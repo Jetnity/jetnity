@@ -83,7 +83,7 @@
     "lib/reisevorschlag/aktionen.ts": "e07f5f58fe5305c7f248589c72fea9acf8addef8",
     "lib/rental-cars/aktionen.ts": "9299d15c5a7592988e43572449fc33fda2c91c01",
     "lib/traveller/account-registry-aktionen.ts": "453cc96456d9b2bc9c1a5a3acbd288005f8d54ce",
-    "lib/trips/aktionen.ts": "4833378894aeedb152e093912574a698a9701b33",
+    "lib/trips/aktionen.ts": "e0c03d9ea5fc1200774727e4b790511684020c86",
     "lib/trips/archiv-aktionen.ts": "1b4851b604f19588899b78153b1509d8e1674dd1"
   }
 }

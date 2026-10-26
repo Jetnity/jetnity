@@ -62,7 +62,12 @@ import {
   tripPlannerPrimaerMitWeiteremTauschen,
   tripPlannerRouteVorbelegen,
 } from '@/lib/places/route-einstieg'
+import TripStageDayAllocation, {
+  type TageszuordnungAnspruch,
+} from '@/components/trips/TripStageDayAllocation'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
+import { createDayPositions, tageszuordnungAngleichen } from '@/lib/trips/create-day-assignment'
+import { ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
   CREATE_PERSISTENZ_TEMPO,
@@ -180,6 +185,9 @@ export default function TripPlanner({
   const [travellers, setTravellers] = React.useState<number | ''>(2)
   const [budget, setBudget] = React.useState('')
   const [travelWish, setTravelWish] = React.useState(initialIdea)
+  const [zuordnungAktiv, setZuordnungAktiv] = React.useState(false)
+  const [zuordnung, setZuordnung] = React.useState<TageszuordnungAnspruch[]>([])
+  const [zuordnungHinweis, setZuordnungHinweis] = React.useState('')
   const [meldung, setMeldung] = React.useState('')
   const [feldfehler, setFeldfehler] = React.useState<Feldfehler<string>>({})
   const [bestehendeReise, setBestehendeReise] = React.useState('')
@@ -195,10 +203,104 @@ export default function TripPlanner({
   // dieselbe Kennung, dieselbe Reise.
   const clientRef = React.useRef('')
 
+  const zuordnungZiele = React.useMemo(() => {
+    const liste: { key: string; position: number; label: string }[] = []
+    if (destinationOrt) liste.push({ key: primaerKey, position: 1, label: destinationOrt.name })
+    for (const ziel of zusaetzlicheZiele) {
+      if (!ziel.ort) continue
+      liste.push({ key: ziel.key, position: liste.length + 1, label: ziel.ort.name })
+    }
+    return liste
+  }, [destinationOrt, primaerKey, zusaetzlicheZiele])
+  const zuordnungSchluessel = zuordnungZiele.map((ziel) => ziel.key).join('\u0000')
+  const abgleichSignatur = `${zuordnungSchluessel}\u0001${startDate}\u0001${endDate}`
+  const [geseheneSignatur, setGeseheneSignatur] = React.useState(abgleichSignatur)
+  if (geseheneSignatur !== abgleichSignatur) {
+    setGeseheneSignatur(abgleichSignatur)
+    if (zuordnungZiele.length < 2) {
+      if (zuordnung.length > 0) {
+        setZuordnung([])
+        setZuordnungHinweis(
+          'Bei einem Reiseziel gehören alle Tage zu diesem Ziel. Die Aufteilung wurde zurückgesetzt.',
+        )
+      }
+      if (zuordnungAktiv) setZuordnungAktiv(false)
+    } else {
+      const angeglichen = tageszuordnungAngleichen({
+        claims: zuordnung,
+        occurrenceKeys: zuordnungZiele.map((ziel) => ziel.key),
+        startDate,
+        endDate,
+      })
+      if (angeglichen.hinweis) setZuordnungHinweis(angeglichen.hinweis)
+      if (JSON.stringify(angeglichen.claims) !== JSON.stringify(zuordnung)) {
+        setZuordnung(angeglichen.claims)
+      }
+    }
+  }
+
+  const zeitraumZuLang = Boolean(startDate && endDate && startDate <= endDate && zeitraumIstZuLang(startDate, endDate))
+
+  const zuordnungStand = React.useMemo(() => {
+    const tage =
+      startDate && endDate && startDate <= endDate && !zeitraumIstZuLang(startDate, endDate)
+        ? reisetageBauen(startDate, endDate)
+        : []
+    const leer = {
+      zugeordnet: 0,
+      ohneZiel: tage.length,
+      reisetage: tage.length,
+      fehler: '',
+      focusId: null as string | null,
+      claims: null as { occurrence: number; startDate: string; endDate: string }[] | null,
+    }
+    if (!zuordnungAktiv || zuordnungZiele.length < 2) return leer
+    const unvollstaendig = zuordnung.find((eintrag) => (eintrag.startDate === '') !== (eintrag.endDate === ''))
+    if (unvollstaendig) {
+      return {
+        ...leer,
+        fehler: 'Bitte gib für die Tageszuordnung beide Daten an.',
+        focusId: `zuordnung-${unvollstaendig.occurrenceKey}-${unvollstaendig.startDate === '' ? 'von' : 'bis'}`,
+      }
+    }
+    const claims = zuordnung.flatMap((eintrag) => {
+      if (!eintrag.startDate || !eintrag.endDate) return []
+      const ziel = zuordnungZiele.find((kandidat) => kandidat.key === eintrag.occurrenceKey)
+      return ziel ? [{ occurrence: ziel.position, startDate: eintrag.startDate, endDate: eintrag.endDate }] : []
+    })
+    const pruefung = createDayPositions({
+      stageCount: zuordnungZiele.length,
+      startDate,
+      endDate,
+      allocation: { claims },
+    })
+    if (!pruefung.ok) {
+      const ziel = zuordnungZiele.find((eintrag) => eintrag.position === pruefung.focusOccurrence)
+      return {
+        ...leer,
+        fehler: pruefung.message,
+        focusId: ziel ? `zuordnung-${ziel.key}-von` : 'zuordnung-aktiv',
+      }
+    }
+    return {
+      zugeordnet: pruefung.assigned,
+      ohneZiel: pruefung.unassigned,
+      reisetage: tage.length,
+      fehler: '',
+      focusId: null,
+      claims,
+    }
+  }, [zuordnungAktiv, zuordnung, zuordnungZiele, startDate, endDate])
+
   React.useEffect(() => {
     if (!anvisiert.current) return
     const feld = anvisiert.current
     anvisiert.current = null
+    if (feld.startsWith('zuordnung-')) {
+      const knoten = document.getElementById(feld)
+      if (knoten instanceof HTMLElement) feldInSichtNehmen(knoten)
+      return
+    }
     if (feld.startsWith('zusaetzlichesZiel-')) {
       feldInSichtNehmen(zusaetzlicheFelder.current[feld])
       return
@@ -334,6 +436,16 @@ export default function TripPlanner({
       setFeldfehler(sichtbarFehler)
       return
     }
+    if (zeitraumZuLang) {
+      anvisiert.current = 'endDate'
+      setFeldfehler({ endDate: ZEITRAUM_ZU_LANG })
+      return
+    }
+    if (zuordnungAktiv && zuordnungStand.fehler) {
+      anvisiert.current = zuordnungStand.focusId
+      setFeldfehler({ dayAllocation: zuordnungStand.fehler })
+      return
+    }
     setFeldfehler({})
 
     const geprueft = neueReiseSchema.safeParse({
@@ -352,6 +464,9 @@ export default function TripPlanner({
       pace: CREATE_PERSISTENZ_TEMPO,
       interests: CREATE_PERSISTENZ_INTERESSEN,
       travelWish,
+      ...(zuordnungAktiv && zuordnungStand.claims && zuordnungStand.claims.length > 0
+        ? { dayAllocation: { claims: zuordnungStand.claims } }
+        : {}),
     })
 
     if (!geprueft.success) {
@@ -367,11 +482,16 @@ export default function TripPlanner({
           const extra = zusaetzlicheZiele[index]
           if (extra) rest[zusaetzlichesZielFeld(extra.key)] = issue.message
         }
+        if (pfad === 'dayAllocation') rest.dayAllocation = issue.message
       }
       const extraKey = zusaetzlicheZiele
         .map((ziel) => zusaetzlichesZielFeld(ziel.key))
         .find((feld) => rest[feld])
-      anvisiert.current = erstesFehlerfeld(rest, REISE_FORMULAR_FELDER) ?? extraKey ?? null
+      anvisiert.current =
+        (rest.dayAllocation ? zuordnungStand.focusId ?? 'zuordnung-aktiv' : null) ??
+        erstesFehlerfeld(rest, REISE_FORMULAR_FELDER) ??
+        extraKey ??
+        null
       setFeldfehler(rest)
       return
     }
@@ -469,6 +589,11 @@ export default function TripPlanner({
 
         // Auch der Speicherfehler bleibt hier stehen: Kein `router.push` in einen
         // Arbeitsbereich, dessen Reise nirgends liegt.
+        if (fehler instanceof Error && fehler.message === ZEITRAUM_ZU_LANG) {
+          anvisiert.current = 'endDate'
+          setFeldfehler({ endDate: fehler.message })
+          return
+        }
         setMeldung(
           fehler instanceof SpeicherFehler
             ? fehler.message
@@ -730,7 +855,7 @@ export default function TripPlanner({
             id="feld-ende"
             label="Rückreise"
             className={feldReflowClass}
-            fehler={feldfehler.endDate}
+            fehler={feldfehler.endDate || (zeitraumZuLang ? ZEITRAUM_ZU_LANG : undefined)}
             icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
           >
             <input
@@ -741,8 +866,8 @@ export default function TripPlanner({
               type="date"
               min={startDate || heuteIso()}
               value={endDate}
-              aria-invalid={Boolean(feldfehler.endDate) || undefined}
-              aria-describedby={feldfehler.endDate ? feldFehlerId('feld-ende') : undefined}
+              aria-invalid={Boolean(feldfehler.endDate || zeitraumZuLang) || undefined}
+              aria-describedby={feldfehler.endDate || zeitraumZuLang ? feldFehlerId('feld-ende') : undefined}
               aria-required="true"
               disabled={laeuft}
               onChange={(ereignis) => {
@@ -750,11 +875,56 @@ export default function TripPlanner({
                 setEndDate(ereignis.target.value)
                 feldKorrigieren('endDate')
               }}
-              className={cn(fieldClass, feldfehler.endDate && FELD_FEHLER_RAHMEN)}
+              className={cn(fieldClass, (feldfehler.endDate || zeitraumZuLang) && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
             </div>
           </Planungsgruppe>
+
+          {zuordnungZiele.length >= 2 ? (
+            <TripStageDayAllocation
+              ziele={zuordnungZiele}
+              startDate={startDate}
+              endDate={endDate}
+              aktiv={zuordnungAktiv}
+              ansprueche={zuordnung}
+              zugeordnet={zuordnungStand.zugeordnet}
+              ohneZiel={zuordnungStand.ohneZiel}
+              reisetage={zuordnungStand.reisetage}
+              zeitraumZuLang={zeitraumZuLang}
+              fehler={zeitraumZuLang ? undefined : feldfehler.dayAllocation || zuordnungStand.fehler}
+              hinweis={zuordnungHinweis}
+              disabled={laeuft}
+              onAktiv={(wert) => {
+                if (lifecycle.gesperrt()) return
+                setZuordnungAktiv(wert)
+                setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'dayAllocation'))
+              }}
+              onAnspruch={(key, teil) => {
+                if (lifecycle.gesperrt()) return
+                setZuordnung((bisher) => {
+                  const vorhanden = bisher.find((eintrag) => eintrag.occurrenceKey === key)
+                  const naechster = {
+                    occurrenceKey: key,
+                    startDate: teil.startDate ?? vorhanden?.startDate ?? '',
+                    endDate: teil.endDate ?? vorhanden?.endDate ?? '',
+                  }
+                  const ohne = bisher.filter((eintrag) => eintrag.occurrenceKey !== key)
+                  if (!naechster.startDate && !naechster.endDate) return ohne
+                  return [...ohne, naechster]
+                })
+                setZuordnungHinweis('')
+                setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'dayAllocation'))
+              }}
+              onZuruecksetzen={() => {
+                if (lifecycle.gesperrt()) return
+                setZuordnungAktiv(false)
+                setZuordnung([])
+                setZuordnungHinweis('')
+                setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'dayAllocation'))
+              }}
+            />
+          ) : null}
 
           <Planungsgruppe id="planen-gruppe-reisende" titel="Reisende & Budget">
             <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">

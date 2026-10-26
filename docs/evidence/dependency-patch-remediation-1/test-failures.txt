@@ -1,0 +1,54 @@
+not ok 860 - catalog hardening: disposable PostgreSQL upgrade, raw RPC and eligibility proof
+  location: '/workspace/lib/readiness/official-truth-catalog-hardening-schema.test.ts:4:4500'
+  error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+  code: 'ENOENT'
+
+not ok 1004 - native PG16 proves why accepted-store rows cannot be projected through a bypass
+  location: '/workspace/lib/readiness/official-truth-ch-de-first-visa-vertical-1/workspace-refusal.test.ts:2:10111'
+  error: 'local_proof_connection_override_forbidden'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1097 - S1 disposable PostgreSQL 16: cutover, private contracts, atomic RPCs and races
+  location: '/workspace/lib/readiness/official-truth-content-identity-schema-v2.test.ts:4:1284'
+  error: 'spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT'
+  code: 'ENOENT'
+
+not ok 1104 - current-version lookup resolves one retained synthetic receipt on native PostgreSQL 16
+  location: '/workspace/lib/readiness/official-truth-current-version-lookup-1.test.ts:2:7011'
+  error: 'local_proof_connection_override_forbidden'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1147 - R3 native canonical URL publication and post-arming guard loss preserve commit truth and recover
+  location: '/workspace/lib/readiness/official-truth-integrated-pilot-r3.test.ts:2:1085'
+  error: 'local_proof_connection_override_forbidden'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1149 - real disposable PostgreSQL proves structural bytes, atomic transactions, concurrent writers and ACL/RLS; no full-domain success claimed
+  location: '/workspace/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:2815'
+  error: 'NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator'
+  code: 'ERR_ASSERTION'
+
+not ok 1150 - actual primary and composed v2 bundles survive real SQL commit, complete fresh readback and semantic/adversarial proof
+  location: '/workspace/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:3879'
+  error: 'NOT_VERIFIED: local PostgreSQL binaries are required; no hosted fallback or emulator'
+  code: 'ERR_ASSERTION'
+
+not ok 1151 - R5 native legacy and typed SQL consumers preserve envelope admission boundaries
+  location: '/workspace/lib/readiness/official-truth-integrated-pilot-storage.test.ts:2:5950'
+  error: 'local_proof_connection_override_forbidden'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1208 - M1–M4 synthetic atomic custody, protected review, current reader and immutable lifecycle on native PostgreSQL16
+  location: '/workspace/lib/readiness/official-truth-original-custody.test.ts:2:6330'
+  error: 'local_proof_connection_override_forbidden'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1267 - throwaway PostgreSQL proof for the source catalog gateway
+  location: '/workspace/lib/readiness/official-truth-source-catalog-server.test.ts:9:698'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+
+not ok 1337 - throwaway PostgreSQL proof for the trusted store gateway
+  location: '/workspace/lib/readiness/official-truth-store-server.test.ts:11:22607'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
