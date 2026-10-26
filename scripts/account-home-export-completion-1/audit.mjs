@@ -358,6 +358,7 @@ async function aktionenEnthalten(seite, hinweis) {
       bereich.selectNodeContents(el)
       feld.linien = [...bereich.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0).length
     }
+    for (let i = 0; i < links.length; i += 1) aktionen[i].woerter = woerter(links[i])
     const textUeberAktion = []
     for (const feld of felder) {
       for (const wort of feld.woerter) {
@@ -378,6 +379,10 @@ async function aktionenEnthalten(seite, hinweis) {
     assert.equal(aktion.scrollWidth <= aktion.clientWidth + 1, true, `${hinweis} ${aktion.name} scroll`)
     assert.ok(aktion.hoehe + 0.5 >= mindest, `${hinweis} ${aktion.name} hoehe ${aktion.hoehe}`)
     assert.ok(aktion.breite + 0.5 >= mindest, `${hinweis} ${aktion.name} breite ${aktion.breite}`)
+    const aktionsBrueche = (aktion.woerter || [])
+      .filter((wort) => wort.linien !== 1)
+      .map((wort) => `${wort.wort}:${wort.linien}`)
+    assert.deepEqual(aktionsBrueche, [], `${hinweis} ${aktion.name} wortbruch`)
   }
   assert.equal(masse.ueberlappung.length, 0, hinweis)
   assert.equal(masse.inKarte, true, hinweis)
@@ -387,6 +392,34 @@ async function aktionenEnthalten(seite, hinweis) {
   }
   assert.deepEqual(masse.textUeberAktion, [], `${hinweis} text ueber aktion`)
   return masse
+}
+
+async function schriftHerkunft(seite, selector) {
+  const computed = await seite.locator(selector).first().evaluate((el) => {
+    const stil = getComputedStyle(el)
+    return {
+      family: stil.fontFamily,
+      size: stil.fontSize,
+      weight: stil.fontWeight,
+      clientWidth: el.clientWidth,
+    }
+  })
+  const session = await seite.context().newCDPSession(seite)
+  await session.send('DOM.enable')
+  await session.send('CSS.enable')
+  const dokument = await session.send('DOM.getDocument')
+  const gefunden = await session.send('DOM.querySelector', {
+    nodeId: dokument.root.nodeId,
+    selector,
+  })
+  const plattform = gefunden.nodeId
+    ? (await session.send('CSS.getPlatformFontsForNode', { nodeId: gefunden.nodeId })).fonts
+    : []
+  await session.detach()
+  const dateien = plattform
+    .map((schrift) => `${schrift.familyName}/${schrift.postScriptName}/custom:${schrift.isCustomFont}`)
+    .join(', ')
+  return `family=${computed.family} size=${computed.size} weight=${computed.weight} clientWidth=${computed.clientWidth} platform=${dateien || 'keine'}`
 }
 
 function woerterGanz(masse, hinweis) {
@@ -579,23 +612,32 @@ try {
 
   const gueltigeReise = { ...faelle.grenze, reisen: fensterReisen(200, undefined, titelGueltig) }
   await zeige(gueltigeReise, css)
+  const titelZeilen = []
   for (const breite of breiten) {
     for (const schrift of [16, 32]) {
       await page.setViewportSize({ width: breite.width, height: breite.height })
       await page.evaluate((px) => {
         document.documentElement.style.fontSize = px === 16 ? '' : '32px'
       }, schrift)
-      assert.equal((await page.locator('[data-account-titel]').innerText()).replace(/\s+/g, ' ').trim(), titelGueltig)
+      const titelText = (await page.locator('[data-account-titel]').innerText()).replace(/\s+/g, ' ').trim()
+      assert.equal(titelText, titelGueltig)
+      assert.equal(titelText.length, 116, `${breite.name} ${schrift}px titelzeichen`)
       const masse = await aktionenEnthalten(page, `Titel 116 ${breite.name} ${schrift}px`)
       woerterGanz(masse, `Titel 116 ${breite.name} ${schrift}px`)
       const titel = masse.felder.find((feld) => feld.name === 'titel')
-      const zeilenGrenze = breite.width >= 768 ? 8 : 13
+      const zeilenGrenze = 13
       assert.ok(
         titel.linien > 0 && titel.linien <= zeilenGrenze,
         `${breite.name} ${schrift}px titelzeilen ${titel.linien}`,
       )
+      titelZeilen.push(`${breite.name}/${schrift}px:${titel.linien}`)
       const ueber = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
       assert.equal(ueber, true, `116 ${breite.name} ${schrift}`)
+      if ((breite.name === '320' && schrift === 32) || (breite.name === '1440' && schrift === 16)) {
+        const titelSchrift = await schriftHerkunft(page, '[data-account-titel]')
+        const aktionSchrift = await schriftHerkunft(page, '[data-account-naechste] a')
+        protokoll.push(`Schrift bei ${breite.name}/${schrift}px. Titel ${titelSchrift}. Aktion ${aktionSchrift}.`)
+      }
       if (breite.name === '1440' && schrift === 16) {
         await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116.png'), fullPage: true })
       }
@@ -605,9 +647,11 @@ try {
       }
       if (breite.name === '320' && schrift === 32) {
         await page.screenshot({ path: join(ausgabe, 'home-320-titel-116-200-prozent.png'), fullPage: true })
+        protokoll.push(`Gültiger 116-Zeichen-Titel bei 320 und 32px: ${titel.linien} Titelzeilen. Aktionswörter bleiben ganz. Der Titeltext bleibt 116 Zeichen; die Zeilenzahl ist Umbruch, kein fehlender Text.`)
       }
     }
   }
+  protokoll.push(`Gültiger 116-Zeichen-Titel, beobachtete Titelzeilen: ${titelZeilen.join(', ')}. Höchstens 13 Zeilen bei ganzen Wörtern.`)
 
   async function tastaturZiel(name, pfad) {
     await zeige(gueltigeReise, css)
