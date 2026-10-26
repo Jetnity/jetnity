@@ -78,6 +78,36 @@
       "calls": 1
     },
     {
+      "name": "failed-read-does-not-claim-absence",
+      "ok": true,
+      "phase": "fulfilled"
+    },
+    {
+      "name": "invalid-read-does-not-claim-absence",
+      "ok": true,
+      "phase": "fulfilled"
+    },
+    {
+      "name": "confirmed-then-contradictory-is-historical",
+      "ok": true,
+      "reason": "contradictory"
+    },
+    {
+      "name": "confirmed-then-absent-is-historical",
+      "ok": true,
+      "reason": "absent"
+    },
+    {
+      "name": "confirmed-then-failed-read-sets-no-new-truth",
+      "ok": true,
+      "phase": "confirmed"
+    },
+    {
+      "name": "automatic-removal-preserves-search-focus",
+      "ok": true,
+      "calls": 0
+    },
+    {
       "name": "keyboard-focus-cancel-restores-trigger",
       "ok": true,
       "calls": 0

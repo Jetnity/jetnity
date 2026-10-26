@@ -33,9 +33,6 @@ function row(
   }
 }
 
-let publishRows: (rows: UserRow[]) => void = () => {}
-let publishAttempt: (attempt: string) => void = () => {}
-
 const INITIAL: UserRow[] = [
   row('synthetic-ada', 'Ada Example', 'ada.example@example.test', 'user', 'active'),
   row('synthetic-bao', 'Bao Example', 'bao.example@example.test', 'operator', 'pending'),
@@ -46,17 +43,36 @@ const INITIAL: UserRow[] = [
   row('bad id', 'Unbrauchbare Kennung', 'bad-id@example.test', 'user', 'active'),
 ]
 
+type ReadMode = 'follow' | 'error' | 'invalid'
+
 function HarnessTable({ mounted, generation }: { mounted: boolean; generation: number }) {
   const sp = useSearchParams()
   const search = sp.toString()
-  const [rows, setRows] = React.useState(INITIAL)
-  const [attempt, setAttempt] = React.useState('read-seed')
+  const [snapshot, setSnapshot] = React.useState<{ rows: UserRow[]; attempt: string; mode: ReadMode }>({
+    rows: INITIAL,
+    attempt: 'read-seed',
+    mode: 'follow',
+  })
+  const { rows, attempt, mode } = snapshot
 
   const decision = decideUsersDirectoryRead(new URLSearchParams(search))
+  const fallbackQuery = { q: '', page: 1, role: null, status: null } as const
   const read: UsersDirectoryReadModel =
-    decision.kind === 'invalid'
-      ? { kind: 'invalid', readAttempt: attempt, reason: decision.reason, recoveryHref: decision.recovery }
-      : { kind: 'ready', readAttempt: attempt, query: decision.query, count: rows.length }
+    mode === 'error'
+      ? {
+          kind: 'error',
+          readAttempt: attempt,
+          query: decision.kind === 'query' ? decision.query : fallbackQuery,
+          fehler: { meldung: 'Datenbank abgelehnt', wiederholbar: true },
+        }
+      : mode === 'invalid' || decision.kind === 'invalid'
+        ? {
+            kind: 'invalid',
+            readAttempt: attempt,
+            reason: decision.kind === 'invalid' ? decision.reason : 'repeated',
+            recoveryHref: decision.kind === 'invalid' ? decision.recovery : '/admin/users?page=1',
+          }
+        : { kind: 'ready', readAttempt: attempt, query: decision.query, count: rows.length }
 
   React.useEffect(() => {
     const storage = window.localStorage
@@ -72,8 +88,6 @@ function HarnessTable({ mounted, generation }: { mounted: boolean; generation: n
       writes += 1
       sessionSet(key, value)
     }
-    publishRows = setRows
-    publishAttempt = setAttempt
     const api = {
       ready: true,
       calls: () => mutationCalls(),
@@ -81,8 +95,14 @@ function HarnessTable({ mounted, generation }: { mounted: boolean; generation: n
       replaces: () => mutationReplaces(),
       search: () => currentMutationSearch(),
       storageWrites: () => writes,
-      setRows: (next: UserRow[]) => publishRows(next),
-      bump: () => publishAttempt(crypto.randomUUID()),
+      setRows: (next: UserRow[]) => setSnapshot((current) => ({ ...current, rows: next })),
+      bump: () => setSnapshot((current) => ({ ...current, attempt: crypto.randomUUID(), mode: 'follow' })),
+      deliver: (next: { rows?: UserRow[]; mode: 'ready' | 'error' | 'invalid' }) =>
+        setSnapshot((current) => ({
+          rows: next.rows ?? current.rows,
+          mode: next.mode === 'ready' ? 'follow' : next.mode,
+          attempt: crypto.randomUUID(),
+        })),
       hang: () => setMutationMode('hang'),
       resolveNext: () => setMutationMode('resolve'),
       rejectNext: (message: string) => setMutationMode('reject', message),
@@ -168,6 +188,7 @@ declare global {
       storageWrites: () => number
       setRows: (next: UserRow[]) => void
       bump: () => void
+      deliver: (next: { rows?: UserRow[]; mode: 'ready' | 'error' | 'invalid' }) => void
       hang: () => void
       resolveNext: () => void
       rejectNext: (message: string) => void

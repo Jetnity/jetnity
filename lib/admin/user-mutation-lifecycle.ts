@@ -1,7 +1,10 @@
 // Lebenszyklus einer Rollen- oder Statusänderung in der Benutzerverwaltung.
 //
 // Eine erfüllte Server-Action gibt void zurück und ist keine beobachtete
-// Speicherung. Bestätigt wird nur eine spätere kanonische Zeile. Abschluss
+// Speicherung. Nur eine akzeptierte kanonische Abfrage stellt Anwesenheit,
+// Fehlen oder Widerspruch fest. Eine fehlgeschlagene oder ungültige Abfrage
+// lässt den bisherigen Anspruch stehen und behauptet kein fehlendes Konto.
+// Eine spätere kanonische Zeile gleicht eine frühere Bestätigung ab. Abschluss
 // von Konto A lässt ein laufendes Konto B unberührt. Es gibt keine
 // automatische Wiederholung und keinen Speicher für Operationskennungen.
 
@@ -36,6 +39,14 @@ export type HoldReason = 'removed' | 'changed' | 'unknown' | 'malformed' | 'inel
 
 export type AmbiguousReason = 'absent' | 'unchanged' | 'contradictory' | 'transport'
 
+/** Eine fehlgeschlagene oder ungültige Abfrage ist kein kanonischer Kontostand. */
+export type DirectoryReadVerdict = 'accepted' | 'failed' | 'invalid'
+
+export type LaterTruth = {
+  role: Role | null
+  status: AccountStatus | null
+}
+
 export type TargetOperation = {
   id: string
   subject: CapturedSubject
@@ -45,7 +56,13 @@ export type TargetOperation = {
   dispatchReadAttempt: string | null
   fulfilledReadAttempt: string | null
   observedReadAttempt: string | null
+  qualifiedReadAttempt: string | null
   ambiguousReason: AmbiguousReason | null
+  /** Eine akzeptierte Abfrage hat die gewünschte Zeile einmal gezeigt. */
+  confirmedOnce: boolean
+  /** Die jüngste Abfrage war kein akzeptierter Kanon. Sie setzt keinen neuen Stand. */
+  nonCanonical: Exclude<DirectoryReadVerdict, 'accepted'> | null
+  laterTruth: LaterTruth | null
   message: string | null
   queryKey: string | null
 }
@@ -82,7 +99,11 @@ export function requestConfirmation(
     dispatchReadAttempt: null,
     fulfilledReadAttempt: null,
     observedReadAttempt: null,
+    qualifiedReadAttempt: null,
     ambiguousReason: null,
+    confirmedOnce: false,
+    nonCanonical: null,
+    laterTruth: null,
     message: null,
     queryKey: input.queryKey,
   }
@@ -236,46 +257,138 @@ function matchesIntent(operation: TargetOperation, row: TruthRow): boolean {
   return row.status === operation.intent.nextStatus && row.role === operation.subject.role
 }
 
+function alreadyUsed(operation: TargetOperation, readAttempt: string): boolean {
+  return (
+    operation.dispatchReadAttempt === readAttempt ||
+    operation.fulfilledReadAttempt === readAttempt ||
+    operation.observedReadAttempt === readAttempt ||
+    operation.qualifiedReadAttempt === readAttempt
+  )
+}
+
+function laterTruthOf(row: TruthRow): LaterTruth {
+  return { role: row.role, status: row.status }
+}
+
 /**
- * Nur eine erfüllte Operation und nur ein neuer Leseversuch. Eine bloße
- * Aktualisierungsanfrage hat hier keinen Eingang.
+ * Eine fehlgeschlagene oder ungültige Abfrage qualifiziert nur die Unsicherheit.
+ * Sie begründet weder Fehlen noch Widerspruch noch einen neuen Rollenstand.
+ */
+function observeUnreadable(
+  operation: TargetOperation,
+  verdict: Exclude<DirectoryReadVerdict, 'accepted'>,
+  readAttempt: string,
+): TargetOperation {
+  return {
+    ...operation,
+    nonCanonical: verdict,
+    qualifiedReadAttempt: readAttempt,
+  }
+}
+
+function observeAccepted(operation: TargetOperation, rows: TruthRow[], readAttempt: string): TargetOperation {
+  const row = rows.find((item) => item.userId === operation.subject.userId) ?? null
+  if (operation.confirmedOnce) {
+    if (row && matchesIntent(operation, row)) {
+      return {
+        ...operation,
+        phase: 'confirmed',
+        ambiguousReason: null,
+        message: null,
+        hold: null,
+        nonCanonical: null,
+        laterTruth: null,
+        observedReadAttempt: readAttempt,
+      }
+    }
+    if (!row) {
+      return {
+        ...operation,
+        phase: 'ambiguous',
+        ambiguousReason: 'absent',
+        hold: null,
+        nonCanonical: null,
+        laterTruth: null,
+        observedReadAttempt: readAttempt,
+      }
+    }
+    return {
+      ...operation,
+      phase: 'ambiguous',
+      ambiguousReason: 'contradictory',
+      hold: null,
+      nonCanonical: null,
+      laterTruth: laterTruthOf(row),
+      observedReadAttempt: readAttempt,
+    }
+  }
+  if (!row) {
+    return {
+      ...operation,
+      phase: 'ambiguous',
+      ambiguousReason: 'absent',
+      hold: null,
+      nonCanonical: null,
+      laterTruth: null,
+      observedReadAttempt: readAttempt,
+    }
+  }
+  if (sameCaptured(operation.subject, row)) {
+    return {
+      ...operation,
+      phase: 'ambiguous',
+      ambiguousReason: 'unchanged',
+      hold: null,
+      nonCanonical: null,
+      laterTruth: null,
+      observedReadAttempt: readAttempt,
+    }
+  }
+  if (matchesIntent(operation, row)) {
+    return {
+      ...operation,
+      phase: 'confirmed',
+      confirmedOnce: true,
+      ambiguousReason: null,
+      message: null,
+      hold: null,
+      nonCanonical: null,
+      laterTruth: null,
+      observedReadAttempt: readAttempt,
+    }
+  }
+  return {
+    ...operation,
+    phase: 'ambiguous',
+    ambiguousReason: 'contradictory',
+    hold: null,
+    nonCanonical: null,
+    laterTruth: null,
+    observedReadAttempt: readAttempt,
+  }
+}
+
+/**
+ * Nur eine erfüllte oder bereits bestätigte Operation und nur ein noch nicht
+ * verwendeter Leseversuch. Eine bloße Aktualisierungsanfrage hat hier keinen
+ * Eingang. Nur `accepted` darf Anwesenheit, Fehlen oder Widerspruch feststellen.
  */
 export function observeLifecycle(
   state: LifecycleState,
   rows: TruthRow[],
   readAttempt: string | null,
+  verdict: DirectoryReadVerdict = 'accepted',
 ): LifecycleState {
   if (!readAttempt) return state
   let changed = false
   const byTarget = { ...state.byTarget }
   for (const [targetId, operation] of Object.entries(state.byTarget)) {
-    if (operation.phase !== 'fulfilled') continue
-    if (operation.fulfilledReadAttempt != null && readAttempt === operation.fulfilledReadAttempt) continue
-    if (operation.dispatchReadAttempt != null && readAttempt === operation.dispatchReadAttempt) continue
-    const row = rows.find((item) => item.userId === operation.subject.userId) ?? null
-    let next: TargetOperation
-    if (!row) {
-      next = { ...operation, phase: 'ambiguous', ambiguousReason: 'absent', observedReadAttempt: readAttempt, hold: null }
-    } else if (sameCaptured(operation.subject, row)) {
-      next = { ...operation, phase: 'ambiguous', ambiguousReason: 'unchanged', observedReadAttempt: readAttempt, hold: null }
-    } else if (matchesIntent(operation, row)) {
-      next = {
-        ...operation,
-        phase: 'confirmed',
-        ambiguousReason: null,
-        message: null,
-        observedReadAttempt: readAttempt,
-        hold: null,
-      }
-    } else {
-      next = {
-        ...operation,
-        phase: 'ambiguous',
-        ambiguousReason: 'contradictory',
-        observedReadAttempt: readAttempt,
-        hold: null,
-      }
-    }
+    if (operation.phase !== 'fulfilled' && operation.phase !== 'confirmed') continue
+    if (alreadyUsed(operation, readAttempt)) continue
+    const next =
+      verdict === 'accepted'
+        ? observeAccepted(operation, rows, readAttempt)
+        : observeUnreadable(operation, verdict, readAttempt)
     byTarget[targetId] = next
     changed = true
   }

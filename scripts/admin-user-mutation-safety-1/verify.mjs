@@ -393,6 +393,125 @@ try {
     return { calls: 1 }
   })
 
+  await fall('failed-read-does-not-claim-absence', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    const before = (await calls(page)).length
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'error' }))
+    await page.getByText('Datenbank abgelehnt').waitFor()
+    await page.waitForFunction(() => {
+      const item = window.__mutation.phases()[0]
+      return Boolean(item && item.phase === 'fulfilled' && item.text.includes('fehlgeschlagen'))
+    })
+    const seen = (await phases(page))[0]
+    assert.equal(seen?.phase, 'fulfilled')
+    assert.equal(seen?.reason, 'none')
+    assert.match(seen?.text ?? '', /nicht, dass das Konto fehlt/)
+    assert.doesNotMatch(seen?.text ?? '', /fehlt in der neuen Abfrage/)
+    assert.doesNotMatch(seen?.text ?? '', /Die neue Abfrage zeigt/)
+    assert.equal((await calls(page)).length, before)
+    return { phase: seen?.phase }
+  })
+
+  await fall('invalid-read-does-not-claim-absence', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'invalid' }))
+    await page.waitForFunction(() => {
+      const item = window.__mutation.phases()[0]
+      return Boolean(item && item.text.includes('ungültig'))
+    })
+    const seen = (await phases(page))[0]
+    assert.equal(seen?.phase, 'fulfilled')
+    assert.doesNotMatch(seen?.text ?? '', /fehlt in der neuen Abfrage/)
+    assert.equal((await calls(page)).length, 1)
+    return { phase: seen?.phase }
+  })
+
+  await fall('confirmed-then-contradictory-is-historical', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    assert.match((await phases(page))[0]?.text ?? '', /Die neue Abfrage zeigt/)
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), ada)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.reason === 'contradictory'))
+    const seen = (await phases(page))[0]
+    const row = await page.evaluate(() => window.__mutation.rowText('synthetic-ada'))
+    assert.match(row, /Nutzer/)
+    assert.match(seen?.text ?? '', /Eine frühere Abfrage zeigte/)
+    assert.match(seen?.text ?? '', /Nutzer/)
+    assert.match(seen?.text ?? '', /nicht mehr der aktuelle Stand/)
+    assert.doesNotMatch(seen?.text ?? '', /Die neue Abfrage zeigt/)
+    assert.equal((await calls(page)).length, 1)
+    return { reason: seen?.reason }
+  })
+
+  await fall('confirmed-then-absent-is-historical', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'ready' }))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.reason === 'absent'))
+    const seen = (await phases(page))[0]
+    assert.match(seen?.text ?? '', /Eine frühere Abfrage zeigte/)
+    assert.match(seen?.text ?? '', /enthält das Konto nicht/)
+    assert.doesNotMatch(seen?.text ?? '', /Die neue Abfrage zeigt/)
+    assert.equal((await calls(page)).length, 1)
+    return { reason: 'absent' }
+  })
+
+  await fall('confirmed-then-failed-read-sets-no-new-truth', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'error' }))
+    await page.getByText('Datenbank abgelehnt').waitFor()
+    await page.waitForFunction(() => {
+      const item = window.__mutation.phases()[0]
+      return Boolean(item && item.phase === 'confirmed' && item.text.includes('setzt keinen neuen Stand'))
+    })
+    const seen = (await phases(page))[0]
+    assert.equal(seen?.phase, 'confirmed')
+    assert.equal(seen?.reason, 'none')
+    assert.match(seen?.text ?? '', /Eine frühere Abfrage zeigte/)
+    assert.doesNotMatch(seen?.text ?? '', /Die neue Abfrage zeigt/)
+    assert.doesNotMatch(seen?.text ?? '', /fehlt in der neuen Abfrage/)
+    assert.equal((await calls(page)).length, 1)
+    return { phase: 'confirmed' }
+  })
+
+  await fall('automatic-removal-preserves-search-focus', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await page.getByRole('button', { name: 'Aktionen für Ada Example' }).click()
+    await page.getByRole('menuitem', { name: 'Rolle: Creator' }).click()
+    await page.evaluate(() => {
+      const input = document.querySelector('input[aria-label="Nutzer nach Name oder E-Mail suchen"]')
+      if (input instanceof HTMLElement) input.focus()
+    })
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+    assert.equal(
+      await page.evaluate(() => document.activeElement?.getAttribute('aria-label')),
+      'Nutzer nach Name oder E-Mail suchen',
+    )
+    const search = page.locator('input[aria-label="Nutzer nach Name oder E-Mail suchen"]')
+    await search.press('a')
+    await search.press('d')
+    await search.press('a')
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), bao)
+    await page.waitForFunction(() => document.querySelector('[role="dialog"]') === null)
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Nutzer nach Name oder E-Mail suchen')
+    assert.equal(await search.inputValue(), 'ada')
+    assert.deepEqual(await calls(page), [])
+    return { calls: 0 }
+  })
+
   await fall('keyboard-focus-cancel-restores-trigger', 'page=1', { width: 1280, height: 800 }, async (page) => {
     const trigger = page.getByRole('button', { name: 'Aktionen für Ada Example' })
     await trigger.focus()

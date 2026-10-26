@@ -402,9 +402,12 @@ export default function UsersTable({
   const visibleIds = new Set(users.map((user) => user.user_id))
   React.useEffect(() => {
     const ids = new Set(users.map((user) => user.user_id))
-    let next = releaseHiddenConfirmations(lifecycleRef.current, ids)
-    if (read) {
-      next = observeLifecycle(next, users.map(truthOf), read.readAttempt)
+    const canonical = !read || read.kind === 'ready'
+    let next = canonical ? releaseHiddenConfirmations(lifecycleRef.current, ids) : lifecycleRef.current
+    if (read?.kind === 'ready') {
+      next = observeLifecycle(next, users.map(truthOf), read.readAttempt, 'accepted')
+    } else if (read) {
+      next = observeLifecycle(next, users.map(truthOf), read.readAttempt, read.kind === 'error' ? 'failed' : 'invalid')
     }
     if (next === lifecycleRef.current) return
     lifecycleRef.current = next

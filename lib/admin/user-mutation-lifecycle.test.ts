@@ -193,6 +193,72 @@ describe('Mutationslebenszyklus', () => {
     assert.equal(other.userId, bao.userId)
   })
 
+  test('eine fehlgeschlagene oder ungültige Abfrage behauptet kein fehlendes Konto', () => {
+    const opened = open(EMPTY_LIFECYCLE, ada, { kind: 'role', nextRole: 'creator' }, 'op-1')
+    const sent = confirmDispatch(opened.state, ada.userId, context([rowOf(ada)], 'read-1'))
+    if (!sent.ok) return
+    const fulfilled = noteFulfilled(sent.state, ada.userId, 'op-1', 'read-1')
+    const failed = observeLifecycle(fulfilled, [], 'read-error', 'failed')
+    assert.equal(failed.byTarget[ada.userId]?.phase, 'fulfilled')
+    assert.equal(failed.byTarget[ada.userId]?.ambiguousReason, null)
+    const failedText = outcomeCopy(failed.byTarget[ada.userId]!)
+    assert.match(failedText, /fehlgeschlagen/)
+    assert.match(failedText, /nicht, dass das Konto fehlt/)
+    assert.doesNotMatch(failedText, /fehlt in der neuen Abfrage/)
+    assert.doesNotMatch(failedText, /Die neue Abfrage zeigt/)
+    const invalid = observeLifecycle(fulfilled, [], 'read-invalid', 'invalid')
+    assert.equal(invalid.byTarget[ada.userId]?.phase, 'fulfilled')
+    const invalidText = outcomeCopy(invalid.byTarget[ada.userId]!)
+    assert.match(invalidText, /ungültig/)
+    assert.doesNotMatch(invalidText, /fehlt in der neuen Abfrage/)
+    const after = observeLifecycle(failed, [rowOf(ada, { role: 'creator' })], 'read-3', 'accepted')
+    assert.equal(after.byTarget[ada.userId]?.phase, 'confirmed')
+    assert.match(outcomeCopy(after.byTarget[ada.userId]!), /Die neue Abfrage zeigt/)
+  })
+
+  test('eine spätere kanonische Abfrage macht eine ältere Bestätigung historisch', () => {
+    const opened = open(EMPTY_LIFECYCLE, ada, { kind: 'role', nextRole: 'creator' }, 'op-1')
+    const sent = confirmDispatch(opened.state, ada.userId, context([rowOf(ada)], 'read-1'))
+    if (!sent.ok) return
+    const fulfilled = noteFulfilled(sent.state, ada.userId, 'op-1', 'read-1')
+    const confirmed = observeLifecycle(fulfilled, [rowOf(ada, { role: 'creator' })], 'read-2')
+    assert.match(outcomeCopy(confirmed.byTarget[ada.userId]!), /Die neue Abfrage zeigt/)
+    const reverted = observeLifecycle(confirmed, [rowOf(ada, { role: 'user' })], 'read-3')
+    assert.equal(reverted.byTarget[ada.userId]?.phase, 'ambiguous')
+    assert.equal(reverted.byTarget[ada.userId]?.ambiguousReason, 'contradictory')
+    const revertedText = outcomeCopy(reverted.byTarget[ada.userId]!)
+    assert.match(revertedText, /Eine frühere Abfrage zeigte/)
+    assert.match(revertedText, /Nutzer/)
+    assert.match(revertedText, /nicht mehr der aktuelle Stand/)
+    assert.doesNotMatch(revertedText, /Die neue Abfrage zeigt/)
+    const absent = observeLifecycle(confirmed, [], 'read-4')
+    assert.equal(absent.byTarget[ada.userId]?.ambiguousReason, 'absent')
+    const absentText = outcomeCopy(absent.byTarget[ada.userId]!)
+    assert.match(absentText, /enthält das Konto nicht/)
+    assert.match(absentText, /Es wird nichts erneut gesendet/)
+    assert.doesNotMatch(absentText, /Die neue Abfrage zeigt/)
+    const failed = observeLifecycle(confirmed, [], 'read-5', 'failed')
+    assert.equal(failed.byTarget[ada.userId]?.phase, 'confirmed')
+    const failedText = outcomeCopy(failed.byTarget[ada.userId]!)
+    assert.match(failedText, /Eine frühere Abfrage zeigte/)
+    assert.match(failedText, /fehlgeschlagen und setzt keinen neuen Stand/)
+    assert.doesNotMatch(failedText, /Die neue Abfrage zeigt/)
+    assert.doesNotMatch(failedText, /fehlt in der neuen Abfrage/)
+    const invalid = observeLifecycle(confirmed, [rowOf(ada, { role: 'owner' })], 'read-6', 'invalid')
+    assert.equal(invalid.byTarget[ada.userId]?.phase, 'confirmed')
+    assert.match(outcomeCopy(invalid.byTarget[ada.userId]!), /ungültig und setzt keinen neuen Stand/)
+    const stillHeld = requestConfirmation(reverted, {
+      id: 'op-2',
+      subject: ada,
+      intent: { kind: 'status', nextStatus: 'banned' },
+      queryKey: 'q1',
+    })
+    assert.equal(stillHeld.ok, false)
+    assert.equal(dismissFeedback(reverted, ada.userId).byTarget[ada.userId], undefined)
+    const matchedAgain = observeLifecycle(reverted, [rowOf(ada, { role: 'creator' })], 'read-7')
+    assert.equal(matchedAgain.byTarget[ada.userId]?.phase, 'ambiguous')
+  })
+
   test('Transportabbruch und verspätete Rückkehr senden nicht erneut', () => {
     const opened = open(EMPTY_LIFECYCLE, ada, { kind: 'role', nextRole: 'creator' }, 'op-1')
     const sent = confirmDispatch(opened.state, ada.userId, context([rowOf(ada)]))

@@ -68,27 +68,57 @@ function named(operation: TargetOperation): string {
   return `${subjectLabel(operation.subject)} (${operation.subject.userId})`
 }
 
+function desiredPhrase(operation: TargetOperation): string {
+  if (operation.intent.kind === 'role') return `die Rolle ${roleLabel(operation.intent.nextRole)}`
+  return `den Status ${statusLabel(operation.intent.nextStatus)}`
+}
+
+function currentPhrase(operation: TargetOperation): string {
+  const truth = operation.laterTruth
+  if (!truth) return 'einen anderen Stand'
+  if (operation.intent.kind === 'role') return `die Rolle ${roleLabel(truth.role)}`
+  return `den Status ${statusLabel(truth.status)}`
+}
+
 export function outcomeCopy(operation: TargetOperation): string {
   const who = named(operation)
   if (operation.phase === 'pending') {
     return `Die Änderung für ${who} läuft. Eine Rückmeldung ist noch keine bestätigte Speicherung.`
   }
   if (operation.phase === 'fulfilled') {
+    if (operation.nonCanonical === 'failed') {
+      return `Die letzte Abfrage für ${who} ist fehlgeschlagen. Sie zeigt nicht, dass das Konto fehlt, und bestätigt die Speicherung nicht.`
+    }
+    if (operation.nonCanonical === 'invalid') {
+      return `Die letzte Abfrage für ${who} ist ungültig. Sie zeigt nicht, dass das Konto fehlt, und bestätigt die Speicherung nicht.`
+    }
     return `Die Aktion für ${who} ist zurückgekehrt. Eine neue Abfrage hat die Speicherung noch nicht bestätigt.`
   }
   if (operation.phase === 'confirmed') {
-    if (operation.intent.kind === 'role') {
-      return `Die neue Abfrage zeigt für ${who} die Rolle ${roleLabel(operation.intent.nextRole)}.`
+    if (operation.nonCanonical === 'failed') {
+      return `Eine frühere Abfrage zeigte für ${who} ${desiredPhrase(operation)}. Die letzte Abfrage ist fehlgeschlagen und setzt keinen neuen Stand.`
     }
-    return `Die neue Abfrage zeigt für ${who} den Status ${statusLabel(operation.intent.nextStatus)}.`
+    if (operation.nonCanonical === 'invalid') {
+      return `Eine frühere Abfrage zeigte für ${who} ${desiredPhrase(operation)}. Die letzte Abfrage ist ungültig und setzt keinen neuen Stand.`
+    }
+    return `Die neue Abfrage zeigt für ${who} ${desiredPhrase(operation)}.`
   }
   if (operation.phase === 'rejected') {
     return `Die Änderung für ${who} wurde abgelehnt: ${operation.message ?? 'ohne lesbare Rückmeldung'}`
   }
   if (operation.phase === 'ambiguous') {
+    if (operation.confirmedOnce) return historicalCopy(who, operation)
     return ambiguousCopy(who, operation.ambiguousReason)
   }
   return `Für ${who} liegt keine Änderung vor.`
+}
+
+function historicalCopy(who: string, operation: TargetOperation): string {
+  const earlier = `Eine frühere Abfrage zeigte für ${who} ${desiredPhrase(operation)}.`
+  if (operation.ambiguousReason === 'absent') {
+    return `${earlier} Die aktuelle Abfrage enthält das Konto nicht. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
+  }
+  return `${earlier} Die aktuelle Abfrage zeigt ${currentPhrase(operation)}. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
 }
 
 function ambiguousCopy(who: string, reason: AmbiguousReason | null): string {

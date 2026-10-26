@@ -22,16 +22,38 @@ export function UserMutationConfirmation({
 }) {
   const titleId = React.useId()
   const bodyId = React.useId()
+  const dialogRef = React.useRef<HTMLDivElement>(null)
   const cancelRef = React.useRef<HTMLButtonElement>(null)
   const confirmRef = React.useRef<HTMLButtonElement>(null)
 
   React.useEffect(() => {
+    const dialog = dialogRef.current
     const previous = document.querySelector<HTMLElement>(`[data-mutation-trigger="${CSS.escape(triggerId)}"]`)
-    const focusCancel = () => cancelRef.current?.focus()
-    focusCancel()
-    const frame = window.requestAnimationFrame(focusCancel)
+    let frame = 0
+    // Menü und Zeilenknopf gehören zur Öffnung. Suche und andere spätere
+    // Ziele bleiben, wo der Nutzer sie hingesetzt hat.
+    const heldByUser = (node: Node | null) => {
+      if (!(node instanceof Element)) return false
+      if (node === document.body || node === document.documentElement) return false
+      if (dialog?.contains(node)) return false
+      if (previous && (node === previous || previous.contains(node))) return false
+      if (node.closest('[role="menu"]')) return false
+      return true
+    }
+    const focusCancelUnlessNewer = () => {
+      if (heldByUser(document.activeElement)) return
+      cancelRef.current?.focus()
+    }
+    focusCancelUnlessNewer()
+    frame = window.requestAnimationFrame(focusCancelUnlessNewer)
+    const onFocusIn = (event: FocusEvent) => {
+      if (heldByUser(event.target instanceof Node ? event.target : null)) window.cancelAnimationFrame(frame)
+    }
+    document.addEventListener('focusin', onFocusIn, true)
     return () => {
       window.cancelAnimationFrame(frame)
+      document.removeEventListener('focusin', onFocusIn, true)
+      if (heldByUser(document.activeElement)) return
       if (previous?.isConnected) previous.focus()
       else document.querySelector<HTMLElement>('[data-users-directory-root]')?.focus()
     }
@@ -64,6 +86,7 @@ export function UserMutationConfirmation({
   return (
     <div className="user-mutation-confirmation" onKeyDown={onKeyDown}>
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
