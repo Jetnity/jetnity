@@ -20,10 +20,12 @@ const KNOPF =
 export default function KontoDatenexportAktion() {
   const [phase, setPhase] = useState<Phase>('bereit')
   const [meldung, setMeldung] = useState<string | null>(null)
+  const wurzel = useRef<HTMLDivElement | null>(null)
   const lauf = useRef<AbortController | null>(null)
   const generation = useRef(0)
   const adresse = useRef<string | null>(null)
   const ursache = useRef<'nutzer' | 'frist' | null>(null)
+  const abbruchFokus = useRef(false)
   const meldungRef = useRef<HTMLParagraphElement | null>(null)
 
   function widerrufen() {
@@ -45,9 +47,13 @@ export default function KontoDatenexportAktion() {
   }, [])
 
   useEffect(() => {
-    if (phase === 'fehler' || phase === 'abgebrochen' || phase === 'uebergeben') {
-      meldungRef.current?.focus()
-    }
+    if (phase !== 'abgebrochen' || !abbruchFokus.current) return
+    abbruchFokus.current = false
+    const aktiv = document.activeElement
+    const verbunden = aktiv instanceof HTMLElement && aktiv.isConnected
+    const imWidget = verbunden && (wurzel.current?.contains(aktiv) ?? false)
+    const fallen = !verbunden || aktiv === document.body
+    if (imWidget || fallen) meldungRef.current?.focus()
   }, [phase, meldung])
 
   function abbrechen() {
@@ -55,6 +61,7 @@ export default function KontoDatenexportAktion() {
     if (!controller) return
     lauf.current = null
     ursache.current = 'nutzer'
+    abbruchFokus.current = true
     generation.current += 1
     controller.abort()
     widerrufen()
@@ -151,7 +158,7 @@ export default function KontoDatenexportAktion() {
   const fehler = phase === 'fehler' || phase === 'abgebrochen'
 
   return (
-    <div data-export-phase={phase} className="mt-4">
+    <div ref={wurzel} data-export-phase={phase} className="mt-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <button
           type="button"

@@ -30,12 +30,29 @@ export function exportDateiName(generatedAt: string): string {
   return `jetnity-account-export-${tag}.json`
 }
 
+const EXPORT_ZEIT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+
+function exportZeitGueltig(wert: unknown): wert is string {
+  if (typeof wert !== 'string' || !EXPORT_ZEIT.test(wert)) return false
+  const zeit = Date.parse(wert)
+  return Number.isFinite(zeit) && new Date(zeit).toISOString() === wert
+}
+
+function exportZeileGueltig(zeile: unknown, gesehen: Set<string>): boolean {
+  if (!zeile || typeof zeile !== 'object' || Array.isArray(zeile)) return false
+  const id = (zeile as { id?: unknown }).id
+  if (typeof id !== 'string' || id.length === 0 || id !== id.trim()) return false
+  if (gesehen.has(id)) return false
+  gesehen.add(id)
+  return true
+}
+
 export function exportDokumentGueltig(wert: unknown): boolean {
-  if (!wert || typeof wert !== 'object') return false
+  if (!wert || typeof wert !== 'object' || Array.isArray(wert)) return false
   const dokument = wert as Record<string, unknown>
   if (dokument.schemaVersion !== EXPORT_SCHEMA_VERSION) return false
-  if (typeof dokument.generatedAt !== 'string' || dokument.generatedAt.length === 0) return false
-  if (!dokument.scope || typeof dokument.scope !== 'object') return false
+  if (!exportZeitGueltig(dokument.generatedAt)) return false
+  if (!dokument.scope || typeof dokument.scope !== 'object' || Array.isArray(dokument.scope)) return false
   const scope = dokument.scope as Record<string, unknown>
   if (scope.owner !== 'authenticated-session') return false
   if (scope.completeness !== EXPORT_VOLLSTAENDIGKEIT) return false
@@ -43,12 +60,17 @@ export function exportDokumentGueltig(wert: unknown): boolean {
   for (let index = 0; index < EXPORT_TABELLEN.length; index += 1) {
     if (scope.tables[index] !== EXPORT_TABELLEN[index]) return false
   }
-  if (!dokument.data || typeof dokument.data !== 'object') return false
+  if (!dokument.data || typeof dokument.data !== 'object' || Array.isArray(dokument.data)) return false
   const data = dokument.data as Record<string, unknown>
   const schluessel = Object.keys(data)
   if (schluessel.length !== EXPORT_TABELLEN.length) return false
   for (const tabelle of EXPORT_TABELLEN) {
-    if (!Array.isArray(data[tabelle])) return false
+    const zeilen = data[tabelle]
+    if (!Array.isArray(zeilen)) return false
+    const gesehen = new Set<string>()
+    for (const zeile of zeilen) {
+      if (!exportZeileGueltig(zeile, gesehen)) return false
+    }
   }
   return true
 }
