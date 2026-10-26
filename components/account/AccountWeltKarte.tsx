@@ -4,7 +4,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { ArrowUpRight, MapPin, MapPinOff } from 'lucide-react'
 import { useCallback, useId, useMemo, useState } from 'react'
-import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
+import { SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
 import { useReiseFenster } from '@/components/account/account-home-export-1/ReiseFensterRahmen'
 import WorldExplorer from '@/components/account/world-explorer-1/WorldExplorer'
 import {

@@ -483,8 +483,7 @@ try {
     },
     data: {},
   }
-  for (const tabelle of gueltig.scope.tables) gueltig.data[tabelle] = []
-  gueltig.data.profiles = [{ id: 'profil-1' }]
+  for (const tabelle of gueltig.scope.tables) gueltig.data[tabelle] = [{ id: `${tabelle}-1` }]
   let dateiEreignisse = 0
   page.on('download', () => {
     dateiEreignisse += 1
@@ -508,7 +507,10 @@ try {
   const inhalt = JSON.parse(readFileSync(await datei.path(), 'utf8'))
   assert.equal(inhalt.schemaVersion, 'jetnity.account-export.v1')
   assert.equal(inhalt.generatedAt, '2026-10-26T10:00:00.000Z')
-  assert.deepEqual(inhalt.data.profiles, [{ id: 'profil-1' }])
+  assert.deepEqual(Object.keys(inhalt.data), gueltig.scope.tables)
+  for (const tabelle of gueltig.scope.tables) {
+    assert.deepEqual(inhalt.data[tabelle], [{ id: `${tabelle}-1` }])
+  }
   assert.match(await page.getByRole('status').innerText(), /Browser/)
   assert.match(await page.getByRole('status').innerText(), /Betriebssystem/)
   assert.equal(anfragen, 1)
@@ -574,6 +576,12 @@ try {
   const liste = structuredClone(gueltig)
   liste.data.profiles = [[]]
   await ungueltig('Eine Listen-Zeile', JSON.stringify(liste))
+  const leereKennung = structuredClone(gueltig)
+  leereKennung.data.profiles = [{ id: '  ' }]
+  await ungueltig('Eine leere Kennung', JSON.stringify(leereKennung))
+  const doppelt = structuredClone(gueltig)
+  doppelt.data.trips = [{ id: 'gleiche' }, { id: 'gleiche' }]
+  await ungueltig('Eine doppelte Kennung in einer Tabelle', JSON.stringify(doppelt))
 
   const arbeit = page.getByRole('textbox', { name: 'Andere Kontoarbeit' })
   let zeigerLos = () => {}

@@ -1,6 +1,6 @@
 {
   "protokoll": [
-    "Projekt-CSS aus dem Build ist eingebunden (99531 Zeichen).",
+    "Projekt-CSS aus dem Build ist eingebunden (101364 Zeichen).",
     "Der Geräte-Tag nach dem Mount macht die Reise aktiv.",
     "Lokale Mitternacht nach dem Geräte-Timeout beendet aktiv.",
     "Positiver Offset bleibt am Vortag und damit aktiv.",
@@ -30,6 +30,8 @@
     "Eine Null-Zeile löst kein Downloadereignis aus.",
     "Eine Skalar-Zeile löst kein Downloadereignis aus.",
     "Eine Listen-Zeile löst kein Downloadereignis aus.",
+    "Eine leere Kennung löst kein Downloadereignis aus.",
+    "Eine doppelte Kennung in einer Tabelle löst kein Downloadereignis aus.",
     "Erfolg nach einem neueren Zeigerfokus lässt den Fokus dort und bleibt ansagbar.",
     "Fehler nach neuerem Tastaturfokus zieht den Fokus nicht weg.",
     "Eine Frist nach neuerem Tastaturfokus bleibt ansagbar, ohne den Fokus zu nehmen.",
@@ -38,7 +40,7 @@
     "Ein ausdrücklicher neuer Versuch nach dem Abbruch übergibt genau eine weitere Datei.",
     "Eine überschrittene Frist bricht ab, ohne automatisch neu zu starten.",
     "Eine späte Antwort nach dem Unmount erzeugt keinen Download.",
-    "Seitenfehler: 0. Exportanfragen: 19. Downloads: 3. Objekt-URL-Widerrufe: 3."
+    "Seitenfehler: 0. Exportanfragen: 21. Downloads: 3. Objekt-URL-Widerrufe: 3."
   ],
   "seitenfehler": [],
   "netz": [
