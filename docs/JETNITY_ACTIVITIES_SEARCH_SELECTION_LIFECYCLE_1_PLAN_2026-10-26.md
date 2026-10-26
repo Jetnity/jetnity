@@ -32,15 +32,22 @@ Visible context is the canonical stage name, day title, day date, `trip.travelle
 
 ## Adoption recovery boundary
 
+Search epoch and generation own only the visible result. The adoption operation is separate: trip, stage, day, and option content. It does not include epoch or generation.
+
 The callback remains `onUebernehmen(etappe, tag, option): Promise<string | null>`.
 
-- The claim is stored in a ref before the callback runs. The same captured trip/stage/day/epoch/generation/option-content key cannot be dispatched twice, including in the same tick.
-- The handler sends the captured option only when that exact content is still the visible result. A reused id with different content does not submit the old option.
-- `finally` removes only that claim from the in-flight set and records it as settled. Another claim is left untouched. Context changes, new searches, and unrelated props do not delete settled claims and do not replay them.
-- `null` is only the callback’s success report. A string, throw, rejection, or any other value is unconfirmed. Copy tells the person to inspect the trip and does not say the write did not happen, did happen, or happened once.
-- A newer explicit search on the same day hides the older notice. A notice never renders on a different day. Returning to the same day can show it again, without restoring cards and without calling the callback.
-- Another attempt is a new explicit search plus a new click. That is a new claim, not a replay.
+- The claim is stored in a ref before the callback runs. The same operation cannot be dispatched twice, including in the same tick.
+- The handler sends the captured option only when that exact content is still the visible result for the captured epoch and generation. A reused id with different content does not submit the old option. A stale handler does not send the newer content.
+- `finally` closes only that operation. `null` becomes callback-accepted and stays closed for this mount. Any other outcome, including a synchronous throw and an empty string, becomes unconfirmed and stays closed. Another operation is left untouched.
+- Refresh, a relevant context change, and a guest-like graph update while the callback is still pending do not open a pending or accepted operation again. A new search is not reconciliation of an uncertain write.
+- Unconfirmed recovery is the explicit control “Erneut anbieten”. It does not call the writer. It does not open a pending or accepted operation. Search and prop changes do not press it.
+- `null` is only the callback’s success report. Copy tells the person to inspect the trip and does not say the write did not happen, did happen, or happened once.
+- A notice renders only for the current day. It can remain after a newer search. It does not render on another day. Leaving the workspace section hides it with the surface; settling the old work does not move focus into that hidden surface.
 - Full unmount drops the in-memory register. This does not cancel an entered writer, does not serialize other tabs, and does not prove the trip row. No readback endpoint is added.
+
+## Active response boundary
+
+A present `message` or `coverageNote` that is not a bounded string makes an `ok` or `partial` response non-actionable. Replacing that field with a default does not keep the options. Absent text may still use the existing neutral default. Non-active statuses keep their minimal contract: invalid text is replaced, options are removed, and the status is not upgraded to success.
 
 ## Proof commands
 

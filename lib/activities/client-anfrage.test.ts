@@ -106,6 +106,64 @@ describe('Aktivitätensuche im Client', () => {
     assert.equal(limit.coverageNote, ACTIVITY_ABDECKUNGSHINWEIS)
   })
 
+  test('ungültige Textfelder einer aktiven Antwort sind nicht handlungsfähig', () => {
+    const basis = { status: 'ok', evidenz: evidenz(), options: [option()] }
+    for (const feld of [
+      { message: {}, coverageNote: 'Hinweis' },
+      { message: 'Aktivitäten gefunden.', coverageNote: 123 },
+      { message: 'x'.repeat(501), coverageNote: 'Hinweis' },
+    ]) {
+      const antwort = activitySucheAntwortLesen({ ...basis, ...feld }, 200)
+      assert.equal(antwort.status, 'invalid')
+      assert.equal(antwort.options.length, 0)
+      assert.equal(antwort.message, 'Die Aktivitätsangaben konnten nicht gelesen werden.')
+      assert.equal(JSON.stringify(antwort).includes('123'), false)
+      assert.equal(JSON.stringify(antwort).includes('x'.repeat(40)), false)
+    }
+
+    const teilweise = activitySucheAntwortLesen(
+      {
+        status: 'partial',
+        message: 'Einige Angebote konnten nicht gelesen werden.',
+        coverageNote: 'Hinweis',
+        evidenz: evidenz(),
+        options: [],
+      },
+      200,
+    )
+    assert.equal(teilweise.status, 'partial')
+    assert.equal(teilweise.options.length, 0)
+
+    const fehlerform = activitySucheAntwortLesen(
+      { status: 'error', message: 'Die Aktivitätsanfrage ist fehlgeschlagen.', evidenz: evidenz(), options: [option()] },
+      200,
+    )
+    assert.equal(fehlerform.status, 'error')
+    assert.equal(fehlerform.options.length, 0)
+
+    const label = activitySucheAntwortLesen(
+      { ...basis, message: 'Aktivitäten gefunden.', options: [{ ...option(), labels: ['unbekannt'] }] },
+      200,
+    )
+    assert.equal(label.status, 'invalid')
+    assert.equal(label.options.length, 0)
+  })
+
+  test('ein Abbruch beim Lesen der Antwort bleibt ein AbortError', async () => {
+    const fetchFn = (async () =>
+      ({
+        status: 200,
+        json: async () => {
+          throw Object.assign(new Error('aborted'), { name: 'AbortError' })
+        },
+      }) as unknown as Response) as typeof fetch
+    await assert.rejects(activitySucheVomClient({}, { fetchFn }), (fehler: unknown) => {
+      assert.ok(fehler instanceof Error)
+      assert.equal(fehler.name, 'AbortError')
+      return true
+    })
+  })
+
   test('ein Geheimnisfeld wird nicht in die sichtbare Antwort übernommen', () => {
     const antwort = activitySucheAntwortLesen(
       { status: 'ok', message: 'Aktivitäten gefunden.', evidenz: evidenz(), options: [option()], score: 0.9 },

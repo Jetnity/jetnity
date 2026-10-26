@@ -16,7 +16,7 @@ import type { Trip, TripDay, TripStage } from '@/types/trips'
 
 const SPEICHER = 'jetnity:ui-audit:reise'
 
-type UebernahmeArt = 'null' | 'string' | 'throw' | 'reject' | 'malformed' | 'haengen'
+type UebernahmeArt = 'null' | 'string' | 'throw' | 'throw-sync' | 'leer' | 'reject' | 'malformed' | 'haengen' | 'gast'
 
 type AuditStand = {
   aufrufe: number
@@ -28,6 +28,9 @@ type ActivitiesAuditSteuerung = {
   flaeche: (sichtbar: boolean) => void
   uebernahme: (art: UebernahmeArt) => void
   freigeben: () => void
+  aktionSichern: (id: string) => void
+  aktionAlt: () => void
+  aktion: (id: string) => void
   stand: () => AuditStand
 }
 
@@ -45,6 +48,8 @@ export default function ActivitiesAuditClient() {
   const warteRef = React.useRef<(() => void) | null>(null)
   const aufrufeRef = React.useRef(0)
   const letzteRef = React.useRef<AuditStand['letzte']>(null)
+  const aktionenRef = React.useRef(new Map<string, () => void>())
+  const altRef = React.useRef<(() => void) | null>(null)
 
   React.useEffect(() => {
     try {
@@ -59,20 +64,31 @@ export default function ActivitiesAuditClient() {
     }
   }, [])
 
-  const uebernehmen = React.useCallback(async (_etappe: TripStage, _tag: TripDay, option: ActivityOptionSichtbar) => {
-    aufrufeRef.current += 1
-    letzteRef.current = { id: option.id, title: option.title }
+  const uebernehmen = React.useCallback((_etappe: TripStage, _tag: TripDay, option: ActivityOptionSichtbar) => {
     const art = artRef.current
-    if (art === 'throw') throw new Error('audit-wurf')
-    if (art === 'reject') return Promise.reject(new Error('audit-ablehnung'))
-    if (art === 'string') return 'Der Punkt konnte nicht zugeordnet werden.'
-    if (art === 'malformed') return { gespeichert: false } as unknown as string
-    if (art === 'haengen') {
-      await new Promise<void>((loesen) => {
-        warteRef.current = loesen
-      })
+    if (art === 'throw-sync') {
+      aufrufeRef.current += 1
+      letzteRef.current = { id: option.id, title: option.title }
+      throw new Error('audit-wurf')
     }
-    return null
+    return (async () => {
+      aufrufeRef.current += 1
+      letzteRef.current = { id: option.id, title: option.title }
+      if (art === 'throw') throw new Error('audit-wurf')
+      if (art === 'reject') return Promise.reject(new Error('audit-ablehnung'))
+      if (art === 'string') return 'Der Punkt konnte nicht zugeordnet werden.'
+      if (art === 'leer') return ''
+      if (art === 'malformed') return { gespeichert: false } as unknown as string
+      if (art === 'gast') {
+        setReise((bisher) => (bisher ? { ...bisher, travellers: bisher.travellers + 1 } : bisher))
+      }
+      if (art === 'haengen' || art === 'gast') {
+        await new Promise<void>((loesen) => {
+          warteRef.current = loesen
+        })
+      }
+      return null
+    })()
   }, [])
 
   React.useEffect(() => {
@@ -85,6 +101,15 @@ export default function ActivitiesAuditClient() {
       freigeben: () => {
         warteRef.current?.()
         warteRef.current = null
+      },
+      aktionSichern: (id) => {
+        altRef.current = aktionenRef.current.get(id) ?? null
+      },
+      aktionAlt: () => {
+        altRef.current?.()
+      },
+      aktion: (id) => {
+        aktionenRef.current.get(id)?.()
       },
       stand: () => ({ aufrufe: aufrufeRef.current, letzte: letzteRef.current }),
     }
@@ -122,7 +147,15 @@ export default function ActivitiesAuditClient() {
         onPunktEntfernen={async () => null}
         anfangsBereich="aktivitaeten"
         aktivitaetensuche={
-          flaeche ? <AktivitaetenBereich reise={reise} onUebernehmen={uebernehmen} /> : null
+          flaeche ? (
+            <AktivitaetenBereich
+              reise={reise}
+              onUebernehmen={uebernehmen}
+              onUebernahmeBeobachten={(aufnahme) => {
+                aktionenRef.current.set(aufnahme.id, aufnahme.ausloesen)
+              }}
+            />
+          ) : null
         }
       />
     </main>

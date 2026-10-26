@@ -1,10 +1,12 @@
 // lib/activities/suchlebenszyklus.ts
 //
 // Lokale Lebensdauer der Aktivitätensuche und der Übernahme.
-// Identität nur für die gemountete Oberfläche: Reise, Etappe, Tag,
-// semantischer Anfrageinhalt und eine frische Generation je Auslösung.
+// Die Suche hat Epoche und Generation. Die Übernahme hat eine eigene
+// Operation: Reise, Etappe, Tag und Optionsinhalt. Eine neue Suche,
+// ein Kontextwechsel oder eine Änderung am Reisegraphen öffnet eine
+// laufende oder angenommene Operation nicht wieder.
 // Kein Commercial-Provenance-Modell, kein Speicher, kein Provider, kein Abbruch
-// eines bereits betretenen Schreibers.
+// eines bereits betretenen Schreibers. Ein Unmount verwirft nur dieses Register.
 
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 
@@ -128,8 +130,14 @@ export type UebernahmeErfassung = {
   optionInhalt: string
 }
 
-export function uebernahmeSchluessel(erfasst: UebernahmeErfassung): string {
-  return JSON.stringify(erfasst)
+/**
+ * Identität der Übernahme, ohne Epoche und Generation der Suche.
+ * Dieselbe Option bleibt dieselbe Operation, auch wenn die Suche neu läuft.
+ */
+export function uebernahmeOperationSchluessel(
+  erfasst: Pick<UebernahmeErfassung, 'tripId' | 'stageId' | 'dayId' | 'optionInhalt'>,
+): string {
+  return JSON.stringify([erfasst.tripId, erfasst.stageId, erfasst.dayId, erfasst.optionInhalt])
 }
 
 export function uebernahmeDarfSenden(
@@ -143,30 +151,70 @@ export function uebernahmeDarfSenden(
 
 export type UebernahmeRegister = {
   laufend: readonly string[]
-  abgeschlossen: readonly string[]
+  angenommen: readonly string[]
+  unbestaetigt: readonly string[]
 }
 
 export function leeresUebernahmeRegister(): UebernahmeRegister {
-  return { laufend: [], abgeschlossen: [] }
+  return { laufend: [], angenommen: [], unbestaetigt: [] }
 }
 
 export function uebernahmeBeanspruchen(
   register: UebernahmeRegister,
   schluessel: string,
-): { ok: true; register: UebernahmeRegister } | { ok: false; grund: 'doppelt' | 'abgeschlossen' } {
-  if (register.abgeschlossen.includes(schluessel)) return { ok: false, grund: 'abgeschlossen' }
+):
+  | { ok: true; register: UebernahmeRegister }
+  | { ok: false; grund: 'doppelt' | 'angenommen' | 'unbestaetigt' } {
+  if (register.angenommen.includes(schluessel)) return { ok: false, grund: 'angenommen' }
+  if (register.unbestaetigt.includes(schluessel)) return { ok: false, grund: 'unbestaetigt' }
   if (register.laufend.includes(schluessel)) return { ok: false, grund: 'doppelt' }
   return { ok: true, register: { ...register, laufend: [...register.laufend, schluessel] } }
 }
 
-/** Gibt nur den eigenen Anspruch frei und merkt ihn als abgeschlossen. Andere Ansprüche bleiben. */
-export function uebernahmeAbschliessen(register: UebernahmeRegister, schluessel: string): UebernahmeRegister {
+/**
+ * Beendet nur die eigene laufende Operation.
+ * `angenommen` bleibt für diese gemountete Fläche geschlossen.
+ * `unbestaetigt` bleibt geschlossen, bis sie ausdrücklich freigegeben wird.
+ */
+export function uebernahmeAbschliessen(
+  register: UebernahmeRegister,
+  schluessel: string,
+  ergebnis: 'angenommen' | 'unbestaetigt',
+): UebernahmeRegister {
   if (!register.laufend.includes(schluessel)) return register
+  const laufend = register.laufend.filter((eintrag) => eintrag !== schluessel)
+  if (ergebnis === 'angenommen') {
+    return {
+      laufend,
+      angenommen: register.angenommen.includes(schluessel)
+        ? register.angenommen
+        : [...register.angenommen, schluessel],
+      unbestaetigt: register.unbestaetigt.filter((eintrag) => eintrag !== schluessel),
+    }
+  }
   return {
-    laufend: register.laufend.filter((eintrag) => eintrag !== schluessel),
-    abgeschlossen: register.abgeschlossen.includes(schluessel)
-      ? register.abgeschlossen
-      : [...register.abgeschlossen, schluessel],
+    laufend,
+    angenommen: register.angenommen,
+    unbestaetigt: register.unbestaetigt.includes(schluessel)
+      ? register.unbestaetigt
+      : [...register.unbestaetigt, schluessel],
+  }
+}
+
+/**
+ * Öffnet nur eine unbestätigte Operation, und nur auf ausdrückliche Handlung.
+ * Laufende und angenommene Operationen bleiben geschlossen.
+ * Eine neue Suche ruft das nicht auf.
+ */
+export function uebernahmeUnbestaetigtFreigeben(
+  register: UebernahmeRegister,
+  schluessel: string,
+): UebernahmeRegister {
+  if (!register.unbestaetigt.includes(schluessel)) return register
+  if (register.laufend.includes(schluessel) || register.angenommen.includes(schluessel)) return register
+  return {
+    ...register,
+    unbestaetigt: register.unbestaetigt.filter((eintrag) => eintrag !== schluessel),
   }
 }
 
@@ -190,11 +238,6 @@ export function uebernahmeErgebnisLesen(wert: unknown): UebernahmeAusgang {
     return text ? { art: 'text', text } : { art: 'unbestaetigt' }
   }
   return { art: 'unbestaetigt' }
-}
-
-/** Eine spätere Suche auf demselben Tag macht eine ältere Übernahmemeldung ungültig. */
-export function uebernahmeHinweisNochGueltig(sucheMark: number, anspruchSeq: number): boolean {
-  return sucheMark <= anspruchSeq
 }
 
 export function uebernahmeHinweisText(ausgang: UebernahmeAusgang): string {

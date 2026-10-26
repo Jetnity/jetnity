@@ -127,12 +127,26 @@ function optionenLesen(wert: unknown): ActivityOptionSichtbar[] | null {
   return optionen
 }
 
-function hinweisLesen(wert: unknown): string {
-  if (typeof wert !== 'string') return ACTIVITY_ABDECKUNGSHINWEIS
+function hinweisPruefen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
   const text = wert.trim()
-  if (text.length < 1 || text.length > 500) return ACTIVITY_ABDECKUNGSHINWEIS
-  if (/[\u0000-\u001F]/.test(text)) return ACTIVITY_ABDECKUNGSHINWEIS
+  if (text.length < 1 || text.length > 500) return null
+  if (/[\u0000-\u001F]/.test(text)) return null
   return text
+}
+
+function hinweisLesen(wert: unknown): string {
+  return hinweisPruefen(wert) ?? ACTIVITY_ABDECKUNGSHINWEIS
+}
+
+function ungueltigeAktiveAntwort(): ActivitySucheAntwort {
+  return {
+    status: 'invalid',
+    message: STANDARD_MELDUNG.invalid,
+    coverageNote: ACTIVITY_ABDECKUNGSHINWEIS,
+    evidenz: { ...LEERE_ACTIVITY_EVIDENZ },
+    options: [],
+  }
 }
 
 function istStatus(wert: unknown): wert is ActivitySuchStatus {
@@ -171,19 +185,13 @@ export function activitySucheAntwortLesen(wert: unknown, httpStatus: number): Ac
 
   const evidenz = evidenzLesen(roh.evidenz)
   const options = optionenLesen(roh.options)
-  if (!evidenz || !options) {
-    return {
-      status: 'invalid',
-      message: STANDARD_MELDUNG.invalid,
-      coverageNote: ACTIVITY_ABDECKUNGSHINWEIS,
-      evidenz: { ...LEERE_ACTIVITY_EVIDENZ },
-      options: [],
-    }
-  }
+  const meldungAktiv = roh.message === undefined ? STANDARD_MELDUNG[roh.status] : meldungLesen(roh.message)
+  const hinweisAktiv = roh.coverageNote === undefined ? ACTIVITY_ABDECKUNGSHINWEIS : hinweisPruefen(roh.coverageNote)
+  if (!evidenz || !options || !meldungAktiv || !hinweisAktiv) return ungueltigeAktiveAntwort()
   return {
     status: roh.status,
-    message: meldung,
-    coverageNote,
+    message: meldungAktiv,
+    coverageNote: hinweisAktiv,
     evidenz,
     options,
   }

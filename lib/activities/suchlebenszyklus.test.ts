@@ -17,8 +17,9 @@ import {
   uebernahmeBeanspruchen,
   uebernahmeDarfSenden,
   uebernahmeErgebnisLesen,
-  uebernahmeHinweisNochGueltig,
   uebernahmeHinweisText,
+  uebernahmeOperationSchluessel,
+  uebernahmeUnbestaetigtFreigeben,
   type UebernahmeErfassung,
 } from '@/lib/activities/suchlebenszyklus'
 
@@ -189,19 +190,46 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     const andere = uebernahmeBeanspruchen(erste.register, 'op-b')
     assert.equal(andere.ok, true)
     if (!andere.ok) return
-    const frei = uebernahmeAbschliessen(andere.register, 'op-a')
+    const frei = uebernahmeAbschliessen(andere.register, 'op-a', 'angenommen')
     assert.deepEqual(frei.laufend, ['op-b'])
-    assert.deepEqual(frei.abgeschlossen, ['op-a'])
+    assert.deepEqual(frei.angenommen, ['op-a'])
     assert.equal(uebernahmeBeanspruchen(frei, 'op-a').ok, false)
-    const andereFrei = uebernahmeAbschliessen(frei, 'op-b')
+    const andereFrei = uebernahmeAbschliessen(frei, 'op-b', 'unbestaetigt')
     assert.deepEqual(andereFrei.laufend, [])
-    assert.deepEqual(andereFrei.abgeschlossen, ['op-a', 'op-b'])
-    assert.equal(uebernahmeAbschliessen(andereFrei, 'fremd'), andereFrei)
+    assert.deepEqual(andereFrei.angenommen, ['op-a'])
+    assert.deepEqual(andereFrei.unbestaetigt, ['op-b'])
+    assert.equal(uebernahmeAbschliessen(andereFrei, 'fremd', 'angenommen'), andereFrei)
+  })
+
+  test('eine neue Suche öffnet eine laufende oder angenommene Übernahme nicht wieder', () => {
+    const inhalt = optionInhaltSchluessel(OPTION)
+    const basis = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1', optionInhalt: inhalt }
+    const key = uebernahmeOperationSchluessel(basis)
+    assert.equal(uebernahmeOperationSchluessel({ ...basis }), key)
+    const erste = uebernahmeBeanspruchen(leeresUebernahmeRegister(), key)
+    assert.equal(erste.ok, true)
+    if (!erste.ok) return
+    assert.deepEqual(uebernahmeBeanspruchen(erste.register, key), { ok: false, grund: 'doppelt' })
+    const angenommen = uebernahmeAbschliessen(erste.register, key, 'angenommen')
+    assert.deepEqual(uebernahmeBeanspruchen(angenommen, key), { ok: false, grund: 'angenommen' })
+    assert.equal(uebernahmeUnbestaetigtFreigeben(angenommen, key), angenommen)
+    const unbestaetigt = uebernahmeAbschliessen(erste.register, key, 'unbestaetigt')
+    assert.deepEqual(uebernahmeBeanspruchen(unbestaetigt, key), { ok: false, grund: 'unbestaetigt' })
+    assert.equal(uebernahmeUnbestaetigtFreigeben(angenommen, key), angenommen)
+    const frei = uebernahmeUnbestaetigtFreigeben(unbestaetigt, key)
+    const erneut = uebernahmeBeanspruchen(frei, key)
+    assert.equal(erneut.ok, true)
+    assert.equal(
+      uebernahmeDarfSenden(erfasst(inhalt, 1, 1), { epoche: 1, generation: 2, inhalte: [inhalt] }),
+      false,
+    )
   })
 
   test('null, Text, Wurf und eine falsche Form bleiben ehrlich und ohne automatische Wiederholung', () => {
     assert.equal(uebernahmeErgebnisLesen(null).art, 'gemeldet')
     assert.equal(uebernahmeErgebnisLesen('Der Punkt konnte nicht zugeordnet werden.').art, 'text')
+    assert.equal(uebernahmeErgebnisLesen('').art, 'unbestaetigt')
+    assert.equal(uebernahmeErgebnisLesen('   ').art, 'unbestaetigt')
     assert.equal(uebernahmeErgebnisLesen(undefined).art, 'unbestaetigt')
     assert.equal(uebernahmeErgebnisLesen({ gespeichert: false }).art, 'unbestaetigt')
     assert.equal(uebernahmeErgebnisLesen('x\n at Function').art, 'unbestaetigt')
@@ -216,7 +244,5 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
       assert.equal(hinweis.includes('genau einmal'), false)
       assert.equal(hinweis.includes('nicht gespeichert'), false)
     }
-    assert.equal(uebernahmeHinweisNochGueltig(0, 1), true)
-    assert.equal(uebernahmeHinweisNochGueltig(5, 4), false)
   })
 })

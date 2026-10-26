@@ -3,8 +3,9 @@
 // components/trips/AktivitaetenBereich.tsx
 //
 // Aktivitätsbereich im Reise-Arbeitsbereich. Eine Suche startet nur durch eine
-// ausdrückliche Aktion. Ergebnisse und Übernahmen gehören zu Reise, Tag und
-// Generation. Kein Demo, keine Fake-Karten.
+// ausdrückliche Aktion. Die Suche hat eine Generation. Die Übernahme hat eine
+// eigene Operation und bleibt bei einer neuen Suche geschlossen. Kein Demo,
+// keine Fake-Karten.
 
 import * as React from 'react'
 
@@ -24,9 +25,9 @@ import {
   uebernahmeBeanspruchen,
   uebernahmeDarfSenden,
   uebernahmeErgebnisLesen,
-  uebernahmeHinweisNochGueltig,
   uebernahmeHinweisText,
-  uebernahmeSchluessel,
+  uebernahmeOperationSchluessel,
+  uebernahmeUnbestaetigtFreigeben,
   type SuchLauf,
   type UebernahmeErfassung,
   type UebernahmeRegister,
@@ -66,6 +67,24 @@ function istAbbruch(fehler: unknown): boolean {
     (fehler instanceof DOMException && fehler.name === 'AbortError') ||
     (fehler instanceof Error && fehler.name === 'AbortError')
   )
+}
+
+function BeobachteteKarte({
+  option,
+  laeuft,
+  onUebernehmen,
+  onUebernahmeBeobachten,
+}: {
+  option: ActivityOptionSichtbar
+  laeuft: boolean
+  onUebernehmen?: () => void
+  onUebernahmeBeobachten?: (aufnahme: { id: string; ausloesen: () => void }) => void
+}) {
+  React.useEffect(() => {
+    if (!onUebernehmen || !onUebernahmeBeobachten) return
+    onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
+  })
+  return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} />
 }
 
 function hinweisBucket(tripId: string, stageId: string, dayId: string): string {
@@ -113,6 +132,7 @@ export default function AktivitaetenBereich({
   tagId: gesteuerteTagId,
   onTagWechseln,
   onUebernehmen,
+  onUebernahmeBeobachten,
 }: {
   reise: Trip
   /** Gemeinsame Tagesauswahl mit dem Plan, wenn der Arbeitsbereich sie setzt. */
@@ -123,6 +143,8 @@ export default function AktivitaetenBereich({
     tag: TripDay,
     option: ActivityOptionSichtbar,
   ) => Promise<string | null>
+  /** Nur der Audit merkt sich daraus eine bereits gerenderte Aktion. */
+  onUebernahmeBeobachten?: (aufnahme: { id: string; ausloesen: () => void }) => void
 }) {
   const ersterTag = reise.days[0] ?? null
   const [eigeneTagId, setEigeneTagId] = React.useState(ersterTag?.id ?? '')
@@ -164,6 +186,7 @@ export default function AktivitaetenBereich({
       tag={tag}
       onTagWechseln={setTagId}
       onUebernehmen={onUebernehmen}
+      onUebernahmeBeobachten={onUebernahmeBeobachten}
     />
   )
 }
@@ -173,6 +196,7 @@ function ActivityTag({
   tag,
   onTagWechseln,
   onUebernehmen,
+  onUebernahmeBeobachten,
 }: {
   reise: Trip
   tag: TripDay | null | undefined
@@ -182,6 +206,7 @@ function ActivityTag({
     tag: TripDay,
     option: ActivityOptionSichtbar,
   ) => Promise<string | null>
+  onUebernahmeBeobachten?: (aufnahme: { id: string; ausloesen: () => void }) => void
 }) {
   const etappe = tag ? etappeFuer(reise, tag) : null
   const eingabe = React.useMemo(() => {
@@ -215,7 +240,6 @@ function ActivityTag({
   const [register, setRegister] = React.useState<UebernahmeRegister>(leeresUebernahmeRegister)
   const registerRef = React.useRef(register)
   const seqRef = React.useRef(0)
-  const sucheMarkRef = React.useRef<Record<string, number>>({})
   const [hinweise, setHinweise] = React.useState<Record<string, { text: string; seq: number }>>({})
 
   const antwortSetzen = (erwartet: { epoche: number; generation: number }, antwort: ActivitySucheAntwort) => {
@@ -232,14 +256,6 @@ function ActivityTag({
     if (!entscheid.angenommen) return
     laufRef.current = entscheid.lauf
     setLauf(entscheid.lauf)
-    const bucket = hinweisBucket(reise.id, etappe.id, tag.id)
-    sucheMarkRef.current[bucket] = ++seqRef.current
-    setHinweise((bisher) => {
-      if (!bisher[bucket]) return bisher
-      const next = { ...bisher }
-      delete next[bucket]
-      return next
-    })
     abortRef.current?.abort()
     const steuerung = new AbortController()
     abortRef.current = steuerung
@@ -268,7 +284,7 @@ function ActivityTag({
     ) {
       return
     }
-    const schluessel = uebernahmeSchluessel(erfasst)
+    const schluessel = uebernahmeOperationSchluessel(erfasst)
     const anspruch = uebernahmeBeanspruchen(registerRef.current, schluessel)
     if (!anspruch.ok) return
     registerRef.current = anspruch.register
@@ -278,17 +294,21 @@ function ActivityTag({
     const etappeFest = etappe
     const tagFest = tag
     void (async () => {
-      let wert: unknown
+      let wert: unknown = undefined
       try {
         wert = await onUebernehmen(etappeFest, tagFest, option)
       } catch {
         wert = undefined
       } finally {
-        const frei = uebernahmeAbschliessen(registerRef.current, schluessel)
+        const ausgang = uebernahmeErgebnisLesen(wert)
+        const frei = uebernahmeAbschliessen(
+          registerRef.current,
+          schluessel,
+          ausgang.art === 'gemeldet' ? 'angenommen' : 'unbestaetigt',
+        )
         registerRef.current = frei
         setRegister(frei)
       }
-      if (!uebernahmeHinweisNochGueltig(sucheMarkRef.current[bucket] ?? 0, seq)) return
       const text = uebernahmeHinweisText(uebernahmeErgebnisLesen(wert))
       setHinweise((bisher) => {
         const alt = bisher[bucket]
@@ -296,6 +316,13 @@ function ActivityTag({
         return { ...bisher, [bucket]: { text, seq } }
       })
     })()
+  }
+
+  const uebernahmeFreigeben = (schluessel: string) => {
+    const frei = uebernahmeUnbestaetigtFreigeben(registerRef.current, schluessel)
+    if (frei === registerRef.current) return
+    registerRef.current = frei
+    setRegister(frei)
   }
 
   const antwort = angezeigt.phase === 'fertig' ? angezeigt.antwort : null
@@ -457,20 +484,30 @@ function ActivityTag({
                     generation: angezeigt.generation ?? 0,
                     optionInhalt: inhalt,
                   }
-                  const schluessel = uebernahmeSchluessel(erfasst)
+                  const schluessel = uebernahmeOperationSchluessel(erfasst)
                   const gesperrt =
-                    register.laufend.includes(schluessel) || register.abgeschlossen.includes(schluessel)
+                    register.laufend.includes(schluessel) ||
+                    register.angenommen.includes(schluessel) ||
+                    register.unbestaetigt.includes(schluessel)
+                  const ausloesen =
+                    onUebernehmen && etappe && tag ? () => uebernehmen(option, erfasst) : undefined
                   return (
                     <li key={`${angezeigt.generation ?? 0}:${inhalt}`} className="min-w-0">
-                      <AktivitaetKarte
+                      <BeobachteteKarte
                         option={option}
                         laeuft={gesperrt}
-                        onUebernehmen={
-                          onUebernehmen && etappe && tag
-                            ? () => uebernehmen(option, erfasst)
-                            : undefined
-                        }
+                        onUebernehmen={ausloesen}
+                        onUebernahmeBeobachten={onUebernahmeBeobachten}
                       />
+                      {register.unbestaetigt.includes(schluessel) ? (
+                        <button
+                          type="button"
+                          onClick={() => uebernahmeFreigeben(schluessel)}
+                          className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 transition hover:border-line-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto"
+                        >
+                          Erneut anbieten
+                        </button>
+                      ) : null}
                     </li>
                   )
                 })}
