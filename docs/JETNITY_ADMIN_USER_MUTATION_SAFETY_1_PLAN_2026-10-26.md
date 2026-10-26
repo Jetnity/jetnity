@@ -36,3 +36,7 @@ Reviewed head `425ff6270d12de981b3b4c5b92af36f06a8ec6f1`. Same writer, same bran
 ## R1.3 supplement — inline confirmation
 
 The confirmation stays in the row and the search field and a second target stay usable. It is a named `region`, not a modal dialog. It has no `aria-modal` and no Tab trap. Escape still cancels the confirmation that has focus and restores that row's trigger. A second confirmation can be open at the same time. This is component semantics and keyboard proof only. No screen-reader run is claimed. The UUID-versus-safe-character note stays a non-blocking P3 qualification: no server, SQL or Auth change.
+
+## R1.2 residual
+
+An ambiguous note is revisited by a later read. A later accepted row replaces the sentence: Creator after an absence is the latest accepted role, and Moderation replaces a stale Nutzer sentence. A later failed or invalid read does not keep that sentence in the present tense and does not invent a role or an absence. The same operation stays owned and is not sent again.

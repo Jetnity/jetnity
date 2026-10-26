@@ -107,18 +107,36 @@ export function outcomeCopy(operation: TargetOperation): string {
     return `Die Änderung für ${who} wurde abgelehnt: ${operation.message ?? 'ohne lesbare Rückmeldung'}`
   }
   if (operation.phase === 'ambiguous') {
+    if (operation.nonCanonical) return historicalUnread(who, operation)
     if (operation.confirmedOnce) return historicalCopy(who, operation)
     return ambiguousCopy(who, operation.ambiguousReason)
   }
   return `Für ${who} liegt keine Änderung vor.`
 }
 
+function rememberedPhrase(operation: TargetOperation): string {
+  if (operation.laterTruth) return currentPhrase(operation)
+  if (operation.confirmedOnce) return desiredPhrase(operation)
+  if (operation.ambiguousReason === 'unchanged') return 'das Konto unverändert'
+  if (operation.ambiguousReason === 'contradictory') return 'einen anderen Stand'
+  return 'keine gesicherte Speicherung'
+}
+
+function historicalUnread(who: string, operation: TargetOperation): string {
+  const kind = operation.nonCanonical === 'invalid' ? 'ungültig' : 'fehlgeschlagen'
+  const earlier =
+    operation.ambiguousReason === 'absent'
+      ? `Eine frühere akzeptierte Abfrage enthielt ${who} nicht.`
+      : `Eine frühere akzeptierte Abfrage zeigte für ${who} ${rememberedPhrase(operation)}.`
+  return `${earlier} Die letzte Abfrage ist ${kind} und setzt keinen neuen Stand. Es wird nichts erneut gesendet.`
+}
+
 function historicalCopy(who: string, operation: TargetOperation): string {
   const earlier = `Eine frühere Abfrage zeigte für ${who} ${desiredPhrase(operation)}.`
   if (operation.ambiguousReason === 'absent') {
-    return `${earlier} Die aktuelle Abfrage enthält das Konto nicht. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
+    return `${earlier} Die letzte akzeptierte Abfrage enthält das Konto nicht. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
   }
-  return `${earlier} Die aktuelle Abfrage zeigt ${currentPhrase(operation)}. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
+  return `${earlier} Die letzte akzeptierte Abfrage zeigt ${currentPhrase(operation)}. Die frühere Beobachtung ist nicht mehr der aktuelle Stand. Es wird nichts erneut gesendet.`
 }
 
 function ambiguousCopy(who: string, reason: AmbiguousReason | null): string {

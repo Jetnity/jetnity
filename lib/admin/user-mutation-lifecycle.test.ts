@@ -144,7 +144,11 @@ describe('Mutationslebenszyklus', () => {
     const contradictory = observeLifecycle(fulfilled, [rowOf(ada, { role: 'moderator' })], 'read-2')
     assert.equal(contradictory.byTarget[ada.userId]?.ambiguousReason, 'contradictory')
     const returned = observeLifecycle(contradictory, [rowOf(ada, { role: 'creator' })], 'read-3')
-    assert.equal(returned.byTarget[ada.userId]?.phase, 'ambiguous')
+    assert.equal(returned.byTarget[ada.userId]?.id, 'op-1')
+    assert.equal(returned.byTarget[ada.userId]?.phase, 'confirmed')
+    assert.match(outcomeCopy(returned.byTarget[ada.userId]!), /Die neue Abfrage zeigt/)
+    assert.match(outcomeCopy(returned.byTarget[ada.userId]!), /Creator/)
+    assert.doesNotMatch(outcomeCopy(returned.byTarget[ada.userId]!), /widerspricht/)
     assert.match(outcomeCopy(contradictory.byTarget[ada.userId]!), /keine bestätigte Speicherung/)
   })
 
@@ -256,7 +260,35 @@ describe('Mutationslebenszyklus', () => {
     assert.equal(stillHeld.ok, false)
     assert.equal(dismissFeedback(reverted, ada.userId).byTarget[ada.userId], undefined)
     const matchedAgain = observeLifecycle(reverted, [rowOf(ada, { role: 'creator' })], 'read-7')
-    assert.equal(matchedAgain.byTarget[ada.userId]?.phase, 'ambiguous')
+    assert.equal(matchedAgain.byTarget[ada.userId]?.id, 'op-1')
+    assert.equal(matchedAgain.byTarget[ada.userId]?.phase, 'confirmed')
+    const matchedText = outcomeCopy(matchedAgain.byTarget[ada.userId]!)
+    assert.match(matchedText, /Die neue Abfrage zeigt/)
+    assert.match(matchedText, /Creator/)
+    assert.doesNotMatch(matchedText, /Nutzer/)
+    assert.doesNotMatch(matchedText, /enthält das Konto nicht/)
+    const absentThenBack = observeLifecycle(absent, [rowOf(ada, { role: 'creator' })], 'read-8')
+    assert.equal(absentThenBack.byTarget[ada.userId]?.phase, 'confirmed')
+    assert.doesNotMatch(outcomeCopy(absentThenBack.byTarget[ada.userId]!), /enthält das Konto nicht/)
+    const moderator = observeLifecycle(reverted, [rowOf(ada, { role: 'moderator' })], 'read-9')
+    assert.equal(moderator.byTarget[ada.userId]?.phase, 'ambiguous')
+    const moderatorText = outcomeCopy(moderator.byTarget[ada.userId]!)
+    assert.match(moderatorText, /Moderation/)
+    assert.doesNotMatch(moderatorText, /zeigt die Rolle Nutzer/)
+    const failedAfter = observeLifecycle(reverted, [], 'read-10', 'failed')
+    const failedAfterText = outcomeCopy(failedAfter.byTarget[ada.userId]!)
+    assert.match(failedAfterText, /zeigte/)
+    assert.match(failedAfterText, /Nutzer/)
+    assert.match(failedAfterText, /fehlgeschlagen und setzt keinen neuen Stand/)
+    assert.doesNotMatch(failedAfterText, /Die aktuelle Abfrage zeigt/)
+    assert.doesNotMatch(failedAfterText, /Die letzte akzeptierte Abfrage zeigt/)
+    assert.doesNotMatch(failedAfterText, /enthält das Konto nicht/)
+    assert.equal(requestConfirmation(failedAfter, {
+      id: 'op-3',
+      subject: ada,
+      intent: { kind: 'role', nextRole: 'moderator' },
+      queryKey: 'q1',
+    }).ok, false)
   })
 
   test('Transportabbruch und verspätete Rückkehr senden nicht erneut', () => {

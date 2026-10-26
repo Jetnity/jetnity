@@ -48,9 +48,10 @@
       "phase": "fulfilled"
     },
     {
-      "name": "fulfilled-row-absent-does-not-reopen",
+      "name": "fulfilled-absent-then-matching-read-does-not-resend",
       "ok": true,
-      "reason": "absent"
+      "phase": "confirmed",
+      "calls": 1
     },
     {
       "name": "fulfilled-row-unchanged",
@@ -101,6 +102,21 @@
       "name": "confirmed-then-failed-read-sets-no-new-truth",
       "ok": true,
       "phase": "confirmed"
+    },
+    {
+      "name": "confirmed-absent-then-returning-creator",
+      "ok": true,
+      "phase": "confirmed"
+    },
+    {
+      "name": "confirmed-nutzer-then-moderation",
+      "ok": true,
+      "role": "moderator"
+    },
+    {
+      "name": "confirmed-nutzer-then-failed-read-is-historical",
+      "ok": true,
+      "phase": "ambiguous"
     },
     {
       "name": "automatic-removal-preserves-search-focus",

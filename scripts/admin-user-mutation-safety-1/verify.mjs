@@ -300,7 +300,7 @@ try {
     return { phase: seen?.phase }
   })
 
-  await fall('fulfilled-row-absent-does-not-reopen', 'page=1', { width: 1280, height: 800 }, async (page) => {
+  await fall('fulfilled-absent-then-matching-read-does-not-resend', 'page=1', { width: 1280, height: 800 }, async (page) => {
     await chooseRole(page, 'Ada Example', 'Rolle: Creator')
     await confirm(page)
     await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
@@ -313,12 +313,14 @@ try {
       window.__mutation.setRows([next])
       window.__mutation.bump()
     }, withRole(ada, 'creator'))
-    await page.waitForTimeout(80)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
     const seen = await phases(page)
-    assert.equal(seen[0]?.phase, 'ambiguous')
-    assert.equal(seen[0]?.reason, 'absent')
+    assert.equal(seen[0]?.phase, 'confirmed')
+    assert.match(seen[0]?.text ?? '', /Creator/)
+    assert.doesNotMatch(seen[0]?.text ?? '', /enthält das Konto nicht/)
+    assert.doesNotMatch(seen[0]?.text ?? '', /fehlt in der neuen Abfrage/)
     assert.equal((await calls(page)).length, 1)
-    return { reason: 'absent' }
+    return { phase: 'confirmed', calls: 1 }
   })
 
   await fall('fulfilled-row-unchanged', 'page=1', { width: 1280, height: 800 }, async (page) => {
@@ -486,6 +488,67 @@ try {
     assert.doesNotMatch(seen?.text ?? '', /fehlt in der neuen Abfrage/)
     assert.equal((await calls(page)).length, 1)
     return { phase: 'confirmed' }
+  })
+
+  await fall('confirmed-absent-then-returning-creator', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'ready' }))
+    await page.waitForFunction(() => (window.__mutation.phases()[0]?.text ?? '').includes('enthält das Konto nicht'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed' && (item.text ?? '').includes('Creator')))
+    const seen = (await phases(page))[0]
+    const row = await page.evaluate(() => window.__mutation.rowText('synthetic-ada'))
+    assert.match(row, /Creator/)
+    assert.match(seen?.text ?? '', /Die neue Abfrage zeigt/)
+    assert.doesNotMatch(seen?.text ?? '', /enthält das Konto nicht/)
+    assert.equal((await calls(page)).length, 1)
+    return { phase: seen?.phase }
+  })
+
+  await fall('confirmed-nutzer-then-moderation', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), ada)
+    await page.waitForFunction(() => (window.__mutation.phases()[0]?.text ?? '').includes('Nutzer'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'moderator'))
+    await page.waitForFunction(() => (window.__mutation.phases()[0]?.text ?? '').includes('Moderation'))
+    const seen = (await phases(page))[0]
+    const row = await page.evaluate(() => window.__mutation.rowText('synthetic-ada'))
+    assert.match(row, /Moderation/)
+    assert.match(seen?.text ?? '', /Die letzte akzeptierte Abfrage zeigt/)
+    assert.match(seen?.text ?? '', /Moderation/)
+    assert.doesNotMatch(seen?.text ?? '', /zeigt die Rolle Nutzer/)
+    assert.equal((await calls(page)).length, 1)
+    return { role: 'moderator' }
+  })
+
+  await fall('confirmed-nutzer-then-failed-read-is-historical', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    await confirm(page)
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'fulfilled'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), withRole(ada, 'creator'))
+    await page.waitForFunction(() => window.__mutation.phases().some((item) => item.phase === 'confirmed'))
+    await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), ada)
+    await page.waitForFunction(() => (window.__mutation.phases()[0]?.text ?? '').includes('zeigt die Rolle Nutzer'))
+    await page.evaluate(() => window.__mutation.deliver({ rows: [], mode: 'error' }))
+    await page.getByText('Datenbank abgelehnt').waitFor()
+    await page.waitForFunction(() => (window.__mutation.phases()[0]?.text ?? '').includes('setzt keinen neuen Stand'))
+    const seen = (await phases(page))[0]
+    assert.match(seen?.text ?? '', /zeigte/)
+    assert.match(seen?.text ?? '', /Nutzer/)
+    assert.match(seen?.text ?? '', /fehlgeschlagen/)
+    assert.doesNotMatch(seen?.text ?? '', /Die aktuelle Abfrage zeigt/)
+    assert.doesNotMatch(seen?.text ?? '', /Die letzte akzeptierte Abfrage zeigt/)
+    assert.doesNotMatch(seen?.text ?? '', /enthält das Konto nicht/)
+    assert.equal((await calls(page)).length, 1)
+    return { phase: seen?.phase }
   })
 
   await fall('automatic-removal-preserves-search-focus', 'page=1', { width: 1280, height: 800 }, async (page) => {

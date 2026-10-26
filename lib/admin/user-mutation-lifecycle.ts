@@ -369,9 +369,12 @@ function observeAccepted(operation: TargetOperation, rows: TruthRow[], readAttem
 }
 
 /**
- * Nur eine erfüllte oder bereits bestätigte Operation und nur ein noch nicht
- * verwendeter Leseversuch. Eine bloße Aktualisierungsanfrage hat hier keinen
- * Eingang. Nur `accepted` darf Anwesenheit, Fehlen oder Widerspruch feststellen.
+ * Eine erfüllte, bestätigte oder bereits mehrdeutige Operation und nur ein
+ * noch nicht verwendeter Leseversuch. Eine bloße Aktualisierungsanfrage hat
+ * hier keinen Eingang. Nur `accepted` darf Anwesenheit, Fehlen oder Widerspruch
+ * feststellen. Eine spätere akzeptierte Abfrage ersetzt die Beschreibung der
+ * vorherigen. Eine fehlgeschlagene Abfrage lässt den letzten akzeptierten
+ * Stand als frühere Beobachtung stehen.
  */
 export function observeLifecycle(
   state: LifecycleState,
@@ -383,7 +386,7 @@ export function observeLifecycle(
   let changed = false
   const byTarget = { ...state.byTarget }
   for (const [targetId, operation] of Object.entries(state.byTarget)) {
-    if (operation.phase !== 'fulfilled' && operation.phase !== 'confirmed') continue
+    if (operation.phase !== 'fulfilled' && operation.phase !== 'confirmed' && operation.phase !== 'ambiguous') continue
     if (alreadyUsed(operation, readAttempt)) continue
     const next =
       verdict === 'accepted'
