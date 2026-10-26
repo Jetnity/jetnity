@@ -1,0 +1,20 @@
+.wurzel {
+  min-width: 0;
+}
+
+.detail {
+  max-height: 8rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.vorgang {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.zelle {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
