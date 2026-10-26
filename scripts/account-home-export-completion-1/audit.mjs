@@ -2,6 +2,7 @@
 // Montierte Kontoübersicht und Exportaktion. Synthetische Fixtures.
 // Externes Netz wird abgebrochen. Keine echte Kontositzung.
 
+import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
@@ -70,8 +71,12 @@ function reise(teil) {
 // nicht ein gültiger gespeicherter Titel.
 const lang = 'Lissabon '.repeat(24).trim()
 const titelGueltig = 'Lissabon '.repeat(13).trim()
+const titelUngebrochen = 'W'.repeat(120)
+const herkunftUngebrochen = 'Z'.repeat(120)
 assert.equal(lang.length, 215)
 assert.equal(titelGueltig.length, 116)
+assert.equal(titelUngebrochen.length, 120)
+assert.equal(herkunftUngebrochen.length, 120)
 
 function fensterReisen(anzahl, extra, titel = lang) {
   return Array.from({ length: anzahl }, (_, index) =>
@@ -422,6 +427,23 @@ async function schriftHerkunft(seite, selector) {
   return `family=${computed.family} size=${computed.size} weight=${computed.weight} clientWidth=${computed.clientWidth} platform=${dateien || 'keine'}`
 }
 
+function vertragUngebrochenerText() {
+  const lauf = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      './scripts/server-only-test-register.mjs',
+      '--import',
+      'tsx',
+      '--test',
+      'lib/account/account-home-export-1/titel-token.test.ts',
+    ],
+    { cwd: wurzel, encoding: 'utf8' },
+  )
+  assert.equal(lauf.status, 0, `${lauf.stdout || ''}\n${lauf.stderr || ''}`)
+  return '120 Zeichen Titel und Herkunft sind im Vertrag, 121 nicht.'
+}
+
 function woerterGanz(masse, hinweis) {
   const brueche = masse.felder.flatMap((feld) =>
     feld.woerter.filter((wort) => wort.linien !== 1).map((wort) => `${feld.name}:${wort.wort}:${wort.linien}`),
@@ -652,10 +674,76 @@ try {
     }
   }
   protokoll.push(`Gültiger 116-Zeichen-Titel, beobachtete Titelzeilen: ${titelZeilen.join(', ')}. Höchstens 13 Zeilen bei ganzen Wörtern.`)
+  protokoll.push(vertragUngebrochenerText())
 
-  async function tastaturZiel(name, pfad) {
-    await zeige(gueltigeReise, css)
-    await page.setViewportSize({ width: 1440, height: 900 })
+  const ungebrocheneReise = {
+    ...faelle.grenze,
+    reisen: fensterReisen(200, { origin: herkunftUngebrochen }, titelUngebrochen),
+  }
+  await zeige(ungebrocheneReise, css)
+  for (const schrift of [16, 32]) {
+    await page.setViewportSize({ width: 320, height: 900 })
+    await page.evaluate((px) => {
+      document.documentElement.style.fontSize = px === 16 ? '' : '32px'
+    }, schrift)
+    const zeichen = await page.evaluate(() => ({
+      titel: document.querySelector('[data-account-titel]')?.textContent || '',
+      herkunft: document.querySelector('[data-account-herkunft]')?.textContent || '',
+    }))
+    assert.equal(zeichen.titel, titelUngebrochen, `Token 120 Titel ${schrift}`)
+    assert.equal((zeichen.herkunft.match(/Z/g) || []).length, 120, `Token 120 Herkunft ${schrift}`)
+    assert.equal(zeichen.herkunft.includes(herkunftUngebrochen), true, `Token 120 Herkunfttext ${schrift}`)
+    const masse = await aktionenEnthalten(page, `Token 120 320 ${schrift}px`)
+    const geborgen = await page.evaluate(() => {
+      function messen(el) {
+        const kasten = el.getBoundingClientRect()
+        const karte = document.querySelector('[data-account-naechste]').getBoundingClientRect()
+        const bereich = document.createRange()
+        bereich.selectNodeContents(el)
+        const rechtecke = [...bereich.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0)
+        const spiel = 1
+        return {
+          linien: rechtecke.length,
+          horizontal:
+            rechtecke.length > 0 &&
+            rechtecke.every(
+              (rechteck) =>
+                rechteck.left >= kasten.left - spiel &&
+                rechteck.right <= kasten.right + spiel &&
+                rechteck.left >= karte.left - spiel &&
+                rechteck.right <= karte.right + spiel,
+            ),
+          scroll: el.scrollWidth <= el.clientWidth + 1,
+        }
+      }
+      const titel = document.querySelector('[data-account-titel]')
+      return {
+        umbruch: getComputedStyle(titel).overflowWrap,
+        titel: messen(titel),
+        herkunft: messen(document.querySelector('[data-account-herkunft]')),
+        seite: document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      }
+    })
+    assert.equal(geborgen.umbruch, 'break-word', `Token 120 Umbruch ${schrift}`)
+    assert.ok(geborgen.titel.linien > 1, `Token 120 Titelzeilen ${geborgen.titel.linien}`)
+    assert.equal(geborgen.titel.horizontal, true, `Token 120 Titelkasten ${schrift}`)
+    assert.equal(geborgen.titel.scroll, true, `Token 120 Titellauf ${schrift}`)
+    assert.ok(geborgen.herkunft.linien > 1, `Token 120 Herkunftzeilen ${geborgen.herkunft.linien}`)
+    assert.equal(geborgen.herkunft.horizontal, true, `Token 120 Herkunftkasten ${schrift}`)
+    assert.equal(geborgen.herkunft.scroll, true, `Token 120 Herkunftlauf ${schrift}`)
+    assert.equal(geborgen.seite, true, `Token 120 Seite ${schrift}`)
+    assert.equal(masse.textUeberAktion.length, 0)
+    if (schrift === 16) {
+      await page.screenshot({ path: join(ausgabe, 'home-320-titel-120.png'), fullPage: false })
+    } else {
+      await page.screenshot({ path: join(ausgabe, 'home-320-titel-120-200-prozent.png'), fullPage: false })
+    }
+    protokoll.push(`Gültiges ungebrochenes 120-Zeichen-Token bei 320 und ${schrift}px: Titel ${geborgen.titel.linien} Zeilen, Herkunft ${geborgen.herkunft.linien} Zeilen, im Kasten, ohne Seitenüberlauf. Die 13-Zeilen-Grenze des Lissabon-Fixtures gilt hier nicht.`)
+  }
+
+  async function tastaturZiel(name, pfad, fixture = gueltigeReise, breite = 1440) {
+    await zeige(fixture, css)
+    await page.setViewportSize({ width: breite, height: 900 })
     await page.evaluate(() => {
       document.documentElement.style.fontSize = ''
     })
@@ -674,9 +762,11 @@ try {
     })
     assert.deepEqual(treffer, [`http://127.0.0.1:8765${pfad}`])
   }
+  await tastaturZiel('Reise fortsetzen', '/reisen/r0', ungebrocheneReise, 320)
+  await tastaturZiel('Alle Reisen', '/reisen', ungebrocheneReise, 320)
   await tastaturZiel('Reise fortsetzen', '/reisen/r0')
   await tastaturZiel('Alle Reisen', '/reisen')
-  protokoll.push('Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal.')
+  protokoll.push('Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal, auch auf dem 120-Zeichen-Token bei 320px und danach auf dem 116-Zeichen-Titel bei 1440.')
 
   await zeige(faelle.grenze, css)
   await page.evaluate(() => {
@@ -1025,7 +1115,12 @@ try {
   const fremd = netz.filter(
     (url) => /^https?:/i.test(url) && !url.includes('/api/account/export') && !url.includes('127.0.0.1:8765/konto'),
   )
-  assert.deepEqual(fremd, ['http://127.0.0.1:8765/reisen/r0', 'http://127.0.0.1:8765/reisen'])
+  assert.deepEqual(fremd, [
+    'http://127.0.0.1:8765/reisen/r0',
+    'http://127.0.0.1:8765/reisen',
+    'http://127.0.0.1:8765/reisen/r0',
+    'http://127.0.0.1:8765/reisen',
+  ])
   assert.equal(netz.every((url) => !/^https?:/i.test(url) || url.includes('127.0.0.1')), true)
 } finally {
   writeFileSync(join(ausgabe, 'mounted-proof.json'), JSON.stringify({ protokoll, seitenfehler, netz: netz.slice(0, 20) }, null, 2))

@@ -148,12 +148,12 @@ export default function AccountUebersicht({
                 </div>
                 <h2
                   data-account-titel=""
-                  className="mt-3 break-normal text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl"
+                  className="mt-3 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl"
                 >
                   {naechste.reise.title}
                 </h2>
                 {naechste.reise.origin ? (
-                  <p data-account-herkunft="" className="mt-1 break-normal text-sm text-ink-700">
+                  <p data-account-herkunft="" className="mt-1 break-words text-sm text-ink-700">
                     ab {naechste.reise.origin}
                   </p>
                 ) : null}

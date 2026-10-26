@@ -24,7 +24,10 @@
     "Schrift bei 1440/16px. Titel family=system-ui, ui-sans-serif, \"Segoe UI\", Roboto, Helvetica, Arial, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Noto Color Emoji\", sans-serif size=30px weight=600 clientWidth=718 platform=Noto Sans (Fontations)/NotoSans-Bold/custom:false. Aktion family=system-ui, ui-sans-serif, \"Segoe UI\", Roboto, Helvetica, Arial, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Noto Color Emoji\", sans-serif size=14px weight=600 clientWidth=161 platform=Noto Sans (Fontations)/NotoSans-Bold/custom:false.",
     "Gültiger 116-Zeichen-Titel bei 1440 und 32px: 7 Titelzeilen, keine Wortzerlegung, kein Überlappen mit den Aktionen.",
     "Gültiger 116-Zeichen-Titel, beobachtete Titelzeilen: 320/16px:7, 320/32px:13, 390/16px:5, 390/32px:13, 768/16px:3, 768/32px:7, 1440/16px:3, 1440/32px:7. Höchstens 13 Zeilen bei ganzen Wörtern.",
-    "Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal.",
+    "120 Zeichen Titel und Herkunft sind im Vertrag, 121 nicht.",
+    "Gültiges ungebrochenes 120-Zeichen-Token bei 320 und 16px: Titel 10 Zeilen, Herkunft 5 Zeilen, im Kasten, ohne Seitenüberlauf. Die 13-Zeilen-Grenze des Lissabon-Fixtures gilt hier nicht.",
+    "Gültiges ungebrochenes 120-Zeichen-Token bei 320 und 32px: Titel 20 Zeilen, Herkunft 9 Zeilen, im Kasten, ohne Seitenüberlauf. Die 13-Zeilen-Grenze des Lissabon-Fixtures gilt hier nicht.",
+    "Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal, auch auf dem 120-Zeichen-Token bei 320px und danach auf dem 116-Zeichen-Titel bei 1440.",
     "Tab setzt den Fokus auf A: Zur vollständigen Reiseauswahl.",
     "Enter übergibt genau eine gültige Datei, ein Downloadereignis und einen Widerruf.",
     "401 bleibt in der Ansicht und lädt nichts.",
@@ -65,10 +68,10 @@
     "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/konto",
+    "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/reisen/r0",
     "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/reisen",
-    "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/konto"
   ]
 }
