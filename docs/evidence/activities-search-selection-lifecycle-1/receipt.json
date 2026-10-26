@@ -1,12 +1,14 @@
 {
   "slice": "activities-search-selection-lifecycle-1",
-  "runtimeHead": "728235723a4ceb606e6a610765f43fa4254e10d5",
-  "tree": "909c1ba9099caadd986061552e93c497eeb5b87b",
+  "review": "R1 changes required on 8224f7ce061ac2dea85dc781594f3493af732502",
+  "runtimeHead": "055055ac6b998693d30c9a8829aba8b7827c8ab2",
+  "tree": "b8552714a0f41199d7e382d4eaa66c4f747f0e18",
   "main": "cdc5b47163c2f1bb272fb46ed6723e9522489e92",
   "command": "AUDIT_REPORT=/opt/cursor/artifacts/activities_ui_audit.json npm run audit:activities",
   "exitCode": 0,
   "kombinationen": 188,
   "fehlerzahl": 0,
+  "focusedTests": "20 pass",
   "report": "activities-ui-audit.json",
   "fixtures": "synthetic Jetnity audit fixtures only",
   "not": "provider call, sandbox certification, persistence proof, or cancellation of an entered writer"

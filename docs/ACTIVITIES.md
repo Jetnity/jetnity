@@ -244,13 +244,13 @@ Im bestehenden Trip Workspace, nicht als Demo:
 - mobile-first, 44 px Trefferflächen, Status über `aria-*` / `role`
 - ein Browser-Read wird beim Kontextwechsel abgebrochen; das bricht keinen bereits betretenen Schreibvorgang ab
 
-Mount, Remount, Tagwechsel und Reisewechsel lösen keine Suche aus. Eine verspätete Antwort darf eine neuere Angabe nicht ersetzen. Die Übernahme meldet nur, was der Rückruf zurückgibt: `null` ist die Erfolgsmeldung des Rückrufs und kein Nachweis, dass der Punkt gespeichert ist. Text, Wurf, Ablehnung oder eine ungültige Form bleiben unbestätigt. Ein neuer Versuch braucht eine neue ausdrückliche Suche und einen neuen Klick. Ein Remount löscht nur das lokale Register.
+Mount, Remount, Tagwechsel und Reisewechsel lösen keine Suche aus. Eine verspätete Antwort darf eine neuere Angabe nicht ersetzen. Die Übernahme ist eine eigene Operation aus Reise, Etappe, Tag und Optionsinhalt. Sie hängt nicht an der Suchgeneration. `null` ist die Erfolgsmeldung des Rückrufs und kein Nachweis, dass der Punkt gespeichert ist; diese Operation bleibt für die gemountete Fläche geschlossen. Text, Wurf, leere Zeichenkette, Ablehnung oder eine ungültige Form bleiben unbestätigt und ebenfalls geschlossen. Eine neue Suche öffnet das nicht. „Erneut anbieten“ gilt nur für eine unbestätigte Operation und ruft den Schreiber nicht auf. Ein Remount löscht nur das lokale Register.
 
 Solange kein Provider konfiguriert ist, erklärt die Fläche das ehrlich und zeigt höchstens den belegbaren Tageskontext aus der Reise.
 
 ### Browser-Abnahme (Such- und Auswahllaufzeit, 26. Oktober 2026)
 
-Gemessen mit `npm run audit:activities` auf Laufzeit-Head `728235723a4ceb606e6a610765f43fa4254e10d5`, Exit 0. Playwright WebKit und Chromium. Die Audit-Seite `/ui-audit/activities` liegt nicht im produktiven Weg. `VERCEL_ENV=production` ergibt immer 404, auch wenn `JETNITY_UI_AUDIT` gesetzt ist. Ausserhalb von Production braucht die Seite ausdrücklich `JETNITY_UI_AUDIT=1` oder `true`. Karten sind synthetische Jetnity-Fixtures nur im Harness. Das ist kein Anbieter-, Sandbox- oder Zertifizierungsergebnis. Die frühere Zählung mit automatischer Suche beim Chipwechsel gilt für diesen Lauf nicht mehr.
+Gemessen mit `npm run audit:activities` auf Laufzeit-Head `055055ac6b998693d30c9a8829aba8b7827c8ab2`, Exit 0. Der frühere Lauf auf `72823572` deckt die Review-R1-Fälle nicht ab. Playwright WebKit und Chromium. Die Audit-Seite `/ui-audit/activities` liegt nicht im produktiven Weg. `VERCEL_ENV=production` ergibt immer 404, auch wenn `JETNITY_UI_AUDIT` gesetzt ist. Ausserhalb von Production braucht die Seite ausdrücklich `JETNITY_UI_AUDIT=1` oder `true`. Karten sind synthetische Jetnity-Fixtures nur im Harness. Das ist kein Anbieter-, Sandbox- oder Zertifizierungsergebnis. Die frühere Zählung mit automatischer Suche beim Chipwechsel gilt für diesen Lauf nicht mehr.
 
 | Messung | Umfang | Ergebnis |
 | --- | --- | --- |
@@ -263,7 +263,7 @@ Viewports der Layoutmatrix: 280, 320, 360, 390, 430, Landscape 667×375 und 844�
 
 Zustände: keine Tage, Tag ohne Etappe, leerer Tag, Tag mit Punkten/Uhrzeiten, 12 Tag-Chips, lange Texte, Loading, reales `unavailable` ohne Provider, Empty, Error, Timeout, Rate-Limit, Karten mit langen synthetischen Inhalten.
 
-Der Lebenszyklus prüft zusätzlich dieselbe Anfrage in einer anderen Reise, A→B→A, einen doppelten Klick, Übernahme mit `null`, Text, Wurf, Ablehnung und ungültiger Form, eine verspätete Meldung nach Tagwechsel, eine HTTP-500-Antwort in Erfolgsform, den Bereichswechsel und den Remount. Jede ausdrückliche Suche zählt genau einen Aufruf. Öffnen, Tagwechsel, Reisewechsel, Bereichswechsel und Remount zählen null.
+Der Lebenszyklus prüft zusätzlich dieselbe Anfrage in einer anderen Reise, A→B→A, einen doppelten Klick, eine angenommene und eine noch laufende Übernahme nach neuer Suche, eine synchrone Gaständerung am Reisegraphen, einen alten Handler bei wiederverwendeter ID, Übernahme mit `null`, Text, synchronem Wurf, leerer Zeichenkette, Ablehnung und ungültiger Form, „Erneut anbieten“ ohne eigenen Schreibaufruf, eine verspätete Antwort trotz ignoriertem AbortSignal, eine verdeckte Fläche bei laufender Suche und laufender Übernahme, eine HTTP-500-Antwort in Erfolgsform, den Bereichswechsel und den Remount. Jede ausdrückliche Suche zählt genau einen Aufruf. Öffnen, Tagwechsel, Reisewechsel, Bereichswechsel und Remount zählen null.
 
 Die Chip-Zeile darf intern waagrecht scrollen (`ScrollRow`). Die Seite selbst hat kein Overflow. Programmatisches `.focus()` ohne Tastatur zeigt keinen Ring; das ist `focus-visible`. Ein Remount beweist nicht, dass ein bereits betretener Schreiber abgebrochen wurde, und er serialisiert keine anderen Tabs.
 
