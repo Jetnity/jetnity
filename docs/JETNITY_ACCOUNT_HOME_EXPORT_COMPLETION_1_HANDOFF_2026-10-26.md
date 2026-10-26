@@ -33,7 +33,7 @@
 | R2 correction tree | `2c7efb77605c6d6587232920997321dde2f15820` |
 | Ahead / behind at the correction | 13 / 0 |
 
-This file is updated by the documentation commit on top of the proof commit, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
+This file is updated by the documentation commit on top of the R2 correction, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
 
 Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@8.21.0` under `@supabase/realtime-js` and `source-map-js@1.2.2` under `postcss`. `package.json` and `package-lock.json` are byte-identical to accepted main. That install is distinct from historical S evidence and from native CI.
 
