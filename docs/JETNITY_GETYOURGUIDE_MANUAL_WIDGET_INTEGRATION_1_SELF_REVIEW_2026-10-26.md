@@ -18,7 +18,9 @@ TASK V2 replaces only the mandatory product-detail destination for #1040. A sear
 
 On `127.0.0.1` the script is present and `gygPAStatus` remained `loading` for three ticks. Offers still rendered. No `pageerror` or `unhandledrejection` was captured. `sessionStorage` throws in the opaque document. Five collector requests mean telemetry happened. The branch preview host contains `getyourguide` and is behind Vercel SSO, so this session did not verify Analyzer initialization on an eligible host. `allow-same-origin` was not added to hide that.
 
-Root’s San Blas probe is a search list: H1 “San Blas Panama”, `/s/`, 62 results, partner kept. Lisbon, Crete and Portugal card anchors on this branch are the same `/s/?et=&q=` shape with `partner_id=2MQHT6Z`. The latest click of each opened the outage page, title “GetYourGuide – Error”, empty H1, Ray IDs `a50d22a04b76bdc9`, `a50d238deafabdc9` and `a50d24757dc9bdc9`. That is not a search-list H1 and not a product page. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk. A reviewer should treat V1 section 9.3 as open.
+Root’s San Blas probe is a search list: H1 “San Blas Panama”, `/s/`, 62 results, partner kept. Lisbon, Crete and Portugal card anchors on this branch are the same `/s/?et=&q=` shape with `partner_id=2MQHT6Z`. The latest click of each opened the outage page, title “GetYourGuide – Error”, empty H1, Ray IDs `a50d22a04b76bdc9`, `a50d238deafabdc9` and `a50d24757dc9bdc9`. That is not a search-list H1 and not a product page. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk.
+
+Root’s location-42 control landed on `/s/` with 500+ Lisbon results and the Sintra/Cascais card highlighted first, with no H1 within 20 seconds. Report SHA256 `17c62cb2327d5fad7ba51331fe7b8af2797b83c4cbe6d3508f960c32ef6c6b77`. Root’s product-492343 control landed on `/s/?q=Panama+City`, H1 “Panama City”, 437 results, offer highlighted first. Report SHA256 `1343f5ca078b8f197770309e96a61b46ca4a146e6a701d8b595ec92b0f8eba2f`. The provider card uses upstream `activity.href`. A highlighted search result is not section 9.3. A reviewer should treat V1 section 9.3 as open. Preview paint on this head is still unchecked. Root’s blank and populated PNGs are separate observations and are not one screenshot.
 
 The provider “see all” target is not the searched place in every case. Crete’s see-all link was Santorini. That link was not used as product proof. It is still what the official widget rendered.
 
@@ -26,7 +28,7 @@ On a wide viewport the three offer anchors share one box (top 0, bottom 447) ins
 
 A live region widget was not opened. The region path is unit-tested only.
 
-The full test suite on the code before the height message is 7366 tests, 7350 pass, 11 fail, 5 skipped. The 11 failures are missing `/usr/lib/postgresql/16/bin/initdb`. They were not rerun as passes, and the full suite was not repeated after the height message. Focused GetYourGuide tests after that message: 42 pass, 0 fail. `tsc --noEmit` passed. Build and hygiene were not repeated.
+The full test suite on the code before the height message is 7366 tests, 7350 pass, 11 fail, 5 skipped. The 11 failures are missing `/usr/lib/postgresql/16/bin/initdb`. They were not rerun as passes, and the full suite was not repeated after the height message. Focused GetYourGuide tests after that message: 42 pass, 0 fail. `tsc --noEmit` passed. `npm run build` on this head passed and lists `ƒ /embed/getyourguide`. Hygiene passed, with the existing LOCAL/UNAPPLIED RPC notes only. Scoped ESLint exited 0.
 
 ## Scope left alone
 
