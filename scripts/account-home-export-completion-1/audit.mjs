@@ -96,6 +96,23 @@ const faelle = {
     besuchProblem: null,
     reisen: fensterReisen(200),
   },
+  ohneEtappen: {
+    modus: 'home',
+    name: 'Sasa',
+    problem: null,
+    besuchProblem: null,
+    reisen: Array.from({ length: 200 }, (_, index) =>
+      reise({
+        id: `o${index}`,
+        title: `Ohne Etappe ${index}`,
+        stages: [],
+        stageCount: 0,
+        dayCount: 0,
+        startDate: '2026-11-02',
+        endDate: '2026-11-06',
+      }),
+    ),
+  },
   knapp: {
     modus: 'home',
     name: 'Sasa',
@@ -163,7 +180,7 @@ function uhrSkript() {
           window.__uhr.advance(delay)
           window.__uhr.folge = false
           fn()
-        }, 20)
+        }, 300)
       }
       return originalTimeout(fn, ms, ...rest)
     }
@@ -179,7 +196,7 @@ function uhrSkript() {
 }
 
 const browser = await chromium.launch({ headless: true })
-const context = await browser.newContext()
+const context = await browser.newContext({ acceptDownloads: true })
 let exportHandler = null
 let dokument = '<!doctype html><html><body><div id="root"></div></body></html>'
 await context.route('**/*', async (route) => {
@@ -290,6 +307,26 @@ try {
   assert.match(await page.locator('[data-account-fenster="vollstaendig"]').innerText(), /die ganze Antwort dieser Abfrage/)
   protokoll.push('199 Zeilen sind die ganze Leserantwort und behalten den globalen Nächste-Reise-Satz.')
 
+  await zeige(faelle.ohneEtappen, css)
+  await page.waitForFunction(() => document.querySelector('[data-account-heute]')?.getAttribute('data-account-heute') === '2026-08-23')
+  const kartenText = await page.locator('#account-welt-karte-desc').textContent()
+  const kartenSichtbar = await page.locator('[data-world-map]').innerText()
+  assert.equal(kartenText.includes('Noch keine geplanten Reiseziele in deinem Konto'), false)
+  assert.equal(kartenSichtbar.includes('Noch keine geplanten Reiseziele in deinem Konto'), false)
+  assert.match(kartenText, /Keine geplanten Orte in den geladenen Reisen/)
+  assert.match(kartenSichtbar, /Keine geplanten Orte in den geladenen Reisen/)
+  assert.match(kartenSichtbar, /Noch keine Besuche bestätigt/)
+  protokoll.push('200 Reisen ohne Etappen behaupten zu Hause keine globale Ortsleere. Besuche bleiben leer.')
+
+  await zeige({ ...faelle.ohneEtappen, modus: 'welt' }, css)
+  const atlasLeer = await page.locator('[data-world-map]').innerText()
+  assert.equal(atlasLeer.includes('Noch keine Länder oder Orte in deinem Konto gespeichert'), false)
+  assert.equal(atlasLeer.includes('Noch keine geplanten Reiseziele in deinem Konto'), false)
+  assert.match(atlasLeer, /In den geladenen Reisen sind keine Länder oder Orte/)
+  assert.match(atlasLeer, /Keine geplanten Orte in den geladenen Reisen/)
+  assert.match(atlasLeer, /Noch keine Besuche bestätigt/)
+  protokoll.push('Der Welt-Atlas bindet die leere Ortsliste an die geladenen Reisen.')
+
   await zeige({ ...faelle.grenze, modus: 'welt' }, css)
   await page.waitForSelector('[data-world-map-darstellung="atlas"]')
   const weltText = await page.locator('[data-world-map]').innerText()
@@ -325,7 +362,14 @@ try {
   await zeige(faelle.leer, css)
   assert.match(sichtbar(await page.locator('[data-account-naechste="leer"]').innerText()), /noch keine reise in deinem konto/)
   assert.match(await page.locator('[data-account-fenster="vollstaendig"]').innerText(), /nicht abgeschnitten/)
+  assert.match(await page.locator('#account-welt-karte-desc').textContent(), /Noch keine geplanten Reiseziele in deinem Konto/)
   protokoll.push('Null Reisen bleiben eine vollständige leere Antwort.')
+
+  await zeige({ ...faelle.leer, modus: 'welt' }, css)
+  const weltLeer = await page.locator('[data-world-map]').innerText()
+  assert.match(weltLeer, /Noch keine Länder oder Orte in deinem Konto gespeichert/)
+  assert.match(weltLeer, /Noch keine Besuche bestätigt/)
+  protokoll.push('Eine vollständig leere Welt darf die Abwesenheit im Konto sagen.')
 
   await zeige(faelle.reiseFehler, css)
   assert.equal(await page.locator('[data-account-naechste="fehler"]').count(), 1)
@@ -333,6 +377,8 @@ try {
   const neu = page.locator('[data-account-neu-laden="/account"] a')
   assert.equal(await neu.count(), 1)
   assert.match(await neu.locator('xpath=..').innerText(), /bestätigt keine neuen Daten/)
+  assert.equal((await page.locator('#account-welt-karte-desc').textContent()).includes('Noch keine geplanten Reiseziele in deinem Konto'), false)
+  assert.match(await page.locator('[data-world-map]').innerText(), /nicht geladen werden konnten/)
   protokoll.push('Reisefehler bleibt Fehler und lädt die Seite neu, ohne den Wechsel als Bestätigung zu verkaufen.')
 
   await zeige(faelle.besuchFehler, css)
@@ -340,6 +386,7 @@ try {
   assert.equal(await page.locator('[data-account-naechste="kommend"]').count(), 1)
   assert.equal(await page.locator('[data-world-map-visited="fehler"]').count(), 1)
   assert.match(await page.locator('[data-world-map]').innerText(), /nicht, dass keiner besteht/)
+  assert.equal((await page.locator('[data-world-map]').innerText()).includes('Noch keine Besuche bestätigt'), false)
   protokoll.push('Besuchsfehler lässt die geladene Reise stehen und erfindet keine leere Historie.')
 
   const breiten = [
@@ -437,6 +484,11 @@ try {
     data: {},
   }
   for (const tabelle of gueltig.scope.tables) gueltig.data[tabelle] = []
+  gueltig.data.profiles = [{ id: 'profil-1' }]
+  let dateiEreignisse = 0
+  page.on('download', () => {
+    dateiEreignisse += 1
+  })
 
   await exportAntwort((route) =>
     route.fulfill({
@@ -448,15 +500,23 @@ try {
   const knopf = page.getByRole('button', { name: 'Konto- und Reisedaten als JSON herunterladen' })
   await knopf.focus()
   assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-busy')), 'false')
+  const dateiVersprechen = page.waitForEvent('download')
   await page.keyboard.press('Enter')
+  const datei = await dateiVersprechen
   await page.waitForSelector('[data-export-phase="uebergeben"]')
+  assert.equal(datei.suggestedFilename(), 'jetnity-account-export-2026-10-26.json')
+  const inhalt = JSON.parse(readFileSync(await datei.path(), 'utf8'))
+  assert.equal(inhalt.schemaVersion, 'jetnity.account-export.v1')
+  assert.equal(inhalt.generatedAt, '2026-10-26T10:00:00.000Z')
+  assert.deepEqual(inhalt.data.profiles, [{ id: 'profil-1' }])
   assert.match(await page.getByRole('status').innerText(), /Browser/)
   assert.match(await page.getByRole('status').innerText(), /Betriebssystem/)
   assert.equal(anfragen, 1)
   assert.equal(downloads, 1)
+  assert.equal(dateiEreignisse, 1)
   await page.waitForTimeout(30)
-  assert.equal(widerrufen >= 1, true)
-  protokoll.push('Enter übergibt genau eine gültige Datei und widerruft die Objekt-URL.')
+  assert.equal(widerrufen, 1)
+  protokoll.push('Enter übergibt genau eine gültige Datei, ein Downloadereignis und einen Widerruf.')
 
   await exportAntwort((route) => route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"unauthenticated"}' }))
   await knopf.click()
@@ -489,6 +549,88 @@ try {
   await page.waitForSelector('[data-export-phase="fehler"]')
   protokoll.push('Eine fehlerhafte JSON-Form wird nicht heruntergeladen.')
 
+  async function ungueltig(name, koerper) {
+    const vorherDateien = dateiEreignisse
+    const vorherUrls = downloads
+    await exportAntwort((route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: koerper }),
+    )
+    await knopf.click()
+    await page.waitForSelector('[data-export-phase="fehler"]')
+    assert.match(await page.getByRole('alert').innerText(), /keine gültige Exportdatei/)
+    assert.equal(dateiEreignisse, vorherDateien)
+    assert.equal(downloads, vorherUrls)
+    protokoll.push(`${name} löst kein Downloadereignis aus.`)
+  }
+  const ohneZeit = structuredClone(gueltig)
+  ohneZeit.generatedAt = 'not-a-date'
+  await ungueltig('Ein unbrauchbarer Zeitstempel', JSON.stringify(ohneZeit))
+  const nullZeile = structuredClone(gueltig)
+  nullZeile.data.profiles = [null]
+  await ungueltig('Eine Null-Zeile', JSON.stringify(nullZeile))
+  const skalar = structuredClone(gueltig)
+  skalar.data.profiles = ['skalar']
+  await ungueltig('Eine Skalar-Zeile', JSON.stringify(skalar))
+  const liste = structuredClone(gueltig)
+  liste.data.profiles = [[]]
+  await ungueltig('Eine Listen-Zeile', JSON.stringify(liste))
+
+  const arbeit = page.getByRole('textbox', { name: 'Andere Kontoarbeit' })
+  let zeigerLos = () => {}
+  await exportAntwort(async (route) => {
+    await new Promise((resolve) => {
+      zeigerLos = resolve
+    })
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(gueltig) })
+  })
+  const dateienVorZeiger = dateiEreignisse
+  await knopf.click()
+  await page.waitForSelector('[data-export-phase="laeuft"]')
+  await arbeit.click()
+  await arbeit.fill('Zeiger')
+  const zeigerDatei = page.waitForEvent('download')
+  zeigerLos()
+  await zeigerDatei
+  await page.waitForSelector('[data-export-phase="uebergeben"]')
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'andere-kontoarbeit')
+  assert.match(await page.getByRole('status').innerText(), /Browser/)
+  assert.equal(dateiEreignisse, dateienVorZeiger + 1)
+  await page.waitForTimeout(30)
+  assert.equal(widerrufen, downloads)
+  protokoll.push('Erfolg nach einem neueren Zeigerfokus lässt den Fokus dort und bleibt ansagbar.')
+
+  let tastaturLos = () => {}
+  await exportAntwort(async (route) => {
+    await new Promise((resolve) => {
+      tastaturLos = resolve
+    })
+    await route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"export_failed"}' })
+  })
+  const dateienVorTaste = dateiEreignisse
+  await knopf.click()
+  await page.waitForSelector('[data-export-phase="laeuft"]')
+  await page.keyboard.press('Shift+Tab')
+  await page.keyboard.type('Taste')
+  tastaturLos()
+  await page.waitForSelector('[data-export-phase="fehler"]')
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'andere-kontoarbeit')
+  assert.match(await page.getByRole('alert').innerText(), /nicht erreichbar/)
+  assert.equal(dateiEreignisse, dateienVorTaste)
+  protokoll.push('Fehler nach neuerem Tastaturfokus zieht den Fokus nicht weg.')
+
+  await exportAntwort(() => new Promise(() => {}))
+  await page.evaluate(() => {
+    window.__uhr.folge = true
+  })
+  const dateienVorFrist = dateiEreignisse
+  await knopf.click()
+  await page.keyboard.press('Shift+Tab')
+  await page.keyboard.type('Frist')
+  await page.getByRole('alert').filter({ hasText: 'zu lange gedauert' }).waitFor()
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'andere-kontoarbeit')
+  assert.equal(dateiEreignisse, dateienVorFrist)
+  protokoll.push('Eine Frist nach neuerem Tastaturfokus bleibt ansagbar, ohne den Fokus zu nehmen.')
+
   let freigeben = () => {}
   const wartend = new Promise((resolve) => {
     freigeben = resolve
@@ -498,18 +640,65 @@ try {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(gueltig) })
   })
   const vorDoppel = anfragen
+  const urlsVorDoppel = downloads
+  const dateienVorDoppel = dateiEreignisse
   await knopf.click()
   await knopf.click({ force: true })
   await page.waitForTimeout(30)
   assert.equal(anfragen, vorDoppel + 1)
-  await page.getByRole('button', { name: 'Export abbrechen' }).click()
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
   await page.waitForSelector('[data-export-phase="abgebrochen"]')
+  assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('role')), 'alert')
   freigeben()
   await page.waitForTimeout(50)
-  assert.equal(downloads, 1)
+  assert.equal(downloads, urlsVorDoppel)
+  assert.equal(dateiEreignisse, dateienVorDoppel)
   assert.match(await page.getByRole('alert').innerText(), /wurde abgebrochen/)
-  protokoll.push('Doppelklick startet eine Anfrage, Abbruch verhindert den späteren Download.')
+  protokoll.push('Doppelklick startet eine Anfrage. Tastatur-Abbruch fokussiert die Meldung und verwirft die spätere Datei.')
 
+  let alteFreigabe = () => {}
+  const alteWarte = new Promise((resolve) => {
+    alteFreigabe = resolve
+  })
+  let neueFreigabe = () => {}
+  const neueWarte = new Promise((resolve) => {
+    neueFreigabe = resolve
+  })
+  let naechsteAntwort = 'alt'
+  await exportAntwort(async (route) => {
+    const diese = naechsteAntwort
+    naechsteAntwort = 'neu'
+    if (diese === 'alt') {
+      await alteWarte
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(gueltig) })
+      return
+    }
+    await neueWarte
+    await route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"export_failed"}' })
+  })
+  await knopf.click()
+  await page.waitForSelector('[data-export-phase="laeuft"]')
+  await page.getByRole('button', { name: 'Export abbrechen' }).click()
+  await page.waitForSelector('[data-export-phase="abgebrochen"]')
+  await knopf.click()
+  await page.waitForSelector('[data-export-phase="laeuft"]')
+  const anfragenNachNeu = anfragen
+  const dateienVorAlt = dateiEreignisse
+  alteFreigabe()
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('[data-export-phase="laeuft"]').count(), 1)
+  assert.equal(anfragen, anfragenNachNeu)
+  assert.equal(dateiEreignisse, dateienVorAlt)
+  neueFreigabe()
+  await page.waitForSelector('[data-export-phase="fehler"]')
+  assert.match(await page.getByRole('alert').innerText(), /nicht erreichbar/)
+  assert.equal(dateiEreignisse, dateienVorAlt)
+  protokoll.push('Eine abgebrochene Alt-Antwort lädt nicht und setzt die neuere Anfrage nicht.')
+
+  const anfragenVorRetry = anfragen
+  const dateienVorRetry = dateiEreignisse
+  const urlsVorRetry = downloads
   await exportAntwort((route) =>
     route.fulfill({
       status: 200,
@@ -517,30 +706,43 @@ try {
       body: JSON.stringify(gueltig),
     }),
   )
+  const retryDatei = page.waitForEvent('download')
   await knopf.click()
+  await retryDatei
   await page.waitForSelector('[data-export-phase="uebergeben"]')
-  assert.equal(anfragen, vorDoppel + 2)
-  assert.equal(downloads, 2)
+  assert.equal(anfragen, anfragenVorRetry + 1)
+  assert.equal(downloads, urlsVorRetry + 1)
+  assert.equal(dateiEreignisse, dateienVorRetry + 1)
   protokoll.push('Ein ausdrücklicher neuer Versuch nach dem Abbruch übergibt genau eine weitere Datei.')
 
   await exportAntwort(() => new Promise(() => {}))
   await page.evaluate(() => {
     window.__uhr.folge = true
   })
+  const dateienVorZweiterFrist = dateiEreignisse
+  const urlsVorZweiterFrist = downloads
   await knopf.click()
   await page.getByRole('alert').filter({ hasText: 'zu lange gedauert' }).waitFor()
   assert.equal(await page.locator('[data-export-phase="abgebrochen"]').count(), 1)
-  assert.equal(downloads, 2)
+  assert.equal(dateiEreignisse, dateienVorZweiterFrist)
+  assert.equal(downloads, urlsVorZweiterFrist)
   protokoll.push('Eine überschrittene Frist bricht ab, ohne automatisch neu zu starten.')
 
-  const vorUnmount = downloads
-  await exportAntwort(() => new Promise(() => {}))
+  let nachUnmount = () => {}
+  await exportAntwort(async (route) => {
+    await new Promise((resolve) => {
+      nachUnmount = resolve
+    })
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(gueltig) })
+  })
+  const vorUnmount = dateiEreignisse
   await knopf.click()
   await page.waitForSelector('[data-export-phase="laeuft"]')
   await page.evaluate(() => window.__unmount())
-  await page.waitForTimeout(50)
-  assert.equal(downloads, vorUnmount)
-  protokoll.push('Unmount während des Ladens erzeugt keinen Download.')
+  nachUnmount()
+  await page.waitForTimeout(80)
+  assert.equal(dateiEreignisse, vorUnmount)
+  protokoll.push('Eine späte Antwort nach dem Unmount erzeugt keinen Download.')
   assert.equal(seitenfehler.length, 0)
   protokoll.push(`Seitenfehler: 0. Exportanfragen: ${anfragen}. Downloads: ${downloads}. Objekt-URL-Widerrufe: ${widerrufen}.`)
   assert.equal(

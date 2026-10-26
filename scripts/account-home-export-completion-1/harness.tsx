@@ -30,7 +30,17 @@ const laender = { flaechen: [], ohneFlaeche: [] }
 
 function Ansicht() {
   const fixture = window.__fixture
-  if (fixture.modus === 'export') return <KontoDatenexportAktion />
+  if (fixture.modus === 'export') {
+    return (
+      <>
+        <label className="block max-w-xs text-sm font-semibold text-brand-800" htmlFor="andere-kontoarbeit">
+          Andere Kontoarbeit
+          <input id="andere-kontoarbeit" className="mt-1 block min-h-11 w-full rounded-2xl border border-line-200 px-3" />
+        </label>
+        <KontoDatenexportAktion />
+      </>
+    )
+  }
   const besucht = weltBesuchtAbleiten({ besuche: [], problem: fixture.besuchProblem })
   if (fixture.modus === 'welt') {
     const welt = worldMapAbleiten({ problem: fixture.problem, reisen: fixture.reisen })
