@@ -214,6 +214,34 @@ function zielArt(url: string, text: string): 'ausfall' | 'suchliste' | 'angebot'
   return 'andere'
 }
 
+async function analyzerTick(page: Page) {
+  const staende = []
+  for (const frame of page.frames()) {
+    const stand = await frame
+      .evaluate(() => {
+        const fenster = window as Window & { gygPAStatus?: unknown; __jetnityBeobachtung?: string[] }
+        let speicher = 'nicht-gelesen'
+        try {
+          sessionStorage.getItem('jetnity-gyg-lesetest')
+          speicher = 'lesbar'
+        } catch (error) {
+          speicher = `wirft ${String(error).slice(0, 140)}`
+        }
+        return {
+          hostname: location.hostname,
+          script: Boolean(document.querySelector('script[src*="pa.umd.production.min.js"]')),
+          status: fenster.gygPAStatus === undefined ? null : String(fenster.gygPAStatus).slice(0, 40),
+          speicher,
+          beobachtung: (fenster.__jetnityBeobachtung ?? []).slice(0, 8),
+        }
+      })
+      .catch(() => null)
+    if (!stand) continue
+    staende.push({ url: frame.url().slice(0, 140), ...stand })
+  }
+  return staende
+}
+
 async function produktOeffnen(page: Page): Promise<{ url: string; titel: string; text: string } | null> {
   for (const frame of page.frames()) {
     if (!frame.url().includes('getyourguide.com')) continue
@@ -321,6 +349,14 @@ async function main() {
 
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const context = await browser.newContext()
+  await context.addInitScript(`(() => {
+    const merken = (art, wert) => {
+      const liste = (window.__jetnityBeobachtung = window.__jetnityBeobachtung || [])
+      if (liste.length < 12) liste.push(art + ': ' + String(wert).slice(0, 220))
+    }
+    addEventListener('error', (event) => merken('error', event.message))
+    addEventListener('unhandledrejection', (event) => merken('unhandledrejection', event.reason))
+  })()`)
   const page = await context.newPage()
   page.on('request', (request) => {
     try {
@@ -337,10 +373,15 @@ async function main() {
     }
   })
   const konsole: string[] = []
+  const seitenfehler: string[] = []
   page.on('console', (msg) => {
     if (msg.type() === 'error') konsole.push(msg.text().slice(0, 300))
   })
-  page.on('pageerror', (error) => konsole.push(String(error).slice(0, 300)))
+  page.on('pageerror', (error) => {
+    const text = String(error).slice(0, 300)
+    seitenfehler.push(text)
+    konsole.push(text)
+  })
 
   await page.goto(`${basis}/?reise=${KANARIEN}`, { waitUntil: 'networkidle' })
   await page.evaluate((token) => {
@@ -365,6 +406,11 @@ async function main() {
   await laden.focus()
   await page.keyboard.press('Enter')
   const stadt = await wartenAufAngebot(page)
+  const analyzer: Awaited<ReturnType<typeof analyzerTick>>[] = []
+  for (let tick = 0; tick < 3; tick += 1) {
+    analyzer.push(await analyzerTick(page))
+    await page.waitForTimeout(2000)
+  }
   await page.setViewportSize({ width: 1440, height: 900 })
   await rahmenBild(page, 'stadt-1440.png')
   await page.setViewportSize({ width: 768, height: 900 })
@@ -456,6 +502,10 @@ async function main() {
     anbieterVorKlick: vorher.length,
     anbieterGesamt: anbieter.length,
     hosts: [...new Set(anbieter.map((eintrag) => eintrag.host))],
+    analyzerSkript: anbieter.filter((eintrag) => eintrag.path.includes('pa.umd')).map((eintrag) => eintrag.path),
+    telemetry: anbieter.filter((eintrag) => eintrag.host.startsWith('collector.')).length,
+    analyzer,
+    seitenfehler: seitenfehler.slice(0, 12),
     konsole: konsole.slice(0, 20),
     fehler,
   }

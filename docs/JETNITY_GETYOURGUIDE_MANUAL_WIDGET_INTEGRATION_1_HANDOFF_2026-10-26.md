@@ -11,6 +11,22 @@ Stage when the receipt was written: the widget implementation and the first hand
 
 Capability blocker: the delivered product screenshot is the provider outage page, not a missing certificate exception. This session’s Playwright Chromium loaded the official widget, images and offer titles. `allow-same-origin` was not added. Root’s `net::ERR_CERT_AUTHORITY_INVALID` note stays outside this implementation.
 
+## Analyzer on this host
+
+The local proof runs on `127.0.0.1`. That is an IPv4 hostname. Root’s source finding says the official Analyzer skips initialization on localhost, every IPv4 hostname, and hostnames containing `getyourguide`. This session did not invent another hostname and did not use the branch alias, which contains `getyourguide` and currently answers with Vercel SSO.
+
+Observed on the opaque embed document, three ticks about two seconds apart, after the Lisbon offers were visible:
+
+- The document contains the Analyzer script. The browser requested `/dist/pa.umd.production.min.js` once per shown destination.
+- `gygPAStatus` stayed `loading` on every tick. That is not initialization success. `ok` was not observed.
+- `sessionStorage` throws `SecurityError` because the document is sandboxed without `allow-same-origin`. The same throw occurs in the provider frame.
+- `pageerror` and `unhandledrejection` lists were empty on these ticks. No uncaught `getVisitorId` exception was observed here. That does not clear the eligible-host risk, because this hostname is one the Analyzer skips.
+- Five requests went to `collector.getyourguide.com`. This is not a zero-telemetry result. The private canary was not in those request URLs.
+
+The published preview for this head was not opened. Commit status for `9d995008` points at Vercel deployment `4WndLaqmNBYhwk8eLiB59shhwZ8i`. The only preview host written on the PR contains `getyourguide` and redirects to SSO. No eligible deployment hostname was available without authentication.
+
+Smallest options, not implemented: review Analyzer collection on an immutable deployment host that is neither localhost, nor an IPv4 literal, nor a name containing `getyourguide`, once that host is reachable. If that host shows the uncaught `sessionStorage` exception, keep the opaque sandbox. A later separate cookiefree origin is already outside this slice. Do not add `allow-same-origin`, do not patch provider storage, and do not rename the local host to pass the provider filter.
+
 Branch: `feat/getyourguide-manual-widget-integration-1`
 Draft PR: #1041
 Tracking: #1040
@@ -18,7 +34,7 @@ Parent: #1023 V5
 Immutable TASK blob: `7c7b442fafaa0f20ceb641d0a335d564224d7120`
 Task seed: `36837100ea710a6514321be518c32b0f7680a531`, tree `3f87860285a68e56e66cc4b9bad32fd05334cafb`, sole parent `7d52da97efc1f40fbea5c07d978c2e81e6b76659`.
 
-Implementation commit: `b2ae807ffd9e5331154a24bb469e1d480595857b`. First handoff commit: `8da4d3292a4d00afe2f57598043b2ff6f8164a21`. Root task revision: `3eddc72ade423afa1dd5109f3bbd625014495f7e`. The review head is the tip after this receipt commit. This file cannot name that tip’s own SHA. Fresh `origin/main`: `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`. Merge-base: that same commit. Behind: 0.
+Implementation commit: `b2ae807ffd9e5331154a24bb469e1d480595857b`. First handoff commit: `8da4d3292a4d00afe2f57598043b2ff6f8164a21`. Root task revision: `3eddc72ade423afa1dd5109f3bbd625014495f7e`. The review head is the tip that contains this Analyzer observation. This file cannot name that tip’s own SHA. Fresh `origin/main`: `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`. Merge-base: that same commit. Behind: 0.
 
 This is not a Root PASS. Do not mark Ready. Do not merge. Do not start a follow-up slice.
 

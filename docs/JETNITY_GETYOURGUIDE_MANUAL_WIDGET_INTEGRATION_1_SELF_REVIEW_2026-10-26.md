@@ -14,6 +14,10 @@ The search configuration never stores a search string as a GetYourGuide location
 
 TASK V2 replaces only the mandatory product-detail destination for #1040. A search list with `partner_id=2MQHT6Z` is the bounded result. The earlier Arrábida page, when it rendered, was one observed detail body at a search-shaped URL. It is not a guarantee and it does not close V5. The final saved product screenshot of the previous proof was an outage and stays an outage. The visible copy now says an offer click can open a GetYourGuide result list first.
 
+## Analyzer
+
+On `127.0.0.1` the script is present and `gygPAStatus` remained `loading` for three ticks. Offers still rendered. No `pageerror` or `unhandledrejection` was captured. `sessionStorage` throws in the opaque document. Five collector requests mean telemetry happened. The branch preview host contains `getyourguide` and is behind Vercel SSO, so this session did not verify Analyzer initialization on an eligible host. `allow-same-origin` was not added to hide that.
+
 The final product-page artifact is an outage page. The URL is the specific offer URL and keeps `partner_id=2MQHT6Z`, but the body does not show the tour. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk. A reviewer should treat the product-body requirement as unproved on the delivered screenshot and should rerun the proof when GetYourGuide answers that URL again.
 
 The provider “see all” target is not the searched place in every case. Crete’s see-all link was Santorini. That link was not used as product proof. It is still what the official widget rendered.
