@@ -27,6 +27,8 @@ The operation key includes the confirmed place type and the public identifier, i
 
 Country collection deduplicates reads and checks every stage occurrence. An unresolved or conflicting extra stage does not become an automatic single-country decision. An explicit valid country selection stays available, including after ready, unsupported, error and display states.
 
+On a selected day, the canonical country code counts only when it is already stored as two uppercase letters. Null, empty, lowercase and any other shape stay unconfirmed for a city, a region and an island. The stage hint does not fill that code. A valid canonical code that disagrees with a valid stage code stays a contradiction. No new country catalogue was added. Places import and lookup were not changed.
+
 The application resolver stays null. The test seam can confirm an exact id late. Synchronous load failures and rejected confirmations become the existing recoverable error, without the exception text. The closed path does not look a place up.
 
 ## Work V2
@@ -41,11 +43,17 @@ Received. Archive SHA256 `a996f359d529be827376bf5545fb0f806f0ea6e32f9da5891711b0
 - No CI or Preview claim for the corrected head. The earlier Preview on `3051d4d8` does not cover this head.
 - `docs/ACTIVE_WORK_STATUS.md` was not edited. Continuity for this slice is this file and the handoff.
 
+## Addendum, selected-day canonical country
+
+The day path now fails closed when the stored country code is null, empty, lowercase or any other shape than two uppercase letters. City, region and island are covered. Uppercase agreement stays ready. A different uppercase code stays a contradiction. Country mode already rejected the malformed case and still does. `lib/places` was not edited.
+
 ## Checks on this correction
 
-- GetYourGuide unit tests: 33 pass, 0 fail.
+The counts below are the addendum head. The earlier R1 correction had 33 GetYourGuide tests and 7358 full-suite tests.
+
+- GetYourGuide unit tests: 34 pass, 0 fail.
 - Mounted harness: exit 0. Ten local requests, including the page assets and one synthetic `POST /api/activities/search` on localhost. Zero external requests. The cooperative page still records 7 loads, 7 disposals and 7 aborts. The counterexample page uses a renderer that ignores abort and writes late.
-- `npm test`: 7358 tests, 885 suites, 7342 pass, 11 fail, 5 skipped. The 11 failures are the same class of local PostgreSQL proofs. They are not repaired.
+- `npm test`: 7359 tests, 885 suites, 7343 pass, 11 fail, 5 skipped. The 11 failures are the same class of local PostgreSQL proofs. They are not repaired.
 - `npm run lint`: 0 errors, 175 warnings, exit 0.
 - `npm run typecheck` and `npm run build`: exit 0.
 - Hygiene `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` and `check:schema-bezug`: exit 0. Schema check still reports the pre-existing LOCAL/UNAPPLIED RPCs.

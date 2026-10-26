@@ -15,7 +15,7 @@ This handoff is the Review R1 correction in the same session. It is not a new ge
 
 ## What the next reviewer has
 
-A closed GetYourGuide block. Each load has its own node. The operation key includes place type and public identifier. Unresolved or conflicting extra stages do not auto-select a country, and the country choice stays reachable. The application resolver is null. Late exact confirmation exists only on the test seam. Work V2 is received and not activated.
+A closed GetYourGuide block. Each load has its own node. The operation key includes place type and public identifier. Unresolved or conflicting extra stages do not auto-select a country, and the country choice stays reachable. A selected day stays unconfirmed when the canonical country code is missing or not already two uppercase letters. The stage hint does not replace it. The application resolver is null. Late exact confirmation exists only on the test seam. Work V2 is received and not activated.
 
 The synthetic harness proves the abort-ignoring late writer, A→B→A, retry, repeated stages, type and mapping changes, keyboard country change, permission withdrawal, sync throw, disposal throw, and a populated native card. It blocks every non-local request.
 
@@ -43,7 +43,7 @@ npm run check:schema-bezug
 npm run build
 ```
 
-On this correction, before the documentation commit: GetYourGuide tests 33 pass. Harness exit 0, 10 localhost requests, 0 external. Full suite 7358 tests, 7342 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. Lint 0 errors and 175 warnings. Typecheck, build and the hygiene commands exited 0.
+On the selected-day addendum, before the documentation commit: GetYourGuide tests 34 pass. Harness exit 0, 10 localhost requests, 0 external. Full suite 7359 tests, 7343 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. Lint 0 errors and 175 warnings. Typecheck, build and the hygiene commands exited 0.
 
 ## Stop
 

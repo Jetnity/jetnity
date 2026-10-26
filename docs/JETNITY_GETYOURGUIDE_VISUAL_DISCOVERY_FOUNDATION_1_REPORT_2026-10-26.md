@@ -9,7 +9,7 @@ This report covers the Review R1 correction. The first foundation remains on `30
 ## What changed
 
 - `components/trips/GetYourGuideAktivitaeten.tsx` gives every load its own node, detaches that node before disposal, and keeps country radios whenever a choice must remain. A synchronous throw from `laden` becomes the recoverable error state.
-- `lib/activities/getyourguide/kontext.ts` puts place type and public identifier into the operation key. Country evidence is deduplicated by read and checked per occurrence. Unresolved or conflicting extra stages do not auto-select the one remaining country.
+- `lib/activities/getyourguide/kontext.ts` puts place type and public identifier into the operation key. Country evidence is deduplicated by read and checked per occurrence. Unresolved or conflicting extra stages do not auto-select the one remaining country. A selected day accepts a city, region or island only when the canonical country code is already two uppercase letters. A missing or malformed code is not replaced by the stage hint.
 - `lib/activities/getyourguide/aufloesung.ts` is the generation boundary for a late exact confirmation. The application does not call it against Places.
 - `lib/activities/getyourguide/widget.ts` adds `kanonBestaetigen`. `ANWENDUNGS_NAHT` sets it to null, beside the empty mapping and the null renderer.
 - `scripts/getyourguide-visual-discovery-1/gegenprobe.tsx` mounts the counterexamples with a renderer that ignores abort. The local server answers `POST /api/activities/search` with one synthetic card so the native result is populated.
@@ -18,7 +18,7 @@ This report covers the Review R1 correction. The first foundation remains on `30
 
 ## What the checks showed
 
-Focused GetYourGuide tests: 33 passed, 0 failed. Node v22.23.4. Added coverage: same place id as city and region, mapping-only identifier change, both conflict orderings, an unresolved extra stage, San José as city and region in two countries, Lisbon as a further destination, deduplicated reads, and late confirmation that drops a foreign id and a caller's error text.
+Focused GetYourGuide tests: 34 passed, 0 failed. Node v22.23.4. Added coverage: same place id as city and region, mapping-only identifier change, both conflict orderings, an unresolved extra stage, San José as city and region in two countries, Lisbon as a further destination, deduplicated reads, late confirmation that drops a foreign id and a caller's error text, and a selected day whose canonical country is null, empty, lowercase or otherwise not two uppercase letters. City, region and island keep a ready result for uppercase agreement and a contradiction for a different uppercase code.
 
 Mounted harness, headless Chromium, after the final component edit: exit 0. Ten requests, all `http://127.0.0.1`, including one synthetic search POST. Zero GetYourGuide, Supabase, GeoNames or other external requests. The cooperative page still records 7 loads, 7 disposals and 7 aborts. The counterexample page starts A, switches to B, returns to A, retries, repeats a stage, changes type and mapping, keeps a harmless reallocation, changes country by keyboard without remounting, and withdraws permission. The late writer ignores abort. Visible results stay on the current node. A thrown setup error and a thrown disposal do not remain as page errors or as URL text. The native card title “Synthetische Bootsfahrt” stays after those failures. Viewports include 320, 390, 768, 1440 and 200% root text. Screenshots are synthetic and live under `/opt/cursor/artifacts/gyg-visual-discovery/`.
 
@@ -28,7 +28,9 @@ Mounted harness, headless Chromium, after the final component edit: exit 0. Ten 
 
 `npm run typecheck` and `npm run build` exited 0. `next-env.d.ts` was not kept as a change.
 
-Full `npm test`: 7358 tests, 885 suites, 7342 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. They are the same class as on the reviewed head and are not fixed here. The 5 skips are the existing native-PostgreSQL, CI-only and shared-layout-audit skips.
+The selected-day addendum was rechecked on Node v22.23.4. Focused GetYourGuide tests: 34 passed. The mounted harness still exited 0: ten localhost requests, zero external requests, 7 loads, 7 disposals and 7 aborts on the cooperative page.
+
+Full `npm test` on that addendum: 7359 tests, 885 suites, 7343 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. They are the same class as on the reviewed head and are not fixed here. The 5 skips are the existing native-PostgreSQL, CI-only and shared-layout-audit skips.
 
 No migration. No new dependency. No package, workflow or global CSS change.
 
