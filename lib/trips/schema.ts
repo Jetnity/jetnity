@@ -43,7 +43,7 @@ import {
   vehicleClassLesen,
 } from '@/lib/trips/mietwagen-felder'
 import { createDayPositions } from '@/lib/trips/create-day-assignment'
-import { TAGE_MAXIMUM } from '@/lib/trips/tage'
+import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, zeitraumIstZuLang } from '@/lib/trips/tage'
 import { partySchema, readinessItemsSchema } from '@/lib/readiness/schema'
 import { flugRouteItinerarySchema } from '@/lib/route/schema'
 
@@ -653,6 +653,13 @@ export const neueReiseSchema = z.object({
         path: ['endDate'],
         message: 'Die Rückreise darf nicht vor der Abreise liegen.',
       })
+    } else if (zeitraumIstZuLang(reise.startDate, reise.endDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        message: ZEITRAUM_ZU_LANG,
+      })
+      return
     }
     if (!reise.dayAllocation) return
     const zuordnung = createDayPositions({

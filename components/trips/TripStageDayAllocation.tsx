@@ -25,6 +25,8 @@ type TripStageDayAllocationProps = {
   zugeordnet: number
   ohneZiel: number
   reisetage: number
+  /** Ein zu langer Zeitraum wird nicht als gekürzte Reise ausgesprochen. */
+  zeitraumZuLang?: boolean
   fehler?: string
   hinweis?: string
   disabled?: boolean
@@ -55,6 +57,7 @@ export default function TripStageDayAllocation({
   zugeordnet,
   ohneZiel,
   reisetage,
+  zeitraumZuLang,
   fehler,
   hinweis,
   disabled,
@@ -98,9 +101,11 @@ export default function TripStageDayAllocation({
             <span className="min-w-0 flex-1">Vorhandene Tage ausdrücklich auf die Ziele verteilen</span>
           </label>
           <p id="zuordnung-stand" className="max-w-full break-words text-sm leading-6 text-ink-800" aria-live="polite">
-            {aktiv
-              ? `${zugeordnet} Tage zugeordnet, ${ohneZiel} ohne Ziel. Die Reise bleibt ${reisetage} Tage.`
-              : `Noch keine Tageszuordnung. Die Reise hat ${reisetage} Tage.`}
+            {zeitraumZuLang
+              ? 'Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.'
+              : aktiv
+                ? `${zugeordnet} Tage zugeordnet, ${ohneZiel} ohne Ziel. Die Reise bleibt ${reisetage} Tage.`
+                : `Noch keine Tageszuordnung. Die Reise hat ${reisetage} Tage.`}
           </p>
           {aktiv ? (
             <div className="tageszuordnung-liste">

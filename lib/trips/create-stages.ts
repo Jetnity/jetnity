@@ -14,7 +14,7 @@ import {
 } from '@/lib/trips/create-day-assignment'
 import { GRENZEN } from '@/lib/trips/schema'
 import type { DayStageAssignmentMode } from '@/lib/trips/day-stage-assignment'
-import { reisetageBauen } from '@/lib/trips/tage'
+import { ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 
 export type CreateZielFakt = {
   position: number
@@ -84,6 +84,9 @@ export function createKontoTage(
   graph: CreateZieleGraph,
   zeitraum: { startDate: string; endDate: string },
 ) {
+  if (zeitraumIstZuLang(zeitraum.startDate, zeitraum.endDate)) {
+    throw new Error(ZEITRAUM_ZU_LANG)
+  }
   const tage = reisetageBauen(zeitraum.startDate, zeitraum.endDate)
   if (tage.length !== graph.dayStagePositions.length) {
     throw new Error('Die Tageszuordnung passt nicht zum Reisezeitraum.')

@@ -9,7 +9,7 @@ import {
   tageszuordnungAngleichen,
 } from '@/lib/trips/create-day-assignment'
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
-import { TAGE_MAXIMUM } from '@/lib/trips/tage'
+import { REISEDAUER_MAXIMUM, TAGE_MAXIMUM, ZEITRAUM_ZU_LANG } from '@/lib/trips/tage'
 
 function ort(teil: Partial<Ort> & Pick<Ort, 'id' | 'name' | 'countryCode'>): Ort {
   return {
@@ -52,6 +52,7 @@ describe('Erstzuordnung vorhandener Kalendertage', () => {
   test('die Anspruchsgrenze bleibt die kanonische Etappengrenze', () => {
     assert.equal(ZUORDNUNG_ANSPRUECHE_MAXIMUM, GRENZEN.etappenJeReise)
     assert.equal(TAGE_MAXIMUM, 366)
+    assert.equal(REISEDAUER_MAXIMUM, GRENZEN.reisedauerInTagen)
   })
 
   test('ohne Opt-in bleiben mehrere Ziele unzugeordnet', () => {
@@ -242,5 +243,155 @@ describe('Erstzuordnung vorhandener Kalendertage', () => {
     })
     assert.deepEqual(entfernt.claims.map((anspruch) => anspruch.occurrenceKey), ['bangkok'])
     assert.match(entfernt.hinweis ?? '', /entferntes Ziel/)
+  })
+
+  test('366 Kalendertage bleiben vollständig, 367 werden nicht gekürzt', () => {
+    const ansatz = {
+      claims: [{ occurrence: 1, startDate: '2026-11-01', endDate: '2026-11-03' }],
+    }
+    const gueltig = createDayPositions({
+      stageCount: 3,
+      startDate: '2026-11-01',
+      endDate: '2027-11-01',
+      allocation: ansatz,
+    })
+    assert.equal(gueltig.ok, true)
+    if (!gueltig.ok) return
+    assert.equal(gueltig.positions.length, 366)
+    assert.equal(gueltig.assigned, 3)
+    assert.equal(gueltig.unassigned, 363)
+    const graph = createZieleGraph([BANGKOK, CHIANG, PHUKET], {
+      startDate: '2026-11-01',
+      endDate: '2027-11-01',
+    }, ansatz)
+    const tage = createKontoTage(graph, { startDate: '2026-11-01', endDate: '2027-11-01' })
+    assert.equal(tage.length, 366)
+    assert.equal(tage[0]?.day_date, '2026-11-01')
+    assert.equal(tage[365]?.day_date, '2027-11-01')
+    assert.equal(tage.filter((tag) => tag.stage_position === 1).length, 3)
+
+    const zuLang = createDayPositions({
+      stageCount: 3,
+      startDate: '2026-11-01',
+      endDate: '2027-11-02',
+      allocation: ansatz,
+    })
+    assert.equal(zuLang.ok, false)
+    if (zuLang.ok) return
+    assert.equal(zuLang.message, ZEITRAUM_ZU_LANG)
+    assert.equal('positions' in zuLang, false)
+    assert.throws(
+      () => createZieleGraph([BANGKOK, CHIANG, PHUKET], { startDate: '2026-11-01', endDate: '2027-11-02' }, ansatz),
+      new RegExp(ZEITRAUM_ZU_LANG),
+    )
+    assert.throws(
+      () =>
+        createKontoTage(graph, {
+          startDate: '2026-11-01',
+          endDate: '2027-11-02',
+        }),
+      new RegExp(ZEITRAUM_ZU_LANG),
+    )
+
+    const formularLang = neueReiseSchema.safeParse({
+      ...FORMULAR,
+      startDate: '2026-11-01',
+      endDate: '2027-11-02',
+      weitereDestinationPlaceIds: [CHIANG.id, PHUKET.id],
+      dayAllocation: ansatz,
+    })
+    assert.equal(formularLang.success, false)
+    if (formularLang.success) return
+    assert.equal(formularLang.error.issues.some((issue) => issue.path[0] === 'endDate' && issue.message === ZEITRAUM_ZU_LANG), true)
+
+    const formularKurz = neueReiseSchema.safeParse({
+      ...FORMULAR,
+      startDate: '2026-11-01',
+      endDate: '2027-11-01',
+      weitereDestinationPlaceIds: [CHIANG.id, PHUKET.id],
+      dayAllocation: ansatz,
+    })
+    assert.equal(formularKurz.success, true)
+
+    const ohneVerteilung = createDayPositions({
+      stageCount: 3,
+      startDate: '2026-11-01',
+      endDate: '2027-11-01',
+    })
+    assert.equal(ohneVerteilung.ok, true)
+    if (ohneVerteilung.ok) {
+      assert.equal(ohneVerteilung.mode, 'unassigned')
+      assert.equal(ohneVerteilung.positions.length, 366)
+    }
+    const einzeln = createDayPositions({
+      stageCount: 1,
+      startDate: '2026-11-01',
+      endDate: '2027-11-01',
+    })
+    assert.equal(einzeln.ok, true)
+    if (einzeln.ok) assert.equal(einzeln.positions.length, 366)
+    assert.equal(
+      createDayPositions({ stageCount: 1, startDate: '2026-11-01', endDate: '2027-11-02' }).ok,
+      false,
+    )
+  })
+
+  test('Schaltjahrgrenzen bleiben bei 366 Tagen und weisen 367 zurück', () => {
+    const schaltjahr = createDayPositions({
+      stageCount: 2,
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+    })
+    assert.equal(schaltjahr.ok, true)
+    if (schaltjahr.ok) assert.equal(schaltjahr.positions.length, 366)
+
+    const ueberSchaltjahr = createDayPositions({
+      stageCount: 2,
+      startDate: '2024-01-01',
+      endDate: '2025-01-01',
+      allocation: { claims: [{ occurrence: 1, startDate: '2024-01-01', endDate: '2024-01-03' }] },
+    })
+    assert.equal(ueberSchaltjahr.ok, false)
+
+    const abSchaltag = createDayPositions({
+      stageCount: 2,
+      startDate: '2024-02-29',
+      endDate: '2025-02-28',
+    })
+    assert.equal(abSchaltag.ok, true)
+    if (abSchaltag.ok) {
+      assert.equal(abSchaltag.positions.length, 366)
+      assert.equal(abSchaltag.mode, 'unassigned')
+    }
+
+    const durchSchaltag = createDayPositions({
+      stageCount: 2,
+      startDate: '2023-03-01',
+      endDate: '2024-03-01',
+    })
+    assert.equal(durchSchaltag.ok, false)
+    if (!durchSchaltag.ok) assert.equal(durchSchaltag.message, ZEITRAUM_ZU_LANG)
+
+    const formularSchalt = neueReiseSchema.safeParse({
+      ...FORMULAR,
+      startDate: '2024-01-01',
+      endDate: '2025-01-01',
+      weitereDestinationPlaceIds: [CHIANG.id],
+      dayAllocation: { claims: [{ occurrence: 1, startDate: '2024-01-01', endDate: '2024-01-03' }] },
+    })
+    assert.equal(formularSchalt.success, false)
+    if (!formularSchalt.success) {
+      assert.equal(
+        formularSchalt.error.issues.some((issue) => issue.path[0] === 'endDate' && issue.message === ZEITRAUM_ZU_LANG),
+        true,
+      )
+    }
+    const formularSchaltGueltig = neueReiseSchema.safeParse({
+      ...FORMULAR,
+      startDate: '2024-02-29',
+      endDate: '2025-02-28',
+      weitereDestinationPlaceIds: [CHIANG.id],
+    })
+    assert.equal(formularSchaltGueltig.success, true)
   })
 })

@@ -67,7 +67,7 @@ import TripStageDayAllocation, {
 } from '@/components/trips/TripStageDayAllocation'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import { createDayPositions, tageszuordnungAngleichen } from '@/lib/trips/create-day-assignment'
-import { reisetageBauen } from '@/lib/trips/tage'
+import { ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
   CREATE_PERSISTENZ_TEMPO,
@@ -239,8 +239,13 @@ export default function TripPlanner({
     }
   }
 
+  const zeitraumZuLang = Boolean(startDate && endDate && startDate <= endDate && zeitraumIstZuLang(startDate, endDate))
+
   const zuordnungStand = React.useMemo(() => {
-    const tage = startDate && endDate && startDate <= endDate ? reisetageBauen(startDate, endDate) : []
+    const tage =
+      startDate && endDate && startDate <= endDate && !zeitraumIstZuLang(startDate, endDate)
+        ? reisetageBauen(startDate, endDate)
+        : []
     const leer = {
       zugeordnet: 0,
       ohneZiel: tage.length,
@@ -431,6 +436,11 @@ export default function TripPlanner({
       setFeldfehler(sichtbarFehler)
       return
     }
+    if (zeitraumZuLang) {
+      anvisiert.current = 'endDate'
+      setFeldfehler({ endDate: ZEITRAUM_ZU_LANG })
+      return
+    }
     if (zuordnungAktiv && zuordnungStand.fehler) {
       anvisiert.current = zuordnungStand.focusId
       setFeldfehler({ dayAllocation: zuordnungStand.fehler })
@@ -579,6 +589,11 @@ export default function TripPlanner({
 
         // Auch der Speicherfehler bleibt hier stehen: Kein `router.push` in einen
         // Arbeitsbereich, dessen Reise nirgends liegt.
+        if (fehler instanceof Error && fehler.message === ZEITRAUM_ZU_LANG) {
+          anvisiert.current = 'endDate'
+          setFeldfehler({ endDate: fehler.message })
+          return
+        }
         setMeldung(
           fehler instanceof SpeicherFehler
             ? fehler.message
@@ -840,7 +855,7 @@ export default function TripPlanner({
             id="feld-ende"
             label="Rückreise"
             className={feldReflowClass}
-            fehler={feldfehler.endDate}
+            fehler={feldfehler.endDate || (zeitraumZuLang ? ZEITRAUM_ZU_LANG : undefined)}
             icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
           >
             <input
@@ -851,8 +866,8 @@ export default function TripPlanner({
               type="date"
               min={startDate || heuteIso()}
               value={endDate}
-              aria-invalid={Boolean(feldfehler.endDate) || undefined}
-              aria-describedby={feldfehler.endDate ? feldFehlerId('feld-ende') : undefined}
+              aria-invalid={Boolean(feldfehler.endDate || zeitraumZuLang) || undefined}
+              aria-describedby={feldfehler.endDate || zeitraumZuLang ? feldFehlerId('feld-ende') : undefined}
               aria-required="true"
               disabled={laeuft}
               onChange={(ereignis) => {
@@ -860,7 +875,7 @@ export default function TripPlanner({
                 setEndDate(ereignis.target.value)
                 feldKorrigieren('endDate')
               }}
-              className={cn(fieldClass, feldfehler.endDate && FELD_FEHLER_RAHMEN)}
+              className={cn(fieldClass, (feldfehler.endDate || zeitraumZuLang) && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
             </div>
@@ -876,7 +891,8 @@ export default function TripPlanner({
               zugeordnet={zuordnungStand.zugeordnet}
               ohneZiel={zuordnungStand.ohneZiel}
               reisetage={zuordnungStand.reisetage}
-              fehler={feldfehler.dayAllocation || zuordnungStand.fehler}
+              zeitraumZuLang={zeitraumZuLang}
+              fehler={zeitraumZuLang ? undefined : feldfehler.dayAllocation || zuordnungStand.fehler}
               hinweis={zuordnungHinweis}
               disabled={laeuft}
               onAktiv={(wert) => {

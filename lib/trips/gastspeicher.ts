@@ -77,7 +77,7 @@ import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
 import { createZieleGraph } from '@/lib/trips/create-stages'
 import { rohEingabeBegrenzen } from '@/lib/trips/input-resource-bounds'
-import { reisetageBauen } from '@/lib/trips/tage'
+import { ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import { gastLoeschBasisGleich } from '@/lib/trips/trip-plan-editing-placement-recovery-1'
 import type { Ort } from '@/lib/places/domain'
@@ -788,6 +788,7 @@ export function gastreiseAnlegen(
 ): Trip {
   const grenze = rohEingabeBegrenzen(eingabe)
   if (!grenze.ok) throw new Error(grenze.meldung)
+  if (zeitraumIstZuLang(eingabe.startDate, eingabe.endDate)) throw new Error(ZEITRAUM_ZU_LANG)
 
   aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()

@@ -8,7 +8,7 @@ import {
   dayStageAssignmentModeAbleiten,
   type DayStageAssignmentMode,
 } from '@/lib/trips/day-stage-assignment'
-import { TAGE_MAXIMUM, reisetageBauen } from '@/lib/trips/tage'
+import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 
 /** Dieselbe Etappengrenze wie `GRENZEN.etappenJeReise`. */
 export const ZUORDNUNG_ANSPRUECHE_MAXIMUM = 50
@@ -80,6 +80,8 @@ export function createDayPositions(eingabe: TageszuordnungEingabe): Tageszuordnu
     return fehler('Mindestens ein bestätigtes Reiseziel ist erforderlich.')
   }
 
+  if (zeitraumIstZuLang(eingabe.startDate, eingabe.endDate)) return fehler(ZEITRAUM_ZU_LANG)
+
   const tage = reisetageBauen(eingabe.startDate, eingabe.endDate)
   const ansprueche = eingabe.allocation?.claims
   const hatAnsprueche = ansprueche != null
@@ -116,7 +118,6 @@ export function createDayPositions(eingabe: TageszuordnungEingabe): Tageszuordnu
   }
 
   if (tage.length === 0) return fehler(KEINE_TAGE)
-  if (tage.length > TAGE_MAXIMUM) return fehler(`Eine Reise trägt höchstens ${TAGE_MAXIMUM} Tage.`)
 
   const index = new Map(tage.map((tag, stelle) => [tag.dayDate, stelle]))
   const positions: Array<number | null> = tage.map(() => null)

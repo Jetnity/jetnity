@@ -219,6 +219,94 @@ export function registerMounted() {
       assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
     })
 
+    fall('367 Tage werden am Rückreisedatum abgewiesen und nicht gespeichert', async (page) => {
+      await oeffnen(page)
+      await ursprung(page)
+      await zeitraum(page, '2026-11-01', '2027-11-02')
+      await optIn(page)
+      await spanne(page, 'primary', '2026-11-01', '2026-11-03')
+      const stand = await page.locator('#zuordnung-stand').innerText()
+      assert.match(stand, /länger als erlaubt/)
+      assert.doesNotMatch(stand, /366/)
+      assert.doesNotMatch(stand, /bleibt/)
+      const feldfehler = await page.locator('#feld-ende-fehler').innerText()
+      assert.match(feldfehler, /höchstens 365 Tage/)
+      assert.equal(await page.locator('#feld-ende').getAttribute('aria-invalid'), 'true')
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.waitForFunction(() => document.activeElement?.id === 'feld-ende')
+      assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
+      await page.screenshot({ path: `${screens}/grenze-367-gast.png`, fullPage: false })
+      ruhig()
+      return { stand, fokus: 'feld-ende' }
+    })
+
+    fall('367 Tage lösen keinen Konto-Schreibaufruf aus', async (page) => {
+      await oeffnen(page, '/konto')
+      await ursprung(page)
+      await zeitraum(page, '2026-11-01', '2027-11-02')
+      await optIn(page)
+      await spanne(page, 'primary', '2026-11-01', '2026-11-03')
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.waitForFunction(() => document.activeElement?.id === 'feld-ende')
+      const aufrufe = await page.evaluate(
+        () => (window as Window & { __reiseAufrufe?: unknown[] }).__reiseAufrufe?.length ?? 0,
+      )
+      assert.equal(aufrufe, 0)
+      assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
+      assert.match(await page.locator('#feld-ende-fehler').innerText(), /höchstens 365 Tage/)
+      assert.doesNotMatch(await page.locator('#zuordnung-stand').innerText(), /366/)
+      ruhig()
+    })
+
+    fall('366 Tage bleiben vollständig und werden als Gast gespeichert', async (page) => {
+      await oeffnen(page)
+      await ursprung(page)
+      await zeitraum(page, '2026-11-01', '2027-11-01')
+      await optIn(page)
+      await spanne(page, 'primary', '2026-11-01', '2026-11-03')
+      const stand = await page.locator('#zuordnung-stand').innerText()
+      assert.match(stand, /3 Tage zugeordnet, 363 ohne Ziel\. Die Reise bleibt 366 Tage\./)
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.waitForFunction(() => window.localStorage.getItem('jetnity:reise:v3') != null)
+      const reise = await reiseLesen(page)
+      assert.equal(reise.days.length, 366)
+      assert.equal(reise.startDate, '2026-11-01')
+      assert.equal(reise.endDate, '2027-11-01')
+      assert.equal(reise.days[365]?.dayDate, '2027-11-01')
+      assert.equal(reise.days.filter((tag) => tag.stageId === reise.stages[0]?.id).length, 3)
+      assert.equal(reise.days.filter((tag) => tag.stageId == null).length, 363)
+      await page.screenshot({ path: `${screens}/grenze-366-gast.png`, fullPage: false })
+      ruhig()
+    })
+
+    fall('366 Tage erreichen das Konto mit dem vollständigen Zeitraum', async (page) => {
+      await oeffnen(page, '/konto')
+      await ursprung(page)
+      await zeitraum(page, '2026-11-01', '2027-11-01')
+      await optIn(page)
+      await spanne(page, 'primary', '2026-11-01', '2026-11-03')
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.waitForFunction(
+        () => (window as Window & { __reiseAufrufe?: unknown[] }).__reiseAufrufe?.length === 1,
+      )
+      const aufruf = await page.evaluate(
+        () =>
+          (
+            window as Window & {
+              __reiseAufrufe: { eingabe: { startDate: string; endDate: string; dayAllocation?: { claims: { occurrence: number }[] } } }[]
+            }
+          ).__reiseAufrufe[0],
+      )
+      assert.equal(aufruf.eingabe.startDate, '2026-11-01')
+      assert.equal(aufruf.eingabe.endDate, '2027-11-01')
+      assert.deepEqual(
+        aufruf.eingabe.dayAllocation?.claims.map((anspruch) => anspruch.occurrence),
+        [1],
+      )
+      assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
+      ruhig()
+    })
+
     fall('schmale, große und vergrößerte Schrift bleibt im Zuordnungsbereich', async (page) => {
       await oeffnen(page)
       await ursprung(page)

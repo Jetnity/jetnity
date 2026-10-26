@@ -7,6 +7,7 @@ import { alsNutzlast } from '@/lib/trips/abbildung'
 import { createKontoTage, createZieleGraph } from '@/lib/trips/create-stages'
 import { gastreiseAnlegen } from '@/lib/trips/gastspeicher'
 import { timelineAbleiten } from '@/lib/trips/timeline'
+import { ZEITRAUM_ZU_LANG } from '@/lib/trips/tage'
 import type { CreateTripInput } from '@/types/trips'
 
 function ort(teil: Partial<Ort> & Pick<Ort, 'id' | 'name'>): Ort {
@@ -60,9 +61,13 @@ function speicherStellen() {
       },
     },
   })
+  return ablage
 }
 
-function eingabe(claims: CreateTripInput['dayAllocation'] = VERTEILUNG): CreateTripInput {
+function eingabe(
+  claims: CreateTripInput['dayAllocation'] = VERTEILUNG,
+  endDate = ZEITRAUM.endDate,
+): CreateTripInput {
   return {
     clientRef: 'trip-bangkok-chiang-mai-phuket',
     title: 'Bangkok',
@@ -72,6 +77,7 @@ function eingabe(claims: CreateTripInput['dayAllocation'] = VERTEILUNG): CreateT
     origin: 'Zürich',
     originPlaceId: ZUERICH.id,
     ...ZEITRAUM,
+    endDate,
     travellers: 2,
     currency: 'CHF',
     budgetAmount: null,
@@ -83,8 +89,10 @@ function eingabe(claims: CreateTripInput['dayAllocation'] = VERTEILUNG): CreateT
 }
 
 describe('Guest, Konto-Nutzlast und Folgekontext derselben Erstzuordnung', () => {
+  let ablage = new Map<string, string>()
+
   beforeEach(() => {
-    speicherStellen()
+    ablage = speicherStellen()
   })
 
   test('3/4/7 bleibt auf beiden Wegen 14 Tage, ohne Hotel- oder Transferzeiten', () => {
@@ -188,5 +196,28 @@ describe('Guest, Konto-Nutzlast und Folgekontext derselben Erstzuordnung', () =>
         ),
       /Reihenfolge/,
     )
+  })
+
+  test('367 Tage werden nicht geschrieben, 366 Tage bleiben vollständig', () => {
+    assert.throws(
+      () =>
+        gastreiseAnlegen(
+          eingabe({ claims: [{ occurrence: 1, startDate: '2026-11-01', endDate: '2026-11-03' }] }, '2027-11-02'),
+          { ziel: BANGKOK, abreise: ZUERICH, weitereZiele: [CHIANG, PHUKET] },
+        ),
+      new RegExp(ZEITRAUM_ZU_LANG),
+    )
+    assert.equal(ablage.size, 0)
+
+    const reise = gastreiseAnlegen(
+      eingabe({ claims: [{ occurrence: 1, startDate: '2026-11-01', endDate: '2026-11-03' }] }, '2027-11-01'),
+      { ziel: BANGKOK, abreise: ZUERICH, weitereZiele: [CHIANG, PHUKET] },
+    )
+    assert.equal(reise.days.length, 366)
+    assert.equal(reise.startDate, '2026-11-01')
+    assert.equal(reise.endDate, '2027-11-01')
+    assert.equal(reise.days[365]?.dayDate, '2027-11-01')
+    assert.equal(reise.days.filter((tag) => tag.stageId === reise.stages[0]?.id).length, 3)
+    assert.equal(reise.days.filter((tag) => tag.stageId == null).length, 363)
   })
 })
