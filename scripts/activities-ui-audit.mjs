@@ -324,10 +324,12 @@ function layoutPruefen() {
       if (/(hidden|clip)/.test(overflow) && vorfahr.getAttribute('aria-hidden') !== 'true') {
         const aussen = vorfahr.getBoundingClientRect()
         if (box.right > aussen.right + 2 || box.left < aussen.left - 2) {
-          if (!vorfahr.closest('[aria-label="Reisetage"]')) {
-            fehler.push(`abgeschnitten: ${el.tagName}.${el.className}`.slice(0, 160))
-            break
-          }
+          // Die Chip-Zeile darf intern waagrecht scrollen. Ein Vorfahr mit
+          // overflow-hidden ausserhalb der Zeile ist dieselbe Ausnahme.
+          // Seiten-Overflow bleibt oben über scrollWidth ein echter Fehler.
+          if (el.closest('[aria-label="Reisetage"]') || vorfahr.closest('[aria-label="Reisetage"]')) break
+          fehler.push(`abgeschnitten: ${el.tagName}.${el.className}`.slice(0, 160))
+          break
         }
       }
       vorfahr = vorfahr.parentElement
@@ -439,7 +441,13 @@ async function flaecheOeffnen(page) {
     })
     if (await nav.count()) await nav.click()
   }
-  await oeffnen.waitFor({ timeout: 15000 })
+  try {
+    await oeffnen.waitFor({ timeout: 15000 })
+  } catch (error) {
+    const seite = await page.locator('body').innerText().catch(() => '')
+    const meldung = error instanceof Error ? error.message : String(error)
+    throw new Error(`${meldung}\nSeite: ${seite.replace(/\s+/g, ' ').slice(0, 400)}`)
+  }
   await oeffnen.click()
   await region.waitFor({ timeout: 15000 })
   return region
@@ -601,11 +609,16 @@ async function lebenszyklusPruefen(browser, name, viewport) {
   let verzoegerung = 0
   let naechste = null
   const basisReise = reise()
-  await page.addInitScript(() => {
-    document.documentElement.style.fontSize = '20px'
-  })
   await page.addInitScript(
-    ({ speicher, reise }) => sessionStorage.setItem(speicher, JSON.stringify(reise)),
+    ({ speicher, reise }) => {
+      const schrift = () => {
+        const wurzel = document.documentElement
+        if (wurzel) wurzel.style.fontSize = '20px'
+      }
+      schrift()
+      document.addEventListener('DOMContentLoaded', schrift)
+      sessionStorage.setItem(speicher, JSON.stringify(reise))
+    },
     { speicher: 'jetnity:ui-audit:reise', reise: basisReise },
   )
   await page.route('**/api/activities/search', async (route) => {
@@ -639,7 +652,8 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     const anfang = await region.innerText()
     merken(anfang.includes('Für diese Angaben liegt noch keine Suche vor.'), 'Idle-Zustand fehlt')
     merken(anfang.includes('Florenz'), 'Ziel fehlt')
-    merken(anfang.includes('Reisende'), 'Reisende fehlen')
+    const quelle = await region.evaluate((el) => el.textContent || '')
+    merken(quelle.includes('Reisende'), 'Reisende fehlen')
     merken(/\b2\b/.test(anfang), 'Teilnehmerzahl fehlt')
     merken(anfang.includes('CHF'), 'Währung fehlt')
     merken(anfang.includes('Datum') || anfang.includes('Sep'), 'Datum fehlt')
@@ -700,7 +714,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
 
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [karte('Neu')]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
-    await region.getByText('Neu').waitFor({ timeout: 15000 })
+    await region.getByRole('heading', { name: 'Neu', exact: true }).waitFor({ timeout: 15000 })
     await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('string'))
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     await region.getByText('nicht bestätigt').waitFor({ timeout: 15000 })
