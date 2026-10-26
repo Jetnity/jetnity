@@ -7,13 +7,8 @@ import { redirect } from 'next/navigation'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { requireAdminPage } from '@/lib/auth/admin-guard'
-import {
-  assignableRoles,
-  canManageUsers,
-  isAccountStatus,
-  parseRole,
-  DEFAULT_ROLE,
-} from '@/lib/auth/roles'
+import { assignableRoles, canManageUsers } from '@/lib/auth/roles'
+import { displayedStoredRole, displayedStoredStatus, displayedStoredUserId } from '@/lib/admin/user-row-truth'
 import UsersTable, { type UserRow } from '@/components/admin/UsersTable'
 import { ausProblem } from '@/lib/admin/ladezustand'
 import { profilErstellt } from '@/lib/admin/profil-erstellt'
@@ -136,11 +131,11 @@ export default async function UsersPage({
   }
 
   const users: UserRow[] = (result.rows as ProfileRow[]).map((r) => ({
-    user_id: r?.user_id ?? '',
+    user_id: displayedStoredUserId(r?.user_id),
     email: r?.email ?? null,
     display_name: r?.display_name ?? null,
-    role: parseRole(r?.role) ?? DEFAULT_ROLE,
-    status: isAccountStatus(r?.status) ? r.status : 'active',
+    role: displayedStoredRole(r?.role),
+    status: displayedStoredStatus(r?.status),
     created_at: profilErstellt(r?.created_at),
     last_seen_at: r?.last_seen_at ?? null,
   }))

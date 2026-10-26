@@ -505,4 +505,16 @@ export type CreateTripInput = {
   pace: TripPace
   interests: TripInterest[]
   travelWish: string | null
+  /**
+   * Optionale Erstzuordnung vorhandener Kalendertage auf Zielvorkommen.
+   * Fehlend lässt mehrere Ziele ohne Tageszuordnung.
+   * `occurrence` ist die 1-basierte Position in der bestätigten Zielreihenfolge.
+   */
+  dayAllocation?: {
+    claims: Array<{
+      occurrence: number
+      startDate: string
+      endDate: string
+    }>
+  } | null
 }

@@ -20,6 +20,23 @@ export type Reisetag = {
 /** Obergrenze wie `trip_days_index_bereich` in der Datenbank. */
 export const TAGE_MAXIMUM = 366
 
+/**
+ * Höchste erlaubte Differenz von Abreise zu Rückreise.
+ *
+ * 366 Kalendertage sind eingeschlossen erlaubt. Das ist dieselbe Grenze wie
+ * `GRENZEN.reisedauerInTagen` im Leseschema. Ein längerer Zeitraum wird nicht
+ * auf 366 Tage gekürzt.
+ */
+export const REISEDAUER_MAXIMUM = TAGE_MAXIMUM - 1
+
+/**
+ * Sichtbarer Satz nur für die Erstellung.
+ *
+ * Er zählt die eingeschlossenen Kalendertage. Der gespeicherte Lesesatz bleibt
+ * „Eine Reise dauert höchstens 365 Tage“ und wird hier nicht formuliert.
+ */
+export const ZEITRAUM_ZU_LANG = `Eine Reise umfasst höchstens ${TAGE_MAXIMUM} Kalendertage, einschließlich Abreise und Rückreise.`
+
 const EIN_TAG = 86_400_000
 
 /** Verschiebt ein Kalenderdatum um ganze Tage. `null` bleibt `null`. */
@@ -30,6 +47,21 @@ export function datumVerschieben(iso: string | null, delta: number): string | nu
   return new Date(zeit + delta * EIN_TAG).toISOString().slice(0, 10)
 }
 
+/** Kalendertage zwischen Abreise und Rückreise, ohne den Abreisetag selbst. */
+function zeitraumDauer(startDate: string, endDate: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return null
+  const start = Date.parse(`${startDate}T00:00:00Z`)
+  const ende = Date.parse(`${endDate}T00:00:00Z`)
+  if (Number.isNaN(start) || Number.isNaN(ende)) return null
+  return Math.round((ende - start) / EIN_TAG)
+}
+
+/** Wahr, wenn der Zeitraum mehr als 366 eingeschlossene Kalendertage hätte. */
+export function zeitraumIstZuLang(startDate: string, endDate: string): boolean {
+  const dauer = zeitraumDauer(startDate, endDate)
+  return dauer != null && dauer > REISEDAUER_MAXIMUM
+}
+
 /**
  * Die Tage zwischen zwei Daten, beide eingeschlossen.
  *
@@ -37,9 +69,9 @@ export function datumVerschieben(iso: string | null, delta: number): string | nu
  * Zeitumstellung ein Tag aus oder doppelt an – für eine Reise, die in der
  * Sommerzeit beginnt und in der Winterzeit endet, ist das der Normalfall.
  *
- * Ein unmöglicher oder umgekehrter Zeitraum ergibt eine leere Liste. Ein Wurf
- * wäre hier falsch: Die Prüfung der Eingabe steht in `lib/trips/schema.ts`, und
- * diese Funktion soll sie nicht ein zweites Mal formulieren.
+ * Ein unmöglicher oder umgekehrter Zeitraum ergibt eine leere Liste. Die
+ * Schleife stoppt bei 366 Tagen. Ein längerer Zeitraum muss vorher abgewiesen
+ * werden; diese Funktion kürzt ihn sonst still.
  */
 export function reisetageBauen(startDate: string, endDate: string): Reisetag[] {
   const start = Date.parse(`${startDate}T00:00:00Z`)

@@ -1,0 +1,98 @@
+.tageszuordnung {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tageszuordnung > label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tageszuordnung > label > span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.tageszuordnung-liste {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tageszuordnung fieldset {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.tageszuordnung legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tageszuordnung-zeile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tageszuordnung input[type='date'] {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  appearance: none;
+}
+
+.tageszuordnung input[type='date']::-webkit-datetime-edit,
+.tageszuordnung input[type='date']::-webkit-datetime-edit-fields-wrapper {
+  min-width: 0;
+  padding: 0;
+}
+
+.tageszuordnung input[type='date']::-webkit-calendar-picker-indicator {
+  margin: 0;
+}
+
+.tageszuordnung-feld {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tageszuordnung-feld span,
+.tageszuordnung-ziel {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 40rem) {
+  .tageszuordnung-zeile {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
