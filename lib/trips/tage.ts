@@ -29,7 +29,13 @@ export const TAGE_MAXIMUM = 366
  */
 export const REISEDAUER_MAXIMUM = TAGE_MAXIMUM - 1
 
-export const ZEITRAUM_ZU_LANG = `Eine Reise dauert höchstens ${REISEDAUER_MAXIMUM} Tage`
+/**
+ * Sichtbarer Satz nur für die Erstellung.
+ *
+ * Er zählt die eingeschlossenen Kalendertage. Der gespeicherte Lesesatz bleibt
+ * „Eine Reise dauert höchstens 365 Tage“ und wird hier nicht formuliert.
+ */
+export const ZEITRAUM_ZU_LANG = `Eine Reise umfasst höchstens ${TAGE_MAXIMUM} Kalendertage, einschließlich Abreise und Rückreise.`
 
 const EIN_TAG = 86_400_000
 

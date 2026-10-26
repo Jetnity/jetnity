@@ -230,14 +230,15 @@ export function registerMounted() {
       assert.doesNotMatch(stand, /366/)
       assert.doesNotMatch(stand, /bleibt/)
       const feldfehler = await page.locator('#feld-ende-fehler').innerText()
-      assert.match(feldfehler, /höchstens 365 Tage/)
+      assert.match(feldfehler, /höchstens 366 Kalendertage, einschließlich Abreise und Rückreise/)
+      assert.doesNotMatch(feldfehler, /365 Tage/)
       assert.equal(await page.locator('#feld-ende').getAttribute('aria-invalid'), 'true')
       await page.getByRole('button', { name: 'Reise erstellen' }).click()
       await page.waitForFunction(() => document.activeElement?.id === 'feld-ende')
       assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
       await page.screenshot({ path: `${screens}/grenze-367-gast.png`, fullPage: false })
       ruhig()
-      return { stand, fokus: 'feld-ende' }
+      return { stand, feldfehler, fokus: 'feld-ende' }
     })
 
     fall('367 Tage lösen keinen Konto-Schreibaufruf aus', async (page) => {
@@ -253,7 +254,9 @@ export function registerMounted() {
       )
       assert.equal(aufrufe, 0)
       assert.equal(await page.evaluate(() => window.localStorage.getItem('jetnity:reise:v3')), null)
-      assert.match(await page.locator('#feld-ende-fehler').innerText(), /höchstens 365 Tage/)
+      const kontoFehler = await page.locator('#feld-ende-fehler').innerText()
+      assert.match(kontoFehler, /höchstens 366 Kalendertage, einschließlich Abreise und Rückreise/)
+      assert.doesNotMatch(kontoFehler, /365 Tage/)
       assert.doesNotMatch(await page.locator('#zuordnung-stand').innerText(), /366/)
       ruhig()
     })
@@ -266,6 +269,7 @@ export function registerMounted() {
       await spanne(page, 'primary', '2026-11-01', '2026-11-03')
       const stand = await page.locator('#zuordnung-stand').innerText()
       assert.match(stand, /3 Tage zugeordnet, 363 ohne Ziel\. Die Reise bleibt 366 Tage\./)
+      assert.equal(await page.locator('#feld-ende-fehler').count(), 0)
       await page.getByRole('button', { name: 'Reise erstellen' }).click()
       await page.waitForFunction(() => window.localStorage.getItem('jetnity:reise:v3') != null)
       const reise = await reiseLesen(page)

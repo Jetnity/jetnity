@@ -53,6 +53,10 @@ describe('Erstzuordnung vorhandener Kalendertage', () => {
     assert.equal(ZUORDNUNG_ANSPRUECHE_MAXIMUM, GRENZEN.etappenJeReise)
     assert.equal(TAGE_MAXIMUM, 366)
     assert.equal(REISEDAUER_MAXIMUM, GRENZEN.reisedauerInTagen)
+    assert.equal(
+      ZEITRAUM_ZU_LANG,
+      'Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.',
+    )
   })
 
   test('ohne Opt-in bleiben mehrere Ziele unzugeordnet', () => {
