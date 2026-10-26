@@ -32,3 +32,7 @@ Reviewed head `425ff6270d12de981b3b4c5b92af36f06a8ec6f1`. Same writer, same bran
 - R1.2: a later accepted read revisits a confirmed operation. A matching row stays current. A different or missing row becomes a held historical note and does not send again. A later failed or invalid read does not replace that earlier observation with a new role or status.
 - R1.3: confirmation cleanup restores the row trigger only while focus still belongs to the dialog, the opening trigger, or the menu. A later search field, and the scheduled focus callback, stay where the user put them. Escape still returns to the trigger.
 - Witness: only `editable-lower-rank-records-one-call` in `scripts/admin-user-directory-completion-1/verify.mjs`. It now asserts no action before the new confirmation, then confirms, then keeps the single `setUserRole` assertion. No other witness, fixture or navigation assertion was rewritten.
+
+## R1.3 supplement — inline confirmation
+
+The confirmation stays in the row and the search field and a second target stay usable. It is a named `region`, not a modal dialog. It has no `aria-modal` and no Tab trap. Escape still cancels the confirmation that has focus and restores that row's trigger. A second confirmation can be open at the same time. This is component semantics and keyboard proof only. No screen-reader run is claimed. The UUID-versus-safe-character note stays a non-blocking P3 qualification: no server, SQL or Auth change.

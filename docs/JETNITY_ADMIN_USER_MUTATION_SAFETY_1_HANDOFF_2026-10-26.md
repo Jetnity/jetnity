@@ -24,11 +24,13 @@
 - A later failed read after confirmation does not invent a new role or status.
 - Removing a confirmation because the account left an accepted list does not pull focus out of the search field. Escape still returns to the row trigger.
 - `editable-lower-rank-records-one-call` now waits for the confirmation control, asserts zero calls before it, then asserts one `setUserRole`. That is the only edit in `scripts/admin-user-directory-completion-1/verify.mjs`.
+- R1.3 supplement: the confirmation is an inline named region. It does not set `aria-modal` and does not trap Tab. Search input and a second target confirmation stay available. Escape inside one confirmation cancels that confirmation and restores its trigger. Mounted proof checks keyboard movement, two regions, zero `aria-modal="true"` and zero `inert`. No screen-reader run. The UUID character-class note stays a non-blocking P3 with no server, SQL or Auth edit.
 
 ## Changed files
 
 - `components/admin/UsersTable.tsx`
 - `components/admin/users/UserMutationConfirmation.tsx`
+- `components/admin/users/user-mutation-confirmation.css.ts`
 - `components/admin/users/user-mutation-copy.ts`
 - `lib/admin/user-mutation-lifecycle.ts` and `.test.ts`
 - `scripts/admin-user-mutation-safety-1/verify.mjs`
@@ -40,7 +42,7 @@ Not changed: `actions.ts`, `lib/auth/**`, directory query/navigation modules, mi
 
 ## Checks
 
-Node `v22.23.4`. Mounted mutation harness: 27 cases, all ok, external network aborted. R107 directory harness: 44 cases, all ok, including `editable-lower-rank-records-one-call`. `tsc` exit 0. `npm run build` exit 0. Owned ESLint exit 0. Five hygiene checks exit 0. `npm test`: 7270 tests, 7254 pass, 11 fail on missing local `initdb`, 5 skip. No user-mutation failure.
+Node `v22.23.4`. Mounted mutation harness: 28 cases, all ok, external network aborted, including the inline non-modal case. R107 directory harness: 44 cases, all ok, including `editable-lower-rank-records-one-call`. `tsc` exit 0. Owned ESLint exit 0. `npm run build` exit 0 on this supplement. Earlier `npm test` on the R1 head: 7270 tests, 7254 pass, 11 fail on missing local `initdb`, 5 skip. This supplement does not change that suite.
 
 No hosted SQL, no real account, no persistence or Production claim.
 

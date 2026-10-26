@@ -18,11 +18,11 @@ None found. Server actions, capability checks and the directory read path were n
 2. Repository `npm test` cannot run the native PostgreSQL 16 proofs here when `initdb` is missing. That is an environment limit, not a mutation regression. The REPORT records the actual count from this delivery.
 3. Full `npm run lint` was not re-run as a repository-wide gate. Owned files lint clean. The previous full lint failure was the existing warning backlog.
 
-R1.1, R1.2 and R1.3 are addressed in the lifecycle, copy, table and confirmation focus. The narrow directory witness now confirms before the single call.
+R1.1, R1.2 and R1.3 are addressed in the lifecycle, copy, table and confirmation focus. The narrow directory witness now confirms before the single call. The R1.3 supplement removes the false modal claim: the confirmation is an inline named region, Tab can leave it, and two confirmations can be open together. That proof is keyboard and DOM semantics only.
 
 ## P3
 
-The confirmation sits in the row flow rather than a viewport-fixed modal. Mounted overflow checks at 320, 390, 768 and 1280 passed, including 32px root font.
+The confirmation sits in the row. Mounted overflow checks at 320, 390, 768 and 1280 passed, including 32px root font. `profiles.user_id` is UUID-typed. The client safe-character check is a qualification, not an authorization bypass. No server, SQL or Auth change.
 
 ## Preserved
 

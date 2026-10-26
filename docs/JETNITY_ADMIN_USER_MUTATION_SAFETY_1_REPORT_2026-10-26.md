@@ -29,6 +29,8 @@ A failed or invalid read after a fulfilled action keeps the operation unconfirme
 
 `editable-lower-rank-records-one-call` asserts no `setUserRole` before confirmation and one call after it. The other 43 R107 witnesses were re-run and not rewritten.
 
+The confirmation is now an inline `region` with its existing name and description. `aria-modal` and the Tab trap are gone. A mounted case types in search, leaves the region with Tab, opens a second confirmation, and checks zero `aria-modal="true"` nodes and zero `inert` nodes. Escape in the search field leaves the confirmation open. Escape inside Ada's confirmation restores Ada's trigger and leaves Bao's confirmation open. No screen-reader run. No server, SQL or Auth change for the non-blocking UUID qualification.
+
 Mounted mutation harness: 27/27 ok. R107 directory harness: 44/44 ok. `npx tsc -p tsconfig.json --noEmit`: exit 0. `npm run build`: exit 0. Owned ESLint: exit 0. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: exit 0. The schema check still prints the pre-existing LOCAL/UNAPPLIED RPC notes.
 
 `npm test`: 7270 tests, 7254 pass, 11 fail, 5 skip. The 11 failures are `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT` in unrelated native PostgreSQL proofs. No user-mutation test failed.

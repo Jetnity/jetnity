@@ -125,7 +125,7 @@ async function openMenu(page, name) {
 async function chooseRole(page, name, label) {
   await openMenu(page, name)
   await page.getByRole('menuitem', { name: label }).click()
-  await page.getByRole('dialog').waitFor()
+  await page.getByRole('region', { name: new RegExp(`Änderung für ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} bestätigen`) }).waitFor()
 }
 
 async function confirm(page) {
@@ -260,7 +260,7 @@ try {
     await confirm(page)
     await openMenu(page, 'Bao Example')
     await page.getByRole('menuitem', { name: 'Sperren' }).click()
-    await page.getByRole('dialog').waitFor()
+    await page.getByRole('region', { name: /Änderung für Bao Example bestätigen/ }).waitFor()
     await confirm(page)
     await page.waitForFunction(() => window.__mutation.calls().length === 2)
     await page.evaluate(() => window.__mutation.releaseHang())
@@ -505,11 +505,56 @@ try {
     await search.press('d')
     await search.press('a')
     await page.evaluate((next) => window.__mutation.deliver({ rows: [next], mode: 'ready' }), bao)
-    await page.waitForFunction(() => document.querySelector('[role="dialog"]') === null)
+    await page.waitForFunction(() => document.querySelector('[data-mutation-confirmation]') === null)
     assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Nutzer nach Name oder E-Mail suchen')
     assert.equal(await search.inputValue(), 'ada')
     assert.deepEqual(await calls(page), [])
     return { calls: 0 }
+  })
+
+  await fall('inline-confirmations-are-not-modal', 'page=1', { width: 1280, height: 800 }, async (page) => {
+    await chooseRole(page, 'Ada Example', 'Rolle: Creator')
+    const search = page.locator('input[aria-label="Nutzer nach Name oder E-Mail suchen"]')
+    await page.locator('[data-mutation-subject="synthetic-ada"] [data-mutation-cancel]').focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.locator('[data-mutation-subject="synthetic-ada"] [data-mutation-confirm]').focus()
+    await page.keyboard.press('Tab')
+    const leftByTab = await page.evaluate(() => {
+      const active = document.activeElement
+      const region = document.querySelector('[data-mutation-subject="synthetic-ada"]')
+      return Boolean(active && region && !region.contains(active))
+    })
+    assert.equal(leftByTab, true)
+    await search.focus()
+    await page.keyboard.type('bao')
+    await page.keyboard.press('Escape')
+    assert.equal(await search.inputValue(), 'bao')
+    assert.equal(await page.locator('[data-mutation-confirmation]').count(), 1)
+    await chooseRole(page, 'Bao Example', 'Rolle: Creator')
+    const surface = await page.evaluate(() => ({
+      modal: document.querySelectorAll('[aria-modal="true"]').length,
+      inert: document.querySelectorAll('[inert]').length,
+      regions: [...document.querySelectorAll('[data-mutation-confirmation]')].map((node) => ({
+        role: node.getAttribute('role'),
+        modal: node.getAttribute('aria-modal'),
+        subject: node.getAttribute('data-mutation-subject'),
+        name: node.getAttribute('aria-labelledby') ? document.getElementById(node.getAttribute('aria-labelledby'))?.textContent : '',
+      })),
+    }))
+    assert.equal(surface.modal, 0)
+    assert.equal(surface.inert, 0)
+    assert.equal(surface.regions.length, 2)
+    assert.deepEqual(surface.regions.map((item) => item.role), ['region', 'region'])
+    assert.deepEqual(surface.regions.map((item) => item.modal), [null, null])
+    assert.match(surface.regions[0]?.name ?? '', /Ada Example/)
+    assert.match(surface.regions[1]?.name ?? '', /Bao Example/)
+    await page.locator('[data-mutation-subject="synthetic-ada"] [data-mutation-cancel]').focus()
+    await page.keyboard.press('Escape')
+    await page.waitForFunction(() => document.querySelector('[data-mutation-subject="synthetic-ada"]') === null)
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Aktionen für Ada Example')
+    assert.equal(await page.locator('[data-mutation-subject="synthetic-bao"]').count(), 1)
+    assert.deepEqual(await calls(page), [])
+    return { regions: 2, modal: 0 }
   })
 
   await fall('keyboard-focus-cancel-restores-trigger', 'page=1', { width: 1280, height: 800 }, async (page) => {
@@ -518,10 +563,10 @@ try {
     await page.keyboard.press('Enter')
     await page.getByRole('menuitem', { name: 'Rolle: Creator' }).waitFor()
     await page.keyboard.press('Enter')
-    await page.getByRole('dialog').waitFor()
+    await page.getByRole('region', { name: /Änderung für Ada Example bestätigen/ }).waitFor()
     await page.waitForFunction(() => document.activeElement?.getAttribute('data-mutation-cancel') === 'true')
     await page.keyboard.press('Escape')
-    await page.waitForFunction(() => document.querySelector('[role="dialog"]') === null)
+    await page.waitForFunction(() => document.querySelector('[data-mutation-confirmation]') === null)
     await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Aktionen für Ada Example')
     assert.deepEqual(await calls(page), [])
     return { calls: 0 }
@@ -569,7 +614,7 @@ try {
       await chooseRole(page, longName, 'Rolle: Creator')
       const box = await page.evaluate(() => {
         const root = document.querySelector('[data-users-directory-root]')
-        const dialog = document.querySelector('[role="dialog"]')
+        const dialog = document.querySelector('[data-mutation-confirmation]')
         return {
           root: root ? root.scrollWidth <= root.clientWidth + 1 : false,
           dialog: dialog ? dialog.scrollWidth <= (root?.clientWidth ?? 0) + 1 : false,

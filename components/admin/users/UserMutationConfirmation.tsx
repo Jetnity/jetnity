@@ -22,12 +22,12 @@ export function UserMutationConfirmation({
 }) {
   const titleId = React.useId()
   const bodyId = React.useId()
-  const dialogRef = React.useRef<HTMLDivElement>(null)
+  const panelRef = React.useRef<HTMLDivElement>(null)
   const cancelRef = React.useRef<HTMLButtonElement>(null)
   const confirmRef = React.useRef<HTMLButtonElement>(null)
 
   React.useEffect(() => {
-    const dialog = dialogRef.current
+    const panel = panelRef.current
     const previous = document.querySelector<HTMLElement>(`[data-mutation-trigger="${CSS.escape(triggerId)}"]`)
     let frame = 0
     // Menü und Zeilenknopf gehören zur Öffnung. Suche und andere spätere
@@ -35,7 +35,7 @@ export function UserMutationConfirmation({
     const heldByUser = (node: Node | null) => {
       if (!(node instanceof Element)) return false
       if (node === document.body || node === document.documentElement) return false
-      if (dialog?.contains(node)) return false
+      if (panel?.contains(node)) return false
       if (previous && (node === previous || previous.contains(node))) return false
       if (node.closest('[role="menu"]')) return false
       return true
@@ -60,40 +60,23 @@ export function UserMutationConfirmation({
   }, [triggerId])
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      event.stopPropagation()
-      onCancel()
-      return
-    }
-    if (event.key !== 'Tab') return
-    const nodes = [cancelRef.current, confirmRef.current].filter((node): node is HTMLButtonElement => {
-      if (!node) return false
-      return !node.disabled
-    })
-    if (nodes.length === 0) return
-    const first = nodes[0]
-    const last = nodes[nodes.length - 1]
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault()
-      last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault()
-      first.focus()
-    }
+    if (event.key !== 'Escape') return
+    event.preventDefault()
+    event.stopPropagation()
+    onCancel()
   }
 
   return (
     <div className="user-mutation-confirmation" onKeyDown={onKeyDown}>
       <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
+        ref={panelRef}
+        role="region"
         aria-labelledby={titleId}
         aria-describedby={bodyId}
-        tabIndex={-1}
+        data-mutation-confirmation="true"
+        data-mutation-subject={subject.userId}
         data-hold={hold ?? 'none'}
-        className="user-mutation-confirmation__dialog"
+        className="user-mutation-confirmation__panel"
       >
         <h2 id={titleId} className="user-mutation-confirmation__title">
           {confirmationTitle(subject)}

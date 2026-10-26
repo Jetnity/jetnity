@@ -7,7 +7,7 @@ export const USER_MUTATION_CONFIRMATION_CSS = `
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-.user-mutation-confirmation__dialog,
+.user-mutation-confirmation__panel,
 .user-mutation-feedback {
   box-sizing: border-box;
   max-width: 100%;

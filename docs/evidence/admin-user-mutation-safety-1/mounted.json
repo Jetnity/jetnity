@@ -108,6 +108,12 @@
       "calls": 0
     },
     {
+      "name": "inline-confirmations-are-not-modal",
+      "ok": true,
+      "regions": 2,
+      "modal": 0
+    },
+    {
       "name": "keyboard-focus-cancel-restores-trigger",
       "ok": true,
       "calls": 0
