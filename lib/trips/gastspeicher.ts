@@ -76,6 +76,7 @@ import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
 import { createZieleGraph } from '@/lib/trips/create-stages'
+import { rohEingabeBegrenzen } from '@/lib/trips/input-resource-bounds'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import { gastLoeschBasisGleich } from '@/lib/trips/trip-plan-editing-placement-recovery-1'
@@ -785,6 +786,9 @@ export function gastreiseAnlegen(
   eingabe: CreateTripInput,
   bestaetigt?: { ziel: Ort; abreise: Ort; weitereZiele?: Ort[] },
 ): Trip {
+  const grenze = rohEingabeBegrenzen(eingabe)
+  if (!grenze.ok) throw new Error(grenze.meldung)
+
   aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()
 
@@ -808,11 +812,18 @@ export function gastreiseAnlegen(
   const destinations = bestaetigt
     ? [bestaetigt.ziel, ...(bestaetigt.weitereZiele ?? [])]
     : null
+  if ((eingabe.dayAllocation?.claims.length ?? 0) > 0 && !destinations) {
+    throw new Error('Die Tageszuordnung braucht bestätigte Reiseziele.')
+  }
   const graph = destinations
-    ? createZieleGraph(destinations, {
-        startDate: eingabe.startDate,
-        endDate: eingabe.endDate,
-      })
+    ? createZieleGraph(
+        destinations,
+        {
+          startDate: eingabe.startDate,
+          endDate: eingabe.endDate,
+        },
+        eingabe.dayAllocation ?? null,
+      )
     : null
 
   const stages = graph
@@ -846,14 +857,19 @@ export function gastreiseAnlegen(
 
   const ersteStageId = stages[0]?.id ?? null
   const days = graph
-    ? reisetageBauen(eingabe.startDate, eingabe.endDate).map((tag) => ({
-        id: kennungErzeugen('day'),
-        stageId: graph.einzelziel ? ersteStageId : null,
-        dayIndex: tag.dayIndex,
-        dayDate: tag.dayDate,
-        title: null,
-        items: [],
-      }))
+    ? reisetageBauen(eingabe.startDate, eingabe.endDate).map((tag, index) => {
+        const position = graph.dayStagePositions[index]
+        const stageId =
+          position != null ? (stages[position - 1]?.id ?? null) : null
+        return {
+          id: kennungErzeugen('day'),
+          stageId,
+          dayIndex: tag.dayIndex,
+          dayDate: tag.dayDate,
+          title: null,
+          items: [],
+        }
+      })
     : tageMitKennung(eingabe.startDate, eingabe.endDate, ersteStageId)
 
   const entwurf = {
