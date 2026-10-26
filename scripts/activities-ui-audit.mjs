@@ -1001,7 +1001,20 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('button', { name: 'In die Reise', exact: true }).click()
     await region.getByText('3 Punkte').waitFor({ timeout: 15000 })
     merken((await region.innerText()).includes('18:00'), 'unbestätigte 18:00-Zeit fehlt')
-    merken(!(await region.innerText()).includes('GastOffen'), 'unbestätigte Gaständerung lässt die Karte stehen')
+    await region
+      .locator('[role="status"]')
+      .filter({ hasText: 'GastOffen' })
+      .first()
+      .waitFor({ timeout: 15000 })
+    merken(
+      (await region.getByRole('heading', { name: 'GastOffen', exact: true }).count()) === 0,
+      'unbestätigte Gaständerung lässt die Karte stehen',
+    )
+    const gastOffenStatus = await region.locator('[role="status"]').allTextContents()
+    merken(
+      gastOffenStatus.some((text) => text.includes('GastOffen') && text.includes('Die Übernahme ist nicht bestätigt.')),
+      'unbestätigte Gaständerung nennt die Aktivität auf der untätigen Fläche nicht',
+    )
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [mitRang(offenBasis, 'ueberschneidung')]) }
     await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
     await region.getByText('Zeitkonflikt').waitFor({ timeout: 15000 })
