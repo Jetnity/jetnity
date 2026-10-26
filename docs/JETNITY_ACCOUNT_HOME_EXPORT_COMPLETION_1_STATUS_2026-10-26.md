@@ -90,6 +90,18 @@ Correction `273791e37ca02f3705910d2d4f3df3ea0b1d0a0c`, tree `31457f07ab1eeeced44
 
 The R2 screenshot of the overlap is `home-1440-titel-116-200-prozent-before-r3.png`. The rebuilt CSS is 101,250 characters. At 1440 and a 32px root the same 116-character title is 7 lines. Each word in the next-trip label, status, title, origin and dates is one rectangle, and none of those rectangles meet an action. The same check passes at 320, 390, 768 and 1440, at 16px and 32px. At 320 and 32px the title uses 13 lines, one whole word per line, not a character split. Enter requests local `/reisen/r0` and `/reisen` once each. No request leaves `127.0.0.1`. The 215-character fixture stays labelled stress. Export counts stay 21 requests, 3 downloads, 3 revokes, 0 page errors.
 
+## R4
+
+Reviewed head `8d1a59e40f78afb8d74edc25a7c6b24323dd9275`, tree `376192f5a3ccd98328a2bd8f984f2f4964c3da0f`. Stacking removed the overlap. At 320×900 and a 32px root the rem insets still left the title 222px wide. On a wide system font each “Lissabon” broke, and “fortsetzen” broke inside the primary action. This environment’s Chromium renders Noto Sans Bold, which kept the title words whole and still broke “fortsetzen”.
+
+Below `sm`, the card uses `px-[16px]` and the actions use `px-[12px]` and `gap-[8px]`. From `sm` up the card returns to `p-8`. The stack, the font sizes, the full title and both destinations stay. Words use `break-normal`. Nothing is clipped. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
+
+Correction `41b2ff903be2687f561a6bf191d3da991753fd96`, tree `ebbfdc729e92d9b048e9a2228857bc2ccc7a7bda`, parent `8d1a59e40f78afb8d74edc25a7c6b24323dd9275`. At that commit the branch is 18 ahead and 0 behind accepted main. The documentation commit on top is the delivery head named in the PR author block.
+
+The failed 8d1 screenshot is `home-320-titel-116-200-prozent-before-r4.png` (320×7426). The rebuilt CSS is 101,303 characters. This session’s rendered family is the project system stack, and CDP reports `Noto Sans (Fontations)/NotoSans-Bold/custom:false`. At 320/32 the title is 48px, weight 600, clientWidth 286, and 13 lines. At 1440/16 the title is 30px and clientWidth 718. Observed title lines: 320/16px:7, 320/32px:13, 390/16px:5, 390/32px:13, 768/16px:3, 768/32px:7, 1440/16px:3, 1440/32px:7. The bound is 13 intact lines for this 13-word title. The title string stays 116 characters; a different line count is wrapping, not missing text. Action words are checked too. Enter still requests local `/reisen/r0` and `/reisen` once each. The 215-character fixture stays labelled stress. Export counts stay 21 requests, 3 downloads, 3 revokes, 0 page errors.
+
+A separate local measurement set `font-family` to DejaVu Sans on the mounted card only. It is not the product font and not this audit’s rendered font. DejaVu Sans Bold draws “Lissabon” at 226.56px and “fortsetzen” at 162.88px. The same card’s title box is 286px and the action label box is 222px, so those two words fit there as well.
+
 ## Stop
 
 Independent re-gating of the pushed head. Cursor does not mark Ready and does not merge. No follow-up slice. CI and Preview for this head are pending.

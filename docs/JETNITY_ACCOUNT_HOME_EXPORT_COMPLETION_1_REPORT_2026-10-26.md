@@ -93,6 +93,16 @@ The card is now one column. The actions wrap under the text and size to their la
 
 The mounted audit measures text rectangles for those five fields and both actions. A word that breaks across rectangles fails. A rectangle that meets an action fails. At 1440 and 32px the 116-character title is 7 lines. At 320 and 32px it is 13 lines, one intact “Lissabon” per line. The same matrix covers 390 and 768 at both root sizes. Enter on each action is fulfilled on `127.0.0.1` and requests `/reisen/r0` and `/reisen` once. The 215-character title remains a separate stress fixture. Its earlier R2 failure shots stay `home-1440-before-r2.png` and `home-1440-200-prozent-before-r2.png`. The R3 overlap shot is `home-1440-titel-116-200-prozent-before-r3.png`.
 
+## R4 narrow words
+
+Reviewed head `8d1a59e40f78afb8d74edc25a7c6b24323dd9275`. R3’s stack removed the overlap. At 320px and a 32px root, `p-6` is 48px on each side, so the text column was 222px. The primary action’s `px-5`, gap and icon then left “fortsetzen” narrower than the word. Root’s DejaVu Sans Bold also split each “Lissabon” into 26 lines. This environment renders Noto Sans Bold, which kept the title words and still split the action. The earlier full-audit pass on 8d1 therefore did not prove the narrow case for every legitimate system font, and it did not check action words.
+
+The card inset below `sm` is `px-[16px]`. Each action uses `px-[12px]` and `gap-[8px]`, and does not shrink. Trip text and action labels wrap at spaces (`break-normal`). Font size, title, wording and both hrefs stay. The mounted title at 320/32 has clientWidth 286.
+
+The audit checks whole words on the next-trip label, status, title, origin, dates and both actions. The title-line bound is 13 for the 13-word fixture, on every viewport, instead of 8 on desktop. Observed lines in this environment are 7, 13, 5, 13, 3, 7, 3 and 7 across 320/390/768/1440 at 16px then 32px. A platform that draws 13 intact lines at 1440/32 still passes. 26 or 78 fragmented lines do not. The inner text is still compared with the 116-character fixture after whitespace is collapsed, so a line wrap is not reported as a missing character. Computed family and CDP platform font are in `mounted-proof.json`. Here that platform font is `Noto Sans (Fontations)`, `NotoSans-Bold`, `isCustomFont:false`. It is not claimed to be DejaVu.
+
+The failed 8d1 capture remains `home-320-titel-116-200-prozent-before-r4.png`. R2 and R3 screenshots stay. The 215-character fixture is still outside the 120-character contract and is not held to the 13-line bound. Rebuilt CSS is 101,303 characters. The full audit completed, including calendar, window and export: 21 requests, 3 downloads, 3 revokes, 0 page errors.
+
 ## Limits of that proof
 
 - 200% text is `documentElement.style.fontSize = '32px'`. It is not operating-system zoom and not a real device.

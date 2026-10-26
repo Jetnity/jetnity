@@ -25,6 +25,10 @@ Source-confirmed against seed `8a9e5479337090079839629715f9a3f1a03116f9`, parent
 
 Node tests for window copy, calendar arithmetic, export validation and pagination fixtures (0/1000/1001/20000/20001, order arguments, duplicate, nonprogress, invalid id, page error). Mounted Playwright harness with project CSS, synthetic fixtures, external network aborted: midnight and offset, focus after a multi-day jump, cleanup, 320/390/768/1440, 200% root font size, keyboard, export outcomes.
 
+## R4, 26 October 2026
+
+At 320px and a 32px root the stacked card still broke ordinary words: rem padding became 48px a side, and the action’s rem padding plus the icon left “fortsetzen” too little width. Below the small breakpoint the card inset is 16px and the action inset is 12px, both in px, so they do not grow with the root font. Words wrap on spaces. The audit checks action words as well as the trip fields, records the font this environment actually rendered, and accepts up to 13 intact title lines for the 13-word fixture. The 215-character fixture stays labelled stress. No second merge of main.
+
 ## R3, 26 October 2026
 
 The R2 action column kept the labels inside the buttons and left the title 78px wide at a 32px root. The card now stacks the trip text and the actions, and the audit measures both. The 215-character fixture stays labelled stress. No second merge of main.

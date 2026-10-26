@@ -60,6 +60,12 @@ P2 from the R2 layout: the non-shrinking action column overlapped and fragmented
 
 P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this new head are pending. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
 
+## R4
+
+P2 from the R3 layout: at 320px and a 32px root, ordinary words still broke. “fortsetzen” broke in this environment. A wider system font, measured by Root as DejaVu Sans Bold, also broke “Lissabon”. Corrected with px insets below `sm` and whole-word wrapping in `AccountUebersicht.tsx`. The desktop line cap of 8 was this environment’s Noto count; the fixture bound is now 13 intact lines, and the audit records the actual count per viewport. The failed 320/32 screenshot is kept. No font-family override, no global CSS, no font install. Accepted main did not move and was not merged again.
+
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this new head are pending. Line counts differ by the rendered system font; that is recorded, not treated as missing text. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
+
 ## Recommendation
 
 Stop for Root’s full independent re-gating of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.
