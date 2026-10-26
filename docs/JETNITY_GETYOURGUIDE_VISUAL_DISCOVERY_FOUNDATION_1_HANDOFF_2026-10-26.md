@@ -11,22 +11,21 @@ Parent: #1023 V5
 Immutable TASK blob: `dbe1c2def1a4f1b2d8158e467971601a80d03b43`
 Task seed: `8822282c24a03e8975ecc53184e661471405d1ba`
 
+This handoff is the Review R1 correction in the same session. It is not a new generation.
+
 ## What the next reviewer has
 
-A closed GetYourGuide block inside the existing activities area. It knows city, region, island and country, including a trip with no days. It does not load a provider. The synthetic harness proves lifecycle, keyboard, enlarged text and zero external requests. The work packet lists the human evidence still required before any live widget.
+A closed GetYourGuide block. Each load has its own node. The operation key includes place type and public identifier. Unresolved or conflicting extra stages do not auto-select a country, and the country choice stays reachable. The application resolver is null. Late exact confirmation exists only on the test seam. Work V2 is received and not activated.
+
+The synthetic harness proves the abort-ignoring late writer, A→B→A, retry, repeated stages, type and mapping changes, keyboard country change, permission withdrawal, sync throw, disposal throw, and a populated native card. It blocks every non-local request.
 
 ## Exact git
 
-`origin/main` read before these commits, and again immediately before push: see the author block on PR #1039 for the pushed `HEAD`, tree, parent, merge-base and ahead/behind. That block is written from the commands after push. This file is inside the review head, so it does not quote its own commit SHA.
+The author block on PR #1039 is written from the commands after push. This file is inside the review head, so it does not quote its own commit SHA.
 
-Known baseline, unchanged at the last fetch before the commit:
+Reviewed head: `3051d4d868bb4139f1dd5a9f70e3247bd084f8cd`, tree `57cf4ab8256c8068b0cd85d8675ed9300045d2c0`.
 
-- `origin/main`: `3a25fc15a38087190c72b49373fb2233af1f6248`
-- Merge-base of the task seed with that main: the same commit
-- Task seed: `8822282c24a03e8975ecc53184e661471405d1ba`, then 1 ahead and 0 behind
-- Implementation commit, parent of the documentation commit: `2128a3221bd4ce3df7309aefaf00df3abd94fe87`
-
-This branch was not merged and not rebased.
+`origin/main` is read again immediately before push. At the start of this correction it was `3a25fc15a38087190c72b49373fb2233af1f6248`. This branch was not merged and not rebased.
 
 ## Checks the reviewer can repeat
 
@@ -44,14 +43,8 @@ npm run check:schema-bezug
 npm run build
 ```
 
-The harness needs Playwright Chromium on the machine. It aborts every non-local request. Its screenshots are synthetic.
-
-## Known failures that are not this slice
-
-Full `npm test` on the final tree: 7350 tests, 7334 pass, 11 fail, 5 skipped. The failures are local PostgreSQL proofs. `initdb` is not installed here. Do not treat those failures as GetYourGuide regressions, and do not treat them as fixed.
-
-`npm run build` and `npm run typecheck` on that same tree exited 0. `eslint .` exited 0 with 175 existing warnings and 0 errors.
+On this correction, before the documentation commit: GetYourGuide tests 33 pass. Harness exit 0, 10 localhost requests, 0 external. Full suite 7358 tests, 7342 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. Lint 0 errors and 175 warnings. Typecheck, build and the hygiene commands exited 0.
 
 ## Stop
 
-Independent Technical-Lead review only. Same session can take CHANGES REQUIRED. This writer does not mark Ready, does not merge, and does not start a follow-up slice.
+Independent Technical-Lead review of the new head. This writer does not mark Ready, does not merge, and does not start a follow-up slice.

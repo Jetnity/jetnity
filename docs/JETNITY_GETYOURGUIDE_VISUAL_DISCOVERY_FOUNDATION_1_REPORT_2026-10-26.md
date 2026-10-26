@@ -4,36 +4,38 @@ Date: 26 October 2026.
 Author: Jetnity GetYourGuide Visual Discovery Foundation 1 — Cursor Generation 1.
 Tracking #1038. Draft PR #1039.
 
+This report covers the Review R1 correction. The first foundation remains on `3051d4d868bb4139f1dd5a9f70e3247bd084f8cd`. Root reproduced the defects below on that head. This correction does not activate the provider.
+
 ## What changed
 
-- `components/trips/AktivitaetenBereich.tsx` passes the originally requested day id into the new block and renders that block when the trip has no days. Native search and adoption are unchanged. The native invalid-day fallback to the first day remains.
-- `components/trips/GetYourGuideAktivitaeten.tsx` is the visible block. The default export always uses the closed application seam. `GetYourGuidePruefFlaeche` accepts a resolver and renderer only when `herkunft` is `pruefung`.
-- `lib/activities/getyourguide/freigabe.ts`, `widget.ts`, `kontext.ts` and `lebenszyklus.ts` own the closed gate, the three-field public descriptor, destination truth and generation-owned completion.
-- `scripts/getyourguide-visual-discovery-1/` is a local synthetic mount. It is not a route.
-- ADR-0221 and short dated pointers in `ARCHITECTURE.md` and `ROADMAP.md` say this is code-only and inactive.
+- `components/trips/GetYourGuideAktivitaeten.tsx` gives every load its own node, detaches that node before disposal, and keeps country radios whenever a choice must remain. A synchronous throw from `laden` becomes the recoverable error state.
+- `lib/activities/getyourguide/kontext.ts` puts place type and public identifier into the operation key. Country evidence is deduplicated by read and checked per occurrence. Unresolved or conflicting extra stages do not auto-select the one remaining country.
+- `lib/activities/getyourguide/aufloesung.ts` is the generation boundary for a late exact confirmation. The application does not call it against Places.
+- `lib/activities/getyourguide/widget.ts` adds `kanonBestaetigen`. `ANWENDUNGS_NAHT` sets it to null, beside the empty mapping and the null renderer.
+- `scripts/getyourguide-visual-discovery-1/gegenprobe.tsx` mounts the counterexamples with a renderer that ignores abort. The local server answers `POST /api/activities/search` with one synthetic card so the native result is populated.
+- Native `AktivitaetenBereich.tsx`, `suchlebenszyklus.ts` and `lib/places/aktionen.ts` were not edited.
+- ADR-0221 now records the R1 precision. The gate stays closed. Work V2 is recorded as received evidence, not as a registry.
 
 ## What the checks showed
 
-Focused GetYourGuide tests, after the final component edit: 25 passed, 0 failed. Node v22.23.4. They cover closed reads, invalid day, missing stage, Bangkok city versus region, Thailand on a day, Panama without days, a city that does not become a country, multiple countries, forged and mismatched ids, repeated city occurrences, minimized trip copy, stale completion, retry, and the empty application seam.
+Focused GetYourGuide tests: 33 passed, 0 failed. Node v22.23.4. Added coverage: same place id as city and region, mapping-only identifier change, both conflict orderings, an unresolved extra stage, San José as city and region in two countries, Lisbon as a further destination, deduplicated reads, and late confirmation that drops a foreign id and a caller's error text.
 
-Native `lib/activities/suchlebenszyklus.test.ts` was run with those tests before the last comment-only lifecycle capture and passed 13 tests. The lifecycle capture does not change that module. The full suite below includes it.
+Mounted harness, headless Chromium, after the final component edit: exit 0. Ten requests, all `http://127.0.0.1`, including one synthetic search POST. Zero GetYourGuide, Supabase, GeoNames or other external requests. The cooperative page still records 7 loads, 7 disposals and 7 aborts. The counterexample page starts A, switches to B, returns to A, retries, repeats a stage, changes type and mapping, keeps a harmless reallocation, changes country by keyboard without remounting, and withdraws permission. The late writer ignores abort. Visible results stay on the current node. A thrown setup error and a thrown disposal do not remain as page errors or as URL text. The native card title “Synthetische Bootsfahrt” stays after those failures. Viewports include 320, 390, 768, 1440 and 200% root text. Screenshots are synthetic and live under `/opt/cursor/artifacts/gyg-visual-discovery/`.
 
-Mounted harness, headless Chromium, after the final component edit: exit 0. Six requests, all `http://127.0.0.1` for the local page, CSS and script. Zero GetYourGuide, Supabase, GeoNames or other external requests. Loads 7, disposals 7, aborts 7. Every recorded descriptor had only `anbieter`, `umfang` and `oeffentlicheKennung`. Viewports 320, 390, 768, 1440, 320 at 200% text and 390 at 200% text. Keyboard focus and Enter on “Was fehlt hier?”. Panama copy stays a country. A synthetic failure leaves the native idle sentence in place. Screenshots are synthetic and live under `/opt/cursor/artifacts/gyg-visual-discovery/`.
+`eslint .`: 0 errors, 175 warnings, exit 0. The warnings are the existing set. No new warning was left in the edited GetYourGuide files.
 
-`eslint .` after the ref move: 0 errors, 175 warnings, exit 0. The warnings are existing. The only warning in a file this slice edits is `AktivitaetenBereich.tsx` calling `setEigeneTagId` inside an effect. That effect was already there and was not changed.
+`check:dead`, `check:exports`, `check:deps` and `check:api-schutz` exited 0. `check:schema-bezug` exited 0 and still reports the pre-existing LOCAL/UNAPPLIED RPCs. No new RPC.
 
-`check:dead`: 0 unreferenced files. `check:exports`: 0 unreferenced named exports. `check:deps`: 0 unused dependencies. `check:api-schutz`: 12 admin routes still use `requireAdminApi()`. `check:schema-bezug`: generated structures match; the same pre-existing LOCAL/UNAPPLIED Official Truth and trip RPCs are reported. No new RPC.
+`npm run typecheck` and `npm run build` exited 0. `next-env.d.ts` was not kept as a change.
 
-`npm run typecheck` (`next typegen` and `tsc --noEmit`) on the final tree: exit 0. `npm run build`: exit 0. `next-env.d.ts` was not kept as a change.
+Full `npm test`: 7358 tests, 885 suites, 7342 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. They are the same class as on the reviewed head and are not fixed here. The 5 skips are the existing native-PostgreSQL, CI-only and shared-layout-audit skips.
 
-Full `npm test` on the final tree: 7350 tests, 884 suites, 7334 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs (`initdb` ENOENT, `local_proof_connection_override_forbidden`, or an explicit `NOT_VERIFIED` because local PostgreSQL binaries are absent). They are not GetYourGuide tests. The 5 skips are the existing native-PostgreSQL, CI-only and shared-layout-audit skips. This environment did not install PostgreSQL and did not point those tests at a hosted database.
-
-No migration. No new dependency. Playwright Chromium was installed into the user cache for the harness and is not a `package.json` change. The harness uses the esbuild binary already present through `tsx`.
+No migration. No new dependency. No package, workflow or global CSS change.
 
 ## Security and cost
 
-The application path cannot be opened by env, URL, storage or a caller-supplied seam. The renderer receives three public fields. No secret, service role, provider call or trip write. No new ongoing cost.
+The application path cannot be opened. The renderer still receives only the three public fields. The closed path does not confirm a place. Exception text is not shown. No secret, service role, provider call or trip write. No new ongoing cost.
 
 ## Honest limit
 
-The synthetic SVG in the harness is not a GetYourGuide offer. A green harness does not mean pictured offers are available.
+The synthetic card and the synthetic GetYourGuide node are not provider offers. Work V2's sample ids were not copied into the runtime. A green harness does not mean pictured offers are available.

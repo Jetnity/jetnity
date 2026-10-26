@@ -5860,6 +5860,14 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Konsequenzen:** In der Anwendung steht, dass Bildangebote noch nicht eingerichtet sind. Eine spätere Aktivierung braucht das offiziell erzeugte manuelle Widget, die Analyzer- und Einwilligungsgrenze und eine eigene Prüfung. Dieser Schritt enthält keine Migration, keinen Anbieteraufruf, kein Secret und keine neuen laufenden Kosten.
 
+**Präzisierung am 26. Oktober 2026 nach Review R1, weiterhin nur Code und geschlossen:**
+
+1. Jede gestartete Ladung besitzt einen eigenen Knoten. Wechsel, erneutes Laden, Entzug der Berechtigung und Aushängen trennen diesen Knoten ab und entsorgen genau diese Ladung. Eine verspätete Schreibung behält nur den bereits getrennten Knoten.
+2. Der Kontextschlüssel enthält den bestätigten Ortstyp und die öffentliche Kennung. Dieselbe Orts-ID als Stadt oder Region und eine geänderte Kennung verwerfen die alte Anzeige. Eine neue Abbildung mit demselben Inhalt tut das nicht.
+3. Eine unbekannte oder widersprüchliche weitere Etappe erzeugt keine automatische Ein-Land-Entscheidung. Eine ausdrücklich gewählte, tatsächlich bestätigte Länderoption bleibt davon getrennt. Die Prüfung gilt je Vorkommen, das Lesen derselben ID nur einmal.
+4. Die Anwendung übergibt keinen Ortsresolver. Die Prüfnaht darf eine verspätete exakte Bestätigung annehmen. Ein synchroner oder abgelehnter Lade- oder Bestätigungsfehler wird zum bestehenden deutschen Fehlerzustand, ohne den Text der Ausnahme zu zeigen.
+5. Work V2 ist als Nachweis empfangen. Die Beispielkennungen sind keine Laufzeitregistrierung und kein Testangebot. Die Anwendungsabbildung, der Renderer und der Resolver bleiben leer.
+
 ---
 
 ## Offene Widersprüche
