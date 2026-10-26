@@ -1,0 +1,451 @@
+{
+  "kombinationen": 188,
+  "engines": [
+    "webkit",
+    "chromium"
+  ],
+  "viewports": [
+    "280",
+    "320",
+    "360",
+    "390",
+    "430",
+    "667x375",
+    "844x390"
+  ],
+  "zustaende": [
+    "keine-tage",
+    "tag-ohne-etappe",
+    "tag-leer",
+    "tag-mit-punkten",
+    "viele-tage",
+    "lange-texte",
+    "loading",
+    "unavailable",
+    "empty",
+    "error",
+    "timeout",
+    "rate_limited",
+    "karten"
+  ],
+  "fehlerzahl": 0,
+  "fehlgeschlagen": [],
+  "anfragenInteraktion": [
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 1
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 38
+    },
+    {
+      "engine": "webkit",
+      "anfragen": 38
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 1
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 38
+    },
+    {
+      "engine": "chromium",
+      "anfragen": 38
+    }
+  ]
+}

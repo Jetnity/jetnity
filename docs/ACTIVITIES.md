@@ -234,33 +234,38 @@ Spätere Preis- oder Verfügbarkeitsänderungen ändern die gespeicherte Zeile n
 
 Im bestehenden Trip Workspace, nicht als Demo:
 
-- ein Aktivitätsbereich für die Reise, Tagwahl über Chips
-- belegbarer Tageskontext (Etappe, Datum, bereits geplante Punkte) auch ohne Provider
-- Loading / Empty / Unavailable / Timeout / Error / Rate-Limit als getrennte Zustände
+- ein Aktivitätsbereich für die Reise, Tagwahl über dieselben Chips wie der Arbeitsbereich
+- sichtbarer kanonischer Kontext: Ziel, Reisetag, Datum oder „Datum noch offen“, Zahl der Reisenden, Währung
+- Suche nur über „Für diesen Tag suchen“ und danach „Erneut suchen“
+- Loading / Empty / Unavailable / Timeout / Error / Invalid / Rate-Limit als getrennte Zustände
 - `unavailable` ruhig, nicht als Fehler der Reise
-- Aktivitätskarten nur bei echten Optionen
+- Aktivitätskarten nur bei geprüften `ok`- oder `partial`-Antworten
+- Preis auf der Karte als „Preisangabe“ mit geliefertem Betrag und gelieferter Währung
 - mobile-first, 44 px Trefferflächen, Status über `aria-*` / `role`
-- Requests per `AbortController` abbrechbar beim Tagwechsel; keine Fake-Karten
+- ein Browser-Read wird beim Kontextwechsel abgebrochen; das bricht keinen bereits betretenen Schreibvorgang ab
+
+Mount, Remount, Tagwechsel und Reisewechsel lösen keine Suche aus. Eine verspätete Antwort darf eine neuere Angabe nicht ersetzen. Die Übernahme ist die bestehende Schreiber-Momentaufnahme für diesen Tag. Eine Bewertung wird darin auf eine Nachkommastelle gerundet; ohne Bewertung fällt die Anzahl weg. Die Rohwerte 9,01 und 9,02 mit derselben Anzahl bleiben eine Operation, ebenso eine fehlende Bewertung mit anderer Anzahl. Eine vorhandene Bewertung mit anderer Anzahl ändert die gespeicherte Notiz und ist eine andere Operation. Labels, Gründe und Konflikt gehören nicht dazu. Die vollständige sichtbare Karte samt Suchgeneration sperrt nur einen veralteten Handler. `null` ist die Erfolgsmeldung des Rückrufs und kein Nachweis, dass der Punkt gespeichert ist; diese Operation bleibt für die gemountete Fläche geschlossen. Text, Wurf, leere Zeichenkette, Ablehnung oder eine ungültige Form bleiben unbestätigt und ebenfalls geschlossen. Eine neue Suche öffnet das nicht, auch wenn sich nur die Rangdarstellung ändert. „Erneut anbieten“ gilt nur für eine unbestätigte Operation und ruft den Schreiber nicht auf. Eine Meldung gehört zu ihrer Operation und erscheint bei einer sichtbaren Antwort nur neben deren Karte. Sie wird nicht zum Status einer anderen, noch laufenden Übernahme. Liegt keine aktuelle Antwort vor, nennt jede Meldung die erfasste Aktivität und, wenn vorhanden, ihre Uhrzeit, auch wenn eine neuere Übernahme noch läuft. Das Schloss bleibt. Ein Remount löscht nur das lokale Register.
 
 Solange kein Provider konfiguriert ist, erklärt die Fläche das ehrlich und zeigt höchstens den belegbaren Tageskontext aus der Reise.
 
-### Browser-Abnahme (Phase 3.3b)
+### Browser-Abnahme (Such- und Auswahllaufzeit, 26. Oktober 2026)
 
-Gemessen mit `npm run audit:activities` (Playwright WebKit + Chromium, PR-7-Regeln). Die Audit-Seite `/ui-audit/activities` liegt nicht im produktiven Weg. `VERCEL_ENV=production` ergibt immer 404, auch wenn `JETNITY_UI_AUDIT` gesetzt ist. Ausserhalb von Production braucht die Seite ausdrücklich `JETNITY_UI_AUDIT=1` oder `true`. Karten-Fixtures nur im Harness per Request-Interception.
+Gemessen mit `npm run audit:activities` auf Laufzeit-Head `3c24d85509ace94bc6f69ecbef6b333ec0c2d611`, Exit 0. Die Läufe auf `72823572`, `8224f7ce`, `055055ac`, `8adbb10c`, `09c79a84`, `d8f89dc4` und `79a10961` sind historisch. Playwright WebKit und Chromium. Die Audit-Seite `/ui-audit/activities` liegt nicht im produktiven Weg. `VERCEL_ENV=production` ergibt immer 404, auch wenn `JETNITY_UI_AUDIT` gesetzt ist. Ausserhalb von Production braucht die Seite ausdrücklich `JETNITY_UI_AUDIT=1` oder `true`. Karten sind synthetische Jetnity-Fixtures nur im Harness. Das ist kein Anbieter-, Sandbox- oder Zertifizierungsergebnis. Die frühere Zählung mit automatischer Suche beim Chipwechsel gilt für diesen Lauf nicht mehr.
 
 | Messung | Umfang | Ergebnis |
 | --- | --- | --- |
 | Layout, 13 Zustände × 7 Viewports × 2 Engines | 182 | 0 Fehler |
-| Tagwechsel, Fokus, Tastatur, Request-Zählung | 2 (WebKit + Chromium, 390 px) | 0 Fehler |
-| Summe | **184** | **0** |
+| Tagwechsel, Fokus, Tastatur; 0 Suchen beim Öffnen und beim Chipwechsel, genau 1 nach „Für diesen Tag suchen“ | 2 (WebKit + Chromium, 390 px) | 0 Fehler |
+| Lebenszyklus bei 390×844 und 1280×800, Schrift 20 px | 4 (WebKit + Chromium) | 0 Fehler |
+| Summe | **188** | **0** |
 
-Viewports: 280, 320, 360, 390, 430, Landscape 667×375 und 844×390.
+Viewports der Layoutmatrix: 280, 320, 360, 390, 430, Landscape 667×375 und 844×390.
 
-Zustände: keine Tage, Tag ohne Etappe, leerer Tag, Tag mit Punkten/Uhrzeiten, 12 Tag-Chips, lange Texte, Loading, reales `unavailable` ohne Provider, Empty, Error, Timeout, Rate-Limit, Karten mit langen Providerinhalten.
+Zustände: keine Tage, Tag ohne Etappe, leerer Tag, Tag mit Punkten/Uhrzeiten, 12 Tag-Chips, lange Texte, Loading, reales `unavailable` ohne Provider, Empty, Error, Timeout, Rate-Limit, Karten mit langen synthetischen Inhalten.
 
-Interaktion: 4 Suchen je Engine beim schnellen Chipwechsel, keine Schleife. Nach dem Wechsel bleibt nur die Antwort des gewählten Tags. `aria-checked` stimmt. Fokus über `:focus-visible` nach Tastatur-Tab. Interne Scores nicht im DOM.
+Der Lebenszyklus prüft zusätzlich dieselbe Anfrage in einer anderen Reise, A→B→A, einen doppelten Klick, eine angenommene und eine noch laufende Übernahme nach neuer Suche, einen nie ausgelösten Handler bei wiederverwendeter ID, wobei ein fehlender Audit-Handler als Fehler gilt und nicht als abgelehnter Schreibversuch, und danach genau einen Aufruf der aktuellen Karte, eine Gaständerung, die den gewählten Aktivitätspunkt samt Zeitfenster einfügt und die Rangfelder von frei auf Überschneidung wechseln lässt, jeweils während der Rückruf noch läuft, nach `null` und im unbestätigten Zustand, eine ältere Meldung mit `null` und eine unbestätigte Altmeldung, die nach geändertem Reisendenstand nicht auf der neueren noch laufenden Karte erscheinen, eine weitere Änderung der Reisendenzahl ohne neue Suche, bei der die abgeschlossene ältere Übernahme auf der untätigen Fläche mit ihrem Namen steht und die neuere Übernahme offen bleibt, eine fehlende Freigabe, die als Fehler gilt und nichts anderes abschliesst, Übernahme mit `null`, Text, synchronem Wurf, leerer Zeichenkette, Ablehnung und ungültiger Form, „Erneut anbieten“ ohne eigenen Schreibaufruf, eine verspätete Antwort trotz ignoriertem AbortSignal, eine verdeckte und inerte Fläche bei laufender Suche und laufender Übernahme, wobei der vorher fokussierte Flug-Schalter `document.activeElement` bleibt, eine HTTP-500-Antwort in Erfolgsform, den Bereichswechsel und den Remount. Unabhängige Fälle haben eigene Anbieter-Referenz, Zeitfenster und Preis. Jede ausdrückliche Suche zählt genau einen Aufruf. Jeder Lebenszyklus-Viewport zählte 38 ausdrückliche Suchen. Öffnen, Tagwechsel, Reisewechsel, Bereichswechsel und Remount zählen null.
 
-Bekannte Ausnahme wie bei PR #7: Die Chip-Zeile darf intern waagrecht scrollen (`ScrollRow`). Die Seite selbst hat kein Overflow. Programmatisches `.focus()` ohne Tastatur zeigt keinen Ring – das ist `focus-visible`, kein Defekt.
+Die Chip-Zeile darf intern waagrecht scrollen (`ScrollRow`). Die Seite selbst hat kein Overflow. Programmatisches `.focus()` ohne Tastatur zeigt keinen Ring; das ist `focus-visible`. Ein Remount beweist nicht, dass ein bereits betretener Schreiber abgebrochen wurde, und er serialisiert keine anderen Tabs.
 
 ---
 
@@ -274,6 +279,8 @@ Bekannte Ausnahme wie bei PR #7: Die Chip-Zeile darf intern waagrecht scrollen (
 ---
 
 ## 10. Weiterhin offen
+
+Die Such- und Auswahllaufzeit im Workspace ist an die ausdrückliche Suche gebunden. Anbieter, Nachweis, Buchung und Production bleiben offen. Factory und Proof bleiben null. Production bleibt aus.
 
 1. Genau einen ersten Activity-Datenanbieter entscheiden und `ActivityProvider` plus `ActivityNachweis` implementieren · **eigene Freigabe**
 2. Preview mit echtem Provider-Key verifizieren
