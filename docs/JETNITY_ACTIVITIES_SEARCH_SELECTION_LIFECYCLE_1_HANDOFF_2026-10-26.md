@@ -10,18 +10,20 @@ Model: `grok-4.7-high-fast`. Not Auto. Same session as the rejected head.
 
 Read the immutable TASK V1, the updated PLAN, and `docs/JETNITY_ACTIVITIES_SEARCH_SELECTION_LIFECYCLE_1_STATUS_2026-10-26.md`. Do not edit the TASK.
 
-Rejected head: `8224f7ce061ac2dea85dc781594f3493af732502`. Intermediate runtime `055055ac6b998693d30c9a8829aba8b7827c8ab2` is not accepted. Do not review those heads again.
+R2 reviewed `05d6f934beefc5c174794905a775e8655257ecc3`. Runtime `055055ac6b998693d30c9a8829aba8b7827c8ab2` and rejected head `8224f7ce061ac2dea85dc781594f3493af732502` are not accepted. Do not review those heads again. `32688dc0` is not the review head.
 
-Runtime proof head: `8adbb10c46acf6d7ca811d721e188026c5203a31`, tree `4d804ff1be4b947427522a2ca917a0d4116ada61`.  
-Main / merge-base: `cdc5b47163c2f1bb272fb46ed6723e9522489e92`.  
-That head was **8 ahead / 0 behind**. This handoff is the next commit and is the review head. Re-read `git rev-parse HEAD`, `HEAD^{tree}`, the merge-base, and ahead/behind before review.
+Runtime proof head: `09c79a84ac9669406007d1a5391978ed0ce81af2`, tree `1a866d481b9197d4f327f868adfbf195bc5c03ba`.  
+Main / merge-base, re-read before this handoff: `cdc5b47163c2f1bb272fb46ed6723e9522489e92`.  
+That runtime head was **11 ahead / 0 behind**. This handoff is the next commit and is the review head. Re-read `git rev-parse HEAD`, `HEAD^{tree}`, the merge-base, and ahead/behind before review.
 
 Draft PR: https://github.com/Jetnity/jetnity/pull/1025  
 Tracking: https://github.com/Jetnity/jetnity/issues/1024
 
-## Contract after the supplemental R1
+## Contract after R2
 
-Search generation owns the visible result, including ranking fields. The adoption operation follows the writer snapshot and does not include labels, reasons, or konflikt. Pending, callback-accepted, and unconfirmed operations stay closed across refresh and a guest item/window insertion that changes only that ranking. Unconfirmed operations stay closed until “Erneut anbieten”, which does not itself write. Full unmount and other tabs remain outside this register.
+Search generation owns the visible result, including ranking fields. The adoption operation follows the writer snapshot and does not include labels, reasons, or konflikt. Pending, callback-accepted, and unconfirmed operations stay closed across refresh and a guest item/window insertion that changes only that ranking. Unconfirmed operations stay closed until “Erneut anbieten”, which does not itself write.
+
+A settlement notice is stored on that operation. It renders beside the matching card. It does not become the status of a different card, including after a traveller-count change that starts a second pending adoption. The second adoption stays pending. While the day has no current response, each distinct sentence for that day is shown once. The sentence does not name the option. Full unmount and other tabs remain outside this register.
 
 ## Next action
 
