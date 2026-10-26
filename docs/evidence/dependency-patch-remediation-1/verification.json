@@ -1,0 +1,29 @@
+{
+  "testedHead": "c04dce53930092588f237644d7f20223bec71e2e",
+  "testedTree": "712fa8623c216118e518f66b268f5bef1021ed41",
+  "packageLockBlob": "abffddeeea0cc1f5507280f82ebf71fd56052fa8",
+  "node": "v22.23.4",
+  "npm": "10.9.7",
+  "startedAt": "2026-10-26T10:02:43Z",
+  "commands": [
+    {"name": "npm ci", "exit": 0, "note": "532 packages added. Lifecycle scripts enabled. Lockfile not rewritten."},
+    {"name": "npm run check:setup:ci", "exit": 0, "note": "One warning: no .env/.env.local in this environment."},
+    {"name": "npm run check:operating-mode", "exit": 0, "note": "operating-mode guard: PASS. Event pull_request, base 6ae344f4453b16514f9048083bb8b07396135fa2, head c04dce53930092588f237644d7f20223bec71e2e."},
+    {"name": "npm run typecheck", "exit": 0, "note": "next typegen and tsc --noEmit. Route types generated. Working tree stayed clean."},
+    {"name": "npm run lint", "exit": 0},
+    {"name": "npm test", "exit": 1, "note": "867 suites, 7238 pass, 11 fail, 5 skipped, duration_ms 127290.841186. Failures are missing local PostgreSQL 16 binaries or the local-proof connection guard. No hosted database was used."},
+    {"name": "npm run check:api-schutz", "exit": 0, "note": "12 admin routes use requireAdminApi()."},
+    {"name": "npm run check:schema-bezug", "exit": 0, "note": "Exit 0. Log also prints existing LOCAL/UNAPPLIED official-truth RPC notes. This diff does not touch those files."},
+    {"name": "npm run check:dead", "exit": 0, "note": "1671 reachable modules, 0 orphaned."},
+    {"name": "npm run check:exports", "exit": 0, "note": "1241 files, 0 unexplained exports."},
+    {"name": "npm run check:deps", "exit": 0, "note": "11 dependencies and 2 devDependencies checked, 0 unused."},
+    {"name": "npm run build", "exit": 0, "note": "prebuild check:setup passed. Compiled successfully in 11.7s. 26 static pages generated."},
+    {"name": "npm audit --json", "exit": 1, "note": "Non-zero because 9 unrelated advisories remain. ws and source-map-js are absent from the audit set."}
+  ],
+  "notRun": [
+    "No browser or mounted UI audit. This lane changes no product surface.",
+    "No live vulnerability test, stress test, or private application input.",
+    "No hosted SQL, secret, provider, or environment change.",
+    "PostgreSQL 16 binaries were not installed. The task forbids OS-package installation."
+  ]
+}
