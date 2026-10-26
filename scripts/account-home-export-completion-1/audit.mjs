@@ -214,6 +214,14 @@ await context.route('**/*', async (route) => {
     return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: dokument })
   }
   if (url.startsWith('data:') || url === 'about:blank' || url.startsWith('blob:')) return route.continue()
+  const ziel = new URL(url)
+  if (ziel.hostname === '127.0.0.1' && (ziel.pathname === '/reisen' || ziel.pathname.startsWith('/reisen/'))) {
+    return route.fulfill({
+      status: 200,
+      contentType: 'text/html; charset=utf-8',
+      body: '<!doctype html><title>lokal</title>',
+    })
+  }
   return route.abort()
 })
 const page = await context.newPage()
@@ -306,8 +314,62 @@ async function aktionenEnthalten(seite, hinweis) {
         aktion.kasten.top >= kartenKasten.top - 1 &&
         aktion.kasten.bottom <= kartenKasten.bottom + 1,
     )
-    const titel = document.querySelector('[data-account-naechste] h2')
-    return { wurzel, aktionen, ueberlappung, inKarte, titel: titel ? messen(titel) : null }
+    function woerter(el) {
+      const fund = []
+      const wanderer = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      let knoten = wanderer.nextNode()
+      while (knoten) {
+        const inhalt = knoten.textContent || ''
+        const muster = /\S+/g
+        let treffer = muster.exec(inhalt)
+        while (treffer) {
+          const bereich = document.createRange()
+          bereich.setStart(knoten, treffer.index)
+          bereich.setEnd(knoten, treffer.index + treffer[0].length)
+          const rechtecke = [...bereich.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0)
+          fund.push({
+            wort: treffer[0],
+            linien: rechtecke.length,
+            rechtecke: rechtecke.map((rechteck) => ({
+              left: rechteck.left,
+              right: rechteck.right,
+              top: rechteck.top,
+              bottom: rechteck.bottom,
+            })),
+          })
+          treffer = muster.exec(inhalt)
+        }
+        knoten = wanderer.nextNode()
+      }
+      return fund
+    }
+    function schneidet(a, b) {
+      const breite = Math.min(a.right, b.right) - Math.max(a.left, b.left)
+      const hoehe = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+      return breite > 1 && hoehe > 1
+    }
+    const felder = ['kennzeichnung', 'status', 'titel', 'herkunft', 'zeitraum'].map((name) => {
+      const el = karte.querySelector(`[data-account-${name}]`)
+      return el ? { ...messen(el), name, woerter: woerter(el) } : null
+    }).filter(Boolean)
+    for (const feld of felder) {
+      const el = karte.querySelector(`[data-account-${feld.name}]`)
+      const bereich = document.createRange()
+      bereich.selectNodeContents(el)
+      feld.linien = [...bereich.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0).length
+    }
+    const textUeberAktion = []
+    for (const feld of felder) {
+      for (const wort of feld.woerter) {
+        for (const rechteck of wort.rechtecke) {
+          if (aktionen.some((aktion) => schneidet(rechteck, aktion.kasten))) {
+            textUeberAktion.push({ feld: feld.name, wort: wort.wort })
+          }
+        }
+      }
+    }
+    const titel = felder.find((feld) => feld.name === 'titel') || null
+    return { wurzel, aktionen, ueberlappung, inKarte, titel, felder, textUeberAktion }
   })
   const mindest = masse.wurzel * 2.75 - 1
   assert.equal(masse.aktionen.length, 2, hinweis)
@@ -319,8 +381,19 @@ async function aktionenEnthalten(seite, hinweis) {
   }
   assert.equal(masse.ueberlappung.length, 0, hinweis)
   assert.equal(masse.inKarte, true, hinweis)
-  assert.equal(masse.titel === null || masse.titel.scrollWidth <= masse.titel.clientWidth + 1, true, `${hinweis} titel`)
+  for (const feld of masse.felder) {
+    assert.equal(feld.scrollWidth <= feld.clientWidth + 1, true, `${hinweis} ${feld.name} scroll`)
+    assert.ok(feld.woerter.length > 0, `${hinweis} ${feld.name} leer`)
+  }
+  assert.deepEqual(masse.textUeberAktion, [], `${hinweis} text ueber aktion`)
   return masse
+}
+
+function woerterGanz(masse, hinweis) {
+  const brueche = masse.felder.flatMap((feld) =>
+    feld.woerter.filter((wort) => wort.linien !== 1).map((wort) => `${feld.name}:${wort.wort}:${wort.linien}`),
+  )
+  assert.deepEqual(brueche, [], `${hinweis} wortbruch`)
 }
 
 function cssAusBuild() {
@@ -488,46 +561,78 @@ try {
   await zeige(faelle.grenze, css)
   assert.equal((await page.locator('[data-account-naechste] h2').innerText()).replace(/\s+/g, ' ').trim().length, 215)
   for (const breite of breiten) {
-    await page.setViewportSize({ width: breite.width, height: breite.height })
-    const ueber = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
-    assert.equal(ueber, true, breite.name)
-    await aktionenEnthalten(page, `Stress 215 ${breite.name}`)
-    await page.screenshot({ path: join(ausgabe, `home-${breite.name}.png`), fullPage: true })
+    for (const schrift of [16, 32]) {
+      await page.setViewportSize({ width: breite.width, height: breite.height })
+      await page.evaluate((px) => {
+        document.documentElement.style.fontSize = px === 16 ? '' : '32px'
+      }, schrift)
+      const ueber = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+      assert.equal(ueber, true, `Stress ${breite.name} ${schrift}`)
+      await aktionenEnthalten(page, `Stress 215 ${breite.name} ${schrift}px`)
+      if (schrift === 16) await page.screenshot({ path: join(ausgabe, `home-${breite.name}.png`), fullPage: true })
+      if (breite.name === '1440' && schrift === 32) {
+        await page.screenshot({ path: join(ausgabe, 'home-1440-200-prozent.png'), fullPage: true })
+      }
+    }
   }
-  await page.evaluate(() => {
-    document.documentElement.style.fontSize = '32px'
-  })
-  const gross = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
-  assert.equal(gross, true)
-  await aktionenEnthalten(page, 'Stress 215 1440 32px')
-  await page.screenshot({ path: join(ausgabe, 'home-1440-200-prozent.png'), fullPage: true })
-  protokoll.push('Stress-Titel mit 215 Zeichen, ausserhalb des 120-Zeichen-Vertrags: 320, 390, 768, 1440 und 32px-Wurzel bleiben ohne horizontales Überlaufen, und die Aktionsbeschriftungen bleiben in ihren Flächen.')
+  protokoll.push('Stress-Titel mit 215 Zeichen, ausserhalb des 120-Zeichen-Vertrags: 320, 390, 768 und 1440 bei 16px und 32px bleiben ohne horizontales Überlaufen. Reiseinhalt und Aktionen überlappen sich nicht.')
 
-  await zeige({ ...faelle.grenze, reisen: fensterReisen(200, undefined, titelGueltig) }, css)
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await page.evaluate(() => {
-    document.documentElement.style.fontSize = ''
-  })
-  assert.equal((await page.locator('[data-account-naechste] h2').innerText()).replace(/\s+/g, ' ').trim(), titelGueltig)
-  await aktionenEnthalten(page, 'Titel 116 1440 16px')
-  await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116.png'), fullPage: true })
-  await page.evaluate(() => {
-    document.documentElement.style.fontSize = '32px'
-  })
-  await aktionenEnthalten(page, 'Titel 116 1440 32px')
-  await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116-200-prozent.png'), fullPage: true })
-  await page.evaluate(() => {
-    document.documentElement.style.fontSize = ''
-  })
-  const fortsetzen = page.getByRole('link', { name: 'Reise fortsetzen' })
-  assert.equal(await fortsetzen.getAttribute('href'), '/reisen/r0')
-  await fortsetzen.focus()
-  const netzVorEnter = netz.length
-  await page.keyboard.press('Enter')
-  await page.waitForTimeout(200)
-  const ziele = netz.slice(netzVorEnter).filter((url) => url.includes('/reisen/r0'))
-  assert.equal(ziele.length, 1)
-  protokoll.push('Gültiger Titel mit 116 Zeichen bei 1440 und 16px sowie 32px: Beschriftungen liegen in den Aktionsflächen, die Flächen liegen in der Karte und überlappen sich nicht. Enter öffnet /reisen/r0 genau einmal.')
+  const gueltigeReise = { ...faelle.grenze, reisen: fensterReisen(200, undefined, titelGueltig) }
+  await zeige(gueltigeReise, css)
+  for (const breite of breiten) {
+    for (const schrift of [16, 32]) {
+      await page.setViewportSize({ width: breite.width, height: breite.height })
+      await page.evaluate((px) => {
+        document.documentElement.style.fontSize = px === 16 ? '' : '32px'
+      }, schrift)
+      assert.equal((await page.locator('[data-account-titel]').innerText()).replace(/\s+/g, ' ').trim(), titelGueltig)
+      const masse = await aktionenEnthalten(page, `Titel 116 ${breite.name} ${schrift}px`)
+      woerterGanz(masse, `Titel 116 ${breite.name} ${schrift}px`)
+      const titel = masse.felder.find((feld) => feld.name === 'titel')
+      const zeilenGrenze = breite.width >= 768 ? 8 : 13
+      assert.ok(
+        titel.linien > 0 && titel.linien <= zeilenGrenze,
+        `${breite.name} ${schrift}px titelzeilen ${titel.linien}`,
+      )
+      const ueber = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+      assert.equal(ueber, true, `116 ${breite.name} ${schrift}`)
+      if (breite.name === '1440' && schrift === 16) {
+        await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116.png'), fullPage: true })
+      }
+      if (breite.name === '1440' && schrift === 32) {
+        await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116-200-prozent.png'), fullPage: true })
+        protokoll.push(`Gültiger 116-Zeichen-Titel bei 1440 und 32px: ${titel.linien} Titelzeilen, keine Wortzerlegung, kein Überlappen mit den Aktionen.`)
+      }
+      if (breite.name === '320' && schrift === 32) {
+        await page.screenshot({ path: join(ausgabe, 'home-320-titel-116-200-prozent.png'), fullPage: true })
+      }
+    }
+  }
+
+  async function tastaturZiel(name, pfad) {
+    await zeige(gueltigeReise, css)
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = ''
+    })
+    const link = page.getByRole('link', { name })
+    assert.equal(await link.getAttribute('href'), pfad)
+    await link.focus()
+    const vorher = netz.length
+    await page.keyboard.press('Enter')
+    await page.waitForTimeout(200)
+    const treffer = netz.slice(vorher).filter((url) => {
+      try {
+        return new URL(url).pathname === pfad
+      } catch {
+        return false
+      }
+    })
+    assert.deepEqual(treffer, [`http://127.0.0.1:8765${pfad}`])
+  }
+  await tastaturZiel('Reise fortsetzen', '/reisen/r0')
+  await tastaturZiel('Alle Reisen', '/reisen')
+  protokoll.push('Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal.')
 
   await zeige(faelle.grenze, css)
   await page.evaluate(() => {
@@ -876,7 +981,8 @@ try {
   const fremd = netz.filter(
     (url) => /^https?:/i.test(url) && !url.includes('/api/account/export') && !url.includes('127.0.0.1:8765/konto'),
   )
-  assert.deepEqual(fremd, ['http://127.0.0.1:8765/reisen/r0'])
+  assert.deepEqual(fremd, ['http://127.0.0.1:8765/reisen/r0', 'http://127.0.0.1:8765/reisen'])
+  assert.equal(netz.every((url) => !/^https?:/i.test(url) || url.includes('127.0.0.1')), true)
 } finally {
   writeFileSync(join(ausgabe, 'mounted-proof.json'), JSON.stringify({ protokoll, seitenfehler, netz: netz.slice(0, 20) }, null, 2))
   console.log(protokoll.join('\n'))

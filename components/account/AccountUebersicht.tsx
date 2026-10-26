@@ -129,37 +129,48 @@ export default function AccountUebersicht({
             data-account-naechste={naechste.lage}
             className="flex h-full min-w-0 flex-col rounded-[30px] border border-black/5 bg-white p-6 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
           >
-            <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 xl:flex-row xl:items-start">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+            <div className="flex min-w-0 flex-1 flex-col gap-6">
+              <div className="min-w-0">
+                <p
+                  data-account-kennzeichnung=""
+                  className="break-words text-xs font-semibold uppercase tracking-[0.16em] text-brand-600"
+                >
                   {naechsteReiseBezeichnung(naechste.lage, fenster)}
                 </p>
                 <div className="mt-3">
-                  <span className="inline-flex items-center rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+                  <span
+                    data-account-status=""
+                    className="inline-flex max-w-full items-center break-words rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700"
+                  >
                     {STATUS_BEZEICHNUNG[naechste.reise.status]}
                   </span>
                 </div>
-                <h2 className="mt-3 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl">
+                <h2
+                  data-account-titel=""
+                  className="mt-3 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl"
+                >
                   {naechste.reise.title}
                 </h2>
                 {naechste.reise.origin ? (
-                  <p className="mt-1 break-words text-sm text-ink-700">ab {naechste.reise.origin}</p>
+                  <p data-account-herkunft="" className="mt-1 break-words text-sm text-ink-700">
+                    ab {naechste.reise.origin}
+                  </p>
                 ) : null}
-                <p className="mt-3 break-words text-sm text-ink-800">
+                <p data-account-zeitraum="" className="mt-3 break-words text-sm text-ink-800">
                   {zeitraum(naechste.reise.startDate, naechste.reise.endDate)}
                 </p>
               </div>
-              <div className="flex w-full flex-col gap-3 sm:flex-row xl:w-56 xl:shrink-0 xl:flex-col">
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href={`/reisen/${naechste.reise.id}` as Route}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 py-2 text-center text-sm font-semibold leading-5 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 py-2 text-center text-sm font-semibold leading-5 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto"
                 >
                   <span className="min-w-0 break-words">Reise fortsetzen</span>
                   <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
                 <Link
                   href="/reisen"
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-5 py-2 text-center text-sm font-semibold leading-5 text-brand-800 transition hover:bg-surface-50 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-5 py-2 text-center text-sm font-semibold leading-5 text-brand-800 transition hover:bg-surface-50 sm:w-auto"
                 >
                   <span className="min-w-0 break-words">Alle Reisen</span>
                 </Link>

@@ -1,6 +1,6 @@
 {
   "protokoll": [
-    "Projekt-CSS aus dem Build ist eingebunden (101432 Zeichen).",
+    "Projekt-CSS aus dem Build ist eingebunden (101250 Zeichen).",
     "Der Geräte-Tag nach dem Mount macht die Reise aktiv.",
     "Lokale Mitternacht nach dem Geräte-Timeout beendet aktiv.",
     "Positiver Offset bleibt am Vortag und damit aktiv.",
@@ -18,8 +18,9 @@
     "Eine vollständig leere Welt darf die Abwesenheit im Konto sagen.",
     "Reisefehler bleibt Fehler und lädt die Seite neu, ohne den Wechsel als Bestätigung zu verkaufen.",
     "Besuchsfehler lässt die geladene Reise stehen und erfindet keine leere Historie.",
-    "Stress-Titel mit 215 Zeichen, ausserhalb des 120-Zeichen-Vertrags: 320, 390, 768, 1440 und 32px-Wurzel bleiben ohne horizontales Überlaufen, und die Aktionsbeschriftungen bleiben in ihren Flächen.",
-    "Gültiger Titel mit 116 Zeichen bei 1440 und 16px sowie 32px: Beschriftungen liegen in den Aktionsflächen, die Flächen liegen in der Karte und überlappen sich nicht. Enter öffnet /reisen/r0 genau einmal.",
+    "Stress-Titel mit 215 Zeichen, ausserhalb des 120-Zeichen-Vertrags: 320, 390, 768 und 1440 bei 16px und 32px bleiben ohne horizontales Überlaufen. Reiseinhalt und Aktionen überlappen sich nicht.",
+    "Gültiger 116-Zeichen-Titel bei 1440 und 32px: 7 Titelzeilen, keine Wortzerlegung, kein Überlappen mit den Aktionen.",
+    "Gültiger Titel mit 116 Zeichen bei 320, 390, 768 und 1440, jeweils 16px und 32px: Kennzeichnung, Status, Titel, Herkunft und Zeitraum bleiben lesbar und liegen nicht auf den Aktionen. Enter öffnet lokal /reisen/r0 und /reisen je einmal.",
     "Tab setzt den Fokus auf A: Zur vollständigen Reiseauswahl.",
     "Enter übergibt genau eine gültige Datei, ein Downloadereignis und einen Widerruf.",
     "401 bleibt in der Ansicht und lädt nichts.",
@@ -59,11 +60,11 @@
     "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/konto",
+    "http://127.0.0.1:8765/konto",
     "http://127.0.0.1:8765/reisen/r0",
     "http://127.0.0.1:8765/konto",
+    "http://127.0.0.1:8765/reisen",
     "http://127.0.0.1:8765/konto",
-    "http://127.0.0.1:8765/api/account/export",
-    "http://127.0.0.1:8765/api/account/export",
-    "http://127.0.0.1:8765/api/account/export"
+    "http://127.0.0.1:8765/konto"
   ]
 }
