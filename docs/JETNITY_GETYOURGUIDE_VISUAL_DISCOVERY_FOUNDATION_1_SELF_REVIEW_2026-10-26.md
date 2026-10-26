@@ -13,7 +13,7 @@ This is the author's review of the Review R1 correction. It is not an independen
 5. Country decisions dedupe reads and still check every occurrence. Explicit selection is kept separate from unresolved context. The radios stay while more than one country, or any unresolved or conflicting stage, is in play. On a selected day, null, empty, lowercase and other non-uppercase country codes fail closed for city, region and island. Uppercase agreement stays ready. A different uppercase code stays a contradiction. The stage hint is not copied into the canonical country.
 6. `lib/places/aktionen.ts` is not imported or called. Confirmation in the test seam is exact-id only.
 7. `suchlebenszyklus.ts` and the native card path were not edited. The harness now shows a populated native card, not only the idle sentence.
-8. No widget attributes, script URL, Analyzer, consent platform, package, workflow, global CSS or production setting was added. Work V2 sample ids are not runtime entries.
+8. No widget attributes, script URL, Analyzer, consent platform, package, workflow, global CSS or production setting was added. Work V2 sample ids are not runtime entries. The enlarged-text fix stays on the GetYourGuide heading and its own actions. It does not clip them and does not restyle the native area.
 9. The partner account id stays out of application and library code. The boundary test still asserts that.
 
 ## Residual risks I am not calling done

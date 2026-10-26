@@ -36,6 +36,8 @@ Review R2 was rechecked on Node v22.23.4. Focused GetYourGuide tests: 34 passed.
 
 `npm run typecheck`, `npm run lint`, the hygiene commands and `npm run build` exited 0 on this correction. Lint remains 0 errors and 175 warnings. The full `npm test` suite was not repeated. Its last observed result remains the addendum counts: 7359 tests, 7343 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs.
 
+The enlarged-text correction is local to the GetYourGuide heading and its action labels. They can break inside their own boxes. Root's harness on `22cbfb77` exited 1 with `Überlauf langer Name: Seite 324px bei 320px`. The post-fix harness in this environment exited 0 and also checks that the heading and buttons stay inside their content box and inside a clipping ancestor. Native layout and global CSS were not changed.
+
 No migration. No new dependency. No package, workflow or global CSS change.
 
 ## Security and cost

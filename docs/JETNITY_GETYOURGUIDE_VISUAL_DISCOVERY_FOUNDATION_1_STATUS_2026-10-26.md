@@ -33,6 +33,8 @@ On a selected day, the canonical country code counts only when it is already sto
 
 A fulfilled renderer decline now aborts, detaches and disposes that exact load before the recoverable error is shown. A successful display keeps its node. A late decline for an older load does not touch the current one. The visible failure sentence is the existing fixed German sentence. Supplied decline text is not shown. Root's probe had rendered that supplied text; this correction suppresses it. `aufloesung.ts` stays the accepted local reducer for exact-id confirmation. No canonical-cache redesign.
 
+The GetYourGuide heading and its own action labels may break inside their boxes. Root ran the harness on `22cbfb77` and recorded `Überlauf langer Name: Seite 324px bei 320px` at 320 CSS pixels and 200% root text. The heading was 36px and wider than its content box, and the closed parent clipped it. The earlier page-level check ignores elements inside an ancestor with hidden overflow, so a green page width did not prove the heading was readable. The harness now measures the heading and the GetYourGuide buttons against their own content box and against a clipping ancestor. Global CSS and the native area were not changed.
+
 The application resolver stays null. The test seam can confirm an exact id late. Synchronous load failures and rejected confirmations become the existing recoverable error, without the exception text. The closed path does not look a place up.
 
 ## Work V2
@@ -67,6 +69,10 @@ The counts below are the addendum head. The earlier R1 correction had 33 GetYour
 Node v22.23.4, after the decline fix and before the documentation commit. GetYourGuide unit tests: 34 pass. Mounted harness: exit 0. Ten localhost requests, zero external. The cooperative page still records 7 loads, 7 disposals and 7 aborts. The counterexample now also covers an immediate fulfilled decline, a throwing disposer, a retry, and a late decline that leaves the newer display alone. `npm run lint`: 0 errors, 175 warnings. `typecheck`, `build` and the hygiene commands exited 0. Schema check still reports the pre-existing LOCAL/UNAPPLIED RPCs.
 
 The full `npm test` suite was not repeated on this head. Root asked not to regenerate the known local PostgreSQL failures. Their last observed counts remain 7359 tests, 7343 pass, 11 fail, 5 skipped, from the selected-day addendum. Those 11 failures are unchanged in kind and are not claimed as re-run here. No CI or Preview claim for this head.
+
+## Checks on the enlarged-text correction
+
+After the heading and action wrap, the same mounted harness exited 0 on Node v22.23.4. Ten localhost requests, zero external. Cooperative page 7 loads, 7 disposals and 7 aborts. The long-name layout at 320 pixels and 200% text passed the page check and the new heading/action check. Closed layouts at 320, 390, 768, 1440, 320/200% and 390/200% passed the same text check. The decline, throwing disposer, retry and late-decline steps still passed. GetYourGuide unit tests 34 pass. Lint 0 errors and 175 warnings. Typecheck, build and the hygiene commands exited 0. Root's earlier failure on `22cbfb77` remains the recorded counterexample; this author's previous page-level pass did not measure ancestor clipping.
 
 ## Main, at the read before this correction's commit
 
