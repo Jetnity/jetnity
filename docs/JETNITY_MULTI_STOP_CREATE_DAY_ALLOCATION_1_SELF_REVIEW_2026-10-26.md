@@ -37,7 +37,9 @@ Local PostgreSQL proofs in `npm test` fail closed in this session because the bi
 
 The reviewed head built a capped 366-day list for 2026-11-01 through 2027-11-02 and the new summary called that cap the whole journey. Create, the form schema, guest storage, and the planner now reject that interval first. The mounted stand text for the 367-day case is “Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.” Submit focuses `#feld-ende`. Guest storage stays empty. The account shim receives no call. A 366-day guest graph stores 366 days ending 2027-11-01. The account shim for that interval receives `endDate` `2027-11-01`.
 
-`zeitraumDauer` is module-private. It had no caller outside `tage.ts`, and `check:exports` rejects an unused export. That visibility change is on the handoff commit, after the mounted run of `c17257ad`. It does not change the predicate.
+`zeitraumDauer` is module-private. It had no caller outside `tage.ts`, and `check:exports` rejects an unused export. That visibility change does not change the predicate.
+
+The first creator sentence said “höchstens 365 Tage” while 366 included dates are valid. The creator sentence now names 366 calendar days, including departure and return. The reader sentence was not edited. `lib/trips/tage.ts` was changed before Root authorized it. The authorization covers only the additive guard, constants, and comment.
 
 ## Author conclusion
 

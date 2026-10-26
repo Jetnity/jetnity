@@ -73,6 +73,14 @@ Node 22.23.4. Mounted proof: Playwright Chromium via `/opt/google/chrome/chrome`
 
 Production build: `npm run build` exit 0.
 
+## R1 supplementary disposition — `lib/trips/tage.ts`
+
+The additive guard in `lib/trips/tage.ts` was written before it was proposed. That path was outside the TASK's named ownership. Root then authorized only the additive pure calendar-interval guard, its constants, and the explanatory comment. `datumVerschieben`, `reisetageBauen`, `TAGE_MAXIMUM`, stored-reader limits, and unrelated callers keep their behavior. This is not general ownership of calendar or duration editing. TASK V1 was not edited.
+
+Creator wording on runtime `6997f78f1475169be07ff69a13c28ba917fdf1c6`, tree `24c1f35f545b0b0fd6d629e8f7b5f6110ddbea1b`: accepted 366 days are described as 366 days; rejected 367 days say `Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.` The reader sentence remains `Eine Reise dauert höchstens 365 Tage`. Mounted evidence `docs/evidence/multi-stop-create-day-allocation-1/mounted-6997f78f1475.json`, 10/10 PASS, `hostedPersistence: not invoked`.
+
+Re-read before this handoff commit: `origin/main` `68435f012f27f599a1092699f5635aa88312ea67`, merge-base `6ae344f4453b16514f9048083bb8b07396135fa2`, **6 ahead / 6 behind**. This handoff commit is the review head and does not rebase. After it lands, expect **7 ahead / 6 behind** the same main.
+
 ## R1 historical-control addendum
 
 Root authorized only the necessary mechanical inventory update already on this branch: the expected blob for owned `lib/trips/aktionen.ts` tracks `e0c03d9ea5fc1200774727e4b790511684020c86`. R1 does not edit the control file, the audit script, or `aktionen.ts`. Every protected pin and every other entry stays. This is not blanket ownership.

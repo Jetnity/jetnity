@@ -48,7 +48,7 @@ No `reise_aendern` assignment editing, no hosted migration, no package change, n
 
 Technical Lead CHANGES REQUIRED R1.1 on reviewed head `54a06423b80f7c33495f57efbcdda6f7ba31da18`. Immutable TASK V1 stays unchanged.
 
-`reisetageBauen` still stops at 366 days. Create now refuses a longer interval before that cap is used. `zeitraumIstZuLang` uses the existing read-schema boundary: a UTC day difference above `REISEDAUER_MAXIMUM` (365, the same value as `GRENZEN.reisedauerInTagen`). That is 366 inclusive calendar days allowed and 367 rejected. The message is the existing sentence `Eine Reise dauert höchstens 365 Tage`. No new duration contract.
+`reisetageBauen` still stops at 366 days. Create now refuses a longer interval before that cap is used. `zeitraumIstZuLang` uses the existing numeric boundary: a UTC day difference above `REISEDAUER_MAXIMUM` (365, the same value as `GRENZEN.reisedauerInTagen`). That is 366 inclusive calendar days allowed and 367 rejected. The creator sentence counts those included dates: `Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.` The stored-reader sentence in `reiseSchema` stays `Eine Reise dauert höchstens 365 Tage`. No new duration number.
 
 The check runs in `createDayPositions` before `reisetageBauen`, in `neueReiseSchema` on `endDate` before allocation parsing, in `createKontoTage`, and in `gastreiseAnlegen` after the resource preflight and before any storage call. `TripPlanner` shows that sentence on Rückreise (`#feld-ende` / field key `endDate`), moves focus there on submit, and returns before `gastreiseAnlegen` and `reiseAnlegen`. The allocation stand says the interval is longer than allowed and is neither shortened nor stored. It does not announce a truncated day count as the whole journey.
 
@@ -58,4 +58,10 @@ Valid 366-day trips stay complete, including no-opt-in unassigned days and a sin
 
 Historical control: Root authorized only the already-landed one-entry inventory update. The expected blob for the owned `lib/trips/aktionen.ts` may stay `e0c03d9ea5fc1200774727e4b790511684020c86` (previous `4833378894aeedb152e093912574a698a9701b33`). Every other pin, entry, and assertion stays. The audit script was not edited and was not weakened. This is not ownership of the historical-control file.
 
-Integration: `origin/main` advanced through S to `68435f012f27f599a1092699f5635aa88312ea67`. S actual-main acceptance was still pending at this correction. This branch was not rebased or merged onto that main. Merge-base remains `6ae344f4453b16514f9048083bb8b07396135fa2`.
+Integration: `origin/main` advanced through S to `68435f012f27f599a1092699f5635aa88312ea67`. S actual-main acceptance was still pending at this correction. This branch was not rebased or merged onto that main. Merge-base remains `6ae344f4453b16514f9048083bb8b07396135fa2`. Re-read on 26 October 2026 after the wording commit still shows that main and that merge-base.
+
+## R1 supplementary disposition — `lib/trips/tage.ts`
+
+`lib/trips/tage.ts` was outside the TASK's named ownership. The additive interval guard was edited in `c17257ad04ac8bb90e6136c7b3b3f7a50f7537f2` before it was proposed. Root has since authorized only that additive pure calendar-interval guard, the constants it needs, and the explanatory comment. `datumVerschieben`, `reisetageBauen`, `TAGE_MAXIMUM`, the stored-reader limit, and unrelated callers keep their behavior. This is not general ownership of calendar or duration editing. TASK V1 stays immutable.
+
+The visible creator sentence was then aligned with the same number. A 366-day create is described as 366 days. A 367-day create says “höchstens 366 Kalendertage, einschließlich Abreise und Rückreise” and does not say “365 Tage”. Mounted evidence for that wording is `docs/evidence/multi-stop-create-day-allocation-1/mounted-6997f78f1475.json` on runtime `6997f78f1475169be07ff69a13c28ba917fdf1c6`, 10/10, hosted persistence not invoked.

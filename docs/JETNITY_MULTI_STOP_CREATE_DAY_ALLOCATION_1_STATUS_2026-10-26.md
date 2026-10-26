@@ -12,7 +12,7 @@ Implementation is on `feat/r109-multi-stop-create-day-allocation-1`, Draft PR #1
 
 Guest and Account create can assign existing calendar days to confirmed destination occurrences. Without that choice, several destinations stay unassigned and one destination stays `single_destination`. Known days follow occurrence order. Null gaps stay null. Hotel nights and transfers are not inferred.
 
-An interval longer than 366 inclusive calendar days is rejected before the capped day builder and before any create writer. The Rückreise field shows `Eine Reise dauert höchstens 365 Tage` and receives focus. The allocation summary does not describe a shortened interval as the whole journey. A real 366-day interval, including 2026-11-01 through 2027-11-01, stays complete.
+An interval longer than 366 inclusive calendar days is rejected before the capped day builder and before any create writer. The Rückreise field shows `Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.` and receives focus. A real 366-day interval is described as 366 days. The stored-reader sentence stays `Eine Reise dauert höchstens 365 Tage`. The allocation summary does not describe a shortened interval as the whole journey.
 
 Create and import entry points reject oversized known collections before Zod `safeParse`. Zod is not claimed to be remediated anywhere else. Package files were not edited.
 
