@@ -9,7 +9,9 @@
 import type { Metadata } from 'next'
 
 import AccountBesuche from '@/components/account/AccountBesuche'
+import { ReiseFensterRahmen } from '@/components/account/account-home-export-1/ReiseFensterRahmen'
 import { besucheLaden } from '@/lib/account/besuche-daten'
+import { reiseFensterAus } from '@/lib/account/account-home-export-1/fenster'
 import { weltBesuchtAbleiten } from '@/lib/account/welt-ansicht'
 import { weltLaenderLaden } from '@/lib/account/welt-geometrie'
 import { worldMapAbleiten } from '@/lib/account/world-map'
@@ -39,16 +41,23 @@ export default async function AccountWeltSeite() {
     geplant: welt.laenderCodes,
   })
 
+  const fenster = reiseFensterAus({
+    problem: reisenLesung.problem !== null,
+    anzahl: reisenLesung.zeilen?.length ?? 0,
+  })
+
   return (
     <main className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-6xl">
-        <AccountBesuche
-          welt={welt}
-          besucht={besucht}
-          laender={laender}
-          besuche={besucheLesung.zeilen ?? []}
-          problem={besucheLesung.problem}
-        />
+        <ReiseFensterRahmen wert={{ fenster, neuLadenHref: '/account/welt' }}>
+          <AccountBesuche
+            welt={welt}
+            besucht={besucht}
+            laender={laender}
+            besuche={besucheLesung.zeilen ?? []}
+            problem={besucheLesung.problem}
+          />
+        </ReiseFensterRahmen>
       </div>
     </main>
   )

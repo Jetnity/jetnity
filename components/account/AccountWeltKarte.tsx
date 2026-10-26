@@ -4,7 +4,13 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { ArrowUpRight, MapPin, MapPinOff } from 'lucide-react'
 import { useCallback, useId, useMemo, useState } from 'react'
+import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
+import { useReiseFenster } from '@/components/account/account-home-export-1/ReiseFensterRahmen'
 import WorldExplorer from '@/components/account/world-explorer-1/WorldExplorer'
+import {
+  weltReichweiteText,
+  type ReiseFenster,
+} from '@/lib/account/account-home-export-1/fenster'
 
 import {
   WeltFuellungen,
@@ -411,10 +417,15 @@ export default function AccountWeltKarte(props: {
   laender: WeltLaenderAbleitung
   aktion?: { href: Route; text: string } | null
   darstellung?: 'atlas' | 'uebersicht'
+  fenster?: ReiseFenster | null
+  neuLadenHref?: '/account' | '/account/welt'
 }) {
+  const rahmen = useReiseFenster()
+  const fenster = props.fenster ?? rahmen?.fenster ?? null
+  const neuLadenHref = props.neuLadenHref ?? rahmen?.neuLadenHref
   return props.darstellung === 'uebersicht'
-    ? <BestehendeWeltKarte {...props} />
-    : <WorldExplorer welt={props.welt} besucht={props.besucht} laender={props.laender} aktion={props.aktion} />
+    ? <BestehendeWeltKarte {...props} fenster={fenster} neuLadenHref={neuLadenHref} />
+    : <WorldExplorer welt={props.welt} besucht={props.besucht} laender={props.laender} aktion={props.aktion} reichweiteText={fenster ? weltReichweiteText(fenster) : undefined} fenster={fenster} neuLadenHref={neuLadenHref} />
 }
 
 /** Existing compact experience is kept independent of explorer state and controls. */
@@ -424,6 +435,8 @@ function BestehendeWeltKarte({
   laender,
   aktion = null,
   darstellung = 'atlas',
+  fenster = null,
+  neuLadenHref,
 }: {
   welt: WorldMapAbleitung
   besucht: WeltBesuchtAnsicht
@@ -436,6 +449,8 @@ function BestehendeWeltKarte({
    * dieselbe Kartenwahrheit, ohne Länderchips und ohne die volle Ortsliste.
    */
   darstellung?: 'atlas' | 'uebersicht'
+  fenster?: ReiseFenster | null
+  neuLadenHref?: '/account' | '/account/welt'
 }) {
   const istAtlas = darstellung === 'atlas'
   const [gewaehlt, setGewaehlt] = useState<string | null>(null)
@@ -532,12 +547,13 @@ function BestehendeWeltKarte({
       ) : null}
 
       {besucht.fehlerText ? (
-        <p
+        <div
           role="alert"
           className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-800"
         >
-          {besucht.fehlerText}
-        </p>
+          <p>{besucht.fehlerText}</p>
+          {neuLadenHref ? <SeiteNeuLaden href={neuLadenHref} /> : null}
+        </div>
       ) : null}
 
       {welt.lage === 'fehler' ? (
@@ -707,9 +723,14 @@ function BestehendeWeltKarte({
         </div>
         {aktion && !istAtlas ? (
           <div className="mt-5 flex flex-col gap-3 border-t border-line-100 pt-5 lg:flex-row lg:items-center lg:justify-between">
-            <p className="min-w-0 max-w-xl text-sm leading-6 text-ink-800">
-              Die Länder und alle geplanten Orte stehen vollständig auf der Seite Deine Welt. Diese
-              Übersicht wiederholt die Listen nicht.
+            <p className="min-w-0 max-w-xl break-words text-sm leading-6 text-ink-800">
+              {fenster?.lage === 'grenze'
+                ? 'Geplante Orte nur aus den geladenen Reisen dieser Ansicht, nicht als geprüfte Gesamtheit.'
+                : fenster?.lage === 'fehler'
+                  ? 'Geplante Orte sind unbekannt, weil die Reisen nicht geladen werden konnten.'
+                  : fenster?.lage === 'vollstaendig'
+                    ? 'Geplante Orte aus der ganzen Antwort dieser Reiseabfrage. Die Weltseite nutzt denselben Ausschnitt.'
+                    : 'Die geplanten Orte stammen aus den hier geladenen Reisen. Diese Übersicht behauptet daraus keine geprüfte Gesamtheit.'}
             </p>
             <Link
               href={aktion.href}

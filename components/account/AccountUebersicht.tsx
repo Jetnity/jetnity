@@ -13,7 +13,12 @@ import Link from 'next/link'
 import { AlertCircle, ArrowRight, MapPin, Plus } from 'lucide-react'
 
 import AccountWeltKarte from '@/components/account/AccountWeltKarte'
+import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
 import { BUCHUNGEN_COPY } from '@/lib/account/buchungen'
+import {
+  naechsteReiseBezeichnung,
+  reiseFensterAus,
+} from '@/lib/account/account-home-export-1/fenster'
 import type { NaechsteReise } from '@/lib/account/naechste-reise'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import type { WeltLaenderAbleitung } from '@/lib/account/welt-laender'
@@ -35,12 +40,6 @@ function zeitraum(startDate: string | null, endDate: string | null): string {
     new Date(`${endDate}T00:00:00Z`),
   )}`
 }
-
-const LAGE_TEXT = {
-  aktiv: 'Deine Reise läuft gerade.',
-  kommend: 'Deine nächste Reise.',
-  fortsetzen: 'Hier kannst du weiterplanen.',
-} as const
 
 const WELT_VORSCHAU_AKTION = 'Deine Welt öffnen'
 
@@ -75,6 +74,7 @@ export default function AccountUebersicht({
   reisen,
   besucht,
   laender,
+  heute = null,
 }: {
   name: string | null
   problem: Problem | null
@@ -83,11 +83,13 @@ export default function AccountUebersicht({
   reisen: readonly TripSummary[]
   besucht: WeltBesuchtAnsicht
   laender: WeltLaenderAbleitung
+  heute?: string | null
 }) {
   const welt = worldMapAbleiten({ problem, reisen })
+  const fenster = reiseFensterAus({ problem: problem !== null, anzahl: reisen.length })
 
   return (
-    <div data-account-uebersicht="ein">
+    <div data-account-uebersicht="ein" data-account-heute={heute ?? 'unbekannt'}>
       <header className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Konto</p>
         <h1 className="mt-2 break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
@@ -98,6 +100,8 @@ export default function AccountUebersicht({
           Trip Workspace.
         </p>
       </header>
+
+      <ReiseFensterHinweis fenster={fenster} />
 
       <div className="mt-8 grid min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,22rem)]">
         {problem ? (
@@ -117,6 +121,7 @@ export default function AccountUebersicht({
                 ? 'Wir konnten deinen aktuellen Speicherstand gerade nicht prüfen; bitte lade später neu.'
                 : 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.'}
             </p>
+            <SeiteNeuLaden href="/account" />
           </section>
         ) : naechste ? (
           <section
@@ -127,7 +132,7 @@ export default function AccountUebersicht({
             <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 xl:flex-row xl:items-end">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-                  {LAGE_TEXT[naechste.lage]}
+                  {naechsteReiseBezeichnung(naechste.lage, fenster)}
                 </p>
                 <div className="mt-3">
                   <span className="inline-flex items-center rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
@@ -170,12 +175,18 @@ export default function AccountUebersicht({
               <MapPin className="h-5 w-5" />
             </span>
             <h2 className="mt-5 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800">
-              {hatReisen ? 'Keine offene Reise zum Fortsetzen.' : 'Noch keine Reise in deinem Konto.'}
+              {fenster.lage === 'grenze'
+                ? 'In den geladenen Reisen ist keine offene Reise.'
+                : hatReisen
+                  ? 'Keine offene Reise zum Fortsetzen.'
+                  : 'Noch keine Reise in deinem Konto.'}
             </h2>
             <p className="mt-3 max-w-md text-sm leading-6 text-ink-700">
-              {hatReisen
-                ? 'Deine vorhandenen Reisen liegen unter Meine Reisen. Eine neue Reise kannst du jederzeit anlegen.'
-                : 'Lege deine erste Reise an. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus weiterplanen.'}
+              {fenster.lage === 'grenze'
+                ? 'Ob weitere offene Reisen ausserhalb dieser zuletzt geänderten Reisen existieren, ist hier nicht geprüft.'
+                : hatReisen
+                  ? 'Deine vorhandenen Reisen liegen unter Meine Reisen. Eine neue Reise kannst du jederzeit anlegen.'
+                  : 'Lege deine erste Reise an. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus weiterplanen.'}
             </p>
             <div className="mt-6 flex w-full min-w-0 flex-col gap-3 sm:flex-row">
               {hatReisen ? (
@@ -204,6 +215,8 @@ export default function AccountUebersicht({
         welt={welt}
         besucht={besucht}
         laender={laender}
+        fenster={fenster}
+        neuLadenHref="/account"
         aktion={{ href: '/account/welt', text: WELT_VORSCHAU_AKTION }}
       />
     </div>
