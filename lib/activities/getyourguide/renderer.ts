@@ -7,6 +7,30 @@ import { GYG_SANDBOX, embedPfad } from '@/lib/activities/getyourguide/dokument'
 import type { GygLadeErgebnis, GygRenderer } from '@/lib/activities/getyourguide/widget'
 import type { GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
+const hoeheHalter = new WeakMap<HTMLElement, () => void>()
+
+export function gygHoeheAnnehmen(rahmen: HTMLIFrameElement, event: Pick<MessageEvent, 'origin' | 'source' | 'data'>): boolean {
+  if (event.origin !== 'null' || event.source == null || event.source !== rahmen.contentWindow) return false
+  const data: unknown = event.data
+  if (!data || typeof data !== 'object') return false
+  const eintrag = data as Record<string, unknown>
+  const schluessel = Object.keys(eintrag).sort()
+  if (schluessel.length !== 3 || schluessel[0] !== 'art' || schluessel[1] !== 'px' || schluessel[2] !== 'quelle') return false
+  if (eintrag.quelle !== 'jetnity-gyg-rahmen' || eintrag.art !== 'hoehe') return false
+  if (typeof eintrag.px !== 'number' || !Number.isFinite(eintrag.px)) return false
+  const px = Math.round(eintrag.px)
+  if (px < 1 || px > 2400) return false
+  rahmen.style.height = `${px}px`
+  return true
+}
+
+function hoeheLoesen(ziel: HTMLElement) {
+  const los = hoeheHalter.get(ziel)
+  if (!los) return
+  los()
+  hoeheHalter.delete(ziel)
+}
+
 function rahmenErzeugen(suche: GygSuchkonfiguration): HTMLIFrameElement {
   const rahmen = document.createElement('iframe')
   rahmen.setAttribute('sandbox', GYG_SANDBOX)
@@ -29,7 +53,13 @@ export const anwendungsRenderer: GygRenderer = {
     if (signal.aborted || typeof document === 'undefined') {
       return Promise.resolve({ art: 'abgelehnt', meldung: '' })
     }
+    hoeheLoesen(ziel)
     const rahmen = rahmenErzeugen(suche)
+    const nachricht = (event: MessageEvent) => {
+      gygHoeheAnnehmen(rahmen, event)
+    }
+    window.addEventListener('message', nachricht)
+    hoeheHalter.set(ziel, () => window.removeEventListener('message', nachricht))
     ziel.replaceChildren(rahmen)
     return new Promise<GygLadeErgebnis>((resolve) => {
       let fertig = false
@@ -42,11 +72,13 @@ export const anwendungsRenderer: GygRenderer = {
         resolve(ergebnis)
       }
       const abbruch = () => {
+        hoeheLoesen(ziel)
         rahmen.remove()
         ende({ art: 'abgelehnt', meldung: '' })
       }
       const geladen = () => ende({ art: 'ressource' })
       const fehler = () => {
+        hoeheLoesen(ziel)
         rahmen.remove()
         ende({ art: 'abgelehnt', meldung: '' })
       }
@@ -60,6 +92,7 @@ export const anwendungsRenderer: GygRenderer = {
     })
   },
   entsorgen(ziel) {
+    hoeheLoesen(ziel)
     ziel.replaceChildren()
   },
 }

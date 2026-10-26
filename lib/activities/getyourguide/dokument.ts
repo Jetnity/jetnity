@@ -13,6 +13,8 @@ export const GYG_CMP = 'jetnity_activities'
 export const GYG_LOCALE = 'de-CH'
 export const GYG_ANZAHL = '3'
 export const GYG_SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox'
+export const GYG_HOEHE_SKRIPT = '(function(){var letzte=-1,gemerkt=0,timer=0;function lesen(){var rahmen=document.querySelector("iframe");var px=Math.ceil(Math.max(document.body?document.body.scrollHeight:0,document.documentElement.scrollHeight));if(rahmen){var ende=Math.ceil(rahmen.offsetTop+rahmen.offsetHeight);if(ende>px)px=ende;var vater=rahmen.parentElement;if(vater){var gesetzt=parseFloat(vater.style.height);if(isFinite(gesetzt)&&gesetzt>px)px=Math.ceil(gesetzt)}}return px}function messen(){var px=lesen();if(!isFinite(px)||px<1||px>2400)return;if(px>gemerkt){gemerkt=px;clearTimeout(timer);timer=setTimeout(function(){var rahmen=document.querySelector("iframe");var vater=rahmen&&rahmen.parentElement;if(vater)vater.style.height=gemerkt+"px";if(gemerkt===letzte)return;letzte=gemerkt;parent.postMessage({quelle:"jetnity-gyg-rahmen",art:"hoehe",px:letzte},"*")},500)}else if(px+1<gemerkt){var rahmen=document.querySelector("iframe");var vater=rahmen&&rahmen.parentElement;if(vater)vater.style.height=gemerkt+"px"}}var beobachter=new ResizeObserver(messen);beobachter.observe(document.documentElement);new MutationObserver(function(){var rahmen=document.querySelector("iframe");if(rahmen)beobachter.observe(rahmen);messen()}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:["style"]});addEventListener("load",messen)})();'
+export const GYG_HOEHE_HASH = 'sha256-cOuVlZ9+YXLzZAoDPA9amKfiijQx3AnWE6eS4boIRe4='
 
 const UMFANG = new Set<GygSuchumfang>(['stadt', 'region', 'insel', 'land'])
 const PARAMETER = ['umfang', 'code', 'name'] as const
@@ -34,7 +36,7 @@ function rahmen(aktiv: boolean): string {
   return [
     SANDBOX_BASIS,
     "default-src 'none'",
-    'script-src https://widget.getyourguide.com',
+    `script-src '${GYG_HOEHE_HASH}' https://widget.getyourguide.com`,
     'frame-src https://widget.getyourguide.com',
     'img-src https: data:',
     "style-src 'unsafe-inline' https:",
@@ -130,6 +132,7 @@ export function embedDokument(suche: GygSuchkonfiguration | null): string {
 </head>
 <body>
 <div data-gyg-href="${GYG_WIDGET_HREF}" data-gyg-locale-code="${GYG_LOCALE}" data-gyg-widget="activities" data-gyg-number-of-items="${GYG_ANZAHL}" data-gyg-cmp="${GYG_CMP}" data-gyg-partner-id="${GYG_PARTNER_ID}" data-gyg-q="${anfrage}"><span>Powered by <a target="_blank" rel="sponsored noopener noreferrer" href="${GYG_MARKE_HREF}">GetYourGuide</a></span></div>
+<script>${GYG_HOEHE_SKRIPT}</script>
 </body>
 </html>`
 }

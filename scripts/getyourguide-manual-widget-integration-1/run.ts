@@ -242,7 +242,10 @@ async function analyzerTick(page: Page) {
   return staende
 }
 
-async function produktOeffnen(page: Page): Promise<{ url: string; titel: string; text: string } | null> {
+async function produktOeffnen(
+  page: Page,
+  bild: string,
+): Promise<{ url: string; titel: string; text: string; h1: string } | null> {
   for (const frame of page.frames()) {
     if (!frame.url().includes('getyourguide.com')) continue
     const link = frame.locator('a[href*="et="]').first()
@@ -250,19 +253,61 @@ async function produktOeffnen(page: Page): Promise<{ url: string; titel: string;
     const popup = page.context().waitForEvent('page', { timeout: 20000 }).catch(() => null)
     await link.click({ timeout: 8000 })
     const fenster = await popup
-    if (!fenster) return { url: frame.url(), titel: '', text: '' }
+    if (!fenster) return { url: frame.url(), titel: '', text: '', h1: '' }
     await fenster.waitForLoadState('domcontentloaded').catch(() => undefined)
-    let text = ''
-    for (let versuch = 0; versuch < 3; versuch += 1) {
-      await fenster.waitForTimeout(versuch === 0 ? 2000 : 4000)
-      text = (await fenster.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim()
-      if (!/An error occurred/i.test(text) && /€|CHF|EUR|Check availability|Verfügbarkeit/.test(text)) break
+    await fenster.waitForTimeout(2500)
+    let text = (await fenster.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim()
+    if (/An error occurred/i.test(text)) {
       await fenster.reload({ waitUntil: 'domcontentloaded' }).catch(() => undefined)
+      await fenster.waitForTimeout(2500)
+      text = (await fenster.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim()
     }
-    await fenster.screenshot({ path: join(ARTIFACTS, 'produkt-aktion.png') }).catch(() => undefined)
-    return { url: fenster.url(), titel: await fenster.title(), text: text.slice(0, 400) }
+    await fenster.screenshot({ path: join(ARTIFACTS, bild) }).catch(() => undefined)
+    const h1 = (await fenster.locator('h1').first().innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 180)
+    const ergebnis = { url: fenster.url(), titel: await fenster.title(), text: text.slice(0, 400), h1 }
+    await fenster.close().catch(() => undefined)
+    return ergebnis
   }
   return null
+}
+
+async function ausschnitt375(page: Page, szenario: string) {
+  const aussen = await page.evaluate((name) => {
+    const vorfahre = document.querySelector(`[data-szenario="${name}"]`)
+    const rahmen = vorfahre?.querySelector('iframe')
+    if (!(vorfahre instanceof HTMLElement) || !(rahmen instanceof HTMLElement)) return { fehlt: true }
+    const a = rahmen.getBoundingClientRect()
+    const b = vorfahre.getBoundingClientRect()
+    const stil = getComputedStyle(vorfahre)
+    return {
+      fehlt: false,
+      rahmen: { breite: Math.round(a.width), hoehe: Math.round(a.height) },
+      vorfahre: { breite: Math.round(b.width), hoehe: Math.round(b.height), overflowY: stil.overflowY },
+      ragtSeitlich: a.left < b.left - 1 || a.right > b.right + 1,
+      ragtUnten: a.bottom > b.bottom + 1,
+    }
+  }, szenario)
+  const innen = []
+  for (const frame of page.frames()) {
+    if (!frame.url().includes('/embed/getyourguide') && !frame.url().includes('activities.frame')) continue
+    const mass = await frame
+      .evaluate(() => {
+        const widget = document.querySelector('iframe')
+        const karten = [...document.querySelectorAll('a[href*="et="]')].map((anker) => {
+          const box = (anker as HTMLElement).getBoundingClientRect()
+          return { oben: Math.round(box.top), unten: Math.round(box.bottom) }
+        })
+        return {
+          scroll: document.documentElement.scrollHeight,
+          client: document.documentElement.clientHeight,
+          widgetHoehe: widget instanceof HTMLElement ? Math.round(widget.getBoundingClientRect().height) : 0,
+          karten,
+        }
+      })
+      .catch(() => null)
+    if (mass) innen.push({ url: frame.url().slice(0, 100), ...mass })
+  }
+  return { aussen, innen }
 }
 
 async function main() {
@@ -432,8 +477,27 @@ async function main() {
     stadt.karten.length > 0 && stadt.karten.every((karte) => karte.unten <= karte.sicht + 1),
     `Angebotskarten ragen aus dem Anbieterrahmen: ${JSON.stringify(stadt.karten)}`,
   )
+  await page.setViewportSize({ width: 375, height: 812 })
+  let schnitt375 = await ausschnitt375(page, 'wechsel')
+  const startHoehe = Date.now()
+  while (Date.now() - startHoehe < 8000) {
+    const embed = schnitt375.innen.find((eintrag) => eintrag.url.includes('/embed/getyourguide'))
+    const widget = schnitt375.innen.find((eintrag) => eintrag.url.includes('activities.frame'))
+    const tiefste = Math.max(0, ...(widget?.karten ?? []).map((karte) => karte.unten))
+    if (embed && tiefste > 640 && embed.client + 8 >= tiefste && schnitt375.aussen.ragtUnten !== true) break
+    await page.waitForTimeout(400)
+    schnitt375 = await ausschnitt375(page, 'wechsel')
+  }
+  await page.screenshot({ path: join(ARTIFACTS, 'stadt-375.png'), fullPage: true })
+  const embed375 = schnitt375.innen.find((eintrag) => eintrag.url.includes('/embed/getyourguide'))
+  const widget375 = schnitt375.innen.find((eintrag) => eintrag.url.includes('activities.frame'))
+  const tiefste375 = Math.max(0, ...(widget375?.karten ?? []).map((karte) => karte.unten))
+  pruefe(
+    Boolean(embed375) && tiefste375 > 640 && embed375!.client + 8 >= tiefste375 && schnitt375.aussen.ragtUnten !== true,
+    `Bei 375px bleiben Angebote unter dem sichtbaren Rahmen: ${JSON.stringify(schnitt375)}`,
+  )
   await page.setViewportSize({ width: 1440, height: 900 })
-  const produkt = await produktOeffnen(page)
+  const produkt = await produktOeffnen(page, 'produkt-aktion.png')
   const art = produkt ? zielArt(produkt.url, produkt.text) : 'andere'
   pruefe(
     art === 'suchliste' || art === 'angebot',
@@ -468,6 +532,7 @@ async function main() {
   const insel = await wartenAufAngebot(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await rahmenBild(page, 'insel-1440.png')
+  const inselZiel = await produktOeffnen(page, 'produkt-insel.png')
   await page.locator('[data-szenario="wechsel"]').getByRole('button', { name: 'Entfernen' }).click()
   await page.getByRole('button', { name: 'Tag Lissabon' }).click()
   pruefe((await page.locator('[data-szenario="wechsel"] iframe').count()) === 0, 'Rückwechsel belebt den alten Rahmen')
@@ -476,6 +541,7 @@ async function main() {
   await page.locator('[data-szenario="land"]').getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
   const land = await wartenAufAngebot(page)
   await rahmenBild(page, 'land-1440.png')
+  const landZiel = await produktOeffnen(page, 'produkt-land.png')
   await page.screenshot({ path: join(ARTIFACTS, 'nativ-und-land.png'), fullPage: true })
 
   phase = 'direkt'
@@ -494,6 +560,10 @@ async function main() {
     produkt: produkt?.url ?? null,
     produktTitel: produkt?.titel ?? null,
     produktText: produkt?.text ?? null,
+    produktH1: produkt?.h1 ?? null,
+    inselZiel: inselZiel,
+    landZiel: landZiel,
+    schnitt375,
     zielArt: art,
     v2Navigation: art === 'suchliste' || art === 'angebot',
     v1Abschnitt93: art === 'angebot' ? 'eine beobachtete Angebotsseite, kein Abschluss von V1 9.3' : 'nicht erfüllt',

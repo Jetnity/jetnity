@@ -18,15 +18,15 @@ TASK V2 replaces only the mandatory product-detail destination for #1040. A sear
 
 On `127.0.0.1` the script is present and `gygPAStatus` remained `loading` for three ticks. Offers still rendered. No `pageerror` or `unhandledrejection` was captured. `sessionStorage` throws in the opaque document. Five collector requests mean telemetry happened. The branch preview host contains `getyourguide` and is behind Vercel SSO, so this session did not verify Analyzer initialization on an eligible host. `allow-same-origin` was not added to hide that.
 
-The final product-page artifact is an outage page. The URL is the specific offer URL and keeps `partner_id=2MQHT6Z`, but the body does not show the tour. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk. A reviewer should treat the product-body requirement as unproved on the delivered screenshot and should rerun the proof when GetYourGuide answers that URL again.
+Root’s San Blas probe is a search list: H1 “San Blas Panama”, `/s/`, 62 results, partner kept. Lisbon, Crete and Portugal card anchors on this branch are the same `/s/?et=&q=` shape with `partner_id=2MQHT6Z`. The latest click of each opened the outage page, title “GetYourGuide – Error”, empty H1, Ray IDs `a50d22a04b76bdc9`, `a50d238deafabdc9` and `a50d24757dc9bdc9`. That is not a search-list H1 and not a product page. One earlier observation in this session did show “From Lisbon: Arrábida and Sesimbra Full-Day Tour”. That image is not the file left on disk. A reviewer should treat V1 section 9.3 as open.
 
 The provider “see all” target is not the searched place in every case. Crete’s see-all link was Santorini. That link was not used as product proof. It is still what the official widget rendered.
 
-Offer-card rectangles in the provider document share one box (top 0, bottom 447). They fit the provider viewport once it has grown to 495px. A measurement taken earlier in the same session saw client height 150 and would have clipped that box. The proof now waits for the grown viewport. There is no parent resize channel. About 16px of provider document (511 scroll versus 495 client) remains below the provider viewport. The visible titles, including the powered-by line, were present in the frame text.
+On a wide viewport the three offer anchors share one box (top 0, bottom 447) inside a provider viewport of about 495px. At 375px they stack to 354, 724 and 1094. The outer iframe used to stay at 640px and hid the lower cards. It now follows the bounded height message and was 1187px in the latest proof. The ancestor’s `overflow-y: hidden` did not clip that iframe. The provider frame was 1203px client and scroll, so the third card fit. About 32px of the embed document remained below the outer iframe. The message rejects any payload other than the three height fields, any origin other than `null`, and any source other than the current iframe. `gygPAStatus` on `127.0.0.1` is still not Analyzer success. Collector telemetry remains.
 
 A live region widget was not opened. The region path is unit-tested only.
 
-The full test suite on this code is 7366 tests, 7350 pass, 11 fail, 5 skipped. The 11 failures are missing `/usr/lib/postgresql/16/bin/initdb`. They were not rerun as passes.
+The full test suite on the code before the height message is 7366 tests, 7350 pass, 11 fail, 5 skipped. The 11 failures are missing `/usr/lib/postgresql/16/bin/initdb`. They were not rerun as passes, and the full suite was not repeated after the height message. Focused GetYourGuide tests after that message: 42 pass, 0 fail. `tsc --noEmit` passed. Build and hygiene were not repeated.
 
 ## Scope left alone
 

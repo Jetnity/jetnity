@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
@@ -6,6 +7,8 @@ import {
   GYG_ANALYZER_SRC,
   GYG_ANZAHL,
   GYG_CMP,
+  GYG_HOEHE_HASH,
+  GYG_HOEHE_SKRIPT,
   GYG_LOCALE,
   GYG_MARKE_HREF,
   GYG_PARTNER_ID,
@@ -17,6 +20,7 @@ import {
   embedPfad,
   suchparameterLesen,
 } from '@/lib/activities/getyourguide/dokument'
+import { gygHoeheAnnehmen } from '@/lib/activities/getyourguide/renderer'
 import { suchanfrageText, suchkonfigurationBauen } from '@/lib/activities/getyourguide/suche'
 
 function anfrage(suche: string, kopf: Record<string, string> = {}): Request {
@@ -129,6 +133,25 @@ describe('GetYourGuide-Einbettungsdokument', () => {
     assert.match(aktivHtml, new RegExp(`data-gyg-q="${landName('IS', 'de')}"`))
     assert.equal(aktiv.headers.get('cache-control'), 'private, no-store')
     assert.equal((aktiv.headers.get('content-security-policy') ?? '').includes('allow-same-origin'), false)
+    assert.equal(aktivHtml.split(GYG_HOEHE_SKRIPT).length - 1, 1)
+    assert.equal(createHash('sha256').update(GYG_HOEHE_SKRIPT).digest('base64'), GYG_HOEHE_HASH.slice('sha256-'.length))
+    assert.equal((aktiv.headers.get('content-security-policy') ?? '').includes(`'${GYG_HOEHE_HASH}'`), true)
+    assert.equal((aktiv.headers.get('content-security-policy') ?? '').includes("'unsafe-inline'"), true)
+    assert.equal((aktiv.headers.get('content-security-policy') ?? '').includes('script-src \'unsafe-inline\''), false)
+  })
+
+  test('die Höhennachricht akzeptiert nur den eigenen undurchsichtigen Rahmen', () => {
+    const fenster = {}
+    const rahmen = { contentWindow: fenster, style: { height: '' } } as unknown as HTMLIFrameElement
+    const gueltig = { quelle: 'jetnity-gyg-rahmen', art: 'hoehe', px: 1171 }
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: gueltig }), true)
+    assert.equal(rahmen.style.height, '1171px')
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'https://widget.getyourguide.com', source: fenster as MessageEventSource, data: gueltig }), false)
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: {} as MessageEventSource, data: gueltig }), false)
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, tour: 1 } }), false)
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: 2401 } }), false)
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: Number.NaN } }), false)
+    assert.equal(rahmen.style.height, '1171px')
   })
 
   test('doppelte, übergrosse und fremde Parameter laden den Analyzer nicht', async () => {
