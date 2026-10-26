@@ -481,9 +481,9 @@ async function main() {
       await page.getByRole('button', { name: 'Eintrag hinzufügen' }).click()
       await page.locator('[data-security-block="203.0.113.32"]').click()
       await page.waitForFunction(() => window.__securityAudit.pending().filter((call) => call.method === 'POST').length === 2)
+      await page.getByLabel('Aufgezeichnete Ereignisse durchsuchen').fill('zzz-filter')
       await page.locator('#blocklist-grund').focus()
       await page.keyboard.type(' beta')
-      await page.getByLabel('Aufgezeichnete Ereignisse durchsuchen').fill('zzz-filter')
       const pending = (await stand(page)).pending.filter((call) => call.method === 'POST')
       const formPost = pending.find((call) => call.body?.includes('203.0.113.77'))
       const rowPost = pending.find((call) => call.body?.includes('203.0.113.32'))
@@ -585,31 +585,86 @@ async function main() {
         { width: 1280, height: 900, name: 'desktop-1280' },
       ]) {
         await page.setViewportSize({ width: viewport.width, height: viewport.height })
+        await page.evaluate(() => {
+          if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+        })
         await pause(50)
-        const gemessen = await page.evaluate(() => ({
-          scrollWidth: document.documentElement.scrollWidth,
-          clientWidth: document.documentElement.clientWidth,
-          text: document.body.innerText.includes('ENDE'),
-          add: document.querySelector('#blocklist-eintrag-titel')?.getBoundingClientRect().height ?? 0,
-        }))
+        const gemessen = await page.evaluate(() => {
+          const region = document.querySelector('[aria-label="Aufgezeichnete Ereignisse"]')
+          const regionStyle = region ? getComputedStyle(region) : null
+          const limit = document.documentElement.clientWidth + 1
+          const offenders = [...document.querySelectorAll('body *')]
+            .map((node) => {
+              const rect = node.getBoundingClientRect()
+              const parent = node.parentElement
+              return {
+                tag: node.tagName,
+                className: String(node.className).slice(0, 100),
+                left: Math.round(rect.left),
+                right: Math.round(rect.right),
+                parent: parent ? String(parent.className).slice(0, 120) : '',
+              }
+            })
+            .filter((node) => node.right > limit)
+            .slice(0, 8)
+          return {
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth,
+            text: document.body.innerText.includes('ENDE'),
+            add: document.querySelector('#blocklist-eintrag-titel')?.getBoundingClientRect().height ?? 0,
+            region: region
+              ? { overflowX: regionStyle?.overflowX, client: region.clientWidth, scroll: region.scrollWidth }
+              : null,
+            offenders,
+          }
+        })
         assert.equal(gemessen.text, true)
-        assert.ok(gemessen.scrollWidth <= gemessen.clientWidth + 1, viewport.name)
+        assert.ok(
+          gemessen.scrollWidth <= gemessen.clientWidth + 1,
+          `${viewport.name} ${JSON.stringify({ scroll: gemessen.scrollWidth, client: gemessen.clientWidth, region: gemessen.region, offenders: gemessen.offenders })}`,
+        )
         assert.ok(gemessen.add > 0)
         await shot(page, `admin-security-console-${viewport.name}.png`)
         masse.push({ ...viewport, ...gemessen, text: undefined })
       }
       await page.setViewportSize({ width: 390, height: 800 })
       await page.evaluate(() => {
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
         document.documentElement.style.fontSize = '32px'
       })
       await pause(50)
-      const gross = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        button: [...document.querySelectorAll('button')].find((node) => node.textContent?.includes('Eintrag hinzufügen'))?.getBoundingClientRect().height ?? 0,
-      }))
+      const gross = await page.evaluate(() => {
+        const limit = document.documentElement.clientWidth + 1
+          const offenders = [...document.querySelectorAll('body *')]
+          .filter((node) => !node.closest('[role="region"]'))
+          .map((node) => {
+            const rect = node.getBoundingClientRect()
+            return {
+              tag: node.tagName,
+              className: String(node.className).slice(0, 120),
+              right: Math.round(rect.right),
+              whiteSpace: getComputedStyle(node).whiteSpace,
+            }
+          })
+          .filter((node) => node.right > limit)
+          .slice(0, 8)
+        const widths = [...document.querySelectorAll('section, [role="region"], input, h2, .wurzel')]
+          .map((node) => ({
+            tag: node.tagName,
+            id: node.id || node.getAttribute('aria-label') || node.className?.toString?.().slice(0, 60),
+            client: node.clientWidth,
+            scroll: node.scrollWidth,
+          }))
+        return {
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          button: [...document.querySelectorAll('button')].find((node) => node.textContent?.includes('Eintrag hinzufügen'))?.getBoundingClientRect().height ?? 0,
+          offenders,
+          widths,
+        }
+      })
       assert.ok(gross.button >= 44)
-      assert.ok(gross.scrollWidth <= gross.clientWidth + 1)
+      assert.ok(gross.scrollWidth <= gross.clientWidth + 1, JSON.stringify(gross))
       await shot(page, 'admin-security-console-200-percent.png')
       return { fokus, masse, gross }
     })

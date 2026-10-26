@@ -264,7 +264,7 @@ export default function SecurityWidget() {
         <p data-security-read-note="veraltet">Die sichtbaren Zeilen stammen aus der letzten angenommenen Lesung.</p>
       )}
 
-      <section className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,140px),1fr))] xl:grid-cols-4">
+      <section className="grid min-w-0 gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,140px),1fr))] xl:grid-cols-4">
         <KPICard
           icon={<ShieldCheck className="h-5 w-5" />}
           label={ADMIN_EHRLICHE_TEXTE.securityKpiEvents24h}
@@ -518,9 +518,9 @@ export default function SecurityWidget() {
 
 function KPICard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | null }) {
   return (
-    <div className="rounded-2xl border bg-card p-4" data-security-kpi={label} data-security-kpi-value={value === null ? '' : String(value)}>
+    <div className="min-w-0 rounded-2xl border bg-card p-4" data-security-kpi={label} data-security-kpi-value={value === null ? '' : String(value)}>
       <div className="flex items-start justify-between gap-3">
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="min-w-0 break-words text-xs text-muted-foreground">{label}</span>
         <span className="shrink-0 text-muted-foreground" aria-hidden>
           {icon}
         </span>
