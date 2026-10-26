@@ -1,7 +1,11 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import { activityKandidatenAnreichern } from '@/lib/activities/anreichern'
+import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import { activitySucheAntwortLesen } from '@/lib/activities/client-anfrage'
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 import { sucheFuerClient } from '@/lib/activities/client-sicht'
 import { LEERE_ACTIVITY_EVIDENZ, type ActivityOption, type ActivitySuchanfrage } from '@/lib/activities/domain'
@@ -78,16 +82,21 @@ function erfasst(inhalt: string, generation = 1, epoche = 1, option: ActivityOpt
     epoche,
     generation,
     optionInhalt: inhalt,
-    schreibIdentitaet: optionSchreibIdentitaet(option),
+    schreibIdentitaet: optionSchreibIdentitaet(option, null),
   }
 }
 
-function operationVon(option: ActivityOptionSichtbar, tripId = 'trip-a', dayId = 'day-1'): string {
+function operationVon(
+  option: ActivityOptionSichtbar,
+  tripId = 'trip-a',
+  dayId = 'day-1',
+  tagDatum: string | null = null,
+): string {
   return uebernahmeOperationSchluessel({
     tripId,
     stageId: 'stage-1',
     dayId,
-    schreibIdentitaet: optionSchreibIdentitaet(option),
+    schreibIdentitaet: optionSchreibIdentitaet(option, tagDatum),
   })
 }
 
@@ -378,6 +387,57 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     )
   })
 
+  test('dieselbe effektive Momentaufnahme bleibt eine Operation, wenn nur die Rohbewertung abweicht', () => {
+    const tagDatum = '2026-09-12'
+    const gerundet = sichtbareOption({ bewertung: 9.02, bewertungenAnzahl: 100 })
+    const basis = sichtbareOption({ bewertung: 9.01, bewertungenAnzahl: 100 })
+    const ohneZahlA = sichtbareOption({ bewertung: null, bewertungenAnzahl: 100 })
+    const ohneZahlB = sichtbareOption({ bewertung: null, bewertungenAnzahl: 101 })
+    const mitZahl = sichtbareOption({ bewertung: 9, bewertungenAnzahl: 101 })
+    assert.equal(basis.bewertung, 9.01)
+    assert.equal(gerundet.bewertung, 9.02)
+    assert.deepEqual(alsActivityMomentaufnahme(basis, tagDatum), alsActivityMomentaufnahme(gerundet, tagDatum))
+    assert.deepEqual(alsActivityMomentaufnahme(ohneZahlA, tagDatum), alsActivityMomentaufnahme(ohneZahlB, tagDatum))
+    assert.notDeepEqual(alsActivityMomentaufnahme(basis, tagDatum), alsActivityMomentaufnahme(mitZahl, tagDatum))
+    assert.equal(kartenText(basis), kartenText(gerundet))
+    assert.equal(kartenText(ohneZahlA), kartenText(ohneZahlB))
+    assert.notEqual(optionInhaltSchluessel(basis), optionInhaltSchluessel(gerundet))
+    assert.notEqual(optionInhaltSchluessel(ohneZahlA), optionInhaltSchluessel(ohneZahlB))
+
+    const key = operationVon(basis, 'trip-a', 'day-1', tagDatum)
+    assert.equal(operationVon(gerundet, 'trip-a', 'day-1', tagDatum), key)
+    assert.equal(operationVon(ohneZahlA, 'trip-a', 'day-1', tagDatum), operationVon(ohneZahlB, 'trip-a', 'day-1', tagDatum))
+    assert.notEqual(operationVon(mitZahl, 'trip-a', 'day-1', tagDatum), operationVon(basis, 'trip-a', 'day-1', tagDatum))
+    assert.equal(
+      optionSchreibIdentitaet(basis, tagDatum),
+      JSON.stringify(alsActivityMomentaufnahme(basis, tagDatum)),
+    )
+
+    for (const paar of [
+      [basis, gerundet],
+      [ohneZahlA, ohneZahlB],
+    ] as const) {
+      const erste = operationVon(paar[0], 'trip-a', 'day-1', tagDatum)
+      const zweite = operationVon(paar[1], 'trip-a', 'day-1', tagDatum)
+      const laufend = uebernahmeBeanspruchen(leeresUebernahmeRegister(), erste)
+      assert.equal(laufend.ok, true)
+      if (!laufend.ok) return
+      assert.deepEqual(uebernahmeBeanspruchen(laufend.register, zweite), { ok: false, grund: 'doppelt' })
+      const angenommen = uebernahmeAbschliessen(laufend.register, erste, 'angenommen')
+      assert.deepEqual(uebernahmeBeanspruchen(angenommen, zweite), { ok: false, grund: 'angenommen' })
+      const unbestaetigt = uebernahmeAbschliessen(laufend.register, erste, 'unbestaetigt')
+      assert.deepEqual(uebernahmeBeanspruchen(unbestaetigt, zweite), { ok: false, grund: 'unbestaetigt' })
+      assert.equal(
+        uebernahmeDarfSenden(erfasst(optionInhaltSchluessel(paar[0]), 1, 1, paar[0]), {
+          epoche: 1,
+          generation: 1,
+          inhalte: [optionInhaltSchluessel(paar[1])],
+        }),
+        false,
+      )
+    }
+  })
+
   test('eine ältere Meldung spricht nicht für eine neuere Karte', () => {
     const tag = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1' }
     const erste = uebernahmeHinweisSetzen({}, 'op-a', { ...tag, text: ACTIVITY_HINWEIS_GEMELDET, seq: 2 })
@@ -443,3 +503,64 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     }
   })
 })
+
+const BEWERTUNG_EVIDENZ = {
+  hatOrt: true,
+  hatKoordinaten: false,
+  hatTag: true,
+  hatDatum: true,
+  hatBestehendePunkte: false,
+  hatBelastbareZeiten: true,
+  hatInteressen: false,
+  hatBudget: false,
+}
+
+function sichtbareOption(teil: {
+  bewertung: number | null
+  bewertungenAnzahl: number | null
+}): ActivityOptionSichtbar {
+  const antwort = activitySucheAntwortLesen(
+    {
+      status: 'ok',
+      message: 'Aktivitäten gefunden.',
+      evidenz: BEWERTUNG_EVIDENZ,
+      options: [
+        {
+          id: 'opt-bewertung',
+          provider: 'test-activity',
+          externalRef: 'ref-bewertung',
+          title: 'Garten am Nachmittag',
+          description: null,
+          locationName: 'Boboli',
+          punkt: null,
+          dauerMinuten: 90,
+          timeslot: {
+            startsOn: '2026-09-12',
+            startsAt: '15:00',
+            endsOn: '2026-09-12',
+            endsAt: '16:30',
+          },
+          preis: 40,
+          preisWaehrung: 'CHF',
+          bewertung: teil.bewertung,
+          bewertungenAnzahl: teil.bewertungenAnzahl,
+          stornierbar: true,
+          kategorien: ['culture'],
+          tags: ['garten'],
+          labels: ['jetnity'],
+          reasons: ['Passt zum Tag.'],
+          konflikt: 'frei',
+        },
+      ],
+    },
+    200,
+  )
+  assert.equal(antwort.status, 'ok')
+  const option = antwort.options[0]
+  assert.ok(option)
+  return option
+}
+
+function kartenText(option: ActivityOptionSichtbar): string {
+  return renderToStaticMarkup(createElement(AktivitaetKarte, { option, laeuft: false, onUebernehmen: () => undefined }))
+}

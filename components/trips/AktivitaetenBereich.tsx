@@ -346,7 +346,7 @@ function ActivityTag({
               tripId: reise.id,
               stageId: etappe?.id ?? '',
               dayId: tag?.id ?? '',
-              schreibIdentitaet: optionSchreibIdentitaet(option),
+              schreibIdentitaet: optionSchreibIdentitaet(option, tag?.dayDate ?? null),
             }),
           )
         : []
@@ -508,7 +508,7 @@ function ActivityTag({
                     epoche: angezeigt.epoche,
                     generation: angezeigt.generation ?? 0,
                     optionInhalt: inhalt,
-                    schreibIdentitaet: optionSchreibIdentitaet(option),
+                    schreibIdentitaet: optionSchreibIdentitaet(option, tag?.dayDate ?? null),
                   }
                   const schluessel = uebernahmeOperationSchluessel(erfasst)
                   const gesperrt =

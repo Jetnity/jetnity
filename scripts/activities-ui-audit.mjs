@@ -753,6 +753,20 @@ async function lebenszyklusPruefen(browser, name, viewport) {
   const merken = (bedingung, text) => {
     if (!bedingung) fehler.push(text)
   }
+  const direkteAktion = async (art, id, text) => {
+    const ergebnis = await page.evaluate(
+      ({ art, id }) => {
+        const steuerung = window.__jetnityActivitiesAudit
+        if (!steuerung) return { ok: false, grund: 'fehlt' }
+        if (art === 'sichern') return steuerung.aktionSichern(id)
+        if (art === 'alt') return steuerung.aktionAlt()
+        return steuerung.aktion(id)
+      },
+      { art, id },
+    )
+    merken(ergebnis?.ok === true, text)
+    return ergebnis
+  }
 
   try {
     await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
@@ -825,7 +839,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'Alt', exact: true }).waitFor({ timeout: 15000 })
     const vorAngenommen = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), alt.id)
+    await direkteAktion('aktion', alt.id, 'angenommene Übernahme hat keinen erfassten Handler')
     const nachAngenommen = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachAngenommen === vorAngenommen, `angenommene Übernahme nach neuer Suche: ${nachAngenommen - vorAngenommen}`)
 
@@ -839,12 +853,16 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [handlerAlt]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'HandlerAlt', exact: true }).waitFor({ timeout: 15000 })
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktionSichern(id), handlerAlt.id)
+    const ohneHandler = await page.evaluate(() => window.__jetnityActivitiesAudit.aktion('opt-fehlt'))
+    merken(ohneHandler?.ok === false, 'fehlende Aktion gilt als ausgeführter Handler')
+    const ohneSicherung = await page.evaluate(() => window.__jetnityActivitiesAudit.aktionSichern('opt-fehlt'))
+    merken(ohneSicherung?.ok === false, 'fehlende Sicherung gilt als erfasster Handler')
+    await direkteAktion('sichern', handlerAlt.id, 'nie ausgelöster Handler wurde nicht erfasst')
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [handlerNeu]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'HandlerNeu', exact: true }).waitFor({ timeout: 15000 })
     const vorAltHandler = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
-    await page.evaluate(() => window.__jetnityActivitiesAudit.aktionAlt())
+    await direkteAktion('alt', null, 'nie ausgelöster Handler wurde nicht ausgeführt')
     const nachAltHandler = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
     merken(nachAltHandler.aufrufe === vorAltHandler.aufrufe, 'nie ausgelöster Handler hat einen Rückruf ausgelöst')
     merken(nachAltHandler.letzte?.title === 'Alt', `alter Handler ersetzte den Inhalt durch ${nachAltHandler.letzte?.title}`)
@@ -853,7 +871,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
       'aktuelle Karte mit wiederverwendeter ID ist gesperrt',
     )
     await page.evaluate(() => window.__jetnityActivitiesAudit.uebernahme('null'))
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), handlerNeu.id)
+    await direkteAktion('aktion', handlerNeu.id, 'aktuelle Karte hat keinen erfassten Handler')
     await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
     const nachHandlerNeu = await page.evaluate(() => window.__jetnityActivitiesAudit.stand())
     merken(nachHandlerNeu.aufrufe === vorAltHandler.aufrufe + 1, 'aktuelle Karte hat nicht genau einmal gesendet')
@@ -881,13 +899,13 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [wartet]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'Wartet', exact: true }).waitFor({ timeout: 15000 })
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), wartet.id)
+    await direkteAktion('aktion', wartet.id, 'laufende Übernahme hat keinen erfassten Handler')
     await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
     await page.waitForTimeout(150)
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [wartet]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByRole('heading', { name: 'Wartet', exact: true }).waitFor({ timeout: 15000 })
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), wartet.id)
+    await direkteAktion('aktion', wartet.id, 'angenommene Übernahme nach dem Lösen hat keinen Handler')
     const nachWartet = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachWartet === vorWartet + 1, `laufende Übernahme wurde ${nachWartet - vorWartet} mal gesendet`)
 
@@ -940,13 +958,13 @@ async function lebenszyklusPruefen(browser, name, viewport) {
       await region.getByRole('button', { name: 'In die Reise', exact: true }).isDisabled(),
       'laufende Gastübernahme ist nach dem Rangwechsel klickbar',
     )
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), gastBasis.id)
+    await direkteAktion('aktion', gastBasis.id, 'laufende Gastübernahme hat keinen erfassten Handler')
     await page.evaluate(() => window.__jetnityActivitiesAudit.freigeben())
     await region.getByText('Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist.').waitFor({ timeout: 15000 })
     naechste = { koerper: antwort('ok', 'Passende Aktivitäten für diesen Tag.', [gastKonflikt]) }
     await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
     await region.getByText('Zeitkonflikt').waitFor({ timeout: 15000 })
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), gastBasis.id)
+    await direkteAktion('aktion', gastBasis.id, 'angenommene Gastübernahme hat keinen erfassten Handler')
     const nachGast = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachGast === vorGast + 1, `Gastgraph öffnet die angenommene Übernahme erneut: ${nachGast - vorGast}`)
     merken(
@@ -979,7 +997,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
     await region.getByRole('button', { name: 'Für diesen Tag suchen', exact: true }).click()
     await region.getByText('Zeitkonflikt').waitFor({ timeout: 15000 })
     await region.getByRole('button', { name: 'Erneut anbieten', exact: true }).waitFor({ timeout: 15000 })
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), offenBasis.id)
+    await direkteAktion('aktion', offenBasis.id, 'unbestätigte Gastübernahme hat keinen erfassten Handler')
     merken(
       (await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)) === vorOffen + 1,
       'Rangwechsel hat die unbestätigte Gastübernahme geöffnet',
@@ -1012,7 +1030,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
         await region.getByRole('button', { name: 'Erneut suchen', exact: true }).click()
         await region.getByText(`Karte ${art}`).waitFor({ timeout: 15000 })
         const vorSperre = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
-        await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), karteArt.id)
+        await direkteAktion('aktion', karteArt.id, `${art}: unbestätigte Übernahme hat keinen erfassten Handler`)
         merken(
           (await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)) === vorSperre,
           `${art}: neue Suche hat die unbestätigte Übernahme geöffnet`,
@@ -1057,7 +1075,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
       await region.getByRole('button', { name: 'In die Reise', exact: true }).isDisabled(),
       'neuere Übernahme wirkt nach der alten Meldung abgeschlossen',
     )
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), hinweisNeu.id)
+    await direkteAktion('aktion', hinweisNeu.id, 'neuere Meldung hat keinen erfassten Handler')
     const nachHinweis = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachHinweis === vorHinweis + 2, `Meldungswechsel sendete ${nachHinweis - vorHinweis}`)
 
@@ -1096,7 +1114,7 @@ async function lebenszyklusPruefen(browser, name, viewport) {
       await region.getByRole('button', { name: 'In die Reise', exact: true }).isDisabled(),
       'neuere Übernahme wirkt nach der unbestätigten Meldung abgeschlossen',
     )
-    await page.evaluate((id) => window.__jetnityActivitiesAudit.aktion(id), offenNeu.id)
+    await direkteAktion('aktion', offenNeu.id, 'neuere unbestätigte Meldung hat keinen erfassten Handler')
     const nachOffenHinweis = await page.evaluate(() => window.__jetnityActivitiesAudit.stand().aufrufe)
     merken(nachOffenHinweis === vorOffenHinweis + 2, `unbestätigte Altmeldung sendete ${nachOffenHinweis - vorOffenHinweis}`)
     await page.evaluate((id) => window.__jetnityActivitiesAudit.freigeben(id), offenNeu.id)

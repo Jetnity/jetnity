@@ -36,14 +36,16 @@ type AuditStand = {
   letzte: { id: string; title: string } | null
 }
 
+type AuditDirektaufruf = { ok: true } | { ok: false; grund: 'fehlt' }
+
 type ActivitiesAuditSteuerung = {
   reiseSetzen: (reise: Trip) => void
   flaeche: (sichtbar: boolean) => void
   uebernahme: (art: UebernahmeArt) => void
   freigeben: (id?: string) => void
-  aktionSichern: (id: string) => void
-  aktionAlt: () => void
-  aktion: (id: string) => void
+  aktionSichern: (id: string) => AuditDirektaufruf
+  aktionAlt: () => AuditDirektaufruf
+  aktion: (id: string) => AuditDirektaufruf
   stand: () => AuditStand
 }
 
@@ -143,13 +145,22 @@ export default function ActivitiesAuditClient() {
         warteRef.current.clear()
       },
       aktionSichern: (id) => {
-        altRef.current = aktionenRef.current.get(id) ?? null
+        const ausloesen = aktionenRef.current.get(id)
+        if (!ausloesen) return { ok: false, grund: 'fehlt' }
+        altRef.current = ausloesen
+        return { ok: true }
       },
       aktionAlt: () => {
-        altRef.current?.()
+        const ausloesen = altRef.current
+        if (!ausloesen) return { ok: false, grund: 'fehlt' }
+        ausloesen()
+        return { ok: true }
       },
       aktion: (id) => {
-        aktionenRef.current.get(id)?.()
+        const ausloesen = aktionenRef.current.get(id)
+        if (!ausloesen) return { ok: false, grund: 'fehlt' }
+        ausloesen()
+        return { ok: true }
       },
       stand: () => ({ aufrufe: aufrufeRef.current, letzte: letzteRef.current }),
     }

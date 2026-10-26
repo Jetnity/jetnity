@@ -10,6 +10,7 @@
 // eines bereits betretenen Schreibers. Ein Unmount verwirft nur dieses Register.
 
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
+import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 
 export const ACTIVITY_HINWEIS_GEMELDET =
   'Die Übernahme wurde gemeldet. Das bestätigt nicht, dass der Punkt in der Reise gespeichert ist. Bitte prüfe die Reise.'
@@ -135,34 +136,20 @@ export type UebernahmeErfassung = {
 }
 
 /**
- * Fakten, die eine Aktivitätsübernahme in den Planpunkt schreibt.
- * Entspricht der bestehenden Momentaufnahme: Titel bis 120 Zeichen, Ort,
- * Dauer, Bewertung, Storno, Zeitfenster, Preis, Währung, Anbieter, externalRef.
- * Nicht dabei: Karten-ID, Beschreibung, Koordinaten, Kategorien, Tags,
- * Labels, Gründe, Konflikt. Das ist kein neues Provenance-Modell.
+ * Identität der Übernahme ist die bestehende Schreiber-Momentaufnahme.
+ * Die reine Abbildung rundet eine Bewertung auf eine Nachkommastelle und
+ * lässt Bewertung samt Anzahl weg, wenn keine Bewertung vorliegt.
+ * Rohwerte, die dort gleich ankommen, bleiben eine Operation.
+ * Eine abgelehnte Abbildung hat keinen Planpunkt und daher keine eigene Identität.
  */
-export function optionSchreibIdentitaet(option: ActivityOptionSichtbar): string {
-  return JSON.stringify({
-    provider: option.provider,
-    externalRef: option.externalRef,
-    title: option.title.slice(0, 120),
-    locationName: option.locationName,
-    dauerMinuten: option.dauerMinuten,
-    timeslot: option.timeslot,
-    preis: option.preis,
-    preisWaehrung: option.preisWaehrung,
-    bewertung: option.bewertung,
-    bewertungenAnzahl: option.bewertungenAnzahl,
-    stornierbar: option.stornierbar,
-  })
+export function optionSchreibIdentitaet(option: ActivityOptionSichtbar, tagDatum: string | null): string {
+  return JSON.stringify(alsActivityMomentaufnahme(option, tagDatum))
 }
 
 /**
  * Identität der Übernahme, ohne Epoche, Generation und ohne abgeleitete Rangfelder.
- * Dieselbe Schreiber-Momentaufnahme bleibt dieselbe Operation, auch wenn die
- * Suche neu läuft oder sich nur Labels, Gründe oder der Konflikt ändern.
- * Ein anderer Titel, Anbieter, externalRef, Preis, ein anderes Zeitfenster
- * oder ein anderes Ziel ist eine andere Operation.
+ * Dieselbe effektive Schreiber-Momentaufnahme bleibt dieselbe Operation.
+ * Ein anderer gespeicherter Fakt oder ein anderes Ziel ist eine andere Operation.
  */
 export function uebernahmeOperationSchluessel(
   erfasst: Pick<UebernahmeErfassung, 'tripId' | 'stageId' | 'dayId' | 'schreibIdentitaet'>,
