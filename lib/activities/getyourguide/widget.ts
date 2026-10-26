@@ -28,10 +28,17 @@ export type GygRenderer = {
   entsorgen: (ziel: HTMLElement) => void
 }
 
+/**
+ * Asynchrone exakte Ortsbestätigung für die Prüfung.
+ * Die Anwendung übergibt null. Das ist nicht der Places-Serveraufruf.
+ */
+export type GygKanonBestaetigen = (id: string, signal: AbortSignal) => Promise<Ort | null>
+
 export type GetYourGuideNaht = {
   herkunft: 'anwendung' | 'pruefung'
   freigabe: GetYourGuideFreigabe
   orteLesen: ((id: string) => Ort | null) | null
+  kanonBestaetigen: GygKanonBestaetigen | null
   abbildung: readonly GygZielabbildung[]
   renderer: GygRenderer | null
 }
@@ -42,6 +49,7 @@ export const ANWENDUNGS_NAHT: GetYourGuideNaht = Object.freeze({
   herkunft: 'anwendung' as const,
   freigabe: anwendungsFreigabe(),
   orteLesen: null,
+  kanonBestaetigen: null,
   abbildung: GETYOURGUIDE_ANWENDUNGS_ABBILDUNG,
   renderer: null,
 })

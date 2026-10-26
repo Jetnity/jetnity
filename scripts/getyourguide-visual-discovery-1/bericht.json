@@ -11,12 +11,16 @@
     "390-200"
   ],
   "netz": [
-    "http://127.0.0.1:37515/anwendung",
-    "http://127.0.0.1:37515/app.css",
-    "http://127.0.0.1:37515/anwendung.js",
-    "http://127.0.0.1:37515/pruefung",
-    "http://127.0.0.1:37515/app.css",
-    "http://127.0.0.1:37515/pruefung.js"
+    "http://127.0.0.1:37953/anwendung",
+    "http://127.0.0.1:37953/app.css",
+    "http://127.0.0.1:37953/anwendung.js",
+    "http://127.0.0.1:37953/pruefung",
+    "http://127.0.0.1:37953/app.css",
+    "http://127.0.0.1:37953/pruefung.js",
+    "http://127.0.0.1:37953/gegenprobe",
+    "http://127.0.0.1:37953/app.css",
+    "http://127.0.0.1:37953/gegenprobe.js",
+    "http://127.0.0.1:37953/api/activities/search"
   ],
   "bericht": {
     "laden": 7,

@@ -50,6 +50,7 @@ export type GygPlan =
       schluessel: string
       name: string | null
       zielArt: 'stadt' | 'region' | 'insel' | 'land' | 'anders'
+      laender?: readonly GygLandOption[]
     }
   | {
       art: 'bereit'
@@ -57,7 +58,9 @@ export type GygPlan =
       bezug: GygOeffentlicherBezug
       name: string | null
       zielArt: 'stadt' | 'region' | 'insel' | 'land'
+      laender?: readonly GygLandOption[]
     }
+  | { art: 'ort_ausstehend'; schluessel: string }
 
 export type GygPlanEingabe = {
   reise: GygReise
@@ -101,6 +104,9 @@ function schluessel(teile: {
   countryCode: string | null
   landWahl: string | null
   art: GygPlan['art']
+  zielTyp: string | null
+  kennung: string | null
+  bezugUmfang: string | null
 }): string {
   return JSON.stringify([
     teile.freigabe,
@@ -109,8 +115,11 @@ function schluessel(teile: {
     teile.tagId,
     teile.etappeId,
     teile.ortId,
+    teile.zielTyp,
     teile.countryCode,
     teile.landWahl,
+    teile.kennung,
+    teile.bezugUmfang,
     teile.art,
   ])
 }
@@ -131,19 +140,26 @@ type LandStuetze = { name: string; bestaetigt: boolean }
 function laenderSammeln(
   reise: GygReise,
   lesen: ((id: string) => Ort | null) | null,
-): { laender: Map<string, LandStuetze>; widerspruch: number; unbestaetigt: number } {
+): { laender: Map<string, LandStuetze>; widerspruch: number; unbestaetigt: number; lesungen: number } {
   const laender = new Map<string, LandStuetze>()
   let widerspruch = 0
   let unbestaetigt = 0
-  const gesehen = new Set<string>()
+  let lesungen = 0
+  const cache = new Map<string, Ort | null>()
+  const einmal = (id: string) => {
+    const vorhanden = cache.get(id)
+    if (vorhanden !== undefined || cache.has(id)) return cache.get(id) ?? null
+    lesungen += 1
+    const ort = ortLesen(id, lesen)
+    cache.set(id, ort)
+    return ort
+  }
   for (const etappe of reise.etappen) {
     if (!etappe.placeId || !istOrtId(etappe.placeId)) {
       unbestaetigt += 1
       continue
     }
-    if (gesehen.has(etappe.placeId)) continue
-    gesehen.add(etappe.placeId)
-    const ort = ortLesen(etappe.placeId, lesen)
+    const ort = einmal(etappe.placeId)
     if (!ort) {
       unbestaetigt += 1
       continue
@@ -165,7 +181,7 @@ function laenderSammeln(
     }
     if (bestaetigt) laender.set(ort.countryCode, { name: ort.name, bestaetigt: true })
   }
-  return { laender, widerspruch, unbestaetigt }
+  return { laender, widerspruch, unbestaetigt, lesungen }
 }
 
 function landErgebnis(
@@ -181,29 +197,35 @@ function landErgebnis(
     etappeId: null,
     ortId: null,
     landWahl: eingabe.landWahl,
+    zielTyp: null,
+    kennung: null,
+    bezugUmfang: null,
   }
-  if (stuetze.laender.size === 0) {
+  const laender = [...stuetze.laender.entries()]
+    .map(([countryCode, wert]) => ({ countryCode, name: wert.name, bestaetigt: wert.bestaetigt }))
+    .sort((a, b) => a.countryCode.localeCompare(b.countryCode))
+  const auswahl = laender.map(({ countryCode, name }) => ({ countryCode, name }))
+  if (laender.length === 0) {
     const art = stuetze.widerspruch > 0 && stuetze.unbestaetigt === 0 ? 'ort_widerspruch' : 'ort_unbestaetigt'
     return { art, schluessel: schluessel({ ...basis, countryCode: null, art }) }
   }
-  const optionen = [...stuetze.laender.entries()]
-    .map(([countryCode, wert]) => ({ countryCode, name: wert.name, bestaetigt: wert.bestaetigt }))
-    .sort((a, b) => a.countryCode.localeCompare(b.countryCode))
-  const gewaehlt = optionen.find((eintrag) => eintrag.countryCode === eingabe.landWahl) ?? null
-  const einzig = optionen.length === 1 ? optionen[0] : null
+  const gewaehlt = laender.find((eintrag) => eintrag.countryCode === eingabe.landWahl) ?? null
+  const einzig = laender.length === 1 ? laender[0] : null
+  const unsicher = stuetze.unbestaetigt > 0 || stuetze.widerspruch > 0 || laender.length > 1
   if (eingabe.landWahl && !gewaehlt) {
     return {
       art: 'land_auswahl',
       schluessel: schluessel({ ...basis, countryCode: null, art: 'land_auswahl' }),
-      laender: optionen.map(({ countryCode, name }) => ({ countryCode, name })),
+      laender: auswahl,
     }
   }
-  const ziel = gewaehlt ?? (einzig?.bestaetigt ? einzig : null)
+  const automatisch = Boolean(einzig?.bestaetigt) && !unsicher
+  const ziel = gewaehlt ?? (automatisch ? einzig : null)
   if (!ziel) {
     return {
       art: 'land_auswahl',
       schluessel: schluessel({ ...basis, countryCode: null, art: 'land_auswahl' }),
-      laender: optionen.map(({ countryCode, name }) => ({ countryCode, name })),
+      laender: auswahl,
     }
   }
   const bezug = oeffentlichenBezugBauen(
@@ -211,20 +233,56 @@ function landErgebnis(
     eingabe.abbildung,
     gesperrtFuer(eingabe.reise),
   )
+  const identitaet = {
+    ...basis,
+    countryCode: ziel.countryCode,
+    zielTyp: 'country',
+    kennung: bezug?.oeffentlicheKennung ?? null,
+    bezugUmfang: bezug?.umfang ?? null,
+  }
   if (!bezug) {
     return {
       art: 'nicht_unterstuetzt',
-      schluessel: schluessel({ ...basis, countryCode: ziel.countryCode, art: 'nicht_unterstuetzt' }),
+      schluessel: schluessel({ ...identitaet, art: 'nicht_unterstuetzt' }),
       name: ziel.name,
       zielArt: 'land',
+      ...(unsicher ? { laender: auswahl } : {}),
     }
   }
   return {
     art: 'bereit',
-    schluessel: schluessel({ ...basis, countryCode: ziel.countryCode, art: 'bereit' }),
+    schluessel: schluessel({ ...identitaet, art: 'bereit' }),
     bezug,
     name: ziel.name,
     zielArt: 'land',
+    ...(unsicher ? { laender: auswahl } : {}),
+  }
+}
+
+const OHNE_ZIEL = { zielTyp: null, kennung: null, bezugUmfang: null }
+
+export function gygOrtAnfrage(
+  reise: GygReise,
+  umfang: GygUmfang,
+  angeforderteTagId: string | null,
+): { anfrage: string; ids: readonly string[] } {
+  if (umfang === 'land') {
+    const ids: string[] = []
+    const gesehen = new Set<string>()
+    for (const etappe of reise.etappen) {
+      if (!etappe.placeId || !istOrtId(etappe.placeId) || gesehen.has(etappe.placeId)) continue
+      gesehen.add(etappe.placeId)
+      ids.push(etappe.placeId)
+    }
+    return { anfrage: JSON.stringify(['land', ids]), ids }
+  }
+  const tagId = angeforderteTagId && angeforderteTagId.length > 0 ? angeforderteTagId : null
+  const tag = tagId ? reise.tage.find((eintrag) => eintrag.id === tagId) ?? null : null
+  const etappe = tag?.stageId ? reise.etappen.find((eintrag) => eintrag.id === tag.stageId) ?? null : null
+  const id = etappe?.placeId && istOrtId(etappe.placeId) ? etappe.placeId : null
+  return {
+    anfrage: JSON.stringify(['tag', tag?.id ?? null, etappe?.id ?? null, id]),
+    ids: id ? [id] : [],
   }
 }
 
@@ -237,6 +295,7 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
     umfang: eingabe.umfang,
     tagId,
     landWahl: eingabe.landWahl,
+    ...OHNE_ZIEL,
   }
 
   if (eingabe.umfang === 'land') {
@@ -301,7 +360,7 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
   if (isoLand(etappe.countryCode) && isoLand(ort.countryCode) && etappe.countryCode !== ort.countryCode) {
     return {
       art: 'ort_widerspruch',
-      schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: null, art: 'ort_widerspruch' }),
+      schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: null, zielTyp: ort.typ, art: 'ort_widerspruch' }),
     }
   }
   if (ort.typ === 'country') {
@@ -311,6 +370,7 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
         ...ortBasis,
         ortId: ort.id,
         countryCode: ort.countryCode,
+        zielTyp: ort.typ,
         art: 'kein_tagesziel',
       }),
       name: ort.name,
@@ -320,7 +380,13 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
   if (ort.typ !== 'city' && ort.typ !== 'region' && ort.typ !== 'island') {
     return {
       art: 'nicht_unterstuetzt',
-      schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: ort.countryCode, art: 'nicht_unterstuetzt' }),
+      schluessel: schluessel({
+        ...ortBasis,
+        ortId: ort.id,
+        countryCode: ort.countryCode,
+        zielTyp: ort.typ,
+        art: 'nicht_unterstuetzt',
+      }),
       name: ort.name,
       zielArt: 'anders',
     }
@@ -331,17 +397,25 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
     eingabe.abbildung,
     gesperrtFuer(eingabe.reise),
   )
+  const identitaet = {
+    ...ortBasis,
+    ortId: ort.id,
+    countryCode: ort.countryCode,
+    zielTyp: ort.typ,
+    kennung: bezug?.oeffentlicheKennung ?? null,
+    bezugUmfang: bezug?.umfang ?? null,
+  }
   if (!bezug) {
     return {
       art: 'nicht_unterstuetzt',
-      schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: ort.countryCode, art: 'nicht_unterstuetzt' }),
+      schluessel: schluessel({ ...identitaet, art: 'nicht_unterstuetzt' }),
       name: ort.name,
       zielArt,
     }
   }
   return {
     art: 'bereit',
-    schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: ort.countryCode, art: 'bereit' }),
+    schluessel: schluessel({ ...identitaet, art: 'bereit' }),
     bezug,
     name: ort.name,
     zielArt,

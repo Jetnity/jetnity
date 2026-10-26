@@ -210,6 +210,7 @@ function Pruefung() {
     herkunft: 'pruefung',
     freigabe: offen ? { status: 'bereit' } : { status: 'geschlossen', gruende: ['berechtigung'] },
     orteLesen: (id) => orte.find((eintrag) => eintrag.id === id) ?? null,
+    kanonBestaetigen: null,
     abbildung: ABBILDUNG,
     renderer,
   }

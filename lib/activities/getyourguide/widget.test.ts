@@ -22,6 +22,7 @@ describe('GetYourGuide-Abbildung', () => {
   test('die Anwendungsnaht ist leer und geschlossen', () => {
     assert.equal(ANWENDUNGS_NAHT.herkunft, 'anwendung')
     assert.equal(ANWENDUNGS_NAHT.orteLesen, null)
+    assert.equal(ANWENDUNGS_NAHT.kanonBestaetigen, null)
     assert.equal(ANWENDUNGS_NAHT.renderer, null)
     assert.equal(ANWENDUNGS_NAHT.abbildung, GETYOURGUIDE_ANWENDUNGS_ABBILDUNG)
     assert.equal(GETYOURGUIDE_ANWENDUNGS_ABBILDUNG.length, 0)

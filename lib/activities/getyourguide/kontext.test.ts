@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 
 import { anwendungsFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
 import {
+  gygOrtAnfrage,
   gygPlanen,
   gygReiseAusTrip,
   type GygEtappe,
@@ -274,6 +275,7 @@ describe('GetYourGuide-Kontext', () => {
     if (plan.art !== 'bereit') return
     assert.equal(plan.bezug.oeffentlicheKennung, 'synthetic-public:panama')
     assert.equal(JSON.stringify(plan).includes('Panama City'), false)
+    assert.equal('laender' in plan, false)
   })
 
   test('mehrere Länder bleiben eine Auswahl', () => {
@@ -450,6 +452,242 @@ describe('GetYourGuide-Kontext', () => {
     if (hin.art !== 'bereit' || rueck.art !== 'bereit') return
     assert.notEqual(hin.schluessel, rueck.schluessel)
     assert.deepEqual(hin.bezug, rueck.bezug)
+  })
+
+  test('dieselbe Orts-ID mit anderem Typ oder anderer Kennung ist ein anderes Ziel', () => {
+    const id = 'geonames:9001609348'
+    const alsStadt = synthetisch({ id, name: 'Bangkok', typ: 'city', country: 'Thailand', countryCode: 'TH' })
+    const alsRegion = synthetisch({ id, name: 'Bangkok', typ: 'region', country: 'Thailand', countryCode: 'TH' })
+    const beide: readonly GygZielabbildung[] = [
+      { art: 'ort', ortId: id, typ: 'city', kennung: 'synthetic-public:same-city' },
+      { art: 'ort', ortId: id, typ: 'region', kennung: 'synthetic-public:same-region' },
+    ]
+    const stadt = gygPlanen(
+      eingabe({
+        orteLesen: () => alsStadt,
+        abbildung: beide,
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-same', id, 'TH')], [tag('day-gyg-1', 'stage-gyg-same')]),
+      }),
+    )
+    const region = gygPlanen(
+      eingabe({
+        orteLesen: () => alsRegion,
+        abbildung: beide,
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-same', id, 'TH')], [tag('day-gyg-1', 'stage-gyg-same')]),
+      }),
+    )
+    assert.equal(stadt.art, 'bereit')
+    assert.equal(region.art, 'bereit')
+    if (stadt.art !== 'bereit' || region.art !== 'bereit') return
+    assert.equal(stadt.bezug.oeffentlicheKennung, 'synthetic-public:same-city')
+    assert.equal(region.bezug.oeffentlicheKennung, 'synthetic-public:same-region')
+    assert.notEqual(stadt.schluessel, region.schluessel)
+
+    const kennungA = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(katalog, []),
+        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-a' }],
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
+      }),
+    )
+    const kennungB = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(katalog, []),
+        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-b' }],
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
+      }),
+    )
+    assert.equal(kennungA.art, 'bereit')
+    assert.equal(kennungB.art, 'bereit')
+    if (kennungA.art !== 'bereit' || kennungB.art !== 'bereit') return
+    assert.notEqual(kennungA.schluessel, kennungB.schluessel)
+    const kopie = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(katalog, []),
+        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-a' }],
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
+      }),
+    )
+    assert.equal(kopie.art, 'bereit')
+    if (kopie.art !== 'bereit') return
+    assert.equal(kopie.schluessel, kennungA.schluessel)
+  })
+
+  test('unbekannte oder widersprüchliche weitere Etappen entscheiden kein Land automatisch', () => {
+    const mitUnbekannt = (landWahl: string | null) =>
+      gygPlanen(
+        eingabe({
+          orteLesen: leserFuer(katalog, []),
+          umfang: 'land',
+          landWahl,
+          reise: reise([etappe('stage-gyg-pa', panama.id, 'PA'), etappe('stage-gyg-alt', null, 'TH')]),
+        }),
+      )
+    const automatisch = mitUnbekannt(null)
+    assert.equal(automatisch.art, 'land_auswahl')
+    if (automatisch.art !== 'land_auswahl') return
+    assert.deepEqual(automatisch.laender.map((land) => land.countryCode), ['PA'])
+    const gewaehlt = mitUnbekannt('PA')
+    assert.equal(gewaehlt.art, 'bereit')
+    if (gewaehlt.art !== 'bereit') return
+    assert.equal(gewaehlt.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.deepEqual(gewaehlt.laender?.map((land) => land.countryCode), ['PA'])
+
+    const reihenfolge = (codes: readonly [string, string]) => {
+      const aufrufe: string[] = []
+      const plan = gygPlanen(
+        eingabe({
+          orteLesen: leserFuer(katalog, aufrufe),
+          umfang: 'land',
+          reise: reise([
+            etappe('stage-gyg-1', panama.id, codes[0]),
+            etappe('stage-gyg-2', panama.id, codes[1]),
+          ]),
+        }),
+      )
+      return { plan, aufrufe }
+    }
+    const vorwaerts = reihenfolge(['PA', 'TH'])
+    const rueckwaerts = reihenfolge(['TH', 'PA'])
+    assert.equal(vorwaerts.plan.art, 'land_auswahl')
+    assert.equal(rueckwaerts.plan.art, 'land_auswahl')
+    assert.equal(vorwaerts.plan.schluessel, rueckwaerts.plan.schluessel)
+    assert.deepEqual(vorwaerts.aufrufe, [panama.id])
+    assert.deepEqual(rueckwaerts.aufrufe, [panama.id])
+    const explizit = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(katalog, []),
+        umfang: 'land',
+        landWahl: 'PA',
+        reise: reise([etappe('stage-gyg-1', panama.id, 'TH'), etappe('stage-gyg-2', panama.id, 'PA')]),
+      }),
+    )
+    assert.equal(explizit.art, 'bereit')
+    if (explizit.art !== 'bereit') return
+    assert.equal(explizit.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.ok(explizit.laender && explizit.laender.length > 0)
+  })
+
+  test('Namensvetter und ein weiteres Land bleiben getrennte Ziele', () => {
+    const lissabon = synthetisch({
+      id: 'geonames:9002267057',
+      name: 'Lissabon',
+      typ: 'city',
+      country: 'Portugal',
+      countryCode: 'PT',
+    })
+    const sanJoseStadt = synthetisch({
+      id: 'geonames:9001880250',
+      name: 'San José',
+      typ: 'city',
+      country: 'Costa Rica',
+      countryCode: 'CR',
+    })
+    const sanJoseRegion = synthetisch({
+      id: 'geonames:9001858001',
+      name: 'San José',
+      typ: 'region',
+      country: 'Uruguay',
+      countryCode: 'UY',
+    })
+    const liste = [lissabon, sanJoseStadt, sanJoseRegion]
+    const abbildung: readonly GygZielabbildung[] = [
+      { art: 'ort', ortId: lissabon.id, typ: 'city', kennung: 'synthetic-public:lisbon-city' },
+      { art: 'ort', ortId: sanJoseStadt.id, typ: 'city', kennung: 'synthetic-public:sanjose-city' },
+      { art: 'ort', ortId: sanJoseRegion.id, typ: 'region', kennung: 'synthetic-public:sanjose-region' },
+    ]
+    const stadt = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(liste, []),
+        abbildung,
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-cr',
+        reise: reise([etappe('stage-gyg-cr', sanJoseStadt.id, 'CR')], [tag('day-gyg-cr', 'stage-gyg-cr')]),
+      }),
+    )
+    const region = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(liste, []),
+        abbildung,
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-uy',
+        reise: reise([etappe('stage-gyg-uy', sanJoseRegion.id, 'UY')], [tag('day-gyg-uy', 'stage-gyg-uy')]),
+      }),
+    )
+    assert.equal(stadt.art, 'bereit')
+    assert.equal(region.art, 'bereit')
+    if (stadt.art !== 'bereit' || region.art !== 'bereit') return
+    assert.equal(stadt.name, 'San José')
+    assert.equal(region.name, 'San José')
+    assert.equal(stadt.zielArt, 'stadt')
+    assert.equal(region.zielArt, 'region')
+    assert.notEqual(stadt.schluessel, region.schluessel)
+    assert.equal(stadt.bezug.oeffentlicheKennung, 'synthetic-public:sanjose-city')
+    assert.equal(region.bezug.oeffentlicheKennung, 'synthetic-public:sanjose-region')
+
+    const lissabonTag = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(liste, []),
+        abbildung,
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-pt',
+        reise: reise([etappe('stage-gyg-pt', lissabon.id, 'PT')], [tag('day-gyg-pt', 'stage-gyg-pt')]),
+      }),
+    )
+    assert.equal(lissabonTag.art, 'bereit')
+    if (lissabonTag.art !== 'bereit') return
+    assert.equal(lissabonTag.bezug.oeffentlicheKennung, 'synthetic-public:lisbon-city')
+    assert.equal(JSON.stringify(lissabonTag).includes('synthetic-public:bangkok'), false)
+    assert.equal(JSON.stringify(lissabonTag).includes('synthetic-public:panama'), false)
+
+    const laender = gygPlanen(
+      eingabe({
+        orteLesen: leserFuer(liste, []),
+        abbildung,
+        umfang: 'land',
+        reise: reise([
+          etappe('stage-gyg-cr', sanJoseStadt.id, 'CR'),
+          etappe('stage-gyg-uy', sanJoseRegion.id, 'UY'),
+          etappe('stage-gyg-pt', lissabon.id, 'PT'),
+        ]),
+      }),
+    )
+    assert.equal(laender.art, 'land_auswahl')
+    if (laender.art !== 'land_auswahl') return
+    assert.deepEqual(
+      laender.laender.map((land) => land.countryCode),
+      ['CR', 'PT', 'UY'],
+    )
+    assert.equal(laender.laender.some((land) => land.name === 'San José'), false)
+    assert.equal(laender.laender.some((land) => land.name === 'Lissabon'), false)
+  })
+
+  test('die Ortsanfrage liest nicht und fasst dieselbe ID einmal zusammen', () => {
+    const ziel = reise(
+      [etappe('stage-gyg-pa', panama.id, 'PA'), etappe('stage-gyg-pa-2', panama.id, 'PA')],
+      [],
+    )
+    const land = gygOrtAnfrage(ziel, 'land', null)
+    assert.deepEqual(land.ids, [panama.id])
+    const tagAnfrage = gygOrtAnfrage(
+      reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
+      'tag',
+      'day-gyg-1',
+    )
+    assert.deepEqual(tagAnfrage.ids, [bangkok.id])
+    assert.equal(tagAnfrage.anfrage.includes('day-gyg-1'), true)
+    assert.equal(tagAnfrage.anfrage.includes('stage-gyg-bkk'), true)
+    assert.equal(gygOrtAnfrage(ziel, 'land', null).anfrage, land.anfrage)
   })
 
   test('die Reiseabbildung trägt keine privaten Suchfelder', () => {

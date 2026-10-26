@@ -76,6 +76,7 @@ async function bundeln(css: string) {
     entryPoints: {
       anwendung: 'scripts/getyourguide-visual-discovery-1/anwendung.tsx',
       pruefung: 'scripts/getyourguide-visual-discovery-1/pruefung.tsx',
+      gegenprobe: 'scripts/getyourguide-visual-discovery-1/gegenprobe.tsx',
     },
     bundle: true,
     format: 'iife',
@@ -165,7 +166,7 @@ async function haupt() {
   await bundeln(css)
   const server = createServer((req, res) => {
     const pfad = (req.url ?? '/').split('?')[0]
-    if (pfad === '/anwendung.js' || pfad === '/pruefung.js') {
+    if (pfad === '/anwendung.js' || pfad === '/pruefung.js' || pfad === '/gegenprobe.js') {
       antwort(res, 200, 'text/javascript; charset=utf-8', readFileSync(join(OUT, pfad.slice(1))))
       return
     }
@@ -175,6 +176,50 @@ async function haupt() {
     }
     if (pfad === '/pruefung') {
       antwort(res, 200, 'text/html; charset=utf-8', html('pruefung'))
+      return
+    }
+    if (pfad === '/gegenprobe') {
+      antwort(res, 200, 'text/html; charset=utf-8', html('gegenprobe'))
+      return
+    }
+    if (pfad === '/api/activities/search') {
+      req.resume()
+      antwort(res, 200, 'application/json; charset=utf-8', JSON.stringify({
+        status: 'ok',
+        message: 'Aktivitäten gefunden.',
+        coverageNote: 'Synthetische lokale Abdeckung, kein Anbieter.',
+        evidenz: {
+          hatOrt: true,
+          hatKoordinaten: false,
+          hatTag: true,
+          hatDatum: false,
+          hatBestehendePunkte: false,
+          hatBelastbareZeiten: false,
+          hatInteressen: false,
+          hatBudget: false,
+        },
+        options: [{
+          id: 'synthetic-local-boot',
+          provider: 'synthetic',
+          externalRef: 'synthetic-local-boot',
+          title: 'Synthetische Bootsfahrt',
+          description: 'Lokale Karte ohne Anbieter.',
+          locationName: 'Bangkok',
+          punkt: null,
+          dauerMinuten: 90,
+          timeslot: null,
+          preis: 80,
+          preisWaehrung: 'CHF',
+          bewertung: null,
+          bewertungenAnzahl: null,
+          stornierbar: null,
+          kategorien: [],
+          tags: [],
+          labels: [],
+          reasons: ['Synthetische lokale Karte'],
+          konflikt: 'frei',
+        }],
+      }))
       return
     }
     if (pfad === '/' || pfad === '/anwendung') {
@@ -380,6 +425,7 @@ async function haupt() {
   }
   await netzFrei(netz)
   pruefe(netz.length >= vorher, 'Netzprotokoll fehlt')
+  await gegenprobe(page, basis)
   pruefe(seitenfehler.length === 0, `Seitenfehler: ${seitenfehler.join(' | ')}`)
 
   const protokoll = {
@@ -404,6 +450,220 @@ async function haupt() {
   console.log(`Synthetische Montage in Ordnung. Requests: ${netz.length}. Ladungen: ${stand.laden}.`)
 }
 
+type Gegenbericht = {
+  laden: number
+  entsorgen: number
+  bestaetigt: number
+  schreibungen: { kennung: string; generation: string; verbunden: boolean; abgebrochen: boolean }[]
+  entsorgtVerbunden: boolean[]
+}
+
+function gegenLesen(page: Page): Promise<Gegenbericht> {
+  return page.evaluate(`(() => {
+    const stand = window.__gygGegenprobe
+    return stand || { laden: 0, entsorgen: 0, bestaetigt: 0, schreibungen: [], entsorgtVerbunden: [] }
+  })()`)
+}
+
+function textVon(page: Page, selektor: string): Promise<string> {
+  return page.evaluate(`(() => {
+    const ziel = document.querySelector(${JSON.stringify(selektor)})
+    return ziel ? (ziel.textContent || '') : ''
+  })()`)
+}
+
+function anzahlVon(page: Page, selektor: string): Promise<number> {
+  return page.evaluate(`(() => document.querySelectorAll(${JSON.stringify(selektor)}).length)()`)
+}
+
+async function wartenAufText(page: Page, selektor: string, ausschnitt: string) {
+  const start = Date.now()
+  let text = ''
+  while (Date.now() - start < 8000) {
+    text = await textVon(page, selektor)
+    if (text.includes(ausschnitt)) return text
+    await page.waitForTimeout(40)
+  }
+  throw new Error(`${ausschnitt} fehlt in ${text.slice(0, 400)}`)
+}
+
+async function wartenAufFrei(page: Page, selektor: string, verboten: string) {
+  const start = Date.now()
+  let text = ''
+  while (Date.now() - start < 4000) {
+    text = await textVon(page, selektor)
+    if (!text.includes(verboten)) return text
+    await page.waitForTimeout(40)
+  }
+  return text
+}
+
+async function gegenprobe(page: Page, basis: string) {
+  await page.goto(`${basis}/gegenprobe`, { waitUntil: 'domcontentloaded', timeout: 20000 })
+  const flaeche = page.locator('[data-szenario="gegenprobe"]')
+  const gyg = flaeche.locator('[aria-label="GetYourGuide"]')
+  await page.locator('[data-szenario="nativ"]').getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+  await page.locator('[data-szenario="nativ"]').getByText('Synthetische Bootsfahrt').waitFor({ timeout: 10000 })
+  await gyg.waitFor({ timeout: 10000 })
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).waitFor({ timeout: 10000 })
+
+  const instanzStart = await gyg.getAttribute('data-gyg-instanz')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await page.getByRole('button', { name: 'Tag B', exact: true }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await page.getByRole('button', { name: 'Tag A', exact: true }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  const sichtbarA = await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'result-synthetic:synthetic-public:map-a:')
+  const nachA = await gegenLesen(page)
+  const ergebnisseA = await anzahlVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage] [data-synthetic-result]')
+  pruefe(ergebnisseA === 1, `A→B→A zeigt ${ergebnisseA} Ergebnisse: ${sichtbarA}`)
+  pruefe(!sichtbarA.includes('phuket'), `Phuket blieb sichtbar: ${sichtbarA}`)
+  pruefe(nachA.schreibungen.some((eintrag) => eintrag.verbunden === false && eintrag.abgebrochen === true), 'Späte Schreibung auf getrenntem Knoten fehlt')
+  pruefe(nachA.entsorgtVerbunden.every((verbunden) => verbunden === false), `Entsorgung sah einen verbundenen Knoten: ${nachA.entsorgtVerbunden.join(',')}`)
+
+  const vorRetry = (await gegenLesen(page)).entsorgen
+  await flaeche.getByRole('button', { name: 'Erneut laden' }).click()
+  const waehrend = await textVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage]')
+  pruefe(!waehrend.includes('result-synthetic'), `Alter Inhalt blieb während des Ladens: ${waehrend}`)
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'result-synthetic:')
+  const nachRetry = await gegenLesen(page)
+  pruefe(nachRetry.entsorgen > vorRetry, 'Erneutes Laden hat nicht entsorgt')
+  pruefe((await anzahlVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage] [data-synthetic-result]')) === 1, 'Erneutes Laden hat zwei Ergebnisse angehängt')
+
+  await page.getByRole('button', { name: 'Tag A wieder' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  const wieder = await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'result-synthetic:synthetic-public:map-a:')
+  const generationen = (await gegenLesen(page)).schreibungen.filter((eintrag) => eintrag.kennung === 'synthetic-public:map-a')
+  pruefe(generationen.some((eintrag) => eintrag.verbunden === false), 'Wiederholte Etappe hat die alte Schreibung nicht getrennt')
+  pruefe((await anzahlVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage] [data-synthetic-result]')) === 1, `Wiederholte Etappe zeigt mehr als ein Ergebnis: ${wieder}`)
+
+  await page.getByRole('button', { name: 'Als Stadt' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:same-city')
+  await page.getByRole('button', { name: 'Als Region' }).click()
+  const nachTyp = await wartenAufFrei(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'same-city')
+  pruefe(!nachTyp.includes('same-city'), `Stadtinhalt blieb nach dem Typwechsel: ${nachTyp}`)
+  pruefe((await gyg.getAttribute('data-gyg-phase')) !== 'anzeige', 'Typwechsel liess die alte Anzeige gelten')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  const regionText = await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:same-region')
+  pruefe(!regionText.includes('same-city'), `Region zeigt noch die Stadt: ${regionText}`)
+  pruefe((await gyg.getAttribute('data-gyg-instanz')) === instanzStart, 'Typwechsel hat die Fläche neu erzeugt')
+
+  await page.getByRole('button', { name: 'Tag A', exact: true }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:map-a')
+  const vorKennung = (await gegenLesen(page)).bestaetigt
+  const vorEntsorgung = (await gegenLesen(page)).entsorgen
+  await page.getByRole('button', { name: 'Kennung wechseln' }).click()
+  const nachKennung = await wartenAufFrei(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'result-synthetic')
+  pruefe(!nachKennung.includes('result-synthetic'), `Kennungswechsel zeigt den alten Inhalt: ${nachKennung}`)
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'ruhend', 'Kennungswechsel hat ohne neue Aktion geladen')
+  pruefe((await gegenLesen(page)).bestaetigt === vorKennung, 'Kennungswechsel hat die Ortsbestätigung wiederholt')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:map-b')
+  const vorKlon = await gegenLesen(page)
+  await page.getByRole('button', { name: 'Abbildung neu' }).click()
+  await page.waitForTimeout(200)
+  const nachKlon = await gegenLesen(page)
+  pruefe((await textVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage]')).includes('synthetic-public:map-b'), 'Gleiche Abbildung hat die Anzeige verworfen')
+  pruefe(nachKlon.entsorgen === vorKlon.entsorgen, 'Gleiche Abbildung hat entsorgt')
+  pruefe(nachKlon.bestaetigt === vorKlon.bestaetigt, 'Gleiche Abbildung hat neu bestätigt')
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'anzeige', 'Gleiche Abbildung hat die Phase zurückgesetzt')
+  pruefe(vorEntsorgung >= 0, 'Entsorgung vor dem Kennungswechsel fehlt')
+
+  await page.getByRole('button', { name: 'Zwei Länder' }).click()
+  await flaeche.getByRole('radio', { name: 'Panama' }).waitFor({ timeout: 10000 })
+  await flaeche.getByRole('radio', { name: 'Thailand' }).waitFor({ timeout: 10000 })
+  const instanzLand = await gyg.getAttribute('data-gyg-instanz')
+  await flaeche.getByRole('radio', { name: 'Panama' }).focus()
+  await page.keyboard.press('Space')
+  pruefe((await flaeche.getByRole('radio').count()) === 2, 'Nach der Länderwahl fehlen die Auswahlen')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:panama')
+  pruefe((await flaeche.getByRole('radio').count()) === 2, 'Während der Anzeige fehlen die Länder')
+  await page.getByRole('button', { name: 'Abschluss wirft' }).click()
+  await flaeche.getByRole('button', { name: 'Erneut laden' }).click()
+  await flaeche.getByText('GetYourGuide konnte gerade nicht geladen werden.').waitFor({ timeout: 5000 })
+  const nachWurf = await flaeche.innerText()
+  pruefe(!nachWurf.includes('private.example'), `Fehlertext enthält eine Adresse: ${nachWurf}`)
+  pruefe(!nachWurf.includes('widget-token'), 'Fehlertext enthält den Ausnahmefehler')
+  pruefe((await flaeche.getByRole('radio').count()) === 2, 'Nach dem Fehler fehlen die Länder')
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'fehler', 'Synchrone Ausnahme blieb hängen')
+  await page.getByRole('button', { name: 'Abschluss hängt spät' }).click()
+  await flaeche.getByRole('radio', { name: 'Thailand' }).focus()
+  await page.keyboard.press('Space')
+  const nachLand = await wartenAufFrei(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:panama')
+  pruefe(!nachLand.includes('synthetic-public:panama'), `Länderwechsel zeigt Panama weiter: ${nachLand}`)
+  pruefe((await gyg.getAttribute('data-gyg-instanz')) === instanzLand, 'Länderwechsel hat die Reise neu erzeugt')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:thailand')
+  await page.getByRole('button', { name: 'Panama-Abbildung aus' }).click()
+  await flaeche.getByRole('radio', { name: 'Panama' }).focus()
+  await page.keyboard.press('Space')
+  await flaeche.getByText('noch keine geprüfte Zuordnung').waitFor({ timeout: 5000 })
+  pruefe((await flaeche.getByRole('radio').count()) === 2, 'Ohne Abbildung fehlen die Länder')
+  pruefe((await gyg.getAttribute('data-gyg-instanz')) === instanzLand, 'Abbildungswechsel hat die Fläche neu erzeugt')
+
+  await page.setViewportSize({ width: 320, height: 720 })
+  const schmal = await ueberlauf(page)
+  pruefe(schmal.length === 0, `Überlauf Gegenprobe 320: ${schmal.join(' | ')}`)
+  await schiessen(page, 'gegenprobe-320')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await schiessen(page, 'gegenprobe-390')
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await schiessen(page, 'gegenprobe-1440')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
+  const gross = await ueberlauf(page)
+  pruefe(gross.length === 0, `Überlauf Gegenprobe 200%: ${gross.join(' | ')}`)
+  await schiessen(page, 'gegenprobe-390-200')
+  await page.addStyleTag({ content: 'html { font-size: 16px !important; }' })
+
+  await page.getByRole('button', { name: 'Panama-Abbildung an' }).click()
+  await flaeche.getByRole('radio', { name: 'Panama' }).focus()
+  await page.keyboard.press('Space')
+  await page.getByRole('button', { name: 'Entsorgung wirft' }).click()
+  await page.getByRole('button', { name: 'Tag A', exact: true }).click()
+  const nachEntsorgung = await textVon(page, '[data-szenario="gegenprobe"]')
+  pruefe(!nachEntsorgung.includes('private.example'), 'Entsorgungsfehler bleibt sichtbar')
+  pruefe(!nachEntsorgung.includes('result-synthetic'), 'Entsorgungsfehler hat alten Inhalt eingehängt')
+  const nativeNachher = await page.locator('[data-szenario="nativ"]').innerText()
+  pruefe(nativeNachher.includes('Synthetische Bootsfahrt'), 'Native Karte fehlt nach dem GetYourGuide-Fehler')
+  pruefe(nativeNachher.includes('noch nicht eingerichtet'), 'Native GetYourGuide-Fläche ist nicht geschlossen')
+
+  const vorEntzug = (await gegenLesen(page)).bestaetigt
+  await page.getByRole('button', { name: 'Bestätigung verzögern' }).click()
+  await flaeche.getByText('Das Ziel wird bestätigt.').waitFor({ timeout: 5000 })
+  await page.getByRole('button', { name: 'Berechtigung zurückziehen' }).click()
+  await page.waitForTimeout(1000)
+  pruefe((await gyg.getAttribute('data-gyg-zustand')) === 'geschlossen', 'Entzogene Berechtigung bestätigt weiter')
+  pruefe((await gegenLesen(page)).bestaetigt === vorEntzug + 1, 'Entzogene Berechtigung hat erneut bestätigt')
+  const textEntzug = await flaeche.innerText()
+  pruefe(!textEntzug.includes('private.example'), 'Entzug zeigt eine Adresse')
+  pruefe(!textEntzug.includes('Bei GetYourGuide anzeigen'), 'Entzug bietet das Laden an')
+  await page.getByRole('button', { name: 'Berechtigung wieder geben' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).waitFor({ timeout: 8000 })
+  pruefe((await gegenLesen(page)).bestaetigt > vorEntzug + 1, 'Neue Berechtigung hat die alte Antwort wiederverwendet')
+
+  await page.getByRole('button', { name: 'Bestätigung ablehnen' }).click()
+  await flaeche.getByText('Das Ziel konnte gerade nicht bestätigt werden.').waitFor({ timeout: 5000 })
+  const ablehnung = await flaeche.innerText()
+  pruefe(!ablehnung.includes('private.example'), 'Ablehnung zeigt die Ausnahme')
+  pruefe(!ablehnung.includes('places-token'), 'Ablehnung zeigt den Token-Text')
+  await page.getByRole('button', { name: 'Bestätigung gelingt' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).waitFor({ timeout: 8000 })
+
+  await page.getByRole('button', { name: 'Bestätigung verzögern' }).click()
+  await flaeche.getByText('Das Ziel wird bestätigt.').waitFor({ timeout: 5000 })
+  await page.getByRole('button', { name: 'Fläche entfernen' }).click()
+  await page.waitForTimeout(1000)
+  pruefe((await page.locator('[data-entfernt="ja"]').count()) === 1, 'Entfernte Fläche blieb stehen')
+  await page.getByRole('button', { name: 'Fläche wieder zeigen' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).waitFor({ timeout: 8000 })
+  pruefe((await textVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage]')).includes('result-synthetic') === false, 'Neue Fläche zeigt eine alte Auflösung')
+  pruefe(await page.locator('[data-szenario="nativ"]').innerText().then((text) => text.includes('Synthetische Bootsfahrt')), 'Native Karte fehlt am Ende')
+}
+
 function lesen(page: Page): Promise<Bericht> {
   return page.evaluate(`(() => {
     const stand = window.__gyg
@@ -413,5 +673,5 @@ function lesen(page: Page): Promise<Bericht> {
 
 haupt().catch((error: unknown) => {
   console.error(error)
-  process.exitCode = 1
+  process.exit(1)
 })

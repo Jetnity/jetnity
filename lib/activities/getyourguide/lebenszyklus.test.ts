@@ -139,4 +139,86 @@ describe('GetYourGuide-Lebenszyklus', () => {
     assert.equal(andereReise.bezug, null)
     assert.equal(gygAbschluss(andereReise, start, { art: 'ressource' }).phase, 'ruhend')
   })
+
+  test('Typwechsel und Kennungswechsel verwerfen die alte Anzeige', () => {
+    const id = 'geonames:9001609348'
+    const basis = {
+      id,
+      source: 'geonames' as const,
+      sourceId: '9001609348',
+      name: 'Bangkok',
+      country: 'Thailand',
+      countryCode: 'TH',
+      region: null,
+      lat: null,
+      lon: null,
+      iata: null,
+      keywords: null,
+    }
+    const reiseGleich: GygReise = {
+      id: 'trip-gyg-1',
+      etappen: [{ id: 'stage-gyg-same', placeId: id, countryCode: 'TH' }],
+      tage: [{ id: 'day-gyg-1', stageId: 'stage-gyg-same' }],
+    }
+    const abbildung = [
+      { art: 'ort' as const, ortId: id, typ: 'city' as const, kennung: 'synthetic-public:same-city' },
+      { art: 'ort' as const, ortId: id, typ: 'region' as const, kennung: 'synthetic-public:same-region' },
+    ]
+    const stadt = gygPlanen({
+      reise: reiseGleich,
+      angeforderteTagId: 'day-gyg-1',
+      umfang: 'tag',
+      landWahl: null,
+      freigabe: { status: 'bereit' },
+      orteLesen: () => ({ ...basis, typ: 'city' }),
+      abbildung,
+    })
+    const region = gygPlanen({
+      reise: reiseGleich,
+      angeforderteTagId: 'day-gyg-1',
+      umfang: 'tag',
+      landWahl: null,
+      freigabe: { status: 'bereit' },
+      orteLesen: () => ({ ...basis, typ: 'region' }),
+      abbildung,
+    })
+    assert.equal(stadt.art, 'bereit')
+    assert.equal(region.art, 'bereit')
+    if (stadt.art !== 'bereit' || region.art !== 'bereit') return
+    assert.notEqual(stadt.schluessel, region.schluessel)
+    let lauf = gygLaufStart(stadt.schluessel)
+    const erster = gygAnfordern(lauf, stadt.bezug)
+    assert.equal(erster.angenommen, true)
+    if (!erster.angenommen) return
+    lauf = gygKontextWechseln(erster.lauf, region.schluessel)
+    assert.equal(gygAbschluss(lauf, erster, { art: 'ressource' }).phase, 'ruhend')
+    assert.equal(lauf.bezug, null)
+
+    const nurA = gygPlanen({
+      reise: reise(),
+      angeforderteTagId: 'day-gyg-bkk',
+      umfang: 'tag',
+      landWahl: null,
+      freigabe: { status: 'bereit' },
+      orteLesen: (ortId) => liste.find((eintrag) => eintrag.id === ortId) ?? null,
+      abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-a' }],
+    })
+    const nurB = gygPlanen({
+      reise: reise(),
+      angeforderteTagId: 'day-gyg-bkk',
+      umfang: 'tag',
+      landWahl: null,
+      freigabe: { status: 'bereit' },
+      orteLesen: (ortId) => liste.find((eintrag) => eintrag.id === ortId) ?? null,
+      abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-b' }],
+    })
+    assert.equal(nurA.art, 'bereit')
+    assert.equal(nurB.art, 'bereit')
+    if (nurA.art !== 'bereit' || nurB.art !== 'bereit') return
+    const geladen = gygAnfordern(gygLaufStart(nurA.schluessel), nurA.bezug)
+    assert.equal(geladen.angenommen, true)
+    if (!geladen.angenommen) return
+    const gewechselt = gygKontextWechseln(geladen.lauf, nurB.schluessel)
+    assert.equal(gygAbschluss(gewechselt, geladen, { art: 'ressource' }).bezug, null)
+  })
 })

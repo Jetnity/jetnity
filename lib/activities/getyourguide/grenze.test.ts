@@ -17,6 +17,7 @@ describe('GetYourGuide-Grenze', () => {
       quelle('widget.ts'),
       quelle('kontext.ts'),
       quelle('lebenszyklus.ts'),
+      quelle('aufloesung.ts'),
       readFileSync(join(hier, '../../../components/trips/GetYourGuideAktivitaeten.tsx'), 'utf8'),
       readFileSync(join(hier, '../../../components/trips/AktivitaetenBereich.tsx'), 'utf8'),
     ].join('\n')

@@ -139,6 +139,7 @@ describe('GetYourGuide-Fläche', () => {
       herkunft: 'anwendung',
       freigabe: { status: 'bereit' },
       orteLesen: (id) => orte.find((eintrag) => eintrag.id === id) ?? null,
+      kanonBestaetigen: null,
       abbildung: [{ art: 'land', countryCode: 'PA', kennung: 'synthetic-public:panama' }],
       renderer: null,
     }
@@ -164,5 +165,38 @@ describe('GetYourGuide-Fläche', () => {
     assert.match(pruefung, /Ideen für Panama/)
     assert.equal(pruefung.includes('Panama City'), false)
     assert.equal(ANWENDUNGS_NAHT.renderer, null)
+    assert.equal(ANWENDUNGS_NAHT.kanonBestaetigen, null)
+  })
+
+  test('zwei Länder bleiben als Auswahl sichtbar', () => {
+    const bangkok = ort('geonames:1609350', 'Bangkok', 'city', 'TH', 'Thailand')
+    const html = markup(
+      createElement(GetYourGuidePruefFlaeche, {
+        reise: reise({
+          stages: [
+            etappe({ id: 'stage-gyg-bkk', name: 'Bangkok', placeId: bangkok.id, countryCode: 'TH' }),
+            etappe({ id: 'stage-gyg-pa', name: 'Panama', placeId: panama.id, countryCode: 'PA' }),
+          ],
+        }),
+        angeforderteTagId: null,
+        naht: {
+          herkunft: 'pruefung',
+          freigabe: { status: 'bereit' },
+          orteLesen: (id) => (id === bangkok.id ? bangkok : id === panama.id ? panama : null),
+          kanonBestaetigen: null,
+          abbildung: [
+            { art: 'land', countryCode: 'TH', kennung: 'synthetic-public:thailand' },
+            { art: 'land', countryCode: 'PA', kennung: 'synthetic-public:panama' },
+          ],
+          renderer: null,
+        },
+      }),
+    )
+    assert.match(html, /data-gyg-zustand="land_auswahl"/)
+    assert.match(html, /name="gyg-land-trip-gyg-1"/)
+    assert.equal(html.split('type="radio"').length - 1, 2)
+    assert.match(html, /Panama/)
+    assert.match(html, /Thailand/)
+    assert.equal(html.includes('Bei GetYourGuide anzeigen'), false)
   })
 })

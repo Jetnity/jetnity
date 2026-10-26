@@ -4,10 +4,18 @@
 //
 // GetYourGuide im bestehenden Aktivitätsbereich.
 // Die Anwendung bleibt geschlossen. Eine Prüfung hängt nur über die Naht.
+// Jede Ladung besitzt einen eigenen, abtrennbaren Knoten.
 
 import * as React from 'react'
 
-import { gygReiseAusTrip, gygPlanen, type GygPlan } from '@/lib/activities/getyourguide/kontext'
+import {
+  gygAufloesungAbschluss,
+  gygAufloesungBeginnen,
+  gygAufloesungStart,
+  gygAufloesungWechseln,
+  type GygAufloesung,
+} from '@/lib/activities/getyourguide/aufloesung'
+import { gygOrtAnfrage, gygPlanen, gygReiseAusTrip, type GygPlan } from '@/lib/activities/getyourguide/kontext'
 import {
   gygAbschluss,
   gygAnfordern,
@@ -20,8 +28,12 @@ import {
   bezugIstOeffentlich,
   gygLadenErlaubt,
   type GetYourGuideNaht,
+  type GygKanonBestaetigen,
+  type GygLadeErgebnis,
+  type GygRenderer,
 } from '@/lib/activities/getyourguide/widget'
 import { cn } from '@/lib/utils'
+import type { Ort } from '@/lib/places/domain'
 import type { Trip } from '@/types/trips'
 import { Loader2 } from 'lucide-react'
 
@@ -36,41 +48,172 @@ type Props = {
   angeforderteTagId: string | null
 }
 
+type Betrieb = {
+  epoche: number
+  generation: number
+  renderer: GygRenderer
+  knoten: HTMLElement
+  steuerung: AbortController
+}
+
+type OrtBuch = { stand: GygAufloesung; versuch: number; quelle: GygKanonBestaetigen }
+
+function betriebBeenden(betrieb: Betrieb | null) {
+  if (!betrieb) return
+  betrieb.steuerung.abort()
+  betrieb.knoten.remove()
+  try {
+    betrieb.renderer.entsorgen(betrieb.knoten)
+  } catch {
+    // Der Knoten ist bereits aus dem Dokument. Ein Entsorgungsfehler hängt ihn nicht wieder ein.
+  }
+  betrieb.knoten.remove()
+}
+
 function zielSatz(plan: Extract<GygPlan, { art: 'bereit' | 'nicht_unterstuetzt' | 'kein_tagesziel' }>): string | null {
   if (!plan.name) return null
   if (plan.art === 'kein_tagesziel') return plan.name
-  if (plan.art === 'nicht_unterstuetzt') {
+  if (plan.art === 'nicht_unterstuetzt' || plan.art === 'bereit') {
     if (plan.zielArt === 'stadt') return `die Stadt ${plan.name}`
     if (plan.zielArt === 'region') return `die Region ${plan.name}`
     if (plan.zielArt === 'insel') return `die Insel ${plan.name}`
     if (plan.zielArt === 'land') return plan.name
-    return plan.name
   }
-  if (plan.zielArt === 'stadt') return `die Stadt ${plan.name}`
-  if (plan.zielArt === 'region') return `die Region ${plan.name}`
-  if (plan.zielArt === 'insel') return `die Insel ${plan.name}`
   return plan.name
 }
 
+function laenderVon(plan: GygPlan) {
+  if (plan.art === 'land_auswahl') return plan.laender
+  if ((plan.art === 'bereit' || plan.art === 'nicht_unterstuetzt') && plan.laender && plan.laender.length > 0) {
+    return plan.laender
+  }
+  return []
+}
+
 function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuideNaht }) {
+  const instanz = React.useId()
   const ohneTage = reise.days.length === 0
   const [umfangState, setUmfangState] = React.useState<'tag' | 'land'>(ohneTage ? 'land' : 'tag')
   const [landWahl, setLandWahl] = React.useState<string | null>(null)
   const [hinweisOffen, setHinweisOffen] = React.useState(false)
+  const [ortVersuch, setOrtVersuch] = React.useState(0)
   const umfang = ohneTage ? 'land' : umfangState
-  const plan = React.useMemo(
-    () =>
-      gygPlanen({
-        reise: gygReiseAusTrip(reise),
+  const bestaetigen: GygKanonBestaetigen | null = naht.herkunft === 'pruefung' ? naht.kanonBestaetigen : null
+  const syncLesen = naht.herkunft === 'pruefung' && !bestaetigen ? naht.orteLesen : null
+  const abbildung = naht.herkunft === 'pruefung' ? naht.abbildung : ANWENDUNGS_NAHT.abbildung
+  const reiseKern = React.useMemo(() => gygReiseAusTrip(reise), [reise])
+  const anfrage = bestaetigen && naht.freigabe.status === 'bereit'
+    ? gygOrtAnfrage(reiseKern, umfang, ohneTage ? null : angeforderteTagId)
+    : null
+  const anfrageText = anfrage?.anfrage ?? ''
+  const [buch, setBuch] = React.useState<OrtBuch | null>(null)
+  const buchSichtbar = React.useMemo<OrtBuch | null>(() => {
+    if (!anfrage || !bestaetigen) return null
+    const anfrageStand = gygAufloesungWechseln(buch?.stand ?? gygAufloesungStart(anfrage.anfrage), anfrage.anfrage)
+    if (buch && buch.stand === anfrageStand) return buch
+    return { stand: anfrageStand, versuch: buch?.versuch ?? ortVersuch, quelle: buch?.quelle ?? bestaetigen }
+  }, [anfrage, bestaetigen, buch, ortVersuch])
+  if ((buch?.stand.anfrage ?? null) !== (buchSichtbar?.stand.anfrage ?? null)) setBuch(buchSichtbar)
+
+  const buchRef = React.useRef<OrtBuch | null>(buchSichtbar)
+  const anfrageRef = React.useRef(anfrage)
+  const bestaetigenRef = React.useRef(bestaetigen)
+  React.useLayoutEffect(() => {
+    buchRef.current = buchSichtbar
+    anfrageRef.current = anfrage
+    bestaetigenRef.current = bestaetigen
+  }, [anfrage, bestaetigen, buchSichtbar])
+
+  React.useEffect(() => {
+    const leser = bestaetigenRef.current
+    const angefragt = anfrageRef.current
+    if (!leser || !angefragt || naht.freigabe.status !== 'bereit' || angefragt.ids.length === 0) return
+    const bisher = buchRef.current
+    if (
+      bisher &&
+      bisher.quelle === leser &&
+      bisher.stand.anfrage === angefragt.anfrage &&
+      bisher.versuch === ortVersuch &&
+      (bisher.stand.phase === 'fertig' || bisher.stand.phase === 'fehler')
+    ) {
+      return
+    }
+    const basis = gygAufloesungWechseln(bisher?.stand ?? gygAufloesungStart(angefragt.anfrage), angefragt.anfrage)
+    const ausgang = basis.phase === 'ruhend' ? basis : { ...basis, phase: 'ruhend' as const, orte: {}, fehler: null }
+    const next = gygAufloesungBeginnen(ausgang)
+    const erwartet = { epoche: next.epoche, generation: next.generation, anfrage: next.anfrage }
+    const laufend: OrtBuch = { stand: next, versuch: ortVersuch, quelle: leser }
+    buchRef.current = laufend
+    setBuch(laufend)
+    const steuerung = new AbortController()
+    let lebend = true
+    void (async () => {
+      const orte: Record<string, Ort | null> = {}
+      try {
+        for (const id of angefragt.ids) {
+          if (!lebend) return
+          const ort = await leser(id, steuerung.signal)
+          if (!lebend) return
+          orte[id] = ort && ort.id === id ? ort : null
+        }
+        if (!lebend) return
+        setBuch((aktuell) => {
+          const fertig = gygAufloesungAbschluss(aktuell?.stand ?? next, erwartet, { art: 'orte', orte })
+          const folge: OrtBuch = { stand: fertig, versuch: ortVersuch, quelle: leser }
+          buchRef.current = folge
+          return folge
+        })
+      } catch {
+        if (!lebend) return
+        setBuch((aktuell) => {
+          const fehler = gygAufloesungAbschluss(aktuell?.stand ?? next, erwartet, { art: 'abgelehnt' })
+          const folge: OrtBuch = { stand: fehler, versuch: ortVersuch, quelle: leser }
+          buchRef.current = folge
+          return folge
+        })
+      }
+    })()
+    return () => {
+      lebend = false
+      steuerung.abort()
+    }
+  }, [bestaetigen, anfrageText, naht.freigabe.status, ortVersuch])
+
+  const plan = React.useMemo(() => {
+    if (bestaetigen && naht.freigabe.status === 'bereit' && anfrage && anfrage.ids.length > 0) {
+      const stand = buchSichtbar?.stand
+      const bestaetigt =
+        Boolean(stand) && buchSichtbar?.quelle === bestaetigen && stand?.anfrage === anfrage.anfrage
+      if (!bestaetigt || !stand || stand.phase === 'ruhend' || stand.phase === 'laeuft') {
+        return { art: 'ort_ausstehend' as const, schluessel: anfrage.anfrage }
+      }
+      if (stand.phase === 'fehler') {
+        return { art: 'ort_ausstehend' as const, schluessel: `${anfrage.anfrage}:fehler` }
+      }
+      return gygPlanen({
+        reise: reiseKern,
         angeforderteTagId: ohneTage ? null : angeforderteTagId,
         umfang,
         landWahl,
         freigabe: naht.freigabe,
-        orteLesen: naht.herkunft === 'pruefung' ? naht.orteLesen : null,
-        abbildung: naht.herkunft === 'pruefung' ? naht.abbildung : ANWENDUNGS_NAHT.abbildung,
-      }),
-    [reise, angeforderteTagId, umfang, landWahl, naht, ohneTage],
-  )
+        orteLesen: (id) => {
+          const ort = stand.orte[id]
+          return ort && ort.id === id ? ort : null
+        },
+        abbildung,
+      })
+    }
+    return gygPlanen({
+      reise: reiseKern,
+      angeforderteTagId: ohneTage ? null : angeforderteTagId,
+      umfang,
+      landWahl,
+      freigabe: naht.freigabe,
+      orteLesen: syncLesen,
+      abbildung,
+    })
+  }, [abbildung, anfrage, angeforderteTagId, bestaetigen, buchSichtbar, landWahl, naht.freigabe, ohneTage, reiseKern, syncLesen, umfang])
+
   const [lauf, setLauf] = React.useState<GygLauf>(() => gygLaufStart(plan.schluessel))
   const angepasst = lauf.kontext === plan.schluessel ? lauf : gygKontextWechseln(lauf, plan.schluessel)
   if (angepasst !== lauf) setLauf(angepasst)
@@ -78,8 +221,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
   const erlaubterRenderer = naht.herkunft === 'pruefung' ? naht.renderer : null
   const laufRef = React.useRef(angepasst)
   const planRef = React.useRef(plan)
-  const abortRef = React.useRef<AbortController | null>(null)
-  const mountRef = React.useRef<HTMLDivElement>(null)
+  const betriebRef = React.useRef<Betrieb | null>(null)
+  const hostRef = React.useRef<HTMLDivElement>(null)
   const rendererRef = React.useRef(erlaubterRenderer)
   React.useLayoutEffect(() => {
     laufRef.current = angepasst
@@ -87,14 +230,11 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     rendererRef.current = erlaubterRenderer
   }, [angepasst, plan, erlaubterRenderer])
   React.useEffect(() => {
-    const knoten = mountRef.current
-    const renderer = rendererRef.current
+    const host = hostRef.current
     return () => {
-      abortRef.current?.abort()
-      abortRef.current = null
-      if (!knoten) return
-      renderer?.entsorgen(knoten)
-      knoten.replaceChildren()
+      betriebBeenden(betriebRef.current)
+      betriebRef.current = null
+      host?.replaceChildren()
     }
   }, [angepasst.kontext])
 
@@ -105,21 +245,43 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     const entscheid = gygAnfordern(laufRef.current, aktuell.bezug)
     if (!entscheid.angenommen) return
     const renderer = rendererRef.current
-    const ziel = mountRef.current
-    if (!renderer || !ziel) {
+    const host = hostRef.current
+    betriebBeenden(betriebRef.current)
+    betriebRef.current = null
+    if (!renderer || !host) {
       const next = gygAbschluss(entscheid.lauf, entscheid, { art: 'abgelehnt', meldung: '' })
       laufRef.current = next
       setLauf(next)
       return
     }
+    const knoten = document.createElement('div')
+    knoten.dataset.gygBetrieb = String(entscheid.generation)
+    host.replaceChildren(knoten)
+    const steuerung = new AbortController()
+    const betrieb: Betrieb = {
+      epoche: entscheid.epoche,
+      generation: entscheid.generation,
+      renderer,
+      knoten,
+      steuerung,
+    }
+    betriebRef.current = betrieb
     laufRef.current = entscheid.lauf
     setLauf(entscheid.lauf)
-    abortRef.current?.abort()
-    const steuerung = new AbortController()
-    abortRef.current = steuerung
-    void renderer.laden(entscheid.bezug, ziel, steuerung.signal).then(
+    let ausstehend: Promise<GygLadeErgebnis>
+    try {
+      ausstehend = Promise.resolve(renderer.laden(entscheid.bezug, knoten, steuerung.signal))
+    } catch {
+      betriebBeenden(betrieb)
+      if (betriebRef.current === betrieb) betriebRef.current = null
+      const next = gygAbschluss(entscheid.lauf, entscheid, { art: 'abgelehnt', meldung: '' })
+      laufRef.current = next
+      setLauf(next)
+      return
+    }
+    void ausstehend.then(
       (ergebnis) => {
-        if (steuerung.signal.aborted) return
+        if (betriebRef.current !== betrieb) return
         setLauf((stand) => {
           const next = gygAbschluss(stand, entscheid, ergebnis)
           laufRef.current = next
@@ -127,7 +289,9 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
         })
       },
       () => {
-        if (steuerung.signal.aborted) return
+        if (betriebRef.current !== betrieb) return
+        betriebBeenden(betrieb)
+        betriebRef.current = null
         setLauf((stand) => {
           const next = gygAbschluss(stand, entscheid, { art: 'abgelehnt', meldung: '' })
           laufRef.current = next
@@ -139,12 +303,17 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
 
   const montageSichtbar = angepasst.phase === 'laeuft' || angepasst.phase === 'anzeige'
   const satz = plan.art === 'bereit' || plan.art === 'nicht_unterstuetzt' || plan.art === 'kein_tagesziel' ? zielSatz(plan) : null
+  const laender = laenderVon(plan)
+  const bestaetigungFehler = Boolean(
+    buchSichtbar && buchSichtbar.stand.phase === 'fehler' && plan.art === 'ort_ausstehend' && plan.schluessel.endsWith(':fehler'),
+  )
 
   return (
     <section
       aria-label="GetYourGuide"
       data-gyg-zustand={plan.art}
       data-gyg-phase={angepasst.phase}
+      data-gyg-instanz={instanz}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Anbieter</p>
@@ -185,6 +354,10 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
             Das sagt nichts darüber aus, ob es Angebote gibt.
           </p>
         ) : null}
+        {plan.art === 'ort_ausstehend' && !bestaetigungFehler ? (
+          <p aria-busy="true" className={TEXT}>Das Ziel wird bestätigt. GetYourGuide lädt dabei noch nichts.</p>
+        ) : null}
+        {bestaetigungFehler ? <p className={TEXT}>{buchSichtbar?.stand.fehler}</p> : null}
         {plan.art === 'bereit' && angepasst.phase === 'ruhend' ? (
           <p className={TEXT}>
             {plan.zielArt === 'land'
@@ -206,11 +379,11 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
         ) : null}
       </div>
 
-      {plan.art === 'land_auswahl' ? (
+      {laender.length > 0 ? (
         <fieldset className="mt-4 min-w-0">
           <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Bestätigtes Land</legend>
           <div className="mt-2 grid gap-2">
-            {plan.laender.map((land) => (
+            {laender.map((land) => (
               <label
                 key={land.countryCode}
                 className="flex min-h-11 min-w-0 items-center gap-3 rounded-2xl border border-line-200 bg-white px-3 text-sm text-ink-900"
@@ -246,6 +419,11 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
             Ideen für dieses Land
           </button>
         ) : null}
+        {bestaetigungFehler ? (
+          <button type="button" onClick={() => setOrtVersuch((wert) => wert + 1)} className={cn(AKTION, PRIMAR)}>
+            Ziel erneut bestätigen
+          </button>
+        ) : null}
         {plan.art === 'bereit' && angepasst.phase !== 'laeuft' ? (
           <button type="button" onClick={anzeigen} className={cn(AKTION, PRIMAR)}>
             {angepasst.phase === 'fehler' ? 'Erneut versuchen' : angepasst.phase === 'anzeige' ? 'Erneut laden' : 'Bei GetYourGuide anzeigen'}
@@ -277,7 +455,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       ) : null}
 
       <div
-        ref={mountRef}
+        ref={hostRef}
         data-gyg-montage={montageSichtbar ? 'sichtbar' : 'leer'}
         hidden={!montageSichtbar}
         className="mt-4 min-w-0"
