@@ -29,6 +29,7 @@ function quelle(relativ: string) {
 const helfer = quelle('datenexport.ts')
 const route = quelle('../../app/api/account/export/route.ts')
 const settings = quelle('../../app/account/settings/page.tsx')
+const loeschen = quelle('../../components/account/KontoLoeschen.tsx')
 const proxy = quelle('../../proxy.ts')
 
 const VERBOTENE_TABELLEN = [
@@ -45,7 +46,8 @@ type MockFehler = { message: string; code?: string; status?: number }
 function mockClient(args: {
   zeilen?: Partial<Record<string, unknown[]>>
   fehler?: Partial<Record<string, MockFehler>>
-  gesehen?: { tabelle: string; userId: string; select: string }[]
+  gesehen?: { tabelle: string; userId: string; select: string; order: string | null; von: number; bis: number }[]
+  gleicheSeite?: unknown[]
 }): SupabaseClient<Database> {
   const zeilen = args.zeilen ?? {}
   const fehler = args.fehler ?? {}
@@ -55,6 +57,7 @@ function mockClient(args: {
     from(tabelle: string) {
       let userId = ''
       let select = ''
+      let order: string | null = null
       const kette = {
         select(spalten: string) {
           select = spalten
@@ -65,8 +68,12 @@ function mockClient(args: {
           userId = wert
           return kette
         },
+        order(spalte: string, optionen: { ascending?: boolean }) {
+          order = `${spalte}.${optionen.ascending === false ? 'desc' : 'asc'}`
+          return kette
+        },
         range(von: number, bis: number) {
-          gesehen?.push({ tabelle, userId, select })
+          gesehen?.push({ tabelle, userId, select, order, von, bis })
           const eintrag = fehler[tabelle]
           if (eintrag) {
             return Promise.resolve({
@@ -75,7 +82,15 @@ function mockClient(args: {
               status: eintrag.status ?? 500,
             })
           }
-          const alle = zeilen[tabelle] ?? []
+          if (args.gleicheSeite && tabelle === 'account_visits') {
+            return Promise.resolve({ data: args.gleicheSeite, error: null, status: 200 })
+          }
+          const alle = [...(zeilen[tabelle] ?? [])]
+          if (order === 'id.asc') {
+            alle.sort((links, rechts) =>
+              String((links as { id?: unknown }).id).localeCompare(String((rechts as { id?: unknown }).id)),
+            )
+          }
           return Promise.resolve({
             data: alle.slice(von, bis + 1),
             error: null,
@@ -159,7 +174,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
       assert.match(helfer, new RegExp(`\\.from\\('${tabelle}'\\)[\\s\\S]{0,80}\\.select\\(spalten\\)`))
     }
 
-    const gesehen: { tabelle: string; userId: string; select: string }[] = []
+    const gesehen: { tabelle: string; userId: string; select: string; order: string | null; von: number; bis: number }[] = []
     const leer = await kontoDatenexportErzeugen(
       mockClient({ gesehen }),
       '55555555-5555-5555-5555-555555555555',
@@ -174,6 +189,9 @@ describe('V1 Account Data Export 1 Vertrag', () => {
       assert.notEqual(eintrag.select, '*')
       assert.equal(eintrag.select.includes('*'), false, eintrag.tabelle)
       assert.equal(eintrag.userId, '55555555-5555-5555-5555-555555555555')
+      assert.equal(eintrag.order, 'id.asc')
+      assert.equal(eintrag.von, 0)
+      assert.equal(eintrag.bis, KONTO_DATENEXPORT_SEITE - 1)
     }
   })
 
@@ -208,7 +226,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
       assert.deepEqual(leer.dokument.data[tabelle], [])
     }
 
-    const gesehen: { tabelle: string; userId: string; select: string }[] = []
+    const gesehen: { tabelle: string; userId: string; select: string; order: string | null; von: number; bis: number }[] = []
     const fehl = await kontoDatenexportErzeugen(
       mockClient({
         gesehen,
@@ -248,6 +266,97 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.equal(grenze.ok, false)
     if (grenze.ok) throw new Error('erwartet Fehler')
     assert.equal(grenze.problem.status, 500)
+    assert.match(grenze.problem.message, /überschreitet die Exportgrenze/)
+  })
+
+  test('Seiten stehen auf id und wiederholen, doppeln oder verwerfen keine Kennung', async () => {
+    const seite = KONTO_DATENEXPORT_SEITE
+    const tausend = Array.from({ length: seite }, (_, index) => ({ id: `b${String(index).padStart(4, '0')}` }))
+    const tausendUndEins = [...tausend, { id: 'b1000' }]
+    const genauGrenze = Array.from({ length: KONTO_DATENEXPORT_MAX_ZEILEN }, (_, index) => ({
+      id: `c${String(index).padStart(5, '0')}`,
+    }))
+    const gesehen: { tabelle: string; userId: string; select: string; order: string | null; von: number; bis: number }[] = []
+
+    const voll = await kontoDatenexportErzeugen(
+      mockClient({ gesehen, zeilen: { account_visits: tausend } }),
+      '66666666-6666-6666-6666-666666666666',
+    )
+    assert.equal(voll.ok, true)
+    if (!voll.ok) throw new Error('erwartet ok')
+    assert.equal(voll.dokument.data.account_visits.length, seite)
+    const besuche = gesehen.filter((eintrag) => eintrag.tabelle === 'account_visits')
+    assert.equal(
+      besuche.every(
+        (eintrag) =>
+          eintrag.userId === '66666666-6666-6666-6666-666666666666' && eintrag.select.includes('id'),
+      ),
+      true,
+    )
+    assert.deepEqual(
+      besuche.map((eintrag) => [eintrag.von, eintrag.bis, eintrag.order]),
+      [
+        [0, seite - 1, 'id.asc'],
+        [seite, seite * 2 - 1, 'id.asc'],
+      ],
+    )
+
+    const einsMehr = await kontoDatenexportErzeugen(
+      mockClient({ zeilen: { account_visits: tausendUndEins } }),
+      '66666666-6666-6666-6666-666666666666',
+    )
+    assert.equal(einsMehr.ok, true)
+    if (!einsMehr.ok) throw new Error('erwartet ok')
+    assert.equal(einsMehr.dokument.data.account_visits.length, seite + 1)
+
+    const grenze = await kontoDatenexportErzeugen(
+      mockClient({ zeilen: { account_visits: genauGrenze } }),
+      '77777777-7777-7777-7777-777777777777',
+    )
+    assert.equal(grenze.ok, true)
+    if (!grenze.ok) throw new Error('erwartet ok')
+    assert.equal(grenze.dokument.data.account_visits.length, KONTO_DATENEXPORT_MAX_ZEILEN)
+
+    const ungeordnet = [{ id: 'm' }, { id: 'a' }, { id: 'z' }]
+    const sortiert = await kontoDatenexportErzeugen(
+      mockClient({ zeilen: { trips: ungeordnet } }),
+      '88888888-8888-8888-8888-888888888888',
+    )
+    assert.equal(sortiert.ok, true)
+    if (!sortiert.ok) throw new Error('erwartet ok')
+    assert.deepEqual(
+      sortiert.dokument.data.trips.map((zeile) => (zeile as { id: string }).id),
+      ['a', 'm', 'z'],
+    )
+
+    const doppelt = await kontoDatenexportErzeugen(
+      mockClient({
+        zeilen: {
+          account_visits: [...tausend, { id: tausend[3]?.id }],
+        },
+      }),
+      '99999999-9999-9999-9999-999999999999',
+    )
+    assert.equal(doppelt.ok, false)
+    if (doppelt.ok) throw new Error('erwartet Fehler')
+    assert.match(doppelt.problem.message, /wiederholte Kennung/)
+
+    const stillstand = await kontoDatenexportErzeugen(
+      mockClient({ gleicheSeite: tausend }),
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    )
+    assert.equal(stillstand.ok, false)
+    if (stillstand.ok) throw new Error('erwartet Fehler')
+    assert.match(stillstand.problem.message, /keine neue Seite/)
+
+    const ohneKennung = await kontoDatenexportErzeugen(
+      mockClient({ zeilen: { profiles: [{ id: 'ok' }, { id: '' }] } }),
+      'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    )
+    assert.equal(ohneKennung.ok, false)
+    if (ohneKennung.ok) throw new Error('erwartet Fehler')
+    assert.match(ohneKennung.problem.message, /ohne gültige Kennung/)
+    assert.equal('dokument' in ohneKennung, false)
   })
 
   test('Route ist sessiongebunden, fail-closed und ohne Service-Role', () => {
@@ -289,7 +398,9 @@ describe('V1 Account Data Export 1 Vertrag', () => {
   })
 
   test('Einstellungen bieten den Export ehrlich und die Löschung getrennt an', () => {
-    assert.match(settings, /href="\/api\/account\/export"/)
+    assert.match(settings, /KontoDatenexportAktion/)
+    assert.equal(settings.includes('href="/api/account/export"'), false)
+    assert.match(settings, /keine einzelne atomare Momentaufnahme/)
     assert.match(settings, /aria-labelledby="account-datenexport-title"/)
     assert.match(settings, /<h2[\s\S]*id="account-datenexport-title"/)
     assert.match(settings, /aktuell von Jetnity gespeicherten Konto- und Reisedaten/)
@@ -300,6 +411,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.equal(settings.includes('DSGVO'), false)
     assert.equal(settings.includes('CH-DSG'), false)
     assert.match(settings, /KontoLoeschen/)
+    assert.match(loeschen, /href="\/api\/account\/export"/)
     assert.match(settings, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
     assert.match(settings, /loeschungAngeboten \? <KontoLoeschen \/> : null/)
     assert.equal(settings.includes('headers('), false)

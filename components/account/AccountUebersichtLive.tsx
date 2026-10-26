@@ -3,10 +3,9 @@
 // Geräte-Kalendertag für aktiv/kommend. Der Server kennt die lokale Lage nicht
 // und darf sie nicht aus UTC erfinden.
 
-import { useEffect, useState } from 'react'
-
 import AccountUebersicht from '@/components/account/AccountUebersicht'
-import { heutigesDatum, naechsteReiseAus } from '@/lib/account/naechste-reise'
+import { useGeraetekalendertag } from '@/components/account/account-home-export-1/useGeraetekalendertag'
+import { naechsteReiseAus } from '@/lib/account/naechste-reise'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import type { WeltLaenderAbleitung } from '@/lib/account/welt-laender'
 import type { Problem } from '@/lib/api/datenbank-lesen'
@@ -25,12 +24,7 @@ export default function AccountUebersichtLive({
   besucht: WeltBesuchtAnsicht
   laender: WeltLaenderAbleitung
 }) {
-  const [heute, setHeute] = useState<string | null>(null)
-
-  useEffect(() => {
-    setHeute(heutigesDatum())
-  }, [])
-
+  const heute = useGeraetekalendertag()
   const naechste = problem ? null : naechsteReiseAus(reisen, heute)
 
   return (
@@ -42,6 +36,7 @@ export default function AccountUebersichtLive({
       reisen={reisen}
       besucht={besucht}
       laender={laender}
+      heute={heute}
     />
   )
 }

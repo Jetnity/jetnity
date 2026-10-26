@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { naechsteReiseBezeichnung, reiseFensterAus } from '@/lib/account/account-home-export-1/fenster'
 import { heutigesDatum, kalendertagAusInstant, naechsteReiseAus } from '@/lib/account/naechste-reise'
 import type { TripSummary } from '@/types/trips'
 
@@ -189,5 +190,23 @@ describe('UTC/lokaler Tageswechsel an der aktiv/kommend-Grenze', () => {
     const gewählt = naechsteReiseAus([endetAmVortag], geraetetag)
     assert.equal(gewählt?.lage, 'fortsetzen')
     assert.equal(gewählt?.reise.id, 'ende')
+  })
+
+  test('an der 200er-Grenze heisst die Auswahl nicht die globale nächste Reise', () => {
+    const imFenster = reise({
+      id: 'im-fenster',
+      title: 'Im Fenster',
+      startDate: '2026-09-02',
+      endDate: '2026-09-06',
+      status: 'planned',
+    })
+    const gewählt = naechsteReiseAus([imFenster], HEUTE)
+    assert.equal(gewählt?.lage, 'kommend')
+    const grenze = reiseFensterAus({ problem: false, anzahl: 200 })
+    assert.equal(naechsteReiseBezeichnung(gewählt?.lage ?? 'kommend', grenze), 'Nächste Reise in den geladenen Reisen.')
+    assert.equal(
+      naechsteReiseBezeichnung('kommend', reiseFensterAus({ problem: false, anzahl: 1 })),
+      'Deine nächste Reise.',
+    )
   })
 })

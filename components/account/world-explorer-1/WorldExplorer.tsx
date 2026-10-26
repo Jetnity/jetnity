@@ -7,6 +7,8 @@ import { Search, X } from 'lucide-react'
 import { WeltZustandProbe } from '@/components/account/WeltZustaende'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import { WELT_ZUSTAND_TEXT, type WeltLaenderAbleitung } from '@/lib/account/welt-laender'
+import { geplanteAussage, weltLeereOrteText, type ReiseFenster } from '@/lib/account/account-home-export-1/fenster'
+import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
 import type { WorldMapAbleitung } from '@/lib/account/world-map'
 import { WORLD_MAP_GRUNDKARTE_HINWEIS } from '@/lib/account/world-map-ansicht'
 import { explorerRecords, filterRecords, positionText, recordStatus, type ExplorerFilter } from '@/lib/account/world-explorer-1/presentation'
@@ -16,11 +18,14 @@ import ExplorerDetails from './ExplorerDetails'
 const FILTERS = [['alle', 'Alle'], ['besucht', 'Besucht'], ['geplant', 'Geplant'], ['beides', 'Beides']] as const
 const PAGE_SIZE = 24
 
-export default function WorldExplorer({ welt, besucht, laender, aktion }: {
+export default function WorldExplorer({ welt, besucht, laender, aktion, reichweiteText, fenster, neuLadenHref }: {
   welt: WorldMapAbleitung
   besucht: WeltBesuchtAnsicht
   laender: WeltLaenderAbleitung
   aktion?: { href: Route; text: string } | null
+  reichweiteText?: string
+  fenster?: ReiseFenster | null
+  neuLadenHref?: '/account' | '/account/welt'
 }) {
   const id = useId()
   const searchRef = useRef<HTMLInputElement>(null)
@@ -67,13 +72,14 @@ export default function WorldExplorer({ welt, besucht, laender, aktion }: {
     <h2 id={`${id}-titel`} className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl">{welt.titel}</h2>
     <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-800">{welt.unterscheidung}</p>
     <div className="mt-4 rounded-2xl bg-surface-50 p-4" data-explorer-totals>
-      <p className="text-xs font-semibold text-brand-800">Gesamt in deinem Konto · unabhängig von Suche und Filter</p>
+      {fenster ? <ReiseFensterHinweis fenster={fenster} neuLadenHref={neuLadenHref} /> : null}
+      <p className="text-xs font-semibold text-brand-800">{reichweiteText ?? 'Gesamt in deinem Konto · unabhängig von Suche und Filter'}</p>
       <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-800">
         <li className="flex items-center gap-2"><WeltZustandProbe zustand="besucht" /><span><strong>Besucht:</strong> {besucht.kurz}</span></li>
-        <li className="flex items-center gap-2"><WeltZustandProbe zustand="geplant" /><span><strong>Geplant:</strong> {welt.lage === 'fehler' ? 'Gerade nicht lesbar' : welt.geplantKennzahl}</span></li>
+        <li className="flex items-center gap-2"><WeltZustandProbe zustand="geplant" /><span><strong>Geplant:</strong> {welt.lage === 'fehler' ? 'Gerade nicht lesbar' : geplanteAussage({ fenster, lage: welt.lage, kennzahl: welt.geplantKennzahl, leertext: welt.leerText, leerStattKennzahl: false })}</span></li>
       </ul>
     </div>
-    {besucht.fehlerText ? <p role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950">{besucht.fehlerText}</p> : null}
+    {besucht.fehlerText ? <div role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950"><p>{besucht.fehlerText}</p>{neuLadenHref ? <SeiteNeuLaden href={neuLadenHref} /> : null}</div> : null}
     {welt.lage === 'fehler' ? <p role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950">{welt.fehlerText} Der Planungsstand ist unbekannt.</p> : null}
     <div className="mt-6">
       <label htmlFor={`${id}-suche`} className="text-sm font-semibold text-brand-800">Länder und Orte in deinem Konto suchen</label>
@@ -100,7 +106,7 @@ export default function WorldExplorer({ welt, besucht, laender, aktion }: {
     </div>
     <div className="mt-6 border-t border-line-200 pt-5" data-explorer-results>
       <h3 className="text-base font-semibold text-brand-800">Deine Länder und Orte</h3>
-      {matches.length === 0 ? <p className="mt-3 text-sm leading-6 text-ink-800">{partial && filter === 'beides' ? 'Die Schnittmenge ist bei unvollständigen Daten unbekannt.' : records.length === 0 && !query ? (partial ? 'Gerade keine lesbaren Einträge verfügbar.' : 'Noch keine Länder oder Orte in deinem Konto gespeichert.') : 'Keine passenden Einträge. Ändere die Suche oder den Filter.'}</p> : null}
+      {matches.length === 0 ? <p className="mt-3 text-sm leading-6 text-ink-800">{partial && filter === 'beides' ? 'Die Schnittmenge ist bei unvollständigen Daten unbekannt.' : records.length === 0 && !query ? (partial ? 'Gerade keine lesbaren Einträge verfügbar.' : weltLeereOrteText(fenster)) : 'Keine passenden Einträge. Ändere die Suche oder den Filter.'}</p> : null}
       <ul className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {matches.slice(0, limit).map((r) => <li key={r.id} className="min-w-0"><button type="button" data-explorer-result={r.id} aria-current={selection === r.id ? 'true' : undefined} aria-controls={`${id}-details`} onClick={() => choose(r.id)} className={`flex min-h-11 w-full min-w-0 gap-2 rounded-2xl border p-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selection === r.id ? 'border-brand-700 bg-surface-100' : 'border-line-200 bg-surface-0 hover:bg-surface-50'}`}>
           <WeltZustandProbe zustand={r.zustand} alsPunkt={!!r.flaeche?.punkt} /><span className="min-w-0 break-words text-sm leading-5"><span className="block font-semibold text-brand-800">{r.label}{r.art === 'land' ? ` (${r.code})` : ''}</span><span className="block text-ink-800">{r.art === 'land' ? 'Land' : r.landLabel ?? 'Kein gespeicherter Ländercode'} · {recordStatus(r)}</span>{r.besuch ? <span className="block text-xs text-ink-800">{r.besuch.zeitText}{r.besuch.wiederholungText ? ` · ${r.besuch.wiederholungText}` : ''}</span> : null}{positionText(r) ? <span className="block text-xs text-ink-800">{positionText(r)}</span> : null}</span>

@@ -13,7 +13,12 @@ import Link from 'next/link'
 import { AlertCircle, ArrowRight, MapPin, Plus } from 'lucide-react'
 
 import AccountWeltKarte from '@/components/account/AccountWeltKarte'
+import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
 import { BUCHUNGEN_COPY } from '@/lib/account/buchungen'
+import {
+  naechsteReiseBezeichnung,
+  reiseFensterAus,
+} from '@/lib/account/account-home-export-1/fenster'
 import type { NaechsteReise } from '@/lib/account/naechste-reise'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import type { WeltLaenderAbleitung } from '@/lib/account/welt-laender'
@@ -35,12 +40,6 @@ function zeitraum(startDate: string | null, endDate: string | null): string {
     new Date(`${endDate}T00:00:00Z`),
   )}`
 }
-
-const LAGE_TEXT = {
-  aktiv: 'Deine Reise läuft gerade.',
-  kommend: 'Deine nächste Reise.',
-  fortsetzen: 'Hier kannst du weiterplanen.',
-} as const
 
 const WELT_VORSCHAU_AKTION = 'Deine Welt öffnen'
 
@@ -75,6 +74,7 @@ export default function AccountUebersicht({
   reisen,
   besucht,
   laender,
+  heute = null,
 }: {
   name: string | null
   problem: Problem | null
@@ -83,11 +83,13 @@ export default function AccountUebersicht({
   reisen: readonly TripSummary[]
   besucht: WeltBesuchtAnsicht
   laender: WeltLaenderAbleitung
+  heute?: string | null
 }) {
   const welt = worldMapAbleiten({ problem, reisen })
+  const fenster = reiseFensterAus({ problem: problem !== null, anzahl: reisen.length })
 
   return (
-    <div data-account-uebersicht="ein">
+    <div data-account-uebersicht="ein" data-account-heute={heute ?? 'unbekannt'}>
       <header className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Konto</p>
         <h1 className="mt-2 break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
@@ -98,6 +100,8 @@ export default function AccountUebersicht({
           Trip Workspace.
         </p>
       </header>
+
+      <ReiseFensterHinweis fenster={fenster} />
 
       <div className="mt-8 grid min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,22rem)]">
         {problem ? (
@@ -117,46 +121,59 @@ export default function AccountUebersicht({
                 ? 'Wir konnten deinen aktuellen Speicherstand gerade nicht prüfen; bitte lade später neu.'
                 : 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.'}
             </p>
+            <SeiteNeuLaden href="/account" />
           </section>
         ) : naechste ? (
           <section
             aria-label="Nächste Reise"
             data-account-naechste={naechste.lage}
-            className="flex h-full min-w-0 flex-col rounded-[30px] border border-black/5 bg-white p-6 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
+            // Horizontal insets stay in px below sm. Rem padding doubles at a 32px root and leaves ordinary words no line to sit on.
+            className="flex h-full min-w-0 flex-col rounded-[30px] border border-black/5 bg-white px-[16px] py-6 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
           >
-            <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 xl:flex-row xl:items-end">
+            <div className="flex min-w-0 flex-1 flex-col gap-6">
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-                  {LAGE_TEXT[naechste.lage]}
+                <p
+                  data-account-kennzeichnung=""
+                  className="break-normal text-xs font-semibold uppercase tracking-[0.16em] text-brand-600"
+                >
+                  {naechsteReiseBezeichnung(naechste.lage, fenster)}
                 </p>
                 <div className="mt-3">
-                  <span className="inline-flex items-center rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+                  <span
+                    data-account-status=""
+                    className="inline-flex max-w-full items-center break-normal rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700"
+                  >
                     {STATUS_BEZEICHNUNG[naechste.reise.status]}
                   </span>
                 </div>
-                <h2 className="mt-3 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl">
+                <h2
+                  data-account-titel=""
+                  className="mt-3 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl"
+                >
                   {naechste.reise.title}
                 </h2>
                 {naechste.reise.origin ? (
-                  <p className="mt-1 break-words text-sm text-ink-700">ab {naechste.reise.origin}</p>
+                  <p data-account-herkunft="" className="mt-1 break-words text-sm text-ink-700">
+                    ab {naechste.reise.origin}
+                  </p>
                 ) : null}
-                <p className="mt-3 break-words text-sm text-ink-800">
+                <p data-account-zeitraum="" className="mt-3 break-normal text-sm text-ink-800">
                   {zeitraum(naechste.reise.startDate, naechste.reise.endDate)}
                 </p>
               </div>
-              <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row xl:w-56 xl:flex-col">
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href={`/reisen/${naechste.reise.id}` as Route}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-[8px] rounded-full bg-brand-800 px-[12px] py-2 text-center text-sm font-semibold leading-5 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto"
                 >
-                  Reise fortsetzen
-                  <ArrowRight className="h-4 w-4" />
+                  <span className="break-normal">Reise fortsetzen</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
                 <Link
                   href="/reisen"
-                  className="inline-flex h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full border border-line-200 bg-white px-[12px] py-2 text-center text-sm font-semibold leading-5 text-brand-800 transition hover:bg-surface-50 sm:w-auto"
                 >
-                  Alle Reisen
+                  <span className="break-normal">Alle Reisen</span>
                 </Link>
               </div>
             </div>
@@ -170,12 +187,18 @@ export default function AccountUebersicht({
               <MapPin className="h-5 w-5" />
             </span>
             <h2 className="mt-5 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800">
-              {hatReisen ? 'Keine offene Reise zum Fortsetzen.' : 'Noch keine Reise in deinem Konto.'}
+              {fenster.lage === 'grenze'
+                ? 'In den geladenen Reisen ist keine offene Reise.'
+                : hatReisen
+                  ? 'Keine offene Reise zum Fortsetzen.'
+                  : 'Noch keine Reise in deinem Konto.'}
             </h2>
             <p className="mt-3 max-w-md text-sm leading-6 text-ink-700">
-              {hatReisen
-                ? 'Deine vorhandenen Reisen liegen unter Meine Reisen. Eine neue Reise kannst du jederzeit anlegen.'
-                : 'Lege deine erste Reise an. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus weiterplanen.'}
+              {fenster.lage === 'grenze'
+                ? 'Ob weitere offene Reisen ausserhalb dieser zuletzt geänderten Reisen existieren, ist hier nicht geprüft.'
+                : hatReisen
+                  ? 'Deine vorhandenen Reisen liegen unter Meine Reisen. Eine neue Reise kannst du jederzeit anlegen.'
+                  : 'Lege deine erste Reise an. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus weiterplanen.'}
             </p>
             <div className="mt-6 flex w-full min-w-0 flex-col gap-3 sm:flex-row">
               {hatReisen ? (
@@ -204,6 +227,8 @@ export default function AccountUebersicht({
         welt={welt}
         besucht={besucht}
         laender={laender}
+        fenster={fenster}
+        neuLadenHref="/account"
         aktion={{ href: '/account/welt', text: WELT_VORSCHAU_AKTION }}
       />
     </div>
