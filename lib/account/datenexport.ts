@@ -302,6 +302,34 @@ function alsAntwort<Zeile>(abfrage: PromiseLike<unknown>): PromiseLike<Leseantwo
   return abfrage as PromiseLike<Leseantwort<Zeile>>
 }
 
+type GeordneteSeite = {
+  eq: (
+    spalte: 'user_id',
+    wert: string,
+  ) => {
+    order: (
+      spalte: 'id',
+      optionen: { ascending: true },
+    ) => { range: (von: number, bis: number) => PromiseLike<unknown> }
+  }
+}
+
+/**
+ * `id` ist der vorhandene eindeutige Zeilenschlüssel jeder Exporttabelle.
+ * `range` ohne `order` kann laut aktuellem Supabase-JS-Vertrag unerwartet
+ * blättern. Die Sortierung gilt je Tabelle. Sie ist keine gemeinsame
+ * Momentaufnahme über die 13 Tabellen: die Tabellen werden nacheinander
+ * gelesen, und Schreibvorgänge dazwischen bleiben sichtbar.
+ */
+function geordneteSeite(
+  abfrage: GeordneteSeite,
+  sitzungUserId: string,
+  von: number,
+  bis: number,
+) {
+  return abfrage.eq('user_id', sitzungUserId).order('id', { ascending: true }).range(von, bis)
+}
+
 function tabelleSeite(
   supabase: SupabaseClient<Database>,
   tabelle: KontoDatenexportTabelle,
@@ -312,52 +340,104 @@ function tabelleSeite(
   const spalten = kontoDatenexportSpaltenliste(tabelle)
   switch (tabelle) {
     case 'profiles':
-      return supabase.from('profiles').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('profiles').select(spalten), sitzungUserId, von, bis)
     case 'account_travellers':
-      return supabase.from('account_travellers').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('account_travellers').select(spalten), sitzungUserId, von, bis)
     case 'account_traveller_citizenships':
-      return supabase
-        .from('account_traveller_citizenships')
-        .select(spalten)
-        .eq('user_id', sitzungUserId)
-        .range(von, bis)
+      return geordneteSeite(
+        supabase.from('account_traveller_citizenships').select(spalten),
+        sitzungUserId,
+        von,
+        bis,
+      )
     case 'account_traveller_documents':
-      return supabase
-        .from('account_traveller_documents')
-        .select(spalten)
-        .eq('user_id', sitzungUserId)
-        .range(von, bis)
+      return geordneteSeite(
+        supabase.from('account_traveller_documents').select(spalten),
+        sitzungUserId,
+        von,
+        bis,
+      )
     case 'account_visits':
-      return supabase.from('account_visits').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('account_visits').select(spalten), sitzungUserId, von, bis)
     case 'trips':
-      return supabase.from('trips').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('trips').select(spalten), sitzungUserId, von, bis)
     case 'trip_stages':
-      return supabase.from('trip_stages').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('trip_stages').select(spalten), sitzungUserId, von, bis)
     case 'trip_days':
-      return supabase.from('trip_days').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('trip_days').select(spalten), sitzungUserId, von, bis)
     case 'trip_items':
-      return supabase.from('trip_items').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('trip_items').select(spalten), sitzungUserId, von, bis)
     case 'trip_travellers':
-      return supabase.from('trip_travellers').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
+      return geordneteSeite(supabase.from('trip_travellers').select(spalten), sitzungUserId, von, bis)
     case 'trip_traveller_citizenships':
-      return supabase
-        .from('trip_traveller_citizenships')
-        .select(spalten)
-        .eq('user_id', sitzungUserId)
-        .range(von, bis)
+      return geordneteSeite(
+        supabase.from('trip_traveller_citizenships').select(spalten),
+        sitzungUserId,
+        von,
+        bis,
+      )
     case 'trip_traveller_documents':
-      return supabase
-        .from('trip_traveller_documents')
-        .select(spalten)
-        .eq('user_id', sitzungUserId)
-        .range(von, bis)
+      return geordneteSeite(
+        supabase.from('trip_traveller_documents').select(spalten),
+        sitzungUserId,
+        von,
+        bis,
+      )
     case 'trip_readiness_items':
-      return supabase
-        .from('trip_readiness_items')
-        .select(spalten)
-        .eq('user_id', sitzungUserId)
-        .range(von, bis)
+      return geordneteSeite(
+        supabase.from('trip_readiness_items').select(spalten),
+        sitzungUserId,
+        von,
+        bis,
+      )
   }
+}
+
+type ExportSeitengrund = 'ungueltige-kennung' | 'doppelt' | 'kein-fortschritt' | 'seite-zu-gross'
+
+function exportSeitenSignatur(kennungen: readonly string[]): string {
+  if (kennungen.length === 0) return ''
+  return `${kennungen[0]}\n${kennungen[kennungen.length - 1]}\n${kennungen.length}`
+}
+
+function exportSeitePruefen(
+  bisher: ReadonlySet<string>,
+  seite: readonly unknown[],
+  vorherSignatur: string | null,
+):
+  | { ok: true; kennungen: string[]; signatur: string }
+  | { ok: false; grund: ExportSeitengrund } {
+  if (seite.length > KONTO_DATENEXPORT_SEITE) return { ok: false, grund: 'seite-zu-gross' }
+  const kennungen: string[] = []
+  const inSeite = new Set<string>()
+  for (const zeile of seite) {
+    if (!zeile || typeof zeile !== 'object') return { ok: false, grund: 'ungueltige-kennung' }
+    const id = (zeile as { id?: unknown }).id
+    if (typeof id !== 'string' || id.length === 0 || id !== id.trim()) {
+      return { ok: false, grund: 'ungueltige-kennung' }
+    }
+    if (inSeite.has(id)) return { ok: false, grund: 'doppelt' }
+    inSeite.add(id)
+    kennungen.push(id)
+  }
+  const signatur = exportSeitenSignatur(kennungen)
+  if (seite.length > 0 && vorherSignatur !== null && signatur === vorherSignatur) {
+    return { ok: false, grund: 'kein-fortschritt' }
+  }
+  for (const id of kennungen) {
+    if (bisher.has(id)) return { ok: false, grund: 'doppelt' }
+  }
+  return { ok: true, kennungen, signatur }
+}
+
+function exportSeitenProblem(tabelle: KontoDatenexportTabelle, grund: ExportSeitengrund): Problem {
+  const text = {
+    'ungueltige-kennung': `Die Tabelle ${tabelle} enthält eine Zeile ohne gültige Kennung.`,
+    doppelt: `Die Tabelle ${tabelle} hat eine wiederholte Kennung.`,
+    'kein-fortschritt': `Die Tabelle ${tabelle} hat beim Blättern keine neue Seite geliefert.`,
+    'seite-zu-gross': `Die Tabelle ${tabelle} hat eine Seite über der erwarteten Grösse geliefert.`,
+  }[grund]
+  return { status: 500, message: text }
 }
 
 async function tabelleLesen(
@@ -366,6 +446,8 @@ async function tabelleLesen(
   sitzungUserId: string,
 ): Promise<Lesung<unknown>> {
   const gesammelt: unknown[] = []
+  const gesehen = new Set<string>()
+  let vorherSignatur: string | null = null
 
   for (let von = 0; ; von += KONTO_DATENEXPORT_SEITE) {
     const bis = von + KONTO_DATENEXPORT_SEITE - 1
@@ -374,6 +456,12 @@ async function tabelleLesen(
     )
     if (lesung.problem) return lesung
 
+    const befund = exportSeitePruefen(gesehen, lesung.zeilen, vorherSignatur)
+    if (!befund.ok) {
+      return { zeilen: null, problem: exportSeitenProblem(tabelle, befund.grund) }
+    }
+    for (const id of befund.kennungen) gesehen.add(id)
+    vorherSignatur = befund.signatur
     gesammelt.push(...lesung.zeilen)
     if (gesammelt.length > KONTO_DATENEXPORT_MAX_ZEILEN) {
       return {

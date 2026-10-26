@@ -7,8 +7,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Download, Shield } from 'lucide-react'
 
+import KontoDatenexportAktion from '@/components/account/account-home-export-1/KontoDatenexportAktion'
 import KontoLoeschen from '@/components/account/KontoLoeschen'
-import { SICHERHEIT_ZIEL_44 } from '@/lib/auth/account-security-premium-ux-1'
 import { loeschUmgebungErlaubt } from '@/lib/account/kontoloeschung-vertrag'
 
 export const metadata: Metadata = {
@@ -75,14 +75,10 @@ export default function AccountEinstellungenSeite() {
                 </p>
                 <p className="mt-3 text-sm leading-6 text-ink-700">
                   Der Download umfasst nur diesen Jetnity-eigenen Konto- und Reisestand. Er ist kein
-                  vollständiger rechtlicher Datenauszug und keine Kontolöschung.
+                  vollständiger rechtlicher Datenauszug und keine Kontolöschung. Die Tabellen werden
+                  nacheinander gelesen und sind keine einzelne atomare Momentaufnahme.
                 </p>
-                <a
-                  href="/api/account/export"
-                  className={`${SICHERHEIT_ZIEL_44} mt-4 inline-flex items-center rounded-2xl bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
-                >
-                  Konto- und Reisedaten als JSON herunterladen
-                </a>
+                <KontoDatenexportAktion />
               </div>
             </div>
           </section>
