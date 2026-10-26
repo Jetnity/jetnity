@@ -8,7 +8,7 @@ This report covers the Review R1 correction. The first foundation remains on `30
 
 ## What changed
 
-- `components/trips/GetYourGuideAktivitaeten.tsx` gives every load its own node, detaches that node before disposal, and keeps country radios whenever a choice must remain. A synchronous throw from `laden` becomes the recoverable error state.
+- `components/trips/GetYourGuideAktivitaeten.tsx` gives every load its own node, detaches that node before disposal, and keeps country radios whenever a choice must remain. A synchronous throw from `laden` becomes the recoverable error state. A fulfilled decline does the same immediately: that load is aborted, detached and disposed, and the fixed German sentence is shown. A successful result keeps its node.
 - `lib/activities/getyourguide/kontext.ts` puts place type and public identifier into the operation key. Country evidence is deduplicated by read and checked per occurrence. Unresolved or conflicting extra stages do not auto-select the one remaining country. A selected day accepts a city, region or island only when the canonical country code is already two uppercase letters. A missing or malformed code is not replaced by the stage hint.
 - `lib/activities/getyourguide/aufloesung.ts` is the generation boundary for a late exact confirmation. The application does not call it against Places.
 - `lib/activities/getyourguide/widget.ts` adds `kanonBestaetigen`. `ANWENDUNGS_NAHT` sets it to null, beside the empty mapping and the null renderer.
@@ -31,6 +31,10 @@ Mounted harness, headless Chromium, after the final component edit: exit 0. Ten 
 The selected-day addendum was rechecked on Node v22.23.4. Focused GetYourGuide tests: 34 passed. The mounted harness still exited 0: ten localhost requests, zero external requests, 7 loads, 7 disposals and 7 aborts on the cooperative page.
 
 Full `npm test` on that addendum: 7359 tests, 885 suites, 7343 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs. They are the same class as on the reviewed head and are not fixed here. The 5 skips are the existing native-PostgreSQL, CI-only and shared-layout-audit skips.
+
+Review R2 was rechecked on Node v22.23.4. Focused GetYourGuide tests: 34 passed. The mounted harness exited 0: ten localhost requests, zero external requests. A fulfilled decline detaches and disposes its own node before another click, a throwing disposer does not leave that node mounted, retry still reaches a new display, and a late decline leaves the newer display in place. The cooperative renderer still supplies the sentence “Die synthetische Prüfung ist fehlgeschlagen.” The page shows the fixed sentence instead. That is the original probe, recorded here, and it is no longer the visible contract.
+
+`npm run typecheck`, `npm run lint`, the hygiene commands and `npm run build` exited 0 on this correction. Lint remains 0 errors and 175 warnings. The full `npm test` suite was not repeated. Its last observed result remains the addendum counts: 7359 tests, 7343 pass, 11 fail, 5 skipped. The 11 failures are local PostgreSQL proofs.
 
 No migration. No new dependency. No package, workflow or global CSS change.
 
