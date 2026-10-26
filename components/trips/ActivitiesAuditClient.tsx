@@ -12,11 +12,23 @@ import * as React from 'react'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
+import { activityMomentaufnahmeAlsPunkt, alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
 
 const SPEICHER = 'jetnity:ui-audit:reise'
 
-type UebernahmeArt = 'null' | 'string' | 'throw' | 'throw-sync' | 'leer' | 'reject' | 'malformed' | 'haengen' | 'gast'
+type UebernahmeArt =
+  | 'null'
+  | 'string'
+  | 'throw'
+  | 'throw-sync'
+  | 'leer'
+  | 'reject'
+  | 'malformed'
+  | 'haengen'
+  | 'gast'
+  | 'gast-null'
+  | 'gast-offen'
 
 type AuditStand = {
   aufrufe: number
@@ -64,7 +76,7 @@ export default function ActivitiesAuditClient() {
     }
   }, [])
 
-  const uebernehmen = React.useCallback((_etappe: TripStage, _tag: TripDay, option: ActivityOptionSichtbar) => {
+  const uebernehmen = React.useCallback((etappe: TripStage, tag: TripDay, option: ActivityOptionSichtbar) => {
     const art = artRef.current
     if (art === 'throw-sync') {
       aufrufeRef.current += 1
@@ -79,9 +91,29 @@ export default function ActivitiesAuditClient() {
       if (art === 'string') return 'Der Punkt konnte nicht zugeordnet werden.'
       if (art === 'leer') return ''
       if (art === 'malformed') return { gespeichert: false } as unknown as string
-      if (art === 'gast') {
-        setReise((bisher) => (bisher ? { ...bisher, travellers: bisher.travellers + 1 } : bisher))
+      if (art === 'gast' || art === 'gast-null' || art === 'gast-offen') {
+        const aufnahme = alsActivityMomentaufnahme(option, tag.dayDate)
+        if (aufnahme) {
+          const punkt = activityMomentaufnahmeAlsPunkt(aufnahme, {
+            id: `item-${option.externalRef}`,
+            dayId: tag.id,
+            stageId: etappe.id,
+            position: tag.items.length + 1,
+          })
+          setReise((bisher) => {
+            if (!bisher) return bisher
+            return {
+              ...bisher,
+              revision: bisher.revision + 1,
+              days: bisher.days.map((eintrag) =>
+                eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
+              ),
+            }
+          })
+        }
       }
+      if (art === 'gast-null') return null
+      if (art === 'gast-offen') return ''
       if (art === 'haengen' || art === 'gast') {
         await new Promise<void>((loesen) => {
           warteRef.current = loesen

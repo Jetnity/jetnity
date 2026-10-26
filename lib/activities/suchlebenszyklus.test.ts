@@ -1,14 +1,20 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { activityKandidatenAnreichern } from '@/lib/activities/anreichern'
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
-import { LEERE_ACTIVITY_EVIDENZ } from '@/lib/activities/domain'
+import { sucheFuerClient } from '@/lib/activities/client-sicht'
+import { LEERE_ACTIVITY_EVIDENZ, type ActivityOption, type ActivitySuchanfrage } from '@/lib/activities/domain'
+import type { Zeitfenster } from '@/lib/activities/konflikt'
+import { activityOptionenBewerten } from '@/lib/activities/ranking'
+import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import {
   ACTIVITY_HINWEIS_GEMELDET,
   ACTIVITY_HINWEIS_UNBESTAETIGT,
   activitySuchKontextSchluessel,
   leeresUebernahmeRegister,
   optionInhaltSchluessel,
+  optionSchreibIdentitaet,
   suchAntwortAnwenden,
   suchDispatch,
   suchKontextWechseln,
@@ -62,7 +68,7 @@ function schluessel(tripId: string, dayId: string | null, anfrage = '{"currency"
   })
 }
 
-function erfasst(inhalt: string, generation = 1, epoche = 1): UebernahmeErfassung {
+function erfasst(inhalt: string, generation = 1, epoche = 1, option: ActivityOptionSichtbar = OPTION): UebernahmeErfassung {
   return {
     tripId: 'trip-a',
     stageId: 'stage-1',
@@ -70,7 +76,17 @@ function erfasst(inhalt: string, generation = 1, epoche = 1): UebernahmeErfassun
     epoche,
     generation,
     optionInhalt: inhalt,
+    schreibIdentitaet: optionSchreibIdentitaet(option),
   }
+}
+
+function operationVon(option: ActivityOptionSichtbar, tripId = 'trip-a', dayId = 'day-1'): string {
+  return uebernahmeOperationSchluessel({
+    tripId,
+    stageId: 'stage-1',
+    dayId,
+    schreibIdentitaet: optionSchreibIdentitaet(option),
+  })
 }
 
 describe('Aktivitäts-Suchlebenszyklus', () => {
@@ -203,9 +219,8 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
 
   test('eine neue Suche öffnet eine laufende oder angenommene Übernahme nicht wieder', () => {
     const inhalt = optionInhaltSchluessel(OPTION)
-    const basis = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1', optionInhalt: inhalt }
-    const key = uebernahmeOperationSchluessel(basis)
-    assert.equal(uebernahmeOperationSchluessel({ ...basis }), key)
+    const key = operationVon(OPTION)
+    assert.equal(operationVon(OPTION), key)
     const erste = uebernahmeBeanspruchen(leeresUebernahmeRegister(), key)
     assert.equal(erste.ok, true)
     if (!erste.ok) return
@@ -221,6 +236,142 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
     assert.equal(erneut.ok, true)
     assert.equal(
       uebernahmeDarfSenden(erfasst(inhalt, 1, 1), { epoche: 1, generation: 2, inhalte: [inhalt] }),
+      false,
+    )
+  })
+
+  test('dieselbe Schreiber-Momentaufnahme bleibt eine Operation, wenn nur die Rangdarstellung wechselt', () => {
+    const anbieter: ActivityOption = {
+      id: 'opt-fenster',
+      provider: 'test-activity',
+      externalRef: 'ref-fenster',
+      title: 'Nachmittag im Garten',
+      description: 'Beschreibung ändert die Momentaufnahme nicht.',
+      locationName: 'Boboli',
+      punkt: { lat: 43.762, lon: 11.249 },
+      dauerMinuten: 90,
+      timeslot: {
+        startsOn: '2026-09-12',
+        startsAt: '15:00',
+        endsOn: '2026-09-12',
+        endsAt: '16:30',
+      },
+      preis: 40,
+      preisWaehrung: 'CHF',
+      bewertung: 8.4,
+      bewertungenAnzahl: 120,
+      stornierbar: true,
+      kategorien: ['culture'],
+      tags: ['garten'],
+    }
+    const anfrage: ActivitySuchanfrage = {
+      destinationPlaceId: 'geonames:3176959',
+      destinationName: 'Florenz',
+      dayDate: '2026-09-12',
+      participants: 2,
+      currency: 'CHF',
+      budgetAmount: 4200,
+      interests: ['culture'],
+      pace: 'calm',
+    }
+    const morgen: Zeitfenster = {
+      startsOn: '2026-09-12',
+      startsAt: '09:00',
+      endsOn: '2026-09-12',
+      endsAt: '11:00',
+    }
+    const sichtbar = (fenster: readonly Zeitfenster[]) => {
+      const kandidaten = activityKandidatenAnreichern([anbieter], anfrage, fenster, {
+        lat: 43.7696,
+        lon: 11.2558,
+      })
+      const bewertet = activityOptionenBewerten(kandidaten)
+      const antwort = sucheFuerClient({
+        status: 'ok',
+        message: 'Aktivitäten gefunden.',
+        options: bewertet,
+      })
+      const option = antwort.options[0]
+      if (!option) throw new Error('Pipeline ohne Option')
+      return option
+    }
+    const frei = sichtbar([morgen])
+    const ueberschneidung = sichtbar([
+      morgen,
+      {
+        startsOn: '2026-09-12',
+        startsAt: '15:00',
+        endsOn: '2026-09-12',
+        endsAt: '16:30',
+      },
+    ])
+    const { labels: labelsFrei, reasons: reasonsFrei, konflikt: konfliktFrei, ...restFrei } = frei
+    const {
+      labels: labelsNachher,
+      reasons: reasonsNachher,
+      konflikt: konfliktNachher,
+      ...restNachher
+    } = ueberschneidung
+    assert.deepEqual(restFrei, restNachher)
+    assert.equal(konfliktFrei, 'frei')
+    assert.equal(konfliktNachher, 'ueberschneidung')
+    assert.notDeepEqual(labelsFrei, labelsNachher)
+    assert.notDeepEqual(reasonsFrei, reasonsNachher)
+    assert.notEqual(optionInhaltSchluessel(frei), optionInhaltSchluessel(ueberschneidung))
+    assert.deepEqual(
+      alsActivityMomentaufnahme(frei, '2026-09-12'),
+      alsActivityMomentaufnahme(ueberschneidung, '2026-09-12'),
+    )
+
+    const key = operationVon(frei)
+    assert.equal(operationVon(ueberschneidung), key)
+    assert.notEqual(operationVon({ ...frei, title: 'Anderer Titel' }), key)
+    assert.notEqual(operationVon({ ...frei, externalRef: 'ref-andere' }), key)
+    assert.notEqual(operationVon({ ...frei, preis: 41 }), key)
+    assert.notEqual(
+      operationVon({
+        ...frei,
+        timeslot: { startsOn: '2026-09-12', startsAt: '18:00', endsOn: '2026-09-12', endsAt: '19:00' },
+      }),
+      key,
+    )
+    assert.notEqual(operationVon(frei, 'trip-b'), key)
+    assert.notEqual(operationVon(frei, 'trip-a', 'day-2'), key)
+
+    const laufend = uebernahmeBeanspruchen(leeresUebernahmeRegister(), key)
+    assert.equal(laufend.ok, true)
+    if (!laufend.ok) return
+    assert.deepEqual(uebernahmeBeanspruchen(laufend.register, operationVon(ueberschneidung)), {
+      ok: false,
+      grund: 'doppelt',
+    })
+    const andere = uebernahmeBeanspruchen(laufend.register, operationVon({ ...frei, externalRef: 'ref-andere' }))
+    assert.equal(andere.ok, true)
+    const angenommen = uebernahmeAbschliessen(laufend.register, key, 'angenommen')
+    assert.deepEqual(uebernahmeBeanspruchen(angenommen, operationVon(ueberschneidung)), {
+      ok: false,
+      grund: 'angenommen',
+    })
+    assert.equal(uebernahmeUnbestaetigtFreigeben(angenommen, key), angenommen)
+    const unbestaetigt = uebernahmeAbschliessen(laufend.register, key, 'unbestaetigt')
+    assert.deepEqual(uebernahmeBeanspruchen(unbestaetigt, operationVon(ueberschneidung)), {
+      ok: false,
+      grund: 'unbestaetigt',
+    })
+    assert.equal(
+      uebernahmeDarfSenden(erfasst(optionInhaltSchluessel(frei), 1, 1, frei), {
+        epoche: 1,
+        generation: 1,
+        inhalte: [optionInhaltSchluessel(ueberschneidung)],
+      }),
+      false,
+    )
+    assert.equal(
+      uebernahmeDarfSenden(erfasst(optionInhaltSchluessel(ueberschneidung), 1, 1, ueberschneidung), {
+        epoche: 1,
+        generation: 2,
+        inhalte: [optionInhaltSchluessel(ueberschneidung)],
+      }),
       false,
     )
   })

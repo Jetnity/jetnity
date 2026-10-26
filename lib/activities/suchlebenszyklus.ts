@@ -2,9 +2,10 @@
 //
 // Lokale Lebensdauer der Aktivitätensuche und der Übernahme.
 // Die Suche hat Epoche und Generation. Die Übernahme hat eine eigene
-// Operation: Reise, Etappe, Tag und Optionsinhalt. Eine neue Suche,
-// ein Kontextwechsel oder eine Änderung am Reisegraphen öffnet eine
-// laufende oder angenommene Operation nicht wieder.
+// Operation: Reise, Etappe, Tag und die Fakten, die der Schreiber in den
+// Planpunkt übernimmt. Labels, Gründe und Konflikt sind abgeleitete
+// Rangdarstellung und öffnen dieselbe Operation nicht neu.
+// Die vollständige sichtbare Karte bleibt separat und sperrt nur veraltete Handler.
 // Kein Commercial-Provenance-Modell, kein Speicher, kein Provider, kein Abbruch
 // eines bereits betretenen Schreibers. Ein Unmount verwirft nur dieses Register.
 
@@ -127,17 +128,51 @@ export type UebernahmeErfassung = {
   dayId: string
   epoche: number
   generation: number
+  /** Vollständige sichtbare Karte, einschliesslich Rangfelder. Nur für veraltete Handler. */
   optionInhalt: string
+  /** Schreiber-Fakten ohne Labels, Gründe und Konflikt. Nur für das Operationsschloss. */
+  schreibIdentitaet: string
 }
 
 /**
- * Identität der Übernahme, ohne Epoche und Generation der Suche.
- * Dieselbe Option bleibt dieselbe Operation, auch wenn die Suche neu läuft.
+ * Fakten, die eine Aktivitätsübernahme in den Planpunkt schreibt.
+ * Entspricht der bestehenden Momentaufnahme: Titel bis 120 Zeichen, Ort,
+ * Dauer, Bewertung, Storno, Zeitfenster, Preis, Währung, Anbieter, externalRef.
+ * Nicht dabei: Karten-ID, Beschreibung, Koordinaten, Kategorien, Tags,
+ * Labels, Gründe, Konflikt. Das ist kein neues Provenance-Modell.
+ */
+export function optionSchreibIdentitaet(option: ActivityOptionSichtbar): string {
+  return JSON.stringify({
+    provider: option.provider,
+    externalRef: option.externalRef,
+    title: option.title.slice(0, 120),
+    locationName: option.locationName,
+    dauerMinuten: option.dauerMinuten,
+    timeslot: option.timeslot,
+    preis: option.preis,
+    preisWaehrung: option.preisWaehrung,
+    bewertung: option.bewertung,
+    bewertungenAnzahl: option.bewertungenAnzahl,
+    stornierbar: option.stornierbar,
+  })
+}
+
+/**
+ * Identität der Übernahme, ohne Epoche, Generation und ohne abgeleitete Rangfelder.
+ * Dieselbe Schreiber-Momentaufnahme bleibt dieselbe Operation, auch wenn die
+ * Suche neu läuft oder sich nur Labels, Gründe oder der Konflikt ändern.
+ * Ein anderer Titel, Anbieter, externalRef, Preis, ein anderes Zeitfenster
+ * oder ein anderes Ziel ist eine andere Operation.
  */
 export function uebernahmeOperationSchluessel(
-  erfasst: Pick<UebernahmeErfassung, 'tripId' | 'stageId' | 'dayId' | 'optionInhalt'>,
+  erfasst: Pick<UebernahmeErfassung, 'tripId' | 'stageId' | 'dayId' | 'schreibIdentitaet'>,
 ): string {
-  return JSON.stringify([erfasst.tripId, erfasst.stageId, erfasst.dayId, erfasst.optionInhalt])
+  return JSON.stringify([
+    erfasst.tripId,
+    erfasst.stageId,
+    erfasst.dayId,
+    erfasst.schreibIdentitaet,
+  ])
 }
 
 export function uebernahmeDarfSenden(

@@ -4,7 +4,8 @@
 //
 // Aktivitätsbereich im Reise-Arbeitsbereich. Eine Suche startet nur durch eine
 // ausdrückliche Aktion. Die Suche hat eine Generation. Die Übernahme hat eine
-// eigene Operation und bleibt bei einer neuen Suche geschlossen. Kein Demo,
+// eigene Operation aus den Schreiber-Fakten und bleibt bei einer neuen Suche
+// geschlossen, auch wenn sich nur die Rangdarstellung ändert. Kein Demo,
 // keine Fake-Karten.
 
 import * as React from 'react'
@@ -17,6 +18,7 @@ import {
   activitySuchKontextSchluessel,
   leeresUebernahmeRegister,
   optionInhaltSchluessel,
+  optionSchreibIdentitaet,
   suchAntwortAnwenden,
   suchDispatch,
   suchKontextWechseln,
@@ -483,6 +485,7 @@ function ActivityTag({
                     epoche: angezeigt.epoche,
                     generation: angezeigt.generation ?? 0,
                     optionInhalt: inhalt,
+                    schreibIdentitaet: optionSchreibIdentitaet(option),
                   }
                   const schluessel = uebernahmeOperationSchluessel(erfasst)
                   const gesperrt =
