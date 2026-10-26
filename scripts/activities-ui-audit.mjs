@@ -695,7 +695,7 @@ async function fokusUnveraendert(page, knopf, verbotenerText) {
   const handle = await knopf.elementHandle()
   return page.evaluate(
     ({ ziel, text }) => {
-      const flaeche = document.querySelector('[aria-label="Aktivitäten"]')
+      const flaeche = document.querySelector('[data-arbeitsbereich="aktivitaeten"]')
       return {
         gleicherFokus: ziel instanceof Element && document.activeElement === ziel,
         verborgen: Boolean(flaeche?.closest('[hidden]')),
