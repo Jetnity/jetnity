@@ -85,6 +85,14 @@ The audit’s older long title is `('Lissabon '.repeat(24)).trim()` (215 charact
 
 The valid case is mounted at 1440×900 with production CSS. Text rectangles of both labels stay inside the link boxes at 16px and 32px. The links stay inside the card, do not overlap, and meet a 2.75rem minimum box. Enter on “Reise fortsetzen” requests `http://127.0.0.1:8765/reisen/r0` once. The same label check also passes on the 215-character stress fixture at 320, 390, 768 and 1440, including 32px at 1440. A page-level scrollWidth check is still present and is not treated as proof of the labels.
 
+## R3 trip text and actions
+
+Reviewed head `378f5c01b321f4a35d571251896dfa94b82c2cbc`. The R2 column `xl:w-56 xl:shrink-0` is 14rem. At a 32px root that is 448px inside a 704px card, so the title column was 78px. The valid 116-character title broke inside “Lissabon”, and “Nächste Reise in den geladenen Reisen.” painted over the buttons. The action-label checks stayed green because they did not measure the trip text.
+
+The card is now one column. The actions wrap under the text and size to their labels from the small breakpoint up. The eyebrow, status, title, origin and dates can wrap on word boundaries. Font sizes, the full title and both hrefs stay. There is no ellipsis and no clipping.
+
+The mounted audit measures text rectangles for those five fields and both actions. A word that breaks across rectangles fails. A rectangle that meets an action fails. At 1440 and 32px the 116-character title is 7 lines. At 320 and 32px it is 13 lines, one intact “Lissabon” per line. The same matrix covers 390 and 768 at both root sizes. Enter on each action is fulfilled on `127.0.0.1` and requests `/reisen/r0` and `/reisen` once. The 215-character title remains a separate stress fixture. Its earlier R2 failure shots stay `home-1440-before-r2.png` and `home-1440-200-prozent-before-r2.png`. The R3 overlap shot is `home-1440-titel-116-200-prozent-before-r3.png`.
+
 ## Limits of that proof
 
 - 200% text is `documentElement.style.fontSize = '32px'`. It is not operating-system zoom and not a real device.

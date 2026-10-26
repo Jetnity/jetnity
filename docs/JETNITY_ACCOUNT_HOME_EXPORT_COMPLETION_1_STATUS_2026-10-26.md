@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Status:** R2 Home action labels are corrected on top of the integrated head. Draft. No final Technical-Lead PASS. Not Ready. Not merged to main.
+**Status:** R3 stacks the Home trip text above its actions. Draft. No final Technical-Lead PASS. Not Ready. Not merged to main.
 
 ## Identity
 
@@ -79,6 +79,16 @@ Correction commit `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde`, tree `2c7efb77605c
 The 215-character title (`repeat(24)`) stays in the audit as stress evidence only. It is outside the 120-character contract. The before screenshots are `home-1440-before-r2.png` and `home-1440-200-prozent-before-r2.png`. The valid case is `home-1440-titel-116.png` and `home-1440-titel-116-200-prozent.png`.
 
 Mounted audit on the rebuilt CSS (101,432 characters): the 116-character title at 1440 keeps both labels inside their link boxes at 16px and 32px, the links stay inside the card and do not overlap, and Enter requests `/reisen/r0` once. The same containment check passes for the 215-character stress title at 320, 390, 768 and 1440, including 32px at 1440. Export and window cases are unchanged: 21 requests, 3 downloads, 3 revokes, 0 page errors.
+
+## R3
+
+Reviewed head `378f5c01b321f4a35d571251896dfa94b82c2cbc`, tree `e160e6e2c58a417742710540932312f2bde4f4d8`. R2 stopped the action labels from leaving their buttons by keeping a `xl:w-56 xl:shrink-0` column. At a 32px root that column is 448px. On the 704px card the title column was 78px wide, so the 116-character title broke into 78 lines and the next-trip sentence overlapped the buttons.
+
+The card no longer places that column beside the text. The title, status, origin and dates use the card width, and the actions wrap underneath. Labels, destinations and font sizes are unchanged. Nothing is clipped or ellipsized. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
+
+Correction `273791e37ca02f3705910d2d4f3df3ea0b1d0a0c`, tree `31457f07ab1eeeced44e53f2846ce9420fbcf580`, parent `378f5c01b321f4a35d571251896dfa94b82c2cbc`. At that commit the branch is 16 ahead and 0 behind accepted main. The documentation commit on top is the delivery head named in the PR author block.
+
+The R2 screenshot of the overlap is `home-1440-titel-116-200-prozent-before-r3.png`. The rebuilt CSS is 101,250 characters. At 1440 and a 32px root the same 116-character title is 7 lines. Each word in the next-trip label, status, title, origin and dates is one rectangle, and none of those rectangles meet an action. The same check passes at 320, 390, 768 and 1440, at 16px and 32px. At 320 and 32px the title uses 13 lines, one whole word per line, not a character split. Enter requests local `/reisen/r0` and `/reisen` once each. No request leaves `127.0.0.1`. The 215-character fixture stays labelled stress. Export counts stay 21 requests, 3 downloads, 3 revokes, 0 page errors.
 
 ## Stop
 

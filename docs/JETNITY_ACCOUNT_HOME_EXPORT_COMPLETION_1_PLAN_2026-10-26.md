@@ -25,6 +25,10 @@ Source-confirmed against seed `8a9e5479337090079839629715f9a3f1a03116f9`, parent
 
 Node tests for window copy, calendar arithmetic, export validation and pagination fixtures (0/1000/1001/20000/20001, order arguments, duplicate, nonprogress, invalid id, page error). Mounted Playwright harness with project CSS, synthetic fixtures, external network aborted: midnight and offset, focus after a multi-day jump, cleanup, 320/390/768/1440, 200% root font size, keyboard, export outcomes.
 
+## R3, 26 October 2026
+
+The R2 action column kept the labels inside the buttons and left the title 78px wide at a 32px root. The card now stacks the trip text and the actions, and the audit measures both. The 215-character fixture stays labelled stress. No second merge of main.
+
 ## R2, 26 October 2026
 
 The integrated Home card let a valid 116-character title shrink the action column until the labels left the buttons. The correction stays in `AccountUebersicht.tsx`: the column does not shrink, the links can grow and wrap, and the mounted audit measures the text rectangles. The 215-character fixture stays as labelled stress. No second merge of main.

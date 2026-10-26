@@ -54,6 +54,12 @@ P2 from the integrated head: the Home action labels could paint outside their bu
 
 P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this head are pending. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
 
+## R3
+
+P2 from the R2 layout: the non-shrinking action column overlapped and fragmented the trip text at a 32px root. Corrected by stacking that text and the actions in `AccountUebersicht.tsx`. The 215-character title stays labelled stress. The R2 screenshot that shows the overlap is kept. No global CSS. Accepted main did not move and was not merged again.
+
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this new head are pending. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
+
 ## Recommendation
 
 Stop for Root’s full independent re-gating of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.

@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Next actor:** ChatGPT / Technical Lead, for a full independent re-gating of Draft PR #1036 after R2. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
+**Next actor:** ChatGPT / Technical Lead, for a full independent re-gating of Draft PR #1036 after R3. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
 
 ## Session
 
@@ -32,8 +32,13 @@
 | R2 correction | `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde` |
 | R2 correction tree | `2c7efb77605c6d6587232920997321dde2f15820` |
 | Ahead / behind at the correction | 13 / 0 |
+| R3 reviewed head | `378f5c01b321f4a35d571251896dfa94b82c2cbc` |
+| R3 reviewed tree | `e160e6e2c58a417742710540932312f2bde4f4d8` |
+| R3 correction | `273791e37ca02f3705910d2d4f3df3ea0b1d0a0c` |
+| R3 correction tree | `31457f07ab1eeeced44e53f2846ce9420fbcf580` |
+| Ahead / behind at the R3 correction | 16 / 0 |
 
-This file is updated by the documentation commit on top of the R2 correction, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
+This file is updated by the documentation commit on top of the R3 correction, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
 
 Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@8.21.0` under `@supabase/realtime-js` and `source-map-js@1.2.2` under `postcss`. `package.json` and `package-lock.json` are byte-identical to accepted main. That install is distinct from historical S evidence and from native CI.
 
@@ -43,7 +48,9 @@ Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@
 - `d5b7bf3392bca6ed4d9d675d3d1b053c87d466bd` — mounted blank id, duplicate id, and a row in all 13 tables; unused window-hint import removed
 - `33d2874493ffe41aef6f621fa4d2a67cd5263edf` — integration handoff
 - `03bacf6e45e67f0fb3db5d70b19b6d4f11df6fde` — R2: Home action labels stay inside their buttons for a valid 116-character title
-- this documentation commit — R2 in PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
+- `378f5c01b321f4a35d571251896dfa94b82c2cbc` — R2 handoff
+- `273791e37ca02f3705910d2d4f3df3ea0b1d0a0c` — R3: stack the trip text above the actions
+- this documentation commit — R3 in PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
 
 ## Owned diff against accepted main
 
@@ -79,6 +86,12 @@ P0 none. P1 none. P2 and P3 are in the self-review. Special Product-Owner gates 
 The next-trip actions no longer use a shrinking `xl:w-56` column or a fixed `h-11`. A 116-character title, which is inside the existing 120-character limit, keeps “Reise fortsetzen” and “Alle Reisen” inside their link boxes at 1440 with a 16px and a 32px root. Enter still requests `/reisen/r0` once. The older 215-character fixture remains, labelled as stress outside that limit. Before screenshots are kept beside the new ones. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
 
 R2 gates on this session: production build pass; focused account tests 35 pass; mounted audit pass; lint 0 errors and 175 warnings; five hygiene checks pass. `npm test`: 7308 pass, 5 skipped, 11 fail, same missing local PostgreSQL 16. No hosted SQL.
+
+## R3
+
+The fixed R2 action column overlapped the trip text at a 32px root. The text and the actions now stack, so a valid 116-character title at 1440 is 7 lines rather than 78. Words in the next-trip label, status, title, origin and dates stay whole and off the buttons at 320, 390, 768 and 1440, at 16px and 32px. Keyboard Enter requests local `/reisen/r0` and `/reisen` once each. The 215-character fixture remains stress evidence. The R2 overlap screenshot is kept as `home-1440-titel-116-200-prozent-before-r3.png`. Accepted main was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` and was not merged again.
+
+R3 gates on this session: production build pass; focused account tests 35 pass; mounted audit pass; lint 0 errors and 175 warnings; five hygiene checks pass. `npm test`: 7308 pass, 5 skipped, 11 fail, same missing local PostgreSQL 16. No hosted SQL.
 
 ## Gate
 
