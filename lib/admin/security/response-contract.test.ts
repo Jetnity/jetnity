@@ -6,6 +6,7 @@ import {
   LEERE_LESUNG,
   SECURITY_DETAIL_MAX,
   SECURITY_KURZFELD_MAX,
+  angezeigterSicherheitstext,
   leseAusgang,
   pruefeSecurityListenAntwort,
   sichereLeseFehler,
@@ -82,14 +83,37 @@ describe('Admin-Security Antwortvertrag', () => {
     )
     const grenze = pruefeSecurityListenAntwort(antwort(zuGross))
     assert.deepEqual(grenze, { ok: false, problem: 'grenze' })
-    const detail = pruefeSecurityListenAntwort(
-      antwort([ereignis('evt-1', { detail: 'x'.repeat(SECURITY_DETAIL_MAX + 1), id: 'x'.repeat(SECURITY_KURZFELD_MAX + 1) })]),
+    const idZuLang = pruefeSecurityListenAntwort(
+      antwort([ereignis('evt-1', { id: 'x'.repeat(SECURITY_KURZFELD_MAX + 1) })]),
     )
-    assert.equal(detail.ok, false)
+    assert.equal(idZuLang.ok, false)
+    assert.equal(pruefeSecurityListenAntwort(antwort([ereignis('evt-1', { detail: 12 })])).ok, false)
+    assert.equal(
+      pruefeSecurityListenAntwort(antwort([], [{ ip: '203.0.113.9', reason: { text: 'nein' }, created_at: ZEIT }])).ok,
+      false,
+    )
     const genau = pruefeSecurityListenAntwort(
       antwort(Array.from({ length: SECURITY_LISTEN_MAX_ZEILEN }, (_, index) => ereignis(`evt-${index}`))),
     )
     assert.equal(genau.ok, true)
+  })
+
+  test('ein langer Grund oder ein langes Detail bleibt eine gültige Zeile und wird in der Ansicht gekennzeichnet gekürzt', () => {
+    const lang = 'y'.repeat(SECURITY_DETAIL_MAX + 1)
+    const geprueft = pruefeSecurityListenAntwort(
+      antwort([ereignis('evt-lang', { detail: lang })], [{ ip: '203.0.113.9', reason: lang, created_at: ZEIT }]),
+    )
+    assert.equal(geprueft.ok, true)
+    if (!geprueft.ok) return
+    assert.equal(geprueft.daten.events[0]?.detail, lang)
+    assert.equal(geprueft.daten.blocklist[0]?.reason, lang)
+    const anzeige = angezeigterSicherheitstext(lang)
+    assert.equal(anzeige.text.length, SECURITY_DETAIL_MAX)
+    assert.equal(anzeige.text, lang.slice(0, SECURITY_DETAIL_MAX))
+    assert.match(anzeige.hinweis ?? '', /Gekürzt/)
+    assert.match(anzeige.hinweis ?? '', /nicht sichtbar/)
+    assert.equal(angezeigterSicherheitstext('kurz').hinweis, null)
+    assert.equal(angezeigterSicherheitstext(null).text, '')
   })
 
   test('Verweigerung löscht geschützte Zeilen und eine folgende Störung holt sie nicht zurück', () => {

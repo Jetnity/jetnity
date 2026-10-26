@@ -1,8 +1,10 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { SECURITY_DETAIL_MAX } from '@/lib/admin/security/response-contract'
 import {
   beginnVorgang,
+  blendeVorgaengeAus,
   istAusstehend,
   leeresBuch,
   schliesseVorgang,
@@ -93,6 +95,41 @@ describe('Admin-Security Vorgangslebenszyklus', () => {
     const zu = schliesseVorgang(beginn.buch, beginn.vorgang.id, beginn.vorgang.ip, 'unbestaetigt')
     assert.equal(zu.nachIp['203.0.113.9']?.lage, 'unbestaetigt')
     assert.equal(zu.naechsteId, beginn.buch.naechsteId)
+  })
+
+  test('Ausblenden behält die nächste Kennung und ein altes Ergebnis schließt den neuen Vorgang nicht', () => {
+    const erster = erfasst('203.0.113.10', 'eintragen', 'alt')
+    assert.equal(erster.ok, true)
+    if (!erster.ok) return
+    const verborgen = blendeVorgaengeAus(erster.buch)
+    assert.equal(verborgen.naechsteId, erster.buch.naechsteId)
+    assert.deepEqual(verborgen.nachIp, {})
+    const zweiter = beginnVorgang(verborgen, { ip: '203.0.113.10', aktion: 'eintragen', grund: 'neu' })
+    assert.equal(zweiter.ok, true)
+    if (!zweiter.ok) return
+    assert.notEqual(zweiter.vorgang.id, erster.vorgang.id)
+    const ignoriert = schliesseVorgang(zweiter.buch, erster.vorgang.id, erster.vorgang.ip, 'rueckgemeldet')
+    assert.equal(ignoriert.nachIp['203.0.113.10']?.id, zweiter.vorgang.id)
+    assert.equal(ignoriert.nachIp['203.0.113.10']?.lage, 'ausstehend')
+    assert.equal(ignoriert.naechsteId, zweiter.buch.naechsteId)
+  })
+
+  test('ein Grund über der Anzeigegrenze startet keinen Vorgang', () => {
+    const zuLang = beginnVorgang(leeresBuch(), {
+      ip: '203.0.113.10',
+      aktion: 'eintragen',
+      grund: 'z'.repeat(SECURITY_DETAIL_MAX + 1),
+    })
+    assert.equal(zuLang.ok, false)
+    if (zuLang.ok) return
+    assert.equal(zuLang.grund, 'text')
+    assert.equal(zuLang.buch.naechsteId, 1)
+    const grenze = beginnVorgang(leeresBuch(), {
+      ip: '203.0.113.10',
+      aktion: 'eintragen',
+      grund: 'z'.repeat(SECURITY_DETAIL_MAX),
+    })
+    assert.equal(grenze.ok, true)
   })
 
   test('eine leere IP startet keinen Vorgang', () => {

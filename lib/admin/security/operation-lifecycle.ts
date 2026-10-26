@@ -2,6 +2,8 @@
 // The subject is the captured IP. A callback, a refresh, or absence from the
 // bounded list is not proof that a row was stored or removed.
 
+import { SECURITY_DETAIL_MAX } from '@/lib/admin/security/response-contract'
+
 export type BlockAktion = 'eintragen' | 'entfernen'
 
 export type VorgangLage = 'ausstehend' | 'rueckgemeldet' | 'unbestaetigt' | 'abgelehnt'
@@ -19,7 +21,7 @@ export type VorgangBuch = {
   nachIp: Record<string, Vorgang>
 }
 
-export type BeginnAblehnung = 'leer' | 'doppelt' | 'konflikt'
+export type BeginnAblehnung = 'leer' | 'doppelt' | 'konflikt' | 'text'
 
 export type BeginnErgebnis =
   | { ok: true; buch: VorgangBuch; vorgang: Vorgang }
@@ -49,6 +51,11 @@ export function vorgaengeNachBeginn(buch: VorgangBuch): Vorgang[] {
   return Object.values(buch.nachIp).sort((links, rechts) => links.id - rechts.id)
 }
 
+/** Drops displayed subjects. The next id stays so a later operation cannot reuse an in-flight id. */
+export function blendeVorgaengeAus(buch: VorgangBuch): VorgangBuch {
+  return { naechsteId: buch.naechsteId, nachIp: {} }
+}
+
 export function beginnVorgang(
   buch: VorgangBuch,
   input: { ip: string; aktion: BlockAktion; grund: string | null },
@@ -59,11 +66,13 @@ export function beginnVorgang(
   if (bestehend?.lage === 'ausstehend') {
     return { ok: false, buch, grund: bestehend.aktion === input.aktion ? 'doppelt' : 'konflikt' }
   }
+  const grund = input.aktion === 'eintragen' ? (input.grund ?? '').trim() : null
+  if (grund !== null && grund.length > SECURITY_DETAIL_MAX) return { ok: false, buch, grund: 'text' }
   const vorgang: Vorgang = {
     id: buch.naechsteId,
     ip,
     aktion: input.aktion,
-    grund: input.aktion === 'eintragen' ? (input.grund ?? '').trim() : null,
+    grund,
     lage: 'ausstehend',
   }
   return {

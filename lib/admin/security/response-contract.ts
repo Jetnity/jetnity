@@ -66,8 +66,18 @@ function kurzOderNull(wert: unknown): string | null | undefined {
 
 function detailOderNull(wert: unknown): string | null | undefined {
   if (wert == null) return null
-  if (typeof wert !== 'string' || wert.length > SECURITY_DETAIL_MAX) return undefined
+  if (typeof wert !== 'string') return undefined
   return wert.length > 0 ? wert : null
+}
+
+/** Visible prefix only. The stored string stays intact for filtering. */
+export function angezeigterSicherheitstext(wert: string | null): { text: string; hinweis: string | null } {
+  if (!wert) return { text: '', hinweis: null }
+  if (wert.length <= SECURITY_DETAIL_MAX) return { text: wert, hinweis: null }
+  return {
+    text: wert.slice(0, SECURITY_DETAIL_MAX),
+    hinweis: `Gekürzt: die ersten ${SECURITY_DETAIL_MAX} von ${wert.length} Zeichen. Der übrige Text ist in dieser Ansicht nicht sichtbar.`,
+  }
 }
 
 function datumOderNull(wert: unknown): string | null | undefined {

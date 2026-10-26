@@ -27,17 +27,13 @@ function textFuer(vorgang: Vorgang): string {
 export default function SecurityOperationStatus({
   vorgaenge,
   aktionenOffen,
-  schreibenVerweigert,
   onErneut,
-  onSchreibschutzAufheben,
 }: {
   vorgaenge: Vorgang[]
   aktionenOffen: boolean
-  schreibenVerweigert: boolean
   onErneut: (vorgang: Vorgang) => void
-  onSchreibschutzAufheben: () => void
 }) {
-  if (vorgaenge.length === 0 && !schreibenVerweigert) return null
+  if (vorgaenge.length === 0) return null
   return (
     <section className="rounded-2xl border bg-card p-4 sm:p-5" aria-labelledby="security-vorgaenge-titel">
       <h2 id="security-vorgaenge-titel" className="text-sm font-semibold">
@@ -46,20 +42,6 @@ export default function SecurityOperationStatus({
       <p className="mt-1 text-sm text-muted-foreground">
         Eine Rückmeldung und eine spätere Liste belegen nicht, dass ein Eintrag gespeichert oder entfernt wurde.
       </p>
-      {schreibenVerweigert && (
-        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className={styles.vorgang}>Schreiben ist abgewiesen. Ein neuer Versuch startet nicht von allein.</p>
-          <Button
-            type="button"
-            variant="outline"
-            className="whitespace-normal"
-            onClick={onSchreibschutzAufheben}
-            data-security-write-unlock="true"
-          >
-            Schreibschutz aufheben
-          </Button>
-        </div>
-      )}
       <ul className="mt-3 space-y-3" aria-live="polite" data-security-operations={vorgaenge.length}>
         {vorgaenge.map((vorgang) => (
           <li

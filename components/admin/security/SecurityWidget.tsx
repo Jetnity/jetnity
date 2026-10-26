@@ -6,9 +6,11 @@
 // Entwarnung, die es nicht gab. Und bei jedem Lauf kam er erneut. Die Meldung
 // bleibt jetzt stehen, solange sie gilt (ADR-0040).
 //
-// Eine aktuelle 401/403 blendet geschützte Zeilen aus. Eine spätere Störung
-// holt sie nicht zurück. Blocklisten-Vorgänge gehören zur erfassten IP und
-// werden nicht still wiederholt.
+// Eine aktuelle Lese- oder Schreibverweigerung blendet geschützte Zeilen,
+// Kennzahlen und Vorgangsangaben aus. Eine ältere Lesung und ein später
+// eintreffendes Ergebnis holen sie nicht zurück. Nur eine danach angenommene
+// Lesung stellt Zeilen wieder her. Blocklisten-Vorgänge gehören zur erfassten
+// IP und werden nicht still wiederholt.
 
 'use client'
 
@@ -35,6 +37,7 @@ import {
 } from '@/lib/admin/security/filter-ehrlichkeit'
 import {
   beginnVorgang,
+  blendeVorgaengeAus,
   istAusstehend,
   leeresBuch,
   schliesseVorgang,
@@ -46,6 +49,8 @@ import {
 } from '@/lib/admin/security/operation-lifecycle'
 import {
   LEERE_LESUNG,
+  SECURITY_DETAIL_MAX,
+  angezeigterSicherheitstext,
   leseAusgang,
   pruefeSecurityListenAntwort,
   sichereLeseFehler,
@@ -66,6 +71,13 @@ import SecurityOperationStatus from '@/components/admin/security/SecurityOperati
 import styles from './security-widget.module.css'
 
 type LeseUrsprung = 'takt' | 'ausdruecklich'
+type VerweigerungQuelle = 'lesen' | 'schreiben'
+
+const SCHREIB_VERWEIGERT = {
+  meldung:
+    'Der Server hat den Schreibvorgang abgewiesen. Geschützte Zeilen bleiben ausgeblendet, bis eine neue Lesung angenommen wird.',
+  wiederholbar: false,
+} as const
 
 export default function SecurityWidget() {
   const [data, setData] = React.useState<SecurityListenAntwort | null>(null)
@@ -76,17 +88,18 @@ export default function SecurityWidget() {
   const [banIp, setBanIp] = React.useState('')
   const [banReason, setBanReason] = React.useState('admin block')
   const [buch, setBuch] = React.useState<VorgangBuch>(() => leeresBuch())
-  const [schreibenVerweigert, setSchreibenVerweigert] = React.useState(false)
+  const [hinweis, setHinweis] = React.useState<VerweigerungQuelle | null>(null)
   const juengsteLesung = React.useRef(0)
   const laufende = React.useRef(0)
   const mounted = React.useRef(true)
   const leseZustand = React.useRef<LeseZustand>(LEERE_LESUNG)
   const buchRef = React.useRef(buch)
+  const verweigerung = React.useRef(0)
 
-  const setBuchBeide = (next: VorgangBuch) => {
+  const setBuchBeide = React.useCallback((next: VorgangBuch) => {
     buchRef.current = next
     setBuch(next)
-  }
+  }, [])
 
   const refresh = React.useCallback(async (ursprung: LeseUrsprung) => {
     if (!mounted.current) return
@@ -125,7 +138,14 @@ export default function SecurityWidget() {
     setLeseArt(naechster.art)
     setFehler(ausgang.art === 'angenommen' ? null : sichereLeseFehler(status))
     setData(naechster.daten)
-  }, [])
+    if (ausgang.art === 'verweigert') {
+      verweigerung.current += 1
+      setHinweis('lesen')
+      setBuchBeide(blendeVorgaengeAus(buchRef.current))
+    } else if (ausgang.art === 'angenommen') {
+      setHinweis(null)
+    }
+  }, [setBuchBeide])
 
   React.useEffect(() => {
     mounted.current = true
@@ -139,7 +159,7 @@ export default function SecurityWidget() {
     }
   }, [refresh])
 
-  const aktionenOffen = leseArt === 'angenommen' && !schreibenVerweigert
+  const aktionenOffen = leseArt === 'angenommen'
 
   const starte = async (rohIp: string, aktion: BlockAktion, rohGrund: string | null) => {
     if (!aktionenOffen) return
@@ -147,6 +167,7 @@ export default function SecurityWidget() {
     if (!beginn.ok) return
     setBuchBeide(beginn.buch)
     const vorgang = beginn.vorgang
+    const epoche = verweigerung.current
     const pfad =
       vorgang.aktion === 'eintragen' ? '/api/admin/security/block' : '/api/admin/security/unblock'
     const ip = vorgang.ip
@@ -159,7 +180,7 @@ export default function SecurityWidget() {
         body: JSON.stringify(vorgang.aktion === 'eintragen' ? { ip, reason } : { ip }),
       })
     } catch {
-      if (!mounted.current) return
+      if (!mounted.current || verweigerung.current !== epoche) return
       setBuchBeide(schliesseVorgang(buchRef.current, vorgang.id, vorgang.ip, 'unbestaetigt'))
       return
     }
@@ -170,10 +191,21 @@ export default function SecurityWidget() {
     } catch {
       lesbar = false
     }
-    if (!mounted.current) return
+    if (!mounted.current || verweigerung.current !== epoche) return
     const ausgang = schreibAusgang(antwort.status, koerper, lesbar)
-    if (ausgang === 'verweigert') setSchreibenVerweigert(true)
-    const lage = ausgang === 'rueckgemeldet' ? 'rueckgemeldet' : ausgang === 'verweigert' ? 'abgelehnt' : 'unbestaetigt'
+    if (ausgang === 'verweigert') {
+      verweigerung.current += 1
+      juengsteLesung.current = naechsteRefreshIdentitaet(juengsteLesung.current)
+      const naechster = wendeLesungAn(leseZustand.current, { art: 'verweigert' })
+      leseZustand.current = naechster
+      setLeseArt(naechster.art)
+      setFehler(SCHREIB_VERWEIGERT)
+      setData(naechster.daten)
+      setHinweis('schreiben')
+      setBuchBeide(blendeVorgaengeAus(buchRef.current))
+      return
+    }
+    const lage = ausgang === 'rueckgemeldet' ? 'rueckgemeldet' : 'unbestaetigt'
     setBuchBeide(schliesseVorgang(buchRef.current, vorgang.id, vorgang.ip, lage))
     if (ausgang === 'rueckgemeldet') void refresh('ausdruecklich')
   }
@@ -213,7 +245,12 @@ export default function SecurityWidget() {
   const vorgaenge = vorgaengeNachBeginn(buch)
 
   return (
-    <div className={`${styles.wurzel} space-y-6`} data-security-read-state={leseArt} data-security-writes={aktionenOffen ? 'enabled' : 'disabled'}>
+    <div
+      className={`${styles.wurzel} space-y-6`}
+      data-security-read-state={leseArt}
+      data-security-writes={aktionenOffen ? 'enabled' : 'disabled'}
+      data-security-denial={hinweis ?? ''}
+    >
       <section className="rounded-2xl border bg-card px-4 py-3 sm:px-5" aria-label="Security-Abdeckung">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
@@ -248,9 +285,22 @@ export default function SecurityWidget() {
         />
       )}
       {leseArt === 'verweigert' && (
-        <p data-security-read-note="verweigert">
-          Geschützte Zeilen und Kennzahlen sind ausgeblendet. Schreiben ist deaktiviert.
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p data-security-read-note="verweigert">
+            {hinweis === 'schreiben'
+              ? 'Der Schreibvorgang wurde abgewiesen. Geschützte Zeilen, Kennzahlen und Vorgangsangaben sind ausgeblendet. Erneut lesen prüft die Ansicht und erteilt kein Recht.'
+              : 'Geschützte Zeilen und Kennzahlen sind ausgeblendet. Schreiben ist deaktiviert.'}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="whitespace-normal"
+            data-security-reread="true"
+            onClick={() => void refresh('ausdruecklich')}
+          >
+            Erneut lesen
+          </Button>
+        </div>
       )}
       {leseArt === 'unlesbar' && (
         <p data-security-read-note="unlesbar">Die Antwort wurde nicht als aktuelle Liste übernommen.</p>
@@ -333,7 +383,7 @@ export default function SecurityWidget() {
                     </span>
                   </td>
                   <td className="px-4 py-2 max-w-[420px]">
-                    <div className={styles.detail}>{e.detail || '—'}</div>
+                    <Langtext wert={e.detail} />
                   </td>
                   <td className={`${styles.zelle} px-4 py-2 font-mono`}>{e.user_id || '—'}</td>
                   <td className="px-4 py-2">
@@ -412,6 +462,7 @@ export default function SecurityWidget() {
               containerClassName="[&>div:last-child]:hidden"
               id="blocklist-grund"
               placeholder="Grund…"
+              maxLength={SECURITY_DETAIL_MAX}
               value={banReason}
               onChange={(e) => setBanReason(e.target.value)}
             />
@@ -421,7 +472,12 @@ export default function SecurityWidget() {
             className="w-full whitespace-normal sm:col-span-2 xl:col-span-1 xl:w-auto"
             variant="outline"
             leftIcon={<Ban className="h-4 w-4" />}
-            disabled={!aktionenOffen || banIp.trim().length === 0 || istAusstehend(buch, banIp)}
+            disabled={
+              !aktionenOffen ||
+              banIp.trim().length === 0 ||
+              banReason.trim().length > SECURITY_DETAIL_MAX ||
+              istAusstehend(buch, banIp)
+            }
             onClick={() => void starte(banIp, 'eintragen', banReason)}
           >
             Eintrag hinzufügen
@@ -429,13 +485,7 @@ export default function SecurityWidget() {
         </div>
       </section>
 
-      <SecurityOperationStatus
-        vorgaenge={vorgaenge}
-        aktionenOffen={aktionenOffen}
-        schreibenVerweigert={schreibenVerweigert}
-        onErneut={erneut}
-        onSchreibschutzAufheben={() => setSchreibenVerweigert(false)}
-      />
+      <SecurityOperationStatus vorgaenge={vorgaenge} aktionenOffen={aktionenOffen} onErneut={erneut} />
 
       <section className="min-w-0 rounded-2xl border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b">
@@ -465,7 +515,9 @@ export default function SecurityWidget() {
               {(data?.blocklist ?? []).map((b) => (
                 <tr key={b.ip} className="border-t">
                   <td className={`${styles.zelle} px-4 py-2 font-mono`}>{b.ip}</td>
-                  <td className={`${styles.zelle} px-4 py-2`}>{b.reason || '—'}</td>
+                  <td className={`${styles.zelle} px-4 py-2`}>
+                    <Langtext wert={b.reason} />
+                  </td>
                   <td className={`${styles.zelle} px-4 py-2`}>
                     {b.created_at ? (
                       <span className="inline-flex items-center gap-1">
@@ -512,6 +564,21 @@ export default function SecurityWidget() {
           </table>
         </div>
       </section>
+    </div>
+  )
+}
+
+function Langtext({ wert }: { wert: string | null }) {
+  const anzeige = angezeigterSicherheitstext(wert)
+  if (!anzeige.text) return <>—</>
+  return (
+    <div>
+      <div className={styles.detail}>{anzeige.text}</div>
+      {anzeige.hinweis ? (
+        <p className="mt-1 text-xs text-muted-foreground" data-security-truncated="true">
+          {anzeige.hinweis}
+        </p>
+      ) : null}
     </div>
   )
 }
