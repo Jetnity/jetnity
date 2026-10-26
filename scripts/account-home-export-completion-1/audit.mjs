@@ -66,13 +66,18 @@ function reise(teil) {
   }
 }
 
+// 215 Zeichen liegen ausserhalb von GRENZEN.titel (120). Das bleibt Stress,
+// nicht ein gültiger gespeicherter Titel.
 const lang = 'Lissabon '.repeat(24).trim()
+const titelGueltig = 'Lissabon '.repeat(13).trim()
+assert.equal(lang.length, 215)
+assert.equal(titelGueltig.length, 116)
 
-function fensterReisen(anzahl, extra) {
+function fensterReisen(anzahl, extra, titel = lang) {
   return Array.from({ length: anzahl }, (_, index) =>
     reise({
       id: `r${index}`,
-      title: index === 0 ? lang : `Reise ${index}`,
+      title: index === 0 ? titel : `Reise ${index}`,
       startDate: index === 0 ? '2026-11-02' : '2026-12-01',
       endDate: index === 0 ? '2026-11-06' : '2026-12-04',
       updatedAt: `2026-08-${String((index % 27) + 1).padStart(2, '0')}T10:00:00.000Z`,
@@ -231,6 +236,91 @@ async function zeige(fixture, css) {
 
 function sichtbar(text) {
   return text.toLocaleLowerCase('de-CH')
+}
+
+async function aktionenEnthalten(seite, hinweis) {
+  const masse = await seite.evaluate(() => {
+    const karte = document.querySelector('[data-account-naechste]')
+    const links = [...karte.querySelectorAll('a')]
+    const wurzel = parseFloat(getComputedStyle(document.documentElement).fontSize)
+    function messen(el) {
+      const bereich = document.createRange()
+      const wanderer = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      const liste = []
+      let knoten = wanderer.nextNode()
+      while (knoten) {
+        if (knoten.textContent.trim()) {
+          bereich.selectNodeContents(knoten)
+          for (const rechteck of bereich.getClientRects()) {
+            liste.push({
+              left: rechteck.left,
+              right: rechteck.right,
+              top: rechteck.top,
+              bottom: rechteck.bottom,
+              width: rechteck.width,
+              height: rechteck.height,
+            })
+          }
+        }
+        knoten = wanderer.nextNode()
+      }
+      const kasten = el.getBoundingClientRect()
+      const spiel = 1
+      const textDrin =
+        liste.length > 0 &&
+        liste.every(
+          (rechteck) =>
+            rechteck.width > 0 &&
+            rechteck.height > 0 &&
+            rechteck.left >= kasten.left - spiel &&
+            rechteck.right <= kasten.right + spiel &&
+            rechteck.top >= kasten.top - spiel &&
+            rechteck.bottom <= kasten.bottom + spiel,
+        )
+      return {
+        name: (el.textContent || '').replace(/\s+/g, ' ').trim(),
+        href: el.getAttribute('href'),
+        textDrin,
+        breite: kasten.width,
+        hoehe: kasten.height,
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        kasten: { left: kasten.left, right: kasten.right, top: kasten.top, bottom: kasten.bottom },
+      }
+    }
+    const kartenKasten = karte.getBoundingClientRect()
+    const aktionen = links.map(messen)
+    const ueberlappung = []
+    for (let i = 0; i < aktionen.length; i += 1) {
+      for (let j = i + 1; j < aktionen.length; j += 1) {
+        const a = aktionen[i].kasten
+        const b = aktionen[j].kasten
+        const treffer = a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1
+        if (treffer) ueberlappung.push([aktionen[i].name, aktionen[j].name])
+      }
+    }
+    const inKarte = aktionen.every(
+      (aktion) =>
+        aktion.kasten.left >= kartenKasten.left - 1 &&
+        aktion.kasten.right <= kartenKasten.right + 1 &&
+        aktion.kasten.top >= kartenKasten.top - 1 &&
+        aktion.kasten.bottom <= kartenKasten.bottom + 1,
+    )
+    const titel = document.querySelector('[data-account-naechste] h2')
+    return { wurzel, aktionen, ueberlappung, inKarte, titel: titel ? messen(titel) : null }
+  })
+  const mindest = masse.wurzel * 2.75 - 1
+  assert.equal(masse.aktionen.length, 2, hinweis)
+  for (const aktion of masse.aktionen) {
+    assert.equal(aktion.textDrin, true, `${hinweis} ${aktion.name}`)
+    assert.equal(aktion.scrollWidth <= aktion.clientWidth + 1, true, `${hinweis} ${aktion.name} scroll`)
+    assert.ok(aktion.hoehe + 0.5 >= mindest, `${hinweis} ${aktion.name} hoehe ${aktion.hoehe}`)
+    assert.ok(aktion.breite + 0.5 >= mindest, `${hinweis} ${aktion.name} breite ${aktion.breite}`)
+  }
+  assert.equal(masse.ueberlappung.length, 0, hinweis)
+  assert.equal(masse.inKarte, true, hinweis)
+  assert.equal(masse.titel === null || masse.titel.scrollWidth <= masse.titel.clientWidth + 1, true, `${hinweis} titel`)
+  return masse
 }
 
 function cssAusBuild() {
@@ -396,10 +486,12 @@ try {
     { name: '1440', width: 1440, height: 900 },
   ]
   await zeige(faelle.grenze, css)
+  assert.equal((await page.locator('[data-account-naechste] h2').innerText()).replace(/\s+/g, ' ').trim().length, 215)
   for (const breite of breiten) {
     await page.setViewportSize({ width: breite.width, height: breite.height })
     const ueber = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
     assert.equal(ueber, true, breite.name)
+    await aktionenEnthalten(page, `Stress 215 ${breite.name}`)
     await page.screenshot({ path: join(ausgabe, `home-${breite.name}.png`), fullPage: true })
   }
   await page.evaluate(() => {
@@ -407,9 +499,37 @@ try {
   })
   const gross = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
   assert.equal(gross, true)
+  await aktionenEnthalten(page, 'Stress 215 1440 32px')
   await page.screenshot({ path: join(ausgabe, 'home-1440-200-prozent.png'), fullPage: true })
-  protokoll.push('320, 390, 768, 1440 und 200%-Text bleiben ohne horizontales Überlaufen.')
+  protokoll.push('Stress-Titel mit 215 Zeichen, ausserhalb des 120-Zeichen-Vertrags: 320, 390, 768, 1440 und 32px-Wurzel bleiben ohne horizontales Überlaufen, und die Aktionsbeschriftungen bleiben in ihren Flächen.')
 
+  await zeige({ ...faelle.grenze, reisen: fensterReisen(200, undefined, titelGueltig) }, css)
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = ''
+  })
+  assert.equal((await page.locator('[data-account-naechste] h2').innerText()).replace(/\s+/g, ' ').trim(), titelGueltig)
+  await aktionenEnthalten(page, 'Titel 116 1440 16px')
+  await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116.png'), fullPage: true })
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '32px'
+  })
+  await aktionenEnthalten(page, 'Titel 116 1440 32px')
+  await page.screenshot({ path: join(ausgabe, 'home-1440-titel-116-200-prozent.png'), fullPage: true })
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = ''
+  })
+  const fortsetzen = page.getByRole('link', { name: 'Reise fortsetzen' })
+  assert.equal(await fortsetzen.getAttribute('href'), '/reisen/r0')
+  await fortsetzen.focus()
+  const netzVorEnter = netz.length
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(200)
+  const ziele = netz.slice(netzVorEnter).filter((url) => url.includes('/reisen/r0'))
+  assert.equal(ziele.length, 1)
+  protokoll.push('Gültiger Titel mit 116 Zeichen bei 1440 und 16px sowie 32px: Beschriftungen liegen in den Aktionsflächen, die Flächen liegen in der Karte und überlappen sich nicht. Enter öffnet /reisen/r0 genau einmal.')
+
+  await zeige(faelle.grenze, css)
   await page.evaluate(() => {
     document.documentElement.style.fontSize = ''
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
@@ -753,10 +873,10 @@ try {
   protokoll.push('Eine späte Antwort nach dem Unmount erzeugt keinen Download.')
   assert.equal(seitenfehler.length, 0)
   protokoll.push(`Seitenfehler: 0. Exportanfragen: ${anfragen}. Downloads: ${downloads}. Objekt-URL-Widerrufe: ${widerrufen}.`)
-  assert.equal(
-    netz.filter((url) => /^https?:/i.test(url) && !url.includes('/api/account/export') && !url.includes('127.0.0.1:8765/konto')).length,
-    0,
+  const fremd = netz.filter(
+    (url) => /^https?:/i.test(url) && !url.includes('/api/account/export') && !url.includes('127.0.0.1:8765/konto'),
   )
+  assert.deepEqual(fremd, ['http://127.0.0.1:8765/reisen/r0'])
 } finally {
   writeFileSync(join(ausgabe, 'mounted-proof.json'), JSON.stringify({ protokoll, seitenfehler, netz: netz.slice(0, 20) }, null, 2))
   console.log(protokoll.join('\n'))

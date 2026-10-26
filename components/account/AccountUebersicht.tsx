@@ -129,8 +129,8 @@ export default function AccountUebersicht({
             data-account-naechste={naechste.lage}
             className="flex h-full min-w-0 flex-col rounded-[30px] border border-black/5 bg-white p-6 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
           >
-            <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 xl:flex-row xl:items-end">
-              <div className="min-w-0">
+            <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 xl:flex-row xl:items-start">
+              <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
                   {naechsteReiseBezeichnung(naechste.lage, fenster)}
                 </p>
@@ -149,19 +149,19 @@ export default function AccountUebersicht({
                   {zeitraum(naechste.reise.startDate, naechste.reise.endDate)}
                 </p>
               </div>
-              <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row xl:w-56 xl:flex-col">
+              <div className="flex w-full flex-col gap-3 sm:flex-row xl:w-56 xl:shrink-0 xl:flex-col">
                 <Link
                   href={`/reisen/${naechste.reise.id}` as Route}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 py-2 text-center text-sm font-semibold leading-5 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 sm:w-auto xl:w-full"
                 >
-                  Reise fortsetzen
-                  <ArrowRight className="h-4 w-4" />
+                  <span className="min-w-0 break-words">Reise fortsetzen</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
                 <Link
                   href="/reisen"
-                  className="inline-flex h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 sm:w-auto xl:w-full"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-200 bg-white px-5 py-2 text-center text-sm font-semibold leading-5 text-brand-800 transition hover:bg-surface-50 sm:w-auto xl:w-full"
                 >
-                  Alle Reisen
+                  <span className="min-w-0 break-words">Alle Reisen</span>
                 </Link>
               </div>
             </div>
