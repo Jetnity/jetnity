@@ -716,6 +716,9 @@ try {
     async (page) => {
       await page.getByRole('button', { name: 'Aktionen für Ada Example' }).click()
       await page.getByRole('menuitem', { name: 'Rolle: Creator' }).click()
+      await page.getByRole('region', { name: /Änderung für Ada Example bestätigen/ }).waitFor()
+      assert.deepEqual(await page.evaluate(() => window.__usersDirectory.actionCalls()), [])
+      await page.getByRole('button', { name: 'Änderung bestätigen' }).click()
       await page.waitForFunction(() => window.__usersDirectory.actionCalls().length === 1)
       const calls = await page.evaluate(() => window.__usersDirectory.actionCalls())
       assert.deepEqual(calls, ['setUserRole'])

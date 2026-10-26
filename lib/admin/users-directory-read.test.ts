@@ -3,6 +3,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { canManageUsers } from '@/lib/auth/roles'
+import { mutationBlockReason } from '@/lib/admin/user-row-truth'
 import {
   USERS_DIRECTORY_PAGE_SIZE,
   executeUsersDirectoryRead,
@@ -131,7 +132,6 @@ describe('Admin-Benutzerverzeichnis Lesereihenfolge', () => {
     const helper = readFileSync(new URL('./users-directory-query.ts', import.meta.url), 'utf8')
     const navigation = readFileSync(new URL('./users-search-navigation.ts', import.meta.url), 'utf8')
     const presentation = readFileSync(new URL('./users-directory-presentation.ts', import.meta.url), 'utf8')
-    const table = readFileSync(new URL('../../components/admin/UsersTable.tsx', import.meta.url), 'utf8')
     const actions = readFileSync(new URL('../../app/(admin)/admin/users/actions.ts', import.meta.url), 'utf8')
     assert.equal(page.includes('try'), false)
     assert.equal(helper.includes('try'), false)
@@ -143,13 +143,34 @@ describe('Admin-Benutzerverzeichnis Lesereihenfolge', () => {
     assert.equal(USERS_DIRECTORY_PAGE_SIZE, 20)
     assert.match(page, /created_at:\s*profilErstellt\(r\?\.created_at\)/)
     assert.match(page, /last_seen_at:\s*r\?\.last_seen_at\s*\?\?\s*null/)
+    assert.match(page, /displayedStoredRole\(r\?\.role\)/)
+    assert.match(page, /displayedStoredStatus\(r\?\.status\)/)
+    assert.equal(page.includes('DEFAULT_ROLE'), false)
     assert.equal(page.includes('new Date().toISOString()'), false)
-    assert.match(table, /function editable\(u: UserRow\)/)
-    assert.match(table, /async function changeRole\(u: UserRow, role: Role\)/)
-    assert.match(table, /async function toggleBan\(u: UserRow\)/)
-    assert.match(table, /assignable/)
-    assert.match(table, /u\.user_id === actorId/)
-    assert.match(table, /rankOf\(actorRole\) > rankOf\(u\.role\)/)
+    assert.equal(
+      mutationBlockReason({ userId: 'actor', role: 'admin', status: 'active', actorId: 'actor', actorRole: 'admin' }),
+      'self',
+    )
+    assert.equal(
+      mutationBlockReason({ userId: 'lower', role: 'user', status: 'active', actorId: 'actor', actorRole: 'admin' }),
+      null,
+    )
+    assert.equal(
+      mutationBlockReason({ userId: 'peer', role: 'admin', status: 'active', actorId: 'actor', actorRole: 'admin' }),
+      'rank',
+    )
+    assert.equal(
+      mutationBlockReason({ userId: 'peer', role: 'admin', status: 'active', actorId: 'actor', actorRole: 'owner' }),
+      null,
+    )
+    assert.equal(
+      mutationBlockReason({ userId: 'stored', role: null, status: 'active', actorId: 'actor', actorRole: 'owner' }),
+      'unknown-role',
+    )
+    assert.equal(
+      mutationBlockReason({ userId: 'stored', role: 'user', status: null, actorId: 'actor', actorRole: 'owner' }),
+      'unknown-status',
+    )
     assert.match(actions, /export async function setUserRole/)
     assert.match(actions, /export async function setUserStatus/)
   })

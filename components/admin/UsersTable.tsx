@@ -4,7 +4,6 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +17,42 @@ import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { ChevronLeft, ChevronRight, MoreHorizontal, Shield } from 'lucide-react'
 import { setUserRole, setUserStatus } from '@/app/(admin)/admin/users/actions'
 import type { Fehler } from '@/lib/admin/ladezustand'
+import {
+  banToggleTarget,
+  isDispatchableUserId,
+  mutationBlockReason,
+} from '@/lib/admin/user-row-truth'
+import {
+  cancelConfirmation,
+  confirmDispatch,
+  detachedOperations,
+  dismissFeedback,
+  EMPTY_LIFECYCLE,
+  isTransportFailure,
+  MUTATION_TRANSPORT_TIMEOUT_MS,
+  noteFulfilled,
+  noteRejected,
+  noteTransportFailure,
+  liveHold,
+  observeLifecycle,
+  releaseHiddenConfirmations,
+  requestConfirmation,
+  type LifecycleState,
+  type MutationIntent,
+  type TargetOperation,
+  type TruthRow,
+} from '@/lib/admin/user-mutation-lifecycle'
+import { UserMutationConfirmation } from '@/components/admin/users/UserMutationConfirmation'
+import { USER_MUTATION_CONFIRMATION_CSS } from '@/components/admin/users/user-mutation-confirmation.css'
+import {
+  blockCopy,
+  DETACHED_PREFIX,
+  outcomeCopy,
+  RECOVER_LABEL,
+  roleLabel,
+  statusLabel,
+  STATUS_LABELS,
+} from '@/components/admin/users/user-mutation-copy'
 import {
   buildUsersListHref,
   normalizeUserSearch,
@@ -55,7 +90,6 @@ import {
 import {
   ACCOUNT_STATUSES,
   isRole,
-  rankOf,
   ROLE_LABELS,
   ROLES,
   type AccountStatus,
@@ -66,8 +100,8 @@ export type UserRow = {
   user_id: string
   email: string | null
   display_name: string | null
-  role: Role
-  status: AccountStatus
+  role: Role | null
+  status: AccountStatus | null
   created_at: string | null
   last_seen_at: string | null
 }
@@ -109,11 +143,14 @@ type RefreshLease = {
   href: string
 }
 
-const STATUS_LABELS: Record<AccountStatus, string> = {
-  active: 'Aktiv',
-  pending: 'Ausstehend',
-  disabled: 'Deaktiviert',
-  banned: 'Gesperrt',
+function truthOf(user: UserRow): TruthRow {
+  return {
+    userId: user.user_id,
+    email: user.email,
+    displayName: user.display_name,
+    role: user.role,
+    status: user.status,
+  }
 }
 
 function targetOfHref(href: string): { key: string; q: string } {
@@ -164,7 +201,7 @@ export default function UsersTable({
   const [ownSearchAcks, setOwnSearchAcks] = React.useState<string[]>([])
   const [historyTraversal, setHistoryTraversal] = React.useState(0)
   const [seenTraversal, setSeenTraversal] = React.useState(0)
-  const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const [lifecycle, setLifecycle] = React.useState<LifecycleState>(EMPTY_LIFECYCLE)
   const [operation, setOperation] = React.useState<NavigateOperation | null>(null)
   const [lease, setLease] = React.useState<RefreshLease | null>(null)
   const epoch = React.useRef(0)
@@ -176,6 +213,8 @@ export default function UsersTable({
   const leaseRef = React.useRef(lease)
   const mountedRef = React.useRef(true)
   const leaseSeq = React.useRef(0)
+  const lifecycleRef = React.useRef(lifecycle)
+  const usersRef = React.useRef(users)
 
   React.useEffect(() => {
     readRef.current = read
@@ -184,6 +223,8 @@ export default function UsersTable({
     leaseRef.current = lease
     spRef.current = sp
     routerRef.current = router
+    usersRef.current = users
+    lifecycleRef.current = lifecycle
   })
 
   React.useEffect(() => {
@@ -358,6 +399,38 @@ export default function UsersTable({
     return () => window.clearTimeout(handle)
   }, [lease])
 
+  const visibleIds = new Set(users.map((user) => user.user_id))
+  React.useEffect(() => {
+    const ids = new Set(users.map((user) => user.user_id))
+    const canonical = !read || read.kind === 'ready'
+    let next = canonical ? releaseHiddenConfirmations(lifecycleRef.current, ids) : lifecycleRef.current
+    if (read?.kind === 'ready') {
+      next = observeLifecycle(next, users.map(truthOf), read.readAttempt, 'accepted')
+    } else if (read) {
+      next = observeLifecycle(next, users.map(truthOf), read.readAttempt, read.kind === 'error' ? 'failed' : 'invalid')
+    }
+    if (next === lifecycleRef.current) return
+    lifecycleRef.current = next
+    setLifecycle(next)
+  }, [users, read])
+
+  React.useEffect(() => {
+    const pending = Object.values(lifecycle.byTarget).filter((item) => item.phase === 'pending')
+    if (pending.length === 0) return
+    const timers = pending.map((item) =>
+      window.setTimeout(() => {
+        const current = lifecycleRef.current.byTarget[item.subject.userId]
+        if (!current || current.id !== item.id || current.phase !== 'pending') return
+        const next = noteTransportFailure(lifecycleRef.current, item.subject.userId, item.id)
+        lifecycleRef.current = next
+        if (mountedRef.current) setLifecycle(next)
+      }, MUTATION_TRANSPORT_TIMEOUT_MS),
+    )
+    return () => {
+      for (const timer of timers) window.clearTimeout(timer)
+    }
+  }, [lifecycle])
+
   const maxPage = Math.max(1, Math.ceil(total / pageSize))
   const directoryCount = read?.kind === 'ready' ? read.count : null
   const filtered = Boolean(urlQ || rawRole || rawStatus)
@@ -469,43 +542,105 @@ export default function UsersTable({
     routerRef.current.refresh()
   }
 
+  function publish(next: LifecycleState) {
+    lifecycleRef.current = next
+    setLifecycle(next)
+  }
+
+  function currentQueryKey(): string | null {
+    const current = readRef.current
+    if (!current) return null
+    if (current.kind === 'invalid') return `invalid:${current.reason}`
+    return usersDirectoryQueryKey(current.query)
+  }
+
   /**
    * Was die Tabelle anbietet, spiegelt nur die serverseitige Regel – die
    * Entscheidung fällt in der Server-Action. Ein eigener Rang lässt sich nicht
-   * ändern, und fremde Konten nur unterhalb des eigenen Rangs.
+   * ändern, und fremde Konten nur unterhalb des eigenen Rangs. Unbekannte
+   * gespeicherte Werte werden nicht als gewöhnliches Konto behandelt.
    */
-  function editable(u: UserRow) {
-    if (u.user_id === actorId) return false
-    if (actorRole === 'owner') return true
-    return rankOf(actorRole) > rankOf(u.role)
+  function begin(user: UserRow, intent: MutationIntent) {
+    if (!user.role || !user.status) return
+    if (
+      mutationBlockReason({
+        userId: user.user_id,
+        role: user.role,
+        status: user.status,
+        actorId,
+        actorRole,
+      })
+    ) {
+      return
+    }
+    const decision = requestConfirmation(lifecycleRef.current, {
+      id: crypto.randomUUID(),
+      subject: {
+        userId: user.user_id,
+        email: user.email,
+        displayName: user.display_name,
+        role: user.role,
+        status: user.status,
+      },
+      intent,
+      queryKey: currentQueryKey(),
+    })
+    if (!decision.ok) return
+    publish(decision.state)
   }
 
-  async function changeRole(u: UserRow, role: Role) {
+  async function commit(targetId: string) {
+    const currentRead = readRef.current
+    const decision = confirmDispatch(lifecycleRef.current, targetId, {
+      rows: usersRef.current.map(truthOf),
+      actorId,
+      actorRole,
+      assignable,
+      readAttempt: currentRead?.readAttempt ?? null,
+    })
+    publish(decision.state)
+    if (!decision.ok) return
+    const operation = decision.operation
     try {
-      setPendingId(u.user_id)
-      await setUserRole(u.user_id, role)
-      toast.success(`Rolle geändert: ${u.email ?? u.user_id} → ${ROLE_LABELS[role]}`)
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Fehler beim Ändern der Rolle')
-    } finally {
-      setPendingId(null)
+      if (operation.intent.kind === 'role') await setUserRole(operation.subject.userId, operation.intent.nextRole)
+      else await setUserStatus(operation.subject.userId, operation.intent.nextStatus)
+      if (!mountedRef.current) return
+      const live = lifecycleRef.current.byTarget[targetId]
+      if (!live || live.id !== operation.id || live.phase !== 'pending') return
+      publish(noteFulfilled(lifecycleRef.current, targetId, operation.id, readRef.current?.readAttempt ?? null))
+      routerRef.current.refresh()
+    } catch (error: unknown) {
+      if (!mountedRef.current) return
+      const live = lifecycleRef.current.byTarget[targetId]
+      if (!live || live.id !== operation.id || live.phase !== 'pending') return
+      const next = isTransportFailure(error)
+        ? noteTransportFailure(lifecycleRef.current, targetId, operation.id)
+        : noteRejected(
+            lifecycleRef.current,
+            targetId,
+            operation.id,
+            error instanceof Error && error.message ? error.message : 'Die Aktion ist ohne lesbare Rückmeldung fehlgeschlagen.',
+          )
+      publish(next)
     }
   }
 
-  async function toggleBan(u: UserRow) {
-    const target: AccountStatus = u.status === 'banned' ? 'active' : 'banned'
-    try {
-      setPendingId(u.user_id)
-      await setUserStatus(u.user_id, target)
-      toast.success(`${u.email ?? u.user_id} ist jetzt ${target}`)
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Fehler beim Aktualisieren')
-    } finally {
-      setPendingId(null)
-    }
+  function cancel(targetId: string) {
+    publish(cancelConfirmation(lifecycleRef.current, targetId))
   }
 
-  function RoleBadge({ role }: { role: Role }) {
+  function recover(targetId: string) {
+    publish(dismissFeedback(lifecycleRef.current, targetId))
+  }
+
+  function RoleBadge({ role }: { role: Role | null }) {
+    if (!role) {
+      return (
+        <Badge variant="outline" data-role-truth="unknown">
+          {roleLabel(null)}
+        </Badge>
+      )
+    }
     const emphasis: Partial<Record<Role, string>> = {
       owner: 'border-primary text-primary',
       admin: 'border-primary/70 text-primary',
@@ -513,23 +648,51 @@ export default function UsersTable({
       moderator: 'border-citrus-500/70 text-citrus-700',
     }
     return (
-      <Badge variant="outline" className={emphasis[role]}>
-        {ROLE_LABELS[role]}
+      <Badge variant="outline" data-role-truth="known" className={emphasis[role]}>
+        {roleLabel(role)}
       </Badge>
     )
   }
 
-  function StatusBadge({ status }: { status: AccountStatus }) {
-    if (status === 'active') return <Badge>{STATUS_LABELS.active}</Badge>
+  function StatusBadge({ status }: { status: AccountStatus | null }) {
+    if (!status) {
+      return (
+        <Badge variant="outline" data-status-truth="unknown">
+          {statusLabel(null)}
+        </Badge>
+      )
+    }
+    if (status === 'active') return <Badge data-status-truth="known">{statusLabel(status)}</Badge>
     const emphasis: Record<Exclude<AccountStatus, 'active'>, string> = {
       banned: 'border-destructive text-destructive',
       pending: 'border-citrus-600 text-citrus-700',
       disabled: 'border-border text-muted-foreground',
     }
     return (
-      <Badge variant="outline" className={emphasis[status]}>
-        {STATUS_LABELS[status]}
+      <Badge variant="outline" data-status-truth="known" className={emphasis[status]}>
+        {statusLabel(status)}
       </Badge>
+    )
+  }
+
+  function Feedback({ item }: { item: TargetOperation }) {
+    const recoverable = item.phase === 'fulfilled' || item.phase === 'confirmed' || item.phase === 'rejected' || item.phase === 'ambiguous'
+    return (
+      <div
+        className="user-mutation-feedback"
+        data-mutation-phase={item.phase}
+        data-mutation-subject={item.subject.userId}
+        data-mutation-reason={item.ambiguousReason ?? 'none'}
+      >
+        <p>{outcomeCopy(item)}</p>
+        {recoverable ? (
+          <div className="user-mutation-feedback__actions">
+            <button type="button" className="user-mutation-confirmation__button" data-mutation-recover="true" onClick={() => recover(item.subject.userId)}>
+              {RECOVER_LABEL}
+            </button>
+          </div>
+        ) : null}
+      </div>
     )
   }
 
@@ -574,10 +737,12 @@ export default function UsersTable({
   return (
     <div
       data-users-directory-root="true"
+      tabIndex={-1}
       data-operation-phase={operation?.phase ?? 'none'}
       data-lease-phase={lease?.phase ?? 'none'}
       className="min-w-0 rounded-2xl border bg-card"
     >
+      <style>{USER_MUTATION_CONFIRMATION_CSS}</style>
       <div className="flex min-w-0 max-w-full flex-wrap items-center gap-3 border-b p-4">
         <Input
           containerClassName="w-full sm:w-80 [&>div:last-child]:hidden"
@@ -703,6 +868,13 @@ export default function UsersTable({
         </div>
       ) : null}
 
+      {detachedOperations(lifecycle, visibleIds).map((item) => (
+        <div key={item.id} className="min-w-0 px-4" data-mutation-detached="true">
+          <p className="text-sm text-muted-foreground">{DETACHED_PREFIX}</p>
+          <Feedback item={item} />
+        </div>
+      ))}
+
       <div className="min-w-0 max-w-full">
         <table role="table" className="block w-full min-w-0 max-w-full text-sm lg:table">
           <thead className="sr-only bg-muted/40 lg:not-sr-only lg:table-header-group">
@@ -716,75 +888,138 @@ export default function UsersTable({
           </thead>
           <tbody role="rowgroup" className="block lg:table-row-group">
             {showRows &&
-              users.map((u) => (
-                <tr role="row" key={u.user_id} className="relative grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 border-t p-4 first:border-t-0 lg:table-row lg:grid-cols-none lg:p-0">
-                  <td role="cell" className="col-span-2 min-w-0 pr-12 lg:w-[32%] lg:p-4">
-                    <p className="break-words font-medium">{u.display_name || 'Ohne Namen'}</p>
-                    <p className="mt-1 break-all text-xs text-muted-foreground">
-                      {u.email ? (
-                        <Link href={`mailto:${u.email}`} className="hover:underline">
-                          {u.email}
-                        </Link>
-                      ) : (
-                        'Keine E-Mail hinterlegt'
-                      )}
-                    </p>
-                  </td>
-                  <td role="cell" className="col-span-2 lg:p-4">
-                    <div className="flex flex-wrap gap-2">
-                      <RoleBadge role={u.role} />
-                      <StatusBadge status={u.status} />
-                    </div>
-                  </td>
-                <td role="cell" className="min-w-0 break-words text-xs text-muted-foreground lg:p-4">
-                  <span className="mb-1 block lg:hidden">Erstellt</span>
-                  {formatUsersDirectoryTimestamp(u.created_at)}
-                </td>
-                <td role="cell" className="min-w-0 break-words text-xs text-muted-foreground lg:p-4">
-                  <span className="mb-1 block lg:hidden">Letzte Aktivität</span>
-                  {formatUsersDirectoryTimestamp(u.last_seen_at)}
-                </td>
-                  <td role="cell" className="absolute right-2 top-2 lg:static lg:p-4">
-                    <div className="flex justify-end">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" aria-label={`Aktionen für ${u.display_name || u.email || 'Konto'}`}>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-60">
-                          {editable(u) ? (
-                            <>
-                              {assignable
-                                .filter((role) => role !== u.role)
-                                .map((role) => (
-                                  <DropdownMenuItem key={role} onClick={() => changeRole(u, role)}>
-                                    <Shield className="mr-2 h-4 w-4" /> Rolle: {ROLE_LABELS[role]}
-                                  </DropdownMenuItem>
-                                ))}
-
-                              <div className="my-1 h-px bg-border" />
-
-                              <DropdownMenuItem onClick={() => toggleBan(u)}>
-                                {u.status === 'banned' ? 'Entsperren' : 'Sperren'}
-                              </DropdownMenuItem>
-                            </>
+              users.map((u, index) => {
+                const block = mutationBlockReason({
+                  userId: u.user_id,
+                  role: u.role,
+                  status: u.status,
+                  actorId,
+                  actorRole,
+                })
+                const item = lifecycle.byTarget[u.user_id]
+                const owned = Boolean(item)
+                const shownHold =
+                  item?.phase === 'confirming'
+                    ? liveHold(item, {
+                        rows: users.map(truthOf),
+                        actorId,
+                        actorRole,
+                        assignable,
+                        readAttempt: read?.readAttempt ?? null,
+                      })
+                    : null
+                const rowKey = isDispatchableUserId(u.user_id) ? u.user_id : `undispatchable-${index}`
+                return (
+                  <React.Fragment key={rowKey}>
+                    <tr
+                      role="row"
+                      data-user-row={u.user_id || 'empty'}
+                      aria-busy={item?.phase === 'pending' ? true : undefined}
+                      className="relative grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 border-t p-4 first:border-t-0 lg:table-row lg:grid-cols-none lg:p-0"
+                    >
+                      <td role="cell" className="col-span-2 min-w-0 pr-12 lg:w-[32%] lg:p-4">
+                        <p className="break-words font-medium">{u.display_name || 'Ohne Namen'}</p>
+                        <p className="mt-1 break-all text-xs text-muted-foreground">
+                          {u.email ? (
+                            <Link href={`mailto:${u.email}`} className="hover:underline">
+                              {u.email}
+                            </Link>
                           ) : (
-                            <div className="px-2 py-2 text-xs text-muted-foreground">
-                              {u.user_id === actorId
-                                ? 'Das eigene Konto lässt sich hier nicht ändern.'
-                                : 'Für dieses Konto fehlt die Berechtigung.'}
-                            </div>
+                            'Keine E-Mail hinterlegt'
                           )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      {pendingId === u.user_id && (
-                        <span className="ml-2 text-xs text-muted-foreground">speichere…</span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        </p>
+                      </td>
+                      <td role="cell" className="col-span-2 lg:p-4">
+                        <div className="flex flex-wrap gap-2">
+                          <RoleBadge role={u.role} />
+                          <StatusBadge status={u.status} />
+                        </div>
+                      </td>
+                      <td role="cell" className="min-w-0 break-words text-xs text-muted-foreground lg:p-4">
+                        <span className="mb-1 block lg:hidden">Erstellt</span>
+                        {formatUsersDirectoryTimestamp(u.created_at)}
+                      </td>
+                      <td role="cell" className="min-w-0 break-words text-xs text-muted-foreground lg:p-4">
+                        <span className="mb-1 block lg:hidden">Letzte Aktivität</span>
+                        {formatUsersDirectoryTimestamp(u.last_seen_at)}
+                      </td>
+                      <td role="cell" className="absolute right-2 top-2 lg:static lg:p-4">
+                        <div className="flex justify-end">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                data-mutation-trigger={u.user_id}
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Aktionen für ${u.display_name || u.email || 'Konto'}`}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-60 max-w-[calc(100vw-2rem)]"
+                              onCloseAutoFocus={(event) => {
+                                if (lifecycleRef.current.byTarget[u.user_id]?.phase === 'confirming') {
+                                  event.preventDefault()
+                                }
+                              }}
+                            >
+                              {block ? (
+                                <div className="px-2 py-2 text-xs text-muted-foreground">{blockCopy(block)}</div>
+                              ) : u.role && u.status ? (
+                                <>
+                                  {assignable
+                                    .filter((role) => role !== u.role)
+                                    .map((role) => (
+                                      <DropdownMenuItem
+                                        key={role}
+                                        disabled={owned}
+                                        onSelect={() => begin(u, { kind: 'role', nextRole: role })}
+                                      >
+                                        <Shield className="mr-2 h-4 w-4" /> Rolle: {ROLE_LABELS[role]}
+                                      </DropdownMenuItem>
+                                    ))}
+
+                                  <div className="my-1 h-px bg-border" />
+
+                                  <DropdownMenuItem
+                                    disabled={owned}
+                                    onSelect={() => begin(u, { kind: 'status', nextStatus: banToggleTarget(u.status as AccountStatus) })}
+                                  >
+                                    {u.status === 'banned' ? 'Entsperren' : 'Sperren'}
+                                  </DropdownMenuItem>
+                                </>
+                              ) : null}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </td>
+                    </tr>
+                    {item?.phase === 'confirming' ? (
+                      <tr role="row" className="block min-w-0 lg:table-row">
+                        <td role="cell" className="block min-w-0 p-4 lg:table-cell" colSpan={5}>
+                          <UserMutationConfirmation
+                            subject={item.subject}
+                            intent={item.intent}
+                            hold={shownHold}
+                            onConfirm={() => void commit(u.user_id)}
+                            onCancel={() => cancel(u.user_id)}
+                            triggerId={u.user_id}
+                          />
+                        </td>
+                      </tr>
+                    ) : null}
+                    {item && item.phase !== 'confirming' ? (
+                      <tr role="row" className="block min-w-0 lg:table-row">
+                        <td role="cell" className="block min-w-0 p-4 lg:table-cell" colSpan={5}>
+                          <Feedback item={item} />
+                        </td>
+                      </tr>
+                    ) : null}
+                  </React.Fragment>
+                )
+              })}
             {showRows && users.length === 0 && (
               <tr role="row" className="block lg:table-row">
                 <td role="cell" className="block p-6 text-center text-muted-foreground lg:table-cell" colSpan={5}>

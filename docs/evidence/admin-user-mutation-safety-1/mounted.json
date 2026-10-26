@@ -1,0 +1,168 @@
+{
+  "generatedAt": "2026-10-26",
+  "network": "external requests aborted",
+  "synthetic": true,
+  "results": [
+    {
+      "name": "external-network-blocked",
+      "ok": true,
+      "outcome": "blocked"
+    },
+    {
+      "name": "unknown-role-status-and-malformed-identity",
+      "ok": true,
+      "truth": {
+        "role": "Unbekannte Rolle",
+        "status": "Unbekannter Status"
+      }
+    },
+    {
+      "name": "self-and-peer-stay-blocked",
+      "ok": true,
+      "calls": []
+    },
+    {
+      "name": "same-turn-double-activation",
+      "ok": true,
+      "calls": 1
+    },
+    {
+      "name": "role-then-status-for-one-pending-target",
+      "ok": true,
+      "calls": 1
+    },
+    {
+      "name": "a-and-b-pending-a-settles-first",
+      "ok": true,
+      "bao": "pending",
+      "ada": "confirmed"
+    },
+    {
+      "name": "captured-row-changed-before-confirm",
+      "ok": true,
+      "calls": 0
+    },
+    {
+      "name": "fulfilled-without-new-read-is-not-confirmed",
+      "ok": true,
+      "phase": "fulfilled"
+    },
+    {
+      "name": "fulfilled-absent-then-matching-read-does-not-resend",
+      "ok": true,
+      "phase": "confirmed",
+      "calls": 1
+    },
+    {
+      "name": "fulfilled-row-unchanged",
+      "ok": true,
+      "reason": "unchanged"
+    },
+    {
+      "name": "fulfilled-row-contradictory",
+      "ok": true,
+      "reason": "contradictory"
+    },
+    {
+      "name": "old-error-after-newer-query",
+      "ok": true,
+      "detached": true
+    },
+    {
+      "name": "transport-timeout-and-no-resend-recovery",
+      "ok": true,
+      "calls": 1
+    },
+    {
+      "name": "explicit-recovery-does-not-write",
+      "ok": true,
+      "calls": 1
+    },
+    {
+      "name": "failed-read-does-not-claim-absence",
+      "ok": true,
+      "phase": "fulfilled"
+    },
+    {
+      "name": "invalid-read-does-not-claim-absence",
+      "ok": true,
+      "phase": "fulfilled"
+    },
+    {
+      "name": "confirmed-then-contradictory-is-historical",
+      "ok": true,
+      "reason": "contradictory"
+    },
+    {
+      "name": "confirmed-then-absent-is-historical",
+      "ok": true,
+      "reason": "absent"
+    },
+    {
+      "name": "confirmed-then-failed-read-sets-no-new-truth",
+      "ok": true,
+      "phase": "confirmed"
+    },
+    {
+      "name": "confirmed-absent-then-returning-creator",
+      "ok": true,
+      "phase": "confirmed"
+    },
+    {
+      "name": "confirmed-nutzer-then-moderation",
+      "ok": true,
+      "role": "moderator"
+    },
+    {
+      "name": "confirmed-nutzer-then-failed-read-is-historical",
+      "ok": true,
+      "phase": "ambiguous"
+    },
+    {
+      "name": "automatic-removal-preserves-search-focus",
+      "ok": true,
+      "calls": 0
+    },
+    {
+      "name": "inline-confirmations-are-not-modal",
+      "ok": true,
+      "regions": 2,
+      "modal": 0
+    },
+    {
+      "name": "keyboard-focus-cancel-restores-trigger",
+      "ok": true,
+      "calls": 0
+    },
+    {
+      "name": "full-unmount-drops-feedback-without-storage",
+      "ok": true,
+      "stored": 0
+    },
+    {
+      "name": "search-debounce-still-resets-page",
+      "ok": true,
+      "search": "q=berta&page=1"
+    },
+    {
+      "name": "layout-320-enlarged",
+      "ok": true,
+      "overflow": false
+    },
+    {
+      "name": "layout-390",
+      "ok": true,
+      "overflow": false
+    },
+    {
+      "name": "layout-768",
+      "ok": true,
+      "overflow": false
+    },
+    {
+      "name": "layout-1280",
+      "ok": true,
+      "overflow": false
+    }
+  ]
+}
