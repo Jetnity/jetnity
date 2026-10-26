@@ -8,6 +8,7 @@ import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account
 import { useReiseFenster } from '@/components/account/account-home-export-1/ReiseFensterRahmen'
 import WorldExplorer from '@/components/account/world-explorer-1/WorldExplorer'
 import {
+  geplanteAussage,
   weltReichweiteText,
   type ReiseFenster,
 } from '@/lib/account/account-home-export-1/fenster'
@@ -453,6 +454,20 @@ function BestehendeWeltKarte({
   neuLadenHref?: '/account' | '/account/welt'
 }) {
   const istAtlas = darstellung === 'atlas'
+  const geplantLeer = geplanteAussage({
+    fenster,
+    lage: welt.lage,
+    kennzahl: welt.geplantKennzahl,
+    leertext: welt.leerText,
+    leerStattKennzahl: true,
+  })
+  const geplantZahl = geplanteAussage({
+    fenster,
+    lage: welt.lage,
+    kennzahl: welt.geplantKennzahl,
+    leertext: welt.leerText,
+    leerStattKennzahl: false,
+  })
   const [gewaehlt, setGewaehlt] = useState<string | null>(null)
   const [offeneGruppe, setOffeneGruppe] = useState<string | null>(null)
   const musterBasis = useId()
@@ -531,7 +546,7 @@ function BestehendeWeltKarte({
       <ul className="mt-4 flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-start">
         <KennzahlZeile zustand="besucht" label={besucht.label} wert={besucht.kurz} />
         {welt.lage === 'fehler' ? null : (
-          <KennzahlZeile zustand="geplant" label={welt.geplantLabel} wert={welt.geplantKennzahl} />
+          <KennzahlZeile zustand="geplant" label={welt.geplantLabel} wert={geplantZahl} />
         )}
       </ul>
 
@@ -587,7 +602,7 @@ function BestehendeWeltKarte({
                   {`${WORLD_MAP_GRUNDKARTE_BESCHREIBUNG} ${besucht.label}: ${
                     besucht.kurz
                   }. ${welt.geplantLabel}: ${
-                    welt.lage === 'leer' ? welt.leerText : welt.geplantKennzahl
+                    welt.lage === 'leer' ? geplantLeer : geplantZahl
                   }. ${WELT_KARTE_ZUSTAND_BESCHREIBUNG}`}
                 </desc>
                 <WeltMusterDefs id={musterBasis} />
@@ -716,7 +731,7 @@ function BestehendeWeltKarte({
                 anker={false}
               />
             ) : (
-              <AtlasHinweis lage={welt.lage} leerText={welt.leerText} fehlerText={welt.fehlerText} />
+              <AtlasHinweis lage={welt.lage} leerText={geplantLeer} fehlerText={welt.fehlerText} />
             )}
           </aside>
           <AtlasLegende kompakt={!istAtlas} />

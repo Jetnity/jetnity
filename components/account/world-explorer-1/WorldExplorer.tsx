@@ -7,7 +7,7 @@ import { Search, X } from 'lucide-react'
 import { WeltZustandProbe } from '@/components/account/WeltZustaende'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import { WELT_ZUSTAND_TEXT, type WeltLaenderAbleitung } from '@/lib/account/welt-laender'
-import type { ReiseFenster } from '@/lib/account/account-home-export-1/fenster'
+import { geplanteAussage, weltLeereOrteText, type ReiseFenster } from '@/lib/account/account-home-export-1/fenster'
 import { ReiseFensterHinweis, SeiteNeuLaden } from '@/components/account/account-home-export-1/ReiseFensterHinweis'
 import type { WorldMapAbleitung } from '@/lib/account/world-map'
 import { WORLD_MAP_GRUNDKARTE_HINWEIS } from '@/lib/account/world-map-ansicht'
@@ -76,7 +76,7 @@ export default function WorldExplorer({ welt, besucht, laender, aktion, reichwei
       <p className="text-xs font-semibold text-brand-800">{reichweiteText ?? 'Gesamt in deinem Konto · unabhängig von Suche und Filter'}</p>
       <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-800">
         <li className="flex items-center gap-2"><WeltZustandProbe zustand="besucht" /><span><strong>Besucht:</strong> {besucht.kurz}</span></li>
-        <li className="flex items-center gap-2"><WeltZustandProbe zustand="geplant" /><span><strong>Geplant:</strong> {welt.lage === 'fehler' ? 'Gerade nicht lesbar' : welt.geplantKennzahl}</span></li>
+        <li className="flex items-center gap-2"><WeltZustandProbe zustand="geplant" /><span><strong>Geplant:</strong> {welt.lage === 'fehler' ? 'Gerade nicht lesbar' : geplanteAussage({ fenster, lage: welt.lage, kennzahl: welt.geplantKennzahl, leertext: welt.leerText, leerStattKennzahl: false })}</span></li>
       </ul>
     </div>
     {besucht.fehlerText ? <div role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950"><p>{besucht.fehlerText}</p>{neuLadenHref ? <SeiteNeuLaden href={neuLadenHref} /> : null}</div> : null}
@@ -106,7 +106,7 @@ export default function WorldExplorer({ welt, besucht, laender, aktion, reichwei
     </div>
     <div className="mt-6 border-t border-line-200 pt-5" data-explorer-results>
       <h3 className="text-base font-semibold text-brand-800">Deine Länder und Orte</h3>
-      {matches.length === 0 ? <p className="mt-3 text-sm leading-6 text-ink-800">{partial && filter === 'beides' ? 'Die Schnittmenge ist bei unvollständigen Daten unbekannt.' : records.length === 0 && !query ? (partial ? 'Gerade keine lesbaren Einträge verfügbar.' : 'Noch keine Länder oder Orte in deinem Konto gespeichert.') : 'Keine passenden Einträge. Ändere die Suche oder den Filter.'}</p> : null}
+      {matches.length === 0 ? <p className="mt-3 text-sm leading-6 text-ink-800">{partial && filter === 'beides' ? 'Die Schnittmenge ist bei unvollständigen Daten unbekannt.' : records.length === 0 && !query ? (partial ? 'Gerade keine lesbaren Einträge verfügbar.' : weltLeereOrteText(fenster)) : 'Keine passenden Einträge. Ändere die Suche oder den Filter.'}</p> : null}
       <ul className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {matches.slice(0, limit).map((r) => <li key={r.id} className="min-w-0"><button type="button" data-explorer-result={r.id} aria-current={selection === r.id ? 'true' : undefined} aria-controls={`${id}-details`} onClick={() => choose(r.id)} className={`flex min-h-11 w-full min-w-0 gap-2 rounded-2xl border p-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selection === r.id ? 'border-brand-700 bg-surface-100' : 'border-line-200 bg-surface-0 hover:bg-surface-50'}`}>
           <WeltZustandProbe zustand={r.zustand} alsPunkt={!!r.flaeche?.punkt} /><span className="min-w-0 break-words text-sm leading-5"><span className="block font-semibold text-brand-800">{r.label}{r.art === 'land' ? ` (${r.code})` : ''}</span><span className="block text-ink-800">{r.art === 'land' ? 'Land' : r.landLabel ?? 'Kein gespeicherter Ländercode'} · {recordStatus(r)}</span>{r.besuch ? <span className="block text-xs text-ink-800">{r.besuch.zeitText}{r.besuch.wiederholungText ? ` · ${r.besuch.wiederholungText}` : ''}</span> : null}{positionText(r) ? <span className="block text-xs text-ink-800">{positionText(r)}</span> : null}</span>

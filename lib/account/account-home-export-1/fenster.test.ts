@@ -3,8 +3,10 @@ import assert from 'node:assert/strict'
 
 import {
   fensterHinweis,
+  geplanteAussage,
   naechsteReiseBezeichnung,
   reiseFensterAus,
+  weltLeereOrteText,
   weltReichweiteText,
 } from '@/lib/account/account-home-export-1/fenster'
 import { naechsteReiseAus } from '@/lib/account/naechste-reise'
@@ -77,6 +79,44 @@ describe('geladenes Reisefenster', () => {
     assert.equal(text, 'Nächste Reise in den geladenen Reisen.')
     assert.equal(text.includes('Deine nächste Reise'), false)
     assert.equal(naechsteReiseBezeichnung('kommend', reiseFensterAus({ problem: false, anzahl: 3 })), 'Deine nächste Reise.')
+  })
+
+  test('leere Etappen an der Obergrenze sind keine Kontogesamtheit', () => {
+    const grenze = reiseFensterAus({ problem: false, anzahl: 200 })
+    const leer = 'Noch keine geplanten Reiseziele in deinem Konto. Die Karte bleibt leer, bis gespeicherte Etappen existieren.'
+    const aussage = geplanteAussage({
+      fenster: grenze,
+      lage: 'leer',
+      kennzahl: 'Noch keine geplanten Orte',
+      leertext: leer,
+      leerStattKennzahl: true,
+    })
+    assert.equal(aussage.includes('in deinem Konto'), false)
+    assert.match(aussage, /geladenen Reisen/)
+    assert.match(aussage, /nicht geprüft/)
+    assert.equal(weltLeereOrteText(grenze).includes('in deinem Konto gespeichert'), false)
+    const ganz = reiseFensterAus({ problem: false, anzahl: 0 })
+    assert.equal(
+      geplanteAussage({
+        fenster: ganz,
+        lage: 'leer',
+        kennzahl: 'Noch keine geplanten Orte',
+        leertext: leer,
+        leerStattKennzahl: true,
+      }),
+      leer,
+    )
+    assert.match(weltLeereOrteText(ganz), /in deinem Konto gespeichert/)
+    assert.equal(
+      geplanteAussage({
+        fenster: grenze,
+        lage: 'geplant',
+        kennzahl: '1 Land · 1 Ort',
+        leertext: leer,
+        leerStattKennzahl: false,
+      }),
+      '1 Land · 1 Ort in den geladenen Reisen.',
+    )
   })
 
   test('nur archivierte Zeilen an der Obergrenze sind keine globale Leere', () => {
