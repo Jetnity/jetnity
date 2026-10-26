@@ -116,8 +116,15 @@ describe('GetYourGuide-Lebenszyklus', () => {
     if (!erster.angenommen) return
     lauf = gygAbschluss(erster.lauf, erster, { art: 'abgelehnt', meldung: '<script>x</script>' })
     assert.equal(lauf.phase, 'fehler')
-    assert.equal(lauf.fehler, gygFehlertext('<script>x</script>'))
     assert.equal(lauf.fehler, 'GetYourGuide konnte gerade nicht geladen werden.')
+    const klartext = gygAbschluss(erster.lauf, erster, {
+      art: 'abgelehnt',
+      meldung: 'Die synthetische Prüfung ist fehlgeschlagen.',
+    })
+    assert.equal(klartext.phase, 'fehler')
+    assert.equal(klartext.fehler, 'GetYourGuide konnte gerade nicht geladen werden.')
+    assert.equal(JSON.stringify(klartext).includes('synthetische Prüfung'), false)
+    assert.equal(gygFehlertext('<script>x</script>'), 'GetYourGuide konnte gerade nicht geladen werden.')
     const erneut = gygAnfordern(lauf, plan.bezug)
     assert.equal(erneut.angenommen, true)
     if (!erneut.angenommen) return

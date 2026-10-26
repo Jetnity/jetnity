@@ -90,5 +90,6 @@ export function gygAbschluss(
   if (ergebnis.art === 'ressource') {
     return { ...lauf, phase: 'anzeige', fehler: null }
   }
-  return { ...lauf, phase: 'fehler', fehler: gygFehlertext(ergebnis.meldung) }
+  // Der mitgelieferte Text ist kein Fehlervertrag. Sichtbar bleibt der feste Satz.
+  return { ...lauf, phase: 'fehler', fehler: gygFehlertext(null) }
 }

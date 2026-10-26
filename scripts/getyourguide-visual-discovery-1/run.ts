@@ -377,7 +377,9 @@ async function haupt() {
   await page.getByRole('button', { name: 'Bangkok Hinfahrt' }).click()
   await page.getByRole('button', { name: 'Nächster Abschluss scheitert' }).click()
   await pruef.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
-  await page.waitForSelector('text=synthetische Prüfung ist fehlgeschlagen')
+  await page.waitForSelector('text=GetYourGuide konnte gerade nicht geladen werden.')
+  const rohtext = await textVon(page, '[data-szenario="pruef"] [aria-label="GetYourGuide"]')
+  pruefe(!rohtext.includes('synthetische Prüfung ist fehlgeschlagen'), `Abgelehnter Klartext bleibt sichtbar: ${rohtext}`)
   const nativeText = await page.locator('[data-szenario="nativ"]').innerText()
   pruefe(nativeText.includes('Für diese Angaben liegt noch keine Suche vor.'), 'GYG-Fehler hat die native Suche ersetzt')
   pruefe(nativeText.includes('noch nicht eingerichtet'), 'Native GetYourGuide-Fläche ist nicht mehr geschlossen')
@@ -456,6 +458,16 @@ type Gegenbericht = {
   bestaetigt: number
   schreibungen: { kennung: string; generation: string; verbunden: boolean; abgebrochen: boolean }[]
   entsorgtVerbunden: boolean[]
+  ablehnung: {
+    vorAbbruch: boolean
+    vorVerbunden: boolean
+    nachAbbruch: boolean
+    nachVerbunden: boolean
+    entsorgenDavor: number
+    entsorgenDanach: number
+    zuhoerer: number
+    nachher: number
+  } | null
 }
 
 function gegenLesen(page: Page): Promise<Gegenbericht> {
@@ -652,6 +664,66 @@ async function gegenprobe(page: Page, basis: string) {
   pruefe(!ablehnung.includes('places-token'), 'Ablehnung zeigt den Token-Text')
   await page.getByRole('button', { name: 'Bestätigung gelingt' }).click()
   await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).waitFor({ timeout: 8000 })
+
+  const vorAblehnung = (await gegenLesen(page)).entsorgen
+  await page.getByRole('button', { name: 'Ergebnis lehnt ab' }).click()
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await flaeche.getByText('GetYourGuide konnte gerade nicht geladen werden.').waitFor({ timeout: 5000 })
+  await page.waitForTimeout(80)
+  const nachAblehnung = await gegenLesen(page)
+  const probe = nachAblehnung.ablehnung
+  pruefe(Boolean(probe), 'Ablehnung hat keinen Nachweis')
+  if (probe) {
+    pruefe(probe.vorAbbruch === false && probe.vorVerbunden === true, 'Ablehnung startete nicht verbunden und offen')
+    pruefe(probe.nachAbbruch === true, 'Abgelehntes Signal blieb offen')
+    pruefe(probe.nachVerbunden === false, 'Abgelehnter Knoten blieb verbunden')
+    pruefe(probe.entsorgenDanach === probe.entsorgenDavor + 1, `Ablehnung entsorgte ${probe.entsorgenDanach - probe.entsorgenDavor} mal`)
+    pruefe(probe.zuhoerer === 1, `Abort-Zuhörer lief ${probe.zuhoerer} mal`)
+    pruefe(probe.nachher === 0, 'Abgelehntes Signal nahm einen weiteren Aufruf an')
+  }
+  pruefe(nachAblehnung.entsorgen === vorAblehnung + 1, 'Ablehnung wartete auf den nächsten Versuch')
+  const ablehnungText = await textVon(page, '[data-szenario="gegenprobe"]')
+  pruefe(!ablehnungText.includes('adapter-token'), 'Ablehnung zeigt den Adaptertext')
+  pruefe(!ablehnungText.includes('private.example'), 'Ablehnung zeigt eine Adresse')
+  pruefe(!ablehnungText.includes('after-decline'), 'Späte Schreibung blieb in der Fläche')
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'fehler', 'Abgelehnte Ladung blieb in der Laufphase')
+  pruefe((await textVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage]')).trim() === '', 'Abgelehnter Knoten blieb in der Montage')
+
+  await page.getByRole('button', { name: 'Abschluss hängt spät' }).click()
+  await flaeche.getByRole('button', { name: 'Erneut versuchen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'result-synthetic:')
+
+  const vorWurf = (await gegenLesen(page)).entsorgen
+  await page.getByRole('button', { name: 'Ablehnung wirft bei Entsorgung' }).click()
+  await flaeche.getByRole('button', { name: 'Erneut laden' }).click()
+  await flaeche.getByText('GetYourGuide konnte gerade nicht geladen werden.').waitFor({ timeout: 5000 })
+  await page.waitForTimeout(80)
+  const nachWurfAblehnung = await gegenLesen(page)
+  const wurfText = await textVon(page, '[data-szenario="gegenprobe"]')
+  pruefe(
+    nachWurfAblehnung.ablehnung?.entsorgenDanach === (nachWurfAblehnung.ablehnung?.entsorgenDavor ?? 0) + 1,
+    'Die abgelehnte Ladung wurde nicht genau einmal entsorgt',
+  )
+  pruefe(nachWurfAblehnung.entsorgen === vorWurf + 2, 'Erneutes Laden hat die sichtbare und die abgelehnte Ladung nicht entsorgt')
+  pruefe(nachWurfAblehnung.ablehnung?.nachVerbunden === false, 'Werfende Entsorgung hängte den Knoten wieder ein')
+  pruefe(!wurfText.includes('private.example'), 'Werfende Entsorgung zeigt eine Adresse')
+  pruefe(!wurfText.includes('after-decline'), 'Werfende Entsorgung liess die späte Schreibung stehen')
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'fehler', 'Werfende Ablehnung blieb hängen')
+
+  const vorSpaet = (await gegenLesen(page)).entsorgen
+  await page.getByRole('button', { name: 'Ablehnung kommt spät' }).click()
+  await flaeche.getByRole('button', { name: 'Erneut versuchen' }).click()
+  await page.getByRole('button', { name: 'Tag B', exact: true }).click()
+  const nachWechsel = (await gegenLesen(page)).entsorgen
+  pruefe(nachWechsel > vorSpaet, 'Der Wechsel hat die alte Ablehnung nicht entsorgt')
+  await flaeche.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wartenAufText(page, '[data-szenario="gegenprobe"] [data-gyg-montage]', 'synthetic-public:phuket-city')
+  const beiAnzeige = (await gegenLesen(page)).entsorgen
+  await page.waitForTimeout(700)
+  const nachSpaet = await gegenLesen(page)
+  pruefe(nachSpaet.entsorgen === beiAnzeige, 'Verspätete Ablehnung hat die neue Ladung entsorgt')
+  pruefe((await gyg.getAttribute('data-gyg-phase')) === 'anzeige', 'Verspätete Ablehnung hat die neue Anzeige verworfen')
+  pruefe((await textVon(page, '[data-szenario="gegenprobe"] [data-gyg-montage]')).includes('synthetic-public:phuket-city'), 'Verspätete Ablehnung hat Phuket ersetzt')
 
   await page.getByRole('button', { name: 'Bestätigung verzögern' }).click()
   await flaeche.getByText('Das Ziel wird bestätigt.').waitFor({ timeout: 5000 })

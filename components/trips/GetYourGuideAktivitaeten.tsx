@@ -282,6 +282,16 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     void ausstehend.then(
       (ergebnis) => {
         if (betriebRef.current !== betrieb) return
+        if (ergebnis.art === 'abgelehnt') {
+          betriebBeenden(betrieb)
+          if (betriebRef.current === betrieb) betriebRef.current = null
+          setLauf((stand) => {
+            const next = gygAbschluss(stand, entscheid, { art: 'abgelehnt', meldung: '' })
+            laufRef.current = next
+            return next
+          })
+          return
+        }
         setLauf((stand) => {
           const next = gygAbschluss(stand, entscheid, ergebnis)
           laufRef.current = next

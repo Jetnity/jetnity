@@ -9,12 +9,24 @@ import type { Trip, TripDay, TripStage } from '@/types/trips'
 
 type Schreibung = { kennung: string; generation: string; verbunden: boolean; abgebrochen: boolean }
 
+type Ablehnung = {
+  vorAbbruch: boolean
+  vorVerbunden: boolean
+  nachAbbruch: boolean
+  nachVerbunden: boolean
+  entsorgenDavor: number
+  entsorgenDanach: number
+  zuhoerer: number
+  nachher: number
+}
+
 type Bericht = {
   laden: number
   entsorgen: number
   bestaetigt: number
   schreibungen: Schreibung[]
   entsorgtVerbunden: boolean[]
+  ablehnung: Ablehnung | null
 }
 
 declare global {
@@ -131,6 +143,7 @@ function veroeffentlichen(stand: Bericht) {
     bestaetigt: stand.bestaetigt,
     schreibungen: stand.schreibungen.map((eintrag) => ({ ...eintrag })),
     entsorgtVerbunden: [...stand.entsorgtVerbunden],
+    ablehnung: stand.ablehnung ? { ...stand.ablehnung } : null,
   }
 }
 
@@ -147,8 +160,17 @@ function Gegenprobe() {
   const katalog = useRef<Ort[]>([bangkok, phuket, panama, gleicheStadt])
   const verzögerung = useRef(80)
   const resolverModus = useRef<'ok' | 'abgelehnt'>('ok')
-  const modus = useRef<'spaet' | 'wurf' | 'entsorgen'>('spaet')
-  const bericht = useRef<Bericht>({ laden: 0, entsorgen: 0, bestaetigt: 0, schreibungen: [], entsorgtVerbunden: [] })
+  const modus = useRef<'spaet' | 'wurf' | 'entsorgen' | 'ablehnen' | 'ablehnenWirft'>('spaet')
+  const naechster = useRef<'ablehnen' | null>(null)
+  const wartezeit = useRef(40)
+  const bericht = useRef<Bericht>({
+    laden: 0,
+    entsorgen: 0,
+    bestaetigt: 0,
+    schreibungen: [],
+    entsorgtVerbunden: [],
+    ablehnung: null,
+  })
 
   const bestaetigen = useMemo<GygKanonBestaetigen>(() => {
     return (id) => {
@@ -176,6 +198,47 @@ function Gegenprobe() {
         stand.laden += 1
         veroeffentlichen(stand)
         if (modus.current === 'wurf') throw new Error('https://private.example/widget-token')
+        const art = naechster.current ?? modus.current
+        if (naechster.current) naechster.current = null
+        if (art === 'ablehnen' || art === 'ablehnenWirft') {
+          const protokoll: NonNullable<Bericht['ablehnung']> = {
+            vorAbbruch: signal.aborted,
+            vorVerbunden: ziel.isConnected,
+            nachAbbruch: signal.aborted,
+            nachVerbunden: ziel.isConnected,
+            entsorgenDavor: stand.entsorgen,
+            entsorgenDanach: stand.entsorgen,
+            zuhoerer: 0,
+            nachher: 0,
+          }
+          stand.ablehnung = protokoll
+          const beiAbort = () => {
+            protokoll.zuhoerer += 1
+            veroeffentlichen(stand)
+          }
+          signal.addEventListener('abort', beiAbort)
+          const warten = wartezeit.current
+          return new Promise((resolve) => {
+            window.setTimeout(() => {
+              protokoll.vorAbbruch = signal.aborted
+              protokoll.vorVerbunden = ziel.isConnected
+              protokoll.entsorgenDavor = stand.entsorgen
+              veroeffentlichen(stand)
+              resolve({ art: 'abgelehnt', meldung: 'https://private.example/adapter-token' })
+              window.setTimeout(() => {
+                if (!signal.aborted) protokoll.nachher += 1
+                protokoll.nachAbbruch = signal.aborted
+                protokoll.nachVerbunden = ziel.isConnected
+                protokoll.entsorgenDanach = stand.entsorgen
+                const zeile = document.createElement('p')
+                zeile.dataset.syntheticResult = '1'
+                zeile.textContent = 'result-synthetic:after-decline'
+                ziel.append(zeile)
+                veroeffentlichen(stand)
+              }, 30)
+            }, warten)
+          })
+        }
         const kennungText = bezug.oeffentlicheKennung
         const generation = ziel.dataset.gygBetrieb ?? ''
         return new Promise((resolve) => {
@@ -199,7 +262,7 @@ function Gegenprobe() {
         bericht.current.entsorgen += 1
         bericht.current.entsorgtVerbunden.push(ziel.isConnected)
         veroeffentlichen(bericht.current)
-        if (modus.current !== 'entsorgen') return
+        if (modus.current !== 'entsorgen' && modus.current !== 'ablehnenWirft') return
         const zeile = document.createElement('p')
         zeile.dataset.syntheticResult = '1'
         zeile.textContent = 'result-synthetic:stale-https://private.example/dispose'
@@ -264,6 +327,9 @@ function Gegenprobe() {
           <button type="button" className={knopf} onClick={() => { modus.current = 'wurf' }}>Abschluss wirft</button>
           <button type="button" className={knopf} onClick={() => { modus.current = 'spaet' }}>Abschluss hängt spät</button>
           <button type="button" className={knopf} onClick={() => { modus.current = 'entsorgen' }}>Entsorgung wirft</button>
+          <button type="button" className={knopf} onClick={() => { modus.current = 'ablehnen'; wartezeit.current = 40 }}>Ergebnis lehnt ab</button>
+          <button type="button" className={knopf} onClick={() => { modus.current = 'ablehnenWirft'; wartezeit.current = 40 }}>Ablehnung wirft bei Entsorgung</button>
+          <button type="button" className={knopf} onClick={() => { naechster.current = 'ablehnen'; wartezeit.current = 450; modus.current = 'spaet' }}>Ablehnung kommt spät</button>
           <button type="button" className={knopf} onClick={() => { resolverModus.current = 'abgelehnt'; verzögerung.current = 40; setBestaetigenStand((wert) => wert + 1) }}>Bestätigung ablehnen</button>
           <button type="button" className={knopf} onClick={() => { resolverModus.current = 'ok'; verzögerung.current = 80; setBestaetigenStand((wert) => wert + 1) }}>Bestätigung gelingt</button>
           <button type="button" className={knopf} onClick={() => { resolverModus.current = 'ok'; verzögerung.current = 800; setBestaetigenStand((wert) => wert + 1) }}>Bestätigung verzögern</button>
