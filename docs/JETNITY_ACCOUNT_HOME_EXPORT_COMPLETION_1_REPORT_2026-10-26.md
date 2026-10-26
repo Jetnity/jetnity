@@ -103,6 +103,12 @@ The audit checks whole words on the next-trip label, status, title, origin, date
 
 The failed 8d1 capture remains `home-320-titel-116-200-prozent-before-r4.png`. R2 and R3 screenshots stay. The 215-character fixture is still outside the 120-character contract and is not held to the 13-line bound. Rebuilt CSS is 101,303 characters. The full audit completed, including calendar, window and export: 21 requests, 3 downloads, 3 revokes, 0 page errors.
 
+## R5 long token
+
+Reviewed head `790e41cad2f60995a967a456e8dbf86fa803656c`. The ordinary-word matrix passes. Title and origin then used `overflow-wrap: normal`. `titel` and `ort` in `lib/trips/schema.ts` allow 1–120 characters and do not require a space. `'W'.repeat(120)` and `'Z'.repeat(120)` parse; 121 does not. On the 790 rule this environment drew the title outside a 286px box and widened the page. That is wrapping, not a missing character: the 120 letters were present.
+
+`break-words` is restored on the title and the origin. Ordinary words still break only when they do not fit. A single long token wraps inside the width. The Lissabon fixture still requires intact words and at most 13 lines. The token fixture does not. At 320px the token is 10 title lines and 5 origin lines at 16px, and 20 and 9 at 32px. Enter still requests `/reisen/r0` and `/reisen` on that card and on the 116-character card. The 215-character stress fixture stays outside the 120-character contract. Before shots from this Noto Sans Bold run are kept beside the contained shots. Root’s DejaVu widths on 790 are a different rendered font.
+
 ## Limits of that proof
 
 - 200% text is `documentElement.style.fontSize = '32px'`. It is not operating-system zoom and not a real device.

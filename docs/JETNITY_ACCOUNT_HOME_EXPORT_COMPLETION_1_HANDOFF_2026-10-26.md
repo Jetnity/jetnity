@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Next actor:** ChatGPT / Technical Lead, for a full independent re-gating of Draft PR #1036 after R4. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
+**Next actor:** ChatGPT / Technical Lead, for a full independent re-gating of Draft PR #1036 after R5. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
 
 ## Session
 
@@ -42,8 +42,13 @@
 | R4 correction | `41b2ff903be2687f561a6bf191d3da991753fd96` |
 | R4 correction tree | `ebbfdc729e92d9b048e9a2228857bc2ccc7a7bda` |
 | Ahead / behind at the R4 correction | 18 / 0 |
+| R5 reviewed head | `790e41cad2f60995a967a456e8dbf86fa803656c` |
+| R5 reviewed tree | `56cc4735da0c450195532f234f00fd2c0fe3daf4` |
+| R5 correction | `62d01072e9c22eb4d5311c17c9117fcf182aca8a` |
+| R5 correction tree | `484225ce04596539c5a4cd414baab535e5e98536` |
+| Ahead / behind at the R5 correction | 20 / 0 |
 
-This file is updated by the documentation commit on top of the R4 correction, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
+This file is updated by the documentation commit on top of the R5 correction, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
 
 Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@8.21.0` under `@supabase/realtime-js` and `source-map-js@1.2.2` under `postcss`. `package.json` and `package-lock.json` are byte-identical to accepted main. That install is distinct from historical S evidence and from native CI.
 
@@ -57,11 +62,13 @@ Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@
 - `273791e37ca02f3705910d2d4f3df3ea0b1d0a0c` — R3: stack the trip text above the actions
 - `8d1a59e40f78afb8d74edc25a7c6b24323dd9275` — R3 handoff
 - `41b2ff903be2687f561a6bf191d3da991753fd96` — R4: px insets so narrow enlarged words stay whole
-- this documentation commit — R4 in PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
+- `790e41cad2f60995a967a456e8dbf86fa803656c` — R4 handoff
+- `62d01072e9c22eb4d5311c17c9117fcf182aca8a` — R5: emergency wrapping for a 120-character token
+- this documentation commit — R5 in PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
 
 ## Owned diff against accepted main
 
-`app/account/settings/page.tsx`, `app/account/welt/page.tsx`, `components/account/AccountUebersicht.tsx`, `components/account/AccountUebersichtLive.tsx`, `components/account/AccountWeltKarte.tsx`, `components/account/account-home-export-1/KontoDatenexportAktion.tsx`, `components/account/account-home-export-1/ReiseFensterHinweis.tsx`, `components/account/account-home-export-1/ReiseFensterRahmen.tsx`, `components/account/account-home-export-1/useGeraetekalendertag.ts`, `components/account/world-explorer-1/WorldExplorer.tsx`, `lib/account/account-home-export-1/export-antwort.ts`, `lib/account/account-home-export-1/export-antwort.test.ts`, `lib/account/account-home-export-1/fenster.ts`, `lib/account/account-home-export-1/fenster.test.ts`, `lib/account/account-home-export-1/kalender.ts`, `lib/account/account-home-export-1/kalender.test.ts`, `lib/account/datenexport.ts`, `lib/account/datenexport.test.ts`, `lib/account/naechste-reise.test.ts`, `scripts/account-home-export-completion-1/audit.mjs`, `scripts/account-home-export-completion-1/harness.tsx`, `scripts/account-home-export-completion-1/server-only-stub.js`, the five owned docs, TASK V1, and `docs/evidence/account-home-export-completion-1/`.
+`app/account/settings/page.tsx`, `app/account/welt/page.tsx`, `components/account/AccountUebersicht.tsx`, `components/account/AccountUebersichtLive.tsx`, `components/account/AccountWeltKarte.tsx`, `components/account/account-home-export-1/KontoDatenexportAktion.tsx`, `components/account/account-home-export-1/ReiseFensterHinweis.tsx`, `components/account/account-home-export-1/ReiseFensterRahmen.tsx`, `components/account/account-home-export-1/useGeraetekalendertag.ts`, `components/account/world-explorer-1/WorldExplorer.tsx`, `lib/account/account-home-export-1/export-antwort.ts`, `lib/account/account-home-export-1/export-antwort.test.ts`, `lib/account/account-home-export-1/fenster.ts`, `lib/account/account-home-export-1/fenster.test.ts`, `lib/account/account-home-export-1/kalender.ts`, `lib/account/account-home-export-1/kalender.test.ts`, `lib/account/account-home-export-1/titel-token.test.ts`, `lib/account/datenexport.ts`, `lib/account/datenexport.test.ts`, `lib/account/naechste-reise.test.ts`, `scripts/account-home-export-completion-1/audit.mjs`, `scripts/account-home-export-completion-1/harness.tsx`, `scripts/account-home-export-completion-1/server-only-stub.js`, the five owned docs, TASK V1, and `docs/evidence/account-home-export-completion-1/`.
 
 Not changed by this lane: `lib/trips/daten.ts`, trip writers, `KontoLoeschen.tsx`, `app/api/account/export/route.ts`, Auth, privacy, migrations, packages, workflows, global CSS, `AGENTS.md`, operating mode, Root continuity docs. S, T, A and U files arrived only through the accepted-main merge and were not edited afterward.
 
@@ -105,6 +112,12 @@ R3 gates on this session: production build pass; focused account tests 35 pass; 
 At 320px and a 32px root, rem padding still broke ordinary words. The card and the actions now use px insets below `sm`, and the audit requires whole words on the title and on both actions. This environment renders Noto Sans Bold, not DejaVu. At 320/32 the title is 13 lines and clientWidth 286. The 13-word fixture may use up to 13 lines. The failed 8d1 shot is `home-320-titel-116-200-prozent-before-r4.png`. Accepted main was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` and was not merged again.
 
 R4 gates on this session: production build pass; focused account tests 35 pass; mounted audit pass, including the export section; lint 0 errors and 175 warnings; five hygiene checks pass. `npm test`: 7308 pass, 5 skipped, 11 fail, same missing local PostgreSQL 16. No hosted SQL.
+
+## R5
+
+`break-words` is back on the title and origin. A valid 120-character token with no spaces wraps inside the card at 320px, at 16px and 32px. The 13-word Lissabon checks are unchanged and are not applied to that token. This environment still renders Noto Sans Bold. The overflow shots from the 790 rule are `home-320-titel-120-before-r5.png` and `home-320-titel-120-32-before-r5.png`. Accepted main was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` and was not merged again.
+
+R5 gates on this session: production build pass; focused account tests 36 pass; mounted audit pass, including calendar, window and export; lint 0 errors and 175 warnings; five hygiene checks pass. `npm test`: 7309 pass, 5 skipped, 11 fail, same missing local PostgreSQL 16. No hosted SQL.
 
 ## Gate
 

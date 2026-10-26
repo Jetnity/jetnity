@@ -102,6 +102,16 @@ The failed 8d1 screenshot is `home-320-titel-116-200-prozent-before-r4.png` (320
 
 A separate local measurement set `font-family` to DejaVu Sans on the mounted card only. It is not the product font and not this audit’s rendered font. DejaVu Sans Bold draws “Lissabon” at 226.56px and “fortsetzen” at 162.88px. The same card’s title box is 286px and the action label box is 222px, so those two words fit there as well.
 
+## R5
+
+Reviewed head `790e41cad2f60995a967a456e8dbf86fa803656c`, tree `56cc4735da0c450195532f234f00fd2c0fe3daf4`. The eight 116-character cases pass. `break-normal` on the title and origin then let a valid unbroken 120-character token leave the card. `neueReiseSchema` and `reiseSchema` accept `'W'.repeat(120)` and `'Z'.repeat(120)` and reject 121. That is a different contract from the 13-word Lissabon fixture and from the 215-character stress title.
+
+The title and origin use `break-words` again. The R4 insets, stack, font sizes, labels and destinations stay. Fixed labels stay `break-normal`. Nothing is clipped. Accepted main was re-read and was still `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. It was not merged again.
+
+Correction `62d01072e9c22eb4d5311c17c9117fcf182aca8a`, tree `484225ce04596539c5a4cd414baab535e5e98536`, parent `790e41cad2f60995a967a456e8dbf86fa803656c`. At that commit the branch is 20 ahead and 0 behind accepted main. The documentation commit on top is the delivery head named in the PR author block.
+
+Before the change, this environment’s Noto Sans Bold drew the 120-character title past the 286px box: at 16px the text rectangle was 2698.56px and the document scrollWidth was 2716; at 32px those were 5397.14px and 5414. Those shots are `home-320-titel-120-before-r5.png` and `home-320-titel-120-32-before-r5.png`. Root’s DejaVu measurements on 790 were larger and are not claimed as this font. After the change the same token at 320px is 10 title lines and 5 origin lines at 16px, and 20 and 9 at 32px. The rectangles stay in the card, the page does not scroll sideways, and the 13-line Lissabon bound is not applied. Enter on that card requests local `/reisen/r0` and `/reisen` once each, and the 116-character keyboard checks still do. Rebuilt CSS is 101,303 characters. This session still renders `Noto Sans (Fontations)/NotoSans-Bold/custom:false`. The 116-character line counts are unchanged: 7, 13, 5, 13, 3, 7, 3, 7. Export counts stay 21 requests, 3 downloads, 3 revokes, 0 page errors.
+
 ## Stop
 
 Independent re-gating of the pushed head. Cursor does not mark Ready and does not merge. No follow-up slice. CI and Preview for this head are pending.

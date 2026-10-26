@@ -66,6 +66,12 @@ P2 from the R3 layout: at 320px and a 32px root, ordinary words still broke. “
 
 P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this new head are pending. Line counts differ by the rendered system font; that is recorded, not treated as missing text. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
 
+## R5
+
+P2 from the R4 layout: `break-normal` on the user-controlled title and origin removed emergency wrapping. A valid 120-character token with no spaces overflowed the card. Corrected by restoring `break-words` on those two fields only. The 13-word Lissabon checks stay, and they are not applied to this token. The overflow screenshots from this environment are kept. No parser change, no global CSS, no font override. Accepted main did not move and was not merged again.
+
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this new head are pending. Line counts differ by the rendered system font. `weltMusterId` remains an unused import from the baseline. P0 and P1: none found in this correction.
+
 ## Recommendation
 
 Stop for Root’s full independent re-gating of the new head. Do not Ready. Do not merge. Do not start a follow-up slice.
