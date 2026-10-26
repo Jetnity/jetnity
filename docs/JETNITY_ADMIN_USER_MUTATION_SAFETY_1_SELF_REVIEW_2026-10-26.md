@@ -27,3 +27,7 @@ The confirmation sits in the row. Mounted overflow checks at 320, 390, 768 and 1
 ## Preserved
 
 Self and equal-rank blocks, assignable roles, ban/unban only, directory debounce, and the page guard/query/column contract. No automatic resend.
+
+## Integration
+
+This note is not a Technical-Lead PASS. The history-preserving merge of `813c0ca774e3bf45ef2a7d7b8404556028389ca2` had no conflicts and did not change the lockfile, TASK V1, server actions, Auth, capabilities, query, navigation, migrations, workflows or global CSS. Owned checks on the integrated tree are in the REPORT. The `css-320` failure observed on `0a6fccee` is still the historical result. A later local directory run on the integrated tree passed that case and is recorded as that run only. The UUID character-class qualification remains P3. CI and Preview are pending.

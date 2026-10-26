@@ -37,6 +37,14 @@ Mounted mutation harness: 27/27 ok. R107 directory harness: 44/44 ok. `npx tsc -
 
 `npm test`: 7270 tests, 7254 pass, 11 fail, 5 skip. The 11 failures are `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT` in unrelated native PostgreSQL proofs. No user-mutation test failed.
 
+## Integration — 26 October 2026
+
+Accepted main `813c0ca774e3bf45ef2a7d7b8404556028389ca2` merged into `4b7d6616218b7f613dc91d061f87595d03424a6f` as `54b540c0e9860f77d02cfd09512c5a514d5aa6df`. Parents are those two commits. Merge tree `7eb8dc14a5314db025baa5f055e2e0c15b927d1c`. `package.json` and `package-lock.json` match that main. `npm ci` installed `ws` 8.21.0 and `source-map-js` 1.2.2.
+
+On that integrated tree, before this documentation commit: focused tests 21/21. Mounted mutation harness 31/31. Directory script 44/44, including `css-320` on this local run. The independent `0a6fccee` result remains 28 passes, one `css-320` failure, and 15 cases not run there. The later 15 on `4b7d6616` do not turn those mixed runs into 44 passes of one head. Directory evidence files rewritten by the script were restored.
+
+`tsc` exit 0. Owned ESLint exit 0. Hygiene checks exit 0. `npm run build` exit 0. `npm test` 7312 tests, 7296 pass, 11 fail, 5 skip. Failures are local PostgreSQL proofs: missing `initdb`, `local_proof_connection_override_forbidden` while `SUPABASE_PROJECT_REF` is set, or an explicit local-binary `NOT_VERIFIED`. No database was provisioned.
+
 ## Limits
 
-No hosted SQL, no signed-in admin, no persistence proof. Full unmount drops the in-memory operation. There is no cross-tab channel. A refresh count is not a saved row. This branch was not rebased onto main `68435f012f27f599a1092699f5635aa88312ea67`.
+No hosted SQL, no signed-in admin, no persistence proof, no screen-reader run, no physical device. Full unmount drops the in-memory operation. There is no cross-tab channel. A refresh count is not a saved row. CI and Preview for the delivery head are pending. This integration is not a Technical-Lead PASS.

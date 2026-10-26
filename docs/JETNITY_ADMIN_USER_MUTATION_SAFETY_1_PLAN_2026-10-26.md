@@ -40,3 +40,7 @@ The confirmation stays in the row and the search field and a second target stay 
 ## R1.2 residual
 
 An ambiguous note is revisited by a later read. A later accepted row replaces the sentence: Creator after an absence is the latest accepted role, and Moderation replaces a stale Nutzer sentence. A later failed or invalid read does not keep that sentence in the present tense and does not invent a role or an absence. The same operation stays owned and is not sent again.
+
+## Controlled integration — 26 October 2026
+
+Same writer and session. Mode re-read `NORMAL`. Accepted main `813c0ca774e3bf45ef2a7d7b8404556028389ca2` matched the pinned tree `ac655160fb063b44f103f37827361c17c1931e4f`, so the integration proceeded. One ordinary merge into `4b7d6616218b7f613dc91d061f87595d03424a6f`. Merge `54b540c0e9860f77d02cfd09512c5a514d5aa6df`. No conflicts and no lockfile edit. S, T and A are input from that main, not new ownership. TASK V1 stays immutable. The UUID character-class qualification and the frozen server-action gap stay recorded. The directory script was not edited again. The known `css-320` baseline failure on `0a6fccee` remains historical evidence.
