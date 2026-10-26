@@ -37,9 +37,13 @@
   ],
   "nextCompiledWs": {
     "path": "node_modules/next/dist/compiled/ws/package.json",
-    "versionField": null,
-    "closeImplementationMatchesInstalledWs8210Uint8ArrayGuard": false,
-    "disposition": "Vendored inside frozen Next 16.4.1. Not an npm lock entry. Not modified."
+    "version": "UNKNOWN",
+    "advisoryDisposition": "UNKNOWN",
+    "indexBytes": 45840,
+    "indexSha256": "af354cb13a11abe910cdbcb70943cb450b01b24f322026ae3f88d428d148395d",
+    "representedInLockMap": false,
+    "representedInNpmLs": false,
+    "detail": "docs/evidence/dependency-patch-remediation-1/bundled-ws-residual.json"
   },
   "typesWs": "node_modules/@types/ws@8.18.1 is the TypeScript types package, not the ws runtime."
 }

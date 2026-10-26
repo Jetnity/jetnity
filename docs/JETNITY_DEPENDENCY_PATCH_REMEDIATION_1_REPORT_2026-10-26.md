@@ -31,9 +31,22 @@ Compared with seed `9dfbb9bcebbbc162564d96ef1f8c661471ade547`: 0 packages added,
 - `@supabase/supabase-js@2.57.2` → `@supabase/realtime-js@2.15.5` → `ws@8.21.0`
 - `postcss@8.5.23` → `source-map-js@1.2.2`
 
-Installed `package.json` versions match. There is no second npm copy of either target. `@types/ws@8.18.1` remains the TypeScript types package.
+Installed `package.json` versions match. Those two npm resolutions are the patched lockfile instances. `@types/ws@8.18.1` remains the TypeScript types package. Its package name is `@types/ws`, not `ws`.
 
-`node_modules/next/dist/compiled/ws` is an unversioned bundle inside Next `16.4.1`. Its close path does not contain the `isUint8Array` guard present in installed `ws@8.21.0` `lib/sender.js`. It is not an npm lock entry and was not edited. Reachability through Jetnity application code was not established. `next/dist/compiled/source-map` is the separate `source-map` package, not `source-map-js`.
+## Bundled residual, separate from the lockfile patch
+
+A recursive read of installed manifests whose `name` is `ws` or `source-map-js` also finds `node_modules/next/dist/compiled/ws/package.json`. That manifest names `ws` and has no `version` field. `index.js` is 45,840 bytes, SHA-256 `af354cb13a11abe910cdbcb70943cb450b01b24f322026ae3f88d428d148395d`. It does not appear in the lock map or in `npm ls`. Its published version is **UNKNOWN**. Its advisory disposition is **UNKNOWN**. The npm result for `ws@8.21.0` does not clear this bundle.
+
+Source read in Next `16.4.1`, without a framework upgrade:
+
+- `next/dist/server/node-environment-baseline.js` defines `globalThis.WebSocket` only when it is not already a function. The getter returns `require('next/dist/compiled/ws').WebSocket`. The production file `next/dist/compiled/next-server/server.runtime.prod.js` contains that same guard and was not executed.
+- The dev hot-reloader modules `next/dist/server/dev/hot-reloader-webpack.js` and `hot-reloader-turbopack.js` require `next/dist/compiled/ws` at load. Those modules were not loaded in this check.
+
+Local runtime on Node v22.23.4, in child processes, with no frames sent: while native `WebSocket` was already a function, requiring the baseline left that same function in place and did not put `compiled/ws` in `require.cache`. In a second process, after `globalThis.WebSocket` was deleted, reading the getter loaded `/workspace/node_modules/next/dist/compiled/ws/index.js`. That is local guard evidence. Deployed reachability stays **UNKNOWN**. It is not a Production execution.
+
+`next/dist/compiled/source-map` is package name `source-map`, not `source-map-js`. The only installed manifest named `source-map-js` is `1.2.2`.
+
+Detail: `docs/evidence/dependency-patch-remediation-1/bundled-ws-residual.json`.
 
 ## Commands
 
@@ -64,4 +77,4 @@ No application, test, script, workflow, Auth, DB, provider, secret, or environme
 
 ## Limits
 
-A later unlocked `npm update` could select `ws@8.22.0` because the parent range allows it. This commit pins `8.21.0` for `npm ci`. Newer `8.21.x` and `8.22.0` releases exist; OSV listed nothing for `8.21.0`, and they were not reviewed as extra fixes. The Next vendored copy remains. Zod remains.
+A later unlocked `npm update` could select `ws@8.22.0` because the parent range allows it. This lockfile pins `8.21.0` for `npm ci`. Newer `8.21.x` and `8.22.0` releases exist; OSV listed nothing for `8.21.0`, and they were not reviewed as extra fixes. The Next-vendored `ws` bundle remains, with version and advisory disposition UNKNOWN. Zod remains. No global advisory closure is claimed.

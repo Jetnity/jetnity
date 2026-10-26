@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-26  
 **Writer:** Jetnity Dependency Patch Remediation 1 — Cursor Generation 1  
-**Reviewed tree:** implementation head `c04dce53930092588f237644d7f20223bec71e2e`, plus the documentation commit that records this review.  
+**Reviewed tree:** lockfile head `c04dce53930092588f237644d7f20223bec71e2e`, docs head `e7ea95158993c181dd34bee0b64e4b6553199f11`, plus this evidence correction. The correction does not change the lockfile.  
 **This is not an independent Technical-Lead PASS.**
 
 ## Checks against the task
@@ -22,11 +22,12 @@
 - The 7238 passing tests do not exercise the ws close path or source-map-js parsing. They show the existing suite still runs on this graph, apart from the 11 PostgreSQL-environment failures.
 - OSV returning an empty list for the patched versions is not a statement that Jetnity is free of every advisory.
 - Production build success is not Production deployment acceptance.
-- The Next compiled `ws` bundle was identified by source shape, not by a published version field, and was not proven reachable or unreachable.
+- An earlier note compared the bundled file with `ws@8.21.0` `lib/sender.js`. That comparison is withdrawn as a version identification. The bundle has no version field. Version and advisory disposition stay UNKNOWN.
+- The local baseline check shows when this Node loads `compiled/ws`. It does not show deployed reachability.
 
 ## Residual the author is not fixing in this lane
 
-Next `16.4.1` vendors `dist/compiled/ws` without a version. That close implementation lacks the `isUint8Array` guard in installed `ws@8.21.0`. Changing it would mean changing Next or patching `node_modules`, both outside this task. Technical Lead can decide whether a later Next-bounded slice should inspect it.
+Next `16.4.1` vendors `dist/compiled/ws`. The manifest has no version. Changing it would mean changing Next or patching `node_modules`, both outside this task. The qualified evidence is `docs/evidence/dependency-patch-remediation-1/bundled-ws-residual.json`.
 
 Registry `ws@8.22.0` is newer than the assigned pin. Taking it would violate the exact target.
 

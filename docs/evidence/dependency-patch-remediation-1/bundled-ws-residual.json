@@ -1,0 +1,102 @@
+{
+  "purpose": "Separate the patched npm lock resolutions from the Next-vendored ws bundle. The bundle version is UNKNOWN. This file does not clear any advisory.",
+  "observedAt": "2026-10-26",
+  "session": "https://cursor.com/agents/bc-6579ee4a-5874-4701-b1b0-fd8382cde28d",
+  "node": "v22.23.4",
+  "installedFromLockBlob": "abffddeeea0cc1f5507280f82ebf71fd56052fa8",
+  "nextPackageVersion": "16.4.1",
+  "npmLockResolutions": {
+    "ws": {
+      "version": "8.21.0",
+      "path": "node_modules/ws/package.json",
+      "npmLs": "@supabase/supabase-js@2.57.2 -> @supabase/realtime-js@2.15.5 -> ws@8.21.0"
+    },
+    "source-map-js": {
+      "version": "1.2.2",
+      "path": "node_modules/source-map-js/package.json",
+      "npmLs": "postcss@8.5.23 -> source-map-js@1.2.2"
+    }
+  },
+  "manifestsWhosePackageNameIsWsOrSourceMapJs": [
+    {
+      "path": "node_modules/source-map-js/package.json",
+      "name": "source-map-js",
+      "version": "1.2.2",
+      "class": "npm lock resolution"
+    },
+    {
+      "path": "node_modules/ws/package.json",
+      "name": "ws",
+      "version": "8.21.0",
+      "class": "npm lock resolution"
+    },
+    {
+      "path": "node_modules/next/dist/compiled/ws/package.json",
+      "name": "ws",
+      "version": null,
+      "class": "framework bundle, not an npm lock entry and not present in npm ls"
+    }
+  ],
+  "bundledWs": {
+    "packageJsonPath": "node_modules/next/dist/compiled/ws/package.json",
+    "packageJsonText": "{\"name\":\"ws\",\"main\":\"index.js\",\"author\":\"Einar Otto Stangvik <einaros@gmail.com> (http://2x.io)\",\"license\":\"MIT\"}",
+    "version": "UNKNOWN",
+    "versionReason": "The manifest has no version field. No published ws version was assigned from source shape.",
+    "advisoryDisposition": "UNKNOWN",
+    "indexPath": "node_modules/next/dist/compiled/ws/index.js",
+    "indexBytes": 45840,
+    "indexSha256": "af354cb13a11abe910cdbcb70943cb450b01b24f322026ae3f88d428d148395d",
+    "representedInLockMap": false,
+    "representedInNpmLs": false,
+    "modified": false
+  },
+  "sourceLoadSitesRead": [
+    {
+      "path": "node_modules/next/dist/server/node-environment-baseline.js",
+      "lines": "9-22",
+      "behavior": "Defines globalThis.WebSocket only when it is not already a function. The getter returns require('next/dist/compiled/ws').WebSocket."
+    },
+    {
+      "path": "node_modules/next/dist/esm/server/node-environment-baseline.js",
+      "behavior": "Same getter as the CJS baseline."
+    },
+    {
+      "path": "node_modules/next/dist/compiled/next-server/server.runtime.prod.js",
+      "behavior": "Inlined copy of the same guard: the compiled/ws require runs only when typeof globalThis.WebSocket is not function. A webpack external also maps the specifier next/dist/compiled/ws to require('next/dist/compiled/ws'). This file was read, not executed."
+    },
+    {
+      "path": "node_modules/next/dist/server/dev/hot-reloader-webpack.js",
+      "line": 47,
+      "behavior": "Top-level require('next/dist/compiled/ws'). Module was not loaded in this check."
+    },
+    {
+      "path": "node_modules/next/dist/server/dev/hot-reloader-turbopack.js",
+      "line": 16,
+      "behavior": "Top-level require('next/dist/compiled/ws'). Module was not loaded in this check."
+    }
+  ],
+  "localRuntime": {
+    "kind": "local child processes on Node v22.23.4. Not a Production server, not a hosted test, and not an exploit or stress probe. No WebSocket frames were sent.",
+    "nativeWebSocketPresent": {
+      "beforeType": "function",
+      "beforeName": "WebSocket",
+      "afterRequiringBaselineSameFunction": true,
+      "compiledWsCacheEntries": []
+    },
+    "nativeWebSocketRemovedBeforeBaseline": {
+      "beforeType": "undefined",
+      "afterAccessType": "function",
+      "afterAccessName": "WebSocket",
+      "compiledWsCacheEntries": [
+        "/workspace/node_modules/next/dist/compiled/ws/index.js"
+      ]
+    },
+    "reading": "On this Node, the baseline getter does not load the bundle while native WebSocket remains. Removing native WebSocket and then reading the getter does load the bundle. Deployed reachability remains UNKNOWN."
+  },
+  "notTheSamePackage": {
+    "path": "node_modules/next/dist/compiled/source-map/package.json",
+    "name": "source-map",
+    "note": "This is not source-map-js. The only installed manifest named source-map-js is version 1.2.2."
+  },
+  "typesPackage": "@types/ws@8.18.1 is a TypeScript types package. Its name is not ws."
+}
