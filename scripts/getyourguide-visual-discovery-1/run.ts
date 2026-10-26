@@ -115,6 +115,42 @@ function cssBauen(): string {
   return readFileSync(ziel, 'utf8')
 }
 
+async function gygSchrift(page: Page): Promise<string[]> {
+  return page.evaluate(`(() => {
+    const fehler = []
+    for (const flaeche of document.querySelectorAll('[aria-label="GetYourGuide"]')) {
+      const ziele = [...flaeche.querySelectorAll('h3, button')]
+      for (const el of ziele) {
+        const rahmen = el.getBoundingClientRect()
+        if (rahmen.width <= 0 || rahmen.height <= 0) continue
+        const stil = getComputedStyle(el)
+        const links = rahmen.left + parseFloat(stil.paddingLeft)
+        const rechts = rahmen.right - parseFloat(stil.paddingRight)
+        const bereich = document.createRange()
+        bereich.selectNodeContents(el)
+        const text = bereich.getBoundingClientRect()
+        const name = (el.textContent || '').trim().slice(0, 48)
+        if (text.width > 0 && (text.left < links - 1 || text.right > rechts + 1)) {
+          fehler.push(el.tagName + ' ragt aus dem eigenen Feld «' + name + '»')
+        }
+        let knoten = el.parentElement
+        while (knoten && knoten !== document.body) {
+          const lauf = getComputedStyle(knoten).overflowX
+          if (lauf === 'hidden' || lauf === 'clip' || lauf === 'auto' || lauf === 'scroll') {
+            const box = knoten.getBoundingClientRect()
+            if (text.width > 0 && (text.left < box.left - 1 || text.right > box.right + 1)) {
+              fehler.push(el.tagName + ' wird vom Vorfahren beschnitten «' + name + '»')
+              break
+            }
+          }
+          knoten = knoten.parentElement
+        }
+      }
+    }
+    return fehler.slice(0, 8)
+  })()`)
+}
+
 async function ueberlauf(page: Page): Promise<string[]> {
   return page.evaluate(`(() => {
     const wurzel = document.documentElement
@@ -272,7 +308,9 @@ async function haupt() {
   for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
     const ueber = await ueberlauf(page)
+    const schrift = await gygSchrift(page)
     pruefe(ueber.length === 0, `Überlauf ${viewport.name}: ${ueber.join(' | ')}`)
+    pruefe(schrift.length === 0, `GetYourGuide-Text ${viewport.name}: ${schrift.join(' | ')}`)
     await schiessen(page, `anwendung-${viewport.name}`)
   }
 
@@ -300,7 +338,9 @@ async function haupt() {
   ]) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
     const ueber = await ueberlauf(page)
+    const schrift = await gygSchrift(page)
     pruefe(ueber.length === 0, `Überlauf ${viewport.name}: ${ueber.join(' | ')}`)
+    pruefe(schrift.length === 0, `GetYourGuide-Text ${viewport.name}: ${schrift.join(' | ')}`)
     const hoehe = await page.locator('[data-szenario="tage"] button', { hasText: 'Was fehlt hier?' }).evaluate((el) => el.getBoundingClientRect().height)
     pruefe(hoehe >= 44, `Hinweisfläche ${viewport.name} ist ${hoehe}px`)
     await schiessen(page, `anwendung-${viewport.name}`)
@@ -369,7 +409,9 @@ async function haupt() {
   await page.setViewportSize({ width: 320, height: 720 })
   await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
   const langUeber = await ueberlauf(page)
+  const langSchrift = await gygSchrift(page)
   pruefe(langUeber.length === 0, `Überlauf langer Name: ${langUeber.join(' | ')}`)
+  pruefe(langSchrift.length === 0, `GetYourGuide-Text langer Name: ${langSchrift.join(' | ')}`)
   await schiessen(page, 'pruefung-lang-320-200')
   await page.addStyleTag({ content: 'html { font-size: 16px !important; }' })
   await page.setViewportSize({ width: 390, height: 844 })
@@ -618,7 +660,9 @@ async function gegenprobe(page: Page, basis: string) {
 
   await page.setViewportSize({ width: 320, height: 720 })
   const schmal = await ueberlauf(page)
+  const schmalSchrift = await gygSchrift(page)
   pruefe(schmal.length === 0, `Überlauf Gegenprobe 320: ${schmal.join(' | ')}`)
+  pruefe(schmalSchrift.length === 0, `GetYourGuide-Text Gegenprobe 320: ${schmalSchrift.join(' | ')}`)
   await schiessen(page, 'gegenprobe-320')
   await page.setViewportSize({ width: 390, height: 844 })
   await schiessen(page, 'gegenprobe-390')
@@ -627,7 +671,9 @@ async function gegenprobe(page: Page, basis: string) {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
   const gross = await ueberlauf(page)
+  const grossSchrift = await gygSchrift(page)
   pruefe(gross.length === 0, `Überlauf Gegenprobe 200%: ${gross.join(' | ')}`)
+  pruefe(grossSchrift.length === 0, `GetYourGuide-Text Gegenprobe 200%: ${grossSchrift.join(' | ')}`)
   await schiessen(page, 'gegenprobe-390-200')
   await page.addStyleTag({ content: 'html { font-size: 16px !important; }' })
 
