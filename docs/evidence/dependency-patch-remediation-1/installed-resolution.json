@@ -1,0 +1,49 @@
+{
+  "node": "v22.23.4",
+  "npm": "10.9.7",
+  "install": "npm ci (lifecycle scripts enabled, matching CI) after an earlier npm ci --ignore-scripts. Both added 532 packages.",
+  "lockfileRewrittenByInstall": false,
+  "testedHead": "c04dce53930092588f237644d7f20223bec71e2e",
+  "packageLockBlobAtTestedHead": "abffddeeea0cc1f5507280f82ebf71fd56052fa8",
+  "npmTree": {
+    "@supabase/supabase-js@2.57.2": "@supabase/realtime-js@2.15.5 -> ws@8.21.0",
+    "postcss@8.5.23": "source-map-js@1.2.2",
+    "problems": null
+  },
+  "installedPackageJson": {
+    "ws": "8.21.0",
+    "source-map-js": "1.2.2",
+    "zod": "3.25.76",
+    "next": "16.4.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "runtimePackageCopies": [
+    {
+      "path": "node_modules/source-map-js/package.json",
+      "name": "source-map-js",
+      "version": "1.2.2"
+    },
+    {
+      "path": "node_modules/next/dist/compiled/ws/package.json",
+      "name": "ws",
+      "version": null
+    },
+    {
+      "path": "node_modules/ws/package.json",
+      "name": "ws",
+      "version": "8.21.0"
+    }
+  ],
+  "nextCompiledWs": {
+    "path": "node_modules/next/dist/compiled/ws/package.json",
+    "version": "UNKNOWN",
+    "advisoryDisposition": "UNKNOWN",
+    "indexBytes": 45840,
+    "indexSha256": "af354cb13a11abe910cdbcb70943cb450b01b24f322026ae3f88d428d148395d",
+    "representedInLockMap": false,
+    "representedInNpmLs": false,
+    "detail": "docs/evidence/dependency-patch-remediation-1/bundled-ws-residual.json"
+  },
+  "typesWs": "node_modules/@types/ws@8.18.1 is the TypeScript types package, not the ws runtime."
+}
