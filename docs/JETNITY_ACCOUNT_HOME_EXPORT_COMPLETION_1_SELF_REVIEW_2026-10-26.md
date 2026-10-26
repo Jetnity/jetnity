@@ -14,8 +14,8 @@ This is the author's review. It is not a Technical-Lead PASS.
 
 - The world harness does not mount `AccountBesuche`. The visit form bundle imports server Next code. The atlas wording is proven on `AccountWeltKarte` inside the same context the world page provides.
 - 200% text is a 32px root font size, not OS zoom, and there is no real-device pass.
-- Eleven `npm test` failures are missing local PostgreSQL 16 binaries in this VM. They are outside this diff. They were not replaced with hosted SQL.
-- Preview and CI for the implementation head did not exist at authoring time. The existing Vercel preview on #1036 is the seed.
+- Eleven `npm test` failures on the integrated tree are missing local PostgreSQL 16 binaries in this VM (`ENOENT` on `initdb`, `local_proof_connection_override_forbidden`, or `NOT_VERIFIED`). Counts: 7308 pass, 5 skipped, 11 fail, of 7324. They were not replaced with hosted SQL.
+- Preview and CI for the integrated head were not read back at authoring time. They stay pending. The older Vercel preview on #1036 is not this head.
 
 **P3.**
 
@@ -44,9 +44,9 @@ This is the author's review. It is not a Technical-Lead PASS.
 
 The first delivery edited `WorldExplorer.tsx` before asking. That was outside the original allowlist. Root reviewed that coverage change and granted only coverage, empty-state and recovery presentation there. R1.1 uses that grant. No marker, search or geography work was added.
 
-R1.1 through R1.3 are addressed on top of `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. Main at `68435f012f27f599a1092699f5635aa88312ea67` was not merged.
+R1.1 through R1.3 were addressed on `c020b7cb81616d469d8021cb33395afe653ef659` and are now inside merge `db09b714d4fe57459e37b672fef603853b66d0d4` of accepted main `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84`. The mounted audit was run again on that integrated source and CSS.
 
-P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, and the 11 PostgreSQL failures are the missing local `initdb`. P0 and P1: none found in this correction.
+P2 that remain: no real device, 200% text is a 32px root font, the world harness still mounts `AccountWeltKarte` inside the frame rather than `AccountBesuche`, the 11 PostgreSQL failures are the missing local `initdb`, and CI/Preview of this head are pending. `weltMusterId` is still an unused import in `AccountWeltKarte.tsx`; it was already unused on baseline `6ae344f4453b16514f9048083bb8b07396135fa2` and was not removed here. P0 and P1: none found in this integration.
 
 ## Recommendation
 

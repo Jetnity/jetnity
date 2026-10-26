@@ -2,6 +2,12 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
+## Integration
+
+Accepted U main `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` (tree `a1a3e145b6870fa5e1d4c2f00bb04f9d5c240d8a`) was merged with a normal merge commit `db09b714d4fe57459e37b672fef603853b66d0d4`. Parents are the reviewed R1 head `c020b7cb81616d469d8021cb33395afe653ef659` and that main. The merge had no conflicts. S, T, A and U stayed as accepted input. `package.json` and `package-lock.json` were not edited after the merge. `npm ci` resolved `ws@8.21.0` and `source-map-js@1.2.2`.
+
+Proof commit `d5b7bf3392bca6ed4d9d675d3d1b053c87d466bd` (tree `e50bd37d337968788c0eb64c4b2911af463f8eb8`) is 11 ahead and 0 behind that main. Its parent is the merge. The mounted audit on the integrated CSS refuses a blank id and a duplicate id inside one table, and the valid download contains one row in each of the 13 tables.
+
 TASK V1 was not edited. Seed `8a9e5479337090079839629715f9a3f1a03116f9` remains the parent of the implementation commits:
 
 1. `2d57b165733fa0f3d87d2ebea56c68c3b239d581` — loaded window and local calendar
@@ -47,19 +53,19 @@ Supabase JS docs for `order` and `range`, read 26 October 2026, say range follow
 
 `node scripts/account-home-export-completion-1/audit.mjs` bundles the real components with esbuild and opens them in headless Chromium. The page origin is `http://127.0.0.1:8765/konto`. Every other http(s) request is aborted. Fixtures are synthetic.
 
-Passed with production CSS inlined from `.next/static/chunks/2ou75wl-hqib8.css` (99,516 bytes; the harness records 99,531 characters inside the style tag):
+The first mounted pass used an earlier stylesheet. The integrated pass inlines the production CSS built on this branch after the accepted-main merge (101,364 characters in the style tag). The fresh protocol is `docs/evidence/account-home-export-completion-1/mounted-proof.json`. It records:
 
 - Mount on 2026-08-23 makes the same-day trip active. A shortened timer across local midnight makes it "continue". Offset +120 at 2026-08-24T00:30Z stays active. Offset −180 at 2026-08-23T22:30Z is already the next local day. Focus after a jump to 27 August and a new offset does not call `/api/`. Unmount leaves no page error.
 - 200, 199, 0, archived-only 200, trip 503, and visit 500 with a September trip.
 - World atlas at 200 rows uses the loaded-window sentence and `/reisen`. A world trip failure offers reload of `/account/welt` and does not say the account total is known.
 - Home at 320, 390, 768 and 1440, then 1440 with root font-size 32px, had no horizontal overflow. One Tab from a blurred document focused "Zur vollständigen Reiseauswahl".
-- Export: Enter on a valid document (1 request, 1 download, revoke), 401, 503, 500, plain text, bad JSON, double activation (still 1 request), cancel then a late 200 (no extra download), an explicit retry (second download), deadline (no download, no auto retry), unmount during the request (no download). Final counts: 10 requests, 2 downloads, 2 revokes, 0 page errors.
+- Export: Enter on a valid document whose file contains one row in all 13 tables (1 request, 1 download, revoke), 401, 503, 500, plain text, bad JSON, `not-a-date`, null, scalar, array, blank id, and a duplicate id inside `trips`. Then pointer focus, keyboard focus, timeout, double activation (still 1 request), keyboard cancel of a late 200, an old body that does not settle the newer request, an explicit retry, a second deadline, and unmount. Final counts: 21 requests, 3 downloads, 3 revokes, 0 page errors.
 
 Screenshots: `home-320.png`, `home-390.png`, `home-768.png`, `home-1440.png`, `home-1440-200-prozent.png`, `welt-320.png`.
 
 ## R1 corrections
 
-Reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`.
+Reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. Those corrections are inside the merged history. The integrated audit re-ran them.
 
 **R1.1.** `world-map.ts` still derives the global empty sentence. Presentation replaces it only when the loaded window is at the 200 cap: the compact map description, the visible empty hint, the planned total, and the atlas empty list. A whole reader result of zero trips may still say the account has no planned places. Successful empty visits stay “Noch keine Besuche bestätigt”. A failed visit stays a failure. A failed trip stays a failure and does not become an empty map.
 

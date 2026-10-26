@@ -2,7 +2,7 @@
 
 **Lane K · 26 October 2026 · Cursor Generation 1**
 
-**Next actor:** ChatGPT / Technical Lead, for an independent exact-head review of Draft PR #1036. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
+**Next actor:** ChatGPT / Technical Lead, for an independent exact-head review of Draft PR #1036 after this integration. Cursor does not PASS, Ready, or merge. Do not start a follow-up slice.
 
 ## Session
 
@@ -10,6 +10,7 @@
 | --- | --- |
 | Logical name | Jetnity Account Home and Export Completion 1 — Cursor Generation 1 |
 | Model | `grok-4.7-high-fast` |
+| Metadata source | Cursor Cloud run-info field `originalModelName` |
 | Session | `bc-596c12d0-a045-48c8-ba62-db7ca4ca3809` |
 | Link | https://cursor.com/agents/bc-596c12d0-a045-48c8-ba62-db7ca4ca3809 |
 | Node | `v22.23.4` |
@@ -17,58 +18,57 @@
 | PR | Draft #1036 · tracking #1033 · parent #1026 |
 | TASK | `docs/JETNITY_ACCOUNT_HOME_EXPORT_COMPLETION_1_TASK_V1_2026-10-26.md`, blob `ca05682f451fb9140af63922afbf9ec2b0cb0e35`, not edited |
 | Seed | `8a9e5479337090079839629715f9a3f1a03116f9` |
-| `origin/main` re-read 26 October 2026 | `6ae344f4453b16514f9048083bb8b07396135fa2` |
-| Merge-base | `6ae344f4453b16514f9048083bb8b07396135fa2` |
-| Implementation tip before this handoff commit | `276c9d20ebf9cd325f2c58cfaaefcf18b3e6cfe5` |
-| Implementation tree | `a33cce1b94ec85e78688d6d8df970239f3b027d6` |
-| Ahead / behind at that tip | 4 / 0 |
+| Mode | `NORMAL` |
+| Accepted main | `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` |
+| Accepted main tree | `a1a3e145b6870fa5e1d4c2f00bb04f9d5c240d8a` |
+| Merge commit | `db09b714d4fe57459e37b672fef603853b66d0d4` |
+| Merge parents | `c020b7cb81616d469d8021cb33395afe653ef659`, `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` |
+| Proof commit | `d5b7bf3392bca6ed4d9d675d3d1b053c87d466bd` |
+| Proof tree | `e50bd37d337968788c0eb64c4b2911af463f8eb8` |
+| Merge-base | `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` |
+| Ahead / behind at the proof commit | 11 / 0 |
 
-This file is added by the following commit, so it cannot name its own SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. If main has moved, that is drift for the Technical Lead. This writer did not rebase or merge.
+This file is updated by the documentation commit on top of the proof commit, so it cannot name that documentation SHA. After push, the author block on #1036 is the exact `HEAD`, tree, ahead and behind. Re-fetch `origin/main` before review. A main move after `7c5b32d309fa52f18bca1b1744421cb5b2cd1c84` was not merged again.
 
-#751 was read before delivery. It still described R109 as active, K as waiting for first evidence, and main as `6ae344f4453b16514f9048083bb8b07396135fa2`. Open sibling drafts at that read: #1028 S, #1030 T, #1034 A, #1035 U. Their branches were not merged into this one.
+Lock provenance, this session: `npm ci` from the integrated lock. Installed `ws@8.21.0` under `@supabase/realtime-js` and `source-map-js@1.2.2` under `postcss`. `package.json` and `package-lock.json` are byte-identical to accepted main. That install is distinct from historical S evidence and from native CI.
 
-## Commits on top of the seed
+## Commits after the reviewed R1 head
 
-- `2d57b165733fa0f3d87d2ebea56c68c3b239d581` — loaded window and local calendar
-- `2b442737e2f0d0374eb653ab744bb837521b9ff7` — export delivery and id pagination
-- `276c9d20ebf9cd325f2c58cfaaefcf18b3e6cfe5` — mounted proof and screenshots
-- this handoff commit — STATUS, REPORT, SELF_REVIEW, HANDOFF
+- `db09b714d4fe57459e37b672fef603853b66d0d4` — merge of accepted U main, no conflicts
+- `d5b7bf3392bca6ed4d9d675d3d1b053c87d466bd` — mounted blank id, duplicate id, and a row in all 13 tables; unused window-hint import removed
+- this documentation commit — PLAN, STATUS, REPORT, SELF_REVIEW, HANDOFF
 
-## Changed files
+## Owned diff against accepted main
 
-Owned product and proof files only, plus the optional `WorldExplorer` heading props disclosed in the self-review. Not changed: `lib/trips/daten.ts`, trip writers, `KontoLoeschen.tsx`, `app/api/account/export/route.ts`, Auth, privacy, migrations, packages, workflows, global CSS, `AGENTS.md`, operating mode.
+`app/account/settings/page.tsx`, `app/account/welt/page.tsx`, `components/account/AccountUebersicht.tsx`, `components/account/AccountUebersichtLive.tsx`, `components/account/AccountWeltKarte.tsx`, `components/account/account-home-export-1/KontoDatenexportAktion.tsx`, `components/account/account-home-export-1/ReiseFensterHinweis.tsx`, `components/account/account-home-export-1/ReiseFensterRahmen.tsx`, `components/account/account-home-export-1/useGeraetekalendertag.ts`, `components/account/world-explorer-1/WorldExplorer.tsx`, `lib/account/account-home-export-1/export-antwort.ts`, `lib/account/account-home-export-1/export-antwort.test.ts`, `lib/account/account-home-export-1/fenster.ts`, `lib/account/account-home-export-1/fenster.test.ts`, `lib/account/account-home-export-1/kalender.ts`, `lib/account/account-home-export-1/kalender.test.ts`, `lib/account/datenexport.ts`, `lib/account/datenexport.test.ts`, `lib/account/naechste-reise.test.ts`, `scripts/account-home-export-completion-1/audit.mjs`, `scripts/account-home-export-completion-1/harness.tsx`, `scripts/account-home-export-completion-1/server-only-stub.js`, the five owned docs, TASK V1, and `docs/evidence/account-home-export-completion-1/`.
+
+Not changed by this lane: `lib/trips/daten.ts`, trip writers, `KontoLoeschen.tsx`, `app/api/account/export/route.ts`, Auth, privacy, migrations, packages, workflows, global CSS, `AGENTS.md`, operating mode, Root continuity docs. S, T, A and U files arrived only through the accepted-main merge and were not edited afterward.
 
 ## Tests and browser provenance
 
-- Typecheck, lint, five hygiene checks, production build: pass. Lint has 180 pre-existing warnings and 0 errors.
-- `npm test`: 7249 pass, 5 skipped, 11 fail. The failures are native PG16 proofs with no local `initdb`. No hosted SQL.
-- Mounted Chromium audit, external network aborted, synthetic fixtures, production CSS inlined: pass. Evidence: `docs/evidence/account-home-export-completion-1/mounted-proof.json` and the PNG files beside it.
-- Playwright Chromium was installed in this VM as a local tool. It is not a product dependency.
+- Typecheck on the proof commit: pass.
+- Lint on the proof commit: 0 errors, 175 warnings. The lane file warning is the pre-existing unused `weltMusterId` import.
+- Five hygiene checks: pass, run on the merge before the proof commit. The proof commit does not add an export or a dependency.
+- Production build: pass. `check:setup` warned that this VM has no `.env` file.
+- `npm test`: 7308 pass, 5 skipped, 11 fail. The failures are native PG16 proofs with no local `initdb`. No hosted SQL.
+- Focused account tests: 35 pass.
+- Mounted Chromium audit, external network aborted, synthetic fixtures, production CSS from `.next/static/chunks/*.css` inlined (101,364 characters): pass. Evidence: `docs/evidence/account-home-export-completion-1/mounted-proof.json` and the PNG files beside it. Final counts: 21 requests, 3 downloads, 3 revokes, 0 page errors.
+- Playwright Chromium is a local tool in this VM. It is not a product dependency.
 
 ## Checked
 
-Account home and world window copy, local midnight and offset, trip versus visit failure, settings export outcomes, pagination integrity for the existing 13 tables, keyboard Enter on export and one Tab on home, widths 320/390/768/1440 and 32px root text on the home overview.
+Account home and world window copy, including stage-less 200, complete empty, and separate trip and visit failures. Local midnight and offset. Settings export outcomes, including newer pointer and keyboard focus, keyboard cancel, timeout, unmount, a late old body, and a valid 13-table file. Blank id and duplicate id inside one table do not download. Widths 320/390/768/1440 and 32px root text on the home overview.
 
 ## Not checked
 
-Real account, private export body, hosted database, real device, OS zoom, full tab order, `AccountBesuche` mounted in the harness, sibling implementation trees, CI or Preview of this head.
+Real account, private export body, hosted database, real device, OS zoom, full tab order, screen reader, `AccountBesuche` mounted in the harness, CI, or Preview of this head. Source and synthetic proof are not hosted persistence.
 
 ## Findings
 
-P0 none. P1 none. P2 and P3 are in the self-review. Special Product-Owner gates are unchanged. No new cost, provider, or migration.
-
-## R1
-
-Corrections for R1.1, R1.2 and R1.3 sit on top of reviewed head `3d3a24b8c0272f3fdbd7ad14f81ffb1615a9a1d4`. The exact new head is the commit that contains this updated handoff, recorded in the author block of Draft #1036 after push.
-
-`origin/main` re-read after R1, not merged: `68435f012f27f599a1092699f5635aa88312ea67`. This branch was not rebased. Siblings were not merged.
-
-Runtime re-read from Cursor Cloud run-info: `originalModelName` `grok-4.7-high-fast`, session `bc-596c12d0-a045-48c8-ba62-db7ca4ca3809`.
-
-R1 gates: typecheck, five hygiene checks, and production build passed. Lint reported 0 errors and 181 warnings, one of them an unused audit binding that was removed after that run and not linted again. `npm test`: 7250 pass, 5 skipped, 11 fail, same missing PostgreSQL 16 binaries. Mounted audit passed after that removal, including stage-less 200, complete empty, trip and visit failures, focus retention, keyboard cancel, malformed rows, download content, and a late body after cancel or unmount.
+P0 none. P1 none. P2 and P3 are in the self-review. Special Product-Owner gates are unchanged, including #917 hosted STOP, #748 personal-browser suspension, Official Truth and provider hard-off, noindex and budget. No new cost, provider, or migration.
 
 ## Gate
 
-Draft. Stop for independent Technical-Lead review.
+Draft. Stop for independent Technical-Lead review. CI and Preview can be added later as a PR comment.
 
 **do not mark Ready · do not merge · do not start a follow-up slice**
