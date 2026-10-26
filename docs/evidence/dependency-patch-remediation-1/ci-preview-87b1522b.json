@@ -1,0 +1,41 @@
+{
+  "head": "87b1522b5a30033b51969afd065a9e215104030f",
+  "packageLockBlob": "abffddeeea0cc1f5507280f82ebf71fd56052fa8",
+  "readAt": "2026-10-26T10:35:48Z",
+  "githubActions": {
+    "databaseId": 40305882452,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/40305882452",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success",
+        "startedAt": "2026-10-26T10:16:02Z",
+        "completedAt": "2026-10-26T10:16:39Z"
+      },
+      {
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success",
+        "startedAt": "2026-10-26T10:16:02Z",
+        "completedAt": "2026-10-26T10:35:45Z",
+        "includes": ["Tests", "Production build"]
+      }
+    ],
+    "annotationNote": "The successful jobs still logged Node.js 20 action-runtime deprecation and existing lint annotations. Those annotations did not fail the run. This lane did not edit the annotated application files."
+  },
+  "vercel": {
+    "commitStatusContext": "Vercel",
+    "state": "success",
+    "description": "Deployment has completed",
+    "updatedAt": "2026-10-26T10:15:18Z",
+    "inspectorUrl": "https://vercel.com/jetnity-e1b93c82/jetnity-app/9oRvtCQdqzKihYxzD6LP1c755nPs",
+    "previewCommentsCheck": "success"
+  },
+  "notClaimed": [
+    "This is not a Technical-Lead PASS, Ready, or merge.",
+    "The Vercel deployment is Preview evidence for this SHA, not Production acceptance.",
+    "Local npm test still had 11 PostgreSQL-environment failures. The GitHub Actions Tests step on this run succeeded; this record does not reprint a CI assertion count."
+  ]
+}

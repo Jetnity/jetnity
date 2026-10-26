@@ -1,0 +1,98 @@
+{
+  "retrievedAt": "2026-10-26",
+  "session": "https://cursor.com/agents/bc-6579ee4a-5874-4701-b1b0-fd8382cde28d",
+  "model": "grok-4.7-high-fast",
+  "sources": {
+    "githubAdvisoryApi": "GET /advisories/{ghsa_id}",
+    "registry": "npm view dist.tarball + dist.integrity, then SHA-512 of the downloaded tarball",
+    "osv": "POST https://api.osv.dev/v1/query"
+  },
+  "parentRanges": {
+    "node_modules/@supabase/realtime-js@2.15.5": {
+      "ws": "^8.18.2"
+    },
+    "node_modules/postcss@8.5.23": {
+      "source-map-js": "^1.2.1"
+    }
+  },
+  "advisories": [
+    {
+      "ghsa_id": "GHSA-96hv-2xvq-fx4p",
+      "cve_id": "CVE-2026-48779",
+      "severity": "high",
+      "summary": "ws: Memory exhaustion DoS from tiny fragments and data chunks",
+      "published_at": "2026-06-15T16:34:23Z",
+      "updated_at": "2026-07-13T15:31:39Z",
+      "withdrawn_at": null,
+      "html_url": "https://github.com/advisories/GHSA-96hv-2xvq-fx4p",
+      "package": "ws",
+      "vulnerable_version_range": ">= 8.0.0, < 8.21.0",
+      "first_patched_version": "8.21.0",
+      "disposition": "8.18.3 is inside the range. 8.21.0 is the first patched 8.x release."
+    },
+    {
+      "ghsa_id": "GHSA-58qx-3vcg-4xpx",
+      "cve_id": "CVE-2026-45736",
+      "severity": "medium",
+      "summary": "ws: Uninitialized memory disclosure",
+      "published_at": "2026-05-18T19:02:40Z",
+      "updated_at": "2026-05-18T19:02:42Z",
+      "withdrawn_at": null,
+      "html_url": "https://github.com/advisories/GHSA-58qx-3vcg-4xpx",
+      "package": "ws",
+      "vulnerable_version_range": ">= 8.0.0, < 8.20.1",
+      "first_patched_version": "8.20.1",
+      "disposition": "8.18.3 is inside the range. 8.21.0 is above the first patched version."
+    },
+    {
+      "ghsa_id": "GHSA-68fv-2mgg-jv7q",
+      "cve_id": "CVE-2026-93749",
+      "severity": "high",
+      "summary": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+      "published_at": "2026-09-18T18:31:44Z",
+      "updated_at": "2026-10-05T23:31:22Z",
+      "withdrawn_at": null,
+      "html_url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
+      "package": "source-map-js",
+      "vulnerable_version_range": ">= 1.0.0, < 1.2.2",
+      "first_patched_version": "1.2.2",
+      "disposition": "1.2.1 is inside the range. 1.2.2 is the first patched version and the registry latest."
+    }
+  ],
+  "osv": {
+    "ws@8.18.3": ["GHSA-58qx-3vcg-4xpx", "GHSA-96hv-2xvq-fx4p"],
+    "ws@8.21.0": [],
+    "source-map-js@1.2.1": ["GHSA-68fv-2mgg-jv7q"],
+    "source-map-js@1.2.2": []
+  },
+  "registry": {
+    "ws@8.21.0": {
+      "tarball": "https://registry.npmjs.org/ws/-/ws-8.21.0.tgz",
+      "integrity": "sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==",
+      "tarballBytes": 34987,
+      "sha512MatchesDownloadedTarball": true,
+      "gitHead": "bca91adf15677e47dbe4f959653452727be28b94",
+      "published": "2026-05-22T17:59:59.453Z",
+      "registryLatest": "8.22.0",
+      "dependencies": null,
+      "peerDependenciesUnchangedFrom8.18.3": true,
+      "enginesUnchanged": ">=10.0.0"
+    },
+    "source-map-js@1.2.2": {
+      "tarball": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+      "tarballBytes": 36349,
+      "sha512MatchesDownloadedTarball": true,
+      "gitHead": "0a1d334fd1e55a47df97fcd60a7915d46df3b08a",
+      "published": "2026-09-30T14:08:09.382Z",
+      "registryLatest": "1.2.2",
+      "dependencies": null,
+      "enginesUnchanged": ">=0.10.0"
+    }
+  },
+  "notClaimed": [
+    "No statement that every R107 advisory pair is fixed.",
+    "Zod 3.25.76 was not changed and remains an open separate finding.",
+    "OSV empty is not a global security clearance and not exploitability proof."
+  ]
+}

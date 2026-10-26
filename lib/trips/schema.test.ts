@@ -23,6 +23,7 @@ import {
   reiseNutzlastSchema,
   reiseSchema,
 } from '@/lib/trips/schema'
+import { ZEITRAUM_ZU_LANG } from '@/lib/trips/tage'
 
 const JETZT = '2026-08-17T22:00:00.000Z'
 
@@ -145,6 +146,35 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
 
   test('mehr als 365 Tage Zeitraum – wie trips_zeitraum_laenge', () => {
     assert.equal(reiseLesen(reise({ startDate: '2026-01-01', endDate: '2027-06-01' })), null)
+    const gelesen = reiseSchema.safeParse(reise({ startDate: '2026-11-01', endDate: '2027-11-02' }))
+    assert.equal(gelesen.success, false)
+    if (!gelesen.success) {
+      const satz = gelesen.error.issues.find((issue) => issue.path[0] === 'endDate')?.message
+      assert.equal(satz, 'Eine Reise dauert höchstens 365 Tage')
+      assert.notEqual(satz, ZEITRAUM_ZU_LANG)
+    }
+    const erstellt = neueReiseSchema.safeParse({
+      clientRef: 'trip-grenze',
+      title: 'Bangkok',
+      destination: 'Bangkok',
+      destinationPlaceId: 'geonames:1609350',
+      origin: 'Zürich',
+      originPlaceId: 'geonames:2657896',
+      startDate: '2026-11-01',
+      endDate: '2027-11-02',
+      travellers: 1,
+      currency: 'CHF',
+      budgetAmount: null,
+      pace: 'balanced',
+      interests: [],
+      travelWish: null,
+    })
+    assert.equal(erstellt.success, false)
+    if (!erstellt.success) {
+      const satz = erstellt.error.issues.find((issue) => issue.path[0] === 'endDate')?.message
+      assert.equal(satz, ZEITRAUM_ZU_LANG)
+      assert.match(satz ?? '', /366 Kalendertage/)
+    }
   })
 
   test('ein Datum, das es nicht gibt', () => {

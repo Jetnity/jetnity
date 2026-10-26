@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "info": 0,
+    "low": 0,
+    "moderate": 2,
+    "high": 7,
+    "critical": 0,
+    "total": 9
+  },
+  "npmAuditExit": 1,
+  "note": "npm audit exits 1 when any advisory remains. Observed output only. Not exploitability proof and not a reason to broaden this task.",
+  "wsPresent": false,
+  "sourceMapJsPresent": false,
+  "packages": [
+    {
+      "name": "brace-expansion",
+      "severity": "high",
+      "range": "<=1.1.20 || 2.0.0 - 2.1.6 || 4.0.0 - 5.0.11",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/@eslint/config-array/node_modules/brace-expansion",
+        "node_modules/@eslint/eslintrc/node_modules/brace-expansion",
+        "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion",
+        "node_modules/brace-expansion",
+        "node_modules/eslint-config-next/node_modules/brace-expansion",
+        "node_modules/eslint/node_modules/brace-expansion"
+      ],
+      "titles": [
+        "brace-expansion: Zero-step sequence causes process hang and memory exhaustion",
+        "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
+        "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
+        "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
+        "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+        "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+        "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+        "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+        "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+        "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+        "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+        "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+        "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-f886-m6hf-6m8v",
+        "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
+        "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+        "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+        "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+        "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+        "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr",
+        "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+        "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+        "https://github.com/advisories/GHSA-qhr7-859c-m2p7",
+        "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
+        "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p",
+        "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+      ]
+    },
+    {
+      "name": "browserslist",
+      "severity": "high",
+      "range": "<=4.28.6",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/browserslist"
+      ],
+      "titles": [
+        "Browserslist: Unbounded memory growth (no cache eviction) via distinct query results, leading to eventual OOM",
+        "Browserslist: Uncaught crash / prototype write via untrusted browserslist-stats.json custom stats (normalizeStats)"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-c83g-rgw3-j3cx",
+        "https://github.com/advisories/GHSA-73wf-gq98-2v4g"
+      ]
+    },
+    {
+      "name": "glob",
+      "severity": "high",
+      "range": "10.2.0 - 10.4.5",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/glob"
+      ],
+      "titles": [
+        "glob CLI: Command injection via -c/--cmd executes matches with shell:true"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-5j98-mcp5-4vw2"
+      ]
+    },
+    {
+      "name": "minimatch",
+      "severity": "high",
+      "range": "9.0.0 - 9.0.6",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/minimatch"
+      ],
+      "titles": [
+        "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
+        "minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments",
+        "minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-3ppc-4f35-3m26",
+        "https://github.com/advisories/GHSA-7r86-cg39-jmmj",
+        "https://github.com/advisories/GHSA-23c5-xmqv-rm74"
+      ]
+    },
+    {
+      "name": "picomatch",
+      "severity": "high",
+      "range": "<=2.3.1 || 4.0.0 - 4.0.3",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/picomatch",
+        "node_modules/tinyglobby/node_modules/picomatch"
+      ],
+      "titles": [
+        "Picomatch: Method Injection in POSIX Character Classes causes incorrect Glob Matching",
+        "Picomatch: Method Injection in POSIX Character Classes causes incorrect Glob Matching",
+        "Picomatch has a ReDoS vulnerability via extglob quantifiers",
+        "Picomatch has a ReDoS vulnerability via extglob quantifiers"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-3v7f-55p6-f55p",
+        "https://github.com/advisories/GHSA-3v7f-55p6-f55p",
+        "https://github.com/advisories/GHSA-c2c7-rcm5-vvqj",
+        "https://github.com/advisories/GHSA-c2c7-rcm5-vvqj"
+      ]
+    },
+    {
+      "name": "playwright",
+      "severity": "high",
+      "range": "<1.55.1",
+      "isDirect": true,
+      "nodes": [
+        "node_modules/playwright"
+      ],
+      "titles": [
+        "Playwright downloads and installs browsers without verifying the authenticity of the SSL certificate"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-7mvr-c777-76hp"
+      ]
+    },
+    {
+      "name": "postcss-selector-parser",
+      "severity": "moderate",
+      "range": "<=7.1.5",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/postcss-nested/node_modules/postcss-selector-parser",
+        "node_modules/tailwindcss/node_modules/postcss-selector-parser"
+      ],
+      "titles": [
+        "postcss-selector-parser allows denial of service through uncontrolled AST recursion",
+        "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-w9m9-85wc-3x92",
+        "https://github.com/advisories/GHSA-rj75-hqrm-r3gf"
+      ]
+    },
+    {
+      "name": "yaml",
+      "severity": "moderate",
+      "range": "2.0.0 - 2.8.2",
+      "isDirect": false,
+      "nodes": [
+        "node_modules/yaml"
+      ],
+      "titles": [
+        "yaml is vulnerable to Stack Overflow via deeply nested YAML collections"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-48c2-rrv3-qjmp"
+      ]
+    },
+    {
+      "name": "zod",
+      "severity": "high",
+      "range": "<4.6.6",
+      "isDirect": true,
+      "nodes": [
+        "node_modules/zod"
+      ],
+      "titles": [
+        "Zod can exhaust memory while validating oversized constrained collections"
+      ],
+      "urls": [
+        "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+      ]
+    }
+  ]
+}
