@@ -27,7 +27,9 @@ import {
   uebernahmeBeanspruchen,
   uebernahmeDarfSenden,
   uebernahmeErgebnisLesen,
+  uebernahmeHinweisSetzen,
   uebernahmeHinweisText,
+  uebernahmeHinweisTexte,
   uebernahmeOperationSchluessel,
   uebernahmeUnbestaetigtFreigeben,
   type SuchLauf,
@@ -87,10 +89,6 @@ function BeobachteteKarte({
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
   return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} />
-}
-
-function hinweisBucket(tripId: string, stageId: string, dayId: string): string {
-  return JSON.stringify([tripId, stageId, dayId])
 }
 
 function SuchKontext({
@@ -242,7 +240,9 @@ function ActivityTag({
   const [register, setRegister] = React.useState<UebernahmeRegister>(leeresUebernahmeRegister)
   const registerRef = React.useRef(register)
   const seqRef = React.useRef(0)
-  const [hinweise, setHinweise] = React.useState<Record<string, { text: string; seq: number }>>({})
+  const [hinweise, setHinweise] = React.useState<
+    Record<string, { text: string; seq: number; tripId: string; stageId: string; dayId: string }>
+  >({})
 
   const antwortSetzen = (erwartet: { epoche: number; generation: number }, antwort: ActivitySucheAntwort) => {
     setLauf((stand) => {
@@ -292,7 +292,6 @@ function ActivityTag({
     registerRef.current = anspruch.register
     setRegister(anspruch.register)
     const seq = ++seqRef.current
-    const bucket = hinweisBucket(erfasst.tripId, erfasst.stageId, erfasst.dayId)
     const etappeFest = etappe
     const tagFest = tag
     void (async () => {
@@ -312,11 +311,15 @@ function ActivityTag({
         setRegister(frei)
       }
       const text = uebernahmeHinweisText(uebernahmeErgebnisLesen(wert))
-      setHinweise((bisher) => {
-        const alt = bisher[bucket]
-        if (alt && alt.seq > seq) return bisher
-        return { ...bisher, [bucket]: { text, seq } }
-      })
+      setHinweise((bisher) =>
+        uebernahmeHinweisSetzen(bisher, schluessel, {
+          text,
+          seq,
+          tripId: erfasst.tripId,
+          stageId: erfasst.stageId,
+          dayId: erfasst.dayId,
+        }),
+      )
     })()
   }
 
@@ -334,9 +337,29 @@ function ActivityTag({
   const suchLabel = antwort ? 'Erneut suchen' : 'Für diesen Tag suchen'
   const geplante = tag?.items ?? []
   const zeitpunkte = geplante.filter((punkt) => punkt.startsAt)
-  const bucket = etappe && tag ? hinweisBucket(reise.id, etappe.id, tag.id) : ''
-  const hinweis = bucket ? hinweise[bucket]?.text ?? '' : ''
   const kannSuchen = Boolean(eingabe && etappe && tag)
+  const kartenSchluessel =
+    suchLaeuft || antwort
+      ? kartenSichtbar
+        ? (antwort?.options ?? []).map((option) =>
+            uebernahmeOperationSchluessel({
+              tripId: reise.id,
+              stageId: etappe?.id ?? '',
+              dayId: tag?.id ?? '',
+              schreibIdentitaet: optionSchreibIdentitaet(option),
+            }),
+          )
+        : []
+      : null
+  const hinweisSicht =
+    etappe && tag
+      ? uebernahmeHinweisTexte(hinweise, {
+          tripId: reise.id,
+          stageId: etappe.id,
+          dayId: tag.id,
+          karten: kartenSchluessel,
+        })
+      : { allgemein: [], jeKarte: {} }
 
   return (
     <section
@@ -502,6 +525,11 @@ function ActivityTag({
                         onUebernehmen={ausloesen}
                         onUebernahmeBeobachten={onUebernahmeBeobachten}
                       />
+                      {hinweisSicht.jeKarte[schluessel] ? (
+                        <p role="status" className="mt-3 rounded-2xl bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800">
+                          {hinweisSicht.jeKarte[schluessel]}
+                        </p>
+                      ) : null}
                       {register.unbestaetigt.includes(schluessel) ? (
                         <button
                           type="button"
@@ -522,11 +550,11 @@ function ActivityTag({
         )}
       </div>
 
-      {hinweis && (
-        <p role="status" className="mt-4 rounded-2xl bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800">
-          {hinweis}
+      {hinweisSicht.allgemein.map((text) => (
+        <p key={text} role="status" className="mt-4 rounded-2xl bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800">
+          {text}
         </p>
-      )}
+      ))}
     </section>
   )
 }

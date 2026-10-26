@@ -280,3 +280,56 @@ export function uebernahmeHinweisText(ausgang: UebernahmeAusgang): string {
   if (ausgang.art === 'text') return `${ausgang.text} ${ACTIVITY_HINWEIS_UNBESTAETIGT}`
   return ACTIVITY_HINWEIS_UNBESTAETIGT
 }
+
+export type UebernahmeHinweisEintrag = {
+  text: string
+  seq: number
+  tripId: string
+  stageId: string
+  dayId: string
+}
+
+/**
+ * Speichert die Meldung an der Operation.
+ * Eine bereits neuere Meldung derselben Operation bleibt stehen.
+ * Das Schloss der Operation wird hier nicht angefasst.
+ */
+export function uebernahmeHinweisSetzen(
+  bisher: Readonly<Record<string, UebernahmeHinweisEintrag>>,
+  schluessel: string,
+  eintrag: UebernahmeHinweisEintrag,
+): Record<string, UebernahmeHinweisEintrag> {
+  const alt = bisher[schluessel]
+  if (alt && alt.seq > eintrag.seq) return { ...bisher }
+  return { ...bisher, [schluessel]: eintrag }
+}
+
+/**
+ * Eine Meldung gehört zur Operation, nicht zur gerade sichtbaren anderen Karte.
+ * `karten === null` ist die untätige Tagesfläche ohne neuere Antwort: dort bleiben
+ * die Meldungen dieses Tages sichtbar. Eine laufende oder fertige neuere Antwort
+ * zeigt eine Meldung nur neben der Karte derselben Operation.
+ */
+export function uebernahmeHinweisTexte(
+  hinweise: Readonly<Record<string, UebernahmeHinweisEintrag>>,
+  sicht: {
+    tripId: string
+    stageId: string
+    dayId: string
+    karten: readonly string[] | null
+  },
+): { allgemein: readonly string[]; jeKarte: Readonly<Record<string, string>> } {
+  const tag = Object.entries(hinweise).filter(
+    ([, eintrag]) =>
+      eintrag.tripId === sicht.tripId && eintrag.stageId === sicht.stageId && eintrag.dayId === sicht.dayId,
+  )
+  if (sicht.karten) {
+    const erlaubt = new Set(sicht.karten)
+    const jeKarte: Record<string, string> = {}
+    for (const [schluessel, eintrag] of tag) {
+      if (erlaubt.has(schluessel)) jeKarte[schluessel] = eintrag.text
+    }
+    return { allgemein: [], jeKarte }
+  }
+  return { allgemein: tag.map(([, eintrag]) => eintrag.text), jeKarte: {} }
+}

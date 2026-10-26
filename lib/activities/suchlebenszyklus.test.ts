@@ -23,7 +23,9 @@ import {
   uebernahmeBeanspruchen,
   uebernahmeDarfSenden,
   uebernahmeErgebnisLesen,
+  uebernahmeHinweisSetzen,
   uebernahmeHinweisText,
+  uebernahmeHinweisTexte,
   uebernahmeOperationSchluessel,
   uebernahmeUnbestaetigtFreigeben,
   type UebernahmeErfassung,
@@ -374,6 +376,33 @@ describe('Aktivitäts-Suchlebenszyklus', () => {
       }),
       false,
     )
+  })
+
+  test('eine ältere Meldung spricht nicht für eine neuere Karte', () => {
+    const tag = { tripId: 'trip-a', stageId: 'stage-1', dayId: 'day-1' }
+    const erste = uebernahmeHinweisSetzen({}, 'op-a', { ...tag, text: ACTIVITY_HINWEIS_GEMELDET, seq: 2 })
+    const bleibt = uebernahmeHinweisSetzen(erste, 'op-a', { ...tag, text: 'älter', seq: 1 })
+    assert.equal(bleibt['op-a']?.text, ACTIVITY_HINWEIS_GEMELDET)
+    const neu = uebernahmeHinweisTexte(bleibt, { ...tag, karten: ['op-b'] })
+    assert.deepEqual(neu.allgemein, [])
+    assert.deepEqual(neu.jeKarte, {})
+    const beide = uebernahmeHinweisTexte(bleibt, { ...tag, karten: ['op-a', 'op-b'] })
+    assert.equal(beide.jeKarte['op-a'], ACTIVITY_HINWEIS_GEMELDET)
+    assert.equal(beide.jeKarte['op-b'], undefined)
+    assert.deepEqual(beide.allgemein, [])
+    const untätig = uebernahmeHinweisTexte(bleibt, { ...tag, karten: null })
+    assert.deepEqual(untätig.allgemein, [ACTIVITY_HINWEIS_GEMELDET])
+    const andererTag = uebernahmeHinweisTexte(bleibt, { ...tag, dayId: 'day-2', karten: null })
+    assert.deepEqual(andererTag.allgemein, [])
+    const offen = uebernahmeHinweisSetzen(bleibt, 'op-a', {
+      ...tag,
+      text: ACTIVITY_HINWEIS_UNBESTAETIGT,
+      seq: 3,
+    })
+    const unterdrueckt = uebernahmeHinweisTexte(offen, { ...tag, karten: ['op-b'] })
+    assert.deepEqual(unterdrueckt.allgemein, [])
+    assert.equal(unterdrueckt.jeKarte['op-b'], undefined)
+    assert.equal(uebernahmeHinweisTexte(offen, { ...tag, karten: ['op-a'] }).jeKarte['op-a'], ACTIVITY_HINWEIS_UNBESTAETIGT)
   })
 
   test('null, Text, Wurf und eine falsche Form bleiben ehrlich und ohne automatische Wiederholung', () => {

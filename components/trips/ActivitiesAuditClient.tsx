@@ -26,6 +26,7 @@ type UebernahmeArt =
   | 'reject'
   | 'malformed'
   | 'haengen'
+  | 'haengen-offen'
   | 'gast'
   | 'gast-null'
   | 'gast-offen'
@@ -39,7 +40,7 @@ type ActivitiesAuditSteuerung = {
   reiseSetzen: (reise: Trip) => void
   flaeche: (sichtbar: boolean) => void
   uebernahme: (art: UebernahmeArt) => void
-  freigeben: () => void
+  freigeben: (id?: string) => void
   aktionSichern: (id: string) => void
   aktionAlt: () => void
   aktion: (id: string) => void
@@ -57,7 +58,7 @@ export default function ActivitiesAuditClient() {
   const [fehlend, setFehlend] = React.useState(false)
   const [flaeche, setFlaeche] = React.useState(true)
   const artRef = React.useRef<UebernahmeArt>('null')
-  const warteRef = React.useRef<(() => void) | null>(null)
+  const warteRef = React.useRef(new Map<string, () => void>())
   const aufrufeRef = React.useRef(0)
   const letzteRef = React.useRef<AuditStand['letzte']>(null)
   const aktionenRef = React.useRef(new Map<string, () => void>())
@@ -114,11 +115,13 @@ export default function ActivitiesAuditClient() {
       }
       if (art === 'gast-null') return null
       if (art === 'gast-offen') return ''
-      if (art === 'haengen' || art === 'gast') {
+      if (art === 'haengen' || art === 'haengen-offen' || art === 'gast') {
         await new Promise<void>((loesen) => {
-          warteRef.current = loesen
+          warteRef.current.set(option.id, loesen)
         })
+        warteRef.current.delete(option.id)
       }
+      if (art === 'haengen-offen') return ''
       return null
     })()
   }, [])
@@ -130,9 +133,14 @@ export default function ActivitiesAuditClient() {
       uebernahme: (art) => {
         artRef.current = art
       },
-      freigeben: () => {
-        warteRef.current?.()
-        warteRef.current = null
+      freigeben: (id) => {
+        if (id) {
+          warteRef.current.get(id)?.()
+          warteRef.current.delete(id)
+          return
+        }
+        for (const loesen of warteRef.current.values()) loesen()
+        warteRef.current.clear()
       },
       aktionSichern: (id) => {
         altRef.current = aktionenRef.current.get(id) ?? null
