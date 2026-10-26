@@ -5870,6 +5870,29 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0222 – Manuelles GetYourGuide-Widget über die öffentliche Suche
+
+**Datum:** 26. Oktober 2026
+**Status:** Code auf dem Integrationszweig, Draft PR #1041, Tracking #1040, Eltern #1023 V5. Kein Root-PASS, kein Ready, kein Merge. Verbindlich: `docs/JETNITY_GETYOURGUIDE_MANUAL_WIDGET_INTEGRATION_1_TASK_V1_2026-10-26.md`. ADR-0221 bleibt die historische geschlossene Grundlage und wird hier nicht umgeschrieben.
+
+**Entscheidung:**
+
+1. Die Anwendung lädt das dokumentierte manuelle Aktivitäten-Widget, nachdem die Besucherin oder der Besucher es ausdrücklich anzeigt. Die Suche benutzt `data-gyg-q` aus dem bestätigten öffentlichen Ortsnamen und dem Ländernamen des bestehenden Katalogs. Ein Land ohne Tage sucht nur mit dem Ländernamen. Es gibt keine Beispielregistrierung und keine erfundene GetYourGuide-Ortskennung.
+2. Das Widget und der Integration Analyzer stehen einmal in einem neutralen HTML-Dokument unter `/embed/getyourguide`. Die Route liest keine Sitzung, keine Datenbank und keine Cookies. Ein direkter Aufruf oder fehlende Fetch-Metadata bleibt inaktiv und enthält den Analyzer nicht. Der Rahmen ist `allow-scripts allow-popups allow-popups-to-escape-sandbox` ohne `allow-same-origin` und trägt `credentialless`, damit die gerahmte Anfrage das Cookie der Seite nicht mitschickt.
+3. Partner `2MQHT6Z`, Kampagne `jetnity_activities`, Sprache `de-CH` und drei Einträge bleiben fest im Dokument. Die Markenadresse ist `https://www.getyourguide.com/`. Ein Klick darauf ist kein Produktnachweis.
+4. Die native Aktivitätssuche, ihre Karten und die Übernahme bleiben unverändert. Ein GetYourGuide-Fehler oder das Entfernen setzt sie nicht zurück. Ein ungültiger Tag, ein unbekanntes oder widersprüchliches Land und ein fehlender kanonischer Landescode bleiben wie in ADR-0221 ehrlich.
+5. Die sichtbare Phase nach dem Rahmenladen sagt, dass der Rahmen geladen ist. Sie behauptet keine Angebotszahl und keinen leeren Katalog. Entfernen beendet die weitere Einbettung und verspricht keine rückwirkende Löschung.
+
+**Kontext:** Der Product Owner hat die Einbindung des bestehenden offiziellen Widgets ohne zusätzliche Anbieteranfrage freigegeben (Issue #1023, Kommentar `6428171400`). Die geschlossene Grundlage aus ADR-0221 ist auf main angenommen. Dieser Schritt öffnet nur den dokumentierten manuellen Suchweg.
+
+**Alternativen:** Weiter geschlossen bleiben. Ortskennungen aus GeoNames raten. Das automatische Widget über private Reiseinhalte laufen lassen. `allow-same-origin` setzen, damit der Anbieter Speicher lesen kann. Eine Höhennachricht einbauen, obwohl die sichtbaren Angebotskarten im Anbieterrahmen liegen.
+
+**Begründung:** Die öffentliche Suche ist der dokumentierte Weg und braucht keine erfundene Kennung. Der undurchsichtige Rahmen hat in der lokalen Prüfung Bilder und konkrete Angebote gezeigt und gleichzeitig `localStorage` im Rahmen verweigert. Die native Suche bleibt getrennt, weil sie eine andere Tag-Wahrheit hat. Eine Höhennachricht würde den anbieterfremden Rahmen nicht vergrössern und wurde deshalb nicht gebaut.
+
+**Konsequenzen:** Die Anwendung ist für diesen Weg `bereit`. Eine injizierte geschlossene Freigabe bleibt für die Prüfung erhalten. Das historische Prüfprogramm `scripts/getyourguide-visual-discovery-1/` erwartet weiter die geschlossene Naht und ist nicht der Nachweis dieses Schritts. Es gibt keine Migration, kein Secret, keinen Vertrag, keine Zahlung und keine neuen laufenden Infrastrukturkosten. Production-Aktivierung, Ready und Merge bleiben beim Technical Lead.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
