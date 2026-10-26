@@ -2,8 +2,15 @@
 
 Date: 26 October 2026.
 Exact writer: Jetnity GetYourGuide Manual Widget Integration 1 — Cursor Generation 1.
-Observed runtime: `grok-4.7-high-fast`, from cursor-cloud `run-info` (`originalModelName`).
-Session: https://cursor.com/agents/bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50
+
+## Runtime receipt
+
+Re-read at this reporting point from cursor-cloud `run-info`. Field `originalModelName`: `grok-4.7-high-fast`. Run `source`: `scm`. Session `bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50`, https://cursor.com/agents/bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50. The same logical name is the run `name`. This is the original Generation 1 session. It was not restarted.
+
+Stage when the receipt was written: the widget implementation and the first handoff were already on the remote branch at `8da4d3292a4d00afe2f57598043b2ff6f8164a21`, tree `480a7882210ea266ac9b584b10ba92b2dc11131d`. Root then added task revision `3eddc72ade423afa1dd5109f3bbd625014495f7e` on the same branch. This receipt commit is rebased onto that revision and does not replace it. `origin/main` `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, merge-base that commit, behind 0. No check was abandoned. The receipt commit’s own SHA is recorded in the PR body after push.
+
+Capability blocker: the delivered product screenshot is the provider outage page, not a missing certificate exception. This session’s Playwright Chromium loaded the official widget, images and offer titles. `allow-same-origin` was not added. Root’s `net::ERR_CERT_AUTHORITY_INVALID` note stays outside this implementation.
+
 Branch: `feat/getyourguide-manual-widget-integration-1`
 Draft PR: #1041
 Tracking: #1040
@@ -11,7 +18,7 @@ Parent: #1023 V5
 Immutable TASK blob: `7c7b442fafaa0f20ceb641d0a335d564224d7120`
 Task seed: `36837100ea710a6514321be518c32b0f7680a531`, tree `3f87860285a68e56e66cc4b9bad32fd05334cafb`, sole parent `7d52da97efc1f40fbea5c07d978c2e81e6b76659`.
 
-Implementation commit before this documentation commit: `b2ae807ffd9e5331154a24bb469e1d480595857b`. The review head is the tip of this branch after the documentation commit. This file cannot name its own SHA. The PR body records `git rev-parse HEAD` and `git rev-parse HEAD^{tree}` after the push. Fresh `origin/main` at fetch time: `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`. Merge-base: that same commit. Behind: 0. Ahead before this delivery’s commits: 1.
+Implementation commit: `b2ae807ffd9e5331154a24bb469e1d480595857b`. First handoff commit: `8da4d3292a4d00afe2f57598043b2ff6f8164a21`. Root task revision: `3eddc72ade423afa1dd5109f3bbd625014495f7e`. The review head is the tip after this receipt commit. This file cannot name that tip’s own SHA. Fresh `origin/main`: `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`. Merge-base: that same commit. Behind: 0.
 
 This is not a Root PASS. Do not mark Ready. Do not merge. Do not start a follow-up slice.
 
