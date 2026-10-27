@@ -17,6 +17,10 @@ The manual widget’s count is an allowlisted query parameter. The click handler
 - `DECISIONS.md` and `scripts/getyourguide-manual-widget-integration-1/hoehe.ts` still speak of 2400. Editing them would either rewrite a decision outside this allowlist or change historical evidence. A later decision note can record 12000. Until then those two texts are stale on purpose.
 - The positive coverage sentence is still inside the search payload. Only the unavailable screen suppresses it.
 
+## R1
+
+The click proof is a provider 403 on `www.getyourguide.com/s/`, with the partner id present. I did not treat the error page as a result list or a product detail, and I did not retry it. The expanded frame at 320, 390 and 200% host text keeps the last card inside the parent height, and removal leaves no iframe. ADR-0222 is still the old text; ADR-0223 is the successor for count and height only.
+
 ## Recommendation
 
 Keep the PR Draft. Review this exact head. Do not merge from this review.

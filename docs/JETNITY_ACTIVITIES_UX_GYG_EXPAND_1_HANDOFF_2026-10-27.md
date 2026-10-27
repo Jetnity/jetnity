@@ -56,6 +56,36 @@ Node v22.23.4.
 
 No database, Auth, RLS, migration, provider factory, Viator, payment, secret, contract, new infrastructure cost, or indexing change. Native hard-off still returns `aktiv: false` for production. Analyzer script and the known `sessionStorage` P2 are unchanged. #1023 V5 / #1040 V1 §9.3 product-detail links were not closed and no purchase was made. #917 and #985 holds were not touched. USD 100/month budget unchanged.
 
+## R1 on the reviewed head
+
+Reviewed head `a8f5081c294eb6107be98c537e32fb0b1b1741bb`, tree `db2dedc5c9d9357bbc2e577d7c13aa026a49b0d8`. Root R1 is CHANGES REQUIRED, review `5668256113`. This continuation is the same session `bc-e917b7cb-fdc2-43ca-9dcd-53a537538210`. No Generation 2. No runtime change.
+
+CI run `40509190598` attempt 1 was CANCELLED at the job limit. Root had queued one unchanged App retry. Neither result gates the corrected head. Workflows and timeouts were not edited. This handoff does not claim CI PASS or a new Preview.
+
+### R1-F1 click
+
+`angebote.ts` clicks one `a[href*="et="]` in the stable 12 view and one in the stable expanded view, then closes the popup. No reload, no checkout.
+
+Both targets were the first card, `et=552815`. The popup URL path is `/s/` on `www.getyourguide.com`, with `partner_id=2MQHT6Z`, `cmp=jetnity_activities`, `locale=de-CH` and `q=Bangkok+Thailand`. That shape is a search URL, not a product-detail path. The document status was 403. Title `GetYourGuide – Error`. Body begins “An error occurred.” Ray IDs `a5123f9d9ba7a5f3` (12) and `a51240cc4845a5f3` (expanded). Host `www.getyourguide.com` path `/s/` appears in the response log twice with status 403. Provider BLOCKED for this landing. Widget card loading itself was not 403. #1023 V5 / TASK V1 §9.3 stay open.
+
+### R1-F2 expanded frame
+
+Stability now requires the loader pixel height and the parent client height to match for four samples after each viewport change.
+
+| Viewport | Cards | Last card bottom | Frame px | Horizontal overflow | Ancestor clips |
+| --- | --- | --- | --- | --- | --- |
+| 320×700 | 20 | 6904 | 6956 | no | no, overflow visible |
+| 390×844 | 20 | 7692 | 7744 | no | no |
+| 390, root 32px | 20 | 7692 | 7744 | no | no |
+| After Weniger, 390 | 12 | 4633 | 4685 | no | no, one iframe |
+| After Entfernen | 0 | — | no iframe | — | — |
+
+320 did not keep the 390 height. 6956 and 7744 are both under 12000. Screenshots: `bangkok-24-320.png` is 320×6957, `bangkok-24-390.png` is 390×7745, `bangkok-24-390-200.png` is 390×7744.
+
+### R1-F3
+
+`DECISIONS.md` gains ADR-0223 only. ADR-0222 was not edited.
+
 ## Stop
 
 Do not mark Ready. Do not merge. Do not start a follow-up slice. Root owns exact-head PASS, Ready, merge, and actual-main acceptance. Preview for this head did not exist at authoring.

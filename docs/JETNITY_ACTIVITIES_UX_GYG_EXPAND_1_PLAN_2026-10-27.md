@@ -26,6 +26,10 @@ The official Widgets 101 text allows choosing the manual count and does not prov
 
 Keep 2400 until a real load’s explicit loader pixel height exceeds it. The first probe did: Portugal and Kreta at 12 were 4685px, and Bangkok at requested 24 was 7744px, while the parent rejected those messages and stayed at `40rem`. Both the child script and `gygHoeheAnnehmen` then moved to the finite cap 12000. No `scrollHeight`, no remembered maximum. CSP SHA-256 recomputed.
 
+## R1, same session
+
+After Root’s CHANGES REQUIRED on `a8f5081c`, the same writer adds only: one real offer click from the 12 view and one from the expanded view, expanded 320/390/200% measurements after the loader and parent height match, and append-only ADR-0223. No runtime change unless a click or clip shows a product defect. A landing 403 stays a provider block.
+
 ## Out of scope
 
 No provider contract, key, Viator, payment, database, Auth, RLS, migration, new cost, public indexing, or follow-up slice. Draft only. Ready and merge stay with the Technical Lead.
