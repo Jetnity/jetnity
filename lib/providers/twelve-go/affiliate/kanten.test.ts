@@ -398,6 +398,108 @@ describe('benachbarte 12Go-Kanten', () => {
     assert.doesNotMatch(kanten[0]!.datumHinweis, /2026-11-01|2026-11-16|2026-11-30/)
   })
 
+  test('wiederholtes X→Y bindet ein Transferdatum an kein Vorkommen', () => {
+    const hinundher = [
+      ort({ occurrenceId: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001', kind: 'city' }),
+      ort({ occurrenceId: 'b1', name: 'Koh Chang', position: 2, placeId: 'geonames:9002', kind: 'island' }),
+      ort({ occurrenceId: 'a2', name: 'Bangkok', position: 3, placeId: 'geonames:9001', kind: 'city' }),
+      ort({ occurrenceId: 'b2', name: 'Koh Chang', position: 4, placeId: 'geonames:9002', kind: 'island' }),
+    ]
+    const einer: TwelveGoTransferFakt = {
+      id: 't1',
+      originPlaceId: 'geonames:9001',
+      destinationPlaceId: 'geonames:9002',
+      startsOn: '2026-11-15',
+    }
+    const einmal = twelveGoKantenAusVorkommen(hinundher, [einer], [])
+    assert.deepEqual(
+      einmal.map((kante) => kante.id),
+      ['a1:b1', 'b1:a2', 'a2:b2'],
+    )
+    assert.equal(einmal[0]?.geplantesDatum, null)
+    assert.equal(einmal[2]?.geplantesDatum, null)
+    assert.equal(einmal[0]?.datumHinweis, 'Bitte das Datum bei 12Go wählen.')
+    assert.equal(einmal[2]?.datumHinweis, 'Bitte das Datum bei 12Go wählen.')
+    assert.doesNotMatch(einmal[0]!.href, /date=|2026-11-15/)
+    assert.doesNotMatch(einmal[2]!.href, /date=|2026-11-15/)
+    assert.equal(einmal[1]?.geplantesDatum, null)
+
+    const zwei = twelveGoKantenAusVorkommen(
+      hinundher,
+      [einer, { id: 't2', originPlaceId: 'geonames:9001', destinationPlaceId: 'geonames:9002', startsOn: '2026-11-20' }],
+      [],
+    )
+    assert.equal(zwei[0]?.geplantesDatum, null)
+    assert.equal(zwei[2]?.geplantesDatum, null)
+    assert.doesNotMatch(`${zwei[0]?.datumHinweis} ${zwei[2]?.datumHinweis}`, /2026-11-15|2026-11-20/)
+
+    const eindeutig = twelveGoKantenAusVorkommen(
+      [
+        hinundher[0]!,
+        hinundher[1]!,
+        ort({ occurrenceId: 'c', name: 'Phuket', position: 3, placeId: 'geonames:9003', kind: 'city' }),
+      ],
+      [einer],
+      [],
+    )
+    assert.equal(eindeutig[0]?.geplantesDatum, '2026-11-15')
+    assert.equal(eindeutig[1]?.geplantesDatum, null)
+    assert.doesNotMatch(eindeutig[0]!.href, /date=|2026-11-15/)
+  })
+
+  test('Umsortieren und eine geänderte Kante lassen das alte Datum nicht mitwandern', () => {
+    const transfer: TwelveGoTransferFakt = {
+      id: 't1',
+      originPlaceId: 'geonames:9001',
+      destinationPlaceId: 'geonames:9002',
+      startsOn: '2026-11-15',
+    }
+    const offen = twelveGoKantenAusVorkommen(
+      [
+        ort({ occurrenceId: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001' }),
+        ort({ occurrenceId: 'b1', name: 'Koh Chang', position: 2, placeId: 'geonames:9002' }),
+      ],
+      [transfer],
+      [],
+    )
+    assert.equal(offen[0]?.geplantesDatum, '2026-11-15')
+
+    const gedreht = twelveGoKantenAusVorkommen(
+      [
+        ort({ occurrenceId: 'b1', name: 'Koh Chang', position: 1, placeId: 'geonames:9002' }),
+        ort({ occurrenceId: 'a1', name: 'Bangkok', position: 2, placeId: 'geonames:9001' }),
+      ],
+      [transfer],
+      [],
+    )
+    assert.equal(gedreht[0]?.id, 'b1:a1')
+    assert.equal(gedreht[0]?.geplantesDatum, null)
+    assert.doesNotMatch(gedreht[0]!.href, /date=|2026-11-15/)
+
+    const wiederholt = twelveGoKantenAusVorkommen(
+      [
+        ort({ occurrenceId: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001' }),
+        ort({ occurrenceId: 'b1', name: 'Koh Chang', position: 2, placeId: 'geonames:9002' }),
+        ort({ occurrenceId: 'a2', name: 'Bangkok', position: 3, placeId: 'geonames:9001' }),
+        ort({ occurrenceId: 'b2', name: 'Koh Chang', position: 4, placeId: 'geonames:9002' }),
+      ],
+      [transfer],
+      [],
+    )
+    assert.equal(wiederholt.every((kante) => kante.geplantesDatum === null), true)
+
+    const veraltet = twelveGoKantenAusVorkommen(
+      [
+        ort({ occurrenceId: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001' }),
+        ort({ occurrenceId: 'b1', name: 'Phuket', position: 2, placeId: 'geonames:9003' }),
+      ],
+      [transfer],
+      [],
+    )
+    assert.equal(veraltet[0]?.geplantesDatum, null)
+    assert.equal(veraltet[0]?.datumHinweis, 'Bitte das Datum bei 12Go wählen.')
+  })
+
   test('Umsortierung verwirft die alte Richtung', () => {
     const aufbau = [
       etappe({ id: 'bkk', name: 'Bangkok', position: 1, placeId: 'geonames:9001' }),

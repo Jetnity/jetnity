@@ -135,6 +135,91 @@ describe('12Go-Fläche', () => {
     assert.match(html, /Währung und Anzahl Reisende bitte bei 12Go prüfen/)
   })
 
+  test('wiederholtes Ortspaar zeigt kein Datum und keine date-Abfrage', () => {
+    const transfer = (id: string, startsOn: string): TripItem => ({
+      id,
+      dayId: null,
+      stageId: id === 'alt' ? 'a1' : null,
+      kind: 'transfer',
+      title: 'Fähre',
+      note: null,
+      position: 1,
+      startsOn,
+      startsAt: null,
+      endsOn: null,
+      endsAt: null,
+      priceAmount: null,
+      priceCurrency: null,
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+      ...unbestaetigteBuchung(),
+      ...leereMobilitaet(),
+      originPlaceId: 'geonames:9001',
+      destinationPlaceId: 'geonames:9002',
+      originName: 'Bangkok',
+      destinationName: 'Koh Chang',
+    })
+    const schleife = [
+      etappe({ id: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001', arrivalDate: '2026-11-01' }),
+      etappe({ id: 'b1', name: 'Koh Chang', position: 2, placeId: 'geonames:9002', arrivalDate: '2026-11-16' }),
+      etappe({ id: 'a2', name: 'Bangkok', position: 3, placeId: 'geonames:9001', arrivalDate: '2026-11-20' }),
+      etappe({ id: 'b2', name: 'Koh Chang', position: 4, placeId: 'geonames:9002', arrivalDate: '2026-11-24' }),
+    ]
+    const html = renderToStaticMarkup(
+      createElement(TwelveGoAffiliateLinks, {
+        reise: reise({ stages: schleife, ohneTag: [transfer('alt', '2026-11-15')] }),
+      }),
+    )
+    assert.equal(html.includes('data-geplant="2026-11-15"'), false)
+    assert.equal(html.includes('Geplant am'), false)
+    assert.equal(html.match(/Bitte das Datum bei 12Go wählen/g)?.length, 3)
+    assert.doesNotMatch(html, /date=|2026-11-15/)
+    assert.equal(html.includes('data-twelve-go-kante="a1:b1"'), true)
+    assert.equal(html.includes('data-twelve-go-kante="a2:b2"'), true)
+
+    const zwei = renderToStaticMarkup(
+      createElement(TwelveGoAffiliateLinks, {
+        reise: reise({
+          stages: schleife,
+          ohneTag: [transfer('t1', '2026-11-15'), transfer('t2', '2026-11-20')],
+        }),
+      }),
+    )
+    assert.equal(zwei.includes('Geplant am'), false)
+    assert.doesNotMatch(zwei, /date=|2026-11-15|2026-11-20/)
+
+    const gedreht = renderToStaticMarkup(
+      createElement(TwelveGoAffiliateLinks, {
+        reise: reise({
+          stages: [
+            etappe({ id: 'b1', name: 'Koh Chang', position: 1, placeId: 'geonames:9002' }),
+            etappe({ id: 'a1', name: 'Bangkok', position: 2, placeId: 'geonames:9001' }),
+          ],
+          ohneTag: [transfer('alt', '2026-11-15')],
+        }),
+      }),
+    )
+    assert.equal(gedreht.includes('data-twelve-go-kante="b1:a1"'), true)
+    assert.equal(gedreht.includes('data-geplant="2026-11-15"'), false)
+    assert.doesNotMatch(gedreht, /date=|2026-11-15/)
+
+    const veraltet = renderToStaticMarkup(
+      createElement(TwelveGoAffiliateLinks, {
+        reise: reise({
+          stages: [
+            etappe({ id: 'a1', name: 'Bangkok', position: 1, placeId: 'geonames:9001' }),
+            etappe({ id: 'b1', name: 'Phuket', position: 2, placeId: 'geonames:9003' }),
+          ],
+          ohneTag: [transfer('alt', '2026-11-15')],
+        }),
+      }),
+    )
+    assert.equal(veraltet.includes('data-geplant=""'), true)
+    assert.equal(veraltet.includes('Geplant am'), false)
+    assert.doesNotMatch(veraltet, /date=|2026-11-15/)
+  })
+
   test('Verbindungen enthalten die Fläche und lassen die eigene Suche geschlossen', () => {
     const html = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise() }))
     const bestand = html.indexOf('data-organisieren-flaeche="bestand"')

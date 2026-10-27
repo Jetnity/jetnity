@@ -92,11 +92,24 @@ function routeHref(
   return twelveGoAffiliateUrl(treffer[0]!.path)
 }
 
+function paarIdentitaet(von: TwelveGoEndpunkt, nach: TwelveGoEndpunkt): string | null {
+  if (!von.placeId || !nach.placeId) return null
+  return `${von.placeId}\u0000${nach.placeId}`
+}
+
+/**
+ * Datum nur, wenn Ortskennungen genau eine benachbarte Kante treffen und
+ * genau ein Transfer dieselbe Richtung trägt. Ein wiederholtes X→Y hat keine
+ * Vorkommensbindung: `stageId` nennt eine Etappe, nicht das Paar. Reihenfolge,
+ * Ankunft und Namen dürfen das nicht ersetzen.
+ */
 function geplantesDatum(
   von: TwelveGoEndpunkt,
   nach: TwelveGoEndpunkt,
   transfers: readonly TwelveGoTransferFakt[],
+  gleicheRichtung: number,
 ): string | null {
+  if (gleicheRichtung !== 1) return null
   if (!von.placeId || !nach.placeId) return null
   const treffer = transfers.filter(
     (transfer) =>
@@ -114,12 +127,13 @@ function kanteAus(
   transfers: readonly TwelveGoTransferFakt[],
   register: readonly TwelveGoGepruefteRoute[],
   generisch: string,
+  gleicheRichtung: number,
 ): TwelveGoKante {
   const route = routeHref(von, nach, register)
   const art = route ? 'route' : 'generic'
   const vonName = von.name.trim()
   const nachName = nach.name.trim()
-  const datum = geplantesDatum(von, nach, transfers)
+  const datum = geplantesDatum(von, nach, transfers, gleicheRichtung)
   return {
     id: `${von.occurrenceId}:${nach.occurrenceId}`,
     vonOccurrenceId: von.occurrenceId,
@@ -167,15 +181,32 @@ export function twelveGoKantenAusVorkommen(
     eindeutig.push(ort)
   }
 
-  const generisch = twelveGoGenerischeSuche()
-  const kanten: TwelveGoKante[] = []
+  const paare: { von: TwelveGoEndpunkt; nach: TwelveGoEndpunkt }[] = []
   for (let index = 1; index < eindeutig.length; index += 1) {
     const von = eindeutig[index - 1]!
     const nach = eindeutig[index]!
     if (!von.name.trim() || !nach.name.trim()) continue
-    kanten.push(kanteAus(von, nach, transfers, register, generisch))
+    paare.push({ von, nach })
   }
-  return kanten
+
+  const richtung = new Map<string, number>()
+  for (const paar of paare) {
+    const schluessel = paarIdentitaet(paar.von, paar.nach)
+    if (!schluessel) continue
+    richtung.set(schluessel, (richtung.get(schluessel) ?? 0) + 1)
+  }
+
+  const generisch = twelveGoGenerischeSuche()
+  return paare.map((paar) =>
+    kanteAus(
+      paar.von,
+      paar.nach,
+      transfers,
+      register,
+      generisch,
+      richtung.get(paarIdentitaet(paar.von, paar.nach) ?? '') ?? 0,
+    ),
+  )
 }
 
 function artAusPlaceId(placeId: string | null): TwelveGoEndpunkt['kind'] {
