@@ -3,9 +3,9 @@
 // Lädt das neutrale Einbettungsdokument in einen undurchsichtigen Rahmen.
 // Der Rahmen teilt sich den Ursprung des privaten Arbeitsbereichs nicht.
 
-import { GYG_SANDBOX, embedPfad } from '@/lib/activities/getyourguide/dokument'
+import { GYG_HOEHE_MAX, GYG_SANDBOX, embedPfad } from '@/lib/activities/getyourguide/dokument'
 import type { GygLadeErgebnis, GygRenderer } from '@/lib/activities/getyourguide/widget'
-import type { GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
+import { GYG_ANZAHL_ERWEITERT, GYG_ANZAHL_STANDARD, type GygAnzahl, type GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
 const hoeheHalter = new WeakMap<HTMLElement, () => void>()
 
@@ -19,7 +19,7 @@ export function gygHoeheAnnehmen(rahmen: HTMLIFrameElement, event: Pick<MessageE
   if (eintrag.quelle !== 'jetnity-gyg-rahmen' || eintrag.art !== 'hoehe') return false
   if (typeof eintrag.px !== 'number' || !Number.isFinite(eintrag.px)) return false
   const px = Math.round(eintrag.px)
-  if (px < 1 || px > 2400) return false
+  if (px < 1 || px > GYG_HOEHE_MAX) return false
   rahmen.style.height = `${px}px`
   return true
 }
@@ -31,13 +31,13 @@ function hoeheLoesen(ziel: HTMLElement) {
   hoeheHalter.delete(ziel)
 }
 
-function rahmenErzeugen(suche: GygSuchkonfiguration): HTMLIFrameElement {
+function rahmenErzeugen(suche: GygSuchkonfiguration, anzahl: GygAnzahl): HTMLIFrameElement {
   const rahmen = document.createElement('iframe')
   rahmen.setAttribute('sandbox', GYG_SANDBOX)
   rahmen.setAttribute('credentialless', '')
   rahmen.referrerPolicy = 'no-referrer'
   rahmen.title = 'GetYourGuide'
-  rahmen.src = embedPfad(suche)
+  rahmen.src = embedPfad(suche, anzahl)
   rahmen.className = 'block h-[40rem] w-full max-w-full border-0 bg-white'
   rahmen.style.display = 'block'
   rahmen.style.width = '100%'
@@ -49,12 +49,15 @@ function rahmenErzeugen(suche: GygSuchkonfiguration): HTMLIFrameElement {
 }
 
 export const anwendungsRenderer: GygRenderer = {
-  laden(suche, ziel, signal) {
+  laden(suche, ziel, signal, anzahl: GygAnzahl = GYG_ANZAHL_STANDARD) {
     if (signal.aborted || typeof document === 'undefined') {
       return Promise.resolve({ art: 'abgelehnt', meldung: '' })
     }
+    if (anzahl !== GYG_ANZAHL_STANDARD && anzahl !== GYG_ANZAHL_ERWEITERT) {
+      return Promise.resolve({ art: 'abgelehnt', meldung: '' })
+    }
     hoeheLoesen(ziel)
-    const rahmen = rahmenErzeugen(suche)
+    const rahmen = rahmenErzeugen(suche, anzahl)
     const nachricht = (event: MessageEvent) => {
       gygHoeheAnnehmen(rahmen, event)
     }

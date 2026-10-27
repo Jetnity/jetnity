@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { createElement, type ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
+import AktivitaetenBereich, { nativeAktivitaetsAnzeige } from '@/components/trips/AktivitaetenBereich'
 import GetYourGuideAktivitaeten, { GetYourGuidePruefFlaeche } from '@/components/trips/GetYourGuideAktivitaeten'
 import { ANWENDUNGS_NAHT, type GetYourGuideNaht } from '@/lib/activities/getyourguide/widget'
 import type { Ort } from '@/lib/places/domain'
@@ -81,6 +81,21 @@ function reise(teil: Partial<Trip> = {}): Trip {
 function markup(knoten: ReactElement): string {
   return renderToStaticMarkup(knoten)
 }
+
+describe('Native Aktivitätensuche bei unavailable', () => {
+  test('unavailable versteckt die Angebotszusage und benennt die Prüfung neu', () => {
+    const aus = nativeAktivitaetsAnzeige('unavailable')
+    assert.equal(aus.label, 'Suche erneut prüfen')
+    assert.equal(aus.abdeckung, false)
+    assert.equal(nativeAktivitaetsAnzeige(null).label, 'Für diesen Tag suchen')
+    assert.equal(nativeAktivitaetsAnzeige('ok').label, 'Erneut suchen')
+    assert.equal(nativeAktivitaetsAnzeige('ok').abdeckung, true)
+    assert.equal(nativeAktivitaetsAnzeige('partial').abdeckung, true)
+    assert.equal(nativeAktivitaetsAnzeige('empty').abdeckung, true)
+    assert.equal(nativeAktivitaetsAnzeige('error').label, 'Erneut suchen')
+    assert.equal(nativeAktivitaetsAnzeige('error').abdeckung, true)
+  })
+})
 
 describe('GetYourGuide-Fläche', () => {
   test('ohne Tage bleibt die native Erklärung und GetYourGuide lädt noch nichts', () => {
