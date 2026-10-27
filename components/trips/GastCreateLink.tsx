@@ -12,7 +12,7 @@ import Link from 'next/link'
 
 import { standAusSitzung, type Sitzungsstand } from '@/lib/auth/oeffentliche-navigation'
 import { genericCreateCtaFuerSitzung } from '@/lib/trips/create-entry'
-import { gastspeicherLaden } from '@/lib/trips/gastspeicher'
+import { GASTSPEICHER_AKTUALISIERT, SCHLUESSEL, gastspeicherLaden } from '@/lib/trips/gastspeicher'
 import { createBrowserClient } from '@/lib/supabase/client'
 
 type GastCreateLinkProps = {
@@ -67,16 +67,36 @@ export default function GastCreateLink({
   }, [])
 
   React.useEffect(() => {
-    const aktiv = sitzung === 'gast' ? gastspeicherLaden().aktiv : null
-    const ziel = genericCreateCtaFuerSitzung({
-      createHref,
-      createLabel,
-      sitzung,
-      aktiv,
-    })
-    setHref(ziel.href)
-    setErsetzen(ziel.labelErsetzen)
-    setLabel(ziel.label)
+    const anwenden = () => {
+      if (!lebt.current) return
+      // `unbekannt` and `konto` never read guest storage. Invalid bytes
+      // come back as `aktiv: null` and the generic create target stays.
+      const aktiv = sitzung === 'gast' ? gastspeicherLaden().aktiv : null
+      const ziel = genericCreateCtaFuerSitzung({
+        createHref,
+        createLabel,
+        sitzung,
+        aktiv,
+      })
+      setHref(ziel.href)
+      setErsetzen(ziel.labelErsetzen)
+      setLabel(ziel.label)
+    }
+
+    anwenden()
+    if (sitzung !== 'gast') return
+
+    const beiSpeicher = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== SCHLUESSEL.aktiv) return
+      anwenden()
+    }
+
+    window.addEventListener(GASTSPEICHER_AKTUALISIERT, anwenden)
+    window.addEventListener('storage', beiSpeicher)
+    return () => {
+      window.removeEventListener(GASTSPEICHER_AKTUALISIERT, anwenden)
+      window.removeEventListener('storage', beiSpeicher)
+    }
   }, [createHref, createLabel, sitzung])
 
   return (

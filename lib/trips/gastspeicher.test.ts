@@ -24,6 +24,7 @@ import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
+  GASTSPEICHER_AKTUALISIERT,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   SCHLUESSEL,
@@ -1788,5 +1789,81 @@ describe('Manuelle Unterkunft: enger Gast-Zeitraum-Schreibweg', () => {
     assert.equal(speicher.roh(SCHLUESSEL.aktiv), vorher)
     speicher.sperren()
     assert.throws(() => gastUnterkunftZeitraumSetzen(reise, id, '2026-09-12', '2026-09-16'), SpeicherFehler)
+  })
+})
+
+describe('Aktive Gastreise meldet eine erfolgreiche Änderung ohne Kennung', () => {
+  function meldungen() {
+    const gesehen: Array<{ type: string; detail: unknown }> = []
+    window.dispatchEvent = ((event: Event) => {
+      const detail = event instanceof CustomEvent ? event.detail ?? null : null
+      gesehen.push({ type: event.type, detail })
+      return true
+    }) as typeof window.dispatchEvent
+    return gesehen
+  }
+
+  async function warten() {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  }
+
+  test('Anlegen und Verwerfen melden je einmal, ohne Reisekennung', async () => {
+    const gesehen = meldungen()
+    const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-signal-a' }))
+    await warten()
+    assert.equal(gesehen.length, 1)
+    assert.equal(gesehen[0]?.type, GASTSPEICHER_AKTUALISIERT)
+    assert.equal(gesehen[0]?.detail, null)
+    assert.equal(gesehen[0]?.type.includes(reise.id), false)
+    assert.equal(JSON.stringify(gesehen).includes(reise.id), false)
+
+    gastreiseEntfernen()
+    await warten()
+    assert.equal(gesehen.length, 2)
+    assert.equal(gesehen[1]?.detail, null)
+    assert.equal(JSON.stringify(gesehen).includes(reise.id), false)
+  })
+
+  test('ein fehlgeschlagener Schreibversuch meldet nichts', async () => {
+    const gesehen = meldungen()
+    speicher.sperren()
+    assert.throws(() => gastreiseAnlegen(eingabe()), SpeicherFehler)
+    await warten()
+    assert.deepEqual(gesehen, [])
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
+  test('eine abgelehnte zweite Reise und ein stummer Speicher melden nichts', async () => {
+    const gesehen = meldungen()
+    const erste = gastreiseAnlegen(eingabe({ clientRef: 'trip-signal-eine' }))
+    await warten()
+    assert.equal(gesehen.length, 1)
+
+    assert.throws(() => gastreiseAnlegen(eingabe({ clientRef: 'trip-signal-zwei' })), GastreiseBestehtFehler)
+    await warten()
+    assert.equal(gesehen.length, 1)
+    assert.equal(gastspeicherLaden().aktiv?.id, erste.id)
+
+    speicher.stummschalten()
+    assert.throws(() => gastreiseSpeichern(erste), SpeicherFehler)
+    speicher.loeschenSperren()
+    assert.throws(() => gastreiseEntfernen(), SpeicherFehler)
+    await warten()
+    assert.equal(gesehen.length, 1)
+    assert.equal(gastspeicherLaden().aktiv?.id, erste.id)
+    assert.equal(JSON.stringify(gesehen).includes(erste.id), false)
+  })
+
+  test('eine bestätigte Übernahme der aktiven Reise meldet das Entfernen ohne Kennung', async () => {
+    const gesehen = meldungen()
+    const reise = gastreiseAnlegen(eingabe({ clientRef: 'trip-signal-uebernahme' }))
+    await warten()
+    uebernommenStreichen(reise.clientRef ?? reise.id)
+    await warten()
+    assert.equal(gesehen.length, 2)
+    assert.equal(gesehen[1]?.type, GASTSPEICHER_AKTUALISIERT)
+    assert.equal(gesehen[1]?.detail, null)
+    assert.equal(JSON.stringify(gesehen).includes(reise.id), false)
+    assert.equal(gastspeicherLaden().aktiv, null)
   })
 })
