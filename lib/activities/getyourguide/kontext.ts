@@ -7,11 +7,7 @@ import type { Ort } from '@/lib/places/domain'
 import { istOrtId } from '@/lib/places/domain'
 
 import type { GetYourGuideFreigabe, GygGrund } from '@/lib/activities/getyourguide/freigabe'
-import {
-  oeffentlichenBezugBauen,
-  type GygOeffentlicherBezug,
-  type GygZielabbildung,
-} from '@/lib/activities/getyourguide/widget'
+import { suchkonfigurationBauen, type GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
 export type GygEtappe = {
   id: string
@@ -55,7 +51,7 @@ export type GygPlan =
   | {
       art: 'bereit'
       schluessel: string
-      bezug: GygOeffentlicherBezug
+      suche: GygSuchkonfiguration
       name: string | null
       zielArt: 'stadt' | 'region' | 'insel' | 'land'
       laender?: readonly GygLandOption[]
@@ -69,7 +65,6 @@ export type GygPlanEingabe = {
   landWahl: string | null
   freigabe: GetYourGuideFreigabe
   orteLesen: ((id: string) => Ort | null) | null
-  abbildung: readonly GygZielabbildung[]
 }
 
 type ReiseQuelle = {
@@ -105,8 +100,10 @@ function schluessel(teile: {
   landWahl: string | null
   art: GygPlan['art']
   zielTyp: string | null
-  kennung: string | null
-  bezugUmfang: string | null
+  sucheUmfang: string | null
+  sucheName: string | null
+  sucheLand: string | null
+  sucheCode: string | null
 }): string {
   return JSON.stringify([
     teile.freigabe,
@@ -118,8 +115,10 @@ function schluessel(teile: {
     teile.zielTyp,
     teile.countryCode,
     teile.landWahl,
-    teile.kennung,
-    teile.bezugUmfang,
+    teile.sucheUmfang,
+    teile.sucheName,
+    teile.sucheLand,
+    teile.sucheCode,
     teile.art,
   ])
 }
@@ -198,8 +197,10 @@ function landErgebnis(
     ortId: null,
     landWahl: eingabe.landWahl,
     zielTyp: null,
-    kennung: null,
-    bezugUmfang: null,
+    sucheUmfang: null,
+    sucheName: null,
+    sucheLand: null,
+    sucheCode: null,
   }
   const laender = [...stuetze.laender.entries()]
     .map(([countryCode, wert]) => ({ countryCode, name: wert.name, bestaetigt: wert.bestaetigt }))
@@ -228,19 +229,22 @@ function landErgebnis(
       laender: auswahl,
     }
   }
-  const bezug = oeffentlichenBezugBauen(
-    { art: 'land', countryCode: ziel.countryCode },
-    eingabe.abbildung,
-    gesperrtFuer(eingabe.reise),
-  )
+  const suche = suchkonfigurationBauen({
+    umfang: 'land',
+    name: ziel.name,
+    countryCode: ziel.countryCode,
+    gesperrt: gesperrtFuer(eingabe.reise),
+  })
   const identitaet = {
     ...basis,
     countryCode: ziel.countryCode,
     zielTyp: 'country',
-    kennung: bezug?.oeffentlicheKennung ?? null,
-    bezugUmfang: bezug?.umfang ?? null,
+    sucheUmfang: suche?.umfang ?? null,
+    sucheName: suche?.name ?? null,
+    sucheLand: suche?.land ?? null,
+    sucheCode: suche?.countryCode ?? null,
   }
-  if (!bezug) {
+  if (!suche) {
     return {
       art: 'nicht_unterstuetzt',
       schluessel: schluessel({ ...identitaet, art: 'nicht_unterstuetzt' }),
@@ -252,14 +256,14 @@ function landErgebnis(
   return {
     art: 'bereit',
     schluessel: schluessel({ ...identitaet, art: 'bereit' }),
-    bezug,
+    suche,
     name: ziel.name,
     zielArt: 'land',
     ...(unsicher ? { laender: auswahl } : {}),
   }
 }
 
-const OHNE_ZIEL = { zielTyp: null, kennung: null, bezugUmfang: null }
+const OHNE_ZIEL = { zielTyp: null, sucheUmfang: null, sucheName: null, sucheLand: null, sucheCode: null }
 
 export function gygOrtAnfrage(
   reise: GygReise,
@@ -407,20 +411,23 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
     }
   }
   const zielArt = ort.typ === 'city' ? 'stadt' : ort.typ === 'region' ? 'region' : 'insel'
-  const bezug = oeffentlichenBezugBauen(
-    { art: 'ort', ortId: ort.id, typ: ort.typ },
-    eingabe.abbildung,
-    gesperrtFuer(eingabe.reise),
-  )
+  const suche = suchkonfigurationBauen({
+    umfang: zielArt,
+    name: ort.name,
+    countryCode: ort.countryCode,
+    gesperrt: gesperrtFuer(eingabe.reise),
+  })
   const identitaet = {
     ...ortBasis,
     ortId: ort.id,
     countryCode: ort.countryCode,
     zielTyp: ort.typ,
-    kennung: bezug?.oeffentlicheKennung ?? null,
-    bezugUmfang: bezug?.umfang ?? null,
+    sucheUmfang: suche?.umfang ?? null,
+    sucheName: suche?.name ?? null,
+    sucheLand: suche?.land ?? null,
+    sucheCode: suche?.countryCode ?? null,
   }
-  if (!bezug) {
+  if (!suche) {
     return {
       art: 'nicht_unterstuetzt',
       schluessel: schluessel({ ...identitaet, art: 'nicht_unterstuetzt' }),
@@ -431,7 +438,7 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
   return {
     art: 'bereit',
     schluessel: schluessel({ ...identitaet, art: 'bereit' }),
-    bezug,
+    suche,
     name: ort.name,
     zielArt,
   }

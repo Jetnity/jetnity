@@ -4,17 +4,19 @@ import { fileURLToPath } from 'node:url'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { anwendungsFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
+import { landName } from '@/lib/country/darstellung'
+import { anwendungsFreigabe, geschlosseneFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
 import {
   gygOrtAnfrage,
   gygPlanen,
   gygReiseAusTrip,
   type GygEtappe,
+  type GygPlan,
   type GygPlanEingabe,
   type GygReise,
   type GygTag,
 } from '@/lib/activities/getyourguide/kontext'
-import type { GygZielabbildung } from '@/lib/activities/getyourguide/widget'
+import { suchanfrageText } from '@/lib/activities/getyourguide/suche'
 import type { Ort } from '@/lib/places/domain'
 import { geoNamesTsvZeile, laenderAusCountryInfo, orteAusGeoNames } from '@/lib/places/importieren'
 
@@ -99,15 +101,16 @@ const flughafen = synthetisch({
 
 const katalog = [bangkok, bangkokRegion, thailand, phuket, panama, panamaStadt, insel, flughafen]
 
-const ABBILDUNG: readonly GygZielabbildung[] = [
-  { art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:bangkok-city' },
-  { art: 'ort', ortId: bangkokRegion.id, typ: 'region', kennung: 'synthetic-public:bangkok-region' },
-  { art: 'ort', ortId: phuket.id, typ: 'city', kennung: 'synthetic-public:phuket-city' },
-  { art: 'ort', ortId: panamaStadt.id, typ: 'city', kennung: 'synthetic-public:panama-city' },
-  { art: 'ort', ortId: insel.id, typ: 'city', kennung: 'synthetic-public:samui-als-stadt' },
-  { art: 'land', countryCode: 'TH', kennung: 'synthetic-public:thailand' },
-  { art: 'land', countryCode: 'PA', kennung: 'synthetic-public:panama' },
-]
+function sucheVon(plan: GygPlan) {
+  assert.equal(plan.art, 'bereit')
+  if (plan.art !== 'bereit') throw new Error('Plan nicht bereit')
+  assert.equal('oeffentlicheKennung' in plan.suche, false)
+  assert.equal(JSON.stringify(plan.suche).includes('geonames:'), false)
+  assert.equal(JSON.stringify(plan.suche).includes('trip-gyg'), false)
+  assert.equal(JSON.stringify(plan.suche).includes('synthetic-public'), false)
+  assert.equal(plan.suche.land, landName(plan.suche.countryCode, 'de'))
+  return plan.suche
+}
 
 function leserFuer(liste: readonly Ort[], aufrufe: string[]) {
   return (id: string) => {
@@ -122,7 +125,6 @@ function eingabe(teil: Partial<GygPlanEingabe> & Pick<GygPlanEingabe, 'reise' | 
     landWahl: null,
     freigabe: OFFEN,
     orteLesen: null,
-    abbildung: ABBILDUNG,
     ...teil,
   }
 }
@@ -140,11 +142,11 @@ function reise(etappen: GygEtappe[], tage: GygTag[] = []): GygReise {
 }
 
 describe('GetYourGuide-Kontext', () => {
-  test('die Anwendung liest bei geschlossener Freigabe keinen Ort', () => {
+  test('eine geschlossene Freigabe liest keinen Ort, die Anwendung sucht ohne Kennung', () => {
     const aufrufe: string[] = []
     const plan = gygPlanen(
       eingabe({
-        freigabe: anwendungsFreigabe(),
+        freigabe: geschlosseneFreigabe(),
         orteLesen: leserFuer(katalog, aufrufe),
         umfang: 'tag',
         angeforderteTagId: 'day-gyg-1',
@@ -154,6 +156,21 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(plan.art, 'geschlossen')
     assert.deepEqual(aufrufe, [])
     if (plan.art === 'geschlossen') assert.deepEqual(plan.gruende, ['konfiguration', 'berechtigung', 'analyzer', 'manueller_widget'])
+    assert.equal(anwendungsFreigabe().status, 'bereit')
+    const offen = gygPlanen(
+      eingabe({
+        freigabe: anwendungsFreigabe(),
+        orteLesen: leserFuer(katalog, []),
+        umfang: 'tag',
+        angeforderteTagId: 'day-gyg-1',
+        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
+      }),
+    )
+    const suche = sucheVon(offen)
+    assert.equal(suche.umfang, 'stadt')
+    assert.equal(suche.name, 'Bangkok')
+    assert.equal(suche.countryCode, 'TH')
+    assert.equal(suchanfrageText(suche), `Bangkok ${suche.land}`)
   })
 
   test('ein ungültiger Tag fällt nicht auf den ersten Tag zurück', () => {
@@ -217,11 +234,14 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(stadt.name, 'Bangkok')
     assert.equal(region.name, 'Bangkok')
     assert.notEqual(stadt.schluessel, region.schluessel)
-    assert.equal(stadt.bezug.oeffentlicheKennung, 'synthetic-public:bangkok-city')
-    assert.equal(region.bezug.oeffentlicheKennung, 'synthetic-public:bangkok-region')
-    assert.deepEqual(Object.keys(stadt.bezug).sort(), ['anbieter', 'oeffentlicheKennung', 'umfang'])
-    assert.equal(JSON.stringify(stadt.bezug).includes('trip-gyg-1'), false)
-    assert.equal(JSON.stringify(stadt.bezug).includes('CHF'), false)
+    const stadtSuche = sucheVon(stadt)
+    const regionSuche = sucheVon(region)
+    assert.equal(stadtSuche.umfang, 'stadt')
+    assert.equal(regionSuche.umfang, 'region')
+    assert.equal(stadtSuche.name, 'Bangkok')
+    assert.equal(regionSuche.name, 'Bangkok')
+    assert.equal(suchanfrageText(stadtSuche), suchanfrageText(regionSuche))
+    assert.notEqual(stadtSuche.umfang, regionSuche.umfang)
   })
 
   test('Thailand am Reisetag ist kein Stadtziel', () => {
@@ -253,14 +273,16 @@ describe('GetYourGuide-Kontext', () => {
     if (plan.art !== 'bereit') return
     assert.equal(plan.zielArt, 'land')
     assert.equal(plan.name, 'Panama')
-    assert.equal(plan.bezug.umfang, 'land')
-    assert.equal(plan.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    const suche = sucheVon(plan)
+    assert.equal(suche.umfang, 'land')
+    assert.equal(suche.countryCode, 'PA')
+    assert.equal(suchanfrageText(suche), suche.land)
     const text = JSON.stringify(plan)
     assert.equal(text.includes('Panama City'), false)
     assert.equal(text.includes('synthetic-public:panama-city'), false)
     assert.equal(text.includes('San Blas'), false)
     assert.equal(text.includes('abreise'), false)
-    assert.deepEqual(Object.keys(plan).sort(), ['art', 'bezug', 'name', 'schluessel', 'zielArt'])
+    assert.deepEqual(Object.keys(plan).sort(), ['art', 'name', 'schluessel', 'suche', 'zielArt'])
   })
 
   test('eine Stadt in Panama wird nicht zum Land und Panama City nicht erfunden', () => {
@@ -273,7 +295,8 @@ describe('GetYourGuide-Kontext', () => {
     )
     assert.equal(plan.art, 'bereit')
     if (plan.art !== 'bereit') return
-    assert.equal(plan.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.equal(sucheVon(plan).umfang, 'land')
+    assert.equal(sucheVon(plan).name, landName('PA', 'de'))
     assert.equal(JSON.stringify(plan).includes('Panama City'), false)
     assert.equal('laender' in plan, false)
   })
@@ -309,7 +332,8 @@ describe('GetYourGuide-Kontext', () => {
     )
     assert.equal(gewaehlt.art, 'bereit')
     if (gewaehlt.art !== 'bereit') return
-    assert.equal(gewaehlt.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.equal(sucheVon(gewaehlt).countryCode, 'PA')
+    assert.equal(sucheVon(gewaehlt).umfang, 'land')
   })
 
   test('eine Stadt wird nicht still zum Land', () => {
@@ -333,8 +357,10 @@ describe('GetYourGuide-Kontext', () => {
     )
     assert.equal(gewaehlt.art, 'bereit')
     if (gewaehlt.art !== 'bereit') return
-    assert.equal(gewaehlt.bezug.umfang, 'land')
-    assert.equal(gewaehlt.bezug.oeffentlicheKennung, 'synthetic-public:thailand')
+    const suche = sucheVon(gewaehlt)
+    assert.equal(suche.umfang, 'land')
+    assert.equal(suche.countryCode, 'TH')
+    assert.equal(suche.name.includes('Bangkok'), false)
   })
 
   test('Name, stage-Kennung und falsche Rückgabe sind keine Zuordnung', () => {
@@ -410,7 +436,10 @@ describe('GetYourGuide-Kontext', () => {
         reise: reise([etappe('stage-gyg-sam', insel.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-sam')]),
       }),
     )
-    assert.equal(typ.art, 'nicht_unterstuetzt')
+    const inselSuche = sucheVon(typ)
+    assert.equal(inselSuche.umfang, 'insel')
+    assert.equal(inselSuche.name, 'Koh Samui')
+    assert.equal(suchanfrageText(inselSuche), `Koh Samui ${inselSuche.land}`)
     assert.equal(JSON.stringify(typ).includes('synthetic-public:samui-als-stadt'), false)
 
     const airport = gygPlanen(
@@ -426,18 +455,12 @@ describe('GetYourGuide-Kontext', () => {
 
   test('ein ausgewählter Tag übernimmt keinen fehlenden kanonischen Landescode von der Etappe', () => {
     const ziele = [
-      { typ: 'city' as const, zielArt: 'stadt' as const, id: panamaStadt.id, kennung: 'synthetic-public:panama-city' },
-      { typ: 'region' as const, zielArt: 'region' as const, id: 'geonames:9003703480', kennung: 'synthetic-public:panama-region' },
-      { typ: 'island' as const, zielArt: 'insel' as const, id: 'geonames:9003703481', kennung: 'synthetic-public:panama-island' },
+      { typ: 'city' as const, zielArt: 'stadt' as const, id: panamaStadt.id },
+      { typ: 'region' as const, zielArt: 'region' as const, id: 'geonames:9003703480' },
+      { typ: 'island' as const, zielArt: 'insel' as const, id: 'geonames:9003703481' },
     ]
     const fehlend: Array<string | null> = [null, '', 'pa', 'INVALID']
     for (const ziel of ziele) {
-      const abbildung: readonly GygZielabbildung[] = [
-        ...ABBILDUNG.filter(
-          (eintrag) => !(eintrag.art === 'ort' && eintrag.ortId === ziel.id && eintrag.typ === ziel.typ),
-        ),
-        { art: 'ort', ortId: ziel.id, typ: ziel.typ, kennung: ziel.kennung },
-      ]
       const planen = (countryCode: string | null, stufe: string | null) =>
         gygPlanen(
           eingabe({
@@ -449,7 +472,6 @@ describe('GetYourGuide-Kontext', () => {
                 country: countryCode === 'PA' ? 'Panama' : null,
                 countryCode,
               }),
-            abbildung,
             umfang: 'tag',
             angeforderteTagId: 'day-gyg-pa',
             reise: reise([etappe('stage-gyg-pa', ziel.id, stufe)], [tag('day-gyg-pa', 'stage-gyg-pa')]),
@@ -458,18 +480,18 @@ describe('GetYourGuide-Kontext', () => {
       for (const countryCode of fehlend) {
         const plan = planen(countryCode, 'PA')
         assert.equal(plan.art, 'ort_unbestaetigt', `${ziel.typ}:${String(countryCode)}`)
-        assert.equal('bezug' in plan, false)
+        assert.equal('suche' in plan, false)
         assert.equal(JSON.stringify(plan).includes('synthetic-public'), false)
-        assert.equal(JSON.stringify(plan).includes(ziel.kennung), false)
       }
       const positiv = planen('PA', 'PA')
-      assert.equal(positiv.art, 'bereit', ziel.typ)
+      const suche = sucheVon(positiv)
       if (positiv.art !== 'bereit') continue
       assert.equal(positiv.zielArt, ziel.zielArt)
-      assert.equal(positiv.bezug.oeffentlicheKennung, ziel.kennung)
+      assert.equal(suche.umfang, ziel.zielArt)
+      assert.equal(suche.name, 'Panama-Ziel')
+      assert.equal(suche.countryCode, 'PA')
       const ohneStufe = planen('PA', null)
-      assert.equal(ohneStufe.art, 'bereit', `${ziel.typ}:ohne-stufe`)
-      if (ohneStufe.art === 'bereit') assert.equal(ohneStufe.bezug.oeffentlicheKennung, ziel.kennung)
+      assert.equal(sucheVon(ohneStufe).name, 'Panama-Ziel')
       const widerspruch = planen('FR', 'PA')
       assert.equal(widerspruch.art, 'ort_widerspruch', ziel.typ)
       assert.equal(JSON.stringify(widerspruch).includes('synthetic-public'), false)
@@ -513,76 +535,30 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(rueck.art, 'bereit')
     if (hin.art !== 'bereit' || rueck.art !== 'bereit') return
     assert.notEqual(hin.schluessel, rueck.schluessel)
-    assert.deepEqual(hin.bezug, rueck.bezug)
+    assert.deepEqual(sucheVon(hin), sucheVon(rueck))
   })
 
-  test('dieselbe Orts-ID mit anderem Typ oder anderer Kennung ist ein anderes Ziel', () => {
+  test('dieselbe Orts-ID mit anderem Typ ist ein anderes Ziel, eine Kennungsliste nicht', () => {
     const id = 'geonames:9001609348'
     const alsStadt = synthetisch({ id, name: 'Bangkok', typ: 'city', country: 'Thailand', countryCode: 'TH' })
     const alsRegion = synthetisch({ id, name: 'Bangkok', typ: 'region', country: 'Thailand', countryCode: 'TH' })
-    const beide: readonly GygZielabbildung[] = [
-      { art: 'ort', ortId: id, typ: 'city', kennung: 'synthetic-public:same-city' },
-      { art: 'ort', ortId: id, typ: 'region', kennung: 'synthetic-public:same-region' },
-    ]
-    const stadt = gygPlanen(
-      eingabe({
-        orteLesen: () => alsStadt,
-        abbildung: beide,
-        umfang: 'tag',
-        angeforderteTagId: 'day-gyg-1',
-        reise: reise([etappe('stage-gyg-same', id, 'TH')], [tag('day-gyg-1', 'stage-gyg-same')]),
-      }),
-    )
-    const region = gygPlanen(
-      eingabe({
-        orteLesen: () => alsRegion,
-        abbildung: beide,
-        umfang: 'tag',
-        angeforderteTagId: 'day-gyg-1',
-        reise: reise([etappe('stage-gyg-same', id, 'TH')], [tag('day-gyg-1', 'stage-gyg-same')]),
-      }),
-    )
-    assert.equal(stadt.art, 'bereit')
-    assert.equal(region.art, 'bereit')
-    if (stadt.art !== 'bereit' || region.art !== 'bereit') return
-    assert.equal(stadt.bezug.oeffentlicheKennung, 'synthetic-public:same-city')
-    assert.equal(region.bezug.oeffentlicheKennung, 'synthetic-public:same-region')
+    const planen = (ort: Ort) =>
+      gygPlanen(
+        eingabe({
+          orteLesen: () => ort,
+          umfang: 'tag',
+          angeforderteTagId: 'day-gyg-1',
+          reise: reise([etappe('stage-gyg-same', id, 'TH')], [tag('day-gyg-1', 'stage-gyg-same')]),
+        }),
+      )
+    const stadt = planen(alsStadt)
+    const region = planen(alsRegion)
+    assert.equal(sucheVon(stadt).umfang, 'stadt')
+    assert.equal(sucheVon(region).umfang, 'region')
     assert.notEqual(stadt.schluessel, region.schluessel)
-
-    const kennungA = gygPlanen(
-      eingabe({
-        orteLesen: leserFuer(katalog, []),
-        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-a' }],
-        umfang: 'tag',
-        angeforderteTagId: 'day-gyg-1',
-        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
-      }),
-    )
-    const kennungB = gygPlanen(
-      eingabe({
-        orteLesen: leserFuer(katalog, []),
-        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-b' }],
-        umfang: 'tag',
-        angeforderteTagId: 'day-gyg-1',
-        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
-      }),
-    )
-    assert.equal(kennungA.art, 'bereit')
-    assert.equal(kennungB.art, 'bereit')
-    if (kennungA.art !== 'bereit' || kennungB.art !== 'bereit') return
-    assert.notEqual(kennungA.schluessel, kennungB.schluessel)
-    const kopie = gygPlanen(
-      eingabe({
-        orteLesen: leserFuer(katalog, []),
-        abbildung: [{ art: 'ort', ortId: bangkok.id, typ: 'city', kennung: 'synthetic-public:map-a' }],
-        umfang: 'tag',
-        angeforderteTagId: 'day-gyg-1',
-        reise: reise([etappe('stage-gyg-bkk', bangkok.id, 'TH')], [tag('day-gyg-1', 'stage-gyg-bkk')]),
-      }),
-    )
-    assert.equal(kopie.art, 'bereit')
-    if (kopie.art !== 'bereit') return
-    assert.equal(kopie.schluessel, kennungA.schluessel)
+    const erneut = planen(alsStadt)
+    assert.equal(erneut.schluessel, stadt.schluessel)
+    assert.equal(JSON.stringify(stadt).includes('synthetic-public'), false)
   })
 
   test('unbekannte oder widersprüchliche weitere Etappen entscheiden kein Land automatisch', () => {
@@ -602,7 +578,7 @@ describe('GetYourGuide-Kontext', () => {
     const gewaehlt = mitUnbekannt('PA')
     assert.equal(gewaehlt.art, 'bereit')
     if (gewaehlt.art !== 'bereit') return
-    assert.equal(gewaehlt.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.equal(sucheVon(gewaehlt).countryCode, 'PA')
     assert.deepEqual(gewaehlt.laender?.map((land) => land.countryCode), ['PA'])
 
     const reihenfolge = (codes: readonly [string, string]) => {
@@ -636,7 +612,8 @@ describe('GetYourGuide-Kontext', () => {
     )
     assert.equal(explizit.art, 'bereit')
     if (explizit.art !== 'bereit') return
-    assert.equal(explizit.bezug.oeffentlicheKennung, 'synthetic-public:panama')
+    assert.equal(sucheVon(explizit).countryCode, 'PA')
+    assert.equal(sucheVon(explizit).umfang, 'land')
     assert.ok(explizit.laender && explizit.laender.length > 0)
   })
 
@@ -663,15 +640,9 @@ describe('GetYourGuide-Kontext', () => {
       countryCode: 'UY',
     })
     const liste = [lissabon, sanJoseStadt, sanJoseRegion]
-    const abbildung: readonly GygZielabbildung[] = [
-      { art: 'ort', ortId: lissabon.id, typ: 'city', kennung: 'synthetic-public:lisbon-city' },
-      { art: 'ort', ortId: sanJoseStadt.id, typ: 'city', kennung: 'synthetic-public:sanjose-city' },
-      { art: 'ort', ortId: sanJoseRegion.id, typ: 'region', kennung: 'synthetic-public:sanjose-region' },
-    ]
     const stadt = gygPlanen(
       eingabe({
         orteLesen: leserFuer(liste, []),
-        abbildung,
         umfang: 'tag',
         angeforderteTagId: 'day-gyg-cr',
         reise: reise([etappe('stage-gyg-cr', sanJoseStadt.id, 'CR')], [tag('day-gyg-cr', 'stage-gyg-cr')]),
@@ -680,7 +651,6 @@ describe('GetYourGuide-Kontext', () => {
     const region = gygPlanen(
       eingabe({
         orteLesen: leserFuer(liste, []),
-        abbildung,
         umfang: 'tag',
         angeforderteTagId: 'day-gyg-uy',
         reise: reise([etappe('stage-gyg-uy', sanJoseRegion.id, 'UY')], [tag('day-gyg-uy', 'stage-gyg-uy')]),
@@ -694,28 +664,28 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(stadt.zielArt, 'stadt')
     assert.equal(region.zielArt, 'region')
     assert.notEqual(stadt.schluessel, region.schluessel)
-    assert.equal(stadt.bezug.oeffentlicheKennung, 'synthetic-public:sanjose-city')
-    assert.equal(region.bezug.oeffentlicheKennung, 'synthetic-public:sanjose-region')
+    assert.equal(sucheVon(stadt).countryCode, 'CR')
+    assert.equal(sucheVon(region).countryCode, 'UY')
+    assert.notEqual(suchanfrageText(sucheVon(stadt)), suchanfrageText(sucheVon(region)))
 
     const lissabonTag = gygPlanen(
       eingabe({
         orteLesen: leserFuer(liste, []),
-        abbildung,
         umfang: 'tag',
         angeforderteTagId: 'day-gyg-pt',
         reise: reise([etappe('stage-gyg-pt', lissabon.id, 'PT')], [tag('day-gyg-pt', 'stage-gyg-pt')]),
       }),
     )
-    assert.equal(lissabonTag.art, 'bereit')
-    if (lissabonTag.art !== 'bereit') return
-    assert.equal(lissabonTag.bezug.oeffentlicheKennung, 'synthetic-public:lisbon-city')
-    assert.equal(JSON.stringify(lissabonTag).includes('synthetic-public:bangkok'), false)
-    assert.equal(JSON.stringify(lissabonTag).includes('synthetic-public:panama'), false)
+    const lissabonSuche = sucheVon(lissabonTag)
+    assert.equal(lissabonSuche.name, 'Lissabon')
+    assert.equal(lissabonSuche.countryCode, 'PT')
+    assert.equal(suchanfrageText(lissabonSuche), `Lissabon ${lissabonSuche.land}`)
+    assert.equal(JSON.stringify(lissabonTag).includes('San Blas'), false)
+    assert.equal(JSON.stringify(lissabonTag).includes('Panama City'), false)
 
     const laender = gygPlanen(
       eingabe({
         orteLesen: leserFuer(liste, []),
-        abbildung,
         umfang: 'land',
         reise: reise([
           etappe('stage-gyg-cr', sanJoseStadt.id, 'CR'),

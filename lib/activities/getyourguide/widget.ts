@@ -1,11 +1,12 @@
 // lib/activities/getyourguide/widget.ts
 //
-// GetYourGuide-eigene Naht. Kein generisches Plugin, kein geratenes Markup,
-// kein Skript und keine Produktadresse. Die Anwendung bleibt leer.
+// GetYourGuide-eigene Naht. Die Anwendung sucht mit dem kanonischen Namen.
+// Die frühere Kennungsabbildung bleibt eine getrennte, leere Grenze.
 
 import type { Ort } from '@/lib/places/domain'
 
 import { anwendungsFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
+import type { GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
 export type GygZielabbildung =
   | { art: 'ort'; ortId: string; typ: 'city' | 'region' | 'island'; kennung: string }
@@ -21,7 +22,7 @@ export type GygLadeErgebnis = { art: 'ressource' } | { art: 'abgelehnt'; meldung
 
 export type GygRenderer = {
   laden: (
-    bezug: GygOeffentlicherBezug,
+    suche: GygSuchkonfiguration,
     ziel: HTMLElement,
     signal: AbortSignal,
   ) => Promise<GygLadeErgebnis>
@@ -39,10 +40,10 @@ export type GetYourGuideNaht = {
   freigabe: GetYourGuideFreigabe
   orteLesen: ((id: string) => Ort | null) | null
   kanonBestaetigen: GygKanonBestaetigen | null
-  abbildung: readonly GygZielabbildung[]
   renderer: GygRenderer | null
 }
 
+/** Keine Laufzeitregistrierung von GetYourGuide-Standortkennungen. */
 export const GETYOURGUIDE_ANWENDUNGS_ABBILDUNG: readonly GygZielabbildung[] = Object.freeze([])
 
 export const ANWENDUNGS_NAHT: GetYourGuideNaht = Object.freeze({
@@ -50,7 +51,6 @@ export const ANWENDUNGS_NAHT: GetYourGuideNaht = Object.freeze({
   freigabe: anwendungsFreigabe(),
   orteLesen: null,
   kanonBestaetigen: null,
-  abbildung: GETYOURGUIDE_ANWENDUNGS_ABBILDUNG,
   renderer: null,
 })
 

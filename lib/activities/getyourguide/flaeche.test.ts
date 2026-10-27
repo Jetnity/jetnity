@@ -83,7 +83,7 @@ function markup(knoten: ReactElement): string {
 }
 
 describe('GetYourGuide-Fläche', () => {
-  test('ohne Tage bleibt die native Erklärung und die Fläche geschlossen', () => {
+  test('ohne Tage bleibt die native Erklärung und GetYourGuide lädt noch nichts', () => {
     const html = markup(
       createElement(AktivitaetenBereich, {
         reise: reise({
@@ -92,10 +92,12 @@ describe('GetYourGuide-Fläche', () => {
       }),
     )
     assert.match(html, /Diese Reise hat noch keine Tage/)
-    assert.match(html, /noch nicht eingerichtet/)
-    assert.match(html, /data-gyg-zustand="geschlossen"/)
+    assert.match(html, /data-gyg-zustand="ort_ausstehend"/)
+    assert.match(html, /lädt dabei noch nichts/)
     assert.equal(html.includes('Panama City'), false)
     assert.equal(html.includes('Bei GetYourGuide anzeigen'), false)
+    assert.equal(html.includes('widget.getyourguide.com'), false)
+    assert.equal(html.includes('<iframe'), false)
     assert.equal(html.includes('Jetnity empfiehlt'), false)
   })
 
@@ -129,29 +131,30 @@ describe('GetYourGuide-Fläche', () => {
         angeforderteTagId: null,
       }),
     )
-    assert.match(html, /data-gyg-zustand="geschlossen"/)
+    assert.match(html, /data-gyg-zustand="ort_ausstehend"/)
     assert.equal(html.includes('synthetic-public'), false)
+    assert.equal(html.includes('<iframe'), false)
   })
 
-  test('eine Naht mit Anwendungherkunft bleibt geschlossen, eine Prüfnaht darf den nächsten Schritt zeigen', () => {
+  test('eine Anwendungsherkunft ignoriert die injizierte Kennung, eine Prüfnaht zeigt die Suche', () => {
     const orte = [panama]
     const offen: GetYourGuideNaht = {
       herkunft: 'anwendung',
       freigabe: { status: 'bereit' },
       orteLesen: (id) => orte.find((eintrag) => eintrag.id === id) ?? null,
       kanonBestaetigen: null,
-      abbildung: [{ art: 'land', countryCode: 'PA', kennung: 'synthetic-public:panama' }],
       renderer: null,
     }
-    const geschlossen = markup(
+    const anwendung = markup(
       createElement(GetYourGuidePruefFlaeche, {
         reise: reise({ stages: [etappe({ id: 'stage-gyg-pa', name: 'Panama', placeId: panama.id, countryCode: 'PA' })] }),
         angeforderteTagId: null,
         naht: offen,
       }),
     )
-    assert.match(geschlossen, /data-gyg-zustand="geschlossen"/)
-    assert.equal(geschlossen.includes('Bei GetYourGuide anzeigen'), false)
+    assert.match(anwendung, /data-gyg-zustand="ort_ausstehend"/)
+    assert.equal(anwendung.includes('Bei GetYourGuide anzeigen'), false)
+    assert.equal(anwendung.includes('synthetic-public'), false)
 
     const pruefung = markup(
       createElement(GetYourGuidePruefFlaeche, {
@@ -163,7 +166,13 @@ describe('GetYourGuide-Fläche', () => {
     assert.match(pruefung, /data-gyg-zustand="bereit"/)
     assert.match(pruefung, /Bei GetYourGuide anzeigen/)
     assert.match(pruefung, /Ideen für Panama/)
+    assert.match(pruefung, /Integration Analyzer/)
+    assert.match(pruefung, /Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung/)
+    assert.match(pruefung, /Datenschutz von GetYourGuide/)
+    assert.match(pruefung, /Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen/)
     assert.equal(pruefung.includes('Panama City'), false)
+    assert.equal(pruefung.includes('<iframe'), false)
+    assert.equal(pruefung.includes('widget.getyourguide.com'), false)
     assert.equal(ANWENDUNGS_NAHT.renderer, null)
     assert.equal(ANWENDUNGS_NAHT.kanonBestaetigen, null)
   })
@@ -184,16 +193,13 @@ describe('GetYourGuide-Fläche', () => {
           freigabe: { status: 'bereit' },
           orteLesen: (id) => (id === bangkok.id ? bangkok : id === panama.id ? panama : null),
           kanonBestaetigen: null,
-          abbildung: [
-            { art: 'land', countryCode: 'TH', kennung: 'synthetic-public:thailand' },
-            { art: 'land', countryCode: 'PA', kennung: 'synthetic-public:panama' },
-          ],
           renderer: null,
         },
       }),
     )
     assert.match(html, /data-gyg-zustand="land_auswahl"/)
-    assert.match(html, /name="gyg-land-trip-gyg-1"/)
+    assert.match(html, /name="gyg-land-/)
+    assert.equal(html.includes('name="gyg-land-trip-gyg-1"'), false)
     assert.equal(html.split('type="radio"').length - 1, 2)
     assert.match(html, /Panama/)
     assert.match(html, /Thailand/)

@@ -3,7 +3,7 @@
 // Kontexteigene Lebensdauer. Eine Antwort gilt nur für Epoche und Generation.
 // Ein Kontextwechsel verwirft das alte Ziel, bevor eine neue Anfrage entsteht.
 
-import type { GygOeffentlicherBezug } from '@/lib/activities/getyourguide/widget'
+import type { GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
 export type GygPhase = 'ruhend' | 'laeuft' | 'fehler' | 'anzeige'
 
@@ -13,7 +13,7 @@ export type GygLauf = {
   naechsteGeneration: number
   phase: GygPhase
   generation: number | null
-  bezug: GygOeffentlicherBezug | null
+  suche: GygSuchkonfiguration | null
   fehler: string | null
 }
 
@@ -24,7 +24,7 @@ export type GygDispatch =
       lauf: GygLauf
       epoche: number
       generation: number
-      bezug: GygOeffentlicherBezug
+      suche: GygSuchkonfiguration
     }
 
 const FEHLER_STANDARD = 'GetYourGuide konnte gerade nicht geladen werden.'
@@ -36,7 +36,7 @@ export function gygLaufStart(kontext: string): GygLauf {
     naechsteGeneration: 1,
     phase: 'ruhend',
     generation: null,
-    bezug: null,
+    suche: null,
     fehler: null,
   }
 }
@@ -49,12 +49,25 @@ export function gygKontextWechseln(lauf: GygLauf, kontext: string): GygLauf {
     naechsteGeneration: lauf.naechsteGeneration,
     phase: 'ruhend',
     generation: null,
-    bezug: null,
+    suche: null,
     fehler: null,
   }
 }
 
-export function gygAnfordern(lauf: GygLauf, bezug: GygOeffentlicherBezug): GygDispatch {
+export function gygEntfernen(lauf: GygLauf): GygLauf {
+  if (lauf.phase === 'ruhend' && lauf.suche === null) return lauf
+  return {
+    epoche: lauf.epoche + 1,
+    kontext: lauf.kontext,
+    naechsteGeneration: lauf.naechsteGeneration,
+    phase: 'ruhend',
+    generation: null,
+    suche: null,
+    fehler: null,
+  }
+}
+
+export function gygAnfordern(lauf: GygLauf, suche: GygSuchkonfiguration): GygDispatch {
   if (lauf.phase === 'laeuft') return { angenommen: false, lauf }
   const generation = lauf.naechsteGeneration
   const next: GygLauf = {
@@ -62,10 +75,10 @@ export function gygAnfordern(lauf: GygLauf, bezug: GygOeffentlicherBezug): GygDi
     naechsteGeneration: generation + 1,
     phase: 'laeuft',
     generation,
-    bezug,
+    suche,
     fehler: null,
   }
-  return { angenommen: true, lauf: next, epoche: next.epoche, generation, bezug }
+  return { angenommen: true, lauf: next, epoche: next.epoche, generation, suche }
 }
 
 export function gygFehlertext(meldung: string | null | undefined): string {
