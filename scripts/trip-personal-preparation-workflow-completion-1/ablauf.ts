@@ -316,8 +316,8 @@ async function ablauf() {
 
   const bericht = {
     herkunft: {
-      autor: 'Jetnity Trip Personal Preparation Workflow Completion 1 — Cursor Generation 1',
-      session: 'bc-6bbca11e-14c9-4f1a-ac07-e729d8a54ca3',
+      autor: 'Jetnity V2 Traveller and Preparation Clarity 1 — Cursor Generation 1',
+      session: 'bc-a62482f0-b662-484a-b2a4-ca39b15ea410',
       modell: 'grok-4.7-high-fast',
       kopf: git(['rev-parse', 'HEAD']),
       baum: git(['rev-parse', 'HEAD^{tree}']),
