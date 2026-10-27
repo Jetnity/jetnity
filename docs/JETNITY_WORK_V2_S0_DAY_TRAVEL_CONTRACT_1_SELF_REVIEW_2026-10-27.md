@@ -33,6 +33,12 @@ I did not query Production. I did not call the RPC. The Account block is a sourc
 - Mounted UI: not run. No component changed, and private browser use is suspended.
 - Full native CI locally: not run. I will not describe a green build I did not execute. GitHub CI on this head is the check that counts, and only after it finishes on this SHA.
 
+## R1-F1
+
+Review `5671375305` correctly rejected the decision sentence that said a create of three, four and seven days stays fourteen. The tables already said create-time 3 then 4 on 7 days stays 7, and the editor grows to 14. I had collapsed R109’s different example (an already-14-day trip assigned 3, then 4, then 7 stays 14 rather than 28) into that sentence. The decision paragraph is corrected. TASK V1 is untouched. A repository search after the edit is in the R2 packet. The S0 documents no longer claim that a 7-day create becomes 14 days.
+
+R1-F2: status and handoff now say design-only. This memo does not fulfill the user requirement. ACCOUNT BLOCKED is unchanged. No runtime file is in the correction.
+
 ## What I will not claim
 
 - Independent Technical Lead acceptance.

@@ -46,7 +46,7 @@ Repeating 3 and 4 when those counts are already stored returns `Es gibt noch kei
 | Edit, 7 days with null `stageId`, request 3 and 4 | 14 | original 7 plus 7 new | Current duration edit. |
 | Edit, assigned 3+4, request 6+8 | 14 | original 7 plus 7 new | Current duration edit, explicit lengthening. |
 
-Create allocation and edit duration answer different questions. R109 already recorded both: a 3/4/7 create stays 14 days, and duration editing must not be relabelled as distributing existing days (`docs/JETNITY_MULTI_STOP_CREATE_DAY_ALLOCATION_1_TASK_V1_2026-10-26.md`). S0 confirms that split still holds on main `d31a16afdac5e97d4b02f4cb5824f5adc290577c` and adds the unassigned-edit arithmetic above.
+Create allocation and edit duration answer different questions. Create-time assignment of 3 days then 4 days on an existing 7-day calendar stays 7 days. The direct editor, given those 7 days with null `stageId` and requested lengths 3 and 4, grows the trip to 14 days. R109 recorded a separate case: a trip that is already 14 days long, with those days assigned 3 then 4 then 7, stays 14 days rather than becoming 28, and duration editing must not be relabelled as distributing existing days (`docs/JETNITY_MULTI_STOP_CREATE_DAY_ALLOCATION_1_TASK_V1_2026-10-26.md`). S0 confirms that split still holds on main `d31a16afdac5e97d4b02f4cb5824f5adc290577c` and adds the unassigned-edit arithmetic above.
 
 A later editor can offer two separate actions:
 

@@ -36,6 +36,12 @@ Task-owned only:
 
 Not changed: product TS/TSX, SQL, Auth, CI, indexing, S1/S2/S3 sources, #1043, `docs/ACTIVE_WORK_STATUS.md`, `DECISIONS.md`, `ARCHITECTURE.md`. A dirty `next-env.d.ts` from the environment was restored and is not in the commit.
 
+## R1 correction
+
+Technical Lead R1 review `5671375305` on `daebe8ed097cb378343bd589799f7af06d3bb011` is CHANGES REQUIRED. The decision paragraph that collapsed two different examples is corrected. Create-time 3 then 4 on 7 days stays 7. The editor on 7 unassigned days grows to 14. R109’s separate example is a trip that is already 14 days long and is assigned 3, then 4, then 7, which stays 14 rather than becoming 28.
+
+The memo stays design-only. It does not fulfill the user requirement. ACCOUNT BLOCKED stands. No day role, RPC, or SQL was added. This correction does not merge or rebase onto a moving `main`. Root syncs that base after an accepted correction.
+
 ## What the next reader must treat as decided
 
 Read the decision document. Short form:
@@ -72,7 +78,7 @@ Not checked:
 
 ## Next step
 
-Technical Lead reviews this exact head. Possible later work, each only after a new assignment:
+Stop for independent Technical Lead R2 on the correction head. R1 head `daebe8ed097cb378343bd589799f7af06d3bb011` is not approved. Possible later work, each only after a new assignment:
 
 1. Owner decision on the Account RPC gate. Until yes, no Account assignment writer.
 2. A separate UI slice for “Dauer ändern” versus “Vorhandene Tage zuordnen”, Guest first if the gate is still closed.

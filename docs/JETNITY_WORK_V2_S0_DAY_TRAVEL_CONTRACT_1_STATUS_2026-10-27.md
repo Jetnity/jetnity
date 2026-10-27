@@ -2,7 +2,9 @@
 
 Date 27 October 2026. Draft [#1051](https://github.com/Jetnity/jetnity/pull/1051). Tracking [#1047](https://github.com/Jetnity/jetnity/issues/1047).
 
-**Status: decision written, stopped for independent Technical Lead review.** No runtime change. Not Ready. Not merged. No follow-up slice started.
+**Status: design-only. Stopped for independent Technical Lead R2.** This memo does not fulfill the user requirement. The product still has no post-create assignment of existing day ids and no stored Hinreise / Rückreise / transfer-day labels. **ACCOUNT BLOCKED** remains. No day-role field, no RPC, no SQL, no runtime change. Not Ready. Not merged. No follow-up slice started.
+
+R1 on `daebe8ed097cb378343bd589799f7af06d3bb011` (review `5671375305`) required one factual correction. The decision no longer treats R109’s already-14-day example as a 7-day create. Create-time 3 then 4 on 7 days stays 7. The direct editor on 7 unassigned days grows to 14. This correction does not sync `main`.
 
 ## Writer
 
