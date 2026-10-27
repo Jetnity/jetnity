@@ -7,9 +7,15 @@ Exact writer: Jetnity GetYourGuide Manual Widget Integration 1 — Cursor Genera
 
 Re-read at this reporting point from cursor-cloud `run-info`. Field `originalModelName`: `grok-4.7-high-fast`. Run `source`: `scm`. Session `bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50`, https://cursor.com/agents/bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50. The same logical name is the run `name`. This is the original Generation 1 session. It was not restarted.
 
-Stage when the receipt was written: the widget implementation and the first handoff were already on the remote branch at `8da4d3292a4d00afe2f57598043b2ff6f8164a21`, tree `480a7882210ea266ac9b584b10ba92b2dc11131d`. Root then added task revision `3eddc72ade423afa1dd5109f3bbd625014495f7e` on the same branch. This receipt commit is rebased onto that revision and does not replace it. `origin/main` `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, merge-base that commit, behind 0. No check was abandoned. The receipt commit’s own SHA is recorded in the PR body after push.
+Stage at this R1 delivery: same Generation 1 session, no new writer. Root task revision `3eddc72ade423afa1dd5109f3bbd625014495f7e` remains an ancestor. Fresh `origin/main` on 27 October 2026 is `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`, merge-base that commit, behind 0. The reviewed head before this correction was `dd6f972d20eae71cac3d66dfbb407380868a7c77`, tree `e3947a4c47b29c914b5707806f9de491778149cf`, 9 ahead. Actions run 40418657518 passed for that SHA only. This file cannot name the corrected tip’s own SHA. It is the PR body after the push.
 
 Capability blocker: the delivered product screenshot is the provider outage page, not a missing certificate exception. This session’s Playwright Chromium loaded the official widget, images and offer titles. `allow-same-origin` was not added. Root’s `net::ERR_CERT_AUTHORITY_INVALID` note stays outside this implementation.
+
+## R1
+
+The height script no longer reads scroll height, writes the provider parent style, or remembers a maximum. It posts the provider loader’s current explicit pixel height, up or down, within 1 to 2400. CSP hash `sha256-7l6jKj7GuYrEhMz6eSTGsEYmIyXjLcO292wkNpWkfn8=`. Root’s old-script SHA256 `70eb95959f7e6172f3640a033c0f5a98a7e28a3431dc09d613a792e1ba0845ee` and the 1116→1292 climb stay the finding against that script. The synthetic regression held 1100px for 6 seconds with scroll height 1116, then 400, then 1100, including 375px, with no provider request. The live Lisbon frame then settled at 495px, 1173px and back to 495px, each time matching the loader style for 1.5 seconds. At 375 the third card ended at 1121 inside the 1173px frame. The ancestor did not clip it. Embed scroll and client were both 1173. The earlier 1187px and 32px remainder are not this script.
+
+Parent document, URL, cookie and localStorage reads from the embed frame threw `SecurityError` at origin `null`. Request URL, headers and body, including popup navigations, had no canary. Collector telemetry was 9. `gygPAStatus` stayed `loading`. The same-surface native card stayed through a pending adoption, the accepted message “Die Übernahme wurde gemeldet.”, and GetYourGuide removal. Synthetic A→B→A, mismatched id, failure, retry, unmount and a second instance completed with no provider request. The offer click is still the provider outage, Ray IDs `a510b081d99d3e6e`, `a510b16f6e543e6e` and `a510b2573fa93e6e`, with `partner_id=2MQHT6Z`. That is not section 9.3. Preview and eligible-host Analyzer stay unchecked.
 
 ## Analyzer on this host
 
@@ -21,7 +27,7 @@ Observed on the opaque embed document, three ticks about two seconds apart, afte
 - `gygPAStatus` stayed `loading` on every tick. That is not initialization success. `ok` was not observed.
 - `sessionStorage` throws `SecurityError` because the document is sandboxed without `allow-same-origin`. The same throw occurs in the provider frame.
 - `pageerror` and `unhandledrejection` lists were empty on these ticks. No uncaught `getVisitorId` exception was observed here. That does not clear the eligible-host risk, because this hostname is one the Analyzer skips.
-- Five requests went to `collector.getyourguide.com`. This is not a zero-telemetry result. The private canary was not in those request URLs.
+- An earlier tick on the previous head counted five requests to `collector.getyourguide.com`. The R1 run on this correction counted nine. This is not a zero-telemetry result. The private canary was not in those request URLs, headers or bodies.
 
 The published preview for this head was not opened. Commit status for `9d995008` points at Vercel deployment `4WndLaqmNBYhwk8eLiB59shhwZ8i`. The only preview host written on the PR contains `getyourguide` and redirects to SSO. No eligible deployment hostname was available without authentication.
 

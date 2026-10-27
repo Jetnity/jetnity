@@ -13,8 +13,10 @@ export const GYG_CMP = 'jetnity_activities'
 export const GYG_LOCALE = 'de-CH'
 export const GYG_ANZAHL = '3'
 export const GYG_SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox'
-export const GYG_HOEHE_SKRIPT = '(function(){var letzte=-1,gemerkt=0,timer=0;function lesen(){var rahmen=document.querySelector("iframe");var px=Math.ceil(Math.max(document.body?document.body.scrollHeight:0,document.documentElement.scrollHeight));if(rahmen){var ende=Math.ceil(rahmen.offsetTop+rahmen.offsetHeight);if(ende>px)px=ende;var vater=rahmen.parentElement;if(vater){var gesetzt=parseFloat(vater.style.height);if(isFinite(gesetzt)&&gesetzt>px)px=Math.ceil(gesetzt)}}return px}function messen(){var px=lesen();if(!isFinite(px)||px<1||px>2400)return;if(px>gemerkt){gemerkt=px;clearTimeout(timer);timer=setTimeout(function(){var rahmen=document.querySelector("iframe");var vater=rahmen&&rahmen.parentElement;if(vater)vater.style.height=gemerkt+"px";if(gemerkt===letzte)return;letzte=gemerkt;parent.postMessage({quelle:"jetnity-gyg-rahmen",art:"hoehe",px:letzte},"*")},500)}else if(px+1<gemerkt){var rahmen=document.querySelector("iframe");var vater=rahmen&&rahmen.parentElement;if(vater)vater.style.height=gemerkt+"px"}}var beobachter=new ResizeObserver(messen);beobachter.observe(document.documentElement);new MutationObserver(function(){var rahmen=document.querySelector("iframe");if(rahmen)beobachter.observe(rahmen);messen()}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:["style"]});addEventListener("load",messen)})();'
-export const GYG_HOEHE_HASH = 'sha256-cOuVlZ9+YXLzZAoDPA9amKfiijQx3AnWE6eS4boIRe4='
+// Liest nur die explizite Pixelhöhe, die der Anbieter-Loader an seinen eigenen Rahmen-Eltern schreibt.
+// Kein scrollHeight, kein Schreiben dieser Höhe, kein gemerktes Maximum. Wachstum und Schrumpfen bleiben der aktuelle Wert.
+export const GYG_HOEHE_SKRIPT = '(function(){var letzte=-1;function lesen(){var rahmen=document.querySelector("iframe");var vater=rahmen&&rahmen.parentElement;if(!vater)return 0;var treffer=/^([0-9]+(?:\\.[0-9]+)?)px$/.exec(String(vater.style.height||""));if(!treffer)return 0;var px=Math.round(Number(treffer[1]));if(!isFinite(px)||px<1||px>2400)return 0;return px}function melden(){var px=lesen();if(!px||px===letzte)return;letzte=px;parent.postMessage({quelle:"jetnity-gyg-rahmen",art:"hoehe",px:px},"*")}new MutationObserver(melden).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:["style"]});addEventListener("load",melden)})();'
+export const GYG_HOEHE_HASH = 'sha256-7l6jKj7GuYrEhMz6eSTGsEYmIyXjLcO292wkNpWkfn8='
 
 const UMFANG = new Set<GygSuchumfang>(['stadt', 'region', 'insel', 'land'])
 const PARAMETER = ['umfang', 'code', 'name'] as const
@@ -128,6 +130,7 @@ export function embedDokument(suche: GygSuchkonfiguration | null): string {
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <title>GetYourGuide</title>
+<style>html,body{margin:0;padding:0}</style>
 <script async defer src="${GYG_ANALYZER_SRC}" data-gyg-partner-id="${GYG_PARTNER_ID}"></script>
 </head>
 <body>

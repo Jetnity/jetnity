@@ -8,15 +8,33 @@ This status is not a Root PASS, not Ready, and not a merge.
 
 Observed at this reporting point from cursor-cloud `run-info`, field `originalModelName`: `grok-4.7-high-fast`. Metadata source is that tool result, not a guessed label. Run `source` is `scm`. Session `bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50`, https://cursor.com/agents/bc-a2ac7c66-900d-4ad0-9fd1-dfe692d10f50. Logical name on the run: Jetnity GetYourGuide Manual Widget Integration 1 — Cursor Generation 1. No Auto fallback was selected.
 
-Stage: implementation, proof, and the first handoff were already pushed at `8da4d3292a4d00afe2f57598043b2ff6f8164a21`. This receipt commit is rebased onto Root’s task revision `3eddc72ade423afa1dd5109f3bbd625014495f7e`. Its own SHA is the PR body after the push.
+Stage: Technical-Lead R1 is implemented on this same Generation 1 session. The corrected head is the branch tip that contains this file. Its SHA is in the PR body after the push. Root’s task revision `3eddc72ade423afa1dd5109f3bbd625014495f7e` stays an ancestor. `origin/main` fetched on 27 October 2026 is still `7d52da97efc1f40fbea5c07d978c2e81e6b76659`. Merge-base is that commit. Before this correction the branch was 9 ahead and 0 behind. GitHub Actions run 40418657518 remains the gate of `dd6f972d` only.
 
-Concrete blocker: offer-card clicks in this session land on GetYourGuide URLs that keep `partner_id=2MQHT6Z`, and the latest bodies are the provider outage page. Ray ID on the latest Lisbon click: `a50d22a04b76bdc9`. Root’s separate test-browser `net::ERR_CERT_AUTHORITY_INVALID` was not reproduced here and is not used as a sandbox or certificate-bypass reason. No vendor inquiry.
+Concrete blocker: offer-card clicks in this session land on GetYourGuide URLs that keep `partner_id=2MQHT6Z`, and the latest bodies are the provider outage page. The latest Lisbon Ray ID on this corrected run is `a510b081d99d3e6e`. Earlier Ray IDs, including `a50d22a04b76bdc9`, stay separate observations. Root’s separate test-browser `net::ERR_CERT_AUTHORITY_INVALID` was not reproduced here and is not used as a sandbox or certificate-bypass reason. No vendor inquiry.
 
 ## State
 
 The manual search widget is implemented on `feat/getyourguide-manual-widget-integration-1`, Draft PR #1041, tracking #1040, parent #1023 V5. The application loads the official activities widget only after an explicit visitor action. The query is the confirmed public place name plus the catalog country label, or the country label alone for a country without days. The document is `/embed/getyourguide`. Direct opens stay inactive.
 
 The delivering review head is the branch tip that contains this file. Its exact SHA is recorded in the PR body after the last commit of this delivery. `origin/main` read on 26 October 2026 is `7d52da97efc1f40fbea5c07d978c2e81e6b76659`, tree `608321f4a8813adf1de23c3132039d39f9c27e98`. Merge-base with that main is the same commit. The branch was 1 ahead / 0 behind before these implementation commits.
+
+## R1 correction
+
+The height script that measured document scroll height, wrote that value onto the provider frame’s parent, and remembered only the maximum is replaced. Root’s reproduction of 1116→1292px and the stuck 1100px after a shrink to 400px belongs to that script, SHA256 `70eb95959f7e6172f3640a033c0f5a98a7e28a3431dc09d613a792e1ba0845ee`. The 1187px outer frame and the 32px remainder are historical measurements of that script.
+
+The replacement reads only the explicit pixel height the provider loader writes. It does not write that style and does not keep a maximum. The parent still accepts only `{ quelle: 'jetnity-gyg-rahmen', art: 'hoehe', px }` from the current iframe at origin `null`, integer 1 to 2400. The active CSP hash is `sha256-7l6jKj7GuYrEhMz6eSTGsEYmIyXjLcO292wkNpWkfn8=`.
+
+A synthetic Playwright run with the real script, 8px body margin, and no provider request held the outer frame at 1100px for 24 samples over 6 seconds while document scroll height stayed 1116. It then followed 400px for 8 samples and returned to 1100px for 8 samples. At 1280, 375 and 1280 again the outer frame stayed 1100, the ancestor did not clip it, and no host other than 127.0.0.1 was requested. Node on this machine was 22.23.4. That run is synthetic geometry, not provider acceptance.
+
+On the real Lisbon widget after this change, fresh geometry after a 1.5s settle was outer 495px at 1440, 1173px at 375, and 495px again at 1440. Each matched the provider loader’s explicit style. Three cards were present at each width. At 375 the card bottoms were 363, 742 and 1121. The outer frame and the embed document were both 1173px, so the third card fit. The overflow-hidden ancestor was 1801px and did not cut the frame. This is not the earlier 1187px observation.
+
+The proof now also waits for an exact place id, ignores a late answer after A→B→A, rejects a mismatched id, shows a synthetic load failure and retry, drops a late load after unmount, and keeps a second instance after the first is removed. In the same activities section a native “Synthetische Bootsfahrt” stays visible while its adoption is pending, then shows “Die Übernahme wurde gemeldet.” after resolve. Removing GetYourGuide leaves that card and that message. No GetYourGuide request happened during those synthetic steps.
+
+The embed frame’s attempts to read the parent document, URL, cookie and localStorage each threw `SecurityError` from origin `null`. The canary was not in those reads. Context requests, including popup navigations, were scanned in URL, headers and body. `kanarienLecks` is empty. Nine collector requests remain, so telemetry is not zero. `gygPAStatus` stayed `loading` on `127.0.0.1`. That is not Analyzer initialization.
+
+The load notice and the Jetnity privacy paragraph now say the Analyzer measures the widget’s display for GetYourGuide. They do not certify that measurement. ADR-0222 now limits the `credentialless` cookie observation to browsers that implement it and to the framed Chromium check. A first-party cookie on the first-party route in another browser is not by itself a provider leak.
+
+The latest offer clicks still open GetYourGuide’s outage page with `partner_id=2MQHT6Z` and no H1. Ray IDs from this run: Lisbon `a510b081d99d3e6e` (`et=430238`, `q=Lissabon+Portugal`), Crete `a510b16f6e543e6e`, Portugal `a510b2573fa93e6e`. The proof exits 1 for that outage. It is not a search list and not TASK V1 section 9.3. Earlier search-list and Arrábida observations stay separate. Preview Fetch Metadata, paint and eligible-host Analyzer remain unchecked. No Ready and no merge.
 
 ## What is shown
 

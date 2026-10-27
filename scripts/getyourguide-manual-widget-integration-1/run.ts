@@ -25,7 +25,8 @@ const ARTIFACTS = '/opt/cursor/artifacts/gyg-manual-widget'
 const KANARIEN = 'kanarien-private-reise-7f3a'
 
 const fehler: string[] = []
-const netz: { phase: string; host: string; path: string }[] = []
+const netz: { phase: string; host: string; path: string; art: string }[] = []
+const kanarienLecks: string[] = []
 let phase = 'vorher'
 
 function pruefe(bedingung: boolean, meldung: string) {
@@ -302,12 +303,243 @@ async function ausschnitt375(page: Page, szenario: string) {
           client: document.documentElement.clientHeight,
           widgetHoehe: widget instanceof HTMLElement ? Math.round(widget.getBoundingClientRect().height) : 0,
           karten,
+          stil: widget instanceof HTMLElement && widget.parentElement ? widget.parentElement.style.height : '',
         }
       })
       .catch(() => null)
     if (mass) innen.push({ url: frame.url().slice(0, 100), ...mass })
   }
   return { aussen, innen }
+}
+
+type PruefApi = {
+  wartend: string[]
+  aufloesen: (id: string, ort: { id: string } | null) => boolean
+  ablehnen: (id: string) => boolean
+  laden: { warten: boolean; fehler: boolean }
+  offen: HTMLElement[]
+}
+
+async function lebenszyklusPruefen(page: Page) {
+  const wurzel = page.locator('[data-szenario="lebenszyklus"]')
+  const gleichzeitig = page.locator('[data-szenario="gleichzeitig"]')
+  const lisbon = 'geonames:2267057'
+  const kreta = 'geonames:2593313'
+  const api = () =>
+    page.evaluate(() => {
+      const fenster = window as Window & { __gygPruef?: PruefApi }
+      return fenster.__gygPruef?.wartend ?? []
+    })
+  const wartenAufId = async (id: string) => {
+    await page.waitForFunction(
+      (erwartet) => {
+        const fenster = window as Window & { __gygPruef?: { wartend: string[] } }
+        return fenster.__gygPruef?.wartend.includes(erwartet) === true
+      },
+      id,
+      { timeout: 8000 },
+    )
+  }
+  await wartenAufId(lisbon)
+  await wurzel.getByRole('button', { name: 'Lebenszyklus Kreta' }).click()
+  await page.waitForFunction(
+    (alt) => {
+      const fenster = window as Window & { __gygPruef?: { wartend: string[] } }
+      const wartend = fenster.__gygPruef?.wartend ?? []
+      return !wartend.includes(alt)
+    },
+    lisbon,
+    { timeout: 8000 },
+  )
+  const spaetLissabon = await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    return fenster.__gygPruef?.aufloesen(id, { id }) ?? false
+  }, lisbon)
+  pruefe(spaetLissabon === false, 'Eine verspätete Lissabon-Bestätigung wurde noch angenommen')
+  pruefe(
+    (await wurzel.getByText('Für die Stadt Lissabon').count()) === 0,
+    'Der verspätete Lissabon-Abschluss hat die Fläche wiederbelebt',
+  )
+  await wartenAufId(kreta)
+  const kretaOk = await page.evaluate(
+    (id) => {
+      const fenster = window as Window & { __gygPruef?: PruefApi }
+      return fenster.__gygPruef?.aufloesen(id, {
+        id,
+        source: 'geonames',
+        sourceId: '2593313',
+        name: 'Kreta',
+        typ: 'island',
+        country: 'Griechenland',
+        countryCode: 'GR',
+        region: 'A1',
+        lat: null,
+        lon: null,
+        iata: null,
+        keywords: null,
+      }) ?? false
+    },
+    kreta,
+  )
+  pruefe(kretaOk, 'Die aktuelle Kreta-Bestätigung wurde verworfen')
+  await wurzel.getByText('Für die Insel Kreta').waitFor({ timeout: 8000 })
+  await wurzel.getByRole('button', { name: 'Lebenszyklus Lissabon' }).click()
+  await wartenAufId(lisbon)
+  const spaetKreta = await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    return fenster.__gygPruef?.aufloesen(id, { id }) ?? false
+  }, kreta)
+  pruefe(spaetKreta === false, 'Eine verspätete Kreta-Bestätigung wurde nach dem Rückwechsel angenommen')
+  const falsch = await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    return fenster.__gygPruef?.aufloesen(id, { id: 'geonames:1' }) ?? false
+  }, lisbon)
+  pruefe(falsch, 'Die falsche Orts-ID wurde nicht als Abschluss der offenen Anfrage gezählt')
+  await wurzel.getByText('Das Ziel ist nicht bestätigt.').waitFor({ timeout: 8000 })
+  await wurzel.getByRole('button', { name: 'Lebenszyklus Kreta' }).click()
+  await wartenAufId(kreta)
+  await wurzel.getByRole('button', { name: 'Lebenszyklus Lissabon' }).click()
+  await wartenAufId(lisbon)
+  const genau = await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    return fenster.__gygPruef?.aufloesen(id, {
+      id,
+      source: 'geonames',
+      sourceId: '2267057',
+      name: 'Lissabon',
+      typ: 'city',
+      country: 'Portugal',
+      countryCode: 'PT',
+      region: '11',
+      lat: null,
+      lon: null,
+      iata: null,
+      keywords: null,
+    }) ?? false
+  }, lisbon)
+  pruefe(genau, 'Die exakte Lissabon-ID wurde nicht übernommen')
+  await wurzel.getByText('Für die Stadt Lissabon').waitFor({ timeout: 8000 })
+  await page.evaluate(() => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    if (fenster.__gygPruef) fenster.__gygPruef.laden.fehler = true
+  })
+  await wurzel.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wurzel.getByText('GetYourGuide konnte gerade nicht geladen werden.').waitFor({ timeout: 8000 })
+  await page.evaluate(() => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    if (!fenster.__gygPruef) return
+    fenster.__gygPruef.laden.fehler = false
+    fenster.__gygPruef.laden.warten = true
+  })
+  await wurzel.getByRole('button', { name: 'Erneut versuchen' }).click()
+  await wurzel.locator('[data-gyg-wartet="1"]').waitFor({ timeout: 8000 })
+  await wurzel.getByRole('button', { name: 'Lebenszyklus ausblenden' }).click()
+  await page.evaluate(() => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    const knoten = fenster.__gygPruef?.offen.at(-1)
+    knoten?.dispatchEvent(new CustomEvent('jetnity-gyg-freigabe', { detail: true }))
+  })
+  await page.waitForTimeout(200)
+  pruefe((await wurzel.locator('[data-gyg-synthese]').count()) === 0, 'Ein verspätetes Laden hat den ausgeblendeten Rahmen zurückgebracht')
+  await wurzel.getByRole('button', { name: 'Lebenszyklus ausblenden' }).click()
+  await wartenAufId(lisbon)
+  await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    if (fenster.__gygPruef) fenster.__gygPruef.laden.warten = false
+    fenster.__gygPruef?.aufloesen(id, {
+      id,
+      source: 'geonames',
+      sourceId: '2267057',
+      name: 'Lissabon',
+      typ: 'city',
+      country: 'Portugal',
+      countryCode: 'PT',
+      region: '11',
+      lat: null,
+      lon: null,
+      iata: null,
+      keywords: null,
+    })
+  }, lisbon)
+  await gleichzeitig.getByRole('button', { name: 'Gleichzeitig zeigen' }).click()
+  await wartenAufId(kreta)
+  await page.evaluate((id) => {
+    const fenster = window as Window & { __gygPruef?: PruefApi }
+    fenster.__gygPruef?.aufloesen(id, {
+      id,
+      source: 'geonames',
+      sourceId: '2593313',
+      name: 'Kreta',
+      typ: 'island',
+      country: 'Griechenland',
+      countryCode: 'GR',
+      region: 'A1',
+      lat: null,
+      lon: null,
+      iata: null,
+      keywords: null,
+    })
+  }, kreta)
+  await wurzel.getByText('Für die Stadt Lissabon').waitFor({ timeout: 8000 })
+  await gleichzeitig.getByText('Für die Insel Kreta').waitFor({ timeout: 8000 })
+  await wurzel.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await gleichzeitig.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await wurzel.locator('[data-gyg-synthese="stadt"]').waitFor({ timeout: 8000 })
+  await gleichzeitig.locator('[data-gyg-synthese="insel"]').waitFor({ timeout: 8000 })
+  await wurzel.getByRole('button', { name: 'Entfernen' }).click()
+  pruefe((await wurzel.locator('[data-gyg-synthese]').count()) === 0, 'Entfernen lässt die erste Instanz stehen')
+  pruefe((await gleichzeitig.locator('[data-gyg-synthese="insel"]').count()) === 1, 'Entfernen der ersten Instanz löscht die zweite')
+  await gleichzeitig.getByRole('button', { name: 'Entfernen' }).click()
+  return { wartend: await api(), schritte: 'A-B-A, Fehler, Retry, Unmount, gleichzeitig' }
+}
+
+async function uebernahmeImSelbenBereich(page: Page) {
+  const bereich = page.locator('[data-szenario="nativ"]')
+  await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+  await bereich.getByText('Synthetische Bootsfahrt').waitFor({ timeout: 8000 })
+  const knopf = bereich.getByRole('button', { name: 'In die Reise' })
+  await knopf.click()
+  await page.waitForTimeout(100)
+  pruefe(await knopf.isDisabled(), 'Die Übernahme zeigt den laufenden Zustand nicht')
+  pruefe((await bereich.getByText('Die Übernahme wurde gemeldet.').count()) === 0, 'Die Übernahme ist schon vor dem Abschluss gemeldet')
+  await bereich.getByRole('button', { name: 'Bei GetYourGuide anzeigen' }).click()
+  await bereich.locator('[data-gyg-synthese="stadt"]').waitFor({ timeout: 8000 })
+  pruefe(await knopf.isDisabled(), 'Die laufende Übernahme wird durch GetYourGuide freigegeben')
+  pruefe((await bereich.getByText('Synthetische Bootsfahrt').count()) === 1, 'Die native Karte fehlt während GetYourGuide läuft')
+  await bereich.getByRole('button', { name: 'Übernahme abschliessen' }).click()
+  await bereich.getByText('Die Übernahme wurde gemeldet.').waitFor({ timeout: 8000 })
+  pruefe((await bereich.locator('[data-gyg-synthese="stadt"]').count()) === 1, 'Die gemeldete Übernahme entfernt GetYourGuide')
+  await bereich.getByRole('button', { name: 'Entfernen' }).click()
+  pruefe((await bereich.locator('[data-gyg-synthese]').count()) === 0, 'Entfernen lässt den synthetischen Rahmen im Aktivitätsbereich stehen')
+  pruefe((await bereich.getByText('Synthetische Bootsfahrt').count()) === 1, 'Die angenommene native Karte fehlt nach dem Entfernen')
+  pruefe((await bereich.getByText('Die Übernahme wurde gemeldet.').count()) === 1, 'Die Übernahmemeldung fehlt nach dem Entfernen')
+}
+
+async function elternZugriff(page: Page) {
+  const ergebnisse: { url: string; dom: string; adresse: string; cookie: string; speicher: string }[] = []
+  for (const frame of page.frames()) {
+    if (!frame.url().includes('/embed/getyourguide')) continue
+    const stand = await frame.evaluate(`(() => {
+      var token = ${JSON.stringify(KANARIEN)};
+      var eltern = window.parent;
+      function lesen(quelle) {
+        try {
+          var wert = quelle();
+          return wert.indexOf(token) >= 0 ? 'gelesen-mit-kanarien' : 'gelesen:' + String(wert).slice(0, 80);
+        } catch (error) {
+          return 'wirft ' + String(error).slice(0, 140);
+        }
+      }
+      return {
+        dom: lesen(function () { return eltern.document.body ? eltern.document.body.innerText : ''; }),
+        adresse: lesen(function () { return String(eltern.location.href); }),
+        cookie: lesen(function () { return eltern.document.cookie; }),
+        speicher: lesen(function () { return eltern.localStorage.getItem(token) || ''; })
+      };
+    })()`)
+    ergebnisse.push({ url: frame.url().slice(0, 140), ...stand })
+  }
+  return ergebnisse
 }
 
 async function main() {
@@ -403,15 +635,20 @@ async function main() {
     addEventListener('unhandledrejection', (event) => merken('unhandledrejection', event.reason))
   })()`)
   const page = await context.newPage()
-  page.on('request', (request) => {
+  context.on('request', (request) => {
     try {
       const url = new URL(request.url())
-      netz.push({ phase, host: url.host, path: url.pathname })
-      if (request.url().includes(KANARIEN) && url.pathname === '/embed/getyourguide') {
-        fehler.push(`Kanarienvogel in Einbettungsanfrage während ${phase}`)
-      }
-      if (url.host.includes('getyourguide') && request.url().includes(KANARIEN)) {
-        fehler.push(`Kanarienvogel in Anbieteranfrage während ${phase}`)
+      const art = request.resourceType()
+      netz.push({ phase, host: url.host, path: url.pathname, art })
+      const anbieter = url.host.includes('getyourguide')
+      const embed = url.pathname === '/embed/getyourguide'
+      if (!anbieter && !embed) return
+      const koerper = request.postData() ?? ''
+      const kopf = JSON.stringify(request.headers())
+      if ([request.url(), kopf, koerper].some((teil) => teil.includes(KANARIEN))) {
+        const meldung = `Kanarienvogel in ${art} ${url.host}${url.pathname} während ${phase}`
+        kanarienLecks.push(meldung)
+        fehler.push(meldung)
       }
     } catch {
       fehler.push('Anfrage ohne gültige Adresse')
@@ -440,11 +677,19 @@ async function main() {
     (await page.getByText('Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen.').count()) > 0,
     'Der Hinweis auf eine mögliche Ergebnisliste fehlt',
   )
+  pruefe(
+    (await page.getByText('Der Analyzer misst für GetYourGuide die Darstellung des Widgets.').count()) > 0,
+    'Der Hinweis auf die Messung des Analyzers fehlt',
+  )
 
-  await page.locator('[data-szenario="nativ"]').getByRole('button', { name: 'Für diesen Tag suchen' }).click()
-  await page.getByText('Synthetische Bootsfahrt').waitFor({ timeout: 8000 })
-  const uebernehmen = page.locator('[data-szenario="nativ"]').getByRole('button', { name: /übernehmen/i })
-  if (await uebernehmen.count()) await uebernehmen.first().click()
+  phase = 'lebenszyklus'
+  const lebenszyklus = await lebenszyklusPruefen(page)
+  const uebernahme = 'gemeldet'
+  await uebernahmeImSelbenBereich(page)
+  pruefe(
+    netz.filter((eintrag) => eintrag.host.includes('getyourguide')).length === 0,
+    'Der synthetische Lebenszyklus hat den Anbieter kontaktiert',
+  )
 
   phase = 'stadt'
   const laden = page.locator('[data-szenario="wechsel"]').getByRole('button', { name: 'Bei GetYourGuide anzeigen' })
@@ -473,10 +718,65 @@ async function main() {
     document.documentElement.style.fontSize = ''
   })
   pruefe(stadt.bilder > 0, `Lissabon zeigt keine Anbieterbilder (${stadt.bilder})`)
-  pruefe(
-    stadt.karten.length > 0 && stadt.karten.every((karte) => karte.unten <= karte.sicht + 1),
-    `Angebotskarten ragen aus dem Anbieterrahmen: ${JSON.stringify(stadt.karten)}`,
-  )
+  const eltern = await elternZugriff(page)
+  pruefe(eltern.length > 0, 'Der Einbettungsrahmen war für den Elternzugriff nicht erreichbar')
+  for (const eintrag of eltern) {
+    for (const [name, wert] of Object.entries(eintrag)) {
+      if (name === 'url') continue
+      pruefe(String(wert).startsWith('wirft'), `Elternzugriff ${name} war nicht verweigert: ${wert}`)
+    }
+  }
+  const schnitte: { breite: number; aussen: number | null; stil: string; karten: number; stabil: boolean; ragtUnten: boolean | null }[] = []
+  for (const breite of [1440, 375, 1440]) {
+    await page.setViewportSize({ width: breite, height: breite === 375 ? 812 : 900 })
+    const startRuhe = Date.now()
+    let ruheSeit = 0
+    let merkmal = ''
+    let danach = await ausschnitt375(page, 'wechsel')
+    while (Date.now() - startRuhe < 8000) {
+      danach = await ausschnitt375(page, 'wechsel')
+      const embedJetzt = danach.innen.find((eintrag) => eintrag.url.includes('/embed/getyourguide'))
+      const aussenJetzt = danach.aussen.fehlt ? null : danach.aussen.rahmen.hoehe
+      const stilJetzt = embedJetzt?.stil ?? ''
+      const schluessel = `${aussenJetzt}|${stilJetzt}`
+      const stilZahl = Number(stilJetzt.replace('px', ''))
+      const folgt = Number.isFinite(stilZahl) && stilZahl > 0 && aussenJetzt != null && Math.abs(aussenJetzt - stilZahl) <= 2
+      if (folgt && schluessel === merkmal) {
+        if (ruheSeit === 0) ruheSeit = Date.now()
+        if (Date.now() - ruheSeit >= 1500) break
+      } else {
+        ruheSeit = 0
+        merkmal = schluessel
+      }
+      await page.waitForTimeout(300)
+    }
+    const embed = danach.innen.find((eintrag) => eintrag.url.includes('/embed/getyourguide'))
+    const widget = danach.innen.find((eintrag) => eintrag.url.includes('activities.frame'))
+    const aussenDanach = danach.aussen.fehlt ? null : danach.aussen.rahmen.hoehe
+    const stil = embed?.stil ?? ''
+    const stilPx = Number(stil.replace('px', ''))
+    const karten = widget?.karten ?? []
+    const tiefste = Math.max(0, ...karten.map((karte) => karte.unten))
+    schnitte.push({
+      breite,
+      aussen: aussenDanach,
+      stil,
+      karten: karten.length,
+      stabil: ruheSeit > 0 && Date.now() - ruheSeit >= 1500,
+      ragtUnten: danach.aussen.fehlt ? null : danach.aussen.ragtUnten,
+    })
+    pruefe(ruheSeit > 0 && Date.now() - ruheSeit >= 1500, `Höhe bei ${breite}px bleibt nach dem Setzen nicht 1,5s ruhig: ${aussenDanach} / ${stil}`)
+    if (karten.length > 0) {
+      pruefe(Number.isFinite(stilPx) && stilPx > 0, `Keine explizite Anbieterhöhe bei ${breite}px`)
+    }
+    if (Number.isFinite(stilPx) && stilPx > 0) {
+      pruefe(Math.abs((aussenDanach ?? 0) - stilPx) <= 2, `Äusserer Rahmen ${aussenDanach} folgt der Anbieterhöhe ${stil} bei ${breite}px nicht`)
+    }
+    if (breite === 375 && karten.length > 0) {
+      pruefe(tiefste > 0 && (embed?.client ?? 0) + 8 >= tiefste && danach.aussen.ragtUnten !== true, `Bei 375px bleiben Angebote unter dem sichtbaren Rahmen: ${JSON.stringify(danach)}`)
+    }
+    await page.screenshot({ path: join(ARTIFACTS, `stadt-frisch-${breite}.png`) })
+  }
   await page.setViewportSize({ width: 375, height: 812 })
   let schnitt375 = await ausschnitt375(page, 'wechsel')
   const startHoehe = Date.now()
@@ -564,6 +864,11 @@ async function main() {
     inselZiel: inselZiel,
     landZiel: landZiel,
     schnitt375,
+    schnitte,
+    eltern,
+    lebenszyklus,
+    uebernahme,
+    kanarienLecks,
     zielArt: art,
     v2Navigation: art === 'suchliste' || art === 'angebot',
     v1Abschnitt93: art === 'angebot' ? 'eine beobachtete Angebotsseite, kein Abschluss von V1 9.3' : 'nicht erfüllt',

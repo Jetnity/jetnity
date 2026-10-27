@@ -32,7 +32,7 @@ export default async function PrivacyPage() {
         <section aria-label="GetYourGuide" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
           <h2 className="text-lg font-semibold text-brand-800">GetYourGuide</h2>
           <p className="mt-3">
-            Wenn du in einer Reise GetYourGuide ausdrücklich anzeigen lässt, lädt Jetnity das offizielle Aktivitäten-Widget und den Integration Analyzer von GetYourGuide in einem getrennten Rahmen. Dabei entsteht eine Verbindung zu GetYourGuide. Jetnity übergibt dafür den bestätigten öffentlichen Ortsnamen und das Land, keine privaten Reisedaten. Entfernen beendet die weitere Einbindung und löscht keine bereits gesendeten Anfragen.
+            Wenn du in einer Reise GetYourGuide ausdrücklich anzeigen lässt, lädt Jetnity das offizielle Aktivitäten-Widget und den Integration Analyzer von GetYourGuide in einem getrennten Rahmen. Der Analyzer misst für GetYourGuide die Darstellung des Widgets. Dabei entsteht eine Verbindung zu GetYourGuide. Jetnity übergibt dafür den bestätigten öffentlichen Ortsnamen und das Land, keine privaten Reisedaten. Entfernen beendet die weitere Einbindung und löscht keine bereits gesendeten Anfragen.
           </p>
           <p className="mt-3">
             <a
