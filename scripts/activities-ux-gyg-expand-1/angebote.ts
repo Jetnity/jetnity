@@ -229,17 +229,18 @@ async function messen(page: Page, name: string): Promise<Messung> {
   }
 }
 
-async function warten(page: Page, name: string, mindest = 1): Promise<Messung> {
+async function warten(page: Page, name: string, mindest = 1, ruhe = 3): Promise<Messung> {
   const start = Date.now()
   let letzte: Messung | null = null
   let gleich = 0
   while (Date.now() - start < 40000) {
     const stand = await messen(page, name)
-    const schluessel = `${stand.karten}|${stand.rohPx}|${stand.numberOfItems}`
-    const vorher = letzte ? `${letzte.karten}|${letzte.rohPx}|${letzte.numberOfItems}` : ''
-    if (stand.karten > 0 && schluessel === vorher) {
+    const schluessel = `${stand.karten}|${stand.rohPx}|${stand.rahmenClient}|${stand.numberOfItems}`
+    const vorher = letzte ? `${letzte.karten}|${letzte.rohPx}|${letzte.rahmenClient}|${letzte.numberOfItems}` : ''
+    const hoeheFolgt = stand.rohPx != null && stand.rahmenClient != null && Math.abs(stand.rohPx - stand.rahmenClient) <= 2
+    if (stand.karten > 0 && hoeheFolgt && schluessel === vorher) {
       gleich += 1
-      if (gleich >= 3 && (stand.karten >= mindest || Date.now() - start > 15000)) return stand
+      if (gleich >= ruhe && (stand.karten >= mindest || Date.now() - start > 15000)) return stand
     } else {
       gleich = 0
     }
@@ -247,6 +248,238 @@ async function warten(page: Page, name: string, mindest = 1): Promise<Messung> {
     await page.waitForTimeout(600)
   }
   return letzte ?? (await messen(page, name))
+}
+
+type Schnitt = {
+  karten: number
+  tiefste: number | null
+  widgetClient: number | null
+  widgetBreite: number | null
+  seitlichKarte: boolean
+  embedClient: number | null
+  rahmenClient: number | null
+  rohPx: number | null
+  rahmenZahl: number
+  vorfahreOverflow: string | null
+  rahmenRagtUnten: boolean
+  rahmenRagtSeitlich: boolean
+  kartenUnterRahmen: boolean
+  kartenUnterWidget: boolean
+}
+
+async function schnitt(page: Page, name: string): Promise<Schnitt> {
+  const aussen = await page.evaluate((ziel) => {
+    const vorfahre = document.querySelector(`[data-szenario="${ziel}"]`)
+    const rahmen = vorfahre?.querySelector('iframe[title="GetYourGuide"]')
+    if (!(vorfahre instanceof HTMLElement) || !(rahmen instanceof HTMLElement)) {
+      return { fehlt: true as const, rahmenZahl: vorfahre?.querySelectorAll('iframe').length ?? 0 }
+    }
+    const a = rahmen.getBoundingClientRect()
+    const b = vorfahre.getBoundingClientRect()
+    const stil = getComputedStyle(vorfahre)
+    return {
+      fehlt: false as const,
+      rahmenZahl: vorfahre.querySelectorAll('iframe').length,
+      rahmenClient: Math.round(rahmen.clientHeight),
+      vorfahreOverflow: `${stil.overflowX}/${stil.overflowY}`,
+      rahmenRagtUnten: a.bottom > b.bottom + 1,
+      rahmenRagtSeitlich: a.left < b.left - 1 || a.right > b.right + 1,
+    }
+  }, name)
+  let innen: { karten: number; tiefste: number | null; widgetClient: number | null; widgetBreite: number | null; seitlichKarte: boolean } = {
+    karten: 0,
+    tiefste: null,
+    widgetClient: null,
+    widgetBreite: null,
+    seitlichKarte: false,
+  }
+  const widgetRahmen = page.frames().filter((frame) => frame.url().includes('activities.frame'))
+  const benannte = widgetRahmen.filter((frame) => passt(frame.url(), name))
+  const gezaehlt = benannte.length > 0 ? benannte : widgetRahmen.length === 1 ? widgetRahmen : []
+  for (const frame of gezaehlt) {
+    const stand = await frame
+      .evaluate(() => {
+        const gesehen = new Set<string>()
+        let tiefste = 0
+        let seitlich = false
+        const breite = document.documentElement.clientWidth
+        for (const anker of document.querySelectorAll('a[href*="et="]')) {
+          const box = (anker as HTMLElement).getBoundingClientRect()
+          const href = (anker as HTMLAnchorElement).href
+          let schluessel = href
+          try {
+            const url = new URL(href)
+            schluessel = url.searchParams.get('et') || `${url.origin}${url.pathname}`
+          } catch {
+            schluessel = href
+          }
+          if (gesehen.has(schluessel)) continue
+          gesehen.add(schluessel)
+          tiefste = Math.max(tiefste, box.bottom)
+          if (box.left < -2 || box.right > breite + 2) seitlich = true
+        }
+        return {
+          karten: gesehen.size,
+          tiefste: gesehen.size ? Math.round(tiefste) : null,
+          widgetClient: document.documentElement.clientHeight,
+          widgetBreite: breite,
+          seitlichKarte: seitlich,
+        }
+      })
+      .catch(() => null)
+    if (!stand) continue
+    if (stand.karten >= innen.karten) innen = stand
+  }
+  let embedClient: number | null = null
+  let rohPx: number | null = null
+  for (const frame of page.frames()) {
+    if (!frame.url().includes('/embed/getyourguide') || !passt(frame.url(), name)) continue
+    const stand = await frame
+      .evaluate(() => {
+        const widget = document.querySelector('iframe')
+        const vater = widget?.parentElement as HTMLElement | null
+        const treffer = /^([0-9]+(?:\.[0-9]+)?)px$/.exec(String(vater?.style.height || ''))
+        return {
+          embedClient: document.documentElement.clientHeight,
+          rohPx: treffer ? Math.round(Number(treffer[1])) : null,
+        }
+      })
+      .catch(() => null)
+    if (!stand) continue
+    embedClient = stand.embedClient
+    rohPx = stand.rohPx
+  }
+  const rahmenClient = aussen.fehlt ? null : aussen.rahmenClient
+  return {
+    karten: innen.karten,
+    tiefste: innen.tiefste,
+    widgetClient: innen.widgetClient,
+    widgetBreite: innen.widgetBreite,
+    seitlichKarte: innen.seitlichKarte,
+    embedClient,
+    rahmenClient,
+    rohPx,
+    rahmenZahl: aussen.rahmenZahl,
+    vorfahreOverflow: aussen.fehlt ? null : aussen.vorfahreOverflow,
+    rahmenRagtUnten: aussen.fehlt ? false : aussen.rahmenRagtUnten,
+    rahmenRagtSeitlich: aussen.fehlt ? false : aussen.rahmenRagtSeitlich,
+    kartenUnterRahmen: innen.tiefste != null && rahmenClient != null && innen.tiefste > rahmenClient + 8,
+    kartenUnterWidget: innen.tiefste != null && innen.widgetClient != null && innen.tiefste > innen.widgetClient + 8,
+  }
+}
+
+type Klick = {
+  anzahl: string | null
+  et: string | null
+  partnerImHref: boolean
+  popup: boolean
+  ziel: string | null
+  status: number | null
+  partnerImZiel: boolean
+  h1: string
+  titel: string
+  textProbe: string
+  art: 'ergebnisliste' | 'detail' | 'fehler' | 'blockiert' | 'kein-popup' | 'kein-anker' | 'unbekannt'
+}
+
+function klickArt(ziel: string, h1: string, text: string, status: number | null): Klick['art'] {
+  if (status === 403 || /\b403\b|Access Denied|Attention Required/i.test(text)) return 'blockiert'
+  if ((status != null && status >= 400) || /An error occurred/i.test(text)) return 'fehler'
+  const liste = /\/s\/|search\?|[?&]q=/i.test(ziel) || /\d[\d.]*\s+(Aktivitäten|activities|results|Ergebnisse)/i.test(`${h1} ${text}`)
+  const detail = /-t\d{3,}/.test(ziel)
+  if (detail && !liste) return 'detail'
+  if (liste) return 'ergebnisliste'
+  return 'unbekannt'
+}
+
+async function angebotKlicken(page: Page, name: string, datei: string): Promise<Klick> {
+  const widgetRahmen = page.frames().filter((frame) => frame.url().includes('activities.frame'))
+  const benannte = widgetRahmen.filter((frame) => passt(frame.url(), name))
+  const frame = (benannte.length > 0 ? benannte : widgetRahmen.length === 1 ? widgetRahmen : [])[0]
+  const anzahl = await page.locator(`[data-szenario="${name}"] [data-gyg-anzahl]`).first().getAttribute('data-gyg-anzahl')
+  const leer = (art: Klick['art']): Klick => ({
+    anzahl,
+    et: null,
+    partnerImHref: false,
+    popup: false,
+    ziel: null,
+    status: null,
+    partnerImZiel: false,
+    h1: '',
+    titel: '',
+    textProbe: '',
+    art,
+  })
+  if (!frame) return leer('kein-anker')
+  const link = frame.locator('a[href*="et="]').first()
+  if ((await link.count()) === 0) return leer('kein-anker')
+  const href = await link.evaluate((anker) => (anker as HTMLAnchorElement).href)
+  let et: string | null = null
+  let partnerImHref = false
+  try {
+    const url = new URL(href)
+    et = url.searchParams.get('et')
+    partnerImHref = url.searchParams.get('partner_id') === PARTNER || href.includes(`partner_id=${PARTNER}`)
+  } catch {
+    partnerImHref = href.includes(`partner_id=${PARTNER}`)
+  }
+  const dokumente: { url: string; status: number }[] = []
+  const zuhoerer = (response: { url: () => string; status: () => number; request: () => { resourceType: () => string }; frame: () => { page: () => unknown } | null }) => {
+    try {
+      if (response.request().resourceType() !== 'document') return
+      if (!response.url().includes('getyourguide.com')) return
+      dokumente.push({ url: response.url().slice(0, 240), status: response.status() })
+    } catch {
+      dokumente.push({ url: 'unlesbar', status: 0 })
+    }
+  }
+  page.context().on('response', zuhoerer)
+  try {
+    const popupErwartet = page.context().waitForEvent('page', { timeout: 20000 }).catch(() => null)
+    await link.scrollIntoViewIfNeeded().catch(() => undefined)
+    await link.click({ timeout: 8000 })
+    const popup = await popupErwartet
+    if (!popup) {
+      return { ...leer('kein-popup'), et, partnerImHref }
+    }
+    await popup.waitForLoadState('domcontentloaded').catch(() => undefined)
+    await popup.waitForTimeout(3000)
+    const ziel = popup.url()
+    const eigene = dokumente.filter((eintrag) => {
+      try {
+        const a = new URL(ziel)
+        const b = new URL(eintrag.url)
+        return a.origin === b.origin && a.pathname === b.pathname
+      } catch {
+        return false
+      }
+    })
+    const status = (eigene.length ? eigene : dokumente).at(-1)?.status ?? null
+    const h1 = (await popup.locator('h1').first().innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 180)
+    const titel = (await popup.title().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 180)
+    const textProbe = (await popup.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 360)
+    await popup.screenshot({ path: join(ARTIFACTS, datei) }).catch(() => undefined)
+    const partnerImZiel = ziel.includes(`partner_id=${PARTNER}`)
+    const art = klickArt(ziel, h1, textProbe, status)
+    await popup.close().catch(() => undefined)
+    return {
+      anzahl,
+      et,
+      partnerImHref,
+      popup: true,
+      ziel: ziel.slice(0, 360),
+      status,
+      partnerImZiel,
+      h1,
+      titel,
+      textProbe,
+      art,
+    }
+  } catch (fehler: unknown) {
+    return { ...leer(fehler instanceof Error && /403/.test(fehler.message) ? 'blockiert' : 'fehler'), et, partnerImHref, textProbe: String(fehler).slice(0, 240) }
+  } finally {
+    page.context().off('response', zuhoerer)
+  }
 }
 
 async function bild(page: Page, name: string, datei: string) {
@@ -335,35 +568,73 @@ async function main() {
   await page.keyboard.press('Enter')
   const bangkok12 = await warten(page, 'bangkok', 8)
   await page.setViewportSize({ width: 320, height: 700 })
+  const bangkok12Bei320 = await warten(page, 'bangkok', 8, 4)
   await bild(page, 'bangkok', 'bangkok-12-320.png')
   await page.setViewportSize({ width: 390, height: 844 })
+  const bangkok12Bei390 = await warten(page, 'bangkok', 8, 4)
   await bild(page, 'bangkok', 'bangkok-12-390.png')
   await page.setViewportSize({ width: 768, height: 900 })
+  await warten(page, 'bangkok', 8, 4)
   await bild(page, 'bangkok', 'bangkok-12-768.png')
   await page.setViewportSize({ width: 1440, height: 900 })
+  await warten(page, 'bangkok', 8, 4)
   await bild(page, 'bangkok', 'bangkok-12-1440.png')
   await page.setViewportSize({ width: 390, height: 844 })
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '32px'
   })
+  await warten(page, 'bangkok', 8, 4)
   await bild(page, 'bangkok', 'bangkok-12-390-200.png')
-  const taste = await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Mehr Aktivitäten anzeigen', exact: true }).count()
   await page.evaluate(() => {
     document.documentElement.style.fontSize = ''
   })
+  await warten(page, 'bangkok', 8, 4)
+  const klick12 = await angebotKlicken(page, 'bangkok', 'klick-12.png')
+  const taste = await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Mehr Aktivitäten anzeigen', exact: true }).count()
   let bangkok24: Messung | null = null
+  let schnitt320: Schnitt | null = null
+  let schnitt390: Schnitt | null = null
+  let schnitt200: Schnitt | null = null
+  let klick24: Klick | null = null
   if (taste === 1) {
     await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Mehr Aktivitäten anzeigen', exact: true }).click()
-    bangkok24 = await warten(page, 'bangkok', 13)
+    await page.setViewportSize({ width: 320, height: 700 })
+    const bei320 = await warten(page, 'bangkok', 13, 4)
+    schnitt320 = await schnitt(page, 'bangkok')
+    await bild(page, 'bangkok', 'bangkok-24-320.png')
+    await page.setViewportSize({ width: 390, height: 844 })
+    const bei390 = await warten(page, 'bangkok', 13, 4)
+    schnitt390 = await schnitt(page, 'bangkok')
+    bangkok24 = bei390.karten > 0 ? bei390 : bei320
     await bild(page, 'bangkok', 'bangkok-24-390.png')
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '32px'
+    })
+    await warten(page, 'bangkok', 13, 4)
+    schnitt200 = await schnitt(page, 'bangkok')
+    await bild(page, 'bangkok', 'bangkok-24-390-200.png')
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = ''
+    })
+    await warten(page, 'bangkok', 13, 4)
+    klick24 = await angebotKlicken(page, 'bangkok', 'klick-24.png')
   }
   let bangkokZurueck: Messung | null = null
+  let schnittZurueck: Schnitt | null = null
   const weniger = await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Weniger anzeigen', exact: true }).count()
   if (weniger === 1) {
+    await page.setViewportSize({ width: 390, height: 844 })
     await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Weniger anzeigen', exact: true }).click()
-    bangkokZurueck = await warten(page, 'bangkok', 8)
+    bangkokZurueck = await warten(page, 'bangkok', 8, 4)
+    schnittZurueck = await schnitt(page, 'bangkok')
     await bild(page, 'bangkok', 'bangkok-weniger-390.png')
   }
+  const entfernenSichtbar = await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Entfernen', exact: true }).count()
+  if (entfernenSichtbar === 1) {
+    await page.locator('[data-szenario="bangkok"]').getByRole('button', { name: 'Entfernen', exact: true }).click()
+  }
+  await page.locator('[data-szenario="bangkok"] [data-gyg-phase="ruhend"]').waitFor({ timeout: 8000 }).catch(() => undefined)
+  const nachEntfernen = await schnitt(page, 'bangkok')
 
   await page.locator('[data-szenario="portugal"]').getByRole('button', { name: 'Bei GetYourGuide anzeigen', exact: true }).click()
   const portugal = await warten(page, 'portugal', 1)
@@ -383,9 +654,19 @@ async function main() {
     vorher,
     kanarien,
     bangkok12,
+    bangkok12Bei320,
+    bangkok12Bei390,
+    klick12,
     bangkok24,
+    schnitt320,
+    schnitt390,
+    schnitt200,
+    klick24,
     weniger,
     bangkokZurueck,
+    schnittZurueck,
+    entfernenSichtbar,
+    nachEntfernen,
     portugal,
     kreta,
     taste,
