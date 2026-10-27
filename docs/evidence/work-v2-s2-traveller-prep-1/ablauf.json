@@ -1,0 +1,411 @@
+{
+  "herkunft": {
+    "autor": "Jetnity V2 Traveller and Preparation Clarity 1 — Cursor Generation 1",
+    "session": "bc-a62482f0-b662-484a-b2a4-ca39b15ea410",
+    "modell": "grok-4.7-high-fast",
+    "kopf": "d7ca07a9ca1e12d7e02a376234a43c287a7950fd",
+    "baum": "618c571e006aa97699a1c8322751a486f1fec888",
+    "main": "d31a16afdac5e97d4b02f4cb5824f5adc290577c",
+    "quellen": {
+      "components/trips/EigeneReisevorbereitung.tsx": "607a9fc5e030b20def9d9623e14ac067dce63c5e",
+      "components/trips/usePersonalPreparationLifecycle.ts": "ed1a8e02eeb29266f4ea9aecb5bb679512860aa6",
+      "components/trips/Reisevorbereitung.tsx": "71490d3e74dec6f525719ad72452038192ad9329",
+      "components/trips/TripWorkspace.tsx": "16825180b4da46ea71d549f4ffc399717664f020",
+      "components/trips/KontoArbeitsbereich.tsx": "a776fb4d166936c4ac1432f75bdba405963bbe8f",
+      "components/trips/GastArbeitsbereich.tsx": "a8da52126b4e386ef9a742643dca22ac43d119a1",
+      "lib/readiness/personal-preparation-workflow.ts": "c295637b18d4b356ce14739e211871179cbf38f7",
+      "lib/trips/gastspeicher.ts": "5cf03698b2d7e72b978459571d257b70e3f26b74",
+      "scripts/trip-personal-preparation-workflow-completion-1/flaeche.tsx": "e1a27c1f659625cbdafb92e70ce929e90a3b98d6"
+    },
+    "node": "v22.23.4",
+    "browser": "140.0.7339.16"
+  },
+  "grenze": "Echte Komponente EigeneReisevorbereitung und echter Hook, gebündelt mit esbuild, mit CSS aus .next/static des lokalen next build. Aufgeschobene Schreib- und Leseversprechen, synthetische beispielreise. Kein TripWorkspace-Router, kein Next-Router, kein gehostetes Konto, kein Supabase, kein RLS. Schriftgröße 32px ist eine lokale CSS-Simulation, kein nativer Zoom, kein Gerät und kein Screenreader. Überlauf von html, body und der Liste bleibt sichtbar.",
+  "css": {
+    "sha256": "5feb91cf735eb5070f01c84eee12d5a52aeadbe022d514559a6e0bfca1c05b67",
+    "dateien": [
+      {
+        "pfad": ".next/static/chunks/101umuoh5inok.css",
+        "sha256": "5346287c7c8feab6810a2e5a3fd30e8d541f7da9434b9d3eda41937b493750dc",
+        "bytes": 99601
+      },
+      {
+        "pfad": ".next/static/chunks/1vx9kqftc7721.css",
+        "sha256": "f0bd1cc7b3e22386a66a709e61d090d19d9916d89a552b48d948bf9280b5baf5",
+        "bytes": 1395
+      },
+      {
+        "pfad": ".next/static/chunks/3z9r4kg2eogl7.css",
+        "sha256": "4b20f39baa33f0a54d837f466dd87729bd5fdad2a0b36e9c7593b229ce66403a",
+        "bytes": 288
+      }
+    ]
+  },
+  "bilder": [
+    "lang-320.png",
+    "lang-360.png",
+    "lang-390.png",
+    "status-390.png",
+    "lang-768.png",
+    "lang-1280.png",
+    "leer-390.png",
+    "kein-treffer-390.png",
+    "pending-390.png",
+    "fehler-390.png",
+    "lang-320-root32.png",
+    "status-320-root32.png",
+    "tastatur-390.png",
+    "reduziert-390.png"
+  ],
+  "tastatur": {
+    "setzen": 1,
+    "phase": "pending"
+  },
+  "messungen": [
+    {
+      "name": "lang-320",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 296,
+          "scrollWidth": 296
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 320,
+          "scrollWidth": 320
+        }
+      }
+    },
+    {
+      "name": "lang-360",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 336,
+          "scrollWidth": 336
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 360,
+          "scrollWidth": 360
+        }
+      }
+    },
+    {
+      "name": "lang-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "status-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "lang-768",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 744,
+          "scrollWidth": 744
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 768,
+          "scrollWidth": 768
+        }
+      }
+    },
+    {
+      "name": "lang-1280",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 1256,
+          "scrollWidth": 1256
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 1280,
+          "scrollWidth": 1280
+        }
+      }
+    },
+    {
+      "name": "leer-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": null,
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "kein-treffer-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": null,
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "pending-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Unterwegs"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "fehler-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Fehlerfall"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    },
+    {
+      "name": "lang-320-root32",
+      "mass": {
+        "rootSchrift": "32px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 272,
+          "scrollWidth": 272
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 80,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 320,
+          "scrollWidth": 320
+        }
+      }
+    },
+    {
+      "name": "status-320-root32",
+      "mass": {
+        "rootSchrift": "32px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": false,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 272,
+          "scrollWidth": 272
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 80,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 320,
+          "scrollWidth": 320
+        }
+      }
+    },
+    {
+      "name": "reduziert-390",
+      "mass": {
+        "rootSchrift": "16px",
+        "htmlOverflow": "visible",
+        "bodyOverflow": "visible",
+        "bewegung": true,
+        "wurzel": {
+          "overflow": "visible",
+          "clientWidth": 366,
+          "scrollWidth": 366
+        },
+        "titel": {
+          "overflowWrap": "break-word",
+          "text": "Reiseadapter und lange ungebrocheneZeichenfolgeWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+        },
+        "knopf": {
+          "hoehe": 44,
+          "hintergrund": "rgb(21, 58, 51)",
+          "minHoehe": "44px"
+        },
+        "dokument": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        }
+      }
+    }
+  ]
+}

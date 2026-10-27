@@ -672,6 +672,45 @@ describe('mounted personal preparation', () => {
     await page.close()
   })
 
+  test('status is reachable without title editing and stays unsaved until Speichern', async () => {
+    for (const seam of ['guest', 'account'] as const) {
+      for (const width of [320, 390]) {
+        const basis = beispielreise({ id: `status-${seam}-${width}`, readinessItems: [] })
+        const reise = beispielreise({
+          id: basis.id,
+          readinessItems: [punkt(basis, 'preparation-status', 'Adapter')],
+        })
+        const page = await oeffnen(browser, bundle, {
+          seam,
+          reise,
+          kanonisch: seam === 'account' ? reise : undefined,
+        })
+        await page.setViewportSize({ width, height: 844 })
+        await page.addStyleTag({ content: 'html{font-size:32px !important}' })
+        const zeile = page.locator('[data-personal-client-ref="preparation-status"]')
+        assert.equal(await zeile.getByRole('button', { name: 'Erledigt', exact: true }).count(), 0)
+        assert.equal(await zeile.getByLabel('Titel bearbeiten').count(), 0)
+        await zeile.getByRole('button', { name: 'Status ändern' }).focus()
+        await page.keyboard.press('Enter')
+        await page.waitForFunction(() => document.activeElement?.textContent === 'Offen')
+        assert.equal(await zeile.getAttribute('data-readiness-status'), 'open')
+        await page.keyboard.press('Tab')
+        await page.keyboard.press('Enter')
+        await page.waitForFunction(
+          () => document.querySelector('[data-personal-client-ref="preparation-status"] button[aria-pressed="true"]')?.textContent === 'Erledigt',
+        )
+        assert.equal(await zeile.getAttribute('data-readiness-status'), 'open')
+        assert.equal(await zahl(page, 'setzen'), 0)
+        await zeile.getByRole('button', { name: 'Speichern' }).click()
+        await page.waitForFunction(() => window.__PERSONAL__.setzen.length === 1)
+        const payload = await page.evaluate(() => window.__PERSONAL__.setzen[0]) as { userStatus: string; title: string }
+        assert.equal(payload.userStatus, 'done')
+        assert.equal(payload.title, 'Adapter')
+        await page.close()
+      }
+    }
+  })
+
   test('production wiring names the canonical prop and the workspace hook', () => {
     const workspace = readFileSync('components/trips/TripWorkspace.tsx', 'utf8')
     const konto = readFileSync('components/trips/KontoArbeitsbereich.tsx', 'utf8')
