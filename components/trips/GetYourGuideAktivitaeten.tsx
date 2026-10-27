@@ -25,7 +25,13 @@ import {
   type GygLauf,
 } from '@/lib/activities/getyourguide/lebenszyklus'
 import { anwendungsRenderer } from '@/lib/activities/getyourguide/renderer'
-import { GYG_DATENSCHUTZ_HREF, suchkonfigurationIstGueltig } from '@/lib/activities/getyourguide/suche'
+import {
+  GYG_ANZAHL_ERWEITERT,
+  GYG_ANZAHL_STANDARD,
+  GYG_DATENSCHUTZ_HREF,
+  suchkonfigurationIstGueltig,
+  type GygAnzahl,
+} from '@/lib/activities/getyourguide/suche'
 import {
   ANWENDUNGS_NAHT,
   gygLadenErlaubt,
@@ -230,9 +236,18 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     })
   }, [anfrage, angeforderteTagId, bestaetigen, buchSichtbar, landWahl, naht.freigabe, ohneTage, reiseKern, syncLesen, umfang])
 
+  const [anzahlBuch, setAnzahlBuch] = React.useState<{ kontext: string; anzahl: GygAnzahl }>(() => ({
+    kontext: plan.schluessel,
+    anzahl: GYG_ANZAHL_STANDARD,
+  }))
+  const anzahlRef = React.useRef<GygAnzahl>(GYG_ANZAHL_STANDARD)
   const [lauf, setLauf] = React.useState<GygLauf>(() => gygLaufStart(plan.schluessel))
   const angepasst = lauf.kontext === plan.schluessel ? lauf : gygKontextWechseln(lauf, plan.schluessel)
   if (angepasst !== lauf) setLauf(angepasst)
+  const anzahl = anzahlBuch.kontext === angepasst.kontext ? anzahlBuch.anzahl : GYG_ANZAHL_STANDARD
+  if (anzahlBuch.kontext !== angepasst.kontext) {
+    setAnzahlBuch({ kontext: angepasst.kontext, anzahl: GYG_ANZAHL_STANDARD })
+  }
 
   const erlaubterRenderer = naht.herkunft === 'pruefung' ? naht.renderer : anwendungsRenderer
   const laufRef = React.useRef(angepasst)
@@ -244,7 +259,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     laufRef.current = angepasst
     planRef.current = plan
     rendererRef.current = erlaubterRenderer
-  }, [angepasst, plan, erlaubterRenderer])
+    anzahlRef.current = anzahl
+  }, [angepasst, plan, erlaubterRenderer, anzahl])
   React.useEffect(() => {
     const host = hostRef.current
     return () => {
@@ -254,7 +270,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     }
   }, [angepasst.kontext])
 
-  const anzeigen = () => {
+  const anzeigen = (gewuenscht: GygAnzahl = anzahlRef.current) => {
+    if (gewuenscht !== GYG_ANZAHL_STANDARD && gewuenscht !== GYG_ANZAHL_ERWEITERT) return
     const aktuell = planRef.current
     if (!gygLadenErlaubt(aktuell.art, 'aktion') || aktuell.art !== 'bereit') return
     if (!suchkonfigurationIstGueltig(aktuell.suche)) return
@@ -270,6 +287,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       setLauf(next)
       return
     }
+    anzahlRef.current = gewuenscht
+    setAnzahlBuch({ kontext: entscheid.lauf.kontext, anzahl: gewuenscht })
     const knoten = document.createElement('div')
     knoten.dataset.gygBetrieb = String(entscheid.generation)
     host.replaceChildren(knoten)
@@ -286,7 +305,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     setLauf(entscheid.lauf)
     let ausstehend: Promise<GygLadeErgebnis>
     try {
-      ausstehend = Promise.resolve(renderer.laden(entscheid.suche, knoten, steuerung.signal))
+      ausstehend = Promise.resolve(renderer.laden(entscheid.suche, knoten, steuerung.signal, gewuenscht))
     } catch {
       betriebBeenden(betrieb)
       if (betriebRef.current === betrieb) betriebRef.current = null
@@ -331,6 +350,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     betriebBeenden(betriebRef.current)
     betriebRef.current = null
     hostRef.current?.replaceChildren()
+    anzahlRef.current = GYG_ANZAHL_STANDARD
+    setAnzahlBuch((buch) => ({ kontext: buch.kontext, anzahl: GYG_ANZAHL_STANDARD }))
     const next = gygEntfernen(laufRef.current)
     laufRef.current = next
     setLauf(next)
@@ -350,6 +371,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       aria-label="GetYourGuide"
       data-gyg-zustand={plan.art}
       data-gyg-phase={angepasst.phase}
+      data-gyg-anzahl={String(anzahl)}
       data-gyg-instanz={instanz}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
@@ -464,8 +486,23 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
           </button>
         ) : null}
         {ladenSichtbar ? (
-          <button type="button" onClick={anzeigen} aria-describedby={`${instanz}-hinweis`} className={cn(AKTION, PRIMAR)}>
+          <button
+            type="button"
+            onClick={() => anzeigen()}
+            aria-describedby={`${instanz}-hinweis`}
+            className={cn(AKTION, PRIMAR)}
+          >
             {angepasst.phase === 'fehler' ? 'Erneut versuchen' : angepasst.phase === 'anzeige' ? 'Erneut laden' : 'Bei GetYourGuide anzeigen'}
+          </button>
+        ) : null}
+        {angepasst.phase === 'anzeige' && anzahl === GYG_ANZAHL_STANDARD ? (
+          <button type="button" onClick={() => anzeigen(GYG_ANZAHL_ERWEITERT)} className={cn(AKTION, SEKUNDAER)}>
+            Mehr Aktivitäten anzeigen
+          </button>
+        ) : null}
+        {angepasst.phase === 'anzeige' && anzahl === GYG_ANZAHL_ERWEITERT ? (
+          <button type="button" onClick={() => anzeigen(GYG_ANZAHL_STANDARD)} className={cn(AKTION, SEKUNDAER)}>
+            Weniger anzeigen
           </button>
         ) : null}
         {entfernenSichtbar ? (

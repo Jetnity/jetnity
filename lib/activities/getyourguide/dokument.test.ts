@@ -5,9 +5,9 @@ import assert from 'node:assert/strict'
 import { landName } from '@/lib/country/darstellung'
 import {
   GYG_ANALYZER_SRC,
-  GYG_ANZAHL,
   GYG_CMP,
   GYG_HOEHE_HASH,
+  GYG_HOEHE_MAX,
   GYG_HOEHE_SKRIPT,
   GYG_LOCALE,
   GYG_MARKE_HREF,
@@ -20,6 +20,7 @@ import {
   embedPfad,
   suchparameterLesen,
 } from '@/lib/activities/getyourguide/dokument'
+import { GYG_ANZAHL_ERWEITERT, GYG_ANZAHL_STANDARD } from '@/lib/activities/getyourguide/suche'
 import { gygHoeheAnnehmen } from '@/lib/activities/getyourguide/renderer'
 import { suchanfrageText, suchkonfigurationBauen } from '@/lib/activities/getyourguide/suche'
 
@@ -42,9 +43,14 @@ describe('GetYourGuide-Einbettungsdokument', () => {
     assert.equal(suchanfrageText(suche), `Lissabon ${suche.land}`)
     assert.equal(JSON.stringify(suche).includes('oeffentlicheKennung'), false)
     assert.equal(JSON.stringify(suche).includes('geonames:'), false)
-    assert.equal(embedPfad(suche), '/embed/getyourguide?umfang=stadt&code=PT&name=Lissabon')
+    assert.equal(embedPfad(suche), '/embed/getyourguide?umfang=stadt&code=PT&name=Lissabon&anzahl=12')
+    assert.equal(embedPfad(suche, GYG_ANZAHL_ERWEITERT), '/embed/getyourguide?umfang=stadt&code=PT&name=Lissabon&anzahl=24')
     const gelesen = suchparameterLesen('?umfang=stadt&code=PT&name=Lissabon')
-    assert.deepEqual(gelesen, suche)
+    assert.deepEqual(gelesen, { suche, anzahl: GYG_ANZAHL_STANDARD })
+    assert.deepEqual(suchparameterLesen('?umfang=stadt&code=PT&name=Lissabon&anzahl=24'), {
+      suche,
+      anzahl: GYG_ANZAHL_ERWEITERT,
+    })
   })
 
   test('Land, Insel und Region behalten den Typ nur in der Konfiguration', () => {
@@ -84,16 +90,20 @@ describe('GetYourGuide-Einbettungsdokument', () => {
   })
 
   test('das gerahmte Dokument enthält Analyzer, Partner und die neutrale Marke genau einmal', () => {
-    const suche = suchparameterLesen('?umfang=stadt&code=PT&name=Lissabon')
-    assert.ok(suche)
-    if (!suche) return
-    const html = embedDokument(suche)
+    const auftrag = suchparameterLesen('?umfang=stadt&code=PT&name=Lissabon&anzahl=12')
+    assert.ok(auftrag)
+    if (!auftrag) return
+    const html = embedDokument(auftrag)
+    const suche = auftrag.suche
     assert.equal(html.split(GYG_ANALYZER_SRC).length - 1, 1)
     assert.equal(html.split('data-gyg-partner-id="2MQHT6Z"').length - 1, 2)
     assert.match(html, new RegExp(`data-gyg-q="${suchanfrageText(suche)}"`))
     assert.match(html, new RegExp(`data-gyg-cmp="${GYG_CMP}"`))
     assert.match(html, new RegExp(`data-gyg-locale-code="${GYG_LOCALE}"`))
-    assert.match(html, new RegExp(`data-gyg-number-of-items="${GYG_ANZAHL}"`))
+    assert.match(html, /data-gyg-number-of-items="12"/)
+    assert.equal(html.includes('data-gyg-number-of-items="3"'), false)
+    const erweitert = suchparameterLesen('?umfang=stadt&code=PT&name=Lissabon&anzahl=24')
+    assert.match(embedDokument(erweitert), /data-gyg-number-of-items="24"/)
     assert.match(html, new RegExp(`data-gyg-href="${GYG_WIDGET_HREF}"`))
     assert.match(html, new RegExp(`href="${GYG_MARKE_HREF}"`))
     assert.equal(html.includes('Panama+City'), false)
@@ -153,9 +163,19 @@ describe('GetYourGuide-Einbettungsdokument', () => {
     assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'https://widget.getyourguide.com', source: fenster as MessageEventSource, data: gueltig }), false)
     assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: {} as MessageEventSource, data: gueltig }), false)
     assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, tour: 1 } }), false)
-    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: 2401 } }), false)
+    assert.equal(
+      gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: GYG_HOEHE_MAX + 1 } }),
+      false,
+    )
     assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: Number.NaN } }), false)
     assert.equal(rahmen.style.height, '1171px')
+    assert.equal(
+      gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: GYG_HOEHE_MAX } }),
+      true,
+    )
+    assert.equal(rahmen.style.height, `${GYG_HOEHE_MAX}px`)
+    assert.equal(gygHoeheAnnehmen(rahmen, { origin: 'null', source: fenster as MessageEventSource, data: { ...gueltig, px: 400 } }), true)
+    assert.equal(rahmen.style.height, '400px')
   })
 
   test('doppelte, übergrosse und fremde Parameter laden den Analyzer nicht', async () => {
@@ -169,6 +189,14 @@ describe('GetYourGuide-Einbettungsdokument', () => {
       '?umfang=stadt&code=NOPE&name=Lissabon',
       '?umfang=stadt&code=PT&name=%3Cscript%3E',
       `?${'umfang=stadt&code=PT&name=Lissabon&'.repeat(40)}`,
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=3',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=13',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=99',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=012',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=12.0',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=12&anzahl=24',
+      '?umfang=stadt&code=PT&name=Lissabon&anzahl=24&partner_id=ANDERER',
     ]
     for (const suche of faelle) {
       const antwort = embedAntwort(anfrage(suche, RAHMEN))
