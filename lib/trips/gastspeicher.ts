@@ -88,6 +88,13 @@ import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 const SCHLUESSEL_AKTIV = 'jetnity:reise:v3'
 
 /**
+ * Same-window notice that the active guest key's stored bytes changed.
+ * No detail and no trip id. Other tabs use the browser `storage` event.
+ * Not a second store.
+ */
+export const GASTSPEICHER_AKTUALISIERT = 'jetnity:gastspeicher-aktualisiert'
+
+/**
  * Reisen, die auf ein Konto warten.
  *
  * Wird ausschliesslich von der Übernahme der Fassung v2 gefüllt. Im laufenden
@@ -393,19 +400,51 @@ function aktiveAblageVorSchreibenPruefen() {
  * würde diesen Fall als Erfolg zählen.
  */
 function schreibenVersuch(schluessel: string, wert: unknown): boolean {
+  // Readback stays the success condition. A previous read that throws must
+  // not skip the write. Only a confirmed active-key change notifies listeners.
+  let vorher: string | null = null
+  try {
+    vorher = window.localStorage.getItem(schluessel)
+  } catch {
+    vorher = null
+  }
+
   try {
     if (wert === null) {
       window.localStorage.removeItem(schluessel)
-      return window.localStorage.getItem(schluessel) === null
+      const ok = window.localStorage.getItem(schluessel) === null
+      if (ok) gastspeicherGeaendertMelden(schluessel, vorher, null)
+      return ok
     }
 
     const roh = JSON.stringify(wert)
     window.localStorage.setItem(schluessel, roh)
-    return window.localStorage.getItem(schluessel) === roh
+    const ok = window.localStorage.getItem(schluessel) === roh
+    if (ok) gastspeicherGeaendertMelden(schluessel, vorher, roh)
+    return ok
   } catch {
     // Voller oder gesperrter Speicher.
     return false
   }
+}
+
+/**
+ * Post-success signal for the active key only.
+ *
+ * Writers that reach this after a confirmed readback: `gastreiseSpeichern`,
+ * `gastreiseAnlegen`, `gastreiseAblegen`, `gastreiseEntfernen` (via
+ * `schreibenMuss`), plus `legacyUebernehmen` and `uebernommenStreichen` when
+ * their active-key `schreibenVersuch` succeeds. Failed readback does not
+ * signal. Identical bytes do not signal. The event has no payload.
+ */
+function gastspeicherGeaendertMelden(schluessel: string, vorher: string | null, nachher: string | null) {
+  if (schluessel !== SCHLUESSEL_AKTIV || vorher === nachher) return
+  const fenster = window
+  if (typeof fenster.dispatchEvent !== 'function') return
+  queueMicrotask(() => {
+    if (typeof fenster.dispatchEvent !== 'function') return
+    fenster.dispatchEvent(new CustomEvent(GASTSPEICHER_AKTUALISIERT))
+  })
 }
 
 /** Wie `schreibenVersuch`, aber ein Fehlschlag ist ein Fehler. */

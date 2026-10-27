@@ -398,6 +398,18 @@ function Zeile({
 }) {
   const statusText = nutzerstandText(item.userStatus, item.currentness)
   const unterwegs = intent != null && (intent.phase === 'pending' || intent.phase === 'awaiting' || intent.phase === 'blocked')
+  const statusGruppe = React.useRef<HTMLDivElement>(null)
+  const statusFokus = React.useRef(false)
+  React.useEffect(() => {
+    if (!statusFokus.current || !editor) return
+    statusFokus.current = false
+    const knopf = statusGruppe.current?.querySelector('button')
+    if (knopf instanceof HTMLButtonElement) knopf.focus()
+  }, [editor])
+  const statusOeffnen = () => {
+    statusFokus.current = true
+    onOeffnen()
+  }
   return (
     <li
       className="grid w-full min-w-0 grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3"
@@ -423,7 +435,7 @@ function Zeile({
             Titel bearbeiten
             <input value={editor.title} onChange={(event) => onTitel(event.target.value)} onFocus={onInteraktion} maxLength={80} className={FELD} />
           </label>
-          <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+          <div ref={statusGruppe} role="group" aria-label="Status ändern" className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
             <Status aktiv={editor.status === 'open'} onClick={() => onStatus('open')} onFocus={onInteraktion} disabled={sperre}>Offen</Status>
             <Status aktiv={editor.status === 'done'} onClick={() => onStatus('done')} onFocus={onInteraktion} disabled={sperre}>Erledigt</Status>
             <Status aktiv={editor.status === 'skipped'} onClick={() => onStatus('skipped')} onFocus={onInteraktion} disabled={sperre}>Nicht relevant</Status>
@@ -433,9 +445,14 @@ function Zeile({
           </button>
         </div>
       ) : (
-        <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onOeffnen}>
-          Titel bearbeiten
-        </button>
+        <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+          <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={onOeffnen}>
+            Titel bearbeiten
+          </button>
+          <button type="button" className={SEKUNDAER} onFocus={onInteraktion} onClick={statusOeffnen}>
+            Status ändern
+          </button>
+        </div>
       )}
       {loeschen ? (
         <div className="grid gap-2" role="group" aria-label={entfernenFrage(item.title ?? '', doppelt, statusText)}>
