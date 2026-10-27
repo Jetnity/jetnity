@@ -5,8 +5,10 @@
 //
 // Zeitliche Lage kommt aus derselben AP-3-Date-only-Funktion. Coverage-Texte
 // und ihre maschinenlesbare Presentation-Lage kommen gemeinsam aus
-// bereichStatus / planStatus. Personen aus party[] oder ehrlich nur als Anzahl.
-// Citizenships werden nicht gelesen.
+// bereichStatus / planStatus. Die Personenanzahl ist die gespeicherte Kopfzahl.
+// party.length zählt nur vorhandene Profile und darf kleiner sein. Citizenships,
+// Namen und Dokumente werden nicht gelesen. Widerspricht die Profilliste der
+// Kopfzahl, bleibt die Anzahl unbestimmt.
 
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { reiseGruppe, type ReiseGruppe } from '@/lib/account/reise-lage'
@@ -24,10 +26,19 @@ export type UebersichtLage = ReiseGruppe
 export type AbdeckungLage = BereichLage
 
 export type UebersichtPerson = {
-  anzahl: number
-  quelle: 'party' | 'travellers'
+  anzahl: number | null
+  quelle: 'travellers' | 'unbestimmt'
   text: string
 }
+
+export const KOPFZAHL_WIDERSPRUCH =
+  'Anzahl der Reisenden und erfasste Profile stimmen nicht überein.'
+
+export type Kopfzahl =
+  | { art: 'bekannt'; anzahl: number; profile: number }
+  | { art: 'unbestimmt' }
+
+export type MehrereReisendeLage = 'hinweis' | 'widerspruch' | 'keiner'
 
 export type UebersichtAbdeckung = {
   bereich: BereichStatus['bereich']
@@ -83,24 +94,52 @@ function uebersichtLageText(lage: UebersichtLage | null): string {
   return LAGE_TEXT[lage]
 }
 
+function profileAnzahl(party: Trip['party']): number | null {
+  if (party == null) return 0
+  if (!Array.isArray(party)) return null
+  return party.length
+}
+
+/** Gespeicherte Kopfzahl. Profile dürfen fehlen. Ein Überhang oder eine ungültige Zahl bleibt unbestimmt. */
+export function kopfzahl(reise: Pick<Trip, 'travellers' | 'party'>): Kopfzahl {
+  const profile = profileAnzahl(reise.party)
+  const kopf = reise.travellers
+  if (profile == null || !Number.isInteger(kopf) || kopf < 1 || profile > kopf) {
+    return { art: 'unbestimmt' }
+  }
+  return { art: 'bekannt', anzahl: kopf, profile }
+}
+
+/** Mehrpersonenhinweis nur bei bekannter Kopfzahl über 1. Ein Widerspruch wird nicht als eine Person und nicht als mehrere Personen behauptet. */
+export function mehrereReisendeLage(reise: Pick<Trip, 'travellers' | 'party'>): MehrereReisendeLage {
+  const lage = kopfzahl(reise)
+  if (lage.art === 'unbestimmt') return 'widerspruch'
+  if (lage.anzahl > 1) return 'hinweis'
+  return 'keiner'
+}
+
+function personenBasis(anzahl: number): string {
+  return anzahl === 1 ? '1 Reisende Person' : `${anzahl} Reisende`
+}
+
 export function uebersichtPersonen(reise: Pick<Trip, 'travellers' | 'party'>): UebersichtPerson {
-  const party = reise.party ?? []
-  if (party.length > 0) {
-    const anzahl = party.length
-    return {
-      anzahl,
-      quelle: 'party',
-      text: anzahl === 1 ? '1 Reisende Person' : `${anzahl} Reisende`,
-    }
+  const lage = kopfzahl(reise)
+  if (lage.art === 'unbestimmt') {
+    return { anzahl: null, quelle: 'unbestimmt', text: KOPFZAHL_WIDERSPRUCH }
   }
 
-  const anzahl = reise.travellers
-  return {
-    anzahl,
-    quelle: 'travellers',
-    text:
-      anzahl === 1 ? '1 Reisende Person · Angaben noch offen' : `${anzahl} Reisende · Angaben noch offen`,
+  const basis = personenBasis(lage.anzahl)
+  if (lage.profile === 0) {
+    return { anzahl: lage.anzahl, quelle: 'travellers', text: `${basis} · Angaben noch offen` }
   }
+  if (lage.profile < lage.anzahl) {
+    return {
+      anzahl: lage.anzahl,
+      quelle: 'travellers',
+      text: `${basis} · ${lage.profile} von ${lage.anzahl} Profilen vorhanden`,
+    }
+  }
+  return { anzahl: lage.anzahl, quelle: 'travellers', text: basis }
 }
 
 function fortschrittAus(abdeckungen: readonly UebersichtAbdeckung[]): string {

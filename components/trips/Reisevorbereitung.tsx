@@ -39,6 +39,7 @@ import {
   readinessWorkspaceZusammenfassung,
 } from '@/lib/readiness/workspace-presentation'
 import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
+import { KOPFZAHL_WIDERSPRUCH, mehrereReisendeLage } from '@/lib/trips/uebersicht'
 import {
   dokumentAblaufGegenReise,
   dokumentReiseAblaufText,
@@ -134,6 +135,7 @@ export default function Reisevorbereitung({
   const fehlendeFakten = [...new Set(anwendbareSlots.flatMap((slot) => slot.missingFacts))]
   const pruefung = officialPruefungAusEvaluations(evaluations)
   const uebersichtStatus = preparationUebersichtStatus(pruefung, officialStatusText(summary.officialStatus))
+  const reisendeLage = mehrereReisendeLage(reise)
 
   const setzen = async (
     item: {
@@ -190,9 +192,16 @@ export default function Reisevorbereitung({
         {uebersichtStatus}. {PREPARATION_DISCLAIMER}
       </p>
 
-      {summary.individualClaimsForbidden && (
-        <p className="mt-2 text-xs leading-5 text-ink-800">{MEHRERE_REISENDE_HINWEIS}</p>
-      )}
+      {reisendeLage === 'hinweis' ? (
+        <p className="mt-2 text-xs leading-5 text-ink-800" data-mehrere-reisende="hinweis">
+          {MEHRERE_REISENDE_HINWEIS}
+        </p>
+      ) : null}
+      {reisendeLage === 'widerspruch' ? (
+        <p className="mt-2 text-xs leading-5 text-ink-800" data-mehrere-reisende="unklar">
+          {KOPFZAHL_WIDERSPRUCH}
+        </p>
+      ) : null}
       {summary.unknownCountryContext && (
         <p className="mt-2 text-xs leading-5 text-ink-800">
           Für mindestens eine Etappe ist der Länderkontext nicht vollständig bestimmbar.

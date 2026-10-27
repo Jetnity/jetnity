@@ -167,6 +167,30 @@ function pruefen(name: string, mass: Awaited<ReturnType<typeof messen>>, schrift
   }
 }
 
+async function statusPerTastatur(page: Page, clientRef: string) {
+  const zeile = page.locator(`[data-personal-client-ref="${clientRef}"]`)
+  const vor = await page.evaluate(() => window.__PERSONAL__.setzen.length)
+  await zeile.getByRole('button', { name: 'Status ändern' }).focus()
+  await page.keyboard.press('Enter')
+  await page.waitForFunction(
+    (ref) => document.activeElement?.textContent === 'Offen'
+      && document.querySelector(`[data-personal-client-ref="${ref}"]`)?.getAttribute('data-readiness-status') === 'open',
+    clientRef,
+  )
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
+  await page.waitForFunction(
+    (ref) => {
+      const knoten = document.querySelector(`[data-personal-client-ref="${ref}"]`)
+      return knoten?.querySelector('button[aria-pressed="true"]')?.textContent === 'Erledigt'
+        && knoten.getAttribute('data-readiness-status') === 'open'
+    },
+    clientRef,
+  )
+  const nach = await page.evaluate(() => window.__PERSONAL__.setzen.length)
+  if (nach !== vor) throw new Error(`Statuswahl hat geschrieben: ${vor} -> ${nach}`)
+}
+
 async function szene(page: Page, name: string, css: string, bundle: string, start: unknown, schrift: string | null) {
   await page.setContent(dokument(bundle, start), { waitUntil: 'domcontentloaded' })
   await page.addStyleTag({ content: css })
@@ -220,6 +244,14 @@ async function ablauf() {
       await page.screenshot({ path: join(ausgabe, datei), fullPage: true })
       bilder.push(datei)
       messungen.push({ name: `lang-${breite}`, mass })
+      if (breite === 390) {
+        await statusPerTastatur(page, 'preparation-lang')
+        const statusMass = await messen(page)
+        pruefen('status-390', statusMass, '16px')
+        await page.screenshot({ path: join(ausgabe, 'status-390.png'), fullPage: true })
+        bilder.push('status-390.png')
+        messungen.push({ name: 'status-390', mass: statusMass })
+      }
       await page.close()
     }
     const zustaende = [
@@ -246,6 +278,12 @@ async function ablauf() {
     await gross.screenshot({ path: join(ausgabe, 'lang-320-root32.png'), fullPage: true })
     bilder.push('lang-320-root32.png')
     messungen.push({ name: 'lang-320-root32', mass: grossMass })
+    await statusPerTastatur(gross, 'preparation-lang')
+    const statusGross = await messen(gross)
+    pruefen('status-320-root32', statusGross, '32px')
+    await gross.screenshot({ path: join(ausgabe, 'status-320-root32.png'), fullPage: true })
+    bilder.push('status-320-root32.png')
+    messungen.push({ name: 'status-320-root32', mass: statusGross })
     await gross.close()
 
     const taste = await browser.newPage({ viewport: { width: 390, height: 844 } })
