@@ -13,6 +13,10 @@ Author review only. This is not a Technical-Lead PASS.
 - Geometry proof used system Chrome because Playwright’s headless shell was not installed. The script is outside `npm test`, so that missing shell does not fail GitHub CI. The harness sets `box-sizing: border-box` and `min-h-11 { min-height: 2.75rem }` to mirror Tailwind. It is not the compiled production CSS bundle.
 - No request to `12go.asia` was made. That also means this session did not observe the live landing, currency, or passenger form.
 
+## R1-F1
+
+`geplantesDatum` used to match only place IDs, so A→B→A→B painted one transfer date onto both X→Y edges. The count of that directed pair is now taken from the current adjacent occurrences. A count other than one yields “Bitte das Datum bei 12Go wählen” on every such edge. Two dated transfers are not assigned by order. Reversal and a changed place ID drop the previous date. A single unchanged X→Y edge still shows its date, in the model and in the rendered `data-geplant` attribute, and the href still has no `date=`. `stageId` names one stage, not the pair, so a transfer stored on `a1` still does not date `a1→b1` when `a2→b2` has the same places.
+
 ## Limits I am not papering over
 
 - No production deep link, by decision. The task’s “if the Bangkok–Koh Chang link is verified” branch is implemented and tested, and not wired to the UI.
