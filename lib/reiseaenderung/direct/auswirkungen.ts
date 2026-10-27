@@ -174,7 +174,7 @@ function qualifiziert(wert: UnterkunftAbdeckung): boolean {
     && wert.zusammenfassung !== 'Unterkunftsstand noch unklar'
 }
 
-/** No stages may use the trip-date fallback. Any present stage needs its own valid interval; the canonical reader still falls back to trip dates for one incomplete stage and for several stages that are all incomplete. */
+/** No stages may use the trip-date fallback for a qualified plan. One stage without its own interval still falls back to the trip calendar. Several stages with a missing interval do not: the calendar length can be known while stage ownership stays unknown. */
 function etappenDatenVollstaendig(reise: Trip): boolean {
   if (reise.stages.length === 0) return true
   return reise.stages.every(etappe => spanne(etappe.arrivalDate, etappe.departureDate) > 0)

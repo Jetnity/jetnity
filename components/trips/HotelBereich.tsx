@@ -9,7 +9,8 @@ import { AlertCircle, BedDouble, Loader2, MapPin } from 'lucide-react'
 
 import type { HotelOptionSichtbar, HotelSucheAntwort } from '@/lib/hotels/client-sicht'
 import { HOTEL_ABDECKUNGSHINWEIS } from '@/lib/hotels/domain'
-import { checkInAus, checkOutAus, hotelSucheEingabeAusReise, naechteZwischen } from '@/lib/hotels/quartier-kontext'
+import { HOTELZEITRAUM_OFFEN, hotelSucheEingabeAusReise, naechteZwischen } from '@/lib/hotels/quartier-kontext'
+import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import HotelKarte from '@/components/trips/HotelKarte'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
@@ -93,17 +94,22 @@ function HotelEtappe({
     dayId: string | null,
   ) => Promise<string | null>
 }) {
-  const [laeuft, setLaeuft] = React.useState(true)
+  const [laeuft, setLaeuft] = React.useState(() => hotelZeitraumAusEtappe(reise, etappe) !== null)
   const [uebernimmt, setUebernimmt] = React.useState(false)
   const [antwort, setAntwort] = React.useState<HotelSucheAntwort | null>(null)
   const [meldung, setMeldung] = React.useState('')
 
   const eingabe = React.useMemo(() => hotelSucheEingabeAusReise(reise, etappe), [reise, etappe])
-  const checkIn = checkInAus(eingabe)
-  const checkOut = checkOutAus(eingabe)
+  const zeitraum = hotelZeitraumAusEtappe(reise, etappe)
+  const checkIn = zeitraum?.checkIn ?? null
+  const checkOut = zeitraum?.checkOut ?? null
   const naechte = naechteZwischen(checkIn, checkOut)
 
+  const sucheAktiv = Boolean(checkIn && checkOut)
+
   React.useEffect(() => {
+    if (!checkIn || !checkOut) return
+
     let aktiv = true
     setLaeuft(true)
     setAntwort(null)
@@ -146,7 +152,7 @@ function HotelEtappe({
     return () => {
       aktiv = false
     }
-  }, [eingabe])
+  }, [eingabe, checkIn, checkOut])
 
   const uebernehmen = async (option: HotelOptionSichtbar) => {
     if (!onUebernehmen || !checkIn || !checkOut || uebernimmt) return
@@ -184,23 +190,29 @@ function HotelEtappe({
           </h2>
           <p className="mt-3 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3 text-sm leading-6 text-ink-800">
             <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Zeitraum</span>
-            <span className="mt-1 block">
-              {zeitraumText(checkIn, checkOut)}
-              {naechte ? ` · ${naechte} ${naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+            <span className="mt-1 block min-w-0 break-words">
+              {checkIn && checkOut ? (
+                <>
+                  {zeitraumText(checkIn, checkOut)}
+                  {naechte ? ` · ${naechte} ${naechte === 1 ? 'Nacht' : 'Nächte'}` : ''}
+                </>
+              ) : (
+                HOTELZEITRAUM_OFFEN
+              )}
             </span>
           </p>
         </div>
         <BedDouble className="h-5 w-5 text-brand-600" aria-hidden="true" />
       </div>
 
-      {laeuft && (
+      {sucheAktiv && laeuft && (
         <p aria-busy="true" className="mt-5 flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
           <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" />
           Jetnity ordnet die Gegend für diese Etappe ein.
         </p>
       )}
 
-      {!laeuft && antwort && (
+      {sucheAktiv && !laeuft && antwort && (
         <div className="mt-5 grid gap-4">
           {quartierSichtbar && antwort.quartier && (
             <div className="rounded-2xl bg-surface-25 px-4 py-4">

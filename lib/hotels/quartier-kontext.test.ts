@@ -2,9 +2,12 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
+  checkInAus,
+  checkOutAus,
   hotelSucheEingabeAusReise,
   naechteZwischen,
   quartierKontextAusReise,
+  suchanfrageAusKontext,
 } from '@/lib/hotels/quartier-kontext'
 import { quartiereBewerten } from '@/lib/hotels/quartier-ranking'
 import type { HotelSucheEingabe } from '@/lib/hotels/schema'
@@ -144,6 +147,54 @@ describe('Quartierkontext aus der Reise', () => {
     assert.match(texte, /fehlen noch Wegezeitdaten/)
     assert.equal(texte.includes('Kurze Wege'), false)
     assert.equal(texte.includes('öffentlichen Verkehrsmitteln'), false)
+  })
+
+  test('mehrere Orte ohne Etappenzeitraum erzeugen keine Reise-Suchdaten', () => {
+    const etappe: TripStage = {
+      ...EINGABE.stage,
+      arrivalDate: null,
+      departureDate: null,
+    } as TripStage
+    const reise = {
+      stages: [etappe, { ...etappe, id: 'stage-2', name: 'Rom' }],
+      days: [],
+      ohneTag: [],
+      travellers: 2,
+      currency: 'CHF',
+      budgetAmount: 3500,
+      interests: ['food'],
+      pace: 'calm',
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+    } as unknown as Trip
+    const eingabe = hotelSucheEingabeAusReise(reise, etappe)
+    assert.equal(eingabe.stage.arrivalDate, null)
+    assert.equal(eingabe.stage.departureDate, null)
+    assert.equal(eingabe.trip.startDate, '2026-09-12')
+    assert.equal(checkInAus(eingabe), null)
+    assert.equal(checkOutAus(eingabe), null)
+    assert.equal(suchanfrageAusKontext(eingabe, null), null)
+  })
+
+  test('eine Etappe ohne Daten trägt den Reisezeitraum in die Suchanfrage', () => {
+    const etappe = { ...EINGABE.stage, arrivalDate: null, departureDate: null } as TripStage
+    const reise = {
+      stages: [etappe],
+      days: [],
+      ohneTag: [],
+      travellers: 2,
+      currency: 'CHF',
+      budgetAmount: null,
+      interests: [],
+      pace: null,
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+    } as unknown as Trip
+    const eingabe = hotelSucheEingabeAusReise(reise, etappe)
+    assert.equal(checkInAus(eingabe), '2026-09-12')
+    assert.equal(checkOutAus(eingabe), '2026-09-16')
+    assert.equal(suchanfrageAusKontext(eingabe, null)?.checkIn, '2026-09-12')
+    assert.equal(suchanfrageAusKontext(eingabe, null)?.checkOut, '2026-09-16')
   })
 
   test('Nutzerinteressen erzeugen kein Quartierprofil', () => {

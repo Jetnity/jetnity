@@ -54,6 +54,31 @@ describe('Hotel-Reisegraph', () => {
     assert.equal(ergebnis.art, 'zeitraum-unvollstaendig')
   })
 
+  test('mehrere Etappen ohne eigene Daten übernehmen nicht die ganze Reise', () => {
+    const reise = beispielreise()
+    const florenz = { ...reise.stages[0]!, arrivalDate: null, departureDate: null }
+    reise.stages = [florenz, reise.stages[1]!]
+    assert.equal(hotelZeitraumAusEtappe(reise, florenz), null)
+    assert.deepEqual(hotelZeitraumAusEtappe(reise, reise.stages[1]!), {
+      checkIn: '2026-09-15',
+      checkOut: '2026-09-16',
+    })
+    const pruefung = hotelReisegraphPruefen(reise, { tripId: reise.id, stageId: florenz.id, dayId: null })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.art, 'zeitraum-unvollstaendig')
+  })
+
+  test('eine Etappe ohne eigene Daten behält den Reisezeitraum', () => {
+    const reise = beispielreise()
+    const nur = { ...reise.stages[0]!, arrivalDate: null, departureDate: null }
+    reise.stages = [nur]
+    assert.deepEqual(hotelZeitraumAusEtappe(reise, nur), {
+      checkIn: '2026-09-12',
+      checkOut: '2026-09-16',
+    })
+  })
+
   test('eine passende Etappe und der Check-in-Tag werden angenommen', () => {
     const reise = beispielreise()
     const ergebnis = hotelReisegraphPruefen(reise, {
