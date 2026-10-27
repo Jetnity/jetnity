@@ -38,11 +38,12 @@ export function activityZustand(
   })
 }
 
+export const ACTIVITY_TAG_UNVERFUEGBAR =
+  'Die Suche nach Aktivitäten für diesen Reisetag ist derzeit nicht verfügbar.'
+
 export function activityZustandMeldung(zustand: ActivityZustand): string {
   if (zustand.aktiv) return 'Die Aktivitätensuche ist in dieser Umgebung eingeschaltet.'
-  if (zustand.grund === 'production') {
-    return 'Die Aktivitätensuche ist in Production noch nicht freigegeben.'
-  }
+  if (zustand.grund === 'production') return ACTIVITY_TAG_UNVERFUEGBAR
   if (zustand.grund === 'ohne-zugang') {
     return 'Passende Aktivitäten werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier Vorschläge für diesen Reisetag – ohne erfundene Angebote.'
   }
