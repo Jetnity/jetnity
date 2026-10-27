@@ -101,7 +101,7 @@ function profileAnzahl(party: Trip['party']): number | null {
 }
 
 /** Gespeicherte Kopfzahl. Profile dürfen fehlen. Ein Überhang oder eine ungültige Zahl bleibt unbestimmt. */
-export function kopfzahl(reise: Pick<Trip, 'travellers' | 'party'>): Kopfzahl {
+function kopfzahl(reise: Pick<Trip, 'travellers' | 'party'>): Kopfzahl {
   const profile = profileAnzahl(reise.party)
   const kopf = reise.travellers
   if (profile == null || !Number.isInteger(kopf) || kopf < 1 || profile > kopf) {
