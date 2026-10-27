@@ -69,10 +69,15 @@ export default function UnterkunftBestand({
     })
   }
 
+  const uebergangsNaechte = abdeckung.luecken
+    .filter((luecke) => luecke.stageId == null && reise.stages.length > 0)
+    .reduce((summe, luecke) => summe + luecke.naechte, 0)
   const kopf = datumUnbekannt
     ? abdeckung.zusammenfassung
     : abdeckung.bekannt && abdeckung.naechteGesamt !== null && abdeckung.naechteAbgedeckt !== null
-      ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten abgedeckt`
+      ? uebergangsNaechte > 0
+        ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Übernachtungsintervallen im Reisekalender erfasst`
+        : `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten abgedeckt`
       : abdeckung.zusammenfassung
 
   return (
@@ -92,6 +97,13 @@ export default function UnterkunftBestand({
             Nächte-Abdeckung
           </h2>
           <p className="mt-1 text-sm leading-6 text-ink-800">{kopf}</p>
+          {uebergangsNaechte > 0 ? (
+            <p className="mt-1 min-w-0 break-words text-sm leading-6 text-ink-800">
+              {uebergangsNaechte === 1
+                ? '1 Übernachtungsintervall liegt im Übergang oder ausserhalb der Etappen. Daraus folgt keine Hotelbuchung.'
+                : `${uebergangsNaechte} Übernachtungsintervalle liegen im Übergang oder ausserhalb der Etappen. Daraus folgt keine Hotelbuchung.`}
+            </p>
+          ) : null}
         </div>
         <BedDouble className="h-5 w-5 text-brand-600" aria-hidden="true" />
       </div>
@@ -158,25 +170,30 @@ export default function UnterkunftBestand({
             </li>
             )
           })}
-          {abdeckung.luecken.map((luecke) => (
+          {abdeckung.luecken.map((luecke) => {
+            const uebergang = luecke.stageId == null && reise.stages.length > 0
+            return (
             <li
               key={`${luecke.start}:${luecke.end}:${luecke.stageId ?? 'reise'}`}
               className="flex min-w-0 flex-col gap-3 rounded-2xl border border-dashed border-line-300 bg-surface-25 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-brand-800">
+                <p className="text-sm font-semibold break-words text-brand-800">
                   {zeitraumKurz(luecke.start, luecke.end)}
-                  {luecke.stageName ? ` · ${luecke.stageName}` : ''}
+                  {uebergang ? ' · Übergang' : luecke.stageName ? ` · ${luecke.stageName}` : ''}
                 </p>
-                <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                  {datumUnbekannt
+                <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
+                  {uebergang
+                    ? `${luecke.naechte} ${luecke.naechte === 1 ? 'Übergangsnacht' : 'Übergangsnächte'}, ohne angenommene Hotelübernachtung`
+                    : datumUnbekannt
                     ? `${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht' : 'Nächte'} noch nicht als fehlend bestimmbar`
                     : `${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht fehlt' : 'Nächte fehlen'}`}
                 </p>
               </div>
-              <BuchungsSiegel status={datumUnbekannt ? 'unknown' : 'open'} />
+              <BuchungsSiegel status={uebergang || datumUnbekannt ? 'unknown' : 'open'} />
             </li>
-          ))}
+            )
+          })}
         </ul>
       )}
 

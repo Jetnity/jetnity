@@ -150,24 +150,28 @@ function reiseZeitraum(graph: Trip): UnterkunftZeitraum | null {
 
 function benoetigteZeitraeume(graph: Trip): { bekannt: boolean; zeitraeume: UnterkunftZeitraum[] } {
   const ausEtappen = graph.stages.map(etappenZeitraum)
-  if (graph.stages.length > 0 && ausEtappen.every(Boolean)) {
-    return {
-      bekannt: true,
-      zeitraeume: ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null),
+  const etappen = ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null)
+  const vollstaendig = graph.stages.length > 0 && ausEtappen.every((wert) => wert !== null)
+  const kalender = reiseZeitraum(graph)
+  if (vollstaendig) {
+    const zeitraeume = [...etappen]
+    if (kalender) {
+      zeitraeume.push({
+        start: kalender.start,
+        end: kalender.end,
+        stageId: null,
+        stageName: null,
+      })
     }
+    return { bekannt: true, zeitraeume }
   }
   if (graph.stages.length === 0 || graph.stages.length === 1) {
-    const fallback = reiseZeitraum(graph)
-    if (fallback) return { bekannt: true, zeitraeume: [fallback] }
+    if (kalender) return { bekannt: true, zeitraeume: [kalender] }
   }
-  if (graph.stages.length > 1 && ausEtappen.some(Boolean) && ausEtappen.some((wert) => wert === null)) {
-    return {
-      bekannt: false,
-      zeitraeume: ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null),
-    }
+  if (graph.stages.length > 1 && etappen.length > 0 && etappen.length < graph.stages.length) {
+    return { bekannt: false, zeitraeume: etappen }
   }
-  const fallback = reiseZeitraum(graph)
-  if (fallback) return { bekannt: true, zeitraeume: [fallback] }
+  if (kalender) return { bekannt: true, zeitraeume: [kalender] }
   return { bekannt: false, zeitraeume: [] }
 }
 
@@ -327,6 +331,7 @@ describe('Intervallauswerter gegen das Nacht-Orakel', () => {
     assert.deepEqual(ergebnis.luecken.map((luecke) => [luecke.start, luecke.end, luecke.stageName]), [
       [plus(0), plus(5), 'Früher'],
       [plus(5), plus(12), 'Später'],
+      [plus(12), plus(14), null],
     ])
   })
 
@@ -344,9 +349,12 @@ describe('Intervallauswerter gegen das Nacht-Orakel', () => {
         etappe({ id: 'gleich', name: 'Fortsetzung', position: 2, arrivalDate: plus(4), departureDate: plus(10) }),
       ],
     }))
-    assert.equal(ohneDeckung.luecken.length, 1)
+    assert.equal(ohneDeckung.luecken.length, 2)
     assert.equal(ohneDeckung.luecken[0]?.stageName, 'Anfang')
     assert.equal(ohneDeckung.luecken[0]?.naechte, 10)
+    assert.equal(ohneDeckung.luecken[1]?.stageId, null)
+    assert.equal(ohneDeckung.luecken[1]?.start, plus(10))
+    assert.equal(ohneDeckung.luecken[1]?.end, plus(14))
 
     const namenAmLueckenanfang = unterkunftAbdeckung(reise({
       stages: [
@@ -355,9 +363,11 @@ describe('Intervallauswerter gegen das Nacht-Orakel', () => {
       ],
       ohneTag: [stay({ id: 'nur-anfang', startsOn: plus(0), endsOn: plus(4) })],
     }))
-    assert.equal(namenAmLueckenanfang.luecken.length, 1)
+    assert.equal(namenAmLueckenanfang.luecken.length, 2)
     assert.equal(namenAmLueckenanfang.luecken[0]?.stageName, 'Fortsetzung')
     assert.equal(namenAmLueckenanfang.luecken[0]?.start, plus(4))
+    assert.equal(namenAmLueckenanfang.luecken[1]?.stageId, null)
+    assert.equal(namenAmLueckenanfang.luecken[1]?.start, plus(10))
   })
 
   test('gebucht verdrängt ausgewählt, auch bei späterem ausgewähltem Stay', () => {
@@ -551,7 +561,7 @@ describe('Intervallauswerter gegen das Nacht-Orakel', () => {
     assert.equal(draussen.naechteAbgedeckt, 0)
   })
 
-  test('Etappenvereinigung lässt Kalenderlöcher aus und ignoriert breitere Reisedaten', () => {
+  test('Reisekalender behält Löcher zwischen Etappen als Übergang', () => {
     gleich(reise({
       startDate: plus(0),
       endDate: plus(20),
@@ -568,8 +578,15 @@ describe('Intervallauswerter gegen das Nacht-Orakel', () => {
         etappe({ id: 'rechts', name: 'Rechts', position: 2, arrivalDate: plus(6), departureDate: plus(9) }),
       ],
     }))
-    assert.equal(loch.naechteGesamt, 6)
-    assert.deepEqual(loch.luecken.map((luecke) => luecke.start), [plus(0), plus(6)])
+    assert.equal(loch.naechteGesamt, 20)
+    assert.deepEqual(loch.luecken.map((luecke) => [luecke.start, luecke.stageId]), [
+      [plus(0), 'links'],
+      [plus(3), null],
+      [plus(6), 'rechts'],
+      [plus(9), null],
+    ])
+    assert.equal(loch.luecken[1]?.naechte, 3)
+    assert.equal(loch.luecken[3]?.naechte, 11)
   })
 
   test('Eingaben bleiben unverändert', () => {
@@ -765,17 +782,23 @@ describe('Lange Bereiche bleiben eingabebegrenzt', () => {
     )
   })
 
-  test('getrennte lange Etappen erzeugen kein Loch als Lücke', () => {
+  test('getrennte lange Etappen erzeugen kein Jahrhundertloch als Lücke', () => {
     const ergebnis = unterkunftAbdeckung(reise({
       stages: [
         etappe({ id: 'frueh', name: 'Früh', arrivalDate: '1800-01-01', departureDate: '1800-02-01' }),
         etappe({ id: 'spaet', name: 'Spät', position: 2, arrivalDate: '2200-01-01', departureDate: '2200-02-01' }),
       ],
     }))
-    assert.equal(ergebnis.naechteGesamt, 31 + 31)
-    assert.equal(ergebnis.luecken.length, 2)
+    const tripnacht = nachtDifferenz('2026-08-30', '2026-09-13')
+    assert.equal(ergebnis.naechteGesamt, 31 + 31 + tripnacht)
+    assert.equal(ergebnis.luecken.length, 3)
+    assert.equal(ergebnis.luecken.some((luecke) => luecke.start === '1800-02-01' && luecke.end === '2200-01-01'), false)
     assert.equal(ergebnis.luecken[0]?.end, '1800-02-01')
-    assert.equal(ergebnis.luecken[1]?.start, '2200-01-01')
+    assert.deepEqual(
+      ergebnis.luecken.filter((luecke) => luecke.stageId == null).map((luecke) => [luecke.start, luecke.end]),
+      [['2026-08-30', '2026-09-13']],
+    )
+    assert.equal(ergebnis.luecken[2]?.start, '2200-01-01')
   })
 
   test('gültige vierstellige Ränder bleiben vollständig', () => {

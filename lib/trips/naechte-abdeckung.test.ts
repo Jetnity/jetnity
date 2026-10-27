@@ -300,11 +300,87 @@ describe('Unterkunftsabdeckung', () => {
         ohneTag: [stay({ id: 's1', startsOn: '2026-08-30', endsOn: '2026-09-05', stageId: 'stage-1' })],
       }),
     )
-    assert.equal(ergebnis.naechteGesamt, 10)
+    assert.equal(ergebnis.naechteGesamt, 14)
     assert.equal(ergebnis.naechteAbgedeckt, 6)
-    assert.equal(ergebnis.luecken.length, 1)
+    assert.equal(ergebnis.luecken.length, 2)
     assert.equal(ergebnis.luecken[0]?.stageName, 'Singapur')
     assert.equal(ergebnis.luecken[0]?.naechte, 4)
+    assert.equal(ergebnis.luecken[1]?.stageId, null)
+    assert.equal(ergebnis.luecken[1]?.start, '2026-09-09')
+    assert.equal(ergebnis.luecken[1]?.end, '2026-09-13')
+  })
+
+  test('12 Tage behalten 11 Übernachtungsintervalle und zwei Übergangsnächte', () => {
+    const ergebnis = unterkunftAbdeckung(reise({
+      startDate: '2026-10-01',
+      endDate: '2026-10-12',
+      stages: [
+        etappe({ id: 'a', name: 'A', position: 1, arrivalDate: '2026-10-01', departureDate: '2026-10-03' }),
+        etappe({ id: 'b', name: 'B', position: 2, arrivalDate: '2026-10-04', departureDate: '2026-10-08' }),
+        etappe({ id: 'c', name: 'C', position: 3, arrivalDate: '2026-10-09', departureDate: '2026-10-12' }),
+      ],
+      ohneTag: [stay({
+        id: 'gebucht',
+        stageId: 'a',
+        startsOn: '2026-10-01',
+        endsOn: '2026-10-03',
+        bookingStatus: 'booked',
+        bookingSource: 'user',
+        bookingConfirmedAt: JETZT,
+      })],
+    }))
+    assert.equal(ergebnis.bekannt, true)
+    assert.equal(ergebnis.naechteGesamt, 11)
+    assert.equal(ergebnis.naechteAbgedeckt, 2)
+    assert.equal(ergebnis.naechteGebucht, 2)
+    assert.equal(ergebnis.aufenthalte[0]?.status, 'booked')
+    assert.deepEqual(ergebnis.luecken.map((luecke) => [luecke.start, luecke.end, luecke.stageId, luecke.naechte]), [
+      ['2026-10-03', '2026-10-04', null, 1],
+      ['2026-10-04', '2026-10-08', 'b', 4],
+      ['2026-10-08', '2026-10-09', null, 1],
+      ['2026-10-09', '2026-10-12', 'c', 3],
+    ])
+    assert.equal(ergebnis.luecken.filter((luecke) => luecke.stageId == null).reduce((summe, luecke) => summe + luecke.naechte, 0), 2)
+  })
+
+  test('sieben Tage bleiben sechs Intervalle, überlappende Etappen zählen einmal', () => {
+    const sieben = unterkunftAbdeckung(reise({
+      startDate: '2026-11-01',
+      endDate: '2026-11-07',
+      stages: [
+        etappe({ id: 'a', name: 'A', arrivalDate: '2026-11-01', departureDate: '2026-11-04' }),
+        etappe({ id: 'b', name: 'B', position: 2, arrivalDate: '2026-11-04', departureDate: '2026-11-07' }),
+      ],
+    }))
+    assert.equal(sieben.naechteGesamt, 6)
+    assert.equal(sieben.luecken.every((luecke) => luecke.stageId != null), true)
+
+    const ueberlappend = unterkunftAbdeckung(reise({
+      startDate: '2026-11-01',
+      endDate: '2026-11-07',
+      stages: [
+        etappe({ id: 'a', name: 'A', arrivalDate: '2026-11-01', departureDate: '2026-11-07' }),
+        etappe({ id: 'b', name: 'B', position: 2, arrivalDate: '2026-11-01', departureDate: '2026-11-07' }),
+      ],
+    }))
+    assert.equal(ueberlappend.naechteGesamt, 6)
+    assert.equal(ueberlappend.luecken.length, 1)
+    assert.equal(ueberlappend.luecken[0]?.stageId, 'a')
+    assert.equal(ueberlappend.luecken[0]?.naechte, 6)
+  })
+
+  test('fehlende Etappendaten bleiben teilweise und erfinden keine Hotelnächte', () => {
+    const ergebnis = unterkunftAbdeckung(reise({
+      startDate: '2026-10-01',
+      endDate: '2026-10-12',
+      stages: [
+        etappe({ id: 'a', name: 'A', arrivalDate: '2026-10-01', departureDate: '2026-10-04' }),
+        etappe({ id: 'b', name: 'B', position: 2, arrivalDate: null, departureDate: null }),
+      ],
+    }))
+    assert.equal(ergebnis.bekannt, false)
+    assert.equal(ergebnis.naechteGesamt, null)
+    assert.deepEqual(ergebnis.luecken, [])
   })
 })
 

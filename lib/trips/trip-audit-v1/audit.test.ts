@@ -34,11 +34,20 @@ test('T01: multi-stage lodging gaps are exact canonical intervals, never an exte
   const input = trip([item('stay', { kind: 'stay', startsOn: '2026-09-12', endsOn: '2026-09-13' })])
   const canonical = unterkunftAbdeckung(input)
   const report = tripAuditV1(input)
+  const hotelGaps = canonical.luecken.filter(gap => gap.stageId != null)
+  const transitions = canonical.luecken.filter(gap => gap.stageId == null)
   assert.equal(canonical.bekannt, true)
-  assert.equal(canonical.luecken.length, 2)
-  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging').map(f => f.evidence), canonical.luecken)
-  assert(report.findings.filter(f => f.domain === 'lodging').every(f => f.state === 'known_gap' && f.source === 'unterkunftAbdeckung'))
+  assert.equal(canonical.naechteGesamt, 4)
+  assert.equal(transitions.length, 1)
+  assert.equal(transitions[0]?.start, '2026-09-14')
+  assert.equal(transitions[0]?.end, '2026-09-15')
+  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging' && f.state === 'known_gap').map(f => f.evidence), hotelGaps)
+  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging' && f.state === 'unknown').map(f => f.evidence), transitions)
+  assert(report.findings.filter(f => f.domain === 'lodging' && f.state === 'known_gap').every(f => f.source === 'unterkunftAbdeckung'))
+  assert.equal(report.sections[0].coverage, 'partial')
+  assert.match(report.sections[0].detail, /Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht/)
   assert.match(report.sections[0].detail, /1 mit ausgewählter Unterkunft; 0 von dir als gebucht markiert/)
+  assert.doesNotMatch(report.findings.find(f => f.state === 'unknown' && f.domain === 'lodging')?.title ?? '', /Hotelpflicht|Geplante Unterkunftsnacht fehlt/)
 })
 
 test('T02: connected overlapping items use tripZeitpruefung possible conflicts verbatim', () => {
@@ -105,7 +114,8 @@ test('T04: unknown stay dates or assignment suppress definitive gaps and zero-ni
   }
   const incomplete = trip()
   incomplete.stages[1].departureDate = null
-  assert.equal(tripAuditV1(incomplete).sections[0].coverage, 'unavailable')
+  assert.equal(tripAuditV1(incomplete).sections[0].coverage, 'partial')
+  assert.match(tripAuditV1(incomplete).sections[0].detail, /teilweise oder unbekannt/)
   assert(!tripAuditV1(incomplete).findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
 })
 

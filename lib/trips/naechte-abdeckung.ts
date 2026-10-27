@@ -5,6 +5,9 @@
 // Check-in/Check-out ist ein halboffenes Intervall `[checkIn, checkOut)`.
 // Überlappende Stays werden vereinigt, nicht doppelt gezählt. Fehlende Daten
 // werden nicht erfunden: unbekannte Abdeckung ist unbekannt, nicht `0/14`.
+// Liegt ein Reisekalender vor und jede vorhandene Etappe hat ein eigenes
+// Intervall, gehören die Nächte zwischen den Reiseenden dazu. Nächte ohne
+// Etappe bleiben Übergang und werden keiner benachbarten Etappe zugeschlagen.
 //
 // `unterkunftAbdeckung` rechnet mit Intervallgrenzen. Die Nächte zwischen zwei
 // Daten werden nicht aufgezählt. `naechteHalboffen` bleibt die öffentliche Liste.
@@ -106,21 +109,36 @@ function reiseZeitraum(reise: Trip): UnterkunftZeitraum | null {
 
 function benoetigteZeitraeume(reise: Trip): { bekannt: boolean; zeitraeume: UnterkunftZeitraum[] } {
   const ausEtappen = reise.stages.map(etappenZeitraum)
-  if (reise.stages.length > 0 && ausEtappen.every(Boolean)) {
-    return { bekannt: true, zeitraeume: ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null) }
+  const etappen = ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null)
+  const vollstaendig = reise.stages.length > 0 && ausEtappen.every((wert) => wert !== null)
+  const kalender = reiseZeitraum(reise)
+
+  // Vollständige Etappen behalten ihren Besitz. Der Reisekalender wird danach
+  // angehängt, damit Nächte zwischen den Endpunkten sichtbar bleiben, auch wenn
+  // keine Etappe sie besitzt. Die Etappe steht in der Liste zuerst und gewinnt
+  // Überlappungen. Ein Loch ausserhalb des Reisekalenders wird nicht aufgefüllt.
+  if (vollstaendig) {
+    const zeitraeume = [...etappen]
+    if (kalender) {
+      zeitraeume.push({
+        start: kalender.start,
+        end: kalender.end,
+        stageId: null,
+        stageName: null,
+      })
+    }
+    return { bekannt: true, zeitraeume }
   }
 
   if (reise.stages.length === 0 || reise.stages.length === 1) {
-    const fallback = reiseZeitraum(reise)
-    if (fallback) return { bekannt: true, zeitraeume: [fallback] }
+    if (kalender) return { bekannt: true, zeitraeume: [kalender] }
   }
 
-  if (reise.stages.length > 1 && ausEtappen.some(Boolean) && ausEtappen.some((wert) => wert === null)) {
-    return { bekannt: false, zeitraeume: ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null) }
+  if (reise.stages.length > 1 && etappen.length > 0 && etappen.length < reise.stages.length) {
+    return { bekannt: false, zeitraeume: etappen }
   }
 
-  const fallback = reiseZeitraum(reise)
-  if (fallback) return { bekannt: true, zeitraeume: [fallback] }
+  if (kalender) return { bekannt: true, zeitraeume: [kalender] }
   return { bekannt: false, zeitraeume: [] }
 }
 
