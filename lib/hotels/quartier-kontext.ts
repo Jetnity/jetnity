@@ -37,12 +37,34 @@ export function naechteZwischen(anreise: string | null, abreise: string | null):
   return differenz > 0 ? differenz : null
 }
 
+export const HOTELZEITRAUM_OFFEN = 'Hotelzeitraum für diesen Ort noch offen'
+
+/**
+ * Hotelzeitraum nur aus belegten Grenzen. Mehrere Etappen bekommen keinen
+ * Reise-Fallback: fehlende Etappendaten bleiben offen. Eine einzelne Etappe
+ * darf weiterhin die Reisedaten nutzen, wenn sie selbst keine Spanne hat.
+ */
+export function hotelZeitraumAusEtappe(
+  reise: Pick<Trip, 'startDate' | 'endDate' | 'stages'>,
+  etappe: Pick<TripStage, 'arrivalDate' | 'departureDate'>,
+): { checkIn: string; checkOut: string } | null {
+  const eigene = naechteZwischen(etappe.arrivalDate, etappe.departureDate)
+  if (eigene && etappe.arrivalDate && etappe.departureDate) {
+    return { checkIn: etappe.arrivalDate, checkOut: etappe.departureDate }
+  }
+  if (reise.stages.length > 1) return null
+  const checkIn = etappe.arrivalDate ?? reise.startDate
+  const checkOut = etappe.departureDate ?? reise.endDate
+  if (!checkIn || !checkOut || !naechteZwischen(checkIn, checkOut)) return null
+  return { checkIn, checkOut }
+}
+
 export function checkInAus(eingabe: HotelSucheEingabe): string | null {
-  return eingabe.stage.arrivalDate ?? eingabe.trip.startDate
+  return eingabe.stage.arrivalDate
 }
 
 export function checkOutAus(eingabe: HotelSucheEingabe): string | null {
-  return eingabe.stage.departureDate ?? eingabe.trip.endDate
+  return eingabe.stage.departureDate
 }
 
 function uhrzeitMinuten(wert: string | null): number | null {
@@ -126,6 +148,7 @@ function etappenKandidat(eingabe: HotelSucheEingabe, anker: ReiseAnker[]): Quart
 }
 
 export function hotelSucheEingabeAusReise(reise: Trip, etappe: TripStage): HotelSucheEingabe {
+  const zeitraum = hotelZeitraumAusEtappe(reise, etappe)
   return {
     stage: {
       id: etappe.id,
@@ -133,8 +156,8 @@ export function hotelSucheEingabeAusReise(reise: Trip, etappe: TripStage): Hotel
       placeId: etappe.placeId,
       latitude: etappe.latitude,
       longitude: etappe.longitude,
-      arrivalDate: etappe.arrivalDate,
-      departureDate: etappe.departureDate,
+      arrivalDate: zeitraum?.checkIn ?? null,
+      departureDate: zeitraum?.checkOut ?? null,
     },
     trip: {
       startDate: reise.startDate,

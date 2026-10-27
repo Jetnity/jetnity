@@ -186,10 +186,23 @@ test('one incomplete stage and several incomplete stages stay unknown despite th
     assert.deepEqual(stay && { startsOn: stay.startsOn, endsOn: stay.endsOn }, { startsOn: '2026-10-07', endsOn: '2026-10-10' })
     const links = unterkunftAbdeckung(before)
     const rechts = unterkunftAbdeckung(after)
-    assert.equal(links.bekannt, true)
-    assert.equal(rechts.bekannt, true)
-    assert.deepEqual([links.naechteAbgedeckt, links.naechteGesamt], [3, 3])
-    assert.deepEqual([rechts.naechteAbgedeckt, rechts.naechteGesamt], [1, 3])
+    if (anzahl === 1) {
+      assert.equal(links.bekannt, true)
+      assert.equal(rechts.bekannt, true)
+      assert.deepEqual([links.naechteAbgedeckt, links.naechteGesamt], [3, 3])
+      assert.deepEqual([rechts.naechteAbgedeckt, rechts.naechteGesamt], [1, 3])
+    } else {
+      assert.equal(links.bekannt, false)
+      assert.equal(rechts.bekannt, false)
+      assert.equal(links.naechteGesamt, null)
+      assert.equal(rechts.naechteGesamt, null)
+      assert.equal(links.kalenderNaechte, 3)
+      assert.ok(rechts.kalenderNaechte !== null && rechts.kalenderNaechte > 0)
+      assert.equal(links.zeitraeume.length, 0)
+      assert.equal(rechts.zeitraeume.length, 0)
+      assert.deepEqual(links.luecken, [])
+      assert.deepEqual(rechts.luecken, [])
+    }
     const text = textVon(before, after)
     assert.match(text, /Bisheriger gespeicherter Plan: Unterkunftsstand noch unklar/)
     assert.match(text, /Vorschau nach deiner Änderung: Unterkunftsstand noch unklar/)
@@ -368,7 +381,12 @@ test('a repository-max span is admitted, and more than twenty gap rows stay inta
   let aufrufe = 0
   const gruppen = auswirkungen(before, after, reise => { aufrufe += 1; return unterkunftAbdeckung(reise) })
   assert.equal(aufrufe, 2)
-  assert.equal(gruppen.some(gruppe => gruppe.titel === TITEL), false)
+  const lodging = gruppen.find(gruppe => gruppe.titel === TITEL)
+  assert.ok(lodging)
+  const lodgingText = lodging.zeilen.map(zeile => zeile.text).join('\n')
+  assert.match(lodgingText, /Bisheriger gespeicherter Plan: 1 von 3 Nächten/)
+  assert.match(lodgingText, /Vorschau nach deiner Änderung: 1 von 3 Nächten/)
+  assert.doesNotMatch(lodgingText, /365/)
 
   const fragmented = fixture()
   fragmented.days = []
