@@ -6,7 +6,7 @@ import type { ActivityOption } from '@/lib/activities/domain'
 import { ActivityProviderFehler, type ActivityProvider } from '@/lib/activities/provider'
 import { activityRateLeeren } from '@/lib/activities/rate-limit'
 import { activitiesSuchen } from '@/lib/activities/suche'
-import { activityZustand } from '@/lib/activities/zustand'
+import { ACTIVITY_TAG_UNVERFUEGBAR, activityZustand } from '@/lib/activities/zustand'
 
 const EINGABE = {
   stage: {
@@ -103,7 +103,9 @@ describe('Aktivitätensuche-Orchestrierung', () => {
       kennung: 'activity-prod',
     })
     assert.equal(koerper.status, 'unavailable')
-    assert.match(koerper.message, /Production/)
+    assert.equal(koerper.options.length, 0)
+    assert.equal(koerper.message, ACTIVITY_TAG_UNVERFUEGBAR)
+    assert.doesNotMatch(koerper.message, /Production|verfügbare Angebote/)
   })
 
   test('ungültige Eingabe fällt fail-closed', async () => {

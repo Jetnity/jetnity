@@ -5893,6 +5893,28 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0223 – Zwölf und vierundzwanzig Einträge und Höhenobergrenze 12000
+
+**Datum:** 27. Oktober 2026
+**Status:** Code auf `feat/r108-activities-ux-gyg-expand-1`, Draft PR #1043, Tracking #1042, Eltern #1023 V5. Kein Root-PASS, kein Ready, kein Merge. ADR-0222 bleibt unverändert als historischer Text. Für die Eintragszahl und die Höhenobergrenze des manuellen Widgets ist diese Entscheidung der nachfolgende Vertrag.
+
+**Entscheidung:**
+
+1. Nach dem bestehenden ausdrücklichen Anzeigen fordert das manuelle Aktivitäten-Widget zwölf Einträge an (`data-gyg-number-of-items="12"`). „Mehr Aktivitäten anzeigen“ verwirft diesen Rahmen und lädt einen neuen isolierten manuellen Rahmen derselben öffentlichen Suche mit 24. „Weniger anzeigen“ stellt 12 auf demselben Weg wieder her. Die Beschriftung ist eine Anfrage, keine Behauptung über ungesehene Angebote. Der Server lässt nur 12 und 24 zu. Eine fehlende Anzahl bleibt 12. Unbekannt, doppelt oder fehlerhaft bleibt inaktiv und lädt den Analyzer nicht.
+2. Die feste Drei aus ADR-0222 Punkt 3 gilt für diesen Weg nicht mehr. Partner `2MQHT6Z`, Kampagne `jetnity_activities`, Sprache `de-CH`, der undurchsichtige Rahmen ohne `allow-same-origin` und der ursprüngliche Analyzer bleiben.
+3. Die Höhennachricht akzeptiert eine ganze Zahl von 1 bis 12000, im Kindskript und in `gygHoeheAnnehmen`, mit der dazu neu berechneten CSP-SHA-256 `sha256-poQQU/MYBLZP2WRKZarx+V+rBn+1QuHFgUwrd5VZC+E=`. Das ersetzt die Grenze „1 bis 2400“ aus der Begründung von ADR-0222. Kein `scrollHeight`, kein gemerktes Maximum. Gemessen wurden 4685px bei zwölf gestapelten Karten und 7744px bei zwanzig Karten nach einer Anfrage von 24. Beides lag über 2400 und wurde vor dieser Anhebung beschnitten.
+4. Eine Anfrage von 24 hat in der Autorenprüfung für Bangkok 20 verschiedene Angebote geliefert, nicht 24. Das ist kein universeller Anspruch auf 24 Karten. Ein Klick auf die erste Angebotskarte der Zwölf-Ansicht und der erweiterten Ansicht öffnete jeweils `https://www.getyourguide.com/s/` mit `partner_id=2MQHT6Z`, `et=552815` und `q=Bangkok Thailand`. Die Antwort war HTTP 403, Titel „GetYourGuide – Error“, Ray `a5123f9d9ba7a5f3` und `a51240cc4845a5f3`. Das ist ein Anbieterausfall dieser Zielseite, kein lokaler Produktpass und kein Produktdetail. #1023 V5 / die ursprüngliche TASK V1 §9.3 bleiben offen. Der Ausfall wird nicht umgangen.
+
+**Kontext:** Der Product Owner hat am 27. Oktober 2026 ungefähr 10–15 sichtbare Angebote und „Mehr anzeigen“ freigegeben, wenn weitere offizielle Angebote tatsächlich geladen werden können. Root hat im Review R1 zu PR #1043 diese eine ergänzende ADR erlaubt und ADR-0222 ausdrücklich nicht zum Umschreiben freigegeben.
+
+**Alternativen:** Bei drei Einträgen und 2400px bleiben und gestapelte Karten abschneiden. Eine undokumentierte Paginierung oder ein ausgelesenes Angebot-Feed bauen. Den HTTP-403 der Zielseite durch einen anderen Aufruf, einen anderen Browser oder eine gelockerte Sandbox umgehen.
+
+**Begründung:** Die offizielle Widget-Dokumentation erlaubt die Anzahl beim manuellen Widget und empfiehlt drei. Sie beweist weder 12 noch 24 als Maximum. Die Obergrenze 12000 fasst die gemessenen Stapel, bleibt endlich und übernimmt nur die explizite Pixelhöhe des Anbieter-Loaders. Der Klickbeleg zeigt die Partner-Kennung auf einer Suchadresse und zugleich die Ablehnung dieser Adresse durch den Anbieter.
+
+**Konsequenzen:** ADR-0222 bleibt lesbar und historisch. `scripts/getyourguide-manual-widget-integration-1/hoehe.ts` erwartet weiterhin die Ablehnung von 2401 und ist nicht der Nachweis der neuen Obergrenze. Keine Migration, kein Secret, kein Vertrag, keine Zahlung und keine neuen laufenden Infrastrukturkosten. Ready und Merge bleiben beim Technical Lead.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

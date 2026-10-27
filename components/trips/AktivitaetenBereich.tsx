@@ -53,6 +53,12 @@ const kurzesDatum = new Intl.DateTimeFormat('de-CH', {
 
 const NETZ_MELDUNG = 'Die Aktivitätsanfrage ist gerade nicht erreichbar.'
 
+export function nativeAktivitaetsAnzeige(status: string | null): { label: string; abdeckung: boolean } {
+  if (status === null) return { label: 'Für diesen Tag suchen', abdeckung: false }
+  if (status === 'unavailable') return { label: 'Suche erneut prüfen', abdeckung: false }
+  return { label: 'Erneut suchen', abdeckung: true }
+}
+
 function alsDatum(wert: string) {
   return new Date(`${wert}T00:00:00Z`)
 }
@@ -342,7 +348,8 @@ function ActivityTag({
   const suchLaeuft = angezeigt.phase === 'loading'
   const zustand = antwort?.status
   const kartenSichtbar = zustand === 'ok' || zustand === 'partial'
-  const suchLabel = antwort ? 'Erneut suchen' : 'Für diesen Tag suchen'
+  const anzeige = nativeAktivitaetsAnzeige(antwort ? (zustand ?? null) : null)
+  const suchLabel = anzeige.label
   const geplante = tag?.items ?? []
   const zeitpunkte = geplante.filter((punkt) => punkt.startsAt)
   const kannSuchen = Boolean(eingabe && etappe && tag)
@@ -553,7 +560,9 @@ function ActivityTag({
               </ol>
             )}
 
-            <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>
+            {anzeige.abdeckung ? (
+              <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>
+            ) : null}
           </div>
         )}
       </div>
