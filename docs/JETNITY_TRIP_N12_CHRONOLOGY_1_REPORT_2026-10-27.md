@@ -8,6 +8,10 @@
 
 **Product tree** — `111e19a33100571b9570353d7afa0ca09afe8647`
 
+**First docs commit** — `69f07a9f8e32fabec2a2ef1b702d6caedfef51f4`, tree `760d0865b6db5dff440a7dcad0a19a48708a1756`
+
+The pushed review head is the branch tip in the PR comment. It is docs-only above `d57eac49`.
+
 **Merge-base / main** — `a9b7a45b88347da3cac92965e2c544ec5e1bca67`
 
 **Session** — `bc-76158c10-7a26-4509-86ad-9eac8af04bfa`, `originalModelName=grok-4.7-high-fast`, display name `Jetnity V2 N12 Chronological Travel Days 1 — Cursor Generation 1`
