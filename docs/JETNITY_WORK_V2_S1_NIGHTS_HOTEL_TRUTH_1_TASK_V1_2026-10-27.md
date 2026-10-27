@@ -1,0 +1,19 @@
+# V2-S1 Nights and Hotel Truth 1 — IMMUTABLE TASK V1
+Date 27 October 2026 (Europe/Zurich). Tracking #1048; parent #1046; coordinate read-only Travel-Day Contract #1047 (separate writer).
+Exact main d31a16afdac5e97d4b02f4cb5824f5adc290577c, tree df19ecca084c0ee9d4fc0b22314f2254f86e743a, mode NORMAL; branch fix/v2-s1-overnight-hotel-truth-1.
+Single writer **Jetnity V2 Nights and Hotel Truth 1 — Cursor Generation 1**, genuine originalModelName grok-4.7-high-fast with session ID/link and metadata source before runtime edits. No Auto/fallback.
+
+## First preflight before implementation
+Read precise stage/date/TripDay identity and current lodging authority. Read #1047's frozen requirement but do not await or fabricate its still-pending architecture conclusions. DO NOT modify day assignment mode, trip Days/Stages/Items, existing bookings or travel-day labels. If a safe first-party code-only assessment of total overnight intervals vs real hotel requirement cannot be established, STOP and report bounded decision; NEVER invent flight-night or stage dates.
+
+## Proven Work F02/F03 + source
+F02 synthetic Guest 12 days =11 chronological night intervals; after stage edit 3+5+4, existing lib/trips/naechte-abdeckung.ts:benoetigteZeitraeume uses only union of stage arrival/departure spans, 9 considered, 2 transition nights silently omitted. lib/trips/trip-audit-v1/audit.ts lodging "complete" inherits mistaken smaller denominator. Fix all known *overnight intervals* between original trip calendar endpoints; never equate all11 with required hotels. Inter-stage gaps must be visible **unresolved/transition**, never automatically last-stage hotel. Overlaps stay counted once. Known selected/booked stays only cover their own verified date ranges; gaps and unknown coverage are different. No persistence/migration, no fabricated booking.
+F03 multi-stage search shows each destination's full trip start/end as hotel period: lib/hotels/quartier-kontext.ts checkInAus/checkOutAus and lib/hotels/reisegraph.ts hotelZeitraumAusEtappe fallback on whole trip. components/trips/HotelBereich.tsx displays false per-stage periods. For multi-stop unknown stage HOTEL bounds, display "Hotelzeitraum für diesen Ort noch offen"/equivalent and avoid automatic provider search/adoption with fabricated period; only verified bounds user approved can progress. Retain correctly known single-stage behavior.
+
+## Exact file ownership (only if grounded)
+lib/trips/naechte-abdeckung.ts and nearest tests; lib/trips/trip-audit-v1/audit.ts *lodging section only* and tests; lib/hotels/quartier-kontext.ts, lib/hotels/reisegraph.ts and tests; components/trips/UnterkunftBestand.tsx, components/trips/HotelBereich.tsx and bounded synthetic mounted tests; task-owned docs PLAN/STATUS/HANDOFF/SELF_REVIEW. Do NOT edit flights or mobility audit section (later F05), account/day SQL, guest save mutations, readiness/traveller, Activity/GYG components (#1043), generic CI. If new file authority required, STOP and request Root scope review (not direct PO secrets).
+
+## Must-prove cases
+12-days trip stage 3+5+4 => total 11 overnight intervals, 2 transition unresolved, no invented hotel, valid audit coverage qualifier; 7→7 no stray insert; stage overlapping intervals counted once; unknown destination period is UNKNOWN rather than entire trip; selected/booked stays factual and preserved; missing stage dates report partial; multi-city search must not mint full-trip date; 320/390/768 and host 200% text; Guest/Account read parity using synthetics only. Old tests must remain and be adjusted for accepted new truth, not deleted.
+No direct live provider, booking, paid service, Supabase/Auth/RLS, #917 hosted SQL, personal browser, indexing. USD100 budget.
+Cursor deliver PLAN before code, actual model/session, test/source evidence, honest full suite and Preview, SHAs and scope diff in same Draft PR, no Ready/merge/auto-followup. STOP for independent TL.
