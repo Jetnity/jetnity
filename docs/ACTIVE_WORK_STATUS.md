@@ -13,11 +13,16 @@ Aktueller kombinierter [Technical-Lead-Handoff und Continuity-Checkpoint](JETNIT
 <!-- R109_ROOT_CONTINUITY_POINTER_END -->
 
 <!-- V2_S2_TRAVELLER_PREP_1_BEGIN -->
-## V2-S2 Traveller and Preparation Clarity 1 — aktiver Draft
+## V2-S2 Traveller and Preparation Clarity 1 — Draft, author packet only
 
-**27. Oktober 2026.** Logical agent **Jetnity V2 Traveller and Preparation Clarity 1 — Cursor Generation 1**. Session https://cursor.com/agents/bc-a62482f0-b662-484a-b2a4-ca39b15ea410. `originalModelName=grok-4.7-high-fast`. Branch `fix/v2-s2-traveller-prep-1`. Draft PR #1053. Tracking #1049. Parent #1046. Mode `NORMAL`. Seed main `d31a16afdac5e97d4b02f4cb5824f5adc290577c`, 0 behind at the pre-edit fetch. No base sync.
+**27. Oktober 2026.** Logical agent **Jetnity V2 Traveller and Preparation Clarity 1 — Cursor Generation 1**. Session https://cursor.com/agents/bc-a62482f0-b662-484a-b2a4-ca39b15ea410. `originalModelName=grok-4.7-high-fast`. Branch `fix/v2-s2-traveller-prep-1`. Draft PR #1053. Tracking #1049. Parent #1046.
 
-Scope F04/F10/F11 only: stored headcount stays the group total, multi-person preparation hint only for a known headcount above 1, and `Status ändern` is not hidden under `Titel bearbeiten`. Plan: `docs/JETNITY_WORK_V2_S2_TRAVELLER_PREP_1_PLAN_2026-10-27.md`. Handoff and self-review follow the local gates on this same branch. No Ready. No merge. No follow-up slice. Live evidence wins over this paragraph.
+- Mode `NORMAL`. Fetched main `d31a16afdac5e97d4b02f4cb5824f5adc290577c`, 0 behind, no base sync.
+- Product head `739fb017b4c2551ed9694e65d8abbb521194ee31`. Export fix and CSS-report head: `d7ca07a9ca1e12d7e02a376234a43c287a7950fd`, tree `618c571e006aa97699a1c8322751a486f1fec888`. The docs commit after that does not change product source. Review the branch tip.
+- F04/F10/F11 only. Stored headcount stays the group total. Multi-person hint only for a known headcount above 1. `Status ändern` is beside title editing and still saves only on `Speichern`.
+- Local: overview 17 pass; mounted personal UI 20 pass; identity 8 pass; workspace preparation 6 pass; eslint on touched files pass; `npm run build` exit 0; CSS harness exit 0 on `d7ca07a9` (`docs/evidence/work-v2-s2-traveller-prep-1/ablauf.json`); `check:exports`, `check:dead` and `check:deps` pass. Full `npm test`, CI and Preview are not claimed here.
+- Plan `docs/JETNITY_WORK_V2_S2_TRAVELLER_PREP_1_PLAN_2026-10-27.md`. Handoff `docs/JETNITY_WORK_V2_S2_TRAVELLER_PREP_1_HANDOFF_2026-10-27.md`. Self-review `docs/JETNITY_WORK_V2_S2_TRAVELLER_PREP_1_SELF_REVIEW_2026-10-27.md`.
+- **Next step:** independent Technical Lead exact-head review. No Ready. No merge. No follow-up slice. Live evidence wins over this paragraph.
 <!-- V2_S2_TRAVELLER_PREP_1_END -->
 
 > **R107 — fünf begrenzte Lanes T → S → D → W → M actual-main abgeschlossen; Stand 25. Oktober 2026, 22:15:20 UTC.** Nach dem [Technical-Lead-/Cursor-Betriebsstandard](JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md) den [R107-Handoff](JETNITY_R107_FINITE_BATCH_CLOSURE_HANDOFF_2026-10-25.md), den [Continuity-Checkpoint](JETNITY_R107_POST_MERGE_CONTINUITY_CHECKPOINT_2026-10-25.md), [V24 / Live-Index #751](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6404106059) und [Auftrag #1011](https://github.com/Jetnity/jetnity/issues/1011) lesen. Alle fünf Produkt-PRs und Trackings sind abgeschlossen. Root verifizierte Main `b932d15ac99fe4bbb1f3ecc22579e5c2e9c15006`, Tree `503752c1bee097f5bba47487061415730429cc57`, native CI sowie Production und direkte Domain; [M-POST-MERGE-PASS 6404092020](https://github.com/Jetnity/jetnity/pull/1019#issuecomment-6404092020). **Erster noch offener Schritt ist der endliche Dokumentationsabschluss durch Root mit eigenen Docs-Gates; kein automatischer sechster Task.** S bleibt Triage mit 40 vorläufigen P1 und zwei P2 ohne Remediation. Sämtliche besonderen Holds bleiben erhalten. Neuere Live-Receipts bestimmen den tatsächlichen Fortsetzungsstand.
