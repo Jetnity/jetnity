@@ -1,14 +1,15 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { activityZustand, activityZustandMeldung } from '@/lib/activities/zustand'
+import { ACTIVITY_TAG_UNVERFUEGBAR, activityZustand, activityZustandMeldung } from '@/lib/activities/zustand'
 
 describe('Aktivitätszustand', () => {
   test('Production bleibt hart aus, auch mit Kill Switch und Provider', () => {
     const zustand = activityZustand({ VERCEL_ENV: 'production', JETNITY_ACTIVITY_AKTIV: 'true' }, true)
     assert.equal(zustand.aktiv, false)
     if (!zustand.aktiv) assert.equal(zustand.grund, 'production')
-    assert.match(activityZustandMeldung(zustand), /Production/)
+    assert.equal(activityZustandMeldung(zustand), ACTIVITY_TAG_UNVERFUEGBAR)
+    assert.doesNotMatch(activityZustandMeldung(zustand), /Production|Umgebung|freigegeben/)
   })
 
   test('ohne Kill Switch bleibt die Suche aus', () => {

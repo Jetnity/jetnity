@@ -6,7 +6,7 @@
 import type { Ort } from '@/lib/places/domain'
 
 import { anwendungsFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
-import type { GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
+import type { GygAnzahl, GygSuchkonfiguration } from '@/lib/activities/getyourguide/suche'
 
 export type GygZielabbildung =
   | { art: 'ort'; ortId: string; typ: 'city' | 'region' | 'island'; kennung: string }
@@ -25,6 +25,7 @@ export type GygRenderer = {
     suche: GygSuchkonfiguration,
     ziel: HTMLElement,
     signal: AbortSignal,
+    anzahl?: GygAnzahl,
   ) => Promise<GygLadeErgebnis>
   entsorgen: (ziel: HTMLElement) => void
 }
