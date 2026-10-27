@@ -7,8 +7,7 @@ export const TWELVE_GO_HOST = '12go.asia'
 export const TWELVE_GO_PARTNER_ID = '17323861'
 export const TWELVE_GO_SUB_ID = 'jetnity-mobility-route'
 
-export const TWELVE_GO_ORT_ARTEN = ['city', 'island'] as const
-export type TwelveGoOrtArt = (typeof TWELVE_GO_ORT_ARTEN)[number]
+export type TwelveGoOrtArt = 'city' | 'island'
 
 /**
  * Geprüfte Strecke: kanonische Jetnity-Ortskennung plus die exakte

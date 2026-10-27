@@ -15,9 +15,9 @@ import type { Trip, TripItem } from '@/types/trips'
 
 export const TWELVE_GO_HINWEIS =
   'Externer Affiliate-Link – Angebote, Verfügbarkeit und Buchung ausschliesslich bei 12Go'
-export const TWELVE_GO_GENERISCHE_STRECKE = 'Bitte Strecke und Datum bei 12Go auswählen'
-export const TWELVE_GO_DATUM_WAEHLEN = 'Bitte das Datum bei 12Go wählen.'
-export const TWELVE_GO_WAEHRUNG = 'Währung und Anzahl Reisende bitte bei 12Go prüfen.'
+const TWELVE_GO_GENERISCHE_STRECKE = 'Bitte Strecke und Datum bei 12Go auswählen'
+const TWELVE_GO_DATUM_WAEHLEN = 'Bitte das Datum bei 12Go wählen.'
+const TWELVE_GO_WAEHRUNG = 'Währung und Anzahl Reisende bitte bei 12Go prüfen.'
 
 const ORT_ID = /^geonames:\d+$/
 const ISO_TAG = /^(\d{4})-(\d{2})-(\d{2})$/

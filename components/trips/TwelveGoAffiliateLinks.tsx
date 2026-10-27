@@ -21,7 +21,6 @@ export default function TwelveGoAffiliateLinks({ reise }: { reise: Trip }) {
       aria-label="Externe 12Go-Suche"
       data-organisieren-flaeche="twelve-go"
       data-twelve-go-affiliate="1"
-      data-twelve-go-reise={reise.id}
       className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Extern</p>
