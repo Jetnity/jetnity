@@ -3,8 +3,9 @@
 // components/trips/MietwagenBereich.tsx
 //
 // Mietwagen innerhalb von Mobilität. Bestand zuerst, darunter ehrliche
-// Unavailable-Anzeige ohne automatische Suche und manuelle Erfassung
-// mit leeren Startwerten. Kein eigener Top-Level-Tab. Keine Fake-Angebote.
+// Unavailable-Anzeige ohne automatische Suche, ein optionaler externer
+// DiscoverCars-Link und manuelle Erfassung mit leeren Startwerten.
+// Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
 import { Car } from 'lucide-react'
@@ -18,6 +19,7 @@ import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-car
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import DiscoverCarsAffiliateLinks from '@/components/trips/DiscoverCarsAffiliateLinks'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
@@ -168,6 +170,8 @@ export default function MietwagenBereich({
           startet nicht automatisch aus dem Reisekontext.
         </p>
       </section>
+
+      <DiscoverCarsAffiliateLinks reiseId={reise.id} stationen={reise.stages.length} />
 
       {onManuellAnlegen ? <ManuellerMietwagen reise={reise} onAnlegen={onManuellAnlegen} /> : null}
     </div>
