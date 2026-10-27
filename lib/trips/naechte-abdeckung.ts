@@ -5,9 +5,13 @@
 // Check-in/Check-out ist ein halboffenes Intervall `[checkIn, checkOut)`.
 // Überlappende Stays werden vereinigt, nicht doppelt gezählt. Fehlende Daten
 // werden nicht erfunden: unbekannte Abdeckung ist unbekannt, nicht `0/14`.
-// Liegt ein Reisekalender vor und jede vorhandene Etappe hat ein eigenes
-// Intervall, gehören die Nächte zwischen den Reiseenden dazu. Nächte ohne
-// Etappe bleiben Übergang und werden keiner benachbarten Etappe zugeschlagen.
+// Liegt ein Reisekalender vor, ist die Nachtbilanz genau dieses halboffene
+// Fenster: N Tage ergeben N−1 Reisenächte. Etappen werden darauf beschnitten.
+// Stücke ausserhalb bleiben ausserhalb und vergrössern die Bilanz nicht.
+// Nur wenn jede Etappe ein eigenes Intervall hat, sind Kalendernächte ohne
+// Etappe belegte Übergänge. Fehlt bei mehreren Etappen auch nur ein Intervall,
+// bleibt die Zuordnung unbekannt: der Kalender kann trotzdem N−1 Nächte haben,
+// ohne dass daraus Übergang oder Hotelpflicht wird.
 //
 // `unterkunftAbdeckung` rechnet mit Intervallgrenzen. Die Nächte zwischen zwei
 // Daten werden nicht aufgezählt. `naechteHalboffen` bleibt die öffentliche Liste.
@@ -44,14 +48,22 @@ export type UnterkunftAufenthalt = {
   ausserhalb: boolean
 }
 
+export type UnterkunftAusserhalb = UnterkunftZeitraum & {
+  naechte: number
+}
+
 export type UnterkunftAbdeckung = {
   bekannt: boolean
   naechteGesamt: number | null
   naechteAbgedeckt: number | null
   naechteGebucht: number | null
   naechteAusgewaehlt: number | null
+  /** N−1, sobald Start und Ende der Reise gültig sind. Unabhängig von der Etappenzuordnung. */
+  kalenderNaechte: number | null
   zeitraeume: UnterkunftZeitraum[]
   luecken: UnterkunftLuecke[]
+  /** Etappenstücke ausserhalb des Reisekalenders. Nicht in `naechteGesamt`. */
+  ausserhalb: UnterkunftAusserhalb[]
   aufenthalte: UnterkunftAufenthalt[]
   zusammenfassung: string
 }
@@ -107,39 +119,114 @@ function reiseZeitraum(reise: Trip): UnterkunftZeitraum | null {
   }
 }
 
-function benoetigteZeitraeume(reise: Trip): { bekannt: boolean; zeitraeume: UnterkunftZeitraum[] } {
+type Bedarf = {
+  bekannt: boolean
+  zeitraeume: UnterkunftZeitraum[]
+  kalenderNaechte: number | null
+  ausserhalb: UnterkunftAusserhalb[]
+}
+
+function isoSchnitt(
+  links: { start: string; end: string },
+  rechts: { start: string; end: string },
+): { start: string; end: string } | null {
+  const start = links.start > rechts.start ? links.start : rechts.start
+  const end = links.end < rechts.end ? links.end : rechts.end
+  return start < end ? { start, end } : null
+}
+
+/** `basis` ohne `abzug`. Beide Seiten sind halboffen und lexikographisch sortiert. */
+function isoRest(
+  basis: { start: string; end: string },
+  abzug: { start: string; end: string },
+): { start: string; end: string }[] {
+  const schnitt = isoSchnitt(basis, abzug)
+  if (!schnitt) return [{ start: basis.start, end: basis.end }]
+  const aus: { start: string; end: string }[] = []
+  if (basis.start < schnitt.start) aus.push({ start: basis.start, end: schnitt.start })
+  if (schnitt.end < basis.end) aus.push({ start: schnitt.end, end: basis.end })
+  return aus
+}
+
+function kalenderRest(
+  kalender: { start: string; end: string },
+  abzuege: readonly { start: string; end: string }[],
+): { start: string; end: string }[] {
+  let offen = [{ start: kalender.start, end: kalender.end }]
+  for (const abzug of abzuege) {
+    const naechste: { start: string; end: string }[] = []
+    for (const teil of offen) naechste.push(...isoRest(teil, abzug))
+    offen = naechste
+  }
+  return offen
+}
+
+function naechteZwischenGrenzen(start: string, end: string): number {
+  return tagZahl(end) - tagZahl(start)
+}
+
+function ausserhalbVon(
+  etappe: UnterkunftZeitraum,
+  kalender: { start: string; end: string },
+): UnterkunftAusserhalb[] {
+  return isoRest(etappe, kalender).map((rest) => ({
+    start: rest.start,
+    end: rest.end,
+    stageId: etappe.stageId,
+    stageName: etappe.stageName,
+    naechte: naechteZwischenGrenzen(rest.start, rest.end),
+  }))
+}
+
+function benoetigteZeitraeume(reise: Trip): Bedarf {
   const ausEtappen = reise.stages.map(etappenZeitraum)
   const etappen = ausEtappen.filter((wert): wert is UnterkunftZeitraum => wert !== null)
   const vollstaendig = reise.stages.length > 0 && ausEtappen.every((wert) => wert !== null)
   const kalender = reiseZeitraum(reise)
+  const kalenderNaechte = kalender ? naechteZwischenGrenzen(kalender.start, kalender.end) : null
+  const leer: Bedarf = { bekannt: false, zeitraeume: [], kalenderNaechte, ausserhalb: [] }
 
-  // Vollständige Etappen behalten ihren Besitz. Der Reisekalender wird danach
-  // angehängt, damit Nächte zwischen den Endpunkten sichtbar bleiben, auch wenn
-  // keine Etappe sie besitzt. Die Etappe steht in der Liste zuerst und gewinnt
-  // Überlappungen. Ein Loch ausserhalb des Reisekalenders wird nicht aufgefüllt.
-  if (vollstaendig) {
-    const zeitraeume = [...etappen]
-    if (kalender) {
-      zeitraeume.push({
-        start: kalender.start,
-        end: kalender.end,
-        stageId: null,
-        stageName: null,
-      })
+  // Bekannter Reisekalender ist die einzige Nachtbilanz. Etappen werden
+  // darauf beschnitten. Die erste Etappe in der gespeicherten Reihenfolge
+  // behält eine Überlappung. Kalendernächte ohne Etappe sind nur dann
+  // Übergang, wenn jede Etappe ein eigenes Intervall hat.
+  if (vollstaendig && kalender) {
+    const innen: UnterkunftZeitraum[] = []
+    const ausserhalb: UnterkunftAusserhalb[] = []
+    for (const etappe of etappen) {
+      const schnitt = isoSchnitt(etappe, kalender)
+      if (schnitt) innen.push({ ...etappe, start: schnitt.start, end: schnitt.end })
+      ausserhalb.push(...ausserhalbVon(etappe, kalender))
     }
-    return { bekannt: true, zeitraeume }
+    const uebergang = kalenderRest(kalender, innen).map((teil) => ({
+      start: teil.start,
+      end: teil.end,
+      stageId: null,
+      stageName: null,
+    }))
+    return { bekannt: true, zeitraeume: [...innen, ...uebergang], kalenderNaechte, ausserhalb }
   }
 
-  if (reise.stages.length === 0 || reise.stages.length === 1) {
-    if (kalender) return { bekannt: true, zeitraeume: [kalender] }
+  if (vollstaendig) return { bekannt: true, zeitraeume: etappen, kalenderNaechte: null, ausserhalb: [] }
+
+  if ((reise.stages.length === 0 || reise.stages.length === 1) && kalender) {
+    return { bekannt: true, zeitraeume: [kalender], kalenderNaechte, ausserhalb: [] }
   }
 
-  if (reise.stages.length > 1 && etappen.length > 0 && etappen.length < reise.stages.length) {
-    return { bekannt: false, zeitraeume: etappen }
+  // Mehrere Etappen und mindestens ein fehlendes Intervall: keine Übergangsbehauptung.
+  if (reise.stages.length > 1) {
+    if (!kalender) return { ...leer, zeitraeume: etappen, kalenderNaechte: null }
+    const innen: UnterkunftZeitraum[] = []
+    const ausserhalb: UnterkunftAusserhalb[] = []
+    for (const etappe of etappen) {
+      const schnitt = isoSchnitt(etappe, kalender)
+      if (schnitt) innen.push({ ...etappe, start: schnitt.start, end: schnitt.end })
+      ausserhalb.push(...ausserhalbVon(etappe, kalender))
+    }
+    return { bekannt: false, zeitraeume: innen, kalenderNaechte, ausserhalb }
   }
 
-  if (kalender) return { bekannt: true, zeitraeume: [kalender] }
-  return { bekannt: false, zeitraeume: [] }
+  return leer
 }
 
 /** Halboffene Nachtspanne in UTC-Tagesindizes: `[start, end)`. */
@@ -384,7 +471,7 @@ function zusammenfassungAus(abdeckung: Omit<UnterkunftAbdeckung, 'zusammenfassun
 }
 
 export function unterkunftAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = []): UnterkunftAbdeckung {
-  const { bekannt, zeitraeume } = benoetigteZeitraeume(reise)
+  const { bekannt, zeitraeume, kalenderNaechte, ausserhalb } = benoetigteZeitraeume(reise)
   const merker = isoMerker()
   const bedarf = zeitraeume.map((zeitraum) => ({
     start: merker.merken(zeitraum.start),
@@ -441,8 +528,10 @@ export function unterkunftAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = 
     naechteAbgedeckt,
     naechteGebucht,
     naechteAusgewaehlt,
+    kalenderNaechte,
     zeitraeume,
     luecken: bekannt ? lueckenVerbinden(besitzOhneDeckung(besitz, abgedeckt), (tag) => merker.text(tag)) : [],
+    ausserhalb,
     aufenthalte,
   }
 

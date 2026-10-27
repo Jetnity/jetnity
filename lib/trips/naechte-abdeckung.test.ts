@@ -331,6 +331,8 @@ describe('Unterkunftsabdeckung', () => {
     }))
     assert.equal(ergebnis.bekannt, true)
     assert.equal(ergebnis.naechteGesamt, 11)
+    assert.equal(ergebnis.kalenderNaechte, 11)
+    assert.equal(ergebnis.ausserhalb.length, 0)
     assert.equal(ergebnis.naechteAbgedeckt, 2)
     assert.equal(ergebnis.naechteGebucht, 2)
     assert.equal(ergebnis.aufenthalte[0]?.status, 'booked')
@@ -380,7 +382,61 @@ describe('Unterkunftsabdeckung', () => {
     }))
     assert.equal(ergebnis.bekannt, false)
     assert.equal(ergebnis.naechteGesamt, null)
+    assert.equal(ergebnis.kalenderNaechte, 11)
     assert.deepEqual(ergebnis.luecken, [])
+    assert.equal(ergebnis.zeitraeume.some((zeitraum) => zeitraum.stageId == null), false)
+  })
+
+  test('alle Etappendaten fehlen: Kalender bleibt bekannt, Zuordnung nicht', () => {
+    const ergebnis = unterkunftAbdeckung(reise({
+      startDate: '2026-10-01',
+      endDate: '2026-10-12',
+      stages: [
+        etappe({ id: 'a', name: 'A', arrivalDate: null, departureDate: null }),
+        etappe({ id: 'b', name: 'B', position: 2, arrivalDate: null, departureDate: null }),
+        etappe({ id: 'c', name: 'C', position: 3, arrivalDate: null, departureDate: null }),
+      ],
+    }))
+    assert.equal(ergebnis.bekannt, false)
+    assert.equal(ergebnis.naechteGesamt, null)
+    assert.equal(ergebnis.kalenderNaechte, 11)
+    assert.deepEqual(ergebnis.zeitraeume, [])
+    assert.deepEqual(ergebnis.luecken, [])
+    assert.deepEqual(ergebnis.ausserhalb, [])
+  })
+
+  test('Etappe vor und nach der Reise zählt nicht als zusätzliche Reisenacht', () => {
+    const ergebnis = unterkunftAbdeckung(reise({
+      startDate: '2026-10-01',
+      endDate: '2026-10-12',
+      stages: [
+        etappe({ id: 'vor', name: 'Vor', arrivalDate: '2026-09-28', departureDate: '2026-10-04' }),
+        etappe({ id: 'nach', name: 'Nach', position: 2, arrivalDate: '2026-10-09', departureDate: '2026-10-15' }),
+      ],
+      ohneTag: [stay({
+        id: 'gebucht-draussen',
+        stageId: 'vor',
+        startsOn: '2026-09-20',
+        endsOn: '2026-09-25',
+        bookingStatus: 'booked',
+        bookingSource: 'user',
+        bookingConfirmedAt: JETZT,
+      })],
+    }))
+    assert.equal(ergebnis.naechteGesamt, 11)
+    assert.equal(ergebnis.kalenderNaechte, 11)
+    assert.equal(ergebnis.naechteGebucht, 0)
+    assert.equal(ergebnis.aufenthalte[0]?.status, 'booked')
+    assert.equal(ergebnis.aufenthalte[0]?.ausserhalb, true)
+    assert.deepEqual(ergebnis.luecken.map((luecke) => [luecke.start, luecke.end, luecke.stageId, luecke.naechte]), [
+      ['2026-10-01', '2026-10-04', 'vor', 3],
+      ['2026-10-04', '2026-10-09', null, 5],
+      ['2026-10-09', '2026-10-12', 'nach', 3],
+    ])
+    assert.deepEqual(ergebnis.ausserhalb.map((teil) => [teil.stageId, teil.start, teil.end, teil.naechte]), [
+      ['vor', '2026-09-28', '2026-10-01', 3],
+      ['nach', '2026-10-12', '2026-10-15', 3],
+    ])
   })
 })
 

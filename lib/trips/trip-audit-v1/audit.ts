@@ -165,9 +165,12 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       refs: { itemIds: [stay.item.id], ...(stay.item.stageId ? { stageId: stay.item.stageId } : {}) },
       evidence: { status: stay.status, reasons: ['incomplete_stay'] },
     })
-    const uebergang = (gap: UnterkunftLuecke) => gap.stageId == null && view.stages.length > 0
+    const uebergang = (gap: UnterkunftLuecke) => result.bekannt && gap.stageId == null && view.stages.length > 0
     const uebergangsNaechte = result.luecken.filter(uebergang).reduce((summe, gap) => summe + gap.naechte, 0)
-    const etappenUnvollstaendig = view.stages.length > 1 && !result.bekannt && result.zeitraeume.length > 0
+    const zuordnungUnbekannt = view.stages.length > 1 && !result.bekannt
+    const aussenHinweis = result.ausserhalb.length === 0
+      ? ''
+      : ` ${result.ausserhalb.length} ${result.ausserhalb.length === 1 ? 'Etappenintervall liegt' : 'Etappenintervalle liegen'} ausserhalb der Reise und ${result.ausserhalb.length === 1 ? 'zählt' : 'zählen'} nicht als zusätzliche Reisenächte.`
     if (safeGaps) for (const gap of result.luecken) {
       if (uebergang(gap)) {
         add({
@@ -185,14 +188,16 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
         source: 'unterkunftAbdeckung', refs: gap.stageId ? { stageId: gap.stageId } : {}, evidence: { ...gap },
       })
     }
-    const lodgingComplete = safeGaps && uebergangsNaechte === 0 && !etappenUnvollstaendig
+    const lodgingComplete = safeGaps && uebergangsNaechte === 0 && !zuordnungUnbekannt
     return {
-      coverage: lodgingComplete ? 'complete' : result.bekannt || etappenUnvollstaendig ? 'partial' : 'unavailable',
+      coverage: lodgingComplete ? 'complete' : result.bekannt || zuordnungUnbekannt ? 'partial' : 'unavailable',
       detail: lodgingComplete
-        ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.`
+        ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
         : safeGaps && uebergangsNaechte > 0
-          ? `${result.naechteGesamt} Übernachtungsintervalle im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.`
-          : 'Unterkunftsstand teilweise oder unbekannt. Fehlende Zeiträume oder Zuordnungen erlauben keine vollständige Nachtbilanz.',
+          ? `${result.naechteGesamt} Übernachtungsintervalle im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
+          : zuordnungUnbekannt && result.kalenderNaechte !== null
+            ? `${result.kalenderNaechte} Übernachtungsintervalle im Reisekalender sind bekannt. Welche Etappe sie besitzt, ist unbekannt. Es wird keine Hotelpflicht angenommen.`
+            : 'Unterkunftsstand teilweise oder unbekannt. Fehlende Zeiträume oder Zuordnungen erlauben keine vollständige Nachtbilanz.',
       reasons: lodgingComplete ? [] : ['incomplete_lodging'],
     }
   })

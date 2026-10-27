@@ -114,9 +114,26 @@ test('T04: unknown stay dates or assignment suppress definitive gaps and zero-ni
   }
   const incomplete = trip()
   incomplete.stages[1].departureDate = null
-  assert.equal(tripAuditV1(incomplete).sections[0].coverage, 'partial')
-  assert.match(tripAuditV1(incomplete).sections[0].detail, /teilweise oder unbekannt/)
-  assert(!tripAuditV1(incomplete).findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
+  const incompleteReport = tripAuditV1(incomplete)
+  assert.equal(incompleteReport.sections[0].coverage, 'partial')
+  assert.match(incompleteReport.sections[0].detail, /Welche Etappe sie besitzt, ist unbekannt/)
+  assert.match(incompleteReport.sections[0].detail, /keine Hotelpflicht/)
+  assert.doesNotMatch(incompleteReport.sections[0].detail, /Übergang/)
+  assert(!incompleteReport.findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
+  assert(!incompleteReport.findings.some(f => f.domain === 'lodging' && /Übergang/.test(f.title)))
+
+  const undated = trip()
+  for (const stage of undated.stages) {
+    stage.arrivalDate = null
+    stage.departureDate = null
+  }
+  const undatedReport = tripAuditV1(undated)
+  assert.equal(unterkunftAbdeckung(undated).kalenderNaechte, 4)
+  assert.equal(unterkunftAbdeckung(undated).naechteGesamt, null)
+  assert.equal(undatedReport.sections[0].coverage, 'partial')
+  assert.match(undatedReport.sections[0].detail, /4 Übernachtungsintervalle im Reisekalender sind bekannt/)
+  assert.doesNotMatch(undatedReport.sections[0].detail, /Übergang/)
+  assert(!undatedReport.findings.some(f => f.domain === 'lodging' && (f.state === 'known_gap' || /Übergang/.test(f.title))))
 })
 
 test('T04: selected versus user-marked booking retains canonical counts and explicit authority limit', () => {

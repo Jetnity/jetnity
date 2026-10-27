@@ -135,6 +135,54 @@ describe('Nächte und Hotelzeitraum', () => {
     assert.doesNotMatch(source, /whitespace-nowrap/)
   })
 
+  test('12 Tage ohne Etappendaten nennen keine Übergangsnacht und keine Hotelsuche', () => {
+    const graph = zwoelfTage()
+    graph.stages = graph.stages.map((stufe) => ({ ...stufe, arrivalDate: null, departureDate: null }))
+    graph.ohneTag = []
+    const gast = unterkunftAbdeckung(graph)
+    const konto = unterkunftAbdeckung(graph, graph.ohneTag)
+    assert.deepEqual(gast, konto)
+    assert.equal(gast.bekannt, false)
+    assert.equal(gast.naechteGesamt, null)
+    assert.equal(gast.kalenderNaechte, 11)
+    assert.deepEqual(gast.zeitraeume, [])
+    assert.deepEqual(gast.luecken, [])
+    const audit = tripAuditV1(graph).sections[0]
+    assert.equal(audit.coverage, 'partial')
+    assert.match(audit.detail, /11 Übernachtungsintervalle im Reisekalender sind bekannt/)
+    assert.doesNotMatch(audit.detail, /Übergang/)
+    assert.equal(tripAuditV1(graph).findings.some((fund) => fund.domain === 'lodging' && /Übergang|Hotelpflicht fehlt|Geplante Unterkunftsnacht/.test(fund.title)), false)
+    const bestand = renderToStaticMarkup(createElement(UnterkunftBestand, { reise: graph }))
+    assert.match(bestand, /11 Übernachtungsintervalle im Reisekalender/)
+    assert.match(bestand, /Etappenzuordnung ist unbekannt/)
+    assert.match(bestand, /keine Hotelbuchung/)
+    assert.doesNotMatch(bestand, /Übergang/)
+    const hotel = renderToStaticMarkup(createElement(HotelBereich, { reise: graph }))
+    assert.equal((hotel.match(new RegExp(HOTELZEITRAUM_OFFEN, 'g')) ?? []).length, graph.stages.length)
+    assert.doesNotMatch(hotel, /api\/hotels\/search/)
+  })
+
+  test('teilweise bekannte Etappen erfinden weder Übergang noch Hotelnacht', () => {
+    const graph = zwoelfTage()
+    graph.stages[1] = { ...graph.stages[1], arrivalDate: null, departureDate: null }
+    graph.stages[2] = { ...graph.stages[2], arrivalDate: null, departureDate: null }
+    graph.ohneTag = []
+    const ergebnis = unterkunftAbdeckung(graph)
+    assert.equal(ergebnis.bekannt, false)
+    assert.equal(ergebnis.naechteGesamt, null)
+    assert.equal(ergebnis.kalenderNaechte, 11)
+    assert.deepEqual(ergebnis.luecken, [])
+    assert.equal(ergebnis.zeitraeume.length, 1)
+    assert.equal(ergebnis.zeitraeume[0]?.stageId, 'a')
+    const bestand = renderToStaticMarkup(createElement(UnterkunftBestand, { reise: graph }))
+    assert.doesNotMatch(bestand, /Übergang/)
+    assert.match(bestand, /Etappenzuordnung ist unbekannt/)
+    const audit = tripAuditV1(graph)
+    assert.equal(audit.sections[0].coverage, 'partial')
+    assert.doesNotMatch(audit.sections[0].detail, /Übergang/)
+    assert.equal(audit.findings.some((fund) => fund.domain === 'lodging' && fund.state === 'known_gap'), false)
+  })
+
   test('bekannte Etappendaten bleiben die Hotelspanne, nicht die ganze Reise', () => {
     const html = renderToStaticMarkup(createElement(HotelBereich, { reise: beispielreise() }))
     assert.match(html, /2 Nächte/)
