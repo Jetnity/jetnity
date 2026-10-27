@@ -30,11 +30,13 @@ Headless Chromium, synthetic session stub:
 
 ## R1 browser launch
 
-`5671377921` required the four mounted tests to execute on the GitHub Ubuntu runner. The hook no longer depends only on the Playwright-managed headless shell. I ran both launch paths locally: managed Chromium `140.0.7339.16` and, with that cache hidden, system Chrome `148.0.7778.96`. Both completed 5 tests, 0 failures, 0 skipped, including guest A→B and the 320/390/768/1440 by 16px/32px rectangles. The runner's Chrome is newer (155 or 156, depending on whether `ubuntu-latest` has moved to 26.04). I have not seen that binary execute this harness. A protocol or font-metric failure on that Chrome would be a real CI failure, not something this correction hides.
+`5671377921` required the four mounted tests to execute on the GitHub Ubuntu runner. The hook no longer depends only on the Playwright-managed headless shell. I ran both launch paths locally: managed Chromium `140.0.7339.16` and, with that cache hidden, system Chrome `148.0.7778.96`. Both completed 5 tests, 0 failures, 0 skipped.
+
+The hosted runner then executed the same hook. Run `40549850593`, App job `122350326327`, commit `1477653a2a4ced3aff3a351d3357cdc646ad5ebf`, logged `guest-nav-browser kanal=chrome version=155.0.8059.39`. All four mounted subtests passed there. Job TAP was 7483 tests, 7481 pass, 0 fail, 0 cancelled, 2 skipped. Auth job `122350326756` passed. The Vercel status on that commit is success. This self-review does not turn that into a Technical-Lead PASS.
 
 ## Residual risk
 
 - Below 640px the four modes are a vertical list instead of a 2×2 grid. That is the stack chosen so a 28px single word cannot collide. From 640px up they remain one scrolling row.
 - The writing document does not observe its own raw `localStorage.setItem`. Only Jetnity's confirmed active-key writes, and other documents' `storage` events, refresh the CTA.
-- Author screenshots and this review do not replace exact-head CI, Preview, or Technical-Lead review.
-- Local `npm test` is not fully green on this machine: 7360 pass, 11 fail, 5 skip. The failures are missing local PostgreSQL 16 binaries in official-truth proofs. CI must be read on the review tip. This author does not claim that CI result.
+- Author screenshots and this review do not replace Technical-Lead review. The green hosted run is exact to `1477653a`.
+- Local `npm test` is not fully green on this machine: 7360 pass, 11 fail, 5 skip. The failures are missing local PostgreSQL 16 binaries in official-truth proofs. The hosted App job on `1477653a` did not show those failures.

@@ -43,16 +43,18 @@ Reviewed head `3225892807714b671e3841fbd89dc33724ecc1d7` failed required App CI 
 
 The failed job's label was `ubuntu-latest`. During this migration window that label is Ubuntu 24.04 or Ubuntu 26.04. Both current runner-image readmes list Google Chrome. Local system Chrome `148.0.7778.96` executed all four subtests when the managed browser directory was empty.
 
-The correction commit is the new review head. Re-fetch it. Do not treat `32258928` as current. Exact-head CI and Preview on the correction tip belong to Root. This handoff does not claim they passed.
+The browser-launch correction is `1477653a2a4ced3aff3a351d3357cdc646ad5ebf`, tree `546dae1e0db48a763f7bc0ea1f2544558fe7c193`. Do not treat `32258928` as current.
+
+On that exact commit, run `40549850593` passed. App job `122350326327` logged `guest-nav-browser kanal=chrome version=155.0.8059.39` and passed all four mounted subtests. TAP: 7483 tests, 7481 pass, 0 fail, 0 cancelled, 2 skipped. Auth job `122350326756` passed. Vercel commit status is success for deployment `3jD8x37gXUREz6j5o2LbVcJGUvqm`. That read is not a Technical-Lead PASS. Re-fetch the tip after this handoff commit and review that newer head on its own CI.
 
 ## Exact next step
 
-Independent Technical-Lead review of the fetched tip. Then ordinary CI and Preview on that tip. Cursor stops. No follow-up slice.
+Independent Technical-Lead R2 of the fetched tip. The hosted App, Auth, and Vercel success already read is exact to `1477653a`. This handoff commit is a newer head, so Root reads its own CI and Preview. Cursor stops. No follow-up slice. No Ready. No merge. `origin/main` moved to `d698ee9e3e365b09295effc1db5a4f9db165eec8` after #1043. This branch was not synced.
 
 ## Not done here
 
 - No Ready, no merge, no base sync, no CI edit
 - No `ACTIVE_WORK_STATUS.md` or `DECISIONS.md` edit
 - No claim that the 11 local official-truth PostgreSQL failures were fixed or re-run on a database
-- No claim that GitHub CI or Vercel Preview passed on the review tip
+- The green App, Auth, and Vercel status above are for `1477653a` only. They are not a Ready mark and not a PASS for a later docs tip
 - A raw `setItem` in the writing tab still does not notify that same tab. The other tab receives the browser `storage` event and fail-closes. Successful Jetnity writers notify the writing tab through the new event

@@ -45,7 +45,18 @@ The harness now launches Playwright Chromium when that binary exists, and otherw
 
 Runner evidence, not an assumption about this job's exact image: job `122323798480` used the `ubuntu-latest` label on 27 October 2026, during the 19 October–19 November 2026 migration from Ubuntu 24.04 to 26.04. The published Ubuntu 24.04 image `20261023.334.3` lists Google Chrome `155.0.8059.39`. The Ubuntu 26.04 image lists Google Chrome `155.0.8059.39` and the 26 October update lists `156.0.8078.47`. Both images include Google Chrome.
 
-Local proof after the correction: with Playwright Chromium present, the log is `guest-nav-browser kanal=playwright-chromium version=140.0.7339.16` and 5/5 pass, 0 skipped. With `PLAYWRIGHT_BROWSERS_PATH` pointed at an empty directory, the log is `guest-nav-browser kanal=chrome version=148.0.7778.96` and the same four mounted subtests pass, 0 skipped. GitHub CI and Preview for the correction tip are not claimed until those live checks are read.
+Local proof after the correction: with Playwright Chromium present, the log is `guest-nav-browser kanal=playwright-chromium version=140.0.7339.16` and 5/5 pass, 0 skipped. With `PLAYWRIGHT_BROWSERS_PATH` pointed at an empty directory, the log is `guest-nav-browser kanal=chrome version=148.0.7778.96` and the same four mounted subtests pass, 0 skipped.
+
+## Exact-head CI read for `1477653a`
+
+Read on 27 October 2026 from GitHub, not inferred from the local runs. Commit `1477653a2a4ced3aff3a351d3357cdc646ad5ebf`, run `40549850593`.
+
+- App job `122350326327` (Typecheck, Lint & Build) passed. The hook log is `guest-nav-browser kanal=chrome version=155.0.8059.39`. The managed Chromium binary was absent, so the system-Chrome path ran.
+- The four mounted subtests executed and passed: guest A discard then B, malformed bytes fail closed, account and unresolved sessions ignore guest storage, and tab labels at 320/390/768/1440. Suite `ok 1888`, `1..4`, duration about 16.6s. TAP for the job: 7483 tests, 7481 pass, 0 fail, 0 cancelled, 2 skipped.
+- Auth job `122350326756` passed.
+- Commit status `Vercel` is `success`, description "Deployment has completed", target `https://vercel.com/jetnity-e1b93c82/jetnity-app/3jD8x37gXUREz6j5o2LbVcJGUvqm`.
+
+This read is author evidence for that commit. It is not a Technical-Lead PASS. A later docs commit that records this read is a new head. Its own CI and Preview belong to Root.
 
 ## Boundaries
 
