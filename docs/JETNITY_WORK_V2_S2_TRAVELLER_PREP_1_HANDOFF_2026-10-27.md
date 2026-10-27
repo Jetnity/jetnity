@@ -19,6 +19,14 @@ This handoff is the author packet. It is not an independent Technical Lead PASS,
 - `kopfzahl` kept internal so `check:exports` passes: `d7ca07a9ca1e12d7e02a376234a43c287a7950fd`, tree `618c571e006aa97699a1c8322751a486f1fec888`. The CSS report observes this head.
 - The evidence commit that adds this file does not change product source. Review the branch tip. A newer head invalidates this packet.
 
+## R1 correction
+
+Technical Lead R1 review `5671376977` on `47e46d75bba387b7f3b174dbdebfc6a8365b26e6` required one change: R1-F1. The shared `docs/ACTIVE_WORK_STATUS.md` edit is removed. That file is blob `2c87fdf8c4814695b3bb67a3bc61900325f4f56d`, byte-identical to initial main `d31a16afdac5e97d4b02f4cb5824f5adc290577c` and to fetched `origin/main` `d698ee9e3e365b09295effc1db5a4f9db165eec8` for this path only. No historical status text was rewritten. This branch was not synced onto the moved main. Root owns that sync and #751.
+
+Runtime F04/F10/F11 is unchanged from the reviewed head. `git diff 47e46d75 -- lib components scripts` is empty. No inline review comments were present. No identity, slot, or Official Truth change.
+
+The CSS harness and mounted tests were not re-run for this docs-only correction. They still describe product head `d7ca07a9`. CI and Preview on the correction tip are for Root. This author does not claim them.
+
 ## What changed
 
 - F04. `uebersichtPersonen` uses stored `Trip.travellers` as the group total. One saved profile on a 2-person trip renders `2 Reisende · 1 von 2 Profilen vorhanden`. Zero profiles keep `Angaben noch offen`. A full profile list renders the headcount only. Names, citizenships and documents are not read. If `party.length` exceeds the headcount, or the headcount is not a positive integer, the count is unset and the text is `Anzahl der Reisenden und erfasste Profile stimmen nicht überein.`
@@ -45,4 +53,4 @@ No DB, SQL, RLS, Auth, identity, party-slot, or schema change. No Official Truth
 
 ## Next step
 
-Independent Technical Lead exact-head review of the branch tip. Do not treat this author packet or the harness screenshots as that review.
+Independent Technical Lead R2 on the correction tip. Same session. Draft. Do not treat this author packet or the earlier harness screenshots as that review. No Ready. No merge. No follow-up slice.

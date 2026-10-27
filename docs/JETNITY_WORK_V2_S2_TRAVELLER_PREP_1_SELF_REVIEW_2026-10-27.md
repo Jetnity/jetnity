@@ -22,6 +22,10 @@ Author only. Session `bc-a62482f0-b662-484a-b2a4-ca39b15ea410`. Model `grok-4.7-
 - A snapshot with headcount 2 and 3 profiles is treated as unsettled, so it does not receive the definitive multi-person sentence even though both numbers are above 1. That is deliberate honesty about the contradiction, not a claim that the trip has one traveller.
 - `1 von 2 Profilen vorhanden` counts stored profile records. It does not say those profiles are document-complete.
 
+## R1-F1
+
+Review `5671376977` is correct. The shared `docs/ACTIVE_WORK_STATUS.md` block was outside S2 ownership. It is restored to blob `2c87fdf8c4814695b3bb67a3bc61900325f4f56d`. Task-owned handoff carries the slice status. Runtime files are unchanged from `47e46d75`. The mounted and CSS runs were not repeated.
+
 ## Stop
 
-No Ready. No merge. No follow-up slice. No extra path beyond the owned traveller, header, and preparation files, their close tests, and this packet.
+No Ready. No merge. No follow-up slice. No extra path beyond the owned traveller, header, and preparation files, their close tests, and this packet. Shared status stays with Root.
