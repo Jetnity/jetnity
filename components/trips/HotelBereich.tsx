@@ -105,13 +105,10 @@ function HotelEtappe({
   const checkOut = zeitraum?.checkOut ?? null
   const naechte = naechteZwischen(checkIn, checkOut)
 
+  const sucheAktiv = Boolean(checkIn && checkOut)
+
   React.useEffect(() => {
-    if (!checkIn || !checkOut) {
-      setLaeuft(false)
-      setAntwort(null)
-      setMeldung('')
-      return
-    }
+    if (!checkIn || !checkOut) return
 
     let aktiv = true
     setLaeuft(true)
@@ -208,14 +205,14 @@ function HotelEtappe({
         <BedDouble className="h-5 w-5 text-brand-600" aria-hidden="true" />
       </div>
 
-      {laeuft && (
+      {sucheAktiv && laeuft && (
         <p aria-busy="true" className="mt-5 flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
           <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" />
           Jetnity ordnet die Gegend für diese Etappe ein.
         </p>
       )}
 
-      {!laeuft && antwort && (
+      {sucheAktiv && !laeuft && antwort && (
         <div className="mt-5 grid gap-4">
           {quartierSichtbar && antwort.quartier && (
             <div className="rounded-2xl bg-surface-25 px-4 py-4">
