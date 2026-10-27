@@ -28,6 +28,10 @@ Headless Chromium, synthetic session stub:
 - A context seeded with guest bytes and `sitzung=konto` stays on "Reise planen". `sitzung=halten` stays on "Reise planen" until the stub resolves a guest session, then it reads the current bytes.
 - Label rectangles at 320/390/768/1440 and root 16px/32px do not overlap. Text boxes sit inside the buttons. Computed font size is 14px or 28px. Document `scrollWidth` does not exceed `clientWidth` by more than 1px. After scroll, the 72px sticky header does not cover the buttons. Enter sets `{ ansicht: 'organisieren', tastatur: true }`. A pointer click sets Vorbereitung with `tastatur: false`.
 
+## R1 browser launch
+
+`5671377921` required the four mounted tests to execute on the GitHub Ubuntu runner. The hook no longer depends only on the Playwright-managed headless shell. I ran both launch paths locally: managed Chromium `140.0.7339.16` and, with that cache hidden, system Chrome `148.0.7778.96`. Both completed 5 tests, 0 failures, 0 skipped, including guest A→B and the 320/390/768/1440 by 16px/32px rectangles. The runner's Chrome is newer (155 or 156, depending on whether `ubuntu-latest` has moved to 26.04). I have not seen that binary execute this harness. A protocol or font-metric failure on that Chrome would be a real CI failure, not something this correction hides.
+
 ## Residual risk
 
 - Below 640px the four modes are a vertical list instead of a 2×2 grid. That is the stack chosen so a 28px single word cannot collide. From 640px up they remain one scrolling row.

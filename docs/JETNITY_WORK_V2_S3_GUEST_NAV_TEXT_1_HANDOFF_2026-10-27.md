@@ -37,6 +37,14 @@ The mounted file needs Playwright Chromium. It bundles the real components with 
 
 Author harness screenshots are not acceptance. They show the synthetic page at CSS 390 and 320 with root 32px: both CTAs on B, and the four labels stacked.
 
+## R1 correction
+
+Reviewed head `3225892807714b671e3841fbd89dc33724ecc1d7` failed required App CI because the new `before` hook called `chromium.launch` and the runner has no Playwright-managed `chromium_headless_shell`. The correction is only in `lib/trips/guest-nav-text-1.test.ts`. Playwright Chromium is still preferred. `channel: 'chrome'` runs only when that launch reports `Executable doesn't exist`. The four mounted cases stay real browser tests. There is no `test.skip`. `.github/workflows/ci.yml` was not edited.
+
+The failed job's label was `ubuntu-latest`. During this migration window that label is Ubuntu 24.04 or Ubuntu 26.04. Both current runner-image readmes list Google Chrome. Local system Chrome `148.0.7778.96` executed all four subtests when the managed browser directory was empty.
+
+The correction commit is the new review head. Re-fetch it. Do not treat `32258928` as current. Exact-head CI and Preview on the correction tip belong to Root. This handoff does not claim they passed.
+
 ## Exact next step
 
 Independent Technical-Lead review of the fetched tip. Then ordinary CI and Preview on that tip. Cursor stops. No follow-up slice.

@@ -97,10 +97,36 @@ async function wartenAuf(page: Page, hrefTeil: string, text: string) {
   )
 }
 
+const BROWSER_ARGS = ['--no-sandbox', '--disable-dev-shm-usage']
+
+function playwrightChromiumFehlt(fehler: unknown) {
+  const meldung = fehler instanceof Error ? fehler.message : String(fehler)
+  return meldung.includes("Executable doesn't exist")
+}
+
+/**
+ * GitHub-hosted `ubuntu-latest` does not download Playwright's
+ * `chromium_headless_shell`. The 24.04 and 26.04 runner images both install
+ * Google Chrome. Use that system browser only when the managed binary is
+ * absent. A missing system browser still fails this hook.
+ */
+async function gastNavBrowser() {
+  try {
+    const gestartet = await chromium.launch({ headless: true, args: BROWSER_ARGS })
+    return { browser: gestartet, kanal: 'playwright-chromium' as const }
+  } catch (fehler) {
+    if (!playwrightChromiumFehlt(fehler)) throw fehler
+    const gestartet = await chromium.launch({ headless: true, channel: 'chrome', args: BROWSER_ARGS })
+    return { browser: gestartet, kanal: 'chrome' as const }
+  }
+}
+
 describe('mounted guest resume links and large-text tabs', () => {
   let browser: Browser
   let server: Server
   let origin: string
+  let browserKanal = ''
+  let browserVersion = ''
   const seite = html
 
   before(async () => {
@@ -120,7 +146,14 @@ describe('mounted guest resume links and large-text tabs', () => {
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
     const adresse = server.address() as AddressInfo
     origin = `http://127.0.0.1:${adresse.port}`
-    browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+    const gestartet = await gastNavBrowser()
+    browser = gestartet.browser
+    browserKanal = gestartet.kanal
+    browserVersion = gestartet.browser.version()
+    if (!/^\d+\.\d+/.test(browserVersion)) {
+      throw new Error(`guest-nav browser ${browserKanal} returned no version`)
+    }
+    console.log(`guest-nav-browser kanal=${browserKanal} version=${browserVersion}`)
   })
 
   after(async () => {
@@ -177,6 +210,8 @@ describe('mounted guest resume links and large-text tabs', () => {
       await wartenAuf(erste.page, '/planen', 'Reise planen')
       await wartenAuf(zweite.page, '/planen', 'Reise planen')
       const navigationen = await erste.page.evaluate(() => performance.getEntriesByType('navigation').length)
+      assert.match(browserVersion, /^\d+\.\d+/)
+      assert.equal(browserKanal === 'playwright-chromium' || browserKanal === 'chrome', true)
 
       await erste.page.locator('[data-aktion="anlegen-a"]').click()
       await wartenAuf(erste.page, 'trip-a-synthetic', 'Reise fortsetzen')
