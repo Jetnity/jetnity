@@ -4,6 +4,10 @@ Date: 26 October 2026.
 Writer: Jetnity GetYourGuide Manual Widget Integration 1 — Cursor Generation 1.
 This review is the author’s own reading. It is not an independent Technical-Lead PASS.
 
+## R2
+
+The lifecycle paragraph below belonged to `d5dd937f`. Its late completion never reached the component, and its adoption click used a sibling widget. This head replaces that evidence with `synthese.ts`. Aborted operations stay open until the runner delivers them. A1 and A2 are different operation numbers for the same place id. Late success and late rejection do not replace or dispose the current result, including after unmount. The nested widget is inside the real activities section. One adoption stays pending through load failure, retry, country context and removal, then shows “Die Übernahme wurde gemeldet.” The count is 1. Exit 0. No off-host request. `run.ts` was not run again. The provider outage and the height samples stay historical. The visible sentence is “Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung.” It does not say collection finished. Receipt 6438082137 stays on `dd6f972d`.
+
 ## What holds
 
 The search configuration never stores a search string as a GetYourGuide location id. The server rebuilds the country label from the country code, so the client cannot substitute a country name. Private tokens of at least 8 characters, URLs, and `geonames:` names are rejected. The inactive document and the active document are split by Fetch Metadata, not by a session. The route does not call `cookies()` or a server client. Analyzer text is absent from the trip component, the activities area, and the root, public, account and admin layouts. The privacy addition is a Jetnity-owned paragraph. It does not edit PrivacyBee text and does not say the integration is certified.

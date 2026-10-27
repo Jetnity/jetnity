@@ -500,7 +500,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       {ladenSichtbar || entfernenSichtbar ? (
         <p id={`${instanz}-hinweis`} className={cn(TEXT, 'mt-3')}>
           {ladenSichtbar
-            ? 'Beim Anzeigen werden Inhalte von GetYourGuide und der Integration Analyzer geladen. Der Analyzer misst für GetYourGuide die Darstellung des Widgets. Dabei wird eine Verbindung zu GetYourGuide hergestellt. '
+            ? 'Beim Anzeigen werden Inhalte von GetYourGuide und der Integration Analyzer geladen. Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung. Dabei wird eine Verbindung zu GetYourGuide hergestellt. '
             : null}
           <a
             href={GYG_DATENSCHUTZ_HREF}

@@ -167,7 +167,7 @@ describe('GetYourGuide-Fläche', () => {
     assert.match(pruefung, /Bei GetYourGuide anzeigen/)
     assert.match(pruefung, /Ideen für Panama/)
     assert.match(pruefung, /Integration Analyzer/)
-    assert.match(pruefung, /Der Analyzer misst für GetYourGuide die Darstellung des Widgets/)
+    assert.match(pruefung, /Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung/)
     assert.match(pruefung, /Datenschutz von GetYourGuide/)
     assert.match(pruefung, /Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen/)
     assert.equal(pruefung.includes('Panama City'), false)
