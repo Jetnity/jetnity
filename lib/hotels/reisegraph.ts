@@ -5,8 +5,10 @@
 //
 // Frei von Next und Providern.
 
-import { naechteZwischen } from '@/lib/hotels/quartier-kontext'
+import { hotelZeitraumAusEtappe } from '@/lib/hotels/quartier-kontext'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
+
+export { hotelZeitraumAusEtappe }
 
 export type HotelReisegraphFehlerArt =
   | 'reise-fremd'
@@ -43,16 +45,6 @@ const MELDUNG: Record<HotelReisegraphFehlerArt, string> = {
 
 function fehler(art: HotelReisegraphFehlerArt): HotelReisegraphErgebnis {
   return { ok: false, art, message: MELDUNG[art] }
-}
-
-export function hotelZeitraumAusEtappe(
-  reise: Pick<Trip, 'startDate' | 'endDate'>,
-  etappe: Pick<TripStage, 'arrivalDate' | 'departureDate'>,
-): { checkIn: string; checkOut: string } | null {
-  const checkIn = etappe.arrivalDate ?? reise.startDate
-  const checkOut = etappe.departureDate ?? reise.endDate
-  if (!checkIn || !checkOut || !naechteZwischen(checkIn, checkOut)) return null
-  return { checkIn, checkOut }
 }
 
 export function hotelReisegraphPruefen(
