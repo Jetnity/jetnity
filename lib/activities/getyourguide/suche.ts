@@ -8,6 +8,11 @@ import { istKatalogLand } from '@/lib/country/katalog'
 
 export const GYG_DATENSCHUTZ_HREF = 'https://www.getyourguide.com/c/privacy-policy'
 
+/** Server-Allowlist für das manuelle Widget. Der Browser darf keine andere Zahl erzwingen. */
+export const GYG_ANZAHL_STANDARD = 12
+export const GYG_ANZAHL_ERWEITERT = 24
+export type GygAnzahl = typeof GYG_ANZAHL_STANDARD | typeof GYG_ANZAHL_ERWEITERT
+
 export type GygSuchumfang = 'stadt' | 'region' | 'insel' | 'land'
 
 export type GygSuchkonfiguration = {
