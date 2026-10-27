@@ -11,6 +11,7 @@ import { ArrowRightLeft, Loader2 } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
+import TwelveGoAffiliateLinks from '@/components/trips/TwelveGoAffiliateLinks'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { mobilitySucheFehlerAntwort, mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
 import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
@@ -304,6 +305,8 @@ export default function MobilitaetBereich({
           </p>
         ) : null}
       </section>
+
+      <TwelveGoAffiliateLinks reise={reise} />
 
       <section
         aria-label="Mobilitätssuche"
