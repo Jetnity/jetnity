@@ -6,6 +6,8 @@
 //
 // Etappen kommen nur aus `reise.stages`. Flight-Transitländer sind
 // keine Nutzerziele. Die einzige Tag-Auswahl bleibt `gewaehlterTagId`.
+// Die kalendarische Tagesfolge liegt in `chronologischeLaeufe` und
+// lässt diese Etappengruppierung unverändert.
 
 import { gewaehlterTagId, planStatus } from '@/lib/trips/arbeitsbereich'
 import { dayStageAssignmentModeLesenDb } from '@/lib/trips/day-stage-assignment'

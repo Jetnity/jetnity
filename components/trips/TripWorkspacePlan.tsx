@@ -29,6 +29,12 @@ import {
 } from '@/lib/trips/bezeichnungen'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import {
+  laufUntertitel,
+  reisehinweisText,
+  chronologischeLaeufe,
+  type ChronologischerLauf,
+} from '@/lib/trips/n12-chronology-1/laeufe'
+import {
   planTagNavigator,
   planTageFolgen,
   tagStreifenZiel,
@@ -76,6 +82,14 @@ const ART_SYMBOL: Record<TripItemKind, React.ComponentType<{ className?: string 
 
 const fokusRing =
   'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 motion-reduce:transition-none'
+
+function laufText(lauf: ChronologischerLauf): string {
+  if (lauf.lesart === 'ziel') {
+    return etappenZeitraumAnzeigen(lauf.arrivalDate, lauf.departureDate)
+      ?? 'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
+  }
+  return laufUntertitel(lauf)
+}
 
 function sichtbarerTag(tagId: string): HTMLElement | null {
   const liste = document.querySelectorAll<HTMLElement>(`[data-timeline-tag="${CSS.escape(tagId)}"]`)
@@ -198,10 +212,17 @@ export default function TripWorkspacePlan({
   }, [meldung])
 
   const timeline = timelineAbleiten(reise, ohneTag, aktiverTag)
+  const chronologie = chronologischeLaeufe(reise)
   const tag = timeline.gewaehlterTag
-  const folge = planTageFolgen(timeline.etappen)
+  const laeufe = chronologie.gueltig ? chronologie.laeufe : []
+  const folge = planTageFolgen(laeufe)
   const navigator = planTagNavigator(folge, timeline.gewaehlterTagId)
-  const etappeDesTags = timeline.etappen.find((etappe) => etappe.tage.some((eintrag) => eintrag.id === tag?.id))
+  const laufDesTags = chronologie.gueltig
+    ? chronologie.laeufe.find((lauf) => lauf.tage.some((eintrag) => eintrag.id === tag?.id))
+    : undefined
+  const hinweise = chronologie.gueltig && tag
+    ? chronologie.hinweise.filter((hinweis) => hinweis.sichtbarAufTagId === tag.id)
+    : []
 
   React.useLayoutEffect(() => {
     if (!timeline.gewaehlterTagId) return
@@ -271,7 +292,7 @@ export default function TripWorkspacePlan({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-          {etappeDesTags?.name ?? `Tag ${tag.dayIndex}`}
+          {laufDesTags?.name ?? `Tag ${tag.dayIndex}`}
         </p>
         <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
           {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
@@ -280,6 +301,20 @@ export default function TripWorkspacePlan({
           <p className="mt-1 text-xs text-ink-700">
             {tag.items.length === 1 ? '1 Punkt' : `${tag.items.length} Punkte`}
           </p>
+        ) : null}
+        {hinweise.length > 0 ? (
+          <ul data-plan-reisehinweise className="mt-2 space-y-1">
+            {hinweise.map((hinweis) => (
+              <li
+                key={`${hinweis.rolle}:${hinweis.itemId}`}
+                data-plan-reisehinweis={hinweis.rolle}
+                data-plan-reisehinweis-punkt={hinweis.itemId}
+                className="text-xs leading-5 text-ink-700 [overflow-wrap:anywhere]"
+              >
+                {reisehinweisText(hinweis)}
+              </li>
+            ))}
+          </ul>
         ) : null}
       </div>
       <button
@@ -357,6 +392,7 @@ export default function TripWorkspacePlan({
       tabIndex={-1}
       data-tagesplan-modul="ein"
       data-plan-premium="4"
+      data-plan-chronologie={chronologie.gueltig ? 'tag-zuerst' : 'ungueltig'}
       data-plan-kompakt={kompakt ? 'ja' : 'nein'}
       className={cn(
         'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
@@ -391,7 +427,7 @@ export default function TripWorkspacePlan({
                 </p>
                 <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700">
                   {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-                  {etappeDesTags ? ` · ${etappeDesTags.name}` : ''}
+                  {laufDesTags ? ` · ${laufDesTags.name}` : ''}
                 </p>
               </div>
               <div className="flex items-center justify-between gap-3 md:justify-center">
@@ -424,22 +460,17 @@ export default function TripWorkspacePlan({
               </div>
             </div>
           ) : null}
+              {laeufe.length > 0 ? (
               <div className="mt-3 grid min-w-0 gap-3 md:hidden">
-                {timeline.etappen.map((etappe) =>
-                  etappe.tage.length === 0 ? null : (
-                    <div key={`streifen-${etappe.stageId ?? 'ohne'}`} data-timeline-etappe={etappe.stageId ?? 'ohne'} className="min-w-0">
-                      <p className="text-xs text-brand-800"><strong className="font-semibold">{etappe.name}</strong></p>
-                      <p className="mt-0.5 text-xs text-ink-700">
-                        {etappe.istNutzerziel
-                          ? etappenZeitraumAnzeigen(etappe.arrivalDate, etappe.departureDate) ??
-                            'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
-                          : 'Tage ohne festgelegten Aufenthalt'}
-                      </p>
+                {laeufe.map((lauf) => (
+                    <div key={`streifen-${lauf.schluessel}`} data-timeline-etappe={lauf.stageId ?? 'ohne'} data-plan-lauf={lauf.lesart} className="min-w-0">
+                      <p className="text-xs text-brand-800"><strong data-plan-lauf-name className="font-semibold">{lauf.name}</strong></p>
+                      <p className="mt-0.5 text-xs text-ink-700">{laufText(lauf)}</p>
                       <div
                         data-plan-tag-streifen
                         className="mt-2 flex max-w-full min-w-0 snap-x gap-2 overflow-x-auto overscroll-x-contain"
                       >
-                        {etappe.tage.map((eintrag) => (
+                        {lauf.tage.map((eintrag) => (
                           <TagWahl
                             key={`streifen-${eintrag.id}`}
                             eintrag={eintrag}
@@ -450,9 +481,13 @@ export default function TripWorkspacePlan({
                         ))}
                       </div>
                     </div>
-                  ),
-                )}
+                ))}
               </div>
+              ) : (
+                <p data-plan-chronologie-hinweis className="mt-3 text-sm leading-6 text-ink-700 md:hidden">
+                  Die Tagesreihenfolge ist nicht eindeutig.
+                </p>
+              )}
               <div
                 id="plan-tag-kontext"
                 data-plan-tag-kontext
@@ -464,14 +499,16 @@ export default function TripWorkspacePlan({
             </div>
           ) : null}
 
+          {laeufe.length > 0 ? (
           <ol className="mt-4 hidden min-w-0 gap-4 md:grid">
-            {timeline.etappen.map((etappe) => {
-              const ersterTag = ersterTagDerEtappe(timeline.etappen, etappe.stageId)
-              const etappeAktiv = etappe.tage.some((eintrag) => eintrag.id === timeline.gewaehlterTagId)
+            {laeufe.map((lauf) => {
+              const ersterTag = lauf.tage[0]?.id ?? ''
+              const etappeAktiv = lauf.tage.some((eintrag) => eintrag.id === timeline.gewaehlterTagId)
               return (
                 <li
-                  key={etappe.stageId ?? 'ohne-etappe'}
-                  data-timeline-etappe={etappe.stageId ?? 'ohne'}
+                  key={lauf.schluessel}
+                  data-timeline-etappe={lauf.stageId ?? 'ohne'}
+                  data-plan-lauf={lauf.lesart}
                   className="min-w-0"
                 >
                   <button
@@ -485,21 +522,16 @@ export default function TripWorkspacePlan({
                     )}
                   >
                     <span className="min-w-0">
-                      <strong className="block hyphens-auto break-words text-sm font-semibold">{etappe.name}</strong>
-                      <span className="mt-0.5 block text-xs text-ink-700">
-                        {etappe.istNutzerziel
-                          ? etappenZeitraumAnzeigen(etappe.arrivalDate, etappe.departureDate) ??
-                            'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
-                          : 'Tage ohne festgelegten Aufenthalt'}
-                      </span>
+                      <strong data-plan-lauf-name className="block hyphens-auto break-words text-sm font-semibold">{lauf.name}</strong>
+                      <span className="mt-0.5 block text-xs text-ink-700">{laufText(lauf)}</span>
                     </span>
                   </button>
-                  {etappe.tage.length > 0 && (
+                  {lauf.tage.length > 0 && (
                     <div
                       data-plan-raster
                       className="mt-2 hidden md:grid md:grid-cols-4 lg:grid-cols-7 min-w-0 gap-2"
                     >
-                        {etappe.tage.map((eintrag) => (
+                        {lauf.tage.map((eintrag) => (
                           <TagWahl
                             key={`raster-${eintrag.id}`}
                             eintrag={eintrag}
@@ -513,6 +545,41 @@ export default function TripWorkspacePlan({
               )
             })}
           </ol>
+          ) : (
+            <p data-plan-chronologie-hinweis className="mt-4 hidden text-sm leading-6 text-ink-700 md:block">
+              Die Tagesreihenfolge ist nicht eindeutig.
+            </p>
+          )}
+          {timeline.etappen.length > 0 ? (
+            <div data-plan-etappen-uebersicht className="mt-4 min-w-0 border-t border-line-200 pt-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Etappen</p>
+              <p className="mt-1 text-xs leading-5 text-ink-700">Nach Ziel zusammengefasst, nicht die Kalenderfolge.</p>
+              <ul className="mt-2 grid gap-1">
+                {timeline.etappen.map((etappe) => {
+                  const ersterTag = ersterTagDerEtappe(timeline.etappen, etappe.stageId)
+                  return (
+                    <li key={etappe.stageId ?? 'ohne-etappe'}>
+                      <button
+                        type="button"
+                        data-plan-etappe-sprung={etappe.stageId ?? 'ohne'}
+                        disabled={!ersterTag || !chronologie.gueltig}
+                        onClick={() => ersterTag && chronologie.gueltig && onTagWechseln(ersterTag)}
+                        className={cn(
+                          'flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-2xl px-1 text-left text-ink-800 transition disabled:cursor-default disabled:opacity-60',
+                          fokusRing,
+                        )}
+                      >
+                        <strong className="min-w-0 hyphens-auto break-words text-sm font-semibold">{etappe.name}</strong>
+                        <span className="shrink-0 text-xs text-ink-700">
+                          {etappe.tage.length === 1 ? '1 Tag' : `${etappe.tage.length} Tage`}
+                        </span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ) : null}
           {tag ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt))}
             selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
           {tag ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id}
