@@ -88,7 +88,7 @@ async function modus(page: Page, name: string) {
   await knopf.click()
 }
 
-describe('mounted route and detail', { timeout: 240_000 }, () => {
+describe('mounted route and detail', { timeout: 300_000 }, () => {
   let browser: Browser
   let server: Server
   let origin: string
@@ -292,6 +292,175 @@ describe('mounted route and detail', { timeout: 240_000 }, () => {
       assert.equal(await split.getAttribute('data-u1b-anordnung'), 'neben')
       await split.evaluate((el) => { (el as HTMLElement).style.width = `${49.5 * 16 - 2}px` })
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Zurück auf die tag-freie Adresse zeigt nur die Punkte des angezeigten Tages', async () => {
+    const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      await page.goBack()
+      await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
+      assert.match(await page.locator('[data-plan-tag-zaehler]').innerText(), /Tag 1 von/)
+      const ids = await page.locator('[data-u1b-day] [data-plan-punkt]').evaluateAll((knoten) => knoten.map((el) => el.getAttribute('data-plan-punkt')))
+      assert.deepEqual(ids.filter((id) => id === 'flight-out' || id === 'transfer-11' || id === 'stay-11'), ['flight-out'])
+      const paar = await page.locator('[data-u1b-day] [data-plan-entfernen]').evaluateAll((knoten) => knoten.map((el) => el.getAttribute('data-plan-entfernen')))
+      assert.deepEqual(paar.filter((wert) => wert?.endsWith('flight-out') || wert?.endsWith('transfer-11') || wert?.endsWith('stay-11')), ['day-1:flight-out'])
+      await page.locator('[data-u1b-day] [data-plan-entfernen="day-1:flight-out"]').click()
+      assert.deepEqual(await page.evaluate(() => window.__u1b?.writes ?? []), ['day-1:flight-out'])
+      await page.goForward()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      const nachVor = await page.locator('[data-u1b-day] [data-plan-punkt]').evaluateAll((knoten) => knoten.map((el) => el.getAttribute('data-plan-punkt')))
+      assert.equal(nachVor.includes('transfer-11'), true)
+      assert.equal(nachVor.includes('stay-11'), true)
+      assert.equal(nachVor.includes('flight-out'), false)
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Zur Route stellt die vorher sichtbare Routenposition wieder her', async () => {
+    const { page } = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.setViewportSize({ width: 390, height: 640 })
+      const vorher = await page.evaluate(() => {
+        document.documentElement.style.minHeight = '2400px'
+        document.body.style.minHeight = '2400px'
+        document.documentElement.style.scrollBehavior = 'auto'
+        document.body.style.scrollBehavior = 'auto'
+        const scroller = document.scrollingElement
+        if (scroller) scroller.scrollTop = 480
+        return {
+          y: window.scrollY,
+          top: scroller?.scrollTop ?? -1,
+          hoehe: document.documentElement.scrollHeight,
+          fenster: window.innerHeight,
+          overflow: getComputedStyle(document.documentElement).overflowY,
+        }
+      })
+      const startY = Math.max(vorher.y, vorher.top)
+      assert.ok(startY > 200, `keine Routenposition ${JSON.stringify(vorher)}`)
+      const tag20 = page.locator('[data-timeline-tag="day-20"]').filter({ visible: true }).first()
+      await tag20.click()
+      await page.evaluate(() => window.scrollTo(0, 0))
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      await page.waitForTimeout(100)
+      const nachRoute = await page.evaluate(() => window.scrollY)
+      assert.ok(Math.abs(nachRoute - startY) < 24, `day ${nachRoute} vs ${startY}`)
+      await tag20.click()
+      assert.equal(await sichtbar(page, '[data-u1b-route]'), false)
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      const tag11 = page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first()
+      await tag11.evaluate((el) => el.scrollIntoView({ block: 'center' }))
+      const beiTag = await page.evaluate(() => window.scrollY)
+      await tag11.click()
+      await page.locator('[data-plan-punkt="stay-11"] button[aria-expanded]').click()
+      await page.evaluate(() => window.scrollTo(0, 0))
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      const zurueck = await page.evaluate(() => window.scrollY)
+      assert.ok(Math.abs(zurueck - beiTag) < 24, `item ${zurueck} vs ${beiTag}`)
+      await page.locator('[data-timeline-tag="day-2"]').filter({ visible: true }).first().click()
+      await page.locator('[data-u1b-tag-weg]').click()
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      const fokusRoute = await page.evaluate(() => document.activeElement?.closest('[data-u1b-route]') != null)
+      assert.equal(fokusRoute, true)
+      assert.equal(await page.locator('[aria-current="date"]').count(), 0)
+      await page.setViewportSize({ width: 1440, height: 900 })
+      await page.setViewportSize({ width: 390, height: 900 })
+      await page.waitForFunction(() => document.querySelector('[data-u1b-anordnung]')?.getAttribute('data-u1b-anordnung') === 'schmal')
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Route, Tag und Punkt bleiben in der Breite bei 280 bis 1440 und Root 32', async () => {
+    const { page } = await offen(280, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      const breiten = [280, 320, 360, 390, 430, 768, 1440]
+      for (const breite of breiten) {
+        for (const schrift of [16, 32]) {
+          await page.setViewportSize({ width: breite, height: 900 })
+          await page.evaluate((px) => { document.documentElement.style.fontSize = `${px}px` }, schrift)
+          await page.waitForTimeout(30)
+          const zurRoute = page.getByRole('button', { name: 'Zur Route' }).filter({ visible: true })
+          if (await zurRoute.count()) await zurRoute.first().click()
+          const routeMessung = await page.evaluate(() => {
+            const delta = document.documentElement.scrollWidth - document.documentElement.clientWidth
+            let schuld = ''
+            if (delta > 1) {
+              for (const el of document.querySelectorAll('body *')) {
+                if (!(el instanceof HTMLElement) || el.closest('[hidden]')) continue
+                const rect = el.getBoundingClientRect()
+                if (rect.width > 0 && rect.right > document.documentElement.clientWidth + 1) {
+                  schuld = `${el.tagName} ${el.getAttribute('data-workspace-mode-nav') ?? ''} ${el.getAttribute('data-plan-etappe-sprung') ?? ''} ${el.className.toString().slice(0, 100)}`
+                  break
+                }
+              }
+            }
+            return { delta, schuld }
+          })
+          assert.ok(routeMessung.delta <= 1, `route ${breite}/${schrift} +${routeMessung.delta} ${routeMessung.schuld}`)
+          await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+          await page.waitForSelector('[data-plan-tag-zaehler]')
+          const tagMessung = await page.evaluate(() => {
+            const delta = document.documentElement.scrollWidth - document.documentElement.clientWidth
+            let schuld = ''
+            if (delta > 1) {
+              for (const el of document.querySelectorAll('body *')) {
+                if (!(el instanceof HTMLElement) || el.closest('[hidden]')) continue
+                const rect = el.getBoundingClientRect()
+                if (rect.width > 0 && rect.right > document.documentElement.clientWidth + 1) {
+                  schuld = `${el.tagName} ${el.className.toString().slice(0, 140)}`
+                  break
+                }
+              }
+            }
+            let weit = ''
+            let weitDelta = 0
+            for (const el of document.querySelectorAll('body *')) {
+              if (!(el instanceof HTMLElement) || el.closest('[hidden]')) continue
+              const ueber = el.scrollWidth - document.documentElement.clientWidth
+              if (ueber <= 1) continue
+              const kindUeber = [...el.children].some((kind) => kind instanceof HTMLElement && kind.scrollWidth - document.documentElement.clientWidth > 1)
+              if (kindUeber) continue
+              if (ueber > weitDelta) {
+                weitDelta = ueber
+                weit = `${el.tagName} ${el.getAttribute('aria-label') ?? ''} ${el.className.toString().slice(0, 140)}`
+              }
+            }
+            return { delta, schuld, weit, weitDelta }
+          })
+          assert.ok(tagMessung.delta <= 1, `tag ${breite}/${schrift} +${tagMessung.delta} ${tagMessung.schuld} | ${tagMessung.weit} +${tagMessung.weitDelta}`)
+          await page.locator('[data-plan-punkt="stay-11"] button[aria-expanded]').click()
+          const punktMessung = await page.evaluate(() => {
+            const client = document.documentElement.clientWidth
+            const delta = document.documentElement.scrollWidth - client
+            let weit = ''
+            let weitDelta = 0
+            for (const el of document.querySelectorAll('body *')) {
+              if (!(el instanceof HTMLElement) || el.closest('[hidden]')) continue
+              const rect = el.getBoundingClientRect()
+              const ueber = Math.max(rect.right, rect.left + el.scrollWidth) - client
+              if (ueber <= 1) continue
+              const kindUeber = [...el.children].some((kind) => {
+                if (!(kind instanceof HTMLElement) || kind.closest('[hidden]')) return false
+                const kindRect = kind.getBoundingClientRect()
+                return Math.max(kindRect.right, kindRect.left + kind.scrollWidth) - client > 1
+              })
+              if (kindUeber) continue
+              if (ueber > weitDelta) {
+                weitDelta = ueber
+                weit = `${el.tagName} ${(el.textContent ?? '').trim().slice(0, 80)} ${el.className.toString().slice(0, 100)}`
+              }
+            }
+            return { delta, weit, weitDelta }
+          })
+          assert.ok(punktMessung.delta <= 1, `punkt ${breite}/${schrift} +${punktMessung.delta} ${punktMessung.weit} +${punktMessung.weitDelta}`)
+        }
+      }
     } finally {
       await page.close()
     }

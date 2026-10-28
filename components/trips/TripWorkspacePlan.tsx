@@ -164,6 +164,7 @@ export default function TripWorkspacePlan({
   hinweis = null,
   kanonischerTagId = null,
   onZurRoute,
+  onRouteZeigenVorbereiten,
   onEditorAktiv,
 }: {
   readinessItems?: readonly ReadinessViewItem[]
@@ -186,6 +187,7 @@ export default function TripWorkspacePlan({
   hinweis?: Hinweis | null
   kanonischerTagId?: string | null
   onZurRoute?: () => void
+  onRouteZeigenVorbereiten?: (ziel: EventTarget | null) => void
   onEditorAktiv?: (aktiv: boolean) => void
 }) {
   const root = React.useRef<HTMLElement>(null)
@@ -247,7 +249,8 @@ export default function TripWorkspacePlan({
   const tagFehlt = hinweis?.art === 'tag-fehlt'
   const defaultId = gemessen && anordnung === 'neben' && !hinweis && !kanonischerTagId ? (reise.days[0]?.id ?? '') : ''
   const bodyId = gemessen ? (tagFehlt ? '' : (kanonischerTagId || defaultId)) : timeline.gewaehlterTagId
-  const tag = gemessen ? (reise.days.find((eintrag) => eintrag.id === bodyId) ?? null) : timeline.gewaehlterTag
+  const tagesansicht = bodyId && bodyId !== aktiverTag ? timelineAbleiten(reise, ohneTag, bodyId) : timeline
+  const tag = bodyId && tagesansicht.gewaehlterTagId === bodyId ? tagesansicht.gewaehlterTag : null
   const highlightId = gemessen ? (kanonischerTagId ?? '') : timeline.gewaehlterTagId
   const laeufe = chronologie.gueltig ? chronologie.laeufe : []
   const folge = planTageFolgen(laeufe)
@@ -262,6 +265,11 @@ export default function TripWorkspacePlan({
     ? chronologie.hinweise.filter((hinweis) => hinweis.sichtbarAufTagId === tag.id)
     : []
 
+  React.useEffect(() => {
+    if (!tag?.id || formularTag === tag.id) return
+    setFormularOffen(false)
+    setBearbeiten(undefined)
+  }, [tag?.id, formularTag])
   React.useLayoutEffect(() => {
     if (gemessen) return
     if (!timeline.gewaehlterTagId) return
@@ -294,8 +302,12 @@ export default function TripWorkspacePlan({
       return onPunktBearbeiten(original, change)
     }
     : undefined
+  const punktLiegtAufTag = (tagId: string, punktId: string) => {
+    const punkt = [...reise.days.flatMap((eintrag) => eintrag.items), ...ohneTag].find((eintrag) => eintrag.id === punktId)
+    return Boolean(punkt) && (punkt?.dayId ?? '') === tagId
+  }
   const entfernen = async (tagId: string, punktId: string) => {
-    if (!tagNochDa(tagId)) {
+    if (!tagNochDa(tagId) || !punktLiegtAufTag(tagId, punktId)) {
       setMeldung('Dieser Tag ist nicht mehr in der Reise.')
       return
     }
@@ -391,7 +403,7 @@ export default function TripWorkspacePlan({
 
   const tagesFelder = tag && (
     <>
-      {formularOffen && !bearbeiten && (
+      {formularOffen && !bearbeiten && formularTag === tag.id && (
         <PlanpunktEditor
           key={`${reise.id}:${tag.id}:new:${leben.editorGeneration}`}
           {...editorProps}
@@ -408,7 +420,7 @@ export default function TripWorkspacePlan({
         </p>
       ) : (
         <div data-plan-tages-timeline className="mt-5 min-w-0 space-y-5">
-          {timeline.tagesplan.map((gruppe) => (
+          {tagesansicht.tagesplan.map((gruppe) => (
             <section
               key={gruppe.id}
               aria-label={gruppe.titel}
@@ -431,7 +443,8 @@ export default function TripWorkspacePlan({
                     gewaehlt={gewaehlterPunktId === punkt.id}
                     onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
                     onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
-                    onEntfernen={() => entfernen(tag.id, punkt.id)}
+                    onEntfernen={() => { if (punkt.dayId === tag.id) entfernen(tag.id, punkt.id) }}
+                    mutationTag={tag.id}
                   />
                 ))}
               </ol>
@@ -459,11 +472,12 @@ export default function TripWorkspacePlan({
     >
       <div
         data-u1b-route
+        onPointerDown={(event) => onRouteZeigenVorbereiten?.(event.target)}
         tabIndex={-1}
         hidden={routeVerborgen}
         inert={routeVerborgen}
         style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn(gemessen && 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
       >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
@@ -576,12 +590,12 @@ export default function TripWorkspacePlan({
                         disabled={!ersterTag || !chronologie.gueltig}
                         onClick={() => ersterTag && chronologie.gueltig && onTagWechseln(ersterTag)}
                         className={cn(
-                          'flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-2xl px-1 text-left text-ink-800 transition disabled:cursor-default disabled:opacity-60',
+                          'flex min-h-11 w-full min-w-0 max-w-full flex-wrap items-center justify-between gap-3 rounded-2xl px-1 text-left text-ink-800 transition disabled:cursor-default disabled:opacity-60',
                           fokusRing,
                         )}
                       >
                         <strong className="min-w-0 hyphens-auto break-words text-sm font-semibold">{etappe.name}</strong>
-                        <span className="shrink-0 text-xs text-ink-700">
+                        <span className="min-w-0 max-w-full text-xs text-ink-700">
                           {etappe.tage.length === 1 ? '1 Tag' : `${etappe.tage.length} Tage`}
                         </span>
                       </button>
@@ -610,6 +624,7 @@ export default function TripWorkspacePlan({
                 onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
                 onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
                 onEntfernen={() => entfernen('', punkt.id)}
+                mutationTag=""
               />
             ))}
           </ol>
@@ -623,7 +638,7 @@ export default function TripWorkspacePlan({
         inert={dayVerborgen}
         data-u1b-default-tag={gemessen && defaultId !== '' && bodyId === defaultId ? 'ja' : undefined}
         style={gemessen && anordnung === 'neben' ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn(gemessen && 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
       >
         {hinweis ? <p data-u1b-hinweis={hinweis.art} className="text-sm leading-6 text-ink-800">{hinweisText(hinweis)}</p> : null}
         {onZurRoute ? (
@@ -635,14 +650,14 @@ export default function TripWorkspacePlan({
           <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
             {navigator ? (
               <div data-plan-navigator="schritt" className="flex min-w-0 flex-col gap-3">
-                <div className="min-w-0 overflow-x-auto">
-                  <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800">{navigator.text}</p>
-                  <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700">
+                <div className="min-w-0 max-w-full">
+                  <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800 [overflow-wrap:anywhere] [white-space:normal]">{navigator.text}</p>
+                  <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700 [overflow-wrap:anywhere] [white-space:normal]">
                     {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
                     {laufDesTags ? ` · ${laufDesTags.name}` : ''}
                   </p>
                 </div>
-                <div className="flex items-center justify-between gap-3 md:justify-center">
+                <div className="flex min-w-0 max-w-full flex-wrap items-center justify-between gap-3 md:justify-center">
                   <button type="button" data-plan-tag-vorher aria-label="Vorheriger Tag" disabled={!navigator.vorherId || leben.loescht} onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)} className={cn('inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40', fokusRing)}>
                     <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                   </button>
@@ -658,7 +673,7 @@ export default function TripWorkspacePlan({
             </div>
           </div>
         ) : null}
-        {tag && !tagFehlt ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={tag.id === timeline.gewaehlterTagId ? timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt)) : tag.items} selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
+        {tag && !tagFehlt ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={tagesansicht.gewaehlterTagId === tag.id ? tagesansicht.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt)) : []} selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
         {tag && !tagFehlt ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} /> : null}
       </div>
     </section>
@@ -712,6 +727,7 @@ function Planpunkt({
   onBearbeiten,
   hinweis,
   onPreparation,
+  mutationTag = '',
 }: {
   hinweis?: ReturnType<typeof vorbereitungenFuerPunkt>[number]
   onPreparation?: (ziel: PreparationZiel) => void
@@ -722,6 +738,7 @@ function Planpunkt({
   onOeffnen?: () => void
   onEntfernen: () => void
   onBearbeiten?: () => void
+  mutationTag?: string
 }) {
   const Symbol = ART_SYMBOL[punkt.kind]
   const inhalt = (
@@ -796,6 +813,7 @@ function Planpunkt({
         <button
           type="button"
           onClick={onEntfernen}
+          data-plan-entfernen={`${mutationTag}:${punkt.id}`}
           disabled={gesperrt}
           aria-label={`${punkt.title} entfernen`}
           className={cn(

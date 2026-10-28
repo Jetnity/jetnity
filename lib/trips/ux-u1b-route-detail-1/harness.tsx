@@ -56,6 +56,7 @@ function SuchProbe() {
 
 function Flaeche() {
   const [reise, setReise] = React.useState(() => u1bReise())
+  React.useEffect(() => { window.__u1b = stand }, [])
   return (
     <div data-u1b-harness="">
       <header className="sticky top-0 z-50 flex h-[72px] items-center border-b border-line-200 bg-white px-3 text-sm font-semibold text-brand-800">Jetnity</header>
@@ -79,7 +80,7 @@ function Flaeche() {
         quelle="guest"
         ohneTag={reise.ohneTag}
         onPunktAnlegen={async (tagId) => { stand.writes.push(tagId); return null }}
-        onPunktEntfernen={async (tagId) => { stand.writes.push(tagId); return null }}
+        onPunktEntfernen={async (tagId, punktId) => { stand.writes.push(`${tagId}:${punktId}`); return null }}
         flugsuche={<SuchProbe />}
       />
     </div>

@@ -1,22 +1,17 @@
 # UX V1 U1-B Route and Detail 1 — SELF_REVIEW
 
-28 October 2026. This is the author review. It is not a Technical Lead PASS.
+28 October 2026. Author review of the R1 correction. It is not a Technical Lead PASS.
 
-## Checked
+## Checked against R1
 
-- One history meaning at both widths. `Zur Route` is UI-only for day and item.
-- Re-clicking the current row clears `routeBetont` when the URL does not change.
-- A no-day item opened from a route that still has `tag` and `punkt` records that URL as `elternUrl`.
-- Hard minima: leave below 49.5rem, re-enter at 50.5rem, initial enter at 49.5rem. No `scrollWidth` input.
-- 1440 at root 16 measured route ≥ 20rem, detail ≥ 28rem, gap ≥ 1.5rem. 768 and 1440 at root 32 stayed `schmal`.
-- Provider parent did not move. Mount count stayed 1.
-- Tab change to Übersicht updates the URL immediately while an editor is open. The plan tree is hidden, not left on screen.
-- Invalid item survives canonical replace, reload, graph bump, and Forward after Back to day 1. A new trip id clears it. A removed day has no `aria-current`. Writes array stayed empty.
-- Focus inside `[hidden]`/`[inert]` is blurred. N12 and U1-A2 suites stayed green without edits.
+- Back from day 11 to the tag-free plan URL shows Tag 1, only `flight-out` among the compared items, and the remove control `day-1:flight-out`. The synthetic callback receives that same pair. Forward shows `transfer-11` and `stay-11` and not `flight-out`.
+- The wide default remains `data-u1b-default-tag` and does not invent a URL selection.
+- Route scroll is captured only while the route can be pointed at. Zur Route restores it within 24px in the mounted 390 case, including after an item and after the same row is opened again. A deleted day focuses the route and leaves `aria-current` empty.
+- The 7 by 2 width matrix includes the route, the selected day, and the selected item. The item fix is inherited `word-break: break-word` on the owned slot, not `overflow-x` clipping and not an edit to `TripWorkspaceDetail`.
+- Prior U1-B navigation, one search mount, N12 chronology, and U1-A2 sticky geometry stayed green on this tree.
 
-## Open for the Technical Lead
+## Still open for the Technical Lead
 
-- True browser zoom 200% was not performed. Root 32px at 1440 CSS px was. CDP page scale was not used as zoom.
-- The desktop day raster and the phone chip both carry `aria-current` for the same day. One is `display: none` below the `md` breakpoint. That preserves the legacy source strings.
-- Standalone Plan stays `stapel-kompatibel`, so the N12 harness still shows the counter and the day list together.
-- Native CI and Preview on this head are not yet a review result.
+- True browser zoom 200% was not performed. Root 32px at the seven CSS widths was.
+- Native App/Auth CI and the exact Preview for the correction head are not a review result until the PR comment records them. The green CI on `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` does not cover this head.
+- `word-break: break-word` is the legacy value that lets a min-content word wrap. It is inherited into the detail and the search slot. It does not change history or provider mounting. The mounted search probe still counted one mount.

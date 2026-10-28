@@ -17,6 +17,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
+import { cn } from '@/lib/utils'
 import { hinweisAktualisieren, hinweisGleich, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
 
 import {
@@ -464,7 +465,8 @@ export default function TripWorkspace({
   const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
   const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
   const [editorAktiv, setEditorAktiv] = React.useState(false)
-  const routeLageRef = React.useRef({ top: 0, windowY: 0 })
+  const routeLageRef = React.useRef({ top: 0, windowY: 0, streifenLeft: 0, erfasst: false })
+  const routeRueckAnkerRef = React.useRef<{ art: 'tag' | 'punkt'; id: string } | null>(null)
   const splitRef = React.useRef<HTMLDivElement>(null)
   const setHinweisBeide = React.useCallback((wert: Hinweis | null) => {
     hinweisRef.current = wert
@@ -528,8 +530,8 @@ export default function TripWorkspace({
       oeffnungsArbeitBeenden()
       const ausloeser = letzterAusloeserRef.current
       rueckkehrFokussiertRef.current = false
-      if (ausloeser?.isConnected && !ausloeser.closest('[hidden], [inert]') && ausloeser.getClientRects().length > 0) {
-        ausloeser.focus()
+        if (ausloeser?.isConnected && !ausloeser.closest('[hidden], [inert]') && ausloeser.getClientRects().length > 0) {
+        ausloeser.focus({ preventScroll: routeBetont })
         rueckkehrFokussiertRef.current = true
       } else {
         const bereich = letzterBereichRef.current
@@ -583,7 +585,7 @@ export default function TripWorkspace({
     return () => {
       oeffnungsArbeitBeenden()
     }
-  }, [detailOffen, kompakt, modus.bereich, modusBereit])
+  }, [detailOffen, kompakt, modus.bereich, modusBereit, routeBetont])
 
   const merkeAusloeser = () => {
     const aktiv = document.activeElement
@@ -637,11 +639,17 @@ export default function TripWorkspace({
     setAuswahl(gapAuswahl(domain, signalId))
   }
 
-  const routeLageMerken = () => {
+  const routeLageMerken = (ziel?: EventTarget | null) => {
     const route = document.querySelector('[data-u1b-route]')
+    const aktiv = ziel instanceof Node ? ziel : document.activeElement
+    if (!(route instanceof HTMLElement) || route.getClientRects().length === 0 || route.closest('[hidden], [inert]')) return
+    if (!(aktiv instanceof Node) || !route.contains(aktiv)) return
+    const streifen = aktiv instanceof Element ? aktiv.closest('[data-plan-tag-streifen]') : null
     routeLageRef.current = {
-      top: route instanceof HTMLElement ? route.scrollTop : 0,
+      top: route.scrollTop,
       windowY: window.scrollY,
+      streifenLeft: streifen instanceof HTMLElement ? streifen.scrollLeft : 0,
+      erfasst: true,
     }
   }
 
@@ -660,25 +668,34 @@ export default function TripWorkspace({
   }
 
   const routeZeigen = () => {
-    const schmal = u1bAnordnung === 'schmal'
     const punkt = bereinigt.art === 'item' ? itemInReise(reise, ungeplantePunkte, bereinigt.itemId) : null
     const anker = punkt
       ? (punkt.dayId && reise.days.some((tag) => tag.id === punkt.dayId) ? { art: 'tag' as const, id: punkt.dayId } : { art: 'punkt' as const, id: punkt.id })
       : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
-    routeLageMerken()
+    routeRueckAnkerRef.current = anker
     setRouteBetont(true)
-    window.requestAnimationFrame(() => {
-      const route = document.querySelector('[data-u1b-route]')
-      if (schmal && route instanceof HTMLElement) route.scrollTop = routeLageRef.current.top
-      if (schmal) window.scrollTo({ top: routeLageRef.current.windowY, behavior: 'instant' })
-      const ziel = routeZiel(anker)
-      if (ziel) ziel.focus({ preventScroll: true })
-    })
   }
+
+  React.useLayoutEffect(() => {
+    if (!routeBetont || u1bAnordnung !== 'schmal' || !routeLageRef.current.erfasst) return
+    const lage = routeLageRef.current
+    const wiederherstellen = () => {
+      const flaeche = document.querySelector('[data-u1b-route]')
+      if (flaeche instanceof HTMLElement) flaeche.scrollTop = lage.top
+      const knopf = routeZiel(routeRueckAnkerRef.current)
+      const streifen = knopf?.closest('[data-plan-tag-streifen]')
+      if (streifen instanceof HTMLElement) streifen.scrollLeft = lage.streifenLeft
+      window.scrollTo({ top: lage.windowY, behavior: 'instant' })
+      return knopf
+    }
+    const ziel = wiederherstellen()
+    if (ziel) ziel.focus({ preventScroll: true })
+    wiederherstellen()
+    window.requestAnimationFrame(() => { wiederherstellen() })
+  }, [routeBetont, u1bAnordnung])
 
   const oeffneItem = (itemId: string) => {
     if (!itemInReise(reise, ungeplantePunkte, itemId)) return
-    routeLageMerken()
     setRouteBetont(false)
     setHinweisBeide(null)
     merkeAusloeser()
@@ -714,7 +731,6 @@ export default function TripWorkspace({
 
   const tagWechseln = (tagId: string) => {
     if (!reise.days.some((tag) => tag.id === tagId)) return
-    routeLageMerken()
     setRouteBetont(false)
     setHinweisBeide(null)
     setAktiverTag(tagId)
@@ -894,6 +910,7 @@ export default function TripWorkspace({
       hinweis={auswahlHinweis}
       kanonischerTagId={modus.ansicht === 'plan' && modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) && auswahlHinweis?.art !== 'tag-fehlt' ? modus.tagId : null}
       onZurRoute={routeZeigen}
+      onRouteZeigenVorbereiten={(ziel) => routeLageMerken(ziel)}
       onEditorAktiv={setEditorAktiv}
     />
   )
@@ -1126,7 +1143,7 @@ export default function TripWorkspace({
 
         <div
           ref={splitRef}
-          className={rasterKlasse}
+          className={cn(rasterKlasse, 'min-w-0 max-w-full')}
           data-workspace-split={anordnung}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
@@ -1218,7 +1235,7 @@ export default function TripWorkspace({
             data-workspace-active-domain={detailOffen ? (aktiveDomain ?? 'offen') : 'aus'}
             data-workspace-anordnung={anordnung}
             hidden={!detailOffen}
-            className="min-w-0"
+            className="min-w-0 max-w-full [overflow-wrap:anywhere] [word-break:break-word]"
             style={planNeben ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
             ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {
@@ -1230,7 +1247,7 @@ export default function TripWorkspace({
             <FlaecheHuelle
               name="detail"
               verborgen={detailVerborgen}
-              sichtbarKlasse="min-w-0 scroll-mt-[calc(72px+3.75rem)]"
+              sichtbarKlasse="min-w-0 max-w-full scroll-mt-[calc(72px+3.75rem)] [overflow-wrap:anywhere] [word-break:break-word]"
             >
               {detailOffen ? (
                 <TripWorkspaceDetail

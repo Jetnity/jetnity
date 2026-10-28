@@ -25,3 +25,13 @@ Session: Jetnity UX V1 Route and Detail 1 — Cursor Generation 1, `bc-767a1802-
 ## Writes
 
 `components/trips/TripWorkspace.tsx`, `components/trips/TripWorkspacePlan.tsx`, the `'Zur Route'` label union in `lib/trips/detail.ts`, `lib/trips/ux-u1b-route-detail-1/**`, `scripts/ux-u1b-route-detail-1/**` only if a script harness is required, and the STATUS/REPORT/SELF_REVIEW/HANDOFF siblings of this file. `lib/trips/workspace-mode.ts` is not edited. The local history writer in `TripWorkspace.tsx` may store the UI notice on the existing `jetnityWorkspace` entry and may `replaceState` the same URL when an explicit selection clears that notice. It does not push on popstate, does not call `history.go`, and does not drop `elternUrl`.
+
+## R1 implementation corrections
+
+Independent R1 on `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` required three presentation corrections. They do not change the history, width, or provider contract above.
+
+1. The wide unlabeled default and a later tag-free history entry use one effective day for the counter, the grouped items, the editor, the delete target, and `TripIntegratedDay`. `timelineAbleiten(reise, ohneTag, aktiverTag)` stays for the source contract. When that tag is not the effective day, a second read-only derivation supplies the body. A missing URL tag does not become an `aria-current` selection.
+
+2. The route scroll snapshot is taken only from a pointer interaction inside a visible route. Opening a day or item, stepping next/previous, and scrolling the detail do not replace it. Zur Route restores that snapshot after focus, with `preventScroll` on the competing detail-close focus.
+
+3. Long item text that sets `overflow-wrap: break-word` still has a min-content size. The owned detail slot inherits `word-break: break-word` so those words wrap inside the viewport. Text is not clipped and `TripWorkspaceDetail` / `TripIntegratedDay` stay unread.
