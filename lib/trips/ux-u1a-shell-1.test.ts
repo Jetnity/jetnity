@@ -7,6 +7,7 @@ import {
   UX_U1A_ROOT_GROSS_PX,
   UX_U1A_SCHMAL_BIS_PX,
   UX_U1A_TASTATUR_AB_PX,
+  UX_U1A_VIER_TABS_AB_PX,
   UX_U1A_ZOOM_AB,
   shellBrowserZoom,
   shellNavLage,
@@ -25,7 +26,8 @@ const normal: ShellMessung = {
 test('320px, grosse Wurzelschrift, Browserzoom und Tastatur fallen getrennt in den Fluss', () => {
   assert.equal(shellNavLage({ ...normal, viewportBreite: 280, detailOffen: false }), 'flow')
   assert.equal(shellNavLage({ ...normal, viewportBreite: UX_U1A_SCHMAL_BIS_PX, detailOffen: false }), 'flow')
-  assert.equal(shellNavLage({ ...normal, viewportBreite: UX_U1A_SCHMAL_BIS_PX + 1, detailOffen: false }), 'bottom')
+  assert.equal(shellNavLage({ ...normal, viewportBreite: UX_U1A_SCHMAL_BIS_PX + 1, detailOffen: false }), 'flow')
+  assert.equal(shellNavLage({ ...normal, viewportBreite: UX_U1A_VIER_TABS_AB_PX - 1, detailOffen: false }), 'flow')
   assert.equal(shellNavLage({ ...normal, viewportBreite: 390, rootSchriftPx: UX_U1A_ROOT_GROSS_PX, detailOffen: false }), 'flow')
   assert.equal(shellNavLage({ ...normal, viewportBreite: UX_U1A_PHONE_BIS_PX, rootSchriftPx: UX_U1A_ROOT_GROSS_PX, detailOffen: false }), 'flow')
   assert.equal(shellNavLage({ ...normal, viewportBreite: 1440, rootSchriftPx: UX_U1A_ROOT_GROSS_PX - 0.1, detailOffen: false }), 'sticky')
