@@ -1,0 +1,313 @@
+{
+  "sha": "bcd4cb9d",
+  "basis": "http://127.0.0.1:3462",
+  "laeufe": [
+    {
+      "name": "280",
+      "erwartet": "flow",
+      "stand": {
+        "lage": "flow",
+        "position": "relative",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 4,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "320",
+      "erwartet": "flow",
+      "stand": {
+        "lage": "flow",
+        "position": "relative",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 4,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "360",
+      "erwartet": "bottom",
+      "stand": {
+        "lage": "bottom",
+        "position": "fixed",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 1,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "390",
+      "erwartet": "bottom",
+      "stand": {
+        "lage": "bottom",
+        "position": "fixed",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 1,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "430",
+      "erwartet": "bottom",
+      "stand": {
+        "lage": "bottom",
+        "position": "fixed",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 1,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "768",
+      "erwartet": "sticky",
+      "stand": {
+        "lage": "sticky",
+        "position": "sticky",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 1,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "1440",
+      "erwartet": "sticky",
+      "stand": {
+        "lage": "sticky",
+        "position": "sticky",
+        "save": "device",
+        "ueberlauf": 0,
+        "titelGleich": true,
+        "bangkok": 2,
+        "knopfTexte": [
+          "Übersicht",
+          "Reiseplan",
+          "Organisieren",
+          "Vorbereitung"
+        ],
+        "kleineZiele": [],
+        "zeilen": 1,
+        "titelSchneidetNav": false,
+        "suchfelder": 0,
+        "factsOffen": false,
+        "prozent": false,
+        "leerstand": null,
+        "stufen": [
+          "stage-bkk-1",
+          "stage-ko-chang",
+          "stage-hkt",
+          "stage-bkk-2"
+        ]
+      }
+    },
+    {
+      "name": "390-root32",
+      "erwartet": "flow",
+      "stand": {
+        "lage": "flow",
+        "position": "relative",
+        "rootPx": 32,
+        "ueberlauf": 0,
+        "zeilen": 4
+      }
+    },
+    {
+      "name": "768-root32",
+      "erwartet": "flow",
+      "stand": {
+        "lage": "flow",
+        "position": "relative",
+        "rootPx": 32,
+        "ueberlauf": 0,
+        "zeilen": 2
+      }
+    }
+  ],
+  "netz": [],
+  "fehler": [],
+  "netzNachModus": 0,
+  "fokus": {
+    "ok": true,
+    "schnitt": false,
+    "sichtbar": true,
+    "hoehe": 98,
+    "lage": "bottom",
+    "position": "fixed"
+  },
+  "tastatur": {
+    "versuch": {
+      "ersetzt": true,
+      "scale": 1
+    },
+    "lage": "flow",
+    "position": "relative"
+  },
+  "zoom": {
+    "lage": "flow",
+    "position": "relative",
+    "scale": 2,
+    "innerWidth": 780,
+    "visualWidth": 390,
+    "ueberlauf": 0,
+    "rootPx": 16,
+    "titel": {
+      "text": "Thailand Rundreise mit einem bewusst sehr langen gespeicherten Titel der nicht aus den Etappen erfunden wird und auch bei schmaler Breite vollständig lesbar bleiben muss ohne abgeschnitten zu werden",
+      "breite": 310,
+      "sichtbarRechts": true
+    }
+  },
+  "aufmerksamkeit": {
+    "leerstand": null,
+    "text": "JETZT WICHTIG Was jetzt Aufmerksamkeit braucht DIESE REISE Flugstrecke noch offen Im Plan offen DIESE REISE Unterkunftsnächte fehlen noch Im Plan offen REISENDE PERSON Offizielle Prüfung noch nicht möglich Angaben fehlen 2 weitere Hinweisgruppen anzeigen",
+    "stufen": [
+      {
+        "id": "stage-bkk-1",
+        "land": "TH",
+        "einreise": "keine_evidence",
+        "sicherheit": "keine_evidence",
+        "saison": "keine_evidence"
+      },
+      {
+        "id": "stage-ko-chang",
+        "land": "TH",
+        "einreise": "keine_evidence",
+        "sicherheit": "keine_evidence",
+        "saison": "keine_evidence"
+      },
+      {
+        "id": "stage-hkt",
+        "land": "TH",
+        "einreise": "keine_evidence",
+        "sicherheit": "keine_evidence",
+        "saison": "keine_evidence"
+      },
+      {
+        "id": "stage-bkk-2",
+        "land": "TH",
+        "einreise": "keine_evidence",
+        "sicherheit": "keine_evidence",
+        "saison": "keine_evidence"
+      }
+    ],
+    "ladeGesehen": false
+  }
+}
