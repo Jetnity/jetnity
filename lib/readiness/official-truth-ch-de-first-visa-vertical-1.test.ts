@@ -18,6 +18,7 @@ import { requirementsProviderAus, type RequirementsProvider } from './provider'
 import { requirementsProviderNachZustand } from './zustand'
 import { officialChecklist } from './official-presentation'
 import { destinationEssentialsAbleiten } from '@/lib/trips/destination-essentials'
+import * as leereEinreise from '@/lib/trips/ux-u3b-country-empty-1/leere-einreise'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { itineraryDirekt, itineraryEinTransit } from '@/lib/route/fixtures'
 import { OFFICIAL_REQUIREMENT_TYPES, type Trip, type TripTraveller } from '@/types/trips'
@@ -71,17 +72,49 @@ function assertUnknown(rows: OfficialEvaluation[]) {
   }
 }
 
+const DESTINATION_RENDER_ALLOW = {
+  'react/jsx-runtime': () => createRequire(import.meta.url)('react/jsx-runtime'),
+  '@/lib/trips/ux-u3b-country-empty-1/leere-einreise': () => leereEinreise,
+} as const
+
+function destinationRenderModul(name: string) {
+  assert.ok(Object.hasOwn(DESTINATION_RENDER_ALLOW, name), name)
+  return DESTINATION_RENDER_ALLOW[name as keyof typeof DESTINATION_RENDER_ALLOW]()
+}
+
 function renderDestination(t: Trip, rows: OfficialEvaluation[]) {
   const file = resolve('components/trips/TripWorkspaceDestinationEssentials.tsx')
   const code = ts.transpileModule(readFileSync(file, 'utf8'), { fileName: file,
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText
-  const require = createRequire(import.meta.url)
   const loaded = { exports: {} as { default: React.ComponentType<{ essentials: ReturnType<typeof destinationEssentialsAbleiten> }> } }
-  new Function('require', 'module', 'exports', code)((name: string) => {
-    assert.equal(name, 'react/jsx-runtime'); return require(name)
-  }, loaded, loaded.exports)
+  new Function('require', 'module', 'exports', code)((name: string) => destinationRenderModul(name), loaded, loaded.exports)
   return renderToStaticMarkup(React.createElement(loaded.exports.default, { essentials: destinationEssentialsAbleiten({ reise: t, officialEvaluations: rows }) }))
 }
+
+test('destination essentials render allowlist executes only jsx-runtime and the pure empty-entry helper', () => {
+  assert.deepEqual(Object.keys(DESTINATION_RENDER_ALLOW), [
+    'react/jsx-runtime',
+    '@/lib/trips/ux-u3b-country-empty-1/leere-einreise',
+  ])
+  assert.equal(typeof destinationRenderModul('react/jsx-runtime'), 'object')
+  const helperModul = destinationRenderModul('@/lib/trips/ux-u3b-country-empty-1/leere-einreise') as typeof leereEinreise
+  assert.equal(helperModul.u3bAnzeigeGruppen, leereEinreise.u3bAnzeigeGruppen)
+  assert.equal(helperModul.generischeLeereEinreiseSignatur, leereEinreise.generischeLeereEinreiseSignatur)
+  for (const name of [
+    'react',
+    'react-dom',
+    'react-dom/server',
+    'fs',
+    'node:fs',
+    '@/lib/trips/destination-essentials',
+    '@/lib/country/katalog',
+    '@/lib/readiness/engine',
+    '@/lib/trips/ux-u3b-country-empty-1/leere-einreise.ts',
+    ' @/lib/trips/ux-u3b-country-empty-1/leere-einreise',
+  ]) {
+    assert.throws(() => destinationRenderModul(name), { message: name })
+  }
+})
 
 test('explicit one-cell research uses canonical scope/request/candidate without a legal fact', () => {
   const input = immutable(selection()), result = chDeVisaResearch(input)
