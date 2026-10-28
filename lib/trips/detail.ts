@@ -37,7 +37,7 @@ export type WorkspaceDetailAuswahl =
 
 /** Ein expliziter Parent-Vertrag für beide Detail-Rückkehrflächen. */
 export type WorkspaceRueckkehr = {
-  label: 'Zum Tagesplan' | 'Zur Übersicht' | 'Zur Organisation' | 'Zur Vorbereitung'
+  label: 'Zum Tagesplan' | 'Zur Route' | 'Zur Übersicht' | 'Zur Organisation' | 'Zur Vorbereitung'
   ausfuehren: () => void
 }
 
