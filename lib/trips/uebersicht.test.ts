@@ -4,12 +4,14 @@
 // Citizenship-Annahme oder das Hochstufen teilweiser Coverage zu „belegt“
 // wäre ein Produktdefekt.
 
+import { readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { itineraryDirekt } from '@/lib/route/fixtures'
 
 import { reiseGruppe } from '@/lib/account/reise-lage'
 import {
+  mehrereReisendeLage,
   uebersichtAbleiten,
   uebersichtLage,
   uebersichtPersonen,
@@ -158,64 +160,93 @@ describe('AP-3-Date-only', () => {
   })
 })
 
+function ohnePersonen(anzahl: number) {
+  return Array.from({ length: anzahl }, (_, index) =>
+    reisender({
+      id: `t${index + 1}`,
+      clientRef: `traveller:${index + 1}`,
+      label: index === 0 ? 'Alex' : 'Sam',
+      citizenships: [
+        {
+          id: `c${index + 1}`,
+          clientRef: `cit:${index + 1}`,
+          countryCode: index === 0 ? 'CH' : 'DE',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+    }),
+  )
+}
+
+function ohnePersonenleak(text: string) {
+  assert.equal(text.includes('CH'), false)
+  assert.equal(text.includes('DE'), false)
+  assert.equal(text.includes('IT'), false)
+  assert.equal(text.includes('Alex'), false)
+  assert.equal(text.includes('Sam'), false)
+}
+
 describe('Personenkontext', () => {
   test('ohne party bleibt nur die Anzahl ohne Angaben', () => {
     const person = uebersichtPersonen(reise({ travellers: 2, party: [] }))
     assert.equal(person.quelle, 'travellers')
     assert.equal(person.anzahl, 2)
     assert.equal(person.text, '2 Reisende · Angaben noch offen')
+    assert.equal(mehrereReisendeLage(reise({ travellers: 2, party: [] })), 'hinweis')
   })
 
-  test('party zählt Reisende und liest keine Citizenship', () => {
-    const person = uebersichtPersonen(
-      reise({
-        travellers: 1,
-        party: [
-          reisender({
-            id: 't1',
-            clientRef: 'traveller:1',
-            label: 'Alex',
-            citizenships: [
-              {
-                id: 'c1',
-                clientRef: 'cit:1',
-                countryCode: 'CH',
-                createdAt: JETZT,
-                updatedAt: JETZT,
-              },
-              {
-                id: 'c2',
-                clientRef: 'cit:2',
-                countryCode: 'IT',
-                createdAt: JETZT,
-                updatedAt: JETZT,
-              },
-            ],
-          }),
-          reisender({
-            id: 't2',
-            clientRef: 'traveller:2',
-            label: 'Sam',
-            citizenships: [
-              {
-                id: 'c3',
-                clientRef: 'cit:3',
-                countryCode: 'DE',
-                createdAt: JETZT,
-                updatedAt: JETZT,
-              },
-            ],
-          }),
-        ],
-      }),
-    )
-    assert.equal(person.quelle, 'party')
+  test('eine fehlende party bleibt die gespeicherte Kopfzahl', () => {
+    const person = uebersichtPersonen(reise({ travellers: 2 }))
+    assert.equal(person.anzahl, 2)
+    assert.equal(person.text, '2 Reisende · Angaben noch offen')
+  })
+
+  test('ein teilweise gespeichertes Profil lässt die Gruppe bei 2', () => {
+    const person = uebersichtPersonen(reise({ travellers: 2, party: ohnePersonen(1) }))
+    assert.equal(person.quelle, 'travellers')
+    assert.equal(person.anzahl, 2)
+    assert.equal(person.text, '2 Reisende · 1 von 2 Profilen vorhanden')
+    assert.equal(person.text.includes('1 Reisende Person'), false)
+    ohnePersonenleak(person.text)
+    assert.equal(mehrereReisendeLage(reise({ travellers: 2, party: ohnePersonen(1) })), 'hinweis')
+  })
+
+  test('vollständige Profilliste übernimmt die Kopfzahl und liest keine Citizenship', () => {
+    const person = uebersichtPersonen(reise({ travellers: 2, party: ohnePersonen(2) }))
+    assert.equal(person.quelle, 'travellers')
     assert.equal(person.anzahl, 2)
     assert.equal(person.text, '2 Reisende')
-    assert.equal(person.text.includes('CH'), false)
-    assert.equal(person.text.includes('IT'), false)
-    assert.equal(person.text.includes('DE'), false)
-    assert.equal(person.text.includes('Alex'), false)
+    ohnePersonenleak(person.text)
+    assert.equal(mehrereReisendeLage(reise({ travellers: 2, party: ohnePersonen(2) })), 'hinweis')
+  })
+
+  test('eine Person mit einem Profil bleibt eine Person', () => {
+    const person = uebersichtPersonen(reise({ travellers: 1, party: ohnePersonen(1) }))
+    assert.equal(person.anzahl, 1)
+    assert.equal(person.text, '1 Reisende Person')
+    ohnePersonenleak(person.text)
+    assert.equal(mehrereReisendeLage(reise({ travellers: 1, party: ohnePersonen(1) })), 'keiner')
+    assert.equal(mehrereReisendeLage(reise({ travellers: 1, party: [] })), 'keiner')
+  })
+
+  test('widersprüchliche Profile behaupten keine Anzahl', () => {
+    const person = uebersichtPersonen(reise({ travellers: 1, party: ohnePersonen(2) }))
+    assert.equal(person.quelle, 'unbestimmt')
+    assert.equal(person.anzahl, null)
+    assert.equal(person.text, 'Anzahl der Reisenden und erfasste Profile stimmen nicht überein.')
+    assert.equal(person.text.includes('1 Reisende Person'), false)
+    assert.equal(person.text.includes('2 Reisende'), false)
+    ohnePersonenleak(person.text)
+    assert.equal(mehrereReisendeLage(reise({ travellers: 1, party: ohnePersonen(2) })), 'widerspruch')
+    assert.equal(mehrereReisendeLage(reise({ travellers: 2, party: ohnePersonen(3) })), 'widerspruch')
+    assert.equal(uebersichtPersonen(reise({ travellers: 0, party: [] })).quelle, 'unbestimmt')
+  })
+
+  test('der Mehrpersonenhinweis hängt an der Kopfzahl, nicht am Nationalitäten-Flag', () => {
+    const quelle = readFileSync('components/trips/Reisevorbereitung.tsx', 'utf8')
+    assert.match(quelle, /mehrereReisendeLage\(reise\)/)
+    assert.equal(quelle.includes('individualClaimsForbidden'), false)
   })
 })
 

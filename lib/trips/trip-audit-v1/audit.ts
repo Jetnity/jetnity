@@ -2,6 +2,7 @@ import { ungeplantePunkteLesen } from '@/lib/trips/arbeitsbereich'
 import { unterkunftAbdeckung, type UnterkunftLuecke } from '@/lib/trips/naechte-abdeckung'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
 import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
+import { f05AdjustFlightKnownGap, type F05FlightGapAdjustment } from './f05-ground-flight'
 import { tripZeitpruefung, type Zeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { AUDIT_LIMITS, boundedSnapshot, lodgingBudget, snapshotProblem } from './limits'
 import type { Trip, TripItem } from '@/types/trips'
@@ -165,18 +166,40 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       refs: { itemIds: [stay.item.id], ...(stay.item.stageId ? { stageId: stay.item.stageId } : {}) },
       evidence: { status: stay.status, reasons: ['incomplete_stay'] },
     })
-    if (safeGaps) for (const gap of result.luecken) add({
-      id: id('lodging', [gap.stageId, gap.start, gap.end]), domain: 'lodging', state: 'known_gap',
-      title: 'Geplante Unterkunftsnacht fehlt',
-      detail: `${gap.stageName ?? 'Reise'}: ${gap.start} bis ${gap.end} · ${gap.naechte} Nächte ohne zugeordnete Unterkunft im Plan.`,
-      source: 'unterkunftAbdeckung', refs: gap.stageId ? { stageId: gap.stageId } : {}, evidence: { ...gap },
-    })
+    const uebergang = (gap: UnterkunftLuecke) => result.bekannt && gap.stageId == null && view.stages.length > 0
+    const uebergangsNaechte = result.luecken.filter(uebergang).reduce((summe, gap) => summe + gap.naechte, 0)
+    const zuordnungUnbekannt = view.stages.length > 1 && !result.bekannt
+    const aussenHinweis = result.ausserhalb.length === 0
+      ? ''
+      : ` ${result.ausserhalb.length} ${result.ausserhalb.length === 1 ? 'Etappenintervall liegt' : 'Etappenintervalle liegen'} ausserhalb der Reise und ${result.ausserhalb.length === 1 ? 'zählt' : 'zählen'} nicht als zusätzliche Reisenächte.`
+    if (safeGaps) for (const gap of result.luecken) {
+      if (uebergang(gap)) {
+        add({
+          id: id('lodging', ['transition', gap.start, gap.end]), domain: 'lodging', state: 'unknown',
+          title: 'Übergangsnacht ohne Unterkunftszuordnung',
+          detail: `${gap.start} bis ${gap.end} · ${gap.naechte} ${gap.naechte === 1 ? 'Übernachtungsintervall' : 'Übernachtungsintervalle'} ausserhalb der Etappen. Das ist keine festgestellte Hotelpflicht und keine Buchung.`,
+          source: 'unterkunftAbdeckung', refs: {}, evidence: { ...gap },
+        })
+        continue
+      }
+      add({
+        id: id('lodging', [gap.stageId, gap.start, gap.end]), domain: 'lodging', state: 'known_gap',
+        title: 'Geplante Unterkunftsnacht fehlt',
+        detail: `${gap.stageName ?? 'Reise'}: ${gap.start} bis ${gap.end} · ${gap.naechte} Nächte ohne zugeordnete Unterkunft im Plan.`,
+        source: 'unterkunftAbdeckung', refs: gap.stageId ? { stageId: gap.stageId } : {}, evidence: { ...gap },
+      })
+    }
+    const lodgingComplete = safeGaps && uebergangsNaechte === 0 && !zuordnungUnbekannt
     return {
-      coverage: safeGaps ? 'complete' : result.bekannt ? 'partial' : 'unavailable',
-      detail: safeGaps
-        ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.`
-        : 'Unterkunftsstand teilweise oder unbekannt. Fehlende Zeiträume oder Zuordnungen erlauben keine vollständige Nachtbilanz.',
-      reasons: safeGaps ? [] : ['incomplete_lodging'],
+      coverage: lodgingComplete ? 'complete' : result.bekannt || zuordnungUnbekannt ? 'partial' : 'unavailable',
+      detail: lodgingComplete
+        ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
+        : safeGaps && uebergangsNaechte > 0
+          ? `${result.naechteGesamt} Übernachtungsintervalle im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
+          : zuordnungUnbekannt && result.kalenderNaechte !== null
+            ? `${result.kalenderNaechte} Übernachtungsintervalle im Reisekalender sind bekannt. Welche Etappe sie besitzt, ist unbekannt. Es wird keine Hotelpflicht angenommen.`
+            : 'Unterkunftsstand teilweise oder unbekannt. Fehlende Zeiträume oder Zuordnungen erlauben keine vollständige Nachtbilanz.',
+      reasons: lodgingComplete ? [] : ['incomplete_lodging'],
     }
   })
 
@@ -198,32 +221,61 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
   })
 
   function connections(domain: 'flights' | 'mobility', source: Source, determinable: boolean,
-    connections: readonly (FlugAbschnitt | Bewegungskante)[], unassigned: readonly TripItem[]): Omit<AuditSection, 'domain' | 'source'> {
+    connections: readonly (FlugAbschnitt | Bewegungskante)[], unassigned: readonly TripItem[],
+    adjustFlightGap?: (segment: FlugAbschnitt) => F05FlightGapAdjustment): Omit<AuditSection, 'domain' | 'source'> {
     let unknown = !determinable || unassigned.length > 0
     let selected = 0
     let booked = 0
+    let groundCount = 0
     for (const connection of [...connections].sort((a, b) => compare(a.id, b.id))) {
-      const state = connectionFindingState(connection.status, determinable && unassigned.length === 0, connection.date)
+      const raw = connectionFindingState(connection.status, determinable && unassigned.length === 0, connection.date)
+      const adjustment: F05FlightGapAdjustment = raw === 'known_gap' && domain === 'flights' && adjustFlightGap
+        ? adjustFlightGap(connection as FlugAbschnitt)
+        : { kind: 'keep' }
+      const state = adjustment.kind === 'keep' ? raw : 'unknown'
       selected += Number(connection.status === 'selected')
       booked += Number(connection.status === 'booked')
       if (!state) continue
       if (state === 'unknown') unknown = true
+      const place = `${connection.originName} → ${connection.destinationName} · ${connection.date ?? 'Datum unbekannt'}`
+      if (adjustment.kind === 'ground') {
+        groundCount += 1
+        add({ id: id(domain, connection.id), domain, state, source,
+          title: 'Bodenverbindung geplant, Flugbedarf nicht belegt',
+          detail: `${place}. Im Plan ist eine Bodenverbindung für diesen Abschnitt gespeichert. Ob ein Flug nötig ist, ist nicht belegt. ${adjustment.userMarkedBooked ? 'Die Bodenverbindung ist von dir als gebucht markiert. ' : 'Die Bodenverbindung ist ausgewählt, nicht als gebucht markiert. '}Das ist keine Anbieterbestätigung.`,
+          refs: { sectionId: connection.id, itemIds: [adjustment.itemId] },
+          evidence: { status: 'open', date: connection.date, reasons: [adjustment.userMarkedBooked ? 'ground_user_marked_booked' : 'ground_selected', 'flight_necessity_unknown'] } })
+        continue
+      }
       add({ id: id(domain, connection.id), domain, state, source,
         title: state === 'unknown' ? 'Verbindung nicht vollständig bewertbar'
           : domain === 'flights' ? 'Kein Flug für diesen Abschnitt im Plan' : 'Keine Verbindung für diesen Abschnitt im Plan',
-        detail: `${connection.originName} → ${connection.destinationName} · ${connection.date ?? 'Datum unbekannt'}. Dies ist keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.`,
-        refs: { sectionId: connection.id }, evidence: { status: connection.status, date: connection.date } })
+        detail: `${place}. Dies ist keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.`,
+        refs: { sectionId: connection.id },
+        evidence: adjustment.kind === 'withhold'
+          ? { status: connection.status, date: connection.date, reasons: ['flight_obligation_not_established'] }
+          : { status: connection.status, date: connection.date } })
     }
     if (unassigned.length) add({ id: id(domain, 'unassigned'), domain, state: 'unknown', source,
       title: 'Planpunkte nicht eindeutig zugeordnet', detail: `${unassigned.length} gespeicherte Planpunkte lassen sich keinem Abschnitt eindeutig zuordnen.`,
       refs: { itemIds: unassigned.map(item => item.id).sort(compare) }, evidence: { status: 'unassigned' } })
+    const groundSentence = groundCount > 0
+      ? `${groundCount} ${groundCount === 1 ? 'Abschnitt hat eine gespeicherte Bodenverbindung' : 'Abschnitte haben eine gespeicherte Bodenverbindung'}; ein Flugbedarf ist daraus nicht belegt. `
+      : ''
     return { coverage: !determinable ? 'unavailable' : unknown ? 'partial' : 'complete',
-      detail: `${selected} Abschnitte ausgewählt; ${booked} von dir als gebucht markiert. ${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}Keine externe Bestätigung geprüft.`,
+      detail: `${selected} Abschnitte ausgewählt; ${booked} von dir als gebucht markiert. ${groundSentence}${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}Keine externe Bestätigung geprüft.`,
       reasons: unknown ? ['incomplete_connections'] : [] }
   }
   section('flights', 'flugAbdeckung', () => {
     const result = flugAbdeckung(view, view.ohneTag)
-    return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet)
+    let readMobility: ReturnType<typeof mobilitaetsAbdeckung> | null = null
+    try { readMobility = mobilitaetsAbdeckung(view, view.ohneTag) } catch { readMobility = null }
+    const mobility = readMobility
+    if (!mobility) {
+      return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet)
+    }
+    return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet,
+      (segment) => f05AdjustFlightKnownGap(segment, result, mobility))
   })
   section('mobility', 'mobilitaetsAbdeckung', () => {
     const result = mobilitaetsAbdeckung(view, view.ohneTag)

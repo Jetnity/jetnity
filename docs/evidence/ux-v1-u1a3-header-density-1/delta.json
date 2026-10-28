@@ -1,0 +1,440 @@
+{
+  "beforeSha": "5b1b65e8db247de17466f8f02eb466222de08310",
+  "afterMeasuredAgainst": "working tree before commit",
+  "harness": "PublicNavbar über das öffentliche Layout. Gasttext entspricht GastArbeitsbereich, als Ersatz des kürzeren Audit-Hinweises. Entwurf verwerfen / Reise löschen steht als Geschwister unter der Identitätskarte, weil der Audit-Client kopfzeile nicht übergibt. Slot-Padding der Komponente ist darin nicht enthalten.",
+  "browser": "google-chrome-headless",
+  "zeilen": [
+    {
+      "name": "280-gast",
+      "before": {
+        "headingY": 918,
+        "attentionY": 1018,
+        "attentionPunktY": 1139,
+        "aendernY": 793
+      },
+      "after": {
+        "headingY": 848,
+        "attentionY": 928,
+        "attentionPunktY": 1050,
+        "aendernY": 760,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 70,
+        "attention": 90,
+        "punkt": 89,
+        "aendern": 33
+      }
+    },
+    {
+      "name": "280-gast-lang",
+      "before": {
+        "headingY": 1248,
+        "attentionY": 1348,
+        "attentionPunktY": 1469,
+        "aendernY": 1123
+      },
+      "after": {
+        "headingY": 1073,
+        "attentionY": 1153,
+        "attentionPunktY": 1275,
+        "aendernY": 985,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 175,
+        "attention": 195,
+        "punkt": 194,
+        "aendern": 138
+      }
+    },
+    {
+      "name": "320-gast",
+      "before": {
+        "headingY": 877,
+        "attentionY": 977,
+        "attentionPunktY": 1099,
+        "aendernY": 753
+      },
+      "after": {
+        "headingY": 810,
+        "attentionY": 870,
+        "attentionPunktY": 991,
+        "aendernY": 722,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 67,
+        "attention": 107,
+        "punkt": 108,
+        "aendern": 31
+      }
+    },
+    {
+      "name": "320-gast-root32",
+      "before": {
+        "headingY": 3892,
+        "attentionY": 4252,
+        "attentionPunktY": 4590,
+        "aendernY": 3580
+      },
+      "after": {
+        "headingY": 3354,
+        "attentionY": 3666,
+        "attentionPunktY": 4003,
+        "aendernY": 3114,
+        "dichte": "gestapelt",
+        "aendernHoehe": 88,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 538,
+        "attention": 586,
+        "punkt": 587,
+        "aendern": 466
+      }
+    },
+    {
+      "name": "360-gast",
+      "before": {
+        "headingY": 639,
+        "attentionY": 739,
+        "attentionPunktY": 833,
+        "aendernY": 515
+      },
+      "after": {
+        "headingY": 572,
+        "attentionY": 632,
+        "attentionPunktY": 725,
+        "aendernY": 484,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 67,
+        "attention": 107,
+        "punkt": 108,
+        "aendern": 31
+      }
+    },
+    {
+      "name": "390-gast",
+      "before": {
+        "headingY": 639,
+        "attentionY": 739,
+        "attentionPunktY": 833,
+        "aendernY": 515
+      },
+      "after": {
+        "headingY": 572,
+        "attentionY": 632,
+        "attentionPunktY": 725,
+        "aendernY": 484,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 67,
+        "attention": 107,
+        "punkt": 108,
+        "aendern": 31
+      }
+    },
+    {
+      "name": "390-gast-lang",
+      "before": {
+        "headingY": 849,
+        "attentionY": 949,
+        "attentionPunktY": 1043,
+        "aendernY": 725
+      },
+      "after": {
+        "headingY": 722,
+        "attentionY": 782,
+        "attentionPunktY": 875,
+        "aendernY": 634,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 127,
+        "attention": 167,
+        "punkt": 168,
+        "aendern": 91
+      }
+    },
+    {
+      "name": "390-konto",
+      "before": {
+        "headingY": 529,
+        "attentionY": 629,
+        "attentionPunktY": 723,
+        "aendernY": 405
+      },
+      "after": {
+        "headingY": 462,
+        "attentionY": 522,
+        "attentionPunktY": 615,
+        "aendernY": 374,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 67,
+        "attention": 107,
+        "punkt": 108,
+        "aendern": 31
+      }
+    },
+    {
+      "name": "390-gast-root32",
+      "before": {
+        "headingY": 3307,
+        "attentionY": 3563,
+        "attentionPunktY": 3845,
+        "aendernY": 3035
+      },
+      "after": {
+        "headingY": 2767,
+        "attentionY": 2983,
+        "attentionPunktY": 3264,
+        "aendernY": 2559,
+        "dichte": "gestapelt",
+        "aendernHoehe": 88,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 540,
+        "attention": 580,
+        "punkt": 581,
+        "aendern": 476
+      }
+    },
+    {
+      "name": "430-gast",
+      "before": {
+        "headingY": 599,
+        "attentionY": 699,
+        "attentionPunktY": 793,
+        "aendernY": 475
+      },
+      "after": {
+        "headingY": 532,
+        "attentionY": 592,
+        "attentionPunktY": 685,
+        "aendernY": 444,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 67,
+        "attention": 107,
+        "punkt": 108,
+        "aendern": 31
+      }
+    },
+    {
+      "name": "768-gast",
+      "before": {
+        "headingY": 645,
+        "attentionY": 745,
+        "attentionPunktY": 839,
+        "aendernY": 541
+      },
+      "after": {
+        "headingY": 593,
+        "attentionY": 653,
+        "attentionPunktY": 746,
+        "aendernY": 521,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 52,
+        "attention": 92,
+        "punkt": 93,
+        "aendern": 20
+      }
+    },
+    {
+      "name": "768-gast-lang",
+      "before": {
+        "headingY": 735,
+        "attentionY": 835,
+        "attentionPunktY": 929,
+        "aendernY": 631
+      },
+      "after": {
+        "headingY": 689,
+        "attentionY": 749,
+        "attentionPunktY": 842,
+        "aendernY": 617,
+        "dichte": "gestapelt",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 46,
+        "attention": 86,
+        "punkt": 87,
+        "aendern": 14
+      }
+    },
+    {
+      "name": "1440-gast",
+      "before": {
+        "headingY": 645,
+        "attentionY": 745,
+        "attentionPunktY": 758,
+        "aendernY": 540
+      },
+      "after": {
+        "headingY": 529,
+        "attentionY": 589,
+        "attentionPunktY": 602,
+        "aendernY": 477,
+        "dichte": "zeile",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 116,
+        "attention": 156,
+        "punkt": 156,
+        "aendern": 63
+      }
+    },
+    {
+      "name": "1440-gast-lang",
+      "before": {
+        "headingY": 720,
+        "attentionY": 820,
+        "attentionPunktY": 833,
+        "aendernY": 615
+      },
+      "after": {
+        "headingY": 593,
+        "attentionY": 653,
+        "attentionPunktY": 666,
+        "aendernY": 541,
+        "dichte": "zeile",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 127,
+        "attention": 167,
+        "punkt": 167,
+        "aendern": 74
+      }
+    },
+    {
+      "name": "1440-konto",
+      "before": {
+        "headingY": 595,
+        "attentionY": 695,
+        "attentionPunktY": 708,
+        "aendernY": 490
+      },
+      "after": {
+        "headingY": 479,
+        "attentionY": 539,
+        "attentionPunktY": 552,
+        "aendernY": 427,
+        "dichte": "zeile",
+        "aendernHoehe": 44,
+        "ueberlauf": 0,
+        "headingImFeld": true,
+        "attentionImFeld": true,
+        "punktImFeld": true
+      },
+      "savedPx": {
+        "heading": 116,
+        "attention": 156,
+        "punkt": 156,
+        "aendern": 63
+      }
+    },
+    {
+      "name": "1440-gast-root32",
+      "before": {
+        "headingY": 1882,
+        "attentionY": 2082,
+        "attentionPunktY": 2107,
+        "aendernY": 1689
+      },
+      "after": {
+        "headingY": 1646,
+        "attentionY": 1766,
+        "attentionPunktY": 1791,
+        "aendernY": 1502,
+        "dichte": "gestapelt",
+        "aendernHoehe": 88,
+        "ueberlauf": 0,
+        "headingImFeld": false,
+        "attentionImFeld": false,
+        "punktImFeld": false
+      },
+      "savedPx": {
+        "heading": 236,
+        "attention": 316,
+        "punkt": 316,
+        "aendern": 187
+      }
+    }
+  ]
+}

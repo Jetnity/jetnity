@@ -34,11 +34,20 @@ test('T01: multi-stage lodging gaps are exact canonical intervals, never an exte
   const input = trip([item('stay', { kind: 'stay', startsOn: '2026-09-12', endsOn: '2026-09-13' })])
   const canonical = unterkunftAbdeckung(input)
   const report = tripAuditV1(input)
+  const hotelGaps = canonical.luecken.filter(gap => gap.stageId != null)
+  const transitions = canonical.luecken.filter(gap => gap.stageId == null)
   assert.equal(canonical.bekannt, true)
-  assert.equal(canonical.luecken.length, 2)
-  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging').map(f => f.evidence), canonical.luecken)
-  assert(report.findings.filter(f => f.domain === 'lodging').every(f => f.state === 'known_gap' && f.source === 'unterkunftAbdeckung'))
+  assert.equal(canonical.naechteGesamt, 4)
+  assert.equal(transitions.length, 1)
+  assert.equal(transitions[0]?.start, '2026-09-14')
+  assert.equal(transitions[0]?.end, '2026-09-15')
+  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging' && f.state === 'known_gap').map(f => f.evidence), hotelGaps)
+  assert.deepEqual(report.findings.filter(f => f.domain === 'lodging' && f.state === 'unknown').map(f => f.evidence), transitions)
+  assert(report.findings.filter(f => f.domain === 'lodging' && f.state === 'known_gap').every(f => f.source === 'unterkunftAbdeckung'))
+  assert.equal(report.sections[0].coverage, 'partial')
+  assert.match(report.sections[0].detail, /Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht/)
   assert.match(report.sections[0].detail, /1 mit ausgewählter Unterkunft; 0 von dir als gebucht markiert/)
+  assert.doesNotMatch(report.findings.find(f => f.state === 'unknown' && f.domain === 'lodging')?.title ?? '', /Hotelpflicht|Geplante Unterkunftsnacht fehlt/)
 })
 
 test('T02: connected overlapping items use tripZeitpruefung possible conflicts verbatim', () => {
@@ -105,8 +114,26 @@ test('T04: unknown stay dates or assignment suppress definitive gaps and zero-ni
   }
   const incomplete = trip()
   incomplete.stages[1].departureDate = null
-  assert.equal(tripAuditV1(incomplete).sections[0].coverage, 'unavailable')
-  assert(!tripAuditV1(incomplete).findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
+  const incompleteReport = tripAuditV1(incomplete)
+  assert.equal(incompleteReport.sections[0].coverage, 'partial')
+  assert.match(incompleteReport.sections[0].detail, /Welche Etappe sie besitzt, ist unbekannt/)
+  assert.match(incompleteReport.sections[0].detail, /keine Hotelpflicht/)
+  assert.doesNotMatch(incompleteReport.sections[0].detail, /Übergang/)
+  assert(!incompleteReport.findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
+  assert(!incompleteReport.findings.some(f => f.domain === 'lodging' && /Übergang/.test(f.title)))
+
+  const undated = trip()
+  for (const stage of undated.stages) {
+    stage.arrivalDate = null
+    stage.departureDate = null
+  }
+  const undatedReport = tripAuditV1(undated)
+  assert.equal(unterkunftAbdeckung(undated).kalenderNaechte, 4)
+  assert.equal(unterkunftAbdeckung(undated).naechteGesamt, null)
+  assert.equal(undatedReport.sections[0].coverage, 'partial')
+  assert.match(undatedReport.sections[0].detail, /4 Übernachtungsintervalle im Reisekalender sind bekannt/)
+  assert.doesNotMatch(undatedReport.sections[0].detail, /Übergang/)
+  assert(!undatedReport.findings.some(f => f.domain === 'lodging' && (f.state === 'known_gap' || /Übergang/.test(f.title))))
 })
 
 test('T04: selected versus user-marked booking retains canonical counts and explicit authority limit', () => {
@@ -336,7 +363,7 @@ test('T09/T10: guest and account use common Workspace; additive selected-list mo
   assert(overview.indexOf('<TripWorkspaceJetztWichtig') < overview.indexOf('<TripAuditV1Panel'))
   assert.match(source('components/trips/GastArbeitsbereich.tsx'), /<TripWorkspace/)
   assert.match(source('components/trips/KontoArbeitsbereich.tsx'), /<TripWorkspace/)
-  const runtime = ['lib/trips/trip-audit-v1/audit.ts', 'lib/trips/trip-audit-v1/limits.ts', 'components/trips/TripAuditV1Panel.tsx'].map(source).join('\n')
+  const runtime = ['lib/trips/trip-audit-v1/audit.ts', 'lib/trips/trip-audit-v1/f05-ground-flight.ts', 'lib/trips/trip-audit-v1/limits.ts', 'components/trips/TripAuditV1Panel.tsx'].map(source).join('\n')
   assert.doesNotMatch(runtime, /\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|document\.cookie|sendBeacon|Date\.now|new Date\(\)|useEffect|useMemo|supabase|console\./)
   assert.doesNotMatch(runtime, /from ['"].*(?:readiness\/provider|safety|seasonal|auth|payment|server)/)
 })

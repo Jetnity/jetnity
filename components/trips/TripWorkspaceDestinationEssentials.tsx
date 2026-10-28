@@ -6,6 +6,12 @@ import type {
   DestinationEssentialZiel,
   DestinationEssentialsAbleitung,
 } from '@/lib/trips/destination-essentials'
+import {
+  u3bAnzeigeGruppen,
+  u3bHinweisAnzahl,
+  u3bQuellenAnzahl,
+  type U3bAnzeigeGruppe,
+} from '@/lib/trips/ux-u3b-country-empty-1/leere-einreise'
 
 function ZielName({ name, countryLabel }: { name: string | null; countryLabel: string | null }) {
   if (name && countryLabel) return `${name} · ${countryLabel}`
@@ -68,22 +74,77 @@ function ZielKopf({ ziel, datumAbstand }: { ziel: DestinationEssentialZiel; datu
   )
 }
 
-function ZielHinweise({ ziel }: { ziel: DestinationEssentialZiel }) {
+function ZielHinweise({
+  ziel,
+  einreiseZeigen = true,
+}: {
+  ziel: DestinationEssentialZiel
+  einreiseZeigen?: boolean
+}) {
   return (
     <dl className="mt-3 grid gap-2">
-      <div>
-        <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Einreise</dt>
-        <dd className="mt-0.5 text-sm leading-6 text-ink-800">{ziel.einreise.text}</dd>
-      </div>
+      {einreiseZeigen ? (
+        <div>
+          <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Einreise</dt>
+          <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800">{ziel.einreise.text}</dd>
+        </div>
+      ) : null}
       <div>
         <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Sicherheit</dt>
-        <dd className="mt-0.5 text-sm leading-6 text-ink-800">{ziel.sicherheit.text}</dd>
+        <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800">{ziel.sicherheit.text}</dd>
       </div>
       <div>
         <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Reisezeit</dt>
-        <dd className="mt-0.5 text-sm leading-6 text-ink-800">{ziel.saison.text}</dd>
+        <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800">{ziel.saison.text}</dd>
       </div>
     </dl>
+  )
+}
+
+function ZielMerkmale(ziel: DestinationEssentialZiel) {
+  return {
+    'data-destination-stage': ziel.stageId,
+    'data-destination-country': ziel.countryCode ?? 'none',
+    'data-destination-entry': ziel.einreise.lage,
+    'data-destination-safety': ziel.sicherheit.lage,
+    'data-destination-seasonal': ziel.saison.lage,
+    'data-u3b-warning-count': String(u3bHinweisAnzahl(ziel)),
+    'data-u3b-source-count': String(u3bQuellenAnzahl(ziel)),
+  }
+}
+
+function GemeinsameLeereEinreise({ gruppe }: { gruppe: U3bAnzeigeGruppe }) {
+  return (
+    <li
+      className="min-w-0"
+      data-u3b-shared-entry="ein"
+      data-u3b-country={gruppe.countryCode}
+      data-u3b-stage-count={String(gruppe.ziele.length)}
+    >
+      <article className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
+        <dl className="grid gap-2">
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Einreise</dt>
+            <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800" data-u3b-shared-entry-text="ein">
+              {gruppe.text}
+            </dd>
+          </div>
+        </dl>
+        <ol className="mt-3 grid min-w-0 border-t border-line-100">
+          {gruppe.ziele.map((ziel) => (
+            <li
+              key={ziel.stageId}
+              {...ZielMerkmale(ziel)}
+              className="min-w-0 border-b border-line-100 py-2.5 last:border-b-0"
+            >
+              <ZielKopf ziel={ziel} datumAbstand="mt-0.5" />
+              <ZielHinweise ziel={ziel} einreiseZeigen={false} />
+              <ZielQuellen ziel={ziel} />
+            </li>
+          ))}
+        </ol>
+      </article>
+    </li>
   )
 }
 
@@ -159,12 +220,8 @@ export default function TripWorkspaceDestinationEssentials({
             {essentials.ziele.map((ziel) => (
               <li
                 key={ziel.stageId}
+                {...ZielMerkmale(ziel)}
                 className="min-w-0 border-b border-line-100 py-2.5 last:border-b-0"
-                data-destination-stage={ziel.stageId}
-                data-destination-country={ziel.countryCode ?? 'none'}
-                data-destination-entry={ziel.einreise.lage}
-                data-destination-safety={ziel.sicherheit.lage}
-                data-destination-seasonal={ziel.saison.lage}
               >
                 <ZielKopf ziel={ziel} datumAbstand="mt-0.5" />
               </li>
@@ -173,22 +230,22 @@ export default function TripWorkspaceDestinationEssentials({
         </>
       ) : (
         <ul className="mt-3 grid min-w-0 gap-3">
-          {essentials.ziele.map((ziel) => (
-            <li key={ziel.stageId} className="min-w-0">
-              <article
-                data-destination-stage={ziel.stageId}
-                data-destination-country={ziel.countryCode ?? 'none'}
-                data-destination-entry={ziel.einreise.lage}
-                data-destination-safety={ziel.sicherheit.lage}
-                data-destination-seasonal={ziel.saison.lage}
-                className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3"
-              >
-                <ZielKopf ziel={ziel} datumAbstand="mt-1" />
-                <ZielHinweise ziel={ziel} />
-                <ZielQuellen ziel={ziel} />
-              </article>
-            </li>
-          ))}
+          {u3bAnzeigeGruppen(essentials.ziele).map((eintrag) =>
+            eintrag.art === 'gemeinsame-leere-einreise' ? (
+              <GemeinsameLeereEinreise key={eintrag.ziele[0]?.stageId ?? eintrag.countryCode} gruppe={eintrag} />
+            ) : (
+              <li key={eintrag.ziel.stageId} className="min-w-0">
+                <article
+                  {...ZielMerkmale(eintrag.ziel)}
+                  className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3"
+                >
+                  <ZielKopf ziel={eintrag.ziel} datumAbstand="mt-1" />
+                  <ZielHinweise ziel={eintrag.ziel} />
+                  <ZielQuellen ziel={eintrag.ziel} />
+                </article>
+              </li>
+            ),
+          )}
         </ul>
       )}
     </section>
