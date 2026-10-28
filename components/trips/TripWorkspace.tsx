@@ -16,13 +16,15 @@ import * as React from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
+import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
+import { hinweisAktualisieren, hinweisGleich, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
+
 import {
   ARBEITSBEREICH_DESKTOP_AB_PX,
   type Arbeitsbereich,
   aenderungIstSichtbar,
   begleiterIstSichtbar,
   bereichDarstellungKlasse,
-  gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
 import {
   ABDECKUNG_LUFT_PX,
@@ -213,22 +215,50 @@ function historyElternLesen(reiseId: string): string | null {
   return stand.elternUrl
 }
 
+function historyHinweisLesen(reiseId: string): Hinweis | null {
+  const stand: unknown = window.history.state?.jetnityWorkspace
+  if (!stand || typeof stand !== 'object' || !('reiseId' in stand) || stand.reiseId !== reiseId) return null
+  if (!('hinweis' in stand) || !stand.hinweis || typeof stand.hinweis !== 'object') return null
+  const hinweis = stand.hinweis as Hinweis
+  if (hinweis.art === 'tag-fehlt' && typeof hinweis.id === 'string') return hinweis
+  if (hinweis.art === 'punkt-fehlt' && typeof hinweis.id === 'string' && (hinweis.tagId === null || typeof hinweis.tagId === 'string')) return hinweis
+  return null
+}
+
+/**
+ * History bleibt die kanonische Auswahl. `hinweis` ist nur der UI-Hinweis
+ * auf demselben Eintrag. Eine gleiche Adresse wird ersetzt, wenn sich der
+ * Hinweis ändert; Eltern-URL und Stack bleiben. popstate ruft das mit
+ * `canonical` auf und erzeugt keinen Push.
+ */
 function historieSchreiben(
   reiseId: string,
   naechster: WorkspaceModus,
   art: 'push' | 'replace',
   kontext: 'child' | 'canonical' | 'root',
+  hinweis: Hinweis | null,
 ) {
   const url = modusUrl(window.location.href, naechster)
   const jetzt = aktuelleAdresse()
-  if (url === jetzt) return
   const elternUrl = kontext === 'child' ? jetzt : kontext === 'canonical' ? historyElternLesen(reiseId) : null
   // Let Next's public native-history wrapper synchronize its router URL. Passing its
   // internal markers back would bypass that wrapper and a later refresh replays the old day.
-  const stand = { ...window.history.state, jetnityWorkspace: { reiseId, url, ...(elternUrl && { elternUrl }) } }
+  const stand = {
+    ...window.history.state,
+    jetnityWorkspace: { reiseId, url, ...(elternUrl && { elternUrl }), ...(hinweis && { hinweis }) },
+  }
   delete stand.__NA
   delete stand._N
   delete stand.__PRIVATE_NEXTJS_INTERNALS_TREE
+  if (url === jetzt) {
+    if (art === 'push') return
+    const bisher = window.history.state?.jetnityWorkspace
+    const bisherHinweis = historyHinweisLesen(reiseId)
+    const bisherEltern = bisher && typeof bisher === 'object' && 'elternUrl' in bisher && typeof bisher.elternUrl === 'string' ? bisher.elternUrl : null
+    if (hinweisGleich(bisherHinweis, hinweis) && bisherEltern === (elternUrl ?? null)) return
+    window.history.replaceState(stand, '', url)
+    return
+  }
   if (art === 'push') window.history.pushState(stand, '', url)
   else window.history.replaceState(stand, '', url)
 }
@@ -427,6 +457,19 @@ export default function TripWorkspace({
   })
   const [sucheBesucht, setSucheBesucht] = React.useState<ReadonlySet<DetailDomain>>(new Set())
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
+  const [auswahlHinweis, setAuswahlHinweis] = React.useState<Hinweis | null>(null)
+  const hinweisRef = React.useRef<Hinweis | null>(null)
+  const reiseIdRef = React.useRef(reise.id)
+  const [routeBetont, setRouteBetont] = React.useState(false)
+  const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
+  const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
+  const [editorAktiv, setEditorAktiv] = React.useState(false)
+  const routeLageRef = React.useRef({ top: 0, windowY: 0 })
+  const splitRef = React.useRef<HTMLDivElement>(null)
+  const setHinweisBeide = React.useCallback((wert: Hinweis | null) => {
+    hinweisRef.current = wert
+    setAuswahlHinweis((bisher) => hinweisGleich(bisher, wert) ? bisher : wert)
+  }, [])
   const [aenderungOffen, setAenderungOffen] = React.useState(false)
   const [aenderungBereit, setAenderungBereit] = React.useState(!kompakt)
   const aenderungKnopfRef = React.useRef<HTMLButtonElement>(null)
@@ -464,10 +507,11 @@ export default function TripWorkspace({
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
+  const planItemGewaehlt = modus.ansicht === 'plan' && bereinigt.art === 'item'
   const detailOffen =
     modusBereit &&
     ((modus.ansicht === 'organisieren' && modus.bereich != null && bereinigt.art === 'gap') ||
-      (modus.ansicht === 'plan' && bereinigt.art === 'item'))
+      (planItemGewaehlt && !(routeBetont && u1bAnordnung === 'schmal')))
   const gewaehlterPunktId = bereinigt.art === 'item' ? bereinigt.itemId : undefined
 
   React.useEffect(() => {
@@ -494,7 +538,7 @@ export default function TripWorkspace({
           : null
         const ziel = knopf instanceof HTMLElement && !knopf.closest('[hidden], [inert]')
           ? knopf : document.querySelector('[data-workspace-modus-heading]')
-        if (ziel instanceof HTMLElement) {
+        if (ziel instanceof HTMLElement && darfFokussieren(ziel)) {
           ziel.focus({ preventScroll: true })
           arbeitsflaecheZeigen(ziel)
           rueckkehrFokussiertRef.current = true
@@ -505,9 +549,9 @@ export default function TripWorkspace({
     if (oeffnet || sichtwechsel) {
       oeffnungsArbeitBeenden()
       const fokus = kompakt ? zurueckRef.current : detailFokusRef.current
-      if (oeffnet) fokus?.focus({ preventScroll: true })
+      if (oeffnet && darfFokussieren(fokus)) fokus.focus({ preventScroll: true })
       const ziel = kompakt ? detailAnkerRef.current : fokus
-      if (ziel) scrollDetailInSicht(ziel)
+      if (darfFokussieren(ziel)) scrollDetailInSicht(ziel)
       if (kompakt) {
         const rahmen = window.requestAnimationFrame(() => {
           if (detailAnkerRef.current) scrollDetailInSicht(detailAnkerRef.current)
@@ -567,7 +611,11 @@ export default function TripWorkspace({
         (bisher.art === 'item' && detail.art === 'item' && bisher.itemId === detail.itemId))) return bisher
       return bisher.art === 'keine' && detail.art === 'keine' ? bisher : detail
     })
-    if (naechster.ansicht === 'plan') setAktiverTag(gewaehlterTagId(reise, naechster.tagId ?? ''))
+    if (naechster.ansicht === 'plan') {
+      if (naechster.tagId && reise.days.some((tag) => tag.id === naechster.tagId)) setAktiverTag(naechster.tagId)
+      else if (naechster.tagId) setAktiverTag('')
+      else setAktiverTag((bisher) => reise.days.some((tag) => tag.id === bisher) ? bisher : '')
+    }
     const domain = detailDomainVon(detail, reise, ungeplantePunkte)
     setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, domain))
     if (zielFokussieren && naechster.preparationZiel) {
@@ -578,7 +626,7 @@ export default function TripWorkspace({
 
   const modusSetzen = React.useCallback((naechster: WorkspaceModus, art: 'push' | 'replace', child = false) => {
     const validiert = modusFuerReise(naechster, reise, ungeplantePunkte)
-    historieSchreiben(reise.id, validiert, art, child ? 'child' : 'root')
+    historieSchreiben(reise.id, validiert, art, child ? 'child' : 'root', hinweisRef.current)
     navigationAnwenden(validiert, true)
   }, [reise, ungeplantePunkte, navigationAnwenden])
 
@@ -589,11 +637,59 @@ export default function TripWorkspace({
     setAuswahl(gapAuswahl(domain, signalId))
   }
 
+  const routeLageMerken = () => {
+    const route = document.querySelector('[data-u1b-route]')
+    routeLageRef.current = {
+      top: route instanceof HTMLElement ? route.scrollTop : 0,
+      windowY: window.scrollY,
+    }
+  }
+
+  const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
+    const route = document.querySelector('[data-u1b-route]')
+    if (!(route instanceof HTMLElement)) return null
+    if (anker?.art === 'tag') {
+      const knopf = [...route.querySelectorAll<HTMLElement>('[data-timeline-tag]')].find((el) => el.getAttribute('data-timeline-tag') === anker.id && darfFokussieren(el))
+      if (knopf) return knopf
+    }
+    if (anker?.art === 'punkt') {
+      const punkt = route.querySelector<HTMLElement>(`[data-plan-punkt="${CSS.escape(anker.id)}"] button`)
+      if (darfFokussieren(punkt)) return punkt
+    }
+    return darfFokussieren(route) ? route : null
+  }
+
+  const routeZeigen = () => {
+    const schmal = u1bAnordnung === 'schmal'
+    const punkt = bereinigt.art === 'item' ? itemInReise(reise, ungeplantePunkte, bereinigt.itemId) : null
+    const anker = punkt
+      ? (punkt.dayId && reise.days.some((tag) => tag.id === punkt.dayId) ? { art: 'tag' as const, id: punkt.dayId } : { art: 'punkt' as const, id: punkt.id })
+      : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
+    routeLageMerken()
+    setRouteBetont(true)
+    window.requestAnimationFrame(() => {
+      const route = document.querySelector('[data-u1b-route]')
+      if (schmal && route instanceof HTMLElement) route.scrollTop = routeLageRef.current.top
+      if (schmal) window.scrollTo({ top: routeLageRef.current.windowY, behavior: 'instant' })
+      const ziel = routeZiel(anker)
+      if (ziel) ziel.focus({ preventScroll: true })
+    })
+  }
+
   const oeffneItem = (itemId: string) => {
     if (!itemInReise(reise, ungeplantePunkte, itemId)) return
+    routeLageMerken()
+    setRouteBetont(false)
+    setHinweisBeide(null)
     merkeAusloeser()
     modusTastaturRef.current = false
-    modusSetzen({ ansicht: 'plan', bereich: null, itemId, urlAnpassen: false }, 'push', true)
+    const naechster = { ansicht: 'plan' as const, bereich: null, itemId, urlAnpassen: false as const }
+    const validiert = modusFuerReise(naechster, reise, ungeplantePunkte)
+    if (modusUrl(window.location.href, validiert) === aktuelleAdresse()) {
+      historieSchreiben(reise.id, validiert, 'replace', 'canonical', null)
+      return
+    }
+    modusSetzen(naechster, 'push', true)
   }
 
   const schliessen = React.useCallback(() => {
@@ -607,17 +703,29 @@ export default function TripWorkspace({
     modusSetzen(detailElternModus(modusFuerReise(modus, reise, ungeplantePunkte)), 'replace')
   }, [reise, modus, ungeplantePunkte, modusSetzen])
 
-  const rueckkehr: WorkspaceRueckkehr = {
-    label: bereinigt.art === 'item' || historyEltern?.ansicht === 'plan' ? 'Zum Tagesplan'
-      : historyEltern?.ansicht === 'uebersicht' ? 'Zur Übersicht'
-        : historyEltern?.ansicht === 'vorbereitung' ? 'Zur Vorbereitung' : 'Zur Organisation',
-    ausfuehren: schliessen,
-  }
+  const rueckkehr: WorkspaceRueckkehr = modus.ansicht === 'plan' && bereinigt.art === 'item'
+    ? { label: 'Zur Route', ausfuehren: routeZeigen }
+    : {
+      label: bereinigt.art === 'item' || historyEltern?.ansicht === 'plan' ? 'Zum Tagesplan'
+        : historyEltern?.ansicht === 'uebersicht' ? 'Zur Übersicht'
+          : historyEltern?.ansicht === 'vorbereitung' ? 'Zur Vorbereitung' : 'Zur Organisation',
+      ausfuehren: schliessen,
+    }
 
   const tagWechseln = (tagId: string) => {
     if (!reise.days.some((tag) => tag.id === tagId)) return
+    routeLageMerken()
+    setRouteBetont(false)
+    setHinweisBeide(null)
     setAktiverTag(tagId)
-    if (modus.ansicht === 'plan') modusSetzen({ ansicht: 'plan', bereich: null, tagId, urlAnpassen: false }, 'push')
+    if (modus.ansicht !== 'plan') return
+    const naechster = { ansicht: 'plan' as const, bereich: null, tagId, urlAnpassen: false as const }
+    const validiert = modusFuerReise(naechster, reise, ungeplantePunkte)
+    if (modusUrl(window.location.href, validiert) === aktuelleAdresse()) {
+      historieSchreiben(reise.id, validiert, 'replace', 'canonical', null)
+      return
+    }
+    modusSetzen(naechster, 'push')
   }
 
   const preparationOeffnen = (preparationZiel?: PreparationZiel) => {
@@ -645,7 +753,7 @@ export default function TripWorkspace({
 
   const onModus = (ansicht: WorkspaceAnsicht, tastatur: boolean) => {
     modusTastaturRef.current = tastatur
-    const tagId = ansicht === 'plan' ? gewaehlterTagId(reise, aktiverTag) : ''
+    const tagId = ansicht === 'plan' && reise.days.some((tag) => tag.id === aktiverTag) ? aktiverTag : ''
     modusSetzen({ ansicht, bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
   }
 
@@ -659,9 +767,36 @@ export default function TripWorkspace({
       if (art === 'pop') {
         backAusstehendRef.current = false
         modusTastaturRef.current = true
+        setRouteBetont(false)
       }
+      const rohAuswahl = {
+        tag: params.getAll('tag').length === 1 ? params.get('tag') : null,
+        punkt: params.getAll('punkt').length === 1 ? params.get('punkt') : null,
+      }
+      const graph = {
+        tagExistiert: (id: string) => reise.days.some((tag) => tag.id === id),
+        punkt: (id: string) => {
+          const punkt = itemInReise(reise, ungeplantePunkte, id)
+          return punkt ? { dayId: punkt.dayId } : null
+        },
+      }
+      const reiseWechsel = reiseIdRef.current !== reise.id
+      reiseIdRef.current = reise.id
+      if (reiseWechsel) setRouteBetont(false)
+      const gespeichert = reiseWechsel ? null : historyHinweisLesen(reise.id)
+      const naechsterHinweis = reiseWechsel
+        ? null
+        : hinweisAktualisieren(art === 'pop' ? null : hinweisRef.current, {
+          art: 'lesen',
+          roh: rohAuswahl,
+          graph,
+          gespeichert,
+        })
+      setHinweisBeide(naechsterHinweis)
+      if (naechsterHinweis?.art === 'tag-fehlt') setAktiverTag('')
+      if (naechsterHinweis?.art === 'punkt-fehlt') setAktiverTag(naechsterHinweis.tagId ?? '')
       // Nur replace zur Kanonisierung; popstate erzeugt niemals einen Push.
-      historieSchreiben(reise.id, gelesen, 'replace', 'canonical')
+      historieSchreiben(reise.id, gelesen, 'replace', 'canonical', naechsterHinweis)
       navigationAnwenden(gelesen, art !== 'graph', art === 'graph')
     }
     anwenden(navigationBereitRef.current ? 'graph' : 'mount')
@@ -670,7 +805,7 @@ export default function TripWorkspace({
     const onPop = () => anwenden('pop')
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
-  }, [navigationAnwenden, anfangsBereich, reise, ungeplantePunkte])
+  }, [navigationAnwenden, anfangsBereich, reise, ungeplantePunkte, setHinweisBeide])
 
   const aenderungOeffnen = () => {
     if (aenderungFeldRef.current?.querySelector('[data-aenderung-sperre="true"]')) return
@@ -707,6 +842,8 @@ export default function TripWorkspace({
     seasonalEvaluations,
     officialEvaluations,
   })
+  // tagWechseln merkt die Route-Scrollposition in einem Ref, erst beim Klick.
+  // eslint-disable-next-line react-hooks/refs -- der Ref wird nicht während des Renderns gelesen
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, tagWechseln)
   const gap = bereinigt.art === 'gap' ? gapDetailAbleiten(reise, ungeplantePunkte, bereinigt.domain) : null
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
@@ -751,6 +888,13 @@ export default function TripWorkspace({
       onPunktEntfernen={onPunktEntfernen}
       onPunktOeffnen={oeffneItem}
       gewaehlterPunktId={gewaehlterPunktId}
+      steuerung="gemessen"
+      anordnung={u1bAnordnung}
+      routeBetont={routeBetont}
+      hinweis={auswahlHinweis}
+      kanonischerTagId={modus.ansicht === 'plan' && modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) && auswahlHinweis?.art !== 'tag-fehlt' ? modus.tagId : null}
+      onZurRoute={routeZeigen}
+      onEditorAktiv={setEditorAktiv}
     />
   )
 
@@ -767,7 +911,7 @@ export default function TripWorkspace({
         // A confirmed graph may have removed the initiating day/item. Reuse the
         // Workspace canonicalizer after consuming the edit-only history entry.
         const aktuell = modusFuerReise(modusAusQuery(new URLSearchParams(window.location.search)), reise, ungeplantePunkte)
-        historieSchreiben(reise.id, aktuell, 'replace', 'canonical')
+        historieSchreiben(reise.id, aktuell, 'replace', 'canonical', hinweisRef.current)
         setAenderungOffen(false)
       }}>{aenderung}</TripWorkspaceEditSurface> : null}
     </div>
@@ -806,6 +950,29 @@ export default function TripWorkspace({
     weit,
   })
   const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
+  const planNeben = modusBereit && modus.ansicht === 'plan' && u1bAnordnung === 'neben'
+
+  React.useLayoutEffect(() => {
+    const el = splitRef.current
+    if (!el) return
+    const messen = () => {
+      const rootPx = Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
+      const naechste = naechsteAnordnung(anordnungBisherRef.current, el.clientWidth, rootPx)
+      anordnungBisherRef.current = naechste
+      setU1bAnordnung((bisher) => bisher === naechste ? bisher : naechste)
+    }
+    messen()
+    const beobachter = new ResizeObserver(messen)
+    beobachter.observe(el)
+    const schrift = new MutationObserver(messen)
+    schrift.observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'class'] })
+    window.addEventListener('resize', messen)
+    return () => {
+      beobachter.disconnect()
+      schrift.disconnect()
+      window.removeEventListener('resize', messen)
+    }
+  }, [])
 
   React.useEffect(() => {
     if (!detailOffen && !(modus.ansicht === 'vorbereitung' && historyEltern)) return
@@ -865,7 +1032,7 @@ export default function TripWorkspace({
     if (modus.ansicht === 'organisieren' && modus.bereich) return
     if (modus.ansicht === 'plan' && detailOffen) return
     const heading = document.querySelector('[data-workspace-modus-heading]')
-    if (!(heading instanceof HTMLElement)) return
+    if (!(heading instanceof HTMLElement) || !darfFokussieren(heading)) return
     arbeitsflaecheZeigen(heading)
     if (tastatur) heading.focus({ preventScroll: true })
   }, [modus, modusBereit, detailOffen])
@@ -957,7 +1124,14 @@ export default function TripWorkspace({
 
         <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} rueckkehr={rueckkehr} zurueckRef={zurueckRef} />
 
-        <div className={rasterKlasse} data-workspace-split={anordnung}>
+        <div
+          ref={splitRef}
+          className={rasterKlasse}
+          data-workspace-split={anordnung}
+          data-u1b-anordnung={u1bAnordnung}
+          data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
+          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 1fr) minmax(28rem, 1.4fr)', columnGap: '1.5rem', alignItems: 'start' } : undefined}
+        >
           {modusBereit && modus.ansicht === 'uebersicht' ? (
             <FlaecheHuelle name="uebersicht" verborgen={false}>
               <TripWorkspaceUebersicht
@@ -972,12 +1146,19 @@ export default function TripWorkspace({
             </FlaecheHuelle>
           ) : null}
 
-          {modusBereit && modus.ansicht === 'plan' ? (
-            <section aria-labelledby="workspace-plan-titel" className="mt-4 min-w-0" data-workspace-modus="plan">
+          {modusBereit && modus.ansicht === 'plan' || editorAktiv ? (
+            <section
+              aria-labelledby="workspace-plan-titel"
+              hidden={modus.ansicht !== 'plan'}
+              inert={modus.ansicht !== 'plan'}
+              className={modus.ansicht === 'plan' ? 'contents' : 'mt-4 min-w-0'}
+              data-workspace-modus="plan"
+            >
               <h2
                 id="workspace-plan-titel"
                 tabIndex={-1}
                 data-workspace-modus-heading
+                style={planNeben ? { gridColumn: '1 / -1' } : undefined}
                 className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
               >
                 Reiseplan
@@ -1038,6 +1219,7 @@ export default function TripWorkspace({
             data-workspace-anordnung={anordnung}
             hidden={!detailOffen}
             className="min-w-0"
+            style={planNeben ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
             ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {
               if (ereignis.key !== 'Escape' || !detailOffen) return

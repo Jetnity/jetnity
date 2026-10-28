@@ -43,6 +43,8 @@ import {
 import { type PlanpunktFormular } from '@/lib/trips/schema'
 import { ersterTagDerEtappe, timelineAbleiten } from '@/lib/trips/timeline'
 import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
+import { darfFokussieren } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
+import { hinweisText, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
 import { cn } from '@/lib/utils'
 import { type Trip, type TripDay, type TripItem, type TripItemKind } from '@/types/trips'
 
@@ -156,6 +158,13 @@ export default function TripWorkspacePlan({
   onPunktEntfernen,
   onPunktOeffnen,
   gewaehlterPunktId,
+  steuerung = 'stapel-kompatibel',
+  anordnung = 'schmal',
+  routeBetont = false,
+  hinweis = null,
+  kanonischerTagId = null,
+  onZurRoute,
+  onEditorAktiv,
 }: {
   readinessItems?: readonly ReadinessViewItem[]
   onPreparation?: (ziel: PreparationZiel) => void
@@ -171,6 +180,13 @@ export default function TripWorkspacePlan({
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
   onPunktOeffnen?: (punktId: string) => void
   gewaehlterPunktId?: string
+  steuerung?: 'gemessen' | 'stapel-kompatibel'
+  anordnung?: 'neben' | 'schmal'
+  routeBetont?: boolean
+  hinweis?: Hinweis | null
+  kanonischerTagId?: string | null
+  onZurRoute?: () => void
+  onEditorAktiv?: (aktiv: boolean) => void
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)
@@ -208,15 +224,37 @@ export default function TripWorkspacePlan({
     if (!meldung || meldungOp.current == null || meldungFokus.current == null) return
     if (!loeschungAktuellRef.current(meldungOp.current)) return
     if (!fokusAktuellRef.current(meldungFokus.current)) return
-    meldungRef.current?.focus({ preventScroll: true })
+    if (!darfFokussieren(meldungRef.current)) return
+    meldungRef.current.focus({ preventScroll: true })
   }, [meldung])
+  React.useEffect(() => {
+    const stop = (event: FocusEvent) => {
+      const ziel = event.target
+      if (!(ziel instanceof HTMLElement)) return
+      if (!ziel.closest('[hidden], [inert]')) return
+      ziel.blur()
+    }
+    document.addEventListener('focusin', stop, true)
+    return () => document.removeEventListener('focusin', stop, true)
+  }, [])
+  React.useEffect(() => {
+    onEditorAktiv?.(formularOffen || leben.loescht)
+  }, [formularOffen, leben.loescht, onEditorAktiv])
 
   const timeline = timelineAbleiten(reise, ohneTag, aktiverTag)
   const chronologie = chronologischeLaeufe(reise)
-  const tag = timeline.gewaehlterTag
+  const gemessen = steuerung === 'gemessen'
+  const tagFehlt = hinweis?.art === 'tag-fehlt'
+  const defaultId = gemessen && anordnung === 'neben' && !hinweis && !kanonischerTagId ? (reise.days[0]?.id ?? '') : ''
+  const bodyId = gemessen ? (tagFehlt ? '' : (kanonischerTagId || defaultId)) : timeline.gewaehlterTagId
+  const tag = gemessen ? (reise.days.find((eintrag) => eintrag.id === bodyId) ?? null) : timeline.gewaehlterTag
+  const highlightId = gemessen ? (kanonischerTagId ?? '') : timeline.gewaehlterTagId
   const laeufe = chronologie.gueltig ? chronologie.laeufe : []
   const folge = planTageFolgen(laeufe)
-  const navigator = planTagNavigator(folge, timeline.gewaehlterTagId)
+  const navigator = planTagNavigator(folge, tag?.id ?? '')
+  const itemSichtbar = Boolean(gewaehlterPunktId) && hinweis?.art !== 'punkt-fehlt' && !tagFehlt
+  const routeVerborgen = gemessen && anordnung === 'schmal' && !routeBetont && Boolean(kanonischerTagId || hinweis || gewaehlterPunktId)
+  const dayVerborgen = gemessen && (itemSichtbar || (anordnung === 'schmal' && (routeBetont || (!kanonischerTagId && !hinweis && !gewaehlterPunktId))))
   const laufDesTags = chronologie.gueltig
     ? chronologie.laeufe.find((lauf) => lauf.tage.some((eintrag) => eintrag.id === tag?.id))
     : undefined
@@ -225,9 +263,10 @@ export default function TripWorkspacePlan({
     : []
 
   React.useLayoutEffect(() => {
+    if (gemessen) return
     if (!timeline.gewaehlterTagId) return
     gewaehltenTagSichtbarHalten(timeline.gewaehlterTagId)
-  }, [timeline.gewaehlterTagId])
+  }, [timeline.gewaehlterTagId, gemessen])
 
   const zurueck = (punktId: string | null) => {
     const fokusId = leben.editorFokus()
@@ -242,7 +281,24 @@ export default function TripWorkspacePlan({
     zurueck(punktId)
   }
 
+  const tagNochDa = (tagId: string) => tagId === '' || reise.days.some((eintrag) => eintrag.id === tagId)
+  const anlegenSicher = async (tagId: string, eingabe: PlanpunktFormular) => {
+    if (!tagNochDa(tagId)) return 'Dieser Tag ist nicht mehr in der Reise.'
+    return onPunktAnlegen(tagId, eingabe)
+  }
+  const bearbeitenSicher = onPunktBearbeiten
+    ? async (original: TripItem, change: PlanAenderung) => {
+      if (original.dayId && !reise.days.some((eintrag) => eintrag.id === original.dayId)) {
+        return 'Dieser Tag ist nicht mehr in der Reise.'
+      }
+      return onPunktBearbeiten(original, change)
+    }
+    : undefined
   const entfernen = async (tagId: string, punktId: string) => {
+    if (!tagNochDa(tagId)) {
+      setMeldung('Dieser Tag ist nicht mehr in der Reise.')
+      return
+    }
     const op = leben.loeschungBeginnen()
     if (op == null) return
     const fokusId = leben.loeschFokus()
@@ -272,8 +328,8 @@ export default function TripWorkspacePlan({
   const editorProps = {
     reise,
     generation: leben.editorGeneration,
-    onAnlegen: onPunktAnlegen,
-    onBearbeiten: onPunktBearbeiten,
+    onAnlegen: anlegenSicher,
+    onBearbeiten: bearbeitenSicher,
     operationBeginnen: leben.editorBeginnen,
     operationAktuell: leben.editorAktuell,
   }
@@ -394,12 +450,21 @@ export default function TripWorkspacePlan({
       data-plan-premium="4"
       data-plan-chronologie={chronologie.gueltig ? 'tag-zuerst' : 'ungueltig'}
       data-plan-kompakt={kompakt ? 'ja' : 'nein'}
+      data-u1b-steuerung={steuerung}
       className={cn(
-        'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
-        fokusRing,
-        eingebettet ? 'mt-1' : 'mt-5',
+        gemessen ? 'contents' : 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
+        !gemessen && fokusRing,
+        !gemessen && (eingebettet ? 'mt-1' : 'mt-5'),
       )}
     >
+      <div
+        data-u1b-route
+        tabIndex={-1}
+        hidden={routeVerborgen}
+        inert={routeVerborgen}
+        style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
+        className={cn(gemessen && 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+      >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
         <p className="mt-1 text-sm text-ink-900">{timeline.planText}</p>
@@ -417,49 +482,6 @@ export default function TripWorkspacePlan({
         </p>
       ) : (
         <>
-          {tag ? (
-            <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
-          {navigator ? (
-            <div data-plan-navigator="schritt" className="flex min-w-0 flex-col gap-3">
-              <div className="min-w-0 overflow-x-auto">
-                <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800">
-                  {navigator.text}
-                </p>
-                <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700">
-                  {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-                  {laufDesTags ? ` · ${laufDesTags.name}` : ''}
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-3 md:justify-center">
-                <button
-                  type="button"
-                  data-plan-tag-vorher
-                  aria-label="Vorheriger Tag"
-                  disabled={!navigator.vorherId || leben.loescht}
-                  onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)}
-                  className={cn(
-                    'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
-                    fokusRing,
-                  )}
-                >
-                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  data-plan-tag-naechster
-                  aria-label="Nächster Tag"
-                  disabled={!navigator.naechsterId || leben.loescht}
-                  onClick={() => navigator.naechsterId && onTagWechseln(navigator.naechsterId)}
-                  className={cn(
-                    'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
-                    fokusRing,
-                  )}
-                >
-                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          ) : null}
               {laeufe.length > 0 ? (
               <div className="mt-3 grid min-w-0 gap-3 md:hidden">
                 {laeufe.map((lauf) => (
@@ -474,7 +496,7 @@ export default function TripWorkspacePlan({
                           <TagWahl
                             key={`streifen-${eintrag.id}`}
                             eintrag={eintrag}
-                            gewaehlt={timeline.gewaehlterTagId === eintrag.id}
+                            gewaehlt={highlightId === eintrag.id}
                             onWaehlen={() => onTagWechseln(eintrag.id)}
                             streifen
                           />
@@ -488,22 +510,11 @@ export default function TripWorkspacePlan({
                   Die Tagesreihenfolge ist nicht eindeutig.
                 </p>
               )}
-              <div
-                id="plan-tag-kontext"
-                data-plan-tag-kontext
-                className={navigator ? 'mt-4 border-t border-line-200 pt-4' : undefined}
-              >
-                {tagesKopf}
-                {tagesFelder}
-              </div>
-            </div>
-          ) : null}
-
           {laeufe.length > 0 ? (
           <ol className="mt-4 hidden min-w-0 gap-4 md:grid">
             {laeufe.map((lauf) => {
               const ersterTag = lauf.tage[0]?.id ?? ''
-              const etappeAktiv = lauf.tage.some((eintrag) => eintrag.id === timeline.gewaehlterTagId)
+              const etappeAktiv = lauf.tage.some((eintrag) => eintrag.id === highlightId)
               return (
                 <li
                   key={lauf.schluessel}
@@ -535,7 +546,7 @@ export default function TripWorkspacePlan({
                           <TagWahl
                             key={`raster-${eintrag.id}`}
                             eintrag={eintrag}
-                            gewaehlt={timeline.gewaehlterTagId === eintrag.id}
+                            gewaehlt={highlightId === eintrag.id}
                             onWaehlen={() => onTagWechseln(eintrag.id)}
                           />
                         ))}
@@ -580,10 +591,6 @@ export default function TripWorkspacePlan({
               </ul>
             </div>
           ) : null}
-          {tag ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt))}
-            selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
-          {tag ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id}
-            onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} /> : null}
         </>
       )}
 
@@ -609,6 +616,51 @@ export default function TripWorkspacePlan({
           {bearbeiten?.dayId == null ? bestehenderEditor : null}
         </div>
       )}
+      </div>
+      <div
+        data-u1b-day
+        hidden={dayVerborgen}
+        inert={dayVerborgen}
+        data-u1b-default-tag={gemessen && defaultId !== '' && bodyId === defaultId ? 'ja' : undefined}
+        style={gemessen && anordnung === 'neben' ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
+        className={cn(gemessen && 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+      >
+        {hinweis ? <p data-u1b-hinweis={hinweis.art} className="text-sm leading-6 text-ink-800">{hinweisText(hinweis)}</p> : null}
+        {onZurRoute ? (
+          <button type="button" data-u1b-zur-route onClick={onZurRoute} className={cn('mt-3 inline-flex min-h-11 items-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+            Zur Route
+          </button>
+        ) : null}
+        {tag && !tagFehlt ? (
+          <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
+            {navigator ? (
+              <div data-plan-navigator="schritt" className="flex min-w-0 flex-col gap-3">
+                <div className="min-w-0 overflow-x-auto">
+                  <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800">{navigator.text}</p>
+                  <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700">
+                    {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
+                    {laufDesTags ? ` · ${laufDesTags.name}` : ''}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between gap-3 md:justify-center">
+                  <button type="button" data-plan-tag-vorher aria-label="Vorheriger Tag" disabled={!navigator.vorherId || leben.loescht} onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)} className={cn('inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40', fokusRing)}>
+                    <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  <button type="button" data-plan-tag-naechster aria-label="Nächster Tag" disabled={!navigator.naechsterId || leben.loescht} onClick={() => navigator.naechsterId && onTagWechseln(navigator.naechsterId)} className={cn('inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40', fokusRing)}>
+                    <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            <div id="plan-tag-kontext" data-plan-tag-kontext className={navigator ? 'mt-4 border-t border-line-200 pt-4' : undefined}>
+              {tagesKopf}
+              {tagesFelder}
+            </div>
+          </div>
+        ) : null}
+        {tag && !tagFehlt ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={tag.id === timeline.gewaehlterTagId ? timeline.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt)) : tag.items} selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
+        {tag && !tagFehlt ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} /> : null}
+      </div>
     </section>
   )
 }
