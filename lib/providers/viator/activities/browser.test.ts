@@ -191,6 +191,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     let detailLoesen: (() => void) | null = null
     const gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }> = []
     const suchen: unknown[] = []
+    let suchLaeufe = 0
     await page.route('**/*', async (route) => {
       const url = new URL(route.request().url())
       if (url.origin !== origin) return route.abort()
@@ -204,7 +205,11 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       if (url.pathname === '/api/activities/search') {
         const roh = route.request().postData()
         if (roh) suchen.push(JSON.parse(roh) as unknown)
-        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sucheAntwort) })
+        suchLaeufe += 1
+        const antwort = suchLaeufe === 1
+          ? sucheAntwort
+          : { status: 'empty', message: 'Keine Testangebote.', options: [] }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(antwort) })
       }
       if (url.pathname === '/api/activities/viator/detail') {
         details += 1
@@ -263,6 +268,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       },
       gesendet,
       suchen,
+      detailAnzahl: () => details,
     })
     return page
   }
@@ -274,6 +280,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       suchen: Array<{ stage?: { name?: string; countryCode?: string }; trip?: { currency?: string }; day?: { dayDate?: string } }>
       releaseFirst: () => void
       releaseDetail: () => void
+      detailAnzahl: () => number
     }
     const bereich = page.getByRole('region', { name: 'Aktivitäten' })
     await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
@@ -309,10 +316,11 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.getByText('neue Prüfung').waitFor()
     await page.getByText('80').waitFor()
     assert.equal(await page.getByText('111').count(), 0)
+    const detailsVorSuche = träger.detailAnzahl()
     await bereich.getByRole('button', { name: 'Erneut suchen' }).click()
+    await page.getByText('Keine Testangebote.').waitFor()
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
-    await bereich.getByRole('button', { name: 'Angebot prüfen' }).click()
-    await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).waitFor()
+    assert.equal(träger.detailAnzahl(), detailsVorSuche)
     await bereich.getByRole('radio', { name: 'Phuket-Tag' }).click()
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     const vorher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
