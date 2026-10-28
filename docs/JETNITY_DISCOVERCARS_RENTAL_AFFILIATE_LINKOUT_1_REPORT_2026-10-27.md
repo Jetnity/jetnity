@@ -22,6 +22,8 @@
 
 **Nächster Schritt** — Stop for independent Technical Lead review of the pushed head. No Ready, no merge, no follow-up.
 
+The closed station identity remains IATA `BKK`, ICAO `VTBS`, name `Suvarnabhumi Airport`, type `large_airport`. City Bangkok does not select it. `currency=chf` exists only on that fixed URL. Visitors are not told about constants, query keys or attribution. Commission is still unproven. `referrerPolicy="no-referrer"` stays.
+
 **27 October 2026.** Code-only V1 on Draft PR #1059. Not Production. Not a merge request.
 
 **Status** — teilweise fertig. The linkout is implemented and locally checked. Independent review, exact-head CI/Preview, attribution and account acceptance are open.

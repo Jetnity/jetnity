@@ -13,6 +13,10 @@ State: **main is merged, no rental-entry regression found, draft remains blocked
 - Exact-head GitHub CI and Vercel Preview for the pushed tip are not evidence until they finish. Do not copy Production Supabase into Preview. No repeated Vercel CLI login.
 - No Ready. No merge. No follow-up.
 
+## Copy — 28 October 2026, same session
+
+Visitor text in `DiscoverCarsAffiliateLinks.tsx` no longer explains constants, addresses or audit checks. The screen says to compare and search at DiscoverCars, to choose pickup, return and dates there, and that DiscoverCars confirms price, availability and booking. The choices are “Abholort bei DiscoverCars wählen” and “Flughafen Suvarnabhumi (BKK)”. With BKK selected, the airport is described as preselected, dates still belong on that page, and CHF is that page’s preset, not a quote and not the trip currency. URLs, `no-referrer`, the closed station check and the manual form are unchanged. Implementation detail stays in this note and in `ziel.ts`.
+
 The 27 October notes below describe the original source head `f5c20a71acd83208b556b52b3d44f885d69c29c3`. That head stays SOURCE ACCEPTED history. This continuation’s tip is the commit after the main merge.
 
 **27 October 2026.** State at that head: **code on the draft branch, not live, not reviewed.**

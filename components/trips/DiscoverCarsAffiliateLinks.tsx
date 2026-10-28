@@ -64,55 +64,42 @@ export default function DiscoverCarsAffiliateLinks({
       className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-        Externer Affiliate-Link
+        Affiliate-Link
       </p>
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words sm:text-2xl">
         Mietwagen bei DiscoverCars
       </h2>
       <div className="mt-4 grid gap-3 text-sm leading-6 text-ink-800">
-        <p>
-          Verfügbarkeit, Preise, Zahlung und Buchung liegen bei DiscoverCars, nicht bei Jetnity.
-          Jetnity zeigt hier keine Fahrzeuge und keine Preise.
-        </p>
-        <p>
-          Abholort, Rückgabeort und Mietzeit wählst du dort. Name, Datum, Uhrzeit, Wohnsitz, Alter
-          und Anzahl der Reisenden gehen nicht in diesen Link.
+        <p id="discovercars-erklaerung">
+          Vergleiche und suche Mietwagen bei DiscoverCars. Abholung, Rückgabe und Mietdauer wählst
+          du dort. Preise, Verfügbarkeit und Buchung bestätigt DiscoverCars.
         </p>
         {mehrere ? (
           <p data-discovercars-hinweis="mehrere-stationen">
-            Mehrere Stationen bleiben offen. Jetnity leitet daraus keinen Abholort, keinen
-            Rückgabeort und keine Einwegmiete ab.
+            Mehrere Stationen ändern daran nichts.
           </p>
         ) : null}
         {ziel.art === 'bkk' ? (
           <p data-discovercars-hinweis="bkk">
-            Du hast den Flughafen Suvarnabhumi (BKK) gewählt. Der Link öffnet nur diese geprüfte
-            Stationsseite. CHF in dieser Adresse gehört zum geprüften Beispiel und ist nicht die
-            Währung deiner Reise. Rückgabe und Mietdauer bleiben bei DiscoverCars.
+            Suvarnabhumi (BKK) ist vorausgewählt. Datum und Mietdauer trägst du dort ein. CHF ist
+            die Voreinstellung dieser Seite, kein bestätigter Preis und nicht die Währung deiner
+            Reise.
           </p>
-        ) : (
-          <p data-discovercars-hinweis="generisch">
-            Die allgemeine Suche enthält keine Station. Bangkok als Stadt ist nicht der Flughafen
-            BKK.
-          </p>
-        )}
+        ) : null}
       </div>
 
       <fieldset className="mt-4 grid min-w-0 gap-2">
-        <legend className="text-sm font-semibold text-brand-800">Abholstation</legend>
-        <p id="discovercars-abholstation-hinweis" className="text-sm leading-6 text-ink-800">
-          Nur eine eigene Wahl ändert die Adresse.
-        </p>
+        <legend className="text-sm font-semibold text-brand-800">Abholung</legend>
         <label className={WAHL_KLASSE}>
           <input
             className="h-5 w-5 shrink-0 accent-brand-800"
             type="radio"
             name="discovercars-abholstation"
             checked={ziel.art === 'generisch'}
-            aria-describedby="discovercars-abholstation-hinweis"
+            aria-describedby="discovercars-erklaerung"
             onChange={() => setMerke({ reiseId, station: null })}
           />
-          <span>Allgemeine Suche, ohne Station in der Adresse</span>
+          <span>Abholort bei DiscoverCars wählen</span>
         </label>
         <label className={WAHL_KLASSE}>
           <input
@@ -120,10 +107,10 @@ export default function DiscoverCarsAffiliateLinks({
             type="radio"
             name="discovercars-abholstation"
             checked={ziel.art === 'bkk'}
-            aria-describedby="discovercars-abholstation-hinweis"
+            aria-describedby="discovercars-erklaerung"
             onChange={() => setMerke({ reiseId, station: DISCOVERCARS_BKK_STATION })}
           />
-          <span>Flughafen Suvarnabhumi (BKK), nur diese geprüfte Stationsseite</span>
+          <span>Flughafen Suvarnabhumi (BKK)</span>
         </label>
       </fieldset>
 

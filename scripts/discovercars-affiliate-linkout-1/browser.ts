@@ -227,7 +227,7 @@ async function main() {
       path: `${AUSGABE}/390-bkk-wahl-abschnitt.png`,
     })
 
-    await konto.page.getByRole('radio', { name: /Allgemeine Suche/ }).check()
+    await konto.page.getByRole('radio', { name: /Abholort bei DiscoverCars wählen/ }).check()
     const zurueck = await masse(konto.page)
     if (zurueck.href !== GENERISCH) fehler.push(`Zurück ${zurueck.href}`)
 
