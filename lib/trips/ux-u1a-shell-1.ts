@@ -16,7 +16,9 @@ export type ShellNavLage = 'sticky' | 'bottom' | 'flow'
 export const UX_U1A_SCHMAL_BIS_PX = 320
 /**
  * Schmalste Breite für vier gleiche 14px-Beschriftungen in einer Zeile.
- * „Vorbereitung“ misst dort etwa 93px. Darunter stapelt der Fluss, statt 3+1 oder abzuschneiden.
+ * Darunter stapelt der Fluss. Die untere Leiste zieht die Laufweite ein,
+ * damit die Wörter in der Zelle bleiben; eine noch engere Safe Area fällt
+ * nach der Messung ebenfalls in den Fluss.
  */
 export const UX_U1A_VIER_TABS_AB_PX = 376
 /** Ordinary phone widths use the bottom bar. 768 and above keep sticky tabs. */

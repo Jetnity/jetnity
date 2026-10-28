@@ -1,6 +1,8 @@
 # UX V1 U1-A2 — STATUS
 
-28 October 2026. Cursor Generation 1. Stop for independent Technical Lead R1. Not Ready. Not merged. No follow-up slice.
+28 October 2026. Cursor Generation 1, same session, R1 correction. Stop for independent Technical Lead R2. Not Ready. Not merged. No follow-up slice.
+
+R1 rejected head `a59fa725d309e93279558e4a9a0fa56a13230567`. Native CI 40681199028 failed because „Organisieren“ / „Vorbereitung“ at 14px spilled out of the 96.75px cell on GitHub Chrome. The sticky column fix is unchanged. The bottom row now uses `tracking-[-0.07em]`. With DejaVu Sans, Vorbereitung sits 2.3px inside each side and Organisieren 3.2px, still 14px, one row, height 53px. A 24px safe-area inset on each side leaves the bottom row for the relative stack. `guest-nav-text-1.test.ts` was not edited.
 
 ## Session
 

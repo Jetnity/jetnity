@@ -1,6 +1,8 @@
 # UX V1 U1-A2 — HANDOFF
 
-28 October 2026. Generation 1 stops here. The next actor is the Technical Lead, same Draft PR #1076, same branch `fix/ux-v1-u1a2-nav-geometry-1`.
+28 October 2026. Generation 1 stops for R2. The next actor is the Technical Lead, same Draft PR #1076, same branch `fix/ux-v1-u1a2-nav-geometry-1`, same session `bc-c363f33c-f1e2-46a4-b33c-3888008e64a0`.
+
+R1-F1 is the bottom-label overflow on 390px. Rejected head `a59fa725d309e93279558e4a9a0fa56a13230567`. The correction is letter-spacing on the bottom buttons only, plus a measurement fallback when a safe-area inset still overflows. UX-01 sticky containment is unchanged.
 
 ## Read first
 

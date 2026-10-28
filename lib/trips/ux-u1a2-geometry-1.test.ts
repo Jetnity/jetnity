@@ -237,6 +237,10 @@ function knapp(stand: Geometrie) {
       width: runde(knopf.width),
       height: runde(knopf.height),
       top: runde(knopf.top),
+      textLeft: runde(knopf.textLeft),
+      textRight: runde(knopf.textRight),
+      insetLeft: runde(knopf.textLeft - knopf.left),
+      insetRight: runde(knopf.right - knopf.textRight),
       fontSize: knopf.fontSize,
     })),
   }
@@ -429,11 +433,13 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
         assert.equal(knopf.height >= 44, true, knopf.name)
         assert.equal(knopf.width >= 44, true, knopf.name)
         assert.equal(knopf.fontSize, '14px', knopf.name)
-        assert.equal(knopf.textLeft >= knopf.left - 1, true, JSON.stringify(knopf))
-        assert.equal(knopf.textRight <= knopf.right + 1, true, `${knopf.name} ${knopf.textRight} > ${knopf.right}`)
+        assert.equal(knopf.textLeft >= knopf.left - 0.5, true, JSON.stringify(knopf))
+        assert.equal(knopf.textRight <= knopf.right + 0.5, true, `${knopf.name} ${knopf.textRight} > ${knopf.right}`)
         assert.equal(knopf.textTop >= knopf.top - 1, true, knopf.name)
         assert.equal(knopf.textBottom <= knopf.bottom + 1, true, knopf.name)
       }
+      const laufweite = await page.evaluate(() => getComputedStyle(document.querySelector('[data-workspace-mode-nav] button')!).letterSpacing)
+      assert.equal(laufweite.startsWith('-'), true, laufweite)
       assert.match(stand.offset, /px$/)
       const offsetPx = Number.parseFloat(stand.offset)
       assert.equal(Math.abs(offsetPx - stand.navHeight) <= 1, true, stand.offset)
@@ -454,6 +460,49 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     assert.equal(schmal.overflowX <= 1, true)
     assert.deepEqual(fehler, [])
     evidenz.bottom = laeufe
+    await page.close()
+  })
+
+  test('DejaVu labels stay inside the 390 row, and a safe-area inset leaves that row', async () => {
+    const { page, fehler } = await oeffnen(390, 844)
+    await page.addStyleTag({
+      content: '[data-shell-nav="bottom"] button { font-family: "DejaVu Sans", sans-serif !important; }',
+    })
+    await page.setViewportSize({ width: 391, height: 844 })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'bottom')
+    const weit = await geometrie(page)
+    evidenz.dejavu390 = knapp(weit)
+    assert.equal(weit.lage, 'bottom')
+    assert.equal(weit.navHeight < 80, true, JSON.stringify(knapp(weit)))
+    assert.deepEqual(weit.knoepfe.map((knopf) => knopf.name), LABEL)
+    const tops = weit.knoepfe.map((knopf) => knopf.top)
+    assert.equal(Math.max(...tops) - Math.min(...tops) <= 1, true, JSON.stringify(tops))
+    for (const knopf of weit.knoepfe) {
+      assert.equal(knopf.fontSize, '14px', knopf.name)
+      assert.equal(knopf.height >= 44, true, knopf.name)
+      assert.equal(knopf.textLeft >= knopf.left - 0.5, true, JSON.stringify(knopf))
+      assert.equal(knopf.textRight <= knopf.right + 0.5, true, JSON.stringify(knopf))
+    }
+    await bild(page, 'bottom-390-dejavu')
+
+    await page.addStyleTag({
+      content: '[data-shell-nav="bottom"] { padding-left: 24px !important; padding-right: 24px !important; }',
+    })
+    await page.setViewportSize({ width: 391, height: 844 })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'flow')
+    const safe = await geometrie(page)
+    evidenz.safeArea = knapp(safe)
+    assert.equal(safe.lage, 'flow')
+    assert.equal(safe.position, 'relative')
+    assert.deepEqual(safe.knoepfe.map((knopf) => knopf.name), LABEL)
+    for (const knopf of safe.knoepfe) {
+      assert.equal(knopf.textLeft >= knopf.left - 0.5, true, JSON.stringify(knopf))
+      assert.equal(knopf.textRight <= knopf.right + 0.5, true, JSON.stringify(knopf))
+    }
+    assert.equal(safe.overflowX <= 1, true)
+    assert.deepEqual(fehler, [])
     await page.close()
   })
 

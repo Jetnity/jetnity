@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect, useRef, useSyncExternalStore } from 'react'
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import { modusScrollerZiel } from '@/lib/trips/trip-workspace-premium-experience-3'
 import {
@@ -13,6 +13,17 @@ import {
 } from '@/lib/trips/ux-u1a-shell-1'
 import { WORKSPACE_ANSICHTEN, WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { cn } from '@/lib/utils'
+
+function textSprengtZelle(nav: HTMLElement): boolean {
+  return [...nav.querySelectorAll('button')].some((knopf) => {
+    const box = knopf.getBoundingClientRect()
+    if (box.width < 1 || box.height < 1) return false
+    const range = document.createRange()
+    range.selectNodeContents(knopf)
+    const text = range.getBoundingClientRect()
+    return text.left < box.left - 1 || text.right > box.right + 1
+  })
+}
 
 const SERVER_MESSUNG: ShellMessung = {
   viewportBreite: 280,
@@ -92,6 +103,26 @@ export default function TripWorkspaceModeNavigation({
   const navRef = useRef<HTMLElement>(null)
   const messung = useSyncExternalStore(messungAbonnieren, messungLesen, () => SERVER_MESSUNG)
   const lage: ShellNavLage = shellNavLage({ ...messung, detailOffen })
+  const masse = `${messung.viewportBreite}:${messung.rootSchriftPx}:${messung.browserZoom}:${messung.tastatur}:${detailOffen}`
+  const [zeileZuEng, setZeileZuEng] = useState(false)
+  const gezeigt: ShellNavLage = lage === 'bottom' && zeileZuEng ? 'flow' : lage
+
+  useLayoutEffect(() => {
+    setZeileZuEng(false)
+  }, [masse])
+
+  useLayoutEffect(() => {
+    if (gezeigt !== 'bottom') return
+    const nav = navRef.current
+    if (!nav) return
+    const pruefen = () => {
+      if (textSprengtZelle(nav)) setZeileZuEng(true)
+    }
+    pruefen()
+    const beobachter = new ResizeObserver(pruefen)
+    beobachter.observe(nav)
+    return () => beobachter.disconnect()
+  }, [gezeigt, masse])
 
   useLayoutEffect(() => {
     if (lage !== 'sticky') return
@@ -118,7 +149,7 @@ export default function TripWorkspaceModeNavigation({
       wurzel.style.removeProperty('--ux-u1a-nav-offset')
       wurzel.style.scrollPaddingBottom = ''
     }
-    if (lage !== 'bottom' || !nav) {
+    if (gezeigt !== 'bottom' || !nav) {
       loeschen()
       return loeschen
     }
@@ -134,10 +165,10 @@ export default function TripWorkspaceModeNavigation({
       beobachter.disconnect()
       loeschen()
     }
-  }, [lage, ansicht])
+  }, [gezeigt, ansicht])
 
   useLayoutEffect(() => {
-    if (lage !== 'bottom') return
+    if (gezeigt !== 'bottom') return
     const onFocus = (ereignis: FocusEvent) => {
       const ziel = ereignis.target
       const nav = navRef.current
@@ -150,7 +181,7 @@ export default function TripWorkspaceModeNavigation({
     }
     document.addEventListener('focusin', onFocus)
     return () => document.removeEventListener('focusin', onFocus)
-  }, [lage])
+  }, [gezeigt])
 
   const knopf = (modus: WorkspaceAnsicht, variante: ShellNavLage) => {
     const aktiv = ansicht === modus
@@ -165,7 +196,7 @@ export default function TripWorkspaceModeNavigation({
           variante === 'sticky' &&
             'inline-flex w-full items-center justify-center whitespace-normal rounded-full sm:w-auto sm:shrink-0 sm:grow sm:basis-auto sm:whitespace-nowrap sm:px-3.5',
           variante === 'bottom' &&
-            'inline-flex w-full min-w-0 items-center justify-center whitespace-nowrap rounded-2xl px-0',
+            'inline-flex w-full min-w-0 items-center justify-center whitespace-nowrap rounded-2xl px-0 tracking-[-0.07em]',
           variante === 'flow' && 'block w-full min-w-0 whitespace-normal rounded-full',
           aktiv ? 'bg-brand-800 text-white' : 'text-brand-800 hover:bg-surface-50',
         )}
@@ -175,7 +206,7 @@ export default function TripWorkspaceModeNavigation({
     )
   }
 
-  if (lage === 'bottom') {
+  if (gezeigt === 'bottom') {
     return (
       <nav
         ref={navRef}
@@ -191,7 +222,7 @@ export default function TripWorkspaceModeNavigation({
     )
   }
 
-  if (lage === 'flow') {
+  if (gezeigt === 'flow') {
     return (
       <nav
         ref={navRef}

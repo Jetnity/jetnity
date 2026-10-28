@@ -2,6 +2,10 @@
 
 28 October 2026. Author review only. This is not a Technical Lead PASS.
 
+## R1-F1
+
+GitHub Chrome drew Organisieren at 102px inside a 96.75px button. Local Arial was narrower, so the first evidence JSON did not catch it. DejaVu Sans, the wide face on that runner, draws Vorbereitung at about 104px. `tracking-[-0.07em]` keeps the 14px face and puts that word 2.3px inside the cell. The guest-nav test file is untouched and passed again on Chrome 148. A forced 24px left/right inset switches the bar to relative flow instead of clipping.
+
 ## Checked
 
 - Operating mode is `NORMAL`. This slice is the dispatched UX correction, not a new product lane.
