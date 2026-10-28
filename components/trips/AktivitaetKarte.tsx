@@ -8,7 +8,7 @@ import { Clock3, Sparkles } from 'lucide-react'
 
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
 import { ACTIVITY_MARKE_TEXT, type ActivityMarke } from '@/lib/activities/domain'
-import { viatorBildAnzeigen, validateViatorProductUrl } from '@/lib/providers/viator/activities/url'
+import { viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { cn } from '@/lib/utils'
 
