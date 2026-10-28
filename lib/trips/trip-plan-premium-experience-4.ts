@@ -38,7 +38,7 @@ export type PlanTagNavigator = {
   naechsterId: string | null
 }
 
-/** Sichtbare Reihenfolge aus der bereits abgeleiteten Timeline. Keine neue Zuordnung. */
+/** Sichtbare Reihenfolge der übergebenen Gruppen, ohne sie neu zu sortieren. */
 export function planTageFolgen(etappen: readonly { tage: readonly PlanTagRef[] }[]): PlanTagRef[] {
   return etappen.flatMap((etappe) => etappe.tage.map((tag) => ({ id: tag.id, dayIndex: tag.dayIndex })))
 }
