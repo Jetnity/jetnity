@@ -911,25 +911,28 @@ export default function TripWorkspace({
         />
 
         {modusBereit ? (
-          <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
+          <>
+            {/* Klebt an der langen Spalte. Die kurze Aktionszeile wäre sonst der Sticky-Kasten. */}
             <TripWorkspaceModeNavigation
               ansicht={modus.ansicht}
               kompakt={kompakt}
               detailOffen={detailOffen}
               onWechsel={onModus}
             />
-            <TripWorkspaceAktionen
-              aenderungOffen={aenderungOffen}
-              begleiterOffen={begleiterOffen}
-              begleiterVorhanden={begleiter != null}
-              onAenderung={aenderungOeffnen}
-              onBegleiter={begleiterOeffnen}
-              aenderungKnopfRef={aenderungKnopfRef}
-              begleiterKnopfRef={begleiterKnopfRef}
-            />
-            {aenderungFeld}
-            {begleiterFeld}
-          </div>
+            <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
+              <TripWorkspaceAktionen
+                aenderungOffen={aenderungOffen}
+                begleiterOffen={begleiterOffen}
+                begleiterVorhanden={begleiter != null}
+                onAenderung={aenderungOeffnen}
+                onBegleiter={begleiterOeffnen}
+                aenderungKnopfRef={aenderungKnopfRef}
+                begleiterKnopfRef={begleiterKnopfRef}
+              />
+              {aenderungFeld}
+              {begleiterFeld}
+            </div>
+          </>
         ) : (
           <div
             data-workspace-modus-ausstehend=""

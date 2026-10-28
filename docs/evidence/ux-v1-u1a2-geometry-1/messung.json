@@ -1,0 +1,1064 @@
+{
+  "grenze": [
+    "CDP pageScale und visualViewport.scale sind kein Desktop-Browserzoom 200%.",
+    "Kein physisches Gerät, keine OS-Tastatur, kein VoiceOver."
+  ],
+  "negativ": {
+    "scrollY": 650,
+    "navTop": -494,
+    "navBottom": -440,
+    "ansichtHeight": 138
+  },
+  "sticky": {
+    "768": {
+      "0": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 429.5,
+        "navBottom": 483.5,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 0,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 434.5,
+            "textLeft": 76.3,
+            "textRight": 144.1,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 434.5,
+            "textLeft": 242.6,
+            "textRight": 310.4,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 434.5,
+            "textLeft": 409,
+            "textRight": 500.2,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 434.5,
+            "textLeft": 598.8,
+            "textRight": 691.7,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "450": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 450,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 76.3,
+            "textRight": 144.1,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 242.6,
+            "textRight": 310.4,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 409,
+            "textRight": 500.2,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 598.8,
+            "textRight": 691.7,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "650": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 650,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 76.3,
+            "textRight": 144.1,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 242.6,
+            "textRight": 310.4,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 409,
+            "textRight": 500.2,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 598.8,
+            "textRight": 691.7,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "900": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 900,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 76.3,
+            "textRight": 144.1,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 242.6,
+            "textRight": 310.4,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 409,
+            "textRight": 500.2,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 598.8,
+            "textRight": 691.7,
+            "insetLeft": 47.3,
+            "insetRight": 47.3,
+            "fontSize": "14px"
+          }
+        ]
+      }
+    },
+    "1440": {
+      "0": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 449,
+        "navBottom": 503,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 0,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 454,
+            "textLeft": 220.3,
+            "textRight": 288.1,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 454,
+            "textLeft": 514.6,
+            "textRight": 582.4,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 454,
+            "textLeft": 809,
+            "textRight": 900.2,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 454,
+            "textLeft": 1126.8,
+            "textRight": 1219.7,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "450": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 450,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 220.3,
+            "textRight": 288.1,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 514.6,
+            "textRight": 582.4,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 809,
+            "textRight": 900.2,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 1126.8,
+            "textRight": 1219.7,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "650": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 650,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 220.3,
+            "textRight": 288.1,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 514.6,
+            "textRight": 582.4,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 809,
+            "textRight": 900.2,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 1126.8,
+            "textRight": 1219.7,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "900": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 900,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "textLeft": 220.3,
+            "textRight": 288.1,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "textLeft": 514.6,
+            "textRight": 582.4,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "textLeft": 809,
+            "textRight": 900.2,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "textLeft": 1126.8,
+            "textRight": 1219.7,
+            "insetLeft": 111.3,
+            "insetRight": 111.3,
+            "fontSize": "14px"
+          }
+        ]
+      }
+    }
+  },
+  "history": {
+    "ansicht": "organisieren",
+    "navCount": 1
+  },
+  "bottom": {
+    "360": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": 409.5,
+      "navBottom": 615.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2137,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2289,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 318,
+          "height": 44,
+          "top": 418.5,
+          "textLeft": 146.1,
+          "textRight": 213.9,
+          "insetLeft": 125.1,
+          "insetRight": 125.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 318,
+          "height": 44,
+          "top": 466.5,
+          "textLeft": 146.1,
+          "textRight": 213.9,
+          "insetLeft": 125.1,
+          "insetRight": 125.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 318,
+          "height": 44,
+          "top": 514.5,
+          "textLeft": 134.4,
+          "textRight": 225.6,
+          "insetLeft": 113.4,
+          "insetRight": 113.4,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 318,
+          "height": 44,
+          "top": 562.5,
+          "textLeft": 133.5,
+          "textRight": 226.5,
+          "insetLeft": 112.5,
+          "insetRight": 112.5,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "390": {
+      "lage": "bottom",
+      "position": "fixed",
+      "navTop": 791,
+      "navBottom": 844,
+      "navHeight": 53,
+      "headerBottom": 72,
+      "parentHeight": 1900.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2053,
+      "overflowX": 0,
+      "offset": "53px",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 18.9,
+          "textRight": 77.9,
+          "insetLeft": 18.9,
+          "insetRight": 18.9,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 116.6,
+          "textRight": 175.6,
+          "insetLeft": 18.9,
+          "insetRight": 18.9,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 204.2,
+          "textRight": 283.6,
+          "insetLeft": 8.7,
+          "insetRight": 8.7,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 301,
+          "textRight": 382.2,
+          "insetLeft": 7.8,
+          "insetRight": 7.8,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "430": {
+      "lage": "bottom",
+      "position": "fixed",
+      "navTop": 791,
+      "navBottom": 844,
+      "navHeight": 53,
+      "headerBottom": 72,
+      "parentHeight": 1858,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2010,
+      "overflowX": 0,
+      "offset": "53px",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 23.9,
+          "textRight": 82.9,
+          "insetLeft": 23.9,
+          "insetRight": 23.9,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 131.6,
+          "textRight": 190.6,
+          "insetLeft": 23.9,
+          "insetRight": 23.9,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 229.2,
+          "textRight": 308.6,
+          "insetLeft": 13.7,
+          "insetRight": 13.7,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "textLeft": 336,
+          "textRight": 417.2,
+          "insetLeft": 12.8,
+          "insetRight": 12.8,
+          "fontSize": "14px"
+        }
+      ]
+    }
+  },
+  "dejavu390": {
+    "lage": "bottom",
+    "position": "fixed",
+    "navTop": 791,
+    "navBottom": 844,
+    "navHeight": 53,
+    "headerBottom": 72,
+    "parentHeight": 1900.5,
+    "ansichtHeight": 92,
+    "planHeight": null,
+    "scrollY": 0,
+    "scrollHeight": 2053,
+    "overflowX": 0,
+    "offset": "53px",
+    "knoepfe": [
+      {
+        "name": "Übersicht",
+        "width": 96.8,
+        "height": 44,
+        "top": 796,
+        "textLeft": 14.8,
+        "textRight": 81.9,
+        "insetLeft": 14.8,
+        "insetRight": 14.8,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Reiseplan",
+        "width": 96.8,
+        "height": 44,
+        "top": 796,
+        "textLeft": 112,
+        "textRight": 180.3,
+        "insetLeft": 14.2,
+        "insetRight": 14.2,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Organisieren",
+        "width": 96.8,
+        "height": 44,
+        "top": 796,
+        "textLeft": 198.7,
+        "textRight": 289,
+        "insetLeft": 3.2,
+        "insetRight": 3.2,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Vorbereitung",
+        "width": 96.8,
+        "height": 44,
+        "top": 796,
+        "textLeft": 295.5,
+        "textRight": 387.7,
+        "insetLeft": 2.3,
+        "insetRight": 2.3,
+        "fontSize": "14px"
+      }
+    ]
+  },
+  "safeArea": {
+    "lage": "flow",
+    "position": "relative",
+    "navTop": 409.5,
+    "navBottom": 615.5,
+    "navHeight": 206,
+    "headerBottom": 72,
+    "parentHeight": 2118.5,
+    "ansichtHeight": 92,
+    "planHeight": null,
+    "scrollY": 0,
+    "scrollHeight": 2271,
+    "overflowX": 0,
+    "offset": "",
+    "knoepfe": [
+      {
+        "name": "Übersicht",
+        "width": 348,
+        "height": 44,
+        "top": 418.5,
+        "textLeft": 161.1,
+        "textRight": 228.9,
+        "insetLeft": 140.1,
+        "insetRight": 140.1,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Reiseplan",
+        "width": 348,
+        "height": 44,
+        "top": 466.5,
+        "textLeft": 161.1,
+        "textRight": 228.9,
+        "insetLeft": 140.1,
+        "insetRight": 140.1,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Organisieren",
+        "width": 348,
+        "height": 44,
+        "top": 514.5,
+        "textLeft": 149.4,
+        "textRight": 240.6,
+        "insetLeft": 128.4,
+        "insetRight": 128.4,
+        "fontSize": "14px"
+      },
+      {
+        "name": "Vorbereitung",
+        "width": 348,
+        "height": 44,
+        "top": 562.5,
+        "textLeft": 148.5,
+        "textRight": 241.5,
+        "insetLeft": 127.5,
+        "insetRight": 127.5,
+        "fontSize": "14px"
+      }
+    ]
+  },
+  "flow": {
+    "280": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230,
+      "navBottom": -24,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2547.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 734,
+      "scrollHeight": 2700,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 238,
+          "height": 44,
+          "top": -221,
+          "textLeft": 106.1,
+          "textRight": 173.9,
+          "insetLeft": 85.1,
+          "insetRight": 85.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 238,
+          "height": 44,
+          "top": -173,
+          "textLeft": 106.1,
+          "textRight": 173.9,
+          "insetLeft": 85.1,
+          "insetRight": 85.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 238,
+          "height": 44,
+          "top": -125,
+          "textLeft": 94.4,
+          "textRight": 185.6,
+          "insetLeft": 73.4,
+          "insetRight": 73.4,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 238,
+          "height": 44,
+          "top": -77,
+          "textLeft": 93.5,
+          "textRight": 186.5,
+          "insetLeft": 72.5,
+          "insetRight": 72.5,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "320": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230.5,
+      "navBottom": -24.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2291,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 694,
+      "scrollHeight": 2443,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 278,
+          "height": 44,
+          "top": -221.5,
+          "textLeft": 126.1,
+          "textRight": 193.9,
+          "insetLeft": 105.1,
+          "insetRight": 105.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 278,
+          "height": 44,
+          "top": -173.5,
+          "textLeft": 126.1,
+          "textRight": 193.9,
+          "insetLeft": 105.1,
+          "insetRight": 105.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 278,
+          "height": 44,
+          "top": -125.5,
+          "textLeft": 114.4,
+          "textRight": 205.6,
+          "insetLeft": 93.4,
+          "insetRight": 93.4,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 278,
+          "height": 44,
+          "top": -77.5,
+          "textLeft": 113.5,
+          "textRight": 206.5,
+          "insetLeft": 92.5,
+          "insetRight": 92.5,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "root32": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": 1035,
+      "navBottom": 1445,
+      "navHeight": 410,
+      "headerBottom": 72,
+      "parentHeight": 6522.5,
+      "ansichtHeight": 224,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 6755,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 308,
+          "height": 88,
+          "top": 1052,
+          "textLeft": 127.2,
+          "textRight": 262.8,
+          "insetLeft": 86.2,
+          "insetRight": 86.2,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 308,
+          "height": 88,
+          "top": 1148,
+          "textLeft": 127.2,
+          "textRight": 262.8,
+          "insetLeft": 86.2,
+          "insetRight": 86.2,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 308,
+          "height": 88,
+          "top": 1244,
+          "textLeft": 103.8,
+          "textRight": 286.2,
+          "insetLeft": 62.8,
+          "insetRight": 62.8,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 308,
+          "height": 88,
+          "top": 1340,
+          "textLeft": 102.1,
+          "textRight": 287.9,
+          "insetLeft": 61.1,
+          "insetRight": 61.1,
+          "fontSize": "28px"
+        }
+      ]
+    },
+    "tastatur": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230.5,
+      "navBottom": -24.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2118.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 640,
+      "scrollHeight": 2271,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 348,
+          "height": 44,
+          "top": -221.5,
+          "textLeft": 161.1,
+          "textRight": 228.9,
+          "insetLeft": 140.1,
+          "insetRight": 140.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 348,
+          "height": 44,
+          "top": -173.5,
+          "textLeft": 161.1,
+          "textRight": 228.9,
+          "insetLeft": 140.1,
+          "insetRight": 140.1,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 348,
+          "height": 44,
+          "top": -125.5,
+          "textLeft": 149.4,
+          "textRight": 240.6,
+          "insetLeft": 128.4,
+          "insetRight": 128.4,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 348,
+          "height": 44,
+          "top": -77.5,
+          "textLeft": 148.5,
+          "textRight": 241.5,
+          "insetLeft": 127.5,
+          "insetRight": 127.5,
+          "fontSize": "14px"
+        }
+      ]
+    }
+  },
+  "providerAnfragen": []
+}
