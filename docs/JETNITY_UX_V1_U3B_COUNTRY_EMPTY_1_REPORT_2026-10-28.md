@@ -1,14 +1,14 @@
 # UX V1 U3-B — REPORT
 
-**Status** — Implemented on the Draft branch. Stopped for independent Technical Lead review. Not Ready. Not merged.
+**Status** — R1 correction implemented on the Draft branch. Stopped for independent Technical Lead R2. Not Ready. Not merged. Rejected head `2e58485b061ffe78c666d03c486072ff6313d228`.
 
-**Umgesetzt** — Full-density destination essentials can show one honest country entry sentence when consecutive stages share the same trusted country and the same generic empty entry signature. Every stage occurrence, date, local safety line and season line remains. Thailand → Cambodia → Thailand stays two Thai visits. The previous all-empty compact collapse is unchanged. No second truth engine.
+**Umgesetzt** — R1-F1 lets the existing CH-DE render harness execute `react/jsx-runtime` and the real `leere-einreise` helper, and rejects every other require id. R1-F2 keeps country-label grouping on the exact string: `' Thailand '` is not `'Thailand'`. The previous display behaviour is otherwise unchanged.
 
 **Dateien** — `components/trips/TripWorkspaceDestinationEssentials.tsx`. `lib/trips/ux-u3b-country-empty-1/leere-einreise.ts` and its two tests. `scripts/ux-u3b-country-empty-1/mounted-render.ts`. This PLAN, STATUS, HANDOFF, SELF_REVIEW and REPORT. The immutable task file was not edited.
 
 **Datenbank** — None. No migration, RLS, Auth or type generation for the database.
 
-**Tests** — `tsc -p tsconfig.json --noEmit` passed. ESLint on the owned files passed. Node tests passed: U3-B helper and presentation, `destination-essentials-density-1.test.ts`, `destination-essentials.test.ts` (18), and the premium source lock that reads this component. Combined focused run of the U3-B, density and premium files was 46 passed. Playwright synthetic mount passed at 320, 390, 768 and 1440, with root font-size 32px (shared sentence 28px, no horizontal overflow) and keyboard activation of a 44px source link. Artifacts are local synthetic renders, not Production.
+**Tests** — R1 re-run passed 72/72: `official-truth-ch-de-first-visa-vertical-1.test.ts` including the unavailable render path and the new allowlist rejection test, plus the U3-B helper and presentation tests. The padded-label negative test passed. `tsc --noEmit` and ESLint on the touched TypeScript files passed again. Native CI and Preview for this correction head are not yet results. The earlier synthetic mount remains evidence for `2e58485b` only.
 
 **Build** — A production `next build` was not run in this session. Typecheck passed. Exact-head Vercel Preview is still required and is not claimed.
 

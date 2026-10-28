@@ -320,6 +320,30 @@ describe('U3-B contiguous grouping', () => {
     )
   })
 
+  test('a padded catalog label is not the catalog label and does not group', () => {
+    assert.equal(
+      generischeLeereEinreiseSignatur(ziel({ stageId: 'pad', countryLabel: ' Thailand ' })),
+      null,
+    )
+    assert.equal(
+      generischeLeereEinreiseSignatur(ziel({ stageId: 'leer', countryLabel: '   ' })),
+      null,
+    )
+    const gemischt = u3bAnzeigeGruppen([
+      ziel({ stageId: 'a', countryLabel: 'Thailand' }),
+      ziel({ stageId: 'b', position: 2, countryLabel: ' Thailand ' }),
+      ziel({ stageId: 'c', position: 3, countryLabel: 'Thailand' }),
+    ])
+    assert.equal(gemischt.length, 3)
+    assert.ok(gemischt.every((gruppe) => gruppe.art === 'einzeln'))
+    const beide = u3bAnzeigeGruppen([
+      ziel({ stageId: 'p1', countryLabel: ' Thailand ' }),
+      ziel({ stageId: 'p2', position: 2, countryLabel: ' Thailand ' }),
+    ])
+    assert.equal(beide.length, 2)
+    assert.ok(beide.every((gruppe) => gruppe.art === 'einzeln'))
+  })
+
   test('a differing label, date-only difference still groups, and a stale neighbor breaks the run', () => {
     const label = u3bAnzeigeGruppen([
       ziel({ stageId: 'a', countryLabel: 'Thailand' }),

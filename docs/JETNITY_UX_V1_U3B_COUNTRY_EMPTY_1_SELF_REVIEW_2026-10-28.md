@@ -1,6 +1,11 @@
 # UX V1 U3-B — SELF-REVIEW
 
-Author review only. This is not a Technical Lead PASS.
+Author review only. This is not a Technical Lead PASS. R1 on `2e58485b061ffe78c666d03c486072ff6313d228` is corrected in the following commit. That rejected head is historical.
+
+## R1
+
+- The CH-DE harness allowlist is an exact two-id map. `destinationRenderModul` throws for every other id, including `destination-essentials`, `katalog`, `react`, and a padded copy of the helper path. The helper binding is the module the test runner imported, checked by function identity. The unavailable/unknown checklist assertions in the original render test were not edited.
+- `countryLabel?.trim()` is gone. A label that differs from `label.trim()` has no signature, so `' Thailand '` is not stored as `'Thailand'` and two padded copies do not group with each other or with the catalog label. `trim()` remains only as that inequality check.
 
 ## What holds
 

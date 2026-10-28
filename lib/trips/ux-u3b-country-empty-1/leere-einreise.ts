@@ -43,9 +43,10 @@ export function generischeLeereEinreiseSignatur(
   ziel: DestinationEssentialZiel,
 ): U3bEinreiseSignatur | null {
   const code = ziel.countryCode
-  const label = ziel.countryLabel?.trim() ?? ''
+  const label = ziel.countryLabel
   if (!code || !istKatalogLand(code)) return null
-  if (label.length === 0) return null
+  // Exact label only. Surrounding whitespace is a different string, not a catalog alias.
+  if (label == null || label.length === 0 || label !== label.trim()) return null
   const einreise = ziel.einreise
   if (einreise.lage !== 'keine_evidence') return null
   if (einreise.unvollstaendig !== false) return null

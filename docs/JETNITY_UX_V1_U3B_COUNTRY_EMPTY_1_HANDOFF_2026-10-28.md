@@ -20,6 +20,10 @@ Hand this to the Technical Lead. Do not start U1-B, U3-A, U4, or another Cursor 
 3. The two test files beside the helper, plus `scripts/ux-u3b-country-empty-1/mounted-render.ts`.
 4. This slice’s PLAN, STATUS, SELF_REVIEW and REPORT.
 
+## R1
+
+Rejected head `2e58485b061ffe78c666d03c486072ff6313d228`. Same session. The correction adds the pure helper to the closed `renderDestination()` require map and refuses padded country labels. Review the new head. CI `40614068944` belongs to the rejected head.
+
 ## Review question that is a product judgment inside the approved rule
 
 Contiguous runs were chosen so a Thailand → Cambodia → Thailand reentry is not one Thailand assessment. The two single-stage Thai visits each keep their own entry line. Sharing happens only when two or more consecutive stages have the identical generic empty entry signature. If the intended reading was one country sentence for every Thai stage in the whole trip, that is a CHANGES REQUIRED on this same session, not a new writer.
