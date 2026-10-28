@@ -1,14 +1,14 @@
 # Viator S2 native activities — REPORT
 
-28 October 2026. Status: **partially finished**. Review fixes for destination catalog resolution, stale quotes, schedule times, and a browser flow that clicks search, selection, and a delayed check. The previous exact-head CI failed on an unrelated SQL `57P01` and does not cover this head. Live Sandbox remains blocked.
+28 October 2026. Status: **partially finished**. The OpenAPI 3.0.2 contract correction is in the same R1–R4 session. Live Sandbox remains blocked. Exact-head CI for this commit is not claimed in this file.
 
 ## Umgesetzt
 
-Explicit activity search can use the Viator provider when the sandbox guard is open. Cards can show a validated image, source label, and price basis. Selecting a Viator card loads detail and a schedule hint, then asks for a date, option, and age-band mix before a live check. The external link is the original validated product URL. Manual planning and GetYourGuide stay in place. A context change drops the Viator selection.
+Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. It does not invent an ISO country code. Product options shown to visitors use the required title. A live check sends `productCode`, `travelDate`, `paxMix`, and a supported `currency`. `productOptionCode` and `startTime` are omitted unless the visitor selected a real option or a real time. A standard product is checked without an invented code. Several start times require a choice. A missing season end date is the 384-day horizon, and a schedule hint is still not availability.
 
 ## Dateien
 
-`lib/providers/viator/activities/anbinden.ts`, route helper, S2 and browser tests, `components/trips/AktivitaetenBereich.tsx`, `AktivitaetKarte.tsx`, `ViatorPruefung.tsx`, `app/api/activities/search/route.ts`, `app/api/activities/viator/{detail,schedule,check}/route.ts`, narrow `lib/activities` domain, schema, client view, and factory. S2 task seed and these docs. Main was merged, including Trip Workspace files as they arrived. Those UX files were not hand-edited.
+`lib/providers/viator/activities/{anbinden,content,contracts,destination,kalender,live-check,request}.ts`, `components/trips/ViatorPruefung.tsx`, and the focused Viator tests. S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited.
 
 ## Datenbank
 
@@ -16,15 +16,15 @@ None.
 
 ## Tests
 
-S2 unit tests passed, including missing key, Production, unmapped place, EUR-versus-CHF, and traveller-total rejection. Browser harness passed. Text enlargement was `documentElement.style.fontSize = 32px`, not browser zoom.
+`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the touched Viator files passed with `--max-warnings 0`. Foundation, sandbox, and S2 unit tests passed with the server-only test register. The browser harness passed: search, explicit Morgentour selection, CHF check body, stale 111 discarded, widths 320, 390, 768, and 1440, root font 32px. `scripts/erreichbarkeit.mjs` and `scripts/exporte.mjs` reported no orphans. Full `npm run lint`, production build, and exact-head CI are not claimed here.
 
 ## Build
 
-`tsc -p tsconfig.json --noEmit` passed before the docs. ESLint on the new Viator and activity files passed with `--max-warnings 0`. Full lint, build, and exact-head CI run after push and are not claimed yet.
+Not re-run for this contract correction. Typecheck passed.
 
 ## Security
 
-No key, no provider call, no Vercel login, no database change. Routes are no-store and noindex. Product URLs are revalidated before a link. Account adoption still stores `booking_url: null`.
+No key, no provider call, no Vercel login, no database change. Routes stay no-store and noindex. Production and a missing key stay closed.
 
 ## Kosten
 
@@ -32,15 +32,15 @@ No new paid call.
 
 ## Dokumentation
 
-This report and the S2 PLAN, STATUS, HANDOFF, and SELF_REVIEW. Official pages named in the task were the contract. The verified email remains comment 6468170303.
+This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. The official partner technical page, fetched by the Technical Lead on 28 October 2026, is the field source. The verified email remains comment 6468170303.
 
 ## Offene Punkte
 
-Protected sandbox key, real `/destinations` bindings, image license, checkout currency, and DiscoverCars under its own owner.
+Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, and exact-head CI for this commit. DiscoverCars stays with its own owner.
 
 ## Risiken
 
-A later key without destination bindings still returns no offers. That is fail-closed, and it can look like a product outage. Green tests are not live Viator proof.
+Green fixture tests are not live Viator proof. A display currency in the check is not a checkout-currency confirmation. `lookupId` is kept and is not a country code.
 
 ## Empfehlung
 

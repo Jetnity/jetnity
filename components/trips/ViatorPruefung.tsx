@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import type { ViatorAgeBand, ViatorAgeBandRule } from '@/lib/providers/viator/activities/contracts'
+import {
+  VIATOR_SEARCH_CURRENCIES,
+  isViatorSearchCurrency,
+  type ViatorAgeBand,
+  type ViatorAgeBandRule,
+  type ViatorSearchCurrency,
+} from '@/lib/providers/viator/activities/contracts'
 import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
 import { validateViatorProductUrl, viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
 
@@ -15,7 +21,7 @@ const ALTER: Record<ViatorAgeBand, string> = {
   TRAVELER: 'Reisende',
 }
 
-type Option = { code: string; title: string | null }
+type Option = { code: string; title: string }
 
 type Detail = {
   productCode: string
@@ -49,6 +55,13 @@ type Quote = {
 }
 
 type Antwort<T> = { status: string; message: string; value: T | null }
+
+function heuteIso(): string {
+  const datum = new Date()
+  const monat = String(datum.getMonth() + 1).padStart(2, '0')
+  const tag = String(datum.getDate()).padStart(2, '0')
+  return `${datum.getFullYear()}-${monat}-${tag}`
+}
 
 async function lesen<T>(pfad: string, body: unknown, signal: AbortSignal): Promise<Antwort<T>> {
   try {
@@ -90,9 +103,12 @@ export default function ViatorPruefung({
   const [datum, setDatum] = useState(dayDate ?? '')
   const [option, setOption] = useState('')
   const [startzeit, setStartzeit] = useState('')
+  const [waehrungsWahl, setWaehrungsWahl] = useState('')
   const [mix, setMix] = useState<Partial<Record<ViatorAgeBand, number>>>({})
   const lauf = useRef(0)
   const abortRef = useRef<AbortController | null>(null)
+  const reiseWaehrung = isViatorSearchCurrency(gewuenschteWaehrung) ? gewuenschteWaehrung : null
+  const waehrung: ViatorSearchCurrency | null = reiseWaehrung ?? (isViatorSearchCurrency(waehrungsWahl) ? waehrungsWahl : null)
 
   const verwerfen = () => {
     lauf.current += 1
@@ -115,8 +131,9 @@ export default function ViatorPruefung({
         if (steuerung.signal.aborted || lauf.current !== eigene) return
         setDetail(produkt.value)
         setPlan(kalender.value)
-        setOption(produkt.value?.productOptions[0]?.code ?? produkt.value?.productOptionCodes[0] ?? '')
-        setMeldung(produkt.status === 'rate_limited' || produkt.status === 'timeout' ? produkt.message : produkt.message)
+        setOption('')
+        setStartzeit('')
+        setMeldung(produkt.message)
       } catch {
         if (!steuerung.signal.aborted && lauf.current === eigene) setMeldung('Die Verbindung zu Viator ist abgebrochen.')
       }
@@ -129,13 +146,42 @@ export default function ViatorPruefung({
 
   const bild = viatorBildAnzeigen(detail?.imageUrl)
   const link = detail?.productUrl && validateViatorProductUrl(detail.productUrl).ok ? detail.productUrl : null
-  const saison = plan?.options.find((eintrag) => eintrag.productOptionCode === option)
-  const zeiten = viatorStartzeiten(saison, datum) ?? []
-  const optionen = detail?.productOptions?.length
-    ? detail.productOptions
-    : (detail?.productOptionCodes ?? []).map((code) => ({ code, title: null }))
+  const optionen = (detail?.productOptions ?? []).filter((eintrag) => eintrag.title.trim().length > 0)
+  const ohneTitel = detail != null && optionen.length === 0 && detail.productOptionCodes.length > 0
+  const standard = detail != null && optionen.length === 0 && detail.productOptionCodes.length === 0
+  const kalenderMehrdeutig = standard && (plan?.options.length ?? 0) > 1
+  const gewaehlteOption = optionen.length === 1 ? optionen[0]!.code : optionen.some((eintrag) => eintrag.code === option) ? option : ''
+  const hinweis = standard
+    ? plan?.options.length === 1
+      ? plan.options[0]
+      : undefined
+    : plan?.options.find((eintrag) => eintrag.productOptionCode === gewaehlteOption)
+  const zeiten =
+    gewaehlteOption || (standard && !kalenderMehrdeutig) ? (viatorStartzeiten(hinweis, datum, heuteIso()) ?? []) : []
+  const gewaehlteZeit = zeiten.length === 1 ? zeiten[0]! : zeiten.includes(startzeit) ? startzeit : ''
+  const pruefungGesperrt = ohneTitel || kalenderMehrdeutig
 
   const pruefen = () => {
+    if (!waehrung) {
+      setQuote(null)
+      setQuoteMeldung('Bitte wähle eine Anzeigewährung. Ohne Währung gibt es keinen aktuellen Preis.')
+      return
+    }
+    if (pruefungGesperrt) {
+      setQuote(null)
+      setQuoteMeldung('Die Prüfung gilt hier nicht als erfolgreich. Der Link öffnet das Angebot bei Viator.')
+      return
+    }
+    if (!standard && !gewaehlteOption) {
+      setQuote(null)
+      setQuoteMeldung('Bitte wähle eine Option.')
+      return
+    }
+    if (zeiten.length > 1 && !gewaehlteZeit) {
+      setQuote(null)
+      setQuoteMeldung('Bitte wähle eine Startzeit.')
+      return
+    }
     const generation = ++lauf.current
     abortRef.current?.abort()
     const steuerung = new AbortController()
@@ -150,10 +196,10 @@ export default function ViatorPruefung({
       '/api/activities/viator/check',
       {
         productCode,
-        productOptionCode: option,
+        ...(standard ? {} : { productOptionCode: gewaehlteOption }),
         travelDate: datum,
-        startTime: startzeit || null,
-        currency: gewuenschteWaehrung === 'CHF' ? 'CHF' : null,
+        ...(gewaehlteZeit ? { startTime: gewaehlteZeit } : {}),
+        currency: waehrung,
         paxMix,
       },
       steuerung.signal,
@@ -183,6 +229,12 @@ export default function ViatorPruefung({
       ) : null}
       {detail?.description ? <p className="mt-3 break-words text-sm leading-6 text-ink-800">{detail.description}</p> : null}
       {plan ? <p className="mt-3 text-sm text-ink-800">Kalenderhinweis, keine aktuelle Verfügbarkeit.</p> : null}
+      {standard ? <p className="mt-3 text-sm text-ink-800">Dieses Angebot hat keine Zusatzoption.</p> : null}
+      {pruefungGesperrt ? (
+        <p className="mt-3 text-sm leading-6 text-ink-800">
+          Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.
+        </p>
+      ) : null}
       <div className="mt-4 grid gap-3">
         <label className="grid gap-1 text-sm text-ink-800">
           Datum
@@ -197,42 +249,69 @@ export default function ViatorPruefung({
             className="min-h-11 rounded-xl border border-line-200 px-3"
           />
         </label>
-        <label className="grid gap-1 text-sm text-ink-800">
-          Option
-          <select
-            value={option}
-            onChange={(event) => {
-              setOption(event.target.value)
-              setStartzeit('')
-              verwerfen()
-            }}
-            className="min-h-11 rounded-xl border border-line-200 px-3"
-          >
-            {optionen.map((eintrag) => (
-              <option key={eintrag.code} value={eintrag.code}>
-                {eintrag.title ? `${eintrag.title}` : eintrag.code}
-              </option>
-            ))}
-          </select>
-        </label>
+        {optionen.length > 0 ? (
+          <label className="grid gap-1 text-sm text-ink-800">
+            Option
+            <select
+              value={gewaehlteOption}
+              onChange={(event) => {
+                setOption(event.target.value)
+                setStartzeit('')
+                verwerfen()
+              }}
+              className="min-h-11 rounded-xl border border-line-200 px-3"
+            >
+              {optionen.length === 1 ? null : <option value="">Bitte wählen</option>}
+              {optionen.map((eintrag) => (
+                <option key={eintrag.code} value={eintrag.code}>
+                  {eintrag.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
         {zeiten.length > 0 ? (
           <label className="grid gap-1 text-sm text-ink-800">
             Startzeit
             <select
-              value={zeiten.includes(startzeit) ? startzeit : ''}
+              value={gewaehlteZeit}
               onChange={(event) => {
                 setStartzeit(event.target.value)
                 verwerfen()
               }}
               className="min-h-11 rounded-xl border border-line-200 px-3"
             >
-              <option value="">Bitte wählen</option>
+              {zeiten.length === 1 ? null : <option value="">Bitte wählen</option>}
               {zeiten.map((zeit) => (
-                <option key={zeit} value={zeit}>{zeit}</option>
+                <option key={zeit} value={zeit}>
+                  {zeit}
+                </option>
               ))}
             </select>
           </label>
         ) : null}
+        {reiseWaehrung ? (
+          <p className="text-sm text-ink-800">Angefragte Anzeigewährung: {reiseWaehrung}. Das ist keine Checkout-Zusage.</p>
+        ) : (
+          <label className="grid gap-1 text-sm text-ink-800">
+            Anzeigewährung
+            <select
+              value={waehrung ?? ''}
+              onChange={(event) => {
+                setWaehrungsWahl(event.target.value)
+                verwerfen()
+              }}
+              className="min-h-11 rounded-xl border border-line-200 px-3"
+            >
+              <option value="">Bitte wählen</option>
+              {VIATOR_SEARCH_CURRENCIES.map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {(detail?.ageBands ?? []).map((band) => (
           <label key={band.ageBand} className="grid gap-1 text-sm text-ink-800">
             {ALTER[band.ageBand]} ({band.startAge}–{band.endAge})
@@ -249,22 +328,24 @@ export default function ViatorPruefung({
             />
           </label>
         ))}
-        <button
-          type="button"
-          onClick={pruefen}
-          disabled={prueft}
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-60"
-        >
-          Verfügbarkeit prüfen
-        </button>
+        {pruefungGesperrt ? null : (
+          <button
+            type="button"
+            onClick={pruefen}
+            disabled={prueft}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-60"
+          >
+            Verfügbarkeit prüfen
+          </button>
+        )}
       </div>
       <p role="status" className="mt-3 text-sm leading-6 text-ink-800">
         {prueft ? 'Prüfung läuft.' : quoteMeldung}
       </p>
-      {quote?.price ? (
+      {quote?.price && waehrung ? (
         <p className="mt-2 text-sm text-ink-800">
           {quote.price.currency} {quote.price.amount}. Keine Checkout-Zusage.
-          {gewuenschteWaehrung === 'CHF' && quote.price.currency !== 'CHF' ? ' Nicht als CHF übernommen.' : ''}
+          {quote.price.currency !== waehrung ? ` Nicht als ${waehrung} übernommen.` : ''}
         </p>
       ) : null}
       {link ? (

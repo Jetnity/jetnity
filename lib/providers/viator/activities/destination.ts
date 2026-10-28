@@ -1,3 +1,5 @@
+import { landName } from '@/lib/country/darstellung'
+
 export type ViatorPlaceBinding = {
   jetnityPlaceId: string
   destinationId: number
@@ -49,24 +51,12 @@ export type ViatorKatalogOrt = {
   name: string
   type: string
   parentDestinationId: number | null
+  lookupId: string | null
   latitude: number | null
   longitude: number | null
 }
 
 const ORTS_TYPEN = new Set(['CITY', 'TOWN'])
-const LAND_NAMEN: Record<string, readonly string[]> = {
-  TH: ['thailand'],
-  FR: ['france', 'frankreich'],
-  US: ['united states', 'united states of america', 'usa', 'vereinigte staaten'],
-  DE: ['germany', 'deutschland'],
-  IT: ['italy', 'italien'],
-  ES: ['spain', 'spanien'],
-  GB: ['united kingdom', 'uk', 'grossbritannien', 'vereinigtes königreich'],
-  CH: ['switzerland', 'schweiz'],
-  AT: ['austria', 'österreich', 'osterreich'],
-  JP: ['japan'],
-  AU: ['australia', 'australien'],
-}
 
 function nameSchluessel(value: string): string {
   return value
@@ -96,12 +86,14 @@ export function viatorKatalogLesen(body: unknown): ViatorKatalogOrt[] | null {
       parent == null ? null : typeof parent === 'number' && Number.isSafeInteger(parent) && parent > 0 ? parent : null
     if (parent != null && parentDestinationId == null) return null
     const center = ziel.center && typeof ziel.center === 'object' && !Array.isArray(ziel.center) ? (ziel.center as Record<string, unknown>) : null
+    const lookupId = typeof ziel.lookupId === 'string' && ziel.lookupId.trim().length > 0 ? ziel.lookupId.trim() : null
     gesehen.add(ziel.destinationId)
     orte.push({
       destinationId: ziel.destinationId,
       name: ziel.name.trim(),
       type: ziel.type.trim().toUpperCase(),
       parentDestinationId,
+      lookupId,
       latitude: zahl(center?.latitude),
       longitude: zahl(center?.longitude),
     })
@@ -124,9 +116,9 @@ function landVon(ort: ViatorKatalogOrt, katalog: readonly ViatorKatalogOrt[]): V
 function landPasst(code: string | null, land: ViatorKatalogOrt | null): boolean {
   if (!code) return true
   if (!land) return false
-  const namen = LAND_NAMEN[code.toUpperCase()]
-  if (!namen) return false
-  return namen.includes(nameSchluessel(land.name))
+  const jetnityName = landName(code, 'en')
+  if (!jetnityName || jetnityName.toUpperCase() === code.toUpperCase()) return false
+  return nameSchluessel(land.name) === nameSchluessel(jetnityName)
 }
 
 function distanzKm(lat1: number, lon1: number, lat2: number, lon2: number): number {

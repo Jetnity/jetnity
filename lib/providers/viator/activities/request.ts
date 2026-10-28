@@ -120,18 +120,18 @@ export function buildViatorSandboxCall(
   if (!live.ok) return live
   const payload: {
     productCode: string
-    productOptionCode: string
     travelDate: string
+    currency: ViatorSearchCurrency
     paxMix: ViatorLiveCheckRequestPax[]
-    currency?: ViatorSearchCurrency
+    productOptionCode?: string
     startTime?: string
   } = {
     productCode: live.value.productCode,
-    productOptionCode: live.value.productOptionCode,
     travelDate: live.value.travelDate,
+    currency: live.value.currency,
     paxMix: live.value.paxMix.map((item) => ({ ageBand: item.ageBand, numberOfTravelers: item.numberOfTravelers })),
   }
-  if (live.value.currency) payload.currency = live.value.currency
+  if (live.value.productOptionCode) payload.productOptionCode = live.value.productOptionCode
   if (live.value.startTime) payload.startTime = live.value.startTime
   return {
     ok: true,

@@ -4,12 +4,18 @@
 
 ## State
 
-The Aktivitäten area can search through the Viator provider only when the sandbox guard is open. Without `VIATOR_SANDBOX_API_KEY` and `VIATOR_SANDBOX_CALLS=true`, or in Production, the provider is absent and the existing search says the activity search is unavailable. No example offers are substituted.
+The Aktivitäten search uses Viator only when the sandbox guard is open. Missing `VIATOR_SANDBOX_API_KEY` or `VIATOR_SANDBOX_CALLS`, and Production, stay unavailable. No example offers are substituted.
 
-A selected Viator card can open detail, a schedule hint, an age-band check, and the original product link. Changing the day context drops that selection. An unknown place is not mapped to a city. The runtime destination binding list is empty, so a future key still fails closed until a real `/destinations` binding is supplied outside this session.
+Runtime destination resolution loads `GET /destinations`. A place matches a CITY or TOWN only through a COUNTRY ancestor whose English name equals Jetnity `landName`. Destination records have no invented country code. `lookupId` is stored and is not treated as an ISO code. Unknown hierarchy and duplicate names stay unresolved.
+
+A live check always sends a supported display currency. CHF is sent when the trip currency is the labelled CHF flow. Any other supported trip currency is sent under that code. An unsupported trip currency asks for a choice and does not show a current price. The request omits `productOptionCode` for a product with no titled option, and never sends `TG1` or `DEFAULT` as a stand-in. Several start times stay unselected until the visitor chooses one. A season without `endDate` is a hint through 384 days from the check clock, not availability.
 
 Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited.
 
 ## Checks
 
-Focused S2 unit tests passed. Browser harness passed at 320, 390, 768, and 1440. Text enlargement set the document root font to 32px; that is not browser zoom. External image requests were aborted. Exact-head CI for the previous S2 head failed on an unrelated Postgres `57P01`. This review fix produces a new head. Live Sandbox and hosted acceptance stay blocked. Destination lookup now uses `GET /destinations` on the runtime path, cached at most 3600 seconds. A changed date, option, or age mix drops the previous quote before a newer check can replace it.
+Focused Viator unit tests passed, including currency, standard product, horizon, and country-ancestor cases. The browser harness passed at 320, 390, 768, and 1440. It selected Morgentour by its title, sent CHF with option `TG1` and start time `10:00`, and discarded a late 111 after the date changed. Text enlargement set the document root font to 32px. That is not browser zoom. Exact-head CI for this contract correction starts on push and is not claimed here. Earlier CI does not cover this head.
+
+## Still blocked
+
+Real Sandbox calls, image license, checkout currency, and hosted acceptance. No Ready. No merge.

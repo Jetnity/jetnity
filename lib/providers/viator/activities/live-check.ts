@@ -25,9 +25,13 @@ export function validateViatorLiveCheckRequest(raw: unknown): { ok: true; value:
   if (typeof record.productCode !== 'string' || !PRODUCT_CODE.test(record.productCode)) {
     return { ok: false, reason: 'missing_product' }
   }
-  if (typeof record.productOptionCode !== 'string' || !OPTION_CODE.test(record.productOptionCode)) {
+  const optionIstText = typeof record.productOptionCode === 'string' && record.productOptionCode.length > 0
+  if (optionIstText) {
+    if (!OPTION_CODE.test(record.productOptionCode as string)) return { ok: false, reason: 'missing_option' }
+  } else if (record.productOptionCode !== null && record.standardProduct !== true) {
     return { ok: false, reason: 'missing_option' }
   }
+  const productOptionCode = optionIstText ? (record.productOptionCode as string) : null
   const travelDate = calendarDate(record.travelDate)
   if (!travelDate) return { ok: false, reason: 'missing_date' }
   if (!Array.isArray(record.paxMix) || record.paxMix.length === 0 || record.paxMix.length > 6) {
@@ -60,14 +64,14 @@ export function validateViatorLiveCheckRequest(raw: unknown): { ok: true; value:
   if (record.startTime != null && startTime == null) return { ok: false, reason: 'invalid_start_time' }
   if (startTimeRequired && startTime == null) return { ok: false, reason: 'missing_start_time' }
 
-  const currency = record.currency == null ? null : readViatorCurrency(record.currency)
-  if (record.currency != null && currency == null) return { ok: false, reason: 'unknown_currency' }
+  const currency = readViatorCurrency(record.currency)
+  if (!currency) return { ok: false, reason: 'missing_currency' }
 
   return {
     ok: true,
     value: {
       productCode: record.productCode,
-      productOptionCode: record.productOptionCode,
+      productOptionCode,
       travelDate,
       paxMix,
       currency,
@@ -95,10 +99,14 @@ export function parseViatorAvailabilityCheck(
   const responseCurrency = readViatorCurrency(record.currency)
 
   const matches = record.bookableItems.map(asRecord).filter((candidate) => {
-    if (!candidate || candidate.productOptionCode !== request.productOptionCode) return false
-    if (typeof candidate.available !== 'boolean') return false
-    if (request.startTime == null) return true
-    return candidate.startTime === request.startTime
+  if (!candidate || typeof candidate.available !== 'boolean') return false
+  const optionCode =
+    typeof candidate.productOptionCode === 'string' && candidate.productOptionCode.length > 0
+      ? candidate.productOptionCode
+      : null
+  if (optionCode !== request.productOptionCode) return false
+  if (request.startTime == null) return clockTime(candidate.startTime) == null
+  return candidate.startTime === request.startTime
   })
   if (matches.length !== 1) return { ok: false, reason: 'malformed_response' }
   const item = matches[0]!
@@ -136,8 +144,8 @@ export function parseViatorAvailabilityCheck(
         ttlSeconds,
         retrievedAt: context.retrievedAt,
         nowMs: context.nowMs,
-        boundKey: request.productOptionCode + request.travelDate,
-        currentKey: request.productOptionCode + request.travelDate,
+        boundKey: `${request.productOptionCode ?? ''}${request.travelDate}`,
+        currentKey: `${request.productOptionCode ?? ''}${request.travelDate}`,
       }),
       checkoutCurrencyConfirmed: false,
     },

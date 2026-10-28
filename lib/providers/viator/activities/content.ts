@@ -136,11 +136,11 @@ function readCancellation(value: unknown): ViatorCancellation {
   return { policyType: 'unknown', stornierbar: null }
 }
 
-function readOptionCodes(value: unknown): { codes: string[]; options: Array<{ code: string; title: string | null }>; partial: boolean } {
+function readOptionCodes(value: unknown): { codes: string[]; options: Array<{ code: string; title: string }>; partial: boolean } {
   if (value == null) return { codes: [], options: [], partial: false }
   if (!Array.isArray(value)) return { codes: [], options: [], partial: true }
   const codes: string[] = []
-  const options: Array<{ code: string; title: string | null }> = []
+  const options: Array<{ code: string; title: string }> = []
   let partial = false
   for (const item of value) {
     const record = asRecord(item)
@@ -151,6 +151,10 @@ function readOptionCodes(value: unknown): { codes: string[]; options: Array<{ co
     }
     if (codes.includes(code)) continue
     const title = readViatorTitle(record?.title)
+    if (!title) {
+      partial = true
+      continue
+    }
     codes.push(code)
     options.push({ code, title })
   }

@@ -223,7 +223,7 @@ export type ViatorContentProduct = {
   reviewSummary: ViatorReviewSummary | null
   image: ViatorImage | null
   productOptionCodes: string[]
-  productOptions: Array<{ code: string; title: string | null }>
+  productOptions: Array<{ code: string; title: string }>
   ageBands: ViatorAgeBandRule[]
   cancellation: ViatorCancellation
   flags: string[]
@@ -319,10 +319,10 @@ export type ViatorPaxMixItem = {
 
 export type ViatorLiveCheckRequest = {
   productCode: string
-  productOptionCode: string
+  productOptionCode: string | null
   travelDate: string
   paxMix: ViatorPaxMixItem[]
-  currency: ViatorSearchCurrency | null
+  currency: ViatorSearchCurrency
   startTime: string | null
   productAgeBands: ViatorAgeBandRule[]
 }
@@ -332,7 +332,7 @@ export type ViatorLiveCheck = {
   evidenceMode: 'live_check'
   availabilityClaim: true
   productCode: string
-  productOptionCode: string
+  productOptionCode: string | null
   travelDate: string
   startTime: string | null
   available: boolean

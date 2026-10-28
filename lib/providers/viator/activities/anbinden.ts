@@ -192,7 +192,7 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
   imageUrl: string | null
   price: { amount: number; currency: string; priceRole: ActivityPreisRolle; checkoutCurrencyConfirmed: false } | null
   productOptionCodes: string[]
-  productOptions: Array<{ code: string; title: string | null }>
+  productOptions: Array<{ code: string; title: string }>
   ageBands: ViatorAgeBandRule[]
   productUrl: string | null
 }>> {
@@ -299,8 +299,10 @@ export async function viatorLivePruefen(
   if (!product) {
     return { status: 'error', message: 'Die Prüfung braucht zuerst lesbare Produktdetails.', httpStatus: 200, value: null, availabilityClaim: false }
   }
+  const hatOptionen = product.productOptionCodes.length > 0
   const anfrage = validateViatorLiveCheckRequest({
     ...(record ?? {}),
+    standardProduct: !hatOptionen,
     productAgeBands: product.ageBands,
   })
   if (!anfrage.ok) {
@@ -309,11 +311,25 @@ export async function viatorLivePruefen(
         ? 'Eine Gesamtzahl ist keine Altersmischung.'
         : anfrage.reason === 'nonmatching_age_band'
           ? 'Diese Altersgruppe gibt es bei diesem Angebot nicht.'
-          : 'Für die Prüfung fehlen Datum, Option oder Altersgruppen.'
+          : anfrage.reason === 'missing_currency'
+            ? 'Die Prüfung braucht eine unterstützte Anzeigewährung.'
+            : anfrage.reason === 'missing_option'
+              ? 'Bitte wähle eine Option. Es wird kein Standardcode erfunden.'
+              : 'Für die Prüfung fehlen Datum, Option oder Altersgruppen.'
     return { status: 'invalid', message, httpStatus: 200, value: null, availabilityClaim: false }
   }
-  if (!product.productOptionCodes.includes(anfrage.value.productOptionCode)) {
-    return { status: 'invalid', message: 'Diese Option gehört nicht zum Angebot.', httpStatus: 200, value: null, availabilityClaim: false }
+  if (hatOptionen) {
+    if (!anfrage.value.productOptionCode || !product.productOptionCodes.includes(anfrage.value.productOptionCode)) {
+      return { status: 'invalid', message: 'Diese Option gehört nicht zum Angebot.', httpStatus: 200, value: null, availabilityClaim: false }
+    }
+  } else if (anfrage.value.productOptionCode) {
+    return {
+      status: 'invalid',
+      message: 'Dieses Angebot hat keinen Optionscode. Es wird keiner erfunden.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
   }
   const plan = await bereit.client.schedule({ productCode, acceptLanguage: 'de-DE' })
   if (!plan.ok) {
@@ -325,16 +341,36 @@ export async function viatorLivePruefen(
       availabilityClaim: false,
     }
   }
-  const saison = plan.value.options.find((option) => option.productOptionCode === anfrage.value.productOptionCode)
-  const zeiten = viatorStartzeiten(saison, anfrage.value.travelDate)
-  if (zeiten == null) {
-    return { status: 'invalid', message: 'Dieses Datum liegt ausserhalb des Kalenderhinweises.', httpStatus: 200, value: null, availabilityClaim: false }
+  const code = anfrage.value.productOptionCode
+  const passende = code
+    ? plan.value.options.filter((option) => option.productOptionCode === code)
+    : plan.value.options
+  if (code && passende.length !== 1) {
+    return { status: 'invalid', message: 'Diese Option steht im Kalenderhinweis nicht.', httpStatus: 200, value: null, availabilityClaim: false }
   }
-  if (zeiten.length > 0 && !anfrage.value.startTime) {
-    return { status: 'invalid', message: 'Bitte wähle eine Startzeit.', httpStatus: 200, value: null, availabilityClaim: false }
+  if (!code && passende.length > 1) {
+    return {
+      status: 'invalid',
+      message: 'Ohne Optionscode ist der Kalenderhinweis nicht eindeutig.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
   }
-  if (anfrage.value.startTime && !zeiten.includes(anfrage.value.startTime)) {
-    return { status: 'invalid', message: 'Diese Startzeit gilt nicht für die gewählte Option und das Datum.', httpStatus: 200, value: null, availabilityClaim: false }
+  const heute = new Date(deps.nowMs ?? Date.now()).toISOString().slice(0, 10)
+  if (passende.length === 1) {
+    const zeiten = viatorStartzeiten(passende[0], anfrage.value.travelDate, heute)
+    if (zeiten == null) {
+      return { status: 'invalid', message: 'Dieses Datum liegt ausserhalb des Kalenderhinweises.', httpStatus: 200, value: null, availabilityClaim: false }
+    }
+    if (zeiten.length > 0 && !anfrage.value.startTime) {
+      return { status: 'invalid', message: 'Bitte wähle eine Startzeit.', httpStatus: 200, value: null, availabilityClaim: false }
+    }
+    if (anfrage.value.startTime && !zeiten.includes(anfrage.value.startTime)) {
+      return { status: 'invalid', message: 'Diese Startzeit gilt nicht für die gewählte Option und das Datum.', httpStatus: 200, value: null, availabilityClaim: false }
+    }
+  } else if (anfrage.value.startTime) {
+    return { status: 'invalid', message: 'Ohne Kalenderhinweis wird keine Startzeit gesetzt.', httpStatus: 200, value: null, availabilityClaim: false }
   }
   const check = await bereit.client.check({ liveCheck: anfrage.value, acceptLanguage: 'de-DE' })
   if (!check.ok) {

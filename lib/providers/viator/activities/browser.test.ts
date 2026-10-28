@@ -92,6 +92,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
     let checks = 0
     let releaseFirst: (() => void) | null = null
+    const gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }> = []
     await page.route('**/*', async (route) => {
       const url = new URL(route.request().url())
       if (url.origin !== origin) return route.abort()
@@ -192,6 +193,8 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       if (url.pathname === '/api/activities/viator/check') {
         checks += 1
         const aktuell = checks
+        const roh = route.request().postData()
+        if (roh) gesendet.push(JSON.parse(roh) as { currency?: string | null; productOptionCode?: string; startTime?: string })
         if (aktuell === 1) await new Promise<void>((resolve) => { releaseFirst = resolve })
         try {
           await route.fulfill({
@@ -215,14 +218,24 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.getByRole('button', { name: 'Angebot prüfen' }).click()
     await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).waitFor()
     page.once('close', () => releaseFirst?.())
-    Object.assign(page, { releaseFirst: () => releaseFirst?.() })
+    Object.assign(page, { releaseFirst: () => releaseFirst?.(), gesendet })
     return page
   }
 
   test('search, selection and a late quote do not survive a changed date', async () => {
     const page = await seite(390)
+    const träger = page as Page & { gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }> }
+    await page.getByLabel('Option').waitFor()
+    assert.equal(await page.getByLabel('Option').inputValue(), '')
+    await page.getByLabel('Option').selectOption({ label: 'Morgentour' })
+    await page.getByText('Angefragte Anzeigewährung: CHF').waitFor()
     await page.getByLabel('Erwachsene Anzahl').fill('2')
     await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).click()
+    for (let i = 0; i < 50 && träger.gesendet.length < 1; i += 1) await page.waitForTimeout(20)
+    assert.equal(träger.gesendet[0]?.currency, 'CHF')
+    assert.equal(träger.gesendet[0]?.productOptionCode, 'TG1')
+    assert.equal(träger.gesendet[0]?.startTime, '10:00')
+    assert.equal(JSON.stringify(träger.gesendet[0]).includes('DEFAULT'), false)
     await page.getByLabel('Datum').fill('2026-11-03')
     ;(page as Page & { releaseFirst: () => void }).releaseFirst()
     await page.waitForTimeout(50)

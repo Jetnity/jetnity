@@ -232,6 +232,17 @@ describe('Viator content parsers', () => {
     if (!parsed.ok) return
     assert.equal(parsed.value.products[0]?.description, 'Meet at the gate.\nBring water.')
     assert.equal(parsed.value.products[0]?.description?.includes('<'), false)
+    const optionen = parseViatorProductDetail(
+      product({
+        productOptions: [{ productOptionCode: 'TG1' }, { productOptionCode: 'TG2', title: 'Abendtour' }],
+      }),
+      { source: 'provider_response', retrievedAt: RETRIEVED, nowMs: NOW },
+    )
+    assert.equal(optionen.ok, true)
+    if (!optionen.ok) return
+    assert.deepEqual(optionen.value.products[0]?.productOptionCodes, ['TG2'])
+    assert.equal(optionen.value.products[0]?.productOptions[0]?.title, 'Abendtour')
+    assert.equal(optionen.value.partial, true)
   })
 
   test('CHF display price is not a checkout transfer and is not invented from another currency', () => {
@@ -296,6 +307,21 @@ describe('Viator schedules, live check, destination, and cache', () => {
     assert.equal(parsed.value.options[0]?.ageBandPrices[0]?.price.amount, 100.02)
     assert.equal(JSON.stringify(parsed.value).includes('partnerNetPrice'), false)
     assert.equal(parsed.value.options[0]?.seasons[0]?.unavailableDates[0], '2026-09-16')
+    const ohneEnde = parseViatorSchedule(
+      {
+        productCode: '10001P1',
+        currency: 'EUR',
+        bookableItems: [{
+          productOptionCode: 'TG1',
+          seasons: [{ startDate: '2026-11-01', pricingRecords: [{ timedEntries: [{ startTime: '09:00' }] }] }],
+        }],
+      },
+      { retrievedAt: RETRIEVED, nowMs: NOW },
+    )
+    assert.equal(ohneEnde.ok, true)
+    if (!ohneEnde.ok) return
+    assert.equal(ohneEnde.value.availabilityClaim, false)
+    assert.equal(ohneEnde.value.options[0]?.seasons[0]?.endDate, null)
   })
 
   test('live check requires an explicit age mix and ignores partner net', () => {
@@ -367,6 +393,49 @@ describe('Viator schedules, live check, destination, and cache', () => {
     assert.equal(parsed.value.checkoutCurrencyConfirmed, false)
     assert.equal(parsed.value.cache.reusable, false)
     assert.equal(JSON.stringify(parsed.value).includes('partnerNetPrice'), false)
+    const ohneWaehrung = validateViatorLiveCheckRequest({
+      productCode: '10001P1',
+      productOptionCode: 'TG1',
+      travelDate: '2026-11-02',
+      currency: null,
+      paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 2 }],
+      productAgeBands: [ADULT],
+    })
+    assert.equal(ohneWaehrung.ok, false)
+    if (!ohneWaehrung.ok) assert.equal(ohneWaehrung.reason, 'missing_currency')
+    const standard = validateViatorLiveCheckRequest({
+      productCode: '10001P1',
+      standardProduct: true,
+      travelDate: '2026-11-02',
+      currency: 'CHF',
+      paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+      productAgeBands: [ADULT],
+    })
+    assert.equal(standard.ok, true)
+    if (!standard.ok) return
+    assert.equal(standard.value.productOptionCode, null)
+    const gebaut = buildViatorSandboxCall('availability_check', { liveCheck: standard.value })
+    assert.equal(gebaut.ok, true)
+    if (!gebaut.ok || !gebaut.call.body) return
+    const koerper = JSON.parse(gebaut.call.body) as { currency?: string; productOptionCode?: string }
+    assert.equal(koerper.currency, 'CHF')
+    assert.equal('productOptionCode' in koerper, false)
+    assert.equal(gebaut.call.body.includes('DEFAULT'), false)
+    assert.equal(gebaut.call.body.includes('TG1'), false)
+    const mehrere = parseViatorAvailabilityCheck(
+      {
+        currency: 'CHF',
+        productCode: '10001P1',
+        travelDate: '2026-11-02',
+        bookableItems: [
+          { productOptionCode: 'TG1', startTime: '10:00', available: true, totalPrice: { price: { recommendedRetailPrice: 10 } } },
+          { productOptionCode: 'TG1', startTime: '11:00', available: false, totalPrice: { price: { recommendedRetailPrice: 12 } } },
+        ],
+      },
+      { ...request.value, startTime: null },
+      { retrievedAt: RETRIEVED, nowMs: NOW, ttlSeconds: 0 },
+    )
+    assert.equal(mehrere.ok, false)
   })
 
   test('destination resolution does not invent a city', () => {

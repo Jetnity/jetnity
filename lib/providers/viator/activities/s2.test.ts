@@ -8,8 +8,8 @@ import type { ProviderHttpClient, ProviderHttpRequest } from '@/lib/server/provi
 
 const KATALOG = {
   destinations: [
-    { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
-    { destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 20, center: { latitude: 13.75, longitude: 100.5 } },
+    { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null, countryCode: 'FR', lookupId: '20' },
+    { destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 20, lookupId: '6.20.343', countryCode: 'US', center: { latitude: 13.75, longitude: 100.5 } },
     { destinationId: 344, name: 'Chiang Mai', type: 'CITY', parentDestinationId: 20, center: { latitude: 18.79, longitude: 98.98 } },
     { destinationId: 51, name: 'France', type: 'COUNTRY', parentDestinationId: null },
     { destinationId: 479, name: 'Paris', type: 'CITY', parentDestinationId: 51, center: { latitude: 48.86, longitude: 2.35 } },
@@ -71,7 +71,7 @@ const product = {
   images: [{ isCover: true, variants: [{ url: IMAGE, width: 720, height: 480 }] }],
   reviews: { combinedAverageRating: 4.5, totalReviews: 4, sources: [{ text: 'SECRET REVIEW BODY' }] },
   viatorUniqueContent: { text: 'UNIQUE CONTENT SHOULD NOT LEAK' },
-  productOptions: [{ productOptionCode: 'TG1' }],
+  productOptions: [{ productOptionCode: 'TG1', title: 'Morgentour' }],
   pricingInfo: {
     ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
   },
@@ -95,6 +95,8 @@ describe('Viator native seam', () => {
   test('catalog resolution distinguishes country, repeat visits and ambiguity', async () => {
     const katalog = viatorKatalogLesen(KATALOG)
     assert.ok(katalog)
+    assert.equal(katalog!.find((ort) => ort.destinationId === 343)?.lookupId, '6.20.343')
+    assert.equal('countryCode' in (katalog!.find((ort) => ort.destinationId === 343) ?? {}), false)
     const bangkok = viatorOrtAufloesen({ name: 'Bangkok', countryCode: 'TH', latitude: 13.75, longitude: 100.5, katalog: katalog! })
     const chiang = viatorOrtAufloesen({ name: 'Chiang Mai', countryCode: 'TH', latitude: 18.79, longitude: 98.98, katalog: katalog! })
     const parisFr = viatorOrtAufloesen({ name: 'Paris', countryCode: 'FR', latitude: 48.86, longitude: 2.35, katalog: katalog! })
@@ -107,6 +109,18 @@ describe('Viator native seam', () => {
     assert.equal(parisUs.ok && parisUs.destinationId, '901')
     assert.equal(erneut.ok && erneut.destinationId, '343')
     assert.equal(unklar.ok, false)
+    const haengend = viatorKatalogLesen({
+      destinations: [{ destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 999, lookupId: '999.343' }],
+    })
+    assert.equal(viatorOrtAufloesen({ name: 'Bangkok', countryCode: 'TH', katalog: haengend! }).ok, false)
+    const doppelt = viatorKatalogLesen({
+      destinations: [
+        { destinationId: 51, name: 'France', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 1, name: 'Lyon', type: 'CITY', parentDestinationId: 51 },
+        { destinationId: 2, name: 'Lyon', type: 'CITY', parentDestinationId: 51 },
+      ],
+    })
+    assert.equal(viatorOrtAufloesen({ name: 'Lyon', countryCode: 'FR', katalog: doppelt! }).ok, false)
   })
 
   test('runtime search loads destinations once and does not guess an unknown city', async () => {
@@ -181,9 +195,31 @@ describe('Viator native seam', () => {
         }],
       },
       '2026-11-02',
+      '2026-10-28',
     )
     assert.deepEqual(zeiten, ['11:00'])
-    assert.equal(viatorStartzeiten(undefined, '2026-01-01'), null)
+    assert.equal(Array.isArray(zeiten), true)
+    assert.equal(viatorStartzeiten(undefined, '2026-01-01', '2026-10-28'), null)
+    const offen = viatorStartzeiten(
+      {
+        productOptionCode: 'TG1',
+        seasons: [{ startDate: '2026-11-01', endDate: null, startTimes: ['09:00'], unavailableDates: [] }],
+      },
+      '2026-11-02',
+      '2026-10-28',
+    )
+    assert.deepEqual(offen, ['09:00'])
+    assert.equal(
+      viatorStartzeiten(
+        {
+          productOptionCode: 'TG1',
+          seasons: [{ startDate: '2026-11-01', endDate: null, startTimes: ['09:00'], unavailableDates: [] }],
+        },
+        '2028-12-01',
+        '2026-10-28',
+      ),
+      null,
+    )
   })
 
   test('a traveller total is not treated as adults and does not request a live check', async () => {
@@ -197,5 +233,161 @@ describe('Viator native seam', () => {
     assert.equal(ergebnis.status, 'invalid')
     assert.equal(ergebnis.availabilityClaim, false)
     assert.equal(http.calls.some((url) => url.includes('/availability/check')), false)
+  })
+
+  test('a live check sends a currency, omits invented option codes, and does not treat a schedule as availability', async () => {
+    const log: Array<{ url: string; body: string | null }> = []
+    const antwort = (wert: unknown) => {
+      const encoded = new TextEncoder().encode(JSON.stringify(wert))
+      return new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoded)
+          controller.close()
+        },
+      })
+    }
+    const mitOption = {
+      productCode: '10001P1',
+      title: 'Fixture walking tour',
+      description: 'Eine kurze Beschreibung.',
+      productUrl: URL,
+      productOptions: [
+        { productOptionCode: 'TG1', title: 'Morgentour' },
+        { productOptionCode: 'TG2', title: 'Abendtour' },
+      ],
+      pricingInfo: {
+        ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
+      },
+    }
+    const standard = {
+      productCode: '10002P2',
+      title: 'Fixture standard tour',
+      description: 'Ohne Option.',
+      productUrl: URL,
+      pricingInfo: mitOption.pricingInfo,
+    }
+    const kalender = {
+      productCode: '10001P1',
+      currency: 'EUR',
+      bookableItems: [
+        {
+          productOptionCode: 'TG1',
+          seasons: [{
+            startDate: '2026-11-01',
+            endDate: '2026-11-30',
+            pricingRecords: [{ timedEntries: [{ startTime: '10:00' }, { startTime: '11:00' }] }],
+          }],
+        },
+        {
+          productOptionCode: 'TG2',
+          seasons: [{
+            startDate: '2026-11-01',
+            endDate: '2026-11-30',
+            pricingRecords: [{ timedEntries: [{ startTime: '18:00' }] }],
+          }],
+        },
+      ],
+    }
+    const standardKalender = {
+      productCode: '10002P2',
+      currency: 'EUR',
+      bookableItems: [{
+        productOptionCode: 'DEFAULT',
+        seasons: [{
+          startDate: '2026-11-01',
+          pricingRecords: [{ timedEntries: [{ startTime: '09:00' }] }],
+        }],
+      }],
+    }
+    const routes: Record<string, unknown> = {
+      'https://api.sandbox.viator.com/partner/products/10001P1': mitOption,
+      'https://api.sandbox.viator.com/partner/products/10002P2': standard,
+      'https://api.sandbox.viator.com/partner/availability/schedules/10001P1': kalender,
+      'https://api.sandbox.viator.com/partner/availability/schedules/10002P2': standardKalender,
+    }
+    const client: ProviderHttpClient = async (request) => {
+      log.push({ url: request.url, body: request.body ?? null })
+      if (request.url.endsWith('/availability/check') && request.body) {
+        const sent = JSON.parse(request.body) as {
+          productCode: string
+          travelDate: string
+          currency: string
+          productOptionCode?: string
+          startTime?: string
+        }
+        return {
+          status: 200,
+          headers: { get: () => null },
+          body: antwort({
+            currency: sent.currency,
+            productCode: sent.productCode,
+            travelDate: sent.travelDate,
+            bookableItems: [{
+              ...(sent.productOptionCode ? { productOptionCode: sent.productOptionCode } : {}),
+              ...(sent.startTime ? { startTime: sent.startTime } : {}),
+              available: true,
+              totalPrice: { price: { recommendedRetailPrice: 50 } },
+            }],
+          }),
+        }
+      }
+      return { status: 200, headers: { get: () => null }, body: antwort(routes[request.url] ?? {}) }
+    }
+    const pax = [{ ageBand: 'ADULT', numberOfTravelers: 1 }]
+    const deps = { env, http: client, nowMs: NOW }
+    const ohneWaehrung = await viatorLivePruefen(
+      { productCode: '10001P1', productOptionCode: 'TG1', travelDate: '2026-11-02', startTime: '10:00', currency: null, paxMix: pax },
+      deps,
+    )
+    assert.equal(ohneWaehrung.status, 'invalid')
+    assert.equal(ohneWaehrung.availabilityClaim, false)
+    const erfunden = await viatorLivePruefen(
+      { productCode: '10001P1', standardProduct: true, travelDate: '2026-11-02', currency: 'CHF', paxMix: pax },
+      deps,
+    )
+    assert.equal(erfunden.status, 'invalid')
+    assert.match(erfunden.message, /kein Standardcode/)
+    const ohneZeit = await viatorLivePruefen(
+      { productCode: '10001P1', productOptionCode: 'TG1', travelDate: '2026-11-02', currency: 'CHF', paxMix: pax },
+      deps,
+    )
+    assert.equal(ohneZeit.status, 'invalid')
+    assert.match(ohneZeit.message, /Startzeit/)
+    const pruefung = await viatorLivePruefen(
+      { productCode: '10001P1', productOptionCode: 'TG1', travelDate: '2026-11-02', startTime: '10:00', currency: 'CHF', paxMix: pax },
+      deps,
+    )
+    assert.equal(pruefung.status, 'ok')
+    assert.equal(pruefung.availabilityClaim, true)
+    assert.equal(pruefung.value?.price?.currency, 'CHF')
+    const standardPruefung = await viatorLivePruefen(
+      { productCode: '10002P2', travelDate: '2026-11-02', startTime: '09:00', currency: 'EUR', paxMix: pax },
+      deps,
+    )
+    assert.equal(standardPruefung.status, 'ok')
+    assert.equal(standardPruefung.value?.price?.currency, 'EUR')
+    const defaultCode = await viatorLivePruefen(
+      { productCode: '10002P2', productOptionCode: 'DEFAULT', travelDate: '2026-11-02', startTime: '09:00', currency: 'EUR', paxMix: pax },
+      deps,
+    )
+    assert.equal(defaultCode.status, 'invalid')
+    assert.match(defaultCode.message, /keinen Optionscode/)
+    const horizont = await viatorLivePruefen(
+      { productCode: '10002P2', travelDate: '2028-12-01', currency: 'EUR', paxMix: pax },
+      deps,
+    )
+    assert.equal(horizont.status, 'invalid')
+    assert.equal(horizont.availabilityClaim, false)
+    const checks = log.filter((eintrag) => eintrag.url.endsWith('/availability/check'))
+    assert.equal(checks.length, 2)
+    const erste = JSON.parse(checks[0]!.body ?? '{}') as { currency?: string; productOptionCode?: string; startTime?: string }
+    const zweite = JSON.parse(checks[1]!.body ?? '{}') as { currency?: string; productOptionCode?: string }
+    assert.equal(erste.currency, 'CHF')
+    assert.equal(erste.productOptionCode, 'TG1')
+    assert.equal(erste.startTime, '10:00')
+    assert.equal(zweite.currency, 'EUR')
+    assert.equal('productOptionCode' in zweite, false)
+    assert.equal(JSON.stringify(zweite).includes('DEFAULT'), false)
+    assert.equal(JSON.stringify(zweite).includes('TG1'), false)
   })
 })
