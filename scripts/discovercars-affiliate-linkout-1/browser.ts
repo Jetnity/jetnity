@@ -7,6 +7,8 @@
 // nicht ein Desktop-Browserzoom.
 
 import { mkdirSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { chromium, type Browser, type Page } from 'playwright'
 
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
@@ -14,7 +16,15 @@ import type { TripStage } from '@/types/trips'
 
 const BASIS = process.env.DISCOVERCARS_AUDIT_BASIS ?? 'http://127.0.0.1:3000'
 const SPEICHER = 'jetnity:ui-audit:workspace'
-const AUSGABE = '/opt/cursor/artifacts/discovercars-affiliate-linkout-1'
+
+/** Explizit `DISCOVERCARS_LINKOUT_AUSGABE`, sonst ein beschreibbares Verzeichnis unter dem OS-Temp. */
+function ausgabeVerzeichnis(): string {
+  const gesetzt = process.env.DISCOVERCARS_LINKOUT_AUSGABE?.trim()
+  if (gesetzt) return gesetzt
+  return join(tmpdir(), 'discovercars-affiliate-linkout-1')
+}
+
+const AUSGABE = ausgabeVerzeichnis()
 const GENERISCH = 'https://www.discovercars.com/?a_aid=jetnity'
 const BKK =
   'https://www.discovercars.com/de/thailand/bangkok/suvarnabhumi-airport-bkk?a_aid=jetnity&currency=chf'
@@ -31,11 +41,11 @@ function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'position' | '
   }
 }
 
-function reiseBangkok(id: string) {
+function reiseBangkok(id: string, title = 'Reise Bangkok Stadt') {
   return beispielreise({
     id,
     clientRef: `ref-${id}`,
-    title: 'Nur der Titel Bangkok',
+    title,
     origin: 'Bangkok',
     currency: 'THB',
     travellers: 5,
@@ -90,10 +100,10 @@ async function oeffnen(
     return route.abort()
   })
   await context.addInitScript(
-    ([key, wert]) => {
-      sessionStorage.setItem(key, wert)
+    ({ key, wert }: { key: string; wert: string }) => {
+      if (!sessionStorage.getItem(key)) sessionStorage.setItem(key, wert)
     },
-    [SPEICHER, JSON.stringify(nutzlast)] as const,
+    { key: SPEICHER, wert: JSON.stringify(nutzlast) },
   )
   const page = await context.newPage()
   page.on('request', (request) => {
@@ -107,6 +117,20 @@ async function oeffnen(
   const link = page.getByRole('link', { name: /DiscoverCars/ })
   await link.waitFor()
   return { context, page, link, aufrufe }
+}
+
+async function tabBisRadio(page: Page, labelTeil: string): Promise<number> {
+  for (let schritt = 0; schritt < 60; schritt += 1) {
+    await page.keyboard.press('Tab')
+    const label = await page.evaluate(() => {
+      const el = document.activeElement
+      if (!(el instanceof HTMLInputElement) || el.type !== 'radio') return ''
+      if (el.name !== 'discovercars-abholstation') return ''
+      return el.closest('label')?.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+    })
+    if (label.includes(labelTeil)) return schritt + 1
+  }
+  return 0
 }
 
 async function masse(page: Page) {
@@ -144,7 +168,7 @@ async function main() {
 
   try {
     for (const fall of faelle) {
-      const { context, page, link, aufrufe } = await oeffnen(
+      const { context, page, aufrufe } = await oeffnen(
         browser,
         { reise: reiseBangkok(`bangkok-${fall.name}`), quelle: 'guest', anfangsBereich: 'mobilitaet' },
         { width: fall.width, height: fall.height },
@@ -183,9 +207,6 @@ async function main() {
       if (fremd.length > 0) fehler.push(`${fall.name}: Vorab-Ressource ${fremd.join(' ')}`)
       const radios = page.getByRole('radio')
       if ((await radios.count()) !== 2) fehler.push(`${fall.name}: Radios ${await radios.count()}`)
-      await link.focus()
-      const tag = await page.evaluate(() => document.activeElement?.tagName ?? '')
-      if (tag !== 'A') fehler.push(`${fall.name}: Fokus ${tag}`)
       await page.screenshot({
         path: `${AUSGABE}/${fall.name}.png`,
         fullPage: false,
@@ -210,46 +231,75 @@ async function main() {
 
     const konto = await oeffnen(
       browser,
-      { reise: reiseBangkok('konto-bangkok'), quelle: 'account', anfangsBereich: 'mobilitaet' },
+      { reise: reiseBangkok('konto-bangkok', 'Reise Bangkok Stadt'), quelle: 'account', anfangsBereich: 'mobilitaet' },
       { width: 390, height: 844 },
       16,
     )
+    const ersteUeberschrift = await konto.page.locator('h1').innerText()
+    if (!ersteUeberschrift.includes('Reise Bangkok Stadt')) {
+      fehler.push(`Erste Reise nicht sichtbar: ${ersteUeberschrift}`)
+    }
     const kontoMasse = await masse(konto.page)
     if (kontoMasse.href !== GENERISCH) fehler.push(`Konto-href ${kontoMasse.href}`)
     if (konto.aufrufe.length > 0) fehler.push(`Konto-Netz ${konto.aufrufe.join(' ')}`)
 
-    await konto.page.getByRole('radio', { name: /Suvarnabhumi/ }).check()
+    const tabSchritte = await tabBisRadio(konto.page, 'Abholort bei DiscoverCars wählen')
+    if (tabSchritte === 0) fehler.push('Tab erreichte die allgemeine Abholwahl nicht')
+    await konto.page.keyboard.press('ArrowDown')
     const nachWahl = await masse(konto.page)
-    if (nachWahl.href !== BKK) fehler.push(`BKK-Wahl ${nachWahl.href}`)
+    const bkkGewaehlt = await konto.page.getByRole('radio', { name: 'Flughafen Suvarnabhumi (BKK)' }).isChecked()
+    if (!bkkGewaehlt || nachWahl.href !== BKK) fehler.push(`Pfeil nach unten wählte BKK nicht: ${nachWahl.href}`)
     if (konto.aufrufe.length > 0) fehler.push(`BKK-Wahl Netz ${konto.aufrufe.join(' ')}`)
     await konto.page.screenshot({ path: `${AUSGABE}/390-bkk-wahl.png`, fullPage: false })
     await konto.page.locator('[data-discovercars-affiliate="1"]').screenshot({
       path: `${AUSGABE}/390-bkk-wahl-abschnitt.png`,
     })
-
-    await konto.page.getByRole('radio', { name: /Abholort bei DiscoverCars wählen/ }).check()
+    await konto.page.keyboard.press('ArrowUp')
     const zurueck = await masse(konto.page)
-    if (zurueck.href !== GENERISCH) fehler.push(`Zurück ${zurueck.href}`)
+    const allgemeinGewaehlt = await konto.page
+      .getByRole('radio', { name: 'Abholort bei DiscoverCars wählen' })
+      .isChecked()
+    if (!allgemeinGewaehlt || zurueck.href !== GENERISCH) fehler.push(`Pfeil nach oben: ${zurueck.href}`)
+
+    await konto.page.keyboard.press('ArrowDown')
+    const wiederBkk = await masse(konto.page)
+    if (wiederBkk.href !== BKK) fehler.push(`BKK vor dem Reisewechsel fehlt: ${wiederBkk.href}`)
 
     await konto.page.evaluate(
-      ([key, wert]) => sessionStorage.setItem(key, wert),
-      [
-        SPEICHER,
-        JSON.stringify({
-          reise: reiseBangkok('andere-reise'),
+      ({ key, wert }) => sessionStorage.setItem(key, wert),
+      {
+        key: SPEICHER,
+        wert: JSON.stringify({
+          reise: reiseBangkok('andere-reise', 'Zweite Reise klar'),
           quelle: 'account',
           anfangsBereich: 'mobilitaet',
         }),
-      ] as const,
+      },
     )
     await konto.page.reload({ waitUntil: 'domcontentloaded' })
+    const zweiteUeberschrift = await konto.page.locator('h1').innerText()
+    if (!zweiteUeberschrift.includes('Zweite Reise klar')) {
+      fehler.push(`Zweite Reise nicht geladen: ${zweiteUeberschrift}`)
+    }
+    if (zweiteUeberschrift.includes('Reise Bangkok Stadt')) {
+      fehler.push('Die erste Reise blieb nach dem Wechsel sichtbar')
+    }
     await konto.page.getByRole('tab', { name: 'Mietwagen' }).click()
     const nachReload = await masse(konto.page)
-    if (nachReload.href !== GENERISCH) fehler.push(`Neue Reise ${nachReload.href}`)
+    const bkkNachWechsel = await konto.page.getByRole('radio', { name: 'Flughafen Suvarnabhumi (BKK)' }).isChecked()
+    if (bkkNachWechsel || nachReload.href !== GENERISCH) {
+      fehler.push(`BKK blieb auf der zweiten Reise: ${nachReload.href}`)
+    }
     if (konto.aufrufe.length > 0) fehler.push(`Reload Netz ${konto.aufrufe.join(' ')}`)
     await konto.context.close()
 
-    const bericht = { basis: BASIS, befunde, fehler }
+    const bericht = {
+      basis: BASIS,
+      ausgabe: AUSGABE,
+      tastatur: { tabSchritteBisAllgemeineWahl: tabSchritte, pfeile: ['ArrowDown', 'ArrowUp', 'ArrowDown'] },
+      befunde,
+      fehler,
+    }
     writeFileSync(`${AUSGABE}/bericht.json`, JSON.stringify(bericht, null, 2))
     if (fehler.length > 0) {
       console.error(bericht)

@@ -18,7 +18,7 @@
 
 **Kosten** — No new running cost.
 
-**Offene Risiken** — Hosted normal-path QA is still blocked. The earlier Preview failure was missing public Supabase configuration, not a demonstrated rental defect. Commission and document/KYC/domain confirmation are not established by the recorded clicks. A new head invalidates CI `40577685214` and Preview `dpl_EdkZASxnmkV2gtihSh2Nob44Qemd`.
+**Offene Risiken** — Two separate limits. Hosted acceptance: the normal Jetnity rental entry is not yet accepted on an exact-head Preview; the earlier `/planen` HTTP 500 was missing public Supabase configuration, and local UI-audit does not replace that. Attribution: account and direct-link clicks are recorded in PR comment 6469129579; commission is unproven, is not promised, and a purchase is not required before the link is shown. A new head invalidates CI `40577685214` and Preview `dpl_EdkZASxnmkV2gtihSh2Nob44Qemd`.
 
 **Nächster Schritt** — Stop for independent Technical Lead review of the pushed head. No Ready, no merge, no follow-up.
 

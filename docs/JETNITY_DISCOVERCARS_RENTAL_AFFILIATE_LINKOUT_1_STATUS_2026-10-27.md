@@ -2,14 +2,16 @@
 
 ## Current — 28 October 2026, integration completion
 
-State: **main is merged, no rental-entry regression found, draft remains blocked for hosted QA and commission.**
+State: **main is merged. Showing the affiliate link does not wait on a commission purchase. Hosted rental acceptance is a separate gap.**
 
 - Same writer and session: `bc-658ab635-d1c2-4113-9eeb-aaa9eadcbd55`, `originalModelName=grok-4.7-high-fast`.
 - `origin/main` rechecked: `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`. Mode `NORMAL`.
 - Non-force merge of that main into this branch. No rebase. No force-push.
-- Accepted V1 behavior is unchanged: generic `https://www.discovercars.com/?a_aid=jetnity`; BKK URL only after the explicit closed station choice; `noopener noreferrer sponsored` and `referrerPolicy="no-referrer"` kept. Click evidence is not a reason to drop that privacy protection. Commission stays unproven. Widget `UNKNOWN_PORTAL` is not a direct-link block.
+- Accepted V1 behavior is unchanged: generic `https://www.discovercars.com/?a_aid=jetnity`; BKK URL only after the explicit closed station choice; `noopener noreferrer sponsored` and `referrerPolicy="no-referrer"` kept. Click evidence is not a reason to drop that privacy protection. Widget `UNKNOWN_PORTAL` belongs to the generator preview, not these direct links.
+- Account approval and working generic/BKK link clicks are already recorded in [PR comment 6469129579](https://github.com/Jetnity/jetnity/pull/1059#issuecomment-6469129579). Commission is unproven and is not promised. This task does not require a purchase or a sales experiment before the link can be shown.
+- Hosted acceptance gap, separate from attribution: the normal Jetnity rental entry has not been accepted on an exact-head Preview. The earlier `/planen` HTTP 500 came from missing public Supabase configuration. Local UI-audit evidence does not close that gap. This session does not change Preview configuration.
 - After the merge, `MietwagenBereich` is still mounted from Mobilität → Mietwagen with manual create. Main’s 12Go insertion stays on Verbindungen. `TripWorkspace` and `MobilitaetBereich` were not edited here.
-- Focused affiliate tests 16/16 and rental recovery tests passed on the merged tree. Typecheck and production build passed. Chromium on the local UI-audit route passed 320/390/768/1440, root font 16px and 32px, keyboard focus, 44px targets, visible manual form, honest unavailable search, BKK choice then reload, zero DiscoverCars requests and no DiscoverCars iframe/script/image/preconnect. That is local evidence, not hosted acceptance.
+- Focused affiliate tests 16/16 passed. The browser script writes to `DISCOVERCARS_LINKOUT_AUSGABE` or, if unset, a directory under the OS temp path. It reaches the radios with Tab, moves them with ArrowUp/ArrowDown, and reloads a second trip title after BKK was selected. The init script does not overwrite an existing audit payload.
 - Exact-head GitHub CI and Vercel Preview for the pushed tip are not evidence until they finish. Do not copy Production Supabase into Preview. No repeated Vercel CLI login.
 - No Ready. No merge. No follow-up.
 
