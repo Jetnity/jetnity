@@ -8,6 +8,7 @@ import { Clock3, Sparkles } from 'lucide-react'
 
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
 import { ACTIVITY_MARKE_TEXT, type ActivityMarke } from '@/lib/activities/domain'
+import { validateViatorImageUrl } from '@/lib/providers/viator/activities/url'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { cn } from '@/lib/utils'
 
@@ -23,11 +24,22 @@ export default function AktivitaetKarte({
   option,
   laeuft,
   onUebernehmen,
+  onPruefen,
 }: {
   option: ActivityOptionSichtbar
   laeuft: boolean
   onUebernehmen?: () => void
+  onPruefen?: () => void
 }) {
+  const bild = option.bildUrl && validateViatorImageUrl(option.bildUrl).ok ? option.bildUrl : null
+  const basis =
+    option.preisRolle === 'rrp_from'
+      ? 'ab, keine aktuelle Verfügbarkeit'
+      : option.preisRolle === 'rrp_schedule'
+        ? 'Kalenderhinweis, keine aktuelle Verfügbarkeit'
+        : option.preisRolle === 'rrp_check'
+          ? 'aktuelle Prüfung'
+          : 'Preisgrundlage unbekannt'
   return (
     <article className="min-w-0 rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
@@ -50,6 +62,14 @@ export default function AktivitaetKarte({
       </div>
 
       <div className="mt-3 min-w-0">
+        {bild ? (
+          // Provider bytes stay on the original host. Next image optimization would fetch and cache them.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={bild} alt="" className="mb-3 h-36 w-full rounded-xl object-cover" />
+        ) : option.provider === 'viator' ? (
+          <p className="mb-3 text-xs text-ink-700">Kein geprüftes Bild von Viator.</p>
+        ) : null}
+        {option.provider === 'viator' ? <p className="text-xs font-semibold text-brand-700">Viator</p> : null}
         <h3 className="break-words text-lg font-semibold tracking-[-0.03em] text-brand-800">
           {option.title}
         </h3>
@@ -76,13 +96,26 @@ export default function AktivitaetKarte({
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
         <div className="min-w-0">
-          <p className="text-xs text-ink-700">Preisangabe</p>
+          <p className="text-xs text-ink-700">{basis}</p>
           <p className="text-lg font-semibold text-brand-800">
             {option.preis !== null && option.preisWaehrung
               ? betragLesbar(option.preis, option.preisWaehrung)
-              : 'Noch ohne Preis'}
+              : 'Preis unbekannt'}
           </p>
+          {option.preisWaehrung && option.preisWaehrung !== 'CHF' ? (
+            <p className="text-xs text-ink-700">Keine Umrechnung nach CHF.</p>
+          ) : null}
         </div>
+        <div className="flex flex-wrap gap-2">
+          {onPruefen && (
+            <button
+              type="button"
+              onClick={onPruefen}
+              className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            >
+              Angebot prüfen
+            </button>
+          )}
         {onUebernehmen && (
           <button
             type="button"
@@ -94,6 +127,7 @@ export default function AktivitaetKarte({
             In die Reise
           </button>
         )}
+        </div>
       </div>
 
       {option.reasons.length > 0 && (

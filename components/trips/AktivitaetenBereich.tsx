@@ -38,6 +38,7 @@ import {
   type UebernahmeRegister,
 } from '@/lib/activities/suchlebenszyklus'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
 import { ScrollRow } from '@/components/ui/scroll-row'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
@@ -85,18 +86,20 @@ function BeobachteteKarte({
   option,
   laeuft,
   onUebernehmen,
+  onPruefen,
   onUebernahmeBeobachten,
 }: {
   option: ActivityOptionSichtbar
   laeuft: boolean
   onUebernehmen?: () => void
+  onPruefen?: () => void
   onUebernahmeBeobachten?: (aufnahme: { id: string; ausloesen: () => void }) => void
 }) {
   React.useEffect(() => {
     if (!onUebernehmen || !onUebernahmeBeobachten) return
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
-  return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} />
+  return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
 }
 
 function SuchKontext({
@@ -250,6 +253,8 @@ function ActivityTag({
     }
   }, [angezeigt.epoche])
 
+  const [viatorWahl, setViatorWahl] = React.useState<{ kontext: string; code: string } | null>(null)
+  const viatorCode = viatorWahl?.kontext === kontext ? viatorWahl.code : null
   const [register, setRegister] = React.useState<UebernahmeRegister>(leeresUebernahmeRegister)
   const registerRef = React.useRef(register)
   const seqRef = React.useRef(0)
@@ -538,6 +543,11 @@ function ActivityTag({
                         option={option}
                         laeuft={gesperrt}
                         onUebernehmen={ausloesen}
+                        onPruefen={
+                          option.provider === 'viator'
+                            ? () => setViatorWahl({ kontext, code: option.externalRef })
+                            : undefined
+                        }
                         onUebernahmeBeobachten={onUebernahmeBeobachten}
                       />
                       {hinweisSicht.jeKarte[schluessel] ? (
@@ -559,6 +569,15 @@ function ActivityTag({
                 })}
               </ol>
             )}
+
+            {viatorCode ? (
+              <ViatorPruefung
+                key={`${kontext}:${viatorCode}`}
+                productCode={viatorCode}
+                dayDate={tag?.dayDate ?? null}
+                gewuenschteWaehrung={reise.currency}
+              />
+            ) : null}
 
             {anzeige.abdeckung ? (
               <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>

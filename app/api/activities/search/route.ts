@@ -29,7 +29,10 @@ function antwort(
 ) {
   return NextResponse.json(koerper, {
     status: httpStatus,
-    headers: activitySucheHttpHeader(httpStatus, retryAfterSec),
+    headers: {
+      ...activitySucheHttpHeader(httpStatus, retryAfterSec),
+      'X-Robots-Tag': 'noindex, nofollow',
+    },
   })
 }
 
