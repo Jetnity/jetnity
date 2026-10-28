@@ -363,7 +363,7 @@ test('T09/T10: guest and account use common Workspace; additive selected-list mo
   assert(overview.indexOf('<TripWorkspaceJetztWichtig') < overview.indexOf('<TripAuditV1Panel'))
   assert.match(source('components/trips/GastArbeitsbereich.tsx'), /<TripWorkspace/)
   assert.match(source('components/trips/KontoArbeitsbereich.tsx'), /<TripWorkspace/)
-  const runtime = ['lib/trips/trip-audit-v1/audit.ts', 'lib/trips/trip-audit-v1/limits.ts', 'components/trips/TripAuditV1Panel.tsx'].map(source).join('\n')
+  const runtime = ['lib/trips/trip-audit-v1/audit.ts', 'lib/trips/trip-audit-v1/f05-ground-flight.ts', 'lib/trips/trip-audit-v1/limits.ts', 'components/trips/TripAuditV1Panel.tsx'].map(source).join('\n')
   assert.doesNotMatch(runtime, /\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|document\.cookie|sendBeacon|Date\.now|new Date\(\)|useEffect|useMemo|supabase|console\./)
   assert.doesNotMatch(runtime, /from ['"].*(?:readiness\/provider|safety|seasonal|auth|payment|server)/)
 })
