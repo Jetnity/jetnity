@@ -6,7 +6,7 @@ import TripWorkspace from '@/components/trips/TripWorkspace'
 import { n12Punkt, n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 
 /** 22 gespeicherte Tage plus eine lange Tagesnotiz, damit der Plan über Scroll 900 hinausreicht. */
-export function u1a2Reise() {
+function u1a2Reise() {
   const reise = n12Reise()
   const tag = reise.days[0]
   if (!tag) return reise

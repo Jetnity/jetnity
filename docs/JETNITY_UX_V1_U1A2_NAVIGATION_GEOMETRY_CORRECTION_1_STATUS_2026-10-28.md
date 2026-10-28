@@ -4,6 +4,8 @@
 
 R1 rejected head `a59fa725d309e93279558e4a9a0fa56a13230567`. Native CI 40681199028 failed because „Organisieren“ / „Vorbereitung“ at 14px spilled out of the 96.75px cell on GitHub Chrome. The sticky column fix is unchanged. The bottom row now uses `tracking-[-0.07em]`. With DejaVu Sans, Vorbereitung sits 2.3px inside each side and Organisieren 3.2px, still 14px, one row, height 53px. A 24px safe-area inset on each side leaves the bottom row for the relative stack. `guest-nav-text-1.test.ts` was not edited.
 
+CI 40686603053 on the tracking commit passed Auth, typecheck, lint, and Tests, then failed `check:exports` on the unused `u1a2Reise` export. That function is no longer exported. That run is not the review head.
+
 ## Session
 
 - Name: Jetnity UX V1 Navigation Geometry Correction 1 — Cursor Generation 1
