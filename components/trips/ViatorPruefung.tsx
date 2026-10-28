@@ -44,7 +44,7 @@ type Plan = {
       endDate: string | null
       startTimes: string[]
       unavailableDates: string[]
-      timedEntries: Array<{ startTime: string; unavailableDates: string[] }>
+      timedEntries: Array<{ startTime: string; unavailableDates: string[]; daysOfWeek?: string[] }>
     }>
   }>
 }
@@ -85,14 +85,16 @@ async function lesen<T>(pfad: string, body: unknown, signal: AbortSignal): Promi
   }
 }
 
-export default function ViatorPruefung({
+function ViatorPruefungLauf({
   productCode,
   dayDate,
   gewuenschteWaehrung,
+  onRetry,
 }: {
   productCode: string
   dayDate: string | null
   gewuenschteWaehrung: string
+  onRetry: () => void
 }) {
   const [detail, setDetail] = useState<Detail | null>(null)
   const [plan, setPlan] = useState<Plan | null>(null)
@@ -100,20 +102,23 @@ export default function ViatorPruefung({
   const [quote, setQuote] = useState<Quote | null>(null)
   const [quoteMeldung, setQuoteMeldung] = useState<string | null>(null)
   const [prueft, setPrueft] = useState(false)
+  const [laedt, setLaedt] = useState(true)
   const [datum, setDatum] = useState(dayDate ?? '')
   const [option, setOption] = useState('')
   const [startzeit, setStartzeit] = useState('')
   const [waehrungsWahl, setWaehrungsWahl] = useState('')
   const [mix, setMix] = useState<Partial<Record<ViatorAgeBand, number>>>({})
-  const lauf = useRef(0)
-  const abortRef = useRef<AbortController | null>(null)
+  const detailLauf = useRef(0)
+  const quoteLauf = useRef(0)
+  const detailAbort = useRef<AbortController | null>(null)
+  const quoteAbort = useRef<AbortController | null>(null)
   const reiseWaehrung = isViatorSearchCurrency(gewuenschteWaehrung) ? gewuenschteWaehrung : null
   const waehrung: ViatorSearchCurrency | null = reiseWaehrung ?? (isViatorSearchCurrency(waehrungsWahl) ? waehrungsWahl : null)
 
   const verwerfen = () => {
-    lauf.current += 1
-    abortRef.current?.abort()
-    abortRef.current = null
+    quoteLauf.current += 1
+    quoteAbort.current?.abort()
+    quoteAbort.current = null
     setQuote(null)
     setQuoteMeldung(null)
     setPrueft(false)
@@ -121,26 +126,36 @@ export default function ViatorPruefung({
 
   useEffect(() => {
     const steuerung = new AbortController()
-    const eigene = ++lauf.current
+    detailAbort.current?.abort()
+    detailAbort.current = steuerung
+    const eigene = ++detailLauf.current
+    quoteLauf.current += 1
+    quoteAbort.current?.abort()
+    quoteAbort.current = null
     void (async () => {
       try {
         const [produkt, kalender] = await Promise.all([
           lesen<Detail>('/api/activities/viator/detail', { productCode }, steuerung.signal),
           lesen<Plan>('/api/activities/viator/schedule', { productCode }, steuerung.signal),
         ])
-        if (steuerung.signal.aborted || lauf.current !== eigene) return
+        if (steuerung.signal.aborted || detailLauf.current !== eigene) return
         setDetail(produkt.value)
-        setPlan(kalender.value)
-        setOption('')
-        setStartzeit('')
-        setMeldung(produkt.message)
+        const kalenderOffen = kalender.status === 'ok' && kalender.value != null
+        setPlan(kalenderOffen ? kalender.value : null)
+        setMeldung(kalenderOffen ? produkt.message : kalender.message || produkt.message)
+        setLaedt(false)
       } catch {
-        if (!steuerung.signal.aborted && lauf.current === eigene) setMeldung('Die Verbindung zu Viator ist abgebrochen.')
+        if (!steuerung.signal.aborted && detailLauf.current === eigene) {
+          setMeldung('Die Verbindung zu Viator ist abgebrochen.')
+          setLaedt(false)
+        }
       }
     })()
     return () => {
       steuerung.abort()
-      lauf.current += 1
+      detailLauf.current += 1
+      quoteAbort.current?.abort()
+      quoteLauf.current += 1
     }
   }, [productCode])
 
@@ -182,10 +197,10 @@ export default function ViatorPruefung({
       setQuoteMeldung('Bitte wähle eine Startzeit.')
       return
     }
-    const generation = ++lauf.current
-    abortRef.current?.abort()
+    const generation = ++quoteLauf.current
+    quoteAbort.current?.abort()
     const steuerung = new AbortController()
-    abortRef.current = steuerung
+    quoteAbort.current = steuerung
     setQuote(null)
     setQuoteMeldung(null)
     setPrueft(true)
@@ -205,17 +220,17 @@ export default function ViatorPruefung({
       steuerung.signal,
     )
       .then((antwort) => {
-        if (lauf.current !== generation) return
+        if (quoteLauf.current !== generation) return
         setQuote(antwort.value)
         setQuoteMeldung(antwort.message)
       })
       .catch(() => {
-        if (lauf.current !== generation) return
+        if (quoteLauf.current !== generation) return
         setQuote(null)
         setQuoteMeldung('Die Prüfung wurde abgebrochen.')
       })
       .finally(() => {
-        if (lauf.current === generation) setPrueft(false)
+        if (quoteLauf.current === generation) setPrueft(false)
       })
   }
 
@@ -229,6 +244,15 @@ export default function ViatorPruefung({
       ) : null}
       {detail?.description ? <p className="mt-3 break-words text-sm leading-6 text-ink-800">{detail.description}</p> : null}
       {plan ? <p className="mt-3 text-sm text-ink-800">Kalenderhinweis, keine aktuelle Verfügbarkeit.</p> : null}
+      {!laedt && (!detail || !plan) ? (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 px-4 text-sm font-semibold text-brand-800"
+        >
+          Erneut laden
+        </button>
+      ) : null}
       {standard ? <p className="mt-3 text-sm text-ink-800">Dieses Angebot hat keine Zusatzoption.</p> : null}
       {pruefungGesperrt ? (
         <p className="mt-3 text-sm leading-6 text-ink-800">
@@ -356,5 +380,20 @@ export default function ViatorPruefung({
         <p className="mt-4 text-sm text-ink-700">Kein geprüfter Link.</p>
       )}
     </section>
+  )
+}
+
+export default function ViatorPruefung(props: {
+  productCode: string
+  dayDate: string | null
+  gewuenschteWaehrung: string
+}) {
+  const [versuch, setVersuch] = useState(0)
+  return (
+    <ViatorPruefungLauf
+      key={`${props.productCode}:${versuch}`}
+      {...props}
+      onRetry={() => setVersuch((stand) => stand + 1)}
+    />
   )
 }

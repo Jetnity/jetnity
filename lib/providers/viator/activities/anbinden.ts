@@ -236,7 +236,7 @@ export async function viatorKalenderLaden(productCode: string, deps: Abhaengigke
   supplierCurrency: string | null
   options: Array<{
     productOptionCode: string
-    seasons: Array<{ startDate: string; endDate: string | null; startTimes: string[]; unavailableDates: string[]; timedEntries: Array<{ startTime: string; unavailableDates: string[] }> }>
+    seasons: Array<{ startDate: string; endDate: string | null; startTimes: string[]; unavailableDates: string[]; timedEntries: Array<{ startTime: string; unavailableDates: string[]; daysOfWeek: string[] }> }>
   }>
 }>> {
   const bereit = clientFuer(deps)

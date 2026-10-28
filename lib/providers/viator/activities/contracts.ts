@@ -284,7 +284,7 @@ export type ViatorScheduleSeason = {
   daysOfWeek: string[]
   startTimes: string[]
   unavailableDates: string[]
-  timedEntries: Array<{ startTime: string; unavailableDates: string[] }>
+  timedEntries: Array<{ startTime: string; unavailableDates: string[]; daysOfWeek: string[] }>
 }
 
 export type ViatorScheduleBandPrice = {

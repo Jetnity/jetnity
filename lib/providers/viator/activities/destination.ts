@@ -1,4 +1,8 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
 import { landName } from '@/lib/country/darstellung'
+import { geoNamesTsvZeile } from '@/lib/places/importieren'
 
 export type ViatorPlaceBinding = {
   jetnityPlaceId: string
@@ -56,7 +60,47 @@ export type ViatorKatalogOrt = {
   longitude: number | null
 }
 
-const ORTS_TYPEN = new Set(['CITY', 'TOWN'])
+const ORTS_TYPEN = new Set(['CITY', 'TOWN', 'ISLAND'])
+
+type Namensbruecke = { countryCode: string; schluessel: Set<string> }
+
+let namensbruecke: Namensbruecke[] | null = null
+
+function bruecke(): Namensbruecke[] {
+  if (namensbruecke) return namensbruecke
+  const gelesen: Namensbruecke[] = []
+  try {
+    const text = readFileSync(join(process.cwd(), 'lib/places/fixtures/geonames.tsv'), 'utf8')
+    for (const zeile of text.split(/\r?\n/)) {
+      const ort = geoNamesTsvZeile(zeile)
+      if (!ort) continue
+      const code = ort.countryCode.trim().toUpperCase()
+      if (!/^[A-Z]{2}$/.test(code)) continue
+      const schluessel = new Set(
+        [ort.name, ort.asciiName, ...ort.altNames.split(',')]
+          .map((name) => nameSchluessel(name))
+          .filter((name) => name.length > 0),
+      )
+      if (schluessel.size > 0) gelesen.push({ countryCode: code, schluessel })
+    }
+  } catch {
+    namensbruecke = []
+    return namensbruecke
+  }
+  namensbruecke = gelesen
+  return namensbruecke
+}
+
+function aliasNamen(name: string, countryCode: string | null): Set<string> {
+  if (!countryCode) return new Set()
+  const gesucht = nameSchluessel(name)
+  const namen = new Set<string>()
+  for (const eintrag of bruecke()) {
+    if (eintrag.countryCode !== countryCode.toUpperCase() || !eintrag.schluessel.has(gesucht)) continue
+    for (const wert of eintrag.schluessel) namen.add(wert)
+  }
+  return namen
+}
 
 function nameSchluessel(value: string): string {
   return value
@@ -144,8 +188,13 @@ export function viatorOrtAufloesen(input: {
 }): ViatorDestinationResolution {
   const name = nameSchluessel(input.name)
   if (!name) return { ok: false, reason: 'invalid_place' }
+  const aliase = aliasNamen(input.name, input.countryCode ?? null)
   const staedte = input.katalog.filter((ort) => ORTS_TYPEN.has(ort.type) && landVon(ort, input.katalog)?.type === 'COUNTRY')
-  const nachName = staedte.filter((ort) => nameSchluessel(ort.name) === name && landPasst(input.countryCode ?? null, landVon(ort, input.katalog)))
+  const nachName = staedte.filter((ort) => {
+    const katalogName = nameSchluessel(ort.name)
+    const namePasst = katalogName === name || aliase.has(katalogName)
+    return namePasst && landPasst(input.countryCode ?? null, landVon(ort, input.katalog))
+  })
   const hatPunkt = typeof input.latitude === 'number' && typeof input.longitude === 'number'
   const nah = hatPunkt
     ? nachName.filter((ort) => {

@@ -10,7 +10,7 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
-import { mountViatorHarness } from '@/lib/providers/viator/activities/browser-harness'
+import { mountViatorHarness } from '@/scripts/viator-s2-native-integration/browser-harness'
 
 test('the browser harness stays imported for reachability', () => {
   assert.equal(typeof mountViatorHarness, 'function')
@@ -35,7 +35,7 @@ async function css(): Promise<string> {
 async function bundle(): Promise<string> {
   const gebaut = await esbuild.build({
     absWorkingDir: process.cwd(),
-    entryPoints: ['lib/providers/viator/activities/browser-harness.tsx'],
+    entryPoints: ['scripts/viator-s2-native-integration/browser-harness.tsx'],
     bundle: true,
     write: false,
     format: 'iife',
@@ -49,7 +49,18 @@ async function bundle(): Promise<string> {
         build.onResolve({ filter: /^server-only$/ }, () => ({ path: 'server-only', namespace: 'leer' }))
         build.onResolve({ filter: /^next\// }, (args) => ({ path: args.path, namespace: 'leer' }))
         build.onResolve({ filter: /^@\// }, (args) => build.resolve(join(process.cwd(), args.path.slice(2)), { resolveDir: process.cwd(), kind: args.kind }))
-        build.onLoad({ filter: /.*/, namespace: 'leer' }, () => ({ contents: 'export default function(){return null}', loader: 'js' }))
+        build.onLoad({ filter: /.*/, namespace: 'leer' }, () => ({
+          contents: [
+            'export default function(){return null}',
+            'export function cookies(){return { get(){return undefined}, getAll(){return []} }}',
+            'export function headers(){return { get(){return null} }}',
+            'export function redirect(){return null}',
+            'export function useRouter(){return { push(){}, replace(){}, back(){} }}',
+            'export function usePathname(){return "/"}',
+            'export function useSearchParams(){return new URLSearchParams()}',
+          ].join('\n'),
+          loader: 'js',
+        }))
       },
     }],
   })
@@ -88,11 +99,98 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())))
   })
 
+  const evidenz = {
+    hatOrt: true,
+    hatKoordinaten: true,
+    hatTag: true,
+    hatDatum: true,
+    hatBestehendePunkte: false,
+    hatBelastbareZeiten: false,
+    hatInteressen: false,
+    hatBudget: false,
+  }
+  const sucheAntwort = {
+    status: 'ok',
+    message: 'Aktivitäten gefunden.',
+    coverageNote: 'Die Abdeckung bleibt ein Hinweis.',
+    evidenz,
+    options: [{
+      id: 'viator:10001P1',
+      provider: 'viator',
+      externalRef: '10001P1',
+      title: 'Spaziergang durch die Altstadt',
+      description: null,
+      locationName: null,
+      punkt: null,
+      dauerMinuten: 90,
+      timeslot: null,
+      preis: 42,
+      preisWaehrung: 'EUR',
+      bewertung: null,
+      bewertungenAnzahl: null,
+      stornierbar: null,
+      kategorien: [],
+      tags: [],
+      bildUrl: '/viator-local.png',
+      preisRolle: 'rrp_from',
+      labels: [],
+      reasons: [],
+      konflikt: 'unbekannt',
+    }],
+  }
+  const detailAntwort = {
+    status: 'ok',
+    message: 'Details geladen.',
+    value: {
+      productCode: '10001P1',
+      title: 'Spaziergang',
+      description: 'Kurzbeschreibung.',
+      imageUrl: '/viator-local.png',
+      price: null,
+      productOptionCodes: ['TG1', 'TG2'],
+      productOptions: [{ code: 'TG1', title: 'Morgentour' }, { code: 'TG2', title: 'Abendtour' }],
+      ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
+      productUrl: 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api',
+    },
+  }
+  const kalenderAntwort = {
+    status: 'ok',
+    message: 'Kalenderhinweis.',
+    value: {
+      productCode: '10001P1',
+      supplierCurrency: 'EUR',
+      options: [{
+        productOptionCode: 'TG1',
+        seasons: [{
+          startDate: '2026-11-01',
+          endDate: '2026-11-30',
+          startTimes: ['10:00'],
+          unavailableDates: [],
+          timedEntries: [{ startTime: '10:00', unavailableDates: [], daysOfWeek: ['MONDAY', 'TUESDAY'] }],
+        }],
+      }, {
+        productOptionCode: 'TG2',
+        seasons: [{
+          startDate: '2026-11-01',
+          endDate: '2026-11-30',
+          startTimes: ['18:00'],
+          unavailableDates: [],
+          timedEntries: [{ startTime: '18:00', unavailableDates: [], daysOfWeek: ['MONDAY', 'TUESDAY'] }],
+        }],
+      }],
+    },
+  }
+
   async function seite(breite: number): Promise<Page> {
     const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
     let checks = 0
+    let details = 0
+    let schedules = 0
     let releaseFirst: (() => void) | null = null
+    let detailFreigegeben = false
+    let detailLoesen: (() => void) | null = null
     const gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }> = []
+    const suchen: unknown[] = []
     await page.route('**/*', async (route) => {
       const url = new URL(route.request().url())
       if (url.origin !== origin) return route.abort()
@@ -104,91 +202,29 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
         })
       }
       if (url.pathname === '/api/activities/search') {
-        return route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            status: 'ok',
-            message: 'Aktivitäten gefunden.',
-            options: [{
-              id: 'viator:10001P1',
-              provider: 'viator',
-              externalRef: '10001P1',
-              title: 'Spaziergang durch die Altstadt',
-              description: null,
-              locationName: null,
-              punkt: null,
-              dauerMinuten: 90,
-              timeslot: null,
-              preis: 42,
-              preisWaehrung: 'EUR',
-              bewertung: null,
-              bewertungenAnzahl: null,
-              stornierbar: null,
-              kategorien: [],
-              tags: [],
-              bildUrl: '/viator-local.png',
-              preisRolle: 'rrp_from',
-              labels: [],
-              reasons: [],
-              konflikt: 'unbekannt',
-            }],
-          }),
-        })
+        const roh = route.request().postData()
+        if (roh) suchen.push(JSON.parse(roh) as unknown)
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sucheAntwort) })
       }
       if (url.pathname === '/api/activities/viator/detail') {
-        return route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            status: 'ok',
-            message: 'Details geladen.',
-            value: {
-              productCode: '10001P1',
-              title: 'Spaziergang',
-              description: 'Kurzbeschreibung.',
-              imageUrl: '/viator-local.png',
-              price: null,
-              productOptionCodes: ['TG1', 'TG2'],
-              productOptions: [{ code: 'TG1', title: 'Morgentour' }, { code: 'TG2', title: 'Abendtour' }],
-              ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
-              productUrl: 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api',
-            },
-          }),
-        })
+        details += 1
+        if (details === 2 && !detailFreigegeben) await new Promise<void>((resolve) => { detailLoesen = resolve })
+        try {
+          return await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(detailAntwort) })
+        } catch {
+          return
+        }
       }
       if (url.pathname === '/api/activities/viator/schedule') {
-        return route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            status: 'ok',
-            message: 'Kalenderhinweis.',
-            value: {
-              productCode: '10001P1',
-              supplierCurrency: 'EUR',
-              options: [{
-                productOptionCode: 'TG1',
-                seasons: [{
-                  startDate: '2026-11-01',
-                  endDate: '2026-11-30',
-                  startTimes: ['10:00'],
-                  unavailableDates: [],
-                  timedEntries: [{ startTime: '10:00', unavailableDates: [] }],
-                }],
-              }, {
-                productOptionCode: 'TG2',
-                seasons: [{
-                  startDate: '2026-11-01',
-                  endDate: '2026-11-30',
-                  startTimes: ['18:00'],
-                  unavailableDates: [],
-                  timedEntries: [{ startTime: '18:00', unavailableDates: [] }],
-                }],
-              }],
-            },
-          }),
-        })
+        schedules += 1
+        if (schedules === 1) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ status: 'error', message: 'Der Kalenderhinweis konnte nicht geladen werden.', value: null }),
+          })
+        }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(kalenderAntwort) })
       }
       if (url.pathname === '/api/activities/viator/check') {
         checks += 1
@@ -214,17 +250,45 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       return route.continue()
     })
     await page.goto(origin)
-    await page.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
-    await page.getByRole('button', { name: 'Angebot prüfen' }).click()
-    await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).waitFor()
-    page.once('close', () => releaseFirst?.())
-    Object.assign(page, { releaseFirst: () => releaseFirst?.(), gesendet })
+    page.once('close', () => {
+      releaseFirst?.()
+      detailFreigegeben = true
+      detailLoesen?.()
+    })
+    Object.assign(page, {
+      releaseFirst: () => releaseFirst?.(),
+      releaseDetail: () => {
+        detailFreigegeben = true
+        detailLoesen?.()
+      },
+      gesendet,
+      suchen,
+    })
     return page
   }
 
-  test('search, selection and a late quote do not survive a changed date', async () => {
+  test('the real activity search keeps currency, drops stale quotes, and clears a new search', async () => {
     const page = await seite(390)
-    const träger = page as Page & { gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }> }
+    const träger = page as Page & {
+      gesendet: Array<{ currency?: string | null; productOptionCode?: string; startTime?: string }>
+      suchen: Array<{ stage?: { name?: string; countryCode?: string }; trip?: { currency?: string }; day?: { dayDate?: string } }>
+      releaseFirst: () => void
+      releaseDetail: () => void
+    }
+    const bereich = page.getByRole('region', { name: 'Aktivitäten' })
+    await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await bereich.getByRole('button', { name: 'Angebot prüfen' }).click()
+    assert.equal(träger.suchen[0]?.stage?.name, 'Bangkok')
+    assert.equal(träger.suchen[0]?.stage?.countryCode, 'TH')
+    assert.equal(träger.suchen[0]?.trip?.currency, 'CHF')
+    assert.equal(träger.suchen[0]?.day?.dayDate, '2026-11-02')
+    await page.getByRole('button', { name: 'Erneut laden' }).click()
+    await page.getByText('Details werden geladen.').waitFor()
+    await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').fill('2026-11-03')
+    träger.releaseDetail()
+    await page.getByLabel('Erwachsene Anzahl').waitFor()
+    assert.equal(await page.getByText('Details werden geladen.').count(), 0)
+    assert.equal(await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').inputValue(), '2026-11-03')
     await page.getByLabel('Option').waitFor()
     assert.equal(await page.getByLabel('Option').inputValue(), '')
     await page.getByLabel('Option').selectOption({ label: 'Morgentour' })
@@ -236,8 +300,8 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(träger.gesendet[0]?.productOptionCode, 'TG1')
     assert.equal(träger.gesendet[0]?.startTime, '10:00')
     assert.equal(JSON.stringify(träger.gesendet[0]).includes('DEFAULT'), false)
-    await page.getByLabel('Datum').fill('2026-11-03')
-    ;(page as Page & { releaseFirst: () => void }).releaseFirst()
+    await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').fill('2026-11-02')
+    träger.releaseFirst()
     await page.waitForTimeout(50)
     assert.equal(await page.getByText('111').count(), 0)
     assert.equal(await page.getByText('alte Prüfung').count(), 0)
@@ -245,9 +309,15 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.getByText('neue Prüfung').waitFor()
     await page.getByText('80').waitFor()
     assert.equal(await page.getByText('111').count(), 0)
-    const vorher = await page.locator('h3').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
+    await bereich.getByRole('button', { name: 'Erneut suchen' }).click()
+    assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
+    await bereich.getByRole('button', { name: 'Angebot prüfen' }).click()
+    await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).waitFor()
+    await bereich.getByRole('radio', { name: 'Phuket-Tag' }).click()
+    assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
+    const vorher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-    const nachher = await page.locator('h3').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
+    const nachher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     assert.ok(nachher > vorher)
     await page.keyboard.press('Tab')
     const mass = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
@@ -256,6 +326,12 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.close()
     for (const breite of [320, 768, 1440]) {
       const weitere = await seite(breite)
+      const flaeche = weitere.getByRole('region', { name: 'Aktivitäten' })
+      await flaeche.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      await flaeche.getByRole('button', { name: 'Angebot prüfen' }).click()
+      await weitere.getByRole('button', { name: 'Erneut laden' }).click()
+      ;(weitere as Page & { releaseDetail: () => void }).releaseDetail()
+      await weitere.getByText('Kalenderhinweis, keine aktuelle Verfügbarkeit.').waitFor()
       const kante = await weitere.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
       assert.ok(kante.scroll <= kante.client + 1, `${breite}`)
       await weitere.screenshot({ path: join(ARTIFACTS, `viator-${breite}.png`), fullPage: true })

@@ -121,6 +121,33 @@ describe('Viator native seam', () => {
       ],
     })
     assert.equal(viatorOrtAufloesen({ name: 'Lyon', countryCode: 'FR', katalog: doppelt! }).ok, false)
+    const portugal = viatorKatalogLesen({
+      destinations: [
+        { destinationId: 55, name: 'Portugal', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 501, name: 'Lisbon', type: 'CITY', parentDestinationId: 55, center: { latitude: 38.72, longitude: -9.14 } },
+        { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 348, name: 'Ko Chang', type: 'ISLAND', parentDestinationId: 20, center: { latitude: 12.0, longitude: 102.3 } },
+        { destinationId: 349, name: 'Phuket', type: 'ISLAND', parentDestinationId: 20, center: { latitude: 7.88, longitude: 98.39 } },
+        { destinationId: 80, name: 'Panama', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 801, name: 'Panama City', type: 'CITY', parentDestinationId: 80, center: { latitude: 8.98, longitude: -79.52 } },
+      ],
+    })
+    const lissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
+    const lisbon = viatorOrtAufloesen({ name: 'Lisbon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
+    const erneutLissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
+    const land = viatorOrtAufloesen({ name: 'Portugal', countryCode: 'PT', katalog: portugal! })
+    const koChang = viatorOrtAufloesen({ name: 'Ko Chang', countryCode: 'TH', latitude: 12.0, longitude: 102.3, katalog: portugal! })
+    const phuket = viatorOrtAufloesen({ name: 'Phuket', countryCode: 'TH', latitude: 7.88, longitude: 98.39, katalog: portugal! })
+    const panama = viatorOrtAufloesen({ name: 'Panama City', countryCode: 'PA', latitude: 8.98, longitude: -79.52, katalog: portugal! })
+    const nurLand = viatorOrtAufloesen({ name: 'Panama', countryCode: 'PA', katalog: portugal! })
+    assert.equal(lissabon.ok && lissabon.destinationId, '501')
+    assert.equal(lisbon.ok && lisbon.destinationId, '501')
+    assert.equal(erneutLissabon.ok && erneutLissabon.destinationId, '501')
+    assert.equal(land.ok, false)
+    assert.equal(koChang.ok && koChang.destinationId, '348')
+    assert.equal(phuket.ok && phuket.destinationId, '349')
+    assert.equal(panama.ok && panama.destinationId, '801')
+    assert.equal(nurLand.ok, false)
   })
 
   test('runtime search loads destinations once and does not guess an unknown city', async () => {
@@ -199,6 +226,18 @@ describe('Viator native seam', () => {
     )
     assert.deepEqual(zeiten, ['11:00'])
     assert.equal(Array.isArray(zeiten), true)
+    const montag = {
+      productOptionCode: 'TG1',
+      seasons: [{
+        startDate: '2026-11-01',
+        endDate: '2026-11-30',
+        startTimes: ['10:00'],
+        unavailableDates: [],
+        timedEntries: [{ startTime: '10:00', unavailableDates: [], daysOfWeek: ['MONDAY'] }],
+      }],
+    }
+    assert.deepEqual(viatorStartzeiten(montag, '2026-11-02', '2026-10-28'), ['10:00'])
+    assert.deepEqual(viatorStartzeiten(montag, '2026-11-03', '2026-10-28'), [])
     assert.equal(viatorStartzeiten(undefined, '2026-01-01', '2026-10-28'), null)
     const offen = viatorStartzeiten(
       {

@@ -307,6 +307,7 @@ describe('Viator schedules, live check, destination, and cache', () => {
     assert.equal(parsed.value.options[0]?.ageBandPrices[0]?.price.amount, 100.02)
     assert.equal(JSON.stringify(parsed.value).includes('partnerNetPrice'), false)
     assert.equal(parsed.value.options[0]?.seasons[0]?.unavailableDates[0], '2026-09-16')
+    assert.deepEqual(parsed.value.options[0]?.seasons[0]?.timedEntries[0]?.daysOfWeek, ['MONDAY'])
     const ohneEnde = parseViatorSchedule(
       {
         productCode: '10001P1',
@@ -420,6 +421,22 @@ describe('Viator schedules, live check, destination, and cache', () => {
     const koerper = JSON.parse(gebaut.call.body) as { currency?: string; productOptionCode?: string }
     assert.equal(koerper.currency, 'CHF')
     assert.equal('productOptionCode' in koerper, false)
+    for (const waehrung of ['EUR', 'USD'] as const) {
+      const abweichend = validateViatorLiveCheckRequest({
+        productCode: '10001P1',
+        productOptionCode: 'TG1',
+        travelDate: '2026-11-02',
+        currency: waehrung,
+        paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+        productAgeBands: [ADULT],
+      })
+      assert.equal(abweichend.ok, true)
+      if (!abweichend.ok) return
+      const aufruf = buildViatorSandboxCall('availability_check', { liveCheck: abweichend.value })
+      assert.equal(aufruf.ok, true)
+      if (!aufruf.ok || !aufruf.call.body) return
+      assert.equal(JSON.parse(aufruf.call.body).currency, waehrung)
+    }
     assert.equal(gebaut.call.body.includes('DEFAULT'), false)
     assert.equal(gebaut.call.body.includes('TG1'), false)
     const mehrere = parseViatorAvailabilityCheck(

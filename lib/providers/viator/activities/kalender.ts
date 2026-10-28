@@ -5,7 +5,7 @@ export type ViatorKalenderOption = {
     endDate: string | null
     startTimes: string[]
     unavailableDates: string[]
-    timedEntries?: Array<{ startTime: string; unavailableDates: string[] }>
+    timedEntries?: Array<{ startTime: string; unavailableDates: string[]; daysOfWeek?: string[] }>
   }>
 }
 
@@ -24,16 +24,27 @@ export function viatorStartzeiten(
     const ende = season.endDate ?? horizont
     if (datum < season.startDate || datum > ende) continue
     imZeitraum = true
+    const wochentag = wochentagVon(datum)
     const eintraege =
       season.timedEntries && season.timedEntries.length > 0
         ? season.timedEntries
-        : season.startTimes.map((startTime) => ({ startTime, unavailableDates: season.unavailableDates }))
+        : season.startTimes.map((startTime) => ({ startTime, unavailableDates: season.unavailableDates, daysOfWeek: [] as string[] }))
     for (const eintrag of eintraege) {
-      if (!eintrag.unavailableDates.includes(datum)) zeiten.add(eintrag.startTime)
+      if (eintrag.unavailableDates.includes(datum)) continue
+      const tage = eintrag.daysOfWeek ?? []
+      if (tage.length > 0 && (!wochentag || !tage.includes(wochentag))) continue
+      zeiten.add(eintrag.startTime)
     }
   }
   if (!imZeitraum) return null
   return [...zeiten]
+}
+
+function wochentagVon(iso: string): string | null {
+  const [jahr, monat, tag] = iso.split('-').map(Number)
+  const datum = new Date(Date.UTC(jahr!, (monat ?? 1) - 1, tag))
+  if (Number.isNaN(datum.getTime())) return null
+  return ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][datum.getUTCDay()] ?? null
 }
 
 function plusTage(iso: string, tage: number): string | null {

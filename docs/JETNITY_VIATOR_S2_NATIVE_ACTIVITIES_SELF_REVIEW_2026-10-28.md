@@ -6,12 +6,13 @@ The session is still `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`, model `grok-4.7-
 
 ## Holds
 
-- Destination catalog fields are `destinationId`, `name`, `type`, `parentDestinationId`, `lookupId`, and `center`. A `countryCode` property on a destination is ignored. Bangkok in Thailand stays distinct from Chiang Mai, and Paris in France stays distinct from Paris in the United States, by comparing the COUNTRY ancestor name with `landName`. A dangling parent and two Lyons in France stay unresolved.
+- Destination catalog fields are `destinationId`, `name`, `type`, `parentDestinationId`, `lookupId`, and `center`. A `countryCode` property on a destination is ignored. Bangkok, Chiang Mai, the two Parises, Lisbon/Lissabon in Portugal, Ko Chang, Phuket, and Panama City resolve through the COUNTRY ancestor and `landName`. Portugal and Panama as country names do not become cities. A dangling parent and two Lyons stay unresolved.
 - Check requests include `currency`. A null currency does not call `/availability/check`. CHF on the labelled CHF flow is sent as CHF. A EUR quote is not relabelled.
 - A product with titled options requires one of those codes. A product with none omits `productOptionCode`. `DEFAULT` and `TG1` are not invented. A client `standardProduct: true` flag does not skip a real option list.
 - Two returned start times without an explicit `startTime` are rejected. The parser does not keep the first bookable item.
 - A season with no `endDate` stays `availabilityClaim: false`. Dates after today plus 384 days are outside the hint.
-- Changing the date aborts the previous live check. The browser flow selected Morgentour, sent CHF, and a late 111 did not replace the cleared quote.
+- Changing the date aborts the previous live check and does not cancel an in-flight detail load. The browser flow uses `AktivitaetenBereich`, selected Morgentour, sent CHF, recovered from a schedule error, cleared the product on a new search and on the Phuket day, and a late 111 did not replace the cleared quote.
+- A Monday-only 10:00 is absent on Tuesday. CHF, EUR, and USD are present on built check bodies.
 - Option titles are required. An untitled option is dropped.
 
 ## Gaps

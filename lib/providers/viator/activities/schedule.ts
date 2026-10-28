@@ -29,23 +29,27 @@ function readSeason(value: unknown): { season: ViatorScheduleSeason; partial: bo
   const endDate = record.endDate == null ? null : calendarDate(record.endDate)
   if (record.endDate != null && endDate == null) return null
   if (endDate && endDate < startDate) return null
-  const daysOfWeek: string[] = []
   let partial = false
-  if (Array.isArray(record.daysOfWeek)) {
-    for (const day of record.daysOfWeek) {
-      if (typeof day === 'string' && DAYS.has(day) && !daysOfWeek.includes(day)) daysOfWeek.push(day)
-      else partial = true
-    }
-  }
   const startTimes: string[] = []
-  const timedEntries: Array<{ startTime: string; unavailableDates: string[] }> = []
+  const timedEntries: Array<{ startTime: string; unavailableDates: string[]; daysOfWeek: string[] }> = []
   const unavailableDates: string[] = []
+  const daysOfWeek: string[] = []
   if (Array.isArray(record.pricingRecords)) {
     for (const pricingRecord of record.pricingRecords) {
       const pricing = asRecord(pricingRecord)
       if (!pricing) {
         partial = true
         continue
+      }
+      const tage: string[] = []
+      if (Array.isArray(pricing.daysOfWeek)) {
+        for (const day of pricing.daysOfWeek) {
+          if (typeof day === 'string' && DAYS.has(day) && !tage.includes(day)) tage.push(day)
+          else partial = true
+        }
+      }
+      for (const tag of tage) {
+        if (!daysOfWeek.includes(tag)) daysOfWeek.push(tag)
       }
       if (Array.isArray(pricing.timedEntries)) {
         for (const entry of pricing.timedEntries) {
@@ -57,21 +61,19 @@ function readSeason(value: unknown): { season: ViatorScheduleSeason; partial: bo
           }
           if (!startTimes.includes(startTime)) startTimes.push(startTime)
           const eigene: string[] = []
-          if (!Array.isArray(timed?.unavailableDates)) {
-            timedEntries.push({ startTime, unavailableDates: [] })
-            continue
-          }
-          for (const unavailable of timed.unavailableDates) {
-            const item = asRecord(unavailable)
-            const date = calendarDate(item?.date)
-            if (!date) {
-              partial = true
-              continue
+          if (Array.isArray(timed?.unavailableDates)) {
+            for (const unavailable of timed.unavailableDates) {
+              const item = asRecord(unavailable)
+              const date = calendarDate(item?.date)
+              if (!date) {
+                partial = true
+                continue
+              }
+              if (eigene.length < 100 && !eigene.includes(date)) eigene.push(date)
+              if (unavailableDates.length < 100 && !unavailableDates.includes(date)) unavailableDates.push(date)
             }
-            if (eigene.length < 100 && !eigene.includes(date)) eigene.push(date)
-            if (unavailableDates.length < 100 && !unavailableDates.includes(date)) unavailableDates.push(date)
           }
-          timedEntries.push({ startTime, unavailableDates: eigene })
+          timedEntries.push({ startTime, unavailableDates: eigene, daysOfWeek: tage })
         }
       }
     }

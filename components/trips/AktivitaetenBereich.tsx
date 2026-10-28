@@ -278,6 +278,7 @@ function ActivityTag({
     if (!eingabe || !tag || !etappe) return
     const entscheid = suchDispatch(laufRef.current)
     if (!entscheid.angenommen) return
+    setViatorWahl(null)
     laufRef.current = entscheid.lauf
     setLauf(entscheid.lauf)
     abortRef.current?.abort()

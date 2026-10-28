@@ -4,7 +4,7 @@
 
 ## Umgesetzt
 
-Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. It does not invent an ISO country code. Product options shown to visitors use the required title. A live check sends `productCode`, `travelDate`, `paxMix`, and a supported `currency`. `productOptionCode` and `startTime` are omitted unless the visitor selected a real option or a real time. A standard product is checked without an invented code. Several start times require a choice. A missing season end date is the 384-day horizon, and a schedule hint is still not availability.
+Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Lissabon matches Lisbon through the existing GeoNames alternate names. A country record is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product. The browser harness renders the real Aktivitäten area.
 
 ## Dateien
 
@@ -16,7 +16,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the touched Viator files passed with `--max-warnings 0`. Foundation, sandbox, and S2 unit tests passed with the server-only test register. The browser harness passed: search, explicit Morgentour selection, CHF check body, stale 111 discarded, widths 320, 390, 768, and 1440, root font 32px. `scripts/erreichbarkeit.mjs` and `scripts/exporte.mjs` reported no orphans. Full `npm run lint`, production build, and exact-head CI are not claimed here.
+`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the new and edited Viator files passed with `--max-warnings 0`. The pre-existing set-state warning in `AktivitaetenBereich` was left as it was. Foundation, sandbox, and S2 unit tests passed. The browser harness passed against `AktivitaetenBereich`: real search body, schedule retry, date change during loading, CHF check body, stale 111 discarded, new search and Phuket day clear the product, widths 320, 390, 768, and 1440, root font 32px. Reachability and export checks were clean. Full `npm run lint`, production build, and exact-head CI are not claimed here. CI 40781976364 remains a recorded failure.
 
 ## Build
 
