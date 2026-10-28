@@ -3,6 +3,7 @@
 import type { ComponentType, RefObject } from 'react'
 import { ArrowRightLeft, BedDouble, ChevronRight, Compass, PenLine, Plane, Sparkles } from 'lucide-react'
 
+import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
 import { INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
@@ -44,16 +45,26 @@ export function TripWorkspaceAktionen({
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
   begleiterKnopfRef: RefObject<HTMLButtonElement | null>
 }) {
+  const dichte = useKopfDichte()
+
   return (
-    <div data-workspace-aktionen className="mt-3 min-w-0 max-w-full">
-      <div className={cn('grid min-w-0 gap-2', begleiterVorhanden && 'sm:grid-cols-2')}>
+    <div
+      data-workspace-aktionen
+      data-u1a3-bereit={dichte.bereit ? '1' : '0'}
+      data-u1a3-dichte={dichte.zeile ? 'zeile' : 'gestapelt'}
+      className={cn('mt-2 min-w-0 max-w-full lg:flex lg:items-center lg:gap-3', dichte.gross && 'lg:block')}
+    >
+      <div className={cn('grid min-w-0 gap-2', begleiterVorhanden && 'sm:grid-cols-2', !dichte.gross && 'lg:shrink-0')}>
         <button
           ref={aenderungKnopfRef}
           type="button"
           aria-expanded={aenderungOffen}
           aria-controls="reise-aenderung"
           onClick={onAenderung}
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          className={cn(
+            'inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+            dichte.gross ? 'w-full' : 'w-full lg:w-auto',
+          )}
         >
           <PenLine className="h-4 w-4 shrink-0" aria-hidden="true" />
           {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
@@ -65,14 +76,17 @@ export function TripWorkspaceAktionen({
             aria-expanded={begleiterOffen}
             aria-controls="reisebegleiter"
             onClick={onBegleiter}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-800 bg-white px-4 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            className={cn(
+              'inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-800 bg-white px-4 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+              dichte.gross ? 'w-full' : 'w-full lg:w-auto',
+            )}
           >
             <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
             {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
           </button>
         ) : null}
       </div>
-      <p className="mt-2 text-xs leading-5 text-ink-700">
+      <p className={cn('text-xs leading-4 text-ink-700', dichte.gross ? 'mt-1' : 'mt-1 lg:mt-0 lg:min-w-0 lg:flex-1')}>
         Grunddaten, Zeitraum und Etappen direkt oder in eigenen Worten anpassen.
         {begleiterVorhanden
           ? ' Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und ändert nichts.'
@@ -102,19 +116,21 @@ export default function TripWorkspaceUebersicht({
   const praeferenzen = workspacePraeferenzSicht(reise)
 
   return (
-    <section aria-label="Reiseübersicht" className="mt-3 grid min-w-0 max-w-full gap-3">
+    <section aria-label="Reiseübersicht" className="mt-2 grid min-w-0 max-w-full gap-2">
       <header className="min-w-0 max-w-full">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Übersicht</p>
         <h2
           id="workspace-uebersicht-titel"
           tabIndex={-1}
           data-workspace-modus-heading
-          className="mt-1 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
+          className="break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
         >
           Deine Reise auf einen Blick
         </h2>
-        <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
-        <p className="mt-1 break-words text-sm leading-6 text-ink-700">{uebersicht.planText}</p>
+        <p className="mt-1 max-w-2xl break-words text-sm leading-5 text-ink-800">
+          {uebersicht.fortschrittText}
+          <span className="text-ink-600"> · </span>
+          {uebersicht.planText}
+        </p>
       </header>
 
       <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />
@@ -124,7 +140,7 @@ export default function TripWorkspaceUebersicht({
       <TripWorkspaceDestinationEssentials essentials={destinationEssentials} />
 
       <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className="min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white">
-        <p className="border-b border-line-100 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
+        <p className="border-b border-line-100 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
           Bereiche dieser Reise
         </p>
         <ul className="grid gap-px bg-line-100 sm:grid-cols-2">
