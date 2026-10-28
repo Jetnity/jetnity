@@ -83,6 +83,33 @@ async function sichtbar(page: Page, selektor: string) {
   }, selektor)
 }
 
+async function fokusSichtbar(page: Page) {
+  return page.evaluate(() => {
+    const el = document.activeElement
+    if (!(el instanceof HTMLElement)) return { ok: false, grund: 'keins' }
+    const rect = el.getBoundingClientRect()
+    const treffer = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    const getroffen = treffer === el || (treffer instanceof Node && el.contains(treffer))
+    const streifen = el.closest('[data-plan-tag-streifen]')
+    const streifenFrei = !(streifen instanceof HTMLElement) || (() => {
+      const flaeche = streifen.getBoundingClientRect()
+      return rect.left >= flaeche.left - 1 && rect.right <= flaeche.right + 1
+    })()
+    return {
+      ok: getroffen && streifenFrei && rect.top >= 0 && rect.bottom <= window.innerHeight && rect.left >= -1 && rect.right <= window.innerWidth + 1,
+      tag: el.getAttribute('data-timeline-tag'),
+      punkt: el.closest('[data-plan-punkt]')?.getAttribute('data-plan-punkt') ?? null,
+      top: rect.top,
+      bottom: rect.bottom,
+      left: rect.left,
+      right: rect.right,
+      hoehe: window.innerHeight,
+      getroffen,
+      y: window.scrollY,
+    }
+  })
+}
+
 async function modus(page: Page, name: string) {
   const knopf = page.getByRole('button', { name, exact: true }).filter({ visible: true }).first()
   await knopf.click()
@@ -657,6 +684,53 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
     }
   })
 
+  test('ein aufgeschobener Standardtag-Entwurf überlebt Übersicht und Reflow', async () => {
+    const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      await page.goBack()
+      await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
+      await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+      await page.getByLabel('Ort oder Aktivität').fill('Standard Entwurf')
+      await page.locator('[data-u1b-anlegen-halten]').click()
+      await page.getByRole('button', { name: 'Speichern', exact: true }).click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy') === 'true')
+      assert.deepEqual(await page.evaluate(() => window.__u1b?.writes ?? []), ['day-1:Standard Entwurf'])
+      await modus(page, 'Übersicht')
+      await page.setViewportSize({ width: 390, height: 900 })
+      await page.setViewportSize({ width: 1440, height: 900 })
+      const verborgen = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        busy: document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy'),
+      }))
+      assert.equal(verborgen.formulare, 1)
+      assert.equal(verborgen.titel, 'Standard Entwurf')
+      assert.equal(verborgen.busy, 'true')
+      await page.locator('[data-u1b-anlegen-fehler]').click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent?.includes('Der Entwurf bleibt auf diesem Tag.'))
+      await modus(page, 'Reiseplan')
+      await page.waitForSelector('form[aria-label="Punkt hinzufügen"]')
+      const danach = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        fehler: document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent ?? '',
+        writes: window.__u1b?.writes ?? [],
+        tag: new URL(location.href).searchParams.get('tag'),
+        plan: new URL(location.href).searchParams.get('ansicht'),
+      }))
+      assert.equal(danach.formulare, 1)
+      assert.equal(danach.titel, 'Standard Entwurf')
+      assert.match(danach.fehler, /Der Entwurf bleibt auf diesem Tag/)
+      assert.deepEqual(danach.writes, ['day-1:Standard Entwurf'])
+      assert.equal(danach.plan, 'plan')
+      assert.equal(danach.tag, null)
+    } finally {
+      await page.close()
+    }
+  })
+
   test('Zur Route fokussiert den sichtbaren Tag ohne Zeigerfoto', async () => {
     const tastatur = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
     try {
@@ -705,6 +779,57 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       assert.ok(kasten && kasten.links >= -1 && kasten.rechts <= kasten.fenster + 1, JSON.stringify(kasten))
     } finally {
       await weit.page.close()
+    }
+  })
+
+  test('Zur Route legt ein spätes Ziel frei, ohne eine passende Scrollposition zu verwerfen', async () => {
+    const schrift = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await schrift.page.locator('[data-timeline-tag="day-10"]').filter({ visible: true }).first().click()
+      await schrift.page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+      await schrift.page.waitForSelector('[data-u1b-anordnung="schmal"]')
+      await schrift.page.getByRole('button', { name: 'Zur Route' }).click()
+      await schrift.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      const gross = await fokusSichtbar(schrift.page)
+      assert.equal(gross.ok, true, JSON.stringify(gross))
+    } finally {
+      await schrift.page.close()
+    }
+
+    const tastatur = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      const chip = tastatur.page.locator('[data-timeline-tag="day-20"]').filter({ visible: true }).first()
+      await chip.focus()
+      await tastatur.page.keyboard.press('Enter')
+      await tastatur.page.locator('[data-u1b-zur-route]').focus()
+      await tastatur.page.keyboard.press('Enter')
+      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-20')
+      const spaet = await fokusSichtbar(tastatur.page)
+      assert.equal(spaet.ok, true, JSON.stringify(spaet))
+    } finally {
+      await tastatur.page.close()
+    }
+
+    const tag = await offen(390, 900, '?ansicht=plan&tag=day-20&foreign=1#marke')
+    try {
+      await tag.page.locator('[data-u1b-zur-route]').click()
+      await tag.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-20')
+      const direkt = await fokusSichtbar(tag.page)
+      assert.equal(direkt.ok, true, JSON.stringify(direkt))
+    } finally {
+      await tag.page.close()
+    }
+
+    const notiz = await browser.newPage({ viewport: { width: 390, height: 900 } })
+    try {
+      await notiz.goto(`${origin}/?ansicht=plan&punkt=note-ohne&foreign=1#marke`, { waitUntil: 'networkidle' })
+      await notiz.getByRole('button', { name: 'Zur Route' }).click()
+      await notiz.waitForFunction(() => document.activeElement?.closest('[data-plan-punkt="note-ohne"]') != null)
+      const punkt = await fokusSichtbar(notiz)
+      assert.equal(punkt.ok, true, JSON.stringify(punkt))
+      assert.equal(punkt.punkt, 'note-ohne')
+    } finally {
+      await notiz.close()
     }
   })
 })

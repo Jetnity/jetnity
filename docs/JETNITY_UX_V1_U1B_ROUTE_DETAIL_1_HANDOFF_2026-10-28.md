@@ -17,7 +17,7 @@ Reviewed head `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` is superseded by the co
 
 ## What the correction changed
 
-One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping. An open editor stays on the displayed day it was opened for through Übersicht, Zur Route, and reflow, including a deferred error. Punkt hinzufügen on the unlabeled default writes that day. Zur Route focuses a visible route chip without requiring a pointer snapshot. The standalone counter keeps nowrap; the measured counter and the date wrap.
+One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping. An open editor stays on the displayed day it was opened for through Übersicht and reflow, including a deferred error on day 11 and on the unlabeled day 1. Zur Route keeps a scroll snapshot only when the target stays fully visible; otherwise it reveals that target clear of sticky UI. The standalone counter keeps nowrap; the measured counter and the date wrap.
 
 ## Next step
 

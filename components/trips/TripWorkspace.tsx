@@ -464,6 +464,9 @@ export default function TripWorkspace({
   const [routeBetont, setRouteBetont] = React.useState(false)
   const [routeFokus, setRouteFokus] = React.useState(0)
   const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
+  const [wurzelSchrift, setWurzelSchrift] = React.useState(16)
+  const planTagRef = React.useRef('')
+  const planGesehenRef = React.useRef(false)
   const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
   const [editorAktiv, setEditorAktiv] = React.useState(false)
   const routeLageRef = React.useRef({ top: 0, windowY: 0, streifenLeft: 0, erfasst: false })
@@ -664,6 +667,48 @@ export default function TripWorkspace({
     else if (chip.right > flaeche.right) streifen.scrollLeft += chip.right - flaeche.right
   }
 
+  function untereAbdeckung(): number {
+    const kandidaten = [
+      document.querySelector('header'),
+      document.querySelector('[data-workspace-mode-nav]'),
+      document.querySelector('nav[aria-label="Reise"]'),
+    ]
+    let kante = window.innerHeight
+    for (const el of kandidaten) {
+      const band = bandVon(el)
+      if (!band || band.top < window.innerHeight * 0.5) continue
+      kante = Math.min(kante, band.top)
+    }
+    return kante
+  }
+
+  function zielFrei(el: HTMLElement): boolean {
+    const rect = el.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return false
+    const oben = abdeckungUnten() + 1
+    const unten = untereAbdeckung() - 1
+    if (rect.top < oben || rect.bottom > unten) return false
+    if (rect.left < -1 || rect.right > window.innerWidth + 1) return false
+    const streifen = el.closest('[data-plan-tag-streifen]')
+    if (streifen instanceof HTMLElement) {
+      const flaeche = streifen.getBoundingClientRect()
+      if (rect.left < flaeche.left - 1 || rect.right > flaeche.right + 1) return false
+    }
+    const treffer = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    return treffer === el || (treffer instanceof Node && el.contains(treffer))
+  }
+
+  function zielInSicht(el: HTMLElement) {
+    chipImStreifenZeigen(el)
+    if (zielFrei(el)) return
+    const rect = el.getBoundingClientRect()
+    const oben = abdeckungUnten() + 8
+    const unten = untereAbdeckung() - 8
+    const delta = rect.height > unten - oben || rect.top < oben ? rect.top - oben : rect.bottom - unten
+    window.scrollTo({ top: Math.max(0, window.scrollY + delta), behavior: 'instant' })
+    chipImStreifenZeigen(el)
+  }
+
   const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
@@ -703,17 +748,15 @@ export default function TripWorkspace({
       const route = document.querySelector('[data-u1b-route]')
       const ziel = knopf && anker && knopf !== route ? knopf : (route instanceof HTMLElement && darfFokussieren(route) ? route : knopf)
       if (ziel) ziel.focus({ preventScroll: true })
-      if (knopf && knopf !== route) {
-        const streifen = knopf.closest<HTMLElement>('[data-plan-tag-streifen]')
-        if (schmal && lage.erfasst && streifen) streifen.scrollLeft = lage.streifenLeft
-        chipImStreifenZeigen(knopf)
-      }
-      if (schmal && lage.erfasst) window.scrollTo({ top: lage.windowY, behavior: 'instant' })
+      if (!(ziel instanceof HTMLElement) || ziel === route) return
+      const streifen = ziel.closest('[data-plan-tag-streifen]')
+      if (schmal && lage.erfasst && streifen instanceof HTMLElement) streifen.scrollLeft = lage.streifenLeft
+      if (!zielFrei(ziel)) zielInSicht(ziel)
     }
     zeigen()
     const rahmen = window.requestAnimationFrame(zeigen)
     return () => window.cancelAnimationFrame(rahmen)
-  }, [routeBetont, routeFokus, u1bAnordnung])
+  }, [routeBetont, routeFokus, u1bAnordnung, wurzelSchrift])
 
   React.useLayoutEffect(() => {
     if (!routeBetont) return
@@ -801,7 +844,12 @@ export default function TripWorkspace({
 
   const onModus = (ansicht: WorkspaceAnsicht, tastatur: boolean) => {
     modusTastaturRef.current = tastatur
-    const tagId = ansicht === 'plan' && reise.days.some((tag) => tag.id === aktiverTag) ? aktiverTag : ''
+    if (modus.ansicht === 'plan') {
+      planTagRef.current = modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? modus.tagId : ''
+      planGesehenRef.current = true
+    }
+    const ersterTag = reise.days.some((tag) => tag.id === aktiverTag) ? aktiverTag : ''
+    const tagId = ansicht === 'plan' ? (planGesehenRef.current ? planTagRef.current : ersterTag) : ''
     modusSetzen({ ansicht, bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
   }
 
@@ -1009,6 +1057,7 @@ export default function TripWorkspace({
       const naechste = naechsteAnordnung(anordnungBisherRef.current, el.clientWidth, rootPx)
       anordnungBisherRef.current = naechste
       setU1bAnordnung((bisher) => bisher === naechste ? bisher : naechste)
+      setWurzelSchrift((bisher) => bisher === rootPx ? bisher : rootPx)
     }
     messen()
     const beobachter = new ResizeObserver(messen)

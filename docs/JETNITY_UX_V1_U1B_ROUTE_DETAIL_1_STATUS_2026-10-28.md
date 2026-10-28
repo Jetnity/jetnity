@@ -24,11 +24,11 @@ Zur Route restores the route scroll captured from a visible route interaction. D
 
 Route, selected day, and selected item stay inside the document at 280, 320, 360, 390, 430, 768, and 1440, at root 16 and root 32. Item copy wraps through inherited `word-break: break-word` on the owned detail slot. No overflow clip. `TripWorkspaceDetail` and `TripIntegratedDay` were not edited.
 
-A deferred save on day 11 keeps the same form, title, date, and one write through Übersicht, including while the plan is hidden. The returned error is on that form when Reiseplan is shown again. Punkt hinzufügen on the unlabeled wide default after Back writes day 1. Zur Route focuses the visible day chip for keyboard, direct load, and the wide layout, without requiring a pointer snapshot. A captured route scroll, including keyboard activation inside the route, is still restored. The standalone counter keeps its nowrap class. The measured counter and the date line wrap, without both declarations on one element.
+A deferred save on day 11 keeps the same form, title, date, and one write through Übersicht. The same is true for a deferred draft opened on the unlabeled day 1 after Back: the writer receives day 1 once, and the error is still on that form after Übersicht and a width change. Returning to a plan that had no canonical tag does not invent one. Zur Route keeps a scroll snapshot only when the focused target stays fully visible; otherwise it scrolls the target clear of the sticky header and the bottom bar, including root-32 day 10, keyboard day 20, direct day 20, and the no-day note. The standalone counter keeps nowrap. The measured counter and the date line wrap, without both declarations on one element.
 
 ## Local evidence on this correction
 
-U1-B mounted Chrome: 15 tests passed, including the deferred Übersicht path, the default-day write, keyboard/direct/wide route focus, and the chip reflow. N12 mounted chronology: 10 passed. U1-A2 geometry: 8 passed. The plan premium source contract passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors.
+U1-B mounted Chrome: 16 tests passed, including the deferred day-11 draft, the deferred default-day draft, vertical reveal for root 32, late keyboard, direct day 20 and the no-day note, and the unchanged route-scroll case. N12 mounted chronology: 10 passed on the unchanged plan surface. U1-A2 geometry: 8 passed. The plan premium source contract passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors. `npm run build` exited 0.
 
 ## Not claimed
 

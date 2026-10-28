@@ -13,7 +13,8 @@
 ## R2
 
 - Übersicht during a deferred day-11 save keeps one busy form with the title and date. After the failure, Reiseplan shows that form and the error. The write list is only `day-11:Lokaler Testentwurf`.
-- Back to the tag-free wide plan, then Punkt hinzufügen, writes `day-1:Tag eins Entwurf` and does not add a tag to the URL.
+- The same roundtrip on the unlabeled day 1 after Back keeps one form and the error. The only write is `day-1:Standard Entwurf`, and the URL stays tag-free.
+- Root 32 after day 10, keyboard day 20, direct day 20, and the no-day note all focus a target whose center is hit-testable inside the viewport. A route scroll that already shows its target is left in place.
 - Keyboard Enter, a direct `tag=day-11` load, and wide Zur Route focus the visible day-11 control. The narrow chip rectangle is inside its strip and the viewport. Deleted day 10 still focuses the route.
 - The measured counter does not carry both nowrap and normal white-space. The standalone counter keeps the legacy nowrap string. N12 at 320/root 32 does not overflow.
 

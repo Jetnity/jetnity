@@ -12,11 +12,11 @@
 
 ## R2.1 Editor day
 
-Measured mode no longer resets an open form when `aktiverTag` and the displayed day differ. Punkt hinzufügen binds the form to the displayed effective day, so the unlabeled day 1 after Back opens a form and the synthetic writer receives `day-1`. An open day-11 form stays mounted in `data-u1b-editor-halt` when the canonical tag disappears for Übersicht. The deferred error returns on that same form. A different canonical day still closes it.
+Measured mode no longer resets an open form when `aktiverTag` and the displayed day differ. Punkt hinzufügen binds the form to the displayed effective day. A deferred draft on that unlabeled day 1 survives Übersicht and a width change; the only write is `day-1:Standard Entwurf`, and the URL stays tag-free. A deferred day-11 draft still returns with its error. The first visit to the plan from another tab still uses the existing active day, so the long plan stays on screen. A later return uses the canonical tag the plan actually had, including none.
 
 ## R2.2 Route focus
 
-Scroll capture is optional. Pointer and keyboard activation inside a visible route record it. Zur Route focuses the visible day control even when no snapshot exists and on the wide layout. The chip is then scrolled inside its horizontal strip. The route-scroll regression still restores the captured window position.
+Scroll capture is optional. A saved window position is kept only when the focused target is still fully visible and hit-testable after it is applied. Otherwise Zur Route scrolls that target clear of the top sticky bands and the bottom bar, and into its horizontal strip. Root 32 after day 10, keyboard day 20, direct day 20, and the no-day note all land inside the viewport. The unchanged route-scroll regression still restores the captured window position.
 
 ## R2.3 Counter classes
 
@@ -36,7 +36,7 @@ The matrix now opens the route, day 11, and stay 11 at seven widths and both roo
 
 ## Tests on this correction
 
-Passed on this candidate: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (15), `lib/trips/n12-chronology-1/browser.test.ts` (10), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), and `trip-plan-premium-experience-4.test.ts`. `tsc --noEmit` passed. ESLint on the touched files reported 0 errors.
+Passed on this candidate: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (16 mounted), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), and `trip-plan-premium-experience-4.test.ts`. N12 mounted chronology passed 10 on the unchanged plan surface. `tsc --noEmit` passed. ESLint on the touched files reported 0 errors. `npm run build` exited 0.
 
 `npm run build` exited 0.
 
