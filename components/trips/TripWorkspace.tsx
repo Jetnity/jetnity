@@ -769,6 +769,15 @@ export default function TripWorkspace({
   }, [routeBetont, routeFokus, u1bAnordnung, wurzelSchrift])
 
   React.useLayoutEffect(() => {
+    if (u1bAnordnung !== 'schmal' || routeBetont || modus.ansicht !== 'plan') return
+    const ziel = document.querySelector<HTMLElement>('[data-u1b-zur-route]')
+    if (!darfFokussieren(ziel)) return
+    const aktiv = document.activeElement
+    if (aktiv instanceof HTMLElement && aktiv !== document.body && darfFokussieren(aktiv)) return
+    ziel.focus({ preventScroll: true })
+  }, [u1bAnordnung, routeBetont, modus.ansicht, modus.tagId, modus.kanteId, kanteUnlesbar])
+
+  React.useLayoutEffect(() => {
     if (!routeBetont) return
     const anker = routeRueckAnkerRef.current
     if (anker?.art !== 'tag' || reise.days.some((tag) => tag.id === anker.id)) return

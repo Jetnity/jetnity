@@ -24,6 +24,10 @@
 - Stage-duration editing that can grow an unassigned 22-day trip to 44 days is unchanged.
 - #1068 and #1067 remain open.
 
+## Correction review
+
+R1 does not drop the 22-day reachability check; it moves it off the simultaneous chip count. R2 reads the existing edge status and does not choose a candidate when the status is unknown. R3 keeps the visible title in the accessible name. R5’s keyboard check is DOM focus and hit size, not a screen-reader pass. The DejaVu assertion was not edited.
+
 ## Verdict
 
-Author considers the slice ready for independent exact-head review. Not FINAL PASS.
+Author considers the R1–R5 correction ready for a new independent exact-head review. Not FINAL PASS.

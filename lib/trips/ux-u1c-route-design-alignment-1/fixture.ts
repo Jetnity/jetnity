@@ -120,6 +120,29 @@ export function wiederholterNameReise(): Trip {
   return reiseAus({ id: 'trip-u1c-namen', title: 'Bangkok zweimal', stages, days })
 }
 
+/** Saved ferry plus a same-date flight. Canonical coverage stays unknown. */
+export function unklareVerbindungReise(): Trip {
+  const reise = referenzReise()
+  const koChang = reise.stages.find((etappe) => etappe.id === 'stage-kc')
+  const tag = reise.days.find((eintrag) => eintrag.id === 'day-9')
+  if (koChang) koChang.arrivalDate = '2026-11-23'
+  if (tag) {
+    tag.items = [
+      transferPunkt({ id: 'ferry-unklar', dayId: tag.id, stageId: 'stage-kc' }),
+      transferPunkt({
+        id: 'flight-unklar',
+        dayId: tag.id,
+        stageId: 'stage-kc',
+        kind: 'flight',
+        title: 'Gleicher Tag',
+        startsAt: '08:00',
+        endsAt: '09:00',
+      }),
+    ]
+  }
+  return reise
+}
+
 export function transferPunkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'dayId'>): TripItem {
   return n12Punkt({
     kind: 'transfer',

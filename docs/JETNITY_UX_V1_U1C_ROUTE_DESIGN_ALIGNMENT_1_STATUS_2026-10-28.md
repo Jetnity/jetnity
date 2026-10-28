@@ -1,41 +1,44 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-28 October 2026. **Implementation delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+28 October 2026. **R1–R5 correction delivered. STOP for a new independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+
+## Review taken over
+
+Comment https://github.com/Jetnity/jetnity/pull/1082#issuecomment-6478861951 on `b21d0c1bb8607d585c9770884380a54ac84b5e0c`. Five corrections:
+
+1. R1 — geometry test still demanded 22 simultaneous day buttons.
+2. R2 — unknown connection state was shown as no saved connection.
+3. R3 — accessible day names dropped the visible day title.
+4. R4 — “Kante / Zieleappe” and visitor-facing “Kennung”.
+5. R5 — real TripWorkspace coverage for connections, history, repeats, invalidation and narrow keyboard focus.
+
+Amendment 2 was committed before these runtime edits: `73d372de26dde2f730d324c0a9eeb06adeb7afe7`.
 
 ## Session
-
-Re-read from `cursor-cloud` `run-info` after the exact rename in this same session.
 
 - URL: https://cursor.com/agents/bc-4904589f-a8f0-4106-a65a-507bc53e084a
 - `bcId`: `bc-4904589f-a8f0-4106-a65a-507bc53e084a`
 - Read-back name: `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`
 - `originalModelName`: `grok-4.7-high-fast`
-- Earlier read-back `UX V1 U1-C Route Design Alignment 1 — Cursor Generation 1` was corrected. Technical Lead treats the model string as author-reported run-info, not an independent TL query.
 
 ## Git
 
 | Fact | Value |
 | --- | --- |
-| Amendment read before edits | `97c4ad9afdaa5a215722f89556d6163f02b2f981` |
-| Accepted plan | `57f3207f28375ed0d96259592c37f265e5d2f1df` |
-| `origin/main` and merge-base | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
-| Main tree | `24770e02bd176f06040ccaf515783534ca5c83e6` |
-| Mode | `NORMAL` |
-| Review head | the commit that adds this status. The PR comment records its SHA. |
+| Reviewed head | `b21d0c1bb8607d585c9770884380a54ac84b5e0c` |
+| `origin/main` | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
+| Correction head | the commit that adds this status. The PR comment records its SHA and tree. |
 
-## What landed
+## Checks for this correction
 
-The Reiseplan route is one chronological row per N12 run. The selected run opens a wrapping day chooser. Repeated visits stay on day and stage ids. Unassigned boundary dates stay unassigned. Planned-day text lists real contiguous ranges and says when dates are missing, duplicated, or not continuous. Country text uses the stored code’s name, with no flag. Internal `connection:` rows appear only between adjacent destination runs. The same edge id at more than one boundary is not selectable. An unknown or removed `kante` stays in the URL and shows an unavailable message without choosing another visit. Discard and delete sit in `Reiseoptionen`; confirmations and storage calls are unchanged. Back-to-top uses the live `--ux-u1a-nav-offset` when the bottom nav is fixed, and hides when that height is missing.
+- Route unit tests, including unknown versus open connection copy: pass.
+- Full `lib/trips/ux-u1a2-geometry-1.test.ts`: pass. Sticky scroll, one nav, history/focus and no-provider checks remain. All 22 day ids are reached through the run rows. The long scroll content stays the day-1 note. The DejaVu/safe-area case passed in this Chrome session and was not weakened.
+- Mounted real TripWorkspace contract test: pass. Connection click, Zur Route, reload, back/forward, repeated names, ambiguous A→B→A→B, unknown ferry-plus-flight, outbound and return URLs, stage removal, day removal, pending editor text, and 390px Enter focus on the visible Zur Route. No fetch/XHR. This is not a VoiceOver pass.
+- U1-B mounted browser suite: pass after the narrow focus move.
+- `tsc --noEmit`: pass. Lint on touched files: 0 errors. Pre-existing effect warnings remain.
 
-## Checks in this session
+Native CI and Preview belong to the pushed correction head and are recorded in the PR comment after the push. Preview READY is not browser acceptance.
 
-- Route, workspace-mode, chronology source, premium-plan source, and mobile-accessibility unit tests: pass.
-- Mounted N12 chronology browser tests, including root font 32px: pass. Chrome `148.0.7778.96`.
-- Mounted U1-B route/detail browser tests: pass after the route-row focus updates. One scroll assertion now allows 48px because revealing the focused run moved the restored position by about 35px; a jump to the top still fails.
-- Evidence browser test: pass. At 390×844, root 16px, scrolled route, the Back-to-top box did not intersect `[data-shell-nav="bottom"]`, and `elementFromPoint` hit the button and the nav separately.
-- `tsc --noEmit`: pass. `npm run build`: pass (Next.js 16.4.1). Lint on touched files: 0 errors. Pre-existing effect warnings remain. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`: pass. Schema check still lists the same pre-existing LOCAL/UNAPPLIED RPCs.
-- Browser zoom, physical Safari, and VoiceOver: not run. Root 32px is root font size, not zoom.
+## Still outside
 
-## Still outside this slice
-
-#1067 broader acceptance, #1068 organizer context, F01 travel roles, provider gates, and the 44-day stage-duration triage. No Ready, merge, deploy, or follow-up.
+#1067, #1068, F01, provider gates, and the 44-day duration triage. No Ready, merge, deploy, or follow-up.

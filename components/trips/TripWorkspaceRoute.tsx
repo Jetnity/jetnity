@@ -153,13 +153,14 @@ export function Tageswahl({
     <div data-u1c-tage className="mt-3 flex min-w-0 flex-wrap gap-2" aria-label="Tag in diesem Aufenthalt">
       {tage.map((eintrag) => {
         const gewaehlt = eintrag.id === gewaehltId
-        const label = eintrag.dayDate ? chipDatum.format(alsDatum(eintrag.dayDate)) : (eintrag.title ?? `Tag ${eintrag.dayIndex}`)
+        const titel = eintrag.title ?? `Tag ${eintrag.dayIndex}`
+        const datum = eintrag.dayDate ? chipDatum.format(alsDatum(eintrag.dayDate)) : 'ohne Datum'
         return (
           <button
             key={eintrag.id}
             type="button"
             aria-current={gewaehlt ? 'date' : undefined}
-            aria-label={eintrag.dayDate ? label : `${label}, ohne Datum`}
+            aria-label={`${titel}, ${datum}`}
             data-timeline-tag={eintrag.id}
             onClick={() => onWaehlen(eintrag.id)}
             className={cn(
@@ -168,8 +169,8 @@ export function Tageswahl({
               gewaehlt ? 'border-brand-800 bg-brand-800 text-white' : 'border-line-200 bg-white text-ink-900',
             )}
           >
-            <strong className="block text-sm font-semibold">{eintrag.title ?? `Tag ${eintrag.dayIndex}`}</strong>
-            <span className={cn('mt-0.5 block text-xs', gewaehlt ? 'text-white/80' : 'text-ink-700')}>{label}</span>
+            <strong className="block text-sm font-semibold">{titel}</strong>
+            <span className={cn('mt-0.5 block text-xs', gewaehlt ? 'text-white/80' : 'text-ink-700')}>{datum}</span>
           </button>
         )
       })}

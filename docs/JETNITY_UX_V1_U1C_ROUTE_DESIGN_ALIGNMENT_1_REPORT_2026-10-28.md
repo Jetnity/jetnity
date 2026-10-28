@@ -31,6 +31,16 @@ The before images were rendered from `TripWorkspacePlan` at amendment `97c4ad9a`
 
 The evidence test asserted no intersection between the Back-to-top box and the fixed bottom nav, and separate hit targets. It also asserted no fetch/XHR while selecting a visit on the desktop route.
 
+## Correction R1–R5
+
+Review `6478861951` is recorded in amendment 2 before the runtime edits.
+
+- R1: the geometry test no longer requires 22 day buttons during the sticky scroll. It still checks one sticky nav, the long day-1 note, focus/history and no provider calls, then opens each chronological run and requires all 22 day ids. The DejaVu/safe-area assertion was left unchanged and passed in this session.
+- R2: `status === 'unknown'` now says the assignment is unclear and is not evidence that nothing was saved. Open with no matched item still says no saved connection. A matched user-booked transfer stays user-marked, not provider-confirmed. Canonical `mobilitaetsAbdeckung` was not edited.
+- R3: each day button’s accessible name is `Tag N, date` (or the custom title plus the date). The mounted test uses that role name.
+- R4: the arrival sentence is “Gespeichertes Ankunftsdatum des Ziels”. Repeated sections say “Dieser Abschnitt kommt mehrfach vor” and do not say “Kennung”.
+- R5: `workspace-browser.test.ts` mounts real `TripWorkspace`. At 390px, Enter on a run moves focus to the visible Zur Route button instead of `body`.
+
 ## Not claimed
 
 Organizer context, F01, provider activation, browser zoom, physical Safari, VoiceOver, and a domain fix for stage-duration versus unassigned days.

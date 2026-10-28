@@ -52,7 +52,8 @@ export type KanteAufloesung =
   | { art: 'mehrdeutig' }
   | { art: 'nicht-verfuegbar' }
 
-export const KANTE_MEHRDEUTIG = 'Diese Kennung gilt für mehr als einen benachbarten Abschnitt. Keiner davon wird automatisch gewählt.'
+export const KANTE_MEHRDEUTIG = 'Dieser Abschnitt kommt mehrfach vor. Keiner wird automatisch ausgewählt.'
+export const KANTE_ZUORDNUNG_UNKLAR = 'Die Zuordnung gespeicherter Verbindungen ist noch unklar. Das belegt nicht, dass keine Verbindung gespeichert ist.'
 export const KANTE_NICHT_VERFUEGBAR = 'Dieser Reiseabschnitt ist nicht mehr verfügbar. Ein anderer Abschnitt wird nicht eingesetzt.'
 export const KANTE_UNLESBAR = 'Dieser Reiseabschnitt ist nicht lesbar. Ein anderer Abschnitt wird nicht eingesetzt.'
 
@@ -103,7 +104,8 @@ function landText(lauf: ChronologischerLauf): string | null {
 
 function kanteDatumText(kante: Pick<Bewegungskante, 'date'>): string {
   if (!kante.date) return 'Reisedatum nicht gespeichert. Aus den Aufenthaltstagen wird keines abgeleitet.'
-  return `Die bestehende Kante nennt ${kante.date} als gespeichertes Ankunftsdatum der Zieleappe. Das ist kein nachgewiesenes Reisedatum.`
+  const sichtbar = etappenZeitraumAnzeigen(kante.date, kante.date) ?? kante.date
+  return `Gespeichertes Ankunftsdatum des Ziels: ${sichtbar}. Das ist kein nachgewiesenes Reisedatum.`
 }
 
 export function kanteDauerText(kante: Pick<Bewegungskante, 'durationMinutes'>): string {
@@ -111,7 +113,8 @@ export function kanteDauerText(kante: Pick<Bewegungskante, 'durationMinutes'>): 
   return `Gespeicherte Ortszeitdifferenz: ${kante.durationMinutes} Minuten. Keine geprüfte Reisezeit.`
 }
 
-export function kantePlanText(kante: Pick<Bewegungskante, 'mobilityItem'>): string {
+export function kantePlanText(kante: Pick<Bewegungskante, 'mobilityItem' | 'status'>): string {
+  if (kante.status === 'unknown') return KANTE_ZUORDNUNG_UNKLAR
   const punkt = kante.mobilityItem
   if (!punkt) return 'Noch keine gespeicherte Verbindung.'
   const markierung = istGebucht(punkt)

@@ -10,6 +10,7 @@ import {
   wiederholterNameReise,
 } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import {
+  KANTE_ZUORDNUNG_UNKLAR,
   backToTopEntscheidung,
   geplanteTageText,
   kanteAufloesen,
@@ -166,13 +167,46 @@ test('Nutzerbuchung und Ortszeit werden nicht zur Anbieter- oder Reisedauer', ()
   tag.items = [transferPunkt({ id: 'ferry-1', dayId: tag.id, stageId: 'stage-kc' })]
   const kante = kanten(reise).find((zeile) => zeile.kanteId === 'connection:stage-bkk:stage-kc')
   assert.ok(kante)
+  assert.match(kante.datumText, /Gespeichertes Ankunftsdatum des Ziels/)
   assert.match(kante.datumText, /kein nachgewiesenes Reisedatum/i)
+  assert.equal(kante.datumText.includes('Zieleappe'), false)
+  assert.equal(kante.datumText.includes('Kante'), false)
   assert.match(kante.dauerText, /Ortszeitdifferenz/)
   assert.match(kante.dauerText, /Keine geprüfte Reisezeit/)
   assert.match(kante.planText, /als gebucht markiert/)
   assert.match(kante.planText, /Keine Anbieterbestätigung/)
   assert.equal(kanteDauerText({ durationMinutes: null }), 'Dauer nicht gespeichert.')
-  assert.match(kantePlanText({ mobilityItem: null }), /Noch keine gespeicherte Verbindung/)
+  assert.match(kantePlanText({ status: 'open', mobilityItem: null }), /Noch keine gespeicherte Verbindung/)
+  assert.equal(kantePlanText({ status: 'unknown', mobilityItem: null }), KANTE_ZUORDNUNG_UNKLAR)
+})
+
+test('ohne Datum und mehrere Kandidaten bleiben unklar statt leer', () => {
+  const ohneDatum = kanten().find((zeile) => zeile.kanteId === 'connection:stage-bkk:stage-kc')
+  assert.ok(ohneDatum)
+  assert.match(ohneDatum.planText, /unklar/)
+  assert.equal(ohneDatum.planText.includes('Noch keine gespeicherte Verbindung'), false)
+  const reise = referenzReise()
+  const koChang = reise.stages[1]
+  const tag = reise.days.find((eintrag) => eintrag.id === 'day-9')
+  assert.ok(koChang && tag)
+  koChang.arrivalDate = '2026-11-23'
+  tag.items = [
+    transferPunkt({ id: 'ferry-unklar', dayId: tag.id, stageId: 'stage-kc' }),
+    transferPunkt({
+      id: 'flight-unklar',
+      dayId: tag.id,
+      stageId: 'stage-kc',
+      kind: 'flight',
+      title: 'Gleicher Tag',
+      startsAt: '08:00',
+      endsAt: '09:00',
+    }),
+  ]
+  const unklar = kanten(reise).find((zeile) => zeile.kanteId === 'connection:stage-bkk:stage-kc')
+  assert.ok(unklar)
+  assert.match(unklar.planText, /unklar/)
+  assert.equal(unklar.planText.includes('Fähre'), false)
+  assert.equal(unklar.planText.includes('Noch keine gespeicherte Verbindung'), false)
 })
 
 test('Back-to-top nutzt nur eine positive feste Navigationshöhe', () => {
