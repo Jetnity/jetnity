@@ -102,19 +102,19 @@ export default function TripWorkspaceUebersicht({
   const praeferenzen = workspacePraeferenzSicht(reise)
 
   return (
-    <section aria-label="Reiseübersicht" className="mt-4 grid min-w-0 gap-4">
-      <header className="min-w-0">
+    <section aria-label="Reiseübersicht" className="mt-3 grid min-w-0 max-w-full gap-3">
+      <header className="min-w-0 max-w-full">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Übersicht</p>
         <h2
           id="workspace-uebersicht-titel"
           tabIndex={-1}
           data-workspace-modus-heading
-          className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+          className="mt-1 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
         >
           Deine Reise auf einen Blick
         </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
-        <p className="mt-1 text-sm leading-6 text-ink-700">{uebersicht.planText}</p>
+        <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
+        <p className="mt-1 break-words text-sm leading-6 text-ink-700">{uebersicht.planText}</p>
       </header>
 
       <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />

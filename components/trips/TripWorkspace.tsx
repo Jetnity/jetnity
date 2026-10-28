@@ -887,7 +887,10 @@ export default function TripWorkspace({
   }, [modus, modusBereit, preparationAnfrage])
 
   return (
-    <main data-workspace-premium="3" className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
+    <main
+      data-workspace-premium="3"
+      className="min-h-screen bg-surface-75 pb-[max(5rem,var(--ux-u1a-nav-offset,0px))] [overflow-anchor:none]"
+    >
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
