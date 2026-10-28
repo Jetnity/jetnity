@@ -1,6 +1,21 @@
 # DiscoverCars rental affiliate linkout 1 — STATUS
 
-**27 October 2026.** State: **code on the draft branch, not live, not reviewed.**
+## Current — 28 October 2026, integration completion
+
+State: **main is merged, no rental-entry regression found, draft remains blocked for hosted QA and commission.**
+
+- Same writer and session: `bc-658ab635-d1c2-4113-9eeb-aaa9eadcbd55`, `originalModelName=grok-4.7-high-fast`.
+- `origin/main` rechecked: `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`. Mode `NORMAL`.
+- Non-force merge of that main into this branch. No rebase. No force-push.
+- Accepted V1 behavior is unchanged: generic `https://www.discovercars.com/?a_aid=jetnity`; BKK URL only after the explicit closed station choice; `noopener noreferrer sponsored` and `referrerPolicy="no-referrer"` kept. Click evidence is not a reason to drop that privacy protection. Commission stays unproven. Widget `UNKNOWN_PORTAL` is not a direct-link block.
+- After the merge, `MietwagenBereich` is still mounted from Mobilität → Mietwagen with manual create. Main’s 12Go insertion stays on Verbindungen. `TripWorkspace` and `MobilitaetBereich` were not edited here.
+- Focused affiliate tests 16/16 and rental recovery tests passed on the merged tree. Typecheck and production build passed. Chromium on the local UI-audit route passed 320/390/768/1440, root font 16px and 32px, keyboard focus, 44px targets, visible manual form, honest unavailable search, BKK choice then reload, zero DiscoverCars requests and no DiscoverCars iframe/script/image/preconnect. That is local evidence, not hosted acceptance.
+- Exact-head GitHub CI and Vercel Preview for the pushed tip are not evidence until they finish. Do not copy Production Supabase into Preview. No repeated Vercel CLI login.
+- No Ready. No merge. No follow-up.
+
+The 27 October notes below describe the original source head `f5c20a71acd83208b556b52b3d44f885d69c29c3`. That head stays SOURCE ACCEPTED history. This continuation’s tip is the commit after the main merge.
+
+**27 October 2026.** State at that head: **code on the draft branch, not live, not reviewed.**
 
 - Writer: `Jetnity DiscoverCars Rental Affiliate Linkout 1 — Cursor Generation 1`
 - Session: https://cursor.com/agents/bc-658ab635-d1c2-4113-9eeb-aaa9eadcbd55

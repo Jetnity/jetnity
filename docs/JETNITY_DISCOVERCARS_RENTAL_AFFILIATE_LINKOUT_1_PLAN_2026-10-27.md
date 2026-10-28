@@ -30,6 +30,10 @@ Fetched `origin/main` and this branch.
 2. `components/trips/DiscoverCarsAffiliateLinks.tsx` is inserted in `components/trips/MietwagenBereich.tsx` between the unavailable search and the manual form. The parent passes only `reise.id` (to clear the choice) and `reise.stages.length` (for the multi-stop sentence). The link is `target="_blank"` and `rel="noopener noreferrer sponsored"`.
 3. Tests cover hostile URLs, identity, guest/account sameness, markup, and the preserved rental sections. `scripts/discovercars-affiliate-linkout-1/browser.ts` checks the real Mietwagen tab on the local UI-audit route.
 
+## Continuation — 28 October 2026
+
+The pre-code plan for amendment 1 was posted before this merge. Live main was `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`, mode NORMAL, same session and model. The merge did not require a product fix. Privacy protection on the link stays. Hosted QA and commission stay open.
+
 ## Still closed
 
-Account acceptance, approved links and commission attribution are unverified. The Work preview `UNKNOWN_PORTAL` remains open. No widget, API, provider contact, terms acceptance, paid traffic or Production activation. Cursor does not mark Ready and does not merge.
+Direct-link account and click evidence is recorded by Work and is no longer a blanket provider block. Commission, separate document confirmation and hosted Jetnity rental QA are still open. No widget, API, provider contact, paid traffic or Production activation. Cursor does not mark Ready and does not merge.

@@ -3,6 +3,8 @@
 // Lokaler Nachweis für den DiscoverCars-Link im echten Mietwagen-Bereich.
 // Die Audit-Seite braucht JETNITY_UI_AUDIT=1 und ist in Production aus.
 // Der Affiliate-Link wird nicht geöffnet. DiscoverCars wird nicht aufgerufen.
+// 32px ist die im Repository erklärte Textvergrößerung (200% der 16px-Wurzel),
+// nicht ein Desktop-Browserzoom.
 
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { chromium, type Browser, type Page } from 'playwright'
@@ -66,6 +68,7 @@ type Befund = {
   breite: number
   hoehe: number
   text: number
+  textMethode: string
   href: string
   linkHoehe: number
   linkBreite: number
@@ -166,6 +169,18 @@ async function main() {
       if (referrer !== 'no-referrer') fehler.push(`${fall.name}: referrer ${referrer}`)
       if (gemessen.sektionUeberlauf > 1) fehler.push(`${fall.name}: Sektion überläuft um ${gemessen.sektionUeberlauf}`)
       if (aufrufe.length > 0) fehler.push(`${fall.name}: DiscoverCars vor dem Klick ${aufrufe.join(' ')}`)
+      const manuell = page.locator('[aria-label="Manueller Mietwagen"]')
+      if ((await manuell.count()) !== 1 || !(await manuell.isVisible())) {
+        fehler.push(`${fall.name}: manuelle Erfassung nicht benutzbar`)
+      }
+      const vorbereitet = page.getByText('Mietwagenangebote werden vorbereitet')
+      if (!(await vorbereitet.isVisible())) fehler.push(`${fall.name}: ehrliche Suche fehlt`)
+      const fremd = await page.locator('iframe,script,img,link').evaluateAll((knoten) =>
+        knoten
+          .map((knoten) => `${knoten.tagName}:${knoten.getAttribute('src') ?? ''}${knoten.getAttribute('href') ?? ''}`)
+          .filter((wert) => /discovercars\.com/i.test(wert)),
+      )
+      if (fremd.length > 0) fehler.push(`${fall.name}: Vorab-Ressource ${fremd.join(' ')}`)
       const radios = page.getByRole('radio')
       if ((await radios.count()) !== 2) fehler.push(`${fall.name}: Radios ${await radios.count()}`)
       await link.focus()
@@ -182,6 +197,7 @@ async function main() {
         breite: fall.width,
         hoehe: fall.height,
         text: fall.text,
+        textMethode: fall.text === 32 ? 'root-font-32px' : 'root-font-16px',
         href: gemessen.href ?? '',
         linkHoehe: gemessen.linkHoehe,
         linkBreite: gemessen.linkBreite,

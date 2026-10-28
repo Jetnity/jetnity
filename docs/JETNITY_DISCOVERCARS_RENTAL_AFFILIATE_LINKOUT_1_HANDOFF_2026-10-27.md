@@ -1,5 +1,17 @@
 # DiscoverCars rental affiliate linkout 1 — HANDOFF
 
+## Continuation — 28 October 2026
+
+Same session `bc-658ab635-d1c2-4113-9eeb-aaa9eadcbd55`. Amendment 1 is in the branch and was not rewritten. Current main `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` was merged without force or rebase.
+
+No product defect showed up in the rental entry. `MobilitaetBereich` still renders `MietwagenBereich` on the Mietwagen tab, including manual create. The affiliate call is still only `reiseId` and `stationen`. `rentalCarProviderAus()` still returns null. Main’s TripWorkspace and 12Go changes were kept as merged, not edited.
+
+The only new writer change after the merge is the local browser script: it now checks the visible manual form, the honest unavailable-search sentence, and that no DiscoverCars iframe, script, image or link resource is present. Root font 32px is the repository’s declared text enlargement, not a desktop browser zoom.
+
+Hosted `/planen` QA is still blocked by the known missing public Supabase configuration on the old Preview. This session did not change env or Preview protection. Commission is still unproven.
+
+Next action: independent Technical Lead review of the pushed exact head. Cursor does not mark Ready and does not merge.
+
 **27 October 2026.** For the next reader of Draft PR #1059. This handoff is not a PASS.
 
 ## Who

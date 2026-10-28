@@ -1,6 +1,18 @@
 # DiscoverCars rental affiliate linkout 1 — SELF REVIEW
 
-**27 October 2026.** Author review only. Not an independent Technical Lead PASS.
+## Continuation — 28 October 2026
+
+Author review only. Not a Technical Lead PASS.
+
+- Identity re-read: same `bcId`, same display name, `originalModelName=grok-4.7-high-fast`.
+- Live main matched the amendment: `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`. The merge is a normal merge commit. Ahead of that main by the DiscoverCars commits plus the merge commit. Behind 0.
+- I did not find a rental-entry regression. The Mietwagen tab still shows the generic link for a two-stage Bangkok city trip, the manual form, and the unavailable-search sentence. Choosing BKK changes only the href. Reloading another trip id returns to generic. No DiscoverCars network or resource request occurred.
+- `referrerPolicy="no-referrer"` remains. Work’s click rows do not justify removing it. Sales attribution is still not proven.
+- #1079 and #1082 files were not edited. `TripWorkspace.tsx` and `MobilitaetBereich.tsx` differ from the old base only because main merged.
+- Local Chromium is the UI-audit route with `JETNITY_UI_AUDIT=1`, synthetic trip data. It is not hosted normal-path QA and not a Preview PASS. Root 32px is not desktop browser zoom 200%.
+- Typecheck and `npm run build` passed on this merged tree. Exact-head CI and the new Preview were not green at the time of this note.
+
+**27 October 2026.** Author review of the original source head. Not an independent Technical Lead PASS.
 
 ## What holds
 
