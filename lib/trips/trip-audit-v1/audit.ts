@@ -2,6 +2,7 @@ import { ungeplantePunkteLesen } from '@/lib/trips/arbeitsbereich'
 import { unterkunftAbdeckung, type UnterkunftLuecke } from '@/lib/trips/naechte-abdeckung'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
 import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
+import { f05AdjustFlightKnownGap, type F05FlightGapAdjustment } from './f05-ground-flight'
 import { tripZeitpruefung, type Zeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { AUDIT_LIMITS, boundedSnapshot, lodgingBudget, snapshotProblem } from './limits'
 import type { Trip, TripItem } from '@/types/trips'
@@ -220,32 +221,61 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
   })
 
   function connections(domain: 'flights' | 'mobility', source: Source, determinable: boolean,
-    connections: readonly (FlugAbschnitt | Bewegungskante)[], unassigned: readonly TripItem[]): Omit<AuditSection, 'domain' | 'source'> {
+    connections: readonly (FlugAbschnitt | Bewegungskante)[], unassigned: readonly TripItem[],
+    adjustFlightGap?: (segment: FlugAbschnitt) => F05FlightGapAdjustment): Omit<AuditSection, 'domain' | 'source'> {
     let unknown = !determinable || unassigned.length > 0
     let selected = 0
     let booked = 0
+    let groundCount = 0
     for (const connection of [...connections].sort((a, b) => compare(a.id, b.id))) {
-      const state = connectionFindingState(connection.status, determinable && unassigned.length === 0, connection.date)
+      const raw = connectionFindingState(connection.status, determinable && unassigned.length === 0, connection.date)
+      const adjustment: F05FlightGapAdjustment = raw === 'known_gap' && domain === 'flights' && adjustFlightGap
+        ? adjustFlightGap(connection as FlugAbschnitt)
+        : { kind: 'keep' }
+      const state = adjustment.kind === 'keep' ? raw : 'unknown'
       selected += Number(connection.status === 'selected')
       booked += Number(connection.status === 'booked')
       if (!state) continue
       if (state === 'unknown') unknown = true
+      const place = `${connection.originName} → ${connection.destinationName} · ${connection.date ?? 'Datum unbekannt'}`
+      if (adjustment.kind === 'ground') {
+        groundCount += 1
+        add({ id: id(domain, connection.id), domain, state, source,
+          title: 'Bodenverbindung geplant, Flugbedarf nicht belegt',
+          detail: `${place}. Im Plan ist eine Bodenverbindung für diesen Abschnitt gespeichert. Ob ein Flug nötig ist, ist nicht belegt. ${adjustment.userMarkedBooked ? 'Die Bodenverbindung ist von dir als gebucht markiert. ' : 'Die Bodenverbindung ist ausgewählt, nicht als gebucht markiert. '}Das ist keine Anbieterbestätigung.`,
+          refs: { sectionId: connection.id, itemIds: [adjustment.itemId] },
+          evidence: { status: 'open', date: connection.date, reasons: [adjustment.userMarkedBooked ? 'ground_user_marked_booked' : 'ground_selected', 'flight_necessity_unknown'] } })
+        continue
+      }
       add({ id: id(domain, connection.id), domain, state, source,
         title: state === 'unknown' ? 'Verbindung nicht vollständig bewertbar'
           : domain === 'flights' ? 'Kein Flug für diesen Abschnitt im Plan' : 'Keine Verbindung für diesen Abschnitt im Plan',
-        detail: `${connection.originName} → ${connection.destinationName} · ${connection.date ?? 'Datum unbekannt'}. Dies ist keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.`,
-        refs: { sectionId: connection.id }, evidence: { status: connection.status, date: connection.date } })
+        detail: `${place}. Dies ist keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.`,
+        refs: { sectionId: connection.id },
+        evidence: adjustment.kind === 'withhold'
+          ? { status: connection.status, date: connection.date, reasons: ['flight_obligation_not_established'] }
+          : { status: connection.status, date: connection.date } })
     }
     if (unassigned.length) add({ id: id(domain, 'unassigned'), domain, state: 'unknown', source,
       title: 'Planpunkte nicht eindeutig zugeordnet', detail: `${unassigned.length} gespeicherte Planpunkte lassen sich keinem Abschnitt eindeutig zuordnen.`,
       refs: { itemIds: unassigned.map(item => item.id).sort(compare) }, evidence: { status: 'unassigned' } })
+    const groundSentence = groundCount > 0
+      ? `${groundCount} ${groundCount === 1 ? 'Abschnitt hat eine gespeicherte Bodenverbindung' : 'Abschnitte haben eine gespeicherte Bodenverbindung'}; ein Flugbedarf ist daraus nicht belegt. `
+      : ''
     return { coverage: !determinable ? 'unavailable' : unknown ? 'partial' : 'complete',
-      detail: `${selected} Abschnitte ausgewählt; ${booked} von dir als gebucht markiert. ${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}Keine externe Bestätigung geprüft.`,
+      detail: `${selected} Abschnitte ausgewählt; ${booked} von dir als gebucht markiert. ${groundSentence}${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}Keine externe Bestätigung geprüft.`,
       reasons: unknown ? ['incomplete_connections'] : [] }
   }
   section('flights', 'flugAbdeckung', () => {
     const result = flugAbdeckung(view, view.ohneTag)
-    return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet)
+    let readMobility: ReturnType<typeof mobilitaetsAbdeckung> | null = null
+    try { readMobility = mobilitaetsAbdeckung(view, view.ohneTag) } catch { readMobility = null }
+    const mobility = readMobility
+    if (!mobility) {
+      return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet)
+    }
+    return connections('flights', 'flugAbdeckung', result.bestimmbar, result.abschnitte, result.unzugeordnet,
+      (segment) => f05AdjustFlightKnownGap(segment, result, mobility))
   })
   section('mobility', 'mobilitaetsAbdeckung', () => {
     const result = mobilitaetsAbdeckung(view, view.ohneTag)
