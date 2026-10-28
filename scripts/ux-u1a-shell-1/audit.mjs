@@ -244,15 +244,72 @@ function pruefe(name, wert, erwartet) {
   if (wert !== erwartet) throw new Error(`${name}: ${JSON.stringify(wert)} !== ${JSON.stringify(erwartet)}`)
 }
 
+async function flussBleibtImDokument(page, name) {
+  if (await page.locator('dialog[open]').count()) {
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(50)
+  }
+  const knopf = page.getByRole('button', { name: 'Reise ändern', exact: true })
+  await knopf.focus()
+  await page.evaluate(() => {
+    const nav = document.querySelector('[data-workspace-mode-nav]')
+    const probe = document.createElement('div')
+    probe.setAttribute('data-u1a-scroll-probe', '')
+    probe.style.height = '1600px'
+    document.body.appendChild(probe)
+    const ziel = Math.max(0, (nav?.getBoundingClientRect().bottom ?? 0) + window.scrollY + 2)
+    window.scrollTo({ top: ziel, left: 0, behavior: 'instant' })
+  })
+  await page.mouse.move(40, 40)
+  await page.mouse.wheel(0, 2200)
+  await page.waitForTimeout(80)
+  const stand = await page.evaluate(() => {
+    const nav = document.querySelector('[data-workspace-mode-nav]')
+    const ziel = document.activeElement
+    if (!(nav instanceof HTMLElement) || !(ziel instanceof HTMLElement)) return { fehler: 'nav oder fokus fehlt' }
+    const scroller = document.scrollingElement || document.documentElement
+    const nr = nav.getBoundingClientRect()
+    const fr = ziel.getBoundingClientRect()
+    const position = getComputedStyle(nav).position
+    const schnitt =
+      nr.bottom > fr.top + 1 && nr.top < fr.bottom - 1 && nr.right > fr.left + 1 && nr.left < fr.right - 1
+    document.querySelector('[data-u1a-scroll-probe]')?.remove()
+    return {
+      lage: nav.getAttribute('data-shell-nav'),
+      position,
+      navTop: nr.top,
+      navBottom: nr.bottom,
+      feldTop: fr.top,
+      feldBottom: fr.bottom,
+      scrollTop: scroller.scrollTop,
+      scrollY: window.scrollY,
+      scrollHeight: scroller.scrollHeight,
+      clientHeight: scroller.clientHeight,
+      htmlOverflow: getComputedStyle(document.documentElement).overflowY,
+      bodyOverflow: getComputedStyle(document.body).overflowY,
+      schnitt,
+      weg: nr.bottom <= 1,
+    }
+  })
+  if (stand.fehler) throw new Error(`${name} ${stand.fehler}`)
+  if (stand.lage !== 'flow') throw new Error(`${name} nicht flow ${JSON.stringify(stand)}`)
+  if (stand.position === 'sticky' || stand.position === 'fixed') {
+    throw new Error(`${name} flow ist ${stand.position}`)
+  }
+  if (!stand.weg) throw new Error(`${name} Navigation blieb im Bild ${JSON.stringify(stand)}`)
+  if (stand.schnitt) throw new Error(`${name} Navigation liegt auf dem Feld ${JSON.stringify(stand)}`)
+  return stand
+}
+
 async function haupt() {
   mkdirSync(EVIDENZ, { recursive: true })
   mkdirSync(BILDER, { recursive: true })
   const server = await serverStarten()
   const browser = await chromium.launch({ headless: true })
   const ergebnis = {
-    rejectedHead: '7c510c3622488b69fc3d1a1abf397ceff821a5d2',
+    rejectedHead: '7e6838c01205ba6ab83ecbd9d0c9437e39eb01cb',
     gitHeadAtMeasurement: SHA,
-    measurement: 'uncommitted R1 working tree on top of rejectedHead; gitHeadAtMeasurement is not the passing head',
+    measurement: 'uncommitted R2 working tree on top of rejectedHead; gitHeadAtMeasurement is not the new head',
     screenshots: 'private artifacts only, not committed',
     screenshotDir: BILDER,
     basis: BASIS,
@@ -320,7 +377,13 @@ async function haupt() {
       if (stand.prozent) throw new Error(`${viewport.name} Prozent in der Übersicht`)
       if (stand.factsOffen !== false) throw new Error(`${viewport.name} Angaben sind nicht zugeklappt`)
       if (viewport.lage === 'bottom' && stand.position !== 'fixed') throw new Error(`${viewport.name} nicht fixed`)
-      if (viewport.lage !== 'bottom' && stand.position === 'fixed') throw new Error(`${viewport.name} unerwartet fixed`)
+      if (stand.lage === 'flow' && (stand.position === 'sticky' || stand.position === 'fixed')) {
+        throw new Error(`${viewport.name} flow ist ${stand.position}`)
+      }
+      if (viewport.lage === 'sticky' && stand.position === 'fixed') throw new Error(`${viewport.name} unerwartet fixed`)
+      if (viewport.name === '320') {
+        lauf.fluss = await flussBleibtImDokument(page, '320/root16')
+      }
       await page.screenshot({ path: join(BILDER, `${viewport.name}.png`), fullPage: false })
       await page.locator('[data-workspace-mode-nav]').scrollIntoViewIfNeeded()
       await page.screenshot({ path: join(BILDER, `${viewport.name}-nav.png`), fullPage: false })
@@ -418,9 +481,10 @@ async function haupt() {
     if (tastatur.ersetzt && nachTastatur.lage !== 'flow') {
       throw new Error(`Tastatur-Stellvertreter blieb ${nachTastatur.lage}`)
     }
-    if (tastatur.ersetzt && nachTastatur.position === 'fixed') {
-      throw new Error('Tastatur-Stellvertreter lässt die Leiste fixed')
+    if (tastatur.ersetzt && (nachTastatur.position === 'fixed' || nachTastatur.position === 'sticky')) {
+      throw new Error(`Tastatur-Stellvertreter lässt die Leiste ${nachTastatur.position}`)
     }
+    if (tastatur.ersetzt) ergebnis.tastatur.fluss = await flussBleibtImDokument(page, 'tastatur')
     await page.screenshot({ path: join(BILDER, '390-keyboard-standin.png'), fullPage: false })
     await page.close()
 
@@ -453,7 +517,10 @@ async function haupt() {
       })
       if (Math.round(stand.rootPx) < 32) throw new Error(`${breite} root blieb ${stand.rootPx}`)
       pruefe(`${breite} root lage`, stand.lage, 'flow')
-      if (stand.position === 'fixed') throw new Error(`${breite} root32 ist fixed`)
+      if (stand.position === 'sticky' || stand.position === 'fixed') {
+        throw new Error(`${breite} root32 ist ${stand.position}`)
+      }
+      ergebnis.laeufe.at(-1).fluss = await flussBleibtImDokument(gross, `${breite}/root32`)
       if (stand.ueberlauf > 1) throw new Error(`${breite} root32 Überlauf ${stand.ueberlauf}`)
       const kleine = stand.knoepfe.filter((knopf) => knopf.height < 44 || knopf.width < 44)
       const ausserhalb = stand.knoepfe.filter((knopf) => knopf.enthalten === false)
@@ -482,7 +549,9 @@ async function haupt() {
     if (zoom.scale < 1.9) throw new Error(`Seitenmaßstab blieb ${zoom.scale}`)
     if (Math.round(zoom.rootPx) >= 32) throw new Error('Zoom wurde mit Wurzelschrift vermischt')
     pruefe('zoom lage', zoom.lage, 'flow')
-    if (zoom.position === 'fixed') throw new Error('Zoom 200% lässt die Leiste fixed')
+    if (zoom.position === 'fixed' || zoom.position === 'sticky') {
+      throw new Error(`Seitenmaßstab lässt die Leiste ${zoom.position}`)
+    }
     const zoomAus = zoom.knoepfe.filter((knopf) => knopf.enthalten === false)
     if (zoomAus.length) throw new Error(`Zoom Text ausserhalb ${JSON.stringify(zoomAus)}`)
     const zoomTitel = await zoomSeite.evaluate(() => {
@@ -500,7 +569,7 @@ async function haupt() {
     })
     ergebnis.zoom.titel = zoomTitel
     ergebnis.zoom.disposition =
-      'CDP page scale 2 is not root-font 200%. The nav leaves the fixed bottom bar. This slice does not set inline max-width on a shell or the site header. The layout viewport can stay wider than the visual window, so a long title may need a pan. That is a bounded limit, not a 200% accessibility pass.'
+      'CDP Emulation.setPageScaleFactor(2) is pinch/visual scale, not a desktop browser zoom of 200%. Ctrl+Plus was not verified in this headless browser. Root 32px and CSS viewport width are the bounded product evidence. The long title can extend past the visual window. No shell max-width is applied. This is an incomplete zoom qualification, not an accessibility pass.'
     if (zoomTitel.text !== TITEL) throw new Error(`Zoom Titel ${zoomTitel.text}`)
     if (zoomTitel.shellMarker || zoomTitel.shellStyle) throw new Error(`Shell-Mutation ${JSON.stringify(zoomTitel)}`)
     await zoomSeite.screenshot({ path: join(BILDER, 'zoom-200.png'), fullPage: false })

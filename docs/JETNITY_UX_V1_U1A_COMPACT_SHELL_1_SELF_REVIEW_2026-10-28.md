@@ -2,6 +2,11 @@
 
 Author review only. This is not an independent Technical Lead PASS. R1 below replaces the earlier shell-zoom claim.
 
+## R2
+
+- F1: the flow wrapper is `relative`. It scrolls away with the page. `lage === 'sticky'` is the only sticky mode. The phone bottom bar was not changed to satisfy this.
+- F2: the U1-A audit checks 320/root16, 390/root32, 768/root32, and the keyboard stand-in. Each computed position is `relative`. After scroll their nav bottoms are -2204.5, -2204.5, -2204, and -2202.5, with no intersection of the focused control. `guest-nav-text-1.test.ts` stays unmodified and passed in system Chrome 148.0.7778.96. CDP `setPageScaleFactor(2)` is pinch/visual scale only. Desktop browser zoom 200% was not verified. No shell max-width.
+
 ## R1
 
 - F1: flow tabs are one full-width block row. Ordinary-phone tabs size to the label and wrap instead of shrinking under the text. `lib/trips/guest-nav-text-1.test.ts` was not edited. Local system Chrome 148.0.7778.96 ran that mounted suite, kanal `chrome`, including `tab labels stay apart, readable and keyboard-reachable at 320/390/768/1440`: pass. Playwright Chromium 140 passed the same file first.
@@ -10,7 +15,7 @@ Author review only. This is not an independent Technical Lead PASS. R1 below rep
 
 ## Checked
 
-- Exclusive paths only: header, mode nav, overview spacing, the shell wrapper attribute and bottom padding in `TripWorkspace.tsx`, helper, unit test, audit script, these docs, and local screenshots.
+- Exclusive paths only: header, mode nav, overview spacing, bottom padding in `TripWorkspace.tsx`, helper, unit test, audit script, these docs, and the rect JSON. Public PNGs stay deleted.
 - Not edited: `TripWorkspacePlan.tsx`, timeline, trip-audit, destination-essentials, providers, guest/account writers, `docs/ACTIVE_WORK_STATUS.md`, SQL, Auth, package, CI.
 - Four labels, one click path, no second search mount. Audit counted zero `flugsuche` / `hotelsuche` / `aktivitaeten` mounts and zero matching provider requests across viewport and mode changes, including back/forward.
 - Title is the stored string. Route shows Bangkok twice for two stage ids. Budget `null` stays `Noch offen` inside the disclosure. Save line is `device` or `account` from `quelle`.

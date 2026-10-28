@@ -198,7 +198,7 @@ export default function TripWorkspaceModeNavigation({
         aria-label="Reiseansicht"
         data-workspace-mode-nav
         data-shell-nav="flow"
-        className="sticky top-[calc(72px+env(safe-area-inset-top))] z-30 mt-3 min-w-0 max-w-full"
+        className="relative z-30 mt-3 min-w-0 max-w-full"
       >
         <div className="grid min-w-0 max-w-full grid-cols-1 gap-1 rounded-3xl border border-line-200 bg-white p-2 shadow-[0_8px_24px_rgba(15,46,42,0.05)]">
           {WORKSPACE_ANSICHTEN.map((modus) => knopf(modus, 'flow'))}

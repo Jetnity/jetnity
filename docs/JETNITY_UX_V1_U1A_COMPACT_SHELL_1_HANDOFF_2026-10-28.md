@@ -13,7 +13,7 @@ Stop. Same session only if Root asks for a fix. A new head invalidates this evid
 
 ## Behavior
 
-`shellNavLage` chooses `flow`, `bottom`, or `sticky`. Flow is one full-width label per row, sticky under the site header, so large text stays inside the button and does not slide under the header. There is no shell `max-width` mutation. Page scale 2 does not reflow the site header; that remains a bounded limit.
+`shellNavLage` chooses `flow`, `bottom`, or `sticky`. Flow is one full-width label per row in normal document flow (`position: relative`). It is not sticky and not fixed, so scrolling carries it off the workspace. Only `lage === 'sticky'` keeps the desktop bar under the site header. The phone bottom bar is unchanged. There is no shell `max-width` mutation. CDP page scale 2 is pinch/visual scale, not a verified desktop browser zoom of 200%.
 
 Guest/account text and the header slot for delete/discard are unchanged in meaning. `Reise ändern` is still the separate action. Overview still renders the existing attention list, audit, and per-stage essentials.
 

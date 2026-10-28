@@ -1,8 +1,8 @@
 # UX V1 U1-A — STATUS
 
-28 October 2026. Cursor Generation 1, same session, R1 correction. Stop for Technical Lead R2. Not Ready. Not merged.
+28 October 2026. Cursor Generation 1, same session, R2 correction. Stop for Technical Lead R3. Not Ready. Not merged.
 
-Rejected head `7c510c3622488b69fc3d1a1abf397ceff821a5d2` failed native App CI on the unedited guest-nav large-text case. This correction changes button layout only, removes the shell width mutation, and drops the public PNG blobs. `docs/evidence/ux-v1-u1a-shell-1/report.json` field `gitHeadAtMeasurement` is that rejected head because the audit ran on the uncommitted fix. It is not the new head.
+R2 rejected head `7e6838c01205ba6ab83ecbd9d0c9437e39eb01cb`. Flow navigation is `relative`, not sticky. The phone bottom bar and the desktop sticky bar stay as they were. `docs/evidence/ux-v1-u1a-shell-1/report.json` field `gitHeadAtMeasurement` is the rejected R2 head when the audit runs before this commit. It is not the new head. CDP page scale is not a desktop browser-zoom pass.
 
 ## Session
 
