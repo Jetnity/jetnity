@@ -10,6 +10,12 @@
 - The 7 by 2 width matrix includes the route, the selected day, and the selected item. The item fix is inherited `word-break: break-word` on the owned slot, not `overflow-x` clipping and not an edit to `TripWorkspaceDetail`.
 - Prior U1-B navigation, one search mount, N12 chronology, and U1-A2 sticky geometry stayed green on this tree.
 
+## R1.4 and R1.2b
+
+- A deferred create on day 11 keeps one form, the title `Lokaler Testentwurf`, the date `2026-06-11`, and a single `day-11` write through Zur Route, 1440/390, Übersicht, and the return to Reiseplan. The synthetic error is on that form.
+- Day 10 at 1440, then 390 and Zur Route, focuses a chip whose rectangle is inside the horizontal strip and the viewport. Widening focuses the visible day-10 control. Deleting day 10 focuses the route and does not mark day 1.
+- The editor host does not retarget a write when the canonical tag is absent. A different canonical day still closes the form.
+
 ## Still open for the Technical Lead
 
 - True browser zoom 200% was not performed. Root 32px at the seven CSS widths was.

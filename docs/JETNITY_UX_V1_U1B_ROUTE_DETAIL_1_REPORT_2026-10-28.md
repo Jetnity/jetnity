@@ -10,13 +10,21 @@
 
 `routeLageMerken` runs from `pointerdown` inside a route that has a client box and is not hidden or inert. `tagWechseln`, `oeffneItem`, and `routeZeigen` do not capture. The restore layout effect writes the saved window position after focusing the route anchor with `preventScroll`, then again on the next frame. The detail-close focus uses `preventScroll` while the route is emphasized. The mounted regression covers scrolled route to day to route, route to day to item to route, the same row, a missing day anchor, and a wide/narrow reflow.
 
+## R1.4 Pending editor
+
+The new-point editor and a day edit stay in `data-u1b-editor-halt` inside the plan mount. Their keys use the day or item captured at open, not the day currently on screen. Leaving the plan clears the canonical tag and no longer unmounts the form or sends the write to the wide default. A deferred synthetic failure stays on that form. Übersicht, Zur Route, and a width change keep one form, the typed title, the day-11 date, and exactly one `day-11` write.
+
+## R1.2b Chip reflow
+
+Zur Route still restores the window position captured from a visible route interaction. It then scrolls the focused day chip inside `[data-plan-tag-streifen]` when that chip is outside the strip. Widening focuses the visible control for the same day. A deleted day focuses the route and leaves `aria-current` empty.
+
 ## R1.3 Width
 
 The matrix now opens the route, day 11, and stay 11 at seven widths and both root sizes. The inherited large-text overflow on the selected item was a longest word whose `overflow-wrap: break-word` does not reduce min-content. The owned detail slot sets inherited `word-break: break-word`. Document `scrollWidth` stays within 1px of `clientWidth`. Text is not clipped. Read-only detail and integrated-day files were not edited.
 
 ## Tests on this correction
 
-Passed: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (10), `lib/trips/n12-chronology-1/browser.test.ts` (10), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), `anordnung.test.ts`, `hinweis.test.ts`, `n12-chronology-1/laeufe.test.ts`, and `trip-plan-premium-experience-4.test.ts` (27 together). `tsc --noEmit` passed. ESLint on the touched presentation and harness files reported 0 errors. `check:exports`, `check:dead`, `check:api-schutz`, and `check:deps` passed. `check:schema-bezug` exited 0 and repeated existing local/unapplied RPC notes. This slice does not change the schema.
+Passed on this addendum: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (12), `lib/trips/n12-chronology-1/browser.test.ts` (10), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), `anordnung.test.ts`, `hinweis.test.ts`, and `trip-plan-premium-experience-4.test.ts`. `tsc --noEmit` passed. ESLint on the touched files reported 0 errors.
 
 `npm run build` exited 0.
 

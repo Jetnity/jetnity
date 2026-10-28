@@ -462,6 +462,7 @@ export default function TripWorkspace({
   const hinweisRef = React.useRef<Hinweis | null>(null)
   const reiseIdRef = React.useRef(reise.id)
   const [routeBetont, setRouteBetont] = React.useState(false)
+  const [routeFokus, setRouteFokus] = React.useState(0)
   const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
   const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
   const [editorAktiv, setEditorAktiv] = React.useState(false)
@@ -653,6 +654,16 @@ export default function TripWorkspace({
     }
   }
 
+  function chipImStreifenZeigen(knopf: HTMLElement) {
+    const streifen = knopf.closest<HTMLElement>('[data-plan-tag-streifen]')
+    if (!streifen) return
+    const flaeche = streifen.getBoundingClientRect()
+    const chip = knopf.getBoundingClientRect()
+    if (chip.width <= 0 || flaeche.width <= 0) return
+    if (chip.left < flaeche.left) streifen.scrollLeft -= flaeche.left - chip.left
+    else if (chip.right > flaeche.right) streifen.scrollLeft += chip.right - flaeche.right
+  }
+
   const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
@@ -674,25 +685,44 @@ export default function TripWorkspace({
       : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
     routeRueckAnkerRef.current = anker
     setRouteBetont(true)
+    setRouteFokus((stand) => stand + 1)
   }
 
   React.useLayoutEffect(() => {
-    if (!routeBetont || u1bAnordnung !== 'schmal' || !routeLageRef.current.erfasst) return
+    if (!routeBetont) return
     const lage = routeLageRef.current
-    const wiederherstellen = () => {
-      const flaeche = document.querySelector('[data-u1b-route]')
-      if (flaeche instanceof HTMLElement) flaeche.scrollTop = lage.top
-      const knopf = routeZiel(routeRueckAnkerRef.current)
-      const streifen = knopf?.closest('[data-plan-tag-streifen]')
-      if (streifen instanceof HTMLElement) streifen.scrollLeft = lage.streifenLeft
-      window.scrollTo({ top: lage.windowY, behavior: 'instant' })
-      return knopf
+    const anker = routeRueckAnkerRef.current
+    const zeigen = () => {
+      const schmal = u1bAnordnung === 'schmal'
+      if (schmal && lage.erfasst) {
+        const flaeche = document.querySelector('[data-u1b-route]')
+        if (flaeche instanceof HTMLElement) flaeche.scrollTop = lage.top
+        window.scrollTo({ top: lage.windowY, behavior: 'instant' })
+      }
+      const knopf = routeZiel(anker)
+      const route = document.querySelector('[data-u1b-route]')
+      const ziel = knopf && anker && knopf !== route ? knopf : (route instanceof HTMLElement && darfFokussieren(route) ? route : knopf)
+      if (ziel) ziel.focus({ preventScroll: true })
+      if (knopf && knopf !== route) {
+        const streifen = knopf.closest<HTMLElement>('[data-plan-tag-streifen]')
+        if (schmal && lage.erfasst && streifen) streifen.scrollLeft = lage.streifenLeft
+        chipImStreifenZeigen(knopf)
+      }
+      if (schmal && lage.erfasst) window.scrollTo({ top: lage.windowY, behavior: 'instant' })
     }
-    const ziel = wiederherstellen()
-    if (ziel) ziel.focus({ preventScroll: true })
-    wiederherstellen()
-    window.requestAnimationFrame(() => { wiederherstellen() })
-  }, [routeBetont, u1bAnordnung])
+    zeigen()
+    const rahmen = window.requestAnimationFrame(zeigen)
+    return () => window.cancelAnimationFrame(rahmen)
+  }, [routeBetont, routeFokus, u1bAnordnung])
+
+  React.useLayoutEffect(() => {
+    if (!routeBetont) return
+    const anker = routeRueckAnkerRef.current
+    if (anker?.art !== 'tag' || reise.days.some((tag) => tag.id === anker.id)) return
+    routeRueckAnkerRef.current = null
+    const route = document.querySelector('[data-u1b-route]')
+    if (route instanceof HTMLElement && darfFokussieren(route)) route.focus({ preventScroll: true })
+  }, [reise, routeBetont])
 
   const oeffneItem = (itemId: string) => {
     if (!itemInReise(reise, ungeplantePunkte, itemId)) return

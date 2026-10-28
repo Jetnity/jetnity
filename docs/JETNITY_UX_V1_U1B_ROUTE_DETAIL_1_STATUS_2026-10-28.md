@@ -1,6 +1,6 @@
 # UX V1 U1-B Route and Detail 1 — STATUS
 
-28 October 2026. Cursor Generation 1. Stop for independent Technical Lead R2. Not Ready. Not merged. No follow-up slice.
+28 October 2026. Cursor Generation 1. R1.4 and R1.2b are in the same correction. Stop for independent Technical Lead R2. Not Ready. Not merged. No follow-up slice.
 
 ## Session
 
@@ -24,9 +24,11 @@ Zur Route restores the route scroll captured from a visible route interaction. D
 
 Route, selected day, and selected item stay inside the document at 280, 320, 360, 390, 430, 768, and 1440, at root 16 and root 32. Item copy wraps through inherited `word-break: break-word` on the owned detail slot. No overflow clip. `TripWorkspaceDetail` and `TripIntegratedDay` were not edited.
 
+A deferred save keeps the same editor, title, date, and day-11 write through Zur Route, a width change, and Übersicht. The returned error is on that form when Reiseplan is shown again. After 1440 to 390, the focused day-10 chip sits inside its horizontal strip. The inverse width focuses the visible day-10 control. A deleted day-10 focuses the route and does not mark day 1.
+
 ## Local evidence on this correction
 
-U1-B mounted Chrome: 10 tests passed, including the three R1 regressions. N12 mounted chronology: 10 passed. U1-A2 geometry: 8 passed. Anordnung, Hinweis, N12 `laeufe`, and the plan premium source contract: 27 passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors. Export and reachability checks passed.
+U1-B mounted Chrome: 12 tests passed, including the R1 day, scroll, width, deferred-editor, and chip-reflow regressions. N12 mounted chronology: 10 passed. U1-A2 geometry: 8 passed. Anordnung, Hinweis, and the plan premium source contract passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors.
 
 ## Not claimed
 

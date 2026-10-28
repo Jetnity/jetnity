@@ -35,3 +35,7 @@ Independent R1 on `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` required three pres
 2. The route scroll snapshot is taken only from a pointer interaction inside a visible route. Opening a day or item, stepping next/previous, and scrolling the detail do not replace it. Zur Route restores that snapshot after focus, with `preventScroll` on the competing detail-close focus.
 
 3. Long item text that sets `overflow-wrap: break-word` still has a min-content size. The owned detail slot inherits `word-break: break-word` so those words wrap inside the viewport. Text is not clipped and `TripWorkspaceDetail` / `TripIntegratedDay` stay unread.
+
+4. An open plan editor stays mounted on the day it was opened for. Leaving the plan, Zur Route, and a width change do not unmount it, retarget its write, or drop a deferred error. A different canonical day still closes it.
+
+5. After a wide/narrow change, Zur Route reveals the selected day chip inside its horizontal strip. A missing chip focuses the route and does not select day 1. Window scroll restoration from a visible route interaction stays.

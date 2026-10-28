@@ -465,4 +465,128 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.close()
     }
   })
+
+  test('ein laufendes Formular bleibt derselbe Entwurf über Tab, Route und Reflow', async () => {
+    const { page } = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+      await page.getByLabel('Ort oder Aktivität').fill('Lokaler Testentwurf')
+      await page.locator('[data-u1b-anlegen-halten]').click()
+      await page.getByRole('button', { name: 'Speichern', exact: true }).click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy') === 'true')
+      const vorher = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        datum: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[type="date"]') as HTMLInputElement | null)?.value ?? '',
+        writes: window.__u1b?.writes ?? [],
+      }))
+      assert.equal(vorher.formulare, 1)
+      assert.equal(vorher.titel, 'Lokaler Testentwurf')
+      assert.equal(vorher.datum, '2026-06-11')
+      assert.deepEqual(vorher.writes, ['day-11:Lokaler Testentwurf'])
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      const aufDerRoute = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+      }))
+      assert.equal(aufDerRoute.formulare, 1)
+      assert.equal(aufDerRoute.titel, 'Lokaler Testentwurf')
+      await page.setViewportSize({ width: 1440, height: 900 })
+      await page.setViewportSize({ width: 390, height: 900 })
+      await page.waitForSelector('[data-u1b-anordnung="schmal"]')
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForSelector('form[aria-label="Punkt hinzufügen"]')
+      assert.equal(await page.locator('form[aria-label="Punkt hinzufügen"] input[required]').inputValue(), 'Lokaler Testentwurf')
+      await modus(page, 'Übersicht')
+      assert.equal(page.url().includes('ansicht=plan'), false)
+      assert.equal(page.url().includes('foreign=1'), true)
+      assert.equal(await sichtbar(page, '[data-arbeitsbereich="uebersicht"]'), true)
+      const verborgen = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        busy: document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy'),
+      }))
+      assert.equal(verborgen.formulare, 1)
+      assert.equal(verborgen.titel, 'Lokaler Testentwurf')
+      assert.equal(verborgen.busy, 'true')
+      await page.locator('[data-u1b-anlegen-fehler]').click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent?.includes('Der Entwurf bleibt auf diesem Tag.'))
+      await modus(page, 'Reiseplan')
+      await page.waitForSelector('[data-plan-tag-zaehler]')
+      const danach = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        datum: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[type="date"]') as HTMLInputElement | null)?.value ?? '',
+        fehler: document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent ?? '',
+        writes: window.__u1b?.writes ?? [],
+        tag: new URL(location.href).searchParams.get('tag'),
+      }))
+      assert.equal(danach.formulare, 1)
+      assert.equal(danach.titel, 'Lokaler Testentwurf')
+      assert.equal(danach.datum, '2026-06-11')
+      assert.match(danach.fehler, /Der Entwurf bleibt auf diesem Tag/)
+      assert.deepEqual(danach.writes, ['day-11:Lokaler Testentwurf'])
+      assert.equal(danach.tag, 'day-11')
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('der gewählte Chip bleibt im sichtbaren Streifen nach dem Reflow', async () => {
+    const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-10"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-10'))
+      await page.setViewportSize({ width: 390, height: 900 })
+      await page.waitForSelector('[data-u1b-anordnung="schmal"]')
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      await page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      const schmal = await page.evaluate(() => {
+        const el = document.activeElement
+        if (!(el instanceof HTMLElement)) return null
+        const streifen = el.closest('[data-plan-tag-streifen]')
+        if (!(streifen instanceof HTMLElement)) return { art: 'kein-streifen' as const }
+        const flaeche = streifen.getBoundingClientRect()
+        const chip = el.getBoundingClientRect()
+        return { art: 'streifen' as const, links: chip.left, rechts: chip.right, sLinks: flaeche.left, sRechts: flaeche.right, fenster: window.innerWidth }
+      })
+      assert.equal(schmal?.art, 'streifen')
+      if (schmal?.art !== 'streifen') return
+      assert.ok(schmal.links >= schmal.sLinks - 1 && schmal.rechts <= schmal.sRechts + 1, JSON.stringify(schmal))
+      assert.ok(schmal.links >= -1 && schmal.rechts <= schmal.fenster + 1, JSON.stringify(schmal))
+      await page.setViewportSize({ width: 1440, height: 900 })
+      await page.waitForSelector('[data-u1b-anordnung="neben"]')
+      await page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      const weit = await page.evaluate(() => {
+        const el = document.activeElement
+        if (!(el instanceof HTMLElement)) return null
+        const chip = el.getBoundingClientRect()
+        return {
+          tag: el.getAttribute('data-timeline-tag'),
+          verborgen: Boolean(el.closest('[hidden], [inert]')),
+          links: chip.left,
+          rechts: chip.right,
+          fenster: window.innerWidth,
+        }
+      })
+      assert.equal(weit?.tag, 'day-10')
+      assert.equal(weit?.verborgen, false)
+      assert.ok((weit?.links ?? -1) >= -1 && (weit?.rechts ?? 9999) <= (weit?.fenster ?? 0) + 1, JSON.stringify(weit))
+      await page.locator('[data-u1b-tag10-weg]').click()
+      await page.waitForFunction(() => !document.querySelector('[data-timeline-tag="day-10"]'))
+      await page.getByRole('button', { name: 'Zur Route' }).click()
+      const fallback = await page.evaluate(() => ({
+        route: document.activeElement?.closest('[data-u1b-route]') != null,
+        tag: document.activeElement?.getAttribute('data-timeline-tag'),
+        current: document.querySelectorAll('[aria-current="date"]').length,
+      }))
+      assert.equal(fallback.route, true)
+      assert.equal(fallback.tag, null)
+      assert.equal(fallback.current, 0)
+    } finally {
+      await page.close()
+    }
+  })
 })

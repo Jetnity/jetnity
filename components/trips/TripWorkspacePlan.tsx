@@ -266,10 +266,10 @@ export default function TripWorkspacePlan({
     : []
 
   React.useEffect(() => {
-    if (!tag?.id || formularTag === tag.id) return
+    if (!kanonischerTagId || !formularTag || formularTag === kanonischerTagId) return
     setFormularOffen(false)
     setBearbeiten(undefined)
-  }, [tag?.id, formularTag])
+  }, [kanonischerTagId, formularTag])
   React.useLayoutEffect(() => {
     if (gemessen) return
     if (!timeline.gewaehlterTagId) return
@@ -345,16 +345,29 @@ export default function TripWorkspacePlan({
     operationBeginnen: leben.editorBeginnen,
     operationAktuell: leben.editorAktuell,
   }
-  const bestehenderEditor = formularOffen && bearbeiten ? (
-    <PlanpunktEditor
-      key={`${reise.id}:${bearbeiten.id}:${bearbeiten.dayId == null ? 'ohne' : (tag?.id ?? 'ohne')}:${leben.editorGeneration}`}
-      {...editorProps}
-      tagId={bearbeiten.dayId ?? ''}
-      item={bearbeiten}
-      onAbbrechen={() => zurueck(bearbeiten.id)}
-      onFertig={() => gespeichert(bearbeiten.id)}
-    />
-  ) : null
+  const editorHalt = (
+    <div data-u1b-editor-halt="">
+      {formularOffen && !bearbeiten && formularTag ? (
+        <PlanpunktEditor
+          key={`${reise.id}:${formularTag}:new:${leben.editorGeneration}`}
+          {...editorProps}
+          tagId={formularTag}
+          onAbbrechen={() => zurueck(null)}
+          onFertig={() => gespeichert(null)}
+        />
+      ) : null}
+      {formularOffen && bearbeiten && bearbeiten.dayId ? (
+        <PlanpunktEditor
+          key={`${reise.id}:${bearbeiten.id}:edit:${leben.editorGeneration}`}
+          {...editorProps}
+          tagId={bearbeiten.dayId}
+          item={bearbeiten}
+          onAbbrechen={() => zurueck(bearbeiten.id)}
+          onFertig={() => gespeichert(bearbeiten.id)}
+        />
+      ) : null}
+    </div>
+  )
 
   const tagesKopf = tag && (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -388,7 +401,7 @@ export default function TripWorkspacePlan({
       <button
         type="button"
         data-plan-hinzufuegen
-        onClick={(event) => { leben.oeffnen(); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularOffen((offen) => !offen); setErfolg('') }}
+        onClick={(event) => { leben.oeffnen(); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularTag(tag.id); setFormularOffen((offen) => !offen); setErfolg('') }}
         aria-expanded={formularOffen}
         className={cn(
           'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 sm:w-auto',
@@ -403,17 +416,6 @@ export default function TripWorkspacePlan({
 
   const tagesFelder = tag && (
     <>
-      {formularOffen && !bearbeiten && formularTag === tag.id && (
-        <PlanpunktEditor
-          key={`${reise.id}:${tag.id}:new:${leben.editorGeneration}`}
-          {...editorProps}
-          tagId={tag.id}
-          onAbbrechen={() => zurueck(null)}
-          onFertig={() => gespeichert(null)}
-        />
-      )}
-      {bearbeiten?.dayId === tag.id ? bestehenderEditor : null}
-
       {tag.items.length === 0 ? (
         <p data-plan-leer className="mt-3 text-sm leading-6 text-ink-700">
           Noch nichts an diesem Tag.
@@ -628,7 +630,16 @@ export default function TripWorkspacePlan({
               />
             ))}
           </ol>
-          {bearbeiten?.dayId == null ? bestehenderEditor : null}
+          {formularOffen && bearbeiten && bearbeiten.dayId == null ? (
+            <PlanpunktEditor
+              key={`${reise.id}:${bearbeiten.id}:edit:${leben.editorGeneration}`}
+              {...editorProps}
+              tagId=""
+              item={bearbeiten}
+              onAbbrechen={() => zurueck(bearbeiten.id)}
+              onFertig={() => gespeichert(bearbeiten.id)}
+            />
+          ) : null}
         </div>
       )}
       </div>
@@ -646,6 +657,7 @@ export default function TripWorkspacePlan({
             Zur Route
           </button>
         ) : null}
+        {editorHalt}
         {tag && !tagFehlt ? (
           <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
             {navigator ? (

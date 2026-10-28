@@ -40,6 +40,7 @@ function u1bReise(): Trip {
 }
 
 const stand: U1bZaehler = { mounts: 0, unmounts: 0, requests: 0, writes: [] }
+const anlegenWarten: { halten: boolean; loesen: ((wert: string | null) => void) | null } = { halten: false, loesen: null }
 
 function SuchProbe() {
   React.useEffect(() => {
@@ -67,6 +68,9 @@ function Flaeche() {
         ...alt,
         days: alt.days.map((tag) => ({ ...tag, items: tag.items.filter((punkt) => punkt.id !== 'stay-11') })),
       }))}>Punkt weg</button>
+      <button type="button" data-u1b-anlegen-halten onClick={() => { anlegenWarten.halten = true }}>Anlegen halten</button>
+      <button type="button" data-u1b-anlegen-fehler onClick={() => { anlegenWarten.loesen?.('Der Entwurf bleibt auf diesem Tag.'); anlegenWarten.loesen = null; anlegenWarten.halten = false }}>Anlegen Fehler</button>
+      <button type="button" data-u1b-tag10-weg onClick={() => setReise((alt) => ({ ...alt, days: alt.days.filter((tag) => tag.id !== 'day-10') }))}>Tag 10 weg</button>
       <button type="button" data-u1b-verschieben onClick={() => setReise((alt) => ({
         ...alt,
         days: alt.days.map((tag) => {
@@ -79,7 +83,11 @@ function Flaeche() {
         reise={reise}
         quelle="guest"
         ohneTag={reise.ohneTag}
-        onPunktAnlegen={async (tagId) => { stand.writes.push(tagId); return null }}
+        onPunktAnlegen={async (tagId, eingabe) => {
+          stand.writes.push(`${tagId}:${eingabe.title}`)
+          if (!anlegenWarten.halten) return null
+          return await new Promise<string | null>((resolve) => { anlegenWarten.loesen = resolve })
+        }}
         onPunktEntfernen={async (tagId, punktId) => { stand.writes.push(`${tagId}:${punktId}`); return null }}
         flugsuche={<SuchProbe />}
       />

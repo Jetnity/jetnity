@@ -17,7 +17,7 @@ Reviewed head `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` is superseded by the co
 
 ## What the correction changed
 
-One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping.
+One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping. An open editor stays on its original day through a tab change, Zur Route, and reflow, including a deferred error. A reflow reveals the selected chip in its horizontal strip; a deleted chip focuses the route.
 
 ## Next step
 
