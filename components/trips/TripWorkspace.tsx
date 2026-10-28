@@ -726,6 +726,7 @@ export default function TripWorkspace({
 
   const oeffneItem = (itemId: string) => {
     if (!itemInReise(reise, ungeplantePunkte, itemId)) return
+    if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
     setRouteBetont(false)
     setHinweisBeide(null)
     merkeAusloeser()
@@ -761,6 +762,7 @@ export default function TripWorkspace({
 
   const tagWechseln = (tagId: string) => {
     if (!reise.days.some((tag) => tag.id === tagId)) return
+    if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
     setRouteBetont(false)
     setHinweisBeide(null)
     setAktiverTag(tagId)

@@ -39,3 +39,7 @@ Independent R1 on `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` required three pres
 4. An open plan editor stays mounted on the day it was opened for. Leaving the plan, Zur Route, and a width change do not unmount it, retarget its write, or drop a deferred error. A different canonical day still closes it.
 
 5. After a wide/narrow change, Zur Route reveals the selected day chip inside its horizontal strip. A missing chip focuses the route and does not select day 1. Window scroll restoration from a visible route interaction stays.
+
+6. A new form uses the displayed effective day. An already open form keeps that day through a hidden tab, Zur Route, and reflow. It is not reset when `aktiverTag` and the displayed day diverge, and it is not closed merely because the canonical tag is absent. A different canonical day still closes it.
+
+7. Zur Route always focuses a visible route target. Scroll restoration is optional and runs only when a visible route interaction, including the keyboard, captured one. The standalone day counter keeps `whitespace-nowrap`. The measured counter and the date line wrap.

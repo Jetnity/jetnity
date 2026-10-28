@@ -1,6 +1,6 @@
 # UX V1 U1-B Route and Detail 1 — STATUS
 
-28 October 2026. Cursor Generation 1. R1.4 and R1.2b are in the same correction. Stop for independent Technical Lead R2. Not Ready. Not merged. No follow-up slice.
+28 October 2026. Cursor Generation 1. R2 is folded into the same correction. Stop for independent Technical Lead R3. Not Ready. Not merged. No follow-up slice.
 
 ## Session
 
@@ -24,11 +24,11 @@ Zur Route restores the route scroll captured from a visible route interaction. D
 
 Route, selected day, and selected item stay inside the document at 280, 320, 360, 390, 430, 768, and 1440, at root 16 and root 32. Item copy wraps through inherited `word-break: break-word` on the owned detail slot. No overflow clip. `TripWorkspaceDetail` and `TripIntegratedDay` were not edited.
 
-A deferred save keeps the same editor, title, date, and day-11 write through Zur Route, a width change, and Übersicht. The returned error is on that form when Reiseplan is shown again. After 1440 to 390, the focused day-10 chip sits inside its horizontal strip. The inverse width focuses the visible day-10 control. A deleted day-10 focuses the route and does not mark day 1.
+A deferred save on day 11 keeps the same form, title, date, and one write through Übersicht, including while the plan is hidden. The returned error is on that form when Reiseplan is shown again. Punkt hinzufügen on the unlabeled wide default after Back writes day 1. Zur Route focuses the visible day chip for keyboard, direct load, and the wide layout, without requiring a pointer snapshot. A captured route scroll, including keyboard activation inside the route, is still restored. The standalone counter keeps its nowrap class. The measured counter and the date line wrap, without both declarations on one element.
 
 ## Local evidence on this correction
 
-U1-B mounted Chrome: 12 tests passed, including the R1 day, scroll, width, deferred-editor, and chip-reflow regressions. N12 mounted chronology: 10 passed. U1-A2 geometry: 8 passed. Anordnung, Hinweis, and the plan premium source contract passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors.
+U1-B mounted Chrome: 15 tests passed, including the deferred Übersicht path, the default-day write, keyboard/direct/wide route focus, and the chip reflow. N12 mounted chronology: 10 passed. U1-A2 geometry: 8 passed. The plan premium source contract passed. `tsc --noEmit` passed. ESLint on the touched files: 0 errors.
 
 ## Not claimed
 

@@ -10,6 +10,13 @@
 - The 7 by 2 width matrix includes the route, the selected day, and the selected item. The item fix is inherited `word-break: break-word` on the owned slot, not `overflow-x` clipping and not an edit to `TripWorkspaceDetail`.
 - Prior U1-B navigation, one search mount, N12 chronology, and U1-A2 sticky geometry stayed green on this tree.
 
+## R2
+
+- Übersicht during a deferred day-11 save keeps one busy form with the title and date. After the failure, Reiseplan shows that form and the error. The write list is only `day-11:Lokaler Testentwurf`.
+- Back to the tag-free wide plan, then Punkt hinzufügen, writes `day-1:Tag eins Entwurf` and does not add a tag to the URL.
+- Keyboard Enter, a direct `tag=day-11` load, and wide Zur Route focus the visible day-11 control. The narrow chip rectangle is inside its strip and the viewport. Deleted day 10 still focuses the route.
+- The measured counter does not carry both nowrap and normal white-space. The standalone counter keeps the legacy nowrap string. N12 at 320/root 32 does not overflow.
+
 ## R1.4 and R1.2b
 
 - A deferred create on day 11 keeps one form, the title `Lokaler Testentwurf`, the date `2026-06-11`, and a single `day-11` write through Zur Route, 1440/390, Übersicht, and the return to Reiseplan. The synthetic error is on that form.

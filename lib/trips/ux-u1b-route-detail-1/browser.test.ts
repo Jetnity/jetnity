@@ -589,4 +589,122 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.close()
     }
   })
+
+  test('Übersicht behält den laufenden Tag-11-Entwurf und die Fehlermeldung', async () => {
+    const { page } = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+      await page.getByLabel('Ort oder Aktivität').fill('Lokaler Testentwurf')
+      await page.locator('[data-u1b-anlegen-halten]').click()
+      await page.getByRole('button', { name: 'Speichern', exact: true }).click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy') === 'true')
+      assert.deepEqual(await page.evaluate(() => window.__u1b?.writes ?? []), ['day-11:Lokaler Testentwurf'])
+      await modus(page, 'Übersicht')
+      assert.equal(page.url().includes('ansicht=plan'), false)
+      const verborgen = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        datum: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[type="date"]') as HTMLInputElement | null)?.value ?? '',
+        busy: document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy'),
+      }))
+      assert.equal(verborgen.formulare, 1)
+      assert.equal(verborgen.titel, 'Lokaler Testentwurf')
+      assert.equal(verborgen.datum, '2026-06-11')
+      assert.equal(verborgen.busy, 'true')
+      await page.locator('[data-u1b-anlegen-fehler]').click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent?.includes('Der Entwurf bleibt auf diesem Tag.'))
+      await modus(page, 'Reiseplan')
+      await page.waitForSelector('form[aria-label="Punkt hinzufügen"]')
+      const danach = await page.evaluate(() => ({
+        formulare: document.querySelectorAll('form[aria-label="Punkt hinzufügen"]').length,
+        titel: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[required]') as HTMLInputElement | null)?.value ?? '',
+        datum: (document.querySelector('form[aria-label="Punkt hinzufügen"] input[type="date"]') as HTMLInputElement | null)?.value ?? '',
+        fehler: document.querySelector('form[aria-label="Punkt hinzufügen"] [role="alert"]')?.textContent ?? '',
+        writes: window.__u1b?.writes ?? [],
+        tag: new URL(location.href).searchParams.get('tag'),
+        plan: new URL(location.href).searchParams.get('ansicht'),
+      }))
+      assert.equal(danach.formulare, 1)
+      assert.equal(danach.titel, 'Lokaler Testentwurf')
+      assert.equal(danach.datum, '2026-06-11')
+      assert.match(danach.fehler, /Der Entwurf bleibt auf diesem Tag/)
+      assert.deepEqual(danach.writes, ['day-11:Lokaler Testentwurf'])
+      assert.equal(danach.plan, 'plan')
+      assert.equal(danach.tag, 'day-11')
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Punkt hinzufügen auf dem angezeigten Standardtag schreibt Tag 1', async () => {
+    const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await page.waitForFunction(() => location.search.includes('tag=day-11'))
+      await page.goBack()
+      await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
+      await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+      await page.waitForSelector('form[aria-label="Punkt hinzufügen"]')
+      await page.getByLabel('Ort oder Aktivität').fill('Tag eins Entwurf')
+      await page.getByRole('button', { name: 'Speichern', exact: true }).click()
+      await page.waitForFunction(() => (window.__u1b?.writes ?? []).some((wert) => wert.startsWith('day-1:')))
+      assert.deepEqual(await page.evaluate(() => window.__u1b?.writes ?? []), ['day-1:Tag eins Entwurf'])
+      assert.equal(new URL(page.url()).searchParams.has('tag'), false)
+    } finally {
+      await page.close()
+    }
+  })
+
+  test('Zur Route fokussiert den sichtbaren Tag ohne Zeigerfoto', async () => {
+    const tastatur = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
+    try {
+      const chip = tastatur.page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first()
+      await chip.focus()
+      await tastatur.page.keyboard.press('Enter')
+      await tastatur.page.waitForSelector('[data-u1b-zur-route]')
+      await tastatur.page.locator('[data-u1b-zur-route]').focus()
+      await tastatur.page.keyboard.press('Enter')
+      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      const lage = await tastatur.page.evaluate(() => {
+        const el = document.activeElement
+        if (!(el instanceof HTMLElement)) return null
+        const streifen = el.closest('[data-plan-tag-streifen]')
+        if (!(streifen instanceof HTMLElement)) return null
+        const flaeche = streifen.getBoundingClientRect()
+        const kasten = el.getBoundingClientRect()
+        return { links: kasten.left, rechts: kasten.right, sLinks: flaeche.left, sRechts: flaeche.right, fenster: window.innerWidth }
+      })
+      assert.ok(lage && lage.links >= lage.sLinks - 1 && lage.rechts <= lage.sRechts + 1 && lage.rechts <= lage.fenster + 1, JSON.stringify(lage))
+    } finally {
+      await tastatur.page.close()
+    }
+
+    const direkt = await offen(390, 900, '?ansicht=plan&tag=day-11&foreign=1#marke')
+    try {
+      await direkt.page.locator('[data-u1b-zur-route]').focus()
+      await direkt.page.keyboard.press('Enter')
+      await direkt.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      assert.notEqual(await direkt.page.evaluate(() => document.activeElement?.tagName), 'BODY')
+    } finally {
+      await direkt.page.close()
+    }
+
+    const weit = await offen(1440, 900, '?ansicht=plan&tag=day-11&foreign=1#marke')
+    try {
+      await weit.page.locator('[data-u1b-zur-route]').click()
+      await weit.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      const kasten = await weit.page.evaluate(() => {
+        const el = document.activeElement
+        if (!(el instanceof HTMLElement)) return null
+        const rect = el.getBoundingClientRect()
+        return { links: rect.left, rechts: rect.right, verborgen: Boolean(el.closest('[hidden], [inert]')), fenster: window.innerWidth }
+      })
+      assert.equal(kasten?.verborgen, false)
+      assert.ok(kasten && kasten.links >= -1 && kasten.rechts <= kasten.fenster + 1, JSON.stringify(kasten))
+    } finally {
+      await weit.page.close()
+    }
+  })
 })

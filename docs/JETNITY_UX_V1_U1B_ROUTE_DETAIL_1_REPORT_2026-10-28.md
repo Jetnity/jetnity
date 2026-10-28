@@ -10,6 +10,18 @@
 
 `routeLageMerken` runs from `pointerdown` inside a route that has a client box and is not hidden or inert. `tagWechseln`, `oeffneItem`, and `routeZeigen` do not capture. The restore layout effect writes the saved window position after focusing the route anchor with `preventScroll`, then again on the next frame. The detail-close focus uses `preventScroll` while the route is emphasized. The mounted regression covers scrolled route to day to route, route to day to item to route, the same row, a missing day anchor, and a wide/narrow reflow.
 
+## R2.1 Editor day
+
+Measured mode no longer resets an open form when `aktiverTag` and the displayed day differ. Punkt hinzufügen binds the form to the displayed effective day, so the unlabeled day 1 after Back opens a form and the synthetic writer receives `day-1`. An open day-11 form stays mounted in `data-u1b-editor-halt` when the canonical tag disappears for Übersicht. The deferred error returns on that same form. A different canonical day still closes it.
+
+## R2.2 Route focus
+
+Scroll capture is optional. Pointer and keyboard activation inside a visible route record it. Zur Route focuses the visible day control even when no snapshot exists and on the wide layout. The chip is then scrolled inside its horizontal strip. The route-scroll regression still restores the captured window position.
+
+## R2.3 Counter classes
+
+The standalone counter keeps `whitespace-nowrap text-sm font-semibold text-brand-800`. The measured counter wraps and does not also set nowrap. The date line wraps in both modes. The plan source contract still matches.
+
 ## R1.4 Pending editor
 
 The new-point editor and a day edit stay in `data-u1b-editor-halt` inside the plan mount. Their keys use the day or item captured at open, not the day currently on screen. Leaving the plan clears the canonical tag and no longer unmounts the form or sends the write to the wide default. A deferred synthetic failure stays on that form. Übersicht, Zur Route, and a width change keep one form, the typed title, the day-11 date, and exactly one `day-11` write.
@@ -24,7 +36,7 @@ The matrix now opens the route, day 11, and stay 11 at seven widths and both roo
 
 ## Tests on this correction
 
-Passed on this addendum: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (12), `lib/trips/n12-chronology-1/browser.test.ts` (10), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), `anordnung.test.ts`, `hinweis.test.ts`, and `trip-plan-premium-experience-4.test.ts`. `tsc --noEmit` passed. ESLint on the touched files reported 0 errors.
+Passed on this candidate: `lib/trips/ux-u1b-route-detail-1/browser.test.ts` (15), `lib/trips/n12-chronology-1/browser.test.ts` (10), `lib/trips/ux-u1a2-geometry-1.test.ts` (8), and `trip-plan-premium-experience-4.test.ts`. `tsc --noEmit` passed. ESLint on the touched files reported 0 errors.
 
 `npm run build` exited 0.
 

@@ -212,8 +212,12 @@ export default function TripWorkspacePlan({
     setMeldung('')
     setErfolg('')
   }
-  if (formularTag !== aktiverTag) {
-    setFormularTag(aktiverTag); setFormularOffen(false); setBearbeiten(undefined); setMeldung(''); setErfolg('')
+  if (steuerung !== 'gemessen' && formularTag !== aktiverTag) {
+    setFormularTag(aktiverTag)
+    setFormularOffen(false)
+    setBearbeiten(undefined)
+    setMeldung('')
+    setErfolg('')
   }
   const loeschungAktuellRef = React.useRef(leben.loeschungAktuell)
   const fokusAktuellRef = React.useRef(leben.fokusAktuell)
@@ -663,8 +667,8 @@ export default function TripWorkspacePlan({
             {navigator ? (
               <div data-plan-navigator="schritt" className="flex min-w-0 flex-col gap-3">
                 <div className="min-w-0 max-w-full">
-                  <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800 [overflow-wrap:anywhere] [white-space:normal]">{navigator.text}</p>
-                  <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700 [overflow-wrap:anywhere] [white-space:normal]">
+                  <p data-plan-tag-zaehler className={gemessen ? 'min-w-0 max-w-full text-sm font-semibold text-brand-800 [overflow-wrap:anywhere]' : 'whitespace-nowrap text-sm font-semibold text-brand-800'}>{navigator.text}</p>
+                  <p data-plan-tag-datum className="mt-0.5 min-w-0 max-w-full text-xs leading-5 text-ink-700 [overflow-wrap:anywhere]">
                     {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
                     {laufDesTags ? ` · ${laufDesTags.name}` : ''}
                   </p>

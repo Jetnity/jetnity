@@ -1,6 +1,6 @@
 # UX V1 U1-B Route and Detail 1 — HANDOFF
 
-28 October 2026. Stop for independent Technical Lead R2. Same session only if that review asks for another correction. Do not start U3-A. Do not mark Ready. Do not merge.
+28 October 2026. Stop for independent Technical Lead R3. Same session only if that review asks for another correction. Do not start U3-A. Do not mark Ready. Do not merge.
 
 ## Read first
 
@@ -17,7 +17,7 @@ Reviewed head `e8a0b496a80e0b984f27813802f1f6a66e5a1c11` is superseded by the co
 
 ## What the correction changed
 
-One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping. An open editor stays on its original day through a tab change, Zur Route, and reflow, including a deferred error. A reflow reveals the selected chip in its horizontal strip; a deleted chip focuses the route.
+One effective day for header, items, editor, delete, and integrated day. Route scroll captured only from a visible route pointer interaction and restored on Zur Route. Selected route, day, and item stay within the viewport at the required widths and root sizes via wrapping, not clipping. An open editor stays on the displayed day it was opened for through Übersicht, Zur Route, and reflow, including a deferred error. Punkt hinzufügen on the unlabeled default writes that day. Zur Route focuses a visible route chip without requiring a pointer snapshot. The standalone counter keeps nowrap; the measured counter and the date wrap.
 
 ## Next step
 
