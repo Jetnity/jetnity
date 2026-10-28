@@ -23,7 +23,7 @@ The phone bar used `flex-wrap` and content-sized buttons. At 390×844 root 16 th
 
 Move only `TripWorkspaceModeNavigation` out of `div[data-workspace-ansicht]` so its sticky containing block is the `max-w-7xl` column that also holds the plan. One nav. Existing `top: calc(72px + safe-area)`. No second toolbar, no scroll handler, no route state.
 
-The bottom posture uses `grid-cols-4`, `px-0`, and a 1px gap so 14px text stays inside equal 44px targets at 360, 390 and 430. Below 360, and for root 32, zoom ≥ 1.9, keyboard, and width ≤ 320, the existing relative flow stack is used. `guest-nav-text-1.test.ts` stays unmodified.
+The bottom posture uses `grid-cols-4`, `px-0`, and a 1px gap so 14px text stays inside equal 44px targets at 390 and 430. Measured „Vorbereitung“ is about 93px, so 360 and below use the relative flow stack, as do root 32, zoom ≥ 1.9, keyboard, and width ≤ 320. `guest-nav-text-1.test.ts` stays unmodified.
 
 ## Tests
 

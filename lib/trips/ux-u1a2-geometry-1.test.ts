@@ -407,10 +407,10 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     await page.close()
   })
 
-  test('390, 360 and 430 show four equal labels in one bottom row', async () => {
+  test('390 and 430 show four equal labels in one bottom row; 360 uses flow', async () => {
     const { page, fehler } = await oeffnen(390, 844)
     const laeufe: Record<string, unknown> = {}
-    for (const breite of [390, 360, 430]) {
+    for (const breite of [390, 430]) {
       await page.setViewportSize({ width: breite, height: 844 })
       await page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'bottom')
       const stand = await geometrie(page)
@@ -429,7 +429,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
         assert.equal(knopf.height >= 44, true, knopf.name)
         assert.equal(knopf.width >= 44, true, knopf.name)
         assert.equal(knopf.fontSize, '14px', knopf.name)
-        assert.equal(knopf.textLeft >= knopf.left - 1, true, knopf.name)
+        assert.equal(knopf.textLeft >= knopf.left - 1, true, JSON.stringify(knopf))
         assert.equal(knopf.textRight <= knopf.right + 1, true, `${knopf.name} ${knopf.textRight} > ${knopf.right}`)
         assert.equal(knopf.textTop >= knopf.top - 1, true, knopf.name)
         assert.equal(knopf.textBottom <= knopf.bottom + 1, true, knopf.name)
@@ -439,6 +439,19 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
       assert.equal(Math.abs(offsetPx - stand.navHeight) <= 1, true, stand.offset)
       if (breite === 390) await bild(page, 'bottom-390')
     }
+    await page.setViewportSize({ width: 360, height: 844 })
+    await page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'flow')
+    const schmal = await geometrie(page)
+    laeufe['360'] = knapp(schmal)
+    assert.equal(schmal.lage, 'flow')
+    assert.equal(schmal.position, 'relative')
+    assert.deepEqual(schmal.knoepfe.map((knopf) => knopf.name), LABEL)
+    for (const knopf of schmal.knoepfe) {
+      assert.equal(knopf.fontSize, '14px')
+      assert.equal(knopf.textLeft >= knopf.left - 1, true, JSON.stringify(knopf))
+      assert.equal(knopf.textRight <= knopf.right + 1, true, JSON.stringify(knopf))
+    }
+    assert.equal(schmal.overflowX <= 1, true)
     assert.deepEqual(fehler, [])
     evidenz.bottom = laeufe
     await page.close()
@@ -449,7 +462,11 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     for (const breite of [280, 320]) {
       const { page, fehler } = await oeffnen(breite, 844)
       await page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'flow')
-      await scrollZu(page, 700)
+      await page.evaluate(() => {
+        const nav = document.querySelector('[data-workspace-mode-nav]')
+        if (!(nav instanceof HTMLElement)) return
+        window.scrollTo(0, window.scrollY + nav.getBoundingClientRect().bottom + 24)
+      })
       const stand = await geometrie(page)
       laeufe[String(breite)] = knapp(stand)
       assert.equal(stand.lage, 'flow')
@@ -485,7 +502,11 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
 
     const tastatur = await oeffnen(390, 844, true)
     await tastatur.page.waitForFunction(() => document.querySelector('[data-workspace-mode-nav]')?.getAttribute('data-shell-nav') === 'flow')
-    await scrollZu(tastatur.page, 700)
+    await tastatur.page.evaluate(() => {
+      const nav = document.querySelector('[data-workspace-mode-nav]')
+      if (!(nav instanceof HTMLElement)) return
+      window.scrollTo(0, window.scrollY + nav.getBoundingClientRect().bottom + 24)
+    })
     const tastaturStand = await geometrie(tastatur.page)
     laeufe.tastatur = knapp(tastaturStand)
     assert.equal(tastaturStand.position, 'relative')

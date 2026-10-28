@@ -1,0 +1,702 @@
+{
+  "grenze": [
+    "CDP pageScale und visualViewport.scale sind kein Desktop-Browserzoom 200%.",
+    "Kein physisches Gerät, keine OS-Tastatur, kein VoiceOver."
+  ],
+  "negativ": {
+    "scrollY": 650,
+    "navTop": -494,
+    "navBottom": -440,
+    "ansichtHeight": 138
+  },
+  "sticky": {
+    "768": {
+      "0": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 429.5,
+        "navBottom": 483.5,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 0,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 434.5,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 434.5,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 434.5,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 434.5,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "450": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 450,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "650": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 650,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "900": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 5292.5,
+        "ansichtHeight": 72,
+        "planHeight": 4741,
+        "scrollY": 900,
+        "scrollHeight": 5445,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 162.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 162.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 185.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 187.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      }
+    },
+    "1440": {
+      "0": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 449,
+        "navBottom": 503,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 0,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 454,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 454,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 454,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 454,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "450": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 450,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "650": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 650,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      },
+      "900": {
+        "lage": "sticky",
+        "position": "sticky",
+        "navTop": 72,
+        "navBottom": 126,
+        "navHeight": 54,
+        "headerBottom": 72,
+        "parentHeight": 4036,
+        "ansichtHeight": 72,
+        "planHeight": 3465,
+        "scrollY": 900,
+        "scrollHeight": 4188,
+        "overflowX": 0,
+        "offset": "",
+        "knoepfe": [
+          {
+            "name": "Übersicht",
+            "width": 290.3,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Reiseplan",
+            "width": 290.4,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Organisieren",
+            "width": 313.8,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          },
+          {
+            "name": "Vorbereitung",
+            "width": 315.5,
+            "height": 44,
+            "top": 77,
+            "fontSize": "14px"
+          }
+        ]
+      }
+    }
+  },
+  "history": {
+    "ansicht": "organisieren",
+    "navCount": 1
+  },
+  "bottom": {
+    "360": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": 409.5,
+      "navBottom": 615.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2137,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2289,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 318,
+          "height": 44,
+          "top": 418.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 318,
+          "height": 44,
+          "top": 466.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 318,
+          "height": 44,
+          "top": 514.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 318,
+          "height": 44,
+          "top": 562.5,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "390": {
+      "lage": "bottom",
+      "position": "fixed",
+      "navTop": 791,
+      "navBottom": 844,
+      "navHeight": 53,
+      "headerBottom": 72,
+      "parentHeight": 1900.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2053,
+      "overflowX": 0,
+      "offset": "53px",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 96.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "430": {
+      "lage": "bottom",
+      "position": "fixed",
+      "navTop": 791,
+      "navBottom": 844,
+      "navHeight": 53,
+      "headerBottom": 72,
+      "parentHeight": 1858,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 2010,
+      "overflowX": 0,
+      "offset": "53px",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 106.8,
+          "height": 44,
+          "top": 796,
+          "fontSize": "14px"
+        }
+      ]
+    }
+  },
+  "flow": {
+    "280": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230,
+      "navBottom": -24,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2547.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 734,
+      "scrollHeight": 2700,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 238,
+          "height": 44,
+          "top": -221,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 238,
+          "height": 44,
+          "top": -173,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 238,
+          "height": 44,
+          "top": -125,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 238,
+          "height": 44,
+          "top": -77,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "320": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230.5,
+      "navBottom": -24.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2291,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 694,
+      "scrollHeight": 2443,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 278,
+          "height": 44,
+          "top": -221.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 278,
+          "height": 44,
+          "top": -173.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 278,
+          "height": 44,
+          "top": -125.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 278,
+          "height": 44,
+          "top": -77.5,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    "root32": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": 1035,
+      "navBottom": 1445,
+      "navHeight": 410,
+      "headerBottom": 72,
+      "parentHeight": 6522.5,
+      "ansichtHeight": 224,
+      "planHeight": null,
+      "scrollY": 0,
+      "scrollHeight": 6755,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 308,
+          "height": 88,
+          "top": 1052,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 308,
+          "height": 88,
+          "top": 1148,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 308,
+          "height": 88,
+          "top": 1244,
+          "fontSize": "28px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 308,
+          "height": 88,
+          "top": 1340,
+          "fontSize": "28px"
+        }
+      ]
+    },
+    "tastatur": {
+      "lage": "flow",
+      "position": "relative",
+      "navTop": -230.5,
+      "navBottom": -24.5,
+      "navHeight": 206,
+      "headerBottom": 72,
+      "parentHeight": 2118.5,
+      "ansichtHeight": 92,
+      "planHeight": null,
+      "scrollY": 640,
+      "scrollHeight": 2271,
+      "overflowX": 0,
+      "offset": "",
+      "knoepfe": [
+        {
+          "name": "Übersicht",
+          "width": 348,
+          "height": 44,
+          "top": -221.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Reiseplan",
+          "width": 348,
+          "height": 44,
+          "top": -173.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Organisieren",
+          "width": 348,
+          "height": 44,
+          "top": -125.5,
+          "fontSize": "14px"
+        },
+        {
+          "name": "Vorbereitung",
+          "width": 348,
+          "height": 44,
+          "top": -77.5,
+          "fontSize": "14px"
+        }
+      ]
+    }
+  },
+  "providerAnfragen": []
+}

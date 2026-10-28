@@ -16,9 +16,9 @@ export type ShellNavLage = 'sticky' | 'bottom' | 'flow'
 export const UX_U1A_SCHMAL_BIS_PX = 320
 /**
  * Schmalste Breite für vier gleiche 14px-Beschriftungen in einer Zeile.
- * „Organisieren“ braucht etwa 86px. Darunter stapelt der Fluss, statt 3+1 umzubrechen.
+ * „Vorbereitung“ misst dort etwa 93px. Darunter stapelt der Fluss, statt 3+1 oder abzuschneiden.
  */
-export const UX_U1A_VIER_TABS_AB_PX = 360
+export const UX_U1A_VIER_TABS_AB_PX = 376
 /** Ordinary phone widths use the bottom bar. 768 and above keep sticky tabs. */
 export const UX_U1A_PHONE_BIS_PX = 768
 /** Matches the existing compact workspace breakpoint. */

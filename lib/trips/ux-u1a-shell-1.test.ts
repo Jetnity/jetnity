@@ -38,7 +38,8 @@ test('320px, grosse Wurzelschrift, Browserzoom und Tastatur fallen getrennt in d
 })
 
 test('gewöhnliches Telefon nutzt die untere Leiste, ab 768 kleben die Tabs', () => {
-  for (const breite of [360, 390, 430, 767]) {
+  assert.equal(shellNavLage({ ...normal, viewportBreite: 360, detailOffen: false }), 'flow')
+  for (const breite of [UX_U1A_VIER_TABS_AB_PX, 390, 430, 767]) {
     assert.equal(shellNavLage({ ...normal, viewportBreite: breite, detailOffen: false }), 'bottom')
   }
   for (const breite of [UX_U1A_PHONE_BIS_PX, UX_U1A_DESKTOP_AB_PX, 1440]) {
