@@ -22,6 +22,10 @@ Real Sandbox HTTP is **BLOCKED**. `scripts/viator-sandbox-foundation-1/status.ts
 
 Native App/Auth CI and Vercel Preview for this head start only after push. They are fixture/code smoke, not live provider QA.
 
+## Evidence addendum
+
+Original email screenshot visually verified by Technical Lead; vendor account login and API credentials NOT verified. Source: https://github.com/Jetnity/jetnity/issues/1023#issuecomment-6468170303. Same session `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`, model `grok-4.7-high-fast`. The immutable task is unchanged, including its earlier screenshot sentence. CI SUCCESS `40683991959` covers `8a3e00e9522d81968362b1ebb90f75db4ad94b96` only.
+
 ## Next
 
 Independent Technical Lead R1 on the exact pushed head. Cursor does not mark Ready and does not merge.

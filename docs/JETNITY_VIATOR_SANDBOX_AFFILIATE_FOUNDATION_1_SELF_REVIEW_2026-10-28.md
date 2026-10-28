@@ -16,7 +16,7 @@ Owned paths only: `lib/providers/viator/activities/**`, `scripts/viator-sandbox-
 
 - Unsafe, spoofed, credentialed, and non-HTTPS product URLs fail. A valid URL is returned unchanged.
 - Fixture plus a valid `productUrl` does not create `affiliate_redirect` or `live_api`.
-- Review text and `viatorUniqueContent` are omitted. Noindex contract is `X-Robots-Tag: noindex, nofollow` and is not yet attached to a route.
+- Review text and `viatorUniqueContent` are omitted. Noindex contract is `X-Robots-Tag: noindex, nofollow` and is not yet attached to a route. The vendor sentence covers unique content. The broader gate for user-visible provider content is Jetnity's, pending the accepted agreement.
 - Schedule `availabilityClaim` is false. `partnerNetPrice` is not the customer amount.
 - A traveller total is not treated as adults. A child band is rejected when the product only has adults. `TRAVELER` mixed with `ADULT` is rejected.
 - CHF checkout transfer is unsupported. A CHF amount is not invented from a USD supplier price. A response that states CHF keeps that display amount with `checkoutCurrencyConfirmed: false`.
@@ -34,7 +34,7 @@ Owned paths only: `lib/providers/viator/activities/**`, `scripts/viator-sandbox-
 - Image allowlist is `hare-media-cdn.tripadvisor.com` from the same public examples.
 - Destination catalog is not ingested. Viator's weekly `/destinations` cadence is longer than the 3600 s ceiling, so S1 resolves only an explicit place binding.
 - Transport uses the shared executor with one attempt and a 12 s timeout. HTTP 429 fails closed. That is intentional: 120 s is a booking recommendation, and this slice does not book.
-- The Greg reply remains owner-reported. No duplicate inquiry was sent.
+- Original email screenshot visually verified by Technical Lead; vendor account login and API credentials NOT verified. Source: https://github.com/Jetnity/jetnity/issues/1023#issuecomment-6468170303. No duplicate inquiry was sent. Checkout date, CHF, participant mix, and a specific Sandbox quota remain unproven.
 - This review does not replace Technical Lead R1, exact-head CI, or Preview smoke.
 
 ## Decision

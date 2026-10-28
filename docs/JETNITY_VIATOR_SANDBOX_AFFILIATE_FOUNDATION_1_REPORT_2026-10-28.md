@@ -52,7 +52,7 @@ No new paid call, provider contract, or running infrastructure cost.
 
 ## Dokumentation
 
-The five owned docs above. Official pages cited in the plan were read on 28 October 2026. The owner-reported Affiliate API reply is labeled as such.
+The five owned docs above. Official pages cited in the plan were read on 28 October 2026. Original email screenshot visually verified by Technical Lead; vendor account login and API credentials NOT verified. Source: https://github.com/Jetnity/jetnity/issues/1023#issuecomment-6468170303. The email's indexing sentence is unique content only. Broader noindex of user-visible provider content is an internal gate. Checkout date, CHF, participant mix, and Sandbox quota are not proven by that email. The immutable task still contains the earlier "screenshot not visible" sentence and was not edited.
 
 ## Offene Punkte
 

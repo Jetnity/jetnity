@@ -115,6 +115,8 @@ describe('Viator contract', () => {
     assert.ok(VIATOR_PRODUCT_URL_HOSTS.includes('shop.live.rc.viator.com'))
     assert.ok(VIATOR_IMAGE_URL_HOSTS.includes('hare-media-cdn.tripadvisor.com'))
     assert.equal(VIATOR_NOINDEX_CONTRACT.value, 'noindex, nofollow')
+    assert.equal(VIATOR_NOINDEX_CONTRACT.vendorSentenceScope, 'unique_content')
+    assert.equal(VIATOR_NOINDEX_CONTRACT.internalReleaseGate, 'user_visible_provider_content')
     assert.equal(VIATOR_NOINDEX_CONTRACT.jsonLd, false)
     assert.equal(VIATOR_NOINDEX_CONTRACT.reviewBodyInNormalizedPayload, false)
     assert.equal(VIATOR_NOINDEX_CONTRACT.s1PublishesProviderContent, false)

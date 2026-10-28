@@ -168,12 +168,18 @@ export const VIATOR_FORBIDDEN_OPERATIONS = [
 ] as const
 
 /**
- * Later S2 responses that carry Viator content must send this header.
+ * The 28 October 2026 vendor email, visually verified by the Technical Lead
+ * in issue #1023 comment 6468170303, says Viator unique content must not be
+ * indexed. It does not say every Viator field is covered by that sentence.
+ * `internalReleaseGate` is Jetnity's broader noindex for user-visible
+ * provider content until the technical agreement scope is accepted.
  * S1 itself publishes no provider page, RSC payload, or JSON-LD.
  */
 export const VIATOR_NOINDEX_CONTRACT = {
   header: 'X-Robots-Tag',
   value: 'noindex, nofollow',
+  vendorSentenceScope: 'unique_content',
+  internalReleaseGate: 'user_visible_provider_content',
   jsonLd: false,
   reviewBodyInNormalizedPayload: false,
   viatorUniqueContentInNormalizedPayload: false,

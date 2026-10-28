@@ -27,6 +27,10 @@ Required server env, when an isolated sandbox is later provisioned:
 
 Do not copy the key into Preview, chat, or a fixture. #968 still blocks casual Preview/Production Supabase mixing. S2 is a separate writer after Technical Lead acceptance.
 
+## Vendor evidence
+
+Original email screenshot visually verified by Technical Lead; vendor account login and API credentials NOT verified. https://github.com/Jetnity/jetnity/issues/1023#issuecomment-6468170303. The email requires unique content to stay unindexed. Broader noindex for user-visible provider content is Jetnity's internal gate. There is still no proof that checkout accepts a date, CHF, or a participant mix, and no certified Sandbox quota.
+
 ## Do not resume from here
 
 No follow-up slice, no factory edit, no UI, no booking endpoint, no Production request, no Ready, no merge.

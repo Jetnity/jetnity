@@ -29,7 +29,9 @@ Evidence stays split: `fixture`, `content_preview`, `schedule_hint`, `live_check
 - https://partnerresources.viator.com/travel-commerce/technical-guide/
 - https://partnerresources.viator.com/travel-commerce/managing-product-availability-data/ (3 October 2025)
 
-The Greg / Affiliate API team summary for P00328015 is owner-reported via the dispatch and #1078. The original mail and screenshot were not independently visible.
+Original email screenshot visually verified by Technical Lead; vendor account login and API credentials NOT verified. Sanitized assertions: https://github.com/Jetnity/jetnity/issues/1023#issuecomment-6468170303. The pre-code plan comment was written before that screenshot was attached and still says the screenshot was not visible. That earlier sentence is historical. The immutable task file still contains it and is not edited.
+
+The visible email says Viator unique content must not be indexed. It does not say every Viator field is covered by that sentence. Broader noindex for user-visible provider content remains Jetnity's cautious internal release gate until the technical agreement scope is accepted. The email does not prove that checkout accepts a date, CHF, or a participant mix, and it does not certify a Sandbox quota.
 
 ## Stop
 
