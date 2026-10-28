@@ -14,6 +14,13 @@ export type ShellNavLage = 'sticky' | 'bottom' | 'flow'
 
 /** CSS pixels. 320 and below leave the fixed bottom bar. */
 export const UX_U1A_SCHMAL_BIS_PX = 320
+/**
+ * Schmalste Breite für vier gleiche 14px-Beschriftungen in einer Zeile.
+ * Darunter stapelt der Fluss. Die untere Leiste zieht die Laufweite ein,
+ * damit die Wörter in der Zelle bleiben; eine noch engere Safe Area fällt
+ * nach der Messung ebenfalls in den Fluss.
+ */
+export const UX_U1A_VIER_TABS_AB_PX = 376
 /** Ordinary phone widths use the bottom bar. 768 and above keep sticky tabs. */
 export const UX_U1A_PHONE_BIS_PX = 768
 /** Matches the existing compact workspace breakpoint. */
@@ -61,6 +68,7 @@ export function shellNavLage(eingabe: ShellMessung & { detailOffen: boolean }): 
     eingabe.tastatur
   if (eng) return 'flow'
   if (eingabe.detailOffen && eingabe.viewportBreite < UX_U1A_DESKTOP_AB_PX) return 'flow'
+  if (eingabe.viewportBreite < UX_U1A_VIER_TABS_AB_PX) return 'flow'
   if (eingabe.viewportBreite < UX_U1A_PHONE_BIS_PX) return 'bottom'
   return 'sticky'
 }
