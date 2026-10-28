@@ -273,6 +273,7 @@ type TripWorkspaceProps = {
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
   kopfzeile?: React.ReactNode
+  reiseoptionen?: React.ReactNode
   hinweis?: React.ReactNode
   aenderung?: React.ReactNode
   /**
@@ -377,6 +378,7 @@ export default function TripWorkspace({
   onVerbindungAnlegen,
   onPunktEntfernen,
   kopfzeile,
+  reiseoptionen,
   hinweis,
   aenderung,
   begleiter,
@@ -462,6 +464,8 @@ export default function TripWorkspace({
   const hinweisRef = React.useRef<Hinweis | null>(null)
   const reiseIdRef = React.useRef(reise.id)
   const [routeBetont, setRouteBetont] = React.useState(false)
+  const [kanteUnlesbar, setKanteUnlesbar] = React.useState(false)
+  const kanteUnlesbarRef = React.useRef(false)
   const [routeFokus, setRouteFokus] = React.useState(0)
   const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
   const [wurzelSchrift, setWurzelSchrift] = React.useState(16)
@@ -712,7 +716,13 @@ export default function TripWorkspace({
   const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
+    const kanteKnopf = route.querySelector<HTMLElement>('[data-u1c-kante][aria-pressed="true"]')
+    if (darfFokussieren(kanteKnopf)) return kanteKnopf
     if (anker?.art === 'tag') {
+      const lauf = [...route.querySelectorAll<HTMLElement>('[data-u1c-lauf]')].find((el) => (
+        (el.getAttribute('data-u1c-tage') ?? '').split(' ').includes(anker.id) && darfFokussieren(el)
+      ))
+      if (lauf) return lauf
       const knopf = [...route.querySelectorAll<HTMLElement>('[data-timeline-tag]')].find((el) => el.getAttribute('data-timeline-tag') === anker.id && darfFokussieren(el))
       if (knopf) return knopf
     }
@@ -807,6 +817,8 @@ export default function TripWorkspace({
     if (!reise.days.some((tag) => tag.id === tagId)) return
     if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
     setRouteBetont(false)
+    kanteUnlesbarRef.current = false
+    setKanteUnlesbar(false)
     setHinweisBeide(null)
     setAktiverTag(tagId)
     if (modus.ansicht !== 'plan') return
@@ -817,6 +829,29 @@ export default function TripWorkspace({
       return
     }
     modusSetzen(naechster, 'push')
+  }
+
+  const kanteWechseln = (kanteId: string, tagId: string) => {
+    if (!reise.days.some((tag) => tag.id === tagId)) return
+    if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
+    setRouteBetont(false)
+    kanteUnlesbarRef.current = false
+    setKanteUnlesbar(false)
+    setHinweisBeide(null)
+    setAktiverTag(tagId)
+    if (modus.ansicht !== 'plan') return
+    const naechster = { ansicht: 'plan' as const, bereich: null, tagId, kanteId, urlAnpassen: false as const }
+    const validiert = modusFuerReise(naechster, reise, ungeplantePunkte)
+    if (modusUrl(window.location.href, validiert) === aktuelleAdresse()) {
+      historieSchreiben(reise.id, validiert, 'replace', 'canonical', null)
+      return
+    }
+    modusSetzen(naechster, 'push')
+  }
+
+  const alleVerbindungenOeffnen = () => {
+    modusTastaturRef.current = false
+    modusSetzen({ ansicht: 'organisieren', bereich: 'mobilitaet', urlAnpassen: false }, 'push', true)
   }
 
   const preparationOeffnen = (preparationZiel?: PreparationZiel) => {
@@ -878,7 +913,16 @@ export default function TripWorkspace({
       }
       const reiseWechsel = reiseIdRef.current !== reise.id
       reiseIdRef.current = reise.id
-      if (reiseWechsel) setRouteBetont(false)
+      if (reiseWechsel) {
+        setRouteBetont(false)
+        kanteUnlesbarRef.current = false
+      }
+      const kanteRoh = params.getAll('kante')
+      const kanteUngueltigGeschrieben = gelesen.ansicht === 'plan' && kanteRoh.length > 0 && !gelesen.kanteId
+      if (art === 'pop' || reiseWechsel) kanteUnlesbarRef.current = kanteUngueltigGeschrieben
+      else if (kanteUngueltigGeschrieben) kanteUnlesbarRef.current = true
+      else if (gelesen.kanteId) kanteUnlesbarRef.current = false
+      setKanteUnlesbar(kanteUnlesbarRef.current)
       const gespeichert = reiseWechsel ? null : historyHinweisLesen(reise.id)
       const naechsterHinweis = reiseWechsel
         ? null
@@ -992,6 +1036,10 @@ export default function TripWorkspace({
       onZurRoute={routeZeigen}
       onRouteZeigenVorbereiten={(ziel) => routeLageMerken(ziel)}
       onEditorAktiv={setEditorAktiv}
+      kanteId={modus.ansicht === 'plan' ? modus.kanteId ?? null : null}
+      kanteUnlesbar={kanteUnlesbar}
+      onKanteWaehlen={kanteWechseln}
+      onAlleVerbindungen={alleVerbindungenOeffnen}
     />
   )
 
@@ -1173,6 +1221,7 @@ export default function TripWorkspace({
           kompakt={kompakt}
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
+          reiseoptionen={reiseoptionen}
         />
 
         {modusBereit ? (

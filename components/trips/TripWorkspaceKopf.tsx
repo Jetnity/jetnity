@@ -40,12 +40,14 @@ export default function TripWorkspaceKopf({
   kompakt,
   uebersicht,
   kopfzeile,
+  reiseoptionen,
 }: {
   reise: Trip
   quelle: TripSource
   kompakt: boolean
   uebersicht: UebersichtAbleitung
   kopfzeile?: ReactNode
+  reiseoptionen?: ReactNode
 }) {
   const gast = quelle === 'guest'
   const dichte = useKopfDichte()
@@ -105,6 +107,14 @@ export default function TripWorkspaceKopf({
       </div>
       {kopfzeile ? (
         <div className="border-t border-white/10 px-4 py-1 sm:px-5 xl:px-6">{kopfzeile}</div>
+      ) : null}
+      {reiseoptionen ? (
+        <details data-reiseoptionen className="border-t border-white/10 px-4 sm:px-5 xl:px-6">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40 [&::-webkit-details-marker]:hidden">
+            Reiseoptionen
+          </summary>
+          <div className="pb-2">{reiseoptionen}</div>
+        </details>
       ) : null}
     </section>
   )

@@ -1,68 +1,41 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-28 October 2026. **PRE-CODE PLAN SUBMITTED. STOP for independent Technical Lead acceptance.** No runtime implementation is authorized by this status.
+28 October 2026. **Implementation delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
 
-## Session evidence
+## Session
 
-Read from `cursor-cloud` `run-info`, then again after rename. Not inferred.
+Re-read from `cursor-cloud` `run-info` after the exact rename in this same session.
 
 - URL: https://cursor.com/agents/bc-4904589f-a8f0-4106-a65a-507bc53e084a
 - `bcId`: `bc-4904589f-a8f0-4106-a65a-507bc53e084a`
-- Name after rename read-back: `UX V1 U1-C Route Design Alignment 1 — Cursor Generation 1`
-- Branch reported by run-info: `feat/ux-v1-u1c-route-design-alignment-1`
-- Repository: `github.com/Jetnity/jetnity`
+- Read-back name: `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`
 - `originalModelName`: `grok-4.7-high-fast`
-- Required model binding: satisfied. No Auto substitution.
-- Logical task: Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1
-- Dispatch: https://github.com/Jetnity/jetnity/pull/1082#issuecomment-6476977093
-- Latest #751 read: https://github.com/Jetnity/jetnity/issues/751#issuecomment-6476986415
+- Earlier read-back `UX V1 U1-C Route Design Alignment 1 — Cursor Generation 1` was corrected. Technical Lead treats the model string as author-reported run-info, not an independent TL query.
 
-## Git evidence at plan write
-
-Fetched `origin/main` and this branch in this session.
+## Git
 
 | Fact | Value |
 | --- | --- |
-| HEAD parent / task seed | `408a4c5d50848ccbfcfc72b2aaca627168d10eb1` |
-| Seed tree | `88e775d4e718459ed9650d1ae71609c43f88b436` |
-| `origin/main` | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
+| Amendment read before edits | `97c4ad9afdaa5a215722f89556d6163f02b2f981` |
+| Accepted plan | `57f3207f28375ed0d96259592c37f265e5d2f1df` |
+| `origin/main` and merge-base | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
 | Main tree | `24770e02bd176f06040ccaf515783534ca5c83e6` |
-| Merge-base | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
-| Ahead / behind main before this plan commit | 3 / 0 |
 | Mode | `NORMAL` |
-| Plan review head | the commit that adds this status and the plan. The PR comment records that SHA. |
+| Review head | the commit that adds this status. The PR comment records its SHA. |
 
-Before the fetch, the local `origin/main` ref was the older `b7cadb7688f7bac84df0ea33a7b9ec1f3a9b7c48`. That ref was stale. It is not the baseline.
+## What landed
 
-Working tree at the plan commit contains only:
+The Reiseplan route is one chronological row per N12 run. The selected run opens a wrapping day chooser. Repeated visits stay on day and stage ids. Unassigned boundary dates stay unassigned. Planned-day text lists real contiguous ranges and says when dates are missing, duplicated, or not continuous. Country text uses the stored code’s name, with no flag. Internal `connection:` rows appear only between adjacent destination runs. The same edge id at more than one boundary is not selectable. An unknown or removed `kante` stays in the URL and shows an unavailable message without choosing another visit. Discard and delete sit in `Reiseoptionen`; confirmations and storage calls are unchanged. Back-to-top uses the live `--ux-u1a-nav-offset` when the bottom nav is fixed, and hides when that height is missing.
 
-- `docs/JETNITY_UX_V1_U1C_ROUTE_DESIGN_ALIGNMENT_1_PLAN_2026-10-28.md`
-- `docs/JETNITY_UX_V1_U1C_ROUTE_DESIGN_ALIGNMENT_1_STATUS_2026-10-28.md`
+## Checks in this session
 
-An environment-only `next-env.d.ts` path change was restored and is not part of the commit. No file under `app/`, `components/`, `lib/`, `hooks/`, `supabase/`, `types/`, or `public/` is changed. `docs/ACTIVE_WORK_STATUS.md` is unchanged because the task allowlist does not include it. Amendment D in the plan can add that pointer later.
+- Route, workspace-mode, chronology source, premium-plan source, and mobile-accessibility unit tests: pass.
+- Mounted N12 chronology browser tests, including root font 32px: pass. Chrome `148.0.7778.96`.
+- Mounted U1-B route/detail browser tests: pass after the route-row focus updates. One scroll assertion now allows 48px because revealing the focused run moved the restored position by about 35px; a jump to the top still fails.
+- Evidence browser test: pass. At 390×844, root 16px, scrolled route, the Back-to-top box did not intersect `[data-shell-nav="bottom"]`, and `elementFromPoint` hit the button and the nav separately.
+- `tsc --noEmit`: pass. `npm run build`: pass (Next.js 16.4.1). Lint on touched files: 0 errors. Pre-existing effect warnings remain. `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`: pass. Schema check still lists the same pre-existing LOCAL/UNAPPLIED RPCs.
+- Browser zoom, physical Safari, and VoiceOver: not run. Root 32px is root font size, not zoom.
 
-## Scope position
+## Still outside this slice
 
-The plan proposes a compact chronological visit route, wrapping day chooser, honest planned-day labels, existing adjacent `connection:` rows, `Reiseoptionen` placement, and a measured back-to-top clearance.
-
-It asks the Technical Lead to accept three implementation amendments before runtime edits:
-
-- A. Retarget N12, premium-plan, and U1-B tests that require every day chip and the duplicate stage summary to be visible in the route.
-- B. Prefer a single optional `kante` query for an existing adjacent `connection:` id. If rejected, connection rows stay non-interactive text.
-- C. Split the existing destructive button into a `reiseoptionen` slot without changing confirm or storage behavior.
-
-#1068, F01, provider activation, and the 44-day stage-duration observation stay outside this slice. The duration observation is explained in the plan and is not claimed as a silent save.
-
-## Gates
-
-- Ready: not set.
-- Merge: not performed.
-- Deploy / Production / provider / Auth / DB: not touched.
-- HOLD, STOP, and Product Owner gates: unchanged.
-- noindex and the USD 100 / month cap: unchanged.
-- Tests, typecheck, lint, and build: not run. This commit has no runtime change to validate.
-- Browser acceptance: not claimed. Root 32px, browser zoom, physical Safari, and VoiceOver were not run.
-
-## Next step
-
-Independent Technical Lead acceptance or CHANGES REQUIRED on the exact plan commit. Any review fix stays in this same session. No second writer and no follow-up slice.
+#1067 broader acceptance, #1068 organizer context, F01 travel roles, provider gates, and the 44-day stage-duration triage. No Ready, merge, deploy, or follow-up.

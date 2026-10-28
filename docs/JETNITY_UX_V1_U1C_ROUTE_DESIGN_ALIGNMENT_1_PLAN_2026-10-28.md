@@ -1,8 +1,12 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — PRE-CODE PLAN
 
+## Implementation acceptance — amendment 1
+
+Technical Lead accepted plan `57f3207f28375ed0d96259592c37f265e5d2f1df` with immutable amendment `97c4ad9afdaa5a215722f89556d6163f02b2f981`. Amendments A, B1, C and D are implemented as that amendment records them. The sections below remain the reviewed pre-code plan.
+
 28 October 2026. Cursor Generation 1. Draft PR #1082. Tracking #1081. Parent #1064. Visual acceptance #1067 stays open. Organizer context #1068 stays queued and is not this writer.
 
-This document is the pre-code plan. It authorizes no runtime edit. Implementation starts only after an independent Technical Lead accepts this plan, including the amendments named below.
+This document was the pre-code plan. Runtime edits began only after the amendment commit.
 
 ## Binding
 

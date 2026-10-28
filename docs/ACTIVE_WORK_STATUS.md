@@ -1,5 +1,11 @@
 # Jetnity – Active Work Status
 
+<!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_BEGIN -->
+## Aktueller Writer — UX V1 Route Design Alignment 1
+
+28 October 2026. Draft PR #1082, branch `feat/ux-v1-u1c-route-design-alignment-1`, tracking #1081. Session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName=grok-4.7-high-fast`. Implementation is on this branch and is waiting for independent exact-head review. This pointer is not Ready, merge, #1067 closure, or #1068. #751 remains the canonical live index. The blocks below stay historical.
+<!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_END -->
+
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->
 ## Aktueller R109-Checkpoint — fünf Produkt-Lanes akzeptiert
 

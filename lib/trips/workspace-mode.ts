@@ -13,7 +13,9 @@ import type { Trip, TripItem } from '@/types/trips'
 
 export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung'] as const
 const WORKSPACE_BEREICHE = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
-export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'vorbereitung', 'reisender'] as const
+export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'vorbereitung', 'reisender'] as const
+/** Opaque plan selection. Not travel intent. Stage ids are at most 80 characters each. */
+export const WORKSPACE_KANTE_MAX = 200
 
 export type WorkspaceAnsicht = (typeof WORKSPACE_ANSICHTEN)[number]
 export type WorkspaceBereich = (typeof WORKSPACE_BEREICHE)[number]
@@ -23,6 +25,8 @@ export type WorkspaceModus = {
   bereich: WorkspaceBereich | null
   tagId?: string
   itemId?: string
+  /** Existing connection id, for example `connection:<stageId>:<stageId>`. Presentation only. */
+  kanteId?: string
   preparationZiel?: PreparationZiel
   /** Die sichtbare Adresse weicht von der kanonischen Form ab und wird ersetzt. */
   urlAnpassen: boolean
@@ -68,9 +72,16 @@ function rohLesen(params: URLSearchParams): Navigation {
   if (ansicht === 'plan') {
     const tagId = refLesen(params, 'tag', 80) // Trip day/item schema: max(80)
     const itemId = refLesen(params, 'punkt', 80)
+    const kanteId = refLesen(params, 'kante', WORKSPACE_KANTE_MAX)
     // Ein mehrdeutiger/malformed Tag darf kein Child öffnen.
     if (params.has('tag') && !tagId) return { ansicht, bereich: null }
-    return { ansicht, bereich: null, ...(tagId && { tagId }), ...(itemId && { itemId }) }
+    return {
+      ansicht,
+      bereich: null,
+      ...(tagId && { tagId }),
+      ...(itemId && { itemId }),
+      ...(kanteId && { kanteId }),
+    }
   }
   if (ansicht === 'vorbereitung') {
     const bereich = einzeln(params, 'vorbereitung')
@@ -100,6 +111,7 @@ export function queryFuerModus(aktuell: URLSearchParams, modus: Navigation): URL
   if (modus.ansicht === 'plan') {
     if (refGueltig(modus.tagId, 80)) next.append('tag', modus.tagId)
     if (refGueltig(modus.itemId, 80) && (!modus.tagId || refGueltig(modus.tagId, 80))) next.append('punkt', modus.itemId)
+    if (refGueltig(modus.kanteId, WORKSPACE_KANTE_MAX)) next.append('kante', modus.kanteId)
   }
   if (modus.ansicht === 'vorbereitung' && modus.preparationZiel && istPreparationBereich(modus.preparationZiel.bereich)) {
     next.append('vorbereitung', modus.preparationZiel.bereich)
@@ -145,7 +157,13 @@ export function modusFuerReise(modus: WorkspaceModus, reise: Trip, ohneTag: read
 /** Sicherer Parent eines direkten Links; niemals einen Tag aus einer ID erfinden. */
 export function detailElternModus(modus: WorkspaceModus): WorkspaceModus {
   if (modus.ansicht === 'plan') {
-    return { ansicht: 'plan', bereich: null, ...(modus.tagId && { tagId: modus.tagId }), urlAnpassen: false }
+    return {
+      ansicht: 'plan',
+      bereich: null,
+      ...(modus.tagId && { tagId: modus.tagId }),
+      ...(modus.kanteId && { kanteId: modus.kanteId }),
+      urlAnpassen: false,
+    }
   }
   return { ansicht: 'organisieren', bereich: null, urlAnpassen: false }
 }
