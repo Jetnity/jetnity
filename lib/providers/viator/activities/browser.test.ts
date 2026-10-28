@@ -10,6 +10,12 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { mountViatorHarness } from '@/lib/providers/viator/activities/browser-harness'
+
+test('the browser harness stays imported for reachability', () => {
+  assert.equal(typeof mountViatorHarness, 'function')
+})
+
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
 async function css(): Promise<string> {

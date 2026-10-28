@@ -44,4 +44,10 @@ function Ablauf() {
   )
 }
 
-createRoot(document.getElementById('root')!).render(<Ablauf />)
+export function mountViatorHarness() {
+  const root = document.getElementById('root')
+  if (!root) return
+  createRoot(root).render(<Ablauf />)
+}
+
+if (typeof document !== 'undefined') mountViatorHarness()
