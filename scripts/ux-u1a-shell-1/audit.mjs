@@ -14,6 +14,7 @@ import { chromium } from 'playwright'
 const PORT = process.env.AUDIT_PORT || '3462'
 const BASIS = process.env.AUDIT_BASE || `http://127.0.0.1:${PORT}`
 const EVIDENZ = process.env.AUDIT_EVIDENCE_DIR || join(process.cwd(), 'docs/evidence/ux-v1-u1a-shell-1')
+const BILDER = process.env.AUDIT_SCREENSHOT_DIR || '/opt/cursor/artifacts/ux-u1a-r1'
 const SHA = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
 const NETZ_MUSTER = /\/api\/(flights|hotels|activities|mobility|rental-cars|reisebegleiter)\b/
 const TITEL =
@@ -98,12 +99,28 @@ function messen() {
   const titel = kopf?.querySelector('h1')
   const knoepfe = [...document.querySelectorAll('[data-workspace-mode-nav] button')].map((el) => {
     const rand = el.getBoundingClientRect()
+    const bereich = document.createRange()
+    bereich.selectNodeContents(el)
+    const text = bereich.getBoundingClientRect()
+    const enthalten =
+      text.width === 0 ||
+      (text.left >= rand.left - 1 &&
+        text.right <= rand.right + 1 &&
+        text.top >= rand.top - 1 &&
+        text.bottom <= rand.bottom + 1)
     return {
       text: (el.textContent || '').replace(/\s+/g, ' ').trim(),
       width: rand.width,
       height: rand.height,
       top: rand.top,
       left: rand.left,
+      right: rand.right,
+      bottom: rand.bottom,
+      textLeft: text.left,
+      textRight: text.right,
+      textTop: text.top,
+      textBottom: text.bottom,
+      enthalten,
     }
   })
   const navStil = nav ? getComputedStyle(nav) : null
@@ -229,9 +246,20 @@ function pruefe(name, wert, erwartet) {
 
 async function haupt() {
   mkdirSync(EVIDENZ, { recursive: true })
+  mkdirSync(BILDER, { recursive: true })
   const server = await serverStarten()
   const browser = await chromium.launch({ headless: true })
-  const ergebnis = { sha: SHA, basis: BASIS, laeufe: [], netz: [], fehler: [] }
+  const ergebnis = {
+    rejectedHead: '7c510c3622488b69fc3d1a1abf397ceff821a5d2',
+    gitHeadAtMeasurement: SHA,
+    measurement: 'uncommitted R1 working tree on top of rejectedHead; gitHeadAtMeasurement is not the passing head',
+    screenshots: 'private artifacts only, not committed',
+    screenshotDir: BILDER,
+    basis: BASIS,
+    laeufe: [],
+    netz: [],
+    fehler: [],
+  }
   try {
     for (const viewport of VIEWPORTS) {
       const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } })
@@ -239,6 +267,7 @@ async function haupt() {
       const stand = await page.evaluate(messen)
       ergebnis.netz.push(...netz)
       const klein = stand.knoepfe.filter((knopf) => knopf.width < 44 || knopf.height < 44)
+      const ausserhalb = stand.knoepfe.filter((knopf) => knopf.enthalten === false)
       const zeilen = new Set(stand.knoepfe.map((knopf) => Math.round(knopf.top)))
       const lauf = {
         name: viewport.name,
@@ -250,8 +279,22 @@ async function haupt() {
           ueberlauf: stand.ueberlauf,
           titelGleich: stand.titel === TITEL,
           bangkok: (stand.route.match(/Bangkok/g) || []).length,
-          knopfTexte: stand.knoepfe.map((knopf) => knopf.text),
-          kleineZiele: klein,
+        knopfTexte: stand.knoepfe.map((knopf) => knopf.text),
+        rechtecke: stand.knoepfe.map((knopf) => ({
+          text: knopf.text,
+          left: knopf.left,
+          right: knopf.right,
+          top: knopf.top,
+          bottom: knopf.bottom,
+          textLeft: knopf.textLeft,
+          textRight: knopf.textRight,
+          textTop: knopf.textTop,
+          textBottom: knopf.textBottom,
+          enthalten: knopf.enthalten,
+          width: knopf.width,
+          height: knopf.height,
+        })),
+        kleineZiele: klein,
           zeilen: zeilen.size,
           titelSchneidetNav: stand.titelSchneidetNav,
           suchfelder: stand.suchfelder,
@@ -267,6 +310,7 @@ async function haupt() {
       pruefe(`${viewport.name} titel`, stand.titel, TITEL)
       if (stand.ueberlauf > 1) throw new Error(`${viewport.name} horizontaler Überlauf ${stand.ueberlauf}`)
       if (klein.length) throw new Error(`${viewport.name} Ziel unter 44px ${JSON.stringify(klein)}`)
+      if (ausserhalb.length) throw new Error(`${viewport.name} Text ausserhalb ${JSON.stringify(ausserhalb)}`)
       if (stand.knoepfe.map((knopf) => knopf.text).join('|') !== 'Übersicht|Reiseplan|Organisieren|Vorbereitung') {
         throw new Error(`${viewport.name} Beschriftungen ${stand.knoepfe.map((knopf) => knopf.text).join('|')}`)
       }
@@ -277,9 +321,9 @@ async function haupt() {
       if (stand.factsOffen !== false) throw new Error(`${viewport.name} Angaben sind nicht zugeklappt`)
       if (viewport.lage === 'bottom' && stand.position !== 'fixed') throw new Error(`${viewport.name} nicht fixed`)
       if (viewport.lage !== 'bottom' && stand.position === 'fixed') throw new Error(`${viewport.name} unerwartet fixed`)
-      await page.screenshot({ path: join(EVIDENZ, `${viewport.name}.png`), fullPage: false })
+      await page.screenshot({ path: join(BILDER, `${viewport.name}.png`), fullPage: false })
       await page.locator('[data-workspace-mode-nav]').scrollIntoViewIfNeeded()
-      await page.screenshot({ path: join(EVIDENZ, `${viewport.name}-nav.png`), fullPage: false })
+      await page.screenshot({ path: join(BILDER, `${viewport.name}-nav.png`), fullPage: false })
       await page.close()
     }
 
@@ -297,7 +341,7 @@ async function haupt() {
     if (!offen.offen || !offen.text.includes('Noch offen') || !offen.text.includes('Reisende')) {
       throw new Error(`Disclosure unvollständig ${JSON.stringify(offen)}`)
     }
-    await page.screenshot({ path: join(EVIDENZ, '390-account-disclosure.png'), fullPage: false })
+    await page.screenshot({ path: join(BILDER, '390-account-disclosure.png'), fullPage: false })
 
     const vorher = page.url()
     await page.getByRole('button', { name: 'Reiseplan', exact: true }).click()
@@ -341,7 +385,7 @@ async function haupt() {
       }
     })
     if (!fokus.ok) throw new Error(`Fokus verdeckt ${JSON.stringify(fokus)}`)
-    await page.screenshot({ path: join(EVIDENZ, '390-focus.png'), fullPage: false })
+    await page.screenshot({ path: join(BILDER, '390-focus.png'), fullPage: false })
     ergebnis.fokus = fokus
     if (netz.length) throw new Error(`Fokus hat Provider-Netz ausgelöst: ${netz.join(', ')}`)
 
@@ -377,7 +421,7 @@ async function haupt() {
     if (tastatur.ersetzt && nachTastatur.position === 'fixed') {
       throw new Error('Tastatur-Stellvertreter lässt die Leiste fixed')
     }
-    await page.screenshot({ path: join(EVIDENZ, '390-keyboard-standin.png'), fullPage: false })
+    await page.screenshot({ path: join(BILDER, '390-keyboard-standin.png'), fullPage: false })
     await page.close()
 
     for (const breite of [390, 768]) {
@@ -387,15 +431,35 @@ async function haupt() {
       ergebnis.laeufe.push({
         name: `${breite}-root32`,
         erwartet: 'flow',
-        stand: { lage: stand.lage, position: stand.position, rootPx: stand.rootPx, ueberlauf: stand.ueberlauf, zeilen: new Set(stand.knoepfe.map((knopf) => Math.round(knopf.top))).size },
+        stand: {
+          lage: stand.lage,
+          position: stand.position,
+          rootPx: stand.rootPx,
+          ueberlauf: stand.ueberlauf,
+          zeilen: new Set(stand.knoepfe.map((knopf) => Math.round(knopf.top))).size,
+          rechtecke: stand.knoepfe.map((knopf) => ({
+            text: knopf.text,
+            left: knopf.left,
+            right: knopf.right,
+            textLeft: knopf.textLeft,
+            textRight: knopf.textRight,
+            textTop: knopf.textTop,
+            textBottom: knopf.textBottom,
+            width: knopf.width,
+            height: knopf.height,
+            enthalten: knopf.enthalten,
+          })),
+        },
       })
       if (Math.round(stand.rootPx) < 32) throw new Error(`${breite} root blieb ${stand.rootPx}`)
       pruefe(`${breite} root lage`, stand.lage, 'flow')
       if (stand.position === 'fixed') throw new Error(`${breite} root32 ist fixed`)
       if (stand.ueberlauf > 1) throw new Error(`${breite} root32 Überlauf ${stand.ueberlauf}`)
       const kleine = stand.knoepfe.filter((knopf) => knopf.height < 44 || knopf.width < 44)
+      const ausserhalb = stand.knoepfe.filter((knopf) => knopf.enthalten === false)
       if (kleine.length) throw new Error(`${breite} root32 Ziel unter 44 ${JSON.stringify(kleine)}`)
-      await gross.screenshot({ path: join(EVIDENZ, `${breite}-root32.png`), fullPage: false })
+      if (ausserhalb.length) throw new Error(`${breite} root32 Text ausserhalb ${JSON.stringify(ausserhalb)}`)
+      await gross.screenshot({ path: join(BILDER, `${breite}-root32.png`), fullPage: false })
       await gross.close()
     }
 
@@ -419,22 +483,29 @@ async function haupt() {
     if (Math.round(zoom.rootPx) >= 32) throw new Error('Zoom wurde mit Wurzelschrift vermischt')
     pruefe('zoom lage', zoom.lage, 'flow')
     if (zoom.position === 'fixed') throw new Error('Zoom 200% lässt die Leiste fixed')
+    const zoomAus = zoom.knoepfe.filter((knopf) => knopf.enthalten === false)
+    if (zoomAus.length) throw new Error(`Zoom Text ausserhalb ${JSON.stringify(zoomAus)}`)
     const zoomTitel = await zoomSeite.evaluate(() => {
       const h1 = document.querySelector('[data-workspace-identity] h1')
       const rand = h1?.getBoundingClientRect()
+      const shell = document.querySelector('[data-workspace-shell]')
       return {
         text: (h1?.textContent || '').replace(/\s+/g, ' ').trim(),
         breite: rand?.width ?? null,
-        sichtbarRechts: rand ? rand.right <= (window.visualViewport?.width ?? window.innerWidth) + 1 : false,
+        right: rand?.right ?? null,
+        visualWidth: window.visualViewport?.width ?? null,
+        shellMarker: shell instanceof HTMLElement,
+        shellStyle: shell instanceof HTMLElement ? shell.getAttribute('style') : null,
       }
     })
     ergebnis.zoom.titel = zoomTitel
-    if (!zoomTitel.sichtbarRechts || zoomTitel.text !== TITEL) {
-      throw new Error(`Zoom schneidet den Titel ${JSON.stringify(zoomTitel)}`)
-    }
-    await zoomSeite.screenshot({ path: join(EVIDENZ, 'zoom-200.png'), fullPage: false })
+    ergebnis.zoom.disposition =
+      'CDP page scale 2 is not root-font 200%. The nav leaves the fixed bottom bar. This slice does not set inline max-width on a shell or the site header. The layout viewport can stay wider than the visual window, so a long title may need a pan. That is a bounded limit, not a 200% accessibility pass.'
+    if (zoomTitel.text !== TITEL) throw new Error(`Zoom Titel ${zoomTitel.text}`)
+    if (zoomTitel.shellMarker || zoomTitel.shellStyle) throw new Error(`Shell-Mutation ${JSON.stringify(zoomTitel)}`)
+    await zoomSeite.screenshot({ path: join(BILDER, 'zoom-200.png'), fullPage: false })
     await zoomSeite.locator('[data-workspace-mode-nav]').scrollIntoViewIfNeeded()
-    await zoomSeite.screenshot({ path: join(EVIDENZ, 'zoom-200-nav.png'), fullPage: false })
+    await zoomSeite.screenshot({ path: join(BILDER, 'zoom-200-nav.png'), fullPage: false })
     await zoomSeite.close()
 
     const leer = await browser.newPage({ viewport: { width: 390, height: 844 } })
@@ -467,12 +538,17 @@ async function haupt() {
       } catch {
         server.kill('SIGTERM')
       }
+      server.stdout?.destroy()
+      server.stderr?.destroy()
       server.unref()
     }
   }
   if (ergebnis.netz.length) throw new Error(`Unerwartetes Netz ${ergebnis.netz.join(', ')}`)
-  writeFileSync(join(EVIDENZ, 'report.json'), JSON.stringify(ergebnis, null, 2))
+  const bericht = JSON.stringify(ergebnis, null, 2)
+  writeFileSync(join(EVIDENZ, 'report.json'), bericht)
+  writeFileSync(join(BILDER, 'report.json'), bericht)
   console.log(JSON.stringify(ergebnis, null, 2))
+  process.exit(0)
 }
 
 haupt().catch((fehler) => {

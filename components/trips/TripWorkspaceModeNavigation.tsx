@@ -112,23 +112,15 @@ export default function TripWorkspaceModeNavigation({
   }, [ansicht, lage])
 
   useLayoutEffect(() => {
-    const hulle = document.querySelector('[data-workspace-shell]')
-    const vv = window.visualViewport
-    if (hulle instanceof HTMLElement) {
-      if (messung.browserZoom >= 1.9 && vv && vv.width > 0) {
-        hulle.style.maxWidth = `${Math.floor(vv.width)}px`
-        hulle.style.marginLeft = `${Math.max(0, Math.floor(vv.offsetLeft))}px`
-      } else {
-        hulle.style.removeProperty('max-width')
-        hulle.style.removeProperty('margin-left')
-      }
-    }
     const wurzel = document.documentElement
     const nav = navRef.current
-    if (lage !== 'bottom' || !nav) {
+    const loeschen = () => {
       wurzel.style.removeProperty('--ux-u1a-nav-offset')
       wurzel.style.scrollPaddingBottom = ''
-      return
+    }
+    if (lage !== 'bottom' || !nav) {
+      loeschen()
+      return loeschen
     }
     const setzen = () => {
       const hoehe = `${nav.offsetHeight}px`
@@ -140,14 +132,9 @@ export default function TripWorkspaceModeNavigation({
     beobachter.observe(nav)
     return () => {
       beobachter.disconnect()
-      wurzel.style.removeProperty('--ux-u1a-nav-offset')
-      wurzel.style.scrollPaddingBottom = ''
-      if (hulle instanceof HTMLElement) {
-        hulle.style.removeProperty('max-width')
-        hulle.style.removeProperty('margin-left')
-      }
+      loeschen()
     }
-  }, [lage, ansicht, messung.browserZoom])
+  }, [lage, ansicht])
 
   useLayoutEffect(() => {
     if (lage !== 'bottom') return
@@ -174,11 +161,12 @@ export default function TripWorkspaceModeNavigation({
         aria-current={aktiv ? 'page' : undefined}
         onClick={(ereignis) => onWechsel(modus, ereignis.detail === 0)}
         className={cn(
-          'inline-flex min-h-11 min-w-11 items-center justify-center whitespace-normal break-words px-2 py-2 text-center text-sm font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+          'min-h-11 min-w-11 px-3 py-2 text-center text-sm font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
           variante === 'sticky' &&
-            'w-full rounded-full sm:w-auto sm:shrink-0 sm:grow sm:basis-auto sm:whitespace-nowrap sm:px-3.5',
-          variante === 'bottom' && 'w-full rounded-2xl px-1 leading-4',
-          variante === 'flow' && 'w-auto min-w-0 flex-1 basis-36 rounded-full px-3',
+            'inline-flex w-full items-center justify-center whitespace-normal rounded-full sm:w-auto sm:shrink-0 sm:grow sm:basis-auto sm:whitespace-nowrap sm:px-3.5',
+          variante === 'bottom' &&
+            'inline-flex w-auto shrink-0 grow-0 basis-auto items-center justify-center whitespace-nowrap rounded-2xl',
+          variante === 'flow' && 'block w-full min-w-0 whitespace-normal rounded-full',
           aktiv ? 'bg-brand-800 text-white' : 'text-brand-800 hover:bg-surface-50',
         )}
       >
@@ -196,7 +184,7 @@ export default function TripWorkspaceModeNavigation({
         data-shell-nav="bottom"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line-200 bg-white pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] shadow-[0_-8px_24px_rgba(15,46,42,0.06)]"
       >
-        <div className="grid min-w-0 grid-cols-4 gap-1 px-1 py-1">
+        <div className="flex min-w-0 max-w-full flex-wrap items-stretch justify-center gap-1 px-1 py-1">
           {WORKSPACE_ANSICHTEN.map((modus) => knopf(modus, 'bottom'))}
         </div>
       </nav>
@@ -210,9 +198,9 @@ export default function TripWorkspaceModeNavigation({
         aria-label="Reiseansicht"
         data-workspace-mode-nav
         data-shell-nav="flow"
-        className="relative z-30 mt-3 min-w-0 max-w-full"
+        className="sticky top-[calc(72px+env(safe-area-inset-top))] z-30 mt-3 min-w-0 max-w-full"
       >
-        <div className="flex min-w-0 max-w-full flex-wrap gap-1 rounded-3xl border border-line-200 bg-white p-2 shadow-[0_8px_24px_rgba(15,46,42,0.05)]">
+        <div className="grid min-w-0 max-w-full grid-cols-1 gap-1 rounded-3xl border border-line-200 bg-white p-2 shadow-[0_8px_24px_rgba(15,46,42,0.05)]">
           {WORKSPACE_ANSICHTEN.map((modus) => knopf(modus, 'flow'))}
         </div>
       </nav>

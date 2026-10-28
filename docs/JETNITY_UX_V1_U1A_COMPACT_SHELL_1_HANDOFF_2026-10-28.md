@@ -9,11 +9,11 @@ Stop. Same session only if Root asks for a fix. A new head invalidates this evid
 - Status: `docs/JETNITY_UX_V1_U1A_COMPACT_SHELL_1_STATUS_2026-10-28.md`
 - Self-review: `docs/JETNITY_UX_V1_U1A_COMPACT_SHELL_1_SELF_REVIEW_2026-10-28.md`
 - Report: `docs/JETNITY_UX_V1_U1A_COMPACT_SHELL_1_REPORT_2026-10-28.md`
-- Browser JSON: `docs/evidence/ux-v1-u1a-shell-1/report.json`
+- Rect JSON only: `docs/evidence/ux-v1-u1a-shell-1/report.json`. Its `gitHeadAtMeasurement` is the rejected head, not this correction.
 
 ## Behavior
 
-`shellNavLage` in `lib/trips/ux-u1a-shell-1.ts` chooses `flow`, `bottom`, or `sticky`. The navigation component measures width, root font, `visualViewport.scale` / outer-inner ratio, and visual-viewport height loss. At page scale >= 1.9 it also caps `[data-workspace-shell]` to the visual viewport width so the stored title wraps inside the zoomed window. The site header is outside that shell and is not restyled.
+`shellNavLage` chooses `flow`, `bottom`, or `sticky`. Flow is one full-width label per row, sticky under the site header, so large text stays inside the button and does not slide under the header. There is no shell `max-width` mutation. Page scale 2 does not reflow the site header; that remains a bounded limit.
 
 Guest/account text and the header slot for delete/discard are unchanged in meaning. `Reise ändern` is still the separate action. Overview still renders the existing attention list, audit, and per-stage essentials.
 

@@ -1,5 +1,9 @@
 {
-  "sha": "bcd4cb9d",
+  "rejectedHead": "7c510c3622488b69fc3d1a1abf397ceff821a5d2",
+  "gitHeadAtMeasurement": "7c510c36",
+  "measurement": "uncommitted R1 working tree on top of rejectedHead; gitHeadAtMeasurement is not the passing head",
+  "screenshots": "private artifacts only, not committed",
+  "screenshotDir": "/opt/cursor/artifacts/ux-u1a-r1",
   "basis": "http://127.0.0.1:3462",
   "laeufe": [
     {
@@ -7,7 +11,7 @@
       "erwartet": "flow",
       "stand": {
         "lage": "flow",
-        "position": "relative",
+        "position": "sticky",
         "save": "device",
         "ueberlauf": 0,
         "titelGleich": true,
@@ -17,6 +21,64 @@
           "Reiseplan",
           "Organisieren",
           "Vorbereitung"
+        ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 21,
+            "right": 259,
+            "top": 814,
+            "bottom": 858,
+            "textLeft": 106.109375,
+            "textRight": 173.890625,
+            "textTop": 826,
+            "textBottom": 845,
+            "enthalten": true,
+            "width": 238,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 21,
+            "right": 259,
+            "top": 862,
+            "bottom": 906,
+            "textLeft": 106.09375,
+            "textRight": 173.90625,
+            "textTop": 874,
+            "textBottom": 893,
+            "enthalten": true,
+            "width": 238,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 21,
+            "right": 259,
+            "top": 910,
+            "bottom": 954,
+            "textLeft": 94.390625,
+            "textRight": 185.59375,
+            "textTop": 922,
+            "textBottom": 941,
+            "enthalten": true,
+            "width": 238,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 21,
+            "right": 259,
+            "top": 958,
+            "bottom": 1002,
+            "textLeft": 93.53125,
+            "textRight": 186.46875,
+            "textTop": 970,
+            "textBottom": 989,
+            "enthalten": true,
+            "width": 238,
+            "height": 44
+          }
         ],
         "kleineZiele": [],
         "zeilen": 4,
@@ -38,7 +100,7 @@
       "erwartet": "flow",
       "stand": {
         "lage": "flow",
-        "position": "relative",
+        "position": "sticky",
         "save": "device",
         "ueberlauf": 0,
         "titelGleich": true,
@@ -48,6 +110,64 @@
           "Reiseplan",
           "Organisieren",
           "Vorbereitung"
+        ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 21,
+            "right": 299,
+            "top": 733.5,
+            "bottom": 777.5,
+            "textLeft": 126.109375,
+            "textRight": 193.890625,
+            "textTop": 745.5,
+            "textBottom": 764.5,
+            "enthalten": true,
+            "width": 278,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 21,
+            "right": 299,
+            "top": 781.5,
+            "bottom": 825.5,
+            "textLeft": 126.09375,
+            "textRight": 193.90625,
+            "textTop": 793.5,
+            "textBottom": 812.5,
+            "enthalten": true,
+            "width": 278,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 21,
+            "right": 299,
+            "top": 829.5,
+            "bottom": 873.5,
+            "textLeft": 114.390625,
+            "textRight": 205.59375,
+            "textTop": 841.5,
+            "textBottom": 860.5,
+            "enthalten": true,
+            "width": 278,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 21,
+            "right": 299,
+            "top": 877.5,
+            "bottom": 921.5,
+            "textLeft": 113.53125,
+            "textRight": 206.46875,
+            "textTop": 889.5,
+            "textBottom": 908.5,
+            "enthalten": true,
+            "width": 278,
+            "height": 44
+          }
         ],
         "kleineZiele": [],
         "zeilen": 4,
@@ -80,8 +200,66 @@
           "Organisieren",
           "Vorbereitung"
         ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 26.59375,
+            "right": 118.375,
+            "top": 704,
+            "bottom": 748,
+            "textLeft": 38.59375,
+            "textRight": 106.375,
+            "textTop": 716,
+            "textBottom": 735,
+            "enthalten": true,
+            "width": 91.78125,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 122.375,
+            "right": 214.1875,
+            "top": 704,
+            "bottom": 748,
+            "textLeft": 134.375,
+            "textRight": 202.1875,
+            "textTop": 716,
+            "textBottom": 735,
+            "enthalten": true,
+            "width": 91.8125,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 218.1875,
+            "right": 333.390625,
+            "top": 704,
+            "bottom": 748,
+            "textLeft": 230.1875,
+            "textRight": 321.390625,
+            "textTop": 716,
+            "textBottom": 735,
+            "enthalten": true,
+            "width": 115.203125,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 121.53125,
+            "right": 238.46875,
+            "top": 752,
+            "bottom": 796,
+            "textLeft": 133.53125,
+            "textRight": 226.46875,
+            "textTop": 764,
+            "textBottom": 783,
+            "enthalten": true,
+            "width": 116.9375,
+            "height": 44
+          }
+        ],
         "kleineZiele": [],
-        "zeilen": 1,
+        "zeilen": 2,
         "titelSchneidetNav": false,
         "suchfelder": 0,
         "factsOffen": false,
@@ -111,8 +289,66 @@
           "Organisieren",
           "Vorbereitung"
         ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 41.59375,
+            "right": 133.375,
+            "top": 748,
+            "bottom": 792,
+            "textLeft": 53.59375,
+            "textRight": 121.375,
+            "textTop": 760,
+            "textBottom": 779,
+            "enthalten": true,
+            "width": 91.78125,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 137.375,
+            "right": 229.1875,
+            "top": 748,
+            "bottom": 792,
+            "textLeft": 149.375,
+            "textRight": 217.1875,
+            "textTop": 760,
+            "textBottom": 779,
+            "enthalten": true,
+            "width": 91.8125,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 233.1875,
+            "right": 348.390625,
+            "top": 748,
+            "bottom": 792,
+            "textLeft": 245.1875,
+            "textRight": 336.390625,
+            "textTop": 760,
+            "textBottom": 779,
+            "enthalten": true,
+            "width": 115.203125,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 136.53125,
+            "right": 253.46875,
+            "top": 796,
+            "bottom": 840,
+            "textLeft": 148.53125,
+            "textRight": 241.46875,
+            "textTop": 808,
+            "textBottom": 827,
+            "enthalten": true,
+            "width": 116.9375,
+            "height": 44
+          }
+        ],
         "kleineZiele": [],
-        "zeilen": 1,
+        "zeilen": 2,
         "titelSchneidetNav": false,
         "suchfelder": 0,
         "factsOffen": false,
@@ -142,8 +378,66 @@
           "Organisieren",
           "Vorbereitung"
         ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 61.59375,
+            "right": 153.375,
+            "top": 836,
+            "bottom": 880,
+            "textLeft": 73.59375,
+            "textRight": 141.375,
+            "textTop": 848,
+            "textBottom": 867,
+            "enthalten": true,
+            "width": 91.78125,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 157.375,
+            "right": 249.1875,
+            "top": 836,
+            "bottom": 880,
+            "textLeft": 169.375,
+            "textRight": 237.1875,
+            "textTop": 848,
+            "textBottom": 867,
+            "enthalten": true,
+            "width": 91.8125,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 253.1875,
+            "right": 368.390625,
+            "top": 836,
+            "bottom": 880,
+            "textLeft": 265.1875,
+            "textRight": 356.390625,
+            "textTop": 848,
+            "textBottom": 867,
+            "enthalten": true,
+            "width": 115.203125,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 156.53125,
+            "right": 273.46875,
+            "top": 884,
+            "bottom": 928,
+            "textLeft": 168.53125,
+            "textRight": 261.46875,
+            "textTop": 896,
+            "textBottom": 915,
+            "enthalten": true,
+            "width": 116.9375,
+            "height": 44
+          }
+        ],
         "kleineZiele": [],
-        "zeilen": 1,
+        "zeilen": 2,
         "titelSchneidetNav": false,
         "suchfelder": 0,
         "factsOffen": false,
@@ -172,6 +466,64 @@
           "Reiseplan",
           "Organisieren",
           "Vorbereitung"
+        ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 29,
+            "right": 191.34375,
+            "top": 525.5,
+            "bottom": 569.5,
+            "textLeft": 76.28125,
+            "textRight": 144.0625,
+            "textTop": 537.5,
+            "textBottom": 556.5,
+            "enthalten": true,
+            "width": 162.34375,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 195.34375,
+            "right": 357.71875,
+            "top": 525.5,
+            "bottom": 569.5,
+            "textLeft": 242.625,
+            "textRight": 310.4375,
+            "textTop": 537.5,
+            "textBottom": 556.5,
+            "enthalten": true,
+            "width": 162.375,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 361.71875,
+            "right": 547.484375,
+            "top": 525.5,
+            "bottom": 569.5,
+            "textLeft": 409,
+            "textRight": 500.203125,
+            "textTop": 537.5,
+            "textBottom": 556.5,
+            "enthalten": true,
+            "width": 185.765625,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 551.484375,
+            "right": 738.984375,
+            "top": 525.5,
+            "bottom": 569.5,
+            "textLeft": 598.765625,
+            "textRight": 691.703125,
+            "textTop": 537.5,
+            "textBottom": 556.5,
+            "enthalten": true,
+            "width": 187.5,
+            "height": 44
+          }
         ],
         "kleineZiele": [],
         "zeilen": 1,
@@ -204,6 +556,64 @@
           "Organisieren",
           "Vorbereitung"
         ],
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 109,
+            "right": 399.34375,
+            "top": 530,
+            "bottom": 574,
+            "textLeft": 220.28125,
+            "textRight": 288.0625,
+            "textTop": 542,
+            "textBottom": 561,
+            "enthalten": true,
+            "width": 290.34375,
+            "height": 44
+          },
+          {
+            "text": "Reiseplan",
+            "left": 403.34375,
+            "right": 693.71875,
+            "top": 530,
+            "bottom": 574,
+            "textLeft": 514.625,
+            "textRight": 582.4375,
+            "textTop": 542,
+            "textBottom": 561,
+            "enthalten": true,
+            "width": 290.375,
+            "height": 44
+          },
+          {
+            "text": "Organisieren",
+            "left": 697.71875,
+            "right": 1011.484375,
+            "top": 530,
+            "bottom": 574,
+            "textLeft": 809,
+            "textRight": 900.203125,
+            "textTop": 542,
+            "textBottom": 561,
+            "enthalten": true,
+            "width": 313.765625,
+            "height": 44
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 1015.484375,
+            "right": 1330.984375,
+            "top": 530,
+            "bottom": 574,
+            "textLeft": 1126.765625,
+            "textRight": 1219.703125,
+            "textTop": 542,
+            "textBottom": 561,
+            "enthalten": true,
+            "width": 315.5,
+            "height": 44
+          }
+        ],
         "kleineZiele": [],
         "zeilen": 1,
         "titelSchneidetNav": false,
@@ -224,10 +634,60 @@
       "erwartet": "flow",
       "stand": {
         "lage": "flow",
-        "position": "relative",
+        "position": "sticky",
         "rootPx": 32,
         "ueberlauf": 0,
-        "zeilen": 4
+        "zeilen": 4,
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 41,
+            "right": 349,
+            "textLeft": 127.21875,
+            "textRight": 262.78125,
+            "textTop": 2370.5,
+            "textBottom": 2408.5,
+            "width": 308,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Reiseplan",
+            "left": 41,
+            "right": 349,
+            "textLeft": 127.1875,
+            "textRight": 262.796875,
+            "textTop": 2466.5,
+            "textBottom": 2504.5,
+            "width": 308,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Organisieren",
+            "left": 41,
+            "right": 349,
+            "textLeft": 103.796875,
+            "textRight": 286.203125,
+            "textTop": 2562.5,
+            "textBottom": 2600.5,
+            "width": 308,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 41,
+            "right": 349,
+            "textLeft": 102.0625,
+            "textRight": 287.9375,
+            "textTop": 2658.5,
+            "textBottom": 2696.5,
+            "width": 308,
+            "height": 88,
+            "enthalten": true
+          }
+        ]
       }
     },
     {
@@ -235,10 +695,60 @@
       "erwartet": "flow",
       "stand": {
         "lage": "flow",
-        "position": "relative",
+        "position": "sticky",
         "rootPx": 32,
         "ueberlauf": 0,
-        "zeilen": 2
+        "zeilen": 4,
+        "rechtecke": [
+          {
+            "text": "Übersicht",
+            "left": 65,
+            "right": 703,
+            "textLeft": 316.21875,
+            "textRight": 451.78125,
+            "textTop": 1654,
+            "textBottom": 1692,
+            "width": 638,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Reiseplan",
+            "left": 65,
+            "right": 703,
+            "textLeft": 316.1875,
+            "textRight": 451.796875,
+            "textTop": 1750,
+            "textBottom": 1788,
+            "width": 638,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Organisieren",
+            "left": 65,
+            "right": 703,
+            "textLeft": 292.796875,
+            "textRight": 475.203125,
+            "textTop": 1846,
+            "textBottom": 1884,
+            "width": 638,
+            "height": 88,
+            "enthalten": true
+          },
+          {
+            "text": "Vorbereitung",
+            "left": 65,
+            "right": 703,
+            "textLeft": 291.0625,
+            "textRight": 476.9375,
+            "textTop": 1942,
+            "textBottom": 1980,
+            "width": 638,
+            "height": 88,
+            "enthalten": true
+          }
+        ]
       }
     }
   ],
@@ -259,11 +769,11 @@
       "scale": 1
     },
     "lage": "flow",
-    "position": "relative"
+    "position": "sticky"
   },
   "zoom": {
     "lage": "flow",
-    "position": "relative",
+    "position": "sticky",
     "scale": 2,
     "innerWidth": 780,
     "visualWidth": 390,
@@ -271,9 +781,13 @@
     "rootPx": 16,
     "titel": {
       "text": "Thailand Rundreise mit einem bewusst sehr langen gespeicherten Titel der nicht aus den Etappen erfunden wird und auch bei schmaler Breite vollständig lesbar bleiben muss ohne abgeschnitten zu werden",
-      "breite": 310,
-      "sichtbarRechts": true
-    }
+      "breite": 700,
+      "right": 740,
+      "visualWidth": 390,
+      "shellMarker": false,
+      "shellStyle": null
+    },
+    "disposition": "CDP page scale 2 is not root-font 200%. The nav leaves the fixed bottom bar. This slice does not set inline max-width on a shell or the site header. The layout viewport can stay wider than the visual window, so a long title may need a pan. That is a bounded limit, not a 200% accessibility pass."
   },
   "aufmerksamkeit": {
     "leerstand": null,

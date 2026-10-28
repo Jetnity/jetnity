@@ -4,7 +4,7 @@
 
 The Trip Workspace header now leads with the stored title, the real route, the real date, and the guest-device or account save sentence. Travellers and budget open from a native disclosure. The four modes stay Übersicht, Reiseplan, Organisieren, and Vorbereitung.
 
-Ordinary phone widths use a fixed text bottom bar with safe-area CSS and 44px targets. At 320px and below, at root font 32px, at browser/page scale >= 1.9, when the visual viewport loses more than 80px, or while a compact detail is open, the bar is an in-flow wrap. From 768px upward, under normal text and zoom, the tabs stay sticky under the site header. Page scale also limits the workspace shell to the visible width so a long title wraps instead of running past the zoomed window.
+Ordinary phone widths use a fixed text bottom bar with safe-area CSS and 44px targets. At 320px and below, at root font 32px, at browser/page scale >= 1.9, when the visual viewport loses more than 80px, or while a compact detail is open, the bar is an in-flow wrap. From 768px upward, under normal text and zoom, the tabs stay sticky under the site header. At 320px, root 32px, page scale >= 1.9, or a keyboard gap, the four labels stack one per row under the site header. They are not a fixed bottom bar. Page scale does not resize the site header; a long title can extend past the visual window until the user pans. That limit is measured, not passed off as full zoom accessibility.
 
 Overview spacing is tighter. The three-item attention list, further-groups control, audit panel, and per-stage essentials are the existing ones.
 
@@ -17,7 +17,7 @@ Overview spacing is tighter. The three-item attention list, further-groups contr
 - `lib/trips/ux-u1a-shell-1.ts`
 - `lib/trips/ux-u1a-shell-1.test.ts`
 - `scripts/ux-u1a-shell-1/audit.mjs`
-- `docs/evidence/ux-v1-u1a-shell-1/`
+- `docs/evidence/ux-v1-u1a-shell-1/report.json` only. The earlier PNG blobs are removed.
 - this PLAN / STATUS / HANDOFF / SELF_REVIEW / REPORT set
 
 ## Datenbank
@@ -33,7 +33,8 @@ None.
 - ESLint on the touched TS/TSX files: 0 errors. Two existing `react-hooks/set-state-in-effect` warnings in `TripWorkspace.tsx` were already on the branch and were not introduced by the padding edit.
 - `tsc -p tsconfig.json --noEmit`: no errors reported for these files
 - `npm run build`: success (Next.js 16.4.1). Setup check warned only that no `.env` file is present.
-- Browser audit `node scripts/ux-u1a-shell-1/audit.mjs` against `next start` with `JETNITY_UI_AUDIT=1` on 127.0.0.1:3462: pass. Matrix 280/320/360/390/430/768/1440, root 32px at 390 and 768, CDP page scale 2 at layout width 780 with root font still 16px, account disclosure, mode push and three backs, focus not covered by the bottom bar, scripted keyboard stand-in. Provider request count 0. See `docs/evidence/ux-v1-u1a-shell-1/report.json`.
+- Browser audit `node scripts/ux-u1a-shell-1/audit.mjs` against a fresh `next start` of this fix: pass. Every measured label rect has `enthalten: true`. At 320px, Organisieren text is 114.39–205.59 inside button 21–299. At 390px and root 32px, Organisieren text is 103.80–286.20 inside button 41–349. Page scale 2 kept root font 16, nav `flow`/`sticky`, and `shellMarker: false`. Provider request count 0.
+- `lib/trips/guest-nav-text-1.test.ts` was not modified. System Chrome 148 passed the mounted suite, including the case that failed in CI job 122576123475.
 
 ## Build
 

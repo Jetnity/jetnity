@@ -891,7 +891,7 @@ export default function TripWorkspace({
       data-workspace-premium="3"
       className="min-h-screen bg-surface-75 pb-[max(5rem,var(--ux-u1a-nav-offset,0px))] [overflow-anchor:none]"
     >
-      <div data-workspace-shell className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
           className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"

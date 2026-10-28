@@ -1,6 +1,12 @@
 # UX V1 U1-A — SELF-REVIEW
 
-Author review only. This is not an independent Technical Lead PASS.
+Author review only. This is not an independent Technical Lead PASS. R1 below replaces the earlier shell-zoom claim.
+
+## R1
+
+- F1: flow tabs are one full-width block row. Ordinary-phone tabs size to the label and wrap instead of shrinking under the text. `lib/trips/guest-nav-text-1.test.ts` was not edited. Local system Chrome 148.0.7778.96 ran that mounted suite, kanal `chrome`, including `tab labels stay apart, readable and keyboard-reachable at 320/390/768/1440`: pass. Playwright Chromium 140 passed the same file first.
+- F2: no inline `max-width` or `margin-left` on a shell or the site header. The bottom-bar offset effect always returns cleanup. Page scale 2 is recorded as a bounded limit: layout width can stay wider than the visual window. That is not a 200% accessibility pass.
+- F3: the 21 synthetic PNGs are removed from the public diff. Rects live in `report.json`. Screenshots of this rerun stayed under `/opt/cursor/artifacts/ux-u1a-r1`. The captures were generated here from a synthetic audit trip. They are not Work or account screenshots.
 
 ## Checked
 

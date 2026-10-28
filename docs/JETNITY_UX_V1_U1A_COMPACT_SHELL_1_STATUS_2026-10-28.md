@@ -1,6 +1,8 @@
 # UX V1 U1-A — STATUS
 
-28 October 2026. Cursor Generation 1. Stop for independent Technical Lead review. Not Ready. Not merged.
+28 October 2026. Cursor Generation 1, same session, R1 correction. Stop for Technical Lead R2. Not Ready. Not merged.
+
+Rejected head `7c510c3622488b69fc3d1a1abf397ceff821a5d2` failed native App CI on the unedited guest-nav large-text case. This correction changes button layout only, removes the shell width mutation, and drops the public PNG blobs. `docs/evidence/ux-v1-u1a-shell-1/report.json` field `gitHeadAtMeasurement` is that rejected head because the audit ran on the uncommitted fix. It is not the new head.
 
 ## Session
 
