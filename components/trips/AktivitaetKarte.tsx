@@ -8,7 +8,7 @@ import { Clock3, Sparkles } from 'lucide-react'
 
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
 import { ACTIVITY_MARKE_TEXT, type ActivityMarke } from '@/lib/activities/domain'
-import { validateViatorImageUrl } from '@/lib/providers/viator/activities/url'
+import { viatorBildAnzeigen, validateViatorProductUrl } from '@/lib/providers/viator/activities/url'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { cn } from '@/lib/utils'
 
@@ -31,15 +31,23 @@ export default function AktivitaetKarte({
   onUebernehmen?: () => void
   onPruefen?: () => void
 }) {
-  const bild = option.bildUrl && validateViatorImageUrl(option.bildUrl).ok ? option.bildUrl : null
+  const bild = viatorBildAnzeigen(option.bildUrl)
   const basis =
-    option.preisRolle === 'rrp_from'
-      ? 'ab, keine aktuelle Verfügbarkeit'
-      : option.preisRolle === 'rrp_schedule'
-        ? 'Kalenderhinweis, keine aktuelle Verfügbarkeit'
-        : option.preisRolle === 'rrp_check'
-          ? 'aktuelle Prüfung'
-          : 'Preisgrundlage unbekannt'
+    option.provider !== 'viator'
+      ? 'Preisangabe'
+      : option.preisRolle === 'rrp_from'
+        ? 'ab, keine aktuelle Verfügbarkeit'
+        : option.preisRolle === 'rrp_schedule'
+          ? 'Kalenderhinweis, keine aktuelle Verfügbarkeit'
+          : option.preisRolle === 'rrp_check'
+            ? 'aktuelle Prüfung'
+            : 'Preisgrundlage unbekannt'
+  const preis =
+    option.preis !== null && option.preisWaehrung
+      ? betragLesbar(option.preis, option.preisWaehrung)
+      : option.provider === 'viator'
+        ? 'Preis unbekannt'
+        : 'Noch ohne Preis'
   return (
     <article className="min-w-0 rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
@@ -97,11 +105,7 @@ export default function AktivitaetKarte({
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
         <div className="min-w-0">
           <p className="text-xs text-ink-700">{basis}</p>
-          <p className="text-lg font-semibold text-brand-800">
-            {option.preis !== null && option.preisWaehrung
-              ? betragLesbar(option.preis, option.preisWaehrung)
-              : 'Preis unbekannt'}
-          </p>
+          <p className="text-lg font-semibold text-brand-800">{preis}</p>
           {option.preisWaehrung && option.preisWaehrung !== 'CHF' ? (
             <p className="text-xs text-ink-700">Keine Umrechnung nach CHF.</p>
           ) : null}

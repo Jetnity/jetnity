@@ -4,7 +4,7 @@
 
 ## What is wired
 
-`activityProviderAus` returns the Viator provider only when `viatorSandboxZugang` is open. Search maps a content preview into an activity option. The option has no product URL. Detail, schedule, and check are `POST /api/activities/viator/{detail,schedule,check}`. The check loads product age bands from the detail response and rejects a traveller total. Responses send `X-Robots-Tag: noindex, nofollow` and `cache-control: no-store`.
+`activityProviderAus` loads `GET /destinations` when the sandbox guard is open, caches that catalog for at most 3600 seconds, and resolves the confirmed place by name, country and nearby center. An ambiguous or unknown place does not guess an id. The empty binding list is gone.
 
 The card shows a validated image, the price currency that Viator returned, and a basis. CHF is not invented. "Bei Viator ansehen" uses the validated original URL from the detail response.
 

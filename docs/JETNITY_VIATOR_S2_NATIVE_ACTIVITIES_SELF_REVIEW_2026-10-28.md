@@ -6,7 +6,9 @@ The session is still `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`, model `grok-4.7-
 
 ## Holds
 
-- Missing key and Production make no HTTP call.
+- The runtime search calls `GET /destinations`, caches it for at most 3600 seconds, and resolves Bangkok and Chiang Mai in Thailand separately from Paris in France and Paris in the United States. A bare Paris name stays ambiguous. A second search reuses the catalog.
+- Changing the date aborts the previous live check. A late response of 111 does not replace the cleared quote. The next check can show 80.
+- A sold-out 10:00 time is omitted. Detail rate limiting stays `rate_limited`, not a generic error.
 - An unmapped place does not call search and does not guess Bangkok or any other city.
 - A CHF request does not relabel a EUR price. The activity option does not carry the product URL.
 - A participant total does not become a live check.

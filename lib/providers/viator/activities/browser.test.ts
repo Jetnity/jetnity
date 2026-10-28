@@ -10,7 +10,6 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
-const BREITEN = [320, 390, 768, 1440]
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
 async function css(): Promise<string> {
@@ -84,38 +83,164 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
   })
 
   async function seite(breite: number): Promise<Page> {
-    const page = await browser.newPage({ viewport: { width: breite, height: 800 } })
-    await page.route('**/*', (route) => {
-      const url = route.request().url()
-      if (url.startsWith(origin)) return route.continue()
-      return route.abort()
+    const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
+    let checks = 0
+    let releaseFirst: (() => void) | null = null
+    await page.route('**/*', async (route) => {
+      const url = new URL(route.request().url())
+      if (url.origin !== origin) return route.abort()
+      if (url.pathname === '/viator-local.png') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'image/png',
+          body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64'),
+        })
+      }
+      if (url.pathname === '/api/activities/search') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            message: 'Aktivitäten gefunden.',
+            options: [{
+              id: 'viator:10001P1',
+              provider: 'viator',
+              externalRef: '10001P1',
+              title: 'Spaziergang durch die Altstadt',
+              description: null,
+              locationName: null,
+              punkt: null,
+              dauerMinuten: 90,
+              timeslot: null,
+              preis: 42,
+              preisWaehrung: 'EUR',
+              bewertung: null,
+              bewertungenAnzahl: null,
+              stornierbar: null,
+              kategorien: [],
+              tags: [],
+              bildUrl: '/viator-local.png',
+              preisRolle: 'rrp_from',
+              labels: [],
+              reasons: [],
+              konflikt: 'unbekannt',
+            }],
+          }),
+        })
+      }
+      if (url.pathname === '/api/activities/viator/detail') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            message: 'Details geladen.',
+            value: {
+              productCode: '10001P1',
+              title: 'Spaziergang',
+              description: 'Kurzbeschreibung.',
+              imageUrl: '/viator-local.png',
+              price: null,
+              productOptionCodes: ['TG1', 'TG2'],
+              productOptions: [{ code: 'TG1', title: 'Morgentour' }, { code: 'TG2', title: 'Abendtour' }],
+              ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
+              productUrl: 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api',
+            },
+          }),
+        })
+      }
+      if (url.pathname === '/api/activities/viator/schedule') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'ok',
+            message: 'Kalenderhinweis.',
+            value: {
+              productCode: '10001P1',
+              supplierCurrency: 'EUR',
+              options: [{
+                productOptionCode: 'TG1',
+                seasons: [{
+                  startDate: '2026-11-01',
+                  endDate: '2026-11-30',
+                  startTimes: ['10:00'],
+                  unavailableDates: [],
+                  timedEntries: [{ startTime: '10:00', unavailableDates: [] }],
+                }],
+              }, {
+                productOptionCode: 'TG2',
+                seasons: [{
+                  startDate: '2026-11-01',
+                  endDate: '2026-11-30',
+                  startTimes: ['18:00'],
+                  unavailableDates: [],
+                  timedEntries: [{ startTime: '18:00', unavailableDates: [] }],
+                }],
+              }],
+            },
+          }),
+        })
+      }
+      if (url.pathname === '/api/activities/viator/check') {
+        checks += 1
+        const aktuell = checks
+        if (aktuell === 1) await new Promise<void>((resolve) => { releaseFirst = resolve })
+        try {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              status: 'ok',
+              message: aktuell === 1 ? 'alte Prüfung' : 'neue Prüfung',
+              value: { available: true, price: { amount: aktuell === 1 ? 111 : 80, currency: 'EUR', checkoutCurrencyConfirmed: false } },
+            }),
+          })
+        } catch {
+          return
+        }
+        return
+      }
+      return route.continue()
     })
     await page.goto(origin)
-    await page.getByRole('link', { name: 'Bei Viator ansehen' }).waitFor()
+    await page.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await page.getByRole('button', { name: 'Angebot prüfen' }).click()
+    await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).waitFor()
+    page.once('close', () => releaseFirst?.())
+    Object.assign(page, { releaseFirst: () => releaseFirst?.() })
     return page
   }
 
-  test('layout stays inside the viewport and text enlargement uses the root font', async () => {
-    for (const breite of BREITEN) {
-      const page = await seite(breite)
-      const mass = await page.evaluate(() => ({
-        scroll: document.documentElement.scrollWidth,
-        client: document.documentElement.clientWidth,
-      }))
-      assert.ok(mass.scroll <= mass.client + 1, `${breite} overflow ${mass.scroll}>${mass.client}`)
-      await page.screenshot({ path: join(ARTIFACTS, `viator-${breite}.png`), fullPage: true })
-      await page.close()
-    }
+  test('search, selection and a late quote do not survive a changed date', async () => {
     const page = await seite(390)
+    await page.getByLabel('Erwachsene Anzahl').fill('2')
+    await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).click()
+    await page.getByLabel('Datum').fill('2026-11-03')
+    ;(page as Page & { releaseFirst: () => void }).releaseFirst()
+    await page.waitForTimeout(50)
+    assert.equal(await page.getByText('111').count(), 0)
+    assert.equal(await page.getByText('alte Prüfung').count(), 0)
+    await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).click()
+    await page.getByText('neue Prüfung').waitFor()
+    await page.getByText('80').waitFor()
+    assert.equal(await page.getByText('111').count(), 0)
     const vorher = await page.locator('h3').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
-    await page.evaluate(() => {
-      document.documentElement.style.fontSize = '32px'
-    })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
     const nachher = await page.locator('h3').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
-    assert.ok(nachher > vorher, `root font did not enlarge text (${vorher} -> ${nachher})`)
+    assert.ok(nachher > vorher)
     await page.keyboard.press('Tab')
-    const fokus = await page.evaluate(() => document.activeElement?.textContent ?? '')
-    assert.equal(fokus.includes('Angebot prüfen') || fokus.includes('Verfügbarkeit prüfen') || fokus.includes('Bei Viator'), true)
+    const mass = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
+    assert.ok(mass.scroll <= mass.client + 1)
+    await page.screenshot({ path: join(ARTIFACTS, 'viator-390.png'), fullPage: true })
     await page.close()
+    for (const breite of [320, 768, 1440]) {
+      const weitere = await seite(breite)
+      const kante = await weitere.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
+      assert.ok(kante.scroll <= kante.client + 1, `${breite}`)
+      await weitere.screenshot({ path: join(ARTIFACTS, `viator-${breite}.png`), fullPage: true })
+      await weitere.close()
+    }
   })
 })

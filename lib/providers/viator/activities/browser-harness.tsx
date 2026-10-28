@@ -1,64 +1,47 @@
 'use client'
 
+import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
 import ViatorPruefung from '@/components/trips/ViatorPruefung'
-import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
+import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 
-const IMAGE = 'https://hare-media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/06/71/ef/dc.jpg'
-const LINK = 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api'
+function Ablauf() {
+  const [option, setOption] = useState<ActivityOptionSichtbar | null>(null)
+  const [offen, setOffen] = useState(false)
+  const [meldung, setMeldung] = useState('Für diese Angaben liegt noch keine Suche vor.')
 
-const option: ActivityOptionSichtbar = {
-  id: 'viator:10001P1',
-  provider: 'viator',
-  externalRef: '10001P1',
-  title: 'Spaziergang durch die Altstadt',
-  description: 'Eine kurze Beschreibung ohne Verfügbarkeitszusage.',
-  locationName: null,
-  punkt: null,
-  dauerMinuten: 90,
-  timeslot: null,
-  preis: 42,
-  preisWaehrung: 'EUR',
-  bewertung: 4.5,
-  bewertungenAnzahl: 8,
-  stornierbar: null,
-  kategorien: [],
-  tags: [],
-  bildUrl: IMAGE,
-  preisRolle: 'rrp_from',
-  labels: [],
-  reasons: [],
-  konflikt: 'unbekannt',
-}
+  const suchen = () => {
+    setOffen(false)
+    setOption(null)
+    void fetch('/api/activities/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ stage: { name: 'Bangkok' } }),
+    })
+      .then((response) => response.json() as Promise<ActivitySucheAntwort>)
+      .then((json) => {
+        setMeldung(json.message)
+        setOption(json.options[0] ?? null)
+      })
+      .catch(() => setMeldung('Die Suche ist fehlgeschlagen.'))
+  }
 
-function mountViatorHarness() {
-  const root = document.getElementById('root')
-  if (!root) return
-  createRoot(root).render(
+  return (
     <main className="mx-auto max-w-3xl p-4">
-      <AktivitaetKarte option={option} laeuft={false} onPruefen={() => undefined} />
-      <ViatorPruefung
-        productCode="10001P1"
-        dayDate="2026-11-02"
-        gewuenschteWaehrung="CHF"
-        vorgabe={{
-          detail: {
-            productCode: '10001P1',
-            title: 'Spaziergang durch die Altstadt',
-            description: 'Details ohne Live-Zusage.',
-            imageUrl: IMAGE,
-            price: { amount: 42, currency: 'EUR', priceRole: 'rrp_from', checkoutCurrencyConfirmed: false },
-            productOptionCodes: ['TG1'],
-            ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
-            productUrl: LINK,
-          },
-          plan: { supplierCurrency: 'EUR', options: [{ productOptionCode: 'TG1', startTimes: ['10:00'] }] },
-        }}
-      />
-    </main>,
+      <button type="button" onClick={suchen} className="min-h-11 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white">
+        Für diesen Tag suchen
+      </button>
+      <p className="mt-3 text-sm">{meldung}</p>
+      {option ? (
+        <AktivitaetKarte option={option} laeuft={false} onPruefen={() => setOffen(true)} />
+      ) : null}
+      {offen && option ? (
+        <ViatorPruefung productCode={option.externalRef} dayDate="2026-11-02" gewuenschteWaehrung="CHF" />
+      ) : null}
+    </main>
   )
 }
 
-mountViatorHarness()
+createRoot(document.getElementById('root')!).render(<Ablauf />)

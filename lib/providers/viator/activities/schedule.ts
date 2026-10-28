@@ -38,6 +38,7 @@ function readSeason(value: unknown): { season: ViatorScheduleSeason; partial: bo
     }
   }
   const startTimes: string[] = []
+  const timedEntries: Array<{ startTime: string; unavailableDates: string[] }> = []
   const unavailableDates: string[] = []
   if (Array.isArray(record.pricingRecords)) {
     for (const pricingRecord of record.pricingRecords) {
@@ -55,7 +56,11 @@ function readSeason(value: unknown): { season: ViatorScheduleSeason; partial: bo
             continue
           }
           if (!startTimes.includes(startTime)) startTimes.push(startTime)
-          if (!Array.isArray(timed?.unavailableDates)) continue
+          const eigene: string[] = []
+          if (!Array.isArray(timed?.unavailableDates)) {
+            timedEntries.push({ startTime, unavailableDates: [] })
+            continue
+          }
           for (const unavailable of timed.unavailableDates) {
             const item = asRecord(unavailable)
             const date = calendarDate(item?.date)
@@ -63,17 +68,15 @@ function readSeason(value: unknown): { season: ViatorScheduleSeason; partial: bo
               partial = true
               continue
             }
-            if (unavailableDates.length >= 100) {
-              partial = true
-              continue
-            }
-            if (!unavailableDates.includes(date)) unavailableDates.push(date)
+            if (eigene.length < 100 && !eigene.includes(date)) eigene.push(date)
+            if (unavailableDates.length < 100 && !unavailableDates.includes(date)) unavailableDates.push(date)
           }
+          timedEntries.push({ startTime, unavailableDates: eigene })
         }
       }
     }
   }
-  return { season: { startDate, endDate, daysOfWeek, startTimes, unavailableDates }, partial }
+  return { season: { startDate, endDate, daysOfWeek, startTimes, unavailableDates, timedEntries }, partial }
 }
 
 function readAgeBandPrices(

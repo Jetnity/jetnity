@@ -149,6 +149,7 @@ export const VIATOR_OPERATIONS = [
   'product_detail',
   'availability_schedule',
   'availability_check',
+  'destinations',
 ] as const
 
 export type ViatorOperation = (typeof VIATOR_OPERATIONS)[number]
@@ -222,6 +223,7 @@ export type ViatorContentProduct = {
   reviewSummary: ViatorReviewSummary | null
   image: ViatorImage | null
   productOptionCodes: string[]
+  productOptions: Array<{ code: string; title: string | null }>
   ageBands: ViatorAgeBandRule[]
   cancellation: ViatorCancellation
   flags: string[]
@@ -282,6 +284,7 @@ export type ViatorScheduleSeason = {
   daysOfWeek: string[]
   startTimes: string[]
   unavailableDates: string[]
+  timedEntries: Array<{ startTime: string; unavailableDates: string[] }>
 }
 
 export type ViatorScheduleBandPrice = {

@@ -227,7 +227,11 @@ function ActivityTag({
   const etappe = tag ? etappeFuer(reise, tag) : null
   const eingabe = React.useMemo(() => {
     if (!tag || !etappe || !etappe.name.trim()) return null
-    return activitySucheEingabeAusReise(reise, etappe, tag)
+    const basis = activitySucheEingabeAusReise(reise, etappe, tag)
+    return {
+      ...basis,
+      stage: { ...basis.stage, countryCode: etappe.countryCode },
+    }
   }, [reise, etappe, tag])
   const anfrageSchluessel = eingabe ? JSON.stringify(eingabe) : ''
   const kontext = activitySuchKontextSchluessel({

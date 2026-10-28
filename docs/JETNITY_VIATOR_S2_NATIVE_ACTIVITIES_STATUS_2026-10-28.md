@@ -12,4 +12,4 @@ Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was reque
 
 ## Checks
 
-Focused S2 unit tests passed. Browser harness passed at 320, 390, 768, and 1440. Text enlargement set the document root font to 32px; that is not browser zoom. External image requests were aborted. Exact-head CI for this commit starts after push and is not yet a result.
+Focused S2 unit tests passed. Browser harness passed at 320, 390, 768, and 1440. Text enlargement set the document root font to 32px; that is not browser zoom. External image requests were aborted. Exact-head CI for the previous S2 head failed on an unrelated Postgres `57P01`. This review fix produces a new head. Live Sandbox and hosted acceptance stay blocked. Destination lookup now uses `GET /destinations` on the runtime path, cached at most 3600 seconds. A changed date, option, or age mix drops the previous quote before a newer check can replace it.

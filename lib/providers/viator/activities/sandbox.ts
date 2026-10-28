@@ -19,6 +19,7 @@ import {
   type ViatorLiveCheck,
   type ViatorScheduleHint,
 } from '@/lib/providers/viator/activities/contracts'
+import { viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { parseViatorAvailabilityCheck, validateViatorLiveCheckRequest } from '@/lib/providers/viator/activities/live-check'
 import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/request'
 import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
@@ -42,6 +43,7 @@ export type ViatorSandboxClient = {
   detail(input: { productCode: string; acceptLanguage?: string }): Promise<{ ok: true; value: ViatorContentPreview } | ViatorSandboxFailure>
   schedule(input: { productCode: string; acceptLanguage?: string }): Promise<{ ok: true; value: ViatorScheduleHint } | ViatorSandboxFailure>
   check(input: { liveCheck: unknown; acceptLanguage?: string }): Promise<{ ok: true; value: ViatorLiveCheck } | ViatorSandboxFailure>
+  destinations(input?: { acceptLanguage?: string }): Promise<{ ok: true; katalog: import('@/lib/providers/viator/activities/destination').ViatorKatalogOrt[] } | ViatorSandboxFailure>
 }
 
 type Created =
@@ -111,6 +113,13 @@ export function createViatorSandboxClient(options: {
   return {
     ok: true,
     client: {
+      async destinations(input: { acceptLanguage?: string } = {}) {
+        const result = await execute('destinations', input)
+        if (!result.ok) return result
+        const katalog = viatorKatalogLesen(result.body)
+        if (!katalog) return { ok: false as const, reason: 'malformed_response' }
+        return { ok: true as const, katalog }
+      },
       async search(input) {
         const result = await execute('products_search', input)
         if (!result.ok) return result

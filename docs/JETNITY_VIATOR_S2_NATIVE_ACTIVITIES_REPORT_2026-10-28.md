@@ -1,6 +1,6 @@
 # Viator S2 native activities — REPORT
 
-28 October 2026. Status: **partially finished**. The Aktivitäten seam is in the branch. Real Sandbox and hosted acceptance stay **BLOCKED**. Ready was not set. Nothing was merged.
+28 October 2026. Status: **partially finished**. Review fixes for destination catalog resolution, stale quotes, schedule times, and a browser flow that clicks search, selection, and a delayed check. The previous exact-head CI failed on an unrelated SQL `57P01` and does not cover this head. Live Sandbox remains blocked.
 
 ## Umgesetzt
 

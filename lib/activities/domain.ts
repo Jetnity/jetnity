@@ -47,6 +47,9 @@ export type ActivitySuchanfrage = {
   budgetAmount: number | null
   interests: ReadonlyArray<string>
   pace: 'calm' | 'balanced' | 'intense' | null
+  countryCode?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 /**

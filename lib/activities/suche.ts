@@ -92,7 +92,15 @@ export async function activitiesSuchen(
     }
   }
 
-  const { anfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
+  const { anfrage: rohAnfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
+  const anfrage = rohAnfrage
+    ? {
+        ...rohAnfrage,
+        countryCode: geprueft.data.stage.countryCode,
+        latitude: geprueft.data.stage.latitude,
+        longitude: geprueft.data.stage.longitude,
+      }
+    : null
 
   if (!ports.zustand.aktiv || !ports.provider) {
     beobachten('unavailable')

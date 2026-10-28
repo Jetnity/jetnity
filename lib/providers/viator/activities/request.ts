@@ -83,6 +83,19 @@ export function buildViatorSandboxCall(
     }
   }
 
+  if (operation === 'destinations') {
+    return {
+      ok: true,
+      call: {
+        operation: 'destinations',
+        method: 'GET',
+        url: sandboxUrl('/partner/destinations'),
+        body: null,
+        acceptLanguage,
+      },
+    }
+  }
+
   if (operation === 'product_detail' || operation === 'availability_schedule') {
     if (typeof input.productCode !== 'string' || !PRODUCT_CODE.test(input.productCode)) {
       return { ok: false, reason: 'missing_product' }

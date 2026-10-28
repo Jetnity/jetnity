@@ -41,3 +41,12 @@ export function validateViatorProductUrl(raw: unknown): ViatorUrlResult {
 export function validateViatorImageUrl(raw: unknown): ViatorUrlResult {
   return validateViatorVendorUrl(raw, IMAGE_HOSTS)
 }
+
+export function viatorBildAnzeigen(raw: unknown): string | null {
+  if (typeof raw !== 'string' || raw.length === 0 || raw.length > 2048) return null
+  if (raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('..') && /^\/[A-Za-z0-9._/-]+$/.test(raw)) {
+    return raw
+  }
+  const checked = validateViatorImageUrl(raw)
+  return checked.ok ? checked.url : null
+}

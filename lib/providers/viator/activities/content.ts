@@ -136,10 +136,11 @@ function readCancellation(value: unknown): ViatorCancellation {
   return { policyType: 'unknown', stornierbar: null }
 }
 
-function readOptionCodes(value: unknown): { codes: string[]; partial: boolean } {
-  if (value == null) return { codes: [], partial: false }
-  if (!Array.isArray(value)) return { codes: [], partial: true }
+function readOptionCodes(value: unknown): { codes: string[]; options: Array<{ code: string; title: string | null }>; partial: boolean } {
+  if (value == null) return { codes: [], options: [], partial: false }
+  if (!Array.isArray(value)) return { codes: [], options: [], partial: true }
   const codes: string[] = []
+  const options: Array<{ code: string; title: string | null }> = []
   let partial = false
   for (const item of value) {
     const record = asRecord(item)
@@ -148,9 +149,12 @@ function readOptionCodes(value: unknown): { codes: string[]; partial: boolean } 
       partial = true
       continue
     }
-    if (!codes.includes(code)) codes.push(code)
+    if (codes.includes(code)) continue
+    const title = readViatorTitle(record?.title)
+    codes.push(code)
+    options.push({ code, title })
   }
-  return { codes, partial }
+  return { codes, options, partial }
 }
 
 function readFromPrice(pricing: unknown): ViatorPrice | null {
@@ -200,6 +204,7 @@ function readProduct(value: unknown, source: ViatorContentSource): ProductRead {
       reviewSummary: readReviewSummary(record.reviews),
       image: readImage(record.images),
       productOptionCodes: options.codes,
+      productOptions: options.options,
       ageBands: ages.bands,
       cancellation: readCancellation(record.cancellationPolicy),
       flags: readFlags(record.flags),

@@ -13,7 +13,8 @@ import {
   type ViatorAgeBandRule,
   type ViatorPriceRole,
 } from '@/lib/providers/viator/activities/contracts'
-import { resolveViatorDestination, type ViatorPlaceBinding } from '@/lib/providers/viator/activities/destination'
+import { viatorOrtAufloesen, type ViatorKatalogOrt } from '@/lib/providers/viator/activities/destination'
+import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
 import { validateViatorLiveCheckRequest } from '@/lib/providers/viator/activities/live-check'
 import { createViatorSandboxClient } from '@/lib/providers/viator/activities/sandbox'
 import { validateViatorImageUrl, validateViatorProductUrl } from '@/lib/providers/viator/activities/url'
@@ -83,9 +84,27 @@ export function activityOptionAusViatorProdukt(product: {
 
 type Abhaengigkeiten = {
   env?: ViatorSandboxEnv
-  bindings?: readonly ViatorPlaceBinding[]
   http?: ProviderHttpClient
   nowMs?: number
+}
+
+const ZIEL_TTL_MS = 3_600_000
+let zielCache: { at: number; orte: ViatorKatalogOrt[] } | null = null
+
+export function viatorZielCacheLeeren(): void {
+  zielCache = null
+}
+
+function transportErgebnis<T>(
+  art: string | undefined,
+): ViatorDienstErgebnis<T> | null {
+  if (art === 'timeout') {
+    return { status: 'timeout', message: 'Viator hat zu lange gebraucht.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
+  if (art === 'rate_limited') {
+    return { status: 'rate_limited', message: 'Viator begrenzt gerade die Anfragen.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
+  return null
 }
 
 function clientFuer(deps: Abhaengigkeiten) {
@@ -101,16 +120,42 @@ function clientFuer(deps: Abhaengigkeiten) {
 export function viatorActivityProvider(deps: Abhaengigkeiten = {}): ActivityProvider | null {
   const env = deps.env ?? umgebungAusProzess()
   if (!viatorSandboxZugang(env).ok) return null
-  const bindings = deps.bindings ?? []
   return {
     id: VIATOR_PROVIDER_ID,
     async suchen(anfrage: ActivitySuchanfrage): Promise<ActivityProviderTreffer> {
-      const ziel = resolveViatorDestination({ jetnityPlaceId: anfrage.destinationPlaceId, bindings })
-      if (!ziel.ok) {
-        throw new ActivityProviderFehler('invalid', 'Für diesen Ort ist kein Viator-Ziel hinterlegt. Es wird keine Stadt geraten.')
-      }
       const bereit = clientFuer(deps)
       if (!bereit.ok) throw new ActivityProviderFehler('unavailable', bereit.ergebnis.message)
+      const jetzt = deps.nowMs ?? Date.now()
+      let orte = zielCache && jetzt - zielCache.at <= ZIEL_TTL_MS ? zielCache.orte : null
+      if (!orte) {
+        const katalog = await bereit.client.destinations({ acceptLanguage: 'en-US' })
+        if (!katalog.ok) {
+          if (katalog.reason === 'transport' && katalog.transportKind === 'timeout') {
+            throw new ActivityProviderFehler('timeout', 'Die Viator-Ziele haben zu lange gebraucht.')
+          }
+          if (katalog.reason === 'transport' && katalog.transportKind === 'rate_limited') {
+            throw new ActivityProviderFehler('unavailable', 'Viator begrenzt gerade die Anfragen.')
+          }
+          throw new ActivityProviderFehler('error', 'Die Viator-Ziele konnten nicht gelesen werden.')
+        }
+        orte = katalog.katalog
+        zielCache = { at: jetzt, orte }
+      }
+      if (!orte) throw new ActivityProviderFehler('error', 'Die Viator-Ziele konnten nicht gelesen werden.')
+      const ziel = viatorOrtAufloesen({
+        name: anfrage.destinationName,
+        countryCode: anfrage.countryCode,
+        latitude: anfrage.latitude,
+        longitude: anfrage.longitude,
+        katalog: orte,
+      })
+      if (!ziel.ok) {
+        const message =
+          ziel.reason === 'ambiguous'
+            ? 'Für diesen Namen gibt es mehrere Viator-Ziele. Es wird keines geraten.'
+            : 'Für diesen Ort ist kein eindeutiges Viator-Ziel hinterlegt.'
+        throw new ActivityProviderFehler('invalid', message)
+      }
       const currency = anfrage.currency && isViatorSearchCurrency(anfrage.currency) ? anfrage.currency : null
       const suche = await bereit.client.search({
         destinationId: ziel.destinationId,
@@ -147,13 +192,14 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
   imageUrl: string | null
   price: { amount: number; currency: string; priceRole: ActivityPreisRolle; checkoutCurrencyConfirmed: false } | null
   productOptionCodes: string[]
+  productOptions: Array<{ code: string; title: string | null }>
   ageBands: ViatorAgeBandRule[]
   productUrl: string | null
 }>> {
   const bereit = clientFuer(deps)
   if (!bereit.ok) return bereit.ergebnis
   const detail = await bereit.client.detail({ productCode, acceptLanguage: 'de-DE' })
-  if (!detail.ok) return { status: 'error', message: 'Die Produktdetails konnten nicht geladen werden.', httpStatus: 200, value: null, availabilityClaim: false }
+  if (!detail.ok) return transportErgebnis(detail.reason === 'transport' ? detail.transportKind ?? undefined : undefined) ?? { status: 'error', message: 'Die Produktdetails konnten nicht geladen werden.', httpStatus: 200, value: null, availabilityClaim: false }
   const product = detail.value.products[0]
   if (!product) return { status: 'empty', message: 'Viator hat zu diesem Angebot keine lesbaren Details geliefert.', httpStatus: 200, value: null, availabilityClaim: false }
   const link = detail.value.affiliateRedirects[0]?.productUrl ?? null
@@ -178,6 +224,7 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
           }
         : null,
       productOptionCodes: product.productOptionCodes,
+      productOptions: product.productOptions,
       ageBands: product.ageBands,
       productUrl,
     },
@@ -187,15 +234,26 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
 export async function viatorKalenderLaden(productCode: string, deps: Abhaengigkeiten = {}): Promise<ViatorDienstErgebnis<{
   productCode: string
   supplierCurrency: string | null
-  options: Array<{ productOptionCode: string; startTimes: string[] }>
+  options: Array<{
+    productOptionCode: string
+    seasons: Array<{ startDate: string; endDate: string | null; startTimes: string[]; unavailableDates: string[]; timedEntries: Array<{ startTime: string; unavailableDates: string[] }> }>
+  }>
 }>> {
   const bereit = clientFuer(deps)
   if (!bereit.ok) return bereit.ergebnis
   const plan = await bereit.client.schedule({ productCode, acceptLanguage: 'de-DE' })
-  if (!plan.ok) return { status: 'error', message: 'Der Kalenderhinweis konnte nicht geladen werden.', httpStatus: 200, value: null, availabilityClaim: false }
+  if (!plan.ok) {
+    return transportErgebnis(plan.reason === 'transport' ? plan.transportKind ?? undefined : undefined) ?? {
+      status: 'error',
+      message: 'Der Kalenderhinweis konnte nicht geladen werden.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
+  }
   return {
     status: 'ok',
-    message: 'Kalenderhinweis. Das ist keine aktuelle Verfügbarkeit und kein verbindlicher Preis.',
+    message: 'Kalenderhinweis. Das ist keine aktuelle Verfügbarkeit.',
     httpStatus: 200,
     availabilityClaim: false,
     value: {
@@ -203,7 +261,13 @@ export async function viatorKalenderLaden(productCode: string, deps: Abhaengigke
       supplierCurrency: plan.value.supplierCurrency,
       options: plan.value.options.map((option) => ({
         productOptionCode: option.productOptionCode,
-        startTimes: option.seasons.flatMap((season) => season.startTimes),
+        seasons: option.seasons.map((season) => ({
+          startDate: season.startDate,
+          endDate: season.endDate,
+          startTimes: season.startTimes,
+          unavailableDates: season.unavailableDates,
+          timedEntries: season.timedEntries,
+        })),
       })),
     },
   }
@@ -222,24 +286,66 @@ export async function viatorLivePruefen(
   const bereit = clientFuer(deps)
   if (!bereit.ok) return bereit.ergebnis
   const detail = await bereit.client.detail({ productCode, acceptLanguage: 'de-DE' })
-  if (!detail.ok || !detail.value.products[0]) {
+  if (!detail.ok) {
+    return transportErgebnis(detail.reason === 'transport' ? detail.transportKind ?? undefined : undefined) ?? {
+      status: 'error',
+      message: 'Die Prüfung braucht zuerst lesbare Produktdetails.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
+  }
+  const product = detail.value.products[0]
+  if (!product) {
     return { status: 'error', message: 'Die Prüfung braucht zuerst lesbare Produktdetails.', httpStatus: 200, value: null, availabilityClaim: false }
   }
   const anfrage = validateViatorLiveCheckRequest({
     ...(record ?? {}),
-    productAgeBands: detail.value.products[0].ageBands,
+    productAgeBands: product.ageBands,
   })
   if (!anfrage.ok) {
     const message =
       anfrage.reason === 'total_is_not_age_mix'
-        ? 'Eine Gesamtzahl ist keine Altersmischung. Bitte wähle die Altersgruppen.'
+        ? 'Eine Gesamtzahl ist keine Altersmischung.'
         : anfrage.reason === 'nonmatching_age_band'
           ? 'Diese Altersgruppe gibt es bei diesem Angebot nicht.'
-          : 'Für die aktuelle Prüfung fehlen Datum, Option oder Altersgruppen.'
+          : 'Für die Prüfung fehlen Datum, Option oder Altersgruppen.'
     return { status: 'invalid', message, httpStatus: 200, value: null, availabilityClaim: false }
   }
+  if (!product.productOptionCodes.includes(anfrage.value.productOptionCode)) {
+    return { status: 'invalid', message: 'Diese Option gehört nicht zum Angebot.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
+  const plan = await bereit.client.schedule({ productCode, acceptLanguage: 'de-DE' })
+  if (!plan.ok) {
+    return transportErgebnis(plan.reason === 'transport' ? plan.transportKind ?? undefined : undefined) ?? {
+      status: 'error',
+      message: 'Der Kalenderhinweis konnte nicht gelesen werden.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
+  }
+  const saison = plan.value.options.find((option) => option.productOptionCode === anfrage.value.productOptionCode)
+  const zeiten = viatorStartzeiten(saison, anfrage.value.travelDate)
+  if (zeiten == null) {
+    return { status: 'invalid', message: 'Dieses Datum liegt ausserhalb des Kalenderhinweises.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
+  if (zeiten.length > 0 && !anfrage.value.startTime) {
+    return { status: 'invalid', message: 'Bitte wähle eine Startzeit.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
+  if (anfrage.value.startTime && !zeiten.includes(anfrage.value.startTime)) {
+    return { status: 'invalid', message: 'Diese Startzeit gilt nicht für die gewählte Option und das Datum.', httpStatus: 200, value: null, availabilityClaim: false }
+  }
   const check = await bereit.client.check({ liveCheck: anfrage.value, acceptLanguage: 'de-DE' })
-  if (!check.ok) return { status: 'error', message: 'Die aktuelle Prüfung ist fehlgeschlagen.', httpStatus: 200, value: null, availabilityClaim: false }
+  if (!check.ok) {
+    return transportErgebnis(check.reason === 'transport' ? check.transportKind ?? undefined : undefined) ?? {
+      status: 'error',
+      message: 'Die aktuelle Prüfung ist fehlgeschlagen.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
+  }
   return {
     status: 'ok',
     message: check.value.available ? 'Viator meldet das Angebot für diese Auswahl.' : 'Viator meldet für diese Auswahl keine Verfügbarkeit.',

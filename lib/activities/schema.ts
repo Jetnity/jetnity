@@ -50,6 +50,13 @@ const etappeSchema = z.object({
   placeId: z.string().trim().min(1).max(80).nullable().default(null),
   latitude: z.number().finite().min(-90).max(90).nullable().default(null),
   longitude: z.number().finite().min(-180).max(180).nullable().default(null),
+  countryCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{2}$/)
+    .nullable()
+    .default(null),
 })
 
 const tagSchema = z
