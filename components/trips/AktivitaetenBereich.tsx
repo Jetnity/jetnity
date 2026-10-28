@@ -113,8 +113,8 @@ function SuchKontext({
 }) {
   const datum = tag?.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : 'Datum noch offen'
   return (
-    <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm">
-      <div className="col-span-2 min-w-0">
+    <dl className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm">
+      <div className="min-w-0 sm:col-span-2">
         <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
         <dd className="mt-1 break-words text-ink-800">{etappe?.name.trim() || 'Zielort fehlt'}</dd>
       </div>

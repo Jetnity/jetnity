@@ -14,7 +14,7 @@ Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was reque
 
 ## Checks
 
-Focused Viator unit tests passed, including Lisbon/Lissabon, Ko Chang, Phuket, Panama City, CHF/EUR/USD, and Monday-only times. The browser harness renders the real Aktivitäten area and passed at 320, 390, 768, and 1440. The search body carried Bangkok, TH, and CHF. A date change during loading still showed the age bands. A new search and the Phuket day cleared the selected product. A late 111 was discarded. Text enlargement set the document root font to 32px. That is not browser zoom. CI 40781976364 on `0603a4e3` stays a recorded failure. Exact-head CI for this commit is not claimed here.
+Focused Viator unit tests passed, including Lisbon/Lissabon, Ko Chang, Phuket, Panama City, CHF/EUR/USD, and Monday-only times. The browser harness renders the real Aktivitäten area and passed at 320, 390, 768, and 1440. The search body carried Bangkok, TH, and CHF. A date change during loading still showed the age bands. A new search and the Phuket day cleared the selected product. A late 111 was discarded. Text enlargement set the document root font to 32px. That is not browser zoom. At that size the summary labels Reisetag/Datum and Reisende/Währung no longer share the same box. CI 40781976364 on `0603a4e3` stays a recorded failure. Exact-head CI for this commit is not claimed here.
 
 ## Still blocked
 

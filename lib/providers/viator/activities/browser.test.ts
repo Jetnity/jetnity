@@ -319,6 +319,24 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
     const nachher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     assert.ok(nachher > vorher)
+    const ueberlappung = await page.evaluate(`(() => {
+      const kasten = (name) => {
+        const el = [...document.querySelectorAll('dt')].find((knoten) => knoten.textContent && knoten.textContent.trim() === name)
+        if (!el) return null
+        const rect = el.getBoundingClientRect()
+        return { x: rect.x, y: rect.y, right: rect.right, bottom: rect.bottom }
+      }
+      const schneidet = (links, rechts) => {
+        if (!links || !rechts) return true
+        return links.x < rechts.right && rechts.x < links.right && links.y < rechts.bottom && rechts.y < links.bottom
+      }
+      return {
+        reisetagDatum: schneidet(kasten('Reisetag'), kasten('Datum')),
+        reisendeWaehrung: schneidet(kasten('Reisende'), kasten('Währung')),
+      }
+    })()`) as { reisetagDatum: boolean; reisendeWaehrung: boolean }
+    assert.equal(ueberlappung.reisetagDatum, false)
+    assert.equal(ueberlappung.reisendeWaehrung, false)
     await page.keyboard.press('Tab')
     const mass = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
     assert.ok(mass.scroll <= mass.client + 1)
