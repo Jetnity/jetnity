@@ -12,13 +12,13 @@ There is **no live tracker** in this slice.
 
 ## Exact head
 
-Code evidence and these docs are committed together. The SHA stamp commit, if present, only updates the lines below. Re-check `git rev-parse HEAD` and `git rev-parse HEAD^{tree}` on the PR. A newer head invalidates this note.
+The command table below was produced on the implementation tree, then committed as `debe80bab44a3af9fd33c3af7ca322a3ff57756c`. The stamp commit that records these hashes changes only this status file. Re-check `git rev-parse HEAD` on the PR. A newer head invalidates this note. Focused tests were run again on the stamp head before push; see the PR delivery comment.
 
-- Evidence commit (filled by stamp): `PENDING_EVIDENCE_SHA`
-- Evidence tree (filled by stamp): `PENDING_EVIDENCE_TREE`
+- Implementation commit: `debe80bab44a3af9fd33c3af7ca322a3ff57756c`
+- Implementation tree: `ac4cabe60496f7ba7b6ad4ed529271d7042a1a63`
 - `origin/main` at implementation: `e462cf7c5910ce75fa6350928326c04e33d94eee`
 - Merge-base at implementation: `e462cf7c5910ce75fa6350928326c04e33d94eee`
-- Ahead/behind at implementation start: 1 / 0, plus this slice's commits
+- Ahead/behind at implementation start: 1 / 0, plus the task commit, the implementation commit, and this stamp
 
 ## Files
 
