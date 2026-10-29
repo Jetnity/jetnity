@@ -10,10 +10,11 @@
 - URL: https://cursor.com/agents/bc-1885a130-36a8-4dcf-86bc-48aa6121c24e
 - Branch: `feat/discovercars-v2-official-widget-optin-1`
 - Implementation commit: `de8165a3d5c58995c882f24039223563f2e0b9b2`
+- Docs commit: `8a9bf98df39137264d6069a3aafe8a96f276492f`
 - Task blob: `f4b0996471eb67b811382c1102f88285944335e5` (unchanged)
 - Mode: NORMAL
 - Base at dispatch: `origin/main` `e462cf7c5910ce75fa6350928326c04e33d94eee`
-- The docs commit that follows this file is the branch tip. The PR comment records that exact head, tree, and ahead/behind. This file does not invent that later SHA.
+- This recording commit is the branch tip only until the PR comment on #1084 names a later exact head. Read `git rev-parse HEAD` after fetch.
 
 ## Done in the allowlist
 
