@@ -13,6 +13,7 @@
 
 - Provider set is closed. URLs and ad-hoc ids cannot create a state.
 - Repository constants, not caller input, decide purpose separation and script execution. Both are `false`. The execution return type is the literal `false`.
+- R1-F1: `grant_informative` no longer writes `granted` into the purpose map. Analytics, marketing, and functional load stay `not_decided`. Refuse still refuses every purpose.
 - UI distinguishes the informative sentence from "Wirksame Anbieter-Ausführung: aus."
 - Refuse and approve share classes, border, and background. Neither uses the primary button fill, so Zustimmen is not the highlighted path.
 - Stale generation, scope change, and reorder were tested. Storage APIs are absent from the new runtime files (source scan in `vertrag.test.ts`).

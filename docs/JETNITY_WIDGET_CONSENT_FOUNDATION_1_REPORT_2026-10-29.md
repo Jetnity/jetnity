@@ -18,8 +18,8 @@
 ## Behaviour that was exercised
 
 - Unknown provider ids and empty scope keys are rejected.
-- Refuse, informative grant, withdraw, close, and reopen change only the in-memory informative state and panel. Execution stays `false`.
-- A late grant with the previous generation is ignored.
+- Refuse sets every purpose to `refused`. Informative grant sets `informative` to `granted` and leaves every purpose `not_decided`. It does not authorise analytics, marketing, or functional load. Withdraw, close, and reopen do not grant a purpose. Execution stays `false`.
+- A late grant with the previous generation is ignored and does not grant a purpose.
 - The same scope key does not reset. A different scope key and a reorder both return to `not_decided` and bump generation.
 - A second `createWidgetConsentState` does not inherit a prior grant (no storage across "unmount").
 - `individuelleZweckwahl` returns `purpose_separation_unverified` for both providers.
@@ -41,7 +41,7 @@ Screenshots from the harness, not a production route:
 
 | Risk | Why it matters | Mitigation in this slice | Left open |
 | --- | --- | --- | --- |
-| Informative `granted` is read as permission to load a widget | Would start GTM or a counter before a legal gate | Execution function ignores the choice and caller `enabled` | Later provider slices must call this function and must not add a second grant path |
+| Informative `granted` is read as marketing permission | A later adapter could treat a purpose field as authorisation | Informative grant leaves every purpose `not_decided`. Execution ignores the choice and caller `enabled` | A future purpose grant needs its own separated, legally approved path. This model does not provide one |
 | Purpose rows look like separate consents | Analytics could be described as refused while a bundle script still loads | No checkboxes. Copy says separation is not proved | Do not render checkboxes until a source proof flips the repository constant |
 | Scope key becomes a private trip id | Memory inspection or logs could retain it | Foundation does not write storage or logs. Harness uses `scope-alpha` / `scope-beta` | Hosts must pass an opaque token, not a user, trip, document, IP, or user-agent id |
 | Privacy link click contacts the vendor | A real navigation is a third-party request | Component is unmounted. Harness does not activate the link. No prefetch | Mounting later is its own gate. A click is still a navigation, not a widget script |

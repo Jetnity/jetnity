@@ -50,21 +50,35 @@ describe('widget consent entscheidung', () => {
     assert.equal(zugestimmt.event, 'informative_granted')
     assert.equal(zugestimmt.state.informative, 'granted')
     for (const zweck of WIDGET_CONSENT_PURPOSES) {
-      assert.equal(zugestimmt.state.purposes[zweck], 'granted')
+      assert.equal(zugestimmt.state.purposes[zweck], 'not_decided')
     }
     assert.equal(zugestimmt.state.effectiveVendorExecution, false)
     assert.equal(vendorScriptMayExecute(zugestimmt.state, { enabled: true }), false)
+    for (const zweck of WIDGET_CONSENT_PURPOSES) {
+      assert.equal(abgelehnt.state.purposes[zweck], 'refused')
+    }
   })
 
   test('ein gesetztes enabled und ein gefälschter Zustand bleiben aus', () => {
     const start = offen('twelvego')
     const zugestimmt = applyWidgetConsentCommand(start, commandForAction(start, 'grant_informative'))
+    for (const zweck of WIDGET_CONSENT_PURPOSES) {
+      assert.equal(zugestimmt.state.purposes[zweck], 'not_decided')
+    }
     const faelschung = {
       ...zugestimmt.state,
       effectiveVendorExecution: true,
       informative: 'granted',
+      purposes: {
+        functional_load: 'granted',
+        nonessential_analytics: 'granted',
+        advertising_marketing: 'granted',
+      },
     } as unknown as WidgetConsentState
     assert.equal(vendorScriptMayExecute(faelschung, { enabled: true }), false)
+    assert.equal(zugestimmt.state.purposes.advertising_marketing, 'not_decided')
+    assert.equal(zugestimmt.state.purposes.nonessential_analytics, 'not_decided')
+    assert.equal(zugestimmt.state.purposes.functional_load, 'not_decided')
   })
 
   test('einzelne Zweckwahl ist immer abgelehnt', () => {
@@ -90,6 +104,10 @@ describe('widget consent entscheidung', () => {
     assert.equal(spaet.event, 'stale_ignored')
     assert.equal(spaet.state, geschlossen.state)
     assert.equal(spaet.state.informative, 'not_decided')
+    for (const zweck of WIDGET_CONSENT_PURPOSES) {
+      assert.equal(spaet.state.purposes[zweck], 'not_decided')
+    }
+    assert.equal(vendorScriptMayExecute(spaet.state, { enabled: true }), false)
   })
 
   test('Zurücknehmen, Schliessen und erneutes Öffnen laden nichts nach', () => {
@@ -101,6 +119,10 @@ describe('widget consent entscheidung', () => {
     )
     assert.equal(offenWieder.state.informative, 'granted')
     assert.equal(offenWieder.state.panel, 'open')
+    for (const zweck of WIDGET_CONSENT_PURPOSES) {
+      assert.equal(offenWieder.state.purposes[zweck], 'not_decided')
+    }
+    assert.equal(vendorScriptMayExecute(offenWieder.state, { enabled: true }), false)
     const zurueck = applyWidgetConsentCommand(offenWieder.state, commandForAction(offenWieder.state, 'withdraw'))
     assert.equal(zurueck.event, 'withdrawn')
     assert.equal(zurueck.state.informative, 'not_decided')

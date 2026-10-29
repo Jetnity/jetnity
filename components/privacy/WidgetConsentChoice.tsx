@@ -61,7 +61,7 @@ export function WidgetConsentChoice({ state, onCommand }: WidgetConsentChoicePro
 
   const status =
     state.informative === 'granted'
-      ? 'Deine Zustimmung ist nur in dieser Anzeige festgehalten. Sie startet kein Anbieter-Skript.'
+      ? 'Diese Anzeige hält nur eine informative Auswahl fest. Kein Zweck ist freigegeben, und es startet kein Anbieter-Skript.'
       : state.informative === 'refused'
         ? 'Du hast abgelehnt. Es wird nichts geladen.'
         : 'Noch keine Auswahl. Standard ist Ablehnung, und es wird nichts geladen.'

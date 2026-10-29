@@ -59,7 +59,8 @@ const NICHT_ENTSCHIEDEN: PurposeMap = Object.freeze({
   advertising_marketing: 'not_decided',
 })
 
-function buendel(wahl: InformativeChoice): PurposeMap {
+/** Ablehnung oder unentschieden. `granted` ist hier kein Zweckstatus. */
+function buendel(wahl: Exclude<InformativeChoice, 'granted'>): PurposeMap {
   return Object.freeze({
     functional_load: wahl,
     nonessential_analytics: wahl,
@@ -140,13 +141,15 @@ export function applyWidgetConsentCommand(
         'informative_refused',
       )
     case 'grant_informative':
+      // Anzeige bleibt `informative: granted`. Kein Zweck wird granted:
+      // Trennung ist nicht nachgewiesen und eine rechtliche Zweckfreigabe fehlt.
       return ergebnis(
         einfrieren({
           ...state,
           generation,
           panel: 'closed',
           informative: 'granted',
-          purposes: buendel('granted'),
+          purposes: NICHT_ENTSCHIEDEN,
         }),
         true,
         false,

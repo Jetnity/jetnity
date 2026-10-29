@@ -40,8 +40,8 @@ Privacy URL from the in-repo 12Go audit of 29 August 2026 (`docs/PROVIDER_12GO_M
 
 | Layer | Meaning in this foundation |
 | --- | --- |
-| Informative choice | `not_decided` (default), `refused`, or `granted` in memory only |
-| Purpose rows | Functional load, non-essential analytics, advertising/marketing. Not separately enforceable |
+| Informative choice | `not_decided` (default), `refused`, or `granted` as a display label only |
+| Purpose rows | Functional load, non-essential analytics, advertising/marketing. They stay `not_decided` after an informative grant. They become `refused` only on Ablehnen. None becomes `granted` in this foundation |
 | Effective vendor execution | Always denied while the repository kill switch stays false |
 | Storage | None. Refresh drops the choice. No user, trip, IP, or user-agent record |
 

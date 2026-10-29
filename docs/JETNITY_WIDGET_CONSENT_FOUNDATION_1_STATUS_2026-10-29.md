@@ -6,19 +6,22 @@
 
 ## Result
 
-A reusable in-memory choice model and a controlled UI exist for `discovercars` and `twelvego`. Default is `not_decided`. Ablehnen and Zustimmen have the same visual weight. Zustimmen is informative only. `vendorScriptMayExecute` returns `false` even if a caller passes `{ enabled: true }`. Purpose checkboxes are absent because separation is not proved. Nothing is stored. The UI is not mounted in the Trip Workspace or on `/privacy`.
+A reusable in-memory choice model and a controlled UI exist for `discovercars` and `twelvego`. Default is `not_decided`. Ablehnen and Zustimmen have the same visual weight. Zustimmen sets only `informative: 'granted'`. It does not set `functional_load`, `nonessential_analytics`, or `advertising_marketing` to `granted`. Those purpose fields stay `not_decided` while separation is unverified. Refuse still sets every purpose to `refused`. `vendorScriptMayExecute` returns `false` even if a caller passes `{ enabled: true }`. Purpose checkboxes are absent. Nothing is stored. The UI is not mounted in the Trip Workspace or on `/privacy`.
+
+R1-F1 corrects head `5edff201f83b46787c829f749765163daf203b69`, which had copied `granted` into all three purpose fields. That head is not the review head.
 
 There is **no live tracker** in this slice.
 
 ## Exact head
 
-The command table below was produced on the implementation tree, then committed as `debe80bab44a3af9fd33c3af7ca322a3ff57756c`. The stamp commit that records these hashes changes only this status file. Re-check `git rev-parse HEAD` on the PR. A newer head invalidates this note. Focused tests were run again on the stamp head before push; see the PR delivery comment.
+R1-F1 supersedes review head `5edff201f83b46787c829f749765163daf203b69` (tree `557a417082968a6df3d13f24a1ea4b1e5b8a0a42`). That head's purpose map wrote `granted` into analytics and marketing. The correction commit and tree below are the new review head. A later head invalidates this note.
 
-- Implementation commit: `debe80bab44a3af9fd33c3af7ca322a3ff57756c`
-- Implementation tree: `ac4cabe60496f7ba7b6ad4ed529271d7042a1a63`
-- `origin/main` at implementation: `e462cf7c5910ce75fa6350928326c04e33d94eee`
-- Merge-base at implementation: `e462cf7c5910ce75fa6350928326c04e33d94eee`
-- Ahead/behind at implementation start: 1 / 0, plus the task commit, the implementation commit, and this stamp
+- R1 correction commit: `PENDING_R1_SHA`
+- R1 correction tree: `PENDING_R1_TREE`
+- `origin/main` and merge-base: `e462cf7c5910ce75fa6350928326c04e33d94eee`
+- Ahead/behind after this correction: 4 / 0 once the R1 commit is the only addition on the previous 3
+
+Focused tests, harness, typecheck, lint of the changed files, dead/exports/schema-bezug, and production build were run on this correction before the SHA lines were filled. The stamp commit changes only those two lines.
 
 ## Files
 

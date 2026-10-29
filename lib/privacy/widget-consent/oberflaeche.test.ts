@@ -61,6 +61,7 @@ describe('widget consent oberflaeche', () => {
     assert.match(html, /data-informative="granted"/)
     assert.match(html, /data-effective-vendor-execution="denied"/)
     assert.match(html, /Entscheidung zurücknehmen/)
+    assert.match(html, /Kein Zweck ist freigegeben/)
     assert.match(html, /startet kein Anbieter-Skript/)
     assert.equal(html.includes('widget.js'), false)
     assert.equal(html.includes('googletagmanager.com/gtm'), false)
