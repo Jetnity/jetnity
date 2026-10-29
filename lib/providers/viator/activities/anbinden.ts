@@ -148,6 +148,11 @@ export function viatorActivityProvider(deps: Abhaengigkeiten = {}): ActivityProv
         latitude: anfrage.latitude,
         longitude: anfrage.longitude,
         katalog: orte,
+        kanon: {
+          namen: [anfrage.destinationName, ...(anfrage.placeAliases ?? [])],
+          typ: anfrage.placeType ?? null,
+          countryCode: anfrage.countryCode,
+        },
       })
       if (!ziel.ok) {
         const message =

@@ -47,7 +47,7 @@ const reise: Trip = {
     },
   ],
   days: [
-    { id: 'day-bkk', stageId: 'stage-bkk', dayIndex: 1, dayDate: '2026-11-02', title: 'Bangkok-Tag', items: [] },
+    { id: 'day-bkk', stageId: 'stage-bkk', dayIndex: 1, dayDate: '2026-11-02', title: 'Bangkok erster Besuch', items: [] },
     { id: 'day-phu', stageId: 'stage-phu', dayIndex: 2, dayDate: '2026-11-04', title: 'Phuket-Tag', items: [] },
   ],
   ohneTag: [],

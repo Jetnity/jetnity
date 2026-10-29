@@ -50,6 +50,10 @@ export type ActivitySuchanfrage = {
   countryCode?: string | null
   latitude?: number | null
   longitude?: number | null
+  /** Confirmed aliases of the selected place. Absent means only destinationName is confirmed. */
+  placeAliases?: readonly string[]
+  /** Confirmed place type, such as city, island, or country. */
+  placeType?: string | null
 }
 
 /**

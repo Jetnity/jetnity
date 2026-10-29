@@ -1,8 +1,4 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-
 import { landName } from '@/lib/country/darstellung'
-import { geoNamesTsvZeile } from '@/lib/places/importieren'
 
 export type ViatorPlaceBinding = {
   jetnityPlaceId: string
@@ -61,45 +57,15 @@ export type ViatorKatalogOrt = {
 }
 
 const ORTS_TYPEN = new Set(['CITY', 'TOWN', 'ISLAND'])
+const LAND_TYPEN = new Set(['country', 'land', 'region'])
+const INSEL_TYPEN = new Set(['island', 'insel'])
+const STADT_TYPEN = new Set(['city', 'town', 'stadt'])
 
-type Namensbruecke = { countryCode: string; schluessel: Set<string> }
-
-let namensbruecke: Namensbruecke[] | null = null
-
-function bruecke(): Namensbruecke[] {
-  if (namensbruecke) return namensbruecke
-  const gelesen: Namensbruecke[] = []
-  try {
-    const text = readFileSync(join(process.cwd(), 'lib/places/fixtures/geonames.tsv'), 'utf8')
-    for (const zeile of text.split(/\r?\n/)) {
-      const ort = geoNamesTsvZeile(zeile)
-      if (!ort) continue
-      const code = ort.countryCode.trim().toUpperCase()
-      if (!/^[A-Z]{2}$/.test(code)) continue
-      const schluessel = new Set(
-        [ort.name, ort.asciiName, ...ort.altNames.split(',')]
-          .map((name) => nameSchluessel(name))
-          .filter((name) => name.length > 0),
-      )
-      if (schluessel.size > 0) gelesen.push({ countryCode: code, schluessel })
-    }
-  } catch {
-    namensbruecke = []
-    return namensbruecke
-  }
-  namensbruecke = gelesen
-  return namensbruecke
-}
-
-function aliasNamen(name: string, countryCode: string | null): Set<string> {
-  if (!countryCode) return new Set()
-  const gesucht = nameSchluessel(name)
-  const namen = new Set<string>()
-  for (const eintrag of bruecke()) {
-    if (eintrag.countryCode !== countryCode.toUpperCase() || !eintrag.schluessel.has(gesucht)) continue
-    for (const wert of eintrag.schluessel) namen.add(wert)
-  }
-  return namen
+/** Confirmed place identity supplied by the caller. Not read from a fixture or a database. */
+export type ViatorKanonOrt = {
+  namen: readonly string[]
+  typ?: string | null
+  countryCode?: string | null
 }
 
 function nameSchluessel(value: string): string {
@@ -175,8 +141,18 @@ function distanzKm(lat1: number, lon1: number, lat2: number, lon2: number): numb
   return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
+function erlaubteTypen(typ: string | null | undefined): Set<string> {
+  if (!typ || typ.trim().length === 0) return ORTS_TYPEN
+  const normal = typ.trim().toLowerCase()
+  if (LAND_TYPEN.has(normal)) return new Set()
+  if (INSEL_TYPEN.has(normal)) return new Set(['ISLAND'])
+  if (STADT_TYPEN.has(normal)) return new Set(['CITY', 'TOWN'])
+  return new Set()
+}
+
 /**
  * Resolves a confirmed place against a destinations catalog.
+ * Aliases come only from the injected canonical record.
  * A repeated name without a matching country or nearby center stays unresolved.
  */
 export function viatorOrtAufloesen(input: {
@@ -185,15 +161,24 @@ export function viatorOrtAufloesen(input: {
   latitude?: number | null
   longitude?: number | null
   katalog: readonly ViatorKatalogOrt[]
+  kanon?: ViatorKanonOrt | null
 }): ViatorDestinationResolution {
   const name = nameSchluessel(input.name)
   if (!name) return { ok: false, reason: 'invalid_place' }
-  const aliase = aliasNamen(input.name, input.countryCode ?? null)
-  const staedte = input.katalog.filter((ort) => ORTS_TYPEN.has(ort.type) && landVon(ort, input.katalog)?.type === 'COUNTRY')
+  const kanonLand = input.kanon?.countryCode?.trim().toUpperCase() || null
+  const landCode = input.countryCode?.trim().toUpperCase() || null
+  if (kanonLand && landCode && kanonLand !== landCode) return { ok: false, reason: 'unmapped' }
+  const typen = erlaubteTypen(input.kanon?.typ)
+  if (typen.size === 0) return { ok: false, reason: 'unmapped' }
+  const namen = new Set<string>([name])
+  for (const alias of input.kanon?.namen ?? []) {
+    const schluessel = nameSchluessel(alias)
+    if (schluessel) namen.add(schluessel)
+  }
+  const staedte = input.katalog.filter((ort) => typen.has(ort.type) && landVon(ort, input.katalog)?.type === 'COUNTRY')
   const nachName = staedte.filter((ort) => {
-    const katalogName = nameSchluessel(ort.name)
-    const namePasst = katalogName === name || aliase.has(katalogName)
-    return namePasst && landPasst(input.countryCode ?? null, landVon(ort, input.katalog))
+    const namePasst = namen.has(nameSchluessel(ort.name))
+    return namePasst && landPasst(landCode ?? kanonLand, landVon(ort, input.katalog))
   })
   const hatPunkt = typeof input.latitude === 'number' && typeof input.longitude === 'number'
   const nah = hatPunkt

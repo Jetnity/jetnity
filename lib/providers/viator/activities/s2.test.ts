@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
 import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
@@ -132,14 +134,17 @@ describe('Viator native seam', () => {
         { destinationId: 801, name: 'Panama City', type: 'CITY', parentDestinationId: 80, center: { latitude: 8.98, longitude: -79.52 } },
       ],
     })
-    const lissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
-    const lisbon = viatorOrtAufloesen({ name: 'Lisbon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
-    const erneutLissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
+    const kanonLissabon = { namen: ['Lissabon', 'Lisbon', 'Lisboa'], typ: 'city', countryCode: 'PT' }
+    const lissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal!, kanon: kanonLissabon })
+    const lisbon = viatorOrtAufloesen({ name: 'Lisbon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal!, kanon: kanonLissabon })
+    const erneutLissabon = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal!, kanon: kanonLissabon })
+    const ohneAlias = viatorOrtAufloesen({ name: 'Lissabon', countryCode: 'PT', latitude: 38.72, longitude: -9.14, katalog: portugal! })
     const land = viatorOrtAufloesen({ name: 'Portugal', countryCode: 'PT', katalog: portugal! })
     const koChang = viatorOrtAufloesen({ name: 'Ko Chang', countryCode: 'TH', latitude: 12.0, longitude: 102.3, katalog: portugal! })
     const phuket = viatorOrtAufloesen({ name: 'Phuket', countryCode: 'TH', latitude: 7.88, longitude: 98.39, katalog: portugal! })
     const panama = viatorOrtAufloesen({ name: 'Panama City', countryCode: 'PA', latitude: 8.98, longitude: -79.52, katalog: portugal! })
     const nurLand = viatorOrtAufloesen({ name: 'Panama', countryCode: 'PA', katalog: portugal! })
+    assert.equal(ohneAlias.ok, false)
     assert.equal(lissabon.ok && lissabon.destinationId, '501')
     assert.equal(lisbon.ok && lisbon.destinationId, '501')
     assert.equal(erneutLissabon.ok && erneutLissabon.destinationId, '501')
@@ -148,6 +153,61 @@ describe('Viator native seam', () => {
     assert.equal(phuket.ok && phuket.destinationId, '349')
     assert.equal(panama.ok && panama.destinationId, '801')
     assert.equal(nurLand.ok, false)
+    const europa = viatorKatalogLesen({
+      destinations: [
+        { destinationId: 11, name: 'Austria', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 454, name: 'Vienna', type: 'CITY', parentDestinationId: 11, center: { latitude: 48.2, longitude: 16.37 } },
+        { destinationId: 12, name: 'Germany', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 487, name: 'Munich', type: 'CITY', parentDestinationId: 12, center: { latitude: 48.14, longitude: 11.58 } },
+        { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 348, name: 'Koh Chang', type: 'ISLAND', parentDestinationId: 20, center: { latitude: 12.0, longitude: 102.3 } },
+        { destinationId: 77, name: 'United States', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 999, name: 'Test Village', type: 'CITY', parentDestinationId: 77 },
+        { destinationId: 55, name: 'Portugal', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 556, name: 'Portugal', type: 'CITY', parentDestinationId: 55 },
+      ],
+    })
+    assert.equal(viatorOrtAufloesen({ name: 'Wien', countryCode: 'AT', latitude: 48.2, longitude: 16.37, katalog: europa! }).ok, false)
+    assert.equal(viatorOrtAufloesen({ name: 'München', countryCode: 'DE', latitude: 48.14, longitude: 11.58, katalog: europa! }).ok, false)
+    assert.equal(viatorOrtAufloesen({ name: 'Ko Chang', countryCode: 'TH', latitude: 12.0, longitude: 102.3, katalog: europa! }).ok, false)
+    assert.equal(viatorOrtAufloesen({ name: 'Test', countryCode: 'US', katalog: europa! }).ok, false)
+    const wien = viatorOrtAufloesen({
+      name: 'Wien',
+      countryCode: 'AT',
+      latitude: 48.2,
+      longitude: 16.37,
+      katalog: europa!,
+      kanon: { namen: ['Wien', 'Vienna'], typ: 'city', countryCode: 'AT' },
+    })
+    const muenchen = viatorOrtAufloesen({
+      name: 'München',
+      countryCode: 'DE',
+      latitude: 48.14,
+      longitude: 11.58,
+      katalog: europa!,
+      kanon: { namen: ['München', 'Munich'], typ: 'city', countryCode: 'DE' },
+    })
+    const kohChang = viatorOrtAufloesen({
+      name: 'Ko Chang',
+      countryCode: 'TH',
+      latitude: 12.0,
+      longitude: 102.3,
+      katalog: europa!,
+      kanon: { namen: ['Ko Chang', 'Koh Chang'], typ: 'island', countryCode: 'TH' },
+    })
+    const landIdentitaet = viatorOrtAufloesen({
+      name: 'Portugal',
+      countryCode: 'PT',
+      katalog: europa!,
+      kanon: { namen: ['Portugal'], typ: 'country', countryCode: 'PT' },
+    })
+    assert.equal(wien.ok && wien.destinationId, '454')
+    assert.equal(muenchen.ok && muenchen.destinationId, '487')
+    assert.equal(kohChang.ok && kohChang.destinationId, '348')
+    assert.equal(landIdentitaet.ok, false)
+    const quelle = readFileSync(join(process.cwd(), 'lib/providers/viator/activities/destination.ts'), 'utf8')
+    assert.equal(quelle.includes('geonames.tsv'), false)
+    assert.equal(quelle.includes('readFileSync'), false)
   })
 
   test('runtime search loads destinations once and does not guess an unknown city', async () => {

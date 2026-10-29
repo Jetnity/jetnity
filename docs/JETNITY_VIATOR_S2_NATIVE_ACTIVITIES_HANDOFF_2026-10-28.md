@@ -4,7 +4,7 @@
 
 ## What is wired
 
-`activityProviderAus` loads `GET /destinations` when the sandbox guard is open, caches that catalog for at most 3600 seconds, and resolves a CITY, TOWN, or ISLAND by name, country ancestor, nearby center, and GeoNames alternate names already in `lib/places/fixtures/geonames.tsv`. Country identity uses `landName`. An ambiguous or unknown place does not guess an id. A country record is not returned as the place.
+`activityProviderAus` loads `GET /destinations` when the sandbox guard is open, caches that catalog for at most 3600 seconds, and resolves a CITY, TOWN, or ISLAND by the confirmed place name, injected aliases, country ancestor, and nearby center. It does not read `lib/places/fixtures/geonames.tsv`. Country identity uses `landName`. An ambiguous or unknown place does not guess an id. A country identity is not returned as a city.
 
 The check panel shows option titles. Detail loading and the live quote use separate generations, so a date edit during loading does not strand the panel. A new search in `AktivitaetenBereich` clears the Viator selection. Currency is required. Pricing-record weekdays limit the hinted times. A missing season `endDate` uses the documented 384-day horizon. The browser harness lives in `scripts/viator-s2-native-integration/` and renders `AktivitaetenBereich`.
 

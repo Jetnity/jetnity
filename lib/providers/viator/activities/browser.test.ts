@@ -18,6 +18,29 @@ test('the browser harness stays imported for reachability', () => {
 
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
+const TEXT_GRENZEN = `(() => {
+  const wert = [...document.querySelectorAll('dd')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
+  const knopf = [...document.querySelectorAll('button')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
+  const section = wert ? wert.closest('section') : null
+  const dl = wert ? wert.closest('dl') : null
+  if (!wert || !knopf || !section || !dl) return { ok: false, reason: 'missing' }
+  const box = section.getBoundingClientRect()
+  const messen = (el) => {
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    return [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0)
+  }
+  const rects = [...messen(wert), ...messen(knopf)]
+  const ausserhalb = rects.some((rect) => rect.right > box.right + 1 || rect.left < box.left - 1)
+  return {
+    ok: rects.length > 0 && !ausserhalb && dl.scrollWidth <= dl.clientWidth + 1,
+    rechts: rects.map((rect) => Math.round(rect.right)),
+    sectionRechts: Math.round(box.right),
+    dlScroll: dl.scrollWidth,
+    dlClient: dl.clientWidth,
+  }
+})()`
+
 async function css(): Promise<string> {
   const verlangen = createRequire(import.meta.url)
   const postcss = verlangen('postcss') as (plugins: unknown[]) => {
@@ -321,12 +344,12 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.getByText('Keine Testangebote.').waitFor()
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     assert.equal(träger.detailAnzahl(), detailsVorSuche)
-    await bereich.getByRole('radio', { name: 'Phuket-Tag' }).click()
-    assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     const vorher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
     const nachher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     assert.ok(nachher > vorher)
+    const textGrenzen = await page.evaluate(TEXT_GRENZEN)
+    assert.equal(textGrenzen.ok, true, JSON.stringify(textGrenzen))
     const ueberlappung = await page.evaluate(`(() => {
       const kasten = (name) => {
         const el = [...document.querySelectorAll('dt')].find((knoten) => knoten.textContent && knoten.textContent.trim() === name)
@@ -345,10 +368,12 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     })()`) as { reisetagDatum: boolean; reisendeWaehrung: boolean }
     assert.equal(ueberlappung.reisetagDatum, false)
     assert.equal(ueberlappung.reisendeWaehrung, false)
+    await page.screenshot({ path: join(ARTIFACTS, 'viator-390.png'), fullPage: true })
+    await bereich.getByRole('radio', { name: 'Phuket-Tag' }).click()
+    assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     await page.keyboard.press('Tab')
     const mass = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
     assert.ok(mass.scroll <= mass.client + 1)
-    await page.screenshot({ path: join(ARTIFACTS, 'viator-390.png'), fullPage: true })
     await page.close()
     for (const breite of [320, 768, 1440]) {
       const weitere = await seite(breite)
@@ -358,6 +383,11 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       await weitere.getByRole('button', { name: 'Erneut laden' }).click()
       ;(weitere as Page & { releaseDetail: () => void }).releaseDetail()
       await weitere.getByText('Kalenderhinweis, keine aktuelle Verfügbarkeit.').waitFor()
+      if (breite === 320) {
+        await weitere.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+        const grenzen = await weitere.evaluate(TEXT_GRENZEN)
+        assert.equal(grenzen.ok, true, `${breite} ${JSON.stringify(grenzen)}`)
+      }
       const kante = await weitere.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
       assert.ok(kante.scroll <= kante.client + 1, `${breite}`)
       await weitere.screenshot({ path: join(ARTIFACTS, `viator-${breite}.png`), fullPage: true })

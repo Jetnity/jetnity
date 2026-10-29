@@ -113,25 +113,25 @@ function SuchKontext({
 }) {
   const datum = tag?.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : 'Datum noch offen'
   return (
-    <dl className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm">
+    <dl className="mt-4 grid min-w-0 grid-cols-1 gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm sm:grid-cols-2">
       <div className="min-w-0 sm:col-span-2">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
         <dd className="mt-1 break-words text-ink-800">{etappe?.name.trim() || 'Zielort fehlt'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisetag</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisetag</dt>
         <dd className="mt-1 break-words text-ink-800">{tag ? tagTitel(tag) : 'Tag fehlt'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Datum</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Datum</dt>
         <dd className="mt-1 break-words text-ink-800">{tag ? datum : 'Datum noch offen'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisende</dt>
-        <dd className="mt-1 text-ink-800">{reise.travellers}</dd>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisende</dt>
+        <dd className="mt-1 break-words text-ink-800">{reise.travellers}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Währung</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Währung</dt>
         <dd className="mt-1 break-words text-ink-800">{reise.currency}</dd>
       </div>
     </dl>
@@ -430,13 +430,13 @@ function ActivityTag({
                 aria-checked={gewaehlt}
                 onClick={() => onTagWechseln(eintrag.id)}
                 className={cn(
-                  'inline-flex min-h-11 max-w-[14rem] shrink-0 items-center rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                  'inline-flex min-h-11 max-w-full min-w-0 shrink items-center whitespace-normal rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                   gewaehlt
                     ? 'border-brand-800 bg-brand-800 text-white'
                     : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
                 )}
               >
-                <span className="min-w-0 break-words">{tagTitel(eintrag)}</span>
+                <span className="block min-w-0 max-w-full break-words">{tagTitel(eintrag)}</span>
               </button>
             )
           })}

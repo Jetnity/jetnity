@@ -4,7 +4,7 @@
 
 ## Umgesetzt
 
-Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Lissabon matches Lisbon through the existing GeoNames alternate names. A country record is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product. The browser harness renders the real Aktivitäten area.
+Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. The activity summary uses one column below the small breakpoint so a long day name wraps inside the section. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product. The browser harness renders the real Aktivitäten area.
 
 ## Dateien
 
