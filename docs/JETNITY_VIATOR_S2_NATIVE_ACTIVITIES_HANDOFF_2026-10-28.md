@@ -18,10 +18,14 @@ Comment 6494491081 authorized one file. On this branch a search of `*.ts`, `*.ts
 
 The Linux browser test presses ArrowDown and, on this machine, moves Tag 1 to Tag 2 and the Bangkok day to Phuket-Tag. Comment 6485453294 records that the same ArrowDown sequence does not change a native select in macOS headless Chrome 156, including a plain HTML select. Typeahead worked in that review. The product control was not replaced and the test was not rewritten. Real-device, VoiceOver, and full-browser-zoom acceptance remain open.
 
+## Sandbox environment
+
+S2-PREACTIVATION-R1, comment 6495438986. `viatorSandboxZugang` opens the real client only for exact `preview` or `development`, and only after the calls flag and key checks. Missing, empty, unknown, Production, and malformed values return before transport. Tests inject HTTP and count zero calls. The cleanup PASS [40860128741](https://github.com/Jetnity/jetnity/actions/runs/40860128741) remains valid for `b7299e69` and does not cover this guard change. No secret was installed.
+
 ## Still blocked
 
 Real Sandbox calls, image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff. The destinations request exists; this session did not call Viator. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
 
 ## Next step
 
-Independent review of the deletion head. CI 40800257522 is the FAIL on `7a255a12` and is not evidence for this commit.
+Independent review of the pre-activation head. CI 40860128741 is the historical cleanup PASS on `b7299e69`.

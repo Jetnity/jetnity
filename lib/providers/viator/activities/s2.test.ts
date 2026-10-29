@@ -7,7 +7,7 @@ import { activitiesSuchen } from '@/lib/activities/suche'
 import { activityRateLeeren } from '@/lib/activities/rate-limit'
 import { activityZustand } from '@/lib/activities/zustand'
 import type { Ort } from '@/lib/places/domain'
-import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
+import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorKalenderLaden, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
 import { viatorOrtAufloesen, viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
 import type { ProviderHttpClient, ProviderHttpRequest } from '@/lib/server/providers/core'
@@ -66,7 +66,7 @@ function httpFor(routes: Record<string, unknown>): { client: ProviderHttpClient;
   return { client, calls }
 }
 
-const env = { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY }
+const env = { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY, VERCEL_ENV: 'preview' }
 const product = {
   productCode: '10001P1',
   title: 'Fixture walking tour',
@@ -96,6 +96,52 @@ describe('Viator native seam', () => {
     assert.equal(production.status, 'unavailable')
     assert.deepEqual(http.calls, [])
     assert.equal(viatorActivityProvider({ env: {} }), null)
+  })
+
+  test('an unrecognized environment does not call Viator', async () => {
+    viatorZielCacheLeeren()
+    const http = httpFor({
+      [ZIELE]: KATALOG,
+      'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
+    })
+    const schluessel = { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY }
+    const verweigert = [undefined, '', ' ', 'staging', 'production', 'production ', 'Production', 'preview ', 'Preview', 'development ']
+    for (const wert of verweigert) {
+      const umgebung = wert === undefined ? schluessel : { ...schluessel, VERCEL_ENV: wert }
+      assert.equal(viatorActivityProvider({ env: umgebung, http: http.client, nowMs: NOW }), null, JSON.stringify(wert))
+      const detail = await viatorProduktLaden('10001P1', { env: umgebung, http: http.client, nowMs: NOW })
+      const kalender = await viatorKalenderLaden('10001P1', { env: umgebung, http: http.client, nowMs: NOW })
+      const live = await viatorLivePruefen(
+        { productCode: '10001P1', currency: 'CHF', travelDate: '2026-11-02', paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }] },
+        { env: umgebung, http: http.client, nowMs: NOW },
+      )
+      assert.equal(detail.status, 'unavailable', JSON.stringify(wert))
+      assert.equal(kalender.status, 'unavailable', JSON.stringify(wert))
+      assert.equal(live.status, 'unavailable', JSON.stringify(wert))
+    }
+    const ohneFlag = await viatorProduktLaden('10001P1', { env: { VERCEL_ENV: 'development' }, http: http.client, nowMs: NOW })
+    const ohneKey = await viatorProduktLaden('10001P1', {
+      env: { VERCEL_ENV: 'preview', VIATOR_SANDBOX_CALLS: 'true' },
+      http: http.client,
+      nowMs: NOW,
+    })
+    assert.equal(ohneFlag.status, 'unavailable')
+    assert.equal(ohneKey.status, 'unavailable')
+    assert.deepEqual(http.calls, [])
+    const entwicklung = httpFor({
+      [ZIELE]: KATALOG,
+      'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
+    })
+    const provider = viatorActivityProvider({
+      env: { ...schluessel, VERCEL_ENV: 'development' },
+      http: entwicklung.client,
+      nowMs: NOW,
+    })
+    assert.ok(provider)
+    const treffer = await provider.suchen(anfrage())
+    assert.equal(treffer.options[0]?.externalRef, '10001P1')
+    assert.equal(entwicklung.calls.includes(ZIELE), true)
+    assert.equal(entwicklung.calls.includes('https://api.sandbox.viator.com/partner/products/search'), true)
   })
 
   test('catalog resolution distinguishes country, repeat visits and ambiguity', async () => {

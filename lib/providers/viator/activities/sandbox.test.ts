@@ -39,6 +39,7 @@ const enabled = {
   VIATOR_SANDBOX_CALLS: 'true',
   VIATOR_SANDBOX_API_KEY: KEY,
   VIATOR_API_ORIGIN: 'https://api.viator.com',
+  VERCEL_ENV: 'preview',
 }
 
 describe('Viator sandbox client', () => {
@@ -62,6 +63,52 @@ describe('Viator sandbox client', () => {
     const noNetwork = createViatorSandboxClient({ env: enabled })
     assert.equal(noNetwork.ok, false)
     if (!noNetwork.ok) assert.equal(noNetwork.reason, 'network_not_authorized')
+    const http = recording({})
+    const previewOhneFlag = createViatorSandboxClient({ env: { VERCEL_ENV: 'preview' }, http: http.client, nowMs: NOW })
+    assert.equal(previewOhneFlag.ok, false)
+    if (!previewOhneFlag.ok) assert.equal(previewOhneFlag.reason, 'disabled')
+    const previewOhneKey = createViatorSandboxClient({
+      env: { VERCEL_ENV: 'preview', VIATOR_SANDBOX_CALLS: 'true' },
+      http: http.client,
+      nowMs: NOW,
+    })
+    assert.equal(previewOhneKey.ok, false)
+    if (!previewOhneKey.ok) assert.equal(previewOhneKey.reason, 'missing_key')
+    assert.equal(http.calls.length, 0)
+  })
+
+  test('only exact preview or development may call the sandbox host', async () => {
+    const http = recording({})
+    const basis = {
+      VIATOR_SANDBOX_CALLS: 'true',
+      VIATOR_SANDBOX_API_KEY: KEY,
+    }
+    const verweigert = [undefined, '', ' ', 'staging', 'production', 'production ', 'Production', 'preview ', 'Preview', 'development ']
+    for (const wert of verweigert) {
+      const umgebung = wert === undefined ? basis : { ...basis, VERCEL_ENV: wert }
+      const guard = viatorSandboxZugang(umgebung)
+      assert.equal(guard.ok, false, JSON.stringify(wert))
+      if (!guard.ok) assert.equal(guard.reason, wert === 'production' ? 'production_blocked' : 'environment_blocked')
+      const created = createViatorSandboxClient({ env: umgebung, http: http.client, nowMs: NOW })
+      assert.equal(created.ok, false, JSON.stringify(wert))
+    }
+    assert.equal(http.calls.length, 0)
+    for (const wert of ['preview', 'development'] as const) {
+      const erlaubt = recording({
+        products: [{ productCode: '10001P1', title: 'Fixture walking tour', pricing: { summary: { fromPrice: 40 }, currency: 'EUR' } }],
+      })
+      const created = createViatorSandboxClient({
+        env: { ...basis, VERCEL_ENV: wert },
+        http: erlaubt.client,
+        nowMs: NOW,
+      })
+      assert.equal(created.ok, true, wert)
+      if (!created.ok) return
+      const result = await created.client.search({ destinationId: '732', currency: 'EUR' })
+      assert.equal(result.ok, true, wert)
+      assert.equal(erlaubt.calls.length, 1)
+      assert.equal(erlaubt.calls[0]?.url, 'https://api.sandbox.viator.com/partner/products/search')
+    }
   })
 
   test('search uses the sandbox host, hides the key, and drops unique content', async () => {

@@ -4,13 +4,13 @@
 
 ## Umgesetzt
 
-The three corrections from the review of `ce0a5bcda6c227ef831a7b4534841b744af27e06` are in this head. The unused `bestaetigt` binding is removed. "Verfügbarkeit prüfen" stays inside its button in the padded `main` at 320px and root font 32px. Multi-week trips use one labelled day select instead of a full day list. The earlier identity and reader guards stay in place.
+The three corrections from the review of `ce0a5bcda6c227ef831a7b4534841b744af27e06` remain. S2-PREACTIVATION-R1 closes the sandbox client unless `VERCEL_ENV` is exactly `preview` or `development`. The earlier identity and reader guards stay in place.
 
 Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product.
 
 ## Dateien
 
-`components/ui/scroll-row.tsx` is deleted because it had no importer after the day select replaced the old list. `lib/activities/suche.ts`, `components/trips/AktivitaetenBereich.tsx`, `components/trips/ViatorPruefung.tsx`, `scripts/viator-s2-native-integration/browser-harness.tsx`, `lib/providers/viator/activities/browser.test.ts`, and the S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Workspace, navigation, places, schema, and auth files were not edited. The reachability script was not edited.
+`lib/providers/viator/activities/zugang.ts`, `sandbox.test.ts`, and `s2.test.ts`. The S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Auth, database, environment configuration, shared provider-ops, UI, workflows, and packages were not edited.
 
 ## Datenbank
 
@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-On `7a255a12`, CI 40800257522 failed only at `check:dead` for `components/ui/scroll-row.tsx` after 7651 passing tests. After deleting that file, `check:dead` reported 0 orphans, `check:exports` reported 0 unused exports, and `check:deps` reported 0 unused packages. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 9 passed. Foundation and sandbox: 17 passed. Browser harness: 3 passed on Linux, including ArrowDown. That ArrowDown pass is not macOS headless acceptance: comment 6485453294 showed ArrowDown does not move a plain native select there, while typeahead does. The test and the select were left unchanged. Measured availability text at 320px / root 32px: x66–254 inside button x58–262, with main padding-left 32px. Measured 22-day group: 90px and search y 511 at 390px; 90px and y 419 at 1440px; 154px and y 1199 at 320px / root 32px.
+`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the three touched Viator files passed with `--max-warnings 0`. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 10 passed, including zero injected HTTP calls for missing, empty, `staging`, exact `production`, `production ` with a trailing space, and malformed preview/development values, through the provider, detail, schedule, and live-check entry points. Sandbox client: 5 passed, including one sandbox-host search each for exact `preview` and `development`. Foundation tests in the same run passed. The browser harness was not re-run for this guard change. Its earlier Linux ArrowDown pass remains the comment-6485453294 limit: macOS headless Chrome does not move a plain native select on ArrowDown. CI 40860128741 is the historical SUCCESS on `b7299e69` and does not cover this commit.
 
 ## Build
 
@@ -38,7 +38,7 @@ This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. `docs/ACTIVE_WORK_STATU
 
 ## Offene Punkte
 
-Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for the deletion commit. CI 40800257522 is the `check:dead` failure on `7a255a12`. DiscoverCars stays with its own owner. Shared docs that still name ScrollRow were not rewritten.
+Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for the pre-activation commit. CI 40860128741 is the cleanup SUCCESS on `b7299e69`. DiscoverCars stays with its own owner.
 
 ## Risiken
 

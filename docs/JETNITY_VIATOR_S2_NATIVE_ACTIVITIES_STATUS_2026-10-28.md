@@ -4,7 +4,7 @@
 
 ## State
 
-The Aktivitäten search uses Viator only when the sandbox guard is open. Missing `VIATOR_SANDBOX_API_KEY` or `VIATOR_SANDBOX_CALLS`, and Production, stay unavailable. No example offers are substituted.
+The Aktivitäten search uses Viator only when the sandbox guard is open. The real client opens only when `VERCEL_ENV` is exactly `preview` or `development`, the calls flag is `true`, and the key matches the existing shape. Missing, empty, unknown, Production, and malformed environment values stay closed before HTTP. A missing flag stays disabled. An unusable key stays a missing key. No example offers are substituted.
 
 Runtime destination resolution loads `GET /destinations`. For Viator, `activitiesSuchen` reads the selected place only after the provider is active and the rate limit allows it. A missing id, a null read, a different id, a country mismatch, or a display name outside the confirmed names stops before product search. A matching record replaces the client name and coordinates. Browser aliases are discarded. The reader timeout and errors stay inside the search response. The GeoNames fixture is not read.
 
@@ -30,7 +30,11 @@ For 22 synthetic days the day group was 90px high and the search button was at d
 
 CI [40800257522](https://github.com/Jetnity/jetnity/actions/runs/40800257522) on `7a255a12` finished FAIL. Typecheck, lint, Auth, admin API protection, and schema reference passed. Tests were 7651 pass, 0 fail, 2 skipped. `check:dead` then failed on `components/ui/scroll-row.tsx`, so export, package, and build steps were skipped. That run does not cover the commit that deletes the file.
 
-After the deletion, local `check:dead` reported 0 orphans, `check:exports` reported 0 unused exports, and `check:deps` reported 0 unused packages. `npx tsc -p tsconfig.json --noEmit` and `npx eslint . --quiet` passed. The same 35 focused tests passed on Linux, including the ArrowDown assertions. `npm run build` passed. Exact-head CI for the deletion commit is not a PASS in this file.
+After the deletion, local `check:dead` reported 0 orphans, `check:exports` reported 0 unused exports, and `check:deps` reported 0 unused packages. `npx tsc -p tsconfig.json --noEmit` and `npx eslint . --quiet` passed. The same 35 focused tests passed on Linux, including the ArrowDown assertions. `npm run build` passed. CI [40860128741](https://github.com/Jetnity/jetnity/actions/runs/40860128741) later completed SUCCESS on `b7299e69`. That PASS covers the deletion only.
+
+## Pre-activation guard
+
+Comment 6495438986, S2-PREACTIVATION-R1. On `b7299e69` the guard rejected only the exact string `production`. A synthetic key and calls flag therefore opened missing, empty, `staging`, and `production ` (trailing space) before any HTTP call. `viatorSandboxZugang` now allows only exact `preview` and `development` after the flag and key checks. Exact `production` stays `production_blocked`. Every other environment value is `environment_blocked`. Injected HTTP on `createViatorSandboxClient`, `viatorActivityProvider`, `viatorProduktLaden`, `viatorKalenderLaden`, and `viatorLivePruefen` recorded zero calls for those refused values, and also for a disabled flag or a missing key on an otherwise allowed environment. Explicit `preview` and `development` each performed a sandbox-host search. Synthetic fixtures set `VERCEL_ENV` themselves. No deployed fixture switch was added. This change does not read or write a secret, and it does not activate Sandbox.
 
 ## Native select on macOS headless Chrome
 
@@ -38,4 +42,4 @@ Comment 6485453294, checked on macOS headless Chrome 156, found that ArrowDown, 
 
 ## Still blocked
 
-Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for the deletion commit. No Ready. No merge.
+Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for the pre-activation commit. The cleanup PASS on `b7299e69` does not cover that commit. No Ready. No merge.
