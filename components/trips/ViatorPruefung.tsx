@@ -235,7 +235,7 @@ function ViatorPruefungLauf({
   }
 
   return (
-    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-3">
+    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-[12px]">
       <h3 className="text-base font-semibold text-brand-800">Ausgewähltes Angebot</h3>
       <p className="mt-1 text-sm leading-6 text-ink-800">{meldung}</p>
       {bild ? (
@@ -357,9 +357,9 @@ function ViatorPruefungLauf({
             type="button"
             onClick={pruefen}
             disabled={prueft}
-            className="inline-flex min-h-11 w-full min-w-0 max-w-full items-center justify-center whitespace-normal break-normal rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-60"
+            className="flex min-h-11 w-full min-w-0 max-w-full items-center justify-center whitespace-normal rounded-full bg-brand-800 px-[8px] py-2 text-center text-sm font-semibold leading-tight text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-60"
           >
-            Verfügbarkeit prüfen
+            <span className="block w-full min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere]">Verfügbarkeit prüfen</span>
           </button>
         )}
       </div>

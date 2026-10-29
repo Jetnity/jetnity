@@ -175,7 +175,7 @@ export default function AktivitaetenBereich({
       <section
         aria-label="Aktivitäten"
         data-organisieren-flaeche="suche"
-        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-3 sm:!p-5')}
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-[12px] sm:!p-5')}
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
@@ -389,7 +389,7 @@ function ActivityTag({
     <section
       aria-label="Aktivitäten"
       data-organisieren-flaeche="suche"
-      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-3 sm:!p-5')}
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-[12px] sm:!p-5')}
     >
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
@@ -408,32 +408,24 @@ function ActivityTag({
 
       {tag ? <SuchKontext reise={reise} etappe={etappe} tag={tag} /> : null}
 
-      <div className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
-        <p id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
-          Reisetag
-        </p>
-        <div role="radiogroup" aria-labelledby="activity-tag-label" className="mt-2 grid min-w-0 gap-2">
-          {reise.days.map((eintrag) => {
-            const gewaehlt = tag?.id === eintrag.id
-            return (
-              <button
-                key={eintrag.id}
-                type="button"
-                role="radio"
-                aria-checked={gewaehlt}
-                onClick={() => onTagWechseln(eintrag.id)}
-                className={cn(
-                  'flex min-h-11 w-full min-w-0 items-center rounded-full border px-3 py-1 text-left text-sm font-medium leading-tight transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                  gewaehlt
-                    ? 'border-brand-800 bg-brand-800 text-white'
-                    : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                )}
-              >
-                <span className="min-w-0 break-normal">{tagTitel(eintrag)}</span>
-              </button>
-            )
-          })}
-        </div>
+      <div className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-[12px] py-[12px]">
+        <label className="grid min-w-0 gap-1 text-sm text-ink-800" htmlFor="activity-day-select">
+          <span id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
+            Reisetag
+          </span>
+          <select
+            id="activity-day-select"
+            value={tag?.id ?? ''}
+            onChange={(event) => onTagWechseln(event.target.value)}
+            className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 bg-white px-[12px] text-sm text-ink-900"
+          >
+            {reise.days.map((eintrag) => (
+              <option key={eintrag.id} value={eintrag.id}>
+                {tagTitel(eintrag)}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {kannSuchen ? (

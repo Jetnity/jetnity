@@ -55,10 +55,34 @@ const reise: Trip = {
   updatedAt: '2026-10-28T00:00:00.000Z',
 }
 
+function reiseMitTagen(anzahl: number): Trip {
+  if (anzahl <= 2) return reise
+  const days = Array.from({ length: anzahl }, (_, index) => {
+    const tag = index + 1
+    const monat = 10 + Math.floor((tag + 1) / 28)
+    const monatstag = ((tag + 1) % 28) + 1
+    return {
+      id: `day-${tag}`,
+      stageId: index < 11 ? 'stage-bkk' : 'stage-phu',
+      dayIndex: tag,
+      dayDate: `2026-${String(monat).padStart(2, '0')}-${String(monatstag).padStart(2, '0')}`,
+      title: `Tag ${tag}`,
+      items: [],
+    }
+  })
+  return { ...reise, days }
+}
+
 export function mountViatorHarness() {
   const root = document.getElementById('root')
   if (!root) return
-  createRoot(root).render(<AktivitaetenBereich reise={reise} />)
+  const anzahl = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('tage')
+  const gewaehlt = reiseMitTagen(anzahl === '22' ? 22 : 2)
+  createRoot(root).render(
+    <main className="mx-auto max-w-3xl p-4">
+      <AktivitaetenBereich reise={gewaehlt} />
+    </main>,
+  )
 }
 
 if (typeof document !== 'undefined') mountViatorHarness()

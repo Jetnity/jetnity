@@ -153,7 +153,6 @@ export async function activitiesSuchen(
     anfrage.placeAliases = undefined
     anfrage.placeType = undefined
   }
-  let bestaetigt = anfrage
   if (!ports.zustand.aktiv || !ports.provider) {
     beobachten('unavailable')
     return {
@@ -196,7 +195,7 @@ export async function activitiesSuchen(
       : null
 
   try {
-    let ziel = bestaetigt ?? anfrage
+    let ziel = anfrage
     if (ports.provider.id === VIATOR_PROVIDER_ID) {
       ziel = await bestaetigteViatorAnfrage(anfrage, ports.ortLesen)
     }

@@ -1,6 +1,6 @@
 # Viator S2 native activities — STATUS
 
-28 October 2026. Draft #1079. Not Ready. Not merged.
+29 October 2026, Europe/Zurich. Draft #1079. Not Ready. Not merged.
 
 ## State
 
@@ -10,12 +10,24 @@ Runtime destination resolution loads `GET /destinations`. For Viator, `activitie
 
 A live check always sends a supported display currency. CHF, EUR, and USD are sent when that is the requested display currency. An unsupported trip currency asks for a choice and does not show a current price. The request omits `productOptionCode` for a product with no titled option, and never sends `TG1` or `DEFAULT` as a stand-in. Several start times stay unselected until the visitor chooses one. `daysOfWeek` comes from each pricing record, so a Monday-only time is not offered on Tuesday. A season without `endDate` is a hint through 384 days from the check clock, not availability. Changing the date while details are still loading does not discard that load. A new activity search clears the selected Viator product.
 
-Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited.
+The day control is one native select labelled Reisetag. The closed control shows the selected day. Changing it keeps the stage and day identity and clears a Viator selection from another day. The availability label stays inside its button when the real page padding is present.
+
+Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited. The shared scroll row was not edited.
 
 ## Checks
 
-Focused Viator unit tests passed, including Lisbon/Lissabon, Ko Chang, Phuket, Panama City, CHF/EUR/USD, and Monday-only times. The browser harness renders the real Aktivitäten area and passed at 320, 390, 768, and 1440. The search body carried Bangkok, TH, and CHF. A date change during loading still showed the age bands. A second search that returns no offers clears the selected product and does not request product details again. The Phuket day clears it as well. The browser harness lives under `scripts/viator-s2-native-integration/`, so the reachability check does not treat it as orphaned. A late 111 was discarded. Text enlargement set the document root font to 32px. That is not browser zoom. At that size the day name, "Angebot prüfen", and "Verfügbarkeit prüfen" stay inside their controls and the section. Day rows stay under 140px. This is root-font enlargement, not browser zoom. Local typecheck and production build passed. Exact-head CI for this commit is not claimed. CI 40793295665 and 40795543573 do not cover it. CI 40781976364 on `0603a4e3` stays a recorded failure. Exact-head CI for this commit is not claimed here.
+On 29 October 2026 the review of `ce0a5bcda6c227ef831a7b4534841b744af27e06` (comment 6485054044) left three corrections. This head addresses them.
+
+`npx eslint . --quiet` passed. The unused `bestaetigt` binding is gone. `let ziel` is assigned again for a Viator request, so `prefer-const` stays enabled. `npx tsc -p tsconfig.json --noEmit` passed. `npm run build` passed (Next.js 16.4.1).
+
+Focused tests passed: 6 search-orchestration, 9 Viator seam, 17 foundation/sandbox, and 3 browser tests. The seam tests still cover unknown id, mismatched id, Porto versus Lisbon, Lissabon, Wien, a throwing reader, a disabled provider with zero reads, and the ninth request returning 429 without a read.
+
+The browser harness renders `AktivitaetenBereich` inside `main.mx-auto.max-w-3xl.p-4`. At root font 32px the measured main padding-left was 32px. "Verfügbarkeit prüfen" text was x66–254 inside a button at x58–262 on a 320px viewport, and x66–324 inside a button at x58–332 on a 390px viewport. "Angebot prüfen" stayed inside its button. The search body carried Bangkok, TH, and CHF. A late 111 was discarded. An empty repeat search cleared the selected product. ArrowDown moved the two-day trip from Bangkok to Phuket-Tag.
+
+For 22 synthetic days the day group was 90px high and the search button was at document y 511 at 390px, and 90px / y 419 at 1440px, all at the normal 16px root. At 320px and root font 32px the group was 154px, the select was 88px, and the search button was at y 1199. ArrowDown moved Tag 1 to Tag 2. Tag 22 selected the Phuket stage. There is no day radio list.
+
+Exact-head CI for this commit is not claimed. CI 40797421578 failed lint on `ce0a5bcd` and does not cover this head. CI 40795543573 and 40793295665 do not cover it either.
 
 ## Still blocked
 
-Real Sandbox calls, image license, checkout currency, and hosted acceptance. No Ready. No merge.
+Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for this commit. No Ready. No merge.

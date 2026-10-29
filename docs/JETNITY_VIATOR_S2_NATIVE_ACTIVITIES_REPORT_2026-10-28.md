@@ -1,14 +1,16 @@
 # Viator S2 native activities — REPORT
 
-28 October 2026. Status: **partially finished**. The OpenAPI 3.0.2 contract correction is in the same R1–R4 session. Live Sandbox remains blocked. Exact-head CI for this commit is not claimed in this file.
+29 October 2026, Europe/Zurich. Status: **partially finished**. Live Sandbox remains blocked. Exact-head CI for this commit is not claimed in this file.
 
 ## Umgesetzt
 
-Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. The activity summary uses one column below the small breakpoint so a long day name wraps inside the section. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product. The browser harness renders the real Aktivitäten area.
+The three corrections from the review of `ce0a5bcda6c227ef831a7b4534841b744af27e06` are in this head. The unused `bestaetigt` binding is removed. "Verfügbarkeit prüfen" stays inside its button in the padded `main` at 320px and root font 32px. Multi-week trips use one labelled day select instead of a full day list. The earlier identity and reader guards stay in place.
+
+Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product.
 
 ## Dateien
 
-`lib/providers/viator/activities/{anbinden,content,contracts,destination,kalender,live-check,request}.ts`, `components/trips/ViatorPruefung.tsx`, and the focused Viator tests. S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited.
+`lib/activities/suche.ts`, `components/trips/AktivitaetenBereich.tsx`, `components/trips/ViatorPruefung.tsx`, `scripts/viator-s2-native-integration/browser-harness.tsx`, `lib/providers/viator/activities/browser.test.ts`, and the S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Shared scroll row, workspace, navigation, places, schema, and auth files were not edited.
 
 ## Datenbank
 
@@ -16,11 +18,11 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. `npm run build` passed. ESLint on the new search and Viator files passed with `--max-warnings 0`. The pre-existing set-state warning in `AktivitaetenBereich` was left as it was. S2 tests cover unknown id, mismatched id, Porto versus Lisbon, a throwing reader, and the rate limit before the read. The browser harness checks text rectangles for the day name and both action labels at 320 and 390 with root font 32px. Exact-head CI for this commit is not claimed. CI 40793295665 failed typecheck on `b254509f`. CI 40795543573 was still open for `80a26255` at review time and does not cover this head.
+`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 9 passed. Foundation and sandbox: 17 passed. Browser harness: 3 passed, including the nested 32px check and the 22-day select at 390, 1440, and 320. Measured availability text at 320px / root 32px: x66–254 inside button x58–262, with main padding-left 32px. Measured 22-day group: 90px and search y 511 at 390px; 90px and y 419 at 1440px; 154px and y 1199 at 320px / root 32px.
 
 ## Build
 
-Not re-run for this contract correction. Typecheck passed.
+`npm run build` passed on Next.js 16.4.1.
 
 ## Security
 
@@ -32,15 +34,15 @@ No new paid call.
 
 ## Dokumentation
 
-This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. The official partner technical page, fetched by the Technical Lead on 28 October 2026, is the field source. The verified email remains comment 6468170303.
+This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. `docs/ACTIVE_WORK_STATUS.md` was not edited.
 
 ## Offene Punkte
 
-Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, and exact-head CI for this commit. DiscoverCars stays with its own owner.
+Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, and exact-head CI for this commit. CI 40797421578 is the lint failure on `ce0a5bcd`. DiscoverCars stays with its own owner.
 
 ## Risiken
 
-Green fixture tests are not live Viator proof. A display currency in the check is not a checkout-currency confirmation. `lookupId` is kept and is not a country code.
+Green fixture tests are not live Viator proof. A display currency in the check is not a checkout-currency confirmation. `lookupId` is kept and is not a country code. `kanonischeOrteLesen` can search by name; the route discards a row whose id does not match. A native select shows one selected day; a very long title can be shortened by the browser control while the day summary still wraps the full title.
 
 ## Empfehlung
 

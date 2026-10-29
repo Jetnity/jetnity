@@ -25,8 +25,14 @@ type Messwert = {
   sectionRechts?: number
   dlScroll?: number
   dlClient?: number
-  radios?: Array<{ width: number; height: number }>
-  kontrollen?: Array<{ right: number; panelRight: number; sectionRight: number }>
+  mainPad?: number
+  text?: { left: number; right: number }
+  knopf?: { left: number; right: number }
+  gruppeHoehe?: number
+  auswahlHoehe?: number
+  sucheY?: number
+  label?: string
+  optionen?: number
 }
 
 function alsMesswert(wert: unknown): Messwert {
@@ -52,34 +58,43 @@ const BEDIENUNG = `(() => {
   const button = (root, name) => [...root.querySelectorAll('button')].find((el) => (el.textContent || '').includes(name))
   const angebot = button(section, 'Angebot prüfen')
   const verfuegbar = button(panel, 'Verfügbarkeit prüfen')
-  const radios = [...section.querySelectorAll('[role="radio"]')]
+  const auswahl = section.querySelector('#activity-day-select')
+  const main = document.querySelector('main')
+  const mainPad = main ? Number.parseFloat(getComputedStyle(main).paddingLeft) : 0
   const angebotOk = Boolean(angebot) && inside(textRects(angebot), angebot.getBoundingClientRect()) && inside(textRects(angebot), sectionBox)
-  const verfuegbarOk = Boolean(verfuegbar) && inside(textRects(verfuegbar), verfuegbar.getBoundingClientRect()) && inside(textRects(verfuegbar), sectionBox)
-  const radiosOk = radios.length > 0 && radios.every((el) => {
-    const box = el.getBoundingClientRect()
-    return box.height < 140 && inside(textRects(el), sectionBox)
-  })
+  const verfuegbarBox = verfuegbar ? verfuegbar.getBoundingClientRect() : null
+  const verfuegbarText = verfuegbar ? textRects(verfuegbar) : []
+  const verfuegbarOk = Boolean(verfuegbarBox) && inside(verfuegbarText, verfuegbarBox) && inside(verfuegbarText, sectionBox)
+  const auswahlBox = auswahl ? auswahl.getBoundingClientRect() : null
+  const auswahlOk = Boolean(auswahlBox) && auswahlBox.height < 200 && auswahlBox.height > 20 && inside([auswahlBox], sectionBox)
+  const vereinigt = verfuegbarText.reduce((stand, rect) => ({
+    left: Math.min(stand.left, rect.left),
+    right: Math.max(stand.right, rect.right),
+  }), { left: Infinity, right: -Infinity })
   return {
-    ok: angebotOk && verfuegbarOk && radiosOk,
-    radios: radios.map((el) => ({ width: Math.round(el.getBoundingClientRect().width), height: Math.round(el.getBoundingClientRect().height) })),
-    angebot: angebot ? Math.round(angebot.getBoundingClientRect().right) : null,
+    ok: angebotOk && verfuegbarOk && auswahlOk && mainPad >= 16,
+    mainPad: Math.round(mainPad),
+    text: Number.isFinite(vereinigt.left) ? { left: Math.round(vereinigt.left * 100) / 100, right: Math.round(vereinigt.right * 100) / 100 } : null,
+    knopf: verfuegbarBox ? { left: Math.round(verfuegbarBox.left * 100) / 100, right: Math.round(verfuegbarBox.right * 100) / 100 } : null,
+    auswahlHoehe: auswahlBox ? Math.round(auswahlBox.height) : 0,
     sectionRechts: Math.round(sectionBox.right),
   }
 })()`
 
 const TEXT_GRENZEN = `(() => {
   const wert = [...document.querySelectorAll('dd')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
-  const knopf = [...document.querySelectorAll('button')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
+  const auswahl = document.querySelector('#activity-day-select')
   const section = wert ? wert.closest('section') : null
   const dl = wert ? wert.closest('dl') : null
-  if (!wert || !knopf || !section || !dl) return { ok: false, reason: 'missing' }
+  if (!wert || !auswahl || !section || !dl) return { ok: false, reason: 'missing' }
   const box = section.getBoundingClientRect()
   const messen = (el) => {
     const range = document.createRange()
     range.selectNodeContents(el)
     return [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0)
   }
-  const rects = [...messen(wert), ...messen(knopf)]
+  const auswahlBox = auswahl.getBoundingClientRect()
+  const rects = [...messen(wert), auswahlBox]
   const ausserhalb = rects.some((rect) => rect.right > box.right + 1 || rect.left < box.left - 1)
   return {
     ok: rects.length > 0 && !ausserhalb && dl.scrollWidth <= dl.clientWidth + 1,
@@ -419,7 +434,12 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(ueberlappung.reisetagDatum, false)
     assert.equal(ueberlappung.reisendeWaehrung, false)
     await page.screenshot({ path: join(ARTIFACTS, 'viator-390.png'), fullPage: true })
-    await bereich.getByRole('radio', { name: 'Phuket-Tag' }).click()
+    const tagWahl = bereich.getByRole('combobox', { name: 'Reisetag' })
+    await tagWahl.focus()
+    assert.equal(await page.evaluate('document.activeElement && document.activeElement.id'), 'activity-day-select')
+    await page.keyboard.press('ArrowDown')
+    assert.equal(await tagWahl.inputValue(), 'day-phu')
+    assert.match(await bereich.innerText(), /Phuket/)
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     await page.keyboard.press('Tab')
     const mass = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
@@ -445,5 +465,63 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       await weitere.screenshot({ path: join(ARTIFACTS, `viator-${breite}.png`), fullPage: true })
       await weitere.close()
     }
+  })
+
+  test('a multi-week trip keeps one compact day choice', async () => {
+    const TAGE = `(() => {
+      const auswahl = document.querySelector('#activity-day-select')
+      const gruppe = auswahl ? auswahl.closest('div') : null
+      const suche = [...document.querySelectorAll('button')].find((el) => (el.textContent || '').includes('suchen'))
+      const radios = document.querySelectorAll('[role="radio"]').length
+      if (!auswahl || !gruppe || !suche) return { ok: false, reason: 'missing', optionen: auswahl ? auswahl.options.length : 0 }
+      const gewaehlt = auswahl.options[auswahl.selectedIndex]
+      return {
+        ok: radios === 0 && auswahl.options.length === 22 && Boolean(gewaehlt && gewaehlt.textContent),
+        gruppeHoehe: Math.round(gruppe.getBoundingClientRect().height),
+        auswahlHoehe: Math.round(auswahl.getBoundingClientRect().height),
+        sucheY: Math.round(suche.getBoundingClientRect().top + window.scrollY),
+        label: gewaehlt ? gewaehlt.textContent : '',
+        optionen: auswahl.options.length,
+      }
+    })()`
+    for (const breite of [390, 1440]) {
+      const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
+      await page.goto(`${origin}#tage=22`)
+      const mass = alsMesswert(await page.evaluate(TAGE))
+      assert.equal(mass.ok, true, `${breite} ${JSON.stringify(mass)}`)
+      assert.ok((mass.gruppeHoehe ?? 9999) < 280, `${breite} gruppe ${mass.gruppeHoehe}`)
+      assert.ok((mass.auswahlHoehe ?? 9999) < 80, `${breite} auswahl ${mass.auswahlHoehe}`)
+      assert.ok((mass.sucheY ?? 9999) < 1000, `${breite} suche ${mass.sucheY}`)
+      assert.equal(mass.label, 'Tag 1')
+      const tagWahl = page.getByRole('combobox', { name: 'Reisetag' })
+      await tagWahl.focus()
+      await page.keyboard.press('ArrowDown')
+      assert.equal(await tagWahl.inputValue(), 'day-2')
+      assert.match(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
+      await tagWahl.selectOption({ label: 'Tag 22' })
+      assert.equal(await tagWahl.inputValue(), 'day-22')
+      assert.match(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Phuket/)
+      assert.doesNotMatch(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
+      await page.close()
+    }
+    const schmal = await browser.newPage({ viewport: { width: 320, height: 900 } })
+    await schmal.goto(`${origin}#tage=22`)
+    await schmal.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    const gross = alsMesswert(await schmal.evaluate(TAGE))
+    assert.equal(gross.ok, true, JSON.stringify(gross))
+    assert.ok((gross.gruppeHoehe ?? 9999) < 500, `32px gruppe ${gross.gruppeHoehe}`)
+    assert.ok((gross.auswahlHoehe ?? 9999) < 160, `32px auswahl ${gross.auswahlHoehe}`)
+    assert.ok((gross.sucheY ?? 9999) < 1600, `32px suche ${gross.sucheY}`)
+    assert.equal(gross.label, 'Tag 1')
+    const wahl = schmal.getByRole('combobox', { name: 'Reisetag' })
+    await wahl.focus()
+    await schmal.keyboard.press('ArrowDown')
+    assert.equal(await wahl.inputValue(), 'day-2')
+    await wahl.selectOption({ label: 'Tag 22' })
+    assert.equal(await wahl.inputValue(), 'day-22')
+    assert.match(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Phuket/)
+    assert.doesNotMatch(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
+    await schmal.screenshot({ path: join(ARTIFACTS, 'viator-22-tage-320.png'), fullPage: true })
+    await schmal.close()
   })
 })
