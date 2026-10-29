@@ -117,7 +117,9 @@ async function main() {
         ueberlauf: await ueberlauf(normal.page),
         widgetUeberlauf,
         quelle: await widget.getAttribute('data-discovercars-quelle'),
-        ladeknopf: await normal.page.getByRole('button', { name: 'Mietwagensuche bei DiscoverCars laden' }).count(),
+        laufzeit: await widget.getAttribute('data-discovercars-laufzeit'),
+        skript: await normal.page.locator('script[src*="discovercars"]').count(),
+        ladeknopf: await normal.page.getByRole('button', { name: 'Lokale Prüfseite zeigen' }).count(),
         affiliate: await normal.page.locator('[data-discovercars-affiliate="1"]').count(),
         formular: await normal.page.getByRole('button', { name: 'Mietwagen speichern' }).count(),
       })
@@ -188,7 +190,7 @@ async function main() {
     const nachEnter = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
     await naht.page.keyboard.press('Escape')
     await naht.page.waitForFunction(() =>
-      (document.activeElement?.textContent ?? '').includes('Mietwagensuche bei DiscoverCars laden'),
+      (document.activeElement?.textContent ?? '').includes('Lokale Prüfseite zeigen'),
     )
     const nachEscape = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
     const leer = await naht.page.locator('[data-discovercars-widget-fixture]').count()
@@ -217,13 +219,13 @@ async function main() {
       })
     })
     await naht.page.getByRole('button', { name: 'Prüfseite schließen' }).click()
-    await naht.page.getByRole('button', { name: 'Mietwagensuche bei DiscoverCars laden' }).click()
+    await naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen' }).click()
     await naht.page.getByText('Die lokale Prüfseite wird vorbereitet').waitFor()
     await naht.page.evaluate(() => {
       const fenster = window as unknown as { __setzen: (modus: string, reise: string) => void }
       fenster.__setzen('naht', 'reise-zwei')
     })
-    await naht.page.getByRole('button', { name: 'Mietwagensuche bei DiscoverCars laden' }).waitFor()
+    await naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen' }).waitFor()
     await naht.page.evaluate(() => {
       const fenster = window as unknown as { __loesen?: (wert: 'fixture') => void }
       fenster.__loesen?.('fixture')
@@ -241,7 +243,7 @@ async function main() {
       const fenster = window as unknown as { __laden: () => Promise<'fehler'> }
       fenster.__laden = () => Promise.resolve('fehler')
     })
-    await naht.page.getByRole('button', { name: 'Mietwagensuche bei DiscoverCars laden' }).click()
+    await naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen' }).click()
     await naht.page.getByRole('alert').waitFor()
     await naht.page.getByRole('button', { name: 'Erneut versuchen' }).focus()
     await naht.page.keyboard.press('Enter')
@@ -266,6 +268,9 @@ async function main() {
       name: string
       ueberlauf?: number
       widgetUeberlauf?: number
+      quelle?: string | null
+      laufzeit?: string | null
+      skript?: number
       ladeknopf?: number
       fixture?: number
       fixtureNachEscape?: number
@@ -283,16 +288,19 @@ async function main() {
     if (satz.name === 'mietwagen-320-wurzel-200' && (satz.widgetUeberlauf ?? 0) > 1) {
       probleme.push('Widget überläuft bei Wurzel 200%')
     }
+    if (satz.quelle !== undefined && satz.quelle !== 'LIVE_SOURCE_VERIFIED') probleme.push(`${satz.name} Quelle ${satz.quelle}`)
+    if (satz.laufzeit !== undefined && satz.laufzeit !== 'CONSENT_BLOCKED') probleme.push(`${satz.name} Laufzeit ${satz.laufzeit}`)
+    if (satz.skript) probleme.push(`${satz.name} bindet das Anbieterskript`)
     if (satz.ladeknopf) probleme.push(`${satz.name} zeigt den Ladeknopf`)
     if (satz.fixture) probleme.push(`${satz.name} zeigt die Fixture`)
     if (satz.fixtureNachEscape) probleme.push('Escape lässt die Fixture stehen')
     if (satz.geheimeReiseSichtbar) probleme.push('Reisekennung sichtbar')
     if (satz.netz?.length) probleme.push(`${satz.name} Netz ${satz.netz.join(',')}`)
     if (satz.ressourcen?.length) probleme.push(`${satz.name} Ressourcen`)
-    if (satz.tabName !== undefined && !satz.tabName.includes('Mietwagensuche bei DiscoverCars laden')) {
+    if (satz.tabName !== undefined && !satz.tabName.includes('Lokale Prüfseite zeigen')) {
       probleme.push(`Tab landete auf ${satz.tabName}`)
     }
-    if (satz.nachEscape !== undefined && !satz.nachEscape.includes('Mietwagensuche bei DiscoverCars laden')) {
+    if (satz.nachEscape !== undefined && !satz.nachEscape.includes('Lokale Prüfseite zeigen')) {
       probleme.push(`Fokus nach Escape: ${satz.nachEscape}`)
     }
     return probleme

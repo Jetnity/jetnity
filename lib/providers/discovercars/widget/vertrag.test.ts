@@ -5,6 +5,9 @@ import {
   WIDGET_FIXTURE_TEXT,
   WIDGET_HERKUNFT_ERLAUBT,
   WIDGET_PRUEFNAHT,
+  WIDGET_EXPORT_BYTES,
+  WIDGET_EXPORT_SHA256,
+  WIDGET_LAUFZEIT,
   WIDGET_QUELLENSTATUS,
   widgetAnfang,
   widgetAnsicht,
@@ -17,13 +20,17 @@ import {
 const REISE = 'trip-uuid-geheim'
 
 describe('DiscoverCars Widget-Quelle', () => {
-  test('der Konto-Export fehlt und Ausführung bleibt aus', () => {
+  test('der allgemeine Export ist gebunden und die Laufzeit bleibt zu', () => {
     assert.deepEqual(widgetQuelle(), {
       status: WIDGET_QUELLENSTATUS,
-      sha256: null,
+      sha256: WIDGET_EXPORT_SHA256,
+      bytes: WIDGET_EXPORT_BYTES,
+      laufzeit: WIDGET_LAUFZEIT,
       herkunft: [],
     })
-    assert.equal(WIDGET_QUELLENSTATUS, 'VENDOR_EXPORT_MISSING')
+    assert.equal(WIDGET_QUELLENSTATUS, 'LIVE_SOURCE_VERIFIED')
+    assert.equal(WIDGET_LAUFZEIT, 'CONSENT_BLOCKED')
+    assert.equal(WIDGET_EXPORT_BYTES, 835)
     assert.equal(widgetDarfAusfuehren(), false)
     assert.deepEqual(WIDGET_HERKUNFT_ERLAUBT, [])
     assert.equal(widgetPruefnaht(WIDGET_PRUEFNAHT), true)

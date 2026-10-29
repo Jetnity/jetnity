@@ -2,7 +2,7 @@
 
 **Status:** preparation complete and fail-closed. **Not** a live widget integration.
 
-**Source:** `VENDOR_EXPORT_MISSING`. No SHA-256, because no original export was available. Allowed origins: none. The missing export is the **general** account widget. The BKK sample is a separate, also missing, non-default reference. An empty pickup attribute is not confirmed.
+**Source:** `LIVE_SOURCE_VERIFIED`. SHA-256 `5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa`. **Runtime:** `CONSENT_BLOCKED`. Execution origins: none. `data-location=""` is in the bound export. The BKK sample is not the default.
 
 ## Umgesetzt
 
@@ -28,7 +28,7 @@ Implementation commit: `de8165a3d5c58995c882f24039223563f2e0b9b2`. Task file unt
 
 Author run, 29 October 2026:
 
-- Focused node tests after the owner correction: 19 pass, 0 fail (`vertrag`, `oberflaeche`, existing affiliate markup).
+- Focused node tests: 22 pass, 0 fail, including the bound export hash and 26 attributes.
 - ESLint on the owned files: pass.
 - `npx tsc -p tsconfig.json --noEmit`: pass after `next typegen`.
 - `npm run build`: pass. Setup check warned that no `.env` / `.env.local` is present in this workspace. That warning is pre-existing and the build exited 0.
@@ -53,7 +53,7 @@ No new service and no paid call. The USD 100/month cap is unchanged.
 
 ## Offene Risiken
 
-- Without the real export, any “working widget” claim would be false. This report does not make that claim.
+- The source file is verified. A working embedded widget is not. The script stays unloaded.
 - Consent for the vendor’s cookies and measurement is undecided. Activation before that decision would be the wrong next step.
 - At 320px and 200% root text, the V1 BKK radio label overflows the viewport by 18px. Fixing it means editing `DiscoverCarsAffiliateLinks.tsx`. That file stays read-only until the Technical Lead widens scope. Suggested change, not applied: let the label text shrink and wrap (`min-w-0` on the text span). The new housing does not overflow.
 - Chromium CSS zoom at 2 was exercised and overflowed. It is not the browser zoom control, not a phone, and not VoiceOver.

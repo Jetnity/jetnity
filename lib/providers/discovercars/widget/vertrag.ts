@@ -1,18 +1,28 @@
 // lib/providers/discovercars/widget/vertrag.ts
 //
-// Fail-closed gate for a general DiscoverCars search widget.
-// The account export is not in this repository. A Bangkok/BKK sample is
-// not the default and is not an allowed location. Nothing here builds a
-// vendor URL, script, frame or pixel. A click is not consent.
+// Fail-closed gate for the general DiscoverCars search widget.
+// The vetted export is bound in export.ts. Execution stays off: there is
+// no consent mechanism, and the later host inventory is incomplete.
+// A Bangkok/BKK sample is not the default. Nothing here builds a vendor
+// URL, script, frame or pixel. A click is not consent.
 
-export const WIDGET_QUELLENSTATUS = 'VENDOR_EXPORT_MISSING' as const
+export const WIDGET_QUELLENSTATUS = 'LIVE_SOURCE_VERIFIED' as const
+
+export const WIDGET_LAUFZEIT = 'CONSENT_BLOCKED' as const
+
+export const WIDGET_EXPORT_SHA256 =
+  '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa'
+
+export const WIDGET_EXPORT_BYTES = 835
 
 export type WidgetQuellenstatus = typeof WIDGET_QUELLENSTATUS
 
-/** Empty until a hashed official export names its hosts. */
+export type WidgetLaufzeit = typeof WIDGET_LAUFZEIT
+
+/** Empty on purpose. Two observed hosts are not a complete execution allowlist. */
 export const WIDGET_HERKUNFT_ERLAUBT: readonly string[] = Object.freeze([])
 
-/** Empty until that same export names its attributes. Fragments are not enough. */
+/** Fragments are not the export. The full attribute set is checked beside this. */
 export const WIDGET_ATTRIBUT_ERLAUBT: readonly string[] = Object.freeze([])
 
 export const WIDGET_PRUEFNAHT = 'synthetisch-nicht-anbieter' as const
@@ -72,17 +82,21 @@ export type WidgetEreignis =
 
 export function widgetQuelle(): {
   status: WidgetQuellenstatus
-  sha256: null
+  sha256: typeof WIDGET_EXPORT_SHA256
+  bytes: typeof WIDGET_EXPORT_BYTES
+  laufzeit: WidgetLaufzeit
   herkunft: readonly string[]
 } {
   return {
     status: WIDGET_QUELLENSTATUS,
-    sha256: null,
+    sha256: WIDGET_EXPORT_SHA256,
+    bytes: WIDGET_EXPORT_BYTES,
+    laufzeit: WIDGET_LAUFZEIT,
     herkunft: WIDGET_HERKUNFT_ERLAUBT,
   }
 }
 
-/** Real vendor execution stays off while the export and consent gate are missing. */
+/** Vendor script stays off. Consent is not evidenced, and the host list is incomplete. */
 export function widgetDarfAusfuehren(): false {
   return false
 }

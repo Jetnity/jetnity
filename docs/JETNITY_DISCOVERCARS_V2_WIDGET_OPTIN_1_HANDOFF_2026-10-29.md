@@ -15,13 +15,13 @@ Session that wrote this: Jetnity DiscoverCars Official Search Widget V2 Opt-In 1
 
 29 October 2026, same session `bc-1885a130-36a8-4dcf-86bc-48aa6121c24e`. The standard V2 widget is a general rental search. Bangkok Suvarnabhumi is not its default. The historical pre-code comment described the missing export before this correction; this handoff and the status file carry the correction. The task file stays byte-for-byte unchanged.
 
-Verified general export: none. BKK sample file: none, and not the product default. Unselected pickup syntax: unconfirmed. Do not reconstruct either snippet.
+Verified general export: `lib/providers/discovercars/widget/discovercars-widget-allgemein.html`, SHA-256 `5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa`, `data-location=""`. BKK sample: not the default and refused. Runtime: `CONSENT_BLOCKED`. Do not serve the script until consent and a complete origin inventory exist.
 
 ## Product state
 
 Organisieren → Mobilität → Mietwagen shows the existing honest unavailable-offers card, then a DiscoverCars housing that says the embedded search is not active and that Jetnity sets no pickup, then the existing V1 links, then the manual form. The V1 BKK radio is an explicit visitor choice for that link only. A Bangkok city trip leaves the widget free of Bangkok and leaves the V1 link on the generic URL. Guests still leave Jetnity only through those V1 links. The housing does not send trip id, dates, age, residence, or route anywhere.
 
-`VENDOR_EXPORT_MISSING`. `widgetDarfAusfuehren()` is `false`. Allowed origins are empty. There is no embed route.
+`LIVE_SOURCE_VERIFIED`. `widgetDarfAusfuehren()` is `false` because consent and the origin inventory are blocked, not because the file is missing. The execution allowlist is empty. There is no embed route.
 
 ## How to re-run the local proof
 
@@ -50,4 +50,4 @@ Do not edit Viator #1079, UX U1-C #1082 (`TripWorkspace*`, `docs/ACTIVE_WORK_STA
 
 ## If a later slice is chosen by the Technical Lead
 
-It needs the full original **general** export, a recorded SHA-256, the real host inventory, and a privacy decision that is more than a button click. Prefer an official unselected pickup only after the generator proves that attribute. A BKK sample must not become the default. If the vendor requires one fixed pickup per snippet and has no general mode, stop and keep the generic V1 link; do not invent location parameters. Until then, do not add a load button to the normal housing and do not paste a reconstructed snippet.
+The general export is already bound. A later slice still needs a real consent decision and a complete vendor origin inventory before any script load. Do not treat a button click, PrivacyBee, or issue #1073 as that decision. Do not add `allow-same-origin` to make the provider run. Keep the generic V1 link as the fallback. A BKK sample must not replace `data-location=""`.

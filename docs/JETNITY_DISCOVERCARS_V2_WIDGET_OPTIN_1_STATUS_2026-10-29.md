@@ -1,10 +1,10 @@
 # DiscoverCars V2 widget opt-in 1 — status
 
-**29 October 2026. Source status: VENDOR_EXPORT_MISSING. Housing: fail-closed general search, not a Bangkok widget and not a live widget.**
+**29 October 2026. Source status: LIVE_SOURCE_VERIFIED. Runtime: CONSENT_BLOCKED. Not a live widget.**
 
-## Owner correction
+## Owner correction and source
 
-Same session, 29 October 2026. The Product Owner asked why Bangkok appeared to be the widget. Answer in this slice: the V2 housing sets no pickup. BKK remains only the explicit V1 radio and the old Work sample. A general account export with visitor-chosen pickup is **not verified**. An empty-pickup attribute is **not claimed**. The BKK `data-location` path is refused. The immutable task file was not rewritten.
+Same session. The V2 search is general. The bound export has `data-location=""`. BKK remains only the explicit V1 radio and the old sample, which is refused as a widget location. SHA-256 `5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa`, 835 bytes, 26 attributes. The script is not loaded: no consent mechanism covers it, and `widget.discovercars.com` is not a complete origin list. Issue #1073 is not clearance. The immutable task file was not rewritten.
 
 ## Identity
 
@@ -30,8 +30,9 @@ Same session, 29 October 2026. The Product Owner asked why Bangkok appeared to b
 
 ## Not done, and not claimed
 
-- No general widget snippet, no BKK sample file, no hash, and no allowed origin.
-- No proof that the generator can emit an unselected pickup. That option is not implemented.
+- No live script, frame, or `/embed/discovercars` route.
+- No complete vendor origin inventory and no consent clearance. Runtime stays `CONSENT_BLOCKED`.
+- No proof of affiliate click or commission for this coloured export.
 - No hosted widget, no Preview click-through to DiscoverCars, no portal attribution.
 - No consent decision and no PrivacyBee edit.
 - Native App/Auth CI and Vercel Preview for the delivery head are not claimed here; they start on push and are reported from that head.

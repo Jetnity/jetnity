@@ -12,14 +12,14 @@ The Product Owner asked why the widget looked tied to Bangkok. The standard V2 s
 
 Two exports stay distinct:
 
-- **General account widget** (`jetnity`, German, CHF, responsive, pickup chosen by the visitor inside DiscoverCars): **not in the repository and not verified.** The public generator says a location can be chosen as a default. That sentence does not prove an empty or unselected pickup attribute, and this slice does not invent one.
-- **BKK sample** `offizieller-widgetcode-bangkok.html`: still absent. If it arrives later it is optional reference only. Its `data-location` path is refused by the gate and is not the normal widget.
+- **General account widget**, verified 29 October 2026 from the Technical Lead’s exact 835-byte export, SHA-256 `5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa`. `data-location=""`, `data-lang="de"`, `data-currency="chf"`, `data-utm-source="jetnity"`, `data-aff-code="a_aid"`, script `https://www.discovercars.com/widget.js?v1`. Stored unaltered as `lib/providers/discovercars/widget/discovercars-widget-allgemein.html`.
+- **BKK sample** `offizieller-widgetcode-bangkok.html`: still absent and not the default. Its `data-location` path is refused.
 
-If a future official export shows that DiscoverCars requires one fixed pickup per snippet and has no general mode, activation stops. The fallback remains the existing generic V1 link. A later UX may offer only exact official snippets the visitor chooses. It must not invent location parameters or map a city to an airport.
+The bound export already has an empty pickup, so this slice does not stop on a missing general mode. Activation still stops because consent and the full origin list are missing. The fallback remains the existing generic V1 link.
 
 ## Source decision
 
-**VENDOR_EXPORT_MISSING.** The repository has no general export and no `offizieller-widgetcode-bangkok.html`. The public generator page `https://www.discovercars.com/affiliate/widget`, read on 29 October 2026, shows generator chrome (“Paste these codes”, “Your affiliate code”) and does not contain Jetnity’s snippet, script URL, or attribute list. Narrative attributes from #1083 are not an export. No hash, no allowed origin, no executable vendor document. `lib/providers/discovercars/widget/vertrag.ts` keeps an empty origin list and `widgetDarfAusfuehren()` returns `false`.
+**LIVE_SOURCE_VERIFIED / CONSENT_BLOCKED.** The general export above is the bound source. `widgetDarfAusfuehren()` stays `false`. PrivacyBee is only the legal-page loader. Issue #1073 is an open GetYourGuide consent decision, not clearance for this script. A click is not consent. Work saw `widget.discovercars.com` after a different load; that host plus `www.discovercars.com` is not a complete origin inventory. No `/embed/discovercars` route is added, because serving the script would be a live load. The sandbox was not weakened and the script was not fetched.
 
 ## What this slice builds
 
@@ -33,7 +33,7 @@ No `app/embed/discovercars` route. No vendor adapter, no Search API, no native c
 
 ## Privacy
 
-PrivacyBee remains a legal-page loader (`widget.js` / `imprint-widget.js` on the privacy and imprint pages). Cookie consent UI was removed earlier. A load click is not marketing consent. GYG’s opt-in pattern was read only: nothing loads before a deliberate action, and a click is not consent. Because there is no trustworthy consent state for this vendor’s third-party purposes, real activation stays stopped even after a future export arrives.
+PrivacyBee remains a legal-page loader (`widget.js` / `imprint-widget.js` on the privacy and imprint pages). Cookie consent UI was removed earlier. A load click is not marketing consent. GYG’s opt-in pattern was read only: nothing loads before a deliberate action, and a click is not consent. The export is now present. There is still no trustworthy consent state for this vendor’s third-party script, so real activation stays stopped.
 
 ## Validation
 

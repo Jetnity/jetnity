@@ -2,16 +2,17 @@
 
 // components/trips/DiscoverCarsWidgetOptin.tsx
 //
-// Inertes Gehäuse für eine allgemeine DiscoverCars-Suche.
-// Kein fester Abholort, kein Bangkok-Standard. Der Konto-Export fehlt,
-// deshalb gibt es normal keinen Ladeknopf. Ein Klick wäre keine Einwilligung.
-// Die Prüfnaht zeigt nur eine lokale Textseite.
+// Gehäuse für die allgemeine DiscoverCars-Suche.
+// Der geprüfte Export hat einen leeren Abholort. Das Skript bleibt aus:
+// Einwilligung und die vollständige Hostliste fehlen. Die Prüfnaht zeigt
+// nur eine lokale Textseite und lädt DiscoverCars nicht.
 
 import * as React from 'react'
 
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import {
   WIDGET_FIXTURE_TEXT,
+  WIDGET_LAUFZEIT,
   WIDGET_QUELLENSTATUS,
   widgetAnfang,
   widgetAnsicht,
@@ -120,6 +121,7 @@ export default function DiscoverCarsWidgetOptin({
       aria-busy={ansicht.art === 'laedt'}
       data-discovercars-widget={naht ? 'pruefnaht' : 'inert'}
       data-discovercars-quelle={WIDGET_QUELLENSTATUS}
+      data-discovercars-laufzeit={WIDGET_LAUFZEIT}
       className={`${ORGANISIEREN_FLAECHE_KLASSE} max-w-full`}
       onKeyDown={(ereignis) => {
         if (ereignis.key !== 'Escape' || ansicht.art !== 'fixture') return
@@ -133,14 +135,19 @@ export default function DiscoverCarsWidgetOptin({
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words sm:text-2xl">
         Suchwidget
       </h2>
-      <div id="discovercars-widget-erklaerung" className="mt-4 grid gap-3 text-sm leading-6 text-ink-800">
+      <div id="discovercars-widget-erklaerung" className="mt-4 grid min-w-0 gap-3 break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]">
         <p>
-          Eine eingebettete Mietwagensuche von DiscoverCars ist hier nicht aktiv. Jetnity lädt
-          dafür kein Skript und übernimmt keine Reisedaten.
+          Eine allgemeine DiscoverCars-Suche ist hinterlegt. Sie hat keinen Abholort. Jetnity
+          übernimmt keine Reisedaten und lädt das Skript nicht.
         </p>
         <p>
-          Fahrzeuge, Bilder, Preise und Verfügbarkeit bleiben bei DiscoverCars und erscheinen
-          nicht in Jetnity. Die Links darunter öffnen die allgemeine Suche. Abholung, Rückgabe
+          Beim Laden würde DiscoverCars unter www.discovercars.com und möglicherweise weiteren
+          Adressen, darunter widget.discovercars.com, erreicht. Die vollständige Liste ist nicht
+          belegt. Eine Einwilligung dafür liegt nicht vor, deshalb bleibt das Suchwidget aus.
+          Fahrzeuge, Bilder, Preise und Verfügbarkeit erscheinen nicht in Jetnity.
+        </p>
+        <p>
+          Die Links darunter öffnen die allgemeine Suche ohne dieses Skript. Abholung, Rückgabe
           und Mietdauer wählst du dort. Jetnity legt keinen Abholort fest.
         </p>
         {naht ? (
@@ -182,7 +189,7 @@ export default function DiscoverCarsWidgetOptin({
           aria-describedby="discovercars-widget-erklaerung"
           onClick={() => starten(true)}
         >
-          Mietwagensuche bei DiscoverCars laden
+          Lokale Prüfseite zeigen
         </button>
       ) : null}
 
