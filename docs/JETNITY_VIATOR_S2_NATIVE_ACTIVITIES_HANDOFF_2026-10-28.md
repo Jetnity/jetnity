@@ -4,7 +4,7 @@
 
 ## What is wired
 
-`activitiesSuchen` asks the injected canonical reader for the selected place id, checks that id with `ortAusBestand`, and only then passes name, aliases, type, and country to Viator. Browser aliases are removed. The search route uses `kanonischeOrteLesen` and keeps the result only when the id matches. Tests inject the reader and do not call the database. `activityProviderAus` still loads `GET /destinations` and does not read the GeoNames fixture.
+For Viator, `activitiesSuchen` calls the canonical reader only after the provider is active and the rate limit allows the search. The confirmed record must match the requested id, country, and display name. Its name and coordinates replace the client fields. A null or different id does not fall back to the typed city. Other providers are unchanged. Tests inject the reader. The route still uses `kanonischeOrteLesen` only when the id matches. No GeoNames fixture read.
 
 The check panel shows option titles. Detail loading and the live quote use separate generations, so a date edit during loading does not strand the panel. A new search in `AktivitaetenBereich` clears the Viator selection. Currency is required. Pricing-record weekdays limit the hinted times. A missing season `endDate` uses the documented 384-day horizon. The browser harness lives in `scripts/viator-s2-native-integration/` and renders `AktivitaetenBereich`.
 

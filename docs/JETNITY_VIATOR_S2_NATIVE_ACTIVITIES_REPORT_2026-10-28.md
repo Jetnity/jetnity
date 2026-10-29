@@ -16,7 +16,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the new and edited Viator files passed with `--max-warnings 0`. The pre-existing set-state warning in `AktivitaetenBereich` was left as it was. Foundation, sandbox, and S2 unit tests passed. The browser harness passed against `AktivitaetenBereich`: real search body, schedule retry, date change during loading, CHF check body, stale 111 discarded, new search and Phuket day clear the product, widths 320, 390, 768, and 1440, root font 32px. Reachability and export checks were clean. Full `npm run lint`, production build, and exact-head CI are not claimed here. CI 40781976364 remains a recorded failure.
+`npx tsc -p tsconfig.json --noEmit` passed. `npm run build` passed. ESLint on the new search and Viator files passed with `--max-warnings 0`. The pre-existing set-state warning in `AktivitaetenBereich` was left as it was. S2 tests cover unknown id, mismatched id, Porto versus Lisbon, a throwing reader, and the rate limit before the read. The browser harness checks text rectangles for the day name and both action labels at 320 and 390 with root font 32px. Exact-head CI for this commit is not claimed. CI 40793295665 failed typecheck on `b254509f`. CI 40795543573 was still open for `80a26255` at review time and does not cover this head.
 
 ## Build
 

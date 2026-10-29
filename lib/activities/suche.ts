@@ -9,6 +9,7 @@ import { activityKandidatenAnreichern } from '@/lib/activities/anreichern'
 import { sucheFuerClient, type ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 import { ACTIVITY_SUCHE_GRENZEN, LEERE_ACTIVITY_EVIDENZ, type ActivityEvidenz, type ActivitySuchanfrage } from '@/lib/activities/domain'
 import { ActivityProviderFehler, type ActivityProvider } from '@/lib/activities/provider'
+import { VIATOR_PROVIDER_ID } from '@/lib/providers/viator/activities/contracts'
 import { activitySucheErlaubt } from '@/lib/activities/rate-limit'
 import { activityOptionenBewerten } from '@/lib/activities/ranking'
 import { ersteActivitymeldung, activitySucheEingabeSchema } from '@/lib/activities/schema'
@@ -65,6 +66,49 @@ async function mitTimeout<T>(arbeit: Promise<T>, timeoutMs: number): Promise<T> 
   }
 }
 
+function namensschluessel(wert: string): string {
+  return wert.trim().toLocaleLowerCase('de').normalize('NFD').replace(/\p{M}/gu, '')
+}
+
+async function bestaetigteViatorAnfrage(
+  anfrage: ActivitySuchanfrage,
+  ortLesen: ActivitySuchePorts['ortLesen'],
+): Promise<ActivitySuchanfrage> {
+  if (!anfrage.destinationPlaceId || !ortLesen) {
+    throw new ActivityProviderFehler('invalid', 'Für diesen Ort liegt keine bestätigte Identität vor.')
+  }
+  const gelesen = await mitTimeout(
+    Promise.resolve(ortLesen(anfrage.destinationPlaceId)),
+    ACTIVITY_SUCHE_GRENZEN.timeoutMs,
+  )
+  const ort = gelesen ? ortAusBestand([gelesen], anfrage.destinationPlaceId, 'ziel') : null
+  if (!ort || ort.id !== anfrage.destinationPlaceId) {
+    throw new ActivityProviderFehler('invalid', 'Für diesen Ort ist kein bestätigter Datensatz hinterlegt.')
+  }
+  const stageLand = anfrage.countryCode?.toUpperCase() ?? null
+  const ortLand = ort.countryCode?.toUpperCase() ?? null
+  if (stageLand && ortLand && stageLand !== ortLand) {
+    throw new ActivityProviderFehler('invalid', 'Der bestätigte Ort gehört zu einem anderen Land.')
+  }
+  const aliasTeile = (ort.keywords ?? '')
+    .split(',')
+    .map((teil) => teil.trim())
+    .filter((teil) => teil.length > 0)
+  const namen = new Set([ort.name, ...aliasTeile].map(namensschluessel).filter((teil) => teil.length > 0))
+  if (!namen.has(namensschluessel(anfrage.destinationName))) {
+    throw new ActivityProviderFehler('invalid', 'Der angezeigte Name passt nicht zum bestätigten Ort.')
+  }
+  return {
+    ...anfrage,
+    destinationName: ort.name,
+    latitude: ort.lat,
+    longitude: ort.lon,
+    countryCode: ortLand ?? stageLand,
+    placeAliases: [ort.name, ...aliasTeile],
+    placeType: ort.typ,
+  }
+}
+
 export async function activitiesSuchen(
   eingabe: unknown,
   ports: ActivitySuchePorts,
@@ -110,32 +154,6 @@ export async function activitiesSuchen(
     anfrage.placeType = undefined
   }
   let bestaetigt = anfrage
-  if (bestaetigt?.destinationPlaceId && ports.ortLesen) {
-    const gelesen = await ports.ortLesen(bestaetigt.destinationPlaceId)
-    const ort = gelesen ? ortAusBestand([gelesen], bestaetigt.destinationPlaceId, 'ziel') : null
-    if (ort) {
-      const stageLand = bestaetigt.countryCode?.toUpperCase() ?? null
-      const ortLand = ort.countryCode?.toUpperCase() ?? null
-      if (stageLand && ortLand && stageLand !== ortLand) {
-        beobachten('invalid')
-        return {
-          httpStatus: 200,
-          koerper: leerAntwort('invalid', 'Der bestätigte Ort gehört zu einem anderen Land.', evidenz),
-        }
-      }
-      const aliasTeile = (ort.keywords ?? '')
-        .split(',')
-        .map((teil) => teil.trim())
-        .filter((teil) => teil.length > 0)
-      bestaetigt = {
-        ...bestaetigt,
-        placeAliases: [ort.name, ...aliasTeile],
-        placeType: ort.typ,
-        countryCode: stageLand ?? ortLand,
-      }
-    }
-  }
-
   if (!ports.zustand.aktiv || !ports.provider) {
     beobachten('unavailable')
     return {
@@ -178,7 +196,11 @@ export async function activitiesSuchen(
       : null
 
   try {
-    const treffer = await mitTimeout(ports.provider.suchen(bestaetigt ?? anfrage!), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
+    let ziel = bestaetigt ?? anfrage
+    if (ports.provider.id === VIATOR_PROVIDER_ID) {
+      ziel = await bestaetigteViatorAnfrage(anfrage, ports.ortLesen)
+    }
+    const treffer = await mitTimeout(ports.provider.suchen(ziel), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
     const begrenzt = treffer.options.slice(0, ACTIVITY_SUCHE_GRENZEN.angebote)
     const kandidaten = activityKandidatenAnreichern(begrenzt, anfrage, bestehendeFenster, etappenPunkt)
     const optionen = activityOptionenBewerten(kandidaten).slice(

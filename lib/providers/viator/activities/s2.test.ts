@@ -573,5 +573,111 @@ describe('Viator native seam', () => {
     })
     assert.equal(anderesLand.koerper.status, 'invalid')
     assert.match(anderesLand.koerper.message, /anderen Land/)
+    const suchenVorher = http.calls.filter((url) => url.endsWith('/products/search')).length
+    const unbekannt = await activitiesSuchen(eingabe('Lisbon', 'geonames:999999999', 'PT', 38.72, -9.14), {
+      ...ports,
+      kennung: 'viator-unbekannte-id',
+    })
+    assert.equal(unbekannt.koerper.status, 'invalid')
+    const falscheId = await activitiesSuchen(eingabe('Lisbon', lisbon.id, 'PT', 38.72, -9.14), {
+      ...ports,
+      kennung: 'viator-falsche-id',
+      ortLesen: () => ({ ...lisbon, id: 'geonames:1', sourceId: '1' }),
+    })
+    assert.equal(falscheId.koerper.status, 'invalid')
+    const porto = await activitiesSuchen(eingabe('Porto', lisbon.id, 'PT', 41.15, -8.61), {
+      ...ports,
+      kennung: 'viator-porto-widerspruch',
+    })
+    assert.equal(porto.koerper.status, 'invalid')
+    assert.match(porto.koerper.message, /passt nicht/)
+    assert.equal(http.calls.filter((url) => url.endsWith('/products/search')).length, suchenVorher)
+  })
+
+  test('canonical reads wait for an active provider and the rate limit', async () => {
+    activityRateLeeren()
+    let lesungen = 0
+    const werfend = () => {
+      lesungen += 1
+      throw new Error('reader failed')
+    }
+    const aus = await activitiesSuchen(
+      {
+        stage: { id: 'stage-1', name: 'Lissabon', placeId: 'geonames:2267057', countryCode: 'PT', latitude: 38.72, longitude: -9.14 },
+        day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+        trip: { startDate: '2026-11-02', endDate: '2026-11-05', travellers: 2, currency: 'CHF', budgetAmount: null, interests: [], pace: 'balanced' },
+        items: [],
+      },
+      {
+        zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'false' }, false),
+        provider: null,
+        kennung: 'viator-leser-aus',
+        ortLesen: werfend,
+      },
+    )
+    assert.equal(aus.koerper.status, 'unavailable')
+    assert.equal(lesungen, 0)
+    const provider = {
+      id: 'viator' as const,
+      async suchen() {
+        return { options: [], partial: false }
+      },
+    }
+    const fehler = await activitiesSuchen(
+      {
+        stage: { id: 'stage-1', name: 'Lissabon', placeId: 'geonames:2267057', countryCode: 'PT', latitude: 38.72, longitude: -9.14 },
+        day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+        trip: { startDate: '2026-11-02', endDate: '2026-11-05', travellers: 2, currency: 'CHF', budgetAmount: null, interests: [], pace: 'balanced' },
+        items: [],
+      },
+      {
+        zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+        provider,
+        kennung: 'viator-leser-fehler',
+        ortLesen: werfend,
+      },
+    )
+    assert.equal(fehler.koerper.status, 'error')
+    assert.equal(lesungen, 1)
+    let begrenzt = 0
+    const ort = {
+      id: 'geonames:2267057',
+      source: 'geonames' as const,
+      sourceId: '2267057',
+      name: 'Lisbon',
+      typ: 'city' as const,
+      country: 'Portugal',
+      countryCode: 'PT',
+      region: null,
+      lat: 38.72,
+      lon: -9.14,
+      iata: null,
+      keywords: 'Lissabon',
+    }
+    for (let i = 0; i < 9; i += 1) {
+      const antwort = await activitiesSuchen(
+        {
+          stage: { id: 'stage-1', name: 'Lissabon', placeId: ort.id, countryCode: 'PT', latitude: 38.72, longitude: -9.14 },
+          day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+          trip: { startDate: '2026-11-02', endDate: '2026-11-05', travellers: 2, currency: 'CHF', budgetAmount: null, interests: [], pace: 'balanced' },
+          items: [],
+        },
+        {
+          zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+          provider,
+          kennung: 'viator-leser-limit',
+          ortLesen: () => {
+            begrenzt += 1
+            return ort
+          },
+        },
+      )
+      if (i < 8) assert.notEqual(antwort.koerper.status, 'rate_limited')
+      else {
+        assert.equal(antwort.httpStatus, 429)
+        assert.equal(antwort.koerper.status, 'rate_limited')
+      }
+    }
+    assert.equal(begrenzt, 8)
   })
 })

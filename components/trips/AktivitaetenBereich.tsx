@@ -40,7 +40,6 @@ import {
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
 import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
-import { ScrollRow } from '@/components/ui/scroll-row'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
@@ -176,7 +175,7 @@ export default function AktivitaetenBereich({
       <section
         aria-label="Aktivitäten"
         data-organisieren-flaeche="suche"
-        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-3 sm:!p-5')}
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
@@ -390,7 +389,7 @@ function ActivityTag({
     <section
       aria-label="Aktivitäten"
       data-organisieren-flaeche="suche"
-      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-3 sm:!p-5')}
     >
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
@@ -413,13 +412,7 @@ function ActivityTag({
         <p id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
           Reisetag
         </p>
-        <ScrollRow
-          label="Reisetage"
-          className="mt-2"
-          fadeFromClassName="from-white"
-          viewportClassName="gap-2 pb-1"
-          aria-labelledby="activity-tag-label"
-        >
+        <div role="radiogroup" aria-labelledby="activity-tag-label" className="mt-2 grid min-w-0 gap-2">
           {reise.days.map((eintrag) => {
             const gewaehlt = tag?.id === eintrag.id
             return (
@@ -430,17 +423,17 @@ function ActivityTag({
                 aria-checked={gewaehlt}
                 onClick={() => onTagWechseln(eintrag.id)}
                 className={cn(
-                  'flex min-h-11 w-full max-w-full shrink-0 basis-full items-center whitespace-normal rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                  'flex min-h-11 w-full min-w-0 items-center rounded-full border px-3 py-1 text-left text-sm font-medium leading-tight transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                   gewaehlt
                     ? 'border-brand-800 bg-brand-800 text-white'
                     : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
                 )}
               >
-                <span className="min-w-0 break-words">{tagTitel(eintrag)}</span>
+                <span className="min-w-0 break-normal">{tagTitel(eintrag)}</span>
               </button>
             )
           })}
-        </ScrollRow>
+        </div>
       </div>
 
       {kannSuchen ? (

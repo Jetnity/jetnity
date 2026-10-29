@@ -49,7 +49,7 @@ export default function AktivitaetKarte({
         ? 'Preis unbekannt'
         : 'Noch ohne Preis'
   return (
-    <article className="min-w-0 rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
+    <article className="min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-3 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
         {option.labels.map((marke: ActivityMarke) => (
           <span
@@ -102,7 +102,7 @@ export default function AktivitaetKarte({
         </p>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
+      <div className="mt-4 flex min-w-0 flex-col items-stretch gap-3 border-t border-line-100 pt-4">
         <div className="min-w-0">
           <p className="text-xs text-ink-700">{basis}</p>
           <p className="text-lg font-semibold text-brand-800">{preis}</p>
@@ -110,12 +110,12 @@ export default function AktivitaetKarte({
             <p className="text-xs text-ink-700">Keine Umrechnung nach CHF.</p>
           ) : null}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           {onPruefen && (
             <button
               type="button"
               onClick={onPruefen}
-              className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              className="inline-flex min-h-11 w-full min-w-0 max-w-full items-center justify-center whitespace-normal break-normal rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
               Angebot prüfen
             </button>
@@ -125,7 +125,7 @@ export default function AktivitaetKarte({
             type="button"
             onClick={onUebernehmen}
             disabled={laeuft}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex min-h-11 w-full min-w-0 max-w-full items-center justify-center gap-2 whitespace-normal break-normal rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
           >
             <Sparkles className="h-4 w-4" aria-hidden="true" />
             In die Reise

@@ -41,23 +41,30 @@ const BEDIENUNG = `(() => {
   const panel = document.querySelector('section[aria-label="Viator-Prüfung"]')
   if (!section || !panel) return { ok: false, reason: 'missing' }
   const sectionBox = section.getBoundingClientRect()
-  const panelBox = panel.getBoundingClientRect()
-  const radios = [...section.querySelectorAll('[role="radio"]')].map((el) => {
-    const rect = el.getBoundingClientRect()
-    return { width: rect.width, height: rect.height }
-  })
-  const kontrollen = [...panel.querySelectorAll('input, select, button, a')].map((el) => {
-    const rect = el.getBoundingClientRect()
-    return { right: rect.right, left: rect.left, panelRight: panelBox.right, sectionRight: sectionBox.right }
-  })
-  const radioOk = radios.length > 0 && radios.every((eintrag) => eintrag.height < 140 && eintrag.width > 120)
-  const kontrolleOk = kontrollen.length > 0 && kontrollen.every((eintrag) => (
-    eintrag.right <= sectionBox.right + 1
-    && eintrag.right <= panelBox.right + 1
-    && eintrag.left >= panelBox.left - 1
-    && panelBox.right <= sectionBox.right + 1
+  const textRects = (el) => {
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    return [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0)
+  }
+  const inside = (rects, box) => rects.length > 0 && rects.every((rect) => (
+    rect.left >= box.left - 1 && rect.right <= box.right + 1 && rect.top >= box.top - 1 && rect.bottom <= box.bottom + 1
   ))
-  return { ok: radioOk && kontrolleOk, radios, kontrollen }
+  const button = (root, name) => [...root.querySelectorAll('button')].find((el) => (el.textContent || '').includes(name))
+  const angebot = button(section, 'Angebot prüfen')
+  const verfuegbar = button(panel, 'Verfügbarkeit prüfen')
+  const radios = [...section.querySelectorAll('[role="radio"]')]
+  const angebotOk = Boolean(angebot) && inside(textRects(angebot), angebot.getBoundingClientRect()) && inside(textRects(angebot), sectionBox)
+  const verfuegbarOk = Boolean(verfuegbar) && inside(textRects(verfuegbar), verfuegbar.getBoundingClientRect()) && inside(textRects(verfuegbar), sectionBox)
+  const radiosOk = radios.length > 0 && radios.every((el) => {
+    const box = el.getBoundingClientRect()
+    return box.height < 140 && inside(textRects(el), sectionBox)
+  })
+  return {
+    ok: angebotOk && verfuegbarOk && radiosOk,
+    radios: radios.map((el) => ({ width: Math.round(el.getBoundingClientRect().width), height: Math.round(el.getBoundingClientRect().height) })),
+    angebot: angebot ? Math.round(angebot.getBoundingClientRect().right) : null,
+    sectionRechts: Math.round(sectionBox.right),
+  }
 })()`
 
 const TEXT_GRENZEN = `(() => {

@@ -13,7 +13,8 @@ The session is still `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`, model `grok-4.7-
 - A season with no `endDate` stays `availabilityClaim: false`. Dates after today plus 384 days are outside the hint.
 - Changing the date aborts the previous live check and does not cancel an in-flight detail load. The browser flow uses `AktivitaetenBereich`, selected Morgentour, sent CHF, recovered from a schedule error, cleared the product on a new search and on the Phuket day, and a late 111 did not replace the cleared quote.
 - A Monday-only 10:00 is absent on Tuesday. CHF, EUR, and USD are present on built check bodies.
-- Option titles are required. An untitled option is dropped.
+- A Viator search with an unknown id, a different returned id, or a display name outside the confirmed names does not call product search. Lissabon and Wien still search when the injected record lists those names. A throwing reader returns an error response. A disabled provider and a rate-limited request do not read the place.
+- At root font 32px and 320/390px, the day name and the offer actions stay inside their controls. Day rows stay under 140px. The shared scroll row was not edited.
 
 ## Gaps
 
