@@ -5,6 +5,7 @@ import {
   WIDGET_FIXTURE_TEXT,
   WIDGET_HERKUNFT_ERLAUBT,
   WIDGET_PRUEFNAHT,
+  WIDGET_ATTRIBUT_ERLAUBT,
   WIDGET_EXPORT_BYTES,
   WIDGET_EXPORT_SHA256,
   WIDGET_LAUFZEIT,
@@ -32,6 +33,7 @@ describe('DiscoverCars Widget-Quelle', () => {
     assert.equal(WIDGET_LAUFZEIT, 'CONSENT_BLOCKED')
     assert.equal(WIDGET_EXPORT_BYTES, 835)
     assert.equal(widgetDarfAusfuehren(), false)
+    assert.deepEqual(WIDGET_ATTRIBUT_ERLAUBT, [])
     assert.deepEqual(WIDGET_HERKUNFT_ERLAUBT, [])
     assert.equal(widgetPruefnaht(WIDGET_PRUEFNAHT), true)
     assert.equal(widgetPruefnaht('live'), false)
