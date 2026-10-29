@@ -18,6 +18,48 @@ test('the browser harness stays imported for reachability', () => {
 
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
+type Messwert = {
+  ok: boolean
+  reason?: string
+  rechts?: number[]
+  sectionRechts?: number
+  dlScroll?: number
+  dlClient?: number
+  radios?: Array<{ width: number; height: number }>
+  kontrollen?: Array<{ right: number; panelRight: number; sectionRight: number }>
+}
+
+function alsMesswert(wert: unknown): Messwert {
+  if (!wert || typeof wert !== 'object' || typeof (wert as { ok?: unknown }).ok !== 'boolean') {
+    return { ok: false, reason: 'missing' }
+  }
+  return wert as Messwert
+}
+
+const BEDIENUNG = `(() => {
+  const section = document.querySelector('section[aria-label="Aktivitäten"]')
+  const panel = document.querySelector('section[aria-label="Viator-Prüfung"]')
+  if (!section || !panel) return { ok: false, reason: 'missing' }
+  const sectionBox = section.getBoundingClientRect()
+  const panelBox = panel.getBoundingClientRect()
+  const radios = [...section.querySelectorAll('[role="radio"]')].map((el) => {
+    const rect = el.getBoundingClientRect()
+    return { width: rect.width, height: rect.height }
+  })
+  const kontrollen = [...panel.querySelectorAll('input, select, button, a')].map((el) => {
+    const rect = el.getBoundingClientRect()
+    return { right: rect.right, left: rect.left, panelRight: panelBox.right, sectionRight: sectionBox.right }
+  })
+  const radioOk = radios.length > 0 && radios.every((eintrag) => eintrag.height < 140 && eintrag.width > 120)
+  const kontrolleOk = kontrollen.length > 0 && kontrollen.every((eintrag) => (
+    eintrag.right <= sectionBox.right + 1
+    && eintrag.right <= panelBox.right + 1
+    && eintrag.left >= panelBox.left - 1
+    && panelBox.right <= sectionBox.right + 1
+  ))
+  return { ok: radioOk && kontrolleOk, radios, kontrollen }
+})()`
+
 const TEXT_GRENZEN = `(() => {
   const wert = [...document.querySelectorAll('dd')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
   const knopf = [...document.querySelectorAll('button')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
@@ -339,16 +381,17 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     await page.getByText('neue Prüfung').waitFor()
     await page.getByText('80').waitFor()
     assert.equal(await page.getByText('111').count(), 0)
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    const bedienung = alsMesswert(await page.evaluate(BEDIENUNG))
+    assert.equal(bedienung.ok, true, JSON.stringify(bedienung))
     const detailsVorSuche = träger.detailAnzahl()
     await bereich.getByRole('button', { name: 'Erneut suchen' }).click()
     await page.getByText('Keine Testangebote.').waitFor()
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
     assert.equal(träger.detailAnzahl(), detailsVorSuche)
-    const vorher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
-    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-    const nachher = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
-    assert.ok(nachher > vorher)
-    const textGrenzen = await page.evaluate(TEXT_GRENZEN)
+    const schrift = await page.locator('h2').first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
+    assert.ok(schrift >= 32)
+    const textGrenzen = alsMesswert(await page.evaluate(TEXT_GRENZEN))
     assert.equal(textGrenzen.ok, true, JSON.stringify(textGrenzen))
     const ueberlappung = await page.evaluate(`(() => {
       const kasten = (name) => {
@@ -385,8 +428,10 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       await weitere.getByText('Kalenderhinweis, keine aktuelle Verfügbarkeit.').waitFor()
       if (breite === 320) {
         await weitere.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-        const grenzen = await weitere.evaluate(TEXT_GRENZEN)
+        const grenzen = alsMesswert(await weitere.evaluate(TEXT_GRENZEN))
+        const bedienungSchmal = alsMesswert(await weitere.evaluate(BEDIENUNG))
         assert.equal(grenzen.ok, true, `${breite} ${JSON.stringify(grenzen)}`)
+        assert.equal(bedienungSchmal.ok, true, `${breite} ${JSON.stringify(bedienungSchmal)}`)
       }
       const kante = await weitere.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
       assert.ok(kante.scroll <= kante.client + 1, `${breite}`)

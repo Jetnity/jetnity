@@ -18,6 +18,8 @@ import { activityProviderAus } from '@/lib/activities/factory'
 import { activityRateKennungAus } from '@/lib/activities/rate-limit'
 import { activitiesSuchen, activitySuchePortsAusUmgebung } from '@/lib/activities/suche'
 import { activityUmgebungAusProzess } from '@/lib/activities/zustand'
+import type { Ort } from '@/lib/places/domain'
+import { kanonischeOrteLesen } from '@/lib/places/lesen'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -45,6 +47,17 @@ function leer(status: ActivitySucheAntwort['status'], message: string): Activity
   })
 }
 
+async function bestaetigtenOrtLesen(id: string): Promise<Ort | null> {
+  const gelesen = await kanonischeOrteLesen({
+    origin: { name: null, countryCode: null, rolle: 'abreise' },
+    stages: [{ name: '', countryCode: null, rolle: 'ziel' }],
+    behaupteteIds: { stages: [id] },
+  })
+  const ort = gelesen.stages[0]
+  if (!ort || ort.id !== id) return null
+  return ort
+}
+
 export async function POST(req: Request) {
   if (!activitySucheInhaltstypOk(req.headers.get('content-type'))) {
     return antwort(415, leer('error', 'Die Aktivitätensuche erwartet application/json.'))
@@ -70,6 +83,7 @@ export async function POST(req: Request) {
       activityUmgebungAusProzess(),
       activityProviderAus(),
       activityRateKennungAus(req.headers),
+      bestaetigtenOrtLesen,
     ),
   )
 

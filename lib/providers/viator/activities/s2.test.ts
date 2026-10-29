@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
+import { activitiesSuchen } from '@/lib/activities/suche'
+import { activityRateLeeren } from '@/lib/activities/rate-limit'
+import { activityZustand } from '@/lib/activities/zustand'
+import type { Ort } from '@/lib/places/domain'
 import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
 import { viatorOrtAufloesen, viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
@@ -488,5 +492,86 @@ describe('Viator native seam', () => {
     assert.equal('productOptionCode' in zweite, false)
     assert.equal(JSON.stringify(zweite).includes('DEFAULT'), false)
     assert.equal(JSON.stringify(zweite).includes('TG1'), false)
+  })
+
+  test('the normal search reads the confirmed place by id and does not trust browser aliases', async () => {
+    viatorZielCacheLeeren()
+    activityRateLeeren()
+    const katalog = {
+      destinations: [
+        { destinationId: 55, name: 'Portugal', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 501, name: 'Lisbon', type: 'CITY', parentDestinationId: 55, center: { latitude: 38.72, longitude: -9.14 } },
+        { destinationId: 11, name: 'Austria', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 454, name: 'Vienna', type: 'CITY', parentDestinationId: 11, center: { latitude: 48.2, longitude: 16.37 } },
+      ],
+    }
+    const http = httpFor({
+      [ZIELE]: katalog,
+      'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
+    })
+    const provider = viatorActivityProvider({ env, http: http.client, nowMs: NOW })
+    const lisbon: Ort = {
+      id: 'geonames:2267057',
+      source: 'geonames',
+      sourceId: '2267057',
+      name: 'Lisbon',
+      typ: 'city',
+      country: 'Portugal',
+      countryCode: 'PT',
+      region: null,
+      lat: 38.72,
+      lon: -9.14,
+      iata: null,
+      keywords: 'Lisboa,Lissabon',
+    }
+    const vienna: Ort = {
+      ...lisbon,
+      id: 'geonames:2761369',
+      sourceId: '2761369',
+      name: 'Vienna',
+      country: 'Austria',
+      countryCode: 'AT',
+      lat: 48.2,
+      lon: 16.37,
+      keywords: 'Wien',
+    }
+    const bestand = new Map<string, Ort>([[lisbon.id, lisbon], [vienna.id, vienna]])
+    const eingabe = (name: string, placeId: string, countryCode: string, latitude: number, longitude: number) => ({
+      stage: { id: 'stage-1', name, placeId, countryCode, latitude, longitude },
+      day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+      trip: {
+        startDate: '2026-11-02',
+        endDate: '2026-11-05',
+        travellers: 2,
+        currency: 'CHF',
+        budgetAmount: null,
+        interests: [],
+        pace: 'balanced' as const,
+      },
+      items: [],
+    })
+    const ports = {
+      zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+      provider,
+      kennung: 'viator-kanon-suchweg',
+      ortLesen: (id: string) => bestand.get(id) ?? null,
+    }
+    const lissabon = await activitiesSuchen(eingabe('Lissabon', lisbon.id, 'PT', 38.72, -9.14), ports)
+    assert.equal(lissabon.koerper.status, 'ok')
+    assert.equal(http.calls.filter((url) => url.endsWith('/products/search')).length, 1)
+    const wien = await activitiesSuchen(eingabe('Wien', vienna.id, 'AT', 48.2, 16.37), ports)
+    assert.equal(wien.koerper.status, 'ok')
+    const ohneLeser = await activitiesSuchen(eingabe('Lissabon', lisbon.id, 'PT', 38.72, -9.14), {
+      ...ports,
+      kennung: 'viator-ohne-kanon',
+      ortLesen: () => null,
+    })
+    assert.equal(ohneLeser.koerper.status, 'invalid')
+    const anderesLand = await activitiesSuchen(eingabe('Lissabon', lisbon.id, 'FR', 38.72, -9.14), {
+      ...ports,
+      kennung: 'viator-anderes-land',
+    })
+    assert.equal(anderesLand.koerper.status, 'invalid')
+    assert.match(anderesLand.koerper.message, /anderen Land/)
   })
 })

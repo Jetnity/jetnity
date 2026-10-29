@@ -6,7 +6,7 @@
 
 The Aktivitäten search uses Viator only when the sandbox guard is open. Missing `VIATOR_SANDBOX_API_KEY` or `VIATOR_SANDBOX_CALLS`, and Production, stay unavailable. No example offers are substituted.
 
-Runtime destination resolution loads `GET /destinations`. A place matches a CITY, TOWN, or ISLAND through a COUNTRY ancestor whose English name equals Jetnity `landName`. Alternate names come only from the confirmed place record passed into the resolver. The GeoNames fixture is not read. A country identity is not turned into a city. Unknown and duplicate names stay unresolved.
+Runtime destination resolution loads `GET /destinations`. The normal search looks up the selected place id through an injected canonical reader, checks that id with `ortAusBestand`, and passes that record's name, aliases, type, and country to the resolver. Browser-supplied aliases are discarded. A missing or contradictory record does not invent a match. The GeoNames fixture is not read.
 
 A live check always sends a supported display currency. CHF, EUR, and USD are sent when that is the requested display currency. An unsupported trip currency asks for a choice and does not show a current price. The request omits `productOptionCode` for a product with no titled option, and never sends `TG1` or `DEFAULT` as a stand-in. Several start times stay unselected until the visitor chooses one. `daysOfWeek` comes from each pricing record, so a Monday-only time is not offered on Tuesday. A season without `endDate` is a hint through 384 days from the check clock, not availability. Changing the date while details are still loading does not discard that load. A new activity search clears the selected Viator product.
 

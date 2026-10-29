@@ -430,13 +430,13 @@ function ActivityTag({
                 aria-checked={gewaehlt}
                 onClick={() => onTagWechseln(eintrag.id)}
                 className={cn(
-                  'inline-flex min-h-11 max-w-full min-w-0 shrink items-center whitespace-normal rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                  'flex min-h-11 w-full max-w-full shrink-0 basis-full items-center whitespace-normal rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                   gewaehlt
                     ? 'border-brand-800 bg-brand-800 text-white'
                     : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
                 )}
               >
-                <span className="block min-w-0 max-w-full break-words">{tagTitel(eintrag)}</span>
+                <span className="min-w-0 break-words">{tagTitel(eintrag)}</span>
               </button>
             )
           })}

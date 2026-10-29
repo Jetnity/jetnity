@@ -235,7 +235,7 @@ function ViatorPruefungLauf({
   }
 
   return (
-    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-white p-4">
+    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-4">
       <h3 className="text-base font-semibold text-brand-800">Ausgewähltes Angebot</h3>
       <p className="mt-1 text-sm leading-6 text-ink-800">{meldung}</p>
       {bild ? (
@@ -259,7 +259,7 @@ function ViatorPruefungLauf({
           Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.
         </p>
       ) : null}
-      <div className="mt-4 grid gap-3">
+      <div className="mt-4 grid min-w-0 max-w-full grid-cols-1 gap-3">
         <label className="grid gap-1 text-sm text-ink-800">
           Datum
           <input
@@ -270,7 +270,7 @@ function ViatorPruefungLauf({
               setStartzeit('')
               verwerfen()
             }}
-            className="min-h-11 rounded-xl border border-line-200 px-3"
+            className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
           />
         </label>
         {optionen.length > 0 ? (
@@ -283,7 +283,7 @@ function ViatorPruefungLauf({
                 setStartzeit('')
                 verwerfen()
               }}
-              className="min-h-11 rounded-xl border border-line-200 px-3"
+              className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
             >
               {optionen.length === 1 ? null : <option value="">Bitte wählen</option>}
               {optionen.map((eintrag) => (
@@ -303,7 +303,7 @@ function ViatorPruefungLauf({
                 setStartzeit(event.target.value)
                 verwerfen()
               }}
-              className="min-h-11 rounded-xl border border-line-200 px-3"
+              className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
             >
               {zeiten.length === 1 ? null : <option value="">Bitte wählen</option>}
               {zeiten.map((zeit) => (
@@ -325,7 +325,7 @@ function ViatorPruefungLauf({
                 setWaehrungsWahl(event.target.value)
                 verwerfen()
               }}
-              className="min-h-11 rounded-xl border border-line-200 px-3"
+              className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
             >
               <option value="">Bitte wählen</option>
               {VIATOR_SEARCH_CURRENCIES.map((code) => (
@@ -348,7 +348,7 @@ function ViatorPruefungLauf({
                 setMix((stand) => ({ ...stand, [band.ageBand]: Number.isInteger(zahl) ? zahl : 0 }))
                 verwerfen()
               }}
-              className="min-h-11 rounded-xl border border-line-200 px-3"
+              className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
             />
           </label>
         ))}

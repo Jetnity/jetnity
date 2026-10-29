@@ -7,7 +7,7 @@
 
 import { activityKandidatenAnreichern } from '@/lib/activities/anreichern'
 import { sucheFuerClient, type ActivitySucheAntwort } from '@/lib/activities/client-sicht'
-import { ACTIVITY_SUCHE_GRENZEN, LEERE_ACTIVITY_EVIDENZ, type ActivityEvidenz } from '@/lib/activities/domain'
+import { ACTIVITY_SUCHE_GRENZEN, LEERE_ACTIVITY_EVIDENZ, type ActivityEvidenz, type ActivitySuchanfrage } from '@/lib/activities/domain'
 import { ActivityProviderFehler, type ActivityProvider } from '@/lib/activities/provider'
 import { activitySucheErlaubt } from '@/lib/activities/rate-limit'
 import { activityOptionenBewerten } from '@/lib/activities/ranking'
@@ -20,6 +20,8 @@ import {
   type ActivityZustand,
 } from '@/lib/activities/zustand'
 import { geoPunktGueltig } from '@/lib/hotels/geo'
+import type { Ort } from '@/lib/places/domain'
+import { ortAusBestand } from '@/lib/places/pruefen'
 import {
   providerOpsConsoleEventSink,
   providerOpsEventSchreiben,
@@ -32,6 +34,8 @@ export type ActivitySuchePorts = {
   provider: ActivityProvider | null
   kennung: string
   eventSink?: ProviderOpsEventSink
+  /** Server-side read of the confirmed place. Tests inject this. It is not the browser payload. */
+  ortLesen?: (id: string) => Promise<Ort | null> | Ort | null
 }
 
 function leerAntwort(
@@ -93,7 +97,7 @@ export async function activitiesSuchen(
   }
 
   const { anfrage: rohAnfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
-  const anfrage = rohAnfrage
+  const anfrage: ActivitySuchanfrage | null = rohAnfrage
     ? {
         ...rohAnfrage,
         countryCode: geprueft.data.stage.countryCode,
@@ -101,6 +105,36 @@ export async function activitiesSuchen(
         longitude: geprueft.data.stage.longitude,
       }
     : null
+  if (anfrage) {
+    anfrage.placeAliases = undefined
+    anfrage.placeType = undefined
+  }
+  let bestaetigt = anfrage
+  if (bestaetigt?.destinationPlaceId && ports.ortLesen) {
+    const gelesen = await ports.ortLesen(bestaetigt.destinationPlaceId)
+    const ort = gelesen ? ortAusBestand([gelesen], bestaetigt.destinationPlaceId, 'ziel') : null
+    if (ort) {
+      const stageLand = bestaetigt.countryCode?.toUpperCase() ?? null
+      const ortLand = ort.countryCode?.toUpperCase() ?? null
+      if (stageLand && ortLand && stageLand !== ortLand) {
+        beobachten('invalid')
+        return {
+          httpStatus: 200,
+          koerper: leerAntwort('invalid', 'Der bestätigte Ort gehört zu einem anderen Land.', evidenz),
+        }
+      }
+      const aliasTeile = (ort.keywords ?? '')
+        .split(',')
+        .map((teil) => teil.trim())
+        .filter((teil) => teil.length > 0)
+      bestaetigt = {
+        ...bestaetigt,
+        placeAliases: [ort.name, ...aliasTeile],
+        placeType: ort.typ,
+        countryCode: stageLand ?? ortLand,
+      }
+    }
+  }
 
   if (!ports.zustand.aktiv || !ports.provider) {
     beobachten('unavailable')
@@ -144,7 +178,7 @@ export async function activitiesSuchen(
       : null
 
   try {
-    const treffer = await mitTimeout(ports.provider.suchen(anfrage), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
+    const treffer = await mitTimeout(ports.provider.suchen(bestaetigt ?? anfrage!), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
     const begrenzt = treffer.options.slice(0, ACTIVITY_SUCHE_GRENZEN.angebote)
     const kandidaten = activityKandidatenAnreichern(begrenzt, anfrage, bestehendeFenster, etappenPunkt)
     const optionen = activityOptionenBewerten(kandidaten).slice(
@@ -201,11 +235,13 @@ export function activitySuchePortsAusUmgebung(
   umgebung: ActivityUmgebung,
   provider: ActivityProvider | null,
   kennung: string,
+  ortLesen?: ActivitySuchePorts['ortLesen'],
 ): ActivitySuchePorts {
   return {
     zustand: activityZustand(umgebung, provider !== null),
     provider,
     kennung,
     eventSink: providerOpsConsoleEventSink,
+    ortLesen,
   }
 }
