@@ -4,13 +4,13 @@
 
 ## Umgesetzt
 
-The three corrections from the review of `ce0a5bcda6c227ef831a7b4534841b744af27e06` remain. S2-PREACTIVATION-R1 closes the sandbox client unless `VERCEL_ENV` is exactly `preview` or `development`. The earlier identity and reader guards stay in place.
+S2-SANDBOX-FAILURE-DIAGNOSTICS-R1 adds one server-only destinations diagnostic. The guest error text is unchanged. The hosted catalog failure is still unclassified. The preview/development guard and the earlier identity, reader, and UI fixes stay in place.
 
 Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product.
 
 ## Dateien
 
-`lib/providers/viator/activities/zugang.ts`, `sandbox.test.ts`, and `s2.test.ts`. The S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Auth, database, environment configuration, shared provider-ops, UI, workflows, and packages were not edited.
+`lib/providers/viator/activities/anbinden.ts` and `s2.test.ts`. The S2 STATUS, HANDOFF, SELF_REVIEW, and this report. `sandbox.ts` was not changed. The S2 task seed was not edited. Shared transport, UI, Auth, database, environment, workflows, and packages were not edited.
 
 ## Datenbank
 
@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. ESLint on the three touched Viator files passed with `--max-warnings 0`. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 10 passed, including zero injected HTTP calls for missing, empty, `staging`, exact `production`, `production ` with a trailing space, and malformed preview/development values, through the provider, detail, schedule, and live-check entry points. Sandbox client: 5 passed, including one sandbox-host search each for exact `preview` and `development`. Foundation tests in the same run passed. The browser harness was not re-run for this guard change. Its earlier Linux ArrowDown pass remains the comment-6485453294 limit: macOS headless Chrome does not move a plain native select on ArrowDown. CI 40860128741 is the historical SUCCESS on `b7299e69` and does not cover this commit.
+`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 11 passed, including one redacted destinations diagnostic for 401, 403, 429, 500, network, a 12s timeout, non-JSON 200, and a taxonomy rejection, and zero records for a successful catalog and for closed environments. The guest body for HTTP 401 stayed `Die Viator-Ziele konnten nicht gelesen werden.` Sandbox client: 5 passed. The browser harness was not re-run. CI 40866433319 attempt 2 is the historical SUCCESS on `a70e1bfb` and does not cover this commit.
 
 ## Build
 
@@ -38,7 +38,7 @@ This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. `docs/ACTIVE_WORK_STATU
 
 ## Offene Punkte
 
-Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for the pre-activation commit. CI 40860128741 is the cleanup SUCCESS on `b7299e69`. DiscoverCars stays with its own owner.
+Protected sandbox key, a later permitted one-shot destinations retest, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for the diagnostic commit. CI 40866433319 attempt 2 is the SUCCESS on `a70e1bfb`. DiscoverCars stays with its own owner.
 
 ## Risiken
 

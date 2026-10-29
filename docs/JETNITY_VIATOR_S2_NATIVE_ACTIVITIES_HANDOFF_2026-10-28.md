@@ -22,10 +22,14 @@ The Linux browser test presses ArrowDown and, on this machine, moves Tag 1 to Ta
 
 S2-PREACTIVATION-R1, comment 6495438986. `viatorSandboxZugang` opens the real client only for exact `preview` or `development`, and only after the calls flag and key checks. Missing, empty, unknown, Production, and malformed values return before transport. Tests inject HTTP and count zero calls. The cleanup PASS [40860128741](https://github.com/Jetnity/jetnity/actions/runs/40860128741) remains valid for `b7299e69` and does not cover this guard change. No secret was installed.
 
+## Destination diagnostic
+
+S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allowlisted server record and still throws the existing guest message. Classes are `http_denied`, `transport_body`, `catalog_schema`, `timeout`, `network`, `rate_limited`, `aborted`, or `other`. No body, header, key, URL, or trip id is included. `sandbox.ts` already returned the typed failure, so it was not changed. Shared transport code was not changed. The hosted failure at 13:52:42.953Z is still unclassified. No new provider call was made.
+
 ## Still blocked
 
 Real Sandbox calls, image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff. The destinations request exists; this session did not call Viator. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
 
 ## Next step
 
-Independent review of the pre-activation head. CI 40860128741 is the historical cleanup PASS on `b7299e69`.
+Independent review of the diagnostic head. CI 40866433319 attempt 2 is the historical SUCCESS on `a70e1bfb`. The hosted destinations failure stays unclassified until a later permitted one-shot retest.

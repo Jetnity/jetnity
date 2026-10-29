@@ -6,7 +6,7 @@ import 'server-only'
 
 import { ActivityProviderFehler, type ActivityProvider, type ActivityProviderTreffer } from '@/lib/activities/provider'
 import type { ActivityOption, ActivityPreisRolle, ActivitySuchanfrage } from '@/lib/activities/domain'
-import { createFetchProviderHttpClient, type ProviderHttpClient } from '@/lib/server/providers/core'
+import { createFetchProviderHttpClient, istProviderTransportErrorKind, type ProviderHttpClient } from '@/lib/server/providers/core'
 import {
   VIATOR_PROVIDER_ID,
   isViatorSearchCurrency,
@@ -95,6 +95,88 @@ export function viatorZielCacheLeeren(): void {
   zielCache = null
 }
 
+const VIATOR_ZIEL_DIAGNOSE_FELDER = ['ereignis', 'operation', 'klasse', 'reason', 'transportKind', 'status'] as const
+
+type ViatorZielKlasse =
+  | 'http_denied'
+  | 'transport_body'
+  | 'catalog_schema'
+  | 'timeout'
+  | 'network'
+  | 'rate_limited'
+  | 'aborted'
+  | 'other'
+
+type ViatorZielDiagnose = {
+  ereignis: 'viator_ziel_fehlgeschlagen'
+  operation: 'destinations'
+  klasse: ViatorZielKlasse
+  reason: 'transport' | 'malformed_response' | 'unclassified'
+  transportKind: string | null
+  status: number | null
+}
+
+function viatorZielStatus(wert: unknown): number | null {
+  return typeof wert === 'number' && Number.isInteger(wert) && wert >= 100 && wert <= 599 ? wert : null
+}
+
+function viatorZielDiagnose(fehler: {
+  reason: string
+  transportKind?: string | null
+  status?: number | null
+}): ViatorZielDiagnose {
+  const transportKind =
+    typeof fehler.transportKind === 'string' && istProviderTransportErrorKind(fehler.transportKind)
+      ? fehler.transportKind
+      : null
+  const katalog = fehler.reason === 'malformed_response' && transportKind == null
+  const transport = fehler.reason === 'transport'
+  let klasse: ViatorZielKlasse = 'other'
+  if (katalog) klasse = 'catalog_schema'
+  else if (transportKind === 'malformed_response') klasse = 'transport_body'
+  else if (transportKind === 'timeout') klasse = 'timeout'
+  else if (transportKind === 'network_error') klasse = 'network'
+  else if (transportKind === 'rate_limited') klasse = 'rate_limited'
+  else if (transportKind === 'aborted') klasse = 'aborted'
+  else if (
+    transport &&
+    (transportKind === 'authentication' ||
+      transportKind === 'authorization' ||
+      transportKind === 'invalid_request' ||
+      transportKind === 'provider_4xx' ||
+      transportKind === 'provider_5xx')
+  ) {
+    klasse = 'http_denied'
+  }
+  const diagnose: ViatorZielDiagnose = {
+    ereignis: 'viator_ziel_fehlgeschlagen',
+    operation: 'destinations',
+    klasse,
+    reason: katalog ? 'malformed_response' : transport ? 'transport' : 'unclassified',
+    transportKind,
+    status: viatorZielStatus(fehler.status),
+  }
+  return {
+    ereignis: diagnose.ereignis,
+    operation: diagnose.operation,
+    klasse: diagnose.klasse,
+    reason: diagnose.reason,
+    transportKind: diagnose.transportKind,
+    status: diagnose.status,
+  }
+}
+
+function viatorZielFehlerMelden(fehler: {
+  reason: string
+  transportKind?: string | null
+  status?: number | null
+}): void {
+  const diagnose = viatorZielDiagnose(fehler)
+  const satz: Record<string, string | number | null> = {}
+  for (const feld of VIATOR_ZIEL_DIAGNOSE_FELDER) satz[feld] = diagnose[feld]
+  console.error(JSON.stringify(satz))
+}
+
 function transportErgebnis<T>(
   art: string | undefined,
 ): ViatorDienstErgebnis<T> | null {
@@ -130,6 +212,7 @@ export function viatorActivityProvider(deps: Abhaengigkeiten = {}): ActivityProv
       if (!orte) {
         const katalog = await bereit.client.destinations({ acceptLanguage: 'en-US' })
         if (!katalog.ok) {
+          viatorZielFehlerMelden(katalog)
           if (katalog.reason === 'transport' && katalog.transportKind === 'timeout') {
             throw new ActivityProviderFehler('timeout', 'Die Viator-Ziele haben zu lange gebraucht.')
           }

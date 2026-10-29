@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
+import { ActivityProviderFehler } from '@/lib/activities/provider'
 import { activitiesSuchen } from '@/lib/activities/suche'
 import { activityRateLeeren } from '@/lib/activities/rate-limit'
 import { activityZustand } from '@/lib/activities/zustand'
@@ -142,6 +143,175 @@ describe('Viator native seam', () => {
     assert.equal(treffer.options[0]?.externalRef, '10001P1')
     assert.equal(entwicklung.calls.includes(ZIELE), true)
     assert.equal(entwicklung.calls.includes('https://api.sandbox.viator.com/partner/products/search'), true)
+  })
+
+  test('a failed destination catalog records one redacted server diagnostic', { timeout: 30_000 }, async () => {
+    const canary = 'CANARY-ZIEL-GEHEIMNIS'
+    const reiseId = 'trip-canary-9'
+    const zeilen: string[] = []
+    const vorher = console.error
+    console.error = (...teile: unknown[]) => {
+      zeilen.push(teile.map((teil) => (typeof teil === 'string' ? teil : JSON.stringify(teil))).join(' '))
+    }
+    const lesen = () =>
+      zeilen.flatMap((zeile) => {
+        try {
+          const wert = JSON.parse(zeile) as Record<string, unknown>
+          return wert.ereignis === 'viator_ziel_fehlgeschlagen' ? [wert] : []
+        } catch {
+          return []
+        }
+      })
+    const strom = (status: number, roh: string) =>
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode(roh))
+          controller.close()
+        },
+      })
+    const antwort = (status: number, roh: string): ProviderHttpClient => async () => ({
+      status,
+      headers: { get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null) },
+      body: strom(status, roh),
+    })
+    const erwarten = async (
+      http: ProviderHttpClient,
+      klasse: string,
+      transportKind: string | null,
+      status: number | null,
+      meldung: string,
+      art: string,
+    ) => {
+      viatorZielCacheLeeren()
+      const vorherAnzahl = lesen().length
+      const provider = viatorActivityProvider({ env, http, nowMs: NOW })
+      assert.ok(provider)
+      await assert.rejects(
+        () => provider.suchen(anfrage()),
+        (fehler: unknown) => {
+          assert.ok(fehler instanceof ActivityProviderFehler)
+          assert.equal(fehler.art, art)
+          assert.equal(fehler.message, meldung)
+          return true
+        },
+      )
+      const ereignisse = lesen().slice(vorherAnzahl)
+      assert.equal(ereignisse.length, 1)
+      const ereignis = ereignisse[0]!
+      assert.deepEqual(Object.keys(ereignis).sort(), ['ereignis', 'klasse', 'operation', 'reason', 'status', 'transportKind'])
+      assert.equal(ereignis.operation, 'destinations')
+      assert.equal(ereignis.klasse, klasse)
+      assert.equal(ereignis.transportKind, transportKind)
+      assert.equal(ereignis.status, status)
+      assert.equal(ereignis.reason, klasse === 'catalog_schema' ? 'malformed_response' : 'transport')
+    }
+    try {
+      const allgemein = 'Die Viator-Ziele konnten nicht gelesen werden.'
+      viatorZielCacheLeeren()
+      activityRateLeeren()
+      const gastHttp = antwort(401, `{"message":"${canary}","trip":"${reiseId}"}`)
+      const providerGast = viatorActivityProvider({ env, http: gastHttp, nowMs: NOW })
+      const bangkok: Ort = {
+        id: 'geonames:1609350',
+        source: 'geonames',
+        sourceId: '1609350',
+        name: 'Bangkok',
+        typ: 'city',
+        country: 'Thailand',
+        countryCode: 'TH',
+        region: null,
+        lat: 13.75,
+        lon: 100.5,
+        iata: null,
+        keywords: null,
+      }
+      const gast = await activitiesSuchen(
+        {
+          stage: { id: 'stage-1', name: 'Bangkok', placeId: bangkok.id, countryCode: 'TH', latitude: 13.75, longitude: 100.5 },
+          day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+          trip: {
+            startDate: '2026-11-02',
+            endDate: '2026-11-05',
+            travellers: 2,
+            currency: 'CHF',
+            budgetAmount: null,
+            interests: [],
+            pace: 'balanced',
+          },
+          items: [],
+        },
+        {
+          zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+          provider: providerGast,
+          kennung: 'viator-ziel-diagnose',
+          ortLesen: (id: string) => (id === bangkok.id ? bangkok : null),
+        },
+      )
+      assert.equal(gast.koerper.status, 'error')
+      assert.equal(gast.koerper.message, allgemein)
+      assert.equal(JSON.stringify(gast).includes('viator_ziel_fehlgeschlagen'), false)
+      assert.equal(JSON.stringify(gast).includes(canary), false)
+      assert.equal(lesen().length, 1)
+      assert.equal(lesen()[0]?.klasse, 'http_denied')
+      assert.equal(lesen()[0]?.transportKind, 'authentication')
+      assert.equal(lesen()[0]?.status, 401)
+      await erwarten(antwort(403, `{"message":"${canary}"}`), 'http_denied', 'authorization', 403, allgemein, 'error')
+      await erwarten(antwort(429, `{"message":"${canary}"}`), 'rate_limited', 'rate_limited', 429, 'Viator begrenzt gerade die Anfragen.', 'unavailable')
+      await erwarten(antwort(500, `{"message":"${canary}"}`), 'http_denied', 'provider_5xx', 500, allgemein, 'error')
+      await erwarten(async () => {
+        throw new Error(`${canary} ${reiseId}`)
+      }, 'network', 'network_error', null, allgemein, 'error')
+      await erwarten(antwort(200, `{not-json ${canary}`), 'transport_body', 'malformed_response', 200, allgemein, 'error')
+      await erwarten(
+        antwort(200, JSON.stringify({ destinations: [{ name: canary, trip: reiseId }], productUrl: 'https://www.viator.com/tours/secret' })),
+        'catalog_schema',
+        null,
+        null,
+        allgemein,
+        'error',
+      )
+      viatorZielCacheLeeren()
+      const erfolg = httpFor({
+        [ZIELE]: KATALOG,
+        'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
+      })
+      const provider = viatorActivityProvider({ env, http: erfolg.client, nowMs: NOW })
+      const treffer = await provider!.suchen(anfrage())
+      assert.equal(treffer.options[0]?.externalRef, '10001P1')
+      assert.equal(lesen().length, 7)
+      const gesperrt = httpFor({})
+      for (const wert of ['production', 'staging', undefined] as const) {
+        const umgebung = wert === undefined
+          ? { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY }
+          : { ...env, VERCEL_ENV: wert }
+        assert.equal(viatorActivityProvider({ env: umgebung, http: gesperrt.client, nowMs: NOW }), null)
+      }
+      assert.deepEqual(gesperrt.calls, [])
+      assert.equal(lesen().length, 7)
+      viatorZielCacheLeeren()
+      const haengen: ProviderHttpClient = async (request) => {
+        await new Promise((_resolve, reject) => {
+          const abbruch = () => {
+            const fehler = new Error(canary)
+            fehler.name = 'AbortError'
+            reject(fehler)
+          }
+          if (request.signal.aborted) abbruch()
+          else request.signal.addEventListener('abort', abbruch, { once: true })
+        })
+        return antwort(200, '{}')(request)
+      }
+      await erwarten(haengen, 'timeout', 'timeout', null, 'Die Viator-Ziele haben zu lange gebraucht.', 'timeout')
+      const text = zeilen.join('\n')
+      assert.equal(text.includes(canary), false)
+      assert.equal(text.includes(reiseId), false)
+      assert.equal(text.includes(KEY), false)
+      assert.equal(text.includes('viator.com/tours'), false)
+      assert.equal(text.includes('exp-api-key'), false)
+    } finally {
+      console.error = vorher
+      viatorZielCacheLeeren()
+    }
   })
 
   test('catalog resolution distinguishes country, repeat visits and ambiguity', async () => {

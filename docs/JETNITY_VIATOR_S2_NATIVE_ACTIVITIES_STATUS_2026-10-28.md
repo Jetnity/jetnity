@@ -10,7 +10,7 @@ Runtime destination resolution loads `GET /destinations`. For Viator, `activitie
 
 A live check always sends a supported display currency. CHF, EUR, and USD are sent when that is the requested display currency. An unsupported trip currency asks for a choice and does not show a current price. The request omits `productOptionCode` for a product with no titled option, and never sends `TG1` or `DEFAULT` as a stand-in. Several start times stay unselected until the visitor chooses one. `daysOfWeek` comes from each pricing record, so a Monday-only time is not offered on Tuesday. A season without `endDate` is a hint through 384 days from the check clock, not availability. Changing the date while details are still loading does not discard that load. A new activity search clears the selected Viator product.
 
-The day control is one native select labelled Reisetag. The closed control shows the selected day. Changing it keeps the stage and day identity and clears a Viator selection from another day. The availability label stays inside its button when the real page padding is present.
+A failed destinations read writes one server-only diagnostic record. The guest still sees the existing German message. The record names operation `destinations`, a closed class, the allowlisted reason, the existing transport kind or null, and an HTTP status or null. It does not contain the response body, headers, the key, or a trip id. A taxonomy rejection is `catalog_schema`. A transport body or JSON failure stays `transport_body` and is not described as a size limit. This does not explain the one hosted destinations failure from 29 October 2026, 14:52 Europe/Zurich.
 
 Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited.
 
@@ -42,4 +42,4 @@ Comment 6485453294, checked on macOS headless Chrome 156, found that ArrowDown, 
 
 ## Still blocked
 
-Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for the pre-activation commit. The cleanup PASS on `b7299e69` does not cover that commit. No Ready. No merge.
+Real Sandbox calls remain blocked until a later permitted one-shot retest. Image license, checkout currency, hosted acceptance, and a green exact-head CI run for the diagnostic commit are open. CI 40866433319 attempt 2 is the historical SUCCESS on `a70e1bfb` and does not cover the diagnostic commit. No Ready. No merge.
