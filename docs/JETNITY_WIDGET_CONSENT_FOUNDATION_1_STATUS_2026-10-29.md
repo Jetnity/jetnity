@@ -16,12 +16,12 @@ There is **no live tracker** in this slice.
 
 R1-F1 supersedes review head `5edff201f83b46787c829f749765163daf203b69` (tree `557a417082968a6df3d13f24a1ea4b1e5b8a0a42`). That head's purpose map wrote `granted` into analytics and marketing. The correction commit and tree below are the new review head. A later head invalidates this note.
 
-- R1 correction commit: `PENDING_R1_SHA`
-- R1 correction tree: `PENDING_R1_TREE`
+- R1 correction commit: `8d6f18c74fde610c848147210eea7292181824a9`
+- R1 correction tree: `48662af750e5f7d60053896bf94969b4e06a4de1`
 - `origin/main` and merge-base: `e462cf7c5910ce75fa6350928326c04e33d94eee`
-- Ahead/behind after this correction: 4 / 0 once the R1 commit is the only addition on the previous 3
+- Ahead/behind after the SHA stamp: 5 / 0
 
-Focused tests, harness, typecheck, lint of the changed files, dead/exports/schema-bezug, and production build were run on this correction before the SHA lines were filled. The stamp commit changes only those two lines.
+Focused tests, harness, typecheck, lint of the changed files, dead/exports/schema-bezug, and production build were run on `8d6f18c74fde610c848147210eea7292181824a9` before these two hashes were written. The stamp commit changes only this status block. Focused tests were run again on the stamp head before push.
 
 ## Files
 
