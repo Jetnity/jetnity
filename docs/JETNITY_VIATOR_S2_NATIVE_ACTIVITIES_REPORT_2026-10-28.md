@@ -4,7 +4,7 @@
 
 ## Umgesetzt
 
-S2-SANDBOX-FAILURE-DIAGNOSTICS-R1 adds one server-only destinations diagnostic. The guest error text is unchanged. The hosted catalog failure is still unclassified. The preview/development guard and the earlier identity, reader, and UI fixes stay in place.
+S2-SANDBOX-FAILURE-DIAGNOSTICS-R1 adds one server-only destinations diagnostic. A throwing log sink does not change the guest error. The hosted catalog failure is still unclassified. The preview/development guard and the earlier identity, reader, and UI fixes stay in place.
 
 Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product.
 
@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 11 passed, including one redacted destinations diagnostic for 401, 403, 429, 500, network, a 12s timeout, non-JSON 200, and a taxonomy rejection, and zero records for a successful catalog and for closed environments. The guest body for HTTP 401 stayed `Die Viator-Ziele konnten nicht gelesen werden.` Sandbox client: 5 passed. The browser harness was not re-run. CI 40866433319 attempt 2 is the historical SUCCESS on `a70e1bfb` and does not cover this commit.
+`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Viator seam: 12 passed, including the redacted destinations cases and a synthetic 401 whose `console.error` throws. That guest status stayed `error`, the message stayed `Die Viator-Ziele konnten nicht gelesen werden.`, one destinations request was made, and `console.error` was restored. Search orchestration: 6 passed. Sandbox client: 5 passed. CI 40891646901 is the historical SUCCESS on `c470c140` and does not cover this commit. The browser harness was not re-run.
 
 ## Build
 

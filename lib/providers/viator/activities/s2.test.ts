@@ -314,6 +314,86 @@ describe('Viator native seam', () => {
     }
   })
 
+  test('a throwing diagnostic sink keeps the guest destination message', async () => {
+    viatorZielCacheLeeren()
+    activityRateLeeren()
+    const canary = 'CANARY-LOG-SINK'
+    const aufrufe: string[] = []
+    const http: ProviderHttpClient = async (request) => {
+      aufrufe.push(request.url)
+      const roh = new TextEncoder().encode(`{"secret":"${canary}"}`)
+      return {
+        status: 401,
+        headers: { get: () => null },
+        body: new ReadableStream({
+          start(controller) {
+            controller.enqueue(roh)
+            controller.close()
+          },
+        }),
+      }
+    }
+    const provider = viatorActivityProvider({ env, http, nowMs: NOW })
+    const bangkok: Ort = {
+      id: 'geonames:1609350',
+      source: 'geonames',
+      sourceId: '1609350',
+      name: 'Bangkok',
+      typ: 'city',
+      country: 'Thailand',
+      countryCode: 'TH',
+      region: null,
+      lat: 13.75,
+      lon: 100.5,
+      iata: null,
+      keywords: null,
+    }
+    const vorher = console.error
+    let versuche = 0
+    console.error = () => {
+      versuche += 1
+      throw new Error(`${canary} trip-canary-9`)
+    }
+    try {
+      const gast = await activitiesSuchen(
+        {
+          stage: { id: 'stage-1', name: 'Bangkok', placeId: bangkok.id, countryCode: 'TH', latitude: 13.75, longitude: 100.5 },
+          day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+          trip: {
+            startDate: '2026-11-02',
+            endDate: '2026-11-05',
+            travellers: 2,
+            currency: 'CHF',
+            budgetAmount: null,
+            interests: [],
+            pace: 'balanced',
+          },
+          items: [],
+        },
+        {
+          zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+          provider,
+          kennung: 'viator-ziel-diagnose-sink',
+          ortLesen: (id: string) => (id === bangkok.id ? bangkok : null),
+        },
+      )
+      assert.equal(gast.koerper.status, 'error')
+      assert.equal(gast.koerper.message, 'Die Viator-Ziele konnten nicht gelesen werden.')
+      assert.notEqual(gast.koerper.message, 'Die Aktivitätensuche ist fehlgeschlagen.')
+      assert.equal(aufrufe.length, 1)
+      assert.equal(aufrufe[0]?.endsWith('/partner/destinations'), true)
+      assert.equal(versuche, 1)
+      const text = JSON.stringify(gast)
+      assert.equal(text.includes(canary), false)
+      assert.equal(text.includes('trip-canary-9'), false)
+      assert.equal(text.includes(KEY), false)
+    } finally {
+      console.error = vorher
+      viatorZielCacheLeeren()
+    }
+    assert.equal(console.error, vorher)
+  })
+
   test('catalog resolution distinguishes country, repeat visits and ambiguity', async () => {
     const katalog = viatorKatalogLesen(KATALOG)
     assert.ok(katalog)

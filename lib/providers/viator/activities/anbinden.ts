@@ -171,10 +171,14 @@ function viatorZielFehlerMelden(fehler: {
   transportKind?: string | null
   status?: number | null
 }): void {
-  const diagnose = viatorZielDiagnose(fehler)
-  const satz: Record<string, string | number | null> = {}
-  for (const feld of VIATOR_ZIEL_DIAGNOSE_FELDER) satz[feld] = diagnose[feld]
-  console.error(JSON.stringify(satz))
+  try {
+    const diagnose = viatorZielDiagnose(fehler)
+    const satz: Record<string, string | number | null> = {}
+    for (const feld of VIATOR_ZIEL_DIAGNOSE_FELDER) satz[feld] = diagnose[feld]
+    console.error(JSON.stringify(satz))
+  } catch {
+    // Eine fehlgeschlagene Diagnose darf die Gästemeldung nicht ersetzen.
+  }
 }
 
 function transportErgebnis<T>(
