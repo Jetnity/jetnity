@@ -74,7 +74,8 @@ Dated transfer at 390: planned date visible, absent from the href, `CHF` absent 
 | `npm run lint` | exit 0, 0 errors, 178 existing warnings outside this slice |
 | `npm run build` | pass. Setup check warned that no `.env` file was present and continued |
 | `node scripts/erreichbarkeit.mjs` and `scripts/exporte.mjs` | no orphan, no unused export |
-| Vercel Preview and GitHub CI | not known until this head is pushed |
+| Schema reference `node scripts/db/verwendung.mjs --pruefen` | pass after R1-F1. `Buffer.from('Bangkok')` is gone. No `Tabelle Bangkok` finding |
+| Vercel Preview and GitHub CI on `c2fa11dc` | App job `123714720799` failed at schema-bezug. That head is invalidated. New CI and Preview are not evidence until they finish on the correction head |
 | Production acceptance, #968 | not claimed |
 
 ## Security and cost

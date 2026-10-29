@@ -93,7 +93,7 @@ describe('12Go-Widget-Quelle', () => {
     assert.equal(leerZiel.quoted, false)
     assert.equal(leerZiel.value, 'true')
     assert.equal(allgemein.attribute.some((eintrag) => eintrag.name === 'data-origin'), false)
-    assert.equal(allgemeinBytes.includes(Buffer.from('Bangkok')), false)
+    assert.equal(new TextDecoder('utf-8', { fatal: true }).decode(allgemeinBytes).includes('Bangkok'), false)
 
     assert.equal(attribut(referenz.attribute, 'data-origin').value, 'Bangkok')
     assert.equal(attribut(referenz.attribute, 'data-destination').value, 'Koh Chang')

@@ -22,7 +22,8 @@ State: **CONSENT_BLOCKED / DRAFT / STOP for independent Technical Lead review**
 - Plan commit: `b041aacb967e9a0c1b16a6c06f80cbd5e4343264`
 - Implementation commit: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`
 - Implementation tree: `9e83883a884f885b83a27c28e1705f275f551c57`
-- The documentation commit that adds this file is the branch head. A commit cannot store its own hash. The PR comment after push states the exact final HEAD, tree, and ahead/behind.
+- Invalidated prior head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5` (R1-F1). Its CI, Preview, and review gates do not apply to the correction.
+- The R1 correction commit is the new branch head. A commit cannot store its own hash. The PR comment after push states the exact final HEAD, tree, and ahead/behind.
 
 ## Result
 
@@ -35,6 +36,10 @@ Execution stays closed:
 - `isolation: NOT_ESTABLISHED`
 
 Reason: there is no approved vendor consent policy, and safe isolation was not established. The ephemeral audit showed that pasting the official snippet runs 12Go's loader and jQuery 1.11 from `ajax.googleapis.com` in the host document. An opaque `sandbox="allow-scripts"` frame still contacted the same hosts and did not present a complete form. `app/embed/twelve-go/route.ts` was not added.
+
+## R1-F1
+
+Native CI run `40949841634` failed `npm run check:schema-bezug` because `Buffer.from('Bangkok')` in `lib/providers/twelve-go/widget/quelle.test.ts` matched the schema scanner as a table. The assertion now decodes the general export as UTF-8 and checks that the text does not contain `Bangkok`. No table, migration, scanner, or workflow was changed. `CONSENT_BLOCKED` is unchanged.
 
 ## Not done
 

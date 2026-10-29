@@ -14,7 +14,7 @@ Stop: independent exact-head review by the Technical Lead. No Ready, no merge, n
 - Mode: `NORMAL`
 - Protected main / merge-base: `e462cf7c5910ce75fa6350928326c04e33d94eee`
 - Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`, tree `9e83883a884f885b83a27c28e1705f275f551c57`
-- Exact final HEAD, tree, and ahead/behind are the branch tip after the documentation commit. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
+- Invalidated head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5`. R1-F1 replaces `Buffer.from('Bangkok')` with a UTF-8 `includes('Bangkok')` check. Exact final HEAD, tree, and ahead/behind are the branch tip after that correction. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
 
 ## Where the work stopped
 
@@ -37,4 +37,4 @@ Until both are decided, do not add a visitor load button and do not mount the of
 
 ## Next step
 
-Technical Lead reviews this exact head. If the head changes, the gates above are stale. This session does not start the correction or the next slice.
+Technical Lead reviews the R1 correction head. Older CI, Preview, and review gates on `c2fa11dc` are stale. This session does not start another slice.
