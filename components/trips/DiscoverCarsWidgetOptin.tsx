@@ -2,9 +2,10 @@
 
 // components/trips/DiscoverCarsWidgetOptin.tsx
 //
-// Inertes Gehäuse für ein offizielles DiscoverCars-Suchwidget.
-// Normal bleibt es ohne Ladeknopf: der Konto-Export fehlt, und ein Klick
-// wäre keine Einwilligung. Die Prüfnaht zeigt nur eine lokale Textseite.
+// Inertes Gehäuse für eine allgemeine DiscoverCars-Suche.
+// Kein fester Abholort, kein Bangkok-Standard. Der Konto-Export fehlt,
+// deshalb gibt es normal keinen Ladeknopf. Ein Klick wäre keine Einwilligung.
+// Die Prüfnaht zeigt nur eine lokale Textseite.
 
 import * as React from 'react'
 
@@ -139,8 +140,8 @@ export default function DiscoverCarsWidgetOptin({
         </p>
         <p>
           Fahrzeuge, Bilder, Preise und Verfügbarkeit bleiben bei DiscoverCars und erscheinen
-          nicht in Jetnity. Die Links darunter öffnen DiscoverCars. Abholung, Rückgabe und
-          Mietdauer wählst du dort.
+          nicht in Jetnity. Die Links darunter öffnen die allgemeine Suche. Abholung, Rückgabe
+          und Mietdauer wählst du dort. Jetnity legt keinen Abholort fest.
         </p>
         {naht ? (
           <p data-discovercars-widget-hinweis="pruefnaht">

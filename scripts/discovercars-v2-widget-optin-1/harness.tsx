@@ -31,6 +31,7 @@ function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'position' | '
   }
 }
 
+/** Bangkok city is a negative fixture. It must not become a widget pickup. */
 function reise(id: string) {
   return beispielreise({
     id,

@@ -59,6 +59,15 @@ describe('DiscoverCars Widget-Quelle', () => {
     assert.deepEqual(widgetAusfuehren('https://www.discovercars.com/'), { ok: false, grund: 'adresse' })
   })
 
+  test('ein BKK-Standort ist nicht das allgemeine Widget', () => {
+    assert.deepEqual(
+      widgetAusfuehren({
+        attribute: [{ name: 'data-location', wert: 'thailand/bangkok/suvarnabhumi-airport-bkk' }],
+      }),
+      { ok: false, grund: 'attribut' },
+    )
+  })
+
   test('Berichtsfetzen und doppelte Attribute sind kein Export', () => {
     assert.deepEqual(
       widgetAusfuehren({

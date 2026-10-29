@@ -2,6 +2,10 @@
 
 Author review only. This is not a Technical Lead PASS.
 
+## Owner correction
+
+Reviewed after the 29 October 2026 clarification in this same session. The widget component, gate, and markup tests now state that no pickup is set and that `data-location=thailand/bangkok/suvarnabhumi-airport-bkk` is refused. The V1 affiliate file was not edited. The task file was not rewritten. A blank-location attribute is still not claimed.
+
 ## Checked
 
 - Run-info after rename: stored name matches the dispatch, `originalModelName` is `grok-4.7-high-fast`, bcId `bc-1885a130-36a8-4dcf-86bc-48aa6121c24e`.
@@ -12,7 +16,7 @@ Author review only. This is not a Technical Lead PASS.
 - Gate tests reject report fragments (`data-utm-source`, `data-aff-code`), duplicate keys, `www.discovercars.com`, private fields, and `einwilligung: true`.
 - Playwright on the real components: no load button in the normal housing; Tab/Enter/Escape/Space on the seam; late fixture after a trip change does not appear; error retry stays on the error; zero DiscoverCars/PrivacyBee requests.
 - Widget section overflow is 0 at 320, 390, 768, 1440 and at root 32px / 320px. Page overflow at that last size is the V1 BKK label, 18px, file not edited.
-- `npm run build` completed, including its TypeScript pass, after the fixture return type was narrowed. Focused tests: 18 pass, 0 fail.
+- `npm run build` completed, including its TypeScript pass, after the fixture return type was narrowed. Focused tests after the owner correction: 19 pass, 0 fail.
 
 ## Not checked, and not claimed
 

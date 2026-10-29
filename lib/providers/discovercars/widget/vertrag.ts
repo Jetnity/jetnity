@@ -1,7 +1,8 @@
 // lib/providers/discovercars/widget/vertrag.ts
 //
-// Fail-closed gate for an official DiscoverCars search widget.
-// The account export is not in this repository. Nothing here builds a
+// Fail-closed gate for a general DiscoverCars search widget.
+// The account export is not in this repository. A Bangkok/BKK sample is
+// not the default and is not an allowed location. Nothing here builds a
 // vendor URL, script, frame or pixel. A click is not consent.
 
 export const WIDGET_QUELLENSTATUS = 'VENDOR_EXPORT_MISSING' as const

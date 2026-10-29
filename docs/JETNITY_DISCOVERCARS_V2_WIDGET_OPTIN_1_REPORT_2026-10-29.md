@@ -2,13 +2,13 @@
 
 **Status:** preparation complete and fail-closed. **Not** a live widget integration.
 
-**Source:** `VENDOR_EXPORT_MISSING`. No SHA-256, because no original export was available. Allowed origins: none.
+**Source:** `VENDOR_EXPORT_MISSING`. No SHA-256, because no original export was available. Allowed origins: none. The missing export is the **general** account widget. The BKK sample is a separate, also missing, non-default reference. An empty pickup attribute is not confirmed.
 
 ## Umgesetzt
 
 Mietwagen now shows an inert DiscoverCars search housing between the honest unavailable-offers card and the existing affiliate links. The housing tells the visitor that Jetnity does not load the search and does not show vehicles, pictures, prices, or availability. The manual form and the V1 generic/BKK links stay in place.
 
-The load action “Mietwagensuche bei DiscoverCars laden” is absent in normal runtime. A test-only seam can reveal a labelled local fixture, then close it. Trip changes drop an in-flight seam result. Failure keeps the V1 links as the fallback and does not invent offers.
+The housing tells the visitor that Jetnity sets no pickup. A Bangkok city trip does not turn the widget into Suvarnabhumi. The load action “Mietwagensuche bei DiscoverCars laden” is absent in normal runtime. A test-only seam can reveal a labelled local fixture, then close it. Trip changes drop an in-flight seam result. Failure keeps the V1 links as the fallback and does not invent offers.
 
 ## Dateien
 
@@ -28,7 +28,7 @@ Implementation commit: `de8165a3d5c58995c882f24039223563f2e0b9b2`. Task file unt
 
 Author run, 29 October 2026:
 
-- Focused node tests: 18 pass, 0 fail (`vertrag`, `oberflaeche`, existing affiliate markup).
+- Focused node tests after the owner correction: 19 pass, 0 fail (`vertrag`, `oberflaeche`, existing affiliate markup).
 - ESLint on the owned files: pass.
 - `npx tsc -p tsconfig.json --noEmit`: pass after `next typegen`.
 - `npm run build`: pass. Setup check warned that no `.env` / `.env.local` is present in this workspace. That warning is pre-existing and the build exited 0.
@@ -63,4 +63,4 @@ No new service and no paid call. The USD 100/month cap is unchanged.
 
 Technical Lead reviews this exact head. Do not Ready or merge from this session. Do not start a follow-up slice from here. The useful next product input is a sanitized official export (full HTML, SHA-256, hosts, attributes) plus an explicit privacy decision. Native offer cards remain a separate, unproven API-rights question.
 
-Traveller context: this housing does not read citizenship, residence, or documents, and it does not turn a Bangkok city stage into BKK. The V1 BKK link still requires the existing explicit station choice.
+Traveller context: this housing does not read citizenship, residence, or documents, and it does not turn a Bangkok city stage into BKK. The V1 BKK link still requires the existing explicit station choice. The Product Owner correction of 29 October 2026 is recorded in PLAN, STATUS, and HANDOFF: the V2 search is general, and BKK is not its default.
