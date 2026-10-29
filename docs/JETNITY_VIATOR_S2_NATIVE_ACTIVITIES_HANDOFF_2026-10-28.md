@@ -8,7 +8,15 @@ For Viator, `activitiesSuchen` calls the canonical reader only after the provide
 
 The check panel shows option titles. Detail loading and the live quote use separate generations, so a date edit during loading does not strand the panel. A new search in `AktivitaetenBereich` clears the Viator selection. Currency is required. Pricing-record weekdays limit the hinted times. A missing season `endDate` uses the documented 384-day horizon.
 
-The day list is a labelled `<select id="activity-day-select">`. It shows the selected day, accepts the keyboard, and does not render one row per day. Local section and check-panel padding is 12px, so a 32px root font does not double that padding. The availability label can break inside the button. The browser harness lives in `scripts/viator-s2-native-integration/` and renders `AktivitaetenBereich` inside `main.mx-auto.max-w-3xl.p-4`. `#tage=22` mounts 22 synthetic days. The shared scroll row, workspace, and navigation were not edited.
+The day list is a labelled `<select id="activity-day-select">`. It shows the selected day, accepts the keyboard, and does not render one row per day. Local section and check-panel padding is 12px, so a 32px root font does not double that padding. The availability label can break inside the button. The browser harness lives in `scripts/viator-s2-native-integration/` and renders `AktivitaetenBereich` inside `main.mx-auto.max-w-3xl.p-4`. `#tage=22` mounts 22 synthetic days. Workspace and navigation were not edited.
+
+## Scroll row removal
+
+Comment 6494491081 authorized one file. On this branch a search of `*.ts`, `*.tsx`, `*.js`, and `*.mjs` found `ScrollRow` only inside `components/ui/scroll-row.tsx`. `node scripts/erreichbarkeit.mjs --json` listed that path as the only orphan. The file is deleted. No dummy import, no reachability exception, and no change to `scripts/erreichbarkeit.mjs`, `scripts/exporte.mjs`, or `scripts/pakete.mjs`. Main `8fc72a18`, workspace #1082 `f2ff4928`, and DiscoverCars #1059 `6b87036f` were not edited here. Shared design and activity docs that still name ScrollRow were left unchanged.
+
+## Native select on macOS headless Chrome
+
+The Linux browser test presses ArrowDown and, on this machine, moves Tag 1 to Tag 2 and the Bangkok day to Phuket-Tag. Comment 6485453294 records that the same ArrowDown sequence does not change a native select in macOS headless Chrome 156, including a plain HTML select. Typeahead worked in that review. The product control was not replaced and the test was not rewritten. Real-device, VoiceOver, and full-browser-zoom acceptance remain open.
 
 ## Still blocked
 
@@ -16,4 +24,4 @@ Real Sandbox calls, image-license verification, checkout date and currency trans
 
 ## Next step
 
-Independent review of the new head. CI 40797421578 belongs to `ce0a5bcd` and is not evidence for this commit.
+Independent review of the deletion head. CI 40800257522 is the FAIL on `7a255a12` and is not evidence for this commit.

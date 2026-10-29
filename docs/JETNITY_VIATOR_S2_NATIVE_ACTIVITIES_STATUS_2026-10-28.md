@@ -12,7 +12,9 @@ A live check always sends a supported display currency. CHF, EUR, and USD are se
 
 The day control is one native select labelled Reisetag. The closed control shows the selected day. Changing it keeps the stage and day identity and clears a Viator selection from another day. The availability label stays inside its button when the real page padding is present.
 
-Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited. The shared scroll row was not edited.
+Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited.
+
+`components/ui/scroll-row.tsx` had no remaining import on this branch. Before deletion, `node scripts/erreichbarkeit.mjs --json` reported that file as the only orphan. It is removed. The reachability, export, and package checks were not weakened and gained no exception list entry. The day control stays the labelled select. `DESIGN_SYSTEM.md`, `docs/ACTIVITIES.md`, and `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_3.md` still name ScrollRow and were left unchanged.
 
 ## Checks
 
@@ -26,8 +28,14 @@ The browser harness renders `AktivitaetenBereich` inside `main.mx-auto.max-w-3xl
 
 For 22 synthetic days the day group was 90px high and the search button was at document y 511 at 390px, and 90px / y 419 at 1440px, all at the normal 16px root. At 320px and root font 32px the group was 154px, the select was 88px, and the search button was at y 1199. ArrowDown moved Tag 1 to Tag 2. Tag 22 selected the Phuket stage. There is no day radio list.
 
-Exact-head CI for this commit is not claimed. CI 40797421578 failed lint on `ce0a5bcd` and does not cover this head. CI 40795543573 and 40793295665 do not cover it either.
+CI [40800257522](https://github.com/Jetnity/jetnity/actions/runs/40800257522) on `7a255a12` finished FAIL. Typecheck, lint, Auth, admin API protection, and schema reference passed. Tests were 7651 pass, 0 fail, 2 skipped. `check:dead` then failed on `components/ui/scroll-row.tsx`, so export, package, and build steps were skipped. That run does not cover the commit that deletes the file.
+
+After the deletion, local `check:dead` reported 0 orphans, `check:exports` reported 0 unused exports, and `check:deps` reported 0 unused packages. `npx tsc -p tsconfig.json --noEmit` and `npx eslint . --quiet` passed. The same 35 focused tests passed on Linux, including the ArrowDown assertions. `npm run build` passed. Exact-head CI for the deletion commit is not a PASS in this file.
+
+## Native select on macOS headless Chrome
+
+Comment 6485453294, checked on macOS headless Chrome 156, found that ArrowDown, ArrowDown plus Enter, and Space plus ArrowDown plus Enter do not change a plain native select, including outside Jetnity. Typeahead did change the Jetnity day. That is a platform assumption in `browser.test.ts`, not a recorded product defect. The select and those ArrowDown assertions were left as they are. A Linux pass of those two assertions is not Mac, VoiceOver, or full-browser-zoom acceptance.
 
 ## Still blocked
 
-Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for this commit. No Ready. No merge.
+Real Sandbox calls, image license, checkout currency, hosted acceptance, and a green exact-head CI run for the deletion commit. No Ready. No merge.

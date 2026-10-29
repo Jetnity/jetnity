@@ -10,7 +10,7 @@ Destination resolution walks the COUNTRY ancestor and compares its name with Jet
 
 ## Dateien
 
-`lib/activities/suche.ts`, `components/trips/AktivitaetenBereich.tsx`, `components/trips/ViatorPruefung.tsx`, `scripts/viator-s2-native-integration/browser-harness.tsx`, `lib/providers/viator/activities/browser.test.ts`, and the S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Shared scroll row, workspace, navigation, places, schema, and auth files were not edited.
+`components/ui/scroll-row.tsx` is deleted because it had no importer after the day select replaced the old list. `lib/activities/suche.ts`, `components/trips/AktivitaetenBereich.tsx`, `components/trips/ViatorPruefung.tsx`, `scripts/viator-s2-native-integration/browser-harness.tsx`, `lib/providers/viator/activities/browser.test.ts`, and the S2 STATUS, HANDOFF, SELF_REVIEW, and this report. The S2 task seed was not edited. Workspace, navigation, places, schema, and auth files were not edited. The reachability script was not edited.
 
 ## Datenbank
 
@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 9 passed. Foundation and sandbox: 17 passed. Browser harness: 3 passed, including the nested 32px check and the 22-day select at 390, 1440, and 320. Measured availability text at 320px / root 32px: x66–254 inside button x58–262, with main padding-left 32px. Measured 22-day group: 90px and search y 511 at 390px; 90px and y 419 at 1440px; 154px and y 1199 at 320px / root 32px.
+On `7a255a12`, CI 40800257522 failed only at `check:dead` for `components/ui/scroll-row.tsx` after 7651 passing tests. After deleting that file, `check:dead` reported 0 orphans, `check:exports` reported 0 unused exports, and `check:deps` reported 0 unused packages. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search orchestration: 6 passed. Viator seam: 9 passed. Foundation and sandbox: 17 passed. Browser harness: 3 passed on Linux, including ArrowDown. That ArrowDown pass is not macOS headless acceptance: comment 6485453294 showed ArrowDown does not move a plain native select there, while typeahead does. The test and the select were left unchanged. Measured availability text at 320px / root 32px: x66–254 inside button x58–262, with main padding-left 32px. Measured 22-day group: 90px and search y 511 at 390px; 90px and y 419 at 1440px; 154px and y 1199 at 320px / root 32px.
 
 ## Build
 
@@ -38,7 +38,7 @@ This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. `docs/ACTIVE_WORK_STATU
 
 ## Offene Punkte
 
-Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, and exact-head CI for this commit. CI 40797421578 is the lint failure on `ce0a5bcd`. DiscoverCars stays with its own owner.
+Protected sandbox key, a real destinations response, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for the deletion commit. CI 40800257522 is the `check:dead` failure on `7a255a12`. DiscoverCars stays with its own owner. Shared docs that still name ScrollRow were not rewritten.
 
 ## Risiken
 

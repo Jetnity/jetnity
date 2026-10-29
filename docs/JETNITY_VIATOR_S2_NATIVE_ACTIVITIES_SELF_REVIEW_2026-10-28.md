@@ -16,7 +16,8 @@ The session is still `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`, model `grok-4.7-
 - A Viator search with an unknown id, a different returned id, or a display name outside the confirmed names does not call product search. Lissabon and Wien still search when the injected record lists those names. A throwing reader returns an error response. A disabled provider and a rate-limited request do not read the place.
 - `lib/activities/suche.ts` no longer binds `bestaetigt`. `npx eslint . --quiet` passed with `prefer-const` left on. The pre-existing set-state warning in `AktivitaetenBereich` remains a warning and was not silenced.
 - At 320px and root font 32px, inside `main.p-4` (measured padding-left 32px), "Verfügbarkeit prüfen" occupied x66–254 and its button occupied x58–262. At 390px the same text occupied x66–324 inside a button at x58–332. Font size was not reduced and overflow was not hidden.
-- Twenty-two days use one select. Measured group height was 90px at 390 and 1440 with a 16px root, and 154px at 320px with a 32px root. The search button was at document y 511, 419, and 1199 in those three states. ArrowDown and `selectOption` keep the day and stage identity. The shared scroll row was not edited.
+- Twenty-two days use one select. Measured group height was 90px at 390 and 1440 with a 16px root, and 154px at 320px with a 32px root. The search button was at document y 511, 419, and 1199 in those three states. On Linux, ArrowDown and `selectOption` keep the day and stage identity. On macOS headless Chrome 156, comment 6485453294 found ArrowDown does not change a plain native select; typeahead did. That test was not rewritten and the select was not replaced.
+- `components/ui/scroll-row.tsx` had no importer and was the only `check:dead` orphan on `7a255a12`. It is deleted. The checker was not given an exception. Workspace and navigation files were not edited.
 
 ## Gaps
 
