@@ -14,8 +14,11 @@ Veröffentlichung bleiben unverändert.
 - Basis: `8e667661b490758b25bdd5be720421cea33fda9c`.
 - Unabhängiger erster Review: `690c91832a971063396ed70c33d9bc7348e6f388`.
 - Erste Korrekturen und zweiter unabhängiger Review: `4fdf1ac6365e9165afa9785aba7acf85e5fd0576`.
-- Zweite Korrekturen: der Commit mit diesem aktualisierten Nachtrag. Der exakte
-  neue Hash wird im PR-Kommentar mit CI/Review verknüpft.
+- Zweite Korrekturen und abschliessender unabhängiger Quell-/Gastreview:
+  `1117b1cd9cb7ab0f2cc9b7c4e2360a3989eaeab3`.
+- Geschützte Vorschau dieses Anwendungscodes: `dpl_3RKf4mC8ucX3dcE5NzxcyHUkCdbu`,
+  READY, `https://jetnity-a8w3qqkie-jetnity-e1b93c82.vercel.app`.
+  Vorschauprüfungen am 30.10.2026; Belege gesichert um **02:40 CET**.
 - Lokaler neuer Browserlauf: `http://127.0.0.1:3472`, tatsächliche Next-Anwendung,
   synthetische Gastreise `/reisen/trip-unified-workspace-audit`.
 - Ende der sechs Regressionsprüfungen: **30.10.2026 02:14:07 CET**.
@@ -43,7 +46,27 @@ und korrigiert; die erweiterte Suite besteht jetzt mit 6/6 PASS. Der Detailtest
 erwartet bewusst den originalen Flüge-Auslöser, nicht einen neuen Fokusvertrag. Der Writer hat zusätzlich Screenshots angesehen: Ein zunächst
 zu schmaler Reisetitel und ein nach links versetztes Kontomenü bei grosser Schrift
 wurden vor dem letzten Lauf ebenfalls korrigiert. Diese Eigenprüfung ersetzt
-die erneute unabhängige Prüfung des neuen Commits nicht.
+die unabhängige Prüfung nicht. Der abschliessende read-only Review auf `1117b1cd`
+bestätigt jetzt **keine offenen P0–P3-Befunde im geprüften Code-/Gast-UI-Umfang**:
+6/6 Regressionen, 3/3 native Zoom-Szenarien und 35/35 gezielte Tests bestanden.
+Das ist weiterhin keine Abnahme angemeldeter Konten oder physischer Geräte.
+
+## Visueller Vorschau-Nachbefund
+
+Die anschliessende Sichtprüfung des tatsächlichen Preview-Screenshots zeigte bei
+320 px einen P3: „Vorbereitung“ brach trotz insgesamt passender Navigation nach
+dem vorletzten Buchstaben um. Gemessen wurden 33 px Texthöhe bei 16,5 px
+Zeilenhöhe. Die lokale Schriftmetrik zeigte diesen Fehler nicht; die vorherige
+lokale Regression bestand daher bereits. Die vier Spalten werden jetzt mit
+0,9 / 0,9 / 1,1 / 1,1 gewichtet. Beschriftungen, Schriftgrösse, Aktionen und
+44-px-Bedienflächen bleiben erhalten; die vorhandenen Flusslayouts bei grosser
+Schrift überschreiben diese Spalten weiterhin.
+
+Nach dieser einzelnen CSS-Korrektur: neuer Production-Build/Typprüfung und
+Skript-Lint PASS, 6/6 lokale Regressionen (mit ergänzter Wortumbruchprüfung)
+und 3/3 echte Zoomprüfungen PASS. Neue unabhängige CSS-Prüfung und Prüfung des
+neuen exakten Preview-Heads folgen. Frühere Preview-Belege bleiben ausdrücklich
+an `1117b1cd` gebunden.
 
 ## Erhalt und Abgleich mit #1082
 
@@ -82,17 +105,27 @@ Navigation. Sein PASS darf nicht als Abnahme der kombinierten Oberfläche gelten
 | Hygiene | Dead-Code, Exports, Dependencies, API-Schutz und Schema-Bezug PASS; keine Migration |
 | 200 % Text | Wurzelschrift 32 px; getrennt vom nativen Zoom geprüft |
 | Echter Chrome-Zoom 200 % | **3/3 PASS**: Chrome-Einstellungsoberfläche, neue temporäre Profile; Fenster 1440/780/640 → CSS-Breiten 720/390/320, DPR 1→2, Wurzelschrift unverändert 16 px. Vier Bereiche, Menü, Fokus und Rechtslink geprüft. |
-| Authentifizierte Kontowege | **NOCH OFFEN**; Preview-Konfiguration separat freigegeben und eingerichtet, neuer Build und Testkonto-Prüfung folgen |
+| Geschützte Vorschau `1117b1cd` | **10 eindeutige Prüfungen PASS**; 11 Versuche inklusive eines dokumentierten Synchronisationsfehlers des ersten Verlaufstests und erfolgreicher korrigierter Wiederholung |
+| Authentifizierte Kontowege | **BLOCKED: Testkonto fehlt noch**; Preview-Verbindung und Build erfolgreich, normale Jetnity-Anmeldung erreichbar |
 | VoiceOver / reale Mobilgeräte | **NICHT GEPRÜFT** |
 | Gesamte Testsuite | In dieser Nacharbeit nicht erneut ausgeführt. Der erste lokale Gesamtlauf bleibt mit den dokumentierten 13 Fehlschlägen nicht grün; keine Umdeutung |
 
 Der getrennte erste unabhängige Reviewer führte zusätzlich 31 Tests erfolgreich
 aus. Diese Zahl wird nicht zu den 52 Nacharbeitstests addiert, da sich die Abdeckung
-überschneidet. Die Browser-Audits hier sind wiederholbare Prüfungen des Writers.
+überschneidet. Die Browser-Audits hier sind wiederholbare Prüfungen des Writers. Die zusätzliche
+abschliessende unabhängige Gegenprüfung ist getrennt oben und in ihren eigenen
+Ergebnisdateien dokumentiert; Testzahlen werden nicht als disjunkte Abdeckung addiert.
+
+**Grenze der Zoom-Screenshots:** Bei nativem Chrome-Zoom lieferte die automatische
+PNG-Aufnahme einen Ausschnitt statt einer zuverlässigen vollständigen Ansicht.
+Writer und unabhängiger Reviewer beobachteten das. Diese PNGs werden deshalb nicht
+als visuelle Belege verwendet. Die tatsächlichen Bereichswechsel, Klicks, Fokus-
+und Geometriemessungen sind im JSON dokumentiert. Normale Vorschau-Screenshots
+und der getrennte Test mit 200 % Wurzelschrift sind davon nicht betroffen.
 
 ## Geschützte Vorschau / Konto-Prüfgrenze
 
-Read-only bei Vercel geprüft:
+Historischer Befund vor der freigegebenen Vorschaukonfiguration:
 
 - Projekt `jetnity-app`, Team `jetnity-e1b93c82`.
 - Deployment `dpl_4prSAe1esp1mn31qKUiRDe9Fcdau`, READY, exakt `690c9183…`.
@@ -114,7 +147,31 @@ verglichen; Übereinstimmung bestätigt. Der Listenabruf lieferte trotz decrypt
 noch verschlüsselte Werte und wurde nicht als Inhaltsnachweis gewertet.
 Keine Werte im Bericht/Repository; keine Production-/Development-/fremden
 Branch-Werte geändert, keine Service-/Provider-Schlüssel übertragen, keine
-DB-/Auth-/RLS-Änderung. Der neue Preview-Build und die Kontoabnahme stehen aus.
+DB-/Auth-/RLS-Änderung.
+
+**Aktueller Stand:** Der automatisch nach Push erstellte Preview-Build von
+`1117b1cd` ist READY. `/account/settings` führt jetzt korrekt zu
+`/login?next=/account/settings`, statt der früheren 503-Antwort. Die Prüfung
+verwendet zwei neue isolierte Chrome-Kontexte: einen nur für die manuelle Anmeldung
+mit einem develop-Testkonto, einen für künstliche Gastdaten. Persönliche Browser-
+Cookies wurden nicht übernommen. Vercel-Zugriff erfolgt über eine befristete,
+vom Connector erzeugte Freigabe; der Preview-Schutz bleibt aktiv. Zugangstokens
+und Cookies werden weder dokumentiert noch veröffentlicht.
+
+Auf diesem exakten Preview wurden Homepage, beide Planungswege, „Jetzt wichtig“,
+alle vier Reisebereiche, Desktop-Symbolleiste, 320/390 px, Tastatur, Verlauf,
+Bestätigung einer Gast-Titeländerung und Reload mit 3 Etappen/22 Tagen sowie
+200 % Wurzelschrift geprüft. Zehn eindeutige Prüfungen bestanden. Ein erster
+Verlaufsversuch wartete nicht auf den Zielinhalt und lief in ein Timeout; der
+korrigierte Ablauf wartete auf die Reiseüberschrift und bestand Zurück/Vorwärts
+einschliesslich freigegebenem Hintergrund. Kein zusätzlicher Produktfehler belegt.
+
+Keine Browser-Laufzeitfehler und keine Provider-/KI-Requestversuche. Ausschliesslich
+die Vercel-Vorschau-Toolbar wurde durch die bewusst enge Browser-Netzwerkregel
+blockiert. Gastdaten blieben lokal. Die angemeldete Kontoprüfung ist weiterhin
+offen, weil noch kein reines develop-Testkonto bestätigt und geprüft wurde. Nach
+einem solchen Testkonto wurde gefragt; keine Production-Anmeldung oder
+Auth-Umgehung als Ersatz.
 
 Die funktionierende Gastoberfläche erlaubt keinen Schluss auf Konto, Logout,
 Reisebegleiter-Backend oder vollständigen Datenerhalt in angemeldeten Konten.
@@ -126,7 +183,11 @@ Die Vorschau darf deshalb nicht als vollständiger Produkt-PASS gelten.
 - [Korrekturen im Voll-App-Lauf](evidence/unified-workspace-1/review/after-results.json)
 - [Zweite Review-Runde vor Korrektur](evidence/unified-workspace-1/review/second-round-before-results.json)
 - [Nativer Chrome-Zoom 200 %](evidence/unified-workspace-1/review/native-zoom-results.json)
-- [320 CSS-Pixel bei nativem Zoom](evidence/unified-workspace-1/review/320-native200.png)
+- [Unabhängige finale Regressionen](evidence/unified-workspace-1/review/independent-regressions.json)
+- [Unabhängiger nativer Zoom](evidence/unified-workspace-1/review/independent-native-zoom.json)
+- [Geschützte Vorschau: Ergebnisse und Grenzen](evidence/unified-workspace-1/preview/results.json)
+- [Vorschau Desktop: Reiseplan](evidence/unified-workspace-1/preview/desktop-route.png)
+- [Vorschau Smartphone 320 px: Vorbereitung](evidence/unified-workspace-1/preview/320-vorbereitung.png)
 - [Wiederholter 19-Punkte-Audit](evidence/unified-workspace-1/review/full-results.json)
 - [Kontomenü vorher überlagert](evidence/unified-workspace-1/review/menu-before.png)
 - [Kontomenü nachher über der Rücksprungleiste](evidence/unified-workspace-1/review/menu-after.png)
@@ -139,7 +200,8 @@ Browser. Keine persönlichen Sitzungen, Konto-/Bankdaten oder Zugangsdaten.
 
 ## Nächste Entscheidungen
 
-Erneute unabhängige Prüfung und CI auf dem neuen exakten Head, danach zulässige
-Konto-/Preview-Prüfung sowie die offenen VoiceOver-/Geräteprüfungen. Bis zum belegten
+Unabhängiger Quell-/Gastreview abgeschlossen. CI auf dem exakten Head noch prüfen;
+danach angemeldete develop-Kontoprüfung sowie offene VoiceOver-/Geräteprüfungen.
+Bis zum belegten
 Abschluss bleibt #1092 Draft. Keine automatische Zusammenlegung mit #1082,
 keine Provideraktivierung, kein Merge, kein Live-Deployment.

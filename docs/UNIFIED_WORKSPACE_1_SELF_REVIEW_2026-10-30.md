@@ -50,7 +50,10 @@ Kontomenü über der Rücksprungleiste, Umbruch/Position bei 200 % Text,
 Ziel-Fokus nach Tastaturnavigation sowie Erhalt von „Nach oben“ inklusive Abstand
 zur mobilen Navigation. Der neue Voll-App-Lauf besteht aus 19 bestehenden und
 6 ergänzenden Browserprüfungen, alle PASS; 52 gezielte Tests bestanden zusätzlich.
-Die unabhängige erneute Prüfung muss auf dem neuen Commit erfolgen. Einzelheiten
+Die unabhängige erneute Prüfung auf `1117b1cd` ist abgeschlossen: 6/6 Regressionen,
+3/3 native Zoomprüfungen und 35/35 gezielte Tests bestanden; keine offenen P0–P3
+im geprüften Code-/Gastumfang. Die geschützte Vorschau besteht zehn eindeutige
+Gast-/UI-Prüfungen. Angemeldete Kontotests warten auf ein develop-Testkonto. Einzelheiten
 und Grenzen im [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
 
 Im ersten Implementierungslauf bestanden alle 19 gezielten Browserprüfungen und 124 gezielten Tests; der

@@ -114,7 +114,7 @@
 .workspace-shell[data-menu-open="true"] .workspace-sidebar { display: flex; width: min(19rem, calc(100vw - 2rem)); }
 .workspace-bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
-  display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .2rem;
+  display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,.9fr) minmax(0,1.1fr) minmax(0,1.1fr); gap: .2rem;
   padding: .5rem .4rem max(.5rem, env(safe-area-inset-bottom)); border-top: 1px solid var(--workspace-edge);
 }
 .workspace-bottom-nav .workspace-nav-link { flex-direction: column; gap: .3rem; font-size: .6875rem; text-align: center; justify-content: center; padding: .45rem .1rem; min-height: 56px; border-radius: .65rem; }

@@ -151,6 +151,11 @@ try {
     assert(await label.evaluate(el => el.getBoundingClientRect().width > 10 && getComputedStyle(el).clipPath === 'none'))
     assert(await page.locator('.workspace-context').evaluate(el => el.getBoundingClientRect().width >= 200), 'Trip title is squeezed between header buttons')
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1))
+    const labels = await page.locator('.workspace-bottom-nav button > span').evaluateAll(elements => elements.map(el => ({
+      text: el.textContent, height: el.getBoundingClientRect().height, lineHeight: parseFloat(getComputedStyle(el).lineHeight),
+    })))
+    assert(labels.every(el => el.height <= el.lineHeight + 1), `Mobile navigation splits a word: ${JSON.stringify(labels)}`)
+    return { labels }
   })
 } finally {
   await writeFile(join(output, 'results.json'), JSON.stringify({ time: new Date().toISOString(), base, isolation: 'Fresh context per test, synthetic local guest data, no external requests', limits: ['200% root font is text resizing, not native browser zoom', 'No authenticated account or backend tests'], results, forbidden, errors }, null, 2))

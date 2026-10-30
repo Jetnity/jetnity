@@ -5,18 +5,32 @@ Der vom Product Owner gewünschte gemeinsame Konto-/Trip-Rahmen ist auf
 `8e667661b490758b25bdd5be720421cea33fda9c`. Es wurde nichts veröffentlicht.
 
 **Review-Fortsetzung 30.10.2026:** Dieser Work/Codex-Chat übernimmt auf ausdrücklichen
-Wunsch des Product Owners die Technical-Lead-Rolle für #1092. Zwei unabhängige
-read-only Reviews haben auf `690c9183` UI-Regressionsbefunde geliefert; der Root-
-Writer hat sie behoben. Neuer lokaler Voll-App-Lauf: **25/25 PASS**, 52 gezielte
-Tests PASS, Build PASS; zusätzlich 3/3 echte Chrome-Zoom-Szenarien PASS. Erneute unabhängige Prüfung/CI auf dem neuen Commit bleiben
-vor Gesamtfreigabe erforderlich. [Vollständiger Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
+Wunsch des Product Owners die Technical-Lead-Rolle für #1092. Der Anwendungscode
+`1117b1cd9cb7ab0f2cc9b7c4e2360a3989eaeab3` wurde nach zwei Korrekturrunden unabhängig
+geprüft: keine offenen P0–P3-Befunde im geprüften Code-/Gast-UI-Umfang.
+Writer: 25/25 lokale Browserprüfungen, 52 gezielte Tests, Build PASS und 3/3 echte
+Chrome-Zoom-Szenarien PASS. Unabhängiger Reviewer: 6/6 Regressionen, 3/3 Zoom und
+35/35 gezielte Tests PASS; diese Abdeckungen überschneiden sich.
+[Vollständiger Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
 
-Vercel-Zugriff funktioniert. Das exakte bisherige Preview von `690c9183` antwortet
-unter `/account` mit 503 „Anmeldung derzeit nicht prüfbar“; diesem Branch fehlt
-eine Preview-Testkonfiguration. `develop` ist als getrennte Testbranch identifiziert.
-Der Product Owner hat die beiden öffentlichen Verbindungswerte nur für dieses
-Preview freigegeben. Sie wurden für develop gesetzt und intern zurückgelesen.
-Neuer Preview-Build und Konto-Prüfung folgen. Kein Production-Fallback.
+Die zwei freigegebenen öffentlichen Verbindungswerte wurden ausschliesslich für
+Preview/`codex/unified-workspace-navigation` auf die vorhandene develop-Testbranch
+gesetzt und zurückgelesen. Exakte Vorschau READY:
+https://jetnity-a8w3qqkie-jetnity-e1b93c82.vercel.app
+
+Dort bestehen zehn eindeutige Gast-/UI-Prüfungen. Ein erster Synchronisationsfehler
+im Verlaufstest ist als fehlgeschlagener Versuch erhalten; die korrigierte
+Wiederholung bestand. `/account/settings` führt jetzt zur normalen Anmeldung;
+der frühere 503-Konfigurationsfehler ist behoben. **Angemeldete Kontotests bleiben
+BLOCKED bis ein reines develop-Testkonto verfügbar ist.** Dafür steht ein neues,
+isoliertes Chrome-Fenster bereit; keine persönlichen Sitzungen wurden übernommen.
+Kein Production-Fallback. Bei der abschliessenden visuellen Vorschauprüfung wurde
+zusätzlich ein ungünstiger Wortumbruch von „Vorbereitung“ bei 320 px gefunden.
+Eine einzelne CSS-Spaltenanpassung ist lokal mit Build, 6/6 Regressionen und 3/3
+Zoomprüfungen getestet; unabhängiger Nachreview und neues Preview folgen.
+Native Zoom-PNGs sind wegen eines Aufnahmeausschnitts
+kein verlässlicher visueller Beleg; echte Interaktionen und Messwerte sind separat
+belegt. Keine Ready-/Merge-Freigabe.
 
 ## Was der Besucher erhält
 
@@ -44,8 +58,9 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
 
 ## Erforderliche Fortsetzung
 
-1. Vollständigen Diff und aktuellen Commit unabhängig prüfen; insbesondere
-   gemeinsamen Rahmen, ursprüngliche Aktionen, Konto-/Gastgrenzen und A11y.
+1. Der unabhängige Quell-/Gastreview von `1117b1cd` ist abgeschlossen. Spätere
+   Änderungen erneut ihrem Umfang entsprechend prüfen; reine Evidenz-Nachträge
+   sind kein neuer Anwendungscode.
 2. Überschneidung mit dem offenen PR #1082 abgleichen. Keine automatische
    Übernahme oder stilles Verwerfen einer der Arbeiten. Erster unabhängiger Abgleich
    abgeschlossen: nur `TripWorkspace.tsx` gemeinsam, keine überlappenden Hunks.
@@ -53,9 +68,10 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
    (in #1092 nur Datenattribut); der Geometrievertrag bleibt gemeinsam zu prüfen.
    Reihenfolge: gemeinsamen Rahmen abnehmen, danach #1082 gegen diesen Rahmen
    aktualisieren und in der echten kombinierten Oberfläche prüfen.
-3. CI und geeignete geschützte Testvorschau auf dem geprüften Commit abnehmen.
-   Konto-/Reiseseiten mit zulässigen Testkonten prüfen; keinen Zugriffsschutz
-   umgehen und keine Production-Schreibtests einführen.
+3. Aktuelle CI abschliessen und angemeldete Konto-/Reiseseiten in der bereits
+   eingerichteten geschützten Vorschau mit develop-Testkonto prüfen. Kein
+   Zugriffsschutz-Bypass und keine Production-Schreibtests. VoiceOver und
+   physische Geräte bleiben getrennte offene Prüfumfänge.
 4. Alle bestehenden STOP-/HOLD-/Product-Owner-Gates weiter einhalten. Die
    Anbieter-PRs #1084/#1086/#1079/#1091 wurden hier nicht freigeschaltet.
 5. Erst der Technical Lead entscheidet nach unabhängiger Abnahme über Ready,
