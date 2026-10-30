@@ -46,11 +46,24 @@ Root font 32px on the homepage does not overflow more than the unscoped page at 
 
 ## Commands run here
 
-- `npx tsx --test lib/ui/white-mint-home-workspace-1/palette.test.ts lib/ui/white-mint-home-workspace-1/browser.test.ts` — 9 pass, 0 fail.
+- `npx tsx --test lib/ui/white-mint-home-workspace-1/palette.test.ts lib/ui/white-mint-home-workspace-1/browser.test.ts` — 10 pass, 0 fail after the R1 audit. The earlier 9-pass run belongs to `e9187be0`.
 - `npm run typecheck` — pass.
 - `npx eslint` on the owned TypeScript and the three edited sources — 0 warnings.
 - `node scripts/erreichbarkeit.mjs` and `node scripts/exporte.mjs` — no orphan, no unused export.
 - `npm run build` — pass. Setup check warned only that no `.env` file is present. Static homepage still generated.
+
+## R1 correction
+
+Technical Lead R1 asked for rendered pairs, a real guest navigation path, and portable evidence output. This correction stays on the same session.
+
+- `paarePruefen` is the one decision function. A node test feeds a readable first label and an unreadable later label named `Zweite Markierung`; the failure names that later pair. An empty required list and a missing required label both fail.
+- The browser fixture collects pairs from the live DOM, composites translucent colors, and reports image or missing-opaque backgrounds as unsupported instead of counting them as passes. Homepage headings, body, CTA, footer, the create form, the edit form, and the light account/navigation entry are checked at 4.5:1 for normal text and 3:1 for control borders.
+- The same browser audit injects `Zweite Markierung` with white text on white and rejects it at a pair index above 0, while the existing note label is still present.
+- Green text colors are compared between the unscoped stylesheet and the mint layer. Shared pairs must not move. Inherited green-editor or BackToTop issues are not treated as new palette defects. #1082 is still not merged.
+- The guest route mounts `GastArbeitsbereich`. Mode changes use `TripWorkspace` history. Back returns to the overview, Forward returns to the plan, and the saved note remains. Switching light → green → light keeps the selected day in the URL. The account paragraph is marked `data-white-mint-probe` and is not described as the settings form. Server actions and `next/dynamic` are fixture stubs and are not called on this path.
+- Screenshots and `computed-colors.json` are written only when `WHITE_MINT_EVIDENCE_DIR` is set. Otherwise the run uses an OS temp directory. Ordinary tests do not rewrite tracked evidence. The historical PNGs from `e9187be0` stay in `docs/evidence/white-mint-home-workspace-1/`.
+
+The audit showed one light-palette defect: the homepage placeholder `Wohin möchtest du reisen?` used ink-650, about 3.26:1 on white. `styles/white-mint.css` now sets placeholders in the homepage and light workspace to `#3A564C` (about 8:1). No other palette change.
 
 ## Limits
 

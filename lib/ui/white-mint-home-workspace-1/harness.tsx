@@ -2,26 +2,24 @@ import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import HomePage from '@/app/(public)/page'
-import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
+import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import WorkspaceShell from '@/components/workspace/WorkspaceShell'
-import WorkspaceTripChrome from '@/components/workspace/WorkspaceTripChrome'
 import PublicChrome from '@/components/workspace/PublicChrome'
-import {
-  gastPlanpunktAnlegen,
-  gastPlanpunktBearbeiten,
-  gastPlanpunktEntfernen,
-  gastreiseAnlegen,
-  gastreiseLadenNach,
-} from '@/lib/trips/gastspeicher'
-import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
-import type { PlanpunktFormular } from '@/lib/trips/schema'
-import type { Trip, TripItem } from '@/types/trips'
+import { paareSammeln } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
+import { gastreiseAnlegen, gastreiseLadenNach } from '@/lib/trips/gastspeicher'
+import type { Trip } from '@/types/trips'
+
+declare global {
+  interface Window {
+    __whiteMintPaareSammeln?: (selector: string) => ReturnType<typeof paareSammeln>
+  }
+}
 
 const REISE_ID = 'trip-white-mint'
 
 function pfad() {
   if (typeof window === 'undefined') return '/'
-  return window.__jetnityWhiteMintPath || '/'
+  return window.location.pathname || '/'
 }
 
 function beispielreise(): Trip {
@@ -45,58 +43,15 @@ function beispielreise(): Trip {
   })
 }
 
-function SynthetischeReise() {
-  const [reise, setReise] = useState<Trip | null>(null)
-  const [tag, setTag] = useState('')
-  const [bereit] = useState(() => {
-    const graph = beispielreise()
-    return { graph, tagId: graph.days[0]?.id ?? '' }
+/** Real guest workspace. The trip is synthetic and stays in this browser's local storage. */
+function GastMontage({ tripId }: { tripId: string }) {
+  useState(() => {
+    beispielreise()
+    return tripId
   })
-  const aktuell = reise ?? bereit.graph
-  const aktiverTag = tag || bereit.tagId
-  const kompakt = typeof window !== 'undefined' && window.innerWidth < 1024
-  const speichern = (naechste: Trip) => {
-    setReise(naechste)
-    return null
-  }
-  const fehlertext = (ursache: unknown) => (ursache instanceof Error ? ursache.message : 'Speichern fehlgeschlagen')
   return (
-    <div data-synthetic-guest>
-      <WorkspaceTripChrome ansicht="plan" kompakt={kompakt} detailOffen={false} onWechsel={() => {}} />
-      <TripWorkspacePlan
-        reise={aktuell}
-        ohneTag={[]}
-        aktiverTag={aktiverTag}
-        kompakt={kompakt}
-        onTagWechseln={setTag}
-        onPunktAnlegen={async (tagId: string, eingabe: PlanpunktFormular) => {
-          try {
-            const basis = gastreiseLadenNach(aktuell.id)
-            if (!basis) return 'Die Reise ist nicht mehr im Speicher.'
-            return speichern(gastPlanpunktAnlegen(basis, { ...eingabe, dayId: tagId }))
-          } catch (ursache) {
-            return fehlertext(ursache)
-          }
-        }}
-        onPunktBearbeiten={async (original: TripItem, change: PlanAenderung) => {
-          try {
-            const basis = gastreiseLadenNach(aktuell.id)
-            if (!basis) return 'Die Reise ist nicht mehr im Speicher.'
-            return speichern(gastPlanpunktBearbeiten(basis, original, change))
-          } catch (ursache) {
-            return fehlertext(ursache)
-          }
-        }}
-        onPunktEntfernen={async (_tagId: string, punktId: string) => {
-          try {
-            const basis = gastreiseLadenNach(aktuell.id)
-            if (!basis) return 'Die Reise ist nicht mehr im Speicher.'
-            return speichern(gastPlanpunktEntfernen(basis, punktId))
-          } catch (ursache) {
-            return fehlertext(ursache)
-          }
-        }}
-      />
+    <div data-synthetic-guest data-white-mint-guest="echt">
+      <GastArbeitsbereich tripId={tripId} />
     </div>
   )
 }
@@ -117,17 +72,18 @@ export function WhiteMintHarness() {
   if (route.startsWith('/account')) {
     return (
       <>
+        {/* Probe only: the shell navigation is real. This paragraph is not the settings form. */}
         <WorkspaceShell>
-          <p>Einstellungen</p>
+          <p data-white-mint-probe="account-placeholder">Kontoeintrag, keine Einstellungsseite</p>
         </WorkspaceShell>
         <NegativeKontrollen />
       </>
     )
   }
-  const workspace = route === '/planen' || route === '/reisen' || route.startsWith('/reisen/')
+  const gast = route.match(/^\/reisen\/(trip-[^/]+)$/)
   return (
     <>
-      <PublicChrome>{workspace ? <SynthetischeReise /> : route === '/' ? <HomePage /> : null}</PublicChrome>
+      <PublicChrome>{gast ? <GastMontage tripId={gast[1]!} /> : route === '/' ? <HomePage /> : null}</PublicChrome>
       <NegativeKontrollen />
     </>
   )
@@ -135,6 +91,10 @@ export function WhiteMintHarness() {
 
 export function whiteMintHarnessMounted() {
   return true
+}
+
+if (typeof window !== 'undefined') {
+  window.__whiteMintPaareSammeln = (selector: string) => paareSammeln(document.querySelector(selector))
 }
 
 if (typeof document !== 'undefined') {

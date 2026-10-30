@@ -20,6 +20,10 @@ Author review only. This is not an independent Technical Lead PASS.
 - `themeColor` cannot be homepage-only without a second viewport export, which this task does not allow in other layouts.
 - The full-page homepage screenshot includes the fixture's admin probe and provider frame below the real footer. Those are negative controls, not homepage content.
 
+## R1
+
+The rendered audit, not a new design pass, found the placeholder contrast gap and that is the only `white-mint.css` change in this correction. Green comparison is color stability against this branch's own unscoped green, not a claim that the unmerged #1082 editor is accepted. The account paragraph remains a labelled probe. `GastArbeitsbereich` is the navigation path under test; its server-action imports are stubbed so the fixture does not call Auth or the model.
+
 ## Stop
 
 No Ready, no merge, no follow-up slice from this author.

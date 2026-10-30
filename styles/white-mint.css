@@ -67,6 +67,12 @@ main[data-white-mint="home"].bg-surface-75 {
   border-color: var(--white-mint-edge);
 }
 
+[data-white-mint="home"] :is(input, textarea)::placeholder,
+.workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, textarea)::placeholder {
+  color: var(--white-mint-muted);
+  opacity: 1;
+}
+
 [data-white-mint="home"] :is(input, select, textarea, button, a).border-line-100,
 [data-white-mint="home"] :is(input, select, textarea, button, a).border-line-200,
 [data-white-mint="home"] :is(input, select, textarea, button, a).border-line-300,

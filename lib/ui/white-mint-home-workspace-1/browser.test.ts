@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { createServer, type Server } from 'node:http'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { after, before, describe, test } from 'node:test'
 import type { AddressInfo } from 'node:net'
@@ -9,11 +10,20 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type BrowserContext, type Page } from 'playwright'
 
+import dynamicStub from '@/lib/ui/white-mint-home-workspace-1/dynamic-stub'
+import { aenderungErzeugen, ortBestaetigen } from '@/lib/ui/white-mint-home-workspace-1/server-action-stub'
 import { createBrowserClient } from '@/lib/ui/white-mint-home-workspace-1/supabase-stub'
 import { signOutAction } from '@/lib/ui/white-mint-home-workspace-1/sign-out-stub'
 import { usePathname } from '@/lib/ui/white-mint-home-workspace-1/navigation'
 import Image from '@/lib/ui/white-mint-home-workspace-1/image'
 import Link from '@/lib/ui/white-mint-home-workspace-1/link'
+import { paarePruefen, type Paar } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
+
+declare global {
+  interface Window {
+    __whiteMintPaareSammeln?: (selector: string) => Paar[]
+  }
+}
 import { WHITE_MINT, aehnlich, type Rgb } from '@/lib/ui/white-mint-home-workspace-1/palette'
 
 async function harnessModul() {
@@ -23,6 +33,9 @@ async function harnessModul() {
 test('local shims stay on the fixture import path', () => {
   assert.equal(typeof createBrowserClient, 'function')
   assert.equal(typeof signOutAction, 'function')
+  assert.equal(typeof dynamicStub, 'function')
+  assert.equal(typeof aenderungErzeugen, 'function')
+  assert.equal(typeof ortBestaetigen, 'function')
   assert.equal(typeof usePathname, 'function')
   assert.equal(typeof Image, 'function')
   assert.equal(typeof Link, 'function')
@@ -35,9 +48,33 @@ test('local shims stay on the fixture import path', () => {
 })
 
 const BREITEN = [320, 390, 768, 1440] as const
-const EVIDENCE = join(process.cwd(), 'docs/evidence/white-mint-home-workspace-1')
-const ARTIFACTS = '/opt/cursor/artifacts/white-mint'
 const THEME_KEY = 'jetnity:workspace-theme:v1'
+const START_H1 = 'Deine ganze Reise. Intelligent an einem Ort.'
+const ANLEGEN = [
+  'Neuer Punkt',
+  'Ort oder Aktivität',
+  'Notiz, optional',
+  'Anfangsdatum, optional',
+  'Anfangszeit, optional',
+  'Enddatum, optional',
+  'Endzeit, optional',
+  'Speichern',
+  'Abbrechen',
+] as const
+const BEARBEITEN = [
+  'Punkt bearbeiten',
+  'Notiz, optional',
+  'Zuordnung im Tagesplan',
+  'Anfangsdatum, optional',
+  'Speichern',
+] as const
+
+function evidenceVerzeichnis() {
+  const gesetzt = process.env.WHITE_MINT_EVIDENCE_DIR?.trim()
+  const ziel = gesetzt || mkdtempSync(join(tmpdir(), 'white-mint-'))
+  mkdirSync(ziel, { recursive: true })
+  return ziel
+}
 const BROWSER_ARGS = ['--no-sandbox', '--disable-dev-shm-usage']
 
 type Schicht = 'basis' | 'mint'
@@ -97,11 +134,17 @@ async function bundeln() {
           build.onResolve({ filter: /^next\/navigation$/ }, () => ({ path: datei('navigation.tsx') }))
           build.onResolve({ filter: /^@\/app\/auth\/sign-out$/ }, () => ({ path: datei('sign-out-stub.ts') }))
           build.onResolve({ filter: /^@\/lib\/supabase\/client$/ }, () => ({ path: datei('supabase-stub.ts') }))
+          build.onResolve({ filter: /^@\/lib\/reiseaenderung\/aktionen$/ }, () => ({ path: datei('server-action-stub.ts') }))
+          build.onResolve({ filter: /^@\/lib\/places\/aktionen$/ }, () => ({ path: datei('server-action-stub.ts') }))
+          build.onResolve({ filter: /^next\/dynamic$/ }, () => ({ path: datei('dynamic-stub.tsx') }))
           build.onResolve({ filter: /\.css$/ }, (args) => ({ path: args.path, namespace: 'css-leer' }))
           build.onLoad({ filter: /.*/, namespace: 'css-leer' }, () => ({ contents: '', loader: 'js' }))
           build.onResolve({ filter: /^@\// }, (args) => {
             if (args.path === '@/app/auth/sign-out') return { path: datei('sign-out-stub.ts') }
             if (args.path === '@/lib/supabase/client') return { path: datei('supabase-stub.ts') }
+            if (args.path === '@/lib/reiseaenderung/aktionen' || args.path === '@/lib/places/aktionen') {
+              return { path: datei('server-action-stub.ts') }
+            }
             return build.resolve(join(wurzel, args.path.slice(2)), { resolveDir: wurzel, kind: args.kind })
           })
         },
@@ -120,6 +163,7 @@ function html(css: string, js: string) {
 let browser: Browser
 let server: Server
 let origin = ''
+let ausgabe = ''
 let dokumente: Record<Schicht, string> = { basis: '', mint: '' }
 const protokoll: Record<string, unknown> = {}
 
@@ -157,14 +201,14 @@ async function oeffnen(optionen: {
     return route.continue()
   })
   await context.addInitScript(`(() => {
-    window.__jetnityWhiteMintPath = ${JSON.stringify(optionen.pfad)};
     try { localStorage.setItem(${JSON.stringify(THEME_KEY)}, ${JSON.stringify(optionen.thema ?? 'light')}); } catch (e) {}
     ${optionen.schrift ? `(() => { const setzen = () => { if (document.documentElement) document.documentElement.style.fontSize = ${JSON.stringify(optionen.schrift)}; }; setzen(); document.addEventListener('DOMContentLoaded', setzen); })();` : ''}
   })();`)
   const page = await context.newPage()
   const fehler: string[] = []
   page.on('pageerror', (error) => fehler.push(error.message))
-  await page.goto(`${origin}/?schicht=${optionen.schicht}`, { waitUntil: 'networkidle' })
+  const trenn = optionen.pfad.includes('?') ? '&' : '?'
+  await page.goto(`${origin}${optionen.pfad}${trenn}schicht=${optionen.schicht}`, { waitUntil: 'networkidle' })
   return { context, page, fehler, fremd }
 }
 
@@ -173,15 +217,33 @@ async function schliessen(context: BrowserContext) {
 }
 
 async function bild(page: Page, name: string) {
-  mkdirSync(EVIDENCE, { recursive: true })
-  mkdirSync(ARTIFACTS, { recursive: true })
-  const datei = `${name}.png`
-  await page.screenshot({ path: join(EVIDENCE, datei), fullPage: name.includes('full') })
-  await page.screenshot({ path: join(ARTIFACTS, datei), fullPage: name.includes('full') })
+  if (!process.env.WHITE_MINT_EVIDENCE_DIR?.trim()) return
+  mkdirSync(ausgabe, { recursive: true })
+  await page.screenshot({ path: join(ausgabe, `${name}.png`), fullPage: name.includes('full') })
+}
+
+async function audit(page: Page, selector: string, erforderlich: readonly string[]) {
+  const paare = await page.evaluate((sel) => {
+    const sammeln = window.__whiteMintPaareSammeln
+    return sammeln ? sammeln(sel) : []
+  }, selector)
+  return { paare, urteil: paarePruefen(paare, erforderlich) }
+}
+
+async function ansicht(page: Page) {
+  await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]'))
+  return page.locator('[data-workspace-ansicht]').getAttribute('data-workspace-ansicht')
+}
+
+async function planOeffnen(page: Page) {
+  if ((await ansicht(page)) === 'plan') return
+  await page.getByRole('button', { name: 'Reiseplan', exact: true }).click()
+  await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') === 'plan')
 }
 
 describe('rendered white/mint homepage and light workspace', () => {
   before(async () => {
+    ausgabe = evidenceVerzeichnis()
     const [basis, mint, js] = await Promise.all([projektCss(false), projektCss(true), bundeln()])
     dokumente = { basis: html(basis, js), mint: html(mint, js) }
     server = createServer((req, res) => {
@@ -192,9 +254,10 @@ describe('rendered white/mint homepage and light workspace', () => {
         return
       }
       if (url.pathname.startsWith('/images/') || url.pathname.startsWith('/brand/')) {
-        const datei = join(process.cwd(), 'public', decodeURIComponent(url.pathname))
+        const relativ = decodeURIComponent(url.pathname).replace(/^\/+/, '')
         const oeffentlich = join(process.cwd(), 'public')
-        if (!datei.startsWith(oeffentlich)) {
+        const datei = join(oeffentlich, relativ)
+        if (!datei.startsWith(`${oeffentlich}/`)) {
           res.writeHead(404)
           res.end()
           return
@@ -206,11 +269,6 @@ describe('rendered white/mint homepage and light workspace', () => {
           res.writeHead(404)
           res.end()
         }
-        return
-      }
-      if (url.pathname !== '/') {
-        res.writeHead(404)
-        res.end()
         return
       }
       const schicht: Schicht = url.searchParams.get('schicht') === 'basis' ? 'basis' : 'mint'
@@ -225,9 +283,9 @@ describe('rendered white/mint homepage and light workspace', () => {
   })
 
   after(async () => {
-    mkdirSync(EVIDENCE, { recursive: true })
-    writeFileSync(join(EVIDENCE, 'computed-colors.json'), JSON.stringify(protokoll, null, 2))
-    writeFileSync(join(ARTIFACTS, 'computed-colors.json'), JSON.stringify(protokoll, null, 2))
+    if (!ausgabe) ausgabe = evidenceVerzeichnis()
+    mkdirSync(ausgabe, { recursive: true })
+    writeFileSync(join(ausgabe, 'computed-colors.json'), JSON.stringify(protokoll, null, 2))
     await browser?.close()
     if (server) await new Promise<void>((resolve, reject) => server.close((fehler) => (fehler ? reject(fehler) : resolve())))
   })
@@ -276,7 +334,20 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.equal(aehnlich(rgbAus(werte.ueberschrift?.farbe), '#FFFFFF'), true)
       assert.ok((werte.ueberlauf ?? 99) <= 1, `overflow ${werte.ueberlauf} at ${breite}`)
       assert.equal(werte.korn, '0')
-      if (breite === 390 || breite === 1440) await bild(page, `after-homepage-${breite}`)
+      if (breite === 390 || breite === 1440) {
+        const ergebnis = await audit(page, '[data-white-mint="home"]', [
+          START_H1,
+          'Reise planen',
+          'info@jetnity.ch',
+          'Eine Reise statt fünf getrennte Tools',
+        ])
+        assert.equal(ergebnis.urteil.ok, true, ergebnis.urteil.fehler.slice(0, 15).join('\n'))
+        protokoll[`homepagePaare${breite}`] = {
+          paare: ergebnis.urteil.paare,
+          unsupported: ergebnis.urteil.unsupported,
+        }
+        await bild(page, `after-homepage-${breite}`)
+      }
       if (breite === 1440) await bild(page, 'after-homepage-1440-full')
       messungen.push({ breite, werte })
       await schliessen(context)
@@ -341,6 +412,11 @@ describe('rendered white/mint homepage and light workspace', () => {
     await konto.page.locator('summary[aria-label="Kontomenü"]').click()
     const panel = rgbAus(await konto.page.locator('.workspace-account-panel').evaluate((el) => getComputedStyle(el).backgroundColor))
     assert.equal(aehnlich(panel, WHITE_MINT.card), true)
+    const platzhalter = konto.page.locator('[data-white-mint-probe="account-placeholder"]')
+    assert.equal(await platzhalter.innerText(), 'Kontoeintrag, keine Einstellungsseite')
+    const kontoAudit = await audit(konto.page, '.workspace-shell', ['Einstellungen', 'Meine Reisen', 'Kontakt'])
+    assert.equal(kontoAudit.urteil.ok, true, kontoAudit.urteil.fehler.slice(0, 15).join('\n'))
+    protokoll.kontoPaare = { paare: kontoAudit.urteil.paare, unsupported: kontoAudit.urteil.unsupported }
     await schliessen(konto.context)
 
     const gruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
@@ -362,6 +438,22 @@ describe('rendered white/mint homepage and light workspace', () => {
     const wieder = rgbAus(await gruen.page.locator('.workspace-shell').evaluate((el) => getComputedStyle(el).backgroundColor))
     assert.equal(aehnlich(wieder, WHITE_MINT.canvas), true)
     await schliessen(gruen.context)
+
+    const basisGruen = await oeffnen({ schicht: 'basis', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
+    await basisGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
+    const mintGruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
+    await mintGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
+    const signatur = async (page: Page) => page.evaluate(() => window.__whiteMintPaareSammeln?.('.workspace-shell') ?? [])
+    const vorherPaare = (await signatur(basisGruen.page)).filter((paar) => paar.background && !paar.unsupported)
+    const nachherPaare = (await signatur(mintGruen.page)).filter((paar) => paar.background && !paar.unsupported)
+    const vorherNachName = new Map(vorherPaare.map((paar) => [paar.name, paar.color]))
+    const gemeinsam = nachherPaare.filter((paar) => vorherNachName.has(paar.name))
+    assert.ok(gemeinsam.length >= 8, `green pair overlap ${gemeinsam.length}`)
+    const verschoben = gemeinsam.filter((paar) => !aehnlich(paar.color, `#${vorherNachName.get(paar.name)!.map((kanal) => kanal.toString(16).padStart(2, '0')).join('')}`, 2))
+    assert.deepEqual(verschoben.map((paar) => paar.name), [])
+    protokoll.gruenUnveraendert = { gemeinsam: gemeinsam.length, basis: vorherPaare.length, mint: nachherPaare.length }
+    await schliessen(basisGruen.context)
+    await schliessen(mintGruen.context)
     protokoll.workspace = messungen
   })
 
@@ -369,11 +461,16 @@ describe('rendered white/mint homepage and light workspace', () => {
     const { context, page, fehler, fremd } = await oeffnen({
       schicht: 'mint',
       pfad: '/reisen/trip-white-mint',
-      breite: 390,
+      breite: 1440,
       hoehe: 900,
     })
-    await page.waitForSelector('text=Punkt hinzufügen')
+    await page.waitForSelector('[data-white-mint-guest="echt"]')
+    await planOeffnen(page)
+    assert.match(page.url(), /ansicht=plan/)
     await page.getByRole('button', { name: 'Punkt hinzufügen' }).first().click()
+    const anlegen = await audit(page, 'form[aria-label="Punkt hinzufügen"]', ANLEGEN)
+    assert.equal(anlegen.urteil.ok, true, anlegen.urteil.fehler.slice(0, 15).join('\n'))
+    protokoll.anlegenPaare = { paare: anlegen.urteil.paare, unsupported: anlegen.urteil.unsupported }
     await page.getByLabel('Ort oder Aktivität').fill('Mint Markt')
     await page.getByLabel('Notiz, optional').fill('Weisse Karte')
     const fokus = await page.getByLabel('Notiz, optional').evaluate((el) => {
@@ -390,10 +487,31 @@ describe('rendered white/mint homepage and light workspace', () => {
     await page.reload({ waitUntil: 'networkidle' })
     await page.getByText('Weisse Karte').waitFor()
     await page.getByRole('button', { name: 'Mint Markt bearbeiten' }).click()
+    const bearbeiten = await audit(page, 'form[aria-label="Punkt bearbeiten: Mint Markt"]', BEARBEITEN)
+    assert.equal(bearbeiten.urteil.ok, true, bearbeiten.urteil.fehler.slice(0, 15).join('\n'))
+    protokoll.bearbeitenPaare = { paare: bearbeiten.urteil.paare, unsupported: bearbeiten.urteil.unsupported }
     await page.getByLabel('Notiz, optional').fill('Nach dem Neuladen')
     await page.getByRole('button', { name: 'Speichern' }).click()
     await page.getByText('Nach dem Neuladen').waitFor()
     await page.reload({ waitUntil: 'networkidle' })
+    await planOeffnen(page)
+    await page.getByText('Nach dem Neuladen').waitFor()
+    const tagZwei = page.getByRole('button', { name: /Tag 2/ }).first()
+    await tagZwei.click()
+    await page.waitForFunction(() => new URL(location.href).searchParams.has('tag'))
+    await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+    await page.waitForSelector('[data-workspace-theme="green"]')
+    await page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
+    await page.waitForSelector('[data-workspace-theme="light"]')
+    assert.ok(new URL(page.url()).searchParams.has('tag'))
+    const tagZweiFarbe = rgbAus(await page.getByRole('button', { name: /Tag 2/ }).first().evaluate((el) => getComputedStyle(el).backgroundColor))
+    assert.equal(aehnlich(tagZweiFarbe, '#153A33', 8), true, JSON.stringify(tagZweiFarbe))
+    await page.goBack()
+    await page.getByText('Nach dem Neuladen').waitFor()
+    await page.goBack()
+    await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') === 'uebersicht')
+    await page.goForward()
+    await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') === 'plan')
     await page.getByText('Nach dem Neuladen').waitFor()
     await page.getByRole('button', { name: 'Punkt hinzufügen' }).first().click()
     const formular = page.getByRole('form', { name: 'Punkt hinzufügen' })
@@ -403,6 +521,22 @@ describe('rendered white/mint homepage and light workspace', () => {
     await alarm.waitFor()
     const alarmFarbe = rgbAus(await alarm.evaluate((el) => getComputedStyle(el).color))
     assert.equal(aehnlich(alarmFarbe, '#C12D32', 8), true, JSON.stringify(alarmFarbe))
+    await page.evaluate(() => {
+      const host = document.querySelector('[data-synthetic-guest]')
+      const label = document.createElement('label')
+      label.textContent = 'Zweite Markierung'
+      label.style.color = 'rgb(255, 255, 255)'
+      label.style.backgroundColor = 'rgb(255, 255, 255)'
+      label.style.display = 'block'
+      label.style.padding = '8px'
+      host?.appendChild(label)
+    })
+    const gegensatz = await audit(page, '[data-synthetic-guest]', ['Nach dem Neuladen', 'Zweite Markierung'])
+    assert.equal(gegensatz.urteil.ok, false)
+    const zeile = gegensatz.urteil.fehler.find((eintrag) => eintrag.includes('Zweite Markierung'))
+    assert.ok(zeile)
+    assert.match(zeile, /pair [1-9]/)
+    assert.equal(gegensatz.urteil.fehler.some((eintrag) => eintrag.includes('missing required label: Nach dem Neuladen')), false)
     assert.equal(fehler.length, 0, fehler.join('\n'))
     assert.deepEqual(fremd, [])
     await bild(page, 'after-workspace-note-390')

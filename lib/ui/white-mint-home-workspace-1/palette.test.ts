@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import test from 'node:test'
 
+import { paarePruefen, type Paar, type Rgb } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
 import { WHITE_MINT, hexNachRgb, kontrast } from '@/lib/ui/white-mint-home-workspace-1/palette'
 
 const flaeche = readFileSync(join(process.cwd(), 'styles/white-mint.css'), 'utf8').toLowerCase()
@@ -36,4 +37,29 @@ test('text and control pairs clear the contrast floor; pale edges do not', () =>
   assert.ok(kontrast(hexNachRgb('#FFFFFF'), ink) >= 4.5)
   assert.ok(kontrast(edge, card) < 3)
   assert.ok(kontrast(hexNachRgb(WHITE_MINT.beige), card) > 1)
+})
+
+function paar(name: string, color: Rgb, background: Rgb): Paar {
+  return { name, kind: 'text', fontSize: 16, fontWeight: 400, color, background, unsupported: null }
+}
+
+const lesbar = paar('Ort oder Aktivität', [20, 62, 51], [255, 255, 255])
+const unlesbar = paar('Zweite Markierung', [255, 255, 255], [255, 255, 255])
+
+test('the same pair audit rejects a later unreadable label and a missing required label', () => {
+  const gegensatz = paarePruefen([lesbar, unlesbar], ['Ort oder Aktivität', 'Zweite Markierung'])
+  assert.equal(gegensatz.ok, false)
+  const zeile = gegensatz.fehler.find((eintrag) => eintrag.includes('Zweite Markierung'))
+  assert.ok(zeile)
+  assert.match(zeile, /pair [1-9]/)
+  assert.equal(gegensatz.fehler.some((eintrag) => eintrag.includes('missing required label: Ort oder Aktivität')), false)
+
+  const fehlt = paarePruefen([lesbar], ['Ort oder Aktivität', 'Notiz, optional'])
+  assert.equal(fehlt.ok, false)
+  assert.ok(fehlt.fehler.some((eintrag) => eintrag.includes('missing required label: Notiz, optional')))
+
+  const leer = paarePruefen([], [])
+  assert.equal(leer.ok, false)
+  assert.ok(leer.fehler.some((eintrag) => eintrag.includes('required label list is empty')))
+  assert.ok(leer.fehler.some((eintrag) => eintrag.includes('no rendered pairs')))
 })

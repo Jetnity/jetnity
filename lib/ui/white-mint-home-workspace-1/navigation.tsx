@@ -1,37 +1,62 @@
 import { useSyncExternalStore } from 'react'
 
-declare global {
-  interface Window {
-    __jetnityWhiteMintPath?: string
+type Horer = () => void
+
+const horer = new Set<Horer>()
+
+function benachrichtigen() {
+  horer.forEach((eintrag) => eintrag())
+}
+
+function historieVerfolgen() {
+  if (typeof window === 'undefined') return
+  const fenster = window as Window & { __whiteMintHistory?: boolean }
+  if (fenster.__whiteMintHistory) return
+  fenster.__whiteMintHistory = true
+  const push = history.pushState.bind(history)
+  const replace = history.replaceState.bind(history)
+  history.pushState = (...args) => {
+    push(...args)
+    benachrichtigen()
   }
+  history.replaceState = (...args) => {
+    replace(...args)
+    benachrichtigen()
+  }
+  window.addEventListener('popstate', benachrichtigen)
 }
 
-function pfadLesen() {
-  if (typeof window === 'undefined') return '/'
-  return window.__jetnityWhiteMintPath || '/'
+historieVerfolgen()
+
+function abonnieren(callback: Horer) {
+  horer.add(callback)
+  return () => horer.delete(callback)
 }
 
-/** Browser stand-in for `next/navigation`. The path is fixed before the page script runs. */
+/** Browser stand-in for `next/navigation`. The path follows the real location and history. */
 export function usePathname() {
-  return useSyncExternalStore(
-    () => () => {},
-    pfadLesen,
-    () => '/',
-  )
+  return useSyncExternalStore(abonnieren, () => window.location.pathname, () => '/')
 }
 
 export function useRouter() {
   return {
-    push() {},
-    replace() {},
-    back() {},
+    push(ziel: string) {
+      window.history.pushState(window.history.state, '', ziel)
+    },
+    replace(ziel: string) {
+      window.history.replaceState(window.history.state, '', ziel)
+    },
+    back() {
+      window.history.back()
+    },
     prefetch() {},
     refresh() {},
   }
 }
 
 export function useSearchParams() {
-  return new URLSearchParams()
+  const suche = useSyncExternalStore(abonnieren, () => window.location.search, () => '')
+  return new URLSearchParams(suche)
 }
 
 export function redirect(ziel: string): never {

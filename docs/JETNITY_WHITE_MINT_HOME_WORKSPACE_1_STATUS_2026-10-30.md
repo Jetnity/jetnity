@@ -10,6 +10,6 @@
 - Base / merge-base at start: `ac2199dba64e458a20a155b5d1bb826ea99949d3`.
 - Mode: NORMAL.
 - Competing writer: #1082 remains separate. Its CSS, shell, BackToTop, PlanpunktEditor and U1-C tests were not edited.
-- State: finite implementation plus local evidence. STOP for independent Technical Lead exact-head review.
+- State: R1 correction on the same Draft. The rendered-pair audit, real guest workspace path, and opt-in evidence directory are in this head. STOP for independent Technical Lead exact-head review. The previous head `e9187be01b33eed0f731219214b9362ed86801ea` is historical.
 - Native CI and the Git-created Preview are whatever GitHub and Vercel attach to the pushed head. A Vercel READY status is not a UI PASS.
 - Production is unchanged by this branch.
