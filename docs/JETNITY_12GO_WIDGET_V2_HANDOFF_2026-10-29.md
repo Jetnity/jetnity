@@ -39,6 +39,10 @@ Until both are decided, do not add a visitor load button and do not mount the of
 
 Main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged without a force-push. The visitor page is still closed. `/embed/twelve-go` is a 404. The iframe contract is `allow-scripts` only at 100% by 800px and is not mounted on the trip page. A local stub proved size and keyboard. The official form was not requested again. Search remains `NOT_PROVED`. Consent #1087 is still required before any live frame.
 
+## R4
+
+The browser script renders the delivered frame component. A unit test fails if that component is omitted or the measured frame is clipped, duplicated, or same-origin. Output is `TWELVE_GO_WIDGET_NACHWEIS_DIR` or the OS temp folder. Non-loopback traffic fails the run. Gates stay closed.
+
 ## Next step
 
-Technical Lead reviews the R3 head. Older CI and Preview on `daf082b3` do not cover it. This session does not start another slice.
+Technical Lead reviews the R4 head. CI `41065919207` and Preview `dpl_FZNiKe4kjcB1euezYxZBRhChhEPz` belong to `5dc16630` and do not cover the correction. This session does not start another slice.

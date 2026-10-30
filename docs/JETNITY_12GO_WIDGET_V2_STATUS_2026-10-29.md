@@ -5,6 +5,10 @@ Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
 State: **CONSENT_BLOCKED / DRAFT / R3 source preparation / STOP for independent Technical Lead review**
 
+## R4 evidence binding
+
+`scripts/twelve-go-widget-v2/rahmen-nachweis.ts` now server-renders `TwelveGoWidgetRahmen` and wires the local stub only onto that iframe. A missing, duplicated, or clipped frame fails the same predicate the browser uses. Output goes to `TWELVE_GO_WIDGET_NACHWEIS_DIR` or the OS temp directory `twelve-go-widget-v2`. Non-loopback requests are aborted and fail the run. The local stub is still not a fresh official-form proof. CI `41065919207` and Preview `dpl_FZNiKe4kjcB1euezYxZBRhChhEPz` matched the previous head only.
+
 ## R3 on the synced branch
 
 Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged. `vendorScriptMayExecute` and `TWELVE_GO_WIDGET_FREIGABE.ausfuehrbar` both stay false. `/embed/twelve-go` answers 404 with no vendor document. The visitor surface still has no iframe and no load button. A localhost stub proved the 800px opaque frame and keyboard input without calling 12Go. The official form was not loaded again; the R2 measurement remains that evidence. CI and Preview for the R3 head are not evidence until they finish. The exact head is the tip after the R3 commits and is posted on the PR.

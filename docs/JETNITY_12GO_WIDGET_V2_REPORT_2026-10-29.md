@@ -78,6 +78,10 @@ Dated transfer at 390: planned date visible, absent from the href, `CHF` absent 
 | Vercel Preview and GitHub CI on `c2fa11dc` | App job `123714720799` failed at schema-bezug. That head is invalidated. New CI and Preview are not evidence until they finish on the correction head |
 | Production acceptance, #968 | not claimed |
 
+## R4 binds the browser check to the component
+
+The fixture page is `renderToStaticMarkup(TwelveGoWidgetRahmen)` plus a click handler that sets `src` on `[data-twelve-go-rahmen="leer"]`. The handler is not part of the component. Replacing that markup with no iframe, two iframes, height 150, or `allow-same-origin` fails `rahmenBeweis`. The browser run at 320 and 390 measured the component iframe at full width and 800px, parent document access stayed null, and one local character was typed. Every non-loopback request is aborted and recorded. None occurred. Evidence for that run was written under the explicit output variable, not a path stored in git. Default without the variable is the OS temporary directory. This remains a local stub. The R2 official-form observation stays dated. Search, consent, and legal acceptance are not claimed.
+
 ## R3 source preparation
 
 Production execution is still closed. `twelveGoWidgetDarfAusfuehren({ enabled: true })` is false after an informative grant. The new route `app/embed/twelve-go/route.ts` returns 404 for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS, including `?consent=1` and a cookie. The body is `Not found` and the CSP is `script-src 'none'` with no `https:` allowance.
