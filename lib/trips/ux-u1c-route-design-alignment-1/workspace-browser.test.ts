@@ -790,4 +790,279 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.deepEqual(netz, [])
     await context.close()
   })
+
+  test('flow navigation hides the back-to-top control that intercepted the next day', async () => {
+    const context = await browser.newContext({ viewport: { width: 768, height: 900 } })
+    const page = await context.newPage()
+    const fremd: string[] = []
+    await page.route('**/*', (route) => {
+      const url = route.request().url()
+      if (url.startsWith(origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue()
+      fremd.push(url)
+      return route.abort()
+    })
+    await page.addInitScript((reise) => {
+      localStorage.setItem('jetnity:reise:v3', JSON.stringify(reise))
+    }, referenzReise())
+    await page.goto(origin, { waitUntil: 'networkidle' })
+    await page.locator('[data-u1c-probe="gast"]').click()
+    await plan(page)
+    await page.locator('[data-u1c-lauf][data-u1c-tage~="day-11"]').click()
+    await page.locator('[data-timeline-tag="day-11"]').click()
+    await page.locator('[data-plan-tag-naechster]').waitFor()
+
+    const themaSetzen = async (name: 'light' | 'green') => {
+      await page.setViewportSize({ width: 768, height: 900 })
+      const aktuell = await page.locator('.workspace-shell').getAttribute('data-workspace-theme')
+      if (aktuell === name) return
+      await page.getByRole('button', { name: name === 'green' ? 'Grünes Design aktivieren' : 'Helle Darstellung aktivieren' }).click()
+      await page.waitForSelector(`[data-workspace-theme="${name}"]`)
+    }
+    const wartenAufScroll = async (top: number) => {
+      await page.evaluate((y) => window.scrollTo(0, y), top)
+      await page.waitForFunction((y) => {
+        const knopf = document.querySelector('[data-back-to-top]')
+        return knopf instanceof HTMLElement && Math.abs(window.scrollY - y) <= 1
+          && knopf.classList.contains('invisible') === (y <= 400)
+      }, top)
+    }
+    const lage = () => page.evaluate(() => {
+      const kasten = (el: Element | null) => {
+        if (!(el instanceof HTMLElement)) return null
+        const r = el.getBoundingClientRect()
+        return {
+          x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height),
+          right: Math.round(r.right), bottom: Math.round(r.bottom), rects: el.getClientRects().length,
+        }
+      }
+      const treffen = (el: Element | null) => {
+        if (!(el instanceof HTMLElement)) return null
+        const r = el.getBoundingClientRect()
+        const x = r.left + r.width / 2
+        const y = r.top + r.height / 2
+        const hit = document.elementFromPoint(x, y)
+        const knopf = hit?.closest('button, a, [data-back-to-top], [data-shell-nav]')
+        return {
+          x: Math.round(x), y: Math.round(y),
+          label: knopf instanceof HTMLElement ? (knopf.getAttribute('aria-label') ?? '') : '',
+          back: Boolean(hit?.closest('[data-back-to-top]')),
+          next: Boolean(hit?.closest('[data-plan-tag-naechster]')),
+          prev: Boolean(hit?.closest('[data-plan-tag-vorher]')),
+          nav: Boolean(hit?.closest('[data-shell-nav]')),
+        }
+      }
+      const zurueck = document.querySelector('[data-back-to-top]')
+      const nav = document.querySelector('[data-shell-nav]')
+      return {
+        scroll: Math.round(window.scrollY),
+        tag: (document.querySelector('[data-plan-tag-zaehler]')?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+        flow: nav?.getAttribute('data-flow') ?? '',
+        shell: nav?.getAttribute('data-shell-nav') ?? '',
+        navDisplay: getComputedStyle(document.querySelector('.workspace-mobile-navigation') ?? document.documentElement).display,
+        backDisplay: zurueck instanceof HTMLElement ? getComputedStyle(zurueck).display : '',
+        next: kasten(document.querySelector('[data-plan-tag-naechster]')),
+        prev: kasten(document.querySelector('[data-plan-tag-vorher]')),
+        back: kasten(zurueck),
+        nav: kasten(nav),
+        hitNext: treffen(document.querySelector('[data-plan-tag-naechster]')),
+        hitBack: treffen(zurueck),
+      }
+    })
+    const fokusPruefen = () => page.evaluate(() => {
+      const el = document.querySelector('[data-back-to-top]')
+      if (!(el instanceof HTMLElement)) return { rects: 0, fokus: false, display: '' }
+      const vorher = document.activeElement
+      el.focus()
+      const fokus = document.activeElement === el
+      if (fokus && vorher instanceof HTMLElement && vorher !== el) vorher.focus()
+      return { rects: el.getClientRects().length, fokus, display: getComputedStyle(el).display }
+    })
+    const aufKollision = async (breite: number, hoehe: number) => {
+      await page.setViewportSize({ width: breite, height: hoehe })
+      await page.waitForSelector('[data-shell-nav="flow"]')
+      const top = await page.evaluate(() => {
+        const next = document.querySelector('[data-plan-tag-naechster]')
+        if (!(next instanceof HTMLElement)) return null
+        const r = next.getBoundingClientRect()
+        const docY = r.top + window.scrollY + r.height / 2
+        const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ux-u1a-nav-offset')) || 0
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+        return Math.round(docY - (window.innerHeight - (offset + 1.5 * rem) - 22))
+      })
+      assert.ok(top != null && top > 400, `${breite}x${hoehe} alignment ${top}`)
+      await wartenAufScroll(top)
+      const stil = await page.addStyleTag({ content: '.workspace-page [data-back-to-top] { display: flex !important; }' })
+      await page.waitForFunction(() => {
+        const el = document.querySelector('[data-back-to-top]')
+        return el instanceof HTMLElement && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0
+      })
+      const delta = await page.evaluate(() => {
+        const next = document.querySelector('[data-plan-tag-naechster]')
+        const back = document.querySelector('[data-back-to-top]')
+        if (!(next instanceof HTMLElement) || !(back instanceof HTMLElement)) return 0
+        const n = next.getBoundingClientRect()
+        const b = back.getBoundingClientRect()
+        return (n.top + n.height / 2) - (b.top + b.height / 2)
+      })
+      if (Math.abs(delta) > 2) await wartenAufScroll(Math.round(top + delta))
+      const alt = await lage()
+      assert.equal(alt.flow, 'true', JSON.stringify(alt))
+      assert.equal(alt.hitNext?.back, true, JSON.stringify(alt))
+      assert.ok(alt.scroll > 400 && alt.back && alt.next && alt.hitNext, JSON.stringify(alt))
+      assert.ok(
+        alt.hitNext.x >= alt.back.x && alt.hitNext.x <= alt.back.x + alt.back.w
+          && alt.hitNext.y >= alt.back.y && alt.hitNext.y <= alt.back.y + alt.back.h,
+        JSON.stringify(alt),
+      )
+      await stil.evaluate((el) => { if (el instanceof Element) el.remove() })
+      await page.waitForFunction(() => {
+        const el = document.querySelector('[data-back-to-top]')
+        return el instanceof HTMLElement && getComputedStyle(el).display === 'none' && el.getClientRects().length === 0
+      })
+      const neu = await lage()
+      assert.ok(Math.abs(neu.scroll - alt.scroll) <= 1, JSON.stringify({ alt, neu }))
+      assert.equal(neu.hitNext?.next, true, JSON.stringify(neu))
+      assert.equal(neu.hitNext?.back, false, JSON.stringify(neu))
+      assert.equal(neu.backDisplay, 'none')
+      const tastatur = await fokusPruefen()
+      assert.equal(tastatur.fokus, false, JSON.stringify(tastatur))
+      assert.equal(tastatur.rects, 0)
+      assert.ok(neu.hitNext)
+      const vorherScroll = neu.scroll
+      await page.mouse.click(neu.hitNext.x, neu.hitNext.y)
+      await page.waitForFunction(() => (document.querySelector('[data-plan-tag-zaehler]')?.textContent ?? '').includes('Tag 12'))
+      const nach = await lage()
+      assert.match(nach.tag, /Tag 12/)
+      assert.notEqual(nach.scroll, 0, JSON.stringify({ vorherScroll, nach }))
+      const vorher = await page.evaluate(() => {
+        const el = document.querySelector('[data-plan-tag-vorher]')
+        if (!(el instanceof HTMLElement)) return null
+        const r = el.getBoundingClientRect()
+        if (r.top < 8 || r.bottom > window.innerHeight - 8) {
+          window.scrollTo(0, Math.max(0, r.top + window.scrollY - window.innerHeight * 0.3))
+        }
+        const box = el.getBoundingClientRect()
+        const x = box.left + box.width / 2
+        const y = box.top + box.height / 2
+        const hit = document.elementFromPoint(x, y)
+        return {
+          x, y, scroll: window.scrollY,
+          prev: Boolean(hit?.closest('[data-plan-tag-vorher]')),
+          back: Boolean(hit?.closest('[data-back-to-top]')),
+        }
+      })
+      assert.ok(vorher?.prev && !vorher.back, JSON.stringify(vorher))
+      await page.mouse.click(vorher.x, vorher.y)
+      await page.waitForFunction(() => (document.querySelector('[data-plan-tag-zaehler]')?.textContent ?? '').includes('Tag 11'))
+      return { alt, neu }
+    }
+
+    const protokoll: unknown[] = []
+    for (const name of ['light', 'green'] as const) {
+      await themaSetzen(name)
+      for (const [breite, hoehe] of [[520, 290], [540, 300]] as const) {
+        protokoll.push({ name, breite, hoehe, ...(await aufKollision(breite, hoehe)) })
+      }
+    }
+
+    const kontrollen = async (breite: number, hoehe: number) => {
+      await page.setViewportSize({ width: breite, height: hoehe })
+      await page.waitForSelector('[data-shell-nav="bottom"]')
+      await wartenAufScroll(640)
+      const stand = await lage()
+      assert.equal(stand.flow, 'false', JSON.stringify(stand))
+      assert.equal(stand.backDisplay, 'flex', JSON.stringify(stand))
+      assert.ok(stand.back && stand.back.rects > 0 && stand.hitNext?.next && !stand.hitNext.back && !stand.hitNext.nav, JSON.stringify(stand))
+      assert.ok(stand.nav && stand.back.bottom <= stand.nav.y + 1, JSON.stringify(stand))
+      await page.mouse.click(stand.hitNext.x, stand.hitNext.y)
+      await page.waitForFunction(() => (document.querySelector('[data-plan-tag-zaehler]')?.textContent ?? '').includes('Tag 12'))
+      const zurueck = await page.evaluate(() => {
+        const el = document.querySelector('[data-plan-tag-vorher]')
+        if (!(el instanceof HTMLElement)) return null
+        const r = el.getBoundingClientRect()
+        const x = r.left + r.width / 2
+        const y = r.top + r.height / 2
+        const hit = document.elementFromPoint(x, y)
+        return { x, y, prev: Boolean(hit?.closest('[data-plan-tag-vorher]')), back: Boolean(hit?.closest('[data-back-to-top]')), nav: Boolean(hit?.closest('[data-shell-nav]')) }
+      })
+      assert.ok(zurueck?.prev && !zurueck.back && !zurueck.nav, JSON.stringify(zurueck))
+      await page.mouse.click(zurueck.x, zurueck.y)
+      await page.waitForFunction(() => (document.querySelector('[data-plan-tag-zaehler]')?.textContent ?? '').includes('Tag 11'))
+      await wartenAufScroll(640)
+      const knopf = await lage()
+      assert.ok(knopf.hitBack?.back, JSON.stringify(knopf))
+      await page.mouse.click(knopf.hitBack.x, knopf.hitBack.y)
+      await page.waitForFunction(() => window.scrollY < 5)
+      protokoll.push({ breite, hoehe, stand })
+    }
+    for (const name of ['light', 'green'] as const) {
+      await themaSetzen(name)
+      await kontrollen(540, 720)
+      await kontrollen(390, 844)
+    }
+
+    await page.evaluate(() => { document.documentElement.style.fontSize = '' })
+    await page.setViewportSize({ width: 520, height: 290 })
+    await page.waitForSelector('[data-shell-nav="flow"]')
+    await wartenAufScroll(640)
+    const kurz = await lage()
+    const kurzFokus = await fokusPruefen()
+    assert.equal(kurz.backDisplay, 'none', JSON.stringify(kurz))
+    assert.equal(kurzFokus.fokus, false)
+    await page.setViewportSize({ width: 540, height: 720 })
+    await page.waitForSelector('[data-shell-nav="bottom"]')
+    await wartenAufScroll(640)
+    const hoch = await lage()
+    assert.equal(hoch.backDisplay, 'flex', JSON.stringify(hoch))
+    assert.ok(hoch.hitBack?.back, JSON.stringify(hoch))
+    await page.setViewportSize({ width: 520, height: 290 })
+    await page.waitForSelector('[data-shell-nav="flow"]')
+    const wiederKurz = await lage()
+    const wiederFokus = await fokusPruefen()
+    assert.equal(wiederKurz.backDisplay, 'none', JSON.stringify(wiederKurz))
+    assert.equal(wiederFokus.rects, 0)
+    assert.equal(wiederFokus.fokus, false)
+
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    await page.waitForSelector('[data-shell-nav="flow"]')
+    await wartenAufScroll(640)
+    const gross = await lage()
+    const grossFokus = await fokusPruefen()
+    assert.equal(gross.flow, 'true')
+    assert.equal(gross.backDisplay, 'none', `Root-Schrift 32px, keine Browservergrösserung ${JSON.stringify(gross)}`)
+    assert.equal(grossFokus.fokus, false)
+    assert.equal(grossFokus.rects, 0)
+    await page.evaluate(() => { document.documentElement.style.fontSize = '' })
+
+    await page.setViewportSize({ width: 1440, height: 290 })
+    await page.waitForFunction(() => {
+      const nav = document.querySelector('[data-shell-nav]')
+      const mobile = document.querySelector('.workspace-mobile-navigation')
+      return nav?.getAttribute('data-flow') === 'true' && mobile instanceof HTMLElement && getComputedStyle(mobile).display === 'none'
+    })
+    await wartenAufScroll(640)
+    const desktopKurz = await lage()
+    const desktopFokus = await fokusPruefen()
+    assert.equal(desktopKurz.navDisplay, 'none', JSON.stringify(desktopKurz))
+    assert.notEqual(desktopKurz.backDisplay, 'none', JSON.stringify(desktopKurz))
+    assert.ok(desktopFokus.rects > 0 && desktopFokus.fokus, JSON.stringify(desktopFokus))
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.waitForFunction(() => document.querySelector('[data-shell-nav]')?.getAttribute('data-shell-nav') === 'bottom')
+    const desktopTop = await page.evaluate(() => {
+      const el = document.querySelector('[data-plan-tag-naechster]')
+      if (!(el instanceof HTMLElement)) return 640
+      const r = el.getBoundingClientRect()
+      return Math.round(Math.max(450, r.top + window.scrollY - window.innerHeight * 0.4))
+    })
+    await wartenAufScroll(desktopTop)
+    const desktop = await lage()
+    assert.equal(desktop.navDisplay, 'none')
+    assert.equal(desktop.backDisplay, 'flex', JSON.stringify(desktop))
+    assert.ok(desktop.hitNext?.next && !desktop.hitNext.back, JSON.stringify(desktop))
+
+    assert.ok(protokoll.length >= 8)
+    assert.deepEqual(fremd, [])
+    await context.close()
+  })
 })
