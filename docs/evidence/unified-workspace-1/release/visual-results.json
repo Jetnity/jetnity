@@ -1,0 +1,118 @@
+{
+  "time": "2026-10-30T11:09:00.194Z",
+  "base": "http://127.0.0.1:3472",
+  "results": [
+    {
+      "name": "Compact identity, attention and audit form the intended hierarchy",
+      "status": "PASS",
+      "evidence": {
+        "identity": {
+          "top": 150,
+          "bottom": 305.890625,
+          "height": 155.890625
+        },
+        "attention": {
+          "top": 329.890625,
+          "bottom": 844.484375,
+          "height": 514.59375
+        },
+        "route": {
+          "top": 868.484375,
+          "bottom": 1404.796875,
+          "height": 536.3125
+        },
+        "auditInsideAttention": true
+      }
+    },
+    {
+      "name": "Route opens the actual selected day; navigation does not change guest data",
+      "status": "PASS"
+    },
+    {
+      "name": "Repeated destination is a second visit; unknown day keeps its open context",
+      "status": "PASS"
+    },
+    {
+      "name": "Desktop keyboard focus is visible inside clipped attention rows",
+      "status": "PASS",
+      "evidence": {
+        "offset": "-4px",
+        "width": "3px",
+        "color": "rgb(188, 229, 212)"
+      }
+    },
+    {
+      "name": "320/390/768 layouts and 200% text retain content without horizontal overflow",
+      "status": "PASS",
+      "evidence": {
+        "widths": [
+          320,
+          390,
+          768
+        ],
+        "enlargement": "root font 16px to 32px; not native browser zoom"
+      }
+    },
+    {
+      "name": "CSS component fixtures: empty/security/error/status pairs have readable contrast",
+      "status": "PASS",
+      "evidence": [
+        {
+          "name": "empty",
+          "background": "rgb(15, 48, 42)",
+          "color": "rgb(237, 248, 243)",
+          "ratio": 13.086175411969881
+        },
+        {
+          "name": "security",
+          "background": "rgb(15, 48, 42)",
+          "color": "rgb(188, 229, 212)",
+          "ratio": 10.359919668512589
+        },
+        {
+          "name": "inline-error",
+          "background": "rgb(15, 48, 42)",
+          "color": "color(srgb 0.913725 0.527059 0.535686)",
+          "ratio": 5.57795456006888
+        },
+        {
+          "name": "error-card",
+          "background": "color(srgb 0.146039 0.128157 0.116706)",
+          "color": "color(srgb 0.913725 0.527059 0.535686)",
+          "ratio": 6.263337874039668
+        },
+        {
+          "name": "error-tinted",
+          "background": "color(srgb 0.146039 0.128157 0.116706)",
+          "color": "color(srgb 0.913725 0.527059 0.535686)",
+          "ratio": 6.263337874039668
+        },
+        {
+          "name": "warning",
+          "background": "rgb(21, 58, 51)",
+          "color": "rgb(223, 244, 122)",
+          "ratio": 10.302556407955395
+        },
+        {
+          "name": "success",
+          "background": "rgb(21, 58, 51)",
+          "color": "rgb(188, 229, 212)",
+          "ratio": 9.078631285246109
+        },
+        {
+          "name": "selected",
+          "background": "rgb(223, 244, 122)",
+          "color": "rgb(15, 48, 42)",
+          "ratio": 11.756580195099762
+        }
+      ]
+    }
+  ],
+  "forbidden": [],
+  "errors": [],
+  "limits": [
+    "Synthetic guest UI only",
+    "CSS fixture checks do not test authenticated account flows",
+    "No real-device or screen-reader claim"
+  ]
+}

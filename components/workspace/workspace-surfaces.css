@@ -1,0 +1,166 @@
+/* Owner-approved green prototype, scoped to the unified workspace. The public
+   site and embedded provider frames keep their own palette. Existing semantic
+   status text, form behavior and domain models are not changed by this layer. */
+.workspace-shell:where([data-workspace-theme="green"]) {
+  --workspace-bg: rgb(var(--jet-night-800));
+  --workspace-panel: rgb(var(--jet-brand-900));
+  --workspace-soft: rgb(var(--jet-brand-800));
+  --workspace-ink: rgb(var(--jet-surface-50));
+  --workspace-muted: rgb(var(--jet-ink-400));
+  --workspace-edge: rgb(var(--jet-ink-400) / .22);
+  --workspace-glass: rgb(var(--jet-brand-800) / .94);
+  --workspace-danger: color-mix(in srgb, rgb(var(--jet-danger-400)) 80%, rgb(var(--jet-surface-50)));
+  --background: var(--jet-night-800);
+  --foreground: var(--jet-surface-50);
+  --card: var(--jet-brand-900);
+  --card-foreground: var(--jet-surface-50);
+  --popover: var(--jet-brand-900);
+  --popover-foreground: var(--jet-surface-50);
+  --primary: var(--jet-ink-400);
+  --primary-foreground: var(--jet-brand-900);
+  --secondary: var(--jet-brand-800);
+  --secondary-foreground: var(--jet-surface-50);
+  --muted: var(--jet-brand-800);
+  --muted-foreground: var(--jet-ink-400);
+  --accent: var(--jet-brand-800);
+  --accent-foreground: var(--jet-surface-50);
+  --border: var(--jet-night-600);
+  --input: var(--jet-ink-500);
+  --ring: var(--jet-ink-400);
+  --destructive: var(--jet-danger-400);
+  --destructive-foreground: var(--jet-night-900);
+  color: var(--workspace-ink);
+  background: var(--workspace-bg);
+  color-scheme: dark;
+}
+.workspace-shell:where([data-workspace-theme="green"]) :where(a, button, summary, input, select, textarea):focus-visible {
+  outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
+}
+:where([data-workspace-theme="green"]) .workspace-sidebar, :where([data-workspace-theme="green"]) .workspace-header, :where([data-workspace-theme="green"]) .workspace-bottom-nav {
+  background: linear-gradient(120deg, rgb(var(--jet-ink-400) / .12), transparent 70%), var(--workspace-glass);
+  box-shadow: inset -1px 0 rgb(var(--jet-ink-400) / .07);
+}
+:where([data-workspace-theme="green"]) .workspace-brand img { filter: brightness(0) invert(1); }
+:where([data-workspace-theme="green"]) .workspace-kicker, :where([data-workspace-theme="green"]) .workspace-no-trip p, :where([data-workspace-theme="green"]) .workspace-sidebar-end p, :where([data-workspace-theme="green"]) .workspace-credit { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-nav-link, :where([data-workspace-theme="green"]) .workspace-open-trip { color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-nav-link:hover, :where([data-workspace-theme="green"]) .workspace-open-trip:hover { background: rgb(var(--jet-ink-400) / .1); }
+:where([data-workspace-theme="green"]) .workspace-nav-link[aria-current="page"] {
+  background: rgb(var(--jet-ink-400) / .2);
+  box-shadow: inset 3px 0 rgb(var(--jet-ink-400));
+}
+:where([data-workspace-theme="green"]) .workspace-button, :where([data-workspace-theme="green"]) .workspace-icon-button { background: rgb(var(--jet-ink-400) / .08); color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-button:hover { background: rgb(var(--jet-ink-400) / .16); }
+:where([data-workspace-theme="green"]) .workspace-button.workspace-primary { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) .workspace-primary:hover { background: rgb(var(--jet-ink-300)); }
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button,
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:first-child {
+  color: var(--workspace-ink); background: rgb(var(--jet-ink-400) / .07); border: 1px solid var(--workspace-edge);
+}
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:hover { background: rgb(var(--jet-ink-400) / .16); }
+:where([data-workspace-theme="green"]) .workspace-account-panel { background: var(--workspace-panel); color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-account-panel :where(a, button):hover { background: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-page [data-back-to-top] { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
+:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link[aria-current="page"] { box-shadow: inset 0 3px rgb(var(--jet-ink-400)); }
+
+/* Background/foreground pairs also cover existing empty, error and security
+   cards. Provider iframes and image pixels retain their own colours. */
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-white, .bg-white\/65, .bg-white\/70, .bg-white\/75, .bg-surface-0, .bg-surface-0\/85, .bg-surface-25) { background-color: var(--workspace-panel); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-surface-75) { background-color: var(--workspace-bg); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-surface-50, .bg-surface-100, .bg-surface-200, .bg-line-100) { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-brand-600, .text-brand-700, .text-brand-800, .text-brand-900, .text-ink-900, .text-ink-950) { color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-ink-500, .text-ink-600, .text-ink-650, .text-ink-700, .text-ink-800) { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.border-line-100, .border-line-200, .border-line-300, .border-brand-800, .border-brand-600) { border-color: var(--workspace-edge); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:bg-surface-50, .hover\:bg-surface-100, .hover\:bg-white):hover { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-red-50, .bg-red-50\/50, .bg-red-50\/70) { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 12%, var(--workspace-bg)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-red-600, .text-red-700, .text-red-800, .text-red-900, .text-danger-600, .text-danger-700) { color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.border-red-200, .border-red-700) { border-color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:bg-red-100):hover { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 20%, var(--workspace-bg)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:text-danger-600):hover { color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-green-50, .bg-emerald-50, .bg-amber-50) { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-green-800, .text-emerald-900) { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-amber-800, .text-amber-950) { color: rgb(var(--jet-citrus-400)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55),
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55) :where(.text-brand-900, .text-brand-800, .text-ink-800) { color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(input, select, textarea) { color-scheme: dark; }
+:where([data-workspace-theme="green"]) .workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
+:where([data-workspace-theme="green"]) .workspace-content :where(.shadow-brand) { box-shadow: none; }
+/* Keep the existing companion readable in the narrow workspace and at larger
+   text sizes. Its content and request behaviour remain unchanged. */
+.workspace-content #reisebegleiter { min-width: 0; overflow-wrap: anywhere; }
+.workspace-content #reisebegleiter > div { grid-template-columns: minmax(0, 1fr); }
+.workspace-content #reisebegleiter :where(form, section) { min-width: 0; }
+.workspace-content #reisebegleiter button { max-width: 100%; height: auto; min-height: 2.75rem; padding-block: .5rem; white-space: normal; }
+.workspace-content #reisebegleiter button .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
+.workspace-content [data-unified-workspace] > div { padding-top: 1.75rem; }
+.workspace-content [data-workspace-identity].workspace-trip-heading {
+  background: none; color: var(--workspace-ink); margin: 0 0 1.5rem; border: 0; border-radius: 0; overflow: visible;
+}
+.workspace-content [data-workspace-identity].workspace-trip-heading > div:first-child { padding: 0; }
+.workspace-trip-heading-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .75rem; }
+.workspace-eyebrow { font-size: .6875rem; letter-spacing: .17em; text-transform: uppercase; font-weight: 650; color: var(--workspace-muted); margin-bottom: .5rem; }
+.workspace-content .workspace-trip-heading h1 { font-size: clamp(1.6rem, 2.4vw, 2rem); letter-spacing: -.035em; line-height: 1.2; font-weight: 650; overflow-wrap: anywhere; }
+.workspace-status { border: 1px solid var(--workspace-edge); border-radius: .5rem; padding: .35rem .65rem; font-size: .75rem; color: var(--workspace-muted); }
+.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .65rem 1.25rem; margin-top: 1rem; color: var(--workspace-muted); font-size: .875rem; }
+.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .5rem; }
+.workspace-trip-meta dd { overflow-wrap: anywhere; min-width: 0; }
+.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .15rem; }
+.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; font-size: .75rem; color: var(--workspace-muted); margin-top: .75rem; }
+.workspace-trip-storage > span { display: flex; align-items: center; gap: .5rem; }
+.workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
+/* These legacy header slots were white on a dark hero. Only recolour them
+   inside the compact, transparent heading; keep dark action buttons intact. */
+:where([data-workspace-theme="light"]) .workspace-storage-options :where(.text-white, .text-white\/65, .text-white\/70) { color: var(--workspace-muted); }
+:where([data-workspace-theme="light"]) .workspace-storage-options .hover\:text-white:hover { color: var(--workspace-ink); }
+:where([data-workspace-theme="light"]) .workspace-storage-options [role="alert"] { background: var(--workspace-soft); color: var(--workspace-ink); }
+.workspace-content [data-workspace-overview="integrated"] { gap: 1.5rem; margin-top: 0; }
+.workspace-content [data-workspace-attention="integrated"] { border-radius: 1rem; }
+.workspace-content [data-workspace-attention="integrated"] > div:first-child { display: block; }
+.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading { padding: 1.25rem 1.5rem; background: var(--workspace-soft); color: var(--workspace-ink); }
+.workspace-attention-heading p { color: var(--workspace-muted); }
+.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading + div { padding: 0; }
+.workspace-content [data-workspace-attention="integrated"] ul { border-radius: 0; margin: 0; }
+.workspace-content [data-workspace-attention="integrated"] [data-attention-punkt] { padding: 1rem 1.5rem; min-height: 5rem; gap: 1rem; }
+.workspace-content [data-workspace-attention="integrated"] [data-attention-punkt] > span:first-child { width: 1.25rem; height: 1.5rem; background: none; color: var(--workspace-muted); }
+.workspace-content [data-workspace-attention="integrated"] [data-attention-punkt] strong { font-size: .9375rem; }
+.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading + div > :where(p, button) { padding: .75rem 1.5rem; margin: 0; }
+.workspace-content [data-workspace-audit="integrated"] { border: 0; border-top: 1px solid var(--workspace-edge); border-radius: 0; padding: 1.25rem 1.5rem; }
+.workspace-audit-intro { display: flex; gap: 1.25rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.workspace-audit-intro > div { flex: 1 1 21rem; }
+.workspace-audit-intro > button { flex-shrink: 0; margin: 0; border-radius: .75rem; }
+.workspace-audit-intro p { font-size: .8125rem; line-height: 1.6; }
+.workspace-route-overview { border: 1px solid var(--workspace-edge); border-radius: 1rem; background: var(--workspace-panel); overflow: hidden; }
+.workspace-route-overview > header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--workspace-edge); }
+.workspace-route-overview h3 { font-size: 1.125rem; font-weight: 650; }
+.workspace-route-overview p { font-size: .8125rem; color: var(--workspace-muted); margin-top: .25rem; }
+.workspace-route-overview header button { display: flex; gap: .5rem; align-items: center; min-height: 44px; font-size: .875rem; }
+.workspace-route-overview svg { width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+.workspace-route-overview li + li { border-top: 1px solid var(--workspace-edge); }
+.workspace-route-overview li button { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; width: 100%; min-height: 76px; text-align: left; }
+.workspace-route-overview li button:hover { background: var(--workspace-soft); }
+.workspace-route-marker { display: grid; place-items: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: rgb(var(--jet-ink-400) / .12); }
+.workspace-route-copy { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.workspace-route-copy :where(strong, small) { display: block; }
+.workspace-route-copy small { font-size: .8125rem; color: var(--workspace-muted); margin-top: .2rem; }
+.workspace-route-empty { padding: 1rem 1.5rem; }
+.workspace-content [data-workspace-trip-parts] { border-radius: 1rem; }
+.workspace-content [data-workspace-trip-parts] > p { padding: 1rem 1.5rem; font-size: 1.125rem; letter-spacing: -.02em; text-transform: none; }
+.workspace-content [data-workspace-trip-parts] button { padding: 1rem 1.5rem; min-height: 90px; }
+.workspace-content :where([data-attention-punkt], .workspace-route-overview button, [data-workspace-trip-parts] button):focus-visible { outline-offset: -4px; }
+@media (max-width: 40rem) {
+  .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; }
+  .workspace-trip-meta { display: grid; gap: .65rem; }
+  .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading,
+  .workspace-content [data-workspace-attention="integrated"] [data-attention-punkt],
+  .workspace-content [data-workspace-audit="integrated"],
+  .workspace-route-overview > header, .workspace-route-overview li button,
+  .workspace-content [data-workspace-trip-parts] button { padding: 1rem; }
+  .workspace-audit-intro > button { width: 100%; }
+  .workspace-trip-heading-top > div { min-width: 0; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .workspace-sidebar, .workspace-header, .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  .workspace-brand img { filter: none; }
+  .workspace-shell { color-scheme: light dark; }
+}

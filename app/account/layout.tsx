@@ -1,31 +1,16 @@
 // app/account/layout.tsx
 //
-// Account-Shell: öffentliche Leiste plus kompakte Konto-Navigation.
-// Kein zweites Workspace-Dashboard.
+// Gemeinsamer Darstellungsrahmen für Konto, Reiseauswahl und Reiseplanung.
+// Die einzelnen Seiten behalten ihre Zugriffsprüfung und Fachlogik.
 
 import type { Metadata } from 'next'
 
-import AccountNavigation from '@/components/account/AccountNavigation'
-import Footer from '@/components/layout/Footer'
-import PublicNavbar from '@/components/layout/PublicNavbar'
-import SkipToContentLink from '@/components/layout/SkipToContentLink'
+import WorkspaceShell from '@/components/workspace/WorkspaceShell'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <SkipToContentLink targetId="account-content" />
-      <div className="relative min-h-screen bg-surface-75">
-        <PublicNavbar />
-        <AccountNavigation />
-        <div id="account-content" tabIndex={-1} className="min-h-[60dvh] outline-none">
-          {children}
-        </div>
-        <Footer />
-      </div>
-    </>
-  )
+  return <WorkspaceShell contentId="account-content">{children}</WorkspaceShell>
 }

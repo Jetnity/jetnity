@@ -81,6 +81,7 @@ export default function BackToTop() {
 
   return (
     <button
+      data-back-to-top
       type="button"
       inert={!sichtbar}
       tabIndex={sichtbar ? 0 : -1}

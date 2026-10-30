@@ -71,7 +71,8 @@ import type { FlugSegmentManuell, PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
-import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
+import WorkspaceTripChrome, { WorkspacePortal } from '@/components/workspace/WorkspaceTripChrome'
+import { useWorkspaceShell } from '@/components/workspace/WorkspaceContext'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { readinessAnsicht } from '@/lib/readiness/status'
@@ -134,7 +135,7 @@ function bandVon(el: Element | null): AbdeckungsBand | null {
 function abdeckungUnten(): number {
   const baender = [
     bandVon(document.querySelector('header')),
-    bandVon(document.querySelector('[data-workspace-mode-nav]')),
+    ...[...document.querySelectorAll('[data-workspace-mode-nav]')].map(bandVon),
     bandVon(document.querySelector('nav[aria-label="Reise"]')),
   ].filter(
     (band): band is AbdeckungsBand => band != null,
@@ -404,6 +405,7 @@ export default function TripWorkspace({
   seasonalEvaluations,
   anfangsBereich,
 }: TripWorkspaceProps) {
+  const shell = useWorkspaceShell()
   const kompakt = React.useSyncExternalStore(
     kompakteAnsichtAbonnieren,
     kompakteAnsichtLesen,
@@ -674,7 +676,7 @@ export default function TripWorkspace({
   function untereAbdeckung(): number {
     const kandidaten = [
       document.querySelector('header'),
-      document.querySelector('[data-workspace-mode-nav]'),
+      ...document.querySelectorAll('[data-workspace-mode-nav]'),
       document.querySelector('nav[aria-label="Reise"]'),
     ]
     let kante = window.innerHeight
@@ -1211,6 +1213,7 @@ export default function TripWorkspace({
   return (
     <main
       data-workspace-premium="3"
+      data-unified-workspace={shell ? "true" : undefined}
       className="min-h-screen bg-surface-75 pb-[max(5rem,var(--ux-u1a-nav-offset,0px))] [overflow-anchor:none]"
     >
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
@@ -1222,6 +1225,7 @@ export default function TripWorkspace({
           Meine Reisen
         </Link>
 
+        <WorkspacePortal slot="title"><span>{reise.title}</span></WorkspacePortal>
         {hinweis}
 
         <TripWorkspaceKopf
@@ -1231,19 +1235,21 @@ export default function TripWorkspace({
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
           reiseoptionen={reiseoptionen}
+          workspace={Boolean(shell)}
+          uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
         />
 
         {modusBereit ? (
           <>
             {/* Klebt an der langen Spalte. Die kurze Aktionszeile wäre sonst der Sticky-Kasten. */}
-            <TripWorkspaceModeNavigation
+            <WorkspaceTripChrome
               ansicht={modus.ansicht}
               kompakt={kompakt}
               detailOffen={detailOffen}
               onWechsel={onModus}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
-              <TripWorkspaceAktionen
+              <WorkspacePortal slot="actions"><TripWorkspaceAktionen
                 aenderungOffen={aenderungOffen}
                 begleiterOffen={begleiterOffen}
                 begleiterVorhanden={begleiter != null}
@@ -1251,7 +1257,7 @@ export default function TripWorkspace({
                 onBegleiter={begleiterOeffnen}
                 aenderungKnopfRef={aenderungKnopfRef}
                 begleiterKnopfRef={begleiterKnopfRef}
-              />
+              /></WorkspacePortal>
               {aenderungFeld}
               {begleiterFeld}
             </div>
@@ -1298,6 +1304,11 @@ export default function TripWorkspace({
                 destinationEssentials={destinationEssentials}
                 onLuecke={oeffneGap}
                 onAttention={onAttention}
+                workspace={Boolean(shell)}
+                onRoute={(tagId) => {
+                  modusTastaturRef.current = true
+                  modusSetzen({ ansicht: 'plan', bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
+                }}
               />
             </FlaecheHuelle>
           ) : null}

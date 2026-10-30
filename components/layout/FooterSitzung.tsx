@@ -18,7 +18,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 const footerLinkClass =
   'inline-flex min-h-11 items-center text-sm text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25 pointer-fine:min-h-0'
 
-export default function FooterSitzung() {
+export default function FooterSitzung({ workspace = false }: { workspace?: boolean }) {
   const pathname = usePathname()
   const [sitzung, setSitzung] = React.useState<Sitzungsstand>('unbekannt')
 
@@ -65,7 +65,7 @@ export default function FooterSitzung() {
     <>
       {eintraege.map((eintrag) => (
         <li key={eintrag.label}>
-          <FooterSitzungseintrag eintrag={eintrag} onNachlesen={sitzungLesen} />
+          <FooterSitzungseintrag eintrag={eintrag} onNachlesen={sitzungLesen} workspace={workspace} />
         </li>
       ))}
     </>
@@ -75,13 +75,15 @@ export default function FooterSitzung() {
 function FooterSitzungseintrag({
   eintrag,
   onNachlesen,
+  workspace = false,
 }: {
   eintrag: Navigationseintrag
   onNachlesen: () => void
+  workspace?: boolean
 }) {
   if (eintrag.art === 'link') {
     return (
-      <Link href={eintrag.href} className={footerLinkClass}>
+      <Link href={eintrag.href} className={workspace ? 'workspace-session-link' : footerLinkClass}>
         {eintrag.label}
       </Link>
     )
@@ -90,9 +92,9 @@ function FooterSitzungseintrag({
   return (
     <GlobalesAbmeldenForm
       action={signOutAction}
-      fehlerClassName="max-w-[16rem] text-xs text-red-200"
+      fehlerClassName={workspace ? 'max-w-[16rem] text-xs text-danger-600' : 'max-w-[16rem] text-xs text-red-200'}
     >
-      <FooterAbmelden label={eintrag.label} onNachlesen={onNachlesen} />
+      <FooterAbmelden label={eintrag.label} onNachlesen={onNachlesen} workspace={workspace} />
     </GlobalesAbmeldenForm>
   )
 }
@@ -100,9 +102,11 @@ function FooterSitzungseintrag({
 function FooterAbmelden({
   label,
   onNachlesen,
+  workspace = false,
 }: {
   label: string
   onNachlesen: () => void
+  workspace?: boolean
 }) {
   const { pending } = useFormStatus()
   const lief = React.useRef(false)
@@ -119,7 +123,7 @@ function FooterAbmelden({
   }, [pending, onNachlesen])
 
   return (
-    <button type="submit" className={footerLinkClass}>
+    <button type="submit" className={workspace ? 'workspace-session-link' : footerLinkClass}>
       {label}
     </button>
   )
