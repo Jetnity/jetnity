@@ -1,8 +1,18 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-30 October 2026. **Amendment 3 integration delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+30 October 2026, evening Europe/Zurich. **R6 correction delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+
+## R6
+
+Reviewed candidate `941ee51c4f97e978715add3f5a2fe2e69248e0e0`. Same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`. Mode NORMAL. Main still `ac2199dba64e458a20a155b5d1bb826ea99949d3`.
+
+The green Planpunkt form used `sm:bg-surface-50`, which the green remap did not cover, while the heading and labels were already light. Removing `data-planpunkt-editor` in the mounted shell at 768px reproduces that pale panel with light text and contrast below 4.5:1. With the hook, the real create and edit forms keep a dark panel and light text. The selected day, visit and connection in green use a citrus fill plus a dark bar, not only `aria-current` or `aria-pressed`.
+
+The mounted guest test saved one synthetic note, reloaded it, edited it, reloaded again, and returned to that day with the browser Back control. Still one plan item. Light theme contrast stayed at least 4.5:1. Root 32px is root font size, not browser zoom. This is a local synthetic shell run, not a new hosted account pass. The Owner's guest draft was not touched.
 
 ## Integration
+
+Amendment 3 at `9f2c5c60dcfa2288cab3447d21f5cf840d6fa7d6` was already on the branch. Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` was merged without force. After the fetch on 30 October 2026 the same main was still the tip, so this branch is 0 behind it. The runtime integration commit is `621897aafb5c95b66edf6be26912e4069e1ce028`, tree `408f5aa3cd50a6c5d06743e8e30f92926a1b48e3`. The review head is the later status commit on this branch.
 
 Amendment 3 at `9f2c5c60dcfa2288cab3447d21f5cf840d6fa7d6` was already on the branch. Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` was merged without force. After the fetch on 30 October 2026 the same main was still the tip, so this branch is 0 behind it. The runtime integration commit is `621897aafb5c95b66edf6be26912e4069e1ce028`, tree `408f5aa3cd50a6c5d06743e8e30f92926a1b48e3`. The review head is the later status commit on this branch.
 

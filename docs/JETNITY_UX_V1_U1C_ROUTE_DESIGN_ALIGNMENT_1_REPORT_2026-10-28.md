@@ -1,6 +1,12 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — REPORT
 
-30 October 2026. Amendment 3 integration in the same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`. Model read-back `grok-4.7-high-fast`. Session name read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`.
+30 October 2026, evening Europe/Zurich. R6 on the same session. Model read-back `grok-4.7-high-fast`.
+
+## R6
+
+`PlanpunktEditor` now carries `data-planpunkt-editor`. The green workspace rule paints that form with the panel background and keeps headings, labels, helper text, inputs, the error, Cancel and Save paired with it. The old responsive `sm:bg-surface-50` utility remains for the light theme and for the legacy header. The mounted test removes the hook at 768px and records contrast below 4.5:1, then restores the hook.
+
+Selected `[data-timeline-tag][aria-current="date"]`, `[data-u1c-lauf][aria-pressed="true"]` and `[data-u1c-kante][aria-pressed="true"]` get a citrus fill, dark text and a 3px bar. Neighbours stay on the dark panel. `aria-current` and `aria-pressed` are unchanged.
 
 ## Baseline
 

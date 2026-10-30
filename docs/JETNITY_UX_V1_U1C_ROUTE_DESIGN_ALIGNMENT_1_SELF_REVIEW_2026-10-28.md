@@ -1,8 +1,16 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — SELF REVIEW
 
-30 October 2026. Author review of the main integration. Not an independent Technical Lead PASS.
+30 October 2026, evening Europe/Zurich. Author review of R6. Not an independent Technical Lead PASS.
 
-## Checked
+## R6
+
+- The editor hook does not change save, validation or draft state. The guest note was created, reloaded, edited and reloaded as one item.
+- The failing contrast case uses the compiled stylesheet with the hook removed, at the `sm` width the screenshot described.
+- Light theme rules were not given a new background. The light heading still clears 4.5:1 at 320 and 768.
+- Selected-state CSS is limited to the green theme and the existing pressed/current attributes.
+- No Auth, database, provider, env or package file changed. The Owner's hosted guest draft was not opened or cleared.
+
+## Checked earlier today
 
 - The merge kept both `reiseoptionen` and the released `workspace` / `uebersichtAktiv` props. It did not take either file wholesale.
 - `WorkspaceShell`, theme preference, navigation, and account menu were not edited.
