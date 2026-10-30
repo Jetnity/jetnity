@@ -1,6 +1,16 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-30 October 2026, evening Europe/Zurich. **R6 test correction delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+30 October 2026, night Europe/Zurich. **R7 delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+
+## R7 flow navigation
+
+Technical Lead R7 v1 on Draft PR #1082. The reproduced low-height defect is a P2 usability issue: at 520×290 and 540×300 the optional Nach oben control sat on the next-day center. Same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
+
+While the visible mobile navigation is in flow, `.workspace-page` hides `[data-back-to-top]` with `display: none`. The rule sits inside `@media (max-width: 63.999rem)`, the same boundary as the existing 64rem desktop rule, so a hidden desktop copy of the mobile nav does not hide the control. There is no collision observer, no new viewport cutoff, and no change to the day arrows, the timeline, shell flow detection, or storage.
+
+The mounted guest regression uses the synthetic 22-day reference trip in its own browser context and blocks non-loopback requests. A test-only `display: flex !important` restoration makes the next-day center hit Nach oben at both short sizes in light and green. After that restoration is removed, the same center moves day 11 to day 12 and previous restores day 11, without scrolling to the top. 540×720 and 390×844 keep a visible control, working day arrows, clearance above the bottom nav, and a working Nach oben click. The same page goes short, tall, then short again. Root 32px is root font size, not browser zoom; at 390px the control is hidden and cannot take focus. At 1440×290 the hidden mobile nav is in flow and the control stays present.
+
+Reviewed baseline remains `dd66a385b7a0902c5c21e59c7d6948006629c441`. CI run `41109271505` gates that head only. This correction needs its own CI and Preview. Hosted account acceptance stays blocked under #968. This local run is not a physical device, VoiceOver, or true browser zoom.
 
 ## R6 test correction
 

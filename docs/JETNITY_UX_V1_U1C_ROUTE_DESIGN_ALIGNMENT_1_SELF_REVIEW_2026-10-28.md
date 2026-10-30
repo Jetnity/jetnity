@@ -1,6 +1,14 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — SELF REVIEW
 
-30 October 2026, evening Europe/Zurich. Author review of the R6 test correction. Not an independent Technical Lead PASS.
+30 October 2026, night Europe/Zurich. Author review of R7. Not an independent Technical Lead PASS.
+
+## R7 flow navigation
+
+- The production change is the scoped `display: none` rule in `workspace.css`. `BackToTop.tsx`, `WorkspaceTripChrome.tsx`, `PlanpunktEditor`, and the save path were not edited.
+- The sensitivity check uses the real control. A test-only style restores `display: flex` and the next-day center hits Nach oben. A separate lookalike button is not used.
+- Hidden means no client rect and `focus()` does not leave the control as the active element. The 1440px cases keep the control while the mobile nav itself is `display: none`.
+- The earlier note that `workspace.css` was not edited belongs to the R6 head. This head changes that file only for the flow rule.
+- No Auth, database, provider, env, package, or workflow file changed. The Owner's hosted guest drafts were not opened.
 
 ## R6 test correction
 

@@ -1,6 +1,14 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — REPORT
 
-30 October 2026, evening Europe/Zurich. R6 test correction on the same session. Model read-back `grok-4.7-high-fast`.
+30 October 2026, night Europe/Zurich. R7 on the same session. Model read-back `grok-4.7-high-fast`.
+
+## R7 flow navigation
+
+`WorkspaceTripChrome` already sets `data-flow="true"` when the root font is at least 24px, the viewport height is under 500px, or the keyboard shortens the visual viewport. In that state the mobile nav leaves the bottom edge. BackToTop only measures a fixed `[data-shell-nav="bottom"]`, so it stayed in the lower-right corner and covered the next-day control.
+
+The correction is one rule in `components/workspace/workspace.css`. Below 64rem, `.workspace-page:has(.workspace-bottom-nav[data-flow="true"]) [data-back-to-top]` is `display: none`. That removes the hit target and the tab stop. At 64rem and above the mobile nav is already `display: none`, and the rule does not apply, including when that hidden nav is in flow because the window is short.
+
+The regression is in `workspace-browser.test.ts`. It mounts `WorkspaceShell`, `GastArbeitsbereich`, and the real BackToTop with compiled project CSS. The old overlap is reproduced by a test-only style that sets `display: flex !important` on the same control. The click uses the live center coordinates. Day 11 becomes day 12, previous returns to day 11, and the scroll offset does not jump to zero. Root 32px in the enlarged-text check is root font size, not browser zoom.
 
 ## R6 test correction
 
