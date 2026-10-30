@@ -1,5 +1,15 @@
 # Jetnity – Roadmap
 
+> **30.10.2026 – gemeinsamer Konto-/Trip-Workspace, freigegebene Darstellung:**
+> Umsetzung auf `codex/unified-workspace-navigation`, eigenständiger Branch auf
+> `8e667661…`. Einklappbare grüne Glas-Navigation, gemeinsamer Header und mobile
+> Reisebereiche. Fachlogik, beide Planungswege und „Jetzt wichtig“ bleiben.
+> Lokale Prüfungen und Grenzen stehen im
+> [Report](docs/UNIFIED_WORKSPACE_1_REPORT_2026-10-30.md).
+> Noch offen: unabhängiges TL-Review, Abgleich mit #1082 und geschützte
+> Konto-/Preview-Abnahme. Kein Ready, Merge oder Deployment dieses Standes.
+> Bestehende Anbieter- und Product-Owner-Gates bleiben unverändert.
+
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->
 ## Aktueller R109-Checkpoint — fünf Produkt-Lanes akzeptiert
 

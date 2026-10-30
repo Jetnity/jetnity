@@ -3,6 +3,16 @@
 Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
+> **Freigegebener Darstellungsumbau, 30.10.2026 – Branch, noch nicht live:**
+> Der gemeinsame Reise-/Kontorahmen nutzt auf ausdrücklichen Wunsch des Product
+> Owners eine leicht transparente grüne Seitenleiste und einen schmalen Header.
+> Die Ausnahme betrifft nur diesen Rahmen (`components/workspace/workspace.css`),
+> verwendet bestehende Farbtokens und bietet eine deckende Reduced-Transparency-
+> Alternative. Desktop: ausklappbare Beschriftung oder Symbolleiste mit Hover-/
+> Fokustext. Mobil: beschriftetes Menü und Reisebereiche; bei grossem Text stehen
+> Navigation und Header im Dokumentfluss. Homepage und fachliche Komponenten
+> behalten ihre Gestaltung und Logik. [Auftrag](docs/UNIFIED_WORKSPACE_1_TASK_2026-10-30.md).
+
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
 
 ---
