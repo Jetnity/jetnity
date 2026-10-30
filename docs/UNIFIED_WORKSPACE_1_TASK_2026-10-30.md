@@ -1,6 +1,7 @@
 # Unified Workspace 1 – freigegebener Darstellungsumbau
 
-Status: Umsetzung auf eigener Arbeitskopie; keine Live-Freigabe. Basis: main
+Status: Umsetzung auf eigener Arbeitskopie; Veröffentlichung vom Product Owner
+am 30.10.2026 ausdrücklich beauftragt, technische Abschlussprüfung noch offen. Ursprüngliche Basis: main
 `8e667661b490758b25bdd5be720421cea33fda9c`, live am 30.10.2026 geprüft.
 Branch: `codex/unified-workspace-navigation`.
 
@@ -31,6 +32,18 @@ Erlaubt sind nur NEXT_PUBLIC_SUPABASE_URL und NEXT_PUBLIC_SUPABASE_ANON_KEY
 für diesen Preview-Branch sowie Kontoprüfungen mit künstlichen Testdaten.
 Beide Werte sind gesetzt und zurückgelesen. Keine DB-/Auth-/RLS-Änderung, keine
 Production-/Provider-Konfiguration; keine neue Freigabe für andere Vorschauen.
+
+### Auftrag zum Abschluss und Livegang, 30.10.2026
+
+Der Product Owner verlangt ausdrücklich beide bestehenden Aktionen „Reise ändern“
+und „Reisebegleiter fragen“ im Header, die zuvor vereinbarte Darstellung und den
+vollständigen Funktionserhalt; danach soll diese Änderung in Production gehen.
+Diese Freigabe betrifft den Workspace-Umbau #1092. Sie hebt keine Anbieter-,
+Datenschutz-, Schema-, Auth-, Indexierungs- oder sonstigen besonderen Gates auf.
+Normaler geschützter Merge erst nach unabhängiger Prüfung des aktuellen Heads
+und echter develop-Kontoprüfung. Production wird aus main neu gebaut; das mit
+develop verbundene Preview wird nicht als Production-Artefakt übernommen.
+Gäste behalten ihre bisherigen Fähigkeiten; keine neue Gast-KI-Funktion.
 
 ## Ziel und Grenzen
 
@@ -99,7 +112,9 @@ PR #1082 (U1-C, `f2ff4928…`) ist offen und überschneidet sich mit der
 Reise-Darstellung. Nicht ungeprüft übernehmen; TL muss beide Diffs vor einem
 Merge abgleichen. #1084/#1086/#1079/#1091 bleiben eigenständige Anbieterarbeiten.
 STOP-/HOLD-Gates aus #751, #748, #968, #1073, #917/#985 bleiben unverändert.
-Persönliches Browserprofil, Kontoreisen und Production-Schreibtests ausgeschlossen.
+Persönliche Kontoreisen und Production-Schreibtests ausgeschlossen. Die oben
+ausdrücklich freigegebenen künstlichen Kontoreisen in develop sind der separate
+Kontoprüfumfang und keine Ausnahme für persönliche Daten.
 
 ## Prüfplan
 

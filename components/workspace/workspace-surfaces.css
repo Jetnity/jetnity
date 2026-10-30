@@ -84,6 +84,13 @@
 .workspace-content :where(input, select, textarea) { color-scheme: dark; }
 .workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
 .workspace-content :where(.shadow-brand) { box-shadow: none; }
+/* Keep the existing companion readable in the narrow workspace and at larger
+   text sizes. Its content and request behaviour remain unchanged. */
+.workspace-content #reisebegleiter { min-width: 0; overflow-wrap: anywhere; }
+.workspace-content #reisebegleiter > div { grid-template-columns: minmax(0, 1fr); }
+.workspace-content #reisebegleiter :where(form, section) { min-width: 0; }
+.workspace-content #reisebegleiter button { max-width: 100%; height: auto; min-height: 2.75rem; padding-block: .5rem; white-space: normal; }
+.workspace-content #reisebegleiter button .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.75rem; }
 .workspace-content [data-workspace-identity].workspace-trip-heading {
   background: none; color: var(--workspace-ink); margin: 0 0 1.5rem; border: 0; border-radius: 0; overflow: visible;

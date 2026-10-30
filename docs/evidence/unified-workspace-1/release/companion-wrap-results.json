@@ -1,0 +1,816 @@
+{
+  "baseHead": "52f8482a29f607822c38e271a5b18457ee328bca",
+  "scope": "Uncommitted companion CSS fix in workspace-surfaces.css",
+  "limits": [
+    "Existing synthetic account audit; not authenticated develop account verification.",
+    "Real WorkspaceShell/TripWorkspace/companion components and handlers; inner edit form synthetic.",
+    "Client-only history path selection; no account route fetched.",
+    "32px root font is200% text resizing, not native browser zoom.",
+    "No submit, AI, API, non-GET or external requests."
+  ],
+  "results": [
+    {
+      "width": 320,
+      "font": 16,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 320,
+        "documentWidth": 320,
+        "form": {
+          "left": 12,
+          "right": 308,
+          "width": 296,
+          "height": 736,
+          "clientWidth": 294,
+          "scrollWidth": 294
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 33,
+          "right": 287,
+          "width": 254,
+          "height": 32
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 33,
+          "right": 287,
+          "width": 254,
+          "height": 144
+        },
+        "overflowingText": [],
+        "textFragments": 16,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 33,
+            "right": 180.265625,
+            "width": 147.265625,
+            "height": 44,
+            "clientWidth": 145,
+            "scrollWidth": 145,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 33,
+            "right": 163.296875,
+            "width": 130.296875,
+            "height": 44,
+            "clientWidth": 128,
+            "scrollWidth": 128,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 171.296875,
+            "right": 257.703125,
+            "width": 86.40625,
+            "height": 44,
+            "clientWidth": 84,
+            "scrollWidth": 84,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 33,
+            "right": 114.6875,
+            "width": 81.6875,
+            "height": 44,
+            "clientWidth": 80,
+            "scrollWidth": 80,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 33,
+            "right": 287,
+            "width": 254,
+            "height": 44,
+            "clientWidth": 254,
+            "scrollWidth": 254,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 390,
+      "font": 16,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "form": {
+          "left": 12,
+          "right": 378,
+          "width": 366,
+          "height": 640,
+          "clientWidth": 364,
+          "scrollWidth": 364
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 33,
+          "right": 357,
+          "width": 324,
+          "height": 32
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 33,
+          "right": 357,
+          "width": 324,
+          "height": 120
+        },
+        "overflowingText": [],
+        "textFragments": 14,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 33,
+            "right": 180.265625,
+            "width": 147.265625,
+            "height": 44,
+            "clientWidth": 145,
+            "scrollWidth": 145,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 188.265625,
+            "right": 318.5625,
+            "width": 130.296875,
+            "height": 44,
+            "clientWidth": 128,
+            "scrollWidth": 128,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 33,
+            "right": 119.40625,
+            "width": 86.40625,
+            "height": 44,
+            "clientWidth": 84,
+            "scrollWidth": 84,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 127.40625,
+            "right": 209.09375,
+            "width": 81.6875,
+            "height": 44,
+            "clientWidth": 80,
+            "scrollWidth": 80,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 33,
+            "right": 357,
+            "width": 324,
+            "height": 44,
+            "clientWidth": 324,
+            "scrollWidth": 324,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 768,
+      "font": 16,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 768,
+        "documentWidth": 768,
+        "form": {
+          "left": 24,
+          "right": 744,
+          "width": 720,
+          "height": 500,
+          "clientWidth": 718,
+          "scrollWidth": 718
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 53,
+          "right": 715,
+          "width": 662,
+          "height": 36
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 53,
+          "right": 715,
+          "width": 662,
+          "height": 48
+        },
+        "overflowingText": [],
+        "textFragments": 11,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 53,
+            "right": 200.265625,
+            "width": 147.265625,
+            "height": 44,
+            "clientWidth": 145,
+            "scrollWidth": 145,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 208.265625,
+            "right": 338.5625,
+            "width": 130.296875,
+            "height": 44,
+            "clientWidth": 128,
+            "scrollWidth": 128,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 346.5625,
+            "right": 432.96875,
+            "width": 86.40625,
+            "height": 44,
+            "clientWidth": 84,
+            "scrollWidth": 84,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 440.96875,
+            "right": 522.65625,
+            "width": 81.6875,
+            "height": 44,
+            "clientWidth": 80,
+            "scrollWidth": 80,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 579.875,
+            "right": 715,
+            "width": 135.125,
+            "height": 44,
+            "clientWidth": 135,
+            "scrollWidth": 135,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 1440,
+      "font": 16,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "form": {
+          "left": 248,
+          "right": 1416,
+          "width": 1168,
+          "height": 500,
+          "clientWidth": 1166,
+          "scrollWidth": 1166
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 277,
+          "right": 1387,
+          "width": 1110,
+          "height": 36
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 277,
+          "right": 949,
+          "width": 672,
+          "height": 48
+        },
+        "overflowingText": [],
+        "textFragments": 11,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 277,
+            "right": 424.265625,
+            "width": 147.265625,
+            "height": 44,
+            "clientWidth": 145,
+            "scrollWidth": 145,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 432.265625,
+            "right": 562.5625,
+            "width": 130.296875,
+            "height": 44,
+            "clientWidth": 128,
+            "scrollWidth": 128,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 570.5625,
+            "right": 656.96875,
+            "width": 86.40625,
+            "height": 44,
+            "clientWidth": 84,
+            "scrollWidth": 84,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 664.96875,
+            "right": 746.65625,
+            "width": 81.6875,
+            "height": 44,
+            "clientWidth": 80,
+            "scrollWidth": 80,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 1251.875,
+            "right": 1387,
+            "width": 135.125,
+            "height": 44,
+            "clientWidth": 135,
+            "scrollWidth": 135,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 320,
+      "font": 32,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 320,
+        "documentWidth": 320,
+        "form": {
+          "left": 24,
+          "right": 296,
+          "width": 272,
+          "height": 2301,
+          "clientWidth": 270,
+          "scrollWidth": 270
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 65,
+          "right": 255,
+          "width": 190,
+          "height": 192
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 65,
+          "right": 255,
+          "width": 190,
+          "height": 672
+        },
+        "overflowingText": [],
+        "textFragments": 34,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 65,
+            "right": 255,
+            "width": 190,
+            "height": 130,
+            "clientWidth": 188,
+            "scrollWidth": 188,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 65,
+            "right": 255,
+            "width": 190,
+            "height": 98,
+            "clientWidth": 188,
+            "scrollWidth": 188,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 65,
+            "right": 227.125,
+            "width": 162.125,
+            "height": 88,
+            "clientWidth": 160,
+            "scrollWidth": 160,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 65,
+            "right": 219.234375,
+            "width": 154.234375,
+            "height": 88,
+            "clientWidth": 152,
+            "scrollWidth": 152,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 65,
+            "right": 255,
+            "width": 190,
+            "height": 112,
+            "clientWidth": 190,
+            "scrollWidth": 190,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 390,
+      "font": 32,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "form": {
+          "left": 24,
+          "right": 366,
+          "width": 342,
+          "height": 2059,
+          "clientWidth": 340,
+          "scrollWidth": 340
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 65,
+          "right": 325,
+          "width": 260,
+          "height": 192
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 65,
+          "right": 325,
+          "width": 260,
+          "height": 528
+        },
+        "overflowingText": [],
+        "textFragments": 27,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 65,
+            "right": 325,
+            "width": 260,
+            "height": 98,
+            "clientWidth": 258,
+            "scrollWidth": 258,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 65,
+            "right": 309.359375,
+            "width": 244.359375,
+            "height": 88,
+            "clientWidth": 242,
+            "scrollWidth": 242,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 65,
+            "right": 227.125,
+            "width": 162.125,
+            "height": 88,
+            "clientWidth": 160,
+            "scrollWidth": 160,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 65,
+            "right": 219.234375,
+            "width": 154.234375,
+            "height": 88,
+            "clientWidth": 152,
+            "scrollWidth": 152,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 65,
+            "right": 325,
+            "width": 260,
+            "height": 88,
+            "clientWidth": 260,
+            "scrollWidth": 260,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    },
+    {
+      "width": 1440,
+      "font": 32,
+      "functional": "PASS",
+      "presentation": "PASS",
+      "expandedLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "form": {
+          "left": 496,
+          "right": 1392,
+          "width": 896,
+          "height": 1195,
+          "clientWidth": 894,
+          "scrollWidth": 894
+        },
+        "heading": {
+          "text": "Frag den Reisebegleiter",
+          "left": 553,
+          "right": 1335,
+          "width": 782,
+          "height": 72
+        },
+        "paragraph": {
+          "text": "Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.",
+          "left": 553,
+          "right": 1335,
+          "width": 782,
+          "height": 192
+        },
+        "overflowingText": [],
+        "textFragments": 14,
+        "buttons": [
+          {
+            "text": "Was ist noch offen?",
+            "left": 553,
+            "right": 825.84375,
+            "width": 272.84375,
+            "height": 88,
+            "clientWidth": 271,
+            "scrollWidth": 271,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisedokumente",
+            "left": 841.84375,
+            "right": 1086.203125,
+            "width": 244.359375,
+            "height": 88,
+            "clientWidth": 242,
+            "scrollWidth": 242,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Reisezeit",
+            "left": 1102.203125,
+            "right": 1264.328125,
+            "width": 162.125,
+            "height": 88,
+            "clientWidth": 160,
+            "scrollWidth": 160,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Etappen",
+            "left": 553,
+            "right": 707.234375,
+            "width": 154.234375,
+            "height": 88,
+            "clientWidth": 152,
+            "scrollWidth": 152,
+            "whiteSpace": "normal"
+          },
+          {
+            "text": "Frage stellen",
+            "left": 1075.765625,
+            "right": 1335,
+            "width": 259.234375,
+            "height": 88,
+            "clientWidth": 259,
+            "scrollWidth": 259,
+            "whiteSpace": "normal"
+          }
+        ],
+        "exampleSpans": [
+          {
+            "text": "Was ist noch offen?",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisedokumente",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Reisezeit",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          },
+          {
+            "text": "Etappen",
+            "whiteSpace": "normal",
+            "overflow": "visible",
+            "textOverflow": "clip"
+          }
+        ],
+        "formOverflow": "visible",
+        "containerOverflow": "visible"
+      }
+    }
+  ],
+  "blocked": [],
+  "errors": [],
+  "cssSha256": "e82d60bdc4efba43cda44d6252e6a697e2136ae2c3b9e998ae9145ff9789b657",
+  "completedAt": "2026-10-30T11:10:14.858Z",
+  "reviewConclusion": "No open P0-P3 findings in the scoped CSS change. Previous320px/200%-text expanded companion overflow resolved in WorkspaceShell. All7 configurations passed functional and expanded-presentation checks. Visual inspection confirms content wraps rather than being hidden."
+}

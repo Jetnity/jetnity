@@ -99,6 +99,23 @@ offene Bearbeitung und Fokusrückkehr müssen dann in `WorkspaceShell` laufen.
 Das bisherige #1082-Harness verwendet ohne diesen Rahmen weiterhin die alte
 Navigation. Sein PASS darf nicht als Abnahme der kombinierten Oberfläche gelten.
 
+**Erneuter Abgleich nach visuellem Ausbau, 30.10.2026:** Auf #1092 `420258dd`
+ist jetzt zusätzlich `components/trips/TripWorkspaceKopf.tsx` gemeinsam betroffen.
+Damit bestehen drei gemeinsame Dateien. #1082 verschiebt die Lösch-/Verwerfaktion
+in `reiseoptionen`; der neue Workspace-Return in #1092 berücksichtigt diesen
+zukünftigen Prop noch nicht. Ein mechanischer späterer Merge könnte die Aktion
+verlieren. Im aktuellen #1092 ist Löschen/Verwerfen weiterhin vorhanden; der
+Befund ist eine Integrationsanforderung für #1082, kein aktueller Funktionsverlust.
+#1092 kann unabhängig geprüft werden; vor Integration von #1082 müssen diese
+Aktionen in der kombinierten Oberfläche ausdrücklich erhalten und geprüft werden.
+
+Aktueller main-Abgleich mit `d929c6416b1b9349bfe2a3d4a097181c77fd1816`:
+keine gemeinsam geänderten Pfade. Die unabhängige Prüfung bestätigt den Erhalt
+beider Planungswege, Header-Handler, Jetzt-wichtig-/Auditlogik, Route, Vorbereitung,
+Account-/Security-/Export-/Löschzugänge und Provider-Opt-ins. Die Synchronisierung
+erfolgte als normaler Merge; Anwendungspfade app/components/lib/public/styles
+sind gegenüber `420258dd` bytegleich. Neue CI prüft den kombinierten Head.
+
 ## Neue Prüfungen
 
 | Prüfung | Ergebnis / Grenze |
