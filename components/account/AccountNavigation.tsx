@@ -1,5 +1,7 @@
 'use client'
 
+import { useWorkspaceShell } from '@/components/workspace/WorkspaceContext'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
@@ -12,6 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 
 export default function AccountNavigation() {
+  const shell = useWorkspaceShell()
   const pathname = usePathname()
   const leisteRef = useRef<HTMLUListElement>(null)
   const aktivRef = useRef<HTMLAnchorElement>(null)
@@ -27,6 +30,8 @@ export default function AccountNavigation() {
     if (delta == null) return
     leiste.scrollBy({ left: delta, behavior: 'auto' })
   }, [pathname])
+
+  if (shell) return null
 
   return (
     <nav

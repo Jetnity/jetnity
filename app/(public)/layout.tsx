@@ -1,10 +1,7 @@
 // app/(public)/layout.tsx
 import type { Metadata } from 'next'
 
-import PublicNavbar from '@/components/layout/PublicNavbar'
-import Footer from '@/components/layout/Footer'
-import SkipToContentLink from '@/components/layout/SkipToContentLink'
-import BackToTop from '@/components/layout/BackToTop'
+import PublicChrome from '@/components/workspace/PublicChrome'
 import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
 
 const OEFFENTLICHE_METADATA_ORIGIN = oeffentlicheMetadataOrigin()
@@ -45,17 +42,5 @@ export const metadata: Metadata = {
 }
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <SkipToContentLink targetId="public-content" />
-      <div className="relative min-h-screen bg-surface-75">
-        <PublicNavbar />
-        <div id="public-content" tabIndex={-1} className="min-h-[60dvh] outline-none">
-          {children}
-        </div>
-        <Footer />
-        <BackToTop />
-      </div>
-    </>
-  )
+  return <PublicChrome>{children}</PublicChrome>
 }

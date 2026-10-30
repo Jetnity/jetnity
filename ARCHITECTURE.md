@@ -5,6 +5,25 @@ Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligen
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
+### Ergänzung 30.10.2026: gemeinsamer Workspace-Rahmen
+
+`components/workspace/WorkspaceShell` umschliesst seit PR #1092 auf main
+`6b929baec81e6c561142db4e6a9636e1bb30c873` `/planen`, `/reisen`, einzelne Reisen und
+`/account/**`. `PublicChrome` lässt die öffentliche Homepage und sonstige öffentliche
+Seiten im bisherigen Rahmen. Account-Seiten behalten ihre Zugangsprüfungen.
+Der Kontext enthält ausschliesslich DOM-Ziele und Navigationsdarstellung.
+`TripWorkspace` projiziert vorhandene Aktionen, Titel und Bereichswechsel über
+Portale in diesen Rahmen und bleibt alleiniger Eigentümer der Reise-, Detail-,
+Fokus- und Verlaufzustände. Ohne Rahmenkontext bleibt die bisherige Navigation
+für vorhandene Prüfoberflächen bestehen. Keine zusätzliche Reiseablage oder API.
+Der Stand ist gemergt und in Production nachgeprüft; der Beleg steht auf PR #1092.
+Der freigegebene Folgeauftrag `WORKSPACE_THEME_1` ergänzt ausschliesslich lokale
+Darstellung: `useWorkspaceTheme` liefert standardmässig `light` und wechselt per
+Header-Aktion zu `green`. `useSyncExternalStore` liest nach der Hydrierung die
+optionale Browserpräferenz `jetnity:workspace-theme:v1`. Weder Kontodaten noch
+Reisen werden dafür gespeichert oder neu geladen; die Theme-Regeln gelten nur
+innerhalb des Workspace und setzen keinen globalen System-/HTML-Modus.
+
 ---
 
 ## 1. Technischer Stack
