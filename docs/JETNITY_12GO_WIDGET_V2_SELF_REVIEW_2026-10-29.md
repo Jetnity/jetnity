@@ -27,3 +27,7 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 ## Recommendation
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
+
+## R3 addition
+
+The embed route cannot be opened with a query or cookie. The frame component has no source address, and the trip page does not render it. The new browser check uses a local stub, so it does not prove the official form again and it does not prove search. A reviewer should not treat height 800 on that stub as a new vendor acceptance. The R2 measurement is still the vendor-form evidence. Native CI and Preview must be read on the R3 head, not on `daf082b3`.

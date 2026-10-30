@@ -35,6 +35,10 @@ Until both are decided, do not add a visitor load button and do not mount the of
 
 `lib/providers/twelve-go/affiliate/**`, `MobilitaetBereich.tsx`, privacy/CMP, DiscoverCars, Viator, GetYourGuide, UX, Supabase, Auth, RLS, secrets, package, and CI. `docs/ACTIVE_WORK_STATUS.md` was not updated: this task forbids it, even though the progress policy names it. A later writer should reconcile that only with Technical Lead scope.
 
+## R3
+
+Main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged without a force-push. The visitor page is still closed. `/embed/twelve-go` is a 404. The iframe contract is `allow-scripts` only at 100% by 800px and is not mounted on the trip page. A local stub proved size and keyboard. The official form was not requested again. Search remains `NOT_PROVED`. Consent #1087 is still required before any live frame.
+
 ## Next step
 
-Technical Lead reviews the R1 correction head. Older CI, Preview, and review gates on `c2fa11dc` are stale. This session does not start another slice.
+Technical Lead reviews the R3 head. Older CI and Preview on `daf082b3` do not cover it. This session does not start another slice.

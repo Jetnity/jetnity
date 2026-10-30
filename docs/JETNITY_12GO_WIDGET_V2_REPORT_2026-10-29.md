@@ -78,6 +78,16 @@ Dated transfer at 390: planned date visible, absent from the href, `CHF` absent 
 | Vercel Preview and GitHub CI on `c2fa11dc` | App job `123714720799` failed at schema-bezug. That head is invalidated. New CI and Preview are not evidence until they finish on the correction head |
 | Production acceptance, #968 | not claimed |
 
+## R3 source preparation
+
+Production execution is still closed. `twelveGoWidgetDarfAusfuehren({ enabled: true })` is false after an informative grant. The new route `app/embed/twelve-go/route.ts` returns 404 for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS, including `?consent=1` and a cookie. The body is `Not found` and the CSP is `script-src 'none'` with no `https:` allowance.
+
+`TwelveGoWidgetRahmen` can render an iframe with `sandbox="allow-scripts"`, width 100%, and height 800px, and only for the synthetic purpose. It has no `src`. `TwelveGoAffiliateLinks` does not import it. V1 links are unchanged.
+
+Local Playwright at 320 and 390 put a same-origin stub form in that frame after a click. Parent `contentDocument` was null. Origin, destination, and date were inside the 800px window. One character was typed. No request reached 12Go, trainbusferry, or googleapis. This does not repeat the official widget load. That visibility remains the R2 audit: default iframe 300×150 clipped a 369px document; 800px showed the real controls. Search and booking stay `NOT_PROVED`.
+
+`apps/widgets-host` was not edited. Its separate inert 12Go route is another writer's host.
+
 ## Security and cost
 
 No new secret, API key, database, Auth, RLS, provider contract, or runtime cost. The partner id and sub ids are the public values already in the task. Direct insertion of the official snippet would execute an old jQuery build in the Jetnity origin and send the page origin to 12Go and Google. That path is not shipped.

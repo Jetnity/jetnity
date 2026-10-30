@@ -3,7 +3,11 @@
 Date: 29 October 2026 Europe/Zurich
 Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
-State: **CONSENT_BLOCKED / DRAFT / STOP for independent Technical Lead review**
+State: **CONSENT_BLOCKED / DRAFT / R3 source preparation / STOP for independent Technical Lead review**
+
+## R3 on the synced branch
+
+Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged. `vendorScriptMayExecute` and `TWELVE_GO_WIDGET_FREIGABE.ausfuehrbar` both stay false. `/embed/twelve-go` answers 404 with no vendor document. The visitor surface still has no iframe and no load button. A localhost stub proved the 800px opaque frame and keyboard input without calling 12Go. The official form was not loaded again; the R2 measurement remains that evidence. CI and Preview for the R3 head are not evidence until they finish. The exact head is the tip after the R3 commits and is posted on the PR.
 
 ## Session
 
