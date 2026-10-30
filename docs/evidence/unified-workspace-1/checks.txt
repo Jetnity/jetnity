@@ -10,6 +10,7 @@ Focused tests: 124 passed, 0 failed
 Browser audit: 19 passed, 0 failed (results.json)
 Route/detail browser tests, standalone: 17 passed, 0 failed
 Dead code / exports / dependencies / API protection / schema reference: PASS
+Operating-mode guard: PASS, BASE above against implementation commit 7f6a8bd0.
 
 Full suite: NOT GREEN
 7553 tests; 7535 passed; 13 failed; 5 skipped.

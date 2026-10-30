@@ -83,6 +83,7 @@ zusätzlich; dies ersetzt keine allgemeine Datenschutz-/Providerabnahme.
 | Bestehende Route-/Detail-Browsertests, einzeln | 17/17 PASS |
 | Dead-Code / Exports / Dependencies | PASS |
 | API-Schutz / Schema-Bezug | PASS; keine geänderten API- oder Schema-Dateien |
+| Operating-Mode-Guard | PASS gegen den exakten Basis-Commit und Implementierungs-Commit `7f6a8bd0` |
 | Gesamt-Testlauf | **NICHT GRÜN:** 7’553 Tests, 7’535 PASS, 13 FAIL, 5 SKIP; siehe Einordnung unten |
 
 Die 13 Fehlschläge dürfen nicht als erfolgreicher Gesamt-Testlauf berichtet werden:
