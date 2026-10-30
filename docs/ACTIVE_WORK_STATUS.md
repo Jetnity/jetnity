@@ -3,7 +3,7 @@
 <!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_BEGIN -->
 ## Aktueller Writer — UX V1 Route Design Alignment 1
 
-30 October 2026, evening Europe/Zurich. Draft PR #1082, branch `feat/ux-v1-u1c-route-design-alignment-1`, tracking #1081. Session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName=grok-4.7-high-fast`. R6 corrects green Planpunkt contrast and the selected day marker. STOP for independent exact-head review. This pointer is not Ready, merge, hosted account acceptance, or #1068. #751 remains the canonical live index. The blocks below stay historical.
+30 October 2026, evening Europe/Zurich. Draft PR #1082, branch `feat/ux-v1-u1c-route-design-alignment-1`, tracking #1081. Session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName=grok-4.7-high-fast`. R6 test correction measures every editor label on the create and edit forms. STOP for independent exact-head review. This pointer is not Ready, merge, hosted account acceptance, or #1068. #751 remains the canonical live index. The blocks below stay historical.
 <!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_END -->
 
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->

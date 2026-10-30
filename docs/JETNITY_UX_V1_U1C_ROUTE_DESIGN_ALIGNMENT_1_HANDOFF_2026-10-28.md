@@ -1,5 +1,19 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — HANDOFF
 
+30 October 2026, evening Europe/Zurich. STOP after the R6 test correction. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`.
+
+## Read first
+
+1. This handoff, then the R6 test correction in `docs/JETNITY_UX_V1_U1C_ROUTE_DESIGN_ALIGNMENT_1_STATUS_2026-10-28.md`
+2. The Technical Lead R6 v2 request on PR #1082
+3. `docs/JETNITY_UX_V1_U1C_ROUTE_DESIGN_ALIGNMENT_1_TASK_AMENDMENT_3_2026-10-30.md`
+
+The review head is the branch tip after this status commit. Re-fetch before review. Main at the start of this correction was `ac2199dba64e458a20a155b5d1bb826ea99949d3`. CI `41102456996` and Preview `dpl_zxLWKs58D8NvEoWW16Zg9JFnhiis` gate `802f9159` only.
+
+Do not mark Ready. Do not merge. Do not start a follow-up. Hosted account acceptance under #968 stays a separate gate. Immediate review fixes stay in this same session.
+
+## Previous handoff
+
 30 October 2026, evening Europe/Zurich. STOP. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`.
 
 ## Read first

@@ -1,8 +1,14 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — REPORT
 
-30 October 2026, evening Europe/Zurich. R6 on the same session. Model read-back `grok-4.7-high-fast`.
+30 October 2026, evening Europe/Zurich. R6 test correction on the same session. Model read-back `grok-4.7-high-fast`.
 
-## R6
+## R6 test correction
+
+`editorPruefen` walks every visible heading, label, paragraph, field and button in the mounted form. Create and edit both run in light and green at 320, 390, 768 and 1440, and at root 32px. Root 32px is root font size, not browser zoom. Missing “Enddatum, optional” is rejected even when earlier labels are present. A painted Enddatum label fails 4.5:1 on its own.
+
+Below `sm`, the helper and the edit preview were `text-ink-700` on white, measured at 4.06:1. They now use `text-ink-900`. No save or validation behaviour changed.
+
+## R6 presentation
 
 `PlanpunktEditor` now carries `data-planpunkt-editor`. The green workspace rule paints that form with the panel background and keeps headings, labels, helper text, inputs, the error, Cancel and Save paired with it. The old responsive `sm:bg-surface-50` utility remains for the light theme and for the legacy header. The mounted test removes the hook at 768px and records contrast below 4.5:1, then restores the hook.
 

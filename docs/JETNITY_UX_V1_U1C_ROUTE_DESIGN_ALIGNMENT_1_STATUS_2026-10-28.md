@@ -1,8 +1,14 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-30 October 2026, evening Europe/Zurich. **R6 correction delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+30 October 2026, evening Europe/Zurich. **R6 test correction delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
 
-## R6
+## R6 test correction
+
+The mounted editor audit now takes the open create or edit form as its locator. It requires the heading, every date and time label, the helper sentence, and Cancel/Save, and it measures each rendered node. A list that keeps the first labels and drops “Enddatum, optional” is rejected. Painting the Enddatum label with the form background drops that label below 4.5:1 while “Ort oder Aktivität” stays readable; clearing the paint restores the form. The pale-panel counterexample, one saved note, reload, edit, and browser Back remain.
+
+The same audit found the helper and edit-preview sentences at 4.06:1 on white below the `sm` breakpoint, because they used `text-ink-700` outside the pale panel. Those sentences now use `text-ink-900`. That is the only production change in this correction. Green still remaps that token to the light ink on the dark editor panel.
+
+## R6 presentation
 
 Reviewed candidate `941ee51c4f97e978715add3f5a2fe2e69248e0e0`. Same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`. Mode NORMAL. Main still `ac2199dba64e458a20a155b5d1bb826ea99949d3`.
 

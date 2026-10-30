@@ -1,8 +1,15 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — SELF REVIEW
 
-30 October 2026, evening Europe/Zurich. Author review of R6. Not an independent Technical Lead PASS.
+30 October 2026, evening Europe/Zurich. Author review of the R6 test correction. Not an independent Technical Lead PASS.
 
-## R6
+## R6 test correction
+
+- The audit no longer stops at the first label. Date and time labels are counted and measured on the create form and on the edit form.
+- The Enddatum counterexample fails only that label. The pale-panel counterexample still removes the editor hook at 768px.
+- The `text-ink-900` change is limited to the four editor sentences that were using `text-ink-700`. It was made because the new audit measured 4.06:1 at 320px in the light theme.
+- CI 41102456996 belongs to `802f9159`. Its run-level success is not reused as the gate for this correction head. The earlier review also found the App job steps inconsistent, so those totals are not restated as a certified PASS.
+
+## R6 presentation review
 
 - The editor hook does not change save, validation or draft state. The guest note was created, reloaded, edited and reloaded as one item.
 - The failing contrast case uses the compiled stylesheet with the hook removed, at the `sm` width the screenshot described.
