@@ -245,6 +245,7 @@ export default function PlanpunktEditor({
   }
   return <form ref={formular} aria-label={item ? `Punkt bearbeiten: ${item.title}` : 'Punkt hinzufügen'} aria-busy={laeuft}
     onSubmit={speichern} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); event.preventDefault(); if (!laeuft) onAbbrechen() } }}
+    data-planpunkt-editor=""
     className="mt-4 grid min-w-0 grid-cols-1 gap-4 py-4 [overflow-wrap:anywhere] sm:rounded-2xl sm:border sm:border-line-200 sm:bg-surface-50 sm:p-4">
     <h4 className="text-lg font-semibold text-brand-800">{original ? 'Punkt bearbeiten' : 'Neuer Punkt'}</h4>
     {!original && <label className="grid min-w-0 gap-1 text-sm">Art<select disabled={laeuft} className={feld} value={kind} onChange={e => setKind(e.target.value as TripItemKind)}>
