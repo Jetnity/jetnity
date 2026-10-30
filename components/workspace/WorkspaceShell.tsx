@@ -29,6 +29,12 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [menuPath, setMenuPath] = useState(pathname)
+  // The drawer belongs to its route. Browser Back/Forward must release the page.
+  if (menuPath !== pathname) {
+    setMenuPath(pathname)
+    setMobileOpen(false)
+  }
   const [navigation, setNavigation] = useState<HTMLElement | null>(null)
   const [mobile, setMobile] = useState<HTMLElement | null>(null)
   const [actions, setActions] = useState<HTMLElement | null>(null)
@@ -60,9 +66,9 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     closeRef.current?.focus()
     return () => {
       document.body.style.overflow = before
-      if (restoreMenuFocus.current && trigger?.getClientRects().length) trigger.focus({ preventScroll: true })
+      if (restoreMenuFocus.current && window.location.pathname === pathname && trigger?.getClientRects().length) trigger.focus({ preventScroll: true })
     }
-  }, [mobileOpen])
+  }, [mobileOpen, pathname])
 
   useEffect(() => {
     const header = headerRef.current

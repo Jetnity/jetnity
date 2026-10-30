@@ -13,12 +13,13 @@ Veröffentlichung bleiben unverändert.
 
 - Basis: `8e667661b490758b25bdd5be720421cea33fda9c`.
 - Unabhängiger erster Review: `690c91832a971063396ed70c33d9bc7348e6f388`.
-- Korrekturen: der Commit, der diesen Nachtrag und `review-regressions.mjs`
-  einführt. Der exakte neue Hash wird im PR-Kommentar mit CI/Review verknüpft.
+- Erste Korrekturen und zweiter unabhängiger Review: `4fdf1ac6365e9165afa9785aba7acf85e5fd0576`.
+- Zweite Korrekturen: der Commit mit diesem aktualisierten Nachtrag. Der exakte
+  neue Hash wird im PR-Kommentar mit CI/Review verknüpft.
 - Lokaler neuer Browserlauf: `http://127.0.0.1:3472`, tatsächliche Next-Anwendung,
   synthetische Gastreise `/reisen/trip-unified-workspace-audit`.
-- Ende der Regressionsprüfung: **30.10.2026 01:56:51 CET**.
-  Ende des wiederholten 19-Punkte-Audits: **01:56:55 CET**.
+- Ende der sechs Regressionsprüfungen: **30.10.2026 02:14:07 CET**.
+  Wiederholter 19-Punkte-Audit: **02:12 CET**; nativer Zoom: **02:15:14 CET**.
 - Frische isolierte Chrome-Kontexte; kein persönliches Profil importiert.
   Lokale Dummy-Backendadresse, keine Provider-/KI-/Datenbankaufrufe.
 
@@ -31,10 +32,15 @@ Veröffentlichung bleiben unverändert.
 | P2 | Tastaturfokus springt nach Bereichswahl zurück zum Menü | Drawer öffnen, Vorbereitung per Enter wählen. Allgemeines Schliessen überschrieb den Ziel-Fokus. Jetzt getrennte Behandlung: Navigation lässt Ziel-Fokus bestehen, Escape/Schliessen und Wahl desselben Ziels kehren zum Auslöser zurück. Voll-App-Prüfung bestanden. |
 | P3 | Sichtbare Beschriftung „Menü“ auf Telefonen verborgen | Beschriftung wieder sichtbar. Reisetitel erhält schmal eine eigene Zeile. Neue Prüfung kontrolliert Sichtbarkeit, Titelbreite und Seitenüberlauf bei 320 px. |
 | P3 | Bestehender „Nach oben“-Knopf im neuen Rahmen verschwunden | Bestehende Komponente wieder im Rahmen, mit Abstand zur mobilen Navigation. Tatsächlicher Klick und Scrollposition 0 geprüft; Knopfunterkante 735 px, Navigationsoberkante 771 px. |
+| P2 (zweiter Review) | Detail → gleicher Hauptbereich verliert ursprünglichen Rückkehrfokus | Organisieren → Flüge → Drawer → Organisieren per Enter. Gleiche Ansicht zählt bei offenem Detail als Navigation; der ursprüngliche Flüge-Auslöser erhält wieder den Fokus. Echter Browserlauf bestätigt das bestehende Verhalten. |
+| P2 (zweiter Review) | Browser-Zurück lässt den Drawer offen und sperrt den neuen Inhalt | Meine Reisen → synthetische Reise → Menü öffnen → Browser-Zurück. Der Drawer wird bei Pfadwechsel zurückgesetzt; Inert-Zustand und Scroll-Sperre werden freigegeben. Zurück und Vorwärts im echten Verlauf geprüft. |
 | Integrationsrisiko | Geometrieabfragen wählen zuerst unsichtbare Desktopnavigation | Alle Kandidaten werden dem bestehenden Sichtbarkeitsfilter übergeben. Mobile Navigation kennzeichnet zusätzlich ihren `bottom`-/`flow`-Zustand für den geteilten Geometrievertrag. |
 
-Die fünf neuen Voll-App-Regressionsprüfungen schlugen vor den Korrekturen fehl
-und bestehen danach. Der Writer hat zusätzlich Screenshots angesehen: Ein zunächst
+Die ersten fünf Voll-App-Regressionsprüfungen schlugen vor den Korrekturen fehl
+und bestanden danach. Der zweite unabhängige Review bestätigte 5/5 PASS auf
+`4fdf1ac`, fand aber die zwei zusätzlichen P2-Fälle. Beide wurden reproduziert
+und korrigiert; die erweiterte Suite besteht jetzt mit 6/6 PASS. Der Detailtest
+erwartet bewusst den originalen Flüge-Auslöser, nicht einen neuen Fokusvertrag. Der Writer hat zusätzlich Screenshots angesehen: Ein zunächst
 zu schmaler Reisetitel und ein nach links versetztes Kontomenü bei grosser Schrift
 wurden vor dem letzten Lauf ebenfalls korrigiert. Diese Eigenprüfung ersetzt
 die erneute unabhängige Prüfung des neuen Commits nicht.
@@ -48,10 +54,14 @@ und Provider-Opt-ins bleiben in ihrem bisherigen Eigentümer. Echte Gast-Persist
 Titeländerung nach Bestätigung und Reload wurden erneut über die Anwendung geprüft.
 Das ist kein Nachweis für angemeldete Kontoschreibpfade oder einen KI-Aufruf.
 
-Beim Abgleich mit #1082, Head `f2ff4928c551125b250706793195ee849fce0ce6`, ist nur
-`components/trips/TripWorkspace.tsx` gemeinsam geändert. Die Basen enthalten
+Beim ersten Abgleich mit #1082, Head `f2ff4928c551125b250706793195ee849fce0ce6`, war
+nur `components/trips/TripWorkspace.tsx` gemeinsam geändert. Die Basen enthalten
 dasselbe ursprüngliche Datei-Blob; die betroffenen Implementierungshunks sind
-getrennt. Der neue Rahmen verwirft oder übernimmt #1082 nicht.
+getrennt. Seit der Review-Korrektur ist zusätzlich `components/layout/BackToTop.tsx`
+gemeinsam betroffen: #1092 ergänzt ein Datenattribut, #1082 erweitert die
+Positionierung. Ein Konflikt ist dadurch nicht bewiesen; die spätere gemeinsame
+Prüfung muss einen eindeutigen Abstandseigentümer berücksichtigen. Der neue Rahmen
+verwirft oder übernimmt #1082 nicht.
 
 Reihenfolge: erst den gemeinsamen Rahmen vollständig prüfen, danach die kompakte
 Routen-/Detailarbeit gegen diesen Rahmen aktualisieren und gemeinsam testen.
@@ -65,14 +75,15 @@ Navigation. Sein PASS darf nicht als Abnahme der kombinierten Oberfläche gelten
 | Prüfung | Ergebnis / Grenze |
 |---|---|
 | Wiederholter vollständiger Gast-Audit | **19/19 PASS**, Breiten 320/390/768/1440, vier Bereiche, Historie, Formulare, Gastschutz, echte Gast-Speicherung, Menü und Recht |
-| Neue Review-Regressionsprüfungen | **5/5 PASS**, siehe Tabelle oben; keine Laufzeitfehler oder verbotenen Requests |
+| Neue Review-Regressionsprüfungen | **6/6 PASS**, siehe Tabelle oben; keine Laufzeitfehler oder verbotenen Requests |
 | Gezielte Quell-/Browsertests | **52/52 PASS**: Konto-Navigation, Workspace-Modi/-Bedienung, Mobile-Accessibility, Shell, bestehende Route-/Detail-Suite |
 | Production-Build inklusive Typprüfung | PASS nach den abschliessenden UI-Korrekturen |
 | Lint geänderter Komponenten/Skript | 0 Fehler; 3 vorhandene TripWorkspace-Warnungen (2 Effect-State, 1 Effect-Dependencies) |
 | Hygiene | Dead-Code, Exports, Dependencies, API-Schutz und Schema-Bezug PASS; keine Migration |
-| 200 % Text | Wurzelschrift 32 px; kein nativer Browserzoom |
-| Authentifizierte Kontowege | **BLOCKED in der Vorschau**, noch keine zulässige Testkonfiguration |
-| VoiceOver / reale Mobilgeräte / nativer Zoom | **NICHT GEPRÜFT** |
+| 200 % Text | Wurzelschrift 32 px; getrennt vom nativen Zoom geprüft |
+| Echter Chrome-Zoom 200 % | **3/3 PASS**: Chrome-Einstellungsoberfläche, neue temporäre Profile; Fenster 1440/780/640 → CSS-Breiten 720/390/320, DPR 1→2, Wurzelschrift unverändert 16 px. Vier Bereiche, Menü, Fokus und Rechtslink geprüft. |
+| Authentifizierte Kontowege | **NOCH OFFEN**; Preview-Konfiguration separat freigegeben und eingerichtet, neuer Build und Testkonto-Prüfung folgen |
+| VoiceOver / reale Mobilgeräte | **NICHT GEPRÜFT** |
 | Gesamte Testsuite | In dieser Nacharbeit nicht erneut ausgeführt. Der erste lokale Gesamtlauf bleibt mit den dokumentierten 13 Fehlschlägen nicht grün; keine Umdeutung |
 
 Der getrennte erste unabhängige Reviewer führte zusätzlich 31 Tests erfolgreich
@@ -92,11 +103,18 @@ Read-only bei Vercel geprüft:
   Es gibt keinen generischen Preview-Eintrag als Ersatz. Production-/Development-
   Werte werden nicht kopiert. Kein Schutz wurde abgeschaltet.
 
-Supabase-Metadaten weisen die vorhandene Branch `develop` als getrennt und nicht
-standardmässig aus. Noch keine Schlüssel abgerufen, Daten gelesen, Testkonten
-angelegt oder Einstellungen verändert. Für ausschliesslich diese Preview-Anbindung
-ist die zusätzliche Zustimmung angefragt. Noch nicht erteilt zum Zeitpunkt dieses
-Nachtrags. Es wird keine erneute Vercel-Anmeldung als Voraussetzung behauptet.
+Supabase-Metadaten bestätigen die vorhandene Branch `develop`, Projekt
+`yfvbxvijcorffwxbxahl`, als getrennt, nicht standardmässig und ACTIVE_HEALTHY.
+Der Product Owner hat am 30.10.2026 ausdrücklich zugestimmt: „Ja, nur Vorschau
+#1092 einrichten und prüfen“. Ausschliesslich `NEXT_PUBLIC_SUPABASE_URL` und
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` wurden für target `preview`, gitBranch
+`codex/unified-workspace-navigation` angelegt. Beide Werte wurden über den
+Einzelabruf zurückgelesen und intern mit dem bestehenden develop-URL/anon-Key
+verglichen; Übereinstimmung bestätigt. Der Listenabruf lieferte trotz decrypt
+noch verschlüsselte Werte und wurde nicht als Inhaltsnachweis gewertet.
+Keine Werte im Bericht/Repository; keine Production-/Development-/fremden
+Branch-Werte geändert, keine Service-/Provider-Schlüssel übertragen, keine
+DB-/Auth-/RLS-Änderung. Der neue Preview-Build und die Kontoabnahme stehen aus.
 
 Die funktionierende Gastoberfläche erlaubt keinen Schluss auf Konto, Logout,
 Reisebegleiter-Backend oder vollständigen Datenerhalt in angemeldeten Konten.
@@ -106,6 +124,9 @@ Die Vorschau darf deshalb nicht als vollständiger Produkt-PASS gelten.
 
 - [Fehlgeschlagene Regressionen vorher](evidence/unified-workspace-1/review/before-results.json)
 - [Korrekturen im Voll-App-Lauf](evidence/unified-workspace-1/review/after-results.json)
+- [Zweite Review-Runde vor Korrektur](evidence/unified-workspace-1/review/second-round-before-results.json)
+- [Nativer Chrome-Zoom 200 %](evidence/unified-workspace-1/review/native-zoom-results.json)
+- [320 CSS-Pixel bei nativem Zoom](evidence/unified-workspace-1/review/320-native200.png)
 - [Wiederholter 19-Punkte-Audit](evidence/unified-workspace-1/review/full-results.json)
 - [Kontomenü vorher überlagert](evidence/unified-workspace-1/review/menu-before.png)
 - [Kontomenü nachher über der Rücksprungleiste](evidence/unified-workspace-1/review/menu-after.png)
@@ -119,6 +140,6 @@ Browser. Keine persönlichen Sitzungen, Konto-/Bankdaten oder Zugangsdaten.
 ## Nächste Entscheidungen
 
 Erneute unabhängige Prüfung und CI auf dem neuen exakten Head, danach zulässige
-Konto-/Preview-Prüfung sowie die offenen Zoom-/Geräteprüfungen. Bis zum belegten
+Konto-/Preview-Prüfung sowie die offenen VoiceOver-/Geräteprüfungen. Bis zum belegten
 Abschluss bleibt #1092 Draft. Keine automatische Zusammenlegung mit #1082,
 keine Provideraktivierung, kein Merge, kein Live-Deployment.

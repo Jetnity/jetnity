@@ -1,5 +1,5 @@
 {
-  "time": "2026-10-30T00:56:51.772Z",
+  "time": "2026-10-30T01:14:07.063Z",
   "base": "http://127.0.0.1:3472",
   "isolation": "Fresh context per test, synthetic local guest data, no external requests",
   "limits": [
@@ -9,6 +9,10 @@
   "results": [
     {
       "name": "Drawer keyboard navigation focuses the new content; dismissal returns to menu",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser history releases the mobile drawer and the destination page",
       "status": "PASS"
     },
     {

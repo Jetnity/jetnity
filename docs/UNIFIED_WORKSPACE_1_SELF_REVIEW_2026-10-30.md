@@ -49,7 +49,7 @@ Nach unabhängigem Review auf `690c9183` wurden weitere Fehler korrigiert:
 Kontomenü über der Rücksprungleiste, Umbruch/Position bei 200 % Text,
 Ziel-Fokus nach Tastaturnavigation sowie Erhalt von „Nach oben“ inklusive Abstand
 zur mobilen Navigation. Der neue Voll-App-Lauf besteht aus 19 bestehenden und
-5 ergänzenden Browserprüfungen, alle PASS; 52 gezielte Tests bestanden zusätzlich.
+6 ergänzenden Browserprüfungen, alle PASS; 52 gezielte Tests bestanden zusätzlich.
 Die unabhängige erneute Prüfung muss auf dem neuen Commit erfolgen. Einzelheiten
 und Grenzen im [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
 
@@ -59,7 +59,9 @@ Typecheck, Lint und Hygieneprüfungen bestanden. Der Gesamt-Testlauf ist wegen
 der im [Report](UNIFIED_WORKSPACE_1_REPORT_2026-10-30.md) einzeln beschriebenen
 13 Fehlschläge **nicht grün**.
 
-Angemeldete Kontoreisen, Reisebegleiter-Backend, native Zoom-/VoiceOver- und
-physische Mobilprüfung bleiben offen. Der Code erhält diese Wege, aber daraus
+Echter Chrome-Zoom 200 % besteht separat mit 3/3 Szenarien. Die zweite Review-
+Runde führte ausserdem zur Korrektur des Detail-Rückkehrfokus und des Drawers
+bei Browser-Zurück/Vorwärts. Angemeldete Kontoreisen, Reisebegleiter-Backend,
+VoiceOver und physische Mobilprüfung bleiben offen. Der Code erhält diese Wege, aber daraus
 wird kein Browser-PASS abgeleitet. Die Überschneidung mit PR #1082 erfordert
 eine Entscheidung des Technical Lead vor Integration. Keine Merge-/Livefreigabe.

@@ -64,7 +64,7 @@ export default function WorkspaceTripChrome(props: {
       aria-current={props.ansicht === view ? 'page' : undefined}
       onClick={(e) => {
         props.onWechsel(view, e.detail === 0)
-        if (props.ansicht === view) shell.closeNavigation()
+        if (props.ansicht === view && !props.detailOffen) shell.closeNavigation()
         else shell.finishNavigation()
       }}>
       <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{label}</span>

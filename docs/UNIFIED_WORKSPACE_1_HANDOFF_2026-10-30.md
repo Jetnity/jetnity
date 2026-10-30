@@ -7,15 +7,16 @@ Der vom Product Owner gewünschte gemeinsame Konto-/Trip-Rahmen ist auf
 **Review-Fortsetzung 30.10.2026:** Dieser Work/Codex-Chat übernimmt auf ausdrücklichen
 Wunsch des Product Owners die Technical-Lead-Rolle für #1092. Zwei unabhängige
 read-only Reviews haben auf `690c9183` UI-Regressionsbefunde geliefert; der Root-
-Writer hat sie behoben. Neuer lokaler Voll-App-Lauf: **24/24 PASS**, 52 gezielte
-Tests PASS, Build PASS. Erneute unabhängige Prüfung/CI auf dem neuen Commit bleiben
+Writer hat sie behoben. Neuer lokaler Voll-App-Lauf: **25/25 PASS**, 52 gezielte
+Tests PASS, Build PASS; zusätzlich 3/3 echte Chrome-Zoom-Szenarien PASS. Erneute unabhängige Prüfung/CI auf dem neuen Commit bleiben
 vor Gesamtfreigabe erforderlich. [Vollständiger Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
 
 Vercel-Zugriff funktioniert. Das exakte bisherige Preview von `690c9183` antwortet
 unter `/account` mit 503 „Anmeldung derzeit nicht prüfbar“; diesem Branch fehlt
 eine Preview-Testkonfiguration. `develop` ist als getrennte Testbranch identifiziert.
-Die Zustimmung für ausschliesslich zwei öffentliche Verbindungswerte in diesem
-Preview ist angefragt; noch keine Einstellung geändert. Kein Production-Fallback.
+Der Product Owner hat die beiden öffentlichen Verbindungswerte nur für dieses
+Preview freigegeben. Sie wurden für develop gesetzt und intern zurückgelesen.
+Neuer Preview-Build und Konto-Prüfung folgen. Kein Production-Fallback.
 
 ## Was der Besucher erhält
 
@@ -37,8 +38,9 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
 - **Gesamtlauf nicht grün:** 11 fehlende lokale PostgreSQL-Tests, 1 auch am
   unveränderten Basis-Commit reproduzierter Geometrie-Timeout und 1 beendeter
   Browser-Testprozess (nachher separat 17/17 PASS). Details und Belege im Report.
-- Angemeldeter Konto-Workspace, echte Testdatenbank, KI-Backend, native
-  Browserzoom-/VoiceOver-/Geräteprüfung sind noch nicht unabhängig abgenommen.
+- Angemeldeter Konto-Workspace, echte Testdatenbank, KI-Backend sowie
+  VoiceOver-/Geräteprüfung sind noch nicht abgenommen. Echter Chrome-Zoom wurde
+  lokal separat geprüft; er ersetzt keine Prüfung physischer Geräte.
 
 ## Erforderliche Fortsetzung
 
@@ -47,6 +49,8 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
 2. Überschneidung mit dem offenen PR #1082 abgleichen. Keine automatische
    Übernahme oder stilles Verwerfen einer der Arbeiten. Erster unabhängiger Abgleich
    abgeschlossen: nur `TripWorkspace.tsx` gemeinsam, keine überlappenden Hunks.
+   Nach der Review-Korrektur ist zusätzlich `BackToTop.tsx` gemeinsam betroffen
+   (in #1092 nur Datenattribut); der Geometrievertrag bleibt gemeinsam zu prüfen.
    Reihenfolge: gemeinsamen Rahmen abnehmen, danach #1082 gegen diesen Rahmen
    aktualisieren und in der echten kombinierten Oberfläche prüfen.
 3. CI und geeignete geschützte Testvorschau auf dem geprüften Commit abnehmen.
@@ -64,5 +68,6 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
 - [Selbstprüfung](UNIFIED_WORKSPACE_1_SELF_REVIEW_2026-10-30.md)
 - `scripts/unified-workspace-1/audit.mjs` und `fixture.mjs`
 
-Es wurden weder Datenbank-/Vercel-Einstellungen noch Provider-Schlüssel,
-Abonnements, Kontodaten oder der bisherige Live-Stand verändert.
+Einzige externe Änderung: zwei ausdrücklich freigegebene Vercel-Preview-Werte
+nur für #1092 und die vorhandene develop-Testbranch. Datenbankstruktur,
+Auth/RLS, Anbieter-Schlüssel und Live-Stand bleiben unverändert.

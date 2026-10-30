@@ -4,7 +4,9 @@
 
 **Fortsetzung:** Der [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md)
 dokumentiert die unabhängigen Befunde auf `690c9183`, die anschliessenden
-Korrekturen und den neuen lokalen Lauf um 01:56 CET (24/24 Browserprüfungen).
+Korrekturen und den neuen lokalen Lauf um 02:14 CET (25/25 Browserprüfungen) sowie die
+separate echte Chrome-Zoom-Prüfung (3/3). Die untenstehenden Erstlauf-Grenzen
+sind historisch; der Review-Nachtrag hält den aktuellen Status fest.
 Die folgenden ersten Prüfergebnisse bleiben als historischer Nachweis erhalten.
 
 Die öffentliche Startseite behält ihre Navigation und Darstellung. Planen,

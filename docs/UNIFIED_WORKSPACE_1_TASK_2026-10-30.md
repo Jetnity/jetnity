@@ -24,9 +24,13 @@ bei ihren bisherigen Verantwortlichen. Der Review-Auftrag steht zusätzlich in
 [PR #1092](https://github.com/Jetnity/jetnity/pull/1092#issuecomment-6511963252).
 
 Zulässige Nacharbeit: die im unabhängigen Review gefundenen Darstellungs-, Fokus-
-und Navigationsregressionen im bestehenden Branch beheben und neu prüfen. Eine
-Anbindung der Vorschau an die vorhandene Testdatenbank ist separat angefragt,
-aber bei Erstellung dieses Nachtrags noch nicht freigegeben oder vorgenommen.
+und Navigationsregressionen im bestehenden Branch beheben und neu prüfen. Die
+Anbindung ausschliesslich der Vorschau #1092 an die vorhandene Testdatenbank
+„develop“ wurde anschliessend vom Product Owner ausdrücklich freigegeben.
+Erlaubt sind nur NEXT_PUBLIC_SUPABASE_URL und NEXT_PUBLIC_SUPABASE_ANON_KEY
+für diesen Preview-Branch sowie Kontoprüfungen mit künstlichen Testdaten.
+Beide Werte sind gesetzt und zurückgelesen. Keine DB-/Auth-/RLS-Änderung, keine
+Production-/Provider-Konfiguration; keine neue Freigabe für andere Vorschauen.
 
 ## Ziel und Grenzen
 
@@ -37,7 +41,8 @@ Neue Reise und Kontomenü oben rechts; mobile Navigation eigenständig mit
 beschriftetem Menü und Reisebereichen. Tooltip auch bei Tastaturfokus.
 
 Nur Darstellung/Navigation. Kein neues Reisemodell, keine Migration, keine
-Auth-/RLS-/API-Änderung, keine Anbieteraktivierung oder Konfigurationsänderung.
+Auth-/RLS-/API-Änderung, keine Anbieteraktivierung. Einzige freigegebene Konfigurationsausnahme ist
+die oben genannte, getrennte Preview-Testanbindung.
 Keine zusätzlichen Bibliotheken, laufenden Kosten oder Modell-/Provideraufrufe.
 Geschäftslogik, manuelle und intelligente Planung, Jetzt wichtig, gespeicherte
 Reisen, Reiseprüfung, Anbieter-Opt-in und sämtliche Kontofunktionen bleiben.
