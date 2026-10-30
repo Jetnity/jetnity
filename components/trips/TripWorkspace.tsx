@@ -135,7 +135,7 @@ function bandVon(el: Element | null): AbdeckungsBand | null {
 function abdeckungUnten(): number {
   const baender = [
     bandVon(document.querySelector('header')),
-    bandVon(document.querySelector('[data-workspace-mode-nav]')),
+    ...[...document.querySelectorAll('[data-workspace-mode-nav]')].map(bandVon),
     bandVon(document.querySelector('nav[aria-label="Reise"]')),
   ].filter(
     (band): band is AbdeckungsBand => band != null,
@@ -672,7 +672,7 @@ export default function TripWorkspace({
   function untereAbdeckung(): number {
     const kandidaten = [
       document.querySelector('header'),
-      document.querySelector('[data-workspace-mode-nav]'),
+      ...document.querySelectorAll('[data-workspace-mode-nav]'),
       document.querySelector('nav[aria-label="Reise"]'),
     ]
     let kante = window.innerHeight

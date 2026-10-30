@@ -11,6 +11,7 @@ export type WorkspaceSlots = {
   title: HTMLElement | null
   collapsed: boolean
   closeNavigation: () => void
+  finishNavigation: () => void
 }
 
 export const WorkspaceContext = createContext<WorkspaceSlots | null>(null)

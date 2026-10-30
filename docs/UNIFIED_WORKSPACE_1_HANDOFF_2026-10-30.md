@@ -4,6 +4,19 @@ Der vom Product Owner gewünschte gemeinsame Konto-/Trip-Rahmen ist auf
 `codex/unified-workspace-navigation` implementiert, Basis
 `8e667661b490758b25bdd5be720421cea33fda9c`. Es wurde nichts veröffentlicht.
 
+**Review-Fortsetzung 30.10.2026:** Dieser Work/Codex-Chat übernimmt auf ausdrücklichen
+Wunsch des Product Owners die Technical-Lead-Rolle für #1092. Zwei unabhängige
+read-only Reviews haben auf `690c9183` UI-Regressionsbefunde geliefert; der Root-
+Writer hat sie behoben. Neuer lokaler Voll-App-Lauf: **24/24 PASS**, 52 gezielte
+Tests PASS, Build PASS. Erneute unabhängige Prüfung/CI auf dem neuen Commit bleiben
+vor Gesamtfreigabe erforderlich. [Vollständiger Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
+
+Vercel-Zugriff funktioniert. Das exakte bisherige Preview von `690c9183` antwortet
+unter `/account` mit 503 „Anmeldung derzeit nicht prüfbar“; diesem Branch fehlt
+eine Preview-Testkonfiguration. `develop` ist als getrennte Testbranch identifiziert.
+Die Zustimmung für ausschliesslich zwei öffentliche Verbindungswerte in diesem
+Preview ist angefragt; noch keine Einstellung geändert. Kein Production-Fallback.
+
 ## Was der Besucher erhält
 
 Grüne einklappbare Seitenleiste, Namen bei Hover und Tastaturfokus, schmaler
@@ -32,7 +45,10 @@ ausschliesslich synthetische Daten des echten Gast-Workspace.
 1. Vollständigen Diff und aktuellen Commit unabhängig prüfen; insbesondere
    gemeinsamen Rahmen, ursprüngliche Aktionen, Konto-/Gastgrenzen und A11y.
 2. Überschneidung mit dem offenen PR #1082 abgleichen. Keine automatische
-   Übernahme oder stilles Verwerfen einer der Arbeiten.
+   Übernahme oder stilles Verwerfen einer der Arbeiten. Erster unabhängiger Abgleich
+   abgeschlossen: nur `TripWorkspace.tsx` gemeinsam, keine überlappenden Hunks.
+   Reihenfolge: gemeinsamen Rahmen abnehmen, danach #1082 gegen diesen Rahmen
+   aktualisieren und in der echten kombinierten Oberfläche prüfen.
 3. CI und geeignete geschützte Testvorschau auf dem geprüften Commit abnehmen.
    Konto-/Reiseseiten mit zulässigen Testkonten prüfen; keinen Zugriffsschutz
    umgehen und keine Production-Schreibtests einführen.

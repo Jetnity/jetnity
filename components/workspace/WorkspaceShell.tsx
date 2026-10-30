@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Compass, Globe2, Menu, PanelLeftClose, PanelLeftOpen, Plus, Settings2, Luggage, UsersRound, X } from 'lucide-react'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
+import BackToTop from '@/components/layout/BackToTop'
 import { accountNavigationAktiv } from '@/lib/account/navigation'
 import WorkspaceAccountMenu from './WorkspaceAccountMenu'
 import WorkspaceNavItem from './WorkspaceNavItem'
@@ -36,7 +37,13 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
   const menuRef = useRef<HTMLButtonElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const restoreMenuFocus = useRef(true)
   const closeNavigation = useCallback(() => setMobileOpen(false), [])
+  const finishNavigation = useCallback(() => {
+    // A selected destination owns focus; only dismissal returns to the trigger.
+    restoreMenuFocus.current = false
+    setMobileOpen(false)
+  }, [])
 
   useEffect(() => {
     const media = window.matchMedia('(min-width: 64rem)')
@@ -53,7 +60,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     closeRef.current?.focus()
     return () => {
       document.body.style.overflow = before
-      if (trigger?.getClientRects().length) trigger.focus({ preventScroll: true })
+      if (restoreMenuFocus.current && trigger?.getClientRects().length) trigger.focus({ preventScroll: true })
     }
   }, [mobileOpen])
 
@@ -74,8 +81,8 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     return () => { observer.disconnect(); root.style.setProperty('--jet-header-h', before) }
   }, [])
 
-  const slots = useMemo(() => ({ navigation, mobile, actions, title, collapsed: collapsed && !mobileOpen, closeNavigation }),
-    [navigation, mobile, actions, title, collapsed, mobileOpen, closeNavigation])
+  const slots = useMemo(() => ({ navigation, mobile, actions, title, collapsed: collapsed && !mobileOpen, closeNavigation, finishNavigation }),
+    [navigation, mobile, actions, title, collapsed, mobileOpen, closeNavigation, finishNavigation])
   const heading = pathname === '/planen' ? 'Reise planen'
     : pathname === '/reisen' ? 'Meine Reisen'
     : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
@@ -99,7 +106,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
           }}>
           <div className="workspace-brand-row">
-            <Link href="/" aria-label="Jetnity Startseite" className="workspace-brand" onClick={closeNavigation}>
+            <Link href="/" aria-label="Jetnity Startseite" className="workspace-brand" onClick={finishNavigation}>
               {/* Static local brand asset; no image optimizer or remote image source. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/brand/jetnity-logo.png" alt="" width={140} height={48} />
@@ -118,7 +125,8 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             <div ref={setNavigation} className="workspace-trip-navigation" />
             <div className="workspace-no-trip">
               <WorkspaceNavItem label="Reise auswählen" collapsed={collapsed && !mobileOpen}>
-                <Link href="/reisen" className="workspace-open-trip" onClick={closeNavigation} aria-label="Reise auswählen">
+                <Link href="/reisen" className="workspace-open-trip"
+                  onClick={pathname === '/reisen' ? closeNavigation : finishNavigation} aria-label="Reise auswählen">
                   <Luggage aria-hidden="true" /><span className="workspace-nav-label">Reise auswählen</span>
                 </Link>
               </WorkspaceNavItem>
@@ -130,7 +138,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             <nav aria-label="Mein Bereich">
               {PERSONAL.map(({ href, label, icon: Icon }) => (
                 <WorkspaceNavItem key={href} label={label} collapsed={collapsed && !mobileOpen}>
-                  <Link href={href} className="workspace-nav-link" onClick={closeNavigation}
+                  <Link href={href} className="workspace-nav-link" onClick={pathname === href ? closeNavigation : finishNavigation}
                     aria-label={label} aria-current={accountNavigationAktiv(pathname, href) && !pathname.startsWith('/reisen/') ? 'page' : undefined}>
                     <Icon aria-hidden="true" /><span className="workspace-nav-label">{label}</span>
                   </Link>
@@ -140,7 +148,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
           </section>
           <div className="workspace-sidebar-end">
             <WorkspaceNavItem label="Entdecken" collapsed={collapsed && !mobileOpen}>
-              <Link href="/entdecken" className="workspace-nav-link" aria-label="Entdecken" onClick={closeNavigation}>
+              <Link href="/entdecken" className="workspace-nav-link" aria-label="Entdecken" onClick={finishNavigation}>
                 <Compass aria-hidden="true" /><span className="workspace-nav-label">Entdecken</span>
               </Link>
             </WorkspaceNavItem>
@@ -151,7 +159,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
           <header ref={headerRef} className="workspace-header">
             <button ref={menuRef} type="button" className="workspace-button workspace-menu-button"
               aria-label="Navigation öffnen"
-              aria-expanded={mobileOpen} aria-controls="workspace-navigation" onClick={() => setMobileOpen(true)}>
+              aria-expanded={mobileOpen} aria-controls="workspace-navigation" onClick={() => { restoreMenuFocus.current = true; setMobileOpen(true) }}>
               <Menu aria-hidden="true" /><span>Menü</span>
             </button>
             <div className="workspace-context"><span ref={setTitle} /><span className="workspace-default-title">{heading}</span></div>
@@ -169,6 +177,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             <span>© {new Date().getFullYear()} Jetnity</span>
             <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Ortsdaten: GeoNames (CC BY 4.0)</a>
           </footer>
+          <BackToTop />
         </div>
       </div>
     </WorkspaceContext.Provider>

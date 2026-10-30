@@ -30,8 +30,9 @@ Stand: 30.10.2026. Dies ist die Prüfung des implementierenden Agents,
 
 ## Im lokalen Lauf korrigiert
 
-- Header auf kleinen Geräten auf zwei Zeilen begrenzt; vorhandener Gast-CTA-Text
-  wird vollständig erhalten, statt den Überschreibschutz wegzustylen.
+- Header auf kleinen Geräten in bedarfsgerechte Zeilen gegliedert; Reisetitel
+  erhält eine eigene Zeile. Menübeschriftung und vorhandener Gast-CTA-Text bleiben
+  vollständig sichtbar. Bei 200 % Text darf der Header höher werden und scrollt mit.
 - Bei 200 % Text schmale Aktionsgruppen und Navigation in den normalen Fluss
   gesetzt; Schaltflächen-Icons bleiben in ihren Grenzen.
 - Tooltip bleibt beim Wechsel des Mauszeigers auf den Tooltip sichtbar und kann
@@ -44,7 +45,15 @@ Stand: 30.10.2026. Dies ist die Prüfung des implementierenden Agents,
 
 ## Verbleibende Grenzen
 
-Alle 19 gezielten Browserprüfungen und 124 gezielten Tests bestanden; der
+Nach unabhängigem Review auf `690c9183` wurden weitere Fehler korrigiert:
+Kontomenü über der Rücksprungleiste, Umbruch/Position bei 200 % Text,
+Ziel-Fokus nach Tastaturnavigation sowie Erhalt von „Nach oben“ inklusive Abstand
+zur mobilen Navigation. Der neue Voll-App-Lauf besteht aus 19 bestehenden und
+5 ergänzenden Browserprüfungen, alle PASS; 52 gezielte Tests bestanden zusätzlich.
+Die unabhängige erneute Prüfung muss auf dem neuen Commit erfolgen. Einzelheiten
+und Grenzen im [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md).
+
+Im ersten Implementierungslauf bestanden alle 19 gezielten Browserprüfungen und 124 gezielten Tests; der
 separate vorhandene Route-/Detail-Browserlauf bestand mit 17/17. Build,
 Typecheck, Lint und Hygieneprüfungen bestanden. Der Gesamt-Testlauf ist wegen
 der im [Report](UNIFIED_WORKSPACE_1_REPORT_2026-10-30.md) einzeln beschriebenen

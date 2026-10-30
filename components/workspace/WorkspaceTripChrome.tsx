@@ -62,7 +62,11 @@ export default function WorkspaceTripChrome(props: {
     const label = WORKSPACE_ANSICHT_LABEL[view]
     const button = <button type="button" className="workspace-nav-link" aria-label={label}
       aria-current={props.ansicht === view ? 'page' : undefined}
-      onClick={(e) => { props.onWechsel(view, e.detail === 0); shell.closeNavigation() }}>
+      onClick={(e) => {
+        props.onWechsel(view, e.detail === 0)
+        if (props.ansicht === view) shell.closeNavigation()
+        else shell.finishNavigation()
+      }}>
       <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{label}</span>
     </button>
     return rail ? <WorkspaceNavItem key={view} label={label} collapsed={shell.collapsed}>{button}</WorkspaceNavItem>
@@ -71,6 +75,6 @@ export default function WorkspaceTripChrome(props: {
   return <>
     {shell.navigation && createPortal(<nav aria-label="Reiseplanung" data-workspace-mode-nav="sidebar">{buttons(true)}</nav>, shell.navigation)}
     {shell.mobile && createPortal(<nav ref={bottomRef} aria-label="Reisebereiche" className="workspace-bottom-nav"
-      data-flow={flow} data-workspace-mode-nav="mobile">{buttons(false)}</nav>, shell.mobile)}
+      data-flow={flow} data-shell-nav={flow ? 'flow' : 'bottom'} data-workspace-mode-nav="mobile">{buttons(false)}</nav>, shell.mobile)}
   </>
 }

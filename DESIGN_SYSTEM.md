@@ -12,6 +12,10 @@ Status: Farbsystem und Responsive-Regeln verbindlich
 > Fokustext. Mobil: beschriftetes Menü und Reisebereiche; bei grossem Text stehen
 > Navigation und Header im Dokumentfluss. Homepage und fachliche Komponenten
 > behalten ihre Gestaltung und Logik. [Auftrag](docs/UNIFIED_WORKSPACE_1_TASK_2026-10-30.md).
+> Review-Korrektur: Mobile-Menü bleibt sichtbar beschriftet. Sehr schmale Header
+> geben dem Reisetitel eine eigene Zeile. Bei grossem Text darf das Kontomenü im
+> Seitenfluss stehen; sämtliche Einträge bleiben erreichbar. Zielnavigation
+> übergibt den Fokus an den Inhalt, blosses Schliessen zurück an den Auslöser.
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
 

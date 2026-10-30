@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-30T00:56:55.957Z",
+  "base": "http://127.0.0.1:3472",
+  "isolation": "new Chromium incognito context; no storageState/profile imported",
+  "limits": [
+    "No real authenticated account",
+    "No AI/provider backend or booking calls",
+    "Root font 32px is text resizing, not native browser zoom"
+  ],
+  "results": [
+    {
+      "name": "Homepage retains public navigation and footer",
+      "status": "PASS"
+    },
+    {
+      "name": "Both complete planning modes remain reachable",
+      "status": "PASS"
+    },
+    {
+      "name": "Attention, all groups, trip audit and three destinations retained",
+      "status": "PASS"
+    },
+    {
+      "name": "All four views and browser history/deep links",
+      "status": "PASS"
+    },
+    {
+      "name": "Collapsed rail: mouse, keyboard labels, Escape and focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Guest point save → reload → real persisted data",
+      "status": "PASS"
+    },
+    {
+      "name": "Trip edit: both modes, preview before saving, reload and focus return",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing guest trip: create CTA continues without overwriting data",
+      "status": "PASS"
+    },
+    {
+      "name": "320px views, controls and horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "390px views, controls and horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "768px views, controls and horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "1440px views, controls and horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile drawer traps focus, closes on Escape and returns focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Account menu and legal links remain available",
+      "status": "PASS"
+    },
+    {
+      "name": "320px with 200% root text and usable navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "390px with 200% root text and usable navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "1440px with 200% root text and usable navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "No provider/AI calls and no runtime exceptions",
+      "status": "PASS"
+    },
+    {
+      "name": "Unauthenticated account route retains login boundary",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "forbidden": []
+}

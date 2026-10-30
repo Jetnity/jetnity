@@ -2,6 +2,11 @@
 
 **Stand: 30.10.2026, Europe/Zurich. Ergebnis: IMPLEMENTIERT, lokale Browserprüfung PASS; technische Gesamtfreigabe OFFEN.**
 
+**Fortsetzung:** Der [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md)
+dokumentiert die unabhängigen Befunde auf `690c9183`, die anschliessenden
+Korrekturen und den neuen lokalen Lauf um 01:56 CET (24/24 Browserprüfungen).
+Die folgenden ersten Prüfergebnisse bleiben als historischer Nachweis erhalten.
+
 Die öffentliche Startseite behält ihre Navigation und Darstellung. Planen,
 Reiseauswahl, Reise und Konto verwenden einen gemeinsamen Rahmen. Es gibt keine
 Live-Veröffentlichung und keine vollständige Produkt-/Merge-Freigabe.
@@ -130,7 +135,11 @@ ausschliesslich den Gastentwurf im frischen Browserkontext.
 ## Übergabe / keine Freigabe
 
 PR #1082 überschneidet sich bei der Reise-Darstellung. Der Technical Lead muss
-den vollständigen aktuellen Diff und die Reihenfolge beider Arbeiten prüfen.
+den vorliegenden Diff-Abgleich bei jeder neuen Version aktualisieren: Beim
+Review von `690c9183` und `f2ff4928` ist nur `TripWorkspace.tsx` gemeinsam betroffen;
+die Implementierungshunks sind getrennt. Geteilte Navigationsgeometrie muss nach
+Integration gemeinsam geprüft werden. Der [Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md)
+enthält Befunde und Reihenfolge.
 Dieser Branch übernimmt oder verwirft keine fremden Änderungen. Die Holds der
 Anbieter- und Truth-Arbeiten bleiben unberührt.
 

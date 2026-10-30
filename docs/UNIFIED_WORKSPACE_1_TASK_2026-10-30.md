@@ -13,6 +13,21 @@ ersetzt für diesen Branch die allgemeine Cursor-Writer-Vorgabe. Kein zweiter
 Writer. Technical Lead behält unabhängige Abnahme, Ready, Merge und Deployment.
 Die zuvor gestoppte Sites-Veröffentlichung bleibt gestoppt.
 
+### Fortsetzung und Review, 30.10.2026
+
+Der Product Owner hat diesen Work/Codex-Chat inzwischen ausdrücklich mit der
+Technical-Lead-Rolle für diesen Workspace-Umbau beauftragt. Der Root-Agent bleibt
+einziger Writer. Zwei getrennte, read-only Reviewer prüfen Quellcode/A11y sowie
+Erhalt/Überschneidung mit #1082; ihre Befunde sind keine Selbstfreigabe des Writers.
+MULTI_AGENT gilt ausschliesslich für diese Review-Lanes. Anbieterarbeiten bleiben
+bei ihren bisherigen Verantwortlichen. Der Review-Auftrag steht zusätzlich in
+[PR #1092](https://github.com/Jetnity/jetnity/pull/1092#issuecomment-6511963252).
+
+Zulässige Nacharbeit: die im unabhängigen Review gefundenen Darstellungs-, Fokus-
+und Navigationsregressionen im bestehenden Branch beheben und neu prüfen. Eine
+Anbindung der Vorschau an die vorhandene Testdatenbank ist separat angefragt,
+aber bei Erstellung dieses Nachtrags noch nicht freigegeben oder vorgenommen.
+
 ## Ziel und Grenzen
 
 Homepage bleibt unverändert. Reiseplanung: Übersicht, Reiseplan, Organisieren,
