@@ -1,0 +1,38 @@
+{
+  "time": "2026-10-30T00:44:54.205Z",
+  "base": "http://127.0.0.1:3472",
+  "isolation": "Fresh context per test, synthetic local guest data, no external requests",
+  "limits": [
+    "200% root font is text resizing, not native browser zoom",
+    "No authenticated account or backend tests"
+  ],
+  "results": [
+    {
+      "name": "Drawer keyboard navigation focuses the new content; dismissal returns to menu",
+      "status": "FAIL",
+      "message": "page.waitForFunction: Timeout 5000ms exceeded."
+    },
+    {
+      "name": "Open account menu wraps labels at 320px and 200% root text",
+      "status": "FAIL",
+      "message": "{\"clientWidth\":254,\"scrollWidth\":329}"
+    },
+    {
+      "name": "Account menu remains clickable over a sticky trip return bar",
+      "status": "FAIL",
+      "message": "[{\"label\":\"Meine Reisen\",\"clickable\":true},{\"label\":\"Einstellungen\",\"clickable\":true},{\"label\":\"Bestätigte Buchungen\",\"clickable\":true},{\"label\":\"Jetnity Pro\",\"clickable\":true},{\"label\":\"Kontakt\",\"clickable\":true},{\"label\":\"Datenschutzerklärung\",\"clickable\":true},{\"label\":\"Nutzungsbedingungen / AGB\",\"clickable\":true},{\"label\":\"Impressum\",\"clickable\":true},{\"label\":\"Anmelden\",\"clickable\":false}]"
+    },
+    {
+      "name": "Back to top survives the shell and clears the mobile navigation",
+      "status": "FAIL",
+      "message": "locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Nach oben', exact: true }) to be visible\u001b[22m\n"
+    },
+    {
+      "name": "Phone menu has a visible text label",
+      "status": "FAIL",
+      "message": "The expression evaluated to a falsy value:\n\n  assert(await label.evaluate(el => el.getBoundingClientRect().width > 10 && getComputedStyle(el).clipPath === 'none'))\n"
+    }
+  ],
+  "forbidden": [],
+  "errors": []
+}

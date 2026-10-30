@@ -5915,6 +5915,42 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## Ergänzende Darstellungsentscheidung – gemeinsamer Workspace, 30.10.2026
+
+**Status:** Vom Product Owner im Work/Codex-Chat ausdrücklich beauftragt;
+Implementierung auf `codex/unified-workspace-navigation`, technische Abnahme offen.
+
+**Entscheidung:** Konto und Reiseplanung erhalten einen gemeinsamen Rahmen mit
+grüner Glas-Seitenleiste, schmalem Header und eigenständiger mobiler Navigation.
+Der Umbau verändert ausschliesslich Darstellung und Zugänge. „Jetzt wichtig“,
+beide Planungswege, Reiseprüfung, Freigaben und vorhandene Daten bleiben erhalten.
+
+**Kontext und Alternative:** Der Product Owner möchte die bisher getrennten,
+platzintensiven Navigationsflächen zusammenführen. Ein Neuaufbau der fachlichen
+Seiten oder die Übernahme fremder Planungslogik ist ausdrücklich nicht beauftragt.
+
+**Begründung:** Präsentationsportale verwenden dieselben Reise-Handler und
+Zustände. Sie vermeiden eine zweite Reiseverwaltung. Die Kontoübersicht wird
+über das Kontomenü weiter angeboten, damit ihre Funktionen erreichbar bleiben.
+
+**Konsequenzen:** Keine Änderung an Auth, API, Datenmodell, Providern oder
+Speicherverträgen. Die Glaswirkung ist eine ausdrückliche lokale Ausnahme im
+Design-System. Gastschutz kann die neue Header-CTA weiterhin als
+„Reise fortsetzen“ anzeigen. Bestehende Holds gelten; der Technical Lead
+entscheidet nach unabhängiger Prüfung über Ready, Merge und Livegang.
+
+**Visueller Abgleich, 30.10.2026:** Der Owner beanstandet zu Recht, dass der
+Navigationsrahmen allein den grünen Entwurf nicht umsetzt. Auch die Inhalte
+erhalten deshalb die gemeinsame Palette, einen kompakten Reisekopf und das
+durchgehende Jetzt-wichtig-Panel mit Reiseprüfung. Ein Routenüberblick verlinkt
+dieselben gespeicherten Tage über die vorhandene Chronologie. Es werden keine
+Aufenthalte, Statuswerte, Buchungen oder Karten aus dem Muster erfunden.
+Semantische Karten-/Fehlerfarben sind paarweise auf den Workspace begrenzt;
+Homepage, Anbieterframes und alle bestehenden Fachhandler bleiben erhalten.
+Der Abgleich ist separat belegt und ersetzt keine angemeldete Kontoabnahme.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

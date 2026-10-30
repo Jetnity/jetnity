@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-10-30T01:40:17.586Z",
+  "timezone": "Europe/Zurich",
+  "applicationHead": "1117b1cd9cb7ab0f2cc9b7c4e2360a3989eaeab3",
+  "deployment": "dpl_3RKf4mC8ucX3dcE5NzxcyHUkCdbu",
+  "base": "https://jetnity-a8w3qqkie-jetnity-e1b93c82.vercel.app",
+  "scope": "Fresh isolated Chrome; synthetic guest localStorage; no authenticated account writes",
+  "results": [
+    {
+      "name": "Exact preview public homepage retains original navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "Both complete planning paths",
+      "status": "PASS"
+    },
+    {
+      "name": "Guest workspace includes original attention and all 3 destinations",
+      "status": "PASS"
+    },
+    {
+      "name": "All four views and history/reload",
+      "status": "PASS"
+    },
+    {
+      "name": "320 and 390px: labels, overflow, all views, keyboard drawer and detail return",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview browser Back releases drawer and page",
+      "status": "FAIL",
+      "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n  - waiting for getByRole('heading', { name: 'Meine Reisen', exact: true }) to be visible"
+    },
+    {
+      "name": "Desktop collapsed rail: focus tooltip and mode navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview history retest after waiting for trip content hydration",
+      "status": "PASS"
+    },
+    {
+      "name": "Guest edit preserves confirmation, 3 stages and 22 days after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "200% root text at 320px: account menu within bounds and working legal link",
+      "status": "PASS"
+    },
+    {
+      "name": "Unauthenticated account boundary redirects to login and preserves noindex",
+      "status": "PASS"
+    }
+  ],
+  "finalUniqueChecks": 10,
+  "finalPass": 10,
+  "attemptCount": 11,
+  "initialFailure": {
+    "classification": "Test synchronization limitation; not a confirmed product failure",
+    "detail": "Initial history attempt did not wait for destination trip content. Corrected attempt explicitly waited for the trip heading before opening drawer and browser Back; Back/Forward then passed."
+  },
+  "pageErrors": [],
+  "blockedHosts": [
+    "vercel.live"
+  ],
+  "blockedExplanation": "Only Vercel preview toolbar blocked; no provider or AI request attempted.",
+  "requestHosts": [
+    "jetnity-a8w3qqkie-jetnity-e1b93c82.vercel.app",
+    "vercel.live"
+  ],
+  "limits": [
+    "Authenticated account test awaits develop test account",
+    "No physical device or VoiceOver test",
+    "200% text uses root font 32px; separate local native zoom evidence",
+    "Guest success does not establish database persistence or provider operation"
+  ]
+}
