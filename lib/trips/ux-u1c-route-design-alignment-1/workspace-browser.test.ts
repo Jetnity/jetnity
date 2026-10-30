@@ -10,6 +10,7 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import { mountU1cWorkspace } from '@/lib/trips/ux-u1c-route-design-alignment-1/workspace-harness'
 
 test('the workspace harness stays on the test import path', () => {
@@ -47,11 +48,30 @@ async function bundeln(): Promise<string> {
     plugins: [{
       name: 'u1c-shims',
       setup(build) {
+        build.onResolve({ filter: /\.css$/ }, () => ({ path: 'css', namespace: 'u1c-css' }))
         build.onResolve({ filter: /^server-only$/ }, () => ({ path: 'server-only', namespace: 'u1c-leer' }))
         build.onResolve({ filter: /^next\// }, (args) => ({ path: args.path, namespace: 'u1c-leer' }))
         build.onResolve({ filter: /^@\// }, (args) => build.resolve(join(process.cwd(), args.path.slice(2)), { resolveDir: process.cwd(), kind: args.kind }))
+        build.onLoad({ filter: /.*/, namespace: 'u1c-css' }, () => ({ contents: '', loader: 'js' }))
         build.onLoad({ filter: /.*/, namespace: 'u1c-leer' }, () => ({
-          contents: 'export default function(){return null};export const useRouter=()=>({push(){},replace(){}});export const usePathname=()=>"/";export const useSearchParams=()=>new URLSearchParams();',
+          contents: [
+            'export default function(){return null}',
+            'export function cookies(){return {get(){return undefined},set(){},delete(){}}}',
+            'export function headers(){return {get(){return null}}}',
+            'export function draftMode(){return {isEnabled:false}}',
+            'export function revalidatePath(){}',
+            'export function revalidateTag(){}',
+            'export function unstable_cache(fn){return fn}',
+            'export function redirect(){}',
+            'export function permanentRedirect(){}',
+            'export function notFound(){}',
+            'export function useRouter(){return {push(){},replace(){},refresh(){},back(){},forward(){}}}',
+            'export function usePathname(){return "/"}',
+            'export function useSearchParams(){return new URLSearchParams()}',
+            'export function useParams(){return {}}',
+            'export function useSelectedLayoutSegments(){return []}',
+            'export function useFormStatus(){return {pending:false}}',
+          ].join(';'),
           loader: 'js',
         }))
       },
@@ -63,7 +83,8 @@ async function bundeln(): Promise<string> {
 }
 
 function html(css: string, js: string) {
-  return `<!doctype html><html><head><meta charset="utf-8" /><style>${css}</style></head><body><div id="root"></div><script>${js}</script></body></html>`
+  const stil = `${css}\n${shellCss()}`.replaceAll('</style', '<\\/style')
+  return `<!doctype html><html><head><meta charset="utf-8" /><style>${stil}</style></head><body><div id="root"></div><script>${js}</script></body></html>`
 }
 
 async function browserStarten() {
@@ -77,6 +98,7 @@ async function browserStarten() {
 }
 
 async function plan(page: Page) {
+  await page.waitForSelector('[data-workspace-theme]')
   await page.getByRole('button', { name: 'Reiseplan', exact: true }).click()
   const route = page.locator('[data-u1c-route]')
   if (!(await route.isVisible())) {
@@ -86,7 +108,13 @@ async function plan(page: Page) {
   await route.waitFor({ state: 'visible' })
 }
 
-describe('mounted workspace route contract', { timeout: 180_000 }, () => {
+function shellCss(): string {
+  return ['components/workspace/workspace.css', 'components/workspace/workspace-surfaces.css']
+    .map((datei) => readFileSync(join(process.cwd(), datei), 'utf8'))
+    .join('\n')
+}
+
+describe('mounted workspace route contract', { timeout: 240_000 }, () => {
   let browser: Browser
   let server: Server
   let origin: string
@@ -213,10 +241,245 @@ describe('mounted workspace route contract', { timeout: 180_000 }, () => {
       const el = document.activeElement
       if (!(el instanceof HTMLElement) || el === document.body) return false
       return el.hasAttribute('data-u1b-zur-route')
+    }, undefined, { timeout: 5000 }).catch(async (fehler: unknown) => {
+      const stand = await page.evaluate(() => {
+        const aktiv = document.activeElement
+        const zur = document.querySelector('[data-u1b-zur-route]')
+        return {
+          tag: aktiv?.tagName ?? '',
+          name: aktiv instanceof HTMLElement ? (aktiv.getAttribute('aria-label') ?? aktiv.textContent?.slice(0, 120)) : '',
+          zur: zur instanceof HTMLElement,
+          zurHidden: Boolean(zur?.closest('[hidden], [inert]')),
+          routeHidden: Boolean(document.querySelector('[data-u1c-route]')?.closest('[hidden]')),
+        }
+      })
+      throw new Error(`${fehler instanceof Error ? fehler.message : String(fehler)} ${JSON.stringify(stand)}`)
     })
     const sichtbar = await page.locator(':focus').boundingBox()
     assert.ok(sichtbar && sichtbar.width >= 44 && sichtbar.height >= 44 && sichtbar.y >= 0 && sichtbar.y + sichtbar.height <= 844)
     assert.deepEqual(netz, [])
     await page.close()
+  })
+
+  test('the shell reaches every reference day in light and green without a second back-to-top offset', async () => {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+    const netz: string[] = []
+    page.on('request', (request) => {
+      if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') netz.push(request.url())
+    })
+    await page.goto(origin, { waitUntil: 'networkidle' })
+    await plan(page)
+    const ids = new Set<string>()
+    const laeufe = await page.locator('[data-u1c-lauf]').count()
+    for (let index = 0; index < laeufe; index += 1) {
+      await page.locator('[data-u1c-lauf]').nth(index).click()
+      const tags = await page.locator('[data-timeline-tag]').evaluateAll((knoten) => knoten.map((knoten) => knoten.getAttribute('data-timeline-tag')))
+      for (const id of tags) if (id) ids.add(id)
+    }
+    assert.equal(ids.size, 22)
+    assert.equal(await page.locator('[data-u1c-lauf]').count(), 5)
+
+    await page.locator('[data-u1c-szene="arten"]').click()
+    await page.locator('[data-u1c-lauf]').click()
+    for (const titel of ['Art Flug', 'Art Unterkunft', 'Art Aktivität', 'Art Transfer', 'Art Mietwagen', 'Art Notiz', 'Art ohne Tag']) {
+      await page.getByText(titel, { exact: true }).first().waitFor()
+    }
+
+    for (const thema of ['light', 'green'] as const) {
+      if (thema === 'green') await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+      await page.waitForSelector(`[data-workspace-theme="${thema}"]`)
+      for (const breite of [320, 390, 768, 1440]) {
+        await page.setViewportSize({ width: breite, height: 900 })
+        if (breite < 800) await page.waitForSelector('[data-u1b-anordnung="schmal"]')
+        const messung = await page.evaluate(() => {
+          const breite = document.documentElement.clientWidth
+          const treffer = [...document.querySelectorAll('body *')].filter((el) => {
+            if (!(el instanceof HTMLElement)) return false
+            if (el.closest('[data-u1c-probe-bar]')) return false
+            const rechteck = el.getBoundingClientRect()
+            return rechteck.width > 0 && rechteck.right > breite + 1
+          }).slice(0, 6).map((el) => `${el.tagName}.${String(el.className).slice(0, 70)}`)
+          return { ok: treffer.length === 0, treffer }
+        })
+        assert.equal(messung.ok, true, `${thema} ${breite} ${messung.treffer.join(' | ')}`)
+      }
+    }
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    await page.waitForSelector('[data-shell-nav="flow"]')
+    const rootOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+    assert.equal(rootOverflow, true)
+    await page.evaluate(() => { document.documentElement.style.fontSize = '16px' })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.locator('[data-u1c-szene="referenz"]').click()
+    await plan(page)
+    await page.evaluate(() => {
+      const inhalt = document.querySelector('.workspace-content')
+      if (inhalt instanceof HTMLElement) inhalt.style.minHeight = '1800px'
+    })
+    await page.waitForFunction(() => {
+      if (window.scrollY < 500) window.scrollTo(0, 800)
+      const knopf = document.querySelector('[data-back-to-top]')
+      return window.scrollY > 400 && knopf instanceof HTMLElement && !knopf.classList.contains('invisible')
+    }, undefined, { timeout: 3000 }).catch(async (fehler: unknown) => {
+      const stand = await page.evaluate(() => {
+        const knopf = document.querySelector('[data-back-to-top]')
+        const nav = document.querySelector('[data-shell-nav]')
+        return {
+          scroll: window.scrollY,
+          hoehe: document.documentElement.scrollHeight,
+          klasse: knopf?.className ?? '',
+          offset: getComputedStyle(document.documentElement).getPropertyValue('--ux-u1a-nav-offset'),
+          nav: nav?.getAttribute('data-shell-nav') ?? '',
+          position: nav ? getComputedStyle(nav).position : '',
+        }
+      })
+      throw new Error(`${fehler instanceof Error ? fehler.message : String(fehler)} ${JSON.stringify(stand)}`)
+    })
+    const treffer = await page.evaluate(() => {
+      const knopf = document.querySelector('[data-back-to-top]')
+      const nav = document.querySelector('[data-shell-nav="bottom"]')
+      if (!(knopf instanceof HTMLElement) || !(nav instanceof HTMLElement)) return null
+      const k = knopf.getBoundingClientRect()
+      const n = nav.getBoundingClientRect()
+      return {
+        overlap: !(k.bottom <= n.top || k.top >= n.bottom || k.right <= n.left || k.left >= n.right),
+        inline: knopf.style.bottom,
+      }
+    })
+    assert.equal(treffer?.overlap, false, JSON.stringify(treffer))
+    assert.equal(treffer?.inline, '')
+    assert.deepEqual(netz, [])
+    await page.close()
+  })
+
+  test('guest discard and account deletion stay reachable in both headers', async () => {
+    const gast = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true })
+    await gast.addInitScript((reise) => {
+      localStorage.setItem('jetnity:reise:v3', JSON.stringify(reise))
+    }, referenzReise())
+    const dialoge: string[] = []
+    let antwort: 'dismiss' | 'accept' = 'dismiss'
+    gast.on('dialog', async (dialog) => {
+      dialoge.push(dialog.message())
+      if (antwort === 'dismiss') await dialog.dismiss()
+      else await dialog.accept()
+    })
+    await gast.goto(origin, { waitUntil: 'networkidle' })
+    await gast.locator('[data-u1c-probe="gast"]').click()
+    const summary = gast.locator('[data-reiseoptionen] summary')
+    try {
+      await summary.waitFor({ timeout: 15000 })
+    } catch (fehler) {
+      const text = await gast.locator('body').innerText()
+      throw new Error(`${fehler instanceof Error ? fehler.message : String(fehler)}\n${text.slice(0, 1200)}`)
+    }
+    await summary.click()
+    const verwerfen = gast.getByRole('button', { name: 'Entwurf verwerfen' })
+    await verwerfen.waitFor()
+    await verwerfen.focus()
+    await gast.keyboard.press('Enter')
+    assert.match(dialoge.at(-1) ?? '', /von diesem Gerät entfernt/)
+    assert.equal(await gast.evaluate(() => localStorage.getItem('jetnity:reise:v3') != null), true)
+
+    await gast.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+    await gast.waitForSelector('[data-workspace-theme="green"]')
+    const kontrast = await gast.locator('.workspace-reiseoptionen > summary').evaluate((el) => {
+      const kanal = (wert: number) => {
+        const v = wert / 255
+        return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
+      }
+      const zahlen = (farbe: string) => farbe.match(/\d+/g)?.slice(0, 3).map(Number) ?? [0, 0, 0]
+      const text = zahlen(getComputedStyle(el).color)
+      let hintergrund = [255, 255, 255]
+      let hintergrundQuelle = 'fallback'
+      let knoten: Element | null = el
+      while (knoten) {
+        const farbe = getComputedStyle(knoten).backgroundColor
+        const werte = farbe.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/)
+        if (werte && werte[4] !== '0') {
+          hintergrund = [Number(werte[1]), Number(werte[2]), Number(werte[3])]
+          hintergrundQuelle = `${knoten.tagName}.${String((knoten as HTMLElement).className).slice(0, 40)} ${farbe}`
+          break
+        }
+        knoten = knoten.parentElement
+      }
+      const helligkeit = (rgb: number[]) => 0.2126 * kanal(rgb[0] ?? 0) + 0.7152 * kanal(rgb[1] ?? 0) + 0.0722 * kanal(rgb[2] ?? 0)
+      const hell = Math.max(helligkeit(text), helligkeit(hintergrund))
+      const dunkel = Math.min(helligkeit(text), helligkeit(hintergrund))
+      return {
+        wert: (hell + 0.05) / (dunkel + 0.05),
+        text: getComputedStyle(el).color,
+        hintergrundQuelle,
+      }
+    })
+    assert.ok(kontrast.wert >= 3, JSON.stringify(kontrast))
+    await verwerfen.tap()
+    assert.equal(dialoge.length, 2)
+
+    await gast.locator('[data-u1c-shell]').click()
+    await gast.waitForSelector('[data-u1c-shell="aus"]')
+    await gast.locator('[data-reiseoptionen] summary').click()
+    await verwerfen.focus()
+    await gast.keyboard.press('Enter')
+    assert.equal(dialoge.length, 3)
+    await gast.evaluate(() => {
+      const original = Storage.prototype.removeItem
+      let anzahl = 0
+      Storage.prototype.removeItem = function (schluessel: string) {
+        if (schluessel === 'jetnity:reise:v3') anzahl += 1
+        return original.call(this, schluessel)
+      }
+      ;(window as unknown as { __u1cEntfernt?: () => number }).__u1cEntfernt = () => anzahl
+    })
+    antwort = 'accept'
+    await verwerfen.click()
+    await gast.waitForFunction(() => localStorage.getItem('jetnity:reise:v3') == null)
+    assert.equal(await gast.evaluate(() => (window as unknown as { __u1cEntfernt: () => number }).__u1cEntfernt()), 1)
+    assert.equal(dialoge.length, 4)
+    await gast.close()
+
+    const konto = await browser.newPage({ viewport: { width: 768, height: 900 }, hasTouch: true })
+    const kontoDialoge: string[] = []
+    let kontoAntwort: 'dismiss' | 'accept' = 'dismiss'
+    konto.on('dialog', async (dialog) => {
+      kontoDialoge.push(dialog.message())
+      if (kontoAntwort === 'dismiss') await dialog.dismiss()
+      else await dialog.accept()
+    })
+    const kontoNetz: string[] = []
+    konto.on('request', (request) => {
+      if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') kontoNetz.push(request.url())
+    })
+    await konto.goto(origin, { waitUntil: 'networkidle' })
+    await konto.locator('[data-u1c-probe="konto"]').click()
+    const kontoSummary = konto.locator('[data-reiseoptionen] summary')
+    try {
+      await kontoSummary.waitFor({ timeout: 15000 })
+    } catch (fehler) {
+      const text = await konto.locator('body').innerText()
+      throw new Error(`${fehler instanceof Error ? fehler.message : String(fehler)}\n${text.slice(0, 1200)}`)
+    }
+    await kontoSummary.focus()
+    await konto.keyboard.press('Enter')
+    const loeschen = konto.getByRole('button', { name: 'Reise löschen' })
+    await loeschen.waitFor()
+    await loeschen.focus()
+    await konto.keyboard.press('Enter')
+    assert.match(kontoDialoge.at(-1) ?? '', /nicht rückgängig/)
+    assert.equal(await konto.locator('[role="alert"]').count(), 0)
+    await konto.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+    await loeschen.tap()
+    assert.equal(kontoDialoge.length, 2)
+    await konto.locator('[data-u1c-shell]').click()
+    await konto.locator('[data-reiseoptionen] summary').click()
+    kontoAntwort = 'accept'
+    await loeschen.click()
+    await konto.getByRole('alert').waitFor()
+    const meldung = await konto.getByRole('alert').innerText()
+    assert.match(meldung, /Diese Reise ist unbekannt/)
+    assert.equal(kontoDialoge.length, 3)
+    assert.deepEqual(kontoNetz, [])
+    await konto.close()
   })
 })

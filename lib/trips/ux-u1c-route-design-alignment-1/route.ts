@@ -208,3 +208,13 @@ export function backToTopEntscheidung(fixedBottomNav: boolean, offsetPx: number 
   if (offsetPx == null || !(offsetPx > 0)) return 'verborgen'
   return 'frei'
 }
+
+/** Inline bottom only outside the released shell. Inside `.workspace-page` the shell CSS is the only spacing owner. */
+export function backToTopInlineAbstand(
+  imWorkspace: boolean,
+  lage: 'standard' | 'frei' | 'verborgen',
+  offsetPx: number | null,
+): string | undefined {
+  if (imWorkspace || lage !== 'frei' || offsetPx == null || !(offsetPx > 0)) return undefined
+  return `calc(${offsetPx}px + 0.75rem)`
+}

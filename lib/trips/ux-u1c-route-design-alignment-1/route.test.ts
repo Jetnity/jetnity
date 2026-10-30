@@ -3,7 +3,9 @@ import test from 'node:test'
 
 import { landDarstellung } from '@/lib/country/darstellung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
+import { reiseLesen } from '@/lib/trips/schema'
 import {
+  artenReise,
   referenzReise,
   transferPunkt,
   wiederholteEtappenReise,
@@ -12,6 +14,7 @@ import {
 import {
   KANTE_ZUORDNUNG_UNKLAR,
   backToTopEntscheidung,
+  backToTopInlineAbstand,
   geplanteTageText,
   kanteAufloesen,
   kanteDauerText,
@@ -209,10 +212,19 @@ test('ohne Datum und mehrere Kandidaten bleiben unklar statt leer', () => {
   assert.equal(unklar.planText.includes('Noch keine gespeicherte Verbindung'), false)
 })
 
+test('die Prüfentwürfe bleiben gültige Reisen', () => {
+  assert.ok(reiseLesen(referenzReise()))
+  assert.ok(reiseLesen(artenReise()))
+})
+
 test('Back-to-top nutzt nur eine positive feste Navigationshöhe', () => {
   assert.equal(backToTopEntscheidung(false, null), 'standard')
   assert.equal(backToTopEntscheidung(false, 53), 'standard')
   assert.equal(backToTopEntscheidung(true, null), 'verborgen')
   assert.equal(backToTopEntscheidung(true, 0), 'verborgen')
   assert.equal(backToTopEntscheidung(true, 53), 'frei')
+  assert.equal(backToTopInlineAbstand(false, 'frei', 53), 'calc(53px + 0.75rem)')
+  assert.equal(backToTopInlineAbstand(true, 'frei', 53), undefined)
+  assert.equal(backToTopInlineAbstand(false, 'standard', 53), undefined)
+  assert.equal(backToTopInlineAbstand(false, 'verborgen', null), undefined)
 })

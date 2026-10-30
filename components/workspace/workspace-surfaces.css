@@ -106,6 +106,13 @@
 .workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .15rem; }
 .workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; font-size: .75rem; color: var(--workspace-muted); margin-top: .75rem; }
 .workspace-trip-storage > span { display: flex; align-items: center; gap: .5rem; }
+.workspace-reiseoptionen { margin-top: .75rem; border-top: 1px solid var(--workspace-edge); }
+.workspace-reiseoptionen > summary {
+  display: flex; align-items: center; min-height: 44px; cursor: pointer; list-style: none;
+  font-size: .875rem; font-weight: 650; color: var(--workspace-ink);
+}
+.workspace-reiseoptionen > summary::-webkit-details-marker { display: none; }
+.workspace-reiseoptionen > summary:focus-visible { outline: 3px solid var(--workspace-ink); outline-offset: 3px; }
 .workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
 /* These legacy header slots were white on a dark hero. Only recolour them
    inside the compact, transparent heading; keep dark action buttons intact. */

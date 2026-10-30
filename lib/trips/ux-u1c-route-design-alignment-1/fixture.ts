@@ -120,6 +120,40 @@ export function wiederholterNameReise(): Trip {
   return reiseAus({ id: 'trip-u1c-namen', title: 'Bangkok zweimal', stages, days })
 }
 
+/** One assigned day carries every item kind. One note stays outside a day. */
+export function artenReise(): Trip {
+  const tagId = 'day-1'
+  const stageId = 'stage-bkk'
+  const arten = [
+    ['flight', 'Art Flug'],
+    ['stay', 'Art Unterkunft'],
+    ['activity', 'Art Aktivität'],
+    ['transfer', 'Art Transfer'],
+    ['rental_car', 'Art Mietwagen'],
+    ['note', 'Art Notiz'],
+  ] as const
+  return reiseAus({
+    id: 'trip-u1c-arten',
+    title: 'Sechs Arten',
+    stages: [etappe({ id: stageId, name: 'Bangkok', countryCode: 'TH', position: 1 })],
+    days: [tag({
+      id: tagId,
+      dayIndex: 1,
+      dayDate: '2026-11-16',
+      stageId,
+      items: arten.map(([kind, title], index) => n12Punkt({
+        id: `item-${kind}`,
+        kind,
+        title,
+        dayId: tagId,
+        stageId,
+        position: index + 1,
+      })),
+    })],
+    ohneTag: [n12Punkt({ id: 'item-ohne-tag', kind: 'note', title: 'Art ohne Tag', dayId: null })],
+  })
+}
+
 /** Saved ferry plus a same-date flight. Canonical coverage stays unknown. */
 export function unklareVerbindungReise(): Trip {
   const reise = referenzReise()

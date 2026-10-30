@@ -16,7 +16,7 @@ test('the evidence harness stays on the test import path', () => {
   assert.equal(typeof mountU1cEvidence, 'function')
 })
 
-const BILDER = '/opt/cursor/artifacts'
+const BILDER = process.env.U1C_EVIDENCE_DIR || join(tmpdir(), 'u1c-route-evidence')
 
 async function projektCss(): Promise<string> {
   const verlangen = createRequire(import.meta.url)

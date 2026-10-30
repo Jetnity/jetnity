@@ -3,8 +3,11 @@
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 
+import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
+import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import {
+  artenReise,
   referenzReise,
   unklareVerbindungReise,
   wiederholteEtappenReise,
@@ -17,15 +20,13 @@ const SZENEN: Record<string, () => Trip> = {
   namen: wiederholterNameReise,
   abab: wiederholteEtappenReise,
   unklar: unklareVerbindungReise,
+  arten: artenReise,
 }
 
-function Flaeche() {
+function RouteFlaeche() {
   const [reise, setReise] = React.useState<Trip>(() => referenzReise())
   return (
     <div data-u1c-workspace="">
-      <header data-site-header className="sticky top-0 z-50 flex h-[72px] items-center border-b border-line-200 bg-white px-3 text-sm font-semibold text-brand-800">
-        Jetnity
-      </header>
       <div className="flex flex-wrap gap-2 p-3">
         {Object.entries(SZENEN).map(([name, erzeugen]) => (
           <button key={name} type="button" data-u1c-szene={name} onClick={() => setReise(erzeugen())}>{name}</button>
@@ -57,6 +58,46 @@ function Flaeche() {
         onPunktEntfernen={async () => null}
       />
     </div>
+  )
+}
+
+function Arbeitsbereich({
+  probe,
+  kontoReise,
+}: {
+  probe: 'route' | 'gast' | 'konto'
+  kontoReise: Trip
+}) {
+  if (probe === 'gast') return <GastArbeitsbereich tripId="trip-u1c-referenz" />
+  if (probe === 'konto') return <KontoArbeitsbereich reise={kontoReise} ohneTag={kontoReise.ohneTag} officialEvaluations={[]} />
+  return <RouteFlaeche />
+}
+
+function Flaeche() {
+  const kontoReise = React.useMemo(() => referenzReise(), [])
+  const [probe, setProbe] = React.useState<'route' | 'gast' | 'konto'>('route')
+  const [shell, setShell] = React.useState(true)
+  const [Shell, setShellKomponente] = React.useState<React.ComponentType<{ children: React.ReactNode }> | null>(null)
+  React.useEffect(() => {
+    let lebend = true
+    void import('@/components/workspace/WorkspaceShell').then((mod) => {
+      if (lebend) setShellKomponente(() => mod.default)
+    })
+    return () => { lebend = false }
+  }, [])
+  const inhalt = <Arbeitsbereich probe={probe} kontoReise={kontoReise} />
+  return (
+    <>
+      <div data-u1c-probe-bar className="flex flex-wrap gap-2 bg-white p-2 text-sm">
+        <button type="button" data-u1c-probe="route" onClick={() => setProbe('route')}>Route</button>
+        <button type="button" data-u1c-probe="gast" onClick={() => setProbe('gast')}>Gast</button>
+        <button type="button" data-u1c-probe="konto" onClick={() => setProbe('konto')}>Konto</button>
+        <button type="button" data-u1c-shell={shell ? 'an' : 'aus'} onClick={() => setShell((wert) => !wert)}>
+          {shell ? 'Hülle aus' : 'Hülle an'}
+        </button>
+      </div>
+      {shell && Shell ? <Shell>{inhalt}</Shell> : shell ? <p data-u1c-shell-warte>Workspace wird geladen.</p> : inhalt}
+    </>
   )
 }
 
