@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, Globe2, Menu, PanelLeftClose, PanelLeftOpen, Plus, Settings2, Luggage, UsersRound, X } from 'lucide-react'
+import { Compass, Globe2, Leaf, Menu, PanelLeftClose, PanelLeftOpen, Plus, Settings2, Sun, Luggage, UsersRound, X } from 'lucide-react'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
@@ -11,6 +11,7 @@ import { accountNavigationAktiv } from '@/lib/account/navigation'
 import WorkspaceAccountMenu from './WorkspaceAccountMenu'
 import WorkspaceNavItem from './WorkspaceNavItem'
 import { WorkspaceContext } from './WorkspaceContext'
+import useWorkspaceTheme from './useWorkspaceTheme'
 import './workspace.css'
 import './workspace-surfaces.css'
 
@@ -28,6 +29,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
   contentId?: string
 }) {
   const pathname = usePathname()
+  const { theme, toggleTheme } = useWorkspaceTheme()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [menuPath, setMenuPath] = useState(pathname)
@@ -96,7 +98,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
 
   return (
     <WorkspaceContext.Provider value={slots}>
-      <div className="workspace-shell" data-collapsed={collapsed} data-menu-open={mobileOpen}>
+      <div className="workspace-shell" data-workspace-theme={theme} data-collapsed={collapsed} data-menu-open={mobileOpen}>
         <div inert={mobileOpen}><SkipToContentLink targetId={contentId} /></div>
         {mobileOpen && <button type="button" className="workspace-backdrop" tabIndex={-1}
           aria-label="Navigation schliessen" onClick={closeNavigation} />}
@@ -172,6 +174,12 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             <div className="workspace-context"><span ref={setTitle} /><span className="workspace-default-title">{heading}</span></div>
             <div ref={setActions} className="workspace-header-actions" />
             <div className="workspace-header-global">
+              <button type="button" className="workspace-button workspace-theme-toggle" onClick={toggleTheme}
+                aria-label={theme === 'green' ? 'Helle Darstellung aktivieren' : 'Grünes Design aktivieren'}
+                title={theme === 'green' ? 'Zur hellen Darstellung wechseln' : 'Zum grünen Design wechseln'}>
+                {theme === 'green' ? <Sun aria-hidden="true" /> : <Leaf aria-hidden="true" />}
+                <span>{theme === 'green' ? 'Hell' : 'Grün'}</span>
+              </button>
               <GastCreateLink createLabel="Reise planen" className="workspace-button workspace-primary">
                 <Plus aria-hidden="true" /><span>Reise planen</span>
               </GastCreateLink>

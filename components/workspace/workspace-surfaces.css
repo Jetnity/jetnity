@@ -1,7 +1,7 @@
 /* Owner-approved green prototype, scoped to the unified workspace. The public
    site and embedded provider frames keep their own palette. Existing semantic
    status text, form behavior and domain models are not changed by this layer. */
-.workspace-shell {
+.workspace-shell:where([data-workspace-theme="green"]) {
   --workspace-bg: rgb(var(--jet-night-800));
   --workspace-panel: rgb(var(--jet-brand-900));
   --workspace-soft: rgb(var(--jet-brand-800));
@@ -33,57 +33,57 @@
   background: var(--workspace-bg);
   color-scheme: dark;
 }
-.workspace-shell :where(a, button, summary, input, select, textarea):focus-visible {
+.workspace-shell:where([data-workspace-theme="green"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
-.workspace-sidebar, .workspace-header, .workspace-bottom-nav {
+:where([data-workspace-theme="green"]) .workspace-sidebar, :where([data-workspace-theme="green"]) .workspace-header, :where([data-workspace-theme="green"]) .workspace-bottom-nav {
   background: linear-gradient(120deg, rgb(var(--jet-ink-400) / .12), transparent 70%), var(--workspace-glass);
   box-shadow: inset -1px 0 rgb(var(--jet-ink-400) / .07);
 }
-.workspace-brand img { filter: brightness(0) invert(1); }
-.workspace-kicker, .workspace-no-trip p, .workspace-sidebar-end p, .workspace-credit { color: var(--workspace-muted); }
-.workspace-nav-link, .workspace-open-trip { color: var(--workspace-ink); }
-.workspace-nav-link:hover, .workspace-open-trip:hover { background: rgb(var(--jet-ink-400) / .1); }
-.workspace-nav-link[aria-current="page"] {
+:where([data-workspace-theme="green"]) .workspace-brand img { filter: brightness(0) invert(1); }
+:where([data-workspace-theme="green"]) .workspace-kicker, :where([data-workspace-theme="green"]) .workspace-no-trip p, :where([data-workspace-theme="green"]) .workspace-sidebar-end p, :where([data-workspace-theme="green"]) .workspace-credit { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-nav-link, :where([data-workspace-theme="green"]) .workspace-open-trip { color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-nav-link:hover, :where([data-workspace-theme="green"]) .workspace-open-trip:hover { background: rgb(var(--jet-ink-400) / .1); }
+:where([data-workspace-theme="green"]) .workspace-nav-link[aria-current="page"] {
   background: rgb(var(--jet-ink-400) / .2);
   box-shadow: inset 3px 0 rgb(var(--jet-ink-400));
 }
-.workspace-button, .workspace-icon-button { background: rgb(var(--jet-ink-400) / .08); color: var(--workspace-ink); }
-.workspace-button:hover { background: rgb(var(--jet-ink-400) / .16); }
-.workspace-button.workspace-primary { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
-.workspace-primary:hover { background: rgb(var(--jet-ink-300)); }
-.workspace-header-actions [data-workspace-aktionen] button,
-.workspace-header-actions [data-workspace-aktionen] button:first-child {
+:where([data-workspace-theme="green"]) .workspace-button, :where([data-workspace-theme="green"]) .workspace-icon-button { background: rgb(var(--jet-ink-400) / .08); color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-button:hover { background: rgb(var(--jet-ink-400) / .16); }
+:where([data-workspace-theme="green"]) .workspace-button.workspace-primary { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) .workspace-primary:hover { background: rgb(var(--jet-ink-300)); }
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button,
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:first-child {
   color: var(--workspace-ink); background: rgb(var(--jet-ink-400) / .07); border: 1px solid var(--workspace-edge);
 }
-.workspace-header-actions [data-workspace-aktionen] button:hover { background: rgb(var(--jet-ink-400) / .16); }
-.workspace-account-panel { background: var(--workspace-panel); color: var(--workspace-ink); }
-.workspace-account-panel :where(a, button):hover { background: var(--workspace-soft); }
-.workspace-page [data-back-to-top] { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
-.workspace-bottom-nav .workspace-nav-link[aria-current="page"] { box-shadow: inset 0 3px rgb(var(--jet-ink-400)); }
+:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:hover { background: rgb(var(--jet-ink-400) / .16); }
+:where([data-workspace-theme="green"]) .workspace-account-panel { background: var(--workspace-panel); color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-account-panel :where(a, button):hover { background: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-page [data-back-to-top] { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
+:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link[aria-current="page"] { box-shadow: inset 0 3px rgb(var(--jet-ink-400)); }
 
 /* Background/foreground pairs also cover existing empty, error and security
    cards. Provider iframes and image pixels retain their own colours. */
-.workspace-content :where(.bg-white, .bg-white\/65, .bg-white\/70, .bg-white\/75, .bg-surface-0, .bg-surface-0\/85, .bg-surface-25) { background-color: var(--workspace-panel); }
-.workspace-content :where(.bg-surface-75) { background-color: var(--workspace-bg); }
-.workspace-content :where(.bg-surface-50, .bg-surface-100, .bg-surface-200, .bg-line-100) { background-color: var(--workspace-soft); }
-.workspace-content :where(.text-brand-600, .text-brand-700, .text-brand-800, .text-brand-900, .text-ink-900, .text-ink-950) { color: var(--workspace-ink); }
-.workspace-content :where(.text-ink-500, .text-ink-600, .text-ink-650, .text-ink-700, .text-ink-800) { color: var(--workspace-muted); }
-.workspace-content :where(.border-line-100, .border-line-200, .border-line-300, .border-brand-800, .border-brand-600) { border-color: var(--workspace-edge); }
-.workspace-content :where(.hover\:bg-surface-50, .hover\:bg-surface-100, .hover\:bg-white):hover { background-color: var(--workspace-soft); }
-.workspace-content :where(.bg-red-50, .bg-red-50\/50, .bg-red-50\/70) { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 12%, var(--workspace-bg)); }
-.workspace-content :where(.text-red-600, .text-red-700, .text-red-800, .text-red-900, .text-danger-600, .text-danger-700) { color: var(--workspace-danger); }
-.workspace-content :where(.border-red-200, .border-red-700) { border-color: var(--workspace-danger); }
-.workspace-content :where(.hover\:bg-red-100):hover { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 20%, var(--workspace-bg)); }
-.workspace-content :where(.hover\:text-danger-600):hover { color: var(--workspace-danger); }
-.workspace-content :where(.bg-green-50, .bg-emerald-50, .bg-amber-50) { background-color: var(--workspace-soft); }
-.workspace-content :where(.text-green-800, .text-emerald-900) { color: var(--workspace-muted); }
-.workspace-content :where(.text-amber-800, .text-amber-950) { color: rgb(var(--jet-citrus-400)); }
-.workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55),
-.workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55) :where(.text-brand-900, .text-brand-800, .text-ink-800) { color: rgb(var(--jet-brand-900)); }
-.workspace-content :where(input, select, textarea) { color-scheme: dark; }
-.workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
-.workspace-content :where(.shadow-brand) { box-shadow: none; }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-white, .bg-white\/65, .bg-white\/70, .bg-white\/75, .bg-surface-0, .bg-surface-0\/85, .bg-surface-25) { background-color: var(--workspace-panel); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-surface-75) { background-color: var(--workspace-bg); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-surface-50, .bg-surface-100, .bg-surface-200, .bg-line-100) { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-brand-600, .text-brand-700, .text-brand-800, .text-brand-900, .text-ink-900, .text-ink-950) { color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-ink-500, .text-ink-600, .text-ink-650, .text-ink-700, .text-ink-800) { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.border-line-100, .border-line-200, .border-line-300, .border-brand-800, .border-brand-600) { border-color: var(--workspace-edge); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:bg-surface-50, .hover\:bg-surface-100, .hover\:bg-white):hover { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-red-50, .bg-red-50\/50, .bg-red-50\/70) { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 12%, var(--workspace-bg)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-red-600, .text-red-700, .text-red-800, .text-red-900, .text-danger-600, .text-danger-700) { color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.border-red-200, .border-red-700) { border-color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:bg-red-100):hover { background-color: color-mix(in srgb, rgb(var(--jet-danger-600)) 20%, var(--workspace-bg)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.hover\:text-danger-600):hover { color: var(--workspace-danger); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-green-50, .bg-emerald-50, .bg-amber-50) { background-color: var(--workspace-soft); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-green-800, .text-emerald-900) { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.text-amber-800, .text-amber-950) { color: rgb(var(--jet-citrus-400)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55),
+:where([data-workspace-theme="green"]) .workspace-content :where(.bg-citrus-400, .bg-citrus-400\/55) :where(.text-brand-900, .text-brand-800, .text-ink-800) { color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) .workspace-content :where(input, select, textarea) { color-scheme: dark; }
+:where([data-workspace-theme="green"]) .workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
+:where([data-workspace-theme="green"]) .workspace-content :where(.shadow-brand) { box-shadow: none; }
 /* Keep the existing companion readable in the narrow workspace and at larger
    text sizes. Its content and request behaviour remain unchanged. */
 .workspace-content #reisebegleiter { min-width: 0; overflow-wrap: anywhere; }
@@ -107,10 +107,15 @@
 .workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; font-size: .75rem; color: var(--workspace-muted); margin-top: .75rem; }
 .workspace-trip-storage > span { display: flex; align-items: center; gap: .5rem; }
 .workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
+/* These legacy header slots were white on a dark hero. Only recolour them
+   inside the compact, transparent heading; keep dark action buttons intact. */
+:where([data-workspace-theme="light"]) .workspace-storage-options :where(.text-white, .text-white\/65, .text-white\/70) { color: var(--workspace-muted); }
+:where([data-workspace-theme="light"]) .workspace-storage-options .hover\:text-white:hover { color: var(--workspace-ink); }
+:where([data-workspace-theme="light"]) .workspace-storage-options [role="alert"] { background: var(--workspace-soft); color: var(--workspace-ink); }
 .workspace-content [data-workspace-overview="integrated"] { gap: 1.5rem; margin-top: 0; }
 .workspace-content [data-workspace-attention="integrated"] { border-radius: 1rem; }
 .workspace-content [data-workspace-attention="integrated"] > div:first-child { display: block; }
-.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading { padding: 1.25rem 1.5rem; background: var(--workspace-soft); }
+.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading { padding: 1.25rem 1.5rem; background: var(--workspace-soft); color: var(--workspace-ink); }
 .workspace-attention-heading p { color: var(--workspace-muted); }
 .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading + div { padding: 0; }
 .workspace-content [data-workspace-attention="integrated"] ul { border-radius: 0; margin: 0; }
