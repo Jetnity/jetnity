@@ -1,9 +1,15 @@
-/* Owner-approved green glass shell. All colours derive from the shared palette.
-   Domain content, trust labels and forms retain their own styles and semantics. */
+/* Light by default; the optional green palette lives in workspace-surfaces.css.
+   Both themes share this layout and the existing domain behavior. */
 .workspace-shell {
   --workspace-side-width: 14rem;
-  --workspace-glass: rgb(var(--jet-surface-100) / .94);
+  --workspace-bg: rgb(var(--jet-surface-75));
+  --workspace-panel: rgb(var(--jet-surface-0));
+  --workspace-soft: rgb(var(--jet-surface-100));
+  --workspace-ink: rgb(var(--jet-brand-800));
+  --workspace-muted: rgb(var(--jet-ink-900));
+  --workspace-glass: rgb(var(--jet-surface-0) / .94);
   --workspace-edge: rgb(var(--jet-brand-600) / .18);
+  color-scheme: light;
   min-height: 100dvh;
   color: rgb(var(--jet-brand-800));
   background: rgb(var(--jet-surface-75));
@@ -72,6 +78,7 @@
 .workspace-button.workspace-primary { color: rgb(var(--jet-surface-0)); background: rgb(var(--jet-brand-800)); border-color: transparent; }
 .workspace-primary:hover { background: rgb(var(--jet-brand-900)); }
 .workspace-icon-button { width: 44px; flex-shrink: 0; padding: .5rem; }
+.workspace-theme-toggle { white-space: nowrap; }
 .workspace-collapse { display: none; }
 .workspace-header-actions { min-width: 0; width: 100%; order: 4; }
 .workspace-header-actions:empty { display: none; }

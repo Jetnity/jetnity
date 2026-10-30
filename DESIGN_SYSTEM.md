@@ -3,7 +3,7 @@
 Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
-> **Freigegebener Darstellungsumbau, 30.10.2026 – Branch, noch nicht live:**
+> **Freigegebener Darstellungsumbau, 30.10.2026 – PR #1092 live:**
 > Der gemeinsame Reise-/Kontorahmen nutzt auf ausdrücklichen Wunsch des Product
 > Owners eine leicht transparente grüne Seitenleiste und einen schmalen Header.
 > Die Ausnahme betrifft diesen Workspace (`components/workspace/workspace.css`),
@@ -24,6 +24,15 @@ Status: Farbsystem und Responsive-Regeln verbindlich
 > geben dem Reisetitel eine eigene Zeile. Bei grossem Text darf das Kontomenü im
 > Seitenfluss stehen; sämtliche Einträge bleiben erreichbar. Zielnavigation
 > übergibt den Fokus an den Inhalt, blosses Schliessen zurück an den Auslöser.
+>
+> **Owner-Nachtrag: Hell als Standard, Grün per Header-Schalter.** Der Workspace
+> beginnt mit den bestehenden hellen Jetnity-Flächen, unabhängig vom Systemmodus.
+> „Grün“ aktiviert die oben beschriebene grüne Palette; „Hell“ stellt die helle
+> Ansicht wieder her. Die Wahl wird als optionale lokale Browserpräferenz gemerkt.
+> Bei gesperrtem Speicher funktioniert der Wechsel innerhalb der offenen Ansicht.
+> Heller Nebentext verwendet `ink-900`, damit auch auf `surface-100` ausreichend
+> Kontrast bleibt. Layout, Daten und Aktionen sind in beiden Ansichten identisch.
+> [Folgeauftrag](docs/WORKSPACE_THEME_1_TASK_2026-10-30.md).
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
 

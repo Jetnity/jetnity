@@ -5951,6 +5951,30 @@ Der Abgleich ist separat belegt und ersetzt keine angemeldete Kontoabnahme.
 
 ---
 
+## Ergänzende Darstellungsentscheidung – Hell/Grün, 30.10.2026
+
+**Status:** Ausdrücklicher Owner-Auftrag nach dem Release von PR #1092.
+
+**Entscheidung:** Der gemeinsame Workspace ist standardmässig hell wie das
+bisherige Jetnity. Ein beschrifteter Header-Schalter aktiviert mit einem Klick
+die grüne Ansicht und schaltet ebenso zurück. Der Systemmodus entscheidet nicht
+über die erste Ansicht. Eine gültige gespeicherte Browserpräferenz wird wieder
+verwendet; fehlende oder ungültige Werte ergeben Hell. Gesperrter Browserspeicher
+verhindert den Wechsel nicht, aber die dauerhafte Speicherung kann dann entfallen.
+
+**Begründung und Alternative:** Der Owner wünscht die grüne Gestaltung als Wahl,
+nicht als obligatorischen oder vom Betriebssystem abhängigen Standard. Beide
+Paletten nutzen die bestehenden Tokens; ausreichend dunkler Nebentext ist Teil
+des hellen Designs. Der Schalter ersetzt keine Reiseaktion.
+
+**Konsequenzen:** Ausschliesslich Präsentation und optionale lokale UI-Präferenz.
+Keine neue Kontoeinstellung, kein Datenbankzugriff, keine Fachlogikänderung.
+„Jetzt wichtig“, beide Planungswege, Reise ändern und Reisebegleiter fragen bleiben
+erhalten. Öffentliche Startseite und Anbieterframes bleiben unverändert. Die
+Veröffentlichung erfolgt nach unabhängiger Prüfung im bestehenden Releaseverfahren.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
