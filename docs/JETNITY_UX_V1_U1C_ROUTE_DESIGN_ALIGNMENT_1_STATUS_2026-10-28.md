@@ -1,6 +1,33 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — STATUS
 
-28 October 2026. **R1–R5 correction delivered. STOP for a new independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+30 October 2026. **Amendment 3 integration delivered. STOP for independent exact-head review.** This is not FINAL PASS, Ready, or merge.
+
+## Integration
+
+Amendment 3 at `9f2c5c60dcfa2288cab3447d21f5cf840d6fa7d6` was already on the branch. Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` was merged without force. After the fetch on 30 October 2026 the same main was still the tip, so this branch is 0 behind it. The runtime integration commit is `621897aafb5c95b66edf6be26912e4069e1ce028`, tree `408f5aa3cd50a6c5d06743e8e30f92926a1b48e3`. The review head is the later status commit on this branch.
+
+The released `WorkspaceShell` early return now renders the existing `reiseoptionen` disclosure after the visible storage line. The legacy dark header still renders the same slot. Guest discard and account deletion keep their original confirmations and handlers. Inside `.workspace-page`, Back-to-top does not set its own `bottom`; `workspace.css` remains the only spacing owner. Evidence images use `U1C_EVIDENCE_DIR` or the OS temp directory.
+
+## Session
+
+- URL: https://cursor.com/agents/bc-4904589f-a8f0-4106-a65a-507bc53e084a
+- `bcId`: `bc-4904589f-a8f0-4106-a65a-507bc53e084a`
+- Read-back name: `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`
+- `originalModelName`: `grok-4.7-high-fast`
+
+## Checks for this integration
+
+- Route unit tests, including the portable spacing decision and schema-valid fixtures: pass.
+- Evidence browser test: pass. Screenshots were written under the OS temp directory in this session, not a hard-coded `/opt/cursor/artifacts` path.
+- Mounted real `WorkspaceShell` plus `TripWorkspace`: pass. Light and green, 320/390/768/1440, root 32px labeled as root text, 22 day ids, six item kinds plus an undated note, connection history, and 390px Enter focus on Zur Route. No fetch/XHR.
+- Guest “Entwurf verwerfen” and account “Reise löschen” were reached by keyboard and touch in the shell and in the legacy header. Cancellation did not remove the draft or call the delete action. One confirmation removed the synthetic guest key once. One account confirmation called the original action once and showed “Diese Reise ist unbekannt.” because the synthetic id is not a UUID, so no account row was written.
+- `tsc --noEmit`: pass. Production build: pass. Hygiene checks `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, and `check:operating-mode`: pass. Lint on the owned route files: 0 errors. `TripWorkspace.tsx` still has the pre-existing effect warnings that came in with main.
+
+Native CI and Preview belong to the pushed head and are not yet a gate. Old CI `40763600238` and Preview `dpl_2eHpicMQDAyxQbmoKbq7mit8x89m` gated `f2ff4928` only. Hosted account acceptance remains blocked under #968. This local run is a synthetic shell harness, not the hosted product path, not true browser zoom, not a physical device, and not VoiceOver.
+
+## Historical R1–R5 record
+
+28 October 2026. The correction below was reviewed at `f2ff4928c551125b250706793195ee849fce0ce6` and is preserved. It does not gate this integration.
 
 ## Review taken over
 
@@ -14,30 +41,29 @@ Comment https://github.com/Jetnity/jetnity/pull/1082#issuecomment-6478861951 on 
 
 Amendment 2 was committed before these runtime edits: `73d372de26dde2f730d324c0a9eeb06adeb7afe7`.
 
-## Session
+## Session at that correction
 
 - URL: https://cursor.com/agents/bc-4904589f-a8f0-4106-a65a-507bc53e084a
 - `bcId`: `bc-4904589f-a8f0-4106-a65a-507bc53e084a`
 - Read-back name: `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`
 - `originalModelName`: `grok-4.7-high-fast`
 
-## Git
+## Git at that correction
 
 | Fact | Value |
 | --- | --- |
 | Reviewed head | `b21d0c1bb8607d585c9770884380a54ac84b5e0c` |
-| `origin/main` | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
-| Correction head | the commit that adds this status. The PR comment records its SHA and tree. |
+| `origin/main` then | `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc` |
+| Correction head | `f2ff4928c551125b250706793195ee849fce0ce6` |
 
-## Checks for this correction
+## Checks for that correction
 
 - Route unit tests, including unknown versus open connection copy: pass.
-- Full `lib/trips/ux-u1a2-geometry-1.test.ts`: pass. Sticky scroll, one nav, history/focus and no-provider checks remain. All 22 day ids are reached through the run rows. The long scroll content stays the day-1 note. The DejaVu/safe-area case passed in this Chrome session and was not weakened.
-- Mounted real TripWorkspace contract test: pass. Connection click, Zur Route, reload, back/forward, repeated names, ambiguous A→B→A→B, unknown ferry-plus-flight, outbound and return URLs, stage removal, day removal, pending editor text, and 390px Enter focus on the visible Zur Route. No fetch/XHR. This is not a VoiceOver pass.
-- U1-B mounted browser suite: pass after the narrow focus move.
-- `tsc --noEmit`: pass. Lint on touched files: 0 errors. Pre-existing effect warnings remain.
+- Full `lib/trips/ux-u1a2-geometry-1.test.ts`: pass on 28 October. It was not re-run as a separate suite for the 30 October integration.
+- Mounted real TripWorkspace contract test: pass, now inside `WorkspaceShell`.
+- `tsc --noEmit`: pass.
 
-Native CI and Preview belong to the pushed correction head and are recorded in the PR comment after the push. Preview READY is not browser acceptance.
+Native CI and Preview for `f2ff4928` do not gate the integrated head.
 
 ## Still outside
 

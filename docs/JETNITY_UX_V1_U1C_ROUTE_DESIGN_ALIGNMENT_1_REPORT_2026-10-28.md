@@ -1,8 +1,28 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — REPORT
 
-28 October 2026. Same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`. Model read-back `grok-4.7-high-fast`. Session name read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`.
+30 October 2026. Amendment 3 integration in the same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`. Model read-back `grok-4.7-high-fast`. Session name read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`.
 
 ## Baseline
+
+Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` was merged with an ordinary merge. The only conflicts were `TripWorkspace.tsx` and `TripWorkspaceKopf.tsx`. Both header variants keep `reiseoptionen`. The released shell, light default, Green-Light toggle, four modes, header actions, account menu, and mobile drawer were not rewritten. A later fetch still showed that main, 0 behind.
+
+## What the integration changes
+
+The workspace early return renders “Reiseoptionen” under the storage sentence. The buttons stay inside `.workspace-storage-options`, so the existing light-theme remap still applies. `.workspace-reiseoptionen > summary` uses `--workspace-ink` and a 44px target. Green text on the remapped dark page was checked in the harness after the shell stylesheet was placed after the Tailwind output, which is the same order as the app: global CSS first, shell CSS later.
+
+`backToTopInlineAbstand` returns a bottom value only outside `.workspace-page`. A fixed bottom nav with no positive `--ux-u1a-nav-offset` still hides the control. The shell rule `.workspace-page [data-back-to-top]` remains the spacing owner and was not edited.
+
+## Tests
+
+The workspace harness mounts real `WorkspaceShell` and real `TripWorkspace`. Guest and account probes mount `GastArbeitsbereich` and `KontoArbeitsbereich` with the synthetic reference trip. Account deletion uses the original `reiseLoeschen`. The synthetic id is not a UUID, so the action returns “Diese Reise ist unbekannt.” before any database call. The test recorded no fetch or XHR on that page.
+
+Root 32px is root font size, not browser zoom. Physical Safari and VoiceOver were not run. #1068 and hosted account acceptance under #968 stay outside this slice.
+
+## Historical report
+
+28 October 2026. Same session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`. Model read-back `grok-4.7-high-fast`. Session name read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`.
+
+## Baseline at the first implementation
 
 Amendment `97c4ad9afdaa5a215722f89556d6163f02b2f981` was read before runtime edits. `origin/main` remained `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`, tree `24770e02bd176f06040ccaf515783534ca5c83e6`. This branch was 0 behind that main.
 

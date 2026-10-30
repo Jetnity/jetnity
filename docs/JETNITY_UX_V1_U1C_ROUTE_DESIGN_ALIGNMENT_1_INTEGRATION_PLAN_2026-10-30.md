@@ -2,6 +2,8 @@
 
 30 October 2026. Session https://cursor.com/agents/bc-4904589f-a8f0-4106-a65a-507bc53e084a. Read-back name `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`. `run-info.originalModelName` `grok-4.7-high-fast`. Seed `9f2c5c60dcfa2288cab3447d21f5cf840d6fa7d6`. Mode NORMAL. Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3`. Before merge this branch is 9 ahead and 32 behind; merge-base `8fc72a18390af1650d6902fb2a20a64e4f7f8ccc`.
 
+Executed after this plan. The merge commit is `7a189726d6b6f7b55e31a8cc870e776d536cc6de`. The runtime follow-up is `621897aafb5c95b66edf6be26912e4069e1ce028`. Selectors actually added: `.workspace-reiseoptionen` and `.workspace-reiseoptionen > summary`. The light remap stayed the existing `.workspace-storage-options` rules because the disclosure content uses that class.
+
 ## Conflicts to resolve by hand
 
 - `components/trips/TripWorkspaceKopf.tsx`: keep main’s `workspace` early return and add `reiseoptionen` there and in the legacy header.

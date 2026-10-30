@@ -1,8 +1,27 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — SELF REVIEW
 
-28 October 2026. Author review of the implementation commit. Not an independent Technical Lead PASS.
+30 October 2026. Author review of the main integration. Not an independent Technical Lead PASS.
 
 ## Checked
+
+- The merge kept both `reiseoptionen` and the released `workspace` / `uebersichtAktiv` props. It did not take either file wholesale.
+- `WorkspaceShell`, theme preference, navigation, and account menu were not edited.
+- `workspace.css` was not edited. The new summary rules are only in `workspace-surfaces.css`.
+- Inside the shell, the back control’s inline `bottom` stayed empty while a fixed bottom nav was present. The measured rectangles did not overlap.
+- Cancellation left the synthetic guest draft in place. Confirmation removed that key once through `gastreiseEntfernen`.
+- The account button still calls `reiseLoeschen`. The harness did not stub that function. The non-UUID fixture stops before `konto()`.
+- The old `/opt/cursor/artifacts` path is no longer hard-coded. Assertions in the evidence test were not weakened.
+- No provider, Auth, database, env, or package file was edited for this slice.
+
+## Limits
+
+Hosted Preview and a signed-in develop account were not exercised. #968 remains closed for this branch. Root 32px is not browser zoom. The geometry suite from 28 October was not repeated as its own process on this head. VoiceOver and physical devices were not run.
+
+## Historical self-review
+
+28 October 2026. Author review of the implementation commit. Not an independent Technical Lead PASS.
+
+## Checked then
 
 - Amendment `97c4ad9a` was the tree before runtime edits. A, B1, C and D match the files actually changed.
 - N12 readers were not edited. `chronologischeLaeufe` is only called.
