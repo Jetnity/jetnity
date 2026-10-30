@@ -93,6 +93,8 @@ describe('12Go-Widget in der V1-Fläche', () => {
     assert.equal(einbau.includes('widget/quelle'), false)
     assert.equal(einbau.includes('widget/einfuegen'), false)
     assert.equal(einbau.includes('TwelveGoWidgetPruefung'), false)
+    assert.equal(einbau.includes('TwelveGoWidgetRahmen'), false)
+    assert.equal(links.includes('TwelveGoWidgetRahmen'), false)
     assert.equal(einbau.includes('trainbusferry'), false)
     assert.equal(pruefung.includes('trainbusferry'), false)
     assert.equal(pruefung.includes('<script'), false)
