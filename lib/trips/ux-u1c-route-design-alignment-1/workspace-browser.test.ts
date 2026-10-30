@@ -115,7 +115,7 @@ function shellCss(): string {
 }
 
 async function textKontrast(page: Page, selector: string) {
-  return page.locator(selector).first().evaluate((el) => {
+  return page.locator(selector).evaluate((el) => {
     const gelesen = (farbe: string) => {
       const modern = farbe.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/)
       if (modern) {
@@ -161,6 +161,110 @@ async function textKontrast(page: Page, selector: string) {
     const wert = text ? (Math.max(helligkeit(text), helligkeit(hintergrund)) + 0.05) / (Math.min(helligkeit(text), helligkeit(hintergrund)) + 0.05) : 0
     return { wert, text: getComputedStyle(el).color, hintergrund: `rgb(${hintergrund.r}, ${hintergrund.g}, ${hintergrund.b})` }
   })
+}
+
+const EDITOR_PFLICHT = [
+  'Ort oder Aktivität',
+  'Notiz, optional',
+  'Anfangsdatum, optional',
+  'Anfangszeit, optional',
+  'Enddatum, optional',
+  'Endzeit, optional',
+  'Ortszeiten laut deinem Plan',
+  'Abbrechen',
+  'Speichern',
+] as const
+
+function fehlendePflicht(sichtbar: readonly string[], pflicht: readonly string[]) {
+  return pflicht.filter((name) => !sichtbar.some((text) => text.includes(name)))
+}
+
+type EditorMessung = {
+  wert: number
+  text: string
+  hintergrund: string
+  tag: string
+  name: string
+  disabled: boolean
+  role: string | null
+}
+
+async function editorMessung(formular: ReturnType<Page['locator']>): Promise<EditorMessung[]> {
+  return formular.evaluate((wurzel) => {
+    const gelesen = (farbe: string) => {
+      const modern = farbe.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/)
+      if (modern) {
+        return {
+          r: Math.round(Number(modern[1]) * 255),
+          g: Math.round(Number(modern[2]) * 255),
+          b: Math.round(Number(modern[3]) * 255),
+          a: 1,
+        }
+      }
+      const werte = farbe.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
+      if (!werte) return null
+      return { r: Number(werte[1]), g: Number(werte[2]), b: Number(werte[3]), a: werte[4] == null ? 1 : Number(werte[4]) }
+    }
+    const misch = (
+      unten: { r: number, g: number, b: number, a: number },
+      oben: { r: number, g: number, b: number, a: number },
+    ) => {
+      const a = oben.a + unten.a * (1 - oben.a)
+      const kanal = (links: number, rechts: number) => Math.round((rechts * oben.a + links * unten.a * (1 - oben.a)) / (a || 1))
+      return { r: kanal(unten.r, oben.r), g: kanal(unten.g, oben.g), b: kanal(unten.b, oben.b), a }
+    }
+    const grund = (start: Element) => {
+      const schichten: { r: number, g: number, b: number, a: number }[] = []
+      let knoten: Element | null = start
+      while (knoten) {
+        const farbe = gelesen(getComputedStyle(knoten).backgroundColor)
+        if (farbe && farbe.a > 0) schichten.push(farbe)
+        if (farbe && farbe.a >= 0.99) break
+        knoten = knoten.parentElement
+      }
+      let bild = { r: 255, g: 255, b: 255, a: 1 }
+      for (const schicht of schichten.reverse()) bild = misch(bild, schicht)
+      return bild
+    }
+    const kanal = (wert: number) => {
+      const v = wert / 255
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
+    }
+    const helligkeit = (rgb: { r: number, g: number, b: number }) => 0.2126 * kanal(rgb.r) + 0.7152 * kanal(rgb.g) + 0.0722 * kanal(rgb.b)
+    return [...wurzel.querySelectorAll('h4, label, p, button, input, select, textarea')].flatMap((el) => {
+      const stil = getComputedStyle(el)
+      if (stil.display === 'none' || stil.visibility === 'hidden') return []
+      const text = gelesen(stil.color)
+      const hintergrund = grund(el)
+      const wert = text ? (Math.max(helligkeit(text), helligkeit(hintergrund)) + 0.05) / (Math.min(helligkeit(text), helligkeit(hintergrund)) + 0.05) : 0
+      const feld = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || el instanceof HTMLButtonElement
+      return [{
+        wert,
+        text: stil.color,
+        hintergrund: `rgb(${hintergrund.r}, ${hintergrund.g}, ${hintergrund.b})`,
+        tag: el.tagName,
+        name: (el.textContent ?? el.getAttribute('aria-label') ?? '').replace(/\s+/g, ' ').trim().slice(0, 80),
+        disabled: feld ? el.disabled : false,
+        role: el.getAttribute('role'),
+      }]
+    })
+  })
+}
+
+async function editorPruefen(formular: ReturnType<Page['locator']>, hinweis: string, art: 'neu' | 'bestand') {
+  const pflicht = art === 'neu'
+    ? ['Neuer Punkt', 'Art', ...EDITOR_PFLICHT]
+    : ['Punkt bearbeiten', 'Zuordnung im Tagesplan', ...EDITOR_PFLICHT]
+  const messung = await editorMessung(formular)
+  const fehlt = fehlendePflicht(messung.map((eintrag) => eintrag.name), pflicht)
+  assert.deepEqual(fehlt, [], `${hinweis} fehlt ${fehlt.join(', ')}`)
+  const daten = messung.filter((eintrag) => eintrag.tag === 'LABEL' && /Anfangs|End/.test(eintrag.name))
+  assert.equal(daten.length, 4, `${hinweis} Datumsfelder ${daten.map((eintrag) => eintrag.name).join('|')}`)
+  for (const eintrag of messung) {
+    if (eintrag.role === 'alert' || eintrag.role === 'status') continue
+    assert.ok(eintrag.wert >= 4.5, `${hinweis} ${eintrag.tag} ${eintrag.disabled ? 'deaktiviert' : 'aktiv'} ${eintrag.name} ${JSON.stringify(eintrag)}`)
+  }
+  return messung
 }
 
 describe('mounted workspace route contract', { timeout: 240_000 }, () => {
@@ -533,7 +637,8 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
   })
 
   test('green editor text and the selected day stay distinct', async () => {
-    const page = await browser.newPage({ viewport: { width: 768, height: 900 } })
+    const context = await browser.newContext({ viewport: { width: 768, height: 900 } })
+    const page = await context.newPage()
     const netz: string[] = []
     page.on('request', (request) => {
       if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') netz.push(request.url())
@@ -562,49 +667,42 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     const alt = await textKontrast(page, 'form[aria-label="Punkt hinzufügen"] h4')
     assert.ok(alt.wert < 4.5, `alter grüner Editor ${JSON.stringify(alt)}`)
     await formular.evaluate((el) => el.setAttribute('data-planpunkt-editor', ''))
+    assert.deepEqual(
+      fehlendePflicht(['Art', 'Ort oder Aktivität', 'Notiz, optional'], ['Enddatum, optional']),
+      ['Enddatum, optional'],
+    )
 
-    const pruefen = async (hinweis: string) => {
-      for (const ziel of ['h4', 'label', 'p', '[role="status"]']) {
-        const knoten = formular.locator(ziel)
-        if (await knoten.count() === 0) continue
-        const paar = await textKontrast(page, `form[aria-label="Punkt hinzufügen"] ${ziel}, form[aria-label^="Punkt bearbeiten"] ${ziel}`)
-        assert.ok(paar.wert >= 4.5, `${hinweis} ${ziel} ${JSON.stringify(paar)}`)
+    const themaSetzen = async (name: 'light' | 'green') => {
+      const aktuell = await page.locator('.workspace-shell').getAttribute('data-workspace-theme')
+      if (aktuell === name) return
+      await page.getByRole('button', { name: name === 'green' ? 'Grünes Design aktivieren' : 'Helle Darstellung aktivieren' }).click()
+      await page.waitForSelector(`[data-workspace-theme="${name}"]`)
+    }
+    const breiten = [320, 390, 768, 1440]
+    for (const name of ['green', 'light'] as const) {
+      await themaSetzen(name)
+      for (const breite of breiten) {
+        await page.setViewportSize({ width: breite, height: 900 })
+        await editorPruefen(formular, `${name} neu ${breite}`, 'neu')
       }
-      const eingabe = await textKontrast(page, 'form[aria-label="Punkt hinzufügen"] input[required], form[aria-label^="Punkt bearbeiten"] input[required]')
-      assert.ok(eingabe.wert >= 4.5, `${hinweis} Eingabe ${JSON.stringify(eingabe)}`)
-      const abbrechen = await textKontrast(page, 'form[aria-label="Punkt hinzufügen"] button[type="button"], form[aria-label^="Punkt bearbeiten"] button[type="button"]')
-      const speichern = await textKontrast(page, 'form[aria-label="Punkt hinzufügen"] button[type="submit"], form[aria-label^="Punkt bearbeiten"] button[type="submit"]')
-      assert.ok(abbrechen.wert >= 4.5, `${hinweis} Abbrechen ${JSON.stringify(abbrechen)}`)
-      assert.ok(speichern.wert >= 4.5, `${hinweis} Speichern ${JSON.stringify(speichern)}`)
+      await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+      await editorPruefen(formular, `${name} neu Root-Schrift 32px, keine Browservergrösserung`, 'neu')
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+      assert.equal(overflow, true, `${name} root text`)
+      await page.evaluate(() => { document.documentElement.style.fontSize = '' })
     }
-    for (const breite of [320, 390, 768, 1440]) {
-      await page.setViewportSize({ width: breite, height: 900 })
-      await pruefen(`grün ${breite}`)
-    }
-    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-    const gross = await textKontrast(page, '[data-planpunkt-editor] h4')
-    assert.ok(gross.wert >= 4.5, `Root-Schrift 32px, keine Browservergrösserung ${JSON.stringify(gross)}`)
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
-    assert.equal(overflow, true)
-    await page.evaluate(() => { document.documentElement.style.fontSize = '' })
     await page.setViewportSize({ width: 768, height: 900 })
-
-    await page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
-    await page.waitForSelector('[data-workspace-theme="light"]')
     assert.equal(await formular.locator('textarea').inputValue(), 'Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
-    for (const breite of [320, 768]) {
-      await page.setViewportSize({ width: breite, height: 900 })
-      const hell = await textKontrast(page, '[data-planpunkt-editor] h4')
-      assert.ok(hell.wert >= 4.5, `hell ${breite} ${JSON.stringify(hell)}`)
-    }
 
+    await themaSetzen('green')
     await formular.locator('input[required]').fill(' ')
     await formular.locator('button[type="submit"]').click()
     const alarm = formular.locator('[role="alert"]')
     await alarm.waitFor()
-    await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
-    const fehler = await textKontrast(page, '[data-planpunkt-editor] [role="alert"]')
-    assert.ok(fehler.wert >= 4.5, JSON.stringify(fehler))
+    const fehler = await editorMessung(formular)
+    const alarmText = fehler.filter((eintrag) => eintrag.role === 'alert')
+    assert.equal(alarmText.length, 1)
+    assert.ok(alarmText[0]?.wert >= 4.5, JSON.stringify(alarmText[0]))
     await formular.locator('input[required]').fill('QA-Test Tag 11')
     await formular.locator('textarea').fill('Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
     await formular.locator('input[required]').focus()
@@ -624,9 +722,31 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.equal(await page.locator('[data-plan-punkt]').count(), 1)
     await page.getByRole('button', { name: 'QA-Test Tag 11 bearbeiten' }).click()
     const bearbeiten = page.locator('form[aria-label="Punkt bearbeiten: QA-Test Tag 11"]')
+    await bearbeiten.waitFor()
     await bearbeiten.locator('textarea').fill('Dieser Testeintrag soll nach dem Neuladen erhalten bleiben und wurde bearbeitet')
-    const bearbeitet = await textKontrast(page, 'form[aria-label="Punkt bearbeiten: QA-Test Tag 11"] h4')
-    assert.ok(bearbeitet.wert >= 4.5, JSON.stringify(bearbeitet))
+    for (const name of ['green', 'light'] as const) {
+      await themaSetzen(name)
+      for (const breite of breiten) {
+        await page.setViewportSize({ width: breite, height: 900 })
+        await editorPruefen(bearbeiten, `${name} bestand ${breite}`, 'bestand')
+      }
+      await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+      await editorPruefen(bearbeiten, `${name} bestand Root-Schrift 32px, keine Browservergrösserung`, 'bestand')
+      await page.evaluate(() => { document.documentElement.style.fontSize = '' })
+    }
+    await page.setViewportSize({ width: 768, height: 900 })
+    await themaSetzen('green')
+    await bearbeiten.locator('label').filter({ hasText: 'Enddatum, optional' }).evaluate((el) => {
+      const flaeche = el.closest('form')
+      el.style.color = flaeche ? getComputedStyle(flaeche).backgroundColor : 'rgb(15, 48, 42)'
+    })
+    const beschaedigt = (await editorMessung(bearbeiten)).filter((eintrag) => eintrag.tag === 'LABEL' && eintrag.name.includes('Enddatum'))
+    assert.equal(beschaedigt.length, 1)
+    assert.ok((beschaedigt[0]?.wert ?? 99) < 4.5, JSON.stringify(beschaedigt[0]))
+    const erste = (await editorMessung(bearbeiten)).find((eintrag) => eintrag.tag === 'LABEL' && eintrag.name.includes('Ort oder Aktivität'))
+    assert.ok((erste?.wert ?? 0) >= 4.5, JSON.stringify(erste))
+    await bearbeiten.locator('label').filter({ hasText: 'Enddatum, optional' }).evaluate((el) => { el.style.color = '' })
+    await editorPruefen(bearbeiten, 'grün bestand nach Gegenprobe', 'bestand')
     await bearbeiten.locator('button[type="submit"]').click()
     await page.getByText('wurde bearbeitet', { exact: false }).first().waitFor()
     await page.reload({ waitUntil: 'networkidle' })
@@ -668,6 +788,6 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       assert.ok(laufText.wert >= 4.5, JSON.stringify(laufText))
     }
     assert.deepEqual(netz, [])
-    await page.close()
+    await context.close()
   })
 })
