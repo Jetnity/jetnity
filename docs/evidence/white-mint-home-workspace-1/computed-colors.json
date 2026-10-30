@@ -1,0 +1,239 @@
+{
+  "browser": {
+    "kanal": "chrome",
+    "version": "148.0.7778.96"
+  },
+  "homepage": [
+    {
+      "breite": 320,
+      "werte": {
+        "html": "rgb(247, 252, 249)",
+        "main": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "header": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "karte": {
+          "hintergrund": "rgb(255, 255, 255)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "fuss": {
+          "hintergrund": "rgb(15, 48, 42)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "ueberschrift": {
+          "hintergrund": "rgba(0, 0, 0, 0)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "korn": "0",
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 390,
+      "werte": {
+        "html": "rgb(247, 252, 249)",
+        "main": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "header": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "karte": {
+          "hintergrund": "rgb(255, 255, 255)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "fuss": {
+          "hintergrund": "rgb(15, 48, 42)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "ueberschrift": {
+          "hintergrund": "rgba(0, 0, 0, 0)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "korn": "0",
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 768,
+      "werte": {
+        "html": "rgb(247, 252, 249)",
+        "main": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "header": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "karte": {
+          "hintergrund": "rgb(255, 255, 255)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "fuss": {
+          "hintergrund": "rgb(15, 48, 42)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "ueberschrift": {
+          "hintergrund": "rgba(0, 0, 0, 0)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "korn": "0",
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 1440,
+      "werte": {
+        "html": "rgb(247, 252, 249)",
+        "main": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "header": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "karte": {
+          "hintergrund": "rgb(255, 255, 255)",
+          "farbe": "rgb(20, 62, 51)"
+        },
+        "fuss": {
+          "hintergrund": "rgb(15, 48, 42)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "ueberschrift": {
+          "hintergrund": "rgba(0, 0, 0, 0)",
+          "farbe": "rgb(255, 255, 255)"
+        },
+        "korn": "0",
+        "ueberlauf": 0
+      }
+    }
+  ],
+  "workspace": [
+    {
+      "breite": 320,
+      "werte": {
+        "shell": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "nav": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "gewaehlt": {
+          "hintergrund": "rgb(225, 241, 232)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "rgb(20, 62, 51) 3px 0px 0px 0px inset"
+        },
+        "unten": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 390,
+      "werte": {
+        "shell": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "nav": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "gewaehlt": {
+          "hintergrund": "rgb(225, 241, 232)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "rgb(20, 62, 51) 3px 0px 0px 0px inset"
+        },
+        "unten": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 768,
+      "werte": {
+        "shell": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "nav": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "gewaehlt": {
+          "hintergrund": "rgb(225, 241, 232)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "rgb(20, 62, 51) 3px 0px 0px 0px inset"
+        },
+        "unten": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "ueberlauf": 0
+      }
+    },
+    {
+      "breite": 1440,
+      "werte": {
+        "shell": {
+          "hintergrund": "rgb(247, 252, 249)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "nav": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "gewaehlt": {
+          "hintergrund": "rgb(225, 241, 232)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "rgb(20, 62, 51) 3px 0px 0px 0px inset"
+        },
+        "unten": {
+          "hintergrund": "rgb(239, 247, 242)",
+          "farbe": "rgb(20, 62, 51)",
+          "schatten": "none"
+        },
+        "ueberlauf": 0
+      }
+    }
+  ],
+  "vergroesserteSchrift": "32px root font, compared with the unscoped homepage",
+  "negative": {
+    "admin": [
+      10,
+      20,
+      18
+    ],
+    "rahmen": [
+      18,
+      52,
+      86
+    ]
+  }
+}
