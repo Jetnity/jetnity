@@ -6,12 +6,20 @@ Status: Farbsystem und Responsive-Regeln verbindlich
 > **Freigegebener Darstellungsumbau, 30.10.2026 – Branch, noch nicht live:**
 > Der gemeinsame Reise-/Kontorahmen nutzt auf ausdrücklichen Wunsch des Product
 > Owners eine leicht transparente grüne Seitenleiste und einen schmalen Header.
-> Die Ausnahme betrifft nur diesen Rahmen (`components/workspace/workspace.css`),
+> Die Ausnahme betrifft diesen Workspace (`components/workspace/workspace.css`),
 > verwendet bestehende Farbtokens und bietet eine deckende Reduced-Transparency-
 > Alternative. Desktop: ausklappbare Beschriftung oder Symbolleiste mit Hover-/
 > Fokustext. Mobil: beschriftetes Menü und Reisebereiche; bei grossem Text stehen
-> Navigation und Header im Dokumentfluss. Homepage und fachliche Komponenten
-> behalten ihre Gestaltung und Logik. [Auftrag](docs/UNIFIED_WORKSPACE_1_TASK_2026-10-30.md).
+> Navigation und Header im Dokumentfluss. Homepage bleibt unverändert; fachliche
+> Logik bleibt erhalten. [Auftrag](docs/UNIFIED_WORKSPACE_1_TASK_2026-10-30.md).
+> **Visuelle Nacharbeit nach Owner-Abgleich:** Der Rahmen allein entsprach noch
+> nicht dem freigegebenen grünen Entwurf. `workspace-surfaces.css` gleicht daher
+> auch die Inhaltsflächen an: bestehendes `night-800` als Grund, `brand-900` als
+> Karte, `brand-800` als angehobene Fläche, `surface-50`/`ink-400` als Schrift und
+> `ink-400` mit Alpha als Rahmen. Keine neue Palette. Kompakter Reisekopf,
+> vollständiges Jetzt-wichtig-Panel mit Reiseprüfung im Fuss und Routen-Einstieg
+> verwenden bestehende Daten/Handler. Speicher- und Fehlerzustände bleiben sichtbar.
+> Providerframes und öffentliche Seiten werden nicht umgefärbt.
 > Review-Korrektur: Mobile-Menü bleibt sichtbar beschriftet. Sehr schmale Header
 > geben dem Reisetitel eine eigene Zeile. Bei grossem Text darf das Kontomenü im
 > Seitenfluss stehen; sämtliche Einträge bleiben erreichbar. Zielnavigation

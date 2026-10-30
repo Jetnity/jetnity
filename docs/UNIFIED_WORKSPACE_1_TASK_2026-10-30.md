@@ -49,6 +49,26 @@ Reisen, Reiseprüfung, Anbieter-Opt-in und sämtliche Kontofunktionen bleiben.
 
 ## Geplante Dateien und Architektur
 
+### Visueller Abgleich mit dem freigegebenen Entwurf (30.10., Nacharbeit)
+
+Der Owner hat die Abweichung vom Screenshot des grünen Entwurfs ausdrücklich
+beanstandet. Der bisherige Shell-Umbau reicht nicht als visuelle Umsetzung.
+Im selben PR werden daher auch die Inhaltsflächen angeglichen: kompakter
+Reisekopf mit direkt sichtbaren Metadaten, durchgehendes Jetzt-wichtig-Panel
+mit integrierter Reiseprüfung, Route als Einstieg in den bestehenden Tagesplan,
+ruhige grüne Karten und einheitliche Abstände. Homepage bleibt unverändert.
+
+Dateien: Workspace-CSS/Shell, TripWorkspaceKopf, TripWorkspaceUebersicht,
+TripWorkspaceJetztWichtig und TripAuditV1Panel; ein reiner Routen-Überblick
+verwendet die bestehende Chronologie und die bestehende Modusnavigation.
+Keine neuen Statusannahmen, Karten-/Providerabfragen oder Geschäftsregeln.
+Speicherwahrheit, Löschen, weitere Hinweise und Prüfgrenzen bleiben erreichbar.
+Farben kommen aus der vorhandenen Markenpalette. Die Gestaltung wird in einem
+isolierten Browser visuell gegen die Vorlage geprüft, zusätzlich zu den
+vorhandenen Bedienungs-/Erhaltungstests. Risiken: Kontraste in alten Formularen,
+Fokus bei neuer Platzierung und 200-%-Text; diese werden ausdrücklich geprüft.
+Keine Infrastruktur-, API-, Datenbank- oder Kostenänderung in dieser Nacharbeit.
+
 - `components/workspace/`: gemeinsamer Rahmen, Navigationsziele, Slots für die
   existierenden Reise-Handler; keine Kopie des fachlichen Workspace-Zustands.
 - Public-/Account-Layout: Rahmen nur für Reise-/Konto-/Planen-Routen.

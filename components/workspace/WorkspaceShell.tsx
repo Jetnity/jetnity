@@ -12,6 +12,7 @@ import WorkspaceAccountMenu from './WorkspaceAccountMenu'
 import WorkspaceNavItem from './WorkspaceNavItem'
 import { WorkspaceContext } from './WorkspaceContext'
 import './workspace.css'
+import './workspace-surfaces.css'
 
 const PERSONAL = [
   { label: 'Meine Reisen', href: '/reisen', icon: Luggage },

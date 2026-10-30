@@ -1,5 +1,11 @@
 # Unified Workspace 1 – Implementierung und lokaler Prüfbericht
 
+> **Aktueller visueller Nachtrag, 30.10.2026:** Die ursprüngliche Umsetzung
+> entsprach dem Entwurf in den Inhaltsflächen noch nicht ausreichend. Diese
+> Nacharbeit ist im [visuellen Abgleich](UNIFIED_WORKSPACE_1_VISUAL_ALIGNMENT_2026-10-30.md)
+> mit aktuellem Codeumfang, Nachprüfungen und verbleibenden Gates dokumentiert.
+> Frühere Ergebnisse unten bleiben historische Belege. PR #1092 bleibt Draft.
+
 **Stand: 30.10.2026, Europe/Zurich. Ergebnis: IMPLEMENTIERT, lokale Browserprüfung PASS; technische Gesamtfreigabe OFFEN.**
 
 **Fortsetzung:** Der [Review-Nachtrag](UNIFIED_WORKSPACE_1_REVIEW_2026-10-30.md)

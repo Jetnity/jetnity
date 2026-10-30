@@ -6,8 +6,11 @@
 > Reisebereiche. Fachlogik, beide Planungswege und „Jetzt wichtig“ bleiben.
 > Lokale Prüfungen und Grenzen stehen im
 > [Report](docs/UNIFIED_WORKSPACE_1_REPORT_2026-10-30.md).
-> Noch offen: unabhängiges TL-Review, Abgleich mit #1082 und geschützte
-> Konto-/Preview-Abnahme. Kein Ready, Merge oder Deployment dieses Standes.
+> Nach Owner-Rückmeldung sind auch die Inhaltsflächen an die grüne Vorlage
+> angeglichen: kompakter Reisekopf, Jetzt-wichtig-Panel mit Reiseprüfung und
+> kanonischer Routenüberblick. [Visueller Nachreview](docs/UNIFIED_WORKSPACE_1_VISUAL_ALIGNMENT_2026-10-30.md).
+> Noch offen: angemeldete develop-Kontoprüfung, kombinierter Abgleich mit #1082
+> sowie Geräte/VoiceOver. Vorschau vorhanden; kein Ready, Merge oder Livegang.
 > Bestehende Anbieter- und Product-Owner-Gates bleiben unverändert.
 
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->

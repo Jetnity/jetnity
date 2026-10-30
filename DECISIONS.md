@@ -5939,6 +5939,16 @@ Design-System. Gastschutz kann die neue Header-CTA weiterhin als
 „Reise fortsetzen“ anzeigen. Bestehende Holds gelten; der Technical Lead
 entscheidet nach unabhängiger Prüfung über Ready, Merge und Livegang.
 
+**Visueller Abgleich, 30.10.2026:** Der Owner beanstandet zu Recht, dass der
+Navigationsrahmen allein den grünen Entwurf nicht umsetzt. Auch die Inhalte
+erhalten deshalb die gemeinsame Palette, einen kompakten Reisekopf und das
+durchgehende Jetzt-wichtig-Panel mit Reiseprüfung. Ein Routenüberblick verlinkt
+dieselben gespeicherten Tage über die vorhandene Chronologie. Es werden keine
+Aufenthalte, Statuswerte, Buchungen oder Karten aus dem Muster erfunden.
+Semantische Karten-/Fehlerfarben sind paarweise auf den Workspace begrenzt;
+Homepage, Anbieterframes und alle bestehenden Fachhandler bleiben erhalten.
+Der Abgleich ist separat belegt und ersetzt keine angemeldete Kontoabnahme.
+
 ---
 
 ## Offene Widersprüche

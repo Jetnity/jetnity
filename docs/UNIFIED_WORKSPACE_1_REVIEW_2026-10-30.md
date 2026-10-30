@@ -1,5 +1,11 @@
 # Unified Workspace 1 – unabhängiger Review und Nacharbeit
 
+> **Aktueller visueller Nachtrag, 30.10.2026:** Die ursprüngliche Umsetzung
+> entsprach dem Entwurf in den Inhaltsflächen noch nicht ausreichend. Diese
+> Nacharbeit ist im [visuellen Abgleich](UNIFIED_WORKSPACE_1_VISUAL_ALIGNMENT_2026-10-30.md)
+> mit aktuellem Codeumfang, Nachprüfungen und verbleibenden Gates dokumentiert.
+> Frühere Ergebnisse unten bleiben historische Belege. PR #1092 bleibt Draft.
+
 Stand: 30.10.2026, Europe/Zurich. **Teilweise abgeschlossen; keine Ready-/Merge-Freigabe.**
 PR: [#1092](https://github.com/Jetnity/jetnity/pull/1092).
 

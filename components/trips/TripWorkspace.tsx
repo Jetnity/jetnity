@@ -1177,6 +1177,8 @@ export default function TripWorkspace({
           kompakt={kompakt}
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
+          workspace={Boolean(shell)}
+          uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
         />
 
         {modusBereit ? (
@@ -1244,6 +1246,11 @@ export default function TripWorkspace({
                 destinationEssentials={destinationEssentials}
                 onLuecke={oeffneGap}
                 onAttention={onAttention}
+                workspace={Boolean(shell)}
+                onRoute={(tagId) => {
+                  modusTastaturRef.current = true
+                  modusSetzen({ ansicht: 'plan', bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
+                }}
               />
             </FlaecheHuelle>
           ) : null}
