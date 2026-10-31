@@ -16,7 +16,7 @@ import {
 import { viatorOrtAufloesen, type ViatorKatalogOrt } from '@/lib/providers/viator/activities/destination'
 import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
 import { validateViatorLiveCheckRequest } from '@/lib/providers/viator/activities/live-check'
-import { createViatorSandboxClient } from '@/lib/providers/viator/activities/sandbox'
+import { createViatorSandboxClient, VIATOR_BODY_REASONS, type ViatorBodyReason } from '@/lib/providers/viator/activities/sandbox'
 import { validateViatorImageUrl, validateViatorProductUrl } from '@/lib/providers/viator/activities/url'
 import { viatorSandboxZugang, type ViatorSandboxEnv } from '@/lib/providers/viator/activities/zugang'
 
@@ -95,7 +95,7 @@ export function viatorZielCacheLeeren(): void {
   zielCache = null
 }
 
-const VIATOR_ZIEL_DIAGNOSE_FELDER = ['ereignis', 'operation', 'klasse', 'reason', 'transportKind', 'status'] as const
+const VIATOR_ZIEL_DIAGNOSE_FELDER = ['ereignis', 'operation', 'klasse', 'reason', 'transportKind', 'status', 'bodyReason'] as const
 
 type ViatorZielKlasse =
   | 'http_denied'
@@ -114,16 +114,23 @@ type ViatorZielDiagnose = {
   reason: 'transport' | 'malformed_response' | 'unclassified'
   transportKind: string | null
   status: number | null
+  bodyReason: ViatorBodyReason | null
 }
 
 function viatorZielStatus(wert: unknown): number | null {
   return typeof wert === 'number' && Number.isInteger(wert) && wert >= 100 && wert <= 599 ? wert : null
 }
 
+function viatorZielBodyReason(wert: unknown, klasse: ViatorZielKlasse): ViatorBodyReason | null {
+  if (klasse !== 'transport_body') return null
+  return typeof wert === 'string' && (VIATOR_BODY_REASONS as readonly string[]).includes(wert) ? (wert as ViatorBodyReason) : null
+}
+
 function viatorZielDiagnose(fehler: {
   reason: string
   transportKind?: string | null
   status?: number | null
+  bodyReason?: unknown
 }): ViatorZielDiagnose {
   const transportKind =
     typeof fehler.transportKind === 'string' && istProviderTransportErrorKind(fehler.transportKind)
@@ -155,6 +162,7 @@ function viatorZielDiagnose(fehler: {
     reason: katalog ? 'malformed_response' : transport ? 'transport' : 'unclassified',
     transportKind,
     status: viatorZielStatus(fehler.status),
+    bodyReason: viatorZielBodyReason(fehler.bodyReason, klasse),
   }
   return {
     ereignis: diagnose.ereignis,
@@ -163,13 +171,15 @@ function viatorZielDiagnose(fehler: {
     reason: diagnose.reason,
     transportKind: diagnose.transportKind,
     status: diagnose.status,
+    bodyReason: diagnose.bodyReason,
   }
 }
 
-function viatorZielFehlerMelden(fehler: {
+export function viatorZielFehlerMelden(fehler: {
   reason: string
   transportKind?: string | null
   status?: number | null
+  bodyReason?: unknown
 }): void {
   try {
     const diagnose = viatorZielDiagnose(fehler)

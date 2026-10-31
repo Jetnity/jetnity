@@ -1,6 +1,6 @@
 # Viator S2 native activities — STATUS
 
-29 October 2026, Europe/Zurich. Draft #1079. Not Ready. Not merged.
+31 October 2026, Europe/Zurich. Draft #1079. Not Ready. Not merged.
 
 ## State
 
@@ -10,7 +10,7 @@ Runtime destination resolution loads `GET /destinations`. For Viator, `activitie
 
 A live check always sends a supported display currency. CHF, EUR, and USD are sent when that is the requested display currency. An unsupported trip currency asks for a choice and does not show a current price. `productOptionCode` is omitted only when the provider sent no option list at all. A present option without a usable title stays unresolved and is not that option-free case. The request never sends `TG1` or `DEFAULT` as a stand-in. Several start times stay unselected until the visitor chooses one. `daysOfWeek` comes from each pricing record, so a Monday-only time is not offered on Tuesday. A season without `endDate` is a hint through 384 days from the check clock, not availability. Changing the date while details are still loading does not discard that load. A new activity search clears the selected Viator product.
 
-Official product codes may contain an underscore. `2855KENNEDY_TKTS` and `2050_PA` pass content, request, schedule, live-check, and affiliate normalization. Slash, query, fragment, percent-encoding, spaces, controls, and codes outside 2–40 characters do not enter a path. An absent option list remains a standard product. A present but untitled or malformed option list sets `optionenUnaufgeloest` and does not show “Dieses Angebot hat keine Zusatzoption” or start a live check. A labelled option in a mixed list still checks with its exact code. A client `standardProduct` flag does not override that. The hosted destinations failure stays unclassified. Both execution flags stay off. This correction did not call Viator.
+Official product codes may contain an underscore. `2855KENNEDY_TKTS` and `2050_PA` pass content, request, schedule, live-check, and affiliate normalization. Slash, query, fragment, percent-encoding, spaces, controls, and codes outside 2–40 characters do not enter a path. An absent option list remains a standard product. A present but untitled or malformed option list sets `optionenUnaufgeloest` and does not show “Dieses Angebot hat keine Zusatzoption” or start a live check. A labelled option in a mixed list still checks with its exact code. A client `standardProduct` flag does not override that. Both execution flags stay off. The consumed destinations witness and the offline body-reason field are recorded below. This source correction did not call Viator.
 
 Live Sandbox HTTP remains BLOCKED. No secret was read. No Vercel login was requested. DiscoverCars and Trip Workspace were not edited.
 
@@ -40,6 +40,14 @@ Comment 6495438986, S2-PREACTIVATION-R1. On `b7299e69` the guard rejected only t
 
 Comment 6485453294, checked on macOS headless Chrome 156, found that ArrowDown, ArrowDown plus Enter, and Space plus ArrowDown plus Enter do not change a plain native select, including outside Jetnity. Typeahead did change the Jetnity day. That is a platform assumption in `browser.test.ts`, not a recorded product defect. The select and those ArrowDown assertions were left as they are. A Linux pass of those two assertions is not Mac, VoiceOver, or full-browser-zoom acceptance.
 
+## Body-reason diagnostic
+
+R4, 31 October 2026. The approved one-shot on `f644dbd3` is consumed. Deployment `dpl_Br8avGaPwx31xRDiBe4C5hGBsKb7` made one `GET /partner/destinations`. The safe log was operation `destinations`, class `transport_body`, reason `transport`, transport kind `malformed_response`, status 200. That log did not say whether the body was over the cap, empty, a non-JSON media type, invalid JSON, or unreadable. Flags were returned to false. OFF deployment `dpl_CmSbFCagWWnY4X9LAjUhhxf6L4fB` on the same head showed the unavailable state and zero outgoing requests. Receipt 6543514153.
+
+`sandbox.ts` now exact-maps the five fixed parser sentences onto `size_limit`, `body_unreadable`, `empty_json`, `non_json_media_type`, or `invalid_json` only when the destinations transport kind is `malformed_response`. Every other sentence, including `Provider response was malformed.`, is `unknown`. The logger allowlist is the previous six fields plus `bodyReason`. A value is logged only when the class is `transport_body` and the value is one of those six enums. Search, detail, schedule, and check do not receive the field. Guest text stays `Die Viator-Ziele konnten nicht gelesen werden.` A throwing `console.error` still does not replace that text. The body cap stays 1 MiB, with 2 MiB as the configurable maximum. Parsing strategy, MIME acceptance, timeout, cache, and retry count are unchanged. This does not classify the consumed live response and is not a hosted Sandbox pass.
+
+Injected streams covered announced length 1048577, a streamed chunk of 1048577 bytes, a throwing stream, an abort, empty and whitespace bodies, `text/html`, invalid JSON, HTTP status 99, a valid JSON catalog that is not a destination list, a valid catalog, and forged enum values at the logger. Each failure made one destinations call. Canaries and the raw parser sentences stayed out of the log and the guest result. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. The Viator seam file and sandbox client file passed, 21 tests, 0 failures.
+
 ## Still blocked
 
-Real Sandbox calls remain blocked until a later permitted one-shot retest. Image license, checkout currency, hosted acceptance, and a green exact-head CI run for the R3 commit are open. CI 40903974616 is the historical SUCCESS on `814920d0` and does not cover this commit. No Ready. No merge.
+No further real provider call is authorized. The live body subtype remains unknown. Image license, checkout currency, and hosted acceptance stay open. Exact-head CI and Preview for the commit that contains this note are not a pass yet. CI 41198906310 and the OFF deployment above cover `f644dbd3` only. No Ready. No merge.

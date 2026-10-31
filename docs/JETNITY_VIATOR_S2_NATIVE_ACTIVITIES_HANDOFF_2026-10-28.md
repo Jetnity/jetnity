@@ -1,6 +1,6 @@
 # Viator S2 native activities — HANDOFF
 
-29 October 2026, Europe/Zurich. Same writer: Jetnity Viator Sandbox Affiliate Foundation 1 — Cursor Generation 1. bcId `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`. Model `grok-4.7-high-fast`.
+31 October 2026, Europe/Zurich. Same writer: Jetnity Viator Sandbox Affiliate Foundation 1 — Cursor Generation 1. bcId `bc-803fd88c-9fdc-47f7-acfc-213976e487f6`. Model `grok-4.7-high-fast`.
 
 ## What is wired
 
@@ -24,7 +24,9 @@ S2-PREACTIVATION-R1, comment 6495438986. `viatorSandboxZugang` opens the real cl
 
 ## Destination diagnostic
 
-S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allowlisted server record and still throws the existing guest message. The write is inside a catch that swallows a telemetry failure and does not log it again. Classes are `http_denied`, `transport_body`, `catalog_schema`, `timeout`, `network`, `rate_limited`, `aborted`, or `other`. No body, header, key, URL, or trip id is included. `sandbox.ts` already returned the typed failure, so it was not changed. Shared transport code was not changed. CI 40891646901 is the historical SUCCESS on `c470c140`. The hosted failure at 13:52:42.953Z is still unclassified. No new provider call was made.
+S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allowlisted server record and still throws the existing guest message. The write is inside a catch that swallows a telemetry failure and does not log it again. Classes are `http_denied`, `transport_body`, `catalog_schema`, `timeout`, `network`, `rate_limited`, `aborted`, or `other`. No body, header, key, URL, or trip id is included. Shared transport code was not changed. CI 40891646901 is the historical SUCCESS on `c470c140`.
+
+R4 adds `bodyReason` to that same record. It is set only for a destinations `malformed_response`, and only to `size_limit`, `body_unreadable`, `empty_json`, `non_json_media_type`, `invalid_json`, or `unknown`. The logger drops the field unless the class is `transport_body` and the value is one of those six. The consumed one-shot on `f644dbd3` (receipt 6543514153) already showed `transport_body` / `malformed_response` / status 200 and then the OFF rollback on `dpl_CmSbFCagWWnY4X9LAjUhhxf6L4fB`. That response was not given a body subtype. This mapping does not replay it, does not raise the 1 MiB body cap, and does not change `parse` away from JSON. The older 13:52:42.953Z log remains a separate historical line without this field.
 
 ## Product codes and option truth
 
@@ -34,8 +36,8 @@ The local browser harness now loads `globals.css`, `white-mint.css`, `workspace.
 
 ## Still blocked
 
-Real Sandbox calls, image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff. The destinations request exists; this session did not call Viator. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
+The one approved destinations search is consumed. No further provider call is authorized. Image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff remain open. The live body subtype is still unknown. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
 
 ## Next step
 
-Independent review of the R3 head. CI 40903974616 is the historical SUCCESS on `814920d0`. The hosted destinations failure stays unclassified until a later permitted one-shot retest.
+Independent review of the R4 head. CI 41198906310 and Preview for `f644dbd3` do not cover it. Do not start a follow-up slice and do not call Viator again from this result.

@@ -25,11 +25,43 @@ import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/reques
 import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
 import { viatorSandboxZugang, type ViatorSandboxBlockReason, type ViatorSandboxEnv } from '@/lib/providers/viator/activities/zugang'
 
+export type ViatorBodyReason =
+  | 'size_limit'
+  | 'body_unreadable'
+  | 'empty_json'
+  | 'non_json_media_type'
+  | 'invalid_json'
+  | 'unknown'
+
+export const VIATOR_BODY_REASONS: readonly ViatorBodyReason[] = [
+  'size_limit',
+  'body_unreadable',
+  'empty_json',
+  'non_json_media_type',
+  'invalid_json',
+  'unknown',
+]
+
+const VIATOR_BODY_NACHRICHTEN: Record<string, ViatorBodyReason> = {
+  'Provider response exceeded the body size limit.': 'size_limit',
+  'Provider response body could not be read.': 'body_unreadable',
+  'Provider JSON response was empty.': 'empty_json',
+  'Provider response was not JSON.': 'non_json_media_type',
+  'Provider response was not valid JSON.': 'invalid_json',
+}
+
+function viatorBodyReason(message: string): ViatorBodyReason {
+  return Object.prototype.hasOwnProperty.call(VIATOR_BODY_NACHRICHTEN, message)
+    ? VIATOR_BODY_NACHRICHTEN[message]!
+    : 'unknown'
+}
+
 export type ViatorSandboxFailure = {
   ok: false
   reason: string
   transportKind?: ProviderTransportErrorKind
   status?: number | null
+  bodyReason?: ViatorBodyReason
 }
 
 export type ViatorSandboxClient = {
@@ -100,12 +132,16 @@ export function createViatorSandboxClient(options: {
       },
     })
     if (!transport.ok) {
-      return {
-        ok: false as const,
+      const failure: ViatorSandboxFailure = {
+        ok: false,
         reason: 'transport',
         transportKind: transport.error.kind,
         status: transport.error.status,
       }
+      if (operation === 'destinations' && transport.error.kind === 'malformed_response') {
+        failure.bodyReason = viatorBodyReason(transport.error.message)
+      }
+      return failure
     }
     return { ok: true as const, body: transport.value, retrievedAt: new Date(nowMs()).toISOString(), now: nowMs() }
   }

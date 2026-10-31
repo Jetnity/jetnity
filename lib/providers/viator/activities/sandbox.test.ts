@@ -169,4 +169,75 @@ describe('Viator sandbox client', () => {
       assert.equal(JSON.stringify(result).includes(KEY), false)
     }
   })
+
+  test('only a destinations body failure carries the closed reason', async () => {
+    const canary = 'CANARY-CLIENT-BODY'
+    const satz = 'Provider response was not valid JSON.'
+    const kaputt = (urlName: 'destinations' | 'search' | 'detail') => {
+      const calls: string[] = []
+      const http: ProviderHttpClient = async (request) => {
+        calls.push(request.url)
+        return {
+          status: 200,
+          headers: { get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null) },
+          body: new ReadableStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode(`{${canary}`))
+              controller.close()
+            },
+          }),
+        }
+      }
+      return { calls, http, urlName }
+    }
+    const ziele = kaputt('destinations')
+    const created = createViatorSandboxClient({ env: enabled, http: ziele.http, nowMs: NOW })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const destinations = await created.client.destinations()
+    assert.equal(destinations.ok, false)
+    if (!destinations.ok) {
+      assert.equal(destinations.reason, 'transport')
+      assert.equal(destinations.transportKind, 'malformed_response')
+      assert.equal(destinations.bodyReason, 'invalid_json')
+    }
+    assert.equal(ziele.calls.length, 1)
+    assert.equal(ziele.calls[0]?.endsWith('/partner/destinations'), true)
+    const zielText = JSON.stringify(destinations)
+    assert.equal(zielText.includes(canary), false)
+    assert.equal(zielText.includes(satz), false)
+    assert.equal(zielText.includes(KEY), false)
+    const suche = kaputt('search')
+    const suchClient = createViatorSandboxClient({ env: enabled, http: suche.http, nowMs: NOW })
+    assert.equal(suchClient.ok, true)
+    if (!suchClient.ok) return
+    const search = await suchClient.client.search({ destinationId: '343', currency: 'CHF' })
+    assert.equal(search.ok, false)
+    if (!search.ok) {
+      assert.equal(search.transportKind, 'malformed_response')
+      assert.equal('bodyReason' in search, false)
+    }
+    assert.equal(suche.calls.length, 1)
+    assert.equal(JSON.stringify(search).includes(canary), false)
+    assert.equal(JSON.stringify(search).includes(satz), false)
+    const detailHttp = kaputt('detail')
+    const detailClient = createViatorSandboxClient({ env: enabled, http: detailHttp.http, nowMs: NOW })
+    assert.equal(detailClient.ok, true)
+    if (!detailClient.ok) return
+    const detail = await detailClient.client.detail({ productCode: '10001P1' })
+    assert.equal(detail.ok, false)
+    if (!detail.ok) assert.equal('bodyReason' in detail, false)
+    assert.equal(detailHttp.calls.length, 1)
+    const katalogHttp = response(200, { destinations: canary })
+    const katalogClient = createViatorSandboxClient({ env: enabled, http: katalogHttp, nowMs: NOW })
+    assert.equal(katalogClient.ok, true)
+    if (!katalogClient.ok) return
+    const katalog = await katalogClient.client.destinations()
+    assert.equal(katalog.ok, false)
+    if (!katalog.ok) {
+      assert.equal(katalog.reason, 'malformed_response')
+      assert.equal('bodyReason' in katalog, false)
+      assert.equal(JSON.stringify(katalog).includes(canary), false)
+    }
+  })
 })

@@ -9,7 +9,7 @@ import { activityRateLeeren } from '@/lib/activities/rate-limit'
 import { activityZustand } from '@/lib/activities/zustand'
 import type { Ort } from '@/lib/places/domain'
 import { readViatorAffiliateRedirect } from '@/lib/providers/viator/activities/affiliate'
-import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorKalenderLaden, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
+import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorKalenderLaden, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren, viatorZielFehlerMelden } from '@/lib/providers/viator/activities/anbinden'
 import { parseViatorProductDetail } from '@/lib/providers/viator/activities/content'
 import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/request'
 import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
@@ -185,6 +185,7 @@ describe('Viator native seam', () => {
       status: number | null,
       meldung: string,
       art: string,
+      bodyReason: string | null,
     ) => {
       viatorZielCacheLeeren()
       const vorherAnzahl = lesen().length
@@ -202,12 +203,13 @@ describe('Viator native seam', () => {
       const ereignisse = lesen().slice(vorherAnzahl)
       assert.equal(ereignisse.length, 1)
       const ereignis = ereignisse[0]!
-      assert.deepEqual(Object.keys(ereignis).sort(), ['ereignis', 'klasse', 'operation', 'reason', 'status', 'transportKind'])
+      assert.deepEqual(Object.keys(ereignis).sort(), ['bodyReason', 'ereignis', 'klasse', 'operation', 'reason', 'status', 'transportKind'])
       assert.equal(ereignis.operation, 'destinations')
       assert.equal(ereignis.klasse, klasse)
       assert.equal(ereignis.transportKind, transportKind)
       assert.equal(ereignis.status, status)
       assert.equal(ereignis.reason, klasse === 'catalog_schema' ? 'malformed_response' : 'transport')
+      assert.equal(ereignis.bodyReason, bodyReason)
     }
     try {
       const allgemein = 'Die Viator-Ziele konnten nicht gelesen werden.'
@@ -259,13 +261,14 @@ describe('Viator native seam', () => {
       assert.equal(lesen()[0]?.klasse, 'http_denied')
       assert.equal(lesen()[0]?.transportKind, 'authentication')
       assert.equal(lesen()[0]?.status, 401)
-      await erwarten(antwort(403, `{"message":"${canary}"}`), 'http_denied', 'authorization', 403, allgemein, 'error')
-      await erwarten(antwort(429, `{"message":"${canary}"}`), 'rate_limited', 'rate_limited', 429, 'Viator begrenzt gerade die Anfragen.', 'unavailable')
-      await erwarten(antwort(500, `{"message":"${canary}"}`), 'http_denied', 'provider_5xx', 500, allgemein, 'error')
+      assert.equal(lesen()[0]?.bodyReason, null)
+      await erwarten(antwort(403, `{"message":"${canary}"}`), 'http_denied', 'authorization', 403, allgemein, 'error', null)
+      await erwarten(antwort(429, `{"message":"${canary}"}`), 'rate_limited', 'rate_limited', 429, 'Viator begrenzt gerade die Anfragen.', 'unavailable', null)
+      await erwarten(antwort(500, `{"message":"${canary}"}`), 'http_denied', 'provider_5xx', 500, allgemein, 'error', null)
       await erwarten(async () => {
         throw new Error(`${canary} ${reiseId}`)
-      }, 'network', 'network_error', null, allgemein, 'error')
-      await erwarten(antwort(200, `{not-json ${canary}`), 'transport_body', 'malformed_response', 200, allgemein, 'error')
+      }, 'network', 'network_error', null, allgemein, 'error', null)
+      await erwarten(antwort(200, `{not-json ${canary}`), 'transport_body', 'malformed_response', 200, allgemein, 'error', 'invalid_json')
       await erwarten(
         antwort(200, JSON.stringify({ destinations: [{ name: canary, trip: reiseId }], productUrl: 'https://www.viator.com/tours/secret' })),
         'catalog_schema',
@@ -273,6 +276,7 @@ describe('Viator native seam', () => {
         null,
         allgemein,
         'error',
+        null,
       )
       viatorZielCacheLeeren()
       const erfolg = httpFor({
@@ -305,9 +309,19 @@ describe('Viator native seam', () => {
         })
         return antwort(200, '{}')(request)
       }
-      await erwarten(haengen, 'timeout', 'timeout', null, 'Die Viator-Ziele haben zu lange gebraucht.', 'timeout')
+      await erwarten(haengen, 'timeout', 'timeout', null, 'Die Viator-Ziele haben zu lange gebraucht.', 'timeout', null)
       const text = zeilen.join('\n')
       assert.equal(text.includes(canary), false)
+      for (const satz of [
+        'Provider response exceeded the body size limit.',
+        'Provider response body could not be read.',
+        'Provider JSON response was empty.',
+        'Provider response was not JSON.',
+        'Provider response was not valid JSON.',
+        'Provider response was malformed.',
+      ]) {
+        assert.equal(text.includes(satz), false, satz)
+      }
       assert.equal(text.includes(reiseId), false)
       assert.equal(text.includes(KEY), false)
       assert.equal(text.includes('viator.com/tours'), false)
@@ -396,6 +410,224 @@ describe('Viator native seam', () => {
       viatorZielCacheLeeren()
     }
     assert.equal(console.error, vorher)
+  })
+
+  test('destinations body failures keep a closed reason and one call', async () => {
+    viatorZielCacheLeeren()
+    activityRateLeeren()
+    const allgemein = 'Die Viator-Ziele konnten nicht gelesen werden.'
+    const rohSaetze = [
+      'Provider response exceeded the body size limit.',
+      'Provider response body could not be read.',
+      'Provider JSON response was empty.',
+      'Provider response was not JSON.',
+      'Provider response was not valid JSON.',
+      'Provider response was malformed.',
+    ]
+    const zeilen: string[] = []
+    const vorher = console.error
+    console.error = (...teile: unknown[]) => {
+      zeilen.push(teile.map((teil) => (typeof teil === 'string' ? teil : JSON.stringify(teil))).join(' '))
+    }
+    const lesen = () =>
+      zeilen.flatMap((zeile) => {
+        try {
+          const wert = JSON.parse(zeile) as Record<string, unknown>
+          return wert.ereignis === 'viator_ziel_fehlgeschlagen' ? [wert] : []
+        } catch {
+          return []
+        }
+      })
+    const bangkok: Ort = {
+      id: 'geonames:1609350',
+      source: 'geonames',
+      sourceId: '1609350',
+      name: 'Bangkok',
+      typ: 'city',
+      country: 'Thailand',
+      countryCode: 'TH',
+      region: null,
+      lat: 13.75,
+      lon: 100.5,
+      iata: null,
+      keywords: null,
+    }
+    const reise = {
+      stage: { id: 'stage-1', name: 'Bangkok', placeId: bangkok.id, countryCode: 'TH', latitude: 13.75, longitude: 100.5 },
+      day: { id: 'day-1', dayDate: '2026-11-02', stageId: 'stage-1' },
+      trip: {
+        startDate: '2026-11-02',
+        endDate: '2026-11-05',
+        travellers: 2,
+        currency: 'CHF',
+        budgetAmount: null,
+        interests: [],
+        pace: 'balanced' as const,
+      },
+      items: [],
+    }
+    const textStrom = (text: string) =>
+      new ReadableStream<Uint8Array>({
+        start(controller) {
+          if (text.length > 0) controller.enqueue(new TextEncoder().encode(text))
+          controller.close()
+        },
+      })
+    const pruefen = async (
+      name: string,
+      http: ProviderHttpClient,
+      calls: string[],
+      bodyReason: string | null,
+      klasse: string,
+      canary: string,
+    ) => {
+      viatorZielCacheLeeren()
+      const vorherAnzahl = lesen().length
+      const provider = viatorActivityProvider({ env, http, nowMs: NOW })
+      assert.ok(provider, name)
+      const gast = await activitiesSuchen(reise, {
+        zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+        provider,
+        kennung: `viator-body-${name}`,
+        ortLesen: (id: string) => (id === bangkok.id ? bangkok : null),
+      })
+      assert.equal(gast.koerper.status, 'error', name)
+      assert.equal(gast.koerper.message, allgemein, name)
+      assert.equal(calls.length, 1, name)
+      assert.equal(calls[0], ZIELE, name)
+      const ereignisse = lesen().slice(vorherAnzahl)
+      assert.equal(ereignisse.length, 1, name)
+      const ereignis = ereignisse[0]!
+      assert.deepEqual(Object.keys(ereignis).sort(), ['bodyReason', 'ereignis', 'klasse', 'operation', 'reason', 'status', 'transportKind'])
+      assert.equal(ereignis.klasse, klasse, name)
+      assert.equal(ereignis.bodyReason, bodyReason, name)
+      assert.equal(ereignis.operation, 'destinations', name)
+      const gastText = JSON.stringify(gast)
+      const ereignisText = JSON.stringify(ereignis)
+      assert.equal(gastText.includes(canary), false, name)
+      assert.equal(ereignisText.includes(canary), false, name)
+      assert.equal(gastText.includes(KEY), false, name)
+      assert.equal(ereignisText.includes(KEY), false, name)
+      assert.equal(gastText.includes('bodyReason'), false, name)
+      for (const satz of rohSaetze) {
+        assert.equal(gastText.includes(satz), false, `${name} ${satz}`)
+        assert.equal(ereignisText.includes(satz), false, `${name} ${satz}`)
+      }
+    }
+    const httpMit = (
+      body: ReadableStream<Uint8Array> | null,
+      header: { contentType?: string | null; contentLength?: string | null; status?: number } = {},
+    ) => {
+      const calls: string[] = []
+      const http: ProviderHttpClient = async (request) => {
+        calls.push(request.url)
+        return {
+          status: header.status ?? 200,
+          headers: {
+            get: (feld: string) => {
+              const name = feld.toLowerCase()
+              if (name === 'content-type') return header.contentType === undefined ? 'application/json' : header.contentType
+              if (name === 'content-length') return header.contentLength ?? null
+              return null
+            },
+          },
+          body,
+        }
+      }
+      return { http, calls }
+    }
+    try {
+      const angekuendigt = httpMit(textStrom('CANARY-SIZE-ANNOUNCED'), { contentLength: '1048577' })
+      await pruefen('announced-size', angekuendigt.http, angekuendigt.calls, 'size_limit', 'transport_body', 'CANARY-SIZE-ANNOUNCED')
+      const zuGross = new Uint8Array(1_048_577)
+      zuGross.set(new TextEncoder().encode('CANARY-SIZE-STREAM'), 0)
+      const gestreamt = httpMit(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(zuGross)
+            controller.close()
+          },
+        }),
+      )
+      await pruefen('streamed-size', gestreamt.http, gestreamt.calls, 'size_limit', 'transport_body', 'CANARY-SIZE-STREAM')
+      const unlesbar = httpMit(
+        new ReadableStream({
+          start(controller) {
+            controller.error(new Error('CANARY-STREAM-SECRET'))
+          },
+        }),
+      )
+      await pruefen('unreadable', unlesbar.http, unlesbar.calls, 'body_unreadable', 'transport_body', 'CANARY-STREAM-SECRET')
+      const abbruchCalls: string[] = []
+      const abbruch: ProviderHttpClient = async (request) => {
+        abbruchCalls.push(request.url)
+        const fehler = new Error('CANARY-ABORT')
+        fehler.name = 'AbortError'
+        throw fehler
+      }
+      await pruefen('abort', abbruch, abbruchCalls, null, 'aborted', 'CANARY-ABORT')
+      const leer = httpMit(textStrom(''))
+      await pruefen('empty', leer.http, leer.calls, 'empty_json', 'transport_body', 'CANARY-EMPTY')
+      const leerzeichen = httpMit(textStrom('   \n'))
+      await pruefen('whitespace', leerzeichen.http, leerzeichen.calls, 'empty_json', 'transport_body', 'CANARY-WHITESPACE')
+      const html = httpMit(textStrom('<html>CANARY-HTML'), { contentType: 'text/html' })
+      await pruefen('html', html.http, html.calls, 'non_json_media_type', 'transport_body', 'CANARY-HTML')
+      const json = httpMit(textStrom('{CANARY-JSON'))
+      await pruefen('invalid-json', json.http, json.calls, 'invalid_json', 'transport_body', 'CANARY-JSON')
+      const unbekannt = httpMit(textStrom('CANARY-STATUS-99'), { status: 99 })
+      await pruefen('unknown-status', unbekannt.http, unbekannt.calls, 'unknown', 'transport_body', 'CANARY-STATUS-99')
+      const unbekanntEreignis = lesen().at(-1)!
+      assert.equal(unbekanntEreignis.transportKind, 'malformed_response')
+      assert.equal(unbekanntEreignis.status, null)
+      assert.equal(unbekanntEreignis.reason, 'transport')
+      const katalog = httpMit(textStrom(JSON.stringify({ destinations: 'CANARY-CATALOG' })))
+      await pruefen('catalog', katalog.http, katalog.calls, null, 'catalog_schema', 'CANARY-CATALOG')
+      assert.equal(lesen().at(-1)?.reason, 'malformed_response')
+      assert.equal(lesen().at(-1)?.transportKind, null)
+      viatorZielCacheLeeren()
+      const vorherErfolg = lesen().length
+      const erfolg = httpFor({
+        [ZIELE]: KATALOG,
+        'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
+      })
+      const provider = viatorActivityProvider({ env, http: erfolg.client, nowMs: NOW })
+      const treffer = await provider!.suchen(anfrage())
+      assert.equal(treffer.options[0]?.externalRef, '10001P1')
+      assert.equal(lesen().length, vorherErfolg)
+      assert.equal(erfolg.calls.filter((url) => url === ZIELE).length, 1)
+      viatorZielFehlerMelden({
+        reason: 'transport',
+        transportKind: 'malformed_response',
+        status: 200,
+        bodyReason: 'size_limit CANARY-ENUM',
+      })
+      viatorZielFehlerMelden({
+        reason: 'transport',
+        transportKind: 'authentication',
+        status: 401,
+        bodyReason: 'size_limit',
+      })
+      viatorZielFehlerMelden({
+        reason: 'malformed_response',
+        status: 200,
+        bodyReason: 'invalid_json',
+      })
+      const gefaelscht = lesen().slice(vorherErfolg)
+      assert.equal(gefaelscht.length, 3)
+      assert.equal(gefaelscht[0]?.bodyReason, null)
+      assert.equal(gefaelscht[0]?.klasse, 'transport_body')
+      assert.equal(gefaelscht[1]?.bodyReason, null)
+      assert.equal(gefaelscht[1]?.klasse, 'http_denied')
+      assert.equal(gefaelscht[2]?.bodyReason, null)
+      assert.equal(gefaelscht[2]?.klasse, 'catalog_schema')
+      const protokoll = zeilen.join('\n')
+      assert.equal(protokoll.includes('CANARY-ENUM'), false)
+      assert.equal(protokoll.includes('size_limit CANARY-ENUM'), false)
+      for (const satz of rohSaetze) assert.equal(protokoll.includes(satz), false)
+    } finally {
+      console.error = vorher
+      viatorZielCacheLeeren()
+    }
   })
 
   test('catalog resolution distinguishes country, repeat visits and ambiguity', async () => {
