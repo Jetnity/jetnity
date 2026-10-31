@@ -11,7 +11,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { chromium, type Browser, type Page } from 'playwright'
+import { chromium, type Browser, type Locator, type Page } from 'playwright'
 
 const BREITEN = [320, 390, 768, 1440] as const
 
@@ -39,6 +39,18 @@ function fremdeAnfrage(url: string): boolean {
 
 function verlangen(bedingung: boolean, meldung: string): void {
   if (!bedingung) throw new Error(meldung)
+}
+
+/** The element itself must be focused. Ancestor text is not enough. */
+async function fokusIst(ziel: Locator, name: string): Promise<void> {
+  await ziel.waitFor({ state: 'visible' })
+  const element = await ziel.elementHandle()
+  verlangen(element !== null, `${name} fehlt`)
+  try {
+    await ziel.page().waitForFunction((knoten) => knoten instanceof Element && document.activeElement === knoten, element, { timeout: 2000 })
+  } catch {
+    throw new Error(`Fokus ist nicht ${name}`)
+  }
 }
 
 async function projektCss(): Promise<string> {
@@ -134,6 +146,13 @@ async function main() {
   const fremde: string[] = []
   try {
     const normal = await seite(browser, 'mietwagen', 'trip-uuid-geheim')
+    const zeuge = await normal.page.locator('[data-discovercars-widget] h2').evaluate((el) => ({
+      farbe: getComputedStyle(el).color,
+      schale: el.closest('.workspace-shell[data-workspace-theme="light"] .workspace-content') !== null,
+    }))
+    verlangen(zeuge.schale, 'Die helle Workspace-Schale fehlt um das Suchwidget')
+    verlangen(zeuge.farbe === 'rgb(20, 62, 51)', `White-Mint-Farbe fehlt: ${zeuge.farbe}`)
+    befunde.push({ name: 'stil-zeuge', ...zeuge })
     for (const breite of BREITEN) {
       await normal.page.setViewportSize({ width: breite, height: 900 })
       await schrift(normal.page, 16)
@@ -215,21 +234,18 @@ async function main() {
 
     const naht = await seite(browser, 'naht', 'trip-uuid-geheim')
     await naht.page.setViewportSize({ width: 390, height: 900 })
+    const laden = naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen', exact: true })
+    const schliessen = naht.page.getByRole('button', { name: 'Prüfseite schließen', exact: true })
     await naht.page.getByRole('textbox', { name: 'Davor' }).focus()
     await naht.page.keyboard.press('Tab')
-    const tabName = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
-    verlangen(tabName.includes('Lokale Prüfseite zeigen'), `Tab landete auf ${tabName}`)
+    await fokusIst(laden, 'Lokale Prüfseite zeigen')
     await naht.page.keyboard.press('Enter')
     await naht.page.getByText('Synthetische Jetnity-Prüfseite').waitFor()
-    const nachEnter = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
-    verlangen(nachEnter.includes('Prüfseite schließen'), `Fokus nach Enter: ${nachEnter}`)
+    await fokusIst(schliessen, 'Prüfseite schließen')
     await naht.page.keyboard.press('Escape')
-    await naht.page.waitForFunction(() =>
-      (document.activeElement?.textContent ?? '').includes('Lokale Prüfseite zeigen'),
-    )
-    const nachEscape = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
-    verlangen(nachEscape.includes('Lokale Prüfseite zeigen'), `Fokus nach Escape: ${nachEscape}`)
+    await fokusIst(laden, 'Lokale Prüfseite zeigen')
     const leer = await naht.page.locator('[data-discovercars-widget-fixture]').count()
+    verlangen(leer === 0, 'Escape lässt die Fixture stehen')
     await naht.page.keyboard.press('Space')
     await naht.page.getByText('Synthetische Jetnity-Prüfseite').waitFor()
     const spaceBild = join(AUSGABE, 'pruefnaht-fixture-390.png')
@@ -237,9 +253,7 @@ async function main() {
     bilder.push(spaceBild)
     befunde.push({
       name: 'pruefnaht-tastatur',
-      tabName,
-      nachEnter,
-      nachEscape,
+      fokusIdentitaet: 'tab-enter-escape',
       fixtureNachEscape: leer,
       netz: naht.aufrufe.filter((url) => /discovercars|privacybee/i.test(url)),
       ressourcen: (await entdecker(naht.page)).filter((url) => /discovercars|privacybee/i.test(url)),
@@ -254,8 +268,10 @@ async function main() {
         fenster.__loesen = resolve
       })
     })
-    await naht.page.getByRole('button', { name: 'Prüfseite schließen' }).click()
-    await naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen' }).click()
+    await naht.page.getByRole('button', { name: 'Prüfseite schließen', exact: true }).click()
+    await fokusIst(naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen', exact: true }), 'Lokale Prüfseite zeigen')
+    befunde.push({ name: 'pruefnaht-schliessen-klick', schliessenKlickFokus: true })
+    await naht.page.getByRole('button', { name: 'Lokale Prüfseite zeigen', exact: true }).click()
     await naht.page.getByText('Die lokale Prüfseite wird vorbereitet').waitFor()
     await naht.page.evaluate(() => {
       const fenster = window as unknown as { __setzen: (modus: string, reise: string) => void }
@@ -335,12 +351,6 @@ async function main() {
     if (satz.geheimeReiseSichtbar) probleme.push('Reisekennung sichtbar')
     if (satz.netz?.length) probleme.push(`${satz.name} Netz ${satz.netz.join(',')}`)
     if (satz.ressourcen?.length) probleme.push(`${satz.name} Ressourcen`)
-    if (satz.tabName !== undefined && !satz.tabName.includes('Lokale Prüfseite zeigen')) {
-      probleme.push(`Tab landete auf ${satz.tabName}`)
-    }
-    if (satz.nachEscape !== undefined && !satz.nachEscape.includes('Lokale Prüfseite zeigen')) {
-      probleme.push(`Fokus nach Escape: ${satz.nachEscape}`)
-    }
     return probleme
   })
   if (fehler.length > 0) {

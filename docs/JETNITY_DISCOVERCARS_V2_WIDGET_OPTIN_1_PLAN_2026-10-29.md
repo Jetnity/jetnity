@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — plan
 
+**R4.1, 31 October 2026.** Keep the R4 proof, and make the local harness use the real light workspace ancestors. The measured witness is the heading color `rgb(20, 62, 51)`. Focus checks name the exact button, including the close click. No global CSS edit and no live widget.
+
 **R4, 31 October 2026.** Merge accepted main. Prove the housing with the current CSS stack. Fail closed on unexpected network and on lost keyboard focus. Do not turn the explanation into a live widget. The immutable R4 amendment is `docs/JETNITY_DISCOVERCARS_V2_R4_TASK_AMENDMENT_V1_2026-10-31.md`.
 
 **Date:** 29 October 2026. **Tracking:** #1083. **Draft:** #1084. **Task blob unchanged:** `f4b0996471eb67b811382c1102f88285944335e5`.

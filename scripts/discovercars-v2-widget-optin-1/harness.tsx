@@ -62,6 +62,19 @@ function reise(id: string) {
   })
 }
 
+/** Local copy of the light workspace ancestors. No account, router, or network. */
+function Schale({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="workspace-shell" data-workspace-theme="light" data-collapsed="false" data-menu-open="false">
+      <div className="workspace-page">
+        <div id="workspace-content" tabIndex={-1} className="workspace-content">
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Flaeche() {
   const [modus, setModus] = useState<Modus>(window.__modus)
   const [reiseId, setReiseId] = useState(window.__reise)
@@ -73,21 +86,25 @@ function Flaeche() {
   }, [])
   if (modus === 'mietwagen') {
     return (
-      <main className="min-w-0 bg-canvas p-3">
-        <MietwagenBereich reise={reise(reiseId)} onManuellAnlegen={async () => null} />
-      </main>
+      <Schale>
+        <main className="min-w-0 bg-canvas p-3">
+          <MietwagenBereich reise={reise(reiseId)} onManuellAnlegen={async () => null} />
+        </main>
+      </Schale>
     )
   }
   return (
-    <main className="min-w-0 bg-canvas p-3">
-      <input aria-label="Davor" className="mb-3 block min-h-11 w-full max-w-full rounded-xl border border-line-200 px-3" />
-      <DiscoverCarsWidgetOptin
-        reiseId={reiseId}
-        pruefnaht={modus === 'naht' ? WIDGET_PRUEFNAHT : undefined}
-        laden={(lauf) => (window.__laden ? window.__laden(lauf) : Promise.resolve('fixture'))}
-      />
-      <input aria-label="Danach" className="mt-3 block min-h-11 w-full max-w-full rounded-xl border border-line-200 px-3" />
-    </main>
+    <Schale>
+      <main className="min-w-0 bg-canvas p-3">
+        <input aria-label="Davor" className="mb-3 block min-h-11 w-full max-w-full rounded-xl border border-line-200 px-3" />
+        <DiscoverCarsWidgetOptin
+          reiseId={reiseId}
+          pruefnaht={modus === 'naht' ? WIDGET_PRUEFNAHT : undefined}
+          laden={(lauf) => (window.__laden ? window.__laden(lauf) : Promise.resolve('fixture'))}
+        />
+        <input aria-label="Danach" className="mt-3 block min-h-11 w-full max-w-full rounded-xl border border-line-200 px-3" />
+      </main>
+    </Schale>
   )
 }
 

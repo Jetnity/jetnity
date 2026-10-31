@@ -1,6 +1,6 @@
 # DiscoverCars V2 widget opt-in 1 — self-review
 
-**31 October 2026.** R4 keeps the inert housing. The harness now uses the current stylesheet stack and fails on any non-local request. Keyboard focus after Enter and Escape is asserted immediately. Author review only. This is not a Technical Lead PASS. Earlier paragraphs describe the pre-merge head.
+**31 October 2026, R4.1.** The inert housing stays inert. The local harness now includes the light workspace shell and content ancestors, and the run fails unless the “Suchwidget” heading computes to `rgb(20, 62, 51)`. Focus after Tab, Enter, Escape, and the close click is the exact button element. Author review only. This is not a Technical Lead PASS. Earlier paragraphs describe the pre-merge head.
 
 ## Owner correction
 
@@ -16,6 +16,7 @@ The general export is now the bound 835-byte file with `data-location=""`. A BKK
 - Gate tests reject report fragments (`data-utm-source`, `data-aff-code`), duplicate keys, `www.discovercars.com`, private fields, and `einwilligung: true`.
 - Playwright on the real components: no load button in the normal housing; Tab/Enter/Escape/Space on the seam; late fixture after a trip change does not appear; error retry stays on the error; zero DiscoverCars/PrivacyBee requests.
 - Widget section overflow is 0 at 320, 390, 768, 1440 and at root 32px / 320px. Page overflow at that last size is the V1 BKK label, 18px, file not edited.
+- R4.1 local shell: `.workspace-shell[data-workspace-theme="light"]` and `.workspace-content`, no `WorkspaceShell` import. Measured heading color `rgb(20, 62, 51)`. External request list empty. Exact-button focus passed for Tab, Enter, Escape, and the close click. Global CSS and production components were not edited for this correction.
 - Focused tests cover the export hash, the 26 attributes, the consent block, and the V1 links. `npm run build` is re-run on this head.
 
 ## Not checked, and not claimed
