@@ -7,6 +7,7 @@ import 'server-only'
 import {
   createProviderTransportExecutor,
   type ProviderHttpClient,
+  type ProviderRateLimitPolicy,
   type ProviderTransportErrorKind,
 } from '@/lib/server/providers/core'
 import { parseViatorProductDetail, parseViatorSearch } from '@/lib/providers/viator/activities/content'
@@ -21,7 +22,7 @@ import {
 } from '@/lib/providers/viator/activities/contracts'
 import { viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { parseViatorAvailabilityCheck, validateViatorLiveCheckRequest } from '@/lib/providers/viator/activities/live-check'
-import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/request'
+import { buildViatorSandboxCall, type ViatorCallZiel } from '@/lib/providers/viator/activities/request'
 import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
 import { viatorSandboxZugang, type ViatorSandboxBlockReason, type ViatorSandboxEnv } from '@/lib/providers/viator/activities/zugang'
 
@@ -82,7 +83,28 @@ export type ViatorSandboxClient = {
 
 type Created =
   | { ok: true; client: ViatorSandboxClient }
-  | { ok: false; reason: ViatorSandboxBlockReason | 'network_not_authorized' | 'invalid_configuration' }
+  | { ok: false; reason: ViatorSandboxBlockReason | 'network_not_authorized' | 'invalid_configuration' | 'missing_guard' | 'missing_key' }
+
+export type ViatorVersuchSchutz = {
+  pruefen(eingabe: { providerId: string; operationId: string; attempt: number }): Promise<unknown>
+}
+
+function viatorPreflight(guard: ViatorVersuchSchutz): ProviderRateLimitPolicy {
+  return {
+    preflight: async (input) => {
+      const outcome = await guard.pruefen(input)
+      if (outcome && typeof outcome === 'object' && !Array.isArray(outcome)) {
+        const art = (outcome as { kind?: unknown }).kind
+        if (art === 'allowed' && Object.keys(outcome).length === 1) return { kind: 'allowed' }
+        const retry = (outcome as { retryAfterMs?: unknown }).retryAfterMs
+        if (art === 'rate_limited' && typeof retry === 'number' && Number.isInteger(retry) && retry >= 0 && Object.keys(outcome).length === 2) {
+          return { kind: 'rate_limited', retryAfterMs: retry }
+        }
+      }
+      throw new Error('viator-guard')
+    },
+  }
+}
 
 export function createViatorSandboxClient(options: {
   env: ViatorSandboxEnv
@@ -94,6 +116,43 @@ export function createViatorSandboxClient(options: {
   if (!options.http) return { ok: false, reason: 'network_not_authorized' }
   const key = options.env.VIATOR_SANDBOX_API_KEY
   if (!key) return { ok: false, reason: 'missing_key' }
+  return viatorClientBauen({
+    ziel: 'sandbox',
+    credential: key,
+    http: options.http,
+    nowMs: options.nowMs,
+    guard: null,
+  })
+}
+
+export function createViatorProductionTestClient(options: {
+  credential: string
+  http?: ProviderHttpClient
+  nowMs?: number
+  guard?: ViatorVersuchSchutz | null
+}): Created {
+  if (!options.http) return { ok: false, reason: 'network_not_authorized' }
+  if (!options.guard) return { ok: false, reason: 'missing_guard' }
+  return viatorClientBauen({
+    ziel: 'production',
+    credential: options.credential,
+    http: options.http,
+    nowMs: options.nowMs,
+    guard: options.guard,
+  })
+}
+
+function viatorClientBauen(options: {
+  ziel: ViatorCallZiel
+  credential: string
+  http: ProviderHttpClient
+  nowMs?: number
+  guard: ViatorVersuchSchutz | null
+}): Created {
+  if (options.ziel === 'production' && !options.guard) return { ok: false, reason: 'missing_guard' }
+  const key = options.credential
+  if (!/^[A-Za-z0-9-]{8,256}$/.test(key)) return { ok: false, reason: 'missing_key' }
+  const rateLimit = options.guard ? viatorPreflight(options.guard) : undefined
 
   const wiederholung = {
     maxAttempts: 1,
@@ -108,19 +167,21 @@ export function createViatorSandboxClient(options: {
     http: options.http,
     timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
     retry: wiederholung,
+    rateLimit,
   })
   const ziele = createProviderTransportExecutor({
     http: options.http,
     timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
     retry: wiederholung,
     maxBodyBytes: VIATOR_ZIEL_BODY_BYTES,
+    rateLimit,
   })
   if (!standard.ok || !ziele.ok) return { ok: false, reason: 'invalid_configuration' }
 
   const nowMs = () => (options.nowMs == null ? Date.now() : options.nowMs)
 
   const execute = async (operation: string, input: Parameters<typeof buildViatorSandboxCall>[1]) => {
-    const built = buildViatorSandboxCall(operation, input)
+    const built = buildViatorSandboxCall(operation, input, options.ziel)
     if (!built.ok) return { ok: false as const, reason: built.reason }
     if (built.call.method === 'POST' && !built.call.body) return { ok: false as const, reason: 'malformed_request' }
     const gewaehlt = operation === 'destinations' ? ziele : standard

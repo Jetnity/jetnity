@@ -226,6 +226,7 @@ export async function activitiesSuchen(
         message,
         evidenz,
         options: optionen,
+        verweise: treffer.verweise,
       }),
     }
   } catch (fehler) {

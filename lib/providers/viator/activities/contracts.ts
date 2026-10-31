@@ -15,10 +15,15 @@ export const VIATOR_LIVE_CHECK_CACHE_SECONDS = 0
 export const VIATOR_SANDBOX_ORIGIN = 'https://api.sandbox.viator.com' as const
 
 /**
- * Production API origin. Present only so callers can prove it is never used.
- * Request builders concatenate VIATOR_SANDBOX_ORIGIN alone.
+ * Official Production API origin. Selected only by the typed Production binding.
+ * Callers cannot pass a different host.
  */
 export const VIATOR_PRODUCTION_API_ORIGIN = 'https://api.viator.com' as const
+
+/**
+ * Server-only Production credential name. The closed source gate never reads it.
+ */
+export const VIATOR_PRODUCTION_API_KEY_ENV = 'VIATOR_PRODUCTION_API_KEY' as const
 
 export const VIATOR_ACCEPT_HEADER = 'application/json;version=2.0' as const
 

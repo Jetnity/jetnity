@@ -99,6 +99,32 @@ export function suchAntwortAnwenden(
   return { ...lauf, phase: 'fertig', antwort }
 }
 
+export function activityOptionFuerUebernahme(option: ActivityOptionSichtbar): ActivityOptionSichtbar {
+  return {
+    id: option.id,
+    provider: option.provider,
+    externalRef: option.externalRef,
+    title: option.title,
+    description: option.description,
+    locationName: option.locationName,
+    punkt: option.punkt,
+    dauerMinuten: option.dauerMinuten,
+    timeslot: option.timeslot,
+    preis: option.preis,
+    preisWaehrung: option.preisWaehrung,
+    bewertung: option.bewertung,
+    bewertungenAnzahl: option.bewertungenAnzahl,
+    stornierbar: option.stornierbar,
+    kategorien: option.kategorien,
+    tags: option.tags,
+    bildUrl: option.bildUrl,
+    preisRolle: option.preisRolle,
+    labels: option.labels,
+    reasons: option.reasons,
+    konflikt: option.konflikt,
+  }
+}
+
 export function optionInhaltSchluessel(option: ActivityOptionSichtbar): string {
   return JSON.stringify({
     id: option.id,

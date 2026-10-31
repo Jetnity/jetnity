@@ -17,7 +17,8 @@ import {
   type BewerteteActivityOption,
 } from '@/lib/activities/domain'
 import { activityOptionLesen } from '@/lib/activities/schema'
-import { viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
+import { validateViatorProductUrl, viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 
 const VERBOTENE_SCHLUESSEL = [
   'access_token',
@@ -38,12 +39,52 @@ export type ActivityOptionSichtbar = ActivityOption & {
   konflikt: 'ueberschneidung' | 'frei' | 'unbekannt'
 }
 
+export type ActivityViatorVerweis = {
+  externalRef: string
+  productUrl: string
+}
+
 export type ActivitySucheAntwort = {
   status: ActivitySuchStatus
   message: string
   coverageNote: string
   evidenz: ActivityEvidenz
   options: ActivityOptionSichtbar[]
+  viatorVerweise?: ActivityViatorVerweis[]
+}
+
+export function viatorVerweiseAusRoh(
+  wert: unknown,
+  optionen: readonly { externalRef: string }[],
+): ActivityViatorVerweis[] {
+  if (wert == null) return []
+  if (!Array.isArray(wert)) return []
+  const gelesen: ActivityViatorVerweis[] = []
+  for (const eintrag of wert) {
+    if (!eintrag || typeof eintrag !== 'object' || Array.isArray(eintrag)) continue
+    const roh = eintrag as Record<string, unknown>
+    if (Object.keys(roh).some((key) => key !== 'externalRef' && key !== 'productUrl')) continue
+    if (typeof roh.externalRef !== 'string' || typeof roh.productUrl !== 'string') continue
+    gelesen.push({ externalRef: roh.externalRef, productUrl: roh.productUrl })
+  }
+  return viatorVerweiseLesen(gelesen, optionen)
+}
+
+function viatorVerweiseLesen(
+  wert: readonly { externalRef: string; productUrl: string }[] | undefined,
+  optionen: readonly { externalRef: string }[],
+): ActivityViatorVerweis[] {
+  if (!wert || wert.length === 0) return []
+  const erlaubt = new Set(optionen.map((option) => option.externalRef))
+  const ausgabe: ActivityViatorVerweis[] = []
+  for (const eintrag of wert) {
+    if (!erlaubt.has(eintrag.externalRef) || !istViatorProduktcode(eintrag.externalRef)) continue
+    const geprueft = validateViatorProductUrl(eintrag.productUrl)
+    if (!geprueft.ok || geprueft.url !== eintrag.productUrl) continue
+    if (ausgabe.some((bekannt) => bekannt.externalRef === eintrag.externalRef)) continue
+    ausgabe.push({ externalRef: eintrag.externalRef, productUrl: eintrag.productUrl })
+  }
+  return ausgabe
 }
 
 function hatVerbotenes(wert: unknown, pfad: string[] = []): string | null {
@@ -83,10 +124,12 @@ export function sucheFuerClient(ergebnis: {
   message: string
   evidenz?: ActivityEvidenz
   options: BewerteteActivityOption[]
+  verweise?: readonly { externalRef: string; productUrl: string }[]
 }): ActivitySucheAntwort {
   const options = ergebnis.options
     .map(optionFuerClient)
     .filter((option): option is ActivityOptionSichtbar => option !== null)
+  const viatorVerweise = viatorVerweiseLesen(ergebnis.verweise, options)
 
   const koerper: ActivitySucheAntwort = {
     status: ergebnis.status,
@@ -94,6 +137,7 @@ export function sucheFuerClient(ergebnis: {
     coverageNote: ACTIVITY_ABDECKUNGSHINWEIS,
     evidenz: ergebnis.evidenz ?? LEERE_ACTIVITY_EVIDENZ,
     options,
+    ...(viatorVerweise.length > 0 ? { viatorVerweise } : {}),
   }
 
   const verboten = hatVerbotenes(koerper)

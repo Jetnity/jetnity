@@ -234,7 +234,6 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       externalRef: '10001P1',
       title: 'Spaziergang durch die Altstadt',
       description: null,
-      locationName: null,
       punkt: null,
       dauerMinuten: 90,
       timeslot: null,
@@ -250,6 +249,11 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       labels: [],
       reasons: [],
       konflikt: 'unbekannt',
+      locationName: 'Bangkok',
+    }],
+    viatorVerweise: [{
+      externalRef: '10001P1',
+      productUrl: 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api',
     }],
   }
   const detailAntwort = {
@@ -564,6 +568,37 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.doesNotMatch(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
     await schmal.screenshot({ path: join(ARTIFACTS, 'viator-22-tage-320.png'), fullPage: true })
     await schmal.close()
+  })
+
+  test('the search card shows the provider referral without loading detail', async () => {
+    const href = 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api'
+    for (const breite of [320, 390, 768, 1440]) {
+      const page = await seite(breite)
+      const träger = page as Page & { detailAnzahl: () => number }
+      const bereich = page.getByRole('region', { name: 'Aktivitäten' })
+      await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      const link = bereich.getByRole('link', { name: 'Beim Anbieter ansehen' })
+      await link.waitFor()
+      assert.equal(await link.getAttribute('href'), href)
+      assert.match(await link.getAttribute('rel') ?? '', /sponsored/)
+      assert.match(await bereich.innerText(), /Angebotsziel: Bangkok/)
+      assert.match(await bereich.innerText(), /Treffpunkt ist nicht angegeben/)
+      assert.match(await bereich.innerText(), /Keine bestätigte Provision/)
+      assert.equal(träger.detailAnzahl(), 0)
+      const kartenBox = await link.evaluate((el) => {
+        const karte = el.closest('article')?.getBoundingClientRect()
+        const box = el.getBoundingClientRect()
+        return {
+          drin: Boolean(karte) && box.left >= (karte?.left ?? 0) - 1 && box.right <= (karte?.right ?? 0) + 1,
+        }
+      })
+      assert.equal(kartenBox.drin, true, `breite ${breite}`)
+      await link.focus()
+      assert.equal(await page.evaluate(() => document.activeElement?.textContent), 'Beim Anbieter ansehen')
+      await bereich.getByRole('combobox', { name: 'Reisetag' }).selectOption({ label: 'Phuket-Tag' })
+      assert.equal(await link.count(), 0)
+      await page.close()
+    }
   })
 
   test('untitled options are not presented as a product without options', async () => {

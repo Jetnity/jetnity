@@ -22,10 +22,20 @@ export class ActivityProviderFehler extends Error {
   }
 }
 
+export type ActivityProviderVerweis = {
+  externalRef: string
+  productUrl: string
+}
+
 export type ActivityProviderTreffer = {
   options: ActivityOption[]
   /** true, wenn gültige Optionen da sind, einzelne Angebote aber verworfen wurden. */
   partial: boolean
+  /**
+   * Untouched provider product URLs already bound to a returned option.
+   * This interface does not construct affiliate parameters. Adoption must not persist them.
+   */
+  verweise?: ActivityProviderVerweis[]
 }
 
 export type ActivityProvider = {

@@ -4,7 +4,8 @@
 
 import 'server-only'
 
-import { ActivityProviderFehler, type ActivityProvider, type ActivityProviderTreffer } from '@/lib/activities/provider'
+import { activityZustand } from '@/lib/activities/zustand'
+import { ActivityProviderFehler, type ActivityProvider, type ActivityProviderTreffer, type ActivityProviderVerweis } from '@/lib/activities/provider'
 import type { ActivityOption, ActivityPreisRolle, ActivitySuchanfrage } from '@/lib/activities/domain'
 import { createFetchProviderHttpClient, istProviderTransportErrorKind, type ProviderHttpClient } from '@/lib/server/providers/core'
 import {
@@ -36,12 +37,22 @@ function geschlossen<T>(message = GESCHLOSSEN): ViatorDienstErgebnis<T> {
   return { status: 'unavailable', message, httpStatus: 200, value: null, availabilityClaim: false }
 }
 
-function umgebungAusProzess(): ViatorSandboxEnv {
+type LaufEnv = ViatorSandboxEnv & { JETNITY_ACTIVITY_AKTIV?: string }
+
+function umgebungAusProzess(): LaufEnv {
   return {
     VERCEL_ENV: process.env.VERCEL_ENV,
     VIATOR_SANDBOX_CALLS: process.env.VIATOR_SANDBOX_CALLS,
     VIATOR_SANDBOX_API_KEY: process.env.VIATOR_SANDBOX_API_KEY,
+    JETNITY_ACTIVITY_AKTIV: process.env.JETNITY_ACTIVITY_AKTIV,
   }
+}
+
+function laufOffen(env: LaufEnv): boolean {
+  return activityZustand(
+    { VERCEL_ENV: env.VERCEL_ENV, JETNITY_ACTIVITY_AKTIV: env.JETNITY_ACTIVITY_AKTIV },
+    true,
+  ).aktiv
 }
 
 function rolle(value: ViatorPriceRole | null | undefined): ActivityPreisRolle | null {
@@ -58,6 +69,7 @@ export function activityOptionAusViatorProdukt(product: {
   reviewSummary: { combinedAverage: number | null; totalReviews: number | null } | null
   image: { url: string } | null
   cancellation: { stornierbar: boolean | null }
+  locationName?: string | null
 }): ActivityOption | null {
   const bild = product.image && validateViatorImageUrl(product.image.url).ok ? product.image.url : null
   return {
@@ -66,7 +78,7 @@ export function activityOptionAusViatorProdukt(product: {
     externalRef: product.productCode,
     title: product.title,
     description: product.description,
-    locationName: null,
+    locationName: product.locationName ?? null,
     punkt: null,
     dauerMinuten: product.durationMinutes,
     timeslot: null,
@@ -83,9 +95,22 @@ export function activityOptionAusViatorProdukt(product: {
 }
 
 type Abhaengigkeiten = {
-  env?: ViatorSandboxEnv
+  env?: LaufEnv
   http?: ProviderHttpClient
   nowMs?: number
+}
+
+function angebotsziel(
+  product: { primaryDestinationId: string | null },
+  katalog: readonly ViatorKatalogOrt[],
+): string | null {
+  const id = product.primaryDestinationId
+  if (!id) return null
+  const treffer = katalog.filter((ort) => String(ort.destinationId) === id)
+  if (treffer.length !== 1) return null
+  const ort = treffer[0]!
+  if (ort.type !== 'CITY' && ort.type !== 'TOWN' && ort.type !== 'ISLAND') return null
+  return ort.name
 }
 
 const ZIEL_TTL_MS = 3_600_000
@@ -205,6 +230,7 @@ function transportErgebnis<T>(
 
 function clientFuer(deps: Abhaengigkeiten) {
   const env = deps.env ?? umgebungAusProzess()
+  if (!laufOffen(env)) return { ok: false as const, ergebnis: geschlossen<never>(GESCHLOSSEN) }
   const zugang = viatorSandboxZugang(env)
   if (!zugang.ok) return { ok: false as const, ergebnis: geschlossen<never>(GESCHLOSSEN) }
   const http = deps.http ?? createFetchProviderHttpClient()
@@ -275,9 +301,16 @@ export function viatorActivityProvider(deps: Abhaengigkeiten = {}): ActivityProv
         throw new ActivityProviderFehler('error', 'Die Viator-Suche ist fehlgeschlagen.')
       }
       const options = suche.value.products
-        .map((product) => activityOptionAusViatorProdukt(product))
+        .map((product) => activityOptionAusViatorProdukt({ ...product, locationName: angebotsziel(product, orte) }))
         .filter((option): option is ActivityOption => option !== null)
-      return { options, partial: suche.value.partial }
+      const codes = new Set(options.map((option) => option.externalRef))
+      const verweise: ActivityProviderVerweis[] = []
+      for (const redirect of suche.value.affiliateRedirects) {
+        if (!codes.has(redirect.productCode)) continue
+        if (verweise.some((eintrag) => eintrag.externalRef === redirect.productCode)) continue
+        verweise.push({ externalRef: redirect.productCode, productUrl: redirect.productUrl })
+      }
+      return { options, partial: suche.value.partial, verweise }
     },
   }
 }

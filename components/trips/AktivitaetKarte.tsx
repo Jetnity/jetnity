@@ -22,11 +22,13 @@ function dauerText(minuten: number | null): string | null {
 
 export default function AktivitaetKarte({
   option,
+  verweis = null,
   laeuft,
   onUebernehmen,
   onPruefen,
 }: {
   option: ActivityOptionSichtbar
+  verweis?: { productUrl: string } | null
   laeuft: boolean
   onUebernehmen?: () => void
   onPruefen?: () => void
@@ -82,8 +84,22 @@ export default function AktivitaetKarte({
           {option.title}
         </h3>
         <p className="mt-1 break-words text-sm leading-6 text-ink-800">
-          {option.locationName || 'Ort noch ohne genaue Angabe'}
+          {option.locationName ? `Angebotsziel: ${option.locationName}` : 'Angebotsziel nicht eindeutig'}
         </p>
+        {option.provider === 'viator' ? (
+          <p className="mt-1 break-words text-xs leading-5 text-ink-700">Treffpunkt ist nicht angegeben.</p>
+        ) : null}
+        {verweis ? (
+          <a
+            href={verweis.productUrl}
+            rel="sponsored noopener noreferrer"
+            target="_blank"
+            className="mt-2 inline-flex min-h-11 items-center break-words text-sm font-semibold text-brand-800 underline decoration-brand-800/40 underline-offset-4"
+          >
+            Beim Anbieter ansehen
+          </a>
+        ) : null}
+        {verweis ? <p className="text-xs text-ink-700">Gesponserter Hinweis. Keine bestätigte Provision.</p> : null}
         <p className="mt-1 text-xs text-ink-700">
           {[
             option.timeslot

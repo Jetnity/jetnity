@@ -1,6 +1,7 @@
 import {
   VIATOR_FORBIDDEN_OPERATIONS,
   VIATOR_OPERATIONS,
+  VIATOR_PRODUCTION_API_ORIGIN,
   VIATOR_SANDBOX_ORIGIN,
   isViatorAcceptLanguage,
   isViatorSearchCurrency,
@@ -26,8 +27,11 @@ function languageOf(value: string | undefined): ViatorAcceptLanguage | null {
   return isViatorAcceptLanguage(language) ? language : null
 }
 
-function sandboxUrl(path: string): string {
-  return `${VIATOR_SANDBOX_ORIGIN}${path}`
+export type ViatorCallZiel = 'sandbox' | 'production'
+
+function providerUrl(ziel: ViatorCallZiel, path: string): string {
+  const origin = ziel === 'production' ? VIATOR_PRODUCTION_API_ORIGIN : VIATOR_SANDBOX_ORIGIN
+  return `${origin}${path}`
 }
 
 export function buildViatorSandboxCall(
@@ -40,8 +44,11 @@ export function buildViatorSandboxCall(
     count?: number
     productCode?: string
     liveCheck?: unknown
+    origin?: unknown
   } = {},
+  ziel: ViatorCallZiel = 'sandbox',
 ): ViatorSandboxCallResult {
+  if (ziel !== 'sandbox' && ziel !== 'production') return { ok: false, reason: 'invalid_origin' }
   if ((VIATOR_FORBIDDEN_OPERATIONS as readonly string[]).includes(operation) || !(VIATOR_OPERATIONS as readonly string[]).includes(operation)) {
     return { ok: false, reason: 'forbidden_operation' }
   }
@@ -75,7 +82,7 @@ export function buildViatorSandboxCall(
       call: {
         operation,
         method: 'POST',
-        url: sandboxUrl('/partner/products/search'),
+        url: providerUrl(ziel, '/partner/products/search'),
         body: JSON.stringify(payload),
         acceptLanguage,
       },
@@ -88,7 +95,7 @@ export function buildViatorSandboxCall(
       call: {
         operation: 'destinations',
         method: 'GET',
-        url: sandboxUrl('/partner/destinations'),
+        url: providerUrl(ziel, '/partner/destinations'),
         body: null,
         acceptLanguage,
       },
@@ -108,7 +115,7 @@ export function buildViatorSandboxCall(
       call: {
         operation,
         method: 'GET',
-        url: sandboxUrl(path),
+        url: providerUrl(ziel, path),
         body: null,
         acceptLanguage,
       },
@@ -137,7 +144,7 @@ export function buildViatorSandboxCall(
     call: {
       operation: 'availability_check',
       method: 'POST',
-      url: sandboxUrl('/partner/availability/check'),
+      url: providerUrl(ziel, '/partner/availability/check'),
       body: JSON.stringify(payload),
       acceptLanguage,
     },

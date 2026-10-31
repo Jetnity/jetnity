@@ -71,7 +71,7 @@ function httpFor(routes: Record<string, unknown>): { client: ProviderHttpClient;
   return { client, calls }
 }
 
-const env = { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY, VERCEL_ENV: 'preview' }
+const env = { VIATOR_SANDBOX_CALLS: 'true', VIATOR_SANDBOX_API_KEY: KEY, VERCEL_ENV: 'preview', JETNITY_ACTIVITY_AKTIV: 'true' }
 const product = {
   productCode: '10001P1',
   title: 'Fixture walking tour',
@@ -138,7 +138,7 @@ describe('Viator native seam', () => {
       'https://api.sandbox.viator.com/partner/products/search': { products: [product] },
     })
     const provider = viatorActivityProvider({
-      env: { ...schluessel, VERCEL_ENV: 'development' },
+      env: { ...schluessel, VERCEL_ENV: 'development', JETNITY_ACTIVITY_AKTIV: 'true' },
       http: entwicklung.client,
       nowMs: NOW,
     })
@@ -865,7 +865,8 @@ describe('Viator native seam', () => {
     assert.equal(treffer.options[0]?.preisWaehrung, 'EUR')
     assert.equal(treffer.options[0]?.preisRolle, 'rrp_from')
     assert.equal(treffer.options[0]?.bildUrl, IMAGE)
-    assert.equal(JSON.stringify(treffer).includes(URL), false)
+    assert.equal(JSON.stringify(treffer.options).includes(URL), false)
+    assert.equal(treffer.verweise?.[0]?.productUrl, URL)
     assert.equal(JSON.stringify(treffer).includes('UNIQUE CONTENT'), false)
     assert.equal(JSON.stringify(treffer).includes('SECRET REVIEW'), false)
     const option = activityOptionAusViatorProdukt({

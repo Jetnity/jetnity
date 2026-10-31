@@ -17,6 +17,7 @@ import { activitySucheEingabeAusReise } from '@/lib/activities/tageskontext'
 import {
   activitySuchKontextSchluessel,
   leeresUebernahmeRegister,
+  activityOptionFuerUebernahme,
   optionInhaltSchluessel,
   optionSchreibIdentitaet,
   suchAntwortAnwenden,
@@ -83,12 +84,14 @@ function istAbbruch(fehler: unknown): boolean {
 
 function BeobachteteKarte({
   option,
+  verweis,
   laeuft,
   onUebernehmen,
   onPruefen,
   onUebernahmeBeobachten,
 }: {
   option: ActivityOptionSichtbar
+  verweis?: { productUrl: string } | null
   laeuft: boolean
   onUebernehmen?: () => void
   onPruefen?: () => void
@@ -98,7 +101,7 @@ function BeobachteteKarte({
     if (!onUebernehmen || !onUebernahmeBeobachten) return
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
-  return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
+  return <AktivitaetKarte option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
 }
 
 function SuchKontext({
@@ -319,7 +322,7 @@ function ActivityTag({
     void (async () => {
       let wert: unknown = undefined
       try {
-        wert = await onUebernehmen(etappeFest, tagFest, option)
+        wert = await onUebernehmen(etappeFest, tagFest, activityOptionFuerUebernahme(option))
       } catch {
         wert = undefined
       } finally {
@@ -531,6 +534,7 @@ function ActivityTag({
                     <li key={`${angezeigt.generation ?? 0}:${inhalt}`} className="min-w-0">
                       <BeobachteteKarte
                         option={option}
+                        verweis={antwort.viatorVerweise?.find((eintrag) => eintrag.externalRef === option.externalRef) ?? null}
                         laeuft={gesperrt}
                         onUebernehmen={ausloesen}
                         onPruefen={
