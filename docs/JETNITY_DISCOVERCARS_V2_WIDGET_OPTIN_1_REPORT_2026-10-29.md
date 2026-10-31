@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — report
 
+**Current, 31 October 2026, R4.2.** The route-test correction is one file. It waits for the committed desktop shell, then asserts `sticky`, and keeps the mount, unmount, request, and empty-network checks. The local case passed once. A settled wrong position still fails. The script stays unloaded. The original CI cause remains unknown.
+
 **Current, 31 October 2026, R4.1.** Preparation remains fail-closed after merging accepted main. The general export is verified. The script is not loaded. Shared consent and host foundations do not grant execution. The local harness measured the light workspace shell: heading `rgb(20, 62, 51)`, widget overflow 0, V1 label “Flughafen Suvarnabhumi (BKK)” still 18px past a 320px viewport at root 32px, and exact-button focus for Tab, Enter, Escape, and the close click. This report does not claim a usable embedded form. Dated sections below describe earlier heads.
 
 **Status at first delivery:** preparation complete and fail-closed. **Not** a live widget integration.

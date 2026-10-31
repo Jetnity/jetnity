@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — status
 
+**31 October 2026, R4.2.** The named route test now waits for the committed 1440 desktop shell before the unchanged mount, request, and network checks, then requires computed position `sticky`. One local run passed. A disposable page with a settled `static` or `relative` nav still fails that check. The red CI value from run `41198853363` was not reproduced, and the unused main diagnostic attempt was not run. This does not prove the original CI cause. Runtime stays `CONSENT_BLOCKED`.
+
 **31 October 2026, R4.1.** Source `LIVE_SOURCE_VERIFIED`. Runtime `CONSENT_BLOCKED`. Accepted main is merged. #1087, #1089 and #1091 are present and do not authorize execution. The local harness now wraps the housing in `.workspace-shell[data-workspace-theme="light"] .workspace-content`. The measured heading color was `rgb(20, 62, 51)`. Tab, Enter, Escape, and the close click were checked against the exact button. At 320px and root 32px the widget overflow was 0 and the untouched V1 label “Flughafen Suvarnabhumi (BKK)” still overflowed by 18px. The housing is still not a usable provider form. Older CI `40937343854` and Preview `dpl_2guaWCuApj65x78W5Tj19z75jmU1` apply only to `9f493b76`. CI for the previous head `74fe2e3a` does not cover this correction.
 
 **29 October 2026 history.** Source status was already `LIVE_SOURCE_VERIFIED`. Runtime `CONSENT_BLOCKED`. Not a live widget.

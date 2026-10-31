@@ -1,6 +1,6 @@
 # DiscoverCars V2 widget opt-in 1 — handoff
 
-**Current, 31 October 2026.** Source is verified. Runtime is `CONSENT_BLOCKED`. This branch now contains accepted main, including White-Mint and the shared widget foundations. Those foundations are not permission to execute the script. The Mietwagen housing is still an explanation, not a provider form. Stop for independent Technical Lead review. Do not activate the vendor widget from this handoff.
+**Current, 31 October 2026, R4.2.** The one owned route test waits for innerWidth 1440, kompakt `0`, anordnung `neben`, and `data-shell-nav=sticky`, then requires computed `sticky`. Counts and the empty network check stay after that wait. The original CI cause is not proven. Source is verified. Runtime is `CONSENT_BLOCKED`. This branch now contains accepted main, including White-Mint and the shared widget foundations. Those foundations are not permission to execute the script. The Mietwagen housing is still an explanation, not a provider form. Stop for independent Technical Lead review. Do not activate the vendor widget from this handoff.
 
 ## Remaining integration boundary
 
