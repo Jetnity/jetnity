@@ -34,6 +34,18 @@ The default runner uses `performance.now()` and `setTimeout` for the 15-second d
 
 A readable `cookies: []` is a measured zero. A readable `cookies: [{}]` leaves `secure`, `httpOnly`, and `sameSite` unknown. Missing `storageEntries` is a storage gap. Known zeros stay zero. The browser transport rows below are the historical 31 October preflight; this correction did not run them again.
 
+## R5.3
+
+The reviewed parent is `3b96cc0803236e5d5346dcf5ed6cec8d5f7e3d18`. A duplicated suffix in the previous stop note was not a git object.
+
+A final-reader timeout still calls cleanup once. Publishing the snapshot freezes the report and does not cancel that cleanup. If the final reader settles first, the async cleanup it starts stays in the same bounded wait. A later reader resolution does not call cleanup again and does not rewrite the report.
+
+Each `body.cancel` and `reader.cancel` is tracked until that call settles. A locked `ReadableStream` whose `body.cancel` rejects no longer marks the audit complete while `reader.cancel` is still pending. The earlier unresolved header, body, cancel, error, and cleanup-timeout cases remain incomplete.
+
+Shared-context cookies are filtered by the verified frame URL before domain and path are removed. One cookie for each of three origins stays one per role. A context with no verified URL leaves the cookie count unknown. It is not zero and it is not the whole jar.
+
+Event evidence keeps a gap for a role that is unreadable or absent even when another role is readable and empty. A shorter `dataLayer` between the baseline and the final sample is recorded as observed loss, with allowlisted names and counts only. The probe does not replace `dataLayer.push`. The default preflight still does not call `createPassiveReaders`. `browserPreflight` stays `not-run` and `capturePass` stays false. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. `origin/main` is `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` after #1098; this correction does not merge it.
+
 ## Source seam
 
 `decide(request)` still calls `buildShell(provider)` with the production registry only. That registry returns null, the public shell embeds `"plan":null`, and its `frame-src` stays `'none'`.

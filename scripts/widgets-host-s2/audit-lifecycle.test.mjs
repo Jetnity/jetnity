@@ -546,3 +546,225 @@ test('prepared frame readers capture fake surfaces and stay free of identifiers'
   assert.equal(snap.storage.vendor.gap, 'vendor-frame-absent')
   assert.equal(snap.gaps.includes('vendor-frame-absent'), true)
 })
+
+test('a final-reader timeout still cleans up once and the published report stays fixed', async () => {
+  let releaseFinal
+  let cleanupCalls = 0
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: {
+      parent(phase) {
+        if (phase === 'before-start') return { readable: true, storageEntries: 1, cookies: [] }
+        return new Promise((resolve) => { releaseFinal = resolve })
+      },
+    },
+    cleanup() { cleanupCalls += 1 },
+  })
+  audit.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  audit.trip('navigation')
+  assert.equal(cleanupCalls, 0)
+  const snap = await audit.finalize(20)
+  assert.equal(cleanupCalls, 1)
+  assert.equal(snap.finalState, 'unavailable')
+  assert.equal(snap.finalized, false)
+  assert.equal(snap.incomplete, true)
+  assert.equal(snap.cleanupCount, 1)
+  releaseFinal({ readable: true, storageEntries: 4, cookies: [] })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(cleanupCalls, 1)
+  assert.equal(audit.evidence(), snap)
+  assert.equal(snap.storage.parent.beforeTeardown.length, 0)
+})
+
+test('async cleanup started after the final reader stays inside the bounded chain', async () => {
+  let releaseFinal
+  let releaseCleanup
+  let cleanupCalls = 0
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: {
+      parent(phase) {
+        if (phase === 'before-start') return { readable: true, storageEntries: 0, cookies: [] }
+        return new Promise((resolve) => { releaseFinal = resolve })
+      },
+    },
+    cleanup() {
+      cleanupCalls += 1
+      return new Promise((resolve) => { releaseCleanup = resolve })
+    },
+  })
+  audit.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  audit.trip('navigation')
+  const pending = audit.finalize(200)
+  let finished = false
+  pending.then(() => { finished = true })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  assert.equal(cleanupCalls, 0)
+  releaseFinal({ readable: true, storageEntries: 0, cookies: [] })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(cleanupCalls, 1)
+  assert.equal(finished, false)
+  assert.equal(audit.evidence().cleanupState, 'pending')
+  releaseCleanup()
+  const snap = await pending
+  assert.equal(finished, true)
+  assert.equal(snap.cleanupCount, 1)
+  assert.equal(snap.cleanupState, 'complete')
+  assert.equal(snap.finalized, true)
+  assert.equal(snap.incomplete, false)
+  assert.equal(cleanupCalls, 1)
+})
+
+test('a rejected locked-stream cancel does not hide a pending reader cancel', async () => {
+  const stream = new ReadableStream({
+    cancel() { return new Promise(() => {}) },
+  })
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    fetchImpl() { return { status: 200, body: stream } },
+  })
+  audit.start(0)
+  const pending = audit.boundedGet({ url: 'http://127.0.0.1/locked-stream', resourceType: 'document' })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  audit.trip('navigation')
+  assert.equal((await pending).reason, 'aborted')
+  const snap = await audit.finalize(20)
+  assert.equal(snap.finalized, false)
+  assert.equal(snap.incomplete, true)
+  assert.notEqual(snap.ledger.find((row) => row.issued).terminal, 'complete')
+})
+
+test('shared context cookies stay on the verified role url', async () => {
+  const jar = [
+    { domain: 'parent.example', path: '/', secure: true, httpOnly: true, sameSite: 'Lax', name: 'parent-id', value: 'parent-secret' },
+    { domain: 'host.example', path: '/', secure: false, httpOnly: false, sameSite: 'Lax', name: 'host-id', value: 'host-secret' },
+    { domain: 'vendor.example', path: '/', secure: true, httpOnly: true, sameSite: 'Strict', name: 'vendor-id', value: 'vendor-secret' },
+  ]
+  const context = { cookies() { return Promise.resolve(jar.map((cookie) => ({ ...cookie }))) } }
+  const surface = (origin) => ({
+    context,
+    url: () => origin,
+    evaluate(fn) {
+      const previous = { localStorage: globalThis.localStorage, sessionStorage: globalThis.sessionStorage, dataLayer: globalThis.dataLayer }
+      globalThis.localStorage = { length: 0 }
+      globalThis.sessionStorage = { length: 0 }
+      globalThis.dataLayer = []
+      return Promise.resolve().then(() => fn()).finally(() => {
+        globalThis.localStorage = previous.localStorage
+        globalThis.sessionStorage = previous.sessionStorage
+        globalThis.dataLayer = previous.dataLayer
+      })
+    },
+  })
+  const scoped = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({
+      parent: surface('https://parent.example/home'),
+      host: surface('https://host.example/embed'),
+      vendor: surface('https://vendor.example/widget'),
+    }),
+  })
+  scoped.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  scoped.trip('navigation')
+  const snap = await scoped.finalize(30)
+  assert.equal(snap.storage.parent.beforeStart[0].cookieCount, 1)
+  assert.equal(snap.storage.host.beforeStart[0].cookieCount, 1)
+  assert.equal(snap.storage.vendor.beforeStart[0].cookieCount, 1)
+  assert.equal(snap.storage.parent.beforeStart[0].gap, null)
+  const text = JSON.stringify(snap)
+  assert.equal(text.includes('parent-secret'), false)
+  assert.equal(text.includes('parent.example'), false)
+  assert.equal(text.includes('parent-id'), false)
+
+  const unscoped = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({
+      parent: { context, evaluate: surface('https://parent.example/').evaluate },
+      host: null,
+      vendor: null,
+    }),
+  })
+  unscoped.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  unscoped.trip('navigation')
+  const unknown = await unscoped.finalize(30)
+  assert.equal(unknown.storage.parent.beforeStart[0].cookieCount, null)
+  assert.equal(unknown.storage.parent.beforeStart[0].gaps.cookies, 'missing')
+  assert.notEqual(unknown.storage.parent.beforeStart[0].cookieCount, 0)
+  assert.notEqual(unknown.storage.parent.beforeStart[0].cookieCount, 3)
+})
+
+test('partial event gaps and observed dataLayer loss stay visible', async () => {
+  let reads = 0
+  const push = function push() {}
+  const parent = {
+    url: () => 'https://parent.example/',
+    cookies: () => Promise.resolve([]),
+    evaluate(fn) {
+      reads += 1
+      const previous = { localStorage: globalThis.localStorage, sessionStorage: globalThis.sessionStorage, dataLayer: globalThis.dataLayer }
+      const layer = reads === 1
+        ? [{ event: 'gtm.js', payload: 'secret-payload' }, { event: 'private-event', payload: 'secret-payload' }]
+        : [{ event: 'gtm.js', payload: 'secret-payload' }]
+      layer.push = push
+      globalThis.localStorage = { length: 0 }
+      globalThis.sessionStorage = { length: 0 }
+      globalThis.dataLayer = layer
+      try {
+        const probe = fn()
+        assert.equal(layer.push, push)
+        return Promise.resolve(probe)
+      } finally {
+        globalThis.localStorage = previous.localStorage
+        globalThis.sessionStorage = previous.sessionStorage
+        globalThis.dataLayer = previous.dataLayer
+      }
+    },
+  }
+  const empty = {
+    url: () => 'https://host.example/',
+    cookies: () => Promise.resolve([]),
+    evaluate(fn) {
+      const previous = { localStorage: globalThis.localStorage, sessionStorage: globalThis.sessionStorage, dataLayer: globalThis.dataLayer }
+      globalThis.localStorage = { length: 0 }
+      globalThis.sessionStorage = { length: 0 }
+      globalThis.dataLayer = []
+      try { return Promise.resolve(fn()) } finally {
+        globalThis.localStorage = previous.localStorage
+        globalThis.sessionStorage = previous.sessionStorage
+        globalThis.dataLayer = previous.dataLayer
+      }
+    },
+  }
+  const vendor = {
+    url: () => 'https://vendor.example/',
+    cookies: () => Promise.resolve([]),
+    evaluate() { return Promise.reject(new Error('vendor frame unreadable')) },
+  }
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({ parent, host: empty, vendor }),
+  })
+  audit.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  audit.trip('navigation')
+  const snap = await audit.finalize(30)
+  const baseline = snap.events.find((row) => row.phase === 'before-start')
+  const finalRow = snap.events.find((row) => row.phase === 'before-teardown')
+  assert.equal(baseline.roles.vendor.gap, 'unreadable')
+  assert.equal(baseline.roles.parent.gap, null)
+  assert.equal(baseline.roles.host.count, 0)
+  assert.equal(baseline.gap, 'partial-unreadable')
+  assert.notEqual(baseline.gap, null)
+  assert.equal(finalRow.pruning.lost.parent, 1)
+  assert.equal(finalRow.gap.includes('pruned'), true)
+  assert.equal(baseline.events.some((item) => item.name === 'gtm.js'), true)
+  assert.equal(baseline.events.some((item) => item.name === 'other'), true)
+  assert.equal(finalRow.events.some((item) => item.name === 'gtm.js'), true)
+  assert.equal(finalRow.events.some((item) => item.name === 'other'), false)
+  assert.equal(JSON.stringify(snap).includes('secret-payload'), false)
+  assert.equal(JSON.stringify(snap).includes('private-event'), false)
+})

@@ -261,13 +261,70 @@ function pruneCookie(cookie) {
   return pruned
 }
 
+function verifiedSurfaceUrl(surface) {
+  const found = []
+  const readUrl = (target) => {
+    if (!target) return
+    try {
+      const value = typeof target.url === 'function' ? target.url() : target.url
+      if (typeof value !== 'string' || value.length === 0) return
+      const parsed = new URL(value)
+      if (!parsed.hostname) return
+      found.push(parsed.href)
+    } catch { /* unreadable or relative */ }
+  }
+  readUrl(surface)
+  if (surface.frame) readUrl(surface.frame)
+  if (surface.page) readUrl(surface.page)
+  const unique = [...new Set(found)]
+  return unique.length === 1 ? unique[0] : null
+}
+
+function cookieScope(cookie, url) {
+  if (!cookie || typeof cookie.domain !== 'string' || cookie.domain.length === 0) return 'unassignable'
+  let parsed
+  try { parsed = new URL(url) } catch { return 'unassignable' }
+  const domain = cookie.domain.replace(/^\./, '').toLowerCase()
+  const host = parsed.hostname.toLowerCase()
+  if (!domain || domain.includes('*')) return 'unassignable'
+  const hostMatch = host === domain || host.endsWith(`.${domain}`)
+  if (!hostMatch) return 'other'
+  const path = typeof cookie.path === 'string' && cookie.path.length > 0 ? cookie.path : '/'
+  if (parsed.pathname !== path) {
+    const prefix = path.endsWith('/') ? path : `${path}/`
+    if (!parsed.pathname.startsWith(prefix)) return 'other'
+  }
+  return 'match'
+}
+
+function scopeCookieList(list, url) {
+  const matched = []
+  for (const cookie of list) {
+    const scope = cookieScope(cookie, url)
+    if (scope === 'unassignable') return { state: 'unscoped' }
+    if (scope === 'match') matched.push(pruneCookie(cookie))
+  }
+  return { state: 'ready', cookies: matched }
+}
+
+async function readCookieList(source, url) {
+  if (url) {
+    try { return await source.cookies(url) } catch { /* retry without an argument */ }
+  }
+  return source.cookies()
+}
+
 async function readSurfaceCookies(surface) {
-  const source = typeof surface.cookies === 'function' ? surface : surface.context
+  const own = typeof surface.cookies === 'function'
+  const source = own ? surface : surface.context
   if (!source || typeof source.cookies !== 'function') return { state: 'missing' }
+  const url = verifiedSurfaceUrl(surface)
+  if (!own && !url) return { state: 'unscoped' }
   try {
-    const list = await source.cookies()
+    const list = await readCookieList(source, url)
     if (!Array.isArray(list)) return { state: 'unreadable' }
-    return { state: 'ready', cookies: list.map(pruneCookie) }
+    if (!url) return { state: 'ready', cookies: list.map(pruneCookie) }
+    return scopeCookieList(list, url)
   } catch {
     return { state: 'unreadable' }
   }
@@ -286,8 +343,8 @@ async function readSurfaceFrame(surface) {
 export async function readPassiveSurface(surface, role) {
   if (surface == null) {
     return role === 'vendor'
-      ? { storage: { gap: 'vendor-frame-absent' }, events: [], eventsUnreadable: false }
-      : { storage: { readable: false }, events: null, eventsUnreadable: true }
+      ? { storage: { gap: 'vendor-frame-absent' }, events: null, eventsUnreadable: false, absent: true }
+      : { storage: { readable: false }, events: null, eventsUnreadable: true, absent: false }
   }
   const [cookies, frame] = await Promise.all([readSurfaceCookies(surface), readSurfaceFrame(surface)])
   if (frame.state === 'unreadable' || frame.probe?.readable === false) {
@@ -319,8 +376,19 @@ export function createPassiveReaders(surfaces = {}) {
     host: (phase) => load(phase).then((row) => row.host.storage),
     vendor: (phase) => load(phase).then((row) => row.vendor.storage),
     events: (phase) => load(phase).then((row) => {
-      if (row.parent.eventsUnreadable && row.host.eventsUnreadable && row.vendor.eventsUnreadable) return null
-      return [...(row.parent.events || []), ...(row.host.events || []), ...(row.vendor.events || [])]
+      const roles = {}
+      const events = []
+      for (const role of ['parent', 'host', 'vendor']) {
+        const item = row[role]
+        if (item.absent) roles[role] = { gap: 'absent', count: null }
+        else if (item.eventsUnreadable) roles[role] = { gap: 'unreadable', count: null }
+        else {
+          const names = item.events || []
+          roles[role] = { gap: null, count: names.length }
+          events.push(...names)
+        }
+      }
+      return { roles, events }
     }),
   }
 }
@@ -547,6 +615,7 @@ export function createAuditRunner(options = {}) {
   let baselineGate = Promise.resolve('absent')
   let finalState = 'absent'
   let finalPromise = Promise.resolve('absent')
+  let cleanupStarted = false
   let published = null
 
   function frozen() {
@@ -568,22 +637,26 @@ export function createAuditRunner(options = {}) {
       if (job.response) job.cancel = cancelResponse(job, job.response)
     }
     const observation = sample('before-teardown')
-    const beginCleanup = () => {
-      if (cleanupState !== 'idle' || frozen()) return
-      cleanupPromise = runCleanup(reason)
-    }
     if (observation.pending) {
       finalState = 'pending'
       finalPromise = observation.promise.then((status) => {
         if (finalState === 'pending') finalState = status
-        beginCleanup()
+        return startCleanup(reason)
       })
       remember(finalPromise)
     } else {
       finalState = observation.status
       finalPromise = Promise.resolve(observation.status)
-      beginCleanup()
+      startCleanup(reason)
     }
+  }
+
+  function startCleanup(reason) {
+    if (cleanupStarted) return cleanupPromise || Promise.resolve()
+    cleanupStarted = true
+    cleanupPromise = runCleanup(reason)
+    remember(cleanupPromise)
+    return cleanupPromise
   }
 
   function runCleanup(reason) {
@@ -660,11 +733,9 @@ export function createAuditRunner(options = {}) {
         if (events && typeof events.then === 'function') {
           tasks.push(remember(events).then((value) => {
             if (frozen() || (phase === 'before-start' && baselineState === 'unavailable') || (phase === 'before-teardown' && finalState === 'unavailable')) return
-            if (value == null) recordEvents([], { phase, unreadable: true })
-            else recordEvents(value, { phase })
+            recordEventValue(value, phase)
           }))
-        } else if (events == null) recordEvents([], { phase, unreadable: true })
-        else recordEvents(events, { phase })
+        } else recordEventValue(events, phase)
       } catch {
         recordEvents([], { phase, unreadable: true })
       }
@@ -757,20 +828,29 @@ export function createAuditRunner(options = {}) {
     }
   }
 
+  function trackSettlement(promise) {
+    const tracked = Promise.resolve(promise).then(() => undefined, () => undefined)
+    remember(tracked)
+    return tracked
+  }
+
   function cancelResponse(job, response) {
-    if (job.cancel) return job.cancel
-    const tasks = []
+    if (!job.cancelParts) job.cancelParts = []
     const body = (response && response.body) || job.body
-    if (body && typeof body.cancel === 'function') {
+    if (body && typeof body.cancel === 'function' && job.bodyCancelStarted !== true) {
+      job.bodyCancelStarted = true
       job.cancelCalls += 1
-      try { tasks.push(Promise.resolve(body.cancel())) } catch { tasks.push(Promise.resolve()) }
+      let started
+      try { started = body.cancel() } catch (error) { started = Promise.reject(error) }
+      job.cancelParts.push(trackSettlement(started))
     }
     if (job.reader && typeof job.reader.cancel === 'function' && job.readerCancelStarted !== true) {
       job.readerCancelStarted = true
-      try { tasks.push(Promise.resolve(job.reader.cancel())) } catch { tasks.push(Promise.resolve()) }
+      let started
+      try { started = job.reader.cancel() } catch (error) { started = Promise.reject(error) }
+      job.cancelParts.push(trackSettlement(started))
     }
-    job.cancel = Promise.all(tasks).then(() => undefined, () => undefined)
-    remember(job.cancel)
+    job.cancel = Promise.all(job.cancelParts).then(() => undefined)
     return job.cancel
   }
 
@@ -792,6 +872,7 @@ export function createAuditRunner(options = {}) {
     }
     job.response = response
     job.body = response && response.body ? response.body : null
+    job.requestCancel = () => cancelResponse(job, job.response)
     if (job.aborted || tornDown || controller.signal.aborted) {
       await cancelResponse(job, response)
       settle(job, row, 'aborted', 'aborted', response ? response.status : null)
@@ -862,6 +943,47 @@ export function createAuditRunner(options = {}) {
 
   function recordEvents(events, recordOptions = {}) {
     eventRows.push({ phase: recordOptions.phase || 'unspecified', ...sanitizeEvents(events, recordOptions) })
+  }
+
+  function recordEventValue(value, phase) {
+    if (value == null) {
+      recordEvents([], { phase, unreadable: true })
+      return
+    }
+    if (Array.isArray(value)) {
+      recordEvents(value, { phase })
+      return
+    }
+    if (!value.roles) {
+      recordEvents([], { phase, unreadable: true })
+      return
+    }
+    const sanitized = sanitizeEvents(value.events || [])
+    const roles = {}
+    for (const role of ['parent', 'host', 'vendor']) {
+      const item = value.roles[role]
+      roles[role] = {
+        gap: item && typeof item.gap === 'string' ? item.gap : null,
+        count: item && Number.isInteger(item.count) ? item.count : null,
+      }
+    }
+    let pruning = null
+    if (phase === 'before-teardown') {
+      const prior = [...eventRows].reverse().find((row) => row.phase === 'before-start' && row.roles)
+      if (prior) {
+        const lost = {}
+        for (const role of ['parent', 'host', 'vendor']) {
+          const before = prior.roles[role]
+          const after = roles[role]
+          if (!before || !after || before.gap || after.gap) continue
+          if (Number.isInteger(before.count) && Number.isInteger(after.count) && after.count < before.count) lost[role] = before.count - after.count
+        }
+        if (Object.keys(lost).length > 0) pruning = { lost }
+      }
+    }
+    const roleGap = Object.values(roles).some((item) => item.gap)
+    const gap = [roleGap ? 'partial-unreadable' : null, pruning ? 'pruned' : null].filter(Boolean).join('+') || sanitized.gap
+    eventRows.push({ phase, gap, events: sanitized.events, roles, pruning })
   }
 
   function recordStorage(role, snapshot, phase = 'unspecified') {
@@ -950,7 +1072,13 @@ export function createAuditRunner(options = {}) {
       trimmed: false,
       phaseBAuthorized: false,
       gaps: [...gaps],
-      events: eventRows.map((row) => ({ phase: row.phase, gap: row.gap, events: row.events.map((item) => ({ ...item })) })),
+      events: eventRows.map((row) => ({
+        phase: row.phase,
+        gap: row.gap,
+        events: row.events.map((item) => ({ ...item })),
+        ...(row.roles ? { roles: structuredClone(row.roles) } : {}),
+        ...(row.pruning ? { pruning: structuredClone(row.pruning) } : {}),
+      })),
       storage: storageEvidence(),
       cleanupState,
       baselineState,
@@ -991,18 +1119,26 @@ export function createAuditRunner(options = {}) {
 
   async function finalize(boundMs = 30) {
     if (published) return published
-    const tasks = [baselinePromise, finalPromise, cleanupPromise, ...[...jobs.values()].map((job) => job.done), ...settlements].filter((task) => task && typeof task.then === 'function')
+    const deadlineAt = Date.now() + boundMs
     let timedOut = false
-    let timer
-    await Promise.race([
-      Promise.all(tasks).then(() => {}),
-      new Promise((resolve) => { timer = setTimeout(() => { timedOut = true; resolve() }, boundMs) }),
-    ])
-    if (timer) clearTimeout(timer)
+    while (settlements.size > 0) {
+      const remaining = deadlineAt - Date.now()
+      if (remaining <= 0) { timedOut = true; break }
+      const pending = [...settlements]
+      let sliceTimedOut = false
+      let timer
+      await Promise.race([
+        Promise.all(pending).then(() => {}),
+        new Promise((resolve) => { timer = setTimeout(() => { sliceTimedOut = true; resolve() }, remaining) }),
+      ])
+      if (timer) clearTimeout(timer)
+      if (sliceTimedOut) { timedOut = true; break }
+    }
     if (timedOut) {
       if (baselineState === 'pending') baselineState = 'unavailable'
       if (finalState === 'pending') finalState = 'unavailable'
-      if (cleanupState === 'pending' || cleanupState === 'idle') cleanupState = 'incomplete'
+      if (tornDown) startCleanup(teardownReason)
+      if (cleanupState === 'pending') cleanupState = 'incomplete'
       for (const [sequence, job] of jobs) {
         if (job.settled) continue
         const row = ledger.find((item) => item.sequence === sequence)
@@ -1045,6 +1181,7 @@ async function readStream(body, controller, job) {
     if (raced.kind === 'aborted' || controller.signal.aborted) break
     if (raced.chunk.done) return
   }
+  if (typeof job.requestCancel === 'function') return job.requestCancel()
   if (job.readerCancelStarted === true) return job.cancel
   job.readerCancelStarted = true
   return reader.cancel()
