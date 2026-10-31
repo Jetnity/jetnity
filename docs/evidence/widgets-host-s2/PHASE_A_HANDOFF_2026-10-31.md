@@ -10,7 +10,7 @@
 
 Read `docs/evidence/widgets-host-s2/PHASE_A_REPORT_2026-10-31.md` and the summary JSON beside it. R5 is an offline lifecycle correction. The deployed host subtree was not changed.
 
-DiscoverCars stays unselected. 12Go stays selected. The reviewed parent is `3b96cc0803236e5d5346dcf5ed6cec8d5f7e3d18`. A final-reader timeout still runs cleanup once, and that call is not cancelled by the published snapshot. Each body and reader cancel is tracked on its own. Cookie counts follow the verified frame URL. Partial event gaps and a shorter dataLayer stay visible. `createPassiveReaders` stays uninvoked by the default preflight. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run. `capturePass` is false. `origin/main` is `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`; this branch was not synced to it.
+DiscoverCars stays unselected. 12Go stays selected. The reviewed parent is `3b96cc0803236e5d5346dcf5ed6cec8d5f7e3d18`. A final-reader timeout still runs cleanup once, and that call is not cancelled by the published snapshot. Each body and reader cancel is tracked on its own. Cookie counts follow a verified frame URL for both own and context readers. An own method without that URL stays unknown. Partial event gaps and a shorter dataLayer stay visible. `createPassiveReaders` stays uninvoked by the default preflight. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run. `capturePass` is false. `origin/main` is `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`; this branch was not synced to it.
 
 ## Do not do next
 

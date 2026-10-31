@@ -501,8 +501,11 @@ test('prepared frame readers capture fake surfaces and stay free of identifiers'
   const name = 'frame-cookie-name'
   let cookiesPromise
   const parent = {
+    url: () => 'https://example.test/widget',
     cookies() {
-      if (!cookiesPromise) cookiesPromise = Promise.resolve([{ name, value: secret, domain: 'example.test', secure: true, httpOnly: false, sameSite: 'Lax' }])
+      if (!cookiesPromise) {
+        cookiesPromise = Promise.resolve([{ name, value: secret, domain: 'example.test', path: '/', secure: true, httpOnly: false, sameSite: 'Lax' }])
+      }
       return cookiesPromise
     },
     evaluate(fn) {
@@ -695,6 +698,60 @@ test('shared context cookies stay on the verified role url', async () => {
   assert.equal(unknown.storage.parent.beforeStart[0].gaps.cookies, 'missing')
   assert.notEqual(unknown.storage.parent.beforeStart[0].cookieCount, 0)
   assert.notEqual(unknown.storage.parent.beforeStart[0].cookieCount, 3)
+})
+
+test('an own cookies alias without a verified url stays unknown', async () => {
+  const jar = [
+    { domain: 'parent.example', path: '/', secure: true, httpOnly: true, sameSite: 'Lax', name: 'parent-id', value: 'parent-secret' },
+    { domain: 'host.example', path: '/', secure: true, httpOnly: true, sameSite: 'Lax', name: 'host-id', value: 'host-secret' },
+    { domain: 'vendor.example', path: '/', secure: true, httpOnly: true, sameSite: 'Strict', name: 'vendor-id', value: 'vendor-secret' },
+  ]
+  const context = { cookies() { return Promise.resolve(jar.map((cookie) => ({ ...cookie }))) } }
+  const evaluate = (fn) => {
+    const previous = { localStorage: globalThis.localStorage, sessionStorage: globalThis.sessionStorage, dataLayer: globalThis.dataLayer }
+    globalThis.localStorage = { length: 0 }
+    globalThis.sessionStorage = { length: 0 }
+    globalThis.dataLayer = []
+    try { return Promise.resolve(fn()) } finally {
+      globalThis.localStorage = previous.localStorage
+      globalThis.sessionStorage = previous.sessionStorage
+      globalThis.dataLayer = previous.dataLayer
+    }
+  }
+  const alias = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({
+      parent: { cookies: context.cookies, evaluate },
+      host: null,
+      vendor: null,
+    }),
+  })
+  alias.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  alias.trip('navigation')
+  const snap = await alias.finalize(30)
+  const sample = snap.storage.parent.beforeStart[0]
+  assert.equal(sample.cookieCount, null)
+  assert.equal(sample.cookieFlags, null)
+  assert.equal(sample.gaps.cookies, 'missing')
+  assert.notEqual(sample.gap, null)
+  assert.equal(JSON.stringify(snap).includes('"secure":3'), false)
+
+  const emptyOwn = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({
+      parent: { cookies: () => Promise.resolve([]), evaluate },
+      host: null,
+      vendor: null,
+    }),
+  })
+  emptyOwn.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  emptyOwn.trip('navigation')
+  const empty = await emptyOwn.finalize(30)
+  assert.equal(empty.storage.parent.beforeStart[0].cookieCount, null)
+  assert.notEqual(empty.storage.parent.beforeStart[0].cookieCount, 0)
+  assert.equal(empty.storage.parent.beforeStart[0].gaps.cookies, 'missing')
 })
 
 test('partial event gaps and observed dataLayer loss stay visible', async () => {

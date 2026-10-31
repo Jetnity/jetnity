@@ -44,6 +44,10 @@ Each `body.cancel` and `reader.cancel` is tracked until that call settles. A loc
 
 Shared-context cookies are filtered by the verified frame URL before domain and path are removed. One cookie for each of three origins stays one per role. A context with no verified URL leaves the cookie count unknown. It is not zero and it is not the whole jar.
 
+## R5.4
+
+An own `surface.cookies` method is not a scope. Both the own reader and `context.cookies` need one verified role or frame URL before a cookie count or flag is reported. A missing, conflicting, or unassignable scope stays unknown, including when the list is empty. Domain and path are still used to classify a cookie and are removed before export. The prepared frame fixture now carries `https://example.test/widget` and `path: '/'` for its one measured cookie.
+
 Event evidence keeps a gap for a role that is unreadable or absent even when another role is readable and empty. A shorter `dataLayer` between the baseline and the final sample is recorded as observed loss, with allowlisted names and counts only. The probe does not replace `dataLayer.push`. The default preflight still does not call `createPassiveReaders`. `browserPreflight` stays `not-run` and `capturePass` stays false. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. `origin/main` is `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` after #1098; this correction does not merge it.
 
 ## Source seam

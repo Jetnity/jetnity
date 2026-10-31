@@ -315,15 +315,13 @@ async function readCookieList(source, url) {
 }
 
 async function readSurfaceCookies(surface) {
-  const own = typeof surface.cookies === 'function'
-  const source = own ? surface : surface.context
+  const source = typeof surface.cookies === 'function' ? surface : surface.context
   if (!source || typeof source.cookies !== 'function') return { state: 'missing' }
   const url = verifiedSurfaceUrl(surface)
-  if (!own && !url) return { state: 'unscoped' }
+  if (!url) return { state: 'unscoped' }
   try {
     const list = await readCookieList(source, url)
     if (!Array.isArray(list)) return { state: 'unreadable' }
-    if (!url) return { state: 'ready', cookies: list.map(pruneCookie) }
     return scopeCookieList(list, url)
   } catch {
     return { state: 'unreadable' }
