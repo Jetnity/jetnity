@@ -1,6 +1,8 @@
 # DiscoverCars V2 widget opt-in 1 — report
 
-**Status:** preparation complete and fail-closed. **Not** a live widget integration.
+**Current, 31 October 2026.** Preparation remains fail-closed after merging accepted main. The general export is verified. The script is not loaded. Shared consent and host foundations do not grant execution. This report does not claim a usable embedded form. Dated sections below describe earlier heads.
+
+**Status at first delivery:** preparation complete and fail-closed. **Not** a live widget integration.
 
 **Source:** `LIVE_SOURCE_VERIFIED`. SHA-256 `5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa`. **Runtime:** `CONSENT_BLOCKED`. Execution origins: none. `data-location=""` is in the bound export. The BKK sample is not the default.
 

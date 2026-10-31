@@ -1,6 +1,6 @@
 # DiscoverCars V2 widget opt-in 1 — self-review
 
-Author review only. This is not a Technical Lead PASS.
+**31 October 2026.** R4 keeps the inert housing. The harness now uses the current stylesheet stack and fails on any non-local request. Keyboard focus after Enter and Escape is asserted immediately. Author review only. This is not a Technical Lead PASS. Earlier paragraphs describe the pre-merge head.
 
 ## Owner correction
 

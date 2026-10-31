@@ -1,6 +1,8 @@
 # DiscoverCars V2 widget opt-in 1 — status
 
-**29 October 2026. Source status: LIVE_SOURCE_VERIFIED. Runtime: CONSENT_BLOCKED. Not a live widget.**
+**31 October 2026.** Source `LIVE_SOURCE_VERIFIED`. Runtime `CONSENT_BLOCKED`. Accepted main is merged. #1087, #1089 and #1091 are present and do not authorize execution. The housing is still not a usable provider form. Older CI `40937343854` and Preview `dpl_2guaWCuApj65x78W5Tj19z75jmU1` apply only to `9f493b76`.
+
+**29 October 2026 history.** Source status was already `LIVE_SOURCE_VERIFIED`. Runtime `CONSENT_BLOCKED`. Not a live widget.
 
 ## Owner correction and source
 

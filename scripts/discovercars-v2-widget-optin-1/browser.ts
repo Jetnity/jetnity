@@ -5,8 +5,9 @@
 // nicht der Browserzoom. CSS-Zoom wird nur als Chromium-Eigenschaft benannt,
 // wenn er in diesem Lauf wirklich gesetzt wurde.
 
+import { createRequire } from 'node:module'
 import { spawnSync } from 'node:child_process'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -22,13 +23,46 @@ function ausgabeVerzeichnis(): string {
 
 const AUSGABE = ausgabeVerzeichnis()
 
-function bauen(ziel: string): void {
-  const css = spawnSync(
-    'node_modules/.bin/tailwindcss',
-    ['-i', 'styles/globals.css', '-o', join(ziel, 'flaeche.css'), '--minify'],
-    { encoding: 'utf8' },
-  )
-  if (css.status !== 0) throw new Error(css.stderr || css.stdout || 'tailwind')
+/** Root layout, then the workspace shell. Same files and plugin order as the app. */
+const STIL_REIHENFOLGE = [
+  'styles/globals.css via postcss: tailwindcss/nesting, tailwind.config.js, autoprefixer',
+  'styles/white-mint.css',
+  'components/workspace/workspace.css',
+  'components/workspace/workspace-surfaces.css',
+] as const
+
+const LOKALE_ANFRAGE = /^(?:data:|blob:|about:blank$)/
+
+function fremdeAnfrage(url: string): boolean {
+  return !LOKALE_ANFRAGE.test(url)
+}
+
+function verlangen(bedingung: boolean, meldung: string): void {
+  if (!bedingung) throw new Error(meldung)
+}
+
+async function projektCss(): Promise<string> {
+  const verlangenModul = createRequire(import.meta.url)
+  const postcss = verlangenModul('postcss') as (plugins: unknown[]) => {
+    process: (css: string, opts: { from: string }) => Promise<{ css: string }>
+  }
+  const nesting = verlangenModul('tailwindcss/nesting') as () => unknown
+  const tailwindcss = verlangenModul('tailwindcss') as (config: unknown) => unknown
+  const autoprefixer = verlangenModul('autoprefixer') as () => unknown
+  const von = join(process.cwd(), 'styles/globals.css')
+  const config = verlangenModul(join(process.cwd(), 'tailwind.config.js')) as unknown
+  const gebaut = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(von, 'utf8'), { from: von })
+  const dateien = [
+    'styles/white-mint.css',
+    'components/workspace/workspace.css',
+    'components/workspace/workspace-surfaces.css',
+  ]
+  const rest = dateien.map((datei) => readFileSync(join(process.cwd(), datei), 'utf8')).join('\n')
+  return `${gebaut.css}\n${rest}`
+}
+
+async function bauen(ziel: string): Promise<void> {
+  writeFileSync(join(ziel, 'flaeche.css'), await projektCss())
   const js = spawnSync(
     'node_modules/esbuild/bin/esbuild',
     [
@@ -50,15 +84,12 @@ async function seite(browser: Browser, modus: 'inert' | 'naht' | 'mietwagen', re
   const aufrufe: string[] = []
   const context = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 1 })
   await context.route('**/*', (route) => {
-    const url = route.request().url()
-    if (url.startsWith('data:') || url.startsWith('blob:') || url === 'about:blank') return route.continue()
-    aufrufe.push(url)
+    if (!fremdeAnfrage(route.request().url())) return route.continue()
     return route.abort()
   })
   const page = await context.newPage()
   page.on('request', (request) => {
-    const url = request.url()
-    if (!url.startsWith('data:') && url !== 'about:blank') aufrufe.push(url)
+    if (fremdeAnfrage(request.url())) aufrufe.push(request.url())
   })
   await page.setContent(
     '<!doctype html><html><head><meta charset="utf-8"></head><body><div id="root"></div></body></html>',
@@ -96,10 +127,11 @@ async function entdecker(page: Page): Promise<string[]> {
 
 async function main() {
   mkdirSync(AUSGABE, { recursive: true })
-  bauen(AUSGABE)
+  await bauen(AUSGABE)
   const browser = await chromium.launch()
   const bilder: string[] = []
   const befunde: unknown[] = []
+  const fremde: string[] = []
   try {
     const normal = await seite(browser, 'mietwagen', 'trip-uuid-geheim')
     for (const breite of BREITEN) {
@@ -178,6 +210,7 @@ async function main() {
       netz: netzVorKlick.filter((url) => /discovercars|privacybee/i.test(url)),
       ressourcen: (await entdecker(normal.page)).filter((url) => /discovercars|privacybee/i.test(url)),
     })
+    fremde.push(...normal.aufrufe.filter(fremdeAnfrage))
     await normal.context.close()
 
     const naht = await seite(browser, 'naht', 'trip-uuid-geheim')
@@ -185,14 +218,17 @@ async function main() {
     await naht.page.getByRole('textbox', { name: 'Davor' }).focus()
     await naht.page.keyboard.press('Tab')
     const tabName = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
+    verlangen(tabName.includes('Lokale Prüfseite zeigen'), `Tab landete auf ${tabName}`)
     await naht.page.keyboard.press('Enter')
     await naht.page.getByText('Synthetische Jetnity-Prüfseite').waitFor()
     const nachEnter = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
+    verlangen(nachEnter.includes('Prüfseite schließen'), `Fokus nach Enter: ${nachEnter}`)
     await naht.page.keyboard.press('Escape')
     await naht.page.waitForFunction(() =>
       (document.activeElement?.textContent ?? '').includes('Lokale Prüfseite zeigen'),
     )
     const nachEscape = await naht.page.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
+    verlangen(nachEscape.includes('Lokale Prüfseite zeigen'), `Fokus nach Escape: ${nachEscape}`)
     const leer = await naht.page.locator('[data-discovercars-widget-fixture]').count()
     await naht.page.keyboard.press('Space')
     await naht.page.getByText('Synthetische Jetnity-Prüfseite').waitFor()
@@ -256,13 +292,15 @@ async function main() {
       meldung: await naht.page.getByRole('alert').innerText(),
       fixture: await naht.page.locator('[data-discovercars-widget-fixture]').count(),
     })
+    fremde.push(...naht.aufrufe.filter(fremdeAnfrage))
     await naht.context.close()
   } finally {
     await browser.close()
   }
 
-  const bericht = { ausgabe: AUSGABE, bilder, befunde }
+  const bericht = { ausgabe: AUSGABE, stil: STIL_REIHENFOLGE, fremde, bilder, befunde }
   writeFileSync(join(AUSGABE, 'browser.json'), `${JSON.stringify(bericht, null, 2)}\n`)
+  verlangen(fremde.length === 0, `Unerwartete externe Anfragen: ${fremde.join(' ')}`)
   const fehler = befunde.flatMap((eintrag) => {
     const satz = eintrag as {
       name: string
