@@ -56,6 +56,10 @@ Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The surface 
 
 The local surface page uses the light workspace ancestors. Omitting them fails the mint-color witness. This is still the closed notice, not a live form.
 
+## R5.2
+
+Documentation only. The 29 October self-review no longer treats the embed route as unbuilt or the clipped frame as the current blocker. The harness accepted at R5.1 was not changed. The form is still not executing. The open gate remains the account CMP contract, then a reviewed shared execution contract.
+
 ## Next step
 
-Technical Lead reviews the R5.1 head. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` belong to `0a26c611`. The style-only head `ba108947` also does not cover this wrapper fix. This session does not start another slice.
+Technical Lead reviews this documentation head. Gates on the accepted harness head do not cover it. This session does not start another slice.
