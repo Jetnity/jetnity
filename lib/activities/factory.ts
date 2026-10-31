@@ -6,7 +6,8 @@
 import 'server-only'
 
 import type { ActivityProvider } from '@/lib/activities/provider'
+import { viatorActivityProviderAusUmgebung } from '@/lib/providers/viator/activities/anbinden'
 
 export function activityProviderAus(): ActivityProvider | null {
-  return null
+  return viatorActivityProviderAusUmgebung()
 }

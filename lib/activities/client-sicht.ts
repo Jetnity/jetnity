@@ -17,6 +17,7 @@ import {
   type BewerteteActivityOption,
 } from '@/lib/activities/domain'
 import { activityOptionLesen } from '@/lib/activities/schema'
+import { viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
 
 const VERBOTENE_SCHLUESSEL = [
   'access_token',
@@ -67,8 +68,10 @@ function hatVerbotenes(wert: unknown, pfad: string[] = []): string | null {
 function optionFuerClient(option: BewerteteActivityOption): ActivityOptionSichtbar | null {
   const kern = activityOptionLesen(option)
   if (!kern) return null
+  const bild = viatorBildAnzeigen(kern.bildUrl)
   return {
     ...kern,
+    bildUrl: bild,
     labels: option.labels,
     reasons: option.reasons.slice(0, 4),
     konflikt: option.context.konflikt,

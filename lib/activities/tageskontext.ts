@@ -57,6 +57,7 @@ export function activitySucheEingabeAusReise(
       placeId: etappe.placeId,
       latitude: etappe.latitude,
       longitude: etappe.longitude,
+      countryCode: etappe.countryCode,
     },
     day: tag
       ? {
