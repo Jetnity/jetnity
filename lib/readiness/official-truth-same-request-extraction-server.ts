@@ -18,6 +18,7 @@
 
 import 'server-only'
 
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
 import { akzeptierteEvidenceLesen, type EvidenceVersion } from '@/lib/readiness/evidence'
 import {
@@ -669,6 +670,9 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
   eingabe: unknown,
   abhaengigkeiten: OfficialTruthSameRequestExtractionAbhaengigkeiten,
 ): Promise<OfficialTruthSameRequestExtractionErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   let beweis: OfficialTruthSameRequestProofErgebnis
   try {
     beweis = await abhaengigkeiten.loadProof(eingabe)
@@ -762,6 +766,9 @@ export async function decideOfficialTruthSameRequestTrustedFactExtraction(
     const requestUrl = representation.value.requestUrls.includes(support.canonicalUrl)
       ? support.canonicalUrl : representation.value.requestUrls[0]
     if (!requestUrl) return blockiert('support_binding_mismatch')
+    if (support.sourceFingerprintProtocol !== undefined && support.sourceFingerprintProtocol !== 2) {
+      return blockiert('invalid_source_snapshot')
+    }
     let roh: unknown
     try {
       roh = await abhaengigkeiten.retrieve({ sourceId: support.sourceId, url: requestUrl }, replay.transport)

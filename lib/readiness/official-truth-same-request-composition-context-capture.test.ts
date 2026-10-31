@@ -385,7 +385,8 @@ test('finite import/export fences, weak ownership, unchanged live wiring and dor
     'evidence', 'official-truth-content-identity', 'official-truth-composition-policy-registry',
     'official-truth-source-catalog-server', 'official-truth-same-request-proof-server',
     'official-truth-server-held-source-registry', 'official-truth-server-owned-retrieval',
-    'official-truth-trusted-fact-extractor-registry', 'rule-claims', 'source-registry',
+    'official-truth-trusted-fact-extractor-registry', 'official-truth-whole-source-current-request-1',
+    'rule-claims', 'source-registry',
   ].map(n => '@/lib/readiness/' + n)].sort())
   const live = source.slice(source.indexOf('export async function loadOfficialTruthSameRequestTrustedFactExtraction'))
   assert.match(live, /loadProof: loadOfficialTruthSameRequestProof,\s+retrieve: loadOfficialTruthServerOwnedRetrievalWithCatalogTransport,\s+extract: officialTruthTrustedFactExtrahieren,/)

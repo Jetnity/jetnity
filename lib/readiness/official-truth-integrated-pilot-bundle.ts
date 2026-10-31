@@ -2,6 +2,7 @@
 import 'server-only'
 import { Buffer } from 'node:buffer'
 import { z } from 'zod'
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { sha256Hex } from './digest'
 import {
   decodeProvenanceBytes, historicalValuesEqual, ownRecord, pinsEqual, provenanceCanonical,
@@ -157,6 +158,7 @@ function exact<T>(schema: z.ZodType<T>, value: unknown): T | null {
 
 /** Shape reader only. Semantic checks additionally require the complete historical closure. */
 export function readIntegratedPilotReceipt(value: unknown): Result<IntegratedPilotReceipt> {
+  if (officialTruthProtocol3MarkerPresent(value)) return fail('unsupported_version')
   const row = ownRecord(value, ['payload', 'recordFingerprint'])
   if (!row || !fingerprint.safeParse(row.recordFingerprint).success) return fail('receipt_corrupt')
   const payload = exact(payloadSchema, row.payload)
@@ -388,6 +390,7 @@ function manifestContentValid(type: IntegratedPilotManifestType, content: Record
 export function createIntegratedPilotArtifact<K extends IntegratedPilotManifestType>(
   artifactType: K, artifactId: string, version: number, value: IntegratedPilotManifestContent<K>,
 ): Result<IntegratedPilotArtifactInput> {
+  if (officialTruthProtocol3MarkerPresent(value)) return fail('unsupported_version')
   if (!Object.hasOwn(schemas, artifactType) || !id.safeParse(artifactId).success || !positive.safeParse(version).success) return fail('unsupported_version')
   const content = exact(schemas[artifactType] as z.ZodType<unknown>, value)
   if (!content || !manifestContentValid(artifactType, content as Record<string, unknown>, artifactId, version)) return fail('dependency_corrupt')
@@ -399,6 +402,7 @@ export function createIntegratedPilotArtifact<K extends IntegratedPilotManifestT
 
 /** A known codec, verified bytes and typed edges, never an origin certificate. */
 export function readIntegratedPilotArtifact(input: IntegratedPilotArtifactInput): Result<IntegratedPilotVerifiedArtifact> {
+  if (officialTruthProtocol3MarkerPresent(input)) return fail('unsupported_version')
   if (!ownRecord(input, ['pin', 'artifactType', 'artifactContractVersion', 'canonicalBytes']) || !readPin(input.pin)
     || input.artifactContractVersion !== 1 || !(input.canonicalBytes instanceof Uint8Array)) return fail('unsupported_version')
   const decoded = decodeProvenanceBytes(input.canonicalBytes)
@@ -848,6 +852,7 @@ function verifyBundle(input: IntegratedPilotBundleInput, maximumDepth: 8 | 16): 
 
 /** Legacy receipt/storage v1 remains depth 8; it never upgrades after refusal. */
 export function verifyIntegratedPilotBundle(input: IntegratedPilotBundleInput): Result<IntegratedPilotVerifiedBundle> {
+  if (officialTruthProtocol3MarkerPresent(input)) return fail('unsupported_version')
   return verifyBundle(input, INTEGRATED_PILOT_BUNDLE_LIMITS.depth)
 }
 
@@ -855,6 +860,7 @@ export function verifyIntegratedPilotBundle(input: IntegratedPilotBundleInput): 
 export function verifyLocalIntegratedPilotBundle(input: LocalIntegratedPilotEnvelope): Result<
   IntegratedPilotVerifiedBundle & Readonly<{ profile: typeof LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }>
 > {
+  if (officialTruthProtocol3MarkerPresent(input)) return fail('unsupported_version')
   if (!ownRecord(input, ['profile', 'bundle']) || input.profile !== LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE) return fail('unsupported_version')
   const result = verifyBundle(input.bundle, 16)
   return result.ok ? success({ ...result.value, profile: LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }) : result

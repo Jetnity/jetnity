@@ -252,12 +252,14 @@ test('strict report rejects raw additions; all maximum finite fields remain unde
 })
 
 test('protected transport/profile/application remain byte-identical, closed and unreachable from app', () => {
+  // R102-approved literal snapshot after Whole-Source Current Request 1 R1.
+  // The source-probe pin stays the historical blob.
   const pins = {
-    'lib/readiness/official-truth-server-owned-retrieval.ts': '5998fdea54d3337fb68cd7111460b59e43a3cef7',
-    'lib/readiness/official-truth-content-identity.ts': '4a4c3eea77b6e634fd83525849a4aaa6e6e50c18',
+    'lib/readiness/official-truth-server-owned-retrieval.ts': '382a4098ae835ff61b96cfc8186f07bb74bea1f4',
+    'lib/readiness/official-truth-content-identity.ts': '511fb4a330891a24c47d057645b69495e27efaa1',
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts': '375adb52e2ef5ccb9045e17d830bf5d9111f6375',
-    'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts': '90b9dd0108ed3e4d8049a3f8d35323c09b52e23f',
-    'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': '9c4c244f628942d30f4a235f40ec5ad5bfe1724f',
+    'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts': '9790798cf7f51032a28a504d3707be607a87f8e3',
+    'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': '2cf889fca45703041111430d5934674cd598ea04',
   }
   for (const [path, expected] of Object.entries(pins)) {
     const bytes = readFileSync(path)

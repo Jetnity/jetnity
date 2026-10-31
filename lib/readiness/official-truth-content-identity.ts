@@ -396,7 +396,7 @@ export function contentEvidenceLookupV3(scope: unknown, representation: unknown)
 
 export type ContentEvidenceIdentity = ContentIdentityBinding & Readonly<{
   identitySchema: 2
-  sourceFingerprintProtocol?: 2
+  sourceFingerprintProtocol?: 2 | 3
   lookupKey: string
   canonicalUrl: string
   contentType: string
@@ -449,6 +449,41 @@ export function contentEvidenceVersionV2(value: unknown): Result<Readonly<{
     lookupKey: row.lookupKey, canonicalUrl: row.canonicalUrl, contentType: row.contentType,
     sourceContentHash: row.sourceContentHash, retrievedAt: row.retrievedAt, validFrom: row.validFrom, validUntil: row.validUntil,
     ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+  }
+  const canonical = JSON.stringify(identity)
+  return success({ identity, canonical, versionId: `ev2_${sha256Hex(canonical).slice(0, 32)}` })
+}
+
+/**
+ * Current-request identity only. Protocol 3 is mandatory.
+ * `identitySchema` stays 2 and the version id stays `ev2_`.
+ * `contentEvidenceVersionV2` does not accept this marker.
+ */
+export function contentEvidenceVersionCurrentRequest(value: unknown): Result<Readonly<{
+  identity: ContentEvidenceIdentity
+  canonical: string
+  versionId: string
+}>> {
+  const row = record(value, EVIDENCE_V2_FINGERPRINT_FIELDS)
+  const ref = row && representationFrom(row)
+  if (!row || !ref || row.identitySchema !== 2 || row.sourceFingerprintProtocol !== 3
+    || !version(row.contentItemVersion) || !version(row.representationVersion)
+    || !id(row.identityProfileId) || !version(row.identityProfileVersion)
+    || typeof row.lookupKey !== 'string' || !/^evidence-key:v3:[a-f0-9]{64}$/.test(row.lookupKey)
+    || !exactUrl(row.canonicalUrl) || !mediaType(row.contentType)
+    || typeof row.sourceContentHash !== 'string' || !/^[a-f0-9]{64}$/.test(row.sourceContentHash)
+    || !validTime(row.retrievedAt, false) || !(row.validFrom === null || validTime(row.validFrom, true))
+    || !(row.validUntil === null || validTime(row.validUntil, true))) return fail('invalid_evidence_identity')
+  if (row.validFrom !== null && row.validUntil !== null && Date.parse(row.validFrom) > Date.parse(row.validUntil)) {
+    return fail('invalid_evidence_identity')
+  }
+  const identity: ContentEvidenceIdentity = {
+    identitySchema: 2, sourceId: ref.sourceId, contentItemId: ref.contentItemId, contentItemVersion: row.contentItemVersion,
+    representationId: ref.representationId, representationVersion: row.representationVersion,
+    identityProfileId: row.identityProfileId, identityProfileVersion: row.identityProfileVersion,
+    lookupKey: row.lookupKey, canonicalUrl: row.canonicalUrl, contentType: row.contentType,
+    sourceContentHash: row.sourceContentHash, retrievedAt: row.retrievedAt, validFrom: row.validFrom, validUntil: row.validUntil,
+    sourceFingerprintProtocol: 3,
   }
   const canonical = JSON.stringify(identity)
   return success({ identity, canonical, versionId: `ev2_${sha256Hex(canonical).slice(0, 32)}` })
