@@ -468,7 +468,9 @@ export function startProductionShell(config) {
     },
   })
   const status = document.getElementById('jetnity-widget-status')
+  let inserted = false
   function show(text) {
+    if (inserted) return
     if (status) status.textContent = text
   }
   const ready = controller.ready()
@@ -478,8 +480,10 @@ export function startProductionShell(config) {
     const receive = controller.onMessage.bind(controller)
     controller.onMessage = (event) => {
       const result = receive(event)
-      if (result && result.inserted) show('Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.')
-      else if (result && result.pending) show('Eine Freigabe wurde angenommen. Das Skript ist noch nicht eingefügt.')
+      if (result && result.inserted) {
+        inserted = true
+        if (status) status.textContent = 'Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.'
+      } else if (result && result.pending) show('Eine Freigabe wurde angenommen. Das Skript ist noch nicht eingefügt.')
       else if (result && result.ok !== true) show('Die Freigabe wurde abgelehnt. Es ist kein Anbieter geladen.')
       return result
     }

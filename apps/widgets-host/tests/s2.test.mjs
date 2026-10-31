@@ -498,6 +498,25 @@ test('bootstrap status names inactive, requested, denied and inserted states', (
     })
     assert.equal(status.textContent, 'Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.')
     assert.equal(body.children.length, 1)
+    const grant = {
+      type: 'jetnity-widget-host',
+      revision: 1,
+      kind: 'grant',
+      provider: 'discovercars',
+      challenge: readyMessage.challenge,
+      frameGeneration: 1,
+      parentGeneration: 1,
+      policyId: 'synthetic-canary',
+      artifactSha256: 'b'.repeat(64),
+    }
+    const replay = listeners[0]({ source: parent, origin: PARENT_ORIGIN, data: grant })
+    assert.equal(replay.reason, 'challenge')
+    const foreign = listeners[0]({ source: { id: 'foreign' }, origin: PARENT_ORIGIN, data: grant })
+    assert.equal(foreign.reason, 'source')
+    const malformed = listeners[0]({ source: parent, origin: PARENT_ORIGIN, data: { kind: 'constructor' } })
+    assert.equal(malformed.ok, false)
+    assert.equal(status.textContent, 'Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.')
+    assert.equal(body.children.length, 1)
     listeners.length = 0
     body.children.length = 0
     startProductionShell({ provider: 'discovercars', childOrigin: CHILD_ORIGIN, parentOrigin: PARENT_ORIGIN, plan: null })
