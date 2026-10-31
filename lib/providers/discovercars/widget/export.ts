@@ -43,6 +43,30 @@ export const WIDGET_EXPORT_ATTRIBUTE = Object.freeze([
   Object.freeze({ name: 'data-layout_title', wert: 'on' }),
 ])
 
+/** Closed id for the derived file. Not a fresh account export. */
+export const WIDGET_KONFIGURIERT_VARIANTE = 'jetnity-konfiguriert' as const
+
+export const WIDGET_KONFIGURIERT_DATEI = 'discovercars-widget-jetnity-konfiguriert.html'
+
+export const WIDGET_KONFIGURIERT_BYTES = 860
+
+export const WIDGET_KONFIGURIERT_SHA256 =
+  '7c803587919b4aecfa8f05bdbf1b90fed2027b5dd11a0d0b9c0bea7b955dc7e3'
+
+/** The only bytes added to the frozen original, immediately after data-aff-code. */
+export const WIDGET_KONFIGURIERT_EINFUEGUNG = ' data-aff-value="jetnity"'
+
+function konfigurierteAttribute(): readonly { name: string; wert: string }[] {
+  const stelle = WIDGET_EXPORT_ATTRIBUTE.findIndex((eintrag) => eintrag.name === 'data-aff-code')
+  return Object.freeze([
+    ...WIDGET_EXPORT_ATTRIBUTE.slice(0, stelle + 1),
+    Object.freeze({ name: 'data-aff-value', wert: 'jetnity' }),
+    ...WIDGET_EXPORT_ATTRIBUTE.slice(stelle + 1),
+  ])
+}
+
+export const WIDGET_KONFIGURIERT_ATTRIBUTE = konfigurierteAttribute()
+
 export type WidgetExportAttribut = { name: string; wert: string }
 
 export type WidgetExportLesart =
@@ -91,12 +115,19 @@ export function widgetExportLesen(html: string): WidgetExportLesart {
   return { art: 'attribute', attribute }
 }
 
-function gleich(attribute: readonly WidgetExportAttribut[]): boolean {
-  if (attribute.length !== WIDGET_EXPORT_ATTRIBUTE.length) return false
-  return WIDGET_EXPORT_ATTRIBUTE.every((erwartet, index) => {
+function gleichListe(
+  attribute: readonly WidgetExportAttribut[],
+  erwartet: readonly WidgetExportAttribut[],
+): boolean {
+  if (attribute.length !== erwartet.length) return false
+  return erwartet.every((eintrag, index) => {
     const ist = attribute[index]
-    return ist?.name === erwartet.name && ist.wert === erwartet.wert
+    return ist?.name === eintrag.name && ist.wert === eintrag.wert
   })
+}
+
+function gleich(attribute: readonly WidgetExportAttribut[]): boolean {
+  return gleichListe(attribute, WIDGET_EXPORT_ATTRIBUTE)
 }
 
 /** The bound document still does not execute. Consent and the host inventory block it. */
@@ -105,5 +136,14 @@ export function widgetExportAusfuehren(html: string): WidgetExportEntscheidung {
   if (lesart.art === 'form') return { ok: false, grund: 'export' }
   if (lesart.art === 'doppelt') return { ok: false, grund: 'doppelt' }
   if (!gleich(lesart.attribute)) return { ok: false, grund: 'attribut' }
+  return { ok: false, grund: 'einwilligung' }
+}
+
+/** The configured variant is recognised and still does not execute. */
+export function widgetKonfiguriertPruefen(html: string): WidgetExportEntscheidung {
+  const lesart = widgetExportLesen(html)
+  if (lesart.art === 'form') return { ok: false, grund: 'export' }
+  if (lesart.art === 'doppelt') return { ok: false, grund: 'doppelt' }
+  if (!gleichListe(lesart.attribute, WIDGET_KONFIGURIERT_ATTRIBUTE)) return { ok: false, grund: 'attribut' }
   return { ok: false, grund: 'einwilligung' }
 }

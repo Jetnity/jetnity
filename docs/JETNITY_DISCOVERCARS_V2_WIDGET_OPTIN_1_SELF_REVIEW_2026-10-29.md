@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — self-review
 
+**31 October 2026, configured export.** Author-only. Original blob `1581be9a4377a7b53416971332b447b982345763` is unchanged. Removing the 25-byte insertion returns those original bytes. The configured check refuses the exact file with `einwilligung` and refuses the original, a wrong value, a duplicate, an extra attribute, a foreign script, and an iframe. `widgetExportAusfuehren` refuses the configured file as `attribut`. This is not a Technical Lead PASS and does not pass the runtime audit.
+
 **31 October 2026, R4.2.** Author-only. The named test no longer accepts the stale mobile `fixed` bar as the desktop result. The positive run passed once. Settled `static` and `relative` failed a disposable copy of the same position check. This is not a Technical Lead PASS and not a proven fix of CI `41198853363`.
 
 **31 October 2026, R4.1.** The inert housing stays inert. The local harness now includes the light workspace shell and content ancestors, and the run fails unless the “Suchwidget” heading computes to `rgb(20, 62, 51)`. Focus after Tab, Enter, Escape, and the close click is the exact button element. Author review only. This is not a Technical Lead PASS. Earlier paragraphs describe the pre-merge head.

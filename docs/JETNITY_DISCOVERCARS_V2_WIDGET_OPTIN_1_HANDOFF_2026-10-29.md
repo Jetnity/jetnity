@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — handoff
 
+**Current, 31 October 2026, configured export.** Two source files stay distinct. The original 835-byte export has no `data-aff-value`. The configured 860-byte file adds only that public value `jetnity` and is not a fresh account export. Neither file executes. Host parser, frozen-export pins, CMP and host policy pins, and the 31-pair audit contract stay bound to the 835-byte original with an empty affiliate value. This slice does not retarget them. Root still has to version those pins and finish the runtime audit. That audit remains `CHANGES REQUIRED` / `BLOCKED_TRANSPORT`.
+
 **Current, 31 October 2026, R4.2.** The one owned route test waits for innerWidth 1440, kompakt `0`, anordnung `neben`, and `data-shell-nav=sticky`, then requires computed `sticky`. Counts and the empty network check stay after that wait. The original CI cause is not proven. Source is verified. Runtime is `CONSENT_BLOCKED`. This branch now contains accepted main, including White-Mint and the shared widget foundations. Those foundations are not permission to execute the script. The Mietwagen housing is still an explanation, not a provider form. Stop for independent Technical Lead review. Do not activate the vendor widget from this handoff.
 
 ## Remaining integration boundary

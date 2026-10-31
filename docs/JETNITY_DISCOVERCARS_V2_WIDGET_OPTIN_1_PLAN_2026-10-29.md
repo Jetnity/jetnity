@@ -1,5 +1,7 @@
 # DiscoverCars V2 widget opt-in 1 — plan
 
+**Configured export, 31 October 2026.** Keep the 835-byte original. Store one derived 860-byte file whose only added bytes are ` data-aff-value="jetnity"`. Give that file its own fixed identity and a check that still returns refusal. Do not change the UI, the harness, or host/CMP pins.
+
 **R4.1, 31 October 2026.** Keep the R4 proof, and make the local harness use the real light workspace ancestors. The measured witness is the heading color `rgb(20, 62, 51)`. Focus checks name the exact button, including the close click. No global CSS edit and no live widget.
 
 **R4, 31 October 2026.** Merge accepted main. Prove the housing with the current CSS stack. Fail closed on unexpected network and on lost keyboard focus. Do not turn the explanation into a live widget. The immutable R4 amendment is `docs/JETNITY_DISCOVERCARS_V2_R4_TASK_AMENDMENT_V1_2026-10-31.md`.
