@@ -18,7 +18,11 @@ DiscoverCars stays unselected. The already accepted 12Go source selection stays 
 
 The runner now owns one monotonic deadline. Reaching it closes permission, aborts outstanding header and body reads, and runs cleanup once, without waiting for another request. A body that finishes after closure is recorded as aborted, not as a successful response. Pre-start, non-GET, blocked, and late attempts are all in the ledger. Attempt 101 stays in the count. Before-start and before-teardown storage samples are kept separately, with cookie flags and deltas, and without cookie names or values. A role that was not sampled is `not-observed`, not a manufactured zero. Evidence is read after cleanup.
 
-The browser preflight was not run for this correction. The loopback redirect fixture still shows one source hit and zero target hits. `node --test scripts/widgets-host-s2/audit-lifecycle.test.mjs` is the lifecycle proof. It uses an injected clock and fetch, not a live transport.
+The browser preflight was not run. The loopback redirect fixture still shows one source hit and zero target hits. `node --test scripts/widgets-host-s2/audit-lifecycle.test.mjs` is the lifecycle proof.
+
+## R5.1
+
+The default runner uses `performance.now()` and `setTimeout` for the 15-second deadline. A manual clock is used only when a test passes one. An unreadable final storage sample does not become a zero count or a deletion delta. A missing final sample stays missing. Injected parent, host, vendor, and event readers run at before-start and before-teardown. Cleanup that returns a promise stays pending until `finalize()`. A header response that arrives after abort has its body cancelled. Synchronous fetch and body throws are recorded as errors. Every ledger row has `offsetMs` relative to the audit start.
 
 ## Source seam
 

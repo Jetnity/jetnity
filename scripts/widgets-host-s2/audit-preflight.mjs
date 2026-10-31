@@ -192,6 +192,23 @@ async function runAdapter() {
   const clock = createMonotonicClock(0)
   const closed = createAuditRunner({
     clock,
+    readers: {
+      parent(phase) {
+        if (phase === 'before-start') {
+          return { readable: true, storageEntries: 1, cookies: [{ secure: true, sameSite: 'Lax' }] }
+        }
+        return { readable: false }
+      },
+      host(phase) {
+        if (phase === 'before-start') return { readable: true, storageEntries: 1, cookies: [] }
+        return null
+      },
+      vendor() { return { gap: 'vendor-frame-absent' } },
+      events(phase) {
+        if (phase === 'before-start') return [{ name: 'gtm.js' }]
+        return null
+      },
+    },
     fetchImpl(url) {
       fetches.push(String(url))
       throw new Error('provider fetch')

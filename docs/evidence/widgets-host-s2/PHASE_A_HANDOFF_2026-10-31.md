@@ -10,7 +10,7 @@
 
 Read `docs/evidence/widgets-host-s2/PHASE_A_REPORT_2026-10-31.md` and the summary JSON beside it. R5 is an offline lifecycle correction. The deployed host subtree was not changed.
 
-DiscoverCars stays unselected. 12Go stays selected. The runner clock closes the audit at the deadline without another request, aborts body reads, and keeps every late and pre-start attempt. Storage baselines are not overwritten. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run for this correction.
+DiscoverCars stays unselected. 12Go stays selected. The default deadline is a platform timer. Manual clocks are test-only. Unreadable storage stays unknown. Passive readers run at the lifecycle points. `finalize()` waits for cleanup. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run.
 
 ## Do not do next
 
