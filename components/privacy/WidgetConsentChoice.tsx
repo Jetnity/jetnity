@@ -11,6 +11,7 @@ import {
   type WidgetConsentCommand,
   type WidgetConsentState,
 } from '@/lib/privacy/widget-consent/entscheidung'
+import { CMP_PREFERENCES_CLASS } from '@/lib/privacy/privacybee-cmp/vertrag'
 import {
   WIDGET_CONSENT_PROVIDERS,
   purposeControlsEnforceable,
@@ -18,6 +19,15 @@ import {
 
 const AKTION =
   'inline-flex min-h-11 w-full min-w-0 items-center justify-center whitespace-normal break-words rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-center text-base font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+
+function Einstellungen({ mode }: { mode: 'hidden' | 'ready' }) {
+  if (mode !== 'ready') return null
+  return (
+    <button type="button" className={`${AKTION} ${CMP_PREFERENCES_CLASS} mt-3`} data-cmp-preferences="ready">
+      Datenschutz-Einstellungen
+    </button>
+  )
+}
 
 const ZWECK_TEXT = [
   ['functional_load', 'Funktion des Widgets'],
@@ -28,9 +38,11 @@ const ZWECK_TEXT = [
 export type WidgetConsentChoiceProps = {
   state: WidgetConsentState
   onCommand: (command: WidgetConsentCommand) => void
+  /** Official preferences control. Hidden unless the CMP bridge is actually ready. */
+  cmpPreferences?: 'hidden' | 'ready'
 }
 
-export function WidgetConsentChoice({ state, onCommand }: WidgetConsentChoiceProps) {
+export function WidgetConsentChoice({ state, onCommand, cmpPreferences = 'hidden' }: WidgetConsentChoiceProps) {
   const faktum = WIDGET_CONSENT_PROVIDERS[state.providerId]
   const zweckGetrennt = purposeControlsEnforceable(state.providerId)
   const ausfuehrungErlaubt = vendorScriptMayExecute(state)
@@ -100,6 +112,7 @@ export function WidgetConsentChoice({ state, onCommand }: WidgetConsentChoicePro
           >
             Auswahl erneut öffnen
           </button>
+          <Einstellungen mode={cmpPreferences} />
         </div>
       </section>
     )
@@ -201,6 +214,7 @@ export function WidgetConsentChoice({ state, onCommand }: WidgetConsentChoicePro
       >
         Schliessen
       </button>
+      <Einstellungen mode={cmpPreferences} />
     </section>
   )
 }
