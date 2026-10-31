@@ -1,0 +1,314 @@
+JETNITY / TRIP WORKSPACE
+UX- und UI-Vorgabe V1
+28. Oktober 2026 · Europe/Zurich · erstellt durch Work
+
+01 / Entscheidung und Ergebnis
+
+ZIEL
+Eine Reise soll sofort verständlich sein: Wo geht es hin, welcher Abschnitt ist ausgewählt, was ist tatsächlich geplant und welcher nächste Schritt hilft? Die vorhandene Jetnity-Gestaltung bleibt erkennbar. Die Arbeitsfläche wird kompakter, kontextbezogener und auf kleinen Bildschirmen einfacher bedienbar.
+
+EMPFOHLENE RICHTUNG
+Vier Hauptbereiche bleiben: Übersicht, Reiseplan, Organisieren und Vorbereitung. Desktop erhält kompakte Reisetabs; im Reiseplan stehen Route und ausgewähltes Detail nebeneinander. Mobil führt die Route in eine eigene Detailansicht mit eindeutiger Rückkehr. Eine kompakte Navigation unten ist für normale Smartphone-Textgröße vorgesehen; bei Platzmangel wechselt sie in eine umbrechende Navigation im Dokumentfluss.
+
+Die Admin-Ansicht liefert das Prinzip einer klaren Trennung von Navigation und Arbeitsfläche. Ihre vielen Verwaltungsmenüs werden nicht übernommen. Für die vier vorhandenen Reisebereiche ist eine zusätzliche permanente Seitenleiste vorerst nicht erforderlich.
+
+DIE WICHTIGSTEN VERBESSERUNGEN
+- Kleiner Reisekopf, schneller Zugang zur eigentlichen Planung.
+- Aufenthalte, Reisetage und Verbindungen in zeitlicher Reihenfolge.
+- Keine dreifache Einreiseinformation für drei Orte desselben Landes.
+- Aktivitäten, Unterkünfte und Verbindungen öffnen mit sichtbarem Reisekontext.
+- Wenige konkrete nächste Schritte statt langer Listen unbekannter Zustände.
+- Gleiche Fachlogik und Fähigkeiten auf Smartphone, Tablet und Desktop.
+
+AUFTRAG UND ZUSTÄNDIGKEIT
+Work liefert Gestaltung, Bedienregeln, Beispielansichten und unabhängige spätere Prüfung. Der Entwicklungs-Chat bleibt Technical Lead: aktueller Stand, Architektur, Arbeitsaufteilung und finale technische Freigabe. Cursor setzt nur den vom Lead abgegrenzten Auftrag um. Dieses Dokument ist eine prüfbare Produktvorgabe und kein ungeprüfter Auftrag für einen Komplettumbau.
+
+LIEFERUMFANG
+Zwölf Seiten Spezifikation, derselbe Inhalt als kopierbarer Text und ein interaktiver Entwurf mit künstlicher Beispielreise. Jetnity-Code, Konten, Datenbank, Anbieter-Konfiguration und Deployment wurden hierfür nicht verändert. Die dargestellten neuen Abläufe sind Entwurf, keine bereits ausgelieferte Funktion.
+
+===PAGE===
+02 / Befund, Quellenlage und Priorität
+
+BEOBACHTET IN DEN NUTZERBILDERN VOM 27.10.2026
+B1: Der große Reisekopf und mehrere Aktionszeilen beanspruchen viel Platz vor dem Inhalt. Der Titel „Bangkok“ beschreibt die Rundreise Bangkok - Ko Chang - Phuket nur teilweise. Ein selbst gewählter Titel darf trotzdem nicht automatisch überschrieben werden.
+B2: Die Übersicht wiederholt Einreise-, Sicherheits- und Saison-Leerstände für alle drei Orte. Wichtige Bereiche stehen weit unten. Die Bilder belegen die Darstellung, nicht die Ursache oder eine aktuelle Fehlfunktion.
+B3: Geplante Hin- und Rückreisetage wurden im früheren Nutzerbild unter „Noch keinem Ziel zugeordnet“ gesammelt. Das kommuniziert einen vermeintlichen Mangel, obwohl bewusst Reisezeit vorgesehen wurde.
+B4: In den gescrollten Bildern ist der globale Seitenkopf sichtbar, die Reise-Navigation dagegen nicht. Ob dies an Version, Zustand oder Layout liegt, muss am tatsächlich geprüften Stand verifiziert werden.
+
+ABGLEICH MIT DEM PROJEKT
+Der am 28.10. um etwa 00:03 CET gelesene neueste Kontinuitätskommentar in #751 nennt main a9b7a45b88347da3cac92965e2c544ec5e1bca67. Er berichtet bereits integrierte Nacht-, Reisenden-, Gast/Mobil- und 12Go-Slices. Das ist ein dokumentierter Lead-Stand, keine eigene erneute Abnahme von Production. Der Issue-Kopf enthält ältere Stände; für dieses Konzept wurde der neuere Kommentar berücksichtigt. [S1]
+
+Reise- und Kontextorientierung, wiederverwendete Detailflächen, bedarfsgesteuerte Suche und dieselbe Logik für alle Geräte stehen bereits in der Zielarchitektur und TW-5. Sie werden fortgeführt. Die historischen Task-Dateien sind nicht der aktuelle gesamte Implementierungsstand. [S2, S3]
+
+Die Quelltextsicht enthält bereits eine kompakte Darstellung vollständig leerer Zielhinweise, jedoch nur unter genau definierten Bedingungen. Außerdem wurde zuvor eine sticky Reise-Navigation im Quelltext gesehen. Erst den tatsächlichen Produktpfad prüfen, bevor diese Fähigkeiten nochmals gebaut werden. [S4]
+
+PRIORITÄT FÜR DIE UMSETZUNG
+P1 / Fachliche Klarheit: Tage und Nächte korrekt unterscheiden; Hin-/Rückreise, gleiche Länder und wiederkehrende Orte richtig behandeln; Kontext und Speicherung erhalten. Fehlende Umsetzung F01/N12 ist laut Lead-Stand noch offen und darf nicht durch CSS kaschiert werden.
+P2 / Bedienung: kompakter Kopf, klare nächste Aktionen, stabile Navigation, bessere Leerstände, verständliche Providerweiterleitung.
+P3 / Verfeinerung: dezente Übergänge, optionale Karteneinblendung und weitere visuelle Details erst nach den Kernabläufen.
+
+Diese Prioritäten sind Planungsempfehlungen. Sie ersetzen keine reproduzierten Fehler-Severities oder bestehende STOP-/HOLD-Entscheidungen.
+
+===PAGE===
+03 / Navigation und Kontextvertrag
+
+REISEKOPF
+Oben stehen „Meine Reisen“, der echte Reisetitel, Zeitraum und eine kurze Routenzusammenfassung. Weitere Angaben wie Personen, Budget und Speicherort können aufgeklappt werden. „Reise ändern“ bleibt direkt auffindbar. „Reise löschen“ liegt in den Reiseoptionen und verlangt eine konkrete Bestätigung. Ein großer Marketing-Seitenkopf darf die laufende Arbeit nicht dominieren.
+
+HAUPTBEREICHE
+Übersicht beantwortet: Was ist wichtig und was mache ich als Nächstes?
+Reiseplan beantwortet: Wann und wo bin ich, und welche Punkte sind vorgesehen?
+Organisieren beantwortet: Was plane, suche oder ergänze ich für diesen Abschnitt?
+Vorbereitung beantwortet: Welche Angaben, Nachweise und Reisehinweise sind relevant?
+
+Flüge, Unterkünfte, Aktivitäten und Verbindungen bleiben Werkzeuge unter Organisieren. Mietwagen bleiben zunächst innerhalb Verbindungen; kein fünfter Hauptbereich. Ein Wortlautwechsel von „Mobilität“ zu „Verbindungen“ muss über alle Einstiege konsistent erfolgen; interne Bezeichner müssen dafür nicht umbenannt werden.
+
+KONTEXT MUSS SICHTBAR SEIN
+Jeder Detail- oder Organisationsbereich zeigt seinen Bezug: konkrete Etappe, gegebenenfalls Tag, Reiseabschnitt oder reisende Person. Die Auswahl wird mit bestehenden stabilen IDs geführt, nicht mit Ortsnamen oder Listenpositionen. Zwei Besuche in Bangkok bleiben zwei verschiedene Aufenthalte. Ansichtsstatus referenziert bestehende Fakten und kopiert keine zweite Fachwahrheit.
+
+RÜCKKEHR
+Aus „Ko Chang / 25. November“ geöffnete Aktivitäten führen bei „Zurück“ genau dorthin zurück. Tag, Etappe, Auswahl und vorherige Scrollposition bleiben erhalten, soweit noch gültig. Ein Haupttab öffnet die zuletzt gültige Ansicht dieses Bereichs. Der Browser-Zurück-Knopf durchläuft dieselbe nachvollziehbare Hierarchie; keine Schleife zwischen Übersicht und Detail.
+
+URL UND UNGÜLTIGE AUSWAHL
+Bestehende Deep Links und URL-Parameter werden erhalten. Der Lead entscheidet über notwendige Ergänzungen. Ein gelöschter Tag oder Eintrag führt zum nächsthöheren gültigen Kontext mit kurzer Erklärung. Es darf weder ein fremder Abschnitt erscheinen noch still ein anderer Ort übernommen werden. Nach Neuladen gilt die bestehende Gast-/Konto-Speichersemantik; eine reine Ansichtsänderung schreibt keine Reisedaten.
+
+FOKUS UND SUCHERGEBNISSE
+Beim Detailöffnen wird der neue Bereich für Tastatur und Screenreader nachvollziehbar. Zurück führt zum Auslöser. Bei Ortswechsel verschwindet die alte Ergebnisliste sofort aus dem neuen Kontext. Spät eintreffende Antworten dürfen die neue Auswahl nicht überschreiben. Ein bloßer Layoutwechsel darf Suche oder Provideraufruf nicht neu auslösen.
+
+===PAGE===
+04 / Übersicht: zuerst Orientierung, dann Handlung
+
+REIHENFOLGE
+1. Kompakte Reiseidentität mit Datum und Route.
+2. „Jetzt wichtig“ mit höchstens drei zunächst sichtbaren, konkret handlungsfähigen Punkten. Weitere bleiben über eine beschriftete Aktion erreichbar.
+3. Kurzer Routenausschnitt mit Hinreise, Aufenthalten, Verbindungen und Rückreise; Einstieg in den Reiseplan.
+4. Direkte Zugänge zu Organisation und Vorbereitung mit ehrlichen Zustandsangaben.
+5. Verlässliche zusätzliche Hinweise und Quellen nur, wenn inhaltlich vorhanden.
+
+PRIORISIERUNG
+Bestehende fachliche Warnungen und konkret belegte Konflikte zuerst; danach vom Nutzer lösbare Planungslücken; danach optionale Inspiration. Bestehende Domain-Prioritäten bleiben maßgeblich. Keine neue automatische Risikobewertung oder KI-Priorität im UI. Gleiche Hinweise werden nur zusammengefasst, wenn Bedeutung, Quelle und betroffenes Objekt identisch bleiben.
+
+BEISPIELTEXTE
+„Weiterreise Ko Chang - Phuket planen“ führt zum konkreten Abschnitt.
+„Angaben zu Person 2 ergänzen“ führt zur betreffenden Person, sofern eine bestehende Funktion diese Daten benötigt.
+„Aufenthaltsdaten für Ko Chang fehlen“ ist zulässig, wenn der Zeitraum tatsächlich unbekannt ist.
+„Noch keine Aktivitäten geplant“ ist eine optionale Einladung, kein Vollständigkeitsfehler.
+
+ZÄHLER UND FORTSCHRITT
+Keine frei erfundene Prozentanzeige wie „Reise zu 80 % fertig“. Zähler beziehen sich auf nachvollziehbare Objekte und öffnen diese. „3 offen“ darf nicht drei fehlende Datenquellen mit drei unerledigten Nutzeraufgaben vermischen. Wenn keine verlässliche Berechnungsbasis vorliegt, wird die qualitative Aussage ohne Zahl gezeigt.
+
+LEERSTÄNDE
+Wurde noch nicht geprüft, lautet die Aussage entsprechend „Noch nicht geprüft“. Ist Kontext unvollständig, wird die fehlende Angabe benannt. Nur eine nachgewiesene Störung darf „Prüfung derzeit nicht verfügbar“ erzeugen. Fehlende Hinweise bedeuten weder Sicherheit noch Einreiseberechtigung. Gleiche fehlende Informationen können kompakt erklärt werden; ein echter abweichender Orts- oder Personenhinweis bleibt sichtbar.
+
+REISE PRÜFEN
+Die bestehende Planprüfung bleibt erreichbar. Ihr Resultat nennt Umfang und offene Daten. Eine erfolgreiche Planprüfung bestätigt keine tatsächlichen Buchungen oder Anbieter-Verfügbarkeit. Erklärungstext steht am Prüfergebnis oder relevanten Status; keine wiederholten langen Warnblöcke zwischen allen Arbeitsschritten.
+
+===PAGE===
+05 / Reiseplan: Zeit, Orte und Reisetage
+
+DESKTOP
+Links eine chronologische Route mit auswählbaren Aufenthalten und Verbindungen. Rechts das gewählte Detail. Der Nutzer kann Etappe, Tag und konkreten Planpunkt öffnen. Datum und Aufenthaltsort stehen vor der Liste der Aktivitäten. Lange Reisen werden in Etappen gegliedert, nicht als unübersichtliche Reihe von 22 oder mehr gleichrangigen Tagesbuttons.
+
+MOBIL
+Zunächst die Route; ein Tipp öffnet die Detailansicht mit Kontextüberschrift und „Zur Route“. Der Tag ist innerhalb des Aufenthalts auswählbar. Kein dauerhafter zweiter schmaler Bereich und keine horizontal zu durchwischende Pflicht-Timeline. Vollständige Datums- und Ortsangaben müssen ohne Hover lesbar sein.
+
+SYNTHETISCHE REFERENZREISE
+15. November 2026: bewusst geplante Hinreise.
+16.-22. November: Bangkok, Thailand.
+23.-29. November: Ko Chang, Thailand.
+30. November-5. Dezember: Phuket, Thailand.
+6. Dezember: bewusst geplante Rückreise.
+Das sind 22 Kalenderdaten einschließlich Anfang und Ende. Zwischen den drei Aufenthalten werden nur Bangkok - Ko Chang und Ko Chang - Phuket als aufeinanderfolgende Abschnitte gezeigt. Ein Transferdatum ist aus diesen Aufenthaltsbeschriftungen allein nicht als exakt bestätigt abzuleiten.
+
+ROLLEN SIND KEINE BUCHUNGEN
+„Hinreise“, „Rückreise“ und „Weiterreise“ benennen vom Nutzer festgelegte Planung. Ein solcher Tag braucht keinen künstlichen Zielaufenthalt und ist nicht automatisch eine Lücke. „Noch nicht eingeordnet“ bleibt für tatsächlich offene Tage verfügbar. Tage können Reisezeit und Aufenthalt enthalten; eine Reise über Mitternacht kann mehrere Kalendertage betreffen. Eine starre exklusive Ein-Tages-Kategorie darf diese Fälle nicht abschneiden.
+
+TAGE, NÄCHTE UND ZEITZONEN
+Kalenderdauer ist keine Anzahl gebuchter Übernachtungen. Die Beispielreise hat 21 Übergänge zwischen Kalenderdaten, aber daraus folgt keine Hotelpflicht für 21 Nächte. Flug-, Fähr- oder Zugnächte und unbekannte Aufenthaltszuordnungen bleiben korrekt getrennt. Vorhandene Nachtlogik wiederverwenden. Abflug und Ankunft können verschiedene Ortsdaten besitzen; ohne Zeitzonen-Nachweis keine erfundene exakte Dauer.
+
+DETAILS UND BEARBEITUNG
+Ein Planpunkt zeigt Art, Zeit beziehungsweise „Zeit offen“, Ort, Herkunft und belegten Plan-/Buchungsstatus. Notizen bleiben Notizen. Änderungen zeigen ihre Auswirkungen auf Tage, Aufenthalte und vorhandene Einträge, bevor sie übernommen werden. Die nötige persistente Tages-/Reiserollenfunktion gehört zum vorhandenen F01/N12-Architekturstrang und benötigt dessen Freigaben.
+
+===PAGE===
+06 / Regeln für mehrere Orte und Länder
+
+FACHLICHE OBJEKTE
+Ort: beispielsweise Bangkok. Land: beispielsweise Thailand mit bestätigter Länderzuordnung. Aufenthalt: ein bestimmter Besuch dieses Ortes, mit eigener Identität und gegebenenfalls Datum. Verbindung: gerichteter Abschnitt zwischen zwei aufeinanderfolgenden Aufenthalten. Tag: konkretes Kalenderdatum im Plan. Einreiseereignis: belegte oder geplante Grenzüberquerung im vorhandenen fachlichen Modell, nicht automatisch jeder Ortswechsel.
+
+MEHRERE ORTE IM SELBEN LAND
+Bangkok - Ko Chang - Phuket bleibt eine Thailand-Reise mit drei Aufenthalten. Gemeinsame Einreisegrundlagen werden bei Thailand gebündelt. Lokale Sicherheits- oder Saisoninformationen dürfen trotzdem je Ort abweichen. Keine dreifache identische Einreiseaufgabe allein aufgrund der Zahl der Orte.
+
+WIEDERHOLTE ZIELE
+Bangkok (Besuch 1) - Chiang Mai - Bangkok (Besuch 2) bleibt vollständig erhalten. Die beiden Bangkok-Aufenthalte haben getrennte Tage und Einträge. Es gibt zwei gerichtete Verbindungen; weder der zweite Besuch noch dessen Kontext darf durch Namens-Deduplizierung verschwinden.
+
+MEHRERE LÄNDER UND WIEDEREINREISE
+Bangkok - Siem Reap - Bangkok führt zu Thailand und Kambodscha als Ländergruppen. Die Rückkehr nach Thailand darf nicht von der Darstellung „Thailand einmal“ verschluckt werden. Einreiseanforderungen hängen zusätzlich vom konkreten Reisenden, Datum und Dokumentkontext ab. Die Oberfläche gruppiert Quellen, ersetzt aber keine vorhandene fachliche Prüfung.
+
+UNKLARE ORTE ODER VERBINDUNGEN
+Ein unbekannter Freitextort erhält keine erratene Länderflagge, Airport-ID, Route oder Anbieter-URL. „Land noch nicht zugeordnet“ mit einem passenden Korrektureinstieg ist ausreichend. Panama als Land bleibt ein Land; keine automatische Gleichsetzung mit Panama-Stadt. Gleiche Labels sind kein Beweis für gleiche Ortsidentität.
+
+UMSORTIEREN UND ENTFERNEN
+Nach bestätigtem Umsortieren werden nur die neuen Nachbarschaften abgeleitet. Die bisherige Verbindung und ihr Inhalt dürfen nicht auf eine neue Strecke umetikettiert werden. Abhängige Einträge bleiben identifizierbar und werden zur Prüfung vorgelegt. Ein entfernter Aufenthalt darf keine verwaiste aktive Detailansicht erzeugen.
+
+HINREISE UND RÜCKREISE
+Herkunft, Heimkehrziel und Hin-/Rückreiseabsicht müssen explizit vorliegen. Weder Zürich noch irgendein anderer Ausgangsort wird aus Sprache, Kontoland oder einem Screenshot in echte Reisen übernommen. Bereits durch Flug oder andere belegte Planung abgedeckte Abschnitte dürfen nicht zusätzlich als offene Bodenverbindung erscheinen.
+
+===PAGE===
+07 / Organisieren und Anbieter
+
+GEMEINSAME ANORDNUNG
+Bereichsauswahl, sichtbarer Kontext, vorhandene Planpunkte, dann die passende Such- oder Ergänzungsaktion. Neue Providerinhalte werden nur nach ausdrücklicher Aktion geladen. Die restliche Planung bleibt nutzbar, während ein Anbieter lädt oder ausfällt. Kein Layout darf allein durch Tab- oder Größenwechsel zusätzliche Suchaufrufe erzeugen.
+
+FLÜGE
+Hinreise, Rückreise oder ausdrücklich gewählter Flugabschnitt. Herkunft, Ziel, Reisetag und Reisende nur aus passenden vorhandenen Fakten. Ein beliebiger ausgewählter Aufenthaltsort genügt nicht für die Erfindung einer Flugstrecke. Fehlende Angaben werden als offen gezeigt.
+
+UNTERKÜNFTE
+Konkreter Aufenthalt beziehungsweise bestätigter Ein-/Auscheckzeitraum. Nächte werden aus vorhandenen Daten abgeleitet, nicht aus Tagesanzahl oder pauschaler Gleichverteilung. Bei mehreren Bangkok-Aufenthalten muss der gewählte Besuch einschließlich Datum erkennbar sein.
+
+AKTIVITÄTEN
+Ort, optional Tag und erforderlicher Teilnehmerkontext. Bei Bangkok erscheinen Bangkok-bezogene Suchergebnisse, wenn der jeweilige Anbieter das unterstützt. Landessuche bleibt als Landessuche erkennbar. Inspiration, aktuelle Verfügbarkeitsprüfung und tatsächliche Buchung sind getrennte Schritte. Ein Tageswechsel darf keine Verfügbarkeit behaupten, die der Anbieter nicht für diesen Tag geprüft hat.
+
+VERBINDUNGEN UND MIETWAGEN
+Verbindungen beziehen sich auf benachbarte Aufenthalte. Keine vollständige Kombination aller Orte. Mietwagen brauchen gegebenenfalls einen eigenen Abhol-/Rückgabekontext; nicht zwangsläufig denselben wie eine Etappenverbindung. Änderungen an einem Providervertrag sind kein Bestandteil dieser Gestaltung.
+
+12GO IM AKTUELL DOKUMENTIERTEN UMFANG
+Der Lead-Checkpoint beschreibt eine allgemeine externe Suche mit leerem streckenspezifischem Verzeichnis. Die UI darf den Jetnity-Abschnitt nennen, muss aber sagen: „Strecke und Datum bei 12Go auswählen“. Die Aktion lautet etwa „Bei 12Go suchen“. Kein Eindruck bereits gefilterter oder buchbarer Ergebnisse. Parameter z=17323861 und sub_id=jetnity-mobility-route bleiben nach bestehendem Vertrag erhalten. Kein unbestätigtes Datum, keine Personendaten anhängen. [S1]
+
+ANDERE ANBIETER
+GetYourGuide-Ergebnisliste darf nicht als direkte Produktdetailseite bezeichnet werden. Viator-Details und Preise nur innerhalb tatsächlich freigegebener und implementierter Fähigkeiten. Trip.com und DiscoverCars nicht allein durch den neuen Entwurf aktivieren. Aktuelle Freigaben prüft der Lead je Slice.
+
+WEITERLEITUNG
+Anbieter und externe Aktion klar beschriften. Ein neuer Tab wird angekündigt. Rückkehr zu Jetnity behält den Ausgangskontext. Öffnen eines Links, technische Parametererhaltung, erfolgreiche Anbieteranzeige, Provisionszuordnung und Buchung sind fünf unterschiedliche Nachweise. Keiner darf aus einem der anderen automatisch abgeleitet werden.
+
+===PAGE===
+08 / Vorbereitung und ehrliche Zustände
+
+AUFBAU
+Reisende und fehlende erforderliche Angaben; Länder beziehungsweise Einreiseereignisse; relevante regionale Hinweise; persönliche Aufgaben. Ein erster Überblick kann gemeinsame Länderinformationen zusammenfassen. Details unterscheiden Personen, Dokumentoptionen, Datum und Quelle, sofern diese fachlich vorhanden sind.
+
+DATENMINIMIERUNG
+Reiseplanung erfordert nicht automatisch Passnummern oder Dokumentuploads. Nur vorhandene, freigegebene und für die jeweilige Funktion benötigte Angaben abfragen. Sprache, Wohnsitz und Abflugort sind keine Staatsangehörigkeit. Mehrere Staatsangehörigkeiten oder Dokumentoptionen nicht still auf die erste reduzieren.
+
+ZUSTÄNDE MIT UNTERSCHIEDLICHER BEDEUTUNG
+Noch nicht geprüft: eine passende Prüfung ist noch nicht erfolgt. Aktion nur anbieten, wenn tatsächlich verfügbar.
+Angaben fehlen: die konkret notwendige Angabe nennen und den passenden Eingabepunkt öffnen.
+Prüfung nicht verfügbar: belegt nicht verfügbare Quelle oder Funktion. Vorhandene offizielle Links dürfen als manuell prüfbare Quellen dienen.
+Fehler beim Laden: erneuter Versuch für die betroffene Funktion; Reise bleibt bedienbar.
+Stand veraltet: vorhandenes Datum und Unsicherheit zeigen; keine aktuelle Bestätigung vortäuschen.
+Keine Treffer: nur nach tatsächlich erfolgreicher Suche ohne Ergebnis; kein Ersatz für Fehler oder deaktivierten Anbieter.
+Hinweis vorhanden: Inhalt, Bezug und Quelle zeigen, statt pauschal „alles in Ordnung“.
+
+PLANUNG UND BUCHUNG
+Geplant: ein Nutzer hat einen Eintrag vorgesehen.
+Ausgewählt: ein vorhandenes Angebot wurde zur Planung hinzugefügt; daraus folgt keine Buchung.
+Vom Nutzer als gebucht markiert: Selbstauskunft, mit entsprechendem Label.
+Vom Anbieter bestätigt: nur bei vorhandener, belastbarer Anbieterbestätigung.
+Diese Bedeutung muss konsistent sein, ohne neue unbelegte Statuswerte in das Datenmodell einzuführen.
+
+PREISE UND BUDGET
+Budget ist eine Nutzerangabe. Ein gespeicherter Preis kann unvollständig oder veraltet sein. Ein aktueller Anbieterpreis benötigt passende Daten einschließlich Währung und gegebenenfalls Zeitbezug. Fehlender Preis ist kein Preis von null. Eine Summe vorhandener Preise darf nicht als vollständiger Reisepreis erscheinen, wenn Positionen fehlen.
+
+VERDICHTUNG OHNE INFORMATIONSVERLUST
+Eine gemeinsame „Thailand“-Karte kann doppelte generische Inhalte ersetzen. Abweichende Hinweise, reale Warnungen und verschiedene Prüfungslagen bleiben getrennt zugänglich. Fehlende Informationen werden knapp erklärt. Das Weglassen einer leeren Karte darf nicht den Eindruck vermitteln, alle notwendigen Prüfungen seien erfolgreich abgeschlossen.
+
+===PAGE===
+09 / Ändern, Speichern und Fehlerbehandlung
+
+REISE ÄNDERN
+Das manuelle Formular bleibt ein zuverlässiger Einstieg. Datumsänderung, Aufenthaltsverschiebung und Umordnung zeigen eine verständliche Änderungsvorschau mit betroffenen Tagen, Nächten, Verbindungen und Einträgen. „Abbrechen“ verwirft nur den neuen Entwurf. Eine Übernahme löscht oder verschiebt vorhandene Inhalte nicht still.
+
+IN EIGENEN WORTEN
+Solange diese Funktion nicht nachweislich funktioniert, muss die manuelle Alternative direkt erreichbar bleiben. Kein inaktiver Knopf ohne Erklärung. Bei verfügbarer Funktion: Text eingeben, Änderungsvorschlag prüfen, ausdrücklich übernehmen. Fehlgeschlagene Verarbeitung bewahrt die Eingabe. Die KI darf keine Einreiseberechtigung, Verfügbarkeit oder Buchung bestätigen.
+
+SPEICHERORT UND SPEICHERSTATUS
+„Auf diesem Gerät“ und „Im Konto“ bleiben deutlich unterscheidbar. „Gespeichert“ erscheint erst nach Erfolg des jeweiligen Speicherwegs. Bei Fehler bleiben bearbeitete Inhalte soweit möglich erhalten; die UI sagt, was noch nicht gespeichert ist, und bietet erneuten Versuch. Gastansicht darf keine Kontosynchronisation behaupten.
+
+LEERE UND FEHLERHAFTE REISEN
+Keine Aufenthalte: erklärter Einstieg „Ort hinzufügen“, keine falsche Route.
+Keine Termine: Planung möglich, zeitabhängige Ergebnisse ehrlich eingeschränkt.
+Keine Einträge an einem Tag: freier Tag, keine Fehlermeldung.
+Ungültiger Zeitraum: Fehler am Feld mit verständlicher Ursache, Fokus erreichbar.
+Netzwerk-/Speicherfehler: betroffener Bereich erklärt den Fehler; keine endlose Ladeanzeige und kein Verlust der ganzen Navigation.
+
+ASYNCHRONE SUCHEN
+Während einer Suche bleibt der gesuchte Ort/Tag erkennbar. Bei Kontextwechsel wird die alte Anfrage abgebrochen oder ihre Antwort verworfen. Kein alter Bangkok-Inhalt unter Phuket. Wiederholung lädt nur den betroffenen Bereich, nicht die gesamte Reise. Ein Fehler darf nicht wie „ausgebucht“ aussehen.
+
+KONFLIKTE UND ENTFERNEN
+Bestehende gleichzeitige Bearbeitung oder Speicher-Konflikte nicht still überschreiben. Eine Korrektur zeigt betroffene Daten und nutzt die vorhandene Konfliktstrategie. Entfernen eines Planpunkts ist keine Stornierung bei einem Anbieter. Ein etwaiges „Rückgängig“ darf nur angeboten werden, wenn die Wiederherstellung zuverlässig möglich ist.
+
+PROTOTYP-GRENZE
+Der begleitende Entwurf demonstriert lokale Auswahl, Rückkehr, Tageskontext, Planung eines Reisetags und beispielhafte Ergebniszustände. Er schreibt nichts in Jetnity. Seine interaktiven Zustände sind künstlich und ersetzen weder Domain-Tests noch die Prüfung echter Speicherung, Provider oder Browser-History.
+
+===PAGE===
+10 / Darstellung, Mobilität und Zugänglichkeit
+
+VISUELLE LEITLINIEN
+Jetnity-Dunkelgrün bleibt Primärfarbe; helle warme Flächen und zurückhaltende Akzente. Deutliche Auswahlzustände, wenige Rahmen und eine klare Überschriftenhierarchie. Bestehende Produkt-Schrift und Gestaltungstokens wiederverwenden. Richtwerte: 16 px Fließtext, 14 px ergänzende Beschriftung, 24-32 px Abschnitts-/Reisetitel; relative Einheiten und tatsächliche Textvergrößerung bleiben maßgeblich. Keine großen leeren Statuskarten.
+
+DESKTOP UND TABLET
+Bei ausreichend Platz Route und Detail nebeneinander; sonst eine Spalte mit Detailwechsel. Die Umschaltung hängt vom verfügbaren Platz und Text ab, nicht allein vom Gerätenamen. Keine zwei eigenständigen Oberflächen oder doppelt gemounteten Suchkomponenten. Eine Karte ist optional und darf den vollständigen Listenweg nicht ersetzen.
+
+SMARTPHONE
+Vier beschriftete Hauptziele; keine alleinigen Icons. Bei normaler Textgröße kompakte Navigation unten. Bei 320 px, großer Schrift oder Tastaturkonflikt in einen lesbaren, umbrechenden Bereich im Dokumentfluss wechseln. Kein dauerhaftes 2x2-Navigationsfeld über dem Inhalt. Sichere Bildschirmränder berücksichtigen. Der letzte Button und das fokussierte Eingabefeld bleiben erreichbar.
+
+REFLOW UND VERGRÖSSERUNG
+Normaler Inhalt muss bei 320 CSS-Pixeln ohne horizontales Scrollen benutzbar bleiben; besondere zweidimensionale Inhalte wie eine Karte getrennt behandeln. Text muss bis 200 % ohne Verlust von Inhalt oder Funktion vergrößerbar sein. Das sind Prüfkriterien aus WCAG; ein kleiner Screenshot allein belegt sie nicht. [S5, S6]
+
+BEDIENFLÄCHEN UND TASTATUR
+Jetnity-Designziel: mindestens 44 x 44 CSS-Pixel wirksame Bedienfläche für eigenständige Aktionen. Das ist strenger als das WCAG-2.2-AA-Minimum von 24 x 24 mit Ausnahmen. [S7] Sichtbarer Fokus, logische Reihenfolge und echte Buttons/Links; keine nur per Drag oder Hover erreichbare Funktion. Verdeckte Bereiche sind nicht fokussierbar. Falls ein echtes Tab-Muster verwendet wird, braucht es dessen Tastaturverhalten; sonst normale Navigationslinks mit aktivem Zustand.
+
+WEITERE ABNAHME
+Text- und Kontrollkontraste gegen die gewählten Farben messen. Status nicht nur über Farbe vermitteln. Dynamische Ergebnisse knapp ansagen, nicht bei jeder Auswahl den gesamten Workspace vorlesen. Sticky Elemente dürfen keine fokussierten Inhalte verdecken. Reduzierte Bewegung beachten. VoiceOver mit Safari und Tastatur mit Desktop-Browser gehören zur späteren Produktprüfung.
+
+PRÜFGRÖSSEN
+Mindestens 320, 390, 768 und 1440 CSS-Pixel; vorhandene 280/360/430-Regressionsfälle aus TW-5 beibehalten. Zusätzlich Browserzoom 200 % und, separat, Textvergrößerung 200 % mit dokumentierter Methode. Reale mobile Browser ergänzen die Desktop-Emulation. Keine pauschale WCAG-Konformitätsbehauptung aus Teiltests.
+
+===PAGE===
+11 / Verbindlich zu prüfende Beispielszenarien
+
+Die folgenden Soll-Ergebnisse sind Abnahmekriterien für die spätere Umsetzung. Sie sind noch keine Production-PASS-Liste.
+
+A01 / Rundreise: Referenzreise aus Seite 5 im manuellen Formular anlegen. 22 Kalenderdaten; Hin- und Rückreise bleiben bewusst geplante Reisezeit, drei Aufenthalte sichtbar. Kein erzwungener Hotelaufenthalt am Flugtag.
+A02 / Nachbarschaft: Bangkok - Ko Chang - Phuket öffnen. Genau die zwei internen Nachbarabschnitte, keine direkte Bangkok-Phuket-Abkürzung als zusätzlicher Pflichtabschnitt. Hin-/Rückreise nur bei explizitem Kontext.
+A03 / Gleicher Länderbezug: Thailand-Vorbereitung öffnen. Gemeinsame Einreiseinformationen ohne drei identische Länderaufgaben; lokale Hinweise bleiben unterscheidbar.
+A04 / Wiederholung: Bangkok - Chiang Mai - Bangkok mit unterschiedlichen Terminen. Beide Bangkok-Besuche separat auswählen, bearbeiten und wieder öffnen. Einträge und Termine bleiben beim richtigen Besuch.
+A05 / Wiedereinreise: Thailand - Kambodscha - Thailand. Länder bündeln, beide Thailand-Einreiseereignisse und unterschiedliche Personen-/Dokumentkontexte erhalten, soweit fachlich vorhanden. Keine automatische Freigabe.
+A06 / Unbekannt: Freitextort ohne bestätigtes Land und unbekannte Verbindung. Keine erfundene Flagge, Route, Dauer oder Verfügbarkeit. Kontextklärung erreichbar.
+A07 / Umordnung: Reihenfolge ändern oder mittleren Aufenthalt entfernen. Änderungsvorschau zeigt Auswirkungen; neue Nachbarabschnitte stimmen; alte Zuordnungen werden nicht still umetikettiert.
+A08 / Kontext: Ko Chang, bestimmter Tag, Aktivitäten öffnen, zurück, Haupttab wechseln, Browser zurück/vor und neu laden. Gültige Auswahl bleibt gemäß Speicher-/URL-Vertrag erhalten; invalidierte Auswahl erklärt sich.
+A09 / Reisetag: Hinreise über Mitternacht und Tag mit Fahrt plus Aufenthalt. Keine falsche exklusive Zuordnung; ohne Zeitnachweis keine exakte Dauer. Unterkunftsnächte separat prüfen.
+A10 / Suchrennen: Bangkok-Suche starten, sofort Phuket wählen; Bangkok antwortet später. Kein Bangkok-Ergebnis unter Phuket. Entfernen und erneut laden erzeugt keine doppelten Widgets.
+A11 / Zustände: Nicht geprüft, Angaben fehlen, Fehler, veraltet, nicht verfügbar und erfolgreich ohne Treffer gezielt auslösen. Jede Lage hat passende Aussage und keine falsche Erfolgsmeldung.
+A12 / Provider: Tatsächlich angezeigte externe Aktion klicken, Zielinhalt und öffentliche Affiliate-Parameter dokumentieren. Bei 12Go Strecke/Datum manuell. Keine Buchung/Zahlung. Provision bleibt ohne gesonderten Nachweis unbekannt.
+A13 / Zugriff: Vor Opt-in keine neuen Providerressourcen; reine Navigation ohne unerwartete Suchaufrufe. Fehler eines Anbieters blockiert keine Reisebearbeitung. Kontext und zulässige lokale Eingaben bleiben erhalten.
+A14 / Geräte: Alle Kernwege bei den Breiten aus Seite 10, Tastatur und dokumentierten 200-%-Methoden. Keine abgeschnittene Handlung, kein seitlicher Normalinhalt, kein verdeckter Fokus; mobile Rückkehr funktioniert.
+A15 / Speicherung: Gast, freigegebener Testkonto-Weg, Speicherversagen und Neuladen getrennt prüfen. Keine privaten Produktionskonten für Schreibtests. Änderungen nur als gespeichert melden, wenn der vorgesehene Weg erfolgreich war.
+A16 / Bestehender Bestand: Sechs Planpunktarten und Punkte ohne Tag öffnen; keine verlorenen Daten. Ausgewählt, geplant, selbst als gebucht markiert und Anbieterbestätigung bleiben unterscheidbar.
+
+===PAGE===
+12 / Umsetzung, Übergabe und Nachweise
+
+VORGESCHLAGENE ARBEITSPAKETE FÜR DEN LEAD
+U0 / Abgleich: aktuellen Commit, Deploy-Zuordnung, laufende Writer und vorhandene Fähigkeiten feststellen. Bestehende F01/N12-Entscheidungen, #1046 und die aktuellen Gates lesen. Ergebnis: schmale Scope-Liste und gemeinsam akzeptierte Begriffe, keine Doppelentwicklung.
+U1 / Arbeitsfläche: kompakter Kopf, Navigation, Übersicht und stabile Detail-Rückkehr mit vorhandener Fachlogik. Keine versteckte Neuerfindung von Speicherung oder Provideraufrufen.
+U2 / Reiseverständnis: nach erforderlicher Freigabe Tagesrollen, Zuordnung, Chronologie und Auswirkungen von Änderungen über den bestehenden F01/N12-Strang vervollständigen. Kein reiner Anzeige-Fix für fehlende persistente Fakten.
+U3 / Kontext und Hinweise: Organisationskontext, Länder-/Einreisegruppierung, verständliche Zustände. Änderungen an gemeinsam genutzten Domain-Verträgen vorab vom Lead abgrenzen.
+U4 / Unabhängige Prüfung: normale Produktwege mit künstlichen Reisen, echte externe Klicks, Mobile und Zugänglichkeit. Work liefert Befunde und Belege; Lead entscheidet über Korrekturen und Freigabe.
+
+GATES UND ABNAHME
+Zum gelesenen Kontinuitätsstand gelten unter anderem #917 STOP, #985/#982 HOLD, #748 persönliche Browser-Sperre, #968 Preview-Isolation sowie #1056 Trip.com HOLD. Diese Vorgabe hebt nichts davon auf. Keine Übernahme von Produktionszugängen in Testumgebungen. UI-Aufträge geben keine Datenbank-, Account-RPC-, Provider- oder Deployment-Änderung frei. Maßgeblich sind die aktuellen Lead-Entscheidungen.
+
+Jede Lieferung nennt exakten Commit und geprüfte URL, Datum/Zeitzone, tatsächliche Geräte-/Vergrößerungsmethode, Testfall-IDs und bereinigte Belege. Ergebnis je Fall PASS, FAIL, BLOCKED oder NICHT GEPRÜFT; Gesamtergebnis PASS, CHANGES REQUIRED oder BLOCKED. Ein funktionierender Entwurf, Quelltexttest oder Link ist keine vollständige Produktabnahme.
+
+ENTSCHEIDUNGEN VOR UMSETZUNG
+Lead bestätigt die kompakte Tab-Basis und den mobilen Navigationswechsel; ordnet U2 den vorhandenen Architekturarbeiten zu; legt eine zulässige Testumgebung für Konto-Persistenz fest. Optionaler Kartenbereich, Suchfunktion für große Reisen und Animationen sind nachgelagert. Es braucht keinen vollständigen Neubau, um U1 sinnvoll zu beginnen.
+
+QUELLEN / GELESEN AM 28.10.2026
+[S1] Neuer Kontinuitätskommentar: https://github.com/Jetnity/jetnity/issues/751#issuecomment-6455284869
+[S2] Zielarchitektur, Quellstand a9b7a45: https://github.com/Jetnity/jetnity/blob/a9b7a45b88347da3cac92965e2c544ec5e1bca67/docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md
+[S3] TW-5-Vertrag, historisch: https://github.com/Jetnity/jetnity/blob/main/docs/TRIP_WORKSPACE_TW5_TASK.md
+[S4] Zielhinweise, Quellstand a9b7a45: https://github.com/Jetnity/jetnity/blob/a9b7a45b88347da3cac92965e2c544ec5e1bca67/components/trips/TripWorkspaceDestinationEssentials.tsx
+[S5] W3C Reflow: https://www.w3.org/WAI/WCAG22/Understanding/reflow.html
+[S6] W3C Resize Text: https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html
+[S7] W3C Target Size: https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+Weitere Grundlage: die fünf vom Nutzer bereitgestellten Ansichten vom 27.10.2026 sowie dessen Beschreibung der Hin-/Rückreisetage. Private Reise-URLs, Kontodaten und Browsersitzungen sind nicht Bestandteil der Übergabe.

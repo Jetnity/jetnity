@@ -336,11 +336,13 @@ export default function KontoArbeitsbereich({
         ) : null
       }
       kopfzeile={
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="flex min-w-0 items-center gap-2 text-xs leading-5 text-white/65">
-            <Cloud className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            Änderungen werden sofort in deinem Konto gespeichert.
-          </p>
+        <p className="flex min-w-0 items-center gap-2 text-xs leading-5 text-white/65">
+          <Cloud className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          Änderungen werden sofort in deinem Konto gespeichert.
+        </p>
+      }
+      reiseoptionen={
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={loeschen}

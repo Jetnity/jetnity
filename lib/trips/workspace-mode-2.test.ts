@@ -2,10 +2,14 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
+import { n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 import {
   WORKSPACE_ANSICHT_LABEL,
+  WORKSPACE_KANTE_MAX,
+  detailElternModus,
   modusAusAnfangsBereich,
   modusAusQuery,
+  modusFuerReise,
   modusUrl,
   queryFuerModus,
 } from '@/lib/trips/workspace-mode'
@@ -173,4 +177,35 @@ test('Auswahlen außerhalb ihres Modus werden entfernt, Fremdparameter bleiben',
   }
   const params = new URLSearchParams('foreign=1&ansicht=plan&tag=a&punkt=b&vorbereitung=reisende-dokumente&reisender=c')
   assert.equal(queryFuerModus(params, { ansicht: 'uebersicht', bereich: null }).toString(), 'foreign=1')
+})
+
+test('eine lesbare Kante bleibt in der Adresse, auch wenn sie kein live Nachbar ist', () => {
+  const erg = lesen('ansicht=plan&tag=day-1&kante=connection%3Astage-a%3Astage-b')
+  assert.equal(erg.modus.kanteId, 'connection:stage-a:stage-b')
+  assert.equal(erg.modus.tagId, 'day-1')
+  assert.equal(erg.modus.urlAnpassen, false)
+  assert.equal(erg.search, 'ansicht=plan&tag=day-1&kante=connection%3Astage-a%3Astage-b')
+  const outbound = lesen('ansicht=plan&tag=day-1&kante=outbound%3Astage-a')
+  assert.equal(outbound.modus.kanteId, 'outbound:stage-a')
+  assert.equal(outbound.modus.urlAnpassen, false)
+})
+
+test('eine unlesbare Kante wird entfernt, der gültige Tag bleibt', () => {
+  for (const wert of ['', 'a'.repeat(WORKSPACE_KANTE_MAX + 1), '%00', '%20abc']) {
+    const erg = lesen(`ansicht=plan&tag=day-1&kante=${wert}`)
+    assert.equal(erg.search, 'ansicht=plan&tag=day-1', wert)
+    assert.equal(erg.modus.kanteId, undefined)
+  }
+  const doppelt = lesen('ansicht=plan&tag=day-1&kante=a&kante=b')
+  assert.equal(doppelt.search, 'ansicht=plan&tag=day-1')
+  assert.equal(doppelt.modus.tagId, 'day-1')
+})
+
+test('eine ungültige Tageskennung löscht die Kante nicht', () => {
+  const gelesen = modusAusQuery(new URLSearchParams('ansicht=plan&tag=fehlt&kante=connection%3Aa%3Ab'))
+  const nach = modusFuerReise(gelesen, n12Reise(), [])
+  assert.equal(nach.tagId, undefined)
+  assert.equal(nach.kanteId, 'connection:a:b')
+  assert.equal(nach.urlAnpassen, true)
+  assert.equal(modusUrl('/', detailElternModus({ ...nach, urlAnpassen: false })), '/?ansicht=plan&kante=connection%3Aa%3Ab')
 })

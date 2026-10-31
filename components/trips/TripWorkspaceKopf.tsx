@@ -40,15 +40,51 @@ export default function TripWorkspaceKopf({
   kompakt,
   uebersicht,
   kopfzeile,
+  reiseoptionen,
+  workspace = false,
+  uebersichtAktiv = false,
 }: {
   reise: Trip
   quelle: TripSource
   kompakt: boolean
   uebersicht: UebersichtAbleitung
   kopfzeile?: ReactNode
+  reiseoptionen?: ReactNode
+  workspace?: boolean
+  uebersichtAktiv?: boolean
 }) {
   const gast = quelle === 'guest'
   const dichte = useKopfDichte()
+
+  if (workspace) {
+    return (
+      <section data-workspace-identity data-save-truth={gast ? 'device' : 'account'} className="workspace-trip-heading">
+        <div className="workspace-trip-heading-top">
+          <div>
+            <p className="workspace-eyebrow">Deine Reise auf einen Blick</p>
+            <h1 tabIndex={-1} data-workspace-modus-heading={uebersichtAktiv ? '' : undefined}>{uebersicht.titel}</h1>
+          </div>
+          <span className="workspace-status">{uebersicht.lageText}</span>
+        </div>
+        <dl className="workspace-trip-meta">
+          <div><CalendarDays aria-hidden="true" /><dt className="sr-only">Zeitraum</dt><dd>{uebersicht.zeitraum}</dd></div>
+          <div><MapPin aria-hidden="true" /><dt className="sr-only">Route</dt><dd>{uebersicht.orte}</dd></div>
+          <div><Users aria-hidden="true" /><dt className="sr-only">Reisende</dt><dd>{uebersicht.personen.text}</dd></div>
+          <div><WalletCards aria-hidden="true" /><dt className="sr-only">Budget</dt><dd>Budget {betrag(reise.budgetAmount, reise.currency)}</dd></div>
+        </dl>
+        <div className="workspace-trip-storage">
+          <span><ShieldCheck aria-hidden="true" />{gast ? 'Nur auf diesem Gerät' : 'Im Konto gespeichert'}</span>
+          {kopfzeile ? <div className="workspace-storage-options">{kopfzeile}</div> : null}
+        </div>
+        {reiseoptionen ? (
+          <details data-reiseoptionen className="workspace-reiseoptionen">
+            <summary>Reiseoptionen</summary>
+            <div className="workspace-storage-options">{reiseoptionen}</div>
+          </details>
+        ) : null}
+      </section>
+    )
+  }
 
   return (
     <section
@@ -105,6 +141,14 @@ export default function TripWorkspaceKopf({
       </div>
       {kopfzeile ? (
         <div className="border-t border-white/10 px-4 py-1 sm:px-5 xl:px-6">{kopfzeile}</div>
+      ) : null}
+      {reiseoptionen ? (
+        <details data-reiseoptionen className="border-t border-white/10 px-4 sm:px-5 xl:px-6">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40 [&::-webkit-details-marker]:hidden">
+            Reiseoptionen
+          </summary>
+          <div className="pb-2">{reiseoptionen}</div>
+        </details>
       ) : null}
     </section>
   )

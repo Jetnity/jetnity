@@ -1,5 +1,24 @@
 # Jetnity – Roadmap
 
+> **30.10.2026 – gemeinsamer Konto-/Trip-Workspace, freigegebene Darstellung:**
+> PR #1092 ist auf main `6b929baec81e6c561142db4e6a9636e1bb30c873` gemergt und
+> in Production geprüft. Einklappbare Glas-Navigation, gemeinsamer Header und mobile
+> Reisebereiche. Fachlogik, beide Planungswege und „Jetzt wichtig“ bleiben.
+> Lokale Prüfungen und Grenzen stehen im
+> [Report](docs/UNIFIED_WORKSPACE_1_REPORT_2026-10-30.md).
+> Nach Owner-Rückmeldung sind auch die Inhaltsflächen an die grüne Vorlage
+> angeglichen: kompakter Reisekopf, Jetzt-wichtig-Panel mit Reiseprüfung und
+> kanonischer Routenüberblick. [Visueller Nachreview](docs/UNIFIED_WORKSPACE_1_VISUAL_ALIGNMENT_2026-10-30.md).
+> Die angemeldete develop-Kontoprüfung (13 Fälle), Preview-Gastprüfung (7 Fälle)
+> und Production-Gastprüfung (13 Fälle) bestanden; Main-CI ebenfalls.
+> [Abschlussbeleg](https://github.com/Jetnity/jetnity/pull/1092#issuecomment-6521940523).
+> Noch offen bleiben der kombinierte Abgleich mit #1082 sowie echte Geräte/VoiceOver.
+> Owner-Folgeauftrag: standardmässig hell, grünes Design mit einem Klick im Header,
+> lokale Farbauswahl merken. [Auftrag](docs/WORKSPACE_THEME_1_TASK_2026-10-30.md).
+> Dieser begrenzte Folgeauftrag befindet sich in unabhängiger Prüfung und ist
+> noch nicht als veröffentlicht bestätigt.
+> Bestehende Anbieter- und Product-Owner-Gates bleiben unverändert.
+
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->
 ## Aktueller R109-Checkpoint — fünf Produkt-Lanes akzeptiert
 
