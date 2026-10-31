@@ -1,6 +1,8 @@
-// Offline probe of the public 12Go facade. Esbuild aliases the policy module.
+// Offline probe of the public 12Go facade against the selected source policy.
+// The production bootstrap keeps the release false. A test-only baked gate is separate.
 
 import { resetSharedCmpController, readCmpController } from '@/lib/privacy/privacybee-cmp/abo'
+import { buildBootstrapSource, productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import {
   checkProductionExecution,
   consumeProductionGrant,
@@ -8,6 +10,7 @@ import {
   requestProductionExecution,
 } from '@/lib/privacy/privacybee-cmp/produktion'
 import { PRODUCTION_POLICY_TABLE } from '@/lib/privacy/privacybee-cmp/produktionspolitik'
+import { CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee-cmp/vertrag'
 import { TWELVE_GO_HOST_SANDBOX, TWELVE_GO_HOST_SRC, TWELVE_GO_POLICY_ID } from '@/lib/providers/twelve-go/widget/protokoll'
 
 const fehler: string[] = []
@@ -24,35 +27,75 @@ function werte(analytics = true) {
   }
 }
 
-function install(flag: boolean) {
+function install(hostname: string) {
   const host = globalThis as typeof globalThis & {
     window: typeof globalThis
     location: { hostname: string }
-    PrivacyBee: { getAllConsents: () => ReturnType<typeof werte>; getConsent: (name: string) => boolean; hasExplicitConsent: () => boolean }
-    __jetnityCmp?: { releaseAllowed: boolean; killDenied: boolean }
-    __jetnityUseFixturePolicy?: boolean
+    document: {
+      addEventListener: () => void
+      querySelector: () => null
+      createElement: () => { src: string; async: boolean; setAttribute: () => void }
+      head: { appendChild: () => void }
+      documentElement: { appendChild: () => void }
+    }
+    PrivacyBee: {
+      getAllConsents: () => ReturnType<typeof werte>
+      getConsent: (name: string) => boolean
+      hasExplicitConsent: () => boolean
+    }
+    __jetnityCmp?: unknown
   }
   host.window = host
-  host.location = { hostname: 'jetnity.com' }
+  host.location = { hostname }
+  host.document = {
+    addEventListener() {},
+    querySelector() { return null },
+    createElement() { return { src: '', async: false, setAttribute() {} } },
+    head: { appendChild() {} },
+    documentElement: { appendChild() {} },
+  }
   const stand = { analytics: true }
   host.PrivacyBee = {
     getAllConsents: () => werte(stand.analytics),
     getConsent: (name: string) => werte(stand.analytics)[name as keyof ReturnType<typeof werte>],
     hasExplicitConsent: () => true,
   }
-  host.__jetnityUseFixturePolicy = flag
-  host.__jetnityCmp = { releaseAllowed: true, killDenied: false }
+  delete host.__jetnityCmp
   return stand
 }
 
-if (PRODUCTION_POLICY_TABLE.twelvego !== null) fehler.push('Tabelle nicht null')
+if (CMP_RELEASE_AUTHORIZED !== false) fehler.push('Release ist nicht false')
+if (PRODUCTION_POLICY_TABLE.discovercars !== null) fehler.push('DiscoverCars ist nicht null')
+if (PRODUCTION_POLICY_TABLE.twelvego?.policyId !== TWELVE_GO_POLICY_ID) fehler.push('12Go-Policy fehlt')
+if (PRODUCTION_POLICY_TABLE.twelvego?.hostSelectionCommit !== 'f056b01d63ac7d61650864734a9b44eb6484989e') fehler.push('Host-Pin fehlt')
 
 resetSharedCmpController()
-install(false)
-if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('ohne Fixture freigegeben')
+install('jetnity.com')
+eval(productionBootstrapSource())
+if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('produktiver Bootstrap hat freigegeben')
 
 resetSharedCmpController()
-const stand = install(true)
+install('jetnity.com')
+eval(buildBootstrapSource({ release: true, killDenied: true }))
+if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('Kill hat freigegeben')
+
+resetSharedCmpController()
+install('example.com')
+eval(buildBootstrapSource({ release: true, killDenied: false }))
+if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('fremder Host hat freigegeben')
+
+resetSharedCmpController()
+const stand = install('jetnity.com')
+eval(buildBootstrapSource({ release: true, killDenied: false }))
+if (requestProductionExecution('discovercars', 'scope-a') !== null) fehler.push('DiscoverCars hat eine Capability')
+const kopie = {
+  providerId: 'twelvego' as const,
+  src: TWELVE_GO_HOST_SRC,
+  childOrigin: 'https://jetnity-widgets.vercel.app',
+  sandbox: TWELVE_GO_HOST_SANDBOX,
+  protocolRevision: 1 as const,
+}
+if (checkProductionExecution(kopie)) fehler.push('Feldkopie ist ein Handle')
 const first = requestProductionExecution('twelvego', 'scope-a')
 if (!first || first.src !== TWELVE_GO_HOST_SRC || first.sandbox !== TWELVE_GO_HOST_SANDBOX || first.childOrigin !== 'https://jetnity-widgets.vercel.app') {
   fehler.push('Capability weicht ab')
@@ -66,8 +109,10 @@ if (!first || first.src !== TWELVE_GO_HOST_SRC || first.sandbox !== TWELVE_GO_HO
   stand.analytics = false
   if (checkProductionExecution(first)) fehler.push('Kategorie-Verlust bleibt gültig')
   releaseProductionExecution(first)
+  if (checkProductionExecution(first)) fehler.push('freigegebener Handle bleibt gültig')
   stand.analytics = true
   resetSharedCmpController()
+  eval(buildBootstrapSource({ release: true, killDenied: false }))
   const second = requestProductionExecution('twelvego', 'scope-b')
   releaseProductionExecution(first)
   if (!second || !checkProductionExecution(second)) fehler.push('altes Release beendet den neuen Handle')

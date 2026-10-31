@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 
 import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
+import { productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import type { Trip, TripStage } from '@/types/trips'
 
 const JETZT = '2026-10-31T12:00:00.000Z'
@@ -123,6 +124,10 @@ function Probe() {
       </div>
     </div>
   )
+}
+
+if (new URLSearchParams(window.location.search).get('bootstrap') === 'produktion') {
+  window.eval(productionBootstrapSource())
 }
 
 const root = document.getElementById('root')

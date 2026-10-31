@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R7 addition
+
+The host renders the accepted disclosure paragraphs, withdrawal limit, V1 alternative, and privacy link before the request. Preferences use the shared surface control and do not start a frame. Production bootstrap still denies a capability while the 12Go policy row is selected. Ready and grant copy does not claim a search. Self-review is not a Technical Lead PASS.
+
 ## R6-R1 addition
 
 Same-id place and origin changes now change the in-memory scope key. The host drops the frame on that render and releases the handle in layout, so a late ready does not grant the old handle. Reopening the same place needs a new click. The recovery test loader returns the closed scope; the four booking cases still execute. Native `41243615981` remains a failed gate for `8e36dad9`. This correction needs its own App, Auth, and Preview gates. Self-review is not a Technical Lead PASS.

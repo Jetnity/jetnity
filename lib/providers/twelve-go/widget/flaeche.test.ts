@@ -60,6 +60,10 @@ function anker(html: string): string[] {
   return [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map((treffer) => treffer[0])
 }
 
+function v1Anker(html: string): string[] {
+  return anker(html).filter((link) => link.includes('data-twelve-go-art='))
+}
+
 function quelle(relativ: string): string {
   return readFileSync(new URL(relativ, import.meta.url), 'utf8')
 }
@@ -69,18 +73,26 @@ function ohneDrittinhalt(html: string) {
   assert.equal(html.includes('<iframe'), false)
   assert.equal(html.includes('<img'), false)
   assert.equal(html.includes('src='), false)
-  assert.equal(html.includes('trainbusferry'), false)
-  assert.equal(html.includes('cdn0'), false)
+  assert.equal(html.includes('/tools/form'), false)
   assert.equal(html.includes(TWELVE_GO_WIDGET_SUB_ID_ALLGEMEIN), false)
   assert.equal(html.includes('id="powered"'), false)
   assert.equal(html.includes('data-origin='), false)
+  assert.equal(html.includes('twelvego-general-chf'), false)
+  assert.equal(html.includes('f056b01d'), false)
   assert.equal((html.match(/<button\b/g) ?? []).length, 1)
   assert.equal(html.includes('data-twelve-go-aktion="anfragen"'), true)
   assert.equal(html.includes('Suchformular anfragen'), true)
   assert.doesNotMatch(html, /\/de\/travel\/|date=|CHF|ref-bleibt/)
   assert.equal(html.includes('data-twelve-go-widget="consent-blocked"'), true)
   assert.equal(html.includes('data-twelve-go-widget-ausfuehrbar="false"'), true)
-  assert.match(html, /Eine Beispielstrecke wird nicht vorausgefüllt/)
+  assert.equal(html.includes('data-twelve-go-disclosure="twelvego-general-disclosure-v1"'), true)
+  assert.equal(html.includes('href="https://12go.asia/en/privacy-policy"'), true)
+  assert.equal(html.includes('Datenschutzhinweise von 12Go'), true)
+  assert.match(html, /Bangkok-Referenz/)
+  assert.match(html, /cdn0\.trainbusferry\.com/)
+  const datenschutz = html.indexOf('data-twelve-go-datenschutz')
+  const anfrage = html.indexOf('data-twelve-go-aktion="anfragen"')
+  assert.equal(datenschutz >= 0 && anfrage > datenschutz, true)
 }
 
 describe('12Go-Widget in der V1-Fläche', () => {
@@ -113,7 +125,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
   test('gleiches Land, mehrere Stopps und Rückkehr bleiben allgemeine Links', () => {
     const gleich = renderToStaticMarkup(createElement(TwelveGoAffiliateLinks, { reise: reise() }))
     ohneDrittinhalt(gleich)
-    const links = anker(gleich)
+    const links = v1Anker(gleich)
     assert.equal(links.length, 1)
     assert.equal(links[0]?.includes(GENERISCH), true)
     assert.equal(links[0]?.includes('data-twelve-go-art="generic"'), true)
@@ -131,7 +143,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
       }),
     )
     ohneDrittinhalt(mehrere)
-    assert.equal(anker(mehrere).length, 2)
+    assert.equal(v1Anker(mehrere).length, 2)
     assert.equal(mehrere.includes('data-twelve-go-kante="a:c"'), false)
 
     const rueckkehr = renderToStaticMarkup(
@@ -146,7 +158,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
       }),
     )
     ohneDrittinhalt(rueckkehr)
-    assert.equal(anker(rueckkehr).length, 2)
+    assert.equal(v1Anker(rueckkehr).length, 2)
     assert.equal(rueckkehr.includes('data-twelve-go-kante="a1:b"'), true)
     assert.equal(rueckkehr.includes('data-twelve-go-kante="b:a2"'), true)
 
@@ -162,7 +174,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
     )
     ohneDrittinhalt(gedreht)
     assert.equal(gedreht.includes('data-twelve-go-kante="b:a"'), true)
-    assert.equal(anker(gedreht).length, 1)
+    assert.equal(v1Anker(gedreht).length, 1)
   })
 
   test('ein Stopp, ein Datum und der Bereich laden kein Formular', () => {
@@ -172,7 +184,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
       }),
     )
     ohneDrittinhalt(einer)
-    assert.equal(anker(einer).length, 0)
+    assert.equal(v1Anker(einer).length, 0)
     assert.match(einer, /Sobald mindestens zwei Ziele/)
 
     const transfer: TripItem = {
@@ -213,7 +225,7 @@ describe('12Go-Widget in der V1-Fläche', () => {
     ohneDrittinhalt(datiert)
     assert.equal(datiert.includes('data-geplant="2026-11-15"'), true)
     assert.match(datiert, /Geplant am/)
-    assert.doesNotMatch(anker(datiert).join('\n'), /2026-11-15|date=/)
+    assert.doesNotMatch(v1Anker(datiert).join('\n'), /2026-11-15|date=/)
 
     const bereich = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise() }))
     const bestand = bereich.indexOf('data-organisieren-flaeche="bestand"')
@@ -222,7 +234,8 @@ describe('12Go-Widget in der V1-Fläche', () => {
     assert.equal(bestand >= 0 && affiliate > bestand && suche > affiliate, true)
     assert.equal(bereich.includes('data-twelve-go-widget="consent-blocked"'), true)
     assert.equal(bereich.includes('<iframe'), false)
-    assert.equal(bereich.includes('trainbusferry'), false)
+    assert.equal(bereich.includes('/tools/form'), false)
+    assert.match(bereich, /cdn0\.trainbusferry\.com/)
     assert.equal(bereich.includes(GENERISCH), true)
   })
 })

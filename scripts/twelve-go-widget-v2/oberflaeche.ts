@@ -311,7 +311,8 @@ async function main() {
     })
     if (umfang) fehler.push(`${fall.name}: ${umfang}`)
     if (fall.widgetHoehe < 20) fehler.push(`${fall.name}: Hinweis unsichtbar`)
-    if (!fall.text.includes('Eine Beispielstrecke wird nicht vorausgefüllt')) fehler.push(`${fall.name}: Hinweistext fehlt`)
+    if (!fall.text.includes('Bangkok-Referenz')) fehler.push(`${fall.name}: Hinweistext fehlt`)
+    if (!fall.text.includes('Datenschutzhinweise von 12Go')) fehler.push(`${fall.name}: Datenschutzlink fehlt`)
     if (fall.text.includes('CHF')) fehler.push(`${fall.name}: CHF sichtbar`)
     if (fall.fokus.tag !== 'A') fehler.push(`${fall.name}: Fokus ${fall.fokus.tag}`)
     for (const zielLink of fall.ziele) {

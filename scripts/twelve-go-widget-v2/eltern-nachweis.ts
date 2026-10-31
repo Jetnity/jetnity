@@ -15,7 +15,7 @@ const V1 = 'https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route'
 const PAGE = 'https://jetnity.com/fixture'
 const SCRIPT = 'https://jetnity.com/eltern.js'
 
-const POSITIVE = `window.__jetnityUseFixturePolicy=true;window.__analytics=true;window.__jetnityCmp={releaseAllowed:true,killDenied:false};
+const POSITIVE = `window.__analytics=true;window.__jetnityCmp={releaseAllowed:true,killDenied:false};
 window.PrivacyBee={getAllConsents(){return{SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:window.__analytics===true,AD_STORAGE:false,AD_USER_DATA:false,AD_PERSONALIZATION:false,PERSONALIZATION_STORAGE:false}},getConsent(name){return this.getAllConsents()[name]},hasExplicitConsent(){return true}};`
 
 function kindHtml(mode: 'ready' | 'still'): string {
@@ -55,7 +55,6 @@ function bundle(): string {
     '--format=iife',
     '--jsx=automatic',
     `--alias:@=${process.cwd()}`,
-    `--alias:@/lib/privacy/privacybee-cmp/produktionspolitik=${join(process.cwd(), 'scripts/twelve-go-widget-v2/politik-fixture.ts')}`,
     `--alias:next/navigation=${join(process.cwd(), 'scripts/twelve-go-widget-v2/navigation-shim.ts')}`,
     `--alias:next/link=${join(process.cwd(), 'scripts/twelve-go-widget-v2/link-shim.tsx')}`,
     `--alias:server-only=${join(process.cwd(), 'scripts/twelve-go-widget-v2/leer.ts')}`,
@@ -79,7 +78,7 @@ async function oeffnen(
   browser: Browser,
   css: string,
   js: string,
-  options: { fixture: boolean; width: number; height: number; root: string; seam?: 'guest' | 'account' },
+  options: { fixture: boolean; width: number; height: number; root: string; seam?: 'guest' | 'account'; bootstrap?: boolean },
   kind: { current: 'ready' | 'still' },
   ledger: { adresse: string }[],
 ): Promise<{ context: BrowserContext; page: Page; referer: string[] }> {
@@ -103,7 +102,8 @@ async function oeffnen(
   })
   const page = await context.newPage()
   const seam = options.seam ?? 'guest'
-  await page.goto(`${PAGE}?seam=${seam}`, { waitUntil: 'networkidle' })
+  const bootstrap = options.bootstrap ? '&bootstrap=produktion' : ''
+  await page.goto(`${PAGE}?seam=${seam}${bootstrap}`, { waitUntil: 'networkidle' })
   await page.evaluate((root) => { document.documentElement.style.fontSize = root }, options.root)
   return { context, page, referer }
 }
@@ -159,8 +159,11 @@ async function main() {
   const kind = { current: 'ready' as 'ready' | 'still' }
 
   try {
-    const ohne = await oeffnen(browser, css, js, { fixture: false, width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
+    const ohne = await oeffnen(browser, css, js, { fixture: false, bootstrap: true, width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
     await ohne.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
+    assertGleich(fehler, await ohne.page.locator('[data-twelve-go-disclosure="twelvego-general-disclosure-v1"]').count() === 1, 'Hinweis fehlt')
+    assertGleich(fehler, await ohne.page.locator('[data-twelve-go-datenschutz]').getAttribute('href') === 'https://12go.asia/en/privacy-policy', 'Datenschutzlink')
+    assertGleich(fehler, await ohne.page.locator('[data-cmp-preferences="surface"]').count() === 0, 'produktiver Bootstrap zeigt Einstellungen')
     assertGleich(fehler, await ohne.page.locator('iframe').count() === 0, 'Gast startet mit Frame')
     const href = await ohne.page.locator('a[data-twelve-go-art]').first().getAttribute('href')
     assertGleich(fehler, href === V1, `V1 ${href}`)
@@ -185,7 +188,7 @@ async function main() {
       { name: '390-root-32', width: 390, height: 1600, root: '32px' },
     ]
     for (const fall of breiten) {
-      const lauf = await oeffnen(browser, css, js, { fixture: false, ...fall, seam: 'guest' }, kind, ledger)
+      const lauf = await oeffnen(browser, css, js, { fixture: false, bootstrap: true, ...fall, seam: 'guest' }, kind, ledger)
       await lauf.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
       const masse = await lauf.page.evaluate(() => {
         const flaeche = document.querySelector('[data-twelve-go-affiliate]')
@@ -204,7 +207,8 @@ async function main() {
           farbe,
           erwartet,
           abstand: seite ? Number.parseFloat(getComputedStyle(seite).marginLeft) : 0,
-          poweredParent: document.body.innerText.includes('Eine Beispielstrecke wird nicht vorausgefüllt'),
+          poweredParent: document.body.innerText.includes('Bangkok-Referenz'),
+          link: document.querySelector('[data-twelve-go-datenschutz]')?.getBoundingClientRect().height ?? 0,
         }
       })
       assertGleich(fehler, masse.flaeche, `${fall.name}: 12Go-Fläche zu breit`)
@@ -212,8 +216,33 @@ async function main() {
       assertGleich(fehler, masse.farbe === masse.erwartet && masse.farbe !== '', `${fall.name}: Mint`)
       if (fall.width >= 1024) assertGleich(fehler, masse.abstand >= 200, `${fall.name}: Abstand ${masse.abstand}`)
       assertGleich(fehler, masse.poweredParent, `${fall.name}: Hinweis`)
+      assertGleich(fehler, masse.link >= 44, `${fall.name}: Datenschutzlink ${masse.link}`)
       await lauf.page.screenshot({ path: join(ziel, `r6-${fall.name}.png`), fullPage: false })
       await lauf.context.close()
+    }
+
+    for (const fall of breiten) {
+      const einstellung = await oeffnen(browser, css, js, { fixture: true, ...fall, seam: 'guest' }, kind, ledger)
+      await einstellung.page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).waitFor()
+      const masse = await einstellung.page.evaluate(() => {
+        const knopf = document.querySelector('[data-cmp-preferences="surface"]')
+        const anfrage = document.querySelector('[data-twelve-go-aktion="anfragen"]')
+        const flaeche = document.querySelector('[data-twelve-go-affiliate]')
+        const kasten = knopf ? knopf.getBoundingClientRect() : { height: 0, width: 0 }
+        const anfrageKasten = anfrage ? anfrage.getBoundingClientRect() : { height: 0, width: 0 }
+        return {
+          hoehe: kasten.height,
+          breite: kasten.width,
+          anfrage: anfrageKasten.height,
+          rahmen: document.querySelectorAll('iframe').length,
+          ueber: flaeche ? flaeche.scrollWidth > flaeche.clientWidth + 1 : true,
+        }
+      })
+      assertGleich(fehler, masse.hoehe >= 44 && masse.breite >= 44, `${fall.name}: Einstellungen ${masse.hoehe}x${masse.breite}`)
+      assertGleich(fehler, masse.anfrage >= 44, `${fall.name}: Anfrage ${masse.anfrage}`)
+      assertGleich(fehler, masse.rahmen === 0 && !masse.ueber, `${fall.name}: Einstellungen starten oder überlaufen`)
+      await einstellung.page.screenshot({ path: join(ziel, `r7-${fall.name}.png`), fullPage: false })
+      await einstellung.context.close()
     }
 
     kind.current = 'ready'
@@ -221,6 +250,18 @@ async function main() {
     const page = lauf.page
     await page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Fixture startet mit Frame')
+    const reihenfolge = await page.evaluate(() => {
+      const hinweis = document.querySelector('[data-twelve-go-disclosure]')
+      const knopf = document.querySelector('[data-twelve-go-aktion="anfragen"]')
+      if (!hinweis || !knopf) return false
+      return (hinweis.compareDocumentPosition(knopf) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
+    })
+    assertGleich(fehler, reihenfolge, 'Hinweis steht nicht vor der Anfrage')
+    await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).click()
+    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen starten einen Frame')
+    await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).focus()
+    await page.keyboard.press('Enter')
+    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Tastatur auf Einstellungen startet einen Frame')
     const von = page.locator('[aria-label="Manuelle Verbindung"]').getByLabel('Von')
     await von.fill('Bahnhof')
     await page.evaluate(() => {
@@ -328,6 +369,9 @@ async function main() {
     })
     await page.waitForTimeout(200)
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Kategorie behält den Frame')
+    assertGleich(fehler, await page.locator('[data-cmp-preferences="surface"]').count() === 1, 'Einstellungen fehlen nach Statistik-Ablehnung')
+    await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).click()
+    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen nach Ablehnung starten einen Frame')
     await page.evaluate(() => {
       window.__analytics = true
       document.dispatchEvent(new Event('privacybee:consent-changed'))

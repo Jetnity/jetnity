@@ -6,6 +6,7 @@
 import * as React from 'react'
 
 import { useMobilityWidgetScope } from '@/components/trips/MobilityWidgetScope'
+import { PrivacyBeeCmpPreferences } from '@/components/privacy/PrivacyBeeCmpPreferences'
 import {
   checkProductionExecution,
   consumeProductionGrant,
@@ -14,6 +15,7 @@ import {
   type ProductionCapability,
 } from '@/lib/privacy/privacybee-cmp/produktion'
 import { readCmpController, serverCmpSnapshot, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
+import { TWELVEGO_PRODUCTION_DISCLOSURE } from '@/lib/privacy/privacybee-cmp/offenlegung'
 import {
   TWELVE_GO_PARENT_ORIGIN,
   twelveGoGrantBauen,
@@ -32,14 +34,12 @@ export const TWELVE_GO_READY_TIMEOUT_MS = 12_000
 type Phase = 'ruhend' | 'verweigert' | 'wartet' | 'eingesetzt' | 'fehler' | 'entfernt'
 
 const TEXT: Record<Phase, string> = {
-  ruhend:
-    'Das allgemeine Suchformular von 12Go ist hier noch nicht freigegeben. Eine Anfrage prüft das und füllt keine Beispielstrecke voraus. Die Links bleiben nutzbar. Eine Beispielstrecke wird nicht vorausgefüllt.',
-  verweigert: 'Das Suchformular ist hier noch nicht verfügbar. Die Links bleiben nutzbar.',
-  wartet: 'Das Formular wird eingesetzt. Eine Suche ist damit nicht bestätigt.',
-  eingesetzt:
-    'Das Formular von 12Go ist hier eingesetzt. Entfernen schliesst es nur in Jetnity. Eine Suche ist damit nicht bestätigt.',
+  ruhend: 'Die Anfrage ist eine eigene Entscheidung. Ein bereit gemeldetes Fenster ist noch keine Suche.',
+  verweigert: 'Das Formular ist hier nicht eingesetzt. Die Links bleiben nutzbar.',
+  wartet: 'Die Anfrage läuft. Das ist noch keine Suche.',
+  eingesetzt: 'Der Rahmen ist hier eingesetzt. Das bestätigt keine Suche und keine Buchung.',
   fehler: 'Das Formular konnte nicht angezeigt werden. Die Links bleiben nutzbar.',
-  entfernt: 'Das Formular ist hier entfernt. Was 12Go schon erhalten hat, bleibt dort. Die Links bleiben nutzbar.',
+  entfernt: 'Der Rahmen ist hier entfernt. Die Links bleiben nutzbar.',
 }
 
 const KNOPF =
@@ -222,10 +222,31 @@ export default function TwelveGoWidgetHost() {
   )
   const aktion = phase === 'wartet' || phase === 'eingesetzt' ? 'entfernen' : phase === 'ruhend' ? 'anfragen' : 'erneut'
   const aktionText = aktion === 'entfernen' ? 'Formular entfernen' : aktion === 'anfragen' ? 'Suchformular anfragen' : 'Erneut anfragen'
+  const hinweis = TWELVEGO_PRODUCTION_DISCLOSURE
 
   return (
     <div className="mt-5" data-twelve-go-widget={phase === 'ruhend' ? 'consent-blocked' : phase} data-twelve-go-widget-ausfuehrbar={frameOn ? 'true' : 'false'}>
-      <p className="text-sm leading-6 text-ink-800">{TEXT[phase]}</p>
+      <div data-twelve-go-disclosure={hinweis.disclosureRevision} className="min-w-0 max-w-full">
+        {hinweis.paragraphs.map((absatz) => (
+          <p key={absatz} className="mt-3 text-sm leading-6 text-ink-800" style={{ overflowWrap: 'anywhere' }}>{absatz}</p>
+        ))}
+        <p className="mt-3 text-sm leading-6 text-ink-800" style={{ overflowWrap: 'anywhere' }}>{hinweis.withdrawalLimitation}</p>
+        <p className="mt-3 text-sm leading-6 text-ink-800" style={{ overflowWrap: 'anywhere' }}>{hinweis.v1Alternative}</p>
+        <a
+          href={hinweis.privacyHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-twelve-go-datenschutz="1"
+          className="mt-3 inline-flex min-h-11 max-w-full items-center text-sm font-semibold text-brand-800 underline"
+          style={{ overflowWrap: 'anywhere' }}
+        >
+          {hinweis.privacyLinkLabel}
+        </a>
+      </div>
+      <div className="mt-3 max-w-full">
+        <PrivacyBeeCmpPreferences appearance="surface" />
+      </div>
+      <p className="mt-3 text-sm leading-6 text-ink-800">{TEXT[phase]}</p>
       <button
         ref={buttonRef}
         type="button"

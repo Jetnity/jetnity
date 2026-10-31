@@ -3,11 +3,13 @@
 Date: 29 October 2026 Europe/Zurich
 Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
-State: **CONSENT_BLOCKED / DRAFT / R6-R1 correction / STOP for independent Technical Lead review**
+State: **CONSENT_BLOCKED / DRAFT / R7 disclosure / STOP for independent Technical Lead review**
 
-## Current, 31 October 2026 — R6-R1
+## Current, 31 October 2026 — R7
 
-Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` stays the merge base. The visitor path has a request button. That button calls `requestProductionExecution`. The shipped policy stays null, so the production click mounts no frame. A live handle is the only path that mounts `https://jetnity-widgets.vercel.app/embed/twelvego`. Sentences below that say the visitor has no request button, or that the embed route does not exist, describe earlier rounds and are superseded.
+Accepted main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` is merged. The host shows `TWELVEGO_PRODUCTION_DISCLOSURE` and mounts `PrivacyBeeCmpPreferences` with `appearance="surface"`. The disclosure revision is `twelvego-general-disclosure-v1`. The privacy link is `https://12go.asia/en/privacy-policy`. `CMP_RELEASE_AUTHORIZED` stays false, so the production bootstrap still returns no capability. A ready message or a grant is not a completed search. R6-R1 scope and frame retirement stay in place. The exact implementation head is posted on the PR.
+
+Sentences below that say the visitor has no request button, or that the policy row is null, describe earlier rounds and are superseded.
 
 R6-R1: the scope key includes stage name, country, place id, trip origin, and origin place id. The same stage id with Bangkok/TH/bkk replaced by Tokio/JP/tyo is a new key. The host hides the frame on that render and releases the handle before the next message can grant it. Restoring the old place does not mount a frame again until a new click.
 

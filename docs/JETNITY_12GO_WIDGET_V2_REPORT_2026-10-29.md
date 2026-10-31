@@ -2,7 +2,7 @@
 
 Date: 29 October 2026 Europe/Zurich
 Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`
-Classification: visitor UI is inert. The partner form was exercised only in a fresh synthetic browser, not in the Jetnity app.
+Classification: the production release stays false. R7 shows the shared disclosure and surface preferences. A grant is not a completed search.
 
 ## Sources
 
