@@ -1,0 +1,67 @@
+{
+  "phase": "A",
+  "phaseBAuthorized": false,
+  "productionSelected": false,
+  "continueCount": 0,
+  "abortCount": 6,
+  "redirectFollows": 0,
+  "httpLeaks": 0,
+  "tcpLeaks": 0,
+  "serviceWorkers": 0,
+  "transport": {
+    "http": {
+      "proven": true,
+      "disposition": "BLOCKED_PRE_SEND"
+    },
+    "beacon": {
+      "proven": true,
+      "disposition": "BLOCKED_PRE_SEND"
+    },
+    "eventsource": {
+      "proven": true,
+      "disposition": "BLOCKED_PRE_SEND"
+    },
+    "websocket": {
+      "proven": true,
+      "disposition": "BLOCKED_PRE_SEND",
+      "connectToServer": 0
+    },
+    "webrtc": {
+      "proven": false,
+      "disposition": "BLOCKED_TRANSPORT",
+      "method": null
+    }
+  },
+  "storage": {
+    "parent": {
+      "cookieCount": 0,
+      "localCount": 0,
+      "sessionCount": 0
+    },
+    "host": {
+      "cookieCount": 0,
+      "localCount": 0,
+      "sessionCount": 0
+    },
+    "vendor": {
+      "gap": "vendor-frame-absent"
+    }
+  },
+  "childStatus": "inserted-script-not-form-proof",
+  "servedFrame": true,
+  "gate": {
+    "observed": 9,
+    "lateAttempts": 0,
+    "disposition": null,
+    "trimmed": false,
+    "retryScheduled": 0,
+    "reasons": {
+      "local": 3,
+      "withheld": 1,
+      "method": 2,
+      "BLOCKED_REDIRECT": 1,
+      "unmatched": 1,
+      "route": 1
+    }
+  }
+}
