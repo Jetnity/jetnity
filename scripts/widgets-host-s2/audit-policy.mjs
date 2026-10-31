@@ -318,111 +318,333 @@ function loopbackHttp(value) {
   }
 }
 
-function closedResult(reason) {
-  return { transmitted: false, reason, retry: false, handedToBrowser: false, follow: null, status: null }
+function closedResult(reason, extra = {}) {
+  return {
+    transmitted: false,
+    issued: false,
+    reason,
+    retry: false,
+    handedToBrowser: false,
+    follow: null,
+    status: null,
+    late: false,
+    ...extra,
+  }
+}
+
+export function createMonotonicClock(start = 0) {
+  let current = start
+  const timers = []
+  return {
+    now() { return current },
+    advance(to) {
+      if (!Number.isFinite(to) || to < current) throw new Error('clock moved backwards')
+      current = to
+      const due = timers.filter((timer) => !timer.cancelled && !timer.fired && timer.at <= current)
+      due.sort((left, right) => left.at - right.at)
+      for (const timer of due) {
+        timer.fired = true
+        timer.fn()
+      }
+    },
+    schedule(at, fn) {
+      const timer = { at, fn, fired: false, cancelled: false }
+      timers.push(timer)
+      if (at <= current) {
+        timer.fired = true
+        fn()
+      }
+      return timer
+    },
+    cancel(timer) {
+      if (timer) timer.cancelled = true
+    },
+  }
+}
+
+function abortWait(signal) {
+  if (signal.aborted) return Promise.resolve('aborted')
+  return new Promise((resolve) => {
+    signal.addEventListener('abort', () => resolve('aborted'), { once: true })
+  })
 }
 
 export function createAuditRunner(options = {}) {
+  const clock = options.clock || createMonotonicClock(0)
+  const fetchImpl = typeof options.fetchImpl === 'function' ? options.fetchImpl : globalThis.fetch
+  const onCleanup = typeof options.cleanup === 'function' ? options.cleanup : () => {}
   let startedAt = null
-  let gate = null
+  let deadlineTimer = null
   let tornDown = false
   let teardownReason = null
-  const controllers = new Set()
-  const eventRows = []
-  const storage = {}
-  const gaps = []
-  const fetchImpl = typeof options.fetchImpl === 'function' ? options.fetchImpl : globalThis.fetch
+  let cleanupCount = 0
+  let pendingAborted = false
   const providerTransmission = false
+  const jobs = new Map()
+  const ledger = []
+  const eventRows = []
+  const storageLog = []
+  const gaps = []
+
+  function close(reason) {
+    if (tornDown) return
+    tornDown = true
+    teardownReason = reason
+    if (deadlineTimer) clock.cancel(deadlineTimer)
+    for (const job of jobs.values()) {
+      if (job.settled) continue
+      pendingAborted = true
+      job.aborted = true
+      try { job.controller.abort() } catch { /* already aborted */ }
+      if (job.body && typeof job.body.cancel === 'function') {
+        job.body.cancel().catch(() => {})
+      }
+      if (job.reader && typeof job.reader.cancel === 'function') {
+        job.reader.cancel().catch(() => {})
+      }
+    }
+    if (cleanupCount === 0) {
+      cleanupCount = 1
+      onCleanup(reason)
+    }
+  }
 
   function start(now) {
     if (tornDown) return { ok: false, reason: 'torn-down' }
     if (startedAt !== null) return { ok: false, reason: 'already-started' }
-    if (!Number.isFinite(now)) return { ok: false, reason: 'clock' }
-    startedAt = now
-    gate = createAuditGate({ startedAt, mode: 'phase-a' })
+    if (Number.isFinite(now) && now > clock.now()) clock.advance(now)
+    if (Number.isFinite(now) && now < clock.now()) return { ok: false, reason: 'clock' }
+    startedAt = clock.now()
+    deadlineTimer = clock.schedule(startedAt + BUDGET_MS, () => close('DEADLINE'))
     return { ok: true, startedAt }
   }
 
-  function teardown(reason) {
-    if (!tornDown) {
-      tornDown = true
-      teardownReason = reason
+  function pushAttempt(input, fields) {
+    const sequence = ledger.length + 1
+    const closedBefore = tornDown
+    let reason = fields.reason
+    let terminal = fields.terminal
+    let late = closedBefore
+    if (!closedBefore && startedAt !== null && sequence >= BUDGET_ATTEMPTS) {
+      reason = 'BUDGET_REACHED'
+      terminal = 'blocked'
+      late = false
     }
-    for (const controller of controllers) controller.abort()
-    controllers.clear()
+    const row = {
+      sequence,
+      phase: input.phase || (startedAt === null ? 'before-start' : 'initial-load'),
+      contextRole: input.contextRole || 'fixture',
+      method: input.method || 'GET',
+      resourceType: input.resourceType || '',
+      endpoint: fields.endpoint || 'unlisted',
+      queryKeys: fields.queryKeys || [],
+      unknownQueryKeys: fields.unknownQueryKeys || 0,
+      reason,
+      terminal,
+      late,
+      issued: fields.issued === true,
+    }
+    ledger.push(row)
+    if (!closedBefore && reason === 'BUDGET_REACHED') close('BUDGET_REACHED')
+    return row
   }
 
-  function trip(reason) {
-    if (gate) gate.trip(reason)
-    teardown(reason)
+  function resultFrom(row, extra = {}) {
+    return {
+      transmitted: extra.transmitted === true,
+      issued: row.issued === true,
+      reason: row.reason,
+      terminal: row.terminal,
+      retry: false,
+      handedToBrowser: false,
+      follow: null,
+      status: extra.status ?? null,
+      late: row.late === true,
+      sequence: row.sequence,
+    }
+  }
+
+  function classified(input) {
+    const method = input.method || 'GET'
+    const inspection = inspectTarget(input.url || '', method, input.resourceType || 'document')
+    const exported = exportQueryKeys(inspection.queryKeys || [])
+    return {
+      method,
+      endpoint: inspection.role || 'unlisted',
+      queryKeys: exported.queryKeys,
+      unknownQueryKeys: exported.unknownQueryKeys,
+    }
   }
 
   async function boundedGet(input) {
-    if (tornDown) return closedResult(teardownReason || 'torn-down')
-    if (!gate || startedAt === null) return closedResult('not-started')
-    const decision = gate.observe({
-      url: input.url,
-      method: 'GET',
-      resourceType: input.resourceType || 'document',
-      now: input.now,
-      phase: input.phase || 'initial-load',
-      contextRole: input.contextRole || 'fixture',
-    })
-    const stopped = decision.late === true || ['DEADLINE', 'BUDGET_REACHED', 'clock', 'navigation', 'submission', 'popup'].includes(decision.reason)
-    if (stopped || !loopbackHttp(input.url)) {
-      const reason = stopped ? decision.reason : 'provider-closed'
-      if (!stopped) gate.noteTerminal(decision.sequence, { reason: 'provider-closed', terminal: 'blocked' })
-      return { ...closedResult(reason), sequence: decision.sequence }
+    const fields = classified(input)
+    if (startedAt === null) {
+      return resultFrom(pushAttempt(input, { ...fields, reason: 'not-started', terminal: 'blocked', issued: false }))
     }
+    if (tornDown) {
+      return resultFrom(pushAttempt(input, { ...fields, reason: teardownReason || 'torn-down', terminal: 'blocked', issued: false }))
+    }
+    if (clock.now() >= startedAt + BUDGET_MS) {
+      close('DEADLINE')
+      return resultFrom(pushAttempt(input, { ...fields, reason: 'DEADLINE', terminal: 'blocked', issued: false }))
+    }
+    if (ledger.length + 1 >= BUDGET_ATTEMPTS) {
+      return resultFrom(pushAttempt(input, { ...fields, reason: 'BUDGET_REACHED', terminal: 'blocked', issued: false }))
+    }
+    if (fields.method !== 'GET') {
+      return resultFrom(pushAttempt(input, { ...fields, reason: 'method', terminal: 'blocked', issued: false }))
+    }
+    if (!loopbackHttp(input.url)) {
+      return resultFrom(pushAttempt(input, { ...fields, reason: 'provider-closed', terminal: 'blocked', issued: false }))
+    }
+    const row = pushAttempt(input, { ...fields, reason: 'pending', terminal: 'active', issued: true })
     const controller = new AbortController()
-    controllers.add(controller)
+    const job = { controller, body: null, reader: null, settled: false, aborted: false }
+    jobs.set(row.sequence, job)
+    const issued = fetchImpl(input.url, { method: 'GET', redirect: 'manual', signal: controller.signal })
+    issued.catch(() => {})
     let response
     try {
-      response = await fetchImpl(input.url, { method: 'GET', redirect: 'manual', signal: controller.signal })
+      const raced = await Promise.race([
+        issued.then((value) => ({ kind: 'response', value })),
+        abortWait(controller.signal).then(() => ({ kind: 'aborted' })),
+      ])
+      if (raced.kind === 'aborted' || tornDown || controller.signal.aborted) {
+        row.reason = 'aborted'
+        row.terminal = 'aborted'
+        job.settled = true
+        return resultFrom(row, { transmitted: true })
+      }
+      response = raced.value
     } catch {
-      return closedResult(tornDown ? (teardownReason || 'aborted') : 'aborted')
-    } finally {
-      controllers.delete(controller)
+      row.reason = tornDown || controller.signal.aborted ? 'aborted' : 'error'
+      row.terminal = row.reason
+      job.settled = true
+      return resultFrom(row, { transmitted: true })
+    }
+    if (tornDown || controller.signal.aborted) {
+      if (response && response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(() => {})
+      row.reason = 'aborted'
+      row.terminal = 'aborted'
+      job.settled = true
+      return resultFrom(row, { transmitted: true, status: response ? response.status : null })
     }
     if (response.status >= 300 && response.status < 400) {
-      gate.noteTerminal(decision.sequence, { reason: 'BLOCKED_REDIRECT', terminal: 'blocked-redirect' })
-      return { transmitted: true, reason: 'BLOCKED_REDIRECT', retry: false, handedToBrowser: false, follow: null, status: response.status, sequence: decision.sequence }
+      if (response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(() => {})
+      row.reason = 'BLOCKED_REDIRECT'
+      row.terminal = 'blocked-redirect'
+      job.settled = true
+      return resultFrom(row, { transmitted: true, status: response.status })
     }
-    await response.arrayBuffer()
-    return { transmitted: true, reason: 'local-response', retry: false, handedToBrowser: false, follow: null, status: response.status, sequence: decision.sequence }
+    job.body = response.body || null
+    const bodyRead = response.body && typeof response.body.getReader === 'function'
+      ? readStream(response.body, controller, job)
+      : response.arrayBuffer()
+    bodyRead.catch(() => {})
+    try {
+      const bodyOutcome = await Promise.race([
+        Promise.resolve(bodyRead).then(() => 'complete'),
+        abortWait(controller.signal).then(() => 'aborted'),
+      ])
+      if (bodyOutcome === 'aborted' || tornDown || controller.signal.aborted) {
+        row.reason = 'aborted'
+        row.terminal = 'aborted'
+        job.settled = true
+        return resultFrom(row, { transmitted: true, status: response.status })
+      }
+    } catch {
+      row.reason = tornDown || controller.signal.aborted ? 'aborted' : 'error'
+      row.terminal = row.reason
+      job.settled = true
+      return resultFrom(row, { transmitted: true, status: response.status })
+    }
+    if (tornDown || controller.signal.aborted) {
+      row.reason = 'aborted'
+      row.terminal = 'aborted'
+      job.settled = true
+      return resultFrom(row, { transmitted: true, status: response.status })
+    }
+    row.reason = 'local-response'
+    row.terminal = 'complete'
+    job.settled = true
+    return resultFrom(row, { transmitted: true, status: response.status })
   }
 
   function recordEvents(events, recordOptions = {}) {
-    eventRows.push(sanitizeEvents(events, recordOptions))
+    eventRows.push({ phase: recordOptions.phase || 'unspecified', ...sanitizeEvents(events, recordOptions) })
   }
 
-  function recordStorage(role, snapshot) {
+  function recordStorage(role, snapshot, phase = 'unspecified') {
     if (role !== 'parent' && role !== 'host' && role !== 'vendor') return false
-    storage[role] = sanitizeStorage(snapshot)
+    storageLog.push({ role, phase, ...sanitizeStorage(snapshot) })
     return true
   }
 
   function recordGap(name) {
-    if (name === 'vendor-frame-absent' || name === 'unreadable-frame') gaps.push(name)
+    if (name === 'vendor-frame-absent' || name === 'unreadable-frame' || name === 'not-observed') gaps.push(name)
+  }
+
+  function storageEvidence() {
+    const report = {}
+    for (const role of ['parent', 'host', 'vendor']) {
+      const samples = storageLog.filter((sample) => sample.role === role)
+      const beforeStart = samples.filter((sample) => sample.phase === 'before-start')
+      const beforeTeardown = samples.filter((sample) => sample.phase === 'before-teardown')
+      const baseline = beforeStart[0] || null
+      const latest = beforeTeardown[beforeTeardown.length - 1] || null
+      report[role] = {
+        beforeStart,
+        beforeTeardown,
+        samples,
+        delta: baseline && latest ? {
+          cookieCount: latest.cookieCount - baseline.cookieCount,
+          storageCount: latest.storageCount - baseline.storageCount,
+        } : null,
+        gap: samples.length === 0 ? 'not-observed' : null,
+      }
+    }
+    return report
   }
 
   function evidence() {
+    for (const [sequence, job] of jobs) {
+      if (job.settled) continue
+      const row = ledger.find((item) => item.sequence === sequence)
+      if (!row || row.terminal !== 'active') continue
+      row.terminal = tornDown ? 'aborted' : 'hanging'
+      row.reason = tornDown ? 'aborted' : 'hanging'
+    }
+    const lateAttempts = ledger.filter((row) => row.late).length
     return {
       providerTransmission,
       started: startedAt !== null,
       tornDown,
       teardownReason,
+      pendingAborted,
+      cleanupCount,
+      observed: ledger.length,
+      lateAttempts,
+      trimmed: false,
+      phaseBAuthorized: false,
       gaps: [...gaps],
-      events: eventRows.map((row) => ({ gap: row.gap, events: row.events.map((item) => ({ ...item })) })),
-      storage: { ...storage },
-      gate: gate ? gate.evidence() : null,
+      events: eventRows.map((row) => ({ phase: row.phase, gap: row.gap, events: row.events.map((item) => ({ ...item })) })),
+      storage: storageEvidence(),
+      ledger: ledger.map((row) => ({ ...row, queryKeys: [...row.queryKeys] })),
+      gate: {
+        observed: ledger.length,
+        lateAttempts,
+        trimmed: false,
+        disposition: teardownReason,
+        ledger: ledger.map((row) => ({ ...row, queryKeys: [...row.queryKeys] })),
+      },
     }
   }
 
   return {
     start,
+    advance(to) { clock.advance(to) },
     boundedGet,
-    trip,
+    trip(reason) { close(reason) },
     recordEvents,
     recordStorage,
     recordGap,
@@ -430,6 +652,23 @@ export function createAuditRunner(options = {}) {
     get startedAt() { return startedAt },
     get providerTransmission() { return providerTransmission },
   }
+}
+
+async function readStream(body, controller, job) {
+  const reader = body.getReader()
+  job.reader = reader
+  while (!controller.signal.aborted) {
+    const raced = await Promise.race([
+      reader.read().then((chunk) => ({ kind: 'chunk', chunk })),
+      abortWait(controller.signal).then(() => ({ kind: 'aborted' })),
+    ])
+    if (raced.kind === 'aborted' || controller.signal.aborted) {
+      await reader.cancel().catch(() => {})
+      return
+    }
+    if (raced.chunk.done) return
+  }
+  await reader.cancel().catch(() => {})
 }
 
 export function nestedContractHref() {

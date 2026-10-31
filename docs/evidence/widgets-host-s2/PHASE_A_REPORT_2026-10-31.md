@@ -10,7 +10,15 @@
 **Original S2 task blob:** `e4ae6b5d6291792d1fe798029849d66119fcf3f5` unchanged.
 **Phase A seed:** `4b2080568fc5ae10f7902222aec7fe62381e640e`
 
-Phase B was not run. No provider or CMP host was contacted. `route.continue` was not called. Both production registry entries stay `selected: false`.
+Phase B was not run. No provider or CMP host was contacted. WebRTC remains `BLOCKED_TRANSPORT`. `providerTransmission` stays false.
+
+## Current — R5 lifecycle correction
+
+DiscoverCars stays unselected. The already accepted 12Go source selection stays selected. The deployed `apps/widgets-host` subtree was not edited. The old sentence that both registry rows are unselected is historical.
+
+The runner now owns one monotonic deadline. Reaching it closes permission, aborts outstanding header and body reads, and runs cleanup once, without waiting for another request. A body that finishes after closure is recorded as aborted, not as a successful response. Pre-start, non-GET, blocked, and late attempts are all in the ledger. Attempt 101 stays in the count. Before-start and before-teardown storage samples are kept separately, with cookie flags and deltas, and without cookie names or values. A role that was not sampled is `not-observed`, not a manufactured zero. Evidence is read after cleanup.
+
+The browser preflight was not run for this correction. The loopback redirect fixture still shows one source hit and zero target hits. `node --test scripts/widgets-host-s2/audit-lifecycle.test.mjs` is the lifecycle proof. It uses an injected clock and fetch, not a live transport.
 
 ## Source seam
 
