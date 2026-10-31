@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R6-R1 addition
+
+Same-id place and origin changes now change the in-memory scope key. The host drops the frame on that render and releases the handle in layout, so a late ready does not grant the old handle. Reopening the same place needs a new click. The recovery test loader returns the closed scope; the four booking cases still execute. Native `41243615981` remains a failed gate for `8e36dad9`. This correction needs its own App, Auth, and Preview gates. Self-review is not a Technical Lead PASS.
+
 ## R6 addition
 
 The parent now calls the four production CMP functions. Shipped policy and release stay null/false, so the real click path stays denied. A copied capability object still returns false. The host sandbox is not applied to the synthetic empty frame or to a private Jetnity URL. Scope identity is not written to the DOM. I did not edit CMP, the widget host, DiscoverCars, guest/account wrappers, or `/embed/twelve-go`. Offline browser evidence used local fulfillments of `jetnity.com` and `jetnity-widgets.vercel.app`. That is not hosted-form, search, or redirect acceptance. Self-review is not a Technical Lead PASS. The PR stays Draft.

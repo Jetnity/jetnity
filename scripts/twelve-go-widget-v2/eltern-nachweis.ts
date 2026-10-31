@@ -243,6 +243,14 @@ async function main() {
     assertGleich(fehler, erster?.powered === true, 'Powered-by')
     assertGleich(fehler, (erster?.felder.length ?? 0) >= 3 && erster?.felder.every((feld) => feld.wert === '' && feld.hoehe > 0 && feld.breite > 0) === true, 'Felder')
     assertGleich(fehler, lauf.referer.length >= 1 && lauf.referer.every((wert) => wert === ''), `Referer ${lauf.referer.join(',')}`)
+    await page.locator('[data-ort-wechsel]').click()
+    await page.waitForTimeout(150)
+    assertGleich(fehler, await page.locator('[data-twelve-go-host="frame"]').count() === 0, 'gleicher Etappen-ID behält den Frame')
+    await page.locator('[data-ort-wechsel]').click()
+    await page.waitForTimeout(150)
+    assertGleich(fehler, await page.locator('[data-twelve-go-host="frame"]').count() === 0, 'wiederhergestellter Ort startet ohne Klick')
+    await anfragen(page)
+    await wartenAufRahmen(page)
     await page.evaluate(() => {
       const fremd = document.createElement('iframe')
       fremd.src = 'https://jetnity-widgets.vercel.app/embed/twelvego'

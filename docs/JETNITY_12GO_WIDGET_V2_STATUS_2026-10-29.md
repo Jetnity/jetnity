@@ -3,17 +3,17 @@
 Date: 29 October 2026 Europe/Zurich
 Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
-State: **CONSENT_BLOCKED / DRAFT / R6 parent consumer / STOP for independent Technical Lead review**
+State: **CONSENT_BLOCKED / DRAFT / R6-R1 correction / STOP for independent Technical Lead review**
 
-## Current, 31 October 2026 — R6
+## Current, 31 October 2026 — R6-R1
 
-Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` is merged. The visitor path is Reise → Organisieren → Mobilität → Verbindungen → `TwelveGoAffiliateLinks` → `TwelveGoWidgetEinbau` → `TwelveGoWidgetHost`. A conscious click calls `requestProductionExecution('twelvego', scopeKey)`. The shipped policy table stays null and `CMP_RELEASE_AUTHORIZED` stays false, so that call returns null, no frame is mounted, and the V1 links stay usable. The same component mounts the separate host frame only when the public facade returns a live handle. Positive proof uses a test-only policy module under `scripts/twelve-go-widget-v2/`, not a production switch.
+Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` stays the merge base. The visitor path has a request button. That button calls `requestProductionExecution`. The shipped policy stays null, so the production click mounts no frame. A live handle is the only path that mounts `https://jetnity-widgets.vercel.app/embed/twelvego`. Sentences below that say the visitor has no request button, or that the embed route does not exist, describe earlier rounds and are superseded.
 
-`/embed/twelve-go` still returns 404. The synthetic `TwelveGoWidgetRahmen` stays `allow-scripts` and has no `src`. The four-token sandbox belongs only to `https://jetnity-widgets.vercel.app/embed/twelvego`. `hostSelectionCommit` is not pinned. Host head `f056b01d63ac7d61650864734a9b44eb6484989e` is under independent review and is not accepted. This is not a working embedded search.
+R6-R1: the scope key includes stage name, country, place id, trip origin, and origin place id. The same stage id with Bangkok/TH/bkk replaced by Tokio/JP/tyo is a new key. The host hides the frame on that render and releases the handle before the next message can grant it. Restoring the old place does not mount a frame again until a new click.
 
-Shared seam, owned here: `components/trips/MobilityWidgetScope.tsx`. `TripWorkspace` wraps the existing `mobilitaetssuche` node. `MobilitaetBereich` publishes the real `unterbereich`. Read contract: `{ workspaceActive, activeArea, scopeKey }` with default false / null / null. Execution requires `workspaceActive && activeArea === 'verbindungen'` and a scope key. The key is parent memory only.
+Native run [41243615981](https://github.com/Jetnity/jetnity/actions/runs/41243615981) on `8e36dad9` failed in `lib/trips/organisieren-action-recovery-1.test.ts` because the new hook called `useContext` outside that file's custom React. The test loader now supplies the closed scope. The booking, lock, error, retry, and late-context cases stay in the file. App job `124662410744` was the failure. Auth on that run succeeded. Those gates do not cover the correction head.
 
-Older sentences below that say the embed route does not exist, that the trip path has no request, or that iframe height is the blocker, are dated and superseded.
+`/embed/twelve-go` still returns 404. `hostSelectionCommit` is not pinned here. Host source `f056b01d63ac7d61650864734a9b44eb6484989e` has verified source and native gates. Its deployment remains with Root. This branch does not edit CMP or the host. This is not a working embedded search.
 
 ## R5.1 light workspace scope
 
@@ -55,7 +55,7 @@ The commit list below is the 29 October record. Current main and the R5 head are
 
 ## Result
 
-The official general export and the Bangkok → Koh Chang reference are stored as exact bytes. The visitor surface in Organisieren → Verbindungen keeps the V1 links and states that the general form is not loaded. There is no load button, no script, no frame, and no prefetch.
+The official general export and the Bangkok → Koh Chang reference are stored as exact bytes. The 29 October visitor surface had no request button. R6 replaced that with a request that stays closed while the production facade returns null. V1 links stay. There is still no vendor script and no prefetch.
 
 Execution stays closed:
 

@@ -16,7 +16,13 @@ Stop: independent exact-head review by the Technical Lead. No Ready, no merge, n
 - Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`, tree `9e83883a884f885b83a27c28e1705f275f551c57`
 - Invalidated head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5`. R1-F1 replaces `Buffer.from('Bangkok')` with a UTF-8 `includes('Bangkok')` check. Exact final HEAD, tree, and ahead/behind are the branch tip after that correction. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
 
-## Where the work stopped — R6
+## Where the work stopped — R6-R1
+
+Reviewed head `8e36dad970c42e81500b3d6f0fb95e94e116e525` is invalidated. Native CI `41243615981` failed: App job `124662410744`, 7799 tests, 7796 pass, 1 fail, 2 existing skips. The failure was `organisieren-action-recovery-1.test.ts` calling `useContext` outside its custom scheduler. Auth on that run succeeded. The correction head is the branch tip after this commit and is posted on the PR.
+
+The scope key now changes when stage place identity or trip origin changes and the ids and dates stay the same. The frame render checks that bound key. A restored place does not regrant.
+
+## Where R6 stopped
 
 `CONSENT_BLOCKED`. Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` is merged. The exact implementation head is the branch tip after this R6 commit and is posted on the PR, because this file cannot contain the hash of the commit that adds it.
 

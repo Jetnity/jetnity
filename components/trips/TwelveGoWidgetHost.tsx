@@ -55,6 +55,7 @@ export default function TwelveGoWidgetHost() {
   const cmp = React.useSyncExternalStore(subscribeCmpController, readCmpController, serverCmpSnapshot)
   const [phase, setPhase] = React.useState<Phase>('ruhend')
   const [capability, setCapability] = React.useState<ProductionCapability | null>(null)
+  const [boundKey, setBoundKey] = React.useState<string | null>(null)
   const capRef = React.useRef<ProductionCapability | null>(null)
   const keyRef = React.useRef<string | null>(null)
   const challengeRef = React.useRef<string | null>(null)
@@ -78,14 +79,19 @@ export default function TwelveGoWidgetHost() {
     generationRef.current = null
     grantedRef.current = false
     focusRef.current = focus
+    setBoundKey(null)
     setCapability(null)
     setPhase(next)
   }, [])
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     offenRef.current = offen
     keyNowRef.current = scope.scopeKey
-  }, [offen, scope.scopeKey])
+    const handle = capRef.current
+    if (!handle) return
+    if (offen && scope.scopeKey && scope.scopeKey === keyRef.current) return
+    abbauen('ruhend', handle)
+  }, [offen, scope.scopeKey, abbauen])
 
   const annehmen = React.useCallback((handle: ProductionCapability, ready: TwelveGoReady, frame: Window) => {
     if (grantedRef.current) {
@@ -96,7 +102,7 @@ export default function TwelveGoWidgetHost() {
       abbauen('fehler', handle)
       return
     }
-    if (!offenRef.current || keyNowRef.current !== keyRef.current || handle.childOrigin === TWELVE_GO_PARENT_ORIGIN || !checkProductionExecution(handle)) {
+    if (!offenRef.current || keyNowRef.current !== keyRef.current || keyNowRef.current !== boundKey || handle.childOrigin === TWELVE_GO_PARENT_ORIGIN || !checkProductionExecution(handle)) {
       abbauen('fehler', handle)
       return
     }
@@ -121,7 +127,7 @@ export default function TwelveGoWidgetHost() {
     grantedRef.current = true
     frame.postMessage(message, handle.childOrigin)
     setPhase('eingesetzt')
-  }, [abbauen])
+  }, [abbauen, boundKey])
 
   React.useEffect(() => {
     mountedRef.current = true
@@ -135,13 +141,6 @@ export default function TwelveGoWidgetHost() {
       })
     }
   }, [])
-
-  React.useEffect(() => {
-    const handle = capRef.current
-    if (!handle) return
-    if (offen && scope.scopeKey && scope.scopeKey === keyRef.current) return
-    abbauen('ruhend', handle)
-  }, [offen, scope.scopeKey, abbauen])
 
   React.useEffect(() => {
     const handle = capRef.current
@@ -174,7 +173,7 @@ export default function TwelveGoWidgetHost() {
       if (capRef.current !== handle) return
       const frame = iframeRef.current?.contentWindow
       if (event.origin !== handle.childOrigin || !frame || event.source !== frame) return
-      if (!offenRef.current || keyNowRef.current !== keyRef.current) {
+      if (!offenRef.current || keyNowRef.current !== keyRef.current || keyNowRef.current !== boundKey) {
         abbauen('ruhend', handle)
         return
       }
@@ -190,7 +189,7 @@ export default function TwelveGoWidgetHost() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [capability, abbauen, annehmen])
+  }, [capability, abbauen, annehmen, boundKey])
 
   function anfragen() {
     if (!offen || !scope.scopeKey || capRef.current) return
@@ -205,6 +204,7 @@ export default function TwelveGoWidgetHost() {
     challengeRef.current = null
     generationRef.current = null
     grantedRef.current = false
+    setBoundKey(scope.scopeKey)
     setCapability(handle)
     setPhase('wartet')
   }
@@ -213,7 +213,13 @@ export default function TwelveGoWidgetHost() {
     abbauen('entfernt', capRef.current, true)
   }
 
-  const frameOn = Boolean(capability && offen && twelveGoHostPasst(capability))
+  const frameOn = Boolean(
+    capability &&
+    offen &&
+    boundKey != null &&
+    scope.scopeKey === boundKey &&
+    twelveGoHostPasst(capability),
+  )
   const aktion = phase === 'wartet' || phase === 'eingesetzt' ? 'entfernen' : phase === 'ruhend' ? 'anfragen' : 'erneut'
   const aktionText = aktion === 'entfernen' ? 'Formular entfernen' : aktion === 'anfragen' ? 'Suchformular anfragen' : 'Erneut anfragen'
 

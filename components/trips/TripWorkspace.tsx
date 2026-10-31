@@ -1512,6 +1512,8 @@ export default function TripWorkspace({
               scopeKey={mobilityWidgetScopeKey({
                 tripId: reise.id,
                 source: quelle,
+                origin: reise.origin,
+                originPlaceId: reise.originPlaceId,
                 detail: detailOffen ? `${aktiveDomain ?? ''}:${gewaehlterPunktId ?? ''}` : '',
                 dayId: aktiverTag || null,
                 stages: reise.stages,

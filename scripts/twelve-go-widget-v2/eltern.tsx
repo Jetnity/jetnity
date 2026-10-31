@@ -77,6 +77,25 @@ function Probe() {
             <button type="button" data-workspace-an onClick={() => setZeigen(true)}>Workspace an</button>
             <button
               type="button"
+              data-ort-wechsel
+              onClick={() => setReise((alt) => ({
+                ...alt,
+                origin: alt.origin === 'Basel' ? 'Zürich' : 'Basel',
+                originPlaceId: alt.originPlaceId === 'geonames:2661604' ? null : 'geonames:2661604',
+                stages: alt.stages.map((stage) => stage.id === 'b'
+                  ? {
+                    ...stage,
+                    name: stage.name === 'Tokio' ? 'Ayutthaya' : 'Tokio',
+                    countryCode: stage.countryCode === 'JP' ? 'TH' : 'JP',
+                    placeId: stage.placeId === 'tyo' ? null : 'tyo',
+                  }
+                  : stage),
+              }))}
+            >
+              Ort wechseln
+            </button>
+            <button
+              type="button"
               data-etappe-tausch
               onClick={() => setReise((alt) => reiseVon(alt.id, [...alt.stages].reverse().map((stage, index) => ({ ...stage, position: index + 1 }))))}
             >

@@ -19,11 +19,13 @@ function basis() {
   return {
     tripId: 'trip-1',
     source: 'guest' as const,
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     detail: 'mobilitaet:',
     dayId: 'day-1',
     stages: [
-      { id: 'a', position: 1, arrivalDate: '2026-11-01', departureDate: '2026-11-03' },
-      { id: 'b', position: 2, arrivalDate: '2026-11-03', departureDate: null },
+      { id: 'a', position: 1, name: 'Chiang Mai', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-01', departureDate: '2026-11-03' },
+      { id: 'b', position: 2, name: 'Bangkok', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-03', departureDate: null },
     ],
     days: [{ id: 'day-1', dayIndex: 1, dayDate: '2026-11-01', stageId: 'a' }],
   }
@@ -50,18 +52,24 @@ describe('12Go Sichtbarkeit und Rev1', () => {
     assert.notEqual(links, mobilityWidgetScopeKey({
       ...etappen,
       stages: [
-        { id: 'b', position: 1, arrivalDate: '2026-11-03', departureDate: null },
-        { id: 'a', position: 2, arrivalDate: '2026-11-01', departureDate: '2026-11-03' },
+        { id: 'b', position: 1, name: 'Bangkok', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-03', departureDate: null },
+        { id: 'a', position: 2, name: 'Chiang Mai', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-01', departureDate: '2026-11-03' },
       ],
     }))
     assert.notEqual(links, mobilityWidgetScopeKey({
       ...basis(),
       stages: [
-        { id: 'a', position: 1, arrivalDate: '2026-11-02', departureDate: '2026-11-03' },
-        { id: 'b', position: 2, arrivalDate: '2026-11-03', departureDate: null },
+        { id: 'a', position: 1, name: 'Chiang Mai', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-02', departureDate: '2026-11-03' },
+        { id: 'b', position: 2, name: 'Bangkok', countryCode: 'TH', placeId: 'bkk', arrivalDate: '2026-11-03', departureDate: null },
       ],
     }))
+    const gleicherOrt = basis()
+    gleicherOrt.stages[1] = { ...gleicherOrt.stages[1], name: 'Tokio', countryCode: 'JP', placeId: 'tyo' }
+    assert.notEqual(links, mobilityWidgetScopeKey(gleicherOrt))
+    assert.notEqual(links, mobilityWidgetScopeKey({ ...basis(), origin: 'Basel' }))
+    assert.notEqual(links, mobilityWidgetScopeKey({ ...basis(), originPlaceId: 'geonames:2661604' }))
     assert.equal(links?.includes('traveller'), false)
+    assert.equal(links?.includes('Tokio'), false)
   })
 
   test('der Schlüssel steht nicht im Markup und fehlt ohne Provider', () => {

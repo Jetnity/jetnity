@@ -16,6 +16,9 @@ export type MobilityWidgetScope = Readonly<{
 export type MobilityScopeStage = Readonly<{
   id: string
   position: number
+  name: string
+  countryCode: string | null
+  placeId: string | null
   arrivalDate: string | null
   departureDate: string | null
 }>
@@ -30,6 +33,8 @@ export type MobilityScopeDay = Readonly<{
 export type MobilityScopeInput = Readonly<{
   tripId: string
   source: 'guest' | 'account'
+  origin: string | null
+  originPlaceId: string | null
   detail: string
   dayId: string | null
   stages: readonly MobilityScopeStage[]
@@ -45,17 +50,35 @@ function teil(value: string): string {
   return value.replaceAll('\u001f', ' ')
 }
 
-/** Stable parent identity from trip, source, detail, day, and stage/date order. */
+/** Stable parent identity. Place and origin changes count. Ordinary rerenders do not. */
 export function mobilityWidgetScopeKey(input: MobilityScopeInput): string | null {
   const tripId = input.tripId.trim()
   if (tripId === '') return null
   const stages = input.stages
-    .map((stage) => `${teil(stage.id)}:${stage.position}:${stage.arrivalDate ?? ''}:${stage.departureDate ?? ''}`)
-    .join(',')
+    .map((stage) => [
+      teil(stage.id),
+      String(stage.position),
+      teil(stage.name),
+      stage.countryCode ?? '',
+      stage.placeId ?? '',
+      stage.arrivalDate ?? '',
+      stage.departureDate ?? '',
+    ].join('\u001e'))
+    .join('\u001f')
   const days = input.days
-    .map((day) => `${teil(day.id)}:${day.dayIndex}:${day.dayDate ?? ''}:${day.stageId ?? ''}`)
-    .join(',')
-  return ['v1', input.source, teil(tripId), teil(input.detail), input.dayId ?? '', stages, days].join('\u001f')
+    .map((day) => [teil(day.id), String(day.dayIndex), day.dayDate ?? '', day.stageId ?? ''].join('\u001e'))
+    .join('\u001f')
+  return [
+    'v2',
+    input.source,
+    teil(tripId),
+    teil(input.origin ?? ''),
+    input.originPlaceId ?? '',
+    teil(input.detail),
+    input.dayId ?? '',
+    stages,
+    days,
+  ].join('\u001f')
 }
 
 export function MobilityWidgetScopeProvider({
