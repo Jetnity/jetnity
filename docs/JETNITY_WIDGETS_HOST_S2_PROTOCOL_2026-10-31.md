@@ -33,7 +33,7 @@ The local fixture in `lib/host-runtime.mjs` (`createParentFixture`) is the refer
 
 - Accept `ready` only from `https://jetnity-widgets.vercel.app` and only when `event.source === iframe.contentWindow`.
 - Do not treat `ready` as permission. Re-check the current CMP decision, provider intent, and host policy immediately before `grant`.
-- One explicit parent decision id grants at most one child lifecycle. A repeated `ready` with the same challenge is denied. A new challenge without a new decision id retires the whole iframe. A later decision id may grant once. It does not reuse the old challenge.
+- A decision id is used once. A later id must be greater than every id already used. A challenge that was already granted is rejected even if the decision id is new. A repeated `ready` with the same challenge is denied. A new challenge without a new greater id retires the whole iframe.
 - Bind that grant to the echoed challenge, the decision id, the provider, revision 1, and the exact policy and artifact ids.
 - On unmount, category loss, navigation, timeout, or a new frame, remove the iframe element. Do not wait for a child acknowledgement. A child `revoke` or ack is supplementary.
 - A reloaded frame needs a new `ready` and a new decision. Do not reuse a challenge.
@@ -43,7 +43,7 @@ The local fixture in `lib/host-runtime.mjs` (`createParentFixture`) is the refer
 
 The adapter walks a parsed plan and uses `createElement`, `setAttribute`, `createTextNode`, and `appendChild`. It does not use `innerHTML`. Affiliate attributes stay in source order. A `src` that starts with `//` is requested as `https:` plus that value. The raw 12Go file still begins with `//cdn0.trainbusferry.com/`. No script URL is accepted from a message.
 
-When a registry entry is later selected in source, `productionPlansForClient()` embeds that plan and the shell CSP adds that script's exact `https` origin to `script-src`. `frame-src` stays `'none'` until a reviewed frame allowlist exists. A host CSP does not describe what a nested vendor frame requests internally.
+When one registry entry is later selected in source, `productionPlanForClient(provider)` embeds that route's plan only, and the shell CSP adds that script's exact `https` origin to `script-src`. `networkPolicy: 'unselected'` is not an executable allowlist. `frame-src` stays `'none'` until a reviewed frame allowlist exists. A host CSP does not describe what a nested vendor frame requests internally.
 
 ## Storage limits
 

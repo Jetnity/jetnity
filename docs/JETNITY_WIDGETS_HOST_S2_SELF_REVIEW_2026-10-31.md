@@ -2,22 +2,23 @@
 
 **Stand:** 31 October 2026. Author review only. Not an independent Technical-Lead PASS.
 
-## Holds
+## Current head
 
-- Frozen bytes were hashed before copy and matched the task. A later test reads the artifact files and the embedded strings and requires them to be equal.
-- The production registry cannot return a selection while `selected` is false. The shell HTML test requires `"plans":{}` and no vendor host.
-- The controller consumes a matching challenge only after the selector and artifact hash match, and it refuses a second grant.
-- Playwright aborted `https://canary.test` rather than recording it. The route was installed before `goto`.
-- Teardown used `iframe.remove()` on an element created with `document.createElement('iframe')`. The pending canary did not request after that.
-- Root `eslint .` was run while `apps/widgets-host/.next` existed. Exit 0, 0 errors. The nested build output did not reintroduce the S1 lint failure.
+- A decision id can be granted only when it is greater than every id already used. A challenge that was already granted is rejected when the id changes. Going back from 8 to 7 does not grant.
+- `startProductionShell` sets `#jetnity-widget-status` to requested, denied, or inserted. The inserted sentence says the script is not proof of a working provider form.
+- The browser harness uses `https://jetnity.com` and `https://jetnity-widgets.vercel.app`, fulfills one local canary, and fails on any other request. The 200% font check edits the served nonce stylesheet and reads computed `32px`. It does not use `bypassCSP`.
+- `productionPlanForClient()` is null for both providers. `networkPolicy: 'unselected'` is metadata, not an allowlist.
+
+## Historical, head 58f71f05 and the pre-R1 harness
+
+The earlier self-review said the shell test required `"plans":{}`, that Playwright aborted `https://canary.test`, and that the harness did not execute `https://jetnity-widgets.vercel.app`. Those sentences described that head and the first harness. They are not the current proof.
 
 ## Does not hold
 
-- I did not read Vercel project `prj_Qq4i6dNt3hlSbQDpr2LrRaSKOQsk`, DNS, or production cookies in this turn.
-- The browser harness does not execute the page at `https://jetnity-widgets.vercel.app`. A high local port cannot satisfy the pinned origin without a certificate on 443. The Node tests pass those exact origin strings into the same controller.
-- `frame-src` is still `'none'`. I did not invent a vendor frame allowlist.
-- #1096 was not treated as stable. Nothing from `b1408bc679738ae05e691206c90a1e695c927ab1` was imported.
-- Native CI for the new head is not claimed here.
+- Vercel project settings, DNS, and production cookies were not read in this turn.
+- `frame-src` remains `'none'`. No vendor frame, form, or popup capability was added.
+- #1096 was not imported.
+- Native CI for the new head is not claimed in this file. The delivery comment records the check state after push.
 - Author self-review is not merge approval.
 
 ## Decision

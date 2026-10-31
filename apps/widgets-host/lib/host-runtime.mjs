@@ -349,9 +349,10 @@ export function createController(deps) {
 
 export function createParentFixture(deps) {
   let destroyed = false
-  let usedDecision = null
+  let highDecision = null
   let boundChallenge = null
   let boundFrame = null
+  const usedChallenges = new Set()
   const decisionId = () => (typeof deps.currentDecision === 'function' ? deps.currentDecision() : deps.parentGeneration)
   let timer = null
   function retire(reason) {
@@ -367,7 +368,7 @@ export function createParentFixture(deps) {
   }
   if (Number.isInteger(deps.timeoutMs) && deps.timeoutMs > 0) {
     timer = setTimeout(() => {
-      if (usedDecision === null) retire('timeout')
+      if (highDecision === null) retire('timeout')
     }, deps.timeoutMs)
   }
   function onMessage(event) {
@@ -382,15 +383,19 @@ export function createParentFixture(deps) {
         return fail('provider')
       }
       const decision = decisionId()
-      if (usedDecision !== null && decision === usedDecision) {
+      if (!Number.isInteger(decision) || decision < 0) return fail('decision')
+      if (highDecision !== null && decision < highDecision) return fail('decision')
+      if (highDecision !== null && decision === highDecision) {
         if (parsed.message.challenge !== boundChallenge || parsed.message.frameGeneration !== boundFrame) {
           retire('reload')
           return fail('lifecycle')
         }
         return fail('duplicate')
       }
+      if (usedChallenges.has(parsed.message.challenge)) return fail('challenge')
       if (deps.allowsGrant() !== true) return fail('decision')
-      usedDecision = decision
+      highDecision = decision
+      usedChallenges.add(parsed.message.challenge)
       boundChallenge = parsed.message.challenge
       boundFrame = parsed.message.frameGeneration
       if (timer) clearTimeout(timer)
@@ -463,9 +468,21 @@ export function startProductionShell(config) {
     },
   })
   const status = document.getElementById('jetnity-widget-status')
+  function show(text) {
+    if (status) status.textContent = text
+  }
   const ready = controller.ready()
-  if (status && !ready.ok) {
-    status.textContent = 'Kein Anbieter ist geladen. Dieser Host bleibt inaktiv.'
+  if (!ready.ok) show('Kein Anbieter ist geladen. Dieser Host bleibt inaktiv.')
+  else show('Eine Freigabe wurde angefragt. Es ist noch kein Anbieter geladen.')
+  if (typeof controller.onMessage === 'function') {
+    const receive = controller.onMessage.bind(controller)
+    controller.onMessage = (event) => {
+      const result = receive(event)
+      if (result && result.inserted) show('Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.')
+      else if (result && result.pending) show('Eine Freigabe wurde angenommen. Das Skript ist noch nicht eingefügt.')
+      else if (result && result.ok !== true) show('Die Freigabe wurde abgelehnt. Es ist kein Anbieter geladen.')
+      return result
+    }
   }
   return controller
 }

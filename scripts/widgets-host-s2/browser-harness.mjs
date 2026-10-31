@@ -157,6 +157,11 @@ try {
   }
   if (!seen.includes(`${CHILD_ORIGIN}/canary/started.js`)) throw new Error('local canary did not start')
   if (seen.filter((url) => url === `${CHILD_ORIGIN}/canary/once.js`).length !== 1) throw new Error('canary script was not exactly once')
+  const insertedFrame = insert.frames().find((frame) => frame.url().startsWith(CHILD_ORIGIN))
+  const insertedStatus = await insertedFrame.evaluate(() => document.getElementById('jetnity-widget-status').textContent)
+  if (insertedStatus !== 'Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.') {
+    throw new Error(`status after insert: ${insertedStatus}`)
+  }
   await insert.evaluate(() => window.__jetnity.destroy())
   await insert.waitForFunction(() => document.querySelector('iframe') === null)
   await insert.waitForTimeout(900)
@@ -228,6 +233,24 @@ try {
     await layout.close()
   }
   console.log('PASS inactive shell layout under the served CSP')
+  const font = await context.newPage()
+  await font.setViewportSize({ width: 320, height: 900 })
+  await font.goto(`${CHILD_ORIGIN}/embed/twelvego`, { waitUntil: 'domcontentloaded' })
+  const fontResult = await font.evaluate(() => {
+    const sheet = document.querySelector('style')?.sheet
+    if (!sheet) return { ok: false, reason: 'no-sheet' }
+    sheet.insertRule('html{font-size:200%}', sheet.cssRules.length)
+    return {
+      ok: true,
+      font: getComputedStyle(document.documentElement).fontSize,
+      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    }
+  })
+  if (!fontResult.ok || fontResult.font !== '32px' || fontResult.overflow) {
+    throw new Error(`200% font ${JSON.stringify(fontResult)}`)
+  }
+  await font.close()
+  console.log('PASS 200% root font under the served stylesheet')
 
   const bad = unexpected()
   if (bad.length) throw new Error(`unexpected requests: ${[...new Set(bad)].join(', ')}`)

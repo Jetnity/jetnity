@@ -37,37 +37,29 @@ Those commits were the open #1084 and #1086 heads at the pre-code read. The Bang
 
 `lib/decide.mjs` classifies the request. The shell is served only for GET/HEAD of the two embed paths, with an empty query, when the authority is `jetnity-widgets.vercel.app` or that host on port 443. The Fetch API hides `Host` on a constructed `Request`, so the classifier uses the URL host in that case and the `Host` header when a real request provides one. A mismatched URL hostname is closed.
 
-Closed responses keep the S1 body and headers, including `X-Frame-Options: DENY` and `frame-ancestors 'none'`. The shell omits `X-Frame-Options`, sets `frame-ancestors https://jetnity.com`, and nonces its own style and module. `productionPlansForClient()` returns `{}`, and the HTML contains `"plans":{}` and no `discovercars.com`, `12go.asia`, or `trainbusferry` URL.
+Closed responses keep the S1 body and headers, including `X-Frame-Options: DENY` and `frame-ancestors 'none'`. The shell omits `X-Frame-Options`, sets `frame-ancestors https://jetnity.com`, and nonces its own style and module. `productionPlanForClient()` returns null while the registry is unselected, and that shell HTML contains `"plan":null` and no vendor URL.
 
-The same `createController` is used by the production bootstrap and by tests. Tests pass a canary selector. Production passes the frozen registry, whose `selected` flags are false, so an otherwise valid grant does not insert.
+The same `createController` and `startProductionShell` are used by the production bootstrap and by tests. A test may pass one plan into `buildShell`. Production `decide()` does not. The shell status says inactive, requested, denied, or that a script was inserted and that this is not proof of a working provider form.
 
-## Verification run in this session
+`networkPolicy: 'unselected'` is metadata only. Setting `selected` to true would not create an executable network policy, a frame allowlist, form or popup sandbox rights, or a deployment acceptance. Those remain the Root-owned completion step. This correction does not add an allowlist.
 
-From `apps/widgets-host`, Node v22.23.4:
+## Verification on this correction
 
-- `npm test` — 9 tests, 9 pass
-- `npm run typecheck` — exit 0 after `lib/decide.d.mts`
-- `npm run build` — Next.js 16.4.1 Turbopack, success
-- `node scripts/widgets-host-s2/synthetic-http.mjs` — 16/16 on `127.0.0.1:41733`, scrubbed env
-- `node scripts/widgets-host-s2/source-guard.mjs` — PASS
+From `apps/widgets-host`, after the R2 edits:
+
+- `npm test` — 15 tests, 15 pass
 - `node scripts/widgets-host-s2/browser-harness.mjs` — PASS
 
-The harness launched Chromium with host rules for `jetnity.test` and `widgets.test`. Before any navigation it aborted every request whose host was not local or those two names. Results:
+The harness fulfills `https://jetnity.com` and `https://jetnity-widgets.vercel.app` and aborts every other URL before navigation. The real bootstrap inserted one local canary. After insertion the status text was `Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.` Destroying the iframe stopped `after.js`. The inactive shell at 320, 390, 768, and 1440 did not overflow. A further 320px pass set `font-size: 200%` through the served nonce stylesheet, read computed `32px`, and did not overflow. No `bypassCSP` context was used. The unexpected-request ledger was empty.
 
-- one canary script request to `https://canary.test/once.js`, aborted; a replayed grant did not add a second request
-- parent `iframe.remove()` ran on a real iframe after the child signalled a deferred insert; no canary request followed; iframe count was 0
-- two pages on the child harness origin shared `localStorage`; that write is harness-only
-- the child page could not set `Domain=jetnity.test` or `Domain=jetnity.com` cookies visible to the parent origin
-- shell text at 320, 390, 768, and 1440 did not overflow and exposed no link, button, input, or iframe; a second context with CSP bypass applied a 32px root font and also did not overflow
+`node scripts/widgets-host-s2/synthetic-http.mjs` on the previous built server was 14/14 closed. This R2 edit does not change `classify`. Native CI and Preview for the new head are recorded in the delivery comment after push, not here.
 
-Root, with `apps/widgets-host/.next` still present:
+## Historical notes, not the current harness
 
-- `npm run lint` — exit 0, 0 errors, 178 warnings (same warning count previously recorded on main; none were introduced in the S2 paths after the unused-variable cleanup)
-- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode`, `check:schema-bezug` — exit 0
+These sentences were true for earlier heads and are not a description of `f6d029c2` or this correction:
 
-`check:schema-bezug` was run again after the host, harness, and these documents were staged. Exit 0. The new files do not call `.from('...')` or `.rpc('...')`.
-
-Not run here: root `npm run build`, `auth:pruefen`, and the GitHub Actions run for the new head. A `jetnity-app` Preview is not a `jetnity-widgets` deployment. No personal browser (#748). The harness origins are `http://jetnity.test` and `http://widgets.test`, not the pinned HTTPS origins. Exact origin equality for `https://jetnity.com` and `https://jetnity-widgets.vercel.app` is covered by the Node controller tests. The browser test proves the same functions across two real sites with a real iframe.
+- Head `58f71f05b5966470822c88fe00dcb5e5bc2ce711` and its delivery: 9 tests, then 13 tests after R1; HTTP 16 cases and later 14 closed loopback cases; `productionPlansForClient()` / `"plans":{}` was the earlier serializer name.
+- The first harness, before R1, used `http://jetnity.test` and `http://widgets.test`, aborted `https://canary.test/once.js`, and used a `bypassCSP` context for a 32px font. That is not the current harness.
 
 ## S1 gate
 
@@ -79,9 +71,8 @@ Not run here: root `npm run build`, `auth:pruefen`, and the GitHub Actions run f
 | --- | --- |
 | P1 | Production selections, DNS, TLS, redirects, and live `Set-Cookie` attributes are unverified. Do not activate the child host on this delivery. |
 | P1 | One child origin means provider scripts can share that origin's storage once a policy is selected. No provider secret is stored by this host. |
-| P2 | `frame-src 'none'` remains until Root reviews a frame allowlist. Selecting a script origin later does not by itself allow a nested vendor frame. |
+| P2 | `frame-src 'none'` and the other default-deny directives are the current shell, not an open finding. `networkPolicy: 'unselected'` does not become an allowlist when `selected` flips. |
 | P2 | S1 static scan is historical and will not pass on this tree. That is the intended transition. |
-| P3 | The 200% font pass used Playwright `bypassCSP` so the test could set the root font. Default-font passes used the served markup, whose CSP allows only the nonced style. |
 
 ## Ownership
 

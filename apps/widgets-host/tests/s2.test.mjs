@@ -15,6 +15,7 @@ import {
   parseExport,
   parseMessage,
   selectionFromPlan,
+  startProductionShell,
 } from '../lib/host-runtime.mjs'
 import { clientPlan, planFromFrozen, productionPlanForClient } from '../lib/production-wire.mjs'
 import { PRODUCTION_REGISTRY, productionSelection } from '../lib/registry.mjs'
@@ -407,6 +408,119 @@ test('one parent decision grants once and a new challenge retires the frame', ()
   assert.equal(fixture.onMessage(ready('c'.repeat(64), 4)).reason, 'lifecycle')
   assert.equal(iframe.removed, true)
   assert.equal(posted.length, 2)
+})
+
+test('a recycled decision or a spent challenge is not granted again', () => {
+  const iframe = { contentWindow: { id: 'child' }, removed: false, remove() { this.removed = true } }
+  const posted = []
+  let decision = 7
+  const fixture = createParentFixture({
+    provider: 'discovercars',
+    childOrigin: CHILD_ORIGIN,
+    iframe,
+    parentGeneration: 7,
+    currentDecision: () => decision,
+    policyId: 'reviewed-synthetic',
+    artifactSha256: DISCOVER_SHA,
+    allowsGrant: () => true,
+    postToChild(message) { posted.push(message) },
+  })
+  const ready = (challenge, frameGeneration) => ({
+    origin: CHILD_ORIGIN,
+    source: iframe.contentWindow,
+    data: {
+      type: 'jetnity-widget-host',
+      revision: 1,
+      kind: 'ready',
+      provider: 'discovercars',
+      challenge,
+      frameGeneration,
+    },
+  })
+  assert.equal(fixture.onMessage(ready(CHALLENGE, 1)).grant.parentGeneration, 7)
+  decision = 8
+  assert.equal(fixture.onMessage(ready(CHALLENGE, 1)).reason, 'challenge')
+  assert.equal(fixture.onMessage(ready('e'.repeat(64), 2)).grant.parentGeneration, 8)
+  decision = 7
+  assert.equal(fixture.onMessage(ready('f'.repeat(64), 3)).reason, 'decision')
+  assert.deepEqual(posted.map((message) => message.parentGeneration), [7, 8])
+  assert.equal(iframe.removed, false)
+})
+
+test('bootstrap status names inactive, requested, denied and inserted states', () => {
+  const status = { textContent: '' }
+  const body = { children: [], appendChild(child) { this.children.push(child) } }
+  const parent = { id: 'parent' }
+  const listeners = []
+  let readyMessage = null
+  parent.postMessage = (message) => { readyMessage = message }
+  const previousWindow = globalThis.window
+  const previousDocument = globalThis.document
+  globalThis.document = {
+    body,
+    getElementById: () => status,
+    createElement(tag) { return { tag, attrs: [], children: [], setAttribute(name, value) { this.attrs.push([name, value]) }, appendChild(child) { this.children.push(child) } } },
+    createTextNode(value) { return { text: value } },
+  }
+  globalThis.window = {
+    location: { origin: CHILD_ORIGIN, pathname: '/embed/discovercars' },
+    parent,
+    addEventListener(_type, handler) { listeners.push(handler) },
+  }
+  try {
+    const canary = parseExport('discovercars', '<div><script id="canary" src="https://canary.test/once.js" data-canary="1"></script></div>')
+    const plan = {
+      selected: true,
+      provider: 'discovercars',
+      policyId: 'synthetic-canary',
+      artifactSha256: 'b'.repeat(64),
+      childOrigin: CHILD_ORIGIN,
+      parentOrigin: PARENT_ORIGIN,
+      protocolRevision: 1,
+      nodes: canary.nodes,
+    }
+    startProductionShell({ provider: 'discovercars', childOrigin: CHILD_ORIGIN, parentOrigin: PARENT_ORIGIN, plan })
+    assert.equal(status.textContent, 'Eine Freigabe wurde angefragt. Es ist noch kein Anbieter geladen.')
+    listeners[0]({
+      source: parent,
+      origin: PARENT_ORIGIN,
+      data: {
+        type: 'jetnity-widget-host',
+        revision: 1,
+        kind: 'grant',
+        provider: 'discovercars',
+        challenge: readyMessage.challenge,
+        frameGeneration: 1,
+        parentGeneration: 1,
+        policyId: 'synthetic-canary',
+        artifactSha256: 'b'.repeat(64),
+      },
+    })
+    assert.equal(status.textContent, 'Ein Skript wurde eingefügt. Das belegt kein funktionierendes Anbieterformular.')
+    assert.equal(body.children.length, 1)
+    listeners.length = 0
+    body.children.length = 0
+    startProductionShell({ provider: 'discovercars', childOrigin: CHILD_ORIGIN, parentOrigin: PARENT_ORIGIN, plan: null })
+    listeners[0]({
+      source: parent,
+      origin: PARENT_ORIGIN,
+      data: {
+        type: 'jetnity-widget-host',
+        revision: 1,
+        kind: 'grant',
+        provider: 'discovercars',
+        challenge: readyMessage.challenge,
+        frameGeneration: 1,
+        parentGeneration: 1,
+        policyId: 'synthetic-canary',
+        artifactSha256: 'b'.repeat(64),
+      },
+    })
+    assert.equal(status.textContent, 'Die Freigabe wurde abgelehnt. Es ist kein Anbieter geladen.')
+  } finally {
+    globalThis.window = previousWindow
+    globalThis.document = previousDocument
+  }
 })
 
 test('a pending parent intent times out by removing the frame', () => {

@@ -4,7 +4,7 @@
   "seed": "640efc7f7d784905e5a479f9c3e66c0aaceb7638",
   "base": "b7ebc399b92303eacda9afdaa1786f245492051f",
   "commands": [
-    {"command": "npm test", "cwd": "apps/widgets-host", "result": "13 pass / 0 fail after R1"},
+    {"command": "npm test", "cwd": "apps/widgets-host", "result": "15 pass / 0 fail after R2"},
     {"command": "npm run typecheck", "cwd": "apps/widgets-host", "result": "exit 0"},
     {"command": "npm run build", "cwd": "apps/widgets-host", "result": "Next.js 16.4.1 Turbopack success"},
     {"command": "node scripts/widgets-host-s2/synthetic-http.mjs", "result": "14/14 closed on loopback, including spoofed Host"},
