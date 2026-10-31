@@ -28,16 +28,18 @@ S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allow
 
 R4 adds `bodyReason` to that same record. It is set only for a destinations `malformed_response`, and only to `size_limit`, `body_unreadable`, `empty_json`, `non_json_media_type`, `invalid_json`, or `unknown`. The logger drops the field unless the class is `transport_body` and the value is one of those six. The consumed one-shot on `f644dbd3` (receipt 6543514153) already showed `transport_body` / `malformed_response` / status 200 and then the OFF rollback on `dpl_CmSbFCagWWnY4X9LAjUhhxf6L4fB`. That response was not given a body subtype. This mapping does not replay it, does not raise the 1 MiB body cap, and does not change `parse` away from JSON. The older 13:52:42.953Z log remains a separate historical line without this field.
 
+R5 gives destinations its own executor at the existing shared maximum of 2,097,152 bytes. The other four operations stay on the 1,048,576 default, including after a destinations call on the same client. The second consumed one-shot on `3902827c` (receipt 6545868589) was `size_limit`, then OFF `dpl_98f8RDHYJgeWg6zWPoqVLpxFe2eD`. That does not show that the live catalog fits in 2 MiB. `anbinden.ts` and the seven-field log contract were not changed.
+
 ## Product codes and option truth
 
-S2 R3, review 5722552523. One Viator predicate accepts `2855KENNEDY_TKTS` and `2050_PA` on content, request, schedule, check, and affiliate paths. Unsafe path, query, fragment, encoding, and length stay out. Untitled or malformed `productOptions` stay unresolved. They do not become a standard product, and the live check does not run. `productOptionCode` is omitted only when the provider sent no option list. The original product URL is unchanged. The R3 task amendment is unchanged. `origin/main` `b7ebc399b92303eacda9afdaa1786f245492051f` was merged without rebase. Route and White/Mint files were left as main wrote them. The hosted destinations failure stays unclassified. No provider call.
+S2 R3, review 5722552523. One Viator predicate accepts `2855KENNEDY_TKTS` and `2050_PA` on content, request, schedule, check, and affiliate paths. Unsafe path, query, fragment, encoding, and length stay out. Untitled or malformed `productOptions` stay unresolved. They do not become a standard product, and the live check does not run. `productOptionCode` is omitted only when the provider sent no option list. The original product URL is unchanged. The R3 task amendment is unchanged. `origin/main` `b7ebc399b92303eacda9afdaa1786f245492051f` was merged without rebase. Route and White/Mint files were left as main wrote them. The later destinations witness is the R5 note above. No provider call was made for this handoff.
 
 The local browser harness now loads `globals.css`, `white-mint.css`, `workspace.css`, and `workspace-surfaces.css` in that order and mounts the light `workspace-shell` / `workspace-page` / `workspace-content` ancestors around the same `main`. A computed document background of `rgb(247, 252, 249)` and `color-scheme: light` on the shell are the local witness. That is not hosted or device acceptance. Older rectangle measurements used only `globals.css` and a bare `main`.
 
 ## Still blocked
 
-The one approved destinations search is consumed. No further provider call is authorized. Image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff remain open. The live body subtype is still unknown. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
+Both approved destinations searches are consumed. No further provider call is authorized. Image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff remain open. The live catalog's size and JSON validity are still unknown. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
 
 ## Next step
 
-Independent review of the R4 head. CI 41198906310 and Preview for `f644dbd3` do not cover it. Do not start a follow-up slice and do not call Viator again from this result.
+Independent review of the R5 head. CI 41203662843 covers `3902827c` only. Do not start a follow-up slice and do not call Viator again from this result.

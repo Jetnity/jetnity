@@ -1,10 +1,12 @@
 # Viator S2 native activities — REPORT
 
-31 October 2026, Europe/Zurich. Status: **partially finished**. The consumed Sandbox witness and the verified OFF rollback stand. This commit is an offline diagnostic correction, not a hosted Sandbox pass. Exact-head CI for this commit is not claimed in this file.
+31 October 2026, Europe/Zurich. Status: **partially finished**. The second consumed Sandbox witness was `size_limit`, and the OFF rollback is verified. This commit raises only the destinations read to the existing 2,097,152-byte maximum. It is not proof the live catalog fits, and it is not a hosted Sandbox pass. Exact-head CI for this commit is not claimed in this file.
 
 ## Umgesetzt
 
-R4 maps the five fixed destinations body messages to a closed `bodyReason` and logs only that enum. The consumed one-shot on `f644dbd3` remains `transport_body` / `malformed_response` / status 200, with the body subtype unknown. Rollback to flags false was already verified. Search and detail do not receive the field. The 1 MiB body cap and JSON parsing stay as they were.
+R5 selects a destinations-only executor with private `maxBodyBytes` 2,097,152. Search, detail, schedule, and check keep the 1,048,576 default on the same client. The consumed call on `3902827c` remains `transport_body` / `malformed_response` / `size_limit`. OFF `dpl_98f8RDHYJgeWg6zWPoqVLpxFe2eD` is that rollback. The logger and `anbinden.ts` are unchanged.
+
+R4 maps the five fixed destinations body messages to a closed `bodyReason` and logs only that enum. The earlier one-shot on `f644dbd3` did not carry a body subtype. Search and detail do not receive the field.
 
 S2 R3 accepts official underscore product codes on all five paths and stops untitled options from being treated as a standard product. The preview/development guard, logging isolation, and the earlier identity, reader, and UI fixes stay in place. `origin/main` `b7ebc399` was merged; route and White/Mint work was not rewritten.
 
@@ -12,7 +14,7 @@ Destination resolution walks the COUNTRY ancestor and compares its name with Jet
 
 ## Dateien
 
-`lib/providers/viator/activities/sandbox.ts`, `anbinden.ts`, `sandbox.test.ts`, and `s2.test.ts`. The four S2 continuity docs. The R4 task amendment was not edited. Shared transport, UI, CSS, workflows, route, White/Mint, Auth, database, environment, and packages were not edited by this correction.
+`lib/providers/viator/activities/sandbox.ts`, `sandbox.test.ts`, and `s2.test.ts`. The four S2 continuity docs. The R5 task amendment was not edited. `anbinden.ts`, shared transport, UI, CSS, workflows, route, White/Mint, Auth, database, environment, and packages were not edited by this correction.
 
 ## Datenbank
 
@@ -20,7 +22,7 @@ None.
 
 ## Tests
 
-`lib/providers/viator/activities/s2.test.ts` and `sandbox.test.ts`: 21 tests, 0 failures. Injected streams covered announced and streamed oversize, a throwing stream, abort, empty and whitespace bodies, non-JSON media type, invalid JSON, status 99 as `unknown`, catalog schema with `bodyReason` null, a valid catalog with no diagnostic event, and forged enum values dropped at the logger. Each failure was one destinations call. Guest status stayed `error` and the guest message stayed `Die Viator-Ziele konnten nicht gelesen werden.` `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. Export check reported 0 unused exports. The earlier local stylesheet witness remains the R3.1 result on `f644dbd3` and was not re-run.
+`lib/providers/viator/activities/s2.test.ts` and `sandbox.test.ts`: 23 tests, 0 failures. A valid catalog of 1,048,577 bytes and an exact 2,097,152-byte catalog were read. At 2,097,153 bytes, announced length, a missing length, and a falsely small length each cancelled once and stayed `size_limit`. Search, detail, schedule, and check still reject 1,048,577 after that large destinations read. A canonical Portugal country does not select the Portugal city and does not call products/search. The earlier canary, guest message, throwing sink, and guard cases still pass. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. Export check reported 0 unused exports.
 
 ## Build
 
@@ -40,7 +42,7 @@ This report and the S2 STATUS, HANDOFF, and SELF_REVIEW. `docs/ACTIVE_WORK_STATU
 
 ## Offene Punkte
 
-The live body subtype, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for this commit. The one-shot budget is spent. CI 41198906310 covers `f644dbd3` only. DiscoverCars stays with its own owner.
+Whether the live catalog fits in 2,097,152 bytes, image license, checkout currency, hosted acceptance, VoiceOver, full browser zoom, and exact-head CI for this commit. Both one-shot budgets are spent. CI 41203662843 covers `3902827c` only. DiscoverCars stays with its own owner.
 
 ## Risiken
 
@@ -48,4 +50,4 @@ Green fixture tests are not live Viator proof. A display currency in the check i
 
 ## Empfehlung
 
-Technical Lead reviews the pushed R4 head. Do not Ready, merge, or call Viator again from this diagnostic.
+Technical Lead reviews the pushed R5 head. Do not Ready, merge, or call Viator again from this budget change.

@@ -537,9 +537,9 @@ describe('Viator native seam', () => {
       return { http, calls }
     }
     try {
-      const angekuendigt = httpMit(textStrom('CANARY-SIZE-ANNOUNCED'), { contentLength: '1048577' })
+      const angekuendigt = httpMit(textStrom('CANARY-SIZE-ANNOUNCED'), { contentLength: '2097153' })
       await pruefen('announced-size', angekuendigt.http, angekuendigt.calls, 'size_limit', 'transport_body', 'CANARY-SIZE-ANNOUNCED')
-      const zuGross = new Uint8Array(1_048_577)
+      const zuGross = new Uint8Array(2_097_153)
       zuGross.set(new TextEncoder().encode('CANARY-SIZE-STREAM'), 0)
       const gestreamt = httpMit(
         new ReadableStream({
@@ -624,6 +624,97 @@ describe('Viator native seam', () => {
       assert.equal(protokoll.includes('CANARY-ENUM'), false)
       assert.equal(protokoll.includes('size_limit CANARY-ENUM'), false)
       for (const satz of rohSaetze) assert.equal(protokoll.includes(satz), false)
+    } finally {
+      console.error = vorher
+      viatorZielCacheLeeren()
+    }
+  })
+
+  test('a canonical country does not select a same-name city from a catalog above 1MiB', async () => {
+    viatorZielCacheLeeren()
+    activityRateLeeren()
+    const ziele = [
+      { destinationId: 55, name: 'Portugal', type: 'COUNTRY', parentDestinationId: null },
+      { destinationId: 556, name: 'Portugal', type: 'CITY', parentDestinationId: 55, center: { latitude: 38.72, longitude: -9.14 } },
+    ]
+    const basis = JSON.stringify({ destinations: ziele, pad: '' })
+    const zielBytes = 1_048_577
+    const fehlend = zielBytes - new TextEncoder().encode(basis).byteLength
+    assert.equal(fehlend > 0, true)
+    const bytes = new TextEncoder().encode(JSON.stringify({ destinations: ziele, pad: 'a'.repeat(fehlend) }))
+    assert.equal(bytes.byteLength, zielBytes)
+    const aufrufe: string[] = []
+    const http: ProviderHttpClient = async (request) => {
+      aufrufe.push(request.url)
+      return {
+        status: 200,
+        headers: {
+          get: (name: string) => {
+            const feld = name.toLowerCase()
+            if (feld === 'content-type') return 'application/json'
+            if (feld === 'content-length') return String(bytes.byteLength)
+            return null
+          },
+        },
+        body: new ReadableStream({
+          start(controller) {
+            controller.enqueue(bytes)
+            controller.close()
+          },
+        }),
+      }
+    }
+    const portugal: Ort = {
+      id: 'geonames:2264397',
+      source: 'geonames',
+      sourceId: '2264397',
+      name: 'Portugal',
+      typ: 'country',
+      country: 'Portugal',
+      countryCode: 'PT',
+      region: null,
+      lat: 39.5,
+      lon: -8,
+      iata: null,
+      keywords: null,
+    }
+    const zeilen: string[] = []
+    const vorher = console.error
+    console.error = (...teile: unknown[]) => {
+      zeilen.push(teile.map((teil) => (typeof teil === 'string' ? teil : JSON.stringify(teil))).join(' '))
+    }
+    try {
+      const provider = viatorActivityProvider({ env, http, nowMs: NOW })
+      assert.ok(provider)
+      const gast = await activitiesSuchen(
+        {
+          stage: { id: 'stage-pt', name: 'Portugal', placeId: portugal.id, countryCode: 'PT', latitude: 39.5, longitude: -8 },
+          day: { id: 'day-pt', dayDate: '2026-11-02', stageId: 'stage-pt' },
+          trip: {
+            startDate: '2026-11-02',
+            endDate: '2026-11-05',
+            travellers: 2,
+            currency: 'CHF',
+            budgetAmount: null,
+            interests: [],
+            pace: 'balanced',
+          },
+          items: [],
+        },
+        {
+          zustand: activityZustand({ JETNITY_ACTIVITY_AKTIV: 'true' }, true),
+          provider,
+          kennung: 'viator-r5-country',
+          ortLesen: (id: string) => (id === portugal.id ? portugal : null),
+        },
+      )
+      assert.equal(gast.koerper.status, 'invalid')
+      assert.equal(gast.koerper.message, 'Für diesen Ort ist kein eindeutiges Viator-Ziel hinterlegt.')
+      assert.deepEqual(aufrufe, [ZIELE])
+      assert.equal(zeilen.some((zeile) => zeile.includes('viator_ziel_fehlgeschlagen')), false)
+      const text = JSON.stringify(gast)
+      assert.equal(text.includes('a'.repeat(80)), false)
+      assert.equal(text.includes('size_limit'), false)
     } finally {
       console.error = vorher
       viatorZielCacheLeeren()

@@ -42,6 +42,8 @@ export const VIATOR_BODY_REASONS: readonly ViatorBodyReason[] = [
   'unknown',
 ]
 
+const VIATOR_ZIEL_BODY_BYTES = 2_097_152
+
 const VIATOR_BODY_NACHRICHTEN: Record<string, ViatorBodyReason> = {
   'Provider response exceeded the body size limit.': 'size_limit',
   'Provider response body could not be read.': 'body_unreadable',
@@ -93,20 +95,27 @@ export function createViatorSandboxClient(options: {
   const key = options.env.VIATOR_SANDBOX_API_KEY
   if (!key) return { ok: false, reason: 'missing_key' }
 
-  const executor = createProviderTransportExecutor({
+  const wiederholung = {
+    maxAttempts: 1,
+    baseDelayMs: 0,
+    maxDelayMs: 0,
+    jitter: 'none' as const,
+    retryOn429: false,
+    retry5xx: false,
+    retryNetworkErrors: false,
+  }
+  const standard = createProviderTransportExecutor({
     http: options.http,
     timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
-    retry: {
-      maxAttempts: 1,
-      baseDelayMs: 0,
-      maxDelayMs: 0,
-      jitter: 'none',
-      retryOn429: false,
-      retry5xx: false,
-      retryNetworkErrors: false,
-    },
+    retry: wiederholung,
   })
-  if (!executor.ok) return { ok: false, reason: 'invalid_configuration' }
+  const ziele = createProviderTransportExecutor({
+    http: options.http,
+    timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
+    retry: wiederholung,
+    maxBodyBytes: VIATOR_ZIEL_BODY_BYTES,
+  })
+  if (!standard.ok || !ziele.ok) return { ok: false, reason: 'invalid_configuration' }
 
   const nowMs = () => (options.nowMs == null ? Date.now() : options.nowMs)
 
@@ -114,7 +123,8 @@ export function createViatorSandboxClient(options: {
     const built = buildViatorSandboxCall(operation, input)
     if (!built.ok) return { ok: false as const, reason: built.reason }
     if (built.call.method === 'POST' && !built.call.body) return { ok: false as const, reason: 'malformed_request' }
-    const transport = await executor.executor.execute({
+    const gewaehlt = operation === 'destinations' ? ziele : standard
+    const transport = await gewaehlt.executor.execute({
       providerId: VIATOR_PROVIDER_ID,
       operationId: built.call.operation,
       method: built.call.method,
