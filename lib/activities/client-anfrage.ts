@@ -7,7 +7,7 @@
 //
 // Frei von Next.
 
-import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
+import { viatorVerweiseAusRoh, type ActivityOptionSichtbar, type ActivitySucheAntwort } from '@/lib/activities/client-sicht'
 import { clientEnthaeltGeheimnis } from '@/lib/activities/client-sicht'
 import {
   ACTIVITY_ABDECKUNGSHINWEIS,
@@ -188,12 +188,14 @@ export function activitySucheAntwortLesen(wert: unknown, httpStatus: number): Ac
   const meldungAktiv = roh.message === undefined ? STANDARD_MELDUNG[roh.status] : meldungLesen(roh.message)
   const hinweisAktiv = roh.coverageNote === undefined ? ACTIVITY_ABDECKUNGSHINWEIS : hinweisPruefen(roh.coverageNote)
   if (!evidenz || !options || !meldungAktiv || !hinweisAktiv) return ungueltigeAktiveAntwort()
+  const viatorVerweise = viatorVerweiseAusRoh(roh.viatorVerweise, options)
   return {
     status: roh.status,
     message: meldungAktiv,
     coverageNote: hinweisAktiv,
     evidenz,
     options,
+    ...(viatorVerweise.length > 0 ? { viatorVerweise } : {}),
   }
 }
 

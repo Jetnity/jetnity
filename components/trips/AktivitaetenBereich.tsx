@@ -17,6 +17,7 @@ import { activitySucheEingabeAusReise } from '@/lib/activities/tageskontext'
 import {
   activitySuchKontextSchluessel,
   leeresUebernahmeRegister,
+  activityOptionFuerUebernahme,
   optionInhaltSchluessel,
   optionSchreibIdentitaet,
   suchAntwortAnwenden,
@@ -38,8 +39,8 @@ import {
   type UebernahmeRegister,
 } from '@/lib/activities/suchlebenszyklus'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
-import { ScrollRow } from '@/components/ui/scroll-row'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
@@ -83,20 +84,24 @@ function istAbbruch(fehler: unknown): boolean {
 
 function BeobachteteKarte({
   option,
+  verweis,
   laeuft,
   onUebernehmen,
+  onPruefen,
   onUebernahmeBeobachten,
 }: {
   option: ActivityOptionSichtbar
+  verweis?: { productUrl: string } | null
   laeuft: boolean
   onUebernehmen?: () => void
+  onPruefen?: () => void
   onUebernahmeBeobachten?: (aufnahme: { id: string; ausloesen: () => void }) => void
 }) {
   React.useEffect(() => {
     if (!onUebernehmen || !onUebernahmeBeobachten) return
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
-  return <AktivitaetKarte option={option} laeuft={laeuft} onUebernehmen={onUebernehmen} />
+  return <AktivitaetKarte option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
 }
 
 function SuchKontext({
@@ -110,25 +115,25 @@ function SuchKontext({
 }) {
   const datum = tag?.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : 'Datum noch offen'
   return (
-    <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm">
-      <div className="col-span-2 min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
+    <dl className="mt-4 grid min-w-0 grid-cols-1 gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm sm:grid-cols-2">
+      <div className="min-w-0 sm:col-span-2">
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</dt>
         <dd className="mt-1 break-words text-ink-800">{etappe?.name.trim() || 'Zielort fehlt'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisetag</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisetag</dt>
         <dd className="mt-1 break-words text-ink-800">{tag ? tagTitel(tag) : 'Tag fehlt'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Datum</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Datum</dt>
         <dd className="mt-1 break-words text-ink-800">{tag ? datum : 'Datum noch offen'}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisende</dt>
-        <dd className="mt-1 text-ink-800">{reise.travellers}</dd>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Reisende</dt>
+        <dd className="mt-1 break-words text-ink-800">{reise.travellers}</dd>
       </div>
       <div className="min-w-0">
-        <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Währung</dt>
+        <dt className="break-words text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Währung</dt>
         <dd className="mt-1 break-words text-ink-800">{reise.currency}</dd>
       </div>
     </dl>
@@ -173,7 +178,7 @@ export default function AktivitaetenBereich({
       <section
         aria-label="Aktivitäten"
         data-organisieren-flaeche="suche"
-        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-[12px] sm:!p-5')}
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
@@ -224,7 +229,11 @@ function ActivityTag({
   const etappe = tag ? etappeFuer(reise, tag) : null
   const eingabe = React.useMemo(() => {
     if (!tag || !etappe || !etappe.name.trim()) return null
-    return activitySucheEingabeAusReise(reise, etappe, tag)
+    const basis = activitySucheEingabeAusReise(reise, etappe, tag)
+    return {
+      ...basis,
+      stage: { ...basis.stage, countryCode: etappe.countryCode },
+    }
   }, [reise, etappe, tag])
   const anfrageSchluessel = eingabe ? JSON.stringify(eingabe) : ''
   const kontext = activitySuchKontextSchluessel({
@@ -250,6 +259,8 @@ function ActivityTag({
     }
   }, [angezeigt.epoche])
 
+  const [viatorWahl, setViatorWahl] = React.useState<{ kontext: string; code: string } | null>(null)
+  const viatorCode = viatorWahl?.kontext === kontext ? viatorWahl.code : null
   const [register, setRegister] = React.useState<UebernahmeRegister>(leeresUebernahmeRegister)
   const registerRef = React.useRef(register)
   const seqRef = React.useRef(0)
@@ -269,6 +280,7 @@ function ActivityTag({
     if (!eingabe || !tag || !etappe) return
     const entscheid = suchDispatch(laufRef.current)
     if (!entscheid.angenommen) return
+    setViatorWahl(null)
     laufRef.current = entscheid.lauf
     setLauf(entscheid.lauf)
     abortRef.current?.abort()
@@ -310,7 +322,7 @@ function ActivityTag({
     void (async () => {
       let wert: unknown = undefined
       try {
-        wert = await onUebernehmen(etappeFest, tagFest, option)
+        wert = await onUebernehmen(etappeFest, tagFest, activityOptionFuerUebernahme(option))
       } catch {
         wert = undefined
       } finally {
@@ -380,7 +392,7 @@ function ActivityTag({
     <section
       aria-label="Aktivitäten"
       data-organisieren-flaeche="suche"
-      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
+      className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative min-w-0 !p-[12px] sm:!p-5')}
     >
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
@@ -399,38 +411,24 @@ function ActivityTag({
 
       {tag ? <SuchKontext reise={reise} etappe={etappe} tag={tag} /> : null}
 
-      <div className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
-        <p id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
-          Reisetag
-        </p>
-        <ScrollRow
-          label="Reisetage"
-          className="mt-2"
-          fadeFromClassName="from-white"
-          viewportClassName="gap-2 pb-1"
-          aria-labelledby="activity-tag-label"
-        >
-          {reise.days.map((eintrag) => {
-            const gewaehlt = tag?.id === eintrag.id
-            return (
-              <button
-                key={eintrag.id}
-                type="button"
-                role="radio"
-                aria-checked={gewaehlt}
-                onClick={() => onTagWechseln(eintrag.id)}
-                className={cn(
-                  'inline-flex min-h-11 max-w-[14rem] shrink-0 items-center rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                  gewaehlt
-                    ? 'border-brand-800 bg-brand-800 text-white'
-                    : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                )}
-              >
-                <span className="min-w-0 break-words">{tagTitel(eintrag)}</span>
-              </button>
-            )
-          })}
-        </ScrollRow>
+      <div className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-[12px] py-[12px]">
+        <label className="grid min-w-0 gap-1 text-sm text-ink-800" htmlFor="activity-day-select">
+          <span id="activity-tag-label" className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
+            Reisetag
+          </span>
+          <select
+            id="activity-day-select"
+            value={tag?.id ?? ''}
+            onChange={(event) => onTagWechseln(event.target.value)}
+            className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 bg-white px-[12px] text-sm text-ink-900"
+          >
+            {reise.days.map((eintrag) => (
+              <option key={eintrag.id} value={eintrag.id}>
+                {tagTitel(eintrag)}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {kannSuchen ? (
@@ -536,8 +534,14 @@ function ActivityTag({
                     <li key={`${angezeigt.generation ?? 0}:${inhalt}`} className="min-w-0">
                       <BeobachteteKarte
                         option={option}
+                        verweis={antwort.viatorVerweise?.find((eintrag) => eintrag.externalRef === option.externalRef) ?? null}
                         laeuft={gesperrt}
                         onUebernehmen={ausloesen}
+                        onPruefen={
+                          option.provider === 'viator'
+                            ? () => setViatorWahl({ kontext, code: option.externalRef })
+                            : undefined
+                        }
                         onUebernahmeBeobachten={onUebernahmeBeobachten}
                       />
                       {hinweisSicht.jeKarte[schluessel] ? (
@@ -559,6 +563,15 @@ function ActivityTag({
                 })}
               </ol>
             )}
+
+            {viatorCode ? (
+              <ViatorPruefung
+                key={`${kontext}:${viatorCode}`}
+                productCode={viatorCode}
+                dayDate={tag?.dayDate ?? null}
+                gewuenschteWaehrung={reise.currency}
+              />
+            ) : null}
 
             {anzeige.abdeckung ? (
               <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>
