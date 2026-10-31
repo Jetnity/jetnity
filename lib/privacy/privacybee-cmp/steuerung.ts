@@ -1,4 +1,6 @@
 // Current CMP snapshot, per-provider intent, and one live local context.
+// A lost category, a bad read, a refusal, or a scope change retires the epoch.
+// A later regrant uses a new epoch. The old token never becomes valid again.
 
 import {
   applyWidgetConsentCommand,
@@ -11,16 +13,28 @@ import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertr
 import { decideBundle, productionPolicy, type BundleDecision, type ProviderIntent, type ReviewedPolicy } from '@/lib/privacy/privacybee-cmp/bundle'
 import { readCmpApi, type CmpRead } from '@/lib/privacy/privacybee-cmp/schnappschuss'
 import { phaseFromRead, type BridgePhase } from '@/lib/privacy/privacybee-cmp/bruecke'
+import { CMP_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
+
+const PROVIDERS = ['discovercars', 'twelvego'] as const satisfies readonly WidgetConsentProviderId[]
+
+export type WorkToken = {
+  readonly providerId: WidgetConsentProviderId
+  readonly epoch: number
+  readonly scopeKey: string
+}
 
 export type LiveContext = {
   readonly providerId: WidgetConsentProviderId
   readonly generation: number
+  readonly epoch: number
+  readonly scopeKey: string
   readonly requiredOptional: readonly string[]
 }
 
 export type ProviderSlot = {
   readonly consent: WidgetConsentState
   readonly intent: ProviderIntent
+  readonly epoch: number
 }
 
 export type CmpControllerState = {
@@ -29,10 +43,11 @@ export type CmpControllerState = {
   readonly revision: number
   readonly slots: Readonly<Record<WidgetConsentProviderId, ProviderSlot>>
   readonly live: LiveContext | null
+  readonly retired: readonly WorkToken[]
 }
 
 function slot(providerId: WidgetConsentProviderId, scopeKey = 'scope-alpha'): ProviderSlot {
-  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none' }
+  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none', epoch: 1 }
 }
 
 export function createController(): CmpControllerState {
@@ -42,13 +57,51 @@ export function createController(): CmpControllerState {
     revision: 0,
     slots: { discovercars: slot('discovercars'), twelvego: slot('twelvego') },
     live: null,
+    retired: [],
   }
 }
 
-function clearLive(state: CmpControllerState, providerId?: WidgetConsentProviderId): CmpControllerState {
-  if (!state.live) return state
-  if (providerId && state.live.providerId !== providerId) return state
-  return { ...state, live: null }
+function sameRead(left: CmpRead, right: CmpRead): boolean {
+  if (left.status !== right.status) return false
+  if (left.status === 'unusable' && right.status === 'unusable') return left.reason === right.reason
+  if (left.status === 'explicit' && right.status === 'explicit') {
+    if (left.optionalSatisfied !== right.optionalSatisfied) return false
+    return CMP_CATEGORIES.every((name) => left.consents[name] === right.consents[name])
+  }
+  return false
+}
+
+function tokenFor(providerId: WidgetConsentProviderId, current: ProviderSlot): WorkToken {
+  return { providerId, epoch: current.epoch, scopeKey: current.consent.scopeKey }
+}
+
+function retire(
+  state: CmpControllerState,
+  providerId: WidgetConsentProviderId,
+  intent: ProviderIntent,
+  previous?: WorkToken,
+): CmpControllerState {
+  const current = state.slots[providerId]
+  const token = previous ?? tokenFor(providerId, current)
+  return {
+    ...state,
+    retired: [...state.retired, token],
+    live: state.live?.providerId === providerId ? null : state.live,
+    slots: {
+      ...state.slots,
+      [providerId]: { ...current, intent, epoch: current.epoch + 1 },
+    },
+  }
+}
+
+function executionOutstanding(state: CmpControllerState, providerId: WidgetConsentProviderId): boolean {
+  return state.live?.providerId === providerId || state.slots[providerId].intent === 'selected'
+}
+
+function snapshotBlocksExecution(read: CmpRead, live: LiveContext | null): boolean {
+  if (read.status !== 'explicit') return true
+  if (live && live.requiredOptional.some((name) => read.consents[name as keyof typeof read.consents] !== true)) return true
+  return read.optionalSatisfied !== true
 }
 
 export function ingestApi(state: CmpControllerState, api: unknown): CmpControllerState {
@@ -59,26 +112,19 @@ export function ingestApi(state: CmpControllerState, api: unknown): CmpControlle
     read = { status: 'unusable', reason: 'malformed' }
   }
   const phase = phaseFromRead(read, false)
-  const previous = state.read.status === 'explicit' ? state.read.consents : null
-  const nextConsents = read.status === 'explicit' ? read.consents : null
-  let changed = phase !== state.phase || read.status !== state.read.status
-  if (previous && nextConsents) {
-    for (const key of Object.keys(nextConsents)) {
-      if (previous[key as keyof typeof previous] !== nextConsents[key as keyof typeof nextConsents]) changed = true
+  const changed = phase !== state.phase || !sameRead(state.read, read)
+  let next: CmpControllerState = changed
+    ? { ...state, phase, read, revision: state.revision + 1 }
+    : state
+  for (const providerId of PROVIDERS) {
+    if (!executionOutstanding(next, providerId)) continue
+    const live = next.live?.providerId === providerId ? next.live : null
+    if (!snapshotBlocksExecution(read, live)) continue
+    if (!changed && next === state) {
+      next = { ...state, phase, read, revision: state.revision + 1 }
     }
+    next = retire(next, providerId, 'withdrawn')
   }
-  let next: CmpControllerState = {
-    ...state,
-    phase,
-    read,
-    revision: changed ? state.revision + 1 : state.revision,
-  }
-  if (!state.live) return next
-  const required = state.live.requiredOptional
-  const lost =
-    read.status !== 'explicit' ||
-    required.some((name) => nextConsents?.[name as keyof typeof nextConsents] !== true)
-  if (lost) next = clearLive(next, state.live.providerId)
   return next
 }
 
@@ -88,42 +134,40 @@ export function dispatchChoice(
   command: WidgetConsentCommand,
 ): CmpControllerState {
   const current = state.slots[providerId]
-  if (command.type !== 'reset_context' && command.generation !== current.consent.generation) return state
+  if (command.generation !== current.consent.generation) return state
   const applied = applyWidgetConsentCommand(current.consent, command)
-  if (!applied.applied && command.type !== 'reset_context') return state
-  const intent = current.intent
-  let next: CmpControllerState = {
+  if (!applied.applied) return state
+  const previous = tokenFor(providerId, current)
+  const next: CmpControllerState = {
     ...state,
-    slots: { ...state.slots, [providerId]: { consent: applied.state, intent } },
+    slots: { ...state.slots, [providerId]: { ...current, consent: applied.state } },
   }
-  if (command.type === 'grant_informative') return next
-  if (command.type === 'refuse' || command.type === 'withdraw') {
-    next = {
-      ...next,
-      slots: { ...next.slots, [providerId]: { consent: applied.state, intent: 'withdrawn' } },
-    }
-    return clearLive(next, providerId)
+  if (command.type === 'grant_informative' || command.type === 'reopen') return next
+  if (command.type === 'refuse' || command.type === 'withdraw' || command.type === 'close') {
+    return retire(next, providerId, 'withdrawn', previous)
   }
-  if (command.type === 'reset_context') {
-    if (applied.event === 'same_scope_ignored') return state
-    next = {
-      ...next,
-      slots: {
-        ...next.slots,
-        [providerId]: { consent: applied.state, intent: 'none' },
-      },
-    }
-    return clearLive(next, providerId)
-  }
+  if (command.type === 'reset_context') return retire(next, providerId, 'none', previous)
   return next
 }
 
 export function selectProvider(state: CmpControllerState, providerId: WidgetConsentProviderId): CmpControllerState {
   const current = state.slots[providerId]
-  return {
-    ...state,
-    slots: { ...state.slots, [providerId]: { ...current, intent: 'selected' } },
+  if (current.intent === 'none') {
+    return { ...state, slots: { ...state.slots, [providerId]: { ...current, intent: 'selected' } } }
   }
+  return retire(state, providerId, 'selected', tokenFor(providerId, current))
+}
+
+export function issueWork(state: CmpControllerState, providerId: WidgetConsentProviderId): WorkToken | null {
+  const current = state.slots[providerId]
+  if (current.intent !== 'selected') return null
+  return tokenFor(providerId, current)
+}
+
+/** Drops a mounted or merely issued execution. A new selection is required afterwards. */
+export function releaseMountedContext(state: CmpControllerState, providerId: WidgetConsentProviderId): CmpControllerState {
+  if (!executionOutstanding(state, providerId)) return state
+  return retire(state, providerId, 'withdrawn')
 }
 
 export function startLocalContext(
@@ -132,21 +176,29 @@ export function startLocalContext(
   policy: ReviewedPolicy | null,
   freshApi: unknown,
   hostname: string | null | undefined,
+  token?: WorkToken | null,
 ): { readonly state: CmpControllerState; readonly created: boolean; readonly decision: BundleDecision } {
   const reread = ingestApi(state, freshApi)
   const slotState = reread.slots[providerId]
+  const tokenFits = Boolean(
+    token &&
+      token.providerId === providerId &&
+      token.epoch === slotState.epoch &&
+      token.scopeKey === slotState.consent.scopeKey &&
+      slotState.intent === 'selected',
+  )
   const consents = reread.read.status === 'explicit' ? reread.read.consents : null
   const decision = decideBundle({
     policy,
     providerId,
     intent: slotState.intent,
-    generation: slotState.consent.generation,
-    expectedGeneration: slotState.consent.generation,
+    generation: slotState.epoch,
+    expectedGeneration: tokenFits ? slotState.epoch : slotState.epoch + 1,
     consents,
     snapshotUsable: reread.read.status === 'explicit',
     hostname,
   })
-  if (!decision.localContext || decision.productionExecute !== false || reread.live) {
+  if (!decision.localContext || reread.live || !tokenFits || !policy || !token) {
     return { state: reread, created: false, decision }
   }
   return {
@@ -155,7 +207,9 @@ export function startLocalContext(
       live: {
         providerId,
         generation: slotState.consent.generation,
-        requiredOptional: policy?.requiredOptional ?? [],
+        epoch: token.epoch,
+        scopeKey: token.scopeKey,
+        requiredOptional: policy.requiredOptional,
       },
     },
     created: true,
@@ -173,10 +227,14 @@ export function productionStart(
   return { state: result.state, created: false, decision: result.decision }
 }
 
-export function acceptPending(
-  state: CmpControllerState,
-  pending: { readonly providerId: WidgetConsentProviderId; readonly generation: number },
-): boolean {
+export function acceptPending(state: CmpControllerState, pending: WorkToken): boolean {
+  const retired = state.retired.some(
+    (token) => token.providerId === pending.providerId && token.epoch === pending.epoch && token.scopeKey === pending.scopeKey,
+  )
+  if (retired) return false
+  const current = state.slots[pending.providerId]
+  if (!current || current.intent !== 'selected') return false
+  if (current.epoch !== pending.epoch || current.consent.scopeKey !== pending.scopeKey) return false
   if (!state.live) return false
-  return state.live.providerId === pending.providerId && state.live.generation === pending.generation
+  return state.live.providerId === pending.providerId && state.live.epoch === pending.epoch && state.live.scopeKey === pending.scopeKey
 }

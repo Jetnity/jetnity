@@ -10,6 +10,13 @@ function ausfuehren(source: string, hostname: string) {
   const listeners: string[] = []
   const sandbox: Record<string, unknown> = {
     location: { hostname },
+    __jetnityOptionalCalls: 0,
+    __jetnityOptionalSawBanner: false,
+    __jetnityOptionalStart() {
+      sandbox.__jetnityOptionalCalls = Number(sandbox.__jetnityOptionalCalls) + 1
+      sandbox.__jetnityOptionalSawBanner = scripts.length > 0
+      return false
+    },
     document: {
       addEventListener(type: string) { listeners.push(type) },
       querySelector() { return null },
@@ -27,8 +34,14 @@ function ausfuehren(source: string, hostname: string) {
   }
   sandbox.window = sandbox
   runInNewContext(source, sandbox)
-  const root = sandbox.__jetnityCmp as { phase?: string; scripts?: number; booted?: number; order?: string }
-  return { scripts, listeners, root }
+  const root = sandbox.__jetnityCmp as {
+    phase?: string
+    scripts?: number
+    booted?: number
+    order?: string
+    optionalAttempt?: string
+  }
+  return { scripts, listeners, root, calls: sandbox.__jetnityOptionalCalls, sawBanner: sandbox.__jetnityOptionalSawBanner }
 }
 
 describe('cmp bootstrap ausfuehrung', () => {
@@ -38,7 +51,11 @@ describe('cmp bootstrap ausfuehrung', () => {
     assert.equal(lauf.scripts.length, 0)
     assert.equal(lauf.root.phase, 'denied')
     assert.equal(lauf.listeners.includes('privacybee:ready'), true)
+    assert.equal(lauf.calls, 1)
+    assert.equal(lauf.root.optionalAttempt, 'blocked')
+    assert.equal(lauf.sawBanner, false)
     assert.equal(text.includes('acceptAll'), false)
+    assert.equal(text.indexOf('__jetnityOptionalStart') < text.indexOf('createElement'), true)
   })
 
   test('Freigabe falsch, Kill aus, und unlizenzierte Hosts bleiben ohne Skript', () => {
@@ -47,7 +64,10 @@ describe('cmp bootstrap ausfuehrung', () => {
     assert.equal(ausfuehren(buildBootstrapSource({ release: true, killDenied: false }), 'widgets.jetnity.com').scripts.length, 0)
     assert.equal(ausfuehren(buildBootstrapSource({ release: true, killDenied: false }), '127.0.0.1').scripts.length, 0)
     const prod = productionBootstrapSource('aus')
-    assert.equal(ausfuehren(prod, 'jetnity.com').scripts.length, 0)
+    const prodLauf = ausfuehren(prod, 'jetnity.com')
+    assert.equal(prodLauf.scripts.length, 0)
+    assert.equal(prodLauf.calls, 1)
+    assert.equal(prodLauf.root.optionalAttempt, 'blocked')
     assert.equal(prod.includes('true===true'), true)
   })
 

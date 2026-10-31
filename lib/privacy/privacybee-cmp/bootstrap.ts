@@ -23,6 +23,8 @@ if(root.booted)return;
 root.booted=1;
 root.phase="denied";
 root.order="deny-before-optional";
+root.optionalAttempt="blocked";
+if(typeof window.__jetnityOptionalStart==="function"&&window.__jetnityOptionalStart()===true){root.optionalAttempt="ran";}
 document.addEventListener("privacybee:ready",function(){root.ready=1});
 document.addEventListener("privacybee:consent-changed",function(){root.changed=1});
 if(${releaseLiteral}!==true)return;

@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { CMP_BANNER_SRC, CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee-cmp/vertrag'
-import { cmpProductionBannerAllowed, killSwitchDeniesCmp, planBannerInsert } from '@/lib/privacy/privacybee-cmp/freigabe'
+import { cmpProductionBannerAllowed, killSwitchDeniesCmp, planBannerInsert, serverReleaseAllowsCmp } from '@/lib/privacy/privacybee-cmp/freigabe'
 
 describe('cmp freigabe', () => {
   test('die Produktionsfreigabe bleibt falsch, auch auf jetnity.com ohne Kill-Switch', () => {
@@ -10,6 +10,16 @@ describe('cmp freigabe', () => {
     assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: null }), false)
     assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: undefined }), false)
     assert.equal(cmpProductionBannerAllowed({ hostname: 'JETNITY.COM' }), false)
+  })
+
+  test('Serverfreigabe prüft Release und Kill-Switch und keinen Host', () => {
+    assert.equal(serverReleaseAllowsCmp(undefined), false)
+    assert.equal(serverReleaseAllowsCmp(null), false)
+    assert.equal(serverReleaseAllowsCmp('aus', true), false)
+    assert.equal(serverReleaseAllowsCmp(' aus ', true), false)
+    assert.equal(serverReleaseAllowsCmp(undefined, true), true)
+    assert.equal(serverReleaseAllowsCmp(null, true), true)
+    assert.equal(serverReleaseAllowsCmp('an', true), true)
   })
 
   test('Kill-Switch aus verweigert, ein fehlender Schalter nicht von sich aus', () => {

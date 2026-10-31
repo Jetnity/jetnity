@@ -31,14 +31,21 @@ export function planBannerInsert(input: {
   return { request: true, src: CMP_BANNER_SRC }
 }
 
+/** Server release and kill switch only. Hostname is a browser check, not a header. */
+export function serverReleaseAllowsCmp(killSwitch: string | null | undefined, release: boolean = CMP_RELEASE_AUTHORIZED): boolean {
+  if (release !== true) return false
+  if (killSwitchDeniesCmp(killSwitch)) return false
+  return true
+}
+
 export function cmpProductionBannerAllowed(input: {
   hostname: string | null | undefined
   killSwitch?: string | null
 }): boolean {
-  const plan = planBannerInsert({
-    release: CMP_RELEASE_AUTHORIZED,
+  if (!serverReleaseAllowsCmp(input.killSwitch)) return false
+  return planBannerInsert({
+    release: true,
     hostname: input.hostname,
     killSwitch: input.killSwitch,
-  })
-  return plan.request === true
+  }).request === true
 }

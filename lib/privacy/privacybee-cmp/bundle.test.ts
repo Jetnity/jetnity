@@ -9,9 +9,12 @@ import {
   createController,
   dispatchChoice,
   ingestApi,
+  issueWork,
   productionStart,
+  releaseMountedContext,
   selectProvider,
   startLocalContext,
+  type WorkToken,
 } from '@/lib/privacy/privacybee-cmp/steuerung'
 
 const POLICY: ReviewedPolicy = Object.freeze({
@@ -38,6 +41,14 @@ function api(analytics = true, explicit = true) {
     getConsent: (category: string) => consents[category as keyof typeof consents],
     hasExplicitConsent: () => explicit,
   }
+}
+
+function bereit() {
+  return selectProvider(ingestApi(createController(), api()), 'discovercars')
+}
+
+function starten(state: ReturnType<typeof bereit>, token: WorkToken | null = issueWork(state, 'discovercars')) {
+  return startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com', token)
 }
 
 describe('cmp entscheidung und steuerung', () => {
@@ -87,69 +98,178 @@ describe('cmp entscheidung und steuerung', () => {
     }).reason, 'host_unlicensed')
   })
 
-  test('Testpolitik erlaubt nur mit Absicht, Snapshot und Host; informative Zustimmung startet nichts', () => {
-    let state = ingestApi(createController(), api(true, true))
-    const erlaubt = decideBundle({
-      policy: POLICY,
+  test('ohne zuvor ausgegebenes Token bleibt der Generationsvergleich keine Tautologie', () => {
+    const state = bereit()
+    const ohneToken = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com')
+    assert.equal(ohneToken.created, false)
+    assert.equal(ohneToken.decision.reason, 'stale_generation')
+    assert.equal(ohneToken.state.live, null)
+    const falsch = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com', {
       providerId: 'discovercars',
-      intent: 'selected',
-      generation: state.slots.discovercars.consent.generation,
-      expectedGeneration: state.slots.discovercars.consent.generation,
-      consents: state.read.status === 'explicit' ? state.read.consents : null,
-      snapshotUsable: true,
-      hostname: 'jetnity.com',
+      epoch: 99,
+      scopeKey: 'scope-alpha',
     })
-    assert.equal(erlaubt.localContext, true)
-    assert.equal(erlaubt.productionExecute, false)
+    assert.equal(falsch.created, false)
+    assert.equal(falsch.decision.reason, 'stale_generation')
+    const prod = productionStart(state, 'discovercars', api(), 'jetnity.com')
+    assert.equal(prod.created, false)
+    assert.equal(prod.decision.reason, 'production_policy_unreviewed')
+    assert.equal(prod.decision.productionExecute, false)
+  })
 
+  test('informative Zustimmung startet nichts und lässt Zwecke unentschieden', () => {
+    let state = ingestApi(createController(), api(true, true))
     const generation = state.slots.discovercars.consent.generation
     state = dispatchChoice(state, 'discovercars', { type: 'grant_informative', generation })
     assert.equal(state.slots.discovercars.consent.informative, 'granted')
+    assert.equal(state.slots.discovercars.consent.purposes.functional_load, 'not_decided')
+    assert.equal(state.slots.discovercars.consent.purposes.advertising_marketing, 'not_decided')
     assert.equal(state.slots.discovercars.intent, 'none')
     assert.equal(state.live, null)
-    const ohneAbsicht = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com')
+    const ohneAbsicht = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com', issueWork(state, 'discovercars'))
     assert.equal(ohneAbsicht.created, false)
-
-    state = selectProvider(state, 'discovercars')
-    const gestartet = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com')
-    assert.equal(gestartet.created, true)
-    assert.equal(gestartet.state.live?.providerId, 'discovercars')
-    const pending = { providerId: 'discovercars' as const, generation: gestartet.state.live!.generation }
-    assert.equal(acceptPending(gestartet.state, pending), true)
-
-    const prod = productionStart(gestartet.state, 'twelvego', api(), 'jetnity.com')
-    assert.equal(prod.created, false)
-    assert.equal(prod.decision.reason, 'production_policy_unreviewed')
+    assert.equal(issueWork(state, 'discovercars'), null)
   })
 
-  test('Kategorieverlust, Entzug und veraltete Arbeit entfernen den Rahmen', () => {
-    let state = selectProvider(ingestApi(createController(), api()), 'discovercars')
-    state = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com').state
-    const pending = { providerId: 'discovercars' as const, generation: state.live!.generation }
+  test('gemerkte Arbeit vor dem iframe stirbt bei Kategorieverlust und bleibt nach Regrant tot', () => {
+    let state = bereit()
+    const pending = issueWork(state, 'discovercars')
+    assert.ok(pending)
+    assert.equal(acceptPending(state, pending), false)
+    state = ingestApi(state, api(false, true))
+    assert.equal(state.slots.discovercars.intent, 'withdrawn')
+    assert.equal(state.live, null)
+    assert.equal(acceptPending(state, pending), false)
+    state = ingestApi(state, api(true, true))
+    const ohneAuswahl = startLocalContext(state, 'discovercars', POLICY, api(true), 'jetnity.com', pending)
+    assert.equal(ohneAuswahl.created, false)
+    assert.equal(ohneAuswahl.state.live, null)
+    state = selectProvider(ohneAuswahl.state, 'discovercars')
+    const neu = issueWork(state, 'discovercars')
+    assert.ok(neu)
+    assert.notEqual(neu.epoch, pending.epoch)
+    const gestartet = starten(state, neu)
+    assert.equal(gestartet.created, true)
+    assert.equal(acceptPending(gestartet.state, pending), false)
+    assert.equal(acceptPending(gestartet.state, neu), true)
+  })
+
+  test('Kategorieverlust, Entzug, Close und veraltete Kommandos setzen die Epoche dauerhaft ausser Kraft', () => {
+    let state = bereit()
+    const token = issueWork(state, 'discovercars')
+    assert.ok(token)
+    state = starten(state, token).state
+    assert.equal(state.live?.epoch, token.epoch)
+    const liveGeneration = state.live?.generation
     const verloren = ingestApi(state, api(false, true))
     assert.equal(verloren.phase, 'ready')
-    assert.equal(verloren.revision > state.revision, true)
     assert.equal(verloren.live, null)
-    assert.equal(acceptPending(verloren, pending), false)
+    assert.equal(verloren.slots.discovercars.intent, 'withdrawn')
+    assert.equal(acceptPending(verloren, token), false)
+    const wiederTrue = ingestApi(verloren, api(true, true))
+    const ohneNeu = starten(wiederTrue, token)
+    assert.equal(ohneNeu.created, false)
+    assert.equal(ohneNeu.state.slots.discovercars.intent, 'withdrawn')
 
-    let neu = selectProvider(ingestApi(createController(), api()), 'discovercars')
-    neu = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com').state
-    const alt = neu.live!.generation
-    neu = dispatchChoice(neu, 'discovercars', { type: 'withdraw', generation: neu.slots.discovercars.consent.generation })
-    assert.equal(neu.live, null)
-    assert.equal(neu.slots.discovercars.intent, 'withdrawn')
-    const wieder = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com')
-    assert.equal(wieder.created, false)
-    neu = selectProvider(neu, 'discovercars')
-    const frisch = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com')
-    assert.equal(frisch.created, true)
-    assert.notEqual(frisch.state.live?.generation, alt)
+    state = selectProvider(ohneNeu.state, 'discovercars')
+    const zweit = issueWork(state, 'discovercars')
+    assert.ok(zweit)
+    state = starten(state, zweit).state
+    assert.equal(acceptPending(state, token), false)
+    assert.equal(acceptPending(state, zweit), true)
+    assert.notEqual(state.live?.epoch, token.epoch)
 
-    const scope = dispatchChoice(frisch.state, 'discovercars', {
+    const vorStale = state
+    const stale = dispatchChoice(state, 'discovercars', { type: 'reset_context', generation: 0, reason: 'reorder' })
+    assert.equal(stale, vorStale)
+    assert.equal(stale.live?.epoch, zweit.epoch)
+    assert.equal(acceptPending(stale, zweit), true)
+
+    const nachGrant = dispatchChoice(stale, 'discovercars', {
+      type: 'grant_informative',
+      generation: stale.slots.discovercars.consent.generation,
+    })
+    assert.equal(nachGrant.live?.epoch, zweit.epoch)
+    assert.notEqual(nachGrant.slots.discovercars.consent.generation, liveGeneration)
+    assert.equal(acceptPending(nachGrant, zweit), true)
+    assert.equal(acceptPending(nachGrant, {
+      providerId: 'discovercars',
+      epoch: nachGrant.slots.discovercars.consent.generation,
+      scopeKey: 'scope-alpha',
+    }), false)
+
+    const geschlossen = dispatchChoice(nachGrant, 'discovercars', {
+      type: 'close',
+      generation: nachGrant.slots.discovercars.consent.generation,
+    })
+    assert.equal(geschlossen.live, null)
+    assert.equal(geschlossen.slots.discovercars.intent, 'withdrawn')
+    assert.equal(acceptPending(geschlossen, zweit), false)
+
+    state = selectProvider(geschlossen, 'discovercars')
+    const dritt = issueWork(state, 'discovercars')
+    assert.ok(dritt)
+    state = starten(state, dritt).state
+    const umsortiert = dispatchChoice(state, 'discovercars', {
       type: 'reset_context',
-      generation: frisch.state.slots.discovercars.consent.generation,
+      generation: state.slots.discovercars.consent.generation,
       reason: 'reorder',
     })
-    assert.equal(scope.live, null)
+    assert.equal(umsortiert.live, null)
+    assert.equal(umsortiert.slots.discovercars.intent, 'none')
+    assert.equal(acceptPending(umsortiert, dritt), false)
+    const gleicherScope = dispatchChoice(state, 'discovercars', {
+      type: 'reset_context',
+      generation: state.slots.discovercars.consent.generation,
+      reason: 'scope_changed',
+      scopeKey: 'scope-alpha',
+    })
+    assert.equal(gleicherScope.live?.epoch, dritt.epoch)
+    const neuerScope = dispatchChoice(state, 'discovercars', {
+      type: 'reset_context',
+      generation: state.slots.discovercars.consent.generation,
+      reason: 'scope_changed',
+      scopeKey: 'scope-beta',
+    })
+    assert.equal(neuerScope.live, null)
+    assert.equal(neuerScope.slots.discovercars.consent.scopeKey, 'scope-beta')
+    assert.equal(neuerScope.slots.discovercars.intent, 'none')
+    assert.equal(acceptPending(neuerScope, dritt), false)
+  })
+
+  test('ungültige API, Ablehnung und Unmount ziehen auch eine noch nicht gerahmte Auswahl ein', () => {
+    let state = bereit()
+    const token = issueWork(state, 'discovercars')
+    assert.ok(token)
+    const kaputt = ingestApi(state, {
+      getAllConsents() { throw new Error('load') },
+      getConsent() { return true },
+      hasExplicitConsent() { return true },
+    })
+    assert.equal(kaputt.phase, 'error')
+    assert.equal(kaputt.slots.discovercars.intent, 'withdrawn')
+    assert.equal(acceptPending(kaputt, token), false)
+    assert.equal(startLocalContext(kaputt, 'discovercars', POLICY, api(), 'jetnity.com', token).created, false)
+
+    state = bereit()
+    const offen = issueWork(state, 'discovercars')
+    assert.ok(offen)
+    state = starten(state, offen).state
+    const abgelehnt = dispatchChoice(state, 'discovercars', {
+      type: 'refuse',
+      generation: state.slots.discovercars.consent.generation,
+    })
+    assert.equal(abgelehnt.live, null)
+    assert.equal(acceptPending(abgelehnt, offen), false)
+
+    state = bereit()
+    const gemerkt = issueWork(state, 'discovercars')
+    assert.ok(gemerkt)
+    const demontiert = releaseMountedContext(state, 'discovercars')
+    assert.equal(demontiert.live, null)
+    assert.equal(demontiert.slots.discovercars.intent, 'withdrawn')
+    assert.equal(acceptPending(demontiert, gemerkt), false)
+    assert.equal(releaseMountedContext(demontiert, 'discovercars'), demontiert)
+    assert.equal(demontiert.slots.twelvego.intent, 'none')
   })
 })

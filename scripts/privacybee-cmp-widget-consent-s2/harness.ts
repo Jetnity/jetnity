@@ -1,4 +1,6 @@
-// Every navigation is routed. Only the licensed banner URL is fulfilled with the local fixture.
+// Every navigation is routed before it starts. The licensed page may receive
+// one local fixture for the official banner URL. Every other foreign request fails.
+// The ledger is checked again after the interactions and the cleanup.
 
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -11,20 +13,36 @@ import { chromium, type Browser, type Page, type Route } from 'playwright'
 import { buildBootstrapSource, productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { CMP_BANNER_SRC } from '@/lib/privacy/privacybee-cmp/vertrag'
 
+declare global {
+  interface Window {
+    __jetnityOptionalCalls?: number
+    __jetnityOptionalSawBanner?: boolean
+    __jetnityCmp?: { optionalAttempt?: string; order?: string; scripts?: number }
+    __jetnityPrefs?: number
+    __jetnitySetAnalytics?: (wert: boolean) => void
+  }
+}
+
 const wurzel = process.cwd()
 const ausgabe = join(tmpdir(), 'privacybee-cmp-widget-consent-s2')
 const beweis = '/opt/cursor/artifacts/privacybee-cmp-widget-consent-s2'
 const esbuild = join(wurzel, 'node_modules/esbuild/bin/esbuild')
 const tailwind = join(wurzel, 'node_modules/tailwindcss/lib/cli.js')
+const whiteMint = readFileSync(join(wurzel, 'styles/white-mint.css'))
 
 const FIXTURE = `
 var analytics=true;
+var backup=null;
 function werte(){return{SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:analytics,AD_STORAGE:true,AD_USER_DATA:true,AD_PERSONALIZATION:true,PERSONALIZATION_STORAGE:true};}
-window.PrivacyBee={
-  getAllConsents:function(){return werte()},
-  getConsent:function(name){return werte()[name]},
-  hasExplicitConsent:function(){return true}
-};
+function api(){
+  return {
+    getAllConsents:function(){return werte()},
+    getConsent:function(name){return werte()[name]},
+    hasExplicitConsent:function(){return true}
+  };
+}
+window.PrivacyBee=api();
+backup=window.PrivacyBee;
 window.__jetnityPrefs=0;
 document.addEventListener('click',function(event){
   var ziel=event.target&&event.target.closest?event.target.closest('.privacybee-display-preferences'):null;
@@ -35,11 +53,23 @@ window.__jetnitySetAnalytics=function(wert){
   analytics=wert;
   document.dispatchEvent(new CustomEvent('privacybee:consent-changed',{detail:{explicitConsent:false,consents:{ANALYTICS_STORAGE:wert}}}));
 };
+window.__jetnityBreak=function(){
+  window.PrivacyBee={
+    getAllConsents:function(){throw new Error('load-error')},
+    getConsent:function(){return true},
+    hasExplicitConsent:function(){return true}
+  };
+  document.dispatchEvent(new CustomEvent('privacybee:consent-changed',{detail:{explicitConsent:false}}));
+};
+window.__jetnityRestore=function(){
+  window.PrivacyBee=backup;
+  document.dispatchEvent(new CustomEvent('privacybee:consent-changed',{detail:{explicitConsent:true}}));
+};
 document.dispatchEvent(new CustomEvent('privacybee:ready',{detail:{categories:['ANALYTICS_STORAGE'],hasExplicitConsent:true}}));
 `
 
 function html(bootstrap: string) {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"></head><body><script>${bootstrap}</script><script>window.__jetnityOptionalCanary=window.__jetnityCmp&&window.__jetnityCmp.order==="deny-before-optional"?"blocked-first":"too-late";</script><div id="cmp-s2-root"></div><script type="module" src="/app.js"></script></body></html>`
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><script>window.__jetnityOptionalCalls=0;window.__jetnityOptionalSawBanner=false;window.__jetnityOptionalStart=function(){window.__jetnityOptionalCalls+=1;window.__jetnityOptionalSawBanner=!!document.querySelector('script[data-jetnity-cmp="banner"]');return false;};</script><script>${bootstrap}</script><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div><script type="module" src="/app.js"></script></body></html>`
 }
 
 function bauen() {
@@ -81,14 +111,26 @@ function anbinden(page: Page, origin: string, body: string, dateien: { css: Buff
     if (ziel === host && url.endsWith('/app.css')) {
       return route.fulfill({ status: 200, contentType: 'text/css; charset=utf-8', body: dateien.css })
     }
+    if (ziel === host && url.endsWith('/white-mint.css')) {
+      return route.fulfill({ status: 200, contentType: 'text/css; charset=utf-8', body: whiteMint })
+    }
     if (ziel === host) return route.fulfill({ status: 204, body: '' })
     fremd.push(url)
     return route.abort()
   })
 }
 
+async function log(page: Page) {
+  return page.locator('#cmp-canary-log').getAttribute('data-canary-log').then((wert) => JSON.parse(wert || '[]') as { epoch: number; scope: string; ok: boolean }[])
+}
+
+async function tokenLesen(page: Page) {
+  return page.evaluate(() => window.__jetnityToken ?? null)
+}
+
 async function main() {
   const fehler: string[] = []
+  const merken = (text: string) => { fehler.push(text) }
   const dateien = bauen()
   const browser = await browserStart()
   const banner: string[] = []
@@ -99,36 +141,149 @@ async function main() {
     await anbinden(page, 'https://jetnity.com', lizenziert, dateien, banner, fremd)
     await page.goto('https://jetnity.com/', { waitUntil: 'networkidle' })
     const frueh = await page.evaluate(() => ({
-      canary: (window as unknown as { __jetnityOptionalCanary?: string }).__jetnityOptionalCanary ?? null,
-      scripts: (window as unknown as { __jetnityCmp?: { scripts?: number } }).__jetnityCmp?.scripts ?? 0,
+      calls: window.__jetnityOptionalCalls ?? 0,
+      saw: window.__jetnityOptionalSawBanner === true,
+      attempt: window.__jetnityCmp?.optionalAttempt ?? null,
+      order: window.__jetnityCmp?.order ?? null,
+      scripts: window.__jetnityCmp?.scripts ?? 0,
     }))
-    if (frueh.canary !== 'blocked-first') fehler.push(`Reihenfolge ${frueh.canary}`)
-    if (banner.length !== 1 || frueh.scripts !== 1) fehler.push(`Banner ${banner.length}/${frueh.scripts}`)
-    if (fremd.length > 0) fehler.push(`Fremd ${fremd.join(',')}`)
+    if (frueh.calls !== 1 || frueh.saw || frueh.attempt !== 'blocked' || frueh.order !== 'deny-before-optional') {
+      merken(`Optionalstart ${JSON.stringify(frueh)}`)
+    }
+    if (banner.length !== 1 || frueh.scripts !== 1) merken(`Banner ${banner.length}/${frueh.scripts}`)
+    const stil = await page.evaluate(() => ({
+      html: getComputedStyle(document.documentElement).backgroundColor,
+      sheets: [...document.querySelectorAll('link[rel="stylesheet"]')].map((node) => (node as HTMLLinkElement).href),
+      home: document.querySelectorAll('[data-white-mint="home"]').length,
+      shell: document.querySelectorAll('.workspace-shell[data-workspace-theme="light"]').length,
+    }))
+    if (!stil.sheets.some((href) => href.endsWith('/white-mint.css')) || !stil.sheets.some((href) => href.endsWith('/app.css'))) {
+      merken(`Styles ${stil.sheets.join(',')}`)
+    }
+    if (stil.home < 1 || stil.shell < 1) merken('Ancestor fehlt')
+    if (stil.html !== 'rgb(247, 252, 249)' && stil.html !== 'rgba(247, 252, 249, 1)') merken(`Mint ${stil.html}`)
+    if (await page.locator('[data-cmp-client="1"]').count() !== 1) merken('Client nicht gemountet')
+    await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     await page.waitForFunction(() => document.querySelector('[data-phase]')?.getAttribute('data-phase') === 'ready')
     await page.locator('[data-cmp-preferences="ready"]').click()
-    const klicks = await page.evaluate(() => (window as unknown as { __jetnityPrefs?: number }).__jetnityPrefs ?? 0)
-    if (klicks !== 1) fehler.push(`Präferenzen ${klicks}`)
+    const klicks = await page.evaluate(() => window.__jetnityPrefs ?? 0)
+    if (klicks !== 1) merken(`Präferenzen ${klicks}`)
     await page.getByRole('button', { name: 'Zustimmen' }).click()
-    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) fehler.push('Informative Zustimmung hat einen Rahmen erzeugt')
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Informative Zustimmung hat einen Rahmen erzeugt')
+    if (await page.locator('[data-effective-vendor-execution="denied"]').count() < 1) merken('Ausführung nicht verweigert')
+
     await page.locator('[data-synthetic="select"]').click()
+    await page.locator('[data-synthetic="remember"]').click()
+    const vorRahmen = await tokenLesen(page)
+    if (!vorRahmen) merken('Token vor dem Rahmen fehlt')
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Rahmen vor dem Start')
+    await page.evaluate(() => window.__jetnitySetAnalytics?.(false))
+    await page.waitForFunction(() => document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
+    await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
+    await page.locator('[data-synthetic="start"]').click()
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Start ohne neue Auswahl hat einen Rahmen erzeugt')
+
+    await page.locator('[data-synthetic="select"]').click()
+    await page.locator('[data-synthetic="remember"]').click()
     await page.locator('[data-synthetic="start"]').click()
     await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
+    const rahmen = page.locator('[data-synthetic-frame="1"]')
+    if (await rahmen.getAttribute('sandbox') !== 'allow-scripts') merken('Canary-Sandbox fehlt')
+    const srcdoc = await rahmen.getAttribute('srcdoc')
+    if (!srcdoc?.includes('parent.postMessage') || srcdoc.includes('privacybee') || srcdoc.includes('http')) merken('Canary-Dokument')
+    await page.waitForFunction(() => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      return JSON.parse(roh).some((eintrag: { ok: boolean }) => eintrag.ok === true)
+    })
+    const erster = await tokenLesen(page)
+    if (!erster) merken('Lebendes Token fehlt')
+    await page.screenshot({ path: join(beweis, '390-canary.png'), fullPage: true })
+    const generation = await page.locator('[data-consent-generation]').getAttribute('data-consent-generation')
+    const epoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
+    await page.locator('[data-synthetic="stale"]').click()
+    if (await page.locator('[data-consent-generation]').getAttribute('data-consent-generation') !== generation) merken('Veralteter Reset verändert die Generation')
+    if (await page.locator('[data-live-epoch]').getAttribute('data-live-epoch') !== epoche) merken('Veralteter Reset verändert die Epoche')
     await page.locator('[data-synthetic="start"]').click()
-    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) fehler.push('Zweiter Start dupliziert')
-    await page.evaluate(() => (window as unknown as { __jetnitySetAnalytics: (wert: boolean) => void }).__jetnitySetAnalytics(false))
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Zweiter Start dupliziert')
+
+    await page.evaluate(() => window.__jetnitySetAnalytics?.(false))
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null)
     await page.screenshot({ path: join(beweis, '390-nach-kategorieverlust.png'), fullPage: true })
+    await page.evaluate((alt) => {
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+    }, erster)
+    await page.waitForFunction(() => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      return JSON.parse(roh).some((eintrag: { ok: boolean }) => eintrag.ok === false)
+    })
+    await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
+    await page.locator('[data-synthetic="select"]').click()
+    await page.locator('[data-synthetic="remember"]').click()
+    await page.locator('[data-synthetic="start"]').click()
+    await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
+    const zweiter = await tokenLesen(page)
+    if (!zweiter || zweiter.epoch === erster?.epoch) merken('Regrant nutzt die alte Epoche')
+    await page.waitForFunction(() => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      const eintraege = JSON.parse(roh) as { epoch: number; ok: boolean }[]
+      return eintraege.some((eintrag) => eintrag.epoch === window.__jetnityToken?.epoch && eintrag.ok)
+    })
+    const vorReplay = (await log(page)).length
+    await page.evaluate((alt) => {
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+    }, erster)
+    await page.waitForFunction((bisher) => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      return JSON.parse(roh).length > bisher
+    }, vorReplay)
+    const nachRegrant = (await log(page)).slice(vorReplay)
+    if (nachRegrant.length === 0 || nachRegrant.some((eintrag) => eintrag.ok)) merken('Alte Epoche nach Regrant akzeptiert')
+
+    await page.locator('[data-synthetic="reorder"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'none')
+    await page.locator('[data-synthetic="select"]').click()
+    await page.locator('[data-synthetic="remember"]').click()
+    await page.locator('[data-synthetic="start"]').click()
+    await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
+    await page.locator('[data-synthetic="scope"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-scope]')?.getAttribute('data-scope') === 'scope-beta' && document.querySelector('[data-synthetic-frame="1"]') === null)
+
+    await page.locator('[data-synthetic="select"]').click()
+    await page.locator('[data-synthetic="remember"]').click()
+    await page.locator('[data-synthetic="start"]').click()
+    await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
+    const vorClose = await tokenLesen(page)
+    await page.getByRole('button', { name: 'Schliessen' }).click()
+    await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
+    await page.evaluate((alt) => {
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+    }, vorClose)
+    await page.locator('[data-synthetic="break"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error')
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Fehlerzustand behält den Rahmen')
+    await page.locator('[data-synthetic="restore"]').click()
+    await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
+    await page.evaluate(() => window.__jetnityUnmount?.())
+    if (await page.locator('[data-cmp-client="1"]').count() !== 0) merken('Unmount lässt den Client stehen')
+    await page.evaluate(() => window.__jetnityRemount?.())
+    await page.waitForFunction(() => document.querySelector('[data-cmp-client="1"]') && document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
+    const laenge = (await log(page)).length
+    await page.evaluate((alt) => {
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+    }, vorClose)
+    await page.waitForFunction((bisher) => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      return JSON.parse(roh).length > bisher
+    }, laenge)
+    const ende = await log(page)
+    if (ende.at(-1)?.ok !== false) merken('Callback nach Unmount akzeptiert')
+    if (fremd.length !== 0) merken(`Fremd vor Cleanup ${fremd.join(',')}`)
     await page.close()
 
     for (const origin of ['https://www.jetnity.com', 'https://widgets.jetnity.com', 'https://jetnity.com.evil.test']) {
       const negativ = await browser.newPage()
-      const lokalBanner: string[] = []
-      const lokalFremd: string[] = []
-      await anbinden(negativ, origin, lizenziert, dateien, lokalBanner, lokalFremd)
+      await anbinden(negativ, origin, lizenziert, dateien, banner, fremd)
       await negativ.goto(`${origin}/`, { waitUntil: 'domcontentloaded' })
-      if (lokalBanner.length !== 0) fehler.push(`${origin} Banner`)
-      if (lokalFremd.length !== 0) fehler.push(`${origin} fremd`)
       await negativ.close()
     }
 
@@ -145,6 +300,11 @@ async function main() {
           antwort.end(dateien.css)
           return
         }
+        if (pfad === '/white-mint.css') {
+          antwort.setHeader('content-type', 'text/css')
+          antwort.end(whiteMint)
+          return
+        }
         antwort.setHeader('content-type', 'text/html')
         antwort.end(html(productionBootstrapSource(undefined)))
       })
@@ -155,18 +315,23 @@ async function main() {
       })
     })
     const geo = await browser.newPage()
-    const geoFremd: string[] = []
-    const geoBanner: string[] = []
     await geo.route('**/*', (route) => {
       const url = route.request().url()
       if (url.startsWith(server.url)) return route.continue()
-      if (url === CMP_BANNER_SRC) geoBanner.push(url)
-      geoFremd.push(url)
+      if (url === CMP_BANNER_SRC) banner.push(url)
+      fremd.push(url)
       return route.abort()
     })
     await geo.goto(server.url, { waitUntil: 'networkidle' })
-    if (geoBanner.length !== 0 || geoFremd.length !== 0) fehler.push(`Geometrie egress ${geoFremd.length}`)
-    if (await geo.locator('[data-cmp-preferences="ready"]').count() !== 0) fehler.push('Unlizenzierte Präferenzen sichtbar')
+    const geoFrueh = await geo.evaluate(() => ({
+      calls: window.__jetnityOptionalCalls ?? 0,
+      attempt: window.__jetnityCmp?.optionalAttempt ?? null,
+      scripts: window.__jetnityCmp?.scripts ?? 0,
+    }))
+    if (geoFrueh.calls !== 1 || geoFrueh.attempt !== 'blocked' || geoFrueh.scripts !== 0) merken(`Geometrie-Optional ${JSON.stringify(geoFrueh)}`)
+    if (await geo.locator('[data-cmp-client="1"]').count() !== 1) merken('Geometrie ohne Client')
+    await geo.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error', undefined, { timeout: 15_000 })
+    if (await geo.locator('[data-cmp-preferences="ready"]').count() !== 0) merken('Unlizenzierte Präferenzen sichtbar')
     const faelle = [
       { name: '320', width: 320, height: 900, schrift: '16px' },
       { name: '390', width: 390, height: 900, schrift: '16px' },
@@ -178,7 +343,7 @@ async function main() {
       await geo.setViewportSize({ width: fall.width, height: fall.height })
       await geo.evaluate((schrift) => { document.documentElement.style.fontSize = schrift }, fall.schrift)
       const ueberlauf = await geo.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-      if (ueberlauf > 1) fehler.push(`${fall.name} Überlauf ${ueberlauf}`)
+      if (ueberlauf > 1) merken(`${fall.name} Überlauf ${ueberlauf}`)
       await geo.screenshot({ path: join(beweis, `${fall.name}.png`), fullPage: true })
     }
     await geo.close()
@@ -186,7 +351,9 @@ async function main() {
   } finally {
     await browser.close()
   }
-  writeFileSync(join(beweis, 'bericht.json'), JSON.stringify({ fehler }, null, 2))
+  if (banner.length !== 1) fehler.push(`Banner gesamt ${banner.length}`)
+  if (fremd.length !== 0) fehler.push(`Fremd nach Cleanup ${fremd.join(',')}`)
+  writeFileSync(join(beweis, 'bericht.json'), JSON.stringify({ fehler, banner: banner.length, fremd }, null, 2))
   if (fehler.length) {
     console.error(fehler.join('\n'))
     process.exit(1)

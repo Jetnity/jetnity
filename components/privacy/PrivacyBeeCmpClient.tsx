@@ -2,37 +2,12 @@
 
 import { useSyncExternalStore } from 'react'
 
-import { attachCmpBridge } from '@/lib/privacy/privacybee-cmp/bruecke'
-import { createController, ingestApi, type CmpControllerState } from '@/lib/privacy/privacybee-cmp/steuerung'
+import { readCmpController, serverCmpSnapshot, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
 
-declare global {
-  interface Window {
-    PrivacyBee?: unknown
-  }
-}
+export { readCmpController, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
 
-let snapshot: CmpControllerState = createController()
-
-function getSnapshot(): CmpControllerState {
-  return snapshot
-}
-
-function getServerSnapshot(): CmpControllerState {
-  return createController()
-}
-
-function subscribe(onChange: () => void) {
-  const bridge = attachCmpBridge(document, () => window.PrivacyBee, () => {
-    snapshot = ingestApi(snapshot, window.PrivacyBee)
-    onChange()
-  })
-  snapshot = ingestApi(snapshot, window.PrivacyBee)
-  void bridge.phase()
-  return () => bridge.stop()
-}
-
-/** Publishes the current snapshot. It does not render a preferences control. */
+/** Mounted reader. Preferences stay on the choice surface, not on this span. */
 export function PrivacyBeeCmpClient() {
-  const stand = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  return <span data-cmp-phase={stand.phase} data-cmp-revision={String(stand.revision)} hidden />
+  const stand = useSyncExternalStore(subscribeCmpController, readCmpController, serverCmpSnapshot)
+  return <span data-cmp-client="1" data-cmp-phase={stand.phase} data-cmp-revision={String(stand.revision)} hidden />
 }
