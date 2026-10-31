@@ -3,8 +3,9 @@
 // components/trips/MietwagenBereich.tsx
 //
 // Mietwagen innerhalb von Mobilität. Bestand zuerst, darunter ehrliche
-// Unavailable-Anzeige ohne automatische Suche, ein optionaler externer
-// DiscoverCars-Link und manuelle Erfassung mit leeren Startwerten.
+// Unavailable-Anzeige ohne automatische Suche, ein inertes DiscoverCars-
+// Suchwidget ohne Anbietercode, der bestehende Affiliate-Link und manuelle
+// Erfassung mit leeren Startwerten.
 // Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
@@ -20,6 +21,7 @@ import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import DiscoverCarsAffiliateLinks from '@/components/trips/DiscoverCarsAffiliateLinks'
+import DiscoverCarsWidgetOptin from '@/components/trips/DiscoverCarsWidgetOptin'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
@@ -161,7 +163,7 @@ export default function MietwagenBereich({
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
-        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words sm:text-2xl">
           Mietwagenangebote
         </h2>
         <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
@@ -170,6 +172,8 @@ export default function MietwagenBereich({
           startet nicht automatisch aus dem Reisekontext.
         </p>
       </section>
+
+      <DiscoverCarsWidgetOptin reiseId={reise.id} />
 
       <DiscoverCarsAffiliateLinks reiseId={reise.id} stationen={reise.stages.length} />
 
