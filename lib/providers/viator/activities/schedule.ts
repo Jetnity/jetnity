@@ -10,8 +10,7 @@ import {
 } from '@/lib/providers/viator/activities/contracts'
 import { asRecord, calendarDate, clockTime } from '@/lib/providers/viator/activities/guard'
 import { readViatorCurrency, readViatorCustomerPrice } from '@/lib/providers/viator/activities/money'
-
-const PRODUCT_CODE = /^[A-Za-z0-9]{2,30}$/
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 const OPTION_CODE = /^[A-Za-z0-9_-]{1,40}$/
 const DAYS = new Set(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'])
 
@@ -152,7 +151,7 @@ export function parseViatorSchedule(
   context: ViatorScheduleContext,
 ): { ok: true; value: ViatorScheduleHint } | ViatorParseFailure {
   const record = asRecord(body)
-  if (!record || typeof record.productCode !== 'string' || !PRODUCT_CODE.test(record.productCode)) {
+  if (!record || typeof record.productCode !== 'string' || !istViatorProduktcode(record.productCode)) {
     return { ok: false, reason: 'malformed_response' }
   }
   const supplierCurrency = readViatorCurrency(record.currency)

@@ -10,8 +10,8 @@ import {
 } from '@/lib/providers/viator/activities/contracts'
 import { asRecord, calendarDate, clockTime } from '@/lib/providers/viator/activities/guard'
 import { readViatorCurrency, readViatorCustomerPrice } from '@/lib/providers/viator/activities/money'
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 
-const PRODUCT_CODE = /^[A-Za-z0-9]{2,30}$/
 const OPTION_CODE = /^[A-Za-z0-9_-]{1,40}$/
 
 export type ViatorLiveCheckFailure = { ok: false; reason: string }
@@ -22,7 +22,7 @@ export function validateViatorLiveCheckRequest(raw: unknown): { ok: true; value:
   if (record.paxMix == null && typeof record.participants === 'number') {
     return { ok: false, reason: 'total_is_not_age_mix' }
   }
-  if (typeof record.productCode !== 'string' || !PRODUCT_CODE.test(record.productCode)) {
+  if (typeof record.productCode !== 'string' || !istViatorProduktcode(record.productCode)) {
     return { ok: false, reason: 'missing_product' }
   }
   const optionIstText = typeof record.productOptionCode === 'string' && record.productOptionCode.length > 0

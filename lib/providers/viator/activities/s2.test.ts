@@ -8,7 +8,11 @@ import { activitiesSuchen } from '@/lib/activities/suche'
 import { activityRateLeeren } from '@/lib/activities/rate-limit'
 import { activityZustand } from '@/lib/activities/zustand'
 import type { Ort } from '@/lib/places/domain'
+import { readViatorAffiliateRedirect } from '@/lib/providers/viator/activities/affiliate'
 import { activityOptionAusViatorProdukt, viatorActivityProvider, viatorKalenderLaden, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
+import { parseViatorProductDetail } from '@/lib/providers/viator/activities/content'
+import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/request'
+import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
 import { viatorOrtAufloesen, viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { viatorStartzeiten } from '@/lib/providers/viator/activities/kalender'
 import type { ProviderHttpClient, ProviderHttpRequest } from '@/lib/server/providers/core'
@@ -975,5 +979,122 @@ describe('Viator native seam', () => {
       }
     }
     assert.equal(begrenzt, 8)
+  })
+
+  test('official underscore product codes pass every Viator path and unsafe tokens do not', () => {
+    const code = '2855KENNEDY_TKTS'
+    const url = 'https://www.viator.com/tours/Example/Fixture/d1-2855KENNEDY_TKTS?pid=P00000000&medium=api'
+    const detail = parseViatorProductDetail(
+      { ...product, productCode: code, productUrl: url },
+      { source: 'provider_response', retrievedAt: '2026-10-28T12:00:00.000Z', nowMs: NOW },
+    )
+    assert.equal(detail.ok, true)
+    if (!detail.ok) return
+    assert.equal(detail.value.products[0]?.productCode, code)
+    assert.equal(detail.value.products[0]?.optionenUnaufgeloest, false)
+    assert.equal(detail.value.affiliateRedirects[0]?.productUrl, url)
+    const link = readViatorAffiliateRedirect({ source: 'provider_response', productCode: '2050_PA', productUrl: url })
+    assert.equal(link?.productUrl, url)
+    assert.equal(link?.productCode, '2050_PA')
+    const detailAufruf = buildViatorSandboxCall('product_detail', { productCode: code, acceptLanguage: 'de-DE' })
+    const kalenderAufruf = buildViatorSandboxCall('availability_schedule', { productCode: '2050_PA', acceptLanguage: 'de-DE' })
+    assert.equal(detailAufruf.ok && detailAufruf.call.url, `https://api.sandbox.viator.com/partner/products/${code}`)
+    assert.equal(kalenderAufruf.ok && kalenderAufruf.call.url, 'https://api.sandbox.viator.com/partner/availability/schedules/2050_PA')
+    const plan = parseViatorSchedule(
+      { productCode: code, currency: 'EUR', bookableItems: [] },
+      { retrievedAt: '2026-10-28T12:00:00.000Z', nowMs: NOW },
+    )
+    assert.equal(plan.ok && plan.value.productCode, code)
+    const pruefung = buildViatorSandboxCall('availability_check', {
+      liveCheck: {
+        productCode: '2050_PA',
+        standardProduct: true,
+        travelDate: '2026-11-02',
+        currency: 'CHF',
+        paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+        productAgeBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }],
+      },
+    })
+    assert.equal(pruefung.ok, true)
+    if (!pruefung.ok) return
+    assert.equal(pruefung.call.body?.includes('2050_PA'), true)
+    assert.equal(pruefung.call.body?.includes('DEFAULT'), false)
+    for (const schlecht of ['2855/KENNEDY', '2050?PA', '2050#PA', '2050%5FPA', '2050 PA', '2050\nPA', 'A', 'A'.repeat(41)]) {
+      const abgewiesen = buildViatorSandboxCall('product_detail', { productCode: schlecht })
+      assert.equal(abgewiesen.ok, false, schlecht)
+      const roh = parseViatorProductDetail(
+        { ...product, productCode: schlecht, productUrl: url },
+        { source: 'provider_response', retrievedAt: '2026-10-28T12:00:00.000Z', nowMs: NOW },
+      )
+      assert.equal(roh.ok, true, schlecht)
+      if (!roh.ok) return
+      assert.equal(roh.value.products.length, 0)
+      assert.equal(roh.value.affiliateRedirects.length, 0)
+      assert.equal(JSON.stringify(abgewiesen).includes(schlecht), false)
+    }
+  })
+
+  test('untitled options do not become a standard product or a live check', async () => {
+    viatorZielCacheLeeren()
+    const url = 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api'
+    const unbenannt = { ...product, productOptions: [{ productOptionCode: 'TG1' }, { title: 'ohne Code' }] }
+    const gemischt = { ...product, productOptions: [{ productOptionCode: 'TG1' }, { productOptionCode: 'TG2', title: 'Abendtour' }] }
+    const http = httpFor({ 'https://api.sandbox.viator.com/partner/products/10001P1': unbenannt })
+    const geladen = await viatorProduktLaden('10001P1', { env, http: http.client, nowMs: NOW })
+    assert.equal(geladen.status, 'ok')
+    assert.equal(geladen.value?.optionenUnaufgeloest, true)
+    assert.deepEqual(geladen.value?.productOptionCodes, [])
+    assert.equal(geladen.value?.productUrl, url)
+    const pruefung = await viatorLivePruefen(
+      {
+        productCode: '10001P1',
+        standardProduct: true,
+        travelDate: '2026-11-02',
+        currency: 'CHF',
+        paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+      },
+      { env, http: http.client, nowMs: NOW },
+    )
+    assert.equal(pruefung.status, 'invalid')
+    assert.equal(pruefung.availabilityClaim, false)
+    assert.equal(http.calls.some((eintrag) => eintrag.includes('/availability/check')), false)
+    assert.equal(http.calls.some((eintrag) => eintrag.includes('/availability/schedules')), false)
+    const gemischtHttp = httpFor({
+      'https://api.sandbox.viator.com/partner/products/10001P1': gemischt,
+      'https://api.sandbox.viator.com/partner/availability/schedules/10001P1': {
+        productCode: '10001P1',
+        currency: 'EUR',
+        bookableItems: [{
+          productOptionCode: 'TG2',
+          seasons: [{ startDate: '2026-11-01', pricingRecords: [{ timedEntries: [{ startTime: '10:00' }] }] }],
+        }],
+      },
+      'https://api.sandbox.viator.com/partner/availability/check': {
+        currency: 'CHF',
+        productCode: '10001P1',
+        travelDate: '2026-11-02',
+        bookableItems: [{
+          productOptionCode: 'TG2',
+          startTime: '10:00',
+          available: true,
+          totalPrice: { price: { recommendedRetailPrice: 80 } },
+        }],
+      },
+    })
+    const sichtbar = await viatorProduktLaden('10001P1', { env, http: gemischtHttp.client, nowMs: NOW })
+    assert.equal(sichtbar.value?.optionenUnaufgeloest, true)
+    assert.deepEqual(sichtbar.value?.productOptionCodes, ['TG2'])
+    const veraltet = await viatorLivePruefen(
+      { productCode: '10001P1', productOptionCode: 'TG1', standardProduct: true, travelDate: '2026-11-02', currency: 'CHF', paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }] },
+      { env, http: gemischtHttp.client, nowMs: NOW },
+    )
+    assert.equal(veraltet.status, 'invalid')
+    assert.equal(gemischtHttp.calls.some((eintrag) => eintrag.includes('/availability/check')), false)
+    const erlaubt = await viatorLivePruefen(
+      { productCode: '10001P1', productOptionCode: 'TG2', travelDate: '2026-11-02', startTime: '10:00', currency: 'CHF', paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }] },
+      { env, http: gemischtHttp.client, nowMs: NOW },
+    )
+    assert.equal(erlaubt.status, 'ok', erlaubt.message)
+    assert.equal(gemischtHttp.calls.some((eintrag) => eintrag.includes('/availability/check')), true)
   })
 })

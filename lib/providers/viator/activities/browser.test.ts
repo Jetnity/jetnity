@@ -268,7 +268,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     },
   }
 
-  async function seite(breite: number): Promise<Page> {
+  async function seite(breite: number, variante: { unbenannt?: boolean } = {}): Promise<Page> {
     const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
     let checks = 0
     let details = 0
@@ -302,7 +302,19 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
         details += 1
         if (details === 2 && !detailFreigegeben) await new Promise<void>((resolve) => { detailLoesen = resolve })
         try {
-          return await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(detailAntwort) })
+          const detail = variante.unbenannt
+          ? {
+              ...detailAntwort,
+              value: {
+                ...detailAntwort.value,
+                productOptionCodes: [],
+                productOptions: [],
+                optionenUnaufgeloest: true,
+                productUrl: 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api',
+              },
+            }
+          : detailAntwort
+        return await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(detail) })
         } catch {
           return
         }
@@ -523,5 +535,20 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.doesNotMatch(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
     await schmal.screenshot({ path: join(ARTIFACTS, 'viator-22-tage-320.png'), fullPage: true })
     await schmal.close()
+  })
+
+  test('untitled options are not presented as a product without options', async () => {
+    const page = await seite(390, { unbenannt: true })
+    const träger = page as Page & { gesendet: unknown[] }
+    await page.getByRole('region', { name: 'Aktivitäten' }).getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await page.getByRole('button', { name: 'Angebot prüfen' }).click()
+    await page.getByText('Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.').waitFor()
+    assert.equal(await page.getByText('Dieses Angebot hat keine Zusatzoption.').count(), 0)
+    assert.equal(await page.getByRole('button', { name: 'Verfügbarkeit prüfen' }).count(), 0)
+    assert.equal(träger.gesendet.length, 0)
+    const link = page.getByRole('link', { name: 'Bei Viator ansehen' })
+    await link.waitFor()
+    assert.equal(await link.getAttribute('href'), 'https://www.viator.com/tours/Example/Fixture/d1-10001P1?pid=P00000000&medium=api')
+    await page.close()
   })
 })

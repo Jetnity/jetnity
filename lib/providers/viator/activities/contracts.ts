@@ -224,6 +224,8 @@ export type ViatorContentProduct = {
   image: ViatorImage | null
   productOptionCodes: string[]
   productOptions: Array<{ code: string; title: string }>
+  /** True when returned option metadata is present but not safely labelled. */
+  optionenUnaufgeloest: boolean
   ageBands: ViatorAgeBandRule[]
   cancellation: ViatorCancellation
   flags: string[]

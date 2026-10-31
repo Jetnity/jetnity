@@ -242,6 +242,7 @@ describe('Viator content parsers', () => {
     if (!optionen.ok) return
     assert.deepEqual(optionen.value.products[0]?.productOptionCodes, ['TG2'])
     assert.equal(optionen.value.products[0]?.productOptions[0]?.title, 'Abendtour')
+    assert.equal(optionen.value.products[0]?.optionenUnaufgeloest, true)
     assert.equal(optionen.value.partial, true)
   })
 

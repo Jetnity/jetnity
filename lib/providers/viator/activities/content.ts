@@ -14,10 +14,10 @@ import {
 import { readViatorAffiliateRedirect } from '@/lib/providers/viator/activities/affiliate'
 import { asRecord } from '@/lib/providers/viator/activities/guard'
 import { readViatorCurrency, readViatorCustomerPrice } from '@/lib/providers/viator/activities/money'
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 import { readViatorDescription, readViatorTitle } from '@/lib/providers/viator/activities/text'
 import { validateViatorImageUrl } from '@/lib/providers/viator/activities/url'
 
-const PRODUCT_CODE = /^[A-Za-z0-9]{2,30}$/
 const OPTION_CODE = /^[A-Za-z0-9_-]{1,40}$/
 const DESTINATION_REF = /^[1-9]\d{0,9}$/
 const FLAG = /^[A-Z][A-Z0-9_]{0,39}$/
@@ -136,29 +136,37 @@ function readCancellation(value: unknown): ViatorCancellation {
   return { policyType: 'unknown', stornierbar: null }
 }
 
-function readOptionCodes(value: unknown): { codes: string[]; options: Array<{ code: string; title: string }>; partial: boolean } {
-  if (value == null) return { codes: [], options: [], partial: false }
-  if (!Array.isArray(value)) return { codes: [], options: [], partial: true }
+function readOptionCodes(value: unknown): {
+  codes: string[]
+  options: Array<{ code: string; title: string }>
+  partial: boolean
+  unaufgeloest: boolean
+} {
+  if (value == null) return { codes: [], options: [], partial: false, unaufgeloest: false }
+  if (!Array.isArray(value)) return { codes: [], options: [], partial: true, unaufgeloest: true }
   const codes: string[] = []
   const options: Array<{ code: string; title: string }> = []
   let partial = false
+  let unaufgeloest = false
   for (const item of value) {
     const record = asRecord(item)
     const code = record?.productOptionCode
     if (typeof code !== 'string' || !OPTION_CODE.test(code)) {
       partial = true
+      unaufgeloest = true
       continue
     }
     if (codes.includes(code)) continue
     const title = readViatorTitle(record?.title)
     if (!title) {
       partial = true
+      unaufgeloest = true
       continue
     }
     codes.push(code)
     options.push({ code, title })
   }
-  return { codes, options, partial }
+  return { codes, options, partial, unaufgeloest }
 }
 
 function readFromPrice(pricing: unknown): ViatorPrice | null {
@@ -185,7 +193,7 @@ function readAgeBands(value: unknown): { bands: ViatorAgeBandRule[]; partial: bo
 
 function readProduct(value: unknown, source: ViatorContentSource): ProductRead {
   const record = asRecord(value)
-  if (!record || typeof record.productCode !== 'string' || !PRODUCT_CODE.test(record.productCode)) return null
+  if (!record || typeof record.productCode !== 'string' || !istViatorProduktcode(record.productCode)) return null
   const title = readViatorTitle(record.title)
   if (!title) return null
   const destinations = readDestinationIds(record.destinations)
@@ -209,6 +217,7 @@ function readProduct(value: unknown, source: ViatorContentSource): ProductRead {
       image: readImage(record.images),
       productOptionCodes: options.codes,
       productOptions: options.options,
+      optionenUnaufgeloest: options.unaufgeloest,
       ageBands: ages.bands,
       cancellation: readCancellation(record.cancellationPolicy),
       flags: readFlags(record.flags),

@@ -3,8 +3,7 @@ import {
   type ViatorAffiliateRedirect,
 } from '@/lib/providers/viator/activities/contracts'
 import { validateViatorProductUrl } from '@/lib/providers/viator/activities/url'
-
-const PRODUCT_CODE = /^[A-Za-z0-9]{2,30}$/
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 
 /**
  * Affiliate attribution exists only for an untouched provider productUrl.
@@ -16,7 +15,7 @@ export function readViatorAffiliateRedirect(input: {
   productUrl: unknown
 }): ViatorAffiliateRedirect | null {
   if (input.source !== 'provider_response') return null
-  if (!PRODUCT_CODE.test(input.productCode)) return null
+  if (!istViatorProduktcode(input.productCode)) return null
   const checked = validateViatorProductUrl(input.productUrl)
   if (!checked.ok) return null
   return {

@@ -26,10 +26,14 @@ S2-PREACTIVATION-R1, comment 6495438986. `viatorSandboxZugang` opens the real cl
 
 S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allowlisted server record and still throws the existing guest message. The write is inside a catch that swallows a telemetry failure and does not log it again. Classes are `http_denied`, `transport_body`, `catalog_schema`, `timeout`, `network`, `rate_limited`, `aborted`, or `other`. No body, header, key, URL, or trip id is included. `sandbox.ts` already returned the typed failure, so it was not changed. Shared transport code was not changed. CI 40891646901 is the historical SUCCESS on `c470c140`. The hosted failure at 13:52:42.953Z is still unclassified. No new provider call was made.
 
+## Product codes and option truth
+
+S2 R3, review 5722552523. One Viator predicate accepts `2855KENNEDY_TKTS` and `2050_PA` on content, request, schedule, check, and affiliate paths. Unsafe path, query, fragment, encoding, and length stay out. Untitled or malformed `productOptions` stay unresolved. They do not become a standard product, and the live check does not run. The original product URL is unchanged. The R3 task amendment is unchanged. `origin/main` `b7ebc399b92303eacda9afdaa1786f245492051f` was merged without rebase. Route and White/Mint files were left as main wrote them. The hosted destinations failure stays unclassified. No provider call.
+
 ## Still blocked
 
 Real Sandbox calls, image-license verification, checkout date and currency transfer, hosted acceptance, and exact-head CI for the commit that contains this handoff. The destinations request exists; this session did not call Viator. DiscoverCars remains #1059. Do not mark Ready or merge from this handoff.
 
 ## Next step
 
-Independent review of the logging-isolation head. CI 40891646901 is the historical SUCCESS on `c470c140`. The hosted destinations failure stays unclassified until a later permitted one-shot retest.
+Independent review of the R3 head. CI 40903974616 is the historical SUCCESS on `814920d0`. The hosted destinations failure stays unclassified until a later permitted one-shot retest.

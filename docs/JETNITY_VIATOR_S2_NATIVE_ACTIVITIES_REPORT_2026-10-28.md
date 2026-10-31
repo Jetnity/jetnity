@@ -4,13 +4,13 @@
 
 ## Umgesetzt
 
-S2-SANDBOX-FAILURE-DIAGNOSTICS-R1 adds one server-only destinations diagnostic. A throwing log sink does not change the guest error. The hosted catalog failure is still unclassified. The preview/development guard and the earlier identity, reader, and UI fixes stay in place.
+S2 R3 accepts official underscore product codes on all five paths and stops untitled options from being treated as a standard product. The hosted catalog failure is still unclassified. The preview/development guard, logging isolation, and the earlier identity, reader, and UI fixes stay in place. `origin/main` was merged; route and White/Mint work was not rewritten.
 
 Destination resolution walks the COUNTRY ancestor and compares its name with Jetnity `landName`. CITY, TOWN, and ISLAND are selectable. Alternate names are only those on the confirmed place record passed into the resolver. Lissabon matches Lisbon when that record lists both names. A country identity is not a city. A live check sends a supported currency, including CHF, EUR, and USD when that currency was requested. Weekdays come from each pricing record. Detail loading and quote cancellation are separate, and a new search clears the selected product.
 
 ## Dateien
 
-`lib/providers/viator/activities/anbinden.ts` and `s2.test.ts`. The S2 STATUS, HANDOFF, SELF_REVIEW, and this report. `sandbox.ts` was not changed. The S2 task seed was not edited. Shared transport, UI, Auth, database, environment, workflows, and packages were not edited.
+`lib/providers/viator/activities/produktcode.ts` and the five former copies in content, request, affiliate, live-check, and schedule. `anbinden.ts`, `ViatorPruefung.tsx`, `s2.test.ts`, `foundation.test.ts`, `browser.test.ts`, and the four S2 continuity docs. The R3 task amendment was not edited. Shared transport, route, White/Mint, Auth, database, environment, workflows, and packages were not edited by this correction.
 
 ## Datenbank
 
@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Viator seam: 12 passed, including the redacted destinations cases and a synthetic 401 whose `console.error` throws. That guest status stayed `error`, the message stayed `Die Viator-Ziele konnten nicht gelesen werden.`, one destinations request was made, and `console.error` was restored. Search orchestration: 6 passed. Sandbox client: 5 passed. CI 40891646901 is the historical SUCCESS on `c470c140` and does not cover this commit. The browser harness was not re-run.
+`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search 6, foundation suites, sandbox 5, and seam 14 passed, including underscore codes and untitled-option refusal. The rendered panel test passed: no “keine Zusatzoption”, no availability button, original Viator link kept, zero check requests. Root-font enlargement was not re-measured; this was not a layout pass and is not browser zoom. CI 40903974616 is the historical SUCCESS on `814920d0` and does not cover this commit.
 
 ## Build
 

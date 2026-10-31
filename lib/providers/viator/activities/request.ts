@@ -8,9 +8,8 @@ import {
   type ViatorOperation,
   type ViatorSearchCurrency,
 } from '@/lib/providers/viator/activities/contracts'
+import { istViatorProduktcode } from '@/lib/providers/viator/activities/produktcode'
 import { validateViatorLiveCheckRequest, type ViatorLiveCheckFailure } from '@/lib/providers/viator/activities/live-check'
-
-const PRODUCT_CODE = /^[A-Za-z0-9]{2,30}$/
 
 export type ViatorSandboxCall = {
   operation: ViatorOperation
@@ -97,7 +96,7 @@ export function buildViatorSandboxCall(
   }
 
   if (operation === 'product_detail' || operation === 'availability_schedule') {
-    if (typeof input.productCode !== 'string' || !PRODUCT_CODE.test(input.productCode)) {
+    if (typeof input.productCode !== 'string' || !istViatorProduktcode(input.productCode)) {
       return { ok: false, reason: 'missing_product' }
     }
     const path =

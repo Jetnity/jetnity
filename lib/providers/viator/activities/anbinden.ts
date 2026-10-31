@@ -285,6 +285,7 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
   price: { amount: number; currency: string; priceRole: ActivityPreisRolle; checkoutCurrencyConfirmed: false } | null
   productOptionCodes: string[]
   productOptions: Array<{ code: string; title: string }>
+  optionenUnaufgeloest: boolean
   ageBands: ViatorAgeBandRule[]
   productUrl: string | null
 }>> {
@@ -317,6 +318,7 @@ export async function viatorProduktLaden(productCode: string, deps: Abhaengigkei
         : null,
       productOptionCodes: product.productOptionCodes,
       productOptions: product.productOptions,
+      optionenUnaufgeloest: product.optionenUnaufgeloest,
       ageBands: product.ageBands,
       productUrl,
     },
@@ -391,10 +393,10 @@ export async function viatorLivePruefen(
   if (!product) {
     return { status: 'error', message: 'Die Prüfung braucht zuerst lesbare Produktdetails.', httpStatus: 200, value: null, availabilityClaim: false }
   }
-  const hatOptionen = product.productOptionCodes.length > 0
+  const standardErlaubt = !product.optionenUnaufgeloest && product.productOptionCodes.length === 0
   const anfrage = validateViatorLiveCheckRequest({
     ...(record ?? {}),
-    standardProduct: !hatOptionen,
+    standardProduct: standardErlaubt,
     productAgeBands: product.ageBands,
   })
   if (!anfrage.ok) {
@@ -410,7 +412,16 @@ export async function viatorLivePruefen(
               : 'Für die Prüfung fehlen Datum, Option oder Altersgruppen.'
     return { status: 'invalid', message, httpStatus: 200, value: null, availabilityClaim: false }
   }
-  if (hatOptionen) {
+  if (product.optionenUnaufgeloest && !product.productOptionCodes.includes(anfrage.value.productOptionCode ?? '')) {
+    return {
+      status: 'invalid',
+      message: 'Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht gestartet.',
+      httpStatus: 200,
+      value: null,
+      availabilityClaim: false,
+    }
+  }
+  if (product.productOptionCodes.length > 0) {
     if (!anfrage.value.productOptionCode || !product.productOptionCodes.includes(anfrage.value.productOptionCode)) {
       return { status: 'invalid', message: 'Diese Option gehört nicht zum Angebot.', httpStatus: 200, value: null, availabilityClaim: false }
     }

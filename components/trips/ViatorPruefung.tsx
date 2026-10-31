@@ -31,6 +31,7 @@ type Detail = {
   price: { amount: number; currency: string; priceRole: string; checkoutCurrencyConfirmed: false } | null
   productOptionCodes: string[]
   productOptions: Option[]
+  optionenUnaufgeloest?: boolean
   ageBands: ViatorAgeBandRule[]
   productUrl: string | null
 }
@@ -162,8 +163,9 @@ function ViatorPruefungLauf({
   const bild = viatorBildAnzeigen(detail?.imageUrl)
   const link = detail?.productUrl && validateViatorProductUrl(detail.productUrl).ok ? detail.productUrl : null
   const optionen = (detail?.productOptions ?? []).filter((eintrag) => eintrag.title.trim().length > 0)
+  const unaufgeloest = detail?.optionenUnaufgeloest === true
   const ohneTitel = detail != null && optionen.length === 0 && detail.productOptionCodes.length > 0
-  const standard = detail != null && optionen.length === 0 && detail.productOptionCodes.length === 0
+  const standard = detail != null && !unaufgeloest && optionen.length === 0 && detail.productOptionCodes.length === 0
   const kalenderMehrdeutig = standard && (plan?.options.length ?? 0) > 1
   const gewaehlteOption = optionen.length === 1 ? optionen[0]!.code : optionen.some((eintrag) => eintrag.code === option) ? option : ''
   const hinweis = standard
@@ -174,7 +176,7 @@ function ViatorPruefungLauf({
   const zeiten =
     gewaehlteOption || (standard && !kalenderMehrdeutig) ? (viatorStartzeiten(hinweis, datum, heuteIso()) ?? []) : []
   const gewaehlteZeit = zeiten.length === 1 ? zeiten[0]! : zeiten.includes(startzeit) ? startzeit : ''
-  const pruefungGesperrt = ohneTitel || kalenderMehrdeutig
+  const pruefungGesperrt = ohneTitel || kalenderMehrdeutig || (unaufgeloest && optionen.length === 0)
 
   const pruefen = () => {
     if (!waehrung) {
@@ -254,6 +256,11 @@ function ViatorPruefungLauf({
         </button>
       ) : null}
       {standard ? <p className="mt-3 text-sm text-ink-800">Dieses Angebot hat keine Zusatzoption.</p> : null}
+      {unaufgeloest && optionen.length > 0 ? (
+        <p className="mt-3 text-sm leading-6 text-ink-800">
+          Einige Optionen haben keine eindeutige Bezeichnung und werden nicht geprüft.
+        </p>
+      ) : null}
       {pruefungGesperrt ? (
         <p className="mt-3 text-sm leading-6 text-ink-800">
           Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.
