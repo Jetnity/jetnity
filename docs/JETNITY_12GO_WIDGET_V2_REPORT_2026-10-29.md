@@ -78,6 +78,10 @@ Dated transfer at 390: planned date visible, absent from the href, `CHF` absent 
 | Vercel Preview and GitHub CI on `c2fa11dc` | App job `123714720799` failed at schema-bezug. That head is invalidated. New CI and Preview are not evidence until they finish on the correction head |
 | Production acceptance, #968 | not claimed |
 
+## R5.1 light workspace ancestors
+
+The harness body is the light shell, page, and content around `TwelveGoAffiliateLinks`. The witness reads the computed color of `.text-ink-800` inside that scope and compares it with `--white-mint-muted`. At 1440 the page offset must be at least 200px, which is the sidebar inset from `workspace.css`. A bare body fails that witness. No production defect is claimed from this harness.
+
 ## R5 current styles
 
 The surface script compiles `styles/globals.css` with `tailwind.config.js`, nesting, and autoprefixer, then appends `styles/white-mint.css`, `components/workspace/workspace.css`, and `components/workspace/workspace-surfaces.css`. That is the layout order followed by the workspace shell. No global CSS file was edited. The rendered component is still `TwelveGoAffiliateLinks`. Root font 32px is 200% text, not browser zoom. Phone cases are emulation. Non-loopback requests are aborted. Enter may attempt only the existing V1 affiliate URL, and that attempt is aborted.

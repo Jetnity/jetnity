@@ -19,6 +19,10 @@ Pending bridge, not implemented here:
 
 Older sentences below that say the embed route does not exist, or that the opaque frame failed to show the form, are dated and superseded.
 
+## R5.1 light workspace scope
+
+The surface harness places the delivered section inside `.workspace-shell[data-workspace-theme="light"] .workspace-page .workspace-content`. A missing shell, a text color other than the light mint muted token, or a missing desktop content offset fails the run. No global CSS was edited.
+
 ## R5 stylesheet
 
 `oberflaeche.ts` no longer keeps a handwritten utility list. It compiles `styles/globals.css` with the repo Tailwind config, then appends `styles/white-mint.css`, `components/workspace/workspace.css`, and `components/workspace/workspace-surfaces.css` in application order. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` matched `0a26c611` only.

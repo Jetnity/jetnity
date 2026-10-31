@@ -52,6 +52,10 @@ The browser script renders the delivered frame component. A unit test fails if t
 
 Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The surface harness uses the application stylesheet stack instead of a handwritten utility list. R4 frame counterexamples stay. The trip page is still only the closed notice.
 
+## R5.1
+
+The local surface page uses the light workspace ancestors. Omitting them fails the mint-color witness. This is still the closed notice, not a live form.
+
 ## Next step
 
-Technical Lead reviews the R5 head. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` belong to `0a26c611` and do not cover it. This session does not start another slice.
+Technical Lead reviews the R5.1 head. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` belong to `0a26c611`. The style-only head `ba108947` also does not cover this wrapper fix. This session does not start another slice.

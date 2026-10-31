@@ -27,6 +27,23 @@ export const ANWENDUNGS_STIL_REIHENFOLGE = [
   'components/workspace/workspace-surfaces.css',
 ] as const
 
+/** Standard ist hell. Dieselbe Verschachtelung wie `WorkspaceShell`, ohne Konto oder Netz. */
+export function arbeitsflaeche(markup: string): string {
+  return `<div class="workspace-shell" data-workspace-theme="light" data-collapsed="false"><div class="workspace-page"><div class="workspace-content">${markup}</div></div></div>`
+}
+
+export function umfangBeweis(zeugnis: {
+  treffer: boolean
+  farbe: string
+  erwartet: string
+  seitenAbstand: number | null
+}): string | null {
+  if (!zeugnis.treffer) return 'Umfang fehlt'
+  if (!zeugnis.farbe || zeugnis.farbe !== zeugnis.erwartet) return 'Mint-Farbe fehlt'
+  if (zeugnis.seitenAbstand != null && zeugnis.seitenAbstand < 200) return 'Inhalt ohne Seitenabstand'
+  return null
+}
+
 const V1_HREF = 'https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route'
 const JETZT = '2026-10-29T18:00:00.000Z'
 
@@ -108,7 +125,7 @@ const FAELLE = [
 ]
 
 function dokument(markup: string, stil: string): string {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${stil}</style></head><body>${markup}</body></html>`
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${stil}</style></head><body>${arbeitsflaeche(markup)}</body></html>`
 }
 
 async function main() {
@@ -149,6 +166,14 @@ async function main() {
         const flaeche = document.querySelector('[data-twelve-go-affiliate]')
         const links = [...document.querySelectorAll('a[data-twelve-go-art]')]
         const widget = document.querySelector('[data-twelve-go-widget]')
+        const umfang = document.querySelector('.workspace-shell[data-workspace-theme="light"] .workspace-content [data-twelve-go-affiliate]')
+        const probe = document.createElement('span')
+        probe.style.color = 'var(--white-mint-muted)'
+        document.body.appendChild(probe)
+        const seite = document.querySelector('.workspace-page')
+        const farbe = (umfang?.querySelector('.text-ink-800') ? getComputedStyle(umfang.querySelector('.text-ink-800') as Element).color : '').replace(/\s/g, '')
+        const erwartet = getComputedStyle(probe).color.replace(/\s/g, '')
+        probe.remove()
         return {
           anzahl: links.length,
           ueberlauf: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -156,6 +181,10 @@ async function main() {
           marker: widget?.getAttribute('data-twelve-go-widget'),
           ausfuehrbar: widget?.getAttribute('data-twelve-go-widget-ausfuehrbar'),
           widgetHoehe: widget?.getBoundingClientRect().height ?? 0,
+          treffer: Boolean(umfang),
+          farbe,
+          erwartet,
+          seitenAbstand: seite ? Number.parseFloat(getComputedStyle(seite).marginLeft) : 0,
           ziele: links.map((link) => ({
             art: link.getAttribute('data-twelve-go-art'),
             rel: link.getAttribute('rel'),
@@ -274,6 +303,13 @@ async function main() {
     if (fall.iframes !== 0 || fall.scripts !== 0) fehler.push(`${fall.name}: Drittinhalt`)
     if (fall.knoepfe !== 0) fehler.push(`${fall.name}: ${fall.knoepfe} Knöpfe`)
     if (fall.marker !== 'consent-blocked' || fall.ausfuehrbar !== 'false') fehler.push(`${fall.name}: Formular nicht geschlossen`)
+    const umfang = umfangBeweis({
+      treffer: fall.treffer,
+      farbe: fall.farbe,
+      erwartet: fall.erwartet,
+      seitenAbstand: fall.width >= 1024 ? fall.seitenAbstand : null,
+    })
+    if (umfang) fehler.push(`${fall.name}: ${umfang}`)
     if (fall.widgetHoehe < 20) fehler.push(`${fall.name}: Hinweis unsichtbar`)
     if (!fall.text.includes('Eine Beispielstrecke wird nicht vorausgefüllt')) fehler.push(`${fall.name}: Hinweistext fehlt`)
     if (fall.text.includes('CHF')) fehler.push(`${fall.name}: CHF sichtbar`)
