@@ -360,7 +360,14 @@ describe('PrivacyBee Routengrenze', () => {
         einbettung.push(relativ)
       }
     }
-    assert.deepEqual(treffer, ['lib/legal/privacybee-vertrag.ts'])
+    assert.deepEqual(treffer.sort(), [
+      'lib/legal/privacybee-vertrag.ts',
+      'lib/privacy/privacybee-cmp/vertrag.ts',
+    ])
+    assert.equal(
+      treffer.filter((pfad) => pfad.startsWith('components/legal/') || pfad.startsWith('app/')).length,
+      0,
+    )
     assert.deepEqual(einbettung.sort(), [
       'app/(public)/impressum/page.tsx',
       'app/(public)/privacy/page.tsx',
