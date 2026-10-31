@@ -1,8 +1,10 @@
 // components/trips/TwelveGoAffiliateLinks.tsx
 //
 // Eine Fläche für benachbarte Zielvorkommen. Der Link wird erst beim
-// Klick verlassen. Vorher lädt nichts von 12Go.
+// Klick verlassen. Vorher lädt nichts von 12Go. Das offizielle Formular
+// bleibt aus, solange Einwilligung und Einbettung nicht freigegeben sind.
 
+import TwelveGoWidgetEinbau from '@/components/trips/TwelveGoWidgetEinbau'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import {
   TWELVE_GO_HINWEIS,
@@ -64,6 +66,7 @@ export default function TwelveGoAffiliateLinks({ reise }: { reise: Trip }) {
           ))}
         </ul>
       )}
+      <TwelveGoWidgetEinbau />
     </section>
   )
 }
