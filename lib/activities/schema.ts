@@ -8,7 +8,7 @@
 
 import { z } from 'zod'
 
-import { ACTIVITY_SUCHE_GRENZEN, type ActivityOption, type ActivitySuchanfrage } from '@/lib/activities/domain'
+import { ACTIVITY_SUCHE_GRENZEN, ACTIVITY_PREIS_ROLLEN, type ActivityOption, type ActivitySuchanfrage } from '@/lib/activities/domain'
 import { TRIP_INTERESTS, TRIP_ITEM_KINDS, TRIP_PACES } from '@/types/trips'
 
 const datum = z
@@ -50,6 +50,13 @@ const etappeSchema = z.object({
   placeId: z.string().trim().min(1).max(80).nullable().default(null),
   latitude: z.number().finite().min(-90).max(90).nullable().default(null),
   longitude: z.number().finite().min(-180).max(180).nullable().default(null),
+  countryCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{2}$/)
+    .nullable()
+    .default(null),
 })
 
 const tagSchema = z
@@ -139,6 +146,8 @@ const activityOptionSchema = z.object({
   stornierbar: z.boolean().nullable().default(null),
   kategorien: z.array(z.string().trim().min(1).max(40)).max(12).default([]),
   tags: z.array(z.string().trim().min(1).max(40)).max(16).default([]),
+  bildUrl: z.string().trim().min(1).max(2048).nullable().default(null),
+  preisRolle: z.enum(ACTIVITY_PREIS_ROLLEN).nullable().default(null),
 })
   .superRefine((wert, ctx) => {
     if ((wert.preis === null) !== (wert.preisWaehrung === null)) {

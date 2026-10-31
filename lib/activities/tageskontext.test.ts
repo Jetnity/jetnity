@@ -10,6 +10,7 @@ const EINGABE = {
     placeId: 'geonames:3176959',
     latitude: 43.77,
     longitude: 11.25,
+    countryCode: null,
   },
   day: {
     id: 'day-1',
