@@ -1,9 +1,10 @@
 {
   "phase": "A",
   "phaseBAuthorized": false,
+  "providerTransmission": false,
   "productionSelected": false,
   "continueCount": 0,
-  "abortCount": 6,
+  "abortCount": 5,
   "redirectFollows": 0,
   "httpLeaks": 0,
   "tcpLeaks": 0,
@@ -32,36 +33,65 @@
       "method": null
     }
   },
+  "adapter": {
+    "sourceHits": 1,
+    "targetHits": 0,
+    "providerFetches": 0
+  },
   "storage": {
     "parent": {
+      "readable": true,
+      "blocked": false,
       "cookieCount": 0,
-      "localCount": 0,
-      "sessionCount": 0
+      "storageCount": 0,
+      "cookieFlags": {
+        "secure": 0,
+        "httpOnly": 0,
+        "sameSite": {
+          "Lax": 0,
+          "Strict": 0,
+          "None": 0,
+          "absent": 0
+        }
+      }
     },
     "host": {
+      "readable": true,
+      "blocked": false,
       "cookieCount": 0,
-      "localCount": 0,
-      "sessionCount": 0
-    },
-    "vendor": {
-      "gap": "vendor-frame-absent"
+      "storageCount": 0,
+      "cookieFlags": {
+        "secure": 0,
+        "httpOnly": 0,
+        "sameSite": {
+          "Lax": 0,
+          "Strict": 0,
+          "None": 0,
+          "absent": 0
+        }
+      }
     }
   },
+  "gaps": [
+    "vendor-frame-absent"
+  ],
+  "events": [
+    {
+      "gap": null,
+      "events": []
+    }
+  ],
   "childStatus": "inserted-script-not-form-proof",
   "servedFrame": true,
   "gate": {
-    "observed": 9,
+    "observed": 1,
     "lateAttempts": 0,
     "disposition": null,
     "trimmed": false,
     "retryScheduled": 0,
     "reasons": {
-      "local": 3,
-      "withheld": 1,
-      "method": 2,
-      "BLOCKED_REDIRECT": 1,
-      "unmatched": 1,
-      "route": 1
-    }
+      "provider-closed": 1
+    },
+    "unknownQueryKeys": 0
   }
 }

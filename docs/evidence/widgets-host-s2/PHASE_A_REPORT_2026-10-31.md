@@ -24,37 +24,49 @@ CSP path sources that end in `/` are prefix matches in the browser. That header 
 
 The one-time grant and parent teardown behaviour is unchanged. A matching audit grant inserts once. A replay is denied. `createParentFixture(...).destroy()` still removes the iframe.
 
+## R4 correction
+
+The accepted shell binding is unchanged. Public `decide()` still reads the unselected registry. The corrections are in the audit runner and its fixtures.
+
+Unknown query names are no longer copied into the ledger. Internal pair comparison still uses the decoded names and values. The exported row keeps only names that already appear on the fixed allowlist, plus `unknownQueryKeys` as a count. A URL with `visitor_abc123` and `token` exports `queryKeys: ["currency"]` and `unknownQueryKeys: 2`. The unknown names, the values, and the host are absent from the evidence object.
+
+`createAuditRunner` is the bounded GET path. It stays closed until `start(now)` is called, and that call is the start of the 15-second deadline. `boundedGet` checks the deadline and the attempt count before any `fetch`. Attempt 100 and every later attempt are blocked, and the summary keeps the real count (`observed: 101`, `trimmed: false`). There is no accepted Root run authorization in this build, so a provider URL returns `provider-closed` and the fetch implementation is not called (`providerFetches: 0`).
+
+The redirect fixture is a real loopback response. The source server sends HTTP 302 to a second loopback server. The adapter uses `redirect: 'manual'`, records `BLOCKED_REDIRECT`, does not issue another request, and does not return the 3xx to the browser. The source was hit once. The target was hit zero times. `handedToBrowser` and `follow` stay false/null.
+
+An open loopback GET is aborted when the runner is tripped for unexpected navigation. A later `boundedGet` does not transmit. The browser parent buffers `ready` and grants only from the explicit `start()` call, which happens immediately after `runner.start(Date.now())`. Before that call the loader is not requested. After it, the loader is observed once as `provider-closed` and aborted. `route.continue` is not used.
+
+Natural event names go through the same runner allowlist (`gtm.js`, `metaData`, `consent_changed`; anything else is `other` plus a count). Parent and host storage are aggregate counts and cookie flags. The vendor frame was absent, recorded as a gap.
+
 ## Local preflight
 
 `node scripts/widgets-host-s2/audit-preflight.mjs` prints `audit-preflight PASS`. The machine-readable result is `docs/evidence/widgets-host-s2/phase-a-preflight-summary.json`.
 
 | Check | Result |
 | --- | --- |
-| Redirect | A 302 fixture returns `BLOCKED_REDIRECT`, `follow: null`, `retry: false`. The browser did not request the redirect target. `redirectedFrom()` stayed empty. |
-| Retry | The gate schedules no second attempt. `retryScheduled` is 0. The frozen loader was observed once. |
-| Budget | Attempts 1–99 are judged. Attempt 100 closes with `BUDGET_REACHED` and is blocked. Attempt 101 is a late blocked attempt. The summary keeps `observed: 101` and `trimmed: false`. |
-| Deadline | `startedAt + 14999` can still match. `startedAt + 15000` is `DEADLINE`. A `loadEvent` flag does not move `startedAt`. Later attempts stay late. |
-| Redaction | Query values, unknown hosts, cookie names, storage values, and event payloads are absent from the exported objects. Query key names and the fixed event names `gtm.js`, `metaData`, and `consent_changed` remain. Anything else is `other` plus a count. |
-| Source drift | Mismatched bytes return `SOURCE_DRIFT`, `executed: false`, and the published reference digest only. The candidate digest and body are not exported. Phase A does not deliver the three published captures. |
-| Transport HTTP, beacon, EventSource | Playwright `context.route('**/*')` is installed before navigation. Matches are aborted or fulfilled locally. `continueCount` is 0. The loopback leak server received 0 requests. |
-| Transport WebSocket | Playwright `routeWebSocket` closes the socket and does not call `connectToServer`. The loopback TCP listener accepted 0 connections. |
-| Transport WebRTC | No pre-send interceptor exists in this harness. Disposition `BLOCKED_TRANSPORT`. This does not release Phase B. |
-| Shell | The child response used the headers and HTML from `buildShell` for the audit plan. Served CSP contains the one frame target and closed connect/img/font/form directives. The real bootstrap reached the inserted-script status. That status is not a working provider form. |
-| Storage | Parent and host counts were 0. The vendor frame was absent because the loader was aborted, so vendor storage is a gap, not a zero-cookie proof. Service workers stayed blocked. |
+| Redirect | Local source returned a real 302. Adapter result `BLOCKED_REDIRECT`, status 302, `sourceHits: 1`, `targetHits: 0`, no retry, `handedToBrowser: false`. |
+| Retry | No second request was scheduled. `retryScheduled` is 0. |
+| Budget | Attempts 1–99 stay closed. Attempt 100 is `BUDGET_REACHED` and is not fetched. Attempt 101 is late. `observed` stays 101. |
+| Deadline | `start(now)` fixes the clock. `now >= startedAt + 15000` returns `DEADLINE` before fetch. A load event does not move the clock. |
+| Redaction | Unknown query names are counted, not exported. Values, hosts, cookie names, storage values, and event payloads stay out of the evidence. |
+| Source drift | Mismatched bytes return `SOURCE_DRIFT`, `executed: false`, and the published reference digest only. |
+| Transport HTTP, beacon, EventSource | Playwright `context.route('**/*')` is installed before navigation. `continueCount` is 0. The loopback leak server received 0 requests. |
+| Transport WebSocket | `routeWebSocket` closes the socket and does not call `connectToServer`. The loopback TCP listener accepted 0 connections. |
+| Transport WebRTC | The existing Playwright harness has no pre-send block for `RTCPeerConnection`. Disposition remains `method: null`, `proven: false`, `BLOCKED_TRANSPORT`. No infrastructure was added. This still blocks Phase B. |
+| Shell | Served CSP is the real `buildShell` header. The bootstrap reaches the inserted-script status only after the explicit intent. That status is not a working provider form. |
 
-The browser gate observed 9 attempts: 3 local fulfills, 1 withheld loader, 2 method blocks, 1 `BLOCKED_REDIRECT`, 1 unmatched host, and 1 non-HTTPS EventSource refused as `route`. It did not hit the deadline or the attempt cap.
+The post-start browser ledger contains one `provider-closed` attempt. The budget, deadline, redirect, and teardown results are the adapter assertions in the same command.
 
 ## Commands on this delivery
 
-- `npm test` in `apps/widgets-host`: 16 pass / 0 fail
-- `npm run typecheck`: pass
-- `npm run build`: Next.js 16.4.1 success
-- `node scripts/widgets-host-s2/source-guard.mjs`: PASS
+R4 did not change the host product files. The earlier nested `npm test` (16/16), `tsc --noEmit`, and Next.js 16.4.1 build still describe that unchanged code. On this correction:
+
 - `node scripts/widgets-host-s2/audit-preflight.mjs`: PASS
-- targeted eslint on the touched Phase A files: 0 errors
+- `node scripts/widgets-host-s2/source-guard.mjs`: PASS
+- targeted eslint on `audit-policy.mjs` and `audit-preflight.mjs`: 0 errors
 
 Native CI and the `jetnity-app` Preview are recorded in the delivery comment after push. Neither deploys `jetnity-widgets`. A new head invalidates older gates.
 
-## Limits
+## Limits and remaining blockers
 
-No registry activation, deployment, DNS, environment, database, or dependency change. The Viator resize test was not edited. `docs/ACTIVE_WORK_STATUS.md` was left unchanged because this amendment's path list does not include it. Phase B stays closed until a later Root comment names the exact audited head.
+WebRTC is still `BLOCKED_TRANSPORT`. This preflight does not authorize a live audit. Provider transmission is false, and Phase B was not run. No registry activation, deployment, DNS, environment, database, or dependency change. The Viator resize test was not edited. The immutable task and amendment blobs were not edited. Phase B stays closed until a later Root comment names the exact audited head.

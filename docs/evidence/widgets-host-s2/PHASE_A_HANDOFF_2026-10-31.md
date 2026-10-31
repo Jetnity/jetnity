@@ -8,7 +8,9 @@
 **Amendment blob:** `f1dfddd424f88d071a3a76125a39d71e7e2b3b93`
 **Task blob:** `e4ae6b5d6291792d1fe798029849d66119fcf3f5`
 
-Read `docs/evidence/widgets-host-s2/PHASE_A_REPORT_2026-10-31.md` and the summary JSON beside it. The delivery comment has the exact HEAD after push.
+Read `docs/evidence/widgets-host-s2/PHASE_A_REPORT_2026-10-31.md` and the summary JSON beside it. The delivery comment has the exact HEAD after the R4 push.
+
+The runner is default-closed. `boundedGet` can fetch only `http://127.0.0.1` after `start(now)`, and a 3xx from that fixture is not followed. No stored authorization opens a provider host. WebRTC remains `BLOCKED_TRANSPORT`.
 
 ## Do not do next
 

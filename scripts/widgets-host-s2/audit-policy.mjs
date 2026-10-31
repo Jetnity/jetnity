@@ -128,6 +128,18 @@ function failureReason(parsed, resourceType) {
   return 'query'
 }
 
+const PUBLIC_QUERY_NAMES = new Set(RULES.flatMap((rule) => rule.pairs.map((item) => item[0])))
+
+export function exportQueryKeys(keys) {
+  const queryKeys = []
+  let unknownQueryKeys = 0
+  for (const key of keys || []) {
+    if (PUBLIC_QUERY_NAMES.has(key)) queryKeys.push(key)
+    else unknownQueryKeys += 1
+  }
+  return { queryKeys, unknownQueryKeys }
+}
+
 export function inspectTarget(url, method, resourceType) {
   const parsed = parseTarget(url)
   if (!parsed) return { ok: false, reason: 'route', queryKeys: [], role: null }
@@ -228,7 +240,7 @@ export function createAuditGate(options) {
     } else if (input.localFulfill === true) {
       reason = 'local'
       terminal = 'local-fulfill'
-    }     else if (input.method !== 'GET') reason = 'method'
+    } else if (input.method !== 'GET') reason = 'method'
     else if (!inspection.ok) reason = inspection.reason || 'unmatched'
     else if (Number.isInteger(inspection.limit) && (roleGrants.get(inspection.role) || 0) >= inspection.limit) {
       reason = inspection.role === 'health' ? 'health-repeat' : 'repeat'
@@ -238,6 +250,7 @@ export function createAuditGate(options) {
       reason = 'withheld'
       terminal = 'WITHHELD_NO_GET'
     }
+    const exported = exportQueryKeys(inspection.queryKeys || [])
     const row = {
       sequence,
       offsetMs: clockBad ? null : input.now - startedAt,
@@ -246,7 +259,8 @@ export function createAuditGate(options) {
       method: input.method || '',
       resourceType: input.resourceType || '',
       endpoint: inspection.role || 'unlisted',
-      queryKeys: inspection.queryKeys || [],
+      queryKeys: exported.queryKeys,
+      unknownQueryKeys: exported.unknownQueryKeys,
       reason,
       terminal,
       late: alreadyClosed,
@@ -266,6 +280,14 @@ export function createAuditGate(options) {
     return true
   }
 
+  function noteTerminal(sequence, patch) {
+    const row = ledger.find((item) => item.sequence === sequence)
+    if (!row || !patch) return false
+    if (typeof patch.reason === 'string') row.reason = patch.reason
+    if (typeof patch.terminal === 'string') row.terminal = patch.terminal
+    return true
+  }
+
   function evidence() {
     return {
       observed: ledger.length,
@@ -276,11 +298,138 @@ export function createAuditGate(options) {
       trimmed: false,
       phaseBAuthorized: false,
       retryScheduled,
-      ledger: ledger.map((row) => ({ ...row, queryKeys: [...row.queryKeys] })),
+      ledger: ledger.map((row) => ({
+        ...row,
+        queryKeys: [...row.queryKeys],
+        unknownQueryKeys: row.unknownQueryKeys,
+      })),
     }
   }
 
-  return { observe, trip, markHanging, evidence, get startedAt() { return startedAt } }
+  return { observe, trip, markHanging, noteTerminal, evidence, get startedAt() { return startedAt } }
+}
+
+function loopbackHttp(value) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' && url.hostname === '127.0.0.1' && url.username === '' && url.password === ''
+  } catch {
+    return false
+  }
+}
+
+function closedResult(reason) {
+  return { transmitted: false, reason, retry: false, handedToBrowser: false, follow: null, status: null }
+}
+
+export function createAuditRunner(options = {}) {
+  let startedAt = null
+  let gate = null
+  let tornDown = false
+  let teardownReason = null
+  const controllers = new Set()
+  const eventRows = []
+  const storage = {}
+  const gaps = []
+  const fetchImpl = typeof options.fetchImpl === 'function' ? options.fetchImpl : globalThis.fetch
+  const providerTransmission = false
+
+  function start(now) {
+    if (tornDown) return { ok: false, reason: 'torn-down' }
+    if (startedAt !== null) return { ok: false, reason: 'already-started' }
+    if (!Number.isFinite(now)) return { ok: false, reason: 'clock' }
+    startedAt = now
+    gate = createAuditGate({ startedAt, mode: 'phase-a' })
+    return { ok: true, startedAt }
+  }
+
+  function teardown(reason) {
+    if (!tornDown) {
+      tornDown = true
+      teardownReason = reason
+    }
+    for (const controller of controllers) controller.abort()
+    controllers.clear()
+  }
+
+  function trip(reason) {
+    if (gate) gate.trip(reason)
+    teardown(reason)
+  }
+
+  async function boundedGet(input) {
+    if (tornDown) return closedResult(teardownReason || 'torn-down')
+    if (!gate || startedAt === null) return closedResult('not-started')
+    const decision = gate.observe({
+      url: input.url,
+      method: 'GET',
+      resourceType: input.resourceType || 'document',
+      now: input.now,
+      phase: input.phase || 'initial-load',
+      contextRole: input.contextRole || 'fixture',
+    })
+    const stopped = decision.late === true || ['DEADLINE', 'BUDGET_REACHED', 'clock', 'navigation', 'submission', 'popup'].includes(decision.reason)
+    if (stopped || !loopbackHttp(input.url)) {
+      const reason = stopped ? decision.reason : 'provider-closed'
+      if (!stopped) gate.noteTerminal(decision.sequence, { reason: 'provider-closed', terminal: 'blocked' })
+      return { ...closedResult(reason), sequence: decision.sequence }
+    }
+    const controller = new AbortController()
+    controllers.add(controller)
+    let response
+    try {
+      response = await fetchImpl(input.url, { method: 'GET', redirect: 'manual', signal: controller.signal })
+    } catch {
+      return closedResult(tornDown ? (teardownReason || 'aborted') : 'aborted')
+    } finally {
+      controllers.delete(controller)
+    }
+    if (response.status >= 300 && response.status < 400) {
+      gate.noteTerminal(decision.sequence, { reason: 'BLOCKED_REDIRECT', terminal: 'blocked-redirect' })
+      return { transmitted: true, reason: 'BLOCKED_REDIRECT', retry: false, handedToBrowser: false, follow: null, status: response.status, sequence: decision.sequence }
+    }
+    await response.arrayBuffer()
+    return { transmitted: true, reason: 'local-response', retry: false, handedToBrowser: false, follow: null, status: response.status, sequence: decision.sequence }
+  }
+
+  function recordEvents(events, recordOptions = {}) {
+    eventRows.push(sanitizeEvents(events, recordOptions))
+  }
+
+  function recordStorage(role, snapshot) {
+    if (role !== 'parent' && role !== 'host' && role !== 'vendor') return false
+    storage[role] = sanitizeStorage(snapshot)
+    return true
+  }
+
+  function recordGap(name) {
+    if (name === 'vendor-frame-absent' || name === 'unreadable-frame') gaps.push(name)
+  }
+
+  function evidence() {
+    return {
+      providerTransmission,
+      started: startedAt !== null,
+      tornDown,
+      teardownReason,
+      gaps: [...gaps],
+      events: eventRows.map((row) => ({ gap: row.gap, events: row.events.map((item) => ({ ...item })) })),
+      storage: { ...storage },
+      gate: gate ? gate.evidence() : null,
+    }
+  }
+
+  return {
+    start,
+    boundedGet,
+    trip,
+    recordEvents,
+    recordStorage,
+    recordGap,
+    evidence,
+    get startedAt() { return startedAt },
+    get providerTransmission() { return providerTransmission },
+  }
 }
 
 export function nestedContractHref() {

