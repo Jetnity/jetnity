@@ -4,7 +4,20 @@ export function classify(request: Request): {
   method?: string
 }
 
-export function buildShell(provider: 'discovercars' | 'twelvego'): {
+export function buildShell(
+  provider: 'discovercars' | 'twelvego',
+  options?: {
+    plan?: {
+      selected?: boolean
+      provider?: string
+      policyId?: string
+      artifactSha256?: string
+      childOrigin?: string
+      parentOrigin?: string
+      protocolRevision?: number
+    } | null
+  },
+): {
   status: number
   headers: Headers
   html: string

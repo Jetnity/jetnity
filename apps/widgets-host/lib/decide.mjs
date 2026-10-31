@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 
 import contract from '../inert-contract.json' with { type: 'json' }
+import { auditFrameSource } from './audit-network-policy.mjs'
 import { CHILD_HOST, CHILD_ORIGIN, PARENT_ORIGIN, insertionValue } from './host-runtime.mjs'
 import { productionPlanForClient } from './production-wire.mjs'
 
@@ -51,7 +52,13 @@ export function reviewedScriptSources(plan) {
   return sources
 }
 
-function shellHeaders(value, plans) {
+function frameDirective(plan) {
+  const exact = auditFrameSource(plan)
+  if (typeof exact !== 'string' || exact !== exact.trim() || /[\s;]/.test(exact)) return "'none'"
+  return exact
+}
+
+function shellHeaders(value, plan) {
   const headers = new Headers()
   headers.set('Cache-Control', 'no-store')
   headers.set('X-Robots-Tag', 'noindex, nofollow')
@@ -63,7 +70,7 @@ function shellHeaders(value, plans) {
   )
   headers.set(
     'Content-Security-Policy',
-    `default-src 'none'; script-src ${[`'nonce-${value}'`, ...reviewedScriptSources(plans)].join(' ')}; style-src 'nonce-${value}'; frame-ancestors ${PARENT_ORIGIN}; form-action 'none'; base-uri 'none'; object-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; frame-src 'none'`,
+    `default-src 'none'; script-src ${[`'nonce-${value}'`, ...reviewedScriptSources(plan)].join(' ')}; style-src 'nonce-${value}'; frame-ancestors ${PARENT_ORIGIN}; form-action 'none'; base-uri 'none'; object-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; frame-src ${frameDirective(plan)}`,
   )
   headers.set('Content-Type', 'text/html; charset=utf-8')
   headers.set('Cross-Origin-Opener-Policy', 'same-origin')

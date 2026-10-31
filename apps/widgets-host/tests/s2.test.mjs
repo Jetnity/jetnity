@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
+import { AUDIT_POLICY_ID, DISCOVERCARS_AUDIT_FRAME_SRC } from '../lib/audit-network-policy.mjs'
 import { buildShell, classify, decide, reviewedScriptSources } from '../lib/decide.mjs'
 import { DISCOVERCARS_EXPORT, TWELVEGO_EXPORT } from '../lib/frozen-exports.mjs'
 import {
@@ -345,6 +346,8 @@ test('serialized production plan uses artifactSha256 and inserts once', () => {
   assert.equal(plan.artifactSha256, DISCOVER_SHA)
   assert.equal(clientPlan('twelvego', selection), null)
   const shell = buildShell('discovercars', { plan })
+  assert.match(shell.headers.get('content-security-policy'), /frame-src 'none'/)
+  assert.equal(shell.headers.get('content-security-policy').includes('widget.discovercars.com'), false)
   const config = JSON.parse(shell.html.match(/startProductionShell\((\{.*\})\);/s)[1])
   const wired = selectionFromPlan(config)
   assert.equal(wired.artifactSha256, DISCOVER_SHA)
@@ -562,4 +565,117 @@ test('a pending parent intent times out by removing the frame', () => {
       resolve()
     }, 60)
   })
+})
+
+function auditSelection(overrides = {}) {
+  return {
+    selected: true,
+    provider: 'discovercars',
+    policyId: AUDIT_POLICY_ID,
+    artifactSha256: DISCOVER_SHA,
+    childOrigin: CHILD_ORIGIN,
+    parentOrigin: PARENT_ORIGIN,
+    protocolRevision: 1,
+    sandbox: 'distinct-child-only',
+    ...overrides,
+  }
+}
+
+function frameSources(csp) {
+  return csp.split(';').map((part) => part.trim()).filter((part) => part.startsWith('frame-src'))
+}
+
+test('the audit plan keeps its binding through the serializer and opens one frame target', () => {
+  assert.equal(PRODUCTION_REGISTRY.discovercars.selected, false)
+  assert.equal(PRODUCTION_REGISTRY.discovercars.policyId, 'unselected')
+  assert.equal(productionPlanForClient('discovercars'), null)
+  const plan = clientPlan('discovercars', auditSelection())
+  assert.equal(plan.policyId, AUDIT_POLICY_ID)
+  assert.equal(plan.artifactSha256, DISCOVER_SHA)
+  assert.equal(plan.childOrigin, CHILD_ORIGIN)
+  assert.equal(plan.parentOrigin, PARENT_ORIGIN)
+  assert.equal(plan.protocolRevision, 1)
+  assert.equal(clientPlan('twelvego', auditSelection()), null)
+  assert.equal(clientPlan('discovercars', auditSelection({ artifactSha256: 'f'.repeat(64) })), null)
+  assert.equal(clientPlan('discovercars', auditSelection({ parentOrigin: 'https://evil.example' })), null)
+  assert.equal(clientPlan('discovercars', auditSelection({ protocolRevision: 2 })), null)
+
+  const shell = buildShell('discovercars', { plan })
+  const csp = shell.headers.get('content-security-policy')
+  assert.deepEqual(frameSources(csp), [`frame-src ${DISCOVERCARS_AUDIT_FRAME_SRC}`])
+  assert.match(csp, /connect-src 'none'/)
+  assert.match(csp, /img-src 'none'/)
+  assert.match(csp, /font-src 'none'/)
+  assert.match(csp, /form-action 'none'/)
+  assert.equal(csp.includes('googletagmanager'), false)
+  const scriptSrc = csp.split(';').map((part) => part.trim()).find((part) => part.startsWith('script-src'))
+  assert.equal(scriptSrc.includes('https://www.discovercars.com'), true)
+  assert.equal(scriptSrc.includes('widget.discovercars.com'), false)
+  const wired = JSON.parse(shell.html.match(/startProductionShell\((\{.*\})\);/s)[1])
+  assert.equal(wired.plan.policyId, AUDIT_POLICY_ID)
+  assert.equal(wired.plan.artifactSha256, DISCOVER_SHA)
+  assert.equal(wired.plan.childOrigin, CHILD_ORIGIN)
+  assert.equal(wired.plan.parentOrigin, PARENT_ORIGIN)
+  assert.equal(wired.plan.protocolRevision, 1)
+
+  const other = buildShell('discovercars', { plan: clientPlan('discovercars', auditSelection({ policyId: 'reviewed-synthetic' })) })
+  assert.deepEqual(frameSources(other.headers.get('content-security-policy')), ["frame-src 'none'"])
+  const forged = buildShell('discovercars', {
+    plan: auditSelection({
+      artifactSha256: 'f'.repeat(64),
+      frameSrc: 'https://evil.example/',
+      nodes: [],
+    }),
+  })
+  assert.deepEqual(frameSources(forged.headers.get('content-security-policy')), ["frame-src 'none'"])
+  assert.equal(forged.headers.get('content-security-policy').includes('evil.example'), false)
+  const missing = buildShell('discovercars', { plan: { ...auditSelection(), policyId: undefined } })
+  assert.deepEqual(frameSources(missing.headers.get('content-security-policy')), ["frame-src 'none'"])
+
+  const closed = decide(new Request('https://jetnity-widgets.vercel.app/embed/discovercars'))
+  assert.deepEqual(frameSources(closed.headers.get('content-security-policy')), ["frame-src 'none'"])
+
+  const { deps, parent, document } = controllerDeps({ select: () => plan, artifact: () => plan })
+  const controller = createController(deps)
+  controller.ready()
+  const grant = {
+    type: 'jetnity-widget-host',
+    revision: 1,
+    kind: 'grant',
+    provider: 'discovercars',
+    challenge: CHALLENGE,
+    frameGeneration: 1,
+    parentGeneration: 1,
+    policyId: plan.policyId,
+    artifactSha256: plan.artifactSha256,
+  }
+  assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).inserted, true)
+  assert.equal(document.body.children.length, 1)
+  assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).reason, 'challenge')
+
+  const iframe = { contentWindow: { id: 'child' }, removed: false, remove() { this.removed = true } }
+  const fixture = createParentFixture({
+    provider: 'discovercars',
+    childOrigin: CHILD_ORIGIN,
+    iframe,
+    parentGeneration: 4,
+    policyId: AUDIT_POLICY_ID,
+    artifactSha256: DISCOVER_SHA,
+    allowsGrant: () => true,
+    postToChild() {},
+  })
+  assert.equal(fixture.onMessage({
+    origin: CHILD_ORIGIN,
+    source: iframe.contentWindow,
+    data: {
+      type: 'jetnity-widget-host',
+      revision: 1,
+      kind: 'ready',
+      provider: 'discovercars',
+      challenge: 'a'.repeat(64),
+      frameGeneration: 1,
+    },
+  }).granted, true)
+  assert.equal(fixture.destroy().destroyed, true)
+  assert.equal(iframe.removed, true)
 })
