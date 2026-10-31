@@ -53,6 +53,10 @@ function bereit() {
   return selectProvider(ingestApi(createController(), api()), 'discovercars')
 }
 
+function gebunden(state: ReturnType<typeof bereit>) {
+  return bindReviewedPolicy(state, 'discovercars', POLICY)
+}
+
 function starten(state: ReturnType<typeof bereit>, token: WorkToken | null = issueWork(state, 'discovercars')) {
   return startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com', token)
 }
@@ -114,9 +118,11 @@ describe('cmp entscheidung und steuerung', () => {
       providerId: 'discovercars',
       epoch: 99,
       scopeKey: 'scope-alpha',
+      requiredOptional: [...POLICY.requiredOptional],
     })
     assert.equal(falsch.created, false)
     assert.equal(falsch.decision.reason, 'stale_generation')
+    assert.equal(falsch.state.slots.discovercars.requiredOptional, null)
     const prod = productionStart(state, 'discovercars', api(), 'jetnity.com')
     assert.equal(prod.created, false)
     assert.equal(prod.decision.reason, 'production_policy_unreviewed')
@@ -151,6 +157,8 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(ohneAuswahl.created, false)
     assert.equal(ohneAuswahl.state.live, null)
     state = selectProvider(ohneAuswahl.state, 'discovercars')
+    assert.equal(issueWork(state, 'discovercars'), null)
+    state = gebunden(state)
     const neu = issueWork(state, 'discovercars')
     assert.ok(neu)
     assert.notEqual(neu.epoch, pending.epoch)
@@ -161,7 +169,7 @@ describe('cmp entscheidung und steuerung', () => {
   })
 
   test('Kategorieverlust, Entzug, Close und veraltete Kommandos setzen die Epoche dauerhaft ausser Kraft', () => {
-    let state = bereit()
+    let state = gebunden(bereit())
     const token = issueWork(state, 'discovercars')
     assert.ok(token)
     state = starten(state, token).state
@@ -178,6 +186,8 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(ohneNeu.state.slots.discovercars.intent, 'withdrawn')
 
     state = selectProvider(ohneNeu.state, 'discovercars')
+    assert.equal(issueWork(state, 'discovercars'), null)
+    state = gebunden(state)
     const zweit = issueWork(state, 'discovercars')
     assert.ok(zweit)
     state = starten(state, zweit).state
@@ -202,6 +212,7 @@ describe('cmp entscheidung und steuerung', () => {
       providerId: 'discovercars',
       epoch: nachGrant.slots.discovercars.consent.generation,
       scopeKey: 'scope-alpha',
+      requiredOptional: zweit.requiredOptional,
     }), false)
 
     const geschlossen = dispatchChoice(nachGrant, 'discovercars', {
@@ -212,7 +223,7 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(geschlossen.slots.discovercars.intent, 'withdrawn')
     assert.equal(acceptPending(geschlossen, zweit), false)
 
-    state = selectProvider(geschlossen, 'discovercars')
+    state = gebunden(selectProvider(geschlossen, 'discovercars'))
     const dritt = issueWork(state, 'discovercars')
     assert.ok(dritt)
     state = starten(state, dritt).state
@@ -244,7 +255,7 @@ describe('cmp entscheidung und steuerung', () => {
   })
 
   test('ungültige API, Ablehnung und Unmount ziehen auch eine noch nicht gerahmte Auswahl ein', () => {
-    let state = bereit()
+    let state = gebunden(bereit())
     const token = issueWork(state, 'discovercars')
     assert.ok(token)
     const kaputt = ingestApi(state, {
@@ -257,7 +268,7 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(acceptPending(kaputt, token), false)
     assert.equal(startLocalContext(kaputt, 'discovercars', POLICY, api(), 'jetnity.com', token).created, false)
 
-    state = bereit()
+    state = gebunden(bereit())
     const offen = issueWork(state, 'discovercars')
     assert.ok(offen)
     state = starten(state, offen).state
@@ -268,7 +279,7 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(abgelehnt.live, null)
     assert.equal(acceptPending(abgelehnt, offen), false)
 
-    state = bereit()
+    state = gebunden(bereit())
     const gemerkt = issueWork(state, 'discovercars')
     assert.ok(gemerkt)
     const demontiert = releaseMountedContext(state, 'discovercars')
@@ -300,6 +311,23 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(erlaubt.localContext, true)
 
     let state = selectProvider(ingestApi(createController(), nurStatistik), 'discovercars')
+    assert.equal(issueWork(state, 'discovercars'), null)
+    const ungebunden = {
+      providerId: 'discovercars' as const,
+      epoch: state.slots.discovercars.epoch,
+      scopeKey: state.slots.discovercars.consent.scopeKey,
+      requiredOptional: ['ANALYTICS_STORAGE'] as const,
+    }
+    state = ingestApi(state, api(false, true))
+    state = ingestApi(state, api(true, true))
+    assert.equal(state.slots.discovercars.intent, 'selected')
+    assert.equal(state.slots.discovercars.epoch, ungebunden.epoch)
+    const retro = startLocalContext(state, 'discovercars', ANALYTICS_ONLY, nurStatistik, 'jetnity.com', ungebunden)
+    assert.equal(retro.created, false)
+    assert.equal(retro.state.live, null)
+    assert.equal(retro.state.slots.discovercars.requiredOptional, null)
+    assert.equal(acceptPending(retro.state, ungebunden), false)
+    state = bindReviewedPolicy(retro.state, 'discovercars', ANALYTICS_ONLY)
     const token = issueWork(state, 'discovercars')
     assert.ok(token)
     const gestartet = startLocalContext(state, 'discovercars', ANALYTICS_ONLY, nurStatistik, 'jetnity.com', token)
@@ -327,7 +355,7 @@ describe('cmp entscheidung und steuerung', () => {
     const ohneNeu = startLocalContext(pflichtWeg, 'discovercars', ANALYTICS_ONLY, api(true), 'jetnity.com', pending)
     assert.equal(ohneNeu.created, false)
 
-    state = selectProvider(ingestApi(createController(), api()), 'discovercars')
+    state = bindReviewedPolicy(selectProvider(ingestApi(createController(), api()), 'discovercars'), 'discovercars', ANALYTICS_ONLY)
     const voll = issueWork(state, 'discovercars')
     assert.ok(voll)
     state = startLocalContext(state, 'discovercars', ANALYTICS_ONLY, api(), 'jetnity.com', voll).state

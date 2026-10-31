@@ -7,8 +7,9 @@ export function PrivacyBeeCmpFrameSlot({ live }: { live: LiveContext | null }) {
     jetnityCanary: live.epoch,
     provider: live.providerId,
     scope: live.scopeKey,
+    required: live.requiredOptional,
   })
-  const srcDoc = `<!doctype html><html><body><p>Lokaler Canary, kein Anbieter.</p><script>var info=${payload};var n=0;function send(kind){n+=1;parent.postMessage({jetnityCanary:info.jetnityCanary,provider:info.provider,scope:info.scope,kind:kind,n:n},"*");}send("active");setInterval(function(){send("pulse");},120);setTimeout(function(){send("delayed");},1500);</script></body></html>`
+  const srcDoc = `<!doctype html><html><body><p>Lokaler Canary, kein Anbieter.</p><script>var info=${payload};var n=0;function send(kind){n+=1;parent.postMessage({jetnityCanary:info.jetnityCanary,provider:info.provider,scope:info.scope,required:info.required,kind:kind,n:n},"*");}send("active");setInterval(function(){send("pulse");},120);window.addEventListener("message",function(event){var data=event.data;if(!data||data.jetnityArm!=="delayed")return;send("armed");setTimeout(function(){send("delayed");},400);});</script></body></html>`
   return (
     <iframe
       title="Synthetischer Einwilligungsrahmen"

@@ -207,10 +207,19 @@ async function main() {
     }, vorFremd)
     const erster = await tokenLesen(page)
     if (!erster) merken('Lebendes Token fehlt')
+    if ((await log(page)).some((eintrag) => eintrag.kind === 'delayed')) merken('Verzögerung lief vor dem Schnitt')
+    await page.locator('[data-synthetic-frame="1"]').evaluate((node) => {
+      (node as HTMLIFrameElement).contentWindow?.postMessage({ jetnityArm: 'delayed' }, '*')
+    })
+    await page.waitForFunction(() => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      const eintraege = JSON.parse(roh) as { kind: string }[]
+      return eintraege.some((eintrag) => eintrag.kind === 'armed') && !eintraege.some((eintrag) => eintrag.kind === 'delayed')
+    })
     const mark = (await log(page)).length
     await page.evaluate(() => window.__jetnitySetAnalytics?.(false))
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null)
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(800)
     const nachAbbruch = (await log(page)).slice(mark).filter((eintrag) => eintrag.kind === 'active' || eintrag.kind === 'pulse' || eintrag.kind === 'delayed')
     if (nachAbbruch.some((eintrag) => eintrag.kind === 'delayed')) merken('Verzögerte Canary-Arbeit nach Abbruch')
     if (nachAbbruch.length > 1) merken(`Canary arbeitet nach Abbruch ${nachAbbruch.length}`)
@@ -219,7 +228,7 @@ async function main() {
     await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
     await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', true))
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
     }, erster)
     await page.waitForFunction(() => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
@@ -239,7 +248,7 @@ async function main() {
     })
     const vorReplay = (await log(page)).length
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
     }, erster)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
@@ -265,7 +274,7 @@ async function main() {
     await page.getByRole('button', { name: 'Schliessen' }).click()
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
     }, vorClose)
     await page.locator('[data-synthetic="break"]').click()
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error')
@@ -278,7 +287,7 @@ async function main() {
     await page.waitForFunction(() => document.querySelector('[data-cmp-client="1"]') && document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     const laenge = (await log(page)).length
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
     }, vorClose)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'

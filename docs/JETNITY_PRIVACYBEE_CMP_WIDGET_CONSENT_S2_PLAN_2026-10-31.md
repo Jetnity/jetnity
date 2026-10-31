@@ -25,3 +25,7 @@ The server gate is release plus kill switch. It does not invent a hostname. The 
 ## R3 correction under the same plan
 
 A reviewed policy binds only its own required categories. Refusing an unrelated advertising category does not retire an analytics-only selection. Refusing a required category, or an unusable API, still retires pending and live work. The bootstrap registers listeners and then calls the real start gate while the snapshot is still missing. The hook's return value cannot authorize a script. The canary keeps a pulse and one delayed action; teardown through category loss leaves at most one already queued message, and that message is rejected.
+
+## R4 correction under the same plan
+
+`issueWork` returns a token only after `bindReviewedPolicy` has stored a validated requirement. `startLocalContext` does not bind a policy and does not accept a token minted while the slot was unbound. The canary arms its delayed message immediately before teardown and the harness checks that the delay has not already fired.

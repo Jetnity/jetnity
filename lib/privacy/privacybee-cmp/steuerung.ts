@@ -13,7 +13,7 @@ import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertr
 import { decideBundle, productionPolicy, type BundleDecision, type ProviderIntent, type ReviewedPolicy } from '@/lib/privacy/privacybee-cmp/bundle'
 import { readCmpApi, type CmpRead } from '@/lib/privacy/privacybee-cmp/schnappschuss'
 import { phaseFromRead, type BridgePhase } from '@/lib/privacy/privacybee-cmp/bruecke'
-import { CMP_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
+import { CMP_CATEGORIES, CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 const PROVIDERS = ['discovercars', 'twelvego'] as const satisfies readonly WidgetConsentProviderId[]
 
@@ -21,6 +21,8 @@ export type WorkToken = {
   readonly providerId: WidgetConsentProviderId
   readonly epoch: number
   readonly scopeKey: string
+  /** The validated requirement that was already bound when this token was issued. */
+  readonly requiredOptional: readonly string[]
 }
 
 export type LiveContext = {
@@ -73,8 +75,25 @@ function sameRead(left: CmpRead, right: CmpRead): boolean {
   return false
 }
 
+function sameRequirement(left: readonly string[] | null | undefined, right: readonly string[] | null | undefined): boolean {
+  if (!left || !right || left.length !== right.length) return false
+  return left.every((name, index) => name === right[index])
+}
+
+function validatedRequirement(required: readonly string[] | null | undefined): readonly string[] | null {
+  if (!required || required.length === 0) return null
+  if (required.some((name) => !(CMP_CATEGORIES as readonly string[]).includes(name))) return null
+  if (!required.some((name) => (CMP_OPTIONAL_CATEGORIES as readonly string[]).includes(name))) return null
+  return required
+}
+
 function tokenFor(providerId: WidgetConsentProviderId, current: ProviderSlot): WorkToken {
-  return { providerId, epoch: current.epoch, scopeKey: current.consent.scopeKey }
+  return {
+    providerId,
+    epoch: current.epoch,
+    scopeKey: current.consent.scopeKey,
+    requiredOptional: current.requiredOptional ?? [],
+  }
 }
 
 function retire(
@@ -102,7 +121,8 @@ export function bindReviewedPolicy(
   policy: ReviewedPolicy | null,
 ): CmpControllerState {
   const current = state.slots[providerId]
-  const required = policy && policy.requiredOptional.length > 0 ? Object.freeze([...policy.requiredOptional]) : null
+  const validated = validatedRequirement(policy?.requiredOptional)
+  const required = validated ? Object.freeze([...validated]) : null
   const previous = current.requiredOptional
   if (required === null && previous === null) return state
   if (
@@ -187,10 +207,20 @@ export function selectProvider(state: CmpControllerState, providerId: WidgetCons
   return retire(state, providerId, 'selected', tokenFor(providerId, current))
 }
 
+/**
+ * Order: bindReviewedPolicy, then selectProvider if needed, then issueWork, then startLocalContext.
+ * issueWork returns null until a validated policy is already bound. startLocalContext does not bind one.
+ */
 export function issueWork(state: CmpControllerState, providerId: WidgetConsentProviderId): WorkToken | null {
   const current = state.slots[providerId]
-  if (current.intent !== 'selected') return null
-  return tokenFor(providerId, current)
+  const required = validatedRequirement(current.requiredOptional)
+  if (current.intent !== 'selected' || !required) return null
+  return {
+    providerId,
+    epoch: current.epoch,
+    scopeKey: current.consent.scopeKey,
+    requiredOptional: required,
+  }
 }
 
 /** Drops a mounted or merely issued execution. A new selection is required afterwards. */
@@ -207,11 +237,15 @@ export function startLocalContext(
   hostname: string | null | undefined,
   token?: WorkToken | null,
 ): { readonly state: CmpControllerState; readonly created: boolean; readonly decision: BundleDecision } {
-  const prepared = policy ? bindReviewedPolicy(state, providerId, policy) : state
-  const reread = ingestApi(prepared, freshApi)
+  const reread = ingestApi(state, freshApi)
   const slotState = reread.slots[providerId]
+  const bound = validatedRequirement(slotState.requiredOptional)
+  const policyMatches = policy == null || (bound != null && sameRequirement(policy.requiredOptional, bound))
   const tokenFits = Boolean(
     token &&
+      bound &&
+      policyMatches &&
+      sameRequirement(token.requiredOptional, bound) &&
       token.providerId === providerId &&
       token.epoch === slotState.epoch &&
       token.scopeKey === slotState.consent.scopeKey &&
@@ -228,7 +262,7 @@ export function startLocalContext(
     snapshotUsable: reread.read.status === 'explicit',
     hostname,
   })
-  if (!decision.localContext || reread.live || !tokenFits || !policy || !token) {
+  if (!decision.localContext || reread.live || !tokenFits || !policy || !token || !bound) {
     return { state: reread, created: false, decision }
   }
   return {
@@ -239,7 +273,7 @@ export function startLocalContext(
         generation: slotState.consent.generation,
         epoch: token.epoch,
         scopeKey: token.scopeKey,
-        requiredOptional: policy.requiredOptional,
+        requiredOptional: bound,
       },
     },
     created: true,
@@ -265,6 +299,8 @@ export function acceptPending(state: CmpControllerState, pending: WorkToken): bo
   const current = state.slots[pending.providerId]
   if (!current || current.intent !== 'selected') return false
   if (current.epoch !== pending.epoch || current.consent.scopeKey !== pending.scopeKey) return false
+  if (!sameRequirement(current.requiredOptional, pending.requiredOptional)) return false
   if (!state.live) return false
+  if (!sameRequirement(state.live.requiredOptional, pending.requiredOptional)) return false
   return state.live.providerId === pending.providerId && state.live.epoch === pending.epoch && state.live.scopeKey === pending.scopeKey
 }

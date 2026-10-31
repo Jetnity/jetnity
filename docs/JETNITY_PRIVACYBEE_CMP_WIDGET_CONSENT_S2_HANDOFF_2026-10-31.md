@@ -8,11 +8,11 @@
 
 1. Immutable task `docs/JETNITY_PRIVACYBEE_CMP_WIDGET_CONSENT_S2_TASK_V1_2026-10-31.md` (unchanged blob `b460b21bdeb2ee4434766fee6b775f594a09a2a0`).
 2. STATUS for the verification. REPORT and DISCLOSURE_CONTRACT for behavior and observed hosts.
-3. Re-fetch `origin/main` and re-read `git rev-parse HEAD` before review. This delivery used merge-base `b7ebc399b92303eacda9afdaa1786f245492051f`. The previous reviewed head `9cdc994837cea59636f10cf3ca78e286c3146219` is the parent, not this correction.
+3. Re-fetch `origin/main` and re-read `git rev-parse HEAD` before review. This delivery merged main `36efd23835373f4a9cac28175bbefacc9cc45c58`. The previous reviewed head `c59be5860bd2f391c4a4273403a293df33bd0bfe` is the parent of the R4 correction, not the head under review.
 
 ## Current policy
 
-CMP release is false. Production provider policy is unreviewed and denied. Informative consent is not execution. A retired epoch is not reused after regrant. Only the categories named by the bound policy can retire that epoch. The host foundation stays outside this PR and remains fail-closed.
+CMP release is false. Production provider policy is unreviewed and denied. Informative consent is not execution. A token exists only after a validated policy is bound. A retired epoch is not reused after regrant. Only the categories named by the bound policy can retire that epoch. The host foundation stays outside this PR and remains fail-closed. Viator source from main `36efd238` is included by merge and is not changed here.
 
 ## First unfinished step
 

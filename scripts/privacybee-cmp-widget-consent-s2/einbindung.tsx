@@ -63,12 +63,14 @@ export function CmpSyntheticHost() {
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      const data = event.data as { jetnityCanary?: unknown; provider?: unknown; scope?: unknown; kind?: unknown; n?: unknown } | null
+      const data = event.data as { jetnityCanary?: unknown; provider?: unknown; scope?: unknown; kind?: unknown; n?: unknown; required?: unknown } | null
       if (!data || typeof data.jetnityCanary !== 'number' || typeof data.scope !== 'string' || !istAnbieter(data.provider)) return
+      const required = Array.isArray(data.required) ? data.required.filter((name): name is string => typeof name === 'string') : []
       const ok = acceptPending(readCmpController(), {
         providerId: data.provider,
         epoch: data.jetnityCanary,
         scopeKey: data.scope,
+        requiredOptional: required,
       })
       canaryMerken({
         epoch: data.jetnityCanary,
