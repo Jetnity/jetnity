@@ -78,6 +78,10 @@ Dated transfer at 390: planned date visible, absent from the href, `CHF` absent 
 | Vercel Preview and GitHub CI on `c2fa11dc` | App job `123714720799` failed at schema-bezug. That head is invalidated. New CI and Preview are not evidence until they finish on the correction head |
 | Production acceptance, #968 | not claimed |
 
+## R5 current styles
+
+The surface script compiles `styles/globals.css` with `tailwind.config.js`, nesting, and autoprefixer, then appends `styles/white-mint.css`, `components/workspace/workspace.css`, and `components/workspace/workspace-surfaces.css`. That is the layout order followed by the workspace shell. No global CSS file was edited. The rendered component is still `TwelveGoAffiliateLinks`. Root font 32px is 200% text, not browser zoom. Phone cases are emulation. Non-loopback requests are aborted. Enter may attempt only the existing V1 affiliate URL, and that attempt is aborted.
+
 ## R4 binds the browser check to the component
 
 The fixture page is `renderToStaticMarkup(TwelveGoWidgetRahmen)` plus a click handler that sets `src` on `[data-twelve-go-rahmen="leer"]`. The handler is not part of the component. Replacing that markup with no iframe, two iframes, height 150, or `allow-same-origin` fails `rahmenBeweis`. The browser run at 320 and 390 measured the component iframe at full width and 800px, parent document access stayed null, and one local character was typed. Every non-loopback request is aborted and recorded. None occurred. Evidence for that run was written under the explicit output variable, not a path stored in git. Default without the variable is the OS temporary directory. This remains a local stub. The R2 official-form observation stays dated. Search, consent, and legal acceptance are not claimed.

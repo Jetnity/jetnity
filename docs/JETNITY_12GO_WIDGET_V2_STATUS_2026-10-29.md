@@ -3,7 +3,25 @@
 Date: 29 October 2026 Europe/Zurich
 Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
-State: **CONSENT_BLOCKED / DRAFT / R3 source preparation / STOP for independent Technical Lead review**
+State: **CONSENT_BLOCKED / DRAFT / R5 current-main evidence / STOP for independent Technical Lead review**
+
+## Current, 31 October 2026
+
+Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The trip path still mounts only the closed notice in `TwelveGoWidgetEinbau`. `TwelveGoWidgetRahmen` is not on that path. `/embed/twelve-go` exists and stays a constant 404. Both execution switches stay false. Iframe height is not the open blocker: the dated R2 measurement already showed the official general form inside an 800px `allow-scripts` frame. The local three-field stub and the current-style surface check are not official hosted acceptance.
+
+The paragraph in Organisieren is not a finished search form.
+
+Pending bridge, not implemented here:
+
+1. Account-supported CMP grant and withdraw, including the still-open Swiss PrivacyBee snippet, callback, and entitlement (#1087).
+2. A reviewed shared execution and origin contract. Informative consent is not that grant.
+3. One real frame lifecycle, then official form, search, and redirect acceptance.
+
+Older sentences below that say the embed route does not exist, or that the opaque frame failed to show the form, are dated and superseded.
+
+## R5 stylesheet
+
+`oberflaeche.ts` no longer keeps a handwritten utility list. It compiles `styles/globals.css` with the repo Tailwind config, then appends `styles/white-mint.css`, `components/workspace/workspace.css`, and `components/workspace/workspace-surfaces.css` in application order. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` matched `0a26c611` only.
 
 ## R4 evidence binding
 
@@ -24,6 +42,8 @@ Pinned main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged. `vendorScriptM
 
 ## Git
 
+The commit list below is the 29 October record. Current main and the R5 head are in the 31 October section and on the PR.
+
 - Branch: `feat/12go-v2-official-search-widget-optin-1`
 - Protected main / merge-base: `e462cf7c5910ce75fa6350928326c04e33d94eee`
 - Task seed: `421a703b274b489004c0b07e8d392dbc1cec6ed7`
@@ -43,7 +63,7 @@ Execution stays closed:
 - `ausfuehrbar: false`
 - `isolation: NOT_ESTABLISHED`
 
-Reason: there is no approved vendor consent policy, and safe isolation was not established. The ephemeral audit showed that pasting the official snippet runs 12Go's loader and jQuery 1.11 from `ajax.googleapis.com` in the host document. An opaque `sandbox="allow-scripts"` frame still contacted the same hosts and did not present a complete form. `app/embed/twelve-go/route.ts` was not added.
+Dated 29 October reason, superseded: the first audit treated a 300×150 frame as a failed form, and the embed route did not exist yet. R2 later showed the clip. R3 added the 404 route. The still-open cause is the consent and execution bridge in the current section, not the missing route and not the frame height.
 
 ## R1-F1
 

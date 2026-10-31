@@ -2,7 +2,9 @@
 // Synthetisches Markup, kein App-Login, kein Klick zu einer Buchung.
 // 200%-Text ist die Wurzel-Schrift 32px. Chrome-Zoom und echte Geräte laufen hier nicht.
 
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { chromium, devices, type Browser } from 'playwright'
@@ -10,9 +12,22 @@ import { chromium, devices, type Browser } from 'playwright'
 import TwelveGoAffiliateLinks from '@/components/trips/TwelveGoAffiliateLinks'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
+import { nachweisOrdner } from '@/scripts/twelve-go-widget-v2/rahmen-nachweis'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
-const ZIEL = '/opt/cursor/artifacts/twelve-go-widget-v2'
+/**
+ * Dieselbe Reihenfolge wie die App: `app/layout.tsx` lädt globals, dann
+ * white-mint. `WorkspaceShell` lädt danach die beiden Workspace-Dateien.
+ * globals wird mit der bestehenden Tailwind-Konfiguration übersetzt.
+ */
+export const ANWENDUNGS_STIL_REIHENFOLGE = [
+  'styles/globals.css',
+  'styles/white-mint.css',
+  'components/workspace/workspace.css',
+  'components/workspace/workspace-surfaces.css',
+] as const
+
+const V1_HREF = 'https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route'
 const JETZT = '2026-10-29T18:00:00.000Z'
 
 function etappe(id: string, name: string, position: number, placeId: string | null = null): TripStage {
@@ -53,51 +68,33 @@ const reise: Trip = {
   updatedAt: JETZT,
 }
 
-const STIL = `
-  *, *::before, *::after { box-sizing: border-box; }
-  html { font-size: 16px; }
-  body { margin: 0; background: #f4f7f4; color: #14312c; font-family: sans-serif; }
-  .min-h-11 { min-height: 2.75rem; }
-  .inline-flex { display: inline-flex; }
-  .w-full { width: 100%; }
-  .max-w-full { max-width: 100%; }
-  .min-w-0 { min-width: 0; }
-  .items-center { align-items: center; }
-  .break-words { overflow-wrap: anywhere; }
-  .whitespace-normal { white-space: normal; }
-  .rounded-full { border-radius: 9999px; }
-  .rounded-2xl { border-radius: 1rem; }
-  .rounded-\\[24px\\] { border-radius: 24px; }
-  .border { border-width: 1px; border-style: solid; }
-  .border-line-200, .border-line-300 { border-color: #d5e0da; }
-  .bg-white { background: #fff; }
-  .bg-surface-25 { background: #f7faf8; }
-  .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-  .px-4 { padding-left: 1rem; padding-right: 1rem; }
-  .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-  .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-  .p-4 { padding: 1rem; }
-  .text-xs { font-size: 0.75rem; }
-  .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-  .leading-6 { line-height: 1.5rem; }
-  .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-  .font-semibold { font-weight: 600; }
-  .uppercase { text-transform: uppercase; }
-  .tracking-\\[0\\.16em\\] { letter-spacing: 0.16em; }
-  .text-brand-600 { color: #1f6a45; }
-  .text-brand-800, .text-ink-800 { color: #14312c; }
-  .mt-1 { margin-top: 0.25rem; }
-  .mt-3 { margin-top: 0.75rem; }
-  .mt-5 { margin-top: 1.25rem; }
-  .grid { display: grid; }
-  .gap-3 { gap: 0.75rem; }
-  a:focus-visible, button:focus-visible { outline: 4px solid rgba(15, 92, 74, 0.35); outline-offset: 2px; }
-  @media (min-width: 640px) {
-    .sm\\:w-auto { width: auto; }
-    .sm\\:p-5 { padding: 1.25rem; }
-    .sm\\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+function istLoopback(adresse: string): boolean {
+  if (adresse.startsWith('about:') || adresse.startsWith('data:') || adresse.startsWith('blob:')) return true
+  try {
+    const host = new URL(adresse).hostname
+    return host === '127.0.0.1' || host === 'localhost' || host === '[::1]'
+  } catch {
+    return false
   }
-`
+}
+
+async function anwendungsStil(): Promise<string> {
+  const verlangen = createRequire(import.meta.url)
+  const postcss = verlangen('postcss') as (plugins: unknown[]) => {
+    process: (css: string, opts: { from: string }) => Promise<{ css: string }>
+  }
+  const nesting = verlangen('tailwindcss/nesting') as () => unknown
+  const tailwindcss = verlangen('tailwindcss') as (config: unknown) => unknown
+  const autoprefixer = verlangen('autoprefixer') as () => unknown
+  const wurzel = process.cwd()
+  const from = join(wurzel, ANWENDUNGS_STIL_REIHENFOLGE[0])
+  const config = verlangen(join(wurzel, 'tailwind.config.js')) as unknown
+  const uebersetzt = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(from, 'utf8'), { from })
+  const rest = ANWENDUNGS_STIL_REIHENFOLGE.slice(1)
+    .map((datei) => readFileSync(join(wurzel, datei), 'utf8'))
+    .join('\n')
+  return `${uebersetzt.css}\n${rest}`.replaceAll('</style', '<\\/style')
+}
 
 const FAELLE = [
   { name: '320', width: 320, height: 1100, root: '16px', emulation: null },
@@ -110,15 +107,17 @@ const FAELLE = [
   { name: 'pixel-5-emulation', width: devices['Pixel 5'].viewport.width, height: devices['Pixel 5'].viewport.height, root: '16px', emulation: 'Pixel 5' },
 ]
 
-function dokument(markup: string): string {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${STIL}</style></head><body>${markup}</body></html>`
+function dokument(markup: string, stil: string): string {
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${stil}</style></head><body>${markup}</body></html>`
 }
 
 async function main() {
-  mkdirSync(ZIEL, { recursive: true })
+  const ziel = nachweisOrdner()
+  mkdirSync(ziel, { recursive: true })
+  const stil = await anwendungsStil()
   const markup = renderToStaticMarkup(createElement(TwelveGoAffiliateLinks, { reise }))
-  const html = dokument(markup)
-  writeFileSync(`${ZIEL}/flaeche.html`, html)
+  const html = dokument(markup, stil)
+  writeFileSync(join(ziel, 'flaeche.html'), html)
 
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const fehler: string[] = []
@@ -134,9 +133,13 @@ async function main() {
         locale: 'de-CH',
       })
       const page = await context.newPage()
-      page.on('request', (anfrage) => {
-        const adresse = anfrage.url()
-        if (/12go\.|trainbusferry/i.test(adresse)) fremd.push({ fall: fall.name, adresse })
+      await context.route('**/*', (route) => {
+        const adresse = route.request().url()
+        if (!istLoopback(adresse)) {
+          fremd.push({ fall: fall.name, adresse: new URL(adresse).origin })
+          return route.abort()
+        }
+        return route.continue()
       })
       await page.setContent(html, { waitUntil: 'networkidle' })
       await page.evaluate((root) => {
@@ -177,9 +180,11 @@ async function main() {
         const nachSpace = await page.evaluate(() => document.querySelector('[data-twelve-go-widget]')?.getAttribute('data-twelve-go-widget'))
         if (nachSpace !== 'consent-blocked') fehler.push('Escape/Space entfernt den Hinweis')
         const enterZiele: string[] = []
+        await context.unroute('**/*')
         await context.route('**/*', (route) => {
           const adresse = route.request().url()
-          if (/12go\.|trainbusferry/i.test(adresse)) enterZiele.push(adresse)
+          if (istLoopback(adresse)) return route.continue()
+          enterZiele.push(adresse)
           return route.abort()
         })
         const popup = page.waitForEvent('popup', { timeout: 2000 }).catch(() => null)
@@ -188,11 +193,11 @@ async function main() {
         await page.waitForTimeout(300)
         if (enterZiele.length === 0) fehler.push('Enter öffnet den V1-Link nicht')
         if (enterZiele.some((adresse) => /trainbusferry/i.test(adresse))) fehler.push('Enter lädt den Widget-Loader')
-        if (enterZiele.some((adresse) => !adresse.startsWith('https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route'))) {
+        if (enterZiele.some((adresse) => !adresse.startsWith(V1_HREF))) {
           fehler.push(`Enter-Ziel unerwartet: ${enterZiele.length}`)
         }
       }
-      await page.screenshot({ path: `${ZIEL}/${fall.name}.png`, fullPage: true })
+      await page.screenshot({ path: join(ziel, `r5-${fall.name}.png`), fullPage: true })
       ergebnisse.push({ ...fall, ...masse, fokus })
       await context.close()
     }
@@ -232,20 +237,27 @@ async function main() {
   let datumBrowser: Browser | null = null
   try {
     datumBrowser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
-    const page = await datumBrowser.newPage({ viewport: { width: 390, height: 1100 } })
+    const context = await datumBrowser.newContext()
+    const page = await context.newPage()
+    await page.setViewportSize({ width: 390, height: 1100 })
     const anfragen: string[] = []
-    page.on('request', (anfrage) => {
-      if (/12go\.|trainbusferry/i.test(anfrage.url())) anfragen.push(anfrage.url())
+    await context.route('**/*', (route) => {
+      const adresse = route.request().url()
+      if (!istLoopback(adresse)) {
+        anfragen.push(new URL(adresse).origin)
+        return route.abort()
+      }
+      return route.continue()
     })
-    await page.setContent(dokument(renderToStaticMarkup(createElement(TwelveGoAffiliateLinks, { reise: mitDatum }))), { waitUntil: 'networkidle' })
+    await page.setContent(dokument(renderToStaticMarkup(createElement(TwelveGoAffiliateLinks, { reise: mitDatum })), stil), { waitUntil: 'networkidle' })
     const datum = await page.evaluate(() => ({
       geplant: document.querySelector('[data-geplant]')?.getAttribute('data-geplant'),
       href: document.querySelector('a[data-twelve-go-art]')?.getAttribute('href') ?? '',
       text: document.body.innerText,
       marker: document.querySelector('[data-twelve-go-widget]')?.getAttribute('data-twelve-go-widget'),
     }))
-    await page.screenshot({ path: `${ZIEL}/390-geplant.png`, fullPage: true })
-    if (anfragen.length > 0) fehler.push('Datumseite ruft 12Go auf')
+    await page.screenshot({ path: join(ziel, 'r5-390-geplant.png'), fullPage: true })
+    if (anfragen.length > 0) fehler.push('Datumseite ruft ein fremdes Netz auf')
     if (datum.geplant !== '2026-11-15') fehler.push(`Datum ${datum.geplant}`)
     if (datum.href.includes('date=') || datum.href.includes('2026-11-15')) fehler.push('Datum in der URL')
     if (datum.text.includes('CHF')) fehler.push('CHF steht in der Fläche')
@@ -270,13 +282,15 @@ async function main() {
       if (zielLink.art !== 'generic') fehler.push(`${fall.name}: art ${zielLink.art}`)
       if (zielLink.rel !== 'noopener noreferrer sponsored') fehler.push(`${fall.name}: rel`)
       if (zielLink.target !== '_blank') fehler.push(`${fall.name}: target`)
-      if (!zielLink.href?.startsWith('https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route')) fehler.push(`${fall.name}: href`)
+        if (!zielLink.href?.startsWith(V1_HREF)) fehler.push(`${fall.name}: href`)
       if (zielLink.hoehe < 44 || zielLink.breite < 44) fehler.push(`${fall.name}: Ziel ${zielLink.hoehe}x${zielLink.breite}`)
     }
   }
 
   const bericht = {
-    klasse: 'synthetisch-ssr-markup',
+    klasse: 'synthetisch-ssr-mit-anwendungs-css',
+    stil: ANWENDUNGS_STIL_REIHENFOLGE,
+    ausgabe: 'TWELVE_GO_WIDGET_NACHWEIS_DIR oder OS-Temp',
     echtesGeraet: false,
     chromeZoom: 'nicht-ausgefuehrt',
     text200: 'root-font-32px',
@@ -293,7 +307,8 @@ async function main() {
     fremd,
     fehler,
   }
-  writeFileSync(`${ZIEL}/oberflaeche.json`, JSON.stringify(bericht, null, 2))
+  writeFileSync(join(ziel, 'r5-oberflaeche.json'), JSON.stringify(bericht, null, 2))
+  console.log(`nachweis: ${ziel}`)
   if (fehler.length > 0) {
     console.error(fehler.join('\n'))
     process.exit(1)
@@ -301,7 +316,9 @@ async function main() {
   console.log(JSON.stringify(bericht.ergebnisse, null, 2))
 }
 
-void main().catch((fehler: unknown) => {
-  console.error(fehler instanceof Error ? fehler.message : fehler)
-  process.exit(1)
-})
+if (process.argv[1]?.endsWith('oberflaeche.ts') === true) {
+  void main().catch((fehler: unknown) => {
+    console.error(fehler instanceof Error ? fehler.message : fehler)
+    process.exit(1)
+  })
+}

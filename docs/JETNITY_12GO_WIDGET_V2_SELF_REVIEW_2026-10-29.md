@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R5 addition
+
+The surface harness no longer carries its own utility CSS. A source test checks that the stylesheet list matches `app/layout.tsx` and `WorkspaceShell`. The closed paragraph is still not a working form. Iframe sizing is a dated explanation, not the current blocker. I did not wire a CMP callback or a host adapter.
+
 ## R4 addition
 
 The previous browser script measured a handwritten iframe. It now measures the markup of `TwelveGoWidgetRahmen`. The static attribute test remains. A counterexample test rejects a missing frame and a 150px height. I did not add an src prop or an execution switch. The stub still does not load 12Go.

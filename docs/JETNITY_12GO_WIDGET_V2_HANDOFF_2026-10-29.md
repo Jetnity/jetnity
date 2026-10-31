@@ -22,14 +22,19 @@ Stop: independent exact-head review by the Technical Lead. No Ready, no merge, n
 
 The audit script is `scripts/twelve-go-widget-v2/audit.ts`. The surface script is `scripts/twelve-go-widget-v2/oberflaeche.ts`. Both are outside `npm test`. Evidence narrative: `docs/JETNITY_12GO_WIDGET_V2_REPORT_2026-10-29.md`. Proposed notice: `docs/JETNITY_12GO_WIDGET_V2_PRIVACY_NOTICE_2026-10-29.md`.
 
-## Blocker for a functioning form
+## Dated blocker, superseded
 
-Two gates are open:
+The 29 October note that the opaque sandbox was inadequate and that `app/embed/twelve-go/route.ts` still had to be created is historical. The route now returns 404. R2 showed the official form once the frame was 800px tall. Do not treat frame height as the remaining cause.
 
-1. An approved vendor notice and choice. The proposal is written. The live privacy page was not edited.
-2. An isolation technique that does not run the loader and jQuery 1.11 in the Jetnity origin. The opaque sandbox was not good enough, and `app/embed/twelve-go/route.ts` still needs an explicit review before anyone adds it.
+## Pending bridge
 
-Until both are decided, do not add a visitor load button and do not mount the official script.
+Do not invent CMP callbacks in this slice. The open sequence is:
+
+1. Account-supported CMP grant and withdraw. #1087 `APPROVE_B_DEVELOPMENT` exists. The Swiss PrivacyBee banner snippet, callback, and entitlement are still open. #1089 informative consent is not an execution grant.
+2. A reviewed shared execution and origin contract. #1091 is an inert host, not that contract.
+3. One mounted frame, then official form, search, and redirect acceptance. The local stub is not that acceptance.
+
+Until that bridge exists, do not add a visitor load button and do not mount the official script.
 
 ## Do not touch
 
@@ -43,6 +48,10 @@ Main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged without a force-push. 
 
 The browser script renders the delivered frame component. A unit test fails if that component is omitted or the measured frame is clipped, duplicated, or same-origin. Output is `TWELVE_GO_WIDGET_NACHWEIS_DIR` or the OS temp folder. Non-loopback traffic fails the run. Gates stay closed.
 
+## R5
+
+Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The surface harness uses the application stylesheet stack instead of a handwritten utility list. R4 frame counterexamples stay. The trip page is still only the closed notice.
+
 ## Next step
 
-Technical Lead reviews the R4 head. CI `41065919207` and Preview `dpl_FZNiKe4kjcB1euezYxZBRhChhEPz` belong to `5dc16630` and do not cover the correction. This session does not start another slice.
+Technical Lead reviews the R5 head. CI `41083212365` and Preview `dpl_GaEQx9wUePWXRFn1V79951YcAx7x` belong to `0a26c611` and do not cover it. This session does not start another slice.
