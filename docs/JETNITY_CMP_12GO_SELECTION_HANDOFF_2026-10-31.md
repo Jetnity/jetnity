@@ -7,7 +7,7 @@
 ## Read next
 
 1. Immutable task `docs/JETNITY_CMP_12GO_SELECTION_TASK_V1_2026-10-31.md` (blob `b1ffeaab607637fbd7fb62c27814d02e892836c1`).
-2. STATUS for the verification. REPORT for the tuple and the footer limitation.
+2. STATUS for the verification. REPORT for the tuple, the narrow category test, and the harness adapter.
 3. Re-read `git rev-parse HEAD` before review. Main at delivery was `32445c90c2d33695cbd8f69ea3cb7498768dda67`.
 
 ## Current policy
@@ -24,7 +24,7 @@ The disclosure revision is `twelvego-general-disclosure-v1`. The privacy link is
 
 ## Provider handoff
 
-The 12Go author can import `TWELVEGO_PRODUCTION_DISCLOSURE` and `PrivacyBeeCmpPreferences`, then call the existing facade with `twelvego`. This branch does not mount the provider, does not change S1 informative consent, and does not turn the release on. Removing the iframe does not recall provider storage or a provider tab. Paths that share the child origin are not described as isolated storage.
+The 12Go author can import `TWELVEGO_PRODUCTION_DISCLOSURE` and `PrivacyBeeCmpPreferences`, then call the existing facade with `twelvego`. The production footer already mounts the preferences control. This branch does not mount the provider, does not change S1 informative consent, and does not turn the release on. Removing the iframe does not recall provider storage or a provider tab. Paths that share the child origin are not described as isolated storage. The harness adapter is test-only and is not a product boundary.
 
 ## First unfinished step
 

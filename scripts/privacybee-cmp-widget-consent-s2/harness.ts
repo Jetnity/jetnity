@@ -6,8 +6,9 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createServer, type Server } from 'node:http'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 
+import { build, type Plugin } from 'esbuild'
 import { chromium, type Browser, type Page, type Route } from 'playwright'
 
 import { buildBootstrapSource, productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
@@ -16,6 +17,7 @@ import { CMP_BANNER_SRC } from '@/lib/privacy/privacybee-cmp/vertrag'
 declare global {
   interface Window {
     __jetnityPrefs?: number
+    __jetnityPrefClicks?: string[]
     __jetnitySetAnalytics?: (wert: boolean) => void
     __jetnitySetConsent?: (name: string, wert: boolean) => void
     __jetnityCapability?: { src: string } | null
@@ -29,8 +31,8 @@ declare global {
 const wurzel = process.cwd()
 const ausgabe = join(tmpdir(), 'privacybee-cmp-widget-consent-s2')
 const beweis = '/opt/cursor/artifacts/privacybee-cmp-widget-consent-s2'
-const esbuild = join(wurzel, 'node_modules/esbuild/bin/esbuild')
 const tailwind = join(wurzel, 'node_modules/tailwindcss/lib/cli.js')
+const rahmenAdapter = join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/rahmen-adapter.tsx')
 const whiteMint = readFileSync(join(wurzel, 'styles/white-mint.css'))
 
 const FIXTURE = `
@@ -47,10 +49,12 @@ function api(){
 window.PrivacyBee=api();
 backup=window.PrivacyBee;
 window.__jetnityPrefs=0;
+window.__jetnityPrefClicks=[];
 document.addEventListener('click',function(event){
   var ziel=event.target&&event.target.closest?event.target.closest('.privacybee-display-preferences'):null;
   if(!ziel)return;
   window.__jetnityPrefs+=1;
+  window.__jetnityPrefClicks.push(ziel.getAttribute('data-cmp-preferences')||'');
 });
 window.__jetnitySetConsent=function(name, wert){
   werteMap[name]=wert;
@@ -77,19 +81,49 @@ function html(bootstrap: string, fixture = false) {
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div>${flag}<script src="/app.js"></script><script>${bootstrap}</script></body></html>`
 }
 
-function bauen() {
+async function bauen() {
   mkdirSync(ausgabe, { recursive: true })
   mkdirSync(beweis, { recursive: true })
   const cssPfad = join(ausgabe, 'app.css')
   const jsPfad = join(ausgabe, 'app.js')
   execFileSync(process.execPath, [tailwind, '-i', join(wurzel, 'styles/globals.css'), '-o', cssPfad, '--minify'], { cwd: wurzel, stdio: 'inherit' })
-  execFileSync(esbuild, [
-    join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/einbindung.tsx'),
-    '--bundle', '--format=iife', `--alias:@=${wurzel}`,
-    `--alias:@/lib/privacy/privacybee-cmp/produktionspolitik=${join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/politik-mock.ts')}`,
-    `--outfile=${jsPfad}`,
-    '--define:process.env.NODE_ENV="production"',
-  ], { cwd: wurzel, stdio: 'inherit' })
+  const rahmen: Plugin = {
+    name: 'cmp-rahmen',
+    setup(bundle) {
+      const inhalt: Record<string, string> = {
+        link: `export { Link as default } from ${JSON.stringify(rahmenAdapter)}`,
+        image: `export { Image as default } from ${JSON.stringify(rahmenAdapter)}`,
+        navigation: `export { usePathname, useRouter } from ${JSON.stringify(rahmenAdapter)}`,
+        supabase: `export { createBrowserClient } from ${JSON.stringify(rahmenAdapter)}`,
+        signout: `export { signOutAction } from ${JSON.stringify(rahmenAdapter)}`,
+      }
+      bundle.onResolve({ filter: /^next\/(link|image|navigation)$/ }, (args) => ({
+        path: args.path === 'next/link' ? 'link' : args.path === 'next/image' ? 'image' : 'navigation',
+        namespace: 'cmp-rahmen',
+      }))
+      bundle.onResolve({ filter: /^@\/lib\/supabase\/client$/ }, () => ({ path: 'supabase', namespace: 'cmp-rahmen' }))
+      bundle.onResolve({ filter: /^@\/app\/auth\/sign-out$/ }, () => ({ path: 'signout', namespace: 'cmp-rahmen' }))
+      bundle.onLoad({ filter: /.*/, namespace: 'cmp-rahmen' }, (args) => ({
+        contents: inhalt[args.path],
+        resolveDir: dirname(rahmenAdapter),
+        loader: 'js',
+      }))
+    },
+  }
+  await build({
+    entryPoints: [join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/einbindung.tsx')],
+    bundle: true,
+    format: 'iife',
+    outfile: jsPfad,
+    absWorkingDir: wurzel,
+    define: { 'process.env.NODE_ENV': '"production"' },
+    alias: {
+      '@': wurzel,
+      '@/lib/privacy/privacybee-cmp/produktionspolitik': join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/politik-mock.ts'),
+    },
+    plugins: [rahmen],
+    logLevel: 'info',
+  })
   return { css: readFileSync(cssPfad), js: readFileSync(jsPfad) }
 }
 
@@ -138,7 +172,7 @@ async function capabilityLesen(page: Page) {
 async function main() {
   const fehler: string[] = []
   const merken = (text: string) => { fehler.push(text) }
-  const dateien = bauen()
+  const dateien = await bauen()
   const browser = await browserStart()
   const banner: string[] = []
   const fremd: string[] = []
@@ -181,38 +215,64 @@ async function main() {
     if (privacyLink !== 'https://12go.asia/en/privacy-policy') merken(`Datenschutzlink ${privacyLink}`)
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     await page.waitForFunction(() => document.querySelector('[data-phase]')?.getAttribute('data-phase') === 'ready')
-    const fuss = page.locator('footer [data-cmp-preferences="footer"]')
+    const footer = page.locator('footer.bg-brand-900')
+    if (await footer.count() !== 1 || await footer.locator('.grid').count() !== 1) merken('Produktions-Footer fehlt')
+    for (const name of ['Reise planen', 'Meine Reisen', 'Entdecken', 'Jetnity Pro', 'Datenschutzerklärung', 'Impressum']) {
+      if (await footer.getByRole('link', { name, exact: true }).count() !== 1) merken(`Footer-Link ${name}`)
+    }
+    const fuss = footer.locator('[data-cmp-preferences="footer"]')
     if (await fuss.count() !== 1) merken('Footer-Präferenzen fehlen')
-    await fuss.focus()
-    const fokus = await page.evaluate(() => document.activeElement?.getAttribute('data-cmp-preferences'))
-    if (fokus !== 'footer') merken(`Fokus ${fokus}`)
+    const prefKlicks = () => page.evaluate(() => window.__jetnityPrefClicks ?? [])
+    const footerBedienen = async (taste: 'click' | 'Enter' | 'Space') => {
+      const vorher = (await prefKlicks()).length
+      await fuss.evaluate((node) => (node as HTMLButtonElement).focus({ focusVisible: true }))
+      const ring = await fuss.evaluate((node) => getComputedStyle(node).boxShadow)
+      const ziel = await page.evaluate(() => document.activeElement?.getAttribute('data-cmp-preferences'))
+      if (ziel !== 'footer' || !ring || ring === 'none') merken(`Footer-Fokus ${taste} ${ziel} ${ring}`)
+      if (taste === 'click') await fuss.click()
+      else await page.keyboard.press(taste)
+      await page.waitForFunction((n) => (window.__jetnityPrefClicks?.length ?? 0) > n, vorher)
+      const letzte = (await prefKlicks()).at(-1)
+      if (letzte !== 'footer') merken(`Footer-Aktivierung ${taste} ${letzte}`)
+    }
+    await footerBedienen('click')
+    await footerBedienen('Enter')
+    await footerBedienen('Space')
     const vorher = await page.viewportSize()
     for (const fall of [
-      { width: 320, height: 900 },
-      { width: 390, height: 900 },
-      { width: 768, height: 1000 },
-      { width: 1440, height: 1100 },
+      { width: 320, height: 900, schrift: '' },
+      { width: 390, height: 900, schrift: '' },
+      { width: 768, height: 1000, schrift: '' },
+      { width: 1440, height: 1100, schrift: '' },
+      { width: 320, height: 1400, schrift: '32px' },
     ]) {
-      await page.setViewportSize(fall)
+      await page.setViewportSize({ width: fall.width, height: fall.height })
+      await page.evaluate((schrift) => { document.documentElement.style.fontSize = schrift }, fall.schrift)
       const ueberlauf = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-      if (ueberlauf > 1) merken(`Footer ${fall.width} Überlauf ${ueberlauf}`)
-      const kasten = await fuss.boundingBox()
-      const klasse = await fuss.getAttribute('class')
-      if (!klasse?.includes('min-h-11') || !klasse.includes('privacybee-display-preferences')) merken(`Footer-Klasse ${klasse}`)
-      if (!kasten || kasten.width < 44 || kasten.x < 0 || kasten.x + kasten.width > fall.width + 1) {
-        merken(`Footer-Ziel ${fall.width} ${JSON.stringify(kasten)}`)
+      if (ueberlauf > 1) merken(`Footer ${fall.width}/${fall.schrift || '16px'} Überlauf ${ueberlauf}`)
+      const schnitt = await fuss.evaluate((node) => {
+        const rect = node.getBoundingClientRect()
+        return {
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
+          height: rect.height,
+          scroll: node.scrollWidth - node.clientWidth,
+          klasse: node.className,
+        }
+      })
+      if (!schnitt.klasse.includes('min-h-11') || !schnitt.klasse.includes('privacybee-display-preferences')) merken(`Footer-Klasse ${schnitt.klasse}`)
+      if (schnitt.left < -1 || schnitt.right > fall.width + 1 || schnitt.width < 44 || schnitt.scroll > 1) {
+        merken(`Footer-Ziel ${fall.width}/${fall.schrift || '16px'} ${JSON.stringify(schnitt)}`)
       }
-      if (fall.width === 390) await page.screenshot({ path: join(beweis, '390-footer.png'), fullPage: true })
+      if (fall.width === 390 && fall.schrift === '') await page.screenshot({ path: join(beweis, '390-footer.png'), fullPage: true })
     }
-    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-    await page.setViewportSize({ width: 320, height: 1400 })
-    const gross = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-    if (gross > 1) merken(`Footer 200% Überlauf ${gross}`)
     await page.evaluate(() => { document.documentElement.style.fontSize = '' })
     if (vorher) await page.setViewportSize(vorher)
-    await page.locator('[data-cmp-preferences="ready"]').click()
-    const klicks = await page.evaluate(() => window.__jetnityPrefs ?? 0)
-    if (klicks !== 1) merken(`Präferenzen ${klicks}`)
+    const altVorher = (await prefKlicks()).length
+    await page.locator('main [data-cmp-preferences="ready"]').click()
+    await page.waitForFunction((n) => (window.__jetnityPrefClicks?.length ?? 0) > n, altVorher)
+    if ((await prefKlicks()).at(-1) !== 'ready') merken('Alte Präferenz-Schaltfläche wurde nicht getrennt gezählt')
     await page.getByRole('button', { name: 'Zustimmen' }).click()
     if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Informative Zustimmung hat einen Rahmen erzeugt')
     if (await page.locator('[data-effective-vendor-execution="denied"]').count() < 1) merken('Ausführung nicht verweigert')
@@ -264,7 +324,9 @@ async function main() {
     if (nachAbbruch.length > 1) merken(`Canary arbeitet nach Abbruch ${nachAbbruch.length}`)
     if (nachAbbruch.some((eintrag) => eintrag.ok)) merken('Eingereihte Canary-Arbeit wurde akzeptiert')
     await page.screenshot({ path: join(beweis, '390-nach-kategorieverlust.png'), fullPage: true })
-    if (await page.locator('footer [data-cmp-preferences="footer"]').count() !== 1) merken('Präferenzen nach Statistik-Ablehnung weg')
+    if (await page.locator('footer.bg-brand-900 [data-cmp-preferences="footer"]').count() !== 1) merken('Präferenzen nach Statistik-Ablehnung weg')
+    await footerBedienen('click')
+    await footerBedienen('Enter')
     await page.locator('[data-synthetic="check"]').click()
     if (await page.evaluate(() => window.__jetnityFacade?.check) !== false) merken('Check bleibt nach Kategorieverlust wahr')
     const ersteEpoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
@@ -396,6 +458,8 @@ async function main() {
     }
     await geo.locator('[data-synthetic="request"]').click()
     if (await geo.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Unlizenzierte Anfrage erzeugt einen Rahmen')
+    if (await geo.locator('footer.bg-brand-900').count() !== 1) merken('Geometrie ohne Produktions-Footer')
+    if (await geo.getByRole('link', { name: 'Impressum', exact: true }).count() !== 1) merken('Geometrie ohne Footer-Link')
     if (await geo.locator('[data-cmp-preferences="footer"]').count() !== 0) merken('Unlizenzierte Präferenzen sichtbar')
     if (await geo.locator('[data-twelvego-disclosure]').count() !== 1) merken('Offenlegung fehlt auf der Geometrie-Seite')
     const geoFassade = await geo.evaluate(() => window.__jetnityFacade ?? null)
