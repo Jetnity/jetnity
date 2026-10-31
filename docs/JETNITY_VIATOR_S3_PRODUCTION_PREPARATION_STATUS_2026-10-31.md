@@ -6,7 +6,9 @@
 
 Source preparation for a separate Viator Production binding is on this branch. The process resolver returns `source_closed` and does not build transport. Sandbox Preview flags stay off. Public Production stays off. No provider call was made.
 
-Search cards can show an unambiguous Angebotsziel from the destinations catalog and the provider's original product URL. The link is labelled as a sponsored referral without a commission claim. Trip adoption does not receive the URL. A canonical country still does not become a city.
+Search cards can show an unambiguous Angebotsziel from the destinations catalog and the provider's original product URL. The link is labelled as a sponsored referral without a commission claim. Trip adoption does not receive the URL. A canonical country still does not become a city. Two different `primary: true` destination ids stay unlabeled and partial. The same id repeated stays one primary.
+
+Every Sandbox attempt re-reads the activity flag and the calls flag before HTTP, including the second call inside one search and the later calls inside one availability check. The injected Production client does the same with its activation callback and still requires the per-attempt guard. A missing callback stays inactive.
 
 ## Runtime still closed
 

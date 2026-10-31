@@ -5,6 +5,7 @@ export type ViatorSandboxEnv = {
   VIATOR_SANDBOX_CALLS?: string
   VIATOR_SANDBOX_API_KEY?: string
   VIATOR_API_ORIGIN?: string
+  JETNITY_ACTIVITY_AKTIV?: string
 }
 
 export type ViatorSandboxBlockReason = 'disabled' | 'missing_key' | 'production_blocked' | 'environment_blocked'

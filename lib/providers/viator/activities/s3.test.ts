@@ -11,7 +11,8 @@ import type { Ort } from '@/lib/places/domain'
 import { POST as detailPost } from '@/app/api/activities/viator/detail/route'
 import { POST as schedulePost } from '@/app/api/activities/viator/schedule/route'
 import { POST as checkPost } from '@/app/api/activities/viator/check/route'
-import { viatorActivityProvider, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
+import { viatorActivityProvider, viatorLivePruefen, viatorProduktLaden, viatorZielCacheLeeren } from '@/lib/providers/viator/activities/anbinden'
+import { parseViatorSearch } from '@/lib/providers/viator/activities/content'
 import { buildViatorSandboxCall } from '@/lib/providers/viator/activities/request'
 import { createViatorProductionTestClient, createViatorSandboxClient } from '@/lib/providers/viator/activities/sandbox'
 import { VIATOR_PRODUCTION_QUELLE_OFFEN, viatorProductionAusUmgebung } from '@/lib/providers/viator/activities/produktion'
@@ -82,6 +83,7 @@ describe('Viator S3 production preparation', () => {
       credential: 'short',
       http,
       guard: { pruefen: async () => ({ kind: 'allowed' }) },
+      aktiv: () => true,
     })
     assert.equal(kurzer.ok, false)
     if (!kurzer.ok) assert.equal(kurzer.reason, 'missing_key')
@@ -92,7 +94,7 @@ describe('Viator S3 production preparation', () => {
         return { kind: 'allowed' }
       },
     }
-    const created = createViatorProductionTestClient({ credential: PRODUCTION_KEY, http, nowMs: NOW, guard })
+    const created = createViatorProductionTestClient({ credential: PRODUCTION_KEY, http, nowMs: NOW, guard, aktiv: () => true })
     assert.equal(created.ok, true)
     if (!created.ok) return
     const katalog = await created.client.destinations()
@@ -112,6 +114,7 @@ describe('Viator S3 production preparation', () => {
         return jsonAntwort(200, {})( {} as never)
       },
       guard: { pruefen: async () => { throw new Error('CANARY-GUARD') } },
+      aktiv: () => true,
     })
     assert.equal(verweigert.ok, true)
     if (!verweigert.ok) return
@@ -131,6 +134,7 @@ describe('Viator S3 production preparation', () => {
         return jsonAntwort(200, {})({} as never)
       },
       guard: { pruefen: async () => ({ kind: 'allowed', extra: true }) },
+      aktiv: () => true,
     })
     assert.equal(unklar.ok, true)
     if (!unklar.ok) return
@@ -145,6 +149,7 @@ describe('Viator S3 production preparation', () => {
         return jsonAntwort(200, {})({} as never)
       },
       guard: { pruefen: async () => ({ kind: 'rate_limited', retryAfterMs: 1000 }) },
+      aktiv: () => true,
     })
     assert.equal(begrenzt.ok, true)
     if (!begrenzt.ok) return
@@ -158,6 +163,7 @@ describe('Viator S3 production preparation', () => {
       credential: PRODUCTION_KEY,
       nowMs: NOW,
       guard: { pruefen: async (eingabe: { operationId: string }) => { kette.push(eingabe.operationId); return { kind: 'allowed' } } },
+      aktiv: () => true,
       http: async (request) => {
         calls.push(request.url)
         if (request.url.endsWith('/availability/check')) {
@@ -417,5 +423,221 @@ describe('Viator S3 production preparation', () => {
     assert.equal(gast.koerper.options[0]?.locationName, null)
     assert.equal(gast.koerper.viatorVerweise?.[0]?.productUrl, URL)
     assert.equal(gast.koerper.options[0]?.punkt, null)
+  })
+
+  test('a flag flipped inside the first response stops the next attempt', async () => {
+    viatorZielCacheLeeren()
+    const katalog = {
+      destinations: [
+        { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 20, center: { latitude: 13.75, longitude: 100.5 } },
+      ],
+    }
+    const produkt = {
+      productCode: '10001P1',
+      title: 'Fixture walking tour',
+      pricing: { summary: { fromPrice: 40 }, currency: 'EUR' },
+      productOptions: [],
+      pricingInfo: { ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }] },
+    }
+    const suchen = {
+      destinationPlaceId: 'place-1',
+      destinationName: 'Bangkok',
+      dayDate: '2026-11-02',
+      participants: 2,
+      currency: 'CHF',
+      budgetAmount: null,
+      interests: [],
+      pace: null,
+      countryCode: 'TH',
+      latitude: 13.75,
+      longitude: 100.5,
+    }
+    const pruefen = async (feld: 'JETNITY_ACTIVITY_AKTIV' | 'VIATOR_SANDBOX_CALLS') => {
+      viatorZielCacheLeeren()
+      const umgebung = { ...env }
+      const aufrufe: string[] = []
+      const http: ProviderHttpClient = async (request) => {
+        aufrufe.push(request.url)
+        umgebung[feld] = 'false'
+        if (request.url.endsWith('/partner/destinations')) return jsonAntwort(200, katalog)(request)
+        return jsonAntwort(200, { products: [produkt] })(request)
+      }
+      const provider = viatorActivityProvider({ env: umgebung, http, nowMs: NOW })
+      assert.ok(provider, feld)
+      await assert.rejects(() => provider.suchen(suchen))
+      assert.deepEqual(aufrufe, ['https://api.sandbox.viator.com/partner/destinations'], feld)
+      const erneut = await provider.suchen(suchen).catch((fehler: unknown) => fehler)
+      assert.ok(erneut instanceof Error, feld)
+      assert.deepEqual(aufrufe, ['https://api.sandbox.viator.com/partner/destinations'], feld)
+    }
+    await pruefen('JETNITY_ACTIVITY_AKTIV')
+    await pruefen('VIATOR_SANDBOX_CALLS')
+    for (const feld of ['JETNITY_ACTIVITY_AKTIV', 'VIATOR_SANDBOX_CALLS'] as const) {
+      viatorZielCacheLeeren()
+      const umgebung = { ...env }
+      const aufrufe: string[] = []
+      const http: ProviderHttpClient = async (request) => {
+        aufrufe.push(request.url)
+        umgebung[feld] = 'false'
+        return jsonAntwort(200, produkt)(request)
+      }
+      const pruefung = await viatorLivePruefen(
+        {
+          productCode: '10001P1',
+          standardProduct: true,
+          travelDate: '2026-11-02',
+          currency: 'CHF',
+          paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+        },
+        { env: umgebung, http, nowMs: NOW },
+      )
+      assert.notEqual(pruefung.status, 'ok', feld)
+      assert.equal(aufrufe.length, 1, feld)
+      assert.equal(aufrufe[0]?.includes('/partner/products/10001P1'), true, feld)
+      assert.equal(aufrufe.some((url) => url.includes('/availability/')), false, feld)
+    }
+    const wieder = { ...env }
+    const ruhe: string[] = []
+    const client = createViatorSandboxClient({
+      env: wieder,
+      nowMs: NOW,
+      http: async (request) => {
+        ruhe.push(request.url)
+        return jsonAntwort(200, katalog)(request)
+      },
+    })
+    assert.equal(client.ok, true)
+    if (!client.ok) return
+    wieder.JETNITY_ACTIVITY_AKTIV = 'false'
+    const zu = await client.client.destinations()
+    assert.equal(zu.ok, false)
+    wieder.JETNITY_ACTIVITY_AKTIV = 'true'
+    wieder.VIATOR_SANDBOX_CALLS = 'false'
+    const calls = await client.client.search({ destinationId: '343', currency: 'CHF' })
+    assert.equal(calls.ok, false)
+    assert.deepEqual(ruhe, [])
+    let produktionAn = true
+    const produktionAufrufe: string[] = []
+    const produktion = createViatorProductionTestClient({
+      credential: PRODUCTION_KEY,
+      nowMs: NOW,
+      aktiv: () => produktionAn,
+      guard: { pruefen: async () => ({ kind: 'allowed' }) },
+      http: async (request) => {
+        produktionAufrufe.push(request.url)
+        produktionAn = false
+        return jsonAntwort(200, katalog)(request)
+      },
+    })
+    assert.equal(produktion.ok, true)
+    if (!produktion.ok) return
+    await produktion.client.destinations()
+    await produktion.client.search({ destinationId: '343', currency: 'CHF' })
+    assert.deepEqual(produktionAufrufe, ['https://api.viator.com/partner/destinations'])
+    const ohneAktiv = createViatorProductionTestClient({
+      credential: PRODUCTION_KEY,
+      http: async () => {
+        produktionAufrufe.push('ohne')
+        return jsonAntwort(200, katalog)({} as never)
+      },
+      guard: { pruefen: async () => ({ kind: 'allowed' }) },
+    })
+    assert.equal(ohneAktiv.ok, false)
+    if (!ohneAktiv.ok) assert.equal(ohneAktiv.reason, 'inactive')
+    const guardAus: string[] = []
+    const verweigert = createViatorProductionTestClient({
+      credential: PRODUCTION_KEY,
+      aktiv: () => true,
+      guard: { pruefen: async () => ({ kind: 'rate_limited', retryAfterMs: 0 }) },
+      http: async () => {
+        guardAus.push('http')
+        return jsonAntwort(200, katalog)({} as never)
+      },
+    })
+    assert.equal(verweigert.ok, true)
+    if (!verweigert.ok) return
+    const abgewiesen = await verweigert.client.destinations()
+    assert.equal(abgewiesen.ok, false)
+    if (!abgewiesen.ok) assert.equal(abgewiesen.transportKind, 'rate_limited')
+    assert.deepEqual(guardAus, [])
+  })
+
+  test('conflicting primary destinations stay unlabeled', () => {
+    const kontext = { source: 'provider_response' as const, retrievedAt: '2026-10-31T12:00:00.000Z', nowMs: NOW }
+    const produkt = (ziele: unknown[]) => ({
+      productCode: '10001P1',
+      title: 'Fixture walking tour',
+      destinations: ziele,
+      pricing: { summary: { fromPrice: 40 }, currency: 'EUR' },
+    })
+    const lesen = (ziele: unknown[]) => parseViatorSearch({ products: [produkt(ziele)] }, kontext)
+    const vorwaerts = lesen([{ ref: '343', primary: true }, { ref: '344', primary: true }])
+    const rueckwaerts = lesen([{ ref: '344', primary: true }, { ref: '343', primary: true }])
+    assert.equal(vorwaerts.ok && rueckwaerts.ok, true)
+    if (!vorwaerts.ok || !rueckwaerts.ok) return
+    assert.equal(vorwaerts.value.products[0]?.primaryDestinationId, null)
+    assert.equal(rueckwaerts.value.products[0]?.primaryDestinationId, null)
+    assert.equal(vorwaerts.value.partial, true)
+    assert.equal(rueckwaerts.value.partial, true)
+    assert.deepEqual(vorwaerts.value.products[0]?.destinationIds, ['343', '344'])
+    assert.deepEqual(rueckwaerts.value.products[0]?.destinationIds, ['344', '343'])
+    const gleich = lesen([{ ref: '343', primary: true }, { ref: 343, primary: true }])
+    assert.equal(gleich.ok, true)
+    if (!gleich.ok) return
+    assert.equal(gleich.value.products[0]?.primaryDestinationId, '343')
+    assert.equal(gleich.value.partial, false)
+    const kaputt = lesen([{ ref: '343', primary: true }, { ref: 'bangkok', primary: true }])
+    assert.equal(kaputt.ok, true)
+    if (!kaputt.ok) return
+    assert.equal(kaputt.value.products[0]?.primaryDestinationId, '343')
+    assert.equal(kaputt.value.partial, true)
+    assert.deepEqual(kaputt.value.products[0]?.destinationIds, ['343'])
+  })
+
+  test('both primary orders stay unlabeled on the search card', async () => {
+    viatorZielCacheLeeren()
+    const katalog = {
+      destinations: [
+        { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 20, center: { latitude: 13.75, longitude: 100.5 } },
+        { destinationId: 344, name: 'Chiang Mai', type: 'CITY', parentDestinationId: 20, center: { latitude: 18.79, longitude: 98.98 } },
+      ],
+    }
+    const suchen = {
+      destinationPlaceId: 'place-1',
+      destinationName: 'Bangkok',
+      dayDate: '2026-11-02',
+      participants: 2,
+      currency: 'CHF',
+      budgetAmount: null,
+      interests: [],
+      pace: null,
+      countryCode: 'TH',
+      latitude: 13.75,
+      longitude: 100.5,
+    }
+    for (const ziele of [
+      [{ ref: '343', primary: true }, { ref: '344', primary: true }],
+      [{ ref: '344', primary: true }, { ref: '343', primary: true }],
+    ]) {
+      viatorZielCacheLeeren()
+      const http: ProviderHttpClient = async (request) => {
+        if (request.url.endsWith('/partner/destinations')) return jsonAntwort(200, katalog)(request)
+        return jsonAntwort(200, {
+          products: [{
+            productCode: '10001P1',
+            title: 'Fixture walking tour',
+            destinations: ziele,
+            pricing: { summary: { fromPrice: 40 }, currency: 'EUR' },
+          }],
+        })(request)
+      }
+      const provider = viatorActivityProvider({ env, http, nowMs: NOW })
+      const treffer = await provider!.suchen(suchen)
+      assert.equal(treffer.options[0]?.locationName, null)
+      assert.equal(treffer.options[0]?.punkt, null)
+      assert.equal(treffer.partial, true)
+    }
   })
 })

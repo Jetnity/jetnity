@@ -80,7 +80,7 @@ function readDestinationIds(value: unknown): { ids: string[]; primary: string | 
   if (value == null) return { ids: [], primary: null, dropped: false }
   if (!Array.isArray(value)) return { ids: [], primary: null, dropped: true }
   const ids: string[] = []
-  let primary: string | null = null
+  const primaries: string[] = []
   let dropped = false
   for (const item of value) {
     const record = asRecord(item)
@@ -94,9 +94,10 @@ function readDestinationIds(value: unknown): { ids: string[]; primary: string | 
       continue
     }
     if (!ids.includes(ref)) ids.push(ref)
-    if (record.primary === true) primary = ref
+    if (record.primary === true && !primaries.includes(ref)) primaries.push(ref)
   }
-  return { ids, primary, dropped }
+  if (primaries.length > 1) return { ids, primary: null, dropped: true }
+  return { ids, primary: primaries[0] ?? null, dropped }
 }
 
 function readFlags(value: unknown): string[] {

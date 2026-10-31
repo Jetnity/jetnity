@@ -22,6 +22,7 @@ import {
 } from '@/lib/providers/viator/activities/contracts'
 import { viatorKatalogLesen } from '@/lib/providers/viator/activities/destination'
 import { parseViatorAvailabilityCheck, validateViatorLiveCheckRequest } from '@/lib/providers/viator/activities/live-check'
+import { activityZustand } from '@/lib/activities/zustand'
 import { buildViatorSandboxCall, type ViatorCallZiel } from '@/lib/providers/viator/activities/request'
 import { parseViatorSchedule } from '@/lib/providers/viator/activities/schedule'
 import { viatorSandboxZugang, type ViatorSandboxBlockReason, type ViatorSandboxEnv } from '@/lib/providers/viator/activities/zugang'
@@ -83,7 +84,16 @@ export type ViatorSandboxClient = {
 
 type Created =
   | { ok: true; client: ViatorSandboxClient }
-  | { ok: false; reason: ViatorSandboxBlockReason | 'network_not_authorized' | 'invalid_configuration' | 'missing_guard' | 'missing_key' }
+  | { ok: false; reason: ViatorSandboxBlockReason | 'network_not_authorized' | 'invalid_configuration' | 'missing_guard' | 'missing_key' | 'inactive' }
+
+type LaufEnv = ViatorSandboxEnv & { JETNITY_ACTIVITY_AKTIV?: string }
+
+function sandboxDarfRufen(env: LaufEnv): boolean {
+  if (!activityZustand({ VERCEL_ENV: env.VERCEL_ENV, JETNITY_ACTIVITY_AKTIV: env.JETNITY_ACTIVITY_AKTIV }, true).aktiv) {
+    return false
+  }
+  return viatorSandboxZugang(env).ok
+}
 
 export type ViatorVersuchSchutz = {
   pruefen(eingabe: { providerId: string; operationId: string; attempt: number }): Promise<unknown>
@@ -122,6 +132,7 @@ export function createViatorSandboxClient(options: {
     http: options.http,
     nowMs: options.nowMs,
     guard: null,
+    env: options.env,
   })
 }
 
@@ -130,15 +141,18 @@ export function createViatorProductionTestClient(options: {
   http?: ProviderHttpClient
   nowMs?: number
   guard?: ViatorVersuchSchutz | null
+  aktiv?: () => boolean
 }): Created {
   if (!options.http) return { ok: false, reason: 'network_not_authorized' }
   if (!options.guard) return { ok: false, reason: 'missing_guard' }
+  if (typeof options.aktiv !== 'function') return { ok: false, reason: 'inactive' }
   return viatorClientBauen({
     ziel: 'production',
     credential: options.credential,
     http: options.http,
     nowMs: options.nowMs,
     guard: options.guard,
+    aktiv: options.aktiv,
   })
 }
 
@@ -148,8 +162,11 @@ function viatorClientBauen(options: {
   http: ProviderHttpClient
   nowMs?: number
   guard: ViatorVersuchSchutz | null
+  env?: LaufEnv
+  aktiv?: () => boolean
 }): Created {
   if (options.ziel === 'production' && !options.guard) return { ok: false, reason: 'missing_guard' }
+  if (options.ziel === 'production' && typeof options.aktiv !== 'function') return { ok: false, reason: 'inactive' }
   const key = options.credential
   if (!/^[A-Za-z0-9-]{8,256}$/.test(key)) return { ok: false, reason: 'missing_key' }
   const rateLimit = options.guard ? viatorPreflight(options.guard) : undefined
@@ -181,6 +198,8 @@ function viatorClientBauen(options: {
   const nowMs = () => (options.nowMs == null ? Date.now() : options.nowMs)
 
   const execute = async (operation: string, input: Parameters<typeof buildViatorSandboxCall>[1]) => {
+    const erlaubt = options.ziel === 'production' ? options.aktiv!() : sandboxDarfRufen(options.env ?? {})
+    if (!erlaubt) return { ok: false as const, reason: 'disabled' }
     const built = buildViatorSandboxCall(operation, input, options.ziel)
     if (!built.ok) return { ok: false as const, reason: built.reason }
     if (built.call.method === 'POST' && !built.call.body) return { ok: false as const, reason: 'malformed_request' }

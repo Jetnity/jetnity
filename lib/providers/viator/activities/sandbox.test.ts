@@ -40,6 +40,7 @@ const enabled = {
   VIATOR_SANDBOX_API_KEY: KEY,
   VIATOR_API_ORIGIN: 'https://api.viator.com',
   VERCEL_ENV: 'preview',
+  JETNITY_ACTIVITY_AKTIV: 'true',
 }
 
 describe('Viator sandbox client', () => {
@@ -98,7 +99,7 @@ describe('Viator sandbox client', () => {
         products: [{ productCode: '10001P1', title: 'Fixture walking tour', pricing: { summary: { fromPrice: 40 }, currency: 'EUR' } }],
       })
       const created = createViatorSandboxClient({
-        env: { ...basis, VERCEL_ENV: wert },
+        env: { ...basis, VERCEL_ENV: wert, JETNITY_ACTIVITY_AKTIV: 'true' },
         http: erlaubt.client,
         nowMs: NOW,
       })
