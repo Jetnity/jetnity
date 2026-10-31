@@ -372,7 +372,10 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
         assert.equal((stand.ansichtHeight ?? 999) < 420, true, JSON.stringify(knapp(stand)))
         assert.equal(stand.ancestorOverflow.length, 0, stand.ancestorOverflow.join(','))
         assert.equal(stand.suchfelder, 0)
-        assert.equal(stand.tage, 22, `${viewport.name} tage`)
+        // The long scroll fixture is the day-1 note, which is the default detail.
+        // Compact route renders that run's day button, not all 22 at once.
+        assert.equal(stand.tage, 1, `${viewport.name} sichtbarer Standardlauf`)
+        assert.equal(await page.locator('[data-u1c-lauf]').count(), 5, `${viewport.name} Läufe`)
         if (y === 0) {
           assert.equal(stand.navTop > stand.headerBottom, true, JSON.stringify(knapp(stand)))
         } else {
@@ -382,6 +385,21 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
         }
         if (y === 650) await bild(page, `sticky-${viewport.name}-scroll650`)
       }
+      await scrollZu(page, 0)
+      const erreicht = new Set<string>()
+      const laufZahl = await page.locator('[data-u1c-lauf]').count()
+      for (let index = 0; index < laufZahl; index += 1) {
+        const lauf = page.locator('[data-u1c-lauf]').nth(index)
+        if (!(await lauf.isVisible())) await page.locator('[data-u1b-zur-route]').click()
+        await lauf.click()
+        const ids = await page.locator('[data-timeline-tag]').evaluateAll((knoten) => knoten.map((el) => el.getAttribute('data-timeline-tag') ?? ''))
+        for (const id of ids) if (id) erreicht.add(id)
+      }
+      assert.deepEqual(
+        [...erreicht].sort((links, rechts) => Number(links.slice(4)) - Number(rechts.slice(4))),
+        Array.from({ length: 22 }, (_, index) => `day-${index + 1}`),
+        `${viewport.name} erreichbare Tage`,
+      )
       assert.deepEqual(fehler, [])
       laeufe[viewport.name] = punkte
       await page.close()

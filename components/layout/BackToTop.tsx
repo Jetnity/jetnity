@@ -1,10 +1,11 @@
 // components/layout/BackToTop.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUp } from 'lucide-react'
 
 import { scrollVerhalten } from '@/lib/formular/sicht'
+import { backToTopEntscheidung, backToTopInlineAbstand } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 
 /** Felder, bei denen auf Telefonen die Bildschirmtastatur aufgeht. */
 function isTypingTarget(node: EventTarget | null) {
@@ -17,9 +18,23 @@ function isTypingTarget(node: EventTarget | null) {
   return !['checkbox', 'radio', 'button', 'submit', 'reset', 'hidden', 'range', 'file'].includes(type)
 }
 
+function festeNavHoehe(): { fixed: boolean; offsetPx: number | null } {
+  const nav = document.querySelector('[data-shell-nav="bottom"]')
+  const fixed = nav instanceof HTMLElement && getComputedStyle(nav).position === 'fixed'
+  if (!fixed) return { fixed: false, offsetPx: null }
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--ux-u1a-nav-offset').trim()
+  const match = /^(\d+(?:\.\d+)?)px$/.exec(raw)
+  const offsetPx = match ? Number(match[1]) : null
+  return { fixed: true, offsetPx: offsetPx != null && offsetPx > 0 ? offsetPx : null }
+}
+
 export default function BackToTop() {
+  const knopf = useRef<HTMLButtonElement>(null)
   const [show, setShow] = useState(false)
   const [typing, setTyping] = useState(false)
+  const [lage, setLage] = useState<'standard' | 'frei' | 'verborgen'>('standard')
+  const [offsetPx, setOffsetPx] = useState<number | null>(null)
+  const [imWorkspace, setImWorkspace] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 400)
@@ -42,10 +57,35 @@ export default function BackToTop() {
     }
   }, [])
 
-  const sichtbar = show && !typing
+  useEffect(() => {
+    const lesen = () => {
+      const gemessen = festeNavHoehe()
+      const entscheidung = backToTopEntscheidung(gemessen.fixed, gemessen.offsetPx)
+      setImWorkspace(Boolean(knopf.current?.closest('.workspace-page')))
+      setLage(entscheidung)
+      setOffsetPx(entscheidung === 'frei' ? gemessen.offsetPx : null)
+    }
+    lesen()
+    const beobachter = new ResizeObserver(lesen)
+    beobachter.observe(document.documentElement)
+    const nav = document.querySelector('[data-shell-nav="bottom"]')
+    if (nav) beobachter.observe(nav)
+    const mutationen = new MutationObserver(lesen)
+    mutationen.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] })
+    window.addEventListener('resize', lesen)
+    return () => {
+      beobachter.disconnect()
+      mutationen.disconnect()
+      window.removeEventListener('resize', lesen)
+    }
+  }, [])
+
+  const sichtbar = show && !typing && lage !== 'verborgen'
+  const abstand = backToTopInlineAbstand(imWorkspace, lage, offsetPx)
 
   return (
     <button
+      ref={knopf}
       data-back-to-top
       type="button"
       inert={!sichtbar}
@@ -59,6 +99,7 @@ export default function BackToTop() {
         window.scrollTo({ top: 0, behavior: scrollVerhalten() })
       }}
       aria-label="Nach oben"
+      style={abstand ? { bottom: abstand } : undefined}
       className={`fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
                  z-40 flex h-11 w-11 items-center justify-center rounded-full border bg-background/80
                  backdrop-blur hover:bg-background shadow-lg focus-visible:outline-none
