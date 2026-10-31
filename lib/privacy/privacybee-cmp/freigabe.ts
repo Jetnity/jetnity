@@ -34,12 +34,11 @@ export function planBannerInsert(input: {
 export function cmpProductionBannerAllowed(input: {
   hostname: string | null | undefined
   killSwitch?: string | null
-}): false {
+}): boolean {
   const plan = planBannerInsert({
     release: CMP_RELEASE_AUTHORIZED,
     hostname: input.hostname,
     killSwitch: input.killSwitch,
   })
-  void plan
-  return CMP_RELEASE_AUTHORIZED
+  return plan.request === true
 }

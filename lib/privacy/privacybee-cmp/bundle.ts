@@ -1,20 +1,17 @@
-// Production start stays denied. The synthetic object is a test identity, not a live policy.
+// One decision algorithm. Production passes a null policy. Tests pass their own object.
 
+import { browserHostIstLizenziert } from '@/lib/legal/privacybee-vertrag'
 import { VENDOR_SCRIPT_EXECUTION_AUTHORIZED } from '@/lib/privacy/widget-consent/vertrag'
 import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertrag'
 
-import { CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
-import type { CmpRead } from '@/lib/privacy/privacybee-cmp/schnappschuss'
-
-export const SYNTHETIC_BUNDLE_POLICY_ID = 's2-synthetic-reviewed-bundle-v1' as const
-
-export const SYNTHETIC_BUNDLE_POLICY = Object.freeze({
-  id: SYNTHETIC_BUNDLE_POLICY_ID,
-  testOnly: true as const,
-  requiredOptional: Object.freeze([...CMP_OPTIONAL_CATEGORIES]),
-})
+import { CMP_CATEGORIES, CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 export type ProviderIntent = 'none' | 'selected' | 'withdrawn'
+
+export type ReviewedPolicy = {
+  readonly id: string
+  readonly requiredOptional: readonly string[]
+}
 
 export type BundleReason =
   | 'production_policy_unreviewed'
@@ -26,74 +23,67 @@ export type BundleReason =
   | 'stale_generation'
   | 'cmp_snapshot_unusable'
   | 'optional_category_refused'
-  | 'synthetic_bundle_allowed'
+  | 'host_unlicensed'
+  | 'local_context_allowed'
 
 export type BundleDecision = {
-  readonly execute: boolean
+  readonly localContext: boolean
   readonly productionExecute: false
   readonly reason: BundleReason
   readonly providerId: WidgetConsentProviderId
 }
 
-export function decideProductionProvider(
-  providerId: WidgetConsentProviderId,
-  _untrusted?: { readonly enabled?: boolean },
-): { readonly execute: false; readonly productionExecute: false; readonly reason: 'production_policy_unreviewed'; readonly providerId: WidgetConsentProviderId } {
-  void _untrusted?.enabled
-  void VENDOR_SCRIPT_EXECUTION_AUTHORIZED
-  return {
-    execute: false,
-    productionExecute: false,
-    reason: 'production_policy_unreviewed',
-    providerId,
-  }
+export function productionPolicy(providerId: WidgetConsentProviderId): null {
+  void providerId
+  return null
 }
 
-type PolicyShape = { readonly requiredOptional?: readonly string[] }
-
-export function classifyUnreviewedPolicy(policy: PolicyShape): BundleReason {
-  const required = policy.requiredOptional ?? []
-  if (required.length === 0) return 'empty_required_categories'
-  const optional = required.filter((name) => (CMP_OPTIONAL_CATEGORIES as readonly string[]).includes(name))
-  if (optional.length === 0) return 'necessary_only_policy'
-  return 'unknown_policy'
+function deny(providerId: WidgetConsentProviderId, reason: BundleReason): BundleDecision {
+  return { localContext: false, productionExecute: false, reason, providerId }
 }
 
-export function decideSyntheticBundle(input: {
-  policy: typeof SYNTHETIC_BUNDLE_POLICY | PolicyShape
+function optionalSatisfied(consents: Readonly<Record<string, boolean>>, required: readonly string[]): boolean {
+  return required.every((name) => consents[name] === true)
+}
+
+/**
+ * Shared gate. `policy === null` is the production registry and always denies.
+ * Category truth is read from `consents`, never from a caller boolean.
+ */
+export function decideBundle(input: {
+  policy: ReviewedPolicy | null
   providerId: WidgetConsentProviderId
   intent: ProviderIntent
   generation: number
   expectedGeneration: number
-  cmp: CmpRead
+  consents: Readonly<Record<string, boolean>> | null
+  snapshotUsable: boolean
+  hostname: string | null | undefined
 }): BundleDecision {
-  if (input.policy !== SYNTHETIC_BUNDLE_POLICY) {
-    return {
-      execute: false,
-      productionExecute: false,
-      reason: classifyUnreviewedPolicy(input.policy),
-      providerId: input.providerId,
-    }
+  void VENDOR_SCRIPT_EXECUTION_AUTHORIZED
+  if (input.policy === null) return deny(input.providerId, 'production_policy_unreviewed')
+
+  const required = input.policy.requiredOptional
+  if (required.length === 0) return deny(input.providerId, 'empty_required_categories')
+  const unknown = required.filter((name) => !(CMP_CATEGORIES as readonly string[]).includes(name))
+  if (unknown.length > 0) return deny(input.providerId, 'unknown_policy')
+  const optional = required.filter((name) => (CMP_OPTIONAL_CATEGORIES as readonly string[]).includes(name))
+  if (optional.length === 0) return deny(input.providerId, 'necessary_only_policy')
+
+  if (!browserHostIstLizenziert(input.hostname)) return deny(input.providerId, 'host_unlicensed')
+  if (input.intent === 'withdrawn') return deny(input.providerId, 'provider_withdrawn')
+  if (input.intent !== 'selected') return deny(input.providerId, 'no_provider_intent')
+  if (input.generation !== input.expectedGeneration) return deny(input.providerId, 'stale_generation')
+  if (!input.snapshotUsable || !input.consents) return deny(input.providerId, 'cmp_snapshot_unusable')
+  if (input.consents.SECURITY_STORAGE !== true || input.consents.FUNCTIONALITY_STORAGE !== true) {
+    return deny(input.providerId, 'cmp_snapshot_unusable')
   }
-  if (input.intent === 'withdrawn') {
-    return { execute: false, productionExecute: false, reason: 'provider_withdrawn', providerId: input.providerId }
-  }
-  if (input.intent !== 'selected') {
-    return { execute: false, productionExecute: false, reason: 'no_provider_intent', providerId: input.providerId }
-  }
-  if (input.generation !== input.expectedGeneration) {
-    return { execute: false, productionExecute: false, reason: 'stale_generation', providerId: input.providerId }
-  }
-  if (input.cmp.status !== 'explicit') {
-    return { execute: false, productionExecute: false, reason: 'cmp_snapshot_unusable', providerId: input.providerId }
-  }
-  if (!input.cmp.optionalSatisfied) {
-    return { execute: false, productionExecute: false, reason: 'optional_category_refused', providerId: input.providerId }
-  }
+  if (!optionalSatisfied(input.consents, optional)) return deny(input.providerId, 'optional_category_refused')
+
   return {
-    execute: true,
+    localContext: true,
     productionExecute: false,
-    reason: 'synthetic_bundle_allowed',
+    reason: 'local_context_allowed',
     providerId: input.providerId,
   }
 }

@@ -2,7 +2,8 @@
 
 import { useSyncExternalStore } from 'react'
 
-import { attachCmpBridge, type BridgePhase } from '@/lib/privacy/privacybee-cmp/bruecke'
+import { attachCmpBridge } from '@/lib/privacy/privacybee-cmp/bruecke'
+import { createController, ingestApi, type CmpControllerState } from '@/lib/privacy/privacybee-cmp/steuerung'
 
 declare global {
   interface Window {
@@ -10,27 +11,28 @@ declare global {
   }
 }
 
-let snapshot: BridgePhase = 'missing'
+let snapshot: CmpControllerState = createController()
 
-function getSnapshot(): BridgePhase {
+function getSnapshot(): CmpControllerState {
   return snapshot
 }
 
-function getServerSnapshot(): BridgePhase {
-  return 'missing'
+function getServerSnapshot(): CmpControllerState {
+  return createController()
 }
 
 function subscribe(onChange: () => void) {
-  const bridge = attachCmpBridge(document, () => window.PrivacyBee, (next) => {
-    snapshot = next
+  const bridge = attachCmpBridge(document, () => window.PrivacyBee, () => {
+    snapshot = ingestApi(snapshot, window.PrivacyBee)
     onChange()
   })
-  snapshot = bridge.phase()
+  snapshot = ingestApi(snapshot, window.PrivacyBee)
+  void bridge.phase()
   return () => bridge.stop()
 }
 
-/** Listens only. It does not insert the banner and does not write consent. */
+/** Publishes the current snapshot. It does not render a preferences control. */
 export function PrivacyBeeCmpClient() {
-  const phase = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  return <span data-cmp-phase={phase} hidden />
+  const stand = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  return <span data-cmp-phase={stand.phase} data-cmp-revision={String(stand.revision)} hidden />
 }

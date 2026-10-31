@@ -4,12 +4,9 @@
 
 ## What the code does
 
-- Root layout emits a first-party bootstrap built with `CMP_RELEASE_AUTHORIZED === false`. It records deny and registers the two documented document listeners before it would create a banner script. With the constant false, it returns before any banner element.
-- `planBannerInsert` allows a banner URL only for release true, kill switch not `aus`, and hostname exactly `jetnity.com`. `cmpProductionBannerAllowed` always returns false.
-- The read adapter accepts only the seven documented categories as real booleans, requires the two necessary categories to be true, and treats a ready `categories` array as an inventory. `hasExplicitConsent() !== true` is not a grant. Event details are not trusted; the bridge re-reads the API.
-- `decideProductionProvider` is denied for both providers, including `{ enabled: true }`. `vendorScriptMayExecute` stays false. `decideSyntheticBundle` returns execute true only for the frozen `SYNTHETIC_BUNDLE_POLICY` object, a current `selected` intent, a matching generation, and every optional category true. `productionExecute` stays false.
-- `PrivacyBeeCmpFrameSlot` is a div. Withdrawal increments the generation. A stale start does not recreate the frame. Repeat start does not duplicate it.
-- Preferences use `privacybee-display-preferences` only when the choice is told the CMP is ready. The production boundary renders no control.
+- The root bootstrap is the loader. It checks release, then the baked kill-switch denial, then the exact hostname, and only then creates `cookie-banner.js`. `productionBootstrapSource` reads `PRIVACYBEE_KILL_SWITCH` and passes a boolean. Executed script tests cover release true with kill `aus`, release false, and unlicensed hosts.
+- `decideBundle` is the only gate. A null policy is the production registry and denies. Tests pass a policy object that is not exported from the production module. Category checks use the consent map. `vendorScriptMayExecute` stays false.
+- The mounted harness uses that controller, the real choice commands, and an isolated `iframe`. Preferences render only when the bridge phase is ready and call the fixture's official-class handler. Category loss and withdrawal remove the frame. Every navigation is route-intercepted.
 
 ## Network evidence
 

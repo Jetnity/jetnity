@@ -41,6 +41,11 @@ export function attachCmpBridge(
   target.addEventListener('privacybee:ready', onSignal)
   target.addEventListener('privacybee:consent-changed', onSignal)
   reconcile(false)
+  if (onPhase) {
+    queueMicrotask(() => {
+      if (!stopped) onPhase(phase)
+    })
+  }
 
   return {
     phase: () => phase,

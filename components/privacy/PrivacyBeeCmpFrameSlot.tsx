@@ -1,11 +1,17 @@
-import type { LiveFrame } from '@/lib/privacy/privacybee-cmp/rahmen'
+import type { LiveContext } from '@/lib/privacy/privacybee-cmp/steuerung'
 
-/** Local stand-in for a later isolated frame. Not an iframe and not a provider. */
-export function PrivacyBeeCmpFrameSlot({ live }: { live: LiveFrame | null }) {
+/** Isolated local document. Removing `live` removes the frame. No provider URL. */
+export function PrivacyBeeCmpFrameSlot({ live }: { live: LiveContext | null }) {
   if (!live) return null
+  const srcDoc = `<!doctype html><html><body><p data-canary="${live.generation}">${live.providerId}</p></body></html>`
   return (
-    <div data-synthetic-frame="1" data-provider={live.providerId} data-generation={String(live.generation)}>
-      Synthetischer Rahmen, kein Anbieter.
-    </div>
+    <iframe
+      title="Synthetischer Einwilligungsrahmen"
+      sandbox=""
+      srcDoc={srcDoc}
+      data-synthetic-frame="1"
+      data-provider={live.providerId}
+      data-generation={String(live.generation)}
+    />
   )
 }

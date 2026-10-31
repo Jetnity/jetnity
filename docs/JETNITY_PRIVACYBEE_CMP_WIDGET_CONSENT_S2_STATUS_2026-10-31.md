@@ -9,7 +9,7 @@
 
 ## Result
 
-S2 adds a fail-closed CMP boundary and a shared bundle decision. `CMP_RELEASE_AUTHORIZED` is false, so the root bootstrap does not request the banner. Production provider start returns `production_policy_unreviewed`. Informative grants still do not execute. A frozen synthetic policy can allow a local fake frame in tests only. The widget host, provider adapters, and Legal runtime modules were not edited.
+R1 corrects head `b1408bc679738ae05e691206c90a1e695c927ab1`. The bootstrap now bakes the server kill-switch denial into the script it actually runs. The shared controller keeps the current snapshot, per-provider intent, and generation, and drops the isolated local frame when a required category is lost or the visitor withdraws. The positive policy object lives only in the harness. Production `decideBundle` receives a null policy and denies. `CMP_RELEASE_AUTHORIZED` stays false.
 
 There is no live tracker and no live banner.
 
@@ -17,8 +17,8 @@ There is no live tracker and no live banner.
 
 The SHA stamp records the implementation commit. Re-check `git rev-parse HEAD`. A newer head invalidates this note.
 
-- Implementation commit: `eb52f0bb69912d3e405fd467b910ac13b4b6e494`
-- Implementation tree: `ead907b9c5c108f409804c15e29ecf419d7e2805`
+- Implementation commit: `PENDING_R1_SHA`
+- Implementation tree: `PENDING_R1_TREE`
 - `origin/main` and merge-base at delivery: `b7ebc399b92303eacda9afdaa1786f245492051f`
 - Task blob unchanged: `b460b21bdeb2ee4434766fee6b775f594a09a2a0`
 

@@ -29,11 +29,13 @@ describe('cmp oberflaeche', () => {
     assert.match(html, new RegExp(`class="[^"]*${CMP_PREFERENCES_CLASS}`))
     assert.match(html, /Datenschutz-Einstellungen/)
     const rahmen = renderToStaticMarkup(createElement(PrivacyBeeCmpFrameSlot, {
-      live: { providerId: 'discovercars', generation: 2 },
+      live: { providerId: 'discovercars', generation: 2, requiredOptional: ['ANALYTICS_STORAGE'] },
     }))
     assert.match(rahmen, /data-synthetic-frame="1"/)
-    assert.match(rahmen, /data-provider="discovercars"/)
-    assert.equal(rahmen.includes('<iframe'), false)
+    assert.match(rahmen, /<iframe/)
+    assert.match(rahmen, /sandbox=""/)
+    assert.equal(rahmen.includes('discovercars.com'), false)
+    assert.equal(rahmen.includes('src="http'), false)
     assert.equal(renderToStaticMarkup(createElement(PrivacyBeeCmpFrameSlot, { live: null })), '')
   })
 

@@ -2,163 +2,154 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { vendorScriptMayExecute, createWidgetConsentState } from '@/lib/privacy/widget-consent/entscheidung'
+import { CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
+import { decideBundle, productionPolicy, type ReviewedPolicy } from '@/lib/privacy/privacybee-cmp/bundle'
 import {
-  SYNTHETIC_BUNDLE_POLICY,
-  SYNTHETIC_BUNDLE_POLICY_ID,
-  classifyUnreviewedPolicy,
-  decideProductionProvider,
-  decideSyntheticBundle,
-} from '@/lib/privacy/privacybee-cmp/bundle'
-import { readCmpApi } from '@/lib/privacy/privacybee-cmp/schnappschuss'
-import { emptyFrameBook, invalidateFrame, staleFrameSignal, tryStartFrame } from '@/lib/privacy/privacybee-cmp/rahmen'
+  acceptPending,
+  createController,
+  dispatchChoice,
+  ingestApi,
+  productionStart,
+  selectProvider,
+  startLocalContext,
+} from '@/lib/privacy/privacybee-cmp/steuerung'
 
-function voll(explicit = true) {
-  return readCmpApi({
-    getAllConsents: () => ({
-      SECURITY_STORAGE: true,
-      FUNCTIONALITY_STORAGE: true,
-      ANALYTICS_STORAGE: true,
-      AD_STORAGE: true,
-      AD_USER_DATA: true,
-      AD_PERSONALIZATION: true,
-      PERSONALIZATION_STORAGE: true,
-    }),
-    getConsent: (category: string) => category === 'ANALYTICS_STORAGE' || true,
-    hasExplicitConsent: () => explicit,
-  })
+const POLICY: ReviewedPolicy = Object.freeze({
+  id: 's2-test-policy',
+  requiredOptional: Object.freeze([...CMP_OPTIONAL_CATEGORIES]),
+})
+
+function werte(analytics: boolean) {
+  return {
+    SECURITY_STORAGE: true,
+    FUNCTIONALITY_STORAGE: true,
+    ANALYTICS_STORAGE: analytics,
+    AD_STORAGE: true,
+    AD_USER_DATA: true,
+    AD_PERSONALIZATION: true,
+    PERSONALIZATION_STORAGE: true,
+  }
 }
 
-describe('cmp bundle und rahmen', () => {
-  test('Produktion bleibt verweigert, auch mit enabled und vollständigem CMP', () => {
-    const entscheidung = decideProductionProvider('discovercars', { enabled: true })
-    assert.equal(entscheidung.execute, false)
+function api(analytics = true, explicit = true) {
+  const consents = werte(analytics)
+  return {
+    getAllConsents: () => consents,
+    getConsent: (category: string) => consents[category as keyof typeof consents],
+    hasExplicitConsent: () => explicit,
+  }
+}
+
+describe('cmp entscheidung und steuerung', () => {
+  test('Produktionspolitik bleibt null und verweigert trotz enabled', () => {
+    assert.equal(productionPolicy('discovercars'), null)
+    const entscheidung = decideBundle({
+      policy: null,
+      providerId: 'discovercars',
+      intent: 'selected',
+      generation: 1,
+      expectedGeneration: 1,
+      consents: werte(true),
+      snapshotUsable: true,
+      hostname: 'jetnity.com',
+    })
+    assert.equal(entscheidung.localContext, false)
     assert.equal(entscheidung.productionExecute, false)
     assert.equal(entscheidung.reason, 'production_policy_unreviewed')
-    assert.equal(decideProductionProvider('twelvego').execute, false)
-    const state = createWidgetConsentState('discovercars', 'scope-alpha')
-    assert.equal(vendorScriptMayExecute(state, { enabled: true }), false)
+    assert.equal(vendorScriptMayExecute(createWidgetConsentState('discovercars', 'scope-alpha'), { enabled: true }), false)
   })
 
-  test('leere, nur-notwendige und nachgebaute Politik verweigern', () => {
-    assert.equal(classifyUnreviewedPolicy({ requiredOptional: [] }), 'empty_required_categories')
-    assert.equal(
-      classifyUnreviewedPolicy({ requiredOptional: ['SECURITY_STORAGE', 'FUNCTIONALITY_STORAGE'] }),
-      'necessary_only_policy',
-    )
-    const lookalike = { ...SYNTHETIC_BUNDLE_POLICY }
-    const denied = decideSyntheticBundle({
-      policy: lookalike,
-      providerId: 'discovercars',
-      intent: 'selected',
+  test('dieselbe Funktion lehnt leere, nur-notwendige und widersprüchliche Karten ab', () => {
+    const basis = {
+      providerId: 'discovercars' as const,
+      intent: 'selected' as const,
       generation: 1,
       expectedGeneration: 1,
-      cmp: voll(),
-    })
-    assert.equal(denied.execute, false)
-    assert.equal(denied.reason, 'unknown_policy')
-  })
-
-  test('synthetisches Bündel braucht aktuelle Absicht, Generation und alle optionalen Kategorien', () => {
-    const cmp = voll()
-    const erlaubt = decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'discovercars',
-      intent: 'selected',
-      generation: 1,
-      expectedGeneration: 1,
-      cmp,
-    })
-    assert.equal(erlaubt.execute, true)
-    assert.equal(erlaubt.productionExecute, false)
-    assert.equal(erlaubt.reason, 'synthetic_bundle_allowed')
-    assert.equal(SYNTHETIC_BUNDLE_POLICY.id, SYNTHETIC_BUNDLE_POLICY_ID)
-
-    assert.equal(decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'twelvego',
-      intent: 'none',
-      generation: 1,
-      expectedGeneration: 1,
-      cmp,
-    }).reason, 'no_provider_intent')
-    assert.equal(decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'discovercars',
-      intent: 'withdrawn',
-      generation: 1,
-      expectedGeneration: 1,
-      cmp,
-    }).reason, 'provider_withdrawn')
-    assert.equal(decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'discovercars',
-      intent: 'selected',
-      generation: 1,
-      expectedGeneration: 2,
-      cmp,
-    }).reason, 'stale_generation')
-    assert.equal(decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'discovercars',
-      intent: 'selected',
-      generation: 1,
-      expectedGeneration: 1,
-      cmp: voll(false),
-    }).reason, 'cmp_snapshot_unusable')
-
-    const teilweise = readCmpApi({
-      getAllConsents: () => ({
-        SECURITY_STORAGE: true,
-        FUNCTIONALITY_STORAGE: true,
-        ANALYTICS_STORAGE: false,
-        AD_STORAGE: true,
-        AD_USER_DATA: true,
-        AD_PERSONALIZATION: true,
-        PERSONALIZATION_STORAGE: true,
-      }),
-      getConsent: (category: string) => {
-        const map: Record<string, boolean> = {
-          SECURITY_STORAGE: true,
-          FUNCTIONALITY_STORAGE: true,
-          ANALYTICS_STORAGE: false,
-          AD_STORAGE: true,
-          AD_USER_DATA: true,
-          AD_PERSONALIZATION: true,
-          PERSONALIZATION_STORAGE: true,
-        }
-        return map[category]
-      },
-      hasExplicitConsent: () => true,
-    })
-    assert.equal(decideSyntheticBundle({
-      policy: SYNTHETIC_BUNDLE_POLICY,
-      providerId: 'discovercars',
-      intent: 'selected',
-      generation: 1,
-      expectedGeneration: 1,
-      cmp: teilweise,
+      snapshotUsable: true,
+      hostname: 'jetnity.com',
+    }
+    assert.equal(decideBundle({ ...basis, policy: { id: 'leer', requiredOptional: [] }, consents: werte(true) }).reason, 'empty_required_categories')
+    assert.equal(decideBundle({
+      ...basis,
+      policy: { id: 'pflicht', requiredOptional: ['SECURITY_STORAGE'] },
+      consents: werte(true),
+    }).reason, 'necessary_only_policy')
+    assert.equal(decideBundle({
+      ...basis,
+      policy: POLICY,
+      consents: werte(false),
     }).reason, 'optional_category_refused')
+    assert.equal(decideBundle({
+      ...basis,
+      policy: POLICY,
+      consents: werte(true),
+      hostname: '127.0.0.1',
+    }).reason, 'host_unlicensed')
   })
 
-  test('ein Rahmen, Entzug, veraltetes Signal und kein stilles Wiederbeleben', () => {
-    let book = emptyFrameBook()
-    const first = tryStartFrame(book, { allowed: true, providerId: 'discovercars', generation: 1 })
-    assert.equal(first.created, true)
-    book = first.book
-    const repeat = tryStartFrame(book, { allowed: true, providerId: 'discovercars', generation: 1 })
-    assert.equal(repeat.created, false)
-    assert.equal(book.live?.providerId, 'discovercars')
-    book = invalidateFrame(book)
-    assert.equal(book.live, null)
-    assert.equal(book.generation, 2)
-    const stale = tryStartFrame(book, { allowed: true, providerId: 'discovercars', generation: 1 })
-    assert.equal(stale.created, false)
-    assert.equal(staleFrameSignal(book, 1).resurrected, false)
-    assert.equal(book.live, null)
-    const denied = tryStartFrame(book, { allowed: false, providerId: 'twelvego', generation: 2 })
-    assert.equal(denied.created, false)
-    const next = tryStartFrame(book, { allowed: true, providerId: 'twelvego', generation: 2 })
-    assert.equal(next.created, true)
-    assert.equal(next.book.live?.providerId, 'twelvego')
+  test('Testpolitik erlaubt nur mit Absicht, Snapshot und Host; informative Zustimmung startet nichts', () => {
+    let state = ingestApi(createController(), api(true, true))
+    const erlaubt = decideBundle({
+      policy: POLICY,
+      providerId: 'discovercars',
+      intent: 'selected',
+      generation: state.slots.discovercars.consent.generation,
+      expectedGeneration: state.slots.discovercars.consent.generation,
+      consents: state.read.status === 'explicit' ? state.read.consents : null,
+      snapshotUsable: true,
+      hostname: 'jetnity.com',
+    })
+    assert.equal(erlaubt.localContext, true)
+    assert.equal(erlaubt.productionExecute, false)
+
+    const generation = state.slots.discovercars.consent.generation
+    state = dispatchChoice(state, 'discovercars', { type: 'grant_informative', generation })
+    assert.equal(state.slots.discovercars.consent.informative, 'granted')
+    assert.equal(state.slots.discovercars.intent, 'none')
+    assert.equal(state.live, null)
+    const ohneAbsicht = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com')
+    assert.equal(ohneAbsicht.created, false)
+
+    state = selectProvider(state, 'discovercars')
+    const gestartet = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com')
+    assert.equal(gestartet.created, true)
+    assert.equal(gestartet.state.live?.providerId, 'discovercars')
+    const pending = { providerId: 'discovercars' as const, generation: gestartet.state.live!.generation }
+    assert.equal(acceptPending(gestartet.state, pending), true)
+
+    const prod = productionStart(gestartet.state, 'twelvego', api(), 'jetnity.com')
+    assert.equal(prod.created, false)
+    assert.equal(prod.decision.reason, 'production_policy_unreviewed')
+  })
+
+  test('Kategorieverlust, Entzug und veraltete Arbeit entfernen den Rahmen', () => {
+    let state = selectProvider(ingestApi(createController(), api()), 'discovercars')
+    state = startLocalContext(state, 'discovercars', POLICY, api(), 'jetnity.com').state
+    const pending = { providerId: 'discovercars' as const, generation: state.live!.generation }
+    const verloren = ingestApi(state, api(false, true))
+    assert.equal(verloren.phase, 'ready')
+    assert.equal(verloren.revision > state.revision, true)
+    assert.equal(verloren.live, null)
+    assert.equal(acceptPending(verloren, pending), false)
+
+    let neu = selectProvider(ingestApi(createController(), api()), 'discovercars')
+    neu = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com').state
+    const alt = neu.live!.generation
+    neu = dispatchChoice(neu, 'discovercars', { type: 'withdraw', generation: neu.slots.discovercars.consent.generation })
+    assert.equal(neu.live, null)
+    assert.equal(neu.slots.discovercars.intent, 'withdrawn')
+    const wieder = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com')
+    assert.equal(wieder.created, false)
+    neu = selectProvider(neu, 'discovercars')
+    const frisch = startLocalContext(neu, 'discovercars', POLICY, api(), 'jetnity.com')
+    assert.equal(frisch.created, true)
+    assert.notEqual(frisch.state.live?.generation, alt)
+
+    const scope = dispatchChoice(frisch.state, 'discovercars', {
+      type: 'reset_context',
+      generation: frisch.state.slots.discovercars.consent.generation,
+      reason: 'reorder',
+    })
+    assert.equal(scope.live, null)
   })
 })
