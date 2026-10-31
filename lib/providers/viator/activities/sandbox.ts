@@ -118,13 +118,16 @@ function viatorPreflight(guard: ViatorVersuchSchutz): ProviderRateLimitPolicy {
 
 export function createViatorSandboxClient(options: {
   env: ViatorSandboxEnv
+  umgebungLesen?: () => ViatorSandboxEnv
   http?: ProviderHttpClient
   nowMs?: number
 }): Created {
-  const zugang = viatorSandboxZugang(options.env)
+  const lesen = options.umgebungLesen ?? (() => options.env)
+  const env = lesen()
+  const zugang = viatorSandboxZugang(env)
   if (!zugang.ok) return zugang
   if (!options.http) return { ok: false, reason: 'network_not_authorized' }
-  const key = options.env.VIATOR_SANDBOX_API_KEY
+  const key = env.VIATOR_SANDBOX_API_KEY
   if (!key) return { ok: false, reason: 'missing_key' }
   return viatorClientBauen({
     ziel: 'sandbox',
@@ -132,7 +135,7 @@ export function createViatorSandboxClient(options: {
     http: options.http,
     nowMs: options.nowMs,
     guard: null,
-    env: options.env,
+    umgebungLesen: lesen,
   })
 }
 
@@ -162,7 +165,7 @@ function viatorClientBauen(options: {
   http: ProviderHttpClient
   nowMs?: number
   guard: ViatorVersuchSchutz | null
-  env?: LaufEnv
+  umgebungLesen?: () => LaufEnv
   aktiv?: () => boolean
 }): Created {
   if (options.ziel === 'production' && !options.guard) return { ok: false, reason: 'missing_guard' }
@@ -170,6 +173,20 @@ function viatorClientBauen(options: {
   const key = options.credential
   if (!/^[A-Za-z0-9-]{8,256}$/.test(key)) return { ok: false, reason: 'missing_key' }
   const rateLimit = options.guard ? viatorPreflight(options.guard) : undefined
+  const darfRufen = (): boolean => {
+    if (options.ziel === 'production') return options.aktiv!()
+    return sandboxDarfRufen(options.umgebungLesen?.() ?? {})
+  }
+  const http: ProviderHttpClient = async (request) => {
+    let erlaubt = false
+    try {
+      erlaubt = darfRufen()
+    } catch {
+      throw new Error('viator-activation')
+    }
+    if (!erlaubt) throw new Error('viator-activation')
+    return options.http(request)
+  }
 
   const wiederholung = {
     maxAttempts: 1,
@@ -181,13 +198,13 @@ function viatorClientBauen(options: {
     retryNetworkErrors: false,
   }
   const standard = createProviderTransportExecutor({
-    http: options.http,
+    http,
     timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
     retry: wiederholung,
     rateLimit,
   })
   const ziele = createProviderTransportExecutor({
-    http: options.http,
+    http,
     timeout: { timeoutMs: VIATOR_REQUEST_TIMEOUT_MS },
     retry: wiederholung,
     maxBodyBytes: VIATOR_ZIEL_BODY_BYTES,
@@ -198,7 +215,12 @@ function viatorClientBauen(options: {
   const nowMs = () => (options.nowMs == null ? Date.now() : options.nowMs)
 
   const execute = async (operation: string, input: Parameters<typeof buildViatorSandboxCall>[1]) => {
-    const erlaubt = options.ziel === 'production' ? options.aktiv!() : sandboxDarfRufen(options.env ?? {})
+    let erlaubt = false
+    try {
+      erlaubt = darfRufen()
+    } catch {
+      return { ok: false as const, reason: 'disabled' }
+    }
     if (!erlaubt) return { ok: false as const, reason: 'disabled' }
     const built = buildViatorSandboxCall(operation, input, options.ziel)
     if (!built.ok) return { ok: false as const, reason: built.reason }

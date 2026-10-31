@@ -228,13 +228,22 @@ function transportErgebnis<T>(
   return null
 }
 
+function umgebungLesen(deps: Abhaengigkeiten): LaufEnv {
+  return deps.env ?? umgebungAusProzess()
+}
+
 function clientFuer(deps: Abhaengigkeiten) {
-  const env = deps.env ?? umgebungAusProzess()
+  const env = umgebungLesen(deps)
   if (!laufOffen(env)) return { ok: false as const, ergebnis: geschlossen<never>(GESCHLOSSEN) }
   const zugang = viatorSandboxZugang(env)
   if (!zugang.ok) return { ok: false as const, ergebnis: geschlossen<never>(GESCHLOSSEN) }
   const http = deps.http ?? createFetchProviderHttpClient()
-  const erstellt = createViatorSandboxClient({ env, http, nowMs: deps.nowMs })
+  const erstellt = createViatorSandboxClient({
+    env,
+    umgebungLesen: () => umgebungLesen(deps),
+    http,
+    nowMs: deps.nowMs,
+  })
   if (!erstellt.ok) return { ok: false as const, ergebnis: geschlossen<never>() }
   return { ok: true as const, client: erstellt.client }
 }

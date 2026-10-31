@@ -8,7 +8,7 @@ Source preparation for a separate Viator Production binding is on this branch. T
 
 Search cards can show an unambiguous Angebotsziel from the destinations catalog and the provider's original product URL. The link is labelled as a sponsored referral without a commission claim. Trip adoption does not receive the URL. A canonical country still does not become a city. Two different `primary: true` destination ids stay unlabeled and partial. The same id repeated stays one primary.
 
-Every Sandbox attempt re-reads the activity flag and the calls flag before HTTP, including the second call inside one search and the later calls inside one availability check. The injected Production client does the same with its activation callback and still requires the per-attempt guard. A missing callback stays inactive.
+A mutable injected environment still stops the next attempt when a flag changes inside the first response. The process binding is separate: with no injected environment, every attempt reads the current process values again, so the same flag change also stops products/search and the later availability calls. After the awaited guard returns, the provider checks activation once more before its own HTTP call. A guard that clears activation and then allows the attempt does not send HTTP. A throwing activation callback becomes a redacted failure.
 
 ## Runtime still closed
 

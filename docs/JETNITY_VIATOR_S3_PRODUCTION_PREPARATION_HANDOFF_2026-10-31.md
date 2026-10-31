@@ -8,7 +8,7 @@
 
 Sandbox requests still use `VIATOR_SANDBOX_ORIGIN`. A field named `origin` on the input does not change the host. The injected Production client uses `VIATOR_PRODUCTION_API_ORIGIN` and the same 12-second timeout, one attempt, 2,097,152-byte destinations budget, and 1,048,576-byte budget for the other four operations. Its preflight runs before every attempt on both executors. A throw, a malformed result, or a rate-limit result makes no HTTP call.
 
-`clientFuer` checks `activityZustand` before Sandbox access and before the destinations cache. Each Sandbox attempt also re-reads that decision and `VIATOR_SANDBOX_CALLS` immediately before HTTP, so a flag changed inside the first response does not start products/search, schedule, or check. The injected Production client requires `aktiv` on every attempt in addition to the guard. Detail, schedule, and check routes use that path.
+`clientFuer` checks `activityZustand` before Sandbox access and before the destinations cache. Injected tests keep a mutable environment object. The factory and the routes pass no object, and each attempt calls `umgebungAusProzess()` again. The provider HTTP wrapper runs after the awaited guard and repeats that check for both body budgets. A thrown activation callback is replaced with a fixed failure and is not copied into the result. Detail, schedule, and check routes use that path.
 
 Search options keep `punkt` null. `locationName` is set only for one catalog CITY, TOWN, or ISLAND matching the primary destination id. The card says Angebotsziel and states that the meeting point is not given. `viatorVerweise` carries the validated product URL. `activityOptionFuerUebernahme` omits it. `activityInReiseUebernehmen` still writes `booking_url: null` and was not edited.
 

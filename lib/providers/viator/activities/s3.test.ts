@@ -640,4 +640,163 @@ describe('Viator S3 production preparation', () => {
       assert.equal(treffer.partial, true)
     }
   })
+
+  test('the process binding re-reads flags, and the guard cannot outrun activation', async () => {
+    viatorZielCacheLeeren()
+    const katalog = {
+      destinations: [
+        { destinationId: 20, name: 'Thailand', type: 'COUNTRY', parentDestinationId: null },
+        { destinationId: 343, name: 'Bangkok', type: 'CITY', parentDestinationId: 20, center: { latitude: 13.75, longitude: 100.5 } },
+      ],
+    }
+    const produkt = {
+      productCode: '10001P1',
+      title: 'Fixture walking tour',
+      pricing: { summary: { fromPrice: 40 }, currency: 'EUR' },
+      productOptions: [],
+      pricingInfo: { ageBands: [{ ageBand: 'ADULT', startAge: 18, endAge: 99, minTravelersPerBooking: 1, maxTravelersPerBooking: 9 }] },
+    }
+    const suchen = {
+      destinationPlaceId: 'place-1',
+      destinationName: 'Bangkok',
+      dayDate: '2026-11-02',
+      participants: 2,
+      currency: 'CHF',
+      budgetAmount: null,
+      interests: [],
+      pace: null,
+      countryCode: 'TH',
+      latitude: 13.75,
+      longitude: 100.5,
+    }
+    const gesichert = {
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      VIATOR_SANDBOX_CALLS: process.env.VIATOR_SANDBOX_CALLS,
+      VIATOR_SANDBOX_API_KEY: process.env.VIATOR_SANDBOX_API_KEY,
+      JETNITY_ACTIVITY_AKTIV: process.env.JETNITY_ACTIVITY_AKTIV,
+    }
+    const setzen = (name: keyof typeof gesichert, wert: string | undefined) => {
+      if (wert === undefined) delete process.env[name]
+      else process.env[name] = wert
+    }
+    const vorherFetch = globalThis.fetch
+    globalThis.fetch = (async () => {
+      throw new Error('CANARY-FETCH')
+    }) as typeof fetch
+    try {
+      for (const feld of ['JETNITY_ACTIVITY_AKTIV', 'VIATOR_SANDBOX_CALLS'] as const) {
+        viatorZielCacheLeeren()
+        process.env.VERCEL_ENV = 'preview'
+        process.env.VIATOR_SANDBOX_CALLS = 'true'
+        process.env.VIATOR_SANDBOX_API_KEY = KEY
+        process.env.JETNITY_ACTIVITY_AKTIV = 'true'
+        const aufrufe: string[] = []
+        const http: ProviderHttpClient = async (request) => {
+          aufrufe.push(request.url)
+          process.env[feld] = 'false'
+          if (request.url.endsWith('/partner/destinations')) return jsonAntwort(200, katalog)(request)
+          if (request.url.includes('/partner/products/10001P1')) return jsonAntwort(200, produkt)(request)
+          if (request.url.includes('/availability/')) return jsonAntwort(200, { bookableItems: [] })(request)
+          return jsonAntwort(200, { products: [produkt] })(request)
+        }
+        const provider = viatorActivityProvider({ http, nowMs: NOW })
+        assert.ok(provider, feld)
+        await assert.rejects(() => provider.suchen(suchen))
+        assert.deepEqual(aufrufe, ['https://api.sandbox.viator.com/partner/destinations'], feld)
+        process.env.VERCEL_ENV = 'preview'
+        process.env.VIATOR_SANDBOX_CALLS = 'true'
+        process.env.VIATOR_SANDBOX_API_KEY = KEY
+        process.env.JETNITY_ACTIVITY_AKTIV = 'true'
+        const pruefung = await viatorLivePruefen(
+          {
+            productCode: '10001P1',
+            standardProduct: true,
+            travelDate: '2026-11-02',
+            currency: 'CHF',
+            paxMix: [{ ageBand: 'ADULT', numberOfTravelers: 1 }],
+          },
+          { http, nowMs: NOW },
+        )
+        assert.notEqual(pruefung.status, 'ok', feld)
+        assert.equal(aufrufe.length, 2, feld)
+        assert.equal(aufrufe[1]?.includes('/partner/products/10001P1'), true, feld)
+        assert.equal(aufrufe.some((url) => url.includes('/availability/')), false, feld)
+      }
+    } finally {
+      globalThis.fetch = vorherFetch
+      setzen('VERCEL_ENV', gesichert.VERCEL_ENV)
+      setzen('VIATOR_SANDBOX_CALLS', gesichert.VIATOR_SANDBOX_CALLS)
+      setzen('VIATOR_SANDBOX_API_KEY', gesichert.VIATOR_SANDBOX_API_KEY)
+      setzen('JETNITY_ACTIVITY_AKTIV', gesichert.JETNITY_ACTIVITY_AKTIV)
+      viatorZielCacheLeeren()
+    }
+    for (const ziel of ['destinations', 'search'] as const) {
+      let an = true
+      const aufrufe: string[] = []
+      const client = createViatorProductionTestClient({
+        credential: PRODUCTION_KEY,
+        nowMs: NOW,
+        aktiv: () => an,
+        guard: {
+          pruefen: async () => {
+            await Promise.resolve()
+            an = false
+            return { kind: 'allowed' }
+          },
+        },
+        http: async (request) => {
+          aufrufe.push(request.url)
+          return jsonAntwort(200, katalog)(request)
+        },
+      })
+      assert.equal(client.ok, true, ziel)
+      if (!client.ok) return
+      const ergebnis = ziel === 'destinations'
+        ? await client.client.destinations()
+        : await client.client.search({ destinationId: '343', currency: 'CHF' })
+      assert.equal(ergebnis.ok, false, ziel)
+      if (!ergebnis.ok) {
+        assert.equal(ergebnis.reason, 'transport', ziel)
+        assert.equal(ergebnis.transportKind, 'network_error', ziel)
+        assert.equal(JSON.stringify(ergebnis).includes('CANARY'), false, ziel)
+      }
+      assert.deepEqual(aufrufe, [], ziel)
+    }
+    const geworfen = createViatorProductionTestClient({
+      credential: PRODUCTION_KEY,
+      aktiv: () => {
+        throw new Error('CANARY-AKTIV')
+      },
+      guard: { pruefen: async () => ({ kind: 'allowed' }) },
+      http: async () => {
+        throw new Error('CANARY-HTTP')
+      },
+    })
+    assert.equal(geworfen.ok, true)
+    if (!geworfen.ok) return
+    const still = await geworfen.client.destinations()
+    assert.equal(still.ok, false)
+    if (!still.ok) assert.equal(still.reason, 'disabled')
+    assert.equal(JSON.stringify(still).includes('CANARY-AKTIV'), false)
+    let schritt = 0
+    const spaet = createViatorProductionTestClient({
+      credential: PRODUCTION_KEY,
+      nowMs: NOW,
+      aktiv: () => {
+        schritt += 1
+        if (schritt > 1) throw new Error('CANARY-SPAET')
+        return true
+      },
+      guard: { pruefen: async () => ({ kind: 'allowed' }) },
+      http: async () => {
+        throw new Error('CANARY-HTTP')
+      },
+    })
+    assert.equal(spaet.ok, true)
+    if (!spaet.ok) return
+    const nachGuard = await spaet.client.search({ destinationId: '343', currency: 'EUR' })
+    assert.equal(nachGuard.ok, false)
+    if (!nachGuard.ok) assert.equal(nachGuard.transportKind, 'network_error')
+    assert.equal(JSON.stringify(nachGuard).includes('CANARY'), false)
+  })
 })

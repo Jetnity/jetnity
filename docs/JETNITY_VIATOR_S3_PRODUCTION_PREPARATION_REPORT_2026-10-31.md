@@ -16,7 +16,7 @@ None. Root's catalog read is recorded as evidence: migration `20260901020000` an
 
 ## Tests
 
-`s3.test.ts`: 7 passed, including flag flips inside the first response and both primary-destination orders. `s2.test.ts` and `sandbox.test.ts` passed after the option URL assertion was pointed at the option rather than the whole provider result. Client-answer and lifecycle tests passed. Browser harness: 5 passed, including the referral card at 320, 390, 768, and 1440 with zero detail requests before the visitor opens the offer. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. Export check reported 0 unused exports.
+`s3.test.ts`: 8 passed. The injected mutable environment and the process binding are both covered. A guard that withdraws activation during its await sends no HTTP on either body budget. `s2.test.ts` and `sandbox.test.ts` passed after the option URL assertion was pointed at the option rather than the whole provider result. Client-answer and lifecycle tests passed. Browser harness: 5 passed, including the referral card at 320, 390, 768, and 1440 with zero detail requests before the visitor opens the offer. `npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. Export check reported 0 unused exports.
 
 ## Build
 
