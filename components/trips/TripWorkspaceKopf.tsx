@@ -40,6 +40,7 @@ export default function TripWorkspaceKopf({
   kompakt,
   uebersicht,
   kopfzeile,
+  reiseoptionen,
   workspace = false,
   uebersichtAktiv = false,
 }: {
@@ -48,6 +49,7 @@ export default function TripWorkspaceKopf({
   kompakt: boolean
   uebersicht: UebersichtAbleitung
   kopfzeile?: ReactNode
+  reiseoptionen?: ReactNode
   workspace?: boolean
   uebersichtAktiv?: boolean
 }) {
@@ -74,6 +76,12 @@ export default function TripWorkspaceKopf({
           <span><ShieldCheck aria-hidden="true" />{gast ? 'Nur auf diesem Gerät' : 'Im Konto gespeichert'}</span>
           {kopfzeile ? <div className="workspace-storage-options">{kopfzeile}</div> : null}
         </div>
+        {reiseoptionen ? (
+          <details data-reiseoptionen className="workspace-reiseoptionen">
+            <summary>Reiseoptionen</summary>
+            <div className="workspace-storage-options">{reiseoptionen}</div>
+          </details>
+        ) : null}
       </section>
     )
   }
@@ -133,6 +141,14 @@ export default function TripWorkspaceKopf({
       </div>
       {kopfzeile ? (
         <div className="border-t border-white/10 px-4 py-1 sm:px-5 xl:px-6">{kopfzeile}</div>
+      ) : null}
+      {reiseoptionen ? (
+        <details data-reiseoptionen className="border-t border-white/10 px-4 sm:px-5 xl:px-6">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40 [&::-webkit-details-marker]:hidden">
+            Reiseoptionen
+          </summary>
+          <div className="pb-2">{reiseoptionen}</div>
+        </details>
       ) : null}
     </section>
   )

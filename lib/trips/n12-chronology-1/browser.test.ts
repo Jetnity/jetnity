@@ -154,8 +154,6 @@ describe('mounted chronological trip days', { timeout: 180_000 }, () => {
       test(`Tag 1 bis Tag 22 bleiben sichtbar bei ${viewport.name} und ${schrift}`, async () => {
         const { context, page, fehler, netz } = await oeffnen(viewport.width, viewport.height, schrift, 'gast')
         try {
-          const folge = await tagesfolge(page)
-          assert.deepEqual(folge, Array.from({ length: 22 }, (_, index) => `day-${index + 1}`))
           const kopf = await page.locator('[data-plan-lauf-name]').filter({ visible: true }).allInnerTexts()
           assert.deepEqual(kopf, [
             'Reisetag mit geplantem Flug/Transfer',
@@ -164,8 +162,10 @@ describe('mounted chronological trip days', { timeout: 180_000 }, () => {
             'Chiang Mai',
             'Reisetag mit geplantem Flug/Transfer',
           ])
-          const uebersicht = await page.locator('[data-plan-etappen-uebersicht] strong').allInnerTexts()
-          assert.deepEqual(uebersicht, ['Bangkok', 'Chiang Mai', 'Noch keinem Ziel zugeordnet'])
+          assert.equal(await page.locator('[data-plan-etappen-uebersicht]').count(), 0)
+          assert.equal(await page.locator('[data-plan-tag-streifen]').count(), 0)
+          const sichtbarAmAnfang = await tagesfolge(page)
+          assert.deepEqual(sichtbarAmAnfang, ['day-1'])
           const zaehler = page.locator('[data-plan-tag-zaehler]')
           assert.equal((await zaehler.innerText()).trim(), 'Tag 1 von 22')
           const naechster = page.locator('[data-plan-tag-naechster]')
@@ -181,11 +181,12 @@ describe('mounted chronological trip days', { timeout: 180_000 }, () => {
           await page.waitForFunction(() => document.querySelector('[data-plan-tag-zaehler]')?.textContent?.includes('Tag 2 von 22'))
           assert.equal(await page.locator('[data-plan-reisehinweis="fortsetzung"]').count(), 1)
           assert.equal(await page.locator('[data-plan-punkt="flight-out"]').count(), 0)
+          await page.locator('[data-u1c-lauf][data-u1c-tage~="day-11"]').filter({ visible: true }).click()
           await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).click()
           await page.waitForFunction(() => document.querySelector('[data-plan-tag-zaehler]')?.textContent?.includes('Tag 11 von 22'))
           assert.equal(await page.locator('[data-plan-punkt="transfer-11"]').count(), 1)
           assert.equal(await page.locator('[data-plan-punkt="stay-11"]').count(), 1)
-          await page.locator('[data-timeline-tag="day-22"]').filter({ visible: true }).click()
+          await page.locator('[data-u1c-lauf][data-u1c-tage~="day-22"]').filter({ visible: true }).click()
           await page.waitForFunction(() => document.querySelector('[data-plan-tag-zaehler]')?.textContent?.includes('Tag 22 von 22'))
           assert.equal(await page.locator('[data-plan-tag-naechster]').isDisabled(), true)
           await page.locator('[data-plan-tag-vorher]').click()

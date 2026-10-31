@@ -443,27 +443,27 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         />
       }
       ohneTag={reise.ohneTag}
-      kopfzeile={
-        <div className="grid gap-2">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={verwerfen}
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-2 text-sm font-medium text-white/70 transition hover:text-white"
-            >
-              <Trash2 className="h-4 w-4" aria-hidden="true" />
-              Entwurf verwerfen
-            </button>
-          </div>
-          {speicherfehler && (
-            <p
-              role="alert"
-              className="rounded-2xl bg-white/10 px-4 py-2.5 text-xs leading-5 text-white"
-            >
-              {speicherfehler}
-            </p>
-          )}
+      reiseoptionen={
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={verwerfen}
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-2 text-sm font-medium text-white/70 transition hover:text-white"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            Entwurf verwerfen
+          </button>
         </div>
+      }
+      kopfzeile={
+        speicherfehler ? (
+          <p
+            role="alert"
+            className="rounded-2xl bg-white/10 px-4 py-2.5 text-xs leading-5 text-white"
+          >
+            {speicherfehler}
+          </p>
+        ) : null
       }
       hinweis={
         <p className="mt-3 flex items-start gap-2 rounded-xl border border-line-200 bg-white px-3 py-2 text-xs leading-5 text-ink-800">

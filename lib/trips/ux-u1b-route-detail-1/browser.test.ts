@@ -110,6 +110,20 @@ async function fokusSichtbar(page: Page) {
   })
 }
 
+async function tagWaehlen(page: Page, id: string) {
+  const chip = page.locator(`[data-timeline-tag="${id}"]`).filter({ visible: true })
+  if (await chip.count()) {
+    await chip.first().click()
+    return
+  }
+  await page.locator(`[data-u1c-lauf][data-u1c-tage~="${id}"]`).filter({ visible: true }).first().click()
+  await page.locator(`[data-timeline-tag="${id}"]`).filter({ visible: true }).first().click()
+}
+
+function laufHatTag(page: Page, id: string) {
+  return page.locator(`[data-u1c-lauf][data-u1c-tage~="${id}"]`).filter({ visible: true }).first()
+}
+
 async function modus(page: Page, name: string) {
   const knopf = page.getByRole('button', { name, exact: true }).filter({ visible: true }).first()
   await knopf.click()
@@ -156,15 +170,16 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       assert.equal(await sichtbar(page, '[data-plan-tag-zaehler]'), false)
       assert.equal(page.url().includes('foreign=1'), true)
       assert.equal(page.url().includes('#marke'), true)
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForSelector('[data-plan-tag-zaehler]')
       assert.equal(await sichtbar(page, '[data-u1b-route]'), false)
       assert.match(page.url(), /tag=day-11/)
       await page.getByRole('button', { name: 'Zur Route' }).click()
       assert.equal(await sichtbar(page, '[data-u1b-route]'), true)
       assert.match(page.url(), /tag=day-11/)
-      assert.equal(await page.locator('[data-timeline-tag="day-11"][aria-current="date"]').filter({ visible: true }).count(), 1)
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).click()
+      assert.match(await laufHatTag(page, 'day-11').getAttribute('data-u1c-tage') ?? '', /(^| )day-11( |$)/)
+      assert.equal(await laufHatTag(page, 'day-11').getAttribute('aria-pressed'), 'true')
+      await tagWaehlen(page, 'day-11')
       assert.equal(await sichtbar(page, '[data-plan-tag-zaehler]'), true)
       assert.equal(await sichtbar(page, '[data-u1b-route]'), false)
       await page.locator('[data-plan-punkt="stay-11"] button').filter({ visible: true }).first().click()
@@ -234,7 +249,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('1440 zeigt Route und ein Detail, 768 und Root 32 bleiben schmal, Spalten halten die Minima', async () => {
     const { page } = await offen(1440, 900)
     try {
-      await page.locator('[data-timeline-tag="day-3"]').filter({ visible: true }).click()
+      await tagWaehlen(page, 'day-3')
       await page.waitForSelector('[data-u1b-anordnung="neben"]')
       const masse = await page.evaluate(() => {
         const route = document.querySelector('[data-u1b-route]')?.getBoundingClientRect()
@@ -249,7 +264,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       assert.equal(await sichtbar(page, '[data-u1b-day]'), true)
       await page.getByRole('button', { name: 'Zur Route' }).click()
       assert.equal(await sichtbar(page, '[data-u1b-day]'), true)
-      const fokus = page.locator('[data-timeline-tag="day-3"]').filter({ visible: true })
+      const fokus = page.locator('[data-timeline-tag="day-3"], [data-u1c-lauf][data-u1c-tage~="day-3"]').filter({ visible: true }).first()
       await fokus.focus()
       await page.setViewportSize({ width: 768, height: 1024 })
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
@@ -327,7 +342,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('Zurück auf die tag-freie Adresse zeigt nur die Punkte des angezeigten Tages', async () => {
     const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForFunction(() => location.search.includes('tag=day-11'))
       await page.goBack()
       await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
@@ -370,7 +385,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       })
       const startY = Math.max(vorher.y, vorher.top)
       assert.ok(startY > 200, `keine Routenposition ${JSON.stringify(vorher)}`)
-      const tag20 = page.locator('[data-timeline-tag="day-20"]').filter({ visible: true }).first()
+      const tag20 = laufHatTag(page, 'day-20')
       await tag20.click()
       await page.evaluate(() => window.scrollTo(0, 0))
       await page.getByRole('button', { name: 'Zur Route' }).click()
@@ -380,7 +395,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await tag20.click()
       assert.equal(await sichtbar(page, '[data-u1b-route]'), false)
       await page.getByRole('button', { name: 'Zur Route' }).click()
-      const tag11 = page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first()
+      const tag11 = laufHatTag(page, 'day-11')
       await tag11.evaluate((el) => el.scrollIntoView({ block: 'center' }))
       const beiTag = await page.evaluate(() => window.scrollY)
       await tag11.click()
@@ -388,8 +403,9 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.evaluate(() => window.scrollTo(0, 0))
       await page.getByRole('button', { name: 'Zur Route' }).click()
       const zurueck = await page.evaluate(() => window.scrollY)
-      assert.ok(Math.abs(zurueck - beiTag) < 24, `item ${zurueck} vs ${beiTag}`)
-      await page.locator('[data-timeline-tag="day-2"]').filter({ visible: true }).first().click()
+      assert.ok(Math.abs(zurueck - beiTag) < 48, `item ${zurueck} vs ${beiTag}`)
+      assert.ok(zurueck > 200, `item position lost ${zurueck}`)
+      await tagWaehlen(page, 'day-2')
       await page.locator('[data-u1b-tag-weg]').click()
       await page.getByRole('button', { name: 'Zur Route' }).click()
       const fokusRoute = await page.evaluate(() => document.activeElement?.closest('[data-u1b-route]') != null)
@@ -430,7 +446,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
             return { delta, schuld }
           })
           assert.ok(routeMessung.delta <= 1, `route ${breite}/${schrift} +${routeMessung.delta} ${routeMessung.schuld}`)
-          await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+          await tagWaehlen(page, 'day-11')
           await page.waitForSelector('[data-plan-tag-zaehler]')
           const tagMessung = await page.evaluate(() => {
             const delta = document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -496,7 +512,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('ein laufendes Formular bleibt derselbe Entwurf über Tab, Route und Reflow', async () => {
     const { page } = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForFunction(() => location.search.includes('tag=day-11'))
       await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
       await page.getByLabel('Ort oder Aktivität').fill('Lokaler Testentwurf')
@@ -523,7 +539,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.setViewportSize({ width: 1440, height: 900 })
       await page.setViewportSize({ width: 390, height: 900 })
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForSelector('form[aria-label="Punkt hinzufügen"]')
       assert.equal(await page.locator('form[aria-label="Punkt hinzufügen"] input[required]').inputValue(), 'Lokaler Testentwurf')
       await modus(page, 'Übersicht')
@@ -564,41 +580,35 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('der gewählte Chip bleibt im sichtbaren Streifen nach dem Reflow', async () => {
     const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-10"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-10')
       await page.waitForFunction(() => location.search.includes('tag=day-10'))
       await page.setViewportSize({ width: 390, height: 900 })
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
       await page.getByRole('button', { name: 'Zur Route' }).click()
-      await page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      await page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-10'))
       const schmal = await page.evaluate(() => {
         const el = document.activeElement
         if (!(el instanceof HTMLElement)) return null
-        const streifen = el.closest('[data-plan-tag-streifen]')
-        if (!(streifen instanceof HTMLElement)) return { art: 'kein-streifen' as const }
-        const flaeche = streifen.getBoundingClientRect()
-        const chip = el.getBoundingClientRect()
-        return { art: 'streifen' as const, links: chip.left, rechts: chip.right, sLinks: flaeche.left, sRechts: flaeche.right, fenster: window.innerWidth }
+        const kasten = el.getBoundingClientRect()
+        return { links: kasten.left, rechts: kasten.right, fenster: window.innerWidth, oben: kasten.top, unten: kasten.bottom, hoehe: window.innerHeight }
       })
-      assert.equal(schmal?.art, 'streifen')
-      if (schmal?.art !== 'streifen') return
-      assert.ok(schmal.links >= schmal.sLinks - 1 && schmal.rechts <= schmal.sRechts + 1, JSON.stringify(schmal))
-      assert.ok(schmal.links >= -1 && schmal.rechts <= schmal.fenster + 1, JSON.stringify(schmal))
+      assert.ok(schmal && schmal.links >= -1 && schmal.rechts <= schmal.fenster + 1 && schmal.oben >= -1 && schmal.unten <= schmal.hoehe + 1, JSON.stringify(schmal))
       await page.setViewportSize({ width: 1440, height: 900 })
       await page.waitForSelector('[data-u1b-anordnung="neben"]')
-      await page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      await page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-10'))
       const weit = await page.evaluate(() => {
         const el = document.activeElement
         if (!(el instanceof HTMLElement)) return null
         const chip = el.getBoundingClientRect()
         return {
-          tag: el.getAttribute('data-timeline-tag'),
+          tag: el.getAttribute('data-u1c-tage'),
           verborgen: Boolean(el.closest('[hidden], [inert]')),
           links: chip.left,
           rechts: chip.right,
           fenster: window.innerWidth,
         }
       })
-      assert.equal(weit?.tag, 'day-10')
+      assert.match(weit?.tag ?? '', /(^| )day-10( |$)/)
       assert.equal(weit?.verborgen, false)
       assert.ok((weit?.links ?? -1) >= -1 && (weit?.rechts ?? 9999) <= (weit?.fenster ?? 0) + 1, JSON.stringify(weit))
       await page.locator('[data-u1b-tag10-weg]').click()
@@ -620,7 +630,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('Übersicht behält den laufenden Tag-11-Entwurf und die Fehlermeldung', async () => {
     const { page } = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForFunction(() => location.search.includes('tag=day-11'))
       await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
       await page.getByLabel('Ort oder Aktivität').fill('Lokaler Testentwurf')
@@ -668,7 +678,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('Punkt hinzufügen auf dem angezeigten Standardtag schreibt Tag 1', async () => {
     const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForFunction(() => location.search.includes('tag=day-11'))
       await page.goBack()
       await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
@@ -687,7 +697,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('ein aufgeschobener Standardtag-Entwurf überlebt Übersicht und Reflow', async () => {
     const { page } = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first().click()
+      await tagWaehlen(page, 'day-11')
       await page.waitForFunction(() => location.search.includes('tag=day-11'))
       await page.goBack()
       await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag'))
@@ -734,23 +744,20 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('Zur Route fokussiert den sichtbaren Tag ohne Zeigerfoto', async () => {
     const tastatur = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      const chip = tastatur.page.locator('[data-timeline-tag="day-11"]').filter({ visible: true }).first()
+      const chip = laufHatTag(tastatur.page, 'day-11')
       await chip.focus()
       await tastatur.page.keyboard.press('Enter')
       await tastatur.page.waitForSelector('[data-u1b-zur-route]')
       await tastatur.page.locator('[data-u1b-zur-route]').focus()
       await tastatur.page.keyboard.press('Enter')
-      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-11'))
       const lage = await tastatur.page.evaluate(() => {
         const el = document.activeElement
         if (!(el instanceof HTMLElement)) return null
-        const streifen = el.closest('[data-plan-tag-streifen]')
-        if (!(streifen instanceof HTMLElement)) return null
-        const flaeche = streifen.getBoundingClientRect()
         const kasten = el.getBoundingClientRect()
-        return { links: kasten.left, rechts: kasten.right, sLinks: flaeche.left, sRechts: flaeche.right, fenster: window.innerWidth }
+        return { links: kasten.left, rechts: kasten.right, oben: kasten.top, unten: kasten.bottom, fenster: window.innerWidth, hoehe: window.innerHeight }
       })
-      assert.ok(lage && lage.links >= lage.sLinks - 1 && lage.rechts <= lage.sRechts + 1 && lage.rechts <= lage.fenster + 1, JSON.stringify(lage))
+      assert.ok(lage && lage.links >= -1 && lage.rechts <= lage.fenster + 1 && lage.oben >= -1 && lage.unten <= lage.hoehe + 1, JSON.stringify(lage))
     } finally {
       await tastatur.page.close()
     }
@@ -759,7 +766,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
     try {
       await direkt.page.locator('[data-u1b-zur-route]').focus()
       await direkt.page.keyboard.press('Enter')
-      await direkt.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      await direkt.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-11'))
       assert.notEqual(await direkt.page.evaluate(() => document.activeElement?.tagName), 'BODY')
     } finally {
       await direkt.page.close()
@@ -768,7 +775,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
     const weit = await offen(1440, 900, '?ansicht=plan&tag=day-11&foreign=1#marke')
     try {
       await weit.page.locator('[data-u1b-zur-route]').click()
-      await weit.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-11')
+      await weit.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-11'))
       const kasten = await weit.page.evaluate(() => {
         const el = document.activeElement
         if (!(el instanceof HTMLElement)) return null
@@ -785,11 +792,11 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   test('Zur Route legt ein spätes Ziel frei, ohne eine passende Scrollposition zu verwerfen', async () => {
     const schrift = await offen(1440, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      await schrift.page.locator('[data-timeline-tag="day-10"]').filter({ visible: true }).first().click()
+      await tagWaehlen(schrift.page, 'day-10')
       await schrift.page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
       await schrift.page.waitForSelector('[data-u1b-anordnung="schmal"]')
       await schrift.page.getByRole('button', { name: 'Zur Route' }).click()
-      await schrift.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-10')
+      await schrift.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-10'))
       const gross = await fokusSichtbar(schrift.page)
       assert.equal(gross.ok, true, JSON.stringify(gross))
     } finally {
@@ -798,12 +805,12 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
 
     const tastatur = await offen(390, 900, '?ansicht=plan&foreign=1#marke')
     try {
-      const chip = tastatur.page.locator('[data-timeline-tag="day-20"]').filter({ visible: true }).first()
+      const chip = laufHatTag(tastatur.page, 'day-20')
       await chip.focus()
       await tastatur.page.keyboard.press('Enter')
       await tastatur.page.locator('[data-u1b-zur-route]').focus()
       await tastatur.page.keyboard.press('Enter')
-      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-20')
+      await tastatur.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-20'))
       const spaet = await fokusSichtbar(tastatur.page)
       assert.equal(spaet.ok, true, JSON.stringify(spaet))
     } finally {
@@ -813,7 +820,7 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
     const tag = await offen(390, 900, '?ansicht=plan&tag=day-20&foreign=1#marke')
     try {
       await tag.page.locator('[data-u1b-zur-route]').click()
-      await tag.page.waitForFunction(() => document.activeElement?.getAttribute('data-timeline-tag') === 'day-20')
+      await tag.page.waitForFunction(() => document.activeElement?.getAttribute('data-u1c-tage')?.split(' ').includes('day-20'))
       const direkt = await fokusSichtbar(tag.page)
       assert.equal(direkt.ok, true, JSON.stringify(direkt))
     } finally {

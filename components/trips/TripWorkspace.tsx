@@ -196,6 +196,26 @@ function sichtbareSuchflaeche(wurzel: ParentNode | null) {
   return null
 }
 
+function elternTag(id: string | null | undefined): string | null {
+  return id ? id : null
+}
+
+function passendeVerbindung(
+  gespeichert: { reiseId: string, tagId: string | null, kanteId: string, occurrenceKey: string } | null,
+  reiseId: string,
+  ansicht: string,
+  tagId: string | undefined,
+  kanteId: string | undefined,
+): HTMLElement | null {
+  if (!gespeichert || gespeichert.reiseId !== reiseId || ansicht !== 'plan') return null
+  if (elternTag(gespeichert.tagId) !== elternTag(tagId) || kanteId !== gespeichert.kanteId) return null
+  const detail = [...document.querySelectorAll('[data-u1c-kante-detail]')].find((el) => (
+    el.getAttribute('data-u1c-kante-detail') === gespeichert.occurrenceKey
+  ))
+  const knopf = detail?.querySelector<HTMLElement>('[data-u1c-alle-verbindungen]') ?? null
+  return darfFokussieren(knopf) ? knopf : null
+}
+
 function auswahlAusModus(modus: WorkspaceModus): WorkspaceDetailAuswahl {
   if (modus.ansicht === 'organisieren' && modus.bereich) return gapAuswahl(modus.bereich)
   if (modus.ansicht === 'plan' && modus.itemId) return itemAuswahl(modus.itemId)
@@ -274,6 +294,7 @@ type TripWorkspaceProps = {
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
   kopfzeile?: React.ReactNode
+  reiseoptionen?: React.ReactNode
   hinweis?: React.ReactNode
   aenderung?: React.ReactNode
   /**
@@ -378,6 +399,7 @@ export default function TripWorkspace({
   onVerbindungAnlegen,
   onPunktEntfernen,
   kopfzeile,
+  reiseoptionen,
   hinweis,
   aenderung,
   begleiter,
@@ -464,6 +486,8 @@ export default function TripWorkspace({
   const hinweisRef = React.useRef<Hinweis | null>(null)
   const reiseIdRef = React.useRef(reise.id)
   const [routeBetont, setRouteBetont] = React.useState(false)
+  const [kanteUnlesbar, setKanteUnlesbar] = React.useState(false)
+  const kanteUnlesbarRef = React.useRef(false)
   const [routeFokus, setRouteFokus] = React.useState(0)
   const [u1bAnordnung, setU1bAnordnung] = React.useState<U1bAnordnung>('schmal')
   const [wurzelSchrift, setWurzelSchrift] = React.useState(16)
@@ -491,6 +515,12 @@ export default function TripWorkspace({
   const zurueckRef = React.useRef<HTMLButtonElement>(null)
   const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
+  const verbindungsAusloeserRef = React.useRef<{
+    reiseId: string
+    tagId: string | null
+    kanteId: string
+    occurrenceKey: string
+  } | null>(null)
   const vorherOffenRef = React.useRef(false)
   const vorherKompaktRef = React.useRef(kompakt)
   const detailAnkerRef = React.useRef<HTMLDivElement | null>(null)
@@ -639,6 +669,7 @@ export default function TripWorkspace({
   }, [reise, ungeplantePunkte, navigationAnwenden])
 
   const oeffneGap = (domain: DetailDomain, signalId?: string) => {
+    verbindungsAusloeserRef.current = null
     merkeAusloeser()
     modusTastaturRef.current = false
     modusSetzen({ ansicht: 'organisieren', bereich: domain, urlAnpassen: false }, 'push', true)
@@ -711,10 +742,28 @@ export default function TripWorkspace({
     chipImStreifenZeigen(el)
   }
 
+  const laufTagIds = (el: HTMLElement): readonly string[] => {
+    const roh = el.getAttribute('data-u1c-tag-ids')
+    if (!roh) return []
+    try {
+      const wert: unknown = JSON.parse(roh)
+      if (!Array.isArray(wert) || wert.some((eintrag) => typeof eintrag !== 'string')) return []
+      return wert
+    } catch {
+      return []
+    }
+  }
+
   const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
+    const kanteKnopf = route.querySelector<HTMLElement>('[data-u1c-kante][aria-pressed="true"]')
+    if (darfFokussieren(kanteKnopf)) return kanteKnopf
     if (anker?.art === 'tag') {
+      const lauf = [...route.querySelectorAll<HTMLElement>('[data-u1c-lauf]')].find((el) => (
+        laufTagIds(el).some((id) => id === anker.id) && darfFokussieren(el)
+      ))
+      if (lauf) return lauf
       const knopf = [...route.querySelectorAll<HTMLElement>('[data-timeline-tag]')].find((el) => el.getAttribute('data-timeline-tag') === anker.id && darfFokussieren(el))
       if (knopf) return knopf
     }
@@ -759,6 +808,15 @@ export default function TripWorkspace({
     const rahmen = window.requestAnimationFrame(zeigen)
     return () => window.cancelAnimationFrame(rahmen)
   }, [routeBetont, routeFokus, u1bAnordnung, wurzelSchrift])
+
+  React.useLayoutEffect(() => {
+    if (u1bAnordnung !== 'schmal' || routeBetont || modus.ansicht !== 'plan') return
+    const ziel = document.querySelector<HTMLElement>('[data-u1b-zur-route]')
+    if (!darfFokussieren(ziel)) return
+    const aktiv = document.activeElement
+    if (aktiv instanceof HTMLElement && aktiv !== document.body && darfFokussieren(aktiv)) return
+    ziel.focus({ preventScroll: true })
+  }, [u1bAnordnung, routeBetont, modus.ansicht, modus.tagId, modus.kanteId, kanteUnlesbar])
 
   React.useLayoutEffect(() => {
     if (!routeBetont) return
@@ -809,6 +867,8 @@ export default function TripWorkspace({
     if (!reise.days.some((tag) => tag.id === tagId)) return
     if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
     setRouteBetont(false)
+    kanteUnlesbarRef.current = false
+    setKanteUnlesbar(false)
     setHinweisBeide(null)
     setAktiverTag(tagId)
     if (modus.ansicht !== 'plan') return
@@ -819,6 +879,38 @@ export default function TripWorkspace({
       return
     }
     modusSetzen(naechster, 'push')
+  }
+
+  const kanteWechseln = (kanteId: string, tagId: string) => {
+    if (!reise.days.some((tag) => tag.id === tagId)) return
+    if (document.activeElement instanceof Node) routeLageMerken(document.activeElement)
+    setRouteBetont(false)
+    kanteUnlesbarRef.current = false
+    setKanteUnlesbar(false)
+    setHinweisBeide(null)
+    setAktiverTag(tagId)
+    if (modus.ansicht !== 'plan') return
+    const naechster = { ansicht: 'plan' as const, bereich: null, tagId, kanteId, urlAnpassen: false as const }
+    const validiert = modusFuerReise(naechster, reise, ungeplantePunkte)
+    if (modusUrl(window.location.href, validiert) === aktuelleAdresse()) {
+      historieSchreiben(reise.id, validiert, 'replace', 'canonical', null)
+      return
+    }
+    modusSetzen(naechster, 'push')
+  }
+
+  const alleVerbindungenOeffnen = () => {
+    merkeAusloeser()
+    const detail = document.querySelector('[data-u1c-kante-detail]')
+    const occurrenceKey = detail?.getAttribute('data-u1c-kante-detail') ?? ''
+    const imPlan = modus.ansicht === 'plan'
+    const tagId = imPlan ? elternTag(modus.tagId) : null
+    const kanteId = imPlan ? modus.kanteId ?? '' : ''
+    verbindungsAusloeserRef.current = imPlan && kanteId && occurrenceKey
+      ? { reiseId: reise.id, tagId, kanteId, occurrenceKey }
+      : null
+    modusTastaturRef.current = false
+    modusSetzen({ ansicht: 'organisieren', bereich: 'mobilitaet', urlAnpassen: false }, 'push', true)
   }
 
   const preparationOeffnen = (preparationZiel?: PreparationZiel) => {
@@ -880,7 +972,16 @@ export default function TripWorkspace({
       }
       const reiseWechsel = reiseIdRef.current !== reise.id
       reiseIdRef.current = reise.id
-      if (reiseWechsel) setRouteBetont(false)
+      if (reiseWechsel) {
+        setRouteBetont(false)
+        kanteUnlesbarRef.current = false
+      }
+      const kanteRoh = params.getAll('kante')
+      const kanteUngueltigGeschrieben = gelesen.ansicht === 'plan' && kanteRoh.length > 0 && !gelesen.kanteId
+      if (art === 'pop' || reiseWechsel) kanteUnlesbarRef.current = kanteUngueltigGeschrieben
+      else if (kanteUngueltigGeschrieben) kanteUnlesbarRef.current = true
+      else if (gelesen.kanteId) kanteUnlesbarRef.current = false
+      setKanteUnlesbar(kanteUnlesbarRef.current)
       const gespeichert = reiseWechsel ? null : historyHinweisLesen(reise.id)
       const naechsterHinweis = reiseWechsel
         ? null
@@ -994,6 +1095,10 @@ export default function TripWorkspace({
       onZurRoute={routeZeigen}
       onRouteZeigenVorbereiten={(ziel) => routeLageMerken(ziel)}
       onEditorAktiv={setEditorAktiv}
+      kanteId={modus.ansicht === 'plan' ? modus.kanteId ?? null : null}
+      kanteUnlesbar={kanteUnlesbar}
+      onKanteWaehlen={kanteWechseln}
+      onAlleVerbindungen={alleVerbindungenOeffnen}
     />
   )
 
@@ -1115,6 +1220,23 @@ export default function TripWorkspace({
     const vorher = vorherModusRef.current
     const geaendert = vorher.ansicht !== modus.ansicht || vorher.bereich !== modus.bereich
     vorherModusRef.current = modus
+    if (geaendert && vorher.ansicht === 'organisieren' && vorher.bereich === 'mobilitaet' && modus.ansicht === 'plan') {
+      const ziel = passendeVerbindung(
+        verbindungsAusloeserRef.current,
+        reise.id,
+        modus.ansicht,
+        modus.tagId,
+        modus.kanteId,
+      )
+      verbindungsAusloeserRef.current = null
+      if (ziel) {
+        ziel.focus({ preventScroll: true })
+        arbeitsflaecheZeigen(ziel)
+        modusTastaturRef.current = false
+        rueckkehrFokussiertRef.current = false
+        return
+      }
+    }
     if (rueckkehrFokussiertRef.current) {
       rueckkehrFokussiertRef.current = false
       modusTastaturRef.current = false
@@ -1135,7 +1257,7 @@ export default function TripWorkspace({
     if (!(heading instanceof HTMLElement) || !darfFokussieren(heading)) return
     arbeitsflaecheZeigen(heading)
     if (tastatur) heading.focus({ preventScroll: true })
-  }, [modus, modusBereit, detailOffen])
+  }, [modus, modusBereit, detailOffen, reise.id])
 
   React.useLayoutEffect(() => {
     if (!modusBereit || modus.ansicht !== 'vorbereitung' || !modus.preparationZiel || !preparationAnfrage) return
@@ -1177,6 +1299,7 @@ export default function TripWorkspace({
           kompakt={kompakt}
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
+          reiseoptionen={reiseoptionen}
           workspace={Boolean(shell)}
           uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
         />
