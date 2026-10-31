@@ -7,8 +7,9 @@
 
 import { activityKandidatenAnreichern } from '@/lib/activities/anreichern'
 import { sucheFuerClient, type ActivitySucheAntwort } from '@/lib/activities/client-sicht'
-import { ACTIVITY_SUCHE_GRENZEN, LEERE_ACTIVITY_EVIDENZ, type ActivityEvidenz } from '@/lib/activities/domain'
+import { ACTIVITY_SUCHE_GRENZEN, LEERE_ACTIVITY_EVIDENZ, type ActivityEvidenz, type ActivitySuchanfrage } from '@/lib/activities/domain'
 import { ActivityProviderFehler, type ActivityProvider } from '@/lib/activities/provider'
+import { VIATOR_PROVIDER_ID } from '@/lib/providers/viator/activities/contracts'
 import { activitySucheErlaubt } from '@/lib/activities/rate-limit'
 import { activityOptionenBewerten } from '@/lib/activities/ranking'
 import { ersteActivitymeldung, activitySucheEingabeSchema } from '@/lib/activities/schema'
@@ -20,6 +21,8 @@ import {
   type ActivityZustand,
 } from '@/lib/activities/zustand'
 import { geoPunktGueltig } from '@/lib/hotels/geo'
+import type { Ort } from '@/lib/places/domain'
+import { ortAusBestand } from '@/lib/places/pruefen'
 import {
   providerOpsConsoleEventSink,
   providerOpsEventSchreiben,
@@ -32,6 +35,8 @@ export type ActivitySuchePorts = {
   provider: ActivityProvider | null
   kennung: string
   eventSink?: ProviderOpsEventSink
+  /** Server-side read of the confirmed place. Tests inject this. It is not the browser payload. */
+  ortLesen?: (id: string) => Promise<Ort | null> | Ort | null
 }
 
 function leerAntwort(
@@ -58,6 +63,49 @@ async function mitTimeout<T>(arbeit: Promise<T>, timeoutMs: number): Promise<T> 
     return await Promise.race([arbeit, timeout])
   } finally {
     if (timer) clearTimeout(timer)
+  }
+}
+
+function namensschluessel(wert: string): string {
+  return wert.trim().toLocaleLowerCase('de').normalize('NFD').replace(/\p{M}/gu, '')
+}
+
+async function bestaetigteViatorAnfrage(
+  anfrage: ActivitySuchanfrage,
+  ortLesen: ActivitySuchePorts['ortLesen'],
+): Promise<ActivitySuchanfrage> {
+  if (!anfrage.destinationPlaceId || !ortLesen) {
+    throw new ActivityProviderFehler('invalid', 'Für diesen Ort liegt keine bestätigte Identität vor.')
+  }
+  const gelesen = await mitTimeout(
+    Promise.resolve(ortLesen(anfrage.destinationPlaceId)),
+    ACTIVITY_SUCHE_GRENZEN.timeoutMs,
+  )
+  const ort = gelesen ? ortAusBestand([gelesen], anfrage.destinationPlaceId, 'ziel') : null
+  if (!ort || ort.id !== anfrage.destinationPlaceId) {
+    throw new ActivityProviderFehler('invalid', 'Für diesen Ort ist kein bestätigter Datensatz hinterlegt.')
+  }
+  const stageLand = anfrage.countryCode?.toUpperCase() ?? null
+  const ortLand = ort.countryCode?.toUpperCase() ?? null
+  if (stageLand && ortLand && stageLand !== ortLand) {
+    throw new ActivityProviderFehler('invalid', 'Der bestätigte Ort gehört zu einem anderen Land.')
+  }
+  const aliasTeile = (ort.keywords ?? '')
+    .split(',')
+    .map((teil) => teil.trim())
+    .filter((teil) => teil.length > 0)
+  const namen = new Set([ort.name, ...aliasTeile].map(namensschluessel).filter((teil) => teil.length > 0))
+  if (!namen.has(namensschluessel(anfrage.destinationName))) {
+    throw new ActivityProviderFehler('invalid', 'Der angezeigte Name passt nicht zum bestätigten Ort.')
+  }
+  return {
+    ...anfrage,
+    destinationName: ort.name,
+    latitude: ort.lat,
+    longitude: ort.lon,
+    countryCode: ortLand ?? stageLand,
+    placeAliases: [ort.name, ...aliasTeile],
+    placeType: ort.typ,
   }
 }
 
@@ -92,8 +140,19 @@ export async function activitiesSuchen(
     }
   }
 
-  const { anfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
-
+  const { anfrage: rohAnfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
+  const anfrage: ActivitySuchanfrage | null = rohAnfrage
+    ? {
+        ...rohAnfrage,
+        countryCode: geprueft.data.stage.countryCode,
+        latitude: geprueft.data.stage.latitude,
+        longitude: geprueft.data.stage.longitude,
+      }
+    : null
+  if (anfrage) {
+    anfrage.placeAliases = undefined
+    anfrage.placeType = undefined
+  }
   if (!ports.zustand.aktiv || !ports.provider) {
     beobachten('unavailable')
     return {
@@ -136,7 +195,11 @@ export async function activitiesSuchen(
       : null
 
   try {
-    const treffer = await mitTimeout(ports.provider.suchen(anfrage), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
+    let ziel = anfrage
+    if (ports.provider.id === VIATOR_PROVIDER_ID) {
+      ziel = await bestaetigteViatorAnfrage(anfrage, ports.ortLesen)
+    }
+    const treffer = await mitTimeout(ports.provider.suchen(ziel), ACTIVITY_SUCHE_GRENZEN.timeoutMs)
     const begrenzt = treffer.options.slice(0, ACTIVITY_SUCHE_GRENZEN.angebote)
     const kandidaten = activityKandidatenAnreichern(begrenzt, anfrage, bestehendeFenster, etappenPunkt)
     const optionen = activityOptionenBewerten(kandidaten).slice(
@@ -163,6 +226,7 @@ export async function activitiesSuchen(
         message,
         evidenz,
         options: optionen,
+        verweise: treffer.verweise,
       }),
     }
   } catch (fehler) {
@@ -193,11 +257,13 @@ export function activitySuchePortsAusUmgebung(
   umgebung: ActivityUmgebung,
   provider: ActivityProvider | null,
   kennung: string,
+  ortLesen?: ActivitySuchePorts['ortLesen'],
 ): ActivitySuchePorts {
   return {
     zustand: activityZustand(umgebung, provider !== null),
     provider,
     kennung,
     eventSink: providerOpsConsoleEventSink,
+    ortLesen,
   }
 }
