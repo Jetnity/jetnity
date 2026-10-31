@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { PRODUCTION_REGISTRY } from '../../apps/widgets-host/lib/registry.mjs'
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const host = path.join(root, 'apps/widgets-host')
 const findings = []
@@ -14,14 +16,25 @@ function text(relative) {
 
 const runtime = text('lib/host-runtime.mjs')
 const decide = text('lib/decide.mjs')
-const registry = text('lib/registry.mjs')
 for (const [name, source] of [['runtime', runtime], ['decide', decide]]) {
   for (const pattern of [/discovercars\.com/i, /12go\.asia/i, /trainbusferry/i, /googletagmanager/i, /localStorage/, /sessionStorage/, /indexedDB/, /document\.cookie/, /innerHTML/, /\beval\s*\(/, /process\.env/]) {
     if (pattern.test(source)) findings.push(`${name} contains ${pattern}`)
   }
 }
-if (!registry.includes('selected: false')) findings.push('registry is not denied')
-if (registry.includes('selected: true')) findings.push('registry contains a selected entry')
+const discovercars = PRODUCTION_REGISTRY.discovercars
+const twelvego = PRODUCTION_REGISTRY.twelvego
+if (discovercars.selected !== false || discovercars.policyId !== 'unselected') findings.push('discovercars registry is not denied')
+if (twelvego.selected !== true) findings.push('twelvego registry is not the authorized selection')
+if (twelvego.policyId !== 'twelvego-general-chf-20261031-r1') findings.push('twelvego policy id drifted')
+if (twelvego.artifactSha256 !== '3eeefcb326833997b1792f4a2bbc2b833511beddac2fd9626a2a9c07f68b369e') findings.push('twelvego artifact drifted')
+if (twelvego.sandbox !== 'allow-scripts allow-same-origin allow-forms allow-popups') findings.push('twelvego sandbox drifted')
+if (twelvego.processingPolicyRevision !== 'twelvego-load-affiliate-analytics-v1') findings.push('twelvego processing revision drifted')
+if (twelvego.disclosureRevision !== 'twelvego-general-disclosure-v1') findings.push('twelvego disclosure drifted')
+if (twelvego.networkPolicyRevision !== 'twelvego-general-network-v1') findings.push('twelvego network revision drifted')
+if (twelvego.requiredOptional !== 'ANALYTICS_STORAGE') findings.push('twelvego optional purpose drifted')
+if (twelvego.purposeSeparationVerified !== false) findings.push('twelvego purpose separation was marked verified')
+if (twelvego.parentOrigin !== 'https://jetnity.com' || twelvego.childOrigin !== 'https://jetnity-widgets.vercel.app') findings.push('twelvego origins drifted')
+if (twelvego.protocolRevision !== 1 || twelvego.embedPath !== '/embed/twelvego') findings.push('twelvego route binding drifted')
 
 const expected = [
   ['artifacts/discovercars-widget-allgemein.html', 835, '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa'],

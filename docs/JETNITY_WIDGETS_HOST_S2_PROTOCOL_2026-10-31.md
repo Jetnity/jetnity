@@ -45,6 +45,10 @@ The adapter walks a parsed plan and uses `createElement`, `setAttribute`, `creat
 
 When one registry entry is later selected in source, `productionPlanForClient(provider)` embeds that route's plan only, and the shell CSP adds that script's exact `https` origin to `script-src`. `networkPolicy: 'unselected'` is not an executable allowlist. `frame-src` stays `'none'` until a reviewed frame allowlist exists. A host CSP does not describe what a nested vendor frame requests internally.
 
+## Current — 12Go general selection
+
+The paragraph above describes the earlier unselected shell. The 12Go row is now selected. For that exact binding only, the header builder emits the fixed script, style, image, font, connect, and form sources from `twelvego-network-policy.mjs`, plus `style-src-attr 'unsafe-inline'`. `frame-src` stays `'none'`. DiscoverCars stays unselected, and its audit frame rule is unchanged. A wrong or missing binding field yields no plan and no open provider rules. The child record does not set the parent sandbox.
+
 ## Storage limits
 
 Host code does not read or write cookies, `localStorage`, `sessionStorage`, IndexedDB, the Cache API, or auth state. Both provider routes share one child origin. With `allow-same-origin`, vendor code on that origin can use its storage and same-origin sibling frames can see each other. Paths do not create a provider boundary. The harness recorded that shared-origin storage with a canary. It is not a Jetnity write.

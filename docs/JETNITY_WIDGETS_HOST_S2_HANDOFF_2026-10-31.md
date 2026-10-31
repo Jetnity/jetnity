@@ -12,9 +12,15 @@
 
 `docs/ACTIVE_WORK_STATUS.md` was not updated. This handoff is the continuity delta.
 
-## What the next reader should trust
+## Current — 12Go source selection
 
-Read the protocol, then the report. The host now has a real shell and a denied production registry. Local tests, the HTTP matrix, the Next build, and the Playwright harness passed in this session. Root lint with the nested `.next` directory present exited 0.
+The amendment is `docs/JETNITY_WIDGETS_HOST_S2_12GO_SELECTION_AMENDMENT_V1_2026-10-31.md`, blob `b5380cf9451b2a13573ecff572f98f46d12be080`. Only the 12Go registry row is selected. DiscoverCars stays unselected. The DiscoverCars audit is still CHANGES REQUIRED / `BLOCKED_TRANSPORT`; its policy, preflight, and nested-contract files were not changed. `audit-preflight.mjs` fails on `twelvego.selected === false` and is a historical check, not this delivery's pass gate.
+
+Source selection is not a widget launch. Dedicated-host deployment, parent sandbox, CMP acceptance, search/form behavior, and revocation remain open. `hostSelectionCommit` is not set here. `allow-popups-to-escape-sandbox` and top navigation are not selected.
+
+## What an earlier reader trusted
+
+Read the protocol, then the report. The host has a real shell. The R2 note below described a fully denied registry; that sentence is historical for 12Go.
 
 ## Do not do next
 

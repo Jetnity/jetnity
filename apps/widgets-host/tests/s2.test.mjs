@@ -20,6 +20,7 @@ import {
 } from '../lib/host-runtime.mjs'
 import { clientPlan, planFromFrozen, productionPlanForClient } from '../lib/production-wire.mjs'
 import { PRODUCTION_REGISTRY, productionSelection } from '../lib/registry.mjs'
+import { TWELVEGO_BINDING, TWELVEGO_SOURCES, classifyTwelvegoResource } from '../lib/twelvego-network-policy.mjs'
 
 const DISCOVER_SHA = '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa'
 const TWELVE_SHA = '3eeefcb326833997b1792f4a2bbc2b833511beddac2fd9626a2a9c07f68b369e'
@@ -140,17 +141,23 @@ test('insertion recreates elements without innerHTML and upgrades only protocol-
   assert.equal(anchor.attrs.find(([name]) => name === 'href')[1], 'https://12go.asia/?z=17323861&sub_id=jetnity-mobility-search')
 })
 
-test('production registry denies both providers and the client plan map stays empty', () => {
+test('production registry selects only the exact 12Go row', () => {
   assert.equal(PRODUCTION_REGISTRY.discovercars.selected, false)
-  assert.equal(PRODUCTION_REGISTRY.twelvego.selected, false)
+  assert.equal(PRODUCTION_REGISTRY.discovercars.policyId, 'unselected')
   assert.equal(productionSelection('discovercars'), null)
-  assert.equal(productionSelection('twelvego'), null)
   assert.equal(productionPlanForClient('discovercars'), null)
-  assert.equal(productionPlanForClient('twelvego'), null)
+  assert.equal(PRODUCTION_REGISTRY.twelvego.selected, true)
+  assert.equal(PRODUCTION_REGISTRY.twelvego.policyId, 'twelvego-general-chf-20261031-r1')
+  assert.equal(PRODUCTION_REGISTRY.twelvego.purposeSeparationVerified, false)
+  const selected = productionPlanForClient('twelvego')
+  assert.equal(selected.artifactSha256, TWELVE_SHA)
+  assert.equal(selected.sandbox, 'allow-scripts allow-same-origin allow-forms allow-popups')
   const contract = readFileSync(new URL('../lib/origin-contract.ts', import.meta.url), 'utf8')
   assert.equal(contract.includes("childOrigin: 'https://jetnity-widgets.vercel.app'"), true)
-  assert.equal(contract.includes('productionProvidersSelected: false'), true)
+  assert.equal(contract.includes('discovercarsSourceSelected: false'), true)
+  assert.equal(contract.includes('twelvegoSourceSelected: true'), true)
   assert.equal(contract.includes('brandedSubdomainSelected: false'), true)
+  assert.equal(contract.includes("deployment: 'source-only-not-activated'"), true)
   assert.equal(contract.includes('return false'), true)
 })
 
@@ -678,4 +685,85 @@ test('the audit plan keeps its binding through the serializer and opens one fram
   }).granted, true)
   assert.equal(fixture.destroy().destroyed, true)
   assert.equal(iframe.removed, true)
+})
+
+test('the selected 12Go row opens only its bound resources and inserts the frozen export once', () => {
+  const plan = productionPlanForClient('twelvego')
+  assert.equal(plan.policyId, TWELVEGO_BINDING.policyId)
+  assert.equal(plan.purposeSeparationVerified, false)
+  assert.equal(plan.requiredOptional, 'ANALYTICS_STORAGE')
+  for (const field of ['sandbox', 'artifactSha256', 'processingPolicyRevision', 'disclosureRevision', 'networkPolicyRevision', 'parentOrigin', 'embedPath']) {
+    assert.equal(clientPlan('twelvego', { ...PRODUCTION_REGISTRY.twelvego, [field]: field === 'artifactSha256' ? 'f'.repeat(64) : 'wrong' }), null)
+  }
+  assert.equal(clientPlan('twelvego', { ...PRODUCTION_REGISTRY.twelvego, purposeSeparationVerified: true }), null)
+  assert.equal(clientPlan('twelvego', { ...PRODUCTION_REGISTRY.twelvego, selected: false }), null)
+  const wrong = buildShell('twelvego', { plan: { ...plan, sandbox: 'allow-scripts' } })
+  assert.equal(wrong.html.includes('"plan":null'), true)
+  assert.match(wrong.headers.get('content-security-policy'), /form-action 'none'/)
+  assert.equal(wrong.headers.get('content-security-policy').includes('trainbusferry'), false)
+
+  const shell = decide(new Request('https://jetnity-widgets.vercel.app/embed/twelvego'))
+  const csp = shell.headers.get('content-security-policy')
+  assert.equal(csp.includes(TWELVEGO_SOURCES.scriptLoader), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.jquery), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.stylesheet), true)
+  assert.equal(csp.includes("style-src-attr 'unsafe-inline'"), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.logo), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.counter), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.icons), true)
+  assert.equal(csp.includes('data:'), true)
+  for (const font of TWELVEGO_SOURCES.fonts) assert.equal(csp.includes(font), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.typeahead), true)
+  assert.equal(csp.includes(TWELVEGO_SOURCES.search), true)
+  assert.match(csp, /frame-src 'none'/)
+  assert.match(csp, /worker-src 'none'/)
+  const scriptSrc = csp.split(';').map((part) => part.trim()).find((part) => part.startsWith('script-src '))
+  assert.equal(scriptSrc.includes('unsafe-inline'), false)
+  assert.equal(scriptSrc.includes('unsafe-eval'), false)
+  assert.equal(scriptSrc.split(' ').includes('https://cdn0.trainbusferry.com'), false)
+  const html = shell.text()
+  return html.then((body) => {
+    assert.equal(/<script\s+src=/i.test(body), false)
+    assert.equal(body.includes('id=17323861'), true)
+    assert.equal(body.includes('data-sub_id'), true)
+    const wired = selectionFromPlan(JSON.parse(body.match(/startProductionShell\((\{.*\})\);/s)[1]))
+    const { deps, parent, document } = controllerDeps({
+      provider: 'twelvego',
+      readPathProvider: () => 'twelvego',
+      select: () => wired,
+      artifact: () => wired,
+    })
+    const controller = createController(deps)
+    controller.ready()
+    assert.equal(document.body.children.length, 0)
+    const grant = {
+      type: 'jetnity-widget-host',
+      revision: 1,
+      kind: 'grant',
+      provider: 'twelvego',
+      challenge: CHALLENGE,
+      frameGeneration: 1,
+      parentGeneration: 1,
+      policyId: wired.policyId,
+      artifactSha256: wired.artifactSha256,
+    }
+    assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).inserted, true)
+    const script = document.body.children[0]
+    assert.equal(script.attrs.find(([name]) => name === 'src')[1], 'https://cdn0.trainbusferry.com/tools/form/de/?id=17323861&domain=12go.asia')
+    assert.equal(script.attrs.find(([name]) => name === 'data-sub_id')[1], 'jetnity-mobility-search')
+    assert.equal(script.attrs.find(([name]) => name === 'data-curr')[1], 'CHF')
+    assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).reason, 'challenge')
+    assert.equal(classifyTwelvegoResource('https://cdn0.trainbusferry.com/tools/form/de/?id=17323861&domain=12go.asia', 'script').allow, true)
+    assert.equal(classifyTwelvegoResource('https://cdn0.trainbusferry.com/tools/form/de/?id=17323861&domain=12go.asia&person=1', 'script').allow, false)
+    assert.equal(classifyTwelvegoResource(TWELVEGO_SOURCES.jquery, 'script').allow, true)
+    assert.equal(classifyTwelvegoResource(TWELVEGO_SOURCES.stylesheet, 'style').allow, true)
+    assert.equal(classifyTwelvegoResource(`${TWELVEGO_SOURCES.counter}?lang=de&z=17323861&sub_id=jetnity-mobility-search`, 'image').allow, true)
+    assert.equal(classifyTwelvegoResource(`${TWELVEGO_SOURCES.counter}?lang=de&z=17323861&sub_id=person`, 'image').allow, false)
+    assert.equal(classifyTwelvegoResource(`${TWELVEGO_SOURCES.icons}bus.png`, 'image').allow, true)
+    assert.equal(classifyTwelvegoResource(TWELVEGO_SOURCES.fonts[1], 'font').allow, true)
+    assert.equal(classifyTwelvegoResource(TWELVEGO_SOURCES.typeahead, 'connect').allow, true)
+    assert.equal(classifyTwelvegoResource(TWELVEGO_SOURCES.search, 'form').allow, true)
+    assert.equal(classifyTwelvegoResource('https://12go.asia/de/travel/book', 'form').allow, false)
+    assert.equal(classifyTwelvegoResource('https://evil.example/widget.js', 'script').allow, false)
+  })
 })

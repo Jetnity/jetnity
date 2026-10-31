@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 
 import contract from '../inert-contract.json' with { type: 'json' }
 import { auditFrameSource } from './audit-network-policy.mjs'
+import { TWELVEGO_POLICY_ID, twelvegoBindingMatches, twelvegoContentSecurityPolicy } from './twelvego-network-policy.mjs'
 import { CHILD_HOST, CHILD_ORIGIN, PARENT_ORIGIN, insertionValue } from './host-runtime.mjs'
 import { productionPlanForClient } from './production-wire.mjs'
 
@@ -68,9 +69,10 @@ function shellHeaders(value, plan) {
     'Permissions-Policy',
     'accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=()',
   )
+  const twelve = twelvegoContentSecurityPolicy(plan, value)
   headers.set(
     'Content-Security-Policy',
-    `default-src 'none'; script-src ${[`'nonce-${value}'`, ...reviewedScriptSources(plan)].join(' ')}; style-src 'nonce-${value}'; frame-ancestors ${PARENT_ORIGIN}; form-action 'none'; base-uri 'none'; object-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; frame-src ${frameDirective(plan)}`,
+    twelve || `default-src 'none'; script-src ${[`'nonce-${value}'`, ...reviewedScriptSources(plan)].join(' ')}; style-src 'nonce-${value}'; frame-ancestors ${PARENT_ORIGIN}; form-action 'none'; base-uri 'none'; object-src 'none'; img-src 'none'; font-src 'none'; connect-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; frame-src ${frameDirective(plan)}`,
   )
   headers.set('Content-Type', 'text/html; charset=utf-8')
   headers.set('Cross-Origin-Opener-Policy', 'same-origin')
@@ -81,12 +83,15 @@ function shellHeaders(value, plan) {
 
 export function buildShell(provider, options = {}) {
   const value = nonce()
-  const plan = Object.hasOwn(options, 'plan') ? options.plan : productionPlanForClient(provider)
+  const supplied = Object.hasOwn(options, 'plan') ? options.plan : productionPlanForClient(provider)
+  const plan = supplied && supplied.provider === provider && (supplied.policyId !== TWELVEGO_POLICY_ID || twelvegoBindingMatches(supplied))
+    ? supplied
+    : null
   const config = {
     provider,
     childOrigin: CHILD_ORIGIN,
     parentOrigin: PARENT_ORIGIN,
-    plan: plan && plan.provider === provider ? plan : null,
+    plan,
   }
   const html = `<!DOCTYPE html>
 <html lang="de">

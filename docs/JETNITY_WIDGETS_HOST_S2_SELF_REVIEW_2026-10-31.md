@@ -2,7 +2,11 @@
 
 **Stand:** 31 October 2026. Author review only. Not an independent Technical-Lead PASS.
 
-## Current head
+## Current — 12Go source selection
+
+Author review only. The 12Go row is selected with `purposeSeparationVerified: false`. DiscoverCars stays unselected. Host tests on this change were 17/17. The historical `audit-preflight.mjs` assertion that both rows are unselected now fails and is not a pass gate. The DiscoverCars audit is not accepted. Dedicated-host, parent, and CMP runtime acceptance are still missing.
+
+## Earlier head
 
 - A decision id can be granted only when it is greater than every id already used. A challenge that was already granted is rejected when the id changes. Going back from 8 to 7 does not grant.
 - `startProductionShell` sets `#jetnity-widget-status` to requested, denied, or inserted. The inserted sentence says the script is not proof of a working provider form.

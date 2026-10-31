@@ -7,6 +7,10 @@
 **Pre-code:** https://github.com/Jetnity/jetnity/pull/1097#issuecomment-6547425505
 **Implement authorization:** Root, same session, Draft #1097.
 
+## Current — 12Go source selection
+
+The 12Go general row is selected. DiscoverCars stays unselected. The sentences below that say both registry entries stay `selected: false`, and that production plans are `{}`, describe the original S2 shape. They are not the current 12Go registry. Deployment, parent integration, and CMP acceptance remain open. The DiscoverCars audit remains blocked.
+
 ## Shape that was implemented
 
 - Child origin `https://jetnity-widgets.vercel.app`. Parent origin `https://jetnity.com`. `widgets.jetnity.com` is not the child host.

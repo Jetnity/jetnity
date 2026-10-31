@@ -1,5 +1,11 @@
 # Jetnity Widgets Host S2 — REPORT
 
+## Current — 12Go source selection
+
+The 12Go general source row is selected and bound to policy `twelvego-general-chf-20261031-r1`. DiscoverCars stays unselected. This is not a dedicated-host deployment, parent-sandbox acceptance, or CMP acceptance. The DiscoverCars audit remains CHANGES REQUIRED / `BLOCKED_TRANSPORT`. The export was not given `data-starget`, so a named popup target is not claimed. Affiliate parameters in the frozen export are not a commission proof.
+
+The sections below describe earlier heads. Where they say both providers are unselected, that is historical for 12Go.
+
 **Stand:** 31 October 2026.
 **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f
