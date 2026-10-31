@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { mock, test } from 'node:test'
 
-import { BUDGET_ATTEMPTS, BUDGET_MS, createAuditRunner, createMonotonicClock } from './audit-policy.mjs'
+import { BUDGET_ATTEMPTS, BUDGET_MS, createAuditRunner, createMonotonicClock, createPassiveReaders, sanitizeStorage } from './audit-policy.mjs'
 
 const LOADER = 'https://www.discovercars.com/widget.js?v1'
 const SECRET = 'visitor_abc123'
@@ -320,4 +320,229 @@ test('synchronous transport and body failures are recorded instead of escaping',
   const bodyFailure = await syncBody.boundedGet({ url: 'http://127.0.0.1/sync-body', resourceType: 'document' })
   assert.equal(bodyFailure.reason, 'error')
   assert.equal(bodyFailure.terminal, 'error')
+})
+
+test('missing storage and blank cookie flags stay unknown', () => {
+  const measuredZero = sanitizeStorage({ readable: true, storageEntries: 0, cookies: [] })
+  assert.equal(measuredZero.cookieCount, 0)
+  assert.equal(measuredZero.storageCount, 0)
+  assert.equal(measuredZero.cookieFlags.secure, 0)
+  assert.equal(measuredZero.cookieFlags.httpOnly, 0)
+  assert.equal(measuredZero.cookieFlags.sameSite.absent, 0)
+  assert.equal(measuredZero.gap, null)
+  const storageGap = sanitizeStorage({ readable: true, cookies: [] })
+  assert.equal(storageGap.cookieCount, 0)
+  assert.equal(storageGap.storageCount, null)
+  assert.equal(storageGap.gaps.storage, 'missing')
+  assert.equal(storageGap.gap.includes('storage-unobserved'), true)
+  const blank = sanitizeStorage({ readable: true, storageEntries: 2, cookies: [{}] })
+  assert.equal(blank.cookieCount, 1)
+  assert.equal(blank.storageCount, 2)
+  assert.equal(blank.cookieFlags.secure, null)
+  assert.equal(blank.cookieFlags.httpOnly, null)
+  assert.equal(blank.cookieFlags.sameSite, null)
+  assert.equal(blank.gaps.cookieFlags, 'unavailable')
+  assert.equal(JSON.stringify(blank).includes('"secure":0'), false)
+  assert.equal(JSON.stringify(blank).includes('"absent":1'), false)
+  const { runner: audit } = runner()
+  audit.recordStorage('parent', { readable: true, storageEntries: 0, cookies: [] }, 'before-start')
+  audit.recordStorage('parent', { readable: true, storageEntries: 0, cookies: [] }, 'before-teardown')
+  assert.deepEqual(audit.evidence().storage.parent.delta, { cookieCount: 0, storageCount: 0 })
+  assert.equal(audit.evidence().storage.parent.gap, null)
+})
+
+test('finalization waits for headers, body cancellation, and cleanup', async () => {
+  let resolveHeaders
+  const hangingHeaders = createAuditRunner({
+    clock: createMonotonicClock(0),
+    fetchImpl() { return new Promise((resolve) => { resolveHeaders = resolve }) },
+  })
+  hangingHeaders.start(0)
+  const headers = hangingHeaders.boundedGet({ url: 'http://127.0.0.1/headers-hang', resourceType: 'document' })
+  hangingHeaders.trip('navigation')
+  assert.equal((await headers).reason, 'aborted')
+  const headerSnap = await hangingHeaders.finalize(20)
+  assert.equal(headerSnap.finalized, false)
+  assert.equal(headerSnap.incomplete, true)
+  assert.equal(headerSnap.ledger.find((row) => row.issued).terminal, 'hanging')
+  resolveHeaders({ status: 204, async arrayBuffer() { return new Uint8Array() } })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(hangingHeaders.evidence(), headerSnap)
+  assert.equal(headerSnap.finalized, false)
+  assert.equal(headerSnap.ledger.find((row) => row.issued).reason, 'abort-requested')
+
+  const hangingBody = createAuditRunner({
+    clock: createMonotonicClock(0),
+    fetchImpl() {
+      return { status: 200, arrayBuffer() { return new Promise(() => {}) } }
+    },
+  })
+  hangingBody.start(0)
+  const body = hangingBody.boundedGet({ url: 'http://127.0.0.1/body-hang', resourceType: 'document' })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  hangingBody.trip('navigation')
+  assert.equal((await body).reason, 'aborted')
+  const bodySnap = await hangingBody.finalize(20)
+  assert.equal(bodySnap.finalized, false)
+  assert.equal(bodySnap.incomplete, true)
+  assert.notEqual(bodySnap.ledger.find((row) => row.issued).terminal, 'complete')
+
+  let cancelCalls = 0
+  const hangingCancel = createAuditRunner({
+    clock: createMonotonicClock(0),
+    fetchImpl() {
+      return {
+        status: 200,
+        body: {
+          getReader() {
+            return {
+              read() { return new Promise(() => {}) },
+              cancel() { cancelCalls += 1; return new Promise(() => {}) },
+            }
+          },
+        },
+      }
+    },
+  })
+  hangingCancel.start(0)
+  const cancelPending = hangingCancel.boundedGet({ url: 'http://127.0.0.1/cancel-hang', resourceType: 'document' })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  hangingCancel.trip('navigation')
+  assert.equal((await cancelPending).reason, 'aborted')
+  const cancelSnap = await hangingCancel.finalize(20)
+  assert.equal(cancelCalls, 1)
+  assert.equal(cancelSnap.finalized, false)
+  assert.equal(cancelSnap.incomplete, true)
+
+  const hangingCleanup = createAuditRunner({
+    clock: createMonotonicClock(0),
+    cleanup() { return new Promise(() => {}) },
+  })
+  hangingCleanup.start(0)
+  hangingCleanup.trip('navigation')
+  const cleanupSnap = await hangingCleanup.finalize(15)
+  assert.equal(cleanupSnap.cleanupState, 'incomplete')
+  assert.equal(cleanupSnap.incomplete, true)
+  assert.equal(cleanupSnap.finalized, false)
+})
+
+test('late reader resolution cannot rewrite a published snapshot', async () => {
+  const releases = []
+  const hang = () => new Promise((resolve) => { releases.push(resolve) })
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: {
+      parent: hang,
+      host: hang,
+      events: hang,
+    },
+  })
+  assert.equal(audit.start(0).startedAt, 0)
+  audit.trip('navigation')
+  const snap = await audit.finalize(20)
+  assert.equal(snap.finalized, false)
+  assert.equal(snap.incomplete, true)
+  assert.equal(snap.storage.parent.beforeStart.length, 0)
+  assert.equal(snap.storage.host.beforeStart.length, 0)
+  assert.equal(snap.events.length, 0)
+  for (const release of releases) release({ readable: true, storageEntries: 3, cookies: [{ secure: true, httpOnly: true, sameSite: 'Lax' }] })
+  releases.at(-1)?.({ name: 'gtm.js', payload: SECRET })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(audit.evidence(), snap)
+  assert.equal(snap.storage.parent.beforeStart.length + snap.storage.parent.beforeTeardown.length, 0)
+  assert.equal(snap.events.length, 0)
+  assert.equal(snap.finalized, false)
+  assert.equal(JSON.stringify(snap).includes(SECRET), false)
+})
+
+test('baseline capture does not move or extend the 15 second deadline', async () => {
+  let release
+  let fetches = 0
+  const clock = createMonotonicClock(0)
+  const audit = createAuditRunner({
+    clock,
+    readers: { parent: () => new Promise((resolve) => { release = resolve }) },
+    fetchImpl() {
+      fetches += 1
+      return { status: 204, async arrayBuffer() { return new Uint8Array() } }
+    },
+  })
+  assert.equal(audit.start(0).startedAt, 0)
+  const pending = audit.boundedGet({ url: 'http://127.0.0.1/after-baseline', resourceType: 'document' })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  assert.equal(fetches, 0)
+  clock.advance(1000)
+  assert.equal(audit.startedAt, 0)
+  assert.equal(fetches, 0)
+  release({ readable: true, storageEntries: 0, cookies: [] })
+  const result = await pending
+  assert.equal(fetches, 1)
+  assert.equal(result.reason, 'local-response')
+  assert.equal(audit.startedAt, 0)
+
+  let lateFetches = 0
+  const closed = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: { parent: () => new Promise(() => {}) },
+    fetchImpl() { lateFetches += 1; return { status: 204, async arrayBuffer() { return new Uint8Array() } } },
+  })
+  closed.start(0)
+  const blocked = closed.boundedGet({ url: 'http://127.0.0.1/baseline-closed', resourceType: 'document' })
+  closed.advance(BUDGET_MS)
+  const late = await blocked
+  assert.equal(lateFetches, 0)
+  assert.equal(late.issued, false)
+  assert.equal(late.reason, 'DEADLINE')
+  assert.equal(closed.startedAt, 0)
+})
+
+test('prepared frame readers capture fake surfaces and stay free of identifiers', async () => {
+  const secret = 'frame-cookie-secret'
+  const name = 'frame-cookie-name'
+  let cookiesPromise
+  const parent = {
+    cookies() {
+      if (!cookiesPromise) cookiesPromise = Promise.resolve([{ name, value: secret, domain: 'example.test', secure: true, httpOnly: false, sameSite: 'Lax' }])
+      return cookiesPromise
+    },
+    evaluate(fn) {
+      const previous = { localStorage: globalThis.localStorage, sessionStorage: globalThis.sessionStorage, dataLayer: globalThis.dataLayer }
+      const layer = [{ event: 'metaData', payload: secret }]
+      const push = layer.push
+      globalThis.localStorage = { length: 2 }
+      globalThis.sessionStorage = { length: 0 }
+      globalThis.dataLayer = layer
+      return Promise.resolve().then(() => {
+        const probe = fn()
+        assert.equal(layer.push, push)
+        return probe
+      }).finally(() => {
+        globalThis.localStorage = previous.localStorage
+        globalThis.sessionStorage = previous.sessionStorage
+        globalThis.dataLayer = previous.dataLayer
+      })
+    },
+  }
+  const audit = createAuditRunner({
+    clock: createMonotonicClock(0),
+    readers: createPassiveReaders({ parent, host: null, vendor: null }),
+  })
+  audit.start(0)
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  audit.trip('navigation')
+  const snap = await audit.finalize(30)
+  const text = JSON.stringify(snap)
+  assert.equal(text.includes(secret), false)
+  assert.equal(text.includes(name), false)
+  assert.equal(text.includes('example.test'), false)
+  assert.equal(snap.finalized, true)
+  assert.equal(snap.incomplete, false)
+  assert.equal(snap.storage.parent.beforeStart[0].storageCount, 2)
+  assert.equal(snap.storage.parent.beforeStart[0].cookieCount, 1)
+  assert.equal(snap.storage.parent.beforeStart[0].cookieFlags.secure, 1)
+  assert.equal(snap.storage.parent.beforeStart[0].cookieFlags.httpOnly, 0)
+  assert.equal(snap.events.some((row) => row.events.some((item) => item.name === 'metaData' && !Object.hasOwn(item, 'payload'))), true)
+  assert.equal(snap.storage.host.gap, 'unreadable')
+  assert.equal(snap.storage.vendor.gap, 'vendor-frame-absent')
+  assert.equal(snap.gaps.includes('vendor-frame-absent'), true)
 })

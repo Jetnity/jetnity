@@ -17,6 +17,7 @@ import {
   compareReference,
   createAuditGate,
   createAuditRunner,
+  createPassiveReaders,
   createMonotonicClock,
   inspectTarget,
   nestedContractHref,
@@ -187,28 +188,16 @@ function runPure() {
   assert.equal(sanitizeEvents([], { unreadable: true }).gap, 'unreadable-frame')
 }
 
+function preparePassiveCapture(surfaces) {
+  return createPassiveReaders(surfaces)
+}
+
 async function runAdapter() {
+  assert.equal(typeof preparePassiveCapture, 'function')
   const fetches = []
   const clock = createMonotonicClock(0)
   const closed = createAuditRunner({
     clock,
-    readers: {
-      parent(phase) {
-        if (phase === 'before-start') {
-          return { readable: true, storageEntries: 1, cookies: [{ secure: true, sameSite: 'Lax' }] }
-        }
-        return { readable: false }
-      },
-      host(phase) {
-        if (phase === 'before-start') return { readable: true, storageEntries: 1, cookies: [] }
-        return null
-      },
-      vendor() { return { gap: 'vendor-frame-absent' } },
-      events(phase) {
-        if (phase === 'before-start') return [{ name: 'gtm.js' }]
-        return null
-      },
-    },
     fetchImpl(url) {
       fetches.push(String(url))
       throw new Error('provider fetch')
@@ -350,6 +339,8 @@ const summary = {
   phaseBAuthorized: false,
   providerTransmission: false,
   browserPreflight: 'not-run',
+  passiveCapture: 'prepared-uninvoked',
+  capturePass: false,
   discovercarsSelected: false,
   twelvegoSelected: true,
   webrtc: { proven: false, disposition: 'BLOCKED_TRANSPORT', method: null },

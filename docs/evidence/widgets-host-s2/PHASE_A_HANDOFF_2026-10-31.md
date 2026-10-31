@@ -10,7 +10,7 @@
 
 Read `docs/evidence/widgets-host-s2/PHASE_A_REPORT_2026-10-31.md` and the summary JSON beside it. R5 is an offline lifecycle correction. The deployed host subtree was not changed.
 
-DiscoverCars stays unselected. 12Go stays selected. The default deadline is a platform timer. Manual clocks are test-only. Unreadable storage stays unknown. Passive readers run at the lifecycle points. `finalize()` waits for cleanup. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run.
+DiscoverCars stays unselected. 12Go stays selected. The default deadline is a platform timer and starts at the audit intent. Baseline collection does not extend it. `finalize()` waits for the underlying header, body, cancel, reader, and cleanup promises. A timeout stays `incomplete: true` and `finalized: false`. Late readers cannot rewrite the published snapshot. `createPassiveReaders` is prepared and uninvoked by the default preflight. WebRTC remains `BLOCKED_TRANSPORT`. Phase B was not run. The browser preflight was not run. `capturePass` is false.
 
 ## Do not do next
 

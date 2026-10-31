@@ -3,6 +3,8 @@
   "phaseBAuthorized": false,
   "providerTransmission": false,
   "browserPreflight": "not-run",
+  "passiveCapture": "prepared-uninvoked",
+  "capturePass": false,
   "discovercarsSelected": false,
   "twelvegoSelected": true,
   "webrtc": {

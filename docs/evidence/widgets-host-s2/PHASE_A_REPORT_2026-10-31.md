@@ -24,6 +24,16 @@ The browser preflight was not run. The loopback redirect fixture still shows one
 
 The default runner uses `performance.now()` and `setTimeout` for the 15-second deadline. A manual clock is used only when a test passes one. An unreadable final storage sample does not become a zero count or a deletion delta. A missing final sample stays missing. Injected parent, host, vendor, and event readers run at before-start and before-teardown. Cleanup that returns a promise stays pending until `finalize()`. A header response that arrives after abort has its body cancelled. Synchronous fetch and body throws are recorded as errors. Every ledger row has `offsetMs` relative to the audit start.
 
+## R5.2
+
+`finalize()` waits on the underlying header, body, and `body.cancel` promises, the baseline and final reader promises, and cleanup. A `Promise.race` abort result does not mark that work settled. A bounded timeout keeps `finalized: false` and `incomplete: true`, including when cleanup itself times out. The published snapshot is a clone. A reader that resolves later cannot append samples or change that object.
+
+`start()` arms the 15-second deadline immediately. Baseline collection does not move or extend it. A loopback GET waits until the baseline is ready or explicitly unavailable, and an unavailable baseline is not a capture pass. Final observations are requested before cleanup, while the readers still exist. Permission still closes and aborts immediately.
+
+`createPassiveReaders` is the prepared parent/host/vendor capture. It calls `cookies()` and `frame.evaluate(passiveStorageProbe)` on the supplied surfaces, keeps only measured cookie flags and allowlisted event names, and records a missing vendor frame as `vendor-frame-absent`. The default preflight command does not call it and does not launch a browser. `audit-lifecycle.test.mjs` proves it with fake frame and context APIs. `capturePass` stays false.
+
+A readable `cookies: []` is a measured zero. A readable `cookies: [{}]` leaves `secure`, `httpOnly`, and `sameSite` unknown. Missing `storageEntries` is a storage gap. Known zeros stay zero. The browser transport rows below are the historical 31 October preflight; this correction did not run them again.
+
 ## Source seam
 
 `decide(request)` still calls `buildShell(provider)` with the production registry only. That registry returns null, the public shell embeds `"plan":null`, and its `frame-src` stays `'none'`.
@@ -53,6 +63,8 @@ Natural event names go through the same runner allowlist (`gtm.js`, `metaData`, 
 ## Local preflight
 
 `node scripts/widgets-host-s2/audit-preflight.mjs` prints `audit-preflight PASS`. The machine-readable result is `docs/evidence/widgets-host-s2/phase-a-preflight-summary.json`.
+
+The redirect, budget, and deadline rows are from the current local adapter command. The transport and shell rows are historical browser checks from 31 October 2026 and were not run again for R5.2.
 
 | Check | Result |
 | --- | --- |

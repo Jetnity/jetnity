@@ -168,6 +168,25 @@ export function assessPublishedCapture(kind, bytes) {
   return compareReference(bytes, reference)
 }
 
+function countedBoolean(cookies, field) {
+  let count = 0
+  for (const cookie of cookies) {
+    if (typeof cookie?.[field] !== 'boolean') return null
+    if (cookie[field] === true) count += 1
+  }
+  return count
+}
+
+function countedSameSite(cookies) {
+  const sameSite = { Lax: 0, Strict: 0, None: 0, absent: 0 }
+  for (const cookie of cookies) {
+    const site = cookie && cookie.sameSite
+    if (site !== 'Lax' && site !== 'Strict' && site !== 'None') return null
+    sameSite[site] += 1
+  }
+  return sameSite
+}
+
 export function sanitizeStorage(snapshot) {
   if (!snapshot || snapshot.readable !== true || snapshot.unreadable === true) {
     return {
@@ -177,29 +196,132 @@ export function sanitizeStorage(snapshot) {
       cookieCount: null,
       storageCount: null,
       cookieFlags: null,
+      gaps: { storage: 'unreadable', cookies: 'unreadable', cookieFlags: 'unavailable' },
       gap: 'unreadable',
     }
   }
   const cookiesKnown = Array.isArray(snapshot.cookies)
   const entriesKnown = Number.isInteger(snapshot.storageEntries)
-  const flags = { secure: 0, httpOnly: 0, sameSite: { Lax: 0, Strict: 0, None: 0, absent: 0 } }
-  if (cookiesKnown) {
-    for (const cookie of snapshot.cookies) {
-      if (cookie && cookie.secure === true) flags.secure += 1
-      if (cookie && cookie.httpOnly === true) flags.httpOnly += 1
-      const site = cookie && cookie.sameSite
-      if (site === 'Lax' || site === 'Strict' || site === 'None') flags.sameSite[site] += 1
-      else flags.sameSite.absent += 1
-    }
+  const cookieFlags = cookiesKnown
+    ? {
+        secure: countedBoolean(snapshot.cookies, 'secure'),
+        httpOnly: countedBoolean(snapshot.cookies, 'httpOnly'),
+        sameSite: countedSameSite(snapshot.cookies),
+      }
+    : null
+  const flagsKnown = cookieFlags != null && cookieFlags.secure != null && cookieFlags.httpOnly != null && cookieFlags.sameSite != null
+  const gaps = {
+    storage: entriesKnown ? null : 'missing',
+    cookies: cookiesKnown ? null : 'missing',
+    cookieFlags: flagsKnown ? null : 'unavailable',
   }
+  const gap = [
+    gaps.storage ? 'storage-unobserved' : null,
+    gaps.cookies ? 'cookies-unobserved' : null,
+    gaps.cookieFlags ? 'cookie-flags-unavailable' : null,
+  ].filter(Boolean).join('+') || null
   return {
     readable: true,
     blocked: false,
     observed: true,
     cookieCount: cookiesKnown ? snapshot.cookies.length : null,
     storageCount: entriesKnown ? snapshot.storageEntries : null,
-    cookieFlags: cookiesKnown ? flags : null,
-    gap: cookiesKnown ? null : 'cookie-flags-unavailable',
+    cookieFlags,
+    gaps,
+    gap,
+  }
+}
+
+export function passiveStorageProbe() {
+  const result = { readable: true, storageEntries: null, eventNames: [], eventsUnreadable: false }
+  try {
+    const localLength = globalThis.localStorage.length
+    const sessionLength = globalThis.sessionStorage.length
+    result.storageEntries = Number.isInteger(localLength) && Number.isInteger(sessionLength) ? localLength + sessionLength : null
+  } catch {
+    result.readable = false
+  }
+  try {
+    const layer = globalThis.dataLayer
+    if (Array.isArray(layer)) {
+      result.eventNames = layer.map((item) => (item && typeof item.event === 'string' ? item.event : 'unnamed'))
+    } else if (layer != null) result.eventsUnreadable = true
+  } catch {
+    result.eventsUnreadable = true
+  }
+  return result
+}
+
+function pruneCookie(cookie) {
+  const pruned = {}
+  if (!cookie || typeof cookie !== 'object') return pruned
+  if (typeof cookie.secure === 'boolean') pruned.secure = cookie.secure
+  if (typeof cookie.httpOnly === 'boolean') pruned.httpOnly = cookie.httpOnly
+  if (cookie.sameSite === 'Lax' || cookie.sameSite === 'Strict' || cookie.sameSite === 'None') pruned.sameSite = cookie.sameSite
+  return pruned
+}
+
+async function readSurfaceCookies(surface) {
+  const source = typeof surface.cookies === 'function' ? surface : surface.context
+  if (!source || typeof source.cookies !== 'function') return { state: 'missing' }
+  try {
+    const list = await source.cookies()
+    if (!Array.isArray(list)) return { state: 'unreadable' }
+    return { state: 'ready', cookies: list.map(pruneCookie) }
+  } catch {
+    return { state: 'unreadable' }
+  }
+}
+
+async function readSurfaceFrame(surface) {
+  const frame = typeof surface.evaluate === 'function' ? surface : surface.frame || surface.page
+  if (!frame || typeof frame.evaluate !== 'function') return { state: 'missing' }
+  try {
+    return { state: 'ready', probe: await frame.evaluate(passiveStorageProbe) }
+  } catch {
+    return { state: 'unreadable' }
+  }
+}
+
+export async function readPassiveSurface(surface, role) {
+  if (surface == null) {
+    return role === 'vendor'
+      ? { storage: { gap: 'vendor-frame-absent' }, events: [], eventsUnreadable: false }
+      : { storage: { readable: false }, events: null, eventsUnreadable: true }
+  }
+  const [cookies, frame] = await Promise.all([readSurfaceCookies(surface), readSurfaceFrame(surface)])
+  if (frame.state === 'unreadable' || frame.probe?.readable === false) {
+    return { storage: { readable: false }, events: null, eventsUnreadable: true }
+  }
+  const storage = { readable: true }
+  if (cookies.state === 'ready') storage.cookies = cookies.cookies
+  if (frame.state === 'ready' && Number.isInteger(frame.probe?.storageEntries)) storage.storageEntries = frame.probe.storageEntries
+  const events = frame.state === 'ready' && frame.probe?.eventsUnreadable !== true
+    ? (frame.probe?.eventNames || []).map((name) => ({ name }))
+    : null
+  return { storage, events, eventsUnreadable: events == null }
+}
+
+export function createPassiveReaders(surfaces = {}) {
+  const phases = new Map()
+  function load(phase) {
+    if (!phases.has(phase)) {
+      phases.set(phase, Promise.all([
+        readPassiveSurface(surfaces.parent, 'parent'),
+        readPassiveSurface(surfaces.host, 'host'),
+        readPassiveSurface(surfaces.vendor, 'vendor'),
+      ]).then(([parent, host, vendor]) => ({ parent, host, vendor })))
+    }
+    return phases.get(phase)
+  }
+  return {
+    parent: (phase) => load(phase).then((row) => row.parent.storage),
+    host: (phase) => load(phase).then((row) => row.host.storage),
+    vendor: (phase) => load(phase).then((row) => row.vendor.storage),
+    events: (phase) => load(phase).then((row) => {
+      if (row.parent.eventsUnreadable && row.host.eventsUnreadable && row.vendor.eventsUnreadable) return null
+      return [...(row.parent.events || []), ...(row.host.events || []), ...(row.vendor.events || [])]
+    }),
   }
 }
 
@@ -418,83 +540,137 @@ export function createAuditRunner(options = {}) {
   const eventRows = []
   const storageLog = []
   const gaps = []
+  const settlements = new Set()
+  let baselineState = 'absent'
+  let baselinePromise = Promise.resolve('absent')
+  let releaseBaseline = () => {}
+  let baselineGate = Promise.resolve('absent')
+  let finalState = 'absent'
+  let finalPromise = Promise.resolve('absent')
+  let published = null
+
+  function frozen() {
+    return published !== null
+  }
 
   function close(reason) {
     if (tornDown) return
     tornDown = true
     teardownReason = reason
     if (deadlineTimer) clock.cancel(deadlineTimer)
+    if (baselineState === 'pending') baselineState = 'unavailable'
+    releaseBaseline()
     for (const job of jobs.values()) {
       if (job.settled) continue
       pendingAborted = true
       job.aborted = true
       try { job.controller.abort() } catch { /* already aborted */ }
-      if (job.body && typeof job.body.cancel === 'function') {
-        job.body.cancel().catch(() => {})
-      }
-      if (job.reader && typeof job.reader.cancel === 'function') {
-        job.reader.cancel().catch(() => {})
-      }
+      if (job.response) job.cancel = cancelResponse(job, job.response)
     }
-    sample('before-teardown')
-    if (cleanupState === 'idle') {
-      try {
-        const result = onCleanup(reason)
-        if (result && typeof result.then === 'function') {
-          cleanupState = 'pending'
-          cleanupPromise = result.then(
-            () => { cleanupState = 'complete'; cleanupCount = 1 },
-            () => { cleanupState = 'error'; cleanupCount = 0 },
-          )
-        } else {
-          cleanupState = 'complete'
-          cleanupCount = 1
-          cleanupPromise = Promise.resolve()
-        }
-      } catch {
-        cleanupState = 'error'
-        cleanupCount = 0
-        cleanupPromise = Promise.resolve()
+    const observation = sample('before-teardown')
+    const beginCleanup = () => {
+      if (cleanupState !== 'idle' || frozen()) return
+      cleanupPromise = runCleanup(reason)
+    }
+    if (observation.pending) {
+      finalState = 'pending'
+      finalPromise = observation.promise.then((status) => {
+        if (finalState === 'pending') finalState = status
+        beginCleanup()
+      })
+      remember(finalPromise)
+    } else {
+      finalState = observation.status
+      finalPromise = Promise.resolve(observation.status)
+      beginCleanup()
+    }
+  }
+
+  function runCleanup(reason) {
+    try {
+      const result = onCleanup(reason)
+      if (result && typeof result.then === 'function') {
+        cleanupState = 'pending'
+        return result.then(
+          () => { if (!frozen()) { cleanupState = 'complete'; cleanupCount = 1 } },
+          () => { if (!frozen()) { cleanupState = 'error'; cleanupCount = 0 } },
+        )
       }
+      cleanupState = 'complete'
+      cleanupCount = 1
+      return Promise.resolve()
+    } catch {
+      cleanupState = 'error'
+      cleanupCount = 0
+      return Promise.resolve()
     }
   }
 
   function applySample(role, phase, snapshot) {
-    if (snapshot == null) return
+    if (frozen() || snapshot == null) return
+    if (phase === 'before-start' && baselineState === 'unavailable') return
+    if (phase === 'before-teardown' && finalState === 'unavailable') return
     if (snapshot.gap === 'vendor-frame-absent') {
       recordGap('vendor-frame-absent')
+      storageLog.push({
+        role,
+        phase,
+        readable: false,
+        blocked: true,
+        observed: false,
+        cookieCount: null,
+        storageCount: null,
+        cookieFlags: null,
+        gaps: { storage: 'missing', cookies: 'missing', cookieFlags: 'unavailable' },
+        gap: 'vendor-frame-absent',
+      })
       return
     }
     recordStorage(role, snapshot, phase)
   }
 
+  function remember(promise) {
+    const tracked = Promise.resolve(promise).then((value) => value, () => undefined)
+    settlements.add(tracked)
+    tracked.finally(() => settlements.delete(tracked))
+    return tracked
+  }
+
   function sample(phase) {
     const readers = options.readers
-    if (!readers) return
+    if (!readers) return { pending: false, status: 'absent', promise: Promise.resolve('absent') }
+    const tasks = []
     for (const role of ['parent', 'host', 'vendor']) {
       const read = readers[role]
       if (typeof read !== 'function') continue
       try {
         const snapshot = read(phase)
         if (snapshot && typeof snapshot.then === 'function') {
-          snapshot.then((value) => applySample(role, phase, value)).catch(() => applySample(role, phase, { readable: false }))
-        } else {
-          applySample(role, phase, snapshot === undefined ? null : snapshot)
-        }
+          tasks.push(remember(snapshot).then((value) => {
+            applySample(role, phase, value == null ? null : value)
+          }))
+        } else applySample(role, phase, snapshot === undefined ? null : snapshot)
       } catch {
         applySample(role, phase, { readable: false })
       }
     }
-    if (typeof readers.events !== 'function') return
-    try {
-      const events = readers.events(phase)
-      if (events && typeof events.then === 'function') {
-        events.then((value) => recordEvents(value == null ? [] : value, { phase, unreadable: value == null })).catch(() => recordEvents([], { phase, unreadable: true }))
-      } else if (events == null) recordEvents([], { phase, unreadable: true })
-      else recordEvents(events, { phase })
-    } catch {
-      recordEvents([], { phase, unreadable: true })
+    if (typeof readers.events === 'function') {
+      try {
+        const events = readers.events(phase)
+        if (events && typeof events.then === 'function') {
+          tasks.push(remember(events).then((value) => {
+            if (frozen() || (phase === 'before-start' && baselineState === 'unavailable') || (phase === 'before-teardown' && finalState === 'unavailable')) return
+            if (value == null) recordEvents([], { phase, unreadable: true })
+            else recordEvents(value, { phase })
+          }))
+        } else if (events == null) recordEvents([], { phase, unreadable: true })
+        else recordEvents(events, { phase })
+      } catch {
+        recordEvents([], { phase, unreadable: true })
+      }
     }
+    if (tasks.length === 0) return { pending: false, status: 'ready', promise: Promise.resolve('ready') }
+    return { pending: true, status: 'pending', promise: Promise.all(tasks).then(() => 'ready') }
   }
 
   function start(now) {
@@ -502,9 +678,22 @@ export function createAuditRunner(options = {}) {
     if (startedAt !== null) return { ok: false, reason: 'already-started' }
     if (Number.isFinite(now) && typeof clock.advance === 'function' && now > clock.now()) clock.advance(now)
     if (Number.isFinite(now) && now < clock.now()) return { ok: false, reason: 'clock' }
-    sample('before-start')
     startedAt = clock.now()
     deadlineTimer = clock.schedule(startedAt + BUDGET_MS, () => close('DEADLINE'))
+    const observation = sample('before-start')
+    if (observation.pending) {
+      baselineState = 'pending'
+      baselineGate = new Promise((resolve) => { releaseBaseline = resolve })
+      baselinePromise = observation.promise.then((status) => {
+        if (baselineState === 'pending') baselineState = status
+        releaseBaseline()
+      })
+      remember(baselinePromise)
+    } else {
+      baselineState = observation.status
+      baselinePromise = Promise.resolve(observation.status)
+      baselineGate = Promise.resolve(observation.status)
+    }
     return { ok: true, startedAt }
   }
 
@@ -568,125 +757,107 @@ export function createAuditRunner(options = {}) {
     }
   }
 
-  function disposeResponse(job, response) {
-    if (!response || !response.body || typeof response.body.cancel !== 'function') return
-    job.cancelCalls += 1
-    response.body.cancel().catch(() => {})
+  function cancelResponse(job, response) {
+    if (job.cancel) return job.cancel
+    const tasks = []
+    const body = (response && response.body) || job.body
+    if (body && typeof body.cancel === 'function') {
+      job.cancelCalls += 1
+      try { tasks.push(Promise.resolve(body.cancel())) } catch { tasks.push(Promise.resolve()) }
+    }
+    if (job.reader && typeof job.reader.cancel === 'function' && job.readerCancelStarted !== true) {
+      job.readerCancelStarted = true
+      try { tasks.push(Promise.resolve(job.reader.cancel())) } catch { tasks.push(Promise.resolve()) }
+    }
+    job.cancel = Promise.all(tasks).then(() => undefined, () => undefined)
+    remember(job.cancel)
+    return job.cancel
+  }
+
+  function settle(job, row, reason, terminal, status) {
+    if (frozen()) return
+    row.reason = reason
+    row.terminal = terminal
+    if (status != null) job.status = status
+    job.settled = true
+  }
+
+  async function finishIssued(job, row, controller, url) {
+    let response
+    try {
+      response = await fetchImpl(url, { method: 'GET', redirect: 'manual', signal: controller.signal })
+    } catch {
+      settle(job, row, job.aborted || controller.signal.aborted ? 'aborted' : 'error', job.aborted || controller.signal.aborted ? 'aborted' : 'error', null)
+      return
+    }
+    job.response = response
+    job.body = response && response.body ? response.body : null
+    if (job.aborted || tornDown || controller.signal.aborted) {
+      await cancelResponse(job, response)
+      settle(job, row, 'aborted', 'aborted', response ? response.status : null)
+      return
+    }
+    if (response && response.status >= 300 && response.status < 400) {
+      await cancelResponse(job, response)
+      settle(job, row, 'BLOCKED_REDIRECT', 'blocked-redirect', response.status)
+      return
+    }
+    try {
+      if (response && response.body && typeof response.body.getReader === 'function') await readStream(response.body, controller, job)
+      else if (response && typeof response.arrayBuffer === 'function') await response.arrayBuffer()
+    } catch {
+      if (job.aborted || tornDown || controller.signal.aborted) {
+        await cancelResponse(job, response)
+        settle(job, row, 'aborted', 'aborted', response ? response.status : null)
+      } else settle(job, row, 'error', 'error', response ? response.status : null)
+      return
+    }
+    if (job.aborted || tornDown || controller.signal.aborted) {
+      await cancelResponse(job, response)
+      settle(job, row, 'aborted', 'aborted', response ? response.status : null)
+      return
+    }
+    settle(job, row, 'local-response', 'complete', response ? response.status : null)
   }
 
   async function boundedGet(input) {
     const fields = classified(input)
-    if (startedAt === null) {
-      return resultFrom(pushAttempt(input, { ...fields, reason: 'not-started', terminal: 'blocked', issued: false }))
-    }
-    if (tornDown) {
-      return resultFrom(pushAttempt(input, { ...fields, reason: teardownReason || 'torn-down', terminal: 'blocked', issued: false }))
-    }
+    const blocked = (reason, terminal) => resultFrom(pushAttempt(input, { ...fields, reason, terminal, issued: false }))
+    if (startedAt === null) return blocked('not-started', 'blocked')
+    if (tornDown) return blocked(teardownReason || 'torn-down', 'blocked')
     if (clock.now() >= startedAt + BUDGET_MS) {
       close('DEADLINE')
-      return resultFrom(pushAttempt(input, { ...fields, reason: 'DEADLINE', terminal: 'blocked', issued: false }))
+      return blocked('DEADLINE', 'blocked')
     }
-    if (ledger.length + 1 >= BUDGET_ATTEMPTS) {
-      return resultFrom(pushAttempt(input, { ...fields, reason: 'BUDGET_REACHED', terminal: 'blocked', issued: false }))
+    if (ledger.length + 1 >= BUDGET_ATTEMPTS) return blocked('BUDGET_REACHED', 'blocked')
+    if (fields.method !== 'GET') return blocked('method', 'blocked')
+    if (!loopbackHttp(input.url)) return blocked('provider-closed', 'blocked')
+    if (baselineState === 'pending') await baselineGate
+    if (tornDown) return blocked(teardownReason || 'torn-down', 'blocked')
+    if (clock.now() >= startedAt + BUDGET_MS) {
+      close('DEADLINE')
+      return blocked('DEADLINE', 'blocked')
     }
-    if (fields.method !== 'GET') {
-      return resultFrom(pushAttempt(input, { ...fields, reason: 'method', terminal: 'blocked', issued: false }))
-    }
-    if (!loopbackHttp(input.url)) {
-      return resultFrom(pushAttempt(input, { ...fields, reason: 'provider-closed', terminal: 'blocked', issued: false }))
-    }
+    if (ledger.length + 1 >= BUDGET_ATTEMPTS) return blocked('BUDGET_REACHED', 'blocked')
+    if (baselineState === 'unavailable') return blocked('baseline-unavailable', 'blocked')
     const row = pushAttempt(input, { ...fields, reason: 'pending', terminal: 'active', issued: true })
     const controller = new AbortController()
-    const job = { controller, body: null, reader: null, settled: false, aborted: false, cancelCalls: 0 }
+    const job = { controller, body: null, reader: null, response: null, settled: false, aborted: false, cancelCalls: 0, done: null, cancel: null }
     jobs.set(row.sequence, job)
-    let issued
-    try {
-      issued = Promise.resolve(fetchImpl(input.url, { method: 'GET', redirect: 'manual', signal: controller.signal }))
-    } catch {
-      row.reason = 'error'
-      row.terminal = 'error'
-      job.settled = true
-      return resultFrom(row, { transmitted: true })
-    }
-    issued.catch(() => {})
-    issued.then((response) => {
-      if (!job.aborted && !tornDown) return
-      disposeResponse(job, response)
-    }).catch(() => {})
-    let response
-    try {
-      const raced = await Promise.race([
-        issued.then((value) => ({ kind: 'response', value })),
-        abortWait(controller.signal).then(() => ({ kind: 'aborted' })),
-      ])
-      if (raced.kind === 'aborted' || tornDown || controller.signal.aborted) {
-        row.reason = 'aborted'
-        row.terminal = 'aborted'
-        job.settled = true
-        return resultFrom(row, { transmitted: true })
+    job.done = finishIssued(job, row, controller, input.url)
+    remember(job.done)
+    const raced = await Promise.race([
+      job.done.then(() => 'settled'),
+      abortWait(controller.signal).then(() => 'aborted'),
+    ])
+    if (!job.settled && (raced === 'aborted' || tornDown || controller.signal.aborted)) {
+      if (!frozen()) {
+        row.reason = 'abort-requested'
+        row.terminal = 'hanging'
       }
-      response = raced.value
-    } catch {
-      row.reason = tornDown || controller.signal.aborted ? 'aborted' : 'error'
-      row.terminal = row.reason
-      job.settled = true
-      return resultFrom(row, { transmitted: true })
+      return { ...resultFrom(row, { transmitted: true, status: job.status ?? null }), reason: 'aborted', terminal: 'abort-requested' }
     }
-    if (tornDown || controller.signal.aborted) {
-      if (response && response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(() => {})
-      row.reason = 'aborted'
-      row.terminal = 'aborted'
-      job.settled = true
-      return resultFrom(row, { transmitted: true, status: response ? response.status : null })
-    }
-    if (response.status >= 300 && response.status < 400) {
-      if (response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(() => {})
-      row.reason = 'BLOCKED_REDIRECT'
-      row.terminal = 'blocked-redirect'
-      job.settled = true
-      return resultFrom(row, { transmitted: true, status: response.status })
-    }
-    job.body = response.body || null
-    let bodyRead
-    try {
-      bodyRead = response.body && typeof response.body.getReader === 'function'
-        ? readStream(response.body, controller, job)
-        : response.arrayBuffer()
-      bodyRead = Promise.resolve(bodyRead)
-    } catch {
-      row.reason = 'error'
-      row.terminal = 'error'
-      job.settled = true
-      return resultFrom(row, { transmitted: true, status: response.status })
-    }
-    bodyRead.catch(() => {})
-    try {
-      const bodyOutcome = await Promise.race([
-        Promise.resolve(bodyRead).then(() => 'complete'),
-        abortWait(controller.signal).then(() => 'aborted'),
-      ])
-      if (bodyOutcome === 'aborted' || tornDown || controller.signal.aborted) {
-        row.reason = 'aborted'
-        row.terminal = 'aborted'
-        job.settled = true
-        return resultFrom(row, { transmitted: true, status: response.status })
-      }
-    } catch {
-      row.reason = tornDown || controller.signal.aborted ? 'aborted' : 'error'
-      row.terminal = row.reason
-      job.settled = true
-      return resultFrom(row, { transmitted: true, status: response.status })
-    }
-    if (tornDown || controller.signal.aborted) {
-      row.reason = 'aborted'
-      row.terminal = 'aborted'
-      job.settled = true
-      return resultFrom(row, { transmitted: true, status: response.status })
-    }
-    row.reason = 'local-response'
-    row.terminal = 'complete'
-    job.settled = true
-    return resultFrom(row, { transmitted: true, status: response.status })
+    return resultFrom(row, { transmitted: true, status: job.status ?? null })
   }
 
   function recordEvents(events, recordOptions = {}) {
@@ -710,6 +881,10 @@ export function createAuditRunner(options = {}) {
     return latest[field] - baseline[field]
   }
 
+  function flagsReady(sample) {
+    return Boolean(sample && sample.cookieFlags && sample.cookieFlags.secure != null && sample.cookieFlags.httpOnly != null && sample.cookieFlags.sameSite != null)
+  }
+
   function storageEvidence() {
     const report = {}
     for (const role of ['parent', 'host', 'vendor']) {
@@ -720,12 +895,15 @@ export function createAuditRunner(options = {}) {
       const latest = beforeTeardown[beforeTeardown.length - 1] || null
       const cookieCount = numericDelta(baseline, latest, 'cookieCount')
       const storageCount = numericDelta(baseline, latest, 'storageCount')
+      const storageGap = [baseline, latest].some((sample) => sample && sample.gaps && sample.gaps.storage === 'missing')
       let gap = null
-      if (samples.length === 0) gap = 'not-observed'
+      if (samples.length === 0) gap = baselineState === 'unavailable' || finalState === 'unavailable' ? 'unavailable' : 'not-observed'
       else if (!baseline) gap = 'missing-baseline'
       else if (!latest) gap = 'missing-final'
       else if (baseline.gap === 'unreadable' || latest.gap === 'unreadable') gap = 'unreadable'
-      else if (baseline.cookieFlags == null || latest.cookieFlags == null) gap = 'cookie-flags-unavailable'
+      else if (baseline.gap === 'vendor-frame-absent' || latest.gap === 'vendor-frame-absent') gap = 'vendor-frame-absent'
+      else if (storageGap) gap = 'storage-unobserved'
+      else if (!flagsReady(baseline) || !flagsReady(latest)) gap = 'cookie-flags-unavailable'
       report[role] = {
         beforeStart,
         beforeTeardown,
@@ -733,16 +911,25 @@ export function createAuditRunner(options = {}) {
         delta: cookieCount === null && storageCount === null ? null : { cookieCount, storageCount },
         gap,
         phaseGaps: {
-          baseline: baseline ? baseline.gap : 'missing',
-          final: latest ? latest.gap : 'missing',
-          cookieFlags: !baseline || !latest || baseline.cookieFlags == null || latest.cookieFlags == null ? 'unavailable' : null,
+          baseline: baseline ? baseline.gap : (baselineState === 'unavailable' ? 'unavailable' : 'missing'),
+          final: latest ? latest.gap : (finalState === 'unavailable' ? 'unavailable' : 'missing'),
+          storage: storageGap ? 'missing' : (baseline && latest ? null : 'missing'),
+          cookieFlags: flagsReady(baseline) && flagsReady(latest) ? null : 'unavailable',
         },
       }
     }
     return report
   }
 
+  function captureIncomplete() {
+    if (cleanupState === 'pending' || cleanupState === 'incomplete' || cleanupState === 'error') return true
+    if (baselineState === 'pending' || finalState === 'pending') return true
+    if (baselineState === 'unavailable' || finalState === 'unavailable') return true
+    return [...jobs.values()].some((job) => !job.settled)
+  }
+
   function evidence() {
+    if (published) return published
     for (const [sequence, job] of jobs) {
       if (job.settled) continue
       const row = ledger.find((item) => item.sequence === sequence)
@@ -766,8 +953,10 @@ export function createAuditRunner(options = {}) {
       events: eventRows.map((row) => ({ phase: row.phase, gap: row.gap, events: row.events.map((item) => ({ ...item })) })),
       storage: storageEvidence(),
       cleanupState,
+      baselineState,
+      finalState,
       finalized,
-      incomplete: cleanupState === 'pending' || [...jobs.values()].some((job) => !job.settled),
+      incomplete: captureIncomplete(),
       ledger: ledger.map((row) => ({
         sequence: row.sequence,
         phase: row.phase,
@@ -801,17 +990,33 @@ export function createAuditRunner(options = {}) {
   }
 
   async function finalize(boundMs = 30) {
-    const tasks = [cleanupPromise, ...[...jobs.values()].map((job) => job.done).filter(Boolean)]
-    let incomplete = false
+    if (published) return published
+    const tasks = [baselinePromise, finalPromise, cleanupPromise, ...[...jobs.values()].map((job) => job.done), ...settlements].filter((task) => task && typeof task.then === 'function')
+    let timedOut = false
     let timer
     await Promise.race([
       Promise.all(tasks).then(() => {}),
-      new Promise((resolve) => { timer = setTimeout(() => { incomplete = true; resolve() }, boundMs) }),
+      new Promise((resolve) => { timer = setTimeout(() => { timedOut = true; resolve() }, boundMs) }),
     ])
     if (timer) clearTimeout(timer)
-    if (incomplete && cleanupState === 'pending') cleanupState = 'incomplete'
-    finalized = !incomplete && cleanupState !== 'pending'
-    return evidence()
+    if (timedOut) {
+      if (baselineState === 'pending') baselineState = 'unavailable'
+      if (finalState === 'pending') finalState = 'unavailable'
+      if (cleanupState === 'pending' || cleanupState === 'idle') cleanupState = 'incomplete'
+      for (const [sequence, job] of jobs) {
+        if (job.settled) continue
+        const row = ledger.find((item) => item.sequence === sequence)
+        if (!row) continue
+        row.terminal = 'hanging'
+        if (row.issued && row.reason !== 'error') row.reason = 'abort-requested'
+      }
+    }
+    const snap = evidence()
+    snap.incomplete = timedOut || snap.incomplete
+    snap.finalized = snap.incomplete !== true
+    finalized = snap.finalized
+    published = structuredClone(snap)
+    return published
   }
 
   return {
@@ -837,13 +1042,12 @@ async function readStream(body, controller, job) {
       reader.read().then((chunk) => ({ kind: 'chunk', chunk })),
       abortWait(controller.signal).then(() => ({ kind: 'aborted' })),
     ])
-    if (raced.kind === 'aborted' || controller.signal.aborted) {
-      await reader.cancel().catch(() => {})
-      return
-    }
+    if (raced.kind === 'aborted' || controller.signal.aborted) break
     if (raced.chunk.done) return
   }
-  await reader.cancel().catch(() => {})
+  if (job.readerCancelStarted === true) return job.cancel
+  job.readerCancelStarted = true
+  return reader.cancel()
 }
 
 export function nestedContractHref() {
