@@ -7,7 +7,7 @@ State: **CONSENT_BLOCKED / DRAFT / R7 disclosure / STOP for independent Technica
 
 ## Current, 31 October 2026 — R7
 
-Accepted main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` is merged. The host shows `TWELVEGO_PRODUCTION_DISCLOSURE` and mounts `PrivacyBeeCmpPreferences` with `appearance="surface"`. The disclosure revision is `twelvego-general-disclosure-v1`. The privacy link is `https://12go.asia/en/privacy-policy`. `CMP_RELEASE_AUTHORIZED` stays false, so the production bootstrap still returns no capability. A ready message or a grant is not a completed search. R6-R1 scope and frame retirement stay in place. The exact implementation head is posted on the PR.
+Accepted main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` is merged. The host shows `TWELVEGO_PRODUCTION_DISCLOSURE` and mounts `PrivacyBeeCmpPreferences` with `appearance="surface"`. The V1 surface test now counts `data-twelve-go-art` links separately from the privacy link, because that link sits in the same section. The disclosure revision is `twelvego-general-disclosure-v1`. The privacy link is `https://12go.asia/en/privacy-policy`. `CMP_RELEASE_AUTHORIZED` stays false, so the production bootstrap still returns no capability. A ready message or a grant is not a completed search. R6-R1 scope and frame retirement stay in place. The exact implementation head is posted on the PR.
 
 Sentences below that say the visitor has no request button, or that the policy row is null, describe earlier rounds and are superseded.
 

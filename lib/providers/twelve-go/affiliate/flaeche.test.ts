@@ -58,12 +58,20 @@ function anker(html: string): string[] {
   return [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map((treffer) => treffer[0])
 }
 
+function v1Anker(html: string): string[] {
+  return anker(html).filter((link) => link.includes('data-twelve-go-art='))
+}
+
 describe('12Go-Fläche', () => {
   test('zwei allgemeine Links, kein Drittinhalt, kein Deep Link', () => {
     const html = renderToStaticMarkup(createElement(TwelveGoAffiliateLinks, { reise: reise() }))
     assert.equal(html.includes('data-twelve-go-affiliate="1"'), true)
     assert.equal(html.includes('Externer Affiliate-Link – Angebote, Verfügbarkeit und Buchung ausschliesslich bei 12Go'), true)
-    const links = anker(html)
+    const links = v1Anker(html)
+    const datenschutz = anker(html).filter((link) => link.includes('data-twelve-go-datenschutz='))
+    assert.equal(datenschutz.length, 1)
+    assert.equal(datenschutz[0]?.includes('href="https://12go.asia/en/privacy-policy"'), true)
+    assert.equal(datenschutz[0]?.includes('sponsored'), false)
     assert.equal(links.length, 2)
     assert.equal(links.every((link) => link.includes('target="_blank"')), true)
     assert.equal(links.every((link) => link.includes('rel="noopener noreferrer sponsored"')), true)
@@ -89,7 +97,8 @@ describe('12Go-Fläche', () => {
         reise: reise({ stages: [etappe({ id: 'bkk', name: 'Bangkok', position: 1 })] }),
       }),
     )
-    assert.equal(anker(html).length, 0)
+    assert.equal(v1Anker(html).length, 0)
+    assert.equal(anker(html).some((link) => link.includes('data-twelve-go-datenschutz=')), true)
     assert.match(html, /Sobald mindestens zwei Ziele/)
   })
 
