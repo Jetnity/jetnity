@@ -1,0 +1,110 @@
+{
+  "evidence": {
+    "attentionFocus": {
+      "active": true,
+      "outline": "rgb(188, 229, 212) solid 3px",
+      "offset": "-4px"
+    },
+    "routeFocus": {
+      "active": true,
+      "outline": "rgb(188, 229, 212) solid 3px",
+      "offset": "-4px"
+    },
+    "partsFocus": {
+      "active": true,
+      "outline": "rgb(188, 229, 212) solid 3px",
+      "offset": "-4px"
+    },
+    "validation": {
+      "text": "Bitte einen Wert eingeben.",
+      "color": "color(srgb 0.913725 0.527059 0.535686)",
+      "background": "rgb(15, 48, 42)",
+      "activeField": null
+    },
+    "prepareFocus": "Vorbereitung",
+    "overviewFocus": {
+      "text": "Thailand-Rundreise",
+      "rect": {
+        "x": 12,
+        "y": 268.5,
+        "width": 218.9375,
+        "height": 30.703125,
+        "top": 268.5,
+        "right": 230.9375,
+        "bottom": 299.203125,
+        "left": 12
+      }
+    },
+    "moreHints": [
+      {
+        "text": "Diese ReiseFlugstrecke noch offenIm Plan offen",
+        "state": "known_gap"
+      },
+      {
+        "text": "Diese ReiseUnterkunftsnächte fehlen nochIm Plan offen",
+        "state": "known_gap"
+      },
+      {
+        "text": "Reisende PersonOffizielle Prüfung noch nicht möglichAngaben fehlen",
+        "state": "insufficient_context"
+      },
+      {
+        "text": "Diese ReiseSicherheitsprüfung derzeit nicht verfügbarNicht verfügbar",
+        "state": "unavailable"
+      },
+      {
+        "text": "Diese ReiseReisezeitprüfung derzeit nicht verfügbarNicht verfügbar",
+        "state": "unavailable"
+      }
+    ],
+    "backToTop": {
+      "color": "rgb(237, 248, 243)",
+      "background": "rgb(15, 48, 42)"
+    },
+    "syntheticAccountPairs": [
+      {
+        "bg": "rgb(15, 48, 42)",
+        "color": "rgb(237, 248, 243)",
+        "text": [
+          {
+            "text": "Synthetischer Leerzustand",
+            "color": "rgb(237, 248, 243)"
+          },
+          {
+            "text": "Noch keine Reisenden",
+            "color": "rgb(188, 229, 212)"
+          }
+        ]
+      },
+      {
+        "bg": "rgb(15, 48, 42)",
+        "color": "rgb(237, 248, 243)",
+        "text": [
+          {
+            "text": "Synthetischer TOTP-Status",
+            "color": "rgb(188, 229, 212)"
+          },
+          {
+            "text": "Statusbeschreibung",
+            "color": "rgb(188, 229, 212)"
+          }
+        ]
+      },
+      {
+        "bg": "color(srgb 0.146039 0.128157 0.116706)",
+        "color": "color(srgb 0.913725 0.527059 0.535686)",
+        "text": []
+      }
+    ],
+    "root32Route": {
+      "focus": "Reiseplan",
+      "url": "http://127.0.0.1:3472/reisen/trip-unified-workspace-audit?ansicht=plan&tag=day-2",
+      "overflow": 0,
+      "selected": [
+        "Tag 216. Nov.",
+        "Tag 216. Nov."
+      ]
+    }
+  },
+  "blocked": []
+}

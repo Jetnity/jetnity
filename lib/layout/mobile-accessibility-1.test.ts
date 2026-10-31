@@ -20,13 +20,15 @@ describe('Mobile Accessibility 1 – Skip-Link und Inhaltsziel', () => {
   })
 
   test('oeffentliche, Account- und Admin-Inhalte sind fokussierbar', () => {
-    const publicLayout = quelle('../../app/(public)/layout.tsx')
+    const publicLayout = quelle('../../components/workspace/PublicChrome.tsx')
     const accountLayout = quelle('../../app/account/layout.tsx')
+    const workspace = quelle('../../components/workspace/WorkspaceShell.tsx')
     const adminLayout = quelle('../../app/(admin)/admin/layout.tsx')
     assert.match(publicLayout, /id="public-content"/)
     assert.match(publicLayout, /tabIndex=\{-1\}/)
-    assert.match(accountLayout, /id="account-content"/)
-    assert.match(accountLayout, /tabIndex=\{-1\}/)
+    assert.match(accountLayout, /contentId="account-content"/)
+    assert.match(publicLayout, /contentId="public-content"/)
+    assert.match(workspace, /id=\{contentId\} tabIndex=\{-1\}/)
     assert.match(adminLayout, /id="admin-content"/)
     assert.match(adminLayout, /tabIndex=\{-1\}/)
   })

@@ -96,19 +96,23 @@ function CurrentResults({ reise, ungeplantePunkte }: { reise: Trip; ungeplantePu
   return <Results report={tripAuditV1(reise, ungeplantePunkte)} />
 }
 
-export default function TripAuditV1Panel({ reise, ungeplantePunkte }: { reise: Trip; ungeplantePunkte?: readonly TripItem[] }) {
+export default function TripAuditV1Panel({ reise, ungeplantePunkte, integriert = false }: { reise: Trip; ungeplantePunkte?: readonly TripItem[]; integriert?: boolean }) {
   const [open, setOpen] = useState(false)
   const controls = useId()
   return (
-    <section aria-label="Reise prüfen" className="min-w-0 max-w-full break-words rounded-2xl border border-line-200 bg-white p-4 [overflow-wrap:anywhere]">
+    <section aria-label="Reise prüfen" data-workspace-audit={integriert ? 'integrated' : undefined} className="min-w-0 max-w-full break-words rounded-2xl border border-line-200 bg-white p-4 [overflow-wrap:anywhere]">
+      <div className={integriert ? 'workspace-audit-intro' : undefined}>
+      <div>
       <h3 className="font-semibold text-brand-800">Gespeicherten Reiseplan prüfen</h3>
       <p className="mt-1 text-sm leading-6 text-ink-800">
         Unterkunftsnächte, Zeiten und Verbindungen gemeinsam ansehen. Die Prüfung liest deinen Plan und ändert nichts.
         Ausgewählt bedeutet nicht gebucht; auch deine Buchungsmarkierungen sind keine Bestätigung durch einen Anbieter.
       </p>
+      </div>
       <button type="button" aria-expanded={open} aria-controls={controls} onClick={() => setOpen(value => !value)} className={`${BUTTON} mt-3`}>
         {open ? 'Prüfung schliessen' : 'Reise prüfen'}
       </button>
+      </div>
       <div id={controls} hidden={!open}>
         {open ? <CurrentResults reise={reise} ungeplantePunkte={ungeplantePunkte} /> : null}
       </div>

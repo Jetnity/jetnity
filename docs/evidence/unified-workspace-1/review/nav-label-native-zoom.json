@@ -1,0 +1,79 @@
+{
+  "time": "2026-10-30T01:46:09.288Z",
+  "base": "http://127.0.0.1:3472",
+  "method": "Chrome settings UI → Page zoom 200%; fresh disposable profile per width; no CSS/font/CDP zoom emulation",
+  "limits": [
+    "Headless Chrome desktop engine, not a physical smartphone or VoiceOver test",
+    "No authenticated account or backend tests"
+  ],
+  "results": [
+    {
+      "status": "PASS",
+      "windowWidth": 1440,
+      "before": {
+        "width": 1440,
+        "height": 857,
+        "dpr": 1,
+        "rootFont": "16px"
+      },
+      "after": {
+        "width": 720,
+        "height": 428,
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "panel": {
+        "width": 302,
+        "scroll": 302,
+        "left": 400,
+        "right": 704
+      }
+    },
+    {
+      "status": "PASS",
+      "windowWidth": 780,
+      "before": {
+        "width": 780,
+        "height": 857,
+        "dpr": 1,
+        "rootFont": "16px"
+      },
+      "after": {
+        "width": 390,
+        "height": 428,
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "panel": {
+        "width": 302,
+        "scroll": 302,
+        "left": 74,
+        "right": 378
+      }
+    },
+    {
+      "status": "PASS",
+      "windowWidth": 640,
+      "before": {
+        "width": 640,
+        "height": 857,
+        "dpr": 1,
+        "rootFont": "16px"
+      },
+      "after": {
+        "width": 320,
+        "height": 428,
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "panel": {
+        "width": 286,
+        "scroll": 286,
+        "left": 20,
+        "right": 308
+      }
+    }
+  ],
+  "forbidden": [],
+  "errors": []
+}

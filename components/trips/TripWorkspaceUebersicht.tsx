@@ -19,6 +19,7 @@ import type { Trip, TripItem } from '@/types/trips'
 import TripAuditV1Panel from '@/components/trips/TripAuditV1Panel'
 import TripWorkspaceDestinationEssentials from '@/components/trips/TripWorkspaceDestinationEssentials'
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
+import WorkspaceRouteOverview from '@/components/workspace/WorkspaceRouteOverview'
 
 const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], ComponentType<{ className?: string }>> = {
   fluege: Plane,
@@ -104,6 +105,8 @@ export default function TripWorkspaceUebersicht({
   destinationEssentials,
   onLuecke,
   onAttention,
+  workspace = false,
+  onRoute,
 }: {
   reise: Trip
   ungeplantePunkte?: readonly TripItem[]
@@ -112,16 +115,18 @@ export default function TripWorkspaceUebersicht({
   destinationEssentials: DestinationEssentialsAbleitung
   onLuecke: (domain: DetailDomain) => void
   onAttention: (aktion: AttentionAktion) => void
+  workspace?: boolean
+  onRoute?: (tagId?: string) => void
 }) {
   const praeferenzen = workspacePraeferenzSicht(reise)
 
   return (
-    <section aria-label="Reiseübersicht" className="mt-2 grid min-w-0 max-w-full gap-2">
-      <header className="min-w-0 max-w-full">
+    <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className="mt-2 grid min-w-0 max-w-full gap-2">
+      <header className={workspace ? 'sr-only' : 'min-w-0 max-w-full'}>
         <h2
           id="workspace-uebersicht-titel"
           tabIndex={-1}
-          data-workspace-modus-heading
+          data-workspace-modus-heading={!workspace ? '' : undefined}
           className="break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
         >
           Deine Reise auf einen Blick
@@ -133,15 +138,19 @@ export default function TripWorkspaceUebersicht({
         </p>
       </header>
 
-      <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />
+      <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention}
+        zusammenfassung={workspace ? `${uebersicht.fortschrittText} · ${uebersicht.planText}` : undefined}
+        footer={workspace ? <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} integriert /> : undefined} />
 
-      <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} />
+      {!workspace ? <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} /> : null}
 
-      <TripWorkspaceDestinationEssentials essentials={destinationEssentials} />
+      {workspace && onRoute ? <WorkspaceRouteOverview reise={reise} onRoute={onRoute} /> : null}
+
+      {!workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} /> : null}
 
       <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className="min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white">
         <p className="border-b border-line-100 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
-          Bereiche dieser Reise
+          {workspace ? 'Gut organisiert' : 'Bereiche dieser Reise'}
         </p>
         <ul className="grid gap-px bg-line-100 sm:grid-cols-2">
           {uebersicht.abdeckungen.map((eintrag) => {
@@ -170,6 +179,8 @@ export default function TripWorkspaceUebersicht({
           })}
         </ul>
       </section>
+
+      {workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} /> : null}
 
       {workspacePraeferenzHatInhalt(praeferenzen) ? (
         <div className="grid gap-3">

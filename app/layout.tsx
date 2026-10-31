@@ -1,5 +1,7 @@
 // app/layout.tsx
 import '../styles/globals.css'
+/* Homepage and light-workspace presentation only. Green workspace, metadata and providers stay in their own files. */
+import '../styles/white-mint.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 
@@ -44,15 +46,15 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   colorScheme: 'light',
-  themeColor: '#f5f4ee',
+  themeColor: '#F7FCF9',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" data-scroll-behavior="smooth" suppressHydrationWarning>
-      {/* Die Flaeche des Dokuments liegt auf <html> (siehe globals.css), damit
-          sie auch beim Ueberdehnen des Scrollbereichs auf iOS und unterhalb
-          kurzer Seiten zur warmen V2-Flaeche passt. */}
+      {/* Die Dokumentflaeche bleibt das gemeinsame Token in globals.css.
+          styles/white-mint.css faerbt Ueberdehnen und Koernung nur, solange
+          die Startseite oder der helle Workspace sichtbar sind. */}
       <body className="min-h-screen text-foreground antialiased">
         {children}
         <Toaster position="top-right" richColors closeButton expand />

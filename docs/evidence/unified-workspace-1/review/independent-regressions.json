@@ -1,0 +1,86 @@
+{
+  "time": "2026-10-30T01:30:09.893Z",
+  "base": "http://127.0.0.1:3472",
+  "isolation": "Fresh context per test, synthetic local guest data, no external requests",
+  "limits": [
+    "200% root font is text resizing, not native browser zoom",
+    "No authenticated account or backend tests"
+  ],
+  "results": [
+    {
+      "name": "Drawer keyboard navigation focuses the new content; dismissal returns to menu",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser history releases the mobile drawer and the destination page",
+      "status": "PASS"
+    },
+    {
+      "name": "Open account menu wraps labels at 320px and 200% root text",
+      "status": "PASS",
+      "evidence": {
+        "clientWidth": 270,
+        "scrollWidth": 270,
+        "left": 24,
+        "right": 296
+      }
+    },
+    {
+      "name": "Account menu remains clickable over a sticky trip return bar",
+      "status": "PASS",
+      "evidence": [
+        {
+          "label": "Meine Reisen",
+          "clickable": true
+        },
+        {
+          "label": "Einstellungen",
+          "clickable": true
+        },
+        {
+          "label": "Bestätigte Buchungen",
+          "clickable": true
+        },
+        {
+          "label": "Jetnity Pro",
+          "clickable": true
+        },
+        {
+          "label": "Kontakt",
+          "clickable": true
+        },
+        {
+          "label": "Datenschutzerklärung",
+          "clickable": true
+        },
+        {
+          "label": "Nutzungsbedingungen / AGB",
+          "clickable": true
+        },
+        {
+          "label": "Impressum",
+          "clickable": true
+        },
+        {
+          "label": "Anmelden",
+          "clickable": true
+        }
+      ]
+    },
+    {
+      "name": "Back to top survives the shell and clears the mobile navigation",
+      "status": "PASS",
+      "evidence": {
+        "bottom": 735,
+        "navTop": 771,
+        "clickable": true
+      }
+    },
+    {
+      "name": "Phone menu has a visible text label and the trip title remains readable",
+      "status": "PASS"
+    }
+  ],
+  "forbidden": [],
+  "errors": []
+}
