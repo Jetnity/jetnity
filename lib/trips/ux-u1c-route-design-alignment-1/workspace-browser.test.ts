@@ -11,6 +11,7 @@ import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
 import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
+import { reiseLesen } from '@/lib/trips/schema'
 import { mountU1cWorkspace } from '@/lib/trips/ux-u1c-route-design-alignment-1/workspace-harness'
 
 test('the workspace harness stays on the test import path', () => {
@@ -1099,5 +1100,162 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.ok(protokoll.length >= 8)
     assert.deepEqual(fremd, [])
     await context.close()
+  })
+
+  test('keyboard return restores the originating visit and All Connections control', async () => {
+    const leerzeichen = referenzReise()
+    leerzeichen.days = leerzeichen.days.map((tag) => tag.id === 'day-11' ? { ...tag, id: 'day 11' } : tag)
+    assert.equal(reiseLesen(leerzeichen)?.days.find((tag) => tag.dayIndex === 11)?.id, 'day 11')
+    assert.equal(reiseLesen(referenzReise())?.days.find((tag) => tag.dayIndex === 11)?.id, 'day-11')
+
+    const sperren = async (page: Page) => {
+      const fremd: string[] = []
+      await page.route('**/*', (route) => {
+        const url = route.request().url()
+        if (url.startsWith(origin) || url.startsWith('data:') || url.startsWith('blob:')) return route.continue()
+        fremd.push(url)
+        return route.abort()
+      })
+      return fremd
+    }
+    const besuchZurueck = async (page: Page, szene: string | null, tagId: string) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      await plan(page)
+      if (szene) {
+        await page.locator(`[data-u1c-szene="${szene}"]`).click()
+        await page.waitForFunction((id) => (
+          document.querySelector('[data-timeline-etappe="stage-kc"]')?.getAttribute('data-u1c-tage') ?? ''
+        ).includes(id), tagId)
+        if (!(await page.locator('[data-u1c-route]').isVisible())) await plan(page)
+      }
+      const lauf = page.locator('[data-u1c-lauf][data-timeline-etappe="stage-kc"]')
+      await lauf.waitFor()
+      const schluessel = await lauf.getAttribute('data-u1c-lauf')
+      assert.ok(schluessel)
+      assert.equal(schluessel.includes(tagId), false)
+      await lauf.focus()
+      await page.keyboard.press('Enter')
+      await page.locator('[data-u1b-zur-route]').waitFor()
+      const tagLesen = () => page.evaluate(() => new URL(location.href).searchParams.get('tag'))
+      let aktuell = await tagLesen()
+      for (let schritt = 0; schritt < 8 && aktuell !== tagId; schritt += 1) {
+        await page.locator('[data-plan-tag-naechster]').focus()
+        await page.keyboard.press('Enter')
+        await page.waitForFunction((alt) => new URL(location.href).searchParams.get('tag') !== alt, aktuell)
+        aktuell = await tagLesen()
+      }
+      assert.equal(aktuell, tagId)
+      await page.locator('[data-u1b-zur-route]').focus()
+      await page.keyboard.press('Enter')
+      await page.waitForFunction((ziel) => document.activeElement?.getAttribute('data-u1c-lauf') === ziel, schluessel, { timeout: 1000 }).catch(() => undefined)
+      const fokus = await page.evaluate((id) => {
+        const el = document.activeElement
+        const knopf = [...document.querySelectorAll('[data-u1c-lauf]')].find((knoten) => (knoten.getAttribute('data-u1c-tage') ?? '').split(' ').includes(id))
+        const rect = knopf instanceof HTMLElement ? knopf.getBoundingClientRect() : null
+        return {
+          tag: el?.tagName ?? '',
+          lauf: el instanceof HTMLElement ? el.getAttribute('data-u1c-lauf') : '',
+          route: el instanceof HTMLElement && el.hasAttribute('data-u1b-route'),
+          url: new URL(location.href).searchParams.get('tag'),
+          liste: knopf?.getAttribute('data-u1c-tage') ?? '',
+          rect: rect ? { w: rect.width, h: rect.height } : null,
+          hidden: knopf?.closest('[hidden]') instanceof HTMLElement,
+        }
+      }, tagId)
+      assert.equal(fokus.tag, 'BUTTON', JSON.stringify(fokus))
+      assert.equal(fokus.route, false, JSON.stringify(fokus))
+      assert.equal(fokus.lauf, schluessel, JSON.stringify(fokus))
+    }
+
+    const normal = await browser.newContext()
+    const normalSeite = await normal.newPage()
+    const normalNetz = await sperren(normalSeite)
+    await normalSeite.goto(origin, { waitUntil: 'networkidle' })
+    await besuchZurueck(normalSeite, null, 'day-11')
+    assert.deepEqual(normalNetz, [])
+    await normal.close()
+
+    const space = await browser.newContext()
+    const spaceSeite = await space.newPage()
+    const spaceNetz = await sperren(spaceSeite)
+    await spaceSeite.goto(origin, { waitUntil: 'networkidle' })
+    await besuchZurueck(spaceSeite, 'leerzeichen', 'day 11')
+    assert.deepEqual(spaceNetz, [])
+    await space.close()
+
+    const verbindung = async (seite: Page) => {
+      await seite.setViewportSize({ width: 390, height: 844 })
+      await plan(seite)
+      const kante = seite.locator('[data-u1c-kante-id="connection:stage-bkk:stage-kc"]')
+      await kante.press('Enter')
+      const detail = seite.locator('[data-u1c-kante-detail]')
+      await detail.waitFor()
+      const occurrence = await detail.getAttribute('data-u1c-kante-detail')
+      const tag = new URL(seite.url()).searchParams.get('tag')
+      const kanteId = new URL(seite.url()).searchParams.get('kante')
+      assert.ok(occurrence && tag && kanteId)
+      const knopf = seite.locator('[data-u1c-alle-verbindungen]')
+      const handle = await knopf.elementHandle()
+      assert.ok(handle)
+      await knopf.focus()
+      assert.equal(await handle.evaluate((el) => el.isConnected && el.getClientRects().length > 0 && document.activeElement === el), true)
+      await knopf.press('Enter')
+      await seite.getByRole('button', { name: 'Zum Tagesplan' }).waitFor()
+      assert.equal(await handle.evaluate((el) => el.isConnected), false)
+      return { handle, occurrence, tag, kanteId }
+    }
+    const rueckkehr = async (seite: Page, erwartet: { tag: string, kanteId: string, occurrence: string }) => {
+      await seite.getByRole('button', { name: 'Zum Tagesplan' }).press('Enter')
+      await seite.waitForFunction((ziel) => {
+        const url = new URL(location.href)
+        return url.searchParams.get('tag') === ziel.tag && url.searchParams.get('kante') === ziel.kanteId
+      }, { tag: erwartet.tag, kanteId: erwartet.kanteId })
+    }
+
+    const mobil = await browser.newContext()
+    const mobilSeite = await mobil.newPage()
+    const mobilNetz = await sperren(mobilSeite)
+    await mobilSeite.goto(origin, { waitUntil: 'networkidle' })
+    const ausloeser = await verbindung(mobilSeite)
+    await rueckkehr(mobilSeite, ausloeser)
+    assert.equal(await ausloeser.handle.evaluate((el) => el.isConnected), false)
+    const wieder = await mobilSeite.evaluate((occurrence) => {
+      const aktiv = document.activeElement
+      const detail = [...document.querySelectorAll('[data-u1c-kante-detail]')].find((el) => el.getAttribute('data-u1c-kante-detail') === occurrence)
+      const knopf = detail?.querySelector('[data-u1c-alle-verbindungen]')
+      return {
+        gleicherKnoten: aktiv === knopf,
+        verbunden: knopf instanceof HTMLElement && knopf.isConnected,
+        sichtbar: knopf instanceof HTMLElement && knopf.getClientRects().length > 0,
+        name: aktiv instanceof HTMLElement ? (aktiv.textContent ?? '').replace(/\s+/g, ' ').trim() : '',
+        ueberschrift: aktiv instanceof HTMLElement && aktiv.id === 'workspace-plan-titel',
+      }
+    }, ausloeser.occurrence)
+    assert.equal(wieder.gleicherKnoten, true, JSON.stringify(wieder))
+    assert.equal(wieder.verbunden, true)
+    assert.equal(wieder.sichtbar, true)
+    assert.equal(wieder.ueberschrift, false)
+    assert.match(wieder.name, /Alle Verbindungen öffnen/)
+    assert.deepEqual(mobilNetz, [])
+    await mobil.close()
+
+    const fallback = await browser.newContext()
+    const fallbackSeite = await fallback.newPage()
+    const fallbackNetz = await sperren(fallbackSeite)
+    await fallbackSeite.goto(origin, { waitUntil: 'networkidle' })
+    const alt = await verbindung(fallbackSeite)
+    await fallbackSeite.locator('[data-u1c-etappe-weg]').click()
+    await rueckkehr(fallbackSeite, alt)
+    const ausweich = await fallbackSeite.evaluate(() => {
+      const aktiv = document.activeElement
+      return {
+        id: aktiv instanceof HTMLElement ? aktiv.id : '',
+        verbindung: aktiv instanceof HTMLElement && aktiv.hasAttribute('data-u1c-alle-verbindungen'),
+      }
+    })
+    assert.equal(ausweich.verbindung, false, JSON.stringify(ausweich))
+    assert.equal(ausweich.id, 'workspace-plan-titel', JSON.stringify(ausweich))
+    assert.deepEqual(fallbackNetz, [])
+    await fallback.close()
   })
 })

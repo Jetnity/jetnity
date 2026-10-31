@@ -95,6 +95,7 @@ export function RouteListe({
                 type="button"
                 data-u1c-lauf={zeile.schluessel}
                 data-u1c-tage={zeile.tagIds.join(' ')}
+                data-u1c-tag-ids={JSON.stringify(zeile.tagIds)}
                 data-timeline-etappe={zeile.stageId ?? 'ohne'}
                 data-plan-lauf={zeile.lesart}
                 aria-pressed={gewaehlt}

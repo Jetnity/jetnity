@@ -15,12 +15,29 @@ import {
 } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import type { Trip } from '@/types/trips'
 
+function tagMitLeerzeichen(reise: Trip): Trip {
+  const alt = 'day-11'
+  const neu = 'day 11'
+  const ersetze = (id: string | null) => (id === alt ? neu : id)
+  const punkt = (eintrag: Trip['ohneTag'][number]) => ({ ...eintrag, dayId: ersetze(eintrag.dayId) })
+  return {
+    ...reise,
+    days: reise.days.map((tag) => ({
+      ...tag,
+      id: tag.id === alt ? neu : tag.id,
+      items: tag.items.map(punkt),
+    })),
+    ohneTag: reise.ohneTag.map(punkt),
+  }
+}
+
 const SZENEN: Record<string, () => Trip> = {
   referenz: referenzReise,
   namen: wiederholterNameReise,
   abab: wiederholteEtappenReise,
   unklar: unklareVerbindungReise,
   arten: artenReise,
+  leerzeichen: () => tagMitLeerzeichen(referenzReise()),
 }
 
 function RouteFlaeche() {

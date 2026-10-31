@@ -1,5 +1,21 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — HANDOFF
 
+31 October 2026, Europe/Zurich. Amendment 5 delivery. STOP for independent exact-head review. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
+
+## Amendment 5
+
+Started from published tip `74b2d565ed7313c0b7644e7d4834b2e2db56b3ca`. The task file is unchanged. No further main merge. Main and merge-base remain `bfdb3751bf40f789437fc33abb16111beaddcefe`.
+
+R8 puts the visit's real day ids in `data-u1c-tag-ids` as JSON and matches return focus by full string equality. Invalid JSON matches nothing. The old space-separated `data-u1c-tage` hook remains for existing selectors. Before the fix, keyboard return for `day-11` focused the Ko-Chang visit, while `day 11` kept that query value and focused the route container. After the fix, both focus the visit that was opened, identified by its route key rather than the JSON text.
+
+R9 stores the trip, parent tag, connection id and occurrence key when All Connections opens, and still calls the existing trigger capture. The original button is disconnected once the plan section unmounts. On the mobility-child return, focus moves to the new visible button inside that same connection detail, after the detail-close path has focused the plan heading. If that logical target is gone, the heading fallback remains. The regression keeps an ElementHandle from before Enter: it is disconnected after return, and the focused node is a different connected button with the same occurrence. Removing Ko Chang before return focuses `#workspace-plan-titel` and not another All Connections button.
+
+Local results after the fix: route units 13/13; workspace suite 7/7 on the rerun, including R6, R7, the light-palette check and these two regressions. One earlier parallel run timed out in the existing connection keyboard step; that test then passed alone and in the suite rerun. U1-B browser 16/16, U1-C evidence 1/1, N12 browser 9/9. Typecheck passed. ESLint on the edited files has the three pre-existing TripWorkspace warnings and no new warning. Hygiene checks passed. Production build finished 26 static pages. The pushed head, tree and native CI/Preview are in the PR comment.
+
+Hosted Develop and account acceptance stay open. The first outstanding step is an independent Technical-Lead exact-head review.
+
+## Previous handoff
+
 31 October 2026, Europe/Zurich. Amendment 4 delivery. STOP for independent exact-head review. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
 
 ## Amendment 4

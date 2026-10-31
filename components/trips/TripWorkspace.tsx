@@ -196,6 +196,22 @@ function sichtbareSuchflaeche(wurzel: ParentNode | null) {
   return null
 }
 
+function passendeVerbindung(
+  gespeichert: { reiseId: string, tagId: string, kanteId: string, occurrenceKey: string } | null,
+  reiseId: string,
+  ansicht: string,
+  tagId: string | undefined,
+  kanteId: string | undefined,
+): HTMLElement | null {
+  if (!gespeichert || gespeichert.reiseId !== reiseId || ansicht !== 'plan') return null
+  if (tagId !== gespeichert.tagId || kanteId !== gespeichert.kanteId) return null
+  const detail = [...document.querySelectorAll('[data-u1c-kante-detail]')].find((el) => (
+    el.getAttribute('data-u1c-kante-detail') === gespeichert.occurrenceKey
+  ))
+  const knopf = detail?.querySelector<HTMLElement>('[data-u1c-alle-verbindungen]') ?? null
+  return darfFokussieren(knopf) ? knopf : null
+}
+
 function auswahlAusModus(modus: WorkspaceModus): WorkspaceDetailAuswahl {
   if (modus.ansicht === 'organisieren' && modus.bereich) return gapAuswahl(modus.bereich)
   if (modus.ansicht === 'plan' && modus.itemId) return itemAuswahl(modus.itemId)
@@ -495,6 +511,12 @@ export default function TripWorkspace({
   const zurueckRef = React.useRef<HTMLButtonElement>(null)
   const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
+  const verbindungsAusloeserRef = React.useRef<{
+    reiseId: string
+    tagId: string
+    kanteId: string
+    occurrenceKey: string
+  } | null>(null)
   const vorherOffenRef = React.useRef(false)
   const vorherKompaktRef = React.useRef(kompakt)
   const detailAnkerRef = React.useRef<HTMLDivElement | null>(null)
@@ -643,6 +665,7 @@ export default function TripWorkspace({
   }, [reise, ungeplantePunkte, navigationAnwenden])
 
   const oeffneGap = (domain: DetailDomain, signalId?: string) => {
+    verbindungsAusloeserRef.current = null
     merkeAusloeser()
     modusTastaturRef.current = false
     modusSetzen({ ansicht: 'organisieren', bereich: domain, urlAnpassen: false }, 'push', true)
@@ -715,6 +738,18 @@ export default function TripWorkspace({
     chipImStreifenZeigen(el)
   }
 
+  const laufTagIds = (el: HTMLElement): readonly string[] => {
+    const roh = el.getAttribute('data-u1c-tag-ids')
+    if (!roh) return []
+    try {
+      const wert: unknown = JSON.parse(roh)
+      if (!Array.isArray(wert) || wert.some((eintrag) => typeof eintrag !== 'string')) return []
+      return wert
+    } catch {
+      return []
+    }
+  }
+
   const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
@@ -722,7 +757,7 @@ export default function TripWorkspace({
     if (darfFokussieren(kanteKnopf)) return kanteKnopf
     if (anker?.art === 'tag') {
       const lauf = [...route.querySelectorAll<HTMLElement>('[data-u1c-lauf]')].find((el) => (
-        (el.getAttribute('data-u1c-tage') ?? '').split(' ').includes(anker.id) && darfFokussieren(el)
+        laufTagIds(el).some((id) => id === anker.id) && darfFokussieren(el)
       ))
       if (lauf) return lauf
       const knopf = [...route.querySelectorAll<HTMLElement>('[data-timeline-tag]')].find((el) => el.getAttribute('data-timeline-tag') === anker.id && darfFokussieren(el))
@@ -861,6 +896,14 @@ export default function TripWorkspace({
   }
 
   const alleVerbindungenOeffnen = () => {
+    merkeAusloeser()
+    const detail = document.querySelector('[data-u1c-kante-detail]')
+    const occurrenceKey = detail?.getAttribute('data-u1c-kante-detail') ?? ''
+    const tagId = modus.ansicht === 'plan' ? modus.tagId ?? '' : ''
+    const kanteId = modus.ansicht === 'plan' ? modus.kanteId ?? '' : ''
+    verbindungsAusloeserRef.current = tagId && kanteId && occurrenceKey
+      ? { reiseId: reise.id, tagId, kanteId, occurrenceKey }
+      : null
     modusTastaturRef.current = false
     modusSetzen({ ansicht: 'organisieren', bereich: 'mobilitaet', urlAnpassen: false }, 'push', true)
   }
@@ -1172,6 +1215,23 @@ export default function TripWorkspace({
     const vorher = vorherModusRef.current
     const geaendert = vorher.ansicht !== modus.ansicht || vorher.bereich !== modus.bereich
     vorherModusRef.current = modus
+    if (geaendert && vorher.ansicht === 'organisieren' && vorher.bereich === 'mobilitaet' && modus.ansicht === 'plan') {
+      const ziel = passendeVerbindung(
+        verbindungsAusloeserRef.current,
+        reise.id,
+        modus.ansicht,
+        modus.tagId,
+        modus.kanteId,
+      )
+      verbindungsAusloeserRef.current = null
+      if (ziel) {
+        ziel.focus({ preventScroll: true })
+        arbeitsflaecheZeigen(ziel)
+        modusTastaturRef.current = false
+        rueckkehrFokussiertRef.current = false
+        return
+      }
+    }
     if (rueckkehrFokussiertRef.current) {
       rueckkehrFokussiertRef.current = false
       modusTastaturRef.current = false
@@ -1192,7 +1252,7 @@ export default function TripWorkspace({
     if (!(heading instanceof HTMLElement) || !darfFokussieren(heading)) return
     arbeitsflaecheZeigen(heading)
     if (tastatur) heading.focus({ preventScroll: true })
-  }, [modus, modusBereit, detailOffen])
+  }, [modus, modusBereit, detailOffen, reise.id])
 
   React.useLayoutEffect(() => {
     if (!modusBereit || modus.ansicht !== 'vorbereitung' || !modus.preparationZiel || !preparationAnfrage) return
