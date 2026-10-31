@@ -1,0 +1,53 @@
+# B-EXECUTOR-APP-1 — status
+
+**DORMANT CODE / SYNTHETIC EVIDENCE / INDEPENDENT REVIEW PENDING. LIVE B HARD-BLOCKED.**
+
+Writer: Jetnity Official Truth Bern Executor App 1 — Codex Generation 1.
+PR937, branchfeat/official-truth-bern-executor-app-1 only. Same running logical
+session consumed TL SEQUENCE-1/#936 comment6146679373; no new session/branch/writer.
+TASK blobf4ec0d556ecf4b166903a2600edd244b262448d0 remains immutable.
+
+| Acceptance | Actual status |
+| --- | --- |
+| A01 | OPEN. Work/UI registration report App5300986, jetnity-bern-research-executor. Installation blocked by key requirement; no verified client/installation IDs or selected-repository grant. All executable IDs remain unconfigured. |
+| A02 | Synthetic existing-runtime and Keychain/ACL proof delivered. TL acceptance and persistent staging/browser/backup/signer plan OPEN; no real credential. |
+| A03–A06 | Dormant separate protocol and adversarial synthetic tests delivered; no authenticated live success. Witness/configuration/unused/merge receipts remain hypothetical contract shapes, not issued authority. |
+| A07 | Protected source/legacy blobs unchanged. No Bern/ref writer. Existing direct/CLI refusal tests remain authoritative and are included in fresh suite. |
+| A08 | Fresh local/full/nativePG/build and exact published-HEAD original CI/Auth/Preview results recorded in final publication receipt; seed gates do not count. |
+| A09 | OPEN. Independent TL exact-head review/thread disposition; author does not Ready or merge. Actual-main postmerge gates only if TL later merges. |
+| A10 | OPEN. No real provisioning, installation token, authenticated App preflight, source call or consumption. |
+
+No GitHub-App setting, rule24998411/main21875372, hosted DB/Auth/RLS, public route,
+Production functionality or cost change. #934/#917 remain OPEN, source
+SOURCE_NOT_QUALIFIED, ProviderNULL, VisaUNKNOWN. #913/P2/G7 unchanged.
+
+The author delivers code and evidence, then STOP. Exact final SHA/tree/parent and
+CI/Preview identifiers are deliberately in the post-commit handoff, not a
+self-referential commit. Any later changed head requires fresh gates and TL review.
+
+## Same-session R1 correction
+
+Consumed independent TL review5505320406 and issue936 checkpoint6148167645 against
+HEAD372f063f52aed2a6c8e6f00d004b46897dfbd0bb. R1-F1 opaque/header-safe token handling
+and R1-F2 trusted exchange-interval expiry are corrected with synthetic regressions.
+Fresh new-HEAD results belong to the R1 publication receipt; previous-head gates
+do not count for this correction. Independent re-review/thread disposition remains
+OPEN. A01 installation/A02 operational custody/A10 provisioning remain OPEN;
+no real configuration or credential, no renewed Owner approval, no live activation.
+
+## Current CUSTODY-2 override
+
+TL R2 review5506773206 accepted R1-F1/F2 on95d5552a and resolved both threads.
+The preceding R1 "re-review OPEN" sentence is historical for that correction;
+no token fix is reopened here. CUSTODY-2 comment6150274275 authorizes this same
+session's remaining signer/staging work. Changed HEAD needs its own TL review.
+
+A02 now has a constrained default-disabled signer and passing actual synthetic
+staged-import/sign/verify/denial/error/cleanup proof. One new owner-local0700
+task candidate is established and empty. Operational acceptance stays OPEN:
+Time Machine Included; exact one-leaf proposal6150498189 awaits TL; no backup
+change; third-party sync and attended browser destination remain unproved.
+A01 real installation/A09 independent changed-HEAD review/A10 provisioning OPEN.
+Fresh published-HEAD gates and exact metadata are in the CUSTODY-2 publication
+receipt. All historic failed CI attempts remain documented. Draft/STOP;
+LIVE B HARD-BLOCKED, no real configuration or credential.
