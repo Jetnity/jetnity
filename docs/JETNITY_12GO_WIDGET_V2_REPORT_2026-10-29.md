@@ -13,6 +13,10 @@ Classification: visitor UI is inert. The partner form was exercised only in a fr
 
 Parsed general attributes, in order: `src`, `data-one2go`, `data-color`, `data-language`, `data-adaptive`, `data-border`, `data-origin-empty`, `data-destination-empty`, `data-caption`, `data-sub_id`, `data-domain`, `data-curr`. That is 12, not an assumed 26. `data-origin-empty` and `data-destination-empty` are unquoted `true`. The reference file instead has `data-origin="Bangkok"` and `data-destination="Koh Chang"`. Neither file contains a newline. The inserter accepts only the general checksum, and only when a synthetic seam passes `ausfuehrbar: true` with exactly one visible instance. The visitor bundle does not import that inserter.
 
+## R6 parent, 31 October 2026
+
+The closed paragraph is now a conditional consumer. Production denial keeps `data-twelve-go-widget-ausfuehrbar="false"`, shows “Suchformular anfragen”, and after the click says the form is not available. V1 hrefs are unchanged. No trip date, passenger count, or Bangkok value is copied into the frame. The frame `src`, when a test fixture supplies a handle, is exactly `https://jetnity-widgets.vercel.app/embed/twelvego` with sandbox `allow-scripts allow-same-origin allow-forms allow-popups` and `referrerpolicy="no-referrer"`. Ready is accepted only from that frame’s window and origin. One grant is posted to the child origin. Leaving Verbindungen, the mobility detail, or the trip scope removes the frame without a new click. Chrome zoom, a screen reader, and a physical device were not run. Phone sizes in the surface script are emulation. The production client now contains the existing consent inventory string `cdn0.trainbusferry.com` because the consumer imports the CMP controller. It does not contain `jetnity-mobility-search` or the loader path.
+
 ## Visitor result
 
 Inside the existing 12Go section, below the V1 links:

@@ -1,8 +1,9 @@
 // lib/providers/twelve-go/widget/ausfuehrung.ts
 //
-// Beide Aus-Schalter. Ein informativer Grant und ein fremdes `enabled`
-// ändern das Ergebnis nicht.
+// Conditional delegation. A copied field bag, an informative grant, or `enabled`
+// is not authority. Only a live production handle can return true.
 
+import { checkProductionExecution, type ProductionCapability } from '@/lib/privacy/privacybee-cmp/produktion'
 import {
   applyWidgetConsentCommand,
   createWidgetConsentState,
@@ -10,7 +11,10 @@ import {
 } from '@/lib/privacy/widget-consent/entscheidung'
 import { TWELVE_GO_WIDGET_FREIGABE } from '@/lib/providers/twelve-go/widget/freigabe'
 
-export function twelveGoWidgetDarfAusfuehren(untrusted?: { readonly enabled?: boolean }): false {
+export function twelveGoWidgetDarfAusfuehren(
+  untrusted?: { readonly enabled?: boolean },
+  capability?: ProductionCapability | null,
+): boolean {
   const anfang = createWidgetConsentState('twelvego', 'twelve-go-widget')
   const informativ = applyWidgetConsentCommand(anfang, {
     type: 'grant_informative',
@@ -18,5 +22,6 @@ export function twelveGoWidgetDarfAusfuehren(untrusted?: { readonly enabled?: bo
   }).state
   void vendorScriptMayExecute(informativ, untrusted)
   void TWELVE_GO_WIDGET_FREIGABE.ausfuehrbar
-  return false
+  if (!capability || capability.providerId !== 'twelvego') return false
+  return checkProductionExecution(capability)
 }

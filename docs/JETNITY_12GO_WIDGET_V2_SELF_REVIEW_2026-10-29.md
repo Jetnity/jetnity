@@ -10,8 +10,8 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 - Both HTML exports match the supplied length and SHA-256, with no added newline.
 - The reference route cannot pass the inserter. The visitor markup contains no Bangkok prefill, no widget sub id, and no loader host.
 - V1 links, empty audited route list, and the affiliate module were not rewritten.
-- The production component has no load button. Tests cover deny, grant, withdraw, reopen, trip change, stage order, error, and a stale generation.
-- The production JS bundles from `npm run build` did not contain `trainbusferry` or `jetnity-mobility-search`.
+- The original surface had no load button. R6 adds a request that stays closed while the production facade returns null. Tests still cover deny, grant, withdraw, reopen, trip change, stage order, error, and a stale generation.
+- The original production bundles did not contain `trainbusferry` or `jetnity-mobility-search`. After R6 the consent inventory string `cdn0.trainbusferry.com` is in the client chunk through the CMP import. `jetnity-mobility-search` is still absent.
 - Writable paths were respected. `docs/ACTIVE_WORK_STATUS.md` was left unchanged because this task marks it read-only. That conflicts with the general progress policy; the conflict is recorded in the handoff instead of being edited through.
 
 ## What a reviewer should press on
@@ -27,6 +27,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 ## Recommendation
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
+
+## R6 addition
+
+The parent now calls the four production CMP functions. Shipped policy and release stay null/false, so the real click path stays denied. A copied capability object still returns false. The host sandbox is not applied to the synthetic empty frame or to a private Jetnity URL. Scope identity is not written to the DOM. I did not edit CMP, the widget host, DiscoverCars, guest/account wrappers, or `/embed/twelve-go`. Offline browser evidence used local fulfillments of `jetnity.com` and `jetnity-widgets.vercel.app`. That is not hosted-form, search, or redirect acceptance. Self-review is not a Technical Lead PASS. The PR stays Draft.
 
 ## R5.1 addition
 

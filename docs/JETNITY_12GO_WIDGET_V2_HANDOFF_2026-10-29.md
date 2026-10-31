@@ -16,9 +16,17 @@ Stop: independent exact-head review by the Technical Lead. No Ready, no merge, n
 - Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`, tree `9e83883a884f885b83a27c28e1705f275f551c57`
 - Invalidated head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5`. R1-F1 replaces `Buffer.from('Bangkok')` with a UTF-8 `includes('Bangkok')` check. Exact final HEAD, tree, and ahead/behind are the branch tip after that correction. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
 
-## Where the work stopped
+## Where the work stopped — R6
 
-`CONSENT_BLOCKED`. The general and reference exports are in `lib/providers/twelve-go/widget/quelle/`. The visitor copy is `components/trips/TwelveGoWidgetEinbau.tsx`, mounted from `TwelveGoAffiliateLinks`. V1 links still work. The form does not load.
+`CONSENT_BLOCKED`. Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` is merged. The exact implementation head is the branch tip after this R6 commit and is posted on the PR, because this file cannot contain the hash of the commit that adds it.
+
+The visitor path reaches `TwelveGoWidgetHost`. Production `requestProductionExecution` stays null while `lib/privacy/privacybee-cmp/produktionspolitik.ts` (blob `817f7e80c18155494fc44ec1fc4b13cd59052ac7`) keeps both rows null and the release stays false. CMP entry blob `704ba9b6cac6376bfc9ed5284983ffd2ef99295d`. Host amendment blob `b5380cf9451b2a13573ecff572f98f46d12be080`. Host acceptance commit: not accepted (`f056b01d63ac7d61650864734a9b44eb6484989e` is in review). Task blob `e3f6b5d565af5658504947cffc5942877fb3e152`.
+
+Shared read exports from `components/trips/MobilityWidgetScope.tsx`: `MobilityWidgetScope`, `mobilityWidgetScopeKey`, `MobilityWidgetScopeProvider`, `useMobilityWidgetScope`, `useMobilityWidgetArea`. `TripWorkspace.tsx` is the only provider. `MobilitaetBereich.tsx` is the only area writer. Guest and account wrappers were not edited.
+
+Offline evidence: `scripts/twelve-go-widget-v2/eltern-nachweis.ts` and `oberflaeche.ts`. A local child speaks Rev1. No call to 12Go, PrivacyBee, or the live widget host. Native CI and Preview for this head are not yet gates.
+
+The general and reference exports remain in `lib/providers/twelve-go/widget/quelle/`. V1 links still work. `/embed/twelve-go` stays 404.
 
 The audit script is `scripts/twelve-go-widget-v2/audit.ts`. The surface script is `scripts/twelve-go-widget-v2/oberflaeche.ts`. Both are outside `npm test`. Evidence narrative: `docs/JETNITY_12GO_WIDGET_V2_REPORT_2026-10-29.md`. Proposed notice: `docs/JETNITY_12GO_WIDGET_V2_PRIVACY_NOTICE_2026-10-29.md`.
 
@@ -34,7 +42,7 @@ Do not invent CMP callbacks in this slice. The open sequence is:
 2. A reviewed shared execution and origin contract. #1091 is an inert host, not that contract.
 3. One mounted frame, then official form, search, and redirect acceptance. The local stub is not that acceptance.
 
-Until that bridge exists, do not add a visitor load button and do not mount the official script.
+R6 replaced the “do not add a visitor button” stop. The button asks the production facade and, while that facade returns null, mounts nothing. Do not treat that button as a published search. Do not fill the policy table or pin `hostSelectionCommit` from this branch.
 
 ## Do not touch
 

@@ -6,9 +6,11 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import TwelveGoWidgetRahmen from '@/components/trips/TwelveGoWidgetRahmen'
 import { twelveGoWidgetDarfAusfuehren } from '@/lib/providers/twelve-go/widget/ausfuehrung'
 import { TWELVE_GO_WIDGET_FREIGABE } from '@/lib/providers/twelve-go/widget/freigabe'
+import { TWELVE_GO_HOST_SANDBOX, TWELVE_GO_HOST_SRC } from '@/lib/providers/twelve-go/widget/protokoll'
 import {
   TWELVE_GO_WIDGET_RAHMEN_HOEHE_PX,
   TWELVE_GO_WIDGET_SANDBOX,
+  twelveGoHostPasst,
   twelveGoWidgetBeobachteteHosts,
   twelveGoWidgetSandboxIstOpaque,
 } from '@/lib/providers/twelve-go/widget/rahmen'
@@ -46,5 +48,54 @@ describe('12Go-Ausführung bleibt zu', () => {
     assert.equal(html.includes('height:800px'), true)
     assert.equal(html.includes('<script'), false)
     assert.equal(renderToStaticMarkup(createElement(TwelveGoWidgetRahmen, { zweck: 'besucher' })), '')
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: TWELVE_GO_HOST_SRC,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: TWELVE_GO_HOST_SANDBOX,
+      protocolRevision: 1,
+    }), true)
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: 'https://jetnity.com/embed/twelvego',
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: TWELVE_GO_HOST_SANDBOX,
+      protocolRevision: 1,
+    }), false)
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: `${TWELVE_GO_HOST_SRC}?z=1`,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: TWELVE_GO_HOST_SANDBOX,
+      protocolRevision: 1,
+    }), false)
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: TWELVE_GO_HOST_SRC,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: 'allow-scripts',
+      protocolRevision: 1,
+    }), false)
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: TWELVE_GO_HOST_SRC,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: `${TWELVE_GO_HOST_SANDBOX} allow-top-navigation`,
+      protocolRevision: 1,
+    }), false)
+    assert.equal(twelveGoHostPasst({
+      providerId: 'twelvego',
+      src: TWELVE_GO_HOST_SRC,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: `${TWELVE_GO_HOST_SANDBOX} allow-popups-to-escape-sandbox`,
+      protocolRevision: 1,
+    }), false)
+    assert.equal(twelveGoWidgetDarfAusfuehren(undefined, {
+      providerId: 'twelvego',
+      src: TWELVE_GO_HOST_SRC,
+      childOrigin: 'https://jetnity-widgets.vercel.app',
+      sandbox: TWELVE_GO_HOST_SANDBOX,
+      protocolRevision: 1,
+    }), false)
   })
 })

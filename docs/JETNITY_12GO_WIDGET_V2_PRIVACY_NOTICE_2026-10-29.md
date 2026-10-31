@@ -3,6 +3,8 @@
 Date: 29 October 2026 Europe/Zurich
 Status: **PROPOSAL ONLY. Not approved. Not inserted into `/privacy`.**
 
+R6 correction, 31 October 2026: the visitor can ask for the form. With the shipped CMP denial that ask mounts no frame and loads no 12Go, Google, or widget-host document. The sentences below that say the embed route was never created, or that the visitor has no request, are superseded. The route exists and returns 404. This notice is still not on the privacy page. A denied request is not a working search.
+
 `app/(public)/privacy/page.tsx` is read-only for this task. PrivacyBee remains the legal-page embed and is not a vendor CMP for 12Go. DiscoverCars #1084 also touches shared privacy work. This note stops for a separate Technical Lead decision.
 
 ## What a later notice would need to say

@@ -3,21 +3,17 @@
 Date: 29 October 2026 Europe/Zurich
 Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
-State: **CONSENT_BLOCKED / DRAFT / R5 current-main evidence / STOP for independent Technical Lead review**
+State: **CONSENT_BLOCKED / DRAFT / R6 parent consumer / STOP for independent Technical Lead review**
 
-## Current, 31 October 2026
+## Current, 31 October 2026 — R6
 
-Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The trip path still mounts only the closed notice in `TwelveGoWidgetEinbau`. `TwelveGoWidgetRahmen` is not on that path. `/embed/twelve-go` exists and stays a constant 404. Both execution switches stay false. Iframe height is not the open blocker: the dated R2 measurement already showed the official general form inside an 800px `allow-scripts` frame. The local three-field stub and the current-style surface check are not official hosted acceptance.
+Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` is merged. The visitor path is Reise → Organisieren → Mobilität → Verbindungen → `TwelveGoAffiliateLinks` → `TwelveGoWidgetEinbau` → `TwelveGoWidgetHost`. A conscious click calls `requestProductionExecution('twelvego', scopeKey)`. The shipped policy table stays null and `CMP_RELEASE_AUTHORIZED` stays false, so that call returns null, no frame is mounted, and the V1 links stay usable. The same component mounts the separate host frame only when the public facade returns a live handle. Positive proof uses a test-only policy module under `scripts/twelve-go-widget-v2/`, not a production switch.
 
-The paragraph in Organisieren is not a finished search form.
+`/embed/twelve-go` still returns 404. The synthetic `TwelveGoWidgetRahmen` stays `allow-scripts` and has no `src`. The four-token sandbox belongs only to `https://jetnity-widgets.vercel.app/embed/twelvego`. `hostSelectionCommit` is not pinned. Host head `f056b01d63ac7d61650864734a9b44eb6484989e` is under independent review and is not accepted. This is not a working embedded search.
 
-Pending bridge, not implemented here:
+Shared seam, owned here: `components/trips/MobilityWidgetScope.tsx`. `TripWorkspace` wraps the existing `mobilitaetssuche` node. `MobilitaetBereich` publishes the real `unterbereich`. Read contract: `{ workspaceActive, activeArea, scopeKey }` with default false / null / null. Execution requires `workspaceActive && activeArea === 'verbindungen'` and a scope key. The key is parent memory only.
 
-1. Account-supported CMP grant and withdraw, including the still-open Swiss PrivacyBee snippet, callback, and entitlement (#1087).
-2. A reviewed shared execution and origin contract. Informative consent is not that grant.
-3. One real frame lifecycle, then official form, search, and redirect acceptance.
-
-Older sentences below that say the embed route does not exist, or that the opaque frame failed to show the form, are dated and superseded.
+Older sentences below that say the embed route does not exist, that the trip path has no request, or that iframe height is the blocker, are dated and superseded.
 
 ## R5.1 light workspace scope
 

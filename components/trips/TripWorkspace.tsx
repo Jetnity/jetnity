@@ -87,6 +87,7 @@ import {
 import type { ReadinessAktualisierung } from '@/lib/readiness/personal-preparation-workflow'
 import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
 import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
+import { MobilityWidgetScopeProvider, mobilityWidgetScopeKey } from '@/components/trips/MobilityWidgetScope'
 import {
   WORKSPACE_QUERY_KEYS,
   detailElternModus,
@@ -1506,7 +1507,19 @@ export default function TripWorkspace({
             verborgen={!detailOffen || aktiveDomain !== 'mobilitaet'}
             sichtbarKlasse="min-w-0"
           >
-            {mobilitaetssuche}
+            <MobilityWidgetScopeProvider
+              workspaceActive={detailOffen && aktiveDomain === 'mobilitaet'}
+              scopeKey={mobilityWidgetScopeKey({
+                tripId: reise.id,
+                source: quelle,
+                detail: detailOffen ? `${aktiveDomain ?? ''}:${gewaehlterPunktId ?? ''}` : '',
+                dayId: aktiverTag || null,
+                stages: reise.stages,
+                days: reise.days,
+              })}
+            >
+              {mobilitaetssuche}
+            </MobilityWidgetScopeProvider>
           </FlaecheHuelle>
         )}
         {flugSucheBereit && flugsuche && (

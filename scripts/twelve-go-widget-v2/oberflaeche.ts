@@ -95,7 +95,7 @@ function istLoopback(adresse: string): boolean {
   }
 }
 
-async function anwendungsStil(): Promise<string> {
+export async function anwendungsStil(): Promise<string> {
   const verlangen = createRequire(import.meta.url)
   const postcss = verlangen('postcss') as (plugins: unknown[]) => {
     process: (css: string, opts: { from: string }) => Promise<{ css: string }>
@@ -301,7 +301,7 @@ async function main() {
     if (fall.anzahl !== 2) fehler.push(`${fall.name}: ${fall.anzahl} Links`)
     if (fall.ueberlauf) fehler.push(`${fall.name}: horizontaler Überlauf`)
     if (fall.iframes !== 0 || fall.scripts !== 0) fehler.push(`${fall.name}: Drittinhalt`)
-    if (fall.knoepfe !== 0) fehler.push(`${fall.name}: ${fall.knoepfe} Knöpfe`)
+    if (fall.knoepfe !== 1) fehler.push(`${fall.name}: ${fall.knoepfe} Knöpfe`)
     if (fall.marker !== 'consent-blocked' || fall.ausfuehrbar !== 'false') fehler.push(`${fall.name}: Formular nicht geschlossen`)
     const umfang = umfangBeweis({
       treffer: fall.treffer,
