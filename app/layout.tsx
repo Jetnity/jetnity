@@ -5,7 +5,11 @@ import '../styles/white-mint.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 
+import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundary'
+import { productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
+
+const CMP_BOOTSTRAP = productionBootstrapSource()
 
 export const runtime = 'nodejs' // gesamte App standardmäßig auf Node.js
 
@@ -56,6 +60,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           styles/white-mint.css faerbt Ueberdehnen und Koernung nur, solange
           die Startseite oder der helle Workspace sichtbar sind. */}
       <body className="min-h-screen text-foreground antialiased">
+        <script id="jetnity-cmp-bootstrap" dangerouslySetInnerHTML={{ __html: CMP_BOOTSTRAP }} />
+        <PrivacyBeeCmpBoundary />
         {children}
         <Toaster position="top-right" richColors closeButton expand />
         <div id="portal-root" />
