@@ -82,9 +82,43 @@ async function bundeln(): Promise<string> {
   return js
 }
 
+function weissMinzeCss(): { css: string, canvas: string, rgb: string } {
+  const datei = join(process.cwd(), 'styles/white-mint.css')
+  const css = readFileSync(datei, 'utf8')
+  const token = css.match(/--white-mint-canvas:\s*(#[0-9a-fA-F]{6})/)
+  const hex = token?.[1]
+  if (!hex || !css.includes('.workspace-shell[data-workspace-theme="light"]')) {
+    throw new Error('styles/white-mint.css is missing the light workspace canvas')
+  }
+  const kanal = (start: number) => Number.parseInt(hex.slice(start, start + 2), 16)
+  return { css, canvas: hex.toLowerCase(), rgb: `rgb(${kanal(1)}, ${kanal(3)}, ${kanal(5)})` }
+}
+
 function html(css: string, js: string) {
-  const stil = `${css}\n${shellCss()}`.replaceAll('</style', '<\\/style')
+  const mint = weissMinzeCss()
+  const stil = `${css}\n${mint.css}\n${shellCss()}`.replaceAll('</style', '<\\/style')
   return `<!doctype html><html><head><meta charset="utf-8" /><style>${stil}</style></head><body><div id="root"></div><script>${js}</script></body></html>`
+}
+
+async function lichtePalette(page: Page) {
+  const mint = weissMinzeCss()
+  const gemessen = await page.evaluate(() => {
+    const schale = document.querySelector('.workspace-shell')
+    const eng = (farbe: string) => farbe.replace(/\s+/g, '')
+    const blatt = [...document.querySelectorAll('style')].map((el) => el.textContent ?? '').join('\n')
+    return {
+      thema: schale?.getAttribute('data-workspace-theme') ?? '',
+      variable: getComputedStyle(document.documentElement).getPropertyValue('--white-mint-canvas').trim().toLowerCase(),
+      dokument: eng(getComputedStyle(document.documentElement).backgroundColor),
+      schale: schale instanceof HTMLElement ? eng(getComputedStyle(schale).backgroundColor) : '',
+      geladen: blatt.includes('--white-mint-canvas') && blatt.includes('.workspace-shell[data-workspace-theme="light"]'),
+    }
+  })
+  assert.equal(gemessen.geladen, true, JSON.stringify(gemessen))
+  assert.equal(gemessen.thema, 'light', JSON.stringify(gemessen))
+  assert.equal(gemessen.variable, mint.canvas, JSON.stringify(gemessen))
+  assert.equal(gemessen.dokument, mint.rgb.replace(/\s+/g, ''), JSON.stringify(gemessen))
+  assert.equal(gemessen.schale, mint.rgb.replace(/\s+/g, ''), JSON.stringify(gemessen))
 }
 
 async function browserStarten() {
@@ -441,6 +475,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     for (const thema of ['light', 'green'] as const) {
       if (thema === 'green') await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
       await page.waitForSelector(`[data-workspace-theme="${thema}"]`)
+      if (thema === 'light') await lichtePalette(page)
       for (const breite of [320, 390, 768, 1440]) {
         await page.setViewportSize({ width: breite, height: 900 })
         if (breite < 800) await page.waitForSelector('[data-u1b-anordnung="schmal"]')

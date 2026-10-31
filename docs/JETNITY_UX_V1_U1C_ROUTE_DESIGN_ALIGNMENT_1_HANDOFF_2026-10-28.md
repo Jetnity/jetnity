@@ -1,5 +1,19 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — HANDOFF
 
+31 October 2026, Europe/Zurich. Amendment 4 delivery. STOP for independent exact-head review. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
+
+## Amendment 4
+
+Ordinary merge `ca4d408f4d9b7dc23f5d19cff2e70dab31e18eb4` brings pinned main `bfdb3751bf40f789437fc33abb16111beaddcefe` onto author head `5ab20d9d8e796ae5e21d741a02f1ac4aa5ed412e`. Parents are those two commits. `origin/main` at the merge was that same pin, 0 ahead of it. The workspace fixture now loads compiled globals, then `styles/white-mint.css`, then the workspace styles. In the light theme the rendered `--white-mint-canvas`, document background and shell background match the canvas token in that file. A missing file or an unapplied sheet fails that check. R6 and R7 assertions are unchanged.
+
+Local results: route units 13/13; mounted workspace suite 6/6, including the light-palette check, R6 create/edit audit and R7 center clicks. `tsc --noEmit` passed. ESLint on the fixture passed. Hygiene `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` and `check:operating-mode` passed. Production build compiled and finished 26 static pages. The exact pushed head, tree and its own CI/Preview are in the PR comment, not repeated here.
+
+Hosted Develop and account acceptance stay open. #968, #917, #985/#982 and #748 remain. No Ready and no merge from this writer.
+
+The first outstanding step is an independent Technical-Lead exact-head review of the pushed delivery, including its own native CI and SHA-bound Preview.
+
+## Previous handoff
+
 30 October 2026, night Europe/Zurich. STOP after R7. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`.
 
 ## Read first
