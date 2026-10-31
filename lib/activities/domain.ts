@@ -47,6 +47,13 @@ export type ActivitySuchanfrage = {
   budgetAmount: number | null
   interests: ReadonlyArray<string>
   pace: 'calm' | 'balanced' | 'intense' | null
+  countryCode?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  /** Confirmed aliases of the selected place. Absent means only destinationName is confirmed. */
+  placeAliases?: readonly string[]
+  /** Confirmed place type, such as city, island, or country. */
+  placeType?: string | null
 }
 
 /**
@@ -56,6 +63,9 @@ export type ActivitySuchanfrage = {
  * Kommerzielle Provenance (`retrievedAt`, Freshness, Währungsabgleich) liegt
  * nicht in diesem Domänenmodell. Siehe `lib/commercial-provenance`.
  */
+export const ACTIVITY_PREIS_ROLLEN = ['rrp_from', 'rrp_schedule', 'rrp_check'] as const
+export type ActivityPreisRolle = (typeof ACTIVITY_PREIS_ROLLEN)[number]
+
 export type ActivityOption = {
   id: string
   provider: string
@@ -74,6 +84,10 @@ export type ActivityOption = {
   stornierbar: boolean | null
   kategorien: string[]
   tags: string[]
+  /** Validierte Bildadresse. Fehlt sie, gibt es kein Bild. */
+  bildUrl?: string | null
+  /** Preisrolle. Suche und Kalender sind keine aktuelle Verfügbarkeit. */
+  preisRolle?: ActivityPreisRolle | null
 }
 
 export type ActivityKonflikt = 'ueberschneidung' | 'frei' | 'unbekannt'
