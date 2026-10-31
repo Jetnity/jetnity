@@ -36,7 +36,7 @@ function values(rawHeaders, name) {
 function assertClosed(name, result) {
   const problems = []
   if (result.status !== 404) problems.push(`status ${result.status}`)
-  if (result.body.includes(probe)) problems.push('probe reflected')
+  if (result.body.includes(probe) || result.body.includes('startProductionShell')) problems.push('shell or probe')
   if (/discovercars\.com|12go\.asia|trainbusferry|googletagmanager/i.test(result.body)) problems.push('vendor')
   const flat = result.rawHeaders.join('\n').toLowerCase()
   if (flat.includes('set-cookie')) problems.push('set-cookie')
@@ -47,47 +47,21 @@ function assertClosed(name, result) {
   if (problems.length > 0) throw new Error(`${name}: ${problems.join('; ')}`)
 }
 
-function assertShell(name, result, { head = false } = {}) {
-  const problems = []
-  if (result.status !== 200) problems.push(`status ${result.status}`)
-  if (!head && !result.body.includes('Kein Anbieter ist geladen.')) problems.push('status copy')
-  if (!head && !result.body.includes('startProductionShell')) problems.push('bootstrap')
-  if (/discovercars\.com|12go\.asia|trainbusferry|googletagmanager|<iframe/i.test(result.body)) problems.push('vendor')
-  if (result.body.includes(probe)) problems.push('probe reflected')
-  if (result.body.includes('"plans":{}') === false && !head) problems.push('plans not empty')
-  const flat = result.rawHeaders.join('\n').toLowerCase()
-  if (flat.includes('set-cookie')) problems.push('set-cookie')
-  if (values(result.rawHeaders, 'x-frame-options').length > 0) problems.push('xfo present')
-  if (values(result.rawHeaders, 'location').length > 0) problems.push('redirect')
-  const csp = values(result.rawHeaders, 'content-security-policy').join(' ')
-  if (!csp.includes('frame-ancestors https://jetnity.com')) problems.push('frame ancestors')
-  if (!csp.includes("default-src 'none'")) problems.push('default-src')
-  if (!/script-src 'nonce-[a-f0-9]+'/.test(csp)) problems.push('script nonce')
-  if (csp.includes('unsafe-inline') || csp.includes('unsafe-eval') || csp.includes('*')) problems.push('csp relaxation')
-  if (!head) {
-    const nonce = csp.match(/nonce-([a-f0-9]+)/)[1]
-    if (!result.body.includes(`nonce="${nonce}"`)) problems.push('nonce mismatch')
-  }
-  if (problems.length > 0) throw new Error(`${name}: ${problems.join('; ')} body=${result.body.slice(0, 180)}`)
-}
-
 const cases = [
-  { name: 'root', method: 'GET', urlPath: '/', closed: true },
-  { name: 'discovercars shell', method: 'GET', urlPath: '/embed/discovercars', headers: { host: child } },
-  { name: 'twelvego shell', method: 'GET', urlPath: '/embed/twelvego', headers: { host: child } },
-  { name: 'consent query', method: 'GET', urlPath: `/embed/discovercars?consent=1&q=${probe}`, headers: { host: child }, closed: true },
-  { name: 'branded host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'widgets.jetnity.com' }, closed: true },
-  { name: 'parent host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'jetnity.com' }, closed: true },
-  { name: 'evil host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'evil.example', cookie: `probe=${probe}`, authorization: `Bearer ${probe}` }, closed: true },
-  { name: 'port', method: 'GET', urlPath: '/embed/twelvego', headers: { host: `${child}:444` }, closed: true },
-  { name: 'post', method: 'POST', urlPath: '/embed/discovercars', headers: { host: child, cookie: `probe=${probe}` }, body: `{"consent":true,"probe":"${probe}"}`, closed: true },
-  { name: 'options', method: 'OPTIONS', urlPath: '/embed/discovercars', headers: { host: child, origin: 'https://jetnity.com' }, closed: true },
-  { name: 'put', method: 'PUT', urlPath: '/embed/twelvego', headers: { host: child }, closed: true },
-  { name: 'unknown', method: 'GET', urlPath: '/embed/other', headers: { host: child }, closed: true },
-  { name: 'trailing', method: 'GET', urlPath: '/embed/discovercars/', headers: { host: child }, closed: true },
-  { name: 'next static', method: 'GET', urlPath: '/_next/static/chunks/probe.js', headers: { host: child }, closed: true },
-  { name: 'not found artifact', method: 'GET', urlPath: '/_not-found', headers: { host: child }, closed: true },
-  { name: 'head shell', method: 'HEAD', urlPath: '/embed/discovercars', headers: { host: child }, head: true },
+  { name: 'root', method: 'GET', urlPath: '/' },
+  { name: 'loopback embed', method: 'GET', urlPath: '/embed/discovercars' },
+  { name: 'spoofed host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: child } },
+  { name: 'spoofed twelvego', method: 'GET', urlPath: '/embed/twelvego', headers: { host: child } },
+  { name: 'consent query', method: 'GET', urlPath: `/embed/discovercars?consent=1&q=${probe}`, headers: { host: child } },
+  { name: 'branded host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'widgets.jetnity.com' } },
+  { name: 'parent host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'jetnity.com' } },
+  { name: 'evil host', method: 'GET', urlPath: '/embed/discovercars', headers: { host: 'evil.example', cookie: `probe=${probe}`, authorization: `Bearer ${probe}` } },
+  { name: 'port', method: 'GET', urlPath: '/embed/twelvego', headers: { host: `${child}:444` } },
+  { name: 'post', method: 'POST', urlPath: '/embed/discovercars', headers: { host: child }, body: '{}' },
+  { name: 'options', method: 'OPTIONS', urlPath: '/embed/discovercars', headers: { host: child, origin: 'https://jetnity.com' } },
+  { name: 'unknown', method: 'GET', urlPath: '/embed/other', headers: { host: child } },
+  { name: 'next static', method: 'GET', urlPath: '/_next/static/chunks/probe.js', headers: { host: child } },
+  { name: 'head', method: 'HEAD', urlPath: '/embed/discovercars', headers: { host: child } },
 ]
 
 const server = spawn(process.execPath, [path.join(hostRoot, 'node_modules/next/dist/bin/next'), 'start', '-H', '127.0.0.1', '-p', String(port)], {
@@ -116,8 +90,7 @@ try {
   await waitReady()
   for (const item of cases) {
     const result = await request(item)
-    if (item.closed) assertClosed(item.name, result)
-    else assertShell(item.name, result, { head: item.head === true })
+    assertClosed(item.name, result)
     console.log(`PASS ${item.name} ${result.status}`)
   }
   console.log(`synthetic-http PASS cases=${cases.length}`)

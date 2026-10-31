@@ -1,6 +1,6 @@
 # Jetnity Widgets Host S2 — STATUS
 
-**Stand:** 31 October 2026. **Status:** source delivered on Draft #1097. Stopped for independent Technical-Lead exact-head review.
+**Stand:** 31 October 2026. **Status:** R1 corrections delivered on Draft #1097. Stopped for independent Technical-Lead exact-head review.
 **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f
 **Branch:** `feat/widgets-host-s2`

@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
-import { decide, reviewedScriptSources } from '../lib/decide.mjs'
+import { buildShell, classify, decide, reviewedScriptSources } from '../lib/decide.mjs'
 import { DISCOVERCARS_EXPORT, TWELVEGO_EXPORT } from '../lib/frozen-exports.mjs'
 import {
   CHILD_ORIGIN,
@@ -14,8 +14,9 @@ import {
   insertionValue,
   parseExport,
   parseMessage,
+  selectionFromPlan,
 } from '../lib/host-runtime.mjs'
-import { planFromFrozen, productionPlansForClient } from '../lib/production-wire.mjs'
+import { clientPlan, planFromFrozen, productionPlanForClient } from '../lib/production-wire.mjs'
 import { PRODUCTION_REGISTRY, productionSelection } from '../lib/registry.mjs'
 
 const DISCOVER_SHA = '5a9ea3edf4bfa5762850e0d1e6c9f5d777d860f9442fbe17bf9a76b1618cc8aa'
@@ -142,7 +143,8 @@ test('production registry denies both providers and the client plan map stays em
   assert.equal(PRODUCTION_REGISTRY.twelvego.selected, false)
   assert.equal(productionSelection('discovercars'), null)
   assert.equal(productionSelection('twelvego'), null)
-  assert.deepEqual(productionPlansForClient(), {})
+  assert.equal(productionPlanForClient('discovercars'), null)
+  assert.equal(productionPlanForClient('twelvego'), null)
   const contract = readFileSync(new URL('../lib/origin-contract.ts', import.meta.url), 'utf8')
   assert.equal(contract.includes("childOrigin: 'https://jetnity-widgets.vercel.app'"), true)
   assert.equal(contract.includes('productionProvidersSelected: false'), true)
@@ -174,7 +176,7 @@ test('handshake rejects bad parents, replays, stale generations and the producti
   const allowed = createController({
     ...deps,
     select: () => ({ selected: true, policyId: 'synthetic-canary', artifactSha256: 'b'.repeat(64) }),
-    artifact: () => ({ sha256: 'b'.repeat(64), nodes: canary.nodes }),
+    artifact: () => ({ artifactSha256: 'b'.repeat(64), nodes: canary.nodes }),
   })
   allowed.ready()
   assert.equal(allowed.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).ok, true)
@@ -224,7 +226,7 @@ test('deferred insertion rechecks generation and revoke drops it', () => {
     select: () => ({ selected: true, policyId: 'synthetic-canary', artifactSha256: 'b'.repeat(64) }),
     artifact: () => {
       const canary = parseExport('discovercars', '<div><script id="canary" src="https://canary.test/once.js" data-canary="1"></script></div>')
-      return { sha256: 'b'.repeat(64), nodes: canary.nodes }
+      return { artifactSha256: 'b'.repeat(64), nodes: canary.nodes }
     },
   })
   const controller = createController(deps)
@@ -255,13 +257,10 @@ test('deferred insertion rechecks generation and revoke drops it', () => {
 })
 
 test('a selected plan contributes only its exact script origin', () => {
-  const denied = reviewedScriptSources({ discovercars: { selected: false, nodes: [] } })
-  assert.deepEqual(denied, [])
+  assert.deepEqual(reviewedScriptSources({ selected: false, nodes: [] }), [])
   const selected = reviewedScriptSources({
-    discovercars: {
-      selected: true,
-      nodes: [{ kind: 'script', attributes: [['src', '//cdn.example/widget.js']], children: [] }],
-    },
+    selected: true,
+    nodes: [{ kind: 'script', attributes: [['src', '//cdn.example/widget.js']], children: [] }],
   })
   assert.deepEqual(selected, ['https://cdn.example'])
 })
@@ -280,8 +279,8 @@ test('shell and closed HTTP contracts', async () => {
   assert.match(shell.headers.get('content-security-policy'), /default-src 'none'/)
   assert.equal(shell.headers.get('x-frame-options'), null)
   assert.equal(shell.headers.get('set-cookie'), null)
-  assert.equal(JSON.stringify(productionPlansForClient()), '{}')
-  assert.equal(html.includes('"plans":{}'), true)
+  assert.equal(productionPlanForClient('discovercars'), null)
+  assert.equal(html.includes('"plan":null'), true)
 
   const cases = [
     new Request('https://jetnity-widgets.vercel.app/'),
@@ -292,6 +291,8 @@ test('shell and closed HTTP contracts', async () => {
     new Request('https://jetnity.com/embed/discovercars'),
     new Request('https://jetnity-widgets.vercel.app/embed/other'),
     new Request('https://jetnity-widgets.vercel.app/embed/discovercars', { method: 'POST' }),
+    new Request('http://jetnity-widgets.vercel.app/embed/discovercars'),
+    new Request('https://127.0.0.1/embed/discovercars'),
   ]
   for (const request of cases) {
     const closed = decide(request)
@@ -303,4 +304,129 @@ test('shell and closed HTTP contracts', async () => {
     assert.equal(body.includes('SYNTHETIC'), false)
     assert.equal(body.includes(request.headers.get('host') || '___'), false)
   }
+  const spoofed = classify({
+    method: 'GET',
+    url: 'http://127.0.0.1:41733/embed/discovercars',
+    headers: { get: (name) => (name === 'host' ? 'jetnity-widgets.vercel.app' : null) },
+  })
+  assert.equal(spoofed.kind, 'closed')
+})
+
+test('malformed messages are denied without throwing', () => {
+  for (const data of [
+    { kind: 'constructor' },
+    { kind: 'toString' },
+    { kind: '__proto__' },
+    Object.create(null),
+    JSON.parse('{"__proto__":{"polluted":true},"kind":"ready"}'),
+    'not-json',
+    null,
+    [],
+  ]) {
+    const result = parseMessage(data)
+    assert.equal(result.ok, false)
+    assert.equal(typeof result.reason, 'string')
+  }
+})
+
+test('serialized production plan uses artifactSha256 and inserts once', () => {
+  const selection = {
+    selected: true,
+    provider: 'discovercars',
+    artifactSha256: DISCOVER_SHA,
+    childOrigin: CHILD_ORIGIN,
+    parentOrigin: PARENT_ORIGIN,
+    protocolRevision: 1,
+    policyId: 'reviewed-synthetic',
+    sandbox: 'distinct-child-only',
+  }
+  const plan = clientPlan('discovercars', selection)
+  assert.equal(plan.artifactSha256, DISCOVER_SHA)
+  assert.equal(clientPlan('twelvego', selection), null)
+  const shell = buildShell('discovercars', { plan })
+  const config = JSON.parse(shell.html.match(/startProductionShell\((\{.*\})\);/s)[1])
+  const wired = selectionFromPlan(config)
+  assert.equal(wired.artifactSha256, DISCOVER_SHA)
+  assert.equal(shell.html.includes('12go.asia'), false)
+  const { deps, parent, document } = controllerDeps({
+    select: () => wired,
+    artifact: () => wired,
+  })
+  const controller = createController(deps)
+  controller.ready()
+  const grant = {
+    type: 'jetnity-widget-host',
+    revision: 1,
+    kind: 'grant',
+    provider: 'discovercars',
+    challenge: CHALLENGE,
+    frameGeneration: 1,
+    parentGeneration: 1,
+    policyId: wired.policyId,
+    artifactSha256: wired.artifactSha256,
+  }
+  assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).inserted, true)
+  assert.equal(document.body.children.length, 1)
+  assert.equal(controller.onMessage({ source: parent, origin: PARENT_ORIGIN, data: grant }).reason, 'challenge')
+})
+
+test('one parent decision grants once and a new challenge retires the frame', () => {
+  const iframe = { contentWindow: { id: 'child' }, removed: false, remove() { this.removed = true } }
+  const posted = []
+  let decision = 7
+  const fixture = createParentFixture({
+    provider: 'discovercars',
+    childOrigin: CHILD_ORIGIN,
+    iframe,
+    parentGeneration: decision,
+    currentDecision: () => decision,
+    policyId: 'reviewed-synthetic',
+    artifactSha256: DISCOVER_SHA,
+    allowsGrant: () => true,
+    postToChild(message) { posted.push(message) },
+  })
+  const ready = (challenge, frameGeneration) => ({
+    origin: CHILD_ORIGIN,
+    source: iframe.contentWindow,
+    data: {
+      type: 'jetnity-widget-host',
+      revision: 1,
+      kind: 'ready',
+      provider: 'discovercars',
+      challenge,
+      frameGeneration,
+    },
+  })
+  assert.equal(fixture.onMessage(ready(CHALLENGE, 1)).granted, true)
+  assert.equal(posted[0].parentGeneration, 7)
+  assert.equal(fixture.onMessage(ready(CHALLENGE, 1)).reason, 'duplicate')
+  assert.equal(posted.length, 1)
+  decision = 8
+  assert.equal(fixture.onMessage(ready('d'.repeat(64), 3)).granted, true)
+  assert.equal(posted[1].parentGeneration, 8)
+  assert.equal(fixture.onMessage(ready('c'.repeat(64), 4)).reason, 'lifecycle')
+  assert.equal(iframe.removed, true)
+  assert.equal(posted.length, 2)
+})
+
+test('a pending parent intent times out by removing the frame', () => {
+  const iframe = { contentWindow: { id: 'child' }, removed: false, remove() { this.removed = true } }
+  const fixture = createParentFixture({
+    provider: 'twelvego',
+    childOrigin: CHILD_ORIGIN,
+    iframe,
+    parentGeneration: 3,
+    policyId: 'reviewed-synthetic',
+    artifactSha256: TWELVE_SHA,
+    allowsGrant: () => false,
+    postToChild() {},
+    timeoutMs: 30,
+  })
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      assert.equal(iframe.removed, true)
+      assert.equal(fixture.destroyed, true)
+      resolve()
+    }, 60)
+  })
 })

@@ -33,7 +33,8 @@ The local fixture in `lib/host-runtime.mjs` (`createParentFixture`) is the refer
 
 - Accept `ready` only from `https://jetnity-widgets.vercel.app` and only when `event.source === iframe.contentWindow`.
 - Do not treat `ready` as permission. Re-check the current CMP decision, provider intent, and host policy immediately before `grant`.
-- Bind the grant to the echoed challenge, a new parent generation, the provider, revision 1, and the exact policy and artifact ids.
+- One explicit parent decision id grants at most one child lifecycle. A repeated `ready` with the same challenge is denied. A new challenge without a new decision id retires the whole iframe. A later decision id may grant once. It does not reuse the old challenge.
+- Bind that grant to the echoed challenge, the decision id, the provider, revision 1, and the exact policy and artifact ids.
 - On unmount, category loss, navigation, timeout, or a new frame, remove the iframe element. Do not wait for a child acknowledgement. A child `revoke` or ack is supplementary.
 - A reloaded frame needs a new `ready` and a new decision. Do not reuse a challenge.
 - `sandbox="allow-scripts allow-same-origin"` is permitted only when the iframe `src` is the pinned child origin. It is forbidden for `srcdoc` and for any private Jetnity route. Do not add forms, popups, or navigation unless a later reviewed requirement names them.

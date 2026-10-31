@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 
 import { DISCOVERCARS_EXPORT, TWELVEGO_EXPORT } from './frozen-exports.mjs'
-import { parseExport } from './host-runtime.mjs'
+import { CHILD_ORIGIN, PARENT_ORIGIN, PROTOCOL_REVISION, parseExport } from './host-runtime.mjs'
 import { productionSelection } from './registry.mjs'
 
 const RAW = Object.freeze({
@@ -36,19 +36,25 @@ export function planFromFrozen(provider) {
   }
 }
 
-export function productionPlansForClient() {
-  const plans = {}
-  for (const provider of ['discovercars', 'twelvego']) {
-    const selection = productionSelection(provider)
-    if (!selection) continue
-    const plan = planFromFrozen(provider)
-    if (!plan.ok || plan.sha256 !== selection.artifactSha256) continue
-    plans[provider] = {
-      selected: true,
-      policyId: selection.policyId,
-      sha256: selection.artifactSha256,
-      nodes: plan.nodes,
-    }
+export function clientPlan(provider, selection) {
+  if (!selection || selection.selected !== true || selection.provider !== provider) return null
+  if (selection.childOrigin !== CHILD_ORIGIN || selection.parentOrigin !== PARENT_ORIGIN) return null
+  if (selection.protocolRevision !== PROTOCOL_REVISION) return null
+  const plan = planFromFrozen(provider)
+  if (!plan.ok || plan.sha256 !== selection.artifactSha256) return null
+  return {
+    selected: true,
+    provider,
+    policyId: selection.policyId,
+    artifactSha256: selection.artifactSha256,
+    childOrigin: selection.childOrigin,
+    parentOrigin: selection.parentOrigin,
+    protocolRevision: selection.protocolRevision,
+    sandbox: selection.sandbox,
+    nodes: plan.nodes,
   }
-  return plans
+}
+
+export function productionPlanForClient(provider) {
+  return clientPlan(provider, productionSelection(provider))
 }

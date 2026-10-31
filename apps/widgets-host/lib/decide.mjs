@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 
 import contract from '../inert-contract.json' with { type: 'json' }
 import { CHILD_HOST, CHILD_ORIGIN, PARENT_ORIGIN, insertionValue } from './host-runtime.mjs'
-import { productionPlansForClient } from './production-wire.mjs'
+import { productionPlanForClient } from './production-wire.mjs'
 
 const runtimeSource = readFileSync(new URL('./host-runtime.mjs', import.meta.url), 'utf8')
 
@@ -15,24 +15,22 @@ function nonce() {
 export function classify(request) {
   const url = new URL(request.url)
   const method = request.method.toUpperCase()
-  const headerHost = (request.headers.get('host') || '').toLowerCase()
-  const authority = headerHost || url.host.toLowerCase()
   const provider = url.pathname === '/embed/discovercars'
     ? 'discovercars'
     : url.pathname === '/embed/twelvego'
       ? 'twelvego'
       : null
-  const hostOk = authority === CHILD_HOST || authority === `${CHILD_HOST}:443`
-  const urlName = url.hostname.toLowerCase()
-  const urlOk = headerHost.length === 0 || urlName === CHILD_HOST || urlName === '127.0.0.1' || urlName === 'localhost'
+  const headerHost = (request.headers.get('host') || '').toLowerCase()
+  const headerOk = headerHost.length === 0 || headerHost === CHILD_HOST || headerHost === `${CHILD_HOST}:443`
+  const exactHttps = url.protocol === 'https:' && url.hostname === CHILD_HOST && (url.port === '' || url.port === '443')
   const readable = method === 'GET' || method === 'HEAD'
-  if (provider && hostOk && urlOk && readable && url.search === '') {
+  if (provider && exactHttps && headerOk && readable && url.search === '') {
     return { kind: 'shell', provider, method }
   }
   return { kind: 'closed' }
 }
 
-export function reviewedScriptSources(plans) {
+export function reviewedScriptSources(plan) {
   const sources = []
   function walk(nodes) {
     for (const node of nodes || []) {
@@ -48,10 +46,8 @@ export function reviewedScriptSources(plans) {
       if (node.children) walk(node.children)
     }
   }
-  for (const plan of Object.values(plans || {})) {
-    if (!plan || plan.selected !== true) continue
-    walk(plan.nodes)
-  }
+  if (!plan || plan.selected !== true) return sources
+  walk(plan.nodes)
   return sources
 }
 
@@ -76,13 +72,14 @@ function shellHeaders(value, plans) {
   return headers
 }
 
-export function buildShell(provider) {
+export function buildShell(provider, options = {}) {
   const value = nonce()
+  const plan = Object.hasOwn(options, 'plan') ? options.plan : productionPlanForClient(provider)
   const config = {
     provider,
     childOrigin: CHILD_ORIGIN,
     parentOrigin: PARENT_ORIGIN,
-    plans: productionPlansForClient(),
+    plan: plan && plan.provider === provider ? plan : null,
   }
   const html = `<!DOCTYPE html>
 <html lang="de">
@@ -101,7 +98,7 @@ startProductionShell(${JSON.stringify(config)});
 </body>
 </html>
 `
-  return { status: 200, headers: shellHeaders(value, config.plans), html, nonce: value }
+  return { status: 200, headers: shellHeaders(value, config.plan), html, nonce: value }
 }
 
 export function decide(request) {

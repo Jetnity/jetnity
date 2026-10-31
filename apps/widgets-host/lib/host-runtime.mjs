@@ -26,8 +26,14 @@ const GRANT_KEYS = Object.freeze([
   'artifactSha256',
 ])
 const REVOKE_KEYS = Object.freeze(['type', 'revision', 'kind', 'provider', 'frameGeneration'])
-const KEYS = Object.freeze({ ready: READY_KEYS, grant: GRANT_KEYS, revoke: REVOKE_KEYS })
 const MAX_MESSAGE = 2048
+
+function keysFor(kind) {
+  if (kind === 'ready') return READY_KEYS
+  if (kind === 'grant') return GRANT_KEYS
+  if (kind === 'revoke') return REVOKE_KEYS
+  return null
+}
 
 function fail(reason) {
   return { ok: false, reason }
@@ -52,28 +58,27 @@ export function randomChallenge() {
 }
 
 export function parseMessage(data) {
-  let value = data
-  if (typeof value === 'string') {
-    if (value.length > MAX_MESSAGE) return fail('size')
-    try {
-      value = JSON.parse(value)
-    } catch {
-      return fail('malformed')
-    }
-  }
-  if (value === null || typeof value !== 'object' || Array.isArray(value)) return fail('malformed')
-  let encoded = ''
   try {
-    encoded = JSON.stringify(value)
+    return parseMessageBody(data)
   } catch {
     return fail('malformed')
   }
+}
+
+function parseMessageBody(data) {
+  let value = data
+  if (typeof value === 'string') {
+    if (value.length > MAX_MESSAGE) return fail('size')
+    value = JSON.parse(value)
+  }
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return fail('malformed')
+  const encoded = JSON.stringify(value)
   if (encoded.length > MAX_MESSAGE) return fail('size')
   const kind = value.kind
-  const allowed = KEYS[kind]
-  if (!allowed) return fail('kind')
+  const allowed = keysFor(kind)
+  if (!allowed || typeof allowed.some !== 'function') return fail('kind')
   const keys = Object.keys(value)
-  if (keys.length !== allowed.length || allowed.some((key) => !keys.includes(key))) return fail('fields')
+  if (keys.length !== allowed.length || allowed.some((key) => !Object.hasOwn(value, key))) return fail('fields')
   if (value.type !== PROTOCOL_TYPE || value.revision !== PROTOCOL_REVISION) return fail('revision')
   if (!isProvider(value.provider)) return fail('provider')
   if (!isGeneration(value.frameGeneration)) return fail('generation')
@@ -307,7 +312,7 @@ export function createController(deps) {
         return fail('selection')
       }
       const plan = deps.artifact(deps.provider)
-      if (!plan || plan.sha256 !== message.artifactSha256) return fail('artifact')
+      if (!plan || plan.artifactSha256 !== message.artifactSha256) return fail('artifact')
       spent = true
       const accepted = challenge
       challenge = null
@@ -344,45 +349,89 @@ export function createController(deps) {
 
 export function createParentFixture(deps) {
   let destroyed = false
+  let usedDecision = null
+  let boundChallenge = null
+  let boundFrame = null
+  const decisionId = () => (typeof deps.currentDecision === 'function' ? deps.currentDecision() : deps.parentGeneration)
+  let timer = null
+  function retire(reason) {
+    if (destroyed) return { ok: true, destroyed: true, reason }
+    destroyed = true
+    if (timer) clearTimeout(timer)
+    try {
+      deps.iframe.remove()
+    } catch {
+      /* already gone */
+    }
+    return { ok: true, destroyed: true, reason }
+  }
+  if (Number.isInteger(deps.timeoutMs) && deps.timeoutMs > 0) {
+    timer = setTimeout(() => {
+      if (usedDecision === null) retire('timeout')
+    }, deps.timeoutMs)
+  }
   function onMessage(event) {
-    if (destroyed) return fail('destroyed')
-    if (!event || event.origin !== deps.childOrigin) return fail('origin')
-    if (!deps.iframe || event.source !== deps.iframe.contentWindow) return fail('source')
-    const parsed = parseMessage(event.data)
-    if (!parsed.ok) return parsed
-    if (parsed.message.kind !== 'ready') return fail('not-ready')
-    if (parsed.message.provider !== deps.provider || parsed.message.revision !== PROTOCOL_REVISION) {
-      return fail('provider')
+    try {
+      if (destroyed) return fail('destroyed')
+      if (!event || event.origin !== deps.childOrigin) return fail('origin')
+      if (!deps.iframe || event.source !== deps.iframe.contentWindow) return fail('source')
+      const parsed = parseMessage(event.data)
+      if (!parsed.ok) return parsed
+      if (parsed.message.kind !== 'ready') return fail('not-ready')
+      if (parsed.message.provider !== deps.provider || parsed.message.revision !== PROTOCOL_REVISION) {
+        return fail('provider')
+      }
+      const decision = decisionId()
+      if (usedDecision !== null && decision === usedDecision) {
+        if (parsed.message.challenge !== boundChallenge || parsed.message.frameGeneration !== boundFrame) {
+          retire('reload')
+          return fail('lifecycle')
+        }
+        return fail('duplicate')
+      }
+      if (deps.allowsGrant() !== true) return fail('decision')
+      usedDecision = decision
+      boundChallenge = parsed.message.challenge
+      boundFrame = parsed.message.frameGeneration
+      if (timer) clearTimeout(timer)
+      const grant = {
+        type: PROTOCOL_TYPE,
+        revision: PROTOCOL_REVISION,
+        kind: 'grant',
+        provider: deps.provider,
+        challenge: parsed.message.challenge,
+        frameGeneration: parsed.message.frameGeneration,
+        parentGeneration: decision,
+        policyId: deps.policyId,
+        artifactSha256: deps.artifactSha256,
+      }
+      deps.postToChild(grant)
+      return { ok: true, granted: true, grant }
+    } catch {
+      return fail('malformed')
     }
-    if (deps.allowsGrant() !== true) return fail('decision')
-    const grant = {
-      type: PROTOCOL_TYPE,
-      revision: PROTOCOL_REVISION,
-      kind: 'grant',
-      provider: deps.provider,
-      challenge: parsed.message.challenge,
-      frameGeneration: parsed.message.frameGeneration,
-      parentGeneration: deps.parentGeneration,
-      policyId: deps.policyId,
-      artifactSha256: deps.artifactSha256,
-    }
-    deps.postToChild(grant)
-    return { ok: true, granted: true }
   }
   function destroy() {
-    destroyed = true
-    deps.parentGeneration += 1
-    deps.iframe.remove()
+    return retire('teardown')
   }
-  return { onMessage, destroy, get destroyed() { return destroyed } }
+  return { onMessage, destroy, retire, get destroyed() { return destroyed } }
+}
+
+export function selectionFromPlan(config) {
+  const plan = config && config.plan
+  if (!plan || plan.selected !== true) return null
+  if (plan.provider !== config.provider) return null
+  if (plan.childOrigin !== config.childOrigin || plan.parentOrigin !== config.parentOrigin) return null
+  if (plan.protocolRevision !== PROTOCOL_REVISION) return null
+  if (typeof plan.policyId !== 'string' || typeof plan.artifactSha256 !== 'string') return null
+  return plan
 }
 
 export function startProductionShell(config) {
   const view = globalThis.window
   const document = globalThis.document
   if (!view || !document) return fail('environment')
-  const plans = config && config.plans && typeof config.plans === 'object' ? config.plans : {}
-  const plan = plans[config.provider] || null
+  const plan = selectionFromPlan(config)
   const controller = createController({
     provider: config.provider,
     childOrigin: config.childOrigin,

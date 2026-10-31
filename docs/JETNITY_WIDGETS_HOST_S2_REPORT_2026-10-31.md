@@ -13,6 +13,15 @@
 
 The pushed branch tip is the exact HEAD. This document is inside that tip, so the delivery comment records `git rev-parse HEAD` after the push.
 
+## R1 corrections
+
+Reviewed head `58f71f05b5966470822c88fe00dcb5e5bc2ce711` required four source fixes. Registry OFF was kept.
+
+- The client plan field is `artifactSha256`, the same field `createController` compares. `buildShell` embeds only the requested provider. Production `decide()` passes no override, so the served plan is null. A test may pass `{ plan }` to `buildShell`; that argument is not read from the query, the host, or the environment.
+- `createParentFixture` consumes one decision id for one challenge. A duplicate ready is denied. A new challenge without a new decision id removes the iframe. A pending intent times out by removing the iframe.
+- `parseMessage({kind:'constructor'})` and the `toString` / `__proto__` cases return `{ ok:false }` and do not throw.
+- The browser harness fulfills `https://jetnity.com` and `https://jetnity-widgets.vercel.app` with the real shell headers and bootstrap. A local canary script is fulfilled on the child origin. Requests to any other URL fail the ledger. Loopback `next start` stays closed even if `Host` is the child name.
+
 ## Artifacts
 
 Fetched from GitHub commits, not from vendor hosts. Blob ids, sizes, and SHA-256 matched the task before copy:

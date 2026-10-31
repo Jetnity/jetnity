@@ -1,217 +1,241 @@
-import { createServer } from 'node:http'
 import { readFileSync } from 'node:fs'
 
 import { chromium } from 'playwright'
 
 import { buildShell } from '../../apps/widgets-host/lib/decide.mjs'
+import { CHILD_ORIGIN, PARENT_ORIGIN } from '../../apps/widgets-host/lib/host-runtime.mjs'
 
 const runtime = readFileSync(new URL('../../apps/widgets-host/lib/host-runtime.mjs', import.meta.url), 'utf8')
-const sha = 'b'.repeat(64)
-const blocked = []
+const sha = 'c'.repeat(64)
+const seen = []
 
-function page(title, script) {
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title></head><body><p>${title}</p><script type="module">${script}</script></body></html>`
+function canaryPlan(provider) {
+  return {
+    selected: true,
+    provider,
+    policyId: 'synthetic-canary',
+    artifactSha256: sha,
+    childOrigin: CHILD_ORIGIN,
+    parentOrigin: PARENT_ORIGIN,
+    protocolRevision: 1,
+    sandbox: 'distinct-child-only',
+    nodes: [{
+      kind: 'script',
+      tag: 'script',
+      attributes: [['id', 'canary'], ['src', `${CHILD_ORIGIN}/canary/once.js`]],
+      children: [],
+    }],
+  }
 }
 
-function childScript(defer) {
-  return `
-import { createController } from './host-runtime.mjs'
-const parentOrigin = new URLSearchParams(location.search).get('parent')
-const plan = { sha256: '${sha}', nodes: [{ kind: 'element', tag: 'div', attributes: [], children: [
-  { kind: 'script', tag: 'script', attributes: [['id','canary'],['src','https://canary.test/once.js'],['data-canary','1']], children: [] }
-]}]}
-createController({
-  provider: 'discovercars',
-  childOrigin: location.origin,
-  parentOrigin,
-  document,
-  mount: document.body,
-  readLocationOrigin: () => location.origin,
-  readPathProvider: () => 'discovercars',
-  isTopLevel: () => window.parent === window,
-  parentWindow: () => window.parent,
-  postToParent: (message) => window.parent.postMessage(message, parentOrigin),
-  randomChallenge: () => '${'a'.repeat(64)}',
-  select: () => ({ selected: true, policyId: 'synthetic-canary', artifactSha256: '${sha}' }),
-  artifact: () => plan,
-  deferInsert: ${defer ? 500 : 'undefined'},
-  listen(handler) {
-    window.addEventListener('message', (event) => {
-      const result = handler(event)
-      if (result && result.pending) window.parent.postMessage({ harness: 'pending' }, parentOrigin)
-      if (result && result.inserted) window.parent.postMessage({ harness: 'inserted' }, parentOrigin)
-    })
-  },
-}).ready()
+const onceJs = `const started = document.createElement('script');
+started.src = '${CHILD_ORIGIN}/canary/started.js';
+document.body.appendChild(started);
+setTimeout(() => {
+  const later = document.createElement('script');
+  later.src = '${CHILD_ORIGIN}/canary/after.js';
+  document.body.appendChild(later);
+}, 600);
 `
-}
 
-function parentScript(mode) {
-  return `
-import { createParentFixture } from './host-runtime.mjs'
+function parentHtml(provider) {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>parent</title></head><body>
+<p id="parent-status">parent</p>
+<script type="module">
+${runtime}
 const params = new URLSearchParams(location.search)
-const childOrigin = params.get('child')
 const iframe = document.createElement('iframe')
 iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin')
+let allows = params.get('mode') !== 'hold' && params.get('mode') !== 'timeout'
+let decision = 7
 const fixture = createParentFixture({
-  provider: 'discovercars',
-  childOrigin,
+  provider: '${provider}',
+  childOrigin: '${CHILD_ORIGIN}',
   iframe,
-  parentGeneration: 1,
+  parentGeneration: 7,
+  currentDecision: () => decision,
   policyId: 'synthetic-canary',
   artifactSha256: '${sha}',
-  allowsGrant: () => true,
-  postToChild(grant) {
-    iframe.contentWindow.postMessage(grant, childOrigin)
-    if (${mode === 'replay' ? 'true' : 'false'}) iframe.contentWindow.postMessage(grant, childOrigin)
-  },
+  allowsGrant: () => allows,
+  timeoutMs: params.get('mode') === 'timeout' ? 200 : undefined,
+  postToChild(grant) { iframe.contentWindow.postMessage(grant, '${CHILD_ORIGIN}') },
 })
+window.__jetnity = {
+  release() { allows = true; decision = 8 },
+  destroy() { fixture.destroy() },
+  reload() { iframe.src = iframe.src },
+}
 window.addEventListener('message', (event) => {
-  if (event.origin !== childOrigin) return
-  if (event.data && event.data.harness === 'pending') {
-    fixture.destroy()
-    document.body.dataset.destroyed = '1'
-    return
-  }
-  if (event.data && event.data.harness === 'inserted') {
-    document.body.dataset.inserted = String(Number(document.body.dataset.inserted || '0') + 1)
-    return
-  }
-  fixture.onMessage(event)
+  const result = fixture.onMessage(event)
+  if (!result) return
+  if (result.granted) document.body.dataset.grants = String(Number(document.body.dataset.grants || '0') + 1)
+  if (result.reason) document.body.dataset.last = result.reason
+  if (result.destroyed) document.body.dataset.destroyed = result.reason || '1'
 })
 iframe.src = params.get('src')
 document.body.appendChild(iframe)
-`
+</script></body></html>`
 }
 
-function listen(routes) {
-  const server = createServer((req, res) => {
-    const url = new URL(req.url, 'http://127.0.0.1')
-    const hit = routes[url.pathname]
-    if (!hit) {
-      res.writeHead(404, { 'content-type': 'text/plain' })
-      res.end('missing')
-      return
-    }
-    res.writeHead(200, { 'content-type': hit.type, 'cache-control': 'no-store' })
-    res.end(hit.body)
-  })
-  return new Promise((resolve) => {
-    server.listen(0, '127.0.0.1', () => resolve({ server, port: server.address().port }))
-  })
+function fulfill(route, { status = 200, headers = {}, body = '', contentType = 'text/html; charset=utf-8' }) {
+  const merged = { 'content-type': contentType, 'cache-control': 'no-store', ...headers }
+  return route.fulfill({ status, headers: merged, body })
 }
 
-async function overflow(page, width, height) {
-  await page.setViewportSize({ width, height })
-  return page.evaluate(() => ({
-    overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-    controls: document.querySelectorAll('a,button,input,iframe,form').length,
-  }))
-}
-
-const parent = await listen({
-  '/host-runtime.mjs': { type: 'text/javascript; charset=utf-8', body: runtime },
-  '/replay': { type: 'text/html; charset=utf-8', body: page('replay', parentScript('replay')) },
-  '/teardown': { type: 'text/html; charset=utf-8', body: page('teardown', parentScript('teardown')) },
-})
-const child = await listen({
-  '/host-runtime.mjs': { type: 'text/javascript; charset=utf-8', body: runtime },
-  '/insert': { type: 'text/html; charset=utf-8', body: page('insert', childScript(false)) },
-  '/defer': { type: 'text/html; charset=utf-8', body: page('defer', childScript(true)) },
-})
-
-const browser = await chromium.launch({
-  args: ['--host-resolver-rules=MAP jetnity.test 127.0.0.1, MAP widgets.test 127.0.0.1'],
-})
+const browser = await chromium.launch()
 const context = await browser.newContext()
 await context.route('**/*', async (route) => {
+  seen.push(route.request().url())
+  await route.abort('blockedbyclient')
+})
+await context.route(`${PARENT_ORIGIN}/**`, async (route) => {
   const url = route.request().url()
-  let hostname = ''
-  try { hostname = new URL(url).hostname } catch { hostname = '' }
-  const allowed = hostname === '127.0.0.1' || hostname === 'localhost' || hostname === 'jetnity.test' || hostname === 'widgets.test'
-  if (!allowed) {
-    blocked.push(url)
-    await route.abort('blockedbyclient')
+  seen.push(url)
+  if (url.startsWith(`${PARENT_ORIGIN}/parent`)) {
+    const provider = new URL(url).searchParams.get('provider') || 'discovercars'
+    await fulfill(route, { body: parentHtml(provider) })
     return
   }
-  await route.continue()
+  await route.abort('blockedbyclient')
+})
+await context.route(`${CHILD_ORIGIN}/**`, async (route) => {
+  const url = new URL(route.request().url())
+  seen.push(url.href)
+  if (url.pathname === '/embed/discovercars') {
+    const shell = buildShell('discovercars', { plan: canaryPlan('discovercars') })
+    await fulfill(route, { status: shell.status, headers: Object.fromEntries(shell.headers.entries()), body: shell.html })
+    return
+  }
+  if (url.pathname === '/embed/twelvego') {
+    const shell = buildShell('twelvego')
+    await fulfill(route, { status: shell.status, headers: Object.fromEntries(shell.headers.entries()), body: shell.html })
+    return
+  }
+  if (url.pathname === '/canary/once.js') {
+    await fulfill(route, { body: onceJs, contentType: 'text/javascript; charset=utf-8' })
+    return
+  }
+  if (url.pathname === '/canary/started.js') {
+    await fulfill(route, { body: '/* started */', contentType: 'text/javascript; charset=utf-8' })
+    return
+  }
+  if (url.pathname === '/same/a' || url.pathname === '/same/b') {
+    const key = url.pathname.endsWith('/a') ? 'write' : 'read'
+    const body = key === 'write'
+      ? `<!DOCTYPE html><p id="marker">writer</p><script>localStorage.setItem('shared-provider','canary'); document.body.dataset.wrote='1'</script>`
+      : `<!DOCTYPE html><p id="marker"></p><script>document.getElementById('marker').textContent = localStorage.getItem('shared-provider') || ''</script>`
+    await fulfill(route, { body })
+    return
+  }
+  await route.abort('blockedbyclient')
 })
 
-try {
-  const parentOrigin = `http://jetnity.test:${parent.port}`
-  const childOrigin = `http://widgets.test:${child.port}`
-  const replay = await context.newPage()
-  const replayUrl = `${parentOrigin}/replay?child=${encodeURIComponent(childOrigin)}&src=${encodeURIComponent(`${childOrigin}/insert?parent=${encodeURIComponent(parentOrigin)}`)}`
-  await replay.goto(replayUrl, { waitUntil: 'domcontentloaded' })
-  await replay.waitForFunction(() => document.body.dataset.inserted === '1', null, { timeout: 10000 })
-  await replay.waitForTimeout(400)
-  const inserted = await replay.locator('body').getAttribute('data-inserted')
-  const canaryHits = blocked.filter((url) => url.includes('canary.test'))
-  if (inserted !== '1' || canaryHits.length !== 1) {
-    throw new Error(`replay insert failed inserted=${inserted} canary=${canaryHits.length}`)
-  }
-  console.log('PASS one canary insert and replay did not duplicate it')
-
-  const before = blocked.length
-  const teardown = await context.newPage()
-  const teardownUrl = `${parentOrigin}/teardown?child=${encodeURIComponent(childOrigin)}&src=${encodeURIComponent(`${childOrigin}/defer?parent=${encodeURIComponent(parentOrigin)}`)}`
-  await teardown.goto(teardownUrl, { waitUntil: 'domcontentloaded' })
-  await teardown.waitForFunction(() => document.body.dataset.destroyed === '1', null, { timeout: 10000 })
-  const frameCount = await teardown.locator('iframe').count()
-  if (frameCount !== 0) throw new Error('iframe was not removed')
-  await teardown.waitForTimeout(700)
-  const late = blocked.slice(before).filter((url) => url.includes('canary.test'))
-  if (late.length !== 0) throw new Error(`pending canary survived teardown: ${late.length}`)
-  console.log('PASS real iframe teardown stopped the pending canary')
-
-  const storageA = await context.newPage()
-  await storageA.goto(`${childOrigin}/insert?parent=${encodeURIComponent(parentOrigin)}`)
-  await storageA.evaluate(() => localStorage.setItem('shared-provider', 'canary'))
-  const storageB = await context.newPage()
-  await storageB.goto(`${childOrigin}/defer?parent=${encodeURIComponent(parentOrigin)}`)
-  const shared = await storageB.evaluate(() => localStorage.getItem('shared-provider'))
-  if (shared !== 'canary') throw new Error('same-child-origin storage capability was not observable')
-  console.log('PASS same-child-origin storage capability recorded by the harness canary')
-
-  const cookiePage = await context.newPage()
-  await cookiePage.goto(`${childOrigin}/insert?parent=${encodeURIComponent(parentOrigin)}`)
-  await cookiePage.evaluate(() => {
-    document.cookie = 'cross=1; Domain=jetnity.test; Path=/'
-    document.cookie = 'broad=1; Domain=jetnity.com; Path=/'
+function unexpected() {
+  return seen.filter((url) => {
+    if (url.startsWith(`${PARENT_ORIGIN}/parent`)) return false
+    if (url.startsWith(`${CHILD_ORIGIN}/embed/discovercars`)) return false
+    if (url.startsWith(`${CHILD_ORIGIN}/embed/twelvego`)) return false
+    if (url === `${CHILD_ORIGIN}/canary/once.js`) return false
+    if (url === `${CHILD_ORIGIN}/canary/started.js`) return false
+    if (url.startsWith(`${CHILD_ORIGIN}/same/`)) return false
+    return true
   })
-  const parentCookies = await context.cookies(parentOrigin)
-  if (parentCookies.some((item) => item.name === 'cross' || item.name === 'broad')) {
-    throw new Error('child wrote a parent-site cookie')
-  }
-  console.log('PASS child origin did not set a jetnity.test or jetnity.com cookie')
+}
 
-  const shell = buildShell('discovercars')
-  const layout = await context.newPage()
-  await layout.setContent(shell.html, { waitUntil: 'domcontentloaded' })
-  for (const width of [320, 390, 768, 1440]) {
-    const result = await overflow(layout, width, 800)
-    if (result.overflow || result.controls !== 0) throw new Error(`layout ${width} overflow=${result.overflow} controls=${result.controls}`)
+try {
+  const insert = await context.newPage()
+  const childEmbed = `${CHILD_ORIGIN}/embed/discovercars`
+  await insert.goto(`${PARENT_ORIGIN}/parent?provider=discovercars&mode=hold&src=${encodeURIComponent(childEmbed)}`, { waitUntil: 'domcontentloaded' })
+  await insert.waitForTimeout(400)
+  if (await insert.locator('body').getAttribute('data-grants')) throw new Error('pending decision granted')
+  await insert.evaluate(() => window.__jetnity.release())
+  await insert.evaluate(() => window.__jetnity.reload())
+  await insert.waitForFunction(() => document.body.dataset.grants === '1', null, { timeout: 10000 })
+  const startedAt = Date.now()
+  while (!seen.includes(`${CHILD_ORIGIN}/canary/started.js`) && Date.now() - startedAt < 5000) {
+    await insert.waitForTimeout(50)
   }
-  const zoomed = await browser.newContext({ bypassCSP: true })
-  const zoomPage = await zoomed.newPage()
-  await zoomPage.setContent(shell.html, { waitUntil: 'domcontentloaded' })
-  await zoomPage.evaluate(() => { document.documentElement.style.fontSize = '32px' })
-  for (const width of [320, 390, 768, 1440]) {
-    const result = await overflow(zoomPage, width, 900)
-    if (result.overflow) throw new Error(`200% font overflow at ${width}`)
+  if (!seen.includes(`${CHILD_ORIGIN}/canary/started.js`)) throw new Error('local canary did not start')
+  if (seen.filter((url) => url === `${CHILD_ORIGIN}/canary/once.js`).length !== 1) throw new Error('canary script was not exactly once')
+  await insert.evaluate(() => window.__jetnity.destroy())
+  await insert.waitForFunction(() => document.querySelector('iframe') === null)
+  await insert.waitForTimeout(900)
+  if (seen.includes(`${CHILD_ORIGIN}/canary/after.js`)) throw new Error('post-teardown canary ran')
+  console.log('PASS real bootstrap inserted one local canary and teardown stopped the later script')
+
+  const denied = await context.newPage()
+  const deniedResponse = await denied.goto(`${CHILD_ORIGIN}/embed/twelvego`, { waitUntil: 'domcontentloaded' })
+  const deniedCsp = deniedResponse.headers()['content-security-policy'] || ''
+  if (!deniedCsp.includes("frame-ancestors https://jetnity.com")) throw new Error(`twelvego CSP ${deniedCsp}`)
+  const deniedText = await denied.locator('#jetnity-widget-status').innerText()
+  if (!deniedText.includes('Kein Anbieter ist geladen.')) throw new Error(deniedText)
+  if (seen.filter((url) => url.includes('discovercars.com') || url.includes('12go.asia') || url.includes('trainbusferry')).length) {
+    throw new Error('denied shell requested a vendor')
   }
-  await zoomed.close()
-  await layout.focus('body')
-  await layout.keyboard.press('Tab')
-  const active = await layout.evaluate(() => document.activeElement && document.activeElement.tagName)
-  if (active === 'BUTTON' || active === 'A' || active === 'INPUT') throw new Error(`unexpected focus ${active}`)
-  console.log('PASS shell layout at 320/390/768/1440 and 200% root font')
+  console.log('PASS denied twelvego shell kept its frame-ancestors header and loaded no vendor')
+
+  const framed = await context.newPage()
+  const beforeDenied = seen.length
+  await framed.goto(`${PARENT_ORIGIN}/parent?provider=twelvego&mode=hold&src=${encodeURIComponent(`${CHILD_ORIGIN}/embed/twelvego`)}`, { waitUntil: 'domcontentloaded' })
+  await framed.waitForTimeout(300)
+  if (await framed.locator('body').getAttribute('data-grants')) throw new Error('pending decision granted')
+  await framed.evaluate(() => window.__jetnity.release())
+  await framed.evaluate(() => window.__jetnity.reload())
+  await framed.waitForTimeout(500)
+  const vendorAfter = seen.slice(beforeDenied).filter((url) => /discovercars\.com|12go\.asia|trainbusferry|canary\/once/.test(url))
+  if (vendorAfter.length) throw new Error(`denied plan loaded ${vendorAfter.join(',')}`)
+  console.log('PASS a fresh parent decision does not load a denied production plan')
+
+  const timeout = await context.newPage()
+  await timeout.goto(`${PARENT_ORIGIN}/parent?provider=discovercars&mode=timeout&src=${encodeURIComponent(childEmbed)}`, { waitUntil: 'domcontentloaded' })
+  await timeout.waitForFunction(() => document.querySelector('iframe') === null, null, { timeout: 4000 })
+  console.log('PASS parent intent timeout removes the iframe')
+
+  const storage = await context.newPage()
+  await storage.goto(`${CHILD_ORIGIN}/same/a`, { waitUntil: 'domcontentloaded' })
+  const reader = await context.newPage()
+  await reader.goto(`${CHILD_ORIGIN}/same/b`, { waitUntil: 'domcontentloaded' })
+  const shared = await reader.locator('#marker').innerText()
+  if (shared !== 'canary') throw new Error(`shared storage ${shared}`)
+  console.log('PASS same-child-origin storage is shared and is not provider isolation')
+
+  const cookieParent = await context.newPage()
+  await cookieParent.goto(`${PARENT_ORIGIN}/parent?provider=discovercars&mode=hold&probe=cookie&src=${encodeURIComponent(`${CHILD_ORIGIN}/embed/discovercars`)}`, { waitUntil: 'domcontentloaded' })
+  await cookieParent.waitForFunction(() => document.querySelector('iframe') !== null)
+  await cookieParent.evaluate(() => { document.body.dataset.secret = 'parent-only' })
+  const childFrame = cookieParent.frames().find((frame) => frame.url().startsWith(CHILD_ORIGIN))
+  if (!childFrame) throw new Error(`missing child frame: ${cookieParent.frames().map((frame) => frame.url()).join(' | ')}`)
+  const crossed = await childFrame.evaluate(() => {
+    let dom = 'blocked'
+    try { dom = window.parent.document.body.dataset.secret } catch { dom = 'blocked' }
+    document.cookie = 'broad=1; Domain=jetnity.com; Path=/'
+    return dom
+  })
+  if (crossed !== 'blocked') throw new Error('child read parent DOM')
+  const parentCookies = await context.cookies(PARENT_ORIGIN)
+  if (parentCookies.some((item) => item.name === 'broad' || item.domain === 'jetnity.com' || item.domain === '.jetnity.com')) {
+    throw new Error(`parent cookies ${JSON.stringify(parentCookies)}`)
+  }
+  console.log('PASS child origin cannot read parent DOM or set a jetnity.com cookie')
+
+  for (const width of [320, 390, 768, 1440]) {
+    const layout = await context.newPage()
+    await layout.setViewportSize({ width, height: 800 })
+    await layout.goto(`${CHILD_ORIGIN}/embed/twelvego`, { waitUntil: 'domcontentloaded' })
+    const overflow = await layout.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)
+    const controls = await layout.locator('a,button,input,form').count()
+    if (overflow || controls !== 0) throw new Error(`layout ${width} overflow=${overflow} controls=${controls}`)
+    await layout.close()
+  }
+  console.log('PASS inactive shell layout under the served CSP')
+
+  const bad = unexpected()
+  if (bad.length) throw new Error(`unexpected requests: ${[...new Set(bad)].join(', ')}`)
   console.log('browser-harness PASS')
 } catch (error) {
   console.error(error)
+  console.error([...new Set(seen)])
   process.exitCode = 1
 } finally {
   await browser.close()
-  parent.server.close()
-  child.server.close()
 }
