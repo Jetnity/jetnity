@@ -18,6 +18,11 @@ declare global {
     __jetnityPrefs?: number
     __jetnitySetAnalytics?: (wert: boolean) => void
     __jetnitySetConsent?: (name: string, wert: boolean) => void
+    __jetnityCapability?: { src: string } | null
+    __jetnityIssued?: { epoch: number; providerId: string; scopeKey: string; policyId: string; requiredOptional: string[] } | null
+    __jetnityFacade?: { check: boolean; second: boolean; src: string | null; generation: number | null } | null
+    __jetnityUnmount?: () => void
+    __jetnityRemount?: () => void
   }
 }
 
@@ -67,8 +72,9 @@ window.__jetnityRestore=function(){
 document.dispatchEvent(new CustomEvent('privacybee:ready',{detail:{categories:['ANALYTICS_STORAGE'],hasExplicitConsent:true}}));
 `
 
-function html(bootstrap: string) {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div><script src="/app.js"></script><script>${bootstrap}</script></body></html>`
+function html(bootstrap: string, fixture = false) {
+  const flag = fixture ? '<script>window.__jetnityUseFixturePolicy=true</script>' : ''
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div>${flag}<script src="/app.js"></script><script>${bootstrap}</script></body></html>`
 }
 
 function bauen() {
@@ -79,7 +85,9 @@ function bauen() {
   execFileSync(process.execPath, [tailwind, '-i', join(wurzel, 'styles/globals.css'), '-o', cssPfad, '--minify'], { cwd: wurzel, stdio: 'inherit' })
   execFileSync(esbuild, [
     join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/einbindung.tsx'),
-    '--bundle', '--format=iife', `--alias:@=${wurzel}`, `--outfile=${jsPfad}`,
+    '--bundle', '--format=iife', `--alias:@=${wurzel}`,
+    `--alias:@/lib/privacy/privacybee-cmp/produktionspolitik=${join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/politik-mock.ts')}`,
+    `--outfile=${jsPfad}`,
     '--define:process.env.NODE_ENV="production"',
   ], { cwd: wurzel, stdio: 'inherit' })
   return { css: readFileSync(cssPfad), js: readFileSync(jsPfad) }
@@ -123,8 +131,8 @@ async function log(page: Page) {
   return page.locator('#cmp-canary-log').getAttribute('data-canary-log').then((wert) => JSON.parse(wert || '[]') as { epoch: number; scope: string; ok: boolean; kind: string; n: number }[])
 }
 
-async function tokenLesen(page: Page) {
-  return page.evaluate(() => window.__jetnityToken ?? null)
+async function capabilityLesen(page: Page) {
+  return page.evaluate(() => window.__jetnityCapability ?? null)
 }
 
 async function main() {
@@ -135,7 +143,7 @@ async function main() {
   const banner: string[] = []
   const fremd: string[] = []
   try {
-    const lizenziert = html(buildBootstrapSource({ release: true, killDenied: false }))
+    const lizenziert = html(buildBootstrapSource({ release: true, killDenied: false }), true)
     const page = await browser.newPage({ viewport: { width: 390, height: 900 } })
     await anbinden(page, 'https://jetnity.com', lizenziert, dateien, banner, fremd)
     await page.goto('https://jetnity.com/', { waitUntil: 'networkidle' })
@@ -164,7 +172,6 @@ async function main() {
     if (stil.home < 1 || stil.shell < 1) merken('Ancestor fehlt')
     if (stil.html !== 'rgb(247, 252, 249)' && stil.html !== 'rgba(247, 252, 249, 1)') merken(`Mint ${stil.html}`)
     if (await page.locator('[data-cmp-client="1"]').count() !== 1) merken('Client nicht gemountet')
-    if (await page.locator('[data-production-seam="closed"]').count() !== 1) merken('Produktionsnaht nicht geschlossen')
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     await page.waitForFunction(() => document.querySelector('[data-phase]')?.getAttribute('data-phase') === 'ready')
     await page.locator('[data-cmp-preferences="ready"]').click()
@@ -174,21 +181,14 @@ async function main() {
     if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Informative Zustimmung hat einen Rahmen erzeugt')
     if (await page.locator('[data-effective-vendor-execution="denied"]').count() < 1) merken('Ausführung nicht verweigert')
 
-    await page.locator('[data-synthetic="select"]').click()
-    await page.locator('[data-synthetic="remember"]').click()
-    const vorRahmen = await tokenLesen(page)
-    if (!vorRahmen) merken('Token vor dem Rahmen fehlt')
-    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Rahmen vor dem Start')
-    await page.evaluate(() => window.__jetnitySetAnalytics?.(false))
-    await page.waitForFunction(() => document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
-    await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
-    await page.locator('[data-synthetic="start"]').click()
-    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Start ohne neue Auswahl hat einen Rahmen erzeugt')
-
-    await page.locator('[data-synthetic="select"]').click()
-    await page.locator('[data-synthetic="remember"]').click()
-    await page.locator('[data-synthetic="start"]').click()
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Rahmen vor der Anfrage')
+    await page.locator('[data-synthetic="request"]').click()
     await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
+    const fassade = await page.evaluate(() => window.__jetnityFacade ?? null)
+    if (!fassade?.check || fassade.second || !fassade.generation || fassade.generation < 1) merken(`Fassade ${JSON.stringify(fassade)}`)
+    if (!fassade?.src?.endsWith('/embed/discovercars') || fassade.src.includes('privacybee') || fassade.src.includes('discovercars.com')) {
+      merken(`Capability-Quelle ${fassade?.src}`)
+    }
     const rahmen = page.locator('[data-synthetic-frame="1"]')
     if (await rahmen.getAttribute('sandbox') !== 'allow-scripts') merken('Canary-Sandbox fehlt')
     const srcdoc = await rahmen.getAttribute('srcdoc')
@@ -206,8 +206,8 @@ async function main() {
       const eintraege = JSON.parse(roh) as { ok: boolean; kind: string }[]
       return document.querySelectorAll('[data-synthetic-frame="1"]').length === 1 && eintraege.slice(bisher).some((eintrag) => eintrag.kind === 'pulse' && eintrag.ok)
     }, vorFremd)
-    const erster = await tokenLesen(page)
-    if (!erster) merken('Lebendes Token fehlt')
+    const erster = await capabilityLesen(page)
+    if (!erster?.src?.endsWith('/embed/discovercars')) merken('Lebende Capability fehlt')
     await page.locator('[data-synthetic="release-forged"]').click()
     if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Gefälschtes Release entfernt den Rahmen')
     if ((await log(page)).some((eintrag) => eintrag.kind === 'delayed')) merken('Verzögerung lief vor dem Schnitt')
@@ -228,56 +228,58 @@ async function main() {
     if (nachAbbruch.length > 1) merken(`Canary arbeitet nach Abbruch ${nachAbbruch.length}`)
     if (nachAbbruch.some((eintrag) => eintrag.ok)) merken('Eingereihte Canary-Arbeit wurde akzeptiert')
     await page.screenshot({ path: join(beweis, '390-nach-kategorieverlust.png'), fullPage: true })
-    await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
-    await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', true))
-    await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
-    }, erster)
+    await page.locator('[data-synthetic="check"]').click()
+    if (await page.evaluate(() => window.__jetnityFacade?.check) !== false) merken('Check bleibt nach Kategorieverlust wahr')
+    const ersteEpoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
+    const alt = await page.evaluate(() => window.__jetnityIssued ?? null)
+    if (!alt) merken('Ausgestellte Arbeit fehlt')
+    await page.evaluate((ausgegeben) => {
+      window.postMessage({ jetnityCanary: ausgegeben?.epoch, provider: ausgegeben?.providerId, scope: ausgegeben?.scopeKey, policyId: ausgegeben?.policyId, required: ausgegeben?.requiredOptional }, '*')
+    }, alt)
     await page.waitForFunction(() => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
       return JSON.parse(roh).some((eintrag: { ok: boolean }) => eintrag.ok === false)
     })
     await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
-    await page.locator('[data-synthetic="select"]').click()
-    await page.locator('[data-synthetic="remember"]').click()
-    await page.locator('[data-synthetic="start"]').click()
+    await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', true))
+    await page.locator('[data-synthetic="request"]').click()
     await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
-    const zweiter = await tokenLesen(page)
-    if (!zweiter || zweiter.epoch === erster?.epoch) merken('Regrant nutzt die alte Epoche')
+    const zweiteEpoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
+    if (!zweiteEpoche || zweiteEpoche === ersteEpoche) merken(`Neue Epoche ${ersteEpoche}/${zweiteEpoche}`)
     await page.waitForFunction(() => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
       const eintraege = JSON.parse(roh) as { epoch: number; ok: boolean }[]
-      return eintraege.some((eintrag) => eintrag.epoch === window.__jetnityToken?.epoch && eintrag.ok)
+      const aktuell = Number(document.querySelector('[data-live-epoch]')?.getAttribute('data-live-epoch'))
+      return eintraege.some((eintrag) => eintrag.epoch === aktuell && eintrag.ok)
     })
     const vorReplay = (await log(page)).length
-    await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
-    }, erster)
+    await page.evaluate((ausgegeben) => {
+      window.postMessage({ jetnityCanary: ausgegeben?.epoch, provider: ausgegeben?.providerId, scope: ausgegeben?.scopeKey, policyId: ausgegeben?.policyId, required: ausgegeben?.requiredOptional }, '*')
+    }, alt)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
       return JSON.parse(roh).slice(bisher).some((eintrag: { kind?: string }) => eintrag.kind === 'replay')
     }, vorReplay)
     const nachRegrant = (await log(page)).slice(vorReplay).filter((eintrag) => eintrag.kind === 'replay')
     if (nachRegrant.length === 0 || nachRegrant.some((eintrag) => eintrag.ok)) merken('Alte Epoche nach Regrant akzeptiert')
+    await page.locator('[data-synthetic="release-old"]').click()
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Altes Release entfernt den neuen Rahmen')
+    await page.locator('[data-synthetic="release-forged"]').click()
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Gefälschtes Release entfernt den Rahmen')
 
     await page.locator('[data-synthetic="reorder"]').click()
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'none')
-    await page.locator('[data-synthetic="select"]').click()
-    await page.locator('[data-synthetic="remember"]').click()
-    await page.locator('[data-synthetic="start"]').click()
+    await page.locator('[data-synthetic="request"]').click()
     await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
     await page.locator('[data-synthetic="scope"]').click()
     await page.waitForFunction(() => document.querySelector('[data-scope]')?.getAttribute('data-scope') === 'scope-beta' && document.querySelector('[data-synthetic-frame="1"]') === null)
-
-    await page.locator('[data-synthetic="select"]').click()
-    await page.locator('[data-synthetic="remember"]').click()
-    await page.locator('[data-synthetic="start"]').click()
+    await page.locator('[data-synthetic="request"]').click()
     await page.waitForFunction(() => document.querySelectorAll('[data-synthetic-frame="1"]').length === 1)
-    const vorClose = await tokenLesen(page)
+    const vorClose = await page.evaluate(() => window.__jetnityIssued ?? null)
     await page.getByRole('button', { name: 'Schliessen' }).click()
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
-    await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
+    await page.evaluate((ausgegeben) => {
+      window.postMessage({ jetnityCanary: ausgegeben?.epoch, provider: ausgegeben?.providerId, scope: ausgegeben?.scopeKey, policyId: ausgegeben?.policyId, required: ausgegeben?.requiredOptional }, '*')
     }, vorClose)
     await page.locator('[data-synthetic="break"]').click()
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error')
@@ -289,8 +291,8 @@ async function main() {
     await page.evaluate(() => window.__jetnityRemount?.())
     await page.waitForFunction(() => document.querySelector('[data-cmp-client="1"]') && document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     const laenge = (await log(page)).length
-    await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
+    await page.evaluate((ausgegeben) => {
+      window.postMessage({ jetnityCanary: ausgegeben?.epoch, provider: ausgegeben?.providerId, scope: ausgegeben?.scopeKey, policyId: ausgegeben?.policyId, required: ausgegeben?.requiredOptional }, '*')
     }, vorClose)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
@@ -353,6 +355,10 @@ async function main() {
     if (geoFrueh.calls !== 1 || geoFrueh.attempt !== 'blocked' || geoFrueh.scripts !== 0 || geoFrueh.early?.created || geoFrueh.early?.reason !== 'host_unlicensed' || geoFrueh.early?.bannerPresent) {
       merken(`Geometrie-Optional ${JSON.stringify(geoFrueh)}`)
     }
+    await geo.locator('[data-synthetic="request"]').click()
+    if (await geo.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Unlizenzierte Anfrage erzeugt einen Rahmen')
+    const geoFassade = await geo.evaluate(() => window.__jetnityFacade ?? null)
+    if (geoFassade?.generation || geoFassade?.src) merken(`Unlizenzierte Fassade ${JSON.stringify(geoFassade)}`)
     if (await geo.locator('[data-cmp-client="1"]').count() !== 1) merken('Geometrie ohne Client')
     await geo.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error', undefined, { timeout: 15_000 })
     if (await geo.locator('[data-cmp-preferences="ready"]').count() !== 0) merken('Unlizenzierte Präferenzen sichtbar')

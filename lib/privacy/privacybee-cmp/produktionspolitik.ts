@@ -17,7 +17,13 @@ const EMBED = {
   twelvego: { path: TWELVEGO_EMBED_PATH, artifact: TWELVEGO_ARTIFACT_SHA256 },
 } as const
 
-const REJECTED_SANDBOX = ['allow-forms', 'allow-popups', 'allow-top-navigation', 'allow-modals']
+const SANDBOX_REQUIRED = ['allow-scripts', 'allow-same-origin'] as const
+const SANDBOX_OPTIONAL = ['allow-forms', 'allow-popups'] as const
+const SANDBOX_KNOWN = new Set<string>([...SANDBOX_REQUIRED, ...SANDBOX_OPTIONAL])
+const POLICY_ID = /^[a-z0-9-]{1,64}$/
+const COMMIT = /^[a-f0-9]{40}$/
+const REVISION = /^[a-z0-9][a-z0-9._-]{0,63}$/
+const PLACEHOLDER = /^(todo|tbd|placeholder|pending|fixme|xxx|changeme)$/i
 
 export type ProductionPolicyRecord = {
   readonly providerId: WidgetConsentProviderId
@@ -47,6 +53,22 @@ function text(value: unknown): string | null {
   return trimmed === '' ? null : trimmed
 }
 
+function revision(value: unknown): string | null {
+  const raw = text(value)
+  if (!raw || !REVISION.test(raw) || PLACEHOLDER.test(raw)) return null
+  return raw
+}
+
+function sandboxOf(value: unknown): string | null {
+  const raw = text(value)
+  if (!raw) return null
+  const tokens = raw.split(/\s+/)
+  if (new Set(tokens).size !== tokens.length) return null
+  if (!tokens.every((token) => SANDBOX_KNOWN.has(token))) return null
+  if (!SANDBOX_REQUIRED.every((token) => tokens.includes(token))) return null
+  return tokens.join(' ')
+}
+
 function categories(value: unknown): readonly string[] | null {
   if (!Array.isArray(value) || value.length === 0) return null
   const names: string[] = []
@@ -65,15 +87,14 @@ export function validateProductionPolicy(input: unknown): ProductionPolicyRecord
   const pins = EMBED[record.providerId]
   const policyId = text(record.policyId)
   const requiredOptional = categories(record.requiredOptional)
-  const processingPolicyRevision = text(record.processingPolicyRevision)
-  const disclosureRevision = text(record.disclosureRevision)
-  const networkPolicyRevision = text(record.networkPolicyRevision)
+  const processingPolicyRevision = revision(record.processingPolicyRevision)
+  const disclosureRevision = revision(record.disclosureRevision)
+  const networkPolicyRevision = revision(record.networkPolicyRevision)
   const hostSelectionCommit = text(record.hostSelectionCommit)
-  const sandbox = text(record.sandbox)
-  if (!policyId || !requiredOptional || !processingPolicyRevision || !disclosureRevision || !networkPolicyRevision || !hostSelectionCommit || !sandbox) {
+  const sandbox = sandboxOf(record.sandbox)
+  if (!policyId || !POLICY_ID.test(policyId) || !requiredOptional || !processingPolicyRevision || !disclosureRevision || !networkPolicyRevision || !hostSelectionCommit || !COMMIT.test(hostSelectionCommit) || !sandbox) {
     return null
   }
-  if (REJECTED_SANDBOX.some((token) => sandbox.includes(token))) return null
   if (record.parentOrigin !== CMP_PARENT_ORIGIN || record.childOrigin !== CMP_CHILD_ORIGIN) return null
   if (record.embedPath !== pins.path || record.artifactSha256 !== pins.artifact) return null
   if (record.protocolRevision !== 1) return null

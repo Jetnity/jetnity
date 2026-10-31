@@ -22,6 +22,8 @@ var root=window.__jetnityCmp||(window.__jetnityCmp={});
 if(root.booted)return;
 root.booted=1;
 root.phase="denied";
+root.releaseAllowed=${releaseLiteral};
+root.killDenied=${killLiteral};
 document.addEventListener("privacybee:ready",function(){root.ready=1});
 document.addEventListener("privacybee:consent-changed",function(){root.changed=1});
 root.listeners=1;
@@ -42,6 +44,25 @@ script.setAttribute("data-jetnity-cmp","banner");
 (document.head||document.documentElement).appendChild(script);
 root.scripts=(root.scripts||0)+1;
 })();`
+}
+
+export type BakedProductionGate = {
+  readonly releaseAllowed: boolean
+  readonly killDenied: boolean
+}
+
+/** Reads the booleans the bootstrap already baked. Missing or malformed input fails closed. */
+export function readBakedProductionGate(): BakedProductionGate | null {
+  const host = typeof globalThis === 'undefined' ? undefined : globalThis
+  const root = host && (host as { __jetnityCmp?: unknown }).__jetnityCmp
+  if (!root || typeof root !== 'object') return null
+  const record = root as { releaseAllowed?: unknown; killDenied?: unknown }
+  if (typeof record.releaseAllowed !== 'boolean' || typeof record.killDenied !== 'boolean') return null
+  return { releaseAllowed: record.releaseAllowed, killDenied: record.killDenied }
+}
+
+export function bakedProductionGateAllows(gate: BakedProductionGate | null): boolean {
+  return gate !== null && gate.releaseAllowed === true && gate.killDenied === false
 }
 
 export function productionBootstrapSource(

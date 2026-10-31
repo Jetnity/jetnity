@@ -7,13 +7,10 @@ import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundar
 import { PrivacyBeeCmpFrameSlot } from '@/components/privacy/PrivacyBeeCmpFrameSlot'
 import { WidgetConsentChoice } from '@/components/privacy/WidgetConsentChoice'
 import { applyController, readCmpController, retireSharedExecution, serverCmpSnapshot, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
-import { releaseProductionExecution, requestProductionExecution } from '@/lib/privacy/privacybee-cmp/produktion'
+import { checkProductionExecution, consumeProductionGrant, releaseProductionExecution, requestProductionExecution, type ProductionCapability } from '@/lib/privacy/privacybee-cmp/produktion'
 import {
   acceptPending,
-  bindReviewedPolicy,
   dispatchChoice,
-  issueWork,
-  selectProvider,
   startLocalContext,
   type WorkToken,
 } from '@/lib/privacy/privacybee-cmp/steuerung'
@@ -26,6 +23,16 @@ declare global {
   interface Window {
     PrivacyBee?: unknown
     __jetnityToken?: WorkToken | null
+    __jetnityCapability?: ProductionCapability | null
+    __jetnityOldCapability?: ProductionCapability | null
+    __jetnityIssued?: {
+      epoch: number
+      providerId: WidgetConsentProviderId
+      scopeKey: string
+      policyId: string
+      requiredOptional: string[]
+    } | null
+    __jetnityFacade?: { check: boolean; second: boolean; src: string | null; generation: number | null } | null
     __jetnityBreak?: () => void
     __jetnityRestore?: () => void
     __jetnityUnmount?: () => void
@@ -91,7 +98,6 @@ export function CmpSyntheticHost() {
 
   return (
     <main
-      data-production-seam={requestProductionExecution('discovercars', 'scope-alpha') ? 'open' : 'closed'}
       data-white-mint="home"
       data-workspace-theme="light"
       className="workspace-shell workspace-content mx-auto min-h-screen w-full min-w-0 max-w-3xl bg-surface-75 px-4 py-6 text-brand-800 [overflow-wrap:anywhere]"
@@ -116,35 +122,59 @@ export function CmpSyntheticHost() {
           applyController((current) => dispatchChoice(current, 'discovercars', command))
         }}
       />
-      <button type="button" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold" data-synthetic="select" onClick={() => applyController((current) => selectProvider(current, 'discovercars'))}>
-        Anbieter wählen
-      </button>
       <button
         type="button"
         className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold"
-        data-synthetic="remember"
+        data-synthetic="request"
         onClick={() => {
-          applyController((current) => bindReviewedPolicy(current, 'discovercars', TEST_BUNDLE_POLICY))
-          window.__jetnityToken = issueWork(readCmpController(), 'discovercars')
-          document.getElementById('cmp-issued')?.setAttribute('data-issued', window.__jetnityToken ? String(window.__jetnityToken.epoch) : '')
+          if (window.__jetnityCapability) window.__jetnityOldCapability = window.__jetnityCapability
+          const capability = requestProductionExecution('discovercars', 'scope-alpha')
+          const before = capability ? checkProductionExecution(capability) : false
+          const grant = before && capability ? consumeProductionGrant(capability) : null
+          const second = capability ? consumeProductionGrant(capability) : null
+          const after = capability ? checkProductionExecution(capability) : false
+          const live = readCmpController().live
+          window.__jetnityIssued = live ? {
+            epoch: live.epoch,
+            providerId: live.providerId,
+            scopeKey: live.scopeKey,
+            policyId: live.policyId,
+            requiredOptional: [...live.requiredOptional],
+          } : window.__jetnityIssued ?? null
+          window.__jetnityCapability = capability
+          window.__jetnityFacade = {
+            check: before && after,
+            second: second !== null,
+            src: capability?.src ?? null,
+            generation: grant?.parentGeneration ?? null,
+          }
         }}
       >
-        Arbeit merken
+        Ausführung anfragen
       </button>
       <button
         type="button"
         className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold"
-        data-synthetic="start"
-        onClick={() => applyController((current) => startLocalContext(
-          current,
-          'discovercars',
-          TEST_BUNDLE_POLICY,
-          window.PrivacyBee,
-          location.hostname,
-          window.__jetnityToken,
-        ).state)}
+        data-synthetic="check"
+        onClick={() => {
+          const capability = window.__jetnityCapability
+          window.__jetnityFacade = {
+            ...(window.__jetnityFacade ?? { second: false, src: null, generation: null }),
+            check: capability ? checkProductionExecution(capability) : false,
+          }
+        }}
       >
-        Kontext starten
+        Ausführung prüfen
+      </button>
+      <button
+        type="button"
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold"
+        data-synthetic="release-old"
+        onClick={() => {
+          if (window.__jetnityOldCapability) releaseProductionExecution(window.__jetnityOldCapability)
+        }}
+      >
+        Altes Handle lösen
       </button>
       <button type="button" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold" data-synthetic="stale" onClick={() => applyController((current) => dispatchChoice(current, 'discovercars', { type: 'reset_context', generation: 0, reason: 'reorder' }))}>
         Veralteten Kontext verwerfen

@@ -3,13 +3,13 @@
 
 import { browserHostIstLizenziert } from '@/lib/legal/privacybee-vertrag'
 
-import { serverReleaseAllowsCmp } from '@/lib/privacy/privacybee-cmp/freigabe'
+import { applyController, readCmpController } from '@/lib/privacy/privacybee-cmp/abo'
+import { bakedProductionGateAllows, readBakedProductionGate } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import {
   readShippedProductionPolicy,
   validateProductionPolicy,
   type ProductionPolicyRecord,
 } from '@/lib/privacy/privacybee-cmp/produktionspolitik'
-import { applyController, readCmpController } from '@/lib/privacy/privacybee-cmp/abo'
 import {
   bindReviewedPolicy,
   dispatchChoice,
@@ -19,7 +19,6 @@ import {
   selectProvider,
   startLocalContext,
 } from '@/lib/privacy/privacybee-cmp/steuerung'
-import { CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee-cmp/vertrag'
 import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertrag'
 
 export const PARENT_GENERATION_LIMIT = 1_000_000
@@ -36,14 +35,6 @@ export type ProductionGrant = {
   readonly policyId: string
   readonly artifactSha256: string
   readonly parentGeneration: number
-}
-
-export type ProductionSources = {
-  readonly policyFor: (providerId: WidgetConsentProviderId) => ProductionPolicyRecord | null
-  readonly release: boolean
-  readonly killSwitch: string | null | undefined
-  readonly hostname: string | null | undefined
-  readonly api: unknown
 }
 
 type Reservation = {
@@ -76,20 +67,24 @@ function tupleOf(policy: ProductionPolicyRecord): string {
   ])
 }
 
-function killValue(): string | undefined {
-  if (typeof process === 'undefined') return undefined
-  const value = process.env.PRIVACYBEE_KILL_SWITCH
-  return typeof value === 'string' ? value : undefined
+function browserHostname(): string | null {
+  if (typeof location === 'undefined') return null
+  return location.hostname
 }
 
-function shippedSources(): ProductionSources {
-  return {
-    policyFor: readShippedProductionPolicy,
-    release: CMP_RELEASE_AUTHORIZED,
-    killSwitch: killValue(),
-    hostname: typeof location === 'undefined' ? null : location.hostname,
-    api: typeof window === 'undefined' ? undefined : window.PrivacyBee,
-  }
+function browserApi(): unknown {
+  if (typeof window === 'undefined') return undefined
+  return window.PrivacyBee
+}
+
+function gateAllows(): boolean {
+  return bakedProductionGateAllows(readBakedProductionGate())
+}
+
+function policyForRequest(providerId: WidgetConsentProviderId): ProductionPolicyRecord | null {
+  const policy = validateProductionPolicy(readShippedProductionPolicy(providerId))
+  if (!policy || policy.providerId !== providerId) return null
+  return policy
 }
 
 function reservationMatches(reservation: Reservation): boolean {
@@ -125,34 +120,30 @@ function retireIfCurrent(reservation: Reservation): void {
   }
 }
 
-export function createProductionFacade(readSources: () => ProductionSources) {
-  const reservations = new WeakMap<ProductionCapability, Reservation>()
-  let issuedGeneration = 0
+const reservations = new WeakMap<ProductionCapability, Reservation>()
+let issuedGeneration = 0
 
-  function stillValid(capability: ProductionCapability): boolean {
-    const reservation = reservations.get(capability)
-    if (!reservation || reservation.released) return false
-    const sources = readSources()
-    if (!serverReleaseAllowsCmp(sources.killSwitch, sources.release) || !browserHostIstLizenziert(sources.hostname)) {
-      retireIfCurrent(reservation)
-      return false
-    }
-    applyController((current) => ingestApi(current, sources.api))
-    const policy = validateProductionPolicy(sources.policyFor(reservation.providerId))
-    if (!policy || policy.policyId !== reservation.policyId || tupleOf(policy) !== reservation.tuple) {
-      retireIfCurrent(reservation)
-      return false
-    }
-    if (!reservationMatches(reservation)) return false
-    return true
+function stillValid(capability: ProductionCapability): boolean {
+  const reservation = reservations.get(capability)
+  if (!reservation || reservation.released) return false
+  if (!gateAllows() || !browserHostIstLizenziert(browserHostname())) {
+    retireIfCurrent(reservation)
+    return false
   }
+  applyController((current) => ingestApi(current, browserApi()))
+  const policy = policyForRequest(reservation.providerId)
+  if (!policy || policy.policyId !== reservation.policyId || tupleOf(policy) !== reservation.tuple) {
+    retireIfCurrent(reservation)
+    return false
+  }
+  return reservationMatches(reservation)
+}
 
-  function requestProductionExecution(providerId: WidgetConsentProviderId, scopeKey: string): ProductionCapability | null {
+export function requestProductionExecution(providerId: WidgetConsentProviderId, scopeKey: string): ProductionCapability | null {
     if (providerId !== 'discovercars' && providerId !== 'twelvego') return null
     if (typeof scopeKey !== 'string' || scopeKey.trim() === '') return null
-    const sources = readSources()
-    if (!serverReleaseAllowsCmp(sources.killSwitch, sources.release) || !browserHostIstLizenziert(sources.hostname)) return null
-    const policy = validateProductionPolicy(sources.policyFor(providerId))
+    if (!gateAllows() || !browserHostIstLizenziert(browserHostname())) return null
+    const policy = policyForRequest(providerId)
     if (!policy) return null
     const state = readCmpController()
     if (state.live) return null
@@ -177,7 +168,7 @@ export function createProductionFacade(readSources: () => ProductionSources) {
       applyController(() => releaseMountedContext(next, providerId))
       return null
     }
-    const started = startLocalContext(next, providerId, { id: policy.policyId, requiredOptional: policy.requiredOptional }, sources.api, sources.hostname, token)
+    const started = startLocalContext(next, providerId, { id: policy.policyId, requiredOptional: policy.requiredOptional }, browserApi(), browserHostname(), token)
     if (!started.created || started.state.live?.policyId !== policy.policyId) {
       applyController(() => releaseMountedContext(started.state, providerId))
       return null
@@ -201,13 +192,13 @@ export function createProductionFacade(readSources: () => ProductionSources) {
       consumed: false,
     })
     return capability
-  }
+}
 
-  function checkProductionExecution(capability: ProductionCapability): boolean {
-    return stillValid(capability)
-  }
+export function checkProductionExecution(capability: ProductionCapability): boolean {
+  return stillValid(capability)
+}
 
-  function consumeProductionGrant(capability: ProductionCapability): ProductionGrant | null {
+export function consumeProductionGrant(capability: ProductionCapability): ProductionGrant | null {
     if (!stillValid(capability)) return null
     const reservation = reservations.get(capability)
     if (!reservation || reservation.consumed) return null
@@ -220,36 +211,10 @@ export function createProductionFacade(readSources: () => ProductionSources) {
       artifactSha256: reservation.artifactSha256,
       parentGeneration: generation,
     }
-  }
-
-  function releaseProductionExecution(capability: ProductionCapability): void {
-    const reservation = reservations.get(capability)
-    if (!reservation) return
-    retireIfCurrent(reservation)
-  }
-
-  return {
-    requestProductionExecution,
-    checkProductionExecution,
-    consumeProductionGrant,
-    releaseProductionExecution,
-  }
-}
-
-const shipped = createProductionFacade(shippedSources)
-
-export function requestProductionExecution(providerId: WidgetConsentProviderId, scopeKey: string): ProductionCapability | null {
-  return shipped.requestProductionExecution(providerId, scopeKey)
-}
-
-export function checkProductionExecution(capability: ProductionCapability): boolean {
-  return shipped.checkProductionExecution(capability)
-}
-
-export function consumeProductionGrant(capability: ProductionCapability): ProductionGrant | null {
-  return shipped.consumeProductionGrant(capability)
 }
 
 export function releaseProductionExecution(capability: ProductionCapability): void {
-  shipped.releaseProductionExecution(capability)
+  const reservation = reservations.get(capability)
+  if (!reservation) return
+  retireIfCurrent(reservation)
 }
