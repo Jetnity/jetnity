@@ -1257,5 +1257,57 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.equal(ausweich.id, 'workspace-plan-titel', JSON.stringify(ausweich))
     assert.deepEqual(fallbackNetz, [])
     await fallback.close()
+
+    const ohneTag = await browser.newContext({ viewport: { width: 390, height: 844 } })
+    const ohneSeite = await ohneTag.newPage()
+    const ohneNetz = await sperren(ohneSeite)
+    const kanteId = 'connection:stage-bkk:stage-kc'
+    await ohneSeite.goto(`${origin}/?ansicht=plan&kante=${encodeURIComponent(kanteId)}`, { waitUntil: 'networkidle' })
+    const detail = ohneSeite.locator('[data-u1c-kante-detail]')
+    await detail.waitFor()
+    assert.equal(new URL(ohneSeite.url()).searchParams.has('tag'), false)
+    assert.equal(new URL(ohneSeite.url()).searchParams.get('kante'), kanteId)
+    const occurrence = await detail.getAttribute('data-u1c-kante-detail')
+    assert.ok(occurrence)
+    const knopf = ohneSeite.locator('[data-u1c-alle-verbindungen]')
+    const handle = await knopf.elementHandle()
+    assert.ok(handle)
+    await knopf.focus()
+    assert.equal(await handle.evaluate((el) => el.isConnected && document.activeElement === el), true)
+    await knopf.press('Enter')
+    await ohneSeite.getByRole('button', { name: 'Zum Tagesplan' }).waitFor()
+    assert.equal(await handle.evaluate((el) => el.isConnected), false)
+    await ohneSeite.getByRole('button', { name: 'Zum Tagesplan' }).press('Enter')
+    await ohneSeite.waitForFunction((id) => {
+      const url = new URL(location.href)
+      return !url.searchParams.has('tag') && url.searchParams.get('kante') === id
+    }, kanteId)
+    await ohneSeite.waitForFunction((key) => {
+      const aktiv = document.activeElement
+      const ziel = [...document.querySelectorAll('[data-u1c-kante-detail]')]
+        .find((el) => el.getAttribute('data-u1c-kante-detail') === key)
+        ?.querySelector('[data-u1c-alle-verbindungen]')
+      if (!(aktiv instanceof HTMLElement) || aktiv !== ziel) return false
+      const rechteck = aktiv.getBoundingClientRect()
+      return aktiv.getClientRects().length > 0 && rechteck.bottom > 0 && rechteck.top < window.innerHeight
+    }, occurrence)
+    const ohneFokus = await ohneSeite.evaluate((key) => {
+      const aktiv = document.activeElement
+      const ziel = [...document.querySelectorAll('[data-u1c-kante-detail]')]
+        .find((el) => el.getAttribute('data-u1c-kante-detail') === key)
+        ?.querySelector('[data-u1c-alle-verbindungen]')
+      const url = new URL(location.href)
+      return {
+        gleicherKnoten: aktiv === ziel,
+        tag: url.searchParams.has('tag'),
+        kante: url.searchParams.get('kante'),
+      }
+    }, occurrence)
+    assert.equal(await handle.evaluate((el) => el.isConnected), false)
+    assert.equal(ohneFokus.gleicherKnoten, true, JSON.stringify(ohneFokus))
+    assert.equal(ohneFokus.tag, false)
+    assert.equal(ohneFokus.kante, kanteId)
+    assert.deepEqual(ohneNetz, [])
+    await ohneTag.close()
   })
 })

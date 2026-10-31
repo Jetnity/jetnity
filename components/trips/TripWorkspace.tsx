@@ -196,15 +196,19 @@ function sichtbareSuchflaeche(wurzel: ParentNode | null) {
   return null
 }
 
+function elternTag(id: string | null | undefined): string | null {
+  return id ? id : null
+}
+
 function passendeVerbindung(
-  gespeichert: { reiseId: string, tagId: string, kanteId: string, occurrenceKey: string } | null,
+  gespeichert: { reiseId: string, tagId: string | null, kanteId: string, occurrenceKey: string } | null,
   reiseId: string,
   ansicht: string,
   tagId: string | undefined,
   kanteId: string | undefined,
 ): HTMLElement | null {
   if (!gespeichert || gespeichert.reiseId !== reiseId || ansicht !== 'plan') return null
-  if (tagId !== gespeichert.tagId || kanteId !== gespeichert.kanteId) return null
+  if (elternTag(gespeichert.tagId) !== elternTag(tagId) || kanteId !== gespeichert.kanteId) return null
   const detail = [...document.querySelectorAll('[data-u1c-kante-detail]')].find((el) => (
     el.getAttribute('data-u1c-kante-detail') === gespeichert.occurrenceKey
   ))
@@ -513,7 +517,7 @@ export default function TripWorkspace({
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
   const verbindungsAusloeserRef = React.useRef<{
     reiseId: string
-    tagId: string
+    tagId: string | null
     kanteId: string
     occurrenceKey: string
   } | null>(null)
@@ -899,9 +903,10 @@ export default function TripWorkspace({
     merkeAusloeser()
     const detail = document.querySelector('[data-u1c-kante-detail]')
     const occurrenceKey = detail?.getAttribute('data-u1c-kante-detail') ?? ''
-    const tagId = modus.ansicht === 'plan' ? modus.tagId ?? '' : ''
-    const kanteId = modus.ansicht === 'plan' ? modus.kanteId ?? '' : ''
-    verbindungsAusloeserRef.current = tagId && kanteId && occurrenceKey
+    const imPlan = modus.ansicht === 'plan'
+    const tagId = imPlan ? elternTag(modus.tagId) : null
+    const kanteId = imPlan ? modus.kanteId ?? '' : ''
+    verbindungsAusloeserRef.current = imPlan && kanteId && occurrenceKey
       ? { reiseId: reise.id, tagId, kanteId, occurrenceKey }
       : null
     modusTastaturRef.current = false

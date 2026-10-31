@@ -1,5 +1,19 @@
 # Jetnity UX V1 U1-C Route Design Alignment 1 — HANDOFF
 
+31 October 2026, Europe/Zurich. Amendment 5 R9.1. STOP for independent exact-head review. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
+
+## R9.1
+
+Reviewed head `24422a5acd93486afea42a92cedfc3f8248b185f`. No main merge. A plan connection without a day is stored as an absent parent day, not as a missing trigger. Trip, edge and occurrence still have to match. A missing returned button still leaves the plan heading focused.
+
+Before the fix, the mounted no-tag return did not complete the exact parent-URL wait within 30 seconds. After the fix, `?ansicht=plan&kante=connection:stage-bkk:stage-kc` returns with that edge and without `tag`. The button captured before Enter is disconnected. The focused node is the new visible All Connections button in the same occurrence, and its rectangle is inside the viewport after the instant scroll. The tagged return, the removed-target heading fallback, R8, R6/R7 and the light-palette check remain.
+
+Local results: route units 13/13; workspace suite 7/7; U1-B browser 16/16; U1-C evidence 1/1; N12 browser 9/9. Typecheck passed. ESLint on the edited files shows the three pre-existing TripWorkspace warnings. Hygiene checks and the production build passed in the same delivery. The pushed head and its CI/Preview are in the PR comment.
+
+Hosted Develop and account acceptance stay open. The next step is an independent Technical-Lead review of this head.
+
+## Previous handoff
+
 31 October 2026, Europe/Zurich. Amendment 5 delivery. STOP for independent exact-head review. One writer: session `bc-4904589f-a8f0-4106-a65a-507bc53e084a`, read-back `Jetnity UX V1 Route Design Alignment 1 — Cursor Generation 1`, `originalModelName` `grok-4.7-high-fast`.
 
 ## Amendment 5
