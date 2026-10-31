@@ -5,7 +5,9 @@ import { createRoot, type Root } from 'react-dom/client'
 
 import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundary'
 import { PrivacyBeeCmpFrameSlot } from '@/components/privacy/PrivacyBeeCmpFrameSlot'
+import { PrivacyBeeCmpPreferences } from '@/components/privacy/PrivacyBeeCmpPreferences'
 import { WidgetConsentChoice } from '@/components/privacy/WidgetConsentChoice'
+import { TWELVEGO_PRODUCTION_DISCLOSURE } from '@/lib/privacy/privacybee-cmp/offenlegung'
 import { applyController, readCmpController, retireSharedExecution, serverCmpSnapshot, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
 import { checkProductionExecution, consumeProductionGrant, releaseProductionExecution, requestProductionExecution, type ProductionCapability } from '@/lib/privacy/privacybee-cmp/produktion'
 import {
@@ -206,6 +208,19 @@ export function CmpSyntheticHost() {
         API herstellen
       </button>
       <PrivacyBeeCmpFrameSlot live={state.live} />
+      <footer data-cmp-footer="1" className="mt-8 bg-brand-900 px-5 py-6 text-white">
+        <ul className="min-w-0 space-y-1">
+          <PrivacyBeeCmpPreferences appearance="footer" />
+        </ul>
+      </footer>
+      <section data-twelvego-disclosure={TWELVEGO_PRODUCTION_DISCLOSURE.disclosureRevision} className="mt-6 max-w-full text-sm leading-6">
+        {TWELVEGO_PRODUCTION_DISCLOSURE.paragraphs.map((absatz) => (
+          <p key={absatz} className="mt-3 break-words">{absatz}</p>
+        ))}
+        <a className="mt-3 inline-flex min-h-11 items-center break-words underline" href={TWELVEGO_PRODUCTION_DISCLOSURE.privacyHref}>
+          {TWELVEGO_PRODUCTION_DISCLOSURE.privacyLinkLabel}
+        </a>
+      </section>
     </main>
   )
 }

@@ -172,8 +172,44 @@ async function main() {
     if (stil.home < 1 || stil.shell < 1) merken('Ancestor fehlt')
     if (stil.html !== 'rgb(247, 252, 249)' && stil.html !== 'rgba(247, 252, 249, 1)') merken(`Mint ${stil.html}`)
     if (await page.locator('[data-cmp-client="1"]').count() !== 1) merken('Client nicht gemountet')
+    const notice = await page.locator('[data-twelvego-disclosure]').innerText()
+    const revision = await page.locator('[data-twelvego-disclosure]').getAttribute('data-twelvego-disclosure')
+    if (revision !== 'twelvego-general-disclosure-v1' || notice.includes('twelvego-general-chf') || notice.includes('f056b01d') || !notice.includes('12go.asia') || !notice.includes('Bangkok-Referenz')) {
+      merken(`Offenlegung ${revision ?? ''}`)
+    }
+    const privacyLink = await page.locator('[data-twelvego-disclosure] a').getAttribute('href')
+    if (privacyLink !== 'https://12go.asia/en/privacy-policy') merken(`Datenschutzlink ${privacyLink}`)
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     await page.waitForFunction(() => document.querySelector('[data-phase]')?.getAttribute('data-phase') === 'ready')
+    const fuss = page.locator('footer [data-cmp-preferences="footer"]')
+    if (await fuss.count() !== 1) merken('Footer-Präferenzen fehlen')
+    await fuss.focus()
+    const fokus = await page.evaluate(() => document.activeElement?.getAttribute('data-cmp-preferences'))
+    if (fokus !== 'footer') merken(`Fokus ${fokus}`)
+    const vorher = await page.viewportSize()
+    for (const fall of [
+      { width: 320, height: 900 },
+      { width: 390, height: 900 },
+      { width: 768, height: 1000 },
+      { width: 1440, height: 1100 },
+    ]) {
+      await page.setViewportSize(fall)
+      const ueberlauf = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+      if (ueberlauf > 1) merken(`Footer ${fall.width} Überlauf ${ueberlauf}`)
+      const kasten = await fuss.boundingBox()
+      const klasse = await fuss.getAttribute('class')
+      if (!klasse?.includes('min-h-11') || !klasse.includes('privacybee-display-preferences')) merken(`Footer-Klasse ${klasse}`)
+      if (!kasten || kasten.width < 44 || kasten.x < 0 || kasten.x + kasten.width > fall.width + 1) {
+        merken(`Footer-Ziel ${fall.width} ${JSON.stringify(kasten)}`)
+      }
+      if (fall.width === 390) await page.screenshot({ path: join(beweis, '390-footer.png'), fullPage: true })
+    }
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px' })
+    await page.setViewportSize({ width: 320, height: 1400 })
+    const gross = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+    if (gross > 1) merken(`Footer 200% Überlauf ${gross}`)
+    await page.evaluate(() => { document.documentElement.style.fontSize = '' })
+    if (vorher) await page.setViewportSize(vorher)
     await page.locator('[data-cmp-preferences="ready"]').click()
     const klicks = await page.evaluate(() => window.__jetnityPrefs ?? 0)
     if (klicks !== 1) merken(`Präferenzen ${klicks}`)
@@ -228,6 +264,7 @@ async function main() {
     if (nachAbbruch.length > 1) merken(`Canary arbeitet nach Abbruch ${nachAbbruch.length}`)
     if (nachAbbruch.some((eintrag) => eintrag.ok)) merken('Eingereihte Canary-Arbeit wurde akzeptiert')
     await page.screenshot({ path: join(beweis, '390-nach-kategorieverlust.png'), fullPage: true })
+    if (await page.locator('footer [data-cmp-preferences="footer"]').count() !== 1) merken('Präferenzen nach Statistik-Ablehnung weg')
     await page.locator('[data-synthetic="check"]').click()
     if (await page.evaluate(() => window.__jetnityFacade?.check) !== false) merken('Check bleibt nach Kategorieverlust wahr')
     const ersteEpoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
@@ -284,8 +321,10 @@ async function main() {
     await page.locator('[data-synthetic="break"]').click()
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error')
     if (await page.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Fehlerzustand behält den Rahmen')
+    if (await page.locator('footer [data-cmp-preferences="footer"]').count() !== 0) merken('Fehlerzustand zeigt Präferenzen')
     await page.locator('[data-synthetic="restore"]').click()
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
+    if (await page.locator('footer [data-cmp-preferences="footer"]').count() !== 1) merken('Präferenzen nach Wiederherstellung fehlen')
     await page.evaluate(() => window.__jetnityUnmount?.())
     if (await page.locator('[data-cmp-client="1"]').count() !== 0) merken('Unmount lässt den Client stehen')
     await page.evaluate(() => window.__jetnityRemount?.())
@@ -357,6 +396,8 @@ async function main() {
     }
     await geo.locator('[data-synthetic="request"]').click()
     if (await geo.locator('[data-synthetic-frame="1"]').count() !== 0) merken('Unlizenzierte Anfrage erzeugt einen Rahmen')
+    if (await geo.locator('[data-cmp-preferences="footer"]').count() !== 0) merken('Unlizenzierte Präferenzen sichtbar')
+    if (await geo.locator('[data-twelvego-disclosure]').count() !== 1) merken('Offenlegung fehlt auf der Geometrie-Seite')
     const geoFassade = await geo.evaluate(() => window.__jetnityFacade ?? null)
     if (geoFassade?.generation || geoFassade?.src) merken(`Unlizenzierte Fassade ${JSON.stringify(geoFassade)}`)
     if (await geo.locator('[data-cmp-client="1"]').count() !== 1) merken('Geometrie ohne Client')

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Mail } from 'lucide-react'
 
 import FooterSitzung from '@/components/layout/FooterSitzung'
+import { PrivacyBeeCmpPreferences } from '@/components/privacy/PrivacyBeeCmpPreferences'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 
 const productLinks = [
@@ -98,6 +99,7 @@ export default function Footer() {
                   Impressum
                 </Link>
               </li>
+              <PrivacyBeeCmpPreferences appearance="footer" />
               <FooterSitzung />
             </ul>
           </div>
