@@ -17,8 +17,8 @@ There is no live tracker and no live banner.
 
 The SHA stamp records the implementation commit. Re-check `git rev-parse HEAD`. A newer head invalidates this note.
 
-- Implementation commit: `PENDING_S2_SHA`
-- Implementation tree: `PENDING_S2_TREE`
+- Implementation commit: `eb52f0bb69912d3e405fd467b910ac13b4b6e494`
+- Implementation tree: `ead907b9c5c108f409804c15e29ecf419d7e2805`
 - `origin/main` and merge-base at delivery: `b7ebc399b92303eacda9afdaa1786f245492051f`
 - Task blob unchanged: `b460b21bdeb2ee4434766fee6b775f594a09a2a0`
 
