@@ -164,6 +164,7 @@ async function main() {
     if (stil.home < 1 || stil.shell < 1) merken('Ancestor fehlt')
     if (stil.html !== 'rgb(247, 252, 249)' && stil.html !== 'rgba(247, 252, 249, 1)') merken(`Mint ${stil.html}`)
     if (await page.locator('[data-cmp-client="1"]').count() !== 1) merken('Client nicht gemountet')
+    if (await page.locator('[data-production-seam="closed"]').count() !== 1) merken('Produktionsnaht nicht geschlossen')
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     await page.waitForFunction(() => document.querySelector('[data-phase]')?.getAttribute('data-phase') === 'ready')
     await page.locator('[data-cmp-preferences="ready"]').click()
@@ -207,6 +208,8 @@ async function main() {
     }, vorFremd)
     const erster = await tokenLesen(page)
     if (!erster) merken('Lebendes Token fehlt')
+    await page.locator('[data-synthetic="release-forged"]').click()
+    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Gefälschtes Release entfernt den Rahmen')
     if ((await log(page)).some((eintrag) => eintrag.kind === 'delayed')) merken('Verzögerung lief vor dem Schnitt')
     await page.locator('[data-synthetic-frame="1"]').evaluate((node) => {
       (node as HTMLIFrameElement).contentWindow?.postMessage({ jetnityArm: 'delayed' }, '*')
@@ -228,7 +231,7 @@ async function main() {
     await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
     await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', true))
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
     }, erster)
     await page.waitForFunction(() => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
@@ -248,7 +251,7 @@ async function main() {
     })
     const vorReplay = (await log(page)).length
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
     }, erster)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
@@ -274,7 +277,7 @@ async function main() {
     await page.getByRole('button', { name: 'Schliessen' }).click()
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null && document.querySelector('[data-intent]')?.getAttribute('data-intent') === 'withdrawn')
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
     }, vorClose)
     await page.locator('[data-synthetic="break"]').click()
     await page.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error')
@@ -287,7 +290,7 @@ async function main() {
     await page.waitForFunction(() => document.querySelector('[data-cmp-client="1"]') && document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'ready')
     const laenge = (await log(page)).length
     await page.evaluate((alt) => {
-      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, required: alt?.requiredOptional }, '*')
+      window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey, policyId: alt?.policyId, required: alt?.requiredOptional }, '*')
     }, vorClose)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'

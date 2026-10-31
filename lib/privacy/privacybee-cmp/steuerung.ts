@@ -21,6 +21,8 @@ export type WorkToken = {
   readonly providerId: WidgetConsentProviderId
   readonly epoch: number
   readonly scopeKey: string
+  /** Policy identity bound before this token was issued. Category lists alone are not identity. */
+  readonly policyId: string
   /** The validated requirement that was already bound when this token was issued. */
   readonly requiredOptional: readonly string[]
 }
@@ -30,6 +32,7 @@ export type LiveContext = {
   readonly generation: number
   readonly epoch: number
   readonly scopeKey: string
+  readonly policyId: string
   readonly requiredOptional: readonly string[]
 }
 
@@ -37,6 +40,8 @@ export type ProviderSlot = {
   readonly consent: WidgetConsentState
   readonly intent: ProviderIntent
   readonly epoch: number
+  /** Null until bindReviewedPolicy stores a validated policy identity. */
+  readonly policyId: string | null
   /** Categories this selection actually requires. Null means no reviewed policy is bound. */
   readonly requiredOptional: readonly string[] | null
 }
@@ -51,7 +56,7 @@ export type CmpControllerState = {
 }
 
 function slot(providerId: WidgetConsentProviderId, scopeKey = 'scope-alpha'): ProviderSlot {
-  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none', epoch: 1, requiredOptional: null }
+  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none', epoch: 1, policyId: null, requiredOptional: null }
 }
 
 export function createController(): CmpControllerState {
@@ -92,6 +97,7 @@ function tokenFor(providerId: WidgetConsentProviderId, current: ProviderSlot): W
     providerId,
     epoch: current.epoch,
     scopeKey: current.consent.scopeKey,
+    policyId: current.policyId ?? '',
     requiredOptional: current.requiredOptional ?? [],
   }
 }
@@ -110,7 +116,7 @@ function retire(
     live: state.live?.providerId === providerId ? null : state.live,
     slots: {
       ...state.slots,
-      [providerId]: { ...current, intent, epoch: current.epoch + 1, requiredOptional: null },
+      [providerId]: { ...current, intent, epoch: current.epoch + 1, policyId: null, requiredOptional: null },
     },
   }
 }
@@ -122,20 +128,16 @@ export function bindReviewedPolicy(
 ): CmpControllerState {
   const current = state.slots[providerId]
   const validated = validatedRequirement(policy?.requiredOptional)
-  const required = validated ? Object.freeze([...validated]) : null
-  const previous = current.requiredOptional
-  if (required === null && previous === null) return state
-  if (
-    required &&
-    previous &&
-    required.length === previous.length &&
-    required.every((name, index) => name === previous[index])
-  ) {
-    return state
-  }
+  const policyId = validated && policy && policy.id.trim() !== '' ? policy.id : null
+  const required = policyId && validated ? Object.freeze([...validated]) : null
+  if (required === null && current.requiredOptional === null && current.policyId === null) return state
+  if (required && current.policyId === policyId && sameRequirement(current.requiredOptional, required)) return state
   return {
     ...state,
-    slots: { ...state.slots, [providerId]: { ...current, requiredOptional: required } },
+    slots: {
+      ...state.slots,
+      [providerId]: { ...current, policyId: required ? policyId : null, requiredOptional: required },
+    },
   }
 }
 
@@ -214,11 +216,12 @@ export function selectProvider(state: CmpControllerState, providerId: WidgetCons
 export function issueWork(state: CmpControllerState, providerId: WidgetConsentProviderId): WorkToken | null {
   const current = state.slots[providerId]
   const required = validatedRequirement(current.requiredOptional)
-  if (current.intent !== 'selected' || !required) return null
+  if (current.intent !== 'selected' || !required || !current.policyId) return null
   return {
     providerId,
     epoch: current.epoch,
     scopeKey: current.consent.scopeKey,
+    policyId: current.policyId,
     requiredOptional: required,
   }
 }
@@ -240,11 +243,17 @@ export function startLocalContext(
   const reread = ingestApi(state, freshApi)
   const slotState = reread.slots[providerId]
   const bound = validatedRequirement(slotState.requiredOptional)
-  const policyMatches = policy == null || (bound != null && sameRequirement(policy.requiredOptional, bound))
+  const policyMatches = policy == null || (
+    bound != null &&
+    slotState.policyId === policy.id &&
+    sameRequirement(policy.requiredOptional, bound)
+  )
   const tokenFits = Boolean(
     token &&
       bound &&
       policyMatches &&
+      slotState.policyId !== null &&
+      token.policyId === slotState.policyId &&
       sameRequirement(token.requiredOptional, bound) &&
       token.providerId === providerId &&
       token.epoch === slotState.epoch &&
@@ -273,6 +282,7 @@ export function startLocalContext(
         generation: slotState.consent.generation,
         epoch: token.epoch,
         scopeKey: token.scopeKey,
+        policyId: token.policyId,
         requiredOptional: bound,
       },
     },
@@ -281,13 +291,15 @@ export function startLocalContext(
   }
 }
 
+/** Local denial probe. Productive callers use requestProductionExecution. This never grants. */
 export function productionStart(
   state: CmpControllerState,
   providerId: WidgetConsentProviderId,
   freshApi: unknown,
   hostname: string | null | undefined,
 ): { readonly state: CmpControllerState; readonly created: false; readonly decision: BundleDecision } {
-  const result = startLocalContext(state, providerId, productionPolicy(providerId), freshApi, hostname)
+  void productionPolicy(providerId)
+  const result = startLocalContext(state, providerId, null, freshApi, hostname)
   return { state: result.state, created: false, decision: result.decision }
 }
 
@@ -299,8 +311,10 @@ export function acceptPending(state: CmpControllerState, pending: WorkToken): bo
   const current = state.slots[pending.providerId]
   if (!current || current.intent !== 'selected') return false
   if (current.epoch !== pending.epoch || current.consent.scopeKey !== pending.scopeKey) return false
+  if (current.policyId !== pending.policyId) return false
   if (!sameRequirement(current.requiredOptional, pending.requiredOptional)) return false
   if (!state.live) return false
+  if (state.live.policyId !== pending.policyId) return false
   if (!sameRequirement(state.live.requiredOptional, pending.requiredOptional)) return false
   return state.live.providerId === pending.providerId && state.live.epoch === pending.epoch && state.live.scopeKey === pending.scopeKey
 }

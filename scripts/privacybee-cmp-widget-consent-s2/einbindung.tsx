@@ -7,6 +7,7 @@ import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundar
 import { PrivacyBeeCmpFrameSlot } from '@/components/privacy/PrivacyBeeCmpFrameSlot'
 import { WidgetConsentChoice } from '@/components/privacy/WidgetConsentChoice'
 import { applyController, readCmpController, retireSharedExecution, serverCmpSnapshot, subscribeCmpController } from '@/lib/privacy/privacybee-cmp/abo'
+import { releaseProductionExecution, requestProductionExecution } from '@/lib/privacy/privacybee-cmp/produktion'
 import {
   acceptPending,
   bindReviewedPolicy,
@@ -63,13 +64,14 @@ export function CmpSyntheticHost() {
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      const data = event.data as { jetnityCanary?: unknown; provider?: unknown; scope?: unknown; kind?: unknown; n?: unknown; required?: unknown } | null
+      const data = event.data as { jetnityCanary?: unknown; provider?: unknown; scope?: unknown; policyId?: unknown; kind?: unknown; n?: unknown; required?: unknown } | null
       if (!data || typeof data.jetnityCanary !== 'number' || typeof data.scope !== 'string' || !istAnbieter(data.provider)) return
       const required = Array.isArray(data.required) ? data.required.filter((name): name is string => typeof name === 'string') : []
       const ok = acceptPending(readCmpController(), {
         providerId: data.provider,
         epoch: data.jetnityCanary,
         scopeKey: data.scope,
+        policyId: typeof data.policyId === 'string' ? data.policyId : '',
         requiredOptional: required,
       })
       canaryMerken({
@@ -89,6 +91,7 @@ export function CmpSyntheticHost() {
 
   return (
     <main
+      data-production-seam={requestProductionExecution('discovercars', 'scope-alpha') ? 'open' : 'closed'}
       data-white-mint="home"
       data-workspace-theme="light"
       className="workspace-shell workspace-content mx-auto min-h-screen w-full min-w-0 max-w-3xl bg-surface-75 px-4 py-6 text-brand-800 [overflow-wrap:anywhere]"
@@ -151,6 +154,20 @@ export function CmpSyntheticHost() {
       </button>
       <button type="button" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold" data-synthetic="scope" onClick={() => applyController((current) => dispatchChoice(current, 'discovercars', { type: 'reset_context', generation: current.slots.discovercars.consent.generation, reason: 'scope_changed', scopeKey: 'scope-beta' }))}>
         Scope wechseln
+      </button>
+      <button
+        type="button"
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold"
+        data-synthetic="release-forged"
+        onClick={() => releaseProductionExecution({
+          providerId: 'discovercars',
+          src: 'https://jetnity-widgets.vercel.app/embed/discovercars',
+          childOrigin: 'https://jetnity-widgets.vercel.app',
+          sandbox: 'allow-scripts',
+          protocolRevision: 1,
+        })}
+      >
+        Gefälschtes Release
       </button>
       <button type="button" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-line-300 bg-surface-0 px-4 py-3 text-base font-semibold" data-synthetic="break" onClick={() => window.__jetnityBreak?.()}>
         API beschädigen

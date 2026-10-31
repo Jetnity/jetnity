@@ -7,7 +7,7 @@
 - Same session `bc-dc782027-b7e1-4592-a7ae-b4f709161135`, model `grok-4.7-high-fast`, stored name Jetnity Shared Widget Consent Foundation 1 — Cursor Generation 1.
 - Work is on `feat/privacybee-cmp-widget-consent-s2` / #1096. #1089 was not pushed.
 - The task blob was not edited.
-- R4 keeps narrow-category retirement. A token cannot be issued before a validated policy is bound, and start does not bind one later. The canary delay is armed at the cutoff and was still pending when the frame was removed. Main `36efd238` is merged.
+- The production facade reuses the R4 store. A token still requires a bound policy identity. Both shipped rows are null and the release constant is false. Positive authorization runs the same facade with a test-only source object. The shipped `requestProductionExecution` call returns null.
 - Informative grant behavior from S1 is unchanged: purposes stay `not_decided`.
 - Legal runtime files were not edited. The integration test allowlist still rejects banner URLs outside the two vertrag modules.
 - No `acceptAll`, `setAllConsents`, cookie write, or localStorage ledger.

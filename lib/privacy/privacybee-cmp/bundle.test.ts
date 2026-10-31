@@ -118,6 +118,7 @@ describe('cmp entscheidung und steuerung', () => {
       providerId: 'discovercars',
       epoch: 99,
       scopeKey: 'scope-alpha',
+      policyId: POLICY.id,
       requiredOptional: [...POLICY.requiredOptional],
     })
     assert.equal(falsch.created, false)
@@ -212,6 +213,7 @@ describe('cmp entscheidung und steuerung', () => {
       providerId: 'discovercars',
       epoch: nachGrant.slots.discovercars.consent.generation,
       scopeKey: 'scope-alpha',
+      policyId: zweit.policyId,
       requiredOptional: zweit.requiredOptional,
     }), false)
 
@@ -316,6 +318,7 @@ describe('cmp entscheidung und steuerung', () => {
       providerId: 'discovercars' as const,
       epoch: state.slots.discovercars.epoch,
       scopeKey: state.slots.discovercars.consent.scopeKey,
+      policyId: ANALYTICS_ONLY.id,
       requiredOptional: ['ANALYTICS_STORAGE'] as const,
     }
     state = ingestApi(state, api(false, true))

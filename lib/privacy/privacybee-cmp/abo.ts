@@ -111,6 +111,11 @@ export function applyController(change: (state: CmpControllerState) => CmpContro
   return snapshot
 }
 
+/** Test isolation for the one shared store. Does not create a second consent ledger. */
+export function resetSharedCmpController(): void {
+  snapshot = createController()
+}
+
 /** Keeps the retired epoch after unmount without rendering into a dying tree. */
 export function retireSharedExecution(providerId: WidgetConsentProviderId): void {
   const next = releaseMountedContext(snapshot, providerId)

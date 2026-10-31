@@ -53,6 +53,7 @@ describe('cmp oberflaeche', () => {
         generation: 2,
         epoch: 4,
         scopeKey: 'scope-alpha',
+        policyId: 'surface-test',
         requiredOptional: ['ANALYTICS_STORAGE'],
       },
     }))

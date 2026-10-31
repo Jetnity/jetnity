@@ -35,3 +35,7 @@ Unknown optional tracking stays unknown. Vendor-generated privacy text is not cl
 ## CMP categories
 
 The adapter understands only `SECURITY_STORAGE`, `FUNCTIONALITY_STORAGE`, `ANALYTICS_STORAGE`, `AD_STORAGE`, `AD_USER_DATA`, `AD_PERSONALIZATION`, and `PERSONALIZATION_STORAGE`. The two necessary categories cannot authorize a widget. An informative Zustimmen does not grant any purpose and does not execute a provider.
+
+## Production seam, not a published widget
+
+`lib/privacy/privacybee-cmp/produktion.ts` exposes `requestProductionExecution(providerId, scopeKey)`, `checkProductionExecution(capability)`, `consumeProductionGrant(capability)`, and `releaseProductionExecution(capability)`. The shipped table in `produktionspolitik.ts` has null rows for DiscoverCars and 12Go. `CMP_RELEASE_AUTHORIZED` is false. Policy id, required categories, processing revision, disclosure revision, network revision, host-selection commit, and sandbox are absent. Parent origin, child origin, embed paths, and the two artifact hashes are known literals only. They are not a reviewed policy.

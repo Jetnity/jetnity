@@ -4,6 +4,7 @@ import { browserHostIstLizenziert } from '@/lib/legal/privacybee-vertrag'
 import { VENDOR_SCRIPT_EXECUTION_AUTHORIZED } from '@/lib/privacy/widget-consent/vertrag'
 import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertrag'
 
+import { readShippedProductionPolicy } from '@/lib/privacy/privacybee-cmp/produktionspolitik'
 import { CMP_CATEGORIES, CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 export type ProviderIntent = 'none' | 'selected' | 'withdrawn'
@@ -33,9 +34,9 @@ export type BundleDecision = {
   readonly providerId: WidgetConsentProviderId
 }
 
-export function productionPolicy(providerId: WidgetConsentProviderId): null {
-  void providerId
-  return null
+/** Shipped table only. Both provider rows are null until Root supplies a complete record. */
+export function productionPolicy(providerId: WidgetConsentProviderId) {
+  return readShippedProductionPolicy(providerId)
 }
 
 function deny(providerId: WidgetConsentProviderId, reason: BundleReason): BundleDecision {
