@@ -15,11 +15,9 @@ import { CMP_BANNER_SRC } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 declare global {
   interface Window {
-    __jetnityOptionalCalls?: number
-    __jetnityOptionalSawBanner?: boolean
-    __jetnityCmp?: { optionalAttempt?: string; order?: string; scripts?: number }
     __jetnityPrefs?: number
     __jetnitySetAnalytics?: (wert: boolean) => void
+    __jetnitySetConsent?: (name: string, wert: boolean) => void
   }
 }
 
@@ -31,9 +29,9 @@ const tailwind = join(wurzel, 'node_modules/tailwindcss/lib/cli.js')
 const whiteMint = readFileSync(join(wurzel, 'styles/white-mint.css'))
 
 const FIXTURE = `
-var analytics=true;
+var werteMap={SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:true,AD_STORAGE:true,AD_USER_DATA:true,AD_PERSONALIZATION:true,PERSONALIZATION_STORAGE:true};
 var backup=null;
-function werte(){return{SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:analytics,AD_STORAGE:true,AD_USER_DATA:true,AD_PERSONALIZATION:true,PERSONALIZATION_STORAGE:true};}
+function werte(){return{SECURITY_STORAGE:werteMap.SECURITY_STORAGE,FUNCTIONALITY_STORAGE:werteMap.FUNCTIONALITY_STORAGE,ANALYTICS_STORAGE:werteMap.ANALYTICS_STORAGE,AD_STORAGE:werteMap.AD_STORAGE,AD_USER_DATA:werteMap.AD_USER_DATA,AD_PERSONALIZATION:werteMap.AD_PERSONALIZATION,PERSONALIZATION_STORAGE:werteMap.PERSONALIZATION_STORAGE};}
 function api(){
   return {
     getAllConsents:function(){return werte()},
@@ -49,10 +47,11 @@ document.addEventListener('click',function(event){
   if(!ziel)return;
   window.__jetnityPrefs+=1;
 });
-window.__jetnitySetAnalytics=function(wert){
-  analytics=wert;
-  document.dispatchEvent(new CustomEvent('privacybee:consent-changed',{detail:{explicitConsent:false,consents:{ANALYTICS_STORAGE:wert}}}));
+window.__jetnitySetConsent=function(name, wert){
+  werteMap[name]=wert;
+  document.dispatchEvent(new CustomEvent('privacybee:consent-changed',{detail:{explicitConsent:false,consents:{[name]:wert}}}));
 };
+window.__jetnitySetAnalytics=function(wert){window.__jetnitySetConsent('ANALYTICS_STORAGE', wert);};
 window.__jetnityBreak=function(){
   window.PrivacyBee={
     getAllConsents:function(){throw new Error('load-error')},
@@ -69,7 +68,7 @@ document.dispatchEvent(new CustomEvent('privacybee:ready',{detail:{categories:['
 `
 
 function html(bootstrap: string) {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><script>window.__jetnityOptionalCalls=0;window.__jetnityOptionalSawBanner=false;window.__jetnityOptionalStart=function(){window.__jetnityOptionalCalls+=1;window.__jetnityOptionalSawBanner=!!document.querySelector('script[data-jetnity-cmp="banner"]');return false;};</script><script>${bootstrap}</script><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div><script type="module" src="/app.js"></script></body></html>`
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/white-mint.css"></head><body><div class="workspace-shell" data-workspace-theme="light" data-white-mint="home"><div id="cmp-canary-log" data-canary-log="[]"></div><div id="cmp-issued" data-issued=""></div><div id="cmp-s2-root"></div></div><script src="/app.js"></script><script>${bootstrap}</script></body></html>`
 }
 
 function bauen() {
@@ -80,7 +79,7 @@ function bauen() {
   execFileSync(process.execPath, [tailwind, '-i', join(wurzel, 'styles/globals.css'), '-o', cssPfad, '--minify'], { cwd: wurzel, stdio: 'inherit' })
   execFileSync(esbuild, [
     join(wurzel, 'scripts/privacybee-cmp-widget-consent-s2/einbindung.tsx'),
-    '--bundle', '--format=esm', `--alias:@=${wurzel}`, `--outfile=${jsPfad}`,
+    '--bundle', '--format=iife', `--alias:@=${wurzel}`, `--outfile=${jsPfad}`,
     '--define:process.env.NODE_ENV="production"',
   ], { cwd: wurzel, stdio: 'inherit' })
   return { css: readFileSync(cssPfad), js: readFileSync(jsPfad) }
@@ -121,7 +120,7 @@ function anbinden(page: Page, origin: string, body: string, dateien: { css: Buff
 }
 
 async function log(page: Page) {
-  return page.locator('#cmp-canary-log').getAttribute('data-canary-log').then((wert) => JSON.parse(wert || '[]') as { epoch: number; scope: string; ok: boolean }[])
+  return page.locator('#cmp-canary-log').getAttribute('data-canary-log').then((wert) => JSON.parse(wert || '[]') as { epoch: number; scope: string; ok: boolean; kind: string; n: number }[])
 }
 
 async function tokenLesen(page: Page) {
@@ -142,13 +141,15 @@ async function main() {
     await page.goto('https://jetnity.com/', { waitUntil: 'networkidle' })
     const frueh = await page.evaluate(() => ({
       calls: window.__jetnityOptionalCalls ?? 0,
-      saw: window.__jetnityOptionalSawBanner === true,
       attempt: window.__jetnityCmp?.optionalAttempt ?? null,
       order: window.__jetnityCmp?.order ?? null,
       scripts: window.__jetnityCmp?.scripts ?? 0,
+      early: window.__jetnityEarly ?? null,
     }))
-    if (frueh.calls !== 1 || frueh.saw || frueh.attempt !== 'blocked' || frueh.order !== 'deny-before-optional') {
+    if (frueh.calls !== 1 || frueh.attempt !== 'blocked' || frueh.order !== 'listeners-before-optional' || !frueh.early) {
       merken(`Optionalstart ${JSON.stringify(frueh)}`)
+    } else if (frueh.early.created || frueh.early.live || frueh.early.storeLive || frueh.early.bannerPresent || frueh.early.scripts !== 0 || frueh.early.listeners < 1 || frueh.early.reason !== 'no_provider_intent') {
+      merken(`Frühes Gate ${JSON.stringify(frueh.early)}`)
     }
     if (banner.length !== 1 || frueh.scripts !== 1) merken(`Banner ${banner.length}/${frueh.scripts}`)
     const stil = await page.evaluate(() => ({
@@ -193,22 +194,30 @@ async function main() {
     if (!srcdoc?.includes('parent.postMessage') || srcdoc.includes('privacybee') || srcdoc.includes('http')) merken('Canary-Dokument')
     await page.waitForFunction(() => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
-      return JSON.parse(roh).some((eintrag: { ok: boolean }) => eintrag.ok === true)
+      const eintraege = JSON.parse(roh) as { ok: boolean; kind: string }[]
+      return eintraege.some((eintrag) => eintrag.kind === 'active' && eintrag.ok) && eintraege.some((eintrag) => eintrag.kind === 'pulse' && eintrag.ok)
     })
+    await page.screenshot({ path: join(beweis, '390-canary.png'), fullPage: true })
+    await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', false))
+    const vorFremd = (await log(page)).length
+    await page.waitForFunction((bisher) => {
+      const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
+      const eintraege = JSON.parse(roh) as { ok: boolean; kind: string }[]
+      return document.querySelectorAll('[data-synthetic-frame="1"]').length === 1 && eintraege.slice(bisher).some((eintrag) => eintrag.kind === 'pulse' && eintrag.ok)
+    }, vorFremd)
     const erster = await tokenLesen(page)
     if (!erster) merken('Lebendes Token fehlt')
-    await page.screenshot({ path: join(beweis, '390-canary.png'), fullPage: true })
-    const generation = await page.locator('[data-consent-generation]').getAttribute('data-consent-generation')
-    const epoche = await page.locator('[data-live-epoch]').getAttribute('data-live-epoch')
-    await page.locator('[data-synthetic="stale"]').click()
-    if (await page.locator('[data-consent-generation]').getAttribute('data-consent-generation') !== generation) merken('Veralteter Reset verändert die Generation')
-    if (await page.locator('[data-live-epoch]').getAttribute('data-live-epoch') !== epoche) merken('Veralteter Reset verändert die Epoche')
-    await page.locator('[data-synthetic="start"]').click()
-    if (await page.locator('[data-synthetic-frame="1"]').count() !== 1) merken('Zweiter Start dupliziert')
-
+    const mark = (await log(page)).length
     await page.evaluate(() => window.__jetnitySetAnalytics?.(false))
     await page.waitForFunction(() => document.querySelector('[data-synthetic-frame="1"]') === null)
+    await page.waitForTimeout(2000)
+    const nachAbbruch = (await log(page)).slice(mark).filter((eintrag) => eintrag.kind === 'active' || eintrag.kind === 'pulse' || eintrag.kind === 'delayed')
+    if (nachAbbruch.some((eintrag) => eintrag.kind === 'delayed')) merken('Verzögerte Canary-Arbeit nach Abbruch')
+    if (nachAbbruch.length > 1) merken(`Canary arbeitet nach Abbruch ${nachAbbruch.length}`)
+    if (nachAbbruch.some((eintrag) => eintrag.ok)) merken('Eingereihte Canary-Arbeit wurde akzeptiert')
     await page.screenshot({ path: join(beweis, '390-nach-kategorieverlust.png'), fullPage: true })
+    await page.evaluate(() => window.__jetnitySetAnalytics?.(true))
+    await page.evaluate(() => window.__jetnitySetConsent?.('AD_STORAGE', true))
     await page.evaluate((alt) => {
       window.postMessage({ jetnityCanary: alt?.epoch, provider: alt?.providerId, scope: alt?.scopeKey }, '*')
     }, erster)
@@ -234,9 +243,9 @@ async function main() {
     }, erster)
     await page.waitForFunction((bisher) => {
       const roh = document.getElementById('cmp-canary-log')?.getAttribute('data-canary-log') || '[]'
-      return JSON.parse(roh).length > bisher
+      return JSON.parse(roh).slice(bisher).some((eintrag: { kind?: string }) => eintrag.kind === 'replay')
     }, vorReplay)
-    const nachRegrant = (await log(page)).slice(vorReplay)
+    const nachRegrant = (await log(page)).slice(vorReplay).filter((eintrag) => eintrag.kind === 'replay')
     if (nachRegrant.length === 0 || nachRegrant.some((eintrag) => eintrag.ok)) merken('Alte Epoche nach Regrant akzeptiert')
 
     await page.locator('[data-synthetic="reorder"]').click()
@@ -327,8 +336,11 @@ async function main() {
       calls: window.__jetnityOptionalCalls ?? 0,
       attempt: window.__jetnityCmp?.optionalAttempt ?? null,
       scripts: window.__jetnityCmp?.scripts ?? 0,
+      early: window.__jetnityEarly ?? null,
     }))
-    if (geoFrueh.calls !== 1 || geoFrueh.attempt !== 'blocked' || geoFrueh.scripts !== 0) merken(`Geometrie-Optional ${JSON.stringify(geoFrueh)}`)
+    if (geoFrueh.calls !== 1 || geoFrueh.attempt !== 'blocked' || geoFrueh.scripts !== 0 || geoFrueh.early?.created || geoFrueh.early?.reason !== 'host_unlicensed' || geoFrueh.early?.bannerPresent) {
+      merken(`Geometrie-Optional ${JSON.stringify(geoFrueh)}`)
+    }
     if (await geo.locator('[data-cmp-client="1"]').count() !== 1) merken('Geometrie ohne Client')
     await geo.waitForFunction(() => document.querySelector('[data-cmp-phase]')?.getAttribute('data-cmp-phase') === 'error', undefined, { timeout: 15_000 })
     if (await geo.locator('[data-cmp-preferences="ready"]').count() !== 0) merken('Unlizenzierte Präferenzen sichtbar')

@@ -7,7 +7,7 @@
 - Same session `bc-dc782027-b7e1-4592-a7ae-b4f709161135`, model `grok-4.7-high-fast`, stored name Jetnity Shared Widget Consent Foundation 1 — Cursor Generation 1.
 - Work is on `feat/privacybee-cmp-widget-consent-s2` / #1096. #1089 was not pushed.
 - The task blob was not edited.
-- R2 splits the server release/kill decision from the browser host check, keeps one stable server snapshot, and retires execution epochs on loss, bad reads, refusal, close, scope change, reorder, and unmount.
+- R3 keeps the R2 host split and epoch retirement. Retirement follows the bound required categories. The early start calls the real gate after the listeners, and the canary's delayed work stops when the required category is lost.
 - Informative grant behavior from S1 is unchanged: purposes stay `not_decided`.
 - Legal runtime files were not edited. The integration test allowlist still rejects banner URLs outside the two vertrag modules.
 - No `acceptAll`, `setAllConsents`, cookie write, or localStorage ledger.

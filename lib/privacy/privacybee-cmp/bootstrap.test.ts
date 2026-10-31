@@ -15,7 +15,8 @@ function ausfuehren(source: string, hostname: string) {
     __jetnityOptionalStart() {
       sandbox.__jetnityOptionalCalls = Number(sandbox.__jetnityOptionalCalls) + 1
       sandbox.__jetnityOptionalSawBanner = scripts.length > 0
-      return false
+      sandbox.__jetnityListenersAtAttempt = listeners.length
+      return true
     },
     document: {
       addEventListener(type: string) { listeners.push(type) },
@@ -40,8 +41,16 @@ function ausfuehren(source: string, hostname: string) {
     booted?: number
     order?: string
     optionalAttempt?: string
+    listeners?: number
   }
-  return { scripts, listeners, root, calls: sandbox.__jetnityOptionalCalls, sawBanner: sandbox.__jetnityOptionalSawBanner }
+  return {
+    scripts,
+    listeners,
+    root,
+    calls: sandbox.__jetnityOptionalCalls,
+    sawBanner: sandbox.__jetnityOptionalSawBanner,
+    listenersAtAttempt: sandbox.__jetnityListenersAtAttempt,
+  }
 }
 
 describe('cmp bootstrap ausfuehrung', () => {
@@ -53,8 +62,12 @@ describe('cmp bootstrap ausfuehrung', () => {
     assert.equal(lauf.listeners.includes('privacybee:ready'), true)
     assert.equal(lauf.calls, 1)
     assert.equal(lauf.root.optionalAttempt, 'blocked')
+    assert.equal(lauf.root.order, 'listeners-before-optional')
+    assert.equal(lauf.listenersAtAttempt, 2)
     assert.equal(lauf.sawBanner, false)
+    assert.equal(text.includes('optionalAttempt="ran"'), false)
     assert.equal(text.includes('acceptAll'), false)
+    assert.equal(text.indexOf('addEventListener') < text.indexOf('__jetnityOptionalStart'), true)
     assert.equal(text.indexOf('__jetnityOptionalStart') < text.indexOf('createElement'), true)
   })
 

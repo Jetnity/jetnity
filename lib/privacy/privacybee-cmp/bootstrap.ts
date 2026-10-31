@@ -22,11 +22,12 @@ var root=window.__jetnityCmp||(window.__jetnityCmp={});
 if(root.booted)return;
 root.booted=1;
 root.phase="denied";
-root.order="deny-before-optional";
-root.optionalAttempt="blocked";
-if(typeof window.__jetnityOptionalStart==="function"&&window.__jetnityOptionalStart()===true){root.optionalAttempt="ran";}
 document.addEventListener("privacybee:ready",function(){root.ready=1});
 document.addEventListener("privacybee:consent-changed",function(){root.changed=1});
+root.listeners=1;
+root.order="listeners-before-optional";
+root.optionalAttempt="blocked";
+if(typeof window.__jetnityOptionalStart==="function"){try{window.__jetnityOptionalStart();}catch(e){root.optionalError=1;}}
 if(${releaseLiteral}!==true)return;
 if(${killLiteral}===true)return;
 var host=String(location.hostname||"").toLowerCase();

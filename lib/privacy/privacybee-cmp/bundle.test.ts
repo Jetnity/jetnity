@@ -6,6 +6,7 @@ import { CMP_OPTIONAL_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 import { decideBundle, productionPolicy, type ReviewedPolicy } from '@/lib/privacy/privacybee-cmp/bundle'
 import {
   acceptPending,
+  bindReviewedPolicy,
   createController,
   dispatchChoice,
   ingestApi,
@@ -22,6 +23,11 @@ const POLICY: ReviewedPolicy = Object.freeze({
   requiredOptional: Object.freeze([...CMP_OPTIONAL_CATEGORIES]),
 })
 
+const ANALYTICS_ONLY: ReviewedPolicy = Object.freeze({
+  id: 's2-analytics-only',
+  requiredOptional: Object.freeze(['ANALYTICS_STORAGE']),
+})
+
 function werte(analytics: boolean) {
   return {
     SECURITY_STORAGE: true,
@@ -34,8 +40,8 @@ function werte(analytics: boolean) {
   }
 }
 
-function api(analytics = true, explicit = true) {
-  const consents = werte(analytics)
+function api(analytics = true, explicit = true, extra: Partial<ReturnType<typeof werte>> = {}) {
+  const consents = { ...werte(analytics), ...extra }
   return {
     getAllConsents: () => consents,
     getConsent: (category: string) => consents[category as keyof typeof consents],
@@ -132,7 +138,7 @@ describe('cmp entscheidung und steuerung', () => {
   })
 
   test('gemerkte Arbeit vor dem iframe stirbt bei Kategorieverlust und bleibt nach Regrant tot', () => {
-    let state = bereit()
+    let state = bindReviewedPolicy(bereit(), 'discovercars', POLICY)
     const pending = issueWork(state, 'discovercars')
     assert.ok(pending)
     assert.equal(acceptPending(state, pending), false)
@@ -271,5 +277,66 @@ describe('cmp entscheidung und steuerung', () => {
     assert.equal(acceptPending(demontiert, gemerkt), false)
     assert.equal(releaseMountedContext(demontiert, 'discovercars'), demontiert)
     assert.equal(demontiert.slots.twelvego.intent, 'none')
+  })
+
+  test('eine schmale Politik überlebt fremde Werbekategorien und verliert nur ihre eigene', () => {
+    const nurStatistik = api(true, true, {
+      AD_STORAGE: false,
+      AD_USER_DATA: false,
+      AD_PERSONALIZATION: false,
+      PERSONALIZATION_STORAGE: false,
+    })
+    const erlaubt = decideBundle({
+      policy: ANALYTICS_ONLY,
+      providerId: 'discovercars',
+      intent: 'selected',
+      generation: 1,
+      expectedGeneration: 1,
+      consents: nurStatistik.getAllConsents(),
+      snapshotUsable: true,
+      hostname: 'jetnity.com',
+    })
+    assert.equal(erlaubt.reason, 'local_context_allowed')
+    assert.equal(erlaubt.localContext, true)
+
+    let state = selectProvider(ingestApi(createController(), nurStatistik), 'discovercars')
+    const token = issueWork(state, 'discovercars')
+    assert.ok(token)
+    const gestartet = startLocalContext(state, 'discovercars', ANALYTICS_ONLY, nurStatistik, 'jetnity.com', token)
+    assert.equal(gestartet.created, true)
+    assert.equal(gestartet.state.slots.discovercars.epoch, token.epoch)
+    assert.equal(gestartet.decision.reason, 'local_context_allowed')
+    assert.deepEqual(gestartet.state.live?.requiredOptional, ['ANALYTICS_STORAGE'])
+
+    const fremd = ingestApi(gestartet.state, nurStatistik)
+    assert.equal(fremd.live?.epoch, token.epoch)
+    assert.equal(fremd.slots.discovercars.intent, 'selected')
+    assert.equal(acceptPending(fremd, token), true)
+
+    const ohneRahmen = bindReviewedPolicy(selectProvider(ingestApi(createController(), api()), 'discovercars'), 'discovercars', ANALYTICS_ONLY)
+    const pending = issueWork(ohneRahmen, 'discovercars')
+    assert.ok(pending)
+    const werbungAus = ingestApi(ohneRahmen, nurStatistik)
+    assert.equal(werbungAus.slots.discovercars.intent, 'selected')
+    assert.equal(werbungAus.slots.discovercars.epoch, pending.epoch)
+    assert.equal(werbungAus.retired.some((eintrag) => eintrag.epoch === pending.epoch), false)
+    const pflichtWeg = ingestApi(werbungAus, api(false, true))
+    assert.equal(pflichtWeg.slots.discovercars.intent, 'withdrawn')
+    assert.equal(pflichtWeg.live, null)
+    assert.equal(acceptPending(pflichtWeg, pending), false)
+    const ohneNeu = startLocalContext(pflichtWeg, 'discovercars', ANALYTICS_ONLY, api(true), 'jetnity.com', pending)
+    assert.equal(ohneNeu.created, false)
+
+    state = selectProvider(ingestApi(createController(), api()), 'discovercars')
+    const voll = issueWork(state, 'discovercars')
+    assert.ok(voll)
+    state = startLocalContext(state, 'discovercars', ANALYTICS_ONLY, api(), 'jetnity.com', voll).state
+    const nurWerbung = ingestApi(state, api(true, true, { AD_STORAGE: false }))
+    assert.equal(nurWerbung.live?.epoch, voll.epoch)
+    assert.equal(acceptPending(nurWerbung, voll), true)
+    const statistikWeg = ingestApi(nurWerbung, api(false, true, { AD_STORAGE: false }))
+    assert.equal(statistikWeg.live, null)
+    assert.equal(statistikWeg.slots.discovercars.intent, 'withdrawn')
+    assert.equal(acceptPending(statistikWeg, voll), false)
   })
 })

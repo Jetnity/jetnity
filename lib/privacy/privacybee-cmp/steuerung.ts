@@ -35,6 +35,8 @@ export type ProviderSlot = {
   readonly consent: WidgetConsentState
   readonly intent: ProviderIntent
   readonly epoch: number
+  /** Categories this selection actually requires. Null means no reviewed policy is bound. */
+  readonly requiredOptional: readonly string[] | null
 }
 
 export type CmpControllerState = {
@@ -47,7 +49,7 @@ export type CmpControllerState = {
 }
 
 function slot(providerId: WidgetConsentProviderId, scopeKey = 'scope-alpha'): ProviderSlot {
-  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none', epoch: 1 }
+  return { consent: createWidgetConsentState(providerId, scopeKey), intent: 'none', epoch: 1, requiredOptional: null }
 }
 
 export function createController(): CmpControllerState {
@@ -89,8 +91,31 @@ function retire(
     live: state.live?.providerId === providerId ? null : state.live,
     slots: {
       ...state.slots,
-      [providerId]: { ...current, intent, epoch: current.epoch + 1 },
+      [providerId]: { ...current, intent, epoch: current.epoch + 1, requiredOptional: null },
     },
+  }
+}
+
+export function bindReviewedPolicy(
+  state: CmpControllerState,
+  providerId: WidgetConsentProviderId,
+  policy: ReviewedPolicy | null,
+): CmpControllerState {
+  const current = state.slots[providerId]
+  const required = policy && policy.requiredOptional.length > 0 ? Object.freeze([...policy.requiredOptional]) : null
+  const previous = current.requiredOptional
+  if (required === null && previous === null) return state
+  if (
+    required &&
+    previous &&
+    required.length === previous.length &&
+    required.every((name, index) => name === previous[index])
+  ) {
+    return state
+  }
+  return {
+    ...state,
+    slots: { ...state.slots, [providerId]: { ...current, requiredOptional: required } },
   }
 }
 
@@ -98,10 +123,13 @@ function executionOutstanding(state: CmpControllerState, providerId: WidgetConse
   return state.live?.providerId === providerId || state.slots[providerId].intent === 'selected'
 }
 
-function snapshotBlocksExecution(read: CmpRead, live: LiveContext | null): boolean {
+function requiredCategoryMissing(read: CmpRead, required: readonly string[] | null): boolean {
   if (read.status !== 'explicit') return true
-  if (live && live.requiredOptional.some((name) => read.consents[name as keyof typeof read.consents] !== true)) return true
-  return read.optionalSatisfied !== true
+  if (!required || required.length === 0) return false
+  return required.some((name) => {
+    if (!(CMP_CATEGORIES as readonly string[]).includes(name)) return false
+    return read.consents[name as keyof typeof read.consents] !== true
+  })
 }
 
 export function ingestApi(state: CmpControllerState, api: unknown): CmpControllerState {
@@ -119,7 +147,8 @@ export function ingestApi(state: CmpControllerState, api: unknown): CmpControlle
   for (const providerId of PROVIDERS) {
     if (!executionOutstanding(next, providerId)) continue
     const live = next.live?.providerId === providerId ? next.live : null
-    if (!snapshotBlocksExecution(read, live)) continue
+    const required = live?.requiredOptional ?? next.slots[providerId].requiredOptional
+    if (!requiredCategoryMissing(read, required)) continue
     if (!changed && next === state) {
       next = { ...state, phase, read, revision: state.revision + 1 }
     }
@@ -178,7 +207,8 @@ export function startLocalContext(
   hostname: string | null | undefined,
   token?: WorkToken | null,
 ): { readonly state: CmpControllerState; readonly created: boolean; readonly decision: BundleDecision } {
-  const reread = ingestApi(state, freshApi)
+  const prepared = policy ? bindReviewedPolicy(state, providerId, policy) : state
+  const reread = ingestApi(prepared, freshApi)
   const slotState = reread.slots[providerId]
   const tokenFits = Boolean(
     token &&

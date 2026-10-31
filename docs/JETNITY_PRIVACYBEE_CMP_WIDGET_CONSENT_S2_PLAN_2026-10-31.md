@@ -21,3 +21,7 @@ No provider script, host edit, DNS, env write, database, or legal-page publicati
 ## R2 correction under the same plan
 
 The server gate is release plus kill switch. It does not invent a hostname. The browser host stays in the bootstrap and in `decideBundle`. A test-only release token may mount the real client in the harness. Production layout does not pass that token. Execution tokens carry provider, scope, and epoch. Category loss, a bad read, refusal, withdrawal, close, scope change, reorder, and unmount retire that epoch. A later selection uses a new epoch. The old token stays rejected, including work that never reached an iframe.
+
+## R3 correction under the same plan
+
+A reviewed policy binds only its own required categories. Refusing an unrelated advertising category does not retire an analytics-only selection. Refusing a required category, or an unusable API, still retires pending and live work. The bootstrap registers listeners and then calls the real start gate while the snapshot is still missing. The hook's return value cannot authorize a script. The canary keeps a pulse and one delayed action; teardown through category loss leaves at most one already queued message, and that message is rejected.
