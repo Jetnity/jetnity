@@ -42,12 +42,12 @@ export function clientPlan(provider, selection) {
   if (!selection || selection.selected !== true || selection.provider !== provider) return null
   if (selection.childOrigin !== CHILD_ORIGIN || selection.parentOrigin !== PARENT_ORIGIN) return null
   if (selection.protocolRevision !== PROTOCOL_REVISION) return null
+  if (provider === 'twelvego' && !twelvegoBindingMatches(selection)) return null
   if (selection.policyId === AUDIT_POLICY_ID && !auditBindingMatches(selection)) return null
-  if (selection.policyId === TWELVEGO_POLICY_ID && !twelvegoBindingMatches(selection)) return null
   const plan = planFromFrozen(provider)
   if (!plan.ok || plan.sha256 !== selection.artifactSha256) return null
   if (selection.policyId === AUDIT_POLICY_ID && plan.sha256 !== DISCOVERCARS_AUDIT_BINDING.artifactSha256) return null
-  if (selection.policyId === TWELVEGO_POLICY_ID && plan.sha256 !== TWELVEGO_BINDING.artifactSha256) return null
+  if (provider === 'twelvego' && plan.sha256 !== TWELVEGO_BINDING.artifactSha256) return null
   return {
     selected: true,
     provider,

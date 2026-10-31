@@ -697,6 +697,42 @@ test('the selected 12Go row opens only its bound resources and inserts the froze
   }
   assert.equal(clientPlan('twelvego', { ...PRODUCTION_REGISTRY.twelvego, purposeSeparationVerified: true }), null)
   assert.equal(clientPlan('twelvego', { ...PRODUCTION_REGISTRY.twelvego, selected: false }), null)
+  const unknownPolicy = { ...PRODUCTION_REGISTRY.twelvego, policyId: 'unknown-policy' }
+  const missingPolicy = { ...PRODUCTION_REGISTRY.twelvego }
+  delete missingPolicy.policyId
+  assert.equal(clientPlan('twelvego', unknownPolicy), null)
+  assert.equal(clientPlan('twelvego', missingPolicy), null)
+  for (const deniedPlan of [unknownPolicy, missingPolicy]) {
+    const deniedShell = buildShell('twelvego', { plan: deniedPlan })
+    assert.equal(deniedShell.html.includes('"plan":null'), true)
+    assert.equal(deniedShell.headers.get('content-security-policy').includes('cdn0.trainbusferry.com'), false)
+    const wired = selectionFromPlan(JSON.parse(deniedShell.html.match(/startProductionShell\((\{.*\})\);/s)[1]))
+    assert.equal(wired, null)
+    const denied = controllerDeps({
+      provider: 'twelvego',
+      readPathProvider: () => 'twelvego',
+      select: () => wired,
+      artifact: () => wired,
+    })
+    const deniedController = createController(denied.deps)
+    deniedController.ready()
+    assert.equal(deniedController.onMessage({
+      source: denied.parent,
+      origin: PARENT_ORIGIN,
+      data: {
+        type: 'jetnity-widget-host',
+        revision: 1,
+        kind: 'grant',
+        provider: 'twelvego',
+        challenge: CHALLENGE,
+        frameGeneration: 1,
+        parentGeneration: 1,
+        policyId: 'unknown-policy',
+        artifactSha256: TWELVE_SHA,
+      },
+    }).reason, 'unselected')
+    assert.equal(denied.document.body.children.length, 0)
+  }
   const wrong = buildShell('twelvego', { plan: { ...plan, sandbox: 'allow-scripts' } })
   assert.equal(wrong.html.includes('"plan":null'), true)
   assert.match(wrong.headers.get('content-security-policy'), /form-action 'none'/)

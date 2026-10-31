@@ -7,6 +7,7 @@
 - The 12Go general row is selected in source: policy `twelvego-general-chf-20261031-r1`, artifact `3eeefcb326833997b1792f4a2bbc2b833511beddac2fd9626a2a9c07f68b369e`. DiscoverCars stays unselected.
 - That selection opens the fixed 12Go resource rules only when the full binding matches. It does not deploy `jetnity-widgets`, set the parent sandbox, or accept a CMP. `purposeSeparationVerified` is false. The form has no `data-starget`; a safe new tab is not claimed.
 - The DiscoverCars audit remains CHANGES REQUIRED / `BLOCKED_TRANSPORT`. `scripts/widgets-host-s2/audit-preflight.mjs` still expects both rows unselected and is not a current pass gate.
+- R2: a 12Go plan is emitted only when the complete fixed binding matches, including policy id. A wrong or missing policy id does not fall back to the loader origin.
 
 ## Earlier R2 note
 

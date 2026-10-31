@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 
 import contract from '../inert-contract.json' with { type: 'json' }
 import { auditFrameSource } from './audit-network-policy.mjs'
-import { TWELVEGO_POLICY_ID, twelvegoBindingMatches, twelvegoContentSecurityPolicy } from './twelvego-network-policy.mjs'
+import { twelvegoBindingMatches, twelvegoContentSecurityPolicy } from './twelvego-network-policy.mjs'
 import { CHILD_HOST, CHILD_ORIGIN, PARENT_ORIGIN, insertionValue } from './host-runtime.mjs'
 import { productionPlanForClient } from './production-wire.mjs'
 
@@ -84,7 +84,7 @@ function shellHeaders(value, plan) {
 export function buildShell(provider, options = {}) {
   const value = nonce()
   const supplied = Object.hasOwn(options, 'plan') ? options.plan : productionPlanForClient(provider)
-  const plan = supplied && supplied.provider === provider && (supplied.policyId !== TWELVEGO_POLICY_ID || twelvegoBindingMatches(supplied))
+  const plan = supplied && supplied.provider === provider && (provider !== 'twelvego' || twelvegoBindingMatches(supplied))
     ? supplied
     : null
   const config = {

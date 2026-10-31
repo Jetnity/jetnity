@@ -16,7 +16,7 @@
 
 The amendment is `docs/JETNITY_WIDGETS_HOST_S2_12GO_SELECTION_AMENDMENT_V1_2026-10-31.md`, blob `b5380cf9451b2a13573ecff572f98f46d12be080`. Only the 12Go registry row is selected. DiscoverCars stays unselected. The DiscoverCars audit is still CHANGES REQUIRED / `BLOCKED_TRANSPORT`; its policy, preflight, and nested-contract files were not changed. `audit-preflight.mjs` fails on `twelvego.selected === false` and is a historical check, not this delivery's pass gate.
 
-Source selection is not a widget launch. Dedicated-host deployment, parent sandbox, CMP acceptance, search/form behavior, and revocation remain open. `hostSelectionCommit` is not set here. `allow-popups-to-escape-sandbox` and top navigation are not selected.
+Source selection is not a widget launch. Dedicated-host deployment, parent sandbox, CMP acceptance, search/form behavior, and revocation remain open. `hostSelectionCommit` is not set here. `allow-popups-to-escape-sandbox` and top navigation are not selected. A 12Go shell exists only for the complete fixed binding. Wrong or missing `policyId` yields no plan and no whole-origin script source.
 
 ## What an earlier reader trusted
 
