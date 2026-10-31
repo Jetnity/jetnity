@@ -5,10 +5,17 @@ import { join } from 'node:path'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { readCmpController } from '@/lib/privacy/privacybee-cmp/abo'
-import { buildBootstrapSource, readBakedProductionGate } from '@/lib/privacy/privacybee-cmp/bootstrap'
+import { readCmpController, resetSharedCmpController } from '@/lib/privacy/privacybee-cmp/abo'
+import { buildBootstrapSource, productionBootstrapSource, readBakedProductionGate } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { productionPolicy } from '@/lib/privacy/privacybee-cmp/bundle'
-import { nextParentGeneration, PARENT_GENERATION_LIMIT, requestProductionExecution } from '@/lib/privacy/privacybee-cmp/produktion'
+import {
+  checkProductionExecution,
+  consumeProductionGrant,
+  nextParentGeneration,
+  PARENT_GENERATION_LIMIT,
+  releaseProductionExecution,
+  requestProductionExecution,
+} from '@/lib/privacy/privacybee-cmp/produktion'
 import {
   CMP_RELEASE_AUTHORIZED,
 } from '@/lib/privacy/privacybee-cmp/vertrag'
@@ -21,6 +28,8 @@ import {
   CMP_PARENT_ORIGIN,
   DISCOVERCARS_ARTIFACT_SHA256,
   DISCOVERCARS_EMBED_PATH,
+  TWELVEGO_ARTIFACT_SHA256,
+  TWELVEGO_EMBED_PATH,
 } from '@/lib/privacy/privacybee-cmp/produktionspolitik'
 
 const COMMIT = '0123456789abcdef0123456789abcdef01234567'
@@ -48,9 +57,19 @@ describe('produktive capability naht', () => {
   test('die gelieferte Tabelle und der Release bleiben zu, ohne Gate gibt es keine Capability', () => {
     assert.equal(CMP_RELEASE_AUTHORIZED, false)
     assert.equal(PRODUCTION_POLICY_TABLE.discovercars, null)
-    assert.equal(PRODUCTION_POLICY_TABLE.twelvego, null)
+    assert.equal(Object.isFrozen(PRODUCTION_POLICY_TABLE), true)
+    assert.equal(Object.isFrozen(PRODUCTION_POLICY_TABLE.twelvego), true)
+    assert.equal(Object.isFrozen(PRODUCTION_POLICY_TABLE.twelvego.requiredOptional), true)
+    assert.deepEqual(PRODUCTION_POLICY_TABLE.twelvego.requiredOptional, ['ANALYTICS_STORAGE'])
+    assert.equal(PRODUCTION_POLICY_TABLE.twelvego.policyId, 'twelvego-general-chf-20261031-r1')
+    assert.equal(PRODUCTION_POLICY_TABLE.twelvego.hostSelectionCommit, 'f056b01d63ac7d61650864734a9b44eb6484989e')
+    assert.equal(PRODUCTION_POLICY_TABLE.twelvego.artifactSha256, TWELVEGO_ARTIFACT_SHA256)
+    assert.equal(PRODUCTION_POLICY_TABLE.twelvego.embedPath, TWELVEGO_EMBED_PATH)
+    assert.equal(PRODUCTION_POLICY_TABLE.twelvego.sandbox, 'allow-scripts allow-same-origin allow-forms allow-popups')
     assert.equal(productionPolicy('discovercars'), null)
+    assert.equal(productionPolicy('twelvego')?.policyId, 'twelvego-general-chf-20261031-r1')
     assert.equal(requestProductionExecution('discovercars', 'scope-alpha'), null)
+    assert.equal(requestProductionExecution('twelvego', 'scope-alpha'), null)
     assert.equal(readCmpController().live, null)
     assert.equal(nextParentGeneration(0), 1)
     assert.equal(nextParentGeneration(PARENT_GENERATION_LIMIT - 1), PARENT_GENERATION_LIMIT)
@@ -97,11 +116,72 @@ describe('produktive capability naht', () => {
     const gebacken = globalThis as { __jetnityCmp?: { scripts?: number } }
     assert.equal(gebacken.__jetnityCmp?.scripts ?? 0, 0)
     assert.equal(requestProductionExecution('discovercars', 'scope-alpha'), null)
+    assert.equal(requestProductionExecution('twelvego', 'scope-alpha'), null)
+    assert.equal(readCmpController().live, null)
     delete host.__jetnityCmp
     eval(buildBootstrapSource({ release: true, killDenied: false }))
     assert.deepEqual(readBakedProductionGate(), { releaseAllowed: true, killDenied: false })
     assert.equal(requestProductionExecution('discovercars', 'scope-alpha'), null)
     assert.equal(readCmpController().live, null)
+  })
+
+  test('die ausgewählte 12Go-Zeile bleibt ohne Produktions-Bootstrap geschlossen und lässt sich nur mit Testfreigabe einmal verbrauchen', () => {
+    resetSharedCmpController()
+    const host = globalThis as unknown as {
+      window: unknown
+      location: { hostname: string }
+      document: {
+        addEventListener: () => void
+        querySelector: () => null
+        createElement: () => { setAttribute: () => void; src: string; async: boolean }
+        head: { appendChild: () => void }
+      }
+      PrivacyBee?: unknown
+      __jetnityCmp?: unknown
+    }
+    const werte = {
+      SECURITY_STORAGE: true,
+      FUNCTIONALITY_STORAGE: true,
+      ANALYTICS_STORAGE: true,
+      AD_STORAGE: false,
+      AD_USER_DATA: false,
+      AD_PERSONALIZATION: false,
+      PERSONALIZATION_STORAGE: false,
+    }
+    host.window = host
+    host.location = { hostname: 'jetnity.com' }
+    host.document = {
+      addEventListener() {},
+      querySelector() { return null },
+      createElement() { return { src: '', async: false, setAttribute() {} } },
+      head: { appendChild() {} },
+    }
+    host.PrivacyBee = {
+      getAllConsents: () => werte,
+      getConsent: (name: string) => werte[name as keyof typeof werte],
+      hasExplicitConsent: () => true,
+    }
+    delete host.__jetnityCmp
+    eval(productionBootstrapSource())
+    assert.equal(readBakedProductionGate()?.releaseAllowed, false)
+    assert.equal(requestProductionExecution('twelvego', 'scope-alpha'), null)
+    assert.equal(readCmpController().live, null)
+    delete host.__jetnityCmp
+    eval(buildBootstrapSource({ release: true, killDenied: false }))
+    const capability = requestProductionExecution('twelvego', 'scope-alpha')
+    assert.ok(capability)
+    assert.equal(capability.src, `${CMP_CHILD_ORIGIN}${TWELVEGO_EMBED_PATH}`)
+    assert.equal(checkProductionExecution(capability), true)
+    const grant = consumeProductionGrant(capability)
+    assert.equal(grant?.policyId, 'twelvego-general-chf-20261031-r1')
+    assert.equal(grant?.artifactSha256, TWELVEGO_ARTIFACT_SHA256)
+    assert.ok(grant && grant.parentGeneration >= 1)
+    assert.equal(consumeProductionGrant(capability), null)
+    assert.equal(checkProductionExecution(capability), true)
+    assert.equal(requestProductionExecution('discovercars', 'scope-alpha'), null)
+    releaseProductionExecution(capability)
+    assert.equal(readCmpController().live, null)
+    assert.equal(requestProductionExecution('discovercars', 'scope-alpha'), null)
   })
 
   test('die öffentliche Fassade mit dem Testmodul beachtet Kill, Grant und Provider-Pin', () => {

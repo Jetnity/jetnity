@@ -1,5 +1,6 @@
-// Source-owned production policy table. Both rows stay null until Root supplies
-// a complete reviewed record. Known origin and artifact literals are not a policy.
+// Source-owned production policy table. DiscoverCars stays null. The 12Go row is
+// the selected record behind the false release. Known origin and artifact
+// literals are not a second policy.
 
 import type { WidgetConsentProviderId } from '@/lib/privacy/widget-consent/vertrag'
 
@@ -41,10 +42,31 @@ export type ProductionPolicyRecord = {
   readonly sandbox: string
 }
 
-/** Real rows. Null is the prepared deny. Do not fill these from fixtures or the other provider. */
-export const PRODUCTION_POLICY_TABLE: Readonly<Record<WidgetConsentProviderId, null>> = Object.freeze({
+const TWELVEGO_REQUIRED = Object.freeze(['ANALYTICS_STORAGE'])
+
+/** Selected 12Go record. DiscoverCars stays null. The release constant stays false. */
+const TWELVEGO_PRODUCTION_POLICY: ProductionPolicyRecord = Object.freeze({
+  providerId: 'twelvego',
+  policyId: 'twelvego-general-chf-20261031-r1',
+  requiredOptional: TWELVEGO_REQUIRED,
+  processingPolicyRevision: 'twelvego-load-affiliate-analytics-v1',
+  disclosureRevision: 'twelvego-general-disclosure-v1',
+  artifactSha256: TWELVEGO_ARTIFACT_SHA256,
+  parentOrigin: CMP_PARENT_ORIGIN,
+  childOrigin: CMP_CHILD_ORIGIN,
+  embedPath: TWELVEGO_EMBED_PATH,
+  protocolRevision: 1,
+  networkPolicyRevision: 'twelvego-general-network-v1',
+  hostSelectionCommit: 'f056b01d63ac7d61650864734a9b44eb6484989e',
+  sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups',
+})
+
+export const PRODUCTION_POLICY_TABLE: {
+  readonly discovercars: null
+  readonly twelvego: ProductionPolicyRecord
+} = Object.freeze({
   discovercars: null,
-  twelvego: null,
+  twelvego: TWELVEGO_PRODUCTION_POLICY,
 })
 
 function text(value: unknown): string | null {
