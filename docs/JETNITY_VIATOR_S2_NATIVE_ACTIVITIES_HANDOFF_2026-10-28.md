@@ -28,7 +28,9 @@ S2-SANDBOX-FAILURE-DIAGNOSTICS-R1. A failed `destinations` call writes one allow
 
 ## Product codes and option truth
 
-S2 R3, review 5722552523. One Viator predicate accepts `2855KENNEDY_TKTS` and `2050_PA` on content, request, schedule, check, and affiliate paths. Unsafe path, query, fragment, encoding, and length stay out. Untitled or malformed `productOptions` stay unresolved. They do not become a standard product, and the live check does not run. The original product URL is unchanged. The R3 task amendment is unchanged. `origin/main` `b7ebc399b92303eacda9afdaa1786f245492051f` was merged without rebase. Route and White/Mint files were left as main wrote them. The hosted destinations failure stays unclassified. No provider call.
+S2 R3, review 5722552523. One Viator predicate accepts `2855KENNEDY_TKTS` and `2050_PA` on content, request, schedule, check, and affiliate paths. Unsafe path, query, fragment, encoding, and length stay out. Untitled or malformed `productOptions` stay unresolved. They do not become a standard product, and the live check does not run. `productOptionCode` is omitted only when the provider sent no option list. The original product URL is unchanged. The R3 task amendment is unchanged. `origin/main` `b7ebc399b92303eacda9afdaa1786f245492051f` was merged without rebase. Route and White/Mint files were left as main wrote them. The hosted destinations failure stays unclassified. No provider call.
+
+The local browser harness now loads `globals.css`, `white-mint.css`, `workspace.css`, and `workspace-surfaces.css` in that order and mounts the light `workspace-shell` / `workspace-page` / `workspace-content` ancestors around the same `main`. A computed document background of `rgb(247, 252, 249)` and `color-scheme: light` on the shell are the local witness. That is not hosted or device acceptance. Older rectangle measurements used only `globals.css` and a bare `main`.
 
 ## Still blocked
 

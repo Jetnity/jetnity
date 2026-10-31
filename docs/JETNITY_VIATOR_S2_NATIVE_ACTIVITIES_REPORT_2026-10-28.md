@@ -18,7 +18,7 @@ None.
 
 ## Tests
 
-`npx tsc -p tsconfig.json --noEmit` passed. `npx eslint . --quiet` passed. `npm run build` passed. Search 6, foundation suites, sandbox 5, and seam 14 passed, including underscore codes and untitled-option refusal. The rendered panel test passed: no “keine Zusatzoption”, no availability button, original Viator link kept, zero check requests. Root-font enlargement was not re-measured; this was not a layout pass and is not browser zoom. CI 40903974616 is the historical SUCCESS on `814920d0` and does not cover this commit.
+The local browser harness loads `globals.css`, then `white-mint.css`, `workspace.css`, and `workspace-surfaces.css`, and mounts the light workspace shell around `main`. Four browser harness tests passed. The document background computed to `rgb(247, 252, 249)` and the shell `color-scheme` was `light`. That witness is local only. It is not hosted, device, VoiceOver, or full-browser-zoom acceptance. Older rectangle figures used only `globals.css`. `npx tsc -p tsconfig.json --noEmit` and `npm run build` passed.
 
 ## Build
 

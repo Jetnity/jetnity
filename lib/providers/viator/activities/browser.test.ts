@@ -105,6 +105,20 @@ const TEXT_GRENZEN = `(() => {
   }
 })()`
 
+const STIL = `(() => {
+  const shell = document.querySelector('.workspace-shell')
+  const html = getComputedStyle(document.documentElement)
+  const schale = shell ? getComputedStyle(shell) : null
+  return {
+    ok: Boolean(shell)
+      && shell.getAttribute('data-workspace-theme') === 'light'
+      && html.backgroundColor === 'rgb(247, 252, 249)'
+      && schale.colorScheme === 'light',
+    hintergrund: html.backgroundColor,
+    schema: schale ? schale.colorScheme : '',
+  }
+})()`
+
 async function css(): Promise<string> {
   const verlangen = createRequire(import.meta.url)
   const postcss = verlangen('postcss') as (plugins: unknown[]) => {
@@ -113,10 +127,23 @@ async function css(): Promise<string> {
   const nesting = verlangen('tailwindcss/nesting') as () => unknown
   const tailwindcss = verlangen('tailwindcss') as (config: unknown) => unknown
   const autoprefixer = verlangen('autoprefixer') as () => unknown
-  const from = join(process.cwd(), 'styles/globals.css')
   const config = verlangen(join(process.cwd(), 'tailwind.config.js')) as unknown
-  const ergebnis = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(from, 'utf8'), { from })
-  return ergebnis.css.replaceAll('</style', '<\\/style')
+  const reihenfolge = [
+    'styles/globals.css',
+    'styles/white-mint.css',
+    'components/workspace/workspace.css',
+    'components/workspace/workspace-surfaces.css',
+  ]
+  const teile: string[] = []
+  for (const datei of reihenfolge) {
+    const from = join(process.cwd(), datei)
+    const quelle = readFileSync(from, 'utf8')
+    const verarbeitet = datei.endsWith('globals.css')
+      ? (await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(quelle, { from })).css
+      : quelle
+    teile.push(verarbeitet)
+  }
+  return teile.join('\n').replaceAll('</style', '<\\/style')
 }
 
 async function bundle(): Promise<string> {
@@ -354,6 +381,8 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       return route.continue()
     })
     await page.goto(origin)
+    const stil = alsMesswert(await page.evaluate(STIL))
+    assert.equal(stil.ok, true, JSON.stringify(stil))
     page.once('close', () => {
       releaseFirst?.()
       detailFreigegeben = true
@@ -539,6 +568,8 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
 
   test('untitled options are not presented as a product without options', async () => {
     const page = await seite(390, { unbenannt: true })
+    const stil = alsMesswert(await page.evaluate(STIL))
+    assert.equal(stil.ok, true, JSON.stringify(stil))
     const träger = page as Page & { gesendet: unknown[] }
     await page.getByRole('region', { name: 'Aktivitäten' }).getByRole('button', { name: 'Für diesen Tag suchen' }).click()
     await page.getByRole('button', { name: 'Angebot prüfen' }).click()

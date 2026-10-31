@@ -76,12 +76,19 @@ function reiseMitTagen(anzahl: number): Trip {
 export function mountViatorHarness() {
   const root = document.getElementById('root')
   if (!root) return
+  document.body.classList.add('min-h-screen', 'text-foreground', 'antialiased')
   const anzahl = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('tage')
   const gewaehlt = reiseMitTagen(anzahl === '22' ? 22 : 2)
   createRoot(root).render(
-    <main className="mx-auto max-w-3xl p-4">
-      <AktivitaetenBereich reise={gewaehlt} />
-    </main>,
+    <div className="workspace-shell" data-workspace-theme="light" data-collapsed="false" data-menu-open="false">
+      <div className="workspace-page">
+        <div id="workspace-content" className="workspace-content">
+          <main className="mx-auto max-w-3xl p-4">
+            <AktivitaetenBereich reise={gewaehlt} />
+          </main>
+        </div>
+      </div>
+    </div>,
   )
 }
 
