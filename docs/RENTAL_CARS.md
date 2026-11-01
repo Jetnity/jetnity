@@ -1,5 +1,7 @@
 # Jetnity – Mietwagen
 
+**Ergänzung 02.11.2026:** Im vorhandenen Mietwagenbereich ersetzt das bewusst geladene offizielle DiscoverCars-Suchformular die frühere Platzhalter-/BKK-Linkkarte. Die Datenwahl ist auf Jetnity möglich; Fahrzeugangebote und Buchung öffnen bei DiscoverCars. Private Reiseinhalte werden nicht übergeben. Ein-/Ausblenden, Kontextwechsel und vorhandene CMP-Ablehnungen begrenzen die Einbindung. Die unten beschriebene native Suchpipeline bleibt geschlossen, solange kein autorisierter API-Zugang vorliegt. Persistenz und manuelle Buchungsangaben sind unverändert. [Nachweise und offene Releasegrenzen](DISCOVERCARS_ONSITE_EVIDENCE_2026-11-02.md), ADR-0226.
+
 **Stand:** 22. August 2026 · Foundation B / PR #31 Ready for Review; Schema auf Production, Suche aus  
 **Gilt für:** Mietwagendomäne, Persistenz, Trip-Workspace-Unterbereich in Mobilität und geschlossene Suchnaht.
 

@@ -1,0 +1,69 @@
+{
+  "capturedAt": "2026-11-02",
+  "baseline": "cd6ccc33e926897379999de918d21d90111ec77e",
+  "method": "Chrome browser UI, official generator, local isolated test and actual Jetnity components",
+  "sources": {
+    "generator": "https://www.discovercars.com/de/affiliate/widget",
+    "affiliate": "https://www.discovercars.com/affiliate",
+    "b4b": "https://pages.discovercars.com/b4b",
+    "conditions": "https://www.discovercars.com/affiliate-conditions",
+    "account": "https://discover-car-hire.postaffiliatepro.com/affiliates/panel.php"
+  },
+  "accountEvidence": {
+    "affiliateLink": "https://www.discovercars.com/?a_aid=jetnity",
+    "visibleTools": ["Booking Widget Generator", "Landing Page Generator", "SubId Tracking", "Deeplink Generator"],
+    "searchApiAccess": "not evidenced; no credentials or API entitlement shown in inspected account pages",
+    "contact": ["ilina.beskina@discovercars.com", "sergey.kulpin@discovercars.com"]
+  },
+  "widgetEvidence": {
+    "opaqueLocalWrapper": "provider iframe refused connection; not shipped",
+    "directProviderFrame": "working, with own provider origin and no provider script on Jetnity",
+    "origin": "https://widget.discovercars.com",
+    "pathname": "/de/locations/",
+    "queryParameterCount": 31,
+    "sandbox": "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin",
+    "credentialless": true,
+    "referrerPolicy": "origin",
+    "messageOrigin": "https://widget.discovercars.com",
+    "messageDataType": "string",
+    "messageData": "{\"discovercars\":true,\"action\":\"heightChange\",\"height\":478}",
+    "mobileHeightObserved": [703, 604, 580, 534],
+    "tripDataPassed": false
+  },
+  "searchHandoff": {
+    "syntheticTestOnly": true,
+    "pickup": "Flughafen Bangkok Suvarnabhumi (BKK), Bangkok, Thailand",
+    "pickupAt": "2026-11-04T11:00:00",
+    "returnAt": "2026-11-12T11:00:00",
+    "residence": "CH",
+    "ageBand": "30-65",
+    "resultsOrigin": "https://www.discovercars.com",
+    "resultsPath": "/de/search/719c83b9-fcd3-459d-b481-9d1bb150248f",
+    "observedResultParameters": {"utm_source":"jetnity", "utm_medium":"widget", "a_aid":"jetnity", "currency":"CHF", "widget_origin":"http://127.0.0.1", "searchVersion":"2"},
+    "resultsVisible": true,
+    "bookingOrPaymentPerformed": false,
+    "commissionVerified": false
+  },
+  "actualComponents": {
+    "harness": "local React StrictMode with MobilitaetBereich and synthetic trip; production components unchanged by harness",
+    "beforeDisplayIframeCount": 0,
+    "afterDisplayIframeCount": 1,
+    "afterHideIframeCount": 0,
+    "afterMobilitySubtabChangeIframeCount": 0,
+    "afterTripChangeIframeCount": 0,
+    "afterWorkspaceAreaChangeIframeCount": 0,
+    "afterPrivacyRefusalIframeCount": 0,
+    "privacyRefusalUi": "datenschutz",
+    "returnRequiresNewDisplayAction": true,
+    "checkedWidths": [280,320,360,375,390,430,768,1280],
+    "horizontalOverflowOuterOrWidget": false,
+    "differentReturnLocationField": "visible after activating the provider's custom checkbox"
+  },
+  "limitations": [
+    "No native vehicle search API, prices, availability or trip adoption implemented.",
+    "credentialless is browser-dependent and does not mean no provider cookies or tracking.",
+    "Parent CSP does not constrain requests made inside the provider document.",
+    "Jetnity production browser origin remains denied by the browser tool; no bypass attempted.",
+    "Chrome viewport checks are not physical-device or WebKit acceptance."
+  ]
+}

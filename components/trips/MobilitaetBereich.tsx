@@ -200,6 +200,7 @@ export default function MobilitaetBereich({
         >
           <MietwagenBereich
             reise={reise}
+            sichtbar={sichtbar && unterbereich === 'mietwagen'}
             ohneTag={ohneTag}
             onBuchungsstatus={onBuchungsstatus}
             onManuellAnlegen={onMietwagenAnlegen}

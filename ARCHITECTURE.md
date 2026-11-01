@@ -1,5 +1,7 @@
 # Jetnity – Architektur
 
+> **02.11.2026 – DiscoverCars-Suchformular:** Bewusste Anzeige im bestehenden Mietwagenbereich, direkt isoliert auf der Anbieter-Origin; feste Generatorparameter, geprüfte Höhenmeldungen, keine Reisedaten, kein Script auf Jetnity. Fahrzeuge/Preise bleiben extern. Kein neues API-/DB-Modul; native Rental-Factory und alte CMP-/Widget-Host-Gates bleiben geschlossen. [Implementierung, Prüfungen und Releasegrenzen](docs/DISCOVERCARS_ONSITE_EVIDENCE_2026-11-02.md), ADR-0226. Ältere datierte Releasehinweise bleiben historische Snapshots.
+
 > **01.11.2026 – Orts-/Länderqualität, PR #1103:** Implementierung und Development-Prüfung laufen; Production-Migration/Referenzdatenrefresh noch nicht freigegeben. [Aktueller Prüfstand und nächster Schritt](docs/PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md). Root alleiniger Writer, separate unabhängige Reviews. Dieser Hinweis ist der aktuelle Stand dieses Slices; ältere Einträge bleiben historische Snapshots.
 
 Stand: 28. August 2026

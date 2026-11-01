@@ -2,9 +2,8 @@
 
 // components/trips/MietwagenBereich.tsx
 //
-// Mietwagen innerhalb von Mobilität. Bestand zuerst, darunter ehrliche
-// Unavailable-Anzeige ohne automatische Suche, ein optionaler externer
-// DiscoverCars-Link und manuelle Erfassung mit leeren Startwerten.
+// Mietwagen innerhalb von Mobilität. Bestand zuerst, danach das bewusst
+// geladene DiscoverCars-Formular und manuelle Erfassung mit leeren Startwerten.
 // Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
@@ -19,7 +18,7 @@ import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-car
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
-import DiscoverCarsAffiliateLinks from '@/components/trips/DiscoverCarsAffiliateLinks'
+import DiscoverCarsSuche from '@/components/trips/DiscoverCarsSuche'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
@@ -59,11 +58,13 @@ export default function MietwagenBereich({
   ohneTag = [],
   onBuchungsstatus,
   onManuellAnlegen,
+  sichtbar = true,
 }: {
   reise: Trip
   ohneTag?: readonly TripItem[]
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   onManuellAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
+  sichtbar?: boolean
 }) {
   const bestand = mietwagenBestand(reise, ohneTag)
   const aktionIds = bestand.items.map((punkt) => punkt.id)
@@ -154,24 +155,7 @@ export default function MietwagenBereich({
         ) : null}
       </section>
 
-      <section
-        aria-label="Mietwagensuche"
-        data-organisieren-flaeche="suche"
-        className={`${ORGANISIEREN_FLAECHE_KLASSE} relative overflow-hidden`}
-      >
-        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
-        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
-          Mietwagenangebote
-        </h2>
-        <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-          Mietwagenangebote werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen
-          hier echte Fahrzeuge – ohne erfundene Preise, Klassen oder Verfügbarkeiten. Eine Suche
-          startet nicht automatisch aus dem Reisekontext.
-        </p>
-      </section>
-
-      <DiscoverCarsAffiliateLinks reiseId={reise.id} stationen={reise.stages.length} />
+      {sichtbar ? <DiscoverCarsSuche key={reise.id} /> : null}
 
       {onManuellAnlegen ? <ManuellerMietwagen reise={reise} onAnlegen={onManuellAnlegen} /> : null}
     </div>
