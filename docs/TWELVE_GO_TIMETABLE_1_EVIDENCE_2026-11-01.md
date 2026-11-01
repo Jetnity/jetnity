@@ -1,6 +1,6 @@
 # 12Go Timetable 1 — Anbieterbelege und Abnahme
 
-Stand: 1. November 2026, Europe/Zurich. PR #1101; Ausgangs-Main `ab37bd4601f322b0ef72367bec9f0ce2bd4eb09a`. Diese Datei belegt einen begrenzten Entwicklungsstand, keinen Livegang.
+Stand: 1. November 2026, Europe/Zurich. PR #1101; Ausgangs-Main `ab37bd4601f322b0ef72367bec9f0ce2bd4eb09a`. Die ursprünglichen Prüfungen unten bleiben historische Entwicklungsbelege. Inzwischen ist #1101 regulär gemergt, Main `68071953355e1164891611e7eea9a26c00c7cd6a` live; [separate Release-Abnahme](https://github.com/Jetnity/jetnity/pull/1101#issuecomment-6561940221). Die danach entdeckte Bangkok-ADM1-Lücke und ihre Korrektur sind im [Korrekturauftrag](TWELVE_GO_BANGKOK_REGION_FIX_TASK_2026-11-01.md) getrennt dokumentiert. Frühere PASS-Aussagen verwendeten Bangkok-Stadt und belegen keine vollständige Ortsabdeckung.
 
 ## Offizielle Quelle
 
@@ -17,10 +17,13 @@ Die Referenz nennt TH, MY, KH, VN und SG. Diese Liste ist **keine implementierte
 | Jetnity / GeoNames | Provider-Zielregion | Beleg |
 | --- | --- | --- |
 | `geonames:1609350`, Bangkok, TH | Bangkok | [GeoNames Bangkok](https://www.geonames.org/1609350/bangkok.html), Hauptstadt 13.75398 / 100.50144; echte Timetable-Antwort Bangkok–Koh Chang |
+| `geonames:1609348`, Bangkok, TH | Bangkok | [GeoNames Bangkok ADM1](https://www.geonames.org/1609348/bangkok.html), Verwaltungsregion 13.87719 / 100.71991; Verwaltungshierarchie des Stadteintrags 1609350 verweist hierauf. Ergänzung nach Live-Befund, 1. November 2026; dieselbe allgemeine Provider-Region, keine Haltestellenaussage. |
 | `geonames:1611309`, Ko Chang, TH | Koh Chang, Trat | [GeoNames Ko Chang](https://www.geonames.org/1611309/ko-chang.html), Insel 12.0488846 / 102.2994733; echte Antworten Bangkok–Koh Chang und Koh Chang–Phuket |
 | `geonames:1151254`, Phuket, TH | Phuket | [GeoNames Phuket](https://www.geonames.org/1151254/phuket.html), Ort 7.89059 / 98.39810; echte Antwort Koh Chang–Phuket |
 
 Die gleichnamige [Ko-Chang-Insel in Ranong, `1153735`](https://www.geonames.org/1153735/ko-chang.html), ist ein anderer Ort und wird ausdrücklich abgewiesen. Ebenso unbekannte IDs, nur passende Namen, widersprüchliche Länder sowie Ortsnamen/ID-Mischungen. Phuket-Stadt wird nur als Zugang zur allgemeinen Provider-Zielregion behandelt, niemals als konkrete Haltestelle. Alle Haltestellen und Abholorte sind bei 12Go zu prüfen. Keine Namenssuche ohne belegte ID. Eine breitere Registry braucht weitere geografisch geprüfte Belege.
+
+Bangkok-Stadt und die belegte Bangkok-Verwaltungsregion werden ausschließlich in diesem Timetable-Adapter derselben Region zugeordnet. Die Reise bleibt unverändert. Eine Kante zwischen beiden IDs erzeugt keine Bangkok–Bangkok-Abfrage. Andere Verwaltungsregionen werden daraus nicht automatisch zugelassen. Siehe [Korrekturauftrag V1](TWELVE_GO_BANGKOK_REGION_FIX_TASK_2026-11-01.md).
 
 ## Echte Browserprobe
 

@@ -8,6 +8,7 @@ const ort = z.string().trim().min(2).max(80).regex(/^[\p{L}\p{M}\p{N}][\p{L}\p{M
 // docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md. Never resolve an unknown ID by name.
 const zuordnungen: Readonly<Record<string, { country: string; name: string }>> = {
   'geonames:1609350': { country: 'TH', name: 'Bangkok' },
+  'geonames:1609348': { country: 'TH', name: 'Bangkok' }, // Verified ADM1; general provider region, not a stop.
   'geonames:1611309': { country: 'TH', name: 'Koh Chang' },
   'geonames:1151254': { country: 'TH', name: 'Phuket' },
 }
@@ -19,6 +20,7 @@ export const timetableAnfrageSchema = z.object({
   country: z.enum(laender), from: ort, to: ort,
   fromPlaceId: z.string().max(50), toPlaceId: z.string().max(50),
 }).strict().refine((a) => a.fromPlaceId !== a.toPlaceId &&
+  ortSchluessel(a.from, a.country) !== ortSchluessel(a.to, a.country) &&
   zugeordnet(a.fromPlaceId, a.country, a.from) && zugeordnet(a.toPlaceId, a.country, a.to))
 export type TimetableAnfrage = z.infer<typeof timetableAnfrageSchema>
 
