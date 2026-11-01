@@ -7,7 +7,7 @@
 ## Read next
 
 1. Immutable task `docs/JETNITY_PRIVACYBEE_CMP_TWELVEGO_R8_SOURCE_RELEASE_TASK_V1_2026-11-01.md`, blob `d3f0b848799af7ee77d506170cae12ee71d30be6`.
-2. STATUS for the commands and REPORT for the pins.
+2. REPORT for the complete parent JSON, the prior focused command, and the prior shared CMP `bericht.json`.
 3. Re-read `git rev-parse HEAD`, `HEAD^{tree}`, and `git rev-list --left-right --count origin/main...HEAD` before review.
 
 ## Merge

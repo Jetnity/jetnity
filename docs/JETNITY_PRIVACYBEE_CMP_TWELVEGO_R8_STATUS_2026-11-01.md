@@ -17,8 +17,8 @@ The merge commit parents are the task seed `5b9d0f72a2ebf1c45b16b20b093c4f6ba0c3
 
 | Check | Result |
 | --- | --- |
-| Focused CMP, widget-consent, 12Go widget, and legal PrivacyBee tests | 91 pass, 0 fail, 0 skipped |
-| 12Go parent harness `scripts/twelve-go-widget-v2/eltern-nachweis.ts` | exit 0. Production bootstrap with no API fulfilled one local banner and created no preferences control or frame. Explicit false with a ready API created zero banners, preferences, and frames. Positive contexts used the same production bootstrap, one local banner each, and the existing request flow |
+| Focused CMP, widget-consent, 12Go widget, and legal PrivacyBee tests | Not rerun. Prior command on `b8ddd79b` exited 0: 91 pass, 0 fail, 0 skipped. This correction changes only a test title |
+| 12Go parent harness `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts` | exit 0 on this correction. Chrome first, used `148.0.7778.96`. Every existing context records its initial gate and final banner count in REPORT. Unexpected ledger empty |
 | Shared CMP harness | exit 0. Licensed page uses `productionBootstrapSource(null)`. One local banner fixture and no other foreign request |
 | `check:dead` / `check:exports` / `check:schema-bezug` / `check:deps` | pass |
 | Changed-file ESLint `--max-warnings 0` | pass |

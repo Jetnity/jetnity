@@ -17,5 +17,5 @@
 
 - A green offline harness is not a licensed-host CMP or 12Go acceptance.
 - The local banner body is inert. It does not prove the vendor script.
-- I did not run the full repository `npm test`. The focused 91 tests, both harnesses, the guards, and `npm run build` passed.
+- I reran only the parent harness. The focused 91 and the shared CMP harness are the prior `b8ddd79b` outputs. I did not run the full repository `npm test`.
 - I did not read native CI or Preview for the implementation head.

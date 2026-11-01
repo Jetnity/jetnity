@@ -256,6 +256,77 @@ function assertGleich(fehler: string[], bedingung: boolean, text: string) {
   if (!bedingung) fehler.push(text)
 }
 
+type GateSatz = { releaseAllowed: boolean; killDenied: boolean; booted: number; scripts: number }
+
+type KontextNachweis = {
+  name: string
+  bootstrap: 'produktion' | 'geschlossen' | 'keiner'
+  fixture: boolean
+  width: number
+  root: string
+  gateAnfang: GateSatz | null
+  rahmenAnfang: number
+  bannerErwartet: number
+  bannerEnde: number
+}
+
+const kontexte: KontextNachweis[] = []
+
+async function kontextAnfang(
+  name: string,
+  offen: { page: Page; banner: string[] },
+  options: { fixture: boolean; bootstrap?: boolean | 'geschlossen'; width: number; root: string },
+  bannerErwartet: number,
+  fehler: string[],
+): Promise<KontextNachweis> {
+  const gateAnfang = await offen.page.evaluate(() => {
+    const gate = (window as Window & { __jetnityCmp?: { releaseAllowed?: unknown; killDenied?: unknown; booted?: unknown; scripts?: unknown } }).__jetnityCmp
+    if (!gate) return null
+    return {
+      releaseAllowed: gate.releaseAllowed === true,
+      killDenied: gate.killDenied === true,
+      booted: typeof gate.booted === 'number' ? gate.booted : 0,
+      scripts: typeof gate.scripts === 'number' ? gate.scripts : 0,
+    }
+  })
+  const rahmenAnfang = await offen.page.locator('iframe').count()
+  const bootstrap = options.bootstrap === 'geschlossen' ? 'geschlossen' : options.bootstrap ? 'produktion' : 'keiner'
+  const eintrag: KontextNachweis = {
+    name,
+    bootstrap,
+    fixture: options.fixture,
+    width: options.width,
+    root: options.root,
+    gateAnfang,
+    rahmenAnfang,
+    bannerErwartet,
+    bannerEnde: offen.banner.length,
+  }
+  kontexte.push(eintrag)
+  assertGleich(fehler, rahmenAnfang === 0, `${name}: Rahmen am Anfang ${rahmenAnfang}`)
+  if (bootstrap === 'produktion') {
+    assertGleich(
+      fehler,
+      gateAnfang?.releaseAllowed === true && gateAnfang.killDenied === false && gateAnfang.booted === 1 && gateAnfang.scripts === 1,
+      `${name}: Gate ${JSON.stringify(gateAnfang)}`,
+    )
+  } else if (bootstrap === 'geschlossen') {
+    assertGleich(
+      fehler,
+      gateAnfang?.releaseAllowed === false && gateAnfang.killDenied === false && gateAnfang.booted === 1 && gateAnfang.scripts === 0,
+      `${name}: geschlossenes Gate ${JSON.stringify(gateAnfang)}`,
+    )
+  } else {
+    assertGleich(fehler, gateAnfang === null, `${name}: unerwartetes Gate ${JSON.stringify(gateAnfang)}`)
+  }
+  return eintrag
+}
+
+function kontextEnde(eintrag: KontextNachweis, banner: string[], fehler: string[]) {
+  eintrag.bannerEnde = banner.length
+  assertGleich(fehler, eintrag.bannerEnde === eintrag.bannerErwartet, `${eintrag.name}: Bannerende ${eintrag.bannerEnde}`)
+}
+
 async function main() {
   const ziel = nachweisOrdner()
   mkdirSync(ziel, { recursive: true })
@@ -264,7 +335,12 @@ async function main() {
   const js = readFileSync(jsPfad, 'utf8')
   const css = await anwendungsStil()
   const optionen = { headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] }
-  const browser = await chromium.launch({ ...optionen, channel: 'chrome' }).catch(() => chromium.launch(optionen))
+  let browserKanal = 'chrome'
+  const browser = await chromium.launch({ ...optionen, channel: 'chrome' }).catch(() => {
+    browserKanal = 'chromium'
+    return chromium.launch(optionen)
+  })
+  const browserVersion = browser.version()
   const fehler: string[] = []
   const steuerung: Array<Record<string, string | number | boolean | null>> = []
   const ledger: { adresse: string }[] = []
@@ -272,7 +348,9 @@ async function main() {
   const kind = { current: 'ready' as 'ready' | 'still' | 'verzoegert' }
 
   try {
-    const ohne = await oeffnen(browser, css, js, { fixture: false, bootstrap: true, width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
+    const ohneOptionen = { fixture: false, bootstrap: true as const, width: 1440, height: 1200, root: '16px', seam: 'guest' as const }
+    const ohne = await oeffnen(browser, css, js, ohneOptionen, kind, ledger)
+    const ohneNachweis = await kontextAnfang('ohne-api', ohne, ohneOptionen, 1, fehler)
     await ohne.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await ohne.page.locator('[data-twelve-go-disclosure="twelvego-general-disclosure-v1"]').count() === 1, 'Hinweis fehlt')
     assertGleich(fehler, await ohne.page.locator('[data-twelve-go-datenschutz]').getAttribute('href') === 'https://12go.asia/en/privacy-policy', 'Datenschutzlink')
@@ -292,9 +370,12 @@ async function main() {
     assertGleich(fehler, await ohne.page.locator('iframe').count() === 0, 'Sperre montiert einen Frame')
     assertGleich(fehler, ledger.length === 0, `Netz vor der Freigabe ${ledger.length}`)
     await ohne.page.screenshot({ path: join(ziel, 'r6-sperre.png'), fullPage: false })
+    kontextEnde(ohneNachweis, ohne.banner, fehler)
     await ohne.context.close()
 
-    const geschlossen = await oeffnen(browser, css, js, { fixture: true, bootstrap: 'geschlossen', width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
+    const geschlossenOptionen = { fixture: true, bootstrap: 'geschlossen' as const, width: 1440, height: 1200, root: '16px', seam: 'guest' as const }
+    const geschlossen = await oeffnen(browser, css, js, geschlossenOptionen, kind, ledger)
+    const geschlossenNachweis = await kontextAnfang('geschlossen', geschlossen, geschlossenOptionen, 0, fehler)
     await geschlossen.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, geschlossen.banner.length === 0, `geschlossenes Banner ${geschlossen.banner.length}`)
     assertGleich(fehler, await geschlossen.page.locator('[data-cmp-preferences="surface"]').count() === 0, 'explizites false zeigt Einstellungen')
@@ -304,11 +385,15 @@ async function main() {
     assertGleich(fehler, (await geschlossen.page.locator('[data-twelve-go-widget]').getAttribute('data-twelve-go-widget')) === 'verweigert', 'explizites false gibt frei')
     assertGleich(fehler, await geschlossen.page.locator('iframe').count() === 0, 'explizites false montiert einen Frame')
     assertGleich(fehler, ledger.length === 0, `Netz bei explizitem false ${ledger.length}`)
+    kontextEnde(geschlossenNachweis, geschlossen.banner, fehler)
     await geschlossen.context.close()
 
-    const konto = await oeffnen(browser, css, js, { fixture: false, width: 1440, height: 1200, root: '16px', seam: 'account' }, kind, ledger)
+    const kontoOptionen = { fixture: false, width: 1440, height: 1200, root: '16px', seam: 'account' as const }
+    const konto = await oeffnen(browser, css, js, kontoOptionen, kind, ledger)
+    const kontoNachweis = await kontextAnfang('konto', konto, kontoOptionen, 0, fehler)
     await konto.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await konto.page.locator('[data-twelve-go-affiliate]').count() === 1, 'Konto ohne 12Go')
+    kontextEnde(kontoNachweis, konto.banner, fehler)
     await konto.context.close()
 
     const breiten = [
@@ -319,7 +404,9 @@ async function main() {
       { name: '390-root-32', width: 390, height: 1600, root: '32px' },
     ]
     for (const fall of breiten) {
-      const lauf = await oeffnen(browser, css, js, { fixture: false, bootstrap: true, ...fall, seam: 'guest' }, kind, ledger)
+      const gesperrtOptionen = { fixture: false, bootstrap: true as const, ...fall, seam: 'guest' as const }
+      const lauf = await oeffnen(browser, css, js, gesperrtOptionen, kind, ledger)
+      const gesperrtNachweis = await kontextAnfang(`gesperrt-${fall.name}`, lauf, gesperrtOptionen, 1, fehler)
       await lauf.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
       const masse = await lauf.page.evaluate(() => {
         const flaeche = document.querySelector('[data-twelve-go-affiliate]')
@@ -350,11 +437,14 @@ async function main() {
       assertGleich(fehler, masse.link >= 44, `${fall.name}: Datenschutzlink ${masse.link}`)
       assertGleich(fehler, lauf.banner.length === 1, `${fall.name}: Banner ${lauf.banner.length}`)
       await lauf.page.screenshot({ path: join(ziel, `r6-${fall.name}.png`), fullPage: false })
+      kontextEnde(gesperrtNachweis, lauf.banner, fehler)
       await lauf.context.close()
     }
 
     for (const fall of breiten) {
-      const einstellung = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, ...fall, seam: 'guest' }, kind, ledger)
+      const positivOptionen = { fixture: true, bootstrap: true as const, ...fall, seam: 'guest' as const }
+      const einstellung = await oeffnen(browser, css, js, positivOptionen, kind, ledger)
+      const positivNachweis = await kontextAnfang(`positiv-${fall.name}`, einstellung, positivOptionen, 1, fehler)
       await einstellung.page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).waitFor()
       const masse = await einstellung.page.evaluate(() => {
         const knopf = document.querySelector('[data-cmp-preferences="surface"]')
@@ -396,11 +486,14 @@ async function main() {
         ueber: masse.ueber,
       })
       await einstellung.page.screenshot({ path: join(ziel, `r7-${fall.name}.png`), fullPage: false })
+      kontextEnde(positivNachweis, einstellung.banner, fehler)
       await einstellung.context.close()
     }
 
     kind.current = 'ready'
-    const lauf = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 1440, height: 1200, root: '16px' }, kind, ledger)
+    const lebensOptionen = { fixture: true, bootstrap: true as const, width: 1440, height: 1200, root: '16px' }
+    const lauf = await oeffnen(browser, css, js, lebensOptionen, kind, ledger)
+    const lebensNachweis = await kontextAnfang('lebenszyklus', lauf, lebensOptionen, 1, fehler)
     const page = lauf.page
     await page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Fixture startet mit Frame')
@@ -666,10 +759,13 @@ async function main() {
     await page.locator('[data-workspace-an]').click()
     await page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Unmount startet neu')
+    kontextEnde(lebensNachweis, lauf.banner, fehler)
     await lauf.context.close()
 
     kind.current = 'still'
-    const timeout = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 390, height: 1200, root: '16px' }, kind, ledger)
+    const timeoutOptionen = { fixture: true, bootstrap: true as const, width: 390, height: 1200, root: '16px' }
+    const timeout = await oeffnen(browser, css, js, timeoutOptionen, kind, ledger)
+    const timeoutNachweis = await kontextAnfang('timeout', timeout, timeoutOptionen, 1, fehler)
     await timeout.page.clock.install()
     await timeout.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     await anfragen(timeout.page)
@@ -678,10 +774,13 @@ async function main() {
     await timeout.page.waitForTimeout(100)
     assertGleich(fehler, await timeout.page.locator('[data-twelve-go-host="frame"]').count() === 0, 'Timeout behält den Frame')
     await timeout.page.screenshot({ path: join(ziel, 'r6-390-timeout.png'), fullPage: false })
+    kontextEnde(timeoutNachweis, timeout.banner, fehler)
     await timeout.context.close()
 
     kind.current = 'ready'
-    const schmal = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 390, height: 1400, root: '32px' }, kind, ledger)
+    const schmalOptionen = { fixture: true, bootstrap: true as const, width: 390, height: 1400, root: '32px' }
+    const schmal = await oeffnen(browser, css, js, schmalOptionen, kind, ledger)
+    const schmalNachweis = await kontextAnfang('390-32', schmal, schmalOptionen, 1, fehler)
     await schmal.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     await anfragen(schmal.page)
     await wartenAufRahmen(schmal.page)
@@ -690,12 +789,21 @@ async function main() {
     const rahmenBreite = await schmal.page.locator('[data-twelve-go-host="frame"]').evaluate((knoten) => knoten.getBoundingClientRect().width)
     assertGleich(fehler, rahmenBreite <= 390, `Rahmenbreite ${rahmenBreite}`)
     await schmal.page.screenshot({ path: join(ziel, 'r6-390-32.png'), fullPage: false })
+    kontextEnde(schmalNachweis, schmal.banner, fehler)
     await schmal.context.close()
   } finally {
     await browser.close()
   }
 
-  writeFileSync(join(ziel, 'r7-eltern.json'), JSON.stringify({ ledger, fehler, steuerung, arbeit }, null, 2))
+  writeFileSync(join(ziel, 'r7-eltern.json'), JSON.stringify({
+    befehl: 'node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts',
+    browser: { kanal: browserKanal, version: browserVersion },
+    ledger,
+    fehler,
+    steuerung,
+    arbeit,
+    kontexte,
+  }, null, 2))
   console.log(`nachweis: ${ziel}`)
   if (ledger.length || fehler.length) {
     console.error([...fehler, ...ledger.map((eintrag) => eintrag.adresse)].join('\n'))

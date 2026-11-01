@@ -20,7 +20,7 @@ describe('12Go produktive Fassade', () => {
     assert.equal(requestProductionExecution('twelvego', 'scope-a'), null)
   })
 
-  test('der produktive Bootstrap bleibt zu und ein Test-Gate trennt die Handles', () => {
+  test('der produktive Bootstrap gibt die 12Go-Zeile frei und behält die negativen Proben', () => {
     const verzeichnis = mkdtempSync(join(tmpdir(), 'twelve-go-fassade-'))
     const ausgabe = join(verzeichnis, 'probe.js')
     execFileSync(join(process.cwd(), 'node_modules/esbuild/bin/esbuild'), [
