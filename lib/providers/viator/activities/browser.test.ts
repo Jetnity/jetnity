@@ -10,6 +10,8 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { ruhigKlicken } from '@/scripts/activities-destination-first-1/browser-interaction'
+
 import { mountViatorHarness } from '@/scripts/viator-s2-native-integration/browser-harness'
 
 test('the browser harness stays imported for reachability', () => {
@@ -388,6 +390,9 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       return route.continue()
     })
     await page.goto(origin)
+    await page.waitForFunction(() =>
+      document.querySelector('[data-viator-zustand="anzeige"] iframe') &&
+      document.querySelector('[data-gyg-phase="anzeige"] iframe'))
     const stil = alsMesswert(await page.evaluate(STIL))
     assert.equal(stil.ok, true, JSON.stringify(stil))
     page.once('close', () => {
@@ -418,7 +423,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       detailAnzahl: () => number
     }
     const bereich = page.getByRole('region', { name: 'Aktivitäten' })
-    await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await ruhigKlicken(bereich.getByRole('button', { name: 'Für diesen Tag suchen' }))
     await bereich.getByRole('button', { name: 'Angebot prüfen' }).click()
     assert.equal(träger.suchen[0]?.stage?.name, 'Bangkok')
     assert.equal(träger.suchen[0]?.stage?.countryCode, 'TH')
@@ -484,7 +489,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     for (const breite of [320, 768, 1440]) {
       const weitere = await seite(breite)
       const flaeche = weitere.getByRole('region', { name: 'Aktivitäten' })
-      await flaeche.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      await ruhigKlicken(flaeche.getByRole('button', { name: 'Für diesen Tag suchen' }))
       await flaeche.getByRole('button', { name: 'Angebot prüfen' }).click()
       await weitere.getByRole('region', { name: 'Viator-Prüfung' }).getByRole('button', { name: 'Erneut laden' }).click()
       ;(weitere as Page & { releaseDetail: () => void }).releaseDetail()
@@ -573,7 +578,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       const page = await seite(breite)
       const träger = page as Page & { detailAnzahl: () => number }
       const bereich = page.getByRole('region', { name: 'Aktivitäten' })
-      await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      await ruhigKlicken(bereich.getByRole('button', { name: 'Für diesen Tag suchen' }))
       const link = bereich.getByRole('link', { name: 'Beim Anbieter ansehen' })
       await link.waitFor()
       assert.equal(await link.getAttribute('href'), href)
@@ -603,7 +608,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     const stil = alsMesswert(await page.evaluate(STIL))
     assert.equal(stil.ok, true, JSON.stringify(stil))
     const träger = page as Page & { gesendet: unknown[] }
-    await page.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await ruhigKlicken(page.getByRole('button', { name: 'Für diesen Tag suchen' }))
     await page.getByRole('button', { name: 'Angebot prüfen' }).click()
     await page.getByText('Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.').waitFor()
     assert.equal(await page.getByText('Dieses Angebot hat keine Zusatzoption.').count(), 0)

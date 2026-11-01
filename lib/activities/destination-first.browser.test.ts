@@ -10,6 +10,8 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { ruhigKlicken } from '@/scripts/activities-destination-first-1/browser-interaction'
+
 import { mountActivitiesDestinationHarness } from '@/scripts/activities-destination-first-1/browser-harness'
 
 test('the destination harness stays imported for reachability', () => {
@@ -262,14 +264,14 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
     await page.locator('#activity-destination-select').selectOption('stage-phu')
     await bereich.locator('[data-viator-name="Phuket"]').waitFor()
     await widgetLadevorgangAbwarten(page, 'Phuket')
-    await bereich.getByRole('button', { name: 'Für dieses Ziel suchen' }).click()
+    await ruhigKlicken(bereich.getByRole('button', { name: 'Für dieses Ziel suchen' }))
     await bereich.getByText('Synthetisch Phuket', { exact: true }).waitFor()
     assert.equal(suchen.at(-1)?.day ?? null, null)
     assert.deepEqual((suchen.at(-1) as { items?: unknown[] } | undefined)?.items ?? null, [])
     await page.getByLabel('Reisetag').selectOption({ label: 'Bangkok-Tag' })
     await bereich.locator('[data-viator-name="Bangkok"]').waitFor()
     await widgetLadevorgangAbwarten(page, 'Bangkok')
-    await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await ruhigKlicken(bereich.getByRole('button', { name: 'Für diesen Tag suchen' }))
     await bereich.getByText('Synthetisch Bangkok', { exact: true }).waitFor()
     assert.equal(suchen.at(-1)?.day?.id, 'day-bkk')
     assert.equal(suchen.at(-1)?.stage?.id, 'stage-bkk')

@@ -13,3 +13,7 @@ The existing GetYourGuide HTTP403 STOP remains in effect: no further GYG renders
 ## Implemented activity-only rollout decision
 
 This V4 supersedes V3's absent-activities-policy default-block requirement for this owner-authorized first visual release. An absent, unreleased CMP permits automatic activity widget display; any observed/enabled CMP requires a consistent affirmative read and actual refusals remain effective. CMP observation is negatively latched for the tab session, including reload. No consent is invented, no shared policy or other provider gate is activated, and comprehensive privacy acceptance stays open. Provider hiding persists as a negative session preference. Public activity disclosure is updated with actual data flow.
+
+## Narrow preview setup amendment
+
+Under the owner's current finish-and-publish instruction, the TL recorded the missing preview prerequisite in PR #1100 comment6558637046: only the activity branch preview may receive the two already verified public Supabase connection values from existing develop preview configuration and be rebuilt. Readback confirmed the non-Production develop project. No shared or Production environment, schema, provider key or database data is changed. This narrowly supplements the earlier no-environment-change scope above.
