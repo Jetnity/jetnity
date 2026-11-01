@@ -1,5 +1,12 @@
 # Jetnity – Roadmap
 
+> **01.11.2026 — Trip.com Suchlinks 1:** Der Owner hat die offizielle manuelle Suche
+> als ersten Schritt freigegeben. Implementiert wird ein externer Hotel-/Flugsucheinstieg
+> im vorhandenen Trip Workspace, mit lokaler Reisehilfe. Automatische kontextbezogene
+> Ergebnisse, Widgets und API-Zugang sind damit nicht umgesetzt. Veröffentlichung erst
+> nach den regulären Prüfungen; [Plan und Belege](docs/TRIPCOM_SUCHLINKS_1_PLAN_2026-11-01.md).
+> Die separaten DiscoverCars-, 12Go-, Viator- und CMP-Gates bleiben unverändert.
+
 > **30.10.2026 – gemeinsamer Konto-/Trip-Workspace, freigegebene Darstellung:**
 > PR #1092 ist auf main `6b929baec81e6c561142db4e6a9636e1bb30c873` gemergt und
 > in Production geprüft. Einklappbare Glas-Navigation, gemeinsamer Header und mobile

@@ -5975,6 +5975,19 @@ Veröffentlichung erfolgt nach unabhängiger Prüfung im bestehenden Releaseverf
 
 ---
 
+## Ergänzende Anbieterentscheidung — Trip.com Suchlinks, 01.11.2026
+
+Der Owner hat eine manuelle offizielle Suchmöglichkeit als ersten Schritt gewählt.
+Jetnity nutzt dafür unverändert generierte deutschsprachige Hotel-/Flug-Partnerlinks
+mit CHF-Einstellung. Reisedaten bleiben lokal als Eingabehilfe; eine automatische
+Übergabe oder Ergebnisliste wird nicht behauptet. Alternative eingebettete Widgets
+sind derzeit fest 320 Pixel breit und in der gesamten Weiterleitung nicht belegt;
+native Suche benötigt gesondert nachgewiesenen API-Zugang. Der externe Einstieg
+verursacht vor dem Klick keinen Anbieter-Datenverkehr, benötigt kein neues Consent-
+System und verändert bestehende Reise- und Buchungslogik nicht. Die Umsetzung ist
+ein begrenzter Einstieg, nicht das vollständige Zielbild automatisierter Reiseplanung.
+Siehe [Plan](docs/TRIPCOM_SUCHLINKS_1_PLAN_2026-11-01.md).
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
