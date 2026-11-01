@@ -7,7 +7,7 @@ Immutable task: `docs/JETNITY_12GO_WIDGET_V2_TASK_V1_2026-10-29.md` at `421a703b
 
 This file records the plan posted before product code. It is not a Technical Lead review and it is not merge approval.
 
-R7, 31 October 2026: the accepted shared dependency is main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`. The consumer shows that disclosure and `PrivacyBeeCmpPreferences appearance="surface"`. Release stays false. Lifecycle and the R6-R1 scope stay.
+R7, 31 October 2026: the accepted shared dependency is main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`. The consumer shows that disclosure and `PrivacyBeeCmpPreferences appearance="surface"`. Release stays false. Lifecycle and the R6-R1 scope stay. R7-R1 adds the local preferences opening count, delayed withdrawal, and focus checks without changing that lifecycle.
 
 ## Session attestation
 

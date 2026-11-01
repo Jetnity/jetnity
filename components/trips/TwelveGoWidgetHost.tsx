@@ -34,12 +34,12 @@ export const TWELVE_GO_READY_TIMEOUT_MS = 12_000
 type Phase = 'ruhend' | 'verweigert' | 'wartet' | 'eingesetzt' | 'fehler' | 'entfernt'
 
 const TEXT: Record<Phase, string> = {
-  ruhend: 'Die Anfrage ist eine eigene Entscheidung. Ein bereit gemeldetes Fenster ist noch keine Suche.',
-  verweigert: 'Das Formular ist hier nicht eingesetzt. Die Links bleiben nutzbar.',
+  ruhend: 'Die Anfrage ist eine eigene Entscheidung. Sie zeigt die Ansicht von 12Go nur hier. Eine Suche ist damit nicht bestätigt.',
+  verweigert: 'Die Ansicht von 12Go ist hier nicht geöffnet. Die Links bleiben nutzbar.',
   wartet: 'Die Anfrage läuft. Das ist noch keine Suche.',
-  eingesetzt: 'Der Rahmen ist hier eingesetzt. Das bestätigt keine Suche und keine Buchung.',
-  fehler: 'Das Formular konnte nicht angezeigt werden. Die Links bleiben nutzbar.',
-  entfernt: 'Der Rahmen ist hier entfernt. Die Links bleiben nutzbar.',
+  eingesetzt: 'Die Ansicht von 12Go ist hier eingeblendet. Das bestätigt keine Suche und keine Buchung.',
+  fehler: 'Die Ansicht konnte nicht geöffnet werden. Die Links bleiben nutzbar.',
+  entfernt: 'Die Ansicht ist hier entfernt. Die Links bleiben nutzbar.',
 }
 
 const KNOPF =

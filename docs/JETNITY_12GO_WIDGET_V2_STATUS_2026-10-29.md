@@ -5,6 +5,10 @@ Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
 State: **CONSENT_BLOCKED / DRAFT / R7 disclosure / STOP for independent Technical Lead review**
 
+## Current, 1 November 2026 — R7-R1
+
+The preferences harness listens for the actual `privacybee-display-preferences` control and records an opening count. Click and Enter are checked before a request and again after analytics refusal. A delayed child keeps working until refusal, then sends no further canary and no grant. Restored consent does not open the view again. The same width loop checks preferences, request, and remove for focus ring, viewport fit, and overflow at 320, 390, 768, 1440, and 390 at 32px root. Visitor copy no longer talks about a ready window or an inserted frame.
+
 ## Current, 31 October 2026 — R7
 
 Accepted main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea` is merged. The host shows `TWELVEGO_PRODUCTION_DISCLOSURE` and mounts `PrivacyBeeCmpPreferences` with `appearance="surface"`. The V1 surface test now counts `data-twelve-go-art` links separately from the privacy link, because that link sits in the same section. The disclosure revision is `twelvego-general-disclosure-v1`. The privacy link is `https://12go.asia/en/privacy-policy`. `CMP_RELEASE_AUTHORIZED` stays false, so the production bootstrap still returns no capability. A ready message or a grant is not a completed search. R6-R1 scope and frame retirement stay in place. The exact implementation head is posted on the PR.

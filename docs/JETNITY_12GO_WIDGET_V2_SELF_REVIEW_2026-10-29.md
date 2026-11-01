@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R7-R1 addition
+
+The preferences button is observed through a local listener on its real class. An inert button would leave the opening count at zero. Withdrawal uses a child that canaries immediately and sends ready only after 1200ms. Removal stops that work, and a later ready does not grant. The width loop includes the remove control and keyboard focus. Copy says “Ansicht von 12Go” and does not claim a search. Self-review is not a Technical Lead PASS.
+
 ## R7 addition
 
 The host renders the accepted disclosure paragraphs, withdrawal limit, V1 alternative, and privacy link before the request. Preferences use the shared surface control and do not start a frame. Production bootstrap still denies a capability while the 12Go policy row is selected. Ready and grant copy does not claim a search. Self-review is not a Technical Lead PASS.

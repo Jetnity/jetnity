@@ -18,23 +18,26 @@ const SCRIPT = 'https://jetnity.com/eltern.js'
 const POSITIVE = `window.__analytics=true;window.__jetnityCmp={releaseAllowed:true,killDenied:false};
 window.PrivacyBee={getAllConsents(){return{SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:window.__analytics===true,AD_STORAGE:false,AD_USER_DATA:false,AD_PERSONALIZATION:false,PERSONALIZATION_STORAGE:false}},getConsent(name){return this.getAllConsents()[name]},hasExplicitConsent(){return true}};`
 
-function kindHtml(mode: 'ready' | 'still'): string {
+function kindHtml(mode: 'ready' | 'still' | 'verzoegert'): string {
   const script = mode === 'still' ? '' : `<script>
 const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);
 const challenge=[...bytes].map((b)=>b.toString(16).padStart(2,'0')).join('');
 const frameGeneration=1;
 document.documentElement.dataset.challenge=challenge;
-let timer=setInterval(()=>{parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'canary',n:Date.now()},'https://jetnity.com')},150);
-addEventListener('pagehide',()=>clearInterval(timer));
+let timer=setInterval(function(){parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'canary',n:Date.now()},'https://jetnity.com')},80);
+addEventListener('pagehide',function(){clearInterval(timer)});
 let grants=0;
-addEventListener('message',(event)=>{
+addEventListener('message',function(event){
   if(event.origin!=='https://jetnity.com'||event.source!==parent)return;
   if(!event.data||event.data.kind!=='grant')return;
   grants+=1;
   document.documentElement.dataset.grants=String(grants);
   document.documentElement.dataset.policy=String(event.data.policyId||'');
+  parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'grant-gesehen',n:grants},'https://jetnity.com');
 });
-parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'ready',provider:'twelvego',challenge,frameGeneration},'https://jetnity.com');
+function bereit(){parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'ready',provider:'twelvego',challenge:challenge,frameGeneration:frameGeneration},'https://jetnity.com')}
+if(${mode === 'verzoegert' ? 'true' : 'false'}) setTimeout(bereit,1200);
+else bereit();
 </script>`
   return `<!doctype html><html><head><meta charset="utf-8"></head><body>
 <form><label>Start <input name="von"></label><label>Ziel <input name="nach"></label><label>Datum <input name="datum"></label>
@@ -42,7 +45,24 @@ parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'ready',provider:
 }
 
 function seite(css: string): string {
-  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${css}</style></head><body><div id="root"></div><script src="${SCRIPT}"></script></body></html>`
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${css}</style></head><body><div id="root"></div><script>
+window.__einstellungen=0;window.__canaries=0;window.__grantsGesehen=0;window.__zaehleCanary=false;
+document.addEventListener('click',function(event){
+  var ziel=event.target&&event.target.closest?event.target.closest('.privacybee-display-preferences'):null;
+  if(!ziel)return;
+  window.__einstellungen+=1;
+  var feld=document.getElementById('einstellungen-fixture');
+  if(!feld){feld=document.createElement('div');feld.id='einstellungen-fixture';document.body.appendChild(feld)}
+  feld.setAttribute('data-einstellungen-offen',String(window.__einstellungen));
+  feld.textContent='Einstellungen geöffnet';
+});
+window.addEventListener('message',function(event){
+  var data=event.data;
+  if(!data||data.type!=='jetnity-widget-host')return;
+  if(data.kind==='canary'&&window.__zaehleCanary)window.__canaries+=1;
+  if(data.kind==='grant-gesehen')window.__grantsGesehen+=1;
+});
+</script><script src="${SCRIPT}"></script></body></html>`
 }
 
 function bundle(): string {
@@ -136,6 +156,27 @@ async function anfragen(page: Page) {
   await page.locator('[data-twelve-go-aktion="anfragen"], [data-twelve-go-aktion="erneut"]').first().click()
 }
 
+async function fokusBeweis(page: Page, selektor: string): Promise<string | null> {
+  const ziel = page.locator(selektor).first()
+  await ziel.scrollIntoViewIfNeeded()
+  await ziel.focus()
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel)
+    if (!(el instanceof HTMLElement) || document.activeElement !== el) return 'fokus'
+    const kasten = el.getBoundingClientRect()
+    const stil = getComputedStyle(el)
+    const ring = stil.outlineStyle !== 'none' || stil.boxShadow !== 'none'
+    const imFenster = kasten.width >= 8 && kasten.height >= 44 && kasten.top >= -1 && kasten.left >= -1 && kasten.bottom <= window.innerHeight + 1 && kasten.right <= window.innerWidth + 1
+    const flaeche = document.querySelector('[data-twelve-go-affiliate]')
+    const ueber = Boolean(flaeche && flaeche.scrollWidth > flaeche.clientWidth + 1)
+    const seite = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+    if (!ring) return 'ring'
+    if (!imFenster) return `ausschnitt ${Math.round(kasten.width)}x${Math.round(kasten.height)}`
+    if (ueber || seite) return 'ueberlauf'
+    return ''
+  }, selektor)
+}
+
 async function wartenAufRahmen(page: Page) {
   await page.waitForSelector('[data-twelve-go-host="frame"]')
   await page.waitForFunction(() => [...document.querySelectorAll('iframe')].some((frame) => frame.getAttribute('data-twelve-go-host') === 'frame'))
@@ -155,8 +196,9 @@ async function main() {
   const css = await anwendungsStil()
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
   const fehler: string[] = []
+  const steuerung: Array<Record<string, string | number | boolean | null>> = []
   const ledger: { adresse: string }[] = []
-  const kind = { current: 'ready' as 'ready' | 'still' }
+  const kind = { current: 'ready' as 'ready' | 'still' | 'verzoegert' }
 
   try {
     const ohne = await oeffnen(browser, css, js, { fixture: false, bootstrap: true, width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
@@ -241,6 +283,21 @@ async function main() {
       assertGleich(fehler, masse.hoehe >= 44 && masse.breite >= 44, `${fall.name}: Einstellungen ${masse.hoehe}x${masse.breite}`)
       assertGleich(fehler, masse.anfrage >= 44, `${fall.name}: Anfrage ${masse.anfrage}`)
       assertGleich(fehler, masse.rahmen === 0 && !masse.ueber, `${fall.name}: Einstellungen starten oder überlaufen`)
+      const einstellungenFokus = await fokusBeweis(einstellung.page, '[data-cmp-preferences="surface"]')
+      const anfrageFokus = await fokusBeweis(einstellung.page, '[data-twelve-go-aktion="anfragen"]')
+      if (einstellungenFokus) fehler.push(`${fall.name}: Einstellungen ${einstellungenFokus}`)
+      if (anfrageFokus) fehler.push(`${fall.name}: Anfrage ${anfrageFokus}`)
+      await anfragen(einstellung.page)
+      await wartenAufRahmen(einstellung.page)
+      const entfernenFokus = await fokusBeweis(einstellung.page, '[data-twelve-go-aktion="entfernen"]')
+      if (entfernenFokus) fehler.push(`${fall.name}: Entfernen ${entfernenFokus}`)
+      steuerung.push({
+        name: fall.name,
+        einstellungen: einstellungenFokus || 'ok',
+        anfrage: anfrageFokus || 'ok',
+        entfernen: entfernenFokus || 'ok',
+        ueber: masse.ueber,
+      })
       await einstellung.page.screenshot({ path: join(ziel, `r7-${fall.name}.png`), fullPage: false })
       await einstellung.context.close()
     }
@@ -257,11 +314,14 @@ async function main() {
       return (hinweis.compareDocumentPosition(knopf) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
     })
     assertGleich(fehler, reihenfolge, 'Hinweis steht nicht vor der Anfrage')
+    const einstellungenVorher = await page.evaluate(() => window.__einstellungen ?? 0)
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).click()
-    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen starten einen Frame')
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).focus()
     await page.keyboard.press('Enter')
-    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Tastatur auf Einstellungen startet einen Frame')
+    const einstellungenNachher = await page.evaluate(() => window.__einstellungen ?? 0)
+    assertGleich(fehler, einstellungenNachher >= einstellungenVorher + 2, `Einstellungen ${einstellungenNachher}`)
+    assertGleich(fehler, await page.locator('[data-einstellungen-offen]').count() === 1, 'Fixture öffnet nicht')
+    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen starten einen Frame')
     const von = page.locator('[aria-label="Manuelle Verbindung"]').getByLabel('Von')
     await von.fill('Bahnhof')
     await page.evaluate(() => {
@@ -361,17 +421,31 @@ async function main() {
     await page.waitForTimeout(100)
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Etappenwechsel behält den Frame')
 
+    kind.current = 'verzoegert'
+    await page.evaluate(() => { window.__zaehleCanary = true; window.__canaries = 0; window.__grantsGesehen = 0 })
     await anfragen(page)
-    await wartenAufRahmen(page)
+    await page.waitForSelector('[data-twelve-go-host="frame"]')
+    await page.waitForFunction(() => (window.__canaries ?? 0) >= 1)
+    assertGleich(fehler, await page.evaluate(() => window.__grantsGesehen ?? 0) === 0, 'verzoegertes Ready war schon ein Grant')
+    const einstellungenBeiAblehnung = await page.evaluate(() => window.__einstellungen ?? 0)
     await page.evaluate(() => {
       window.__analytics = false
       document.dispatchEvent(new Event('privacybee:consent-changed'))
     })
-    await page.waitForTimeout(200)
-    assertGleich(fehler, await page.locator('iframe').count() === 0, 'Kategorie behält den Frame')
+    await page.waitForFunction(() => document.querySelectorAll('[data-twelve-go-host="frame"]').length === 0)
+    await page.evaluate(() => { window.__canaries = 0 })
+    await page.waitForTimeout(1500)
+    const nachWiderruf = await page.evaluate(() => ({ canaries: window.__canaries ?? 0, grants: window.__grantsGesehen ?? 0 }))
+    assertGleich(fehler, nachWiderruf.canaries === 0, `Canary nach Widerruf ${nachWiderruf.canaries}`)
+    assertGleich(fehler, nachWiderruf.grants === 0, `verspaeteter Grant ${nachWiderruf.grants}`)
     assertGleich(fehler, await page.locator('[data-cmp-preferences="surface"]').count() === 1, 'Einstellungen fehlen nach Statistik-Ablehnung')
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).click()
+    await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).focus()
+    await page.keyboard.press('Enter')
+    const einstellungenNachAblehnung = await page.evaluate(() => window.__einstellungen ?? 0)
+    assertGleich(fehler, einstellungenNachAblehnung >= einstellungenBeiAblehnung + 2, `Einstellungen nach Ablehnung ${einstellungenNachAblehnung}`)
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen nach Ablehnung starten einen Frame')
+    kind.current = 'ready'
     await page.evaluate(() => {
       window.__analytics = true
       document.dispatchEvent(new Event('privacybee:consent-changed'))
@@ -437,7 +511,7 @@ async function main() {
     await browser.close()
   }
 
-  writeFileSync(join(ziel, 'r6-eltern.json'), JSON.stringify({ ledger, fehler }, null, 2))
+  writeFileSync(join(ziel, 'r7-eltern.json'), JSON.stringify({ ledger, fehler, steuerung }, null, 2))
   console.log(`nachweis: ${ziel}`)
   if (ledger.length || fehler.length) {
     console.error([...fehler, ...ledger.map((eintrag) => eintrag.adresse)].join('\n'))
@@ -450,7 +524,10 @@ declare global {
   interface Window {
     __analytics?: boolean
     __zaehle?: boolean
+    __zaehleCanary?: boolean
     __canaries?: number
+    __einstellungen?: number
+    __grantsGesehen?: number
   }
 }
 
