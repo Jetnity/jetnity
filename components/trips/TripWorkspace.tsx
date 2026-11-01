@@ -99,6 +99,7 @@ import {
 } from '@/lib/trips/workspace-mode'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
+import TripComSuche from '@/components/trips/TripComSuche'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
 
 function kompakteAnsichtAbonnieren(melden: () => void) {
@@ -1508,6 +1509,9 @@ export default function TripWorkspace({
           >
             {mobilitaetssuche}
           </FlaecheHuelle>
+        )}
+        {detailOffen && sucheSichtbar && (aktiveDomain === 'fluege' || aktiveDomain === 'unterkunft') && (
+          <TripComSuche reise={reise} art={aktiveDomain === 'fluege' ? 'flights' : 'hotels'} />
         )}
         {flugSucheBereit && flugsuche && (
           <FlaecheHuelle

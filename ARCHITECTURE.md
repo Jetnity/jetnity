@@ -5,6 +5,16 @@ Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligen
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
+### Ergänzung 01.11.2026: Trip.com-Sucheinstieg
+
+`TripComSuche` ergänzt die ausdrücklich geöffnete Flug-/Hotelsuche im Trip Workspace.
+Die Komponente liest Reisedaten als lokale Eingabehilfe und öffnet feste, offiziell
+generierte Affiliate-Links in einem neuen Tab. Keine Frames, Scripts, Vorabkontakte,
+Anbieter-API oder Suchergebnisse werden in Jetnity geladen. Die bestehende Hotelzeitraum-
+Ableitung bleibt massgeblich; Aufenthalte werden nicht nach Ortsnamen zusammengeführt.
+Der Klick verändert weder Reise noch Buchungsstatus. Technische Herkunft und Grenzen:
+[Trip.com Suchlinks 1](docs/TRIPCOM_SUCHLINKS_1_PLAN_2026-11-01.md).
+
 ### Ergänzung 30.10.2026: gemeinsamer Workspace-Rahmen
 
 `components/workspace/WorkspaceShell` umschliesst seit PR #1092 auf main
