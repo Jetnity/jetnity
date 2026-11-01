@@ -256,7 +256,7 @@ function assertGleich(fehler: string[], bedingung: boolean, text: string) {
   if (!bedingung) fehler.push(text)
 }
 
-type GateSatz = { releaseAllowed: boolean; killDenied: boolean; booted: number; scripts: number }
+type GateSatz = { releaseAllowed: boolean | null; killDenied: boolean | null; booted: number | null; scripts: number | null }
 
 type KontextNachweis = {
   name: string
@@ -283,10 +283,10 @@ async function kontextAnfang(
     const gate = (window as Window & { __jetnityCmp?: { releaseAllowed?: unknown; killDenied?: unknown; booted?: unknown; scripts?: unknown } }).__jetnityCmp
     if (!gate) return null
     return {
-      releaseAllowed: gate.releaseAllowed === true,
-      killDenied: gate.killDenied === true,
-      booted: typeof gate.booted === 'number' ? gate.booted : 0,
-      scripts: typeof gate.scripts === 'number' ? gate.scripts : 0,
+      releaseAllowed: gate.releaseAllowed === true || gate.releaseAllowed === false ? gate.releaseAllowed : null,
+      killDenied: gate.killDenied === true || gate.killDenied === false ? gate.killDenied : null,
+      booted: typeof gate.booted === 'number' ? gate.booted : null,
+      scripts: typeof gate.scripts === 'number' ? gate.scripts : null,
     }
   })
   const rahmenAnfang = await offen.page.locator('iframe').count()
@@ -313,7 +313,7 @@ async function kontextAnfang(
   } else if (bootstrap === 'geschlossen') {
     assertGleich(
       fehler,
-      gateAnfang?.releaseAllowed === false && gateAnfang.killDenied === false && gateAnfang.booted === 1 && gateAnfang.scripts === 0,
+      gateAnfang?.releaseAllowed === false && gateAnfang.killDenied === false && gateAnfang.booted === 1 && gateAnfang.scripts === null,
       `${name}: geschlossenes Gate ${JSON.stringify(gateAnfang)}`,
     )
   } else {
@@ -370,8 +370,8 @@ async function main() {
     assertGleich(fehler, await ohne.page.locator('iframe').count() === 0, 'Sperre montiert einen Frame')
     assertGleich(fehler, ledger.length === 0, `Netz vor der Freigabe ${ledger.length}`)
     await ohne.page.screenshot({ path: join(ziel, 'r6-sperre.png'), fullPage: false })
-    kontextEnde(ohneNachweis, ohne.banner, fehler)
     await ohne.context.close()
+    kontextEnde(ohneNachweis, ohne.banner, fehler)
 
     const geschlossenOptionen = { fixture: true, bootstrap: 'geschlossen' as const, width: 1440, height: 1200, root: '16px', seam: 'guest' as const }
     const geschlossen = await oeffnen(browser, css, js, geschlossenOptionen, kind, ledger)
@@ -385,16 +385,16 @@ async function main() {
     assertGleich(fehler, (await geschlossen.page.locator('[data-twelve-go-widget]').getAttribute('data-twelve-go-widget')) === 'verweigert', 'explizites false gibt frei')
     assertGleich(fehler, await geschlossen.page.locator('iframe').count() === 0, 'explizites false montiert einen Frame')
     assertGleich(fehler, ledger.length === 0, `Netz bei explizitem false ${ledger.length}`)
-    kontextEnde(geschlossenNachweis, geschlossen.banner, fehler)
     await geschlossen.context.close()
+    kontextEnde(geschlossenNachweis, geschlossen.banner, fehler)
 
     const kontoOptionen = { fixture: false, width: 1440, height: 1200, root: '16px', seam: 'account' as const }
     const konto = await oeffnen(browser, css, js, kontoOptionen, kind, ledger)
     const kontoNachweis = await kontextAnfang('konto', konto, kontoOptionen, 0, fehler)
     await konto.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await konto.page.locator('[data-twelve-go-affiliate]').count() === 1, 'Konto ohne 12Go')
-    kontextEnde(kontoNachweis, konto.banner, fehler)
     await konto.context.close()
+    kontextEnde(kontoNachweis, konto.banner, fehler)
 
     const breiten = [
       { name: '320', width: 320, height: 1400, root: '16px' },
@@ -437,8 +437,8 @@ async function main() {
       assertGleich(fehler, masse.link >= 44, `${fall.name}: Datenschutzlink ${masse.link}`)
       assertGleich(fehler, lauf.banner.length === 1, `${fall.name}: Banner ${lauf.banner.length}`)
       await lauf.page.screenshot({ path: join(ziel, `r6-${fall.name}.png`), fullPage: false })
-      kontextEnde(gesperrtNachweis, lauf.banner, fehler)
       await lauf.context.close()
+      kontextEnde(gesperrtNachweis, lauf.banner, fehler)
     }
 
     for (const fall of breiten) {
@@ -486,8 +486,8 @@ async function main() {
         ueber: masse.ueber,
       })
       await einstellung.page.screenshot({ path: join(ziel, `r7-${fall.name}.png`), fullPage: false })
-      kontextEnde(positivNachweis, einstellung.banner, fehler)
       await einstellung.context.close()
+      kontextEnde(positivNachweis, einstellung.banner, fehler)
     }
 
     kind.current = 'ready'
@@ -759,8 +759,8 @@ async function main() {
     await page.locator('[data-workspace-an]').click()
     await page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Unmount startet neu')
-    kontextEnde(lebensNachweis, lauf.banner, fehler)
     await lauf.context.close()
+    kontextEnde(lebensNachweis, lauf.banner, fehler)
 
     kind.current = 'still'
     const timeoutOptionen = { fixture: true, bootstrap: true as const, width: 390, height: 1200, root: '16px' }
@@ -774,8 +774,8 @@ async function main() {
     await timeout.page.waitForTimeout(100)
     assertGleich(fehler, await timeout.page.locator('[data-twelve-go-host="frame"]').count() === 0, 'Timeout behält den Frame')
     await timeout.page.screenshot({ path: join(ziel, 'r6-390-timeout.png'), fullPage: false })
-    kontextEnde(timeoutNachweis, timeout.banner, fehler)
     await timeout.context.close()
+    kontextEnde(timeoutNachweis, timeout.banner, fehler)
 
     kind.current = 'ready'
     const schmalOptionen = { fixture: true, bootstrap: true as const, width: 390, height: 1400, root: '32px' }
@@ -789,8 +789,8 @@ async function main() {
     const rahmenBreite = await schmal.page.locator('[data-twelve-go-host="frame"]').evaluate((knoten) => knoten.getBoundingClientRect().width)
     assertGleich(fehler, rahmenBreite <= 390, `Rahmenbreite ${rahmenBreite}`)
     await schmal.page.screenshot({ path: join(ziel, 'r6-390-32.png'), fullPage: false })
-    kontextEnde(schmalNachweis, schmal.banner, fehler)
     await schmal.context.close()
+    kontextEnde(schmalNachweis, schmal.banner, fehler)
   } finally {
     await browser.close()
   }

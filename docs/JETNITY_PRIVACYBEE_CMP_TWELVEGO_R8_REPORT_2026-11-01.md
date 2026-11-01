@@ -12,7 +12,7 @@ Positive proofs call `productionBootstrapSource(null)` and then the real facade.
 
 ## Harness
 
-The parent page evaluates `productionBootstrapSource(null)` for the positive and absent-API modes, and `buildBootstrapSource({ release: false, killDenied: false })` for the closed mode. The ready-API fixture does not write `__jetnityCmp`. `https://app.privacybee.io/cookie-banner.js` is fulfilled with an inert local script. Each existing context records its bootstrap mode, fixture mode, width, root font, initial gate, initial frame count, and the banner count after that context finishes. `grant-beobachter.ts` was not edited.
+The parent page evaluates `productionBootstrapSource(null)` for the positive and absent-API modes, and `buildBootstrapSource({ release: false, killDenied: false })` for the closed mode. The ready-API fixture does not write `__jetnityCmp`. `https://app.privacybee.io/cookie-banner.js` is fulfilled with an inert local script. Each existing context records its bootstrap mode, fixture mode, width, root font, initial gate, initial frame count, and the banner count read after that context's `close`. A missing gate field stays null. `grant-beobachter.ts` was not edited.
 
 The shared CMP harness was not rerun for this correction. Its prior output on `b8ddd79b` is below. It is not a 12Go pass.
 
@@ -60,7 +60,7 @@ No real CMP initialization, 12Go form, search, referral, storage observation, or
 
 ## Complete parent JSON
 
-Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit 0.
+Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit 0. Launcher tried installed Chrome first and used Chrome `148.0.7778.96`. Each `bannerEnde` is read after that context's `close`. The closed bootstrap does not write `scripts`, so that field is null rather than a manufactured 0.
 
 ```json
 {
@@ -79,7 +79,7 @@ Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit
       "einstellungenShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "anfrage": "ok",
       "anfrageOutline": "3px solid rgb(20, 62, 51)",
-      "anfrageShadow": "rgba(255, 255, 255, 0.173) 0px 0px 0px 0px, rgba(29, 113, 94, 0.027) 0px 0px 0px 0.693526px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "anfrageShadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(29, 113, 94, 0.004) 0px 0px 0px 0.130014px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "entfernen": "ok",
       "entfernenOutline": "3px solid rgb(20, 62, 51)",
       "entfernenShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
@@ -92,7 +92,7 @@ Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit
       "einstellungenShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "anfrage": "ok",
       "anfrageOutline": "3px solid rgb(20, 62, 51)",
-      "anfrageShadow": "rgba(255, 255, 255, 0.176) 0px 0px 0px 0px, rgba(29, 113, 94, 0.027) 0px 0px 0px 0.704264px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "anfrageShadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(29, 113, 94, 0.004) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "entfernen": "ok",
       "entfernenOutline": "3px solid rgb(20, 62, 51)",
       "entfernenShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
@@ -131,7 +131,7 @@ Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit
       "einstellungenShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "anfrage": "ok",
       "anfrageOutline": "3px solid rgb(20, 62, 51)",
-      "anfrageShadow": "rgba(255, 255, 255, 0.03) 0px 0px 0px 0px, rgba(29, 113, 94, 0.004) 0px 0px 0px 0.1318px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "anfrageShadow": "rgba(255, 255, 255, 0.176) 0px 0px 0px 0px, rgba(29, 113, 94, 0.027) 0px 0px 0px 0.698882px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
       "entfernen": "ok",
       "entfernenOutline": "3px solid rgb(20, 62, 51)",
       "entfernenShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
@@ -149,7 +149,7 @@ Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit
     },
     "retiredReady": {
       "lieferung": "retired-ready",
-      "challenge": "33954a00d4750dad1c30020fca76d49d5c4b551247e660644acea101684f8366",
+      "challenge": "959287446eb20cfadf33c16312b9a03f9dd799ca72825513016727cc812b2727",
       "consumeVorWiderruf": 1,
       "consumeNachLieferung": 1,
       "readyVorher": 10,
@@ -195,7 +195,7 @@ Command `node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`, exit
         "releaseAllowed": false,
         "killDenied": false,
         "booted": 1,
-        "scripts": 0
+        "scripts": null
       },
       "rahmenAnfang": 0,
       "bannerErwartet": 0,
