@@ -40,6 +40,7 @@ import { aktivitaetsZieleWaehlen, type AktivitaetsTagEntscheidung } from '@/lib/
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
 import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
+import AktivitaetenWidgetFreigabe from '@/components/trips/AktivitaetenWidgetFreigabe'
 import ViatorWidgetAktivitaeten from '@/components/trips/ViatorWidgetAktivitaeten'
 import { istOrtId, type Ort } from '@/lib/places/domain'
 import { ortBestaetigen } from '@/lib/places/aktionen'
@@ -59,8 +60,8 @@ const NETZ_MELDUNG = 'Die Aktivitätsanfrage ist gerade nicht erreichbar.'
 const FELD =
   'min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 bg-white px-[12px] text-sm text-ink-900'
 
-export function nativeAktivitaetsAnzeige(status: string | null): { label: string; abdeckung: boolean } {
-  if (status === null) return { label: 'Für diesen Tag suchen', abdeckung: false }
+export function nativeAktivitaetsAnzeige(status: string | null, hatTag = true): { label: string; abdeckung: boolean } {
+  if (status === null) return { label: hatTag ? 'Für diesen Tag suchen' : 'Für dieses Ziel suchen', abdeckung: false }
   if (status === 'unavailable') return { label: 'Suche erneut prüfen', abdeckung: false }
   return { label: 'Erneut suchen', abdeckung: true }
 }
@@ -222,7 +223,7 @@ export default function AktivitaetenBereich({
 
   const eingabe = (() => {
     if (!etappe || !gewaehlt || gewaehlt.status !== 'bereit' || !gewaehlt.kanonischerName) return null
-    const basis = activitySucheEingabeAusReise(
+    return activitySucheEingabeAusReise(
       reise,
       {
         ...etappe,
@@ -232,8 +233,6 @@ export default function AktivitaetenBereich({
       },
       adoptTag,
     )
-    if (!adoptTag) return { ...basis, day: null, items: [] }
-    return basis
   })()
   const anfrageSchluessel = eingabe ? JSON.stringify(eingabe) : ''
   const kontext = activitySuchKontextSchluessel({
@@ -387,7 +386,7 @@ export default function AktivitaetenBereich({
   const suchLaeuft = angezeigt.phase === 'loading'
   const zustand = antwort?.status
   const kartenSichtbar = zustand === 'ok' || zustand === 'partial'
-  const anzeige = nativeAktivitaetsAnzeige(antwort ? (zustand ?? null) : null)
+  const anzeige = nativeAktivitaetsAnzeige(antwort ? (zustand ?? null) : null, Boolean(adoptTag))
   const kannSuchen = Boolean(eingabe && etappe && gewaehlt?.status === 'bereit')
   const selectTag =
     lokal?.tag.art === 'kein-datum' ? '' : lokal?.tag.art === 'tag' ? lokal.tag.tagId : wahl.tagFilter?.id ?? ''
@@ -508,6 +507,31 @@ export default function AktivitaetenBereich({
           Für {gewaehlt.name} liegt keine geprüfte Zuordnung vor. Das sagt nichts darüber aus, ob es Angebote gibt.
         </p>
       ) : null}
+
+      <AktivitaetenWidgetFreigabe provider="viator">
+        <ViatorWidgetAktivitaeten
+          name={
+            gewaehlt && (gewaehlt.status === 'bereit' || gewaehlt.status === 'land') ? gewaehlt.kanonischerName : null
+          }
+          gesperrt={[reise.id, ...reise.stages.map((etappe) => etappe.id), ...reise.days.map((tag) => tag.id)]}
+          sichtbar={sichtbar}
+          land={gewaehlt?.status === 'land'}
+        />
+      </AktivitaetenWidgetFreigabe>
+
+      <AktivitaetenWidgetFreigabe provider="getyourguide">
+        <GetYourGuideAktivitaeten
+          key={reise.id}
+          reise={reise}
+          angeforderteTagId={null}
+          etappeId={gewaehlt?.stageId ?? null}
+          orte={orte}
+          sichtbar={sichtbar && gewaehlt?.status !== 'ausstehend'}
+        />
+      </AktivitaetenWidgetFreigabe>
+
+      <h3 className="mt-6 border-t border-line-200 pt-5 text-lg font-semibold text-brand-800">Vorschläge für deinen Reiseplan</h3>
+      <p className="mt-1 text-sm leading-6 text-ink-800">Suche zusätzlich nach Aktivitäten, die du in Jetnity einplanen kannst.</p>
 
       {kannSuchen ? (
         <button
@@ -635,24 +659,6 @@ export default function AktivitaetenBereich({
           {text}
         </p>
       ))}
-
-      <ViatorWidgetAktivitaeten
-        name={
-          gewaehlt && (gewaehlt.status === 'bereit' || gewaehlt.status === 'land') ? gewaehlt.kanonischerName : null
-        }
-        gesperrt={[reise.id, ...reise.stages.map((etappe) => etappe.id), ...reise.days.map((tag) => tag.id)]}
-        sichtbar={sichtbar}
-        land={gewaehlt?.status === 'land'}
-      />
-
-      <GetYourGuideAktivitaeten
-        key={reise.id}
-        reise={reise}
-        angeforderteTagId={null}
-        etappeId={gewaehlt?.stageId ?? null}
-        orte={orte}
-        sichtbar={sichtbar && gewaehlt?.status !== 'ausstehend'}
-      />
     </section>
   )
 }

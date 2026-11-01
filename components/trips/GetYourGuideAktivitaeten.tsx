@@ -7,6 +7,7 @@
 // Jede Ladung besitzt einen eigenen, abtrennbaren Knoten.
 
 import * as React from 'react'
+import { useActivityWidgetAusgeblendet } from '@/lib/activities/widget-ausblenden'
 
 import {
   gygAufloesungAbschluss,
@@ -136,7 +137,7 @@ function Flaeche({
   sichtbar = true,
 }: Props & { naht: GetYourGuideNaht }) {
   const zielModus = etappeId !== undefined
-  const [ausgeblendet, setAusgeblendet] = React.useState(false)
+  const [ausgeblendet, setAusgeblendet] = useActivityWidgetAusgeblendet('getyourguide')
   const instanz = React.useId()
   const ohneTage = reise.days.length === 0
   const [umfangState, setUmfangState] = React.useState<'tag' | 'land'>(ohneTage ? 'land' : 'tag')
@@ -500,7 +501,7 @@ function Flaeche({
         {angepasst.phase === 'fehler' ? <p className={TEXT}>{angepasst.fehler}</p> : null}
         {angepasst.phase === 'anzeige' ? (
           <p className={TEXT}>
-            Der GetYourGuide-Rahmen ist geladen. Welche Angebote erscheinen, entscheidet GetYourGuide. Jetnity zählt sie nicht und bestätigt weder Verfügbarkeit noch eine Buchung.
+            Angebote und Buchung bei GetYourGuide.
           </p>
         ) : null}
       </div>

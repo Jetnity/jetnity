@@ -105,7 +105,7 @@ describe('Viator opaque resize bridge', { timeout: 60_000 }, () => {
         await route.fulfill({
           status: 200,
           contentType: 'text/html; charset=utf-8',
-          body: '<!doctype html><meta charset="utf-8"><script>parent.postMessage({id:"vi-wm",h:480,u:location.href},"*")</script>',
+          body: '<!doctype html><meta charset="utf-8"><script>parent.postMessage({id:"vi-wm",h:0,u:location.href},"*");let tries=0;const tick=setInterval(()=>{if(document.documentElement.clientWidth>0){clearInterval(tick);parent.postMessage({id:"vi-wm",h:480,u:location.href},"*")}else if(++tries>100)clearInterval(tick)},20)</script>',
         })
         return
       }
@@ -115,7 +115,7 @@ describe('Viator opaque resize bridge', { timeout: 60_000 }, () => {
     return page
   }
 
-  test('the official loader keeps a null-origin resize hidden, the owned bridge applies only that height', async () => {
+  test('zero-height bootstrap unhides the official opaque child before it can measure a nonzero height', async () => {
     const kontrolle = await oeffnen('/kontrolle')
     assert.equal((await kontrolle.locator('#aussen').getAttribute('sandbox'))?.includes('allow-same-origin'), false)
     let ohne: Awaited<ReturnType<typeof messen>> = null
@@ -145,6 +145,12 @@ describe('Viator opaque resize bridge', { timeout: 60_000 }, () => {
     await frame.evaluate(() => {
       window.postMessage({ id: 'vi-wm', h: 9000, u: 'javascript:alert(1)' }, '*')
     })
+    await page.waitForTimeout(50)
+    const child = page.frames().find((eintrag) => eintrag.url().includes('/widget/partner/'))
+    assert.ok(child)
+    for (const h of [-1, -0.1, 12000.1, 999999, '480', null]) {
+      await child.evaluate((height) => parent.postMessage({ id: 'vi-wm', h: height, u: location.href }, '*'), h)
+    }
     await page.waitForTimeout(50)
     const nachher = await messen(page)
     assert.equal(nachher?.height, '480px')

@@ -6,6 +6,7 @@
 // Kein natives API-Angebot und keine Übernahme aus dem Widget.
 
 import * as React from 'react'
+import { useActivityWidgetAusgeblendet } from '@/lib/activities/widget-ausblenden'
 
 import { VIATOR_DATENSCHUTZ_HREF } from '@/lib/activities/viator-widget/dokument'
 import { viatorAnwendungsRenderer } from '@/lib/activities/viator-widget/renderer'
@@ -33,7 +34,7 @@ export default function ViatorWidgetAktivitaeten({
   land: boolean
 }) {
   const suchname = name ? viatorSuchname(name, gesperrt) : null
-  const [ausgeblendet, setAusgeblendet] = React.useState(false)
+  const [ausgeblendet, setAusgeblendet] = useActivityWidgetAusgeblendet('viator')
   const [phase, setPhase] = React.useState<Phase>('ruhend')
   const hostRef = React.useRef<HTMLDivElement>(null)
   const laufRef = React.useRef(0)
@@ -101,7 +102,7 @@ export default function ViatorWidgetAktivitaeten({
         {phase === 'fehler' ? <p className={TEXT}>Viator konnte gerade nicht geladen werden.</p> : null}
         {phase === 'anzeige' ? (
           <p className={TEXT}>
-            Der Viator-Rahmen hat geantwortet. Das sagt noch nicht, welche Angebote darin stehen, und es ist keine Buchung.
+            Angebote und Buchung bei Viator.
           </p>
         ) : null}
       </div>
@@ -129,7 +130,7 @@ export default function ViatorWidgetAktivitaeten({
             Datenschutz von Viator
           </a>
           {'. '}
-          Ausblenden beendet die weitere Einbindung, bis sie erneut angezeigt wird. Ein Angebotsklick kann Viator öffnen. Das bestätigt keine Provision und keine Buchung.
+          Ausblenden beendet die weitere Einbindung, bis sie erneut angezeigt wird. Die Buchung erfolgt bei Viator.
         </p>
       ) : null}
       <div ref={hostRef} data-viator-montage={zeigen ? 'sichtbar' : 'leer'} hidden={!zeigen} className="mt-4 min-w-0" />

@@ -201,8 +201,35 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
 
   async function seite(hash: string, breite: number, hoehe = 900): Promise<Page> {
     const page = await browser.newPage({ viewport: { width: breite, height: hoehe } })
+    await page.route('**/*', (route) => new URL(route.request().url()).origin === origin ? route.continue() : route.abort())
+    await page.addInitScript({ content: `(() => {
+      if (location.hash.includes('cmp=absent')) return;
+      if (location.hash.includes('cmp=malformed')) { window.PrivacyBee = {}; return; }
+      const consents = {
+        SECURITY_STORAGE: true, FUNCTIONALITY_STORAGE: true,
+        ANALYTICS_STORAGE: !location.hash.includes('cmp=denied'), AD_STORAGE: true,
+        AD_USER_DATA: true, AD_PERSONALIZATION: true, PERSONALIZATION_STORAGE: true,
+      };
+      window.PrivacyBee = {
+        getConsent: (name) => consents[name], getAllConsents: () => ({ ...consents }), hasExplicitConsent: () => true,
+      };
+    })()` })
     await page.goto(`${origin}/${hash}`)
     return page
+  }
+
+  async function widgetLadevorgangAbwarten(page: Page, name: string) {
+    // A destination label changes before the two async fixture frames finish.
+    // Wait for that observable state before clicking below their changing layout.
+    await page.waitForFunction((ziel) => {
+      return [
+        ['[data-viator-zustand="anzeige"]', 'Viator'],
+        ['[data-gyg-phase="anzeige"]', 'GetYourGuide'],
+      ].every(([selector, title]) => {
+        const frame = document.querySelector(`${selector} iframe[title="${title}"]`)
+        return frame instanceof HTMLIFrameElement && new URL(frame.src).searchParams.get('name') === ziel
+      })
+    }, name)
   }
 
   async function ohneUeberlauf(page: Page) {
@@ -223,6 +250,8 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
     assert.match(await bereich.innerText(), /Ideen für Bangkok · Datum später wählen/)
     assert.equal(await bereich.getByRole('button', { name: 'Aktivitäten suchen' }).count(), 0)
     assert.equal(suchen.length, vorher)
+    await bereich.locator('[data-viator-zustand="anzeige"]').waitFor()
+    await bereich.getByRole('region', { name: 'GetYourGuide' }).locator('iframe').waitFor()
     assert.equal(viator.at(-1), '?name=Bangkok')
     assert.equal((viator.at(-1) ?? '').includes('trip-synth'), false)
     assert.equal((viator.at(-1) ?? '').includes('day-ab'), false)
@@ -232,11 +261,14 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
     assert.equal(suchen.length, vorher)
     await page.locator('#activity-destination-select').selectOption('stage-phu')
     await bereich.locator('[data-viator-name="Phuket"]').waitFor()
-    await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await widgetLadevorgangAbwarten(page, 'Phuket')
+    await bereich.getByRole('button', { name: 'Für dieses Ziel suchen' }).click()
+    await bereich.getByText('Synthetisch Phuket', { exact: true }).waitFor()
     assert.equal(suchen.at(-1)?.day ?? null, null)
     assert.deepEqual((suchen.at(-1) as { items?: unknown[] } | undefined)?.items ?? null, [])
     await page.getByLabel('Reisetag').selectOption({ label: 'Bangkok-Tag' })
     await bereich.locator('[data-viator-name="Bangkok"]').waitFor()
+    await widgetLadevorgangAbwarten(page, 'Bangkok')
     await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
     await bereich.getByText('Synthetisch Bangkok', { exact: true }).waitFor()
     assert.equal(suchen.at(-1)?.day?.id, 'day-bkk')
@@ -270,6 +302,7 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
     assert.equal(viator.length, vorAus)
     await page.getByRole('region', { name: 'Viator' }).getByRole('button', { name: 'Erneut anzeigen' }).click()
     await bereich.locator('[data-viator-name="Chiang Mai"]').waitFor()
+    await bereich.locator('[data-viator-zustand="anzeige"]').waitFor()
     assert.equal(viator.length, vorAus + 1)
     const stand = suchen.length
     await page.getByRole('button', { name: 'Fläche verdecken' }).click()
@@ -295,6 +328,73 @@ describe('Activities destination-first browser harness', { timeout: 120_000 }, (
     assert.equal(await bereich.getByText('Synthetisch').count(), 0)
     await konflikt.screenshot({ path: join(ARTIFACTS, 'widerspruch-768-hell.png'), fullPage: true })
     await konflikt.close()
+  })
+
+  test('malformed CMP, refusal and withdrawal never become a navigation grant', async () => {
+    for (const hash of ['#fall=thailand&cmp=malformed', '#fall=thailand&cmp=denied']) {
+      const start = [viator.length, rahmen.length]
+      const page = await seite(hash, 390)
+      await page.locator('[data-activity-widget-blocked="viator"]').waitFor()
+      await page.getByLabel('Ziel').selectOption('stage-kc')
+      await page.getByRole('button', { name: 'Für dieses Ziel suchen' }).click()
+      await page.getByText('Synthetisch Ko Chang', { exact: true }).waitFor()
+      assert.equal(await page.locator('iframe').count(), 0)
+      assert.deepEqual([viator.length, rahmen.length], start)
+      await page.close()
+    }
+    const page = await seite('#fall=thailand', 390)
+    await page.locator('[data-viator-zustand="anzeige"]').waitFor()
+    await page.getByRole('region', { name: 'GetYourGuide' }).locator('iframe').waitFor()
+    const start = [viator.length, rahmen.length]
+    await page.evaluate(`(() => {
+      const consents = { ...window.PrivacyBee.getAllConsents(), ANALYTICS_STORAGE: false };
+      window.PrivacyBee = { getAllConsents: () => consents, getConsent: (name) => consents[name], hasExplicitConsent: () => true };
+      document.dispatchEvent(new CustomEvent('privacybee:consent-changed', { detail: { granted: true } }));
+    })()`)
+    await page.locator('[data-activity-widget-blocked="viator"]').waitFor()
+    await page.getByLabel('Ziel').selectOption('stage-phu')
+    assert.equal(await page.locator('iframe').count(), 0)
+    assert.deepEqual([viator.length, rahmen.length], start)
+    await page.evaluate(`(() => {
+      delete window.PrivacyBee;
+      document.dispatchEvent(new CustomEvent('privacybee:consent-changed'));
+    })()`)
+    await page.locator('[data-activity-widget-blocked="viator"]').waitFor()
+    assert.equal(await page.locator('iframe').count(), 0)
+    // A reload without the previously observed API cannot restore display.
+    await page.goto(`${origin}/#fall=thailand&cmp=absent`)
+    await page.reload()
+    await page.locator('[data-activity-widget-blocked="viator"]').waitFor()
+    assert.equal(await page.locator('iframe').count(), 0)
+    assert.deepEqual([viator.length, rahmen.length], start)
+    await page.close()
+  })
+
+  test('owner-authorized first rollout shows both widgets without an extra load button', async () => {
+    const page = await seite('#fall=thailand&cmp=absent', 390)
+    await widgetLadevorgangAbwarten(page, 'Bangkok')
+    assert.equal(await page.getByRole('region', { name: 'Viator' }).locator('iframe').count(), 1)
+    assert.equal(await page.getByRole('region', { name: 'GetYourGuide' }).locator('iframe').count(), 1)
+    await page.close()
+  })
+
+  test('hide survives unmount and reload and never grants consent', async () => {
+    const page = await seite('#fall=thailand', 390)
+    await page.locator('[data-viator-zustand="anzeige"]').waitFor()
+    const gyg = page.getByRole('region', { name: 'GetYourGuide' })
+    await gyg.locator('iframe').waitFor()
+    await page.getByRole('region', { name: 'Viator' }).getByRole('button', { name: 'Ausblenden', exact: true }).click()
+    await gyg.getByRole('button', { name: 'Ausblenden', exact: true }).click()
+    const start = [viator.length, rahmen.length]
+    await page.reload()
+    await page.getByRole('region', { name: 'Viator' }).getByRole('button', { name: 'Erneut anzeigen' }).waitFor()
+    assert.equal(await page.locator('iframe').count(), 0)
+    assert.deepEqual([viator.length, rahmen.length], start)
+    await page.getByRole('region', { name: 'Viator' }).getByRole('button', { name: 'Erneut anzeigen' }).click()
+    await page.locator('[data-viator-zustand="anzeige"]').waitFor()
+    assert.equal(viator.length, start[0] + 1)
+    assert.equal(rahmen.length, start[1])
+    await page.close()
   })
 
   test('white, green, mobile and enlarged text stay inside the viewport', async () => {

@@ -6001,7 +6001,7 @@ Siehe [Plan](docs/TRIPCOM_SUCHLINKS_1_PLAN_2026-11-01.md).
 
 **Begründung:** Der Sandbox soll die Reise-Seite nicht lesen können. Die native Production-API bleibt zu. Eine geladene Rahmenantwort ist keine Angebotsliste.
 
-**Konsequenzen:** Vier echte Widget-Dokumente wurden geladen, ohne Klick und ohne HTTP 403. Die äußeren Bilder zeigten die Karten nicht, weil der Umschlag verborgen blieb. Die Brücke ist offline gegen das exakte offizielle `widget-main.js` geprüft. Kein fünfter Live-Ladeversuch. Keine CMP-Erweiterung, kein S6, kein Schlüssel.
+**Konsequenzen / Owner-Ergänzung TASK V4:** Codex übernimmt nach Cursor-Nutzungslimit. Der Nullhöhen-Start wird unter denselben strengen Herkunfts-/Rahmenprüfungen behandelt; Versuch 7 zeigt echte Viator-Karten mit CHF, insgesamt 7 Render ohne Klick/403. GYG zeigte Karten, ein Testklick endete mit HTTP403; weitere Anbietertests bleiben gestoppt. Der Owner verlangt automatische Angebote und Veröffentlichung nach Prüfung und verschiebt umfassende Datenschutzarbeit. Nur die Aktivitätenfläche darf bei fehlender/unveröffentlichter CMP automatisch laden. Erkannte CMP-Präsenz wird für die Sitzung negativ gespeichert; tatsächliche Ablehnungen, unklare Reads und Widerruf blockieren. Ausblenden überlebt Bereichswechsel und Neuladen. Öffnen ist keine Einwilligung und es wird keine rechtliche Abnahme behauptet. Gemeinsame CMP, andere Anbieter-Gates, S6, Schlüssel und Datenbank bleiben unverändert. Lokale Tests/Build bestanden, Gesamttest-Ausnahmen siehe QA; endgültige CI-/Preview-/Mergebewertung erfolgt gesondert.
 
 ## Offene Widersprüche
 

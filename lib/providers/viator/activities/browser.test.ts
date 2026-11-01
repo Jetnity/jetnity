@@ -19,6 +19,7 @@ test('the browser harness stays imported for reachability', () => {
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
 type Messwert = {
+  angeboteVorSuche?: boolean
   ok: boolean
   reason?: string
   rechts?: number[]
@@ -468,7 +469,11 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     const tagWahl = bereich.getByRole('combobox', { name: 'Reisetag' })
     await tagWahl.focus()
     assert.equal(await page.evaluate('document.activeElement && document.activeElement.id'), 'activity-day-select')
-    await page.keyboard.press('ArrowDown')
+    // macOS headless Chrome does not open the native select popup; native type-ahead still exercises keyboard change.
+    if (process.platform === 'darwin') await page.keyboard.type('Phuket')
+    else await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+    await page.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-phu', null, { timeout: 2_000 })
     assert.equal(await tagWahl.inputValue(), 'day-phu')
     assert.match(await bereich.innerText(), /Phuket/)
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
@@ -510,7 +515,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
         ok: radios === 0 && auswahl.options.length === 23 && Boolean(gewaehlt && gewaehlt.textContent),
         gruppeHoehe: Math.round(gruppe.getBoundingClientRect().height),
         auswahlHoehe: Math.round(auswahl.getBoundingClientRect().height),
-        sucheY: Math.round(suche.getBoundingClientRect().top + window.scrollY),
+        angeboteVorSuche: [...document.querySelectorAll('[aria-label="Viator"], [aria-label="GetYourGuide"]')].length === 2 && [...document.querySelectorAll('[aria-label="Viator"], [aria-label="GetYourGuide"]')].every((el) => Boolean(el.compareDocumentPosition(suche) & Node.DOCUMENT_POSITION_FOLLOWING)),
         label: gewaehlt ? gewaehlt.textContent : '',
         optionen: auswahl.options.length,
       }
@@ -522,11 +527,14 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       assert.equal(mass.ok, true, `${breite} ${JSON.stringify(mass)}`)
       assert.ok((mass.gruppeHoehe ?? 9999) < 280, `${breite} gruppe ${mass.gruppeHoehe}`)
       assert.ok((mass.auswahlHoehe ?? 9999) < 80, `${breite} auswahl ${mass.auswahlHoehe}`)
-      assert.ok((mass.sucheY ?? 9999) < 1000, `${breite} suche ${mass.sucheY}`)
+      assert.equal(mass.angeboteVorSuche, true, `${breite}: official offers before secondary native search`)
       assert.equal(mass.label, 'Tag 1')
       const tagWahl = page.getByRole('combobox', { name: 'Reisetag' })
       await tagWahl.focus()
-      await page.keyboard.press('ArrowDown')
+      if (process.platform === 'darwin') await page.keyboard.type('Tag 2')
+      else await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Enter')
+      await page.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-2', null, { timeout: 2_000 })
       assert.equal(await tagWahl.inputValue(), 'day-2')
       assert.match(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
       await tagWahl.selectOption({ label: 'Tag 22' })
@@ -542,11 +550,14 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(gross.ok, true, JSON.stringify(gross))
     assert.ok((gross.gruppeHoehe ?? 9999) < 500, `32px gruppe ${gross.gruppeHoehe}`)
     assert.ok((gross.auswahlHoehe ?? 9999) < 160, `32px auswahl ${gross.auswahlHoehe}`)
-    assert.ok((gross.sucheY ?? 9999) < 1600, `32px suche ${gross.sucheY}`)
+    assert.equal(gross.angeboteVorSuche, true, 'enlarged text: official offers before secondary native search')
     assert.equal(gross.label, 'Tag 1')
     const wahl = schmal.getByRole('combobox', { name: 'Reisetag' })
     await wahl.focus()
-    await schmal.keyboard.press('ArrowDown')
+    if (process.platform === 'darwin') await schmal.keyboard.type('Tag 2')
+    else await schmal.keyboard.press('ArrowDown')
+    await schmal.keyboard.press('Enter')
+    await schmal.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-2', null, { timeout: 2_000 })
     assert.equal(await wahl.inputValue(), 'day-2')
     await wahl.selectOption({ label: 'Tag 22' })
     assert.equal(await wahl.inputValue(), 'day-22')

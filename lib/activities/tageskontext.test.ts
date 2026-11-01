@@ -1,7 +1,10 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { tageskontextAusReise } from '@/lib/activities/tageskontext'
+import { activitySucheEingabeAusReise, tageskontextAusReise } from '@/lib/activities/tageskontext'
+
+import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
+import { activitySucheEingabeSchema } from '@/lib/activities/schema'
 
 const EINGABE = {
   stage: {
@@ -77,4 +80,24 @@ describe('Aktivitäts-Tageskontext', () => {
     assert.equal(evidenz.hatBestehendePunkte, true)
     assert.equal(evidenz.hatBelastbareZeiten, false)
   })
+})
+
+
+test('date-free discovery excludes more than forty unrelated items without mutating the trip', () => {
+  const reise = beispielreise()
+  const basis = reise.days[0].items[0]
+  reise.days[1].items = Array.from({ length: 41 }, (_, i) => ({ ...basis, id: `other-${i}`, dayId: reise.days[1].id }))
+  const vorher = JSON.stringify(reise)
+  const eingabe = activitySucheEingabeAusReise(reise, reise.stages[0], null)
+  assert.equal(activitySucheEingabeSchema.safeParse(eingabe).success, true)
+  assert.equal(eingabe.day, null)
+  assert.deepEqual(eingabe.items, [])
+  const kontext = tageskontextAusReise(eingabe)
+  assert.equal(kontext.evidenz.hatTag, false)
+  assert.equal(kontext.evidenz.hatBelastbareZeiten, false)
+  assert.equal(kontext.anfrage?.dayDate, null)
+  const datiert = activitySucheEingabeAusReise(reise, reise.stages[0], reise.days[0])
+  assert.equal(datiert.items.length, 1)
+  assert.equal(datiert.items[0].id, basis.id)
+  assert.equal(JSON.stringify(reise), vorher)
 })

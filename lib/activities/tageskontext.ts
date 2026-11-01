@@ -46,9 +46,9 @@ export function activitySucheEingabeAusReise(
   etappe: TripStage,
   tag: TripDay | null,
 ): ActivitySucheEingabe {
-  const punkte: TripItem[] = tag
-    ? tag.items
-    : [...reise.days.flatMap((eintrag) => eintrag.items), ...reise.ohneTag]
+  // Ohne gewählten Tag ist dies Zieldiscovery, keine Prüfung des Reiseplans.
+  // Fremde Tage weder mitsenden noch still auf die Eingabegrenze kürzen.
+  const punkte: TripItem[] = tag ? tag.items : []
 
   return {
     stage: {
