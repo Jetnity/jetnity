@@ -104,8 +104,9 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
         const angewandt = operationenAnwenden(reise, vorschau.aenderung.operationen, kennungErzeugen)
         const orte = angewandt.ok ? await aenderungOrteAufloesen(angewandt.reise) : undefined
         if (!current()) return
+        if (orte && !orte.ok) { setMeldung(orte.meldung); return }
         gespeichert = gastreiseAendern({ tripId: reise.id, mutationId, basisRevision: vorschau.basisRevision,
-          operationen: vorschau.aenderung.operationen, orte })
+          operationen: vorschau.aenderung.operationen, orte: orte?.orte })
       } else {
         const ergebnis = await aenderungUebernehmen({ tripId: reise.id, mutationId: vorschau.mutationId,
           basisRevision: vorschau.basisRevision, aenderung: vorschau.aenderung })

@@ -46,6 +46,9 @@ export default function RouteZielListe({
             <span className="min-w-0 flex-1 break-words text-sm font-semibold text-brand-800">
               <span className="sr-only">Ziel {stelle}: </span>
               {name}
+              {eintrag.ort?.description && (
+                <span className="block font-normal leading-5 text-ink-700">{eintrag.ort.description}</span>
+              )}
               {wirdErsetzt ? (
                 <span className="ml-2 font-normal text-ink-700">wird ersetzt</span>
               ) : null}

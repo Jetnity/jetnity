@@ -33,7 +33,7 @@ import { modellAufrufen } from '@/lib/modell/aufruf'
 import { modellZustand } from '@/lib/modell/konfiguration'
 import { reisevorschlagErzeugen, type Vorschlagsergebnis } from '@/lib/reisevorschlag/erzeugen'
 import { modellFuerReisevorschlag } from '@/lib/reisevorschlag/routing'
-import { hinweiseAusTexten, type KanonischeOrte } from '@/lib/places/kanon'
+import { hinweiseAusTexten } from '@/lib/places/kanon'
 import { kanonischeOrteLesen } from '@/lib/places/lesen'
 import { vorschlagAlsNutzlast } from '@/lib/reisevorschlag/abbildung'
 import { reisevorschlagSchema, uebernahmeSchema } from '@/lib/reisevorschlag/schema'
@@ -102,15 +102,15 @@ export async function vorschlagUebernehmen(eingabe: unknown): Promise<Aktionserg
     }),
   )
 
-  return reiseAusNutzlastAnlegen(vorschlagAlsNutzlast(vorschlag, geprueft.data.clientRef, orte))
+  if (!orte.ok) return orte
+  return reiseAusNutzlastAnlegen(vorschlagAlsNutzlast(vorschlag, geprueft.data.clientRef, orte.orte))
 }
 
 /** Löst Modellorte gegen public.places auf. Derselbe Stand für Konto und Gast. */
 export async function vorschlagOrteAufloesen(eingabe: unknown) {
   const geprueft = reisevorschlagSchema.safeParse(eingabe)
   if (!geprueft.success) {
-    const leer: KanonischeOrte = { origin: null, stages: [] }
-    return leer
+    return { ok: false as const, meldung: 'Dieser Vorschlag ist nicht mehr gültig.' }
   }
   return kanonischeOrteLesen(
     hinweiseAusTexten({

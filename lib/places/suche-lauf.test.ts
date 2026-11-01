@@ -199,7 +199,7 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.equal(ergebnis.optionen?.[0]?.id, peruLand.id)
     assert.equal(ergebnis.optionen?.[0]?.typ, 'country')
     assert.ok(ergebnis.optionen?.some((option) => option.id === peruStaedte[0]?.id))
-    assert.deepEqual(aufrufe, ['name', 'land'])
+    assert.deepEqual(aufrufe, ['name', 'exakt', 'land', 'schluessel'])
   })
 
   test('ist das Land schon in der Namensmenge, bleibt der selektive Nachzug vollständig und das Land steht vorn', async () => {
@@ -210,7 +210,7 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     const ergebnis = await placesSuchen('Peru', 'ziel', lesen)
     assert.equal(ergebnis.problem, null)
     assert.equal(ergebnis.optionen?.[0]?.id, peruLand.id)
-    assert.deepEqual(aufrufe, ['name', 'land'])
+    assert.deepEqual(aufrufe, ['name', 'exakt', 'land', 'schluessel'])
     assert.equal(limits.land, ORT_LAND_UNIVERSUM)
   })
 
@@ -221,7 +221,7 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     })
     const chinaErgebnis = await placesSuchen('China', 'ziel', china.lesen)
     assert.equal(chinaErgebnis.optionen?.[0]?.id, chinaLand.id)
-    assert.deepEqual(china.aufrufe, ['name', 'land'])
+    assert.deepEqual(china.aufrufe, ['name', 'exakt', 'land', 'schluessel'])
 
     const schweiz = leser({
       name: [

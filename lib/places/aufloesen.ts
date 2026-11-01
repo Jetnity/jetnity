@@ -4,6 +4,7 @@
 // Nie raten: kein Treffer und mehrere plausible Treffer bleiben unaufgelöst.
 
 import { gleichGefaltet } from '@/lib/airports/normalisieren'
+import { passendeLandCodes } from '@/lib/places/namen'
 import { istOrtId, ortPasstZurRolle, type Ort, type OrtRolle } from '@/lib/places/domain'
 
 export type Modellort = {
@@ -41,7 +42,8 @@ function istPlausibel(ort: Ort, suche: string, rolle: OrtRolle): boolean {
     const code = suche.trim().toUpperCase()
     return Boolean(ort.iata && ort.iata === code) || gleichGefaltet(ort.name, suche)
   }
-  return gleichGefaltet(ort.name, suche) || keywordGenau(ort.keywords, suche)
+  if (ort.typ === 'country' && ort.countryCode && passendeLandCodes(suche, true).includes(ort.countryCode)) return true
+  return gleichGefaltet(ort.name, suche) || gleichGefaltet(ort.sourceName, suche) || keywordGenau(ort.keywords, suche)
 }
 
 /**
@@ -53,6 +55,7 @@ export function ortAufloesen(orte: Ort[], hinweis: Modellort): OrtAufloesung {
   if (!name) return { status: 'unaufgeloest', grund: 'ungueltig' }
 
   const land = landescodeLesen(hinweis.countryCode)
+  if (hinweis.countryCode?.trim() && !land) return { status: 'unaufgeloest', grund: 'ungueltig' }
   const treffer = orte.filter((ort) => {
     if (land && ort.countryCode !== land) return false
     return istPlausibel(ort, name, hinweis.rolle)

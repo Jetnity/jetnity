@@ -7,6 +7,7 @@
 // wird erneut gegen denselben Ganzort-Beweis geprüft.
 
 import { gleichGefaltet, enthaeltGefaltet } from '@/lib/airports/normalisieren'
+import { passendeLandCodes } from '@/lib/places/namen'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
 import type { OrtOption } from '@/lib/places/domain'
 import {
@@ -277,6 +278,7 @@ function labelMitOrtskontext(frage: string, option: OrtOption): boolean {
   if (!gleichGefaltet(option.label, name)) return false
   const beschreibung = option.description?.trim() ?? ''
   if (!beschreibung) return false
+  if (option.countryCode && passendeLandCodes(kontext, true).includes(option.countryCode)) return true
   return enthaeltGefaltet(beschreibung, kontext) || gleichGefaltet(beschreibung, kontext)
 }
 

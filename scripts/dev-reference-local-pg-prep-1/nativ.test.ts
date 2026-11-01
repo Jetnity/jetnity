@@ -102,6 +102,8 @@ alter table public.airports enable row level security;
 create policy airports_lesen on public.airports for select to anon, authenticated using (true);
 grant select on table public.airports to anon, authenticated;
 create table public.places (
+  population bigint check (population is null or population >= 0),
+  feature_code text,
   id text primary key
     constraint places_id_laenge check (char_length(btrim(id)) between 1 and 80),
   source text not null

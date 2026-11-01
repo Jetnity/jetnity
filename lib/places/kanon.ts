@@ -8,6 +8,10 @@ import type { Ort } from '@/lib/places/domain'
 import type { Modellort } from '@/lib/places/aufloesen'
 import type { Reisegraph, TripStage } from '@/types/trips'
 
+export type KanonischeOrtsLesung =
+  | { ok: true; orte: KanonischeOrte }
+  | { ok: false; meldung: string }
+
 export type KanonischeOrte = {
   origin: Ort | null
   stages: Array<Ort | null>
@@ -27,7 +31,7 @@ export function hinweiseAusTexten(eingabe: {
   }
 }
 
-export function etappeMitOrt<T extends Pick<TripStage, 'placeId' | 'latitude' | 'longitude'>>(
+export function etappeMitOrt<T extends Pick<TripStage, 'placeId' | 'latitude' | 'longitude'> & Partial<Pick<TripStage, 'countryCode'>>>(
   etappe: T,
   ort: Ort | null,
 ): T {
@@ -37,6 +41,7 @@ export function etappeMitOrt<T extends Pick<TripStage, 'placeId' | 'latitude' | 
   return {
     ...etappe,
     placeId: ort.id,
+    ...('countryCode' in etappe ? { countryCode: ort.countryCode } : {}),
     latitude: ort.lat,
     longitude: ort.lon,
   }

@@ -8,6 +8,7 @@
 //
 // Progressive weitere Ziele / Stage-Create sind nicht Teil dieses Schnitts.
 
+import type { OrtAuswahl } from '@/lib/places/auswahl'
 import type { Sitzungsstand } from '@/lib/auth/oeffentliche-navigation'
 import {
   gastspeicherCreateBelegungLesen,
@@ -287,14 +288,14 @@ export function planenVorbelegung(eingabe: {
   idee?: string | null
   originId?: string | null
   originName?: string | null
-  weitereZiele?: { id: string; name: string }[] | null
+  weitereZiele?: OrtAuswahl[] | null
 }): {
   destinationId: string
   destination: string
   idee: string
   originId: string
   origin: string
-  weitereZiele: { id: string; name: string }[]
+  weitereZiele: OrtAuswahl[]
 } {
   return {
     destinationId: eingabe.zielId?.trim() ?? '',
@@ -303,7 +304,7 @@ export function planenVorbelegung(eingabe: {
     originId: '',
     origin: '',
     weitereZiele: (eingabe.weitereZiele ?? [])
-      .map((ziel) => ({ id: ziel.id.trim(), name: ziel.name.trim() }))
+      .map((ziel) => ({ id: ziel.id.trim(), name: ziel.name.trim(), ...(ziel.description ? { description: ziel.description } : {}) }))
       .filter((ziel) => ziel.id && ziel.name),
   }
 }

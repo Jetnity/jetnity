@@ -86,7 +86,7 @@ describe('Drift-Schutz gegen die Original-Importer', () => {
     const spalten = zwischen(ORIGINAL_ORTE, /insert into public\.places\s*\(/, /\)/)
     assert.deepEqual(normal(spalten).split(', '), [...ORT_SPALTEN])
     assert.deepEqual(felderAusWerte(ORIGINAL_ORTE, 'ort'), [
-      'id', 'source', 'sourceId', 'name', 'typ', 'country', 'countryCode', 'region', 'lat', 'lon', 'iata', 'keywords',
+      'id', 'source', 'sourceId', 'name', 'typ', 'country', 'countryCode', 'region', 'lat', 'lon', 'iata', 'keywords', 'population', 'featureCode',
     ])
     const ort: Ort = {
       id: 'geonames:1', source: 'geonames', sourceId: '1', name: 'X', typ: 'city', country: null,

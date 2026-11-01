@@ -4,6 +4,7 @@
 
 'use server'
 
+import { lese, type Lesung } from '@/lib/api/datenbank-lesen'
 import { ORT_ROLLEN, istOrtId, type Ort, type OrtRolle } from '@/lib/places/domain'
 import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import { ORT_MELDUNG, ortAusBestand } from '@/lib/places/pruefen'
@@ -13,35 +14,23 @@ import { GRENZEN } from '@/lib/trips/schema'
 
 export type OrtBestaetigung =
   | { ok: true; wert: Ort }
-  | { ok: false; meldung: string }
+  | { ok: false; meldung: string; grund?: 'ausfall' | 'unbekannt' }
 
 export type ReiseorteBestaetigung =
   | { ok: true; ziel: Ort; abreise: Ort; weitereZiele: Ort[] }
   | { ok: false; meldung: string; feld?: 'destination' | 'origin'; zielIndex?: number }
 
-async function zeileLesen(id: string): Promise<Ort | null> {
-  const { data, error } = await (await createServerActionClient())
-    .from('places')
-    .select(ORT_SPALTEN)
-    .eq('id', id)
-    .maybeSingle()
-  if (error || !data) return null
-  return ortAusZeile(data as OrtZeile)
-}
-
-async function zeilenLesen(ids: string[]): Promise<Ort[] | null> {
+async function zeilenLesen(ids: string[]): Promise<Lesung<Ort>> {
   const eindeutig = [...new Set(ids.filter((id) => istOrtId(id)))]
-  if (eindeutig.length === 0) return []
-  if (eindeutig.length > GRENZEN.etappenJeReise + 1) return null
-
-  const { data, error } = await (await createServerActionClient())
-    .from('places')
-    .select(ORT_SPALTEN)
-    .in('id', eindeutig)
-  if (error || !data) return null
-  return data
-    .map((zeile) => ortAusZeile(zeile as OrtZeile))
-    .filter((ort): ort is Ort => ort !== null)
+  if (eindeutig.length === 0) return { zeilen: [], problem: null }
+  if (eindeutig.length > GRENZEN.etappenJeReise + 1) {
+    return { zeilen: null, problem: { status: 500, message: ORT_MELDUNG.idUngueltig } }
+  }
+  const gelesen = await lese(async () => (await createServerActionClient())
+    .from('places').select(ORT_SPALTEN).in('id', eindeutig))
+  if (gelesen.problem) return gelesen
+  return { zeilen: gelesen.zeilen.map((zeile) => ortAusZeile(zeile as OrtZeile))
+    .filter((ort): ort is Ort => ort !== null), problem: null }
 }
 
 export async function ortBestaetigen(id: unknown, rolle: unknown): Promise<OrtBestaetigung> {
@@ -51,7 +40,9 @@ export async function ortBestaetigen(id: unknown, rolle: unknown): Promise<OrtBe
   if (typeof id !== 'string' || !istOrtId(id)) {
     return { ok: false, meldung: rolle === 'ziel' ? ORT_MELDUNG.zielUnbekannt : ORT_MELDUNG.abreiseUnbekannt }
   }
-  const ort = await zeileLesen(id)
+  const gelesen = await zeilenLesen([id])
+  if (gelesen.problem) return { ok: false, grund: 'ausfall', meldung: ORT_MELDUNG.nichtErreichbar }
+  const ort = gelesen.zeilen[0]
   if (!ort || !ortAusBestand([ort], id, rolle as OrtRolle)) {
     return { ok: false, meldung: rolle === 'ziel' ? ORT_MELDUNG.zielUnbekannt : ORT_MELDUNG.abreiseUnbekannt }
   }
@@ -77,10 +68,9 @@ export async function reiseorteBestaetigen(eingabe: {
     return { ok: false, meldung: ORT_MELDUNG.abreiseUnbekannt, feld: 'origin' }
   }
 
-  const bestand = await zeilenLesen([eingabe.abreiseId, ...zielIds.ids])
-  if (!bestand) {
-    return { ok: false, meldung: ORT_MELDUNG.idUngueltig }
-  }
+  const gelesen = await zeilenLesen([eingabe.abreiseId, ...zielIds.ids])
+  if (gelesen.problem) return { ok: false, meldung: ORT_MELDUNG.nichtErreichbar }
+  const bestand = gelesen.zeilen
 
   const abreise = ortAusBestand(bestand, eingabe.abreiseId, ORT_ROLLEN[1])
   if (!abreise) {

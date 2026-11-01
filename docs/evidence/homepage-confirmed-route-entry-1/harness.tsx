@@ -42,6 +42,7 @@ window.fetch = async (input, init) => {
   const url = String(input)
   if (url.includes('/api/search/places')) {
     const frage = new URL(url, 'http://harness.local').searchParams.get('q') ?? ''
+    if (new URLSearchParams(window.location.search).has('langsam') && frage === 'Rom') await new Promise((resolve) => setTimeout(resolve, 600))
     const treffer = ORTE.filter((ort) => ort.label.toLowerCase().includes(frage.trim().toLowerCase()))
     return new Response(JSON.stringify(treffer), {
       status: 200,

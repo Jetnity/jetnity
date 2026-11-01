@@ -25,7 +25,7 @@ import { reiseaenderungErzeugen, type Aenderungsergebnis } from '@/lib/reiseaend
 import { aenderungAlsNutzlast } from '@/lib/reiseaenderung/nutzlast'
 import { modellFuerReiseaenderung } from '@/lib/reiseaenderung/routing'
 import { reiseaenderungSchema } from '@/lib/reiseaenderung/schema'
-import { reiseMitKanonischenOrten, type KanonischeOrte } from '@/lib/places/kanon'
+import { reiseMitKanonischenOrten } from '@/lib/places/kanon'
 import { reiseOrteKanonisieren } from '@/lib/places/lesen'
 import { NICHT_ANGEMELDET, konto, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
@@ -147,8 +147,7 @@ export async function aenderungErzeugenGast(eingabe: unknown): Promise<Aenderung
 export async function aenderungOrteAufloesen(eingabe: unknown) {
   const reise = reiseSchema.safeParse(eingabe)
   if (!reise.success) {
-    const leer: KanonischeOrte = { origin: null, stages: [] }
-    return leer
+    return { ok: false as const, meldung: 'Diese Reise ist nicht mehr gültig.' }
   }
   return reiseOrteKanonisieren(tageEtappenZuordnen(reise.data))
 }
@@ -203,7 +202,8 @@ export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionserg
   if (!angewandt.ok) return { ok: false, meldung: angewandt.fehler.meldung }
 
   const orte = await reiseOrteKanonisieren(angewandt.reise)
-  const kanonisch = { ...reiseMitKanonischenOrten(angewandt.reise, orte), dayStageAssignmentMode: aktuell.dayStageAssignmentMode }
+  if (!orte.ok) return orte
+  const kanonisch = { ...reiseMitKanonischenOrten(angewandt.reise, orte.orte), dayStageAssignmentMode: aktuell.dayStageAssignmentMode }
 
   let konflikt = false
   try {

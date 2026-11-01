@@ -1,6 +1,6 @@
 # Jetnity – Ortsbasis
 
-**Stand:** 29. August 2026 · Phase 3.1 / ADR-0196 · PR #173 auf `main`; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED  
+**Stand:** 1. November 2026 · PR #1103 in Prüfung; neue Suchqualität lokal und in Development vorbereitet, noch nicht Production.
 **Gilt für:** die lokale, provider-unabhängige Referenz `public.places` und `/api/search/places`.
 
 Diese Datei beschreibt, woher Reiseziele und Abreiseorte kommen, was in die Suche darf und wie ein Refresh läuft. Entscheidung: ADR-0067 in [DECISIONS.md](../DECISIONS.md). Flughäfen als Verkehrsorte stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md). `public.airports` ist **keine** weltweite Destination-Datenbank.
@@ -31,7 +31,7 @@ Eine leere Tabelle bleibt eine leere Liste. Ein Fehler bleibt ein Fehler. Beides
 | --- | --- |
 | Datensatz | [GeoNames](https://www.geonames.org/) Dump `allCountries` plus `countryInfo` |
 | Verteilung | [download.geonames.org/export/dump](https://download.geonames.org/export/dump/) |
-| Dateien | `allCountries.zip`, `countryInfo.txt` |
+| Dateien | `allCountries.zip`, `countryInfo.txt`, `admin1CodesASCII.txt`, `admin2Codes.txt` |
 | Lizenz | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0) |
 | Kosten | keine Lizenzkosten, kein API-Schlüssel, kein laufender Anbietervertrag |
 
@@ -54,9 +54,9 @@ In `public.places` kommt nur, was als Reiseziel oder Abreise taugt:
 
 | Typ | GeoNames | Schwelle |
 | --- | --- | --- |
-| Land | `PCLI`, `PCLD`, `PCLS`, `TERR` | alle |
-| Region | `ADM1`; `ADM2` | ADM2 nur bei Einwohnerzahl ≥ 50 000 (Südtirol) |
-| Insel | `ISL`, `ISLS`, `ATOL` | Einwohnerzahl ≥ 5 000 (Mallorca) |
+| Land | stabile GeoNames-ID aus `countryInfo`, u. a. `PCL`, `PCLI`, `PCLIX` | historische `PCLH` ausgeschlossen; Zugehörigkeit allein ist keine Landesidentität |
+| Region | `ADM1`; `ADM2`; politische Gebiete ohne eigene countryInfo-Identität | ADM2 nur bei Einwohnerzahl ≥ 50 000 |
+| Insel | `ISL`, `ISLS`, `ATOL` | benannt und gültige Koordinaten; keine Bevölkerungsschwelle |
 | Stadt | `PPLC`, `PPLA`, `PPLA2`, `PPLA3`, `PPLG` oder `PPL*` | sonst Einwohnerzahl ≥ 5 000 (Zermatt bleibt) |
 | Flughafen | aus `public.airports` | bestehender Airport-Filter |
 
@@ -90,11 +90,15 @@ Der Modellweg löst Abreise und Etappen serverseitig gegen `public.places` auf. 
 
 Umlaute werden gefaltet (`Südtirol` trifft `South Tyrol` über Keywords). Gleichnamige Orte bleiben über Land/Region unterscheidbar (`Paris, France`).
 
-Die Abfrage sucht zuerst im Namen und in der IATA, nicht im Land. Für die Abreise werden passende Flughäfen extra dazugeholt, damit `Zürich` auch `ZRH` trifft. Die breite Keyword-Ergänzung (`Südtirol`, `Toskana`) kommt nur dazu, wenn die Namenstreffer noch keine kleine, starke Menge bilden. Sonst würden `Thailand` oder `Japan` in den Städten desselben Landes untergehen.
+Namen-Präfixe und exakte Namen/Alias-Tokens werden getrennt und begrenzt gelesen. Typ und ein erkannter Länderzusatz (`Paris, Frankreich`) filtern **vor** dem Limit. Die Reihenfolge ist deterministisch: Bevölkerung absteigend, dann ID. Exakte Namen/Aliase bleiben dadurch auch hinter einer vollen Präfixmenge erreichbar. Ab drei Zeichen folgt der Keyword-Nachzug unabhängig von bereits starken Präfixen; Flughäfen haben einen eigenen Abreise-Nachzug.
 
-Rang: exakter Name vor starkem Präfix vor späterem Wort oder Keyword. Rolle zählt mit: ein Land gewinnt als Reiseziel gegen lose Keyword-Treffer. Ein **exaktes Länder-Alias/Keyword** (geläufiger Kurzname in `keywords`, gespeicherter Name oft der offizielle Langname) gilt für Rolle `ziel` als Namenswahrheit. Das ist eine **ordinale** Regel, nicht nur ein Score-Bonus: gleichnamige Städte erben ihren Namen oft als Keyword aus dem Import (`asciiName`) und würden sonst Name+Keyword stapeln und das Land überholen. Abreise hebt die primäre Stadt und den zugehörigen Flughafen über Bezirke und entfernte Gleichnamen; Länder-Alias-Vorrang gilt dort nicht. Gleichnamige echte Orte bleiben über Typ, Region und Land unterscheidbar. Die Liste wird nicht aufgefüllt, nur damit sie lang wirkt; sichtbar bleiben etwa 4–6 relevante Treffer, höchstens 8 wenn alle weiterhin stark sind.
+Für Länder werden ISO-/Intl-Namen und Kurzformen in den bereits unterstützten sieben Sprachen verwendet, auch für Präfixe wie `Schwei`, `Allem` oder `Tay`. Es gibt keine zweite übersetzte Länder-Namentabelle. Die Import-Invariante ist entscheidend: Nur die aktuelle, durch `countryInfo` belegte Landes-ID hat `typ=country`; australische Außengebiete behalten ihren eigenen Regionsnamen. Der Ländercode allein würde diese Gebiete fälschlich in „Australien“ umbenennen.
 
-Für Rolle `ziel` holt der Länder-Alias-Nachzug **selektiv** nur Länder mit exaktem Namen oder exaktem Komma-Token (`ortLandAliasExaktfilter`). Die Retrieval-Muster folgen derselben Trim-Semantik wie das Ranking: umgebendes Whitespace am Token, auch am Feldende, zählt nicht. Er lädt nicht das ganze Länder-Universum und nicht per Substring-`ilike %token%`. Das Limit `ORT_LAND_UNIVERSUM` ist eine Sicherheitskappe, kein Transfer des Bestands. Rolle `abreise` holt keinen Länder-Nachzug.
+Rang: exakte Namen und echte exakte Ortsaliase vor Präfixen; ein exakt getroffenes Land bleibt als Reiseziel zuerst. Stadt/Region/Insel werden unterschieden; Bezirks- und Flughafen-Kontextwörter gelten nicht automatisch als exakter Stadtname. Bevölkerung löst nur Ranggleichstände, niemals die automatische Modellauflösung. Die Liste enthält höchstens sechs bzw. bei ausschließlich starken Treffern acht Optionen.
+
+Regionsnamen stammen aus den offiziellen Admin-Dateien. Rohe Kurz-Codes werden nicht als Regionsnamen angezeigt. Auswahlbeschreibungen bleiben durch Startseite, Mehrziel-Übergabe und Planer sichtbar; sie sind reine Darstellung, keine zusätzliche Ortsautorität. Veraltete Antworten sind an Text **und** Rolle gebunden und können nicht mehr für eine neuere Eingabe ausgewählt werden. Eingaben sind auf 120 Zeichen begrenzt; PostgREST-Muster werden gequotet und Regex-Metazeichen escaped.
+
+Der Modell-/Änderungsweg liest nur exakte Kandidaten. Mehr als 80 Kandidaten gelten als unaufgelöst, niemals als Beweis für Eindeutigkeit. Eine behauptete bestehende ID wird gegen Rolle, Name/Alias und Land geprüft. Datenbankfehler und widersprüchliche Ortsangaben stoppen vor Speicherung; ein Budget-Update darf nicht wegen eines Lesefehlers Orts-IDs und Koordinaten löschen. Bestätigte Etappen-Ländercodes kommen aus derselben kanonischen Ortszeile.
 
 Die Eingabe `Test` ist ein Platzhalter und liefert bewusst keine Treffer. Ein realer Ort wie Testaccio bleibt über den vollen Namen erreichbar.
 
@@ -156,3 +160,9 @@ Production bleibt unverändert, bis der kontrollierte Rollout in [PRODUCTION_ROL
 ## 8. Attribution
 
 Contains geographical data from [GeoNames](https://www.geonames.org/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Airport rows additionally derive from OurAirports Open Data (Public Domain).
+
+## Qualitätsrefresh November 2026
+
+Migration `20261101202029_places_search_quality_metadata.sql` ergänzt nullable `population`/`feature_code` und zwei Indizes; keine Rechte, Policies, Reise-FKs oder persönlichen Daten ändern sich. Schema **und** vollständiger Datenrefresh müssen vor dem Runtime-Rollout auf dem jeweiligen Ziel geprüft sein. Development ist separat vorbereitet; Production wartet auf das besondere Owner-Gate. [Prüfstand und Rollout](PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md).
+
+Offline-Probe aus bereits geladenen Originaldateien: `npm run places:importieren -- --quelle-verzeichnis <Verzeichnis> --export <JSONL-Datei>`. `--export` ist nur in Probe erlaubt. Der Import zählt alle gelesenen, ausgeschlossenen und doppelten Zeilen, prüft die countryInfo-Abdeckung vollständig und meldet ausgelassene Alias-Tokens. Aliase werden dedupliziert und als ganze Tokens innerhalb der bestehenden 800-Zeichen-Grenze übernommen. Der Refresh ist ein Upsert nach stabiler ID; keine Löschung bestehender Orts- oder Reisezeilen.

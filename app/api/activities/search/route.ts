@@ -53,7 +53,8 @@ async function bestaetigtenOrtLesen(id: string): Promise<Ort | null> {
     stages: [{ name: '', countryCode: null, rolle: 'ziel' }],
     behaupteteIds: { stages: [id] },
   })
-  const ort = gelesen.stages[0]
+  if (!gelesen.ok) throw new Error(gelesen.meldung)
+  const ort = gelesen.orte.stages[0]
   if (!ort || ort.id !== id) return null
   return ort
 }
