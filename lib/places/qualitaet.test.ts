@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { ISO_3166_1_ALPHA2 } from '@/lib/country/katalog'
 import type { Ort } from './domain'
 import { ortAusZeile, type OrtZeile } from './abbildung'
 import { orteOrdnen, ortExaktfilter, ORT_SUCHTEXT_MAX } from './suche'
 import { placesSuchen, type PlacesSuchart } from './suche-lauf'
 import { kanonischeOrteLauf, ORT_AUFLOESUNG_MAX } from './lesen-lauf'
 import { ortSuchKontext, passendeLandCodes } from './namen'
-import { geoNamesTsvZeile, orteAusGeoNames, type GeoNamesZeile } from './importieren'
+import { geoNamesTsvZeile, orteAusGeoNames, laenderReferenzProblem, type GeoNamesZeile } from './importieren'
 import { planenVorbelegung } from '@/lib/trips/create-entry'
 import { tripPlannerRouteVorbelegen } from './route-einstieg'
 
@@ -164,4 +165,13 @@ test('historische countryInfo-Einträge werden nicht als aktuelle Länderziele a
   const ergebnis = orteAusGeoNames({ laender: [{ code: 'CS', name: 'Serbia and Montenegro', geonameId: '8505033' }], zeilen: [{ ...quelle, countryCode: 'CS', geonameId: '8505033', featureCode: 'PCLH' }] })
   assert.equal(ergebnis.orte.length, 0)
   assert.deepEqual(ergebnis.historischeLandIds, ['8505033'])
+})
+
+
+test('offizieller Import lehnt auch einzeln fehlende und doppelte Länder-IDs ab', () => {
+  const laender = ISO_3166_1_ALPHA2.map((code, i) => ({ code, name: code, geonameId: String(i + 1) }))
+  assert.equal(laenderReferenzProblem(laender), null)
+  assert.ok(laenderReferenzProblem(laender.slice(1)))
+  assert.ok(laenderReferenzProblem([{ ...laender[0]!, geonameId: undefined }, ...laender.slice(1)]))
+  assert.ok(laenderReferenzProblem([{ ...laender[0]!, geonameId: laender[1]!.geonameId }, ...laender.slice(1)]))
 })

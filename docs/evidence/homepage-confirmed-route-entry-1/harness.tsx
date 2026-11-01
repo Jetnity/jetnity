@@ -64,7 +64,7 @@ function weitereAusParams() {
   if (!roh) return []
   return roh.split('|').map((eintrag) => {
     const [id, name] = eintrag.split(',')
-    return { id: id ?? '', name: name ?? id ?? '' }
+    return { id: id ?? '', name: name ?? id ?? '', description: ORTE.find((ort) => ort.id === id)?.description }
   })
 }
 
@@ -131,6 +131,7 @@ function App() {
           angemeldet={params.get('konto') === '1'}
           initialDestination={params.get('ziel') ?? 'Paris'}
           initialDestinationId={params.get('zielId') ?? 'geonames:2988507'}
+          initialDestinationDescription={ORTE.find((ort) => ort.id === (params.get('zielId') ?? 'geonames:2988507'))?.description}
           initialWeitereZiele={weitereAusParams()}
         />
       </div>

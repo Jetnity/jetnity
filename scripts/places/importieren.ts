@@ -18,6 +18,7 @@ import {
   geoNamesTsvZeile,
   geoNamesZeileRelevant,
   laenderAusCountryInfo,
+  laenderReferenzProblem,
   ortAusFlughafen,
   orteAusGeoNames,
   type GeoNamesZeile,
@@ -111,7 +112,8 @@ async function quelleLesen() {
     }
     const laender = laenderAusCountryInfo(readFileSync(join(verzeichnis, fixture ? 'countries.txt' : 'countryInfo.txt'), 'utf8'))
     const landIds = new Set(laender.flatMap((land) => land.geonameId ? [land.geonameId] : []))
-    if (!fixture && landIds.size < 200) throw new Error('Die offizielle Länderreferenz ist unvollständig.')
+    const referenzProblem = fixture ? null : laenderReferenzProblem(laender)
+    if (referenzProblem) throw new Error(referenzProblem)
     let quelle: QuellZeilen
     if (fixture) {
       const roh = readFileSync(join(fixture, 'geonames.tsv'), 'utf8').split(/\r?\n/).filter((z) => z.trim())
@@ -134,6 +136,8 @@ async function quelleLesen() {
     })
     const importLandIds = new Set(ergebnis.orte.filter((ort) => ort.typ === 'country').map((ort) => ort.sourceId))
     const fehlendeLaender = laender.filter((land) => land.geonameId && !importLandIds.has(land.geonameId) && !ergebnis.historischeLandIds.includes(land.geonameId)).map((land) => land.code)
+    const falschZugeordnet = ergebnis.orte.filter((ort) => ort.typ === 'country' && !laender.some((land) => land.geonameId === ort.sourceId && land.code === ort.countryCode))
+    if (!fixture && falschZugeordnet.length) throw new Error('Länderreferenz und Ortsdump widersprechen sich bei ID/Ländercode.')
     if (fehlendeLaender.length) throw new Error(`Länderreferenz unvollständig: ${fehlendeLaender.join(', ')}`)
     return { ...ergebnis, laenderGeprueft: landIds.size, gesamt: quelle.gesamt, verworfen: ergebnis.verworfen + quelle.ungueltig + quelle.ausgefiltert, ungueltig: quelle.ungueltig, herkunft: fixture ?? lokal ?? QUELLE }
   } finally {

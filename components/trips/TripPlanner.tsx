@@ -117,7 +117,7 @@ const fieldClass =
   'outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10'
 
 const fieldIconClass =
-  'pointer-events-none absolute left-3.5 top-6 h-4 w-4 -translate-y-1/2 text-ink-700'
+  'pointer-events-none absolute left-3.5 top-6 z-10 h-4 w-4 -translate-y-1/2 text-ink-700'
 
 /**
  * Oversized-text reflow: Feld already has `min-w-0`, but its implicit grid
@@ -128,7 +128,7 @@ const fieldIconClass =
  * clip, shrink text, or hide the marker.
  */
 const feldReflowClass =
-  'grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
+  'content-start grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
 
 function Planungsgruppe({
   id,

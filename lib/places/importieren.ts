@@ -5,6 +5,7 @@
 
 import { z } from 'zod'
 
+import { ISO_3166_1_ALPHA2 } from '@/lib/country/katalog'
 import { ORT_TYPEN, ortId, type Ort, type OrtTyp } from '@/lib/places/domain'
 
 const landescodeSchema = z
@@ -29,6 +30,16 @@ export type GeoNamesZeile = {
 }
 
 export type LandName = { code: string; name: string; geonameId?: string }
+/** Schutz vor einem unvollständigen offiziellen Länder-Snapshot. Kleine Testfixtures sind separat. */
+export function laenderReferenzProblem(laender: LandName[]): string | null {
+  const codes = new Set(laender.map((land) => land.code))
+  const ids = laender.map((land) => land.geonameId)
+  if (ids.some((id) => !id || !/^\d+$/.test(id))) return 'Länderreferenz enthält eine ungültige oder fehlende GeoNames-ID.'
+  if (codes.size !== laender.length || new Set(ids).size !== ids.length) return 'Länderreferenz enthält doppelte Codes oder IDs.'
+  const fehlend = ISO_3166_1_ALPHA2.filter((code) => !codes.has(code))
+  return fehlend.length ? `Länderreferenz ist unvollständig: ${fehlend.join(', ')}` : null
+}
+
 export type VerwaltungsName = { code: string; name: string }
 
 export function verwaltungAusGeoNames(text: string): VerwaltungsName[] {
