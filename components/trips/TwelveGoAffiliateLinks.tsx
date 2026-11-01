@@ -17,8 +17,8 @@ const AKTION_KLASSE =
 
 export default function TwelveGoAffiliateLinks({ reise }: { reise: Trip }) {
   const kanten = twelveGoKantenFuerReise(reise)
-  // UI preview flag only; the server separately and unconditionally blocks Production.
-  if (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW === 'true') {
+  // Build-time UI opt-in; the server independently requires its own explicit flag.
+  if (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED === 'true') {
     return <TwelveGoTimetable reise={reise} />
   }
 

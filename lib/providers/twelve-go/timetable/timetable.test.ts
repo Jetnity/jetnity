@@ -51,10 +51,13 @@ test('URL construction is fixed-host and rejects arbitrary input, same place and
   for (const value of [{ ...request, from: '../../admin' }, { ...request, country: 'XX' }, { ...request, from: 'Ko Chang', to: 'Koh Chang' }, { ...request, email: 'person@example.test' }, { ...request, date: '2026-11-15' }]) assert.equal(timetableAnfrageSchema.safeParse(value).success, false)
 })
 
-test('Production is always closed, preview requires explicit flag', () => {
-  assert.equal(timetableAktiv({ NODE_ENV: 'production', VERCEL_ENV: 'production', TWELVE_GO_TIMETABLE_ENABLED: 'true' }), false)
-  assert.equal(timetableAktiv({ NODE_ENV: 'production', VERCEL_ENV: 'preview', TWELVE_GO_TIMETABLE_ENABLED: 'true' }), true)
-  assert.equal(timetableAktiv({ NODE_ENV: 'test' }), false)
+test('each environment is closed by default and requires exact explicit opt-in', () => {
+  for (const VERCEL_ENV of ['production', 'preview', 'development', undefined]) {
+    for (const flag of [undefined, '', 'false', 'TRUE', '1', ' true ']) {
+      assert.equal(timetableAktiv({ NODE_ENV: 'production', VERCEL_ENV, TWELVE_GO_TIMETABLE_ENABLED: flag }), false)
+    }
+    assert.equal(timetableAktiv({ NODE_ENV: 'production', VERCEL_ENV, TWELVE_GO_TIMETABLE_ENABLED: 'true' }), true)
+  }
 })
 
 test('verified region identity: same-named island in Ranong, unknown IDs and wrong countries cannot use Trat data', () => {

@@ -33,3 +33,16 @@ Dieser Slice ist **kein Wiederanlauf von PR #1086** (allgemeines Suchwidget). De
 - Relevante Tests, Typecheck, Lint, Build und Hygiene; unabhängiger Review des fertigen Heads. Kein PASS für nicht ausgeführte Prüfungen.
 
 Status: Implementiert und lokal geprüft, Draft PR #1101. Anbieterbelege, Browserergebnisse, Prüfgrenzen und noch offene Release-Gates stehen in `docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md`. Noch keine Veröffentlichung oder Aktivierung.
+
+## Release-Ergänzung V2 — 1. November 2026
+
+Nach der erfolgreich geprüften Vorschau fragte der Product Owner nach der Live-Veröffentlichung und beauftragte anschließend ausdrücklich „ok dann weiter“. Codex bleibt Writer und Technical Lead. Die Aktivierung dieses nativen Fahrplandienstes ist damit Teil des Auftrags; das separate Suchwidget #1086 bleibt unangetastet.
+
+1. Production nicht mehr unabhängig von der Konfiguration sperren, sondern standardmäßig ausgeschaltet lassen: `TWELVE_GO_TIMETABLE_ENABLED=true` schaltet den Server ausdrücklich ein; `NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED=true` schaltet die neue Oberfläche ein. Fehlende oder andere Werte bedeuten AUS. Der bisherige Preview-Variablenname wird ersetzt.
+2. Den neuen Head mit Tests, CI, unabhängiger Prüfung und derselben isolierten Vorschau abnehmen. OFF zuerst im gehosteten Preview prüfen (503 ohne Providerabruf und bestehende Links), anschließend beide Schalter gezielt einschalten und ON prüfen.
+3. Nach erfolgreicher Abnahme regulärer Merge, nur diese beiden Production-Schalter setzen und Production bauen. Niemals die mit develop verbundene Vorschau zu Production befördern. Keine Datenbank-, Secret-, CMP- oder allgemeine Suchwidget-Änderung.
+4. Rückfall dieser Erweiterung ist der nachgewiesene Konfigurationsweg: beide eigenen Schalter auf `false` setzen und denselben geprüften Code im jeweiligen Ziel neu bauen. Der Server stoppt im neuen Build Providerabrufe, die Oberfläche zeigt die bisherigen Links. Ein reiner Providerfehler lässt die externen Links bereits im laufenden Build verfügbar.
+
+Dies ist **kein Instant-Rollback**: Konfigurationsänderungen greifen erst nach erfolgreichem Neubau. Die bei #1086 dokumentierte fehlende `deploymentRollback`-Listberechtigung wird nicht als behoben dargestellt; weder erneuter Versuch dieser abgelehnten Operation noch Wechsel von Identität/Werkzeug zum Umgehen der Berechtigung. Der Technical Lead bewertet hier einen getrennten, normalen Feature-AUS-und-Neubau-Weg, keine Freigabe des #1086-HOLD. Wenn der tatsächlich benötigte Konfigurations-/Build-Weg abgelehnt wird, stoppen und die konkrete Ablehnung melden.
+
+Production-Abnahme: neue Deployment-Identität und Merge-SHA, Gastreise ohne Kontoschreibzugriffe, sichtbare Daten und echte Weiterleitung, Smartphone/Desktop, keine 12Go-Browserressourcen vor Klick. Provisionszuordnung bleibt unbewiesen. Der aktuelle Prüf- und Veröffentlichungsstatus wird unter PR #1101 dokumentiert; diese Ergänzung ist noch kein Release-PASS.

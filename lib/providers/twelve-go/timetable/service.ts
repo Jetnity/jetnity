@@ -17,8 +17,8 @@ export function timetableQuelle(request: TimetableAnfrage): string {
 }
 
 export function timetableAktiv(env: NodeJS.ProcessEnv): boolean {
-  // Preview-only first slice. No env value can activate Production in this version.
-  return env.VERCEL_ENV !== 'production' && env.TWELVE_GO_TIMETABLE_ENABLED === 'true'
+  // Explicit per-environment opt-in; missing/false remains closed, including Production.
+  return env.TWELVE_GO_TIMETABLE_ENABLED === 'true'
 }
 
 /** Public, non-personal route cache. Bounded and process-local, not a global production quota. */
