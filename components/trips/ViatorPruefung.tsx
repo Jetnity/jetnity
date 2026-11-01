@@ -237,7 +237,7 @@ function ViatorPruefungLauf({
   }
 
   return (
-    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-[12px]">
+    <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full [overflow-wrap:anywhere] rounded-2xl border border-line-200 bg-white p-[12px]">
       <h3 className="text-base font-semibold text-brand-800">Ausgewähltes Angebot</h3>
       <p className="mt-1 text-sm leading-6 text-ink-800">{meldung}</p>
       {bild ? (
@@ -267,7 +267,7 @@ function ViatorPruefungLauf({
         </p>
       ) : null}
       <div className="mt-4 grid min-w-0 max-w-full grid-cols-1 gap-3">
-        <label className="grid gap-1 text-sm text-ink-800">
+        <label className="grid min-w-0 gap-1 text-sm text-ink-800">
           Datum
           <input
             type="date"
@@ -281,7 +281,7 @@ function ViatorPruefungLauf({
           />
         </label>
         {optionen.length > 0 ? (
-          <label className="grid gap-1 text-sm text-ink-800">
+          <label className="grid min-w-0 gap-1 text-sm text-ink-800">
             Option
             <select
               value={gewaehlteOption}
@@ -302,7 +302,7 @@ function ViatorPruefungLauf({
           </label>
         ) : null}
         {zeiten.length > 0 ? (
-          <label className="grid gap-1 text-sm text-ink-800">
+          <label className="grid min-w-0 gap-1 text-sm text-ink-800">
             Startzeit
             <select
               value={gewaehlteZeit}
@@ -324,7 +324,7 @@ function ViatorPruefungLauf({
         {reiseWaehrung ? (
           <p className="text-sm text-ink-800">Angefragte Anzeigewährung: {reiseWaehrung}. Das ist keine Checkout-Zusage.</p>
         ) : (
-          <label className="grid gap-1 text-sm text-ink-800">
+          <label className="grid min-w-0 gap-1 text-sm text-ink-800">
             Anzeigewährung
             <select
               value={waehrung ?? ''}
@@ -344,7 +344,7 @@ function ViatorPruefungLauf({
           </label>
         )}
         {(detail?.ageBands ?? []).map((band) => (
-          <label key={band.ageBand} className="grid gap-1 text-sm text-ink-800">
+          <label key={band.ageBand} className="grid min-w-0 gap-1 text-sm text-ink-800">
             {ALTER[band.ageBand]} ({band.startAge}–{band.endAge})
             <input
               inputMode="numeric"

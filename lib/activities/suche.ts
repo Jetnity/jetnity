@@ -209,7 +209,9 @@ export async function activitiesSuchen(
     const status = treffer.partial ? 'partial' : optionen.length === 0 ? 'empty' : 'ok'
     const message =
       status === 'empty'
-        ? 'Keine passenden Aktivitäten für diesen Reisetag gefunden.'
+        ? anfrage.dayDate
+          ? 'Keine passenden Aktivitäten für diesen Reisetag gefunden.'
+          : 'Keine passenden Aktivitäten für dieses Ziel gefunden.'
         : status === 'partial'
           ? 'Einige Angebote konnten nicht gelesen werden. Die übrigen Aktivitäten siehst du unten.'
           : 'Aktivitäten gefunden.'

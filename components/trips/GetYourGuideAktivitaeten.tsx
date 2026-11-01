@@ -7,6 +7,7 @@
 // Jede Ladung besitzt einen eigenen, abtrennbaren Knoten.
 
 import * as React from 'react'
+import { useActivityWidgetAusgeblendet } from '@/lib/activities/widget-ausblenden'
 
 import {
   gygAufloesungAbschluss,
@@ -15,7 +16,14 @@ import {
   gygAufloesungWechseln,
   type GygAufloesung,
 } from '@/lib/activities/getyourguide/aufloesung'
-import { gygOrtAnfrage, gygPlanen, gygReiseAusTrip, type GygPlan } from '@/lib/activities/getyourguide/kontext'
+import {
+  gygEtappenAnfrage,
+  gygOrtAnfrage,
+  gygPlanen,
+  gygReiseAusTrip,
+  gygZielPlanen,
+  type GygPlan,
+} from '@/lib/activities/getyourguide/kontext'
 import {
   gygAbschluss,
   gygAnfordern,
@@ -55,6 +63,12 @@ const TEXT = 'min-w-0 break-words text-sm leading-6 text-ink-800 [overflow-wrap:
 type Props = {
   reise: Trip
   angeforderteTagId: string | null
+  /** Gesetztes Prop schaltet auf die Zielfläche. null ist noch kein Ziel. */
+  etappeId?: string | null
+  /** null: die kanonische Ortslesung läuft noch. */
+  orte?: ReadonlyMap<string, Ort | null> | null
+  /** Nur eine sichtbare Fläche darf laden. */
+  sichtbar?: boolean
 }
 
 type Betrieb = {
@@ -114,7 +128,16 @@ function laenderVon(plan: GygPlan) {
   return []
 }
 
-function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuideNaht }) {
+function Flaeche({
+  reise,
+  angeforderteTagId,
+  naht,
+  etappeId,
+  orte = undefined,
+  sichtbar = true,
+}: Props & { naht: GetYourGuideNaht }) {
+  const zielModus = etappeId !== undefined
+  const [ausgeblendet, setAusgeblendet] = useActivityWidgetAusgeblendet('getyourguide')
   const instanz = React.useId()
   const ohneTage = reise.days.length === 0
   const [umfangState, setUmfangState] = React.useState<'tag' | 'land'>(ohneTage ? 'land' : 'tag')
@@ -126,9 +149,10 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     naht.herkunft === 'pruefung' ? naht.kanonBestaetigen : anwendungsOrtBestaetigen
   const syncLesen = naht.herkunft === 'pruefung' && !bestaetigen ? naht.orteLesen : null
   const reiseKern = React.useMemo(() => gygReiseAusTrip(reise), [reise])
-  const anfrage = bestaetigen && naht.freigabe.status === 'bereit'
-    ? gygOrtAnfrage(reiseKern, umfang, ohneTage ? null : angeforderteTagId)
-    : null
+  const anfrage =
+    !zielModus && bestaetigen && naht.freigabe.status === 'bereit'
+      ? gygOrtAnfrage(reiseKern, umfang, ohneTage ? null : angeforderteTagId)
+      : null
   const anfrageText = anfrage?.anfrage ?? ''
   const [buch, setBuch] = React.useState<OrtBuch | null>(null)
   const buchSichtbar = React.useMemo<OrtBuch | null>(() => {
@@ -204,6 +228,19 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
   }, [bestaetigen, anfrageText, naht.freigabe.status, ortVersuch])
 
   const plan = React.useMemo(() => {
+    if (zielModus) {
+      if (!etappeId) return { art: 'etappe_fehlt' as const, schluessel: gygEtappenAnfrage(reiseKern, null).anfrage }
+      if (orte == null) return { art: 'ort_ausstehend' as const, schluessel: gygEtappenAnfrage(reiseKern, etappeId).anfrage }
+      return gygZielPlanen({
+        reise: reiseKern,
+        etappeId,
+        freigabe: naht.freigabe,
+        orteLesen: (id) => {
+          const ort = orte.get(id)
+          return ort && ort.id === id ? ort : null
+        },
+      })
+    }
     if (bestaetigen && naht.freigabe.status === 'bereit' && anfrage && anfrage.ids.length > 0) {
       const stand = buchSichtbar?.stand
       const bestaetigt =
@@ -234,7 +271,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       freigabe: naht.freigabe,
       orteLesen: syncLesen,
     })
-  }, [anfrage, angeforderteTagId, bestaetigen, buchSichtbar, landWahl, naht.freigabe, ohneTage, reiseKern, syncLesen, umfang])
+  }, [anfrage, angeforderteTagId, bestaetigen, buchSichtbar, etappeId, landWahl, naht.freigabe, ohneTage, orte, reiseKern, syncLesen, umfang, zielModus])
 
   const [anzahlBuch, setAnzahlBuch] = React.useState<{ kontext: string; anzahl: GygAnzahl }>(() => ({
     kontext: plan.schluessel,
@@ -357,8 +394,31 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
     setLauf(next)
   }
 
+  React.useEffect(() => {
+    if (!zielModus) return
+    if (!sichtbar || ausgeblendet) {
+      betriebBeenden(betriebRef.current)
+      betriebRef.current = null
+      hostRef.current?.replaceChildren()
+      const laufJetzt = laufRef.current
+      if (laufJetzt.phase !== 'ruhend' || laufJetzt.suche) {
+        const next = gygEntfernen(laufJetzt)
+        laufRef.current = next
+        setLauf(next)
+      }
+      return
+    }
+    const aktuell = planRef.current
+    if (!gygLadenErlaubt(aktuell.art, 'sichtbar') || aktuell.art !== 'bereit') return
+    if (laufRef.current.phase !== 'ruhend') return
+    anzeigen()
+  }, [angepasst.kontext, ausgeblendet, sichtbar, zielModus])
+
   const montageSichtbar = angepasst.phase === 'laeuft' || angepasst.phase === 'anzeige'
-  const ladenSichtbar = plan.art === 'bereit' && angepasst.phase !== 'laeuft'
+  const ladenSichtbar =
+    plan.art === 'bereit' &&
+    angepasst.phase !== 'laeuft' &&
+    (!zielModus || angepasst.phase === 'fehler' || angepasst.phase === 'anzeige')
   const entfernenSichtbar = angepasst.phase === 'laeuft' || angepasst.phase === 'anzeige'
   const satz = plan.art === 'bereit' || plan.art === 'nicht_unterstuetzt' || plan.art === 'kein_tagesziel' ? zielSatz(plan) : null
   const laender = laenderVon(plan)
@@ -373,6 +433,8 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
       data-gyg-phase={angepasst.phase}
       data-gyg-anzahl={String(anzahl)}
       data-gyg-instanz={instanz}
+      data-gyg-auto={zielModus ? 'ja' : 'nein'}
+      data-gyg-ausgeblendet={ausgeblendet ? 'ja' : 'nein'}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Anbieter</p>
@@ -421,9 +483,13 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
         {bestaetigungFehler ? <p className={TEXT}>{buchSichtbar?.stand.fehler}</p> : null}
         {plan.art === 'bereit' && angepasst.phase === 'ruhend' ? (
           <p className={TEXT}>
-            {plan.zielArt === 'land'
-              ? `Ideen für ${plan.name ?? 'dieses Land'}. Das ist das Land, kein bestimmter Ort und kein Reisetag.`
-              : `Für ${satz ?? 'dieses Ziel'} kann GetYourGuide eigene Inhalte zeigen. Jetnity lädt sie erst auf Wunsch.`}
+            {zielModus
+              ? plan.zielArt === 'land'
+                ? `Ideen für ${plan.name ?? 'dieses Land'}. Das ist das Land, kein bestimmter Ort und kein Reisetag. GetYourGuide und der Integration Analyzer werden dafür geladen.`
+                : `Für ${satz ?? 'dieses Ziel'} zeigt GetYourGuide eigene Inhalte. Dabei werden der Integration Analyzer und eine Verbindung zu GetYourGuide geladen.`
+              : plan.zielArt === 'land'
+                ? `Ideen für ${plan.name ?? 'dieses Land'}. Das ist das Land, kein bestimmter Ort und kein Reisetag.`
+                : `Für ${satz ?? 'dieses Ziel'} kann GetYourGuide eigene Inhalte zeigen. Jetnity lädt sie erst auf Wunsch.`}
           </p>
         ) : null}
         {angepasst.phase === 'laeuft' ? (
@@ -435,7 +501,7 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
         {angepasst.phase === 'fehler' ? <p className={TEXT}>{angepasst.fehler}</p> : null}
         {angepasst.phase === 'anzeige' ? (
           <p className={TEXT}>
-            Der GetYourGuide-Rahmen ist geladen. Welche Angebote erscheinen, entscheidet GetYourGuide. Jetnity zählt sie nicht und bestätigt weder Verfügbarkeit noch eine Buchung.
+            Angebote und Buchung bei GetYourGuide.
           </p>
         ) : null}
       </div>
@@ -475,9 +541,14 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
             Was fehlt hier?
           </button>
         ) : null}
-        {plan.art === 'kein_tagesziel' ? (
+        {!zielModus && plan.art === 'kein_tagesziel' ? (
           <button type="button" onClick={() => setUmfangState('land')} className={cn(AKTION, SEKUNDAER)}>
             Ideen für dieses Land
+          </button>
+        ) : null}
+        {zielModus && ausgeblendet && plan.art === 'bereit' ? (
+          <button type="button" onClick={() => setAusgeblendet(false)} className={cn(AKTION, PRIMAR)}>
+            Erneut anzeigen
           </button>
         ) : null}
         {bestaetigungFehler ? (
@@ -506,16 +577,23 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
           </button>
         ) : null}
         {entfernenSichtbar ? (
-          <button type="button" onClick={entfernen} className={cn(AKTION, SEKUNDAER)}>
-            Entfernen
+          <button
+            type="button"
+            onClick={() => {
+              if (zielModus) setAusgeblendet(true)
+              entfernen()
+            }}
+            className={cn(AKTION, SEKUNDAER)}
+          >
+            {zielModus ? 'Ausblenden' : 'Entfernen'}
           </button>
         ) : null}
-        {!ohneTage && umfang === 'tag' && plan.art !== 'kein_tagesziel' ? (
+        {!zielModus && !ohneTage && umfang === 'tag' && plan.art !== 'kein_tagesziel' ? (
           <button type="button" onClick={() => setUmfangState('land')} className={cn(AKTION, SEKUNDAER)}>
             Ideen für ein bestätigtes Land
           </button>
         ) : null}
-        {!ohneTage && umfang === 'land' ? (
+        {!zielModus && !ohneTage && umfang === 'land' ? (
           <button
             type="button"
             onClick={() => {
@@ -534,9 +612,9 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
           Eine geprüfte Einbindung, die Erlaubnis zum Laden und die Einrichtung bei GetYourGuide fehlen. Jetnity startet deshalb keine Anfrage.
         </p>
       ) : null}
-      {ladenSichtbar || entfernenSichtbar ? (
+      {(zielModus && plan.art === 'bereit') || ladenSichtbar || entfernenSichtbar ? (
         <p id={`${instanz}-hinweis`} className={cn(TEXT, 'mt-3')}>
-          {ladenSichtbar
+          {ladenSichtbar || (zielModus && plan.art === 'bereit')
             ? 'Beim Anzeigen werden Inhalte von GetYourGuide und der Integration Analyzer geladen. Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung. Dabei wird eine Verbindung zu GetYourGuide hergestellt. '
             : null}
           <a
@@ -549,9 +627,11 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
           </a>
           {'. '}
           Ein Angebotsklick kann zunächst eine Ergebnisliste bei GetYourGuide öffnen. Dort wählst du dein Angebot aus.
-          {entfernenSichtbar
-            ? ' Entfernen beendet die weitere Einbindung. Bereits gesendete Anfragen werden dadurch nicht gelöscht.'
-            : ' Entfernen beendet die weitere Einbindung und löscht keine bereits gesendeten Anfragen.'}
+          {zielModus
+            ? ' Ausblenden beendet die weitere Einbindung, bis sie erneut angezeigt wird. Bereits gesendete Anfragen werden dadurch nicht gelöscht.'
+            : entfernenSichtbar
+              ? ' Entfernen beendet die weitere Einbindung. Bereits gesendete Anfragen werden dadurch nicht gelöscht.'
+              : ' Entfernen beendet die weitere Einbindung und löscht keine bereits gesendeten Anfragen.'}
         </p>
       ) : null}
 
@@ -565,11 +645,36 @@ function Flaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuid
   )
 }
 
-export default function GetYourGuideAktivitaeten({ reise, angeforderteTagId }: Props) {
-  return <Flaeche reise={reise} angeforderteTagId={angeforderteTagId} naht={anwendungsNaht()} />
+export default function GetYourGuideAktivitaeten({ reise, angeforderteTagId, etappeId, orte, sichtbar }: Props) {
+  return (
+    <Flaeche
+      reise={reise}
+      angeforderteTagId={angeforderteTagId}
+      etappeId={etappeId}
+      orte={orte}
+      sichtbar={sichtbar}
+      naht={anwendungsNaht()}
+    />
+  )
 }
 
-export function GetYourGuidePruefFlaeche({ reise, angeforderteTagId, naht }: Props & { naht: GetYourGuideNaht }) {
+export function GetYourGuidePruefFlaeche({
+  reise,
+  angeforderteTagId,
+  naht,
+  etappeId,
+  orte,
+  sichtbar,
+}: Props & { naht: GetYourGuideNaht }) {
   const wirksam = naht.herkunft === 'pruefung' ? naht : anwendungsNaht()
-  return <Flaeche reise={reise} angeforderteTagId={angeforderteTagId} naht={wirksam} />
+  return (
+    <Flaeche
+      reise={reise}
+      angeforderteTagId={angeforderteTagId}
+      etappeId={etappeId}
+      orte={orte}
+      sichtbar={sichtbar}
+      naht={wirksam}
+    />
+  )
 }

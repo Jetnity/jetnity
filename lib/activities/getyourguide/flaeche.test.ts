@@ -98,7 +98,7 @@ describe('Native Aktivitätensuche bei unavailable', () => {
 })
 
 describe('GetYourGuide-Fläche', () => {
-  test('ohne Tage bleibt die native Erklärung und GetYourGuide lädt noch nichts', () => {
+  test('ohne Tage bleibt die Zielklärung und der serverseitige Datenschutzverschluss lädt nichts', () => {
     const html = markup(
       createElement(AktivitaetenBereich, {
         reise: reise({
@@ -106,9 +106,11 @@ describe('GetYourGuide-Fläche', () => {
         }),
       }),
     )
-    assert.match(html, /Diese Reise hat noch keine Tage/)
-    assert.match(html, /data-gyg-zustand="ort_ausstehend"/)
-    assert.match(html, /lädt dabei noch nichts/)
+    assert.match(html, /data-aktivitaet-ziel-status="ausstehend"/)
+    assert.match(html, /Angebote laden dabei noch nicht/)
+    assert.equal(html.includes('Diese Reise hat noch keine Tage'), false)
+    assert.match(html, /data-activity-widget-blocked="getyourguide"/)
+    assert.match(html, /Externe Angebote sind derzeit nicht aktiviert/)
     assert.equal(html.includes('Panama City'), false)
     assert.equal(html.includes('Bei GetYourGuide anzeigen'), false)
     assert.equal(html.includes('widget.getyourguide.com'), false)
@@ -116,7 +118,7 @@ describe('GetYourGuide-Fläche', () => {
     assert.equal(html.includes('Jetnity empfiehlt'), false)
   })
 
-  test('ein ungültiger Tag bleibt für GetYourGuide ungültig und die native Fläche behält den ersten Tag', () => {
+  test('ein ungültiger Tag erfindet kein Ziel und umgeht den serverseitigen Datenschutzverschluss nicht', () => {
     const html = markup(
       createElement(AktivitaetenBereich, {
         reise: reise({
@@ -130,11 +132,12 @@ describe('GetYourGuide-Fläche', () => {
       }),
     )
     assert.match(html, /Phuket-Tag/)
-    assert.match(html, /Für diesen Tag suchen|Für diese Angaben liegt noch keine Suche vor/)
+    assert.match(html, /data-aktivitaet-ziel-status="ausstehend"/)
+    assert.equal(html.includes('Zielort fehlt'), false)
     const gyg = html.split('aria-label="GetYourGuide"')[1] ?? ''
-    assert.match(gyg, /nicht ersatzweise einen anderen Tag/)
-    assert.equal(gyg.includes('Phuket'), false)
-    assert.match(gyg, /data-gyg-zustand="tag_ungueltig"/)
+    assert.equal(gyg.includes('nicht ersatzweise einen anderen Tag'), false)
+    assert.match(gyg, /data-activity-widget-blocked="getyourguide"/)
+    assert.equal(html.includes('<iframe'), false)
   })
 
   test('die Anwendungsfläche ignoriert eine mitgegebene Prüfnaht nicht, weil sie keine annimmt', () => {

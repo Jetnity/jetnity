@@ -112,7 +112,10 @@ export function bezugIstOeffentlich(wert: unknown): wert is GygOeffentlicherBezu
 
 export function gygLadenErlaubt(
   art: string,
-  ausloeser: 'aktion' | 'mount' | 'hover' | 'wechsel',
+  ausloeser: 'aktion' | 'mount' | 'hover' | 'wechsel' | 'sichtbar',
 ): boolean {
-  return art === 'bereit' && ausloeser === 'aktion'
+  if (art !== 'bereit') return false
+  // `sichtbar` gilt nur für die tatsächlich gezeigte Aktivitätsfläche.
+  // Mount, Hover und ein blosser Wechsel laden nichts.
+  return ausloeser === 'aktion' || ausloeser === 'sichtbar'
 }

@@ -1,5 +1,11 @@
 # Jetnity – Active Work Status
 
+<!-- ACTIVITIES_DESTINATION_FIRST_1_BEGIN -->
+## Aktueller Writer — Activities Destination First 1
+
+1. November 2026, Europe/Zurich. PR #1100, branch `codex/activities-destination-first-20261101`. Codex ist alleiniger Writer nach ausdrücklicher Owner-Übergabe (Kommentar 6557791273); Cursor `bc-b961dce1-751e-403e-ade6-52d2c56a648b` gestoppt. TASK V4: sichtbare automatische Zielangebote und Veröffentlichung nach Prüfung autorisiert, umfassende Datenschutzarbeit verschoben. Tatsächliche Ablehnungen und Ausblenden bleiben wirksam; gemeinsame CMP/native Viator Production bleiben aus. 208 fokussierte Tests/Typen/Lint/Build/Hygiene bestanden; lokale Gesamttest-Ausnahmen dokumentiert. Viator Versuch 7 zeigt echte Karten/CHF, 7 Render/0 Klicks/0 HTTP403 insgesamt. GYG 1 TL-Render/1 Klick/1 HTTP403, STOP. Unabhängige Prüfung und Exact-Head-CI/Preview/Releasebewertung stehen bei dieser Revision aus. Handoff: `docs/ACTIVITIES_DESTINATION_FIRST_1_HANDOFF_2026-11-01.md`.
+<!-- ACTIVITIES_DESTINATION_FIRST_1_END -->
+
 <!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_BEGIN -->
 ## Aktueller Writer — UX V1 Route Design Alignment 1
 

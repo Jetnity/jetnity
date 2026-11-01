@@ -5988,6 +5988,21 @@ System und verändert bestehende Reise- und Buchungslogik nicht. Die Umsetzung i
 ein begrenzter Einstieg, nicht das vollständige Zielbild automatisierter Reiseplanung.
 Siehe [Plan](docs/TRIPCOM_SUCHLINKS_1_PLAN_2026-11-01.md).
 
+## ADR-0224 – Offizielle Aktivitäts-Widgets nach bestätigtem Ziel
+
+**Datum:** 1. November 2026
+**Status:** umgesetzt auf Draft PR #1100, nicht unabhängig abgenommen
+
+**Entscheidung:** Ein bestätigtes Reiseziel öffnet das manuelle GetYourGuide-Widget und das dynamische Viator-Widget `P00328015` / `W-a3c98184-2fae-4bf6-919e-1c32bc42d788`. Die native Viator-API bleibt im Produkt und startet nur auf ausdrückliche Suche. Der Viator-Rahmen bleibt undurchsichtig und ohne `allow-same-origin`. Eine eigene Brücke wendet `vi-wm` nur auf den erzeugten Viator-Rahmen an, weil das offizielle Skript diese Nachricht bei Herkunft `null` verwirft.
+
+**Kontext:** Der Product Owner hat beide offiziellen Widgets für die erste sichtbare Aktivitätsfläche gewählt und die API behalten. Die Technical-Lead-Prüfung 6557209826 zeigte, dass der offizielle Loader den Umschlag sonst auf `display:none` und den inneren Rahmen auf 0px lässt.
+
+**Alternativen:** `allow-same-origin` am selben Einbettungsdokument; die native API automatisch mitladen; die Widget-Karten in eigene Karten übernehmen.
+
+**Begründung:** Der Sandbox soll die Reise-Seite nicht lesen können. Die native Production-API bleibt zu. Eine geladene Rahmenantwort ist keine Angebotsliste.
+
+**Konsequenzen / Owner-Ergänzung TASK V4:** Codex übernimmt nach Cursor-Nutzungslimit. Der Nullhöhen-Start wird unter denselben strengen Herkunfts-/Rahmenprüfungen behandelt; Versuch 7 zeigt echte Viator-Karten mit CHF, insgesamt 7 Render ohne Klick/403. GYG zeigte Karten, ein Testklick endete mit HTTP403; weitere Anbietertests bleiben gestoppt. Der Owner verlangt automatische Angebote und Veröffentlichung nach Prüfung und verschiebt umfassende Datenschutzarbeit. Nur die Aktivitätenfläche darf bei fehlender/unveröffentlichter CMP automatisch laden. Erkannte CMP-Präsenz wird für die Sitzung negativ gespeichert; tatsächliche Ablehnungen, unklare Reads und Widerruf blockieren. Ausblenden überlebt Bereichswechsel und Neuladen. Öffnen ist keine Einwilligung und es wird keine rechtliche Abnahme behauptet. Gemeinsame CMP, andere Anbieter-Gates, S6, Schlüssel und Datenbank bleiben unverändert. Lokale Tests/Build bestanden, Gesamttest-Ausnahmen siehe QA; endgültige CI-/Preview-/Mergebewertung erfolgt gesondert.
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

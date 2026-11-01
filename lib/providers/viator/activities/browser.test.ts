@@ -10,6 +10,8 @@ import type { AddressInfo } from 'node:net'
 import * as esbuild from 'esbuild'
 import { chromium, type Browser, type Page } from 'playwright'
 
+import { ruhigKlicken } from '@/scripts/activities-destination-first-1/browser-interaction'
+
 import { mountViatorHarness } from '@/scripts/viator-s2-native-integration/browser-harness'
 
 test('the browser harness stays imported for reachability', () => {
@@ -19,6 +21,7 @@ test('the browser harness stays imported for reachability', () => {
 const ARTIFACTS = process.env.VIATOR_S2_ARTIFACT_DIR ?? join(tmpdir(), 'viator-s2')
 
 type Messwert = {
+  angeboteVorSuche?: boolean
   ok: boolean
   reason?: string
   rechts?: number[]
@@ -82,11 +85,10 @@ const BEDIENUNG = `(() => {
 })()`
 
 const TEXT_GRENZEN = `(() => {
-  const wert = [...document.querySelectorAll('dd')].find((el) => (el.textContent || '').includes('Bangkok erster Besuch'))
+  const wert = document.querySelector('[data-aktivitaet-ziel-name]')
   const auswahl = document.querySelector('#activity-day-select')
-  const section = wert ? wert.closest('section') : null
-  const dl = wert ? wert.closest('dl') : null
-  if (!wert || !auswahl || !section || !dl) return { ok: false, reason: 'missing' }
+  const section = document.querySelector('section[aria-label="Aktivitäten"]')
+  if (!wert || !auswahl || !section) return { ok: false, reason: 'missing' }
   const box = section.getBoundingClientRect()
   const messen = (el) => {
     const range = document.createRange()
@@ -97,11 +99,11 @@ const TEXT_GRENZEN = `(() => {
   const rects = [...messen(wert), auswahlBox]
   const ausserhalb = rects.some((rect) => rect.right > box.right + 1 || rect.left < box.left - 1)
   return {
-    ok: rects.length > 0 && !ausserhalb && dl.scrollWidth <= dl.clientWidth + 1,
+    ok: rects.length > 0 && !ausserhalb && section.scrollWidth <= section.clientWidth + 1,
     rechts: rects.map((rect) => Math.round(rect.right)),
     sectionRechts: Math.round(box.right),
-    dlScroll: dl.scrollWidth,
-    dlClient: dl.clientWidth,
+    dlScroll: section.scrollWidth,
+    dlClient: section.clientWidth,
   }
 })()`
 
@@ -320,6 +322,9 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
           body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64'),
         })
       }
+      if (url.pathname === '/embed/viator' || url.pathname === '/embed/getyourguide') {
+        return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: '<!doctype html><title>widget-fixture</title>' })
+      }
       if (url.pathname === '/api/activities/search') {
         const roh = route.request().postData()
         if (roh) suchen.push(JSON.parse(roh) as unknown)
@@ -385,6 +390,9 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       return route.continue()
     })
     await page.goto(origin)
+    await page.waitForFunction(() =>
+      document.querySelector('[data-viator-zustand="anzeige"] iframe') &&
+      document.querySelector('[data-gyg-phase="anzeige"] iframe'))
     const stil = alsMesswert(await page.evaluate(STIL))
     assert.equal(stil.ok, true, JSON.stringify(stil))
     page.once('close', () => {
@@ -415,13 +423,13 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       detailAnzahl: () => number
     }
     const bereich = page.getByRole('region', { name: 'Aktivitäten' })
-    await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await ruhigKlicken(bereich.getByRole('button', { name: 'Für diesen Tag suchen' }))
     await bereich.getByRole('button', { name: 'Angebot prüfen' }).click()
     assert.equal(träger.suchen[0]?.stage?.name, 'Bangkok')
     assert.equal(träger.suchen[0]?.stage?.countryCode, 'TH')
     assert.equal(träger.suchen[0]?.trip?.currency, 'CHF')
     assert.equal(träger.suchen[0]?.day?.dayDate, '2026-11-02')
-    await page.getByRole('button', { name: 'Erneut laden' }).click()
+    await page.getByRole('region', { name: 'Viator-Prüfung' }).getByRole('button', { name: 'Erneut laden' }).click()
     await page.getByText('Details werden geladen.').waitFor()
     await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').fill('2026-11-03')
     träger.releaseDetail()
@@ -460,29 +468,17 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.ok(schrift >= 32)
     const textGrenzen = alsMesswert(await page.evaluate(TEXT_GRENZEN))
     assert.equal(textGrenzen.ok, true, JSON.stringify(textGrenzen))
-    const ueberlappung = await page.evaluate(`(() => {
-      const kasten = (name) => {
-        const el = [...document.querySelectorAll('dt')].find((knoten) => knoten.textContent && knoten.textContent.trim() === name)
-        if (!el) return null
-        const rect = el.getBoundingClientRect()
-        return { x: rect.x, y: rect.y, right: rect.right, bottom: rect.bottom }
-      }
-      const schneidet = (links, rechts) => {
-        if (!links || !rechts) return true
-        return links.x < rechts.right && rechts.x < links.right && links.y < rechts.bottom && rechts.y < links.bottom
-      }
-      return {
-        reisetagDatum: schneidet(kasten('Reisetag'), kasten('Datum')),
-        reisendeWaehrung: schneidet(kasten('Reisende'), kasten('Währung')),
-      }
-    })()`) as { reisetagDatum: boolean; reisendeWaehrung: boolean }
-    assert.equal(ueberlappung.reisetagDatum, false)
-    assert.equal(ueberlappung.reisendeWaehrung, false)
+    assert.equal(await bereich.locator('dt', { hasText: 'Reisende' }).count(), 0)
+    assert.equal(await bereich.locator('dt', { hasText: 'Währung' }).count(), 0)
     await page.screenshot({ path: join(ARTIFACTS, 'viator-390.png'), fullPage: true })
     const tagWahl = bereich.getByRole('combobox', { name: 'Reisetag' })
     await tagWahl.focus()
     assert.equal(await page.evaluate('document.activeElement && document.activeElement.id'), 'activity-day-select')
-    await page.keyboard.press('ArrowDown')
+    // macOS headless Chrome does not open the native select popup; native type-ahead still exercises keyboard change.
+    if (process.platform === 'darwin') await page.keyboard.type('Phuket')
+    else await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+    await page.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-phu', null, { timeout: 2_000 })
     assert.equal(await tagWahl.inputValue(), 'day-phu')
     assert.match(await bereich.innerText(), /Phuket/)
     assert.equal(await page.getByRole('heading', { name: 'Ausgewähltes Angebot' }).count(), 0)
@@ -493,9 +489,9 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     for (const breite of [320, 768, 1440]) {
       const weitere = await seite(breite)
       const flaeche = weitere.getByRole('region', { name: 'Aktivitäten' })
-      await flaeche.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      await ruhigKlicken(flaeche.getByRole('button', { name: 'Für diesen Tag suchen' }))
       await flaeche.getByRole('button', { name: 'Angebot prüfen' }).click()
-      await weitere.getByRole('button', { name: 'Erneut laden' }).click()
+      await weitere.getByRole('region', { name: 'Viator-Prüfung' }).getByRole('button', { name: 'Erneut laden' }).click()
       ;(weitere as Page & { releaseDetail: () => void }).releaseDetail()
       await weitere.getByText('Kalenderhinweis, keine aktuelle Verfügbarkeit.').waitFor()
       if (breite === 320) {
@@ -521,10 +517,10 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       if (!auswahl || !gruppe || !suche) return { ok: false, reason: 'missing', optionen: auswahl ? auswahl.options.length : 0 }
       const gewaehlt = auswahl.options[auswahl.selectedIndex]
       return {
-        ok: radios === 0 && auswahl.options.length === 22 && Boolean(gewaehlt && gewaehlt.textContent),
+        ok: radios === 0 && auswahl.options.length === 23 && Boolean(gewaehlt && gewaehlt.textContent),
         gruppeHoehe: Math.round(gruppe.getBoundingClientRect().height),
         auswahlHoehe: Math.round(auswahl.getBoundingClientRect().height),
-        sucheY: Math.round(suche.getBoundingClientRect().top + window.scrollY),
+        angeboteVorSuche: [...document.querySelectorAll('[aria-label="Viator"], [aria-label="GetYourGuide"]')].length === 2 && [...document.querySelectorAll('[aria-label="Viator"], [aria-label="GetYourGuide"]')].every((el) => Boolean(el.compareDocumentPosition(suche) & Node.DOCUMENT_POSITION_FOLLOWING)),
         label: gewaehlt ? gewaehlt.textContent : '',
         optionen: auswahl.options.length,
       }
@@ -536,17 +532,20 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       assert.equal(mass.ok, true, `${breite} ${JSON.stringify(mass)}`)
       assert.ok((mass.gruppeHoehe ?? 9999) < 280, `${breite} gruppe ${mass.gruppeHoehe}`)
       assert.ok((mass.auswahlHoehe ?? 9999) < 80, `${breite} auswahl ${mass.auswahlHoehe}`)
-      assert.ok((mass.sucheY ?? 9999) < 1000, `${breite} suche ${mass.sucheY}`)
+      assert.equal(mass.angeboteVorSuche, true, `${breite}: official offers before secondary native search`)
       assert.equal(mass.label, 'Tag 1')
       const tagWahl = page.getByRole('combobox', { name: 'Reisetag' })
       await tagWahl.focus()
-      await page.keyboard.press('ArrowDown')
+      if (process.platform === 'darwin') await page.keyboard.type('Tag 2')
+      else await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Enter')
+      await page.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-2', null, { timeout: 2_000 })
       assert.equal(await tagWahl.inputValue(), 'day-2')
       assert.match(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
       await tagWahl.selectOption({ label: 'Tag 22' })
       assert.equal(await tagWahl.inputValue(), 'day-22')
       assert.match(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Phuket/)
-      assert.doesNotMatch(await page.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
+      assert.equal(await page.locator('[data-aktivitaet-ziel]').getAttribute('data-aktivitaet-ziel'), 'stage-phu')
       await page.close()
     }
     const schmal = await browser.newPage({ viewport: { width: 320, height: 900 } })
@@ -556,16 +555,19 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(gross.ok, true, JSON.stringify(gross))
     assert.ok((gross.gruppeHoehe ?? 9999) < 500, `32px gruppe ${gross.gruppeHoehe}`)
     assert.ok((gross.auswahlHoehe ?? 9999) < 160, `32px auswahl ${gross.auswahlHoehe}`)
-    assert.ok((gross.sucheY ?? 9999) < 1600, `32px suche ${gross.sucheY}`)
+    assert.equal(gross.angeboteVorSuche, true, 'enlarged text: official offers before secondary native search')
     assert.equal(gross.label, 'Tag 1')
     const wahl = schmal.getByRole('combobox', { name: 'Reisetag' })
     await wahl.focus()
-    await schmal.keyboard.press('ArrowDown')
+    if (process.platform === 'darwin') await schmal.keyboard.type('Tag 2')
+    else await schmal.keyboard.press('ArrowDown')
+    await schmal.keyboard.press('Enter')
+    await schmal.waitForFunction(() => (document.querySelector('#activity-day-select') as HTMLSelectElement)?.value === 'day-2', null, { timeout: 2_000 })
     assert.equal(await wahl.inputValue(), 'day-2')
     await wahl.selectOption({ label: 'Tag 22' })
     assert.equal(await wahl.inputValue(), 'day-22')
     assert.match(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Phuket/)
-    assert.doesNotMatch(await schmal.getByRole('region', { name: 'Aktivitäten' }).innerText(), /Bangkok/)
+    assert.equal(await schmal.locator('[data-aktivitaet-ziel]').getAttribute('data-aktivitaet-ziel'), 'stage-phu')
     await schmal.screenshot({ path: join(ARTIFACTS, 'viator-22-tage-320.png'), fullPage: true })
     await schmal.close()
   })
@@ -576,7 +578,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
       const page = await seite(breite)
       const träger = page as Page & { detailAnzahl: () => number }
       const bereich = page.getByRole('region', { name: 'Aktivitäten' })
-      await bereich.getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+      await ruhigKlicken(bereich.getByRole('button', { name: 'Für diesen Tag suchen' }))
       const link = bereich.getByRole('link', { name: 'Beim Anbieter ansehen' })
       await link.waitFor()
       assert.equal(await link.getAttribute('href'), href)
@@ -606,7 +608,7 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     const stil = alsMesswert(await page.evaluate(STIL))
     assert.equal(stil.ok, true, JSON.stringify(stil))
     const träger = page as Page & { gesendet: unknown[] }
-    await page.getByRole('region', { name: 'Aktivitäten' }).getByRole('button', { name: 'Für diesen Tag suchen' }).click()
+    await ruhigKlicken(page.getByRole('button', { name: 'Für diesen Tag suchen' }))
     await page.getByRole('button', { name: 'Angebot prüfen' }).click()
     await page.getByText('Die Optionen sind nicht eindeutig benannt. Eine Prüfung wird nicht als erfolgreich angezeigt.').waitFor()
     assert.equal(await page.getByText('Dieses Angebot hat keine Zusatzoption.').count(), 0)

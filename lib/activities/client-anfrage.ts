@@ -47,7 +47,7 @@ const EVIDENZ_FELDER = [
 const STANDARD_MELDUNG: Record<ActivitySuchStatus, string> = {
   ok: 'Aktivitäten gefunden.',
   partial: 'Einige Angebote konnten nicht gelesen werden. Die übrigen Aktivitäten siehst du unten.',
-  empty: 'Keine passenden Aktivitäten für diesen Reisetag gefunden.',
+  empty: 'Keine passenden Aktivitäten für diese Suche gefunden.',
   unavailable: 'Passende Aktivitäten sind gerade nicht verfügbar.',
   timeout: 'Die Aktivitätensuche hat zu lange gedauert.',
   error: 'Die Aktivitätsanfrage ist fehlgeschlagen.',

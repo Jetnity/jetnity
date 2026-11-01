@@ -443,3 +443,132 @@ export function gygPlanen(eingabe: GygPlanEingabe): GygPlan {
     zielArt,
   }
 }
+
+/**
+ * Ziel einer Etappe, ohne einen Reisetag zu verlangen.
+ * Ein Land wird als Landesidee geplant, nicht als Ort an einem Tag.
+ * Zwei Etappen derselben Stadt behalten getrennte Schlüssel.
+ */
+export function gygEtappenAnfrage(
+  reise: GygReise,
+  etappeId: string | null,
+): { anfrage: string; ids: readonly string[] } {
+  const etappe = etappeId ? reise.etappen.find((eintrag) => eintrag.id === etappeId) ?? null : null
+  const id = etappe?.placeId && istOrtId(etappe.placeId) ? etappe.placeId : null
+  return {
+    anfrage: JSON.stringify(['etappe', etappe?.id ?? null, id]),
+    ids: id ? [id] : [],
+  }
+}
+
+export function gygZielPlanen(eingabe: {
+  reise: GygReise
+  etappeId: string | null
+  freigabe: GetYourGuideFreigabe
+  orteLesen: ((id: string) => Ort | null) | null
+}): GygPlan {
+  const etappeId = eingabe.etappeId && eingabe.etappeId.length > 0 ? eingabe.etappeId : null
+  const basis = {
+    freigabe: eingabe.freigabe.status,
+    reiseId: eingabe.reise.id,
+    umfang: 'tag' as const,
+    tagId: null,
+    landWahl: null,
+    ...OHNE_ZIEL,
+  }
+  const etappe = etappeId ? eingabe.reise.etappen.find((eintrag) => eintrag.id === etappeId) ?? null : null
+  if (!etappe) {
+    return {
+      art: 'etappe_fehlt',
+      schluessel: schluessel({ ...basis, etappeId, ortId: null, countryCode: null, art: 'etappe_fehlt' }),
+    }
+  }
+  if (eingabe.freigabe.status === 'geschlossen') {
+    return {
+      art: 'geschlossen',
+      schluessel: schluessel({ ...basis, etappeId: etappe.id, ortId: null, countryCode: null, art: 'geschlossen' }),
+      gruende: eingabe.freigabe.gruende,
+    }
+  }
+  const ortBasis = { ...basis, etappeId: etappe.id }
+  if (!etappe.placeId || !istOrtId(etappe.placeId)) {
+    return {
+      art: 'ort_unbestaetigt',
+      schluessel: schluessel({ ...ortBasis, ortId: null, countryCode: null, art: 'ort_unbestaetigt' }),
+    }
+  }
+  const ort = ortLesen(etappe.placeId, eingabe.orteLesen)
+  if (!ort || !isoLand(ort.countryCode)) {
+    return {
+      art: 'ort_unbestaetigt',
+      schluessel: schluessel({
+        ...ortBasis,
+        ortId: etappe.placeId,
+        countryCode: null,
+        zielTyp: ort?.typ ?? null,
+        art: 'ort_unbestaetigt',
+      }),
+    }
+  }
+  if (isoLand(etappe.countryCode) && etappe.countryCode !== ort.countryCode) {
+    return {
+      art: 'ort_widerspruch',
+      schluessel: schluessel({ ...ortBasis, ortId: ort.id, countryCode: null, zielTyp: ort.typ, art: 'ort_widerspruch' }),
+    }
+  }
+  const landUmfang = ort.typ === 'country'
+  const zielArt = landUmfang
+    ? 'land'
+    : ort.typ === 'city'
+      ? 'stadt'
+      : ort.typ === 'region'
+        ? 'region'
+        : ort.typ === 'island'
+          ? 'insel'
+          : null
+  if (!zielArt) {
+    return {
+      art: 'nicht_unterstuetzt',
+      schluessel: schluessel({
+        ...ortBasis,
+        ortId: ort.id,
+        countryCode: ort.countryCode,
+        zielTyp: ort.typ,
+        art: 'nicht_unterstuetzt',
+      }),
+      name: ort.name,
+      zielArt: 'anders',
+    }
+  }
+  const suche = suchkonfigurationBauen({
+    umfang: zielArt,
+    name: ort.name,
+    countryCode: ort.countryCode,
+    gesperrt: gesperrtFuer(eingabe.reise),
+  })
+  const identitaet = {
+    ...ortBasis,
+    ortId: ort.id,
+    countryCode: ort.countryCode,
+    zielTyp: ort.typ,
+    sucheUmfang: suche?.umfang ?? null,
+    sucheName: suche?.name ?? null,
+    sucheLand: suche?.land ?? null,
+    sucheCode: suche?.countryCode ?? null,
+  }
+  if (!suche) {
+    return {
+      art: 'nicht_unterstuetzt',
+      schluessel: schluessel({ ...identitaet, art: 'nicht_unterstuetzt' }),
+      name: ort.name,
+      zielArt,
+    }
+  }
+  return {
+    art: 'bereit',
+    schluessel: schluessel({ ...identitaet, art: 'bereit' }),
+    suche,
+    name: ort.name,
+    zielArt,
+  }
+}

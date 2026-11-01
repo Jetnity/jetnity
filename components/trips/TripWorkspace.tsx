@@ -9,8 +9,8 @@
 // Item- und Gap-Details öffnen vorhandene Flächen kontextuell (ADR-0167 / TW-5).
 //
 // Die Reise bleibt die primäre Oberfläche. Domain-Flächen sind Details
-// und Werkzeuge, keine gleichrangige Hauptnavigation. Commercial-Suche
-// wird erst nach ausdrücklicher Nutzeraktion gemountet.
+// und Werkzeuge, keine gleichrangige Hauptnavigation. Flug- und Hotelsuche
+// starten erst nach ausdrücklicher Aktion. Aktivitäten öffnen Angebote mit dem Bereich.
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -36,6 +36,7 @@ import {
   domainRasterKlasse,
 } from '@/lib/trips/cross-device-interaction-1'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { ORGANISIEREN_RUECKKEHR_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { AttentionAktion } from '@/lib/trips/attention'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import {
@@ -218,7 +219,9 @@ function passendeVerbindung(
 }
 
 function auswahlAusModus(modus: WorkspaceModus): WorkspaceDetailAuswahl {
-  if (modus.ansicht === 'organisieren' && modus.bereich) return gapAuswahl(modus.bereich)
+  if (modus.ansicht === 'organisieren' && modus.bereich) {
+    return gapAuswahl(modus.bereich, undefined, modus.bereich === 'aktivitaeten')
+  }
   if (modus.ansicht === 'plan' && modus.itemId) return itemAuswahl(modus.itemId)
   return leereDetailAuswahl()
 }
@@ -354,11 +357,12 @@ function sucheMitTag(
   knoten: React.ReactNode,
   tagId: string,
   onTagWechseln: (id: string) => void,
+  sichtbar?: boolean,
 ) {
   if (!React.isValidElement(knoten)) return knoten
   return React.cloneElement(
-    knoten as React.ReactElement<{ tagId?: string; onTagWechseln?: (id: string) => void }>,
-    { tagId, onTagWechseln },
+    knoten as React.ReactElement<{ tagId?: string; onTagWechseln?: (id: string) => void; sichtbar?: boolean }>,
+    { tagId, onTagWechseln, ...(sichtbar === undefined ? {} : { sichtbar }) },
   )
 }
 
@@ -674,7 +678,7 @@ export default function TripWorkspace({
     merkeAusloeser()
     modusTastaturRef.current = false
     modusSetzen({ ansicht: 'organisieren', bereich: domain, urlAnpassen: false }, 'push', true)
-    setAuswahl(gapAuswahl(domain, signalId))
+    setAuswahl(gapAuswahl(domain, signalId, domain === 'aktivitaeten'))
   }
 
   const routeLageMerken = (ziel?: EventTarget | null) => {
@@ -1042,9 +1046,6 @@ export default function TripWorkspace({
     seasonalEvaluations,
     officialEvaluations,
   })
-  // tagWechseln merkt die Route-Scrollposition in einem Ref, erst beim Klick.
-  // eslint-disable-next-line react-hooks/refs -- der Ref wird nicht während des Renderns gelesen
-  const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, tagWechseln)
   const gap = bereinigt.art === 'gap' ? gapDetailAbleiten(reise, ungeplantePunkte, bereinigt.domain) : null
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
   const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
@@ -1149,12 +1150,21 @@ export default function TripWorkspace({
   const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
 
   const sucheSichtbar = sucheIstOffen(bereinigt)
+  const aktivitaetenDirekt = detailOffen && aktiveDomain === 'aktivitaeten' && bereinigt.art === 'gap'
+  const aktivitaeten = sucheMitTag(
+    aktivitaetensuche,
+    aktiverTag,
+    // tagWechseln merkt die Route-Scrollposition in einem Ref, erst beim Klick.
+    // eslint-disable-next-line react-hooks/refs -- der Ref wird nicht während des Renderns gelesen
+    tagWechseln,
+    detailOffen && aktiveDomain === 'aktivitaeten' && sucheSichtbar,
+  )
   const anordnung = domainAnordnung({
     kompakt,
     detailOffen: modus.ansicht === 'organisieren' && modus.bereich != null && detailOffen,
     weit,
   })
-  const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
+  const rasterKlasse = aktivitaetenDirekt ? 'min-w-0 max-w-full' : domainRasterKlasse(anordnung, sucheSichtbar)
   const planNeben = modusBereit && modus.ansicht === 'plan' && u1bAnordnung === 'neben'
 
   React.useLayoutEffect(() => {
@@ -1356,6 +1366,7 @@ export default function TripWorkspace({
           ref={splitRef}
           className={cn(rasterKlasse, 'min-w-0 max-w-full')}
           data-workspace-split={anordnung}
+          data-aktivitaeten-breite={aktivitaetenDirekt ? 'voll' : 'geteilt'}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
           style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 1fr) minmax(28rem, 1.4fr)', columnGap: '1.5rem', alignItems: 'start' } : undefined}
@@ -1465,7 +1476,7 @@ export default function TripWorkspace({
               verborgen={detailVerborgen}
               sichtbarKlasse="min-w-0 max-w-full scroll-mt-[calc(72px+3.75rem)] [overflow-wrap:anywhere] [word-break:break-word]"
             >
-              {detailOffen ? (
+              {detailOffen && !aktivitaetenDirekt ? (
                 <TripWorkspaceDetail
                   auswahl={bereinigt}
                   gap={gap}
@@ -1475,6 +1486,12 @@ export default function TripWorkspace({
                   onSuche={sucheAusdruecklich}
                   fokusRef={detailFokusRef}
                 />
+              ) : null}
+              {aktivitaetenDirekt && !kompakt ? (
+                <button type="button" onClick={rueckkehr.ausfuehren} className={ORGANISIEREN_RUECKKEHR_KLASSE}>
+                  <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                  {rueckkehr.label}
+                </button>
               ) : null}
             </FlaecheHuelle>
             <div
