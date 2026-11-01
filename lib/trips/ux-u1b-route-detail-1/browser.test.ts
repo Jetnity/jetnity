@@ -300,13 +300,36 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
       await page.getByRole('button', { name: 'Zur Route' }).click()
       await page.setViewportSize({ width: 1440, height: 900 })
+      const navStand = () => page.evaluate(() => {
+        const el = document.querySelector('[data-workspace-mode-nav]')
+        return {
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          rootFont: getComputedStyle(document.documentElement).fontSize,
+          kompakt: document.querySelector('[data-workspace-kompakt]')?.getAttribute('data-workspace-kompakt') ?? null,
+          anordnung: document.querySelector('[data-u1b-anordnung]')?.getAttribute('data-u1b-anordnung') ?? null,
+          shell: el?.getAttribute('data-shell-nav') ?? null,
+          position: el ? getComputedStyle(el).position : null,
+        }
+      })
+      try {
+        await page.waitForFunction(() => {
+          const el = document.querySelector('[data-workspace-mode-nav]')
+          return window.innerWidth === 1440
+            && document.querySelector('[data-workspace-kompakt]')?.getAttribute('data-workspace-kompakt') === '0'
+            && document.querySelector('[data-u1b-anordnung]')?.getAttribute('data-u1b-anordnung') === 'neben'
+            && el?.getAttribute('data-shell-nav') === 'sticky'
+        })
+      } catch (fehler) {
+        throw new Error(`Desktop-Navigation nicht festgelegt: ${JSON.stringify(await navStand())}`, { cause: fehler })
+      }
       const stand = await page.evaluate(() => window.__u1b)
       assert.equal(stand?.mounts, 1)
       assert.equal(stand?.unmounts, 0)
       assert.equal(stand?.requests, 1)
       assert.deepEqual(netz, [])
-      const nav = await page.locator('[data-workspace-mode-nav]').first().evaluate((el) => getComputedStyle(el).position)
-      assert.equal(nav === 'sticky' || nav === 'fixed', true)
+      const nav = await navStand()
+      assert.equal(nav.position, 'sticky', JSON.stringify(nav))
     } finally {
       await page.close()
     }
