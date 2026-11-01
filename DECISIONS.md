@@ -6018,12 +6018,14 @@ Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht e
 
 ## ADR-0225 – 12Go-Fahrplandaten als native, regional gebundene Anzeige
 
-**Datum:** 1. November 2026. **Status:** implementiert im Draft #1101; Owner beauftragt nach Preview-PASS die Veröffentlichung, finale Release-Abnahme des neuen Heads steht aus.
+**Datum:** 1. November 2026. **Status:** PR #1101 regulär gemergt und aktiviert auf Main `68071953355e1164891611e7eea9a26c00c7cd6a`; [Release-Abnahme](https://github.com/Jetnity/jetnity/pull/1101#issuecomment-6561940221). Nachfolgende Korrektur der Bangkok-ADM1-Zuordnung in separater Prüfung.
 
 **Kontext:** Der Product Owner möchte Verkehrsmittel und nützliche Streckeninformationen bereits in Jetnity vergleichen. Die bisherigen Affiliate-Links führen lediglich hinaus; Stadt-/Länderwidgets zeigen allgemeine populäre Routen, das Suchwidget führt seine Ergebnisse extern aus. Die offizielle PHP-Referenz stellt allgemeine Timetable-Daten auf Deutsch mit CHF bereit.
 
 **Entscheidung:** Offiziellen lesenden Timetable-Dienst serverseitig verwenden; dessen HTML streng in Text und identitätsgebundene Affiliate-Links umwandeln. Keine Provider-Scripts oder HTML in den Besucherbrowser laden. Bestehende aufeinanderfolgende Reiseabschnitte wiederverwenden. Nur verifizierte GeoNames-Identitäten auf Provider-Zielregionen abbilden, keine generische Namensauflösung. Fehlende Daten sind von Ausfällen zu unterscheiden. Preise/Dauern/Abfahrten bleiben allgemeine Anbieterangaben; keine Verfügbarkeit, Personensumme oder Buchung ableiten.
 
 **Alternativen:** Nur generische Links behalten (wenig Information); Länderwidget (keine einzelne Strecke); tagesgenaue Booking-API (separater Zugang und grössere Anforderungen).
+
+**Präzisierung nach Live-Befund:** GeoNames `1609348` ist die Verwaltungsregion der bereits belegten Stadt Bangkok (`1609350`). Beide dürfen im Adapter auf die allgemeine Provider-Region Bangkok zeigen; die gespeicherte Ortsidentität bleibt erhalten. Unterschiedliche GeoNames-IDs genügen dann nicht mehr zur Unterscheidung einer Strecke: auch die normalisierten, zuvor identitätsgeprüften Provider-Orte müssen verschieden sein. Keine implizite Freigabe weiterer Regionen oder Namensheuristiken.
 
 **Konsequenzen:** Zunächst kleine belegte Ortsabdeckung und externer Rückfall. Provider-Markup kann sich ändern und muss dann geschlossen fehlschlagen. Parserabhängigkeit parse5 8.0.0. Begrenzter serverseitiger Request/Cache statt zusätzlicher Infrastruktur; keine neue bezahlte Funktion. Nach Owner-Freigabe getrennte explizite Server-/UI-Aktivierung, standardmäßig AUS. Rückfall über beide Feature-Schalter false und Neubau, kein belegter Instant-Rollback. Vor Livegang gehostete OFF/ON-Prüfung und unabhängige Abnahme. PR #1086 und sein HOLD werden weder ersetzt noch gelockert. [Quellen und Browserbelege](docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md).
