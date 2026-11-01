@@ -1,4 +1,4 @@
-// Offline parent flow. The bundle aliases the CMP policy module.
+// Offline parent flow. The bundle watches the real production facade.
 // jetnity.com and the widget host are fulfilled locally. No vendor network.
 
 import { execFileSync } from 'node:child_process'
@@ -25,10 +25,20 @@ const challenge=[...bytes].map((b)=>b.toString(16).padStart(2,'0')).join('');
 const frameGeneration=1;
 document.documentElement.dataset.challenge=challenge;
 let timer=setInterval(function(){parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'canary',n:Date.now()},'https://jetnity.com')},80);
-addEventListener('pagehide',function(){clearInterval(timer)});
+let retiredChallenge='';
+addEventListener('pagehide',function(){
+  clearInterval(timer);
+  if(!retiredChallenge)return;
+  parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'ready',provider:'twelvego',challenge:retiredChallenge,frameGeneration:frameGeneration},'https://jetnity.com');
+});
 let grants=0;
 addEventListener('message',function(event){
   if(event.origin!=='https://jetnity.com'||event.source!==parent)return;
+  if(event.data&&event.data.kind==='retired-auf-pagehide'&&typeof event.data.challenge==='string'){
+    retiredChallenge=event.data.challenge;
+    parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'retired-bereit',n:1},'https://jetnity.com');
+    return;
+  }
   if(!event.data||event.data.kind!=='grant')return;
   grants+=1;
   document.documentElement.dataset.grants=String(grants);
@@ -46,7 +56,7 @@ else bereit();
 
 function seite(css: string): string {
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><style>${css}</style></head><body><div id="root"></div><script>
-window.__einstellungen=0;window.__canaries=0;window.__grantsGesehen=0;window.__zaehleCanary=false;
+window.__einstellungen=0;window.__canaries=0;window.__grantsGesehen=0;window.__readyEmpfangen=0;window.__zaehleCanary=false;window.__fassade=[];
 document.addEventListener('click',function(event){
   var ziel=event.target&&event.target.closest?event.target.closest('.privacybee-display-preferences'):null;
   if(!ziel)return;
@@ -61,6 +71,8 @@ window.addEventListener('message',function(event){
   if(!data||data.type!=='jetnity-widget-host')return;
   if(data.kind==='canary'&&window.__zaehleCanary)window.__canaries+=1;
   if(data.kind==='grant-gesehen')window.__grantsGesehen+=1;
+  if(data.kind==='ready'&&event.origin==='https://jetnity-widgets.vercel.app'){window.__readyEmpfangen+=1;window.__readyOrigin=event.origin}
+  if(data.kind==='retired-bereit')window.__retiredBereit=(window.__retiredBereit||0)+1;
 });
 </script><script src="${SCRIPT}"></script></body></html>`
 }
@@ -75,6 +87,7 @@ function bundle(): string {
     '--format=iife',
     '--jsx=automatic',
     `--alias:@=${process.cwd()}`,
+    `--alias:@/lib/privacy/privacybee-cmp/produktion=${join(process.cwd(), 'scripts/twelve-go-widget-v2/grant-beobachter.ts')}`,
     `--alias:next/navigation=${join(process.cwd(), 'scripts/twelve-go-widget-v2/navigation-shim.ts')}`,
     `--alias:next/link=${join(process.cwd(), 'scripts/twelve-go-widget-v2/link-shim.tsx')}`,
     `--alias:server-only=${join(process.cwd(), 'scripts/twelve-go-widget-v2/leer.ts')}`,
@@ -99,7 +112,7 @@ async function oeffnen(
   css: string,
   js: string,
   options: { fixture: boolean; width: number; height: number; root: string; seam?: 'guest' | 'account'; bootstrap?: boolean },
-  kind: { current: 'ready' | 'still' },
+  kind: { current: 'ready' | 'still' | 'verzoegert' },
   ledger: { adresse: string }[],
 ): Promise<{ context: BrowserContext; page: Page; referer: string[] }> {
   const context = await browser.newContext({ viewport: { width: options.width, height: options.height }, locale: 'de-CH' })
@@ -156,25 +169,51 @@ async function anfragen(page: Page) {
   await page.locator('[data-twelve-go-aktion="anfragen"], [data-twelve-go-aktion="erneut"]').first().click()
 }
 
-async function fokusBeweis(page: Page, selektor: string): Promise<string | null> {
+async function tabBeweis(page: Page, selektor: string): Promise<string | null> {
+  await page.evaluate(() => {
+    const aktiv = document.activeElement
+    if (aktiv instanceof HTMLElement) aktiv.blur()
+  })
+  let erreicht = false
+  for (let schritt = 0; schritt < 400 && !erreicht; schritt += 1) {
+    await page.keyboard.press('Tab')
+    erreicht = await page.evaluate((sel) => document.activeElement?.matches(sel) ?? false, selektor)
+  }
+  if (!erreicht) return 'tab'
+  await page.keyboard.press('Shift+Tab')
+  const nochDort = await page.evaluate((sel) => document.activeElement?.matches(sel) ?? false, selektor)
+  if (nochDort) return 'shift'
+  await page.keyboard.press('Tab')
   const ziel = page.locator(selektor).first()
   await ziel.scrollIntoViewIfNeeded()
-  await ziel.focus()
   return page.evaluate((sel) => {
-    const el = document.querySelector(sel)
-    if (!(el instanceof HTMLElement) || document.activeElement !== el) return 'fokus'
-    const kasten = el.getBoundingClientRect()
+    const el = document.activeElement
+    if (!(el instanceof HTMLElement) || !el.matches(sel)) return 'ruecktab'
+    if (!el.matches(':focus-visible')) return 'focus-visible'
     const stil = getComputedStyle(el)
-    const ring = stil.outlineStyle !== 'none' || stil.boxShadow !== 'none'
+    const schatten = stil.boxShadow
+    const schichten = schatten === 'none' ? [] : schatten.split(/,(?![^(]*\))/)
+    const sichtbar = schichten.some((schicht) => {
+      const farbe = schicht.match(/rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}/)?.[0] ?? ''
+      if (!farbe || farbe === 'transparent') return false
+      const alpha = farbe.match(/rgba\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*([\d.]+)\s*\)/)
+      if (alpha && Number(alpha[1]) === 0) return false
+      return /[1-9]/.test(schicht)
+    })
+    const umriss = stil.outlineStyle !== 'none' && stil.outlineWidth !== '0px' && stil.outlineColor !== 'transparent' && !/rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0(?:\.0+)?\s*\)/.test(stil.outlineColor)
+    const kasten = el.getBoundingClientRect()
     const imFenster = kasten.width >= 8 && kasten.height >= 44 && kasten.top >= -1 && kasten.left >= -1 && kasten.bottom <= window.innerHeight + 1 && kasten.right <= window.innerWidth + 1
     const flaeche = document.querySelector('[data-twelve-go-affiliate]')
-    const ueber = Boolean(flaeche && flaeche.scrollWidth > flaeche.clientWidth + 1)
-    const seite = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
-    if (!ring) return 'ring'
-    if (!imFenster) return `ausschnitt ${Math.round(kasten.width)}x${Math.round(kasten.height)}`
-    if (ueber || seite) return 'ueberlauf'
+    const ueber = Boolean(flaeche && flaeche.scrollWidth > flaeche.clientWidth + 1) || document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+    if (!sichtbar && !umriss) return `ring ${stil.outlineStyle} ${stil.outlineWidth} ${stil.outlineColor} ${schatten.slice(0, 120)}`
+    if (!imFenster) return `ausschnitt ${Math.round(kasten.left)},${Math.round(kasten.top)} ${Math.round(kasten.width)}x${Math.round(kasten.height)} fenster ${window.innerWidth}x${window.innerHeight}`
+    if (ueber) return 'ueberlauf'
     return ''
   }, selektor)
+}
+
+function verbrauchteGrants(liste: Array<{ name: string; leer: boolean }> | undefined) {
+  return (liste ?? []).filter((eintrag) => eintrag.name === 'consume' && eintrag.leer === false).length
 }
 
 async function wartenAufRahmen(page: Page) {
@@ -198,6 +237,7 @@ async function main() {
   const fehler: string[] = []
   const steuerung: Array<Record<string, string | number | boolean | null>> = []
   const ledger: { adresse: string }[] = []
+  const arbeit: Record<string, unknown> = {}
   const kind = { current: 'ready' as 'ready' | 'still' | 'verzoegert' }
 
   try {
@@ -283,13 +323,13 @@ async function main() {
       assertGleich(fehler, masse.hoehe >= 44 && masse.breite >= 44, `${fall.name}: Einstellungen ${masse.hoehe}x${masse.breite}`)
       assertGleich(fehler, masse.anfrage >= 44, `${fall.name}: Anfrage ${masse.anfrage}`)
       assertGleich(fehler, masse.rahmen === 0 && !masse.ueber, `${fall.name}: Einstellungen starten oder überlaufen`)
-      const einstellungenFokus = await fokusBeweis(einstellung.page, '[data-cmp-preferences="surface"]')
-      const anfrageFokus = await fokusBeweis(einstellung.page, '[data-twelve-go-aktion="anfragen"]')
+      const einstellungenFokus = await tabBeweis(einstellung.page, '[data-cmp-preferences="surface"]')
+      const anfrageFokus = await tabBeweis(einstellung.page, '[data-twelve-go-aktion="anfragen"]')
       if (einstellungenFokus) fehler.push(`${fall.name}: Einstellungen ${einstellungenFokus}`)
       if (anfrageFokus) fehler.push(`${fall.name}: Anfrage ${anfrageFokus}`)
       await anfragen(einstellung.page)
       await wartenAufRahmen(einstellung.page)
-      const entfernenFokus = await fokusBeweis(einstellung.page, '[data-twelve-go-aktion="entfernen"]')
+      const entfernenFokus = await tabBeweis(einstellung.page, '[data-twelve-go-aktion="entfernen"]')
       if (entfernenFokus) fehler.push(`${fall.name}: Entfernen ${entfernenFokus}`)
       steuerung.push({
         name: fall.name,
@@ -319,6 +359,8 @@ async function main() {
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).focus()
     await page.keyboard.press('Enter')
     const einstellungenNachher = await page.evaluate(() => window.__einstellungen ?? 0)
+    arbeit.einstellungenVorAnfrage = einstellungenVorher
+    arbeit.einstellungenNachKlickUndEnter = einstellungenNachher
     assertGleich(fehler, einstellungenNachher >= einstellungenVorher + 2, `Einstellungen ${einstellungenNachher}`)
     assertGleich(fehler, await page.locator('[data-einstellungen-offen]').count() === 1, 'Fixture öffnet nicht')
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen starten einen Frame')
@@ -421,12 +463,82 @@ async function main() {
     await page.waitForTimeout(100)
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Etappenwechsel behält den Frame')
 
+    kind.current = 'ready'
+    await page.evaluate(() => { window.__zaehleCanary = true; window.__canaries = 0; window.__fassade = [] })
+    await anfragen(page)
+    await wartenAufRahmen(page)
+    const aktiverGrant = await rahmen(page)
+    assertGleich(fehler, aktiverGrant?.grants === '1', `aktiver Grant ${aktiverGrant?.grants}`)
+    const consumeNachGrant = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
+    assertGleich(fehler, consumeNachGrant >= 1, `aktiver Consume ${consumeNachGrant}`)
+    const challenge = aktiverGrant?.challenge ?? ''
+    const bereitVorArm = await page.evaluate(() => window.__retiredBereit ?? 0)
+    await page.evaluate((wert) => {
+      const frame = document.querySelector('[data-twelve-go-host="frame"]')
+      if (!(frame instanceof HTMLIFrameElement) || !frame.contentWindow) return
+      frame.contentWindow.postMessage({
+        type: 'jetnity-widget-host',
+        revision: 1,
+        kind: 'retired-auf-pagehide',
+        challenge: wert,
+      }, 'https://jetnity-widgets.vercel.app')
+    }, challenge)
+    await page.waitForFunction((vorher) => (window.__retiredBereit ?? 0) > vorher, bereitVorArm)
+    const readyVorRetired = await page.evaluate(() => window.__readyEmpfangen ?? 0)
+    await page.evaluate(() => {
+      window.__analytics = false
+      document.dispatchEvent(new Event('privacybee:consent-changed'))
+    })
+    await page.waitForFunction(() => document.querySelectorAll('[data-twelve-go-host="frame"]').length === 0)
+    await page.evaluate(() => { window.__canaries = 0 })
+    await page.waitForTimeout(400)
+    const canaryAktiv = await page.evaluate(() => window.__canaries ?? 0)
+    assertGleich(fehler, canaryAktiv === 0, `Canary nach aktivem Widerruf ${canaryAktiv}`)
+    await page.evaluate(() => {
+      window.__analytics = true
+      document.dispatchEvent(new Event('privacybee:consent-changed'))
+    })
+    await page.waitForTimeout(200)
+    const frameNachZustimmung = await page.locator('[data-twelve-go-host="frame"]').count()
+    assertGleich(fehler, frameNachZustimmung === 0, 'aktive Zustimmung startet neu')
+    const consumeVorRetired = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
+    await page.waitForTimeout(250)
+    let lieferung = (await page.evaluate((vorher) => (window.__readyEmpfangen ?? 0) > vorher, readyVorRetired)) ? 'retired-ready' : 'offen'
+    if (lieferung !== 'retired-ready') {
+      lieferung = await page.evaluate((wert) => {
+        window.dispatchEvent(new MessageEvent('message', {
+          data: {
+            type: 'jetnity-widget-host',
+            revision: 1,
+            kind: 'ready',
+            provider: 'twelvego',
+            challenge: wert,
+            frameGeneration: 1,
+          },
+          origin: 'https://jetnity-widgets.vercel.app',
+        }))
+        return 'retired-ready-dispatch'
+      }, challenge)
+    }
+    const consumeNachRetired = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
+    const readyNachRetired = await page.evaluate(() => window.__readyEmpfangen ?? 0)
+    const frameNachRetired = await page.locator('[data-twelve-go-host="frame"]').count()
+    arbeit.aktiv = { grants: aktiverGrant?.grants ?? null, consume: consumeNachGrant, canaryNachWiderruf: canaryAktiv, frameNachZustimmung }
+    arbeit.retiredReady = { lieferung, consumeVorher: consumeVorRetired, consumeNachher: consumeNachRetired, readyVorher: readyVorRetired, readyNachher: readyNachRetired, frame: frameNachRetired }
+    assertGleich(fehler, lieferung === 'retired-ready' || lieferung === 'retired-ready-dispatch', `retired-ready ${lieferung}`)
+    assertGleich(fehler, readyNachRetired === readyVorRetired + 1, `retired Empfang ${readyVorRetired}->${readyNachRetired}`)
+    assertGleich(fehler, consumeNachRetired === consumeVorRetired, `retired consume ${consumeVorRetired}->${consumeNachRetired}`)
+    assertGleich(fehler, frameNachRetired === 0, 'retired-ready erzeugt einen Frame')
+
     kind.current = 'verzoegert'
+    const consumeVorVerzoegert = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
     await page.evaluate(() => { window.__zaehleCanary = true; window.__canaries = 0; window.__grantsGesehen = 0 })
     await anfragen(page)
     await page.waitForSelector('[data-twelve-go-host="frame"]')
     await page.waitForFunction(() => (window.__canaries ?? 0) >= 1)
-    assertGleich(fehler, await page.evaluate(() => window.__grantsGesehen ?? 0) === 0, 'verzoegertes Ready war schon ein Grant')
+    const canaryVorVerzoegert = await page.evaluate(() => window.__canaries ?? 0)
+    const grantsVorVerzoegert = await page.evaluate(() => window.__grantsGesehen ?? 0)
+    assertGleich(fehler, grantsVorVerzoegert === 0, 'verzoegertes Ready war schon ein Grant')
     const einstellungenBeiAblehnung = await page.evaluate(() => window.__einstellungen ?? 0)
     await page.evaluate(() => {
       window.__analytics = false
@@ -436,13 +548,25 @@ async function main() {
     await page.evaluate(() => { window.__canaries = 0 })
     await page.waitForTimeout(1500)
     const nachWiderruf = await page.evaluate(() => ({ canaries: window.__canaries ?? 0, grants: window.__grantsGesehen ?? 0 }))
+    const consumeNachVerzoegert = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
+    arbeit.verzoegert = {
+      canaryVorWiderruf: canaryVorVerzoegert,
+      grantsVorWiderruf: grantsVorVerzoegert,
+      canaryNachher: nachWiderruf.canaries,
+      grantsNachher: nachWiderruf.grants,
+      consumeVorher: consumeVorVerzoegert,
+      consumeNachher: consumeNachVerzoegert,
+    }
     assertGleich(fehler, nachWiderruf.canaries === 0, `Canary nach Widerruf ${nachWiderruf.canaries}`)
     assertGleich(fehler, nachWiderruf.grants === 0, `verspaeteter Grant ${nachWiderruf.grants}`)
+    assertGleich(fehler, consumeNachVerzoegert === consumeVorVerzoegert, `verzoegerter Consume ${consumeVorVerzoegert}->${consumeNachVerzoegert}`)
     assertGleich(fehler, await page.locator('[data-cmp-preferences="surface"]').count() === 1, 'Einstellungen fehlen nach Statistik-Ablehnung')
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).click()
     await page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).focus()
     await page.keyboard.press('Enter')
     const einstellungenNachAblehnung = await page.evaluate(() => window.__einstellungen ?? 0)
+    arbeit.einstellungenBeiAblehnung = einstellungenBeiAblehnung
+    arbeit.einstellungenNachAblehnung = einstellungenNachAblehnung
     assertGleich(fehler, einstellungenNachAblehnung >= einstellungenBeiAblehnung + 2, `Einstellungen nach Ablehnung ${einstellungenNachAblehnung}`)
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Einstellungen nach Ablehnung starten einen Frame')
     kind.current = 'ready'
@@ -511,7 +635,7 @@ async function main() {
     await browser.close()
   }
 
-  writeFileSync(join(ziel, 'r7-eltern.json'), JSON.stringify({ ledger, fehler, steuerung }, null, 2))
+  writeFileSync(join(ziel, 'r7-eltern.json'), JSON.stringify({ ledger, fehler, steuerung, arbeit }, null, 2))
   console.log(`nachweis: ${ziel}`)
   if (ledger.length || fehler.length) {
     console.error([...fehler, ...ledger.map((eintrag) => eintrag.adresse)].join('\n'))
@@ -528,6 +652,9 @@ declare global {
     __canaries?: number
     __einstellungen?: number
     __grantsGesehen?: number
+    __readyEmpfangen?: number
+    __retiredBereit?: number
+    __fassade?: Array<{ name: string; leer: boolean }>
   }
 }
 

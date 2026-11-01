@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R7-R2 addition
+
+The already-granted case and the delayed case are both in the same harness. The retired ready is a child-origin message posted by that child on removal, and the facade counter shows no second successful consume and no new frame. Zero child grant acknowledgements are not the proof used for that case. Tab and Shift-Tab move real focus. `:focus-visible` and a nonzero ring are required. A transparent shadow does not pass. The viewport alignment after Tab uses Playwright `scrollIntoViewIfNeeded` because this headless session did not scroll on Tab; that is a harness limit, not a product CSS change. The observer is wired only by the offline bundle alias. Self-review is not a Technical Lead PASS.
+
 ## R7-R1 addition
 
 The preferences button is observed through a local listener on its real class. An inert button would leave the opening count at zero. Withdrawal uses a child that canaries immediately and sends ready only after 1200ms. Removal stops that work, and a later ready does not grant. The width loop includes the remove control and keyboard focus. Copy says “Ansicht von 12Go” and does not claim a search. Self-review is not a Technical Lead PASS.

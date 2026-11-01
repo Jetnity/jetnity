@@ -5,6 +5,14 @@ Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
 State: **CONSENT_BLOCKED / DRAFT / R7 disclosure / STOP for independent Technical Lead review**
 
+## Current, 1 November 2026 — R7-R2
+
+Accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` is merged without rebase. That merge keeps the Trip.com search links and the existing 12Go consumer. `CMP_RELEASE_AUTHORIZED` stays false. No product text, lifecycle, CMP, or host file changed in this correction.
+
+The parent harness now has three separate consent observations. An already-granted frame records a real grant and one successful facade consume, then an analytics withdrawal removes it, later child canaries stay at 0, and restored consent does not open it again. The same child window is armed with its saved challenge and posts that ready on `pagehide`; the parent receives one child-origin ready and the successful consume count stays 1, with no new frame. The delayed child still canaries before the first grant, is withdrawn, and does not consume. Tab, Shift-Tab, and Tab reach preferences, request, and remove. The check requires `:focus-visible` and a nonzero ring, then aligns that focused control for the existing viewport and overflow checks at 320, 390, 768, 1440, and 390 at 32px root. Headless Tab left the document scroll at 0, so the geometry step uses Playwright `scrollIntoViewIfNeeded` on the control Tab already focused.
+
+Command: `TWELVE_GO_WIDGET_NACHWEIS_DIR=/tmp/twelve-go-r7r2 node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`. Exit 0. Ledger empty. The compact result is in the report. The implementation head is the branch tip after this commit and is posted on the PR. Native CI and Preview for that head start after the push. Gates on `76c053de` do not cover it.
+
 ## Current, 1 November 2026 — R7-R1
 
 The preferences harness listens for the actual `privacybee-display-preferences` control and records an opening count. Click and Enter are checked before a request and again after analytics refusal. A delayed child keeps working until refusal, then sends no further canary and no grant. Restored consent does not open the view again. The same width loop checks preferences, request, and remove for focus ring, viewport fit, and overflow at 320, 390, 768, 1440, and 390 at 32px root. Visitor copy no longer talks about a ready window or an inserted frame.

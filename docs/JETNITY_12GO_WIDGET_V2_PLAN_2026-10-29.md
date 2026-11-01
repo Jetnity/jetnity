@@ -9,6 +9,8 @@ This file records the plan posted before product code. It is not a Technical Lea
 
 R7, 31 October 2026: the accepted shared dependency is main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`. The consumer shows that disclosure and `PrivacyBeeCmpPreferences appearance="surface"`. Release stays false. Lifecycle and the R6-R1 scope stay. R7-R1 adds the local preferences opening count, delayed withdrawal, and focus checks without changing that lifecycle.
 
+R7-R2, 1 November 2026: merge accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` and close the remaining harness gaps in the same file. Keep the delayed withdrawal, restore the already-granted withdrawal, deliver one retired ready from the saved child window after release, and reach the three controls with Tab and Shift-Tab. No new product text.
+
 ## Session attestation
 
 - `originalModelName`: `grok-4.7-high-fast` from cursor-cloud `run-info` (not Auto)

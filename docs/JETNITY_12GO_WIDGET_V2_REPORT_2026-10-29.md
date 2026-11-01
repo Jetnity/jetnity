@@ -2,7 +2,27 @@
 
 Date: 29 October 2026 Europe/Zurich
 Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`
-Classification: the production release stays false. R7-R1 records preferences opening, delayed withdrawal, and focus at the existing widths. A grant is not a completed search.
+Classification: the production release stays false. R7-R2 records the already-granted withdrawal, the delayed withdrawal, the retired ready, and Tab focus at the existing widths. A grant is not a completed search.
+
+## R7-R2 parent evidence, 1 November 2026
+
+Command: `TWELVE_GO_WIDGET_NACHWEIS_DIR=/tmp/twelve-go-r7r2 node --import tsx scripts/twelve-go-widget-v2/eltern-nachweis.ts`
+
+Exit 0. Printed `eltern ok`. Unexpected-request ledger: `[]`.
+
+Preferences openings: 0 before the request, 2 after click and Enter, 2 at analytics refusal, 4 after click and Enter on the refused surface. No frame started from those controls.
+
+Already granted: child `grants` `1`, successful facade consume `1`, canaries after withdrawal `0`, frame after restored consent `0`.
+
+Retired ready: the live child was given its saved challenge and posted that ready on `pagehide`. Delivery `retired-ready`. Child-origin ready count `10` to `11`. Successful consume stayed `1`. Frame count `0`. This is separate from the delayed timer.
+
+Delayed child: canary before withdrawal `1`, grants seen `0`, canaries after `0`, grants after `0`, successful consume stayed `1`.
+
+Width and control, after Tab / Shift-Tab / Tab, `:focus-visible`, and a nonzero ring. Playwright `scrollIntoViewIfNeeded` then aligned the already focused control because headless Tab did not scroll the document. Overflow is the affiliate/page horizontal check.
+
+```json
+{"steuerung":[{"name":"320","einstellungen":"ok","anfrage":"ok","entfernen":"ok","ueber":false},{"name":"390","einstellungen":"ok","anfrage":"ok","entfernen":"ok","ueber":false},{"name":"768","einstellungen":"ok","anfrage":"ok","entfernen":"ok","ueber":false},{"name":"1440","einstellungen":"ok","anfrage":"ok","entfernen":"ok","ueber":false},{"name":"390-root-32","einstellungen":"ok","anfrage":"ok","entfernen":"ok","ueber":false}],"ledger":[]}
+```
 
 ## Sources
 

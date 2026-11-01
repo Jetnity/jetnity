@@ -16,6 +16,10 @@ Stop: independent exact-head review by the Technical Lead. No Ready, no merge, n
 - Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`, tree `9e83883a884f885b83a27c28e1705f275f551c57`
 - Invalidated head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5`. R1-F1 replaces `Buffer.from('Bangkok')` with a UTF-8 `includes('Bangkok')` check. Exact final HEAD, tree, and ahead/behind are the branch tip after that correction. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
 
+## Where the work stopped — R7-R2
+
+Reviewed head `76c053de12fdf3dee87f91492f7896e3f39e788d` is invalidated. Accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` is merged. The harness file and `scripts/twelve-go-widget-v2/grant-beobachter.ts` are the correction. The observer delegates to the real facade and counts request, consume, and release. It does not mint a grant. The local command exited 0. Native CI and Preview for the new head start after the push. Stop for Root. No Ready, no merge, no R8.
+
 ## Where the work stopped — R7-R1
 
 The harness now records an opening count on the real preferences class, a delayed-child withdrawal, and focus/overflow for preferences, request, and remove at the existing widths. The implementation head is the branch tip after this commit and is posted on the PR. Native CI and Preview for that head start after the push. `b2926148` gates do not cover it.
