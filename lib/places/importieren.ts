@@ -5,6 +5,7 @@
 
 import { z } from 'zod'
 
+import { ISO_3166_1_ALPHA2 } from '@/lib/country/katalog'
 import { ORT_TYPEN, ortId, type Ort, type OrtTyp } from '@/lib/places/domain'
 
 const landescodeSchema = z
@@ -24,14 +25,51 @@ export type GeoNamesZeile = {
   featureCode: string
   countryCode: string
   admin1: string
+  admin2?: string
   population: number
 }
 
-export type LandName = { code: string; name: string }
+export type LandName = { code: string; name: string; geonameId?: string }
+/** Schutz vor einem unvollständigen offiziellen Länder-Snapshot. Kleine Testfixtures sind separat. */
+export function laenderReferenzProblem(laender: LandName[]): string | null {
+  const codes = new Set(laender.map((land) => land.code))
+  const ids = laender.map((land) => land.geonameId)
+  if (ids.some((id) => !id || !/^\d+$/.test(id))) return 'Länderreferenz enthält eine ungültige oder fehlende GeoNames-ID.'
+  if (codes.size !== laender.length || new Set(ids).size !== ids.length) return 'Länderreferenz enthält doppelte Codes oder IDs.'
+  const fehlend = ISO_3166_1_ALPHA2.filter((code) => !codes.has(code))
+  return fehlend.length ? `Länderreferenz ist unvollständig: ${fehlend.join(', ')}` : null
+}
+
+export type VerwaltungsName = { code: string; name: string }
+
+export function verwaltungAusGeoNames(text: string): VerwaltungsName[] {
+  return text.split(/\r?\n/).flatMap((zeile) => {
+    const [code, name] = zeile.split('\t')
+    return code && name?.trim() ? [{ code: code.trim(), name: name.trim() }] : []
+  })
+}
+
+/** Ganze, eindeutige Alias-Tokens; nie ein durch Abschneiden erfundener Alias. */
+function aliasText(ascii: string, alts: string): { text: string | null; ausgelassen: number } {
+  const teile = [...new Set([ascii, ...alts.split(',')].map((v) => v.trim()).filter(Boolean))]
+  const passend: string[] = []
+  let laenge = 0
+  let ausgelassen = 0
+  for (const teil of teile) {
+    const extra = teil.length + (passend.length ? 2 : 0)
+    if (laenge + extra > 800) { ausgelassen += 1; continue }
+    passend.push(teil)
+    laenge += extra
+  }
+  return { text: passend.join(', ') || null, ausgelassen }
+}
 
 const ZIEL_CODES = new Set([
+  'PCL',
   'PCLI',
+  'PCLIX',
   'PCLD',
+  'PCLF',
   'PCLS',
   'TERR',
   'ADM1',
@@ -63,7 +101,7 @@ function anzeigename(offiziell: string, ascii: string, alts: string): string {
 }
 
 function typAus(code: string): OrtTyp | null {
-  if (code === 'PCLI' || code === 'PCLD' || code === 'PCLS' || code === 'TERR') return 'country'
+  if (code === 'PCL' || code === 'PCLIX' || code === 'PCLI' || code === 'PCLD' || code === 'PCLF' || code === 'PCLS' || code === 'TERR') return 'country'
   if (code === 'ADM1' || code === 'ADM2') return 'region'
   if (code === 'ISL' || code === 'ISLS' || code === 'ATOL') return 'island'
   if (code.startsWith('PPL')) return 'city'
@@ -73,16 +111,18 @@ function typAus(code: string): OrtTyp | null {
 export function geoNamesZeileRelevant(zeile: GeoNamesZeile): boolean {
   const code = zeile.featureCode
   if (code === 'ADM2') return zeile.population >= 50_000
-  if (code === 'ISL' || code === 'ISLS' || code === 'ATOL') return zeile.population >= 5_000
+  if (code === 'ISL' || code === 'ISLS' || code === 'ATOL') return true
   if (ZIEL_CODES.has(code) && code !== 'ADM2') return true
   if (zeile.featureClass !== 'P') return false
-  return STADT_CODES.has(code) || zeile.population >= 5_000
+  return STADT_CODES.has(code) || (['PPL', 'PPLA4', 'PPLL', 'PPLS'].includes(code) && zeile.population >= 5_000)
 }
 
 export function orteAusGeoNames(eingabe: {
   zeilen: GeoNamesZeile[]
   laender: LandName[]
-}): { orte: Ort[]; verworfen: number } {
+  admin1?: VerwaltungsName[]
+  admin2?: VerwaltungsName[]
+}): { orte: Ort[]; verworfen: number; aliasAusgelassen: number; doppelteIds: number; historischeLandIds: string[] } {
   const laender = new Map<string, string>()
   for (const land of eingabe.laender) {
     const code = landescodeSchema.safeParse(land.code)
@@ -90,11 +130,22 @@ export function orteAusGeoNames(eingabe: {
     if (code.success && name) laender.set(code.data, name)
   }
 
+  const admin1 = new Map((eingabe.admin1 ?? []).map((v) => [v.code, v.name]))
+  const admin2 = new Map((eingabe.admin2 ?? []).map((v) => [v.code, v.name]))
+  const landIds = new Set(eingabe.laender.flatMap((land) => land.geonameId ? [land.geonameId] : []))
   const nachId = new Map<string, Ort>()
   let verworfen = 0
+  let aliasAusgelassen = 0
+  let doppelteIds = 0
+  const historischeLandIds: string[] = []
 
   for (const zeile of eingabe.zeilen) {
-    if (!geoNamesZeileRelevant(zeile)) {
+    if (landIds.has(zeile.geonameId) && zeile.featureCode === 'PCLH') {
+      historischeLandIds.push(zeile.geonameId)
+      verworfen += 1
+      continue
+    }
+    if (!landIds.has(zeile.geonameId) && !geoNamesZeileRelevant(zeile)) {
       verworfen += 1
       continue
     }
@@ -103,21 +154,27 @@ export function orteAusGeoNames(eingabe: {
       verworfen += 1
       continue
     }
-    const typ = typAus(zeile.featureCode)
+    const quellTyp = typAus(zeile.featureCode)
+    // country_code kann bloße Zugehörigkeit bedeuten (z. B. ein Außengebiet).
+    // Nur countryInfo-Identitäten repräsentieren dann das vollständige Land.
+    const typ = landIds.has(geonameId) ? 'country' : landIds.size && quellTyp === 'country' ? 'region' : quellTyp
     const name = textOderNull(zeile.name, 120)
     const countryCode = landescodeSchema.safeParse(zeile.countryCode)
-    if (!typ || !name || !ORT_TYPEN.includes(typ)) {
+    if (!typ || !name || !ORT_TYPEN.includes(typ) || !Number.isFinite(zeile.lat) || !Number.isFinite(zeile.lon) || Math.abs(zeile.lat) > 90 || Math.abs(zeile.lon) > 180) {
       verworfen += 1
       continue
     }
 
-    const keywords = [zeile.asciiName, zeile.altNames]
-      .map((wert) => wert.trim())
-      .filter(Boolean)
-      .join(', ')
-      .slice(0, 800)
+    const keywords = aliasText(zeile.asciiName, zeile.altNames)
+    aliasAusgelassen += keywords.ausgelassen
+    const code = countryCode.success ? countryCode.data : ''
+    const admin1Name = admin1.get(`${code}.${zeile.admin1}`)
+    const admin2Name = zeile.admin2 ? admin2.get(`${code}.${zeile.admin1}.${zeile.admin2}`) : undefined
+    const region = typ === 'country' || zeile.featureCode === 'ADM1' ? null
+      : [...new Set([admin2Name, admin1Name].filter((v): v is string => Boolean(v) && v !== name))].join(', ') || null
 
     const id = ortId('geonames', geonameId)
+    if (nachId.has(id)) doppelteIds += 1
     nachId.set(id, {
       id,
       source: 'geonames',
@@ -126,16 +183,18 @@ export function orteAusGeoNames(eingabe: {
       typ,
       country: countryCode.success ? (laender.get(countryCode.data) ?? countryCode.data) : null,
       countryCode: countryCode.success ? countryCode.data : null,
-      region: typ === 'region' || typ === 'country' ? null : textOderNull(zeile.admin1, 80),
+      region: textOderNull(region ?? undefined, 80),
       lat: Number.isFinite(zeile.lat) ? zeile.lat : null,
       lon: Number.isFinite(zeile.lon) ? zeile.lon : null,
       iata: null,
-      keywords: keywords || null,
+      keywords: keywords.text,
+      population: Number.isSafeInteger(zeile.population) && zeile.population > 0 ? zeile.population : null,
+      featureCode: zeile.featureCode,
     })
   }
 
   const orte = [...nachId.values()].sort((a, b) => a.id.localeCompare(b.id))
-  return { orte, verworfen }
+  return { orte, verworfen, aliasAusgelassen, doppelteIds, historischeLandIds }
 }
 
 export function ortAusFlughafen(zeile: {
@@ -165,6 +224,8 @@ export function ortAusFlughafen(zeile: {
     lon: zeile.lon,
     iata,
     keywords: keywords || null,
+    population: null,
+    featureCode: null,
   }
 }
 
@@ -174,7 +235,7 @@ export function geoNamesTsvZeile(zeile: string): GeoNamesZeile | null {
   const lat = Number(felder[4])
   const lon = Number(felder[5])
   const population = Number(felder[14] || 0)
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
+  if (!felder[4]?.trim() || !felder[5]?.trim() || !Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null
   return {
     geonameId: felder[0] ?? '',
     name: felder[1] ?? '',
@@ -186,6 +247,7 @@ export function geoNamesTsvZeile(zeile: string): GeoNamesZeile | null {
     featureCode: felder[7] ?? '',
     countryCode: felder[8] ?? '',
     admin1: felder[10] ?? '',
+    admin2: felder[11] ?? '',
     population: Number.isFinite(population) ? population : 0,
   }
 }
@@ -197,7 +259,8 @@ export function laenderAusCountryInfo(text: string): LandName[] {
     const felder = zeile.split('\t')
     const code = felder[0]?.trim() ?? ''
     const name = felder[4]?.trim() || felder[1]?.trim() || ''
-    if (code && name) laender.push({ code, name })
+    const geonameId = felder[16]?.trim()
+    if (code && name) laender.push({ code, name, ...(geonameId && /^\d+$/.test(geonameId) ? { geonameId } : {}) })
   }
   return laender
 }

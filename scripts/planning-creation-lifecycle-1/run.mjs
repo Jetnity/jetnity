@@ -716,6 +716,11 @@ try {
       await page.getByRole('button', { name: 'Reise übernehmen' }).click()
       await page.getByText((await stand(page)).texte.transportUebernahme).waitFor()
       assert.equal(await page.getByText((await stand(page)).texte.warnung).count(), 1)
+      await page.evaluate(() => window.fixture.arm('aufloesen', 'domain'))
+      await page.getByRole('button', { name: 'Reise übernehmen' }).click()
+      await page.getByText((await stand(page)).texte.ortFrei).waitFor()
+      assert.equal((await stand(page)).pushes.length, 0)
+      assert.equal((await stand(page)).aktiv, null)
       await page.evaluate(() => {
         window.fixture.arm('aufloesen', 'hold', 'ok')
         const original = localStorage.setItem.bind(localStorage)

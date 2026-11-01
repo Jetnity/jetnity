@@ -75,8 +75,8 @@ describe('Ortssuche', () => {
 
   test('Paris bleibt über Land unterscheidbar', () => {
     const optionen = orteOrdnen(orte, 'Paris', 'ziel')
-    assert.ok(optionen.some((option) => /France/.test(option.description ?? '')))
-    assert.ok(optionen.some((option) => /United States/.test(option.description ?? '')))
+    assert.ok(optionen.some((option) => /Frankreich/.test(option.description ?? '')))
+    assert.ok(optionen.some((option) => /Vereinigte Staaten/.test(option.description ?? '')))
   })
 
   test('London liefert einen realen London-Treffer', () => {
@@ -115,7 +115,7 @@ describe('Ortssuche', () => {
     assert.ok(filter)
     assert.equal(filter.includes('country.'), false)
     assert.equal(filter.includes('keywords.'), false)
-    assert.equal(filter.includes('name.ilike.Thailand%'), true)
+    assert.equal(filter.includes('name.ilike."Thailand%"'), true)
     assert.equal(ortSchluesselfilter('Südtirol')?.includes('keywords.ilike.'), true)
   })
 
@@ -173,8 +173,8 @@ describe('Ortssuche', () => {
 
   test('echte gleichnamige Orte bleiben über Region und Land unterscheidbar', () => {
     const optionen = orteOrdnen(orte, 'Paris', 'ziel')
-    const frankreich = optionen.find((option) => /France/.test(option.description ?? ''))
-    const texas = optionen.find((option) => /United States/.test(option.description ?? ''))
+    const frankreich = optionen.find((option) => /Frankreich/.test(option.description ?? ''))
+    const texas = optionen.find((option) => /Vereinigte Staaten/.test(option.description ?? ''))
     assert.ok(frankreich)
     assert.ok(texas)
     assert.equal(frankreich?.label, 'Paris')
@@ -412,13 +412,13 @@ describe('Ortssuche', () => {
     })
     const optionen = orteOrdnen([kongoCd, kongoCg], 'Congo', 'ziel')
     assert.equal(optionen.length, 2)
-    assert.ok(optionen.every((option) => option.label === 'Congo' && option.typ === 'country'))
+    assert.ok(optionen.every((option) => option.typ === 'country'))
     const cd = optionen.find((option) => option.id === kongoCd.id)
     const cg = optionen.find((option) => option.id === kongoCg.id)
     assert.equal(cd?.description, 'Land · Democratic Republic of the Congo · CD')
     assert.equal(cg?.description, 'Land · Republic of the Congo · CG')
     assert.equal(cd?.ariaLabel, 'Congo, Land · Democratic Republic of the Congo · CD')
-    assert.equal(cg?.ariaLabel, 'Congo, Land · Republic of the Congo · CG')
+    assert.equal(cg?.ariaLabel, 'Kongo-Brazzaville, Land · Republic of the Congo · CG')
   })
 
   test('die Zeilenform folgt dem Typ, nicht einzelnen Ländernamen', () => {
@@ -470,13 +470,13 @@ describe('Ortssuche', () => {
     assert.equal(ortAnzeigeKontext(land, 'Ruritanien', true), 'Land · Republic of Ruritania · RR')
     assert.equal(landAliasMehrdeutig([land], 'Ruritanien'), false)
     assert.equal(landAliasMehrdeutig([land, stadt], 'Ruritanien'), false)
-    assert.equal(ortAnzeigeKontext(stadt), 'Stadt · Ohio, United States')
+    assert.equal(ortAnzeigeKontext(stadt), 'Stadt · Ohio, Vereinigte Staaten')
     assert.equal(ortAnzeigeKontext(region), 'Region · Ruritania')
     assert.equal(ortAnzeigeKontext(insel), 'Insel · Ruritania')
     assert.equal(ortAnzeigeKontext(flughafen), 'Flughafen · RRR · Capital, Ruritania')
   })
 
-  test('nur ein exaktes Länder-Alias wird angehoben, kein Keyword-Präfix', () => {
+  test('ein exakter Stadtname bleibt vor einem Länder-Alias-Präfix', () => {
     const land = ortFixture({
       id: 'geonames:2658434',
       name: 'Switzerland',
@@ -495,7 +495,7 @@ describe('Ortssuche', () => {
     })
     const optionen = orteOrdnen([land, stadt], 'Swiss', 'ziel')
     assert.equal(optionen[0]?.id, stadt.id)
-    assert.equal(optionen.some((option) => option.id === land.id), false)
+    assert.equal(optionen.some((option) => option.id === land.id), true)
   })
 
   test('Abreise behält Stadt- und IATA-Semantik und hebt kein Land an', () => {
@@ -618,7 +618,7 @@ describe('Ortssuche', () => {
     assert.equal(lauf.includes('keywords.ilike.%'), false)
     const route = readFileSync(join(hier, '../../app/api/search/places/route.ts'), 'utf8')
     assert.match(route, /eq\('typ', 'country'\)/)
-    assert.match(route, /filter \? anfrage\.or\(filter\) : anfrage/)
+    assert.match(route, /anfrage\.or\(filter\)/)
   })
 })
 

@@ -34,6 +34,7 @@ import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import { ortBestaetigen } from '@/lib/places/aktionen'
+import { ortAnzeigeKontext } from '@/lib/places/suche'
 import { istOrtId, type Ort } from '@/lib/places/domain'
 import {
   routeEinstiegAusParams,
@@ -103,6 +104,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
   const route = routeEinstiegAusParams(params)
 
   let handoffFehler: string | null = null
+  let handoffWiederholen = false
   let bestaetigteRoute: Ort[] = []
 
   if (route.art === 'konflikt' || route.art === 'transport_ungueltig') {
@@ -112,6 +114,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
     const bestaetigt = routeZieleBestaetigen(route.ids, bestand)
     if (bestaetigt.art !== 'bestaetigt') {
       handoffFehler = bestaetigt.meldung
+      handoffWiederholen = bestaetigt.art === 'ausfall'
     } else {
       bestaetigteRoute = bestaetigt.ziele
     }
@@ -119,9 +122,13 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
 
   const ziel = ersterWert(params?.ziel)
   const zielId = route.art === 'kein' ? ersterWert(params?.zielId) : undefined
-  const bestaetigt = !handoffFehler && zielId ? await ortBestaetigen(zielId, 'ziel') : null
+  const bestaetigt = !handoffFehler && typeof zielId === 'string' ? await ortBestaetigen(zielId, 'ziel') : null
+  if (bestaetigt && !bestaetigt.ok) {
+    handoffFehler = bestaetigt.meldung
+    handoffWiederholen = bestaetigt.grund === 'ausfall'
+  }
   const zielOrt = bestaetigteRoute[0] ?? (bestaetigt?.ok ? bestaetigt.wert : null)
-  const weitereZiele = bestaetigteRoute.slice(1).map((ort) => ({ id: ort.id, name: ort.name }))
+  const weitereZiele = bestaetigteRoute.slice(1).map((ort) => ({ id: ort.id, name: ort.name, description: ortAnzeigeKontext(ort) }))
 
   const vor = planenVorbelegung({
     zielId: zielOrt?.id ?? null,
@@ -135,7 +142,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
       <div className="mx-auto grid w-full min-w-0 max-w-6xl gap-8 sm:gap-10">
         <PlanenCreateGate angemeldet={angemeldet}>
           {handoffFehler ? (
-            <RouteZielHandoffFehler meldung={handoffFehler} />
+            <RouteZielHandoffFehler meldung={handoffFehler} wiederholen={handoffWiederholen} />
           ) : (
             <>
               <div className="grid min-w-0 gap-4">
@@ -164,6 +171,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
                   angemeldet={angemeldet}
                   initialDestination={vor.destination}
                   initialDestinationId={vor.destinationId}
+                  initialDestinationDescription={zielOrt ? ortAnzeigeKontext(zielOrt) : undefined}
                   initialIdea={vor.idee}
                   initialWeitereZiele={vor.weitereZiele}
                 />

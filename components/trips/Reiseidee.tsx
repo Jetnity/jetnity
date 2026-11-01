@@ -185,9 +185,10 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
       const orte = await vorschlagOrteAufloesen(snapshot)
       if (!lifecycle.aktuell(lauf)) return
+      if (!orte.ok) { setMeldung(orte.meldung); lifecycle.beenden(lauf); return }
       try {
         const reise = gastreiseAblegen(
-          vorschlagAlsReise(snapshot, ref, kennungErzeugen, new Date().toISOString(), orte),
+          vorschlagAlsReise(snapshot, ref, kennungErzeugen, new Date().toISOString(), orte.orte),
         )
         if (!lifecycle.aktuell(lauf)) return
         router.push(`/reisen/${reise.id}` as Route)

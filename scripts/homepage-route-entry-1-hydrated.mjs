@@ -17,11 +17,12 @@ import { chromium } from 'playwright'
 const require = createRequire(import.meta.url)
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..')
 const EVIDENCE = join(REPO, 'docs/evidence/homepage-confirmed-route-entry-1')
-const ARTIFACTS = '/opt/cursor/artifacts'
-const OUT = join('/tmp', 'homepage-route-entry-1-harness')
+const OUTPUT = process.env.PLACES_UI_EVIDENCE_DIR ?? EVIDENCE
+const ARTIFACTS = process.env.PLACES_UI_ARTIFACT_DIR ?? '/opt/cursor/artifacts'
+const OUT = process.env.PLACES_UI_SCRATCH_DIR ?? join('/tmp', 'homepage-route-entry-1-harness')
 
 mkdirSync(OUT, { recursive: true })
-mkdirSync(EVIDENCE, { recursive: true })
+mkdirSync(OUTPUT, { recursive: true })
 mkdirSync(ARTIFACTS, { recursive: true })
 
 const PARIS = 'geonames:2988507'
@@ -126,7 +127,7 @@ async function waehleOrt(page, eingabe, name) {
 }
 
 async function speichern(page, name) {
-  const ziel = join(EVIDENCE, `${name}.png`)
+  const ziel = join(OUTPUT, `${name}.png`)
   const artifact = join(ARTIFACTS, `${name}.png`)
   await page.screenshot({ path: ziel, fullPage: true })
   await page.screenshot({ path: artifact, fullPage: true })
@@ -412,6 +413,25 @@ async function tastaturFokusReflow(page, origin) {
   })
 }
 
+async function aktuelleOrtsauswahl(page, origin) {
+  await oeffnen(page, origin, 'surface=ortsuche&langsam=1', { width: 390, height: 844 })
+  const input = page.locator('#feld-minimal')
+  await input.fill('Paris')
+  await page.getByRole('option', { name: 'Paris, Stadt' }).waitFor()
+  await input.fill('Rom')
+  await input.press('ArrowDown')
+  await input.press('Enter')
+  assert.equal(await page.getByRole('option', { name: 'Paris, Stadt' }).count(), 0)
+  assert.equal(await page.locator('[data-model-name]').getAttribute('data-model-name'), '')
+  await page.getByRole('option', { name: 'Rom, Stadt' }).waitFor()
+  await page.getByRole('option', { name: 'Rom, Stadt' }).click()
+  assert.equal(await page.locator('[data-model-name]').getAttribute('data-model-name'), 'Rom')
+  const kontextId = await input.getAttribute('aria-describedby')
+  assert.ok(kontextId)
+  assert.equal(await page.locator(`[id="${kontextId}"]`).textContent(), 'Italien')
+  await speichern(page, 'places-selected-context-mobile')
+}
+
 const css = await compileCss()
 const bundle = await bundleHarness()
 const script = readFileSync(bundle, 'utf8')
@@ -422,6 +442,7 @@ const page = await browser.newPage()
 const ergebnisse = []
 try {
   for (const [name, lauf] of [
+    ['current-query-only + selected context', aktuelleOrtsauswahl],
     ['R1 pending replace/remove', r1PendingErhalt],
     ['R1 replace-target switch', r1ErsetzenWechsel],
     ['R2 visible/model swap', r2SichtVsModell],
@@ -439,7 +460,7 @@ try {
 } catch (fehler) {
   ergebnisse.push({ name: 'failed', ok: false, meldung: String(fehler) })
   await speichern(page, 'hydrated_failure').catch(() => {})
-  writeFileSync(join(EVIDENCE, 'hydrated-report.json'), JSON.stringify({ ergebnisse, fehler: String(fehler) }, null, 2))
+  writeFileSync(join(OUTPUT, 'hydrated-report.json'), JSON.stringify({ ergebnisse, fehler: String(fehler) }, null, 2))
   await browser.close()
   server.close()
   console.error(fehler)
@@ -449,7 +470,7 @@ try {
 await browser.close()
 server.close()
 writeFileSync(
-  join(EVIDENCE, 'hydrated-report.json'),
+  join(OUTPUT, 'hydrated-report.json'),
   JSON.stringify(
     {
       ok: true,

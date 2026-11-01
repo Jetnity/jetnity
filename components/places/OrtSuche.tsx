@@ -87,6 +87,9 @@ export default function OrtSuche({
 }: OrtSucheProps) {
   const [text, setText] = React.useState(value?.name ?? initialText ?? '')
   const [treffer, setTreffer] = React.useState<OrtOption[]>([])
+  const [trefferSchluessel, setTrefferSchluessel] = React.useState('')
+  const suchSchluessel = `${rolle}\0${text.trim()}`
+  const aktuelleTreffer = trefferSchluessel === suchSchluessel ? treffer : []
   const [offen, setOffen] = React.useState(false)
   const [laedt, setLaedt] = React.useState(false)
   const [fehlerArt, setFehlerArt] = React.useState<'error' | 'unavailable' | null>(null)
@@ -94,6 +97,7 @@ export default function OrtSuche({
   const wurzel = React.useRef<HTMLDivElement>(null)
   const anfrage = React.useRef({ aktuell: 0 })
   const listeId = React.useId()
+  const auswahlKontextId = React.useId()
   const letzterSamen = React.useRef(initialText)
   const zeigerWahl = React.useRef(false)
   const wertSchluessel = value ? `${value.id}\0${value.name}` : ''
@@ -174,6 +178,7 @@ export default function OrtSuche({
           setTreffer([])
           return
         }
+        setTrefferSchluessel(`${rolle}\0${suche}`)
         setTreffer(json)
       } catch (err) {
         if (!darf()) return
@@ -233,7 +238,8 @@ export default function OrtSuche({
   }, [])
 
   const waehlen = (option: OrtOption) => {
-    onChange({ id: option.id, name: option.label }, option.label)
+    if (trefferSchluessel !== suchSchluessel) return
+    onChange({ id: option.id, name: option.label, description: option.description }, option.label)
     setText(option.label)
     setOffen(false)
     setTreffer([])
@@ -242,6 +248,8 @@ export default function OrtSuche({
 
   const tippen = (wert: string) => {
     setText(wert)
+    setTreffer([])
+    setTrefferSchluessel('')
     setOffen(true)
     setAktiv(-1)
     if (!value || wert.trim() !== value.name) onChange(null, wert)
@@ -258,7 +266,7 @@ export default function OrtSuche({
   const lage = sucheLage({
     offen,
     laedt,
-    treffer: treffer.length,
+    treffer: aktuelleTreffer.length,
     queryLen: text.trim().length,
     minQueryLen: 2,
     hatAuswahl: Boolean(value),
@@ -266,7 +274,7 @@ export default function OrtSuche({
     ungueltig,
   })
   const listeSichtbar = sucheListeSichtbar(lage)
-  const optionAnzahl = lage === 'results' ? treffer.length : 0
+  const optionAnzahl = lage === 'results' ? aktuelleTreffer.length : 0
   const aktiverIndex = sucheAktiveOption(aktiv, optionAnzahl)
 
   const taste = (ereignis: React.KeyboardEvent<HTMLInputElement>) => {
@@ -281,9 +289,9 @@ export default function OrtSuche({
       const pfeil = ereignis.key
       setAktiv(sucheListeIndex(aktiverIndex, optionAnzahl, pfeil))
     }
-    if (sucheListeWaehlt(ereignis.key, aktiverIndex) && treffer[aktiverIndex]) {
+    if (sucheListeWaehlt(ereignis.key, aktiverIndex) && aktuelleTreffer[aktiverIndex]) {
       ereignis.preventDefault()
-      waehlen(treffer[aktiverIndex]!)
+      waehlen(aktuelleTreffer[aktiverIndex]!)
     }
   }
 
@@ -307,10 +315,15 @@ export default function OrtSuche({
         aria-autocomplete="list"
         aria-activedescendant={aktiverIndex >= 0 ? `${listeId}-${aktiverIndex}` : undefined}
         aria-invalid={ungueltig || undefined}
-        aria-describedby={ariaBeschrieben(describedBy)}
+        aria-describedby={ariaBeschrieben(describedBy, value?.description ? auswahlKontextId : undefined)}
         disabled={disabled}
         className={inputClassName}
       />
+      {value?.description && (
+        <p id={auswahlKontextId} className="mt-1.5 break-words text-xs leading-5 text-ink-700">
+          {value.description}
+        </p>
+      )}
       {laedt && (
         <Loader2
           className={cn(
@@ -324,7 +337,7 @@ export default function OrtSuche({
         <Suchliste
           id={listeId}
           lage={lage}
-          eintraege={treffer.map((option) => ({
+          eintraege={aktuelleTreffer.map((option) => ({
             id: option.id,
             primaer: option.label,
             sekundaer: option.description,
@@ -334,7 +347,7 @@ export default function OrtSuche({
           }))}
           aktiv={aktiverIndex}
           onWaehlen={(index) => {
-            const option = treffer[index]
+            const option = aktuelleTreffer[index]
             if (option) waehlen(option)
           }}
           leerText={rolle === 'ziel' ? ORT_MELDUNG.zielUnbekannt : ORT_MELDUNG.abreiseUnbekannt}

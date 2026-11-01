@@ -1,0 +1,8 @@
+Quelle: /Users/sasa/Documents/Codex/2026-11-01/un/work/geonames-source
+Offizielle Länderidentitäten vollständig geprüft: 252; historische Einträge ausgeschlossen: 2
+Gelesene Quellzeilen: 13483492
+Übernommen: 289453
+Verworfen: 13194039; ungültige TSV-Zeilen: 0; doppelte IDs: 0
+Ausgelassene ganze Alias-Tokens (800-Zeichen-Grenze): 105405
+Typen: {"city":100822,"island":175037,"region":13344,"country":250}
+Probe – nichts geschrieben. Zum Schreiben: --schreiben --entwicklung oder --schreiben --produktion --projekt-ref <Ref>

@@ -9,6 +9,8 @@ import { ORT_MELDUNG, eingabeOhneAuswahl } from '@/lib/places/pruefen'
 export type OrtAuswahl = {
   id: string
   name: string
+  /** Nur sichtbarer Auswahlkontext; niemals Ortsautorität. */
+  description?: string
 }
 
 export function auswahlFehlt(

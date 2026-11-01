@@ -42,6 +42,7 @@ window.fetch = async (input, init) => {
   const url = String(input)
   if (url.includes('/api/search/places')) {
     const frage = new URL(url, 'http://harness.local').searchParams.get('q') ?? ''
+    if (new URLSearchParams(window.location.search).has('langsam') && frage === 'Rom') await new Promise((resolve) => setTimeout(resolve, 600))
     const treffer = ORTE.filter((ort) => ort.label.toLowerCase().includes(frage.trim().toLowerCase()))
     return new Response(JSON.stringify(treffer), {
       status: 200,
@@ -63,7 +64,7 @@ function weitereAusParams() {
   if (!roh) return []
   return roh.split('|').map((eintrag) => {
     const [id, name] = eintrag.split(',')
-    return { id: id ?? '', name: name ?? id ?? '' }
+    return { id: id ?? '', name: name ?? id ?? '', description: ORTE.find((ort) => ort.id === id)?.description }
   })
 }
 
@@ -130,6 +131,7 @@ function App() {
           angemeldet={params.get('konto') === '1'}
           initialDestination={params.get('ziel') ?? 'Paris'}
           initialDestinationId={params.get('zielId') ?? 'geonames:2988507'}
+          initialDestinationDescription={ORTE.find((ort) => ort.id === (params.get('zielId') ?? 'geonames:2988507'))?.description}
           initialWeitereZiele={weitereAusParams()}
         />
       </div>

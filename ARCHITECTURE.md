@@ -1,5 +1,7 @@
 # Jetnity – Architektur
 
+> **01.11.2026 – Orts-/Länderqualität, PR #1103:** Implementierung und Development-Prüfung laufen; Production-Migration/Referenzdatenrefresh noch nicht freigegeben. [Aktueller Prüfstand und nächster Schritt](docs/PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md). Root alleiniger Writer, separate unabhängige Reviews. Dieser Hinweis ist der aktuelle Stand dieses Slices; ältere Einträge bleiben historische Snapshots.
+
 Stand: 28. August 2026
 Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2, die fail-closed Public-Metadata-Grenze (PR #86 / ADR-0170) sowie den zentralen Admin-AAL2-Application-Guard auf `main`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development. Admin-AAL2-Data-Plane: Development-History `20260826052735_admin_aal2_data_plane`; historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql`. Die forward-only Alignment-Datei `20260827170000_admin_aal2_data_plane_alignment.sql` liegt über PR #98 auf `main` und ist nicht Production-applied (ADR-0175). Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 

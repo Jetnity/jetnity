@@ -9,8 +9,11 @@ import {
   sucheVarianten,
 } from '@/lib/airports/normalisieren'
 import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib/places/domain'
-import { EXAKTER_NAMENS_RANG, namensRangMitWortanfang } from '@/lib/suche/relevanz'
+import { EXAKTER_NAMENS_RANG, namensArt, namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
+import { ortLandName, ortLokalerName, passendeLandCodes } from '@/lib/places/namen'
+
+export const ORT_SUCHTEXT_MAX = 120
 export const ORT_TREFFER = 6
 const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
@@ -28,7 +31,8 @@ const MIN_RANG_BEI_STARK = 1_500
 const MIN_RANG = 200
 
 export function sucheSicher(wert: string): string {
-  return wert.replace(/[%_,.()\\*]/g, '').trim()
+  return [...wert].filter((zeichen) => zeichen >= ' ' && zeichen !== '\u007f')
+    .join('').replace(/[%_\\*"]/g, '').trim()
 }
 
 export function sucheFilter(suche: string): string[] {
@@ -43,27 +47,39 @@ function sucheIstPlatzhalter(suche: string): boolean {
 }
 
 export function ortNamensfilter(suche: string): string | null {
-  if (sucheIstPlatzhalter(suche)) return null
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (teile.length === 0) return null
   return teile
     .flatMap((teil) => {
-      const felder = [`name.ilike.${teil}%`, `name.ilike.% ${teil}%`]
+      const felder = [postgrestIlike('name', `${teil}%`), postgrestIlike('name', `% ${teil}%`)]
       if (/^[A-Za-z]{3}$/.test(teil)) felder.push(`iata.eq.${teil.toUpperCase()}`)
       return felder
     })
     .join(',')
 }
 
+/** Exakte Namen/Aliase separat vor einer begrenzten Präfixmenge holen. */
+export function ortExaktfilter(suche: string): string | null {
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
+  const teile = sucheFilter(suche)
+  if (!teile.length) return null
+  return [...teile.flatMap((teil) => [
+    postgrestIlike('name', teil),
+    `and(${postgrestIlike('keywords', `%${teil}%`)},${postgrestImatch('keywords', `(^|,)[[:space:]]*${regexSicher(teil)}[[:space:]]*(,|$)`)})`,
+    ...(/^[A-Za-z]{3}$/.test(teil) ? [`iata.eq.${teil.toUpperCase()}`] : []),
+  ]), ...passendeLandCodes(suche, true).map((code) => `and(typ.eq.country,country_code.eq.${code})`)].join(',')
+}
+
 export function ortSchluesselfilter(suche: string): string | null {
-  if (sucheIstPlatzhalter(suche)) return null
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (teile.length === 0) return null
-  return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
+  return teile.map((teil) => postgrestIlike('keywords', `%${teil}%`)).join(',')
 }
 
 function postgrestIlike(feld: string, muster: string): string {
-  return /[,%() ]/.test(muster) ? `${feld}.ilike."${muster}"` : `${feld}.ilike.${muster}`
+  return /[,%() .]/.test(muster) ? `${feld}.ilike.${JSON.stringify(muster)}` : `${feld}.ilike.${muster}`
 }
 
 function regexSicher(teil: string): string {
@@ -71,7 +87,7 @@ function regexSicher(teil: string): string {
 }
 
 function postgrestImatch(feld: string, muster: string): string {
-  return `${feld}.imatch."${muster}"`
+  return `${feld}.imatch.${JSON.stringify(muster)}`
 }
 
 /**
@@ -80,10 +96,11 @@ function postgrestImatch(feld: string, muster: string): string {
  * am Token zählt nicht. Kein Substring-`ilike %token%`, kein Universum.
  */
 export function ortLandAliasExaktfilter(suche: string): string | null {
-  if (sucheIstPlatzhalter(suche)) return null
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (teile.length === 0) return null
-  return teile
+  const codes = passendeLandCodes(suche)
+  const filter = teile
     .flatMap((teil) => {
       const sicher = regexSicher(teil)
       return [
@@ -108,6 +125,7 @@ export function ortLandAliasExaktfilter(suche: string): string | null {
       ]
     })
     .join(',')
+  return [filter, ...codes.map((code) => `country_code.eq.${code}`)].filter(Boolean).join(',')
 }
 
 function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
@@ -136,7 +154,7 @@ function keywordAlsWort(keywords: string | readonly string[] | null | undefined,
 function istExaktesLandAlias(ort: Ort, suche: string): boolean {
   if (ort.typ !== 'country') return false
   const raw = suche.trim()
-  return gleichGefaltet(ort.name, raw) || schluesselwortGenau(ort.keywords, raw)
+  return Boolean(ort.countryCode && passendeLandCodes(raw, true).includes(ort.countryCode)) || gleichGefaltet(ort.name, raw) || gleichGefaltet(ortLokalerName(ort), raw) || gleichGefaltet(ort.sourceName, raw) || schluesselwortGenau(ort.keywords, raw)
 }
 
 export function ortIstExaktesLandAlias(ort: Ort, suche: string): boolean {
@@ -150,9 +168,9 @@ function typBonus(ort: Ort, rolle: OrtRolle): number {
     return 0
   }
   if (ort.typ === 'country') return 220
-  if (ort.typ === 'region') return 90
-  if (ort.typ === 'island') return 80
-  if (ort.typ === 'city') return 50
+  if (ort.typ === 'region') return 50
+  if (ort.typ === 'island') return 110
+  if (ort.typ === 'city') return 100
   return 0
 }
 
@@ -165,16 +183,21 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   if (ort.iata && ort.iata === up) treffer += 10_000
 
   const aliasGenau = schluesselwortGenau(ort.keywords, raw)
-  const landAliasAlsName = rolle === 'ziel' && ort.typ === 'country' && aliasGenau
-  let nameScore = namensRangMitWortanfang(ort.name, raw)
+  const landAliasAlsName = rolle === 'ziel' && istExaktesLandAlias(ort, raw)
+  let nameScore = Math.max(namensRangMitWortanfang(ort.name, raw), namensRangMitWortanfang(ort.sourceName, raw), ort.typ === 'country' ? namensRangMitWortanfang(ortLokalerName(ort), raw) : 0)
+  if (ort.typ === 'country' && ort.countryCode && passendeLandCodes(raw).includes(ort.countryCode)) {
+    nameScore = Math.max(nameScore, passendeLandCodes(raw, true).includes(ort.countryCode) ? EXAKTER_NAMENS_RANG : 3_500)
+  }
+  const aliasIstOrtsname = ort.typ === 'country' || (ort.typ !== 'airport' && !['admin', 'later'].includes(namensArt(ort.name, raw)))
+  if (aliasGenau && aliasIstOrtsname) nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   if (landAliasAlsName) {
     nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   }
   treffer += nameScore
 
   if (gleichGefaltet(ort.region, raw)) treffer += 180
-  if (!landAliasAlsName && keywordAlsWort(ort.keywords, raw)) {
-    treffer += aliasGenau ? 700 : 220
+  if (keywordAlsWort(ort.keywords, raw) && (!aliasGenau || !aliasIstOrtsname)) {
+    treffer = Math.max(treffer, aliasIstOrtsname ? 3_000 : (aliasGenau ? 700 : 220))
   }
   if (treffer === 0) return 0
   if (enthaeltGefaltet(ort.country, raw)) treffer += 40
@@ -187,7 +210,8 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
 }
 
 function lageText(ort: Ort): string {
-  return [ort.region, ort.country].filter(
+  const region = ort.region && !/^[A-Z0-9]{1,3}$/.test(ort.region.trim()) ? ort.region : null
+  return [region, ortLandName(ort)].filter(
     (wert, i, alle): wert is string => Boolean(wert) && alle.indexOf(wert) === i,
   ).join(', ')
 }
@@ -216,8 +240,8 @@ export function ortAnzeigeKontext(
     }
     return 'Land'
   }
-  if (ort.typ === 'region') return ['Region', ort.country].filter(Boolean).join(' · ')
-  if (ort.typ === 'island') return ['Insel', ort.country].filter(Boolean).join(' · ')
+  if (ort.typ === 'region') return ['Region', lageText(ort)].filter(Boolean).join(' · ')
+  if (ort.typ === 'island') return ['Insel', lageText(ort)].filter(Boolean).join(' · ')
   if (ort.typ === 'airport') {
     return ['Flughafen', ort.iata, lageText(ort)].filter(Boolean).join(' · ')
   }
@@ -225,8 +249,9 @@ export function ortAnzeigeKontext(
 }
 
 export function ortAnzeigeLabel(ort: Ort, suche: string): string {
-  if (!istExaktesLandAlias(ort, suche)) return ort.name
+  if (!istExaktesLandAlias(ort, suche)) return ortLokalerName(ort)
   const raw = suche.trim()
+  if (ort.countryCode && passendeLandCodes(raw, true).includes(ort.countryCode)) return ortLokalerName(ort)
   if (gleichGefaltet(ort.name, raw)) return ort.name
   return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
 }
@@ -242,6 +267,7 @@ function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): 
     iata: ort.iata ?? undefined,
     ariaLabel: `${label}, ${description}`,
     landAliasMatch: istExaktesLandAlias(ort, suche),
+    ...(ort.countryCode ? { countryCode: ort.countryCode } : {}),
   }
 }
 
@@ -263,7 +289,9 @@ function orteBewerten(
         if (aLand !== bLand) return aLand ? -1 : 1
       }
       if (b.rang !== a.rang) return b.rang - a.rang
-      return a.ort.name.localeCompare(b.ort.name)
+      const bevoelkerung = (b.ort.population ?? 0) - (a.ort.population ?? 0)
+      if (bevoelkerung) return bevoelkerung
+      return a.ort.name.localeCompare(b.ort.name, 'de') || (a.ort.countryCode ?? '').localeCompare(b.ort.countryCode ?? '') || (a.ort.region ?? '').localeCompare(b.ort.region ?? '', 'de') || a.ort.id.localeCompare(b.ort.id)
     })
 }
 

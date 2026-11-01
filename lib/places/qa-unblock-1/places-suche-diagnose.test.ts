@@ -101,9 +101,14 @@ function teileOhneZitat(liste: string): string[] {
   const teile: string[] = []
   let aktuell = ''
   let zitat = false
+  let tiefe = 0
+  let escape = false
   for (const zeichen of liste) {
-    if (zeichen === '"') zitat = !zitat
-    if (zeichen === ',' && !zitat) {
+    if (zeichen === '"' && !escape) zitat = !zitat
+    if (!zitat && zeichen === '(') tiefe += 1
+    if (!zitat && zeichen === ')') tiefe -= 1
+    escape = zeichen === '\\' && !escape
+    if (zeichen === ',' && !zitat && tiefe === 0) {
       teile.push(aktuell)
       aktuell = ''
     } else {
@@ -115,12 +120,16 @@ function teileOhneZitat(liste: string): string[] {
 }
 
 function bedingung(ausdruck: string): (zeile: OrtZeile) => boolean {
+  if (ausdruck.startsWith('and(') && ausdruck.endsWith(')')) {
+    const bedingungen = teileOhneZitat(ausdruck.slice(4, -1)).map(bedingung)
+    return (z) => bedingungen.every((pruefen) => pruefen(z))
+  }
   const ersterPunkt = ausdruck.indexOf('.')
   const zweiterPunkt = ausdruck.indexOf('.', ersterPunkt + 1)
   const feld = ausdruck.slice(0, ersterPunkt) as keyof OrtZeile
   const op = ausdruck.slice(ersterPunkt + 1, zweiterPunkt)
   let wert = ausdruck.slice(zweiterPunkt + 1)
-  if (wert.startsWith('"') && wert.endsWith('"')) wert = wert.slice(1, -1)
+  if (wert.startsWith('"') && wert.endsWith('"')) wert = JSON.parse(wert)
   const lesen = (z: OrtZeile) => {
     const inhalt = z[feld]
     return typeof inhalt === 'string' ? inhalt : null

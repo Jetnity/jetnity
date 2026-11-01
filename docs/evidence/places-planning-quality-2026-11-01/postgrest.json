@@ -1,0 +1,1125 @@
+{
+  "zeit": "2026-11-01T20:29:07.775Z",
+  "umgebung": "http://127.0.0.1:55451",
+  "faelle": [
+    {
+      "suche": "Australien",
+      "id": "geonames:2077456",
+      "ms": 97,
+      "optionen": [
+        {
+          "id": "geonames:2077456",
+          "label": "Australien",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Australien, Land",
+          "landAliasMatch": true,
+          "countryCode": "AU"
+        }
+      ]
+    },
+    {
+      "suche": "Jervis",
+      "enthalten": "geonames:8335033",
+      "ms": 43,
+      "optionen": [
+        {
+          "id": "geonames:3652456",
+          "label": "Isla Rábida",
+          "description": "Insel · Galápagos, Ecuador",
+          "typ": "island",
+          "ariaLabel": "Isla Rábida, Insel · Galápagos, Ecuador",
+          "landAliasMatch": false,
+          "countryCode": "EC"
+        },
+        {
+          "id": "geonames:5854925",
+          "label": "Jarvis Island",
+          "description": "Insel · Amerikanische Überseeinseln",
+          "typ": "island",
+          "ariaLabel": "Jarvis Island, Insel · Amerikanische Überseeinseln",
+          "landAliasMatch": false,
+          "countryCode": "UM"
+        },
+        {
+          "id": "geonames:2101511",
+          "label": "Jervis Island",
+          "description": "Insel · Queensland, Australien",
+          "typ": "island",
+          "ariaLabel": "Jervis Island, Insel · Queensland, Australien",
+          "landAliasMatch": false,
+          "countryCode": "AU"
+        },
+        {
+          "id": "geonames:5986397",
+          "label": "Jervis Island",
+          "description": "Insel · Powell River Regional District, British Columbia, Kanada",
+          "typ": "island",
+          "ariaLabel": "Jervis Island, Insel · Powell River Regional District, British Columbia, Kanada",
+          "landAliasMatch": false,
+          "countryCode": "CA"
+        },
+        {
+          "id": "geonames:8310163",
+          "label": "Mabuiag Island",
+          "description": "Insel · Queensland, Australien",
+          "typ": "island",
+          "ariaLabel": "Mabuiag Island, Insel · Queensland, Australien",
+          "landAliasMatch": false,
+          "countryCode": "AU"
+        },
+        {
+          "id": "geonames:8335033",
+          "label": "Jervis Bay Territory",
+          "description": "Region · Australien",
+          "typ": "region",
+          "ariaLabel": "Jervis Bay Territory, Region · Australien",
+          "landAliasMatch": false,
+          "countryCode": "AU"
+        }
+      ]
+    },
+    {
+      "suche": "Aruba",
+      "id": "geonames:3577279",
+      "ms": 607,
+      "optionen": [
+        {
+          "id": "geonames:3577279",
+          "label": "Aruba",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Aruba, Land",
+          "landAliasMatch": true,
+          "countryCode": "AW"
+        },
+        {
+          "id": "geonames:3577280",
+          "label": "Aruba Island",
+          "description": "Insel · Aruba",
+          "typ": "island",
+          "ariaLabel": "Aruba Island, Insel · Aruba",
+          "landAliasMatch": false,
+          "countryCode": "AW"
+        },
+        {
+          "id": "geonames:3183364",
+          "label": "Alba",
+          "description": "Stadt · Provincia di Cuneo, Piedmont, Italien",
+          "typ": "city",
+          "ariaLabel": "Alba, Stadt · Provincia di Cuneo, Piedmont, Italien",
+          "landAliasMatch": false,
+          "countryCode": "IT"
+        },
+        {
+          "id": "geonames:3182927",
+          "label": "Arba",
+          "description": "Stadt · Pordenone, Friuli Venezia Giulia, Italien",
+          "typ": "city",
+          "ariaLabel": "Arba, Stadt · Pordenone, Friuli Venezia Giulia, Italien",
+          "landAliasMatch": false,
+          "countryCode": "IT"
+        },
+        {
+          "id": "geonames:2080937",
+          "label": "Arubaru",
+          "description": "Insel · Rongelap Atoll, Marshallinseln",
+          "typ": "island",
+          "ariaLabel": "Arubaru, Insel · Rongelap Atoll, Marshallinseln",
+          "landAliasMatch": false,
+          "countryCode": "MH"
+        },
+        {
+          "id": "geonames:5454711",
+          "label": "Albuquerque",
+          "description": "Stadt · Bernalillo County, New Mexico, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Albuquerque, Stadt · Bernalillo County, New Mexico, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        }
+      ]
+    },
+    {
+      "suche": "Curaçao",
+      "id": "geonames:7626836",
+      "ms": 59,
+      "optionen": [
+        {
+          "id": "geonames:7626836",
+          "label": "Curaçao",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Curaçao, Land",
+          "landAliasMatch": true,
+          "countryCode": "CW"
+        },
+        {
+          "id": "geonames:3513790",
+          "label": "Curaçao Island",
+          "description": "Insel · Curaçao",
+          "typ": "island",
+          "ariaLabel": "Curaçao Island, Insel · Curaçao",
+          "landAliasMatch": false,
+          "countryCode": "CW"
+        }
+      ]
+    },
+    {
+      "suche": "Jersey",
+      "id": "geonames:3042142",
+      "ms": 38,
+      "optionen": [
+        {
+          "id": "geonames:3042142",
+          "label": "Jersey",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Jersey, Land",
+          "landAliasMatch": true,
+          "countryCode": "JE"
+        },
+        {
+          "id": "geonames:3042143",
+          "label": "Jersey",
+          "description": "Insel · Jersey",
+          "typ": "island",
+          "ariaLabel": "Jersey, Insel · Jersey",
+          "landAliasMatch": false,
+          "countryCode": "JE"
+        },
+        {
+          "id": "geonames:5986380",
+          "label": "Jerseyman Island",
+          "description": "Insel · Newfoundland and Labrador, Kanada",
+          "typ": "island",
+          "ariaLabel": "Jerseyman Island, Insel · Newfoundland and Labrador, Kanada",
+          "landAliasMatch": false,
+          "countryCode": "CA"
+        },
+        {
+          "id": "geonames:5986381",
+          "label": "Jerseyman Island",
+          "description": "Insel · Nova Scotia, Kanada",
+          "typ": "island",
+          "ariaLabel": "Jerseyman Island, Insel · Nova Scotia, Kanada",
+          "landAliasMatch": false,
+          "countryCode": "CA"
+        },
+        {
+          "id": "geonames:4241822",
+          "label": "Jerseyville",
+          "description": "Stadt · Jersey County, Illinois, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Jerseyville, Stadt · Jersey County, Illinois, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:8180124",
+          "label": "Jersey Island",
+          "description": "Insel · Queensland, Australien",
+          "typ": "island",
+          "ariaLabel": "Jersey Island, Insel · Queensland, Australien",
+          "landAliasMatch": false,
+          "countryCode": "AU"
+        }
+      ]
+    },
+    {
+      "suche": "Antarktis",
+      "id": "geonames:6697173",
+      "ms": 43,
+      "optionen": [
+        {
+          "id": "geonames:6697173",
+          "label": "Antarktis",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Antarktis, Land",
+          "landAliasMatch": true,
+          "countryCode": "AQ"
+        }
+      ]
+    },
+    {
+      "suche": "Tay",
+      "enthalten": "geonames:1220409",
+      "ms": 616,
+      "optionen": [
+        {
+          "id": "geonames:588335",
+          "label": "Tartu",
+          "description": "Stadt · Tartu linn, Estland",
+          "typ": "city",
+          "ariaLabel": "Tartu, Stadt · Tartu linn, Estland",
+          "landAliasMatch": false,
+          "countryCode": "EE"
+        },
+        {
+          "id": "geonames:1220409",
+          "label": "Tadschikistan",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Tadschikistan, Land",
+          "landAliasMatch": false,
+          "countryCode": "TJ"
+        },
+        {
+          "id": "geonames:1682598",
+          "label": "Taytay",
+          "description": "Stadt · Province of Rizal, Calabarzon, Philippinen",
+          "typ": "city",
+          "ariaLabel": "Taytay, Stadt · Province of Rizal, Calabarzon, Philippinen",
+          "landAliasMatch": false,
+          "countryCode": "PH"
+        },
+        {
+          "id": "geonames:1682659",
+          "label": "Tayabas",
+          "description": "Stadt · Province of Quezon, Calabarzon, Philippinen",
+          "typ": "city",
+          "ariaLabel": "Tayabas, Stadt · Province of Quezon, Calabarzon, Philippinen",
+          "landAliasMatch": false,
+          "countryCode": "PH"
+        },
+        {
+          "id": "geonames:5011908",
+          "label": "Taylor",
+          "description": "Stadt · Wayne County, Michigan, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Taylor, Stadt · Wayne County, Michigan, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:5782476",
+          "label": "Taylorsville",
+          "description": "Stadt · Salt Lake County, Utah, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Taylorsville, Stadt · Salt Lake County, Utah, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        }
+      ]
+    },
+    {
+      "suche": "Taj",
+      "enthalten": "geonames:1668284",
+      "ms": 634,
+      "optionen": [
+        {
+          "id": "geonames:1220409",
+          "label": "Tadschikistan",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Tadschikistan, Land",
+          "landAliasMatch": false,
+          "countryCode": "TJ"
+        },
+        {
+          "id": "geonames:1605651",
+          "label": "Thailand",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Thailand, Land",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1668284",
+          "label": "Taiwan",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Taiwan, Land",
+          "landAliasMatch": false,
+          "countryCode": "TW"
+        },
+        {
+          "id": "geonames:1220416",
+          "label": "Tajikobod",
+          "description": "Stadt · Republican Subordination, Tadschikistan",
+          "typ": "city",
+          "ariaLabel": "Tajikobod, Stadt · Republican Subordination, Tadschikistan",
+          "landAliasMatch": false,
+          "countryCode": "TJ"
+        },
+        {
+          "id": "geonames:3189221",
+          "label": "Tajan",
+          "description": "Insel · Dubrovnik-Neretva, Kroatien",
+          "typ": "island",
+          "ariaLabel": "Tajan, Insel · Dubrovnik-Neretva, Kroatien",
+          "landAliasMatch": false,
+          "countryCode": "HR"
+        },
+        {
+          "id": "geonames:10093958",
+          "label": "Tajasaari",
+          "description": "Insel · Pohjois-Lappi, Lapland, Finnland",
+          "typ": "island",
+          "ariaLabel": "Tajasaari, Insel · Pohjois-Lappi, Lapland, Finnland",
+          "landAliasMatch": false,
+          "countryCode": "FI"
+        }
+      ]
+    },
+    {
+      "suche": "Royaume",
+      "enthalten": "geonames:2635167",
+      "ms": 46,
+      "optionen": [
+        {
+          "id": "geonames:2635167",
+          "label": "Vereinigtes Königreich",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Vereinigtes Königreich, Land",
+          "landAliasMatch": false,
+          "countryCode": "GB"
+        },
+        {
+          "id": "geonames:2542007",
+          "label": "Marokko",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Marokko, Land",
+          "landAliasMatch": false,
+          "countryCode": "MA"
+        },
+        {
+          "id": "geonames:934841",
+          "label": "Eswatini",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Eswatini, Land",
+          "landAliasMatch": false,
+          "countryCode": "SZ"
+        }
+      ]
+    },
+    {
+      "suche": "Schwei",
+      "id": "geonames:2658434",
+      "ms": 36,
+      "optionen": [
+        {
+          "id": "geonames:2658434",
+          "label": "Schweiz",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Schweiz, Land",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:2834475",
+          "label": "Schweinesand",
+          "description": "Insel · Lower Saxony, Deutschland",
+          "typ": "island",
+          "ariaLabel": "Schweinesand, Insel · Lower Saxony, Deutschland",
+          "landAliasMatch": false,
+          "countryCode": "DE"
+        },
+        {
+          "id": "geonames:956907",
+          "label": "Schweizer-Reneke",
+          "description": "Stadt · Dr Ruth Segomotsi Mompati District Municipality, North West, Südafrika",
+          "typ": "city",
+          "ariaLabel": "Schweizer-Reneke, Stadt · Dr Ruth Segomotsi Mompati District Municipality, North West, Südafrika",
+          "landAliasMatch": false,
+          "countryCode": "ZA"
+        },
+        {
+          "id": "geonames:2834498",
+          "label": "Schweinfurt",
+          "description": "Stadt · Regierungsbezirk Unterfranken, Bavaria, Deutschland",
+          "typ": "city",
+          "ariaLabel": "Schweinfurt, Stadt · Regierungsbezirk Unterfranken, Bavaria, Deutschland",
+          "landAliasMatch": false,
+          "countryCode": "DE"
+        },
+        {
+          "id": "geonames:2834594",
+          "label": "Schweich",
+          "description": "Stadt · Rheinland-Pfalz, Deutschland",
+          "typ": "city",
+          "ariaLabel": "Schweich, Stadt · Rheinland-Pfalz, Deutschland",
+          "landAliasMatch": false,
+          "countryCode": "DE"
+        },
+        {
+          "id": "geonames:2765383",
+          "label": "Schweiggers",
+          "description": "Stadt · Politischer Bezirk Zwettl, Lower Austria, Österreich",
+          "typ": "city",
+          "ariaLabel": "Schweiggers, Stadt · Politischer Bezirk Zwettl, Lower Austria, Österreich",
+          "landAliasMatch": false,
+          "countryCode": "AT"
+        }
+      ]
+    },
+    {
+      "suche": "Schweiz",
+      "id": "geonames:2658434",
+      "ms": 32,
+      "optionen": [
+        {
+          "id": "geonames:2658434",
+          "label": "Schweiz",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Schweiz, Land",
+          "landAliasMatch": true,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:956907",
+          "label": "Schweizer-Reneke",
+          "description": "Stadt · Dr Ruth Segomotsi Mompati District Municipality, North West, Südafrika",
+          "typ": "city",
+          "ariaLabel": "Schweizer-Reneke, Stadt · Dr Ruth Segomotsi Mompati District Municipality, North West, Südafrika",
+          "landAliasMatch": false,
+          "countryCode": "ZA"
+        }
+      ]
+    },
+    {
+      "suche": "Deutschland",
+      "id": "geonames:2921044",
+      "ms": 35,
+      "optionen": [
+        {
+          "id": "geonames:2921044",
+          "label": "Deutschland",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Deutschland, Land",
+          "landAliasMatch": true,
+          "countryCode": "DE"
+        },
+        {
+          "id": "geonames:2781023",
+          "label": "Deutschlandsberg",
+          "description": "Stadt · Politischer Bezirk Deutschlandsberg, Styria, Österreich",
+          "typ": "city",
+          "ariaLabel": "Deutschlandsberg, Stadt · Politischer Bezirk Deutschlandsberg, Styria, Österreich",
+          "landAliasMatch": false,
+          "countryCode": "AT"
+        }
+      ]
+    },
+    {
+      "suche": "Frankreich",
+      "id": "geonames:3017382",
+      "ms": 32,
+      "optionen": [
+        {
+          "id": "geonames:3017382",
+          "label": "Frankreich",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Frankreich, Land",
+          "landAliasMatch": true,
+          "countryCode": "FR"
+        }
+      ]
+    },
+    {
+      "suche": "Japan",
+      "id": "geonames:1861060",
+      "ms": 726,
+      "optionen": [
+        {
+          "id": "geonames:1861060",
+          "label": "Japan",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Japan, Land",
+          "landAliasMatch": true,
+          "countryCode": "JP"
+        },
+        {
+          "id": "geonames:13715595",
+          "label": "Japan",
+          "description": "Stadt · Kabupaten Mojokerto, East Java, Indonesien",
+          "typ": "city",
+          "ariaLabel": "Japan, Stadt · Kabupaten Mojokerto, East Java, Indonesien",
+          "landAliasMatch": false,
+          "countryCode": "ID"
+        },
+        {
+          "id": "geonames:2082145",
+          "label": "East Fayu Island",
+          "description": "Insel · Nomwin Municipality, Chuuk, Mikronesien",
+          "typ": "island",
+          "ariaLabel": "East Fayu Island, Insel · Nomwin Municipality, Chuuk, Mikronesien",
+          "landAliasMatch": false,
+          "countryCode": "FM"
+        },
+        {
+          "id": "geonames:4328915",
+          "label": "Japan Island",
+          "description": "Insel · Plaquemines Parish, Louisiana, Vereinigte Staaten",
+          "typ": "island",
+          "ariaLabel": "Japan Island, Insel · Plaquemines Parish, Louisiana, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:5553938",
+          "label": "Japonski Island",
+          "description": "Insel · Sitka City and Borough, Alaska, Vereinigte Staaten",
+          "typ": "island",
+          "ariaLabel": "Japonski Island, Insel · Sitka City and Borough, Alaska, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:2079839",
+          "label": "Yabbenohr",
+          "description": "Insel · Kwajalein Atoll, Marshallinseln",
+          "typ": "island",
+          "ariaLabel": "Yabbenohr, Insel · Kwajalein Atoll, Marshallinseln",
+          "landAliasMatch": false,
+          "countryCode": "MH"
+        }
+      ]
+    },
+    {
+      "suche": "Peru",
+      "id": "geonames:3932488",
+      "ms": 669,
+      "optionen": [
+        {
+          "id": "geonames:3932488",
+          "label": "Peru",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Peru, Land",
+          "landAliasMatch": true,
+          "countryCode": "PE"
+        },
+        {
+          "id": "geonames:2110250",
+          "label": "Beru Island",
+          "description": "Insel · Beru, Gilbert Islands, Kiribati",
+          "typ": "island",
+          "ariaLabel": "Beru Island, Insel · Beru, Gilbert Islands, Kiribati",
+          "landAliasMatch": false,
+          "countryCode": "KI"
+        },
+        {
+          "id": "geonames:4924733",
+          "label": "Peru",
+          "description": "Stadt · Miami County, Indiana, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Peru, Stadt · Miami County, Indiana, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4905770",
+          "label": "Peru",
+          "description": "Stadt · LaSalle County, Illinois, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Peru, Stadt · LaSalle County, Illinois, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:1841617",
+          "label": "Peruchii To",
+          "description": "Insel · Jeollanam-do, Südkorea",
+          "typ": "island",
+          "ariaLabel": "Peruchii To, Insel · Jeollanam-do, Südkorea",
+          "landAliasMatch": false,
+          "countryCode": "KR"
+        },
+        {
+          "id": "geonames:10089636",
+          "label": "Perukkasaari",
+          "description": "Insel · Äänekoski, Central Finland, Finnland",
+          "typ": "island",
+          "ariaLabel": "Perukkasaari, Insel · Äänekoski, Central Finland, Finnland",
+          "landAliasMatch": false,
+          "countryCode": "FI"
+        }
+      ]
+    },
+    {
+      "suche": "Munich",
+      "id": "geonames:2867714",
+      "ms": 33,
+      "optionen": [
+        {
+          "id": "geonames:2867714",
+          "label": "Munich",
+          "description": "Stadt · Upper Bavaria, Bavaria, Deutschland",
+          "typ": "city",
+          "ariaLabel": "Munich, Stadt · Upper Bavaria, Bavaria, Deutschland",
+          "landAliasMatch": false,
+          "countryCode": "DE"
+        }
+      ]
+    },
+    {
+      "suche": "München",
+      "id": "geonames:2867714",
+      "ms": 58,
+      "optionen": [
+        {
+          "id": "geonames:2867714",
+          "label": "Munich",
+          "description": "Stadt · Upper Bavaria, Bavaria, Deutschland",
+          "typ": "city",
+          "ariaLabel": "Munich, Stadt · Upper Bavaria, Bavaria, Deutschland",
+          "landAliasMatch": false,
+          "countryCode": "DE"
+        },
+        {
+          "id": "geonames:2659551",
+          "label": "Münchenstein",
+          "description": "Stadt · Bezirk Arlesheim, Basel-Landschaft, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Münchenstein, Stadt · Bezirk Arlesheim, Basel-Landschaft, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:2659552",
+          "label": "Münchenbuchsee",
+          "description": "Stadt · Bern-Mittelland District, Bern, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Münchenbuchsee, Stadt · Bern-Mittelland District, Bern, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:2771042",
+          "label": "Münchendorf",
+          "description": "Stadt · Politischer Bezirk Mödling, Lower Austria, Österreich",
+          "typ": "city",
+          "ariaLabel": "Münchendorf, Stadt · Politischer Bezirk Mödling, Lower Austria, Österreich",
+          "landAliasMatch": false,
+          "countryCode": "AT"
+        },
+        {
+          "id": "geonames:6692367",
+          "label": "Münchenwiler",
+          "description": "Stadt · Bern-Mittelland District, Bern, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Münchenwiler, Stadt · Bern-Mittelland District, Bern, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:3070451",
+          "label": "Mnichovo Hradiště",
+          "description": "Stadt · Okres Mladá Boleslav, Central Bohemia, Tschechien",
+          "typ": "city",
+          "ariaLabel": "Mnichovo Hradiště, Stadt · Okres Mladá Boleslav, Central Bohemia, Tschechien",
+          "landAliasMatch": false,
+          "countryCode": "CZ"
+        }
+      ]
+    },
+    {
+      "suche": "Paris",
+      "id": "geonames:2988507",
+      "ms": 129,
+      "optionen": [
+        {
+          "id": "geonames:2988507",
+          "label": "Paris",
+          "description": "Stadt · Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:966166",
+          "label": "Parys",
+          "description": "Stadt · Fezile Dabi District Municipality, Free State, Südafrika",
+          "typ": "city",
+          "ariaLabel": "Parys, Stadt · Fezile Dabi District Municipality, Free State, Südafrika",
+          "landAliasMatch": false,
+          "countryCode": "ZA"
+        },
+        {
+          "id": "geonames:4717560",
+          "label": "Paris",
+          "description": "Stadt · Lamar County, Texas, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Lamar County, Texas, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:6942553",
+          "label": "Paris",
+          "description": "Stadt · Brant, Ontario, Kanada",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Brant, Ontario, Kanada",
+          "landAliasMatch": false,
+          "countryCode": "CA"
+        },
+        {
+          "id": "geonames:4647963",
+          "label": "Paris",
+          "description": "Stadt · Henry County, Tennessee, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Henry County, Tennessee, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4303602",
+          "label": "Paris",
+          "description": "Stadt · Bourbon County, Kentucky, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Bourbon County, Kentucky, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        }
+      ]
+    },
+    {
+      "suche": "Paris, Frankreich",
+      "id": "geonames:2988507",
+      "land": "FR",
+      "ms": 13,
+      "optionen": [
+        {
+          "id": "geonames:2988507",
+          "label": "Paris",
+          "description": "Stadt · Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:2968815",
+          "label": "Paris",
+          "description": "Region · Île-de-France, Frankreich",
+          "typ": "region",
+          "ariaLabel": "Paris, Region · Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:2970479",
+          "label": "Paris 15 Vaugirard",
+          "description": "Stadt · Paris, Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris 15 Vaugirard, Stadt · Paris, Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:2994540",
+          "label": "Paris 20 Ménilmontant",
+          "description": "Stadt · Paris, Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris 20 Ménilmontant, Stadt · Paris, Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:3029374",
+          "label": "Paris 18 Buttes-Montmartre",
+          "description": "Stadt · Paris, Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris 18 Buttes-Montmartre, Stadt · Paris, Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        },
+        {
+          "id": "geonames:3015772",
+          "label": "Paris 13 Gobelins",
+          "description": "Stadt · Paris, Île-de-France, Frankreich",
+          "typ": "city",
+          "ariaLabel": "Paris 13 Gobelins, Stadt · Paris, Île-de-France, Frankreich",
+          "landAliasMatch": false,
+          "countryCode": "FR"
+        }
+      ]
+    },
+    {
+      "suche": "Paris, USA",
+      "land": "US",
+      "ms": 16,
+      "optionen": [
+        {
+          "id": "geonames:4717560",
+          "label": "Paris",
+          "description": "Stadt · Lamar County, Texas, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Lamar County, Texas, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4647963",
+          "label": "Paris",
+          "description": "Stadt · Henry County, Tennessee, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Henry County, Tennessee, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4303602",
+          "label": "Paris",
+          "description": "Stadt · Bourbon County, Kentucky, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Bourbon County, Kentucky, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4246659",
+          "label": "Paris",
+          "description": "Stadt · Edgar County, Illinois, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Paris, Stadt · Edgar County, Illinois, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4225346",
+          "label": "Swainsboro",
+          "description": "Stadt · Emanuel County, Georgia, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Swainsboro, Stadt · Emanuel County, Georgia, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        },
+        {
+          "id": "geonames:4432542",
+          "label": "Kosciusko",
+          "description": "Stadt · Attala County, Mississippi, Vereinigte Staaten",
+          "typ": "city",
+          "ariaLabel": "Kosciusko, Stadt · Attala County, Mississippi, Vereinigte Staaten",
+          "landAliasMatch": false,
+          "countryCode": "US"
+        }
+      ]
+    },
+    {
+      "suche": "Zürich",
+      "id": "geonames:2657896",
+      "rolle": "abreise",
+      "ms": 10,
+      "optionen": [
+        {
+          "id": "geonames:2657896",
+          "label": "Zürich",
+          "description": "Stadt · Bezirk Zürich, Zurich, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Zürich, Stadt · Bezirk Zürich, Zurich, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        }
+      ]
+    },
+    {
+      "suche": "Zurich",
+      "id": "geonames:2657896",
+      "rolle": "abreise",
+      "ms": 6,
+      "optionen": [
+        {
+          "id": "geonames:2657896",
+          "label": "Zürich",
+          "description": "Stadt · Bezirk Zürich, Zurich, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Zürich, Stadt · Bezirk Zürich, Zurich, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        }
+      ]
+    },
+    {
+      "suche": "Bangkok",
+      "id": "geonames:1609350",
+      "ms": 31,
+      "optionen": [
+        {
+          "id": "geonames:1609350",
+          "label": "Bangkok",
+          "description": "Stadt · Thailand",
+          "typ": "city",
+          "ariaLabel": "Bangkok, Stadt · Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1609348",
+          "label": "Bangkok",
+          "description": "Region · Thailand",
+          "typ": "region",
+          "ariaLabel": "Bangkok, Region · Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1607530",
+          "label": "Phra Nakhon Si Ayutthaya",
+          "description": "Region · Thailand",
+          "typ": "region",
+          "ariaLabel": "Phra Nakhon Si Ayutthaya, Region · Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1619460",
+          "label": "Bangkok Noi",
+          "description": "Stadt · Bangkok, Thailand",
+          "typ": "city",
+          "ariaLabel": "Bangkok Noi, Stadt · Bangkok, Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1619457",
+          "label": "Bangkok Yai",
+          "description": "Stadt · Bangkok, Thailand",
+          "typ": "city",
+          "ariaLabel": "Bangkok Yai, Stadt · Bangkok, Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1619459",
+          "label": "Bangkok Noi",
+          "description": "Region · Bangkok, Thailand",
+          "typ": "region",
+          "ariaLabel": "Bangkok Noi, Region · Bangkok, Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        },
+        {
+          "id": "geonames:1619456",
+          "label": "Bangkok Yai",
+          "description": "Region · Bangkok, Thailand",
+          "typ": "region",
+          "ariaLabel": "Bangkok Yai, Region · Bangkok, Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        }
+      ]
+    },
+    {
+      "suche": "Ubud",
+      "id": "geonames:1622846",
+      "ms": 919,
+      "optionen": [
+        {
+          "id": "geonames:1622846",
+          "label": "Ubud",
+          "description": "Stadt · Kabupaten Gianyar, Bali, Indonesien",
+          "typ": "city",
+          "ariaLabel": "Ubud, Stadt · Kabupaten Gianyar, Bali, Indonesien",
+          "landAliasMatch": false,
+          "countryCode": "ID"
+        }
+      ]
+    },
+    {
+      "suche": "Ko Lipe",
+      "id": "geonames:1342638",
+      "ms": 34,
+      "optionen": [
+        {
+          "id": "geonames:1342638",
+          "label": "Ko Li Pe",
+          "description": "Insel · Satun, Thailand",
+          "typ": "island",
+          "ariaLabel": "Ko Li Pe, Insel · Satun, Thailand",
+          "landAliasMatch": false,
+          "countryCode": "TH"
+        }
+      ]
+    },
+    {
+      "suche": "Nusa Penida",
+      "id": "geonames:1631470",
+      "ms": 33,
+      "optionen": [
+        {
+          "id": "geonames:1631470",
+          "label": "Nusa Penida",
+          "description": "Insel · Bali, Indonesien",
+          "typ": "island",
+          "ariaLabel": "Nusa Penida, Insel · Bali, Indonesien",
+          "landAliasMatch": false,
+          "countryCode": "ID"
+        }
+      ]
+    },
+    {
+      "suche": "St. Gallen",
+      "id": "geonames:2658822",
+      "ms": 34,
+      "optionen": [
+        {
+          "id": "geonames:2658822",
+          "label": "Sankt Gallen",
+          "description": "Stadt · Wahlkreis St. Gallen, Saint Gallen, Schweiz",
+          "typ": "city",
+          "ariaLabel": "Sankt Gallen, Stadt · Wahlkreis St. Gallen, Saint Gallen, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:2658821",
+          "label": "Kanton St. Gallen",
+          "description": "Region · Schweiz",
+          "typ": "region",
+          "ariaLabel": "Kanton St. Gallen, Region · Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:6458770",
+          "label": "Wahlkreis St. Gallen",
+          "description": "Region · Saint Gallen, Schweiz",
+          "typ": "region",
+          "ariaLabel": "Wahlkreis St. Gallen, Region · Saint Gallen, Schweiz",
+          "landAliasMatch": false,
+          "countryCode": "CH"
+        },
+        {
+          "id": "geonames:2766724",
+          "label": "Sankt Gallenkirch",
+          "description": "Stadt · Politischer Bezirk Bludenz, Vorarlberg, Österreich",
+          "typ": "city",
+          "ariaLabel": "Sankt Gallenkirch, Stadt · Politischer Bezirk Bludenz, Vorarlberg, Österreich",
+          "landAliasMatch": false,
+          "countryCode": "AT"
+        }
+      ]
+    },
+    {
+      "suche": "Trinidad und Tobago",
+      "id": "geonames:3573591",
+      "ms": 47,
+      "optionen": [
+        {
+          "id": "geonames:3573591",
+          "label": "Trinidad und Tobago",
+          "description": "Land",
+          "typ": "country",
+          "ariaLabel": "Trinidad und Tobago, Land",
+          "landAliasMatch": true,
+          "countryCode": "TT"
+        }
+      ]
+    }
+  ],
+  "filterPruefungen": 20,
+  "anonymerSchreibzugriff": "verweigert"
+}

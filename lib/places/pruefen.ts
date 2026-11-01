@@ -6,6 +6,8 @@
 import { istOrtId, ortPasstZurRolle, type Ort, type OrtRolle } from '@/lib/places/domain'
 
 export const ORT_MELDUNG = {
+  widerspruch: 'Name und Land passen nicht zum ausgewählten Ort. Bitte prüfe die Ortsauswahl.',
+  nichtErreichbar: 'Die Orte konnten gerade nicht geprüft werden. Deine Eingaben bleiben erhalten. Bitte versuche es erneut.',
   zielFehlt: 'Bitte wähle ein Reiseziel aus der Liste.',
   zielUnbekannt: 'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.',
   abreiseFehlt: 'Bitte wähle einen Abreiseort aus der Liste.',

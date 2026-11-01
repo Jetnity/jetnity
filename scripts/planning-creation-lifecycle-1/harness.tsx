@@ -84,7 +84,7 @@ function erfolg(name: string, eingabe: unknown) {
     }
   }
   if (name === 'uebernehmen') return { ok: true, wert: 'reise-vorschlag-konto' }
-  if (name === 'aufloesen') return { origin: null, stages: [null] }
+  if (name === 'aufloesen') return { ok: true, orte: { origin: null, stages: [null] } }
   throw new Error(`Unbekannte Grenze ${name}`)
 }
 

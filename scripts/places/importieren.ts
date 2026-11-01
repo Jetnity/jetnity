@@ -5,7 +5,7 @@
 // Production nur mit --schreiben --produktion --projekt-ref <exakter Ref>.
 // Nicht in der CI, nicht im prebuild, nicht bei einer Nutzersuche.
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { createInterface } from 'node:readline'
 import { join } from 'node:path'
@@ -18,9 +18,11 @@ import {
   geoNamesTsvZeile,
   geoNamesZeileRelevant,
   laenderAusCountryInfo,
+  laenderReferenzProblem,
   ortAusFlughafen,
   orteAusGeoNames,
   type GeoNamesZeile,
+  verwaltungAusGeoNames,
 } from '@/lib/places/importieren'
 
 import { importAuftragLesen } from '@/lib/rollout/schreibauftrag'
@@ -60,6 +62,8 @@ function werte(ort: Ort): string {
     sqlZahl(ort.lon),
     sqlText(ort.iata),
     sqlText(ort.keywords),
+    sqlZahl(ort.population ?? null),
+    sqlText(ort.featureCode ?? null),
     'now()',
   ].join(', ')
 }
@@ -73,44 +77,72 @@ async function herunterladen(name: string, zielPfad: string): Promise<void> {
   await pipeline(res.body as unknown as NodeJS.ReadableStream, createWriteStream(zielPfad))
 }
 
-async function geoNamesZeilen(zipPfad: string): Promise<GeoNamesZeile[]> {
-  const kind = spawn('unzip', ['-p', zipPfad, 'allCountries.txt'], { stdio: ['ignore', 'pipe', 'pipe'] })
-  if (!kind.stdout) throw new Error('unzip lieferte keinen Strom.')
-  const zeilen: GeoNamesZeile[] = []
-  const leser = createInterface({ input: kind.stdout })
-  for await (const zeile of leser) {
-    const gelesen = geoNamesTsvZeile(zeile)
-    if (gelesen && geoNamesZeileRelevant(gelesen)) zeilen.push(gelesen)
-  }
-  const code = await new Promise<number>((resolve, reject) => {
+type QuellZeilen = { zeilen: GeoNamesZeile[]; gesamt: number; ungueltig: number; ausgefiltert: number }
+
+async function geoNamesZeilen(zipPfad: string, landIds: Set<string>): Promise<QuellZeilen> {
+  const kind = spawn('unzip', ['-p', zipPfad, 'allCountries.txt'], { stdio: ['ignore', 'pipe', 'ignore'] })
+  // Listener vor dem Lesen: auch ein sehr kurzer/defekter Stream darf nicht hängen.
+  const ende = new Promise<number | null>((resolve, reject) => {
     kind.on('error', reject)
     kind.on('close', resolve)
   })
-  if (code !== 0) throw new Error('allCountries.zip konnte nicht gelesen werden.')
-  return zeilen
+  if (!kind.stdout) throw new Error('unzip lieferte keinen Strom.')
+  const quelle: QuellZeilen = { zeilen: [], gesamt: 0, ungueltig: 0, ausgefiltert: 0 }
+  for await (const zeile of createInterface({ input: kind.stdout })) {
+    if (!zeile.trim()) continue
+    quelle.gesamt += 1
+    const gelesen = geoNamesTsvZeile(zeile)
+    if (!gelesen) quelle.ungueltig += 1
+    else if (!landIds.has(gelesen.geonameId) && !geoNamesZeileRelevant(gelesen)) quelle.ausgefiltert += 1
+    else quelle.zeilen.push(gelesen)
+  }
+  if (await ende !== 0) throw new Error('allCountries.zip konnte nicht gelesen werden.')
+  return quelle
 }
 
-async function quelleLesen(): Promise<{ orte: Ort[]; verworfen: number; herkunft: string }> {
-  const verzeichnis = argument('datei')
-  if (verzeichnis) {
-    const tsv = readFileSync(join(verzeichnis, 'geonames.tsv'), 'utf8')
-    const zeilen = tsv
-      .split(/\r?\n/)
-      .map(geoNamesTsvZeile)
-      .filter((zeile): zeile is GeoNamesZeile => Boolean(zeile))
-    const laender = laenderAusCountryInfo(readFileSync(join(verzeichnis, 'countries.txt'), 'utf8'))
-    const { orte, verworfen } = orteAusGeoNames({ zeilen, laender })
-    return { orte, verworfen, herkunft: verzeichnis }
+async function quelleLesen() {
+  const fixture = argument('datei')
+  const lokal = argument('quelle-verzeichnis')
+  const verzeichnis = fixture ?? lokal ?? mkdtempSync(join(tmpdir(), 'jetnity-geonames-'))
+  try {
+    if (!fixture && !lokal) {
+      for (const name of ['countryInfo.txt', 'allCountries.zip', 'admin1CodesASCII.txt', 'admin2Codes.txt']) {
+        await herunterladen(name, join(verzeichnis, name))
+      }
+    }
+    const laender = laenderAusCountryInfo(readFileSync(join(verzeichnis, fixture ? 'countries.txt' : 'countryInfo.txt'), 'utf8'))
+    const landIds = new Set(laender.flatMap((land) => land.geonameId ? [land.geonameId] : []))
+    const referenzProblem = fixture ? null : laenderReferenzProblem(laender)
+    if (referenzProblem) throw new Error(referenzProblem)
+    let quelle: QuellZeilen
+    if (fixture) {
+      const roh = readFileSync(join(fixture, 'geonames.tsv'), 'utf8').split(/\r?\n/).filter((z) => z.trim())
+      const gelesen = roh.map(geoNamesTsvZeile)
+      quelle = { zeilen: gelesen.filter((z): z is GeoNamesZeile => Boolean(z)), gesamt: roh.length, ungueltig: gelesen.filter((z) => !z).length, ausgefiltert: 0 }
+    } else {
+      quelle = await geoNamesZeilen(join(verzeichnis, 'allCountries.zip'), landIds)
+    }
+    const verwaltung = (name: string) => {
+      const pfad = join(verzeichnis, name)
+      // Kleine bestehende Fixtures dürfen ohne Verwaltungsdateien auskommen.
+      if (fixture && !existsSync(pfad)) return []
+      return verwaltungAusGeoNames(readFileSync(pfad, 'utf8'))
+    }
+    const ergebnis = orteAusGeoNames({
+      zeilen: quelle.zeilen,
+      laender,
+      admin1: verwaltung('admin1CodesASCII.txt'),
+      admin2: verwaltung('admin2Codes.txt'),
+    })
+    const importLandIds = new Set(ergebnis.orte.filter((ort) => ort.typ === 'country').map((ort) => ort.sourceId))
+    const fehlendeLaender = laender.filter((land) => land.geonameId && !importLandIds.has(land.geonameId) && !ergebnis.historischeLandIds.includes(land.geonameId)).map((land) => land.code)
+    const falschZugeordnet = ergebnis.orte.filter((ort) => ort.typ === 'country' && !laender.some((land) => land.geonameId === ort.sourceId && land.code === ort.countryCode))
+    if (!fixture && falschZugeordnet.length) throw new Error('Länderreferenz und Ortsdump widersprechen sich bei ID/Ländercode.')
+    if (fehlendeLaender.length) throw new Error(`Länderreferenz unvollständig: ${fehlendeLaender.join(', ')}`)
+    return { ...ergebnis, laenderGeprueft: landIds.size, gesamt: quelle.gesamt, verworfen: ergebnis.verworfen + quelle.ungueltig + quelle.ausgefiltert, ungueltig: quelle.ungueltig, herkunft: fixture ?? lokal ?? QUELLE }
+  } finally {
+    if (!fixture && !lokal) rmSync(verzeichnis, { recursive: true, force: true })
   }
-
-  const landPfad = join(tmpdir(), 'geonames-countryInfo.txt')
-  const zipPfad = join(tmpdir(), 'geonames-allCountries.zip')
-  await herunterladen('countryInfo.txt', landPfad)
-  await herunterladen('allCountries.zip', zipPfad)
-  const laender = laenderAusCountryInfo(readFileSync(landPfad, 'utf8'))
-  const zeilen = await geoNamesZeilen(zipPfad)
-  const { orte, verworfen } = orteAusGeoNames({ zeilen, laender })
-  return { orte, verworfen, herkunft: QUELLE }
 }
 
 async function flughaefenHolen(): Promise<Ort[]> {
@@ -132,7 +164,7 @@ async function stapelSchreiben(orte: Ort[]): Promise<void> {
   const werteListe = orte.map((ort) => `(${werte(ort)})`).join(',\n')
   await runSql(
     `insert into public.places
-        (id, source, source_id, name, typ, country, country_code, region, lat, lon, iata, keywords, updated_at)
+        (id, source, source_id, name, typ, country, country_code, region, lat, lon, iata, keywords, population, feature_code, updated_at)
      values
         ${werteListe}
      on conflict (id) do update set
@@ -147,6 +179,8 @@ async function stapelSchreiben(orte: Ort[]): Promise<void> {
         lon = excluded.lon,
         iata = excluded.iata,
         keywords = excluded.keywords,
+        population = excluded.population,
+        feature_code = excluded.feature_code,
         updated_at = now()`,
   )
 }
@@ -155,6 +189,7 @@ async function main() {
   const auftrag = importAuftragLesen(process.argv)
   const schreiben = auftrag.modus !== 'probe'
 
+  if (argument('export') && schreiben) throw new Error('--export ist nur für die Probe vorgesehen.')
   const quelle = await quelleLesen()
   let orte = quelle.orte
 
@@ -167,8 +202,14 @@ async function main() {
   }
 
   console.log(`Quelle: ${quelle.herkunft}`)
+  console.log(`Offizielle Länderidentitäten vollständig geprüft: ${quelle.laenderGeprueft}; historische Einträge ausgeschlossen: ${quelle.historischeLandIds.length}`)
+  console.log(`Gelesene Quellzeilen: ${quelle.gesamt}`)
   console.log(`Übernommen: ${orte.length}`)
-  console.log(`Verworfen: ${quelle.verworfen}`)
+  console.log(`Verworfen: ${quelle.verworfen}; ungültige TSV-Zeilen: ${quelle.ungueltig}; doppelte IDs: ${quelle.doppelteIds}`)
+  console.log(`Ausgelassene ganze Alias-Tokens (800-Zeichen-Grenze): ${quelle.aliasAusgelassen}`)
+  console.log(`Typen: ${JSON.stringify(orte.reduce<Record<string, number>>((n, ort) => { n[ort.typ] = (n[ort.typ] ?? 0) + 1; return n }, {}))}`)
+  const exportPfad = argument('export')
+  if (exportPfad) writeFileSync(exportPfad, orte.map((ort) => JSON.stringify(ort)).join('\n') + '\n')
 
   if (!schreiben) {
     console.log(

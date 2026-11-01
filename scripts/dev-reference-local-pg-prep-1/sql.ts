@@ -21,7 +21,7 @@ export const FLUGHAFEN_SPALTEN = [
   'iata', 'icao', 'name', 'city', 'region', 'country', 'country_code', 'lat', 'lon', 'keywords', 'klasse', 'updated_at',
 ] as const
 export const ORT_SPALTEN = [
-  'id', 'source', 'source_id', 'name', 'typ', 'country', 'country_code', 'region', 'lat', 'lon', 'iata', 'keywords', 'updated_at',
+  'id', 'source', 'source_id', 'name', 'typ', 'country', 'country_code', 'region', 'lat', 'lon', 'iata', 'keywords', 'population', 'feature_code', 'updated_at',
 ] as const
 
 // Erkennbar für Protokoll und Test-Double. Kein Daten- oder Geheimnisinhalt.
@@ -71,6 +71,8 @@ function ortWerte(ort: Ort): string {
     sqlZahl(ort.lon),
     sqlText(ort.iata),
     sqlText(ort.keywords),
+    sqlZahl(ort.population ?? null),
+    sqlText(ort.featureCode ?? null),
     'now()',
   ].join(', ')
 }

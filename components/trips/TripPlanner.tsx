@@ -101,8 +101,9 @@ type TripPlannerProps = {
   angemeldet: boolean
   initialDestination?: string
   initialDestinationId?: string
+  initialDestinationDescription?: string
   initialIdea?: string
-  initialWeitereZiele?: { id: string; name: string }[]
+  initialWeitereZiele?: OrtAuswahl[]
 }
 
 /**
@@ -116,7 +117,7 @@ const fieldClass =
   'outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10'
 
 const fieldIconClass =
-  'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700'
+  'pointer-events-none absolute left-3.5 top-6 z-10 h-4 w-4 -translate-y-1/2 text-ink-700'
 
 /**
  * Oversized-text reflow: Feld already has `min-w-0`, but its implicit grid
@@ -127,7 +128,7 @@ const fieldIconClass =
  * clip, shrink text, or hide the marker.
  */
 const feldReflowClass =
-  'grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
+  'content-start grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
 
 function Planungsgruppe({
   id,
@@ -161,6 +162,7 @@ export default function TripPlanner({
   angemeldet,
   initialDestination = '',
   initialDestinationId = '',
+  initialDestinationDescription,
   initialIdea = '',
   initialWeitereZiele = [],
 }: TripPlannerProps) {
@@ -174,7 +176,7 @@ export default function TripPlanner({
   })
   const [primaerKey, setPrimaerKey] = React.useState(handoff.primaerKey)
   const [destination, setDestination] = React.useState(handoff.primaer?.name ?? initialDestination)
-  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(handoff.primaer)
+  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(handoff.primaer ? { ...handoff.primaer, description: initialDestinationDescription } : null)
   const [zusaetzlicheZiele, setZusaetzlicheZiele] = React.useState<ZusaetzlichesZiel[]>(
     handoff.weitere.map((ziel) => ({ key: ziel.key, ort: ziel.ort, text: ziel.text })),
   )

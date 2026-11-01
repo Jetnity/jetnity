@@ -141,7 +141,7 @@ describe('homepage-natural-route-intent-1 – kein freier Text als Ort', () => {
   test('OrtSuche bleibt die einzige Bestätigung und auto-select ist nicht eingebaut', () => {
     const suche = quelle('../../components/places/OrtSuche.tsx')
     const start = quelle('../../components/places/StartzielForm.tsx')
-    assert.match(suche, /onChange\(\{ id: option.id, name: option.label \}/)
+    assert.match(suche, /onChange\(\{ id: option.id, name: option.label, description: option.description \}/)
     assert.equal(suche.includes('optionen[0]'), false)
     assert.equal(start.includes('optionen[0]'), false)
     assert.equal(start.includes('autoSelect'), false)

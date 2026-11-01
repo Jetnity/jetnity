@@ -1,5 +1,7 @@
 # Jetnity – Active Work Status
 
+> **01.11.2026 – Orts-/Länderqualität, PR #1103:** Implementierung und Development-Prüfung laufen; Production-Migration/Referenzdatenrefresh noch nicht freigegeben. [Aktueller Prüfstand und nächster Schritt](PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md). Root alleiniger Writer, separate unabhängige Reviews. Dieser Hinweis ist der aktuelle Stand dieses Slices; ältere Einträge bleiben historische Snapshots.
+
 <!-- ACTIVITIES_DESTINATION_FIRST_1_BEGIN -->
 ## Aktueller Writer — Activities Destination First 1
 

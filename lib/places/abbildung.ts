@@ -1,3 +1,4 @@
+import { ortLokalerName } from '@/lib/places/namen'
 import { ORT_QUELLEN, ORT_TYPEN, type Ort, type OrtQuelle, type OrtTyp } from '@/lib/places/domain'
 
 /** PostgREST-`text` ist ein String; Arrays werden defensiv normalisiert, nicht angenommen. */
@@ -16,6 +17,8 @@ export type OrtZeile = {
   lon: number | null
   iata: string | null
   keywords: OrtZeileKeywords
+  population?: number | null
+  feature_code?: string | null
 }
 
 function keywordsAusZeile(wert: unknown): string | null {
@@ -40,7 +43,8 @@ export function ortAusZeile(zeile: OrtZeile): Ort | null {
     id: zeile.id,
     source: zeile.source as OrtQuelle,
     sourceId: zeile.source_id,
-    name: zeile.name,
+    name: ortLokalerName({ typ: zeile.typ as OrtTyp, name: zeile.name, countryCode: zeile.country_code, country: zeile.country }),
+    sourceName: zeile.name,
     typ: zeile.typ as OrtTyp,
     country: zeile.country,
     countryCode: zeile.country_code,
@@ -49,8 +53,10 @@ export function ortAusZeile(zeile: OrtZeile): Ort | null {
     lon: zeile.lon,
     iata: zeile.iata,
     keywords: keywordsAusZeile(zeile.keywords),
+    population: typeof zeile.population === 'number' && Number.isSafeInteger(zeile.population) && zeile.population >= 0 ? zeile.population : null,
+    featureCode: typeof zeile.feature_code === 'string' ? zeile.feature_code : null,
   }
 }
 
 export const ORT_SPALTEN =
-  'id, source, source_id, name, typ, country, country_code, region, lat, lon, iata, keywords'
+  'id, source, source_id, name, typ, country, country_code, region, lat, lon, iata, keywords, population, feature_code'

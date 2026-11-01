@@ -1,10 +1,15 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 
 type RouteZielHandoffFehlerProps = {
   meldung: string
+  wiederholen?: boolean
 }
 
-export default function RouteZielHandoffFehler({ meldung }: RouteZielHandoffFehlerProps) {
+export default function RouteZielHandoffFehler({ meldung, wiederholen = false }: RouteZielHandoffFehlerProps) {
+  const [laedt, setLaedt] = useState(false)
   return (
     <section
       role="alert"
@@ -16,6 +21,12 @@ export default function RouteZielHandoffFehler({ meldung }: RouteZielHandoffFehl
       <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-ink-900 sm:text-base">
         {meldung}
       </p>
+      {wiederholen && (
+        <button type="button" disabled={laedt} onClick={() => { setLaedt(true); window.location.reload() }}
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full border border-brand-600 px-5 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50">
+          {laedt ? 'Wird geprüft …' : 'Erneut versuchen'}
+        </button>
+      )}
       <p className="mt-6">
         <Link
           href="/"

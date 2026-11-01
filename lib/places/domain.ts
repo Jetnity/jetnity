@@ -18,6 +18,7 @@ export type Ort = {
   source: OrtQuelle
   sourceId: string
   name: string
+  sourceName?: string
   typ: OrtTyp
   country: string | null
   countryCode: string | null
@@ -26,6 +27,9 @@ export type Ort = {
   lon: number | null
   iata: string | null
   keywords: string | null
+  /** Suchmetadaten aus der Referenzquelle, keine Reise- oder Anbieterfakten. */
+  population?: number | null
+  featureCode?: string | null
 }
 
 export type OrtOption = {
@@ -39,6 +43,8 @@ export type OrtOption = {
   ariaLabel?: string
   /** Exaktes Länder-Alias für Rolle ziel; steuert die primäre Zeilenbetonung. */
   landAliasMatch?: boolean
+  /** Nur belegter Kontext, keine zweite Ortsidentität. */
+  countryCode?: string
 }
 
 export function ortId(quelle: OrtQuelle, schluessel: string): string {

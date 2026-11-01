@@ -335,6 +335,8 @@ export type Database = {
           lat: number | null
           lon: number | null
           name: string
+          population: number | null
+          feature_code: string | null
           region: string | null
           source: string
           source_id: string
@@ -342,6 +344,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          population?: number | null
+          feature_code?: string | null
           country?: string | null
           country_code?: string | null
           iata?: string | null
@@ -357,6 +361,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          population?: number | null
+          feature_code?: string | null
           country?: string | null
           country_code?: string | null
           iata?: string | null

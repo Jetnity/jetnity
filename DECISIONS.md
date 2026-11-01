@@ -6029,3 +6029,16 @@ Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht e
 **Präzisierung nach Live-Befund:** GeoNames `1609348` ist die Verwaltungsregion der bereits belegten Stadt Bangkok (`1609350`). Beide dürfen im Adapter auf die allgemeine Provider-Region Bangkok zeigen; die gespeicherte Ortsidentität bleibt erhalten. Unterschiedliche GeoNames-IDs genügen dann nicht mehr zur Unterscheidung einer Strecke: auch die normalisierten, zuvor identitätsgeprüften Provider-Orte müssen verschieden sein. Keine implizite Freigabe weiterer Regionen oder Namensheuristiken.
 
 **Konsequenzen:** Zunächst kleine belegte Ortsabdeckung und externer Rückfall. Provider-Markup kann sich ändern und muss dann geschlossen fehlschlagen. Parserabhängigkeit parse5 8.0.0. Begrenzter serverseitiger Request/Cache statt zusätzlicher Infrastruktur; keine neue bezahlte Funktion. Nach Owner-Freigabe getrennte explizite Server-/UI-Aktivierung, standardmäßig AUS. Rückfall über beide Feature-Schalter false und Neubau, kein belegter Instant-Rollback. Vor Livegang gehostete OFF/ON-Prüfung und unabhängige Abnahme. PR #1086 und sein HOLD werden weder ersetzt noch gelockert. [Quellen und Browserbelege](docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md).
+
+
+## Ortsidentität und Suchqualität aus derselben Referenz – 01.11.2026
+
+**Entscheidung:** Exakte Namens-/Alias-Treffer werden vor dem Präfixlimit gesichert; Landesidentitäten werden beim Import über `countryInfo` belegt. Einwohnerzahl ist nur ein Suchrang-Gleichstandsmerkmal. Verwaltungsnamen kommen aus den GeoNames-Admin-Dateien.
+
+**Kontext:** Breite Präfixmengen verdrängten bekannte Orte; Inseln ohne Einwohnerzahl fehlten; gleiche country_codes können sowohl das Land als auch zugehörige Gebiete bezeichnen. Lesefehler konnten beim Kanonisieren wie leere Ergebnisse wirken.
+
+**Alternativen:** neuer Geocoding-Provider, kuratierte Einzellisten oder automatisches Raten anhand von Popularität. Diese würden zusätzliche Kosten, zweite Ortswahrheiten bzw. falsche Reiseidentitäten erzeugen.
+
+**Begründung:** Dieselbe bestehende Referenz verbessert Startseite, Planer und Reisegraph gemeinsam. ID, Rolle, Land und bestätigter Name müssen zusammenpassen; mehrdeutige Modellangaben bleiben unaufgelöst und Datenbankfehler stoppen vor Persistenz. Reiner Auswahlkontext wird nicht zur Ortsautorität.
+
+**Konsequenz:** Zwei additive Metadatenfelder/Indizes und kontrollierter vollständiger Referenzdatenrefresh vor Runtime-Deployment. Bestehende IDs und Reise-FKs bleiben erhalten. Alias-Kapazität bleibt begrenzt und wird messbar dokumentiert. Production unterliegt weiterhin dem besonderen Freigabegate; [Prüfstand](docs/PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md).
