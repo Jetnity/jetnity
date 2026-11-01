@@ -9,6 +9,7 @@
 
 import 'server-only'
 
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { contentIdentityBinding, contentIdentityMatches, readDistinctContentItemRefs, type ContentIdentityBinding, type ContentItemRef } from '@/lib/readiness/official-truth-content-identity'
 import { OFFICIAL_VISA_MODES, type OfficialVisaMode } from '@/lib/readiness/official'
 import {
@@ -681,6 +682,7 @@ export function officialTruthCompositionPhaseA(input: {
   readonly extractors: readonly OfficialTruthExtractorDefinition[]
   readonly policies: readonly OfficialTruthCompositionPolicy[]
 }): OfficialTruthCompositionPhaseAErgebnis {
+  if (officialTruthProtocol3MarkerPresent(input)) return leerBlock('representation_not_eligible')
   const refs = readDistinctContentItemRefs(input.supports.map(({ sourceId, contentItemId }) => ({ sourceId, contentItemId })))
   if (!refs.ok) return leerBlock(input.supports.length === 2 ? 'same_content_item_composition' : 'ambiguous_structure')
   if (refs.value.length < 2) return leerBlock('insufficient_support')
@@ -1224,6 +1226,7 @@ export function officialTruthCompositionPhaseB(input: {
   readonly scope: RegelScope
   readonly registry: QuellenRegistry
 }): OfficialTruthCompositionPhaseBErgebnis {
+  if (officialTruthProtocol3MarkerPresent(input)) return freezeBlock('representation_not_eligible', input.freeze)
   const { freeze } = input
   if (input.supports.length !== input.proofSupports.length) return freezeBlock('support_binding_mismatch', freeze)
   for (const proof of input.proofSupports) {
@@ -1298,5 +1301,6 @@ export function officialTruthCompositionZitatePruefen(input: {
   readonly acceptedVersionIds: readonly string[]
   readonly observations: readonly OfficialTruthExtractorBeobachtung[]
 }): ZitatErfolg {
+  if (officialTruthProtocol3MarkerPresent(input)) return { ok: false, reason: 'representation_not_eligible' }
   return zitatePruefen(input)
 }
