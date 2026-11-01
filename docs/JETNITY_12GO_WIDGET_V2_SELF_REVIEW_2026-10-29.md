@@ -28,6 +28,10 @@ This is the author's self-review. It is not an independent Technical Lead PASS. 
 
 Keep the PR Draft. Do not enable the loader in a follow-up from this session. The next decision is a Technical Lead one: whether the proposed notice and an isolation technique are acceptable. Until both are accepted, the inert notice and the V1 links are the right visitor surface.
 
+## R7-R2.1 addition
+
+The retired ready is one parent message after the frame is gone. Its source is the `contentWindow` captured before removal, its origin is the widget host, and its challenge is the saved value. The consume baseline is the count before withdrawal, not a count taken after the later consent restore. Focus geometry uses outline width and shadow offset, blur, or spread. Color digits and a fully transparent layer do not pass. The stored outline and shadow strings are in `r7-eltern.json`. The after-Tab scroll alignment remains a headless limit. Self-review is not a Technical Lead PASS.
+
 ## R7-R2 addition
 
 The already-granted case and the delayed case are both in the same harness. The retired ready is a child-origin message posted by that child on removal, and the facade counter shows no second successful consume and no new frame. Zero child grant acknowledgements are not the proof used for that case. Tab and Shift-Tab move real focus. `:focus-visible` and a nonzero ring are required. A transparent shadow does not pass. The viewport alignment after Tab uses Playwright `scrollIntoViewIfNeeded` because this headless session did not scroll on Tab; that is a harness limit, not a product CSS change. The observer is wired only by the offline bundle alias. Self-review is not a Technical Lead PASS.

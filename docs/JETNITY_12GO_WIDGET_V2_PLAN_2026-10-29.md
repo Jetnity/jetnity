@@ -11,6 +11,8 @@ R7, 31 October 2026: the accepted shared dependency is main `628b95ddcffc90261cb
 
 R7-R2, 1 November 2026: merge accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` and close the remaining harness gaps in the same file. Keep the delayed withdrawal, restore the already-granted withdrawal, deliver one retired ready from the saved child window after release, and reach the three controls with Tab and Shift-Tab. No new product text.
 
+R7-R2.1, 1 November 2026: take the consume baseline before withdrawal, accept only a retired ready whose source is that saved window and whose challenge matches, and require nonzero outline or shadow geometry. No main sync and no product edit.
+
 ## Session attestation
 
 - `originalModelName`: `grok-4.7-high-fast` from cursor-cloud `run-info` (not Auto)

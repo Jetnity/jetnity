@@ -5,6 +5,10 @@ Tracking: https://github.com/Jetnity/jetnity/issues/1085
 PR: https://github.com/Jetnity/jetnity/pull/1086
 State: **CONSENT_BLOCKED / DRAFT / R7 disclosure / STOP for independent Technical Lead review**
 
+## Current, 1 November 2026 — R7-R2.1
+
+The successful-consume count is taken before analytics withdrawal and compared again after the one retired delivery. That delivery is a parent `message` event whose `source` is the saved child `contentWindow`, whose origin is `https://jetnity-widgets.vercel.app`, and whose challenge is the saved value. A delivery that misses that triple does not pass. There is no source-less fallback. Focus still arrives by Tab, Shift-Tab, and Tab, then `:focus-visible`. A ring now needs outline width above 0 with a non-zero alpha, or a shadow layer whose offset, blur, or spread is non-zero and whose alpha is non-zero. The recorded outline on every control is `3px solid rgb(20, 62, 51)`. Playwright `scrollIntoViewIfNeeded` still aligns the already focused control because headless Tab does not scroll the document. `origin/main` has since moved to `1914e159b59fcabe55581e25e9762cc333ef17ba`; this correction does not merge it. The implementation head is the branch tip after this commit and is posted on the PR. Gates on `82b2be52` do not cover it.
+
 ## Current, 1 November 2026 — R7-R2
 
 Accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` is merged without rebase. That merge keeps the Trip.com search links and the existing 12Go consumer. `CMP_RELEASE_AUTHORIZED` stays false. No product text, lifecycle, CMP, or host file changed in this correction.

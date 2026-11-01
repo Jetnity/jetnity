@@ -25,20 +25,10 @@ const challenge=[...bytes].map((b)=>b.toString(16).padStart(2,'0')).join('');
 const frameGeneration=1;
 document.documentElement.dataset.challenge=challenge;
 let timer=setInterval(function(){parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'canary',n:Date.now()},'https://jetnity.com')},80);
-let retiredChallenge='';
-addEventListener('pagehide',function(){
-  clearInterval(timer);
-  if(!retiredChallenge)return;
-  parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'ready',provider:'twelvego',challenge:retiredChallenge,frameGeneration:frameGeneration},'https://jetnity.com');
-});
+addEventListener('pagehide',function(){clearInterval(timer)});
 let grants=0;
 addEventListener('message',function(event){
   if(event.origin!=='https://jetnity.com'||event.source!==parent)return;
-  if(event.data&&event.data.kind==='retired-auf-pagehide'&&typeof event.data.challenge==='string'){
-    retiredChallenge=event.data.challenge;
-    parent.postMessage({type:'jetnity-widget-host',revision:1,kind:'retired-bereit',n:1},'https://jetnity.com');
-    return;
-  }
   if(!event.data||event.data.kind!=='grant')return;
   grants+=1;
   document.documentElement.dataset.grants=String(grants);
@@ -71,8 +61,11 @@ window.addEventListener('message',function(event){
   if(!data||data.type!=='jetnity-widget-host')return;
   if(data.kind==='canary'&&window.__zaehleCanary)window.__canaries+=1;
   if(data.kind==='grant-gesehen')window.__grantsGesehen+=1;
-  if(data.kind==='ready'&&event.origin==='https://jetnity-widgets.vercel.app'){window.__readyEmpfangen+=1;window.__readyOrigin=event.origin}
-  if(data.kind==='retired-bereit')window.__retiredBereit=(window.__retiredBereit||0)+1;
+  if(data.kind==='ready'&&event.origin==='https://jetnity-widgets.vercel.app'){
+    window.__readyEmpfangen+=1;
+    window.__readyOrigin=event.origin;
+    if(window.__retiredQuelle&&event.source===window.__retiredQuelle&&data.challenge===window.__retiredChallenge)window.__retiredTreffer=(window.__retiredTreffer||0)+1;
+  }
 });
 </script><script src="${SCRIPT}"></script></body></html>`
 }
@@ -169,7 +162,13 @@ async function anfragen(page: Page) {
   await page.locator('[data-twelve-go-aktion="anfragen"], [data-twelve-go-aktion="erneut"]').first().click()
 }
 
-async function tabBeweis(page: Page, selektor: string): Promise<string | null> {
+type FokusBeweis = { status: string; outline: string; shadow: string }
+
+function fokusLeer(status: string): FokusBeweis {
+  return { status, outline: '', shadow: '' }
+}
+
+async function tabBeweis(page: Page, selektor: string): Promise<FokusBeweis> {
   await page.evaluate(() => {
     const aktiv = document.activeElement
     if (aktiv instanceof HTMLElement) aktiv.blur()
@@ -179,36 +178,60 @@ async function tabBeweis(page: Page, selektor: string): Promise<string | null> {
     await page.keyboard.press('Tab')
     erreicht = await page.evaluate((sel) => document.activeElement?.matches(sel) ?? false, selektor)
   }
-  if (!erreicht) return 'tab'
+  if (!erreicht) return fokusLeer('tab')
   await page.keyboard.press('Shift+Tab')
   const nochDort = await page.evaluate((sel) => document.activeElement?.matches(sel) ?? false, selektor)
-  if (nochDort) return 'shift'
+  if (nochDort) return fokusLeer('shift')
   await page.keyboard.press('Tab')
   const ziel = page.locator(selektor).first()
   await ziel.scrollIntoViewIfNeeded()
   return page.evaluate((sel) => {
     const el = document.activeElement
-    if (!(el instanceof HTMLElement) || !el.matches(sel)) return 'ruecktab'
-    if (!el.matches(':focus-visible')) return 'focus-visible'
+    const leer = { status: 'ruecktab', outline: '', shadow: '' }
+    if (!(el instanceof HTMLElement) || !el.matches(sel)) return leer
     const stil = getComputedStyle(el)
     const schatten = stil.boxShadow
+    const basis = { outline: `${stil.outlineWidth} ${stil.outlineStyle} ${stil.outlineColor}`, shadow: schatten }
+    if (!el.matches(':focus-visible')) return { status: 'focus-visible', outline: basis.outline, shadow: basis.shadow }
     const schichten = schatten === 'none' ? [] : schatten.split(/,(?![^(]*\))/)
-    const sichtbar = schichten.some((schicht) => {
-      const farbe = schicht.match(/rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}/)?.[0] ?? ''
-      if (!farbe || farbe === 'transparent') return false
-      const alpha = farbe.match(/rgba\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*([\d.]+)\s*\)/)
-      if (alpha && Number(alpha[1]) === 0) return false
-      return /[1-9]/.test(schicht)
-    })
-    const umriss = stil.outlineStyle !== 'none' && stil.outlineWidth !== '0px' && stil.outlineColor !== 'transparent' && !/rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0(?:\.0+)?\s*\)/.test(stil.outlineColor)
+    let schattenGeometrie = false
+    for (let i = 0; i < schichten.length; i += 1) {
+      const schicht = schichten[i]
+      const farbtreffer = schicht.match(/rgba?\([^)]+\)|hsla?\([^)]+\)|#[0-9a-fA-F]{3,8}/)
+      const farbe = farbtreffer ? farbtreffer[0] : ''
+      const ohneFarbe = farbtreffer ? schicht.replace(farbtreffer[0], ' ') : schicht
+      const px = ohneFarbe.match(/-?\d+(?:\.\d+)?px/g) || []
+      let geometrie = false
+      for (let p = 0; p < px.length; p += 1) if (Number.parseFloat(px[p]) !== 0) geometrie = true
+      let weg = !farbe || farbe === 'transparent'
+      const klasisch = farbe.match(/rgba?\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*(?:,\s*([\d.]+)\s*)?\)/)
+      if (klasisch && klasisch[1] !== undefined && Number(klasisch[1]) === 0) weg = true
+      const modern = farbe.match(/\/\s*([\d.]+%?)\s*\)/)
+      if (modern) {
+        const roh = modern[1]
+        const wert = roh.endsWith('%') ? Number(roh.slice(0, -1)) / 100 : Number(roh)
+        if (wert === 0) weg = true
+      }
+      if (geometrie && !weg) schattenGeometrie = true
+    }
+    let umrissWeg = !stil.outlineColor || stil.outlineColor === 'transparent'
+    const umrissKlasisch = stil.outlineColor.match(/rgba?\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*(?:,\s*([\d.]+)\s*)?\)/)
+    if (umrissKlasisch && umrissKlasisch[1] !== undefined && Number(umrissKlasisch[1]) === 0) umrissWeg = true
+    const umrissModern = stil.outlineColor.match(/\/\s*([\d.]+%?)\s*\)/)
+    if (umrissModern) {
+      const roh = umrissModern[1]
+      const wert = roh.endsWith('%') ? Number(roh.slice(0, -1)) / 100 : Number(roh)
+      if (wert === 0) umrissWeg = true
+    }
+    const umriss = stil.outlineStyle !== 'none' && Number.parseFloat(stil.outlineWidth) > 0 && !umrissWeg
     const kasten = el.getBoundingClientRect()
     const imFenster = kasten.width >= 8 && kasten.height >= 44 && kasten.top >= -1 && kasten.left >= -1 && kasten.bottom <= window.innerHeight + 1 && kasten.right <= window.innerWidth + 1
     const flaeche = document.querySelector('[data-twelve-go-affiliate]')
     const ueber = Boolean(flaeche && flaeche.scrollWidth > flaeche.clientWidth + 1) || document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
-    if (!sichtbar && !umriss) return `ring ${stil.outlineStyle} ${stil.outlineWidth} ${stil.outlineColor} ${schatten.slice(0, 120)}`
-    if (!imFenster) return `ausschnitt ${Math.round(kasten.left)},${Math.round(kasten.top)} ${Math.round(kasten.width)}x${Math.round(kasten.height)} fenster ${window.innerWidth}x${window.innerHeight}`
-    if (ueber) return 'ueberlauf'
-    return ''
+    if (!schattenGeometrie && !umriss) return { status: 'ring', outline: basis.outline, shadow: basis.shadow }
+    if (!imFenster) return { status: `ausschnitt ${Math.round(kasten.left)},${Math.round(kasten.top)} ${Math.round(kasten.width)}x${Math.round(kasten.height)} fenster ${window.innerWidth}x${window.innerHeight}`, outline: basis.outline, shadow: basis.shadow }
+    if (ueber) return { status: 'ueberlauf', outline: basis.outline, shadow: basis.shadow }
+    return { status: '', outline: basis.outline, shadow: basis.shadow }
   }, selektor)
 }
 
@@ -325,17 +348,23 @@ async function main() {
       assertGleich(fehler, masse.rahmen === 0 && !masse.ueber, `${fall.name}: Einstellungen starten oder überlaufen`)
       const einstellungenFokus = await tabBeweis(einstellung.page, '[data-cmp-preferences="surface"]')
       const anfrageFokus = await tabBeweis(einstellung.page, '[data-twelve-go-aktion="anfragen"]')
-      if (einstellungenFokus) fehler.push(`${fall.name}: Einstellungen ${einstellungenFokus}`)
-      if (anfrageFokus) fehler.push(`${fall.name}: Anfrage ${anfrageFokus}`)
+      if (einstellungenFokus.status) fehler.push(`${fall.name}: Einstellungen ${einstellungenFokus.status}`)
+      if (anfrageFokus.status) fehler.push(`${fall.name}: Anfrage ${anfrageFokus.status}`)
       await anfragen(einstellung.page)
       await wartenAufRahmen(einstellung.page)
       const entfernenFokus = await tabBeweis(einstellung.page, '[data-twelve-go-aktion="entfernen"]')
-      if (entfernenFokus) fehler.push(`${fall.name}: Entfernen ${entfernenFokus}`)
+      if (entfernenFokus.status) fehler.push(`${fall.name}: Entfernen ${entfernenFokus.status}`)
       steuerung.push({
         name: fall.name,
-        einstellungen: einstellungenFokus || 'ok',
-        anfrage: anfrageFokus || 'ok',
-        entfernen: entfernenFokus || 'ok',
+        einstellungen: einstellungenFokus.status || 'ok',
+        einstellungenOutline: einstellungenFokus.outline,
+        einstellungenShadow: einstellungenFokus.shadow,
+        anfrage: anfrageFokus.status || 'ok',
+        anfrageOutline: anfrageFokus.outline,
+        anfrageShadow: anfrageFokus.shadow,
+        entfernen: entfernenFokus.status || 'ok',
+        entfernenOutline: entfernenFokus.outline,
+        entfernenShadow: entfernenFokus.shadow,
         ueber: masse.ueber,
       })
       await einstellung.page.screenshot({ path: join(ziel, `r7-${fall.name}.png`), fullPage: false })
@@ -469,21 +498,13 @@ async function main() {
     await wartenAufRahmen(page)
     const aktiverGrant = await rahmen(page)
     assertGleich(fehler, aktiverGrant?.grants === '1', `aktiver Grant ${aktiverGrant?.grants}`)
-    const consumeNachGrant = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
-    assertGleich(fehler, consumeNachGrant >= 1, `aktiver Consume ${consumeNachGrant}`)
+    const consumeVorWiderruf = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
+    assertGleich(fehler, consumeVorWiderruf >= 1, `aktiver Consume ${consumeVorWiderruf}`)
     const challenge = aktiverGrant?.challenge ?? ''
-    const bereitVorArm = await page.evaluate(() => window.__retiredBereit ?? 0)
-    await page.evaluate((wert) => {
+    const altesFenster = await page.evaluateHandle(() => {
       const frame = document.querySelector('[data-twelve-go-host="frame"]')
-      if (!(frame instanceof HTMLIFrameElement) || !frame.contentWindow) return
-      frame.contentWindow.postMessage({
-        type: 'jetnity-widget-host',
-        revision: 1,
-        kind: 'retired-auf-pagehide',
-        challenge: wert,
-      }, 'https://jetnity-widgets.vercel.app')
-    }, challenge)
-    await page.waitForFunction((vorher) => (window.__retiredBereit ?? 0) > vorher, bereitVorArm)
+      return frame instanceof HTMLIFrameElement ? frame.contentWindow : null
+    })
     const readyVorRetired = await page.evaluate(() => window.__readyEmpfangen ?? 0)
     await page.evaluate(() => {
       window.__analytics = false
@@ -501,33 +522,44 @@ async function main() {
     await page.waitForTimeout(200)
     const frameNachZustimmung = await page.locator('[data-twelve-go-host="frame"]').count()
     assertGleich(fehler, frameNachZustimmung === 0, 'aktive Zustimmung startet neu')
-    const consumeVorRetired = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
-    await page.waitForTimeout(250)
-    let lieferung = (await page.evaluate((vorher) => (window.__readyEmpfangen ?? 0) > vorher, readyVorRetired)) ? 'retired-ready' : 'offen'
-    if (lieferung !== 'retired-ready') {
-      lieferung = await page.evaluate((wert) => {
-        window.dispatchEvent(new MessageEvent('message', {
-          data: {
-            type: 'jetnity-widget-host',
-            revision: 1,
-            kind: 'ready',
-            provider: 'twelvego',
-            challenge: wert,
-            frameGeneration: 1,
-          },
-          origin: 'https://jetnity-widgets.vercel.app',
-        }))
-        return 'retired-ready-dispatch'
-      }, challenge)
-    }
+    const lieferung = await page.evaluate(({ fenster, wert }) => {
+      if (!fenster) return 'fenster-weg'
+      window.__retiredQuelle = fenster
+      window.__retiredChallenge = wert
+      window.__retiredTreffer = 0
+      window.dispatchEvent(new MessageEvent('message', {
+        data: {
+          type: 'jetnity-widget-host',
+          revision: 1,
+          kind: 'ready',
+          provider: 'twelvego',
+          challenge: wert,
+          frameGeneration: 1,
+        },
+        origin: 'https://jetnity-widgets.vercel.app',
+        source: fenster,
+      }))
+      return window.__retiredTreffer === 1 ? 'retired-ready' : 'ohne-treffer'
+    }, { fenster: altesFenster, wert: challenge })
     const consumeNachRetired = verbrauchteGrants(await page.evaluate(() => window.__fassade ?? []))
     const readyNachRetired = await page.evaluate(() => window.__readyEmpfangen ?? 0)
+    const treffer = await page.evaluate(() => window.__retiredTreffer ?? 0)
     const frameNachRetired = await page.locator('[data-twelve-go-host="frame"]').count()
-    arbeit.aktiv = { grants: aktiverGrant?.grants ?? null, consume: consumeNachGrant, canaryNachWiderruf: canaryAktiv, frameNachZustimmung }
-    arbeit.retiredReady = { lieferung, consumeVorher: consumeVorRetired, consumeNachher: consumeNachRetired, readyVorher: readyVorRetired, readyNachher: readyNachRetired, frame: frameNachRetired }
-    assertGleich(fehler, lieferung === 'retired-ready' || lieferung === 'retired-ready-dispatch', `retired-ready ${lieferung}`)
+    arbeit.aktiv = { grants: aktiverGrant?.grants ?? null, consume: consumeVorWiderruf, canaryNachWiderruf: canaryAktiv, frameNachZustimmung }
+    arbeit.retiredReady = {
+      lieferung,
+      challenge,
+      consumeVorWiderruf,
+      consumeNachLieferung: consumeNachRetired,
+      readyVorher: readyVorRetired,
+      readyNachher: readyNachRetired,
+      treffer,
+      frame: frameNachRetired,
+    }
+    assertGleich(fehler, lieferung === 'retired-ready', `retired-ready ${lieferung}`)
+    assertGleich(fehler, treffer === 1, `retired Treffer ${treffer}`)
     assertGleich(fehler, readyNachRetired === readyVorRetired + 1, `retired Empfang ${readyVorRetired}->${readyNachRetired}`)
-    assertGleich(fehler, consumeNachRetired === consumeVorRetired, `retired consume ${consumeVorRetired}->${consumeNachRetired}`)
+    assertGleich(fehler, consumeNachRetired === consumeVorWiderruf, `retired consume ${consumeVorWiderruf}->${consumeNachRetired}`)
     assertGleich(fehler, frameNachRetired === 0, 'retired-ready erzeugt einen Frame')
 
     kind.current = 'verzoegert'
@@ -653,7 +685,10 @@ declare global {
     __einstellungen?: number
     __grantsGesehen?: number
     __readyEmpfangen?: number
-    __retiredBereit?: number
+    __readyOrigin?: string
+    __retiredQuelle?: Window | null
+    __retiredChallenge?: string
+    __retiredTreffer?: number
     __fassade?: Array<{ name: string; leer: boolean }>
   }
 }
