@@ -54,8 +54,8 @@ function basis(patch: Record<string, unknown> = {}) {
 }
 
 describe('produktive capability naht', () => {
-  test('die gelieferte Tabelle und der Release bleiben zu, ohne Gate gibt es keine Capability', () => {
-    assert.equal(CMP_RELEASE_AUTHORIZED, false)
+  test('die gelieferte Tabelle ist wahr und ohne Gate gibt es keine Capability', () => {
+    assert.equal(CMP_RELEASE_AUTHORIZED, true)
     assert.equal(PRODUCTION_POLICY_TABLE.discovercars, null)
     assert.equal(Object.isFrozen(PRODUCTION_POLICY_TABLE), true)
     assert.equal(Object.isFrozen(PRODUCTION_POLICY_TABLE.twelvego), true)
@@ -125,7 +125,7 @@ describe('produktive capability naht', () => {
     assert.equal(readCmpController().live, null)
   })
 
-  test('die ausgewählte 12Go-Zeile bleibt ohne Produktions-Bootstrap geschlossen und lässt sich nur mit Testfreigabe einmal verbrauchen', () => {
+  test('die ausgewählte 12Go-Zeile folgt dem Produktions-Bootstrap und bleibt bei explizitem false zu', () => {
     resetSharedCmpController()
     const host = globalThis as unknown as {
       window: unknown
@@ -162,12 +162,13 @@ describe('produktive capability naht', () => {
       hasExplicitConsent: () => true,
     }
     delete host.__jetnityCmp
-    eval(productionBootstrapSource())
+    eval(buildBootstrapSource({ release: false, killDenied: false }))
     assert.equal(readBakedProductionGate()?.releaseAllowed, false)
     assert.equal(requestProductionExecution('twelvego', 'scope-alpha'), null)
     assert.equal(readCmpController().live, null)
     delete host.__jetnityCmp
-    eval(buildBootstrapSource({ release: true, killDenied: false }))
+    eval(productionBootstrapSource(null))
+    assert.deepEqual(readBakedProductionGate(), { releaseAllowed: true, killDenied: false })
     const capability = requestProductionExecution('twelvego', 'scope-alpha')
     assert.ok(capability)
     assert.equal(capability.src, `${CMP_CHILD_ORIGIN}${TWELVEGO_EMBED_PATH}`)

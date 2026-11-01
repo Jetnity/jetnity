@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path'
 import { build, type Plugin } from 'esbuild'
 import { chromium, type Browser, type Page, type Route } from 'playwright'
 
-import { buildBootstrapSource, productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
+import { productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { CMP_BANNER_SRC } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 declare global {
@@ -177,7 +177,7 @@ async function main() {
   const banner: string[] = []
   const fremd: string[] = []
   try {
-    const lizenziert = html(buildBootstrapSource({ release: true, killDenied: false }), true)
+    const lizenziert = html(productionBootstrapSource(null), true)
     const page = await browser.newPage({ viewport: { width: 390, height: 900 } })
     await anbinden(page, 'https://jetnity.com', lizenziert, dateien, banner, fremd)
     await page.goto('https://jetnity.com/', { waitUntil: 'networkidle' })

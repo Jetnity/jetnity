@@ -12,6 +12,7 @@ import { ArrowRightLeft, Loader2 } from 'lucide-react'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
 import TwelveGoAffiliateLinks from '@/components/trips/TwelveGoAffiliateLinks'
+import { useMobilityWidgetArea, useMobilityWidgetScope } from '@/components/trips/MobilityWidgetScope'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { mobilitySucheFehlerAntwort, mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
 import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
@@ -88,6 +89,8 @@ export default function MobilitaetBereich({
       abdeckung.kanten.every((kante) => !kante.mobilityItem) &&
       abdeckung.unzugeordnet.length === 0,
   )
+  const mobilityScope = useMobilityWidgetScope()
+  useMobilityWidgetArea(mobilityScope.workspaceActive ? unterbereich : null)
 
   const abdeckungIds = [
     ...abdeckung.kanten.flatMap((kante) => (kante.mobilityItem ? [kante.mobilityItem.id] : [])),

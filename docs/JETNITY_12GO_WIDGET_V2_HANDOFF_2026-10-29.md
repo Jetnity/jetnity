@@ -1,0 +1,95 @@
+# Jetnity 12Go Official Search Widget V2 — HANDOFF
+
+Date: 29 October 2026 Europe/Zurich
+Tracking: https://github.com/Jetnity/jetnity/issues/1085
+PR: https://github.com/Jetnity/jetnity/pull/1086
+Stop: independent exact-head review by the Technical Lead. No Ready, no merge, no next slice from this author.
+
+## Identity
+
+- Writer: Jetnity 12Go Official Search Widget V2 Opt-In 1 — Cursor Generation 1
+- Model: `grok-4.7-high-fast`
+- bcId: `bc-2a335d8e-9108-4c0e-a2f2-8d7d499fd49c`
+- Session: https://cursor.com/agents/bc-2a335d8e-9108-4c0e-a2f2-8d7d499fd49c
+- Mode: `NORMAL`
+- Protected main / merge-base: `e462cf7c5910ce75fa6350928326c04e33d94eee`
+- Implementation: `e53ac39ce51f85e0a13c51b182f2397ad606ca34`, tree `9e83883a884f885b83a27c28e1705f275f551c57`
+- Invalidated head: `c2fa11dcc898d66d2f527ba3efdd11aa8bd1d2c5`. R1-F1 replaces `Buffer.from('Bangkok')` with a UTF-8 `includes('Bangkok')` check. Exact final HEAD, tree, and ahead/behind are the branch tip after that correction. They are posted on the PR because this file cannot contain the hash of the commit that adds it.
+
+## Where the work stopped — R7-R2.1
+
+Reviewed head `82b2be527c88f46b275e8965fbfe4e2cdfdaddbb` is invalidated. The harness now binds the retired ready to the saved window and challenge, and it records outline and shadow geometry. `grant-beobachter.ts` is unchanged. Fresh `origin/main` is `1914e159b59fcabe55581e25e9762cc333ef17ba`; merge-base stays `a3fda92a1a2653f8dd59383334ba0d148000ba8f` because this correction does not sync main. Native CI and Preview for the new head start after the push. Stop for Root. No Ready, no merge, no R8.
+
+## Where the work stopped — R7-R2
+
+Reviewed head `76c053de12fdf3dee87f91492f7896e3f39e788d` is invalidated. Accepted main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` is merged. The harness file and `scripts/twelve-go-widget-v2/grant-beobachter.ts` are the correction. The observer delegates to the real facade and counts request, consume, and release. It does not mint a grant. The local command exited 0. Native CI and Preview for the new head start after the push. Stop for Root. No Ready, no merge, no R8.
+
+## Where the work stopped — R7-R1
+
+The harness now records an opening count on the real preferences class, a delayed-child withdrawal, and focus/overflow for preferences, request, and remove at the existing widths. The implementation head is the branch tip after this commit and is posted on the PR. Native CI and Preview for that head start after the push. `b2926148` gates do not cover it.
+
+## Where R7 stopped
+
+Accepted dependency main `628b95ddcffc90261cb3bb3d121eafd9e3ce91ea`, post-merge pass comment `6550309898`, native `41250672493`. Task blob `47a7be4a9839b3c4c24389d2ff7ec7ef6e1f06f7`. The consumer renders the shared disclosure and the surface preferences control. Release stays false. The implementation head is the branch tip after this commit and is posted on the PR. Native CI and Preview for that head start after the push.
+
+## Where R6-R1 stopped
+
+Reviewed head `8e36dad970c42e81500b3d6f0fb95e94e116e525` is invalidated. Native CI `41243615981` failed: App job `124662410744`, 7799 tests, 7796 pass, 1 fail, 2 existing skips. The failure was `organisieren-action-recovery-1.test.ts` calling `useContext` outside its custom scheduler. Auth on that run succeeded. The correction head is the branch tip after this commit and is posted on the PR.
+
+The scope key now changes when stage place identity or trip origin changes and the ids and dates stay the same. The frame render checks that bound key. A restored place does not regrant.
+
+## Where R6 stopped
+
+`CONSENT_BLOCKED`. Accepted main `32445c90c2d33695cbd8f69ea3cb7498768dda67` is merged. The exact implementation head is the branch tip after this R6 commit and is posted on the PR, because this file cannot contain the hash of the commit that adds it.
+
+The visitor path reaches `TwelveGoWidgetHost`. Production `requestProductionExecution` stays null while `lib/privacy/privacybee-cmp/produktionspolitik.ts` (blob `817f7e80c18155494fc44ec1fc4b13cd59052ac7`) keeps both rows null and the release stays false. CMP entry blob `704ba9b6cac6376bfc9ed5284983ffd2ef99295d`. Host amendment blob `b5380cf9451b2a13573ecff572f98f46d12be080`. Host acceptance commit: not accepted (`f056b01d63ac7d61650864734a9b44eb6484989e` is in review). Task blob `e3f6b5d565af5658504947cffc5942877fb3e152`.
+
+Shared read exports from `components/trips/MobilityWidgetScope.tsx`: `MobilityWidgetScope`, `mobilityWidgetScopeKey`, `MobilityWidgetScopeProvider`, `useMobilityWidgetScope`, `useMobilityWidgetArea`. `TripWorkspace.tsx` is the only provider. `MobilitaetBereich.tsx` is the only area writer. Guest and account wrappers were not edited.
+
+Offline evidence: `scripts/twelve-go-widget-v2/eltern-nachweis.ts` and `oberflaeche.ts`. A local child speaks Rev1. No call to 12Go, PrivacyBee, or the live widget host. Native CI and Preview for this head are not yet gates.
+
+The general and reference exports remain in `lib/providers/twelve-go/widget/quelle/`. V1 links still work. `/embed/twelve-go` stays 404.
+
+The audit script is `scripts/twelve-go-widget-v2/audit.ts`. The surface script is `scripts/twelve-go-widget-v2/oberflaeche.ts`. Both are outside `npm test`. Evidence narrative: `docs/JETNITY_12GO_WIDGET_V2_REPORT_2026-10-29.md`. Proposed notice: `docs/JETNITY_12GO_WIDGET_V2_PRIVACY_NOTICE_2026-10-29.md`.
+
+## Dated blocker, superseded
+
+The 29 October note that the opaque sandbox was inadequate and that `app/embed/twelve-go/route.ts` still had to be created is historical. The route now returns 404. R2 showed the official form once the frame was 800px tall. Do not treat frame height as the remaining cause.
+
+## Pending bridge
+
+Do not invent CMP callbacks in this slice. The open sequence is:
+
+1. Account-supported CMP grant and withdraw. #1087 `APPROVE_B_DEVELOPMENT` exists. The Swiss PrivacyBee banner snippet, callback, and entitlement are still open. #1089 informative consent is not an execution grant.
+2. A reviewed shared execution and origin contract. #1091 is an inert host, not that contract.
+3. One mounted frame, then official form, search, and redirect acceptance. The local stub is not that acceptance.
+
+R6 replaced the “do not add a visitor button” stop. The button asks the production facade and, while that facade returns null, mounts nothing. Do not treat that button as a published search. Do not fill the policy table or pin `hostSelectionCommit` from this branch.
+
+## Do not touch
+
+`lib/providers/twelve-go/affiliate/**`, `MobilitaetBereich.tsx`, privacy/CMP, DiscoverCars, Viator, GetYourGuide, UX, Supabase, Auth, RLS, secrets, package, and CI. `docs/ACTIVE_WORK_STATUS.md` was not updated: this task forbids it, even though the progress policy names it. A later writer should reconcile that only with Technical Lead scope.
+
+## R3
+
+Main `ac2199dba64e458a20a155b5d1bb826ea99949d3` is merged without a force-push. The visitor page is still closed. `/embed/twelve-go` is a 404. The iframe contract is `allow-scripts` only at 100% by 800px and is not mounted on the trip page. A local stub proved size and keyboard. The official form was not requested again. Search remains `NOT_PROVED`. Consent #1087 is still required before any live frame.
+
+## R4
+
+The browser script renders the delivered frame component. A unit test fails if that component is omitted or the measured frame is clipped, duplicated, or same-origin. Output is `TWELVE_GO_WIDGET_NACHWEIS_DIR` or the OS temp folder. Non-loopback traffic fails the run. Gates stay closed.
+
+## R5
+
+Accepted main `b7ebc399b92303eacda9afdaa1786f245492051f` is merged. The surface harness uses the application stylesheet stack instead of a handwritten utility list. R4 frame counterexamples stay. The trip page is still only the closed notice.
+
+## R5.1
+
+The local surface page uses the light workspace ancestors. Omitting them fails the mint-color witness. This is still the closed notice, not a live form.
+
+## R5.2
+
+Documentation only. The 29 October self-review no longer treats the embed route as unbuilt or the clipped frame as the current blocker. The harness accepted at R5.1 was not changed. The form is still not executing. The open gate remains the account CMP contract, then a reviewed shared execution contract.
+
+## Next step
+
+Technical Lead reviews this documentation head. Gates on the accepted harness head do not cover it. This session does not start another slice.

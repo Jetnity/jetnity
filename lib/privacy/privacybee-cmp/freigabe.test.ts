@@ -5,18 +5,24 @@ import { CMP_BANNER_SRC, CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee
 import { cmpProductionBannerAllowed, killSwitchDeniesCmp, planBannerInsert, serverReleaseAllowsCmp } from '@/lib/privacy/privacybee-cmp/freigabe'
 
 describe('cmp freigabe', () => {
-  test('die Produktionsfreigabe bleibt falsch, auch auf jetnity.com ohne Kill-Switch', () => {
-    assert.equal(CMP_RELEASE_AUTHORIZED, false)
-    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: null }), false)
-    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: undefined }), false)
-    assert.equal(cmpProductionBannerAllowed({ hostname: 'JETNITY.COM' }), false)
+  test('die Produktionsfreigabe gilt auf dem Lizenzhost und der Kill bleibt zu', () => {
+    assert.equal(CMP_RELEASE_AUTHORIZED, true)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: null }), true)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: undefined }), true)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com', killSwitch: 'aus' }), false)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'JETNITY.COM' }), true)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'www.jetnity.com' }), false)
+    assert.equal(cmpProductionBannerAllowed({ hostname: 'jetnity.com.evil.test' }), false)
   })
 
   test('Serverfreigabe prüft Release und Kill-Switch und keinen Host', () => {
-    assert.equal(serverReleaseAllowsCmp(undefined), false)
-    assert.equal(serverReleaseAllowsCmp(null), false)
+    assert.equal(serverReleaseAllowsCmp(undefined), true)
+    assert.equal(serverReleaseAllowsCmp(null), true)
+    assert.equal(serverReleaseAllowsCmp('aus'), false)
+    assert.equal(serverReleaseAllowsCmp(' aus '), false)
     assert.equal(serverReleaseAllowsCmp('aus', true), false)
     assert.equal(serverReleaseAllowsCmp(' aus ', true), false)
+    assert.equal(serverReleaseAllowsCmp(undefined, false), false)
     assert.equal(serverReleaseAllowsCmp(undefined, true), true)
     assert.equal(serverReleaseAllowsCmp(null, true), true)
     assert.equal(serverReleaseAllowsCmp('an', true), true)

@@ -131,6 +131,12 @@ function laden<T>(path: string, react: object): T {
   const loaded = { exports: {} as T }
   new Function('require', 'module', 'exports', code)((name: string) => {
     if (name === 'react') return react
+    if (name === '@/components/trips/MobilityWidgetScope') {
+      return {
+        useMobilityWidgetScope: () => ({ workspaceActive: false, activeArea: null, scopeKey: null }),
+        useMobilityWidgetArea: () => undefined,
+      }
+    }
     return require(name.startsWith('@/') ? resolve(root, name.slice(2)) : name)
   }, loaded, loaded.exports)
   return loaded.exports

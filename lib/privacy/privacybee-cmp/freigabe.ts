@@ -1,4 +1,4 @@
-// Production banner gate. The release constant is false, so production never requests.
+// Production banner gate. The release constant is true. The kill switch and the exact host still deny.
 
 import { browserHostIstLizenziert } from '@/lib/legal/privacybee-vertrag'
 
@@ -18,7 +18,7 @@ export function killSwitchDeniesCmp(value: string | null | undefined): boolean {
 
 /**
  * Pure host/release matrix for tests and the bootstrap builder.
- * Production code must pass CMP_RELEASE_AUTHORIZED, which is false.
+ * Production code passes CMP_RELEASE_AUTHORIZED. A caller can still pass an explicit false.
  */
 export function planBannerInsert(input: {
   release: boolean
