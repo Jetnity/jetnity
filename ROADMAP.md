@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **12Go Timetable 1 — 1. November 2026, Draft #1101:** Native Streckenkarten mit echten allgemeinen 12Go-Fahrplandaten lokal geprüft. Kleine verifizierte Ortsabdeckung, Deutsch/CHF, keine Datums-/Teilnehmerübertragung. Production geschlossen; unabhängige Codeprüfung erfolgt, vollständige CI/Preview-/Release-Abnahme bleibt offen. PR #1086 bleibt separat auf HOLD. [Evidence](docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md).
+
 > **01.11.2026 — Aktivitäten zielgeführt, beide offiziellen Widgets:** PR #1100, Codex nach freigegebener Cursor-Übergabe. Direktes Öffnen zum bestätigten Ziel, optionale Tageswahl, beide offiziellen Widgets vor der erhaltenen nativen Suche. Viator zeigt nach Korrektur des Nullhöhen-Starts echte Karten (7 Render, 0 Klicks/403). GYG-Karten sichtbar, Testklick HTTP403; STOP bleibt. Der Owner hat die automatische Anzeige und Veröffentlichung nach Prüfung freigegeben und die umfassende Datenschutzarbeit verschoben; tatsächliche Ablehnungen/Ausblenden bleiben wirksam, gemeinsame CMP bleibt inaktiv. 208 fokussierte Tests, Typen, Lint, Build und Hygiene bestanden; lokale Gesamttest-Ausnahmen dokumentiert. Unabhängige Prüfung, Exact-Head-CI/Preview und Releaseentscheidung stehen bei dieser Revision noch aus. [Handoff](docs/ACTIVITIES_DESTINATION_FIRST_1_HANDOFF_2026-11-01.md).
 
 > **01.11.2026 — Trip.com Suchlinks 1:** Der Owner hat die offizielle manuelle Suche

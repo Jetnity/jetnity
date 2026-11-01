@@ -1524,7 +1524,11 @@ export default function TripWorkspace({
             verborgen={!detailOffen || aktiveDomain !== 'mobilitaet'}
             sichtbarKlasse="min-w-0"
           >
-            {mobilitaetssuche}
+            {React.isValidElement(mobilitaetssuche)
+              ? React.cloneElement(mobilitaetssuche as React.ReactElement<{ sichtbar?: boolean }>, {
+                  sichtbar: detailOffen && aktiveDomain === 'mobilitaet',
+                })
+              : mobilitaetssuche}
           </FlaecheHuelle>
         )}
         {detailOffen && sucheSichtbar && (aktiveDomain === 'fluege' || aktiveDomain === 'unterkunft') && (

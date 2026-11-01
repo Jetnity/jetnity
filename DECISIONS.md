@@ -6014,3 +6014,16 @@ Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht e
 **3. „Entdecken" als eigener Hauptweg.** `docs/JETNITY_V2_FOUNDATION.md` beschreibt drei gleichrangige Wege (Entdecken, Planen, Meine Reisen). Die Vision benennt den Trip Builder als Kern und grenzt Jetnity von einer Inspirations- und Contentplattform ab. Auflösung: „Entdecken" darf existieren, muss aber dem Reisekern dienen (Einstieg in eine Reise) und darf nicht zu einer eigenen Content-Plattform ausgebaut werden.
 
 **4. Datenbank als Source of Truth – aufgelöst in Phase 1.5.** Regel 13 verlangt, dass keine kritische Geschäftsfunktion ausschliesslich im Local Storage lebt. Reisen eines angemeldeten Kontos liegen jetzt in `public.trips` samt Etappen, Tagen und Planpunkten (ADR-0043); der Browserspeicher trägt ausschliesslich die eine Gastreise, und für die ist er nach Regel 13 ausdrücklich zulässig, weil der Weg ins Konto existiert und geprüft ist (ADR-0042).
+
+
+## ADR-0225 – 12Go-Fahrplandaten als native, regional gebundene Preview
+
+**Datum:** 1. November 2026. **Status:** implementiert im Draft #1101, nicht Production-freigegeben.
+
+**Kontext:** Der Product Owner möchte Verkehrsmittel und nützliche Streckeninformationen bereits in Jetnity vergleichen. Die bisherigen Affiliate-Links führen lediglich hinaus; Stadt-/Länderwidgets zeigen allgemeine populäre Routen, das Suchwidget führt seine Ergebnisse extern aus. Die offizielle PHP-Referenz stellt allgemeine Timetable-Daten auf Deutsch mit CHF bereit.
+
+**Entscheidung:** Offiziellen lesenden Timetable-Dienst serverseitig verwenden; dessen HTML streng in Text und identitätsgebundene Affiliate-Links umwandeln. Keine Provider-Scripts oder HTML in den Besucherbrowser laden. Bestehende aufeinanderfolgende Reiseabschnitte wiederverwenden. Nur verifizierte GeoNames-Identitäten auf Provider-Zielregionen abbilden, keine generische Namensauflösung. Fehlende Daten sind von Ausfällen zu unterscheiden. Preise/Dauern/Abfahrten bleiben allgemeine Anbieterangaben; keine Verfügbarkeit, Personensumme oder Buchung ableiten.
+
+**Alternativen:** Nur generische Links behalten (wenig Information); Länderwidget (keine einzelne Strecke); tagesgenaue Booking-API (separater Zugang und grössere Anforderungen).
+
+**Konsequenzen:** Zunächst kleine belegte Ortsabdeckung und externer Rückfall. Provider-Markup kann sich ändern und muss dann geschlossen fehlschlagen. Parserabhängigkeit parse5 8.0.0. Begrenzter serverseitiger Request/Cache statt zusätzlicher Infrastruktur; keine neue bezahlte Funktion. Production bleibt geschlossen bis eigener Abnahme; PR #1086 und sein HOLD werden weder ersetzt noch gelockert. [Quellen und Browserbelege](docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md).

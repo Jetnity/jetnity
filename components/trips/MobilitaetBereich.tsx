@@ -66,12 +66,14 @@ export default function MobilitaetBereich({
   onBuchungsstatus,
   onManuellAnlegen,
   onMietwagenAnlegen,
+  sichtbar = true,
 }: {
   reise: Trip
   ohneTag?: readonly TripItem[]
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   onManuellAnlegen?: (eingabe: MobilityManuellEingabe) => Promise<string | null>
   onMietwagenAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
+  sichtbar?: boolean
 }) {
   const [suche, setSuche] = React.useState<MobilitySucheAntwort | null>(null)
   const [sucht, setSucht] = React.useState(false)
@@ -306,7 +308,7 @@ export default function MobilitaetBereich({
         ) : null}
       </section>
 
-      <TwelveGoAffiliateLinks reise={reise} />
+      {(process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW !== 'true' || (sichtbar && unterbereich === 'verbindungen')) && <TwelveGoAffiliateLinks reise={reise} />}
 
       <section
         aria-label="Mobilitätssuche"
@@ -325,8 +327,9 @@ export default function MobilitaetBereich({
           </p>
         ) : (
           <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-            {suche?.message ??
-              'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise. Eine Suche startet nicht automatisch.'}
+            {suche?.message ?? (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW === 'true'
+              ? 'Die 12Go-Informationen oben geben dir einen allgemeinen Überblick. Eine Suche nach verfügbaren Verbindungen für deinen konkreten Reisetag ist hier noch nicht angebunden.'
+              : 'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise. Eine Suche startet nicht automatisch.')}
           </p>
         )}
         <button

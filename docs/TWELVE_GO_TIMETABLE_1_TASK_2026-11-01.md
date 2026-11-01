@@ -32,4 +32,4 @@ Dieser Slice ist **kein Wiederanlauf von PR #1086** (allgemeines Suchwidget). De
 - Desktop, 390/320 px, Tastatur, vergrößerter Text, Hell/Grün; echte Weiterleitung vor jeder Buchung beenden.
 - Relevante Tests, Typecheck, Lint, Build und Hygiene; unabhängiger Review des fertigen Heads. Kein PASS für nicht ausgeführte Prüfungen.
 
-Status: Vorbereitung. Noch keine Veröffentlichung oder Aktivierung.
+Status: Implementiert und lokal geprüft, Draft PR #1101. Anbieterbelege, Browserergebnisse, Prüfgrenzen und noch offene Release-Gates stehen in `docs/TWELVE_GO_TIMETABLE_1_EVIDENCE_2026-11-01.md`. Noch keine Veröffentlichung oder Aktivierung.
