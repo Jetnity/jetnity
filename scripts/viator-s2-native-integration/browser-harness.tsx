@@ -3,7 +3,25 @@
 import { createRoot } from 'react-dom/client'
 
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
+import type { Ort } from '@/lib/places/domain'
 import type { Trip } from '@/types/trips'
+
+const bangkokOrt: Ort = {
+  id: 'geonames:1609350',
+  source: 'geonames',
+  sourceId: '1609350',
+  name: 'Bangkok',
+  typ: 'city',
+  country: 'Thailand',
+  countryCode: 'TH',
+  region: null,
+  lat: 13.75,
+  lon: 100.5,
+  iata: null,
+  keywords: null,
+}
+
+const bestaetigteOrte = new Map<string, Ort | null>([[bangkokOrt.id, bangkokOrt]])
 
 const reise: Trip = {
   id: 'trip-viator-s2',
@@ -84,7 +102,7 @@ export function mountViatorHarness() {
       <div className="workspace-page">
         <div id="workspace-content" className="workspace-content">
           <main className="mx-auto max-w-3xl p-4">
-            <AktivitaetenBereich reise={gewaehlt} />
+            <AktivitaetenBereich reise={gewaehlt} bestaetigteOrte={bestaetigteOrte} />
           </main>
         </div>
       </div>

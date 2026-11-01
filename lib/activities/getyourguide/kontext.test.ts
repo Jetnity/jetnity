@@ -7,9 +7,11 @@ import assert from 'node:assert/strict'
 import { landName } from '@/lib/country/darstellung'
 import { anwendungsFreigabe, geschlosseneFreigabe, type GetYourGuideFreigabe } from '@/lib/activities/getyourguide/freigabe'
 import {
+  gygEtappenAnfrage,
   gygOrtAnfrage,
   gygPlanen,
   gygReiseAusTrip,
+  gygZielPlanen,
   type GygEtappe,
   type GygPlan,
   type GygPlanEingabe,
@@ -720,6 +722,51 @@ describe('GetYourGuide-Kontext', () => {
     assert.equal(tagAnfrage.anfrage.includes('day-gyg-1'), true)
     assert.equal(tagAnfrage.anfrage.includes('stage-gyg-bkk'), true)
     assert.equal(gygOrtAnfrage(ziel, 'land', null).anfrage, land.anfrage)
+  })
+
+  test('eine Etappe plant ohne Tag und trennt wiederholte Städte', () => {
+    const hin = gygZielPlanen({
+      reise: reise(
+        [etappe('stage-gyg-hin', bangkok.id, 'TH'), etappe('stage-gyg-rueck', bangkok.id, 'TH')],
+        [],
+      ),
+      etappeId: 'stage-gyg-hin',
+      freigabe: OFFEN,
+      orteLesen: () => bangkok,
+    })
+    const rueck = gygZielPlanen({
+      reise: reise(
+        [etappe('stage-gyg-hin', bangkok.id, 'TH'), etappe('stage-gyg-rueck', bangkok.id, 'TH')],
+        [],
+      ),
+      etappeId: 'stage-gyg-rueck',
+      freigabe: OFFEN,
+      orteLesen: () => bangkok,
+    })
+    assert.equal(hin.art, 'bereit')
+    assert.equal(rueck.art, 'bereit')
+    if (hin.art !== 'bereit' || rueck.art !== 'bereit') return
+    assert.equal(hin.zielArt, 'stadt')
+    assert.notEqual(hin.schluessel, rueck.schluessel)
+    assert.deepEqual(sucheVon(hin), sucheVon(rueck))
+    assert.equal(JSON.stringify(hin).includes('day-gyg'), false)
+    const land = gygZielPlanen({
+      reise: reise([etappe('stage-gyg-th', thailand.id, 'TH')], []),
+      etappeId: 'stage-gyg-th',
+      freigabe: OFFEN,
+      orteLesen: () => thailand,
+    })
+    assert.equal(land.art, 'bereit')
+    if (land.art !== 'bereit') return
+    assert.equal(land.zielArt, 'land')
+    assert.equal(land.suche.umfang, 'land')
+    const anfrage = gygEtappenAnfrage(
+      reise([etappe('stage-gyg-hin', bangkok.id, 'TH'), etappe('stage-gyg-rueck', bangkok.id, 'TH')], []),
+      'stage-gyg-rueck',
+    )
+    assert.deepEqual(anfrage.ids, [bangkok.id])
+    assert.equal(anfrage.anfrage.includes('stage-gyg-rueck'), true)
+    assert.equal(anfrage.anfrage.includes('stage-gyg-hin'), false)
   })
 
   test('die Reiseabbildung trägt keine privaten Suchfelder', () => {

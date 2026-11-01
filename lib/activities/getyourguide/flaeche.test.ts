@@ -106,7 +106,9 @@ describe('GetYourGuide-Fläche', () => {
         }),
       }),
     )
-    assert.match(html, /Diese Reise hat noch keine Tage/)
+    assert.match(html, /data-aktivitaet-ziel-status="ausstehend"/)
+    assert.match(html, /Angebote laden dabei noch nicht/)
+    assert.equal(html.includes('Diese Reise hat noch keine Tage'), false)
     assert.match(html, /data-gyg-zustand="ort_ausstehend"/)
     assert.match(html, /lädt dabei noch nichts/)
     assert.equal(html.includes('Panama City'), false)
@@ -130,11 +132,11 @@ describe('GetYourGuide-Fläche', () => {
       }),
     )
     assert.match(html, /Phuket-Tag/)
-    assert.match(html, /Für diesen Tag suchen|Für diese Angaben liegt noch keine Suche vor/)
+    assert.match(html, /data-aktivitaet-ziel-status="ausstehend"/)
+    assert.equal(html.includes('Zielort fehlt'), false)
     const gyg = html.split('aria-label="GetYourGuide"')[1] ?? ''
-    assert.match(gyg, /nicht ersatzweise einen anderen Tag/)
-    assert.equal(gyg.includes('Phuket'), false)
-    assert.match(gyg, /data-gyg-zustand="tag_ungueltig"/)
+    assert.equal(gyg.includes('nicht ersatzweise einen anderen Tag'), false)
+    assert.match(gyg, /data-gyg-zustand="ort_ausstehend"/)
   })
 
   test('die Anwendungsfläche ignoriert eine mitgegebene Prüfnaht nicht, weil sie keine annimmt', () => {

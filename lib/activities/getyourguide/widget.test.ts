@@ -31,7 +31,9 @@ describe('GetYourGuide-Abbildung', () => {
     assert.equal(gygLadenErlaubt('bereit', 'hover'), false)
     assert.equal(gygLadenErlaubt('bereit', 'wechsel'), false)
     assert.equal(gygLadenErlaubt('geschlossen', 'aktion'), false)
+    assert.equal(gygLadenErlaubt('geschlossen', 'sichtbar'), false)
     assert.equal(gygLadenErlaubt('bereit', 'aktion'), true)
+    assert.equal(gygLadenErlaubt('bereit', 'sichtbar'), true)
   })
 
   test('nur eine passende öffentliche Kennung wird ein Bezug', () => {
