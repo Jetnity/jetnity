@@ -6042,3 +6042,17 @@ Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht e
 **Begründung:** Dieselbe bestehende Referenz verbessert Startseite, Planer und Reisegraph gemeinsam. ID, Rolle, Land und bestätigter Name müssen zusammenpassen; mehrdeutige Modellangaben bleiben unaufgelöst und Datenbankfehler stoppen vor Persistenz. Reiner Auswahlkontext wird nicht zur Ortsautorität.
 
 **Konsequenz:** Zwei additive Metadatenfelder/Indizes und kontrollierter vollständiger Referenzdatenrefresh vor Runtime-Deployment. Bestehende IDs und Reise-FKs bleiben erhalten. Alias-Kapazität bleibt begrenzt und wird messbar dokumentiert. Production unterliegt weiterhin dem besonderen Freigabegate; [Prüfstand](docs/PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md).
+
+## ADR-0226 – DiscoverCars als bewusst geladenes offizielles Suchformular
+
+**Datum:** 2. November 2026. **Status:** Implementiert und lokal geprüft; finale Hosted-CI/Release-Abnahme siehe PR und [Nachweis](docs/DISCOVERCARS_ONSITE_EVIDENCE_2026-11-02.md).
+
+**Kontext:** Der Owner möchte wie bei 12Go möglichst viel nützliche Anbieterinformation direkt auf Jetnity. DiscoverCars bietet offizielle Widgets sowie Search API/White-label. Für das bestehende Affiliate-Konto ist das Formular verfügbar und dessen Suchübergabe belegt, ein nativer API-Zugang dagegen nicht. Der alte Draft #1084 enthält eine getrennte, weiterhin gesperrte Vorbereitung.
+
+**Entscheidung:** Das vom offiziellen Generator erzeugte Suchformular direkt auf seiner eigenen Anbieter-Origin in einem sandboxierten Iframe einbetten, erst nach ausdrücklichem Anzeigen. Keine Anbieter-Scripts auf Jetnity. Feste öffentliche Parameter und Partnerkennung, Deutsch/CHF, keine gespeicherten Orte, Mietdaten, Reise-IDs oder Fahrerangaben übertragen. Höhenmeldungen streng an aktuelle Frame-Quelle, Origin, Format und Grenze binden. Bei fehlender Bereitschaft entfernen und Linkfallback zeigen. Kontextwechsel und Ausblenden entsorgen die gesamte Einbindung. Bestehende CMP-Ablehnungen, Inkonsistenzen und API-Verlust verhindern weiteres Laden; kein neues CMP-Grant aus einem Klick ableiten.
+
+**Alternativen:** Allgemeiner Link allein (unnötige frühe Weiterleitung); undurchsichtiger lokaler Wrapper (Anbieter verweigert im tatsächlichen Versuch); Aktivierung des alten gesamten Host-/CMP-Pfads (größer und nicht erforderlich für den direkt isolierten Anbieterrahmen); Fahrzeugkarten über unautorisierte Website-Endpunkte oder ungeprüfte API (keine belastbare Daten-/Rechtegrundlage).
+
+**Begründung:** Abholung, Rückgabe, Mietzeit und Fahrerwahl werden im bestehenden Reisebereich möglich. Die tatsächliche Übergabe enthielt die Jetnity-Partnerkennung und zeigte Fahrzeugergebnisse. Der direkte fremde Ursprung isoliert das Formular ohne Fremdcode im Jetnity-Dokument. Der bisherige allgemeine Affiliate-Link bleibt unabhängig vom Widget erreichbar.
+
+**Konsequenzen:** Fahrzeuge/Preise/Mietbedingungen und Buchung öffnen weiterhin extern; keine automatische Übernahme oder Buchungswahrheit. Der Anbieter erhält nach Anzeigen Verbindungsdaten und die öffentliche Origin und kann eigene Cookies/Technologien nutzen. `credentialless` ist browserabhängig; die Eltern-CSP kontrolliert keine fremden Unteranfragen. Native Rental-Factory, gemeinsame CMP-Release-Policy, Host-Registry und Draft #1084 bleiben geschlossen/unverändert. Keine neue Migration, Kosten, Secrets oder Verträge. Für native Fahrzeugkarten ist ein bestätigter Search-API-/White-label-Vertrag samt Anzeigerechten nötig; Kontaktanfrage wird erst auf Sendefreigabe verschickt.
