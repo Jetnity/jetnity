@@ -1,7 +1,8 @@
 // components/trips/TwelveGoAffiliateLinks.tsx
 //
 // Eine Fläche für benachbarte Zielvorkommen. Der Link wird erst beim
-// Klick verlassen. Vorher lädt nichts von 12Go.
+// Klick verlassen. Im Standardpfad lädt vorher nichts von 12Go.
+// Die separat freigeschaltete Vorschau lädt allgemeine Fahrpläne serverseitig.
 
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import {
@@ -9,12 +10,17 @@ import {
   twelveGoKantenFuerReise,
 } from '@/lib/providers/twelve-go/affiliate/kanten'
 import type { Trip } from '@/types/trips'
+import TwelveGoTimetable from '@/components/trips/TwelveGoTimetable'
 
 const AKTION_KLASSE =
   'mt-3 inline-flex min-h-11 w-full max-w-full items-center whitespace-normal break-words rounded-full border border-line-300 bg-white px-4 py-2 text-left text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
 
 export default function TwelveGoAffiliateLinks({ reise }: { reise: Trip }) {
   const kanten = twelveGoKantenFuerReise(reise)
+  // Build-time UI opt-in; the server independently requires its own explicit flag.
+  if (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED === 'true') {
+    return <TwelveGoTimetable reise={reise} />
+  }
 
   return (
     <section

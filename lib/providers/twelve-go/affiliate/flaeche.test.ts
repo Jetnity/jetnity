@@ -220,6 +220,27 @@ describe('12Go-Fläche', () => {
     assert.doesNotMatch(veraltet, /date=|2026-11-15/)
   })
 
+  test('native Informationen mit neuem Schalter nur im sichtbaren Verbindungsbereich', (t) => {
+    const key = 'NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED'
+    const oldKey = 'NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW'
+    const before = process.env[key], beforeOld = process.env[oldKey]
+    t.after(() => {
+      if (before === undefined) delete process.env[key]; else process.env[key] = before
+      if (beforeOld === undefined) delete process.env[oldKey]; else process.env[oldKey] = beforeOld
+    })
+    process.env[key] = 'true'
+    delete process.env[oldKey]
+    const visible = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise(), sichtbar: true }))
+    assert.match(visible, /data-twelve-go-timetable="1"/)
+    assert.match(visible, /Die 12Go-Informationen oben/)
+    const hidden = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise(), sichtbar: false }))
+    assert.doesNotMatch(hidden, /data-twelve-go-timetable="1"|data-twelve-go-affiliate="1"/)
+    process.env[key] = 'false'
+    const off = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise(), sichtbar: true }))
+    assert.match(off, /data-twelve-go-affiliate="1"/)
+    assert.doesNotMatch(off, /data-twelve-go-timetable="1"/)
+  })
+
   test('Verbindungen enthalten die Fläche und lassen die eigene Suche geschlossen', () => {
     const html = renderToStaticMarkup(createElement(MobilitaetBereich, { reise: reise() }))
     const bestand = html.indexOf('data-organisieren-flaeche="bestand"')
