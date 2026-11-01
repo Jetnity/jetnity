@@ -308,7 +308,7 @@ export default function MobilitaetBereich({
         ) : null}
       </section>
 
-      {(process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW !== 'true' || (sichtbar && unterbereich === 'verbindungen')) && <TwelveGoAffiliateLinks reise={reise} />}
+      {(process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED !== 'true' || (sichtbar && unterbereich === 'verbindungen')) && <TwelveGoAffiliateLinks reise={reise} />}
 
       <section
         aria-label="Mobilitätssuche"
@@ -327,7 +327,7 @@ export default function MobilitaetBereich({
           </p>
         ) : (
           <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-            {suche?.message ?? (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_PREVIEW === 'true'
+            {suche?.message ?? (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED === 'true'
               ? 'Die 12Go-Informationen oben geben dir einen allgemeinen Überblick. Eine Suche nach verfügbaren Verbindungen für deinen konkreten Reisetag ist hier noch nicht angebunden.'
               : 'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise. Eine Suche startet nicht automatisch.')}
           </p>
