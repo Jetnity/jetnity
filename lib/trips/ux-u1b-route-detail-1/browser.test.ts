@@ -300,6 +300,12 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
       await page.waitForSelector('[data-u1b-anordnung="schmal"]')
       await page.getByRole('button', { name: 'Zur Route' }).click()
       await page.setViewportSize({ width: 1440, height: 900 })
+      // ResizeObserver/React stellen die Desktop-Anordnung asynchron wieder her.
+      await page.waitForSelector('[data-u1b-anordnung="neben"]')
+      await page.waitForFunction(() => {
+        const nav = document.querySelector('[data-workspace-mode-nav]')
+        return nav instanceof HTMLElement && getComputedStyle(nav).position === 'sticky'
+      })
       const stand = await page.evaluate(() => window.__u1b)
       assert.equal(stand?.mounts, 1)
       assert.equal(stand?.unmounts, 0)

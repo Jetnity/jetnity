@@ -79,7 +79,8 @@ grant anon to postgres;
 grant authenticated to postgres;
 `
 
-// Spalten, Checks und Unique-Indizes wie Baseline + 20260820110000/20260820120000.
+// Spalten, Checks und Unique-Indizes wie Baseline + 20260820110000/20260820120000
+// und Ortsmetadaten-Migration 20261101202029.
 // Ohne trgm-Indizes (Extension) und ohne Fremdschlüssel aus trips.
 const TABELLEN_SQL = `
 drop table if exists public.places;
@@ -103,7 +104,7 @@ create policy airports_lesen on public.airports for select to anon, authenticate
 grant select on table public.airports to anon, authenticated;
 create table public.places (
   population bigint check (population is null or population >= 0),
-  feature_code text,
+  feature_code text check (feature_code is null or feature_code ~ '^[A-Z0-9]{1,10}$'),
   id text primary key
     constraint places_id_laenge check (char_length(btrim(id)) between 1 and 80),
   source text not null
@@ -166,8 +167,8 @@ function flughaefen(anzahl: number): FlughafenImportZeile[] {
 
 function geonames(anzahl: number): Ort[] {
   const basis: Ort[] = [
-    { id: 'geonames:1861060', source: 'geonames', sourceId: '1861060', name: 'Japan', typ: 'country', country: 'Japan', countryCode: 'JP', region: null, lat: 35, lon: 139, iata: null, keywords: 'Nippon' },
-    { id: 'geonames:2657896', source: 'geonames', sourceId: '2657896', name: 'Zürich', typ: 'city', country: 'Switzerland', countryCode: 'CH', region: '25', lat: 47.36667, lon: 8.55, iata: null, keywords: 'Zurich' },
+    { id: 'geonames:1861060', source: 'geonames', sourceId: '1861060', name: 'Japan', typ: 'country', country: 'Japan', countryCode: 'JP', region: null, lat: 35, lon: 139, iata: null, keywords: 'Nippon', population: 125000000, featureCode: 'PCLI' },
+    { id: 'geonames:2657896', source: 'geonames', sourceId: '2657896', name: 'Zürich', typ: 'city', country: 'Switzerland', countryCode: 'CH', region: '25', lat: 47.36667, lon: 8.55, iata: null, keywords: 'Zurich', population: 400000, featureCode: 'PPLA' },
   ]
   for (let i = 0; basis.length < anzahl; i += 1) {
     basis.push({ id: `geonames:${900000 + i}`, source: 'geonames', sourceId: String(900000 + i), name: `Ort ${i}`, typ: 'city', country: 'Testland', countryCode: 'TL', region: null, lat: 0.5, lon: 0.5, iata: null, keywords: null })
@@ -433,10 +434,12 @@ describe('R69 nativ: echtes psql und PostgreSQL im eigenen Wegwerf-Cluster', { s
 
     const ortDb = JSON.parse(admin(`select coalesce(jsonb_agg(jsonb_build_object(
       'id', id, 'source', source, 'sourceId', source_id, 'name', name, 'typ', typ, 'country', country,
-      'countryCode', country_code, 'region', region, 'lat', lat, 'lon', lon, 'iata', iata, 'keywords', keywords) order by id), '[]')::text
+      'countryCode', country_code, 'region', region, 'lat', lat, 'lon', lon, 'iata', iata, 'keywords', keywords,
+      'population', population, 'featureCode', feature_code) order by id), '[]')::text
       from public.places;`)[0]!) as Ort[]
     const erwartet = orteMitFlughaefen(e.geonamesOrte, e.flughaefen.map(ortAusFlughafen).filter((o): o is Ort => Boolean(o)))
-    assert.deepEqual(ortDb, [...erwartet].sort((a, b) => nachCodeEinheit(a.id, b.id)))
+    assert.deepEqual(ortDb, erwartet.map((ort) => ({ ...ort, population: ort.population ?? null, featureCode: ort.featureCode ?? null }))
+      .sort((a, b) => nachCodeEinheit(a.id, b.id)))
     const zrh = ortDb.find((o) => o.id === 'airport:ZRH')
     assert.deepEqual(
       { typ: zrh?.typ, iata: zrh?.iata, countryCode: zrh?.countryCode, country: zrh?.country },
