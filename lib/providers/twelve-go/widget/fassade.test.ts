@@ -10,8 +10,8 @@ import { PRODUCTION_POLICY_TABLE } from '@/lib/privacy/privacybee-cmp/produktion
 import { CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 describe('12Go produktive Fassade', () => {
-  test('die ausgewählte 12Go-Policy bleibt hinter einem geschlossenen Release', () => {
-    assert.equal(CMP_RELEASE_AUTHORIZED, false)
+  test('die ausgewählte 12Go-Policy ist frei und ohne Gate trotzdem zu', () => {
+    assert.equal(CMP_RELEASE_AUTHORIZED, true)
     assert.equal(PRODUCTION_POLICY_TABLE.discovercars, null)
     assert.equal(PRODUCTION_POLICY_TABLE.twelvego.policyId, 'twelvego-general-chf-20261031-r1')
     assert.equal(PRODUCTION_POLICY_TABLE.twelvego.disclosureRevision, 'twelvego-general-disclosure-v1')

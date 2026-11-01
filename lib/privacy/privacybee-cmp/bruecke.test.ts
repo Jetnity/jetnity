@@ -58,10 +58,11 @@ describe('cmp bruecke und bootstrap', () => {
     assert.equal(bridge.phase(), 'error')
   })
 
-  test('Produktions-Bootstrap verweigert zuerst und ruft keine Schreib-API', () => {
-    const text = productionBootstrapSource(undefined)
+  test('Produktions-Bootstrap ist wahr und ruft keine Schreib-API', () => {
+    const text = productionBootstrapSource(null)
     assert.equal(text.includes('root.booted'), true)
-    assert.equal(text.includes('false!==true'), true)
+    assert.equal(text.includes('true!==true'), true)
+    assert.equal(text.includes('false===true'), true)
     assert.equal(text.indexOf('addEventListener') < text.indexOf('createElement'), true)
     assert.equal(text.includes('acceptAll'), false)
     assert.equal(text.includes('setAllConsents'), false)

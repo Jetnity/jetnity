@@ -82,6 +82,14 @@ describe('cmp bootstrap ausfuehrung', () => {
     assert.equal(prodLauf.calls, 1)
     assert.equal(prodLauf.root.optionalAttempt, 'blocked')
     assert.equal(prod.includes('true===true'), true)
+    const offen = ausfuehren(productionBootstrapSource(null), 'jetnity.com')
+    assert.equal(offen.scripts.length, 1)
+    assert.equal(offen.scripts[0]?.src, CMP_BANNER_SRC)
+    assert.equal(offen.root.booted, 1)
+    assert.equal(offen.calls, 1)
+    assert.equal(offen.root.order, 'listeners-before-optional')
+    assert.equal(offen.listenersAtAttempt, 2)
+    assert.equal(offen.sawBanner, false)
   })
 
   test('nur Freigabe wahr, Kill an, und jetnity.com setzen genau ein Skript; der zweite Lauf nicht noch eins', () => {

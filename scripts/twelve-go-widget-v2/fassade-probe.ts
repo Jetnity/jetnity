@@ -1,5 +1,5 @@
 // Offline probe of the public 12Go facade against the selected source policy.
-// The production bootstrap keeps the release false. A test-only baked gate is separate.
+// The positive path uses the actual production bootstrap. Explicit false stays separate.
 
 import { resetSharedCmpController, readCmpController } from '@/lib/privacy/privacybee-cmp/abo'
 import { buildBootstrapSource, productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
@@ -64,15 +64,18 @@ function install(hostname: string) {
   return stand
 }
 
-if (CMP_RELEASE_AUTHORIZED !== false) fehler.push('Release ist nicht false')
+if (CMP_RELEASE_AUTHORIZED !== true) fehler.push('Release ist nicht true')
 if (PRODUCTION_POLICY_TABLE.discovercars !== null) fehler.push('DiscoverCars ist nicht null')
 if (PRODUCTION_POLICY_TABLE.twelvego?.policyId !== TWELVE_GO_POLICY_ID) fehler.push('12Go-Policy fehlt')
 if (PRODUCTION_POLICY_TABLE.twelvego?.hostSelectionCommit !== 'f056b01d63ac7d61650864734a9b44eb6484989e') fehler.push('Host-Pin fehlt')
 
 resetSharedCmpController()
+if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('fehlendes Gate hat freigegeben')
+
+resetSharedCmpController()
 install('jetnity.com')
-eval(productionBootstrapSource())
-if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('produktiver Bootstrap hat freigegeben')
+eval(buildBootstrapSource({ release: false, killDenied: false }))
+if (requestProductionExecution('twelvego', 'scope-a') !== null || readCmpController().live) fehler.push('explizites false hat freigegeben')
 
 resetSharedCmpController()
 install('jetnity.com')
@@ -86,7 +89,9 @@ if (requestProductionExecution('twelvego', 'scope-a') !== null) fehler.push('fre
 
 resetSharedCmpController()
 const stand = install('jetnity.com')
-eval(buildBootstrapSource({ release: true, killDenied: false }))
+eval(productionBootstrapSource(null))
+const gate = (globalThis as { __jetnityCmp?: { releaseAllowed?: boolean; killDenied?: boolean; scripts?: number } }).__jetnityCmp
+if (!gate || gate.releaseAllowed !== true || gate.killDenied !== false || (gate.scripts ?? 0) < 1) fehler.push('Produktionsgate fehlt')
 if (requestProductionExecution('discovercars', 'scope-a') !== null) fehler.push('DiscoverCars hat eine Capability')
 const kopie = {
   providerId: 'twelvego' as const,
@@ -112,7 +117,6 @@ if (!first || first.src !== TWELVE_GO_HOST_SRC || first.sandbox !== TWELVE_GO_HO
   if (checkProductionExecution(first)) fehler.push('freigegebener Handle bleibt gültig')
   stand.analytics = true
   resetSharedCmpController()
-  eval(buildBootstrapSource({ release: true, killDenied: false }))
   const second = requestProductionExecution('twelvego', 'scope-b')
   releaseProductionExecution(first)
   if (!second || !checkProductionExecution(second)) fehler.push('altes Release beendet den neuen Handle')

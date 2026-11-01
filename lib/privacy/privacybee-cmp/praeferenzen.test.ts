@@ -12,7 +12,7 @@ import { WIDGET_CONSENT_PROVIDERS } from '@/lib/privacy/widget-consent/vertrag'
 
 describe('cmp praeferenzen und offenlegung', () => {
   test('ohne gebackenes Gate bleibt die gelieferte Schaltfläche unsichtbar', () => {
-    assert.equal(CMP_RELEASE_AUTHORIZED, false)
+    assert.equal(CMP_RELEASE_AUTHORIZED, true)
     const html = renderToStaticMarkup(createElement(PrivacyBeeCmpPreferences, { appearance: 'footer' }))
     assert.equal(html.includes(CMP_PREFERENCES_CLASS), false)
     assert.equal(html.includes('Datenschutz-Einstellungen'), false)

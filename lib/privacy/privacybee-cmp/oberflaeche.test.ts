@@ -14,7 +14,17 @@ import { CMP_PREFERENCES_CLASS } from '@/lib/privacy/privacybee-cmp/vertrag'
 
 describe('cmp oberflaeche', () => {
   test('Grenze und Präferenzen bleiben ohne Bereitschaft unsichtbar', () => {
-    assert.equal(renderToStaticMarkup(createElement(PrivacyBeeCmpBoundary)), '')
+    const standard = renderToStaticMarkup(createElement(PrivacyBeeCmpBoundary))
+    assert.match(standard, /data-cmp-client="1"/)
+    assert.match(standard, /data-cmp-phase="missing"/)
+    const vorher = process.env.PRIVACYBEE_KILL_SWITCH
+    process.env.PRIVACYBEE_KILL_SWITCH = 'aus'
+    try {
+      assert.equal(renderToStaticMarkup(createElement(PrivacyBeeCmpBoundary)), '')
+    } finally {
+      if (vorher === undefined) delete process.env.PRIVACYBEE_KILL_SWITCH
+      else process.env.PRIVACYBEE_KILL_SWITCH = vorher
+    }
     const state = createWidgetConsentState('discovercars', 'scope-alpha')
     const html = renderToStaticMarkup(createElement(WidgetConsentChoice, { state, onCommand: () => undefined }))
     assert.equal(html.includes(CMP_PREFERENCES_CLASS), false)

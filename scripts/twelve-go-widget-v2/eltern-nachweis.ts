@@ -8,6 +8,7 @@ import { chromium, type Browser, type BrowserContext, type Page } from 'playwrig
 
 import { anwendungsStil } from '@/scripts/twelve-go-widget-v2/oberflaeche'
 import { nachweisOrdner } from '@/scripts/twelve-go-widget-v2/rahmen-nachweis'
+import { CMP_BANNER_SRC } from '@/lib/privacy/privacybee-cmp/vertrag'
 import { TWELVE_GO_HOST_SANDBOX, TWELVE_GO_HOST_SRC } from '@/lib/providers/twelve-go/widget/protokoll'
 import { TWELVE_GO_READY_TIMEOUT_MS } from '@/components/trips/TwelveGoWidgetHost'
 
@@ -15,7 +16,7 @@ const V1 = 'https://12go.asia/?z=17323861&sub_id=jetnity-mobility-route'
 const PAGE = 'https://jetnity.com/fixture'
 const SCRIPT = 'https://jetnity.com/eltern.js'
 
-const POSITIVE = `window.__analytics=true;window.__jetnityCmp={releaseAllowed:true,killDenied:false};
+const POSITIVE = `window.__analytics=true;
 window.PrivacyBee={getAllConsents(){return{SECURITY_STORAGE:true,FUNCTIONALITY_STORAGE:true,ANALYTICS_STORAGE:window.__analytics===true,AD_STORAGE:false,AD_USER_DATA:false,AD_PERSONALIZATION:false,PERSONALIZATION_STORAGE:false}},getConsent(name){return this.getAllConsents()[name]},hasExplicitConsent(){return true}};`
 
 function kindHtml(mode: 'ready' | 'still' | 'verzoegert'): string {
@@ -104,16 +105,21 @@ async function oeffnen(
   browser: Browser,
   css: string,
   js: string,
-  options: { fixture: boolean; width: number; height: number; root: string; seam?: 'guest' | 'account'; bootstrap?: boolean },
+  options: { fixture: boolean; width: number; height: number; root: string; seam?: 'guest' | 'account'; bootstrap?: boolean | 'geschlossen' },
   kind: { current: 'ready' | 'still' | 'verzoegert' },
   ledger: { adresse: string }[],
-): Promise<{ context: BrowserContext; page: Page; referer: string[] }> {
+): Promise<{ context: BrowserContext; page: Page; referer: string[]; banner: string[] }> {
   const context = await browser.newContext({ viewport: { width: options.width, height: options.height }, locale: 'de-CH' })
   if (options.fixture) await context.addInitScript(POSITIVE)
   const referer: string[] = []
+  const banner: string[] = []
   const html = seite(css)
   await context.route('**/*', (route) => {
     const adresse = route.request().url()
+    if (adresse === CMP_BANNER_SRC) {
+      banner.push(adresse)
+      return route.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: '/* local inert banner */' })
+    }
     const art = artVon(adresse)
     if (!art) {
       ledger.push({ adresse })
@@ -128,10 +134,11 @@ async function oeffnen(
   })
   const page = await context.newPage()
   const seam = options.seam ?? 'guest'
-  const bootstrap = options.bootstrap ? '&bootstrap=produktion' : ''
+  const modus = options.bootstrap === 'geschlossen' ? 'geschlossen' : options.bootstrap ? 'produktion' : ''
+  const bootstrap = modus ? `&bootstrap=${modus}` : ''
   await page.goto(`${PAGE}?seam=${seam}${bootstrap}`, { waitUntil: 'networkidle' })
   await page.evaluate((root) => { document.documentElement.style.fontSize = root }, options.root)
-  return { context, page, referer }
+  return { context, page, referer, banner }
 }
 
 async function rahmen(page: Page) {
@@ -256,7 +263,8 @@ async function main() {
   const { readFileSync } = await import('node:fs')
   const js = readFileSync(jsPfad, 'utf8')
   const css = await anwendungsStil()
-  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] })
+  const optionen = { headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] }
+  const browser = await chromium.launch({ ...optionen, channel: 'chrome' }).catch(() => chromium.launch(optionen))
   const fehler: string[] = []
   const steuerung: Array<Record<string, string | number | boolean | null>> = []
   const ledger: { adresse: string }[] = []
@@ -268,6 +276,12 @@ async function main() {
     await ohne.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await ohne.page.locator('[data-twelve-go-disclosure="twelvego-general-disclosure-v1"]').count() === 1, 'Hinweis fehlt')
     assertGleich(fehler, await ohne.page.locator('[data-twelve-go-datenschutz]').getAttribute('href') === 'https://12go.asia/en/privacy-policy', 'Datenschutzlink')
+    assertGleich(fehler, ohne.banner.length === 1, `fehlende API Banner ${ohne.banner.length}`)
+    const ohneGate = await ohne.page.evaluate(() => {
+      const gate = (window as Window & { __jetnityCmp?: { releaseAllowed?: boolean; killDenied?: boolean; booted?: number; scripts?: number } }).__jetnityCmp
+      return gate ?? null
+    })
+    assertGleich(fehler, ohneGate?.releaseAllowed === true && ohneGate.killDenied === false && ohneGate.booted === 1 && ohneGate.scripts === 1, `Gate ${JSON.stringify(ohneGate)}`)
     assertGleich(fehler, await ohne.page.locator('[data-cmp-preferences="surface"]').count() === 0, 'produktiver Bootstrap zeigt Einstellungen')
     assertGleich(fehler, await ohne.page.locator('iframe').count() === 0, 'Gast startet mit Frame')
     const href = await ohne.page.locator('a[data-twelve-go-art]').first().getAttribute('href')
@@ -279,6 +293,18 @@ async function main() {
     assertGleich(fehler, ledger.length === 0, `Netz vor der Freigabe ${ledger.length}`)
     await ohne.page.screenshot({ path: join(ziel, 'r6-sperre.png'), fullPage: false })
     await ohne.context.close()
+
+    const geschlossen = await oeffnen(browser, css, js, { fixture: true, bootstrap: 'geschlossen', width: 1440, height: 1200, root: '16px', seam: 'guest' }, kind, ledger)
+    await geschlossen.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
+    assertGleich(fehler, geschlossen.banner.length === 0, `geschlossenes Banner ${geschlossen.banner.length}`)
+    assertGleich(fehler, await geschlossen.page.locator('[data-cmp-preferences="surface"]').count() === 0, 'explizites false zeigt Einstellungen')
+    assertGleich(fehler, await geschlossen.page.locator('iframe').count() === 0, 'explizites false startet mit Frame')
+    await anfragen(geschlossen.page)
+    await geschlossen.page.waitForTimeout(200)
+    assertGleich(fehler, (await geschlossen.page.locator('[data-twelve-go-widget]').getAttribute('data-twelve-go-widget')) === 'verweigert', 'explizites false gibt frei')
+    assertGleich(fehler, await geschlossen.page.locator('iframe').count() === 0, 'explizites false montiert einen Frame')
+    assertGleich(fehler, ledger.length === 0, `Netz bei explizitem false ${ledger.length}`)
+    await geschlossen.context.close()
 
     const konto = await oeffnen(browser, css, js, { fixture: false, width: 1440, height: 1200, root: '16px', seam: 'account' }, kind, ledger)
     await konto.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
@@ -322,12 +348,13 @@ async function main() {
       if (fall.width >= 1024) assertGleich(fehler, masse.abstand >= 200, `${fall.name}: Abstand ${masse.abstand}`)
       assertGleich(fehler, masse.poweredParent, `${fall.name}: Hinweis`)
       assertGleich(fehler, masse.link >= 44, `${fall.name}: Datenschutzlink ${masse.link}`)
+      assertGleich(fehler, lauf.banner.length === 1, `${fall.name}: Banner ${lauf.banner.length}`)
       await lauf.page.screenshot({ path: join(ziel, `r6-${fall.name}.png`), fullPage: false })
       await lauf.context.close()
     }
 
     for (const fall of breiten) {
-      const einstellung = await oeffnen(browser, css, js, { fixture: true, ...fall, seam: 'guest' }, kind, ledger)
+      const einstellung = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, ...fall, seam: 'guest' }, kind, ledger)
       await einstellung.page.getByRole('button', { name: 'Datenschutz-Einstellungen' }).waitFor()
       const masse = await einstellung.page.evaluate(() => {
         const knopf = document.querySelector('[data-cmp-preferences="surface"]')
@@ -346,6 +373,7 @@ async function main() {
       assertGleich(fehler, masse.hoehe >= 44 && masse.breite >= 44, `${fall.name}: Einstellungen ${masse.hoehe}x${masse.breite}`)
       assertGleich(fehler, masse.anfrage >= 44, `${fall.name}: Anfrage ${masse.anfrage}`)
       assertGleich(fehler, masse.rahmen === 0 && !masse.ueber, `${fall.name}: Einstellungen starten oder überlaufen`)
+      assertGleich(fehler, einstellung.banner.length === 1, `${fall.name}: positives Banner ${einstellung.banner.length}`)
       const einstellungenFokus = await tabBeweis(einstellung.page, '[data-cmp-preferences="surface"]')
       const anfrageFokus = await tabBeweis(einstellung.page, '[data-twelve-go-aktion="anfragen"]')
       if (einstellungenFokus.status) fehler.push(`${fall.name}: Einstellungen ${einstellungenFokus.status}`)
@@ -372,7 +400,7 @@ async function main() {
     }
 
     kind.current = 'ready'
-    const lauf = await oeffnen(browser, css, js, { fixture: true, width: 1440, height: 1200, root: '16px' }, kind, ledger)
+    const lauf = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 1440, height: 1200, root: '16px' }, kind, ledger)
     const page = lauf.page
     await page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     assertGleich(fehler, await page.locator('iframe').count() === 0, 'Fixture startet mit Frame')
@@ -641,7 +669,7 @@ async function main() {
     await lauf.context.close()
 
     kind.current = 'still'
-    const timeout = await oeffnen(browser, css, js, { fixture: true, width: 390, height: 1200, root: '16px' }, kind, ledger)
+    const timeout = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 390, height: 1200, root: '16px' }, kind, ledger)
     await timeout.page.clock.install()
     await timeout.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     await anfragen(timeout.page)
@@ -653,7 +681,7 @@ async function main() {
     await timeout.context.close()
 
     kind.current = 'ready'
-    const schmal = await oeffnen(browser, css, js, { fixture: true, width: 390, height: 1400, root: '32px' }, kind, ledger)
+    const schmal = await oeffnen(browser, css, js, { fixture: true, bootstrap: true, width: 390, height: 1400, root: '32px' }, kind, ledger)
     await schmal.page.getByRole('button', { name: 'Suchformular anfragen' }).waitFor()
     await anfragen(schmal.page)
     await wartenAufRahmen(schmal.page)

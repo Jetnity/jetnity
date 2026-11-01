@@ -17,8 +17,8 @@ export const CMP_KILL_SWITCH_AUS = PRIVACYBEE_KILL_SWITCH_AUS
 
 export const CMP_PREFERENCES_CLASS = 'privacybee-display-preferences'
 
-/** Dedicated S2 release. False until a later reviewed package changes this source constant. */
-export const CMP_RELEASE_AUTHORIZED = false as const
+/** Dedicated S2 release for this completion candidate. The kill switch and the exact host still gate the banner. This constant is not a live run or a publication approval. */
+export const CMP_RELEASE_AUTHORIZED = true as const
 
 export const CMP_CATEGORIES = [
   'SECURITY_STORAGE',
