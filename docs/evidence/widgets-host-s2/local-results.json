@@ -1,0 +1,17 @@
+{
+  "session": "bc-fd77a5a3-17dd-4479-9594-f6238f61583f",
+  "model": "grok-4.7-high-fast",
+  "seed": "640efc7f7d784905e5a479f9c3e66c0aaceb7638",
+  "base": "b7ebc399b92303eacda9afdaa1786f245492051f",
+  "commands": [
+    {"command": "npm test", "cwd": "apps/widgets-host", "result": "15 pass / 0 fail after R2"},
+    {"command": "npm run typecheck", "cwd": "apps/widgets-host", "result": "exit 0"},
+    {"command": "npm run build", "cwd": "apps/widgets-host", "result": "Next.js 16.4.1 Turbopack success"},
+    {"command": "node scripts/widgets-host-s2/synthetic-http.mjs", "result": "14/14 closed on loopback, including spoofed Host"},
+    {"command": "node scripts/widgets-host-s2/source-guard.mjs", "result": "PASS"},
+    {"command": "node scripts/widgets-host-s2/browser-harness.mjs", "result": "PASS real https shell, one local canary, teardown before after.js, denied twelvego, timeout, shared-origin storage, cookie and DOM boundary, layout, empty unexpected ledger"},
+    {"command": "npm run lint", "cwd": "repository root, apps/widgets-host/.next present", "result": "exit 0, 0 errors, 178 warnings"},
+    {"command": "check:dead check:exports check:deps check:api-schutz check:operating-mode check:schema-bezug", "result": "exit 0"}
+  ],
+  "notRun": ["root npm run build", "auth:pruefen", "GitHub Actions for the new head", "live widgets host", "production Set-Cookie read"]
+}

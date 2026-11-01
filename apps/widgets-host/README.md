@@ -1,9 +1,9 @@
-# Jetnity widget host (inert)
+# Jetnity widget host (S2)
 
-Separate Next source root for a future `widgets.jetnity.com` origin.
+Separate Next source root for `https://jetnity-widgets.vercel.app`.
 
-This build is fail-closed. `/`, `/embed/discovercars`, `/embed/twelvego` and every other path return 404 and load no provider. It is not connected to Git on the widget Vercel project, not deployed, and not a live HTTPS site.
+GET and HEAD of `/embed/discovercars` and `/embed/twelvego` serve a first-party shell only when the authority is that child host. The shell can be framed by `https://jetnity.com`. Every other request stays a closed 404. The 12Go general source row is selected. DiscoverCars stays unselected. A 12Go script is inserted only after a valid parent grant. This package is source selection, not a deployment, and it does not load a CMP or set the parent sandbox.
 
-Run from this directory: `npm ci`, `npm test`, `npm run build`.
+Frozen general exports live under `artifacts/` and must match their published SHA-256.
 
-The separate-origin and parent-domain cookie contract is in `lib/origin-contract.ts` and `docs/JETNITY_WIDGETS_ORIGIN_FOUNDATION_1_REPORT_2026-10-29.md`.
+Run from this directory: `npm ci`, `npm test`, `npm run build`. The browser harness is `node scripts/widgets-host-s2/browser-harness.mjs` from the repository root.

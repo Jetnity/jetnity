@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test tests/inert.test.ts"
+    "test": "node --test tests/s2.test.mjs"
   },
   "dependencies": {
     "next": "16.4.1",

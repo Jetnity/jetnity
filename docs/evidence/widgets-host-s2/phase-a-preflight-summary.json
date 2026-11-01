@@ -1,0 +1,20 @@
+{
+  "phase": "A",
+  "phaseBAuthorized": false,
+  "providerTransmission": false,
+  "browserPreflight": "not-run",
+  "passiveCapture": "prepared-uninvoked",
+  "capturePass": false,
+  "discovercarsSelected": false,
+  "twelvegoSelected": true,
+  "webrtc": {
+    "proven": false,
+    "disposition": "BLOCKED_TRANSPORT",
+    "method": null
+  },
+  "adapter": {
+    "sourceHits": 1,
+    "targetHits": 0,
+    "providerFetches": 0
+  }
+}
