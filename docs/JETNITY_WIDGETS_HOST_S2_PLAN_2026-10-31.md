@@ -1,5 +1,15 @@
 # Jetnity Widgets Host S2 — PLAN
 
+**Stand:** 1 November 2026. **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
+
+## Current — R6
+
+No new host or audit plan. R6 only merges main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` into Draft #1097. The dedicated host already deployed from `f056b01d63ac7d61650864734a9b44eb6484989e` is `dpl_AtVsfaox5dbxx6i1DFqVM7RJ5Tm4` at `https://jetnity-widgets.vercel.app`, project `prj_Qq4i6dNt3hlSbQDpr2LrRaSKOQsk`, subtree `5f79b8161851fc562205cc1d5d8ae5fab80b67d4`.
+
+12Go remains the selected source row. DiscoverCars remains unselected. `capturePass` is false, `providerTransmission` is false, and WebRTC stays `BLOCKED_TRANSPORT`. Phase B stays closed. Integrations inventory 403 is **NOT VERIFIED**, not empty. Unfinished 12Go parent, CMP, form, search, referral, storage, and withdrawal work stays in #1086. #1091 is not the router.
+
+## Original plan header
+
 **Stand:** 31 October 2026. **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f
 **Model:** `grok-4.7-high-fast`

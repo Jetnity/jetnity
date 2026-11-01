@@ -1,6 +1,12 @@
 # Jetnity Widgets Host S2 — REPORT
 
-## Current — 12Go source selection
+## Current — R6 main integration
+
+R6 merges main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` into Draft #1097 and does not change host or audit source. The deployed host is `dpl_AtVsfaox5dbxx6i1DFqVM7RJ5Tm4` / `https://jetnity-widgets.vercel.app`, project `prj_Qq4i6dNt3hlSbQDpr2LrRaSKOQsk`, frozen source `f056b01d63ac7d61650864734a9b44eb6484989e`, subtree `5f79b8161851fc562205cc1d5d8ae5fab80b67d4`.
+
+Recorded source, HTTP, and native acceptances stay limited to those receipts. Integrations inventory 403 is **NOT VERIFIED** and is not an empty inventory. 12Go is selected. DiscoverCars is unselected. `capturePass: false`. `providerTransmission: false`. `BLOCKED_TRANSPORT`. Phase B is closed. Real 12Go parent, CMP, form, search, referral, storage, and withdrawal behavior remains unfinished in #1086. The router is #1097, not #1091. This report does not mark Ready or claim product completion.
+
+## Earlier — 12Go source selection
 
 The 12Go general source row is selected and bound to policy `twelvego-general-chf-20261031-r1`. DiscoverCars stays unselected. This is not a dedicated-host deployment, parent-sandbox acceptance, or CMP acceptance. The DiscoverCars audit remains CHANGES REQUIRED / `BLOCKED_TRANSPORT`. The export was not given `data-starget`, so a named popup target is not claimed. Affiliate parameters in the frozen export are not a commission proof.
 

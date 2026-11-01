@@ -1,5 +1,19 @@
 # Jetnity Widgets Host S2 — HANDOFF
 
+**Stand:** 1 November 2026. **Stop for Root review after the R6 main merge.**
+
+## Current — R6
+
+Router: Draft https://github.com/Jetnity/jetnity/pull/1097. Do not resume work through historical #1091.
+
+Main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` is merged. CMP #1098 and Trip.com #1099 stay in the tree. Host subtree `5f79b8161851fc562205cc1d5d8ae5fab80b67d4` is unchanged and matches deployed source `f056b01d63ac7d61650864734a9b44eb6484989e` on `dpl_AtVsfaox5dbxx6i1DFqVM7RJ5Tm4` / `https://jetnity-widgets.vercel.app`, project `prj_Qq4i6dNt3hlSbQDpr2LrRaSKOQsk`.
+
+12Go is selected. DiscoverCars is unselected. `capturePass: false`. `providerTransmission: false`. `BLOCKED_TRANSPORT`. Phase B is closed and blocks that execution only. Integrations inventory 403 is **NOT VERIFIED**, not an empty inventory. #1086 still owns unfinished 12Go parent, CMP, form, search, referral, storage, and withdrawal behavior.
+
+Do not mark Ready, merge, deploy, or send another host HTTP request. The next step is independent Root review of the exact pushed head. Native CI and the main-app Preview from that push are not a dedicated-host deployment and are not a whole-PR verdict.
+
+## Earlier handoff
+
 **Stand:** 31 October 2026. **Stop.**
 **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f

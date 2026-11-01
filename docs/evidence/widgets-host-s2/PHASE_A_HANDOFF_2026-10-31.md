@@ -1,5 +1,9 @@
 # Widgets Host S2 — Phase A handoff
 
+**Stand:** 1 November 2026. **R6 note.** The sentence below that main `628b95dd` was not synced is the historical state before R6. R6 merged main `a3fda92a1a2653f8dd59383334ba0d148000ba8f`. Host subtree `5f79b8161851fc562205cc1d5d8ae5fab80b67d4` and the audit policy and lifecycle blobs were not part of that merge. `capturePass` stays false. `providerTransmission` stays false. `BLOCKED_TRANSPORT` and Phase B stay closed. Router remains #1097. No further host HTTP read is authorized.
+
+## Earlier handoff
+
 **Stand:** 31 October 2026. **Stop.**
 **Writer:** Jetnity Widgets Origin Isolation Foundation 1 — Cursor Generation 1.
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f

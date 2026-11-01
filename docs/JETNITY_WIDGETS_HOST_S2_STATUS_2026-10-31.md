@@ -1,8 +1,20 @@
 # Jetnity Widgets Host S2 — STATUS
 
-**Stand:** 31 October 2026. **Status:** 12Go source selection delivered on Draft #1097. Stopped for independent review.
+**Stand:** 1 November 2026. **Status:** R6 merged current main into Draft #1097. Stopped for independent Root review. Not Ready. Not a product completion.
 
-## Current
+## Current — R6 main integration
+
+Router is Draft #1097 on `feat/widgets-host-s2`. #1091 is the historical bootstrap route, not this writer.
+
+R6 is a normal merge of main `a3fda92a1a2653f8dd59383334ba0d148000ba8f` (accepted CMP #1098 and Trip.com #1099). It adds no host or audit implementation. The deployed host remains `dpl_AtVsfaox5dbxx6i1DFqVM7RJ5Tm4` at `https://jetnity-widgets.vercel.app`, project `prj_Qq4i6dNt3hlSbQDpr2LrRaSKOQsk`, source `f056b01d63ac7d61650864734a9b44eb6484989e`, subtree `5f79b8161851fc562205cc1d5d8ae5fab80b67d4`.
+
+12Go stays selected. DiscoverCars stays unselected. `capturePass` is false. `providerTransmission` is false. WebRTC remains `BLOCKED_TRANSPORT`. DiscoverCars Phase B stays closed. That block stops Phase B execution. It is not a generic Product-Owner gate over reviewed host and audit preparation source. Root still decides the whole PR after fresh evidence.
+
+Source, HTTP, and native acceptances stay limited to the receipts already recorded. The integrations inventory read that returned 403 is **NOT VERIFIED**. It is not evidence that integrations are empty. Real 12Go parent, CMP, form, search, referral, storage, and withdrawal work remains unfinished in #1086.
+
+The sections below are earlier receipts. Where they say no deployment exists, or that both registry rows are unselected, that described those earlier reads.
+
+## Earlier — 12Go source selection
 
 - The 12Go general row is selected in source: policy `twelvego-general-chf-20261031-r1`, artifact `3eeefcb326833997b1792f4a2bbc2b833511beddac2fd9626a2a9c07f68b369e`. DiscoverCars stays unselected.
 - That selection opens the fixed 12Go resource rules only when the full binding matches. It does not deploy `jetnity-widgets`, set the parent sandbox, or accept a CMP. `purposeSeparationVerified` is false. The form has no `data-starget`; a safe new tab is not claimed.
@@ -15,7 +27,7 @@
 **Session:** https://cursor.com/agents/bc-fd77a5a3-17dd-4479-9594-f6238f61583f
 **Branch:** `feat/widgets-host-s2`
 
-## True now
+## True at the R2 note
 
 - The host shell, handshake, insertion adapter, denied production registry, frozen exports, unit tests, HTTP matrix, and Playwright harness are in this branch.
 - Historical at R2: both production selections were denied. 12Go source selection is now the current registry state. DiscoverCars remains denied.
