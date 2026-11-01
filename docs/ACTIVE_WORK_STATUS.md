@@ -1,5 +1,11 @@
 # Jetnity – Active Work Status
 
+<!-- ACTIVITIES_DESTINATION_FIRST_1_BEGIN -->
+## Aktueller Writer — Activities Destination First 1
+
+1. November 2026, Europe/Zurich. Draft PR #1100, branch `codex/activities-destination-first-20261101`. Session `bc-b961dce1-751e-403e-ade6-52d2c56a648b`, https://cursor.com/agents/bc-b961dce1-751e-403e-ade6-52d2c56a648b, `originalModelName=grok-4.7-high-fast`. TASK V1 plus TASK V2, including the opaque `vi-wm` bridge. STOP for independent exact-head review. Not Ready and not a merge. Native Viator Production stays off. Four live widget documents, zero clicks, zero HTTP 403. The owned wrapper did not paint those cards; the bridge is proven offline. Handoff: `docs/ACTIVITIES_DESTINATION_FIRST_1_HANDOFF_2026-11-01.md`.
+<!-- ACTIVITIES_DESTINATION_FIRST_1_END -->
+
 <!-- U1C_ROUTE_DESIGN_ALIGNMENT_1_BEGIN -->
 ## Aktueller Writer — UX V1 Route Design Alignment 1
 

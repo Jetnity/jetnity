@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **01.11.2026 — Aktivitäten zielgeführt, beide offiziellen Widgets:** Draft PR #1100. Ein bestätigtes Ziel öffnet GetYourGuide und das dynamische Viator-Widget. Die native Viator-API bleibt aus, bis sie ausdrücklich gesucht wird, und ihre Production bleibt zu. Der undurchsichtige Rahmen braucht eine eigene Höhenbrücke, weil das offizielle Skript `vi-wm` bei Herkunft `null` verwirft. Vier echte Widget-Ladeversuche, kein Klick, kein HTTP 403; die äußeren Bilder zeigten die Karten nicht. Unabhängige Abnahme fehlt. [Handoff](docs/ACTIVITIES_DESTINATION_FIRST_1_HANDOFF_2026-11-01.md).
+
 > **01.11.2026 — Trip.com Suchlinks 1:** Der Owner hat die offizielle manuelle Suche
 > als ersten Schritt freigegeben. Implementiert wird ein externer Hotel-/Flugsucheinstieg
 > im vorhandenen Trip Workspace, mit lokaler Reisehilfe. Automatische kontextbezogene
