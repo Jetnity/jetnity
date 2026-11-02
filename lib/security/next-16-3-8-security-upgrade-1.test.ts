@@ -71,7 +71,6 @@ describe('Next.js 16.4.1 security upgrade 1', () => {
     assert.deepEqual(report.inventory.nextImageImports.sort(), [
       'components/home/HomeHero.tsx',
       'components/home/HomeInspiration.tsx',
-      'components/home/HomeProduktfenster.tsx',
       'components/inspiration/explorer-1/Inspirationskarte.tsx',
       'components/layout/Footer.tsx',
       'components/layout/PublicNavbar.tsx',

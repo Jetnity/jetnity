@@ -13,7 +13,7 @@ export function HomeHero() {
       <div className="mx-auto grid max-w-[1450px] items-stretch rounded-[28px] bg-brand-800 text-white lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:rounded-[36px]">
         <div className="min-w-0 px-5 py-7 sm:px-10 sm:py-12 lg:px-12 lg:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-citrus-400">
-            Dein Reiseplaner. Dein Reisebegleiter.
+            Eine Reise. Ein Zusammenhang.
           </p>
           <h1
             id="start-titel"
@@ -23,8 +23,9 @@ export function HomeHero() {
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-ink-300">{FINAL_HOMEPAGE_DEFINITION}</p>
           <StartzielForm />
+          <p className="mt-3 text-sm text-ink-300">Ohne Konto beginnen. Deine Wünsche geben die Richtung vor.</p>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm leading-6 text-ink-300">
-            {['Ohne Konto starten', 'Dein Plan, dein Tempo'].map((text) => (
+            {['Versteht deine Reise', 'Erkennt, was wichtig wird', 'Passt deinen Plan an'].map((text) => (
               <li key={text} className="flex items-start gap-2">
                 <Check className="mt-1 h-4 w-4 shrink-0 text-citrus-400" aria-hidden="true" />
                 {text}

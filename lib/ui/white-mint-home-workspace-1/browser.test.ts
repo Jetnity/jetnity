@@ -331,7 +331,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.equal(fehler.length, 0, fehler.join('\n'))
       assert.deepEqual(fremd, [])
       assert.equal(aehnlich(rgbAus(werte.main?.hintergrund), WHITE_MINT.canvas), true, JSON.stringify(werte.main))
-      assert.equal(aehnlich(rgbAus(werte.header?.hintergrund), WHITE_MINT.navigation), true, JSON.stringify(werte.header))
+      assert.equal(aehnlich(rgbAus(werte.header?.hintergrund), WHITE_MINT.card), true, JSON.stringify(werte.header))
       assert.equal(aehnlich(rgbAus(werte.karte?.hintergrund), WHITE_MINT.card), true, JSON.stringify(werte.karte))
       assert.equal(aehnlich(rgbAus(werte.ueberschrift?.farbe), '#FFFFFF'), true)
       assert.ok((werte.ueberlauf ?? 99) <= 1, `overflow ${werte.ueberlauf} at ${breite}`)
@@ -341,7 +341,7 @@ describe('rendered white/mint homepage and light workspace', () => {
           START_H1,
           'Reise planen',
           'info@jetnity.ch',
-          'Alles für deine Reise. Ein gemeinsamer Plan.',
+          'Jetnity sieht, was zusammengehört.',
         ])
         assert.equal(ergebnis.urteil.ok, true, ergebnis.urteil.fehler.slice(0, 15).join('\n'))
         protokoll[`homepagePaare${breite}`] = {
@@ -367,7 +367,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       const bounds = await cta.boundingBox()
       assert.ok(bounds && bounds.height >= 44 && bounds.y + bounds.height < 900, `first-screen CTA at ${breite}`)
       assert.equal(await page.locator('main h1').count(), 1)
-      assert.equal(await page.locator('main details').count(), 6)
+      assert.equal(await page.locator('main details').count(), 4)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
       assert.ok(overflow <= 1, `${breite}: ${overflow}`)
       await input.focus()
@@ -379,11 +379,11 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.ok(fokus.breite >= 2 && fokus.art === 'solid', `visible input focus at ${breite}: ${JSON.stringify(fokus)}`)
       await bild(page, `final-homepage-${breite}`)
       await bild(page, `final-homepage-${breite}-full`)
-      const faq = page.locator('summary').filter({ hasText: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?' })
+      const faq = page.locator('summary').filter({ hasText: 'Welche Entscheidungen trifft Jetnity automatisch?' })
       await faq.focus()
       await page.keyboard.press('Enter')
       assert.equal(await faq.evaluate((el) => el.closest('details')?.open), true)
-      assert.equal(await page.getByText(/Ein Eintrag in deinem Reiseplan ist noch keine Buchung/).isVisible(), true)
+      assert.equal(await page.getByText(/Ein angepasster Planeintrag allein ist noch keine Buchung oder Umbuchung/).isVisible(), true)
       await page.keyboard.press('Enter')
       assert.equal(await faq.evaluate((el) => el.closest('details')?.open), false)
       if (breite === 320 || breite === 390) {

@@ -1,5 +1,19 @@
 # Jetnity — Final Homepage Product Spec
 
+> **Maßgebliche Owner-Korrektur, 02.11.2026 — Homepage Reiseintelligenz 2:**
+> Der Owner verwirft die gewöhnliche Reiseplaner-Positionierung von Final 1 und
+> genehmigt die Darstellung des fertigen Zielprodukts: Jetnity versteht die ganze
+> Reise, prüft persönliche Einreiseanforderungen und reagiert auf Flugänderungen.
+> Jetnity ist selbst der handelnde Begleiter; kein „KI“ in Kundentexten, zugänglichen
+> Namen oder Metadaten. H1 und Bali-Hero bleiben. Ein interaktives, ausdrücklich
+> benanntes Beispiel macht automatische Plananpassung erlebbar; bezahlte Änderungen
+> und Buchungen bleiben bestätigungspflichtig. Drei klare Unterschiede, kurze
+> Schritte und FAQ ersetzen Feature-Matrix und Finanzierungs-FAQ.
+> Diese Freigabe betrifft den Auftritt, nicht die technische Betriebsbereitschaft
+> der beschriebenen Fähigkeiten. Die Suchmaschinen-Sperre bleibt ausdrücklich
+> bestehen. [Verbindlicher Auftrag](HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md).
+> Der folgende Final-1-Zusatz gilt nur, soweit er dieser Korrektur nicht widerspricht.
+
 > **Binding owner addendum, 2 November 2026 — Homepage Final 1:** The owner
 > explicitly requests the final customer-facing homepage now, before every
 > future product capability is complete. This supersedes the old timing gate and

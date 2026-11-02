@@ -1,5 +1,14 @@
 # Jetnity – Active Work Status
 
+> **02.11.2026 — Homepage Reiseintelligenz 2:** Root ist alleiniger Writer auf
+> `codex/homepage-reiseintelligenz-20261102`, Baseline main `2311260f`.
+> Aktueller Auftrag: finaler Auftritt des intelligenten Reisebegleiters ohne „KI“
+> in Kundentexten; [Auftrag](HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md) und
+> [Prüfstand](HOMEPAGE_REISEINTELLIGENZ_2_EVIDENCE_2026-11-02.md).
+> Kein Provider-/Datenbank-/Auth- oder Indexierungs-Gate wird geöffnet.
+> Release-Status aus dem aktuellen PR/Deployment verifizieren; ältere Abschnitte
+> unten sind historische Snapshots und keine konkurrierenden Writer-Aufträge.
+
 > **01.11.2026 – Orts-/Länderqualität, PR #1103:** Implementierung und Development-Prüfung laufen; Production-Migration/Referenzdatenrefresh noch nicht freigegeben. [Aktueller Prüfstand und nächster Schritt](PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md). Root alleiniger Writer, separate unabhängige Reviews. Dieser Hinweis ist der aktuelle Stand dieses Slices; ältere Einträge bleiben historische Snapshots.
 
 <!-- ACTIVITIES_DESTINATION_FIRST_1_BEGIN -->

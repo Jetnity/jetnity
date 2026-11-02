@@ -1,5 +1,15 @@
 # Jetnity – Handoff und nächste Schritte
 
+> **02.11.2026 — Homepage Reiseintelligenz 2:** Der Owner genehmigt den kompakten
+> finalen Auftritt: Jetnity ist der intelligente Reisebegleiter, keine manuelle
+> Sammlung von Reisebausteinen. H1/Bali bleiben, Flugänderung und Plananpassung
+> werden im Beispiel sichtbar. Persönliche Einreisevorbereitung, Machbarkeit und
+> Gesamtkosten sind die Kernunterschiede. Kein „KI“ und keine Finanzierungs-FAQ.
+> [Auftrag](docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md) ·
+> [Prüfstand](docs/HOMEPAGE_REISEINTELLIGENZ_2_EVIDENCE_2026-11-02.md).
+> Dies ist ein Homepage-Slice, keine Aktivierung der dargestellten Zielsysteme.
+> Indexierung bleibt gesperrt. Tatsächlichen Release im PR/Deployment nachlesen.
+
 > **01.11.2026 – Orts-/Länderqualität, PR #1103:** Implementierung und Development-Prüfung laufen; Production-Migration/Referenzdatenrefresh noch nicht freigegeben. [Aktueller Prüfstand und nächster Schritt](docs/PLACES_PLANNING_QUALITY_EVIDENCE_2026-11-01.md). Root alleiniger Writer, separate unabhängige Reviews. Dieser Hinweis ist der aktuelle Stand dieses Slices; ältere Einträge bleiben historische Snapshots.
 
 <!-- R109_ROOT_CONTINUITY_POINTER_BEGIN -->

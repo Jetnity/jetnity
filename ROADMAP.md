@@ -1,5 +1,14 @@
 # Jetnity – Roadmap
 
+> **02.11.2026 — Homepage Reiseintelligenz 2:** Der Owner hat die Darstellung des
+> fertigen Reisebegleiters mit automatischer Plananpassung, persönlicher
+> Einreisevorbereitung und Gesamtkosten freigegeben. Implementierung im Branch
+> `codex/homepage-reiseintelligenz-20261102`; Prüfung und Veröffentlichung werden
+> im [Prüfstand](docs/HOMEPAGE_REISEINTELLIGENZ_2_EVIDENCE_2026-11-02.md) geführt.
+> Der Auftritt ersetzt die Final-1-Positionierung. Er aktiviert keine Überwachung,
+> Einreiseprüfung oder Umbuchung; deren technische Abnahmen bleiben getrennt.
+> Indexierung bleibt auf ausdrücklichen Owner-Wunsch gesperrt.
+
 > **02.11.2026 – Homepage Final 1:** Finaler Kundenauftritt mit verständlicher Reiseplaner-Positionierung, Reisebeispiel, Vorteilen, Inspiration und FAQ umgesetzt. Entwicklungsstatus-Matrix nach aktuellem Owner-Auftrag ersetzt. SEO/Share/SSR vorbereitet; öffentliche Indexing-/Launch-Freigabe bleibt separat, unverändert geschlossen. Lokale Prüfungen und unabhängiger Root-Review sind in [Evidence](docs/HOMEPAGE_FINAL_1_EVIDENCE_2026-11-02.md) getrennt dokumentiert; kein behaupteter Hosted-Release.
 
 > **02.11.2026 – Workspace-Navigation:** Weißer, vollbreiter Header und automatische Desktop-Symbolleiste umgesetzt; native DOM-Ereignisse berücksichtigen die über Portale eingebundene Reise-Navigation. Konto/Darstellung nur als Symbole, GeoNames-Nachweis über die öffentliche Quellen-Seite. Technische und unabhängige Release-Abnahme laufen. [Prüfstand](docs/WORKSPACE_NAVIGATION_1_EVIDENCE_2026-11-02.md).

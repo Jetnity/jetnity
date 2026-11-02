@@ -228,3 +228,11 @@ main[data-white-mint="home"].bg-surface-75 {
 .workspace-shell[data-workspace-theme="light"] .workspace-content :where(.text-danger-600, .text-danger-700, .text-red-600, .text-red-700) {
   color: rgb(var(--jet-danger-600));
 }
+
+/* Owner-approved homepage: continuous white navigation above the green hero. */
+[data-white-mint="home"] > header.bg-surface-75\/95,
+[data-white-mint="home"] > header nav[aria-label="Mobile Navigation"] {
+  background-color: var(--white-mint-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}

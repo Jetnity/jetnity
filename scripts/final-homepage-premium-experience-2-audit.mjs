@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Existing homepage audit, updated for the owner-approved Final 1 customer story.
+// Existing homepage audit, updated for the owner-approved Reiseintelligenz 2 story.
 // AUDIT_BROWSER=1 adds an isolated localhost-only check against an actual Next server.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -8,21 +8,21 @@ import { fileURLToPath } from 'node:url'
 
 const wurzel = join(dirname(fileURLToPath(import.meta.url)), '..')
 const lesen = (pfad) => readFileSync(join(wurzel, pfad), 'utf8')
-const dateien = ['app/(public)/page.tsx', 'lib/seo/final-homepage.ts', ...['HomeHero', 'HomeWerkzeuge', 'HomeProduktfenster', 'HomeBegleitung', 'HomeUnterschied', 'HomeInspiration', 'HomeVertrauen'].map((name) => `components/home/${name}.tsx`)]
+const dateien = ['app/(public)/page.tsx', 'lib/seo/final-homepage.ts', ...['HomeHero', 'HomeWerkzeuge', 'HomeProduktfenster', 'HomeReiseBeispiel', 'HomeBegleitung', 'HomeUnterschied', 'HomeInspiration', 'HomeVertrauen'].map((name) => `components/home/${name}.tsx`)]
 const texte = dateien.map(lesen).join('\n')
 const fehler = []
 const pruefe = (wahr, text) => { if (!wahr) fehler.push(text) }
-for (const text of ['Deine ganze Reise. Intelligent an einem Ort.', 'Reiseplaner und Reisebegleiter', 'StartzielForm', 'GastCreateLink', 'zielHref', 'Beispielreise', 'Lissabon', 'Porto', 'Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung', 'HOMEPAGE_FAQ', '<details', '<summary', 'beim jeweiligen Anbieter', 'noch keine Buchung', 'id="so-funktionierts"', 'id="entdecken"', 'id="fragen"', 'id="pro"']) {
+for (const text of ['Deine ganze Reise. Intelligent an einem Ort.', 'intelligente Reiseplattform', 'StartzielForm', 'GastCreateLink', 'zielHref', 'Beispielreise', 'Lissabon', 'Flugänderung', 'Einreise', 'Gesamtkosten', 'Reiseplan', 'HOMEPAGE_FAQ', '<details', '<summary', 'beim jeweiligen Anbieter', 'noch keine Buchung', 'id="so-funktionierts"', 'id="entdecken"', 'id="fragen"', 'id="pro"']) {
   pruefe(texte.includes(text), `Homepage contract missing: ${text}`)
 }
 pruefe(!/Heute nutzbar|Soweit Daten vorliegen|In Vorbereitung|Kommt später|synthetische Reise|HOMEPAGE_FAEHIGKEITEN/.test(texte), 'Obsolete development matrix remains')
 pruefe(!/\bindex:\s*true\b/.test(texte), 'Homepage must not change global indexing permission')
-pruefe(!/\d+\s*(CHF|EUR|€|\$)/.test(texte), 'Unverified price in homepage')
+pruefe(!/\d+\s*(CHF|EUR|€|\$(?!\{))/.test(texte), 'Unverified price in homepage')
 pruefe(!/gtag|googletagmanager|facebook\.net/.test(texte), 'New tracking in homepage')
 pruefe(lesen('lib/seo/oeffentlicher-origin.ts').includes('darfIndexieren'), 'Global indexing gate missing')
 for (const id of ['1650535', '2267057', '2657915', '2759794']) pruefe(lesen('lib/places/inspiration.ts').includes(`geonames:${id}`), `Canonical inspiration id missing: ${id}`)
-const share = readFileSync(join(wurzel, 'public/images/jetnity-reiseplaner-share.png'))
-pruefe(share.readUInt32BE(16) === 1200 && share.readUInt32BE(20) === 630, 'Share image must be 1200×630')
+const share = readFileSync(join(wurzel, 'public/images/hero-bali.png'))
+pruefe(share.readUInt32BE(16) === 1536 && share.readUInt32BE(20) === 1024, 'Share image must be the approved Bali photograph')
 pruefe(!lesen('app/sitemap.ts').includes('lastModified: new Date()'), 'Sitemap fabricates last modification time')
 const bericht = { stand: new Date().toISOString(), dateien, browser: 'NOT RUN (set AUDIT_BROWSER=1)', fehler }
 
@@ -38,7 +38,7 @@ if (process.env.AUDIT_BROWSER === '1') {
   catch (error) { if (!String(error).includes("Executable doesn't exist")) throw error; browser = await chromium.launch({ headless: true, channel: 'chrome' }) }
   try {
     const html = await fetch(`${origin}/`).then((res) => res.text())
-    for (const text of ['Reiseplaner und Reisebegleiter', 'Beispielreise', 'Was ist Jetnity?', 'beim jeweiligen Anbieter', '<details', 'application/ld+json']) pruefe(html.includes(text), `Important content absent from SSR HTML: ${text}`)
+    for (const text of ['intelligente Reiseplattform', 'Beispielreise', 'Was ist Jetnity?', 'beim jeweiligen Anbieter', '<details', 'application/ld+json']) pruefe(html.includes(text), `Important content absent from SSR HTML: ${text}`)
     const laeufe = []
     for (const breite of [320, 360, 390, 768, 1024, 1440]) {
       const context = await browser.newContext({ viewport: { width: breite, height: 900 }, reducedMotion: 'reduce' })
@@ -76,9 +76,9 @@ if (process.env.AUDIT_BROWSER === '1') {
       })
       pruefe(dom.h1Count === 1 && dom.h1 === 'Deine ganze Reise. Intelligent an einem Ort.', `${breite}: single correct H1`)
       pruefe(dom.overflow <= 1, `${breite}: horizontal overflow ${dom.overflow}`)
-      pruefe(dom.canonical === 'https://jetnity.com/', `${breite}: canonical ${dom.canonical}`)
+      pruefe(Boolean(dom.canonical) && new URL(dom.canonical).href === 'https://jetnity.com/', `${breite}: canonical ${dom.canonical}`)
       pruefe(Boolean(dom.description && dom.description.length <= 160), `${breite}: meta description`)
-      pruefe(dom.share?.includes('/images/jetnity-reiseplaner-share.png'), `${breite}: share image`)
+      pruefe(dom.share?.includes('/images/hero-bali.png'), `${breite}: share image`)
       pruefe(dom.images, `${breite}: broken image`)
       pruefe(dom.buttonHeight >= 44 && dom.inputPx >= 16 && dom.summaries, `${breite}: input/touch dimensions`)
       pruefe(dom.firstScreenCta, `${breite}: primary CTA not in first viewport`)
@@ -87,7 +87,24 @@ if (process.env.AUDIT_BROWSER === '1') {
       pruefe(laufzeitfehler.length === 0, `${breite}: ${laufzeitfehler.join(', ')}`)
       pruefe(fremd.length === 0, `${breite}: unexpected external request`)
       await page.screenshot({ path: join(ausgabe, `homepage-${breite}.png`), fullPage: true })
-      const summary = page.locator('summary').filter({ hasText: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?' })
+      const body = await page.locator('body').innerText()
+      pruefe(!/\bKI\b|künstliche Intelligenz|Wie finanziert sich Jetnity|Affiliate|Provision/i.test(body), `${breite}: excluded customer terminology`)
+      pruefe(await page.locator('meta[name="robots"]').getAttribute('content').then((value) => value?.includes('noindex')), `${breite}: indexing hold`)
+      const requestStart = fremd.length
+      const beispiel = page.locator('#reisebeispiel')
+      await beispiel.getByRole('button', { name: 'Flugänderung ansehen', exact: true }).focus()
+      await page.keyboard.press('Enter')
+      pruefe(await beispiel.getByRole('heading', { name: 'Fünf Stunden später. Mehr als eine neue Flugzeit.' }).isVisible(), `${breite}: keyboard change step`)
+      await beispiel.getByRole('button', { name: 'Angepassten Plan ansehen', exact: true }).click()
+      pruefe(await beispiel.getByRole('heading', { name: 'Dein Plan passt wieder zusammen.' }).isVisible(), `${breite}: adapted plan`)
+      pruefe(await beispiel.getByText('Eine passende Transferalternative liegt zur Auswahl bereit.').isVisible(), `${breite}: transfer requires selection`)
+      await page.screenshot({ path: join(ausgabe, `homepage-${breite}-angepasst.png`), fullPage: true })
+      await beispiel.getByRole('button', { name: 'Beispiel erneut ansehen', exact: true }).click()
+      pruefe(await beispiel.getByRole('heading', { name: 'Alles beginnt mit deiner Vorfreude.' }).isVisible(), `${breite}: reset`)
+      await beispiel.getByRole('button', { name: '3 Jetnity passt an', exact: true }).click()
+      pruefe(await beispiel.getByRole('button', { name: '3 Jetnity passt an', exact: true }).getAttribute('aria-pressed') === 'true', `${breite}: direct step selection`)
+      pruefe(fremd.length === requestStart, `${breite}: illustration requested external data`)
+      const summary = page.locator('summary').filter({ hasText: 'Welche Entscheidungen trifft Jetnity automatisch?' })
       await summary.focus(); await page.keyboard.press('Enter')
       pruefe(await summary.evaluate((el) => el.closest('details')?.open), `${breite}: FAQ keyboard interaction`)
       if (breite === 320 || breite === 1440) {

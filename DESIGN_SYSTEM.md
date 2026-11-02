@@ -1,5 +1,17 @@
 # Jetnity – Design-System
 
+> **Owner-Korrektur, 02.11.2026 — Homepage Reiseintelligenz 2:**
+> Die Darstellung rückt Jetnitys zusammenhängende Reisebegleitung in den Mittelpunkt.
+> Der bewährte H1/Bali-Hero bleibt; darunter folgt direkt ein bedienbares Beispiel
+> mit ursprünglichem Plan, Flugänderung und angepasstem Tag. Keine automatisch
+> ablaufende Animation, kein externer Abruf. Drei ruhige Fähigkeitskarten zeigen
+> Machbarkeit, persönliche Einreisevorbereitung und Gesamtkosten; die mittlere
+> Karte ist dunkelgrün. Die Homepage-Kopfleiste ist deckend weiß. Alle Schritte
+> sind per Tastatur erreichbar, Text muss auch bei 320px und 200% umbrechen.
+> Die bisherige Final-1-Reiseplaner-Definition wird ersetzt; sichtbare Sprache
+> nennt Jetnity selbst, keine technische Modellkategorie.
+> [Auftrag](docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md).
+
 > **Owner-Auftrag, 02.11.2026 – Homepage Final 1:** Positive Kundensprache ersetzt
 > sichtbare Entwicklungsstatus-Listen. Der bestehende Dunkelgrün/Lime-Hero erhält
 > eine klare Reiseplaner-Definition; das bewährte Bali-Bild erscheint auch mobil

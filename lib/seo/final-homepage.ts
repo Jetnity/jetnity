@@ -6,71 +6,114 @@ export const FINAL_HOMEPAGE_H1 = 'Deine ganze Reise. Intelligent an einem Ort.'
 
 /** Rendered in the hero and reused verbatim in the entity description. */
 export const FINAL_HOMEPAGE_DEFINITION =
-  'Jetnity ist dein Reiseplaner und Reisebegleiter. Plane deine Route, organisiere Flüge, Unterkünfte und Erlebnisse und behalte deine ganze Reise im Blick.'
+  'Jetnity ist deine intelligente Reiseplattform. Sie verbindet deine Wünsche mit einer durchdachten Reise, prüft Verbindungen und persönliche Einreiseanforderungen und begleitet dich bei Veränderungen unterwegs.'
 
 export const FINAL_HOMEPAGE_DESCRIPTION =
-  'Plane deine Reise mit Jetnity: Reiseziele, Route, Tagesplan, Flüge, Unterkünfte und Aktivitäten an einem Ort. Starte deinen Reiseplan ohne Konto.'
+  'Deine ganze Reise mit Jetnity: passende Routen, persönliche Einreisevorbereitung und ein Reiseplan, der sich bei Flugänderungen automatisch anpasst.'
 
 export const HOMEPAGE_UEBERSCHRIFTEN = {
-  werkzeuge: 'Alles für deine Reise. Ein gemeinsamer Plan.',
-  produktfenster: 'Aus Vorfreude wird dein Reiseplan.',
-  begleitung: 'Deine nächste Reise beginnt ganz einfach.',
-  unterschied: 'Mehr erleben. Weniger organisieren.',
-  inspiration: 'Wohin zieht es dich als Nächstes?',
+  werkzeuge: 'Eine Reise statt fünf getrennte Tools.',
+  produktfenster: 'Dein Flug ändert sich. Jetnity denkt die Reise weiter.',
+  begleitung: 'Du beschreibst deine Wünsche. Jetnity bringt alles zusammen.',
+  unterschied: 'Jetnity sieht, was zusammengehört.',
+  inspiration: 'Wohin es dich zieht, ist persönlich.',
   vertrauen: 'Deine Reise. Deine Entscheidungen.',
-  abschluss: 'Die Welt wartet. Dein Plan beginnt hier.',
+  abschluss: 'Freu dich auf deine Reise. Jetnity denkt mit.',
 } as const
 
 export const HOMEPAGE_WERKZEUGE = [
-  { titel: 'Reiseplan', text: 'Ziele verbinden, Tage gestalten und deine Route im Blick behalten.' },
-  { titel: 'Flüge', text: 'Hinflug, Rückflug und weitere Flüge deiner Reise zuordnen.' },
-  { titel: 'Unterkunft', text: 'Deine Übernachtungen passend zu Orten und Reisetagen organisieren.' },
-  { titel: 'Aktivitäten', text: 'Erlebnisse entdecken und deinen Tagen das Besondere geben.' },
-  { titel: 'Mobilität', text: 'Zug, Bus, Fähre, Transfer und Mietwagen in deine Reise einordnen.' },
+  { titel: 'Reiseplan', text: 'Eine Route, in der alles zusammenpasst.' },
+  { titel: 'Flüge', text: 'Verbindungen mit Blick auf die weitere Reise.' },
+  { titel: 'Unterkunft', text: 'Die passende Lage für deine Pläne.' },
+  { titel: 'Erlebnisse', text: 'Entdeckungen in deinem Tempo.' },
+  { titel: 'Mobilität', text: 'Passende Wege von Station zu Station.' },
 ] as const
 
 export const HOMEPAGE_SCHRITTE = [
-  { titel: 'Wähle deine Ziele', text: 'Ein Wochenende in einer Stadt oder mehrere Stopps auf einer Rundreise: Starte mit den Orten, die du entdecken möchtest.' },
-  { titel: 'Mach den Plan zu deinem', text: 'Lege Reisedaten, Reisende und Budget fest. Ordne deine Route und fülle deine Tage mit dem, was dir wichtig ist.' },
-  { titel: 'Behalte alles im Blick', text: 'Dein Tagesplan, die Organisation und deine Vorbereitung bleiben zusammen. So findest du auch unterwegs schnell zurück zu deiner Reise.' },
+  { titel: 'Wünsche nennen', text: 'Ein festes Ziel oder eine erste Idee: Beschreibe, was dir wichtig ist, wann du reisen möchtest und welches Budget du hast.' },
+  { titel: 'Passenden Vorschlag erhalten', text: 'Jetnity verbindet Route, Aufenthalte und Erlebnisse und erklärt, warum die Empfehlungen zu dir passen.' },
+  { titel: 'Begleitet reisen', text: 'Jetnity behält Vorbereitung und Veränderungen im Blick und zeigt dir den nächsten wichtigen Schritt.' },
 ] as const
 
 export const HOMEPAGE_UNTERSCHIEDE = [
-  { titel: 'Ein Ort für das große Ganze', text: 'Von der ersten Idee bis zum letzten Reisetag: Deine Route, Übernachtungen und Erlebnisse gehören zusammen. Mit Jetnity findest du sie in deiner Reise wieder.' },
-  { titel: 'Ein Plan, der zu dir passt', text: 'Du bestimmst die Ziele, das Tempo und die Reihenfolge. Ergänze eigene Ideen und ändere deinen Plan, wenn sich deine Wünsche ändern.' },
-  { titel: 'Klarheit für den nächsten Schritt', text: 'Sieh, welche Flüge, Übernachtungen und Aktivitäten du bereits eingeplant hast und wo du noch etwas ergänzen möchtest.' },
+  {
+    thema: 'Reiseprüfung',
+    titel: 'Eine Route, die wirklich funktioniert.',
+    text: 'Jetnity prüft Verbindungen, Wegezeiten und Übernachtungen gemeinsam. Zu knappe Umstiege, fehlende Nächte und Lücken werden früh sichtbar – mit passenden Lösungen.',
+    beispiel: 'Die Fähre fährt zu früh nach deiner Landung?',
+    ergebnis: 'Jetnity berücksichtigt den Weg vom Flughafen zum Hafen und findet eine sinnvollere Verbindung.',
+  },
+  {
+    thema: 'Persönliche Einreisevorbereitung',
+    titel: 'Gut vorbereitet. Mit deinem Reisepass.',
+    text: 'Route, Transitländer, Staatsangehörigkeiten und Reisedokumente bestimmen, was du brauchst. Jetnity berücksichtigt jede mitreisende Person – auch mit mehreren Pässen.',
+    beispiel: 'Welche Dokumente brauchst du für diese Route?',
+    ergebnis: 'Du siehst Anforderungen mit offizieller Quelle, Informationsstand und Fristen. Jetnity erinnert dich, wenn du handeln musst.',
+  },
+  {
+    thema: 'Gesamtkosten und Alternativen',
+    titel: 'Die bessere Wahl für die ganze Reise.',
+    text: 'Jetnity vergleicht Preis, Reisezeit und Komfort zusammen. Gepäck, Transfers und zusätzliche Übernachtungen fließen ein. Bestätigte Preise und Schätzungen bleiben erkennbar.',
+    beispiel: 'Was wäre, wenn du eine Nacht länger bleibst?',
+    ergebnis: 'Jetnity zeigt dir die Folgen für Kosten und Verbindungen. Dein bisheriger Plan bleibt erhalten, bis du die Änderung übernimmst.',
+  },
 ] as const
 
 export const HOMEPAGE_PRODUKTFENSTER = {
-  titel: 'Lissabon und Porto',
-  meta: 'Portugal · 8 Tage · 2 Reiseziele',
+  titel: 'Dein Ankunftstag in Lissabon',
+  meta: 'Zürich → Lissabon · 2 Reisende',
   kennzeichnung: 'Beispielreise',
-  route: [
-    { ort: 'Lissabon', text: 'Tag 1–4 · Gassen, Aussicht und Atlantik' },
-    { ort: 'Porto', text: 'Tag 5–8 · Altstadt und Zeit am Douro' },
+  schritte: [
+    {
+      name: 'Dein Plan',
+      titel: 'Alles beginnt mit deiner Vorfreude.',
+      text: 'Ankommen, einchecken und die Stadt entdecken. Alle Teile gehören zu derselben Reise.',
+      status: 'Ursprünglicher Plan',
+      punkte: [
+        { zeit: 'Vormittag', titel: 'Ankunft in Lissabon', text: 'Deine Reise beginnt am Flughafen.' },
+        { zeit: 'Mittag', titel: 'Transfer und Hotel', text: 'Weiter zur Unterkunft, Zeit zum Ankommen.' },
+        { zeit: 'Nachmittag', titel: 'Die Altstadt entdecken', text: 'Der erste Spaziergang durch Lissabon.' },
+      ],
+      naechsterSchritt: 'Alles an einem Ort: Anreise, Unterkunft und dein erster Tag.',
+    },
+    {
+      name: 'Flugänderung',
+      titel: 'Fünf Stunden später. Mehr als eine neue Flugzeit.',
+      text: 'Jetnity erkennt die Verspätung und prüft, was sie für den restlichen Tag bedeutet.',
+      status: 'Flug verspätet',
+      punkte: [
+        { zeit: 'Ankunft', titel: 'Dein Flug landet später', text: 'Die neue Ankunftszeit wird berücksichtigt.' },
+        { zeit: 'Transfer', titel: 'Die Abholung passt nicht mehr', text: 'Verbindung und Hotelankunft müssen neu abgestimmt werden.' },
+        { zeit: 'Erlebnis', titel: 'Zu wenig Zeit für die Altstadt', text: 'Der geplante Nachmittag ist nicht mehr erreichbar.' },
+      ],
+      naechsterSchritt: 'Jetnity betrachtet die Folgen für deinen gesamten Ankunftstag.',
+    },
+    {
+      name: 'Jetnity passt an',
+      titel: 'Dein Plan passt wieder zusammen.',
+      text: 'Jetnity aktualisiert die Zeiten und ordnet den Tag neu. Nötige Buchungsänderungen legt es dir zur Entscheidung vor.',
+      status: 'Plan angepasst',
+      punkte: [
+        { zeit: 'Ankunft', titel: 'Neue Ankunftszeit im Plan', text: 'Alle folgenden Wege berücksichtigen die spätere Landung.' },
+        { zeit: 'Abend', titel: 'In Ruhe im Hotel ankommen', text: 'Eine passende Transferalternative liegt zur Auswahl bereit.' },
+        { zeit: 'Morgen', titel: 'Die Altstadt mit Zeit erleben', text: 'Dein frei geplanter Spaziergang rückt auf den nächsten Tag.' },
+      ],
+      naechsterSchritt: 'Jetzt wichtig: Transferalternative bestätigen und die spätere Hotelankunft mitteilen.',
+    },
   ],
-  tag: 'Ein Tag in Lissabon',
-  tagesplan: [
-    { zeit: 'Vormittag', titel: 'Durch Alfama schlendern', text: 'Zeit für kleine Gassen und einen Kaffee.', art: 'Entdecken' },
-    { zeit: 'Nachmittag', titel: 'Lissabon von oben sehen', text: 'Einen Aussichtspunkt in den Tag einplanen.', art: 'Erleben' },
-    { zeit: 'Abend', titel: 'Den Tag am Tejo ausklingen lassen', text: 'Freiraum für das, worauf du Lust hast.', art: 'Genießen' },
-  ],
-  modi: ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
 } as const
 
 export const HOMEPAGE_VERTRAUEN = [
-  { titel: 'Du behältst die Kontrolle', text: 'Du entscheidest, was in deinen Plan kommt und was du buchst.' },
-  { titel: 'Deine Reise bleibt privat', text: 'Persönliche Reisepläne sind kein öffentlicher Inhalt.' },
-  { titel: 'Einfach ausprobieren', text: 'Beginne deinen Reiseplan ohne Konto. Mit einem Konto kannst du ihn dauerhaft speichern.' },
+  { titel: 'Du entscheidest', text: 'Jetnity denkt voraus. Wichtige Entscheidungen und Buchungen bleiben bei dir.' },
+  { titel: 'Deine Reise bleibt privat', text: 'Persönliche Reisepläne und Reisedokumente sind kein öffentlicher Inhalt.' },
+  { titel: 'Einfach beginnen', text: 'Starte ohne Konto. Mit einem Konto bleiben deine Reisen und Vorlieben für später verfügbar.' },
 ] as const
 
 export const HOMEPAGE_FAQ = [
-  { frage: 'Was ist Jetnity?', antwort: 'Jetnity ist ein Reiseplaner und Reisebegleiter für individuelle Reisen. Du verbindest Reiseziele zu einer Route, gestaltest deinen Tagesplan und organisierst Flüge, Unterkünfte, Aktivitäten und Mobilität in derselben Reise.' },
-  { frage: 'Kann ich meine Reise ohne Konto planen?', antwort: 'Ja. Du kannst ohne Anmeldung mit deinem Reiseziel beginnen und einen Reiseplan erstellen. Dein Gastentwurf bleibt in diesem Browser. Für dauerhaftes Speichern in deinem Konto und den Zugriff auf anderen Geräten meldest du dich an.' },
-  { frage: 'Kann ich mehrere Reiseziele verbinden?', antwort: 'Ja. Wähle mehrere Orte aus und ordne sie in der gewünschten Reihenfolge. So planst du auch Rundreisen und Reisen mit mehreren Stopps. Die Ziele bleiben mit deinem Reiseplan verbunden.' },
-  { frage: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?', antwort: 'Jetnity hilft dir, deine Reise zu planen und passende Reiseleistungen zu organisieren. Wo eine Partnersuche angeboten wird, öffnest du die Angebote beim jeweiligen Anbieter und schließt die Buchung dort ab. Dort prüfst du auch den aktuellen Preis, die Verfügbarkeit und die Buchungsbedingungen. Ein Eintrag in deinem Reiseplan ist noch keine Buchung.' },
-  { frage: 'Für welche Reisen eignet sich Jetnity?', antwort: 'Für Städtetrips, Rundreisen, Urlaub mit mehreren Stopps und individuell geplante Reisen weltweit. Du legst Ziele, Reisedaten, Reisende und Budget fest und gestaltest die Reise nach deinen Vorstellungen.' },
-  { frage: 'Wie finanziert sich Jetnity?', antwort: 'Wenn du über einen Partnerlink eine Buchung abschließt, kann Jetnity eine Provision erhalten. Solche Verbindungen sind als Partnerlinks gekennzeichnet. Du entscheidest selbst, ob und bei welchem Anbieter du buchst.' },
+  { frage: 'Was ist Jetnity?', antwort: 'Jetnity ist eine intelligente Reiseplattform und dein persönlicher Reisebegleiter. Jetnity verbindet Route, Flüge, Unterkünfte, Erlebnisse und Mobilität, prüft die Zusammenhänge und begleitet dich von der ersten Idee bis zur Rückkehr. Deine Wünsche, die tatsächlichen Gesamtkosten und deine persönliche Vorbereitung werden gemeinsam berücksichtigt.' },
+  { frage: 'Wie berücksichtigt Jetnity meine Einreiseanforderungen?', antwort: 'Jetnity berücksichtigt deine Route einschließlich Zwischenstopps sowie Staatsangehörigkeiten, Reisepässe, bestehende Visa und Aufenthaltsbewilligungen. Für jede mitreisende Person werden relevante Anforderungen anhand offizieller Quellen aufbereitet. Du siehst den Informationsstand, wichtige Fristen und deine nächsten Vorbereitungsschritte. Bei einer Routenänderung wird die Vorbereitung erneut geprüft.' },
+  { frage: 'Was passiert bei einer Flugänderung oder einem Ausfall?', antwort: 'Jetnity erkennt die Änderung, prüft ihre Folgen für Anschlüsse, Transfers, Unterkunft und Erlebnisse und aktualisiert deinen Reiseplan automatisch. Bei einem Ausfall bereitet Jetnity passende Alternativen vor und erklärt die Folgen für Reisezeit und Kosten. Eine neue Verbindung kann auch andere Transit- und Einreiseanforderungen mit sich bringen; diese werden erneut berücksichtigt.' },
+  { frage: 'Welche Entscheidungen trifft Jetnity automatisch?', antwort: 'Jetnity prüft deine Reise, aktualisiert Zeiten und stimmt den Reiseplan innerhalb deiner Freigaben neu ab. Neue Buchungen, kostenpflichtige Umbuchungen und Stornierungen bestätigst du selbst. Wo eine Buchung beim jeweiligen Anbieter abgeschlossen wird, führt Jetnity dich dorthin. Ein angepasster Planeintrag allein ist noch keine Buchung oder Umbuchung.' },
 ] as const
 
 const VERBOTENE_JSON_LD_SCHLUESSEL = [
@@ -93,7 +136,7 @@ export function finalHomepageMetadaten(url: string) {
     throw new Error('Homepage-Metadaten akzeptieren nur die kanonische Startseiten-URL.')
   }
   return {
-    title: 'Reiseplaner für deine ganze Reise',
+    title: 'Intelligente Reiseplattform und persönlicher Reisebegleiter',
     description: FINAL_HOMEPAGE_DESCRIPTION,
     canonical: url,
     openGraph: {
@@ -145,7 +188,7 @@ export function finalHomepageJsonLd(eingabe: { url: string }) {
         url,
         applicationCategory: 'TravelApplication',
         operatingSystem: 'Web',
-        image: new URL('/images/jetnity-reiseplaner-share.png', url).href,
+        image: new URL('/images/hero-bali.png', url).href,
         description: FINAL_HOMEPAGE_DEFINITION,
         publisher: { '@id': `${url}#organization` },
       },
