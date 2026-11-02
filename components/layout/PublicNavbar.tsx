@@ -179,8 +179,8 @@ export default function PublicNavbar() {
               aria-current={isActive(item.href) ? 'page' : undefined}
               className={cn(
                 // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
-                // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
-                'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
+                // volle Trefferhoehe bei Touch und Maus.
+                'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-medium transition',
                 FOKUS_RING,
                 isActive(item.href)
                   ? 'bg-surface-100 text-brand-800'
@@ -200,7 +200,7 @@ export default function PublicNavbar() {
             createHref="/planen"
             createLabel="Reise planen"
             className={cn(
-              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0',
+              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900',
               FOKUS_RING,
             )}
           />
@@ -307,7 +307,7 @@ function Sitzungseintrag({
       <Link
         href={eintrag.href}
         className={cn(
-          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
           FOKUS_RING,
         )}
       >
@@ -373,7 +373,7 @@ function AbmeldenKnopf({
               FOKUS_RING,
             )
           : cn(
-              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
               FOKUS_RING,
             )
       }

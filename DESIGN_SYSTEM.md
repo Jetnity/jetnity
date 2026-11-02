@@ -1,5 +1,18 @@
 # Jetnity – Design-System
 
+> **Owner-Auftrag, 02.11.2026 – Homepage Final 1:** Positive Kundensprache ersetzt
+> sichtbare Entwicklungsstatus-Listen. Der bestehende Dunkelgrün/Lime-Hero erhält
+> eine klare Reiseplaner-Definition; das bewährte Bali-Bild erscheint auch mobil
+> unter dem echten Formular. Fünf ruhige Reisebereich-Karten, eine klar benannte
+> Portugal-Beispielreise mit Route und Tagesplan sowie native FAQ erklären das
+> Produkt. Bestehende Weiß/Mint-Palette, Bildassets und H1 bleiben. Öffentliche
+> Navigationsziele sind Ablauf und Fragen; der alte `#pro`-Anker bleibt kompatibel.
+> Öffentliches Header-/Footer-Linkziel mindestens 44px, keine zusätzliche
+> Client-Animation. Ein begrenzter, umbrechender Inspirationslink schützt auch
+> 320px bei 200%-Schrift; kein globales Abschneiden zur Overflow-Kaschierung.
+> [Auftrag](docs/HOMEPAGE_FINAL_1_TASK_2026-11-02.md) ·
+> [Prüfstand](docs/HOMEPAGE_FINAL_1_EVIDENCE_2026-11-02.md).
+
 Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 

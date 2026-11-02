@@ -12,7 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const pfad = new URL(url).pathname
     return {
       url,
-      lastModified: new Date(),
       changeFrequency: pfad === '/' ? 'daily' : 'weekly',
       priority: pfad === '/' ? 0.9 : 0.8,
     }

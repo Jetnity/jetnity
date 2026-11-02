@@ -10,16 +10,17 @@ const productLinks = [
   { label: 'Reise planen', href: '/planen' },
   { label: 'Meine Reisen', href: '/reisen' },
   { label: 'Entdecken', href: '/entdecken' },
-  { label: 'Jetnity Pro', href: '/#pro' },
+  { label: 'So funktioniert’s', href: '/#so-funktionierts' },
+  { label: 'Häufige Fragen', href: '/#fragen' },
 ]
 
 /**
- * Auf Touch-Geraeten stehen die Links weiter auseinander und bekommen eine
- * bequeme Trefferhoehe. Mit Maus bleibt die kompakte Fussleiste unveraendert.
+ * Alle Links behalten eine bequeme Trefferhoehe, unabhängig vom Eingabegerät.
+ * Die Listenabstände passen sich weiterhin an Maus und Touch an.
  */
 const footerListClass = 'mt-5 min-w-0 space-y-1 pointer-fine:mt-5 pointer-fine:space-y-3'
 const footerLinkClass =
-  'inline-flex min-h-11 min-w-0 max-w-full items-center text-sm text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25 pointer-fine:min-h-0'
+  'inline-flex min-h-11 min-w-0 max-w-full items-center text-sm text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25'
 
 export default function Footer() {
   return (
@@ -111,7 +112,7 @@ export default function Footer() {
             Ortsdaten:{' '}
             <a
               href="https://www.geonames.org/"
-              className="inline-flex min-h-11 max-w-full items-center underline decoration-white/25 underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25 pointer-fine:min-h-0"
+              className="inline-flex min-h-11 max-w-full items-center underline decoration-white/25 underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
             >
               GeoNames
             </a>{' '}

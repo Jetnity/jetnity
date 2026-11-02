@@ -29,7 +29,7 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
           </h2>
         </div>
         <p className="max-w-sm text-sm leading-6 text-ink-800">
-          Jede Karte öffnet die echte Planung mit dem bestätigten Ort. Keine eigene Angebotsseite.
+          Lass dich inspirieren. Wähle ein Reiseziel und mach daraus deinen eigenen Plan.
         </p>
       </div>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -62,9 +62,9 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
       </ul>
       <Link
         href="/entdecken"
-        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-800 px-5 py-3 text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
+        className="mt-6 inline-flex min-h-11 max-w-full items-center gap-2 rounded-full border border-brand-800 px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
       >
-        Reiseinspiration entdecken
+        <span className="min-w-0">Mehr Reiseideen</span>
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </section>

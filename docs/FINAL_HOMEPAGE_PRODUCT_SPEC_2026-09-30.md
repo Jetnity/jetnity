@@ -1,5 +1,19 @@
 # Jetnity — Final Homepage Product Spec
 
+> **Binding owner addendum, 2 November 2026 — Homepage Final 1:** The owner
+> explicitly requests the final customer-facing homepage now, before every
+> future product capability is complete. This supersedes the old timing gate and
+> mandatory visible full capability/status matrix below. Preserve the brand H1,
+> existing destination confirmation/guest flow, credible product benefits and
+> a clearly named example trip. Replace development terminology and repeated
+> status badges with a concise positive story and practical FAQ. Explain actual
+> booking at the provider; never fabricate prices, offers, bookings or social
+> proof. SSR content, canonical metadata and matching entity data remain required.
+> Global indexing/launch permission remains a separate, unchanged gate.
+> Current implementation contract: [Homepage Final 1 task](HOMEPAGE_FINAL_1_TASK_2026-11-02.md).
+> Everything below is the historical specification except where this addendum
+> explicitly supersedes it.
+
 Stand: 30 September 2026  
 Status: **PRODUCT-OWNER-BINDING FINAL HOMEPAGE TARGET**
 
