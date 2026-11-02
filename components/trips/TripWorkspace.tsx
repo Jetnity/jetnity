@@ -1164,7 +1164,7 @@ export default function TripWorkspace({
     detailOffen: modus.ansicht === 'organisieren' && modus.bereich != null && detailOffen,
     weit,
   })
-  const rasterKlasse = aktivitaetenDirekt ? 'min-w-0 max-w-full' : domainRasterKlasse(anordnung, sucheSichtbar)
+  const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
   const planNeben = modusBereit && modus.ansicht === 'plan' && u1bAnordnung === 'neben'
 
   React.useLayoutEffect(() => {
@@ -1364,9 +1364,9 @@ export default function TripWorkspace({
 
         <div
           ref={splitRef}
-          className={cn(rasterKlasse, 'min-w-0 max-w-full')}
+          className={cn(rasterKlasse, 'min-w-0 max-w-full', modus.ansicht === 'organisieren' && 'gap-6')}
           data-workspace-split={anordnung}
-          data-aktivitaeten-breite={aktivitaetenDirekt ? 'voll' : 'geteilt'}
+          data-organisieren-breite={modus.ansicht === 'organisieren' ? 'voll' : undefined}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
           style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 1fr) minmax(28rem, 1.4fr)', columnGap: '1.5rem', alignItems: 'start' } : undefined}
@@ -1412,7 +1412,7 @@ export default function TripWorkspace({
           ) : null}
 
           {domainNavSichtbar ? (
-            <section aria-labelledby="workspace-organisieren-titel" className="mt-4 min-w-0" data-workspace-modus="organisieren">
+            <section aria-labelledby="workspace-organisieren-titel" className="col-span-full mt-4 min-w-0" data-workspace-modus="organisieren">
               <h2
                 id="workspace-organisieren-titel"
                 tabIndex={-1}
@@ -1462,7 +1462,10 @@ export default function TripWorkspace({
             data-workspace-active-domain={detailOffen ? (aktiveDomain ?? 'offen') : 'aus'}
             data-workspace-anordnung={anordnung}
             hidden={!detailOffen}
-            className="min-w-0 max-w-full [overflow-wrap:anywhere] [word-break:break-word]"
+            className={cn(
+              'min-w-0 max-w-full [overflow-wrap:anywhere] [word-break:break-word]',
+              modus.ansicht === 'organisieren' && 'col-span-full',
+            )}
             style={planNeben ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
             ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {

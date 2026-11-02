@@ -3,6 +3,17 @@
 Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
+> **Owner-Auftrag, 02.11.2026 – einheitliches Organisieren auf Desktop:**
+> Flüge, Unterkunft, Aktivitäten und Mobilität verwenden dieselbe Anordnung:
+> Die vier Kategorien stehen oberhalb des jeweiligen Inhalts, beide über die
+> gesamte Inhaltsbreite. Der Abstand bleibt beim Kategorie- und Suchwechsel
+> gleich. Es entsteht keine zusätzliche Sticky-Navigation. Die kompakte
+> Navigation und die Reiseplan-Aufteilung behalten ihre bestehenden Regeln.
+> Der Citrus-Akzent am Aktivitäten-Kartenkopf folgt der Kartenrundung; nur die
+> Dekoration wird beschnitten, nicht Formulare, Auswahllisten oder Fokusrahmen.
+> [Auftrag](docs/ORGANISIEREN_DESKTOP_1_TASK_2026-11-02.md) ·
+> [Prüfstand](docs/ORGANISIEREN_DESKTOP_1_EVIDENCE_2026-11-02.md).
+
 > **Freigegebener Darstellungsumbau, 30.10.2026 – PR #1092 live:**
 > Der gemeinsame Reise-/Kontorahmen nutzt auf ausdrücklichen Wunsch des Product
 > Owners eine leicht transparente grüne Seitenleiste und einen schmalen Header.
