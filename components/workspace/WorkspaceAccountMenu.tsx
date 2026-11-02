@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ChevronDown, CircleUserRound } from 'lucide-react'
+import { CircleUserRound } from 'lucide-react'
 import FooterSitzung from '@/components/layout/FooterSitzung'
 
 export default function WorkspaceAccountMenu() {
@@ -18,8 +18,8 @@ export default function WorkspaceAccountMenu() {
     <details ref={ref} className="workspace-account" onKeyDown={(e) => {
       if (e.key === 'Escape') { ref.current?.removeAttribute('open'); ref.current?.querySelector('summary')?.focus() }
     }}>
-      <summary className="workspace-button" aria-label="Kontomenü">
-        <CircleUserRound aria-hidden="true" /><span>Konto</span><ChevronDown aria-hidden="true" />
+      <summary className="workspace-icon-button" aria-label="Kontomenü" title="Konto">
+        <CircleUserRound aria-hidden="true" />
       </summary>
       <div className="workspace-account-panel" onClick={(e) => {
         if ((e.target as HTMLElement).closest('a')) ref.current?.removeAttribute('open')
@@ -37,6 +37,7 @@ export default function WorkspaceAccountMenu() {
           <li><Link href="/privacy">Datenschutzerklärung</Link></li>
           <li><Link href="/terms">Nutzungsbedingungen / AGB</Link></li>
           <li><Link href="/impressum">Impressum</Link></li>
+          <li><Link href="/datenquellen">Datenquellen &amp; Lizenzen</Link></li>
         </ul>
         <ul className="workspace-session"><FooterSitzung workspace /></ul>
       </div>

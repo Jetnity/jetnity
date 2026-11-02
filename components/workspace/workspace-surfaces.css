@@ -36,31 +36,17 @@
 .workspace-shell:where([data-workspace-theme="green"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
-:where([data-workspace-theme="green"]) .workspace-sidebar, :where([data-workspace-theme="green"]) .workspace-header, :where([data-workspace-theme="green"]) .workspace-bottom-nav {
+:where([data-workspace-theme="green"]) .workspace-credit { color: var(--workspace-muted); }
+:where([data-workspace-theme="green"]) .workspace-bottom-nav {
   background: linear-gradient(120deg, rgb(var(--jet-ink-400) / .12), transparent 70%), var(--workspace-glass);
   box-shadow: inset -1px 0 rgb(var(--jet-ink-400) / .07);
 }
-:where([data-workspace-theme="green"]) .workspace-brand img { filter: brightness(0) invert(1); }
-:where([data-workspace-theme="green"]) .workspace-kicker, :where([data-workspace-theme="green"]) .workspace-no-trip p, :where([data-workspace-theme="green"]) .workspace-sidebar-end p, :where([data-workspace-theme="green"]) .workspace-credit { color: var(--workspace-muted); }
-:where([data-workspace-theme="green"]) .workspace-nav-link, :where([data-workspace-theme="green"]) .workspace-open-trip { color: var(--workspace-ink); }
-:where([data-workspace-theme="green"]) .workspace-nav-link:hover, :where([data-workspace-theme="green"]) .workspace-open-trip:hover { background: rgb(var(--jet-ink-400) / .1); }
-:where([data-workspace-theme="green"]) .workspace-nav-link[aria-current="page"] {
-  background: rgb(var(--jet-ink-400) / .2);
-  box-shadow: inset 3px 0 rgb(var(--jet-ink-400));
+:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link { color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link:hover { background: rgb(var(--jet-ink-400) / .1); }
+:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link[aria-current="page"] {
+  background: rgb(var(--jet-ink-400) / .2); box-shadow: inset 0 3px rgb(var(--jet-ink-400));
 }
-:where([data-workspace-theme="green"]) .workspace-button, :where([data-workspace-theme="green"]) .workspace-icon-button { background: rgb(var(--jet-ink-400) / .08); color: var(--workspace-ink); }
-:where([data-workspace-theme="green"]) .workspace-button:hover { background: rgb(var(--jet-ink-400) / .16); }
-:where([data-workspace-theme="green"]) .workspace-button.workspace-primary { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
-:where([data-workspace-theme="green"]) .workspace-primary:hover { background: rgb(var(--jet-ink-300)); }
-:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button,
-:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:first-child {
-  color: var(--workspace-ink); background: rgb(var(--jet-ink-400) / .07); border: 1px solid var(--workspace-edge);
-}
-:where([data-workspace-theme="green"]) .workspace-header-actions [data-workspace-aktionen] button:hover { background: rgb(var(--jet-ink-400) / .16); }
-:where([data-workspace-theme="green"]) .workspace-account-panel { background: var(--workspace-panel); color: var(--workspace-ink); }
-:where([data-workspace-theme="green"]) .workspace-account-panel :where(a, button):hover { background: var(--workspace-soft); }
 :where([data-workspace-theme="green"]) .workspace-page [data-back-to-top] { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
-:where([data-workspace-theme="green"]) .workspace-bottom-nav .workspace-nav-link[aria-current="page"] { box-shadow: inset 0 3px rgb(var(--jet-ink-400)); }
 
 /* Background/foreground pairs also cover existing empty, error and security
    cards. Provider iframes and image pixels retain their own colours. */
@@ -222,7 +208,7 @@
   .workspace-trip-heading-top > div { min-width: 0; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .workspace-sidebar, .workspace-header, .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 @media (forced-colors: active) {
   .workspace-brand img { filter: none; }

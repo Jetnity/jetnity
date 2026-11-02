@@ -6,7 +6,6 @@ import { LayoutDashboard, Route, BriefcaseBusiness, ClipboardCheck } from 'lucid
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import { WORKSPACE_ANSICHTEN, WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { useWorkspaceShell } from './WorkspaceContext'
-import WorkspaceNavItem from './WorkspaceNavItem'
 
 const ICONS = { uebersicht: LayoutDashboard, plan: Route, organisieren: BriefcaseBusiness, vorbereitung: ClipboardCheck }
 
@@ -69,8 +68,7 @@ export default function WorkspaceTripChrome(props: {
       }}>
       <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{label}</span>
     </button>
-    return rail ? <WorkspaceNavItem key={view} label={label} collapsed={shell.collapsed}>{button}</WorkspaceNavItem>
-      : <div key={view}>{button}</div>
+    return <div key={view}>{button}</div>
   })
   return <>
     {shell.navigation && createPortal(<nav aria-label="Reiseplanung" data-workspace-mode-nav="sidebar">{buttons(true)}</nav>, shell.navigation)}

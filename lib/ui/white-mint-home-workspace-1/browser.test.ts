@@ -181,10 +181,12 @@ async function oeffnen(optionen: {
   hoehe?: number
   schrift?: string
   thema?: 'light' | 'green'
+  touch?: boolean
 }) {
   const context = await browser.newContext({
     viewport: { width: optionen.breite, height: optionen.hoehe ?? 900 },
     deviceScaleFactor: 1,
+    hasTouch: optionen.touch,
   })
   const fremd: string[] = []
   await context.route('**/*', (route) => {
@@ -355,7 +357,7 @@ describe('rendered white/mint homepage and light workspace', () => {
     protokoll.homepage = messungen
   })
 
-  test('light workspace uses the mint surfaces and keeps green untouched', async () => {
+  test('light workspace uses white chrome and mint surfaces while green content stays unchanged', async () => {
     const messungen = []
     for (const breite of BREITEN) {
       const { context, page, fehler, fremd } = await oeffnen({
@@ -385,7 +387,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.deepEqual(fremd, [])
       assert.equal(aehnlich(rgbAus(werte.shell?.hintergrund), WHITE_MINT.canvas), true, JSON.stringify(werte.shell))
       assert.equal(aehnlich(rgbAus(werte.shell?.farbe), WHITE_MINT.ink), true)
-      assert.equal(aehnlich(rgbAus(werte.nav?.hintergrund), WHITE_MINT.navigation), true, JSON.stringify(werte.nav))
+      assert.equal(aehnlich(rgbAus(werte.nav?.hintergrund), WHITE_MINT.card), true, JSON.stringify(werte.nav))
       if (werte.gewaehlt) {
         assert.equal(aehnlich(rgbAus(werte.gewaehlt.hintergrund), WHITE_MINT.selected), true, JSON.stringify(werte.gewaehlt))
         assert.match(werte.gewaehlt.schatten, /rgb\(20,\s*62,\s*51\)/)
@@ -443,7 +445,7 @@ describe('rendered white/mint homepage and light workspace', () => {
     await basisGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
     const mintGruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
     await mintGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
-    const signatur = async (page: Page) => page.evaluate(() => window.__whiteMintPaareSammeln?.('.workspace-shell') ?? [])
+    const signatur = async (page: Page) => page.evaluate(() => window.__whiteMintPaareSammeln?.('.workspace-content') ?? [])
     const vorherPaare = (await signatur(basisGruen.page)).filter((paar) => paar.background && !paar.unsupported)
     const nachherPaare = (await signatur(mintGruen.page)).filter((paar) => paar.background && !paar.unsupported)
     const vorherNachName = new Map(vorherPaare.map((paar) => [paar.name, paar.color]))
@@ -455,6 +457,142 @@ describe('rendered white/mint homepage and light workspace', () => {
     await schliessen(basisGruen.context)
     await schliessen(mintGruen.context)
     protokoll.workspace = messungen
+  })
+
+  test('desktop navigation opens on hover without moving content, closes after mouse clicks and supports keyboard focus', async () => {
+    for (const breite of [1024, 1440]) {
+      const { context, page, fehler, fremd } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite })
+      const sidebar = page.locator('.workspace-sidebar')
+      const shell = page.locator('.workspace-shell')
+      await page.waitForSelector('[data-workspace-mode-nav="sidebar"]')
+      const geschlossen = await sidebar.boundingBox()
+      const inhalt = await page.locator('.workspace-page').boundingBox()
+      assert.equal(geschlossen?.width, 72)
+      const header = await page.locator('.workspace-header').boundingBox()
+      assert.equal(header?.x, 0)
+      assert.equal(header?.width, breite)
+      assert.equal(geschlossen?.y, header!.y + header!.height)
+      await page.mouse.move(35, geschlossen!.y + 45)
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
+      const offen = await sidebar.boundingBox()
+      assert.equal(offen?.width, 224)
+      assert.equal((await page.locator('.workspace-page').boundingBox())?.x, inhalt?.x)
+      await page.mouse.move(210, offen!.y + 80)
+      assert.equal(await shell.getAttribute('data-collapsed'), 'false')
+      await sidebar.getByRole('button', { name: 'Reiseplan', exact: true }).click()
+      await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') === 'plan')
+      await page.mouse.move(350, 300)
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
+      assert.equal(await page.locator('[role="tooltip"], .workspace-tooltip').count(), 0)
+      await bild(page, `navigation-collapsed-${breite}`)
+
+      // Reach the rail through the real tab order, after the header controls.
+      await page.locator('summary[aria-label="Kontomenü"]').focus()
+      await page.keyboard.press('Tab')
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
+      assert.equal(await sidebar.evaluate((el) => el.contains(document.activeElement)), true)
+      await page.keyboard.press('Escape')
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
+      await page.keyboard.press('Tab')
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
+      await bild(page, `navigation-keyboard-${breite}`)
+      await page.locator('.workspace-theme-toggle').focus()
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
+      assert.deepEqual(fehler, [])
+      assert.deepEqual(fremd, [])
+      await schliessen(context)
+    }
+  })
+
+  test('white header and icon controls work in both themes and expose the complete attribution', async () => {
+    const { context, page } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440 })
+    for (const thema of ['light', 'green'] as const) {
+      if (thema === 'green') await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+      await page.waitForSelector(`[data-workspace-theme="${thema}"]`)
+      for (const selector of ['.workspace-header', '.workspace-sidebar']) {
+        assert.equal(await page.locator(selector).evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)')
+      }
+      for (const selector of ['.workspace-theme-toggle', 'summary[aria-label="Kontomenü"]']) {
+        const control = page.locator(selector)
+        assert.equal(await control.innerText(), '')
+        assert.equal(await control.locator('svg').isVisible(), true)
+        const rect = await control.boundingBox()
+        assert.ok(rect && rect.width >= 44 && rect.height >= 44)
+      }
+      await page.locator('.workspace-sidebar').hover()
+      await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
+      const kontrast = await audit(page, '.workspace-sidebar', ['Übersicht', 'Reiseplan', 'Organisieren', 'Einstellungen'])
+      assert.equal(kontrast.urteil.ok, true, kontrast.urteil.fehler.join('\n'))
+      await bild(page, `navigation-hover-${thema}`)
+    }
+    assert.equal(await page.locator('.workspace-credit').getByText(/GeoNames/).count(), 0)
+    await page.locator('summary[aria-label="Kontomenü"]').click()
+    await page.getByRole('link', { name: 'Datenquellen & Lizenzen' }).click()
+    await page.getByRole('heading', { name: 'Datenquellen & Lizenzen' }).waitFor()
+    assert.equal(await page.locator('main a[href="https://www.geonames.org/"]').isVisible(), true)
+    assert.equal(await page.locator('main a[href="https://creativecommons.org/licenses/by/4.0/"]').isVisible(), true)
+    assert.equal(await page.getByText(/vereinheitlicht Bezeichnungen/).isVisible(), true)
+    await schliessen(context)
+  })
+
+  test('touch desktop has an explicit control and mobile drawer preserves focus and scroll lock', async () => {
+    const desktop = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, touch: true })
+    await desktop.page.getByRole('button', { name: 'Seitenleiste öffnen' }).tap()
+    await desktop.page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
+    await desktop.page.locator('.workspace-context').tap()
+    await desktop.page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
+    await schliessen(desktop.context)
+    for (const breite of [320, 390, 768]) {
+      const { context, page, fehler } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite, touch: true })
+      await page.getByRole('button', { name: 'Navigation öffnen' }).tap()
+      const dialog = page.getByRole('dialog', { name: 'Workspace-Navigation' })
+      await dialog.waitFor()
+      assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden')
+      assert.equal(await page.locator('.workspace-header').evaluate((el) => el instanceof HTMLElement && el.inert), true)
+      assert.equal(await dialog.getByRole('button', { name: 'Navigation schliessen' }).evaluate((el) => el === document.activeElement), true)
+      await page.keyboard.press('Shift+Tab')
+      assert.equal(await dialog.getByRole('link', { name: 'Jetnity Startseite' }).evaluate((el) => el === document.activeElement), true)
+      await page.keyboard.press('Shift+Tab')
+      assert.equal(await dialog.getByRole('link', { name: 'Entdecken' }).evaluate((el) => el === document.activeElement), true)
+      await page.keyboard.press('Escape')
+      await dialog.waitFor({ state: 'hidden' })
+      assert.equal(await page.evaluate(() => document.body.style.overflow), '')
+      assert.equal(await page.getByRole('button', { name: 'Navigation öffnen' }).evaluate((el) => el === document.activeElement), true)
+      assert.equal(await page.locator('summary[aria-label="Kontomenü"] svg').isVisible(), true)
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth <= 1))
+      await bild(page, `navigation-mobile-${breite}`)
+      assert.deepEqual(fehler, [])
+      await schliessen(context)
+    }
+  })
+
+  test('enlarged workspace text keeps the full header clear and motion preferences shorten the rail animation', async () => {
+    for (const breite of [320, 1440]) {
+      const { context, page } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite, schrift: '32px' })
+      await page.waitForSelector('.workspace-header[data-flow="true"]')
+      const header = await page.locator('.workspace-header').boundingBox()
+      const logo = await page.locator('.workspace-header-brand').boundingBox()
+      assert.ok(logo && header && logo.x >= 0 && logo.x + logo.width <= breite)
+      if (breite === 1440) {
+        const sidebar = await page.locator('.workspace-sidebar').boundingBox()
+        assert.ok(sidebar && header && sidebar.y >= header.y + header.height, JSON.stringify({ sidebar, header }))
+        await bild(page, 'navigation-enlarged-desktop')
+        await page.evaluate(() => window.scrollTo(0, 600))
+        await page.locator('.workspace-sidebar').hover()
+        await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 448)
+        assert.ok((await page.locator('.workspace-sidebar').boundingBox())!.y >= 0)
+      } else {
+        await page.getByRole('button', { name: 'Navigation öffnen' }).click()
+        await page.getByRole('dialog').getByRole('link', { name: 'Entdecken' }).scrollIntoViewIfNeeded()
+        assert.equal(await page.getByRole('dialog').getByRole('link', { name: 'Entdecken' }).isVisible(), true)
+        await page.keyboard.press('Escape')
+      }
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth <= 1))
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const duration = await page.locator('.workspace-sidebar').evaluate((el) => getComputedStyle(el).transitionDuration)
+      assert.ok(duration.split(',').every((part) => parseFloat(part) <= .001), duration)
+      await schliessen(context)
+    }
   })
 
   test('a synthetic guest note saves, reloads and keeps a visible focus and alert', async () => {

@@ -38,6 +38,14 @@ optionale Browserpräferenz `jetnity:workspace-theme:v1`. Weder Kontodaten noch
 Reisen werden dafür gespeichert oder neu geladen; die Theme-Regeln gelten nur
 innerhalb des Workspace und setzen keinen globalen System-/HTML-Modus.
 
+Owner-Nachtrag 02.11.2026: Der Header liegt als vollbreiter Geschwisterknoten vor
+Sidebar und Inhaltsbereich. Die Sidebar öffnet auf Desktop als Überlagerung;
+der Inhalt behält die Breite der schmalen Leiste als linken Abstand. Native
+DOM-Ereignisse behandeln Hover, Fokus und Tastatur auch für die über Portale
+eingebundenen Bereichsbuttons. Kopf-/Navigationsflächen bleiben in beiden Themes
+weiß. Öffentliche Quellenangaben stehen auf `/datenquellen`, verlinkt im Kontomenü.
+Keine neue Datenablage, Berechtigung oder API; [Auftrag](docs/WORKSPACE_NAVIGATION_1_TASK_2026-11-02.md).
+
 ---
 
 ## 1. Technischer Stack

@@ -9,7 +9,6 @@ export type WorkspaceSlots = {
   mobile: HTMLElement | null
   actions: HTMLElement | null
   title: HTMLElement | null
-  collapsed: boolean
   closeNavigation: () => void
   finishNavigation: () => void
 }
