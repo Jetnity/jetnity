@@ -425,7 +425,9 @@ export default function AktivitaetenBereich({
       data-aktivitaet-suche={sichtbar ? angezeigt.phase : 'verdeckt'}
       className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative w-full min-w-0 max-w-none !p-[12px] sm:!p-5')}
     >
-      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+        <span className="block h-1 bg-citrus-400" />
+      </span>
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
         <h2 className="mt-1 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
