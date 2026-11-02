@@ -38,7 +38,7 @@ try {
     page.on('response', async res => {
       if (useLive && mode === 'normal' && res.url().endsWith('/api/rental-cars/discovercars') && res.request().postDataJSON()?.action === 'search') { const data = await res.json(); if (data.status === 'ok') captured = data }
     })
-    await page.goto(`${base}/reisen/${trip.id}?ansicht=organisieren&bereich=mobilitaet`, { waitUntil: 'networkidle' })
+    await page.goto(`${base}/reisen/${trip.id}?ansicht=organisieren&bereich=mobilitaet`, { waitUntil: 'domcontentloaded' })
     await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
     const ui = page.locator('[data-discovercars-native]')
     await ui.waitFor(); assert.equal(calls, 0, 'No provider request before an explicit input')

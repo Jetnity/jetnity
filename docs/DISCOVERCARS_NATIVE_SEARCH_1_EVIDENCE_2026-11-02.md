@@ -1,6 +1,6 @@
 # DiscoverCars Native Search 1 — Vertrag und Prüfnachweis
 
-Stand: 2. November 2026. Branch `feat/discovercars-native-search-1`, Ausgangspunkt main `05f7652c2560d8b11750d60589c1ab4bd2615d77`. Implementierung vorhanden; Preview, unabhängiger Review, native CI und Release noch offen. Kein Gesamtprodukt-/Launch-PASS.
+Stand: 2. November 2026. Branch `feat/discovercars-native-search-1`, Ausgangspunkt main `05f7652c2560d8b11750d60589c1ab4bd2615d77`. Implementierung, unabhängiger Code-Review und geschützte Vorschau geprüft; native CI und Release noch offen. Kein Gesamtprodukt-/Launch-PASS.
 
 ## Offizieller Vertrag
 
@@ -46,6 +46,14 @@ Rohantworten und Credentials liegen ausschliesslich temporär ausserhalb Git. Na
 - Fünf Hygieneprüfungen erfolgreich: dead, exports, deps, api-schutz, schema-bezug.
 - Erster Gesamttest: 7 781 Tests, 7 764 bestanden, 13 fehlgeschlagen, 4 übersprungen. Drei durch diese Änderung ausgelöste Fehler (alte SSR-Erwartung, neuer Next-Image-Import im SSR-Harness und Security-Inventar) sind gezielt behoben und nachgeprüft. Übrige lokale Fehler betreffen PG16-Pflicht bei vorhandenem PG17, geerbte DB-Umgebung und zwei bestehende Workspace-Geometrieprüfungen. Vollständige native PR-CI bleibt Freigabegate; diese Liste ist kein behaupteter Gesamttest-PASS.
 - Montierter Browseraudit: Desktop 1440 sowie 390/320, Tastatur, Filter, Vergleich, Details/Escape-Fokus, Eingabeänderung, leere/fehlerhafte/abgelaufene Ergebnisse, verspätete Antworten und unveränderte Gastreise. Bestanden: 1440px mit realer Suche (147 Angebote) und realem Detailabruf; 390/320px mit den dabei erhaltenen Angebotsdaten und kontrollierten Fehler-/Ablaufantworten. Keine Browserfehler, kein Seitenüberlauf, Reise bytegleich. Escape bei Ortsliste und Modal lässt den Mietwagenbereich offen; Primärbuttons und Vergleichsbreite korrigiert. Kein echter Hardwaretest behauptet.
+
+## Unabhängiger Review und geschützte Vorschau
+
+- Unabhängiger Read-only-Review PASS am Runtime-Head `cbd0fb673b7659c99d4a43b8a0d82a2742eba5b1`: keine verbleibenden P1/P2. Gefundener Popup-Escape-Fehler behoben und montiert nachgeprüft.
+- Vercel Preview `dpl_J85eiAkfBE9jyAdeXQWEQFscXvXk` READY am selben Head. Branchbezogener serverseitiger Schlüssel/Flag und vorhandene öffentliche Development-Verbindung; keine Production-/Admin-Datenbankzugänge im Preview.
+- Geschützter Browseraudit bestanden: 147 reale Angebote + reales Detail bei 1440px, derselbe Ablauf mit kontrollierten Antworten bei 390/320px. Filter/Vergleich, Escape/Fokus, Eingabeänderung, Leer-/Fehler-/Ablaufzustände, verspätete Antworten und unveränderte Gastreise geprüft; keine Seitenfehler. Zugriff über autorisierten temporären Vercel-Link, Schutz bleibt an. Navigation wartet auf DOM und sichtbare Kontrollen statt auf durch das Preview-Toolbar offen gehaltene Netzwerkruhe.
+- Browser-Asset-Prüfung: null Vorkommen des serverseitigen Provider-Schlüssels.
+- PR [#1109](https://github.com/Jetnity/jetnity/pull/1109); tatsächliche CI-/Merge-/Production-Receipts im Live-Index [#751](https://github.com/Jetnity/jetnity/issues/751). Diese Datei behauptet keinen späteren Release vor dessen beobachtetem Abschluss.
 
 ## Release und verbleibende Grenzen
 
