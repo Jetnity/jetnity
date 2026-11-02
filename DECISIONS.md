@@ -6135,3 +6135,18 @@ Flugüberwachung oder vollständiger offizieller Einreiseprüfung. Deren technis
 Gates bleiben bestehen. Der ausdrückliche Indexierungs-Hold bleibt unverändert.
 Keine neuen Abhängigkeiten, Provider, Datenbankänderungen oder laufenden Kosten.
 Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
+
+
+## ADR-0227 – DiscoverCars-Angebote nativ lesen, Buchung beim Anbieter
+
+**Datum:** 2. November 2026. **Status:** vom Owner beauftragte Umsetzung; Release getrennt nachzuweisen.
+
+**Kontext:** Nach dem Widget bestätigt DiscoverCars Search-API-Zugang, Onsite-Anzeige und affiliate-gebundene Angebotslinks. Nutzer sollen Fahrzeuge und Bedingungen auf Jetnity vergleichen.
+
+**Entscheidung:** Eine kleine, providerbezogene serverseitige Suchschicht verwendet den gemeinsamen begrenzten HTTP-Transport. Ein validierter POST-Vertrag bedient Ortsvorschläge, Suche und Details. Kein Ausbau der alten generischen Foundation-Factory auf Vorrat. Reiseetappen/-daten sind überprüfbare Vorschläge; Stationen müssen aus der offiziellen Suche bestätigt werden. Fahreralter, Wohnsitz und Uhrzeiten werden nicht erfunden.
+
+**Alternativen:** Widget-only hält alle Angebote extern; eine universelle Rental-Abstraktion erzeugt derzeit unnötige Komplexität; ein eingebetteter Buchungsabschluss ist nicht durch diesen API-Vertrag gedeckt.
+
+**Begründung:** Native Lesefunktion liefert den gewünschten Nutzen ohne Änderungen am Reisegraphen, Auth-System oder Buchungsstatus. Der Originalwert `url.web` bleibt erhalten. Eine Suchantwort gilt höchstens 30 Minuten; signierte Detailtokens binden ID, Währung und ursprüngliches Ablaufdatum. Fehler/Teildaten/Leere sind getrennte Zustände.
+
+**Konsequenzen:** Nur serverseitiger API-Key plus explizites Flag schalten frei. Per-Instanz-Missbrauchslimits ergänzen das getrennte Providerkontingent (600/min); sie sind kein verteilter Account-Limiter. Kein neuer Dienst und keine bezahlte Beauftragung. Kosten-/Kontingentänderungen separat prüfen. API-Buchungen, automatische Reservierung, Reiseübernahme und bestätigte Buchungen sind nicht Teil dieser Lesesuche. Gezielte reale Tests verwenden Live-Inventar ohne Buchung; es gibt keine Sandbox. Details: [Nachweis](docs/DISCOVERCARS_NATIVE_SEARCH_1_EVIDENCE_2026-11-02.md).
