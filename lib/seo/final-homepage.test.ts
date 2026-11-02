@@ -10,8 +10,7 @@ import {
   FINAL_HOMEPAGE_DEFINITION,
   FINAL_HOMEPAGE_DESCRIPTION,
   FINAL_HOMEPAGE_H1,
-  HOMEPAGE_FAEHIGKEITEN,
-  HOMEPAGE_KENNZEICHNUNGEN,
+  HOMEPAGE_FAQ,
   HOMEPAGE_PRODUKTFENSTER,
   HOMEPAGE_SCHRITTE,
   HOMEPAGE_UEBERSCHRIFTEN,
@@ -20,7 +19,6 @@ import {
   finalHomepageJsonLd,
   finalHomepageMetadaten,
   finalHomepageSeitenUrl,
-  homepageFaehigkeitenGruppiert,
 } from '@/lib/seo/final-homepage'
 import { KANONISCHE_PUBLIC_ORIGIN, kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 
@@ -64,74 +62,38 @@ describe('final homepage product 1 – Wahrheit und Entity', () => {
     }
     assert.equal(graph['@graph'][1].inLanguage, 'de')
     assert.equal(graph['@graph'][2].operatingSystem, 'Web')
+    assert.equal(graph['@graph'][0].logo, 'https://jetnity.com/brand/jetnity-logo.png')
+    assert.equal(graph['@graph'][2].image, 'https://jetnity.com/images/jetnity-reiseplaner-share.png')
     assert.equal(roh.includes('vercel.app'), false)
     for (const schluessel of VERBOTENE_SCHLUESSEL) {
       assert.equal(roh.includes(`"${schluessel}"`), false, schluessel)
     }
   })
 
-  test('jede Fähigkeit hat einen erlaubten Stand und eine sichtbare Kennzeichnung', () => {
-    const ids = new Set<string>()
-    for (const faehigkeit of HOMEPAGE_FAEHIGKEITEN) {
-      assert.equal(ids.has(faehigkeit.id), false)
-      ids.add(faehigkeit.id)
-      assert.ok(['LIVE', 'PARTIAL', 'PLANNED'].includes(faehigkeit.stand))
-      assert.ok(HOMEPAGE_KENNZEICHNUNGEN.includes(faehigkeit.kennzeichnung))
-      if (faehigkeit.stand === 'PLANNED') {
-        assert.notEqual(faehigkeit.kennzeichnung, 'Heute nutzbar')
-        assert.notEqual(faehigkeit.kennzeichnung, 'Soweit Daten vorliegen')
-      }
-      if (faehigkeit.stand === 'LIVE') assert.equal(faehigkeit.kennzeichnung, 'Heute nutzbar')
-    }
-    assert.ok(HOMEPAGE_FAEHIGKEITEN.some((eintrag) => eintrag.kennzeichnung === 'In Vorbereitung'))
-    assert.ok(HOMEPAGE_FAEHIGKEITEN.some((eintrag) => eintrag.kennzeichnung === 'Kommt später'))
-    assert.ok(HOMEPAGE_FAEHIGKEITEN.some((eintrag) => eintrag.kennzeichnung === 'Produktvorschau'))
-  })
-
-  test('Produktfenster und Werkzeuge nennen keine Preise', () => {
+  test('Reisebeispiel enthält keine erfundenen Angebote oder Buchungen', () => {
     const roh = JSON.stringify({ HOMEPAGE_PRODUKTFENSTER, HOMEPAGE_WERKZEUGE, HOMEPAGE_SCHRITTE })
     assert.equal(/\d+\s*(CHF|EUR|€|\$)/.test(roh), false)
-    assert.equal(HOMEPAGE_PRODUKTFENSTER.kennzeichnung, 'Produktvorschau')
-    assert.match(HOMEPAGE_PRODUKTFENSTER.hinweis, /Kein Preis/)
-    assert.match(HOMEPAGE_PRODUKTFENSTER.hinweis, /keine amtliche Auskunft/)
-    assert.deepEqual(
-      HOMEPAGE_PRODUKTFENSTER.modi.map((modus) => modus.titel),
-      ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
-    )
-    assert.deepEqual(
-      HOMEPAGE_PRODUKTFENSTER.route.map((halt) => halt.ort),
-      ['Lissabon', 'Porto'],
-    )
-    assert.match(HOMEPAGE_PRODUKTFENSTER.route[1]?.text ?? '', /Unterkunft noch offen/)
-    for (const modus of HOMEPAGE_PRODUKTFENSTER.modi) {
-      assert.equal(modus.kennzeichnung, 'Heute nutzbar')
-    }
-    const reisebereich = HOMEPAGE_FAEHIGKEITEN.find((eintrag) => eintrag.id === 'reisebereich')
-    assert.equal(reisebereich?.stand, 'LIVE')
-    assert.match(reisebereich?.text ?? '', /Übersicht, Reiseplan, Organisieren und Vorbereitung/)
-    assert.match(reisebereich?.text ?? '', /nicht live/)
+    assert.equal(HOMEPAGE_PRODUKTFENSTER.kennzeichnung, 'Beispielreise')
+    assert.deepEqual(HOMEPAGE_PRODUKTFENSTER.modi, ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'])
+    assert.deepEqual(HOMEPAGE_PRODUKTFENSTER.route.map((halt) => halt.ort), ['Lissabon', 'Porto'])
+    assert.equal(HOMEPAGE_PRODUKTFENSTER.tagesplan.length, 3)
+    assert.equal(/gebucht|bestätigte Buchung|verfügbar für/i.test(roh), false)
   })
 
-  test('die Pflichtstory bleibt wörtlich', () => {
-    assert.equal(FINAL_HOMEPAGE_DESCRIPTION, FINAL_HOMEPAGE_DEFINITION)
+  test('die finale Kundenstory beschreibt das Produkt ohne Statusmatrix', () => {
     assert.equal(FINAL_HOMEPAGE_H1, 'Deine ganze Reise. Intelligent an einem Ort.')
-    assert.equal(HOMEPAGE_UEBERSCHRIFTEN.werkzeuge, 'Eine Reise statt fünf getrennte Tools')
-    assert.equal(HOMEPAGE_UEBERSCHRIFTEN.begleitung, 'So begleitet Jetnity deine Reise')
-    assert.equal(HOMEPAGE_UEBERSCHRIFTEN.unterschied, 'Warum Jetnity anders ist')
-    assert.equal(HOMEPAGE_UEBERSCHRIFTEN.vertrauen, 'Deine Reise. Deine Entscheidungen.')
-    assert.deepEqual(
-      HOMEPAGE_SCHRITTE.map((schritt) => schritt.titel),
-      ['Beschreiben', 'Organisieren', 'Begleiten lassen'],
-    )
-    assert.deepEqual(
-      HOMEPAGE_UNTERSCHIEDE.map((punkt) => punkt.titel),
-      [
-        'Reisekontext statt Einzelsuche',
-        'Wahrheit statt geratenen Antworten',
-        'Nächster sinnvoller Schritt statt Informationsflut',
-      ],
-    )
+    assert.match(FINAL_HOMEPAGE_DEFINITION, /Reiseplaner und Reisebegleiter/)
+    assert.ok(FINAL_HOMEPAGE_DESCRIPTION.length <= 160)
+    const texte = JSON.stringify({ HOMEPAGE_UEBERSCHRIFTEN, HOMEPAGE_SCHRITTE, HOMEPAGE_UNTERSCHIEDE, HOMEPAGE_WERKZEUGE, HOMEPAGE_FAQ })
+    assert.equal(/In Vorbereitung|Kommt später|Heute nutzbar|synthetisch/.test(texte), false)
+    assert.equal(HOMEPAGE_SCHRITTE.length, 3)
+    const buchung = HOMEPAGE_FAQ.find((eintrag) => eintrag.frage.includes('buche'))
+    assert.match(buchung?.antwort ?? '', /beim jeweiligen Anbieter/)
+    assert.match(buchung?.antwort ?? '', /noch keine Buchung/)
+    const gast = HOMEPAGE_FAQ.find((eintrag) => eintrag.frage.includes('ohne Konto'))
+    assert.match(gast?.antwort ?? '', /diesem Browser/)
   })
+
 })
 
 describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', () => {
@@ -159,28 +121,26 @@ describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', ()
     assert.match(hrefs[0] ?? '', /zielId=geonames%3A1650535/)
   })
 
-  test('Navbar-Anker und Fähigkeitsliste bleiben auf der Startseite', () => {
+  test('FAQ ist ohne JavaScript lesbar und alte Pro-Links haben ein kompatibles Ziel', () => {
     const vertrauen = quelle('../../components/home/HomeVertrauen.tsx')
     const inspiration = quelle('../../components/home/HomeInspiration.tsx')
-    assert.match(vertrauen, /id=\{faehigkeit\.id === 'jetnity-pro' \? 'pro' : undefined\}/)
-    assert.match(vertrauen, /HOMEPAGE_FAEHIGKEITEN/)
+    assert.match(vertrauen, /id="pro"/)
+    assert.match(vertrauen, /id="fragen"/)
+    assert.match(vertrauen, /HOMEPAGE_FAQ/)
+    assert.match(vertrauen, /<details/)
+    assert.match(vertrauen, /<summary/)
+    assert.equal(vertrauen.includes("'use client'"), false)
+    assert.equal(vertrauen.includes('dangerouslySetInnerHTML'), false)
     assert.match(inspiration, /id="entdecken"/)
   })
 
-  test('der vollständige Fähigkeitswortlaut bleibt in einem nativen Disclosure', () => {
-    const vertrauen = quelle('../../components/home/HomeVertrauen.tsx')
-    const werkzeuge = quelle('../../components/home/HomeWerkzeuge.tsx')
-    assert.match(vertrauen, /<details/)
-    assert.match(vertrauen, /<summary/)
-    assert.equal(vertrauen.includes('sr-only'), false)
-    assert.equal(vertrauen.includes('display:none'), false)
-    assert.equal(werkzeuge.includes('lg:grid-cols-3'), false)
-    const gruppen = homepageFaehigkeitenGruppiert()
-    const gesehen = gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.id))
-    assert.deepEqual(gesehen, HOMEPAGE_FAEHIGKEITEN.map((eintrag) => eintrag.id))
-    assert.deepEqual(
-      gruppen.map((gruppe) => gruppe.kennzeichnung),
-      ['Heute nutzbar', 'Soweit Daten vorliegen', 'In Vorbereitung', 'Produktvorschau', 'Kommt später'],
-    )
+  test('Share-Bild und Bildreferenzen existieren; Sitemap erfindet kein Aktualisierungsdatum', () => {
+    const seite = quelle('../../app/(public)/page.tsx')
+    assert.match(seite, /jetnity-reiseplaner-share.png/)
+    const bild = readFileSync(join(hier, '../../public/images/jetnity-reiseplaner-share.png'))
+    assert.equal(bild.readUInt32BE(16), 1200)
+    assert.equal(bild.readUInt32BE(20), 630)
+    const sitemap = quelle('../../app/sitemap.ts')
+    assert.equal(sitemap.includes('lastModified: new Date()'), false)
   })
 })

@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **02.11.2026 – Homepage Final 1:** Finaler Kundenauftritt mit verständlicher Reiseplaner-Positionierung, Reisebeispiel, Vorteilen, Inspiration und FAQ umgesetzt. Entwicklungsstatus-Matrix nach aktuellem Owner-Auftrag ersetzt. SEO/Share/SSR vorbereitet; öffentliche Indexing-/Launch-Freigabe bleibt separat, unverändert geschlossen. Lokale Prüfungen und unabhängiger Root-Review sind in [Evidence](docs/HOMEPAGE_FINAL_1_EVIDENCE_2026-11-02.md) getrennt dokumentiert; kein behaupteter Hosted-Release.
+
 > **02.11.2026 – Workspace-Navigation:** Weißer, vollbreiter Header und automatische Desktop-Symbolleiste umgesetzt; native DOM-Ereignisse berücksichtigen die über Portale eingebundene Reise-Navigation. Konto/Darstellung nur als Symbole, GeoNames-Nachweis über die öffentliche Quellen-Seite. Technische und unabhängige Release-Abnahme laufen. [Prüfstand](docs/WORKSPACE_NAVIGATION_1_EVIDENCE_2026-11-02.md).
 
 > **02.11.2026 – Organisieren auf Desktop vereinheitlicht:** Alle vier Kategorien stehen über dem vollbreiten Inhalt; der Aktivitäten-Akzent endet innerhalb der Kartenrundung. Begrenzte Darstellungsänderung, unabhängige lokale Browser- und technische Abnahme erfolgreich; vollständige CI/Vorschau/Release folgen. [Prüfstand](docs/ORGANISIEREN_DESKTOP_1_EVIDENCE_2026-11-02.md).

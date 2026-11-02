@@ -8,7 +8,7 @@ export function HomeBegleitung() {
       aria-labelledby="begleitung-titel"
     >
       <div className="max-w-3xl px-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Ablauf</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">In drei Schritten</p>
         <h2
           id="begleitung-titel"
           className="mt-3 max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-balance sm:text-5xl"

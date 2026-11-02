@@ -5,7 +5,7 @@ export function HomeUnterschied() {
   return (
     <section className="px-3 py-2 sm:px-5 sm:py-4" aria-labelledby="unterschied-titel">
       <div className="mx-auto max-w-[1450px] rounded-[28px] bg-brand-800 px-5 py-10 text-white sm:rounded-[36px] sm:px-12 sm:py-16">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-citrus-400">Unterschied</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-citrus-400">Warum Jetnity</p>
         <div className="mt-4 grid items-start gap-10 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-6">
             <h2

@@ -64,7 +64,7 @@ export type Navigationseintrag =
 export const HAUPTNAVIGATION = [
   { label: 'Entdecken', href: '/entdecken' },
   { label: 'Meine Reisen', href: '/reisen' },
-  { label: 'Jetnity Pro', href: '/#pro' },
+  { label: 'So funktioniert’s', href: '/#so-funktionierts' },
 ] as const
 
 /**

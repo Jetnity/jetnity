@@ -42,6 +42,7 @@
     "nextImageImports": [
       "components/home/HomeHero.tsx",
       "components/home/HomeInspiration.tsx",
+      "components/home/HomeProduktfenster.tsx",
       "components/inspiration/explorer-1/Inspirationskarte.tsx",
       "components/layout/Footer.tsx",
       "components/layout/PublicNavbar.tsx"

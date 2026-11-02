@@ -138,7 +138,7 @@ test('shared responsive layout: real Guest Workspace, CSS zoom, text, targets an
   const browser = await chromium.launch({ channel: 'chrome', headless: true, chromiumSandbox: true })
   const failures: string[] = []
   const records: unknown[] = []
-  const expectedLinks = ['/', '/planen', '/reisen', '/entdecken', '/#pro', 'mailto:info@jetnity.ch', '/privacy', '/terms', '/impressum', 'https://www.geonames.org/']
+  const expectedLinks = ['/', '/planen', '/reisen', '/entdecken', '/#so-funktionierts', '/#fragen', 'mailto:info@jetnity.ch', '/privacy', '/terms', '/impressum', 'https://www.geonames.org/']
   try {
     for (const width of [320, 360, 375, 390, 768, 1024, 1280]) {
       for (const zoom of [1, 2]) {

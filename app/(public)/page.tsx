@@ -29,16 +29,16 @@ export const metadata: Metadata = {
     url: kanonischeUrl('/'),
     images: [
       {
-        url: '/images/hero-bali.png',
-        width: 1536,
-        height: 1024,
-        alt: 'Reisterrassen und Palmen, Stimmungsbild der Jetnity-Startseite',
+        url: '/images/jetnity-reiseplaner-share.png',
+        width: 1200,
+        height: 630,
+        alt: 'Jetnity – Deine ganze Reise. Intelligent an einem Ort.',
       },
     ],
   },
   twitter: {
     ...homepageMeta.twitter,
-    images: ['/images/hero-bali.png'],
+    images: ['/images/jetnity-reiseplaner-share.png'],
   },
 }
 
@@ -68,16 +68,15 @@ export default function HomePage() {
             {HOMEPAGE_UEBERSCHRIFTEN.abschluss}
           </h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-ink-300">
-            Bestätige ein Ziel und beginne deinen eigenen Entwurf. Jetnity entscheidet die Reise nicht
-            für dich.
+            Ein erster Ort, eine große Idee oder schon eine ganze Route: Gib deiner nächsten Reise einen Anfang.
           </p>
           <GastCreateLink
             createHref="/planen"
             createLabel="Reise starten"
-            className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-citrus-400 px-6 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+            className="mt-6 inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-full bg-citrus-400 px-6 py-3 text-sm font-semibold text-brand-800 [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
           >
-            Reise starten
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <span className="min-w-0">Reise starten</span>
+            <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
           </GastCreateLink>
         </div>
       </section>

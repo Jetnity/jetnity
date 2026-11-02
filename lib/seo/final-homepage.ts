@@ -1,237 +1,76 @@
-// lib/seo/final-homepage.ts
-//
-// Vertrag der finalen Startseite: sichtbare Definition, Fähigkeitsstand und
-// JSON-LD. Indexing bleibt am bestehenden fail-closed Gate. Keine sameAs,
-// Bewertungen, Angebote, Nutzerzahlen oder Anbieterwahrheit.
-
+// Customer-facing homepage content and matching entity data.
+// Crawl/index permission remains in the existing global launch gate.
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 
 export const FINAL_HOMEPAGE_H1 = 'Deine ganze Reise. Intelligent an einem Ort.'
 
-/** Sichtbare Definition. Dieselbe Zeichenkette steht in JSON-LD. */
+/** Rendered in the hero and reused verbatim in the entity description. */
 export const FINAL_HOMEPAGE_DEFINITION =
-  'Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.'
+  'Jetnity ist dein Reiseplaner und Reisebegleiter. Plane deine Route, organisiere Flüge, Unterkünfte und Erlebnisse und behalte deine ganze Reise im Blick.'
 
-export const FINAL_HOMEPAGE_DESCRIPTION = FINAL_HOMEPAGE_DEFINITION
-
-export const HOMEPAGE_KENNZEICHNUNGEN = [
-  'Heute nutzbar',
-  'Soweit Daten vorliegen',
-  'In Vorbereitung',
-  'Kommt später',
-  'Produktvorschau',
-] as const
-
-export type HomepageKennzeichnung = (typeof HOMEPAGE_KENNZEICHNUNGEN)[number]
-
-export type HomepageFaehigkeitsstand = 'LIVE' | 'PARTIAL' | 'PLANNED'
-
-export type HomepageFaehigkeit = {
-  id: string
-  stand: HomepageFaehigkeitsstand
-  titel: string
-  text: string
-  kennzeichnung: HomepageKennzeichnung
-}
-
-/**
- * Inventar gegen main@c1eae921a37db1d1f661af4b5d58139d3dc752ec
- * nach dem akzeptierten Trip Workspace mit vier Arbeitsbereichen.
- * LIVE darf als verfügbar stehen. PARTIAL bleibt eng. PLANNED ist gekennzeichnet.
- * Unsicheres wurde herabgestuft.
- */
-export const HOMEPAGE_FAEHIGKEITEN = [
-  {
-    id: 'ziel-bestaetigen',
-    stand: 'LIVE',
-    titel: 'Ziel bestätigen und Entwurf starten',
-    text: 'Du bestätigst ein Ziel aus der Ortsliste und kannst ohne Konto einen Entwurf beginnen.',
-    kennzeichnung: 'Heute nutzbar',
-  },
-  {
-    id: 'mehrere-ziele',
-    stand: 'LIVE',
-    titel: 'Mehrere Ziele als eine Route',
-    text: 'Mehrere bestätigte Ziele bleiben in deiner Reihenfolge. Jetnity erfindet daraus keinen Ort.',
-    kennzeichnung: 'Heute nutzbar',
-  },
-  {
-    id: 'reisebereich',
-    stand: 'LIVE',
-    titel: 'Vier Bereiche einer Reise',
-    text: 'Übersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.',
-    kennzeichnung: 'Heute nutzbar',
-  },
-  {
-    id: 'offene-schritte',
-    stand: 'PARTIAL',
-    titel: 'Offene Schritte aus bekannten Angaben',
-    text: 'Jetnity kann zeigen, was im vorhandenen Plan noch offen ist. Prüfungen, die externe Quellen brauchen, bleiben offen.',
-    kennzeichnung: 'Soweit Daten vorliegen',
-  },
-  {
-    id: 'live-angebote',
-    stand: 'PLANNED',
-    titel: 'Preise und Verfügbarkeit',
-    text: 'Die Reisebereiche sind da. Echte Anbieterpreise und Verfügbarkeiten sind nicht freigeschaltet.',
-    kennzeichnung: 'In Vorbereitung',
-  },
-  {
-    id: 'amtliche-auskuenfte',
-    stand: 'PLANNED',
-    titel: 'Amtliche Einreise- und Sicherheitsauskünfte',
-    text: 'Amtliche Angaben werden nicht als vorliegendes Ergebnis gezeigt.',
-    kennzeichnung: 'In Vorbereitung',
-  },
-  {
-    id: 'routenfolgen',
-    stand: 'PLANNED',
-    titel: 'Folgen einer Routenänderung',
-    text: 'Dass eine Änderung andere Bereiche betreffen kann, ist hier eine Produktvorschau. Eine automatische Umsetzung mit Anbieterdaten ist nicht live.',
-    kennzeichnung: 'Produktvorschau',
-  },
-  {
-    id: 'gemeinsam-planen',
-    stand: 'PLANNED',
-    titel: 'Gemeinsam planen',
-    text: 'Mehrere Personen planen eine Reise hier noch nicht gemeinsam.',
-    kennzeichnung: 'Kommt später',
-  },
-  {
-    id: 'jetnity-pro',
-    stand: 'PLANNED',
-    titel: 'Jetnity Pro',
-    text: 'Live-Hinweise, Offline-Zugriff und Dokumentenerinnerungen sind nicht verfügbar.',
-    kennzeichnung: 'Kommt später',
-  },
-] as const satisfies readonly HomepageFaehigkeit[]
+export const FINAL_HOMEPAGE_DESCRIPTION =
+  'Plane deine Reise mit Jetnity: Reiseziele, Route, Tagesplan, Flüge, Unterkünfte und Aktivitäten an einem Ort. Starte deinen Reiseplan ohne Konto.'
 
 export const HOMEPAGE_UEBERSCHRIFTEN = {
-  werkzeuge: 'Eine Reise statt fünf getrennte Tools',
-  produktfenster: 'So sieht eine Reise in Jetnity aus.',
-  begleitung: 'So begleitet Jetnity deine Reise',
-  unterschied: 'Warum Jetnity anders ist',
-  inspiration: 'Eine Idee, dann ein bestätigtes Ziel.',
+  werkzeuge: 'Alles für deine Reise. Ein gemeinsamer Plan.',
+  produktfenster: 'Aus Vorfreude wird dein Reiseplan.',
+  begleitung: 'Deine nächste Reise beginnt ganz einfach.',
+  unterschied: 'Mehr erleben. Weniger organisieren.',
+  inspiration: 'Wohin zieht es dich als Nächstes?',
   vertrauen: 'Deine Reise. Deine Entscheidungen.',
-  abschluss: 'Starte mit deinem eigenen Ziel.',
+  abschluss: 'Die Welt wartet. Dein Plan beginnt hier.',
 } as const
 
 export const HOMEPAGE_WERKZEUGE = [
-  {
-    titel: 'Reiseplan',
-    text: 'Bestätigte Ziele werden zu einer Reise mit Tagen und Reihenfolge.',
-    kennzeichnung: 'Heute nutzbar',
-  },
-  {
-    titel: 'Flüge',
-    text: 'Der Flugbereich gehört zur Reise. Anbieterpreise und Verfügbarkeit sind in Vorbereitung.',
-    kennzeichnung: 'Soweit Daten vorliegen',
-  },
-  {
-    titel: 'Unterkunft',
-    text: 'Die Unterkunft bleibt im Zusammenhang der Reise. Konkrete Angebote sind in Vorbereitung.',
-    kennzeichnung: 'Soweit Daten vorliegen',
-  },
-  {
-    titel: 'Aktivitäten',
-    text: 'Aktivitäten lassen sich der Reise zuordnen. Live-Suche mit Anbietern ist in Vorbereitung.',
-    kennzeichnung: 'Soweit Daten vorliegen',
-  },
-  {
-    titel: 'Mobilität',
-    text: 'Wege zwischen Orten gehören zur selben Reise. Live-Verbindungen sind in Vorbereitung.',
-    kennzeichnung: 'Soweit Daten vorliegen',
-  },
-] as const satisfies readonly {
-  titel: string
-  text: string
-  kennzeichnung: HomepageKennzeichnung
-}[]
+  { titel: 'Reiseplan', text: 'Ziele verbinden, Tage gestalten und deine Route im Blick behalten.' },
+  { titel: 'Flüge', text: 'Hinflug, Rückflug und weitere Flüge deiner Reise zuordnen.' },
+  { titel: 'Unterkunft', text: 'Deine Übernachtungen passend zu Orten und Reisetagen organisieren.' },
+  { titel: 'Aktivitäten', text: 'Erlebnisse entdecken und deinen Tagen das Besondere geben.' },
+  { titel: 'Mobilität', text: 'Zug, Bus, Fähre, Transfer und Mietwagen in deine Reise einordnen.' },
+] as const
 
 export const HOMEPAGE_SCHRITTE = [
-  {
-    titel: 'Beschreiben',
-    text: 'Sag Jetnity, wohin du möchtest und was dir wichtig ist. Ein Ort gilt erst nach deiner Bestätigung.',
-  },
-  {
-    titel: 'Organisieren',
-    text: 'Übersicht, Reiseplan, Organisieren und Vorbereitung bleiben an derselben Reise. Live-Angebote sind in Vorbereitung.',
-  },
-  {
-    titel: 'Begleiten lassen',
-    text: 'Jetnity zeigt offene Schritte aus dem, was zur Reise schon bekannt ist. Live-Hinweise und amtliche Auskünfte kommen später.',
-  },
+  { titel: 'Wähle deine Ziele', text: 'Ein Wochenende in einer Stadt oder mehrere Stopps auf einer Rundreise: Starte mit den Orten, die du entdecken möchtest.' },
+  { titel: 'Mach den Plan zu deinem', text: 'Lege Reisedaten, Reisende und Budget fest. Ordne deine Route und fülle deine Tage mit dem, was dir wichtig ist.' },
+  { titel: 'Behalte alles im Blick', text: 'Dein Tagesplan, die Organisation und deine Vorbereitung bleiben zusammen. So findest du auch unterwegs schnell zurück zu deiner Reise.' },
 ] as const
 
 export const HOMEPAGE_UNTERSCHIEDE = [
-  {
-    titel: 'Reisekontext statt Einzelsuche',
-    text: 'Ein Flug oder eine Unterkunft gehört in Jetnity zur selben Reise. Die Bereiche liegen nicht als getrennte Suchen nebeneinander.',
-  },
-  {
-    titel: 'Wahrheit statt geratenen Antworten',
-    text: 'Unbekannt bleibt unbekannt. Geplant bleibt geplant. Amtliche Angaben, Anbieterfakten, Vorschläge von Jetnity und dein Plan bleiben getrennt.',
-  },
-  {
-    titel: 'Nächster sinnvoller Schritt statt Informationsflut',
-    text: 'Jetnity stellt nach vorn, was im vorhandenen Plan Aufmerksamkeit braucht, statt endlose Optionen zu zeigen.',
-  },
+  { titel: 'Ein Ort für das große Ganze', text: 'Von der ersten Idee bis zum letzten Reisetag: Deine Route, Übernachtungen und Erlebnisse gehören zusammen. Mit Jetnity findest du sie in deiner Reise wieder.' },
+  { titel: 'Ein Plan, der zu dir passt', text: 'Du bestimmst die Ziele, das Tempo und die Reihenfolge. Ergänze eigene Ideen und ändere deinen Plan, wenn sich deine Wünsche ändern.' },
+  { titel: 'Klarheit für den nächsten Schritt', text: 'Sieh, welche Flüge, Übernachtungen und Aktivitäten du bereits eingeplant hast und wo du noch etwas ergänzen möchtest.' },
 ] as const
 
 export const HOMEPAGE_PRODUKTFENSTER = {
-  kennzeichnung: 'Produktvorschau',
   titel: 'Lissabon und Porto',
-  meta: '8 Tage · beispielhafter Entwurf',
-  jetztWichtig: 'Die Unterkunft in Porto ist noch offen.',
-  hinweis: 'Beispiel aus einem Reiseplan. Kein Preis, keine Verfügbarkeit und keine amtliche Auskunft.',
-  naechsterSchritt: 'Eigenes Ziel bestätigen',
+  meta: 'Portugal · 8 Tage · 2 Reiseziele',
+  kennzeichnung: 'Beispielreise',
   route: [
-    { ort: 'Lissabon', text: 'Ort der Beispielroute.' },
-    { ort: 'Porto', text: 'Ort der Beispielroute. Unterkunft noch offen.' },
+    { ort: 'Lissabon', text: 'Tag 1–4 · Gassen, Aussicht und Atlantik' },
+    { ort: 'Porto', text: 'Tag 5–8 · Altstadt und Zeit am Douro' },
   ],
-  modiHinweis:
-    'Diese vier Bereiche gibt es in einer echten Reise. Die Beispielreise selbst bleibt eine Produktvorschau.',
-  modi: [
-    {
-      titel: 'Übersicht',
-      text: 'Was jetzt wichtig ist, und was in dieser Reise noch offen ist.',
-      kennzeichnung: 'Heute nutzbar',
-    },
-    {
-      titel: 'Reiseplan',
-      text: 'Tage und Reihenfolge. Hier nur als Beispiel, ohne automatische Umsetzung.',
-      kennzeichnung: 'Heute nutzbar',
-    },
-    {
-      titel: 'Organisieren',
-      text: 'Flüge, Unterkunft, Aktivitäten und Mobilität. Ohne Anbieterpreise.',
-      kennzeichnung: 'Heute nutzbar',
-    },
-    {
-      titel: 'Vorbereitung',
-      text: 'Offene Vorbereitung aus bekannten Angaben. Keine amtliche Auskunft.',
-      kennzeichnung: 'Heute nutzbar',
-    },
+  tag: 'Ein Tag in Lissabon',
+  tagesplan: [
+    { zeit: 'Vormittag', titel: 'Durch Alfama schlendern', text: 'Zeit für kleine Gassen und einen Kaffee.', art: 'Entdecken' },
+    { zeit: 'Nachmittag', titel: 'Lissabon von oben sehen', text: 'Einen Aussichtspunkt in den Tag einplanen.', art: 'Erleben' },
+    { zeit: 'Abend', titel: 'Den Tag am Tejo ausklingen lassen', text: 'Freiraum für das, worauf du Lust hast.', art: 'Genießen' },
   ],
+  modi: ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
 } as const
 
-/** Sichtbare Statusgruppen in der Reihenfolge, in der der Stand zuerst belegt ist. Keine neue Wahrheit. */
-export function homepageFaehigkeitenGruppiert() {
-  const reihenfolge: HomepageKennzeichnung[] = []
-  for (const eintrag of HOMEPAGE_FAEHIGKEITEN) {
-    if (!reihenfolge.includes(eintrag.kennzeichnung)) reihenfolge.push(eintrag.kennzeichnung)
-  }
-  return reihenfolge.map((kennzeichnung) => ({
-    kennzeichnung,
-    eintraege: HOMEPAGE_FAEHIGKEITEN.filter((eintrag) => eintrag.kennzeichnung === kennzeichnung),
-  }))
-}
-
 export const HOMEPAGE_VERTRAUEN = [
-  'Jetnity trifft keine wichtige Reiseentscheidung still für dich.',
-  'Anbieterpreise, Verfügbarkeit und Buchungen werden hier nicht erfunden.',
-  'Amtliche Angaben, Anbieterfakten, Vorschläge von Jetnity und dein eigener Plan bleiben getrennt.',
-  'Sensible Reisedaten sind kein Werbeinhalt. Private Reisen sind keine öffentlichen Seiten.',
+  { titel: 'Du behältst die Kontrolle', text: 'Du entscheidest, was in deinen Plan kommt und was du buchst.' },
+  { titel: 'Deine Reise bleibt privat', text: 'Persönliche Reisepläne sind kein öffentlicher Inhalt.' },
+  { titel: 'Einfach ausprobieren', text: 'Beginne deinen Reiseplan ohne Konto. Mit einem Konto kannst du ihn dauerhaft speichern.' },
+] as const
+
+export const HOMEPAGE_FAQ = [
+  { frage: 'Was ist Jetnity?', antwort: 'Jetnity ist ein Reiseplaner und Reisebegleiter für individuelle Reisen. Du verbindest Reiseziele zu einer Route, gestaltest deinen Tagesplan und organisierst Flüge, Unterkünfte, Aktivitäten und Mobilität in derselben Reise.' },
+  { frage: 'Kann ich meine Reise ohne Konto planen?', antwort: 'Ja. Du kannst ohne Anmeldung mit deinem Reiseziel beginnen und einen Reiseplan erstellen. Dein Gastentwurf bleibt in diesem Browser. Für dauerhaftes Speichern in deinem Konto und den Zugriff auf anderen Geräten meldest du dich an.' },
+  { frage: 'Kann ich mehrere Reiseziele verbinden?', antwort: 'Ja. Wähle mehrere Orte aus und ordne sie in der gewünschten Reihenfolge. So planst du auch Rundreisen und Reisen mit mehreren Stopps. Die Ziele bleiben mit deinem Reiseplan verbunden.' },
+  { frage: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?', antwort: 'Jetnity hilft dir, deine Reise zu planen und passende Reiseleistungen zu organisieren. Wo eine Partnersuche angeboten wird, öffnest du die Angebote beim jeweiligen Anbieter und schließt die Buchung dort ab. Dort prüfst du auch den aktuellen Preis, die Verfügbarkeit und die Buchungsbedingungen. Ein Eintrag in deinem Reiseplan ist noch keine Buchung.' },
+  { frage: 'Für welche Reisen eignet sich Jetnity?', antwort: 'Für Städtetrips, Rundreisen, Urlaub mit mehreren Stopps und individuell geplante Reisen weltweit. Du legst Ziele, Reisedaten, Reisende und Budget fest und gestaltest die Reise nach deinen Vorstellungen.' },
+  { frage: 'Wie finanziert sich Jetnity?', antwort: 'Wenn du über einen Partnerlink eine Buchung abschließt, kann Jetnity eine Provision erhalten. Solche Verbindungen sind als Partnerlinks gekennzeichnet. Du entscheidest selbst, ob und bei welchem Anbieter du buchst.' },
 ] as const
 
 const VERBOTENE_JSON_LD_SCHLUESSEL = [
@@ -254,7 +93,7 @@ export function finalHomepageMetadaten(url: string) {
     throw new Error('Homepage-Metadaten akzeptieren nur die kanonische Startseiten-URL.')
   }
   return {
-    title: FINAL_HOMEPAGE_H1,
+    title: 'Reiseplaner für deine ganze Reise',
     description: FINAL_HOMEPAGE_DESCRIPTION,
     canonical: url,
     openGraph: {
@@ -288,6 +127,7 @@ export function finalHomepageJsonLd(eingabe: { url: string }) {
         url,
         description: FINAL_HOMEPAGE_DEFINITION,
         email: 'info@jetnity.ch',
+        logo: new URL('/brand/jetnity-logo.png', url).href,
       },
       {
         '@type': 'WebSite',
@@ -305,6 +145,7 @@ export function finalHomepageJsonLd(eingabe: { url: string }) {
         url,
         applicationCategory: 'TravelApplication',
         operatingSystem: 'Web',
+        image: new URL('/images/jetnity-reiseplaner-share.png', url).href,
         description: FINAL_HOMEPAGE_DEFINITION,
         publisher: { '@id': `${url}#organization` },
       },

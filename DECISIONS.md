@@ -6084,3 +6084,29 @@ die öffentliche Seite auch für Gäste. Section 3(a)(2) der Lizenz erlaubt die
 angemessene Verlinkung auf vollständige Nachweise; der lange Workspace-Footertext
 ist dafür nicht erforderlich. [Lizenz](https://creativecommons.org/licenses/by/4.0/legalcode.en).
 [Auftrag und Grenzen](docs/WORKSPACE_NAVIGATION_1_TASK_2026-11-02.md).
+
+
+## Finale Kunden-Startseite ohne Entwicklungsstatus-Matrix – 02.11.2026
+
+**Entscheidung:** Der aktuelle Owner-Auftrag zieht den finalen Homepage-Auftritt
+vor. Die frühere sichtbare vollständige Capability-Matrix und das historische
+Timing-Gate werden für diese Seite ersetzt. Verständliche Produktvorteile,
+Beispielreise und nützliche FAQ erklären Jetnity. Konkrete Angebots-/Buchungsdaten
+werden nicht erfunden; die FAQ erklärt die Buchung beim jeweiligen Anbieter.
+
+**Kontext/Alternative:** Die bisherige Seite wiederholte interne Live/Partial/
+Planned-Kennzeichen, obwohl der Kunde sein Reiseziel und den nächsten Schritt
+verstehen muss. Ein bloßer Austausch einzelner Sätze hätte diesen Eindruck
+bewahrt. Gewählt wurde die bestehende Markenkomposition mit deutlich kompakterer
+Kundenstory, ohne neue Produktlogik oder Nebenmodule.
+
+**Konsequenzen:** Statische Server-Texte und native FAQ, gemeinsamer
+Definitionstext für Hero/Entity-Daten, beschreibender Seitentitel und eigenes
+Share-Bild aus vorhandenen Assets. Die öffentlichen Links führen auf reale
+Abschnitte; `#pro` bleibt als kompatibles FAQ-Ziel. `lastModified` in der Sitemap
+entfällt, solange keine belegten Änderungsdaten vorliegen. Globale Indexing-Gates,
+Auth, Trip-Graph, Provider und Kosten bleiben unverändert. Root entscheidet
+separat über Release und eine ausdrücklich freigegebene öffentliche Indexierung.
+
+[Auftrag](docs/HOMEPAGE_FINAL_1_TASK_2026-11-02.md) ·
+[Nachweis](docs/HOMEPAGE_FINAL_1_EVIDENCE_2026-11-02.md).

@@ -109,10 +109,10 @@ describe('Die Ziele für alle', () => {
     // Meine Reisen gilt auch ohne Konto: Dort liegt der Gastentwurf.
     assert.deepEqual(
       HAUPTNAVIGATION.map((eintrag) => eintrag.href),
-      ['/entdecken', '/reisen', '/#pro'],
+      ['/entdecken', '/reisen', '/#so-funktionierts'],
     )
     assert.deepEqual(HAUPTNAVIGATION.map((eintrag) => eintrag.label), [
-      'Entdecken', 'Meine Reisen', 'Jetnity Pro',
+      'Entdecken', 'Meine Reisen', 'So funktioniert’s',
     ])
   })
 })
