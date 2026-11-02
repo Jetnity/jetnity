@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-> **02.11.2026 – Organisieren auf Desktop vereinheitlicht:** Alle vier Kategorien stehen über dem vollbreiten Inhalt; der Aktivitäten-Akzent endet innerhalb der Kartenrundung. Begrenzte Darstellungsänderung, unabhängige Browser-/CI-/Release-Abnahme noch offen. [Prüfstand](docs/ORGANISIEREN_DESKTOP_1_EVIDENCE_2026-11-02.md).
+> **02.11.2026 – Organisieren auf Desktop vereinheitlicht:** Alle vier Kategorien stehen über dem vollbreiten Inhalt; der Aktivitäten-Akzent endet innerhalb der Kartenrundung. Begrenzte Darstellungsänderung, unabhängige lokale Browser- und technische Abnahme erfolgreich; vollständige CI/Vorschau/Release folgen. [Prüfstand](docs/ORGANISIEREN_DESKTOP_1_EVIDENCE_2026-11-02.md).
 
 > **02.11.2026 – DiscoverCars auf Jetnity:** Offizielles Suchformular mit echter Orts-/Datums-/Fahrerwahl umgesetzt und lokal im Browser geprüft; Affiliate-Übergabe bis zur externen Fahrzeugliste belegt. Native Fahrzeugkarten sind von verifiziertem Search-API-Zugang abhängig; Anfrageentwurf vorbereitet, nicht versandt. Vollständige CI/Hosted-Release-Abnahme folgt auf dem finalen Head. Draft #1084 und gemeinsame CMP-/Host-Vorbereitung bleiben separat. [Prüfstand und nächster Schritt](docs/DISCOVERCARS_ONSITE_EVIDENCE_2026-11-02.md).
 

@@ -1,6 +1,6 @@
 # Organisieren Desktop 1 — Prüfstand vom 02.11.2026
 
-Status: Implementiert und fokussiert geprüft; unabhängige Abnahme und Release
+Status: Implementiert und unabhängig im lokalen Chrome geprüft; CI und Release
 noch offen.
 
 ## Änderung
@@ -40,11 +40,37 @@ Die bestehenden Rasterhelfer bleiben erhalten. Die neue Anordnung entsteht
 durch das volle Überspannen ihrer Spalten; der Browser-Abgleich prüft die
 resultierende Darstellung separat.
 
-## Noch offene unabhängige Abnahme
+## Unabhängige Browser-Abnahme
 
-Der Technical Lead prüft Desktop-Kategoriewechsel, gemeinsame Breite und
-Abstände, die runden Akzentenden sowie kompakte Ansicht, Hell/Grün,
-Tastatur/Fokus und Zurück im Browser. Typecheck, Hygiene, Build, vollständige
-CI und Vercel-Vorschau werden separat auf dem finalen Stand geprüft.
-Dieser Bericht behauptet keinen Browser-, Production- oder Real-Device-Test.
+Chrome über die Browser-Erweiterung, echte Komponenten im WorkspaceShell,
+synthetische Bali-Reise in einer vor den Gates entfernten lokalen Prüfroute:
+
+- 1440 px: Flüge, Unterkunft, Aktivitäten und Mobilität jeweils unter der
+  Navigation, beide 1168 px breit und 24 px auseinander, kein Seitenüberlauf.
+- 1080 px: Navigation und Unterkunft jeweils 808 px, Abstand 24 px.
+- Aktivitäten: Karte und Dekoration jeweils Radius 24 px; nur Dekoration
+  overflow hidden und pointer-events none, Karteninhalt overflow visible.
+  Screenshot bestätigt sauber abgerundete Citrus-Enden.
+- Hell und Grün geprüft; Tab von Ziel zu Reisetag erreicht sichtbaren Fokus.
+- Browser-Zurück stellt Aktivitäten nach Mobilität wieder her.
+- 390 px: kompakte Detailnavigation erhalten, Aktivitäten 366 px breit
+  ohne Seitenüberlauf; Organisieren führt zur Kategorienübersicht zurück.
+- Reiseplan/Tagesplan lässt sich weiterhin öffnen.
+
+Lokale Bildnachweise: outputs/jetnity-organisieren-2026-11-02 im Arbeitsordner.
+Keine Anbieterfreigabe oder Angebotsverfügbarkeit behauptet: lokale Prüfung
+verwendet keine echten Zugangsdaten. Keine Real-Device-Abnahme.
+
+## Noch offene Release-Abnahme
+
+Typecheck, vollständiger Lint (0 Fehler, 192 Bestandswarnungen), alle fünf
+Hygieneprüfungen und Production-Build erfolgreich. Prüfroute und automatisch
+vom Devserver erzeugte Dateien sind entfernt beziehungsweise zurückgesetzt.
+Unabhängiger Diff-/React-Review: keine neuen Zustände, Effekte, Datenzugriffe
+oder Interaktionsänderungen; nur Darstellung und begrenzte Dekoration.
+
+Vollständige CI und Vercel-Vorschau werden auf dem finalen Stand geprüft.
+Die Vorschau nutzt nur die vorhandene öffentliche Develop-Verbindung,
+auf diesen Preview-Branch begrenzt; keine Production- oder Admin-Zugangsdaten.
+Production-Abnahme bleibt offen. Finale CI-/Deployment-Links im PR.
 Ready, Merge und Veröffentlichung bleiben beim Technical Lead.
