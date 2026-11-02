@@ -77,8 +77,9 @@ export function HomeProduktfenster() {
                 )
               })}
             </ol>
-            <Link href="#travel-idea" className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/25">
-              Deine eigene Reise planen <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Link href="#travel-idea" className="mt-3 inline-flex min-h-11 max-w-full items-center gap-2 rounded-full font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/25">
+              <span className="min-w-0">Deine eigene Reise planen</span>
+              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
             </Link>
           </div>
         </div>

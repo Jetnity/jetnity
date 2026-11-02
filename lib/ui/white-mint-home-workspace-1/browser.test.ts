@@ -379,7 +379,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.ok(fokus.breite >= 2 && fokus.art === 'solid', `visible input focus at ${breite}: ${JSON.stringify(fokus)}`)
       await bild(page, `final-homepage-${breite}`)
       await bild(page, `final-homepage-${breite}-full`)
-      const faq = page.getByText('Wie buche ich Flüge, Unterkünfte oder Aktivitäten?', { exact: true })
+      const faq = page.locator('summary').filter({ hasText: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?' })
       await faq.focus()
       await page.keyboard.press('Enter')
       assert.equal(await faq.evaluate((el) => el.closest('details')?.open), true)
@@ -394,10 +394,32 @@ describe('rendered white/mint homepage and light workspace', () => {
       }
       if (breite === 320 || breite === 1440) {
         await page.addStyleTag({ content: 'html { font-size: 32px !important }' })
-        const gross = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-        await bild(page, `final-homepage-${breite}-200-full`)
-        const ausreisser = await page.evaluate(() => [...document.querySelectorAll('body *')].filter((el) => el.getBoundingClientRect().right > innerWidth + 1).slice(0, 12).map((el) => ({ tag: el.tagName, klasse: el.className, text: el.textContent?.slice(0, 80), recht: el.getBoundingClientRect().right })))
-        assert.ok(gross <= 1, `200% at ${breite}: ${gross}; ${JSON.stringify(ausreisser)}`)
+        for (const [schrift, familie] of [['system', ''], ['sans', 'Arial, sans-serif'], ['wide', 'monospace']]) {
+          await page.evaluate((font) => { document.body.style.fontFamily = font }, familie!)
+          const gross = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+          await bild(page, `final-homepage-${breite}-200-${schrift}-full`)
+          const ausreisser = await page.evaluate(() => [...document.querySelectorAll('body *')].filter((el) => el.getBoundingClientRect().right > innerWidth + 1).slice(0, 12).map((el) => ({ tag: el.tagName, klasse: el.getAttribute('class'), text: el.textContent?.slice(0, 80), elternText: el.parentElement?.textContent?.slice(0, 80), recht: el.getBoundingClientRect().right })))
+          assert.ok(gross <= 1, `200% ${schrift} at ${breite}: ${gross}; ${JSON.stringify(ausreisser)}`)
+          const abgeschnitten = await page.evaluate(() => [...document.querySelectorAll('main a, main button, main summary')].flatMap((el) => {
+            const box = el.getBoundingClientRect()
+            if (!box.width || !box.height) return []
+            const inhalt = [...el.querySelectorAll('svg')].map((svg) => svg.getBoundingClientRect())
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+            let text = walker.nextNode()
+            while (text) {
+              if (text.textContent?.trim()) {
+                const range = document.createRange()
+                range.selectNodeContents(text)
+                inhalt.push(...range.getClientRects())
+              }
+              text = walker.nextNode()
+            }
+            return inhalt.some((rect) => rect.left < box.left - 1 || rect.right > box.right + 1)
+              ? [el.textContent?.trim()] : []
+          }))
+          assert.deepEqual(abgeschnitten, [], `200% ${schrift} at ${breite}: link/FAQ contents must fit their control`)
+          protokoll[`homepage200-${breite}-${schrift}`] = { overflow: gross, clippedControls: abgeschnitten }
+        }
       }
       assert.deepEqual(fehler, [])
       assert.deepEqual(fremd, [])
@@ -405,6 +427,36 @@ describe('rendered white/mint homepage and light workspace', () => {
       await schliessen(context)
     }
     protokoll.homepageFinal1 = laeufe
+  })
+
+  test('the active guest continuation CTA remains bounded at 200% with a wide fallback font', async () => {
+    for (const breite of [320, 1440]) {
+      const { context, page, fehler, fremd } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint?fixture-session=guest', breite })
+      await page.waitForSelector('[data-synthetic-guest]')
+      await page.goto(`${origin}/?fixture-session=guest&schicht=mint`, { waitUntil: 'networkidle' })
+      const cta = page.locator('section[aria-labelledby="abschluss-titel"]').getByRole('link', { name: 'Reise fortsetzen', exact: true })
+      await cta.waitFor()
+      assert.equal(await cta.getAttribute('href'), '/reisen/trip-white-mint')
+      await page.addStyleTag({ content: 'html { font-size: 32px !important } body { font-family: monospace !important }' })
+      const werte = await cta.evaluate((el) => {
+        const box = el.getBoundingClientRect()
+        const range = document.createRange()
+        range.selectNodeContents(el)
+        return {
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          textFits: [...range.getClientRects()].every((rect) => rect.left >= box.left - 1 && rect.right <= box.right + 1),
+          height: box.height,
+        }
+      })
+      assert.ok(werte.overflow <= 1, `returning guest overflow at ${breite}: ${werte.overflow}`)
+      assert.equal(werte.textFits, true, `returning guest label fits at ${breite}`)
+      assert.ok(werte.height >= 44)
+      await cta.screenshot({ path: join(ausgabe, `homepage-guest-cta-${breite}-200-wide.png`) })
+      assert.deepEqual(fehler, [])
+      assert.deepEqual(fremd, [])
+      protokoll[`homepageGuest200-${breite}`] = werte
+      await schliessen(context)
+    }
   })
 
   test('light workspace uses white chrome and mint surfaces while green content stays unchanged', async () => {

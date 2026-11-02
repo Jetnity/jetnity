@@ -87,7 +87,7 @@ if (process.env.AUDIT_BROWSER === '1') {
       pruefe(laufzeitfehler.length === 0, `${breite}: ${laufzeitfehler.join(', ')}`)
       pruefe(fremd.length === 0, `${breite}: unexpected external request`)
       await page.screenshot({ path: join(ausgabe, `homepage-${breite}.png`), fullPage: true })
-      const summary = page.getByText('Wie buche ich Flüge, Unterkünfte oder Aktivitäten?', { exact: true })
+      const summary = page.locator('summary').filter({ hasText: 'Wie buche ich Flüge, Unterkünfte oder Aktivitäten?' })
       await summary.focus(); await page.keyboard.press('Enter')
       pruefe(await summary.evaluate((el) => el.closest('details')?.open), `${breite}: FAQ keyboard interaction`)
       if (breite === 320 || breite === 1440) {

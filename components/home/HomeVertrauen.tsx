@@ -43,7 +43,7 @@ export function HomeVertrauen() {
             {HOMEPAGE_FAQ.map((eintrag) => (
               <details key={eintrag.frage} className="group">
                 <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 rounded-lg py-4 font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/25 [&::-webkit-details-marker]:hidden">
-                  {eintrag.frage}
+                  <span className="min-w-0 flex-1">{eintrag.frage}</span>
                   <ChevronDown className="h-5 w-5 shrink-0 motion-safe:transition-transform group-open:rotate-180" aria-hidden="true" />
                 </summary>
                 <p className="max-w-3xl pb-5 pr-4 text-sm leading-7 text-ink-800">{eintrag.antwort}</p>

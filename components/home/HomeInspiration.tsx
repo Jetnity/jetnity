@@ -65,7 +65,7 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
         className="mt-6 inline-flex min-h-11 max-w-full items-center gap-2 rounded-full border border-brand-800 px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
       >
         <span className="min-w-0">Mehr Reiseideen</span>
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
       </Link>
     </section>
   )

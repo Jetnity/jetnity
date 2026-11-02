@@ -32,7 +32,7 @@ Keine neue Bildquelle, keine Modell-/Providerkosten. Native FAQ und Haupttexte
 sind Server-HTML; kein zusätzlicher Client-Bundle für die Produktstory.
 Sitemap-`lastModified` entfällt ohne belegtes Aktualisierungsdatum.
 
-## Prüfungen
+## Prüfungen am ersten Implementierungsstand `4018d99b`
 
 - `npm ci`: PASS; bestehende npm-Audit-Meldung 24 Schwachstellen (17 moderate,
   7 high). Keine Abhängigkeitsänderung oder pauschales `audit fix`.
@@ -82,7 +82,7 @@ kürzerer Beschriftung ist die absolute Overflow-Prüfung grün.
 Der bestehende sichtbare Input-Fokus kommt aus `white-mint.css`; die Prüfung
 misst den berechneten Stil statt allein die `outline-none`-Utility zu deuten.
 
-## Separater Root-Nachweis
+## Separater Root-Nachweis am ersten Implementierungsstand `4018d99b`
 
 Root meldet am finalen Produktionsbuild 67 unabhängige Prüfungen PASS, keine
 Browserfehler, sechs Breiten, Mobilmenü-Anker, FAQ-Tastatur, 200%-Darstellung,
@@ -95,6 +95,60 @@ nicht aus der Builder-Eigenprüfung.
 Separater Evidence-Ordner im übergeordneten Workspace:
 `outputs/jetnity-homepage-review-2026-11-02/` mit `actual-app-audit.json`,
 `actual-app-audit.log`, `index-boundary.log` und `next-*.png`.
+
+## CI-Nachbesserung nach `4018d99b`
+
+Hosted-CI `41450542150` fand auf Linux bei 320px und 200%-Schrift 35px
+horizontalen Überlauf. Die vorangehende macOS-Prüfung hatte diesen Unterschied
+der Ersatzschrift nicht aufgedeckt. Die präzisierte lokale Reproduktion mit
+breiter Monospace-Schrift zeigte 47px: die FAQ-Pfeile und der Abschluss-CTA
+waren die Ausreißer. Anonyme Textknoten in Flex-Elementen behielten ihre
+intrinsische Mindestbreite; außerdem war der Abschlusslink nicht auf seinen
+Container begrenzt.
+
+Korrektur: FAQ-Fragen und CTA-Texte haben explizite schrumpfbare Text-Spans.
+Abschluss-CTA und der Link im Reisebeispiel sind auf die verfügbare Breite
+begrenzt, die Icons behalten ihre Größe, mehrzeilige Texte erhalten genug
+vertikalen Raum. Der Inspirationslink behält ebenfalls seine Icongröße.
+Der Abschluss-CTA erlaubt außerdem Wortumbruch für das von `GastCreateLink`
+eingesetzte reine Gast-Fortsetzungslabel. Die Session-/Gastlogik bleibt unverändert.
+Keine Overflow-Maskierung, keine kleinere Schrift, keine abgeschwächte Prüfung.
+Der FAQ-Tastaturtest fokussiert ausdrücklich das native `summary`-Element.
+
+Die bestehende 200%-Prüfung umfasst nun bei 320/1440px jeweils die
+Systemschrift, Arial/Sans-Fallback und breite Monospace-Schrift. Zusätzlich zum
+absoluten Seitenüberlauf prüft sie Text- und Icon-Grenzen aller Links,
+Schaltflächen und FAQ-Zeilen im Hauptinhalt. Auch innerhalb einer Karte darf
+dadurch kein Inhalt abgeschnitten werden. Die gezielte Prüfung besteht mit
+0px Überlauf und ohne abgeschnittene Bedienelemente.
+
+Finaler Nachbesserungsstand: Produktionsbuild PASS (einschließlich
+TypeScript-Prüfung), separater Typecheck PASS, vollständige White/Mint-Browser-Suite 13/13 PASS,
+23 fokussierte SEO-/Navigations-/Gast-CTA-Tests PASS, Lint der geänderten
+Dateien ohne Meldungen, statischer Homepage-Audit PASS und
+`git diff --check` PASS. Die Testschwelle für Seitenüberlauf bleibt unverändert.
+
+Der zusätzliche Gast-Browsertest aktiviert ausdrücklich eine lokale
+ausgeloggte Fixture-Sitzung, legt über den bestehenden Gast-Workspace einen
+synthetischen Entwurf an und öffnet anschließend die echte Homepage-Komponente.
+Der tatsächlich umgeschaltete CTA zeigt „Reise fortsetzen“, verweist korrekt
+auf `/reisen/trip-white-mint` und bleibt bei 320/1440px mit 200% und breiter
+Ersatzschrift im Rahmen. Kein manuelles Ersetzen des CTA-DOM und keine echte
+Sitzung oder Auth-Anfrage; die Standardfixture bleibt unkonfiguriert.
+
+Neue Builder-Evidence getrennt vom vorherigen Stand:
+`outputs/jetnity-homepage-builder-2026-11-02/ci-fix/`, insbesondere
+`computed-colors.json`, `final-homepage-{320,1440}-200-{system,sans,wide}-full.png`,
+`homepage-guest-cta-{320,1440}-200-wide.png`, `browser-tests.log`, `build.log`,
+`typecheck.log` und `lint.log`. Der reproduzierte Fehler liegt
+im übergeordneten Ordner als `ci-reproduction.log` vor.
+
+Der zweite CI-Fehler betraf laut Root das feste Bildstellen-Inventar:
+`HomeProduktfenster.tsx` verwendet jetzt ein geprüftes lokales `next/image`
+und fehlte dort. Root ergänzt ausschließlich diesen Bildnutzer separat in
+zwei Security-Inventardateien. Root meldet 3 Integrationstests und 38
+Audit-Negativkontrollen PASS; Auditlogik, Hosts, Pins und Guards bleiben
+unverändert. Diese Security-Änderungen sind nicht Teil des Builder-UI-Commits.
 
 ## Self-Review und Grenzen
 
