@@ -8,13 +8,13 @@ const evidence = process.env.AUDIT_EVIDENCE_DIR || '/tmp/jetnity-discovercars-au
 mkdirSync(evidence, { recursive: true })
 const trip = { id: 'discovercars-verification', clientRef: 'discovercars-verification', title: 'Bangkok', origin: 'Zürich', originPlaceId: 'geonames:2657896', startDate: '2026-11-16', endDate: '2026-11-23', travellers: 2, currency: 'CHF', budgetAmount: 3000, status: 'draft', pace: 'balanced', interests: [], travelWish: null, revision: 1, lastMutationId: null, stages: [{ id: 'bkk', position: 1, name: 'Bangkok', countryCode: 'TH', latitude: 13.75, longitude: 100.5, placeId: null, arrivalDate: '2026-11-16', departureDate: '2026-11-23' }], days: [], ohneTag: [], createdAt: '2026-11-02T18:00:00Z', updatedAt: '2026-11-02T18:00:00Z' }
 const station = { id: 8054, name: 'Flughafen Bangkok Suvarnabhumi (BKK)', country: 'Thailand', region: 'Bangkok', type: 'airport' }
-const synthetic = { status: 'ok', kind: 'search', result: { searchedAt: Date.now(), expiresAt: Date.now() + 1800000, omitted: 0, offers: Array.from({ length: 3 }, (_, i) => ({ offer_id: `synthetic-${i}`, token: `synthetic-token-${i}`, car: { name: `Testfahrzeug ${i + 1}`, category: 'small', transmission: i ? 'manual' : 'automatic', seats: 5, bags: 2 }, price: { total: 120 + i * 10, currency: 'CHF' }, supplier: { name: 'Testvermieter', rating: 8, review_count: 10 }, pickup: { location: 'Bangkok Airport' }, dropoff: { location: 'Bangkok Airport' }, url: { web: `https://www.discovercars.com/offer/synthetic-${i}?a_aid=jetnity`, rental_conditions: null } })) } }
+const synthetic = { status: 'ok', kind: 'search', result: { searchedAt: Date.now(), expiresAt: Date.now() + 1800000, omitted: 0, offers: Array.from({ length: 8 }, (_, i) => ({ offer_id: `synthetic-${i}`, token: `synthetic-token-${i}`, car: { name: `Testfahrzeug ${i + 1}`, category: 'small', transmission: i ? 'manual' : 'automatic', seats: 5, bags: 2 }, price: { total: 120 + i * 10, currency: 'CHF' }, supplier: { name: 'Testvermieter', rating: 8, review_count: 10 }, pickup: { location: 'Bangkok Airport' }, dropoff: { location: 'Bangkok Airport' }, url: { web: `https://www.discovercars.com/offer/synthetic-${i}?a_aid=jetnity`, rental_conditions: null } })) } }
 const browser = await chromium.launch({ headless: true })
 const report = { live, base, checks: [], offers: 0, errors: [] }
 let activePage
 let captured = null
 try {
-  for (const width of [1440, 390, 320]) {
+  for (const width of [1440, 1920, 1024, 640, 390, 320]) {
     const context = await browser.newContext({ viewport: { width, height: 950 }, locale: 'de-CH', ...(process.env.AUDIT_BYPASS ? { extraHTTPHeaders: { 'x-vercel-protection-bypass': process.env.AUDIT_BYPASS } } : {}) })
     const page = await context.newPage(); activePage = page
     page.on('pageerror', e => report.errors.push(e.message))
@@ -42,6 +42,15 @@ try {
     await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
     const ui = page.locator('[data-discovercars-native]')
     await ui.waitFor(); assert.equal(calls, 0, 'No provider request before an explicit input')
+    const manual = page.locator('details[aria-label="Manueller Mietwagen"]')
+    assert.equal(await manual.getAttribute('open'), null, 'Manual entry starts collapsed')
+    await manual.locator('summary').click()
+    await manual.getByRole('button', { name: 'Mietwagen speichern', exact: true }).waitFor()
+    await manual.locator('summary').click()
+    await ui.scrollIntoViewIfNeeded()
+    const dateWidth = await ui.getByLabel('Abholdatum', { exact: true }).evaluate(el => el.getBoundingClientRect().width)
+    assert.ok(dateWidth >= 150, `Date field stays legible at ${width}: ${dateWidth}px`)
+    await page.screenshot({ path: `${evidence}/${width}-search.png` })
     await ui.getByRole('combobox', { name: 'Abholstation', exact: true }).fill('Bangkok')
     await page.getByRole('option').filter({ hasText: /Suvarnabhumi/ }).first().waitFor({ timeout: 25000 })
     // Escape dismisses only the station popup, not the surrounding trip panel.
@@ -57,7 +66,9 @@ try {
     await ui.locator('select').filter({ has: page.locator('option[value="CH"]') }).selectOption('CH')
     await ui.getByRole('button', { name: 'Mietwagen vergleichen', exact: true }).click()
     await ui.getByRole('heading', { name: /\d+ Mietwagenangebote/ }).waitFor({ timeout: 35000 })
-    report.offers = captured?.result.offers.length || 3
+    report.offers = captured?.result.offers.length || 8
+    const columns = await ui.locator('[data-rental-grid]').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)
+    assert.equal(columns, width >= 1536 ? 4 : width >= 1280 ? 3 : width >= 640 ? 2 : 1, `Offer columns at ${width}`)
     const beforeFilters = calls
     await ui.getByRole('combobox', { name: /^Getriebe/ }).selectOption('automatic')
     assert.ok(await ui.locator('article').count() > 0)
@@ -65,15 +76,19 @@ try {
     await ui.locator('article').nth(0).getByRole('checkbox').check()
     await ui.locator('article').nth(1).getByRole('checkbox').check()
     await ui.getByRole('table').waitFor(); assert.equal(calls, beforeFilters, 'Filter/compare are local')
+    await ui.getByRole('button', { name: 'Vergleich leeren', exact: true }).click()
     await ui.getByRole('heading', { name: /\d+ Mietwagenangebote/ }).scrollIntoViewIfNeeded()
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `No page overflow at ${width}`)
     await page.screenshot({ path: `${evidence}/${width}-results.png` })
+    await ui.locator('article').first().scrollIntoViewIfNeeded()
+    await page.screenshot({ path: `${evidence}/${width}-cards.png` })
     await ui.locator('article').first().getByRole('button', { name: 'Angebot ansehen' }).click()
     const dialog = page.getByRole('dialog')
     await dialog.getByRole('link', { name: /Bei DiscoverCars buchen/ }).waitFor({ timeout: 25000 })
     const href = await dialog.getByRole('link', { name: /Bei DiscoverCars buchen/ }).getAttribute('href')
     assert.ok(href.startsWith('https://www.discovercars.com/offer/'))
     assert.ok(href.includes('jetnity'))
+    await dialog.locator('img').evaluateAll(images => Promise.race([Promise.all(images.map(img => img.decode().catch(() => {}))), new Promise(resolve => setTimeout(resolve, 5000))]))
     await page.screenshot({ path: `${evidence}/${width}-detail.png` })
     await page.keyboard.press('Escape'); await dialog.waitFor({ state: 'hidden' })
     assert.equal(await ui.locator('article').first().getByRole('button', { name: 'Angebot ansehen' }).evaluate(el => el === document.activeElement), true, 'Focus returns from modal')

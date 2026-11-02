@@ -1,5 +1,7 @@
 # Jetnity – Design-System
 
+> **Owner-Auftrag, 02.11.2026 – Mietwagen Layout 1:** Suche zuerst in einer weißen Karte mit zwei mintfarbenen Gruppen für Stationen und Mietzeitraum, darunter Fahrerangaben und primäre Suchaktion. Ergebnisse bilden ein eigenes Raster: eine Spalte mobil, zwei ab 640px, drei ab 1280px, vier ab 1536px. Gleiche Bildflächen, lesbarer Gesamtpreis und ausgerichtete Aktionen unterstützen den Vergleich. Datum und Uhrzeit stehen unter 1024px untereinander. Fehlende Anbieterbilder erhalten einen neutralen Platzhalter. Angebotsdetails gruppieren Bild/Preis, Bedingungen und Stationen; zusätzliche Angaben sind aufklappbar. Leerer Bestand bleibt kurz, manuelle Erfassung startet geschlossen. Die vier Organisationskategorien bleiben oberhalb des Inhalts. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md).
+
 > **Owner-Korrektur, 02.11.2026 — Homepage Reiseintelligenz 2:**
 > Die Darstellung rückt Jetnitys zusammenhängende Reisebegleitung in den Mittelpunkt.
 > Der bewährte H1/Bali-Hero bleibt; darunter folgt direkt ein bedienbares Beispiel
