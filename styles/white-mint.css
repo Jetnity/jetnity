@@ -125,13 +125,15 @@ main[data-white-mint="home"].bg-surface-75 {
 }
 
 .workspace-shell[data-workspace-theme="light"] :is(.workspace-sidebar, .workspace-header, .workspace-bottom-nav) {
-  background: var(--white-mint-nav);
+  background: var(--white-mint-card);
   background-image: none;
   border-color: var(--white-mint-edge);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+
+.workspace-shell[data-workspace-theme="light"] .workspace-bottom-nav { background: var(--white-mint-nav); }
 
 .workspace-shell[data-workspace-theme="light"] :is(.workspace-nav-link, .workspace-open-trip, .workspace-kicker, .workspace-context, .workspace-default-title) {
   color: var(--white-mint-ink);

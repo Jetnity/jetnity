@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import HomePage from '@/app/(public)/page'
+import DatenquellenPage from '@/app/(public)/datenquellen/page'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import WorkspaceShell from '@/components/workspace/WorkspaceShell'
 import PublicChrome from '@/components/workspace/PublicChrome'
@@ -83,7 +84,7 @@ export function WhiteMintHarness() {
   const gast = route.match(/^\/reisen\/(trip-[^/]+)$/)
   return (
     <>
-      <PublicChrome>{gast ? <GastMontage tripId={gast[1]!} /> : route === '/' ? <HomePage /> : null}</PublicChrome>
+      <PublicChrome>{gast ? <GastMontage tripId={gast[1]!} /> : route === '/' ? <HomePage /> : route === '/datenquellen' ? <DatenquellenPage /> : null}</PublicChrome>
       <NegativeKontrollen />
     </>
   )

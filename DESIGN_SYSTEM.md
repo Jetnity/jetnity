@@ -3,6 +3,20 @@
 Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
+> **Owner-Auftrag, 02.11.2026 – weiße Workspace-Navigation:** Header einschließlich
+> Logo spannt die gesamte Breite auf. Header und Sidebar bleiben in Hell und Grün
+> deckend weiß. Desktop startet mit einer 4,5rem-Symbolleiste; Hover öffnet sie als
+> 14rem-Überlagerung, ohne den Inhalt zu verschieben. Beim Verlassen schließt sie
+> auch nach einem Mausklick. Tastaturfokus öffnet die Beschriftungen, Escape schließt;
+> Touch-Desktops besitzen einen Symbolschalter. Mobile behält Menü, Fokusfalle und
+> untere Bereichsnavigation. Separate Hinweisblasen und manuelle Collapse-Schrift
+> entfallen. Konto sowie Mond/Sonne verwenden nur Symbole mit zugänglichen Namen.
+> Diese Vorgaben ersetzen die unten historisch dokumentierte Glas-Navigation und
+> die sichtbaren Hell/Grün-Beschriftungen; die Inhalts-Paletten bleiben bestehen.
+> Quellenhinweise sind über „Datenquellen & Lizenzen“ im Kontomenü erreichbar.
+> [Auftrag](docs/WORKSPACE_NAVIGATION_1_TASK_2026-11-02.md) ·
+> [Prüfstand](docs/WORKSPACE_NAVIGATION_1_EVIDENCE_2026-11-02.md).
+
 > **Owner-Auftrag, 02.11.2026 – einheitliches Organisieren auf Desktop:**
 > Flüge, Unterkunft, Aktivitäten und Mobilität verwenden dieselbe Anordnung:
 > Die vier Kategorien stehen oberhalb des jeweiligen Inhalts, beide über die

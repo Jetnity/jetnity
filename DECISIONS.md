@@ -6056,3 +6056,31 @@ Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht e
 **Begründung:** Abholung, Rückgabe, Mietzeit und Fahrerwahl werden im bestehenden Reisebereich möglich. Die tatsächliche Übergabe enthielt die Jetnity-Partnerkennung und zeigte Fahrzeugergebnisse. Der direkte fremde Ursprung isoliert das Formular ohne Fremdcode im Jetnity-Dokument. Der bisherige allgemeine Affiliate-Link bleibt unabhängig vom Widget erreichbar.
 
 **Konsequenzen:** Fahrzeuge/Preise/Mietbedingungen und Buchung öffnen weiterhin extern; keine automatische Übernahme oder Buchungswahrheit. Der Anbieter erhält nach Anzeigen Verbindungsdaten und die öffentliche Origin und kann eigene Cookies/Technologien nutzen. `credentialless` ist browserabhängig; die Eltern-CSP kontrolliert keine fremden Unteranfragen. Native Rental-Factory, gemeinsame CMP-Release-Policy, Host-Registry und Draft #1084 bleiben geschlossen/unverändert. Keine neue Migration, Kosten, Secrets oder Verträge. Für native Fahrzeugkarten ist ein bestätigter Search-API-/White-label-Vertrag samt Anzeigerechten nötig; Kontaktanfrage wird erst auf Sendefreigabe verschickt.
+
+
+## Workspace-Chrome und automatische Seitenleiste – 02.11.2026
+
+**Entscheidung:** Auf ausdrücklichen Owner-Wunsch ersetzen deckend weiße Header-
+und Sidebar-Flächen die bisherige grüne Glas-Navigation. Der Header einschließlich
+Logo reicht über die gesamte Fensterbreite. Die 4,5rem-Desktop-Leiste klappt bei
+Hover auf 14rem auf und überlagert den Inhalt; beim Verlassen klappt sie zu.
+Tastaturfokus und Touch-Geräte behalten einen eigenen zugänglichen Bedienweg.
+Konto und Darstellung verwenden beschriftete Symbole ohne sichtbaren Buttontext.
+
+**Kontext und Alternativen:** Manuelles Einklappen und separate Hinweisblasen
+verlangten zusätzliche Bedienung und unterbrachen die breite Arbeitsfläche.
+Eine beim Hover mitwandernde Inhaltsbreite würde bei jedem Ein-/Ausklappen den
+Reiseplan verschieben. Deshalb bleibt die Inhaltskante konstant.
+
+**Konsequenzen:** Native DOM-Listener bedienen auch die in die Sidebar portierte
+Reisenavigation; React-Portal-Events allein erreichen deren DOM-Eltern nicht.
+Mobile Dialog-/Fokus-/Scroll-Verhalten und gespeicherte Theme-Wahl bleiben erhalten.
+Die Inhalts-Paletten ändern sich nicht. Kein fachlicher Datenfluss, API, Auth,
+Provider oder laufender Kostenpunkt wird verändert.
+
+**Quellenhinweis:** GeoNames bleibt unter CC BY 4.0 genannt, samt Quelle,
+Lizenzlink und Hinweis zur Aufbereitung auf `/datenquellen`. Das Kontomenü verlinkt
+die öffentliche Seite auch für Gäste. Section 3(a)(2) der Lizenz erlaubt die
+angemessene Verlinkung auf vollständige Nachweise; der lange Workspace-Footertext
+ist dafür nicht erforderlich. [Lizenz](https://creativecommons.org/licenses/by/4.0/legalcode.en).
+[Auftrag und Grenzen](docs/WORKSPACE_NAVIGATION_1_TASK_2026-11-02.md).
