@@ -29,16 +29,16 @@ export const metadata: Metadata = {
     url: kanonischeUrl('/'),
     images: [
       {
-        url: '/images/jetnity-reiseplaner-share.png',
-        width: 1200,
-        height: 630,
+        url: '/images/hero-bali.png',
+        width: 1536,
+        height: 1024,
         alt: 'Jetnity – Deine ganze Reise. Intelligent an einem Ort.',
       },
     ],
   },
   twitter: {
     ...homepageMeta.twitter,
-    images: ['/images/jetnity-reiseplaner-share.png'],
+    images: ['/images/hero-bali.png'],
   },
 }
 
@@ -53,10 +53,10 @@ export default function HomePage() {
   return (
     <main data-white-mint="home" className="break-words bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800 [&_.sr-only]:whitespace-normal">
       <HomeHero />
-      <HomeWerkzeuge />
       <HomeProduktfenster />
-      <HomeBegleitung />
       <HomeUnterschied />
+      <HomeBegleitung />
+      <HomeWerkzeuge />
       <HomeInspiration ziele={inspirationsziele} />
       <HomeVertrauen />
       <section className="px-3 pb-16 pt-4 sm:px-5 sm:pb-24 sm:pt-8" aria-labelledby="abschluss-titel">
@@ -68,14 +68,14 @@ export default function HomePage() {
             {HOMEPAGE_UEBERSCHRIFTEN.abschluss}
           </h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-ink-300">
-            Ein erster Ort, eine große Idee oder schon eine ganze Route: Gib deiner nächsten Reise einen Anfang.
+            Von deiner ersten Idee bis zu Änderungen unterwegs. Jetnity bringt die passenden Möglichkeiten zusammen.
           </p>
           <GastCreateLink
             createHref="/planen"
-            createLabel="Reise starten"
+            createLabel="Meine Reise planen"
             className="mt-6 inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-full bg-citrus-400 px-6 py-3 text-sm font-semibold text-brand-800 [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
           >
-            <span className="min-w-0">Reise starten</span>
+            <span className="min-w-0">Meine Reise planen</span>
             <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
           </GastCreateLink>
         </div>

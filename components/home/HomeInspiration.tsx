@@ -29,7 +29,7 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
           </h2>
         </div>
         <p className="max-w-sm text-sm leading-6 text-ink-800">
-          Lass dich inspirieren. Wähle ein Reiseziel und mach daraus deinen eigenen Plan.
+          Deine Reise sollte es auch sein. Jetnity berücksichtigt deine Interessen, dein Tempo und die Menschen, mit denen du reist.
         </p>
       </div>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

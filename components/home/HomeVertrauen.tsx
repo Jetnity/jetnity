@@ -14,7 +14,7 @@ export function HomeVertrauen() {
     >
       <div className="rounded-[28px] bg-white p-5 py-8 sm:rounded-[36px] sm:p-10 lg:p-12">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Mit gutem Gefühl planen</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Mit gutem Gefühl reisen</p>
           <h2 id="vertrauen-titel" className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
             {HOMEPAGE_UEBERSCHRIFTEN.vertrauen}
           </h2>

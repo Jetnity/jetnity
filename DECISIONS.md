@@ -6110,3 +6110,28 @@ separat über Release und eine ausdrücklich freigegebene öffentliche Indexieru
 
 [Auftrag](docs/HOMEPAGE_FINAL_1_TASK_2026-11-02.md) ·
 [Nachweis](docs/HOMEPAGE_FINAL_1_EVIDENCE_2026-11-02.md).
+
+
+## 2026-11-02 — Homepage: Jetnity handelt als intelligenter Reisebegleiter
+
+**Entscheidung:** Die ausdrücklich genehmigte Endprodukt-Positionierung ersetzt
+Homepage Final 1. H1/Bali bleiben, ein isoliertes Flugänderungs-Beispiel zeigt
+Plananpassung; Machbarkeit, persönliche Einreisevorbereitung und Gesamtkosten
+stehen unmittelbar im Mittelpunkt. Keine sichtbare Bezeichnung „KI“, auch nicht
+in zugänglichen Namen, Suchmetadaten oder Share-Texten. Keine Finanzierungs-FAQ.
+
+**Kontext und Alternative:** Der Owner hat den gewöhnlichen Reiseplaner-Auftritt
+abgelehnt und den endgültigen Nutzenauftritt vor Fertigstellung aller Systeme
+explizit freigegeben. Eine erneute Status-Matrix würde diesem Auftrag widersprechen.
+
+**Umsetzung:** Statische Nutzenaussagen sind serverseitig lesbar. Nur das lokale,
+ausdrücklich gekennzeichnete Reisebeispiel benötigt Client-Zustand. Es liest keine
+persönliche Reise und führt keine Buchung, externe Suche oder Persistenz aus.
+Automatische Planpflege und bestätigungspflichtige kommerzielle Aktionen bleiben
+verständlich getrennt. Bestehender Ortseinstieg und Gastfortsetzung bleiben erhalten.
+
+**Konsequenzen:** Diese Positionierungsfreigabe ist kein Nachweis produktiver
+Flugüberwachung oder vollständiger offizieller Einreiseprüfung. Deren technische
+Gates bleiben bestehen. Der ausdrückliche Indexierungs-Hold bleibt unverändert.
+Keine neuen Abhängigkeiten, Provider, Datenbankänderungen oder laufenden Kosten.
+Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
