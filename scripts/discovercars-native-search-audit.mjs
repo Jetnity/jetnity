@@ -18,6 +18,7 @@ try {
     const context = await browser.newContext({ viewport: { width, height: 950 }, locale: 'de-CH', ...(process.env.AUDIT_BYPASS ? { extraHTTPHeaders: { 'x-vercel-protection-bypass': process.env.AUDIT_BYPASS } } : {}) })
     const page = await context.newPage(); activePage = page
     page.on('pageerror', e => report.errors.push(e.message))
+    if (process.env.AUDIT_ACCESS_URL) await page.goto(process.env.AUDIT_ACCESS_URL, { waitUntil: 'domcontentloaded' })
     await page.addInitScript(t => localStorage.setItem('jetnity:reise:v3', JSON.stringify(t)), trip)
     let calls = 0; let mode = 'normal'; let detailsCalls = 0
     const useLive = live && width === 1440
@@ -35,7 +36,7 @@ try {
       return route.fulfill({ json: result }).catch(() => {})
     })
     page.on('response', async res => {
-      if (useLive && res.url().endsWith('/api/rental-cars/discovercars') && res.request().postDataJSON()?.action === 'search') { const data = await res.json(); if (data.status === 'ok') captured = data }
+      if (useLive && mode === 'normal' && res.url().endsWith('/api/rental-cars/discovercars') && res.request().postDataJSON()?.action === 'search') { const data = await res.json(); if (data.status === 'ok') captured = data }
     })
     await page.goto(`${base}/reisen/${trip.id}?ansicht=organisieren&bereich=mobilitaet`, { waitUntil: 'networkidle' })
     await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
@@ -43,6 +44,10 @@ try {
     await ui.waitFor(); assert.equal(calls, 0, 'No provider request before an explicit input')
     await ui.getByRole('combobox', { name: 'Abholstation', exact: true }).fill('Bangkok')
     await page.getByRole('option').filter({ hasText: /Suvarnabhumi/ }).first().waitFor({ timeout: 25000 })
+    // Escape dismisses only the station popup, not the surrounding trip panel.
+    await ui.getByRole('combobox', { name: 'Abholstation', exact: true }).press('Escape')
+    assert.equal(await ui.count(), 1)
+    assert.equal(await page.locator('[role=option]').count(), 0)
     // Use keyboard to confirm an actual provider station.
     await ui.getByRole('combobox', { name: 'Abholstation', exact: true }).press('ArrowDown')
     await ui.getByRole('combobox', { name: 'Abholstation', exact: true }).press('Enter')

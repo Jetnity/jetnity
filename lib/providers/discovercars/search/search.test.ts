@@ -123,6 +123,13 @@ test('route is fail-closed, same-origin, bounded, no-store and rejects malformed
     assert.equal((await discoverCarsRequest(req({ action: 'locations', term: 'Bangkok' }, { 'Content-Length': '999999' }))).status, 413)
     assert.equal((await discoverCarsRequest(req({ action: 'locations', term: 'Bangkok' }, { 'Content-Type': 'text/plain' }))).status, 415)
     assert.equal((await discoverCarsRequest(req({ action: 'detail', token: 'invalid-but-long-enough-token' }))).status, 410)
+    // A separate pseudonymous client is capped even for correctly shaped invalid capabilities.
+    for (let i = 0; i < 30; i++) assert.equal((await discoverCarsRequest(req({ action: 'detail', token: 'invalid-but-long-enough-token' }, { 'x-forwarded-for': '203.0.113.17' }))).status, 410)
+    const limited = await discoverCarsRequest(req({ action: 'detail', token: 'invalid-but-long-enough-token' }, { 'x-forwarded-for': '203.0.113.17' }))
+    assert.equal(limited.status, 429)
+    assert.ok(Number(limited.headers.get('retry-after')) > 0)
+    assert.match(limited.headers.get('cache-control') ?? '', /no-store/)
+    assert.equal(limited.headers.get('x-robots-tag'), 'noindex, nofollow')
   } finally {
     if (oldKey == null) delete process.env.DISCOVERCARS_API_KEY; else process.env.DISCOVERCARS_API_KEY = oldKey
     if (oldFlag == null) delete process.env.JETNITY_DISCOVERCARS_SEARCH_ENABLED; else process.env.JETNITY_DISCOVERCARS_SEARCH_ENABLED = oldFlag

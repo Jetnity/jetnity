@@ -55,7 +55,7 @@ export function OfferCard({ offer: o, selected, onCompare, onDetails, expired }:
 }
 
 export function OfferComparison({ offers, onClose }: { offers: RentalOffer[]; onClose: () => void }) {
-  return <section aria-label="Mietwagenvergleich" className="rounded-3xl border border-line-200 bg-white p-4 sm:p-5">
+  return <section aria-label="Mietwagenvergleich" className="min-w-0 rounded-3xl border border-line-200 bg-white p-4 sm:p-5">
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h3 className="text-xl font-semibold text-brand-800">Dein Vergleich</h3><button type="button" onClick={onClose} className={BUTTON}>Vergleich leeren</button></div>
     <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Vergleichstabelle, bei Bedarf seitlich scrollen">
       <table className="w-full text-left text-sm text-ink-800"><caption className="sr-only">Ausgewählte Mietwagen und ihre Bedingungen</caption><thead><tr><th className="p-3">Angebot</th>{offers.map(o => <th key={o.offer_id} scope="col" className="min-w-44 p-3 text-brand-800">{o.car.name}<span className="block font-normal">{o.supplier?.name}</span></th>)}</tr></thead>

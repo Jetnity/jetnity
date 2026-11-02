@@ -131,9 +131,9 @@ export default function DiscoverCarsMietwagen({ reise }: { reise: Trip }) {
       {result.omitted > 0 ? <p className="text-sm text-ink-600">Einige unvollständige Angebote konnten nicht angezeigt werden.</p> : null}
       {!result.offers.length ? <p className="text-sm text-ink-800">Versuche eine andere Station oder einen anderen Mietzeitraum.</p> : <>
         <div className="grid min-w-0 gap-3 sm:grid-cols-3">
-          <label className="grid gap-1 text-sm text-brand-800">Getriebe<select className={FIELD} value={transmission} onChange={e => { setTransmission(e.target.value); setLimit(12) }}><option value="">Alle</option><option value="automatic">Automatik</option><option value="manual">Schaltung</option></select></label>
-          <label className="grid gap-1 text-sm text-brand-800">Fahrzeugklasse<select className={FIELD} value={category} onChange={e => { setCategory(e.target.value); setLimit(12) }}><option value="">Alle</option>{categories.map(c => <option key={c} value={c}>{CATEGORY[c] ?? c}</option>)}</select></label>
-          <label className="grid gap-1 text-sm text-brand-800">Sortieren<select className={FIELD} value={order} onChange={e => setOrder(e.target.value)}><option value="price">Niedrigster Gesamtpreis</option><option value="rating">Beste Vermieterbewertung</option></select></label>
+          <label className="grid min-w-0 gap-1 text-sm text-brand-800">Getriebe<select className={FIELD} value={transmission} onChange={e => { setTransmission(e.target.value); setLimit(12) }}><option value="">Alle</option><option value="automatic">Automatik</option><option value="manual">Schaltung</option></select></label>
+          <label className="grid min-w-0 gap-1 text-sm text-brand-800">Fahrzeugklasse<select className={FIELD} value={category} onChange={e => { setCategory(e.target.value); setLimit(12) }}><option value="">Alle</option>{categories.map(c => <option key={c} value={c}>{CATEGORY[c] ?? c}</option>)}</select></label>
+          <label className="grid min-w-0 gap-1 text-sm text-brand-800">Sortieren<select className={FIELD} value={order} onChange={e => setOrder(e.target.value)}><option value="price">Niedrigster Gesamtpreis</option><option value="rating">Beste Vermieterbewertung</option></select></label>
         </div>
         {comparison.length ? <OfferComparison offers={comparison} onClose={() => setCompare([])} /> : null}
         <p role="status" className="text-sm text-ink-600">{visible.length} passende Angebote · bis zu drei Fahrzeuge vergleichen</p>

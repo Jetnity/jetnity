@@ -40,12 +40,12 @@ Rohantworten und Credentials liegen ausschliesslich temporär ausserhalb Git. Na
 ## Prüfstand
 
 - Installation, TypeScript, Production-Build erfolgreich.
-- Gezielte DiscoverCars-/Rental-Tests: 101 Tests bestanden.
+- Gezielte DiscoverCars-/Rental-Tests und Regressionen: 155 Tests in 21 Suiten bestanden, einschliesslich Ratenbegrenzung vor Anbieterzugriff.
 - Regression manuelle Flüge und bestehendes Security-Inventar nach Behebung des Image-Imports: 54 Tests bestanden.
 - Lint: keine Fehler; bestehende 192 Warnungen im Gesamtprojekt. Neue Module ohne Warnungen.
 - Fünf Hygieneprüfungen erfolgreich: dead, exports, deps, api-schutz, schema-bezug.
 - Erster Gesamttest: 7 781 Tests, 7 764 bestanden, 13 fehlgeschlagen, 4 übersprungen. Drei durch diese Änderung ausgelöste Fehler (alte SSR-Erwartung, neuer Next-Image-Import im SSR-Harness und Security-Inventar) sind gezielt behoben und nachgeprüft. Übrige lokale Fehler betreffen PG16-Pflicht bei vorhandenem PG17, geerbte DB-Umgebung und zwei bestehende Workspace-Geometrieprüfungen. Vollständige native PR-CI bleibt Freigabegate; diese Liste ist kein behaupteter Gesamttest-PASS.
-- Montierter Browseraudit: Desktop 1440 sowie 390/320, Tastatur, Filter, Vergleich, Details/Escape-Fokus, Eingabeänderung, leere/fehlerhafte/abgelaufene Ergebnisse, verspätete Antworten und unveränderte Gastreise. Laufender Nachweis; keine echte Hardware-Abnahme behauptet.
+- Montierter Browseraudit: Desktop 1440 sowie 390/320, Tastatur, Filter, Vergleich, Details/Escape-Fokus, Eingabeänderung, leere/fehlerhafte/abgelaufene Ergebnisse, verspätete Antworten und unveränderte Gastreise. Bestanden: 1440px mit realer Suche (147 Angebote) und realem Detailabruf; 390/320px mit den dabei erhaltenen Angebotsdaten und kontrollierten Fehler-/Ablaufantworten. Keine Browserfehler, kein Seitenüberlauf, Reise bytegleich. Escape bei Ortsliste und Modal lässt den Mietwagenbereich offen; Primärbuttons und Vergleichsbreite korrigiert. Kein echter Hardwaretest behauptet.
 
 ## Release und verbleibende Grenzen
 

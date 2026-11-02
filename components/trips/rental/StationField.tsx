@@ -36,7 +36,7 @@ export default function StationField({ label, value, query, onQuery, onSelect }:
       <input ref={input} id={id} value={query} placeholder="Stadt oder Flughafen" maxLength={100} autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded={open && options.length > 0} aria-controls={`${id}-list`} aria-activedescendant={open && active >= 0 ? `${id}-${active}` : undefined} aria-describedby={`${id}-message`} className={`${FIELD} pr-10`}
         onFocus={() => setOpen(true)} onChange={e => { setOptions([]); setMessage(''); setActive(-1); setOpen(true); onQuery(e.target.value) }}
         onKeyDown={e => {
-          if (e.key === 'Escape') { setOpen(false); setActive(-1) }
+          if (e.key === 'Escape' && open) { e.preventDefault(); e.stopPropagation(); setOpen(false); setActive(-1) }
           if (['ArrowDown', 'ArrowUp'].includes(e.key) && options.length) { e.preventDefault(); setOpen(true); setActive(i => e.key === 'ArrowDown' ? (i + 1) % options.length : (i - 1 + options.length) % options.length) }
           if (e.key === 'Enter' && !value) { e.preventDefault(); if (open && active >= 0 && options[active]) select(options[active]) }
         }} />
