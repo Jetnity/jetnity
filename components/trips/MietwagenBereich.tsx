@@ -258,10 +258,10 @@ function ManuellerMietwagen({
       data-organisieren-flaeche="manuell"
       className={`${ORGANISIEREN_FLAECHE_KLASSE} group`}
     >
-      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 text-brand-800 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center gap-3 text-brand-800 [&::-webkit-details-marker]:hidden">
         <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
-        <span className="flex-1 text-lg font-semibold">Bereits einen Mietwagen? Hier eintragen</span>
-        <ChevronDown className="h-5 w-5 shrink-0 transition group-open:rotate-180" aria-hidden="true" />
+        <span className="order-2 w-full text-base font-semibold sm:order-none sm:w-auto sm:flex-1 sm:text-lg">Mietwagen selbst eintragen</span>
+        <ChevronDown className="ml-auto h-5 w-5 shrink-0 transition group-open:rotate-180" aria-hidden="true" />
       </summary>
       <p className="mt-1 text-sm leading-6 text-ink-800">
         Ergänze einen bereits ausgewählten Mietwagen in deinem Reiseplan. Eine Buchung wird dadurch nicht vorgenommen.
