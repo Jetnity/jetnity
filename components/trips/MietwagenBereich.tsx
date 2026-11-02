@@ -2,8 +2,8 @@
 
 // components/trips/MietwagenBereich.tsx
 //
-// Mietwagen innerhalb von Mobilität. Bestand zuerst, danach das bewusst
-// geladene DiscoverCars-Formular und manuelle Erfassung mit leeren Startwerten.
+// Mietwagen innerhalb von Mobilität. Bestand zuerst, danach die
+// native DiscoverCars-Suche und manuelle Erfassung mit leeren Startwerten.
 // Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
@@ -18,7 +18,7 @@ import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-car
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
-import DiscoverCarsSuche from '@/components/trips/DiscoverCarsSuche'
+import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
@@ -155,7 +155,7 @@ export default function MietwagenBereich({
         ) : null}
       </section>
 
-      {sichtbar ? <DiscoverCarsSuche key={reise.id} /> : null}
+      {sichtbar ? <DiscoverCarsMietwagen key={`${reise.id}:${reise.revision}`} reise={reise} /> : null}
 
       {onManuellAnlegen ? <ManuellerMietwagen reise={reise} onAnlegen={onManuellAnlegen} /> : null}
     </div>

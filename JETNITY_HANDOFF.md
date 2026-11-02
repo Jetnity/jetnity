@@ -1,5 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
+> **02.11.2026 – aktueller DiscoverCars-Auftrag:** Owner genehmigt native Suche nach API-Freischaltung. Root ist alleiniger Writer im Branch `feat/discovercars-native-search-1`; [Auftrag](docs/DISCOVERCARS_NATIVE_SEARCH_1_TASK_2026-11-02.md), [Prüfstand](docs/DISCOVERCARS_NATIVE_SEARCH_1_EVIDENCE_2026-11-02.md). Reale API-Angebote funktionieren, Release noch offen. Keine E-Mail-Antwort, keine Buchung, kein Apple-Events-JavaScript; Homepage und Indexsperre unverändert. Historische Aussagen ohne API-Zugang gelten nicht für diesen ausdrücklich autorisierten Slice.
+
 > **02.11.2026 — Homepage Reiseintelligenz 2:** Der Owner genehmigt den kompakten
 > finalen Auftritt: Jetnity ist der intelligente Reisebegleiter, keine manuelle
 > Sammlung von Reisebausteinen. H1/Bali bleiben, Flugänderung und Plananpassung

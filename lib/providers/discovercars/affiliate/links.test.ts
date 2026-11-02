@@ -23,13 +23,13 @@ describe('DiscoverCars Suche vor der bewussten Anzeige', () => {
     assert.match(html, /focus-visible:ring-4/)
   })
 
-  test('Bestand und manuelle Erfassung bleiben; private Reiseinhalte gelangen nicht in die Suche', () => {
+  test('Bestand bleibt; native Suche rendert ohne Anbieterquellen oder private Reiseidentifikatoren', () => {
     const reise = beispielreise({ id: 'trip-uuid-geheim', clientRef: 'client-ref-geheim', title: 'Privater Titel', currency: 'THB', travellers: 4 })
     const html = renderToStaticMarkup(createElement(MietwagenBereich, { reise, onManuellAnlegen: async () => null }))
     assert.match(html, /Bestand und Status/)
     assert.match(html, /Manueller Mietwagen/)
-    const section = html.slice(html.indexOf('<section aria-label="Mietwagensuche"'), html.indexOf('</section>', html.indexOf('<section aria-label="Mietwagensuche"')))
-    assert.match(section, /Mietwagen finden/)
+    const section = html.slice(html.indexOf('<section aria-label="Mietwagen suchen und vergleichen"'), html.indexOf('</section>', html.indexOf('<section aria-label="Mietwagen suchen und vergleichen"')))
+    assert.match(section, /Dein Mietwagen/); assert.doesNotMatch(section, /<iframe|<script|\ssrc=/)
     for (const value of ['trip-uuid-geheim', 'client-ref-geheim', 'Privater Titel', 'THB', 'a_bid', 'aff_data1']) assert.equal(section.includes(value), false, value)
     assert.equal(rentalCarProviderAus(), null)
   })
