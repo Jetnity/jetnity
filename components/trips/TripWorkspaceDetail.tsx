@@ -55,6 +55,7 @@ export default function TripWorkspaceDetail({
       })
     : null
   const eyebrow = item ? 'Punkt' : folge?.eyebrow
+  const mobilitaetKopf = auswahl.art !== 'item' && gap?.domain === 'mobilitaet'
 
   return (
     <section
@@ -92,7 +93,9 @@ export default function TripWorkspaceDetail({
         ) : null}
       </div>
 
-      {folge && (folge.zustand || folge.hinweis) ? (
+      {mobilitaetKopf ? <details className="mt-1 text-sm text-ink-800"><summary className="min-h-11 cursor-pointer py-3 font-medium">Stand deiner Verbindungen</summary><div className="grid gap-2 pb-2">{folge?.zustand ? <p>{folge.zustand}</p> : null}{folge?.hinweis ? <p>{folge.hinweis}</p> : null}</div></details> : null}
+
+      {!mobilitaetKopf && folge && (folge.zustand || folge.hinweis) ? (
         <div className="mt-3 grid min-w-0 gap-2" data-organisieren-zustand>
           {folge.zustand ? <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{folge.zustand}</p> : null}
           {folge.hinweis ? <p className="text-xs leading-5 text-ink-700">{folge.hinweis}</p> : null}
@@ -110,7 +113,7 @@ export default function TripWorkspaceDetail({
         </div>
       ) : null}
 
-      {folge?.naechstes || (sucheAnbietbar && sucheDomain && !sucheOffen) ? (
+      {(!mobilitaetKopf && folge?.naechstes) || (sucheAnbietbar && sucheDomain && !sucheOffen) ? (
         <div className="mt-4 grid min-w-0 gap-3" data-organisieren-aktion>
           {folge?.naechstes ? (
             <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{folge.naechstes}</p>

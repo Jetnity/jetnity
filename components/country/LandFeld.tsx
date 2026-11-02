@@ -25,6 +25,7 @@ export default function LandFeld({
   locale = COUNTRY_UI_LOCALE,
   disabled = false,
   id,
+  searchable = true,
 }: {
   label: string
   hinweis?: string
@@ -34,6 +35,7 @@ export default function LandFeld({
   locale?: string
   disabled?: boolean
   id?: string
+  searchable?: boolean
 }) {
   const generiert = useId()
   const basisId = id ?? generiert
@@ -54,6 +56,7 @@ export default function LandFeld({
       <span id={labelId} className="text-sm font-medium text-brand-800">
         {label}
       </span>
+      {searchable ? <>
       <label className="sr-only" htmlFor={sucheId}>
         {label}: {COUNTRY_COPY.suchen}
       </label>
@@ -78,6 +81,7 @@ export default function LandFeld({
       <p id={`${basisId}-suche-hinweis`} className="sr-only">
         {COUNTRY_COPY.suchenHinweis}
       </p>
+      </> : null}
       <select
         id={selectId}
         aria-labelledby={labelId}
@@ -87,7 +91,7 @@ export default function LandFeld({
           onChange(landAuswahlUebernehmen(event.target.value, value))
           setSuche('')
         }}
-        className={feldKlasse}
+        className={searchable ? feldKlasse : feldKlasse.replace('text-sm', 'text-base sm:text-sm')}
       >
         <option value="">{optionen.leerLabel}</option>
         {optionen.bestehend ? (

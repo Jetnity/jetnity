@@ -2,12 +2,12 @@
 
 // components/trips/MietwagenBereich.tsx
 //
-// Mietwagen innerhalb von Mobilität. Bestand zuerst, danach die
-// native DiscoverCars-Suche und manuelle Erfassung mit leeren Startwerten.
+// Mietwagen innerhalb von Mobilität. Suche zuerst, gespeicherte Mietwagen
+// und aufklappbare manuelle Erfassung mit leeren Startwerten danach.
 // Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
-import { Car } from 'lucide-react'
+import { Car, ChevronDown, Plus } from 'lucide-react'
 
 import { mietwagenBestand, mietwagenDetails } from '@/lib/rental-cars/bestand'
 import {
@@ -89,30 +89,28 @@ export default function MietwagenBereich({
 
   return (
     <div className="grid gap-6">
+      {sichtbar ? <DiscoverCarsMietwagen key={`${reise.id}:${reise.revision}`} reise={reise} /> : null}
+
       <section
         aria-label="Dein Mietwagen"
         aria-busy={pendingId !== null}
         data-organisieren-flaeche="bestand"
-        className={ORGANISIEREN_FLAECHE_KLASSE}
+        className={bestand.items.length ? ORGANISIEREN_FLAECHE_KLASSE : "flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line-200 bg-white px-5 py-4"}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-              Mietwagen
+              Gespeichert in deiner Reise
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
-              Bestand und Status
+              {bestand.items.length ? 'Deine Mietwagen' : 'Noch kein Mietwagen gespeichert'}
             </h2>
-            <p className="mt-1 text-sm leading-6 text-ink-800">{bestand.zusammenfassung}</p>
+            {bestand.items.length ? <p className="mt-1 text-sm leading-6 text-ink-800">{bestand.zusammenfassung}</p> : null}
           </div>
           <Car className="h-5 w-5 text-brand-600" aria-hidden="true" />
         </div>
 
-        {bestand.items.length === 0 ? (
-          <p className="mt-5 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-            Kein Mietwagen eingetragen. Nicht jede Reise braucht ein Auto.
-          </p>
-        ) : (
+        {bestand.items.length > 0 ? (
           <ul className="mt-5 grid gap-2">
             {bestand.items.map((punkt) => (
               <li
@@ -145,7 +143,7 @@ export default function MietwagenBereich({
               </li>
             ))}
           </ul>
-        )}
+        ) : null}
 
         {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
         {meldung ? (
@@ -154,8 +152,6 @@ export default function MietwagenBereich({
           </p>
         ) : null}
       </section>
-
-      {sichtbar ? <DiscoverCarsMietwagen key={`${reise.id}:${reise.revision}`} reise={reise} /> : null}
 
       {onManuellAnlegen ? <ManuellerMietwagen reise={reise} onAnlegen={onManuellAnlegen} /> : null}
     </div>
@@ -257,22 +253,21 @@ function ManuellerMietwagen({
   }
 
   return (
-    <section
+    <details
       aria-label="Manueller Mietwagen"
       data-organisieren-flaeche="manuell"
-      className={ORGANISIEREN_FLAECHE_KLASSE}
+      className={`${ORGANISIEREN_FLAECHE_KLASSE} group`}
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Manuell</p>
-      <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
-        Bekannten Mietwagen eintragen
-      </h2>
+      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 text-brand-800 [&::-webkit-details-marker]:hidden">
+        <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
+        <span className="flex-1 text-lg font-semibold">Bereits einen Mietwagen? Hier eintragen</span>
+        <ChevronDown className="h-5 w-5 shrink-0 transition group-open:rotate-180" aria-hidden="true" />
+      </summary>
       <p className="mt-1 text-sm leading-6 text-ink-800">
-        Felder bleiben leer, bis du sie selbst einträgst. Vorschläge in den Feldern sind keine
-        gespeicherten Orte, keine Place-IDs und keine geprüften Preise, Verfügbarkeiten oder
-        Mietbedingungen.
+        Ergänze einen bereits ausgewählten Mietwagen in deinem Reiseplan. Eine Buchung wird dadurch nicht vorgenommen.
       </p>
 
-      <form className="mt-5 grid gap-3" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
+      <form className="mt-5 grid gap-4 lg:grid-cols-2" aria-busy={laeuft} onSubmit={(ereignis) => void speichern(ereignis)}>
         <OrganisierenFeldgruppe titel="Orte">
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
@@ -419,7 +414,7 @@ function ManuellerMietwagen({
           ref={(node) => { rememberRentalSubmit(memory, node) }}
           type="submit"
           disabled={laeuft}
-          className={ORGANISIEREN_PRIMAR_KLASSE}
+          className={`${ORGANISIEREN_PRIMAR_KLASSE} justify-self-start lg:col-span-2`}
         >
           {laeuft ? 'Wird gespeichert …' : 'Mietwagen speichern'}
         </button>
@@ -436,6 +431,6 @@ function ManuellerMietwagen({
           {hinweis}
         </p>
       ) : null}
-    </section>
+    </details>
   )
 }

@@ -1,5 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
+> **02.11.2026 – aktueller Mietwagen-Layout-Auftrag:** Root alleiniger Writer auf `feat/rental-search-layout-1`, Ausgangspunkt tatsächlicher Main `9c0e619bbf20309f44785c1c2f4020d7ac2ac082` (PR #1109, native Suche live). Suchvorbereitung und Fahrzeugvergleich werden visuell verdichtet; API, Auth und Datenmodell unverändert. [Auftrag](docs/RENTAL_SEARCH_LAYOUT_1_TASK_2026-11-02.md) · [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md). Spätere CI-/Preview-/Release-Belege stehen im Live-Index #751.
+
 > **02.11.2026 – aktueller DiscoverCars-Auftrag:** Owner genehmigt native Suche nach API-Freischaltung. Root ist alleiniger Writer im Branch `feat/discovercars-native-search-1`; [Auftrag](docs/DISCOVERCARS_NATIVE_SEARCH_1_TASK_2026-11-02.md), [Prüfstand](docs/DISCOVERCARS_NATIVE_SEARCH_1_EVIDENCE_2026-11-02.md). Reale API-Angebote funktionieren, Release noch offen. Keine E-Mail-Antwort, keine Buchung, kein Apple-Events-JavaScript; Homepage und Indexsperre unverändert. Historische Aussagen ohne API-Zugang gelten nicht für diesen ausdrücklich autorisierten Slice.
 
 > **02.11.2026 — Homepage Reiseintelligenz 2:** Der Owner genehmigt den kompakten
