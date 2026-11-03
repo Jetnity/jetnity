@@ -56,6 +56,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <meta name="impact-site-verification" {...{ value: '177c4d97-907d-430b-94d3-f56e271e2508' }} />
+      </head>
       {/* Die Dokumentflaeche bleibt das gemeinsame Token in globals.css.
           styles/white-mint.css faerbt Ueberdehnen und Koernung nur, solange
           die Startseite oder der helle Workspace sichtbar sind. */}
