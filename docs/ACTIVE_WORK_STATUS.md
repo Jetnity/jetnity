@@ -1,5 +1,7 @@
 # Jetnity – Active Work Status
 
+> **04.11.2026 – Trip Maps JS V1, Draft [#1112](https://github.com/Jetnity/jetnity/pull/1112):** Codex ist alleiniger Writer auf `feat/trip-maps-js-v1-20261104`, Baseline main `d2f38f78`. Implementation zur Prüfung; Google Maps bleibt im Code und in der Cloud OFF. Keine Cursor-Session, keine DB-/Auth-/Provider-STOP-Änderung, kein Merge. [Handoff mit Kostenkontrolle und offenen Gates](TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
+
 > **02.11.2026 — Homepage Reiseintelligenz 2:** Root ist alleiniger Writer auf
 > `codex/homepage-reiseintelligenz-20261102`, Baseline main `2311260f`.
 > Aktueller Auftrag: finaler Auftritt des intelligenten Reisebegleiters ohne „KI“

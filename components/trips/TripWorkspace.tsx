@@ -1075,6 +1075,7 @@ export default function TripWorkspace({
 
   const plan = (
     <TripWorkspacePlan
+      mapsActive={modusBereit && modus.ansicht === 'plan'}
       reise={reise}
       ohneTag={ungeplantePunkte}
       aktiverTag={aktiverTag}
