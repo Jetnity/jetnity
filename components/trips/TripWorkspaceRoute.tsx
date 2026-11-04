@@ -156,7 +156,12 @@ export function RouteListe({
                 ) : null}
                 {insight ? (
                   <span className={cn('mt-0.5 block text-xs font-semibold [overflow-wrap:anywhere]', gewaehlt ? 'text-white' : 'text-brand-800')}>
-                    Nächster Schritt: {insight.nextAction}
+                    Empfehlung: {insight.nextAction}
+                  </span>
+                ) : null}
+                {insight ? (
+                  <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
+                    Öffnet diesen Aufenthalt mit den zugehörigen Details.
                   </span>
                 ) : null}
               </button>

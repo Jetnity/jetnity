@@ -8,14 +8,33 @@ export type NavigatorInsight = {
   transferHinweis: string | null
 }
 
-function punktStatusText(werte: Record<TripItemKind, number>): string {
+function leereWerte(): Record<TripItemKind, number> {
+  return {
+    flight: 0,
+    stay: 0,
+    activity: 0,
+    transfer: 0,
+    rental_car: 0,
+    note: 0,
+  }
+}
+
+function statusTeile(werte: Record<TripItemKind, number>, suffix = ''): string[] {
   const teile: string[] = []
-  if (werte.stay > 0) teile.push(werte.stay === 1 ? '1 Unterkunft' : `${werte.stay} Unterkünfte`)
-  if (werte.activity > 0) teile.push(werte.activity === 1 ? '1 Aktivität' : `${werte.activity} Aktivitäten`)
-  if (werte.transfer > 0) teile.push(werte.transfer === 1 ? '1 Transfer' : `${werte.transfer} Transfers`)
-  if (werte.flight > 0) teile.push(werte.flight === 1 ? '1 Flug' : `${werte.flight} Flüge`)
-  if (werte.rental_car > 0) teile.push(werte.rental_car === 1 ? '1 Mietwagen' : `${werte.rental_car} Mietwagen`)
-  if (werte.note > 0) teile.push(werte.note === 1 ? '1 Notiz' : `${werte.note} Notizen`)
+  if (werte.stay > 0) teile.push(`${werte.stay === 1 ? '1 Unterkunft' : `${werte.stay} Unterkünfte`}${suffix}`)
+  if (werte.activity > 0) teile.push(`${werte.activity === 1 ? '1 Aktivität' : `${werte.activity} Aktivitäten`}${suffix}`)
+  if (werte.transfer > 0) teile.push(`${werte.transfer === 1 ? '1 Transfer' : `${werte.transfer} Transfers`}${suffix}`)
+  if (werte.flight > 0) teile.push(`${werte.flight === 1 ? '1 Flug' : `${werte.flight} Flüge`}${suffix}`)
+  if (werte.rental_car > 0) teile.push(`${werte.rental_car === 1 ? '1 Mietwagen' : `${werte.rental_car} Mietwagen`}${suffix}`)
+  if (werte.note > 0) teile.push(`${werte.note === 1 ? '1 Notiz' : `${werte.note} Notizen`}${suffix}`)
+  return teile
+}
+
+function punktStatusText(geplant: Record<TripItemKind, number>, ungeplant: Record<TripItemKind, number>): string {
+  const teile = [
+    ...statusTeile(geplant),
+    ...statusTeile(ungeplant, ' ohne Tag'),
+  ]
   return teile.length > 0 ? teile.join(' · ') : 'Noch keine Punkte erfasst'
 }
 
@@ -42,23 +61,24 @@ export function planNavigatorInsights(trip: Trip): Record<string, NavigatorInsig
 
   const antwort: Record<string, NavigatorInsight> = {}
   for (const lauf of chronologie.laeufe) {
-    const werte: Record<TripItemKind, number> = {
-      flight: 0,
-      stay: 0,
-      activity: 0,
-      transfer: 0,
-      rental_car: 0,
-      note: 0,
-    }
+    const werte = leereWerte()
+    const ungeplant = leereWerte()
     for (const tag of lauf.tage) {
       for (const punkt of tag.items) werte[punkt.kind] += 1
     }
+    if (lauf.stageId) {
+      for (const punkt of trip.ohneTag) {
+        if (punkt.dayId == null && punkt.stageId === lauf.stageId) ungeplant[punkt.kind] += 1
+      }
+    }
     const verbindung = transferHinweis(kantenProLauf.get(lauf.schluessel) ?? [])
     const nextAction = lauf.lesart === 'reise-ohne-ziel'
-      ? 'Passenden Aufenthalt zuordnen'
+      ? (werte.flight + werte.transfer > 0 ? 'Anreise- oder Transferdetails prüfen' : 'Reiseeintrag prüfen')
       : lauf.lesart === 'zuordnung-offen'
-        ? 'Ort für diesen Abschnitt festlegen'
-        : werte.stay === 0
+        ? 'Abschnitt prüfen und bei Bedarf zuordnen'
+        : werte.stay === 0 && ungeplant.stay > 0
+          ? 'Unterkunft einem Reisetag zuordnen'
+          : werte.stay === 0
           ? 'Unterkunft ergänzen'
           : verbindung != null
             ? 'Verbindung prüfen'
@@ -67,7 +87,7 @@ export function planNavigatorInsights(trip: Trip): Record<string, NavigatorInsig
               : 'Tagesdetails prüfen'
 
     antwort[lauf.schluessel] = {
-      status: punktStatusText(werte),
+      status: punktStatusText(werte, ungeplant),
       nextAction,
       transferHinweis: verbindung,
     }

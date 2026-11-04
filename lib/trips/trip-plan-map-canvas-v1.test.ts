@@ -56,3 +56,28 @@ test('verbundene Reiseetappen behalten echte Schluessel, Auswahl und sichere Tra
   assert.match(html, /Ko Chang/)
   assert.equal(html.includes('Google-Karte laden'), false)
 })
+
+test('navigator recommendation labels describe guidance, not a direct action trigger', () => {
+  const reise = referenzReise()
+  const route = routeModell(reise)
+  const bangkok = route.zeilen.find((row) => row.art === 'lauf' && row.name === 'Bangkok')
+  assert.ok(bangkok?.art === 'lauf')
+  const tagId = bangkok.tagIds[0] ?? ''
+  const html = renderToStaticMarkup(createElement(RouteListe, {
+    zeilen: route.zeilen,
+    ausgewaehlterTagId: tagId,
+    aufloesung: { art: 'keine' as const },
+    insights: {
+      [bangkok.schluessel]: {
+        status: '1 Unterkunft',
+        nextAction: 'Tagesdetails prüfen',
+        transferHinweis: null,
+      },
+    },
+    onLauf: () => assert.fail('SSR darf keine Navigation ausloesen'),
+    onKante: () => assert.fail('SSR darf keine Verbindung auswaehlen'),
+  }))
+  assert.match(html, /Empfehlung:\s*Tagesdetails prüfen/)
+  assert.match(html, /Öffnet diesen Aufenthalt mit den zugehörigen Details\./)
+  assert.equal(html.includes('Nächster Schritt:'), false)
+})

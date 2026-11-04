@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { chronologischeLaeufe } from '@/lib/trips/n12-chronology-1/laeufe'
+import { n12Punkt, n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 import { planNavigatorInsights } from '@/lib/trips/plan-navigator-insight'
 import {
   artenReise,
@@ -42,4 +43,44 @@ test('repeated same-name stays remain separate navigator entries', () => {
   const laeufe = chronologischeLaeufe(reise)
   assert.ok(laeufe.gueltig)
   assert.equal(Object.keys(insights).length, laeufe.laeufe.length)
+})
+
+test('legitimate travel days without a stay do not force assignment actions', () => {
+  const reise = n12Reise()
+  const laeufe = chronologischeLaeufe(reise)
+  assert.ok(laeufe.gueltig)
+  const reiseLauf = laeufe.laeufe.find((lauf) => lauf.lesart === 'reise-ohne-ziel')
+  assert.ok(reiseLauf)
+  const insights = planNavigatorInsights(reise)
+  const eintrag = insights[reiseLauf.schluessel]
+  assert.ok(eintrag)
+  assert.equal(eintrag.nextAction, 'Anreise- oder Transferdetails prüfen')
+  assert.notEqual(eintrag.nextAction, 'Passenden Aufenthalt zuordnen')
+})
+
+test('unplanned stays are recognized per exact stage identity and not merged by city name', () => {
+  const reise = wiederholterNameReise()
+  reise.ohneTag.push(n12Punkt({
+    id: 'stay-bkk-unplanned',
+    kind: 'stay',
+    title: 'Bangkok ungeplant',
+    stageId: 'stage-bkk-1',
+    dayId: null,
+  }))
+
+  const laeufe = chronologischeLaeufe(reise)
+  assert.ok(laeufe.gueltig)
+  const ersterBangkok = laeufe.laeufe.find((lauf) => lauf.stageId === 'stage-bkk-1')
+  const zweiterBangkok = laeufe.laeufe.find((lauf) => lauf.stageId === 'stage-bkk-2')
+  assert.ok(ersterBangkok)
+  assert.ok(zweiterBangkok)
+
+  const insights = planNavigatorInsights(reise)
+  const ersterEintrag = insights[ersterBangkok.schluessel]
+  const zweiterEintrag = insights[zweiterBangkok.schluessel]
+  assert.ok(ersterEintrag)
+  assert.ok(zweiterEintrag)
+  assert.equal(ersterEintrag.nextAction, 'Unterkunft einem Reisetag zuordnen')
+  assert.match(ersterEintrag.status, /Unterkunft ohne Tag/)
+  assert.equal(zweiterEintrag.nextAction, 'Unterkunft ergänzen')
 })
