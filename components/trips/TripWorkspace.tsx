@@ -1365,12 +1365,12 @@ export default function TripWorkspace({
 
         <div
           ref={splitRef}
-          className={cn(rasterKlasse, 'min-w-0 max-w-full', modus.ansicht === 'organisieren' && 'gap-6')}
+          className={cn(rasterKlasse, 'min-w-0 max-w-full', modus.ansicht === 'organisieren' && 'gap-6', planNeben && 'rounded-[28px] border border-line-200 bg-white p-3 shadow-[0_14px_40px_rgba(15,46,42,0.07)] sm:p-5')}
           data-workspace-split={anordnung}
           data-organisieren-breite={modus.ansicht === 'organisieren' ? 'voll' : undefined}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
-          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 1fr) minmax(28rem, 1.4fr)', columnGap: '1.5rem', alignItems: 'start' } : undefined}
+          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 0.92fr) minmax(28rem, 1.65fr)', columnGap: '1.25rem', rowGap: '1rem', alignItems: 'start' } : undefined}
         >
           {modusBereit && modus.ansicht === 'uebersicht' ? (
             <FlaecheHuelle name="uebersicht" verborgen={false}>
