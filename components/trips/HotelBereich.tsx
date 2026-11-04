@@ -15,6 +15,8 @@ import HotelKarte from '@/components/trips/HotelKarte'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripStage } from '@/types/trips'
+import KayakHotels from './kayak/KayakHotels'
+import { ExistingSearch } from './kayak/PreviewShared'
 
 const kurzesDatum = new Intl.DateTimeFormat('de-CH', {
   day: '2-digit',
@@ -39,7 +41,11 @@ function checkInTagId(reise: Trip, etappe: TripStage, checkIn: string | null): s
   return reise.days.find((tag) => tag.stageId === etappe.id)?.id ?? null
 }
 
-export default function HotelBereich({
+export default function HotelBereich(props: React.ComponentProps<typeof BestehendeHotelBereich>) {
+  return <div className="grid gap-5"><KayakHotels key={props.reise.id} reise={props.reise} /><ExistingSearch label="Gegenden und weitere Unterkunftssuche öffnen"><BestehendeHotelBereich {...props} /></ExistingSearch></div>
+}
+
+function BestehendeHotelBereich({
   reise,
   onUebernehmen,
 }: {
