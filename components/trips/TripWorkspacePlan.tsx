@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import TripWorkspaceMap from '@/components/trips/TripWorkspaceMap'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import TripIntegratedDay from '@/components/trips/TripIntegratedDay'
 import { buchungstext, vorbereitungenFuerPunkt } from '@/lib/trips/trip-plan-integrated/day'
@@ -120,6 +121,7 @@ export default function TripWorkspacePlan({
   aktiverTag,
   kompakt,
   eingebettet = false,
+  mapsActive = true,
   onTagWechseln,
   onPunktAnlegen,
   onPunktBearbeiten,
@@ -150,6 +152,7 @@ export default function TripWorkspacePlan({
   aktiverTag: string
   kompakt: boolean
   eingebettet?: boolean
+  mapsActive?: boolean
   onTagWechseln: (tagId: string) => void
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
@@ -495,6 +498,10 @@ export default function TripWorkspacePlan({
           Die Tagesreihenfolge ist nicht eindeutig.
         </p>
       )}
+
+      {mapsActive && !routeVerborgen ? (
+        <TripWorkspaceMap key={reise.id} trip={reise} selectedDay={kanteWahl.art === 'eindeutig' ? '' : highlightId} onDay={onTagWechseln} />
+      ) : null}
 
       {(timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
         <div className="mt-5 border-t border-line-200 pt-5">

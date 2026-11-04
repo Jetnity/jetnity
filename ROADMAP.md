@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **04.11.2026 – Trip Maps JS V1:** Marker, Gruppierung, Stopplisten-/Tagesauswahl und Zustände im Draft #1112 implementiert. Lokale UI geprüft; echter Google-Preview-Test und unabhängiger Review offen. Kosten-/Consent-/Referrer-Gates bleiben geschlossen. [Prüfstand und begrenzter Pilotvorschlag](docs/TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
+
 > **02.11.2026 – Mietwagen Layout 1:** Owner wünscht eine kompakte Suchvorbereitung, 3–4 Fahrzeugkarten pro Desktopreihe und eine aufgeräumte Mietwagenseite. Suchkasten, responsives Kartenraster, gruppierte Angebotsdetails und aufklappbare manuelle Erfassung umgesetzt. Native Suche aus PR #1109 bleibt erhalten. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md); exakter Release-Stand im Live-Index #751.
 
 > **02.11.2026 – DiscoverCars Native Search 1:** Umsetzung auf `feat/discovercars-native-search-1`: native Stationssuche, echte Fahrzeugangebote, lokale Filter, Vergleich und Angebotsdetails. Offizieller API-Zugang und Onsite-Anzeigerechte liegen vor; reale Stations-/Angebots-/Detailabrufe sind erfolgreich. Prüfung, unabhängiger Review und Release laufen; noch kein Production-PASS. Buchung bleibt beim Anbieter, Suchklicks erzeugen keinen Reiseeintrag. [Prüfstand und nächste Schritte](docs/DISCOVERCARS_NATIVE_SEARCH_1_EVIDENCE_2026-11-02.md).

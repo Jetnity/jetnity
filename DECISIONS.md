@@ -6150,3 +6150,18 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Begründung:** Native Lesefunktion liefert den gewünschten Nutzen ohne Änderungen am Reisegraphen, Auth-System oder Buchungsstatus. Der Originalwert `url.web` bleibt erhalten. Eine Suchantwort gilt höchstens 30 Minuten; signierte Detailtokens binden ID, Währung und ursprüngliches Ablaufdatum. Fehler/Teildaten/Leere sind getrennte Zustände.
 
 **Konsequenzen:** Nur serverseitiger API-Key plus explizites Flag schalten frei. Per-Instanz-Missbrauchslimits ergänzen das getrennte Providerkontingent (600/min); sie sind kein verteilter Account-Limiter. Kein neuer Dienst und keine bezahlte Beauftragung. Kosten-/Kontingentänderungen separat prüfen. API-Buchungen, automatische Reservierung, Reiseübernahme und bestätigte Buchungen sind nicht Teil dieser Lesesuche. Gezielte reale Tests verwenden Live-Inventar ohne Buchung; es gibt keine Sandbox. Details: [Nachweis](docs/DISCOVERCARS_NATIVE_SEARCH_1_EVIDENCE_2026-11-02.md).
+
+
+## ADR-0228 – Trip Maps JS V1 mit getrenntem, geschlossenem Pilot-Gate
+
+**Datum:** 4. November 2026. **Status:** Umsetzung beauftragt; Aktivierung und Release nicht freigegeben.
+
+**Kontext:** Der Owner will eine hochwertige interaktive Reisekarte. 10’000 kostenlose Dynamic-Maps-Ladungen sind eine Startbasis, kein Kundenbeweis und kein starrer Abschaltpunkt. Das Gesamtbudget aller Provider bleibt USD100/Monat.
+
+**Entscheidung:** Vorhandene Reiseetappen mit gespeicherten Koordinaten als nummerierte Marker und kleine Pixelradius-Gruppen zeigen; Auswahl an die bestehende Tagesansicht anbinden. Google läuft erst nach ausdrücklicher Zustimmung in einem entfernbaren Frame ohne Parent-DOM-Zugriff. Ein separates Source-Gate bleibt geschlossen; auch nach dessen späterer Prüfung sind nur ein exakter geschützter Preview-Host und ein höchstens einstündiges Pilotfenster möglich. Produktion bleibt ausgeschlossen.
+
+**Alternativen:** Eine reine Minimal-Embed-Karte erfüllt den gewünschten Auswahl-/Gruppierungsnutzen nicht. Eine öffentliche, nur durch Budgetwarnungen abgesicherte Karte hätte keine verlässliche Kostensperre. Eine neue umfassende Provider-/Budgetplattform ist für diese kleine V1 nicht gerechtfertigt.
+
+**Begründung:** Google JS kann damit als konkrete Produktfunktion geprüft werden, ohne Reisedatenmodell, My World oder gehaltene Provider zu verändern. Entfernen des Frames beendet dessen aktive Ausführung; Alerts und Ablaufzeit sind ausdrücklich kein harter monatlicher Kostenstopp.
+
+**Konsequenzen:** Kein Google-Upgrade, Abo, API-Enable, Schlüsselwechsel oder Secret-Write in diesem Slice. Kein neuer Places-/Routes-/Street-View-Scope. Reale Google-Darstellung, Attribution, Referrer-Prüfung, Consent-Vertrag und Kostenabgleich sind noch separat abzunehmen. [Nachweis und Pilotvorschlag](docs/TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
