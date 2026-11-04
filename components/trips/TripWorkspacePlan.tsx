@@ -38,6 +38,7 @@ import {
   planTageFolgen,
   tagUnterKanteZiel,
 } from '@/lib/trips/trip-plan-premium-experience-4'
+import { planNavigatorInsights } from '@/lib/trips/plan-navigator-insight'
 import { type PlanpunktFormular } from '@/lib/trips/schema'
 import { timelineAbleiten } from '@/lib/trips/timeline'
 import { kanteAufloesen, routeModell } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
@@ -241,6 +242,7 @@ export default function TripWorkspacePlan({
   const highlightId = gemessen ? (kanonischerTagId ?? '') : timeline.gewaehlterTagId
   const laeufe = chronologie.gueltig ? chronologie.laeufe : []
   const route = routeModell(reise)
+  const navigatorInsights = React.useMemo(() => planNavigatorInsights(reise), [reise])
   const kanteWahl = kanteAufloesen(route.zeilen, kanteId)
   const folge = planTageFolgen(laeufe)
   const navigator = planTagNavigator(folge, tag?.id ?? '')
@@ -248,9 +250,10 @@ export default function TripWorkspacePlan({
   const kanteSichtbar = Boolean(kanteId) || kanteUnlesbar
   const routeVerborgen = gemessen && anordnung === 'schmal' && !routeBetont && Boolean(kanonischerTagId || hinweis || gewaehlterPunktId || kanteSichtbar)
   // A stable map sibling must not inherit the route panel's hidden/inert state.
-  // The source release gate remains closed until a separate reviewed activation.
+  // Source gate stays authoritative: mapsActive alone must never render map canvas.
   const mapCanvasVisible = tripMapEntryVisible(mapsActive, false)
   const dayVerborgen = gemessen && (itemSichtbar || (anordnung === 'schmal' && (routeBetont || (!kanonischerTagId && !hinweis && !gewaehlterPunktId && !kanteSichtbar))))
+  const routeDrawer = gemessen && anordnung === 'schmal' && mapCanvasVisible
   const laufDesTags = chronologie.gueltig
     ? chronologie.laeufe.find((lauf) => lauf.tage.some((eintrag) => eintrag.id === tag?.id))
     : undefined
@@ -450,30 +453,8 @@ export default function TripWorkspacePlan({
     </>
   )
 
-  return (
-    <section ref={root}
-      aria-label="Tagesplan"
-      tabIndex={-1}
-      data-tagesplan-modul="ein"
-      data-plan-premium="4"
-      data-plan-chronologie={chronologie.gueltig ? 'tag-zuerst' : 'ungueltig'}
-      data-plan-kompakt={kompakt ? 'ja' : 'nein'}
-      data-u1b-steuerung={steuerung}
-      className={cn(
-        gemessen ? 'contents' : 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
-        !gemessen && fokusRing,
-        !gemessen && (eingebettet ? 'mt-1' : 'mt-5'),
-      )}
-    >
-      <div
-        data-u1b-route
-        onPointerDown={(event) => onRouteZeigenVorbereiten?.(event.target)}
-        tabIndex={-1}
-        hidden={routeVerborgen}
-        inert={routeVerborgen}
-        style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'min-w-0 border-r border-line-200/80 pr-3 sm:pr-5' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-2')}
-      >
+  const routeInhalt = (
+    <div>
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
         <p className="mt-1 text-sm text-ink-900">{timeline.planText}</p>
@@ -494,6 +475,7 @@ export default function TripWorkspacePlan({
           zeilen={route.zeilen}
           ausgewaehlterTagId={highlightId}
           aufloesung={kanteWahl}
+          insights={navigatorInsights}
           onLauf={onTagWechseln}
           onKante={onKanteWaehlen}
         />
@@ -535,6 +517,43 @@ export default function TripWorkspacePlan({
           ) : null}
         </div>
       )}
+    </div>
+  )
+
+  return (
+    <section ref={root}
+      aria-label="Tagesplan"
+      tabIndex={-1}
+      data-tagesplan-modul="ein"
+      data-plan-premium="4"
+      data-plan-chronologie={chronologie.gueltig ? 'tag-zuerst' : 'ungueltig'}
+      data-plan-kompakt={kompakt ? 'ja' : 'nein'}
+      data-u1b-steuerung={steuerung}
+      className={cn(
+        gemessen ? 'contents' : 'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
+        !gemessen && fokusRing,
+        !gemessen && (eingebettet ? 'mt-1' : 'mt-5'),
+      )}
+    >
+      <div
+        data-u1b-route
+        onPointerDown={(event) => onRouteZeigenVorbereiten?.(event.target)}
+        tabIndex={-1}
+        hidden={routeVerborgen}
+        inert={routeVerborgen}
+        style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'min-w-0 border-r border-line-200/80 pr-3 sm:pr-5' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-2')}
+      >
+        {routeDrawer ? (
+          <details data-plan-route-drawer open className="overflow-hidden rounded-[20px] border border-line-200 bg-white">
+            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+              Routenübersicht
+            </summary>
+            <div className="border-t border-line-200 p-3 sm:p-4">
+              {routeInhalt}
+            </div>
+          </details>
+        ) : routeInhalt}
       </div>
       {mapCanvasVisible ? (
         <div
@@ -593,8 +612,35 @@ export default function TripWorkspacePlan({
             </div>
           </div>
         ) : null}
-        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? <TripIntegratedDay reise={{...reise,ohneTag}} dayId={tag.id} ordered={tagesansicht.gewaehlterTagId === tag.id ? tagesansicht.tagesplan.flatMap(group=>group.punkte.map(entry=>entry.punkt)) : []} selected={gewaehlterPunktId} tasks={readinessItems} onItem={onPunktOeffnen} onPreparation={onPreparation} onVerbindungAnlegen={onVerbindungAnlegen} /> : null}
-        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} /> : null}
+        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
+          <details className="mt-4 overflow-hidden rounded-[20px] border border-line-200 bg-white">
+            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+              Zusätzliche Tagesdetails
+            </summary>
+            <div className="border-t border-line-200 p-3 sm:p-4">
+              <TripIntegratedDay
+                reise={{ ...reise, ohneTag }}
+                dayId={tag.id}
+                ordered={tagesansicht.gewaehlterTagId === tag.id ? tagesansicht.tagesplan.flatMap((group) => group.punkte.map((entry) => entry.punkt)) : []}
+                selected={gewaehlterPunktId}
+                tasks={readinessItems}
+                onItem={onPunktOeffnen}
+                onPreparation={onPreparation}
+                onVerbindungAnlegen={onVerbindungAnlegen}
+              />
+            </div>
+          </details>
+        ) : null}
+        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
+          <details className="mt-3 overflow-hidden rounded-[20px] border border-line-200 bg-white">
+            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+              Zeit- und Konfliktprüfung
+            </summary>
+            <div className="border-t border-line-200 p-3 sm:p-4">
+              <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} />
+            </div>
+          </details>
+        ) : null}
       </div>
     </section>
   )

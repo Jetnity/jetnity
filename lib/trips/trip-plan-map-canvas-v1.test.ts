@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import { RouteListe } from '@/components/trips/TripWorkspaceRoute'
+import { n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import { routeModell } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import { TRIP_MAP_PILOT_RELEASED } from '@/lib/maps/config'
@@ -12,24 +13,27 @@ import { TRIP_MAP_PILOT_RELEASED } from '@/lib/maps/config'
 test('Reiseplan bleibt ohne Google-Freigabe eine vollständig nutzbare Routen- und Tagesfläche', () => {
   assert.equal(TRIP_MAP_PILOT_RELEASED, false)
   const reise = referenzReise()
-  const html = renderToStaticMarkup(createElement(TripWorkspacePlan, {
-    reise,
-    ohneTag: [],
-    aktiverTag: reise.days[0]?.id ?? '',
-    kompakt: false,
-    mapsActive: true,
-    steuerung: 'gemessen',
-    anordnung: 'neben',
-    onTagWechseln: () => assert.fail('SSR darf keinen Tag wechseln'),
-    onPunktAnlegen: async () => null,
-    onPunktEntfernen: async () => null,
-  }))
-  assert.match(html, /data-u1b-route/)
-  assert.match(html, /data-u1b-day/)
-  assert.match(html, /data-u1c-route/)
-  assert.equal(html.includes('data-plan-map-canvas'), false)
-  assert.equal(html.includes('Google-Karte laden'), false)
-  assert.equal(html.includes('maps.googleapis.com'), false)
+  for (const mapsActive of [true, false]) {
+    const html = renderToStaticMarkup(createElement(TripWorkspacePlan, {
+      reise,
+      ohneTag: [],
+      aktiverTag: reise.days[0]?.id ?? '',
+      kompakt: false,
+      mapsActive,
+      steuerung: 'gemessen',
+      anordnung: 'neben',
+      onTagWechseln: () => assert.fail('SSR darf keinen Tag wechseln'),
+      onPunktAnlegen: async () => null,
+      onPunktEntfernen: async () => null,
+    }))
+    assert.match(html, /data-u1b-route/)
+    assert.match(html, /data-u1b-day/)
+    assert.match(html, /data-u1c-route/)
+    assert.equal(html.includes('data-plan-map-canvas'), false)
+    assert.equal(html.includes('data-trip-map'), false)
+    assert.equal(html.includes('Google-Karte laden'), false)
+    assert.equal(html.includes('maps.googleapis.com'), false)
+  }
 })
 
 test('verbundene Reiseetappen behalten echte Schluessel, Auswahl und sichere Transportsperren', () => {
@@ -52,4 +56,54 @@ test('verbundene Reiseetappen behalten echte Schluessel, Auswahl und sichere Tra
   assert.match(html, /Bangkok/)
   assert.match(html, /Ko Chang/)
   assert.equal(html.includes('Google-Karte laden'), false)
+})
+
+test('navigator recommendation labels describe guidance, not a direct action trigger', () => {
+  const reise = referenzReise()
+  const route = routeModell(reise)
+  const bangkok = route.zeilen.find((row) => row.art === 'lauf' && row.name === 'Bangkok')
+  assert.ok(bangkok?.art === 'lauf')
+  const tagId = bangkok.tagIds[0] ?? ''
+  const html = renderToStaticMarkup(createElement(RouteListe, {
+    zeilen: route.zeilen,
+    ausgewaehlterTagId: tagId,
+    aufloesung: { art: 'keine' as const },
+    insights: {
+      [bangkok.schluessel]: {
+        status: '1 Unterkunft',
+        nextAction: 'Tagesdetails prüfen',
+        transferHinweis: null,
+      },
+    },
+    onLauf: () => assert.fail('SSR darf keine Navigation ausloesen'),
+    onKante: () => assert.fail('SSR darf keine Verbindung auswaehlen'),
+  }))
+  assert.match(html, /Empfehlung:\s*Tagesdetails prüfen/)
+  assert.match(html, /Öffnet diesen Reiseabschnitt und seine zugeordneten Details\./)
+  assert.equal(html.includes('Nächster Schritt:'), false)
+})
+
+test('travel-only rows use neutral click explanation without claiming a stay', () => {
+  const reise = n12Reise()
+  const route = routeModell(reise)
+  const reiseLauf = route.zeilen.find((row) => row.art === 'lauf' && row.lesart === 'reise-ohne-ziel')
+  assert.ok(reiseLauf?.art === 'lauf')
+  const tagId = reiseLauf.tagIds[0] ?? ''
+  const html = renderToStaticMarkup(createElement(RouteListe, {
+    zeilen: route.zeilen,
+    ausgewaehlterTagId: tagId,
+    aufloesung: { art: 'keine' as const },
+    insights: {
+      [reiseLauf.schluessel]: {
+        status: '1 Flug',
+        nextAction: 'Anreise- oder Transferdetails prüfen',
+        transferHinweis: null,
+      },
+    },
+    onLauf: () => assert.fail('SSR darf keine Navigation ausloesen'),
+    onKante: () => assert.fail('SSR darf keine Verbindung auswaehlen'),
+  }))
+  assert.match(html, /Empfehlung:\s*Anreise- oder Transferdetails prüfen/)
+  assert.match(html, /Öffnet diesen Reiseabschnitt und seine zugeordneten Details\./)
+  assert.equal(html.includes('Öffnet diesen Aufenthalt mit den zugehörigen Details.'), false)
 })
