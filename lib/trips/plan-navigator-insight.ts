@@ -38,6 +38,12 @@ function punktStatusText(geplant: Record<TripItemKind, number>, ungeplant: Recor
   return teile.length > 0 ? teile.join(' · ') : 'Noch keine Punkte erfasst'
 }
 
+function statusMitMehrdeutigerUnterkunft(basis: string, mehrdeutig: boolean): string {
+  if (!mehrdeutig) return basis
+  const hinweis = 'Ungeplante Unterkunft vorhanden, keinem Aufenthalt eindeutig zugeordnet'
+  return basis === 'Noch keine Punkte erfasst' ? hinweis : `${basis} · ${hinweis}`
+}
+
 function transferHinweis(kanten: readonly RouteKanteZeile[]): string | null {
   if (kanten.some((kante) => kante.planText === KANTE_ZUORDNUNG_UNKLAR)) return 'Verbindung ist noch ungeklärt'
   if (kanten.some((kante) => kante.planText.startsWith('Noch keine gespeicherte Verbindung.'))) return 'Verbindung fehlt noch'
@@ -48,6 +54,18 @@ export function planNavigatorInsights(trip: Trip): Record<string, NavigatorInsig
   const chronologie = chronologischeLaeufe(trip)
   if (!chronologie.gueltig) return {}
   const route = routeModell(trip)
+  const laufAnzahlProStage = new Map<string, number>()
+  for (const lauf of chronologie.laeufe) {
+    if (!lauf.stageId) continue
+    laufAnzahlProStage.set(lauf.stageId, (laufAnzahlProStage.get(lauf.stageId) ?? 0) + 1)
+  }
+  const ungeplantProStage = new Map<string, Record<TripItemKind, number>>()
+  for (const punkt of trip.ohneTag) {
+    if (punkt.dayId != null || punkt.stageId == null) continue
+    const werte = ungeplantProStage.get(punkt.stageId) ?? leereWerte()
+    werte[punkt.kind] += 1
+    ungeplantProStage.set(punkt.stageId, werte)
+  }
   const kantenProLauf = new Map<string, RouteKanteZeile[]>()
   for (const zeile of route.zeilen) {
     if (zeile.art !== 'kante') continue
@@ -62,20 +80,20 @@ export function planNavigatorInsights(trip: Trip): Record<string, NavigatorInsig
   const antwort: Record<string, NavigatorInsight> = {}
   for (const lauf of chronologie.laeufe) {
     const werte = leereWerte()
-    const ungeplant = leereWerte()
+    const stageMehrfach = lauf.stageId != null && (laufAnzahlProStage.get(lauf.stageId) ?? 0) > 1
+    const ungeplantBasis = lauf.stageId ? (ungeplantProStage.get(lauf.stageId) ?? leereWerte()) : leereWerte()
+    const ungeplant = stageMehrfach ? leereWerte() : ungeplantBasis
+    const mehrdeutigeUnterkunft = stageMehrfach && ungeplantBasis.stay > 0
     for (const tag of lauf.tage) {
       for (const punkt of tag.items) werte[punkt.kind] += 1
-    }
-    if (lauf.stageId) {
-      for (const punkt of trip.ohneTag) {
-        if (punkt.dayId == null && punkt.stageId === lauf.stageId) ungeplant[punkt.kind] += 1
-      }
     }
     const verbindung = transferHinweis(kantenProLauf.get(lauf.schluessel) ?? [])
     const nextAction = lauf.lesart === 'reise-ohne-ziel'
       ? (werte.flight + werte.transfer > 0 ? 'Anreise- oder Transferdetails prüfen' : 'Reiseeintrag prüfen')
       : lauf.lesart === 'zuordnung-offen'
         ? 'Abschnitt prüfen und bei Bedarf zuordnen'
+        : werte.stay === 0 && mehrdeutigeUnterkunft
+          ? 'Ungeplante Unterkunft prüfen (mehrfacher Aufenthalt)'
         : werte.stay === 0 && ungeplant.stay > 0
           ? 'Unterkunft einem Reisetag zuordnen'
           : werte.stay === 0
@@ -87,7 +105,7 @@ export function planNavigatorInsights(trip: Trip): Record<string, NavigatorInsig
               : 'Tagesdetails prüfen'
 
     antwort[lauf.schluessel] = {
-      status: punktStatusText(werte, ungeplant),
+      status: statusMitMehrdeutigerUnterkunft(punktStatusText(werte, ungeplant), mehrdeutigeUnterkunft),
       nextAction,
       transferHinweis: verbindung,
     }

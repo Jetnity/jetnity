@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import { RouteListe } from '@/components/trips/TripWorkspaceRoute'
+import { n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import { routeModell } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import { TRIP_MAP_PILOT_RELEASED } from '@/lib/maps/config'
@@ -78,6 +79,31 @@ test('navigator recommendation labels describe guidance, not a direct action tri
     onKante: () => assert.fail('SSR darf keine Verbindung auswaehlen'),
   }))
   assert.match(html, /Empfehlung:\s*Tagesdetails prüfen/)
-  assert.match(html, /Öffnet diesen Aufenthalt mit den zugehörigen Details\./)
+  assert.match(html, /Öffnet diesen Reiseabschnitt und seine zugeordneten Details\./)
   assert.equal(html.includes('Nächster Schritt:'), false)
+})
+
+test('travel-only rows use neutral click explanation without claiming a stay', () => {
+  const reise = n12Reise()
+  const route = routeModell(reise)
+  const reiseLauf = route.zeilen.find((row) => row.art === 'lauf' && row.lesart === 'reise-ohne-ziel')
+  assert.ok(reiseLauf?.art === 'lauf')
+  const tagId = reiseLauf.tagIds[0] ?? ''
+  const html = renderToStaticMarkup(createElement(RouteListe, {
+    zeilen: route.zeilen,
+    ausgewaehlterTagId: tagId,
+    aufloesung: { art: 'keine' as const },
+    insights: {
+      [reiseLauf.schluessel]: {
+        status: '1 Flug',
+        nextAction: 'Anreise- oder Transferdetails prüfen',
+        transferHinweis: null,
+      },
+    },
+    onLauf: () => assert.fail('SSR darf keine Navigation ausloesen'),
+    onKante: () => assert.fail('SSR darf keine Verbindung auswaehlen'),
+  }))
+  assert.match(html, /Empfehlung:\s*Anreise- oder Transferdetails prüfen/)
+  assert.match(html, /Öffnet diesen Reiseabschnitt und seine zugeordneten Details\./)
+  assert.equal(html.includes('Öffnet diesen Aufenthalt mit den zugehörigen Details.'), false)
 })

@@ -8,6 +8,7 @@ import {
   artenReise,
   referenzReise,
   unklareVerbindungReise,
+  wiederholteEtappenReise,
   wiederholterNameReise,
 } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 
@@ -83,4 +84,29 @@ test('unplanned stays are recognized per exact stage identity and not merged by 
   assert.equal(ersterEintrag.nextAction, 'Unterkunft einem Reisetag zuordnen')
   assert.match(ersterEintrag.status, /Unterkunft ohne Tag/)
   assert.equal(zweiterEintrag.nextAction, 'Unterkunft ergänzen')
+})
+
+test('same-stage repeated runs keep unplanned stays ambiguous instead of duplicating visit-level attribution', () => {
+  const reise = wiederholteEtappenReise()
+  reise.ohneTag.push(n12Punkt({
+    id: 'stay-stage-a-unplanned',
+    kind: 'stay',
+    title: 'A ungeplant',
+    stageId: 'stage-a',
+    dayId: null,
+  }))
+
+  const laeufe = chronologischeLaeufe(reise)
+  assert.ok(laeufe.gueltig)
+  const aLaeufe = laeufe.laeufe.filter((lauf) => lauf.stageId === 'stage-a')
+  assert.equal(aLaeufe.length, 2)
+
+  const insights = planNavigatorInsights(reise)
+  for (const lauf of aLaeufe) {
+    const eintrag = insights[lauf.schluessel]
+    assert.ok(eintrag)
+    assert.equal(eintrag.nextAction, 'Ungeplante Unterkunft prüfen (mehrfacher Aufenthalt)')
+    assert.equal(eintrag.status.includes('Unterkunft ohne Tag'), false)
+    assert.match(eintrag.status, /Ungeplante Unterkunft vorhanden, keinem Aufenthalt eindeutig zugeordnet/)
+  }
 })

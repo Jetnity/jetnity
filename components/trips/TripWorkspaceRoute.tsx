@@ -161,7 +161,7 @@ export function RouteListe({
                 ) : null}
                 {insight ? (
                   <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
-                    Öffnet diesen Aufenthalt mit den zugehörigen Details.
+                    Öffnet diesen Reiseabschnitt und seine zugeordneten Details.
                   </span>
                 ) : null}
               </button>
