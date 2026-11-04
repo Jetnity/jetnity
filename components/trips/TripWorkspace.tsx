@@ -13,6 +13,7 @@
 // starten erst nach ausdrücklicher Aktion. Aktivitäten öffnen Angebote mit dem Bereich.
 
 import * as React from 'react'
+import { tripMapEntryVisible } from '@/lib/maps/config'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
@@ -1167,6 +1168,8 @@ export default function TripWorkspace({
   })
   const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
   const planNeben = modusBereit && modus.ansicht === 'plan' && u1bAnordnung === 'neben'
+  // Keep item/gap details below the route, not over the persistent map canvas.
+  const planMapCanvas = planNeben && tripMapEntryVisible(true, false)
 
   React.useLayoutEffect(() => {
     const el = splitRef.current
@@ -1467,7 +1470,7 @@ export default function TripWorkspace({
               'min-w-0 max-w-full [overflow-wrap:anywhere] [word-break:break-word]',
               modus.ansicht === 'organisieren' && 'col-span-full',
             )}
-            style={planNeben ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
+            style={planNeben ? { gridColumn: planMapCanvas ? 1 : 2, gridRow: planMapCanvas ? 4 : 2, minWidth: 0 } : undefined}
             ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {
               if (ereignis.key !== 'Escape' || !detailOffen) return
