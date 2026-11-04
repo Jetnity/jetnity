@@ -27,6 +27,8 @@ import {
 } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
+import KayakFlights from './kayak/KayakFlights'
+import { ExistingSearch } from './kayak/PreviewShared'
 
 type Filter = 'all' | 'jetnity' | 'cheapest' | 'fastest'
 
@@ -37,7 +39,11 @@ const KABINE_TEXT: Record<FlugKabine, string> = {
   first: 'First',
 }
 
-export default function FlugSuche({
+export default function FlugSuche(props: React.ComponentProps<typeof BestehendeFlugSuche>) {
+  return <div className="grid gap-5"><KayakFlights key={`${props.reise.id}:${props.tagId}`} reise={props.reise} tagId={props.tagId} /><ExistingSearch label="Weitere Flugsuche öffnen"><BestehendeFlugSuche {...props} /></ExistingSearch></div>
+}
+
+function BestehendeFlugSuche({
   reise,
   tagId,
   onUebernehmen,

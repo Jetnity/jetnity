@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { tripMapEntryVisible } from '@/lib/maps/config'
 import TripWorkspaceMap from '@/components/trips/TripWorkspaceMap'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import TripIntegratedDay from '@/components/trips/TripIntegratedDay'
@@ -499,7 +500,7 @@ export default function TripWorkspacePlan({
         </p>
       )}
 
-      {mapsActive && !routeVerborgen ? (
+      {tripMapEntryVisible(mapsActive, routeVerborgen) ? (
         <TripWorkspaceMap key={reise.id} trip={reise} selectedDay={kanteWahl.art === 'eindeutig' ? '' : highlightId} onDay={onTagWechseln} />
       ) : null}
 

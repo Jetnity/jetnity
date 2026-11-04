@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { mapStopDay, mapWireStops, tripMapStops } from '@/lib/maps/trip-map'
-import { mapPilotConfig, type MapEnvironment } from '@/lib/maps/config'
+import { mapPilotConfig, TRIP_MAP_PILOT_RELEASED, tripMapEntryVisible, type MapEnvironment } from '@/lib/maps/config'
 import { tripMapFrameResponse } from '@/lib/maps/frame'
 import { referenzReise, wiederholteEtappenReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 
@@ -81,4 +81,15 @@ test('real HTTP handler returns no key or external script even with every enviro
     assert.equal(response.headers.get('cache-control'), 'private, no-store')
   }
   assert.equal(nonces.size, 2)
+})
+
+// A source-OFF implementation may be merged without exposing a broken CTA.
+// A later pilot must explicitly revise and re-review this public-UI invariant.
+test('guest Maps entry remains invisible while the shared source pilot gate is OFF', () => {
+  assert.equal(TRIP_MAP_PILOT_RELEASED, false)
+  for (const mapsActive of [true, false]) {
+    for (const routeHidden of [true, false]) {
+      assert.equal(tripMapEntryVisible(mapsActive, routeHidden), false)
+    }
+  }
 })

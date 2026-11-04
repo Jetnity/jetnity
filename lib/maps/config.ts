@@ -1,6 +1,13 @@
 // A separate reviewed pilot decision is required. Environment variables alone
 // cannot open this source gate. Production is intentionally excluded from V1.
-const TRIP_MAP_PILOT_RELEASED = false
+export const TRIP_MAP_PILOT_RELEASED = false
+
+// This same source lock also hides the guest-facing map CTA. An eventual
+// preview pilot requires a separate review of client host/environment gating;
+// unlocking the server response alone must never expose a broken public CTA.
+export function tripMapEntryVisible(mapsActive: boolean, routeHidden: boolean): boolean {
+  return TRIP_MAP_PILOT_RELEASED && mapsActive && !routeHidden
+}
 
 export type MapEnvironment = {
   VERCEL_ENV?: string
