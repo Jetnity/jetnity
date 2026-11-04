@@ -95,6 +95,8 @@ export function RouteListe({
           }
           const gewaehlt = aufloesung.art !== 'eindeutig' && zeile.tagIds.includes(ausgewaehlterTagId)
           const insight = insights?.[zeile.schluessel]
+          const insightSichtbar = Boolean(insight && gewaehlt)
+          const sichtbarerInsight = insightSichtbar ? insight : null
           const ersterTag = zeile.tagIds[0] ?? ''
           return (
             <li key={zeile.schluessel} className="relative min-w-0 pl-10">
@@ -144,22 +146,22 @@ export function RouteListe({
                     {zeile.untertitel}
                   </span>
                 ) : null}
-                {insight ? (
+                {sichtbarerInsight ? (
                   <span className={cn('mt-1 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/90' : 'text-ink-800')}>
-                    {insight.status}
+                    {sichtbarerInsight.status}
                   </span>
                 ) : null}
-                {insight?.transferHinweis ? (
+                {sichtbarerInsight?.transferHinweis ? (
                   <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/90' : 'text-ink-800')}>
-                    {insight.transferHinweis}
+                    {sichtbarerInsight.transferHinweis}
                   </span>
                 ) : null}
-                {insight ? (
+                {sichtbarerInsight ? (
                   <span className={cn('mt-0.5 block text-xs font-semibold [overflow-wrap:anywhere]', gewaehlt ? 'text-white' : 'text-brand-800')}>
-                    Empfehlung: {insight.nextAction}
+                    Empfehlung: {sichtbarerInsight.nextAction}
                   </span>
                 ) : null}
-                {insight ? (
+                {sichtbarerInsight ? (
                   <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
                     Öffnet diesen Reiseabschnitt und seine zugeordneten Details.
                   </span>
