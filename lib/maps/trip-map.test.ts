@@ -61,6 +61,7 @@ test('release is source-closed, with exact-host, preview, explicit switch, key, 
 })
 
 test('real HTTP handler returns no key or external script even with every environment switch set', async () => {
+  const nonces = new Set<string>()
   for (const headers of [new Headers(), new Headers({ 'sec-fetch-dest': 'iframe', 'sec-fetch-site': 'same-origin', 'sec-fetch-mode': 'navigate' })]) {
     const response = tripMapFrameResponse(new Request(origin + '/embed/trip-map', { headers }), env)
     const html = await response.text()
@@ -69,7 +70,15 @@ test('real HTTP handler returns no key or external script even with every enviro
     assert.match(html, /noch nicht freigeschaltet/)
     assert.match(response.headers.get('content-security-policy')!, /sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox/)
     assert.ok(!response.headers.get('content-security-policy')!.includes('allow-same-origin'))
+    const nonce = /script-src 'nonce-([a-f0-9]{32})'/.exec(response.headers.get('content-security-policy')!)?.[1]
+    assert.ok(nonce)
+    nonces.add(nonce)
+    assert.ok(html.includes(`src="/maps/trip-map.js" nonce="${nonce}"`))
+    assert.ok(html.includes(`<style nonce="${nonce}">`))
+    assert.ok(!response.headers.get('content-security-policy')!.includes('unsafe-inline'))
+    assert.match(response.headers.get('content-security-policy')!, /worker-src blob:/)
     assert.equal(response.headers.get('referrer-policy'), 'strict-origin')
     assert.equal(response.headers.get('cache-control'), 'private, no-store')
   }
+  assert.equal(nonces.size, 2)
 })
