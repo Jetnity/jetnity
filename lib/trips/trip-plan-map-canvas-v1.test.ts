@@ -12,24 +12,27 @@ import { TRIP_MAP_PILOT_RELEASED } from '@/lib/maps/config'
 test('Reiseplan bleibt ohne Google-Freigabe eine vollständig nutzbare Routen- und Tagesfläche', () => {
   assert.equal(TRIP_MAP_PILOT_RELEASED, false)
   const reise = referenzReise()
-  const html = renderToStaticMarkup(createElement(TripWorkspacePlan, {
-    reise,
-    ohneTag: [],
-    aktiverTag: reise.days[0]?.id ?? '',
-    kompakt: false,
-    mapsActive: true,
-    steuerung: 'gemessen',
-    anordnung: 'neben',
-    onTagWechseln: () => assert.fail('SSR darf keinen Tag wechseln'),
-    onPunktAnlegen: async () => null,
-    onPunktEntfernen: async () => null,
-  }))
-  assert.match(html, /data-u1b-route/)
-  assert.match(html, /data-u1b-day/)
-  assert.match(html, /data-u1c-route/)
-  assert.equal(html.includes('data-plan-map-canvas'), false)
-  assert.equal(html.includes('Google-Karte laden'), false)
-  assert.equal(html.includes('maps.googleapis.com'), false)
+  for (const mapsActive of [true, false]) {
+    const html = renderToStaticMarkup(createElement(TripWorkspacePlan, {
+      reise,
+      ohneTag: [],
+      aktiverTag: reise.days[0]?.id ?? '',
+      kompakt: false,
+      mapsActive,
+      steuerung: 'gemessen',
+      anordnung: 'neben',
+      onTagWechseln: () => assert.fail('SSR darf keinen Tag wechseln'),
+      onPunktAnlegen: async () => null,
+      onPunktEntfernen: async () => null,
+    }))
+    assert.match(html, /data-u1b-route/)
+    assert.match(html, /data-u1b-day/)
+    assert.match(html, /data-u1c-route/)
+    assert.equal(html.includes('data-plan-map-canvas'), false)
+    assert.equal(html.includes('data-trip-map'), false)
+    assert.equal(html.includes('Google-Karte laden'), false)
+    assert.equal(html.includes('maps.googleapis.com'), false)
+  }
 })
 
 test('verbundene Reiseetappen behalten echte Schluessel, Auswahl und sichere Transportsperren', () => {

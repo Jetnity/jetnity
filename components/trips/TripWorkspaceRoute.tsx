@@ -9,6 +9,7 @@ import {
   type KanteAufloesung,
   type RouteZeile,
 } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
+import type { NavigatorInsight } from '@/lib/trips/plan-navigator-insight'
 import { cn } from '@/lib/utils'
 import type { TripDay } from '@/types/trips'
 
@@ -29,12 +30,14 @@ export function RouteListe({
   zeilen,
   ausgewaehlterTagId,
   aufloesung,
+  insights,
   onLauf,
   onKante,
 }: {
   zeilen: readonly RouteZeile[]
   ausgewaehlterTagId: string
   aufloesung: KanteAufloesung
+  insights?: Record<string, NavigatorInsight>
   onLauf: (tagId: string) => void
   onKante?: (kanteId: string, tagId: string) => void
 }) {
@@ -91,6 +94,7 @@ export function RouteListe({
             )
           }
           const gewaehlt = aufloesung.art !== 'eindeutig' && zeile.tagIds.includes(ausgewaehlterTagId)
+          const insight = insights?.[zeile.schluessel]
           const ersterTag = zeile.tagIds[0] ?? ''
           return (
             <li key={zeile.schluessel} className="relative min-w-0 pl-10">
@@ -138,6 +142,21 @@ export function RouteListe({
                 {zeile.untertitel ? (
                   <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
                     {zeile.untertitel}
+                  </span>
+                ) : null}
+                {insight ? (
+                  <span className={cn('mt-1 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/90' : 'text-ink-800')}>
+                    {insight.status}
+                  </span>
+                ) : null}
+                {insight?.transferHinweis ? (
+                  <span className={cn('mt-0.5 block text-xs [overflow-wrap:anywhere]', gewaehlt ? 'text-white/90' : 'text-ink-800')}>
+                    {insight.transferHinweis}
+                  </span>
+                ) : null}
+                {insight ? (
+                  <span className={cn('mt-0.5 block text-xs font-semibold [overflow-wrap:anywhere]', gewaehlt ? 'text-white' : 'text-brand-800')}>
+                    Nächster Schritt: {insight.nextAction}
                   </span>
                 ) : null}
               </button>
