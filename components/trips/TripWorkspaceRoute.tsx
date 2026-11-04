@@ -1,5 +1,7 @@
 'use client'
 
+import { CalendarDays, MapPin } from 'lucide-react'
+
 import {
   KANTE_MEHRDEUTIG,
   KANTE_NICHT_VERFUEGBAR,
@@ -37,12 +39,12 @@ export function RouteListe({
   onKante?: (kanteId: string, tagId: string) => void
 }) {
   return (
-    <div data-u1c-route className="mt-3 grid min-w-0 gap-2">
+    <div data-u1c-route className="mt-3 grid min-w-0 gap-3">
       <div>
         <h2 className="text-base font-semibold text-brand-800">Deine Route</h2>
         <p className="text-xs text-ink-700">Geplanter Ablauf</p>
       </div>
-      <ol className="grid min-w-0 gap-2">
+      <ol className="relative grid min-w-0 gap-1 before:absolute before:bottom-4 before:left-[15px] before:top-4 before:w-px before:bg-line-300">
         {zeilen.map((zeile) => {
           if (zeile.art === 'kante') {
             const gewaehlt = aufloesung.art === 'eindeutig' && aufloesung.occurrenceKey === zeile.occurrenceKey
@@ -55,7 +57,8 @@ export function RouteListe({
               </>
             )
             return (
-              <li key={zeile.occurrenceKey} className="min-w-0 pl-3">
+              <li key={zeile.occurrenceKey} className="relative min-w-0 pl-10">
+                <span aria-hidden="true" className="absolute left-[10px] top-4 z-10 h-3 w-3 rounded-full border-2 border-brand-800 bg-white" />
                 {zeile.waehlbar && onKante ? (
                   <button
                     type="button"
@@ -67,7 +70,7 @@ export function RouteListe({
                       if (tagId) onKante(zeile.kanteId, tagId)
                     }}
                     className={cn(
-                      'flex min-h-11 w-full min-w-0 flex-col justify-center rounded-2xl border px-3 py-2 text-left',
+                      'flex min-h-11 w-full min-w-0 flex-col justify-center rounded-xl border px-3 py-2 text-left transition-colors',
                       fokusRing,
                       gewaehlt ? 'border-brand-800 bg-brand-800 text-white' : 'border-line-200 bg-white text-ink-900',
                     )}
@@ -79,7 +82,7 @@ export function RouteListe({
                     data-u1c-kante={zeile.occurrenceKey}
                     data-u1c-kante-id={zeile.kanteId}
                     data-u1c-kante-gesperrt={zeile.mehrdeutig ? 'mehrdeutig' : 'nein'}
-                    className="flex min-h-11 w-full min-w-0 flex-col justify-center rounded-2xl border border-line-200 bg-surface-50 px-3 py-2 text-ink-800"
+                    className="flex min-h-11 w-full min-w-0 flex-col justify-center rounded-xl border border-line-200 bg-surface-50 px-3 py-2 text-ink-800"
                   >
                     {inhalt}
                   </div>
@@ -90,7 +93,13 @@ export function RouteListe({
           const gewaehlt = aufloesung.art !== 'eindeutig' && zeile.tagIds.includes(ausgewaehlterTagId)
           const ersterTag = zeile.tagIds[0] ?? ''
           return (
-            <li key={zeile.schluessel} className="min-w-0">
+            <li key={zeile.schluessel} className="relative min-w-0 pl-10">
+              <span aria-hidden="true" className={cn(
+                'absolute left-0 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border-2',
+                gewaehlt ? 'border-brand-800 bg-brand-800 text-white' : 'border-brand-800 bg-white text-brand-800',
+              )}>
+                {zeile.stageId ? <MapPin className="h-4 w-4" /> : <CalendarDays className="h-4 w-4" />}
+              </span>
               <button
                 type="button"
                 data-u1c-lauf={zeile.schluessel}

@@ -9,12 +9,13 @@ import type { Trip } from '@/types/trips'
 type Phase = 'idle' | 'loading' | 'ready' | 'error' | 'blocked' | 'expired'
 const button = 'min-h-11 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 disabled:opacity-50'
 
-function MapFrame({ stops, selected, onSelect, onPhase, onRemove }: {
+function MapFrame({ stops, selected, onSelect, onPhase, onRemove, canvas }: {
   stops: readonly MapStop[]
   selected: number | null
   onSelect: (index: number) => void
   onPhase: (phase: Phase) => void
   onRemove: () => void
+  canvas?: boolean
 }) {
   const host = React.useRef<HTMLDivElement>(null)
   const frame = React.useRef<HTMLIFrameElement | null>(null)
@@ -35,7 +36,9 @@ function MapFrame({ stops, selected, onSelect, onPhase, onRemove }: {
     child.title = 'Interaktive Google-Karte deiner Reiseorte'
     child.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox')
     child.referrerPolicy = 'strict-origin'
-    child.className = 'block h-[22rem] w-full border-0 sm:h-[26rem]'
+    child.className = canvas
+      ? 'block h-[min(66vh,46rem)] min-h-[22rem] w-full border-0 sm:h-[min(72vh,52rem)]'
+      : 'block h-[22rem] w-full border-0 sm:h-[26rem]'
     child.src = '/embed/trip-map'
     let done = false
     let expiry: ReturnType<typeof setTimeout> | undefined
@@ -76,11 +79,11 @@ function MapFrame({ stops, selected, onSelect, onPhase, onRemove }: {
       child.remove()
       if (frame.current === child) frame.current = null
     }
-  }, [wire])
+  }, [wire, canvas])
 
   React.useEffect(() => { sendSelection() }, [selected])
   return (
-    <div className="mt-3 min-w-0">
+    <div className={cn('min-w-0', !canvas && 'mt-3')}>
       <div ref={host} className="overflow-hidden rounded-2xl border border-line-200" />
       <div className="mt-2 flex flex-wrap gap-2">
         <button type="button" className={cn(button, 'border border-line-200 bg-white text-brand-800')}
@@ -95,10 +98,11 @@ function MapFrame({ stops, selected, onSelect, onPhase, onRemove }: {
   )
 }
 
-export default function TripWorkspaceMap({ trip, selectedDay, onDay }: {
+export default function TripWorkspaceMap({ trip, selectedDay, onDay, presentation = 'standard' }: {
   trip: Trip
   selectedDay: string
   onDay: (id: string) => void
+  presentation?: 'standard' | 'canvas'
 }) {
   const stops = React.useMemo(() => tripMapStops(trip), [trip])
   const located = stops.filter((stop) => stop.position)
@@ -144,12 +148,13 @@ export default function TripWorkspaceMap({ trip, selectedDay, onDay }: {
 
   return (
     <section aria-label="Reisekarte" data-trip-map data-trip-map-state={!online ? 'offline' : phase}
-      className="mt-4 min-w-0 rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
+      className={cn('min-w-0 bg-surface-50', presentation === 'canvas' ? 'overflow-hidden rounded-[24px] p-2 sm:p-3' : 'mt-4 rounded-[20px] border border-line-200 p-3 sm:p-4')}>
+
       <div className="flex items-start gap-3">
         <MapIcon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-brand-700" />
         <div>
-          <h2 className="text-base font-semibold text-brand-800">Deine Reise auf der Karte</h2>
-          <p className="mt-1 text-sm text-ink-700">Alle Reiseorte im Blick. Wähle einen Stopp für den passenden Tagesplan.</p>
+          <h2 className="text-base font-semibold text-brand-800">{presentation === 'canvas' ? 'Deine Reisekarte' : 'Deine Reise auf der Karte'}</h2>
+          <p className="mt-1 text-sm text-ink-700">Alle gespeicherten Orte im Blick. Wähle einen Punkt, um den Reiseplan zu öffnen.</p>
         </div>
       </div>
       <div role="status" aria-live="polite" className="mt-3 text-sm leading-6 text-ink-800">
@@ -188,8 +193,8 @@ export default function TripWorkspaceMap({ trip, selectedDay, onDay }: {
           </button>
         </div>
       ) : null}
-      {active ? <MapFrame stops={stops} selected={selected} onSelect={select} onPhase={setPhase} onRemove={remove} /> : null}
-      {stops.length > 0 ? (
+      {active ? <MapFrame stops={stops} selected={selected} onSelect={select} onPhase={setPhase} onRemove={remove} canvas={presentation === 'canvas'} /> : null}
+      {stops.length > 0 && presentation !== 'canvas' ? (
         <ol aria-label="Orte auf der Reisekarte" className="mt-4 grid min-w-0 gap-2">
           {stops.map((stop) => (
             <li key={`${stop.stageId}:${stop.index}`}>
@@ -208,7 +213,7 @@ export default function TripWorkspaceMap({ trip, selectedDay, onDay }: {
           ))}
         </ol>
       ) : null}
-      <p className="mt-3 text-xs leading-5 text-ink-700">Die Markierungen zeigen gespeicherte Reiseorte. Es wird keine Straßenroute berechnet.</p>
+      <p className="mt-3 px-1 text-xs leading-5 text-ink-700">Die Markierungen zeigen gespeicherte Reiseorte. Es wird keine Straßenroute berechnet.</p>
     </section>
   )
 }

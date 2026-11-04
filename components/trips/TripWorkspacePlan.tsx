@@ -247,6 +247,9 @@ export default function TripWorkspacePlan({
   const itemSichtbar = Boolean(gewaehlterPunktId) && hinweis?.art !== 'punkt-fehlt' && !tagFehlt
   const kanteSichtbar = Boolean(kanteId) || kanteUnlesbar
   const routeVerborgen = gemessen && anordnung === 'schmal' && !routeBetont && Boolean(kanonischerTagId || hinweis || gewaehlterPunktId || kanteSichtbar)
+  // A stable map sibling must not inherit the route panel's hidden/inert state.
+  // The source release gate remains closed until a separate reviewed activation.
+  const mapCanvasVisible = tripMapEntryVisible(mapsActive, false)
   const dayVerborgen = gemessen && (itemSichtbar || (anordnung === 'schmal' && (routeBetont || (!kanonischerTagId && !hinweis && !gewaehlterPunktId && !kanteSichtbar))))
   const laufDesTags = chronologie.gueltig
     ? chronologie.laeufe.find((lauf) => lauf.tage.some((eintrag) => eintrag.id === tag?.id))
@@ -469,7 +472,7 @@ export default function TripWorkspacePlan({
         hidden={routeVerborgen}
         inert={routeVerborgen}
         style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'min-w-0 border-r border-line-200/80 pr-3 sm:pr-5' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-2')}
       >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
@@ -499,10 +502,6 @@ export default function TripWorkspacePlan({
           Die Tagesreihenfolge ist nicht eindeutig.
         </p>
       )}
-
-      {tripMapEntryVisible(mapsActive, routeVerborgen) ? (
-        <TripWorkspaceMap key={reise.id} trip={reise} selectedDay={kanteWahl.art === 'eindeutig' ? '' : highlightId} onDay={onTagWechseln} />
-      ) : null}
 
       {(timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
         <div className="mt-5 border-t border-line-200 pt-5">
@@ -537,13 +536,22 @@ export default function TripWorkspacePlan({
         </div>
       )}
       </div>
+      {mapCanvasVisible ? (
+        <div
+          data-plan-map-canvas="ein"
+          style={gemessen && anordnung === 'neben' ? { gridColumn: 2, gridRow: '2 / span 2', minWidth: 0, alignSelf: 'start' } : undefined}
+          className={cn('min-w-0 max-w-full', gemessen && anordnung === 'neben' && 'sticky top-24 z-0', gemessen && anordnung === 'schmal' && 'order-1 mt-3')}
+        >
+          <TripWorkspaceMap key={reise.id} trip={reise} selectedDay={kanteWahl.art === 'eindeutig' ? '' : highlightId} onDay={onTagWechseln} presentation="canvas" />
+        </div>
+      ) : null}
       <div
         data-u1b-day
         hidden={dayVerborgen}
         inert={dayVerborgen}
         data-u1b-default-tag={gemessen && defaultId !== '' && bodyId === defaultId ? 'ja' : undefined}
-        style={gemessen && anordnung === 'neben' ? { gridColumn: 2, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4')}
+        style={gemessen && anordnung === 'neben' ? { gridColumn: mapCanvasVisible ? 1 : 2, gridRow: mapCanvasVisible ? 3 : 2, minWidth: 0 } : undefined}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'rounded-2xl bg-surface-50/75 p-3 sm:p-4' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-3')}
       >
         {hinweis ? <p data-u1b-hinweis={hinweis.art} className="text-sm leading-6 text-ink-800">{hinweisText(hinweis)}</p> : null}
         {kanteUnlesbar ? <KanteHinweis art="unlesbar" /> : null}
