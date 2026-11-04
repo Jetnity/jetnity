@@ -1373,7 +1373,7 @@ export default function TripWorkspace({
           data-organisieren-breite={modus.ansicht === 'organisieren' ? 'voll' : undefined}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
-          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 0.92fr) minmax(28rem, 1.65fr)', columnGap: '1.25rem', rowGap: '1rem', alignItems: 'start' } : undefined}
+          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 0.92fr) minmax(28rem, 1.65fr)', columnGap: '1.5rem', rowGap: '1rem', alignItems: 'start' } : undefined}
         >
           {modusBereit && modus.ansicht === 'uebersicht' ? (
             <FlaecheHuelle name="uebersicht" verborgen={false}>
