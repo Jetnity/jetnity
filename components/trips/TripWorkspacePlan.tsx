@@ -472,7 +472,7 @@ export default function TripWorkspacePlan({
         hidden={routeVerborgen}
         inert={routeVerborgen}
         style={gemessen && anordnung === 'neben' ? { gridColumn: 1, gridRow: 2, minWidth: 0 } : undefined}
-        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'min-w-0 border-r border-line-200/80 pr-3 sm:pr-5' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'))}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'min-w-0 border-r border-line-200/80 pr-3 sm:pr-5' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-2')}
       >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
@@ -540,7 +540,7 @@ export default function TripWorkspacePlan({
         <div
           data-plan-map-canvas="ein"
           style={gemessen && anordnung === 'neben' ? { gridColumn: 2, gridRow: '2 / span 2', minWidth: 0, alignSelf: 'start' } : undefined}
-          className={cn('min-w-0 max-w-full', gemessen && anordnung === 'neben' && 'sticky top-24 z-0', gemessen && anordnung === 'schmal' && 'mt-3')}
+          className={cn('min-w-0 max-w-full', gemessen && anordnung === 'neben' && 'sticky top-24 z-0', gemessen && anordnung === 'schmal' && 'order-1 mt-3')}
         >
           <TripWorkspaceMap key={reise.id} trip={reise} selectedDay={kanteWahl.art === 'eindeutig' ? '' : highlightId} onDay={onTagWechseln} presentation="canvas" />
         </div>
@@ -551,7 +551,7 @@ export default function TripWorkspacePlan({
         inert={dayVerborgen}
         data-u1b-default-tag={gemessen && defaultId !== '' && bodyId === defaultId ? 'ja' : undefined}
         style={gemessen && anordnung === 'neben' ? { gridColumn: mapCanvasVisible ? 1 : 2, gridRow: mapCanvasVisible ? 3 : 2, minWidth: 0 } : undefined}
-        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'rounded-2xl bg-surface-50/75 p-3 sm:p-4' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'))}
+        className={cn('min-w-0 max-w-full [overflow-wrap:anywhere]', gemessen && (anordnung === 'neben' ? 'rounded-2xl bg-surface-50/75 p-3 sm:p-4' : 'rounded-[24px] border border-line-200 bg-white p-3 sm:p-4'), gemessen && anordnung === 'schmal' && mapCanvasVisible && 'order-3')}
       >
         {hinweis ? <p data-u1b-hinweis={hinweis.art} className="text-sm leading-6 text-ink-800">{hinweisText(hinweis)}</p> : null}
         {kanteUnlesbar ? <KanteHinweis art="unlesbar" /> : null}
