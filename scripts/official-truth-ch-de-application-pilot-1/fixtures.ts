@@ -56,7 +56,7 @@ export async function fixtureRetrieve(fault='none') {
     :fault==='no-visa-table'?fixtureBody.replace('Visumpflicht für Deutschland: Ja/Nein','Visum?')
     :fault==='hidden-swiss'?fixtureBody.replace(swissRow,'<tr><td>Schweiz</td><td><span hidden>Nein</span></td></tr>')
     :fault==='ambiguous-header'?fixtureBody.replace('</thead>','<tr><th>Staaten und Gebietskörperschaften</th><th>Visumpflicht für Deutschland: Ja/Nein</th></tr></thead>')
-    :fault==='partial'?fixtureBody.slice(0,-8)
+    :fault==='partial'?fixtureBody.slice(0,fixtureBody.indexOf(swissRow))
     :fault==='oversize'?'x'.repeat(65_537):fixtureBody
   return decideOfficialTruthServerOwnedRetrieval({sourceId,url:fixtureUrl},{now:()=>new Date(),resolve:async()=>[{address:'8.8.8.8',family:4}],timeoutMs:fault==='timeout'?5:1000,
     catalog:{identityProfiles:[profile],transport:{aufrufen:async()=>({ok:true,antwort:quellenKatalogSnapshotAntwort(fixtureRegistry)})}},
