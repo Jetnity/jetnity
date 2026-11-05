@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { fixtureTrip, fixtureRetrieve, fixtureContract, fixtureRegistry, fixtureExtract, consumeOfficialTruthTrustedFactExecutionContext, loadFixtureModule } from '../../../scripts/official-truth-ch-de-application-pilot-1/fixtures'
+import { fixtureTrip, fixtureBody, fixtureRetrieve, fixtureContract, fixtureRegistry, fixtureExtract, consumeOfficialTruthTrustedFactExecutionContext, loadFixtureModule } from '../../../scripts/official-truth-ch-de-application-pilot-1/fixtures'
 import type * as Evaluation from './evaluate-server'
 import { pilotScope } from './scope-server'
 import { pilotContextCurrent, pilotGraphFingerprint } from './context'
 import { requirementsLokalFuerReise } from '../engine'
+import { chDeAaS1VisaRowResearchFromHtml } from '../official-truth-ch-de-aa-s1-visa-row-research-server'
 
 function runtime(fault='none') {
   const trip=fixtureTrip();let retrievals=0,rechecks=0
@@ -20,6 +21,27 @@ function runtime(fault='none') {
   })
   return {trip,evaluator,retrievals:()=>retrievals}
 }
+test('the already wired application fixture requires exact AA-like semantics, without real source authority',async()=>{
+  const parsed=chDeAaS1VisaRowResearchFromHtml(fixtureBody)
+  assert.equal(parsed.status,'research_visa_table_observation')
+  if(parsed.status!=='research_visa_table_observation')return
+  assert.equal(parsed.sourceCustody,'not_verified')
+  assert.equal(parsed.legalApplicability,'not_verified')
+  assert.equal(parsed.acceptedRules,0)
+  assert.equal(parsed.databaseWrites,0)
+  const retrieval=await fixtureRetrieve('footnoted')
+  assert.equal(retrieval.status,'server_owned_official_retrieval')
+  if(retrieval.status!=='server_owned_official_retrieval')return
+  assert.deepEqual(chDeAaS1VisaRowResearchFromHtml(retrieval.sourceSnapshot),{
+    status:'blocked',reason:'qualified_or_conflicting_swiss_row',
+  })
+  const run=runtime('footnoted')
+  const result=await run.evaluator.evaluateApplicationPilot(run.trip,new AbortController().signal)
+  assert.notEqual(result.status,'verified')
+  assert.equal(result.evaluations.filter(e=>e.result!=='unknown').length,0)
+  assert.equal(run.retrievals(),1)
+})
+
 test('current-only complete synthetic source -> canonical Evidence/review/Rule -> Requirements visa; other cells unknown',async()=>{
   const r=runtime();assert(pilotScope(r.trip).ok);const result=await r.evaluator.evaluateApplicationPilot(r.trip,new AbortController().signal)
   assert.equal(result.status,'verified');assert.equal(r.retrievals(),1)
@@ -27,9 +49,9 @@ test('current-only complete synthetic source -> canonical Evidence/review/Rule -
   assert.equal(visa.result,'not_required');assert.match(visa.evidence.authority!,/SYNTHETISCHE/)
   assert(visa.evidence.checkedAt);assert.equal(visa.evidence.validUntil,null)
   assert(result.evaluations.filter(e=>e.requirementType!=='visa').every(e=>e.result==='unknown'))
-  assert(!JSON.stringify(result).includes('END OF COMPLETE'));assert(result.expiresAt)
+  assert(!JSON.stringify(result).includes('Staaten und Gebietskörperschaften'));assert(result.expiresAt)
 })
-for(const fault of ['disabled','not-admitted','missing-contract','authority','altered','partial','oversize','timeout','withdrawn','wrong-account','revision-changed'])test(`fail closed: ${fault}`,async()=>{
+for(const fault of ['disabled','not-admitted','missing-contract','authority','altered','footnoted','duplicate-swiss','no-visa-table','hidden-swiss','ambiguous-header','partial','oversize','timeout','withdrawn','wrong-account','revision-changed'])test(`fail closed: ${fault}`,async()=>{
   const r=runtime(fault),result=await r.evaluator.evaluateApplicationPilot(r.trip,new AbortController().signal)
   assert.notEqual(result.status,'verified');assert(result.evaluations.every(e=>e.result==='unknown'))
   if(['disabled','not-admitted','missing-contract','authority'].includes(fault))assert.equal(r.retrievals(),0)
