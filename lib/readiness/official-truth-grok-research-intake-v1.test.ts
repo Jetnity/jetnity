@@ -149,6 +149,7 @@ describe('Grok research handoff V1 quarantine: actual paired JSON structure, no 
       'eta_requirement_type_wrong',
       'source_reference_missing',
       'unsupported_stay_column',
+      'visa_mode_on_nonvisa',
     ])
     assert.equal(result.candidates[0]?.disposition, 'blocked')
     assert.equal(result.acceptedRules, 0)
@@ -172,7 +173,10 @@ describe('Grok research handoff V1 quarantine: actual paired JSON structure, no 
 
   test('duplicate candidate, extra report and invalid source URLs cannot create a phantom candidate', () => {
     const pkg = packageFixture(), ver = verificationFixture()
-    pkg.candidates.push({ ...pkg.candidates[0]! })
+    // The incoming handoff is JSON: duplicate records have distinct objects.
+    // A shallow JS copy would reuse nested objects and fail the cycle/alias
+    // guard before the candidate-ID duplication check is reached.
+    pkg.candidates.push(structuredClone(pkg.candidates[0]!))
     assert.deepEqual(read(pkg, ver), { status: 'blocked', reason: 'invalid_candidate_set' })
     pkg.candidates.pop()
     assert.deepEqual(read(pkg, { ...ver, per_candidate: { ...ver.per_candidate, 'CAND-OTHER-001': {} } }), {
