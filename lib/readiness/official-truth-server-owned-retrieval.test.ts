@@ -64,6 +64,7 @@ type Schritt = {
   headers?: Record<string, string>
   body?: string | Uint8Array
   stuecke?: Uint8Array[]
+  framingComplete?: boolean
   location?: string
   haengen?: boolean
   lesen?: { gesehen: boolean; abgebrochen: boolean }
@@ -227,6 +228,7 @@ async function laufen(teil?: {
           if (spur) spur.gesehen = true
           for (const stueck of inhalt) yield stueck
         })(),
+        ...(schritt.framingComplete === undefined ? {} : { framingComplete: () => schritt.framingComplete === true }),
         cancel() {
           if (spur) spur.abgebrochen = true
         },
