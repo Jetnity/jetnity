@@ -246,7 +246,7 @@ export type OfficialTruthServerOwnedRetrievalHttpErgebnis =
       headers: HttpKopf
       body: AsyncIterable<Uint8Array> | null
       cancel?: () => void
-      /** Native HTTP parser framing proof; ignored by existing official retrieval. */
+      /** Native HTTP parser framing proof; checked after the complete bounded body read when supplied. */
       framingComplete?: () => boolean
     }
   | { ok: false; reason: 'address_not_permitted' | 'dns_failed' | 'dns_empty' | 'timeout' | 'http_failed' }
