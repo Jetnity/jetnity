@@ -14,6 +14,7 @@ import { decideOfficialTruthServerOwnedRetrieval } from '@/lib/readiness/officia
 import { officialTruthTrustedFactExtrahierenMitDefinitionen, consumeOfficialTruthTrustedFactExecutionContext, type OfficialTruthExtractorDefinition } from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 import type { ApplicationContract } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server'
 import { pilotGraphFingerprint, type PilotDeclaration } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
+import { chDeAaS1VisaRowResearchFromHtml } from '@/lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server'
 
 export const fixtureTripId='11111111-1111-4111-8111-111111111111'
 export const fixtureUserId='22222222-2222-4222-8222-222222222222'
