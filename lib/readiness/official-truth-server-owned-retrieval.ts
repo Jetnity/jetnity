@@ -833,6 +833,19 @@ async function hopLesen(
     antwort.cancel?.()
     return { art: 'blocked', reason: koerper.reason }
   }
+  // A fully parsed HTML/JSON document can still be a truncated HTTP body.
+  // Do not let parser repair of a missing tail turn an incomplete response into
+  // source-owned evidence. The native HTTP client supplies IncomingMessage.complete.
+  let nativeFramingComplete = true
+  try {
+    if (antwort.framingComplete) nativeFramingComplete = antwort.framingComplete() === true
+  } catch {
+    nativeFramingComplete = false
+  }
+  if ((laenge.value !== null && koerper.bytes.byteLength !== laenge.value) || !nativeFramingComplete) {
+    antwort.cancel?.()
+    return { art: 'blocked', reason: 'http_failed' }
+  }
   return { art: 'bytes', bytes: koerper.bytes, contentType }
 }
 
