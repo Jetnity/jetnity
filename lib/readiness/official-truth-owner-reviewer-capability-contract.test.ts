@@ -119,6 +119,10 @@ function startCluster(): Cluster {
       create role authenticated nologin noinherit;
       create role service_role nologin noinherit;
 
+      -- Deliberate test doubles ONLY. The real role helper reads creator_profiles
+      -- under SECURITY DEFINER and AAL2 reads auth.jwt() from a signed token.
+      -- This disposable proof tests the capability's own AND/ACL contract,
+      -- not those live upstream helper implementations.
       create or replace function public.hat_rolle_mindestens(required text)
       returns boolean
       language sql
@@ -175,7 +179,7 @@ test('owner reviewer capability SQL contract: invoker, AAL2 gate and minimal gra
   assert.doesNotMatch(stripped, /auth\.uid|break-glass|create\s+table|alter\s+table|create\s+policy|drop\s+policy/i)
 })
 
-test('owner reviewer capability: disposable PostgreSQL proof for fail-closed execution', { timeout: 120_000 }, async () => {
+test('owner reviewer capability: disposable PostgreSQL proof with MOCKED upstream helpers', { timeout: 120_000 }, async () => {
   const cluster = startCluster()
   try {
     const config = cluster.ok(`
@@ -224,4 +228,29 @@ test('owner reviewer capability: disposable PostgreSQL proof for fail-closed exe
   } finally {
     cluster.stop()
   }
+})
+
+ 
+test('upstream role/AAL2 declarations are source-linked, not covered by the mock-helper runtime proof', () => {
+  const roles = noComments(readFileSync(
+    join(MIGRATION_DIR, '20260817100000_rollenmodell.sql'), 'utf8',
+  ))
+  const aal2 = noComments(readFileSync(
+    join(MIGRATION_DIR, '20260827170000_admin_aal2_data_plane_alignment.sql'), 'utf8',
+  ))
+
+  // The real minimum-role helper is SECURITY DEFINER, bound to
+  // creator_profiles via aktuelle_rolle() and auth.uid(), not a JWT role string.
+  assert.match(roles, /create or replace function public\.aktuelle_rolle\(\)[\s\S]*?security definer[\s\S]*?from public\.creator_profiles/i)
+  assert.match(roles, /create or replace function public\.hat_rolle_mindestens\(minimum text\)[\s\S]*?security definer[\s\S]*?public\.aktuelle_rolle\(\)/i)
+  assert.match(roles, /where p\.user_id = \(select auth\.uid\(\)\)/i)
+
+  // The actual AAL2 helper verifies auth.jwt() ->> 'aal'; it is not the
+  // disposable local test helper's arbitrary request.jwt.claim.aal GUC.
+  assert.match(aal2, /create or replace function public\.aktuelles_admin_aal2\(\)[\s\S]*?security invoker[\s\S]*?auth\.jwt\(\) ->> 'aal'/i)
+  assert.match(aal2, /revoke all on function public\.aktuelles_admin_aal2\(\) from public, anon/i)
+  assert.match(aal2, /grant execute on function public\.aktuelles_admin_aal2\(\) to authenticated, service_role/i)
+
+  // These checks inspect repository source only. They do not execute the
+  // real Supabase helper chain and cannot clear #917 hosted readback STOP.
 })
