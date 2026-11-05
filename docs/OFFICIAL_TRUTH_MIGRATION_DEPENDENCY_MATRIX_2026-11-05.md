@@ -27,16 +27,28 @@ This matrix reuses the already-verified baseline and focuses only on Official-Tr
 | `20261013184409_official_truth_ch_de_application_pilot_1.sql` | trips/travellers schema + `darf_official_truth_freigeben()` | **LOCAL_DEV_ONLY_CURRENTLY** | CH→DE pilot persistence/grant RPCs; currently code-only/local-unapplied. | `applicationPilotAvailable()` and contract remain hard-off. |
 | `20261023153726_official_truth_current_version_lookup_1.sql` | `official_original_*`, `official_provenance_*`, `...1111839` | **LOCAL_DEV_ONLY_CURRENTLY** | Current-version lookup API for retained accepted receipts; marked LOCAL/UNAPPLIED. | Needs hosted admission plan and lifecycle witness operating model. |
 
-## Resulting ordered chain
+## Dependency order — distinct branches, not a blanket Production apply plan
 
-1. `...121258`  
-2. `...151048`  
-3. `...180549` + `...193748` (parallel after root, both required before v2 cutover replay)  
-4. `...2154952` (capability gate, independent from v2 schema cutover but required for reviewer-protected flows)  
-5. `...04010705`  
-6. `...04223959`  
-7. `...10180000` (gated extension)  
-8. `...1111839` → `...13184409` → `...23153726` (currently local/dev-only branch)
+**Core source/evidence store (conditional future Production foundation):**
+
+1. `20261001121258` — private source/Evidence store.
+2. `20261001151048` — accepted claims, after the private store.
+3. `20261001180549` (trusted writer) and `20261001193748` (catalog) — after their individual prerequisites, not necessarily serially.
+4. `20261004010705` (content identity V2) — after both gateway/writer and their supporting schemas; requires its own empty-cutover/replay evidence.
+5. `20261004223959` (catalog hardening) — after the identity V2 change.
+6. `20261010180000` (fingerprint protocol V2) — a separately gated extension, **not** implicit approval to fetch or store real sources.
+
+**Independent reviewer / Application-Pilot branch:**
+
+- `20261002154952` — `darf_official_truth_freigeben()` depends on the pre-existing real role and AAL2 helper chain. Its documented hosted Stage-1 readback is **blocked under #917**.
+- `20261013184409` — CH→DE Application-Pilot depends on the existing Trip/Traveller schema, ownership/revision contracts and the **verified reviewer capability**. It does **not** depend on `20261011111839` and does not need retained originals merely for its scoped current-request-only pilot. Stage 2 is **NOT_ATTEMPTED**, runtime OFF.
+
+**Separate retained-original / lookup branch (currently local/unapplied):**
+
+- `20261011111839` — retained-original custody/lifecycle depends on the integrated provenance/custody chain and its stated protocol prerequisites; separately gated and synthetic-only.
+- `20261023153726` — current-version lookup depends on the `official_original_*` and `official_provenance_*` objects, including the custody/lifecycle branch. It is not a prerequisite for the current-request-only CH→DE pilot.
+
+**Classification is not an apply authorization.** Even items marked `PROD_REQUIRED_FOUNDATION` describe a conditional *target architecture*, not verified current Production presence or an instruction to execute migrations. The 80/60 migration counts and 25/5 divergence are previous read-only evidence, not an exhaustive live object/ACL/dependency reconciliation. Exact applicable migrations, their prerequisites and permissions must be proven through the authorized #917 workflow before a specific hosted action.
 
 ## Missing proofs for first complete CH→DE source+rule path
 
@@ -45,6 +57,10 @@ This matrix reuses the already-verified baseline and focuses only on Official-Tr
 3. **Pilot runtime remains hard-off** (`applicationPilotAvailable(): false`, `applicationPilotEnabled(): false`), so CH→DE pilot RPC flow is not available in runtime.
 4. **Reader adapter remains unavailable** (`trusted_accepted_reader_unavailable` path in CH→DE first-visa adapter), so no successful accepted-reader bridge to workspace is currently possible.
 5. **Current-version lookup/original-custody path is still local-unapplied**, therefore no hosted retained-custody lookup proof exists yet for CH→DE.
+
+## Scope of local synthetic security proof
+
+The Engineering V1 owner-reviewer PostgreSQL test applies the **actual** capability migration in an isolated disposable cluster, but substitutes simplified implementations for the upstream role and AAL2 helpers. It is only a *mock-helper contract proof*, not evidence of effective Hosted RLS, Supabase-signed JWT verification, real `creator_profiles` owner role, or actual Stage-1 installed ACLs. Its separate source assertions identify the real upstream definitions, without executing the hosted path.
 
 ## Work that can proceed without blocked external research
 
