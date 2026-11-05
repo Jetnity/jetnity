@@ -87,7 +87,7 @@ describe('CH→DE AA visa table: research observation, not accepted government f
     blocked(html([table(), table()]), 'ambiguous_visa_table')
     blocked(html([table([swiss, swiss])]), 'ambiguous_swiss_row')
     blocked(html([table([swiss, '<tr><td>Schweiz</td><td>Ja</td></tr>'])]), 'ambiguous_swiss_row')
-    blocked(html([table([swiss], tableHeaders + tableHeaders)]), 'swiss_row_missing')
+    blocked(html([table([swiss], tableHeaders + tableHeaders)]), 'ambiguous_visa_table')
   })
 
   test('nested table, counterfeit header and over-limit input fail closed', () => {
