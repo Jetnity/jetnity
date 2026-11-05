@@ -81,7 +81,7 @@ function utc(value: unknown): number | null {
   const instant = Date.parse(value)
   if (!Number.isFinite(instant)) return null
   // Reject normalized invalid calendar dates (e.g. 31 February).
-  if (new Date(instant).toISOString() !== (value.includes('.') ? new Date(instant).toISOString() : value.replace('Z', '.000Z'))) return null
+  if (new Date(instant).toISOString().slice(0, 19) !== value.slice(0, 19)) return null
   return instant
 }
 
@@ -135,13 +135,15 @@ export function grokRecherchePaketQuarantaene(
   if (bytes.length > MAX_INPUT_LENGTH) return blocked('input_limit')
 
   const p = record(candidatePackage), v = record(verification)
-  if (!p || p.schema_version !== 1 || !PACKAGE.test(p.package_id as string)) return blocked('invalid_package')
-  if (!v || v.schema_version !== 1 || !VERIFY.test(v.verification_id as string)) return blocked('invalid_verification')
-  if (typeof p.package_id !== 'string' || v.package_id !== p.package_id) return blocked('verification_identity_mismatch')
+  if (!p || p.schema_version !== 1 || typeof p.package_id !== 'string'
+    || !PACKAGE.test(p.package_id)) return blocked('invalid_package')
+  if (!v || v.schema_version !== 1 || typeof v.verification_id !== 'string'
+    || !VERIFY.test(v.verification_id)) return blocked('invalid_verification')
+  if (v.package_id !== p.package_id) return blocked('verification_identity_mismatch')
   const country = p.package_id.split('-')[2]
   if (!(COUNTRIES as readonly string[]).includes(expectedDestination)
     || expectedDestination !== country
-    || (v.verification_id as string).split('-')[2] !== country) return blocked('invalid_scope')
+    || v.verification_id.split('-')[2] !== country) return blocked('invalid_scope')
 
   const pkgTime = utc(p.generated_at_utc), checkTime = utc(v.generated_at_utc)
   if (pkgTime === null || checkTime === null) return blocked('invalid_package')
