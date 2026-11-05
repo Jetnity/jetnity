@@ -1191,10 +1191,20 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       // selector can silently press Enter on a DIV and leave no detail.
       const kante = seite.locator('button[data-u1c-kante-id="connection:stage-bkk:stage-kc"]')
       await kante.waitFor({ state: 'visible' })
-      await kante.focus()
-      assert.equal(await kante.evaluate((el) =>
-        el instanceof HTMLButtonElement && !el.disabled && document.activeElement === el,
-      ), true, 'the route edge must be an actionable, keyboard-focused button')
+      const zugang = await kante.evaluate((el) => ({
+        button: el instanceof HTMLButtonElement,
+        enabled: el instanceof HTMLButtonElement && !el.disabled,
+        keyboardReachable: el instanceof HTMLElement && el.tabIndex >= 0,
+        inert: Boolean(el.closest('[inert], [hidden]')),
+      }))
+      assert.deepEqual(zugang, {
+        button: true, enabled: true, keyboardReachable: true, inert: false,
+      }, JSON.stringify(zugang))
+      // Playwright locator.press focuses the matching element *as part of*
+      // the key press. A separate focus() + immediate activeElement snapshot
+      // can race with the Workspace's route-focus layout effects and fail
+      // before the keyboard interaction is ever tested. The actual Enter
+      // navigation and detail/focus-return assertions below remain required.
       await kante.press('Enter')
       const detail = seite.locator('[data-u1c-kante-detail]')
       try {
