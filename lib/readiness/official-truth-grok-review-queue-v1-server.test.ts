@@ -172,6 +172,31 @@ describe('Grok V1 server-only review plan: no trusted source or accepted rule', 
     assert.deepEqual(result.countries[0]?.candidates[0]?.findings, ['visa_mode_unsupported'])
     assert.equal(result.countries[0]?.candidates[0]?.state, 'blocked')
     assert.equal(result.acceptedRules, 0)
+
+    const eta = pair('US')
+    eta.candidatePackage.candidates[0]!.candidate_id = 'CAND-ESTA-001'
+    eta.candidatePackage.candidates[0]!.requirement_type = 'other_entry_requirement'
+    eta.candidatePackage.candidates[0]!.fact_kind = 'official_actions'
+    eta.candidatePackage.candidates[0]!.schema_mapping = {
+      'private.official_rule_claim_stay_limit.max_days': 90,
+    }
+    const resultEta = read([{
+      ...eta,
+      verification: {
+        ...eta.verification,
+        per_candidate: {
+          'CAND-ESTA-001': { verdict: 'candidate_ready_for_TL_qualification' },
+        },
+      },
+    }])
+    assert.equal(resultEta.status, 'research_review_queue_prepared')
+    if (resultEta.status !== 'research_review_queue_prepared') return
+    assert.deepEqual(resultEta.countries[0]?.candidates[0]?.findings, [
+      'eta_requirement_type_wrong',
+      'unsupported_stay_column',
+      'visa_mode_on_nonvisa',
+    ])
+    assert.equal(resultEta.countries[0]?.candidates[0]?.state, 'blocked')
   })
 
   test('server-only module contains no network, Supabase write or source admission call', () => {
