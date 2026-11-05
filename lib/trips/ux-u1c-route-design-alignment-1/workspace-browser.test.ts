@@ -1186,10 +1186,41 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     const verbindung = async (seite: Page) => {
       await seite.setViewportSize({ width: 390, height: 844 })
       await plan(seite)
-      const kante = seite.locator('[data-u1c-kante-id="connection:stage-bkk:stage-kc"]')
+      // The route renders the same data-u1c-kante-id on an actionable BUTTON
+      // or on an inert DIV when the edge is unavailable. Waiting on a broad
+      // selector can silently press Enter on a DIV and leave no detail.
+      const kante = seite.locator('button[data-u1c-kante-id="connection:stage-bkk:stage-kc"]')
+      await kante.waitFor({ state: 'visible' })
+      await kante.focus()
+      assert.equal(await kante.evaluate((el) =>
+        el instanceof HTMLButtonElement && !el.disabled && document.activeElement === el,
+      ), true, 'the route edge must be an actionable, keyboard-focused button')
       await kante.press('Enter')
       const detail = seite.locator('[data-u1c-kante-detail]')
-      await detail.waitFor()
+      try {
+        await detail.waitFor()
+      } catch (fehler) {
+        // Do not retry the interaction or hide a regression. If this still
+        // fails, report the original route state so the owning UX workstream
+        // can distinguish inert-edge, lost navigation and detail-render errors.
+        const zustand = await seite.evaluate(() => {
+          const el = document.querySelector('[data-u1c-kante-id="connection:stage-bkk:stage-kc"]')
+          const aktiv = document.activeElement
+          const route = document.querySelector('[data-u1c-route]')
+          return {
+            url: window.location.pathname + window.location.search,
+            edgeTag: el?.tagName ?? null,
+            edgePressed: el?.getAttribute('aria-pressed') ?? null,
+            edgeDisabled: el instanceof HTMLButtonElement ? el.disabled : null,
+            edgeInert: Boolean(el?.closest('[hidden], [inert]')),
+            activeTag: aktiv?.tagName ?? null,
+            activeEdge: aktiv?.getAttribute('data-u1c-kante-id') ?? null,
+            routeVisible: route instanceof HTMLElement && route.getClientRects().length > 0,
+            detailCount: document.querySelectorAll('[data-u1c-kante-detail]').length,
+          }
+        })
+        throw new Error(`keyboard edge detail unavailable: ${fehler instanceof Error ? fehler.message : String(fehler)}; ${JSON.stringify(zustand)}`)
+      }
       const occurrence = await detail.getAttribute('data-u1c-kante-detail')
       const tag = new URL(seite.url()).searchParams.get('tag')
       const kanteId = new URL(seite.url()).searchParams.get('kante')
