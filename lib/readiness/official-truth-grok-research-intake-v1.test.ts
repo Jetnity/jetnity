@@ -136,9 +136,11 @@ describe('Grok research handoff V1 quarantine: actual paired JSON structure, no 
     pkg.candidates[0]!.fact_kind = 'official_actions'
     pkg.candidates[0]!.schema_mapping = { 'private.official_rule_claim_stay_limit.max_days': 90 }
     pkg.candidates[0]!.claims[0]!.source_ref = 'SRC-US-MISSING'
-    const ver = verificationFixture()
-    ver.per_candidate = {
-      'CAND-ESTA-001': { verdict: 'candidate_ready_for_TL_qualification', second_pass: { scope_ok: true, quote_supports_claim: true } },
+    const ver = {
+      ...verificationFixture(),
+      per_candidate: {
+        'CAND-ESTA-001': { verdict: 'candidate_ready_for_TL_qualification', second_pass: { scope_ok: true, quote_supports_claim: true } },
+      },
     }
     const result = read(pkg, ver)
     assert.equal(result.status, 'quarantined_research_only')
