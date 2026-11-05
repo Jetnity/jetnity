@@ -54,9 +54,13 @@ This slice reuses that verified baseline; it does not re-open migration counting
   - productive required migrations,
   - currently local/dev-only migrations,
   - unresolved gates before first complete CH→DE path.
-- New security test is deterministic, synthetic, and local-only (disposable PostgreSQL).
+- New security test is deterministic, synthetic, and local-only (disposable PostgreSQL); it distinguishes mocked upstream helpers from real source definitions and **does not** assert live RLS/ACL or signed-JWT proof.
 - Test output is attached in the handoff/report.
 - Existing #917 Stage1 readback STOP remains untouched.
+
+## Technical Lead R1 correction scope (05.11.2026)
+
+The database dependency diagram explicitly separates the current-request-only CH→DE pilot from retained-original custody/lookup. The local SQL proof applies the real owner-reviewer capability migration against **mocked** role/AAL2 helpers, and independently pins the actual upstream migration source definitions. Only the fully authorized #917 readback can prove deployed definitions, grants, JWT semantics and RLS. This is a bounded correction of the existing Engineering V1 scope, not permission for a hosted SQL call or a new migration.
 
 ## Stop condition
 
