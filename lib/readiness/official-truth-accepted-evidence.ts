@@ -80,6 +80,7 @@ function genaueSchluessel(satz: object, erlaubt: readonly string[]): boolean {
 
 function genaueEvidenceSchluessel(evidence: EvidenceVersion): boolean {
   if (!Object.hasOwn(evidence, 'sourceFingerprintProtocol')) return genaueSchluessel(evidence, EVIDENCE_FELDER)
+  if (evidence.sourceFingerprintProtocol === 3) return genaueSchluessel(evidence, EVIDENCE_V2_FELDER)
   return evidence.sourceFingerprintProtocol === 2 && genaueSchluessel(evidence, EVIDENCE_V2_FELDER)
 }
 

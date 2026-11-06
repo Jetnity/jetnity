@@ -3,6 +3,7 @@ import 'server-only'
 import { createHash } from 'node:crypto'
 import { evidenceQuellenFingerprint } from '../../../lib/readiness/evidence'
 import { officialTruthSourceFingerprintV2 } from '../../../lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthProtocol3MarkerPresent } from '../../../lib/readiness/official-truth-whole-source-current-request-1'
 import { verifyLocalIntegratedPilotBundle, LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE, type LocalIntegratedPilotEnvelope } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import { LocalPgConnection, pgBytes, pgText } from '../official-truth-integrated-pilot-1/pg-wire'
 import { inspectIntegratedReadback, publishIntegratedBundle, readIntegratedRows } from '../official-truth-integrated-pilot-1/storage'
@@ -13,7 +14,12 @@ export type PreparedOriginals = Readonly<{ envelope: LocalIntegratedPilotEnvelop
 export const rawDigest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
 
 /** Own the complete bytes synchronously before any async call, never a re-fetch. */
+function protocol3Refused(...values: readonly unknown[]): void {
+  if (values.some((value) => officialTruthProtocol3MarkerPresent(value))) throw new Error('protocol3_current_request_unsupported')
+}
+
 export function prepareOriginals(envelope: LocalIntegratedPilotEnvelope, bodies: readonly Uint8Array[]): PreparedOriginals {
+  protocol3Refused(envelope, bodies)
   const check = verifyLocalIntegratedPilotBundle(envelope)
   if (!check.ok) throw Error('original_closure_invalid')
   if (bodies.length !== check.value.receipt.payload.supports.length) throw Error('original_support_count')
@@ -42,6 +48,7 @@ export async function cursor(connection: LocalPgConnection): Promise<Cursor> {
 }
 /** SQL call is provisional; owned producer below requires COMMIT + fresh readback. */
 export async function bindCandidate(connection: LocalPgConnection, prepared: PreparedOriginals, review: string, key: string, witness: Cursor, mode: 'create_or_verify' | 'verify_existing') {
+  protocol3Refused(prepared, review, key, witness, mode)
   const params = [pgText(prepared.envelope.bundle.recordFingerprint), pgText(review), pgText(key), pgText(witness.sequence, 20), pgText(witness.eventHash), pgText(mode), ...prepared.bodies.map(pgBytes)]
   const array = prepared.bodies.map((_, i) => `$${i + 7}::bytea`).join(',')
   const rows = await connection.query(`SELECT official_original_api.bind_candidate($1::text,$2::uuid,ARRAY[${array}]::bytea[],$3::text,$4::bigint,$5::text,$6::text) AS outcome`, params)
@@ -49,6 +56,7 @@ export async function bindCandidate(connection: LocalPgConnection, prepared: Pre
   return rows[0]!.outcome!
 }
 export async function reviewCandidate(connection: LocalPgConnection, prepared: PreparedOriginals): Promise<string> {
+  protocol3Refused(prepared)
   const verified = verifyLocalIntegratedPilotBundle(prepared.envelope)
   if (!verified.ok) throw Error('original_closure_invalid')
   const rows = await connection.query('SELECT official_original_api.review($1::text,$2::text,$3::jsonb)::text AS review_id', [pgText(prepared.envelope.bundle.recordFingerprint), pgText(verified.value.receipt.payload.proof.reviewPacketKey), pgText(JSON.stringify(prepared.ordered), 3802)])
@@ -57,6 +65,7 @@ export async function reviewCandidate(connection: LocalPgConnection, prepared: P
 }
 /** Holds the SQL lifecycle SHARE lock through both re-proofs. No raw bytes escape. */
 export async function readCandidate(cluster: LocalProofCluster, connection: LocalPgConnection, fingerprint: string, key: string, witness: Cursor) {
+  protocol3Refused(cluster, fingerprint, key, witness)
   const rows = await connection.query('SELECT ordinal::text,original_pin::text,evidence_version,raw_digest,original_bytes FROM official_original_api.read_candidate($1::text,$2::text,$3::bigint,$4::text)', [pgText(fingerprint), pgText(key), pgText(witness.sequence, 20), pgText(witness.eventHash)])
   // Preserve the existing reader's REPEATABLE READ / READ ONLY contract. The
   // guard transaction keeps the lifecycle SHARE lock until this re-proof ends.
@@ -83,6 +92,7 @@ export async function readCandidate(cluster: LocalProofCluster, connection: Loca
 }
 /** Read/COMMIT use a NEW connection after the writer's acknowledged COMMIT. */
 export async function persistCandidate(cluster: LocalProofCluster, oids: { element: number; array: number }, input: PreparedOriginals, review: string, key: string, witness: Cursor, mode: 'create_or_verify' | 'verify_existing' = 'create_or_verify') {
+  protocol3Refused(cluster, oids, input, review, key, witness, mode)
   const prepared = prepareOriginals(input.envelope, input.bodies)
   const writer = await LocalPgConnection.connect(cluster, 'ot_original_test_writer')
   let committing = false, committed = false

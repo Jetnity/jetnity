@@ -16,6 +16,7 @@
 
 import 'server-only'
 
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { akzeptierteEvidenceLesen, type EvidenceVersion } from '@/lib/readiness/evidence'
 import { checkedAtLesen, officialFrische } from '@/lib/readiness/official'
 import {
@@ -329,6 +330,9 @@ export async function decideOfficialTruthSameRequestProof(
   eingabe: unknown,
   abhaengigkeiten: OfficialTruthSameRequestProofAbhaengigkeiten,
 ): Promise<OfficialTruthSameRequestProofErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return blockiert('invalid_source_snapshot')
+  }
   const form = zeugenEingabe(eingabe)
   if (!form.ok) return blockiert(form.reason)
 

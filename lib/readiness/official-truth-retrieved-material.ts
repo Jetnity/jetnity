@@ -12,9 +12,12 @@ import { evidenceQuellenFingerprint, type EvidenceQuellenmaterial } from '@/lib/
 import {
   contentIdentityBinding,
   contentRepresentationFromRegistry,
+  OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
   type ContentIdentityBinding,
 } from '@/lib/readiness/official-truth-content-identity'
 import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
+import { officialTruthWholeSourceCurrentRequestAllowed } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { officialTruthRechercheQuellenRouten } from '@/lib/readiness/official-truth-research-source-routing'
@@ -22,6 +25,7 @@ import { quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/sourc
 
 const UMSCHLAG_FELDER = ['request', 'registry', 'descriptors', 'sourceId', 'material'] as const
 const MATERIAL_FELDER = ['canonicalUrl', 'retrievedAt', 'sourceSnapshot', 'contentType'] as const
+const MATERIAL_MARKER_FELDER = ['canonicalUrl', 'retrievedAt', 'sourceSnapshot', 'contentType', 'sourceFingerprintProtocol'] as const
 const TIEFE_MAX = 8
 
 /**
@@ -119,7 +123,7 @@ export type OfficialTruthAbgerufenBeleg = ContentIdentityBinding & {
   readonly canonicalUrl: string
   readonly retrievedAt: string
   readonly sourceContentHash: string
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly material: EvidenceQuellenmaterial
 }
 
@@ -135,6 +139,16 @@ function datensatz(wert: unknown): Record<string, unknown> | null {
 function genaueSchluessel(satz: Record<string, unknown>, erlaubt: readonly string[]): boolean {
   const namen = Object.keys(satz)
   return namen.length === erlaubt.length && erlaubt.every((name) => Object.hasOwn(satz, name))
+}
+
+/** Own data only. A getter is not read and is not a carried marker. */
+function datenSchluessel(satz: object, erlaubt: readonly string[]): boolean {
+  const keys = Reflect.ownKeys(satz)
+  if (keys.some((key) => typeof key !== 'string') || keys.length !== erlaubt.length) return false
+  return erlaubt.every((name) => {
+    const descriptor = Object.getOwnPropertyDescriptor(satz, name)
+    return descriptor != null && 'value' in descriptor && descriptor.enumerable === true
+  })
 }
 
 function sperre(reason: OfficialTruthAbrufSperrgrund): OfficialTruthAbrufErgebnis {
@@ -262,11 +276,21 @@ function klassenVon(registry: unknown, sourceId: string): 'official_authority' |
 export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: unknown): OfficialTruthAbrufErgebnis {
   const satz = datensatz(umschlag)
   if (!satz) return sperre('invalid_envelope')
+  const materialVorher = datensatz(satz.material)
+  const markerVorher = materialVorher ? Object.getOwnPropertyDescriptor(materialVorher, 'sourceFingerprintProtocol') : undefined
+  if (markerVorher && !('value' in markerVorher)) return sperre('invalid_source_snapshot')
   const baum = baumPruefen(satz, '', [])
   if (baum) return sperre(baum)
   if (!genaueSchluessel(satz, UMSCHLAG_FELDER)) return sperre('invalid_envelope')
   const material = datensatz(satz.material)
-  if (!material || !genaueSchluessel(material, MATERIAL_FELDER)) return sperre('invalid_envelope')
+  if (!material) return sperre('invalid_envelope')
+  const markerDescriptor = Object.getOwnPropertyDescriptor(material, 'sourceFingerprintProtocol')
+  if (markerDescriptor && !('value' in markerDescriptor)) return sperre('invalid_source_snapshot')
+  const marked = markerDescriptor != null
+  if (marked ? !datenSchluessel(material, MATERIAL_MARKER_FELDER) : !genaueSchluessel(material, MATERIAL_FELDER)) {
+    return sperre('invalid_envelope')
+  }
+  const carriedMarker = marked ? markerDescriptor.value : undefined
   if (typeof satz.sourceId !== 'string') return sperre('invalid_envelope')
 
   const entscheidung = officialTruthRechercheQuellenRouten(satz.request, satz.registry, satz.descriptors)
@@ -300,23 +324,47 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
   if (!representation.ok || url.canonicalUrl !== representation.value.expectedFinalUrl
     || material.contentType !== representation.value.expectedMediaType) return sperre('content_identity_mismatch')
   const identity = contentIdentityBinding(representation.value)
-  const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
-  if (!sourceFingerprintProtocol) return sperre('invalid_source_snapshot')
-  const sourceContentHash = sourceFingerprintProtocol === 2
-    ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
-      ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {
-        ...identity,
-        canonicalUrl: url.canonicalUrl,
-        contentType: material.contentType,
-      })
-      : null
-    : evidenceQuellenFingerprint(material.sourceSnapshot)
+  const currentRequest = officialTruthWholeSourceCurrentRequestAllowed({
+    serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+    identity,
+    canonicalUrl: url.canonicalUrl,
+    contentType: representation.value.expectedMediaType,
+    requestUrl: url.canonicalUrl,
+    graph: registry.contentIdentity,
+  })
+  let sourceFingerprintProtocol: 1 | 2 | 3
+  let sourceContentHash: string | null
+  if (currentRequest) {
+    if (carriedMarker !== 3) return sperre('invalid_source_snapshot')
+    sourceFingerprintProtocol = 3
+    sourceContentHash = officialTruthSourceFingerprintV3(material.sourceSnapshot, {
+      ...identity,
+      canonicalUrl: url.canonicalUrl,
+      contentType: representation.value.expectedMediaType,
+    })
+  } else if (marked) {
+    return sperre('invalid_source_snapshot')
+  } else {
+    const derived = officialTruthSourceFingerprintProtocol(material.sourceSnapshot)
+    if (!derived) return sperre('invalid_source_snapshot')
+    sourceFingerprintProtocol = derived
+    sourceContentHash = sourceFingerprintProtocol === 2
+      ? officialTruthChDeSourceFingerprintV2Allowed(registry, identity, url.canonicalUrl, material.contentType)
+        ? officialTruthSourceFingerprintV2(material.sourceSnapshot, {
+          ...identity,
+          canonicalUrl: url.canonicalUrl,
+          contentType: material.contentType,
+        })
+        : null
+      : evidenceQuellenFingerprint(material.sourceSnapshot)
+  }
   if (!sourceContentHash) return sperre('invalid_source_snapshot')
   const belegMaterial: EvidenceQuellenmaterial = Object.freeze({
     contentType: representation.value.expectedMediaType,
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
     sourceSnapshot: material.sourceSnapshot,
+    ...(sourceFingerprintProtocol === 3 ? { sourceFingerprintProtocol: 3 as const } : {}),
   })
   return Object.freeze({
     ...identity,
@@ -329,7 +377,11 @@ export function officialTruthAbgerufenMaterialPruefen(umschlag: unknown, uhr: un
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
     sourceContentHash,
-    ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+    ...(sourceFingerprintProtocol === 2
+      ? { sourceFingerprintProtocol: 2 as const }
+      : sourceFingerprintProtocol === 3
+        ? { sourceFingerprintProtocol: 3 as const }
+        : {}),
     material: belegMaterial,
   })
 }

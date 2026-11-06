@@ -5,6 +5,7 @@
 // Eine Lücke bleibt eine Lücke. Dieses Modul erzeugt keine Anforderungswirkung.
 
 import { readContentIdentityBinding, readDistinctContentItemRefs, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import type { EvidenceLifecycle, EvidenceValidationState } from '@/lib/readiness/evidence'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
@@ -308,6 +309,7 @@ export function officialTruthAbdeckungBewerten(anfrage: OfficialTruthAbdeckungAn
   const echo = schluesselEcho(satz.ruleScopeKey)
   if (!ruleScopeKey) return ungueltig(echo, factKind, 'invalid_rule_scope_key')
   if (!factKind) return ungueltig(ruleScopeKey, null, 'invalid_fact_kind')
+  if (officialTruthProtocol3MarkerPresent(anfrage)) return ungueltig(ruleScopeKey, factKind, 'unexpected_fields')
 
   const referenz = checkedAtLesen(satz.referenceTime)
   if (!referenz) return ungueltig(ruleScopeKey, factKind, 'invalid_reference_time')

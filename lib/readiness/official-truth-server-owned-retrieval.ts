@@ -21,10 +21,15 @@ import https from 'node:https'
 import net from 'node:net'
 
 import { contentIdentityBinding, contentIdentityMatches, OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY, type ContentIdentityBinding } from '@/lib/readiness/official-truth-content-identity'
-import { officialTruthBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'
+import { officialTruthBoundedResponseBody, officialTruthCurrentRequestBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'
 import { quellenInhaltRouten } from '@/lib/readiness/source-router'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
 import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import { OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V3_MAX_BYTES, officialTruthSourceFingerprintV3 } from '@/lib/readiness/official-truth-source-fingerprint-v3'
+import {
+  officialTruthWholeSourceCurrentRequestAllowed,
+  officialTruthWholeSourceCurrentRequestProfile,
+} from '@/lib/readiness/official-truth-whole-source-current-request-1'
 import {
   quellenKatalogLesen,
   type OfficialTruthSourceCatalogAbhaengigkeiten,
@@ -210,7 +215,7 @@ export type OfficialTruthServerOwnedRetrievalErgebnis =
       readonly contentType: string
       readonly sourceSnapshot: string
       readonly sourceContentHash: string
-      readonly sourceFingerprintProtocol?: 2
+      readonly sourceFingerprintProtocol?: 2 | 3
       readonly redirectCount: number
     })
   | {
@@ -679,6 +684,50 @@ async function* bytesAusAntwort(antwort: IncomingMessage): AsyncGenerator<Uint8A
   }
 }
 
+const EINDEUTIGE_ROHKOPFZEILEN = new Set(['content-type', 'content-length', 'content-encoding', 'transfer-encoding'])
+
+function normalisierteKopfzeilen(antwort: IncomingMessage): { get(name: string): string | null } {
+  return {
+    get(name: string) {
+      const header = antwort.headers[name.toLowerCase()]
+      if (Array.isArray(header)) return header.join(', ')
+      return header ?? null
+    },
+  }
+}
+
+/**
+ * Protocol 3 reads the adapter's raw header pairs. Node's normalized map keeps
+ * one Content-Type and one Content-Length, so a duplicate would otherwise look
+ * like a clean response. A second relevant pair, or a pair that is not own
+ * data, is refused before the body is read. A response object with no raw list
+ * keeps the normalized map, which is the previous adapter behavior.
+ */
+function rohKopfzeilen(antwort: IncomingMessage): { get(name: string): string | null } | null {
+  const raw = antwort.rawHeaders
+  if (raw == null) return normalisierteKopfzeilen(antwort)
+  if (!Array.isArray(raw) || raw.length % 2 !== 0) return null
+  const eindeutig = new Map<string, string>()
+  for (let index = 0; index < raw.length; index += 2) {
+    const name = raw[index]
+    const value = raw[index + 1]
+    if (typeof name !== 'string' || typeof value !== 'string' || name.length === 0) return null
+    const key = name.toLowerCase()
+    if (!EINDEUTIGE_ROHKOPFZEILEN.has(key)) continue
+    if (eindeutig.has(key)) return null
+    eindeutig.set(key, value)
+  }
+  return {
+    get(name: string) {
+      const key = name.toLowerCase()
+      if (EINDEUTIGE_ROHKOPFZEILEN.has(key)) return eindeutig.get(key) ?? null
+      const header = antwort.headers[key]
+      if (Array.isArray(header)) return header.join(', ')
+      return header ?? null
+    },
+  }
+}
+
 function serverHttp(anfrage: {
   url: string
   lookup: OfficialTruthServerOwnedRetrievalLookup
@@ -718,16 +767,17 @@ function serverHttp(anfrage: {
         agent,
       },
       (antwort) => {
+        const headers = rohKopfzeilen(antwort)
+        if (!headers) {
+          antwort.destroy()
+          req.destroy()
+          fertig({ ok: false, reason: 'http_failed' })
+          return
+        }
         fertig({
           ok: true,
           status: antwort.statusCode ?? 0,
-          headers: {
-            get(name: string) {
-              const header = antwort.headers[name.toLowerCase()]
-              if (Array.isArray(header)) return header.join(', ')
-              return header ?? null
-            },
-          },
+          headers,
           body: bytesAusAntwort(antwort),
           framingComplete: () => antwort.complete,
           cancel: () => {
@@ -784,6 +834,7 @@ async function hopLesen(
   lookup: OfficialTruthServerOwnedRetrievalLookup,
   signal: AbortSignal,
   maxBytesForMediaType: (mediaType: string | null) => number,
+  mode: 'legacy' | 'current_request' = 'legacy',
 ): Promise<HopKörper> {
   let antwort: OfficialTruthServerOwnedRetrievalHttpErgebnis
   try {
@@ -826,12 +877,24 @@ async function hopLesen(
     return { art: 'blocked', reason: 'response_too_large' }
   }
   const koerper = await Promise.race([
-    officialTruthBoundedResponseBody(antwort.body, signal, maxBytes, antwort.cancel),
+    mode === 'current_request'
+      ? officialTruthCurrentRequestBoundedResponseBody(antwort.body, signal, antwort.cancel)
+      : officialTruthBoundedResponseBody(antwort.body, signal, maxBytes, antwort.cancel),
     abbruch(signal),
   ])
   if (!koerper.ok) {
     antwort.cancel?.()
     return { art: 'blocked', reason: koerper.reason }
+  }
+  if (mode === 'current_request') {
+    if (antwort.framingComplete?.() !== true) {
+      antwort.cancel?.()
+      return { art: 'blocked', reason: 'http_failed' }
+    }
+    if (laenge.value != null && koerper.bytes.byteLength !== laenge.value) {
+      antwort.cancel?.()
+      return { art: 'blocked', reason: 'http_failed' }
+    }
   }
   return { art: 'bytes', bytes: koerper.bytes, contentType }
 }
@@ -874,6 +937,17 @@ async function decideServerOwnedRetrieval(
     && profile.identityProfileVersion === identity.identityProfileVersion)
   if (!item || matches.length !== 1) return blockiert('identity_profile_unavailable')
   const profile = matches[0]!
+  const approvedProfile = officialTruthWholeSourceCurrentRequestProfile(OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY)
+  const privilegedEntry = authorization === LIVE_PRIVILEGED_TRANSPORT && abhaengigkeiten.catalog == null
+  const currentRequest = privilegedEntry && approvedProfile != null && profile === approvedProfile
+    && officialTruthWholeSourceCurrentRequestAllowed({
+      serverProfiles: OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY,
+      identity,
+      canonicalUrl: representation.expectedFinalUrl,
+      contentType: representation.expectedMediaType,
+      requestUrl,
+      graph: katalog.registry.contentIdentity,
+    })
   const allowedUrls = new Set([...representation.requestUrls, representation.expectedFinalUrl])
   const lookup = officialTruthServerOwnedRetrievalLookup(abhaengigkeiten.resolve)
   const frist = fristMs(abhaengigkeiten.timeoutMs)
@@ -889,12 +963,18 @@ async function decideServerOwnedRetrieval(
       if (gesehen.has(aktuell)) return blockiert('redirect_loop')
       gesehen.add(aktuell)
       const maxBytesForMediaType = (mediaType: string | null) =>
-        authorization === LIVE_PRIVILEGED_TRANSPORT && abhaengigkeiten.catalog == null
-          ? officialTruthChDeSourceBudget128k1(identity, item, representation, requestUrl, aktuell, mediaType ?? '', profile) ?? BODY_MAX
-          : BODY_MAX
-      const hop = await hopLesen(abhaengigkeiten.http, aktuell, lookup, controller.signal, maxBytesForMediaType)
+        currentRequest
+          ? OFFICIAL_TRUTH_SOURCE_FINGERPRINT_V3_MAX_BYTES
+          : authorization === LIVE_PRIVILEGED_TRANSPORT && abhaengigkeiten.catalog == null
+            ? officialTruthChDeSourceBudget128k1(identity, item, representation, requestUrl, aktuell, mediaType ?? '', profile) ?? BODY_MAX
+            : BODY_MAX
+      const hop = await hopLesen(
+        abhaengigkeiten.http, aktuell, lookup, controller.signal, maxBytesForMediaType,
+        currentRequest ? 'current_request' : 'legacy',
+      )
       if (hop.art === 'blocked') return blockiert(hop.reason)
       if (hop.art === 'redirect') {
+        if (currentRequest) return blockiert('redirect_rejected')
         if (redirects >= REDIRECT_MAX) return blockiert('redirect_limit')
         if (!hop.location || !hop.location.trim()) return blockiert('redirect_rejected')
         let naechste: string
@@ -922,14 +1002,23 @@ async function decideServerOwnedRetrieval(
         if (!verified || !verified.ok || !verified.identity || !contentIdentityMatches(verified.identity, identity)
           || Object.keys(verified.identity).length !== Object.keys(identity).length) return blockiert('content_identity_mismatch')
       } catch { return blockiert('content_identity_mismatch') }
-      const sourceFingerprintProtocol = officialTruthSourceFingerprintProtocol(text.text, hop.bytes.byteLength)
-      if (!sourceFingerprintProtocol) return blockiert('invalid_source_snapshot')
       const fingerprintBinding = { ...identity, canonicalUrl: aktuell, contentType: hop.contentType }
-      const hash = sourceFingerprintProtocol === 2
-        ? officialTruthChDeSourceFingerprintV2Allowed(katalog.registry, identity, aktuell, hop.contentType)
-          ? officialTruthSourceFingerprintV2(text.text, fingerprintBinding)
-          : null
-        : evidenceQuellenFingerprint(text.text)
+      let sourceFingerprintProtocol: 1 | 2 | 3
+      let hash: string | null
+      if (currentRequest) {
+        if (new TextEncoder().encode(text.text).byteLength !== hop.bytes.byteLength) return blockiert('invalid_utf8')
+        sourceFingerprintProtocol = 3
+        hash = officialTruthSourceFingerprintV3(text.text, fingerprintBinding)
+      } else {
+        const derived = officialTruthSourceFingerprintProtocol(text.text, hop.bytes.byteLength)
+        if (!derived) return blockiert('invalid_source_snapshot')
+        sourceFingerprintProtocol = derived
+        hash = sourceFingerprintProtocol === 2
+          ? officialTruthChDeSourceFingerprintV2Allowed(katalog.registry, identity, aktuell, hop.contentType)
+            ? officialTruthSourceFingerprintV2(text.text, fingerprintBinding)
+            : null
+          : evidenceQuellenFingerprint(text.text)
+      }
       if (!hash) return blockiert('invalid_source_snapshot')
       const retrievedAt = uhrLesen(abhaengigkeiten.now)
       if (!retrievedAt) return blockiert('invalid_retrieval_time')
@@ -944,7 +1033,11 @@ async function decideServerOwnedRetrieval(
         contentType: hop.contentType,
         sourceSnapshot: text.text,
         sourceContentHash: hash,
-        ...(sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+        ...(sourceFingerprintProtocol === 2
+          ? { sourceFingerprintProtocol: 2 as const }
+          : sourceFingerprintProtocol === 3
+            ? { sourceFingerprintProtocol: 3 as const }
+            : {}),
         redirectCount: redirects,
       })
     }

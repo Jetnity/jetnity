@@ -83,9 +83,12 @@ export type OfficialTruthRegelReviewPacketSperrgrund =
  * angenommenen Evidence. Die freie Extraktionsnotiz wird nicht übernommen.
  * Nichts davon ist eine Entscheidung.
  */
+/** Support text the packet keeps and the review digest must not hash. */
+export const OFFICIAL_TRUTH_REVIEW_UNHASHED_SUPPORT_KEYS = ['sourceSnapshot'] as const
+
 export type OfficialTruthRegelReviewSupport = ContentIdentityBinding & {
   readonly identitySchema: 2
-  readonly sourceFingerprintProtocol?: 2
+  readonly sourceFingerprintProtocol?: 2 | 3
   readonly contentType: string
   readonly versionId: string
   readonly sourceId: string
@@ -183,7 +186,11 @@ function stuetzEintrag(belegt: Belegt): OfficialTruthRegelReviewSupport {
   return Object.freeze({
     ...contentIdentityBinding(belegt.evidence),
     identitySchema: 2,
-    ...(belegt.evidence.sourceFingerprintProtocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
+    ...(belegt.evidence.sourceFingerprintProtocol === 2
+      ? { sourceFingerprintProtocol: 2 as const }
+      : belegt.evidence.sourceFingerprintProtocol === 3
+        ? { sourceFingerprintProtocol: 3 as const }
+        : {}),
     contentType: belegt.evidence.contentType,
     versionId: belegt.evidence.versionId,
     sourceId: belegt.evidence.sourceId,

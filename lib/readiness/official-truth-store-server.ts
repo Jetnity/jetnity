@@ -11,6 +11,7 @@
 // nach Beweis.
 
 import 'server-only'
+import { officialTruthProtocol3MarkerPresent } from '@/lib/readiness/official-truth-whole-source-current-request-1'
 
 import { createClient } from '@supabase/supabase-js'
 
@@ -380,6 +381,9 @@ export async function akzeptierteEvidenceSpeichern(
   extraktion: unknown,
   abhaengigkeiten?: OfficialTruthEvidenceStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(umschlag) || officialTruthProtocol3MarkerPresent(extraktion) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return { ok: false, reason: 'store_failed' }
+  }
   if (hatAutoritaet(datensatz(abhaengigkeiten)) || hatAutoritaet(datensatz(abhaengigkeiten?.katalog))) {
     return { ok: false, reason: 'caller_authority_forbidden' }
   }
@@ -390,6 +394,7 @@ export async function akzeptierteEvidenceSpeichern(
     katalogAbhaengigkeit(abhaengigkeiten),
   )
   if (angenommen.status !== 'accepted_evidence') return { ok: false, reason: angenommen.reason }
+  if (officialTruthProtocol3MarkerPresent(angenommen)) return { ok: false, reason: 'store_failed' }
   const evidence = angenommen.evidence
   const scope = regelScopeAusEvidenceScope(evidence.scope)
   if (!scope.ok) return { ok: false, reason: scope.reason }
@@ -425,6 +430,9 @@ export async function akzeptierteRegelClaimSpeichern(
   eingabe: unknown,
   abhaengigkeiten?: OfficialTruthStoreAbhaengigkeiten,
 ): Promise<OfficialTruthStoreErgebnis> {
+  if (officialTruthProtocol3MarkerPresent(eingabe) || officialTruthProtocol3MarkerPresent(abhaengigkeiten)) {
+    return { ok: false, reason: 'store_failed' }
+  }
   // Jeder v2-Carrier ist in diesem Slice bedingungslos nicht speicherbar.
   // Vor Acceptance, Payload, Dependencies/Env, Client, Uhr und jeglichem RPC.
   const trusted = eigenesDatenfeld(eingabe, 'trustedRuleFact')
@@ -434,6 +442,7 @@ export async function akzeptierteRegelClaimSpeichern(
   }
   const angenommen = regelKandidatAkzeptieren(eingabe)
   if (!angenommen.ok) return { ok: false, reason: angenommen.reason }
+  if (officialTruthProtocol3MarkerPresent(angenommen)) return { ok: false, reason: 'store_failed' }
   const claim = persistierbarenClaim(angenommen.claim)
   if (!claim) return { ok: false, reason: 'applicability_not_persistable' }
   const transport = transportAus(abhaengigkeiten)
