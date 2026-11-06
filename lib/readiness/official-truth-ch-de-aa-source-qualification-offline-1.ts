@@ -93,17 +93,25 @@ function block(
  * timestamp, hash or "approved" flag cannot acquire authority here.
  */
 function envelope(value: unknown): OfflineEnvelope | null {
-  if (!value || typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) return null
-  const keys = Reflect.ownKeys(value)
-  if (keys.length !== ENVELOPE_FIELDS.length ||
-      keys.some((key) => typeof key !== 'string' || !ENVELOPE_FIELDS.includes(key as typeof ENVELOPE_FIELDS[number]))) {
+  try {
+    if (!value || typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) return null
+    const keys = Reflect.ownKeys(value)
+    if (keys.length !== ENVELOPE_FIELDS.length ||
+        keys.some((key) => typeof key !== 'string' || !ENVELOPE_FIELDS.includes(key as typeof ENVELOPE_FIELDS[number]))) {
+      return null
+    }
+    // Copy own *data* values once: a hostile proxy cannot swap fields after
+    // shape validation, and no accessor is ever evaluated by this reader.
+    const snapshot: Record<string, unknown> = {}
+    for (const field of ENVELOPE_FIELDS) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, field)
+      if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) return null
+      snapshot[field] = descriptor.value
+    }
+    return snapshot as unknown as OfflineEnvelope
+  } catch {
     return null
   }
-  for (const field of ENVELOPE_FIELDS) {
-    const descriptor = Object.getOwnPropertyDescriptor(value, field)
-    if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) return null
-  }
-  return value as OfflineEnvelope
 }
 
 /**
@@ -125,6 +133,7 @@ export function chDeAaSourceQualificationOffline1(value: unknown): ChDeAaSourceO
   if (input.httpStatus !== 200) return block('wrong_http_status')
   if (typeof input.html !== 'string' || !input.html.trim()) return block('invalid_html')
 
+  if (input.html.length > pinned.maxResearchBodyBytes) return block('research_body_over_limit')
   const observedUtf8Bytes = Buffer.byteLength(input.html, 'utf8')
   if (observedUtf8Bytes > pinned.maxResearchBodyBytes) return block('research_body_over_limit')
   const parsed = chDeAaS1VisaRowResearchFromHtml(input.html)
