@@ -142,7 +142,7 @@ test('Official Truth private schema: real 7-migration chain rejects direct API r
       }
       for (const role of ['anon', 'authenticated', 'service_role'] as const) {
         assert.equal(sql(`select pg_catalog.has_schema_privilege('${role}',
-          'private','USAGE')::text`), 'f', role + ' can access private schema')
+          'private','USAGE')::text`), 'false', role + ' can access private schema')
         for (const table of ['official_sources', 'official_rule_claims',
           'official_content_identity_profile_pins', 'official_truth_v2_fingerprint_receipts'] as const) {
           denied(role, `select * from private.${table} limit 1;`)
