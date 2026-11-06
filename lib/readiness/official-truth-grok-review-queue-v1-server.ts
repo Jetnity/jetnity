@@ -6,16 +6,18 @@ import 'server-only'
 import { sha256Hex } from '@/lib/readiness/digest'
 import {
   grokRecherchePaketQuarantaene,
+  grokRecherchePaketQuarantaeneBridgeV2,
   type GrokForschungSperrgrund,
   type GrokKandidatBefund,
 } from '@/lib/readiness/official-truth-grok-research-intake-v1'
 
 const COUNTRY_CODES = ['IT', 'FR', 'ES', 'JP', 'US'] as const
+const BRIDGE_V2_COUNTRY_CODES = ['DE', 'TH', ...COUNTRY_CODES] as const
 const PAIR_KEYS = ['countryCode', 'candidatePackage', 'verification'] as const
 const MAX_PAIRS = COUNTRY_CODES.length
 const MAX_TREE_DEPTH = 16
 
-type CountryCode = (typeof COUNTRY_CODES)[number]
+type CountryCode = (typeof BRIDGE_V2_COUNTRY_CODES)[number]
 export type GrokReviewQueueV1Sperrgrund =
   | 'invalid_batch'
   | 'invalid_pair'
@@ -44,6 +46,8 @@ export type GrokReviewQueueV1Ergebnis =
         /** Digest of caller-supplied research JSON, NOT an official source hash. */
         readonly untrustedSubmissionKey: string
         readonly botReportedReady: number
+        /** V2-only untrusted reporter claim; absence is a review caveat, not a PASS. */
+        readonly researchLimitsAttestation?: 'bot_reported_only' | 'missing_in_original'
         readonly botReportedBlocked: number
         readonly candidates: readonly {
           readonly candidateId: string
@@ -99,9 +103,19 @@ function compareCountry(a: { countryCode: CountryCode }, b: { countryCode: Count
  * reports as authority. A bad pair blocks the entire batch without output
  * containing source text, raw quotes, URLs or personal details.
  */
-export function grokForschungsReviewQueueVorbereiten(input: unknown): GrokReviewQueueV1Ergebnis {
-  if (!Array.isArray(input) || input.length < 1 || input.length > MAX_PAIRS) return blocked('invalid_batch')
-  if (!dataOnly(input, new WeakSet())) return blocked('invalid_json_tree')
+function grokForschungsReviewQueueIntern(
+  input: unknown, mode: 'v1' | 'bridge-v2',
+): GrokReviewQueueV1Ergebnis {
+  const maxPairs = mode === 'bridge-v2' ? BRIDGE_V2_COUNTRY_CODES.length : MAX_PAIRS
+  if (!Array.isArray(input) || input.length < 1 || input.length > maxPairs) return blocked('invalid_batch')
+  // Catch traps from adversarial proxies before reading any caller data.
+  try {
+    if (!dataOnly(input, new WeakSet())) return blocked('invalid_json_tree')
+  } catch {
+    return blocked('invalid_json_tree')
+  }
+  const acceptedCountries: readonly string[] = mode === 'bridge-v2' ? BRIDGE_V2_COUNTRY_CODES : COUNTRY_CODES
+  const version = mode === 'bridge-v2' ? 2 : 1
 
   const now = new Date()
   const seen = new Set<CountryCode>()
@@ -111,29 +125,31 @@ export function grokForschungsReviewQueueVorbereiten(input: unknown): GrokReview
   for (const raw of input) {
     const pair = record(raw)
     if (!pair || !exactPair(pair)) return blocked('invalid_pair')
-    if (typeof pair.countryCode !== 'string' || !(COUNTRY_CODES as readonly string[]).includes(pair.countryCode)) {
+    if (typeof pair.countryCode !== 'string' || !acceptedCountries.includes(pair.countryCode)) {
       return blocked('invalid_country')
     }
     const country = pair.countryCode as CountryCode
     if (seen.has(country)) return blocked('duplicate_country')
     seen.add(country)
 
-    const examined = grokRecherchePaketQuarantaene(pair.candidatePackage, pair.verification, country, now)
+    const examined = mode === 'bridge-v2'
+      ? grokRecherchePaketQuarantaeneBridgeV2(pair.candidatePackage, pair.verification, country, now)
+      : grokRecherchePaketQuarantaene(pair.candidatePackage, pair.verification, country, now)
     if (examined.status === 'blocked') return blocked(examined.reason)
 
     // A digest of submitted model data is an idempotency identifier only.
     // It is NOT an independently witnessed government source fingerprint.
     const submitted = sha256Hex(JSON.stringify({
-      version: 1,
+      version,
       countryCode: country,
       package: pair.candidatePackage,
       verification: pair.verification,
     }))
-    const submissionKey = 'grok-submission:v1:' + submitted
+    const submissionKey = 'grok-submission:v' + version + ':' + submitted
 
     const candidates = examined.candidates.map((candidate) => Object.freeze({
       candidateId: candidate.candidateId,
-      reviewKey: 'grok-review-item:v1:' + sha256Hex(JSON.stringify([submissionKey, candidate.candidateId])),
+      reviewKey: 'grok-review-item:v' + version + ':' + sha256Hex(JSON.stringify([submissionKey, candidate.candidateId])),
       state: candidate.disposition === 'blocked' ? 'blocked' as const : 'needs_independent_source_review' as const,
       findings: Object.freeze([...candidate.findings]),
     }))
@@ -146,13 +162,14 @@ export function grokForschungsReviewQueueVorbereiten(input: unknown): GrokReview
       packageId: examined.packageId,
       untrustedSubmissionKey: submissionKey,
       botReportedReady: examined.reportedReadyForTlQualification,
+      ...(mode === 'bridge-v2' ? { researchLimitsAttestation: examined.researchLimitsAttestation } : {}),
       botReportedBlocked: examined.reportedBlocked,
       candidates: Object.freeze(candidates),
     }))
   }
 
   countryRows.sort(compareCountry)
-  const queueKey = 'grok-review-queue:v1:' + sha256Hex(JSON.stringify(
+  const queueKey = 'grok-review-queue:v' + version + ':' + sha256Hex(JSON.stringify(
     countryRows.map((row) => [row.countryCode, row.untrustedSubmissionKey]),
   ))
 
@@ -170,4 +187,14 @@ export function grokForschungsReviewQueueVorbereiten(input: unknown): GrokReview
     blockedCandidates: blockedCount,
     countries: Object.freeze(countryRows),
   })
+}
+
+/** Five-country historical V1 behavior, signatures and key namespaces. */
+export function grokForschungsReviewQueueVorbereiten(input: unknown): GrokReviewQueueV1Ergebnis {
+  return grokForschungsReviewQueueIntern(input, 'v1')
+}
+
+/** Seven-country V2 planning, fully offline, unpersisted, never Official Truth. */
+export function grokForschungsReviewQueueVorbereitenV2(input: unknown): GrokReviewQueueV1Ergebnis {
+  return grokForschungsReviewQueueIntern(input, 'bridge-v2')
 }
