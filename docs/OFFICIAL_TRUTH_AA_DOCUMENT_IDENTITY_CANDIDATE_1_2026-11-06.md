@@ -2,7 +2,7 @@
 
 **Date:** 6 November 2026. **Author:** Jetnity AA Document Identity Candidate 1 — Codex Generation 1. **Session:** `/root/aa_identity_candidate_writer`.
 
-**Status at author handoff:** implemented and locally exercised; independent Technical-Lead review and repository CI remain separate gates. This is an unregistered, `current=false` identity candidate. It does not make the entry-requirements feature available on jetnity.com.
+**Status at R3 author handoff:** implemented; actual CI exposed two architecture-test integration failures, now corrected locally and awaiting fresh independent review and complete exact-head re-gating. This is an unregistered, `current=false` identity candidate. It does not make the entry-requirements feature available on jetnity.com.
 
 ## Task and decision
 
@@ -10,10 +10,11 @@
 - [R6 v2 implementation task](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6691564914), following [R6 v1 public research](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6691379699).
 - [Technical-Lead CHANGES REQUIRED R1](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6691907939) was addressed by this same author/session before publication. Its closure is the Technical Lead's decision.
 - [Technical-Lead CHANGES REQUIRED R2](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6692018076) authorized the bounded HTML-only compatibility rule below after reproducing indirect foreign-context breakouts. This same session implemented the correction; independent closure remains with the Technical Lead.
+- [R6 v3 / Technical-Lead CHANGES REQUIRED R3](https://github.com/Jetnity/jetnity/pull/1143#issuecomment-6692474687) authorizes the two test corrections below and only one additional existing-file change. The same writer/session performs this immediate fix.
 
-The existing AA table decoder already matches the observed document structure. The missing component addressed here is deterministic document identity. Rewriting the table parser or raising a shared byte limit would not solve that problem. This candidate implements the existing `ContentIdentityProfileDefinition` contract without importing itself into any live registry or changing another file. Its only runtime dependencies are Node's `util` and the existing pinned parse5 8.0.0 package; the shared identity contract is a type-only import.
+The existing AA table decoder already matches the observed document structure. The missing component addressed here is deterministic document identity. Rewriting the table parser or raising a shared byte limit would not solve that problem. This candidate implements the existing `ContentIdentityProfileDefinition` contract without importing itself into any live registry or changing existing runtime code. Its only runtime dependencies are Node's `util` and the existing pinned parse5 8.0.0 package; the shared identity contract is a type-only import.
 
-Only three new repository files belong to this delivery: the candidate module, its test module, and this handoff. There is no migration, API, UI, authorization, source-catalog, retrieval, budget, fingerprint, provider, dependency or cost change. It does not copy the held #1131/#1135 work.
+The delivery contains three new repository files: the candidate module, its test module, and this handoff. R6 v3 additionally changes only the existing `lib/readiness/official-truth-content-identity.test.ts` finite importer guard. There is no migration, API, UI, authorization, source-catalog, retrieval, budget, fingerprint, provider, dependency or cost change. It does not copy the held #1131/#1135 work.
 
 ## Source observation, with its actual limits
 
@@ -60,7 +61,7 @@ The actual page contains an H2 with an identical repeated `data-js-atom="navigat
 
 R1 exposed why selecting protected nodes only after parsing was insufficient: an initial nonidentity `rel`, `name` or `property` value could conceal a discarded second canonical/author/Open Graph attribute. All actual `html`, `head`, `body`, `main`, `title`, `h1`, `link` and `meta` start tokens are now classified before retained attribute values or DOM repair can hide their role. The three reported contradictory-attribute cases are regression fixtures, as are SVG/hidden-wrapper breakouts.
 
-## Verification performed by the author
+## Implementation verification before R3
 
 The isolated scratch runtime used Node 24.22.1, TypeScript 5.9.3 and parse5 8.0.0 with entities 6.0.1. Existing dependency archives were checked against the baseline lockfile's SHA-512 integrity values; no repository manifest changed. The repository itself targets Node 22, so its real CI remains required.
 
@@ -68,10 +69,22 @@ The isolated scratch runtime used Node 24.22.1, TypeScript 5.9.3 and parse5 8.0.
 2. The existing 93,365-byte research snapshot passed the candidate on source SHA-256 `02eeae9e5206d4be0eec6bfd8aaf87e83564e9ece8a9b43e958ed6f67d6e9863`. The author's rerun of the Technical Lead's expanded actual-snapshot diagnostic passed **21/21 cases**, including all three R1 attribute regressions and all three R2 indirect foreign breakouts. Earlier narrower runs do not replace this final check. This is author evidence, not independent Technical-Lead PASS. Synthetic descriptor labels were used; origin, message completeness and legal applicability remain unproven.
 3. A strict isolated semantic typecheck passed for both new TypeScript files using the six required type declarations extracted unchanged from the baseline identity contract and existing lockfile Node types. This diagnostic does **not** check the actual application dependency graph or replace the repository's typecheck.
 
-The full-repository production-isolation test is present but intentionally was not selected in the partial scratch checkout. It requires the actual `app`, `components`, `hooks`, `lib`, `scripts` and `types` trees and checks for live imports/references, registry inclusion, runtime dependencies and effectful code. It must execute in repository CI. No local full application test, lint/hygiene run, Next.js build, Preview or Production verification is claimed in this author handoff.
+The full-repository production-isolation test was intentionally not selected in the partial scratch checkout. The later real CI run did execute it and the existing finite importer inventory guard; both failed as described below. No local full application test, lint/hygiene run, Next.js build, Preview or Production verification is claimed in this author handoff.
+
+## Actual CI failure and R3 corrections
+
+On PR #1143 head `a4900e7a1e306d5206f2477851d2539275d0ae78`, [actual App job 128069390405](https://github.com/Jetnity/jetnity/actions/runs/42269303856/job/128069390405) in run `42269303856` reported **7,971 tests: 7,967 pass, 2 fail, 2 known skips**. All 18 AA behavioral tests passed. Typecheck, Lint and the separate actual Auth job passed on that head. Later App hygiene/build steps did not run, so they have no PASS. The failed head is not releasable.
+
+The new isolation test incorrectly required a nonexistent `hooks/` root. R3 checks the verified actual roots `app`, `apps`, `components`, `lib`, `scripts`, `tests` and `types`, plus core repository files. It then walks the whole repository root, including `apps`, root-level TypeScript and hidden source files, instead of limiting importer discovery to that directory list. Only dependency/build directories (`node_modules`, `.git`, `.next`, `.vercel`, `dist`, `out`) are excluded. The exact AST assertion for the type-only shared-contract import, no-live-importer checks, registry exclusion and `current=false` assertion remain in place. An incomplete author checkout still fails the guard.
+
+The existing content-identity guard correctly rejected a new importer that was absent from its finite allowlist, even though the import is type-only. R6 v3 adds exactly `lib/readiness/official-truth-aa-visa-table-identity-candidate.ts` with a comment documenting that dormant type-only boundary. An explicit positive assertion and six candidate lookalike/unknown-path negatives accompany the addition. Existing paths, negative checks and repository-wide exact inventory comparison remain unchanged. No wildcard, directory admission, global exemption for type imports or duplicate shared interface is introduced.
+
+The candidate implementation remains byte-identical at SHA-256 `02eeae9e5206d4be0eec6bfd8aaf87e83564e9ece8a9b43e958ed6f67d6e9863`. The existing architecture-test baseline was read at main `9f3553602066d1e11171eaf36e720c2ac21061f8`, blob `0a91f366a153483e82107f093a931a9eb59d6467`; its only amendment is the exact importer/comment and negative assertions.
+
+The author's narrow R3 diagnostic executed the actual corrected guard callback and finite-allowlist assertions extracted from their TypeScript ASTs: **13/13 checks passed**. Temporary fixtures verified the no-hooks positive case; detection of importers in `apps`, root TypeScript, hidden root/source files and a new source directory; permitted test imports; rejection of a runtime shared-contract import and registry inclusion; missing checkout markers; and rejection of the actual partial author checkout. This is a bounded guard regression proof, **not** successful execution of either inventory guard over the real complete Jetnity repository. Those guards and all remaining gates must pass on the new exact head in real CI.
 
 ## Remaining delivery and product gates
 
-The Technical Lead must independently read all three files, reproduce the relevant findings, verify the exact published head's CI/Auth/Preview, decide Ready/merge, and verify actual-main CI/Production after merge. A changed head invalidates earlier head-bound gates. The author does not mark Ready, merge or start another slice.
+The Technical Lead must independently read all four files and the narrow existing-test diff, reproduce the relevant findings, verify the new exact published head's complete CI/Auth/Preview, decide Ready/merge, and verify actual-main CI/Production after merge. A changed head invalidates earlier head-bound gates. Earlier source review and the partial passes on the failed head cannot authorize merge. The author does not publish, mark Ready, merge or start another slice.
 
 Even a merged and passing candidate leaves the first real application path unfinished. #917's denied Development readback and #1131's separate restriction remain unresolved; the target-bound owner/session correction under #1139 is not applied by this work. A coherent, reviewed AA source/body-budget/fingerprint/extractor/application binding and genuine source custody still have to be established before runtime admission and end-to-end testing. The generic provider and existing pilot availability remain off. No accepted government fact, database write or visitor answer was created here.

@@ -290,19 +290,26 @@ test('AA candidate production isolation: no live importer, registration, transpo
     (value.moduleSpecifier as ts.StringLiteral).text, value.importClause?.isTypeOnly ?? false,
   ]), [['node:util', false], ['parse5', false], ['./official-truth-content-identity', true]])
   assert.doesNotMatch(ownSource, /\bfetch\s*\(|https\.request|createClient|execute_sql|apply_migration|regelKandidatAkzeptieren\s*\(/)
+  // Pin real checkout markers, then scan from root rather than assuming a
+  // particular application-directory list covers all runtime importers.
+  const rootDirectories = new Set(readdirSync(root, { withFileTypes: true })
+    .filter(entry => entry.isDirectory()).map(entry => entry.name))
+  for (const directory of ['app', 'apps', 'components', 'lib', 'scripts', 'tests', 'types']) {
+    assert(rootDirectories.has(directory), `full repository source required: ${directory}`)
+  }
+  for (const file of ['AGENTS.md', 'package.json', 'tsconfig.json', 'lib/readiness/official-truth-content-identity.ts']) {
+    assert(existsSync(join(root, file)), `full repository file required: ${file}`)
+  }
   const files: string[] = []
   function visit(directory: string): void {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue
+      if (entry.isDirectory() && ['node_modules', '.git', '.next', '.vercel', 'dist', 'out'].includes(entry.name)) continue
       const path = join(directory, entry.name)
       if (entry.isDirectory()) visit(path)
       else if (/\.[cm]?[jt]sx?$/.test(entry.name)) files.push(path)
     }
   }
-  for (const directory of ['app', 'components', 'hooks', 'lib', 'scripts', 'types']) {
-    assert(existsSync(join(root, directory)), `full repository source required: ${directory}`)
-    visit(join(root, directory))
-  }
+  visit(root)
   for (const file of files) {
     const path = relative(root, file)
     if (path === candidatePath || /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(path)) continue

@@ -484,6 +484,9 @@ describe('dormancy and architectural boundaries', () => {
   })
   const reviewedContentIdentityImporters = [
     'lib/readiness/evidence.ts',
+    // R6 v3 / #1143: exact type-only shared contract for the unregistered,
+    // current=false AA candidate; its own AST guard forbids a runtime import.
+    'lib/readiness/official-truth-aa-visa-table-identity-candidate.ts',
     'lib/readiness/official-truth-accepted-evidence.ts',
     'lib/readiness/official-truth-autonomous-provenance-record.ts',
     'lib/readiness/official-truth-composition-policy-registry.ts',
@@ -553,6 +556,15 @@ describe('dormancy and architectural boundaries', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)
     assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts'), true)
     assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts.evil.ts'), false)
+    assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-aa-visa-table-identity-candidate.ts'), true)
+    for (const path of [
+      'lib/readiness/official-truth-aa-visa-table-identity-candidate.ts.evil.ts',
+      'lib/readiness/official-truth-aa-visa-table-identity-candidate-v2.ts',
+      'lib/readiness/official-truth-aa-visa-table-identity-candidate.ts/../unreviewed.ts',
+      'lib/readiness/official-truth-aa-visa-table-identity-candidate/index.ts',
+      'app/api/official-truth-aa-visa-table-identity-candidate.ts',
+      'apps/official-truth-aa-visa-table-identity-candidate.ts',
+    ]) assert.equal(contentIdentityImporterAllowed(path), false, path)
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
       'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
       'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
