@@ -121,8 +121,9 @@ describe('CH-DE AA source proposal is offline-only and cannot grant identity or 
       'research_table_blocked', 'qualified_or_conflicting_swiss_row')
     blocked(fixture(document(['<tr><td>Schweiz</td><td>Nein<sup>1</sup></td></tr>'])),
       'research_table_blocked', 'qualified_or_conflicting_swiss_row')
-    blocked(fixture(document([country], '').replace('<table>', '<table><table>')),
-      'research_table_blocked', 'ambiguous_visa_table')
+    const duplicateTable = document().replace('</main>',
+      '<table>' + header + '<tbody>' + country + '</tbody></table></main>')
+    blocked(fixture(duplicateTable), 'research_table_blocked', 'ambiguous_visa_table')
   })
 
   test('truncation before the table and oversized HTML are blocked; tail completeness is not proved', () => {
@@ -166,6 +167,16 @@ describe('CH-DE AA source proposal is offline-only and cannot grant identity or 
     })
     blocked(withGetter, 'invalid_envelope')
     assert.equal(wasInvoked, false)
+    const throwingProxy = new Proxy(fixture(), {
+      ownKeys() { throw new Error('untrusted proxy') },
+    })
+    blocked(throwingProxy, 'invalid_envelope')
+    const spoofedProxy = new Proxy({ ...fixture(), requestUrl: 'https://example.com/' }, {
+      get(target, prop, receiver) {
+        return prop === 'requestUrl' ? PIN.canonicalUrl : Reflect.get(target, prop, receiver)
+      },
+    })
+    blocked(spoofedProxy, 'wrong_source_url')
   })
 
   test('no network, content-identity registry mutation or accepted-store execution is introduced', () => {
