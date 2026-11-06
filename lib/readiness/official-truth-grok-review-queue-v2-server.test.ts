@@ -181,6 +181,10 @@ describe('Grok Bridge V2: seven-country, raw-research-only review queue', () => 
       ...th.candidatePackage,
       traveller_scope: { ...th.candidatePackage.traveller_scope, document: 'temporary Swiss passport' },
     } }]), { status: 'blocked', reason: 'invalid_scope' })
+    assert.deepEqual(raw([{ ...th, candidatePackage: {
+      ...th.candidatePackage,
+      traveller_scope: { ...th.candidatePackage.traveller_scope, document: 'ordinary Swiss passport (product scope)' },
+    } }]), { status: 'blocked', reason: 'invalid_scope' })
     assert.deepEqual(raw([{ ...de, countryCode: 'TH' }]), { status: 'blocked', reason: 'invalid_scope' })
     assert.deepEqual(raw([{ ...th, verification: { ...th.verification, package_id: de.verification.package_id } }]), {
       status: 'blocked', reason: 'verification_identity_mismatch',
@@ -235,7 +239,7 @@ describe('Grok Bridge V2: seven-country, raw-research-only review queue', () => 
   test('personal data, hostile accessors, incomplete sources and forged approvals never pass', () => {
     const th = pair('TH')
     assert.deepEqual(raw([{ ...th, candidatePackage: { ...th.candidatePackage, passportNumber: 'PRIVATE' } }]), {
-      status: 'blocked', reason: 'invalid_json_tree',
+      status: 'blocked', reason: 'forbidden_personal_field',
     })
     assert.deepEqual(raw([{ ...th, candidatePackage: { ...th.candidatePackage,
       authority_boundary: { ...th.candidatePackage.authority_boundary, not_approved_for_database_import: false },
