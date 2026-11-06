@@ -81,3 +81,13 @@ P3: unchanged existing lint/dependency residuals must be compared to baseline, n
 No new recurring infrastructure or provider cost.
 
 Root independently reviews the whole diff at the actual head, all relevant threads and claims, targeted behavior, CI and Vercel Preview. Only root may then Ready/merge a normal scope-faithful PR. After merge verify actual main CI/production binding and persist the final result in #1144/#917/#751. No final completion claim for the overall entry function.
+
+## Root amendment R2 — protected application blob pin (6 November 2026)
+
+Root review: [CHANGES REQUIRED R2](https://github.com/Jetnity/jetnity/pull/1145#issuecomment-6696270989), reviewed head `33331ddc928ddac87363d8d2338cb6c20bc7aa19`. Full CI 42295269382 ran 8,004 tests: 8,001 passed, one failed and two unchanged browser-layout skips. The failure is the BP1 guard's old application-evaluator blob pin; all 54 application cases and both previously incomplete canonical trip-cancellation cases passed. Later hygiene/build steps were skipped after the failure.
+
+This task additionally authorizes exactly one literal replacement in `lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts`: the expected blob for `lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts` changes from `9c4c244f628942d30f4a235f40ec5ad5bfe1724f` to the independently reviewed `aa3b3086394b1c30dbfd1e0ffb9604f43db8bde4`. Preserve all other four pins, the assertion, five-path inventory, quarantine, profile/contract/activation and application-reachability checks. The existing native transport pin remains `5998fdea54d3337fb68cd7111460b59e43a3cef7`.
+
+The same author/session performs this immediate correction and appends the honest R1/R2 handoff. No production code or other test behavior changes. Root owns this task amendment and remote publication. Root inspected held #1131: its framing fixtures, response expectations, new framing test and transport-pin change are outside this amendment and must not be copied. Sharing a test filename does not clear that separate held work.
+
+Every new head requires full fresh CI/Preview and independent root review. No old-head rerun, test skip/deletion, computed self-accepting hash, source/DB operation, Ready, merge or follow-up by the author. All other task boundaries remain in force.

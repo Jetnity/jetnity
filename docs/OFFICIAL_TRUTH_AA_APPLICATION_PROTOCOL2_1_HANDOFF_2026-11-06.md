@@ -59,3 +59,13 @@ The held #1131 native response-framing/completeness code was not copied, changed
 - P3: existing whole-repository lint/dependency residuals are not reclassified by this partial local run; exact-head CI compares them with baseline.
 
 **Next actor: root Technical Lead.** Publish the supplied candidate, inspect the full exact-head diff and open threads, execute full CI/Preview and independent review. Author stops and stays available in the same session for immediate review fixes. Only root may Ready/merge and verify actual main/Production afterward. This handoff is not completion of the database or the overall entry function.
+
+## R2 — same-session exact-head guard correction
+
+Root's [CHANGES REQUIRED review](https://github.com/Jetnity/jetnity/pull/1145#issuecomment-6696270989) binds R1 to `33331ddc928ddac87363d8d2338cb6c20bc7aa19` and [CI 42295269382](https://github.com/Jetnity/jetnity/actions/runs/42295269382). That Node 22 run recorded **8,004 tests / 8,001 passed / one failed / two unchanged browser-layout skips**. All 54 application cases, all 18 AA identity cases, both previously incomplete canonical trip-cancellation cases, and identity/isolation/importer guards passed. Typecheck, lint and Auth passed. Hygiene and build were skipped after the test failure and remain unverified.
+
+The sole failure was the BP1 protected-files guard's old evaluator checksum. The narrow R2 amendment authorizes replacing only that expected literal, from `9c4c244f628942d30f4a235f40ec5ad5bfe1724f` to the independently reviewed evaluator blob `aa3b3086394b1c30dbfd1e0ffb9604f43db8bde4`, in `lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts`. All four other pins, the five-file inventory, assertions, tests, quarantine and reachability checks are unchanged. Native transport remains pinned to `5998fdea54d3337fb68cd7111460b59e43a3cef7`; held #1131 framing fixtures, behavior and pin changes were not imported.
+
+The same author session fetched the exact R1 guard, handoff and evaluator. Local narrow verification confirmed the evaluator's Git blob equals the new literal and that the guard differs from R1 by precisely that one literal replacement, with every other byte unchanged. This handoff addition is append-only. No production code changed and no test was removed, skipped or rerun locally for R2. The task-file amendment and remote publication belong to root.
+
+**R2 status: correction supplied; independent review and a new full exact-head CI/Preview are pending.** Prior-head results do not satisfy those new gates. No Ready, merge, database/source action, activation or follow-up was performed. Author STOP; the same session remains available for immediate review fixes.
