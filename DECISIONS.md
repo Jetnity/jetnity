@@ -6178,3 +6178,14 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 
 **Konsequenzen:** Keine neue Abhängigkeit, Kosten, Migration oder Provideraktivierung. #1131, #1139 und der ausstehende tatsächliche Datenbanknachweis bleiben eigenständige Voraussetzungen vor Livebetrieb. Der synthetische Erfolg ist kein amtlicher Rechtsbefund und keine gehostete Funktionsfreigabe. [Prüfstand](docs/OFFICIAL_TRUTH_AA_APPLICATION_PROTOCOL2_1_HANDOFF_2026-11-06.md).
 
+
+
+## AA-Visum-Mapping als eingefrorener, unregistrierter Kandidat — 06.11.2026
+
+**Status:** bounded Umsetzung #1146 / Draft #1147; unabhängige Abnahme offen. #1145 ist als Ausgangsbasis vollständig angenommen.
+
+**Entscheidung:** Ein codeeigenes Manifest bindet den vollständig geprüften V2-Kontext, exakte AA-Identität und ein festes Pilot-Anwendungsfenster 07.–13.11.2026. Ein gemeinsamer privater Guard prüft Match und direkte Extraktion jeweils vollständig. Der unveränderte S1-Decoder muss die unqualifizierte Schweizer Nein-Zeile erkennen; die einzige bedingte Aussage ist Visum `not_required / visa_exempt`. Gültigkeit verwendet dieselbe Vollkontext-Erkennung und liefert unbekannte gesetzliche Grenzen (`null/null`), sonst Ablehnung. Ein geordneter domänengetrennter SHA-256-Digest bindet auch Mapping-, Erkennungs- und Gültigkeitsbedeutung.
+
+**Alternative und Begründung:** Ein nur auf Tabellenzeilen oder DOM-Ausschnitten beruhender Hash würde geänderte globale Einschränkungen und Fußnoten übersehen. Der vollständige Pin verlangt auch bei harmlosen Änderungen erneute Prüfung; außer bestehendem CRLF/CR→LF gibt es keine Normalisierung oder automatische Neupinnung. Er beweist keine Herkunft. Die engere Produktanwendung wird durch den vorhandenen Traveller-/Dokument-/Routen-Kontext begrenzt; die amtliche Aussage muss nicht dieselben Produktbegriffe enthalten.
+
+**Konsequenzen:** Kein generischer Extraktionsrahmen, keine neue produktive Injektion, kein Identitätskandidaten-/Foundation-Import in den beiden neuen Modulen. Registrierungen und Aktivierung bleiben aus. Der tatsächliche kanonische Annahmepfad wird nur mit synthetischen Daten geprüft; gehostete Autorität, Quellenzulassung und Transportvollständigkeit bleiben ausstehend. Keine SQL-/RLS-/Dependency-/Workflow-Änderung, keine reale Quellenabfrage oder laufende Kosten. [Handoff](docs/OFFICIAL_TRUTH_AA_CH_DE_VISA_MAPPING_CANDIDATE_1_HANDOFF_2026-11-06.md).

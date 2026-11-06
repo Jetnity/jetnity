@@ -484,3 +484,10 @@ Normale scope-treue PRs darf der Technical Lead nach unabhängigem Exact-Head-Re
 Kein neuer Agent startet allein aufgrund dieser Roadmap.
 
 Der nächste Technical Lead muss zuerst `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` und live PRs #506/#509/#510/#512 rekonstruieren und danach einen scope-treuen Auftrag versionieren. Historische Agenten-/PR-Bodies bleiben Evidence ihres Zeitpunkts und werden nicht als aktuelle Freigabe gelesen.
+
+
+## Official Truth — AA CH→DE Visa Mapping Candidate 1 (06.11.2026)
+
+#1146 / Draft #1147: ruhender konkreter Visa-Mapping-Kandidat auf der vollständig angenommenen #1145-Baseline implementiert; unabhängige Root-Abnahme und vollständige Checkout-/CI-Gates stehen aus. Synthetischer Nachweis führt 93.365 Byte durch den tatsächlichen Kandidaten und die bestehende Evidence-/Review-/Rule-/Requirements-Kette. Manifest, vollständiger Kontext-Pin und festes Fenster 07.–13.11.2026 sind codegebunden; Extraktor `current=false`, Profil/Contract unregistriert, Pilot aus.
+
+Kein Live-Visumdienst und kein Gesamtabschluss von #917. Unabhängiger gehosteter Stage-1-Readback, Stage 2, effektive #1139-Owner-/Session-Korrektur, reale Quellen-/Transportzulassung und Production-Freigabe bleiben gehalten; der vorhandene lokale #1142-Kandidat wurde nicht neu gebaut. Keine Datenbankaktion, Quellenanfrage, neue Abhängigkeit oder laufende Kosten. Autor stoppt nach [Handoff](docs/OFFICIAL_TRUTH_AA_CH_DE_VISA_MAPPING_CANDIDATE_1_HANDOFF_2026-11-06.md); nur Root darf nach vollständiger unabhängiger Prüfung Ready/Merge entscheiden. Kein automatischer Folgeslice.
