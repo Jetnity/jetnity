@@ -40,7 +40,7 @@ async function canonical(options: Options = {}, input?: unknown) {
         headers: { get: key => ({ 'content-type': options.media ?? 'text/html; charset=utf-8',
           'content-length': options.length, 'content-encoding': options.encoding, location: options.location })[key] ?? null },
         body: (async function* () { yield options.bytes ?? Buffer.from(SYNTHETIC); if (options.partial) throw Error(SENTINEL) })(),
-        cancel() { cancelled++ }, framingComplete: () => false,
+        cancel() { cancelled++ }, framingComplete: () => !options.partial,
       }
     },
   }
@@ -76,7 +76,7 @@ function native(t: TestContext, options: Options = {}) {
           response.headers = { 'content-type': options.media ?? 'text/html; charset=utf-8',
             'content-length': options.length, 'content-encoding': options.encoding, location: options.location,
             'set-cookie': [SENTINEL], 'x-private-test': SENTINEL }
-          response.complete = false // Existing isolated seam does NOT independently check this.
+          response.complete = !options.partial // Synthetic native parser: only a fully delivered response is complete.
           cb(response)
         })
       })
@@ -200,10 +200,10 @@ for (const bytes of [Buffer.alloc(65_536, 97), Buffer.from('é'.repeat(32_768))]
   assert.equal(result.observed?.bytes, 65_536)
 })
 
-test('reports actual legacy seam limits: 206, short declared body and no independent framing proof', async () => {
+test('short declared response is rejected before identity review, with no source body disclosed', async () => {
   const result = await canonical({ status: 206, length: '60000' })
-  assert.deepEqual(result.result, { status: 'blocked', reason: 'content_identity_mismatch' })
-  assert.equal(result.observed?.bytes, Buffer.byteLength(SYNTHETIC))
+  assert.deepEqual(result.result, { status: 'blocked', reason: 'http_failed' })
+  assert.equal(result.observed, null)
   const timeout = await canonical({ timeout: true })
   assert.deepEqual(timeout.result, { status: 'blocked', reason: 'timeout' }); assert.equal(timeout.observed, null)
 })
