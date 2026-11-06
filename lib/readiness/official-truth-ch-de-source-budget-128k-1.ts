@@ -16,6 +16,25 @@ export const OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1 = Object.freeze({
   maxBytes: 131_072,
 })
 
+// An exact future AA binding, not source admission. The current compiled
+// profile registry has no AA profile, so this entry grants no live budget.
+const AA_SOURCE_BUDGET_128K_1 = Object.freeze({
+  sourceId: 'de-aa-staatenliste-visumpflicht',
+  contentItemId: 'aa-staatenliste-visumpflicht-207820',
+  contentItemVersion: 1,
+  representationId: 'aa-staatenliste-visumpflicht-html-de',
+  representationVersion: 1,
+  identityProfileId: 'de-aa-visa-table-html-de-candidate',
+  identityProfileVersion: 1,
+  requestUrl: 'https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820',
+  mediaType: 'text/html',
+  maxBytes: 131_072,
+})
+const SOURCE_BUDGETS = Object.freeze([
+  OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1,
+  AA_SOURCE_BUDGET_128K_1,
+])
+
 type Candidate = Readonly<{
   sourceId: string
   contentItemId: string
@@ -47,6 +66,17 @@ type Representation = Readonly<{
   expectedMediaType: string
 }>
 
+function sourceBudgetCandidate(identity: Candidate) {
+  return SOURCE_BUDGETS.find((candidate) =>
+    identity.sourceId === candidate.sourceId
+    && identity.contentItemId === candidate.contentItemId
+    && identity.contentItemVersion === candidate.contentItemVersion
+    && identity.representationId === candidate.representationId
+    && identity.representationVersion === candidate.representationVersion
+    && identity.identityProfileId === candidate.identityProfileId
+    && identity.identityProfileVersion === candidate.identityProfileVersion)
+}
+
 export function officialTruthChDeSourceBudget128k1(
   identity: Candidate,
   item: Item,
@@ -56,19 +86,13 @@ export function officialTruthChDeSourceBudget128k1(
   mediaType: string,
   identityProfile: ContentIdentityProfileDefinition,
 ): number | null {
-  const candidate = OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1
+  const candidate = sourceBudgetCandidate(identity)
+  if (!candidate) return null
   const approvedProfile = OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY.find((profile) =>
     profile.current
     && profile.identityProfileId === candidate.identityProfileId
     && profile.identityProfileVersion === candidate.identityProfileVersion)
   if (!approvedProfile || identityProfile !== approvedProfile) return null
-  const exactIdentity = identity.sourceId === candidate.sourceId
-    && identity.contentItemId === candidate.contentItemId
-    && identity.contentItemVersion === candidate.contentItemVersion
-    && identity.representationId === candidate.representationId
-    && identity.representationVersion === candidate.representationVersion
-    && identity.identityProfileId === candidate.identityProfileId
-    && identity.identityProfileVersion === candidate.identityProfileVersion
   const exactCurrentItem = item.sourceId === candidate.sourceId
     && item.contentItemId === candidate.contentItemId
     && item.contentItemVersion === candidate.contentItemVersion
@@ -85,7 +109,7 @@ export function officialTruthChDeSourceBudget128k1(
     && representation.requestUrls[0] === candidate.requestUrl
     && representation.expectedFinalUrl === candidate.requestUrl
     && representation.expectedMediaType === candidate.mediaType
-  return exactIdentity && exactCurrentItem && exactRepresentation
+  return exactCurrentItem && exactRepresentation
     && requestUrl === candidate.requestUrl
     && currentUrl === candidate.requestUrl
     && mediaType === candidate.mediaType
@@ -99,6 +123,8 @@ export function officialTruthChDeSourceFingerprintV2Allowed(
   finalUrl: string,
   mediaType: string,
 ): boolean {
+  const candidate = sourceBudgetCandidate(identity)
+  if (!candidate) return false
   if (!registry || typeof registry !== 'object' || Array.isArray(registry)) return false
   const graph = (registry as { contentIdentity?: unknown }).contentIdentity
   if (!graph || typeof graph !== 'object' || Array.isArray(graph)) return false
@@ -125,5 +151,6 @@ export function officialTruthChDeSourceFingerprintV2Allowed(
     && entry.identityProfileVersion === identity.identityProfileVersion)
   return !!item && !!representation && !!profile
     && officialTruthChDeSourceBudget128k1(identity, item, representation,
-      OFFICIAL_TRUTH_CH_DE_SOURCE_BUDGET_128K_1.requestUrl, finalUrl, mediaType, profile) === 131_072
+      candidate.requestUrl, finalUrl, mediaType, profile) === 131_072
 }
+

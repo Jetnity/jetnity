@@ -8,6 +8,7 @@ import ts from 'typescript'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { Trip, TripTraveller } from '@/types/trips'
 import { createContentIdentityGraph, contentIdentityBinding, type ContentIdentityProfileDefinition } from '@/lib/readiness/official-truth-content-identity'
+import * as contentIdentityModule from '@/lib/readiness/official-truth-content-identity'
 import { quellenRegistryErstellen } from '@/lib/readiness/source-registry'
 import { quellenKatalogSnapshotAntwort } from '@/lib/readiness/official-truth-source-catalog-server'
 import { decideOfficialTruthServerOwnedRetrieval } from '@/lib/readiness/official-truth-server-owned-retrieval'
@@ -15,6 +16,9 @@ import { officialTruthTrustedFactExtrahierenMitDefinitionen, consumeOfficialTrut
 import type { ApplicationContract } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server'
 import { pilotGraphFingerprint, type PilotDeclaration } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 import { chDeAaS1VisaRowResearchFromHtml } from '@/lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server'
+import { officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
+import type * as SourceBudget from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
+import type * as Extractors from '@/lib/readiness/official-truth-trusted-fact-extractor-registry'
 
 export const fixtureTripId='11111111-1111-4111-8111-111111111111'
 export const fixtureUserId='22222222-2222-4222-8222-222222222222'
@@ -71,3 +75,78 @@ export function loadFixtureModule<T>(path:string,dependencies:Record<string,unkn
   new Function('require','module','exports',compiled)((id:string)=>dependencies[id]??require(id.startsWith('@/')?resolve(id.slice(2)):id.startsWith('.')?resolve(path,'..',id):id),loaded,loaded.exports)
   return loaded.exports as T
 }
+
+/** LOCAL TEST ONLY: compile the existing canonical chain with one isolated
+ * profile registry. No exported production admission seam is introduced.
+ * The caller supplies test code; the dormant candidate is never imported here.
+ * Native transport/completeness and real source admission are NOT proved. */
+export function protocol2Fixture(
+  profile: ContentIdentityProfileDefinition,
+  compiledProfiles: readonly ContentIdentityProfileDefinition[] = [profile],
+) {
+  const url='https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820'
+  const sourceId='de-aa-staatenliste-visumpflicht'
+  const item={sourceId,contentItemId:'aa-staatenliste-visumpflicht-207820',contentItemVersion:1,current:true,
+    externalIdNamespace:'aa-content-id',externalContentId:'207820',expectedPublisherIds:['auswaertiges-amt'],expectedAuthorityIds:['auswaertiges-amt']}
+  const representation={sourceId,contentItemId:item.contentItemId,contentItemVersion:1,
+    representationId:'aa-staatenliste-visumpflicht-html-de',representationVersion:1,current:true,
+    requestUrls:[url],expectedFinalUrl:url,expectedMediaType:'text/html',expectedLocale:'de',expectedSchema:'article',
+    identityProfileId:'de-aa-visa-table-html-de-candidate',identityProfileVersion:1}
+  const binding=contentIdentityBinding(representation)
+  const source=quellenRegistryErstellen([{sourceId,sourceClass:'official_authority',
+    publisherName:'SYNTHETISCHER LOKALTEST',authorityName:'SYNTHETISCHE TESTQUELLE – KEINE BEHÖRDE',domains:['www.auswaertiges-amt.de']}])
+  assert(source.ok)
+  const graph=createContentIdentityGraph(source.registry,[item],[representation],[profile]);assert(graph.ok)
+  const registry={...graph.value.authorityRegistry,contentIdentity:graph.value}
+  const title='Übersicht zur Visumpflicht bzw. -freiheit bei Einreise in die Bundesrepublik Deutschland'
+  const document=fixtureBody.replace('<title>SYNTHETIC LOCAL APPLICATION TEST ONLY</title>',
+    `<title>${title} - Auswärtiges Amt</title><link rel="canonical" href="${url}">`
+    + `<meta name="author" content="Auswärtiges Amt"><meta property="og:url" content="${url}">`
+    + '<meta property="og:site_name" content="Auswärtiges Amt"><meta property="og:type" content="article">'
+    + `<meta property="og:locale" content="de"><meta property="og:title" content="${title}">`)
+    .replace('<main><h1>','<main id="main"><h1 class="heading__title">')
+    .replace('</main>','<p>SYNTHETIC PROTOCOL 2 TEST ONLY</p><p>ä</p></main>')
+    .replace('</body>','<!-- ID : 207820 / Version : 44 --></body>')
+  const body=document.replace('<p>ä</p>',`<p>ä${'x'.repeat(93_365-Buffer.byteLength(document,'utf8'))}</p>`)
+  assert.equal(Buffer.byteLength(body,'utf8'),93_365)
+  assert(profile.verify({item,representation,responseText:body,finalUrl:url,mediaType:'text/html'}).ok)
+  const contract:ApplicationContract={...fixtureContract,id:'synthetic-aa-protocol2',
+    source:{...fixtureContract.source,sourceId,url,binding},extractorId:'otx_synthetic_aa_protocol2',
+    validity:text=>text.includes('<p>SYNTHETIC PROTOCOL 2 TEST ONLY</p>')?{validFrom:null,validUntil:null}:null}
+
+  // Shared instances are essential: the Evidence/Rule chain must use the same
+  // exact permission, and the extractor's execution witness is a private WeakMap.
+  const modules:Record<string,unknown>={
+    '@/lib/readiness/official-truth-content-identity':{...contentIdentityModule,
+      OFFICIAL_TRUTH_CONTENT_IDENTITY_PROFILE_REGISTRY:Object.freeze([...compiledProfiles])},
+  }
+  for(const name of [
+    'official-truth-ch-de-source-budget-128k-1','evidence','rule-claims','official-truth-research-request',
+    'source-router','official-truth-research-source-routing','official-truth-retrieved-material',
+    'official-truth-retrieved-candidate-evidence','official-truth-accepted-evidence','official-truth-rule-candidate',
+    'official-truth-rule-review-packet','official-truth-rule-review-fingerprint',
+    'official-truth-rule-review-decision-intent','official-truth-trusted-fact-extractor-registry',
+  ]) modules[`@/lib/readiness/${name}`]=loadFixtureModule(`lib/readiness/${name}.ts`,modules)
+  const budget=modules['@/lib/readiness/official-truth-ch-de-source-budget-128k-1'] as typeof SourceBudget
+  const extractors=modules['@/lib/readiness/official-truth-trusted-fact-extractor-registry'] as typeof Extractors
+  const definition:OfficialTruthExtractorDefinition={extractorId:contract.extractorId,extractorVersion:1,current:true,
+    factKind:'requirement_effect',sourceFamilyId:'otf_synthetic_aa_protocol2',contentItemRefs:[{sourceId,contentItemId:item.contentItemId}],
+    representations:[binding],urlAllowlist:[{kind:'exact',canonicalUrl:url}],contentTypes:['text/html'],
+    schemaFamily:'ots_synthetic_aa_protocol2',policyId:null,policyVersion:null,requiredFieldPaths:[],
+    match:c=>c.supports.length===1&&chDeAaS1VisaRowResearchFromHtml(c.supports[0]!.sourceSnapshot).status==='research_visa_table_observation'
+      ?{ok:true}:{ok:false,reason:'structure_not_recognized'},
+    extract:c=>chDeAaS1VisaRowResearchFromHtml(c.supports[0]!.sourceSnapshot).status==='research_visa_table_observation'
+      ?{ok:true,fact:{kind:'requirement_effect',effect:'not_required',visaMode:'visa_exempt'}}:{ok:false,reason:'structure_not_recognized'},
+  }
+  const extract=(input:unknown)=>extractors.officialTruthTrustedFactExtrahierenMitDefinitionen(input,[definition])
+  function retrieval(snapshot=body) {
+    const sourceContentHash=officialTruthSourceFingerprintV2(snapshot,{...binding,canonicalUrl:url,contentType:'text/html'})
+    assert(sourceContentHash)
+    return {...binding,identitySchema:2 as const,status:'server_owned_official_retrieval' as const,
+      sourceId,requestUrl:url,canonicalUrl:url,retrievedAt:new Date().toISOString(),contentType:'text/html',
+      sourceSnapshot:snapshot,sourceContentHash,sourceFingerprintProtocol:2 as const,redirectCount:0}
+  }
+  return {url,body,item,representation,binding,registry,contract,modules,budget,extract,
+    consume:extractors.consumeOfficialTruthTrustedFactExecutionContext,retrieval}
+}
+

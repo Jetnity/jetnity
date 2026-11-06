@@ -1,11 +1,12 @@
 import 'server-only'
-import { Buffer } from 'node:buffer'
 import type { Trip } from '@/types/trips'
 import { loadOfficialTruthFactEntryAuthority } from '@/lib/readiness/official-truth-fact-entry-authority-server'
 import { loadOfficialTruthServerOwnedRetrieval } from '@/lib/readiness/official-truth-server-owned-retrieval'
 import { quellenKatalogLesen } from '@/lib/readiness/official-truth-source-catalog-server'
 import { contentIdentityBinding, contentIdentityMatches, contentRepresentationFromRegistry } from '@/lib/readiness/official-truth-content-identity'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
+import { officialTruthChDeSourceFingerprintV2Allowed } from '@/lib/readiness/official-truth-ch-de-source-budget-128k-1'
+import { officialTruthSourceFingerprintProtocol, officialTruthSourceFingerprintV2 } from '@/lib/readiness/official-truth-source-fingerprint-v2'
 import { regelKandidatAkzeptieren, regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 import { officialTruthRechercheEntscheiden } from '@/lib/readiness/official-truth-research-request'
 import { officialTruthRegelReviewBelege } from '@/lib/readiness/official-truth-rule-review-packet'
@@ -70,11 +71,22 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     if (expired() || Date.now()-started>5_000) return empty('unavailable')
     const retrieval = await loadOfficialTruthServerOwnedRetrieval({ sourceId: source.sourceId, url: contract.source.url })
     if (retrieval.status !== 'server_owned_official_retrieval' || expired()
-      || Buffer.byteLength(retrieval.sourceSnapshot,'utf8')>65_536
-      || retrieval.sourceContentHash !== evidenceQuellenFingerprint(retrieval.sourceSnapshot)
       || !contentIdentityMatches(retrieval, contract.source.binding)
       || retrieval.requestUrl !== contract.source.url || retrieval.canonicalUrl !== representation.value.expectedFinalUrl
       || Date.parse(retrieval.retrievedAt)<started || Date.parse(retrieval.retrievedAt)>Date.now()) return empty('unavailable')
+    // The complete UTF-8 body selects the canonical protocol. V1 omits the
+    // marker; V2 also needs the exact compiled source permission and no redirect.
+    const protocol = officialTruthSourceFingerprintProtocol(retrieval.sourceSnapshot)
+    if (!protocol || (protocol === 2
+      ? retrieval.sourceFingerprintProtocol !== 2 || retrieval.redirectCount !== 0
+        || !officialTruthChDeSourceFingerprintV2Allowed(catalog.registry, retrieval, retrieval.canonicalUrl, retrieval.contentType)
+      : Object.hasOwn(retrieval, 'sourceFingerprintProtocol'))) return empty('unavailable')
+    const sourceContentHash = protocol === 2
+      ? officialTruthSourceFingerprintV2(retrieval.sourceSnapshot, {
+        ...contentIdentityBinding(retrieval), canonicalUrl: retrieval.canonicalUrl, contentType: retrieval.contentType,
+      })
+      : evidenceQuellenFingerprint(retrieval.sourceSnapshot)
+    if (!sourceContentHash || retrieval.sourceContentHash !== sourceContentHash) return empty('unavailable')
     const validity = contract.validity(retrieval.sourceSnapshot)
     if (!validity) return empty('unavailable')
     const packetInput = { supports: [{ umschlag: { request: research.request, registry: catalog.registry,
@@ -97,6 +109,7 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
           canonicalUrl: retrieval.canonicalUrl, retrievedAt: retrieval.retrievedAt,
           contentType: retrieval.contentType, sourceSnapshot: retrieval.sourceSnapshot,
           sourceContentHash: retrieval.sourceContentHash, redirectCount: retrieval.redirectCount,
+          ...(protocol === 2 ? { sourceFingerprintProtocol: 2 as const } : {}),
         } }], policy: null, registry: catalog.registry }
     const extracted = officialTruthTrustedFactExtrahieren(input)
     const execution = consumeOfficialTruthTrustedFactExecutionContext(extracted, input)
@@ -134,3 +147,4 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
       expiresAt: new Date(expires).toISOString(), evaluations }
   } catch { return empty('unavailable') }
 }
+
