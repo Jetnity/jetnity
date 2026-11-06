@@ -253,7 +253,7 @@ test('strict report rejects raw additions; all maximum finite fields remain unde
 
 test('protected transport/profile/application remain byte-identical, closed and unreachable from app', () => {
   const pins = {
-    'lib/readiness/official-truth-server-owned-retrieval.ts': '5998fdea54d3337fb68cd7111460b59e43a3cef7',
+    'lib/readiness/official-truth-server-owned-retrieval.ts': '463d0c24c4345df01b2ee462b13f3a39cf1196f4',
     'lib/readiness/official-truth-content-identity.ts': '4a4c3eea77b6e634fd83525849a4aaa6e6e50c18',
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts': '375adb52e2ef5ccb9045e17d830bf5d9111f6375',
     'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts': '90b9dd0108ed3e4d8049a3f8d35323c09b52e23f',
