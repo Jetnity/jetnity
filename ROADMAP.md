@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **06.11.2026 – Einreisefunktion, AA-Protokollanbindung #1144 / Draft #1145:** Die fehlende quellenspezifische V2-Verarbeitung im bestehenden CH→DE-Anwendungspfad ist implementiert und mit synthetischem Material lokal geprüft. Vollständige CI, unabhängige Abnahme und Release sind offen. AA bleibt unregistriert, der Pilot ausgeschaltet. Danach fehlen weiterhin qualifizierter Quellentransport/-vertrag, wirksame Owner-/Session-Absicherung, tatsächlicher Datenbanknachweis und ein autorisierter vollständiger Anwendungstest. [Auftrag](docs/OFFICIAL_TRUTH_AA_APPLICATION_PROTOCOL2_1_TASK_2026-11-06.md) · [Prüfstand](docs/OFFICIAL_TRUTH_AA_APPLICATION_PROTOCOL2_1_HANDOFF_2026-11-06.md). Kein Gesamtfunktions-PASS.
+
 > **04.11.2026 – Trip Maps JS V1:** Marker, Gruppierung, Stopplisten-/Tagesauswahl und Zustände im Draft #1112 implementiert. Lokale UI geprüft; echter Google-Preview-Test und unabhängiger Review offen. Kosten-/Consent-/Referrer-Gates bleiben geschlossen. [Prüfstand und begrenzter Pilotvorschlag](docs/TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
 
 > **02.11.2026 – Mietwagen Layout 1:** Owner wünscht eine kompakte Suchvorbereitung, 3–4 Fahrzeugkarten pro Desktopreihe und eine aufgeräumte Mietwagenseite. Suchkasten, responsives Kartenraster, gruppierte Angebotsdetails und aufklappbare manuelle Erfassung umgesetzt. Native Suche aus PR #1109 bleibt erhalten. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md); exakter Release-Stand im Live-Index #751.

@@ -6165,3 +6165,16 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Begründung:** Google JS kann damit als konkrete Produktfunktion geprüft werden, ohne Reisedatenmodell, My World oder gehaltene Provider zu verändern. Entfernen des Frames beendet dessen aktive Ausführung; Alerts und Ablaufzeit sind ausdrücklich kein harter monatlicher Kostenstopp.
 
 **Konsequenzen:** Kein Google-Upgrade, Abo, API-Enable, Schlüsselwechsel oder Secret-Write in diesem Slice. Kein neuer Places-/Routes-/Street-View-Scope. Reale Google-Darstellung, Attribution, Referrer-Prüfung, Consent-Vertrag und Kostenabgleich sind noch separat abzunehmen. [Nachweis und Pilotvorschlag](docs/TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
+
+## AA-Protokollanbindung ohne Quellenaktivierung – 06.11.2026
+
+**Status:** bounded Umsetzung #1144 / Draft #1145; unabhängige Abnahme offen.
+
+**Kontext:** Die untersuchte AA-Seite überschreitet die bisher im CH→DE-Evaluator fest angenommene 64-KiB-/V1-Grenze. Das Quellenprotokoll fehlt außerdem in dessen Extraktor-Projektion. Der vorhandene Identitätskandidat und die lokale Owner-/Session-Korrektur ersetzen diese Anwendungsanbindung nicht.
+
+**Entscheidung:** Den bestehenden Quellenbudget-Vertrag um genau einen versionierten AA-Tupel ergänzen, weiterhin mit Identität des aktuellen kompilierten Profilobjekts. Der Evaluator bestimmt V1/V2 aus dem vollständigen Material und prüft den zugehörigen gebundenen Hash. V1 lässt den Protokollmarker weg; V2 trägt ihn ausdrücklich bis zur kanonischen Extraktion weiter. Echte Register und Aktivierung bleiben geschlossen.
+
+**Alternative und Begründung:** Ein globales 128-KiB-Limit oder sofortige Profilregistrierung würde bislang nicht zugelassene Quellen berechtigen. Ein weiterer allgemeiner Rahmen löst den konkreten Fehler nicht. Die begrenzte Änderung schließt die tatsächliche Integrationslücke und lässt sich mit der bestehenden kanonischen Evidence-/Rule-Kette isoliert prüfen.
+
+**Konsequenzen:** Keine neue Abhängigkeit, Kosten, Migration oder Provideraktivierung. #1131, #1139 und der ausstehende tatsächliche Datenbanknachweis bleiben eigenständige Voraussetzungen vor Livebetrieb. Der synthetische Erfolg ist kein amtlicher Rechtsbefund und keine gehostete Funktionsfreigabe. [Prüfstand](docs/OFFICIAL_TRUTH_AA_APPLICATION_PROTOCOL2_1_HANDOFF_2026-11-06.md).
+
