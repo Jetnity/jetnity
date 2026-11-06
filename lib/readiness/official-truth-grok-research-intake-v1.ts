@@ -91,24 +91,38 @@ function utc(value: unknown): number | null {
 }
 
 function safeShape(value: unknown, seen: WeakSet<object>, depth = 0): boolean {
+  // Research input must be plain JSON-like data, with no getters, proxies,
+  // symbols, functions, sparse arrays or cyclic/aliased nested references.
   if (depth > 15) return false
-  if (!value || typeof value !== 'object') return true
-  if (seen.has(value)) return false
-  seen.add(value)
-  if (Array.isArray(value)) return value.length <= 256 && value.every((x) => safeShape(x, seen, depth + 1))
-  const r = record(value)
-  if (!r || Object.keys(r).length > 256) return false
-  for (const [key, field] of Object.entries(r)) {
-    const norm = key.toLowerCase().replace(/[^a-z]/g, '')
-    if ([
-      'passportnumber', 'documentnumber', 'mrz', 'biometric', 'biometrics',
-      'travellername', 'travelername', 'dateofbirth', 'birthdate', 'dob',
-      'accountid', 'userid', 'tripid', 'emailaddress', 'healthrecord',
-      'passportscan', 'documentscan',
-    ].includes(norm)) return false
-    if (!safeShape(field, seen, depth + 1)) return false
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (typeof value !== 'object') return false
+  try {
+    if (seen.has(value)) return false
+    seen.add(value)
+    const array = Array.isArray(value)
+    if (array && (Object.getPrototypeOf(value) !== Array.prototype || value.length > 256)) return false
+    if (!array && !record(value)) return false
+    const keys = Reflect.ownKeys(value).filter(key => !(array && key === 'length'))
+    if (keys.length > 256 || (array && keys.length !== value.length)) return false
+    for (const key of keys) {
+      if (typeof key !== 'string') return false
+      if (array && (!/^(0|[1-9]\d*)$/.test(key) || Number(key) >= value.length)) return false
+      const field = Object.getOwnPropertyDescriptor(value, key)
+      if (!field || !field.enumerable || !('value' in field)) return false
+      const norm = key.toLowerCase().replace(/[^a-z]/g, '')
+      if ([
+        'passportnumber', 'documentnumber', 'mrz', 'biometric', 'biometrics',
+        'travellername', 'travelername', 'dateofbirth', 'birthdate', 'dob',
+        'accountid', 'userid', 'tripid', 'emailaddress', 'healthrecord',
+        'passportscan', 'documentscan',
+      ].includes(norm)) return false
+      if (!safeShape(field.value, seen, depth + 1)) return false
+    }
+    return true
+  } catch {
+    return false
   }
-  return true
 }
 
 function officialUrl(value: unknown): boolean {
@@ -168,11 +182,11 @@ function grokRecherchePaketQuarantaeneIntern(
     || v.authority_boundary_preserved !== true || !Array.isArray(v.external_writes)
     || v.external_writes.length !== 0) return blocked('invalid_package')
 
+  const expectedDocument = mode === 'bridge-v2' && country === 'TH'
+    ? 'ordinary Swiss passport'
+    : 'ordinary Swiss passport (product scope)'
   if (!scope || scope.citizenship !== 'CH' || scope.destination !== country
-    || (scope.document !== 'ordinary Swiss passport (product scope)'
-      && !(mode === 'bridge-v2' && country === 'TH' && scope.document === 'ordinary Swiss passport'))) {
-    return blocked('invalid_scope')
-  }
+    || scope.document !== expectedDocument) return blocked('invalid_scope')
   if (v.method !== 'independent_second_pass_same_executor_re_fetch') return blocked('invalid_verification')
 
   const sources = record(p.sources)
