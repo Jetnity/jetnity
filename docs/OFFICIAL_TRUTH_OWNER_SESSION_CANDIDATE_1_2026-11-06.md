@@ -1,6 +1,6 @@
 # Official Truth Owner Session Candidate 1 — R5
 Date: 6 November 2026. Parent: #1139 / #917.
-Status: IMPLEMENTATION ASSIGNED; no Technical-Lead PASS, no hosted or effective authorization change.
+Status: CANDIDATE IMPLEMENTED / INDEPENDENT REVIEW AND NATIVE CI PENDING; no Technical-Lead PASS, no hosted or effective authorization change.
 Baseline: `4ee93d9c073f88173ed4cc80e7c688104cae9601`.
 Writer: **Jetnity Official Truth Owner Session Candidate 1 — Codex Generation 1**. One writer; root Technical Lead and separately named readers review independently.
 Branch: `fix/official-truth-owner-session-candidate-1-20261106`.
@@ -51,3 +51,58 @@ This candidate does not close #1139/#917 or prove effective Dev/Production polic
 Report exact commit, files and diff, source anchors, executed vs skipped tests, residual risks and next action. Recheck live main before handing off. Self-review is not TL PASS.
 **do not mark Ready; do not merge; do not start a follow-up slice.**
 Stop after delivering this candidate for independent Technical-Lead review. Immediate review fixes stay with this same writer/session. A new head invalidates all previous gates.
+
+## Implemented candidate and bounded design decision
+
+The R5 writer has implemented the following three files; their integration and effective deployment are separate decisions:
+
+| File | Purpose |
+| --- | --- |
+| `scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql` | New own-subject Boolean witness, preserved public INVOKER capability and private VOLATILE mutation guard. |
+| `scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql` | Existing pilot RPC with post-grant trip/authority validation and bounded grant wait. |
+| `lib/readiness/official-truth-owner-session-candidate-local.test.ts` | Current-source anchors, actual native SQL/ACL behavior and coordinated concurrency tests. |
+
+Both SQL files remain outside all canonical migration/apply paths. There is no runtime import, CLI command, remote connection, configuration activation, dependency or workflow change. The previous #1141 diagnostic remains unchanged and continues to mark the canonical helper chain as KNOWN P1.
+
+### Identity, policy and privileges
+
+The Boolean requires the same canonical UUID subject in trusted claims and `auth.uid()`, claim role `authenticated`, current claim AAL2, integer numeric future `exp`, a matching own Session with stored AAL2 and future/null `not_after`, an existing non-deleted/non-anonymous/non-currently-banned Auth user and own stored Owner/active profile. Missing/malformed/inconsistent inputs never authorize. SQL/type/permission failures propagate; no catch-and-allow exists. User/app metadata cannot elevate authority.
+
+`own_active_session_v1()` is STABLE/PARALLEL UNSAFE and observes the statement snapshot/time. `public.darf_official_truth_freigeben()` remains argumentless, INVOKER and STABLE but becomes PARALLEL UNSAFE. CREATE OR REPLACE preserves its existing owner; its existing authenticated/service_role caller grants remain. A service-key-only claim does not satisfy the human session witness.
+
+The new schema, Boolean and guard explicitly use proposed owner `postgres`; the candidate pilot explicitly runs as that owner. Authenticated/service_role obtain only new-schema USAGE and exact Boolean EXECUTE. The private mutation guard is executable only by its owner. PUBLIC/anon receive neither Boolean nor guard execution. No candidate grant changes any Auth table or existing private schema. The actual target owner's existing privileges, function ACLs, schema exposure and ownership remain unverified preconditions, not facts inferred from the fixture.
+
+This candidate is tied only to the already evidenced Development policy: timebox 0, inactivity 0, single_per_user false and strict AAL. It does not implement alternate policies or infer `refreshed_at` timezone semantics; no second configuration authority was added. Current target policy must be reverified before effective use. [Supabase session documentation](https://supabase.com/docs/guides/auth/sessions) explains why row presence alone does not prove other configured lifetime policies.
+
+### Mutation authorization and concurrency
+
+The cheap Boolean precheck is not reusable authority. The existing real pilot grant lock is acquired first with a 3-second lock timeout. After that possible wait, the candidate revalidates and locks the current own Trip/revision using FOR SHARE NOWAIT, then the private VOLATILE guard locks **own Auth user → own Session → own profile** using FOR SHARE NOWAIT. The guard also bounds relation-lock waits to 2 seconds.
+
+After those locks, a fresh clock defines the authorization instant and the guard rereads the complete current user/profile/session predicate, including both numeric claim expiry and Session expiry. Both reserve and recheck use this guard. Grant expiry is then checked using the current clock. No network occurs in the transaction. Locks persist until transaction completion. NOWAIT makes Auth-delete/FK inversions fail closed rather than wait while holding the pilot grant. Stronger isolation serialization errors propagate; previously serialized work is not retroactively cancelled by a later revocation.
+
+The existing payload shape, finite grant semantics and returned fields are unchanged. The test compares the actual candidate pilot body against the anchored original plus the exact added post-lock block/timeout. Primary references: [PostgreSQL volatility](https://www.postgresql.org/docs/17/xfunc-volatility.html), [row locking](https://www.postgresql.org/docs/17/explicit-locking.html), [locking privileges](https://www.postgresql.org/docs/17/sql-select.html).
+
+### Native proof scope and non-vacuity
+
+The fixture reuses nine canonical Trip migrations, exact final role/AAL/capability bodies, the exact current profile status constraint, the exact profile-protection trigger body and its source rename, and the complete original Stage2 schema/RPC before applying the candidate. Sixteen canonical input blobs are pinned; conservative later-DDL guards cover selected helpers, pilot, profile trigger and grant table. This is not a general SQL parser, dynamic-SQL detector or whole deployed ACL replay.
+
+Managed Auth rows, enum/FK behavior and privileges are synthetic. Profile ON DELETE CASCADE is anchored to the baseline source; the managed Session FK remains an explicit fixture assumption. The proposed `postgres` fixture role is **NOLOGIN/NOSUPERUSER**, with explicitly stated local table grants and BYPASSRLS; this does not prove the real target has those privileges. The role-escalation negative uses a separate synthetic non-superuser authenticator with only authenticated membership and checks session_user/current_user; using the bootstrap superuser session there would be vacuous.
+
+Tests cover active-owner success, same claims after status/session/user changes, all lower roles, missing/foreign/malformed/expired witnesses, Auth ban/deletion/anonymity, direct RPC/ACL failures, real privilege removal and schema loss, and metadata elevation while the account still owns the valid Session. Self-reactivation reaches the actual trigger: a no-op own UPDATE first proves row accessibility; changing own status/role must then raise 23514.
+
+Concurrent tests observe the actual waiting PID, blocker PID and Lock state before committing invalidations. Reserve and recheck are both exercised after committed disable/revoke/ban, Session or numeric claim expiry, Trip owner/revision change and grant expiry. Grant expiry is proven still future after the wait is observed. Successful NULL-return transactions **commit before no-consumption readback**; error paths roll back. The suite also exercises non-key row-lock conflicts, real lock timeout, actual synthetic Auth-user FK cascade inversion, repeatable-read/serializable 40001 and locks held after RPC return through commit.
+
+### Writer validation and handoff
+
+- Source snapshot: main `4ee93d9c073f88173ed4cc80e7c688104cae9601`; original 75 migration copies independently blob-checked by root; selected sixteen hashes also verified by the new test.
+- Local Node 24 syntax/transpilation and the source/candidate-body guard **PASS**.
+- Local native test **SKIP: PostgreSQL binaries unavailable**. No native acceptance, full typecheck/lint/build or CI PASS is claimed by this local run. The initial static run caught a JavaScript replacement-string dollar-delimiter error; it was corrected before publication and reran green.
+- Full exact-head CI must actually execute the native parent and all native subtests. Root independently checks original logs, Preview, all changed files, open threads, and any new main drift. Author self-review is never Technical-Lead PASS.
+- Pre-publication root/reviewer findings corrected in this same writer session: source drift coverage, genuine non-superuser SET ROLE negative, commit-before-readback for NULL cases, observed-valid grant expiry and own-session metadata elevation.
+
+**Effective release remains NO-GO.** This executable source-bound candidate does not close #1139/#917 or establish real JWT validation, installed Dev/Production functions, actual Auth lifecycle/FK/ACL/exposure, accepted source identity or any visa answer. The specific #917 platform refusal and separate #1131/#1135 refusals remain intact. No hosted query or mutation was made.
+
+The exact next implementation gate is independent review and actual native CI execution of this candidate. After inert integration, legitimate clearance and unchanged #917 readback are still needed before a target-bound correction package and the special PO gate for an effective database/Auth change. No automatic Stage2/Official Truth activation follows.
+
+**Writer STOP for independent review. No Ready, merge or follow-up authority.**
+
