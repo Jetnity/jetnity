@@ -394,7 +394,7 @@ BEGIN
  IF entry IS NULL OR entry->'id' IS DISTINCT FROM pin->'id' OR entry->'version' IS DISTINCT FROM pin->'version'
   OR entry->'digest' IS DISTINCT FROM pin->'digest' OR entry->>'artifact_type' IS DISTINCT FROM expected_type
   OR entry->'artifact_contract_version' IS DISTINCT FROM '1'::jsonb
-  OR entry->>'byte_contract_family' IS DISTINCT FROM CASE WHEN expected_type='global_cell' THEN 'global_definition_v1' WHEN expected_type LIKE '%V1' THEN 'custody_v1' ELSE 'manifest_v1' END THEN
+  OR entry->>'byte_contract_family' IS DISTINCT FROM (CASE WHEN expected_type='global_cell' THEN 'global_definition_v1' WHEN expected_type LIKE '%V1' THEN 'custody_v1' ELSE 'manifest_v1' END) THEN
   RAISE EXCEPTION 'dependency_missing';
  END IF;
  RETURN entry->'content';
