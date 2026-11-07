@@ -510,7 +510,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     assert.ok(performance.now() - deferredStarted < 8_000, 'actual server cutoff shortens the unchanged 20s guard')
     w.close(deferred); await w.gone([deferredPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
-    note('actually running deferred COMMIT terminated by the shorter server guard', { elapsedMs: Math.round(performance.now() - deferredStarted) })
+    note('actually running deferred COMMIT terminated by the shorter server guard', { deferredCommitElapsedMs: Math.round(performance.now() - deferredStarted) })
     // The raw database cutoff is much later. Delay the ACTUAL guard transport,
     // while leaving enough monotonic time to arm and dispatch COMMIT. With the
     // old relative-sleep implementation this three-second deferred work would
@@ -518,15 +518,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     // calibration must instead terminate it and leave no durable marker.
     const delayed = await w.connect(), delayedPid = (await delayed.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
     await delayed.query('BEGIN; INSERT INTO public.refresh_commit_probe VALUES(3)')
-    const later = await databaseCutoff(20_000), earlierDeadline = performance.now() + 4_000
+    const later = await databaseCutoff(20_000), earlierDeadline = performance.now() + 3_500
     const connectBeforeDelay = LocalPgConnection.connect, delayedGuards: LocalPgConnection[] = []
-    let guardDelayMs = 0, guardArmed = false
+    let guardDelayMs = 0, guardArmed = false, guardTransportObserved = false
+    let enteredAt: number | null = null, delayedOutcome: LocalPgBoundedCommit | undefined
     LocalPgConnection.connect = async (...args: Parameters<typeof connectBeforeDelay>) => {
       const connection = await connectBeforeDelay.call(LocalPgConnection, ...args); delayedGuards.push(connection)
       const query = connection.query.bind(connection)
       connection.query = async (sql: string, params: readonly PgParameter[] = []) => {
-        if (!guardDelayMs && sql.includes('pg_terminate_backend(a.pid)::text AS terminated') && sql.includes('pg_sleep(')) {
-          const start = performance.now(); await delay(1_600); guardDelayMs = performance.now() - start
+        if (!guardTransportObserved && sql.includes('pg_terminate_backend(a.pid)::text AS terminated') && sql.includes('pg_sleep(')) {
+          // Stay below the unchanged 50 x 20ms arming-poll budget, while still
+          // making a restarted relative sleep observably later than our cutoff.
+          guardTransportObserved = true
+          const start = performance.now(); await delay(700); guardDelayMs = performance.now() - start
         }
         const rows = await query(sql, params)
         if (sql.includes('SELECT state,wait_event') && rows[0]?.wait_event === 'PgSleep') guardArmed = true
@@ -536,19 +540,28 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     }
     try {
       const pending = delayed.commitBefore(earlierDeadline, later.cutoff)
-      let enteredAt: number | null = null
       const until = performance.now() + 3_500
       while (performance.now() < until) {
         const active = (await w.owner.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND query='COMMIT' AND wait_event='PgSleep'", [pgText(delayedPid)]))[0]?.n === '1'
         if (active) { enteredAt = performance.now(); break }; await delay(20)
       }
       const result = await pending
+      delayedOutcome = result
       assert.equal(guardArmed, true); assert.ok(enteredAt !== null && enteredAt < earlierDeadline)
       assert.ok(enteredAt + 3_000 > earlierDeadline + 100, 'actual deferred work would finish after the earlier monotonic bound')
       assert.ok(enteredAt + 3_000 < earlierDeadline + guardDelayMs - 100, 'that work would beat a guard which restarted its relative sleep')
       assert.equal(result.dispatched, true); assert.equal(result.acknowledged, false)
       assert.ok(performance.now() < earlierDeadline + 1_500, 'guard fires at calibrated absolute cutoff, not delayed relative sleep')
-    } finally { LocalPgConnection.connect = connectBeforeDelay; w.close(delayed); for (const connection of delayedGuards) connection.close() }
+    } finally {
+      note('delayed guard transport bounded evidence', {
+        requestedGuardDelayMs: 700, guardDelayMs: Math.round(guardDelayMs), earlierBudgetMs: 3_500, deferredWorkMs: 3_000,
+        observedHook: guardTransportObserved, guardArmed, commitObserved: enteredAt !== null,
+        resultCode: delayedOutcome?.code ?? null, dispatched: delayedOutcome?.dispatched ?? null, acknowledged: delayedOutcome?.acknowledged ?? null,
+        deferredAfterBoundMs: enteredAt === null ? null : Math.round(enteredAt + 3_000 - earlierDeadline),
+        deferredBeforeRelativeRestartMs: enteredAt === null ? null : Math.round(earlierDeadline + guardDelayMs - enteredAt - 3_000),
+      })
+      LocalPgConnection.connect = connectBeforeDelay; w.close(delayed); for (const connection of delayedGuards) connection.close()
+    }
     await w.gone([delayedPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
     await w.owner.query('DROP TABLE public.refresh_commit_probe RESTRICT; DROP FUNCTION public.refresh_commit_pause() RESTRICT')
