@@ -9,9 +9,12 @@ import { OFFICIAL_REQUIREMENT_TYPES } from '@/types/trips'
 import { OFFICIAL_VISA_MODES } from '@/lib/readiness/official'
 
 const COUNTRIES = ['IT', 'FR', 'ES', 'JP', 'US'] as const
+const BRIDGE_V2_COUNTRIES = ['DE', 'TH', ...COUNTRIES] as const
 const CANDIDATE = /^CAND-[A-Z0-9-]{3,64}$/
 const PACKAGE = /^OT-CH-(IT|FR|ES|JP|US)-CAND-[0-9]{8}-[0-9]{3}$/
 const VERIFY = /^OT-CH-(IT|FR|ES|JP|US)-VERIFY-[0-9]{8}-[0-9]{3}$/
+const BRIDGE_V2_PACKAGE = /^OT-CH-(DE|TH|IT|FR|ES|JP|US)-CAND-[0-9]{8}-[0-9]{3}$/
+const BRIDGE_V2_VERIFY = /^OT-CH-(DE|TH|IT|FR|ES|JP|US)-VERIFY-[0-9]{8}-[0-9]{3}$/
 const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/
 const SHA256 = /^[a-f0-9]{64}$/
 const MAX_INPUT_LENGTH = 800_000
@@ -50,13 +53,15 @@ export type GrokResearchIntakeErgebnis =
   | {
       readonly status: 'quarantined_research_only'
       readonly packageId: string
-      readonly countryCode: (typeof COUNTRIES)[number]
+      readonly countryCode: (typeof BRIDGE_V2_COUNTRIES)[number]
       readonly researchStatus: 'RESEARCH_ONLY'
       readonly databaseImportStatus: 'NOT_APPROVED_FOR_DATABASE_IMPORT'
       readonly verificationClass: 'same_executor_not_independent'
       readonly sourceCustody: 'not_verified'
       readonly acceptedRules: 0
       readonly databaseWrites: 0
+      /** V2-only reporter declaration; never independently verified. */
+      readonly researchLimitsAttestation?: 'bot_reported_only' | 'missing_in_original'
       readonly reportedReadyForTlQualification: number
       readonly reportedBlocked: number
       readonly candidates: readonly {
@@ -86,24 +91,38 @@ function utc(value: unknown): number | null {
 }
 
 function safeShape(value: unknown, seen: WeakSet<object>, depth = 0): boolean {
+  // Research input must be plain JSON-like data, with no getters, proxies,
+  // symbols, functions, sparse arrays or cyclic/aliased nested references.
   if (depth > 15) return false
-  if (!value || typeof value !== 'object') return true
-  if (seen.has(value)) return false
-  seen.add(value)
-  if (Array.isArray(value)) return value.length <= 256 && value.every((x) => safeShape(x, seen, depth + 1))
-  const r = record(value)
-  if (!r || Object.keys(r).length > 256) return false
-  for (const [key, field] of Object.entries(r)) {
-    const norm = key.toLowerCase().replace(/[^a-z]/g, '')
-    if ([
-      'passportnumber', 'documentnumber', 'mrz', 'biometric', 'biometrics',
-      'travellername', 'travelername', 'dateofbirth', 'birthdate', 'dob',
-      'accountid', 'userid', 'tripid', 'emailaddress', 'healthrecord',
-      'passportscan', 'documentscan',
-    ].includes(norm)) return false
-    if (!safeShape(field, seen, depth + 1)) return false
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return true
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (typeof value !== 'object') return false
+  try {
+    if (seen.has(value)) return false
+    seen.add(value)
+    const array = Array.isArray(value)
+    if (array && (Object.getPrototypeOf(value) !== Array.prototype || value.length > 256)) return false
+    if (!array && !record(value)) return false
+    const keys = Reflect.ownKeys(value).filter(key => !(array && key === 'length'))
+    if (keys.length > 256 || (array && keys.length !== value.length)) return false
+    for (const key of keys) {
+      if (typeof key !== 'string') return false
+      if (array && (!/^(0|[1-9]\d*)$/.test(key) || Number(key) >= value.length)) return false
+      const field = Object.getOwnPropertyDescriptor(value, key)
+      if (!field || !field.enumerable || !('value' in field)) return false
+      const norm = key.toLowerCase().replace(/[^a-z]/g, '')
+      if ([
+        'passportnumber', 'documentnumber', 'mrz', 'biometric', 'biometrics',
+        'travellername', 'travelername', 'dateofbirth', 'birthdate', 'dob',
+        'accountid', 'userid', 'tripid', 'emailaddress', 'healthrecord',
+        'passportscan', 'documentscan',
+      ].includes(norm)) return false
+      if (!safeShape(field.value, seen, depth + 1)) return false
+    }
+    return true
+  } catch {
+    return false
   }
-  return true
 }
 
 function officialUrl(value: unknown): boolean {
@@ -122,11 +141,12 @@ function officialUrl(value: unknown): boolean {
  * server-owned source/evidence review queue; it is NEVER an import request.
  * 'candidate_ready_for_TL_qualification' is merely an untrusted bot label.
  */
-export function grokRecherchePaketQuarantaene(
+function grokRecherchePaketQuarantaeneIntern(
   candidatePackage: unknown,
   verification: unknown,
   expectedDestination: string,
   referenceTime: Date,
+  mode: 'v1' | 'bridge-v2',
 ): GrokResearchIntakeErgebnis {
   if (!(referenceTime instanceof Date) || !Number.isFinite(referenceTime.getTime())) return blocked('invalid_reference_time')
   if (!safeShape(candidatePackage, new WeakSet()) || !safeShape(verification, new WeakSet())) return blocked('forbidden_personal_field')
@@ -136,12 +156,13 @@ export function grokRecherchePaketQuarantaene(
 
   const p = record(candidatePackage), v = record(verification)
   if (!p || p.schema_version !== 1 || typeof p.package_id !== 'string'
-    || !PACKAGE.test(p.package_id)) return blocked('invalid_package')
+    || !(mode === 'bridge-v2' ? BRIDGE_V2_PACKAGE : PACKAGE).test(p.package_id)) return blocked('invalid_package')
   if (!v || v.schema_version !== 1 || typeof v.verification_id !== 'string'
-    || !VERIFY.test(v.verification_id)) return blocked('invalid_verification')
+    || !(mode === 'bridge-v2' ? BRIDGE_V2_VERIFY : VERIFY).test(v.verification_id)) return blocked('invalid_verification')
   if (v.package_id !== p.package_id) return blocked('verification_identity_mismatch')
   const country = p.package_id.split('-')[2]
-  if (!(COUNTRIES as readonly string[]).includes(expectedDestination)
+  const permittedCountries: readonly string[] = mode === 'bridge-v2' ? BRIDGE_V2_COUNTRIES : COUNTRIES
+  if (!permittedCountries.includes(expectedDestination)
     || expectedDestination !== country
     || v.verification_id.split('-')[2] !== country) return blocked('invalid_scope')
 
@@ -150,14 +171,22 @@ export function grokRecherchePaketQuarantaene(
   if (pkgTime > checkTime || checkTime > referenceTime.getTime()) return blocked('future_report')
 
   const boundary = record(p.authority_boundary), scope = record(p.traveller_scope)
+  // Actual DE/TH original packages omit hard_limits_respected entirely.
+  // Their missing declaration is never treated as true/verified.
+  const missingLimits = mode === 'bridge-v2' && (country === 'DE' || country === 'TH')
+    && !Object.hasOwn(p, 'hard_limits_respected')
+  const limitsDeclared = p.hard_limits_respected === true
   if (!boundary || boundary.mode !== 'RESEARCH_ONLY' || boundary.not_accepted_official_truth !== true
     || boundary.not_approved_for_database_import !== true || boundary.no_supabase_writes !== true
-    || boundary.stage1_readback_917_untouched !== true || p.hard_limits_respected !== true
+    || boundary.stage1_readback_917_untouched !== true || (!limitsDeclared && !missingLimits)
     || v.authority_boundary_preserved !== true || !Array.isArray(v.external_writes)
     || v.external_writes.length !== 0) return blocked('invalid_package')
 
+  const expectedDocument = mode === 'bridge-v2' && country === 'TH'
+    ? 'ordinary Swiss passport'
+    : 'ordinary Swiss passport (product scope)'
   if (!scope || scope.citizenship !== 'CH' || scope.destination !== country
-    || scope.document !== 'ordinary Swiss passport (product scope)') return blocked('invalid_scope')
+    || scope.document !== expectedDocument) return blocked('invalid_scope')
   if (v.method !== 'independent_second_pass_same_executor_re_fetch') return blocked('invalid_verification')
 
   const sources = record(p.sources)
@@ -230,15 +259,36 @@ export function grokRecherchePaketQuarantaene(
   return Object.freeze({
     status: 'quarantined_research_only',
     packageId: p.package_id,
-    countryCode: country as (typeof COUNTRIES)[number],
+    countryCode: country as (typeof BRIDGE_V2_COUNTRIES)[number],
     researchStatus: 'RESEARCH_ONLY',
     databaseImportStatus: 'NOT_APPROVED_FOR_DATABASE_IMPORT',
     verificationClass: 'same_executor_not_independent',
     sourceCustody: 'not_verified',
     acceptedRules: 0,
     databaseWrites: 0,
+    ...(mode === 'bridge-v2' ? { researchLimitsAttestation: missingLimits ? 'missing_in_original' as const : 'bot_reported_only' as const } : {}),
     reportedReadyForTlQualification: ready,
     reportedBlocked: botBlocked,
     candidates: Object.freeze(rows),
   })
+}
+
+/** Original five-country behavior remains strict and unmodified. */
+export function grokRecherchePaketQuarantaene(
+  candidatePackage: unknown,
+  verification: unknown,
+  expectedDestination: string,
+  referenceTime: Date,
+): GrokResearchIntakeErgebnis {
+  return grokRecherchePaketQuarantaeneIntern(candidatePackage, verification, expectedDestination, referenceTime, 'v1')
+}
+
+/** V2: original raw paired research files, NOT annotated V2 or accepted Evidence. */
+export function grokRecherchePaketQuarantaeneBridgeV2(
+  candidatePackage: unknown,
+  verification: unknown,
+  expectedDestination: string,
+  referenceTime: Date,
+): GrokResearchIntakeErgebnis {
+  return grokRecherchePaketQuarantaeneIntern(candidatePackage, verification, expectedDestination, referenceTime, 'bridge-v2')
 }
