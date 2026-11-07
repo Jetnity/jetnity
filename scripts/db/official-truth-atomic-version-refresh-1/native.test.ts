@@ -243,8 +243,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           const aa = pgCompositeArray(oids.array, oids.element, b.artifacts.map(a => [pgText(a.pin.id), pgText(String(a.pin.version), 20),
             pgText(a.pin.digest), pgText(a.artifactType), pgText(a.artifactType === 'global_cell' ? 'global_definition_v1' : a.artifactType.endsWith('V1') ? 'custody_v1' : 'manifest_v1'),
             pgText(String(a.artifactContractVersion), 23), pgBytes(a.canonicalBytes)]))
-          return connection.query(`SELECT ${schema}.validate_bundle_v2($1::text,$2::text,$3::bytea,$4::bytea,$5::official_provenance_api.artifact_input_v1[])`,
-            [pgText(envelope.profile), pgText(b.recordFingerprint), pgBytes(b.receiptBytes), pgBytes(b.custodyBindingBytes), aa])
+          const sql = `SELECT ${schema}.validate_bundle_v2($1::text,$2::text,$3::bytea,$4::bytea,$5::official_provenance_api.artifact_input_v1[])`
+          const parameters = [pgText(envelope.profile), pgText(b.recordFingerprint), pgBytes(b.receiptBytes), pgBytes(b.custodyBindingBytes), aa]
+          if (b.artifacts.length === 256) {
+            // The count-only negative must reach SQL. This conservative bound
+            // covers both unchanged wire guards, including fixed P/B/D/E/S
+            // framing beyond the driver's 12-byte-per-parameter preflight.
+            const frameUpperBound = parameters.reduce((sum, parameter) => sum + parameter.bytes.length + 12, Buffer.byteLength(sql) + 64)
+            const transportReserve = 10_485_760 - frameUpperBound
+            assert.ok(transportReserve >= 1_048_576, 'count256 fixture retains at least 1MiB below the unchanged transport limit')
+            note('raw count256 fixture fits actual serialized transport with reserve', { implementation, artifacts: b.artifacts.length,
+              arrayBytes: aa.bytes.length, frameUpperBoundBytes: frameUpperBound, transportReserveBytes: transportReserve })
+          }
+          return connection.query(sql, parameters)
         }
         const stats = async (connection: LocalPgConnection) => connection.query(`SELECT schemaname,funcname,calls::text,total_time::text,self_time::text
           FROM pg_stat_xact_user_functions WHERE schemaname IN ('official_provenance_private','official_refresh_reference_r5')
@@ -424,7 +435,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
             ['second wrong incoming expected type for existing pin', wrongIncoming],
             // This is an explicit raw count refusal, not a fabricated valid
             // 256-node proof or a claimed native depth/cycle branch traversal.
-            ['raw artifact count 256 exceeds unchanged bound', { ...original, bundle: { ...b, artifacts: Array.from({ length: 256 }, (_, i) => b.artifacts[i % b.artifacts.length]!) } }],
+            ['raw artifact count 256 exceeds unchanged bound', { ...original, bundle: { ...b, artifacts: Array.from({ length: 256 }, () => contract) } }],
           ]
           await invoke(adversary, 'current', 'raw')
           for (const [name, envelope] of rawCases) {
