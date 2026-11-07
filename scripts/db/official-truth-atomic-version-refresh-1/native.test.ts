@@ -511,7 +511,9 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           const c = await realConnect.call(LocalPgConnection, ...args)
           const commitControl = insideBoundedCommit && (args[1] === undefined || args[1] === cluster.user)
           if (!commitControl && ![ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) return c
-          const pid = (await c.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+          let pid: string
+          try { pid = (await c.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid! }
+          catch (error) { c.close(); throw error }
           const record = { role: args[1] ?? cluster.user, pid, closed: false, committed: false, profileRestored: false, queries: [] as { phase: string; ms: number; code: string | null }[] }; records.push(record)
           const actualQuery = c.query.bind(c), actualClose = c.close.bind(c)
           const actualCommit = c.commitBefore.bind(c)
@@ -944,48 +946,148 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     note('real delayed guard transport preserves earlier monotonic cutoff', { guardDelayMs: Math.round(guardDelayMs) })
     const blocked = async (kind: 'expiry' | 'abort' | 'timeout') => {
       await w.align()
+      const beforeFixture = await snapshot(w.owner)
+      const backendInventorySql = "SELECT pid::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE datname=current_database() AND backend_type='client backend' ORDER BY pid"
+      const previousBackends = await w.owner.query(backendInventorySql)
+      const ownerPid = (await w.owner.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
       let baseline: Awaited<ReturnType<typeof snapshot>> | undefined
-      const blocker = await w.connect(), cancel = new AbortController(), realConnect = LocalPgConnection.connect
-      let armed = false
-      // The unchanged canonical Old preflight completes before this real lock
-      // is acquired. It cannot be accidentally used as the lock-wait subject.
-      LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+      type Owned = { connection: LocalPgConnection; pid: string | null; closed: boolean }
+      const owned: Owned[] = [], hooks: Promise<LocalPgConnection>[] = [], observations: Promise<unknown>[] = []
+      const cancel = new AbortController(), realConnect = LocalPgConnection.connect
+      let blocker: Owned | undefined, observer: Owned | undefined, writer: Owned | undefined
+      let pending: Promise<AtomicRefreshResult> | undefined
+      let armed = false, stopping = false, expiryChanged = false, outcomeAllowed = false, lockSeen = false
+      let refreshSqlstate: string | null = null, failure: unknown, failed = false
+      let failEarly!: (error: unknown) => void
+      const early = new Promise<never>((_resolve, reject) => { failEarly = reject }); void early.catch(() => {})
+      const closeOwned = (record: Owned) => { if (!record.closed) { record.closed = true; record.connection.close() } }
+      const openOwned = async (...args: Parameters<typeof realConnect>) => {
         const connection = await realConnect.call(LocalPgConnection, ...args)
-        if (args[1] === ATOMIC_REFRESH_LOGIN && !armed) {
-          armed = true
-          if (kind === 'expiry') await w.owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER immutable_rows;
-            UPDATE official_original_private.originals SET freshness_until=clock_timestamp()+interval '12 seconds';
-            ALTER TABLE official_original_private.originals ENABLE TRIGGER immutable_rows;`)
-          baseline = await snapshot(w.owner)
-          await blocker.query('BEGIN'); await blocker.query('SELECT singleton FROM official_original_private.head FOR UPDATE')
-        }
-        return connection
+        // Record ownership before even the identity-query await can fail. The
+        // coordinator does not own an intercepted connection until we return.
+        const record: Owned = { connection, pid: null, closed: false }; owned.push(record)
+        try {
+          record.pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]?.pid ?? null
+          assert.match(record.pid ?? '', /^[1-9][0-9]*$/)
+          return record
+        } catch (error) { closeOwned(record); throw error }
       }
-      const pending = refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal)
-      let lockSeen = false
       try {
+        blocker = await openOwned(w.cluster); observer = await openOwned(w.cluster)
+        assert.equal(new Set([ownerPid, blocker.pid, observer.pid]).size, 3)
+        // Observation owns its backend BEFORE the asynchronous hook is active.
+        // Only the hook uses owner; no poll can overlap its mutation/snapshot.
+        const observe = (sql: string, parameters: readonly PgParameter[] = []) => {
+          const query = observer!.connection.query(sql, parameters)
+          observations.push(query); void query.catch(() => {})
+          return Promise.race([query, early])
+        }
+        LocalPgConnection.connect = (...args: Parameters<typeof realConnect>) => {
+          const hook = (async () => {
+            const record = await openOwned(...args)
+            try {
+              if (stopping) throw Error('blocked_hook_stopped')
+              if (args[1] === ATOMIC_REFRESH_LOGIN && !armed) {
+                armed = true; writer = record
+                assert.equal(new Set([ownerPid, blocker!.pid, observer!.pid, writer.pid]).size, 4)
+                const query = record.connection.query.bind(record.connection)
+                record.connection.query = async (sql: string, parameters: readonly PgParameter[] = []) => {
+                  try { return await query(sql, parameters) }
+                  catch (error) {
+                    if (sql.includes('refresh_version_v1(')) refreshSqlstate = error instanceof LocalPgError ? error.code : 'test_or_transport'
+                    throw error
+                  }
+                }
+                // The unchanged canonical Old preflight has completed. Only
+                // this actual producer, not that reader, can wait on our head.
+                if (kind === 'expiry') {
+                  expiryChanged = true
+                  await w.owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER immutable_rows;
+                    UPDATE official_original_private.originals SET freshness_until=clock_timestamp()+interval '12 seconds';
+                    ALTER TABLE official_original_private.originals ENABLE TRIGGER immutable_rows;`)
+                }
+                if (stopping) throw Error('blocked_hook_stopped')
+                baseline = await snapshot(w.owner)
+                if (stopping) throw Error('blocked_hook_stopped')
+                await blocker!.connection.query('BEGIN')
+                if (stopping) throw Error('blocked_hook_stopped')
+                await blocker!.connection.query('SELECT singleton FROM official_original_private.head FOR UPDATE')
+              }
+              return record.connection
+            } catch (error) { closeOwned(record); throw error }
+          })()
+          hooks.push(hook); void hook.catch(failEarly)
+          return hook
+        }
+        pending = refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal).then(result => {
+          if (!outcomeAllowed) failEarly(Error('blocked_coordinator_returned_before_expected_wait_outcome'))
+          return result
+        }, error => { failEarly(error); throw error })
+        void pending.catch(() => {})
         const until = performance.now() + 45_000
         while (performance.now() < until) {
-          lockSeen = (await w.owner.query(`SELECT count(*)::text AS n FROM pg_stat_activity WHERE usename='${ATOMIC_REFRESH_LOGIN}' AND wait_event_type='Lock'`))[0]?.n === '1'
+          lockSeen = (await observe(`SELECT count(*)::text AS n FROM pg_stat_activity a
+            WHERE a.pid::text=$1::text AND a.usename='${ATOMIC_REFRESH_LOGIN}' AND a.wait_event_type='Lock'
+             AND $2::integer=ANY(pg_blocking_pids(a.pid)) AND position('refresh_version_v1(' IN a.query)>0`,
+          [pgText(writer?.pid ?? ''), pgText(blocker.pid!, 23)]))[0]?.n === '1'
           if (lockSeen) break; await delay(20)
         }
         assert.equal(lockSeen, true, `${kind}: writer really waits on held head`)
-        if (kind === 'abort') cancel.abort()
+        if (kind === 'abort') { outcomeAllowed = true; cancel.abort() }
         if (kind === 'expiry') {
-          assert.equal((await w.owner.query('SELECT bool_and(clock_timestamp()<freshness_until)::text AS current FROM official_original_private.originals'))[0]?.current, 'true', 'predecessor is still usable after the wait actually begins')
-          while ((await w.owner.query('SELECT bool_and(clock_timestamp()>=freshness_until)::text AS expired FROM official_original_private.originals'))[0]?.expired !== 'true') await delay(20)
-          await blocker.query('ROLLBACK')
+          assert.equal((await observe('SELECT bool_and(clock_timestamp()<freshness_until)::text AS current FROM official_original_private.originals'))[0]?.current, 'true', 'predecessor is still usable after the wait actually begins')
+          while ((await observe('SELECT bool_and(clock_timestamp()>=freshness_until)::text AS expired FROM official_original_private.originals'))[0]?.expired !== 'true') await delay(20)
+          outcomeAllowed = true; await blocker.connection.query('ROLLBACK')
         }
-        const result = nonpositive(await pending)
+        if (kind === 'timeout') outcomeAllowed = true
+        const result = nonpositive(await Promise.race([pending, early]))
         assert.equal(result.commitStatus, 'not_attempted')
         if (kind === 'abort') assert.equal(result.reason, 'cancelled')
-      } finally { LocalPgConnection.connect = realConnect; await blocker.query('ROLLBACK'); w.close(blocker) }
-      assert.ok(baseline)
-      assert.deepEqual(await snapshot(w.owner), baseline); await w.locksReleased()
-      if (kind === 'expiry') await w.owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER immutable_rows;
-        UPDATE official_original_private.originals SET freshness_until=captured_at+interval '30 days';
-        ALTER TABLE official_original_private.originals ENABLE TRIGGER immutable_rows;`)
-      note('actual lock-wait refusal with complete rollback and no leaked locks', { case: kind })
+        if (kind === 'expiry') assert.equal(refreshSqlstate, '55000')
+        if (kind === 'timeout') assert.equal(refreshSqlstate, '55P03')
+        assert.notEqual(refreshSqlstate, 'connection_state')
+        assert.ok(baseline)
+      } catch (error) { failure = error; failed = true }
+      finally {
+        const cleanupErrors: unknown[] = []
+        const cleanup = async (operation: () => unknown) => { try { await operation() } catch (error) { cleanupErrors.push(error) } }
+        stopping = true; cancel.abort()
+        // Close releases the held transaction without issuing ROLLBACK on a
+        // blocker that a partially completed hook might still be using.
+        for (const record of owned) await cleanup(() => closeOwned(record))
+        const coordinatorOutcomes = await Promise.allSettled(pending ? [pending] : [])
+        const hookOutcomes: PromiseSettledResult<LocalPgConnection>[] = []
+        for (let drained = 0; drained < hooks.length;) {
+          const batch = hooks.slice(drained); drained += batch.length
+          hookOutcomes.push(...await Promise.allSettled(batch))
+        }
+        await Promise.allSettled(observations)
+        LocalPgConnection.connect = realConnect
+        // A connect that was already pending at cancellation can finish later;
+        // openOwned tracked it before its first further await, and we drain it.
+        for (const record of owned) await cleanup(() => closeOwned(record))
+        await cleanup(() => w.gone(owned.flatMap(record => record.pid ? [record.pid] : [])))
+        await cleanup(() => w.locksReleased())
+        if (baseline) await cleanup(async () => assert.deepEqual(await snapshot(w.owner), baseline))
+        if (expiryChanged) await cleanup(() => w.owner.query(`ALTER TABLE official_original_private.originals DISABLE TRIGGER immutable_rows;
+          UPDATE official_original_private.originals SET freshness_until=captured_at+interval '30 days';
+          ALTER TABLE official_original_private.originals ENABLE TRIGGER immutable_rows;`))
+        await cleanup(async () => assert.deepEqual(await snapshot(w.owner), beforeFixture))
+        // Even a failed initial PID probe must not leave an unrecorded new
+        // backend: compare actual PID+birth against the pre-helper inventory.
+        await cleanup(async () => {
+          const after = await w.owner.query(backendInventorySql)
+          assert.ok(after.every(row => previousBackends.some(before => row.pid === before.pid && row.birth === before.birth)))
+        })
+        note('blocked actors settled and owned backend cleanup inspected', { case: kind, lockSeen, refreshSqlstate,
+          coordinatorSettled: coordinatorOutcomes.length === 1, hooksSettled: hookOutcomes.length,
+          rejectedHooks: hookOutcomes.filter(outcome => outcome.status === 'rejected').length,
+          ownedConnections: owned.length, recordedPids: owned.filter(record => record.pid !== null).length,
+          cleanupFailures: cleanupErrors.length, primaryFailure: failed })
+        if (cleanupErrors.length) throw new AggregateError(failed ? [failure, ...cleanupErrors] : cleanupErrors, 'blocked_cleanup_failed')
+      }
+      if (failed) throw failure
+      note('actual lock-wait refusal with complete rollback and no leaked locks', { case: kind, refreshSqlstate })
     }
     await blocked('expiry'); await blocked('abort'); await blocked('timeout')
     await w.align()
