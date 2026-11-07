@@ -22,6 +22,7 @@ import { applicationContract, applicationPilotEnabled } from './contract-server'
 import { pilotGrant } from './database-server'
 import type { PilotResult, PilotStatus } from './result'
 import { withinDeadline } from './deadline-server'
+import { applicationPilotTargetAllowed } from './target-server'
 
 /** Current invocation only. No exported injection seam, positive cache or writes
  * to the accepted store. Tests replace dependencies outside the deploy graph. */
@@ -41,17 +42,21 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     : scopeCheck.reason === 'context_changed' ? 'context_changed' : 'unsupported_context')
   if (expired()) return empty('unavailable')
   if (!applicationPilotEnabled()) return empty('disabled')
+  if (!applicationPilotTargetAllowed()) return empty('unavailable')
   try {
     const authority = await loadOfficialTruthFactEntryAuthority()
-    if (expired() || authority.status !== 'authorized' || authority.grant !== 'role' || authority.capability !== 'official-truth-freigeben') return empty('unavailable')
+    if (!applicationPilotTargetAllowed() || expired() || authority.status !== 'authorized' || authority.grant !== 'role' || authority.capability !== 'official-truth-freigeben') return empty('unavailable')
     const grant = await pilotGrant(trip, null, signal)
+    if (!applicationPilotTargetAllowed()) return empty('unavailable')
     if (!grant || expired()) return empty('source_not_admitted')
     const contract = applicationContract(grant.contractId, grant.contractDigest)
     if (!contract || contract.applicationScope !== 'ch-ordinary-tourism-direct-de-v1'
       || !trip.startDate || !trip.endDate || trip.startDate<contract.travelDates.from || trip.endDate>contract.travelDates.through) return empty('source_not_admitted')
     // Bern's independent blocked execution authority is never borrowed here.
     if (new URL(contract.source.url).hostname === 'bern.diplo.de') return empty('source_not_admitted')
+    if (!applicationPilotTargetAllowed()) return empty('unavailable')
     const catalog = await quellenKatalogLesen()
+    if (!applicationPilotTargetAllowed()) return empty('unavailable')
     if (!catalog.ok || expired()) return empty('source_not_admitted')
     const source = catalog.registry.sources.find(s => s.sourceId === contract.source.sourceId)
     const representation = contentRepresentationFromRegistry(catalog.registry, contract.source.url)
@@ -68,9 +73,9 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
     const research = officialTruthRechercheEntscheiden({ status: 'missing', ruleScopeKey: scope.key, factKind: 'requirement_effect' }, scope.scope)
     if (research.action !== 'research') return empty('unavailable')
     // Leave the unchanged protected retrieval its complete 10-second budget.
-    if (expired() || Date.now()-started>5_000) return empty('unavailable')
+    if (!applicationPilotTargetAllowed() || expired() || Date.now()-started>5_000) return empty('unavailable')
     const retrieval = await loadOfficialTruthServerOwnedRetrieval({ sourceId: source.sourceId, url: contract.source.url })
-    if (retrieval.status !== 'server_owned_official_retrieval' || expired()
+    if (!applicationPilotTargetAllowed() || retrieval.status !== 'server_owned_official_retrieval' || expired()
       || !contentIdentityMatches(retrieval, contract.source.binding)
       || retrieval.requestUrl !== contract.source.url || retrieval.canonicalUrl !== representation.value.expectedFinalUrl
       || Date.parse(retrieval.retrievedAt)<started || Date.parse(retrieval.retrievedAt)>Date.now()) return empty('unavailable')
@@ -129,20 +134,28 @@ async function evaluateCurrentRequest(trip: Trip, signal: AbortSignal): Promise<
       checkedAt: retrieval.retrievedAt, validFrom: validity.validFrom, validUntil: validity.validUntil,
       ruleReference: review.reviewPacketKey,
     }] }
+    if (!applicationPilotTargetAllowed()) return empty('unavailable')
     const evaluations = await requirementsFuerReise(trip, provider, { signal })
     // Recheck kill/admission, actual Auth and account graph AFTER verification.
-    if (expired()) return empty('unavailable')
+    if (!applicationPilotTargetAllowed() || expired()) return empty('unavailable')
+    // A dependency can change runtime state synchronously before returning its
+    // promise. Check each start, then check again after all started work settles.
     const [currentGrant, currentAuthority, currentTrip, currentCatalog] = await Promise.all([
-      pilotGrant(trip, grant.id, signal), loadOfficialTruthFactEntryAuthority(), reiseLaden(trip.id, signal), quellenKatalogLesen(),
+      applicationPilotTargetAllowed() ? pilotGrant(trip, grant.id, signal) : null,
+      applicationPilotTargetAllowed() ? loadOfficialTruthFactEntryAuthority() : null,
+      applicationPilotTargetAllowed() ? reiseLaden(trip.id, signal) : null,
+      applicationPilotTargetAllowed() ? quellenKatalogLesen() : null,
     ])
-    if (!applicationPilotEnabled() || expired() || currentAuthority.status !== 'authorized' || currentAuthority.grant !== 'role'
+    if (!applicationPilotTargetAllowed() || !applicationPilotEnabled() || expired() || !currentAuthority
+      || currentAuthority.status !== 'authorized' || currentAuthority.grant !== 'role'
       || currentAuthority.capability !== 'official-truth-freigeben'
       || !currentGrant || JSON.stringify(currentGrant)!==JSON.stringify(grant)
-      || !currentCatalog.ok || JSON.stringify(currentCatalog.registry)!==JSON.stringify(catalog.registry)) return empty('unavailable')
-    if (currentTrip.problem || !currentTrip.zeilen[0] || pilotContextFingerprint(currentTrip.zeilen[0])!==fingerprint) return empty('context_changed')
+      || !currentCatalog?.ok || JSON.stringify(currentCatalog.registry)!==JSON.stringify(catalog.registry)) return empty('unavailable')
+    if (!currentTrip || currentTrip.problem || !currentTrip.zeilen[0] || pilotContextFingerprint(currentTrip.zeilen[0])!==fingerprint) return empty('context_changed')
     const positive = evaluations.filter(e => e.result==='required' || e.result==='not_required')
     if (positive.length!==1 || positive[0]!.requirementType!=='visa') return empty('unavailable')
     const expires = Math.min(Date.now()+60_000,Date.parse(grant.expiresAt))
+    if (!applicationPilotTargetAllowed()) return empty('unavailable')
     return { status: 'verified', tripId: trip.id, revision: trip.revision, contextFingerprint: fingerprint,
       expiresAt: new Date(expires).toISOString(), evaluations }
   } catch { return empty('unavailable') }

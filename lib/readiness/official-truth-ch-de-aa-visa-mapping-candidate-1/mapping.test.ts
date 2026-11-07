@@ -256,6 +256,7 @@ function applicationRun(options: { candidate?: Mapping; snapshot?: string; curre
   const grant = { id: '77777777-7777-4777-8777-777777777777', contractId: contract.id,
     contractDigest: options.grantDigest ?? contract.digest, expiresAt: new Date(Date.now() + 120_000).toISOString() }
   const evaluator = loadFixtureModule<typeof Evaluation>('lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts', {
+    './target-server': { applicationPilotTargetAllowed: () => true },
     ...fixture.modules,
     './contract-server': { applicationPilotEnabled: () => true,
       applicationContract: (id: string, digest: string) => id === contract.id && digest === contract.digest ? contract : null },
