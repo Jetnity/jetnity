@@ -8,6 +8,8 @@ import { LocalPgConnection, LocalPgError, pgText, type PgParameter, type LocalPg
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../official-truth-integrated-pilot-1/storage'
 import { bindCandidate, cursor, prepareOriginals, reviewCandidate, type Cursor, type PreparedOriginals } from '../official-truth-original-custody-1/storage'
 import { readPersistedCanonicalRequirements } from '../official-truth-persisted-canonical-read-1/reader'
+import { persistedCanonicalReadContract } from '../official-truth-persisted-canonical-read-1/contract'
+import { selectCurrentVersion } from '../official-truth-current-version-lookup-1/lookup'
 import { alternateSameIdentityReceipt } from '../official-truth-current-version-lookup-1/fixtures'
 import { contradictingFactFixture, originalsFor } from '../official-truth-persisted-canonical-read-1/fixtures'
 import { verifyLocalIntegratedPilotBundle } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
@@ -335,13 +337,28 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     await h.negative('damaged accepted corpus', req, async () => {
       await h.owner.query('ALTER TABLE official_original_private.supports DISABLE TRIGGER immutable_rows; DELETE FROM official_original_private.supports; ALTER TABLE official_original_private.supports ENABLE TRIGGER immutable_rows;')
     }, '55000')
-    // Real second accepted receipt creates ambiguity; test data is rolled back.
-    const ambiguousRequest = { ...await h.request(primary[2]!, 'primary') }
-    await h.negative('full-corpus ambiguity', ambiguousRequest, async () => {
-      await publishIntegratedBundle(h.owner, h.oids, primary[1]!.envelope)
-      await bindCandidate(h.owner, primary[1]!, req.reviewId, h.key, req.witness, 'create_or_verify')
-      ambiguousRequest.witness = await cursor(h.owner)
-    }, '55000')
+    // Each real accepted baseline has its own acknowledged transaction. The
+    // publisher's final SET CONSTRAINTS IMMEDIATE must not leak from fixture
+    // setup into the separate refresh transaction under test.
+    const ambiguous = await openHarness(primary[0]!)
+    try {
+      await ambiguous.seed(primary[1]!)
+      const ambiguousRequest = await ambiguous.request(primary[2]!, 'primary')
+      const reader = await ambiguous.connect('ot_original_test_reader')
+      const pid = (await reader.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+      try {
+        await reader.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+        const selection = await selectCurrentVersion(reader, persistedCanonicalReadContract('primary').request, ambiguousRequest.witness)
+        assert.equal(selection.status, 'ambiguous')
+        if (selection.status !== 'ambiguous') throw Error('actual_ambiguous_baseline_missing')
+        assert.equal(selection.matchCount, 2); assert.equal(selection.acceptedCount, 2)
+        assert.deepEqual(selection.witness, ambiguousRequest.witness)
+        await reader.query('COMMIT')
+      } finally { ambiguous.close(reader) }
+      await ambiguous.gone([pid])
+      note('independent lookup proves two separately committed accepted versions and actual full-corpus ambiguity')
+      await ambiguous.negative('full-corpus ambiguity', ambiguousRequest, undefined, '55000')
+    } finally { ambiguous.stop() }
     await h.align()
     const baseline = await snapshot(h.owner)
     const oldMaterial = () => h.owner.query(`SELECT s.position::text,md5(to_jsonb(s)::text) AS support,md5(to_jsonb(o)::text) AS original,
@@ -352,6 +369,9 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const retainedOld = await oldMaterial()
     nonpositive(await h.observed(() => refreshPersistedCanonicalVersion(h.cluster, forgedRequest, h.key)))
     assert.deepEqual(await snapshot(h.owner), baseline)
+    // A separate operation receives fresh outer fixture authority. Nothing is
+    // renewed during either coordinator call; event witness and sources stay put.
+    await h.align()
     // Own ALL material before first await, including Buffer/TypedArray aliases.
     const aliased = prepareOriginals(primary[1]!.envelope, primary[1]!.bodies)
     const copiedRequest = { ...req, envelope: aliased.envelope, bodies: aliased.bodies }
