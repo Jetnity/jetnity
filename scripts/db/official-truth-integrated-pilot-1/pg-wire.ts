@@ -33,8 +33,15 @@ export type LocalPgOperationDiagnostic = Readonly<{
   outcome: 'complete' | 'timeout' | 'sql_error' | 'transport_error'
   code: string | null
   commitAcknowledged?: boolean
+  commitDispatched?: boolean
   protectionFailure?: 'commit_guard_lost' | 'commit_control_failed' | 'commit_disarm_failed'
 }>
+/** Only the new bounded COMMIT path reports dispatch separately from ACK. */
+export type LocalPgBoundedCommit = Readonly<{
+  dispatched: boolean; acknowledged: boolean; code: string | null;
+  protectionFailure?: LocalPgOperationDiagnostic['protectionFailure'];
+}>
+type CommitBound = Readonly<{ deadlineAt: number; databaseCutoff: string }>
 type CommitDeadline = {
   sent(): void
   completed(): void
@@ -42,7 +49,7 @@ type CommitDeadline = {
   failure(): LocalPgOperationDiagnostic['protectionFailure']
 }
 const diagnosticCode = (error: unknown): string | null => error instanceof LocalPgError
-  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count','commit_deadline_not_armed'].includes(error.code) ? error.code : 'transport_error') : null
+  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count','commit_deadline_not_armed','commit_bound_elapsed'].includes(error.code) ? error.code : 'transport_error') : null
 export class LocalPgConnection {
   private buffer: Buffer = Buffer.alloc(0)
   private messages: { tag: string; bytes: Buffer }[] = []
@@ -56,11 +63,12 @@ export class LocalPgConnection {
   private readonly operations: LocalPgOperationDiagnostic[] = []
   /** Fixed fields only: no SQL, parameter bytes, identities, socket paths or database error text. */
   get operationDiagnostics(): readonly LocalPgOperationDiagnostic[] { return this.operations.slice() }
-  private recordOperation(phase: LocalPgOperationDiagnostic['phase'], started: number, error?: unknown, protectionFailure?: LocalPgOperationDiagnostic['protectionFailure']) {
+  private recordOperation(phase: LocalPgOperationDiagnostic['phase'], started: number, error?: unknown, protectionFailure?: LocalPgOperationDiagnostic['protectionFailure'], dispatched?: boolean) {
     const code = diagnosticCode(error)
     this.operations.push(Object.freeze({ phase, elapsedMs: Math.ceil(performance.now() - started),
       outcome: this.timedOut ? 'timeout' : error === undefined ? 'complete' : code && /^[0-9A-Z]{5}$/.test(code) ? 'sql_error' : 'transport_error', code,
       ...(phase === 'commit' ? { commitAcknowledged: this.commandTag === 'COMMIT' } : {}),
+      ...(dispatched === undefined ? {} : { commitDispatched: dispatched }),
       ...(protectionFailure ? { protectionFailure } : {}) }))
     if (this.operations.length > 32) this.operations.shift()
   }
@@ -145,13 +153,14 @@ export class LocalPgConnection {
    * + transaction start prevent cancellation of a reused PID or later work.
    * The installation owner is local test infrastructure, never an application role.
    */
-  private async armCommitDeadline(): Promise<CommitDeadline> {
+  private async armCommitDeadline(bound?: CommitBound): Promise<CommitDeadline> {
     const guard = await LocalPgConnection.connect(this.cluster)
     let control: LocalPgConnection | undefined, pending: Promise<void> | undefined, recovery: Promise<void> | undefined
     let armed = false, sent = false, completed = false, disarming = false, finished = false
     let protectionFailure: LocalPgOperationDiagnostic['protectionFailure']
     let guardBirth: string | undefined
     let target: Readonly<Record<string, string | null>> | undefined
+    let absoluteCutoff: string | undefined
     const recover = async () => {
       protectionFailure = 'commit_guard_lost'
       // This connection was established and its fixed backend limit configured
@@ -185,16 +194,42 @@ export class LocalPgConnection {
       } finally { control?.close(); guard.close() }
     }
     try {
-      target = (await guard.query('SELECT backend_start::text AS birth,xact_start::text AS transaction FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(this.backendPid), 23)]))[0]
-      if (!target?.birth || !target.transaction) { guard.close(); return { sent() {}, completed() {}, cleanup: async () => {}, failure: () => undefined } }
+      target = (await guard.query(bound
+        ? 'SELECT backend_start::text AS birth,xact_start::text AS transaction,to_char(clock_timestamp() AT TIME ZONE \'UTC\',\'YYYY-MM-DD"T"HH24:MI:SS.US"Z"\') AS observed_at FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer'
+        : 'SELECT backend_start::text AS birth,xact_start::text AS transaction FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(this.backendPid), 23)]))[0]
+      const observedReplyAt = bound ? performance.now() : 0
+      if (!target?.birth || !target.transaction) {
+        if (bound) throw new LocalPgError('commit_deadline_not_armed')
+        guard.close(); return { sent() {}, completed() {}, cleanup: async () => {}, failure: () => undefined }
+      }
+      if (bound) {
+        const observed = target.observed_at
+        if (typeof observed !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/.test(observed)
+          || !Number.isFinite(Date.parse(observed)) || new Date(Date.parse(observed)).toISOString() !== `${observed.slice(0, 23)}Z`
+          || observedReplyAt >= bound.deadlineAt) throw new LocalPgError('commit_bound_elapsed')
+        // Map the immutable monotonic minimum to DB time BEFORE subsequent
+        // arming awaits. Observed DB time precedes response receipt, so this
+        // mapping and millisecond flooring only shorten the allowed duration.
+        // Later SQL scheduling can never restart a relative sleep budget.
+        const mapped = Math.floor(Math.min(Date.parse(bound.databaseCutoff), Date.parse(observed) + bound.deadlineAt - observedReplyAt - 2))
+        if (!Number.isFinite(mapped) || mapped <= Date.parse(observed)) throw new LocalPgError('commit_bound_elapsed')
+        absoluteCutoff = new Date(mapped).toISOString().replace('Z', '000Z')
+      }
       control = await LocalPgConnection.connect(this.cluster)
       await control.query(`SET statement_timeout=${LOCAL_PG_DEADLINES.commitRecoveryStatementMs}`)
       guardBirth = (await control.query('SELECT backend_start::text AS birth FROM pg_catalog.pg_stat_get_activity($1::integer)', [pgText(String(guard.backendPid), 23)]))[0]?.birth ?? undefined
       if (!guardBirth) throw new LocalPgError('commit_deadline_not_armed')
       // pg_sleep returns the empty void text. Using its length in the activity
       // function argument forces the fresh activity lookup AFTER the sleep.
-      pending = guard.query('SELECT pg_catalog.pg_terminate_backend(a.pid)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer + pg_catalog.length(pg_catalog.pg_sleep($4::double precision)::text)) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz',
-        [pgText(String(this.backendPid), 23), pgText(target.birth), pgText(target.transaction), pgText(String(LOCAL_PG_DEADLINES.commitMs / 1000))])
+      // The ordinary fixed path is byte-for-byte the same SQL/20s budget. The
+      // new path only shortens it: both remaining monotonic budget and actual
+      // database cutoff survive asynchronous guard setup and server scheduling.
+      const guardSql = bound
+        ? 'SELECT pg_catalog.pg_terminate_backend(a.pid)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer + pg_catalog.length(pg_catalog.pg_sleep(GREATEST(0::double precision,EXTRACT(epoch FROM ($4::timestamptz-pg_catalog.clock_timestamp()))::double precision))::text)) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz'
+        : 'SELECT pg_catalog.pg_terminate_backend(a.pid)::text AS terminated FROM pg_catalog.pg_stat_get_activity($1::integer + pg_catalog.length(pg_catalog.pg_sleep($4::double precision)::text)) a WHERE a.backend_start=$2::timestamptz AND a.xact_start=$3::timestamptz'
+      const guardParams = [pgText(String(this.backendPid), 23), pgText(target.birth), pgText(target.transaction),
+        pgText(bound ? absoluteCutoff! : String(LOCAL_PG_DEADLINES.commitMs / 1000))]
+      pending = guard.query(guardSql, guardParams)
         .then(() => { finished = true }, () => {
           finished = true
           if (!disarming && armed) {
@@ -217,6 +252,43 @@ export class LocalPgConnection {
         failure: () => protectionFailure,
       }
     } catch (error) { await cleanup(); throw error }
+  }
+  /** Fixed COMMIT only, with a proved cutoff; it cannot dispatch arbitrary SQL.
+   * Legacy query(COMMIT) remains unchanged. The caller receives actual ACK even
+   * after ReadyForQuery/cleanup loss and distinguishes definitely unsent work.
+   */
+  async commitBefore(deadlineAt: number, databaseCutoff: string): Promise<LocalPgBoundedCommit> {
+    const started = performance.now()
+    const invalid = arguments.length !== 2 || !Number.isFinite(deadlineAt) || typeof databaseCutoff !== 'string'
+      || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/.test(databaseCutoff)
+      || !Number.isFinite(Date.parse(databaseCutoff))
+      || new Date(Date.parse(databaseCutoff)).toISOString() !== `${databaseCutoff.slice(0, 23)}Z`
+    if (this.busy || this.closed || invalid) return Object.freeze({ dispatched: false, acknowledged: false, code: 'connection_state' })
+    const bound: CommitBound = Object.freeze({ deadlineAt: Math.min(deadlineAt, started + LOCAL_PG_DEADLINES.commitMs), databaseCutoff })
+    this.busy = true; this.timedOut = false; this.commandTag = null
+    this.socket.setTimeout(30_000)
+    let deadline: CommitDeadline | undefined, failure: unknown, dispatched = false
+    let cleanupFailure: LocalPgOperationDiagnostic['protectionFailure']
+    try {
+      if (performance.now() >= bound.deadlineAt) throw new LocalPgError('commit_bound_elapsed')
+      deadline = await this.armCommitDeadline(bound)
+      const frame = packet('Q', z('COMMIT'))
+      // No await between this post-arming check and handing the COMMIT frame to
+      // the socket. A scheduling delay while arming cannot start a new budget.
+      if (this.closed || performance.now() >= bound.deadlineAt) throw new LocalPgError('commit_bound_elapsed')
+      deadline.sent()
+      dispatched = true
+      this.socket.write(frame)
+      await this.result()
+    } catch (error) { failure = error }
+    finally {
+      deadline?.completed()
+      this.socket.setTimeout(0)
+      try { await deadline?.cleanup() } catch { cleanupFailure = 'commit_disarm_failed'; this.closed = true; this.socket.destroy() }
+      finally { this.busy = false; this.recordOperation('commit', started, failure, deadline?.failure() ?? cleanupFailure, dispatched) }
+    }
+    return Object.freeze({ dispatched, acknowledged: this.commandTag === 'COMMIT', code: diagnosticCode(failure),
+      ...((deadline?.failure() ?? cleanupFailure) ? { protectionFailure: deadline?.failure() ?? cleanupFailure } : {}) })
   }
   async query(sql: string, parameters: readonly PgParameter[] = []): Promise<PgRows> {
     if (this.busy || this.closed) throw new LocalPgError('connection_state')
