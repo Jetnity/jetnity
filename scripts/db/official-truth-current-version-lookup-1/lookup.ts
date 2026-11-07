@@ -55,6 +55,10 @@ export type CurrentVersionLookupResult = Common & (
   }>
 )
 
+/** Internal local selection metadata only; never a custody or positive result. */
+type CurrentVersionSelection = Exclude<CurrentVersionLookupResult, { status: 'synthetic_current_version_verified' }>
+  | (Common & Readonly<{ status: 'unique'; recordFingerprint: string; matchCount: 1 }>)
+
 const columns = 'outcome,reason,record_fingerprint,match_count,accepted_count,rule_scope_key,definition_id,definition_version,definition_digest,fact_kind,requirement_type,read_at,production_accepted_read,positive_visa_cells'
 const readAtPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,6}Z$/
 const fingerprintPattern = /^ot-provenance-v1:[a-f0-9]{64}$/
@@ -96,7 +100,7 @@ function validateWitness(witness: Cursor): void {
  * The returned fingerprint is bound to that witness and read time only.
  * A later decision runs the proof again.
  */
-export async function lookupCurrentVersion(cluster: LocalProofCluster, connection: LocalPgConnection, request: CurrentVersionRequest, key: string, witness: Cursor): Promise<CurrentVersionLookupResult> {
+export async function selectCurrentVersion(connection: LocalPgConnection, request: CurrentVersionRequest, witness: Cursor): Promise<CurrentVersionSelection> {
   const validated = validateRequest(request)
   validateWitness(witness)
   const rows = await connection.query(
@@ -135,7 +139,14 @@ export async function lookupCurrentVersion(cluster: LocalProofCluster, connectio
     return Object.freeze({ ...common, status: 'refused', reason: row.reason as CurrentVersionRefusalReason })
   }
   if (row.outcome !== 'unique' || row.reason !== null || row.match_count !== '1' || !row.record_fingerprint || !fingerprintPattern.test(row.record_fingerprint)) shape()
-  const proof = await readCandidate(cluster, connection, row.record_fingerprint, key, witness)
-  if (proof.recordFingerprint !== row.record_fingerprint || proof.productionAcceptedRead !== 'NOT_AUTHORIZED' || proof.positiveVisaCells !== 0 || proof.cursor.sequence !== witness.sequence || proof.cursor.eventHash !== witness.eventHash) shape()
-  return Object.freeze({ ...common, status: 'synthetic_current_version_verified', recordFingerprint: row.record_fingerprint, matchCount: 1 as const, proof })
+  return Object.freeze({ ...common, status: 'unique', recordFingerprint: row.record_fingerprint, matchCount: 1 as const })
+}
+
+/** Original API/result retained, including its full custody proof. */
+export async function lookupCurrentVersion(cluster: LocalProofCluster, connection: LocalPgConnection, request: CurrentVersionRequest, key: string, witness: Cursor): Promise<CurrentVersionLookupResult> {
+  const selection = await selectCurrentVersion(connection, request, witness)
+  if (selection.status !== 'unique') return selection
+  const proof = await readCandidate(cluster, connection, selection.recordFingerprint, key, witness)
+  if (proof.recordFingerprint !== selection.recordFingerprint || proof.productionAcceptedRead !== 'NOT_AUTHORIZED' || proof.positiveVisaCells !== 0 || proof.cursor.sequence !== witness.sequence || proof.cursor.eventHash !== witness.eventHash) shape()
+  return Object.freeze({ ...selection, status: 'synthetic_current_version_verified', proof })
 }

@@ -48,7 +48,7 @@ function invocation() {
   }
 }
 
-export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotFault = 'none') {
+export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotFault = 'none', clockMode: 'historical' | 'fresh' = 'historical') {
   const safeMode = typeof mode === 'string' && ['primary', 'composed'].includes(mode) ? mode : null
   const safeFault = typeof fault === 'string' && PILOT_FAULTS.includes(fault) ? fault : null
   const trace = { catalogReads: 0, originalHttp: 0, freshHttp: 0, evidenceAcceptances: 0, proof: false,
@@ -71,7 +71,8 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     return { pin, value: parsed }
   }
   try {
-    if (!['primary', 'composed'].includes(mode) || !PILOT_FAULTS.includes(fault)) throw Error('authority_required')
+    if (arguments.length > 3 || !['primary', 'composed'].includes(mode) || !PILOT_FAULTS.includes(fault)
+      || !['historical', 'fresh'].includes(clockMode) || (clockMode === 'fresh' && fault !== 'none')) throw Error('authority_required')
     const corpus = PILOT_CORPUS
     const requested: PilotItem[] = mode === 'primary' ? ['primary_rule'] : ['composed_effect', 'composed_mode']
     // External bootstrap boundary is synthetic and counted; it grants no hosted principal.
@@ -79,6 +80,12 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     token = ledger.advance(token)
     const snapshot = consumeControlledImplementationSnapshot()
     if (!snapshot) throw Error('runtime_context_missing')
+    // The controlled worker owns this finite clock. Every simulated observation
+    // is already in the past; no timestamp/identity is rewritten after execution.
+    const freshBase = Math.floor((Date.now() - 120_000) / 1000) * 1000
+    const originTime = clockMode === 'fresh' ? new Date(freshBase).toISOString() : PILOT_ORIGIN_TIME
+    const referenceTime = clockMode === 'fresh' ? new Date(freshBase + 60_000).toISOString() : PILOT_REFERENCE_TIME
+    const completionTime = clockMode === 'fresh' ? new Date(freshBase + 61_000).toISOString() : PILOT_COMPLETION_TIME
     const files = snapshot.files, capsules: Pin[] = []
     let group: { path: string; utf8: string }[] = [], size = 0
     const flush = () => {
@@ -127,11 +134,11 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
       return { ok: true, antwort: catalogAnswer }
     } }
     trace.catalogReads++ // one external snapshot; all later catalog reads replay these exact bytes
-    let fresh = false, originalClock = PILOT_ORIGIN_TIME
+    let fresh = false, originalClock = originTime
     async function retrieve(input: unknown, replay: OfficialTruthSourceCatalogTransport = transport) {
       return decideOfficialTruthServerOwnedRetrieval(input, { catalog: { transport: replay, identityProfiles: corpus.profiles },
-        now: () => new Date(fresh ? fault === 'reversed_clock' ? PILOT_ORIGIN_TIME : PILOT_COMPLETION_TIME
-          : fault === 'future_original' ? PILOT_COMPLETION_TIME : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock),
+        now: () => new Date(fresh ? fault === 'reversed_clock' ? originTime : completionTime
+          : fault === 'future_original' ? completionTime : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock),
         resolve: async () => [{ address: '93.184.216.34', family: 4 }],
         http: async request => {
           if (fresh) trace.freshHttp++; else trace.originalHttp++
@@ -155,7 +162,7 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     if (fault === 'two_eligible_versions' || fault === 'same_item_two_representations') originalJobs.push({
       item: requested[0]!, secondary: fault === 'same_item_two_representations', extra: true })
     for (const { item, secondary, extra } of originalJobs) {
-      originalClock = extra ? '2026-10-06T12:00:00.500Z' : PILOT_ORIGIN_TIME
+      originalClock = extra ? new Date(Date.parse(originTime) + 500).toISOString() : originTime
       const artifactSuffix = `${item}${extra ? '-second' : ''}`
       const rep = corpus.registry.contentIdentity!.representations.find(r => r.contentItemId === item && r.representationId === (secondary ? 'json-alternate' : 'json'))!
       const itemValue = corpus.registry.contentIdentity!.items.find(r => r.contentItemId === item)!
@@ -164,7 +171,7 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
       const qualification = custody('GlobalRepresentationQualificationV1', `pilot-qualification-${artifactSuffix}`, {
         binding: contentIdentityBinding(rep), itemDefinition, representationDefinition,
         identityProfileDefinition: profile, qualificationContract })
-      const startedAt = fault === 'future_original' ? PILOT_COMPLETION_TIME : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock
+      const startedAt = fault === 'future_original' ? completionTime : fault === 'stale_original' ? '2025-10-06T12:00:00.000Z' : originalClock
       const retrieval = await retrieve({ sourceId: PILOT_SOURCE, url: secondary ? pilotSecondaryUrl(item) : pilotOriginalRequestUrl(item) })
       if (retrieval.status !== 'server_owned_official_retrieval') throw Error('representation_not_global')
       if (!ledger.owns(token)) throw Error('authority_required')
@@ -230,7 +237,7 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     const reviewed = custody('AutonomousReviewConstructionV1', `pilot-${mode}-review`, review.value)
     const proof = proveOfficialTruthCustodiedMaterial({ authority, registry: corpus.registry, evidenceVersions: versions,
       review, scope: fault === 'scope_substitution' ? { ...corpus.scope, destinationCountryCode: 'JP' } : corpus.scope,
-      serverReferenceTime: PILOT_REFERENCE_TIME })
+      serverReferenceTime: referenceTime })
     if (proof.status !== 'same_request_proof') throw Error(proof.reason)
     trace.proof = true; done.push('safe_review_v3', 'scope_identity_freshness_proof'); token = ledger.advance(token)
     fresh = true
@@ -255,7 +262,7 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
     if (fault === 'foreign_composition_seal' && !composed) throw Error('composition_context_incomplete')
     if (composed && officialTruthCompositionSealView(fault === 'foreign_composition_seal' ? {} : composed.context.phaseB.seal)?.fact !== fact) throw Error('composition_context_incomplete')
     const retrievals = primary ? primary.retrievals : composed!.context.retrievals
-    if (retrievals.some(r => Date.parse(r.retrievedAt) < Date.parse(PILOT_REFERENCE_TIME))) throw Error('freshness_gap')
+    if (retrievals.some(r => Date.parse(r.retrievedAt) < Date.parse(referenceTime))) throw Error('freshness_gap')
     trace.extracted = true; trace.actualFactIdentity = true; done.push('fresh_retrieval', `${mode}_actual_execution_context`); token = ledger.advance(token)
     const supports = versions.map(v => ({ versionId: v.versionId, identitySchema: 2 as const, binding: contentIdentityBinding(v),
       canonicalFinalUrl: v.canonicalUrl, contentType: v.contentType, sourceContentHash: v.sourceContentHash,
@@ -286,7 +293,7 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
         extractorRegistrySnapshot, outputContract, policyDefinition, policyRegistrySnapshot, preHttpSelectionKey: selectionKey,
         assignments, supportVersionIds: ids, citations })! } : null
     const proofFields = { contract: proofContract, reviewPacketKey: proof.reviewPacketKey, catalogSnapshot,
-      serverReferenceTime: PILOT_REFERENCE_TIME, freshnessContract, evidenceFreshnessAtReference: 'current' as const }
+      serverReferenceTime: referenceTime, freshnessContract, evidenceFreshnessAtReference: 'current' as const }
     const proofIdentity = provenanceHash('ot-proof-v1', { ...proofFields, ruleScopeKey: corpus.ruleScopeKey,
       factKind: 'requirement_effect', supportVersionIds: ids })!
     const payload: IntegratedPilotPayload = { schema: 'official-truth-autonomous-provenance', schemaVersion: 1,
