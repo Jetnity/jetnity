@@ -532,6 +532,8 @@ describe('dormancy and architectural boundaries', () => {
     'scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts',
     // R3 independent SQL differential proof only; frozen reader is the oracle.
     'scripts/db/official-truth-integrated-pilot-1/r3-proof.ts',
+    // #1150 TL R1: fixed local historical projection, never a live/app reader.
+    'scripts/db/official-truth-persisted-canonical-read-1/projection.ts',
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
@@ -554,6 +556,13 @@ describe('dormancy and architectural boundaries', () => {
     assert.equal(contentIdentityImporterAllowed('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r2-fixtures.ts'), true)
     assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-integrated-pilot-1/r3-proof.ts'), true)
+    assert.equal(contentIdentityImporterAllowed('scripts/db/official-truth-persisted-canonical-read-1/projection.ts'), true)
+    for (const path of ['scripts/db/official-truth-persisted-canonical-read-1/projection.ts.evil.ts',
+      'scripts/db/official-truth-persisted-canonical-read-1/reader.ts',
+      'scripts/db/official-truth-persisted-canonical-read-2/projection.ts',
+      'app/api/official-truth-persisted-canonical-read-1/projection.ts']) {
+      assert.equal(contentIdentityImporterAllowed(path), false, path)
+    }
     assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts'), true)
     assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-ch-de-source-budget-128k-1.ts.evil.ts'), false)
     assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-aa-visa-table-identity-candidate.ts'), true)

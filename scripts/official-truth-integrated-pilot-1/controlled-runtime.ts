@@ -55,7 +55,7 @@ const freeze = o => { if (o && typeof o === 'object' && !Object.isFrozen(o)) { f
   const entry = { exports: {} };
   const load = runInThisContext('(function(require,module,exports,__otConsumeSnapshot){' + code + '\\n})', { filename: 'controlled-pilot.cjs' });
   load(restrictedRequire, entry, entry.exports, consume);
-  const result = await entry.exports.runSyntheticIntegratedPilot(workerData.mode, workerData.fault);
+  const result = await entry.exports.runSyntheticIntegratedPilot(workerData.mode, workerData.fault, workerData.clockMode);
   active = false;
   parentPort.postMessage({ ok: true, value: result });
 })().catch(() => parentPort.postMessage({ ok: false }));
@@ -163,14 +163,15 @@ export async function prepareControlledSyntheticPilot(): Promise<object> {
 }
 
 /** Forged, cloned, foreign, reused and closed handles cannot start a worker. */
-export async function executePreparedControlledSyntheticPilot(handle: unknown, mode: PilotMode, fault: PilotFault = 'none'): Promise<PilotResult> {
+async function execute(handle: unknown, mode: PilotMode, fault: PilotFault, clockMode: 'historical' | 'fresh'): Promise<PilotResult> {
   const captured = handle !== null && typeof handle === 'object' ? prepared.get(handle) : undefined
   if (!captured) throw Error('controlled_runtime_authority_required')
   prepared.delete(handle as object)
-  if (arguments.length > 3 || (mode !== 'primary' && mode !== 'composed') || !CONTROLLED_PILOT_FAULTS.includes(fault)) throw Error('controlled_runtime_authority_required')
+  if ((mode !== 'primary' && mode !== 'composed') || !CONTROLLED_PILOT_FAULTS.includes(fault)
+    || !['historical', 'fresh'].includes(clockMode) || (clockMode === 'fresh' && fault !== 'none')) throw Error('controlled_runtime_authority_required')
   return new Promise<PilotResult>((resolveResult, reject) => {
     const worker = new Worker(captured.bootstrap, { eval: true, execArgv: [], env: {},
-      workerData: { snapshot: captured.snapshot, mode, fault }, stdout: true, stderr: true,
+      workerData: { snapshot: captured.snapshot, mode, fault, clockMode }, stdout: true, stderr: true,
       resourceLimits: { maxOldGenerationSizeMb: 256 } })
     worker.stdout.resume(); worker.stderr.resume()
     let settled = false
@@ -187,7 +188,22 @@ export async function executePreparedControlledSyntheticPilot(handle: unknown, m
   })
 }
 
+export async function executePreparedControlledSyntheticPilot(handle: unknown, mode: PilotMode, fault: PilotFault = 'none'): Promise<PilotResult> {
+  // Preserve the existing closed argument surface and burned one-shot handle.
+  if (arguments.length > 3) {
+    if (handle !== null && typeof handle === 'object') prepared.delete(handle)
+    throw Error('controlled_runtime_authority_required')
+  }
+  return execute(handle, mode, fault, 'historical')
+}
+
 export async function runControlledSyntheticPilot(mode: PilotMode, fault: PilotFault = 'none'): Promise<PilotResult> {
   if (arguments.length > 2) throw Error('controlled_runtime_authority_required')
   return executePreparedControlledSyntheticPilot(await prepareControlledSyntheticPilot(), mode, fault)
+}
+
+/** Fixed fresh synthetic observation sequence. No caller clock, fault or DTO. */
+export async function runFreshControlledSyntheticPilot(mode: PilotMode): Promise<PilotResult> {
+  if (arguments.length !== 1 || (mode !== 'primary' && mode !== 'composed')) throw Error('controlled_runtime_authority_required')
+  return execute(await prepareControlledSyntheticPilot(), mode, 'none', 'fresh')
 }
