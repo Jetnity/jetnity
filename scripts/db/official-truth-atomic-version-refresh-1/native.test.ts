@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { AsyncLocalStorage } from 'node:async_hooks'
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
 import { test } from 'node:test'
 import { startLocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
-import { LocalPgConnection, LocalPgError, pgText, type PgParameter, type LocalPgBoundedCommit } from '../official-truth-integrated-pilot-1/pg-wire'
+import { LocalPgConnection, LocalPgError, pgBytes, pgCompositeArray, pgText, type PgParameter, type LocalPgBoundedCommit } from '../official-truth-integrated-pilot-1/pg-wire'
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../official-truth-integrated-pilot-1/storage'
 import { bindCandidate, cursor, prepareOriginals, reviewCandidate, type Cursor, type PreparedOriginals } from '../official-truth-original-custody-1/storage'
 import { readPersistedCanonicalRequirements } from '../official-truth-persisted-canonical-read-1/reader'
@@ -13,7 +13,7 @@ import { persistedCanonicalReadContract } from '../official-truth-persisted-cano
 import { selectCurrentVersion } from '../official-truth-current-version-lookup-1/lookup'
 import { alternateSameIdentityReceipt } from '../official-truth-current-version-lookup-1/fixtures'
 import { contradictingFactFixture, originalsFor } from '../official-truth-persisted-canonical-read-1/fixtures'
-import { verifyLocalIntegratedPilotBundle } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
+import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, type IntegratedPilotManifestContent } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import { ATOMIC_REFRESH_LOGIN, ATOMIC_REFRESH_ROLE, ownAtomicRefreshRequest, type AtomicRefreshRequest } from './contract'
 import { refreshPersistedCanonicalVersion, type AtomicRefreshResult } from './refresh'
 import { actuallyFreshObservations, corruptReceipt, directlyCallRefresh, falseValidityLocator, extraInactivePolicy } from './fixtures'
@@ -29,6 +29,40 @@ const migrations = [
 ]
 const packageSql = readFileSync(new URL('./refresh-candidate.sql', import.meta.url), 'utf8')
 const rollbackSql = readFileSync(new URL('./refresh-candidate.rollback.sql', import.meta.url), 'utf8')
+const referenceSql = readFileSync(new URL('./semantic-reference-r5.fixture.sql', import.meta.url), 'utf8')
+const referenceDefinitions = [
+  ['validate_graph_v2', 5137, 'dbdc6616e3a6b9de6b46aecc64b6f92921233717c4adcb33e726c15ee52402ef'],
+  ['validate_semantics_v2', 27604, 'c2a4b0e6ccfd6e25c7c95de5588ae629210f8a3f01bb0ace4ed1f5a9a3b21cb1'],
+  ['validate_bundle_v2', 500, 'a114b166b1a7637fa318e09044440dcd445cc375b23ae99ebc753f442eb01c1d'],
+  ['closure_v2', 3506, '056971dc1e7369ecdfc585b14578cc71ad57f603b7c3582b3f2e3b466040d74a'],
+  ['verify_retained_v2', 3787, 'f29f3f9cc5243959d882a456776afb9fd79f3f354d4f5795bc4957a66619dfc4'],
+] as const
+const privateR5Helpers = [
+  ['artifact_edges_once_v2(official_provenance_api.artifact_input_v1)', 'i', 'artifact_edges_once_v2(NULL::official_provenance_api.artifact_input_v1)'],
+  ['inspected_closure_v2(text)', 's', 'inspected_closure_v2(NULL::text)'],
+  ['validate_inspected_graph_v2(text,text,bytea,bytea,official_provenance_api.artifact_input_v1[],jsonb)', 'i', 'validate_inspected_graph_v2(NULL::text,NULL::text,NULL::bytea,NULL::bytea,NULL::official_provenance_api.artifact_input_v1[],NULL::jsonb)'],
+  ['semantic_content_index_v2(official_provenance_api.artifact_input_v1[])', 'i', 'semantic_content_index_v2(NULL::official_provenance_api.artifact_input_v1[])'],
+  ['content_from_index_v2(jsonb,jsonb,text)', 'i', 'content_from_index_v2(NULL::jsonb,NULL::jsonb,NULL::text)'],
+  ['semantic_contract_from_index_v2(jsonb,jsonb,text)', 'i', 'semantic_contract_from_index_v2(NULL::jsonb,NULL::jsonb,NULL::text)'],
+] as const
+const referenceCalls = [
+  'validate_graph_v2(NULL::text,NULL::text,NULL::bytea,NULL::bytea,NULL::official_provenance_api.artifact_input_v1[])',
+  'validate_semantics_v2(NULL::jsonb,NULL::jsonb,NULL::official_provenance_api.artifact_input_v1[])',
+  'validate_bundle_v2(NULL::text,NULL::text,NULL::bytea,NULL::bytea,NULL::official_provenance_api.artifact_input_v1[])',
+  'closure_v2(NULL::text)', 'verify_retained_v2(NULL::text)',
+] as const
+const validateReferenceSource = () => {
+  assert.equal(createHash('sha256').update(referenceSql).digest('hex'), '874257493bd8836dd999bd068afac677fbe7118d9af283261d8a2c1ec9d9d3fc')
+  assert.equal((referenceSql.match(/^CREATE FUNCTION /gm) ?? []).length, 5)
+  for (const [name, length, digest] of referenceDefinitions) {
+    const definition = referenceSql.match(new RegExp(`^CREATE FUNCTION official_refresh_reference_r5\\.${name}\\([\\s\\S]*?\\$\\$;\\n`, 'm'))?.[0]
+    assert.ok(definition)
+    let original = definition
+    for (const [redirected] of referenceDefinitions) original = original.replaceAll(`official_refresh_reference_r5.${redirected}(`, `official_provenance_private.${redirected}(`)
+    assert.equal(Buffer.byteLength(original), length)
+    assert.equal(createHash('sha256').update(original).digest('hex'), digest)
+  }
+}
 const signature = 'official_original_api.refresh_version_v1(text,text,text,uuid,text,bigint,text,bytea,bytea,official_provenance_api.artifact_input_v1[],bytea[])'
 const settingsSql = "SELECT current_setting('jit') AS jit,current_setting('statement_timeout') AS statement,current_setting('lock_timeout') AS lock,current_setting('idle_in_transaction_session_timeout') AS idle_transaction,current_setting('idle_session_timeout') AS idle_session"
 const executionSettings = async (query: LocalPgConnection['query']) => {
@@ -76,6 +110,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   const note = (phase: string, details: Record<string, unknown> = {}) => t.diagnostic(JSON.stringify({
     schema: 'official-truth-atomic-version-refresh-1', phase, elapsedMs: Math.round(performance.now() - began), ...details,
   }))
+  validateReferenceSource()
   const primary = await actuallyFreshObservations('primary', 3), composed = await actuallyFreshObservations('composed', 2)
   note('five independent actual fresh executions; full capsules retained; later observations, unchanged bytes and mutually compatible immutable artifact identities asserted')
   const openHarness = async (initial: PreparedOriginals) => {
@@ -191,6 +226,255 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           await owner.query('SELECT singleton FROM official_original_private.head FOR UPDATE NOWAIT')
           assert.equal((await owner.query('SELECT pg_try_advisory_xact_lock(1869901924,1)::text AS held'))[0]?.held, 'true')
         } finally { await owner.query('ROLLBACK') }
+      }
+      const compareReference = async (mode: 'primary' | 'composed') => {
+        const baseline = await snapshot(owner)
+        const typeInventorySql = `SELECT n.nspname,t.typname,t.typtype,t.oid::text FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace
+          WHERE n.nspname LIKE 'official_%' ORDER BY n.nspname,t.typname`
+        const typesBefore = await owner.query(typeInventorySql)
+        await owner.query(referenceSql)
+        assert.deepEqual(await owner.query(typeInventorySql), typesBefore, 'native oracle introduces no SQL type')
+        type Envelope = PreparedOriginals['envelope']
+        type Implementation = 'reference' | 'current'
+        const invoke = async (connection: LocalPgConnection, implementation: Implementation, kind: 'retained' | 'raw', envelope: Envelope = initial.envelope) => {
+          const schema = implementation === 'reference' ? 'official_refresh_reference_r5' : 'official_provenance_private'
+          const b = envelope.bundle
+          if (kind === 'retained') return connection.query(`SELECT ${schema}.verify_retained_v2($1::text)`, [pgText(b.recordFingerprint)])
+          const aa = pgCompositeArray(oids.array, oids.element, b.artifacts.map(a => [pgText(a.pin.id), pgText(String(a.pin.version), 20),
+            pgText(a.pin.digest), pgText(a.artifactType), pgText(a.artifactType === 'global_cell' ? 'global_definition_v1' : a.artifactType.endsWith('V1') ? 'custody_v1' : 'manifest_v1'),
+            pgText(String(a.artifactContractVersion), 23), pgBytes(a.canonicalBytes)]))
+          return connection.query(`SELECT ${schema}.validate_bundle_v2($1::text,$2::text,$3::bytea,$4::bytea,$5::official_provenance_api.artifact_input_v1[])`,
+            [pgText(envelope.profile), pgText(b.recordFingerprint), pgBytes(b.receiptBytes), pgBytes(b.custodyBindingBytes), aa])
+        }
+        const stats = async (connection: LocalPgConnection) => connection.query(`SELECT schemaname,funcname,calls::text,total_time::text,self_time::text
+          FROM pg_stat_xact_user_functions WHERE schemaname IN ('official_provenance_private','official_refresh_reference_r5')
+          AND funcname IN ('artifact_v2','artifact_envelope','decode','content_v2','content_from_index_v2','semantic_content_index_v2',
+            'closure_v2','inspected_closure_v2','validate_graph_v2','validate_inspected_graph_v2','validate_semantics_v2','validate_bundle_v2','verify_retained_v2')
+          ORDER BY schemaname,funcname`)
+        // These transaction-local statistics measure only the one actual call
+        // between two samples. Preparation/snapshots cannot inflate the count.
+        const probe = async (implementation: Implementation, kind: 'retained' | 'raw') => {
+          const connection = await connect()
+          let pid: string | null = null, beforeProfile: Awaited<ReturnType<typeof executionSettings>> | undefined
+          let beforeTracking: string | null | undefined, elapsed: number | null = null, completed = false, restored = false
+          let sqlstate: string | null = null
+          let delta: { schema: string; function: string; calls: number; totalMs: number; selfMs: number }[] = []
+          try {
+            pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+            beforeProfile = await executionSettings(connection.query.bind(connection))
+            beforeTracking = (await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting
+            assert.ok(beforeTracking)
+            await connection.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+            await connection.query("SET LOCAL track_functions='all'")
+            const before = await stats(connection), started = performance.now()
+            try { await invoke(connection, implementation, kind); completed = true }
+            finally { elapsed = Math.round(performance.now() - started) }
+            const after = await stats(connection)
+            delta = after.map(row => {
+              const prior = before.find(value => value.schemaname === row.schemaname && value.funcname === row.funcname)
+              return { schema: row.schemaname!, function: row.funcname!, calls: Number(row.calls) - Number(prior?.calls ?? '0'),
+                totalMs: Number(row.total_time) - Number(prior?.total_time ?? '0'), selfMs: Number(row.self_time) - Number(prior?.self_time ?? '0') }
+            }).filter(row => row.calls > 0)
+            assert.ok(delta.every(row => Number.isSafeInteger(row.calls) && row.calls >= 0 && Number.isFinite(row.totalMs)
+              && row.totalMs >= 0 && Number.isFinite(row.selfMs) && row.selfMs >= 0))
+            assert.equal(delta.find(row => row.schema === 'official_provenance_private' && row.function === 'artifact_v2')?.calls,
+              initial.envelope.bundle.artifacts.length * (kind === 'retained' && implementation === 'reference' ? 4 : 1))
+            assert.deepEqual(await executionSettings(connection.query.bind(connection)), beforeProfile)
+            assert.deepEqual(await snapshot(connection), baseline)
+          } catch (error) { sqlstate = error instanceof LocalPgError ? error.code : 'test_or_transport'; throw error }
+          finally {
+            try {
+              await connection.query('ROLLBACK')
+              assert.ok(beforeProfile && beforeTracking)
+              assert.deepEqual(await executionSettings(connection.query.bind(connection)), beforeProfile)
+              assert.equal((await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting, beforeTracking)
+              restored = true
+            } finally {
+              close(connection); if (pid) await gone([pid])
+              assert.deepEqual(await snapshot(owner), baseline)
+              note('fixed original/new complete verifier probe', { mode, implementation, kind, artifacts: initial.envelope.bundle.artifacts.length,
+                verifyMs: elapsed, completed, restored, sqlstate, invocationDelta: delta })
+            }
+          }
+        }
+        for (const kind of ['retained', 'raw'] as const) for (const implementation of ['reference', 'current'] as const) await probe(implementation, kind)
+
+        // Exact installed metadata plus actual denied calls. New workers are
+        // private INVOKER functions, never login capabilities or caller caches.
+        for (const [sig, volatility] of privateR5Helpers) {
+          const qualified = `official_provenance_private.${sig}`
+          assert.deepEqual(await owner.query(`SELECT r.rolname AS owner,p.prosecdef::text AS definer,p.provolatile::text AS volatility,
+            (p.proconfig=ARRAY['search_path=""','TimeZone=UTC'])::text AS config FROM pg_proc p JOIN pg_roles r ON r.oid=p.proowner
+            WHERE p.oid=$1::regprocedure`, [pgText(qualified)]), [{ owner: 'ot_provenance_ddl', definer: 'false', volatility, config: 'true' }])
+          assert.deepEqual(await owner.query(`SELECT r.rolname,r.rolcanlogin::text AS login,a.privilege_type,a.is_grantable::text AS grantable
+            FROM pg_proc p CROSS JOIN LATERAL aclexplode(p.proacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE p.oid=$1::regprocedure ORDER BY r.rolname`,
+            [pgText(qualified)]), ['ot_provenance_ddl', 'ot_provenance_read_exec', 'ot_provenance_write_exec'].map(rolname =>
+            ({ rolname, login: 'false', privilege_type: 'EXECUTE', grantable: 'false' })))
+        }
+        assert.deepEqual(await owner.query(`SELECT r.rolname,a.privilege_type,a.is_grantable::text AS grantable FROM pg_namespace n
+          CROSS JOIN LATERAL aclexplode(n.nspacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE n.nspname='official_refresh_reference_r5'
+          ORDER BY a.privilege_type`), ['CREATE', 'USAGE'].map(privilege_type => ({ rolname: cluster.user, privilege_type, grantable: 'false' })))
+        const referenceAcl = await owner.query(`SELECT p.proname,r.rolname,p.prosecdef::text AS definer,a.privilege_type,a.is_grantable::text AS grantable
+          FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace CROSS JOIN LATERAL aclexplode(p.proacl) a
+          LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE n.nspname='official_refresh_reference_r5' ORDER BY p.proname`)
+        assert.deepEqual(referenceAcl, referenceDefinitions.map(([proname]) => ({ proname, rolname: cluster.user, definer: 'false', privilege_type: 'EXECUTE', grantable: 'false' }))
+          .sort((a, b) => a.proname.localeCompare(b.proname)))
+        const deniedRoles = ['anon', 'authenticated', 'service_role', 'ot_provenance_writer', 'ot_provenance_reader',
+          'ot_original_test_writer', 'ot_original_test_reader', ATOMIC_REFRESH_ROLE, ATOMIC_REFRESH_LOGIN]
+        const denialConnection = await connect(), denialPid = (await denialConnection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+        try {
+          await denialConnection.query('BEGIN')
+          for (const role of deniedRoles) {
+            for (const [sig] of privateR5Helpers) assert.equal((await owner.query("SELECT has_function_privilege($1::name,$2::text,'EXECUTE')::text AS allowed",
+              [pgText(role), pgText(`official_provenance_private.${sig}`)]))[0]?.allowed, 'false')
+            await denialConnection.query(`SAVEPOINT role_denial; SET LOCAL ROLE ${role}`)
+            for (const call of [...privateR5Helpers.map(([, , expression]) => `official_provenance_private.${expression}`),
+              ...referenceCalls.map(expression => `official_refresh_reference_r5.${expression}`)]) {
+              await denialConnection.query('SAVEPOINT denied_call')
+              await assert.rejects(denialConnection.query(`SELECT ${call}`), code('42501'))
+              await denialConnection.query('ROLLBACK TO SAVEPOINT denied_call')
+            }
+            await denialConnection.query('ROLLBACK TO SAVEPOINT role_denial')
+          }
+        } finally { try { await denialConnection.query('ROLLBACK') } finally { close(denialConnection) } }
+        await gone([denialPid]); assert.deepEqual(await snapshot(owner), baseline); await locksReleased()
+        note('six private worker ACLs and five owner-only reference functions: actual denied role calls; no new SQL types', { mode, deniedRoles: deniedRoles.length })
+        if (mode === 'composed') return
+
+        // One actual backend sees a valid baseline, each later corruption, and
+        // the restored baseline. No replacement runtime functions or fake pins.
+        const adversary = await connect(), adversaryPid = (await adversary.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+        const originalProfile = await executionSettings(adversary.query.bind(adversary))
+        const triggerInventory = () => adversary.query(`SELECT n.nspname,c.relname,t.tgname,t.tgenabled::text AS enabled,
+          t.tgdeferrable::text AS deferrable,t.tginitdeferred::text AS initially_deferred,md5(pg_get_triggerdef(t.oid)) AS definition
+          FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
+          WHERE n.nspname IN ('official_original_private','official_provenance_private') ORDER BY n.nspname,c.relname,t.tgname`)
+        const originalTriggers = await triggerInventory()
+        const refuseBoth = async (name: string, kind: 'raw' | 'retained', envelope: Envelope = initial.envelope) => {
+          const before = await snapshot(adversary), outcomes: { implementation: Implementation; sqlstate: string; verifyMs: number }[] = []
+          for (const implementation of ['reference', 'current'] as const) {
+            await adversary.query('SAVEPOINT invalid_proof')
+            const started = performance.now(); let caught: unknown
+            try { await invoke(adversary, implementation, kind, envelope) } catch (error) { caught = error }
+            assert.ok(caught instanceof LocalPgError, 'invalid proof must reach the actual verifier and fail')
+            assert.equal(caught.code, 'P0001')
+            outcomes.push({ implementation, sqlstate: caught.code, verifyMs: Math.round(performance.now() - started) })
+            await adversary.query('ROLLBACK TO SAVEPOINT invalid_proof')
+            assert.deepEqual(await snapshot(adversary), before, 'verifier refusal must not mutate even the deliberately corrupt state')
+          }
+          note('original/new invalid proof agreement', { case: name, kind, outcomes })
+        }
+        try {
+          await invoke(adversary, 'current', 'retained')
+          const linkCases = [
+            ['missing artifact link', 'artifact_dependencies', `WITH chosen AS (SELECT parent_id,parent_version,slot FROM official_provenance_private.artifact_dependencies ORDER BY parent_id,parent_version,slot LIMIT 1)
+              DELETE FROM official_provenance_private.artifact_dependencies d USING chosen c WHERE (d.parent_id,d.parent_version,d.slot)=(c.parent_id,c.parent_version,c.slot) RETURNING 1 AS changed`],
+            ['extra artifact link', 'artifact_dependencies', `INSERT INTO official_provenance_private.artifact_dependencies
+              SELECT parent_id,parent_version,parent_digest,'/r5_extra',target_id,target_version,target_digest FROM official_provenance_private.artifact_dependencies ORDER BY parent_id,parent_version,slot LIMIT 1 RETURNING 1 AS changed`],
+            ['same-count wrong artifact link', 'artifact_dependencies', `WITH chosen AS (SELECT * FROM official_provenance_private.artifact_dependencies ORDER BY parent_id,parent_version,slot LIMIT 1),
+              alternative AS (SELECT a.* FROM official_provenance_private.artifacts a,chosen c WHERE (a.artifact_id,a.artifact_version,a.digest)<>(c.target_id,c.target_version,c.target_digest)
+                AND (a.artifact_id,a.artifact_version,a.digest)<>(c.parent_id,c.parent_version,c.parent_digest) ORDER BY a.artifact_id,a.artifact_version LIMIT 1)
+              UPDATE official_provenance_private.artifact_dependencies d SET target_id=a.artifact_id,target_version=a.artifact_version,target_digest=a.digest FROM chosen c,alternative a
+                WHERE (d.parent_id,d.parent_version,d.slot)=(c.parent_id,c.parent_version,c.slot) RETURNING 1 AS changed`],
+            ['missing receipt root link', 'receipt_dependencies', `WITH chosen AS (SELECT record_fingerprint,root_slot FROM official_provenance_private.receipt_dependencies ORDER BY record_fingerprint,root_slot LIMIT 1)
+              DELETE FROM official_provenance_private.receipt_dependencies d USING chosen c WHERE (d.record_fingerprint,d.root_slot)=(c.record_fingerprint,c.root_slot) RETURNING 1 AS changed`],
+            ['missing custody root link', 'custody_dependencies', `WITH chosen AS (SELECT record_fingerprint,binding_slot FROM official_provenance_private.custody_dependencies ORDER BY record_fingerprint,binding_slot LIMIT 1)
+              DELETE FROM official_provenance_private.custody_dependencies d USING chosen c WHERE (d.record_fingerprint,d.binding_slot)=(c.record_fingerprint,c.binding_slot) RETURNING 1 AS changed`],
+            ['later retained byte/digest substitution', 'artifact_blobs', `WITH chosen AS (SELECT b.digest FROM official_provenance_private.artifact_blobs b
+              JOIN official_provenance_private.artifacts a USING(digest) WHERE a.artifact_type='semantic_contract' ORDER BY b.digest LIMIT 1)
+              UPDATE official_provenance_private.artifact_blobs b SET canonical_bytes=b.canonical_bytes||decode('20','hex'),
+                digest=encode(sha256(b.canonical_bytes||decode('20','hex')),'hex') FROM chosen c WHERE b.digest=c.digest RETURNING 1 AS changed`],
+          ] as const
+          for (const [name, table, mutation] of linkCases) {
+            await adversary.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+            try {
+              await adversary.query(`ALTER TABLE official_provenance_private.${table} DISABLE TRIGGER immutable_rows`)
+              assert.deepEqual(await adversary.query(mutation), [{ changed: '1' }])
+              // DML may queue the unchanged deferred FK/constraint triggers.
+              // No further ALTER TABLE is legal while those events are pending.
+              // Only this native mutation trigger stays disabled until ROLLBACK;
+              // both actual STABLE verifiers still inspect the entire bad state.
+              assert.deepEqual(await triggerInventory(), originalTriggers.map(row => row.nspname === 'official_provenance_private'
+                && row.relname === table && row.tgname === 'immutable_rows' ? { ...row, enabled: 'D' } : row))
+              assert.notDeepEqual(await snapshot(adversary), baseline, 'fixture corruption must actually be present')
+              await refuseBoth(name, 'retained')
+            } finally { await adversary.query('ROLLBACK') }
+            assert.deepEqual(await triggerInventory(), originalTriggers, 'rollback restores every actual trigger definition and enabled state')
+            assert.deepEqual(await executionSettings(adversary.query.bind(adversary)), originalProfile)
+            assert.deepEqual(await snapshot(adversary), baseline)
+            await invoke(adversary, 'current', 'retained')
+          }
+          const original = initial.envelope, b = original.bundle
+          const contract = b.artifacts.find(a => a.artifactType === 'semantic_contract'); assert.ok(contract)
+          const extra = createIntegratedPilotArtifact('semantic_contract', 'r5-unsolicited-contract', 1,
+            JSON.parse(Buffer.from(contract.canonicalBytes).toString('utf8')).content as IntegratedPilotManifestContent<'semantic_contract'>)
+          assert.ok(extra.ok)
+          const wrongIncoming = corruptReceipt(original, payload => {
+            const extractor = payload.extractor as { definition: unknown; registrySnapshot: unknown }
+            extractor.registrySnapshot = extractor.definition
+          })
+          const malformedBytes = Buffer.from('{')
+          const malformedFirst = { ...contract, pin: { ...contract.pin, digest: createHash('sha256').update(malformedBytes).digest('hex') }, canonicalBytes: malformedBytes }
+          const rawCases: readonly [string, Envelope][] = [
+            ['duplicate raw identity before indexing', { ...original, bundle: { ...b, artifacts: [...b.artifacts, b.artifacts[0]!] } }],
+            ['missing raw artifact', { ...original, bundle: { ...b, artifacts: b.artifacts.slice(1) } }],
+            ['unsolicited fully formed artifact', { ...original, bundle: { ...b, artifacts: [...b.artifacts, extra.value] } }],
+            ['later malformed raw artifact bytes with matching content digest, inspected first', { ...original, bundle: { ...b, artifacts: [malformedFirst, ...b.artifacts.filter(a => a !== contract)] } }],
+            ['later canonically invalid receipt bytes', { ...original, bundle: { ...b, receiptBytes: Buffer.concat([b.receiptBytes, Buffer.from(' ')]) } }],
+            ['second wrong incoming expected type for existing pin', wrongIncoming],
+            // This is an explicit raw count refusal, not a fabricated valid
+            // 256-node proof or a claimed native depth/cycle branch traversal.
+            ['raw artifact count 256 exceeds unchanged bound', { ...original, bundle: { ...b, artifacts: Array.from({ length: 256 }, (_, i) => b.artifacts[i % b.artifacts.length]!) } }],
+          ]
+          await invoke(adversary, 'current', 'raw')
+          for (const [name, envelope] of rawCases) {
+            await adversary.query('BEGIN')
+            try { await refuseBoth(name, 'raw', envelope) } finally { await adversary.query('ROLLBACK') }
+            assert.deepEqual(await snapshot(adversary), baseline)
+          }
+          await invoke(adversary, 'current', 'raw')
+          // Store only this negative receipt/root fixture in a rollback-only
+          // transaction. Its unchanged artifacts contain a correctly typed
+          // first root and a later root with the identical pin but wrong type.
+          // Full verifiers must reject; it is never a published positive bundle.
+          await adversary.query('BEGIN')
+          try {
+            const negative = wrongIncoming.bundle, bindingDigest = createHash('sha256').update(negative.custodyBindingBytes).digest('hex')
+            const roots = await adversary.query(`SELECT r.slot,r.expected_type,r.ordinality::text,r.pin::text FROM
+              official_provenance_private.receipt_roots(official_provenance_private.decode($1::bytea,262144)) WITH ORDINALITY r`, [pgBytes(negative.receiptBytes)])
+            const first = roots.find(row => row.slot === 'extractor.definition'), second = roots.find(row => row.slot === 'extractor.registrySnapshot')
+            assert.ok(first && second); assert.equal(first.pin, second.pin); assert.notEqual(first.expected_type, second.expected_type)
+            assert.ok(Number(first.ordinality) < Number(second.ordinality))
+            await adversary.query('INSERT INTO official_provenance_private.artifact_blobs VALUES($1::text,$2::bytea)', [pgText(bindingDigest), pgBytes(negative.custodyBindingBytes)])
+            await adversary.query(`INSERT INTO official_provenance_private.receipts VALUES($1::text,$2::bytea,2,'official-truth-autonomous-provenance',1,'ot-provenance-json-v1')`,
+              [pgText(negative.recordFingerprint), pgBytes(negative.receiptBytes)])
+            await adversary.query('INSERT INTO official_provenance_private.custody_bindings VALUES($1::text,$2::text,1)', [pgText(negative.recordFingerprint), pgText(bindingDigest)])
+            await adversary.query(`INSERT INTO official_provenance_private.receipt_dependencies SELECT $1::text,r.slot,r.pin->>'id',(r.pin->>'version')::bigint,r.pin->>'digest'
+              FROM official_provenance_private.receipt_roots(official_provenance_private.decode($2::bytea,262144)) r`, [pgText(negative.recordFingerprint), pgBytes(negative.receiptBytes)])
+            await adversary.query(`INSERT INTO official_provenance_private.custody_dependencies SELECT $1::text,r.slot,r.pin->>'id',(r.pin->>'version')::bigint,r.pin->>'digest'
+              FROM official_provenance_private.binding_roots(official_provenance_private.decode($2::bytea,4096),$1::text) r`, [pgText(negative.recordFingerprint), pgBytes(negative.custodyBindingBytes)])
+            assert.notDeepEqual(await snapshot(adversary), baseline)
+            await refuseBoth('retained second wrong incoming type to an already reached full pin', 'retained', wrongIncoming)
+          } finally { await adversary.query('ROLLBACK') }
+          assert.deepEqual(await snapshot(adversary), baseline); await invoke(adversary, 'current', 'retained')
+          // Full structural equivalence is deliberately weaker than source
+          // truth. The unchanged canonical New/Old checks below reject this.
+          const falseFact = contradictingFactFixture(original)
+          await adversary.query('BEGIN')
+          try { for (const implementation of ['reference', 'current'] as const) await invoke(adversary, implementation, 'raw', falseFact) }
+          finally { await adversary.query('ROLLBACK') }
+          assert.deepEqual(await snapshot(adversary), baseline)
+          note('fully rehashed false fact remains structurally valid in both reference/current raw verifiers; canonical rejection is a separate mandatory proof')
+        } finally {
+          try {
+            await adversary.query('ROLLBACK')
+            assert.deepEqual(await triggerInventory(), originalTriggers)
+            assert.deepEqual(await executionSettings(adversary.query.bind(adversary)), originalProfile)
+          }
+          finally { close(adversary) }
+          await gone([adversaryPid]); assert.deepEqual(await snapshot(owner), baseline); await locksReleased()
+        }
+        note('same backend re-read later corrupt bytes/links and restored all 17 tables; no cross-invocation proof cache')
       }
       const publicationProbe = async (next: PreparedOriginals) => {
         const before = await snapshot(owner), writer = await connect('ot_original_test_writer')
@@ -314,7 +598,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.deepEqual(await snapshot(owner), before); await locksReleased()
         note('negative direct SQL with complete rollback', { case: name, sqlstate: (caught as LocalPgError).code })
       }
-      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit,
+      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
         stop() { for (const c of opened) c.close(); cluster.stop() } }
     } catch (error) { for (const c of opened) c.close(); cluster.stop(); throw error }
@@ -331,6 +615,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       ON o.oid='official_original_api.read_candidate(text,text,bigint,text)'::regprocedure WHERE p.oid=$1::regprocedure`, [pgText(signature)])
     assert.deepEqual(installed, [{ definer: 'true', owner: 'true', config: 'true' }])
     await h.compareJit()
+    await h.compareReference('primary')
     assert.deepEqual(await h.owner.query(`SELECT rolsuper::text,rolbypassrls::text,rolcanlogin::text,rolinherit::text FROM pg_roles WHERE rolname='${ATOMIC_REFRESH_ROLE}'`),
       [{ rolsuper: 'false', rolbypassrls: 'false', rolcanlogin: 'false', rolinherit: 'false' }])
     assert.deepEqual(await h.owner.query(`SELECT r.rolname FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid WHERE m.member='${ATOMIC_REFRESH_LOGIN}'::regrole ORDER BY r.rolname`), [{ rolname: ATOMIC_REFRESH_ROLE }])
@@ -497,6 +782,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   const c = await openHarness(composed[0]!)
   try {
     await c.publicationProbe(composed[1]!)
+    await c.compareReference('composed')
     const req = await c.request(composed[1]!, 'composed')
     await c.negative('composed reversed original support order', { ...req, bodies: [...req.bodies].reverse() })
     await c.negative('composed reversed receipt supports', { ...req, envelope: corruptReceipt(req.envelope, p => { (p.supports as unknown[]).reverse() }) })
@@ -509,10 +795,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   // These are explicitly corrupt historical fixtures, with every ancestor pin
   // recomputed through the unchanged existing test encoder. They never replace
   // either actually executed positive fixture or its observation timestamps.
-  for (const corruption of ['old_validity_locator', 'extra_inactive_policy'] as const) {
-    const mode = corruption === 'old_validity_locator' ? 'primary' : 'composed'
-    const old = originalsFor(corruption === 'old_validity_locator' ? falseValidityLocator(primary[0]!.envelope) : extraInactivePolicy(composed[0]!.envelope))
-    const next = corruption === 'old_validity_locator' ? primary[1]! : originalsFor(extraInactivePolicy(composed[1]!.envelope))
+  for (const corruption of ['old_validity_locator', 'extra_inactive_policy', 'old_false_fact'] as const) {
+    const mode = corruption === 'extra_inactive_policy' ? 'composed' : 'primary'
+    const old = originalsFor(corruption === 'old_validity_locator' ? falseValidityLocator(primary[0]!.envelope)
+      : corruption === 'old_false_fact' ? contradictingFactFixture(primary[0]!.envelope) : extraInactivePolicy(composed[0]!.envelope))
+    const next = corruption === 'extra_inactive_policy' ? originalsFor(extraInactivePolicy(composed[1]!.envelope)) : primary[1]!
     const bad = await openHarness(old)
     try {
       const req = await bad.request(next, mode)
