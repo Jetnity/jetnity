@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { AsyncLocalStorage } from 'node:async_hooks'
 import { randomBytes } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
@@ -29,6 +30,15 @@ const migrations = [
 const packageSql = readFileSync(new URL('./refresh-candidate.sql', import.meta.url), 'utf8')
 const rollbackSql = readFileSync(new URL('./refresh-candidate.rollback.sql', import.meta.url), 'utf8')
 const signature = 'official_original_api.refresh_version_v1(text,text,text,uuid,text,bigint,text,bytea,bytea,official_provenance_api.artifact_input_v1[],bytea[])'
+const settingsSql = "SELECT current_setting('jit') AS jit,current_setting('statement_timeout') AS statement,current_setting('lock_timeout') AS lock,current_setting('idle_in_transaction_session_timeout') AS idle_transaction,current_setting('idle_session_timeout') AS idle_session"
+const executionSettings = async (query: LocalPgConnection['query']) => {
+  const rows = await query(settingsSql)
+  assert.equal(rows.length, 1)
+  const row = rows[0]!
+  assert.ok(row.jit === 'on' || row.jit === 'off')
+  assert.deepEqual({ ...row, jit: 'unchanged' }, { jit: 'unchanged', statement: '25s', lock: '15s', idle_transaction: '20s', idle_session: '0' })
+  return row
+}
 const tables = [
   ...['admissions', 'reviews', 'rule_bindings', 'originals', 'ciphertexts', 'supports', 'events', 'head', 'refresh_transitions_v1'].map(name => `official_original_private.${name}`),
   ...['artifact_names', 'artifact_blobs', 'artifacts', 'receipts', 'receipt_dependencies', 'artifact_dependencies', 'custody_bindings', 'custody_dependencies'].map(name => `official_provenance_private.${name}`),
@@ -91,6 +101,15 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       for (const name of migrations) await owner.query(readFileSync(new URL(`../../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
       await owner.query(readFileSync(new URL('../official-truth-persisted-canonical-read-1/read-projection-candidate.sql', import.meta.url), 'utf8'))
       await owner.query(packageSql)
+      // Actual server-side assertion inside every successful transition. It
+      // changes no runtime function and emits no caller material or settings.
+      await owner.query(`CREATE FUNCTION public.refresh_profile_guard() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+        IF current_setting('jit')<>'off' OR current_setting('statement_timeout')<>'25s'
+         OR current_setting('lock_timeout')<>'15s' OR current_setting('idle_in_transaction_session_timeout')<>'20s'
+        THEN RAISE EXCEPTION 'refresh_execution_profile_wrong' USING ERRCODE='P7798'; END IF;
+        RETURN NEW; END $$;
+        CREATE TRIGGER refresh_profile_guard AFTER INSERT ON official_original_private.refresh_transitions_v1
+        FOR EACH ROW EXECUTE FUNCTION public.refresh_profile_guard();`)
       await owner.query(`CREATE ROLE ot_original_test_writer LOGIN; GRANT ot_original_producer,ot_provenance_writer TO ot_original_test_writer;
         CREATE ROLE ot_original_test_reader LOGIN; GRANT ot_original_reader,ot_provenance_reader TO ot_original_test_reader;
         CREATE ROLE ot_original_test_reviewer LOGIN; GRANT ot_original_reviewer TO ot_original_test_reviewer;
@@ -120,6 +139,49 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         await gone([pid]); witness = await cursor(lifecycle); await align(); return reviewId
       }
       const initialReview = await seed(initial)
+      const compareJit = async () => {
+        const baseline = await snapshot(owner)
+        const probe = async (setting: 'on' | 'off') => {
+          const c = await connect()
+          let pid: string | null = null, original: Awaited<ReturnType<typeof executionSettings>> | undefined
+          let available: string | null | undefined
+          let verifyMs: number | null = null, completed = false, restored = false
+          let errorCode: string | null = null
+          try {
+            pid = (await c.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+            original = await executionSettings(c.query.bind(c))
+            available = (await c.query('SELECT pg_jit_available()::text AS available'))[0]?.available
+            assert.ok(available === 'true' || available === 'false')
+            await c.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+            await c.query(setting === 'on' ? 'SET LOCAL jit=on' : 'SET LOCAL jit=off')
+            assert.deepEqual(await executionSettings(c.query.bind(c)), { ...original, jit: setting })
+            const started = performance.now()
+            try {
+              await c.query('SELECT official_provenance_private.verify_retained_v2($1::text)', [pgText(initial.envelope.bundle.recordFingerprint)])
+              completed = true
+            } finally { verifyMs = Math.round(performance.now() - started) }
+          } catch (error) { errorCode = error instanceof LocalPgError ? error.code : 'test_or_transport'; throw error }
+          finally {
+            try {
+              await c.query('ROLLBACK')
+              assert.ok(original)
+              assert.deepEqual(await executionSettings(c.query.bind(c)), original)
+              restored = true
+            } finally {
+              close(c); if (pid) await gone([pid])
+              assert.deepEqual(await snapshot(owner), baseline)
+              note('fixed retained verification execution-profile probe', { setting, previous: original?.jit ?? null,
+                jitAvailableBefore: available === 'true' ? true : available === 'false' ? false : null,
+                verifyMs, completed, restored, sqlstate: errorCode })
+            }
+          }
+        }
+        // Exactly this fixed pair; no retries, favorable-result selection or
+        // performance assertion. Each probe owns a fresh backend and rollback.
+        await probe('on')
+        await probe('off')
+        await locksReleased()
+      }
       const request = async (next: PreparedOriginals, mode: 'primary' | 'composed', predecessor = initial.envelope.bundle.recordFingerprint): Promise<AtomicRefreshRequest> => ({
         mode, expectedPredecessor: predecessor, envelope: next.envelope, bodies: next.bodies, reviewId: await review(next), witness: { ...witness },
       })
@@ -146,7 +208,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       }
       const observed = async (operation: () => Promise<AtomicRefreshResult>, options: { commitLoss?: boolean; failReader?: boolean; afterAckDelay?: 'cleanup' | 'reader' } = {}) => {
         const realConnect = LocalPgConnection.connect, realFetch = globalThis.fetch
-        const records: { role: string; pid: string; closed: boolean; committed: boolean; queries: { phase: string; ms: number; code: string | null }[] }[] = []
+        const records: { role: string; pid: string; closed: boolean; committed: boolean; profileRestored: boolean; queries: { phase: string; ms: number; code: string | null }[] }[] = []
         let insideBoundedCommit = false, boundedDeadline = 0, commitLossReached = false, readerFailureReached = false, delayReached = false, postCommitOriginals = 0
         let hookAssertion: unknown
         const afterActualBound = async () => { while (performance.now() <= boundedDeadline + 10) await delay(Math.min(50, Math.max(1, boundedDeadline + 11 - performance.now()))) }
@@ -155,7 +217,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           const commitControl = insideBoundedCommit && (args[1] === undefined || args[1] === cluster.user)
           if (!commitControl && ![ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) return c
           const pid = (await c.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
-          const record = { role: args[1] ?? cluster.user, pid, closed: false, committed: false, queries: [] as { phase: string; ms: number; code: string | null }[] }; records.push(record)
+          const record = { role: args[1] ?? cluster.user, pid, closed: false, committed: false, profileRestored: false, queries: [] as { phase: string; ms: number; code: string | null }[] }; records.push(record)
           const actualQuery = c.query.bind(c), actualClose = c.close.bind(c)
           const actualCommit = c.commitBefore.bind(c)
           c.close = () => { record.closed = true; actualClose() }
@@ -181,7 +243,12 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
             const start = performance.now(), phase = sql.includes('refresh_version_v1(') ? 'refresh' : sql === 'COMMIT' ? 'commit' : sql.includes('read_projection_candidate(') ? 'originals' : sql.includes('lookup_current_version(') ? 'lookup' : 'other'
             let errorCode: string | null = null
             try {
+              const beforeProfile = phase === 'refresh' ? await executionSettings(actualQuery) : undefined
               const rows = await actualQuery(sql, params)
+              if (beforeProfile) {
+                try { assert.deepEqual(await executionSettings(actualQuery), beforeProfile); record.profileRestored = true }
+                catch (error) { hookAssertion = error; throw error }
+              }
               if (commitControl && sql.includes('pg_cancel_backend') && options.afterAckDelay === 'cleanup' && !delayReached) {
                 try { assert.equal((await owner.query('SELECT count(*)::text AS n FROM official_original_private.refresh_transitions_v1'))[0]?.n, '1') }
                 catch (error) { hookAssertion = error; throw error }
@@ -208,6 +275,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         if (result.status === 'synthetic_atomic_refresh_verified') {
           assert.equal(records.filter(r => r.role === 'ot_original_test_reader').length, 4)
           assert.equal(records.filter(r => r.role === ATOMIC_REFRESH_LOGIN && r.committed).length, 1)
+          assert.ok(records.filter(r => r.role === ATOMIC_REFRESH_LOGIN && r.committed).every(r => r.profileRestored))
           assert.equal(new Set(records.map(r => r.pid)).size, records.length)
           assert.ok(records.every(r => r.closed))
           note('verified atomic refresh native phase timings', { sql: result.sqlPhaseMs })
@@ -220,26 +288,33 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           assert.equal(encoded.includes(Buffer.from(body).toString('base64')), false)
         }
         note('observed owned coordinator', { status: result.status, reason: 'reason' in result ? result.reason : null,
-          backends: records.map(r => ({ role: r.role, closed: r.closed, acknowledged: r.committed, queries: r.queries.filter(q => q.phase !== 'other') })) })
+          backends: records.map(r => ({ role: r.role, closed: r.closed, acknowledged: r.committed, profileRestored: r.profileRestored, queries: r.queries.filter(q => q.phase !== 'other') })) })
         return result
       }
       const negative = async (name: string, req: AtomicRefreshRequest, setup?: () => Promise<void>, expectedCode?: string) => {
         await align(); const before = await snapshot(owner)
+        const beforeProfile = await executionSettings(owner.query.bind(owner))
         await owner.query('BEGIN ISOLATION LEVEL READ COMMITTED')
         let caught: unknown
         try {
           await setup?.(); const provisionalBaseline = await snapshot(owner)
           await owner.query(`SAVEPOINT failed_refresh; SET LOCAL ROLE ${ATOMIC_REFRESH_ROLE}`)
+          const started = performance.now()
           try { await directlyCallRefresh(owner, oids, req, key) } catch (error) { caught = error }
+          finally { note('actual negative refresh statement returned', { case: name, statementMs: Math.round(performance.now() - started),
+            sqlstate: caught instanceof LocalPgError ? caught.code : caught ? 'test_or_transport' : null }) }
           assert.ok(caught instanceof LocalPgError, `${name} must fail through the actual narrow SQL grant`)
           if (expectedCode) assert.equal(caught.code, expectedCode)
           await owner.query('ROLLBACK TO SAVEPOINT failed_refresh')
           assert.deepEqual(await snapshot(owner), provisionalBaseline, `${name}: complete provisional publication/original/event/audit rollback`)
-        } finally { await owner.query('ROLLBACK') }
+        } finally {
+          await owner.query('ROLLBACK')
+          assert.deepEqual(await executionSettings(owner.query.bind(owner)), beforeProfile)
+        }
         assert.deepEqual(await snapshot(owner), before); await locksReleased()
         note('negative direct SQL with complete rollback', { case: name, sqlstate: (caught as LocalPgError).code })
       }
-      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe,
+      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
         stop() { for (const c of opened) c.close(); cluster.stop() } }
     } catch (error) { for (const c of opened) c.close(); cluster.stop(); throw error }
@@ -252,9 +327,10 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     await h.publicationProbe(primary[1]!)
     const req = await h.request(primary[1]!, 'primary')
     const installed = await h.owner.query(`SELECT p.prosecdef::text AS definer,(p.proowner=o.proowner)::text AS owner,
-      (p.proconfig @> ARRAY['search_path=""','TimeZone=UTC'])::text AS config FROM pg_proc p JOIN pg_proc o
+      (p.proconfig = ARRAY['search_path=""','TimeZone=UTC','jit=off'])::text AS config FROM pg_proc p JOIN pg_proc o
       ON o.oid='official_original_api.read_candidate(text,text,bigint,text)'::regprocedure WHERE p.oid=$1::regprocedure`, [pgText(signature)])
     assert.deepEqual(installed, [{ definer: 'true', owner: 'true', config: 'true' }])
+    await h.compareJit()
     assert.deepEqual(await h.owner.query(`SELECT rolsuper::text,rolbypassrls::text,rolcanlogin::text,rolinherit::text FROM pg_roles WHERE rolname='${ATOMIC_REFRESH_ROLE}'`),
       [{ rolsuper: 'false', rolbypassrls: 'false', rolcanlogin: 'false', rolinherit: 'false' }])
     assert.deepEqual(await h.owner.query(`SELECT r.rolname FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid WHERE m.member='${ATOMIC_REFRESH_LOGIN}'::regrole ORDER BY r.rolname`), [{ rolname: ATOMIC_REFRESH_ROLE }])
@@ -297,7 +373,8 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     await h.negative('after actual bind before actual supersede', req, async () => {
       await h.owner.query(`CREATE FUNCTION public.refresh_fault_before() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
         IF NEW.kind='superseded' THEN
-          IF EXISTS(SELECT 1 FROM official_original_private.rule_bindings WHERE fingerprint='${req.envelope.bundle.recordFingerprint}')
+          IF current_setting('jit')='off'
+           AND EXISTS(SELECT 1 FROM official_original_private.rule_bindings WHERE fingerprint='${req.envelope.bundle.recordFingerprint}')
            AND EXISTS(SELECT 1 FROM official_original_private.events WHERE kind='accepted' AND target='${req.envelope.bundle.recordFingerprint}')
            AND NOT EXISTS(SELECT 1 FROM official_original_private.events WHERE kind='superseded' AND target='${req.expectedPredecessor}')
           THEN RAISE EXCEPTION 'actual_bound_before_supersede' USING ERRCODE='P7701'; ELSE RAISE EXCEPTION 'fault_phase_wrong' USING ERRCODE='P7799'; END IF;
@@ -306,7 +383,8 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     }, 'P7701')
     await h.negative('after actual supersede before COMMIT', req, async () => {
       await h.owner.query(`CREATE FUNCTION public.refresh_fault_after() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
-        IF EXISTS(SELECT 1 FROM official_original_private.events WHERE kind='superseded' AND target=NEW.predecessor AND sequence=NEW.after_sequence)
+        IF current_setting('jit')='off'
+         AND EXISTS(SELECT 1 FROM official_original_private.events WHERE kind='superseded' AND target=NEW.predecessor AND sequence=NEW.after_sequence)
          AND EXISTS(SELECT 1 FROM official_original_private.events WHERE kind='accepted' AND target=NEW.successor AND sequence=NEW.accepted_sequence)
         THEN RAISE EXCEPTION 'actual_superseded_before_commit' USING ERRCODE='P7702'; ELSE RAISE EXCEPTION 'fault_phase_wrong' USING ERRCODE='P7799'; END IF;
         RETURN NEW; END $$;
@@ -613,38 +691,101 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     }
     await blocked('expiry'); await blocked('abort'); await blocked('timeout')
     await w.align()
-    const realConnect = LocalPgConnection.connect, connections: { connection: LocalPgConnection; pid: string }[] = []
-    let readerOriginals = 0, gateUsed = false, release!: () => void, ready!: () => void
-    const held = new Promise<void>(resolve => { ready = resolve }), resume = new Promise<void>(resolve => { release = resolve })
+    type RaceActor = 'old_reader' | 'first_writer' | 'second_writer'
+    type WriterActor = Exclude<RaceActor, 'old_reader'>
+    type ConnectionRecord = { connection: LocalPgConnection; pid: string; actor: RaceActor; role: string; dispatchedAt: number | null }
+    const actors = new AsyncLocalStorage<RaceActor>(), raceAbort = new AbortController()
+    const realConnect = LocalPgConnection.connect, connections: ConnectionRecord[] = [], started: Promise<unknown>[] = [], observations: Promise<unknown>[] = []
+    const barrier = () => {
+      let resolve!: () => void
+      const promise = new Promise<void>(done => { resolve = done })
+      return { promise, resolve }
+    }
+    const readerHeld = barrier(), readerResume = barrier(), writerResume = barrier()
+    const writerReady = { first_writer: barrier(), second_writer: barrier() }
+    const writerDispatched = { first_writer: barrier(), second_writer: barrier() }
+    const producers: Partial<Record<WriterActor, ConnectionRecord>> = {}
+    let readerOriginals = 0, readerPid: string | null = null, lockProofReached = false
+    let failEarly!: (error: unknown) => void
+    const early = new Promise<never>((_resolve, reject) => { failEarly = reject })
+    void early.catch(() => {})
+    const raceStarted = performance.now()
+    // This observation cap does not extend any actor's existing 60s/120s
+    // lifetime. Its only job is to release test gates on an unreachable phase.
+    const phaseTimer = setTimeout(() => { raceAbort.abort(); failEarly(Error('race_actor_phase_unreached')) }, 120_000)
+    const launch = <T>(actor: RaceActor, operation: () => Promise<T>) => {
+      const promise = actors.run(actor, operation).then(result => {
+        if (!lockProofReached) failEarly(Error(`race_${actor}_returned_before_lock_proof`))
+        return result
+      }, error => { failEarly(error); throw error })
+      started.push(promise); void promise.catch(() => {})
+      return promise
+    }
     LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+      const actor = actors.getStore()
       const connection = await realConnect.call(LocalPgConnection, ...args)
-      if ([ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) {
-        const pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!; connections.push({ connection, pid })
+      if (actor && [ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) {
+        let pid: string
+        try { pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid! }
+        catch (error) { connection.close(); throw error }
+        const record: ConnectionRecord = { connection, pid, actor, role: args[1]!, dispatchedAt: null }; connections.push(record)
+        const isProducer = actor !== 'old_reader' && args[1] === ATOMIC_REFRESH_LOGIN && !producers[actor]
+        if (isProducer) producers[actor as WriterActor] = record
         const originalQuery = connection.query.bind(connection)
         connection.query = async (sql: string, parameters: readonly PgParameter[] = []) => {
+          if (isProducer && sql.includes('refresh_version_v1(')) {
+            assert.equal(record.dispatchedAt, null)
+            record.dispatchedAt = performance.now()
+            writerDispatched[actor as WriterActor].resolve()
+          }
           const rows = await originalQuery(sql, parameters)
-          if (args[1] === 'ot_original_test_reader' && sql.includes('read_projection_candidate(') && !gateUsed && ++readerOriginals === 2) {
-            gateUsed = true; ready(); await resume
+          if (actor === 'old_reader' && args[1] === 'ot_original_test_reader' && sql.includes('read_projection_candidate(') && ++readerOriginals === 2) {
+            readerPid = pid; readerHeld.resolve(); await readerResume.promise
           }
           return rows
+        }
+        if (isProducer) {
+          // The coordinator has already completed both immutable preflights.
+          // This actual connection has not received BEGIN or refresh SQL yet.
+          writerReady[actor as WriterActor].resolve(); await writerResume.promise
         }
       }
       return connection
     }
     try {
-      const oldRead = readPersistedCanonicalRequirements(w.cluster, 'primary', w.key, w.witness)
-      await Promise.race([held, oldRead.then(() => { throw Error('reader_did_not_hold_final_share') })])
-      const first = refreshPersistedCanonicalVersion(w.cluster, req, w.key), second = refreshPersistedCanonicalVersion(w.cluster, rival, w.key)
+      // Fixed independent actor contexts prevent either coordinator's Old-read
+      // from becoming the separate reader barrier. All three proofs are real.
+      const oldRead = launch('old_reader', () => readPersistedCanonicalRequirements(w.cluster, 'primary', w.key, w.witness, raceAbort.signal))
+      const first = launch('first_writer', () => refreshPersistedCanonicalVersion(w.cluster, req, w.key, raceAbort.signal))
+      const second = launch('second_writer', () => refreshPersistedCanonicalVersion(w.cluster, rival, w.key, raceAbort.signal))
+      await Promise.race([Promise.all([readerHeld.promise, writerReady.first_writer.promise, writerReady.second_writer.promise]), early])
+      assert.ok(readerPid && producers.first_writer && producers.second_writer)
+      assert.equal(new Set([readerPid, producers.first_writer.pid, producers.second_writer.pid]).size, 3)
+      writerResume.resolve()
+      await Promise.race([Promise.all([writerDispatched.first_writer.promise, writerDispatched.second_writer.promise]), early])
+      assert.ok(producers.first_writer.dispatchedAt !== null && producers.second_writer.dispatchedAt !== null)
+      const dispatchedAt = Math.min(producers.first_writer.dispatchedAt, producers.second_writer.dispatchedAt)
       let waits: Awaited<ReturnType<LocalPgConnection['query']>> = []
-      const until = performance.now() + 12_000
+      const until = dispatchedAt + 12_000
       while (performance.now() < until) {
-        waits = await w.owner.query(`SELECT wait_event,count(*)::text AS n FROM pg_stat_activity WHERE usename='${ATOMIC_REFRESH_LOGIN}' AND wait_event_type='Lock' GROUP BY wait_event`)
-        if (waits.reduce((sum, row) => sum + Number(row.n), 0) === 2 && waits.some(row => row.wait_event === 'advisory')) break
-        await delay(20)
+        const observation = w.owner.query(`SELECT a.pid::text AS pid,a.wait_event,
+          ($3::integer=ANY(pg_blocking_pids(a.pid)))::text AS reader_blocks,
+          EXISTS(SELECT 1 FROM pg_locks l WHERE l.pid=a.pid AND l.locktype='advisory' AND NOT l.granted
+           AND l.classid=1869901924::oid AND l.objid=1::oid AND l.objsubid=2)::text AS publication_wait
+          FROM pg_stat_activity a WHERE a.pid IN($1::integer,$2::integer)
+           AND a.usename='${ATOMIC_REFRESH_LOGIN}' AND a.wait_event_type='Lock'
+           AND position('refresh_version_v1(' IN a.query)>0 ORDER BY a.pid`,
+        [pgText(producers.first_writer.pid, 23), pgText(producers.second_writer.pid, 23), pgText(readerPid, 23)])
+        observations.push(observation)
+        waits = await Promise.race([observation, early])
+        if (waits.length === 2 && waits.filter(row => row.reader_blocks === 'true').length === 1
+          && waits.filter(row => row.wait_event === 'advisory' && row.publication_wait === 'true').length === 1) break
+        await Promise.race([delay(20), early])
       }
-      assert.equal(waits.reduce((sum, row) => sum + Number(row.n), 0), 2, 'actual head wait and actual competing publication-lock wait')
-      assert.ok(waits.some(row => row.wait_event === 'advisory'))
-      release()
+      assert.equal(waits.length, 2, 'both exact producer PIDs must actually be blocked')
+      assert.equal(waits.filter(row => row.reader_blocks === 'true').length, 1, 'actual separate reader holds the head')
+      assert.equal(waits.filter(row => row.wait_event === 'advisory' && row.publication_wait === 'true').length, 1)
+      lockProofReached = true; clearTimeout(phaseTimer); readerResume.resolve()
       const before = await oldRead
       assert.equal(before.status, 'synthetic_persisted_requirements_verified')
       if (before.status === 'synthetic_persisted_requirements_verified') assert.equal(before.projection.recordFingerprint, req.expectedPredecessor)
@@ -659,9 +800,21 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       const loser = winnerIndex === 0 ? rival : req
       assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM official_provenance_private.receipts WHERE record_fingerprint=$1::text', [pgText(loser.envelope.bundle.recordFingerprint)]))[0]?.n, '0')
       await w.negative('later winner survives a fresh-witness old contender', { ...loser, witness: winner.witness }, undefined, '55000')
-      note('real reader SHARE barrier and competing writers', { winner: winnerIndex, sql: winner.sqlPhaseMs })
-    } finally { release(); LocalPgConnection.connect = realConnect; for (const item of connections) item.connection.close() }
-    await w.gone(connections.map(item => item.pid)); await w.locksReleased()
+      note('real reader SHARE barrier and competing writers', { winner: winnerIndex, sql: winner.sqlPhaseMs,
+        writerPhaseStartMs: Math.round(dispatchedAt - raceStarted) })
+    } finally {
+      clearTimeout(phaseTimer); raceAbort.abort(); readerResume.resolve(); writerResume.resolve()
+      const outcomes = await Promise.allSettled(started)
+      await Promise.allSettled(observations)
+      LocalPgConnection.connect = realConnect; actors.disable()
+      for (const item of connections) item.connection.close()
+      await w.gone(connections.map(item => item.pid)); await w.locksReleased()
+      note('three race actors settled and concrete backends removed', { lockProofReached,
+        readerHeld: readerPid !== null, firstWriterReady: Boolean(producers.first_writer), secondWriterReady: Boolean(producers.second_writer),
+        firstDispatched: producers.first_writer?.dispatchedAt !== null && producers.first_writer?.dispatchedAt !== undefined,
+        secondDispatched: producers.second_writer?.dispatchedAt !== null && producers.second_writer?.dispatchedAt !== undefined,
+        outcomes: outcomes.map(result => result.status) })
+    }
   } finally { w.stop() }
 
   for (const outcome of ['unknown_commit', 'readback_failure', 'cleanup_after_bound', 'reader_after_bound'] as const) {

@@ -50,7 +50,7 @@ CREATE FUNCTION official_original_api.refresh_version_v1(
 ) RETURNS TABLE(predecessor text,successor text,after_sequence bigint,after_hash text,started_at timestamptz,
  valid_until timestamptz,observed_at timestamptz,phase_ms jsonb,
  production_accepted_read text,positive_real_visa_cells integer)
-LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path='' SET timezone='UTC' AS $$
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path='' SET timezone='UTC' SET jit=off AS $$
 DECLARE
  -- Generated solely from the frozen current corpus and #1151 contract. The
  -- unit conformance assertion requires exact equality with that code. This is
