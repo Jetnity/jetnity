@@ -1,0 +1,28 @@
+{
+  "syntheticOnly": true,
+  "realCredentialAccess": false,
+  "stage": "authorized_synthetic_signer",
+  "directoryMode": "700",
+  "realPathMatches": true,
+  "directorySymlink": false,
+  "fileMode": "600",
+  "fileSymlink": false,
+  "fileLinks": 1,
+  "authorizedSigner": [
+    "signature_available=true",
+    "private_export_available=false",
+    "export_error_code=-25316"
+  ],
+  "untrustedSigner": [
+    "signature_available=false",
+    "sign_error_code=-25293",
+    "private_export_available=false",
+    "export_error_code=-25316"
+  ],
+  "untrustedSignerExit": 2,
+  "searchListUnchangedDuring": true,
+  "probeStatus": "SYNTHETIC_PRIMITIVE_PASS",
+  "keychainDeleted": true,
+  "syntheticFilesRemoved": true,
+  "operationalCustodyReady": false
+}
