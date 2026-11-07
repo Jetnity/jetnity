@@ -27,7 +27,13 @@ import { applicationPilotTargetAllowed } from './target-server'
 /** Current invocation only. No exported injection seam, positive cache or writes
  * to the accepted store. Tests replace dependencies outside the deploy graph. */
 export async function evaluateApplicationPilot(trip: Trip, signal: AbortSignal): Promise<PilotResult> {
-  try { return await withinDeadline(signal, 15_000, bounded => evaluateCurrentRequest(trip, bounded)) }
+  try {
+    const result = await withinDeadline(signal, 15_000, bounded => evaluateCurrentRequest(trip, bounded))
+    // The real deadline finally may change runtime state after the inner result.
+    // Preserve negative categories, but never publish verification on a lost target.
+    if (result.status === 'verified' && !applicationPilotTargetAllowed()) throw new Error('pilot_target_changed')
+    return result
+  }
   catch { return { status: 'unavailable', tripId: trip.id, revision: trip.revision,
     contextFingerprint: pilotContextFingerprint(trip), expiresAt: null, evaluations: requirementsLokalFuerReise(trip) } }
 }

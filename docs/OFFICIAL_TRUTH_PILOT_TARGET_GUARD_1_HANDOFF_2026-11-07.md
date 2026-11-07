@@ -2,6 +2,8 @@
 
 Stand: 7. November 2026. Tracking #1148, Draft PR #1149, parent #917. **Autorenlieferung; unabhängige Technical-Lead-Abnahme und vollständige Exact-Head-Gates stehen aus.** Kein Ready, Merge oder automatischer Folgeslice durch den Autor.
 
+**Aktueller Korrekturstand: R1 im selben Autor/derselben Session**, ausschließlich nach [Root CHANGES REQUIRED auf `c87c355ab53c86d31b7629f428bbbca039c5f28c`](https://github.com/Jetnity/jetnity/pull/1149#issuecomment-6705926637). Die ursprüngliche Lieferung und ihre Hash-/Prüfangaben unten bleiben historische Evidence dieses ersten Heads; der abschließende Abschnitt „R1-Korrekturlieferung“ beschreibt die neuen Bytes und gezielten Prüfungen. TASK v1 und A1 bleiben unverändert.
+
 ## Auftrag und Provenienz
 
 - Autor: **Jetnity Official Truth Pilot Target Guard 1 — Codex Generation 1**.
@@ -32,7 +34,7 @@ Ein fehlgeschlagener Zielcheck liefert die bestehenden unavailable-/null-Verträ
 
 `applicationPilotAvailable()=false`, `applicationPilotEnabled()=false`, `contracts=[]`, Identitäts-/Quellen-/Extraktorregister, AA-Pin und Mappingfenster bleiben unverändert. Target-Match aktiviert keinen Piloten. Die gemeinsame Supabase-Factory, Browser-/Auth-Code, gewöhnliche Account-Seiten, Proxy und Katalog-API wurden nicht geändert; der Guard behauptet keinen Stopp gewöhnlicher Account-Seitenaufrufe.
 
-## Geänderte Dateien und Git-Blobs
+## Geänderte Dateien und Git-Blobs — erste Lieferung `c87c355`
 
 Die drei vorhandenen Testdateien erhalten ausschließlich den genehmigten positiven externen Target-Port (zweimal in `application.test.ts`, jeweils einmal in den beiden A1-Dateien). Sämtliche vorhandenen semantischen Assertions bleiben bytegleich. Die drei Leitdokumente sind ausschließlich ergänzt. Der TASK ist nicht verändert.
 
@@ -108,3 +110,56 @@ Die vollständigen lokalen Ausgaben liegen außerhalb des Veröffentlichungsscop
 Der erste kritische offene Schritt bleibt die zulässig freigegebene Feststellung der tatsächlich installierten Development-Baseline und wirksamen #1139-Owner-/Account-/Session-Autorität sowie die Zielbindung des vorhandenen #1142-Kandidaten. Die frühere verweigerte Nachprüfung wurde nicht wiederholt, umformuliert oder umgeleitet. **Stage 1: APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING; tatsächliche neue Ledger-ID unbekannt. Stage 2: NOT_ATTEMPTED**, auch nach späterem Readback nicht unverändert anzuwenden. Keine gehostete SQL-/Auth-/Session-/Trip-/RLS-/Migrationsaktion, kein Environment-/Secret-Write, kein realer Quellenaufruf und keine gehaltene Codeintegration.
 
 Für diese Lieferung folgt ausschließlich Root-Submission, unabhängiges Full-Diff-/Exact-Head-Review, vollständige CI und Preview-Prüfung. Nur der Technical Lead entscheidet PASS/Ready/Merge; jeder neue Head benötigt vollständiges Re-Gating. Ein späterer echter Owner-Reisetest, Production-Paket und unabhängiger End-to-End-Nachweis auf jetnity.com sowie die persistente, versionierte, aktualisierbare eigene Datenbasis und vollständige Einreise-Checkliste bleiben offen. **Autor returned / STOP; kein Folgeslice.**
+
+## R1-Korrekturlieferung — gleicher Autor, gleiche Session
+
+**Ausgangshead:** `c87c355ab53c86d31b7629f428bbbca039c5f28c`, Tree `4f17bc2dc5540ff19077731837b7fdd20e23cef8`. [Root-Verdict R1](https://github.com/Jetnity/jetnity/pull/1149#issuecomment-6705926637): **CHANGES REQUIRED**, kein PASS/Ready/Merge. Vor der Korrektur wurden sämtliche zwölf lokalen Veröffentlichungsdateien gegen das eingefrorene Submission-Manifest geprüft. Der frische GitHub-main-Ref blieb `fd31251c0f63dbb8454337d1fd3b526f1893ea94`; #1149 war weiterhin Draft auf dem genannten Head.
+
+### Tatsächliche erste CI und R1.1
+
+Die vollständige [CI 42365799902, Attempt 1](https://github.com/Jetnity/jetnity/actions/runs/42365799902) scheiterte im [App-Job 128383521976](https://github.com/Jetnity/jetnity/actions/runs/42365799902/job/128383521976) bei Lint: **vier neue Errors** für `const module` in `target.test.ts`, Regel `@next/next/no-assign-module-variable`, sowie **193 bestehende Warnings**. Die nachfolgenden Tests, Hygiene und Build waren **SKIPPED**, nicht bestanden. Laut unabhängigem Root-Readback waren Typecheck und der separate Auth-Job erfolgreich; das ersetzt keine erfolgreiche Gesamt-CI.
+
+Die vier Bindungen heißen jetzt `targetGuard`, `requestHandler`, `database` und `evaluator`. Keine Regelunterdrückung, allgemeine Warnungsbereinigung oder Workflow-/Dependency-/Timeout-Änderung. Eine gezielte TypeScript-AST-Inspektion findet null Variable-Bindungen namens `module`; kein `eslint-disable` wurde eingeführt. Das ist kein vollständiger Lint-Nachweis; die frische kanonische CI bleibt erforderlich.
+
+### R1.2: tatsächlicher Cleanup nach dem inneren Ergebnis
+
+Der unveränderte `withinDeadline()`-Helfer ruft im `finally` synchron `controller.abort()` auf. Ein am begrenzten Signal registrierter Cleanup-Listener kann daher nach der inneren Endprüfung, aber vor Auflösung des äußeren Await das Laufzeitziel verändern. Der unabhängige Reviewer und anschließend Root reproduzierten mit tatsächlicher SSR-Erfassung, Guard, Deadline und Evaluator **verified / eine positive Zelle bei targetAtReturn=false**. Der tatsächliche Request mit DB-Save lieferte nach demselben Cleanup HTTP 200 mit gespeichertem Trip; der Request mit Evaluator-Check HTTP 200 mit verified. SDK-, Cookie- und reale Fetch-Aufrufe waren jeweils null. Reproduktion außerhalb des Deploy-Graphen: `review/pilot-target-finally-repro.cjs`, SHA-256 `4d12854d186cb9039a9a66ddd9711362a5ae564b71d5fca594ee399d841d6e27`. Dessen Assertions dokumentieren den fehlerhaften alten Head und sind keine Sollwerte des Fixes.
+
+Die beiden öffentlichen Wrapper prüfen nun **nach dem vollständigen `await withinDeadline(...)`** die Zielbedingung vor bestätigter Ausgabe erneut. Ein zuvor innerlich verifiziertes Evaluator-Ergebnis wird bei Zielverlust über den bestehenden catch zu unavailable mit ausschließlich lokalen unknown-Zellen. Ein HTTP-200-Request-Ergebnis wird bei Zielverlust über den bestehenden catch zur unbestätigten 503-Antwort; ein möglicherweise beendetes Speichern wird nicht als rückgängig gemacht dargestellt. Bereits negative Evaluator-Kategorien und nicht erfolgreiche HTTP-Status bleiben erhalten. Der Deadline-Helfer, Zielguard, Datenbankhelfer, gemeinsam genutzte Factories und alle Hard-offs sind unverändert.
+
+Die neuen Regressionen hängen Testlistener an die tatsächlich weitergegebenen begrenzten Signale. Request-Save verwendet den tatsächlichen DB-Helfer; Request-Check den tatsächlichen Evaluator und dessen kanonische synthetische Evidence-/Rule-Kette. Der echte Deadline-Helfer wird nicht substituiert. Drei positive Kontrollen beweisen den unverändert erfolgreichen Pfad einschließlich stattgefundenem Cleanup; drei Driftfälle verhindern die zuvor beobachtete bestätigte Ausgabe. Weitere Kontrollen erhalten source_not_admitted, HTTP 409 und tatsächliche Hard-off-Kategorien auf abgelehntem Ziel. Keine Produktions-Injektion und kein Livezugriff.
+
+### Gezielt ausgeführte R1-Prüfungen
+
+Die neu hinzugefügten Cleanup-Regressionen wurden zunächst gegen die noch unveränderten Wrapper ausgeführt:
+
+```sh
+node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-name-pattern='public .* after real deadline cleanup' lib/readiness/official-truth-ch-de-application-pilot-1/target.test.ts
+```
+
+Ergebnis vor dem Produktfix: **6 Tests, 3 positive Kontrollen bestanden, genau 3 Drift-Regressionen fehlgeschlagen**, 0 übersprungen, 1.324 s. Die Tests wiesen den konkreten Fehler nach.
+
+Nach der eng begrenzten Korrektur:
+
+```sh
+node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-ch-de-application-pilot-1/target.test.ts lib/readiness/official-truth-ch-de-application-pilot-1/application.test.ts
+```
+
+Ergebnis: **148 Tests, 148 bestanden, 0 fehlgeschlagen, 0 übersprungen**, 5.450 s: 94 Target-Tests (85 bestehende plus 9 R1-Fälle) und 54 unveränderte Application-Tests. Tatsächliche Umgebung weiterhin Node v24.22.1 / TypeScript 5.9.3; keine Behauptung einer lokalen vollständigen Node-22-/Next-CI. Keine Wiederholung der bekannten unvollständigen Gesamtrepository-/R2-Tests und keine weiteren Implementierungen nach dem neuen Freeze.
+
+| R1-Ausgabe unter `/workspace/scratch/c4c9898f6d19/` | SHA-256 |
+| --- | --- |
+| `pilot-target-guard-r1-red-cleanup-tests.log` | `36af0f22147b999d4e177d1b38dbae930770ca3d1277b17191d96b0cefebb747` |
+| `pilot-target-guard-r1-focused-tests.log` | `5dc485f3be27d48e8c87cb882a9843e7d65417eff25b4eb607e691bc854b3097` |
+
+### R1-Dateien und nächstes Gate
+
+Nur die folgenden drei Code-/Testdateien sowie diese Übergabe unterscheiden sich gegenüber `c87c355`; das versionierte lokale R1-Manifest hält ihre SHA-256 und den vollständigen unveränderten Rest des Veröffentlichungsscope fest.
+
+| Datei unter `lib/readiness/official-truth-ch-de-application-pilot-1/` | Neuer Git-Blob | SHA-256 |
+| --- | --- | --- |
+| `target.test.ts` | `d2c7abc992503c816a0da03be837de44536f0ca8` | `477ace9d16c42a4c65f41359b5a3cc086421b56686bccd7f15657d2a83016e17` |
+| `request-server.ts` | `163c3b056dab647ea42a58722d124d78ebbcfb40` | `6b70f43b343b275397727f3f540fdd6040d3e455bf0ecdbbb3513100aa994ea4` |
+| `evaluate-server.ts` | `975206af1755dba3282193f456d1f92d92f8d0ad` | `bf8444e4f9c326c9f52f3c047fe166087c08df98b3aa55144b017b5a2f1b7b72` |
+
+R1.2 bleibt bis zur unabhängigen Root-Abnahme eine zu prüfende Korrektur des Veröffentlichungsschutzes; keine Herabstufung der gehosteten P0/P1-Gates. Der neue Head benötigt vollständiges Re-Gating: tatsächliche Node-22-CI einschließlich aller bisher übersprungenen Tests/Hygiene/Build, Auth, Preview, Threads/main und unabhängiges Full-Diff-/Acceptance-Review. Die erste fehlgeschlagene CI bleibt historische Evidence. Stage 1/Stage 2, #1139, gehaltene Plattformaktionen, Product-Owner-Gates und der vollständige eigene Einreise-Datenbankauftrag bleiben unverändert. **R1-Autor returned / STOP; kein Ready, Merge, Remote-Write oder Folgeslice.**

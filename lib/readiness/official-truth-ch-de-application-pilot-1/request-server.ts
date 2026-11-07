@@ -18,7 +18,13 @@ const requestSchema = z.discriminatedUnion('operation', [
 ])
 const unavailable = { message: 'Die Reise ist mit dieser Anmeldung nicht verfügbar.' }
 export async function applicationPilotRequest(req: Request): Promise<{ status: number; body: unknown }> {
-  try { return await withinDeadline(req.signal, 17_000, signal => handleRequest(req, signal)) }
+  try {
+    const result = await withinDeadline(req.signal, 17_000, signal => handleRequest(req, signal))
+    // Deadline cleanup runs after the inner checks. Recheck before confirming
+    // success; an already submitted save may have completed despite target drift.
+    if (result.status === 200 && !applicationPilotTargetAllowed()) throw new Error('pilot_target_changed')
+    return result
+  }
   catch { return { status: 503, body: { message: 'Die Anfrage konnte nicht bestätigt werden. Bereits gestartete Speichervorgänge können abgeschlossen sein. Bitte neu laden und Angaben prüfen.' } } }
 }
 async function handleRequest(req: Request, signal: AbortSignal): Promise<{ status: number; body: unknown }> {

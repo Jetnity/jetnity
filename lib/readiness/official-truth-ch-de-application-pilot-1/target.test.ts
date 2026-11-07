@@ -40,8 +40,8 @@ function target(captured: string | undefined, current: string | undefined) {
     'next/headers': { cookies: () => { cookies++; assert.fail('guard read cookies') } },
   })
   setEnvironment('NEXT_PUBLIC_SUPABASE_URL', current)
-  const module = loadFixtureModule<typeof Target>(directory+'target-server.ts', { '@/lib/supabase/server': server })
-  return { module, server, calls: () => ({ clients, cookies }) }
+  const targetGuard = loadFixtureModule<typeof Target>(directory+'target-server.ts', { '@/lib/supabase/server': server })
+  return { module: targetGuard, server, calls: () => ({ clients, cookies }) }
 }
 function deferred() {
   let resolve!: () => void
@@ -117,7 +117,7 @@ test('current process lookup is fresh while the actual SSR capture stays fixed',
 function requestRuntime(targetModule: typeof Target, hook?: Hook, hardOff = false) {
   const trip = fixtureTrip(), calls: string[] = []
   const step = async (name: string) => { calls.push(name); await hook?.(name) }
-  const module = loadFixtureModule<typeof RequestHandler>(directory+'request-server.ts', {
+  const requestHandler = loadFixtureModule<typeof RequestHandler>(directory+'request-server.ts', {
     './target-server': targetModule,
     './availability-server': hardOff ? shippedAvailability : { applicationPilotAvailable: () => true },
     '@/lib/supabase/server': { createServerComponentClient: async () => {
@@ -129,7 +129,7 @@ function requestRuntime(targetModule: typeof Target, hook?: Hook, hardOff = fals
     './database-server': { saveDeclaration: async () => { await step('save'); return trip } },
     '@/lib/readiness/trip-official-evaluations-server': { tripOfficialPilotPruefen: async () => { await step('check'); return { status: 'unavailable' } } },
   })
-  const invoke = (operation: 'save' | 'check', spoofHeaders = false) => module.applicationPilotRequest(new Request('https://pilot.example/api/readiness/ch-de-application?target=development', {
+  const invoke = (operation: 'save' | 'check', spoofHeaders = false) => requestHandler.applicationPilotRequest(new Request('https://pilot.example/api/readiness/ch-de-application?target=development', {
     method: 'POST', headers: { origin: 'https://pilot.example', 'content-type': 'application/json', 'sec-fetch-site': 'same-origin',
       ...(spoofHeaders ? { 'x-supabase-url': development, 'x-vercel-env': 'preview', 'x-vercel-project-id': preview.VERCEL_PROJECT_ID } : {}) },
     body: JSON.stringify({ operation, tripId: trip.id, revision: trip.revision,
@@ -141,7 +141,7 @@ function databaseRuntime(targetModule: typeof Target, hook?: Hook) {
   const trip = fixtureTrip(), calls: string[] = [], admitted = grant()
   let context: unknown
   const step = async (name: string) => { calls.push(name); await hook?.(name) }
-  const module = loadFixtureModule<typeof Database>(directory+'database-server.ts', {
+  const database = loadFixtureModule<typeof Database>(directory+'database-server.ts', {
     './target-server': targetModule,
     '@/lib/supabase/server': { createServerComponentClient: async () => {
       await step('client')
@@ -156,18 +156,23 @@ function databaseRuntime(targetModule: typeof Target, hook?: Hook) {
     } },
   })
   const invoke = (operation: 'save' | 'reserve' | 'recheck') => operation === 'save'
-    ? module.saveDeclaration(trip, fixtureDeclaration, mutationId, new AbortController().signal)
-    : module.pilotGrant(trip, operation === 'reserve' ? null : admitted.id, new AbortController().signal)
-  return { invoke, calls }
+    ? database.saveDeclaration(trip, fixtureDeclaration, mutationId, new AbortController().signal)
+    : database.pilotGrant(trip, operation === 'reserve' ? null : admitted.id, new AbortController().signal)
+  return { invoke, calls, database }
 }
-function evaluatorRuntime(targetModule: typeof Target, hook?: Hook, hardOff = false) {
+function evaluatorRuntime(targetModule: typeof Target, hook?: Hook, hardOff = false,
+  cleanup?: { onSignal: (signal: AbortSignal) => void; missingGrant?: boolean }) {
   const trip = fixtureTrip(), calls: string[] = [], admitted = grant()
   let authorities = 0, catalogs = 0
   const step = (name: string) => { calls.push(name); return hook?.(name) }
-  const module = loadFixtureModule<typeof Evaluation>(directory+'evaluate-server.ts', {
+  const evaluator = loadFixtureModule<typeof Evaluation>(directory+'evaluate-server.ts', {
     './target-server': targetModule,
     './contract-server': hardOff ? shippedContract : { applicationPilotEnabled: () => true, applicationContract: () => fixtureContract },
-    './database-server': { pilotGrant: async (_trip: unknown, id: string | null) => { await step(id === null ? 'reserve' : 'grant-recheck'); return admitted } },
+    './database-server': { pilotGrant: async (_trip: unknown, id: string | null, signal: AbortSignal) => {
+      cleanup?.onSignal(signal)
+      await step(id === null ? 'reserve' : 'grant-recheck')
+      return cleanup?.missingGrant ? null : admitted
+    } },
     '@/lib/readiness/official-truth-fact-entry-authority-server': { loadOfficialTruthFactEntryAuthority: async () => {
       await step(++authorities === 1 ? 'authority' : 'authority-recheck')
       return { status: 'authorized', grant: 'role', capability: 'official-truth-freigeben' }
@@ -187,7 +192,7 @@ function evaluatorRuntime(targetModule: typeof Target, hook?: Hook, hardOff = fa
     } },
     '@/lib/trips/daten': { reiseLaden: async () => { await step('trip-recheck'); return { problem: null, zeilen: [trip] } } },
   })
-  return { invoke: () => module.evaluateApplicationPilot(trip, new AbortController().signal), calls }
+  return { invoke: () => evaluator.evaluateApplicationPilot(trip, new AbortController().signal), calls, evaluator }
 }
 function assertUnknown(result: Awaited<ReturnType<typeof Evaluation.evaluateApplicationPilot>>) {
   assert.equal(result.status, 'unavailable')
@@ -298,3 +303,112 @@ for (const stop of evaluationSteps.slice(6)) {
     assert.deepEqual(r.calls, evaluationSteps)
   })
 }
+
+// Use the unchanged real withinDeadline finally path. This listener fires after
+// the inner result, when cleanup aborts its bounded signal, before the public
+// wrapper's outer await resolves. Never substitute the deadline helper.
+function cleanupTargetChange(drift: boolean) {
+  const attached = new WeakSet<AbortSignal>()
+  let cleanups = 0
+  const onSignal = (signal: AbortSignal) => {
+    if (attached.has(signal)) return
+    attached.add(signal)
+    signal.addEventListener('abort', () => {
+      cleanups++
+      if (drift) process.env.NEXT_PUBLIC_SUPABASE_URL = production
+    }, { once: true })
+  }
+  return { onSignal, count: () => cleanups }
+}
+function cleanupRequestRuntime(targetModule: typeof Target, onSignal: (signal: AbortSignal) => void) {
+  const trip = fixtureTrip(), db = databaseRuntime(targetModule), evaluation = evaluatorRuntime(targetModule)
+  const requestHandler = loadFixtureModule<typeof RequestHandler>(directory+'request-server.ts', {
+    './target-server': targetModule,
+    './availability-server': { applicationPilotAvailable: () => true },
+    '@/lib/supabase/server': { createServerComponentClient: async () => ({
+      auth: { getUser: async () => ({ data: { user: { id: fixtureUserId } }, error: null }) },
+    }) },
+    '@/lib/readiness/rate-limit': { readinessAnfrageErlaubt: async () => ({ ok: true }) },
+    '@/lib/trips/daten': { reiseLaden: async (_id: string, signal: AbortSignal) => {
+      onSignal(signal); return { problem: null, zeilen: [trip] }
+    } },
+    './database-server': db.database,
+    '@/lib/readiness/trip-official-evaluations-server': { tripOfficialPilotPruefen: evaluation.evaluator.evaluateApplicationPilot },
+  })
+  const invoke = (operation: 'save' | 'check', revision = trip.revision) => requestHandler.applicationPilotRequest(new Request('https://pilot.example/api/readiness/ch-de-application', {
+    method: 'POST', headers: { origin: 'https://pilot.example', 'content-type': 'application/json', 'sec-fetch-site': 'same-origin' },
+    body: JSON.stringify({ operation, tripId: trip.id, revision,
+      ...(operation === 'save' ? { mutationId, declaration: fixtureDeclaration } : {}) }),
+  }))
+  return { invoke, db, evaluation }
+}
+for (const drift of [false, true]) {
+  test(`public evaluator after real deadline cleanup: ${drift ? 'target drift refuses verified result' : 'target-stable positive control'}`, async t => {
+    environment(t)
+    const fetch = t.mock.method(globalThis, 'fetch', async () => { assert.fail('unexpected real fetch') })
+    const captured = target(development, development), cleanup = cleanupTargetChange(drift)
+    const r = evaluatorRuntime(captured.module, undefined, false, cleanup)
+    const result = await r.invoke()
+    assert.equal(cleanup.count(), 1)
+    assert.equal(captured.module.applicationPilotTargetAllowed(), !drift)
+    assert.deepEqual(r.calls, evaluationSteps)
+    if (drift) assertUnknown(result)
+    else {
+      assert.equal(result.status, 'verified')
+      assert.equal(result.evaluations.filter(row => row.result !== 'unknown').length, 1)
+    }
+    assert.deepEqual(captured.calls(), { clients: 0, cookies: 0 })
+    assert.equal(fetch.mock.callCount(), 0)
+  })
+  for (const operation of ['save', 'check'] as const) test(`public ${operation} request after real deadline cleanup: ${drift ? 'target drift refuses HTTP success' : 'target-stable positive control'}`, async t => {
+    environment(t)
+    const fetch = t.mock.method(globalThis, 'fetch', async () => { assert.fail('unexpected real fetch') })
+    const captured = target(development, development), cleanup = cleanupTargetChange(drift)
+    const r = cleanupRequestRuntime(captured.module, cleanup.onSignal), result = await r.invoke(operation)
+    assert.equal(cleanup.count(), 1)
+    assert.equal(captured.module.applicationPilotTargetAllowed(), !drift)
+    if (drift) assert.deepEqual(result, unconfirmed)
+    else {
+      assert.equal(result.status, 200)
+      const body = result.body as { trip?: ReturnType<typeof fixtureTrip>; status?: string; evaluations?: { result: string }[] }
+      if (operation === 'save') {
+        assert.equal(body.trip?.revision, 2); assert.equal(body.trip?.lastMutationId, mutationId)
+      } else {
+        assert.equal(body.status, 'verified')
+        assert.equal(body.evaluations?.filter(row => row.result !== 'unknown').length, 1)
+      }
+    }
+    // Real helper work completed before cleanup; its effects are not undone.
+    assert.deepEqual(r.db.calls, operation === 'save' ? ['client', 'rpc', 'read'] : [])
+    assert.deepEqual(r.evaluation.calls, operation === 'check' ? evaluationSteps : [])
+    assert.deepEqual(captured.calls(), { clients: 0, cookies: 0 })
+    assert.equal(fetch.mock.callCount(), 0)
+  })
+}
+test('outer evaluator guard preserves a negative admission category after real cleanup drift', async t => {
+  environment(t)
+  const captured = target(development, development), cleanup = cleanupTargetChange(true)
+  const r = evaluatorRuntime(captured.module, undefined, false, { ...cleanup, missingGrant: true })
+  const result = await r.invoke()
+  assert.equal(cleanup.count(), 1); assert.equal(captured.module.applicationPilotTargetAllowed(), false)
+  assert.equal(result.status, 'source_not_admitted'); assert(result.evaluations.every(row => row.result === 'unknown'))
+  assert.deepEqual(r.calls, ['authority', 'reserve'])
+})
+test('outer request guard preserves a negative revision category after real cleanup drift', async t => {
+  environment(t)
+  const captured = target(development, development), cleanup = cleanupTargetChange(true)
+  const r = cleanupRequestRuntime(captured.module, cleanup.onSignal)
+  assert.deepEqual(await r.invoke('save', 2), { status: 409, body: { message: 'Die Reise hat sich geändert. Bitte neu laden.' } })
+  assert.equal(cleanup.count(), 1); assert.equal(captured.module.applicationPilotTargetAllowed(), false)
+  assert.deepEqual(r.db.calls, []); assert.deepEqual(r.evaluation.calls, [])
+})
+test('outer target checks preserve the actual hard-off categories on a rejected target', async t => {
+  environment(t)
+  const captured = target(production, production)
+  const request = requestRuntime(captured.module, undefined, true), evaluator = evaluatorRuntime(captured.module, undefined, true)
+  assert.deepEqual(await request.invoke('save'), unavailable)
+  assert.deepEqual(await request.invoke('check'), unavailable)
+  const result = await evaluator.invoke()
+  assert.equal(result.status, 'disabled'); assert(result.evaluations.every(row => row.result === 'unknown'))
+  assert.deepEqual(request.calls, []); assert.deepEqual(evaluator.calls, [])
+})
