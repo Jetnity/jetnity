@@ -2,7 +2,7 @@
 
 Stand: 7. November 2026. Tracking #1148, Draft PR #1149, parent #917. **Autorenlieferung; unabhängige Technical-Lead-Abnahme und vollständige Exact-Head-Gates stehen aus.** Kein Ready, Merge oder automatischer Folgeslice durch den Autor.
 
-**Aktueller Korrekturstand: R1 im selben Autor/derselben Session**, ausschließlich nach [Root CHANGES REQUIRED auf `c87c355ab53c86d31b7629f428bbbca039c5f28c`](https://github.com/Jetnity/jetnity/pull/1149#issuecomment-6705926637). Die ursprüngliche Lieferung und ihre Hash-/Prüfangaben unten bleiben historische Evidence dieses ersten Heads; der abschließende Abschnitt „R1-Korrekturlieferung“ beschreibt die neuen Bytes und gezielten Prüfungen. TASK v1 und A1 bleiben unverändert.
+**Aktueller Korrekturstand: R2 im selben Autor/derselben Session**, ausschließlich nach [Root CHANGES REQUIRED / TASK v1 Amendment A2 auf `581af23dafc17d3cd7421105453de5a9dac0b96a`](https://github.com/Jetnity/jetnity/pull/1149#issuecomment-6706213098). Die ursprüngliche Lieferung und R1 bleiben mit ihren jeweiligen Hash-/Prüfangaben historische Evidence. Der abschließende Abschnitt „R2-Testintegration“ beschreibt die zwei A2-Teständerungen; der Laufzeitcode bleibt exakt auf R1. TASK v1 bleibt unverändert; A1 und A2 gelten im jeweiligen begrenzten Scope.
 
 ## Auftrag und Provenienz
 
@@ -163,3 +163,60 @@ Nur die folgenden drei Code-/Testdateien sowie diese Übergabe unterscheiden sic
 | `evaluate-server.ts` | `975206af1755dba3282193f456d1f92d92f8d0ad` | `bf8444e4f9c326c9f52f3c047fe166087c08df98b3aa55144b017b5a2f1b7b72` |
 
 R1.2 bleibt bis zur unabhängigen Root-Abnahme eine zu prüfende Korrektur des Veröffentlichungsschutzes; keine Herabstufung der gehosteten P0/P1-Gates. Der neue Head benötigt vollständiges Re-Gating: tatsächliche Node-22-CI einschließlich aller bisher übersprungenen Tests/Hygiene/Build, Auth, Preview, Threads/main und unabhängiges Full-Diff-/Acceptance-Review. Die erste fehlgeschlagene CI bleibt historische Evidence. Stage 1/Stage 2, #1139, gehaltene Plattformaktionen, Product-Owner-Gates und der vollständige eigene Einreise-Datenbankauftrag bleiben unverändert. **R1-Autor returned / STOP; kein Ready, Merge, Remote-Write oder Folgeslice.**
+
+## R2-Testintegration — TASK v1 Amendment A2
+
+**Ausgangshead:** `581af23dafc17d3cd7421105453de5a9dac0b96a`, Tree `d8ebd25294c3d81bfd2125459dfaa90c407d5204`. [Root-Verdict R2 und vorab veröffentlichtes A2](https://github.com/Jetnity/jetnity/pull/1149#issuecomment-6706213098): **CHANGES REQUIRED**, kein PASS/Ready/Merge. Autor und tatsächliche Session bleiben unverändert. Vor Bearbeitung wurden alle zwölf R1-Veröffentlichungsdateien gegen das eingefrorene Manifest geprüft. Der frische GitHub-main-Ref blieb `fd31251c0f63dbb8454337d1fd3b526f1893ea94`; #1149 war Draft auf dem genannten R1-Head.
+
+### Tatsächliche R1-CI
+
+Die vollständige [CI 42366713641, Attempt 1](https://github.com/Jetnity/jetnity/actions/runs/42366713641) führte im [App-Job 128386193179](https://github.com/Jetnity/jetnity/actions/runs/42366713641/job/128386193179) **8.184 Tests aus: 8.179 bestanden, 3 fehlgeschlagen, 2 unveränderte Browser-Layout-Skips**. Root hat die vollständige Originalausgabe ausgewertet. Typecheck, Lint und Auth bestanden; Hygiene und App-Build waren nach dem Testfehler **SKIPPED**. Die zwei in den früheren lokalen Teilspiegelläufen fehlenden kanonischen Trip-Tests und die vollständige Mapping-Import-Isolation bestanden im echten Checkout. Damit ist deren frühere lokale Einschränkung eingeordnet; die drei tatsächlich fehlgeschlagenen Testintegrationen bleiben zu beheben.
+
+### Genau zwei erlaubte Teständerungen
+
+**R2.1:** `request.test.ts` besaß noch keinen positiven externen `./target-server`-Port. Dadurch wurden die vorhandenen Auth-/Save-Fälle vorzeitig gesperrt. A2 ergänzt ausschließlich die eine Zeile `applicationPilotTargetAllowed:()=>true` im bestehenden isolierten Fixture. Die zwei betroffenen Fälle sind „fresh owned Auth/RLS trip only; missing and foreign are indistinguishable“ und „interrupted submitted save is explicitly unconfirmed, never reported rolled back“. Alle Assertions, Zähler, negativen Fälle und der tatsächliche Deployment-Hard-off bleiben unverändert. Entfernt man genau diese Zeile, entsteht wieder der ursprüngliche Git-Blob `ebe1963249c6663db45f7dfec3416411319b9f58`.
+
+**R2.2:** Der BP1-Schutztest erkannte die autorisierte Evaluator-Änderung korrekt, weil sein erwarteter Code-Blob noch `aa3b3086394b1c30dbfd1e0ffb9604f43db8bde4` war. A2 bindet ausschließlich diesen einen statischen Erwartungswert an den unabhängig geprüften tatsächlichen R1-Blob `975206af1755dba3282193f456d1f92d92f8d0ad`, mit einer knappen A2-Provenienzzeile. Rücktausch dieses einen Pins und Entfernen genau dieser Provenienzzeile reproduziert bytegenau den ursprünglichen BP1-Test-Blob `ed1dbf5757364e1ade00b059737038416ca73d2f`.
+
+Alle anderen vier Code-Pins, die strikte Hash-Schleife, Hard-offs, Quarantäne-, Netzwerk- und vollständige Importprüfungen bleiben unverändert. Kein dynamischer Selbstvergleich, keine zusätzlichen erlaubten Hashes, kein Skip und keine künstlichen Verzeichnisse oder Teststubs. Dies ist ausschließlich eine geprüfte Code-Integrationsbindung; **kein AA-Quellen-Pin, Mappingfenster oder Quellenzulassung wird geändert**. Der gesamte Laufzeitcode bleibt exakt auf `581af23`; die 94 unabhängigen Target-Tests bleiben unverändert.
+
+### Gezielte R2-Prüfungen
+
+Root ergänzte ausschließlich unveränderte, gegen main gehashte Import-Abhängigkeiten im lokalen Teilspiegel. Diese Dateien gehören nicht zur Veröffentlichung. Der erste begrenzte Versuch stoppte noch bei fehlendem `lib/trips/bezeichnungen` beziehungsweise `lib/readiness/schema`: **15 gezählte Tests, 12 bestanden, 3 fehlgeschlagen**, wobei die Request-Datei noch nicht initialisierbar war. Das war kein nachgewiesener neuer Produktfehler. Die vollständige Ausgabe bleibt erhalten.
+
+Nach Ergänzung der tatsächlich benötigten unveränderten Importclosure wurde genau derselbe begrenzte Lauf wiederholt:
+
+```sh
+node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-ch-de-application-pilot-1/request.test.ts lib/readiness/official-truth-ch-de-application-pilot-1/cancellation.test.ts
+```
+
+Final: **21 Tests, 21 bestanden, 0 fehlgeschlagen, 0 übersprungen**, 1.301 s. Alle sieben bestehenden Request-Tests einschließlich der zwei R2.1-Fälle und alle vierzehn Cancellation-Tests bestanden; auch die beiden zuvor lokal fehlenden kanonischen Trip-Reads wurden tatsächlich ausgeführt. Keine künstlichen Testports außer der ausdrücklich genehmigten einen Target-Zeile, keine neuen Assertions oder Skips.
+
+Zusätzlich wurden alle fünf festen BP1-Erwartungswerte aus dem unveränderten Pin-Block extrahiert und gegen die echten Datei-Bytes als Git-Blobs geprüft:
+
+| Gepinnte Datei | Tatsächlicher und erwarteter Git-Blob |
+| --- | --- |
+| `lib/readiness/official-truth-server-owned-retrieval.ts` | `5998fdea54d3337fb68cd7111460b59e43a3cef7` |
+| `lib/readiness/official-truth-content-identity.ts` | `4a4c3eea77b6e634fd83525849a4aaa6e6e50c18` |
+| `scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts` | `375adb52e2ef5ccb9045e17d830bf5d9111f6375` |
+| `lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts` | `90b9dd0108ed3e4d8049a3f8d35323c09b52e23f` |
+| `lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts` | `975206af1755dba3282193f456d1f92d92f8d0ad` |
+
+**5/5 exakt.** Der vollständige BP1-Import-Walk über `app`, `components` und `lib` wird damit nicht als lokal bestanden behauptet; er bleibt unverändert für den vollständigen CI-Checkout bestehen. Die bytegenaue Rücknormalisierung der zwei A2-Änderungen beweist zusätzlich den unveränderten Rest des Tests. Kein BP1-/AA-Quellenaufruf oder gehosteter Zugriff. Lokale Laufzeit unverändert Node v24.22.1, keine neue Abhängigkeit oder breite Wiederholung anderer Suites.
+
+| R2-Evidence unter `/workspace/scratch/c4c9898f6d19/` | SHA-256 |
+| --- | --- |
+| `pilot-target-guard-r2-request-cancellation-tests.log` — erster unvollständiger Versuch | `b7d02224df112ce8522f717d9057628cd7e323c5f896fc65f7162560363e7dcb` |
+| `pilot-target-guard-r2-final-request-cancellation-tests.log` — final 21/21 | `bb242da9ed5f3eda9e92c7b1c1b5b35aa3473063d3470b2890974ac04f51f710` |
+| `pilot-target-guard-r2-five-code-pins.json` — echte fünf Code-Pins | `356dbc679a08fce6a1277a3891f8f1ce869b9615431ee7e03b969ad8d887bf2e` |
+
+### R2-Dateien, Freeze und nächstes Gate
+
+Gegenüber `581af23` ändern sich ausschließlich die beiden A2-Testdateien und diese Übergabe. Das versionierte lokale R2-Manifest enthält ihren vollständigen Hash-Nachweis und den unveränderten Rest des Veröffentlichungsscope.
+
+| Datei | Neuer Git-Blob | SHA-256 |
+| --- | --- | --- |
+| `lib/readiness/official-truth-ch-de-application-pilot-1/request.test.ts` | `ce639c1143b57e2cf6debf8166d357fc9579fe2d` | `ec13cf22685f508b413de128ccfcdddc08fc87f45507bb53fd36aa104133f71b` |
+| `lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts` | `39c668f0f95424c25f22e7db8448072f44052e87` | `347c31338dd79cff7b4fc5b14dca418888ce422e28ecc8f3e1ecced9c71219bd` |
+
+R2 behebt ausschließlich die genannten Testintegrationen. Die vorherige CI bleibt fehlgeschlagen; kein grüner Teilnachweis ersetzt den neuen vollständigen Run. Nach Root-Veröffentlichung folgen vollständiges Exact-Head-Re-Gating mit allen Tests, strikter BP1-/Mapping-Isolation, Hygiene, Build, Auth, Preview, Threads/main und unabhängigem Review. Alle gehaltenen Plattform-/Product-Owner-Gates, Stage-1-/Stage-2-Status und der vollständige eigene Einreise-Datenbankauftrag bleiben unverändert. **R2-Autor returned / STOP; kein Ready, Merge, Remote-Write oder Folgeslice.**
