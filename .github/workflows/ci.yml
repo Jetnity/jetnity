@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Typecheck, Lint & Build
+    name: Repository verification
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -51,7 +51,7 @@ jobs:
         run: npm run lint
 
       - name: Tests
-        run: npm test
+        run: npm run test:core
 
       # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
       # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
@@ -77,6 +77,63 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+  persisted_native:
+    name: Persisted canonical read — native
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # fetch-depth: 0 is required so the operating-mode guard can compute the
+      # exact PR-vs-base file list locally. GitHub's default shallow clone does
+      # not contain the base SHA, and the guard must not use network APIs,
+      # secrets, providers or paid services.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      # Bricht ab, wenn package-lock.json nicht zu package.json passt.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup check
+        run: npm run check:setup:ci
+
+      - name: Operating mode
+        env:
+          JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}
+          JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}
+          JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run check:operating-mode
+
+      - name: Persisted native proof
+        run: npm run test:persisted-native
+
+  required_verify:
+    name: Typecheck, Lint & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [verify, persisted_native]
+    if: ${{ always() }}
+
+    steps:
+      - name: Require both verification jobs to succeed
+        env:
+          CORE_RESULT: ${{ needs.verify.result }}
+          PERSISTED_NATIVE_RESULT: ${{ needs.persisted_native.result }}
+        run: |
+          printf 'Core result: %.32s\nPersisted native result: %.32s\n' "$CORE_RESULT" "$PERSISTED_NATIVE_RESULT"
+          if [ "$CORE_RESULT" != "success" ] || [ "$PERSISTED_NATIVE_RESULT" != "success" ]; then
+            printf '%s\n' 'Both verification jobs must succeed.'
+            exit 1
+          fi
+          printf '%s\n' 'Both verification jobs succeeded.'
 
   # Die Auth-Konfiguration liegt nicht in der Datenbank, sondern beim
   # Auth-Server des Branches. Sie kann sich also ohne Commit ändern – ein Klick
