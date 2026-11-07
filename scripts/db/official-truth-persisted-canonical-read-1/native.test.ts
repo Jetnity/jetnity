@@ -3,16 +3,16 @@ import { randomBytes } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
 import { test } from 'node:test'
-import { startLocalProofCluster } from '../../scripts/db/official-truth-integrated-pilot-1/local-cluster'
-import { LocalPgConnection, LocalPgError, pgText, type PgParameter, type PgRows } from '../../scripts/db/official-truth-integrated-pilot-1/pg-wire'
-import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../../scripts/db/official-truth-integrated-pilot-1/storage'
-import { bindCandidate, cursor, reviewCandidate, type Cursor, type PreparedOriginals } from '../../scripts/db/official-truth-original-custody-1/storage'
-import { lookupCurrentVersion } from '../../scripts/db/official-truth-current-version-lookup-1/lookup'
-import { alternateSameIdentityReceipt } from '../../scripts/db/official-truth-current-version-lookup-1/fixtures'
-import { readPersistedCanonicalRequirements, type PersistedCanonicalReadResult } from '../../scripts/db/official-truth-persisted-canonical-read-1/reader'
-import { persistedCanonicalReadContract } from '../../scripts/db/official-truth-persisted-canonical-read-1/contract'
-import { freshExecutedFixture, originalsFor, contradictingFactFixture } from '../../scripts/db/official-truth-persisted-canonical-read-1/fixtures'
-import { verifyLocalIntegratedPilotBundle } from './official-truth-integrated-pilot-bundle'
+import { startLocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
+import { LocalPgConnection, LocalPgError, pgText, type PgParameter, type PgRows } from '../official-truth-integrated-pilot-1/pg-wire'
+import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../official-truth-integrated-pilot-1/storage'
+import { bindCandidate, cursor, reviewCandidate, type Cursor, type PreparedOriginals } from '../official-truth-original-custody-1/storage'
+import { lookupCurrentVersion } from '../official-truth-current-version-lookup-1/lookup'
+import { alternateSameIdentityReceipt } from '../official-truth-current-version-lookup-1/fixtures'
+import { readPersistedCanonicalRequirements, type PersistedCanonicalReadResult } from './reader'
+import { persistedCanonicalReadContract } from './contract'
+import { freshExecutedFixture, originalsFor, contradictingFactFixture } from './fixtures'
+import { verifyLocalIntegratedPilotBundle } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 
 const migrations = [
   '20261001121258_official_truth_private_evidence_store_schema_1.sql',
@@ -54,6 +54,7 @@ const nonpositive = (result: PersistedCanonicalReadResult) => {
 // One cluster, real full implementation capsules, no skips/secret dependency.
 // R3 allows 900s only for this new aggregate suite's complete proof matrix.
 // Existing tests, SQL/transport deadlines, the reader and CI budgets are frozen.
+// R4 runs this entire test only after the unchanged glob-based test run succeeds.
 test('persisted canonical bridge: closed committed producer, fresh native reader, final lifecycle proof', { timeout: 900_000 }, async t => {
   const actualMonotonic = performance.now.bind(performance)
   const began = actualMonotonic()
@@ -83,9 +84,9 @@ test('persisted canonical bridge: closed committed producer, fresh native reader
     assert.match(cluster.version, /^postgres \(PostgreSQL\) 16\./)
     await owner.query('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions; CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;')
     await installLocalProofSchema(owner)
-    for (const name of migrations) await owner.query(readFileSync(new URL(`../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
-    const candidateSql = readFileSync(new URL('../../scripts/db/official-truth-persisted-canonical-read-1/read-projection-candidate.sql', import.meta.url), 'utf8')
-    const rollbackSql = readFileSync(new URL('../../scripts/db/official-truth-persisted-canonical-read-1/read-projection-candidate.rollback.sql', import.meta.url), 'utf8')
+    for (const name of migrations) await owner.query(readFileSync(new URL(`../../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
+    const candidateSql = readFileSync(new URL('./read-projection-candidate.sql', import.meta.url), 'utf8')
+    const rollbackSql = readFileSync(new URL('./read-projection-candidate.rollback.sql', import.meta.url), 'utf8')
     const boundedSignature = 'official_original_api.read_projection_candidate(text,text,bigint,text)'
     const objects = async () => owner.query(`SELECT 'function' AS kind,p.oid::text AS id,md5(pg_get_functiondef(p.oid)||p.proowner::text||COALESCE(p.proacl::text,'')) AS definition
       FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname LIKE 'official_%'
