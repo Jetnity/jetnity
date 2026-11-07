@@ -4,6 +4,7 @@ Date: 2026-11-07. Tracking #1150 / Draft PR #1151.
 Immutable TASK V1 blob `101be0875126d0e79a65636c1f7f49facea2d0d8`.
 Immutable R1 blob `2baa526d48a9c370abcfd86b3e35a2c9547159e8`.
 Same author **Jetnity Official Truth Persisted Canonical Read 1 — Codex Generation 1**, same actual session `/root/persisted_canonical_read_writer`.
+Finalized before R2 dispatch/implementation: the first committed R2 text was tightened with independent deadline/row-comparison feedback while the author explicitly waited. This final exact blob, recorded in the PR dispatch, is the frozen R2 contract.
 
 ## 1. Demonstrated gap and explicit TL decision
 
@@ -46,9 +47,10 @@ The candidate installation must be atomic. Rollback drops only this exact new fu
 
 The new positive reader requires the new candidate surface; absence, malformed metadata or a deadline mismatch refuses/unavailable, never falls back to the old metadata-only path for success. Old `readCandidate` / `lookupCurrentVersion` public result contracts remain unchanged.
 
-For the final protected read:
-- Record a code-owned monotonic query-start instant before the SQL call.
-- Validate all nine returned columns, row identity/order/count/digest/body correspondence and actual finite deadline metadata.
+For the initial and final protected material reads:
+- Use the new bounded candidate surface, and record a code-owned monotonic query-start instant before each SQL call.
+- Preserve the earliest confirmed monotonic deadline for the whole request: take the minimum of every initial/final row bound. A later recheck, refreshed observation or wall-clock movement must never extend a previously established deadline.
+- Validate all nine returned columns, row identity/order/count/digest/body correspondence and actual finite deadline metadata. Compare the stable original five material columns exactly between reads; validate observation-dependent deadline columns separately. Never require observed_at equality across separate queries or omit stable material comparison.
 - Compute the minimum usable lifetime from each row's actual expiry/freshness/lifecycle bounds and its server observation. Bind that remaining interval conservatively to **query-start monotonic time**, not to response arrival; query/transport/JS waiting therefore consumes the interval rather than resetting it.
 - Account conservatively for timestamp precision conversion (e.g. subtract at least one millisecond when truncating microseconds). Do not accidentally round an exclusive expiry later.
 - Reject any nonpositive/inconsistent duration, missing row or metadata. Preserve whole-operation 60s monotonic deadline, cancellation and unchanged canonical source/validity freshness.
