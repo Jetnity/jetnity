@@ -65,7 +65,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     schema: 'official-truth-atomic-version-refresh-1', phase, elapsedMs: Math.round(performance.now() - began), ...details,
   }))
   const primary = await actuallyFreshObservations('primary', 3), composed = await actuallyFreshObservations('composed', 2)
-  note('five independent actual fresh executions; full capsules retained; later source observations and unchanged bytes asserted')
+  note('five independent actual fresh executions; full capsules retained; later observations, unchanged bytes and mutually compatible immutable artifact identities asserted')
   const openHarness = async (initial: PreparedOriginals) => {
     const cluster = startLocalProofCluster(), opened = new Set<LocalPgConnection>()
     const connect = async (role?: string) => { const c = await LocalPgConnection.connect(cluster, role); opened.add(c); return c }
@@ -127,6 +127,20 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           await owner.query('SELECT singleton FROM official_original_private.head FOR UPDATE NOWAIT')
           assert.equal((await owner.query('SELECT pg_try_advisory_xact_lock(1869901924,1)::text AS held'))[0]?.held, 'true')
         } finally { await owner.query('ROLLBACK') }
+      }
+      const publicationProbe = async (next: PreparedOriginals) => {
+        const before = await snapshot(owner), writer = await connect('ot_original_test_writer')
+        const pid = (await writer.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+        try {
+          await writer.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+          assert.equal(await publishIntegratedBundle(writer, oids, next.envelope), 'inserted')
+          assert.equal(await publishIntegratedBundle(writer, oids, next.envelope, 'verify_existing'), 'idempotent')
+        } finally {
+          try { await writer.query('ROLLBACK') } finally { close(writer) }
+        }
+        await gone([pid]); await locksReleased()
+        assert.deepEqual(await snapshot(owner), before, 'compatibility probe must leave every stored row unchanged')
+        note('actual new graph coexisted with stored predecessor; full publisher verification; probe transaction rolled back')
       }
       const observed = async (operation: () => Promise<AtomicRefreshResult>, options: { commitLoss?: boolean; failReader?: boolean; afterAckDelay?: 'cleanup' | 'reader' } = {}) => {
         const realConnect = LocalPgConnection.connect, realFetch = globalThis.fetch
@@ -223,7 +237,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.deepEqual(await snapshot(owner), before); await locksReleased()
         note('negative direct SQL with complete rollback', { case: name, sqlstate: (caught as LocalPgError).code })
       }
-      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased,
+      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
         stop() { for (const c of opened) c.close(); cluster.stop() } }
     } catch (error) { for (const c of opened) c.close(); cluster.stop(); throw error }
@@ -233,6 +247,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   // same-content primary transition, duplicates and package-only removal.
   const h = await openHarness(primary[0]!)
   try {
+    await h.publicationProbe(primary[1]!)
     const req = await h.request(primary[1]!, 'primary')
     const installed = await h.owner.query(`SELECT p.prosecdef::text AS definer,(p.proowner=o.proowner)::text AS owner,
       (p.proconfig @> ARRAY['search_path=""','TimeZone=UTC'])::text AS config FROM pg_proc p JOIN pg_proc o
@@ -261,11 +276,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const beforeReapply = await snapshot(h.owner)
     await assert.rejects(h.owner.query(packageSql), code('42723')); await h.owner.query('ROLLBACK')
     assert.deepEqual(await snapshot(h.owner), beforeReapply)
-    await h.negative('wrong separate review', { ...req, reviewId: h.initialReview })
-    await h.negative('missing review', { ...req, reviewId: '00000000-0000-0000-0000-000000000000' })
-    await h.negative('wrong selected fictional mode', { ...req, mode: 'composed' })
+    await h.negative('wrong separate review', { ...req, reviewId: h.initialReview }, undefined, 'P0002')
+    await h.negative('missing review', { ...req, reviewId: '00000000-0000-0000-0000-000000000000' }, undefined, 'P0002')
+    await h.negative('wrong selected fictional mode', { ...req, mode: 'composed' }, undefined, '22023')
     const changedBody = primary[1]!.bodies.map(b => Uint8Array.from(b)); changedBody[0]![0] = 32
-    await h.negative('unsupported or changed exact source bytes', { ...req, bodies: changedBody })
+    await h.negative('unsupported or changed exact source bytes', { ...req, bodies: changedBody }, undefined, '23514')
     const forged = originalsFor(contradictingFactFixture(primary[1]!.envelope)), forgedRequest = await h.request(forged, 'primary')
     assert.ok(verifyLocalIntegratedPilotBundle(forged.envelope).ok)
     await h.negative('fully rehashed false canonical fact', forgedRequest, undefined, '23514')
@@ -383,6 +398,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
 
   const c = await openHarness(composed[0]!)
   try {
+    await c.publicationProbe(composed[1]!)
     const req = await c.request(composed[1]!, 'composed')
     await c.negative('composed reversed original support order', { ...req, bodies: [...req.bodies].reverse() })
     await c.negative('composed reversed receipt supports', { ...req, envelope: corruptReceipt(req.envelope, p => { (p.supports as unknown[]).reverse() }) })

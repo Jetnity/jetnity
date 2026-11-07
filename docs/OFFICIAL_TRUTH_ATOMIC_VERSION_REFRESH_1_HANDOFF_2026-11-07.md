@@ -7,7 +7,8 @@ Datum: 7. November 2026. Issue #1152 / Draft PR #1153.
 Autor: **Jetnity Official Truth Atomic Version Refresh 1 — Codex Generation 1**. Tatsächliche Session: `/root/atomic_version_refresh_writer`.
 
 Branch: `feat/official-truth-atomic-version-refresh-1-20261107`.
-Verbindlicher Publication-Parent nach den Root-Amendments: `083675fb799dc811eab792208a573a1296fbea7e`.
+Verbindlicher Publication-Parent nach Root-Amendment R3: `888b7fa462e49805f71b07a34f910153877f0f32`, Tree `c3360a515470a6e11bb307ddf3a017fae9f3b334`.
+Vorherige veröffentlichte Autorenlieferung: `3dbf1da2b97154372c945e20264f2a18f1b3b0b5`.
 Angenommene Produktbaseline: main `a2a3f175670dd7744dbb56ed81fee70c38bbdf38`, Tree `2e8c1e12ffe3bfa794ec9f8a41089f901bff6098`.
 
 ## Auftrag und Review-Korrekturen
@@ -15,11 +16,28 @@ Angenommene Produktbaseline: main `a2a3f175670dd7744dbb56ed81fee70c38bbdf38`, Tr
 - [TASK V1](OFFICIAL_TRUTH_ATOMIC_VERSION_REFRESH_1_TASK_2026-11-07.md), unverändert: `b2a3fdb6c1f79cb187b22a7cc9d1a890b8d067d7`.
 - [TL-Amendment R1](OFFICIAL_TRUTH_ATOMIC_VERSION_REFRESH_1_TL_AMENDMENT_R1_2026-11-07.md), unverändert: `ebd7c51b746891e44c8c8bfd8c09e47a84efe596`.
 - [TL-Amendment R2](OFFICIAL_TRUTH_ATOMIC_VERSION_REFRESH_1_TL_AMENDMENT_R2_2026-11-07.md), unverändert: `815bfedf2a3a2cc418a1a9b537868417340731c8`.
+- [TL-Amendment R3](OFFICIAL_TRUTH_ATOMIC_VERSION_REFRESH_1_TL_AMENDMENT_R3_2026-11-07.md), unverändert: `a3c746e487c9c85f346f61ee494ea04539903da3`.
 - [Root CHANGES REQUIRED zum ersten eingefrorenen Zwischenstand](https://github.com/Jetnity/jetnity/pull/1153#issuecomment-6710955853).
 - [Root-Dispatch R2](https://github.com/Jetnity/jetnity/pull/1153#issuecomment-6710997209).
 - [Weiteres Root-Review der Commit-Zeitgrenze](https://github.com/Jetnity/jetnity/pull/1153#issuecomment-6711105770).
+- [Root CHANGES REQUIRED nach tatsächlichem ersten CI](https://github.com/Jetnity/jetnity/pull/1153#issuecomment-6711409969).
 
-Der gleiche Autor bearbeitete sämtliche unmittelbaren Korrekturen. Drei separate unveränderliche Zwischen-Snapshots ermöglichten unabhängige SQL-, Transport- und Integrationsprüfung während der weiteren Native-Testarbeit. Diese Reviews sind keine Abnahme der vollständigen finalen Lieferung. TASK/R1/R2 gehören bereits zum angegebenen Parent und sind kein neuer Autoren-Diff.
+Der gleiche Autor bearbeitete sämtliche unmittelbaren Korrekturen. Drei separate unveränderliche Zwischen-Snapshots ermöglichten unabhängige SQL-, Transport- und Integrationsprüfung während der weiteren Native-Testarbeit. Nach dem tatsächlichen ersten CI wurde auch der begrenzte R3-Code in einem eigenen unveränderlichen Snapshot zur Prüfung übergeben. Diese Reviews sind keine Abnahme der vollständigen finalen Lieferung. TASK/R1/R2/R3 gehören bereits zum angegebenen Parent und sind kein neuer Autoren-Diff.
+
+## R3: unveränderliche Identitäten für echte spätere Beobachtungen
+
+Der erste CI-Lauf belegte einen tatsächlichen Producer-Fehler vor jeder erfolgreichen atomaren Fortschreibung; die genaue Lauf-Evidence steht weiter unten. R3 erlaubt dafür zusätzlich genau `scripts/official-truth-integrated-pilot-1/engine.ts`, Baseline-Blob `4e0d948c915cd60295d2a8d876db983c5df5301f`. Nur die ursprünglich erzeugten IDs der folgenden Typen ändern sich im tatsächlichen Fresh-Modus:
+
+| Factory | Beobachtungsabhängige Typen |
+| --- | --- |
+| Manifest | `original_observation`, `validity_origin`, `accepted_origin`, `eligible_version_snapshot` |
+| Custody | `AcceptedEvidenceCustodyV1`, `SelectedSupportManifestV1`, `AutonomousReviewConstructionV1` |
+
+Der private Helper bildet vor der wirklichen Artifact-/Pin-Erzeugung einen vollständigen kanonischen Preimage aus festem Domain-Tag `official-truth-fresh-artifact-id-v1`, logischer Basis-ID, Byte-Familie, exaktem Typ und tatsächlichem producer-eigenem Inhalt. Bei Custody ist dies der zuvor vollständig streng geparste historische Wert. `historicalPinFor` liefert mit unverändertem Codec den vollständigen 64-stelligen Digest; `pilot-fresh-` plus Digest ist eine gültige 76-stellige ID. Fehlende Hashbildung verweigert. Version bleibt 1. Kein Feld, Namespace, Clock, Counter oder Zufall wird dem Aufrufer zusätzlich angeboten, und kein bereits entstandener Graph oder Receipt wird anschließend umgeschrieben.
+
+Für identischen Inhalt bleibt die abgeleitete Identität gleich; tatsächlich geänderte Beobachtung oder Abhängigkeit ergibt eine neue Identität. Historischer/default Modus und historische Fault-Fälle behalten ihre bisherigen IDs. Alle übrigen Typen, insbesondere Global-Cell-, Profile-, Extractor-, Policy-, Katalog-, Code-, Qualification-, Admission-, Selection-, Content- und Representation-Definitionen, behalten ihren bestehenden Identitätsvertrag. Diese Korrektur migriert keine ältere Codeversion und erlaubt weder geänderte Rechtsaussagen noch stille Überschreibung. Publisher, SQL-Verifier, kanonische Codecs, kontrollierter Runtime-Einstieg, vollständige Kapseln, Corpus und #1151-Leser bleiben unverändert.
+
+Die neuen Fixture-Assertions vergleichen alle bereits tatsächlich ausgeführten Fresh-Bundles paarweise: Jeder geteilte `(artifact_id, artifact_version)`-Schlüssel muss denselben Typ, dieselbe Byte-Familie, denselben Contract, vollständige kanonische Bytes und Digest besitzen. Alle sieben dynamischen Familien müssen vorhanden sein und neue IDs erhalten; sämtliche statischen Artefakte müssen vollständig gemeinsam bleiben. Je ein zusätzlicher Primary-/Composed-Probe benutzt den bestehenden Fixture-Writer in einer ausdrücklich zurückgerollten Transaktion: tatsächliche Publikation neben dem gespeicherten Old, `verify_existing` mit `idempotent`, anschließend vollständige Gleichheit aller Store-Zeilen zum vorherigen Zustand. Die frühen Review-/Mode-/Body-Negativfälle prüfen jetzt ausdrücklich ihren beabsichtigten SQLSTATE; die bisherigen `23514`-Erwartungen und tatsächlichen Fault-Phasen bleiben unverändert.
 
 ## Gelieferte zusammenhängende Funktion
 
@@ -39,7 +57,7 @@ Die kleine RLS-erzwungene, unveränderliche Transitionstabelle verbindet Vorgän
 
 ## Tatsächliche Commit- und Return-Grenzen
 
-R2 autorisiert als einzige Änderung an einer bestehenden Source-Datei den eng begrenzten neuen `LocalPgConnection.commitBefore`-Einstieg in `scripts/db/official-truth-integrated-pilot-1/pg-wire.ts`; dessen Baseline-Blob ist `0d546eaf0acedff4e75157cdd1f05c6090ec30e2`. Der gewöhnliche `query`-Pfad, sein festes 20-Sekunden-COMMIT-Limit sowie die bisherigen Startup-/Statement-/Lock-/Idle-/Recovery-Grenzen bleiben bestehen.
+R2 autorisiert den eng begrenzten neuen `LocalPgConnection.commitBefore`-Einstieg in `scripts/db/official-truth-integrated-pilot-1/pg-wire.ts`; dessen Baseline-Blob ist `0d546eaf0acedff4e75157cdd1f05c6090ec30e2`. Zusätzlich zu diesem Transport-Seam erlaubt erst R3 den oben beschriebenen Producer-Seam. Der gewöhnliche `query`-Pfad, sein festes 20-Sekunden-COMMIT-Limit sowie die bisherigen Startup-/Statement-/Lock-/Idle-/Recovery-Grenzen bleiben bestehen. Driver, Coordinator, SQL-Kandidat und Rollback sind im R3-Fix gegenüber der veröffentlichten ersten Lieferung bytegleich.
 
 Der neue Einstieg nimmt ausschließlich den bereits bewiesenen absoluten monotonen Bound und den tatsächlichen DB-Cutoff entgegen und sendet ausschließlich den festen COMMIT-Frame. Er kann die bisherige Frist nur verkürzen. Der vorhandene unabhängige PostgreSQL-Guard und seine vorab etablierte Control-/Recovery-Verbindung behalten Ziel-PID, Backend-Beginn und Transaktionsbeginn. Eine echte DB-Zeitbeobachtung vor weiteren Arming-Awaits kalibriert die monotone Mindestfrist konservativ in eine absolute DB-Frist; spätere Serverwartezeit kann keinen relativen Sleep neu beginnen lassen. Nach dem Arming folgen Schließen-/Fristprüfung und Dispatch synchron ohne dazwischenliegendes Await.
 
@@ -51,22 +69,23 @@ Dies ist keine allgemeine physische Commit-Frist für beliebige direkte SQL-Aufr
 
 ## Native Abnahmematrix — implementiert, lokal nicht bestanden
 
-Der neue vollständige native Parent hat unverändert maximal **900 Sekunden**, verlangt echtes PostgreSQL 16 und enthält keine vorgesehenen Skips. Seine positiven Fixtures stammen ausschließlich aus drei echten Primary- und zwei echten Composed-Ausführungen des unveränderten Fresh-Runners. Zwischen tatsächlichen Ausführungen liegt eine reale kurze Wartezeit wegen der sekündlichen Quellenuhr. Alle zurückgegebenen Implementierungskapseln bleiben vollständig; es gibt keinen positiven Time-Rehash und keinen Retry für günstigere Hash-Reihenfolgen.
+Der neue vollständige native Parent hat unverändert maximal **900 Sekunden**, verlangt echtes PostgreSQL 16 und enthält keine vorgesehenen Skips. Seine positiven Fixtures stammen ausschließlich aus drei echten Primary- und zwei echten Composed-Ausführungen des unveränderten kontrollierten Fresh-Einstiegs mit dem unter R3 korrigierten ursprünglichen Artefakt-Erzeuger. Zwischen tatsächlichen Ausführungen liegt eine reale kurze Wartezeit wegen der sekündlichen Quellenuhr. Alle zurückgegebenen Implementierungskapseln bleiben vollständig; es gibt keinen positiven Time-Rehash und keinen Retry für günstigere Hash-Reihenfolgen.
 
 | Bereich | Implementierter wirklicher Nachweis |
 | --- | --- |
+| Producer-Kompatibilität | Paarweise Prüfung sämtlicher tatsächlicher Fresh-Graphen auf identische vollständige Bytes jedes gemeinsamen unveränderlichen Schlüssels, neue IDs der sieben dynamischen Typen und unveränderte statische Pins. Vor der downstream Matrix je Primary/Composed tatsächliche rollback-only Coexistenz-Publikation und `verify_existing`. |
 | Primary/Composed | Getrennter Review, tatsächliche Publikation/Bind/Supersede, ACK, Producer-Ende, neue Reader-Backends, genau Nachfolger und eine synthetische Visa-Evaluation. |
 | Scope und Rohbytes | Falscher/missing Review, falscher Modus, geänderte/unqualifizierte Bytes, vollständig rehashter falscher Fakt, andere Scope-/Quellenidentität, alte Beobachtung, verdrehte und gemischte Composed-Stützen. |
 | Kanonischer Old | Closure-konsistente falsche qualified-locator-Basis und zusätzlicher inaktiver Composed-Policy-Eintrag; unveränderter Reader und direkte Minimalrollen-SQL-Operation müssen ablehnen. Vorhandener Graph-Rehash-Helfer wird ausschließlich für diese Negativdaten benutzt. |
 | Rollback | Tatsächliche Test-Trigger prüfen erreichten Bind-/Event-Zustand vor dem Fehler. Separater Fehler nach tatsächlicher Supersession. Alle ursprünglichen/provisorischen Tabellen werden über Counts und Zeilenhashes verglichen. |
 | Geschichte | Alte Original-/Ciphertext-/Support-/Binding-/Review-Werte bleiben unverändert; das alte positive Lesen wird nach Supersession abgewiesen. Keine doppelte Acceptance/Supersession bei wiederholtem Versuch. |
 | Currentness | Stale/expired/disposed, Source-/Profile-/Rule-Withdrawal, Conflict, supersedierter Vorgänger, beschädigter Bestand und echte zusätzliche akzeptierte Version mit Ambiguität. |
-| Konkurrenz | Wirkliche Reader-SHARE-Barriere, wartender Writer am Head, zweiter Writer an der Provenienz-Advisory-Sperre, maximal ein Commit, Verlierer mit nach Warten erneut geprüftem externem Zeugen; keine partielle dauerhafte Version. |
-| Warten/Abbruch | Vorab kanonisch gelesener Old läuft während einer wirklichen Head-Wartezeit ab; eigener Abort- und echter Lock-Timeout-Fall; danach Sperren und Backends freigegeben. |
+| Konkurrenz | Wirkliche Reader-SHARE-Barriere, wartender Writer am Head, zweiter Writer an der Provenienz-Advisory-Sperre, maximal ein Commit, Verlierer mit nach Warten erneut geprüftem externem Zeugen; keine partielle dauerhafte Version. Die abschließenden Backend-/Lock-Assertions in diesem instrumentierten Teil folgen auch auf explizites Schließen durch das Test-`finally`; sie sind kein eigenständiger Beleg für ausschließlich vom Runtime-Pfad geleistetes Cleanup. |
+| Warten/Abbruch | Vorab kanonisch gelesener Old läuft während einer wirklichen Head-Wartezeit ab; eigener Abort- und echter Lock-Timeout-Fall. Die abschließenden Backend-/Lock-Assertions berücksichtigen das ausdrückliche Cleanup der testseitig gehaltenen Verbindungen. |
 | COMMIT-Arming | Tatsächlicher Ablauf während asynchronem Arming mit definitiv ausbleibendem COMMIT-Dispatch. |
 | Deferred COMMIT | Tatsächlich im COMMIT laufende deferred Arbeit wird durch den kürzeren unabhängigen Server-Guard begrenzt. |
 | Verzögerter Guard | Wirkliche Verzögerung vor Guard-Transport bei noch verbleibender monotoner Frist und deutlich späterem rohem DB-Cutoff. Echte dreisekündige Deferred-Arbeit würde nach dem früheren Bound, aber vor einem fälschlich neu gestarteten relativen Guard enden; die absolute Kalibrierung muss sie stoppen und den Testmarker zurückrollen. |
-| Unklare/verspätete Bestätigung | Tatsächlich ausgeführter Commit mit anschließend verlorenem Helfer-Beleg ist ausdrücklich als solcher instrumentiert, kein behaupteter Wire-Packet-Loss. Separat echte ACK-/Producer-Ende-/Readback-Fehler sowie tatsächliche Cleanup-/Reader-Verzögerung über den frühesten SQL-Bound. Unabhängiger State-Audit ohne Replay. |
+| Unklare/verspätete Bestätigung | Tatsächlich ausgeführter Commit mit anschließend verlorenem Helfer-Rückgabebeleg ist ausdrücklich als solcher instrumentiert, kein behaupteter Wire-Packet-Loss. Separat wird eine echte Reader-Verbindung nach ACK und nachgewiesenem Producer-Ende geöffnet, geschlossen und als fehlgeschlagen zurückgegeben. Weitere Fälle verzögern eine erfolgreiche Guard-Cleanup-Antwort beziehungsweise eine erfolgreiche Reader-Antwort über den frühesten SQL-Bound. Das sind keine injizierten Producer-Ende-Fehler und keine fehlgeschlagenen Cleanup-Abfragen. Unabhängiger State-Audit ohne Replay. |
 | Rechte und Rücknahme | Exakte Rolle/Owner/search_path/UTC/ACL, keine breiten Login-Mitgliedschaften oder direkte Lifecycle-/Publish-/Tabellenrechte, keine stille Reinstallation, unveränderliches Audit und gezielte Package-Rücknahme unter Erhalt aller ursprünglichen Store-Zeilen und Funktionen. |
 
 Jede abgeschlossene SQL-Operation meldet tatsächliche Phasenzeiten. Native Diagnose enthält Operation, Resultat, SQLSTATE, Backend-Abschluss und Phase; keine Originalbytes, Schlüssel, Kapseln, rohe Fehlertexte oder Personeninformationen. Positive Ergebnisse bleiben tief eingefroren, `positiveRealVisaCells=0`, `productionAcceptedRead=NOT_AUTHORIZED`, `reusablePositiveCache=false`; alle ungeklärten Anforderungen bleiben unknown.
@@ -76,11 +95,19 @@ Jede abgeschlossene SQL-Operation meldet tatsächliche Phasenzeiten. Native Diag
 Die lokale Arbeitskopie ist ein anhand des exakten Git-Trees gehydrierter Teilbaum; ursprünglich 223 benötigte Baseline-Dateien stimmten ohne Blob-Abweichung. Lokale Laufzeit: Node 24.22.1, CI laut bestehendem Projekt Node 22.x. Vorhandene, unverändert wiederverwendete Abhängigkeiten enthalten keine vollständige React-/Next-/Supabase-SSR-Installation. PostgreSQL-Binaries wurden in den vorhandenen üblichen Installationspfaden nicht gefunden. Es erfolgten keine Installation, keine Dependency-Stubs, keine Lockfile-Änderung und keine Plattformumgehung.
 
 1. Import-/Syntax-Smoketest des neuen Coordinators und Foreign-Cluster-Refusal: tatsächlich erfolgreich.
-2. Vier fokussierte Contract-/Ownership-/SQL-Festbindungs-/CI-Tests: **4 bestanden, 0 fehlgeschlagen, 0 übersprungen**. Der zusätzliche vollständige App-Importgraph-Test wurde in diesem Teilbaum nicht als bestanden behauptet; `app/` und `components/` sind hier nicht vollständig vorhanden. Der Core-CI-Job führt die gesamte Datei aus.
-3. Gezielter Typecheck einschließlich neuer Native-Datei und geändertem Driver: keine gemeldeten Fehler in geänderten Dateien. Der Gesamtaufruf ist **fehlgeschlagen**, mit neun Meldungen außerhalb dieser Dateien, darunter fehlende `react`, `next/navigation`, `next/server`, `next/headers` und `@supabase/ssr` sowie deren Folge-Typdiagnosen. Dies ist kein vollständiger Typecheck-PASS.
-4. `npm run test:refresh-native`: tatsächlich gestartet, **0 bestanden, 1 fehlgeschlagen, 0 übersprungen**. Abbruch bereits im unveränderten Fresh-Runner-Build nach fünf nicht auflösbaren Framework-Imports. Keine positive Fresh-Ausführung und kein PostgreSQL-Statement dieser Native-Suite wurde dadurch lokal nachgewiesen. Native SQL-Laufzeiten und die volle 900-Sekunden-Grenze sind daher offen.
+2. Vier fokussierte Contract-/Ownership-/SQL-Festbindungs-/CI-Tests nach dem R3-Fix erneut ausgeführt: **4 bestanden, 0 fehlgeschlagen, 0 übersprungen**, Gesamtdauer 431,047 ms. Der zusätzliche vollständige App-Importgraph-Test wurde in diesem Teilbaum nicht als bestanden behauptet; `app/` und `components/` sind hier nicht vollständig vorhanden. Der Core-CI-Job führt die gesamte Datei aus.
+3. Gezielter Typecheck nach dem R3-Fix einschließlich Producer, Native-Datei und Driver: keine gemeldeten Fehler in geänderten Dateien. Der Gesamtaufruf ist **fehlgeschlagen**, mit denselben neun Meldungen außerhalb dieser Dateien, darunter fehlende `react`, `next/navigation`, `next/server`, `next/headers` und `@supabase/ssr` sowie deren Folge-Typdiagnosen. Dies ist kein vollständiger Typecheck-PASS.
+4. `npm run test:refresh-native` wurde vor der ersten Lieferung tatsächlich lokal gestartet: **0 bestanden, 1 fehlgeschlagen, 0 übersprungen**. Abbruch bereits im unveränderten Fresh-Runner-Build nach fünf nicht auflösbaren Framework-Imports. Keine positive Fresh-Ausführung und kein PostgreSQL-Statement dieser Native-Suite wurde dadurch lokal nachgewiesen. Der identische fehlende lokale Unterbau wurde nicht durch Stubs oder Installationen ersetzt. Die neuen R3-Kompatibilitäts-/Publikationsproben und die vollständige positive Native-Matrix sind bei dieser Rückgabe noch nicht tatsächlich ausgeführt.
 
 Vollständige Core-/Native-/Refresh-/Auth-/Hygiene-/Build-/Preview-Gates müssen auf dem finalen Exact Head laufen. Insbesondere sind funktionierendes SQL, vollständige Closure-Negativ-Fixtures, tatsächliche Concurrent-/Deferred-Commit-Zeitmessungen und die unveränderten Legacy-PG-Tests noch durch echte CI zu belegen. Kein Timeout, keine alte Test-Erwartung und kein Guard wurde zur Erzielung eines grünen Ergebnisses erweitert oder abgeschwächt.
+
+## Tatsächlich beobachteter erster vollständiger CI-Lauf
+
+Root veröffentlichte die erste vollständige Autorenlieferung auf Head `3dbf1da2b97154372c945e20264f2a18f1b3b0b5`. Im [CI-Lauf 42401079734](https://github.com/Jetnity/jetnity/actions/runs/42401079734), [Refresh-Native-Job 128488741283](https://github.com/Jetnity/jetnity/actions/runs/42401079734/job/128488741283), scheiterte der neue Native-Parent nach **66,235 Sekunden**: Die Prüfung des vollständig rehashten falschen kanonischen Fakts erwartete `23514`, erhielt jedoch `P0001`. **Alle fünf echten Fresh-Ausführungen waren vorher erfolgreich; eine positive atomare Versionsfortschreibung wurde in diesem Lauf nicht erreicht.**
+
+Root und unabhängiger Reviewer identifizierten die Ursache im tatsächlichen Producer: Veränderliche Beobachtungs-, Gültigkeits-, Acceptance-, Custody-, Eligibility-, Manifest- und Review-Artefakte wurden bei jeder Fresh-Ausführung unter festen IDs mit Version 1 erzeugt. Der unveränderte immutable Publisher verweigert folgerichtig andere Bytes unter einer bereits gespeicherten Identität. Die bisher breiteren Negativ-Refusals vor der ersten expliziten SQLSTATE-Prüfung ersetzen keinen Beleg der jeweils beabsichtigten fachlichen Ablehnung. Diese CHANGES REQUIRED werden durch denselben Autor in derselben Session bearbeitet; Fehlercodes, Timeouts und Publisher-Invarianten werden nicht gelockert.
+
+Root meldete für diesen abgeschlossenen ersten Lauf: **Persisted-Native SUCCESS, Auth SUCCESS, Core-Typecheck/Lint SUCCESS, Core-Tests CANCELLED nach neuem Dokumentationshead, Refresh-Native FAILURE, Aggregate FAILURE.** Dies ist kein Gesamtpass. Der oben dokumentierte R3-Codefix ist eine neue Lieferung; für ihn fehlen noch die vollständigen neuen Exact-Head-Gates und der tatsächliche positive Native-Beleg.
 
 ## CI-Integration
 
@@ -102,24 +129,17 @@ Die eigene dauerhafte, versionierte und aktualisierbare Einreiseregel-Datenbank,
 
 ## Dateimanifest und Abschluss
 
-Die finale separate TL-Übergabe enthält für alle 14 Autoren-Dateien den alten/neuen Git-Blob und SHA-256 einschließlich dieser Datei. Der vollständige gefrorene Snapshot liegt unter dem in der Autoren-Rückgabe angegebenen Pfad. Keine pauschale Veröffentlichung des partiellen Arbeitsverzeichnisses; nur die explizite Liste ist lieferbar. TASK/R1/R2 und alle übrigen Baseline-Dateien bleiben ausgenommen.
+Die neue separate TL-Übergabe enthält den vollständigen eingefrorenen Stand aller **15 Autoren-Dateien** und ein ausdrücklich auf den Parent `888b7fa462e49805f71b07a34f910153877f0f32` bezogenes **7-Datei-Deltamanifest**. Nur diese sieben Dateien haben sich gegenüber der ersten veröffentlichten Lieferung geändert: die folgenden sechs Dateien sowie diese Handoff-Datei. Die anderen acht Autoren-Dateien bleiben bytegleich. TASK/R1/R2/R3 werden separat auf ihre veröffentlichten Blobs geprüft und sind ausgeschlossen; sämtliche übrigen Baseline-Dateien bleiben eingefroren. Keine pauschale Veröffentlichung des partiellen Arbeitsverzeichnisses.
 
-| Datei | Alter Git-Blob | Neuer Git-Blob |
+| Geänderte Datei | Alter Git-Blob im R3-Parent | Neuer Git-Blob |
 | --- | --- | --- |
-| `.github/workflows/ci.yml` | `980af5dc3d2667e5be7e421d5b091848135a0585` | `5623adc59ec9dcd7887283651c54e18462910d05` |
-| `ARCHITECTURE.md` | `5491ad5c219df9cc54fb4fc57babca446d052280` | `d7c542601597fa39dece45acf7dad8449d3296d5` |
-| `DECISIONS.md` | `5f9db87bc46f2c1f170a01151b75fe38dec4d8c5` | `5eb1f7fd9de92d75ea560e10e6d2e1350452a720` |
-| `ROADMAP.md` | `b132da8c904646f31980c66cc7db27d54c0bffb4` | `1e31dfd3031977e920f58acfae4a0e041ee7043a` |
-| `package.json` | `d82801d13113495ad87b5f316869ecdee861cc20` | `b84a032582fae5733de40d2eee3c636ae1538eb1` |
-| `scripts/db/official-truth-integrated-pilot-1/pg-wire.ts` | `0d546eaf0acedff4e75157cdd1f05c6090ec30e2` | `c8bae7b92950a318e6555aaad930002c6726ca3e` |
-| `lib/readiness/official-truth-atomic-version-refresh-1.test.ts` | `NEW` | `ed02f7021e96e3d946e0e6794200b07b9a2266dd` |
-| `scripts/db/official-truth-atomic-version-refresh-1/contract.ts` | `NEW` | `7dc82045ce1e32ceabedd70089e50f53d06e1658` |
-| `scripts/db/official-truth-atomic-version-refresh-1/refresh.ts` | `NEW` | `5c311fbb67f9e855239099da018cd50c9bb64579` |
-| `scripts/db/official-truth-atomic-version-refresh-1/refresh-candidate.sql` | `NEW` | `5b4ad25806776c82357296362d33451b496bc052` |
-| `scripts/db/official-truth-atomic-version-refresh-1/refresh-candidate.rollback.sql` | `NEW` | `dfba8fb1418609f4efa69bb01333203217f3bced` |
-| `scripts/db/official-truth-atomic-version-refresh-1/fixtures.ts` | `NEW` | `d96c6e17b74fd05b872c0a07503a17d5bc5c7fb1` |
-| `scripts/db/official-truth-atomic-version-refresh-1/native.test.ts` | `NEW` | `8afa89433f25e4c86beeb918a037195fc6a3d079` |
+| `ARCHITECTURE.md` | `d7c542601597fa39dece45acf7dad8449d3296d5` | `3aca9ac099d35712e686a44d4d96e1f6e7321490` |
+| `DECISIONS.md` | `5eb1f7fd9de92d75ea560e10e6d2e1350452a720` | `fc9c0ed23e8c3c1fdd618697139ce2d962ed4290` |
+| `ROADMAP.md` | `1e31dfd3031977e920f58acfae4a0e041ee7043a` | `31c280a1ac1d9d04fd12b98cd876ce72e7efc170` |
+| `scripts/official-truth-integrated-pilot-1/engine.ts` | `4e0d948c915cd60295d2a8d876db983c5df5301f` | `be74d6fb332881ab2558541482185c811b9ff8b9` |
+| `scripts/db/official-truth-atomic-version-refresh-1/fixtures.ts` | `d96c6e17b74fd05b872c0a07503a17d5bc5c7fb1` | `033b9ed01fdb230beac8e6d346324b4dbf504678` |
+| `scripts/db/official-truth-atomic-version-refresh-1/native.test.ts` | `8afa89433f25e4c86beeb918a037195fc6a3d079` | `7fb68b57f94f6a137203062f45dfdc3d618b12bd` |
 
-Die eigenen finalen Hashes dieser Handoff-Datei und sämtliche alten/neuen SHA-256-Werte stehen im separaten vollständigen Manifest; ein selbstreferenzieller Datei-Hash wird nicht erfunden.
+Die eigenen finalen Hashes dieser Handoff-Datei und sämtliche alten/neuen SHA-256-Werte stehen im separaten vollständigen Manifest und im Deltamanifest; ein selbstreferenzieller Datei-Hash wird nicht erfunden. Die eingefrorene Übergabe enthält außerdem die vollständigen neuen lokalen Test-/Typecheck-Ausgaben. Die unter R3 hinzugekommenen tatsächlichen Native-Proben bleiben bis zur neuen CI ausdrücklich offen.
 
 Autorstatus nach dieser Lieferung: **returned / STOP**. Nur Root entscheidet PASS, Ready, Merge und Release. Bei CHANGES REQUIRED wird genau diese Session für den unmittelbaren Fix fortgesetzt; jeder neue Head braucht die vollständigen eigenen Gates. Kein automatischer Folgeslice.

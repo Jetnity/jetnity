@@ -1,7 +1,7 @@
 // Native conformance helpers only. Never imported by the coordinator or apps.
 import assert from 'node:assert/strict'
 import { provenanceCanonical, provenanceHash } from '../../../lib/readiness/official-truth-autonomous-provenance-artifact'
-import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, type IntegratedPilotManifestContent, type LocalIntegratedPilotEnvelope } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
+import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, type IntegratedPilotArtifactInput, type IntegratedPilotManifestContent, type LocalIntegratedPilotEnvelope } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import { freshExecutedFixture } from '../official-truth-persisted-canonical-read-1/fixtures'
 import type { PilotMode } from '../../official-truth-integrated-pilot-1/corpus'
 import type { PreparedOriginals } from '../official-truth-original-custody-1/storage'
@@ -10,6 +10,52 @@ import type { AtomicRefreshRequest } from './contract'
 import { rewriteIntegratedFixture } from '../official-truth-integrated-pilot-1/integrated-proof'
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
+const changingTypes = new Set([
+  'original_observation', 'validity_origin', 'accepted_origin', 'eligible_version_snapshot',
+  'AcceptedEvidenceCustodyV1', 'SelectedSupportManifestV1', 'AutonomousReviewConstructionV1',
+])
+const artifactKey = (artifact: IntegratedPilotArtifactInput) => `${artifact.pin.id}\0${artifact.pin.version}`
+const byteFamily = (artifact: IntegratedPilotArtifactInput) => artifact.artifactType === 'global_cell' ? 'global_definition_v1'
+  : artifact.artifactType.endsWith('V1') ? 'custody_v1' : 'manifest_v1'
+
+/** Actual outputs must coexist under the unchanged immutable store contract.
+ * An early publisher collision cannot stand in for a downstream refusal. */
+function mutuallyCompatibleFreshGraphs(old: PreparedOriginals, next: PreparedOriginals) {
+  const previous = new Map(old.envelope.bundle.artifacts.map(artifact => [artifactKey(artifact), artifact]))
+  const incoming = new Map(next.envelope.bundle.artifacts.map(artifact => [artifactKey(artifact), artifact]))
+  assert.equal(previous.size, old.envelope.bundle.artifacts.length)
+  assert.equal(incoming.size, next.envelope.bundle.artifacts.length)
+  assert.equal(incoming.size, previous.size)
+  for (const artifact of incoming.values()) {
+    const prior = previous.get(artifactKey(artifact))
+    assert.equal(artifact.pin.version, 1)
+    if (changingTypes.has(artifact.artifactType)) {
+      assert.equal(prior, undefined, `${artifact.artifactType}: genuinely later owned content needs a distinct immutable identity`)
+      assert.match(artifact.pin.id, /^pilot-fresh-[a-f0-9]{64}$/)
+    } else {
+      assert.ok(prior, `${artifact.artifactType}: static producer identity must remain shared`)
+    }
+    if (prior) {
+      assert.equal(artifact.artifactType, prior.artifactType)
+      assert.equal(byteFamily(artifact), byteFamily(prior))
+      assert.equal(artifact.artifactContractVersion, prior.artifactContractVersion)
+      assert.deepEqual(artifact.pin, prior.pin)
+      assert.equal(Buffer.compare(Buffer.from(artifact.canonicalBytes), Buffer.from(prior.canonicalBytes)), 0,
+        'every shared immutable key must have identical complete canonical bytes')
+    }
+  }
+  for (const type of changingTypes) {
+    const before = [...previous.values()].filter(artifact => artifact.artifactType === type)
+    const after = [...incoming.values()].filter(artifact => artifact.artifactType === type)
+    assert.ok(before.length > 0, `${type}: actual changing artifact family must be present`)
+    assert.equal(after.length, before.length)
+    for (const artifact of before) {
+      assert.equal(incoming.has(artifactKey(artifact)), false)
+      assert.match(artifact.pin.id, /^pilot-fresh-[a-f0-9]{64}$/)
+    }
+  }
+}
+
 export async function actuallyFreshObservations(mode: PilotMode, count: number): Promise<PreparedOriginals[]> {
   assert.ok(count >= 2 && count <= 3)
   const fixtures: PreparedOriginals[] = []
@@ -19,6 +65,7 @@ export async function actuallyFreshObservations(mode: PilotMode, count: number):
     if (i) await delay(1_100)
     const fixture = await freshExecutedFixture(mode)
     const checked = verifyLocalIntegratedPilotBundle(fixture.envelope); assert.ok(checked.ok)
+    for (const previous of fixtures) mutuallyCompatibleFreshGraphs(previous, fixture)
     const payload = checked.value.receipt.payload
     const prior = fixtures.at(-1)
     if (prior) {

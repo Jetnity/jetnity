@@ -59,13 +59,25 @@ export async function runSyntheticIntegratedPilot(mode: PilotMode, fault: PilotF
   const originMembership = new WeakSet<object>()
   const artifacts: IntegratedPilotArtifactInput[] = []
   const put = (a: IntegratedPilotArtifactInput) => { artifacts.push(a); return a.pin }
+  function issuedId(family: 'manifest_v1' | 'custody_v1', type: IntegratedPilotManifestType | HistoricalArtifactKind, id: string, content: unknown) {
+    const changing = family === 'manifest_v1'
+      ? ['original_observation', 'validity_origin', 'accepted_origin', 'eligible_version_snapshot'].includes(type)
+      : ['AcceptedEvidenceCustodyV1', 'SelectedSupportManifestV1', 'AutonomousReviewConstructionV1'].includes(type)
+    if (clockMode !== 'fresh' || !changing) return id
+    // Issue immutable identities from the actual owned content before creating
+    // this artifact or any dependent pin. Static and historical IDs stay fixed.
+    const identity = historicalPinFor(id, 1, { domain: 'official-truth-fresh-artifact-id-v1',
+      logicalId: id, byteContractFamily: family, artifactType: type, content })
+    if (!identity) throw Error('fresh_artifact_identity_invalid')
+    return `pilot-fresh-${identity.digest}`
+  }
   function manifest<K extends IntegratedPilotManifestType>(type: K, id: string, content: IntegratedPilotManifestContent<K>) {
-    const parsed = createIntegratedPilotArtifact(type, id, 1, content)
+    const parsed = createIntegratedPilotArtifact(type, issuedId('manifest_v1', type, id, content), 1, content)
     return put(value(parsed))
   }
   function custody(kind: HistoricalArtifactKind, id: string, content: unknown) {
     const parsed = value(readHistoricalArtifact(kind, { kind, schemaVersion: 1, value: content }))
-    const pin = historicalPinFor(id, 1, parsed)!
+    const pin = historicalPinFor(issuedId('custody_v1', kind, id, parsed), 1, parsed)!
     if (kind === 'CustodyDependencyBindingV1') throw Error('separate_binding_required')
     put({ pin, artifactType: kind, artifactContractVersion: 1, canonicalBytes: bytes(parsed) })
     return { pin, value: parsed }
