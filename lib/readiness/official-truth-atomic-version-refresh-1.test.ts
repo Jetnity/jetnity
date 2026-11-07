@@ -9,6 +9,8 @@ import { PILOT_CORPUS, pilotBody, derivePilotValidity } from '../../scripts/offi
 import { persistedCanonicalReadContract } from '../../scripts/db/official-truth-persisted-canonical-read-1/contract'
 import { provenanceCanonical } from './official-truth-autonomous-provenance-artifact'
 import { requirementsProviderAus } from './provider'
+import { OwnedTestLifetime } from '../../scripts/db/official-truth-atomic-version-refresh-1/test-lifetime'
+import { LocalPgConnection } from '../../scripts/db/official-truth-integrated-pilot-1/pg-wire'
 
 const root = new URL('../../', import.meta.url)
 const read = (path: string) => readFileSync(new URL(path, root), 'utf8')
@@ -98,4 +100,65 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
   assert.match(workflow, /REFRESH_NATIVE_RESULT: \$\{\{ needs.refresh_native.result \}\}/)
   assert.match(workflow, /"\$REFRESH_NATIVE_RESULT" != "success"/)
   assert.match(workflow, /if: \$\{\{ always\(\) \}\}/)
+})
+
+test('test lifetime abort restores nested hooks, releases pending work and forbids its continuation', async () => {
+  const parent = new AbortController(), reason = Error('unit_parent_abort')
+  const lifetime = new OwnedTestLifetime(parent.signal), original = LocalPgConnection.connect
+  lifetime.installConnectOwnership()
+  const restore = lifetime.patchConnect(async () => { throw Error('unit_must_not_connect') })
+  let release!: () => void, laterWork = 0
+  const gate = new Promise<void>(resolve => { release = resolve })
+  lifetime.onStop(release)
+  const pending = lifetime.run(async () => { await gate; lifetime.check(); laterWork++ })
+  assert.notEqual(LocalPgConnection.connect, original)
+  parent.abort(reason)
+  await assert.rejects(pending, error => error === reason)
+  assert.equal(LocalPgConnection.connect, original)
+  restore(); assert.equal(LocalPgConnection.connect, original, 'late finally must not reinstall an abandoned wrapper')
+  await assert.rejects(lifetime.run(async () => { laterWork++ }), error => error === reason)
+  const state = await lifetime.dispose()
+  assert.equal(laterWork, 0); assert.equal(state.pending, 0); assert.equal(state.started, state.settled)
+})
+
+test('test lifetime retains cleanup failures without throwing from the abort listener', async () => {
+  const parent = new AbortController(), lifetime = new OwnedTestLifetime(parent.signal)
+  const cleanupError = Error('unit_cleanup_failure')
+  let released = false
+  lifetime.onStop(() => { released = true })
+  lifetime.onStop(() => { throw cleanupError })
+  assert.doesNotThrow(() => parent.abort(Error('unit_parent_abort')))
+  assert.equal(released, true, 'one cleanup failure must not prevent later releases')
+  await assert.rejects(lifetime.dispose(), (error: unknown) => error instanceof AggregateError && error.errors.includes(cleanupError))
+})
+
+test('actual native parent signal owns every test hook and keeps the complete fixed matrix', () => {
+  const native = read(`${packageRoot}native.test.ts`), lifetime = read(`${packageRoot}test-lifetime.ts`)
+  const inOrder = (source: string, before: string, after: string) => {
+    const first = source.indexOf(before), second = source.indexOf(after)
+    assert.ok(first >= 0, `required source boundary missing: ${before}`)
+    assert.ok(second >= 0, `required source boundary missing: ${after}`)
+    assert.ok(first < second, 'required source boundaries are out of order')
+  }
+  const parentBinding = 'new OwnedTestLifetime(t.signal)', firstAwait = 'await lifetime.run(abortLifetimeRegression)'
+  const actualStop = 'this.stopCluster(cluster)', finalDrain = 'this.teardown = this.drainAll()'
+  inOrder(native, parentBinding, firstAwait)
+  assert.match(native, /timeout: 900_000/)
+  assert.match(native, /AbortSignal\.any\(\[lifetime\.signal, signal\]\)/)
+  assert.match(native, /actual parent-lifetime abort stops pending SQL and connection gate/)
+  assert.match(native, /t\.signal\.throwIfAborted\(\)/)
+  assert.doesNotMatch(native, /LocalPgConnection\.connect\s*=/)
+  assert.match(native, /lifetime\.track\(deferred\.commitBefore/)
+  assert.match(native, /lifetime\.track\(delayed\.commitBefore/)
+  assert.match(native, /lifetime\.onStop\([\s\S]*?readerResume\.resolve\(\); writerResume\.resolve\(\)/)
+  assert.match(native, /\['unknown_commit', 'readback_failure', 'cleanup_after_bound', 'reader_after_bound'\]/)
+  inOrder(lifetime, actualStop, finalDrain)
+  // These deliberately broken source copies must fail the same guard. No
+  // native/runtime file or execution evidence is changed by this unit probe.
+  assert.throws(() => inOrder(native.replace(parentBinding, ''), parentBinding, firstAwait))
+  assert.throws(() => inOrder(native.replace(parentBinding, 'new OwnedTestLifetime(new AbortController().signal)'), parentBinding, firstAwait))
+  assert.throws(() => inOrder(lifetime.replace(actualStop, ''), actualStop, finalDrain))
+  assert.throws(() => inOrder(native.replace(firstAwait, ''), parentBinding, firstAwait))
+  assert.throws(() => inOrder(lifetime.replace(finalDrain, ''), actualStop, finalDrain))
+  assert.doesNotMatch(lifetime, /\bfetch\s*\(|DATABASE_URL|SUPABASE|pg_terminate_backend|process\.kill/)
 })

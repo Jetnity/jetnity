@@ -1,24 +1,24 @@
 import assert from 'node:assert/strict'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { createHash, randomBytes } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
 import { test } from 'node:test'
 import { startLocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
 import { LocalPgConnection, LocalPgError, pgBytes, pgCompositeArray, pgText, type PgParameter, type LocalPgBoundedCommit } from '../official-truth-integrated-pilot-1/pg-wire'
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../official-truth-integrated-pilot-1/storage'
 import { bindCandidate, cursor, prepareOriginals, reviewCandidate, type Cursor, type PreparedOriginals } from '../official-truth-original-custody-1/storage'
-import { readPersistedCanonicalRequirements } from '../official-truth-persisted-canonical-read-1/reader'
+import { readPersistedCanonicalRequirements as actualPersistedRead } from '../official-truth-persisted-canonical-read-1/reader'
 import { persistedCanonicalReadContract } from '../official-truth-persisted-canonical-read-1/contract'
 import { selectCurrentVersion } from '../official-truth-current-version-lookup-1/lookup'
 import { alternateSameIdentityReceipt } from '../official-truth-current-version-lookup-1/fixtures'
 import { contradictingFactFixture, originalsFor } from '../official-truth-persisted-canonical-read-1/fixtures'
 import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, type IntegratedPilotManifestContent } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import { ATOMIC_REFRESH_LOGIN, ATOMIC_REFRESH_ROLE, ownAtomicRefreshRequest, type AtomicRefreshRequest } from './contract'
-import { refreshPersistedCanonicalVersion, type AtomicRefreshResult } from './refresh'
+import { refreshPersistedCanonicalVersion as actualAtomicRefresh, type AtomicRefreshResult } from './refresh'
 import { actuallyFreshObservations, corruptReceipt, directlyCallRefresh, falseValidityLocator, extraInactivePolicy } from './fixtures'
+import { OwnedTestLifetime } from './test-lifetime'
 
-const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 const code = (expected: string) => (error: unknown) => error instanceof LocalPgError && error.code === expected
 const migrations = [
   '20261001121258_official_truth_private_evidence_store_schema_1.sql', '20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql',
@@ -107,16 +107,91 @@ const positive = (result: AtomicRefreshResult, request: AtomicRefreshRequest) =>
 // unchanged suites remain in their original mandatory jobs; no intended skips.
 test('atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback', { timeout: 900_000 }, async t => {
   const began = performance.now()
+  const lifetime = new OwnedTestLifetime(t.signal)
+  lifetime.installConnectOwnership()
+  const delay = (ms: number) => lifetime.wait(ms)
+  const refreshPersistedCanonicalVersion: typeof actualAtomicRefresh = (cluster, input, key, signal) => lifetime.run(() =>
+    actualAtomicRefresh(cluster, input, key, signal ? AbortSignal.any([lifetime.signal, signal]) : lifetime.signal))
+  const readPersistedCanonicalRequirements: typeof actualPersistedRead = (cluster, mode, key, witness, signal) => lifetime.run(() =>
+    actualPersistedRead(cluster, mode, key, witness, signal ? AbortSignal.any([lifetime.signal, signal]) : lifetime.signal))
   const note = (phase: string, details: Record<string, unknown> = {}) => t.diagnostic(JSON.stringify({
     schema: 'official-truth-atomic-version-refresh-1', phase, elapsedMs: Math.round(performance.now() - began), ...details,
   }))
+  const abortLifetimeRegression = async () => {
+    const injected = new AbortController(), reason = Error('native_injected_parent_abort')
+    const scope = new OwnedTestLifetime(AbortSignal.any([lifetime.signal, injected.signal]))
+    const beforeConnect = LocalPgConnection.connect, beforeFetch = globalThis.fetch
+    scope.installConnectOwnership()
+    const ownPids: string[] = [], started: Promise<unknown>[] = []
+    let nextScenario = 0, nextCluster = 0, sleepingSeen = false, gateSeen = false
+    let failure: unknown, failed = false
+    try {
+      const cluster = scope.startCluster(startLocalProofCluster)
+      const identify = async (connection: LocalPgConnection) => {
+        const row = (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]
+        assert.match(row?.pid ?? '', /^[1-9][0-9]*$/); assert.ok(row?.birth)
+        ownPids.push(row.pid!); return row.pid!
+      }
+      const worker = await LocalPgConnection.connect(cluster), workerPid = await identify(worker)
+      const observer = await LocalPgConnection.connect(cluster); await identify(observer)
+      let resume!: () => void, reached!: () => void, failEarly!: (error: unknown) => void
+      const gate = new Promise<void>(resolve => { resume = resolve }), ready = new Promise<void>(resolve => { reached = resolve })
+      const early = new Promise<never>((_resolve, reject) => { failEarly = reject }); void early.catch(() => {})
+      scope.onStop(() => { resume(); failEarly(scope.signal.reason) })
+      const realConnect = LocalPgConnection.connect
+      scope.patchConnect(async (...args: Parameters<typeof realConnect>) => {
+        const connection = await realConnect.call(LocalPgConnection, ...args)
+        await identify(connection); gateSeen = true; reached()
+        await gate; scope.check(); return connection
+      })
+      globalThis.fetch = async () => { throw Error('unexpected_abort_regression_network') }
+      scope.restore(() => { globalThis.fetch = beforeFetch })
+      const capturedConnect = LocalPgConnection.connect
+      const sleeping = scope.run(() => worker.query('SELECT pg_sleep(10)'))
+      const gated = capturedConnect(cluster)
+      started.push(sleeping, gated); for (const pending of started) void pending.catch(failEarly)
+      await scope.run(() => Promise.race([ready, early]))
+      const until = performance.now() + 2_000
+      while (performance.now() < until) {
+        sleepingSeen = (await observer.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND state='active' AND wait_event='PgSleep'", [pgText(workerPid)]))[0]?.n === '1'
+        if (sleepingSeen) break; await scope.wait(20)
+      }
+      assert.equal(sleepingSeen, true); assert.equal(gateSeen, true); assert.equal(new Set(ownPids).size, 3)
+      const abortStarted = performance.now()
+      injected.abort(reason)
+      const cleanup = await scope.dispose(), outcomes = await Promise.allSettled(started)
+      assert.equal(outcomes.length, 2); assert.ok(outcomes.every(outcome => outcome.status === 'rejected'))
+      assert.equal(cleanup.pending, 0); assert.equal(cleanup.started, cleanup.settled)
+      assert.equal(cleanup.connections, 3); assert.equal(cleanup.closed, 3); assert.equal(cleanup.stoppedClusters, 1)
+      assert.equal(LocalPgConnection.connect, beforeConnect); assert.equal(globalThis.fetch, beforeFetch)
+      assert.equal(existsSync(cluster.root), false)
+      for (const pid of ownPids) assert.throws(() => process.kill(Number(pid), 0), (error: unknown) => (error as NodeJS.ErrnoException)?.code === 'ESRCH')
+      assert.throws(() => scope.startCluster(() => { nextCluster++; return startLocalProofCluster() }), error => error === reason)
+      await assert.rejects(scope.run(async () => { nextScenario++ }), error => error === reason)
+      await assert.rejects(capturedConnect(cluster), error => error === reason)
+      assert.equal(nextScenario, 0); assert.equal(nextCluster, 0)
+      note('actual parent-lifetime abort stops pending SQL and connection gate, restores hooks and removes own backends', {
+        sleepingSeen, gateSeen, actorsSettled: outcomes.length, ownBackendsGone: ownPids.length,
+        abortCleanupMs: Math.round(performance.now() - abortStarted), cleanup, nextScenario, nextCluster,
+      })
+    } catch (error) { failed = true; failure = error }
+    finally {
+      try { await scope.dispose() } catch (error) { throw new AggregateError(failed ? [failure, error] : [error], 'abort_regression_cleanup_failed') }
+    }
+    if (failed) throw failure
+  }
+  let failure: unknown, failed = false
+  try {
+  await lifetime.run(abortLifetimeRegression)
   validateReferenceSource()
-  const primary = await actuallyFreshObservations('primary', 3), composed = await actuallyFreshObservations('composed', 2)
+  const primary = await lifetime.run(() => actuallyFreshObservations('primary', 3, lifetime.signal))
+  const composed = await lifetime.run(() => actuallyFreshObservations('composed', 2, lifetime.signal))
   note('five independent actual fresh executions; full capsules retained; later observations, unchanged bytes and mutually compatible immutable artifact identities asserted')
   const openHarness = async (initial: PreparedOriginals) => {
-    const cluster = startLocalProofCluster(), opened = new Set<LocalPgConnection>()
+    const cluster = lifetime.startCluster(startLocalProofCluster), opened = new Set<LocalPgConnection>()
     const connect = async (role?: string) => { const c = await LocalPgConnection.connect(cluster, role); opened.add(c); return c }
     const close = (c: LocalPgConnection) => { if (opened.delete(c)) c.close() }
+    try {
     const owner = await connect(), key = randomBytes(32).toString('hex')
     assert.match(cluster.version, /^postgres \(PostgreSQL\) 16\./)
     const gone = async (pids: readonly string[]) => {
@@ -130,7 +205,6 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.equal(absent, true, 'owned producer/reader backend actually exits')
       }
     }
-    try {
       await owner.query('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions; CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;')
       await installLocalProofSchema(owner)
       for (const name of migrations) await owner.query(readFileSync(new URL(`../../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
@@ -507,7 +581,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         let insideBoundedCommit = false, boundedDeadline = 0, commitLossReached = false, readerFailureReached = false, delayReached = false, postCommitOriginals = 0
         let hookAssertion: unknown
         const afterActualBound = async () => { while (performance.now() <= boundedDeadline + 10) await delay(Math.min(50, Math.max(1, boundedDeadline + 11 - performance.now()))) }
-        LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+        const restoreConnect = lifetime.patchConnect(async (...args: Parameters<typeof realConnect>) => {
           const c = await realConnect.call(LocalPgConnection, ...args)
           const commitControl = insideBoundedCommit && (args[1] === undefined || args[1] === cluster.user)
           if (!commitControl && ![ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) return c
@@ -560,10 +634,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
             finally { record.queries.push({ phase, ms: Math.round(performance.now() - start), code: errorCode }) }
           }
           return c
-        }
+        })
         globalThis.fetch = async () => { throw Error('unexpected_refresh_network') }
+        const restoreFetch = lifetime.restore(() => { globalThis.fetch = realFetch })
         let result: AtomicRefreshResult
-        try { result = await operation() } finally { LocalPgConnection.connect = realConnect; globalThis.fetch = realFetch }
+        try { result = await lifetime.run(operation) } finally { restoreFetch(); restoreConnect() }
         if (hookAssertion) throw hookAssertion
         if (options.commitLoss) assert.equal(commitLossReached, true)
         if (options.failReader) assert.equal(readerFailureReached, true)
@@ -613,8 +688,8 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       }
       return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
-        stop() { for (const c of opened) c.close(); cluster.stop() } }
-    } catch (error) { for (const c of opened) c.close(); cluster.stop(); throw error }
+        stop() { lifetime.stopCluster(cluster) } }
+    } catch (error) { lifetime.stopCluster(cluster); throw error }
   }
 
   // Closed input and direct-role adversarial proof, real two fault phases,
@@ -850,7 +925,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const armingBound = await databaseCutoff(1_200), connectBeforeArming = LocalPgConnection.connect
     let armingReached = false
     const guardConnections: LocalPgConnection[] = []
-    LocalPgConnection.connect = async (...args: Parameters<typeof connectBeforeArming>) => {
+    const restoreArmingConnect = lifetime.patchConnect(async (...args: Parameters<typeof connectBeforeArming>) => {
       const connection = await connectBeforeArming.call(LocalPgConnection, ...args); guardConnections.push(connection)
       const query = connection.query.bind(connection)
       connection.query = async (sql: string, params: readonly PgParameter[] = []) => {
@@ -862,12 +937,12 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         return rows
       }
       return connection
-    }
+    })
     try {
       const commit = await unsent.commitBefore(armingBound.deadlineAt, armingBound.cutoff)
       assert.equal(armingReached, true); assert.equal(commit.dispatched, false); assert.equal(commit.acknowledged, false)
       assert.equal(unsent.operationDiagnostics.at(-1)?.commitDispatched, false)
-    } finally { LocalPgConnection.connect = connectBeforeArming; w.close(unsent); for (const connection of guardConnections) connection.close() }
+    } finally { restoreArmingConnect(); w.close(unsent); for (const connection of guardConnections) connection.close() }
     await w.gone([unsentPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
     note('actual cutoff during asynchronous arming; no COMMIT dispatch and no persisted probe')
@@ -876,7 +951,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const deferred = await w.connect(), deferredPid = (await deferred.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
     await deferred.query('BEGIN; INSERT INTO public.refresh_commit_probe VALUES(2)')
     const deferredBound = await databaseCutoff(2_500), deferredStarted = performance.now()
-    const deferredResult = deferred.commitBefore(deferredBound.deadlineAt, deferredBound.cutoff)
+    const deferredResult = lifetime.track(deferred.commitBefore(deferredBound.deadlineAt, deferredBound.cutoff))
     let deferredReached = false
     while (performance.now() - deferredStarted < 2_000) {
       deferredReached = (await w.owner.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND query='COMMIT' AND wait_event='PgSleep'", [pgText(deferredPid)]))[0]?.n === '1'
@@ -900,7 +975,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const connectBeforeDelay = LocalPgConnection.connect, delayedGuards: LocalPgConnection[] = []
     let guardDelayMs = 0, guardArmed = false, guardTransportObserved = false
     let enteredAt: number | null = null, delayedOutcome: LocalPgBoundedCommit | undefined
-    LocalPgConnection.connect = async (...args: Parameters<typeof connectBeforeDelay>) => {
+    const restoreDelayedConnect = lifetime.patchConnect(async (...args: Parameters<typeof connectBeforeDelay>) => {
       const connection = await connectBeforeDelay.call(LocalPgConnection, ...args); delayedGuards.push(connection)
       const query = connection.query.bind(connection)
       connection.query = async (sql: string, params: readonly PgParameter[] = []) => {
@@ -915,9 +990,9 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         return rows
       }
       return connection
-    }
+    })
     try {
-      const pending = delayed.commitBefore(earlierDeadline, later.cutoff)
+      const pending = lifetime.track(delayed.commitBefore(earlierDeadline, later.cutoff))
       const until = performance.now() + 3_500
       while (performance.now() < until) {
         const active = (await w.owner.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND query='COMMIT' AND wait_event='PgSleep'", [pgText(delayedPid)]))[0]?.n === '1'
@@ -938,7 +1013,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         deferredAfterBoundMs: enteredAt === null ? null : Math.round(enteredAt + 3_000 - earlierDeadline),
         deferredBeforeRelativeRestartMs: enteredAt === null ? null : Math.round(earlierDeadline + guardDelayMs - enteredAt - 3_000),
       })
-      LocalPgConnection.connect = connectBeforeDelay; w.close(delayed); for (const connection of delayedGuards) connection.close()
+      restoreDelayedConnect(); w.close(delayed); for (const connection of delayedGuards) connection.close()
     }
     await w.gone([delayedPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
@@ -972,6 +1047,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           return record
         } catch (error) { closeOwned(record); throw error }
       }
+      let restoreBlockedConnect = () => {}
+      const removeParentStop = lifetime.onStop(() => {
+        stopping = true; cancel.abort(); failEarly(lifetime.signal.reason)
+        for (const record of owned) closeOwned(record)
+      })
       try {
         blocker = await openOwned(w.cluster); observer = await openOwned(w.cluster)
         assert.equal(new Set([ownerPid, blocker.pid, observer.pid]).size, 3)
@@ -982,7 +1062,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           observations.push(query); void query.catch(() => {})
           return Promise.race([query, early])
         }
-        LocalPgConnection.connect = (...args: Parameters<typeof realConnect>) => {
+        restoreBlockedConnect = lifetime.patchConnect((...args: Parameters<typeof realConnect>) => {
           const hook = (async () => {
             const record = await openOwned(...args)
             try {
@@ -1016,13 +1096,13 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
               return record.connection
             } catch (error) { closeOwned(record); throw error }
           })()
-          hooks.push(hook); void hook.catch(failEarly)
+          hooks.push(lifetime.track(hook)); void hook.catch(failEarly)
           return hook
-        }
-        pending = refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal).then(result => {
+        })
+        pending = lifetime.track(refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal).then(result => {
           if (!outcomeAllowed) failEarly(Error('blocked_coordinator_returned_before_expected_wait_outcome'))
           return result
-        }, error => { failEarly(error); throw error })
+        }, error => { failEarly(error); throw error }))
         void pending.catch(() => {})
         const until = performance.now() + 45_000
         while (performance.now() < until) {
@@ -1055,14 +1135,15 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         // Close releases the held transaction without issuing ROLLBACK on a
         // blocker that a partially completed hook might still be using.
         for (const record of owned) await cleanup(() => closeOwned(record))
-        const coordinatorOutcomes = await Promise.allSettled(pending ? [pending] : [])
+        restoreBlockedConnect(); removeParentStop()
+        let coordinatorOutcomes: PromiseSettledResult<AtomicRefreshResult>[] = []
+        await cleanup(async () => { coordinatorOutcomes = await lifetime.drain(pending ? [pending] : []) })
         const hookOutcomes: PromiseSettledResult<LocalPgConnection>[] = []
         for (let drained = 0; drained < hooks.length;) {
           const batch = hooks.slice(drained); drained += batch.length
-          hookOutcomes.push(...await Promise.allSettled(batch))
+          await cleanup(async () => { hookOutcomes.push(...await lifetime.drain(batch)) })
         }
-        await Promise.allSettled(observations)
-        LocalPgConnection.connect = realConnect
+        await cleanup(() => lifetime.drain(observations))
         // A connect that was already pending at cancellation can finish later;
         // openOwned tracked it before its first further await, and we drain it.
         for (const record of owned) await cleanup(() => closeOwned(record))
@@ -1113,15 +1194,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     // This observation cap does not extend any actor's existing 60s/120s
     // lifetime. Its only job is to release test gates on an unreachable phase.
     const phaseTimer = setTimeout(() => { raceAbort.abort(); failEarly(Error('race_actor_phase_unreached')) }, 120_000)
+    const removeParentRaceStop = lifetime.onStop(() => {
+      clearTimeout(phaseTimer); raceAbort.abort(); readerResume.resolve(); writerResume.resolve()
+      failEarly(lifetime.signal.reason)
+    })
     const launch = <T>(actor: RaceActor, operation: () => Promise<T>) => {
-      const promise = actors.run(actor, operation).then(result => {
+      const promise = lifetime.track(actors.run(actor, operation).then(result => {
         if (!lockProofReached) failEarly(Error(`race_${actor}_returned_before_lock_proof`))
         return result
-      }, error => { failEarly(error); throw error })
+      }, error => { failEarly(error); throw error }))
       started.push(promise); void promise.catch(() => {})
       return promise
     }
-    LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+    const restoreRaceConnect = lifetime.patchConnect(async (...args: Parameters<typeof realConnect>) => {
       const actor = actors.getStore()
       const connection = await realConnect.call(LocalPgConnection, ...args)
       if (actor && [ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) {
@@ -1140,18 +1225,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           }
           const rows = await originalQuery(sql, parameters)
           if (actor === 'old_reader' && args[1] === 'ot_original_test_reader' && sql.includes('read_projection_candidate(') && ++readerOriginals === 2) {
-            readerPid = pid; readerHeld.resolve(); await readerResume.promise
+            readerPid = pid; readerHeld.resolve(); await readerResume.promise; lifetime.check()
           }
           return rows
         }
         if (isProducer) {
           // The coordinator has already completed both immutable preflights.
           // This actual connection has not received BEGIN or refresh SQL yet.
-          writerReady[actor as WriterActor].resolve(); await writerResume.promise
+          writerReady[actor as WriterActor].resolve(); await writerResume.promise; lifetime.check()
         }
       }
       return connection
-    }
+    })
+    let raceFailure: unknown, raceFailed = false
     try {
       // Fixed independent actor contexts prevent either coordinator's Old-read
       // from becoming the separate reader barrier. All three proofs are real.
@@ -1202,19 +1288,27 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       await w.negative('later winner survives a fresh-witness old contender', { ...loser, witness: winner.witness }, undefined, '55000')
       note('real reader SHARE barrier and competing writers', { winner: winnerIndex, sql: winner.sqlPhaseMs,
         writerPhaseStartMs: Math.round(dispatchedAt - raceStarted) })
-    } finally {
+    } catch (error) { raceFailed = true; raceFailure = error }
+    finally {
       clearTimeout(phaseTimer); raceAbort.abort(); readerResume.resolve(); writerResume.resolve()
-      const outcomes = await Promise.allSettled(started)
-      await Promise.allSettled(observations)
-      LocalPgConnection.connect = realConnect; actors.disable()
-      for (const item of connections) item.connection.close()
-      await w.gone(connections.map(item => item.pid)); await w.locksReleased()
+      restoreRaceConnect(); removeParentRaceStop(); actors.disable()
+      const cleanupErrors: unknown[] = []
+      const cleanup = async (operation: () => unknown) => { try { await operation() } catch (error) { cleanupErrors.push(error) } }
+      // Release transports before awaiting actors. Parent abort also stops the
+      // actual cluster, waking a driver message waiter that close alone cannot.
+      for (const item of connections) await cleanup(() => item.connection.close())
+      let outcomes: PromiseSettledResult<unknown>[] = []
+      await cleanup(async () => { outcomes = await lifetime.drain(started) })
+      await cleanup(() => lifetime.drain(observations))
+      await cleanup(() => w.gone(connections.map(item => item.pid))); await cleanup(() => w.locksReleased())
       note('three race actors settled and concrete backends removed', { lockProofReached,
         readerHeld: readerPid !== null, firstWriterReady: Boolean(producers.first_writer), secondWriterReady: Boolean(producers.second_writer),
         firstDispatched: producers.first_writer?.dispatchedAt !== null && producers.first_writer?.dispatchedAt !== undefined,
         secondDispatched: producers.second_writer?.dispatchedAt !== null && producers.second_writer?.dispatchedAt !== undefined,
-        outcomes: outcomes.map(result => result.status) })
+        outcomes: outcomes.map(result => result.status), cleanupFailures: cleanupErrors.length })
+      if (cleanupErrors.length) throw new AggregateError(raceFailed ? [raceFailure, ...cleanupErrors] : cleanupErrors, 'race_cleanup_failed')
     }
+    if (raceFailed) throw raceFailure
   } finally { w.stop() }
 
   for (const outcome of ['unknown_commit', 'readback_failure', 'cleanup_after_bound', 'reader_after_bound'] as const) {
@@ -1238,5 +1332,18 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       note('truthful nonpositive terminal outcome independently inspected without replay', { case: outcome })
     } finally { h.stop() }
   }
-  note('complete native refresh acceptance matrix finished')
+  lifetime.check()
+  } catch (error) { failed = true; failure = error }
+  finally {
+    try {
+      const cleanup = await lifetime.dispose()
+      assert.equal(cleanup.pending, 0); assert.equal(cleanup.started, cleanup.settled); assert.equal(cleanup.closed, cleanup.connections)
+      note('parent lifetime disposed all owned resources and settled initiated operations', { cleanup, parentAborted: t.signal.aborted })
+    } catch (error) { throw new AggregateError(failed ? [failure, error] : [error], 'native_parent_cleanup_failed') }
+  }
+  if (failed) throw failure
+  t.signal.throwIfAborted()
+  const parentReserveMs = 900_000 - (performance.now() - began)
+  assert.ok(parentReserveMs > 0, 'complete healthy matrix and cleanup must retain actual parent budget')
+  note('complete native refresh acceptance matrix finished', { parentReserveMs: Math.round(parentReserveMs) })
 })
