@@ -12,6 +12,7 @@ import { pilotContextCurrent } from './context'
 function runtime(fault='none') {
  const trip=fixtureTrip();let checks=0,saves=0,auths=0
  const handler=loadFixtureModule<typeof RequestModule>('lib/readiness/official-truth-ch-de-application-pilot-1/request-server.ts',{
+  './target-server':{applicationPilotTargetAllowed:()=>true},
   './availability-server':{applicationPilotAvailable:fault==='deployment-closed'?applicationPilotAvailable:()=>true},
   '@/lib/supabase/server':{createServerComponentClient:async()=>({auth:{getUser:async()=>{auths++;return{error:null,data:{user:fault==='anonymous'?null:{id:'fixture'}}}}}})},
   '@/lib/trips/daten':{reiseLaden:async()=>({problem:fault==='database'?{}:null,zeilen:['foreign','missing'].includes(fault)?[]:[trip]})},

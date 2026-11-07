@@ -257,7 +257,8 @@ test('protected transport/profile/application remain byte-identical, closed and 
     'lib/readiness/official-truth-content-identity.ts': '4a4c3eea77b6e634fd83525849a4aaa6e6e50c18',
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts': '375adb52e2ef5ccb9045e17d830bf5d9111f6375',
     'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts': '90b9dd0108ed3e4d8049a3f8d35323c09b52e23f',
-    'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': 'aa3b3086394b1c30dbfd1e0ffb9604f43db8bde4',
+    // TL TASK v1 A2: reviewed R1 target/cleanup guard; PR #1149 comment 6706213098.
+    'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': '975206af1755dba3282193f456d1f92d92f8d0ad',
   }
   for (const [path, expected] of Object.entries(pins)) {
     const bytes = readFileSync(path)

@@ -8,6 +8,7 @@ import { withinDeadline } from './deadline-server'
 import { declarationSchema } from './context'
 import { saveDeclaration } from './database-server'
 import { applicationPilotAvailable } from './availability-server'
+import { applicationPilotTargetAllowed } from './target-server'
 import { tripOfficialPilotPruefen } from '@/lib/readiness/trip-official-evaluations-server'
 
 const identity = { tripId: z.string().uuid(), revision: z.number().int().positive().max(999_999_999) }
@@ -17,11 +18,18 @@ const requestSchema = z.discriminatedUnion('operation', [
 ])
 const unavailable = { message: 'Die Reise ist mit dieser Anmeldung nicht verfügbar.' }
 export async function applicationPilotRequest(req: Request): Promise<{ status: number; body: unknown }> {
-  try { return await withinDeadline(req.signal, 17_000, signal => handleRequest(req, signal)) }
+  try {
+    const result = await withinDeadline(req.signal, 17_000, signal => handleRequest(req, signal))
+    // Deadline cleanup runs after the inner checks. Recheck before confirming
+    // success; an already submitted save may have completed despite target drift.
+    if (result.status === 200 && !applicationPilotTargetAllowed()) throw new Error('pilot_target_changed')
+    return result
+  }
   catch { return { status: 503, body: { message: 'Die Anfrage konnte nicht bestätigt werden. Bereits gestartete Speichervorgänge können abgeschlossen sein. Bitte neu laden und Angaben prüfen.' } } }
 }
 async function handleRequest(req: Request, signal: AbortSignal): Promise<{ status: number; body: unknown }> {
   const answer = (status: number, body: unknown) => ({ status, body })
+  const pilotUnavailable = () => answer(503,{ message: 'Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.' })
   // Origin is mandatory on this browser-only mutation endpoint; no forwarded
   // host/header supplies an authority or pilot selector.
   if (req.headers.get('origin')!==new URL(req.url).origin
@@ -35,18 +43,22 @@ async function handleRequest(req: Request, signal: AbortSignal): Promise<{ statu
   const parsed = requestSchema.safeParse(input)
   if (!parsed.success) return answer(400,{ message: 'Ungültige Anfrage.' })
   signal.throwIfAborted()
-  if (!applicationPilotAvailable()) return answer(503,{ message: 'Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.' })
+  if (!applicationPilotAvailable() || !applicationPilotTargetAllowed()) return pilotUnavailable()
   const db = await createServerComponentClient()
   signal.throwIfAborted()
+  if (!applicationPilotTargetAllowed()) return pilotUnavailable()
   const auth = await db.auth.getUser()
   signal.throwIfAborted()
+  if (!applicationPilotTargetAllowed()) return pilotUnavailable()
   if (auth.error || !auth.data.user) return answer(401,unavailable)
   const limit = await readinessAnfrageErlaubt(`ch-de-pilot:${auth.data.user.id}`)
+  if (!applicationPilotTargetAllowed()) return pilotUnavailable()
   if (!limit.ok) return answer(429,{ message: 'Zu viele Anfragen. Bitte später erneut versuchen.' })
   signal.throwIfAborted()
   const request = parsed.data
   const read = await reiseLaden(request.tripId, signal)
   signal.throwIfAborted()
+  if (!applicationPilotTargetAllowed()) return pilotUnavailable()
   if (read.problem) return answer(503,{ message: 'Die Reise kann gerade nicht gelesen werden.' })
   const trip = read.zeilen[0]
   if (!trip) return answer(404,unavailable)
@@ -54,7 +66,12 @@ async function handleRequest(req: Request, signal: AbortSignal): Promise<{ statu
   if (request.operation==='save') {
     const saved = await saveDeclaration(trip,request.declaration,request.mutationId,signal)
     signal.throwIfAborted()
+    // A submitted write can have completed. Preserve the existing unconfirmed
+    // outcome from the outer catch instead of claiming that saving was stopped.
+    if (!applicationPilotTargetAllowed()) throw new Error('pilot_target_changed')
     return saved ? answer(200,{ trip: saved }) : answer(409,{ message: 'Das Speichern konnte nicht bestätigt werden. Bitte neu laden und Angaben prüfen.' })
   }
-  return answer(200,await tripOfficialPilotPruefen(trip,signal))
+  const result = await tripOfficialPilotPruefen(trip,signal)
+  signal.throwIfAborted()
+  return applicationPilotTargetAllowed() ? answer(200,result) : pilotUnavailable()
 }

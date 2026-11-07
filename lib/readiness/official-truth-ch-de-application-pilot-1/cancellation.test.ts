@@ -20,6 +20,7 @@ function database() {
     return { abortSignal(signal: AbortSignal) { sdkSignal = signal; return reply.promise } }
   } }
   const subject = loadFixtureModule<typeof Database>('lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts', {
+    './target-server': { applicationPilotTargetAllowed: () => true },
     '@/lib/supabase/server': { createServerComponentClient: () => { clients++; return client.promise } },
     '@/lib/trips/daten': { reiseLaden: async (_id: string, signal: AbortSignal) => {
       assert.equal(signal, sdkSignal); assert(!signal.aborted); reads++
