@@ -85,8 +85,18 @@ export function installNativeSchema(sql:ReturnType<typeof nativeSql>) {
   sql(`set role postgres;${definition('20260817100500_rollenwechsel_beim_anlegen.sql','creator_profiles_rollenwechsel_pruefen')}
     alter function public.creator_profiles_rollenwechsel_pruefen() rename to profil_rollenwechsel_pruefen;
     create trigger profiles_rollenwechsel before insert or update on public.profiles for each row execute function public.profil_rollenwechsel_pruefen();`)
-  for(const file of tripSources)sql(`set role postgres;${source(file)}`)
-  for(const file of evidenceSources)sql(`set role postgres;${source(file)}`)
+  // Original CREATE SCHEMA IF NOT EXISTS still checks database CREATE. Grant
+  // it only for installation in this newly owned cluster; runtime postgres
+  // stays NOSUPERUSER and loses this installation privilege before proofs.
+  sql(`do $install$ begin execute format('grant create on database %I to postgres',current_database()); end $install$;`)
+  try {
+    for(const file of tripSources)sql(`set role postgres;${source(file)}`)
+    for(const file of evidenceSources)sql(`set role postgres;${source(file)}`)
+  } finally {
+    sql(`do $install$ begin execute format('revoke create on database %I from postgres',current_database()); end $install$;`)
+  }
+  assert.equal(sql(`select (not has_database_privilege('postgres',current_database(),'create')
+    and not (select rolsuper from pg_roles where rolname='postgres'))::text`),'true')
   // Actual unchanged #1142 guard and ownership. Auth tables above are explicit
   // synthetic infrastructure; this is not managed Auth/JWT target evidence.
   sql(pinnedSource('scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql'))

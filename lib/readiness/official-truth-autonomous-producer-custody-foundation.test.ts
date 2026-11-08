@@ -319,6 +319,23 @@ const reviewedFoundationImports = new Map<string, readonly string[]>([
   ['lib/readiness/official-truth-same-request-proof-server.ts\0official-truth-autonomous-provenance-artifact',
     ['historicalValuesEqual', 'ownRecord', 'provenanceCanonical']],
   ['lib/readiness/official-truth-same-request-proof-server.ts\0official-truth-autonomous-provenance-record', ['readHistoricalArtifact']],
+  // R5 finite pure-helper consumers. Live authority remains the new protected
+  // authenticated/native publication protocol, never these historical values.
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts\0official-truth-autonomous-provenance-artifact', ['immutable']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/catalog-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/custody-server.ts\0official-truth-autonomous-provenance-artifact', ['provenanceCanonical']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/protocol-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts\0official-truth-autonomous-provenance-artifact',
+    ['historicalPinFor', 'provenanceCanonical', 'provenanceHash', 'historicalValuesEqual', 'Pin']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts\0official-truth-autonomous-provenance-record', ['readHistoricalArtifact', 'HistoricalArtifactKind']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts\0official-truth-global-cell-admission-server', ['validateGlobalCellAdmissionValue']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts\0official-truth-support-selection-server', ['selectHistoricalSupports']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts\0official-truth-autonomous-review-material-server', ['constructHistoricalAutonomousReview']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual', 'immutable']],
+  ['lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts\0official-truth-autonomous-provenance-artifact', ['historicalValuesEqual']],
 ])
 function foundationImporterAllowed(path: string, importedModule: string, names: readonly string[]): boolean {
   const expected = reviewedFoundationImports.get(`${path}\0${importedModule}`)

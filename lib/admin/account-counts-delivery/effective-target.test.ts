@@ -119,7 +119,9 @@ describe('Admin account-counts effective shared-client target', () => {
     const server = readFileSync('lib/supabase/server.ts', 'utf8')
     assert.match(server, /export function getServerSupabaseUrl\(\): string \| undefined \{\n  return SUPABASE_URL\n\}/)
     assert.match(server, /createServerClient<Db>\(SUPABASE_URL!, SUPABASE_ANON!,/)
-    assert.equal((server.match(/createServerClient<Db>\(SUPABASE_URL!, SUPABASE_ANON!,/g) ?? []).length, 3)
+    // R5: three unchanged legacy factories plus the opaque lifetime branch;
+    // all four still use exactly the same captured URL and anonymous key.
+    assert.equal((server.match(/createServerClient<Db>\(SUPABASE_URL!, SUPABASE_ANON!,/g) ?? []).length, 4)
     assert.equal(server.includes('process.env.NEXT_PUBLIC_SUPABASE_URL') && server.indexOf('const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL') >= 0, true)
     assert.equal(server.includes('export function setServerSupabaseUrl'), false)
     assert.equal(transportState().create.length, 0)
