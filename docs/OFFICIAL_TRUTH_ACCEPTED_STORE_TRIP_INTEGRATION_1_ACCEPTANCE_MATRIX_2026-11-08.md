@@ -1,3 +1,46 @@
+# Current acceptance status V11 / post-merge Fix15 and R11
+
+Date: 2026-11-08 UTC. Same author/session/Generation1. Actual starting main `11423774b2c2c5e84af040b546ad564c2e3850e8` has tree `41bf3b0f29ab961d72789d119fdedc1d6e696b91`; corrective publication parent is `b3bc5ed857b05064ca3b6427748947f46b3f9d82`, tree `1df10b9d084e289747a36ac29dd521449b130cec`. [Fix15 TASK V1.2](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md), blob `0113e0436e3c03628d7547fd78caf9f18097fa4e`, supplements the original TASK/R1–R10. Original PR #1156 is merged; #1155 remains open and the bounded corrective PR is pending Root publication.
+
+**Actual-main overall CHANGES REQUIRED.** Run 42484533024/Core 128743397622 has 8208 tests/935 suites, 8205 PASS/1 FAIL/0 cancelled/2 inherited skips, 1104128.713025 ms. Typecheck/Lint pass; hygiene/build are skipped. The independently fetched original is 4048820 bytes, SHA256 `e0d423d684279b5e9c92228f0ec44c601a1df097cd4a94efe95457c106455731`. Root's complete [114 checkpoint](evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json), blob `8c87413277a698b7bd1dac3976edf2d796e8653e`, 205936 bytes, SHA256 `c516cea38d77cdf1c0e990e72572c9ab589e73bcca172c0ac31e5306971a7e4a`, preserves all 58 actual package proof objects and the precise failure limit.
+
+| Actual 114 entry/gate | Observed result and current limit |
+| --- | --- |
+| Native publication | FAIL43198.408941 ms, three completed phases, no suite terminal. snapshotTokenMatched=true proves exact false-fact refusal, untouched reproof, current receipt and exact own live reservation check; the subsequent ordinary cleanup interval is unresolved |
+| Ordinary cleanup evidence | entries0 measures beforeRpc after HTTP/Auth/body, not raw HTTPentry. Actual early server phases/client reply and inner cause are unobserved. stale untouched_reproof step is not an extraction-failure diagnosis |
+| R4 disposal | unknown with0 intervalHTTP after owner.stop; this may follow stopped fixture resources. No independently established second failure, timeout, SQL deletion defect or claimed ACK |
+| Mounted Workspace | PASS233404.076541 ms, all13 scenarios; no browser source change in Fix15 |
+| Other native/package entries | Boundaries90296.277292 ms, Integrity184822.377753 ms, Wait/lifecycle195988.620003 ms, Acceptance84302.205453 ms, Context125947.274377 ms, Implementation2592.708912 ms, Recovery230507.965547 ms all PASS |
+| Auth/Persisted/Atomic | Actual 114 Auth55/243, Persisted95 phases/45 reads and full Atomic151 parsed records PASS; these do not close Core or transfer to a new head |
+| Required aggregate/Production | Aggregate128748464612 FAIL for Core. Actual-main Production/domain/robots pass only for the closed landing, no hosted authenticated/RLS proof |
+
+The semantic phase starts32416 ms and fails43193 ms; its own45-second scope starts after phase entry. No45-second timeout or source-expiry cause is established. Atomic's complete terminal at1011198 ms records10990/10990 settled, pending0, 248/248 closed, 11 clusters, parentAborted=false, reserve188802 ms; one-pass TAP totals1012107.425577 ms. Persisted one-pass TAP totals239982.865941 ms. Original4fbe full PASS led to the regular merge, but actual 114 remains red.
+
+## Fix15/R11 required evidence for the next actual head
+
+| Changed boundary | Mandatory preserved or added evidence |
+| --- | --- |
+| Local HTTP fixture | Explicit Connection:close before handler; actual SDK/Auth/SQL/body/status/held-body EOF preserved. Fixed HTTP/Auth/body/beforeRpc/COMMIT/server-end/finish/close evidence; no retry or global transport replacement |
+| Ordinary cleanup diagnosis | Independent raw HTTP interval, deep-copied preStop snapshot and eventual settled snapshot; fixed own-reservation/cleanup/ack step tags. Server-send/finish is not a client ACK |
+| Client observation | Only the concrete life.fetch instance; original receiver/arguments/promise/Response/rejection; immediately owned nonthrowing branch; exact method/descriptor restoration before R4 and on stop; allowlisted metadata only |
+| Healthy client proof | After all drains, calls/started/settled exactly1;pending/synchronousThrows/observerErrors/omitted exactly0;one fulfilled200 record/noerror. No body-read/clone/tee/extra fetch or awaited product barrier |
+| Semantic and cleanup invariants | All25 prior assertion lines retained plus8 client assertions. Exact retained_fact_invalid, genuine controls, own-token SQL, removed1, token-matched COMMIT, History/CAS/Reserve/Snapshot/noFinalize/final0 remain. One-shot R4 unchanged; optional no-owner cleanup preserves primary and all cleanup failures |
+| Required store group | required-tests/acceptance.test.ts, context.test.ts, integrity.test.ts, native.test.ts; four explicit files, concurrency1, original 240000 ms each |
+| Required lifecycle group | required-tests/boundaries.test.ts, browser.test.ts, recovery.test.ts, wait-lifecycle.test.ts; four explicit files, concurrency1, original 240000 ms each |
+| Core and type coverage | Unchanged three Core globs/imports;595→587Core+8required source mapping. Pure implementation entry byte-identical; narrow tsconfig include retains moved roots and transitive checking |
+| Local/CI completeness | Composed local alias executes both groups. Mandatory two-group CI matrix, fail-fast:false20min each; full checkout/npmci/setup/exact-ref guard. Required always aggregate rejects any non-success of Core/Persisted/Atomic/entire matrix |
+| Existing bounds and tests | Core 30min, Persisted20min, Atomic25min/Auth10min, all product/SQL/operation/drain limits unchanged. Exact eight wrapper imports only; no skipped case, duplicate run, dependency/lockfile or Atomic implementation change |
+
+Explicit close is a deliberate fixture lifecycle policy supported by the pinned Node 22.23.4/Undici code. The same release already validates idle sockets. The actual 114 failure's transport cause remains unknown; neither the policy nor diagnostic tag is retrospective proof. The fresh runs must establish the result and fit their unchanged entry limits and new20-minute orchestration envelopes.
+
+Root and both independent reviewers completed code source review without an open finding, recorded in [source-only receipt6722653175](https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175). That receipt covers Fixture V2, all25 old+8 new semantic assertions and the12 R11 candidates; final documentation/manifest review and all execution gates remain pending.
+
+The complete [Fix15 manifest](evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json) binds all source/doc blobs, old/new wrapper identities, forward/reverse replacements and preserved constraints. This source candidate has no local TypeScript/lint/native/browser/CI PASS. Root alone publishes and reviews the new corrective PR, then verifies actual main and Production after any merge; #1155 is unfinished until those gates succeed. No old-head result supplies a missing new result.
+
+SQL_UNAPPLIED / FEATURE_NOT_LIVE and all #917/#1131/#1139/#968/source/Owner/key/retention/witness/privacy gates remain. The full V10 and earlier suffixes below are historical and byte-identical; their older branch/status/path references are not current instructions.
+
+---
+
 # Current acceptance status V10 / Fix14
 
 Date: 2026-11-08 UTC. Exact parent `557073472e35773aacc644e06df2809e9303a77b`, tree `a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1. TASK and R1–R10 remain immutable.

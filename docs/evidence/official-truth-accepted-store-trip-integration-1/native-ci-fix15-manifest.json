@@ -1,0 +1,2026 @@
+{
+  "schema": "jetnity-accepted-store-trip-integration-1-author-fix-manifest-v1",
+  "title": "Same-session post-merge Fix15 / R11 complete author source freeze",
+  "repository": "Jetnity/jetnity",
+  "issue": 1155,
+  "pullRequest": null,
+  "mergedPullRequest": 1156,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "expectedRemoteParent": "b3bc5ed857b05064ca3b6427748947f46b3f9d82",
+  "expectedParentTree": "1df10b9d084e289747a36ac29dd521449b130cec",
+  "baselineMain": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+  "baselineMainTree": "41bf3b0f29ab961d72789d119fdedc1d6e696b91",
+  "branch": "fix/official-truth-accepted-store-trip-integration-1-postmerge-20261108",
+  "date": "2026-11-08 UTC",
+  "publicationManifestPath": "docs/evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json",
+  "authorization": {
+    "taskPath": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md",
+    "taskVersion": "V1.2; full V1.1 and V1 preserved",
+    "taskBlob": "0113e0436e3c03628d7547fd78caf9f18097fa4e",
+    "taskSha256": "ba5e15e5c9f03daa038b47bf45d8bd457597e91a1744dceb5a803b137cac2568",
+    "taskBytes": 15209,
+    "originalTaskAndR1ThroughR10": "Unchanged; R11 explicitly changes only mandatory test orchestration and this bounded fixture correction.",
+    "rootSourceOnlyReceipt": "https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175",
+    "codeReview": "Root and both independent specialist reviewers completed Fixture V2 and all12 R11 candidate source reviews without an open finding; no runtime/release PASS.",
+    "finalDocsManifestReview": "Pending at initial author freeze; Root and independent peers review actual immutable bytes before publication."
+  },
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+      "mainBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+      "gitBlob": "381688b756dc33163bf08d23f5ef47152e5552ad",
+      "sha256": "0dc3b34d6c7b709a1d1a6d3eec6e3a6e3088dee73d30a29f91a61eec8bf2de4f",
+      "bytes": 14657,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/381688b756dc33163bf08d23f5ef47152e5552ad"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "mainBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "gitBlob": "6aa6af195ab5cfa1b6e4fd230861dc61f87e892f",
+      "sha256": "f7e1cb8680173ccee9e5644178412a5cd1b6501597fdb0edcca4b6bebb0fa09e",
+      "bytes": 24212,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/6aa6af195ab5cfa1b6e4fd230861dc61f87e892f"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-suite.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "d40c0cb2fba4dc33e1cd4694fdc01aa22a658525",
+      "mainBlob": "d40c0cb2fba4dc33e1cd4694fdc01aa22a658525",
+      "gitBlob": "ec1440956c1e4d5b9f48831276411b5984bda391",
+      "sha256": "684ea5ef386431ed3245d58b8f517e1089e5f8cf89e0f133317e76adc7744a8a",
+      "bytes": 22378,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/ec1440956c1e4d5b9f48831276411b5984bda391"
+    },
+    {
+      "path": "package.json",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "b84a032582fae5733de40d2eee3c636ae1538eb1",
+      "mainBlob": "b84a032582fae5733de40d2eee3c636ae1538eb1",
+      "gitBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795",
+      "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+      "bytes": 6330,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/98031bb1fac76eba8db59abbf2e0ef1a8a26a795"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "fdd853ce5ee3f5756dc61f17e32a2a040b3e8b0b",
+      "mainBlob": "fdd853ce5ee3f5756dc61f17e32a2a040b3e8b0b",
+      "gitBlob": "704f35c9ab72a2c1e9a61eb8bf60c2c0cdb73b36",
+      "sha256": "7191dda3a1caf580b879a42e80e6ed80b3863a0817b2826b5acf68d1430a607e",
+      "bytes": 9625,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/704f35c9ab72a2c1e9a61eb8bf60c2c0cdb73b36"
+    },
+    {
+      "path": "tsconfig.json",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "mainBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "gitBlob": "31a2193441b76fee15db2e7c28760206bb638a2c",
+      "sha256": "8d39327495199c6dc6441a72940b95cc5ad4a019e15cdcd17ab8027ba233ef1a",
+      "bytes": 957,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/31a2193441b76fee15db2e7c28760206bb638a2c"
+    },
+    {
+      "path": "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "0969ef271969c262ff41ab137691dbe0fbcd7851",
+      "mainBlob": "0969ef271969c262ff41ab137691dbe0fbcd7851",
+      "gitBlob": "f2935c24dc9c1e6dcbe90ae1d082ee1c94f4dbc3",
+      "sha256": "2da1699c1a3ee26c886e13ff29ee1bf997256457e6186c263ce45d6ac55ad479",
+      "bytes": 24003,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/f2935c24dc9c1e6dcbe90ae1d082ee1c94f4dbc3"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "6e55fee942690385ce8860c9bdbce0ff471638c3",
+      "mainBlob": "6e55fee942690385ce8860c9bdbce0ff471638c3",
+      "gitBlob": "5ca942190ce796ef808f3ea701b276ab30a7fb06",
+      "sha256": "34a902bfb9f1b0c43ad86d2e062ff9020a2777fc9befa0dc452ab2eca69b0a2f",
+      "bytes": 86919,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/5ca942190ce796ef808f3ea701b276ab30a7fb06"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "987874723fa14ab5da04021806c825ba0e30c422",
+      "mainBlob": "987874723fa14ab5da04021806c825ba0e30c422",
+      "gitBlob": "a8f5fe18fbd7d7354ab1502e0a927f8c4ad75fdf",
+      "sha256": "26a8aace95fe61aea500b6a2a39ee0f8a3b92966f9a59b058395dad8caa15f5d",
+      "bytes": 56930,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/a8f5fe18fbd7d7354ab1502e0a927f8c4ad75fdf"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "3bef5465cf8227b0cdfdba3755097239c46c9217",
+      "mainBlob": "3bef5465cf8227b0cdfdba3755097239c46c9217",
+      "gitBlob": "c993c71fec066ae574e2ed42c1d9d38cca9b95a9",
+      "sha256": "675f77c0e4051a15952169a1e41b65f4b85decd5818a3bbebbc996224b2e85e0",
+      "bytes": 131123,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/c993c71fec066ae574e2ed42c1d9d38cca9b95a9"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "61bebba9ab4dda02bbef8bc9fe7f844549545282",
+      "mainBlob": "61bebba9ab4dda02bbef8bc9fe7f844549545282",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/acceptance.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "f678b0ad842cc0d37c02f980ffd8fae81c538d5d",
+      "sha256": "271fe616e903dc01247854425a8c025750dd200189519d8623daffd1deac64af",
+      "bytes": 262,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/f678b0ad842cc0d37c02f980ffd8fae81c538d5d"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "205bf91cba2be9a7023f885b1874815f82fd2926",
+      "mainBlob": "205bf91cba2be9a7023f885b1874815f82fd2926",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/context.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "4cea79543fa2f0ee59ea084eec137825fa78b88a",
+      "sha256": "d54d5868ab3aa43da35a586c16887b3d158c3a85976b87c74551313b880b582f",
+      "bytes": 238,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/4cea79543fa2f0ee59ea084eec137825fa78b88a"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.integrity.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "e20c1d9e76f23fdac9fc89adf279c4b2b852a622",
+      "mainBlob": "e20c1d9e76f23fdac9fc89adf279c4b2b852a622",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/integrity.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "b3e2f430ea8f04219b930d9cc78df382a9d0a555",
+      "sha256": "2e615449aa80469864d4848ee5deea6188397356d8e3f15b9383bbcbdaf9cd8a",
+      "bytes": 263,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/b3e2f430ea8f04219b930d9cc78df382a9d0a555"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "mainBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/native.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "7f5036ff80c2084bc6df34188df3689ab10e517d",
+      "sha256": "de32247fc70c32b221a5ee7cce8ee29c89b9abb01be2c669458fb4f7b19324e0",
+      "bytes": 245,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/7f5036ff80c2084bc6df34188df3689ab10e517d"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.boundaries.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "7c6ebaf9c268e46e530d1854cf2d12756a5afdad",
+      "mainBlob": "7c6ebaf9c268e46e530d1854cf2d12756a5afdad",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/boundaries.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "49f9a98a2f5586a233600a8a62307692701ab6e2",
+      "sha256": "e37f2efd20270b91c5a13755f604762b6d657569d1fd86a842eeede43032d235",
+      "bytes": 268,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/49f9a98a2f5586a233600a8a62307692701ab6e2"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "c651f842b99a22dc6ec7fe84ed9775ad42eb65b9",
+      "mainBlob": "c651f842b99a22dc6ec7fe84ed9775ad42eb65b9",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "d83a174cbd4cc5a621818b37495df703c59a90fd",
+      "sha256": "1d93e44eb187ca2c251cdd376d3259db68007f2362c04d6f9dde38c8964c37aa",
+      "bytes": 232,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/d83a174cbd4cc5a621818b37495df703c59a90fd"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "f2705c72d6d4364cd3a056905533fc286aab0ff5",
+      "mainBlob": "f2705c72d6d4364cd3a056905533fc286aab0ff5",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/recovery.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "6196faf049b01c6022b0e80cd28be351a42e63af",
+      "sha256": "f46a9d8be449baf2cd280e93815d4e2c01939be62d976d3cf0791f37ba055511",
+      "bytes": 238,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/6196faf049b01c6022b0e80cd28be351a42e63af"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.wait-lifecycle.test.ts",
+      "changeAgainstParent": "deleted",
+      "expectedRemoteBlob": "3a29d4499cf43951c4d029b90fa50a88e153bd96",
+      "mainBlob": "3a29d4499cf43951c4d029b90fa50a88e153bd96",
+      "gitBlob": null,
+      "sha256": null,
+      "bytes": null,
+      "blobUrl": null
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/wait-lifecycle.test.ts",
+      "changeAgainstParent": "added",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "9bd3a78261caf15cea1065030fd6a2df21925ae5",
+      "sha256": "2281cd43b68be457490517d3a6bb935416654b114bc833dd204b42f66c68213e",
+      "bytes": 274,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/9bd3a78261caf15cea1065030fd6a2df21925ae5"
+    }
+  ],
+  "fileCounts": {
+    "modified": 10,
+    "added": 8,
+    "deleted": 8,
+    "totalParentLeaves": 26,
+    "candidateBlobs": 18
+  },
+  "exactCodeDiffs": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "baselineBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+      "candidateBlob": "381688b756dc33163bf08d23f5ef47152e5552ad",
+      "replacements": [
+        {
+          "before": "export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSuiteOwnership) {",
+          "after": "export type NativeHttpRequestEvidence={\n  path:string;method:string;authenticated:boolean;bodyParsed:boolean;beforeRpc:boolean;rpcCommitted:boolean;\n  status:number|null;headersSent:boolean;finished:boolean;closed:boolean;\n  // Server end/afterCommit observations, never a claim of client receipt.\n  acknowledgement:'not_sent'|'response_end_called'|'dropped_after_commit';\n}\nexport async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSuiteOwnership) {"
+        },
+        {
+          "before": "  const evidence:{rpc:string;committed:boolean;sqlState:string|null}[]=[],requests:{path:string;method:string}[]=[]",
+          "after": "  const evidence:{rpc:string;committed:boolean;sqlState:string|null}[]=[],requests:NativeHttpRequestEvidence[]=[]\n  const responseEvidence=new WeakMap<ServerResponse,NativeHttpRequestEvidence>()\n  const observeResponse=(res:ServerResponse)=>{\n    const entry=responseEvidence.get(res)\n    if(entry){entry.headersSent=res.headersSent;entry.status=res.headersSent?res.statusCode:null}\n    return entry\n  }"
+        },
+        {
+          "before": "  const send=(res:ServerResponse,status:number,data:unknown)=>{if(!res.destroyed){res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(data))}}",
+          "after": "  const send=(res:ServerResponse,status:number,data:unknown)=>{if(!res.destroyed){\n    res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(data))\n    const entry=observeResponse(res);if(entry)entry.acknowledgement='response_end_called'\n  }}"
+        },
+        {
+          "before": "    const url=new URL(req.url??'/','http://127.0.0.1');requests.push({path:url.pathname,method:req.method??''})",
+          "after": "    const url=new URL(req.url??'/','http://127.0.0.1')\n    const observation:NativeHttpRequestEvidence={path:url.pathname,method:req.method??'',authenticated:false,bodyParsed:false,\n      beforeRpc:false,rpcCommitted:false,status:null,headersSent:false,finished:false,closed:false,acknowledgement:'not_sent'}\n    requests.push(observation);responseEvidence.set(res,observation)\n    res.once('finish',()=>{observation.finished=true;observeResponse(res)})\n    res.once('close',()=>{observation.closed=true;observeResponse(res)})"
+        },
+        {
+          "before": "      if(role!=='authenticated'&&role!=='service_role'){send(res,401,{message:'synthetic authentication required'});return}\n      if(url.pathname",
+          "after": "      if(role!=='authenticated'&&role!=='service_role'){send(res,401,{message:'synthetic authentication required'});return}\n      observation.authenticated=true\n      if(url.pathname"
+        },
+        {
+          "before": "          if(hold.phase==='body'){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.write(text.slice(0,1))}",
+          "after": "          if(hold.phase==='body'){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.write(text.slice(0,1));observeResponse(res)}"
+        },
+        {
+          "before": "          if(!res.destroyed){if(hold.phase==='headers')send(res,200,graph);else res.end(text.slice(1))}",
+          "after": "          if(!res.destroyed){if(hold.phase==='headers')send(res,200,graph);else{res.end(text.slice(1));observation.acknowledgement='response_end_called';observeResponse(res)}}"
+        },
+        {
+          "before": "      assert.deepEqual(Object.keys(body),['payload'])\n      owner?.check()",
+          "after": "      assert.deepEqual(Object.keys(body),['payload'])\n      observation.bodyParsed=true\n      owner?.check()\n      observation.beforeRpc=true"
+        },
+        {
+          "before": "        evidence.push({rpc:name,committed:true,sqlState:null})",
+          "after": "        evidence.push({rpc:name,committed:true,sqlState:null});observation.rpcCommitted=true"
+        },
+        {
+          "before": "      if(acknowledgement&&await(owner?owner.track(acknowledgement):acknowledgement)==='drop'){res.destroy();return}",
+          "after": "      if(acknowledgement&&await(owner?owner.track(acknowledgement):acknowledgement)==='drop'){observation.acknowledgement='dropped_after_commit';res.destroy();return}"
+        },
+        {
+          "before": "    if(stopped||owner?.signal.aborted){res.destroy();return}\n    const promise",
+          "after": "    if(stopped||owner?.signal.aborted){res.destroy();return}\n    // Local transactions need no idle connection reuse. Close only after the\n    // actual response completes; held headers/bodies and EOF remain genuine.\n    res.setHeader('connection','close')\n    const promise"
+        }
+      ]
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "baselineBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "candidateBlob": "6aa6af195ab5cfa1b6e4fd230861dc61f87e892f",
+      "replacements": [
+        {
+          "before": "import type { startNativeHttp } from './native-http'",
+          "after": "import type { startNativeHttp,NativeHttpRequestEvidence } from './native-http'"
+        },
+        {
+          "before": "export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typeof nativeProductRuntime>,",
+          "after": "type CleanupFetchRecord={\n  outcome:'pending'|'fulfilled'|'rejected'|'thrown';status:number|null;\n  error:{name:string;code:string|null;causeCode:string|null}|null;\n}\n/** Only fixed categories survive. In particular, never inspect message/body,\n * request arguments, headers, token values or arbitrary nested causes. */\nfunction cleanupFetchError(error:unknown):NonNullable<CleanupFetchRecord['error']> {\n  const names=new Set(['Error','TypeError','RangeError','AbortError','TimeoutError','DOMException'])\n  const codes=new Set(['ECONNRESET','ECONNREFUSED','EPIPE','ENOTFOUND','EAI_AGAIN','ABORT_ERR',\n    'UND_ERR_SOCKET','UND_ERR_CONNECT_TIMEOUT','UND_ERR_HEADERS_TIMEOUT','UND_ERR_BODY_TIMEOUT','UND_ERR_ABORTED'])\n  const read=(value:unknown,key:string):unknown=>{\n    try{return typeof value==='object'&&value!==null?Reflect.get(value,key):undefined}catch{return undefined}\n  }\n  const name=read(error,'name'),code=read(error,'code'),causeCode=read(read(error,'cause'),'code')\n  return {name:typeof name==='string'&&names.has(name)?name:'other_error',\n    code:typeof code==='string'?(codes.has(code)?code:'other_code'):null,\n    causeCode:typeof causeCode==='string'?(codes.has(causeCode)?causeCode:'other_code'):null}\n}\n\nexport async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typeof nativeProductRuntime>,"
+        },
+        {
+          "before": "  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false},\n    disposal:{status:'not_observed' as 'not_observed'|'not_started'|'acknowledged'|'unknown',removed:null as number|null,intervalCleanupHttpEntries:0,intervalCleanupRpcOutcomes:[] as {committed:boolean;sqlState:string|null}[]}}\n  let disposalRequestFrom:number|null=null,disposalEvidenceFrom:number|null=null",
+          "after": "  type ServerObservation=Pick<NativeHttpRequestEvidence,'authenticated'|'bodyParsed'|'beforeRpc'|'rpcCommitted'|'status'|'headersSent'|'finished'|'closed'|'acknowledgement'>\n  type OrdinarySnapshot={httpEntries:number;server:ServerObservation[];serverOmitted:number;beforeRpcEntries:number;\n    tokenMatches:number;commits:number;committedRemovedOne:boolean;acknowledged:boolean;\n    client:{calls:number;started:number;settled:number;pending:number;synchronousThrows:number;observerErrors:number;\n      omitted:number;records:CleanupFetchRecord[]}}\n  const clientObservation={calls:0,started:0,settled:0,pending:0,synchronousThrows:0,observerErrors:0,omitted:0,records:[] as CleanupFetchRecord[]}\n  const observerWork:Promise<void>[]=[],observerFailures:unknown[]=[]\n  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false,\n    beforeStop:null as OrdinarySnapshot|null,settled:null as OrdinarySnapshot|null},\n    disposal:{status:'not_observed' as 'not_observed'|'not_started'|'acknowledged'|'unknown',removed:null as number|null,intervalCleanupHttpEntries:0,intervalCleanupRpcOutcomes:[] as {committed:boolean;sqlState:string|null}[]}}\n  let ordinaryRequestFrom:number|null=null,ordinaryRequestUntil:number|null=null\n  const ordinarySnapshot=():OrdinarySnapshot=>{\n    const entries=ordinaryRequestFrom===null?[]:http.requests.slice(ordinaryRequestFrom,ordinaryRequestUntil??undefined)\n      .filter(value=>value.path==='/rest/v1/rpc/official_truth_trip_store_cleanup_v1')\n    // Copy every primitive/nested record: the pre-stop view must not change\n    // when the same handlers later finish or close during the owned drain.\n    return {httpEntries:entries.length,server:entries.slice(0,8).map(value=>({\n      authenticated:value.authenticated,bodyParsed:value.bodyParsed,beforeRpc:value.beforeRpc,rpcCommitted:value.rpcCommitted,\n      status:value.status,headersSent:value.headersSent,finished:value.finished,closed:value.closed,acknowledgement:value.acknowledgement,\n    })),serverOmitted:Math.max(0,entries.length-8),beforeRpcEntries:cleanupObservation.ordinary.entries,\n      tokenMatches:cleanupObservation.ordinary.tokenMatches,commits:cleanupObservation.ordinary.commits,\n      committedRemovedOne:cleanupObservation.ordinary.committedRemovedOne,acknowledged:cleanupObservation.ordinary.acknowledged,\n      client:{...clientObservation,records:clientObservation.records.map(value=>({...value,error:value.error?{...value.error}:null}))}}\n  }\n  const observeFailure=(error:unknown)=>{\n    clientObservation.observerErrors++;observerFailures.push(error)\n    if(owner&&!owner.failures.includes(error))owner.failures.push(error)\n  }\n  const drainObserver=async()=>{\n    const settled=owner?await owner.drain(observerWork):await Promise.allSettled(observerWork)\n    for(const value of settled)if(value.status==='rejected')observeFailure(value.reason)\n    if(observerFailures.length)throw new AggregateError(observerFailures,'native_cleanup_observation_failed')\n  }\n  let disposalRequestFrom:number|null=null,disposalEvidenceFrom:number|null=null"
+        },
+        {
+          "before": "    owner?.check();life.assertCurrent()\n    assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations",
+          "after": "    owner?.check();life.assertCurrent()\n    owner?.noteSemanticStep('own_snapshot_reservation')\n    assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations"
+        },
+        {
+          "before": "    const previousBefore=http.faults.beforeRpc,previousAfter=http.faults.afterCommit,ordinaryFrom=http.evidence.length\n    const restoreHooks=()=>{\n      if(previousBefore===undefined)delete http.faults.beforeRpc;else http.faults.beforeRpc=previousBefore\n      if(previousAfter===undefined)delete http.faults.afterCommit;else http.faults.afterCommit=previousAfter\n    }\n    const restore=owner?.restore(restoreHooks)\n    try {\n      http.faults.beforeRpc=async(name,payload)=>{",
+          "after": "    const previousBefore=http.faults.beforeRpc,previousAfter=http.faults.afterCommit,ordinaryFrom=http.evidence.length\n    const previousFetch=life.fetch,fetchDescriptor=Object.getOwnPropertyDescriptor(life,'fetch')\n    const restoreHooks=()=>{\n      if(previousBefore===undefined)delete http.faults.beforeRpc;else http.faults.beforeRpc=previousBefore\n      if(previousAfter===undefined)delete http.faults.afterCommit;else http.faults.afterCommit=previousAfter\n      if(fetchDescriptor)Object.defineProperty(life,'fetch',fetchDescriptor);else Reflect.deleteProperty(life,'fetch')\n    }\n    const restore=owner?.restore(restoreHooks)\n    try {\n      owner?.check();life.assertCurrent()\n      Object.defineProperty(life,'fetch',{configurable:true,enumerable:fetchDescriptor?.enumerable??false,writable:true,\n        // This is deliberately not async: the SDK receives the exact original\n        // Promise, Response and rejection, with no additional awaited barrier.\n        value:function(this:typeof life,...parameters:Parameters<typeof previousFetch>){\n          clientObservation.calls++\n          const record:CleanupFetchRecord={outcome:'pending',status:null,error:null}\n          if(clientObservation.records.length<8)clientObservation.records.push(record);else clientObservation.omitted++\n          let original:ReturnType<typeof previousFetch>\n          try {original=previousFetch.call(this,...parameters)}\n          catch(error){\n            clientObservation.synchronousThrows++;record.outcome='thrown';record.error=cleanupFetchError(error);throw error\n          }\n          clientObservation.started++;clientObservation.pending++\n          const observed=original.then(\n            response=>{try{record.outcome='fulfilled';record.status=response.status}catch(error){observeFailure(error)}\n              finally{clientObservation.settled++;clientObservation.pending--}},\n            error=>{try{record.outcome='rejected';record.error=cleanupFetchError(error)}catch(observationError){observeFailure(observationError)}\n              finally{clientObservation.settled++;clientObservation.pending--}},\n          )\n          observerWork.push(observed)\n          if(owner)owner.track(observed);else void observed.catch(observeFailure)\n          return original\n        },\n      })\n      http.faults.beforeRpc=async(name,payload)=>{"
+        },
+        {
+          "before": "      const cleaned=await run(()=>db.cleanup({token:reserve.token}))\n      owner?.check();life.assertCurrent()",
+          "after": "      ordinaryRequestFrom=http.requests.length\n      owner?.noteSemanticStep('ordinary_cleanup')\n      const cleaned=await run(()=>db.cleanup({token:reserve.token}))\n      owner?.noteSemanticStep('ordinary_cleanup_acknowledged')\n      owner?.check();life.assertCurrent()"
+        },
+        {
+          "before": "  } catch(error){owner?.stop(error);throw error}\n  finally {\n    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle());else{await dispose();await life.settle();await http.settle()}}\n    finally {",
+          "after": "  } catch(error){\n    cleanupObservation.ordinary.beforeStop=ordinarySnapshot()\n    owner?.stop(error);throw error\n  }\n  finally {\n    // End the ordinary-entry interval before the separate R4 attempt. A late\n    // ordinary response can still update its copied-at-settlement metadata.\n    ordinaryRequestUntil=http.requests.length\n    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle(),drainObserver);else{await dispose();await life.settle();await http.settle();await drainObserver()}}\n    finally {\n      cleanupObservation.ordinary.settled=ordinarySnapshot()"
+        },
+        {
+          "before": "  let ordinaryRequestFrom:number|null=null,ordinaryRequestUntil:number|null=null",
+          "after": "  let ordinaryRequestFrom:number|null=null,ordinaryRequestUntil:number|null=null\n  let primaryFailure:{error:unknown}|null=null"
+        },
+        {
+          "before": "  } catch(error){\n    cleanupObservation.ordinary.beforeStop=ordinarySnapshot()",
+          "after": "  } catch(error){\n    primaryFailure={error}\n    cleanupObservation.ordinary.beforeStop=ordinarySnapshot()"
+        },
+        {
+          "before": "    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle(),drainObserver);else{await dispose();await life.settle();await http.settle();await drainObserver()}}",
+          "after": "    try {\n      if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle(),drainObserver)\n      else {\n        const cleanupErrors:unknown[]=[]\n        for(const operation of [dispose,()=>life.settle(),()=>http.settle(),drainObserver]){\n          try{await operation()}catch(error){cleanupErrors.push(error)}\n        }\n        if(cleanupErrors.length)throw new AggregateError(primaryFailure?[primaryFailure.error,...cleanupErrors]:cleanupErrors,'native_suite_scenario_cleanup_failed')\n      }\n    }"
+        },
+        {
+          "before": "  owner?.noteSemanticStep('persistent_after')",
+          "after": "  assert.equal(clientObservation.calls,1)\n  assert.equal(clientObservation.started,1)\n  assert.equal(clientObservation.settled,1)\n  assert.equal(clientObservation.pending,0)\n  assert.equal(clientObservation.synchronousThrows,0)\n  assert.equal(clientObservation.observerErrors,0)\n  assert.equal(clientObservation.omitted,0)\n  assert.deepEqual(clientObservation.records,[{outcome:'fulfilled',status:200,error:null}])\n  owner?.noteSemanticStep('persistent_after')"
+        }
+      ]
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-suite.ts",
+      "baselineBlob": "d40c0cb2fba4dc33e1cd4694fdc01aa22a658525",
+      "candidateBlob": "ec1440956c1e4d5b9f48831276411b5984bda391",
+      "replacements": [
+        {
+          "before": "  |'false_fact_reproof'|'untouched_reproof'|'persistent_after'",
+          "after": "  |'false_fact_reproof'|'untouched_reproof'|'own_snapshot_reservation'|'ordinary_cleanup'|'ordinary_cleanup_acknowledged'|'persistent_after'"
+        },
+        {
+          "before": "      'profile_pin_missing','implementation_changed'].map",
+          "after": "      'profile_pin_missing','implementation_changed','store_cleanup_unavailable'].map"
+        },
+        {
+          "before": "'implementation_changed','store_cleanup_unavailable'].map",
+          "after": "'implementation_changed','store_cleanup_unavailable','native_cleanup_observation_failed'].map"
+        }
+      ]
+    },
+    {
+      "path": "package.json",
+      "baselineBlob": "b84a032582fae5733de40d2eee3c636ae1538eb1",
+      "candidateBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795",
+      "replacements": [
+        {
+          "before": "    \"test\": \"npm run test:core && npm run test:persisted-native && npm run test:refresh-native\",",
+          "after": "    \"test\": \"npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native\","
+        },
+        {
+          "before": "    \"test:persisted-native\":",
+          "after": "    \"test:accepted-store-native\": \"npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle\",\n    \"test:accepted-store-native:store\": \"node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/acceptance.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/context.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/integrity.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/native.test.ts\",\n    \"test:accepted-store-native:lifecycle\": \"node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/boundaries.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/recovery.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/wait-lifecycle.test.ts\",\n    \"test:persisted-native\":"
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "baselineBlob": "fdd853ce5ee3f5756dc61f17e32a2a040b3e8b0b",
+      "candidateBlob": "704f35c9ab72a2c1e9a61eb8bf60c2c0cdb73b36",
+      "replacements": [
+        {
+          "before": "  required_verify:\n",
+          "after": "  accepted_store_native:\n    name: Accepted store trip integration — native (${{ matrix.group }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 20\n    strategy:\n      fail-fast: false\n      matrix:\n        group: [store, lifecycle]\n\n    steps:\n      # Same exact-ref guard and isolated standard runner as the existing proof.\n      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22.x\n          cache: npm\n\n      - name: Install dependencies\n        run: npm ci\n\n      - name: Setup check\n        run: npm run check:setup:ci\n\n      - name: Operating mode\n        env:\n          JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}\n          JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}\n          JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}\n          JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}\n        run: npm run check:operating-mode\n\n      - name: Accepted store native proof\n        run: npm run test:accepted-store-native:${{ matrix.group }}\n\n  required_verify:\n"
+        },
+        {
+          "before": "    needs: [verify, persisted_native, refresh_native]",
+          "after": "    needs: [verify, persisted_native, refresh_native, accepted_store_native]"
+        },
+        {
+          "before": "      - name: Require all three verification jobs to succeed",
+          "after": "      - name: Require all four verification job families to succeed"
+        },
+        {
+          "before": "          REFRESH_NATIVE_RESULT: ${{ needs.refresh_native.result }}",
+          "after": "          REFRESH_NATIVE_RESULT: ${{ needs.refresh_native.result }}\n          ACCEPTED_STORE_NATIVE_RESULT: ${{ needs.accepted_store_native.result }}"
+        },
+        {
+          "before": "          printf 'Core result: %.32s\\nPersisted native result: %.32s\\nRefresh native result: %.32s\\n' \"$CORE_RESULT\" \"$PERSISTED_NATIVE_RESULT\" \"$REFRESH_NATIVE_RESULT\"",
+          "after": "          printf 'Core result: %.32s\\nPersisted native result: %.32s\\nRefresh native result: %.32s\\nAccepted store native result: %.32s\\n' \"$CORE_RESULT\" \"$PERSISTED_NATIVE_RESULT\" \"$REFRESH_NATIVE_RESULT\" \"$ACCEPTED_STORE_NATIVE_RESULT\""
+        },
+        {
+          "before": "          if [ \"$CORE_RESULT\" != \"success\" ] || [ \"$PERSISTED_NATIVE_RESULT\" != \"success\" ] || [ \"$REFRESH_NATIVE_RESULT\" != \"success\" ]; then",
+          "after": "          if [ \"$CORE_RESULT\" != \"success\" ] || [ \"$PERSISTED_NATIVE_RESULT\" != \"success\" ] || [ \"$REFRESH_NATIVE_RESULT\" != \"success\" ] || [ \"$ACCEPTED_STORE_NATIVE_RESULT\" != \"success\" ]; then"
+        },
+        {
+          "before": "All three verification jobs must succeed.",
+          "after": "All four verification job families must succeed."
+        },
+        {
+          "before": "All three verification jobs succeeded.",
+          "after": "All four verification job families succeeded."
+        }
+      ]
+    },
+    {
+      "path": "tsconfig.json",
+      "baselineBlob": "187583dcb17aed1abef60ebddf9b9be01a013641",
+      "candidateBlob": "31a2193441b76fee15db2e7c28760206bb638a2c",
+      "replacements": [
+        {
+          "before": "    \"types\",",
+          "after": "    \"types\",\n    \"scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/*.test.ts\","
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "baselineBlob": "0969ef271969c262ff41ab137691dbe0fbcd7851",
+      "candidateBlob": "f2935c24dc9c1e6dcbe90ae1d082ee1c94f4dbc3",
+      "replacements": [
+        {
+          "before": "test('CI keeps complete native proofs mandatory with unchanged existing test commands', () => {\n  const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }\n  assert.equal(pkg.scripts['test:refresh-native'], 'node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/db/official-truth-atomic-version-refresh-1/native.test.ts')\n  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:persisted-native && npm run test:refresh-native')\n  const workflow = read('.github/workflows/ci.yml')\n  assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)\n  assert.match(workflow, /needs: \\[verify, persisted_native, refresh_native\\]/)\n  assert.match(workflow, /REFRESH_NATIVE_RESULT: \\$\\{\\{ needs.refresh_native.result \\}\\}/)\n  assert.match(workflow, /\"\\$REFRESH_NATIVE_RESULT\" != \"success\"/)\n  assert.match(workflow, /if: \\$\\{\\{ always\\(\\) \\}\\}/)\n})\n",
+          "after": "test('CI keeps complete native proofs mandatory with unchanged existing test commands', () => {\n  const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }\n  assert.equal(pkg.scripts['test:refresh-native'], 'node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/db/official-truth-atomic-version-refresh-1/native.test.ts')\n  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native')\n  assert.equal(pkg.scripts['test:core'], \"node --import ./scripts/server-only-test-register.mjs --import tsx --test \\\"lib/**/*.test.ts\\\" \\\"scripts/operating-mode-guard.test.mjs\\\" \\\"scripts/dev-reference-local-pg-prep-1/*.test.ts\\\"\")\n  assert.equal(pkg.scripts['test:accepted-store-native'], 'npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle')\n  const acceptedRoot = 'scripts/db/official-truth-accepted-store-trip-integration-1/'\n  const groups = { store: ['acceptance', 'context', 'integrity', 'native'], lifecycle: ['boundaries', 'browser', 'recovery', 'wait-lifecycle'] }\n  const entries = Object.values(groups).flat()\n  assert.equal(new Set(entries).size, 8)\n  for (const [group, names] of Object.entries(groups)) {\n    assert.equal(pkg.scripts['test:accepted-store-native:' + group],\n      'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 '\n        + names.map(name => acceptedRoot + 'required-tests/' + name + '.test.ts').join(' '))\n  }\n  assert.deepEqual(readdirSync(new URL(acceptedRoot + 'required-tests/', root)).sort(), entries.map(name => name + '.test.ts').sort())\n  assert.deepEqual(readdirSync(new URL('lib/readiness/', root)).filter(name => name.startsWith('official-truth-accepted-store-trip-integration-1.') && name.endsWith('.test.ts')),\n    ['official-truth-accepted-store-trip-integration-1.implementation.test.ts'])\n  const digest = (source: string) => createHash('sha256').update(source, 'utf8').digest('hex')\n  // Only the relative implementation import changes in each required wrapper.\n  for (const [name, expected] of [\n    [\"acceptance\", \"3315fd6b952bce46504e7321e48ac0bec61b64291ff9051ba10dcf2f5f0f2005\"],\n    [\"context\", \"61eef1f1ced149e559aeff388d8bb8ad6cbfef8cce70fa4e94fda791b4aed8f7\"],\n    [\"integrity\", \"6fa199289cc40f82e7d2b023c8e02f0c00de2ecf0b130cb629ea118e5eb58e5b\"],\n    [\"native\", \"6e1cb57342dcb8bca591bcd307cf700ec3c333cd1977dc87fdf4b699b777446b\"],\n    [\"boundaries\", \"c6f36b629fba3d5dae93151f0edf1d7e50d3a0128647b514a06538aa512c9fc7\"],\n    [\"browser\", \"c15a62cd5800c8522d618a9db128070f1bd366b1ed78d6a76f62f5146d4da48b\"],\n    [\"recovery\", \"28414f71f78621bbf2f54b20029b240c151aab8d2cadbf08837c42213a3ac98f\"],\n    [\"wait-lifecycle\", \"3a2240a22ae283c19d15394a572cc21900ef28fe4cc2eccde581945c53ef0cfb\"],\n  ]) {\n    const moved = read(acceptedRoot + 'required-tests/' + name + '.test.ts')\n    assert.equal(digest(moved.replace(\"from '../\", \"from '../../\" + acceptedRoot)), expected, name)\n  }\n  assert.equal(digest(read('lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts')), \"fa9ae836fe164ca9630d4e30b84eeb8444adfa609f3703709a8cdd2f48db13d2\")\n  const tsconfig = JSON.parse(read('tsconfig.json')) as { include: string[] }\n  assert.deepEqual(tsconfig.include, ['next-env.d.ts', 'app', 'components', 'lib', 'types',\n    acceptedRoot + 'required-tests/*.test.ts', '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])\n  const workflow = read('.github/workflows/ci.yml')\n  assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)\n  assert.match(workflow, /needs: \\[verify, persisted_native, refresh_native, accepted_store_native\\]/)\n  assert.match(workflow, /REFRESH_NATIVE_RESULT: \\$\\{\\{ needs.refresh_native.result \\}\\}/)\n  assert.match(workflow, /\"\\$REFRESH_NATIVE_RESULT\" != \"success\"/)\n  assert.match(workflow, /if: \\$\\{\\{ always\\(\\) \\}\\}/)\n  const accepted = workflow.match(/^  accepted_store_native:\\n([\\s\\S]*?)(?=^  required_verify:)/m)?.[0]\n  assert.ok(accepted)\n  assert.match(accepted, /runs-on: ubuntu-latest/)\n  assert.match(accepted, /timeout-minutes: 20/)\n  assert.match(accepted, /strategy:\\n      fail-fast: false\\n      matrix:\\n        group: \\[store, lifecycle\\]/)\n  assert.match(accepted, /fetch-depth: 0/)\n  assert.match(accepted, /node-version: 22\\.x/)\n  assert.match(accepted, /run: npm ci/)\n  assert.match(accepted, /run: npm run check:setup:ci/)\n  assert.match(accepted, /run: npm run check:operating-mode/)\n  assert.match(accepted, /run: npm run test:accepted-store-native:\\$\\{\\{ matrix.group \\}\\}/)\n  assert.doesNotMatch(accepted, /^\\s*(?:if|continue-on-error):/m)\n  for (const binding of [\n    'JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}',\n    'JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}',\n    'JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}',\n    'JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}',\n  ]) assert.ok(accepted.includes(binding))\n  const aggregate = workflow.match(/^  required_verify:\\n([\\s\\S]*?)(?=^  auth-konfiguration:)/m)?.[0]\n  assert.ok(aggregate)\n  for (const [name, family] of [['CORE_RESULT', 'verify'], ['PERSISTED_NATIVE_RESULT', 'persisted_native'],\n    ['REFRESH_NATIVE_RESULT', 'refresh_native'], ['ACCEPTED_STORE_NATIVE_RESULT', 'accepted_store_native']]) {\n    assert.ok(aggregate.includes(name + ': ${{ needs.' + family + '.result }}'))\n    assert.ok(aggregate.includes('\"$' + name + '\" != \"success\"'))\n  }\n  assert.match(aggregate, /if: \\$\\{\\{ always\\(\\) \\}\\}/)\n  assert.doesNotMatch(aggregate, /continue-on-error:/)\n})\n"
+        }
+      ]
+    }
+  ],
+  "wrapperMoves": [
+    {
+      "group": "store",
+      "name": "acceptance",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/acceptance.test.ts",
+      "baselineBlob": "61bebba9ab4dda02bbef8bc9fe7f844549545282",
+      "baselineSha256": "3315fd6b952bce46504e7321e48ac0bec61b64291ff9051ba10dcf2f5f0f2005",
+      "candidateBlob": "f678b0ad842cc0d37c02f980ffd8fae81c538d5d",
+      "sha256": "271fe616e903dc01247854425a8c025750dd200189519d8623daffd1deac64af",
+      "bytes": 262,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "store",
+      "name": "context",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/context.test.ts",
+      "baselineBlob": "205bf91cba2be9a7023f885b1874815f82fd2926",
+      "baselineSha256": "61eef1f1ced149e559aeff388d8bb8ad6cbfef8cce70fa4e94fda791b4aed8f7",
+      "candidateBlob": "4cea79543fa2f0ee59ea084eec137825fa78b88a",
+      "sha256": "d54d5868ab3aa43da35a586c16887b3d158c3a85976b87c74551313b880b582f",
+      "bytes": 238,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "store",
+      "name": "integrity",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.integrity.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/integrity.test.ts",
+      "baselineBlob": "e20c1d9e76f23fdac9fc89adf279c4b2b852a622",
+      "baselineSha256": "6fa199289cc40f82e7d2b023c8e02f0c00de2ecf0b130cb629ea118e5eb58e5b",
+      "candidateBlob": "b3e2f430ea8f04219b930d9cc78df382a9d0a555",
+      "sha256": "2e615449aa80469864d4848ee5deea6188397356d8e3f15b9383bbcbdaf9cd8a",
+      "bytes": 263,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "store",
+      "name": "native",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/native.test.ts",
+      "baselineBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "baselineSha256": "6e1cb57342dcb8bca591bcd307cf700ec3c333cd1977dc87fdf4b699b777446b",
+      "candidateBlob": "7f5036ff80c2084bc6df34188df3689ab10e517d",
+      "sha256": "de32247fc70c32b221a5ee7cce8ee29c89b9abb01be2c669458fb4f7b19324e0",
+      "bytes": 245,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "lifecycle",
+      "name": "boundaries",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.boundaries.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/boundaries.test.ts",
+      "baselineBlob": "7c6ebaf9c268e46e530d1854cf2d12756a5afdad",
+      "baselineSha256": "c6f36b629fba3d5dae93151f0edf1d7e50d3a0128647b514a06538aa512c9fc7",
+      "candidateBlob": "49f9a98a2f5586a233600a8a62307692701ab6e2",
+      "sha256": "e37f2efd20270b91c5a13755f604762b6d657569d1fd86a842eeede43032d235",
+      "bytes": 268,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "lifecycle",
+      "name": "browser",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts",
+      "baselineBlob": "c651f842b99a22dc6ec7fe84ed9775ad42eb65b9",
+      "baselineSha256": "c15a62cd5800c8522d618a9db128070f1bd366b1ed78d6a76f62f5146d4da48b",
+      "candidateBlob": "d83a174cbd4cc5a621818b37495df703c59a90fd",
+      "sha256": "1d93e44eb187ca2c251cdd376d3259db68007f2362c04d6f9dde38c8964c37aa",
+      "bytes": 232,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "lifecycle",
+      "name": "recovery",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/recovery.test.ts",
+      "baselineBlob": "f2705c72d6d4364cd3a056905533fc286aab0ff5",
+      "baselineSha256": "28414f71f78621bbf2f54b20029b240c151aab8d2cadbf08837c42213a3ac98f",
+      "candidateBlob": "6196faf049b01c6022b0e80cd28be351a42e63af",
+      "sha256": "f46a9d8be449baf2cd280e93815d4e2c01939be62d976d3cf0791f37ba055511",
+      "bytes": 238,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    },
+    {
+      "group": "lifecycle",
+      "name": "wait-lifecycle",
+      "from": "lib/readiness/official-truth-accepted-store-trip-integration-1.wait-lifecycle.test.ts",
+      "to": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/wait-lifecycle.test.ts",
+      "baselineBlob": "3a29d4499cf43951c4d029b90fa50a88e153bd96",
+      "baselineSha256": "3a2240a22ae283c19d15394a572cc21900ef28fe4cc2eccde581945c53ef0cfb",
+      "candidateBlob": "9bd3a78261caf15cea1065030fd6a2df21925ae5",
+      "sha256": "2281cd43b68be457490517d3a6bb935416654b114bc833dd204b42f66c68213e",
+      "bytes": 274,
+      "replacements": [
+        {
+          "before": "from '../../scripts/db/official-truth-accepted-store-trip-integration-1/",
+          "after": "from '../"
+        }
+      ],
+      "change": "Only relative implementation import. Name, callback and timeout240_000 remain exact."
+    }
+  ],
+  "docs": {
+    "version": "V11",
+    "transformations": [
+      {
+        "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+        "baselineBlob": "6e55fee942690385ce8860c9bdbce0ff471638c3",
+        "candidateBlob": "5ca942190ce796ef808f3ea701b276ab30a7fb06",
+        "mode": "prepend",
+        "prefix": "# Current author handoff V11 / post-merge Fix15 and R11\n\nDate: 2026-11-08 UTC. Same author/session: **Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1**, `/root/accepted_store_trip_integration_writer`. Immutable starting main is `11423774b2c2c5e84af040b546ad564c2e3850e8`, tree `41bf3b0f29ab961d72789d119fdedc1d6e696b91`. The corrective branch is `fix/official-truth-accepted-store-trip-integration-1-postmerge-20261108`; publication is leased against `b3bc5ed857b05064ca3b6427748947f46b3f9d82`, tree `1df10b9d084e289747a36ac29dd521449b130cec`. The source baselines still match actual main; Root's corrective task versions and actual-main checkpoint precede this implementation. [Fix15 TASK V1.2](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md), blob `0113e0436e3c03628d7547fd78caf9f18097fa4e`, governs these changes alongside the original TASK and R1–R10.\n\n**Post-merge CHANGES REQUIRED; #1155 remains open.** Root independently passed the complete original PR head 4fbe and regularly merged [PR #1156](https://github.com/Jetnity/jetnity/pull/1156) at 13:20:54 UTC. That PR is merged, not a new draft. The subsequent actual-main push run 42484533024 failed Core 128743397622 and required aggregate 128748464612. The corrective PR is to be published by Root after independent source review; this author freeze does not invent a PR number or transfer earlier gates.\n\n## Actual 114 evidence and precise unresolved boundary\n\nThe author independently read the full Core original: 4048820 bytes, BOM/60999LF, SHA256 `e0d423d684279b5e9c92228f0ec44c601a1df097cd4a94efe95457c106455731`. It contains8208 tests/935 suites, 8205 PASS/1 FAIL/0 cancelled/2 inherited skips, 1104128.713025 ms. Typecheck/Lint pass; five hygiene checks and production build are skipped. The authoritative [actual-main checkpoint](evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json), already committed before implementation, is blob `8c87413277a698b7bd1dac3976edf2d796e8653e`, 205936 bytes, SHA256 `c516cea38d77cdf1c0e990e72572c9ab589e73bcca172c0ac31e5306971a7e4a`. The current Root decision is [comment 6722301930](https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6722301930).\n\nOnly the native-publication entry fails, after43198.408941 ms. Its semantic phase begins at32416 ms and reports failure at43193 ms. The new45-second semantic lifetime starts after the phase begins; these numbers establish no45-second timeout. The old step marker remains untouched_reproof across subsequent work, while snapshotTokenMatched=true proves the exact retained_fact_invalid assertion, untouched original reproof, after.assertCurrent/receipt equality and fresh exact own live snapshot reservation SQL assertion already passed. The unlisted inner error and specific transport cause remain unknown.\n\nOrdinary entries=0 is the temporary beforeRpc hook count after raw HTTP entry, Auth and body parsing. It does not prove that no HTTP request arrived. Those earlier ordinary stages and the actual client reply were unobserved. The catch stops the owner before finally; that stop closes the fixture listener/connections. The subsequent disposalunknown with zero interval requests can therefore follow the first failure and is not evidence of an independent disposal defect. No extraction, permanent-history, witness, SQL-deletion-predicate, source-expiry or deadline cause is inferred.\n\nThe mounted browser passes all13 scenarios, and Boundaries, Integrity, Wait/lifecycle, Acceptance, Context, Implementation and Recovery pass. Browser233404.076541 ms and Recovery230507.965547 ms approach but do not exceed their unchanged 240000 ms entries. Root and peers also verified actual 114 Auth55/243, complete Persisted95 phases/45 reads and complete Atomic151 parsed records. Atomic terminates at1011198 ms with10990/10990 operations settled, pending0, 248/248 connections closed, 11 clusters stopped, parentAborted=false and188802 ms parent reserve; TAP has one pass/no failure/cancellation/skip, 1011201.953659 ms subtest/1012107.425577 ms total. Persisted has one pass, 239308.427082 ms subtest/239982.865941 ms total. Production/domain/robots are verified only for the closed landing; they establish no hosted authenticated entry/RLS proof and do not close Core.\n\n## Fix15: owned local HTTP and factual cleanup evidence\n\nThree existing fixture files change. The local server sets Connection:close centrally before each accepted handler. It retains the actual pinned SDK/Auth, actual SQL transactions and COMMITs, body/status, held-header/body behavior and EOF. There is no global dispatcher/fetch replacement, retry, keepAliveTimeout=0, early socket destruction or longer lifetime. The policy removes unnecessary idle reuse between separate local HTTP transactions; it is not a claim that an idle-socket race caused114. Exact Node 22.23.4 and its bundled Undici already contain idle-socket validation, which remains acknowledged in the pinned primary-source record.\n\nServer evidence now distinguishes accepted HTTP entry, validated Auth/body, beforeRpc, COMMIT, response-end invocation, headers-sent, finish and close. All added fields are fixed categories, booleans or numeric status; a status is absent until headers were sent. Server end/finish/close are not a client ACK or a simultaneous physical-peer-close proof. The semantic helper takes an independent ordinary HTTP-entry interval and an immutable primitive snapshot before owner.stop, then records eventual settled observations separately from the R4 attempt. Fixed steps identify the own-reservation SQL check, ordinary cleanup call and returned acknowledgement. The safe error graph adds only the exact store_cleanup_unavailable and native_cleanup_observation_failed categories, retaining its existing redaction and bounds.\n\nDuring only the ordinary cleanup, a transparent non-async observer wraps this concrete life.fetch instance. It calls the original method with the same receiver/arguments and returns its identical original promise; the SDK receives the original Response or rejection. The immediately owned nonthrowing branch records only allowlisted error names/codes/cause codes or numeric HTTP status. There is no body read, clone, tee, retry, additional fetch, global patch or awaited barrier in the product continuation. The previous own-property descriptor or inherited-method state is restored before disposal and on owner stop. This measures the actual lifetime transport boundary, not a fabricated raw native-fetch start.\n\nAfter the complete owned lifetime/HTTP/observer drain, healthy completion requires exactly calls=started=settled=1, pending=0, synchronousThrows=0, observerErrors=0, omitted=0 and a single fulfilled record with status200 and no error. All25 original semantic assertion lines remain, including exact false-fact refusal, genuine controls, exact own token, removed1, token-bound COMMIT, durable hash/CAS and final zero reservations. Eight additional assertions enforce the client observation. The owner path retains its complete cleanup/error handling; the optional no-owner path now also tries every cleanup step and preserves the original primary error together with all cleanup errors. The existing one-shot R4 dispose still occurs once; unknown is never credited as acknowledged deletion.\n\n## R11: mandatory execution partition with preserved coverage\n\nThe prior Core command discovers595 files without explicit file concurrency. Root rejected serializing all Core files: independently measured top-level sums plus observed setup/finish already exceed the existing30-minute envelope in the green reference run. R11 instead moves exactly eight tiny wrapper roots into scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/. Only their relative implementation import changes; all test names, callbacks and timeout 240_000 remain byte-equivalent. The pure implementation identity entry stays unchanged in Core.\n\n| Required execution | Exact entries |\n| --- | --- |\n| Core | Existing three glob arguments and Node imports unchanged;587 remaining Core files, including the pure implementation identity entry |\n| Accepted-store group store | acceptance, context, integrity, native; four explicit paths, Node 22/server-only-register/tsx, test-concurrency=1 |\n| Accepted-store group lifecycle | boundaries, browser, recovery, wait-lifecycle; four explicit paths, same setup and test-concurrency=1 |\n| Full native companions | Existing Persisted and Atomic commands and complete cases unchanged |\n\nThe two group commands compose the local test:accepted-store-native alias; npm test runs Core, both accepted-store groups, Persisted and Atomic. CI gives the two mandatory matrix groups separate standard runners, fail-fast:false and20min each, full checkout, npm ci, setup and the existing exact-ref operating-mode guard. The required aggregate uses always() and requires actual success from Core, Persisted, Atomic and the entire accepted-store matrix family. Core 30min/Persisted20min/Atomic25min/Auth10min remain; no test, product, SQL, cancellation or drain budget increases. Four240-second entries fit a16-minute allocation with4min for setup/finish; fresh execution must still prove this is sufficient.\n\nThe exact source mapping is595 original files→587 Core+8 required, with no duplicate/removed test content. A scoped tsconfig include explicitly retains these eight TypeScript roots and their existing transitive helper coverage; compiler options and all prior includes/excludes remain unchanged. The approved existing Atomic CI guard verifies both groups, explicit commands, unchanged wrapper content, pure identity, scoped TypeScript include and all four strict result checks. Dependency/lockfile versions, Atomic implementation and all other guard cases remain unchanged.\n\n## Current completion boundary\n\nRoot and both independent specialist reviewers completed the full code source review with no open source finding; the durable [Root source-only receipt6722653175](https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175) binds Fixture V2 and all12 R11 candidates. This review is not a TypeScript, runtime or release PASS. Final documentation/manifest consistency and every fresh execution gate remain pending.\n\nThis is immutable API-based source work, not local compiler/typecheck/lint/native/mounted/CI execution. Full reversible source replacements, move mappings and baseline pins are in the [Fix15 manifest](evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json). Independent source review and fresh exact-head execution remain mandatory, including both matrix originals, required aggregate, Preview/reviews, and actual-main/Production checks after any Root merge. The successful original4fbe gates and114 companion passes do not transfer.\n\nSQL_UNAPPLIED / FEATURE_NOT_LIVE remain exact. #917 is APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING, ledgerUNKNOWN, Stage2NOT_ATTEMPTED; no refused-readback retry or alternate route. #1131 transport hold, #1139 hosted authority, #968 target credentials and all Owner/source-rights/retention/key/witness/privacy/activation gates remain independent. There is no hosted action, business retry, lease extension, positive substitution, SQL/product/canonical-verifier change or following slice. All V10 and earlier historical text below remains verbatim; only this prefix describes the current correction.\n\n---\n\n",
+        "historicalSuffixByteIdentical": true
+      },
+      {
+        "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+        "baselineBlob": "987874723fa14ab5da04021806c825ba0e30c422",
+        "candidateBlob": "a8f5fe18fbd7d7354ab1502e0a927f8c4ad75fdf",
+        "mode": "prepend",
+        "prefix": "# Current acceptance status V11 / post-merge Fix15 and R11\n\nDate: 2026-11-08 UTC. Same author/session/Generation1. Actual starting main `11423774b2c2c5e84af040b546ad564c2e3850e8` has tree `41bf3b0f29ab961d72789d119fdedc1d6e696b91`; corrective publication parent is `b3bc5ed857b05064ca3b6427748947f46b3f9d82`, tree `1df10b9d084e289747a36ac29dd521449b130cec`. [Fix15 TASK V1.2](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md), blob `0113e0436e3c03628d7547fd78caf9f18097fa4e`, supplements the original TASK/R1–R10. Original PR #1156 is merged; #1155 remains open and the bounded corrective PR is pending Root publication.\n\n**Actual-main overall CHANGES REQUIRED.** Run 42484533024/Core 128743397622 has 8208 tests/935 suites, 8205 PASS/1 FAIL/0 cancelled/2 inherited skips, 1104128.713025 ms. Typecheck/Lint pass; hygiene/build are skipped. The independently fetched original is 4048820 bytes, SHA256 `e0d423d684279b5e9c92228f0ec44c601a1df097cd4a94efe95457c106455731`. Root's complete [114 checkpoint](evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json), blob `8c87413277a698b7bd1dac3976edf2d796e8653e`, 205936 bytes, SHA256 `c516cea38d77cdf1c0e990e72572c9ab589e73bcca172c0ac31e5306971a7e4a`, preserves all 58 actual package proof objects and the precise failure limit.\n\n| Actual 114 entry/gate | Observed result and current limit |\n| --- | --- |\n| Native publication | FAIL43198.408941 ms, three completed phases, no suite terminal. snapshotTokenMatched=true proves exact false-fact refusal, untouched reproof, current receipt and exact own live reservation check; the subsequent ordinary cleanup interval is unresolved |\n| Ordinary cleanup evidence | entries0 measures beforeRpc after HTTP/Auth/body, not raw HTTPentry. Actual early server phases/client reply and inner cause are unobserved. stale untouched_reproof step is not an extraction-failure diagnosis |\n| R4 disposal | unknown with0 intervalHTTP after owner.stop; this may follow stopped fixture resources. No independently established second failure, timeout, SQL deletion defect or claimed ACK |\n| Mounted Workspace | PASS233404.076541 ms, all13 scenarios; no browser source change in Fix15 |\n| Other native/package entries | Boundaries90296.277292 ms, Integrity184822.377753 ms, Wait/lifecycle195988.620003 ms, Acceptance84302.205453 ms, Context125947.274377 ms, Implementation2592.708912 ms, Recovery230507.965547 ms all PASS |\n| Auth/Persisted/Atomic | Actual 114 Auth55/243, Persisted95 phases/45 reads and full Atomic151 parsed records PASS; these do not close Core or transfer to a new head |\n| Required aggregate/Production | Aggregate128748464612 FAIL for Core. Actual-main Production/domain/robots pass only for the closed landing, no hosted authenticated/RLS proof |\n\nThe semantic phase starts32416 ms and fails43193 ms; its own45-second scope starts after phase entry. No45-second timeout or source-expiry cause is established. Atomic's complete terminal at1011198 ms records10990/10990 settled, pending0, 248/248 closed, 11 clusters, parentAborted=false, reserve188802 ms; one-pass TAP totals1012107.425577 ms. Persisted one-pass TAP totals239982.865941 ms. Original4fbe full PASS led to the regular merge, but actual 114 remains red.\n\n## Fix15/R11 required evidence for the next actual head\n\n| Changed boundary | Mandatory preserved or added evidence |\n| --- | --- |\n| Local HTTP fixture | Explicit Connection:close before handler; actual SDK/Auth/SQL/body/status/held-body EOF preserved. Fixed HTTP/Auth/body/beforeRpc/COMMIT/server-end/finish/close evidence; no retry or global transport replacement |\n| Ordinary cleanup diagnosis | Independent raw HTTP interval, deep-copied preStop snapshot and eventual settled snapshot; fixed own-reservation/cleanup/ack step tags. Server-send/finish is not a client ACK |\n| Client observation | Only the concrete life.fetch instance; original receiver/arguments/promise/Response/rejection; immediately owned nonthrowing branch; exact method/descriptor restoration before R4 and on stop; allowlisted metadata only |\n| Healthy client proof | After all drains, calls/started/settled exactly1;pending/synchronousThrows/observerErrors/omitted exactly0;one fulfilled200 record/noerror. No body-read/clone/tee/extra fetch or awaited product barrier |\n| Semantic and cleanup invariants | All25 prior assertion lines retained plus8 client assertions. Exact retained_fact_invalid, genuine controls, own-token SQL, removed1, token-matched COMMIT, History/CAS/Reserve/Snapshot/noFinalize/final0 remain. One-shot R4 unchanged; optional no-owner cleanup preserves primary and all cleanup failures |\n| Required store group | required-tests/acceptance.test.ts, context.test.ts, integrity.test.ts, native.test.ts; four explicit files, concurrency1, original 240000 ms each |\n| Required lifecycle group | required-tests/boundaries.test.ts, browser.test.ts, recovery.test.ts, wait-lifecycle.test.ts; four explicit files, concurrency1, original 240000 ms each |\n| Core and type coverage | Unchanged three Core globs/imports;595→587Core+8required source mapping. Pure implementation entry byte-identical; narrow tsconfig include retains moved roots and transitive checking |\n| Local/CI completeness | Composed local alias executes both groups. Mandatory two-group CI matrix, fail-fast:false20min each; full checkout/npmci/setup/exact-ref guard. Required always aggregate rejects any non-success of Core/Persisted/Atomic/entire matrix |\n| Existing bounds and tests | Core 30min, Persisted20min, Atomic25min/Auth10min, all product/SQL/operation/drain limits unchanged. Exact eight wrapper imports only; no skipped case, duplicate run, dependency/lockfile or Atomic implementation change |\n\nExplicit close is a deliberate fixture lifecycle policy supported by the pinned Node 22.23.4/Undici code. The same release already validates idle sockets. The actual 114 failure's transport cause remains unknown; neither the policy nor diagnostic tag is retrospective proof. The fresh runs must establish the result and fit their unchanged entry limits and new20-minute orchestration envelopes.\n\nRoot and both independent reviewers completed code source review without an open finding, recorded in [source-only receipt6722653175](https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175). That receipt covers Fixture V2, all25 old+8 new semantic assertions and the12 R11 candidates; final documentation/manifest review and all execution gates remain pending.\n\nThe complete [Fix15 manifest](evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json) binds all source/doc blobs, old/new wrapper identities, forward/reverse replacements and preserved constraints. This source candidate has no local TypeScript/lint/native/browser/CI PASS. Root alone publishes and reviews the new corrective PR, then verifies actual main and Production after any merge; #1155 is unfinished until those gates succeed. No old-head result supplies a missing new result.\n\nSQL_UNAPPLIED / FEATURE_NOT_LIVE and all #917/#1131/#1139/#968/source/Owner/key/retention/witness/privacy gates remain. The full V10 and earlier suffixes below are historical and byte-identical; their older branch/status/path references are not current instructions.\n\n---\n\n",
+        "historicalSuffixByteIdentical": true
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "baselineBlob": "3bef5465cf8227b0cdfdba3755097239c46c9217",
+        "candidateBlob": "c993c71fec066ae574e2ed42c1d9d38cca9b95a9",
+        "mode": "header insertion",
+        "prefix": "## Aktueller Fortsetzungsanker — post-merge Fix15 / R11\n\n**08.11.2026: #1155 bleibt offen; tatsächlicher Main-Gate ist rot.** [PR #1156](https://github.com/Jetnity/jetnity/pull/1156) wurde nach vollständigem unabhängigen 4fbe-PASS regulär gemergt. Der neue tatsächliche Main `11423774b2c2c5e84af040b546ad564c2e3850e8` scheitert im Core-Publication-Test; die frühere Freigabe ersetzt diese Prüfung nicht. [Vollständige 114-Evidence](evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json) und [aktueller TL-Entscheid 6722301930](https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6722301930) sind maßgeblich. Browser 13/13, die drei anderen R10-Suiten, Recovery, Auth, Persisted und Atomic bestehen an 114; insgesamt bleibt CHANGES REQUIRED.\n\nVerbindliche unmittelbare Korrektur ist [Fix15 TASK V1.2 / R11](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md), Blob `0113e0436e3c03628d7547fd78caf9f18097fa4e`, auf Branch `fix/official-truth-accepted-store-trip-integration-1-postmerge-20261108`; eingefrorener Aufgaben-Parent `b3bc5ed857b05064ca3b6427748947f46b3f9d82`, Quellbasis 114. Derselbe Autor **Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1**, Session `/root/accepted_store_trip_integration_writer`, liefert drei begrenzte Fixture-Korrekturen sowie die verpflichtende Aufteilung aller acht unveränderten Runtime-Wrapper in zwei CI-Gruppen. TypeScript-Abdeckung wird ausdrücklich erhalten; Produkt/SQL/Assertions/240s-Einzelfristen bleiben bestehen. Das [Fix15-Manifest](evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json), [V11-Handoff](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md) und [V11-Matrix](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md) beschreiben den noch nicht ausgeführten Kandidaten.\n\nDer vollständige Code-Quellenreview ist durch Root und beide unabhängigen Fachreviewer ohne offenen Befund abgeschlossen: [Source-only-Entscheid6722653175](https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175). Dies ist kein Typecheck-, Runtime- oder Release-PASS.\n\n**Erster offener Schritt:** abschließender Dokument-/Manifestreview, danach ausschließlich durch Root Veröffentlichung des begrenzten Korrektur-PR und vollständige neue Gates einschließlich beider CI-Matrixgruppen; nach möglichem Merge tatsächliche Main-/Production-Prüfung. Korrektur-PR-Nummer und neuester Head sind live zu ermitteln, nicht aus dem gemergten 1156 abzuleiten. Keine eigenständige Ready-/Merge-Entscheidung, kein günstiger Rerun und kein Folgeslice. SQL_UNAPPLIED / FEATURE_NOT_LIVE sowie #917-Readback-Refusal, #1131-Transport-Hold und sämtliche besonderen Owner-/Source-/Key-/Retention-/Privacy-Gates bleiben unverändert. Alle folgenden älteren Anker sind historische Snapshots.\n\n",
+        "replacements": [
+          {
+            "before": "# Jetnity – Active Work Status\n\n",
+            "after": "# Jetnity – Active Work Status\n\n## Aktueller Fortsetzungsanker — post-merge Fix15 / R11\n\n**08.11.2026: #1155 bleibt offen; tatsächlicher Main-Gate ist rot.** [PR #1156](https://github.com/Jetnity/jetnity/pull/1156) wurde nach vollständigem unabhängigen 4fbe-PASS regulär gemergt. Der neue tatsächliche Main `11423774b2c2c5e84af040b546ad564c2e3850e8` scheitert im Core-Publication-Test; die frühere Freigabe ersetzt diese Prüfung nicht. [Vollständige 114-Evidence](evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json) und [aktueller TL-Entscheid 6722301930](https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6722301930) sind maßgeblich. Browser 13/13, die drei anderen R10-Suiten, Recovery, Auth, Persisted und Atomic bestehen an 114; insgesamt bleibt CHANGES REQUIRED.\n\nVerbindliche unmittelbare Korrektur ist [Fix15 TASK V1.2 / R11](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_REVIEW_FIX15_TASK_2026-11-08.md), Blob `0113e0436e3c03628d7547fd78caf9f18097fa4e`, auf Branch `fix/official-truth-accepted-store-trip-integration-1-postmerge-20261108`; eingefrorener Aufgaben-Parent `b3bc5ed857b05064ca3b6427748947f46b3f9d82`, Quellbasis 114. Derselbe Autor **Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1**, Session `/root/accepted_store_trip_integration_writer`, liefert drei begrenzte Fixture-Korrekturen sowie die verpflichtende Aufteilung aller acht unveränderten Runtime-Wrapper in zwei CI-Gruppen. TypeScript-Abdeckung wird ausdrücklich erhalten; Produkt/SQL/Assertions/240s-Einzelfristen bleiben bestehen. Das [Fix15-Manifest](evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix15-manifest.json), [V11-Handoff](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md) und [V11-Matrix](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md) beschreiben den noch nicht ausgeführten Kandidaten.\n\nDer vollständige Code-Quellenreview ist durch Root und beide unabhängigen Fachreviewer ohne offenen Befund abgeschlossen: [Source-only-Entscheid6722653175](https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175). Dies ist kein Typecheck-, Runtime- oder Release-PASS.\n\n**Erster offener Schritt:** abschließender Dokument-/Manifestreview, danach ausschließlich durch Root Veröffentlichung des begrenzten Korrektur-PR und vollständige neue Gates einschließlich beider CI-Matrixgruppen; nach möglichem Merge tatsächliche Main-/Production-Prüfung. Korrektur-PR-Nummer und neuester Head sind live zu ermitteln, nicht aus dem gemergten 1156 abzuleiten. Keine eigenständige Ready-/Merge-Entscheidung, kein günstiger Rerun und kein Folgeslice. SQL_UNAPPLIED / FEATURE_NOT_LIVE sowie #917-Readback-Refusal, #1131-Transport-Hold und sämtliche besonderen Owner-/Source-/Key-/Retention-/Privacy-Gates bleiben unverändert. Alle folgenden älteren Anker sind historische Snapshots.\n\n"
+          }
+        ]
+      }
+    ],
+    "rootCheckpointPreserved": true,
+    "oldV10SuffixesByteIdentical": true,
+    "active": "Additive current corrective-task/source-review pointer; merged1156 remains historical, no new PR number invented."
+  },
+  "sourceEvidence": {
+    "officialNodeReleasePins": [
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "lib/_http_server.js",
+        "gitBlob": "4ff976d02ca441e030c84232592be5463144d958",
+        "sha256": "213f73e67e3792c19920440b1bcc9684ac2c0c55b49fe1b764bfc8a81560c09c",
+        "bytes": 40340,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/lib/_http_server.js"
+      },
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "lib/_http_outgoing.js",
+        "gitBlob": "f3abf217787063875f172e56c3369cf7b5910d5b",
+        "sha256": "430a3793ef617e3fcd9454c896c1ac5f69afb6c856e537269754eb1eee5a51e6",
+        "bytes": 36465,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/lib/_http_outgoing.js"
+      },
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "deps/undici/src/package.json",
+        "gitBlob": "4bccc5455b894670b56604e99e45d29ded0dc3fe",
+        "sha256": "df5d9c505f8db601e62bf67eb835117985e549cfbbb61c4c1a84c55d57ab3532",
+        "bytes": 6290,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/deps/undici/src/package.json"
+      },
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "deps/undici/src/lib/dispatcher/client.js",
+        "gitBlob": "9efe80e3002bcc170834e3121a22feb824ecc082",
+        "sha256": "9de5bb48be1f468281a43a8e309b01bfebd6ce400ada1f1e14404090b10fc728",
+        "bytes": 17087,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/deps/undici/src/lib/dispatcher/client.js"
+      },
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "deps/undici/src/lib/dispatcher/client-h1.js",
+        "gitBlob": "7d1fdbdf6e7b811f3e399b6fbe46b94d57bb5d56",
+        "sha256": "e219f9a7f00999c33be0b847ed77d108419e7dd359844290f9d3acc30aef037b",
+        "bytes": 41161,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/deps/undici/src/lib/dispatcher/client-h1.js"
+      },
+      {
+        "repository": "nodejs/node",
+        "tag": "v22.23.4",
+        "path": "deps/undici/undici.js",
+        "gitBlob": "fbabc70fe2a5534fd2adf25de06710138cf7fdfc",
+        "sha256": "d08718040d24190751622ae2ec1b96bad378c9f8d7aad856fe7a3fb44266bba8",
+        "bytes": 670291,
+        "url": "https://github.com/nodejs/node/blob/v22.23.4/deps/undici/undici.js"
+      }
+    ],
+    "policyQualification": "Explicit Connection:close removes idle reuse only in the local fixture; current exact-release Node/Undici already validates idle sockets. No actual114 keep-alive/transport cause is established.",
+    "originalFailureBoundary": {
+      "semanticBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "databaseBlob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+      "lifetimeBlob": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "httpBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+      "loaderBlob": "7f79dba1cbdc4a6807f094a4873ba3ad635b7b46",
+      "suiteBlob": "d40c0cb2fba4dc33e1cd4694fdc01aa22a658525",
+      "phaseStartMs": 32416,
+      "failureMs": 43193,
+      "ownSemanticLifetimeStartsAfterPhaseStart": true,
+      "ownSemanticBudgetMs": 45000,
+      "staleStep": "untouched_reproof",
+      "snapshotTokenMatchedTrueImplies": [
+        "exact false-fact assert.rejects satisfied",
+        "untouched original reproof completed",
+        "after.assertCurrent and receipt equality completed",
+        "fresh exact own live snapshot reservation SQL assertion completed"
+      ],
+      "remainingInterval": "ordinary hook installation / current db.cleanup invocation and reply, including unobserved HTTP entry/Auth/body boundaries; not proven inside reproof",
+      "disposalAfterOwnerStop": "The semantic catch calls owner.stop before its finally; the HTTP listener/connections are stopped. unknown disposal and zero interval entries need not be a second independent error.",
+      "actualInnerMessage": "unobserved",
+      "mostSpecificSourceCandidate": "store_cleanup_unavailable is produced on reply.error; it was absent from the diagnostic allowlist. Not a runtime-established message.",
+      "actualTransportCause": "unestablished",
+      "noTimeoutOrSourceExpiryClaim": true,
+      "ordinaryEntryCounterMeaning": "beforeRpc hook after raw HTTP entry/Auth/body parse; zero does not establish absent HTTP entry",
+      "actualOrdinaryHttpAuthBodyState": "unobserved"
+    },
+    "unchangedProductAnchors": {
+      "databaseServer": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+      "lifetimeServer": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "browserFixture": "b79caba69dc741a818367b501dd33df51ce24901",
+      "implementationEntry": "c8976e37ac3cd330197a82a2aec97dfb40398b87",
+      "packageLock": "8f50e69821be6cd5a95beb8e97271b6fc72117f3"
+    },
+    "fixtureCorrection": {
+      "server": "Central Connection:close before accepted handler; actual held body/status/EOF retained; fixed request/Auth/body/beforeRpc/COMMIT/server-end/finish/close fields. Server lifecycle never equals client acknowledgement.",
+      "ordinary": "Separate actual request interval and beforeRpc counter; copied preStop view before owner.stop plus eventual settled view; precise own-reservation/call/returned-ack steps.",
+      "client": "Only concrete life.fetch temporarily observed; identical original method receiver/arguments/Promise/Response/rejection; immediately owned nonthrowing side branch; no body operations/new fetch/retry/barrier.",
+      "restoration": "Exact pre-existing own descriptor or inherited state restored on stop and before R4.",
+      "errors": "Fixed allowlisted name/code/causeCode/status only; complete original errors remain; add exact store_cleanup_unavailable and native_cleanup_observation_failed.",
+      "healthyAssertions": {
+        "calls": 1,
+        "started": 1,
+        "settled": 1,
+        "pending": 0,
+        "synchronousThrows": 0,
+        "observerErrors": 0,
+        "omitted": 0,
+        "records": [
+          {
+            "outcome": "fulfilled",
+            "status": 200,
+            "error": null
+          }
+        ]
+      },
+      "optionalOwner": "Every no-owner cleanup step attempted; original primary plus all cleanup errors retained. Existing owner.cleanup path unchanged."
+    }
+  },
+  "r11": {
+    "groups": {
+      "store": [
+        "acceptance",
+        "context",
+        "integrity",
+        "native"
+      ],
+      "lifecycle": [
+        "boundaries",
+        "browser",
+        "recovery",
+        "wait-lifecycle"
+      ]
+    },
+    "commands": {
+      "store": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/acceptance.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/context.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/integrity.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/native.test.ts",
+      "lifecycle": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/boundaries.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/recovery.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/wait-lifecycle.test.ts"
+    },
+    "composedAlias": "npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle",
+    "npmTest": "npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native",
+    "coreCommandUnchanged": "node --import ./scripts/server-only-test-register.mjs --import tsx --test \"lib/**/*.test.ts\" \"scripts/operating-mode-guard.test.mjs\" \"scripts/dev-reference-local-pg-prep-1/*.test.ts\"",
+    "coreGlobs": [
+      "lib/**/*.test.ts",
+      "scripts/operating-mode-guard.test.mjs",
+      "scripts/dev-reference-local-pg-prep-1/*.test.ts"
+    ],
+    "sourceMapping": {
+      "oldCore": 595,
+      "newCore": 587,
+      "required": 8,
+      "totalUnique": 595,
+      "meaning": "Source-discovery count only; no runtime PASS.",
+      "oldPathsSha256": "7d5048963e8c02d484dab77b1908bdb96780a4050c78e02d43ea203a6c9617fa",
+      "newCorePathsSha256": "64be92727172f6b4d91446c8e5c202c7416877b6d45db1bcfef7fe1286dc095b"
+    },
+    "requiredTypescriptInclude": "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/*.test.ts",
+    "otherCompilerOptionsIncludesExcludesUnchanged": true,
+    "matrix": {
+      "job": "accepted_store_native",
+      "groups": [
+        "store",
+        "lifecycle"
+      ],
+      "failFast": false,
+      "timeoutMinutes": 20,
+      "runner": "ubuntu-latest",
+      "node": "22.x",
+      "testConcurrency": 1,
+      "exactCheckoutAndOperatingMode": true,
+      "optionalExecution": false
+    },
+    "requiredAggregate": {
+      "name": "Typecheck, Lint & Build",
+      "needs": [
+        "verify",
+        "persisted_native",
+        "refresh_native",
+        "accepted_store_native"
+      ],
+      "always": true,
+      "allFourResultsMustEqual": "success"
+    },
+    "unchangedJobBudgetsMinutes": {
+      "core": 30,
+      "persisted": 20,
+      "atomic": 25,
+      "auth": 10
+    },
+    "unchangedEachEntryTimeoutMs": 240000,
+    "unchangedProductBudgets": {
+      "businessMs": 45000,
+      "displayMs": 15000,
+      "sourceAgeMs": 300000,
+      "r4DisposalMs": 5000,
+      "r4BodyBytes": 2048
+    },
+    "guard": "Existing Atomic CI test only adapted to R11/V1.2; all other Atomic guard/implementation bytes remain unchanged.",
+    "noGlobalCoreSerialization": true,
+    "noSkippedCase": true,
+    "noTestDuplication": true,
+    "noDependencyOrLockChange": true
+  },
+  "currentPublishedEvidence": {
+    "classification": "Actual114 failed post-merge gate; prior4fbe full PASS does not transfer.",
+    "checkpoint": {
+      "path": "docs/evidence/official-truth-accepted-store-trip-integration-1/11423774-ci-checkpoint.json",
+      "blob": "8c87413277a698b7bd1dac3976edf2d796e8653e",
+      "sha256": "c516cea38d77cdf1c0e990e72572c9ab589e73bcca172c0ac31e5306971a7e4a",
+      "bytes": 205936,
+      "preservedInParent": true
+    },
+    "rootReceipt": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6722301930",
+    "actualHead": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+    "tree": "41bf3b0f29ab961d72789d119fdedc1d6e696b91",
+    "run": 42484533024,
+    "attempt": 1,
+    "overallVerdict": "CHANGES_REQUIRED",
+    "workClosed": false,
+    "core": {
+      "job": 128743397622,
+      "original": {
+        "sha256": "e0d423d684279b5e9c92228f0ec44c601a1df097cd4a94efe95457c106455731",
+        "bytes": 4048820,
+        "bom": true,
+        "lf": 60999
+      },
+      "summary": {
+        "tests": 8208,
+        "suites": 935,
+        "pass": 8205,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 2,
+        "todo": 0,
+        "duration_ms": 1104128.713025
+      },
+      "entries": [
+        {
+          "testNumber": 554,
+          "name": "Accepted Store Trip Integration 1: actual unbound archive/legacy refusal and final source expiry",
+          "result": "pass",
+          "durationMs": 84302.205453,
+          "line": 21624
+        },
+        {
+          "testNumber": 555,
+          "name": "Accepted Store Trip Integration 1: actual pinned SSR, outgoing signals and owned request/key/target boundaries",
+          "result": "pass",
+          "durationMs": 90296.277292,
+          "line": 21896
+        },
+        {
+          "testNumber": 556,
+          "name": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+          "result": "pass",
+          "durationMs": 233404.076541,
+          "line": 22156
+        },
+        {
+          "testNumber": 557,
+          "name": "Accepted Store Trip Integration 1: actual saved Trip date, person, credential and declaration boundaries",
+          "result": "pass",
+          "durationMs": 125947.274377,
+          "line": 22295
+        },
+        {
+          "testNumber": 558,
+          "name": "Accepted Store Trip Integration 1: complete multi-capsule implementation identity preserves every exact file",
+          "result": "pass",
+          "durationMs": 2592.708912,
+          "line": 22302
+        },
+        {
+          "testNumber": 559,
+          "name": "Accepted Store Trip Integration 1: actual retained-row integrity and own-Trip recovery with independent A/B",
+          "result": "pass",
+          "durationMs": 184822.377753,
+          "line": 22418
+        },
+        {
+          "testNumber": 560,
+          "name": "Accepted Store Trip Integration 1: actual native producer, durable commit, fresh reader and restore refusal",
+          "result": "fail",
+          "durationMs": 43198.408941,
+          "line": 22459
+        },
+        {
+          "testNumber": 561,
+          "name": "Accepted Store Trip Integration 1: native abandonment, late reply, R4 race and orphan expiry recovery",
+          "result": "pass",
+          "durationMs": 230507.965547,
+          "line": 22552
+        },
+        {
+          "testNumber": 562,
+          "name": "Accepted Store Trip Integration 1: actual four Finalize waits, authority/Trip controls and immutable lifecycle",
+          "result": "pass",
+          "durationMs": 195988.620003,
+          "line": 22671
+        }
+      ],
+      "proofs": [
+        {
+          "line": 21629,
+          "proof": "native-acceptance-refusal",
+          "mode": "unbound_archive",
+          "seeded": true,
+          "deferredObserved": false,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": true,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "line": 21630,
+          "proof": "native-acceptance-refusal",
+          "mode": "unbound_legacy_claim",
+          "seeded": true,
+          "deferredObserved": false,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": true,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "line": 21631,
+          "proof": "native-final-expiry-checkpoint",
+          "deferredObserved": true,
+          "sqlState": "22023",
+          "waitMs": 19916,
+          "committedVersions": 0
+        },
+        {
+          "line": 21632,
+          "proof": "native-acceptance-refusal",
+          "mode": "source_expiry_after_constraints",
+          "seeded": false,
+          "deferredObserved": true,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": false,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "line": 21901,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "start",
+          "elapsedMs": 870
+        },
+        {
+          "line": 21902,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "complete",
+          "elapsedMs": 4195
+        },
+        {
+          "line": 21903,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "all actual pinned SSR / outgoing / target / request / key boundary cases",
+          "event": "start",
+          "elapsedMs": 8320
+        },
+        {
+          "line": 21904,
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "constructor_only",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25448,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 0,
+          "queryCalls": 0,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "line": 21905,
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "concurrent_get_user",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25427,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 1,
+          "queryCalls": 0,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "line": 21906,
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "query_abort_then_owner",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25431,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 0,
+          "queryCalls": 1,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "line": 21907,
+          "proof": "actual-outgoing-native-fetch-and-query-boundaries",
+          "cases": [
+            "request_signal",
+            "init_signal",
+            "owner_signal",
+            "complete_body",
+            "late_headers",
+            "abort_at_headers",
+            "actual_factory_query_only",
+            "actual_factory_owner"
+          ],
+          "realNativeResponses": true,
+          "actualRlsTripBytes": true,
+          "allRequestInitOwnerSignalsComposed": true,
+          "headersDoNotSettlePendingBody": true,
+          "postHeadersPreReaderAbortTerminal": true,
+          "bodyReadersReleased": true,
+          "queryOnlyOwnerRemainsLive": true,
+          "noNativeStartsAfterOwnerAbort": true,
+          "allClientAndServerWorkAwaited": true,
+          "boundary": "No instantaneous TCP-close claim; actual native fetch/body and fixture HTTP handlers are separately awaited"
+        },
+        {
+          "line": 21908,
+          "proof": "owned-boundaries",
+          "unsafeTargetNoActivity": true,
+          "preabortNoActivity": true,
+          "legacyFactoryModesPreserved": true,
+          "requestSourceDisposalAwaited": true,
+          "lateKeyAbortWiped": true,
+          "lateKeyBindingClosureWiped": true
+        },
+        {
+          "line": 21909,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "all actual pinned SSR / outgoing / target / request / key boundary cases",
+          "event": "complete",
+          "elapsedMs": 89829
+        },
+        {
+          "line": 21910,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "start",
+          "elapsedMs": 89829
+        },
+        {
+          "line": 21911,
+          "proof": "native-suite-phase",
+          "suite": "boundaries",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "complete",
+          "elapsedMs": 90001
+        },
+        {
+          "line": 21912,
+          "proof": "native-suite-complete",
+          "suite": "boundaries",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 2,
+          "elapsedMs": 90294,
+          "journalOperations": 0,
+          "immutableVersions": 0,
+          "sourceFetches": 2,
+          "rpcCommits": 10,
+          "rpcRefusals": 0,
+          "witnessAdvances": 0,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 584,
+          "ownedSettled": 584,
+          "ownedPending": 0,
+          "ownedConnections": 90,
+          "ownedClosed": 90,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "line": 22161,
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 62,
+            "settled": 62,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-08T13:25:11.428Z",
+          "readAt": "2026-11-08T13:28:44.499Z",
+          "expiresAt": "2026-11-08T13:28:59.499Z",
+          "deadlineFromRequestStartMs": 20857,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        },
+        {
+          "line": 22300,
+          "proof": "actual-saved-Trip-context-negatives",
+          "proofs": [
+            "actual six-RPC role separation and caller authority refusal",
+            "wrong expected revision before any Reserve",
+            "explicit other traveller and passport",
+            "explicit national ID instead of selected ordinary passport",
+            "unknown passport class",
+            "unsupported purpose",
+            "incomplete route",
+            "unsupported origin",
+            "foreign citizenship reference cannot be saved as the own selected document",
+            "actual start_date outside compiled application slot",
+            "actual end_date outside compiled application slot",
+            "extra credential after attestation invalidates saved context"
+          ],
+          "sourceFetchesDuringReads": 0,
+          "targetContextStatusProved": true,
+          "positiveControlsAfterEach": true,
+          "originalMultiPersonMultiOptionPositive": true,
+          "ownedClientBackends": 0
+        },
+        {
+          "line": 22423,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "start",
+          "elapsedMs": 925
+        },
+        {
+          "line": 22424,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "complete",
+          "elapsedMs": 3195
+        },
+        {
+          "line": 22425,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "prerequisite: independent genuine A then B / confirmations / current B read",
+          "event": "start",
+          "elapsedMs": 6141
+        },
+        {
+          "line": 22426,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "prerequisite: independent genuine A then B / confirmations / current B read",
+          "event": "complete",
+          "elapsedMs": 61807
+        },
+        {
+          "line": 22427,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "all retained Evidence / support / archive / custody / current-row integrity cases",
+          "event": "start",
+          "elapsedMs": 61807
+        },
+        {
+          "line": 22428,
+          "proof": "native-retained-row-integrity",
+          "cases": [
+            "missing current version despite retained journal",
+            "ambiguous second current row refused by actual unique constraint",
+            "actual retained legacy Evidence content identity",
+            "actual retained version support and original pin",
+            "actual retained archive binding bytes",
+            "actual retained custody metadata",
+            "actual retained ciphertext envelope"
+          ],
+          "positiveControlAfterEveryExactRestore": true,
+          "journalAndExternalWitnessUnchanged": true,
+          "boundary": "Local physical-restore corruption only; canonical schemas, policies and runtime mutators remain unchanged"
+        },
+        {
+          "line": 22429,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "all retained Evidence / support / archive / custody / current-row integrity cases",
+          "event": "complete",
+          "elapsedMs": 170153
+        },
+        {
+          "line": 22430,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "actual own / foreign / missing Trip and persisted context recovery",
+          "event": "start",
+          "elapsedMs": 170153
+        },
+        {
+          "line": 22431,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "actual own / foreign / missing Trip and persisted context recovery",
+          "event": "complete",
+          "elapsedMs": 184309
+        },
+        {
+          "line": 22432,
+          "proof": "native-integrity-rls-families",
+          "completedFamilies": 2,
+          "prerequisitePublications": 2,
+          "bootstrapNotCountedAsLostAckOrRestoreProof": true
+        },
+        {
+          "line": 22433,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "start",
+          "elapsedMs": 184309
+        },
+        {
+          "line": 22434,
+          "proof": "native-suite-phase",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "complete",
+          "elapsedMs": 184570
+        },
+        {
+          "line": 22435,
+          "proof": "native-suite-complete",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 184820,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 2,
+          "rpcCommits": 86,
+          "rpcRefusals": 6,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 2270,
+          "ownedSettled": 2270,
+          "ownedPending": 0,
+          "ownedConnections": 444,
+          "ownedClosed": 444,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "line": 22474,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "start",
+          "elapsedMs": 834
+        },
+        {
+          "line": 22475,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "complete",
+          "elapsedMs": 2981
+        },
+        {
+          "line": 22476,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "closed availability / origin / bounded body before Auth or DB",
+          "event": "start",
+          "elapsedMs": 5779
+        },
+        {
+          "line": 22477,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "closed availability / origin / bounded body before Auth or DB",
+          "event": "complete",
+          "elapsedMs": 5795
+        },
+        {
+          "line": 22478,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "genuine protected publication A / fresh reader / real client binding",
+          "event": "start",
+          "elapsedMs": 5795
+        },
+        {
+          "line": 22479,
+          "proof": "actual-producer-commit-fresh-reader",
+          "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)",
+          "node": "22.23.4",
+          "receipt": "ot-provenance-v1:507377ef625b18727f258cf6976435903058a2786794fcb99c11590fc49e4663",
+          "sourceCheckedAt": "2026-11-08T13:28:30.067Z",
+          "acceptedAt": "2026-11-08T13:28:35.037Z",
+          "readAt": "2026-11-08T13:28:48.571Z",
+          "expiresAt": "2026-11-08T13:29:03.571Z",
+          "selectedPositive": 1,
+          "otherCellsUnknown": true,
+          "independentReaderSourceCalls": 0,
+          "deadlineFromRequestStartMs": 19633,
+          "actualClientDecoderPassed": true,
+          "fullReceiptLength": 81,
+          "engineReferenceLength": 79,
+          "alteredReferenceRefused": true,
+          "referenceHelperInActualSourceClosure": true
+        },
+        {
+          "line": 22480,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "genuine protected publication A / fresh reader / real client binding",
+          "event": "complete",
+          "elapsedMs": 32416
+        },
+        {
+          "line": 22481,
+          "proof": "native-suite-phase",
+          "suite": "native-publication",
+          "phase": "strict R2 false fact / actual retained semantic re-extraction",
+          "event": "start",
+          "elapsedMs": 32416
+        },
+        {
+          "line": 22482,
+          "proof": "native-semantic-cleanup-observation",
+          "snapshotTokenMatched": true,
+          "ordinary": {
+            "entries": 0,
+            "tokenMatches": 0,
+            "commits": 0,
+            "committedRemovedOne": false,
+            "acknowledged": false
+          },
+          "disposal": {
+            "status": "unknown",
+            "removed": null,
+            "intervalCleanupHttpEntries": 0,
+            "intervalCleanupRpcOutcomes": []
+          }
+        },
+        {
+          "line": 22483,
+          "proof": "native-suite-failed",
+          "suite": "native-publication",
+          "phase": "strict R2 false fact / actual retained semantic re-extraction",
+          "semanticStep": "untouched_reproof",
+          "completedPhases": 3,
+          "elapsedMs": 43193,
+          "lastRpcOutcomes": [
+            {
+              "rpc": "official_truth_trip_store_snapshot_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_finalize_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_confirm_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_cleanup_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_cleanup_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_reserve_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_snapshot_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_finalize_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_confirm_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_cleanup_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_reserve_v1",
+              "committed": true,
+              "sqlState": null
+            },
+            {
+              "rpc": "official_truth_trip_store_snapshot_v1",
+              "committed": true,
+              "sqlState": null
+            }
+          ]
+        },
+        {
+          "line": 22484,
+          "proof": "native-suite-failure-details",
+          "suite": "native-publication",
+          "phase": "strict R2 false fact / actual retained semantic re-extraction",
+          "semanticStep": "untouched_reproof",
+          "completedPhases": 3,
+          "elapsedMs": 43194,
+          "failures": {
+            "roots": [
+              {
+                "ref": 1
+              }
+            ],
+            "nodes": [
+              {
+                "id": 1,
+                "kind": "Error",
+                "name": "Error",
+                "tag": "unlisted_error",
+                "stackInputTruncated": false,
+                "framesTruncated": false,
+                "frames": [
+                  {
+                    "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+                    "line": 2,
+                    "column": 4120
+                  },
+                  {
+                    "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+                    "line": 50,
+                    "column": 27
+                  }
+                ]
+              }
+            ],
+            "rootsOmitted": 0,
+            "maxNodes": 16,
+            "maxDepth": 4,
+            "maxFrames": 3
+          }
+        },
+        {
+          "line": 22557,
+          "proof": "native-orphan-expiry-checkpoint",
+          "genuineUnacknowledgedReserves": 32,
+          "storedReservationBoundsChecked": 32,
+          "quotaActuallyRefused": true,
+          "waitMs": 43542
+        },
+        {
+          "line": 22558,
+          "proof": "native-r4-contended-disposal-checkpoint",
+          "finalizeCommitted": true,
+          "disposalAttempts": 1,
+          "sqlState": "55P03",
+          "residualReservations": 1,
+          "residualStages": 1,
+          "originalExpiryWaitMs": 24583
+        },
+        {
+          "line": 22559,
+          "proof": "native-disposal-and-recovery",
+          "proofs": [
+            "genuine finalized read response arrives after original validation window",
+            "R4 acquired token disposal loses ACK but performs one actual bounded cleanup",
+            "expired unacknowledged read reservations recover through explicit reader alone",
+            "R4 cleanup races actual pending authenticated Finalize and preserves committed history"
+          ],
+          "lateReadNoPositive": true,
+          "unknownDisposalAckHonest": true,
+          "expiredOrphansSwept": 32,
+          "readerRecoverySourceFetches": 0,
+          "finalizeRaceCommitted": true,
+          "acquiredTokenDisposalAttempts": 1,
+          "disposalSqlState": "55P03",
+          "raceExpiredResidueSwept": 1,
+          "immutableVersions": 2,
+          "durableOperations": 2,
+          "ownedClientBackends": 0
+        },
+        {
+          "line": 22676,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "start",
+          "elapsedMs": 944
+        },
+        {
+          "line": 22677,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "fresh owned schema/catalog/Auth/witness/Trip setup",
+          "event": "complete",
+          "elapsedMs": 2888
+        },
+        {
+          "line": 22678,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "prerequisite: independent genuine A then B / confirmations / current B read",
+          "event": "start",
+          "elapsedMs": 5989
+        },
+        {
+          "line": 22679,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "prerequisite: independent genuine A then B / confirmations / current B read",
+          "event": "complete",
+          "elapsedMs": 56473
+        },
+        {
+          "line": 22680,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "all four genuine native Finalize waits / authority / expiry / Trip controls",
+          "event": "start",
+          "elapsedMs": 56473
+        },
+        {
+          "line": 22681,
+          "proof": "native-after-wait-authority-and-trip",
+          "cases": [
+            "auth_revoked",
+            "auth_expired",
+            "child_change",
+            "child_aba"
+          ],
+          "actualBlockedFinalizeObserved": true,
+          "holderReadyBeforeDispatch": true,
+          "actualWaiterAndBlockerMatched": true,
+          "blockedRelation": "private.official_sources",
+          "observationBoundMs": 1000,
+          "positiveControlAfterEach": true,
+          "boundary": "Value-plus-MVCC closure; no claim to detect every fully vanished child ABA. Engine values remain the exact reserved own Trip."
+        },
+        {
+          "line": 22682,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "all four genuine native Finalize waits / authority / expiry / Trip controls",
+          "event": "complete",
+          "elapsedMs": 144971
+        },
+        {
+          "line": 22683,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "actual internal conflict / withdrawal / no reactivation",
+          "event": "start",
+          "elapsedMs": 144971
+        },
+        {
+          "line": 22684,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "actual internal conflict / withdrawal / no reactivation",
+          "event": "complete",
+          "elapsedMs": 195516
+        },
+        {
+          "line": 22685,
+          "proof": "native-wait-lifecycle-families",
+          "completedFamilies": 2,
+          "prerequisitePublications": 2,
+          "journalOperations": 4,
+          "immutableVersions": 2,
+          "bootstrapNotCountedAsLostAckOrRestoreProof": true
+        },
+        {
+          "line": 22686,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "start",
+          "elapsedMs": 195548
+        },
+        {
+          "line": 22687,
+          "proof": "native-suite-phase",
+          "suite": "wait-lifecycle",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "event": "complete",
+          "elapsedMs": 195725
+        },
+        {
+          "line": 22688,
+          "proof": "native-suite-complete",
+          "suite": "wait-lifecycle",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 195986,
+          "journalOperations": 4,
+          "immutableVersions": 2,
+          "sourceFetches": 3,
+          "rpcCommits": 99,
+          "rpcRefusals": 7,
+          "witnessAdvances": 4,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 7172,
+          "ownedSettled": 7172,
+          "ownedPending": 0,
+          "ownedConnections": 476,
+          "ownedClosed": 476,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ],
+      "proofVector": {
+        "sha256": "2e42aea408b08c78661f102537d288718626ee9432191952d8ee7911d957fe32",
+        "bytes": 18744,
+        "count": 58
+      },
+      "failureLocalization": {
+        "phase": "strict R2 false fact / actual retained semantic re-extraction",
+        "recordedStep": "untouched_reproof",
+        "warning": "Step is stale across ordinary cleanup preparation/call; snapshotTokenMatched=true is emitted only after original reproof and exact reservation SQL assertion have succeeded.",
+        "ordinaryAcknowledged": false,
+        "disposalStatus": "unknown",
+        "disposalIntervalHttpEntries": 0,
+        "innerErrorText": "not logged; exact cause under source diagnosis",
+        "ordinaryBeforeRpcHookEntries": 0,
+        "ordinaryRawHttpEntry": "not observed in original",
+        "ordinaryAuthAndBodyPhase": "not observed in original"
+      },
+      "hygiene": "5 skipped",
+      "build": "skipped"
+    },
+    "atomic": {
+      "job": 128743397554,
+      "original": {
+        "sha256": "e486a894390f6133491cf6e8253786d26912cce88dedd2c4e92b5ae966be10ae",
+        "bytes": 179234,
+        "bom": true,
+        "lf": 1359
+      },
+      "tap": {
+        "tests": 1,
+        "suites": 0,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1012107.425577,
+        "subtestDurationMs": 1011201.953659
+      },
+      "rawMarkerCount": 152,
+      "parseableMarkerCount": 151,
+      "malformed": [
+        {
+          "line": 1217,
+          "raw": "2026-11-08T13:38:57.1314374Z # {\"schema\":\"official-truth-atomic-version-refresh-1\",\"phase\":\"R9 structural graph-worker equivalence; no canonical acceptance claim\",\"elapsedMs\":133722,\"case\":\"edge order: invalid bigint before missing target\",\"sqlstate\":\"22P02\",\"message\":\"invalid input syntax for type bigint: \\\\\"not-a-bigint\\\\\"\",\"implementationsCheckedInSql\":2}",
+          "error": "SyntaxError: Expected ',' or '}' after property value in JSON at position 280 (line 1 column 281)"
+        }
+      ],
+      "terminalCases": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 777805,
+          "case": "unknown_commit"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 831303,
+          "case": "readback_failure"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 921156,
+          "case": "cleanup_after_bound"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 1010981,
+          "case": "reader_after_bound"
+        }
+      ],
+      "cleanup": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+        "elapsedMs": 1011198,
+        "cleanup": {
+          "started": 10990,
+          "settled": 10990,
+          "pending": 0,
+          "connections": 248,
+          "closed": 248,
+          "stoppedClusters": 11
+        },
+        "parentAborted": false
+      },
+      "complete": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "complete native refresh acceptance matrix finished",
+        "elapsedMs": 1011198,
+        "parentReserveMs": 188802
+      }
+    },
+    "persisted": {
+      "job": 128743397640,
+      "original": {
+        "sha256": "99a0dc55e12659182ba04e8cc47e973c2da970aaf33a51319366ed68a935d097",
+        "bytes": 151747,
+        "bom": true,
+        "lf": 1156
+      },
+      "tap": {
+        "tests": 1,
+        "suites": 0,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 239982.865941,
+        "subtestDurationMs": 239308.427082
+      },
+      "markers": 95,
+      "readerResults": 45,
+      "terminal": [
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+          "elapsedMs": 181583
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+          "elapsedMs": 238944
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 238944
+        }
+      ]
+    },
+    "auth": {
+      "head": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+      "run": 42484533024,
+      "job": 128743397773,
+      "status": "success",
+      "values": 55,
+      "keys": 243,
+      "checkout": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+      "node": "22.23.4",
+      "sha256": "adc745516f1cb0138e665e46c489c6ecd087c5b61d6721dcb9cf8ced863f421a",
+      "bytes": 19625,
+      "bom": true,
+      "lf": 267,
+      "rootReview": "actual completed original and all config check results reviewed",
+      "actualMainShaPresent": true
+    },
+    "aggregate": {
+      "job": 128748464612,
+      "run": 42484533024,
+      "head": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+      "conclusion": "failure",
+      "core": "failure",
+      "persisted": "success",
+      "atomic": "success",
+      "original": {
+        "sha256": "3e3747556bbe102f3649686faaf4bccf58b337546f2065463b15382d181e71b2",
+        "bytes": 3317,
+        "bom": true,
+        "lf": 50
+      },
+      "rootFullOriginalReviewed": true
+    },
+    "production": {
+      "head": "11423774b2c2c5e84af040b546ad564c2e3850e8",
+      "deployment": "dpl_9nrmbKuPz7ZwZnaCj5axQEdozzQo",
+      "project": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM",
+      "team": "team_fgOHJvth4GbXnyclxk95GQul",
+      "ref": "main",
+      "readyState": "READY",
+      "target": "production",
+      "aliasError": null,
+      "domain": {
+        "url": "https://jetnity.com/",
+        "status": 200,
+        "date": "Sun, 08 Nov 2026 13:24:16 GMT",
+        "ids": [
+          "dpl_9nrmbKuPz7ZwZnaCj5axQEdozzQo"
+        ],
+        "htmlRobots": "noindex, nofollow",
+        "xRobotsTag": null
+      },
+      "robots": {
+        "url": "https://jetnity.com/robots.txt",
+        "status": 200,
+        "date": "Sun, 08 Nov 2026 13:24:10 GMT",
+        "text": "User-Agent: *\nDisallow: /\n\n"
+      },
+      "deploymentUrl": {
+        "url": "https://jetnity-3w8gqkx4o-jetnity-e1b93c82.vercel.app/",
+        "status": 200,
+        "date": "Sun, 08 Nov 2026 13:24:15 GMT",
+        "ids": [
+          "dpl_9nrmbKuPz7ZwZnaCj5axQEdozzQo"
+        ],
+        "xRobotsTag": "noindex"
+      },
+      "scope": "actual main Production deployment and closed landing/domain only; no hosted authenticated entry/RLS proof",
+      "rootVerified": true
+    }
+  },
+  "verification": {
+    "actualFullParentMainTreesRead": true,
+    "parentTreeEntries": 9600,
+    "mainTreeEntries": 9598,
+    "allCandidateBlobsActuallyReadBack": true,
+    "fullContentGitblobSha256Utf8Verified": true,
+    "newDestinationsAbsentInActualParentAndMain": true,
+    "allSourceReplacementsReconstructForwardAndInverse": true,
+    "allEightWrappersImportOnly": true,
+    "originalSemanticAssertionLines": 25,
+    "retainedOrderedByteIdentical": true,
+    "newClientAssertionLines": 8,
+    "pureImplementationByteIdentical": true,
+    "productSqlBrowserAtomicImplementationByteIdentical": true,
+    "fixtureFocus": {
+      "blob": "cbf09b66e69c187972f7f65e5ea46c155eb29f3c",
+      "sha256": "212aa0adb8fec7c2a16404f2088a9bcb8cfffa677da0bd3ba3629bc93e4381b5",
+      "bytes": 19310
+    },
+    "r11Focus": {
+      "blob": "514fcc65e82c7d5597c7dcd30c98f5c3ce4a4ec2",
+      "sha256": "5fc0b762fa8f7ac9d407edf4c282d0ba11b7eeabb21858d4de4923fa12e38b56",
+      "bytes": 19859
+    },
+    "codeSourceReviewsComplete": true,
+    "rootSourceOnlyReceipt": "https://github.com/Jetnity/jetnity/issues/1155#issuecomment-6722653175",
+    "newLocalExecution": false,
+    "newTypecheck": false,
+    "newLint": false,
+    "newNative": false,
+    "newMounted": false,
+    "newCI": false,
+    "freshGates": [
+      "Core typecheck/lint/tests/all5hygiene/build",
+      "Accepted-store store matrix original, all4 entries",
+      "Accepted-store lifecycle matrix original, all4 entries",
+      "Full Persisted original",
+      "Full Atomic original",
+      "Auth",
+      "Strict required aggregate",
+      "Exact-head Preview/reviews",
+      "Actual-main plus closed Production after any Root merge"
+    ],
+    "noHistoricalCauseInvented": true,
+    "noFavorableRerun": true,
+    "independentBackendDocsReview": "Actual V11 Handoff5ca94219,Matrixa8f5fe18,ACTIVEc993c71f and complete114 evidence independently reviewed without finding; final manifest consistency review still required."
+  },
+  "actionBoundary": "Immutable GitHub read/create_blob only. No author tree/commit/ref/PR-state/Ready/merge or local execution. Root independently reviews final bytes, publishes the bounded corrective Draft PR with b3bc lease, then all fresh gates are mandatory.",
+  "holds": "SQL_UNAPPLIED / FEATURE_NOT_LIVE. #917 APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING; ledgerUNKNOWN; Stage2NOT_ATTEMPTED. No refused-readback retry or alternate agent/tool route. #1131 original held transport, #1139 hosted authority, #968 target credentials and all source/Owner/key/retention/witness/privacy/activation holds persist. No hosted SQL/Auth/RLS or actual-source action.",
+  "followingSlice": "NOT AUTHORIZED; issue1155 remains open until actual-main verification succeeds."
+}

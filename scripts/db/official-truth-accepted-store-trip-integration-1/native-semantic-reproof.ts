@@ -11,7 +11,7 @@ import type { ArchiveWire } from '@/lib/readiness/official-truth-accepted-store-
 import type { Trip } from '@/types/trips'
 import type { nativeProductRuntime } from './native-loader'
 import type { nativeBinding } from './native-fixture'
-import type { startNativeHttp } from './native-http'
+import type { startNativeHttp,NativeHttpRequestEvidence } from './native-http'
 import { quote,type nativeSql } from './native-schema'
 import { fixtureExtractor } from './fixtures'
 import type { NativeSuiteOwnership } from './native-suite'
@@ -44,6 +44,25 @@ function contradictingAcceptedArchive(wire:ArchiveWire):IntegratedPilotBundleInp
   return bundle
 }
 
+type CleanupFetchRecord={
+  outcome:'pending'|'fulfilled'|'rejected'|'thrown';status:number|null;
+  error:{name:string;code:string|null;causeCode:string|null}|null;
+}
+/** Only fixed categories survive. In particular, never inspect message/body,
+ * request arguments, headers, token values or arbitrary nested causes. */
+function cleanupFetchError(error:unknown):NonNullable<CleanupFetchRecord['error']> {
+  const names=new Set(['Error','TypeError','RangeError','AbortError','TimeoutError','DOMException'])
+  const codes=new Set(['ECONNRESET','ECONNREFUSED','EPIPE','ENOTFOUND','EAI_AGAIN','ABORT_ERR',
+    'UND_ERR_SOCKET','UND_ERR_CONNECT_TIMEOUT','UND_ERR_HEADERS_TIMEOUT','UND_ERR_BODY_TIMEOUT','UND_ERR_ABORTED'])
+  const read=(value:unknown,key:string):unknown=>{
+    try{return typeof value==='object'&&value!==null?Reflect.get(value,key):undefined}catch{return undefined}
+  }
+  const name=read(error,'name'),code=read(error,'code'),causeCode=read(read(error,'cause'),'code')
+  return {name:typeof name==='string'&&names.has(name)?name:'other_error',
+    code:typeof code==='string'?(codes.has(code)?code:'other_code'):null,
+    causeCode:typeof causeCode==='string'?(codes.has(causeCode)?causeCode:'other_code'):null}
+}
+
 export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typeof nativeProductRuntime>,
   http:Awaited<ReturnType<typeof startNativeHttp>>,witness:Awaited<ReturnType<typeof nativeBinding>>,
   sql:ReturnType<typeof nativeSql>,trip:Trip,owner?:NativeSuiteOwnership) {
@@ -64,8 +83,40 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
   const db=new runtime.database.AcceptedStoreDatabase(life,witness.binding)
   let originalHash='',originalReceipt='',forgedReceipt=''
   const bindingCases:string[]=[]
-  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false},
+  type ServerObservation=Pick<NativeHttpRequestEvidence,'authenticated'|'bodyParsed'|'beforeRpc'|'rpcCommitted'|'status'|'headersSent'|'finished'|'closed'|'acknowledgement'>
+  type OrdinarySnapshot={httpEntries:number;server:ServerObservation[];serverOmitted:number;beforeRpcEntries:number;
+    tokenMatches:number;commits:number;committedRemovedOne:boolean;acknowledged:boolean;
+    client:{calls:number;started:number;settled:number;pending:number;synchronousThrows:number;observerErrors:number;
+      omitted:number;records:CleanupFetchRecord[]}}
+  const clientObservation={calls:0,started:0,settled:0,pending:0,synchronousThrows:0,observerErrors:0,omitted:0,records:[] as CleanupFetchRecord[]}
+  const observerWork:Promise<void>[]=[],observerFailures:unknown[]=[]
+  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false,
+    beforeStop:null as OrdinarySnapshot|null,settled:null as OrdinarySnapshot|null},
     disposal:{status:'not_observed' as 'not_observed'|'not_started'|'acknowledged'|'unknown',removed:null as number|null,intervalCleanupHttpEntries:0,intervalCleanupRpcOutcomes:[] as {committed:boolean;sqlState:string|null}[]}}
+  let ordinaryRequestFrom:number|null=null,ordinaryRequestUntil:number|null=null
+  let primaryFailure:{error:unknown}|null=null
+  const ordinarySnapshot=():OrdinarySnapshot=>{
+    const entries=ordinaryRequestFrom===null?[]:http.requests.slice(ordinaryRequestFrom,ordinaryRequestUntil??undefined)
+      .filter(value=>value.path==='/rest/v1/rpc/official_truth_trip_store_cleanup_v1')
+    // Copy every primitive/nested record: the pre-stop view must not change
+    // when the same handlers later finish or close during the owned drain.
+    return {httpEntries:entries.length,server:entries.slice(0,8).map(value=>({
+      authenticated:value.authenticated,bodyParsed:value.bodyParsed,beforeRpc:value.beforeRpc,rpcCommitted:value.rpcCommitted,
+      status:value.status,headersSent:value.headersSent,finished:value.finished,closed:value.closed,acknowledgement:value.acknowledgement,
+    })),serverOmitted:Math.max(0,entries.length-8),beforeRpcEntries:cleanupObservation.ordinary.entries,
+      tokenMatches:cleanupObservation.ordinary.tokenMatches,commits:cleanupObservation.ordinary.commits,
+      committedRemovedOne:cleanupObservation.ordinary.committedRemovedOne,acknowledged:cleanupObservation.ordinary.acknowledged,
+      client:{...clientObservation,records:clientObservation.records.map(value=>({...value,error:value.error?{...value.error}:null}))}}
+  }
+  const observeFailure=(error:unknown)=>{
+    clientObservation.observerErrors++;observerFailures.push(error)
+    if(owner&&!owner.failures.includes(error))owner.failures.push(error)
+  }
+  const drainObserver=async()=>{
+    const settled=owner?await owner.drain(observerWork):await Promise.allSettled(observerWork)
+    for(const value of settled)if(value.status==='rejected')observeFailure(value.reason)
+    if(observerFailures.length)throw new AggregateError(observerFailures,'native_cleanup_observation_failed')
+  }
   let disposalRequestFrom:number|null=null,disposalEvidenceFrom:number|null=null
   const dispose=async()=>{
     disposalRequestFrom=http.requests.length;disposalEvidenceFrom=http.evidence.length
@@ -160,6 +211,7 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     // cleanup proves removal before the unchanged one-shot R4 disposal; an
     // unknown later disposal is never credited with this ordinary deletion.
     owner?.check();life.assertCurrent()
+    owner?.noteSemanticStep('own_snapshot_reservation')
     assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations
       where token=${quote(reserve.token)} and purpose='read' and state='snapshotted'
         and user_id=${quote(http.claims.sub)} and session_id=${quote(http.claims.session_id)}
@@ -167,12 +219,39 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
         and expires_at>clock_timestamp() and original_expiry>clock_timestamp()`),'1')
     cleanupObservation.snapshotTokenMatched=true
     const previousBefore=http.faults.beforeRpc,previousAfter=http.faults.afterCommit,ordinaryFrom=http.evidence.length
+    const previousFetch=life.fetch,fetchDescriptor=Object.getOwnPropertyDescriptor(life,'fetch')
     const restoreHooks=()=>{
       if(previousBefore===undefined)delete http.faults.beforeRpc;else http.faults.beforeRpc=previousBefore
       if(previousAfter===undefined)delete http.faults.afterCommit;else http.faults.afterCommit=previousAfter
+      if(fetchDescriptor)Object.defineProperty(life,'fetch',fetchDescriptor);else Reflect.deleteProperty(life,'fetch')
     }
     const restore=owner?.restore(restoreHooks)
     try {
+      owner?.check();life.assertCurrent()
+      Object.defineProperty(life,'fetch',{configurable:true,enumerable:fetchDescriptor?.enumerable??false,writable:true,
+        // This is deliberately not async: the SDK receives the exact original
+        // Promise, Response and rejection, with no additional awaited barrier.
+        value:function(this:typeof life,...parameters:Parameters<typeof previousFetch>){
+          clientObservation.calls++
+          const record:CleanupFetchRecord={outcome:'pending',status:null,error:null}
+          if(clientObservation.records.length<8)clientObservation.records.push(record);else clientObservation.omitted++
+          let original:ReturnType<typeof previousFetch>
+          try {original=previousFetch.call(this,...parameters)}
+          catch(error){
+            clientObservation.synchronousThrows++;record.outcome='thrown';record.error=cleanupFetchError(error);throw error
+          }
+          clientObservation.started++;clientObservation.pending++
+          const observed=original.then(
+            response=>{try{record.outcome='fulfilled';record.status=response.status}catch(error){observeFailure(error)}
+              finally{clientObservation.settled++;clientObservation.pending--}},
+            error=>{try{record.outcome='rejected';record.error=cleanupFetchError(error)}catch(observationError){observeFailure(observationError)}
+              finally{clientObservation.settled++;clientObservation.pending--}},
+          )
+          observerWork.push(observed)
+          if(owner)owner.track(observed);else void observed.catch(observeFailure)
+          return original
+        },
+      })
       http.faults.beforeRpc=async(name,payload)=>{
         if(previousBefore)await previousBefore(name,payload)
         if(name==='official_truth_trip_store_cleanup_v1'){
@@ -189,7 +268,10 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
         }
         return acknowledgement
       }
+      ordinaryRequestFrom=http.requests.length
+      owner?.noteSemanticStep('ordinary_cleanup')
       const cleaned=await run(()=>db.cleanup({token:reserve.token}))
+      owner?.noteSemanticStep('ordinary_cleanup_acknowledged')
       owner?.check();life.assertCurrent()
       assert.deepEqual(cleaned,{removed:1})
       cleanupObservation.ordinary.acknowledged=true
@@ -197,10 +279,27 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
       assert.equal(cleanupObservation.ordinary.commits,1);assert.equal(cleanupObservation.ordinary.committedRemovedOne,true)
       assert.equal(http.evidence.slice(ordinaryFrom).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1'&&value.committed).length,1)
     } finally {if(restore)restore();else restoreHooks()}
-  } catch(error){owner?.stop(error);throw error}
+  } catch(error){
+    primaryFailure={error}
+    cleanupObservation.ordinary.beforeStop=ordinarySnapshot()
+    owner?.stop(error);throw error
+  }
   finally {
-    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle());else{await dispose();await life.settle();await http.settle()}}
+    // End the ordinary-entry interval before the separate R4 attempt. A late
+    // ordinary response can still update its copied-at-settlement metadata.
+    ordinaryRequestUntil=http.requests.length
+    try {
+      if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle(),drainObserver)
+      else {
+        const cleanupErrors:unknown[]=[]
+        for(const operation of [dispose,()=>life.settle(),()=>http.settle(),drainObserver]){
+          try{await operation()}catch(error){cleanupErrors.push(error)}
+        }
+        if(cleanupErrors.length)throw new AggregateError(primaryFailure?[primaryFailure.error,...cleanupErrors]:cleanupErrors,'native_suite_scenario_cleanup_failed')
+      }
+    }
     finally {
+      cleanupObservation.ordinary.settled=ordinarySnapshot()
       // These cleanup events span disposal through the final owned drain; a
       // late ordinary handler can also finish here. They are not exclusively
       // correlated to the one disposal request. Its own status stays separate.
@@ -210,6 +309,14 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
       t.diagnostic(JSON.stringify({proof:'native-semantic-cleanup-observation',...cleanupObservation}))
     }
   }
+  assert.equal(clientObservation.calls,1)
+  assert.equal(clientObservation.started,1)
+  assert.equal(clientObservation.settled,1)
+  assert.equal(clientObservation.pending,0)
+  assert.equal(clientObservation.synchronousThrows,0)
+  assert.equal(clientObservation.observerErrors,0)
+  assert.equal(clientObservation.omitted,0)
+  assert.deepEqual(clientObservation.records,[{outcome:'fulfilled',status:200,error:null}])
   owner?.noteSemanticStep('persistent_after')
   owner?.check();assert.equal(persistent(),before);assert.equal(witness.casCount(),cas)
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_reserve_v1'&&e.committed))

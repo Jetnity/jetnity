@@ -12,7 +12,7 @@ import type { AcceptedStoreTripResult } from '@/lib/readiness/official-truth-acc
 
 type NativeSemanticStep='persisted_baseline'|'identity'|'reserve'|'snapshot'|'genuine_reproof'|'genuine_control'
   |'malformed_binding'|'changed_extractor'|'contradiction_build'|'strict_archive'|'original_key'|'original_crypto'
-  |'false_fact_reproof'|'untouched_reproof'|'persistent_after'
+  |'false_fact_reproof'|'untouched_reproof'|'own_snapshot_reservation'|'ordinary_cleanup'|'ordinary_cleanup_acknowledged'|'persistent_after'
 /** Failure evidence only. Original Error objects remain intact in the thrown
  * AggregateError; no free message/stack/actual/expected value is serialized. */
 function nativeFailureEvidence(failures:readonly unknown[]) {
@@ -25,7 +25,7 @@ function nativeFailureEvidence(failures:readonly unknown[]) {
       'retained_validity_invalid','retained_evidence_invalid','retained_candidate_invalid','retained_review_invalid',
       'current_extractor_invalid','current_extractor_changed','current_extractor_ambiguous','retained_fact_invalid',
       'retained_custody_invalid','store_binding_closed','compiled_contract_changed','compiled_definition_changed',
-      'profile_pin_missing','implementation_changed'].map(value=>[value,value] as [string,string]),
+      'profile_pin_missing','implementation_changed','store_cleanup_unavailable','native_cleanup_observation_failed'].map(value=>[value,value] as [string,string]),
     ['Aborted','aborted'],['Deadline exceeded','deadline_exceeded'],['Lifetime closed','lifetime_closed'],
   ])
   const names=new Set(['Error','AggregateError','AssertionError','AbortError','TimeoutError','TypeError','RangeError','LocalPgError'])
