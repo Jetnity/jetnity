@@ -1,3 +1,7 @@
+> **Historical R1 record — superseded by R2 correction.** The human run reported in [#917 / 6725329847](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6725329847) failed with SQLSTATE 22023 and zero rows. The earlier statement below that no human result existed is no longer current. The prior static source verdict missed the zero-dimensional empty ACL input to `aclexplode`; it is not runtime acceptance. Root owns that review gap.
+>
+> Current corrective scope: [R2_TASK.md](R2_TASK.md); exact corrected-source review and execution boundaries: [R2_REVIEW.md](R2_REVIEW.md). The original R1 record is preserved unchanged below for provenance.
+
 # Independent static source review and continuity
 
 Date: 8 November 2026. Task: **Official Truth Human Read-only Audit Preparation 1**.

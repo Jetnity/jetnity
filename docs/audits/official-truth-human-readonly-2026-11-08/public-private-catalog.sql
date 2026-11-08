@@ -178,7 +178,14 @@ acl_entries AS (
   SELECT s.kind, s.object_oid, s.sub_id, s.origin,
     a.grantor, a.grantee, a.privilege_type, a.is_grantable
   FROM acl_sources AS s
-  CROSS JOIN LATERAL pg_catalog.aclexplode(s.acl) AS a
+  -- Zero-entry arrays may have zero dimensions. STRICT aclexplode(NULL) emits
+  -- no rows; nonempty arrays pass through unchanged, including malformed ACLs.
+  CROSS JOIN LATERAL pg_catalog.aclexplode(
+    CASE WHEN pg_catalog.cardinality(s.acl) OPERATOR(pg_catalog.=) 0::pg_catalog.int4
+      THEN NULL::pg_catalog.aclitem[]
+      ELSE s.acl
+    END
+  ) AS a
 ),
 referenced_roles(oid) AS (
   SELECT s.nspowner FROM schemas AS s WHERE s.oid IS NOT NULL
