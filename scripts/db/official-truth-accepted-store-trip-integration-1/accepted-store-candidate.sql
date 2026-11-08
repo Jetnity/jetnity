@@ -506,7 +506,7 @@ end $$;
 create function public.official_truth_trip_store_reserve_v1(payload jsonb) returns jsonb
 language plpgsql volatile parallel unsafe security definer set search_path='' set statement_timeout='20s' set lock_timeout='2s' as $$
 declare a official_accepted_trip_private.admissions%rowtype; h official_accepted_trip_private.heads%rowtype;
-  cv official_accepted_trip_private.current_versions%rowtype; authority jsonb; graph jsonb; legacy jsonb; r official_accepted_trip_private.reservations%rowtype;
+  cv official_accepted_trip_private.current_versions%rowtype; authority jsonb; graph jsonb; legacy jsonb; r official_accepted_trip_private.reservations%rowtype; now_ timestamptz;
 begin
   perform official_accepted_trip_private.principal_v1('authenticated');
   perform official_accepted_trip_private.object_v1(payload,array['cell','contractDigest','profile','purpose','tripId','revision']);
@@ -529,10 +529,13 @@ begin
     if graph->'revision' is distinct from payload->'revision' then raise exception 'trip revision changed' using errcode='40001'; end if;
   end if;
   authority:=official_accepted_trip_private.require_owner_v1();
+  -- One fresh post-authority instant anchors BOTH sides of the unchanged 45s
+  -- CHECK. Two volatile clock reads can differ by even one microsecond.
+  now_:=clock_timestamp();
   insert into official_accepted_trip_private.reservations(cell,purpose,user_id,session_id,original_expiry,created_at,expires_at,state,
     prior_sequence,prior_hash,prior_version,trip_id,trip_revision,graph_digest)
   values(a.cell,payload->>'purpose',(authority->>'uid')::uuid,(authority->>'session')::uuid,(authority->>'expiresAt')::timestamptz,
-    clock_timestamp(),least(clock_timestamp()+interval '45 seconds',(authority->>'expiresAt')::timestamptz),'reserved',h.sequence,h.hash,cv.receipt,
+    now_,least(now_+interval '45 seconds',(authority->>'expiresAt')::timestamptz),'reserved',h.sequence,h.hash,cv.receipt,
     (payload->>'tripId')::uuid,(payload->>'revision')::bigint,graph->>'digest') returning * into r;
   return jsonb_build_object('token',r.token,'operationId',r.operation_id,'now',clock_timestamp(),'expiresAt',r.expires_at,
     'head',jsonb_build_object('sequence',h.sequence,'hash',h.hash),'priorVersion',cv.receipt,

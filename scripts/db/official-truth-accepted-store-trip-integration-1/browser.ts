@@ -66,8 +66,8 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         // context RPC; no production auto-declaration or positive DTO exists.
         trip=await declareNativeTrip(protocol!,runtime);send(res,200,{saved:true});return
       }
-      if(req.url==='/'&&req.method==='GET'){res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end('<!doctype html><html lang="de"><body><div id="root"></div><script src="/bundle.js"></script></body></html>');return}
-      if(req.url==='/bundle.js'){res.writeHead(200,{'content-type':'text/javascript','cache-control':'no-store'});res.end(bundle.code);return}
+      if(req.url==='/'&&req.method==='GET'){res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});res.end('<!doctype html><html lang="de"><head><meta charset="utf-8"></head><body><div id="root"></div><script src="/bundle.js"></script></body></html>');return}
+      if(req.url==='/bundle.js'){res.writeHead(200,{'content-type':'text/javascript; charset=utf-8','cache-control':'no-store'});res.end(bundle.code);return}
       if(req.url==='/api/readiness/ch-de-application'){
         pilotRequests++
         if(pilotPending)await new Promise<void>(resolve=>{const done=()=>{pendingPilots.delete(done);resolve()};pendingPilots.add(done);controller.signal.addEventListener('abort',done,{once:true})})
@@ -95,7 +95,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert(binaryVersion.includes(browser.version()),'Recorded launch target must be the actual running system browser')
     const context=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'})
     await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin){outbound.push(url.origin);return route.abort()}return route.continue()})
-    const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));page.setDefaultTimeout(45_000)
+    const page=await context.newPage();page.on('pageerror',error=>errors.push((error.stack??error.message).slice(0,2048)));page.setDefaultTimeout(45_000)
     const positives=page.locator('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]')
     const none=async()=>{assert.equal(await positives.count(),0)}
     const read=async()=>{
@@ -112,7 +112,16 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       trip=await declareNativeTrip(protocol!,runtime);await page.evaluate(value=>window.acceptedStoreFixture!.replaceTrip(value),trip)}
     const redraw=()=>page.evaluate(()=>window.acceptedStoreFixture!.redraw())
     stage='closed initial mount'
-    await page.goto(origin);await page.waitForFunction(()=>!!window.acceptedStoreFixture)
+    const scriptResponse=page.waitForResponse(response=>new URL(response.url()).pathname==='/bundle.js')
+    const [documentLoad,scriptLoad]=await Promise.allSettled([page.goto(origin),scriptResponse])
+    if(documentLoad.status==='rejected')throw documentLoad.reason
+    if(scriptLoad.status==='rejected')throw scriptLoad.reason
+    const documentResponse=documentLoad.value;assert(documentResponse)
+    assert.equal(documentResponse.headers()['content-type'],'text/html; charset=utf-8')
+    const loadedScript=scriptLoad.value;assert.equal(loadedScript.status(),200)
+    assert.equal(loadedScript.headers()['content-type'],'text/javascript; charset=utf-8')
+    const documentCharset=await page.evaluate(()=>document.characterSet);assert.equal(documentCharset,'UTF-8')
+    await page.waitForFunction(()=>!!window.acceptedStoreFixture)
     await none();assert.equal(storeRequests,0);assert.equal(await page.evaluate(()=>window.acceptedStoreFixture!.read()),false);assert.equal(storeRequests,0)
     assert(await page.getByRole('button',{name:'Gespeicherte Einreiseprüfung erneut prüfen',exact:true}).isDisabled());proofs.push(stage)
     await page.evaluate(()=>window.acceptedStoreFixture!.available(true))
@@ -258,7 +267,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert.equal(state.sourceStarts,sourceStarts);assert.deepEqual(errors,[]);assert.deepEqual(outbound,[])
     t.diagnostic(JSON.stringify({proof:'actual-native-mounted-workspace',node:process.versions.node,react:'19.2.8',playwright:'1.55.0',browser:browser.version(),binaryVersion,
       actualModules:['components/trips/useAcceptedStoreTrip.ts','components/trips/useOfficialTruthPilot.ts','components/trips/Reisevorbereitung.tsx'],
-      bundleSha256:bundle.sha256,bundleModules:bundle.modules,repoModules:bundle.files.length,proofs,
+      bundleSha256:bundle.sha256,bundleModules:bundle.modules,repoModules:bundle.files.length,documentCharset,proofs,
       storeRequests,pilotRequests,travellerWrites,nativeCurrentResults:results.filter(value=>value.status==='current').length,sourceFetchesDuringReads:0,
       sourceCheckedAt:expiring.sourceCheckedAt,readAt:expiring.readAt,expiresAt:expiring.expiresAt,deadlineFromRequestStartMs:expiring.deadlineFromRequestStartMs,
       boundary:'Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim.'}))

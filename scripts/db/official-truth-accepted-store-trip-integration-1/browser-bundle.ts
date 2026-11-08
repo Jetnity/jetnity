@@ -6,6 +6,7 @@ import { readFileSync,existsSync,statSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname,resolve,relative } from 'node:path'
 import { createHash } from 'node:crypto'
+import { Script } from 'node:vm'
 import ts from 'typescript'
 
 export function nativeBrowserBundle(){
@@ -36,6 +37,9 @@ export function nativeBrowserBundle(){
   const definitions=[...entries.values()].map(value=>`${value.id}:[function(require,module,exports){\n${value.code}\n},${JSON.stringify(value.imports)}]`).join(',\n')
   const code=`(()=>{const process={env:{NODE_ENV:'production'}};const definitions={${definitions}};const cache={};function load(id){if(cache[id])return cache[id].exports;const value={exports:{}};cache[id]=value;const entry=definitions[id];entry[0](name=>{if(!(name in entry[1]))throw Error('unbound browser import');return load(entry[1][name])},value,value.exports);return value.exports}load(${main});})();`
   assert(Buffer.byteLength(code)<16_777_216,'bounded actual client bundle')
+  // Parse the complete genuine generated script without executing or replacing
+  // any module. The browser still proves decoding, loading and actual mounting.
+  new Script(code,{filename:'accepted-store-native-browser-bundle.js'})
   return {code,files:[...entries.keys()].filter(path=>!path.includes('/node_modules/')).map(path=>({path:relative(root,path),sha256:createHash('sha256').update(readFileSync(path)).digest('hex')})),
     sha256:createHash('sha256').update(code).digest('hex'),modules:entries.size}
 }

@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "purpose": "Same-author narrow Fix7 for three actual CI failures at exact587 head; independent Root review/full next-head gates pending. No author PASS, Ready, publication, merge, hosted apply, activation, quota/timeout/gate relaxation or following slice.",
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "issue": 1155,
+  "draftPr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "expectedRemoteParent": "587c74047b343f63d407c5dc6e2dfd1996581478",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "originalTaskBlob": "e3336c869472fe50e94473797c1555419f6d82a6",
+  "authorizationBlobs": {
+    "R1": "9aeb099b1ce8d568eefc300a382ed48f553ed533",
+    "R2": "2ac74eb06a0228a749fbd35a885beefd38adf799",
+    "R3": "0dfe1e3afbc8f28647f0fc0be20c82197efea006",
+    "R4": "729875aaa3fc454b79cee9b1dc22676479bc7b62",
+    "R5": "71d22361ea88191407a7cab4587942579517c1d9",
+    "R6": "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "R7": "875c9f5d5cce49e4ec51b2806c775d28353c91d9"
+  },
+  "additionalScope": "Root same-session Fix7 CHANGES REQUIRED and explicit one-post-authority-timestamp/UTF8-fixture acknowledgements; frozen TASK/R1-R7 unchanged.",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "a08fedb881ad96e4ae80bbcfa2b5f82f67b1c1aa",
+      "gitBlob": "c123817d2f332f6471fbf37a8cf91ec11fee98a1",
+      "sha256": "d18cc49d45e867bd02abd65073c9e64b49c075d8792e27f57af4d5ce88390223",
+      "bytes": 74690,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "1b1d03e6e658f30bc5e36a2cc2c78296a46afc75",
+      "gitBlob": "2deb1bac261a77d0b6289e74ce170ab7599201d3",
+      "sha256": "2affca977675335395f4b0716148f404592c40d09e261c01fb79b53857ec5e51",
+      "bytes": 12248,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "fdc38eff71404976fa8b863ab9dbed6b45350ff9",
+      "gitBlob": "201527a82430d087b8e01be853cb2d54d6e5bd81",
+      "sha256": "68fec722f82c55cb67d43b9450223420c44be58de2d8c5620d67be1476159b86",
+      "bytes": 24969,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "7454abb43831d03a0044cf0ff7138e1f62e18487",
+      "gitBlob": "f470ca666dfa94d6f071c69f452322ed73d9d4ce",
+      "sha256": "1305d70760be9501d12e6604547ee0c1f1fa221982d22d086b2c0bf0e30315c7",
+      "bytes": 3531,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "057cb0e693d0c1d6029d2610e4447455ca8e3e3c",
+      "gitBlob": "7d0b40597d4e1ae0e041b7743edbf843e5047898",
+      "sha256": "9c4465d12918ece018f766d94498d978cdf63576f40d1e766fbd02cafcd05c22",
+      "bytes": 30156,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "c52fd6cd6c4fe831b2f8cbc99928a8bfabe9c3a1",
+      "gitBlob": "8d6be93bd3b81d5c5470720ce13829776d3d8e28",
+      "sha256": "737b836973e5e6fd5544e48b90c1c97b44b7da32153700a4d1a2484c3196f690",
+      "bytes": 19488,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix7-587-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    }
+  ],
+  "counts": {
+    "files": 6,
+    "newAgainstParent": 0,
+    "modifiedAgainstParent": 6
+  },
+  "scopeVerification": {
+    "knownAuthorFilesCheckedAgainst587": 69,
+    "changedExactlyDeclaredPaths": true,
+    "allFiveFix6CodeAndTestBlobsUnchanged": true,
+    "rootOwnedStatusAndCiCheckpointFilesExcluded": true
+  },
+  "validation": {
+    "actual587": {
+      "run": 42455385666,
+      "coreJob": 128653158264,
+      "coreLogSha256": "4e2cdf112d4ff491bcfc92877f59269bdf472e175361c3c5308dbb3c27ec0a26",
+      "typecheck": "PASS",
+      "lint": "PASS",
+      "tests": 8205,
+      "pass": 8200,
+      "fail": 3,
+      "cancelled": 0,
+      "existingSkips": 2,
+      "durationMs": 842093.619398,
+      "completeAcceptanceAndContextEntries": "PASS",
+      "implementationRegressionAndOldCallbackFaqTests": "PASS",
+      "partialMainNative": "Three actual pinnedSSR modes and eight outgoing cases passed; Reserve23514 then stopped before late-key entry; remaining families not completed.",
+      "partialRecovery": "Late committed read refusal and lost disposal ACK stages completed; actual orphan loop then Reserve23514.",
+      "browser": "Real publication/Finalize/Confirm committed; Invalid or unexpected token before initial mount; no mounted PASS.",
+      "auth": "PASS",
+      "persisted": "PASS",
+      "atomic": {
+        "status": "PASS",
+        "closingMarkerMs": 766383,
+        "operationsStarted": 9986,
+        "operationsSettled": 9986,
+        "pending": 0,
+        "connectionsOpened": 248,
+        "connectionsClosed": 248,
+        "clusters": 11
+      },
+      "headBoundary": "All successes are exact587 historical evidence after Fix7 changes the head."
+    },
+    "sourceDiagnosis": {
+      "sql": "Two volatile clock_timestamp samples conflict with existing exact45s CHECK; one fresh post-authority instant now derives both values. Original23514 did not include constraint name/row timestamps.",
+      "browser": "Real Unicode client modules parse underUTF8 and fail with exactSyntaxError underWindows1252 misdecoding; original browser charset unobserved. Explicit HTML/JS UTF8, complete generated-script syntax check and actual browser encoding assertions added.",
+      "clientStaticParseEvidence": "/workspace/scratch/9de5b942a09c/accepted-store-587-ci-review-20261108/client-static-parse.original.json",
+      "clientStaticParseSha256": "e1768e575a784c9b19a1864d8499c3ed99f3e8c4a26c75111b39e29a48e35a5b"
+    },
+    "localSyntax": {
+      "node": "24.22.1",
+      "typescript": "5.9.3",
+      "changedTypescriptFiles": 3,
+      "transpileErrors": 0,
+      "fullTypecheck": false,
+      "nativeOrBrowserExecution": false
+    },
+    "newHead": "Not run. Full regular exact-head CI including all existing new and inherited gates is mandatory."
+  },
+  "excluded": [
+    "ACTIVE_WORK_STATUS and separate TL587CIcheckpoint",
+    "unchanged TASK/R1-R7",
+    "no oldSQL/helper/codec changes",
+    "no productbrowser engine/hooks/renderers or positive DTO replacement",
+    "no45second/32quota/timeout/workflow/dependency change",
+    "no held #917/#1131 actions"
+  ]
+}

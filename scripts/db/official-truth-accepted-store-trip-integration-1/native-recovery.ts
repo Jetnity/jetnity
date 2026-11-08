@@ -79,13 +79,18 @@ export async function nativeRecoveryProof(t:TestContext){
     } finally {delete http.faults.afterCommit;await http.settle()}
     assert.equal(lost,32);assert.equal(count('reservations'),32)
     assert.equal(http.evidence.slice(quotaFrom).filter(value=>value.rpc==='official_truth_trip_store_reserve_v1'&&value.committed).length,32)
+    assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations
+      where purpose='read' and state='reserved' and created_at<expires_at and expires_at<=original_expiry
+      and expires_at<=created_at+interval '45 seconds'
+      and expires_at=least(created_at+interval '45 seconds',original_expiry)`),'32',
+    'Every actual committed reservation keeps the same creation anchor and earliest original expiry')
     const exhausted=await fetch(`${http.url}/rest/v1/rpc/official_truth_trip_store_reserve_v1`,{
       method:'POST',headers:{apikey:http.anonToken,Authorization:`Bearer ${http.accessToken}`,'content-type':'application/json'},
       body:JSON.stringify({payload:reserve}),signal:AbortSignal.timeout(10_000),redirect:'error'})
     assert.equal(exhausted.status,400);assert.equal((await exhausted.json() as {code:string}).code,'22023')
     const remaining=Number(sql(`select greatest(0,ceil(extract(epoch from max(expires_at)-clock_timestamp())*1000)) from official_accepted_trip_private.reservations`))
     assert(remaining>=0&&remaining<=45_000)
-    t.diagnostic(JSON.stringify({proof:'native-orphan-expiry-checkpoint',genuineUnacknowledgedReserves:32,quotaActuallyRefused:true,waitMs:remaining}))
+    t.diagnostic(JSON.stringify({proof:'native-orphan-expiry-checkpoint',genuineUnacknowledgedReserves:32,storedReservationBoundsChecked:32,quotaActuallyRefused:true,waitMs:remaining}))
     await new Promise<void>(resolve=>setTimeout(resolve,remaining+25))
     assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations where expires_at<=clock_timestamp()`),'32')
     let swept=0
