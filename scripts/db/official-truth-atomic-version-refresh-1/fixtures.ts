@@ -56,14 +56,17 @@ function mutuallyCompatibleFreshGraphs(old: PreparedOriginals, next: PreparedOri
   }
 }
 
-export async function actuallyFreshObservations(mode: PilotMode, count: number): Promise<PreparedOriginals[]> {
+export async function actuallyFreshObservations(mode: PilotMode, count: number, signal?: AbortSignal): Promise<PreparedOriginals[]> {
   assert.ok(count >= 2 && count <= 3)
   const fixtures: PreparedOriginals[] = []
   for (let i = 0; i < count; i++) {
+    signal?.throwIfAborted()
     // This waits for a genuinely later actual run. It never rewrites a time,
     // evidence ID, receipt, review, provenance field or implementation capsule.
     if (i) await delay(1_100)
+    signal?.throwIfAborted()
     const fixture = await freshExecutedFixture(mode)
+    signal?.throwIfAborted()
     const checked = verifyLocalIntegratedPilotBundle(fixture.envelope); assert.ok(checked.ok)
     for (const previous of fixtures) mutuallyCompatibleFreshGraphs(previous, fixture)
     const payload = checked.value.receipt.payload

@@ -314,8 +314,8 @@ END $$;
 CREATE FUNCTION official_provenance_private.validate_inspected_graph_v2(profile text,fingerprint text,receipt_bytes bytea,binding_bytes bytea,artifacts official_provenance_api.artifact_input_v1[],inspected_edges jsonb) RETURNS void
 LANGUAGE plpgsql IMMUTABLE SECURITY INVOKER SET search_path = '' SET timezone='UTC' AS $$
 DECLARE receipt jsonb; binding jsonb; a official_provenance_api.artifact_input_v1; b official_provenance_api.artifact_input_v1; root record; edge record;
- membership_artifacts official_provenance_api.artifact_input_v1[];
- graph jsonb := '{}'::jsonb; starts jsonb := '[]'::jsonb; work jsonb; item jsonb; visited jsonb := '{}'::jsonb; longest jsonb := '{}'::jsonb; key text; target text; total_bytes bigint; edge_count integer; depth integer;
+ membership_index jsonb;
+ graph jsonb := '{}'::jsonb; adjacency jsonb; starts jsonb := '[]'::jsonb; work jsonb[] := '{}'::jsonb[]; work_head integer:=1; work_tail integer:=0; item jsonb; visited jsonb := '{}'::jsonb; longest jsonb := '{}'::jsonb; key text; target text; total_bytes bigint; edge_count integer; depth integer;
 BEGIN
  PERFORM official_provenance_private.require(profile='ot-integrated-pilot-local-closure-v2');
  IF fingerprint IS NULL OR receipt_bytes IS NULL OR binding_bytes IS NULL OR artifacts IS NULL OR fingerprint !~ '^ot-provenance-v1:[a-f0-9]{64}$'
@@ -327,27 +327,31 @@ BEGIN
  PERFORM official_provenance_private.require(NOT EXISTS(SELECT x.artifact_id FROM pg_catalog.unnest(artifacts) x GROUP BY x.artifact_id HAVING pg_catalog.count(DISTINCT (x.artifact_type,x.byte_contract_family))>1));
  PERFORM official_provenance_private.require(pg_catalog.jsonb_typeof(inspected_edges)='object');
  PERFORM official_provenance_private.require((SELECT pg_catalog.count(*) FROM pg_catalog.jsonb_object_keys(inspected_edges))=pg_catalog.cardinality(artifacts));
- -- R7: membership needs only these unchanged fields. Full bytes remain in
- -- artifacts for every existing inspection, byte bound and graph traversal.
- SELECT pg_catalog.array_agg(
-  ROW(x.artifact_id,x.artifact_version,x.digest,x.artifact_type,x.byte_contract_family,x.artifact_contract_version,NULL::bytea)
-   ::official_provenance_api.artifact_input_v1 ORDER BY x.ordinality)
- INTO membership_artifacts FROM pg_catalog.unnest(artifacts) WITH ORDINALITY x;
+ -- R8: index only this invocation's exact metadata after duplicate checks.
+ -- JSON array keys preserve field boundaries; versions retain bigint equality.
+ -- NULL pin fields cannot satisfy the original SQL conjunction. Full artifacts
+ -- remain the source of all byte checks and the unchanged graph algorithm.
+ SELECT COALESCE(pg_catalog.jsonb_object_agg(
+  pg_catalog.jsonb_build_array(x.artifact_id,x.artifact_version,x.digest)::text,x.artifact_type),'{}'::jsonb)
+ INTO membership_index FROM pg_catalog.unnest(artifacts) x
+ WHERE x.artifact_id IS NOT NULL AND x.artifact_version IS NOT NULL AND x.digest IS NOT NULL;
  total_bytes:=pg_catalog.octet_length(binding_bytes); edge_count:=1;
  FOREACH a IN ARRAY artifacts LOOP
   total_bytes:=total_bytes+pg_catalog.octet_length(a.canonical_bytes);
   key:=a.artifact_id||':'||a.artifact_version::text||':'||a.digest;
   graph:=graph||pg_catalog.jsonb_build_object(key,'[]'::jsonb);
   PERFORM official_provenance_private.require(pg_catalog.jsonb_typeof(inspected_edges->key)='array');
+  adjacency:='[]'::jsonb;
   FOR edge IN SELECT e->>'slot' AS slot,e->'pin' AS pin,e->>'expected_type' AS expected_type FROM pg_catalog.jsonb_array_elements(inspected_edges->key) e LOOP
    edge_count:=edge_count+1;
-   IF NOT EXISTS(SELECT 1 FROM pg_catalog.unnest(membership_artifacts) x WHERE x.artifact_id=edge.pin->>'id' AND x.artifact_version=(edge.pin->>'version')::bigint AND x.digest=edge.pin->>'digest' AND x.artifact_type=edge.expected_type) THEN RAISE EXCEPTION 'dependency_missing'; END IF;
+   IF (membership_index->>pg_catalog.jsonb_build_array(edge.pin->>'id',(edge.pin->>'version')::bigint,edge.pin->>'digest')::text=edge.expected_type) IS NOT TRUE THEN RAISE EXCEPTION 'dependency_missing'; END IF;
    target:=(edge.pin->>'id')||':'||(edge.pin->>'version')||':'||(edge.pin->>'digest');
-   graph:=pg_catalog.jsonb_set(graph,ARRAY[key],graph->key||pg_catalog.to_jsonb(target));
+   adjacency:=adjacency||pg_catalog.to_jsonb(target);
   END LOOP;
+  graph:=pg_catalog.jsonb_set(graph,ARRAY[key],adjacency);
  END LOOP;
  FOR root IN SELECT * FROM official_provenance_private.receipt_roots(receipt) UNION ALL SELECT * FROM official_provenance_private.binding_roots(binding,fingerprint) LOOP
-  IF NOT EXISTS(SELECT 1 FROM pg_catalog.unnest(membership_artifacts) x WHERE x.artifact_id=root.pin->>'id' AND x.artifact_version=(root.pin->>'version')::bigint AND x.digest=root.pin->>'digest' AND x.artifact_type=root.expected_type) THEN RAISE EXCEPTION 'dependency_missing'; END IF;
+  IF (membership_index->>pg_catalog.jsonb_build_array(root.pin->>'id',(root.pin->>'version')::bigint,root.pin->>'digest')::text=root.expected_type) IS NOT TRUE THEN RAISE EXCEPTION 'dependency_missing'; END IF;
   target:=(root.pin->>'id')||':'||(root.pin->>'version')||':'||(root.pin->>'digest');
   depth:=CASE WHEN root.slot IN ('globalAdmission','selectedSupportManifest','autonomousReviewConstruction') THEN 2 ELSE 1 END;
   starts:=starts||pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('key',target,'depth',depth,'path','[]'::jsonb)); edge_count:=edge_count+1;
@@ -355,17 +359,23 @@ BEGIN
  IF total_bytes>8388608 OR edge_count>1024 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;
  -- Longest-depth relaxation revisits a shared node when a later deeper path reaches it.
  -- Dominated same-depth paths are skipped to keep work bounded by nodes/edges times depth.
- work:=starts;
- WHILE pg_catalog.jsonb_array_length(work)>0 LOOP
-  item:=work->0; work:=work-0; key:=item->>'key'; depth:=(item->>'depth')::integer;
+ -- R9: the pending FIFO is exactly work[work_head..work_tail]. Simple local
+ -- element assignments retain expanded-array storage and release consumed items.
+ -- At most 16 expansions per node enqueue at most 16*E+R items; E+R+1<=1024.
+ FOR item IN SELECT pg_catalog.jsonb_array_elements(starts) LOOP
+  work_tail:=work_tail+1; work[work_tail]:=item;
+ END LOOP;
+ WHILE work_head<=work_tail LOOP
+  item:=work[work_head]; work[work_head]:=NULL; work_head:=work_head+1; key:=item->>'key'; depth:=(item->>'depth')::integer;
   IF depth>16 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;
   IF item->'path' ? key THEN RAISE EXCEPTION 'cycle'; END IF;
   IF longest ? key AND (longest->>key)::integer >= depth THEN CONTINUE; END IF;
   longest:=longest||pg_catalog.jsonb_build_object(key,depth);
   visited:=visited||pg_catalog.jsonb_build_object(key,true);
   FOR target IN SELECT pg_catalog.jsonb_array_elements_text(graph->key) LOOP
-   work:=work||pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('key',target,'depth',depth+1,'path',item->'path'||pg_catalog.to_jsonb(key)));
-   IF pg_catalog.jsonb_array_length(work)>16384 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;
+   work_tail:=work_tail+1;
+   work[work_tail]:=pg_catalog.jsonb_build_object('key',target,'depth',depth+1,'path',item->'path'||pg_catalog.to_jsonb(key));
+   IF work_tail-work_head+1>16384 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;
   END LOOP;
  END LOOP;
  IF (SELECT pg_catalog.count(*) FROM pg_catalog.jsonb_object_keys(visited))<>pg_catalog.cardinality(artifacts) THEN RAISE EXCEPTION 'unsolicited_artifact'; END IF;

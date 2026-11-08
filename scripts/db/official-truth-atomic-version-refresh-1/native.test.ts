@@ -1,24 +1,24 @@
 import assert from 'node:assert/strict'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { createHash, randomBytes } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
 import { test } from 'node:test'
 import { startLocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
 import { LocalPgConnection, LocalPgError, pgBytes, pgCompositeArray, pgText, type PgParameter, type LocalPgBoundedCommit } from '../official-truth-integrated-pilot-1/pg-wire'
 import { installLocalProofSchema, localArtifactTypeOids, publishIntegratedBundle } from '../official-truth-integrated-pilot-1/storage'
 import { bindCandidate, cursor, prepareOriginals, reviewCandidate, type Cursor, type PreparedOriginals } from '../official-truth-original-custody-1/storage'
-import { readPersistedCanonicalRequirements } from '../official-truth-persisted-canonical-read-1/reader'
+import { readPersistedCanonicalRequirements as actualPersistedRead } from '../official-truth-persisted-canonical-read-1/reader'
 import { persistedCanonicalReadContract } from '../official-truth-persisted-canonical-read-1/contract'
 import { selectCurrentVersion } from '../official-truth-current-version-lookup-1/lookup'
 import { alternateSameIdentityReceipt } from '../official-truth-current-version-lookup-1/fixtures'
 import { contradictingFactFixture, originalsFor } from '../official-truth-persisted-canonical-read-1/fixtures'
 import { createIntegratedPilotArtifact, verifyLocalIntegratedPilotBundle, type IntegratedPilotManifestContent } from '../../../lib/readiness/official-truth-integrated-pilot-bundle'
 import { ATOMIC_REFRESH_LOGIN, ATOMIC_REFRESH_ROLE, ownAtomicRefreshRequest, type AtomicRefreshRequest } from './contract'
-import { refreshPersistedCanonicalVersion, type AtomicRefreshResult } from './refresh'
+import { refreshPersistedCanonicalVersion as actualAtomicRefresh, type AtomicRefreshResult } from './refresh'
 import { actuallyFreshObservations, corruptReceipt, directlyCallRefresh, falseValidityLocator, extraInactivePolicy } from './fixtures'
+import { OwnedTestLifetime } from './test-lifetime'
 
-const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 const code = (expected: string) => (error: unknown) => error instanceof LocalPgError && error.code === expected
 const migrations = [
   '20261001121258_official_truth_private_evidence_store_schema_1.sql', '20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql',
@@ -30,6 +30,18 @@ const migrations = [
 const packageSql = readFileSync(new URL('./refresh-candidate.sql', import.meta.url), 'utf8')
 const rollbackSql = readFileSync(new URL('./refresh-candidate.rollback.sql', import.meta.url), 'utf8')
 const referenceSql = readFileSync(new URL('./semantic-reference-r5.fixture.sql', import.meta.url), 'utf8')
+const graphWorkerName = 'validate_inspected_graph_v2'
+const graphReferenceSchema = 'official_refresh_graph_reference_r9'
+const graphWorkerSignature = `${graphWorkerName}(text,text,bytea,bytea,official_provenance_api.artifact_input_v1[],jsonb)`
+const validateGraphReferenceSource = (graphReferenceSql: string) => {
+  assert.equal(createHash('sha256').update(graphReferenceSql).digest('hex'), 'e01025d2ff40c374835729519c9e62e9c7eff03bcd8f68f6847d4983e2204f0c')
+  assert.equal((graphReferenceSql.match(/^CREATE FUNCTION /gm) ?? []).length, 1)
+  const definition = graphReferenceSql.match(/^CREATE FUNCTION official_refresh_graph_reference_r9\.validate_inspected_graph_v2\([\s\S]*?END \$\$;\n/m)?.[0]
+  assert.ok(definition)
+  const original = definition.replace(`${graphReferenceSchema}.${graphWorkerName}`, `official_provenance_private.${graphWorkerName}`)
+  assert.equal(Buffer.byteLength(original), 6147)
+  assert.equal(createHash('sha256').update(original).digest('hex'), '17af51e55da5c3ed65007904ddaf62f7875f28a8b3e9b91a71edb88c8976ea39')
+}
 const referenceDefinitions = [
   ['validate_graph_v2', 5137, 'dbdc6616e3a6b9de6b46aecc64b6f92921233717c4adcb33e726c15ee52402ef'],
   ['validate_semantics_v2', 27604, 'c2a4b0e6ccfd6e25c7c95de5588ae629210f8a3f01bb0ace4ed1f5a9a3b21cb1'],
@@ -107,16 +119,93 @@ const positive = (result: AtomicRefreshResult, request: AtomicRefreshRequest) =>
 // unchanged suites remain in their original mandatory jobs; no intended skips.
 test('atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback', { timeout: 900_000 }, async t => {
   const began = performance.now()
+  const lifetime = new OwnedTestLifetime(t.signal)
+  lifetime.installConnectOwnership()
+  const delay = (ms: number) => lifetime.wait(ms)
+  const refreshPersistedCanonicalVersion: typeof actualAtomicRefresh = (cluster, input, key, signal) => lifetime.run(() =>
+    actualAtomicRefresh(cluster, input, key, signal ? AbortSignal.any([lifetime.signal, signal]) : lifetime.signal))
+  const readPersistedCanonicalRequirements: typeof actualPersistedRead = (cluster, mode, key, witness, signal) => lifetime.run(() =>
+    actualPersistedRead(cluster, mode, key, witness, signal ? AbortSignal.any([lifetime.signal, signal]) : lifetime.signal))
   const note = (phase: string, details: Record<string, unknown> = {}) => t.diagnostic(JSON.stringify({
     schema: 'official-truth-atomic-version-refresh-1', phase, elapsedMs: Math.round(performance.now() - began), ...details,
   }))
+  const abortLifetimeRegression = async () => {
+    const injected = new AbortController(), reason = Error('native_injected_parent_abort')
+    const scope = new OwnedTestLifetime(AbortSignal.any([lifetime.signal, injected.signal]))
+    const beforeConnect = LocalPgConnection.connect, beforeFetch = globalThis.fetch
+    scope.installConnectOwnership()
+    const ownPids: string[] = [], started: Promise<unknown>[] = []
+    let nextScenario = 0, nextCluster = 0, sleepingSeen = false, gateSeen = false
+    let failure: unknown, failed = false
+    try {
+      const cluster = scope.startCluster(startLocalProofCluster)
+      const identify = async (connection: LocalPgConnection) => {
+        const row = (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]
+        assert.match(row?.pid ?? '', /^[1-9][0-9]*$/); assert.ok(row?.birth)
+        ownPids.push(row.pid!); return row.pid!
+      }
+      const worker = await LocalPgConnection.connect(cluster), workerPid = await identify(worker)
+      const observer = await LocalPgConnection.connect(cluster); await identify(observer)
+      let resume!: () => void, reached!: () => void, failEarly!: (error: unknown) => void
+      const gate = new Promise<void>(resolve => { resume = resolve }), ready = new Promise<void>(resolve => { reached = resolve })
+      const early = new Promise<never>((_resolve, reject) => { failEarly = reject }); void early.catch(() => {})
+      scope.onStop(() => { resume(); failEarly(scope.signal.reason) })
+      const realConnect = LocalPgConnection.connect
+      scope.patchConnect(async (...args: Parameters<typeof realConnect>) => {
+        const connection = await realConnect.call(LocalPgConnection, ...args)
+        await identify(connection); gateSeen = true; reached()
+        await gate; scope.check(); return connection
+      })
+      globalThis.fetch = async () => { throw Error('unexpected_abort_regression_network') }
+      scope.restore(() => { globalThis.fetch = beforeFetch })
+      const capturedConnect = LocalPgConnection.connect
+      const sleeping = scope.run(() => worker.query('SELECT pg_sleep(10)'))
+      const gated = capturedConnect(cluster)
+      started.push(sleeping, gated); for (const pending of started) void pending.catch(failEarly)
+      await scope.run(() => Promise.race([ready, early]))
+      const until = performance.now() + 2_000
+      while (performance.now() < until) {
+        sleepingSeen = (await observer.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND state='active' AND wait_event='PgSleep'", [pgText(workerPid)]))[0]?.n === '1'
+        if (sleepingSeen) break; await scope.wait(20)
+      }
+      assert.equal(sleepingSeen, true); assert.equal(gateSeen, true); assert.equal(new Set(ownPids).size, 3)
+      const abortStarted = performance.now()
+      injected.abort(reason)
+      const cleanup = await scope.dispose(), outcomes = await Promise.allSettled(started)
+      assert.equal(outcomes.length, 2); assert.ok(outcomes.every(outcome => outcome.status === 'rejected'))
+      assert.equal(cleanup.pending, 0); assert.equal(cleanup.started, cleanup.settled)
+      assert.equal(cleanup.connections, 3); assert.equal(cleanup.closed, 3); assert.equal(cleanup.stoppedClusters, 1)
+      assert.equal(LocalPgConnection.connect, beforeConnect); assert.equal(globalThis.fetch, beforeFetch)
+      assert.equal(existsSync(cluster.root), false)
+      for (const pid of ownPids) assert.throws(() => process.kill(Number(pid), 0), (error: unknown) => (error as NodeJS.ErrnoException)?.code === 'ESRCH')
+      assert.throws(() => scope.startCluster(() => { nextCluster++; return startLocalProofCluster() }), error => error === reason)
+      await assert.rejects(scope.run(async () => { nextScenario++ }), error => error === reason)
+      await assert.rejects(capturedConnect(cluster), error => error === reason)
+      assert.equal(nextScenario, 0); assert.equal(nextCluster, 0)
+      note('actual parent-lifetime abort stops pending SQL and connection gate, restores hooks and removes own backends', {
+        sleepingSeen, gateSeen, actorsSettled: outcomes.length, ownBackendsGone: ownPids.length,
+        abortCleanupMs: Math.round(performance.now() - abortStarted), cleanup, nextScenario, nextCluster,
+      })
+    } catch (error) { failed = true; failure = error }
+    finally {
+      try { await scope.dispose() } catch (error) { throw new AggregateError(failed ? [failure, error] : [error], 'abort_regression_cleanup_failed') }
+    }
+    if (failed) throw failure
+  }
+  let failure: unknown, failed = false
+  try {
+  await lifetime.run(abortLifetimeRegression)
   validateReferenceSource()
-  const primary = await actuallyFreshObservations('primary', 3), composed = await actuallyFreshObservations('composed', 2)
+  const graphReferenceSql = readFileSync(new URL('./graph-reference-r9.fixture.sql', import.meta.url), 'utf8')
+  validateGraphReferenceSource(graphReferenceSql)
+  const primary = await lifetime.run(() => actuallyFreshObservations('primary', 3, lifetime.signal))
+  const composed = await lifetime.run(() => actuallyFreshObservations('composed', 2, lifetime.signal))
   note('five independent actual fresh executions; full capsules retained; later observations, unchanged bytes and mutually compatible immutable artifact identities asserted')
   const openHarness = async (initial: PreparedOriginals) => {
-    const cluster = startLocalProofCluster(), opened = new Set<LocalPgConnection>()
+    const cluster = lifetime.startCluster(startLocalProofCluster), opened = new Set<LocalPgConnection>()
     const connect = async (role?: string) => { const c = await LocalPgConnection.connect(cluster, role); opened.add(c); return c }
     const close = (c: LocalPgConnection) => { if (opened.delete(c)) c.close() }
+    try {
     const owner = await connect(), key = randomBytes(32).toString('hex')
     assert.match(cluster.version, /^postgres \(PostgreSQL\) 16\./)
     const gone = async (pids: readonly string[]) => {
@@ -130,7 +219,6 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.equal(absent, true, 'owned producer/reader backend actually exits')
       }
     }
-    try {
       await owner.query('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions; CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;')
       await installLocalProofSchema(owner)
       for (const name of migrations) await owner.query(readFileSync(new URL(`../../../supabase/migrations/${name}`, import.meta.url), 'utf8'))
@@ -487,6 +575,273 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         }
         note('same backend re-read later corrupt bytes/links and restored all 17 tables; no cross-invocation proof cache')
       }
+      const compareGraphWorker = async (mode: 'primary' | 'composed') => {
+        // R9 comparisons are graph-worker proofs only. Full authenticated
+        // closure/semantic/refresh acceptance above and below stays mandatory.
+        const baseline = await snapshot(owner)
+        const typeInventory = `SELECT n.nspname,t.typname,t.typtype,t.oid::text FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace
+          WHERE n.nspname LIKE 'official_%' ORDER BY n.nspname,t.typname`
+        const typesBefore = await owner.query(typeInventory)
+        await owner.query(graphReferenceSql)
+        assert.deepEqual(await owner.query(typeInventory), typesBefore, 'R9 reference adds no SQL type')
+        const connection = await connect()
+        let pid: string | null = null, profile: Awaited<ReturnType<typeof executionSettings>> | undefined
+        let tracking: string | null | undefined, failed = false, failure: unknown
+        type StoredNode = { id: string; version: string; digest: string; type: string; family: string; contract: string; bytes: Buffer }
+        type Edge = { slot: string; pin: Record<string, unknown>; expected_type: string | null }
+        type Inspection = Record<string, Edge[]>
+        try {
+          pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+          profile = await executionSettings(connection.query.bind(connection))
+          tracking = (await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting
+          assert.ok(tracking)
+          await connection.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+          const qualified = `${graphReferenceSchema}.${graphWorkerSignature}`
+          assert.deepEqual(await connection.query(`SELECT r.rolname AS owner,p.prosecdef::text AS definer,p.provolatile::text AS volatility,
+            (p.proconfig=ARRAY['search_path=""','TimeZone=UTC'])::text AS config FROM pg_proc p JOIN pg_roles r ON r.oid=p.proowner
+            WHERE p.oid=$1::regprocedure`, [pgText(qualified)]), [{ owner: cluster.user, definer: 'false', volatility: 'i', config: 'true' }])
+          assert.equal((await connection.query("SELECT encode(sha256(convert_to(p.prosrc,'UTF8')),'hex') AS digest FROM pg_proc p WHERE p.oid=$1::regprocedure",
+            [pgText(qualified)]))[0]?.digest, '658b89a62bf3482611df4f94eeefe941e5adc2e599ec0e5e6e112be58f32895e')
+          assert.deepEqual(await connection.query(`SELECT r.rolname,a.privilege_type,a.is_grantable::text AS grantable
+            FROM pg_proc p CROSS JOIN LATERAL aclexplode(p.proacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee
+            WHERE p.oid=$1::regprocedure`, [pgText(qualified)]), [{ rolname: cluster.user, privilege_type: 'EXECUTE', grantable: 'false' }])
+          assert.deepEqual(await connection.query(`SELECT r.rolname,a.privilege_type,a.is_grantable::text AS grantable FROM pg_namespace n
+            CROSS JOIN LATERAL aclexplode(n.nspacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE n.nspname='official_refresh_graph_reference_r9'
+            ORDER BY a.privilege_type`), ['CREATE', 'USAGE'].map(privilege_type => ({ rolname: cluster.user, privilege_type, grantable: 'false' })))
+          const denied = ['anon', 'authenticated', 'service_role', 'ot_provenance_writer', 'ot_provenance_reader',
+            'ot_original_test_writer', 'ot_original_test_reader', ATOMIC_REFRESH_ROLE, ATOMIC_REFRESH_LOGIN]
+          for (const role of denied) {
+            assert.deepEqual(await connection.query("SELECT has_function_privilege($1::name,$2::text,'EXECUTE')::text AS execute_allowed,has_schema_privilege($1::name,$3::text,'USAGE')::text AS usage_allowed",
+              [pgText(role), pgText(qualified), pgText(graphReferenceSchema)]), [{ execute_allowed: 'false', usage_allowed: 'false' }])
+            await connection.query(`SAVEPOINT graph_role; SET LOCAL ROLE ${role}`)
+            await assert.rejects(connection.query(`SELECT ${graphReferenceSchema}.${graphWorkerName}(NULL::text,NULL::text,NULL::bytea,NULL::bytea,NULL::official_provenance_api.artifact_input_v1[],NULL::jsonb)`), code('42501'))
+            await connection.query('ROLLBACK TO SAVEPOINT graph_role')
+          }
+          note('R9 graph reference owner-only ACL and exact pinned definition', { mode, deniedRoles: denied.length, referenceDefinitionSha256: '17af51e55da5c3ed65007904ddaf62f7875f28a8b3e9b91a71edb88c8976ea39' })
+
+          // Derive the full stored closure exactly once BEFORE any measured
+          // worker call. No capsule is truncated and no inspection flag is
+          // supplied by the runtime caller. These are private owner test inputs.
+          const fingerprint = initial.envelope.bundle.recordFingerprint
+          const stored = await connection.query(`WITH closure AS MATERIALIZED (
+            SELECT * FROM official_provenance_private.inspected_closure_v2($1::text))
+            SELECT 'artifact'::text AS kind,a.ordinality::text AS ordinal,a.artifact_id,a.artifact_version::text,a.digest,a.artifact_type,
+              a.byte_contract_family,a.artifact_contract_version::text,a.canonical_bytes,NULL::text AS inspection
+            FROM closure c CROSS JOIN LATERAL unnest(c.artifacts) WITH ORDINALITY a
+            UNION ALL SELECT 'inspection',NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::bytea,c.inspected_edges::text FROM closure c`, [pgText(fingerprint)])
+          const inspections = stored.filter(row => row.kind === 'inspection')
+          assert.equal(inspections.length, 1)
+          assert.ok(inspections[0]!.inspection)
+          const actualInspection = JSON.parse(inspections[0]!.inspection!) as Inspection
+          const artifactRows = stored.filter(row => row.kind === 'artifact').sort((a, b) => Number(a.ordinal) - Number(b.ordinal))
+          assert.equal(artifactRows.length, initial.envelope.bundle.artifacts.length)
+          assert.equal(stored.length, artifactRows.length + 1)
+          const nodes: StoredNode[] = artifactRows.map((row, index) => {
+            assert.equal(row.ordinal, String(index + 1))
+            const original = initial.envelope.bundle.artifacts.find(a => a.pin.id === row.artifact_id && String(a.pin.version) === row.artifact_version)
+            assert.ok(original)
+            assert.equal(row.digest, original.pin.digest); assert.equal(row.artifact_type, original.artifactType)
+            assert.equal(row.byte_contract_family, original.artifactType === 'global_cell' ? 'global_definition_v1' : original.artifactType.endsWith('V1') ? 'custody_v1' : 'manifest_v1')
+            assert.equal(row.artifact_contract_version, String(original.artifactContractVersion))
+            assert.match(row.canonical_bytes ?? '', /^\\x(?:[a-f0-9]{2})+$/)
+            const bytes = Buffer.from(row.canonical_bytes!.slice(2), 'hex')
+            assert.deepEqual(bytes, Buffer.from(original.canonicalBytes))
+            return { id: row.artifact_id!, version: row.artifact_version!, digest: row.digest!, type: row.artifact_type!,
+              family: row.byte_contract_family!, contract: row.artifact_contract_version!, bytes }
+          })
+          const keyOf = (node: StoredNode) => `${node.id}:${node.version}:${node.digest}`
+          assert.equal(new Set(nodes.map(keyOf)).size, nodes.length)
+          assert.equal(Object.keys(actualInspection).length, nodes.length)
+          assert.ok(nodes.every(node => Array.isArray(actualInspection[keyOf(node)])))
+          const material = (await connection.query(`SELECT r.canonical_payload_bytes AS receipt,bb.canonical_bytes AS binding
+            FROM official_provenance_private.receipts r JOIN official_provenance_private.custody_bindings cb USING(record_fingerprint)
+            JOIN official_provenance_private.artifact_blobs bb ON bb.digest=cb.binding_digest WHERE r.record_fingerprint=$1::text`, [pgText(fingerprint)]))[0]
+          assert.ok(material)
+          assert.match(material.receipt ?? '', /^\\x(?:[a-f0-9]{2})+$/); assert.match(material.binding ?? '', /^\\x(?:[a-f0-9]{2})+$/)
+          const receipt = Buffer.from(material.receipt!.slice(2), 'hex'), binding = Buffer.from(material.binding!.slice(2), 'hex')
+          assert.deepEqual(receipt, Buffer.from(initial.envelope.bundle.receiptBytes)); assert.deepEqual(binding, Buffer.from(initial.envelope.bundle.custodyBindingBytes))
+          const artifacts = pgCompositeArray(oids.array, oids.element, nodes.map(node => [pgText(node.id), pgText(node.version, 20), pgText(node.digest),
+            pgText(node.type), pgText(node.family), pgText(node.contract, 23), pgBytes(node.bytes)]))
+          const parameters = (inspection: Inspection) => [pgText(initial.envelope.profile), pgText(fingerprint), pgBytes(receipt), pgBytes(binding), artifacts, pgText(JSON.stringify(inspection), 3802)]
+          const actualParameters = parameters(actualInspection)
+          const invoke = (implementation: 'r8_reference' | 'current', prepared: readonly PgParameter[]) => {
+            const schema = implementation === 'r8_reference' ? graphReferenceSchema : 'official_provenance_private'
+            return connection.query(`SELECT ${schema}.${graphWorkerName}($1::text,$2::text,$3::bytea,$4::bytea,$5::official_provenance_api.artifact_input_v1[],$6::jsonb)`, prepared)
+          }
+          const stats = () => connection.query(`SELECT schemaname,funcname,calls::text,total_time::text,self_time::text FROM pg_stat_xact_user_functions
+            WHERE schemaname IN ('official_provenance_private','official_refresh_graph_reference_r9')
+              AND funcname IN ('validate_inspected_graph_v2','artifact_v2') ORDER BY schemaname,funcname`)
+          await connection.query("SET LOCAL track_functions='all'")
+          for (const implementation of ['r8_reference', 'current'] as const) {
+            const before = await stats(), started = performance.now()
+            await invoke(implementation, actualParameters)
+            const workerMs = Math.round(performance.now() - started), after = await stats()
+            const delta = after.map(row => {
+              const prior = before.find(value => value.schemaname === row.schemaname && value.funcname === row.funcname)
+              return { schema: row.schemaname!, function: row.funcname!, calls: Number(row.calls) - Number(prior?.calls ?? '0'),
+                totalMs: Number(row.total_time) - Number(prior?.total_time ?? '0'), selfMs: Number(row.self_time) - Number(prior?.self_time ?? '0') }
+            }).filter(row => row.calls > 0)
+            assert.equal(delta.length, 1)
+            assert.equal(delta[0]!.schema, implementation === 'r8_reference' ? graphReferenceSchema : 'official_provenance_private')
+            assert.equal(delta[0]!.function, graphWorkerName); assert.equal(delta[0]!.calls, 1)
+            assert.ok(Number.isFinite(delta[0]!.totalMs) && delta[0]!.totalMs >= 0 && Number.isFinite(delta[0]!.selfMs) && delta[0]!.selfMs >= 0)
+            note('R9 fixed R8/new graph worker probe on complete retained inputs', { mode, implementation, artifacts: nodes.length,
+              canonicalBytes: nodes.reduce((sum, node) => sum + node.bytes.length, 0), workerMs, invocationDelta: delta })
+          }
+
+          if (mode === 'primary') {
+            const rootRows = await connection.query(`SELECT r.slot,r.pin::text,r.expected_type,
+              (CASE WHEN r.slot IN ('globalAdmission','selectedSupportManifest','autonomousReviewConstruction') THEN 2 ELSE 1 END)::text AS depth
+              FROM (SELECT * FROM official_provenance_private.receipt_roots(official_provenance_private.decode($1::bytea,262144))
+              UNION ALL SELECT * FROM official_provenance_private.binding_roots(official_provenance_private.decode($2::bytea,4096),$3::text)) r`,
+            [pgBytes(receipt), pgBytes(binding), pgText(fingerprint)])
+            const roots = rootRows.map(row => { const pin = JSON.parse(row.pin!) as { id: string; version: number; digest: string }
+              return { key: `${pin.id}:${pin.version}:${pin.digest}`, depth: Number(row.depth) } })
+            assert.ok(roots.length > 1 && roots.every(root => nodes.some(node => keyOf(node) === root.key) && [1, 2].includes(root.depth)))
+            const firstRoot = roots.find(root => root.depth === 1)!, deeperRoot = roots.find(root => root.depth === 2)!
+            assert.ok(firstRoot && deeperRoot)
+            const start = nodes.find(node => keyOf(node) === firstRoot.key)!, deepStart = nodes.find(node => keyOf(node) === deeperRoot.key)!
+            const free = nodes.filter(node => !roots.some(root => root.key === keyOf(node)))
+            assert.ok(free.length >= 16)
+            const edge = (node: StoredNode, index: number): Edge => ({ slot: `/r9/${index}`, pin: { id: node.id, version: Number(node.version), digest: node.digest }, expected_type: node.type })
+            const empty = (): Inspection => Object.fromEntries(nodes.map(node => [keyOf(node), []]))
+            const star = (): Inspection => { const value = empty(); value[keyOf(start)] = nodes.filter(node => node !== start).map(edge); return value }
+            const chain = (maximumDepth: 16 | 17): Inspection => {
+              const value = empty(), shared = free[0]!, end = free[1]!, middle = free.slice(2, maximumDepth - 1)
+              assert.equal(middle.length, maximumDepth - 3)
+              const used = new Set([keyOf(start), keyOf(shared), keyOf(end), ...middle.map(keyOf)])
+              value[keyOf(start)] = [shared, middle[0]!, ...nodes.filter(node => !used.has(keyOf(node)))].map(edge)
+              for (let i = 0; i < middle.length; i++) value[keyOf(middle[i]!)] = [edge(middle[i + 1] ?? shared, 0)]
+              value[keyOf(shared)] = [edge(end, 0)]; return value
+            }
+            // This arithmetic describes the explicit graph-only fixture; it
+            // is neither a typed-capsule validator nor a SQL execution trace.
+            const arithmetic = (inspection: Inspection) => {
+              const queue = roots.map(root => ({ ...root, path: [] as string[] })), longest = new Map<string, number>()
+              let head = 0, deepest = 0, laterDeeper = 0, maxPending = queue.length, dominated = 0
+              while (head < queue.length) {
+                const item = queue[head++]!; deepest = Math.max(deepest, item.depth)
+                if (item.depth > 16) return { outcome: 'depth', deepest, laterDeeper, maxPending, dominated, cycleDominated: false }
+                if (item.path.includes(item.key)) return { outcome: 'cycle', deepest, laterDeeper, maxPending, dominated,
+                  cycleDominated: (longest.get(item.key) ?? 0) >= item.depth }
+                const previous = longest.get(item.key)
+                if (previous !== undefined && previous >= item.depth) { dominated++; continue }
+                if (previous !== undefined) laterDeeper++
+                longest.set(item.key, item.depth)
+                for (const next of inspection[item.key] ?? []) {
+                  queue.push({ key: `${next.pin.id}:${next.pin.version}:${next.pin.digest}`, depth: item.depth + 1, path: [...item.path, item.key] })
+                  maxPending = Math.max(maxPending, queue.length - head)
+                }
+              }
+              return { outcome: longest.size === nodes.length ? 'complete' : 'unsolicited', deepest, laterDeeper, maxPending, dominated, cycleDominated: false }
+            }
+            const duplicate = star(); duplicate[keyOf(start)]!.push(edge(free[0]!, 900), edge(free[1]!, 901), edge(free[0]!, 902))
+            const depth16 = chain(16), depth17 = chain(17), cycle = star()
+            cycle[keyOf(deepStart)] = [edge(free[0]!, 0)]; cycle[keyOf(free[0]!)] = [edge(free[0]!, 0)]
+            const wide = star()
+            while (wide[keyOf(start)]!.length + roots.length + 1 < 1024) wide[keyOf(start)]!.push(edge(free[0]!, wide[keyOf(start)]!.length))
+            const excessive = { ...wide, [keyOf(start)]: [...wide[keyOf(start)]!, edge(free[0]!, 2000)] }
+            assert.equal(arithmetic(star()).outcome, 'complete')
+            assert.ok(Object.values(star()).filter(list => list.length === 0).length === nodes.length - 1)
+            assert.ok(arithmetic(duplicate).dominated > 0)
+            assert.equal(arithmetic(depth16).outcome, 'complete'); assert.equal(arithmetic(depth16).deepest, 16); assert.ok(arithmetic(depth16).laterDeeper > 0)
+            assert.equal(arithmetic(depth17).outcome, 'depth'); assert.equal(arithmetic(depth17).deepest, 17)
+            assert.equal(arithmetic(cycle).outcome, 'cycle'); assert.equal(arithmetic(cycle).cycleDominated, true)
+            assert.equal(wide[keyOf(start)]!.length + roots.length + 1, 1024); assert.ok(arithmetic(wide).maxPending >= 900)
+            assert.equal(excessive[keyOf(start)]!.length + roots.length + 1, 1025)
+            const invalidVersion = { ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: 'not-a-bigint' } }
+            const missingTarget = { ...edge(free[0]!, 1), pin: { ...edge(free[0]!, 1).pin, id: 'r9-missing-target' } }
+            const withFirst = (...entries: Edge[]): Inspection => ({ ...star(), [keyOf(start)]: [...entries, ...star()[keyOf(start)]!] })
+            const missingInspection = star(), missingKey = keyOf(nodes[0]!)
+            delete missingInspection[missingKey]; missingInspection['r9-unused-inspection-key'] = []
+            const spelling = withFirst({ ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: `0${free[0]!.version}` } })
+            const cases: { name: string; inspection: Inspection; sqlstate: string | null; message: string | null; nullFirstKey?: boolean }[] = [
+              { name: 'reachable empty adjacency', inspection: star(), sqlstate: null, message: null },
+              { name: 'ordered duplicate edges retained', inspection: duplicate, sqlstate: null, message: null },
+              { name: 'later deeper shared path accepts exact depth16', inspection: depth16, sqlstate: null, message: null },
+              { name: 'later deeper shared path refuses depth17', inspection: depth17, sqlstate: 'P0001', message: 'bound_exceeded' },
+              { name: 'cycle before an already dominating visit', inspection: cycle, sqlstate: 'P0001', message: 'cycle' },
+              { name: 'wide pending FIFO and duplicate edges total1024', inspection: wide, sqlstate: null, message: null },
+              { name: 'duplicate edges total1025 refuse', inspection: excessive, sqlstate: 'P0001', message: 'bound_exceeded' },
+              { name: 'edge order: invalid bigint before missing target', inspection: withFirst(invalidVersion, missingTarget), sqlstate: '22P02', message: 'invalid input syntax for type bigint: "not-a-bigint"' },
+              { name: 'edge order: missing target before invalid bigint', inspection: withFirst(missingTarget, invalidVersion), sqlstate: 'P0001', message: 'dependency_missing' },
+              { name: 'NULL expected type refuses', inspection: withFirst({ ...edge(free[0]!, 0), expected_type: null }), sqlstate: 'P0001', message: 'dependency_missing' },
+              { name: 'missing inspected key at unchanged cardinality', inspection: missingInspection, sqlstate: 'P0001', message: 'semantic_mismatch' },
+              { name: 'NULL artifact key precedes missing inspection', inspection: actualInspection, sqlstate: '22023', message: 'argument 1: key must not be null', nullFirstKey: true },
+              { name: 'bigint-equal version spelling preserves original target key', inspection: spelling, sqlstate: 'P0001', message: 'unsolicited_artifact' },
+              { name: 'NULL edge version refuses', inspection: withFirst({ ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: null } }), sqlstate: 'P0001', message: 'dependency_missing' },
+            ]
+            assert.equal(cases.length, 14)
+            // The shared driver intentionally redacts error messages. Inspect
+            // them inside owner-only anonymous SQL blocks instead of adding
+            // a function/grant or weakening that driver. An expected P0001 must
+            // also be the exact depth/cycle/refusal message, never an early
+            // input error that happens to share the SQLSTATE. quote_literal is
+            // performed by PostgreSQL; no case value becomes unquoted SQL.
+            // One finite case pair per statement keeps the existing 25-second
+            // statement bound. Every case derives its complete stored input
+            // before both calls; all of this remains inside the 900s Parent.
+            for (const [index, fixture] of cases.entries()) {
+              const quoted = (await connection.query('SELECT quote_literal($1::text) AS fixture,quote_literal($2::text) AS fingerprint,quote_literal($3::text) AS profile',
+                [pgText(JSON.stringify(fixture)), pgText(fingerprint), pgText(initial.envelope.profile)]))[0]!
+              assert.ok(quoted.fixture && quoted.fingerprint && quoted.profile)
+              const block = `DECLARE original_ official_provenance_api.artifact_input_v1[]; input_ official_provenance_api.artifact_input_v1[];
+              receipt_ bytea; binding_ bytea; fixture_ jsonb:=${quoted.fixture}::jsonb; implementation_ text; state_ text; message_ text; checked_ integer:=0;
+              BEGIN
+               SELECT c.artifacts INTO STRICT original_ FROM official_provenance_private.inspected_closure_v2(${quoted.fingerprint}) c;
+               SELECT r.canonical_payload_bytes,bb.canonical_bytes INTO STRICT receipt_,binding_ FROM official_provenance_private.receipts r
+                JOIN official_provenance_private.custody_bindings cb USING(record_fingerprint)
+                JOIN official_provenance_private.artifact_blobs bb ON bb.digest=cb.binding_digest WHERE r.record_fingerprint=${quoted.fingerprint};
+                input_:=original_;
+                IF fixture_->>'nullFirstKey'='true' THEN
+                 SELECT ARRAY(SELECT ROW(CASE WHEN a.ordinality=1 THEN NULL::text ELSE a.artifact_id END,
+                  a.artifact_version,a.digest,a.artifact_type,a.byte_contract_family,a.artifact_contract_version,a.canonical_bytes)::official_provenance_api.artifact_input_v1
+                  FROM unnest(original_) WITH ORDINALITY a ORDER BY a.ordinality) INTO input_;
+                END IF;
+                FOREACH implementation_ IN ARRAY ARRAY['r8_reference','current'] LOOP
+                 state_:=NULL; message_:=NULL;
+                 BEGIN
+                  IF implementation_='r8_reference' THEN
+                   PERFORM official_refresh_graph_reference_r9.validate_inspected_graph_v2(${quoted.profile},${quoted.fingerprint},receipt_,binding_,input_,fixture_->'inspection');
+                  ELSE
+                   PERFORM official_provenance_private.validate_inspected_graph_v2(${quoted.profile},${quoted.fingerprint},receipt_,binding_,input_,fixture_->'inspection');
+                  END IF;
+                 EXCEPTION WHEN OTHERS THEN GET STACKED DIAGNOSTICS state_=RETURNED_SQLSTATE,message_=MESSAGE_TEXT;
+                 END;
+                 IF state_ IS DISTINCT FROM (fixture_->>'sqlstate') OR message_ IS DISTINCT FROM (fixture_->>'message') THEN
+                  RAISE EXCEPTION 'r9_exact_worker_outcome_mismatch' USING ERRCODE='P79${String(index + 1).padStart(2, '0')}';
+                 END IF;
+                 checked_:=checked_+1;
+                END LOOP;
+               IF checked_<>2 THEN RAISE EXCEPTION 'r9_case_count_mismatch' USING ERRCODE='P7999'; END IF;
+              END`
+              assert.equal(block.includes('$r9_graph_cases$'), false)
+              await connection.query(`DO $r9_graph_cases$ ${block} $r9_graph_cases$`)
+              // Completion proves both actual invocations matched both fields
+              // (or genuinely succeeded for the four structural positives).
+              note('R9 structural graph-worker equivalence; no canonical acceptance claim', {
+                case: fixture.name, sqlstate: fixture.sqlstate, message: fixture.message, implementationsCheckedInSql: 2,
+              })
+            }
+          }
+          assert.deepEqual(await snapshot(connection), baseline)
+        } catch (error) { failed = true; failure = error }
+        finally {
+          const cleanupErrors: unknown[] = []
+          const cleanup = async (operation: () => unknown) => { try { await operation() } catch (error) { cleanupErrors.push(error) } }
+          await cleanup(async () => {
+            await connection.query('ROLLBACK')
+            assert.ok(profile && tracking)
+            assert.deepEqual(await executionSettings(connection.query.bind(connection)), profile)
+            assert.equal((await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting, tracking)
+          })
+          await cleanup(() => close(connection)); if (pid) await cleanup(() => gone([pid!]))
+          await cleanup(async () => { assert.deepEqual(await snapshot(owner), baseline); await locksReleased() })
+          if (cleanupErrors.length) throw new AggregateError(failed ? [failure, ...cleanupErrors] : cleanupErrors, 'graph_comparison_cleanup_failed')
+        }
+        if (failed) throw failure
+        note('R9 worker comparison restored settings, full stored state and owned backend departure', { mode })
+      }
       const publicationProbe = async (next: PreparedOriginals) => {
         const before = await snapshot(owner), writer = await connect('ot_original_test_writer')
         const pid = (await writer.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
@@ -507,7 +862,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         let insideBoundedCommit = false, boundedDeadline = 0, commitLossReached = false, readerFailureReached = false, delayReached = false, postCommitOriginals = 0
         let hookAssertion: unknown
         const afterActualBound = async () => { while (performance.now() <= boundedDeadline + 10) await delay(Math.min(50, Math.max(1, boundedDeadline + 11 - performance.now()))) }
-        LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+        const restoreConnect = lifetime.patchConnect(async (...args: Parameters<typeof realConnect>) => {
           const c = await realConnect.call(LocalPgConnection, ...args)
           const commitControl = insideBoundedCommit && (args[1] === undefined || args[1] === cluster.user)
           if (!commitControl && ![ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) return c
@@ -560,10 +915,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
             finally { record.queries.push({ phase, ms: Math.round(performance.now() - start), code: errorCode }) }
           }
           return c
-        }
+        })
         globalThis.fetch = async () => { throw Error('unexpected_refresh_network') }
+        const restoreFetch = lifetime.restore(() => { globalThis.fetch = realFetch })
         let result: AtomicRefreshResult
-        try { result = await operation() } finally { LocalPgConnection.connect = realConnect; globalThis.fetch = realFetch }
+        try { result = await lifetime.run(operation) } finally { restoreFetch(); restoreConnect() }
         if (hookAssertion) throw hookAssertion
         if (options.commitLoss) assert.equal(commitLossReached, true)
         if (options.failReader) assert.equal(readerFailureReached, true)
@@ -611,10 +967,10 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.deepEqual(await snapshot(owner), before); await locksReleased()
         note('negative direct SQL with complete rollback', { case: name, sqlstate: (caught as LocalPgError).code })
       }
-      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference,
+      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference, compareGraphWorker,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
-        stop() { for (const c of opened) c.close(); cluster.stop() } }
-    } catch (error) { for (const c of opened) c.close(); cluster.stop(); throw error }
+        stop() { lifetime.stopCluster(cluster) } }
+    } catch (error) { lifetime.stopCluster(cluster); throw error }
   }
 
   // Closed input and direct-role adversarial proof, real two fault phases,
@@ -629,6 +985,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     assert.deepEqual(installed, [{ definer: 'true', owner: 'true', config: 'true' }])
     await h.compareJit()
     await h.compareReference('primary')
+    await h.compareGraphWorker('primary')
     assert.deepEqual(await h.owner.query(`SELECT rolsuper::text,rolbypassrls::text,rolcanlogin::text,rolinherit::text FROM pg_roles WHERE rolname='${ATOMIC_REFRESH_ROLE}'`),
       [{ rolsuper: 'false', rolbypassrls: 'false', rolcanlogin: 'false', rolinherit: 'false' }])
     assert.deepEqual(await h.owner.query(`SELECT r.rolname FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid WHERE m.member='${ATOMIC_REFRESH_LOGIN}'::regrole ORDER BY r.rolname`), [{ rolname: ATOMIC_REFRESH_ROLE }])
@@ -796,6 +1153,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   try {
     await c.publicationProbe(composed[1]!)
     await c.compareReference('composed')
+    await c.compareGraphWorker('composed')
     const req = await c.request(composed[1]!, 'composed')
     await c.negative('composed reversed original support order', { ...req, bodies: [...req.bodies].reverse() })
     await c.negative('composed reversed receipt supports', { ...req, envelope: corruptReceipt(req.envelope, p => { (p.supports as unknown[]).reverse() }) })
@@ -850,7 +1208,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const armingBound = await databaseCutoff(1_200), connectBeforeArming = LocalPgConnection.connect
     let armingReached = false
     const guardConnections: LocalPgConnection[] = []
-    LocalPgConnection.connect = async (...args: Parameters<typeof connectBeforeArming>) => {
+    const restoreArmingConnect = lifetime.patchConnect(async (...args: Parameters<typeof connectBeforeArming>) => {
       const connection = await connectBeforeArming.call(LocalPgConnection, ...args); guardConnections.push(connection)
       const query = connection.query.bind(connection)
       connection.query = async (sql: string, params: readonly PgParameter[] = []) => {
@@ -862,12 +1220,12 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         return rows
       }
       return connection
-    }
+    })
     try {
       const commit = await unsent.commitBefore(armingBound.deadlineAt, armingBound.cutoff)
       assert.equal(armingReached, true); assert.equal(commit.dispatched, false); assert.equal(commit.acknowledged, false)
       assert.equal(unsent.operationDiagnostics.at(-1)?.commitDispatched, false)
-    } finally { LocalPgConnection.connect = connectBeforeArming; w.close(unsent); for (const connection of guardConnections) connection.close() }
+    } finally { restoreArmingConnect(); w.close(unsent); for (const connection of guardConnections) connection.close() }
     await w.gone([unsentPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
     note('actual cutoff during asynchronous arming; no COMMIT dispatch and no persisted probe')
@@ -876,7 +1234,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const deferred = await w.connect(), deferredPid = (await deferred.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
     await deferred.query('BEGIN; INSERT INTO public.refresh_commit_probe VALUES(2)')
     const deferredBound = await databaseCutoff(2_500), deferredStarted = performance.now()
-    const deferredResult = deferred.commitBefore(deferredBound.deadlineAt, deferredBound.cutoff)
+    const deferredResult = lifetime.track(deferred.commitBefore(deferredBound.deadlineAt, deferredBound.cutoff))
     let deferredReached = false
     while (performance.now() - deferredStarted < 2_000) {
       deferredReached = (await w.owner.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND query='COMMIT' AND wait_event='PgSleep'", [pgText(deferredPid)]))[0]?.n === '1'
@@ -900,7 +1258,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     const connectBeforeDelay = LocalPgConnection.connect, delayedGuards: LocalPgConnection[] = []
     let guardDelayMs = 0, guardArmed = false, guardTransportObserved = false
     let enteredAt: number | null = null, delayedOutcome: LocalPgBoundedCommit | undefined
-    LocalPgConnection.connect = async (...args: Parameters<typeof connectBeforeDelay>) => {
+    const restoreDelayedConnect = lifetime.patchConnect(async (...args: Parameters<typeof connectBeforeDelay>) => {
       const connection = await connectBeforeDelay.call(LocalPgConnection, ...args); delayedGuards.push(connection)
       const query = connection.query.bind(connection)
       connection.query = async (sql: string, params: readonly PgParameter[] = []) => {
@@ -915,9 +1273,9 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         return rows
       }
       return connection
-    }
+    })
     try {
-      const pending = delayed.commitBefore(earlierDeadline, later.cutoff)
+      const pending = lifetime.track(delayed.commitBefore(earlierDeadline, later.cutoff))
       const until = performance.now() + 3_500
       while (performance.now() < until) {
         const active = (await w.owner.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE pid::text=$1::text AND query='COMMIT' AND wait_event='PgSleep'", [pgText(delayedPid)]))[0]?.n === '1'
@@ -938,7 +1296,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         deferredAfterBoundMs: enteredAt === null ? null : Math.round(enteredAt + 3_000 - earlierDeadline),
         deferredBeforeRelativeRestartMs: enteredAt === null ? null : Math.round(earlierDeadline + guardDelayMs - enteredAt - 3_000),
       })
-      LocalPgConnection.connect = connectBeforeDelay; w.close(delayed); for (const connection of delayedGuards) connection.close()
+      restoreDelayedConnect(); w.close(delayed); for (const connection of delayedGuards) connection.close()
     }
     await w.gone([delayedPid])
     assert.equal((await w.owner.query('SELECT count(*)::text AS n FROM public.refresh_commit_probe'))[0]?.n, '0')
@@ -972,6 +1330,11 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           return record
         } catch (error) { closeOwned(record); throw error }
       }
+      let restoreBlockedConnect = () => {}
+      const removeParentStop = lifetime.onStop(() => {
+        stopping = true; cancel.abort(); failEarly(lifetime.signal.reason)
+        for (const record of owned) closeOwned(record)
+      })
       try {
         blocker = await openOwned(w.cluster); observer = await openOwned(w.cluster)
         assert.equal(new Set([ownerPid, blocker.pid, observer.pid]).size, 3)
@@ -982,7 +1345,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           observations.push(query); void query.catch(() => {})
           return Promise.race([query, early])
         }
-        LocalPgConnection.connect = (...args: Parameters<typeof realConnect>) => {
+        restoreBlockedConnect = lifetime.patchConnect((...args: Parameters<typeof realConnect>) => {
           const hook = (async () => {
             const record = await openOwned(...args)
             try {
@@ -1016,13 +1379,13 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
               return record.connection
             } catch (error) { closeOwned(record); throw error }
           })()
-          hooks.push(hook); void hook.catch(failEarly)
+          hooks.push(lifetime.track(hook)); void hook.catch(failEarly)
           return hook
-        }
-        pending = refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal).then(result => {
+        })
+        pending = lifetime.track(refreshPersistedCanonicalVersion(w.cluster, req, w.key, cancel.signal).then(result => {
           if (!outcomeAllowed) failEarly(Error('blocked_coordinator_returned_before_expected_wait_outcome'))
           return result
-        }, error => { failEarly(error); throw error })
+        }, error => { failEarly(error); throw error }))
         void pending.catch(() => {})
         const until = performance.now() + 45_000
         while (performance.now() < until) {
@@ -1055,14 +1418,15 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         // Close releases the held transaction without issuing ROLLBACK on a
         // blocker that a partially completed hook might still be using.
         for (const record of owned) await cleanup(() => closeOwned(record))
-        const coordinatorOutcomes = await Promise.allSettled(pending ? [pending] : [])
+        restoreBlockedConnect(); removeParentStop()
+        let coordinatorOutcomes: PromiseSettledResult<AtomicRefreshResult>[] = []
+        await cleanup(async () => { coordinatorOutcomes = await lifetime.drain(pending ? [pending] : []) })
         const hookOutcomes: PromiseSettledResult<LocalPgConnection>[] = []
         for (let drained = 0; drained < hooks.length;) {
           const batch = hooks.slice(drained); drained += batch.length
-          hookOutcomes.push(...await Promise.allSettled(batch))
+          await cleanup(async () => { hookOutcomes.push(...await lifetime.drain(batch)) })
         }
-        await Promise.allSettled(observations)
-        LocalPgConnection.connect = realConnect
+        await cleanup(() => lifetime.drain(observations))
         // A connect that was already pending at cancellation can finish later;
         // openOwned tracked it before its first further await, and we drain it.
         for (const record of owned) await cleanup(() => closeOwned(record))
@@ -1113,15 +1477,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     // This observation cap does not extend any actor's existing 60s/120s
     // lifetime. Its only job is to release test gates on an unreachable phase.
     const phaseTimer = setTimeout(() => { raceAbort.abort(); failEarly(Error('race_actor_phase_unreached')) }, 120_000)
+    const removeParentRaceStop = lifetime.onStop(() => {
+      clearTimeout(phaseTimer); raceAbort.abort(); readerResume.resolve(); writerResume.resolve()
+      failEarly(lifetime.signal.reason)
+    })
     const launch = <T>(actor: RaceActor, operation: () => Promise<T>) => {
-      const promise = actors.run(actor, operation).then(result => {
+      const promise = lifetime.track(actors.run(actor, operation).then(result => {
         if (!lockProofReached) failEarly(Error(`race_${actor}_returned_before_lock_proof`))
         return result
-      }, error => { failEarly(error); throw error })
+      }, error => { failEarly(error); throw error }))
       started.push(promise); void promise.catch(() => {})
       return promise
     }
-    LocalPgConnection.connect = async (...args: Parameters<typeof realConnect>) => {
+    const restoreRaceConnect = lifetime.patchConnect(async (...args: Parameters<typeof realConnect>) => {
       const actor = actors.getStore()
       const connection = await realConnect.call(LocalPgConnection, ...args)
       if (actor && [ATOMIC_REFRESH_LOGIN, 'ot_original_test_reader'].includes(args[1] ?? '')) {
@@ -1140,18 +1508,19 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
           }
           const rows = await originalQuery(sql, parameters)
           if (actor === 'old_reader' && args[1] === 'ot_original_test_reader' && sql.includes('read_projection_candidate(') && ++readerOriginals === 2) {
-            readerPid = pid; readerHeld.resolve(); await readerResume.promise
+            readerPid = pid; readerHeld.resolve(); await readerResume.promise; lifetime.check()
           }
           return rows
         }
         if (isProducer) {
           // The coordinator has already completed both immutable preflights.
           // This actual connection has not received BEGIN or refresh SQL yet.
-          writerReady[actor as WriterActor].resolve(); await writerResume.promise
+          writerReady[actor as WriterActor].resolve(); await writerResume.promise; lifetime.check()
         }
       }
       return connection
-    }
+    })
+    let raceFailure: unknown, raceFailed = false
     try {
       // Fixed independent actor contexts prevent either coordinator's Old-read
       // from becoming the separate reader barrier. All three proofs are real.
@@ -1202,19 +1571,27 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       await w.negative('later winner survives a fresh-witness old contender', { ...loser, witness: winner.witness }, undefined, '55000')
       note('real reader SHARE barrier and competing writers', { winner: winnerIndex, sql: winner.sqlPhaseMs,
         writerPhaseStartMs: Math.round(dispatchedAt - raceStarted) })
-    } finally {
+    } catch (error) { raceFailed = true; raceFailure = error }
+    finally {
       clearTimeout(phaseTimer); raceAbort.abort(); readerResume.resolve(); writerResume.resolve()
-      const outcomes = await Promise.allSettled(started)
-      await Promise.allSettled(observations)
-      LocalPgConnection.connect = realConnect; actors.disable()
-      for (const item of connections) item.connection.close()
-      await w.gone(connections.map(item => item.pid)); await w.locksReleased()
+      restoreRaceConnect(); removeParentRaceStop(); actors.disable()
+      const cleanupErrors: unknown[] = []
+      const cleanup = async (operation: () => unknown) => { try { await operation() } catch (error) { cleanupErrors.push(error) } }
+      // Release transports before awaiting actors. Parent abort also stops the
+      // actual cluster, waking a driver message waiter that close alone cannot.
+      for (const item of connections) await cleanup(() => item.connection.close())
+      let outcomes: PromiseSettledResult<unknown>[] = []
+      await cleanup(async () => { outcomes = await lifetime.drain(started) })
+      await cleanup(() => lifetime.drain(observations))
+      await cleanup(() => w.gone(connections.map(item => item.pid))); await cleanup(() => w.locksReleased())
       note('three race actors settled and concrete backends removed', { lockProofReached,
         readerHeld: readerPid !== null, firstWriterReady: Boolean(producers.first_writer), secondWriterReady: Boolean(producers.second_writer),
         firstDispatched: producers.first_writer?.dispatchedAt !== null && producers.first_writer?.dispatchedAt !== undefined,
         secondDispatched: producers.second_writer?.dispatchedAt !== null && producers.second_writer?.dispatchedAt !== undefined,
-        outcomes: outcomes.map(result => result.status) })
+        outcomes: outcomes.map(result => result.status), cleanupFailures: cleanupErrors.length })
+      if (cleanupErrors.length) throw new AggregateError(raceFailed ? [raceFailure, ...cleanupErrors] : cleanupErrors, 'race_cleanup_failed')
     }
+    if (raceFailed) throw raceFailure
   } finally { w.stop() }
 
   for (const outcome of ['unknown_commit', 'readback_failure', 'cleanup_after_bound', 'reader_after_bound'] as const) {
@@ -1238,5 +1615,18 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
       note('truthful nonpositive terminal outcome independently inspected without replay', { case: outcome })
     } finally { h.stop() }
   }
-  note('complete native refresh acceptance matrix finished')
+  lifetime.check()
+  } catch (error) { failed = true; failure = error }
+  finally {
+    try {
+      const cleanup = await lifetime.dispose()
+      assert.equal(cleanup.pending, 0); assert.equal(cleanup.started, cleanup.settled); assert.equal(cleanup.closed, cleanup.connections)
+      note('parent lifetime disposed all owned resources and settled initiated operations', { cleanup, parentAborted: t.signal.aborted })
+    } catch (error) { throw new AggregateError(failed ? [failure, error] : [error], 'native_parent_cleanup_failed') }
+  }
+  if (failed) throw failure
+  t.signal.throwIfAborted()
+  const parentReserveMs = 900_000 - (performance.now() - began)
+  assert.ok(parentReserveMs > 0, 'complete healthy matrix and cleanup must retain actual parent budget')
+  note('complete native refresh acceptance matrix finished', { parentReserveMs: Math.round(parentReserveMs) })
 })
