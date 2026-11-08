@@ -23,6 +23,12 @@ export type NativeHttpFaults={
   onRefresh?:()=>void;
   refresh:'normal'|'pending';
 }
+export type NativeHttpRequestEvidence={
+  path:string;method:string;authenticated:boolean;bodyParsed:boolean;beforeRpc:boolean;rpcCommitted:boolean;
+  status:number|null;headersSent:boolean;finished:boolean;closed:boolean;
+  // Server end/afterCommit observations, never a claim of client receipt.
+  acknowledgement:'not_sent'|'response_end_called'|'dropped_after_commit';
+}
 export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSuiteOwnership) {
   owner?.check()
   const secret=randomBytes(32),claims={sub:nativeUser,role:'authenticated',aal:'aal2',session_id:nativeSession,exp:Math.floor(Date.now()/1000)+3600}
@@ -43,11 +49,20 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
   const cookie=(expired=false)=>`base64-${Buffer.from(JSON.stringify({access_token:expired?sign({...claims,exp:Math.floor(Date.now()/1000)-1}):accessToken,
     refresh_token:'SYNTHETIC-LOCAL-REFRESH',token_type:'bearer',expires_in:expired?-1:3600,expires_at:expired?Math.floor(Date.now()/1000)-1:claims.exp,user})).toString('base64url')}`
   const faults:NativeHttpFaults={refresh:'normal'},active=new Set<Promise<void>>(),connections=new Set<LocalPgConnection>()
-  const evidence:{rpc:string;committed:boolean;sqlState:string|null}[]=[],requests:{path:string;method:string}[]=[]
+  const evidence:{rpc:string;committed:boolean;sqlState:string|null}[]=[],requests:NativeHttpRequestEvidence[]=[]
+  const responseEvidence=new WeakMap<ServerResponse,NativeHttpRequestEvidence>()
+  const observeResponse=(res:ServerResponse)=>{
+    const entry=responseEvidence.get(res)
+    if(entry){entry.headersSent=res.headersSent;entry.status=res.headersSent?res.statusCode:null}
+    return entry
+  }
   let authRequests=0,refreshRequests=0,stopped=false
   let closing:Promise<void>|null=null,serverClosing:Promise<void>|null=null
   const closeConnection=(connection:LocalPgConnection)=>{if(connections.delete(connection))connection.close()}
-  const send=(res:ServerResponse,status:number,data:unknown)=>{if(!res.destroyed){res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(data))}}
+  const send=(res:ServerResponse,status:number,data:unknown)=>{if(!res.destroyed){
+    res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(data))
+    const entry=observeResponse(res);if(entry)entry.acknowledgement='response_end_called'
+  }}
   async function transaction(role:'authenticated'|'service_role',jwt:Record<string,unknown>,run:(c:LocalPgConnection)=>Promise<unknown>,timeout=20_000) {
     owner?.check()
     const connection=await LocalPgConnection.connect(cluster,'accepted_fixture_authenticator');connections.add(connection)
@@ -68,7 +83,12 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
   }
   async function handle(req:IncomingMessage,res:ServerResponse) {
     owner?.check()
-    const url=new URL(req.url??'/','http://127.0.0.1');requests.push({path:url.pathname,method:req.method??''})
+    const url=new URL(req.url??'/','http://127.0.0.1')
+    const observation:NativeHttpRequestEvidence={path:url.pathname,method:req.method??'',authenticated:false,bodyParsed:false,
+      beforeRpc:false,rpcCommitted:false,status:null,headersSent:false,finished:false,closed:false,acknowledgement:'not_sent'}
+    requests.push(observation);responseEvidence.set(res,observation)
+    res.once('finish',()=>{observation.finished=true;observeResponse(res)})
+    res.once('close',()=>{observation.closed=true;observeResponse(res)})
     try {
       if(url.pathname==='/auth/v1/token'&&req.method==='POST') {
         refreshRequests++
@@ -80,6 +100,7 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
       const token=(req.headers.authorization??'').replace(/^Bearer /,'')
       const jwt=verify(token),role=jwt.role
       if(role!=='authenticated'&&role!=='service_role'){send(res,401,{message:'synthetic authentication required'});return}
+      observation.authenticated=true
       if(url.pathname==='/auth/v1/user'&&req.method==='GET') {
         authRequests++
         assert.equal(role,'authenticated')
@@ -101,9 +122,9 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
           // transport fixture delays only delivery, never fabricates an Auth,
           // SQL, or positive evaluation response.
           const text=JSON.stringify(graph)
-          if(hold.phase==='body'){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.write(text.slice(0,1))}
+          if(hold.phase==='body'){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.write(text.slice(0,1));observeResponse(res)}
           hold.entered();await hold.released
-          if(!res.destroyed){if(hold.phase==='headers')send(res,200,graph);else res.end(text.slice(1))}
+          if(!res.destroyed){if(hold.phase==='headers')send(res,200,graph);else{res.end(text.slice(1));observation.acknowledgement='response_end_called';observeResponse(res)}}
           return
         }
         send(res,200,graph);return
@@ -114,7 +135,9 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
       for await(const chunk of req){length+=(chunk as Buffer).length;if(length>16_777_216)throw Error('request_bound');chunks.push(Buffer.from(chunk))}
       const body=JSON.parse(Buffer.concat(chunks).toString('utf8')) as {payload:Record<string,unknown>}
       assert.deepEqual(Object.keys(body),['payload'])
+      observation.bodyParsed=true
       owner?.check()
+      observation.beforeRpc=true
       if(faults.beforeRpc){const hook=faults.beforeRpc(name,body.payload);await(owner?owner.track(hook):hook)}
       owner?.check()
       let result:unknown
@@ -131,19 +154,22 @@ export async function startNativeHttp(cluster:LocalProofCluster,owner?:NativeSui
           const rows=await pending
           return JSON.parse(rows[0]!.result!)
         },name==='official_truth_trip_store_finalize_v1'?30_000:name==='official_truth_trip_store_cleanup_v1'?5_000:20_000)
-        evidence.push({rpc:name,committed:true,sqlState:null})
+        evidence.push({rpc:name,committed:true,sqlState:null});observation.rpcCommitted=true
       } catch(error) {
         const code=error instanceof LocalPgError?error.code:'fixture_protocol_error'
         evidence.push({rpc:name,committed:false,sqlState:code});send(res,400,{message:'synthetic SQL refusal',code});return
       }
       owner?.check()
       const acknowledgement=faults.afterCommit?.(name,body.payload,result)
-      if(acknowledgement&&await(owner?owner.track(acknowledgement):acknowledgement)==='drop'){res.destroy();return}
+      if(acknowledgement&&await(owner?owner.track(acknowledgement):acknowledgement)==='drop'){observation.acknowledgement='dropped_after_commit';res.destroy();return}
       send(res,200,result)
     } catch {send(res,401,{message:'synthetic protocol unavailable'})}
   }
   const server=createServer((req,res)=>{
     if(stopped||owner?.signal.aborted){res.destroy();return}
+    // Local transactions need no idle connection reuse. Close only after the
+    // actual response completes; held headers/bodies and EOF remain genuine.
+    res.setHeader('connection','close')
     const promise=handle(req,res).finally(()=>active.delete(promise));active.add(promise)
     if(owner)owner.track(promise)
     else void promise.catch(()=>undefined)

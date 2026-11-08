@@ -37,6 +37,7 @@
     "components",
     "lib",
     "types",
+    "scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/*.test.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

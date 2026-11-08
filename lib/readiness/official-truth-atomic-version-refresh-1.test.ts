@@ -94,13 +94,73 @@ test('new package stays outside app imports, hosted commands and activation', ()
 test('CI keeps complete native proofs mandatory with unchanged existing test commands', () => {
   const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }
   assert.equal(pkg.scripts['test:refresh-native'], 'node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/db/official-truth-atomic-version-refresh-1/native.test.ts')
-  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:persisted-native && npm run test:refresh-native')
+  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native')
+  assert.equal(pkg.scripts['test:core'], "node --import ./scripts/server-only-test-register.mjs --import tsx --test \"lib/**/*.test.ts\" \"scripts/operating-mode-guard.test.mjs\" \"scripts/dev-reference-local-pg-prep-1/*.test.ts\"")
+  assert.equal(pkg.scripts['test:accepted-store-native'], 'npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle')
+  const acceptedRoot = 'scripts/db/official-truth-accepted-store-trip-integration-1/'
+  const groups = { store: ['acceptance', 'context', 'integrity', 'native'], lifecycle: ['boundaries', 'browser', 'recovery', 'wait-lifecycle'] }
+  const entries = Object.values(groups).flat()
+  assert.equal(new Set(entries).size, 8)
+  for (const [group, names] of Object.entries(groups)) {
+    assert.equal(pkg.scripts['test:accepted-store-native:' + group],
+      'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 '
+        + names.map(name => acceptedRoot + 'required-tests/' + name + '.test.ts').join(' '))
+  }
+  assert.deepEqual(readdirSync(new URL(acceptedRoot + 'required-tests/', root)).sort(), entries.map(name => name + '.test.ts').sort())
+  assert.deepEqual(readdirSync(new URL('lib/readiness/', root)).filter(name => name.startsWith('official-truth-accepted-store-trip-integration-1.') && name.endsWith('.test.ts')),
+    ['official-truth-accepted-store-trip-integration-1.implementation.test.ts'])
+  const digest = (source: string) => createHash('sha256').update(source, 'utf8').digest('hex')
+  // Only the relative implementation import changes in each required wrapper.
+  for (const [name, expected] of [
+    ["acceptance", "3315fd6b952bce46504e7321e48ac0bec61b64291ff9051ba10dcf2f5f0f2005"],
+    ["context", "61eef1f1ced149e559aeff388d8bb8ad6cbfef8cce70fa4e94fda791b4aed8f7"],
+    ["integrity", "6fa199289cc40f82e7d2b023c8e02f0c00de2ecf0b130cb629ea118e5eb58e5b"],
+    ["native", "6e1cb57342dcb8bca591bcd307cf700ec3c333cd1977dc87fdf4b699b777446b"],
+    ["boundaries", "c6f36b629fba3d5dae93151f0edf1d7e50d3a0128647b514a06538aa512c9fc7"],
+    ["browser", "c15a62cd5800c8522d618a9db128070f1bd366b1ed78d6a76f62f5146d4da48b"],
+    ["recovery", "28414f71f78621bbf2f54b20029b240c151aab8d2cadbf08837c42213a3ac98f"],
+    ["wait-lifecycle", "3a2240a22ae283c19d15394a572cc21900ef28fe4cc2eccde581945c53ef0cfb"],
+  ]) {
+    const moved = read(acceptedRoot + 'required-tests/' + name + '.test.ts')
+    assert.equal(digest(moved.replace("from '../", "from '../../" + acceptedRoot)), expected, name)
+  }
+  assert.equal(digest(read('lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts')), "fa9ae836fe164ca9630d4e30b84eeb8444adfa609f3703709a8cdd2f48db13d2")
+  const tsconfig = JSON.parse(read('tsconfig.json')) as { include: string[] }
+  assert.deepEqual(tsconfig.include, ['next-env.d.ts', 'app', 'components', 'lib', 'types',
+    acceptedRoot + 'required-tests/*.test.ts', '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])
   const workflow = read('.github/workflows/ci.yml')
   assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)
-  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native\]/)
+  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native\]/)
   assert.match(workflow, /REFRESH_NATIVE_RESULT: \$\{\{ needs.refresh_native.result \}\}/)
   assert.match(workflow, /"\$REFRESH_NATIVE_RESULT" != "success"/)
   assert.match(workflow, /if: \$\{\{ always\(\) \}\}/)
+  const accepted = workflow.match(/^  accepted_store_native:\n([\s\S]*?)(?=^  required_verify:)/m)?.[0]
+  assert.ok(accepted)
+  assert.match(accepted, /runs-on: ubuntu-latest/)
+  assert.match(accepted, /timeout-minutes: 20/)
+  assert.match(accepted, /strategy:\n      fail-fast: false\n      matrix:\n        group: \[store, lifecycle\]/)
+  assert.match(accepted, /fetch-depth: 0/)
+  assert.match(accepted, /node-version: 22\.x/)
+  assert.match(accepted, /run: npm ci/)
+  assert.match(accepted, /run: npm run check:setup:ci/)
+  assert.match(accepted, /run: npm run check:operating-mode/)
+  assert.match(accepted, /run: npm run test:accepted-store-native:\$\{\{ matrix.group \}\}/)
+  assert.doesNotMatch(accepted, /^\s*(?:if|continue-on-error):/m)
+  for (const binding of [
+    'JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}',
+    'JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}',
+    'JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}',
+    'JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}',
+  ]) assert.ok(accepted.includes(binding))
+  const aggregate = workflow.match(/^  required_verify:\n([\s\S]*?)(?=^  auth-konfiguration:)/m)?.[0]
+  assert.ok(aggregate)
+  for (const [name, family] of [['CORE_RESULT', 'verify'], ['PERSISTED_NATIVE_RESULT', 'persisted_native'],
+    ['REFRESH_NATIVE_RESULT', 'refresh_native'], ['ACCEPTED_STORE_NATIVE_RESULT', 'accepted_store_native']]) {
+    assert.ok(aggregate.includes(name + ': ${{ needs.' + family + '.result }}'))
+    assert.ok(aggregate.includes('"$' + name + '" != "success"'))
+  }
+  assert.match(aggregate, /if: \$\{\{ always\(\) \}\}/)
+  assert.doesNotMatch(aggregate, /continue-on-error:/)
 })
 
 test('test lifetime abort restores nested hooks, releases pending work and forbids its continuation', async () => {
