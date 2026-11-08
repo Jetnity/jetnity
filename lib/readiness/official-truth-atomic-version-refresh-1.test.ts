@@ -144,7 +144,7 @@ test('actual native parent signal owns every test hook and keeps the complete fi
   const parentBinding = 'new OwnedTestLifetime(t.signal)', firstAwait = 'await lifetime.run(abortLifetimeRegression)'
   const actualStop = 'this.stopCluster(cluster)', finalDrain = 'this.teardown = this.drainAll()'
   inOrder(native, parentBinding, firstAwait)
-  assert.match(native, /timeout: 900_000/)
+  assert.match(native, /timeout: 1_200_000/)
   assert.match(native, /AbortSignal\.any\(\[lifetime\.signal, signal\]\)/)
   assert.match(native, /actual parent-lifetime abort stops pending SQL and connection gate/)
   assert.match(native, /t\.signal\.throwIfAborted\(\)/)

@@ -167,7 +167,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert.equal(await passportRow.count(),1)
     await passportRow.getByRole('button',{name:'Dokument entfernen',exact:true}).click();await none()
     assert.equal(travellerWrites,0);assert.equal(await page.locator('[data-native-read-controls]').count(),0)
-    assert.equal(await selectedCard.getByLabel('Dokument 1',{exact:true}).inputValue(),'national_id');proofs.push(stage)
+    assert.equal(await selectedCard.getByRole('combobox',{name:'Dokument 1',exact:true}).inputValue(),'national_id');proofs.push(stage)
 
     stage='retained unsaved draft blocks newer confirmed Trip and genuine fresh native result'
     await confirm();assert.equal(travellerWrites,0);await none()
@@ -180,7 +180,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert.equal(await page.evaluate(()=>window.acceptedStoreFixture!.read()),true)
     assert(results.length>retainedResultCount);assert.equal(results.at(-1)?.status,'current')
     await redraw();await none();assert.equal(await page.locator('[data-native-read-controls]').count(),0)
-    assert.equal(await selectedCard.getByLabel('Dokument 1',{exact:true}).inputValue(),'national_id');proofs.push(stage)
+    assert.equal(await selectedCard.getByRole('combobox',{name:'Dokument 1',exact:true}).inputValue(),'national_id');proofs.push(stage)
 
     stage='actual reload editing save and matching native re-read recover'
     await selectedCard.getByRole('button',{name:'Neu laden',exact:true}).click();await none()

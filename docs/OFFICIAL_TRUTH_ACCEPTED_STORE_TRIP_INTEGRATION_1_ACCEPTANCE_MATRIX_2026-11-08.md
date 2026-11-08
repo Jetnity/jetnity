@@ -1,3 +1,25 @@
+# Current acceptance status V7 / Fix11
+
+Date: 2026-11-08 UTC. Exact parent `c8478edd4fae17a631fb9ec22b904dc118e4842d`, tree `d49c3b11605da003223b014bceb006a89bceb099`; immutable main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1 and unchanged TASK/R1–R10.
+
+**Overall CHANGES REQUIRED.** Actual completed Core128697052877/run42469577851: Typecheck/Lint PASS,8208 tests/8204 pass/2 fail/0 cancelled/2 inherited skips,838373.973286ms. Original4245044 bytes,SHA256 `c53aedb37bbac851612009a31151d4511b6d693ddb69d0f9368a6f1715138cad`, independently fetched/hashed by the author. Hygiene/build are skipped.
+
+| Actual c847 boundary | Completed evidence and remaining limitation |
+| --- | --- |
+| All four R10 native suites | Boundaries85881ms,publication92424ms,integrity128584ms,wait/lifecycle136511ms; all actual families and final teardown complete. Each has pending0, all owned operations/connections settled/closed, one stopped cluster, zero provisional rows/actual backends and product key wiping checked before witness close |
+| Recovery | All four stages complete, including32 genuine orphan expiries and the one-acquired-token55P03 race; committed history remains intact, one race residue expires and is swept by a later ordinary reader, final owned backend0 |
+| Browser | First2/13 stages complete with real current DTO, actual client validation and positive renderer. Stage3 exact label locator times out45000ms at170; the same faulty selector remains at183. The remaining stages are not fully established. Original DOM/label text was not logged |
+| Atomic native | Root plus independent backend review confirms one pass/no failure/cancellation/skip and all151 parseable ordered semantic markers. Final cleanup at1017754ms:10930/10930 operations,pending0,248/248 connections,11 clusters,parentAbortedfalse; all terminal bound cases complete |
+| Remaining static failure | Existing Atomic ownership unit guard still expects the superseded900000ms aggregate parent; actual R9-authorized runtime is1200000ms. This guard mismatch is separate from the successful real Atomic run |
+
+Fix11 changes only both `Dokument 1` test locators to exact `combobox` role/name queries and the one static budget expectation to `1_200_000`. Actual pinned Playwright1.55.0 label-vs-role source semantics establish the selector cause; no original DOM observation is invented. All55 browser assertion lines,13 proof stages,45-second limit and actual document/citizenship interactions remain. Every other ownership/operation/drain/matrix assertion is unchanged; no new timeout contract or product change.
+
+Atomic128697052717 original:180286 bytes,SHA256 `9dfc603da029cb227e339f54534c1177945c70755a1ac5601322ce7802b2cb42`; subtest1017757.935318ms,total1018645.095141ms. Aggregate128701241281 remains failed solely for Core. No c847 result substitutes for the required full next-head gates; new Fix11 bytes have no local execution or runtime/CI PASS.
+
+The entire V6/V5 material below remains verbatim historical evidence and required coverage mapping. This dated V7 status supersedes its older pending-job statements. Root publishes alone after independent review; all source/Owner/hosted/retention/privacy holds and FEATURE_NOT_LIVE/SQL_UNAPPLIED remain exact.
+
+---
+
 # Current acceptance status V6 / Fix10
 
 Date: 2026-11-08 UTC. Exact parent `dabeaa479b039d41215d1e95446de79cadc173b2`, tree `4f15205a7765ea9e3dc9052ff8c46ec77e131d59`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; TASK/R1–R10 and the complete case/ownership map are unchanged.
