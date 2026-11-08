@@ -75,15 +75,15 @@ export function fixtureProductModules() {
     path = resolve(path)
     if (!path.endsWith('.ts')) path += '.ts'
     if (cache.has(path)) return cache.get(path)!.exports
-    const module = { exports: {} as unknown }; cache.set(path, module)
+    const loaded = { exports: {} as unknown }; cache.set(path, loaded)
     const output = ts.transpileModule(readFileSync(path, 'utf8'), { fileName: path,
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText
     new Function('require', 'module', 'exports', output)((name: string) => {
       const target = name.startsWith('@/') ? resolve(name.slice(2)) : name.startsWith('.') ? resolve(dirname(path), name) : null
       if (target === resolve('lib/readiness/official-truth-trusted-fact-extractor-registry')) return fixtureExtraction
       return target?.startsWith(productRoot + '/') ? load(target) : require(target ?? name)
-    }, module, module.exports)
-    return module.exports
+    }, loaded, loaded.exports)
+    return loaded.exports
   }
   return {
     canonical: load(resolve(productRoot, 'canonical-server.ts')) as typeof import('@/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server'),

@@ -61,7 +61,7 @@ export function seedNativeRows(sql:ReturnType<typeof nativeSql>) {
 
 export async function seedNativeCatalog(protocol:Protocol) {
   const transport:OfficialTruthSourceCatalogTransport={aufrufen:async payload=>{
-    const antwort=await protocol.transaction('authenticated',protocol.claims,async c=>{
+    const antwort=await protocol.transaction('service_role',{role:'service_role',exp:protocol.claims.exp},async c=>{
       const rows=await c.query('select public.official_truth_source_catalog_v2($1::jsonb) as result',[pgText(JSON.stringify(payload))])
       return JSON.parse(rows[0]!.result!)
     })

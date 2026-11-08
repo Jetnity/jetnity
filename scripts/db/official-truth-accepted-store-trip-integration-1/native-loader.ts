@@ -36,7 +36,7 @@ export function nativeProductRuntime(state:NativeRuntimeState) {
   function load(path:string):unknown {
     path=resolve(path);if(existsSync(path)&&statSync(path).isDirectory())path=resolve(path,'index.ts');else if(!existsSync(path))path+='.ts'
     if(cache.has(path))return cache.get(path)!.exports
-    const module={exports:{} as unknown};cache.set(path,module)
+    const loaded={exports:{} as unknown};cache.set(path,loaded)
     const code=ts.transpileModule(readFileSync(path,'utf8'),{fileName:path,
       compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText
     new Function('require','module','exports',code)((name:string)=>{
@@ -55,8 +55,8 @@ export function nativeProductRuntime(state:NativeRuntimeState) {
         bindingCurrent:(binding:AcceptedStoreBinding)=>state.binding===binding&&binding.current(),acceptedStoreAvailable:()=>!!state.binding?.current(),
       }
       return target?load(target):require(name)
-    },module,module.exports)
-    return module.exports
+    },loaded,loaded.exports)
+    return loaded.exports
   }
   const root='lib/readiness/official-truth-accepted-store-trip-integration-1/'
   return {
