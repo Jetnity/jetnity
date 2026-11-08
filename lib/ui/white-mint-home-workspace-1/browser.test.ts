@@ -386,6 +386,17 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.equal(await page.getByText(/Ein angepasster Planeintrag allein ist noch keine Buchung oder Umbuchung/).isVisible(), true)
       await page.keyboard.press('Enter')
       assert.equal(await faq.evaluate((el) => el.closest('details')?.open), false)
+      // Measure the closed control after its actual finite chevron transition.
+      // A rotating square has a larger bounding rectangle mid-animation.
+      await faq.evaluate(async (el) => {
+        el.getBoundingClientRect()
+        for (const svg of el.querySelectorAll('svg')) void getComputedStyle(svg).transform
+        const animations = el.getAnimations({ subtree: true })
+        if (animations.some((animation) => !Number.isFinite(animation.effect?.getComputedTiming().endTime))) {
+          throw new Error('FAQ layout measurement requires finite animations')
+        }
+        await Promise.all(animations.map((animation) => animation.finished))
+      })
       if (breite === 320 || breite === 390) {
         await page.getByRole('button', { name: 'Menü öffnen', exact: true }).click()
         assert.equal(await page.locator('#oeffentliche-mobile-navigation').getByRole('link', { name: 'So funktioniert’s' }).isVisible(), true)
@@ -400,7 +411,7 @@ describe('rendered white/mint homepage and light workspace', () => {
           await bild(page, `final-homepage-${breite}-200-${schrift}-full`)
           const ausreisser = await page.evaluate(() => [...document.querySelectorAll('body *')].filter((el) => el.getBoundingClientRect().right > innerWidth + 1).slice(0, 12).map((el) => ({ tag: el.tagName, klasse: el.getAttribute('class'), text: el.textContent?.slice(0, 80), elternText: el.parentElement?.textContent?.slice(0, 80), recht: el.getBoundingClientRect().right })))
           assert.ok(gross <= 1, `200% ${schrift} at ${breite}: ${gross}; ${JSON.stringify(ausreisser)}`)
-          const abgeschnitten = await page.evaluate(() => [...document.querySelectorAll('main a, main button, main summary')].flatMap((el) => {
+          const geometrie = await page.evaluate(() => [...document.querySelectorAll('main a, main button, main summary')].flatMap((el) => {
             const box = el.getBoundingClientRect()
             if (!box.width || !box.height) return []
             const inhalt = [...el.querySelectorAll('svg')].map((svg) => svg.getBoundingClientRect())
@@ -415,9 +426,13 @@ describe('rendered white/mint homepage and light workspace', () => {
               text = walker.nextNode()
             }
             return inhalt.some((rect) => rect.left < box.left - 1 || rect.right > box.right + 1)
-              ? [el.textContent?.trim()] : []
+              ? [{ text: el.textContent?.trim(), box: box.toJSON(),
+                svg: [...el.querySelectorAll('svg')].slice(0, 4).map((svg) => ({ rect: svg.getBoundingClientRect().toJSON(), transform: getComputedStyle(svg).transform })),
+                animations: el.getAnimations({ subtree: true }).slice(0, 4).map((animation) => ({ state: animation.playState, currentTime: animation.currentTime,
+                  endTime: animation.effect?.getComputedTiming().endTime })) }] : []
           }))
-          assert.deepEqual(abgeschnitten, [], `200% ${schrift} at ${breite}: link/FAQ contents must fit their control`)
+          const abgeschnitten = geometrie.map((control) => control.text)
+          assert.deepEqual(abgeschnitten, [], `200% ${schrift} at ${breite}: link/FAQ contents must fit their control; ${JSON.stringify(geometrie.slice(0, 8))}`)
           protokoll[`homepage200-${breite}-${schrift}`] = { overflow: gross, clippedControls: abgeschnitten }
         }
       }

@@ -1,0 +1,166 @@
+{
+  "schema": "jetnity-tl-exact-head-ci-checkpoint-v1",
+  "observedAt": "2026-11-08T06:26:00Z",
+  "work": 1155,
+  "pr": 1156,
+  "head": "3050e56fc2316d6c9a7a7fc54c7758dddaeb42d3",
+  "tree": "53cea97f56776bc705d30ce2e5b3c38c7435dc03",
+  "base": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "ciMerge": "ca52222b22a0904268544a4cab22d614b2b3f1bd",
+  "ciMergeTreeMatchesHead": true,
+  "run": 42453393988,
+  "attempt": 1,
+  "node": "22.23.4",
+  "disposition": "CHANGES_REQUIRED",
+  "core": {
+    "job": 128647175092,
+    "status": "failure",
+    "tests": 8204,
+    "pass": 8194,
+    "fail": 8,
+    "cancelled": 0,
+    "skipped": 2,
+    "durationMs": 574887.238659,
+    "logSha256": "2e796696e59817de948078b4e66acb322f7c557c8985608c7088c27632112604",
+    "completeNewFamilies": 0,
+    "failedNewEntries": [
+      "native",
+      "context",
+      "recovery",
+      "acceptance",
+      "browser"
+    ],
+    "actualRpcProgress": [
+      "cleanup COMMIT",
+      "confirm COMMIT",
+      "reserve COMMIT",
+      "prepare inspect COMMIT",
+      "cleanup COMMIT"
+    ],
+    "finalizeReached": false,
+    "mountedResultReached": false,
+    "otherLeafFailures": [
+      "manual flight Workspace dependency MODULE_NOT_FOUND ./useAcceptedStoreTrip",
+      "lodging Workspace dependency MODULE_NOT_FOUND ./useAcceptedStoreTrip",
+      "homepage FAQ control containment 200% system font width1440"
+    ],
+    "partialNewProofs": {
+      "pinnedSsrModes": [
+        "constructor_only",
+        "concurrent_get_user",
+        "query_abort_then_owner"
+      ],
+      "ssr": "0.6.1",
+      "supabase": "2.57.2",
+      "auth": "2.71.1",
+      "refreshRequestsPerMode": 1,
+      "nativeStartsAfterOwnerAbort": 0,
+      "observedPendingAfterDrain": 0,
+      "outgoingCases": [
+        "request_signal",
+        "init_signal",
+        "owner_signal",
+        "complete_body",
+        "late_headers",
+        "abort_at_headers",
+        "actual_factory_query_only",
+        "actual_factory_owner"
+      ]
+    }
+  },
+  "persisted": {
+    "job": 128647175059,
+    "status": "success",
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 329053.567425,
+    "phaseMarkers": 95,
+    "readerResults": 45,
+    "finalPhaseElapsedMs": 328000,
+    "logSha256": "2e6e6cbdcf813ddcaa271b59f8e00f6acca0d67750c36851da4a1a060f2c9c05",
+    "globalResourceCount": "not emitted; no global resource-count claim"
+  },
+  "atomic": {
+    "job": 128647175045,
+    "status": "failure",
+    "failureType": "testTimeoutFailure",
+    "timeoutMs": 900000,
+    "pass": 0,
+    "fail": 0,
+    "cancelled": 1,
+    "skipped": 0,
+    "durationMs": 901158.894275,
+    "rawPhaseLines": 146,
+    "parseablePhaseLines": 145,
+    "lastPhase": "truthful nonpositive terminal outcome independently inspected without replay",
+    "lastCase": "readback_failure",
+    "lastElapsedMs": 832803,
+    "finalCleanupMarker": false,
+    "logSha256": "564f1f4d6799b3dc8e90ecdbde41a98fa52f41330474b9adac36a653b06c4645",
+    "waived": false
+  },
+  "auth": {
+    "job": 128647174899,
+    "status": "success",
+    "comparedValues": 55,
+    "keys": 243
+  },
+  "aggregate": {
+    "job": 128650574440,
+    "status": "failure"
+  },
+  "typecheck": "success",
+  "lint": "success",
+  "hygiene": "not_run",
+  "productionBuild": "not_run",
+  "preview": {
+    "deployment": "dpl_D9xcgniqCkT2A1AaVE6TixNLrmPQ",
+    "status": "READY",
+    "http": 200,
+    "exactHead": true,
+    "noindex": true
+  },
+  "rootCause": {
+    "file": "lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts",
+    "function": "verifyCurrentImplementation",
+    "cause": "Whole multi-capsule source array compared by unchanged single-artifact-bounded canonical helper; false rejection before key acquisition",
+    "supportingDiagnosis": {
+      "node": "24.22.1",
+      "sourceFiles": 121,
+      "sourceUtf8Bytes": 1238783,
+      "combinedCanonicalBytes": 1276137,
+      "unchangedArtifactBound": 1048576,
+      "wholeCanonicalNull": true,
+      "equalIdenticalWholeArray": false,
+      "equalAllIndividualFiles": true,
+      "boundary": "Pure codec diagnostic; no native/SSR/PG/browser PASS"
+    },
+    "correction": "Same author to compare exact validated per-file full strings/count/unique paths; no global codec or bound change; fix execution not yet proved"
+  },
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "ready": false,
+  "merge": false,
+  "hostedApply": false,
+  "activation": false,
+  "receipts": [
+    6718145225,
+    6718172519,
+    6718204078,
+    6718220295,
+    6718220461,
+    6718220700
+  ],
+  "holds": "TASK V1 / R1-R7 and all #917/#1131/other special gates unchanged; no favorable rerun or timeout relaxation",
+  "homepageDiagnosis": {
+    "testBlob": "289aa819cda8f6e1a83c02c232453aeb81e01d62",
+    "componentBlob": "69163ab3e3321d9b24a70f5b295ce739861ca4f5",
+    "bothUnchangedFromMain": true,
+    "sourceFinding": "Just-closed FAQ has a finite rotating SVG transition; original test measures its bounding rectangle without awaiting that animation. Rotated-square bounds can protrude while document overflow remains zero.",
+    "runtimeAttribution": "Not conclusively recoverable from original log; it has no rectangle/transform diagnostics.",
+    "localBrowserProbe": "Unable to start Chromium: socket() failed: Operation not permitted. No bypass or runtime proof.",
+    "approvedTestCorrection": "Await this FAQ's finite actual animation completion before unchanged static text/SVG containment assertions; add bounded diagnostics; no CSS/assertion relaxation."
+  }
+}

@@ -55,6 +55,10 @@ export function verifyCurrentImplementation(bundle: IntegratedPilotVerifiedBundl
     const text=new TextDecoder('utf-8',{fatal:true}).decode(decode(content.bundleBase64))
     files.push(...sourceBundle.parse(JSON.parse(text)).files)
   }
-  if (!files.length || new Set(files.map(f=>f.path)).size!==files.length
-    || !historicalValuesEqual(files.sort((a,b)=>order(a.path,b.path)),[...contract.implementationSources].sort((a,b)=>order(a.path,b.path)))) throw Error('implementation_changed')
+  const current=[...contract.implementationSources].sort((a,b)=>order(a.path,b.path))
+  files.sort((a,b)=>order(a.path,b.path))
+  // The complete source set spans individually bounded implementation capsules.
+  // A single-artifact canonical codec must not impose its byte cap on that set.
+  if (!files.length || files.length!==current.length || new Set(files.map(f=>f.path)).size!==files.length
+    || files.some((file,index)=>file.path!==current[index]!.path || file.utf8!==current[index]!.utf8)) throw Error('implementation_changed')
 }
