@@ -2,6 +2,7 @@
  * No positive DTO, provider evaluation, hook or presentation module is replaced. */
 import assert from 'node:assert/strict'
 import type { TestContext } from 'node:test'
+import { createHash } from 'node:crypto'
 import { createServer,type IncomingMessage,type ServerResponse } from 'node:http'
 import { existsSync,readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
@@ -24,11 +25,25 @@ type BrowserFetchObservation={
   abortDom:{status:string|null;busy:string|null;visibility:string}|null;fetchError:'abort'|'type'|'other'|null;observerError:boolean;
 }
 type BrowserReadObservations={sequence:number;omitted:number;reads:BrowserFetchObservation[]}
+type BrowserCaptureError='invalid_headers'|'missing_body'|'multiple_readers'|'read_failed'|'invalid_chunk'|'bound'|'observer'
+type BrowserCaptureMetadata={
+  id:string;status:number;headerHash:string;headerBytes:number;bytes:number;done:boolean;readerAcquired:boolean;
+  readCalls:number;pending:number;error:BrowserCaptureError|null;taken:boolean;
+}
+type BrowserCaptureOwnership={started:number;settled:number;pending:number;retainedBytes:number;observerErrors:number}
+type BrowserCaptureControl={
+  snapshot():BrowserReadObservations;
+  metadata(id:string):BrowserCaptureMetadata|null;
+  take(id:string):{metadata:BrowserCaptureMetadata;bytes:number[]}|null;
+  drain():Promise<BrowserCaptureOwnership>;
+  release():BrowserCaptureOwnership;
+}
 type ReadAttemptObservation={
   action:number;startedAt:number;requestAt:number|null;requestCount:number;responseAt:number|null;status:number|null;
   finishedAt:number|null;failedAt:number|null;requestFailure:string|null;bodyStartedAt:number|null;bodySettledAt:number|null;
   bodyOutcome:'fulfilled'|'rejected'|null;failureTag:string|null;ownedStarted:number;ownedSettled:number;
   browser:BrowserReadObservations|null;diagnosticUnavailable:boolean;
+  capture:(BrowserCaptureMetadata&{sha256:string})|null;observerDrain:BrowserCaptureOwnership|null;
 }
 
 export async function mountedAcceptedStoreProof(t:TestContext){
@@ -49,6 +64,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     dom:{status:string|null;busy:string|null;draftBlocked:string|null;positiveCount:number;visibility:string;wallNow:number;monotonicNow:number}|null}|null=null
   let lastReadObservation:ReadAttemptObservation|null=null,readAction=0
   const results:AcceptedStoreTripResult[]=[]
+  const sentBodies=new Map<string,{id:string;status:number;bytes:number;sha256:string;sent:boolean}>()
   try {
     installNativeSchema(sql);seedNativeRows(sql)
     // A second citizenship on the OTHER person makes its real remove control
@@ -65,6 +81,18 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert.equal(published.status,'confirmed',JSON.stringify(protocol.evidence.slice(-8)))
     const sourceStarts=state.sourceStarts
     const send=(response:ServerResponse,status:number,value:unknown)=>{if(!response.destroyed){response.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});response.end(JSON.stringify(value))}}
+    const sendRead=(response:ServerResponse,id:string,status:number,value:unknown)=>{
+      // Exactly one serialization supplies both the sent native HTTP bytes
+      // and their bounded fixture descriptor. No positive DTO is substituted.
+      const bytes=Buffer.from(JSON.stringify(value),'utf8'),sha256=createHash('sha256').update(bytes).digest('hex')
+      const descriptor={id,status,bytes:bytes.byteLength,sha256,sent:false};sentBodies.set(id,descriptor)
+      if(sentBodies.size>32)sentBodies.delete(sentBodies.keys().next().value!)
+      if(!response.destroyed){
+        response.writeHead(status,{'content-type':'application/json','cache-control':'no-store',
+          'x-jetnity-fixture-read':id,'x-jetnity-fixture-body-sha256':sha256,'x-jetnity-fixture-body-bytes':String(bytes.byteLength)})
+        response.end(bytes);descriptor.sent=true
+      }
+    }
     async function handle(req:IncomingMessage,res:ServerResponse){
       const controller=new AbortController();res.once('close',()=>controller.abort())
       if(req.url==='/fixture'&&req.method==='GET'){send(res,200,trip);return}
@@ -92,7 +120,10 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         send(res,503,{message:'Closed fixture pilot transport unavailable'});return
       }
       if(req.url==='/api/readiness/accepted-store'&&req.method==='POST'){
-        storeRequests++;if(storeFailure){send(res,503,{message:'Closed fixture transport failure'});return}
+        // Capture once at admission; a later concurrent response cannot alias
+        // this request through the mutable global storeRequests counter.
+        const responseId=`accepted-read-${++storeRequests}`
+        if(storeFailure){sendRead(res,responseId,503,{message:'Closed fixture transport failure'});return}
         const parts:Buffer[]=[];let bytes=0
         for await(const chunk of req){bytes+=(chunk as Buffer).length;assert(bytes<=8192);parts.push(Buffer.from(chunk))}
         runtime.rate.readinessRateLeeren()
@@ -101,7 +132,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
           body:Buffer.concat(parts).toString('utf8')})
         const response=await runtime.request.acceptedStoreTripRequest(request)
         if(response.status===200&&typeof response.body==='object'&&response.body!==null&&'status'in response.body)results.push(response.body as AcceptedStoreTripResult)
-        send(res,response.status,response.body);return
+        sendRead(res,responseId,response.status,response.body);return
       }
       send(res,404,{message:'Closed fixture endpoint'})
     }
@@ -112,12 +143,60 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     const context=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'})
     await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin){outbound.push(url.origin);return route.abort()}return route.continue()})
     const page=await context.newPage();page.on('pageerror',error=>errors.push((error.stack??error.message).slice(0,2048)));page.setDefaultTimeout(45_000)
-    // Passive browser-side metadata only: return the same native promise, Response and
-    // failure, without cloning/reading its stream or changing any input/signal.
+    // Fixture-only observation of the exact native reader used by boundedJson.
+    // Original fetch/read promises, Response, Reader, result and errors pass
+    // through unchanged. The observer never reads, cancels, clones or tees.
     await page.addInitScript(()=>{
-      const original=window.fetch.bind(window)
+      const original=window.fetch.bind(window),limit=2*1024*1024
       const observation:BrowserReadObservations={sequence:0,omitted:0,reads:[]}
-      ;(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation=observation
+      const captures=new Map<string,BrowserCaptureMetadata&{chunks:Uint8Array[]}>()
+      const work={
+        pending:new Set<Promise<void>>(),started:0,settled:0,retainedBytes:0,observerErrors:0,
+        own(pending:Promise<void>,entry:BrowserFetchObservation,capture?:BrowserCaptureMetadata){
+          this.started++;if(capture)capture.pending++
+          const owned=pending.then(()=>{
+            this.settled++;if(capture)capture.pending--;this.pending.delete(owned)
+          },()=>{
+            entry.observerError=true;this.observerErrors++;if(capture){capture.error='observer';capture.pending--}
+            this.settled++;this.pending.delete(owned)
+          })
+          this.pending.add(owned)
+          // Bookkeeping is also handled immediately; it is never a dependency
+          // of the product's original promise or an unobserved rejection.
+          void owned.catch(()=>{entry.observerError=true;this.observerErrors++})
+        },
+        metadata(capture:BrowserCaptureMetadata):BrowserCaptureMetadata{
+          return {id:capture.id,status:capture.status,headerHash:capture.headerHash,headerBytes:capture.headerBytes,
+            bytes:capture.bytes,done:capture.done,readerAcquired:capture.readerAcquired,readCalls:capture.readCalls,
+            pending:capture.pending,error:capture.error,taken:capture.taken}
+        },
+        counts():BrowserCaptureOwnership{
+          return {started:this.started,settled:this.settled,pending:this.pending.size,retainedBytes:this.retainedBytes,observerErrors:this.observerErrors}
+        },
+      }
+      const control:BrowserCaptureControl={
+        snapshot(){return {sequence:observation.sequence,omitted:observation.omitted,reads:observation.reads.map(value=>({...value}))}},
+        metadata(id){const capture=captures.get(id);return capture?work.metadata(capture):null},
+        take(id){
+          const capture=captures.get(id)
+          if(!capture||capture.error||!capture.done||capture.pending!==0||capture.taken)return null
+          const data=new Uint8Array(capture.bytes);let offset=0
+          for(const chunk of capture.chunks){data.set(chunk,offset);offset+=chunk.byteLength}
+          capture.chunks=[];work.retainedBytes-=capture.bytes;capture.taken=true
+          return {metadata:work.metadata(capture),bytes:Array.from(data)}
+        },
+        async drain(){
+          while(work.pending.size)await Promise.allSettled([...work.pending])
+          return work.counts()
+        },
+        release(){
+          if(work.pending.size!==0)throw Error('native_browser_observer_not_drained')
+          for(const capture of captures.values())capture.chunks=[]
+          captures.clear();work.retainedBytes=0
+          return work.counts()
+        },
+      }
+      ;(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation=control
       window.fetch=(input,init)=>{
         let tracked=false
         try{tracked=new URL(typeof input==='string'?input:input instanceof Request?input.url:input.toString(),location.href).pathname==='/api/readiness/accepted-store'}catch{}
@@ -128,8 +207,8 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         if(observation.reads.length>32){observation.reads.shift();observation.omitted++}
         const signal=init?.signal??(input instanceof Request?input.signal:null)
         let response:Response|null=null
-        // An object method survives tsx keepNames + Playwright serialization
-        // without capturing esbuild's module-scoped __name helper.
+        // Object methods have no external esbuild keepNames helper binding
+        // when Playwright serializes this callback with Function.toString().
         const aborted={handleEvent(){
           entry.abortedAt=performance.now();entry.bodyUsedAtAbort=response?.bodyUsed??null;entry.bodyLockedAtAbort=response?.body?.locked??null
           const workspace=document.querySelector('[data-native-workspace]')
@@ -138,13 +217,55 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         }}
         if(signal?.aborted)aborted.handleEvent();else signal?.addEventListener('abort',aborted,{once:true})
         const originalPromise=original(input,init)
-        // Observe on a handled side branch; the hook receives exactly the native
-        // promise, without waiting behind this diagnostic reaction.
-        void originalPromise.then(value=>{
+        work.own(originalPromise.then(value=>{
           response=value;entry.headersAt=performance.now();entry.fetchSettledAt=entry.headersAt;entry.status=value.status
+          const id=value.headers.get('x-jetnity-fixture-read'),hash=value.headers.get('x-jetnity-fixture-body-sha256'),length=value.headers.get('x-jetnity-fixture-body-bytes')
+          if(!id||!/^accepted-read-[1-9][0-9]{0,4}$/.test(id)||!hash||hash.length!==64||!/^[a-f0-9]{64}$/.test(hash)
+            ||!length||!/^[0-9]{1,7}$/.test(length)||Number(length)>limit||captures.has(id)){
+            entry.observerError=true;work.observerErrors++;return
+          }
+          // Retain only bounded evidence. A pending capture is never evicted
+          // to make room for a newer or held response.
+          if(captures.size>=32){
+            const oldest=[...captures.entries()].find(([,candidate])=>candidate.pending===0&&(candidate.taken||candidate.error!==null))
+            if(!oldest){entry.observerError=true;work.observerErrors++;return}
+            const [key,candidate]=oldest
+            if(!candidate.taken)work.retainedBytes-=candidate.bytes
+            candidate.chunks=[];candidate.taken=true;captures.delete(key)
+          }
+          const capture:BrowserCaptureMetadata&{chunks:Uint8Array[]}={id,status:value.status,headerHash:hash,headerBytes:Number(length),
+            bytes:0,done:false,readerAcquired:false,readCalls:0,pending:0,error:null,taken:false,chunks:[]}
+          captures.set(id,capture)
+          if(!value.body){capture.error='missing_body';return}
+          const originalGetReader=value.body.getReader
+          Object.defineProperty(value.body,'getReader',{configurable:true,value(this:ReadableStream<Uint8Array>,...args:unknown[]){
+            const reader=Reflect.apply(originalGetReader,this,args) as ReadableStreamDefaultReader<Uint8Array>
+            try {
+              if(capture.readerAcquired){capture.error='multiple_readers';return reader}
+              capture.readerAcquired=true
+              const originalRead=reader.read
+              Object.defineProperty(reader,'read',{configurable:true,value(this:ReadableStreamDefaultReader<Uint8Array>,...readArgs:unknown[]){
+                capture.readCalls++
+                let originalReadPromise:Promise<ReadableStreamReadResult<Uint8Array>>
+                try {originalReadPromise=Reflect.apply(originalRead,this,readArgs) as Promise<ReadableStreamReadResult<Uint8Array>>}
+                catch(error){capture.error='read_failed';throw error}
+                work.own(originalReadPromise.then(part=>{
+                  if(capture.error||capture.taken)return
+                  if(part.done){capture.done=true;return}
+                  if(!(part.value instanceof Uint8Array)){capture.error='invalid_chunk';return}
+                  const bytes=part.value.byteLength
+                  if(capture.bytes+bytes>limit||work.retainedBytes+bytes>limit){capture.error='bound';return}
+                  if(bytes>0)capture.chunks.push(part.value.slice())
+                  capture.bytes+=bytes;work.retainedBytes+=bytes
+                },()=>{capture.error='read_failed'}),entry,capture)
+                return originalReadPromise
+              }})
+            } catch {capture.error='observer';entry.observerError=true;work.observerErrors++}
+            return reader
+          }})
         },error=>{
           entry.fetchSettledAt=performance.now();entry.fetchError=error instanceof DOMException&&error.name==='AbortError'?'abort':error instanceof TypeError?'type':'other'
-        }).catch(()=>{entry.observerError=true})
+        }),entry)
         return originalPromise
       }
     })
@@ -153,7 +274,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     const read=async()=>{
       const observation:ReadAttemptObservation={action:++readAction,startedAt:performance.now(),requestAt:null,requestCount:0,responseAt:null,status:null,
         finishedAt:null,failedAt:null,requestFailure:null,bodyStartedAt:null,bodySettledAt:null,bodyOutcome:null,failureTag:null,
-        ownedStarted:0,ownedSettled:0,browser:null,diagnosticUnavailable:false}
+        ownedStarted:0,ownedSettled:0,browser:null,diagnosticUnavailable:false,capture:null,observerDrain:null}
       lastReadObservation=observation
       const owned:Promise<unknown>[]=[],failures:unknown[]=[]
       const own=<T>(pending:Promise<T>):Promise<T>=>{owned.push(pending);observation.ownedStarted++;void pending.then(
@@ -167,6 +288,9 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       const requestStarted=(request:PlaywrightRequest)=>{
         if(!matching(request))return
         observation.requestCount++
+        if(observation.requestCount>1){
+          const failure=Error('native_browser_ambiguous_read');failures.push(failure);reject(failure);return
+        }
         if(!expected){expected=request;observation.requestAt=performance.now()}
       }
       const requestFinished=(request:PlaywrightRequest)=>{if(request===expected)observation.finishedAt=performance.now()}
@@ -179,16 +303,48 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       }
       const responseArrived=(response:PlaywrightResponse)=>{
         if(response.request()!==expected||bodyStarted||waitSettled)return
-        clearTimeout(timer);bodyStarted=true;observation.responseAt=performance.now();observation.status=response.status();observation.bodyStartedAt=performance.now()
-        // Start the genuine CDP body read at this exact Response event, before
-        // waiting for click() to return. Its rejection has an owner immediately.
-        const body=own(response.json() as Promise<AcceptedStoreTripResult>)
+        bodyStarted=true;observation.responseAt=performance.now();observation.status=response.status();observation.bodyStartedAt=performance.now()
+        // Always use the bytes consumed by the real hook's native reader. CDP
+        // response-body retention after the hook's finally-abort is not a
+        // second transport requirement and is never used as a fallback.
+        const body=own((async()=>{
+          const headers=response.headers(),id=headers['x-jetnity-fixture-read'],hash=headers['x-jetnity-fixture-body-sha256']
+          const size=Number(headers['x-jetnity-fixture-body-bytes'])
+          assert(typeof id==='string'&&/^accepted-read-[1-9][0-9]{0,4}$/.test(id))
+          assert(typeof hash==='string'&&hash.length===64&&/^[a-f0-9]{64}$/.test(hash))
+          assert(Number.isSafeInteger(size)&&size>=0&&size<=2*1024*1024)
+          const sent=sentBodies.get(id);assert(sent&&sent.sent)
+          assert.equal(sent.id,id);assert.equal(sent.status,response.status());assert.equal(sent.sha256,hash);assert.equal(sent.bytes,size)
+          const remaining=45_000-(performance.now()-observation.startedAt)
+          if(remaining<=0)throw Error('native_browser_response_timeout')
+          const ready=await page.waitForFunction(responseId=>{
+            const capture=(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.metadata(responseId)
+            return capture!==null&&(capture.error!==null||capture.done&&capture.pending===0)
+          },id,{timeout:remaining})
+          let captured:{metadata:BrowserCaptureMetadata;bytes:number[]}|null
+          try {
+            const metadata=await page.evaluate(responseId=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.metadata(responseId),id)
+            assert(metadata,'The exact native response must have a reader capture')
+            assert.equal(metadata.error,null);assert.equal(metadata.done,true);assert.equal(metadata.readerAcquired,true);assert.equal(metadata.pending,0)
+            captured=await page.evaluate(responseId=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.take(responseId),id)
+          } finally {await ready.dispose()}
+          assert(captured,'The exact complete capture is consumed once; no earlier response supplies bytes')
+          const bytes=Buffer.from(captured.bytes),actualHash=createHash('sha256').update(bytes).digest('hex')
+          assert.equal(captured.metadata.id,id);assert.equal(captured.metadata.status,response.status())
+          assert.equal(captured.metadata.headerHash,hash);assert.equal(captured.metadata.headerBytes,size)
+          assert.equal(captured.metadata.bytes,size);assert.equal(bytes.byteLength,size);assert.equal(actualHash,hash)
+          observation.capture={...captured.metadata,sha256:actualHash}
+          const value=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)) as AcceptedStoreTripResult
+          observation.observerDrain=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.drain())
+          assert.equal(observation.observerDrain.pending,0);assert.equal(observation.observerDrain.started,observation.observerDrain.settled)
+          assert.equal(observation.observerDrain.observerErrors,0)
+          return value
+        })())
         own(body.then(value=>{
           observation.bodySettledAt=performance.now();observation.bodyOutcome='fulfilled'
           if(!waitSettled){waitSettled=true;resolveWait({response,body:value})}
         },error=>{
-          observation.bodySettledAt=performance.now();observation.bodyOutcome='rejected'
-          observation.failureTag=error instanceof Error&&error.message.includes('Network.getResponseBody')&&error.message.includes('No data found')?'cdp_body_missing':'body_read_failed'
+          observation.bodySettledAt=performance.now();observation.bodyOutcome='rejected';observation.failureTag='observed_body_failed'
           reject(error)
         }))
       }
@@ -201,7 +357,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         // Same actual validator/current mounted Trip; observations only append
         // bounded metadata to the existing evaluation, without a new barrier.
         const inspected=await page.evaluate((value:unknown)=>({client:window.acceptedStoreFixture!.inspect(value),
-          observation:(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation}),body)
+          observation:(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.snapshot()}),body)
         observation.browser=inspected.observation
         lastClientObservation={received:inspected.client,failure:null,dom:null}
         assert.equal(lastClientObservation.received.validation.ok,true,JSON.stringify(lastClientObservation.received))
@@ -220,14 +376,17 @@ export async function mountedAcceptedStoreProof(t:TestContext){
           throw error
         }
         assert.equal(await positives.count(),1);assert(body.sourceCheckedAt&&body.expiresAt)
+        assert.equal(observation.requestCount,1)
         result=body
       }catch(error){
         if(!failures.includes(error))failures.push(error)
         observation.failureTag??=bodyStarted?'validation_or_display_failed':'click_or_response_failed'
-        try{observation.browser=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation)}
+        try{observation.browser=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.snapshot())}
         catch(diagnosticError){observation.diagnosticUnavailable=true;failures.push(diagnosticError)}
-        // A failed disposable proof releases the page/transport before draining
-        // any already-started CDP body operation. It never retries the request.
+        // Request observer drain before closing; page termination owns any
+        // still-pending native reads. The evaluate promise is itself owned and
+        // may honestly reject if its execution context closes before drain.
+        own(page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.drain()))
         try{await page.close()}catch(closeError){failures.push(closeError)}
       }finally{
         clearTimeout(timer)
@@ -333,7 +492,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     // suppression; it never substitutes an accepted DTO or SQL outcome.
     await page.evaluate(()=>{
       const original=window.fetch.bind(window)
-      const state={next:false,held:false,release:()=>{},realNow:Date.now.bind(Date)}
+      const state={next:false,held:false,release(){},realNow:Date.now.bind(Date)}
       ;(window as unknown as {acceptedTransport:typeof state}).acceptedTransport=state
       window.fetch=async(input,init)=>{
         const response=await original(input,init)
@@ -397,10 +556,16 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     await page.waitForFunction(()=>!document.querySelector('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]'),undefined,{timeout:17_000})
     assert(performance.now()-received<=17_000);await redraw();await none();proofs.push(stage)
     assert.equal(state.sourceStarts,sourceStarts);assert.deepEqual(errors,[]);assert.deepEqual(outbound,[])
+    const observerOwnership=await page.evaluate(async()=>{
+      const capture=(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation
+      await capture.drain();return capture.release()
+    })
+    assert.equal(observerOwnership.pending,0);assert.equal(observerOwnership.started,observerOwnership.settled)
+    assert.equal(observerOwnership.retainedBytes,0);assert.equal(observerOwnership.observerErrors,0)
     t.diagnostic(JSON.stringify({proof:'actual-native-mounted-workspace',node:process.versions.node,react:'19.2.8',playwright:'1.55.0',browser:browser.version(),binaryVersion,
       actualModules:['components/trips/useAcceptedStoreTrip.ts','components/trips/useOfficialTruthPilot.ts','components/trips/Reisevorbereitung.tsx'],
       bundleSha256:bundle.sha256,bundleModules:bundle.modules,repoModules:bundle.files.length,documentCharset,proofs,
-      storeRequests,pilotRequests,travellerWrites,nativeCurrentResults:results.filter(value=>value.status==='current').length,sourceFetchesDuringReads:0,
+      storeRequests,pilotRequests,travellerWrites,observerOwnership,nativeCurrentResults:results.filter(value=>value.status==='current').length,sourceFetchesDuringReads:0,
       sourceCheckedAt:expiring.sourceCheckedAt,readAt:expiring.readAt,expiresAt:expiring.expiresAt,deadlineFromRequestStartMs:expiring.deadlineFromRequestStartMs,
       boundary:'Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim.'}))
     await context.close()

@@ -1,0 +1,1775 @@
+{
+  "schema": "jetnity-author-frozen-api-candidate-v1",
+  "title": "Accepted Store Trip Integration 1 — Fix14 actual hook-consumed bytes and acknowledged semantic-fixture cleanup",
+  "repository": "Jetnity/jetnity",
+  "issue": 1155,
+  "pullRequest": 1156,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "expectedRemoteParent": "557073472e35773aacc644e06df2809e9303a77b",
+  "expectedParentTree": "a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "baselineMainTree": "9bb93361861b3b88c4567d2de7eb6bb77b207180",
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "date": "2026-11-08",
+  "authorization": {
+    "decision": "Root same-session combined Fix14 CHANGES REQUIRED and explicit fixture-only browser-reader / normal semantic-cleanup ACK after complete557 original review.",
+    "durableReview": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6721539906",
+    "earlierSerializerScope": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6721298909",
+    "originalTaskBlob": "e3336c869472fe50e94473797c1555419f6d82a6",
+    "frozenStandards": "TASK and R1-R10 unchanged",
+    "boundary": "Two existing test-fixture files plus current V10 prefixes only. No product Database/Hook/Reader/engine/SQL/authority, dependency, compiler, workflow, deadline, quota, assertion-removal or retry change."
+  },
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "b8ceb373f2eadc108bcbab4614ce408739ae20bb",
+      "mainBlob": null,
+      "gitBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+      "sha256": "abe0e2ff915e41f86af1b01b4341f537edcf590115dd07943becdef4244e900f",
+      "bytes": 47025,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/b79caba69dc741a818367b501dd33df51ce24901"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "dfbe71b8cee0248a6cbd41fa56d9426ce32b4f89",
+      "mainBlob": null,
+      "gitBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "sha256": "591adb8c1a0ba8545546af0b426d4d164faf1597dd29ad2d4e5a42186ba8efef",
+      "bytes": 17010,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/0cda7dc989018ba1388529044ebab1595d6bdd5c"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "0d90d41b7e7d307f7eec88709aca14eb23ca8f24",
+      "mainBlob": null,
+      "gitBlob": "6e55fee942690385ce8860c9bdbce0ff471638c3",
+      "sha256": "80b4454a62334de9aafff33247f994f6c1c329aef728e251ee0344f82770bff9",
+      "bytes": 75420,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/6e55fee942690385ce8860c9bdbce0ff471638c3"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "2395fad3b5651200f21badd514762832a08736b3",
+      "mainBlob": null,
+      "gitBlob": "987874723fa14ab5da04021806c825ba0e30c422",
+      "sha256": "16127cf545e133816b29bcc722c8c6c0b15b3407b27525ef380d41daa55280ee",
+      "bytes": 49612,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/987874723fa14ab5da04021806c825ba0e30c422"
+    }
+  ],
+  "fileCounts": {
+    "code": 2,
+    "docs": 2,
+    "total": 4
+  },
+  "exactCodeDiffs": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "beforeBlob": "b8ceb373f2eadc108bcbab4614ce408739ae20bb",
+      "afterBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+      "forwardAndInverseExact": true,
+      "replacements": [
+        {
+          "beforeStartLine": 5,
+          "afterStartLine": 5,
+          "before": [],
+          "after": [
+            "import { createHash } from 'node:crypto'"
+          ]
+        },
+        {
+          "beforeStartLine": 27,
+          "afterStartLine": 28,
+          "before": [],
+          "after": [
+            "type BrowserCaptureError='invalid_headers'|'missing_body'|'multiple_readers'|'read_failed'|'invalid_chunk'|'bound'|'observer'",
+            "type BrowserCaptureMetadata={",
+            "  id:string;status:number;headerHash:string;headerBytes:number;bytes:number;done:boolean;readerAcquired:boolean;",
+            "  readCalls:number;pending:number;error:BrowserCaptureError|null;taken:boolean;",
+            "}",
+            "type BrowserCaptureOwnership={started:number;settled:number;pending:number;retainedBytes:number;observerErrors:number}",
+            "type BrowserCaptureControl={",
+            "  snapshot():BrowserReadObservations;",
+            "  metadata(id:string):BrowserCaptureMetadata|null;",
+            "  take(id:string):{metadata:BrowserCaptureMetadata;bytes:number[]}|null;",
+            "  drain():Promise<BrowserCaptureOwnership>;",
+            "  release():BrowserCaptureOwnership;",
+            "}"
+          ]
+        },
+        {
+          "beforeStartLine": 32,
+          "afterStartLine": 46,
+          "before": [],
+          "after": [
+            "  capture:(BrowserCaptureMetadata&{sha256:string})|null;observerDrain:BrowserCaptureOwnership|null;"
+          ]
+        },
+        {
+          "beforeStartLine": 52,
+          "afterStartLine": 67,
+          "before": [],
+          "after": [
+            "  const sentBodies=new Map<string,{id:string;status:number;bytes:number;sha256:string;sent:boolean}>()"
+          ]
+        },
+        {
+          "beforeStartLine": 68,
+          "afterStartLine": 84,
+          "before": [],
+          "after": [
+            "    const sendRead=(response:ServerResponse,id:string,status:number,value:unknown)=>{",
+            "      // Exactly one serialization supplies both the sent native HTTP bytes",
+            "      // and their bounded fixture descriptor. No positive DTO is substituted.",
+            "      const bytes=Buffer.from(JSON.stringify(value),'utf8'),sha256=createHash('sha256').update(bytes).digest('hex')",
+            "      const descriptor={id,status,bytes:bytes.byteLength,sha256,sent:false};sentBodies.set(id,descriptor)",
+            "      if(sentBodies.size>32)sentBodies.delete(sentBodies.keys().next().value!)",
+            "      if(!response.destroyed){",
+            "        response.writeHead(status,{'content-type':'application/json','cache-control':'no-store',",
+            "          'x-jetnity-fixture-read':id,'x-jetnity-fixture-body-sha256':sha256,'x-jetnity-fixture-body-bytes':String(bytes.byteLength)})",
+            "        response.end(bytes);descriptor.sent=true",
+            "      }",
+            "    }"
+          ]
+        },
+        {
+          "beforeStartLine": 95,
+          "afterStartLine": 123,
+          "before": [
+            "        storeRequests++;if(storeFailure){send(res,503,{message:'Closed fixture transport failure'});return}"
+          ],
+          "after": [
+            "        // Capture once at admission; a later concurrent response cannot alias",
+            "        // this request through the mutable global storeRequests counter.",
+            "        const responseId=`accepted-read-${++storeRequests}`",
+            "        if(storeFailure){sendRead(res,responseId,503,{message:'Closed fixture transport failure'});return}"
+          ]
+        },
+        {
+          "beforeStartLine": 104,
+          "afterStartLine": 135,
+          "before": [
+            "        send(res,response.status,response.body);return"
+          ],
+          "after": [
+            "        sendRead(res,responseId,response.status,response.body);return"
+          ]
+        },
+        {
+          "beforeStartLine": 115,
+          "afterStartLine": 146,
+          "before": [
+            "    // Passive browser-side metadata only: return the same native promise, Response and",
+            "    // failure, without cloning/reading its stream or changing any input/signal."
+          ],
+          "after": [
+            "    // Fixture-only observation of the exact native reader used by boundedJson.",
+            "    // Original fetch/read promises, Response, Reader, result and errors pass",
+            "    // through unchanged. The observer never reads, cancels, clones or tees."
+          ]
+        },
+        {
+          "beforeStartLine": 118,
+          "afterStartLine": 150,
+          "before": [
+            "      const original=window.fetch.bind(window)"
+          ],
+          "after": [
+            "      const original=window.fetch.bind(window),limit=2*1024*1024"
+          ]
+        },
+        {
+          "beforeStartLine": 120,
+          "afterStartLine": 152,
+          "before": [
+            "      ;(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation=observation"
+          ],
+          "after": [
+            "      const captures=new Map<string,BrowserCaptureMetadata&{chunks:Uint8Array[]}>()",
+            "      const work={",
+            "        pending:new Set<Promise<void>>(),started:0,settled:0,retainedBytes:0,observerErrors:0,",
+            "        own(pending:Promise<void>,entry:BrowserFetchObservation,capture?:BrowserCaptureMetadata){",
+            "          this.started++;if(capture)capture.pending++",
+            "          const owned=pending.then(()=>{",
+            "            this.settled++;if(capture)capture.pending--;this.pending.delete(owned)",
+            "          },()=>{",
+            "            entry.observerError=true;this.observerErrors++;if(capture){capture.error='observer';capture.pending--}",
+            "            this.settled++;this.pending.delete(owned)",
+            "          })",
+            "          this.pending.add(owned)",
+            "          // Bookkeeping is also handled immediately; it is never a dependency",
+            "          // of the product's original promise or an unobserved rejection.",
+            "          void owned.catch(()=>{entry.observerError=true;this.observerErrors++})",
+            "        },",
+            "        metadata(capture:BrowserCaptureMetadata):BrowserCaptureMetadata{",
+            "          return {id:capture.id,status:capture.status,headerHash:capture.headerHash,headerBytes:capture.headerBytes,",
+            "            bytes:capture.bytes,done:capture.done,readerAcquired:capture.readerAcquired,readCalls:capture.readCalls,",
+            "            pending:capture.pending,error:capture.error,taken:capture.taken}",
+            "        },",
+            "        counts():BrowserCaptureOwnership{",
+            "          return {started:this.started,settled:this.settled,pending:this.pending.size,retainedBytes:this.retainedBytes,observerErrors:this.observerErrors}",
+            "        },",
+            "      }",
+            "      const control:BrowserCaptureControl={",
+            "        snapshot(){return {sequence:observation.sequence,omitted:observation.omitted,reads:observation.reads.map(value=>({...value}))}},",
+            "        metadata(id){const capture=captures.get(id);return capture?work.metadata(capture):null},",
+            "        take(id){",
+            "          const capture=captures.get(id)",
+            "          if(!capture||capture.error||!capture.done||capture.pending!==0||capture.taken)return null",
+            "          const data=new Uint8Array(capture.bytes);let offset=0",
+            "          for(const chunk of capture.chunks){data.set(chunk,offset);offset+=chunk.byteLength}",
+            "          capture.chunks=[];work.retainedBytes-=capture.bytes;capture.taken=true",
+            "          return {metadata:work.metadata(capture),bytes:Array.from(data)}",
+            "        },",
+            "        async drain(){",
+            "          while(work.pending.size)await Promise.allSettled([...work.pending])",
+            "          return work.counts()",
+            "        },",
+            "        release(){",
+            "          if(work.pending.size!==0)throw Error('native_browser_observer_not_drained')",
+            "          for(const capture of captures.values())capture.chunks=[]",
+            "          captures.clear();work.retainedBytes=0",
+            "          return work.counts()",
+            "        },",
+            "      }",
+            "      ;(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation=control"
+          ]
+        },
+        {
+          "beforeStartLine": 131,
+          "afterStartLine": 210,
+          "before": [
+            "        // An object method survives tsx keepNames + Playwright serialization",
+            "        // without capturing esbuild's module-scoped __name helper."
+          ],
+          "after": [
+            "        // Object methods have no external esbuild keepNames helper binding",
+            "        // when Playwright serializes this callback with Function.toString()."
+          ]
+        },
+        {
+          "beforeStartLine": 141,
+          "afterStartLine": 220,
+          "before": [
+            "        // Observe on a handled side branch; the hook receives exactly the native",
+            "        // promise, without waiting behind this diagnostic reaction.",
+            "        void originalPromise.then(value=>{"
+          ],
+          "after": [
+            "        work.own(originalPromise.then(value=>{"
+          ]
+        },
+        {
+          "beforeStartLine": 145,
+          "afterStartLine": 222,
+          "before": [],
+          "after": [
+            "          const id=value.headers.get('x-jetnity-fixture-read'),hash=value.headers.get('x-jetnity-fixture-body-sha256'),length=value.headers.get('x-jetnity-fixture-body-bytes')",
+            "          if(!id||!/^accepted-read-[1-9][0-9]{0,4}$/.test(id)||!hash||hash.length!==64||!/^[a-f0-9]{64}$/.test(hash)",
+            "            ||!length||!/^[0-9]{1,7}$/.test(length)||Number(length)>limit||captures.has(id)){",
+            "            entry.observerError=true;work.observerErrors++;return",
+            "          }",
+            "          // Retain only bounded evidence. A pending capture is never evicted",
+            "          // to make room for a newer or held response.",
+            "          if(captures.size>=32){",
+            "            const oldest=[...captures.entries()].find(([,candidate])=>candidate.pending===0&&(candidate.taken||candidate.error!==null))",
+            "            if(!oldest){entry.observerError=true;work.observerErrors++;return}",
+            "            const [key,candidate]=oldest",
+            "            if(!candidate.taken)work.retainedBytes-=candidate.bytes",
+            "            candidate.chunks=[];candidate.taken=true;captures.delete(key)",
+            "          }",
+            "          const capture:BrowserCaptureMetadata&{chunks:Uint8Array[]}={id,status:value.status,headerHash:hash,headerBytes:Number(length),",
+            "            bytes:0,done:false,readerAcquired:false,readCalls:0,pending:0,error:null,taken:false,chunks:[]}",
+            "          captures.set(id,capture)",
+            "          if(!value.body){capture.error='missing_body';return}",
+            "          const originalGetReader=value.body.getReader",
+            "          Object.defineProperty(value.body,'getReader',{configurable:true,value(this:ReadableStream<Uint8Array>,...args:unknown[]){",
+            "            const reader=Reflect.apply(originalGetReader,this,args) as ReadableStreamDefaultReader<Uint8Array>",
+            "            try {",
+            "              if(capture.readerAcquired){capture.error='multiple_readers';return reader}",
+            "              capture.readerAcquired=true",
+            "              const originalRead=reader.read",
+            "              Object.defineProperty(reader,'read',{configurable:true,value(this:ReadableStreamDefaultReader<Uint8Array>,...readArgs:unknown[]){",
+            "                capture.readCalls++",
+            "                let originalReadPromise:Promise<ReadableStreamReadResult<Uint8Array>>",
+            "                try {originalReadPromise=Reflect.apply(originalRead,this,readArgs) as Promise<ReadableStreamReadResult<Uint8Array>>}",
+            "                catch(error){capture.error='read_failed';throw error}",
+            "                work.own(originalReadPromise.then(part=>{",
+            "                  if(capture.error||capture.taken)return",
+            "                  if(part.done){capture.done=true;return}",
+            "                  if(!(part.value instanceof Uint8Array)){capture.error='invalid_chunk';return}",
+            "                  const bytes=part.value.byteLength",
+            "                  if(capture.bytes+bytes>limit||work.retainedBytes+bytes>limit){capture.error='bound';return}",
+            "                  if(bytes>0)capture.chunks.push(part.value.slice())",
+            "                  capture.bytes+=bytes;work.retainedBytes+=bytes",
+            "                },()=>{capture.error='read_failed'}),entry,capture)",
+            "                return originalReadPromise",
+            "              }})",
+            "            } catch {capture.error='observer';entry.observerError=true;work.observerErrors++}",
+            "            return reader",
+            "          }})"
+          ]
+        },
+        {
+          "beforeStartLine": 147,
+          "afterStartLine": 268,
+          "before": [
+            "        }).catch(()=>{entry.observerError=true})"
+          ],
+          "after": [
+            "        }),entry)"
+          ]
+        },
+        {
+          "beforeStartLine": 156,
+          "afterStartLine": 277,
+          "before": [
+            "        ownedStarted:0,ownedSettled:0,browser:null,diagnosticUnavailable:false}"
+          ],
+          "after": [
+            "        ownedStarted:0,ownedSettled:0,browser:null,diagnosticUnavailable:false,capture:null,observerDrain:null}"
+          ]
+        },
+        {
+          "beforeStartLine": 170,
+          "afterStartLine": 291,
+          "before": [],
+          "after": [
+            "        if(observation.requestCount>1){",
+            "          const failure=Error('native_browser_ambiguous_read');failures.push(failure);reject(failure);return",
+            "        }"
+          ]
+        },
+        {
+          "beforeStartLine": 182,
+          "afterStartLine": 306,
+          "before": [
+            "        clearTimeout(timer);bodyStarted=true;observation.responseAt=performance.now();observation.status=response.status();observation.bodyStartedAt=performance.now()",
+            "        // Start the genuine CDP body read at this exact Response event, before",
+            "        // waiting for click() to return. Its rejection has an owner immediately.",
+            "        const body=own(response.json() as Promise<AcceptedStoreTripResult>)"
+          ],
+          "after": [
+            "        bodyStarted=true;observation.responseAt=performance.now();observation.status=response.status();observation.bodyStartedAt=performance.now()",
+            "        // Always use the bytes consumed by the real hook's native reader. CDP",
+            "        // response-body retention after the hook's finally-abort is not a",
+            "        // second transport requirement and is never used as a fallback.",
+            "        const body=own((async()=>{",
+            "          const headers=response.headers(),id=headers['x-jetnity-fixture-read'],hash=headers['x-jetnity-fixture-body-sha256']",
+            "          const size=Number(headers['x-jetnity-fixture-body-bytes'])",
+            "          assert(typeof id==='string'&&/^accepted-read-[1-9][0-9]{0,4}$/.test(id))",
+            "          assert(typeof hash==='string'&&hash.length===64&&/^[a-f0-9]{64}$/.test(hash))",
+            "          assert(Number.isSafeInteger(size)&&size>=0&&size<=2*1024*1024)",
+            "          const sent=sentBodies.get(id);assert(sent&&sent.sent)",
+            "          assert.equal(sent.id,id);assert.equal(sent.status,response.status());assert.equal(sent.sha256,hash);assert.equal(sent.bytes,size)",
+            "          const remaining=45_000-(performance.now()-observation.startedAt)",
+            "          if(remaining<=0)throw Error('native_browser_response_timeout')",
+            "          const ready=await page.waitForFunction(responseId=>{",
+            "            const capture=(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.metadata(responseId)",
+            "            return capture!==null&&(capture.error!==null||capture.done&&capture.pending===0)",
+            "          },id,{timeout:remaining})",
+            "          let captured:{metadata:BrowserCaptureMetadata;bytes:number[]}|null",
+            "          try {",
+            "            const metadata=await page.evaluate(responseId=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.metadata(responseId),id)",
+            "            assert(metadata,'The exact native response must have a reader capture')",
+            "            assert.equal(metadata.error,null);assert.equal(metadata.done,true);assert.equal(metadata.readerAcquired,true);assert.equal(metadata.pending,0)",
+            "            captured=await page.evaluate(responseId=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.take(responseId),id)",
+            "          } finally {await ready.dispose()}",
+            "          assert(captured,'The exact complete capture is consumed once; no earlier response supplies bytes')",
+            "          const bytes=Buffer.from(captured.bytes),actualHash=createHash('sha256').update(bytes).digest('hex')",
+            "          assert.equal(captured.metadata.id,id);assert.equal(captured.metadata.status,response.status())",
+            "          assert.equal(captured.metadata.headerHash,hash);assert.equal(captured.metadata.headerBytes,size)",
+            "          assert.equal(captured.metadata.bytes,size);assert.equal(bytes.byteLength,size);assert.equal(actualHash,hash)",
+            "          observation.capture={...captured.metadata,sha256:actualHash}",
+            "          const value=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)) as AcceptedStoreTripResult",
+            "          observation.observerDrain=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.drain())",
+            "          assert.equal(observation.observerDrain.pending,0);assert.equal(observation.observerDrain.started,observation.observerDrain.settled)",
+            "          assert.equal(observation.observerDrain.observerErrors,0)",
+            "          return value",
+            "        })())"
+          ]
+        },
+        {
+          "beforeStartLine": 190,
+          "afterStartLine": 347,
+          "before": [
+            "          observation.bodySettledAt=performance.now();observation.bodyOutcome='rejected'",
+            "          observation.failureTag=error instanceof Error&&error.message.includes('Network.getResponseBody')&&error.message.includes('No data found')?'cdp_body_missing':'body_read_failed'"
+          ],
+          "after": [
+            "          observation.bodySettledAt=performance.now();observation.bodyOutcome='rejected';observation.failureTag='observed_body_failed'"
+          ]
+        },
+        {
+          "beforeStartLine": 204,
+          "afterStartLine": 360,
+          "before": [
+            "          observation:(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation}),body)"
+          ],
+          "after": [
+            "          observation:(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.snapshot()}),body)"
+          ]
+        },
+        {
+          "beforeStartLine": 223,
+          "afterStartLine": 379,
+          "before": [],
+          "after": [
+            "        assert.equal(observation.requestCount,1)"
+          ]
+        },
+        {
+          "beforeStartLine": 227,
+          "afterStartLine": 384,
+          "before": [
+            "        try{observation.browser=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation)}"
+          ],
+          "after": [
+            "        try{observation.browser=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.snapshot())}"
+          ]
+        },
+        {
+          "beforeStartLine": 229,
+          "afterStartLine": 386,
+          "before": [
+            "        // A failed disposable proof releases the page/transport before draining",
+            "        // any already-started CDP body operation. It never retries the request."
+          ],
+          "after": [
+            "        // Request observer drain before closing; page termination owns any",
+            "        // still-pending native reads. The evaluate promise is itself owned and",
+            "        // may honestly reject if its execution context closes before drain.",
+            "        own(page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation.drain()))"
+          ]
+        },
+        {
+          "beforeStartLine": 336,
+          "afterStartLine": 495,
+          "before": [
+            "      const state={next:false,held:false,release:()=>{},realNow:Date.now.bind(Date)}"
+          ],
+          "after": [
+            "      const state={next:false,held:false,release(){},realNow:Date.now.bind(Date)}"
+          ]
+        },
+        {
+          "beforeStartLine": 400,
+          "afterStartLine": 559,
+          "before": [],
+          "after": [
+            "    const observerOwnership=await page.evaluate(async()=>{",
+            "      const capture=(window as unknown as {acceptedStoreReadObservation:BrowserCaptureControl}).acceptedStoreReadObservation",
+            "      await capture.drain();return capture.release()",
+            "    })",
+            "    assert.equal(observerOwnership.pending,0);assert.equal(observerOwnership.started,observerOwnership.settled)",
+            "    assert.equal(observerOwnership.retainedBytes,0);assert.equal(observerOwnership.observerErrors,0)"
+          ]
+        },
+        {
+          "beforeStartLine": 403,
+          "afterStartLine": 568,
+          "before": [
+            "      storeRequests,pilotRequests,travellerWrites,nativeCurrentResults:results.filter(value=>value.status==='current').length,sourceFetchesDuringReads:0,"
+          ],
+          "after": [
+            "      storeRequests,pilotRequests,travellerWrites,observerOwnership,nativeCurrentResults:results.filter(value=>value.status==='current').length,sourceFetchesDuringReads:0,"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "beforeBlob": "dfbe71b8cee0248a6cbd41fa56d9426ce32b4f89",
+      "afterBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+      "forwardAndInverseExact": true,
+      "replacements": [
+        {
+          "beforeStartLine": 15,
+          "afterStartLine": 15,
+          "before": [
+            "import type { nativeSql } from './native-schema'"
+          ],
+          "after": [
+            "import { quote,type nativeSql } from './native-schema'"
+          ]
+        },
+        {
+          "beforeStartLine": 67,
+          "afterStartLine": 67,
+          "before": [],
+          "after": [
+            "  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false},",
+            "    disposal:{status:'not_observed' as 'not_observed'|'not_started'|'acknowledged'|'unknown',removed:null as number|null,intervalCleanupHttpEntries:0,intervalCleanupRpcOutcomes:[] as {committed:boolean;sqlState:string|null}[]}}",
+            "  let disposalRequestFrom:number|null=null,disposalEvidenceFrom:number|null=null",
+            "  const dispose=async()=>{",
+            "    disposalRequestFrom=http.requests.length;disposalEvidenceFrom=http.evidence.length",
+            "    const result=await db.dispose();cleanupObservation.disposal.status=result.status",
+            "    if(result.status==='acknowledged')cleanupObservation.disposal.removed=result.removed",
+            "  }"
+          ]
+        },
+        {
+          "beforeStartLine": 151,
+          "afterStartLine": 159,
+          "before": [],
+          "after": [
+            "    // The direct semantic fixture is still healthy. A normal acknowledged",
+            "    // cleanup proves removal before the unchanged one-shot R4 disposal; an",
+            "    // unknown later disposal is never credited with this ordinary deletion.",
+            "    owner?.check();life.assertCurrent()",
+            "    assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations",
+            "      where token=${quote(reserve.token)} and purpose='read' and state='snapshotted'",
+            "        and user_id=${quote(http.claims.sub)} and session_id=${quote(http.claims.session_id)}",
+            "        and trip_id=${quote(trip.id)} and trip_revision=${quote(String(trip.revision))}::bigint",
+            "        and expires_at>clock_timestamp() and original_expiry>clock_timestamp()`),'1')",
+            "    cleanupObservation.snapshotTokenMatched=true",
+            "    const previousBefore=http.faults.beforeRpc,previousAfter=http.faults.afterCommit,ordinaryFrom=http.evidence.length",
+            "    const restoreHooks=()=>{",
+            "      if(previousBefore===undefined)delete http.faults.beforeRpc;else http.faults.beforeRpc=previousBefore",
+            "      if(previousAfter===undefined)delete http.faults.afterCommit;else http.faults.afterCommit=previousAfter",
+            "    }",
+            "    const restore=owner?.restore(restoreHooks)",
+            "    try {",
+            "      http.faults.beforeRpc=async(name,payload)=>{",
+            "        if(previousBefore)await previousBefore(name,payload)",
+            "        if(name==='official_truth_trip_store_cleanup_v1'){",
+            "          cleanupObservation.ordinary.entries++",
+            "          if(payload.token===reserve.token)cleanupObservation.ordinary.tokenMatches++",
+            "        }",
+            "      }",
+            "      http.faults.afterCommit=async(name,payload,result)=>{",
+            "        const acknowledgement=await previousAfter?.(name,payload,result)",
+            "        if(name==='official_truth_trip_store_cleanup_v1'&&payload.token===reserve.token){",
+            "          cleanupObservation.ordinary.commits++",
+            "          cleanupObservation.ordinary.committedRemovedOne=typeof result==='object'&&result!==null",
+            "            &&Object.keys(result).length===1&&'removed'in result&&result.removed===1",
+            "        }",
+            "        return acknowledgement",
+            "      }",
+            "      const cleaned=await run(()=>db.cleanup({token:reserve.token}))",
+            "      owner?.check();life.assertCurrent()",
+            "      assert.deepEqual(cleaned,{removed:1})",
+            "      cleanupObservation.ordinary.acknowledged=true",
+            "      assert.equal(cleanupObservation.ordinary.entries,1);assert.equal(cleanupObservation.ordinary.tokenMatches,1)",
+            "      assert.equal(cleanupObservation.ordinary.commits,1);assert.equal(cleanupObservation.ordinary.committedRemovedOne,true)",
+            "      assert.equal(http.evidence.slice(ordinaryFrom).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1'&&value.committed).length,1)",
+            "    } finally {if(restore)restore();else restoreHooks()}"
+          ]
+        },
+        {
+          "beforeStartLine": 152,
+          "afterStartLine": 201,
+          "before": [
+            "  finally {if(owner)await owner.cleanup(()=>db.dispose(),()=>life.settle(),()=>http.settle());else{await db.dispose();await life.settle();await http.settle()}}"
+          ],
+          "after": [
+            "  finally {",
+            "    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle());else{await dispose();await life.settle();await http.settle()}}",
+            "    finally {",
+            "      // These cleanup events span disposal through the final owned drain; a",
+            "      // late ordinary handler can also finish here. They are not exclusively",
+            "      // correlated to the one disposal request. Its own status stays separate.",
+            "      if(disposalRequestFrom!==null)cleanupObservation.disposal.intervalCleanupHttpEntries=http.requests.slice(disposalRequestFrom).filter(value=>value.path==='/rest/v1/rpc/official_truth_trip_store_cleanup_v1').length",
+            "      if(disposalEvidenceFrom!==null)cleanupObservation.disposal.intervalCleanupRpcOutcomes=http.evidence.slice(disposalEvidenceFrom).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1')",
+            "        .map(value=>({committed:value.committed,sqlState:value.sqlState}))",
+            "      t.diagnostic(JSON.stringify({proof:'native-semantic-cleanup-observation',...cleanupObservation}))",
+            "    }",
+            "  }"
+          ]
+        }
+      ]
+    }
+  ],
+  "sourceEvidence": {
+    "actualRepositoryAnchors": {
+      "package": {
+        "path": "package.json",
+        "gitBlob": "b84a032582fae5733de40d2eee3c636ae1538eb1",
+        "sha256": "3d6899ed779027ba9a221a59a8fbcc2a09d3db693d561ab14d7325070c8ce26f",
+        "bytes": 5143
+      },
+      "lock": {
+        "path": "package-lock.json",
+        "gitBlob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3",
+        "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+        "bytes": 319637
+      }
+    },
+    "actualLockedVersions": {
+      "tsx": {
+        "version": "4.20.5",
+        "integrity": "sha512-+wKjMNU9w/EaQayHXb7WA7ZaHY6hN8WgfvHNQ3t1PnU91/7O8TcTnIhCDYTZwnt8JsO9IBqZ30Ln1r7pPF52Aw=="
+      },
+      "esbuild": {
+        "version": "0.25.9",
+        "integrity": "sha512-CRbODhYyQx3qp7ZEwzxOk4JBqmD/seJrzPa/cGjY1VtIn5E09Oi9/dB4JwctnfZ8Q8iT7rioVv5k/FNT/uf54g=="
+      },
+      "playwright": {
+        "version": "1.55.0",
+        "integrity": "sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA=="
+      },
+      "playwrightCore": {
+        "version": "1.55.0",
+        "integrity": "sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg=="
+      }
+    },
+    "actualCoreCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx --test \"lib/**/*.test.ts\" \"scripts/operating-mode-guard.test.mjs\" \"scripts/dev-reference-local-pg-prep-1/*.test.ts\"",
+    "officialTagTrees": [
+      {
+        "repository": "privatenumber/tsx",
+        "tag": "v4.20.5",
+        "tree": "e6d1a4726540eb4dbef9b331acb13a294c674e96",
+        "url": "https://api.github.com/repos/privatenumber/tsx/git/trees/v4.20.5?recursive=1"
+      },
+      {
+        "repository": "evanw/esbuild",
+        "tag": "v0.25.9",
+        "tree": "195e05c16f03a341390feef38b8ebf17d3075e14",
+        "url": "https://api.github.com/repos/evanw/esbuild/git/trees/v0.25.9?recursive=1"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "tree": "f992162f04ae0b0b5a0f4b6114b894215be98995",
+        "url": "https://api.github.com/repos/microsoft/playwright/git/trees/v1.55.0?recursive=1"
+      }
+    ],
+    "officialSourceBlobs": [
+      {
+        "repository": "privatenumber/tsx",
+        "tag": "v4.20.5",
+        "path": "src/utils/transform/get-esbuild-options.ts",
+        "gitBlob": "a14771ce4822caf89a7b9c4e17b1cbfdb87d7de2",
+        "sha256": "c58733a126aa61d37b4d6eeb8425f01c1d0806ff6955da97b73730ebe424de8d",
+        "bytes": 2641,
+        "url": "https://github.com/privatenumber/tsx/blob/v4.20.5/src/utils/transform/get-esbuild-options.ts",
+        "blobUrl": "https://api.github.com/repos/privatenumber/tsx/git/blobs/a14771ce4822caf89a7b9c4e17b1cbfdb87d7de2"
+      },
+      {
+        "repository": "privatenumber/tsx",
+        "tag": "v4.20.5",
+        "path": "src/utils/transform/index.ts",
+        "gitBlob": "bd7a1204fcbf17d2ed11c018081810c1b38f9d30",
+        "sha256": "ced9482377a94fa9c5c40ce38fe7f9cb0c24fc00bf917972916f3c786df3e672",
+        "bytes": 3507,
+        "url": "https://github.com/privatenumber/tsx/blob/v4.20.5/src/utils/transform/index.ts",
+        "blobUrl": "https://api.github.com/repos/privatenumber/tsx/git/blobs/bd7a1204fcbf17d2ed11c018081810c1b38f9d30"
+      },
+      {
+        "repository": "evanw/esbuild",
+        "tag": "v0.25.9",
+        "path": "internal/js_parser/js_parser.go",
+        "gitBlob": "9918c1bc38f0c3a71efbc82fc45f8b1d8b2c823f",
+        "sha256": "c4044bfa4663e44b6f22e80c28b0f903d10728943c77b3fb5805a81db1b07ab9",
+        "bytes": 647709,
+        "url": "https://github.com/evanw/esbuild/blob/v0.25.9/internal/js_parser/js_parser.go",
+        "blobUrl": "https://api.github.com/repos/evanw/esbuild/git/blobs/9918c1bc38f0c3a71efbc82fc45f8b1d8b2c823f"
+      },
+      {
+        "repository": "evanw/esbuild",
+        "tag": "v0.25.9",
+        "path": "internal/bundler_tests/snapshots/snapshots_default.txt",
+        "gitBlob": "ad869cd413a49f16cadf2deb50e5d6d21e64120a",
+        "sha256": "95314eaad5a9a0b9e8a5a596bb651c5c8bfcec6b646bc5005afc15c57ef2a3cd",
+        "bytes": 161376,
+        "url": "https://github.com/evanw/esbuild/blob/v0.25.9/internal/bundler_tests/snapshots/snapshots_default.txt",
+        "blobUrl": "https://api.github.com/repos/evanw/esbuild/git/blobs/ad869cd413a49f16cadf2deb50e5d6d21e64120a"
+      },
+      {
+        "repository": "evanw/esbuild",
+        "tag": "v0.25.9",
+        "path": "internal/runtime/runtime.go",
+        "gitBlob": "8b4b2c1ae39bc7eaa6e41bf850a0f5a4f9408273",
+        "sha256": "63a30c8dc21035d458787ecb77a216f01390f18bc88c035fce4b440a091943e2",
+        "bytes": 23994,
+        "url": "https://github.com/evanw/esbuild/blob/v0.25.9/internal/runtime/runtime.go",
+        "blobUrl": "https://api.github.com/repos/evanw/esbuild/git/blobs/8b4b2c1ae39bc7eaa6e41bf850a0f5a4f9408273"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "path": "packages/playwright-core/src/client/clientHelper.ts",
+        "gitBlob": "aecc92a156380cf2032245d4dba418dd0fd8e3bc",
+        "sha256": "edaf3395d466aa6d5f1bb965dfad4857680a42550b98ac6a6e69ca7330840094",
+        "bytes": 2086,
+        "url": "https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/client/clientHelper.ts",
+        "blobUrl": "https://api.github.com/repos/microsoft/playwright/git/blobs/aecc92a156380cf2032245d4dba418dd0fd8e3bc"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "path": "packages/playwright-core/src/client/page.ts",
+        "gitBlob": "4dbf85ab03c42bded699c4896b025ac9b554e4ea",
+        "sha256": "9aee7e07028b5d073f2527609d9377c2caefd284f6e93a385be0450e1d479ce6",
+        "bytes": 37130,
+        "url": "https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/client/page.ts",
+        "blobUrl": "https://api.github.com/repos/microsoft/playwright/git/blobs/4dbf85ab03c42bded699c4896b025ac9b554e4ea"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "path": "packages/playwright-core/src/client/network.ts",
+        "gitBlob": "88c34c6785ed951e176ea16bb32941c740986e55",
+        "sha256": "4eb218c4b96fb14b3029ab52e81246e54f74825ad8fd9a4b6a18948518824e56",
+        "bytes": 30822,
+        "url": "https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/client/network.ts",
+        "blobUrl": "https://api.github.com/repos/microsoft/playwright/git/blobs/88c34c6785ed951e176ea16bb32941c740986e55"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "path": "packages/playwright-core/src/server/network.ts",
+        "gitBlob": "a34050b0222c078e42d5cc13c486e1b1fd58ba50",
+        "sha256": "38f448762c2db40a874ef2e5253e3f487979f79c043804095e2265844b8a0347",
+        "bytes": 23858,
+        "url": "https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/server/network.ts",
+        "blobUrl": "https://api.github.com/repos/microsoft/playwright/git/blobs/a34050b0222c078e42d5cc13c486e1b1fd58ba50"
+      },
+      {
+        "repository": "microsoft/playwright",
+        "tag": "v1.55.0",
+        "path": "packages/playwright-core/src/server/chromium/crNetworkManager.ts",
+        "gitBlob": "27a4cba97fdc55eeedf05fd8af644f5aec110a98",
+        "sha256": "add4c9825ce6cd5f3c5a30a7d4333697023f495e680ace791fb8dc582ed40bb4",
+        "bytes": 39604,
+        "url": "https://github.com/microsoft/playwright/blob/v1.55.0/packages/playwright-core/src/server/chromium/crNetworkManager.ts",
+        "blobUrl": "https://api.github.com/repos/microsoft/playwright/git/blobs/27a4cba97fdc55eeedf05fd8af644f5aec110a98"
+      }
+    ],
+    "immutableProductAndFixtureAnchors": [
+      {
+        "path": "components/trips/useAcceptedStoreTrip.ts",
+        "gitBlob": "ada9d5ca91bcfd30d9644e2b5d4d1ffc57c659f9",
+        "sha256": "ca5b987d5d367247f68790da365d9459082b1ecb94d14cb37b8324c042edba79",
+        "bytes": 8231,
+        "changed": false
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "gitBlob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+        "sha256": "873b55b662ad7dc214659b78749cbc6a3ddebd4d4dab4caebe7c5c39b2bc938a",
+        "bytes": 7920,
+        "changed": false
+      },
+      {
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+        "gitBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+        "sha256": "939bd41ca52d16ef1a63c26d3218a17ca34af65205fd112708fec5ec62c2939d",
+        "bytes": 13007,
+        "changed": false
+      },
+      {
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-suite.ts",
+        "gitBlob": "d40c0cb2fba4dc33e1cd4694fdc01aa22a658525",
+        "sha256": "5df60e8d4f62c978de26eb6b6199a593dd3c6a4e4dde19d8ee30e8272786ac6a",
+        "bytes": 22236,
+        "changed": false
+      },
+      {
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "gitBlob": "c123817d2f332f6471fbf37a8cf91ec11fee98a1",
+        "sha256": "d18cc49d45e867bd02abd65073c9e64b49c075d8792e27f57af4d5ce88390223",
+        "bytes": 74690,
+        "changed": false
+      }
+    ],
+    "browserMechanism": [
+      "The unchanged hook alone acquires and reads its native Response stream, requires done and then fatal UTF8/JSON decode; its finally aborts even on success.",
+      "Pinned Playwright body() already waits for request terminal settlement, including loadingFailed. Eager CDP body retrieval does not establish that CDP retained an independent readable body.",
+      "The actual557 final request has HTTP200 then ERR_ABORTED / CDP body missing. bodyUsed/locked and a previous client-current result do not prove the failing request's EOF or decoder success.",
+      "The mandatory fixture evidence now uses exact original native reader results, not a fallback from the failed CDP operation. ID/status/hash/length bind actual sent bytes to the exact new Request/Response and hook-consumed chunks.",
+      "Every second matching new POST becomes an owned failure; a successful helper additionally requires requestCount exactly one.",
+      "No observer read/cancel/clone/tee or alternate fetch; each native reader.read is called once and its exact promise/result/error returned. Copies are bounded globally and per captured body to2MiB; raw bytes are excluded from diagnostics."
+    ],
+    "serializerAudit": {
+      "parentCallsites": {
+        "addInitScript": 1,
+        "evaluate": 23,
+        "waitForFunction": 10,
+        "total": 34
+      },
+      "candidateCallsites": {
+        "addInitScript": 1,
+        "evaluate": 28,
+        "waitForFunction": 11,
+        "total": 40
+      },
+      "priorUnreachedDefect": "Named object-property release arrow is wrapped by esbuild keepNames; replacing it with a normal object method avoids the outer module helper lost by Playwright function serialization.",
+      "parserRanges": [
+        "14673-14681 property key naming",
+        "15595-15597 arrow KeepNames",
+        "15620-15626 object method exclusion",
+        "15793-15801 EIdentifier-only assignment naming"
+      ],
+      "methodAndAnonymousArgumentCallbacksOnly": true,
+      "unchangedMemberAssignments": [
+        "window.fetch",
+        "Date.now",
+        "state.release"
+      ],
+      "sourceOnly": true
+    },
+    "nativeMechanism": [
+      "Actual557 fails only the final provisional reservation-zero assertion; precise retained_fact_invalid, unchanged genuine receipt, durable history hash and witness CAS have already passed.",
+      "The old direct fixture discarded db.dispose's return. R4 permits an unconfirmed result; the actual557 result and its transport cause are not logged.",
+      "After all unchanged semantic controls, the normal existing db.cleanup executes within the original live45s owner/lifetime and strictly proves actual own snapshotted token/user/session/Trip/revision/live bounds, removed1 and corresponding token-bound COMMIT.",
+      "Previous beforeRpc/afterCommit hooks are chained and restored before the unchanged one-shot disposal; status/removed from that disposal remain separate. Later HTTP/RPC fields explicitly describe an interval, not exclusive disposal correlation.",
+      "Original durable-history/CAS/Reserve/Snapshot/no-Finalize/zero-reservation assertions remain. No product/SQL/R4 mutation, new token/lease/business scope, direct delete, disposal retry or new budget."
+    ],
+    "qualification": "Official pinned-source analysis and immutable original/readback evidence only; no local compiler transform, typecheck, lint, Node, browser or native execution. Exact historical abort caller, reader EOF and disposal transport cause remain unproved."
+  },
+  "currentPublishedEvidence": {
+    "head": "557073472e35773aacc644e06df2809e9303a77b",
+    "run": {
+      "id": 42478154389,
+      "attempt": 1,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42478154389",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    "core": {
+      "head": "557073472e35773aacc644e06df2809e9303a77b",
+      "runId": 42478154389,
+      "attempt": 1,
+      "jobId": 128724035109,
+      "checkout": "e7f9ad3d6d12098eaf5db346d0ff8b98ed297a0d",
+      "tree": "a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c",
+      "node": "22.23.4",
+      "original": {
+        "sha256": "40dcbab1a90907b99bdfdd8f556fe3f9b5f29d265b99c4825694e2b13cb392f7",
+        "bytes": 4042335,
+        "bom": true,
+        "lf": 60837
+      },
+      "typecheck": "PASS",
+      "lint": {
+        "errors": 0,
+        "warnings": 197
+      },
+      "tap": {
+        "tests": 8208,
+        "suites": 935,
+        "pass": 8204,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 2,
+        "todo": 0,
+        "duration_ms": 792779.524519
+      },
+      "newDiscoveredEntries": [
+        {
+          "testNumber": 554,
+          "name": "Accepted Store Trip Integration 1: actual unbound archive/legacy refusal and final source expiry",
+          "result": "pass",
+          "durationMs": 77229.417978,
+          "line": 21633
+        },
+        {
+          "testNumber": 555,
+          "name": "Accepted Store Trip Integration 1: actual pinned SSR, outgoing signals and owned request/key/target boundaries",
+          "result": "pass",
+          "durationMs": 86643.759839,
+          "line": 21905
+        },
+        {
+          "testNumber": 556,
+          "name": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+          "result": "fail",
+          "durationMs": 48398.596262,
+          "line": 21989
+        },
+        {
+          "testNumber": 557,
+          "name": "Accepted Store Trip Integration 1: actual saved Trip date, person, credential and declaration boundaries",
+          "result": "pass",
+          "durationMs": 85896.649814,
+          "line": 22134
+        },
+        {
+          "testNumber": 558,
+          "name": "Accepted Store Trip Integration 1: complete multi-capsule implementation identity preserves every exact file",
+          "result": "pass",
+          "durationMs": 1314.095728,
+          "line": 22141
+        },
+        {
+          "testNumber": 559,
+          "name": "Accepted Store Trip Integration 1: actual retained-row integrity and own-Trip recovery with independent A/B",
+          "result": "pass",
+          "durationMs": 125077.869688,
+          "line": 22257
+        },
+        {
+          "testNumber": 560,
+          "name": "Accepted Store Trip Integration 1: actual native producer, durable commit, fresh reader and restore refusal",
+          "result": "fail",
+          "durationMs": 33823.158713,
+          "line": 22298
+        },
+        {
+          "testNumber": 561,
+          "name": "Accepted Store Trip Integration 1: native abandonment, late reply, R4 race and orphan expiry recovery",
+          "result": "pass",
+          "durationMs": 193389.363384,
+          "line": 22390
+        },
+        {
+          "testNumber": 562,
+          "name": "Accepted Store Trip Integration 1: actual four Finalize waits, authority/Trip controls and immutable lifecycle",
+          "result": "pass",
+          "durationMs": 136440.418702,
+          "line": 22509
+        }
+      ],
+      "skipped": [
+        "2026-11-08T12:14:54.7274715Z ok 2358 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+        "2026-11-08T12:14:54.7910258Z ok 2548 - shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      ],
+      "findings": [
+        {
+          "id": "FIX14_BROWSER_OBSERVATION",
+          "severity": "P1",
+          "observed": "response.json -> Network.getResponseBody: No data found for resource with given identifier",
+          "sourceLocation": "browser.ts:185",
+          "completedStages": 5,
+          "totalStages": 13,
+          "diagnostic": {
+            "line": 22000,
+            "failedBrowserStage": "actual document and citizenship add remove preserve save recovery",
+            "proofs": [
+              "closed initial mount",
+              "actual native result in unchanged preparation renderer",
+              "real traveller buttons synchronously invalidate without persistence",
+              "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+              "actual reload editing save and matching native re-read recover"
+            ],
+            "storeRequests": 6,
+            "pilotRequests": 0,
+            "errors": [],
+            "outbound": [],
+            "lastNativeStatus": "current",
+            "lastClientObservation": {
+              "received": {
+                "validation": {
+                  "ok": true
+                },
+                "status": "current",
+                "busy": false,
+                "canRead": true,
+                "draftBlocked": false,
+                "visibility": "visible",
+                "wallNow": 1794139430369,
+                "monotonicNow": 28583.800000000017,
+                "wallRemainingMs": 14153,
+                "deadlineFromRequestStartMs": 17532
+              },
+              "failure": null,
+              "dom": null
+            },
+            "lastReadObservation": {
+              "action": 5,
+              "startedAt": 44307.240059,
+              "requestAt": 44458.657919,
+              "requestCount": 1,
+              "responseAt": 49024.765348,
+              "status": 200,
+              "finishedAt": null,
+              "failedAt": 49081.409107,
+              "requestFailure": "net::ERR_ABORTED",
+              "bodyStartedAt": 49024.767892,
+              "bodySettledAt": 49083.518768,
+              "bodyOutcome": "rejected",
+              "failureTag": "cdp_body_missing",
+              "ownedStarted": 4,
+              "ownedSettled": 4,
+              "browser": {
+                "sequence": 6,
+                "omitted": 0,
+                "reads": [
+                  {
+                    "sequence": 1,
+                    "startedAt": 841.8999999999942,
+                    "headersAt": 6187.299999999988,
+                    "fetchSettledAt": 6187.299999999988,
+                    "abortedAt": 6195.1999999999825,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  },
+                  {
+                    "sequence": 2,
+                    "startedAt": 6802.5,
+                    "headersAt": 11530.699999999983,
+                    "fetchSettledAt": 11530.699999999983,
+                    "abortedAt": 11532.199999999983,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  },
+                  {
+                    "sequence": 3,
+                    "startedAt": 12771.399999999994,
+                    "headersAt": 17452.699999999983,
+                    "fetchSettledAt": 17452.699999999983,
+                    "abortedAt": 17454.100000000006,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  },
+                  {
+                    "sequence": 4,
+                    "startedAt": 18288.100000000006,
+                    "headersAt": 22959.99999999997,
+                    "fetchSettledAt": 22959.99999999997,
+                    "abortedAt": 22961.100000000006,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  },
+                  {
+                    "sequence": 5,
+                    "startedAt": 23854.100000000006,
+                    "headersAt": 28488.49999999997,
+                    "fetchSettledAt": 28488.49999999997,
+                    "abortedAt": 28489.899999999994,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  },
+                  {
+                    "sequence": 6,
+                    "startedAt": 29437.300000000017,
+                    "headersAt": 34060.99999999997,
+                    "fetchSettledAt": 34060.99999999997,
+                    "abortedAt": 34062.30000000002,
+                    "status": 200,
+                    "bodyUsedAtAbort": true,
+                    "bodyLockedAtAbort": false,
+                    "abortDom": {
+                      "status": "checking",
+                      "busy": "true",
+                      "visibility": "visible"
+                    },
+                    "fetchError": null,
+                    "observerError": false
+                  }
+                ]
+              },
+              "diagnosticUnavailable": false
+            },
+            "lastRpcOutcomes": [
+              {
+                "rpc": "official_truth_trip_store_confirm_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_reserve_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_snapshot_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_finalize_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_confirm_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              }
+            ]
+          },
+          "boundary": "The final request has no observed native reader EOF or successful final client decode. LastClientObservation belongs to the previous successful request. Actual Abort caller is not recorded; no product defect or final-read success is inferred.",
+          "sourceDiagnosis": "The unchanged product Hook consumes the actual bounded stream and always aborts its controller in finally, even after success; PW1.55 body() already waits for request completion but CDP can lose retained body after loadingFailed. Extra finished waits do not prove retention.",
+          "authorizedFix": "Fixture-only observer on exact original native Reader/read Promise results; bounded actual chunk copies with EOF and exact response-ID/actual sent-byte binding. No extra product reads, clone, tee, cancel, retry, synthesized DTO, or budget extension; all existing checks retained."
+        },
+        {
+          "id": "FIX14_NATIVE_PROVISIONAL_CLEANUP",
+          "severity": "P1",
+          "observed": "strictEqual at native-semantic-reproof.ts:158 (count reservations == '0')",
+          "details": {
+            "line": 22322,
+            "proof": "native-suite-failure-details",
+            "suite": "native-publication",
+            "phase": "strict R2 false fact / actual retained semantic re-extraction",
+            "semanticStep": "persistent_after",
+            "completedPhases": 3,
+            "elapsedMs": 33820,
+            "failures": {
+              "roots": [
+                {
+                  "ref": 1
+                }
+              ],
+              "nodes": [
+                {
+                  "id": 1,
+                  "kind": "Error",
+                  "name": "AssertionError",
+                  "tag": "unlisted_error",
+                  "code": "ERR_ASSERTION",
+                  "operator": "strictEqual",
+                  "stackInputTruncated": false,
+                  "framesTruncated": false,
+                  "frames": [
+                    {
+                      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+                      "line": 158,
+                      "column": 10
+                    },
+                    {
+                      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+                      "line": 80,
+                      "column": 7
+                    },
+                    {
+                      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+                      "line": 50,
+                      "column": 27
+                    }
+                  ],
+                  "actualType": "string",
+                  "expectedType": "string"
+                }
+              ],
+              "rootsOmitted": 0,
+              "maxNodes": 16,
+              "maxDepth": 4,
+              "maxFrames": 3
+            }
+          },
+          "provenBeforeFailure": [
+            "strict retained_fact_invalid",
+            "untouched genuine reproof still same receipt",
+            "persistent history hash unchanged",
+            "external witness CAS unchanged",
+            "Reserve and Snapshot COMMIT observed",
+            "no Finalize in semantic phase"
+          ],
+          "residualCount": "Nonzero but actual value redacted/unknown; do not claim exactly one",
+          "transportCause": "Unknown: dispose returns fulfilled unknown on failure; return was discarded. No subsequent completed cleanup RPC recorded after final semantic Reserve/Snapshot.",
+          "sourceDiagnosis": "The harness asserts immediate physical deletion after solely invoking R4 disposal, which deliberately permits an unconfirmed outcome. Source review found no demonstrated SQL cleanup predicate, history, witness, or reproof defect.",
+          "authorizedFix": "Inside unchanged live45s business scope after all semantic controls, run normal token-bound acknowledged cleanup and prove removed1 plus actual corresponding COMMIT; preserve exactly one R4 dispose/finally/drain and every existing history/CAS/zero assertion. Record only sanitized disposal/outcome facts."
+        },
+        {
+          "id": "FIX14_SERIALIZER_PROPERTY",
+          "severity": "P1",
+          "scope": "source-only, not reached in failing557 browser run",
+          "observed": "release:()=>{} in serialized page function receives esbuild keepNames module helper",
+          "candidate": "release(){}",
+          "candidateBlob": "2a03b54856d9e63a550bcb3970599811da846475",
+          "candidateStatus": "Minimal source fix reviewed but not published separately; included in combined Fix14",
+          "allSerializedCallbacksAudited": 34
+        }
+      ],
+      "suiteAudit": [
+        {
+          "suite": "boundaries",
+          "phaseStarts": 3,
+          "phaseCompletes": 3,
+          "terminal": {
+            "line": 21921,
+            "proof": "native-suite-complete",
+            "suite": "boundaries",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 2,
+            "elapsedMs": 86642,
+            "journalOperations": 0,
+            "immutableVersions": 0,
+            "sourceFetches": 2,
+            "rpcCommits": 10,
+            "rpcRefusals": 0,
+            "witnessAdvances": 0,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 584,
+            "ownedSettled": 584,
+            "ownedPending": 0,
+            "ownedConnections": 90,
+            "ownedClosed": 90,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          "failed": null,
+          "healthyClosureProven": true
+        },
+        {
+          "suite": "native-publication",
+          "phaseStarts": 4,
+          "phaseCompletes": 3,
+          "terminal": null,
+          "failed": {
+            "line": 22321,
+            "proof": "native-suite-failed",
+            "suite": "native-publication",
+            "phase": "strict R2 false fact / actual retained semantic re-extraction",
+            "semanticStep": "persistent_after",
+            "completedPhases": 3,
+            "elapsedMs": 33818,
+            "lastRpcOutcomes": [
+              {
+                "rpc": "official_truth_trip_store_snapshot_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_finalize_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_confirm_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_reserve_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_snapshot_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_finalize_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_confirm_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_cleanup_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_reserve_v1",
+                "committed": true,
+                "sqlState": null
+              },
+              {
+                "rpc": "official_truth_trip_store_snapshot_v1",
+                "committed": true,
+                "sqlState": null
+              }
+            ]
+          },
+          "healthyClosureProven": false
+        },
+        {
+          "suite": "integrity-rls",
+          "phaseStarts": 5,
+          "phaseCompletes": 5,
+          "terminal": {
+            "line": 22274,
+            "proof": "native-suite-complete",
+            "suite": "integrity-rls",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 125077,
+            "journalOperations": 2,
+            "immutableVersions": 2,
+            "sourceFetches": 2,
+            "rpcCommits": 86,
+            "rpcRefusals": 6,
+            "witnessAdvances": 2,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 2272,
+            "ownedSettled": 2272,
+            "ownedPending": 0,
+            "ownedConnections": 444,
+            "ownedClosed": 444,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          "failed": null,
+          "healthyClosureProven": true
+        },
+        {
+          "suite": "wait-lifecycle",
+          "phaseStarts": 5,
+          "phaseCompletes": 5,
+          "terminal": {
+            "line": 22526,
+            "proof": "native-suite-complete",
+            "suite": "wait-lifecycle",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 136439,
+            "journalOperations": 4,
+            "immutableVersions": 2,
+            "sourceFetches": 3,
+            "rpcCommits": 99,
+            "rpcRefusals": 7,
+            "witnessAdvances": 4,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 5563,
+            "ownedSettled": 5563,
+            "ownedPending": 0,
+            "ownedConnections": 476,
+            "ownedClosed": 476,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          "failed": null,
+          "healthyClosureProven": true
+        }
+      ],
+      "hygiene": "all five hygiene steps skipped after Tests failure",
+      "productionBuild": "SKIPPED",
+      "verdict": "FAIL / CHANGES REQUIRED / NO OVERALL PASS"
+    },
+    "auth": {
+      "head": "557073472e35773aacc644e06df2809e9303a77b",
+      "run": 42478154389,
+      "job": 128724035136,
+      "status": "success",
+      "values": 55,
+      "keys": 243,
+      "checkout": "e7f9ad3d6d12098eaf5db346d0ff8b98ed297a0d",
+      "node": "22.23.4",
+      "sha256": "2286b248e420d4f679af0a411c0f05fac4fb9b4d483639e27df0561b2e677955",
+      "bytes": 20866,
+      "bom": true,
+      "lf": 286
+    },
+    "persisted": {
+      "head": "557073472e35773aacc644e06df2809e9303a77b",
+      "run": 42478154389,
+      "job": 128724035288,
+      "status": "success",
+      "sha256": "0db73779a2fab13efbcfeda7a7f73794bf722fc696046faa0c4b08f95b5eb915",
+      "bytes": 152782,
+      "bom": true,
+      "lf": 1169,
+      "tests": 1,
+      "suites": 0,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 238573.302507,
+      "subtestDurationMs": 237870.520596,
+      "markers": 95,
+      "readerResults": 45,
+      "fullOrderedSignatureMatchesPrior": true,
+      "measuredTimesAreNotComparedForEquality": [
+        "elapsedMs",
+        "readMs",
+        "sqlMs",
+        "beforeMs",
+        "afterMs",
+        "fullReadMs",
+        "maxOriginalSqlMs",
+        "windowMs",
+        "pauseMs",
+        "separationMs",
+        "afterFirstMs",
+        "beforeFinalMs",
+        "actualPauseMs"
+      ],
+      "constantReserveMsPreserved": 5000,
+      "terminal": [
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+          "elapsedMs": 182041
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+          "elapsedMs": 237604
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 237604
+        }
+      ],
+      "checkout": "e7f9ad3d6d12098eaf5db346d0ff8b98ed297a0d",
+      "tree": "a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c",
+      "node": "22.23.4",
+      "rootReview": "complete-full95records-actual-original",
+      "independentReview": {
+        "agent": "/root/refresh_independent_review",
+        "status": "complete-no-findings",
+        "all95ActualRecordsVerified": true,
+        "original": {
+          "sha256": "0db73779a2fab13efbcfeda7a7f73794bf722fc696046faa0c4b08f95b5eb915",
+          "bytes": 152782,
+          "bom": true,
+          "lf": 1169
+        },
+        "vector": {
+          "bytes": 34792,
+          "sha256": "64af2babb2f8563549c20ec6bb6c5b3ae6658b1d378f6d6699e8bffe0a69ca42"
+        },
+        "head": "557073472e35773aacc644e06df2809e9303a77b",
+        "job": 128724035288
+      }
+    },
+    "atomic": {
+      "head": "557073472e35773aacc644e06df2809e9303a77b",
+      "runId": 42478154389,
+      "attempt": 1,
+      "jobId": 128724034924,
+      "checkout": "e7f9ad3d6d12098eaf5db346d0ff8b98ed297a0d",
+      "tree": "a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c",
+      "node": "22.23.4",
+      "original": {
+        "sha256": "c51b1d62845a288437435fc55c25b5a97c8bd5f8bf8902e0c27f5b12f5f875bc",
+        "bytes": 179991,
+        "bom": true,
+        "lf": 1369
+      },
+      "tap": {
+        "tests": 1,
+        "suites": 0,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "subtestDurationMs": 783022.715714,
+        "durationMs": 783731.377874
+      },
+      "rawMarkerCount": 152,
+      "parseableMarkerCount": 151,
+      "malformed": [
+        {
+          "line": 1227,
+          "raw": "{\"schema\":\"official-truth-atomic-version-refresh-1\",\"phase\":\"R9 structural graph-worker equivalence; no canonical acceptance claim\",\"elapsedMs\":103157,\"case\":\"edge order: invalid bigint before missing target\",\"sqlstate\":\"22P02\",\"message\":\"invalid input syntax for type bigint: \\\\\"not-a-bigint\\\\\"\",\"implementationsCheckedInSql\":2}",
+          "error": "SyntaxError: Expected ',' or '}' after property value in JSON at position 280 (line 1 column 281)"
+        }
+      ],
+      "recursiveSemanticComparison": "All151 records compared recursively to actual41c original; only actual measured durations/SQL times and global started/settled9993 versus10943 differ. All fixed budgets, ordering and semantics unchanged; no prior pass transfer.",
+      "cleanup": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+        "elapsedMs": 783019,
+        "cleanup": {
+          "started": 9993,
+          "settled": 9993,
+          "pending": 0,
+          "connections": 248,
+          "closed": 248,
+          "stoppedClusters": 11
+        },
+        "parentAborted": false
+      },
+      "complete": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "complete native refresh acceptance matrix finished",
+        "elapsedMs": 783019,
+        "parentReserveMs": 416981
+      },
+      "terminalCases": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 580906,
+          "case": "unknown_commit"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 619592,
+          "case": "readback_failure"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 701201,
+          "case": "cleanup_after_bound"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 782749,
+          "case": "reader_after_bound"
+        }
+      ],
+      "rootReview": "complete-no-findings",
+      "independentReview": {
+        "agent": "/root/refresh_independent_review",
+        "status": "complete-no-findings",
+        "allOriginalsPhasesCleanupTapCheckoutVerified": true
+      }
+    },
+    "aggregate": {
+      "head": "557073472e35773aacc644e06df2809e9303a77b",
+      "runId": 42478154389,
+      "attempt": 1,
+      "jobId": 128727690615,
+      "status": "failure",
+      "original": {
+        "sha256": "37e30dd2e644f779a757f7c6e7077d5a99f392ae11dc47ef90eaaa82d7d85d63",
+        "bytes": 3317,
+        "bom": true,
+        "lf": 50
+      },
+      "core": "failure",
+      "persistedNative": "success",
+      "refreshNative": "success",
+      "exit": 1,
+      "rootFullReview": true
+    },
+    "actualCheckout": {
+      "sha": "e7f9ad3d6d12098eaf5db346d0ff8b98ed297a0d",
+      "tree": "a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c",
+      "parents": [
+        "e1fe0c696ade9f39b417772b5c065f87530204d6",
+        "557073472e35773aacc644e06df2809e9303a77b"
+      ],
+      "rootAndIndependentVerified": true
+    },
+    "rootCheckpoint": {
+      "path": "docs/evidence/official-truth-accepted-store-trip-integration-1/55707347-ci-checkpoint.json",
+      "gitBlob": "83141a786e763d2af47cd8efbe71c00628d9a718",
+      "sha256": "982ec6b1932263b264c4ad8cf0dbec42ff7e0c36806afcd7444a9ded0c062cbe",
+      "bytes": 223811,
+      "rootAddsSeparately": true
+    },
+    "qualification": "All copied fields above are actual completed557 Root-checkpoint facts, not candidate execution. Final reader EOF/decoder success and disposal status at the two failing boundaries are unobserved. Prior b5 causes remain unknown."
+  },
+  "docs": {
+    "version": "V10/Fix14",
+    "method": "New current-status prefixes followed by complete actual557 V9/V8/V7/V6/V5 text byte-for-byte.",
+    "historicalSuffixExact": true,
+    "historicalSuffixBlobs": {
+      "handoff": "0d90d41b7e7d307f7eec88709aca14eb23ca8f24",
+      "matrix": "2395fad3b5651200f21badd514762832a08736b3"
+    },
+    "prefixBytes": {
+      "handoff": 9883,
+      "matrix": 6549
+    },
+    "sourceNativeStatus": "Source-reviewed exact0cda after interval-label precision; candidate runtime unexecuted.",
+    "runtimeStatus": "557 overall CHANGES REQUIRED; Core two failures, companion Auth/Persisted/Atomic PASS and no forward transfer.",
+    "originalDisposalStatusUnknown": true,
+    "originalBrowserFinalEOFUnknown": true,
+    "b5CausesRemainUnknown": true
+  },
+  "verification": {
+    "actualParentFilesRead": true,
+    "allFourCandidateBlobsActuallyReadBack": true,
+    "fullContentGitblobSha256Utf8Verified": true,
+    "mainAbsenceVerifiedFromActualImmutableTree": true,
+    "mainTreeEntries": 9495,
+    "completeCodeReplacementsReconstructForwardAndInverse": true,
+    "assertionProof": {
+      "browser": {
+        "before": 55,
+        "after": 71,
+        "allOldLinesOrderedUnchanged": true
+      },
+      "native": {
+        "before": 20,
+        "after": 25,
+        "allOldLinesOrderedUnchanged": true
+      }
+    },
+    "orderedBrowserProofPushes": 13,
+    "fullScenarioBodyBeforeFinalObserverCheckParentIdenticalExceptReleaseMethod": true,
+    "browserReviewCorrections": {
+      "numericHeader": "^[0-9]{1,7}$",
+      "uniqueRequest": "Second matching new POST retained as owned failure; strict requestCount==1 before success.",
+      "inverseToReviewed019Exact": true
+    },
+    "nativeReviewCorrection": "Only interval-labelled cleanup HTTP/RPC observations; exact disposal result separately recorded.",
+    "sourceOnlyReviews": {
+      "root": "Root completed the full019 browser source review and required the two exact narrow corrections; complete native0cda source review has no further finding. Final candidate publication acceptance remains Root's responsibility; no runtime/TL PASS is claimed.",
+      "independentUI": "Full019 source plus exact b79 two-fix inverse reviewed; no remaining source finding; all55 old assertion lines,13 stages and40 serialization callbacks retained. Both V10 prefixes and complete historical suffixes also reviewed without a finding.",
+      "independentBackend": "Complete native0cda, V10 handoff/matrix and557 companion evidence reviewed; no source/documentation finding."
+    },
+    "newLocalExecution": false,
+    "newTypecheck": false,
+    "newLint": false,
+    "newNative": false,
+    "newMounted": false,
+    "newCI": false,
+    "executionBoundary": "Actual complete fresh Node22 CI and all other exact-head gates remain mandatory after Root publication; no local substitute or favorable rerun."
+  },
+  "actionBoundary": "Immutable GitHub read/create_blob only. No author tree, commit, ref, PR state, Ready or merge. Root adds its separately reviewed557 checkpoint83141a78 and ACTIVE pointer3bef5465, then publishes only after final independent review with the exact557 lease.",
+  "holds": "TASK/R1-R10 unchanged; FEATURE_NOT_LIVE, SQL_UNAPPLIED, absent deployment activation and all #917/#1131/source/Owner/key/retention/privacy/hosted holds persist.",
+  "followingSlice": "none",
+  "rootPublication": {
+    "finalManifestPath": "docs/evidence/official-truth-accepted-store-trip-integration-1/native-ci-fix14-manifest.json",
+    "authorManifest": {
+      "gitBlob": "a62ced83638357de9828a5a57f86d213e796143f",
+      "sha256": "379527a75f392d63a07ac8ba29777a6298ac1380869a6688aa3f43723d2bfa44",
+      "bytes": 81108,
+      "allAuthorFieldsPreserved": true
+    },
+    "rootArtifacts": [
+      {
+        "path": "docs/evidence/official-truth-accepted-store-trip-integration-1/55707347-ci-checkpoint.json",
+        "gitBlob": "83141a786e763d2af47cd8efbe71c00628d9a718",
+        "sha256": "982ec6b1932263b264c4ad8cf0dbec42ff7e0c36806afcd7444a9ded0c062cbe",
+        "bytes": 223811,
+        "expectedRemoteBlob": null,
+        "changeAgainstParent": "added"
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "gitBlob": "3bef5465cf8227b0cdfdba3755097239c46c9217",
+        "sha256": "a86d3bf44f8fd2c50f2eebfde7d61ab3fdf4d8beb30c22a4af3f71bfe3d02a0f",
+        "bytes": 128205,
+        "expectedRemoteBlob": "0cad1fb865d08c49fcf59f4c0e0955aae5fa56b0",
+        "changeAgainstParent": "modified"
+      }
+    ],
+    "fileCounts": {
+      "authorCode": 2,
+      "authorDocumentation": 2,
+      "rootEvidenceAndContinuity": 2,
+      "finalManifest": 1,
+      "totalParentDelta": 7
+    },
+    "authorSourceReview": {
+      "browser": {
+        "gitBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+        "root": "complete; no remaining concrete source finding",
+        "independent": "/root/release_reconstruction; complete; two findings closed by exact inverse",
+        "oldAssertionLines": 55,
+        "totalAssertionLines": 71,
+        "proofStages": 13,
+        "serializedCallbacks": 40
+      },
+      "native": {
+        "gitBlob": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+        "root": "complete; no remaining concrete source finding",
+        "independent": "/root/refresh_independent_review; complete; interval-correlation precision corrected",
+        "oldAssertionLines": 20,
+        "productDatabaseAndSqlUnchanged": true
+      },
+      "documents": "Root and both separate reviewers read full V10 prefixes and verified entire V9 suffixes byte-identical.",
+      "checkpoint": "Root and both reviewers checked full current557 original evidence;95 Persisted/151 Atomic plus malformed raw marker/all57 Core objects, actual job/TAP/checkouts/deployments and honest failure boundaries.",
+      "active": "Root and both reviewers verified exactly2 new lines; entire0cad parent preserved."
+    },
+    "reviewCorrectionHistory": [
+      {
+        "candidate": "0196837bd0ab06683e90963023dd135857c589db",
+        "findings": [
+          "Double-escaped decimal length regex rejects genuine numeric headers",
+          "Multiple matching new Requests counted without unique-request assertion"
+        ],
+        "finalCandidate": "b79caba69dc741a818367b501dd33df51ce24901",
+        "bothClosed": true,
+        "fullInverseToEarlierReviewedCandidate": true
+      },
+      {
+        "candidate": "2c649dbfce9f2ed65f96a4e7eff91685009bd78a",
+        "finding": "Interval HTTP/RPC outcomes could include a late earlier handler and must not be presented as exclusively disposal-correlated",
+        "finalCandidate": "0cda7dc989018ba1388529044ebab1595d6bdd5c",
+        "closed": true,
+        "fullInverseVerified": true
+      },
+      {
+        "checkpoint": "efc121c9f9a35c176edf1c59d1162dc92f365b2a",
+        "finding": "The original disposal status was not observed; describe may return unknown rather than an actual unknown status",
+        "finalCheckpoint": "83141a786e763d2af47cd8efbe71c00628d9a718",
+        "closed": true,
+        "onlyOneQualifiedSentenceChanged": true
+      }
+    ],
+    "expectedRefLease": "557073472e35773aacc644e06df2809e9303a77b",
+    "force": false,
+    "freshMode": "NORMAL; metadata_not_competing_governance; all special Product-Owner gates retained",
+    "sourceDecision": "SOURCE REVIEW NO REMAINING FINDING, AUTHORIZED TO PUBLISH FOR FRESH GATING. NOT RUNTIME OR OVERALL TL PASS; NOT READY OR MERGED.",
+    "executionBoundary": "No local transform/type/lint/native/mounted execution; all actual new-head gates reset. Prior557 complete runtime fails Core and required aggregate. No favorable rerun or previous PASS transfer.",
+    "feature": "FEATURE_NOT_LIVE / SQL_UNAPPLIED",
+    "followingSlice": "none"
+  }
+}

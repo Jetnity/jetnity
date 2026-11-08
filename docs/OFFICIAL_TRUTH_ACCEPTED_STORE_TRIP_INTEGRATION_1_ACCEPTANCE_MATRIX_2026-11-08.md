@@ -1,3 +1,41 @@
+# Current acceptance status V10 / Fix14
+
+Date: 2026-11-08 UTC. Exact parent `557073472e35773aacc644e06df2809e9303a77b`, tree `a74e28c56c7bab944ebfe4a51f5d5cadfcb1c80c`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1. TASK and R1–R10 remain immutable.
+
+**Overall CHANGES REQUIRED.** Completed run42478154389/Core128724035109: Typecheck/Lint PASS,197 warnings/0 errors,8208 tests/8204 pass/2 fail/0 cancelled/2 inherited skips,935 suites,792779.524519ms. Five hygiene steps and production build are skipped. Original4042335 bytes,SHA256 `40dcbab1a90907b99bdfdd8f556fe3f9b5f29d265b99c4825694e2b13cb392f7`, independently fetched/hashed by the author. The full [557 checkpoint](evidence/official-truth-accepted-store-trip-integration-1/55707347-ci-checkpoint.json) is blob `83141a786e763d2af47cd8efbe71c00628d9a718`,223811 bytes,SHA256 `982ec6b1932263b264c4ad8cf0dbec42ff7e0c36806afcd7444a9ded0c062cbe`.
+
+| Actual557 boundary | Observed result and limit |
+| --- | --- |
+| Mounted Workspace | Five of13 stages complete. During actual document/citizenship recovery, action5/request6 receives HTTP200 then net::ERR_ABORTED; eager CDP body read fails. Four helper promises settle, but there is no full mounted/global cleanup PASS. Native reader EOF and successful final client decode were not recorded |
+| Semantic reproof | Exact retained_fact_invalid and untouched genuine control pass; permanent-history hash and witness CAS equality also pass. Failure at line158 is immediate reservation count==0; the actual nonzero value is unknown. The discarded disposal return and absent later cleanup COMMIT do not establish a particular transport cause |
+| Native publication suite | Three phases complete; no healthy publication terminal. Previous sequential semantic controls must not be confused with full suite completion |
+| Other R10 suites | Boundaries86642ms,integrity125077ms,wait/lifecycle136439ms complete with respective584/2272/5563 operations fully settled,90/444/476 connections closed,zero pending/backends/provisional rows,key wipe and stopped clusters. Phase-complete event counts3/5/5; literal terminal completedPhases2/4/4 |
+| Other package entries | Acceptance, Context, Implementation and Recovery PASS |
+| Companion gates | Auth55/243; Persisted95 phases/45 reads and full Atomic151 parsed/152 raw records with final resource closure PASS. Aggregate128727690615 fails solely for Core. These exact557 results do not transfer to Fix14 |
+
+## Fix14 evidence requirements retained or strengthened
+
+| Fixture boundary | Exact candidate requirement; execution remains pending |
+| --- | --- |
+| Positive browser bytes | Once-at-admission immutable response ID; one actual UTF8 serialization supplies sent bytes and hash/length. Exactly one new matching request; exact Playwright Request/Response, original browser Response capture and sent body must match ID/status/hash/length |
+| Native reader observation | The unchanged hook acquires the actual native Reader. Original getReader/read operations occur exactly once; exact Reader/read promise/result/error and fetch promise/Response pass through. Only bounded delivered chunk copies plus real EOF form the test JSON |
+| No alternate positive | No own read/cancel/clone/tee, replacement DTO, second fetch, CDP-failure fallback, retry or success after incomplete/error/overlimit capture. Original45-second evidence bound and real client/current-Trip/current/one-positive assertions remain |
+| Ownership and held races | All observer branches immediately handled and accounted for; copies bounded by2MiB and released after proof. Positive EOF is scoped to the exact new response ID. Deliberately aborted or held old requests never supply missing bytes or need a fictitious EOF |
+| Complete existing scenarios | All55 old assertion lines and13 ordered proof pushes remain. Document/citizenship/save/recovery, latest-lane, held-response, clock, visibility and expiry interactions are preserved |
+| Serialization | Unreached named release property becomes an ordinary release(){} method. Previous34 serialized bodies and new callbacks reviewed against actual pinned tsx4.20.5/esbuild0.25.9/Playwright1.55.0 source. No compiler configuration/helper injection/product change |
+| Direct semantic fixture cleanup | After all existing reproof controls, exact live own snapshotted token/Trip/session is verified. Normal db.cleanup in the original45-second scope must return removed1 and have its actual token-bound COMMIT; prior hooks restored before the existing one-shot R4 disposal |
+| Disposal honesty and invariants | Direct disposal status/removed remain separate from ordinary ACK; interval HTTP/RPC fields are not exclusively attributed to disposal. Unchanged history/CAS/Reserve/Snapshot/no-Finalize and final zero-reservation assertions remain. No SQL-direct-delete, new scope, retry or product/R4 mutation |
+
+The557 final passive fetch entry has headers34061ms/abort34062.3ms, bodyUsed=true/bodyLocked=false and checking/busy DOM. Those observations do not prove actual EOF or decode; the previous successful client observation is not reused. The new byte path is mandatory on every positive read, not a fallback after the old protocol error. The exact original abort caller remains unobserved.
+
+The reservation-zero assertion is distinct from the already-passed permanent hash/CAS checks. R4 may return fulfilled unknown, but the actual557 return was discarded and is unknown. The added normal acknowledged cleanup proves the fixture's intended healthy deletion; it does not claim that the original disposal transport cause was discovered or repaired.
+
+Full557 Atomic128724034924:783022.715714ms subtest/783731.377874ms total,one pass/no failure/cancellation/skip. Final783019ms:9993/9993 settled,pending0,248/248 closed,11 clusters,parentAborted=false,reserve416981ms. Original179991 bytes,SHA256 `c51b1d62845a288437435fc55c25b5a97c8bd5f8bf8902e0c27f5b12f5f875bc`. Persisted totals238573.302507ms with95 phases/45 reads; original152782 bytes,SHA256 `0db73779a2fab13efbcfeda7a7f73794bf722fc696046faa0c4b08f95b5eb915`. Root and peers completed original review.
+
+All V9/V8/V7/V6/V5 coverage and evidence below remain verbatim historical suffixes. Fix14 is unexecuted source work: no local compiler/type/lint/native/mounted/CI PASS and no forward gate transfer. Earlier b5 causes remain unknown. Only Root can publish/PASS/Ready/merge after independent review and complete fresh exact-head gates. All SQL-unapplied/feature-off and held actions remain exact.
+
+---
+
 # Current acceptance status V9 / Fix13
 
 Date: 2026-11-08 UTC. Exact parent `41c365c444727b6fc29d9f28511eb86b3276e720`, tree `049c9aa5e299be59fb20d2ca825e5ea74948a5d0`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; TASK/R1–R10 remain unchanged.

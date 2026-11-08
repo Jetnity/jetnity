@@ -12,7 +12,7 @@ import type { Trip } from '@/types/trips'
 import type { nativeProductRuntime } from './native-loader'
 import type { nativeBinding } from './native-fixture'
 import type { startNativeHttp } from './native-http'
-import type { nativeSql } from './native-schema'
+import { quote,type nativeSql } from './native-schema'
 import { fixtureExtractor } from './fixtures'
 import type { NativeSuiteOwnership } from './native-suite'
 
@@ -64,6 +64,14 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
   const db=new runtime.database.AcceptedStoreDatabase(life,witness.binding)
   let originalHash='',originalReceipt='',forgedReceipt=''
   const bindingCases:string[]=[]
+  const cleanupObservation={snapshotTokenMatched:false,ordinary:{entries:0,tokenMatches:0,commits:0,committedRemovedOne:false,acknowledged:false},
+    disposal:{status:'not_observed' as 'not_observed'|'not_started'|'acknowledged'|'unknown',removed:null as number|null,intervalCleanupHttpEntries:0,intervalCleanupRpcOutcomes:[] as {committed:boolean;sqlState:string|null}[]}}
+  let disposalRequestFrom:number|null=null,disposalEvidenceFrom:number|null=null
+  const dispose=async()=>{
+    disposalRequestFrom=http.requests.length;disposalEvidenceFrom=http.evidence.length
+    const result=await db.dispose();cleanupObservation.disposal.status=result.status
+    if(result.status==='acknowledged')cleanupObservation.disposal.removed=result.removed
+  }
   try {
     owner?.noteSemanticStep('identity')
     assert.equal(await run(()=>db.userIdentity()),http.claims.sub)
@@ -148,8 +156,60 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     owner?.noteSemanticStep('untouched_reproof')
     const after=await run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life))
     after.assertCurrent();assert.equal(after.receipt,originalReceipt)
+    // The direct semantic fixture is still healthy. A normal acknowledged
+    // cleanup proves removal before the unchanged one-shot R4 disposal; an
+    // unknown later disposal is never credited with this ordinary deletion.
+    owner?.check();life.assertCurrent()
+    assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations
+      where token=${quote(reserve.token)} and purpose='read' and state='snapshotted'
+        and user_id=${quote(http.claims.sub)} and session_id=${quote(http.claims.session_id)}
+        and trip_id=${quote(trip.id)} and trip_revision=${quote(String(trip.revision))}::bigint
+        and expires_at>clock_timestamp() and original_expiry>clock_timestamp()`),'1')
+    cleanupObservation.snapshotTokenMatched=true
+    const previousBefore=http.faults.beforeRpc,previousAfter=http.faults.afterCommit,ordinaryFrom=http.evidence.length
+    const restoreHooks=()=>{
+      if(previousBefore===undefined)delete http.faults.beforeRpc;else http.faults.beforeRpc=previousBefore
+      if(previousAfter===undefined)delete http.faults.afterCommit;else http.faults.afterCommit=previousAfter
+    }
+    const restore=owner?.restore(restoreHooks)
+    try {
+      http.faults.beforeRpc=async(name,payload)=>{
+        if(previousBefore)await previousBefore(name,payload)
+        if(name==='official_truth_trip_store_cleanup_v1'){
+          cleanupObservation.ordinary.entries++
+          if(payload.token===reserve.token)cleanupObservation.ordinary.tokenMatches++
+        }
+      }
+      http.faults.afterCommit=async(name,payload,result)=>{
+        const acknowledgement=await previousAfter?.(name,payload,result)
+        if(name==='official_truth_trip_store_cleanup_v1'&&payload.token===reserve.token){
+          cleanupObservation.ordinary.commits++
+          cleanupObservation.ordinary.committedRemovedOne=typeof result==='object'&&result!==null
+            &&Object.keys(result).length===1&&'removed'in result&&result.removed===1
+        }
+        return acknowledgement
+      }
+      const cleaned=await run(()=>db.cleanup({token:reserve.token}))
+      owner?.check();life.assertCurrent()
+      assert.deepEqual(cleaned,{removed:1})
+      cleanupObservation.ordinary.acknowledged=true
+      assert.equal(cleanupObservation.ordinary.entries,1);assert.equal(cleanupObservation.ordinary.tokenMatches,1)
+      assert.equal(cleanupObservation.ordinary.commits,1);assert.equal(cleanupObservation.ordinary.committedRemovedOne,true)
+      assert.equal(http.evidence.slice(ordinaryFrom).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1'&&value.committed).length,1)
+    } finally {if(restore)restore();else restoreHooks()}
   } catch(error){owner?.stop(error);throw error}
-  finally {if(owner)await owner.cleanup(()=>db.dispose(),()=>life.settle(),()=>http.settle());else{await db.dispose();await life.settle();await http.settle()}}
+  finally {
+    try {if(owner)await owner.cleanup(dispose,()=>life.settle(),()=>http.settle());else{await dispose();await life.settle();await http.settle()}}
+    finally {
+      // These cleanup events span disposal through the final owned drain; a
+      // late ordinary handler can also finish here. They are not exclusively
+      // correlated to the one disposal request. Its own status stays separate.
+      if(disposalRequestFrom!==null)cleanupObservation.disposal.intervalCleanupHttpEntries=http.requests.slice(disposalRequestFrom).filter(value=>value.path==='/rest/v1/rpc/official_truth_trip_store_cleanup_v1').length
+      if(disposalEvidenceFrom!==null)cleanupObservation.disposal.intervalCleanupRpcOutcomes=http.evidence.slice(disposalEvidenceFrom).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1')
+        .map(value=>({committed:value.committed,sqlState:value.sqlState}))
+      t.diagnostic(JSON.stringify({proof:'native-semantic-cleanup-observation',...cleanupObservation}))
+    }
+  }
   owner?.noteSemanticStep('persistent_after')
   owner?.check();assert.equal(persistent(),before);assert.equal(witness.casCount(),cas)
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_reserve_v1'&&e.committed))
