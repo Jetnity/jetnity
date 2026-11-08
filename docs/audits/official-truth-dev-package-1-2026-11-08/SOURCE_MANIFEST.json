@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
-  "package_version": "DEV-PACKAGE-1 V2",
+  "schema_version": 2,
+  "package_version": "DEV-PACKAGE-1 V3",
   "date_europe_zurich": "2026-11-08",
-  "baseline_main": "608414441651b407cf56ab976c1cd116db45de0c",
-  "baseline_tree": "b7d6f19bddb035f9b445904f7e0582658047a6b6",
+  "baseline_main": "1b96936f0159578c063992407c650a0995b60895",
+  "baseline_tree": "b6f46ef0e4efc06e6fa772c4d364d12c3a6317e6",
   "intended_target": {
     "environment": "Development",
     "branch": "develop",
@@ -15,7 +15,7 @@
   },
   "package_kind": "documentation_and_source_review_only",
   "effective_change_ready": false,
-  "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+  "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
   "owner_historical_gap_url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
   "source_files": [
     {
@@ -205,6 +205,11 @@
       "id": 6726914934,
       "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
       "updated_at": "2026-11-08T20:47:31Z"
+    },
+    {
+      "id": 6727812983,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
+      "updated_at": "2026-11-08T22:09:28Z"
     }
   ],
   "verification_in_this_package": {
@@ -219,10 +224,14 @@
     "existing_current_main_original_core_and_auth_logs_read": true,
     "additional_run2_comparisons_offline_only": true,
     "new_native_or_hosted_test_execution_by_document_review": false,
-    "observation_scope": "Frozen source/document review before publication; ordinary automatic CI for the later documentation PR is separately reported against its exact head.",
-    "product_plan_source_pins_from_current_main": 25,
-    "product_plan_source_bytes_independently_rehashed_by_root": 23,
-    "all_25_product_source_pins_match_pinned_main_tree": true
+    "observation_scope": "V3 document/source review on revision-base main 1b96936; no SQL or hosted inventory. Existing source-baseline and normal #1160 CI are distinct; later V3 PR CI is separately gated at its actual head.",
+    "product_plan_source_pins_from_current_main": 26,
+    "product_plan_source_bytes_independently_rehashed_by_root": 24,
+    "v3_focused_source_bytes_independently_rehashed_by_root": 10,
+    "v3_focused_source_pins_match_current_complete_tree": true,
+    "v3_six_candidate_source_bytes_rehashed_by_root": true,
+    "all_product_plan_source_pins_match_current_complete_tree": true,
+    "product_source_byte_verification_scope": "V3: 24 locally available complete byte copies rehashed; the remaining two source-header/contract-comment pins are verified by Gitblob in the current complete tree. Byte verification does not extend the stated semantic read scope."
   },
   "notes": [
     "Source file hashes describe unchanged approved repository inputs, not installed target state.",
@@ -230,99 +239,9 @@
     "Package file SHA256 identities and independent review decisions are in REVIEW.md; publishing commit identifies all final files without self-referential hashes.",
     "No new executable migration, verification query or rollback script is included.",
     "Existing main CI is accepted at its own head. New documentation PR checks, if automatically triggered by publication, are not pre-certified by this manifest and are recorded in the PR/continuity receipts.",
-    "V2 preserves the reviewed V1/R1 findings and adds the binding Owner automation direction. Historical V1/R1 byte reviews do not certify modified V2 files."
+    "V3 follows the Owner's explicit correction: one unambiguous official destination-country primary source is sufficient; optional official crosscheck absence is nonblocking. Old TASK.md/TASK_V2.md and V2 review receipts are historical, not active two-source gates.",
+    "The two original task files retain their exact historical bytes. The current directive and all active plan criteria are V3; earlier two-source conclusions are explicitly superseded, not current requirements."
   ],
-  "current_main_existing_ci": {
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
-    "run_id": 42513853717,
-    "attempt": 1,
-    "event": "push",
-    "head_sha": "608414441651b407cf56ab976c1cd116db45de0c",
-    "status": "completed",
-    "conclusion": "success",
-    "created_at": "2026-11-08T19:12:19Z",
-    "updated_at": "2026-11-08T19:30:32Z",
-    "jobs": [
-      {
-        "id": 128832463420,
-        "name": "Accepted store trip integration — native (store)",
-        "conclusion": "success",
-        "steps": 10
-      },
-      {
-        "id": 128832463566,
-        "name": "Repository verification",
-        "conclusion": "success",
-        "steps": 18
-      },
-      {
-        "id": 128832463576,
-        "name": "Atomic version refresh — native",
-        "conclusion": "success",
-        "steps": 10
-      },
-      {
-        "id": 128832463601,
-        "name": "Accepted store trip integration — native (lifecycle)",
-        "conclusion": "success",
-        "steps": 10
-      },
-      {
-        "id": 128832463648,
-        "name": "Persisted canonical read — native",
-        "conclusion": "success",
-        "steps": 10
-      },
-      {
-        "id": 128832463670,
-        "name": "Auth-Konfiguration gegen config.toml",
-        "conclusion": "success",
-        "steps": 9
-      },
-      {
-        "id": 128837126954,
-        "name": "Typecheck, Lint & Build",
-        "conclusion": "success",
-        "steps": 3
-      }
-    ],
-    "total_jobs": 7,
-    "total_steps": 70,
-    "core_original_log_review": {
-      "job_id": 128832463566,
-      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
-      "source_guard_tap": "ok 1567",
-      "native_parent_tap": "ok 1568",
-      "native_children_executed": 27,
-      "native_children_passed": 27,
-      "native_children_failed": 0,
-      "native_children_skipped": 0,
-      "parent_duration_ms": 22791.237512,
-      "total_core_tests": 8200,
-      "total_core_pass": 8198,
-      "total_core_fail": 0,
-      "total_core_skipped": 2,
-      "skip_scope": "Two pre-existing browser/layout skips outside this native parent.",
-      "verification": "Root independently read the original existing job log; peer independently confirmed. No new test run started for this document review."
-    },
-    "auth_original_log_review": {
-      "job_id": 128832463670,
-      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
-      "result_at_utc": "2026-11-08T19:13:09.2284794Z",
-      "expected_values": 55,
-      "reported_keys": 243,
-      "all_expected_values_match": true,
-      "bound_candidate_policy": {
-        "timebox": 0,
-        "inactivity_timeout": 0,
-        "single_per_user": false,
-        "mfa_allow_low_aal": false
-      },
-      "scope": "Existing configured Development-branch policy snapshot; not a new independent project attestation and not Production.",
-      "verification": "Root independently read the original existing job log and mapped the four values through the pinned expectation/report/runner/config sources."
-    },
-    "exact_head_limit": "This existing main pass is source/runtime evidence. It is not a pass for a future documentation PR head or for a new target installation."
-  },
   "auth_policy_source_pins": [
     {
       "path": "supabase/config.toml",
@@ -400,13 +319,12 @@
   },
   "task_v1_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
   "product_direction": {
-    "current_owner_directive": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "current_owner_directive": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
     "historical_autonomy_source": "docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
     "historical_autonomy_git_blob": "e220c045661db8489feefff0cdb27b8178449c04",
     "current_direction_prevails_on_conflict": true,
     "per_rule_human_approval_required_in_target": false,
     "one_time_method_approval_required": true,
-    "minimum_agreeing_official_primary_sources": 2,
     "research_proposal_only": true,
     "jetnity_owned_verifying_importer_only": true,
     "public_answer_after_accepted_version_and_cache_binding": true,
@@ -423,12 +341,23 @@
       "destination_country",
       "citizenship_country_codes"
     ],
-    "new_personal_context_questions_authorized": false
+    "new_personal_context_questions_authorized": false,
+    "superseded_two_source_directive": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "required_destination_country_official_primary_sources": 1,
+    "required_primary_source_clarity": "Unambiguous qualified destination-country official primary source for the normalized fact/context/validity.",
+    "independent_official_crosscheck": "When available",
+    "missing_secondary_blocks_publication": false,
+    "unclear_secondary_alone_blocks_publication": false,
+    "unclear_required_primary_blocks_publication": true,
+    "confirmed_relevant_source_conflict_blocks_publication": true,
+    "known_relevant_conflict_survives_secondary_unavailability": true,
+    "mandatory_multisupport_store_migration_due_to_source_minimum": false,
+    "existing_single_support_cardinality_satisfies_source_count_only": true
   },
   "product_source_mapping": {
-    "mapping_task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
-    "mapping_main": "608414441651b407cf56ab976c1cd116db45de0c",
-    "peer_mapping_sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
+    "mapping_task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
+    "mapping_main": "1b96936f0159578c063992407c650a0995b60895",
+    "peer_mapping_sha256": "e3ddbbbaa4f9df590a2fae23f859584ed4a081dc4490fd1879ef94327677693e",
     "product_source_pins": [
       {
         "path": "docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
@@ -515,6 +444,14 @@
         "read_level": "complete_source",
         "bytes": 2317,
         "sha256": "ef00c4bbb7b211d6c1f52e34f1e6c29afaa3e2ec221ec03a3ab75773bde4cb94"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "git_blob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f",
+        "bytes": 1438,
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "read_level": "complete_source"
       },
       {
         "path": "lib/readiness/official-truth-composition-policy-registry.ts",
@@ -626,6 +563,244 @@
         "bytes": 3664,
         "sha256": "a7578346b147b4319fce497dae0ed2fdb80af102448adf2161d27874759f1468"
       }
+    ],
+    "historical_v2_task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "historical_v2_main": "608414441651b407cf56ab976c1cd116db45de0c",
+    "historical_v2_peer_mapping_sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
+    "mapping_scope": "Focused V3 registry/primary/countercheck/lifecycle mapping; historical V2 source facts retained but mandatory-two-source and forced-multisupport deductions superseded. Ten focused unchanged code sources and six mapping areas; not a new complete read of all historical 50 sources.",
+    "v3_focused_source_pins": [
+      {
+        "id": "S01",
+        "path": "lib/readiness/source-registry.ts",
+        "git_blob": "672a316209cdeba279988e1691ce1e15e0dfb1b3",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/source-registry.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 9165,
+        "sha256": "058c9a69f11c703594415f56ed77ed15bf9804de7ae53aae5fb46c05511e22bc"
+      },
+      {
+        "id": "S02",
+        "path": "lib/readiness/official-truth-source-catalog-server.ts",
+        "git_blob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-source-catalog-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 24091,
+        "sha256": "6d2cf2f4c9dd2f73554af0a5068f7554ec56b306f3c54fc8bbd81f711f3dd7b1"
+      },
+      {
+        "id": "S03",
+        "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "git_blob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 1438,
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2"
+      },
+      {
+        "id": "S04",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+        "git_blob": "e926ee3fab1c7725583f62f7e070b99377999c99",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 1639,
+        "sha256": "0415f45a0ac62a014282235eddfd46552d7a0f33287d31ce18814879b29825fb"
+      },
+      {
+        "id": "S05",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+        "git_blob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 8409,
+        "sha256": "f72b3711e69902e7784d9987ff575304c61feee030d1509da6c87616089cf74a"
+      },
+      {
+        "id": "S06",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts",
+        "git_blob": "942a9492388e09ea15ae1ae4f603cb6446841e80",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 15099,
+        "sha256": "24d2f918109e0e7d46e7e5179c9a51705d40ce3459a897efdd01b47c98b8762f"
+      },
+      {
+        "id": "S07",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts",
+        "git_blob": "a0f8e284f87f9cb6dd970a728537db6662f7b0ed",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 11111,
+        "sha256": "35edfcdf78d4add36dfd3eb58e2712d6f18b46ff27267b1ccbde37e0529d255e"
+      },
+      {
+        "id": "S08",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "git_blob": "b77667a2b345ff272a5379aaa9a08d409e25d208",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 9176,
+        "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572"
+      },
+      {
+        "id": "S09",
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "git_blob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "read_scope": "Previously reviewed V2 source with focused V3 reread of relevant fields and transitions",
+        "bytes": 7920,
+        "sha256": "873b55b662ad7dc214659b78749cbc6a3ddebd4d4dab4caebe7c5c39b2bc938a"
+      },
+      {
+        "id": "S10",
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "git_blob": "c123817d2f332f6471fbf37a8cf91ec11fee98a1",
+        "unchanged_from_main": "608414441651b407cf56ab976c1cd116db45de0c",
+        "current_url": "https://github.com/Jetnity/jetnity/blob/1b96936f0159578c063992407c650a0995b60895/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "read_scope": "Targeted declared support/admission/lifecycle invariants, not new full SQL review",
+        "bytes": 74690,
+        "sha256": "d18cc49d45e867bd02abd65073c9e64b49c075d8792e27f57af4d5ce88390223"
+      }
     ]
+  },
+  "previous_source_baseline_main": "608414441651b407cf56ab976c1cd116db45de0c",
+  "previous_source_baseline_tree": "b7d6f19bddb035f9b445904f7e0582658047a6b6",
+  "task_v2_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+  "source_baseline_existing_ci": {
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
+    "run_id": 42513853717,
+    "attempt": 1,
+    "event": "push",
+    "head_sha": "608414441651b407cf56ab976c1cd116db45de0c",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-08T19:12:19Z",
+    "updated_at": "2026-11-08T19:30:32Z",
+    "jobs": [
+      {
+        "id": 128832463420,
+        "name": "Accepted store trip integration — native (store)",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463566,
+        "name": "Repository verification",
+        "conclusion": "success",
+        "steps": 18
+      },
+      {
+        "id": 128832463576,
+        "name": "Atomic version refresh — native",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463601,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463648,
+        "name": "Persisted canonical read — native",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463670,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success",
+        "steps": 9
+      },
+      {
+        "id": 128837126954,
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success",
+        "steps": 3
+      }
+    ],
+    "total_jobs": 7,
+    "total_steps": 70,
+    "core_original_log_review": {
+      "job_id": 128832463566,
+      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
+      "source_guard_tap": "ok 1567",
+      "native_parent_tap": "ok 1568",
+      "native_children_executed": 27,
+      "native_children_passed": 27,
+      "native_children_failed": 0,
+      "native_children_skipped": 0,
+      "parent_duration_ms": 22791.237512,
+      "total_core_tests": 8200,
+      "total_core_pass": 8198,
+      "total_core_fail": 0,
+      "total_core_skipped": 2,
+      "skip_scope": "Two pre-existing browser/layout skips outside this native parent.",
+      "verification": "Root independently read the original existing job log; peer independently confirmed. No new test run started for this document review."
+    },
+    "auth_original_log_review": {
+      "job_id": 128832463670,
+      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
+      "result_at_utc": "2026-11-08T19:13:09.2284794Z",
+      "expected_values": 55,
+      "reported_keys": 243,
+      "all_expected_values_match": true,
+      "bound_candidate_policy": {
+        "timebox": 0,
+        "inactivity_timeout": 0,
+        "single_per_user": false,
+        "mfa_allow_low_aal": false
+      },
+      "scope": "Existing configured Development-branch policy snapshot; not a new independent project attestation and not Production.",
+      "verification": "Root independently read the original existing job log and mapped the four values through the pinned expectation/report/runner/config sources."
+    },
+    "exact_head_limit": "This existing main pass is source/runtime evidence. It is not a pass for a future documentation PR head or for a new target installation."
+  },
+  "code_source_continuity": {
+    "previous_main": "608414441651b407cf56ab976c1cd116db45de0c",
+    "revision_base_main": "1b96936f0159578c063992407c650a0995b60895",
+    "revision_base_tree": "b6f46ef0e4efc06e6fa772c4d364d12c3a6317e6",
+    "changes": "Exactly ten documentation additions from #1160; no product or SQL source change.",
+    "pinned_source_git_blobs_unchanged": true,
+    "source_urls_may_retain_previous_immutable_commit": true
+  },
+  "revision_base_existing_ci": {
+    "run_id": 42527963600,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42527963600",
+    "event": "push",
+    "head_sha": "1b96936f0159578c063992407c650a0995b60895",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": 7,
+    "steps": 70,
+    "core_job_id": 128875685288,
+    "actual_checkout": "1b96936f0159578c063992407c650a0995b60895",
+    "source_guard_test": 1567,
+    "native_parent_test": 1568,
+    "native_cases": 27,
+    "native_pass": 27,
+    "native_fail": 0,
+    "native_skip": 0,
+    "native_duration_ms": 19859.855067,
+    "core_tests": 8200,
+    "core_pass": 8198,
+    "core_fail": 0,
+    "core_skipped": 2,
+    "core_skip_scope": "Two known unrelated browser-layout tests; no owner-session native case skipped.",
+    "auth_job_id": 128875685142,
+    "auth_expected_values": 55,
+    "auth_observed_keys": 243,
+    "auth_all_expected_match": true,
+    "auth_report_at_utc": "2026-11-08T22:01:11Z",
+    "meaning": "Existing automatic post-merge #1160 evidence, independently read in original logs by Root; not a V3-author-started test, hosted installation, new product-method acceptance or future V3 PR gate."
   }
 }
