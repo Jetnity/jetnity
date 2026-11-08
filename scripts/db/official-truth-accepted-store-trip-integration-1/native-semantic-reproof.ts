@@ -58,18 +58,24 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     'ciphertexts',(select jsonb_agg(to_jsonb(x) order by receipt) from official_accepted_trip_private.ciphertexts x),
     'archiveBlobs',(select jsonb_agg(jsonb_build_array(digest,encode(sha256(canonical_bytes),'hex')) order by digest)
       from official_provenance_private.artifact_blobs))::text::bytea),'hex')`)
+  owner?.noteSemanticStep('persisted_baseline')
   const before=persistent(),cas=witness.casCount(),rpcFrom=http.evidence.length
   const readerOwner=owner?owner.controller():new AbortController(),life=new runtime.lifetime.AcceptedStoreLifetime(readerOwner.signal,45_000)
   const db=new runtime.database.AcceptedStoreDatabase(life,witness.binding)
   let originalHash='',originalReceipt='',forgedReceipt=''
   const bindingCases:string[]=[]
   try {
+    owner?.noteSemanticStep('identity')
     assert.equal(await run(()=>db.userIdentity()),http.claims.sub)
+    owner?.noteSemanticStep('reserve')
     const reserve=await run(()=>db.reserve({cell:witness.binding.contract.id,contractDigest:witness.binding.contract.digest,
       profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,purpose:'read',tripId:trip.id,revision:trip.revision})) as {token:string}
     assert.equal(typeof reserve.token,'string')
+    owner?.noteSemanticStep('snapshot')
     const response=await run(()=>db.snapshot({token:reserve.token})) as {snapshot:unknown}
+    owner?.noteSemanticStep('genuine_reproof')
     const genuine=await run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life))
+    owner?.noteSemanticStep('genuine_control')
     genuine.assertCurrent();originalReceipt=genuine.receipt
     assert.deepEqual(genuine.claim.fact,{kind:'requirement_effect',effect:'not_required',visaMode:'visa_exempt'})
     type Snapshot=typeof genuine.snapshot
@@ -85,6 +91,7 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     ]
     for(const [name,reason,change] of malformed) {
       owner?.check()
+      owner?.noteSemanticStep('malformed_binding')
       const clone=structuredClone(genuine.snapshot);change(clone)
       await assert.rejects(run(()=>runtime.reproof.reproveRetainedSnapshot(clone,witness.binding,life)),
         error=>error instanceof Error&&error.message===reason,name)
@@ -93,6 +100,7 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     // This is only the existing closed test registry object, never a canonical
     // production definition or SDK mutation. The actual new reader compares
     // its current descriptor with the unchanged archived definition pins.
+    owner?.noteSemanticStep('changed_extractor')
     const version=Object.getOwnPropertyDescriptor(fixtureExtractor,'extractorVersion')!
     const restoreDefinition=owner?.restore(()=>Object.defineProperty(fixtureExtractor,'extractorVersion',version))
     try {
@@ -102,10 +110,12 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
       bindingCases.push('changed current closed-fixture extractor definition')
     } finally {if(restoreDefinition)restoreDefinition();else Object.defineProperty(fixtureExtractor,'extractorVersion',version)}
     owner?.check()
+    owner?.noteSemanticStep('contradiction_build')
     const snapshot=structuredClone(genuine.snapshot)
     const sourceArchive=snapshot.archive as ArchiveWire&{edges:{receipt:Record<string,unknown>[];binding:Record<string,unknown>[];artifacts:Record<string,unknown>[]}}
     const bundle=contradictingAcceptedArchive(sourceArchive),wire=runtime.archive.archiveWire(bundle)
     owner?.check()
+    owner?.noteSemanticStep('strict_archive')
     const strict=runtime.archive.verifyArchive(wire)
     forgedReceipt=strict.receipt.recordFingerprint
     assert.deepEqual(wire.artifacts,sourceArchive.artifacts,'Every original artifact byte and pin stays unchanged')
@@ -116,11 +126,13 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     snapshot.manifest.metadata=snapshot.metadata
     snapshot.manifest.claim={...(snapshot.manifest.claim as Record<string,unknown>),fact:strict.receipt.payload.candidate.fact}
     owner?.check()
+    owner?.noteSemanticStep('original_key')
     const acquiringKey=life.run(()=>witness.binding.key.resolve(life.signal))
     owner?.track(acquiringKey)
     const key=await acquiringKey
     try {
       owner?.check();life.assertCurrent();assert(key)
+      owner?.noteSemanticStep('original_crypto')
       const original=runtime.custody.decryptOriginal(genuine.snapshot.ciphertext,genuine.snapshot.metadata,key)
       originalHash=createHash('sha256').update(original,'utf8').digest('hex')
       assert.equal(originalHash,genuine.snapshot.metadata.contentHash)
@@ -130,12 +142,15 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     // Edges, code pins, Evidence, original hash, AAD and parser are all real.
     // This precise error occurs only after actual match/extract and canonical
     // regelKandidatAkzeptieren, rather than an earlier byte/hash refusal.
+    owner?.noteSemanticStep('false_fact_reproof')
     await assert.rejects(run(()=>runtime.reproof.reproveRetainedSnapshot(snapshot,witness.binding,life)),
       error=>error instanceof Error&&error.message==='retained_fact_invalid')
+    owner?.noteSemanticStep('untouched_reproof')
     const after=await run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life))
     after.assertCurrent();assert.equal(after.receipt,originalReceipt)
   } catch(error){owner?.stop(error);throw error}
   finally {if(owner)await owner.cleanup(()=>db.dispose(),()=>life.settle(),()=>http.settle());else{await db.dispose();await life.settle();await http.settle()}}
+  owner?.noteSemanticStep('persistent_after')
   owner?.check();assert.equal(persistent(),before);assert.equal(witness.casCount(),cas)
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_reserve_v1'&&e.committed))
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_snapshot_v1'&&e.committed))

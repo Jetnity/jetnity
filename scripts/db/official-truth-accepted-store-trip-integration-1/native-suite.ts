@@ -10,6 +10,105 @@ import { startNativeHttp,nativeTrip } from './native-http'
 import { seedNativeRows,seedNativeCatalog,nativeBinding,declareNativeTrip } from './native-fixture'
 import type { AcceptedStoreTripResult } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/result'
 
+type NativeSemanticStep='persisted_baseline'|'identity'|'reserve'|'snapshot'|'genuine_reproof'|'genuine_control'
+  |'malformed_binding'|'changed_extractor'|'contradiction_build'|'strict_archive'|'original_key'|'original_crypto'
+  |'false_fact_reproof'|'untouched_reproof'|'persistent_after'
+/** Failure evidence only. Original Error objects remain intact in the thrown
+ * AggregateError; no free message/stack/actual/expected value is serialized. */
+function nativeFailureEvidence(failures:readonly unknown[]) {
+  const limit=16,maxDepth=4,seen=new Map<Error,number>(),nodes:Record<string,unknown>[]=[]
+  const tags=new Map<string,string>([
+    ...['native_suite_parent_deadline','native_suite_stopped','native_suite_scenario_cleanup_failed',
+      'native_witness_setup_failed','native_http_setup_failed','auth_observation_invalid','lifetime_budget_invalid',
+      'deadline_invalid','database_response_bound','auth_lifetime_observation_invalid',
+      'retained_binding_invalid','retained_receipt_invalid','retained_source_invalid','retained_key_unavailable',
+      'retained_validity_invalid','retained_evidence_invalid','retained_candidate_invalid','retained_review_invalid',
+      'current_extractor_invalid','current_extractor_changed','current_extractor_ambiguous','retained_fact_invalid',
+      'retained_custody_invalid','store_binding_closed','compiled_contract_changed','compiled_definition_changed',
+      'profile_pin_missing','implementation_changed'].map(value=>[value,value] as [string,string]),
+    ['Aborted','aborted'],['Deadline exceeded','deadline_exceeded'],['Lifetime closed','lifetime_closed'],
+  ])
+  const names=new Set(['Error','AggregateError','AssertionError','AbortError','TimeoutError','TypeError','RangeError','LocalPgError'])
+  const codes=new Set(['ERR_ASSERTION','22023','23514','23505','42501','55P03','57014','40001','40P01','08003','08006','57P01','25P03'])
+  const operators=new Set(['strictEqual','deepStrictEqual','equal','deepEqual','notStrictEqual','notDeepStrictEqual',
+    'notEqual','notDeepEqual','match','doesNotMatch','throws','rejects','ok','fail'])
+  const knownFrames=new Set([
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-suite.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-integrity.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts',
+    'scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts',
+    'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
+    'scripts/db/official-truth-integrated-pilot-1/local-cluster.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts',
+  ])
+  const valueType=(value:unknown)=>value===null?'null':value instanceof Error?'Error':typeof value
+  const property=(value:Error,key:string):unknown=>{try{return Reflect.get(value,key)}catch{return undefined}}
+  const visit=(value:unknown,depth:number):Record<string,unknown>=>{
+    if(value instanceof Error&&seen.has(value))return {ref:seen.get(value),repeated:true}
+    if(depth>maxDepth)return {truncated:'depth',kind:valueType(value)}
+    if(nodes.length>=limit)return {truncated:'nodes',kind:valueType(value)}
+    const id=nodes.length+1,node:Record<string,unknown>={id,kind:valueType(value)}
+    nodes.push(node)
+    if(!(value instanceof Error))return {ref:id}
+    seen.set(value,id)
+    const name=property(value,'name'),message=property(value,'message'),code=property(value,'code'),operator=property(value,'operator')
+    node.name=typeof name==='string'&&names.has(name)?name:'other_error'
+    node.tag=typeof message==='string'?tags.get(message)??'unlisted_error':'unreadable_error'
+    if(typeof code==='string')node.code=codes.has(code)?code:'other_code'
+    if(typeof operator==='string')node.operator=operators.has(operator)?operator:'other_operator'
+    const stack=property(value,'stack'),frames:{path:string;line:number;column:number}[]=[]
+    if(typeof stack==='string'){
+      // A free message can contain newline + a fake "at ...". Strip the
+      // complete, exactly recognized header, not merely its first line.
+      const headers=typeof name==='string'&&names.has(name)&&typeof message==='string'&&message.length<=8192
+        ?[`${name}${message?': '+message:''}`,...(name==='AssertionError'&&code==='ERR_ASSERTION'?[`AssertionError [ERR_ASSERTION]${message?': '+message:''}`]:[])]:[]
+      const header=headers.find(value=>stack===value||stack.startsWith(value+'\n'))
+      if(header===undefined)node.framesOmitted='unrecognized_or_large_header'
+      else {
+        const remainder=stack.slice(header.length),boundedLines=remainder.slice(0,16384).split('\n'),lines=boundedLines.slice(0,41)
+        node.stackInputTruncated=remainder.length>16384||boundedLines.length>41
+        let matches=0
+        for(const line of lines){
+          if(!/^\s*at\s/.test(line))continue
+          const frame=line.match(/\b((?:scripts\/db\/official-truth-(?:accepted-store-trip-integration-1|atomic-version-refresh-1|integrated-pilot-1)\/|lib\/readiness\/official-truth-accepted-store-trip-integration-1\/)[A-Za-z0-9._/-]+\.(?:ts|tsx|js)):(\d+):(\d+)/)
+          if(!frame||!knownFrames.has(frame[1]!))continue
+          matches++;if(frames.length<3)frames.push({path:frame[1]!,line:Number(frame[2]),column:Number(frame[3])})
+        }
+        node.framesTruncated=matches>3
+      }
+    }
+    node.frames=frames
+    const cause=property(value,'cause')
+    if(cause!==undefined)node.cause=visit(cause,depth+1)
+    if(value instanceof AggregateError){
+      const nested=property(value,'errors')
+      if(Array.isArray(nested)){
+        node.errors=nested.slice(0,limit).map(error=>visit(error,depth+1))
+        node.errorsOmitted=Math.max(0,nested.length-limit)
+      }else node.errorsUnreadable=true
+    }
+    if(name==='AssertionError'||code==='ERR_ASSERTION'){
+      const actual=property(value,'actual')
+      node.actualType=valueType(actual);node.expectedType=valueType(property(value,'expected'))
+      if(actual instanceof Error)node.actualError=visit(actual,depth+1)
+    }
+    return {ref:id}
+  }
+  const roots=failures.slice(0,limit).map(error=>visit(error,0))
+  return {roots,nodes,rootsOmitted:Math.max(0,failures.length-limit),maxNodes:limit,maxDepth,maxFrames:3}
+}
+
 const SUITE_MS=240_000
 export class NativeSuiteOwnership extends OwnedTestLifetime {
   private readonly abort:AbortController
@@ -18,6 +117,7 @@ export class NativeSuiteOwnership extends OwnedTestLifetime {
   readonly deadline=this.startedAt+SUITE_MS
   readonly failures:unknown[]=[]
   private phaseName='setup'
+  private semanticStep:NativeSemanticStep|null=null
   private completed=0
   constructor(readonly test:TestContext,readonly suite:string) {
     const abort=new AbortController()
@@ -52,7 +152,7 @@ export class NativeSuiteOwnership extends OwnedTestLifetime {
     return controller
   }
   async phase<T>(name:string,operation:()=>Promise<T>):Promise<T> {
-    this.check();this.phaseName=name
+    this.check();this.phaseName=name;this.semanticStep=null
     this.test.diagnostic(JSON.stringify({proof:'native-suite-phase',suite:this.suite,phase:name,event:'start',elapsedMs:Math.round(performance.now()-this.startedAt)}))
     try {
       const value=await this.run(operation);this.check();this.completed++
@@ -83,7 +183,8 @@ export class NativeSuiteOwnership extends OwnedTestLifetime {
     for(const error of errors)if(!this.failures.includes(error))this.failures.push(error)
     if(errors.length)throw new AggregateError(errors,'native_suite_scenario_cleanup_failed')
   }
-  progress(){return {suite:this.suite,phase:this.phaseName,completedPhases:this.completed,elapsedMs:Math.round(performance.now()-this.startedAt)}}
+  noteSemanticStep(value:NativeSemanticStep):void {this.semanticStep=value}
+  progress(){return {suite:this.suite,phase:this.phaseName,semanticStep:this.semanticStep,completedPhases:this.completed,elapsedMs:Math.round(performance.now()-this.startedAt)}}
   async finish(){try{return await super.dispose()}finally{clearTimeout(this.timer)}}
 }
 
@@ -194,7 +295,13 @@ export async function runNativeSuite(t:TestContext,name:string,work:(suite:Nativ
     for(const key of envKeys){if(previous[key]===undefined)delete process.env[key];else process.env[key]=previous[key]}
   }
   for(const error of owner.failures)if(!errors.includes(error))errors.push(error)
-  if(errors.length)throw new AggregateError(errors,`native_suite_failed:${name}`)
+  if(errors.length){
+    // Emit only after finish and the full retained-failure merge. A diagnostic
+    // failure is retained too; it cannot replace any original failure.
+    try{t.diagnostic(JSON.stringify({proof:'native-suite-failure-details',...owner.progress(),failures:nativeFailureEvidence(errors)}))}
+    catch(diagnosticError){errors.push(diagnosticError)}
+    throw new AggregateError(errors,`native_suite_failed:${name}`)
+  }
   assert(resources.summary&&teardown)
   const summary=resources.summary
   assert.equal(teardown.pending,0);assert.equal(teardown.started,teardown.settled)

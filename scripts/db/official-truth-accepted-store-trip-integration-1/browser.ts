@@ -5,7 +5,7 @@ import type { TestContext } from 'node:test'
 import { createServer,type IncomingMessage,type ServerResponse } from 'node:http'
 import { existsSync,readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
-import { chromium } from 'playwright'
+import { chromium,type Request as PlaywrightRequest,type Response as PlaywrightResponse } from 'playwright'
 import { startLocalProofCluster,assertLocalProofEnvironment } from '../official-truth-integrated-pilot-1/local-cluster'
 import { nativeSql,installNativeSchema,quote } from './native-schema'
 import { startNativeHttp } from './native-http'
@@ -17,6 +17,19 @@ import { travellerAlsPayload,travellerBauen } from '@/lib/readiness/reisende'
 import { pgText } from '../official-truth-integrated-pilot-1/pg-wire'
 import type { BrowserFixtureDiagnostic } from './browser-entry'
 import type { AcceptedStoreTripResult } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/result'
+
+type BrowserFetchObservation={
+  sequence:number;startedAt:number;headersAt:number|null;fetchSettledAt:number|null;
+  abortedAt:number|null;status:number|null;bodyUsedAtAbort:boolean|null;bodyLockedAtAbort:boolean|null;
+  abortDom:{status:string|null;busy:string|null;visibility:string}|null;fetchError:'abort'|'type'|'other'|null;observerError:boolean;
+}
+type BrowserReadObservations={sequence:number;omitted:number;reads:BrowserFetchObservation[]}
+type ReadAttemptObservation={
+  action:number;startedAt:number;requestAt:number|null;requestCount:number;responseAt:number|null;status:number|null;
+  finishedAt:number|null;failedAt:number|null;requestFailure:string|null;bodyStartedAt:number|null;bodySettledAt:number|null;
+  bodyOutcome:'fulfilled'|'rejected'|null;failureTag:string|null;ownedStarted:number;ownedSettled:number;
+  browser:BrowserReadObservations|null;diagnosticUnavailable:boolean;
+}
 
 export async function mountedAcceptedStoreProof(t:TestContext){
   assert.equal(process.versions.node.split('.')[0],'22');assertLocalProofEnvironment()
@@ -34,6 +47,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
   let stage='bootstrap',storeRequests=0,pilotRequests=0,travellerWrites=0,pilotPending=false,storeFailure=false,origin=''
   let lastClientObservation:{received:BrowserFixtureDiagnostic;failure:BrowserFixtureDiagnostic|null;
     dom:{status:string|null;busy:string|null;draftBlocked:string|null;positiveCount:number;visibility:string;wallNow:number;monotonicNow:number}|null}|null=null
+  let lastReadObservation:ReadAttemptObservation|null=null,readAction=0
   const results:AcceptedStoreTripResult[]=[]
   try {
     installNativeSchema(sql);seedNativeRows(sql)
@@ -98,33 +112,130 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     const context=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'})
     await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin){outbound.push(url.origin);return route.abort()}return route.continue()})
     const page=await context.newPage();page.on('pageerror',error=>errors.push((error.stack??error.message).slice(0,2048)));page.setDefaultTimeout(45_000)
+    // Passive browser-side metadata only: return the same native promise, Response and
+    // failure, without cloning/reading its stream or changing any input/signal.
+    await page.addInitScript(()=>{
+      const original=window.fetch.bind(window)
+      const observation:BrowserReadObservations={sequence:0,omitted:0,reads:[]}
+      ;(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation=observation
+      window.fetch=(input,init)=>{
+        let tracked=false
+        try{tracked=new URL(typeof input==='string'?input:input instanceof Request?input.url:input.toString(),location.href).pathname==='/api/readiness/accepted-store'}catch{}
+        if(!tracked)return original(input,init)
+        const entry:BrowserFetchObservation={sequence:++observation.sequence,startedAt:performance.now(),
+          headersAt:null,fetchSettledAt:null,abortedAt:null,status:null,bodyUsedAtAbort:null,bodyLockedAtAbort:null,abortDom:null,fetchError:null,observerError:false}
+        observation.reads.push(entry)
+        if(observation.reads.length>32){observation.reads.shift();observation.omitted++}
+        const signal=init?.signal??(input instanceof Request?input.signal:null)
+        let response:Response|null=null
+        const aborted=()=>{
+          entry.abortedAt=performance.now();entry.bodyUsedAtAbort=response?.bodyUsed??null;entry.bodyLockedAtAbort=response?.body?.locked??null
+          const workspace=document.querySelector('[data-native-workspace]')
+          entry.abortDom={status:workspace?.getAttribute('data-store-status')??null,busy:workspace?.getAttribute('data-store-busy')??null,
+            visibility:document.visibilityState}
+        }
+        if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true})
+        const originalPromise=original(input,init)
+        // Observe on a handled side branch; the hook receives exactly the native
+        // promise, without waiting behind this diagnostic reaction.
+        void originalPromise.then(value=>{
+          response=value;entry.headersAt=performance.now();entry.fetchSettledAt=entry.headersAt;entry.status=value.status
+        },error=>{
+          entry.fetchSettledAt=performance.now();entry.fetchError=error instanceof DOMException&&error.name==='AbortError'?'abort':error instanceof TypeError?'type':'other'
+        }).catch(()=>{entry.observerError=true})
+        return originalPromise
+      }
+    })
     const positives=page.locator('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]')
     const none=async()=>{assert.equal(await positives.count(),0)}
     const read=async()=>{
-      const pending=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/readiness/accepted-store'&&response.request().method()==='POST')
-      await page.getByRole('button',{name:'Gespeicherte Einreiseprüfung erneut prüfen',exact:true}).click()
-      const response=await pending,body=await response.json() as AcceptedStoreTripResult
-      assert.equal(response.status(),200);assert.equal(body.status,'current',JSON.stringify({status:body.status,lastRpc:protocol!.evidence.slice(-6)}))
-      // This diagnostics-only boundary uses the actual validator, genuine HTTP
-      // body and currently mounted Trip. It does not supply a positive result
-      // to the hook or change the existing current/visible assertions.
-      lastClientObservation={received:await page.evaluate((value:unknown)=>window.acceptedStoreFixture!.inspect(value),body),failure:null,dom:null}
-      assert.equal(lastClientObservation.received.validation.ok,true,JSON.stringify(lastClientObservation.received))
-      try {
-        await page.waitForFunction(()=>document.querySelector('[data-native-workspace]')?.getAttribute('data-store-status')==='current')
-      }catch(error){
-        lastClientObservation.failure=await page.evaluate((value:unknown)=>window.acceptedStoreFixture!.inspect(value),body)
-        lastClientObservation.dom=await page.evaluate(()=>{
-          const workspace=document.querySelector('[data-native-workspace]')
-          return {status:workspace?.getAttribute('data-store-status')??null,busy:workspace?.getAttribute('data-store-busy')??null,
-            draftBlocked:workspace?.getAttribute('data-draft-blocked')??null,
-            positiveCount:document.querySelectorAll('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]').length,
-            visibility:document.visibilityState,wallNow:Date.now(),monotonicNow:performance.now()}
-        })
-        throw error
+      const observation:ReadAttemptObservation={action:++readAction,startedAt:performance.now(),requestAt:null,requestCount:0,responseAt:null,status:null,
+        finishedAt:null,failedAt:null,requestFailure:null,bodyStartedAt:null,bodySettledAt:null,bodyOutcome:null,failureTag:null,
+        ownedStarted:0,ownedSettled:0,browser:null,diagnosticUnavailable:false}
+      lastReadObservation=observation
+      const owned:Promise<unknown>[]=[],failures:unknown[]=[]
+      const own=<T>(pending:Promise<T>):Promise<T>=>{owned.push(pending);observation.ownedStarted++;void pending.then(
+        ()=>{observation.ownedSettled++},()=>{observation.ownedSettled++});return pending}
+      let expected:PlaywrightRequest|null=null,bodyStarted=false,waitSettled=false,result:AcceptedStoreTripResult|null=null
+      let resolveWait!:(value:{response:PlaywrightResponse;body:AcceptedStoreTripResult})=>void,rejectWait!:(reason:unknown)=>void
+      const pending=own(new Promise<{response:PlaywrightResponse;body:AcceptedStoreTripResult}>((resolve,reject)=>{resolveWait=resolve;rejectWait=reject}))
+      const reject=(reason:unknown)=>{if(!waitSettled){waitSettled=true;rejectWait(reason)}}
+      const timer=setTimeout(()=>reject(Error('native_browser_response_timeout')),45_000)
+      const matching=(request:PlaywrightRequest)=>new URL(request.url()).pathname==='/api/readiness/accepted-store'&&request.method()==='POST'
+      const requestStarted=(request:PlaywrightRequest)=>{
+        if(!matching(request))return
+        observation.requestCount++
+        if(!expected){expected=request;observation.requestAt=performance.now()}
       }
-      assert.equal(await positives.count(),1);assert(body.sourceCheckedAt&&body.expiresAt)
-      return body
+      const requestFinished=(request:PlaywrightRequest)=>{if(request===expected)observation.finishedAt=performance.now()}
+      const requestFailed=(request:PlaywrightRequest)=>{
+        if(request!==expected)return
+        observation.failedAt=performance.now()
+        const reason=request.failure()?.errorText
+        observation.requestFailure=typeof reason==='string'&&/^net::ERR_[A-Z0-9_]{1,64}$/.test(reason)?reason:'other_request_failure'
+        if(!bodyStarted)reject(Error('native_browser_request_failed'))
+      }
+      const responseArrived=(response:PlaywrightResponse)=>{
+        if(response.request()!==expected||bodyStarted||waitSettled)return
+        clearTimeout(timer);bodyStarted=true;observation.responseAt=performance.now();observation.status=response.status();observation.bodyStartedAt=performance.now()
+        // Start the genuine CDP body read at this exact Response event, before
+        // waiting for click() to return. Its rejection has an owner immediately.
+        const body=own(response.json() as Promise<AcceptedStoreTripResult>)
+        own(body.then(value=>{
+          observation.bodySettledAt=performance.now();observation.bodyOutcome='fulfilled'
+          if(!waitSettled){waitSettled=true;resolveWait({response,body:value})}
+        },error=>{
+          observation.bodySettledAt=performance.now();observation.bodyOutcome='rejected'
+          observation.failureTag=error instanceof Error&&error.message.includes('Network.getResponseBody')&&error.message.includes('No data found')?'cdp_body_missing':'body_read_failed'
+          reject(error)
+        }))
+      }
+      const pageClosed=()=>reject(failures[0]??Error('native_browser_page_closed'))
+      page.on('request',requestStarted);page.on('response',responseArrived);page.on('requestfinished',requestFinished);page.on('requestfailed',requestFailed);page.on('close',pageClosed)
+      try {
+        await own(page.getByRole('button',{name:'Gespeicherte Einreiseprüfung erneut prüfen',exact:true}).click())
+        const {response,body}=await pending
+        assert.equal(response.status(),200);assert.equal(body.status,'current',JSON.stringify({status:body.status,lastRpc:protocol!.evidence.slice(-6)}))
+        // Same actual validator/current mounted Trip; observations only append
+        // bounded metadata to the existing evaluation, without a new barrier.
+        const inspected=await page.evaluate((value:unknown)=>({client:window.acceptedStoreFixture!.inspect(value),
+          observation:(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation}),body)
+        observation.browser=inspected.observation
+        lastClientObservation={received:inspected.client,failure:null,dom:null}
+        assert.equal(lastClientObservation.received.validation.ok,true,JSON.stringify(lastClientObservation.received))
+        try {
+          await page.waitForFunction(()=>document.querySelector('[data-native-workspace]')?.getAttribute('data-store-status')==='current')
+        }catch(error){
+          if(!failures.includes(error))failures.push(error)
+          lastClientObservation.failure=await page.evaluate((value:unknown)=>window.acceptedStoreFixture!.inspect(value),body)
+          lastClientObservation.dom=await page.evaluate(()=>{
+            const workspace=document.querySelector('[data-native-workspace]')
+            return {status:workspace?.getAttribute('data-store-status')??null,busy:workspace?.getAttribute('data-store-busy')??null,
+              draftBlocked:workspace?.getAttribute('data-draft-blocked')??null,
+              positiveCount:document.querySelectorAll('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]').length,
+              visibility:document.visibilityState,wallNow:Date.now(),monotonicNow:performance.now()}
+          })
+          throw error
+        }
+        assert.equal(await positives.count(),1);assert(body.sourceCheckedAt&&body.expiresAt)
+        result=body
+      }catch(error){
+        if(!failures.includes(error))failures.push(error)
+        observation.failureTag??=bodyStarted?'validation_or_display_failed':'click_or_response_failed'
+        try{observation.browser=await page.evaluate(()=>(window as unknown as {acceptedStoreReadObservation:BrowserReadObservations}).acceptedStoreReadObservation)}
+        catch(diagnosticError){observation.diagnosticUnavailable=true;failures.push(diagnosticError)}
+        // A failed disposable proof releases the page/transport before draining
+        // any already-started CDP body operation. It never retries the request.
+        try{await page.close()}catch(closeError){failures.push(closeError)}
+      }finally{
+        clearTimeout(timer)
+        page.off('request',requestStarted);page.off('response',responseArrived);page.off('requestfinished',requestFinished);page.off('requestfailed',requestFailed);page.off('close',pageClosed)
+        if(!waitSettled)reject(failures[0]??Error('native_browser_read_stopped'))
+        for(const drained of await Promise.allSettled(owned))if(drained.status==='rejected'&&!failures.includes(drained.reason))failures.push(drained.reason)
+      }
+      if(failures.length)throw failures.length===1?failures[0]:new AggregateError(failures,'native_browser_read_failed')
+      if(!result)throw Error('native_browser_read_missing_result')
+      return result
     }
     const confirm=async()=>{assert(sql(`update public.trip_traveller_documents set expires_on=expires_on+1
       where trip_id=${quote(trip.id)} and client_ref='synthetic-national-id' returning id`))
@@ -292,7 +403,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       boundary:'Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim.'}))
     await context.close()
   } catch(error){t.diagnostic(JSON.stringify({failedBrowserStage:stage,proofs,storeRequests,pilotRequests,errors,outbound,lastNativeStatus:results.at(-1)?.status,
-    lastClientObservation,lastRpcOutcomes:protocol?.evidence.slice(-8)}));throw error}
+    lastClientObservation,lastReadObservation,lastRpcOutcomes:protocol?.evidence.slice(-8)}));throw error}
   finally {
     for(const done of pendingPilots)done();if(browser)await browser.close()
     if(server){server.closeAllConnections();await new Promise<void>(resolve=>server!.close(()=>resolve()))}

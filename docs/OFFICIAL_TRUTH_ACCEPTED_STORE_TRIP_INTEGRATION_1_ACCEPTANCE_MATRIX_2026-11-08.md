@@ -1,3 +1,26 @@
+# Current acceptance status V8 / Fix12
+
+Date: 2026-11-08 UTC. Exact parent `b5abb39934faf0c7277159ad4ad94eb9c186297e`, tree `49690de729f290a139130ecef1d13b9395a45300`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; unchanged TASK/R1–R10. Root authorization: [6720613252](https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6720613252).
+
+**Overall CHANGES REQUIRED; unknown original causes stay unknown.** Actual Core128704774837/run42472017121: Typecheck/Lint PASS,8208 tests/8204 pass/2 fail/0 cancelled/2 inherited skips,793039.699685ms. Complete original independently fetched by author:4041300 bytes,SHA256 `390061cb7e08e370b3fea29b3b6d2b094542d9c5962bec066ea9c0b236fe41ec`. Hygiene/build are skipped.
+
+| Actual b5 boundary | Completed evidence and remaining limitation |
+| --- | --- |
+| Browser | Seven of13 ordered stages complete, including both exact document-role locators, retained-draft blocking and genuine save/edit recovery. Availability/context-loss stage fails on response.json/CDP body retrieval at request9. Original lacks request-specific abort/body/terminal evidence; prior current/validator observation does not prove the failing body. No full mounted PASS |
+| Native publication | Actual A/fresh reader/real R8 client/sourceclosure completes; strict-R2 semantic reproof fails after actual Reserve/Snapshot COMMIT. completedPhases3/elapsed37687ms; inner error and exact substep absent. No publication-suite/cleanup PASS and no inferred cause |
+| Other required native entries | Boundaries86699ms,integrity122041ms,wait/lifecycle131253ms finish all healthy resource/key assertions and teardown. Acceptance, Context, Implementation and Recovery are PASS |
+| Companion gates | Auth55/243, Persisted95 phases/45 reads and complete Atomic151 parseable markers/final cleanup are PASS on b5; aggregate remains failed solely for Core |
+
+Fix12 preserves every existing case and assertion. Browser ownership now starts the genuine CDP body promise immediately for the exact newly observed Request's Response, keeps all rejection paths owned and disposes/drains started work even if the real click fails. Passive bounded32-record metadata observes the original fetch/signal/Response only and returns exactly the original native fetch promise; a separately handled observer branch retains its own errors as a fixed boolean; no body clone/read by the observer, replacement positive, pre-click synchronization barrier, retry, changed timeout or catch-as-PASS. All55 assertion lines,13 ordered proof pushes,45-second limits and actual document/citizenship actions remain. This addresses fixture observation order/ownership, not a proven original hook-abort or CDP cause.
+
+Native changes add only fixed semantic subphase metadata and bounded redacted nested error evidence after finish/failure collection. Original exceptions and cleanup failures remain in the full AggregateError. The evidence cap is16 nodes/depth4/three fixed known repository frames; no free message/stack/actual/expected output. Complete messageheader stripping and an18-path exact allowlist close the reviewer's reproduced multiline-message redaction flaw. Source/pure-V8 checks used synthetic sentinel messages; no actual secret disclosure or TypeScript/Node/native execution is claimed. No semantic assertion, producer/reader behavior or deadline changes.
+
+Full Atomic128704774542:777921.987667ms subtest,778638.975318ms total; final777919ms has9971/9971 settled,pending0,248/248 closed,11 clusters,parentAbortedfalse,reserve422081ms. OriginalSHA256 `ff43f8350bb8905a331230ef80255d83dbf7abf62df8dd9f4acc3f5ade1c5ee1`,179929 bytes. Root and independent backend review complete; detailed authoritative evidence is in [the b5 checkpoint](evidence/official-truth-accepted-store-trip-integration-1/b5abb399-ci-checkpoint.json).
+
+The entire V7/V6/V5 coverage map and historical evidence below remain verbatim. This V8 status governs the current lease. Fix12 candidate runtime/Typecheck/CI gates are unexecuted; even a later green run cannot retroactively establish the unrecorded b5 failure causes. Root publishes alone after independent review, then all exact-head/actual-main gates remain mandatory. All feature-off/SQL-unapplied and held action boundaries remain unchanged.
+
+---
+
 # Current acceptance status V7 / Fix11
 
 Date: 2026-11-08 UTC. Exact parent `c8478edd4fae17a631fb9ec22b904dc118e4842d`, tree `d49c3b11605da003223b014bceb006a89bceb099`; immutable main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1 and unchanged TASK/R1–R10.
