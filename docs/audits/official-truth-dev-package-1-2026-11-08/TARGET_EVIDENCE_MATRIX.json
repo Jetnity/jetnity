@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "package_id": "DEV-PACKAGE-1",
-  "version": "V2",
+  "version": "V3",
   "revision": "R0",
   "date_local": "2026-11-08",
   "timezone": "Europe/Zurich",
-  "source_main": "608414441651b407cf56ab976c1cd116db45de0c",
+  "source_main": "1b96936f0159578c063992407c650a0995b60895",
   "document_role": "Docs-only Dev decision package and binding product-target plan; not an execution or activation artifact",
   "intended_target": {
     "environment": "Development",
@@ -38,7 +38,7 @@
     "NO_VERIFIED_CLEARANCE",
     "RESERVED_NOT_REQUESTED",
     "PRESERVED_OUT_OF_SCOPE",
-    "ACCEPTED_CURRENT_CI_SNAPSHOT"
+    "ACCEPTED_BASELINE_CI_SNAPSHOT"
   ],
   "rows": [
     {
@@ -281,21 +281,23 @@
     {
       "id": "E14",
       "subject": "Dev-Session-Policy",
-      "status": "ACCEPTED_CURRENT_CI_SNAPSHOT",
-      "accepted_evidence": "R4 plus heutige bestehende Main-CI 42513853717 auf 60841444: Original-Authjob 128832463670 am 08.11.2026 um 19:13:09 UTC meldet 55 erwartete Werte/243 Schlüssel, sämtliche Sollwerte stimmen. Root hat die vier Werte timebox=0 / inactivity_timeout=0 / single_per_user=false / mfa_allow_low_aal=false über aktuelle gepinnte Vergleichsquellen gebunden; Autor las diese Quellen ebenfalls.",
+      "status": "ACCEPTED_BASELINE_CI_SNAPSHOT",
+      "accepted_evidence": "R4 plus vorherige Main-CI 42513853717 auf 60841444: Original-Authjob 128832463670 am 08.11.2026 um 19:13:09 UTC bestätigt 55 Sollwerte/243 Schlüssel und timebox=0 / inactivity_timeout=0 / single_per_user=false / mfa_allow_low_aal=false über gepinnte Vergleichsquellen. Zusätzlich las Root das Original der regulären #1160-Main-CI 42527963600 an 1b96936: Auth 128875685142 bestätigt um 22:01:11 UTC erneut 55/243, alle passend. Bestehende Baseline-Evidence; kein neuer vom V3-Autor gestarteter Authabruf oder Test und kein V3-Dokument-Head-PASS.",
       "remaining_gap": "Keine pauschale UNKNOWN-Policy. Der akzeptierte Snapshot bleibt zeitlich und auf Development begrenzt; konkrete Drift beziehungsweise geänderter Zielstand vor späterem Apply braucht Bewertung. Kein Production-Nachweis.",
       "remaining_gap_blocks_effective_dev": false,
-      "closure_criterion_or_disposition": "Aktuellen CI-Snapshot als tatsächliche Policy-Evidence anerkennen und im finalen Zielpaket mit Zeitpunkt/Quellpins referenzieren. Fehlende oder abweichende Werte werden von der bestehenden Vergleichskette abgelehnt.",
+      "closure_criterion_or_disposition": "Konkrete zeit-/zielgebundene Policy-Snapshots mit Originaljob und Source-Pins anerkennen; keine pauschale UNKNOWN-Policy. Konkrete Drift vor künftigem Apply gesondert bewerten. Fehlende oder abweichende Werte lehnt die bestehende Vergleichskette ab. Neue V3-Head-Gates bleiben separat.",
       "evidence_urls": [
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
         "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
         "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
-        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463670"
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463670",
+        "https://github.com/Jetnity/jetnity/actions/runs/42527963600",
+        "https://github.com/Jetnity/jetnity/actions/runs/42527963600/job/128875685142"
       ],
       "owner": "Root / Technical Lead",
       "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
-      "phase": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "phase": "ACCEPTED_BASELINE_CI_SNAPSHOT",
       "blocks_pre_po_package": false
     },
     {
@@ -374,7 +376,7 @@
       "id": "E19",
       "subject": "Unveränderte Kandidatquelle",
       "status": "ACCEPTED_SOURCE_IDENTITY",
-      "accepted_evidence": "Alle vier #1142-Dateiblobs stimmen an main 60841444 mit den gemergten PR-Dateien überein; Gitblob und SHA256 nachgerechnet.",
+      "accepted_evidence": "Alle vier #1142-Dateiblobs stimmen am ursprünglichen Source-Pin 60841444 mit den gemergten PR-Dateien überein; Gitblob und SHA256 nachgerechnet. Selbst gelesener Read-only-Compare zur Dokumentbasis 1b96936 enthält nur die zehn #1160-Dokumentzugänge, keine Änderung dieser Implementierungsblobs.",
       "remaining_gap": "Quellidentität ist kein installierter Zielbestand und kein eigenes neues Runtime-PASS.",
       "remaining_gap_blocks_effective_dev": false,
       "closure_criterion_or_disposition": "Exakte Source-Pins im Paket beibehalten; jede spätere Änderung braucht neue Versions-/Reviewbindung.",
@@ -382,7 +384,8 @@
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
-        "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366"
+        "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366",
+        "https://github.com/Jetnity/jetnity/compare/608414441651b407cf56ab976c1cd116db45de0c...1b96936f0159578c063992407c650a0995b60895"
       ],
       "owner": "Root / Technical Lead",
       "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
@@ -391,10 +394,10 @@
     },
     {
       "id": "E20",
-      "subject": "Vorhandene historische und aktuelle Abnahme der 27 nativen Fälle",
-      "status": "ACCEPTED_CURRENT_CI_SNAPSHOT",
-      "accepted_evidence": "Historischer R5-PASS und heutige bestehende Main-CI 42513853717 auf 60841444. Root hat Core-Original 128832463566 geprüft: Source-Guard ok 1567; nativer Parent ok 1568, alle 27 Kinder PASS/keine Skips, 22791.237512 ms. Für die Dokumentenprüfung von V1/V2 hat der Autor keinen neuen Native-/Hosted-Test gestartet. Eine spätere automatische Docs-PR-CI ist separat an deren tatsächlichen Head und Ergebnisse zu binden.",
-      "remaining_gap": "Synthetische Auth-/JWT-/FK-/ACL-Fixture; kein Hosted-/Signaturbeweis. Der Source-Review dieser Version verwendet bereits vorhandene main-CI-Evidence; Ergebnisse einer späteren automatischen Docs-PR-CI werden nicht vorweggenommen.",
+      "subject": "Vorhandene sourcegebundene Abnahmen der 27 nativen Fälle",
+      "status": "ACCEPTED_BASELINE_CI_SNAPSHOT",
+      "accepted_evidence": "Historischer R5-PASS, vorherige Main-CI 42513853717 auf 60841444 und inzwischen abgeschlossene reguläre #1160-Main-CI 42527963600 an 1b96936. Root las die Original-Core-Logs: 128832463566 mit 27/27 PASS/0 Skip und 22791.237512 ms; 128875685288 bestätigt tatsächlichen Checkout 1b96936, Source-Guard 1567 und nativen Parent 1568 mit 27/27 PASS/0 Skip/0 Fail, 19859.855067 ms. Autor startete für V1/V2/V3 keinen Native-/Hosted-Test. Neue V3-Dokument-Head-Gates sind separat zu binden.",
+      "remaining_gap": "Synthetische Auth-/JWT-/FK-/ACL-Fixture; kein Hosted-/Signaturbeweis oder V3-Produktmethoden-PASS. Die vorhandene Baseline-CI bestätigt unveränderte Implementierungsbytes; sie nimmt neue V3-PR-/Head-Ergebnisse nicht vorweg.",
       "remaining_gap_blocks_effective_dev": false,
       "closure_criterion_or_disposition": "Als unveränderte sourcegebundene Regressionsevidence verwenden; tatsächliche spätere Zielbedingungen und neue Artefakte separat prüfen.",
       "evidence_urls": [
@@ -402,11 +405,13 @@
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
         "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
-        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463566"
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463566",
+        "https://github.com/Jetnity/jetnity/actions/runs/42527963600",
+        "https://github.com/Jetnity/jetnity/actions/runs/42527963600/job/128875685288"
       ],
       "owner": "Root / Technical Lead",
       "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
-      "phase": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "phase": "ACCEPTED_BASELINE_CI_SNAPSHOT",
       "blocks_pre_po_package": false
     },
     {
@@ -507,11 +512,12 @@
       "id": "E26",
       "subject": "Besondere PO-Entscheidung für wirksame Änderung",
       "status": "RESERVED_NOT_REQUESTED",
-      "accepted_evidence": "Owner autorisiert TASK V2 zur Fortführung des konkreten Vorbereitungs-/Reviewpakets einschließlich verbindlichem Automatisierungsziel. Allgemeine Zustimmung und die festgelegte automatische Routineannahme bleiben gültig.",
+      "accepted_evidence": "Owner autorisiert TASK V3 zur Korrektur des Vorbereitungs-/Reviewpakets: eine klare amtliche Zielland-Primärquelle genügt, verfügbare unabhängige amtliche Gegenprüfung ist optional. Automatische Routineannahme und übrige Produktvorgaben bleiben verbindlich; kein erneutes Grundsatzgate.",
       "remaining_gap": "Besondere Entscheidung zur konkreten wirksamen Auth-/DB-Änderung folgt auf ein vollständig prüffähiges Phase-A-Paket. Das ist keine dauerhafte Einzelregelfreigabe und keine erneute Grundsatzentscheidung zur Automatisierung.",
       "remaining_gap_blocks_effective_dev": true,
       "closure_criterion_or_disposition": "Root legt erst das vollständige geprüfte Paket mit exakten Änderungen, Nachprüfung und Recovery zur spezifischen PO-Entscheidung vor; keine erneute pauschale Zustimmung anfordern.",
       "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
@@ -527,11 +533,12 @@
       "id": "E27",
       "subject": "Andere Produkt-/Aktivierungsgates",
       "status": "PRESERVED_OUT_OF_SCOPE",
-      "accepted_evidence": "Stage2 NOT_ATTEMPTED im dokumentierten Ablauf; Accepted Store SQL_UNAPPLIED/FEATURE_NOT_LIVE; #1131 und weitere besondere Gates bleiben. TASK V2 präzisiert die seit 02.10. verbindliche autonome Routineannahme nach einmaliger Methode und mindestens zwei amtlichen Primärquellen.",
+      "accepted_evidence": "Stage2 NOT_ATTEMPTED im dokumentierten Ablauf; Accepted Store SQL_UNAPPLIED/FEATURE_NOT_LIVE; #1131 und weitere besondere Gates bleiben. TASK V3 erhält autonome Routineannahme nach einmaliger Methode und ersetzt die frühere Mindestzahl zwei durch eine eindeutige amtliche Zielland-Primärquelle plus verfügbare unabhängige amtliche Gegenprüfung.",
       "remaining_gap": "Dieses Paket liefert weder echte Source-Zulassung noch Pilot-/Store-/Production-/Launch-Freigabe.",
       "remaining_gap_blocks_effective_dev": false,
-      "closure_criterion_or_disposition": "Eigenständige Gates erhalten; Stage1-Teil- oder Gesamtabnahme nicht als Abschluss des breiten Feature-Issues #917 ausgeben. Einzelregelfreigaben dürfen nicht als Dauerbetrieb vorausgesetzt werden. Konkrete technische Auth-/DB-/Provider-/Rollout-Freigaben bleiben eigenständig. Für die erste öffentliche Regelpublikation gelten bereits mindestens zwei geeignete amtliche Primärquellen; alte Einquellenkandidaten erhalten keine neue öffentliche Pilotfreigabe.",
+      "closure_criterion_or_disposition": "Eigenständige Gates erhalten; Stage1-Abnahme nicht als Abschluss von #917 ausgeben. Keine dauerhafte Einzelregelfreigabe. Konkrete Auth-/DB-/Provider-/Rollout-Freigaben bleiben eigenständig. Bereits die erste öffentliche CH→DE-Regelantwort folgt V3: fehlende/unpassende/unklare/unerreichbare optionale Quelle allein blockiert nicht; echter relevanter Konflikt oder unklare Pflichtquelle blockiert den fachlichen Quellenentscheid. Einquellen-Store passt zur Anzahl, belegt keine fertige Methode/Installation.",
       "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
         "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6726660349",
         "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
@@ -560,7 +567,7 @@
     }
   ],
   "references": {
-    "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
     "run2": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
     "human": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
     "baseline1139": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045",
@@ -576,7 +583,9 @@
     "test": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
     "historical_gap": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
     "task_v1": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
-    "autonomy_directive": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md"
+    "autonomy_directive": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
+    "task_v2": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "source_continuity_compare": "https://github.com/Jetnity/jetnity/compare/608414441651b407cf56ab976c1cd116db45de0c...1b96936f0159578c063992407c650a0995b60895"
   },
   "readiness_phases": {
     "phase_a": "PRE_PO_PACKAGE_READINESS: actual relevant baseline, exact final artifacts, complete bounded test/QA plan, applicable reviewed recovery and independent review.",
@@ -609,11 +618,10 @@
   ],
   "product_target_contract": {
     "status": "BINDING_OWNER_TARGET",
-    "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983",
     "prior_autonomy_directive_git_blob": "e220c045661db8489feefff0cdb27b8178449c04",
     "automatic_routine_acceptance_after_method_approval": true,
     "per_rule_owner_approval_required": false,
-    "minimum_agreeing_official_primary_sources": 2,
     "proposer_may_write_accepted_database": false,
     "jetnity_importer_exclusive_accepted_writer": true,
     "public_result_before_accepted_import_and_cache": false,
@@ -625,8 +633,7 @@
     "live_automation_activated_in_this_task": false,
     "target_plan_file": "PRODUCT_TARGET_PLAN.md",
     "boundary": "The product target and planned follow-ups do not erase E01–E28 or authorize implementation, database calls, providers, schedules or rollout. Product method decisions are not new blockers for preparing the current #1139 package.",
-    "source_limit_rule": "At least two independently qualified official sources must support the same normalized claim in the same scope and validity context. Duplicate URLs, translations, mirrors or model agreement do not automatically supply independent evidence. A relevant conflicting source is not outvoted by two agreeing sources.",
-    "minimum_two_sources_applies_to_first_public_rule_publish": true,
+    "source_limit_rule": "One clear qualified official destination-country primary source suffices. Check available independent official counter-sources with a finite method-bound strategy. No optional source, temporary failure, stale optional evidence, ambiguity or noncomparability alone blocks automatic publication. Actual relevant conflict or unclear required primary blocks/escalates the substantive source decision; independent technical gates remain.",
     "missing_automation_or_public_cache_blocks_narrow_1139_fix": false,
     "visitor_inputs": [
       "destination_country",
@@ -634,16 +641,39 @@
     ],
     "standard_output": "Conditional rule overview per citizenship, with visible global purpose/duration/transit/document-type/date conditions; no automatic best-pass selection.",
     "additional_personal_questionnaire_authorized": false,
-    "visitor_residence_or_travel_profile_persisted": false
+    "visitor_residence_or_travel_profile_persisted": false,
+    "minimum_required_destination_primary_sources": 1,
+    "primary_source_required_qualities": [
+      "Official primary authority of the destination country, competent for the fact",
+      "Securely qualified actual source/content origin",
+      "Clear current statement for the normalized fact, context and legal validity"
+    ],
+    "optional_independent_official_countercheck_when_available": true,
+    "missing_optional_counter_source_blocks_by_itself": false,
+    "optional_outage_age_inapplicability_or_ambiguity_blocks_by_itself": false,
+    "no_exhaustive_global_counter_source_search_required": true,
+    "known_relevant_counter_source_may_be_silently_skipped": false,
+    "source_decision_blockers": [
+      "Actual relevant contradiction on the same normalized fact/context and comparable legal applicability",
+      "Unclear or unqualified required destination-country primary source"
+    ],
+    "technical_auth_integrity_privacy_import_freshness_gates_preserved": true,
+    "known_conflict_survives_later_counter_source_unavailability": true,
+    "known_conflict_resolution": "Positive method-valid evidence may establish factual resolution or a relevant context/validity change; mere omission, later fetch failure or blanket primary precedence cannot. No permanent manual block is required after actual resolution.",
+    "existing_single_support_store_count_compatible": true,
+    "mandatory_multi_support_migration": false,
+    "separate_versioned_countercheck_record_planned": true,
+    "countercheck_record_implemented": false,
+    "v3_source_rule_applies_to_first_public_rule_publish": true
   },
   "product_implementation_rows": [
     {
       "id": "P01",
-      "owner_requirement": "Automatische Regelannahme nach einmaliger Methode; mindestens zwei amtliche Primärquellen; Konflikte blockieren.",
+      "owner_requirement": "Automatische Regelannahme nach einmaliger Methode; eine eindeutige amtliche Zielland-Primärquelle genügt, unabhängige amtliche Gegenprüfung wenn verfügbar; echter relevanter Konflikt oder unklare Pflichtquelle blockiert.",
       "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
-      "accepted_source_evidence": "Autonomy Directive und flüchtiger Preacceptance-/Same-Request-Witness existieren; globale Producer-Wurzel bleibt custody_missing. Der konkret gelesene Canonical Store und SQL-Kandidat verlangen genau eine Stütze. Allgemeine Mehrquellenkomposition bindet bereits mindestens zwei verschiedene ContentItems und eingefrorene Policy-/Extractorversionen; beide allgemeinen Produktionsregister sind leer. Verschiedene ContentItems allein beweisen noch keine amtliche Unabhängigkeit/Konkordanz.",
-      "planned_change": "Vorhandene Foundation wiederverwenden; neue Methoden-/Maschinenautorität und Zwei-Quellen-Vertrag gemeinsam in TypeScript, SQL, Custody, Provenienz, Refresh und Read-Reproof versionieren. Keine gefälschte menschliche Sitzung.",
-      "acceptance": "Zwei vollständige kontextgleiche Primärstützen erlauben automatische Annahme; relevante Widersprüche, fehlende/alte Stützen oder falsche Proofversion blockieren ohne Owner-Einzelklick.",
+      "accepted_source_evidence": "Autonomy Directive, Preacceptance-/Same-Request-Witness und allgemeine Einzel-/Mehrbeleg-Extractor-/Kompositionsgrundlagen existieren; Produktionsregister bleiben leer, globale Producer-Wurzel custody_missing. Canonical Store und SQL verlangen genau eine Stütze. Diese Anzahl passt zu V3; keine automatische Aussage über Zuständigkeit/Eindeutigkeit der Quelle oder tatsächliche Installation.",
+      "planned_change": "Vorhandene Foundation und einzelne Pflichtstütze beibehalten. Zielland-Kompetenz, Primärklarheit, neue enge Maschinenautorität und separate versionierte Gegenprüfungsentscheidung an Annahme/Commit/Refresh/Rückzug/Read binden. Exakte nötige Schema-/API-/Proofänderungen später prüfen; keine zwingende Mehrstützenmigration und keine gefälschte menschliche Sitzung.",
+      "acceptance": "Klare qualifizierte gültige Pflichtquelle erlaubt automatische Annahme auch ohne zweite Quelle. Verfügbare passende Gegenquelle prüfen. Fehlende/unpassende/unklare/unerreichbare optionale Evidence allein blockiert nicht. Echter relevanter Konflikt und unklare Pflichtquelle blockieren; technische Auth-/Herkunfts-/Integritäts-/Privacy-Gates bleiben.",
       "source_urls": [
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts",
@@ -651,7 +681,8 @@
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-composition-policy-registry.ts",
-        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-trusted-fact-extractor-registry.ts"
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts"
       ],
       "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
       "blocks_current_dev_package_preparation": false,
@@ -662,8 +693,8 @@
       "owner_requirement": "Strukturierte Fakten, Quellen, Abrufdatum, Gültigkeit und Version.",
       "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
       "accepted_source_evidence": "Evidence-, Rule-/Content-Identity-, Fingerprint- und Provenienzprimitive bestehen. Historische Hashes sind keine Herkunfts-/Schreibautorität.",
-      "planned_change": "Normalisierten Fakt und Kontext mit allen Stützen sowie Methoden-, Regel- und Cacheversion binden. Altverträge nicht nachträglich als neue Annahme etikettieren.",
-      "acceptance": "Jede öffentliche Aussage ist auf tatsächliche Quellenprüfzeit, Gültigkeit und unverwechselbaren akzeptierten Evidenzsatz rückführbar; Cachebauzeit verjüngt keine Evidence.",
+      "planned_change": "Normalisierten Fakt/Kontext mit Pflichtprimärbeleg, Methoden-, Regel- und Cacheversion sowie eigener versionierter Gegenprüfungs-/Konfliktentscheidung binden. Record enthält Quelle/Versuchsplan, Zeit, Vergleichskontext/Gültigkeit, Ergebnis oder Nichtverfügbarkeitsgrund und Vorgänger. Keine zweite Stütze in unveränderte Einquellenarrays und keine lose Lognotiz ohne Entscheidungswirkung.",
+      "acceptance": "Jede öffentliche Aussage verweist auf ihre klare Pflichtquelle, tatsächliche Prüfzeit und Gültigkeit sowie nachvollziehbare optionale Gegenprüfung. Annahme/Commit/Rückzug/Cache werten die aktuelle gebundene Entscheidung aus. Kein erfundener Abruf bei fehlender Quelle; Cachebauzeit verjüngt keine Evidence.",
       "source_urls": [
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-evidence.ts",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-provenance-artifact.ts",
@@ -677,9 +708,9 @@
       "id": "P03",
       "owner_requirement": "Automatische Quellenüberwachung, Aktualisierung, Versionierung, Prüfspur und Rollback.",
       "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
-      "accepted_source_evidence": "Refresh-Diff und atomare Versions-/Persistenzkandidaten bestehen; Accepted-Store-Producer besitzt Accept/Withdraw/Conflict/Confirm-Verträge, jedoch keinen aktiven Schedule und keine Deploymentbindung.",
-      "planned_change": "Dauerhafte Überwachung mit begrenzten Jobs, Frischefenstern, Invalidierung, Kill-Switch und Recovery an die neue mehrquellige Methode anbinden.",
-      "acceptance": "Änderungen/Fristende/Konflikt sperren betroffene Projektionen; Wiederholung/Neustart ist idempotent; Restore aktiviert keine heute ungültige Regel.",
+      "accepted_source_evidence": "Refresh-Diff und atomare Versions-/Persistenzkandidaten bestehen. Producer/SQL erlauben Accept/Withdraw/Conflict/Confirm, Read setzt accepted voraus. Der heutige Accept-Graph beginnt aus null/accepted; kein fertiger Wiederannahmeübergang aus conflicted/withdrawn und kein Gegenquellenvergleich. Schedule/Deploymentbindung fehlen.",
+      "planned_change": "Dauerhafte begrenzte Überwachung und primärquellenbezogene Frische mit separater optionaler Gegenprüfung, Invalidierung und Kill-Switch ergänzen. Nach belegter Konfliktauflösung automatische Wiederannahme als neue geprüfte Version über ausdrücklich versionierten zulässigen Übergang planen, keine direkte Statusüberschreibung.",
+      "acceptance": "Unklare/ungültige Pflichtquelle oder echter relevanter Konflikt sperrt betroffene Projektion; optionaler Ausfall/Altersablauf allein tut dies nicht. Ein bekannter relevanter Konflikt bleibt bis methodengültiger Auflösung einschließlich möglichem Kontext-/Gültigkeitswechsel wirksam. Wiederholung/Neustart idempotent; keine Historienlöschung oder ungültige Reaktivierung durch Restore.",
       "source_urls": [
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-refresh-diff.ts",
         "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
@@ -742,19 +773,120 @@
   "product_owner_decisions": [
     {
       "id": "D1",
-      "subject": "Konkrete Methode und belegter Betriebsrahmen",
-      "already_fixed": "Automatische Routineannahme, Mindestzahl zwei amtliche Primärquellen, keine Veröffentlichung bei Unsicherheit/Konflikt.",
-      "proposal": "M1 mit qualifizierten unabhängigen Publikationen, gemeinsamem Kontext/Gültigkeit, striktem Negativverhalten und konkretem Budget-/Frische-/Eskalationsrahmen. Stündliche Prüfung/24-Stunden-Maximalalter sind Vorschlag, keine vorhandene Garantie. CH→DE bleibt der bereits entschiedene Erstpfad; keine erneute Wahl des Startbereichs.",
-      "decision_time": "Erst nach vollständiger prüfbarer Methodenfassung und Gegenbeispielen; keine Einzelfreigabe je Regel."
+      "subject": "Konkrete Quellenmethode und belegter Betriebsrahmen",
+      "already_fixed": "Eine eindeutige amtliche Primärquelle des Ziellandes genügt; verfügbare unabhängige amtliche Gegenprüfung; fehlende optionale Quelle sperrt nicht. Automatische Routineannahme ohne Einzelregelfreigabe und CH→DE als Erstpfad sind bereits entschieden.",
+      "proposal": "M1 präzisiert Zielland-Zuständigkeit, Original-/Publikationsqualifikation, eindeutige Aussage, Kontext-/Gültigkeitsvergleich für echte Konflikte, begrenzte verfügbare Gegenprüfung und versionierte Auflösung. Budget, Frische, SLO und Eskalationskanal konkret belegen; stündliche Prüfung/24 Stunden Pflichtquellenalter bleiben Vorschläge, keine Garantie oder zweite Quellenpflicht.",
+      "decision_time": "Erst nach vollständiger prüfbarer Methodenfassung und Gegenbeispielen; keine erneute Zustimmung zur Einquellenregel und keine neue Vorbedingung für die enge #1139-Paketvorbereitung."
     }
   ],
   "product_source_map_evidence": {
     "reviewer": "/root/release_live_audit",
-    "sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
-    "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
-    "source_readbacks": 50,
-    "test_source_pins": 16,
-    "scope": "Bounded source mapping; read levels distinguish complete, targeted and tree-only evidence. No new SQL, database, provider or native test execution.",
+    "version": "V3",
+    "sha256": "e3ddbbbaa4f9df590a2fae23f859584ed4a081dc4490fd1879ef94327677693e",
+    "source_commit": "1b96936f0159578c063992407c650a0995b60895",
+    "unchanged_implementation_source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+    "mapping_rows": 6,
+    "source_pins": 10,
+    "proposed_future_case_rows_in_source_map": 8,
+    "scope": "Fokussierter V3-Abgleich vorhandener Quellen und Read-only-Commitvergleich; keine neue Produktquellensuche oder SQL-/DB-/Provider-/Testausführung. Zehn Source-Pins mit gekennzeichnetem Leseumfang, SQL nur gezielte Invarianten.",
+    "historical_v2_map": {
+      "reviewer": "/root/release_live_audit",
+      "sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "source_readbacks": 50,
+      "test_source_pins": 16,
+      "scope": "Bounded source mapping; read levels distinguish complete, targeted and tree-only evidence. No new SQL, database, provider or native test execution.",
+      "repository_manifest_file": "SOURCE_MANIFEST.json",
+      "status": "Historical V2 source evidence remains. Active two-source minimum and mandatory multi-support migration deductions superseded by new TASK V3, not retroactively errors."
+    },
     "repository_manifest_file": "SOURCE_MANIFEST.json"
-  }
+  },
+  "source_tree": "b6f46ef0e4efc06e6fa772c4d364d12c3a6317e6",
+  "implementation_source_pin_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+  "source_continuity": "Self-read read-only compare contains only the ten V2 documentation additions from #1160. Product/SQL blobs are unchanged. Historical CI, baseline-main CI and V2 reviews are not relabeled as V3-document-head gates.",
+  "product_countercheck_record_plan": {
+    "status": "PROPOSED_NOT_IMPLEMENTED",
+    "primary_support_count_unchanged": 1,
+    "meaning": "Separate decision evidence; optional counter-source is not made a second mandatory support. Illustrative field/status names are not existing enums or APIs.",
+    "bind": [
+      "immutable method/version and bounded attempt-plan version",
+      "normalized fact, rule/version and mandatory primary evidence identity",
+      "official independent counter-source identity and observation if actually available",
+      "check time, compared context and legal applicability",
+      "actual comparison result or explicit absence/unreachability/ambiguity/noncomparability reason",
+      "decision predecessor/version and positive conflict-resolution reference where applicable"
+    ],
+    "decision_use": [
+      "acceptance",
+      "commit/reproof",
+      "refresh",
+      "withdrawal/invalidation",
+      "current public cache projection"
+    ],
+    "not_available_is_normal_nonblocking_result": true,
+    "known_actual_conflict_erased_by_unavailability": false,
+    "exact_schema_api_proof_changes_pending": true
+  },
+  "product_future_source_acceptance_cases": [
+    {
+      "id": "S01",
+      "case": "Klare qualifizierte gültige Zielland-Primärquelle, keine zweite Quelle verfügbar",
+      "expected": "Automatische Annahme/Veröffentlichung nach normalen technischen Importgates; kein Owner-Einzelklick.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S02",
+      "case": "Klare Pflichtquelle und passende unabhängige amtliche Gegenquelle stimmen überein",
+      "expected": "Automatische Annahme; exakte Gegenprüfungsentscheidung versioniert und entscheidungswirksam gebunden.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S03",
+      "case": "Optionale Quelle nicht gefunden, unerreichbar, veraltet oder selbst unklar; Pflichtquelle bleibt klar",
+      "expected": "Für sich keine automatische Sperre oder Routineeskalation; unterscheidbares normales Gegenprüfungsergebnis.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S04",
+      "case": "Gegenquelle betrifft anderen Kontext oder nicht vergleichbare rechtliche Gültigkeit",
+      "expected": "Nichtvergleichbarkeit dokumentieren; weder automatisch Zustimmung noch echter Konflikt.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S05",
+      "case": "Echter relevanter Widerspruch zum selben Fakt/Kontext/Gültigkeitsbezug",
+      "expected": "Neue Veröffentlichung blockiert; betroffene aktuelle öffentliche Version invalidiert/zurückgezogen; deduplizierte Eskalation.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S06",
+      "case": "Pflichtquelle unklar/unqualifiziert, Sekundärquelle eindeutig",
+      "expected": "Keine Veröffentlichung; Sekundärquelle ersetzt Pflichtquelle nicht; Quellenklärung eskalieren.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S07",
+      "case": "Bekannter echter relevanter Konflikt, danach fehlt/versagt Gegenquelle",
+      "expected": "Konflikt bleibt wirksam; kein Zurücksetzen aufgrund von Ausfall/Weglassen.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S08",
+      "case": "Konflikt durch tatsächliche neue Evidence oder Kontext-/Gültigkeitswechsel methodengültig geklärt",
+      "expected": "Frische geprüfte Version und ausdrücklich zulässiger versionierter Übergang können automatische Neuannahme erlauben; keine ungeprüfte Reaktivierung oder ewige manuelle Blockade.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S09",
+      "case": "Bekannte verfügbare passende Gegenquelle wird ausgelassen oder Record manipuliert",
+      "expected": "Methoden-/Integritätsverletzung erkennen; keine Umgehung bekannter Gegen-Evidence. Begrenzte Suche verlangt keinen erschöpfenden Weltnachweis.",
+      "execution_status": "NOT_EXECUTED"
+    },
+    {
+      "id": "S10",
+      "case": "Unabhängiges Auth-/Herkunfts-/Integritäts-/Privacy-/aktuelles Versionsgate scheitert",
+      "expected": "Technisch fail-closed; Optionalsemantik lockert diese Grenzen nicht.",
+      "execution_status": "NOT_EXECUTED"
+    }
+  ]
 }

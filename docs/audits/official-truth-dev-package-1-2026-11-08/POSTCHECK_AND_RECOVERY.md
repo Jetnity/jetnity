@@ -1,16 +1,18 @@
 # Dev-Paket #1139 — Nachprüfung und Rollback-/Recovery-Plan
 
-**DEV-PACKAGE-1 / V2 / R0 — 8. November 2026, Europe/Zurich.**
+**DEV-PACKAGE-1 / V3 / R0 — 8. November 2026, Europe/Zurich.**
 
 **Planstatus: prüfbar, nicht zur Ausführung freigegeben.** Eine wirksame Dev-Installation ist NOT_RELEASE_READY. Die unveränderten Kandidatquellen, Zielgrenzen und offenen Bedingungen stehen in [DEV_PACKAGE.md](DEV_PACKAGE.md) und [TARGET_EVIDENCE_MATRIX.json](TARGET_EVIDENCE_MATRIX.json). Hier werden messbare Abnahmebedingungen und Fehlerzustände festgelegt; kein Datenbankbefehl oder menschlicher Ersatzlauf wird angeordnet.
 
-**V2-Abgrenzung:** Die nachfolgenden Zielgates betreffen weiterhin das konkrete #1139-Dev-Paket. Die besondere PO-Entscheidung erlaubt eine geprüfte Auth-/DB-Änderung; sie bedeutet keine Einzelregelfreigabe. Die automatische Routineannahme nach freigegebener Methode bleibt verbindliches Produktziel. Die gesonderten Erweiterungsprüfungen stehen in Abschnitt 7 und [PRODUCT_TARGET_PLAN.md](PRODUCT_TARGET_PLAN.md); sie sind heute nicht ausgeführte Zukunftsplanung.
+**V3-Abgrenzung:** Die nachfolgenden Zielgates betreffen weiterhin das konkrete #1139-Dev-Paket. Die besondere PO-Entscheidung erlaubt eine geprüfte Auth-/DB-Änderung; sie bedeutet keine Einzelregelfreigabe. Die automatische Routineannahme nach freigegebener Methode bleibt verbindliches Produktziel. Die gesonderten Erweiterungsprüfungen stehen in Abschnitt 7 und [PRODUCT_TARGET_PLAN.md](PRODUCT_TARGET_PLAN.md); sie sind heute nicht ausgeführte Zukunftsplanung.
 
 ## 1. Was bereits geprüft wurde
 
-Die vier #1142-Dateien sind im jetzigen Repository an main 608414441651b407cf56ab976c1cd116db45de0c byteidentisch mit den abgenommenen Quellblobs. Ihre eigene ursprüngliche CI-Abnahme bleibt an deren historischen Prüfstand gebunden.
+Die vier #1142-Dateien bleiben an Dokumentbasis main 1b96936f0159578c063992407c650a0995b60895 byteidentisch mit den abgenommenen Implementierungsblobs am historischen Pin 608414441651b407cf56ab976c1cd116db45de0c. Dazwischen wurden nur die zehn #1160-Dokumente ergänzt. Frühere Source-Pässe und V2-Dokumentreviews sind keine V3-Head-Abnahme.
 
-Zusätzlich hat Root die **bereits vorhandene aktuelle Main-CI 42513853717** auf genau 60841444 unabhängig im Original gelesen: Core 128832463566 enthält Source-Guard ok 1567 und nativen Parent ok 1568, alle 27 Fälle PASS/keine Skips, 22791.237512 ms. Auth 128832463670 bestätigt am 08.11.2026, 19:13:09 UTC: 55 erwartete Werte/243 Schlüssel; die vier Kandidat-Policywerte 0 / 0 / false / false sind durch die aktuelle gepinnte Vergleichskette erfasst. Diese aktuellen Nachweise werden ebenfalls anerkannt. Sie wurden für die Dokumentenprüfung von V1/V2 nicht neu ausgeführt. [Aktuelle CI](https://github.com/Jetnity/jetnity/actions/runs/42513853717)
+Root hat die **bereits vorhandene frühere Main-CI 42513853717** auf genau 60841444 im Original gelesen: Core 128832463566, Source-Guard ok 1567, nativer Parent ok 1568, alle 27 Fälle PASS/keine Skips, 22791.237512 ms. Auth 128832463670 am 08.11.2026, 19:13:09 UTC bestätigt 55 erwartete Werte/243 Schlüssel und die vier gepinnten Policywerte 0 / 0 / false / false. Dieser begrenzte Snapshot bleibt anerkannt. [Vorherige CI](https://github.com/Jetnity/jetnity/actions/runs/42513853717)
+
+Zusätzlich bestätigt Root die **inzwischen abgeschlossene reguläre #1160-Post-Merge-CI 42527963600** an main 1b96936: sieben erfolgreiche Jobs. Original-Core 128875685288 belegt den tatsächlichen Checkout, Source-Guard 1567 und nativen Parent 1568 mit 27/27 PASS, 0 Skip, 0 Fail, 19859.855067 ms. Original-Auth 128875685142 bestätigt um 22:01:11 UTC erneut 55 Sollwerte/243 Schlüssel, alle passend. Das ist bestehende Baseline-Evidence des neuen Main-Heads; kein vom V3-Autor gestarteter Test, keine neue Dev-Installation und kein PASS für die erst geänderten V3-Dokumentbytes. Task V3s damalige Angabe „läuft noch“ bezeichnet dessen Publikationszeitpunkt. Neue V3-PR-/Head-Gates folgen separat. [Baseline-CI](https://github.com/Jetnity/jetnity/actions/runs/42527963600)
 
 Der [TL-POST-MERGE-PASS 6690979366](https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366) dokumentiert tatsächliches main 9f3553602066d1e11171eaf36e720c2ac21061f8, CI 42257254001, den Source-Guard und die vollständig ausgeführten **27 nativen Unterfälle**. Die damalige Gesamtausführung meldete 7952 Tests/7950 PASS/0 FAIL/2 bekannte Browser-Layout-Skips. Die 27 Kandidatenfälle hatten keinen Skip.
 
@@ -31,7 +33,7 @@ Der [TL-POST-MERGE-PASS 6690979366](https://github.com/Jetnity/jetnity/pull/1142
 
 Native erfolgreich mit NULL zurückgekehrte Negativtransaktionen wurden vor dem Nichtverbrauchsvergleich committed; ein vorheriger Rollback hätte einen fehlerhaften Verbrauch verdecken können. Locktests beobachteten wartenden und blockierenden Backend-PID sowie den echten Lockzustand. Diese Nicht-Leerheitsbedingungen müssen bei einer späteren gezielten Anpassung erhalten bleiben.
 
-**Grenze:** Auth-Datensätze, FK-/Enum-/Rechtekontext und Request-Claims der Fixture sind synthetisch. Die Quellenprüfung und beide belegten nativen CI-Ausführungen beweisen keine Signatur echter Dev-JWTs und keine installierte Zielautorität. Für die Dokumentenprüfung von V1/V2 hat der Autor keine neuen SQL-/Native-/Hosted-Tests gestartet. Der Source-Review verwendet die bereits vorhandene main-CI. Eine spätere reguläre automatische Docs-PR-CI wird separat am tatsächlichen neuen Head bewertet; ihr Ergebnis wird nicht vorweggenommen. Die historische writer-local PG-SKIP-Aussage wird nicht mit der späteren tatsächlich erfolgreichen CI-Ausführung verwechselt.
+**Grenze:** Auth-Datensätze, FK-/Enum-/Rechtekontext und Request-Claims der Fixture sind synthetisch. Die Quellenprüfung und belegten nativen CI-Ausführungen beweisen keine Signatur echter Dev-JWTs und keine installierte Zielautorität. Für die Dokumentenprüfung von V1/V2/V3 hat der Autor keine neuen SQL-/Native-/Hosted-Tests gestartet. Der Source-Review verwendet die bereits vorhandenen, exakt zugeordneten Main-CI-Snapshots. Eine spätere reguläre automatische Docs-PR-CI wird separat am tatsächlichen neuen Head bewertet; ihr Ergebnis wird nicht vorweggenommen. Die historische writer-local PG-SKIP-Aussage wird nicht mit der späteren tatsächlich erfolgreichen CI-Ausführung verwechselt.
 
 ## 2. Phasen und Bedingungen vor einer späteren wirksamen Änderung
 
@@ -54,9 +56,9 @@ Die folgende Reihenfolge ist ein Abnahmeplan für Root, keine aktuelle Ausführu
 | V11 | Liegt unabhängige exakte Abnahme vor? | Root und unabhängige Sicherheits-/Zielprüfung beurteilen dasselbe endgültige Artefakt und denselben Zielstand; keine alten Head-Pässe übertragen. |
 | V12 | Ist die reservierte besondere Entscheidung getroffen? | PO entscheidet über das vollständige konkrete Dev-Paket. Allgemeines Weiterarbeiten oder der Auftrag zum Zusammenstellen ersetzt dieses spätere Auth-/DB-Gate nicht. |
 
-**Derzeit als Vor-PO-Lücken offen:** konkret betroffene Teile von V01–V10: der benötigte zulässige Readback-Weg, tatsächliches Ledger/Stage2/Namespace, nicht erfasste Auth-/Rechte-/Lifecycle-/Expositionsbedingungen sowie endgültiges Installations-/Recovery-Artefakt und konkrete QA-Bindung. V11 wartet auf diese finale Zielrevision. R4-/Run2-Teile und der heutige CI-Policy-Snapshot aus V01/V03/V05–V07 sind bereits anerkannt und müssen nicht als vollständig unbekannt neu erfunden werden. Die tatsächlichen Phase-C-Ergebnisse werden erst nach der späteren Entscheidung erwartet. Die Matrix benennt jeden Umfang einzeln.
+**Derzeit als Vor-PO-Lücken offen:** konkret betroffene Teile von V01–V10: der benötigte zulässige Readback-Weg, tatsächliches Ledger/Stage2/Namespace, nicht erfasste Auth-/Rechte-/Lifecycle-/Expositionsbedingungen sowie endgültiges Installations-/Recovery-Artefakt und konkrete QA-Bindung. V11 wartet auf diese finale Zielrevision. R4-/Run2-Teile und der bereits vorhandene Baseline-CI-Policy-Snapshot aus V01/V03/V05–V07 sind bereits anerkannt und müssen nicht als vollständig unbekannt neu erfunden werden. Die tatsächlichen Phase-C-Ergebnisse werden erst nach der späteren Entscheidung erwartet. Die Matrix benennt jeden Umfang einzeln.
 
-Für V08 genügt weder das Kopieren beider Kandidaten noch ein äußerer Transaktionsrahmen. Beide Dateien besitzen innere COMMITs. Eine mögliche spätere Änderung ihrer Transaktionsgrenzen erzeugt neue Bytes mit eigenen Tests und Reviews; V2 ändert sie nicht.
+Für V08 genügt weder das Kopieren beider Kandidaten noch ein äußerer Transaktionsrahmen. Beide Dateien besitzen innere COMMITs. Eine mögliche spätere Änderung ihrer Transaktionsgrenzen erzeugt neue Bytes mit eigenen Tests und Reviews; V3 ändert sie nicht.
 
 ## 3. Messbare Nachprüfung des zukünftigen tatsächlichen Zielpakets
 
@@ -110,7 +112,7 @@ Jedes unerwartete Objekt/ACL, jede falsche Zielbindung, jeder unbekannte Commitz
 
 Öffentliche Evidence enthält nur freigegebene Metadaten: Paket-/Quellhashes, abstrakte Testfallkennung, Datum/Zeit, SQLSTATE-/HTTP-Kategorie soweit geprüft, Soll/Ist, Commitzustand und den begrenzten Verdict. Keine Kontenlisten, Mailadressen, rohen JWTs/Cookies/Keys, Sessionwerte, Pass-/Reiseinhalte, Rohfehler mit Personenwerten oder unredigierten Auth-Dumps. Testbezeichnungen verwenden synthetische Labels.
 
-Ein tatsächlicher Dev-Readonly-Nachweis muss seine erlaubte Quelle benennen. V2 liefert kein SQL für das verweigerte Ledger-/Katalogreadback. Echte Accountsperren, fremde Sitzungseingriffe und neue Auth-/RLS-Privilegien sind keine impliziten Tests dieser Dokumentation.
+Ein tatsächlicher Dev-Readonly-Nachweis muss seine erlaubte Quelle benennen. V3 liefert kein SQL für das verweigerte Ledger-/Katalogreadback. Echte Accountsperren, fremde Sitzungseingriffe und neue Auth-/RLS-Privilegien sind keine impliziten Tests dieser Dokumentation.
 
 ## 5. Rollback- und Recovery-Entscheidung nach beobachtetem Zustand
 
@@ -140,7 +142,7 @@ Vor einer wirksamen Änderung benötigt Root:
 - für jede Commitgrenze eine geprüfte Weiterführungs- oder Gegenänderungsoption mit neuen Artefakthashes und zulässiger Nachprüfung;
 - bei Restore: tatsächliche Sicherungs-/Restore-ID, Ziel, Zeitpunkt, abgedeckte Objekte/Daten, Auswirkungen auf spätere Auth-/Trip-Änderungen, akzeptiertes Verlustfenster und ein angemessener Wiederherstellungsnachweis.
 
-**Diese konkreten Recovery-Artefakte sind auch in V2 nicht vorhanden oder nicht bestätigt.** Die vorhandene P1-Stage1-Quelle darf als historische Vergleichsbasis erhalten bleiben. Ihre Wiederherstellung unter weiterhin aktiver alter Freigabelogik wäre kein sicherer Rückfall. Eine kontrollierte Rückkehr zu vorherigen Definitionen wäre nur mit nachweislich wirksamer Sperre des betroffenen Produkts und separat geprüfter Zielentscheidung vertretbar; V2 erteilt sie nicht.
+**Diese konkreten Recovery-Artefakte sind auch in V3 nicht vorhanden oder nicht bestätigt.** Die vorhandene P1-Stage1-Quelle darf als historische Vergleichsbasis erhalten bleiben. Ihre Wiederherstellung unter weiterhin aktiver alter Freigabelogik wäre kein sicherer Rückfall. Eine kontrollierte Rückkehr zu vorherigen Definitionen wäre nur mit nachweislich wirksamer Sperre des betroffenen Produkts und separat geprüfter Zielentscheidung vertretbar; V3 erteilt sie nicht.
 
 Ein globaler Datenbank-Restore kann spätere fremde Änderungen betreffen. Der historische [Recovery-Metadatenreceipt 6164171285](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164171285) bestätigt keinen aktuellen getesteten Zero-Loss-Restore. Er darf nicht zum universellen Undo für die neue Funktions-/Auth-Ersetzung umgedeutet werden. Keine History-Reparatur, kein Rückdatieren von Migrationsversionen und kein Replay von Stage1 oder verbrauchten Grants.
 
@@ -155,29 +157,36 @@ Der spätere menschliche Entscheidungsablauf ist:
 3. Nur wenn tatsächlich eine zulässige menschliche Handlung erforderlich ist, liefert Root eine auf diese genehmigte Revision begrenzte Schrittfolge mit erwarteten Meldungen und klaren Abbruchpunkten.
 4. Root bewertet die unveränderten tatsächlichen Ergebnisse; neue Fehler oder ein veränderter Head führen zurück zur Prüfung. Ein Erfolg erteilt keine zusätzliche Production-/Source-/Provider-/Launchfreigabe.
 
-Das wirksame #1139-Paket steht auch in V2 noch bei Schritt 1 vor dessen Abschluss. Es enthält bewusst keine Klick-/Verbindungs-/SQL-Anleitung für die verweigerte Aktion. Ein anderer menschlicher Operator ist keine Plattformclearance.
+Das wirksame #1139-Paket steht auch in V3 noch bei Schritt 1 vor dessen Abschluss. Es enthält bewusst keine Klick-/Verbindungs-/SQL-Anleitung für die verweigerte Aktion. Ein anderer menschlicher Operator ist keine Plattformclearance.
 
-## 7. Zusätzliche spätere Produktabnahme aus TASK V2
+## 7. Spätere Produktabnahme nach TASK V3
 
-Diese Kriterien gehören zu künftigen konkret versionierten Produktpaketen. Die Mindestzahl von zwei amtlichen Primärquellen gilt bereits für jede erste öffentliche Regelantwort; alte Einquellenkandidaten erhalten keine neue Publikationsfreigabe. Sie ersetzen weder V01–V12 noch die tatsächlichen #917/#1139-Nachweise und sind kein Anlass, heute neue SQL-/Provider-/Jobaktionen zu starten.
+[Die neue Owner-Quellenregel](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983) gilt bereits für die erste öffentliche CH→DE-Regelantwort: **eine eindeutige amtliche Primärquelle des Ziellandes genügt; unabhängige amtliche Gegenprüfung, wenn verfügbar.** Fehlende, unpassende, unklare oder unerreichbare optionale Evidence allein erzeugt weder Sperre noch Routineeskalation. Echte relevante Konflikte und unklare Pflichtquellen blockieren den fachlichen Quellenentscheid; technische Grenzen bleiben bestehen. Der bestehende genau-eins-Store passt zur Mindestzahl, beweist aber weder Zielland-Zuständigkeit noch fertige Methodenumsetzung.
+
+Alle folgenden Fälle sind **geplante Abnahmekriterien, NOT_EXECUTED**. Die bestehenden 27 Owner-/Sessiontests validieren diese neue Methode nicht. Sie ersetzen weder V01–V12 noch #917/#1139-Nachweise und schaffen kein zusätzliches Gate für die Vorbereitung des engen #1139-Fixes.
 
 | Fall | Erwartetes Ergebnis der späteren Umsetzung |
 | --- | --- |
-| Zwei amtliche Primärquellen, gleicher normalisierter Kontext, gültige Methode und vollständige Provenienz | Jetnity-Dienst nimmt automatisch an; kein menschlicher Klick je Regel. |
-| Eine Quelle, Dublette, Spiegel, widersprüchlicher Fakt, zusätzliche relevante Gegenquelle, unklare Bedingung/Gültigkeit oder veraltete Stütze | Keine Veröffentlichung; keine 2:1-Mehrheitsabkürzung; verständlicher Pending-/Blockierungsgrund und deduplizierte Ausnahmeeskalation. |
-| Einquellen-Altvertrag, altes Proofschema oder historische kopierte Annahme | Keine stillschweigende Erfüllung der neuen Methode; getrennte historische Evidence, erforderliche erneute Qualifikation. |
-| Anbieter liefert accepted/trusted/role/policy-Claims, direkte SQL-Anweisung oder erfundene Source-Autorität | Vor Storage/Import zurückweisen; keine stärkeren Rechte für Researcher oder Modelle. |
-| Maschinenimport ohne menschliche Sitzung | Nur über ausdrücklich geprüften eigenen Dienstvertrag erfolgreich; keine gefälschten Owner-/AAL2-/Sessionclaims und kein pauschaler service_role-Bypass. |
-| Änderung an Supportzahl/-identität | TypeScript, SQL, Custody, Provenienz, Refresh, Commit/Confirm und Read-Reproof gemeinsam auf neue Version binden; fehlende oder abweichende Stütze muss in jedem Pfad scheitern. |
-| Mehrere Staatsangehörigkeiten / Dokumentbedingungen | Bedingte Regelübersicht je Staatsangehörigkeit mit sichtbaren globalen Reise-/Dokumentbedingungen; kein zusätzlicher persönlicher Fragebogen, keine günstigste-Pass-Heuristik und kein Zusammenfallen ungleicher Cachezellen. |
-| Cache-Miss / neue oder abgelaufene Regelzelle | Schnelles „wird geprüft“, höchstens ein aktiver Job je Kontext/Methode; bis bestätigtem Import und Cacheversion keine öffentliche Regelantwort. |
-| Quellenwechsel, Rückzug, Konflikt oder Restore | Betroffene Cacheprojektionen invalidiert; keine automatische Reaktivierung einer heute ungültigen Altregel. |
-| Wiederholter Job, parallele Ergebnisse, verlorene Commitantwort | Idempotenz/Vorgängerabgleich und echte Confirm-/Recovery-Evidence; keine doppelten oder veralteten Annahmen. |
-| Cache-SLO und Forschungspfad | Vorgeschlagenes p95-Ziel unter 1.000 ms bei vereinbartem Referenznetz/Zielregion separat für Treffer/Pending messen; Research läuft nicht synchron auf dem Trefferpfad. Keine aktuelle Performancebehauptung. |
-| Passnummer, MRZ, Passfoto, Nutzer-/Trip-/Sessionkennung oder personenbezogener Freitext in Proposal/Cache/Logs/Fehlern | Nicht in der öffentlichen Regelpipeline speichern oder zurückspiegeln; strikte Feldprüfung und gezielte Privacy-Abnahme einschließlich Hintergrundjobs. |
-| Kill-Switch / Prozessneustart / Anbieterwechsel | Annahme kontrolliert gesperrt beziehungsweise Arbeit sicher wiederaufgenommen; kein laufender Chat und keine bestimmte Person als Betriebsabhängigkeit. |
+| S01 Klare qualifizierte gültige Zielland-Primärquelle, keine zweite Quelle verfügbar | Jetnity nimmt nach normalen technischen Importgates automatisch an und veröffentlicht; kein Owner-Einzelklick. Begrenzte Gegenprüfungsstrategie und tatsächliches Ergebnis sind nachvollziehbar. |
+| S02 Klare Pflichtquelle plus passende unabhängige amtliche Gegenquelle mit gleicher Aussage | Automatische Annahme; Quellen-/Prüfzeit-/Fakt-/Kontext-/Gültigkeitsbindung der Gegenprüfung wird exakt versioniert. |
+| S03 Optionale Quelle fehlt, ist unerreichbar, veraltet oder selbst unklar; Pflichtquelle bleibt gültig und klar | Für sich keine Veröffentlichungssperre und keine manuelle Routineeskalation. Nichtverfügbarkeit und unklare Pflichtquelle bleiben verschiedene Zustände. |
+| S04 Gegenquelle nennt andere Voraussetzungen oder nicht vergleichbare rechtliche Gültigkeit | Nichtvergleichbarkeit dokumentieren; nicht automatisch als echter Widerspruch oder Zustimmung werten. Ein separat bekannter relevanter Konflikt wird dadurch nicht gelöscht. |
+| S05 Echter relevanter Widerspruch zum gleichen normalisierten Fakt, vergleichbarem Kontext und Gültigkeitsbezug | Keine neue Veröffentlichung; betroffene aktuelle Projektion invalidieren/zurückziehen und dedupliziert eskalieren. Weder Mehrheit noch pauschaler Primärquellenvorrang hebt den Konflikt auf. |
+| S06 Pflichtquelle unklar/unqualifiziert; Sekundärquelle eindeutig | Keine Veröffentlichung; Sekundärquelle ersetzt die vorgeschriebene Zielland-Primärquelle nicht. Quellenklasse, Behördenname oder Domain allein beweist keine Zuständigkeit. |
+| S07 Bekannter echter relevanter Konflikt; Gegenquelle später fehlend/unerreichbar | Konflikt bleibt wirksam bis methodengültiger tatsächlicher Auflösung. Weglassen oder Abruffehler setzt keinen accepted-Status wieder ein. |
+| S08 Belegte sachliche Klärung oder relevanter Kontext-/Gültigkeitswechsel löst den Konflikt auf | Neue geprüfte Version und ausdrücklich versionierter zulässiger Übergang können automatisch neu annehmen. Heutige SQL-/Producer-Verträge liefern noch keinen Wiederannahmeübergang aus conflicted/withdrawn. Keine direkte Statusüberschreibung, Historiensäuberung oder ewige manuelle Blockade. |
+| S09 Bekannte verfügbare passende Gegenquelle ausgelassen oder Gegenprüfungsrecord manipuliert | Methoden-/Integritätsverletzung erkennen. Pflichtbeleg bleibt singular; Gegenprüfungsrecord bindet aktuelle Entscheidung an Annahme/Commit/Rückzug/Cache. Keine lose Lognotiz und kein zweites Element in unveränderten genau-eins-Arrays. Keine erschöpfende Weltsuche verlangen. |
+| S10 Auth-, Herkunfts-, Integritäts-, Privacy- oder aktuelles Versionsgate scheitert | Technisch fail-closed. Gegenquellenoptionalität verleiht weder Quellenautorität noch Schreib- oder Publikationsrechte. |
+| B01 Researcher sendet accepted/trusted/role/policy-Claims, SQL-Anweisung oder erfundene Source-Autorität | Vor Speicherung/Import zurückweisen; Anbieter bleibt austauschbarer Lieferant untrusted Vorschläge. Alte Hashes/Receipts werden nicht zu V3-Annahmebeweisen. |
+| B02 Maschinenimport ohne menschliche Sitzung | Nur über ausdrücklich geprüften eigenen Dienstvertrag erfolgreich; keine gefälschten Owner-/AAL2-/Sessionclaims, kein pauschaler service_role-Bypass. |
+| B03 Mehrere Staatsangehörigkeiten und Dokumentbedingungen | Bedingte Regelübersicht je Staatsangehörigkeit, sichtbare globale Bedingungen; kein zusätzlicher persönlicher Fragebogen, keine günstigste-Pass-Heuristik oder Vermischung von Cachezellen. |
+| B04 Cache-Miss oder ungeklärte/ungültige Pflichtquellenzelle | Schnell „wird geprüft“, höchstens ein aktiver Job je Kontext/Methode; bis bestätigter Annahme/Import/Cacheversion keine öffentliche Regelantwort. Allein fehlende optionale Gegenquelle erzeugt keinen solchen dauerhaften Miss. |
+| B05 Wiederholter Job, parallele Ergebnisse, verlorene Commitantwort | Idempotenz, Vorgängerabgleich und echte Confirm-/Recovery-Evidence verhindern doppelte oder veraltete Annahmen. |
+| B06 Cache-SLO und Recherchepfad | Vorgeschlagenes p95-Ziel unter 1.000 ms bei vereinbartem Referenznetz/Zielregion getrennt für Treffer/Pending messen; Recherche bleibt im Hintergrund. Kein bestehendes Leistungsergebnis behauptet. |
+| B07 Passnummer, MRZ, Passfoto, Nutzer-/Trip-/Sessionkennung oder personenbezogener Freitext in Proposal/Cache/Logs/Fehlern | Nicht in der öffentlichen Regelpipeline speichern oder zurückspiegeln; Privacy-Abnahme einschließlich Hintergrundjobs. Amtliche Originale folgen gesonderten bestehenden Custody-/Retention-Verträgen. |
+| B08 Kill-Switch, Prozessneustart, Anbieterwechsel oder Restore | Annahme kontrolliert sperren beziehungsweise sicher wiederaufnehmen; kein laufender Chat oder bestimmter Mensch als Runtimeabhängigkeit. Keine aktuelle ungültige oder ungelöst widersprüchliche Version reaktivieren. |
 
-Produkt-Recovery bindet an die aktuellen Quellen und die weiterhin gültige Methode. Ein alter Regeldatensatz ist trotz intakter Prüfsumme kein zulässiger aktiver Fallback, wenn seine Evidenz abgelaufen, widersprüchlich oder zurückgezogen ist. Audit-/Receipt-Historie bleibt erhalten. Bestehende #1131-/Privacy-/Rollout-Gates werden durch diese Abnahmematrix nicht geschlossen.
+Produkt-Recovery verlangt die heute gültige Methode, klare zulässige Pflichtquelle und aktuellen Konfliktentscheid. Eine fehlende oder inzwischen veraltete optionale Quelle sperrt allein keine weiterhin gültige Primärversion. Ein bekannter relevanter Konflikt bleibt bis positiver methodengültiger Auflösung bestehen; ein belegter Gültigkeits-/Kontextwechsel darf ihn auflösen. Audit-/Receipt-Historie bleibt erhalten. Exakte Gegenprüfungs-, Speicher-/Proof- und Wiederannahmeverträge sind spätere Implementierungsarbeit; kein zwingender Mehrstützenumbau nur für den Normalfall ohne zweite Quelle. Bestehende #1131-/Privacy-/Rollout-Gates bleiben.
 
 ## 8. Aktuelles Verdict
 

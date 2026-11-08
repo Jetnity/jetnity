@@ -1,84 +1,109 @@
-# Technical-Lead-Review — DEV-PACKAGE-1 V2/R0
+# Technical-Lead-Review — DEV-PACKAGE-1 V3/R0
 
-**8. November 2026. Verfasser und Entscheidung: ChatGPT / Technical Lead, Root.**
+**8. November 2026, UTC. Dokumentinhalt: PASS. Wirksame Dev-Änderung: NOT_RELEASE_READY.**
 
-## 1. Verbindliches Urteil
+Maßgeblich ist [TASK V3 /6727812983](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727812983). Die Owner-Korrektur nach #1160 ersetzt die aktive Zwei-Quellen-Pflicht: **Eine eindeutige qualifizierte amtliche Primärquelle des Ziellandes genügt; unabhängige amtliche Gegenprüfung, wenn verfügbar.** Fehlende optionale Gegen-Evidence allein blockiert nicht. Der damalige V2-Auftrag und seine Abnahme bleiben historische Evidence. Sie werden weder rückwirkend zum Fehler erklärt noch als V3-PASS übernommen.
 
-**TL-DOCUMENT-CONTENT-PASS für die unten exakt gebundenen neun fachlichen Dokumente und ihre begrenzten Source-/Evidence-Aussagen.** Beide unabhängigen Reviewer haben dieselben neun Dateien vollständig gelesen und deren Bytes vor und nach der Prüfung verifiziert. Materielle Dokumentfindings: **keine**. Root hat die Ergebnisse selbst geprüft und fällt dieses begrenzte Urteil; der Autoren-Self-Review ist keine TL-Abnahme.
+Dieser Review beurteilt die vollständige Dokumentation, ihre Quellzuordnung und ihre ehrlichen Abnahmegrenzen. Er ist keine Methodenfreigabe, kein tatsächlicher Stage1-/Dev-Readback, keine installierte #1139-Korrektur und kein vorweggenommener PR-Head-/CI-/Preview-/Production-PASS. Root entscheidet nach den zusätzlichen tatsächlichen Head-Gates gesondert über Ready und Merge.
 
-**Die wirksame Dev-Änderung bleibt NOT_RELEASE_READY / NOT_EXECUTED.** Dieses Dokumentenurteil schließt weder Stage1 noch #1139, genehmigt keine konkrete neue Methode und aktiviert keinen Import-Dienst, Cache, Provider oder Datenbankpfad. Die normale Veröffentlichung dieses reinen Dokumentationspakets wird separat an ihren tatsächlichen PR-Head, Diff, frische CI und Deployment-/Review-Gates gebunden. Diese zukünftigen Gates werden hier nicht vorweggenommen.
+## 1. Baseline, Auftrag und Scope
 
-Auftrag: [TASK V2](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878). Quellbaseline main **608414441651b407cf56ab976c1cd116db45de0c**, Tree **b7d6f19bddb035f9b445904f7e0582658047a6b6**. Paketpfad: docs/audits/official-truth-dev-package-1-2026-11-08/. Geplanter Veröffentlichungsbranch: docs/official-truth-dev-package-1-20261108. Genau zehn Dokumentationsdateien einschließlich dieses abschließenden REVIEW.md; kein Produktcode, keine Migration und keine Workflowänderung.
+- Dokumentbasis main **1b96936f0159578c063992407c650a0995b60895**, Tree **b6f46ef0e4efc06e6fa772c4d364d12c3a6317e6**, tatsächlicher Merge von #1160. Live-Main und V3-Branch wurden nach der Unterbrechung erneut gelesen.
+- Branch **docs/official-truth-dev-package-1-v3-20261108** beginnt bei dieser Basis. Kein historischer Head wird als neuer V3-Head bezeichnet; der veröffentlichende Commit bindet später die hier geprüften Bytes.
+- Fünf Autorendokumente von **Jetnity Official Truth Dev Decision Package 1 — Codex Generation 1**, tatsächlich fortgesetzte Session **/root/dev_package_writer**. Cursor bleibt pausiert; kein Cursor-UI-/Rename-Nachweis wird erfunden.
+- Root besitzt Stage1-Bericht, Source-Manifest, Tasktexte und diesen Review. Beide unabhängigen Reviewer besitzen ausschließlich ihre Analyseberichte.
+- Zehn Fachdateien wurden eingefroren und vollständig geprüft; dieser abschließende Review wird als elfte Datei separat auf Wahrheit und Scope gegengeprüft. Gegenüber main sind acht vorhandene Dokumente geändert und TASK_V3.md neu. TASK.md und TASK_V2.md bleiben byteidentisch.
+- Kein Produktcode, SQL-Kandidat, kanonische Migration, Test, Workflow, Recht, Rolle, RLS, Auth-Konfiguration oder Governance-Vertrag wird geändert. Keine neue ausführbare Installations-/Readback-/Rollback-Anweisung.
 
-## 2. Autorenschaft und unabhängige Prüfung
+Der [Wiederanlauf-Receipt6728010716](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6728010716) dokumentiert den tatsächlichen Unterbrechungspunkt: Die fünf Autoren-V3-Entwürfe waren zunächst noch nicht auf Disk. Dieselbe Session hat sie danach tatsächlich geschrieben. Es wird kein damaliger Fertigstand oder Review erfunden.
 
-| Rolle | Tatsächliche Session / Ergebnis |
-| --- | --- |
-| Autor | **Jetnity Official Truth Dev Decision Package 1 — Codex Generation 1**, /root/dev_package_writer. V2/R0 als Fortsetzung derselben Session; fünf zugewiesene Autorendokumente. Kein Ready/Merge durch den Autor. |
-| Unabhängiger Source-/Release-Reviewer | /root/release_live_audit. SCOPED_DOCUMENT_AND_SOURCE_PASS; Findings NONE. Vollständiger Neun-Datei-Review am 08.11.2026, 21:36:54 UTC. Lokaler Review-Record SHA256 **151555d9999392b05c4da218afba9694da81e64f5eba0b543414fbc6c0c2a72d**. |
-| Unabhängiger Evidence-/Gate-Reviewer | /root/blocker_evidence_review. SCOPED_DOCUMENT_SOURCE_PASS; Findings NONE. Vollständiger Neun-Datei-Review am 08.11.2026, 21:37:54 UTC. Lokaler Review-Record SHA256 **3d88d0a5924e13d58e02f0ac0f143ff54994021eba142a208b7a7273a00c6892**. |
-| Technical Lead | Root prüfte Quellen, Original-Receipts, vorhandene CI-Logs, Run2-Artefakte, Produktzuordnung und die endgültigen Dokumente unabhängig; entscheidet über dieses Dokumenturteil und spätere PR-Gates. |
+## 2. Exakte Fachdateien
 
-V1/R1 wurde zuvor begrenzt geprüft. Die spätere ausdrückliche Owner-Steuerung erforderte TASK V2 und neue Bytes; der alte PASS wurde nicht übernommen. Kein Cursor-UI-/Rename-Nachweis wird behauptet. Cursor bleibt nach bestehender Continuity pausiert; die tatsächlich eingesetzte Codex-Generation und Session sind oben benannt.
+Freeze am **2026-11-08T22:30:14.308440+00:00**, SHA256 **b9fe0db82416218ea4eba5a95890987848352583ecca29cc4477e9249bc46209**. Root und beide Reviewer prüften dieselben zehn vollständigen Dateien; Bytes, SHA256 und Gitblob wurden unabhängig abgeglichen. Jeder spätere Inhaltseingriff verlangt neue gebundene Prüfung.
 
-Die beiden unabhängigen Records betreffen den neunfachen Freeze, nicht ihren eigenen oder diesen nachträglich geschriebenen Text. Root lässt die Zusammenfassung dieses REVIEW.md vor Veröffentlichung gesondert auf wahrheitsgetreue Wiedergabe und Grenzen prüfen. Dessen eigener Hash und der endgültige Repository-Head gehören in den externen Veröffentlichungsreceipt; kein selbstreferenzieller Hash wird erfunden.
+| Datei | UTF8-Bytes | SHA256 |
+| --- | ---: | --- |
+| DEV_PACKAGE.md | 28821 | `6e61c4d7d375d643c5d790701cf4f6b54a9cbc74bb28911e0c671dd9d8a82796` |
+| HANDOFF.md | 19224 | `449fe311c25e7e4c18b22b139bb6394b5e481d926d0ec6ecbc3326210265908e` |
+| POSTCHECK_AND_RECOVERY.md | 31183 | `a2687284099ec3d2d788c7948eaf5f8603a8dac5e656c940d697e732db2985d1` |
+| PRODUCT_TARGET_PLAN.md | 25686 | `6a302f327143e61126b19eda6c8527b4a2a15f74e40de77ac3866262969eec2c` |
+| SOURCE_MANIFEST.json | 41466 | `14a42f6f05760ac97fe7e40ac9f3484985a1566f60b4998f0a0c92c4c5c5449d` |
+| STAGE1_ACCEPTANCE_REPORT.md | 20328 | `7391d34998f4abad8daba16d697208022341ea5305df403d92a46349e53b4c94` |
+| TARGET_EVIDENCE_MATRIX.json | 68867 | `8cf070059e7b57e0fc64579e05bf21e349cb145549b2f2c82cc56e0f8e0e46d7` |
+| TASK.md | 6794 | `71a0a06b2565f160cc6581dd7885d69d620f78295727e09b43a8a21b4eca7c74` |
+| TASK_V2.md | 8247 | `245e970413e03d6c5816ac22b2b5a2424bd0518f07d31096c4ba6a35b0cced10` |
+| TASK_V3.md | 7845 | `f1a08307ac5ac75323c1688e96e3258fbc5ea5faf4efda8d9a73e078c681b30c` |
 
-## 3. Exakte fachliche Dateien
+Die Gitblobs stehen zusätzlich im gebundenen Freeze und späteren Commitbaum. Dieser Review enthält keinen selbstreferenziellen eigenen Hash; sein Veröffentlichungsblob und das externe PR-Receipt identifizieren seine finale Fassung.
 
-Freeze-Zeit **2026-11-08T21:34:13.267812+00:00**; SHA256 des lokalen Freeze-Manifests **044103756126e9ef3d4c020d2d7cdcd8b04af6fda247361eec5e43c5911a4bed**.
+## 3. Unabhängige Reviews und eigene Root-Prüfung
 
-| Datei | UTF8-Bytes | Gitblob | SHA256 |
-| --- | ---: | --- | --- |
-| [DEV_PACKAGE.md](DEV_PACKAGE.md) | 26226 | aee99957c50d1b3df038c30f2f54c25da19d2c48 | 3c33636bd6abc024c9340da893302dde8ee3f29e725f857c2238099e882d9c2f |
-| [HANDOFF.md](HANDOFF.md) | 16994 | 98dc4ae18fb87b62bcd0816d9bd1181f39c9287b | 8e3960b1c986fa07e91223f733b5309fee2645f48dda1ee76c6f254ef76a69fd |
-| [POSTCHECK_AND_RECOVERY.md](POSTCHECK_AND_RECOVERY.md) | 27529 | 989873e822bbb5558942d305b88fb6de47c5dbb0 | 953e84463e957bd3ee60f8b2876052cd8d9cb44a8f1c5f80f2ffa283f41262e3 |
-| [PRODUCT_TARGET_PLAN.md](PRODUCT_TARGET_PLAN.md) | 24398 | 81eb80a588bfa98a0a08ceba9aed2e572be35877 | 331f075e1a8c54d29b8a38e1743f391c79d7ad2aeae7e9da9cd1fff525ce1499 |
-| [SOURCE_MANIFEST.json](SOURCE_MANIFEST.json) | 29927 | a5ac91237d1419ba0d5ddb1bf8599f97f12f4809 | ab691b1df5a2384c9a7c689f24ebfdccf5ff47511439f83daca1232db83b609e |
-| [STAGE1_ACCEPTANCE_REPORT.md](STAGE1_ACCEPTANCE_REPORT.md) | 18802 | bf8309d5e0c61330d1fe8b778c83a3340331132a | df0b685963fbc430d16156871c42c6c40b1319f86f6dc8ed6264e67894ab940b |
-| [TARGET_EVIDENCE_MATRIX.json](TARGET_EVIDENCE_MATRIX.json) | 58459 | 846ee64cbc04a54e4b47fbe80e081ec01c1d3afd | c1c1dad6ae99055aad3cdc448f0e2ba87ed64d584d623f8c994afa2071fa104b |
-| [TASK.md](TASK.md) | 6794 | ab3f073f26394483bf1de24168f523e15ccb7d0a | 71a0a06b2565f160cc6581dd7885d69d620f78295727e09b43a8a21b4eca7c74 |
-| [TASK_V2.md](TASK_V2.md) | 8247 | 726c4ff0d9396989bb6bf756b1089e1fa8eb80e6 | 245e970413e03d6c5816ac22b2b5a2424bd0518f07d31096c4ba6a35b0cced10 |
+| Prüfer | Ergebnis für die zehn Fachdateien | Identität des vollständigen Arbeitsreports |
+| --- | --- | --- |
+| /root/release_live_audit | SCOPED_DOCUMENT_AND_SOURCE_PASS, keine Findings | peer-final-doc-review-v3-r0.json; 23550 Bytes; SHA256 `3a614139247b5214bfd656799562098e6f75fbdbd107cd00fd650eb02d1b5fa0` |
+| /root/blocker_evidence_review | SCOPED_DOCUMENT_SOURCE_PASS, keine materiellen Findings | blocker-final-doc-review-v3-r0.json; 18757 Bytes; SHA256 `2b96821e5bf6814be720a14522f3429b732c707ea001f42b7fc30b1ec71beefe` |
+| ChatGPT / Root | DOCUMENT-CONTENT-PASS nach eigener vollständiger Inhalts-/Diff-/Evidence-Prüfung | Dieses Dokument, gebunden an die obigen zehn Identitäten; spätere Head-Entscheidung separat |
 
-Jede inhaltliche Änderung erfordert einen neuen gebundenen Review. Eine bloß neue Commit-ID erbt keine CI-/Deploymentfreigabe; unveränderte dokumentierte Dateihashes dürfen als dieselben geprüften Inhalte erkannt werden, während der neue Head separat gegated wird.
+Beide Reviewer haben sämtliche Texte einschließlich der beiden vollständigen JSON-Dateien und historischen TASK1/2 gelesen. Sie überprüften nicht nur den Autoren-Handoff. Die Quellreviewerin beziehungsweise der Quellreviewer bestätigte die bestehende Singlestütze, die gezielte Zielland-Qualifikation und die aktuelle Lifecycle-Grenze. Der zweite Review kontrollierte Quellenfälle, Konfliktpersistenz/-auflösung, Phasen, Privacy, Autoritäts- und STOP-Grenzen. Beide unterscheiden ihre eigenen Offline-Prüfungen von Roots Original-CI-Evidence. Ihre Empfehlungen erteilen keine TL-/Ready-/Merge-Autorität.
 
-## 4. Nachweise und unabhängige Gegenprüfung
+**Root hat selbst geprüft:**
 
-Root bestätigte die sechs ursprünglichen Paketquellen und ihre Gitblob-/SHA256-Identitäten sowie die 16 nativen Source-Anker. Der #1142-Kandidat wird wiederverwendet; seine vier Dateien sind gegenüber der bereits integrierten Lieferung unverändert. Die zusätzlichen rollenrang-/Stage2-Tupelvergleiche sind ausschließlich Offline-Auswertungen des vorhandenen Run2-Exports. Ein fehlender Stage2-Hashmatch ist kein Beweis benannter Objektabwesenheit.
+1. Vollständige aktuelle Autorenunterlagen, Stage1-Bericht, Manifest und alle drei Aufträge; den tatsächlichen Dokumentdiff gegen die erhaltene V2-Fassung. Historische Originaltasks sind auch im live gelesenen Main-Baum byteidentisch.
+2. Alle **64 rekursiven path/git_blob-Pins über 54 eindeutige Pfade** im Manifest gegen den frisch gelesenen vollständigen aktuellen Main-Baum. Keine Abweichung. Der Compare 60841444…1b96936 enthält genau zehn Dokumentzugänge aus #1160; Produkt-/SQL-Quellen bleiben gleich.
+3. Erneute Offline-Byte-/SHA256-/Gitblob-Prüfung der sechs ursprünglichen Kandidat-/Migrations-/Testquellen, **24 vorhandener vollständiger Bytekopien der 26 Produktplanpins** und aller **zehn fokussierten V3-Quellen**. Zwei weitere Produktpins bleiben auf bereits gelesene Header-/Vertragskommentare plus verifizierten Gitblob begrenzt. Bytegleichheit erweitert den dokumentierten semantischen Leseumfang nicht.
+4. Sämtliche 126 gepinnten Repository-Quell-URL-Vorkommen auf existierende Pfade; lokale Links, strikte JSON-Parser ohne doppelte Schlüssel, E01–E28, sechs Produktpunkte, zehn ausdrücklich zukünftige Quellenfälle und genau D1. Vor-PO- und spätere Ausführungsphasen sind getrennt.
+5. Unveränderte Run2-CSV und unveränderten JSON-Zelltext erneut offline gehasht: **96d6fc7ac398fcb8a0e73719c06730e4637090a141c2dbcbfaa731d62a732471** beziehungsweise **4d0ff64abe2cf6d12d8ada7fd418fe1d9047fb6a5a7da52616bf290d685b551c**. Keine neue Datenbankabfrage.
+6. Beide vollständigen neuen Reviewreports, ihre Dateihashes und tatsächlich begrenzten Empfehlungen. Kein V1-/V2-Review wird auf geänderte V3-Bytes übertragen.
 
-Die vollständige Produktzuordnung des Source-Reviewers enthält zehn fachliche Mappingbereiche, 50 hashverifizierte Source-Readbacks und 16 Testpins mit ausdrücklich getrennten vollständigen, gezielten und Tree-Leseumfängen. Map-SHA256 **02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27**. Root hat sämtliche **53 path/git_blob-Einträge mit 51 eindeutigen Pfaden** im finalen SOURCE_MANIFEST rekursiv gegen den vollständigen gepinnten main-Tree geprüft. Darunter passen alle **25 Produktplanpins**; **23** vollständige lokale Produktquellkopien wurden zusätzlich erneut gehasht. Die zwei übrigen Produktpins bleiben gesondert als Quell-/Tree-Identitäten behandelt; daraus wird keine vollständige eigene semantische Prüfung aller 50 Mappingdateien behauptet.
+Die fokussierte Source-Map V3 ist SHA256 **e3ddbbbaa4f9df590a2fae23f859584ed4a081dc4490fd1879ef94327677693e**. Sie enthält sechs Mappingbereiche und zehn Quellpins; der Produktplan ordnet sieben konkrete Bausteine zu. Das ist keine behauptete neue Vollprüfung aller 50 historischen V2-Quellen.
 
-Beide JSON-Dokumente sind syntaktisch konsistent und enthalten nach unabhängiger Prüfung keine doppelten Schlüssel. Die Matrix führt **28 Dev-Evidence-Punkte**, **17 ausgewiesene Vor-PO-Lücken**, sechs getrennte Produktzeilen und genau eine spätere konkrete Methodenentscheidung D1. Nicht jede Zeile ist vollständig unbekannt: anerkannte Snapshot-/CI-/historische Teile bleiben erhalten. Phase A benötigt Zielbaseline, finalen Änderungstext, konkreten QA-/Nachprüfungsplan, Recovery und unabhängiges Review; Phase B ist die reservierte PO-Entscheidung; tatsächliche Postchecks sind Phase C. Künftige Ergebnisse werden nicht zirkulär vor der Freigabe verlangt.
+## 4. Fachliche Entscheidung zur Quellenkorrektur
 
-**Vorhandene CI, nicht neu für diesen Dokumentreview gestartet:** [main-Run 42513853717](https://github.com/Jetnity/jetnity/actions/runs/42513853717) auf 60841444 ist erfolgreich. Root las die Original-Logs: Core-Job 128832463566 enthält Source-Guard ok 1567 und nativen Parent ok 1568 mit **27/27 PASS, keinem Skip**; insgesamt 8200 Tests, 8198 PASS, 0 FAIL, zwei bekannte andere Skips. Auth-Job 128832463670 bestätigt am 08.11.2026 um 19:13:09 UTC **55 Sollwerte / 243 Schlüssel**; die vier benötigten Policywerte sind über die gepinnten Mappingquellen gebunden. Die native Fixture ist echtes lokales PostgreSQL mit synthetischen Auth-/JWT-/FK-/ACL-Daten. Sie beweist keine tatsächliche Hosted-Installation oder echte signierte Dev-Sessionabnahme.
+**Der neue Quellenvertrag ist konsistent umgesetzt.** Die erforderliche Quelle muss tatsächlich amtlich, dem Zielland zugehörig, fachlich zuständig und für Fakt/Kontext/Gültigkeit eindeutig sein. Ein Behördenlabel, eine Domain, ein Ländercode oder ein einzelner gespeicherter Eintrag beweist dies allein nicht. Eine klare ausländische Gegenquelle ersetzt keine unklare Pflichtquelle.
 
-**Release-Baseline vor Veröffentlichung:** Die gelesenen GitHub-/Vercel-Metadaten bestätigen Production dpl_EqQ92Psn4z4F1xkFbc9EFB3NhcvF READY an main 60841444 und jetnity.com an diesem Deployment. Die zuletzt relevante #1159-Preview dpl_FDgRm8XTTrc9ERvBVrYXyJwq74Ah ist READY an e3c578402bdc8e81f641b6d32b0b4adc1550f61e. Diese Baseline ist kein Vorab-PASS der erst entstehenden Dokumentations-PR. Deren tatsächlicher Head, Diff, Ahead/Behind, frische Actions, Preview und Threads sind von Root gesondert zu verifizieren. Der spezielle Ready-STOP von #1131 an 0575063888fb6ee46e0933dd5a60005721d03a42 bleibt unberührt.
+Die begrenzte methodengebundene Gegenprüfung berücksichtigt bekannte verfügbare passende unabhängige amtliche Quellen. Fehlende, aktuell unerreichbare, selbst unklare, veraltete oder nicht vergleichbare optionale Evidence allein führt weder zu einer versteckten zweiten Pflichtquelle noch zu routinemäßiger Owner-Eskalation. Eine erschöpfende globale Suche wird nicht verlangt. Verschiedene Kontexte/Gültigkeitsbezüge gelten weder automatisch als Übereinstimmung noch als echter Konflikt.
 
-## 5. Inhaltliche Abnahme
+Ein tatsächlicher relevanter Widerspruch beim gleichen normalisierten Fakt und vergleichbaren Bedingungen verhindert die neue Veröffentlichung beziehungsweise invalidiert die betroffene aktuelle Projektion und eskaliert. Sein späterer Abruffehler oder Weglassen hebt ihn nicht auf. Positive methodengültige Evidence kann den Konflikt tatsächlich auflösen, auch durch einen belegten relevanten Kontext-/Gültigkeitswechsel. Es wird keine dauerhafte manuelle Blockade trotz erfolgter Klärung vorgeschrieben.
 
-**Stage1:** Die vom Owner bestätigte fehlende historische Zusatz-Evidence ist endgültig als Lücke dokumentiert. Es wird keine weitere Suche beim Owner und kein nachgestellter Altbeleg verlangt. Run2-Integrität und die positiven Funktions-/Body-/Konfigurations-/ACL-/Trigger-/rollenrang-Teilbelege bleiben anerkannt. Tatsächliche Ledger-ID, vollständiger historischer Abgleich und weitere aktuelle Zielbedingungen sind dadurch nicht belegt. [Stage1-Bericht](STAGE1_ACCEPTANCE_REPORT.md) und [Owner-Gap-Receipt](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934).
+**Bestehende Einzelstütze:** Der TypeScript-/SQL-Vertrag mit genau einer Primärstütze passt zur neuen Mindestzahl. Eine zwingende Mehrstützenmigration folgt daraus nicht mehr. Die geplante optionale Gegenprüfungsentscheidung wird separat versioniert und muss Primärevidence, Fakt, Kontext, Gültigkeit, Methode, Versuch/Quelle/Zeit, Ergebnis, Vorgänger und gegebenenfalls Auflösung an Annahme, Commit/Reproof, Rückzug und Cache binden. Eine lose Lognotiz genügt nicht; ein zweites Element darf nicht in unveränderte genau-eins-Arrays geschrieben werden.
 
-**#1139:** Das vollständige vorhandene Inventar umfasst ein Schema und vier Funktionen, 13 Authority- plus vier Pilot-DDL-/ACL-Operationen und zwei getrennte Commitgrenzen. CREATE OR REPLACE, tatsächliche Zusatz-/Default-/geerbte ACLs, neue Namespacekollisionen und Pilotabhängigkeiten sind ausdrücklich berücksichtigt. Der vorher bekannte P1-Vertrag gilt nicht als sichere aktivierte Rückfallversion. Der Recoveryplan unterscheidet R0 bis R8 einschließlich Teilcommit, unklarem Ausgang, Kollisionen und bereits entstandenen Grant-/Datenwirkungen. Endgültige zielgebundene Installations-/Inverse-/Recovery-Bytes und deren realer Nachweis fehlen noch; ein Bericht erfindet sie nicht. [Dev-Paket](DEV_PACKAGE.md), [Nachprüfung und Recovery](POSTCHECK_AND_RECOVERY.md).
+Die heutigen Verträge liefern accepted/withdrawn/conflicted, aber keinen fertigen Wiederannahmeübergang aus conflicted/withdrawn. Der Plan benennt die nötige spätere explizite versionierte Erweiterung mit neuer geprüfter Evidence korrekt. Weder dieser Übergang noch Quellenvergleich, Maschinenautorität, öffentlicher Cache oder Hintergrunddienst werden als implementiert dargestellt.
 
-**Produktziel:** Alle sechs Vorgaben sind verbindlich. Automatische Routineannahme nach einmaliger Methodenfreigabe; mindestens zwei qualifizierte übereinstimmende amtliche Primärquellen bereits für die erste öffentliche Regelantwort; Konflikt/Unsicherheit sperrt Veröffentlichung. Zwei URLs, Spiegel oder Modellantworten ersetzen keine Quellenunabhängigkeit. Eine relevante Gegenquelle wird nicht überstimmt. Vorhandene Registry-, Research-, Mehrbeleg-, Provenienz- und Persistenzgrundlagen werden erhalten.
+Die übrigen fünf Owner-Ziele bleiben verbindlich: versionierte Fakten, automatische Pflege mit Prüfspur/Recovery, anbieterneutrale Vorschläge, ausschließlich Jetnity-eigener prüfender Import, schnelle vorberechnete Besucherantwort und automatischer Miss-Pfad. Besucher geben nur Zielland und Staatsangehörigkeiten an; bedingte Regeln bleiben je Option sichtbar. Keine Passnummern/MRZ/Passfotos, kein zusätzlicher persönlicher Fragebogen oder stiller günstigster Pass. Privacy gilt auch für Queue, Proposals, Logs und Fehler.
 
-Der konkret vorhandene Accepted Store verlangt in TypeScript und SQL genau eine Stütze. Die geforderte Erweiterung bindet mindestens zwei Stützen gemeinsam an Fakten, Custody, Methoden-/Versionsnachweise, Commit/Confirm, Refresh und Read-Reproof. Menschliche Owner-/AAL2-Autorität bleibt geschützt; der geplante Jetnity-Import erhält eine eigene enge Maschinenautorität. Researcher bleiben auf untrusted Vorschläge beschränkt. Keine gefälschten menschlichen Claims oder pauschale service_role-Umgehung.
+D1 ist genau die spätere konkrete Methoden-/Betriebsentscheidung. Einquellenregel, automatische Routineannahme und CH→DE werden nicht erneut zur Grundsatzfreigabe gestellt. Stündliche Prüfung, 24 Stunden Primärevidence-Alter und p95 unter 1.000 ms sind gekennzeichnete Vorschläge, keine bewiesenen Leistungen. Diese Erweiterungen sind kein neues Vorbereitungsgate für den engen #1139-Fix.
 
-Besucher geben nur Zielland und Staatsangehörigkeiten an; die Ausgabe zeigt bedingte globale Regelübersichten pro Nationalität. Kein persönlicher Zusatzfragebogen, gespeichertes Wohnsitz-/Reiseprofil oder stiller günstigster Pass. Öffentlicher Cache, deduplizierte dauerhafte Miss-Jobs und laufende Überwachung sind konkret geplante Erweiterungen, keine behaupteten aktiven Funktionen. p95 unter 1000 ms, stündliche Prüfung und 24 Stunden Evidence-Alter sind gekennzeichnete SLO-/Methodenvorschläge; keine gemessenen Ergebnisse oder bereits erteilten Betriebsfreigaben.
+## 5. #917/#1139 bleiben wahrheitsgemäß abgegrenzt
 
-**#917/#1139 bleiben zuerst.** Fehlender vollständiger Automationsbetrieb oder Public Cache ist kein neues Vorbereitungsgate für den engen #1139-Fix. CH→DE bleibt der bereits entschiedene Erstpfad. D1 betrifft erst die konkret vorgelegte Methode samt Quellenqualifikation, Frische, Budget und Eskalationsrahmen. Bestehende konkrete Auth-/DB-/Rollout-Gates bleiben getrennt und werden nicht zu Einzelregelfreigaben. [Produktplan](PRODUCT_TARGET_PLAN.md).
+Die historische Lücke ist als endgültige Owner-Auskunft dokumentiert: keine weiteren damaligen Stage1-Belege vorhanden. Diese Suche wird nicht erneut beauftragt. Der erfolgreiche menschliche Run2 und seine positiven Definitions-/Konfigurations-/ACL-/Fingerprint-Teilnachweise bleiben ausdrücklich akzeptiert.
 
-## 6. Risiken, STOP und nächster Schritt
+Stage1 bleibt **APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING**. Die tatsächliche Ledger-ID, vollständige aktuelle Zielbindung und restliche Abnahme sind nicht durch den Dokumentabschluss erzeugt. Das Ausbleiben der zwei exakten alten Stage2-Fingerprints bei sieben redigierten passenden Signaturen beweist keine Abwesenheit heutiger benannter Objekte. Stage2 bleibt NOT_ATTEMPTED im dokumentierten Ablauf.
 
-| Stufe | Ergebnis im tatsächlichen Umfang |
-| --- | --- |
-| P0 | Kein neuer P0-Befund im Dokument-/Quellreview. Keine pauschale Behauptung über ungeprüfte Datenbanksicherheit. |
-| P1 | #1139 bleibt OPEN: wirksamer eigener Account-/Session-Schutz und erforderliche Ziel-/Ledger-/Rechte-/Recovery-Bindung noch nicht insgesamt abgenommen. Der historische #917-Plattform-STOP und eigenständige #1131-STOP bleiben bestehen. |
-| P2 | Eigenständige Privacy-Holds, insbesondere #911/#913, werden durch dieses Paket nicht geschlossen. Keine neuen persönlichen Dokument-/Session-/Credential-Daten im Paket. |
-| P3 | Keine materiellen neuen Dokumentfindings. Fremde Lint-/Abhängigkeitsbefunde werden durch diese Lieferung nicht bearbeitet oder geschlossen. |
+#1142 wird als bereits implementierter, nativ geprüfter Kandidat wiederverwendet. Fünf berührte Objekte, **13+4 DDL-/ACL-Operationen**, zwei getrennte Transaktionsgrenzen, bestehende/default/geerbte Rechte und die Nach-Lock-Autorisierung sind korrekt beschrieben. Die **28 Dev-Punkte**, 17 Vor-PO-Lücken, **27 nativen Fälle** und Recovery **R0–R8** bleiben erhalten. Ein äußeres BEGIN macht die zwei inneren COMMIT-Dateien nicht zu einem atomischen Zielartefakt.
 
-Der erste noch offene fachliche Schritt ist die konkrete Bindung der verbleibenden #917/#1139-Zielbedingungen anhand zulässig verfügbarer Evidence beziehungsweise einer tatsächlich belegten regulären Klärung der Plattformgrenze. Anschließend sind endgültiges Dev-Transaktions-/Migrations-/QA-/Recovery-Artefakt und unabhängiges Review fertigzustellen. Erst danach folgt die besondere konkrete PO-Entscheidung. Dieses Paket enthält keine Ersatzabfrage, keinen alternativen Operatorweg und keinen menschlichen SQL-Retry.
+Phase A verlangt zuerst tatsächliche Zielbaseline, finale Änderungs-/QA-/Recoveryartefakte und unabhängiges Review. Erst dann folgt Phase B mit der besonderen konkreten PO-Entscheidung. Tatsächliche Post-Apply-Ergebnisse gehören in Phase C und werden nicht zirkulär vor der Freigabe verlangt. Ein alter Backupbericht ist keine aktuelle geprüfte Wiederherstellung; der bekannte alte P1-Zustand ist kein sicherer aktiver Fallback. Bei unbekanntem Commitzustand gibt es keinen blinden Retry.
 
-**Sasa muss heute nichts in Supabase ausführen und keine alten Stage1-Belege nachliefern.** Die autorisierte Dokumentation wird durch Root vollständig veröffentlicht und an ihren tatsächlichen PR-/Issue-Stand gebunden. Der nächste Produkt-Implementierungsslice startet nicht automatisch. Keine SQL-/DB-/Auth-/ACL-/RLS-/Provider-/Schedule-Aktion wurde durch diesen Dokumentreview durchgeführt.
+**#1139 bleibt OPEN/P1 EFFECTIVE FIX NOT ACCEPTED; wirksames Paket NOT_RELEASE_READY / NOT_EXECUTED. Accepted Store bleibt SQL_UNAPPLIED / FEATURE_NOT_LIVE.** Die breite #917-Aufgabe würde auch durch Stage1 allein nicht geschlossen.
 
-**Abschlussstatus:** Dokumentinhalt PASS; Stage1 APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING mit anerkannten Teilbelegen; #1139 OPEN / P1 EFFECTIVE FIX NOT ACCEPTED; Stage2 NOT_ATTEMPTED im dokumentierten Ablauf, heutige Abwesenheit unbewiesen; Accepted Store SQL_UNAPPLIED / FEATURE_NOT_LIVE; Produktziel verbindlich, konkrete Methode/Umsetzung noch nicht freigegeben oder aktiviert.
+Der ursprüngliche #917-Readback-STOP und der unabhängige #1131-Ready-STOP bleiben bestehen. Die historische Plattformablehnung war kein Datenbankfehler und ist keine neue Ablehnung dieses Reviews. Vorhandene zulässige Artefakte wurden offline ausgewertet; keine umformulierte Abfrage, kein anderer Operator und kein menschlicher Ersatzlauf wurden eingeführt. Besondere Auth-/DB-/Ziel-/Privacy-/Production-Gates bleiben maßgeblich.
+
+## 6. Bestehende Baseline-Evidence und noch eigene Release-Gates
+
+Die [#1160-Post-Merge-Abnahme6727898770](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6727898770) bleibt an main1b96936 gebunden. Root hatte die vollständigen Originale geprüft: [CI42527963600](https://github.com/Jetnity/jetnity/actions/runs/42527963600), sieben erfolgreiche Jobs/70 Schritte; Core128875685288 mit Source-Guard1567 und nativer Parent1568, **27/27 PASS,0 SKIP,0 FAIL**,19859.855067 ms; Gesamt8200/8198/0/2 bekannte andere UI-Skips. Auth128875685142 bestätigt um22:01:11 UTC **55 Sollwerte/243 Schlüssel**, alle passend. Die frühere Evidence auf60841444 bleibt ihrem eigenen Run42513853717 zugeordnet. Die Task-V3-Angabe „läuft noch“ war ihr damaliger Publikationszeitpunkt.
+
+Nach der Unterbrechung las Root Run-/Main-Metadaten erneut: weiterhin SUCCESS/main1b96936. Production **dpl_6bFparJ6HM5WT3HFDUwy4rQ3DpGc READY**, Source1b96936, aliasError null; jetnity.com tatsächlich auf dieses Deployment gebunden. Die historische #1160-Preview **dpl_Be6bsWFxpuwSRJDADFWhsGmpAYqA** bleibt READY an47f3f91a2096ca124a9faaa0f1ca6caaa3010869. Diese Preview ist ausdrücklich kein V3-Deployment.
+
+Der Betriebsmodus ist NORMAL. Ruleset21875372 bleibt aktiv mit strikten erforderlichen Checks und Threadauflösung, ohne Bypass. Zwölf bestehende andere PRs sind Draft; #1131 hält seinen Head0575063888fb6ee46e0933dd5a60005721d03a42 und STOP. Diese read-only Release-Abgleiche ändern keine gehaltene Arbeit.
+
+**Vor einer V3-Integration noch zu prüfen:** tatsächlich veröffentlichter neuer Head, vollständiger Remote-Diff/Dateiblobs, Merge-Base/Ahead/Behind und unveränderte Basis, neue automatische GitHub-Actions-Ergebnisse mit tatsächlichem Checkout, neue Vercel-Preview an diesem Head, offene GitHub-/Vercel-Threads und frische Root-Entscheidung. Bei Merge folgen tatsächliches main, frische Push-CI, Production und aktive Domainbindung. Ergebnisse werden in PR und #917/#1139/#751 persistiert; keine heutige Aussage nimmt sie vorweg. Nur Root darf Ready/Merge ausführen.
+
+## 7. Verdict, Risiken und erster offener Schritt
+
+**DOCUMENT-CONTENT-PASS für genau die zehn gebundenen Fachdateien.** Keine neuen materiellen P0/P1/P2/P3-Findings im Dokumentationsumfang. Die beiden unabhängigen Reviews bestätigen die Inhalte; dieser Root-Entscheid beruht zusätzlich auf eigener Prüfung. Die separate Wahrheit-/Scope-Prüfung dieses abschließenden Reviewtextes und die tatsächlichen neuen Head-Gates bleiben vor Veröffentlichung/Integration abzuschließen.
+
+Bestehendes P1 #1139 sowie Ziel-/Ledger-/Recovery-/Plattformgrenzen bleiben offen. Eigenständige Privacy-Holds #911/#913 und vorhandene andere Lint-/Abhängigkeitsrisiken werden nicht durch Dokumentreview geschlossen. Kein allgemeiner DB-/Produkt-/Launch-PASS.
+
+**Jetzt:** finalen Reviewtext gegenprüfen, alle elf Bytes veröffentlichen und die neuen Dokument-PR-Gates vollständig abschließen. **Danach fachlich:** nur rechtmäßig vorliegende fehlende Restnachweise oder regulär belegte Auflösung der bestehenden Plattformgrenze an die Matrix binden; daraus das endgültige Dev-Migrations-/QA-/Recoverypaket fertigstellen. Erst das vollständig geprüfte wirksame Paket wird zur besonderen PO-Entscheidung vorgelegt.
+
+**Sasa muss aktuell keinen SQL-Lauf ausführen, keine alten Belege nachliefern und keine Grundsatzentscheidung wiederholen.** Kein automatischer Produkt-Folgeslice wurde gestartet.
 
