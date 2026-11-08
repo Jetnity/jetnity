@@ -21,9 +21,9 @@ function holdGraph(http:Protocol,phase:'headers'|'body',owner?:NativeSuiteOwners
   const reached=new Promise<void>(resolve=>{entered=resolve}),released=new Promise<void>(resolve=>{release=resolve})
   http.faults.graphHold={phase,released,entered}
   owner?.track(reached);owner?.track(released)
-  let removeStop:(()=>void)|undefined
-  const clear=()=>{release();entered();delete http.faults.graphHold;removeStop?.()}
-  removeStop=owner?.onStop(clear)
+  const registration:{removeStop:(()=>void)|undefined}={removeStop:undefined}
+  const clear=()=>{release();entered();delete http.faults.graphHold;registration.removeStop?.()}
+  registration.removeStop=owner?.onStop(clear)
   return {reached,release,clear}
 }
 function observeNative(life:InstanceType<Runtime['lifetime']['AcceptedStoreLifetime']>,onHeaders?:()=>void,owner?:NativeSuiteOwnership) {

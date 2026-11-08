@@ -1,3 +1,15 @@
+# Current author handoff V6 / Fix10
+
+Date: 2026-11-08 UTC. Same author/session: **Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1**, `/root/accepted_store_trip_integration_writer`. Current exact publication lease: `dabeaa479b039d41215d1e95446de79cadc173b2`, tree `4f15205a7765ea9e3dc9052ff8c46ec77e131d59`; main remains `e1fe0c696ade9f39b417772b5c065f87530204d6`.
+
+**CHANGES REQUIRED.** Actual run42468672936/Core128694046043 passes Typecheck, then fails Lint on one `prefer-const` error at `native-fetch-boundaries.ts:24:7`; 197 existing warnings remain. Core tests, all five hygiene steps and build are skipped. No R10/native/mounted execution or complete Fix9 gate is established by this run. Core original: 194150 bytes, SHA256 `fd0a1341bc0514b2b4f9b36e2438ffa23459e3c3923be18cb6b7de80c38f64c7`. At this update Root has independently confirmed Auth55/243 PASS, exact Preview READY and completed Persisted PASS (327593.22361ms total; 326733.887637ms subtest; 95 markers/45 reads; complete phase326499ms). Atomic is still running; no Atomic result is inferred. Every changed head needs fresh complete gates.
+
+Fix10 changes only three declaration/access lines in `holdGraph`: a constant initialized registration holder replaces the once-assigned variable. A synchronous `onStop(clear)` callback therefore still sees an existing holder with an undefined remover, and later cleanup uses the actual returned deregistration function. This removes the lint error without a temporal-dead-zone risk, altering no assertions, cases, timing, ownership or runtime policy. The new source is an immutable candidate; no local execution, new Typecheck/Lint/CI PASS, author publication, Ready or merge is claimed. TASK/R1–R10 and every hold remain unchanged.
+
+The complete V5 handoff below is retained **verbatim as historical Fix9 material**. Its a75 lease and latest-run statements describe that earlier checkpoint; this V6 status governs the current dabe lease. Root persists the full dabe CI/Persisted checkpoint separately and alone publishes the reviewed Fix10, followed by complete new-head gating.
+
+---
+
 # Official Truth Accepted Store Trip Integration 1 — author handoff V5
 
 Date: 2026-11-08. Issue #1155; Draft PR #1156.

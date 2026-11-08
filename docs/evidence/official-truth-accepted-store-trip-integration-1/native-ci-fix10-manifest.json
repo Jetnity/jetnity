@@ -1,0 +1,113 @@
+{
+  "schema": "jetnity-author-frozen-api-candidate-v1",
+  "title": "Accepted Store Trip Integration 1 — minimal Fix10",
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "repository": "Jetnity/jetnity",
+  "issue": 1155,
+  "pullRequest": 1156,
+  "expectedRemoteParent": "dabeaa479b039d41215d1e95446de79cadc173b2",
+  "expectedParentTree": "4f15205a7765ea9e3dc9052ff8c46ec77e131d59",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "priorImmutableFix9Manifest": "319cce5365bf29508a226659486501974ebb562d",
+  "scope": "Root-authorized same-session immediate Fix10: one prefer-const error, synchronously safe registration form, two concise dated V6 status prefixes only. TASK/R1-R10 unchanged.",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "802e4401eacd675e0a08aa1f7fad7a722af3ae00",
+      "mainBlob": null,
+      "gitBlob": "5531aae18e3be2534e518f59855d96cfc917a6ed",
+      "sha256": "c34fb5e9e2079df038feb7f6138c5725b549b14511f8e695ede704068d677845",
+      "bytes": 11745,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/5531aae18e3be2534e518f59855d96cfc917a6ed"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "76f80e7e6869464f808fdfa80baafd5bd014f955",
+      "mainBlob": null,
+      "gitBlob": "27c070920ae5efca9a5140152c97239204c0525c",
+      "sha256": "f9414d1cf379d67c9849641fae987e240842dec8ec198e2f6b55782ad6374687",
+      "bytes": 50057,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/27c070920ae5efca9a5140152c97239204c0525c"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "56325dc468432561bbaa95a432162fe75c345be0",
+      "mainBlob": null,
+      "gitBlob": "f1a3b160c9fa4be83b5ed352120c910e9350b3a4",
+      "sha256": "48c998d1639b4394a64e553be254427cd1f028145a3ef2cac91aa99d95fea7d5",
+      "bytes": 31703,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/f1a3b160c9fa4be83b5ed352120c910e9350b3a4"
+    }
+  ],
+  "fileCounts": {
+    "code": 1,
+    "docs": 2,
+    "total": 3
+  },
+  "correction": {
+    "before": "let removeStop:(()=>void)|undefined; clear accesses removeStop; removeStop=owner?.onStop(clear)",
+    "after": "const registration:{removeStop:(()=>void)|undefined}={removeStop:undefined}; clear accesses registration.removeStop; registration.removeStop=owner?.onStop(clear)",
+    "rationale": "The holder is fully initialized before onStop can call clear synchronously. During that synchronous call its optional remover remains undefined/no-op, exactly as before; after registration clear uses the actual returned deregistration callback. A naive const initializer referring to itself would risk the temporal dead zone.",
+    "preserved": "Same release/entered calls, hold deletion, returned reached/release/clear, all assertions/cases/ownership/signals/deadlines. No eslint disable/rule/dependency/workflow/product change.",
+    "diff": "Only the three declaration/access/assignment source lines are replaced; inverse exact replacement reproduces the complete original code blob.",
+    "docs": "V6 prefixes only; complete V5 document bytes retained verbatim as suffixes and explicitly labeled historical."
+  },
+  "currentPublishedEvidence": {
+    "source": "Root independently read original completed Core and current companion jobs; author source correction uses those exact reported boundaries.",
+    "run": 42468672936,
+    "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+    "core": {
+      "job": 128694046043,
+      "typecheck": "PASS",
+      "lint": "FAIL",
+      "errors": 1,
+      "warnings": 197,
+      "error": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts:24:7 prefer-const",
+      "originalBytes": 194150,
+      "originalSha256": "fd0a1341bc0514b2b4f9b36e2438ffa23459e3c3923be18cb6b7de80c38f64c7",
+      "tests": "SKIPPED",
+      "hygieneFiveSteps": "SKIPPED",
+      "build": "SKIPPED",
+      "newR10NativeMountedExecution": false
+    },
+    "auth": {
+      "status": "PASS",
+      "values": 55,
+      "keys": 243
+    },
+    "preview": {
+      "status": "READY",
+      "qualifier": "Root exact-head observation; not hosted authenticated QA"
+    },
+    "persisted": {
+      "status": "PASS",
+      "totalMs": 327593.22361,
+      "subtestMs": 326733.887637,
+      "markers": 95,
+      "reads": 45,
+      "completePhaseMs": 326499
+    },
+    "atomic": {
+      "status": "IN_PROGRESS at dated Fix10 preparation",
+      "passClaim": false
+    }
+  },
+  "verification": {
+    "author": "Actual dabe code and both document blobs fetched before edit; baseline Gitblob verified. All3 new actual immutable blobs read back byte-for-byte with Gitblob/SHA256/UTF8 validation.",
+    "localEnvironment": "Unavailable; no local exec.",
+    "typecheckOfNewCandidate": false,
+    "lintOfNewCandidate": false,
+    "nativeOfNewCandidate": false,
+    "mountedOfNewCandidate": false,
+    "ciOfNewCandidate": false,
+    "pass": "No new runtime, full exact-head or Technical-Lead PASS. Source correction still requires normal complete new-head gates."
+  },
+  "actionBoundary": "Only create_blob/read operations by author; no tree/commit/ref/Ready/merge. Root reviews/publishes with exact dabe lease; old Fix9 manifest remains immutable.",
+  "holds": "FEATURE_NOT_LIVE; SQL UNAPPLIED; absent binding/provider/contracts; all #917/#1131 and real-source/key/retention/witness/privacy/Owner/hosted activation holds unchanged.",
+  "followingSlice": "none"
+}

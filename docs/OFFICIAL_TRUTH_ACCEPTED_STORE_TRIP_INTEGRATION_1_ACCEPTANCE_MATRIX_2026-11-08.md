@@ -1,3 +1,15 @@
+# Current acceptance status V6 / Fix10
+
+Date: 2026-11-08 UTC. Exact parent `dabeaa479b039d41215d1e95446de79cadc173b2`, tree `4f15205a7765ea9e3dc9052ff8c46ec77e131d59`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; TASK/R1–R10 and the complete case/ownership map are unchanged.
+
+Actual CI42468672936/Core128694046043: Typecheck PASS, Lint FAIL on the single `native-fetch-boundaries.ts:24:7` `prefer-const` declaration (197 existing warnings). Tests/all five hygiene steps/build are **SKIPPED**, so this run supplies no R10/native/mounted case result. Original Core SHA256 `fd0a1341bc0514b2b4f9b36e2438ffa23459e3c3923be18cb6b7de80c38f64c7`,194150 bytes. Root's current independent evidence confirms Auth55/243 PASS, Preview READY and completed Persisted PASS (327593.22361ms total,326733.887637ms subtest,95 markers/45 reads,complete326499ms). Atomic remains in progress at this dated update.
+
+Fix10 uses a constant initialized registration holder and preserves both synchronous `onStop` cleanup and later deregistration. Only its three code lines and these two concise status prefixes change. No assertion, test case, timeout, dependency, gate or ownership contract is removed or weakened. New candidate execution remains open; no successful lint or integration run is inferred from this source correction. Root alone reviews/publishes and then reads every complete new-head gate.
+
+The V5 matrix below remains **verbatim historical Fix9 evidence and the full required coverage map**; its earlier a75 status does not supersede this current dabe result. No old PASS carries to the next head.
+
+---
+
 # Accepted Store Trip Integration 1 — acceptance matrix V5
 
 Author: Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1.  
