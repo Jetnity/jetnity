@@ -4,6 +4,7 @@ import { requirementsLokalFuerReise } from '../engine'
 import { pilotContextFingerprint } from '../official-truth-ch-de-application-pilot-1/context'
 import type { OfficialEvaluation } from '../official'
 import type { AcceptedStoreTripResult } from './result'
+import { acceptedStoreRuleReference } from './engine-reference'
 
 const text=z.string().max(16_384),nullable=text.nullable()
 const date=z.string().max(40).refine(value=>Number.isFinite(Date.parse(value)))
@@ -40,7 +41,7 @@ export function acceptedStoreClientResult(raw:unknown,trip:Trip):AcceptedStoreTr
     const p=positives[0]!,source=Date.parse(result.sourceCheckedAt),accepted=Date.parse(result.acceptedAt),read=Date.parse(result.readAt),end=Date.parse(result.expiresAt)
     if(p.status!=='current'||p.freshness!=='current'||p.officialClass!=='requirement'||p.requirementType!=='visa'||p.destinationCountryCode!=='DE'||p.transitCountryCode!==null
       ||p.travellerClientRef!==declaration.travellerClientRef||p.credentialOptionRef!==declaration.credentialOptionRef
-      ||p.evidence.checkedAt!==result.sourceCheckedAt||p.evidence.ruleReference!==result.receiptFingerprint
+      ||p.evidence.checkedAt!==result.sourceCheckedAt||p.evidence.ruleReference!==acceptedStoreRuleReference(result.receiptFingerprint)
       ||p.action&&(p.action.href!==p.evidence.sourceUrl||!p.action.href.startsWith('https://'))
       ||source>accepted||accepted>read||end<=read||end-read>15_000||end-source>300_000)throw Error('response_binding_invalid')
   } else if(positives.length||result.receiptFingerprint!==null||result.evidenceVersionId!==null||result.sourceCheckedAt!==null||result.acceptedAt!==null

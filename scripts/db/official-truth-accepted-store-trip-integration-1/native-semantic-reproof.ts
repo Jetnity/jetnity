@@ -14,6 +14,7 @@ import type { nativeBinding } from './native-fixture'
 import type { startNativeHttp } from './native-http'
 import type { nativeSql } from './native-schema'
 import { fixtureExtractor } from './fixtures'
+import type { NativeSuiteOwnership } from './native-suite'
 
 /** Same pure receipt-rehash recipe as the frozen historical negative fixture;
  * the required verifier here is the actual Accepted-Store R2 profile. No LOCAL
@@ -45,7 +46,9 @@ function contradictingAcceptedArchive(wire:ArchiveWire):IntegratedPilotBundleInp
 
 export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typeof nativeProductRuntime>,
   http:Awaited<ReturnType<typeof startNativeHttp>>,witness:Awaited<ReturnType<typeof nativeBinding>>,
-  sql:ReturnType<typeof nativeSql>,trip:Trip) {
+  sql:ReturnType<typeof nativeSql>,trip:Trip,owner?:NativeSuiteOwnership) {
+  owner?.check()
+  const run=<T>(operation:()=>Promise<T>)=>owner?owner.run(operation):operation()
   const persistent=()=>sql(`select encode(sha256(jsonb_build_object(
     'heads',(select jsonb_agg(to_jsonb(x)) from official_accepted_trip_private.heads x),
     'operations',(select jsonb_agg(to_jsonb(x) order by sequence) from official_accepted_trip_private.operations x),
@@ -56,17 +59,17 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     'archiveBlobs',(select jsonb_agg(jsonb_build_array(digest,encode(sha256(canonical_bytes),'hex')) order by digest)
       from official_provenance_private.artifact_blobs))::text::bytea),'hex')`)
   const before=persistent(),cas=witness.casCount(),rpcFrom=http.evidence.length
-  const owner=new AbortController(),life=new runtime.lifetime.AcceptedStoreLifetime(owner.signal,45_000)
+  const readerOwner=owner?owner.controller():new AbortController(),life=new runtime.lifetime.AcceptedStoreLifetime(readerOwner.signal,45_000)
   const db=new runtime.database.AcceptedStoreDatabase(life,witness.binding)
   let originalHash='',originalReceipt='',forgedReceipt=''
   const bindingCases:string[]=[]
   try {
-    assert.equal(await db.userIdentity(),http.claims.sub)
-    const reserve=await db.reserve({cell:witness.binding.contract.id,contractDigest:witness.binding.contract.digest,
-      profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,purpose:'read',tripId:trip.id,revision:trip.revision}) as {token:string}
+    assert.equal(await run(()=>db.userIdentity()),http.claims.sub)
+    const reserve=await run(()=>db.reserve({cell:witness.binding.contract.id,contractDigest:witness.binding.contract.digest,
+      profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,purpose:'read',tripId:trip.id,revision:trip.revision})) as {token:string}
     assert.equal(typeof reserve.token,'string')
-    const response=await db.snapshot({token:reserve.token}) as {snapshot:unknown}
-    const genuine=await runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life)
+    const response=await run(()=>db.snapshot({token:reserve.token})) as {snapshot:unknown}
+    const genuine=await run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life))
     genuine.assertCurrent();originalReceipt=genuine.receipt
     assert.deepEqual(genuine.claim.fact,{kind:'requirement_effect',effect:'not_required',visaMode:'visa_exempt'})
     type Snapshot=typeof genuine.snapshot
@@ -81,8 +84,9 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
       }],
     ]
     for(const [name,reason,change] of malformed) {
+      owner?.check()
       const clone=structuredClone(genuine.snapshot);change(clone)
-      await assert.rejects(runtime.reproof.reproveRetainedSnapshot(clone,witness.binding,life),
+      await assert.rejects(run(()=>runtime.reproof.reproveRetainedSnapshot(clone,witness.binding,life)),
         error=>error instanceof Error&&error.message===reason,name)
       bindingCases.push(name)
     }
@@ -90,27 +94,33 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     // production definition or SDK mutation. The actual new reader compares
     // its current descriptor with the unchanged archived definition pins.
     const version=Object.getOwnPropertyDescriptor(fixtureExtractor,'extractorVersion')!
+    const restoreDefinition=owner?.restore(()=>Object.defineProperty(fixtureExtractor,'extractorVersion',version))
     try {
       Object.defineProperty(fixtureExtractor,'extractorVersion',{...version,value:fixtureExtractor.extractorVersion+1})
-      await assert.rejects(runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life),
+      await assert.rejects(run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life)),
         error=>error instanceof Error&&error.message==='current_extractor_changed')
       bindingCases.push('changed current closed-fixture extractor definition')
-    } finally {Object.defineProperty(fixtureExtractor,'extractorVersion',version)}
+    } finally {if(restoreDefinition)restoreDefinition();else Object.defineProperty(fixtureExtractor,'extractorVersion',version)}
+    owner?.check()
     const snapshot=structuredClone(genuine.snapshot)
     const sourceArchive=snapshot.archive as ArchiveWire&{edges:{receipt:Record<string,unknown>[];binding:Record<string,unknown>[];artifacts:Record<string,unknown>[]}}
     const bundle=contradictingAcceptedArchive(sourceArchive),wire=runtime.archive.archiveWire(bundle)
+    owner?.check()
     const strict=runtime.archive.verifyArchive(wire)
     forgedReceipt=strict.receipt.recordFingerprint
     assert.deepEqual(wire.artifacts,sourceArchive.artifacts,'Every original artifact byte and pin stays unchanged')
     const edges=structuredClone(sourceArchive.edges)
-    for(const edge of [...edges.receipt,...edges.binding])edge.record_fingerprint=forgedReceipt
+    for(const edge of [...edges.receipt,...edges.binding]){owner?.check();edge.record_fingerprint=forgedReceipt}
     snapshot.archive={...wire,edges};snapshot.receipt=forgedReceipt
     snapshot.metadata={...snapshot.metadata,receiptFingerprint:forgedReceipt}
     snapshot.manifest.metadata=snapshot.metadata
     snapshot.manifest.claim={...(snapshot.manifest.claim as Record<string,unknown>),fact:strict.receipt.payload.candidate.fact}
-    const key=await life.run(()=>witness.binding.key.resolve(life.signal))
+    owner?.check()
+    const acquiringKey=life.run(()=>witness.binding.key.resolve(life.signal))
+    owner?.track(acquiringKey)
+    const key=await acquiringKey
     try {
-      life.assertCurrent();assert(key)
+      owner?.check();life.assertCurrent();assert(key)
       const original=runtime.custody.decryptOriginal(genuine.snapshot.ciphertext,genuine.snapshot.metadata,key)
       originalHash=createHash('sha256').update(original,'utf8').digest('hex')
       assert.equal(originalHash,genuine.snapshot.metadata.contentHash)
@@ -120,12 +130,13 @@ export async function nativeSemanticReproof(t:TestContext,runtime:ReturnType<typ
     // Edges, code pins, Evidence, original hash, AAD and parser are all real.
     // This precise error occurs only after actual match/extract and canonical
     // regelKandidatAkzeptieren, rather than an earlier byte/hash refusal.
-    await assert.rejects(runtime.reproof.reproveRetainedSnapshot(snapshot,witness.binding,life),
+    await assert.rejects(run(()=>runtime.reproof.reproveRetainedSnapshot(snapshot,witness.binding,life)),
       error=>error instanceof Error&&error.message==='retained_fact_invalid')
-    const after=await runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life)
+    const after=await run(()=>runtime.reproof.reproveRetainedSnapshot(response.snapshot,witness.binding,life))
     after.assertCurrent();assert.equal(after.receipt,originalReceipt)
-  } finally {await db.dispose();await life.settle();await http.settle()}
-  assert.equal(persistent(),before);assert.equal(witness.casCount(),cas)
+  } catch(error){owner?.stop(error);throw error}
+  finally {if(owner)await owner.cleanup(()=>db.dispose(),()=>life.settle(),()=>http.settle());else{await db.dispose();await life.settle();await http.settle()}}
+  owner?.check();assert.equal(persistent(),before);assert.equal(witness.casCount(),cas)
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_reserve_v1'&&e.committed))
   assert(http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_snapshot_v1'&&e.committed))
   assert(!http.evidence.slice(rpcFrom).some(e=>e.rpc==='official_truth_trip_store_finalize_v1'))

@@ -1,0 +1,296 @@
+{
+  "kind": "read-only measured Atomic gate diagnosis, no new execution",
+  "source": {
+    "native.test.ts": "1b04f7375080ebfa53123751c9bbc83a70d38290",
+    "test-lifetime.ts": "dfafa09b6bac17561f42f76ab15646656f84bf20",
+    ".github/workflows/ci.yml": "5623adc59ec9dcd7887283651c54e18462910d05",
+    "contract.ts": "7dc82045ce1e32ceabedd70089e50f53d06e1658"
+  },
+  "runs": {
+    "587": {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-final-native-gating-20261108/atomic-128653158272.log",
+      "sha256": "0d7bdefa83500f731db9c7a2e453e1fc7508794549b39b1212ec98d0703b2fe0",
+      "bytes": 179821,
+      "head": "587c74047b343f63d407c5dc6e2dfd1996581478",
+      "job": 128653158272,
+      "rawMarkers": 152,
+      "parseableMarkers": 151,
+      "terminalMs": {
+        "unknown_commit": 567420,
+        "readback_failure": 604576,
+        "cleanup_after_bound": 685420,
+        "reader_after_bound": 766125
+      },
+      "negativeStatements": {
+        "count": 30,
+        "sumMs": 91143
+      },
+      "completeVerifierProbesMs": 17775,
+      "jitProbes": [
+        {
+          "setting": "on",
+          "verifyMs": 808,
+          "completed": true,
+          "restored": true
+        },
+        {
+          "setting": "off",
+          "verifyMs": 811,
+          "completed": true,
+          "restored": true
+        }
+      ],
+      "positiveSqlPhases": [
+        {
+          "bind": 1369.744,
+          "total": 8530.359,
+          "publish": 1989.233,
+          "head_wait": 0.186,
+          "supersede": 0.618,
+          "new_lookup": 1369.969,
+          "old_lookup": 695.251,
+          "new_reproof": 680.493,
+          "old_reproof": 1744.575,
+          "old_final_reproof": 680.19
+        },
+        {
+          "bind": 1500.375,
+          "total": 9381.355,
+          "publish": 2195.484,
+          "head_wait": 0.192,
+          "supersede": 0.604,
+          "new_lookup": 1513.468,
+          "old_lookup": 764.249,
+          "new_reproof": 760.583,
+          "old_reproof": 1896.167,
+          "old_final_reproof": 750.133
+        }
+      ],
+      "corpus": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        }
+      ],
+      "cleanup": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+        "elapsedMs": 766383,
+        "cleanup": {
+          "started": 9986,
+          "settled": 9986,
+          "pending": 0,
+          "connections": 248,
+          "closed": 248,
+          "stoppedClusters": 11
+        },
+        "parentAborted": false
+      },
+      "completion": {
+        "schema": "official-truth-atomic-version-refresh-1",
+        "phase": "complete native refresh acceptance matrix finished",
+        "elapsedMs": 766383,
+        "parentReserveMs": 133617
+      }
+    },
+    "e51": {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-e51-native-ci-review-20261108/atomic-128659586063-original.log",
+      "sha256": "f6bc2d517d925b20d390368c6c84de031a0263cff31687e0685e2c11fa03b2c6",
+      "bytes": 173556,
+      "head": "e51d856876d1e5d55591b30103453ea774be44bc",
+      "job": 128659586063,
+      "rawMarkers": 146,
+      "parseableMarkers": 145,
+      "terminalMs": {
+        "unknown_commit": 773440,
+        "readback_failure": 826365
+      },
+      "negativeStatements": {
+        "count": 30,
+        "sumMs": 135238
+      },
+      "completeVerifierProbesMs": 24259,
+      "jitProbes": [
+        {
+          "setting": "on",
+          "verifyMs": 1166,
+          "completed": true,
+          "restored": true
+        },
+        {
+          "setting": "off",
+          "verifyMs": 1169,
+          "completed": true,
+          "restored": true
+        }
+      ],
+      "positiveSqlPhases": [
+        {
+          "bind": 2031.053,
+          "total": 12678.376,
+          "publish": 2950.058,
+          "head_wait": 0.215,
+          "supersede": 0.81,
+          "new_lookup": 2057.882,
+          "old_lookup": 1033.228,
+          "new_reproof": 1015.178,
+          "old_reproof": 2572.877,
+          "old_final_reproof": 1016.943
+        },
+        {
+          "bind": 2253.922,
+          "total": 14030.06,
+          "publish": 3270.704,
+          "head_wait": 0.199,
+          "supersede": 0.757,
+          "new_lookup": 2273.828,
+          "old_lookup": 1147.291,
+          "new_reproof": 1133.7,
+          "old_reproof": 2828.537,
+          "old_final_reproof": 1120.988
+        }
+      ],
+      "corpus": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        }
+      ],
+      "cleanup": null,
+      "completion": null
+    },
+    "a75": {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-a75-native-ci-review-20261108/atomic-128668274962-original.log",
+      "sha256": "6b33e97b19ac593d0056b7cc9d8e5488b08855cab47741602c6aea0b9a0605b1",
+      "bytes": 173718,
+      "head": "a75e709f074576d3f1ad1d4ac8fec54956fcb02a",
+      "job": 128668274962,
+      "rawMarkers": 146,
+      "parseableMarkers": 145,
+      "terminalMs": {
+        "unknown_commit": 782285,
+        "readback_failure": 836148
+      },
+      "negativeStatements": {
+        "count": 30,
+        "sumMs": 136670
+      },
+      "completeVerifierProbesMs": 24700,
+      "jitProbes": [
+        {
+          "setting": "on",
+          "verifyMs": 1168,
+          "completed": true,
+          "restored": true
+        },
+        {
+          "setting": "off",
+          "verifyMs": 1166,
+          "completed": true,
+          "restored": true
+        }
+      ],
+      "positiveSqlPhases": [
+        {
+          "bind": 2052.349,
+          "total": 12761.071,
+          "publish": 2968.581,
+          "head_wait": 0.254,
+          "supersede": 0.797,
+          "new_lookup": 2060.74,
+          "old_lookup": 1036.693,
+          "new_reproof": 1021.116,
+          "old_reproof": 2602.467,
+          "old_final_reproof": 1017.939
+        },
+        {
+          "bind": 2272.101,
+          "total": 14149.006,
+          "publish": 3300.735,
+          "head_wait": 0.203,
+          "supersede": 0.801,
+          "new_lookup": 2303.64,
+          "old_lookup": 1136.242,
+          "new_reproof": 1148.396,
+          "old_reproof": 2840.635,
+          "old_final_reproof": 1146.121
+        }
+      ],
+      "corpus": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5565412
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5587552
+        }
+      ],
+      "cleanup": null,
+      "completion": null
+    }
+  },
+  "all145CommonMarkerKeysEqual": true,
+  "projectionOnlyNotObserved": {
+    "baselineRemainingAfterReadbackMs": 161807,
+    "a75WithBaselineTailMs": 997955,
+    "a75WithTailScaled1point5Ms": 1078858.5,
+    "notWallTimeGuarantee": true
+  }
+}

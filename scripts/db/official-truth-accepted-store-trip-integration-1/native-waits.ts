@@ -9,34 +9,44 @@ import { nativeSession,type startNativeHttp } from './native-http'
 import { quote,type nativeSql } from './native-schema'
 import { declareNativeTrip,nativeIds } from './native-fixture'
 import type { nativeProductRuntime } from './native-loader'
+import type { NativeSuiteOwnership } from './native-suite'
 
 export async function nativeWaitProof(t:TestContext,cluster:LocalProofCluster,sql:ReturnType<typeof nativeSql>,
-  runtime:ReturnType<typeof nativeProductRuntime>,http:Awaited<ReturnType<typeof startNativeHttp>>,initial:Trip):Promise<Trip>{
+  runtime:ReturnType<typeof nativeProductRuntime>,http:Awaited<ReturnType<typeof startNativeHttp>>,initial:Trip,owner?:NativeSuiteOwnership):Promise<Trip>{
+  owner?.check()
+  const controller=()=>owner?owner.controller():new AbortController()
   let trip=initial
   const cases:string[]=[]
   async function observe(condition:()=>boolean|Promise<boolean>,ms:number){
     const deadline=performance.now()+ms
     while(performance.now()<deadline){
-      if(await condition()){assert(performance.now()<=deadline,'Actual native checkpoint exceeded its unchanged observation bound');return}
-      await new Promise<void>(resolve=>setTimeout(resolve,5))
+      owner?.check()
+      if(await condition()){owner?.check();assert(performance.now()<=deadline,'Actual native checkpoint exceeded its unchanged observation bound');return}
+      if(owner)await owner.wait(5);else await new Promise<void>(resolve=>setTimeout(resolve,5))
     }
     assert.fail('Required actual blocked native SQL checkpoint was not observed')
   }
-  const read=(signal:AbortSignal)=>{runtime.rate.readinessRateLeeren();return runtime.reader.readAcceptedStoreTrip(trip.id,trip.revision,signal)}
+  const read=(signal:AbortSignal)=>{owner?.check();runtime.rate.readinessRateLeeren();const operation=runtime.reader.readAcceptedStoreTrip(trip.id,trip.revision,signal);return owner?owner.track(operation):operation}
   for(const mode of ['auth_revoked','auth_expired','child_change','child_aba'] as const){
+    owner?.check()
     const held:{connection:LocalPgConnection|null;ready:boolean;pid:number;waiterPid:number|null}={connection:null,ready:false,pid:0,waiterPid:null}
     let entered=false,finished=false,observer:LocalPgConnection|null=null
-    const owner=new AbortController(),from=http.evidence.length
+    const caseOwner=controller(),from=http.evidence.length
+    const closeActors=()=>{
+      if(held.connection){const connection=held.connection;held.connection=null;connection.close()}
+      if(observer){const connection=observer;observer=null;connection.close()}
+    }
+    const removeActorsStop=owner?.onStop(closeActors)
     http.faults.beforeRpc=async(name)=>{
       if(name!=='official_truth_trip_store_finalize_v1'||entered)return
-      entered=true;held.connection=await LocalPgConnection.connect(cluster)
+      owner?.check();entered=true;held.connection=await LocalPgConnection.connect(cluster)
       await held.connection.query('begin')
       await held.connection.query('lock table private.official_sources in row exclusive mode')
       held.pid=Number((await held.connection.query('select pg_backend_pid()::text as pid'))[0]!.pid)
       assert(Number.isInteger(held.pid)&&held.pid>0);held.ready=true
     }
     http.faults.afterRpcDispatch=(name,_payload,pid)=>{if(name==='official_truth_trip_store_finalize_v1')held.waiterPid=pid}
-    const operation=read(owner.signal).finally(()=>{finished=true})
+    const operation=read(caseOwner.signal).finally(()=>{finished=true});owner?.track(operation)
     try {
       observer=await LocalPgConnection.connect(cluster)
       await observer.query("set statement_timeout='1s'")
@@ -60,6 +70,7 @@ export async function nativeWaitProof(t:TestContext,cluster:LocalProofCluster,sq
         return rows.length===1&&rows[0]!.waiter_pid===String(held.waiterPid)&&rows[0]!.holder_pid===String(held.pid)
           &&rows[0]!.relation==='private.official_sources'
       },1_000)
+      owner?.check()
       if(mode==='auth_revoked')sql(`update auth.sessions set aal='aal1' where id=${quote(nativeSession)}`)
       else if(mode==='auth_expired'){
         sql(`update auth.sessions set not_after=clock_timestamp()+interval '150 milliseconds' where id=${quote(nativeSession)}`)
@@ -75,17 +86,27 @@ export async function nativeWaitProof(t:TestContext,cluster:LocalProofCluster,sq
       assert(final&&!final.committed,`${mode}: must reach and refuse actual final native transaction`)
       assert.equal(final.sqlState,mode.startsWith('auth_')?'42501':'22023')
       cases.push(mode)
-    } finally {
-      owner.abort();delete http.faults.beforeRpc;delete http.faults.afterRpcDispatch
-      if(held.connection){await held.connection.query('rollback').catch(()=>[]);held.connection.close()}
-      await operation;await http.settle()
-      observer?.close()
-      sql(`update auth.sessions set aal='aal2',not_after=clock_timestamp()+interval '1 hour' where id=${quote(nativeSession)}`)
+    } catch(error){owner?.stop(error);throw error}
+    finally {
+      caseOwner.abort();delete http.faults.beforeRpc;delete http.faults.afterRpcDispatch
+      const releaseHolder=async()=>{
+        if(held.connection){
+          const connection=held.connection
+          try{await connection.query('rollback').catch(()=>[])}finally{if(held.connection===connection){held.connection=null;connection.close()}}
+        }
+      }
+      try {
+        if(owner)await owner.cleanup(releaseHolder,()=>Promise.allSettled([operation]),()=>http.settle(),()=>closeActors())
+        else{await releaseHolder();await operation;await http.settle();closeActors()}
+      } finally {removeActorsStop?.()}
+      if(!owner?.signal.aborted)sql(`update auth.sessions set aal='aal2',not_after=clock_timestamp()+interval '1 hour' where id=${quote(nativeSession)}`)
     }
-    if(mode.startsWith('child_'))trip=await declareNativeTrip(http,runtime)
-    const control=await read(new AbortController().signal)
+    owner?.check()
+    if(mode.startsWith('child_'))trip=await declareNativeTrip(http,runtime,{},owner)
+    const control=await read(controller().signal)
     assert.equal(control.status,200);assert.equal((control.body as AcceptedStoreTripResult).status,'current',`${mode}: positive control must independently reprove current data`)
   }
+  owner?.check()
   t.diagnostic(JSON.stringify({proof:'native-after-wait-authority-and-trip',cases,actualBlockedFinalizeObserved:true,
     holderReadyBeforeDispatch:true,actualWaiterAndBlockerMatched:true,blockedRelation:'private.official_sources',observationBoundMs:1_000,
     positiveControlAfterEach:true,boundary:'Value-plus-MVCC closure; no claim to detect every fully vanished child ABA. Engine values remain the exact reserved own Trip.'}))

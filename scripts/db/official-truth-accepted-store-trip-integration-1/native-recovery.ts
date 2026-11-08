@@ -118,7 +118,8 @@ export async function nativeRecoveryProof(t:TestContext){
       }
     }
     http.faults.afterCommit=async(name,payload,result)=>{
-      if(name==='official_truth_trip_store_cleanup_v1'&&payload.token===raceToken)disposalRemoved=(result as {removed:number}).removed
+      if(name==='official_truth_trip_store_cleanup_v1'&&raceToken!==null&&raceOwner.signal.aborted
+        &&disposalAttempts===1&&payload.token===raceToken)disposalRemoved=(result as {removed:number}).removed
     }
     const publication=runtime.producer.publishAcceptedStore(raceOwner.signal).finally(()=>{finished=true})
     try {

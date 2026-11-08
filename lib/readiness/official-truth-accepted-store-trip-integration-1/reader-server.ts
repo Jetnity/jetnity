@@ -9,6 +9,7 @@ import { pilotContextFingerprint } from '../official-truth-ch-de-application-pil
 import type { RequirementsProvider } from '../provider'
 import type { Trip } from '@/types/trips'
 import type { AcceptedStoreTripResult } from './result'
+import { acceptedStoreRuleReference } from './engine-reference'
 import { acceptedStoreBinding } from './binding-server'
 import { AcceptedStoreLifetime } from './lifetime-server'
 import { AcceptedStoreDatabase } from './database-server'
@@ -67,7 +68,7 @@ export async function readAcceptedStoreTrip(tripId:string,revision:number,signal
       travellerClientRef:selected.travellerClientRef,credentialOptionRef:selected.credentialOptionRef,destinationCountryCode:'DE',
       requirementType:'visa',result:fact.effect,visaMode:fact.visaMode,officialClass:'requirement',authority:proof.source.authorityName,
       sourceUrl:proof.evidence.canonicalUrl,checkedAt:proof.evidence.retrievedAt,validFrom:proof.validity.validFrom,
-      validUntil:proof.validity.validUntil,ruleReference:proof.receipt,
+      validUntil:proof.validity.validUntil,ruleReference:acceptedStoreRuleReference(proof.receipt),
     }]}
     const evaluations=await life.run(()=>requirementsFuerReise(trip!,provider,{signal:life.signal}));proof.assertCurrent()
     const positives=evaluations.filter(e=>e.result!=='unknown')

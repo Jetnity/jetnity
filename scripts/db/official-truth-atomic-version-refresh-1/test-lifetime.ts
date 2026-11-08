@@ -5,7 +5,7 @@ import type { LocalProofCluster } from '../official-truth-integrated-pilot-1/loc
 
 // Teardown only: startup's existing transport fallback is 30s. Closing actual
 // transports and stopping owned clusters precede this finite settlement window.
-// This never extends a query, authority, scenario or the 900s parent.
+// This never extends a query, authority, scenario or the 1200s parent.
 const DRAIN_MS = 35_000
 type Stop = () => void
 
