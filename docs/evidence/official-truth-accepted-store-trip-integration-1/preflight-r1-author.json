@@ -1,0 +1,656 @@
+{
+  "schema": "accepted-store-trip-preflight-v1",
+  "observedAt": "2026-11-08T03:05:19.536Z",
+  "baseline": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "acknowledgement": "3e5f9e418c2ebc48d0351ae7185e71f07a30d3db",
+  "boundary": "Synthetic original and actual fresh canonical Evidence/Review/Extractor/Rule execution. No Auth/SQL/COMMIT/product authorization claimed.",
+  "scope": {
+    "destinationCountryCode": "DE",
+    "transitCountryCode": null,
+    "citizenship": {
+      "mode": "required",
+      "countryCodes": [
+        "CH"
+      ]
+    },
+    "credentialOption": {
+      "mode": "option",
+      "documentType": "passport",
+      "issuingCountryCode": "CH",
+      "relatedCitizenshipCountryCode": "CH"
+    },
+    "residence": {
+      "mode": "not_applicable"
+    },
+    "requirementType": "visa",
+    "validity": {
+      "mode": "travel_date",
+      "travelDate": "2026-11-20"
+    }
+  },
+  "ruleScopeKey": "rule-scope:v1:a59074d4d372830d057027f9ce6f3e84f46e6a1a756ccad1e36fe9db04463369",
+  "fact": {
+    "kind": "requirement_effect",
+    "effect": "not_required",
+    "visaMode": "visa_exempt"
+  },
+  "evidenceVersion": "ev2_3ed5454bf23914a7f348c0e18f1e872b",
+  "originalRetrievedAt": "2026-11-08T03:05:18.936Z",
+  "legalValidity": {
+    "validFrom": "2026-11-01",
+    "validUntil": "2026-12-31",
+    "validFromBasis": {
+      "kind": "qualified_locator",
+      "locator": {
+        "kind": "json_pointer",
+        "pointer": "/validity/from"
+      },
+      "value": "2026-11-01"
+    },
+    "validUntilBasis": {
+      "kind": "qualified_locator",
+      "locator": {
+        "kind": "json_pointer",
+        "pointer": "/validity/until"
+      },
+      "value": "2026-12-31"
+    }
+  },
+  "reviewPacketKey": "review-packet:v3:33e386c68cf0d6a58f7b2d41b3a86fe0a382aa1da513028186fc2fd552996530",
+  "receiptFingerprint": "ot-provenance-v1:56eb5ec94db3b57346af7d8397e20f6a0362b6dc96722884e177270248737a89",
+  "verifier": {
+    "path": "lib/readiness/official-truth-integrated-pilot-bundle.ts",
+    "gitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1"
+  },
+  "standard8": {
+    "entry": "verifyIntegratedPilotBundle",
+    "configuredMaximum": 8,
+    "result": {
+      "ok": false,
+      "reason": "closure_bound_exceeded",
+      "bound": {
+        "limit": "depth",
+        "observed": 11,
+        "maximum": 8
+      }
+    }
+  },
+  "local16Diagnostic": {
+    "entry": "verifyLocalIntegratedPilotBundle",
+    "profile": "ot-integrated-pilot-local-closure-v2",
+    "configuredMaximum": 16,
+    "result": {
+      "ok": true,
+      "graph": {
+        "nodes": 40,
+        "edges": 172,
+        "bytes": 1113484,
+        "longestDepth": 11
+      }
+    }
+  },
+  "receiptBytes": 4038,
+  "custodyBindingBytes": 743,
+  "artifacts": [
+    {
+      "pin": {
+        "id": "ast-ae6fa4ab3819ece935d2743b4e698113556cb445f814b8ebd113109543cdba37",
+        "version": 1,
+        "digest": "c6b3dcb5eeb1e18b4ad42c2ab824b715a72d078329c148cf5f0b0c04d5e58240"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 168228
+    },
+    {
+      "pin": {
+        "id": "ast-f8532dfcad8411b636bff9a92e012b3b5edfe983a9c905ab28b07020a4662ed7",
+        "version": 1,
+        "digest": "fb2ecc6e66ab2d235831cc0c0fe5ce324e840ed30419e3a385e9841738367239"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 162716
+    },
+    {
+      "pin": {
+        "id": "ast-5866411fca35cac1a62464bcbfa6c8427345c5b4dcee47ad0eb9f5217d24ea3e",
+        "version": 1,
+        "digest": "7b48fa0605ea17070df3d87699b176513045fcbe64086b73016491b3513038d3"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 194836
+    },
+    {
+      "pin": {
+        "id": "ast-7eb23cbe77558cd3644868cad55ad459ef91f57b0f3e90d7d49c902b55590fea",
+        "version": 1,
+        "digest": "5761a099b7039ac76050acf8a1b60a69e0c47582eb552a60d7fe952c7c85b712"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 198104
+    },
+    {
+      "pin": {
+        "id": "ast-5b050b0ecc35cfcc42aaafab30eee733f2c271dcef22363a0e4da5dd4bb02e5f",
+        "version": 1,
+        "digest": "91c9f05c3e6c171c0c461d3e2fbed174fbc36b8392a22b0aafc422482e850cbc"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 167080
+    },
+    {
+      "pin": {
+        "id": "ast-313d93bbbbe5cebd800fd1bceef32da20b0b3750607e89a96a1cfb5eab4290d1",
+        "version": 1,
+        "digest": "daa10c3ca3095e4113f80c3ba2d606caeed7f0496364e8aa1366a293ba899db7"
+      },
+      "artifactType": "implementation_bundle",
+      "artifactContractVersion": 1,
+      "byteLength": 152360
+    },
+    {
+      "pin": {
+        "id": "ast-b046c59c8a0ecde89de478a2581bf38066263e5dd239fe5d600ba2e21a483e99",
+        "version": 1,
+        "digest": "427698f7ee24e30dc4bcd56aad37e2b05644093a3aa48b59950dae7e11fcb4e3"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2508
+    },
+    {
+      "pin": {
+        "id": "ast-f4de6c62560a31d8adb2b49415101a79b0164d3f13998c7f705fb4ecb5f09521",
+        "version": 1,
+        "digest": "369eb3d77eaa14e444750e9f9a34be9c7fbcf32f2809466f4f6ce595079a3bfe"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2519
+    },
+    {
+      "pin": {
+        "id": "ast-5ff12a1f522704568ac75455e28216b93c90323b2c67b350ef682bd5f1edba08",
+        "version": 1,
+        "digest": "eccd32e6ef1da3446daf64f461477dbad52590a6387f6efe3e3b858eee3a5bcc"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2517
+    },
+    {
+      "pin": {
+        "id": "ast-95c7941cb4eb8d4f130164e0ae1a91679fb32109e64aa50fc7ad8f9aa421acbb",
+        "version": 1,
+        "digest": "1738e56eb8366565638f2b850b3d821bf3557b9207fd529ed6f55d972f7d372e"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2523
+    },
+    {
+      "pin": {
+        "id": "ast-ba05b66ed9b2c637365752e3bd467f4bef6e3a5d519c5342d816014888e7d71f",
+        "version": 1,
+        "digest": "0aeff9976c290abd15dcd4508b908e9d07101aec244727588206c231020ea21f"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2519
+    },
+    {
+      "pin": {
+        "id": "ast-342fbff6a3abd2c194a61610147c0e1440d7582e5b61a533f452fba2c853bbd7",
+        "version": 1,
+        "digest": "88ad281f3e6b5375b39a284d84bcd005b65f73056315c9274d9b4c990e3f49ad"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2514
+    },
+    {
+      "pin": {
+        "id": "ast-148a9c89f608e878e0e1a513b9cbb3c960c88c3d47ccb3ffad46e90185e992d5",
+        "version": 1,
+        "digest": "6cb9de5245fe6071140a25ec4e7814833caa9a40646221678b560bf8d4e685bb"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2512
+    },
+    {
+      "pin": {
+        "id": "ast-1f82f6bf6d47fc74e2f18ea6c6e83d991299d985cf75c72138716052d626c30b",
+        "version": 1,
+        "digest": "5e3bf053785d8f8f4b67481cac6dc1e7914af233c00501a00766eec73c76dcd1"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2531
+    },
+    {
+      "pin": {
+        "id": "ast-f712562b9c0ce5bc846fb7366567e25eed8634574cb5ffc93e28e8e6d4d44df6",
+        "version": 1,
+        "digest": "634bd9fcb954628da0c114c88ea616dc8ba72d50d33e06fae1f5a887f1eec691"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2522
+    },
+    {
+      "pin": {
+        "id": "ast-553ae7bec6e592170212625aea2fc823a7a1db1f201f9abd4ef7ee16cc17a50e",
+        "version": 1,
+        "digest": "223528840828e3ed47bfb4fcdfd362feda4a804ae6dc31ccf09c9275996e3a03"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2522
+    },
+    {
+      "pin": {
+        "id": "ast-ff81a485ef01ec1651461024a7caab180e756f97c35da1b1328ea80ce5119df4",
+        "version": 1,
+        "digest": "f0fb8a55543583608dbdd2af911529de968478be8ee073e75a6b7005acfe20ed"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2520
+    },
+    {
+      "pin": {
+        "id": "ast-778f17ddd68076e82c15ff024b3b12e0d26e3be32e03efdc23be0200b172b483",
+        "version": 1,
+        "digest": "0222f61da85087bf614352ee31f28ee7c22282e0fc37d4e261e840c710c917f8"
+      },
+      "artifactType": "semantic_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2522
+    },
+    {
+      "pin": {
+        "id": "ast-5234134999897b1399362ba8fbaaf8b4808493e3cdbe75508d88f2f8a98ef2b7",
+        "version": 1,
+        "digest": "35bf7f987fb63f7a5219218e28695e1eff5ddabb2bad51f080ed2fb6d997115f"
+      },
+      "artifactType": "fact_schema",
+      "artifactContractVersion": 1,
+      "byteLength": 2508
+    },
+    {
+      "pin": {
+        "id": "ast-5ef0bc81151fa8f9a74070fb3f8e72bb0dce6ba09349f536cb59e61d2b858821",
+        "version": 1,
+        "digest": "cd95d0043f36f9230efe08287291799d23304ffe2924532a22a7460f929541e1"
+      },
+      "artifactType": "output_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2516
+    },
+    {
+      "pin": {
+        "id": "ast-12cc1d150efc48111acb2bccd11f846ae94bd89e34fd6bbae7feef60e2cc86a1",
+        "version": 1,
+        "digest": "01b7f58c6a49a30e61be65d0d18a200df5e8c1de7689a7d500bc82a0e00571fb"
+      },
+      "artifactType": "proof_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2514
+    },
+    {
+      "pin": {
+        "id": "ast-3046214fb32827a72e77d571fd9afd9500f503ccdcbc4a9945c2cd248e8d60ab",
+        "version": 1,
+        "digest": "af306b37540ceae521be6d4d768410406d1d13c3237d8517febfb7e6c192d289"
+      },
+      "artifactType": "freshness_contract",
+      "artifactContractVersion": 1,
+      "byteLength": 2522
+    },
+    {
+      "pin": {
+        "id": "synthetic-accepted-trip-whole-json",
+        "version": 1,
+        "digest": "ae39f63189727137fc312ab1bf679a38a28161d80652264aba4a58de295f2ead"
+      },
+      "artifactType": "identity_profile",
+      "artifactContractVersion": 1,
+      "byteLength": 2538
+    },
+    {
+      "pin": {
+        "id": "ast-d78d0674345b2bd6b607d3146f9827a79bb6c2cc184915fdf277046bdfe1dc5e",
+        "version": 1,
+        "digest": "bbc5b20fab69c49a5bcaa0ee8eb2b3d94eec463499763d8063139d4806157cdd"
+      },
+      "artifactType": "catalog_snapshot",
+      "artifactContractVersion": 1,
+      "byteLength": 2066
+    },
+    {
+      "pin": {
+        "id": "otx_accepted_store_trip_fixture",
+        "version": 1,
+        "digest": "da4c05e9f310c669fc5a677220b01fca3f20d2f38b223b83555313839c95bf26"
+      },
+      "artifactType": "extractor_definition",
+      "artifactContractVersion": 1,
+      "byteLength": 4037
+    },
+    {
+      "pin": {
+        "id": "ast-40019adf4c382d941135f64bf56bdb32bfac13f9538cd846446481f0eb713100",
+        "version": 1,
+        "digest": "9aef45821ffd58a920f65bfa5255edf6017a38bcd9fb27974d43b7e9ec9ca9e6"
+      },
+      "artifactType": "extractor_registry",
+      "artifactContractVersion": 1,
+      "byteLength": 580
+    },
+    {
+      "pin": {
+        "id": "synthetic-ch-de-2026-11-20",
+        "version": 1,
+        "digest": "40c0cec239b1f96b4b4e69eb0a7414419a5ee0e208cac790959fcfda2ebef714"
+      },
+      "artifactType": "global_cell",
+      "artifactContractVersion": 1,
+      "byteLength": 418
+    },
+    {
+      "pin": {
+        "id": "ast-92af85b66e02597cfcabedc445f9932440252b519316092eb94e6fe8ab8464d3",
+        "version": 1,
+        "digest": "92af85b66e02597cfcabedc445f9932440252b519316092eb94e6fe8ab8464d3"
+      },
+      "artifactType": "GlobalCellAdmissionV1",
+      "artifactContractVersion": 1,
+      "byteLength": 2441
+    },
+    {
+      "pin": {
+        "id": "ast-ca02443923cb0e33ca0e678bcc64ebafdf784438fe5098d3009cce1598a7c535",
+        "version": 1,
+        "digest": "fd56ff7e3c1443f1f18208b13ecff64ccab429d346e2c28b5768c57d9566df6e"
+      },
+      "artifactType": "content_item_definition",
+      "artifactContractVersion": 1,
+      "byteLength": 468
+    },
+    {
+      "pin": {
+        "id": "ast-9e1ae9930fb6956330ce19a1e177c1c82e9626d374eb3974ca53270ca1cc2ad4",
+        "version": 1,
+        "digest": "e5eb4220ba6b4426843ffc239bf5e2768a4db7ffaf4e0468dc0b9c68958fc483"
+      },
+      "artifactType": "representation_definition",
+      "artifactContractVersion": 1,
+      "byteLength": 727
+    },
+    {
+      "pin": {
+        "id": "ast-c74e7a35b7105f05e8ab3cc2e5ca9bbb190002fe862d41cfe76267bdde4efaa1",
+        "version": 1,
+        "digest": "c74e7a35b7105f05e8ab3cc2e5ca9bbb190002fe862d41cfe76267bdde4efaa1"
+      },
+      "artifactType": "GlobalRepresentationQualificationV1",
+      "artifactContractVersion": 1,
+      "byteLength": 1067
+    },
+    {
+      "pin": {
+        "id": "ast-a77f7ed85ec93bb6d260daba77734be5f5084eb4aca3a7965e14b3776f40387e",
+        "version": 1,
+        "digest": "53a67ef6003f6fa6a3743668c21d5ec9a3314ef63bac0366e99a425badd988e9"
+      },
+      "artifactType": "original_observation",
+      "artifactContractVersion": 1,
+      "byteLength": 2634
+    },
+    {
+      "pin": {
+        "id": "ast-3b823a846a2caaf4ac0cb4ce5f05b5a1fa4c4bb798d3dad65ff93ff2fdc08c11",
+        "version": 1,
+        "digest": "c22acd44c09f2931a2b2247d38997d250990ed3be0713ac0952d0eb68e3da7b0"
+      },
+      "artifactType": "validity_origin",
+      "artifactContractVersion": 1,
+      "byteLength": 1680
+    },
+    {
+      "pin": {
+        "id": "ast-c9f3924c8e9086fa958c4d7ba936b9d4957a95a2f29516788dae1e7fe6856fc3",
+        "version": 1,
+        "digest": "6be4aa1a5e646c63d873d86c51302245d93aadac6f22aca04c917dfa59aec44c"
+      },
+      "artifactType": "accepted_origin",
+      "artifactContractVersion": 1,
+      "byteLength": 3135
+    },
+    {
+      "pin": {
+        "id": "ast-c35c5ecf4b89d5793ffe87ab37e07e926dac0d19902c5106375d6f1ede037579",
+        "version": 1,
+        "digest": "c35c5ecf4b89d5793ffe87ab37e07e926dac0d19902c5106375d6f1ede037579"
+      },
+      "artifactType": "AcceptedEvidenceCustodyV1",
+      "artifactContractVersion": 1,
+      "byteLength": 2619
+    },
+    {
+      "pin": {
+        "id": "ast-7eaf02d648d5406b355e4565e8c157537c5441cdc633ab78b69b9ddb941bb18b",
+        "version": 1,
+        "digest": "7eaf02d648d5406b355e4565e8c157537c5441cdc633ab78b69b9ddb941bb18b"
+      },
+      "artifactType": "SupportSelectionDefinitionV1",
+      "artifactContractVersion": 1,
+      "byteLength": 604
+    },
+    {
+      "pin": {
+        "id": "ast-5791e799054dc4d8a56093ef060c99a8e50be8f45d4eb21c1bf57771b2ac22ed",
+        "version": 1,
+        "digest": "3b7a68e00b69ed4f912571446ceb561db304e712521dc5bf2c6a6a2d9e3b07ee"
+      },
+      "artifactType": "eligible_version_snapshot",
+      "artifactContractVersion": 1,
+      "byteLength": 648
+    },
+    {
+      "pin": {
+        "id": "ast-5d48a74e15eb81ab8f00a17526e959f9325539da37360eb5b306cb6128f673e7",
+        "version": 1,
+        "digest": "5d48a74e15eb81ab8f00a17526e959f9325539da37360eb5b306cb6128f673e7"
+      },
+      "artifactType": "SelectedSupportManifestV1",
+      "artifactContractVersion": 1,
+      "byteLength": 1513
+    },
+    {
+      "pin": {
+        "id": "ast-3abdd0646c7243a5f226621b695ba9d7aa741d1ff3469e1c107ef7390fdf3b6b",
+        "version": 1,
+        "digest": "3abdd0646c7243a5f226621b695ba9d7aa741d1ff3469e1c107ef7390fdf3b6b"
+      },
+      "artifactType": "AutonomousReviewConstructionV1",
+      "artifactContractVersion": 1,
+      "byteLength": 1953
+    }
+  ],
+  "code": [
+    {
+      "path": "lib/readiness/digest.ts",
+      "gitBlob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54"
+    },
+    {
+      "path": "lib/readiness/domain.ts",
+      "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927"
+    },
+    {
+      "path": "lib/readiness/evidence.ts",
+      "gitBlob": "f1a28d5a8f7445219f8cec224a849852c012fc3a"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-evidence.ts",
+      "gitBlob": "024eaf2579ad9cf5637882b08c423100f9dbb1d3"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+      "gitBlob": "958923cfc13ee1643d38e362f48931f78966e2ec"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts",
+      "gitBlob": "e17f07c0cbfe980c6ed1089df4193bb5847f14fa"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-provenance-artifact.ts",
+      "gitBlob": "3c3aaeb3cc73e223b0a0cf2df1d9ceb27ff161cf"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-provenance-record.ts",
+      "gitBlob": "064355d4c7cfe1732677c500118ec8f77fac7725"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-review-material-server.ts",
+      "gitBlob": "68d2ff362c3aec1bceda430518422c60b60ae785"
+    },
+    {
+      "path": "lib/readiness/official-truth-bounded-response-body.ts",
+      "gitBlob": "783d802fff48a2969b86945515b159a513df76e9"
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
+      "gitBlob": "25dafee0f06353785972efafe0fc2db90183372b"
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+      "gitBlob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f"
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-source-budget-128k-1.ts",
+      "gitBlob": "8212e90e15ec1c87df58525867d0d095ecabedf0"
+    },
+    {
+      "path": "lib/readiness/official-truth-composition-policy-registry.ts",
+      "gitBlob": "7b6a97a10052f925de8ab49a247fa0f32fcc3a81"
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.ts",
+      "gitBlob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18"
+    },
+    {
+      "path": "lib/readiness/official-truth-coverage.ts",
+      "gitBlob": "42c36f522016e87cf51461f7bd3f1056d4355529"
+    },
+    {
+      "path": "lib/readiness/official-truth-evidence-metadata-custody-server.ts",
+      "gitBlob": "acd7e5b6d867e65bd02381efd17d8c9f08904461"
+    },
+    {
+      "path": "lib/readiness/official-truth-global-cell-admission-server.ts",
+      "gitBlob": "c0317598be690de70aa9ddd05af69b9da2371209"
+    },
+    {
+      "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.ts",
+      "gitBlob": "505ecc92bada48cf7ef81bd812210c1a5dac8d7b"
+    },
+    {
+      "path": "lib/readiness/official-truth-integrated-pilot-bundle.ts",
+      "gitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1"
+    },
+    {
+      "path": "lib/readiness/official-truth-research-request.ts",
+      "gitBlob": "b91eedb8e929dcb16e8cc031609af000de447f86"
+    },
+    {
+      "path": "lib/readiness/official-truth-research-source-routing.ts",
+      "gitBlob": "c1cc413ac3fbca7a31b4435dc3ffe7abe4cfbb65"
+    },
+    {
+      "path": "lib/readiness/official-truth-retrieved-candidate-evidence.ts",
+      "gitBlob": "d4f075066734096b0d937adc2b4c3ea5c3900abc"
+    },
+    {
+      "path": "lib/readiness/official-truth-retrieved-material.ts",
+      "gitBlob": "b2feda07fb198ae62be460eeeff302489af11361"
+    },
+    {
+      "path": "lib/readiness/official-truth-rule-candidate.ts",
+      "gitBlob": "e5c1e9e96050f594fe04b5ba72beb2c3405d958b"
+    },
+    {
+      "path": "lib/readiness/official-truth-rule-review-decision-intent.ts",
+      "gitBlob": "cfd53f67892ac5041792c09bbb402f353a47f337"
+    },
+    {
+      "path": "lib/readiness/official-truth-rule-review-fingerprint.ts",
+      "gitBlob": "f4712ab9f193911e83beaa173f648b685e76150f"
+    },
+    {
+      "path": "lib/readiness/official-truth-rule-review-packet.ts",
+      "gitBlob": "a36d907dd6b46cfec25d133f73c91100e185ffc6"
+    },
+    {
+      "path": "lib/readiness/official-truth-server-owned-retrieval.ts",
+      "gitBlob": "5998fdea54d3337fb68cd7111460b59e43a3cef7"
+    },
+    {
+      "path": "lib/readiness/official-truth-source-catalog-server.ts",
+      "gitBlob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee"
+    },
+    {
+      "path": "lib/readiness/official-truth-source-fingerprint-v2.ts",
+      "gitBlob": "72d324d019625c5028be8f47763fdd0f6ffe38e5"
+    },
+    {
+      "path": "lib/readiness/official-truth-support-selection-server.ts",
+      "gitBlob": "d8e865c5beb29ee8c9159984ee856dc7e94abbdf"
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+      "gitBlob": "9f407dca147f8ba41280133dd64c7198c82c10a7"
+    },
+    {
+      "path": "lib/readiness/official.ts",
+      "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c"
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130"
+    },
+    {
+      "path": "lib/readiness/rule-claims.ts",
+      "gitBlob": "c61d06ca67d87e8c9b6435c23c8ac62965a251f6"
+    },
+    {
+      "path": "lib/readiness/source-registry.ts",
+      "gitBlob": "672a316209cdeba279988e1691ce1e15e0dfb1b3"
+    },
+    {
+      "path": "lib/readiness/source-router.ts",
+      "gitBlob": "98bd84acf911660ddab810cfeb97a1f79a4d8a68"
+    },
+    {
+      "path": "lib/readiness/temporal.ts",
+      "gitBlob": "2b45246938196127124539302634e175a172b4b6"
+    },
+    {
+      "path": "lib/route/domain.ts",
+      "gitBlob": "59de349e313f20a74a2fc0119f2244fd0b65a50b"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts",
+      "gitBlob": "aa1a1b1010bd76532ad325af851eaa7b6485de09"
+    },
+    {
+      "path": "types/trips.ts",
+      "gitBlob": "15b8506a5c005bb7a5afcc466bc26881e3083d6d"
+    }
+  ]
+}

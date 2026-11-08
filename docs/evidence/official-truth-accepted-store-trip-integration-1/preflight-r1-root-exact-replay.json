@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-11-08T03:08:50.655Z",
+  "reviewer": "ChatGPT Technical Lead / Root",
+  "replay": "independent exact-byte replay in isolated source copy, every recorded source Git blob verified",
+  "bundleSha256": "33a763bd2eba1eee325e3608e99c219e1508b5862aa9045b1f9133282f6b3bab",
+  "receiptFingerprint": "ot-provenance-v1:56eb5ec94db3b57346af7d8397e20f6a0362b6dc96722884e177270248737a89",
+  "codePinsChecked": 42,
+  "verifier": {
+    "path": "lib/readiness/official-truth-integrated-pilot-bundle.ts",
+    "gitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1"
+  },
+  "old8": {
+    "ok": false,
+    "reason": "closure_bound_exceeded",
+    "bound": {
+      "limit": "depth",
+      "observed": 11,
+      "maximum": 8
+    }
+  },
+  "local16": {
+    "ok": true,
+    "graph": {
+      "nodes": 40,
+      "edges": 172,
+      "bytes": 1113484,
+      "longestDepth": 11
+    }
+  },
+  "boundary": "synthetic canonical preflight; no SQL, owner grant, hosted proof or product activation"
+}
