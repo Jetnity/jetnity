@@ -15,7 +15,7 @@ import { nativeBrowserBundle } from './browser-bundle'
 import { travellerKontoEingabeSchema } from '@/lib/readiness/schema'
 import { travellerAlsPayload,travellerBauen } from '@/lib/readiness/reisende'
 import { pgText } from '../official-truth-integrated-pilot-1/pg-wire'
-import type {} from './browser-entry'
+import type { BrowserFixtureDiagnostic } from './browser-entry'
 import type { AcceptedStoreTripResult } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/result'
 
 export async function mountedAcceptedStoreProof(t:TestContext){
@@ -32,6 +32,8 @@ export async function mountedAcceptedStoreProof(t:TestContext){
   const previous=Object.fromEntries(envKeys.map(key=>[key,process.env[key]]))
   const active=new Set<Promise<void>>(),pendingPilots=new Set<()=>void>(),errors:string[]=[],outbound:string[]=[],proofs:string[]=[]
   let stage='bootstrap',storeRequests=0,pilotRequests=0,travellerWrites=0,pilotPending=false,storeFailure=false,origin=''
+  let lastClientObservation:{received:BrowserFixtureDiagnostic;failure:BrowserFixtureDiagnostic|null;
+    dom:{status:string|null;busy:string|null;draftBlocked:string|null;positiveCount:number;visibility:string;wallNow:number;monotonicNow:number}|null}|null=null
   const results:AcceptedStoreTripResult[]=[]
   try {
     installNativeSchema(sql);seedNativeRows(sql)
@@ -103,7 +105,24 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       await page.getByRole('button',{name:'Gespeicherte Einreiseprüfung erneut prüfen',exact:true}).click()
       const response=await pending,body=await response.json() as AcceptedStoreTripResult
       assert.equal(response.status(),200);assert.equal(body.status,'current',JSON.stringify({status:body.status,lastRpc:protocol!.evidence.slice(-6)}))
-      await page.waitForFunction(()=>document.querySelector('[data-native-workspace]')?.getAttribute('data-store-status')==='current')
+      // This diagnostics-only boundary uses the actual validator, genuine HTTP
+      // body and currently mounted Trip. It does not supply a positive result
+      // to the hook or change the existing current/visible assertions.
+      lastClientObservation={received:await page.evaluate((value:unknown)=>window.acceptedStoreFixture!.inspect(value),body),failure:null,dom:null}
+      assert.equal(lastClientObservation.received.validation.ok,true,JSON.stringify(lastClientObservation.received))
+      try {
+        await page.waitForFunction(()=>document.querySelector('[data-native-workspace]')?.getAttribute('data-store-status')==='current')
+      }catch(error){
+        lastClientObservation.failure=await page.evaluate((value:unknown)=>window.acceptedStoreFixture!.inspect(value),body)
+        lastClientObservation.dom=await page.evaluate(()=>{
+          const workspace=document.querySelector('[data-native-workspace]')
+          return {status:workspace?.getAttribute('data-store-status')??null,busy:workspace?.getAttribute('data-store-busy')??null,
+            draftBlocked:workspace?.getAttribute('data-draft-blocked')??null,
+            positiveCount:document.querySelectorAll('[data-official-result="required"], [data-official-result="not_required"], [data-official-result="conditional"]').length,
+            visibility:document.visibilityState,wallNow:Date.now(),monotonicNow:performance.now()}
+        })
+        throw error
+      }
       assert.equal(await positives.count(),1);assert(body.sourceCheckedAt&&body.expiresAt)
       return body
     }
@@ -272,7 +291,8 @@ export async function mountedAcceptedStoreProof(t:TestContext){
       sourceCheckedAt:expiring.sourceCheckedAt,readAt:expiring.readAt,expiresAt:expiring.expiresAt,deadlineFromRequestStartMs:expiring.deadlineFromRequestStartMs,
       boundary:'Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim.'}))
     await context.close()
-  } catch(error){t.diagnostic(JSON.stringify({failedBrowserStage:stage,proofs,storeRequests,pilotRequests,errors,outbound,lastNativeStatus:results.at(-1)?.status,lastRpcOutcomes:protocol?.evidence.slice(-8)}));throw error}
+  } catch(error){t.diagnostic(JSON.stringify({failedBrowserStage:stage,proofs,storeRequests,pilotRequests,errors,outbound,lastNativeStatus:results.at(-1)?.status,
+    lastClientObservation,lastRpcOutcomes:protocol?.evidence.slice(-8)}));throw error}
   finally {
     for(const done of pendingPilots)done();if(browser)await browser.close()
     if(server){server.closeAllConnections();await new Promise<void>(resolve=>server!.close(()=>resolve()))}

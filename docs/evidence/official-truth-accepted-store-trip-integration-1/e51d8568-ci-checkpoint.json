@@ -1,0 +1,409 @@
+{
+  "schema": "jetnity.technical-lead.exact-head-ci-checkpoint.v1",
+  "recordedAt": "2026-11-08T07:37:43Z",
+  "author": "ChatGPT / Technical Lead — Root",
+  "disposition": "DRAFT / CHANGES REQUIRED; same-session Fix8 in progress; no TL PASS, Ready or merge",
+  "repository": "Jetnity/jetnity",
+  "workIssue": 1155,
+  "pr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "head": "e51d856876d1e5d55591b30103453ea774be44bc",
+  "tree": "4ba8ceaeb5183acbc3e5ba59a812b6c015360edb",
+  "parent": "587c74047b343f63d407c5dc6e2dfd1996581478",
+  "base": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "mergeBase": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "ahead": 12,
+  "behind": 0,
+  "changedFiles": 98,
+  "run": {
+    "id": 42457513850,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42457513850",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "updatedAt": "2026-11-08T07:24:10Z",
+    "actualCheckout": "dd9f04ed4994cef375efcbf1c48ad87a43ee2c9f",
+    "actualTree": "4ba8ceaeb5183acbc3e5ba59a812b6c015360edb",
+    "actualParents": [
+      "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "e51d856876d1e5d55591b30103453ea774be44bc"
+    ],
+    "actualTreeMatchesHead": true,
+    "node": "22.23.4",
+    "postgres": "16.15",
+    "runnerImage": "ubuntu-24.04 / 20261101.360.1",
+    "jobs": [
+      {
+        "id": 128659585782,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 128659585924,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 128659586063,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 128659586067,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 128662931207,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "gates": {
+    "head": "e51d856876d1e5d55591b30103453ea774be44bc",
+    "sourceReview": "complete",
+    "ci": "CHANGES REQUIRED",
+    "preview": {
+      "status": "verified",
+      "id": "dpl_CuZBxS4dkASFHxvxp62uyo1EYjB2",
+      "http": 200,
+      "head": "e51d856876d1e5d55591b30103453ea774be44bc",
+      "robots": "noindex",
+      "checkedAt": "2026-11-08T07:10:07Z"
+    },
+    "base": {
+      "main": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "mergeBase": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "ahead": 12,
+      "behind": 0
+    },
+    "threads": {
+      "open": 0,
+      "reviews": 0,
+      "checkedAt": "2026-11-08T07:08:29Z"
+    },
+    "ready": false,
+    "merge": false,
+    "production": "pending-after-merge",
+    "ciMerge": {
+      "sha": "dd9f04ed4994cef375efcbf1c48ad87a43ee2c9f",
+      "tree": "4ba8ceaeb5183acbc3e5ba59a812b6c015360edb",
+      "parents": [
+        "e1fe0c696ade9f39b417772b5c065f87530204d6",
+        "e51d856876d1e5d55591b30103453ea774be44bc"
+      ],
+      "matchesHead": true
+    },
+    "auth": {
+      "status": "pass",
+      "job": 128659585924,
+      "values": 55,
+      "keys": 243
+    },
+    "typecheck": {
+      "status": "pass",
+      "job": 128659585782
+    },
+    "lint": {
+      "status": "pass",
+      "job": 128659585782
+    },
+    "persisted": {
+      "status": "pass",
+      "job": 128659586067,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 297365.002972,
+      "phaseMarkers": 95,
+      "readerResults": 45,
+      "finalPhaseElapsedMs": 296360,
+      "logSha256": "e19d5ab8251d9ceb7e304f11a077099299cb2e0a60b73d53d11933cf76dbc9e7"
+    },
+    "core": {
+      "status": "failure",
+      "job": 128659585782,
+      "tests": 8205,
+      "pass": 8200,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 2,
+      "durationMs": 591389.787969,
+      "logSha256": "8dde55552193fc0af49cd750c63e45c31682b9f599d579257cbf9ec38c6ab332",
+      "failures": [
+        "Browser native current response does not become rendered current status",
+        "Native intended blocked Finalize checkpoint not observed after 7 complete families",
+        "Recovery race leaves one reservation after Finalize COMMIT and Cleanup55P03"
+      ],
+      "completedMainNativeFamilies": 7
+    },
+    "hygiene": "skipped-after-Core-failure",
+    "build": "skipped-after-Core-failure",
+    "disposition": "DRAFT / CHANGES REQUIRED; same author Fix8",
+    "atomic": {
+      "status": "failure",
+      "job": 128659586063,
+      "tests": 1,
+      "pass": 0,
+      "fail": 0,
+      "cancelled": 1,
+      "skipped": 0,
+      "durationMs": 901100.437835,
+      "testBudgetMs": 900000,
+      "rawMarkers": 146,
+      "parseableMarkers": 145,
+      "lastElapsedMs": 826365,
+      "lastCase": "readback_failure",
+      "fullCleanupObserved": false,
+      "remainingTerminalCases": [
+        "cleanup_after_bound",
+        "reader_after_bound"
+      ],
+      "logSha256": "f6bc2d517d925b20d390368c6c84de031a0263cff31687e0685e2c11fa03b2c6"
+    },
+    "aggregate": {
+      "status": "failure",
+      "job": 128662931207
+    }
+  },
+  "coreEvidence": {
+    "originalLog": {
+      "bytes": 4021127,
+      "sha256": "8dde55552193fc0af49cd750c63e45c31682b9f599d579257cbf9ec38c6ab332",
+      "originalBomPreserved": true,
+      "lineFeeds": 60630
+    },
+    "independentIndex": {
+      "sha256": "a09b4624f6686ae23fbee4b258d067c1aac81a521601b85c88f380ab80ca65ad"
+    },
+    "entryResults": [
+      {
+        "entry": "Acceptance",
+        "status": "pass",
+        "durationMs": 72551,
+        "scope": "All three refusal modes, actual deferred source expiry, zero owned backends. Deferred refusal SQLSTATE22023 and zero committed versions are observed; subsequent waitMs23333 is the remaining original provisional-reservation expiry wait before fresh publication/sweep, not elapsed time to the deferred check."
+      },
+      {
+        "entry": "Context",
+        "status": "pass",
+        "durationMs": 53925,
+        "scope": "All twelve actual principal/Trip/credential families with fresh positive controls; sourceCalls0, ownedBackends0."
+      },
+      {
+        "entry": "Implementation",
+        "status": "pass",
+        "durationMs": 915,
+        "scope": "Actual multipart source identity and preserved limits/regressions."
+      },
+      {
+        "entry": "Browser",
+        "status": "failure",
+        "durationMs": 63631,
+        "scope": "UTF8 response and document checks plus closed initial mount pass; first actual current response received; mounted current status not observed."
+      },
+      {
+        "entry": "Native",
+        "status": "failure",
+        "durationMs": 201256,
+        "scope": "Seven full integration families after actual SSR/outgoing/owned boundaries; first intended blocked Finalize not observed."
+      },
+      {
+        "entry": "Recovery",
+        "status": "failure",
+        "durationMs": 116364,
+        "scope": "First three stages complete; later Finalize/Cleanup race fails at the first residual reservation count."
+      }
+    ],
+    "durationPrecision": "Entry durations above are rounded milliseconds from the independently read original log; overall Core duration in gates is the original full precision.",
+    "failures": [
+      {
+        "entry": "Browser",
+        "location": "browser.ts:106, invoked at 129",
+        "observation": "Actual API HTTP200 and body.status=current pass; real Reserve/Snapshot/Finalize/Confirm/Cleanup committed. data-store-status=current not observed within unchanged45000ms. storeRequests1, pilotRequests0, page errors[], outbound[].",
+        "limits": "Only closed initial mount is in proof list. positives.count() was not reached. Original does not log differing DOM status, validator rejection or hook catch reason. No single product, decoder, clock or renderer cause is established."
+      },
+      {
+        "entry": "Native",
+        "location": "native-waits.ts:20/36, invoked from native.ts:167",
+        "observation": "First auth_revoked case fails to observe actual blocked Finalize before any Auth/Trip mutation. Terminal evidence after finally abort/release contains FinalizeCOMMIT and Cleanup55P03.",
+        "limits": "No original observation identifies where Finalize was during the1s window. Since mutation was not reached, later COMMIT does not prove a skipped authority guard. All four blocked-wait cases, lifecycle conflict/withdrawal, final ACL/backend closure remain incomplete."
+      },
+      {
+        "entry": "Recovery",
+        "location": "native-recovery.ts:127",
+        "observation": "One reservation remains after actual FinalizeCOMMIT and acquired-token Cleanup55P03.",
+        "limits": "Failure is at the first reservation-count expression. Subsequent stage count, durable version/operation counts, witness reconciliation and final backend-zero assertions were not executed. No immediate deletion or complete cleanup is claimed."
+      }
+    ],
+    "completedMainNativeFamilies": [
+      "Fresh protected publication A followed by distinct fresh actual database reader; exactly one selected positive, other cells unknown; no source fetch for reader.",
+      "Strict R2 fully rehashed structurally valid false fact rejected by actual retained extraction with retained_fact_invalid; unchanged positive before/after.",
+      "Four actual stage negative manifest/claim/archive/evidence cases.",
+      "Committed successor B with lost Finalize ACK, explicit witness reconciliation and full15-field support identity.",
+      "Partial current-projection restore refusal.",
+      "Seven actual retained-row integrity cases with exact restoration and positive controls.",
+      "Actual RLS and persisted-context changes."
+    ],
+    "precedingBoundaries": {
+      "pinnedSsrCases": 3,
+      "observedDrainMs": [
+        25434,
+        25426,
+        25430
+      ],
+      "outgoingCases": 8,
+      "ownedBoundaries": "Late-key abort and binding closure with owned-copy wipe complete."
+    },
+    "completedRecoveryStages": [
+      "Late finalized-response refusal.",
+      "One bounded acquired-token cleanup with lost acknowledgement.",
+      "Thirty-two actual unknown-token committed Reserve operations; all32 actual original stored time bounds; 33rd quota refusal22023; actual original expiry followed by a fresh ordinary explicit reader sweep."
+    ],
+    "unchangedRegressions": "Existing flight callback, lodging callback and FAQ geometry tests pass. Two pre-existing explicit layout skips remain unverified.",
+    "hygieneAndBuild": "All five hygiene steps and Production build skipped after Core failure."
+  },
+  "persistedEvidence": {
+    "job": 128659586067,
+    "originalLog": {
+      "bytes": 152914,
+      "sha256": "e19d5ab8251d9ceb7e304f11a077099299cb2e0a60b73d53d11933cf76dbc9e7"
+    },
+    "parsedMarkers": 95,
+    "readerResults": 45,
+    "distribution": {
+      "no_match": 7,
+      "synthetic_persisted_requirements_verified": 5,
+      "refused": 29,
+      "unavailable": 3,
+      "ambiguous": 1
+    },
+    "completeOrderedSignatureMatchesPreviousSuccessfulRun": true,
+    "actualReaderBackendsClearedAtMs": 223378,
+    "rollbackAndSuiteCompleteAtMs": 296360,
+    "limits": "Full Persisted result is observed. This suite has no Atomic-style global resource counter; none is inferred."
+  },
+  "atomicEvidence": {
+    "job": 128659586063,
+    "originalLog": {
+      "bytes": 173556,
+      "sha256": "f6bc2d517d925b20d390368c6c84de031a0263cff31687e0685e2c11fa03b2c6"
+    },
+    "rawMarkers": 146,
+    "parseableMarkers": 145,
+    "orderedParseablePhaseCasePrefixMatchesPreviousCompleteRun": true,
+    "malformedMarker": "Existing overescaped not-a-bigint diagnostic remains unchanged in original.",
+    "completedVerifierProbes": 8,
+    "verifierProbeRestore": true,
+    "verifierProbeSqlState": null,
+    "r9WorkerRestores": 2,
+    "completedLockWaits": 3,
+    "threePartyRaceCleanupFailures": 0,
+    "lastCase": "readback_failure",
+    "lastElapsedMs": 826365,
+    "absentMarkers": [
+      "coordinator cleanup_after_bound",
+      "terminal cleanup_after_bound",
+      "coordinator reader_after_bound",
+      "terminal reader_after_bound",
+      "global parent cleanup",
+      "full suite completion"
+    ],
+    "fullGlobalCleanupObserved": false,
+    "limits": "Earlier complete probes/races do not establish missing global cleanup after timeout. No rerun, budget increase, workflow change or performance change was made."
+  },
+  "ancillaryOriginalLogs": {
+    "auth": {
+      "job": 128659585924,
+      "bytes": 21090,
+      "sha256": "66852b64b0bb371e72f4dbd14ca41a39fa3b63f52d4dab39123efb3d136bbd55",
+      "values": 55,
+      "keys": 243
+    },
+    "aggregate": {
+      "job": 128662931207,
+      "bytes": 3316,
+      "sha256": "9e245c5aec430bd76b3dd689c822e751ec907894f31ad1413f35552f1baf41be",
+      "actualResults": {
+        "core": "failure",
+        "persisted": "success",
+        "refresh": "failure"
+      },
+      "exitCode": 1
+    }
+  },
+  "independentlyReviewedSourceDiagnostics": [
+    {
+      "finding": "Wait readiness is published before BEGIN/LOCK completes; later Trip table is reached after global/lifecycle locks and complete historical head closure.",
+      "qualification": "Source-confirmed synchronization problem, not a runtime observation of the missing blocked checkpoint.",
+      "authorizedCorrection": "Existing earlier private.official_sources table lock in lock_legacy_v1; fully acquired holder before ready; actual native dispatch and owned asynchronous observer identifying genuine waiter/blocker/relation. Mutation only after observed real block. All four refusals and fresh positive controls remain required;1s/240s/product budgets unchanged."
+    },
+    {
+      "finding": "Recovery some(cleanup&&committed) may match the earlier null-token start sweep instead of the later acquired-token disposal.",
+      "qualification": "Source-confirmed test defect; actual later disposal55P03 and one reservation are independently observed. R4 explicitly allows unknown bounded disposal outcome.",
+      "authorizedCorrection": "Identify exact acquired token and exactly one disposal attempt; actual COMMIT/refusal plus rows/original times; no post-abort Auth/Confirm/new business. Keep independent reconciliation. If residue persists, observe original expiry, then invoke a new ordinary explicit reader with existing sweep; prove zero provisional state and unchanged durable history. No disposal retry or deadline/quota/product change."
+    },
+    {
+      "finding": "Genuine current server result does not reach observed mounted current state; original diagnostics cannot distinguish validator, lifecycle and clock branches.",
+      "qualification": "Unresolved browser cause; diagnostic-only amendment is not a claimed product fix.",
+      "authorizedCorrection": "Fixture-only actual acceptedStoreClientResult invocation on genuine received DTO and actual currently mounted Trip, bounded validation codes/paths (no raw values), existing status/busy/visibility plus passive Date.now()/performance.now() observations, real validation assertion before unchanged current wait. No additional state-mutating DisplayClock.snapshot()/current() call, fake positive, product hook/clock/renderer/deadline change without an independently established cause."
+    }
+  ],
+  "continuation": {
+    "exactAuthor": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+    "sameSession": "/root/accepted_store_trip_integration_writer",
+    "next": "Fix8 frozen delta and updated honest handoff/matrix; complete independent source review and full fresh exact-head gates.",
+    "requiredAfterMerge": "Actual main CI and exact Production/domain review before1155 closure.",
+    "currentCheckpointUrls": [
+      "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6718738947",
+      "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6718815510",
+      "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6718815730"
+    ]
+  },
+  "limits": {
+    "productSqlCandidate": "UNAPPLIED",
+    "binding": "absent",
+    "provider": "null",
+    "contracts": "inactive",
+    "feature": "FEATURE_NOT_LIVE",
+    "hostReadback917": "Stage1 APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING; ledger UNKNOWN; Stage2 NOT_ATTEMPTED. Original automatic rejection not cleared; no retry, rephrase, alternate tool/agent/operator or workaround.",
+    "heldTransport1131": "Independent hold unchanged; no held-code inspection/copy/reimplementation, Ready retry or merge.",
+    "otherGates": "Target Owner/AAL2/session, source rights, actual key/retention/witness/privacy/ownerMac and activation gates remain independent.",
+    "noHostedAction": true,
+    "noRealSourceFetch": true,
+    "noActualKeyCreation": true,
+    "noPaidServiceCall": true,
+    "noLaunchOrIndexing": true,
+    "noAutomaticNextSlice": true,
+    "localEvidence": "Node24/partial source checks only. No local Node22/native PostgreSQL/SSR/React/locked-browser PASS; actual native evidence comes from original CI.",
+    "exactHeadRule": "Every new head invalidates all prior exact-head gates; previous successful Atomic/Persisted cannot substitute for current execution."
+  },
+  "riskMatrix": {
+    "scope": "Official Truth Accepted Store Trip Integration 1 / #1155 / #1156",
+    "p0": "No new confirmed P0 found in completed source review. Complete package runtime acceptance remains incomplete; latest exact-head CI is red.",
+    "p1": [
+      "Latest exact-head gates failed; required corrections and complete fresh native/mounted/CI gates are necessary before Ready/merge.",
+      "#917 independent hosted readback remains unknown after automatic refusal; no retry/workaround or inferred installed target authority.",
+      "#1139 target Owner/account/session authority remains an activation prerequisite.",
+      "#1131 held response-framing correction remains separate and is neither inspected/copied nor represented as solved by local parser/native fixture evidence.",
+      "#968 Preview/Production Supabase isolation remains relevant to future authenticated target QA; current Preview check is only the closed landing response."
+    ],
+    "p2": [
+      "Public evidence privacy work #911/#913 remains independent.",
+      "Existing dependency report: 16 untriaged advisories (9 moderate/7 high); this is not an overall dependency/security clearance.",
+      "Pinned SSR retry bookkeeping may drain beyond the business lifetime; no fixed wall-clock-rollback-safe SDK return ceiling is claimed."
+    ],
+    "p3": [
+      "Current e51 CI reports 197 lint warnings and zero lint errors; 2 inherited browser-layout skips remain visible. No new optional test skip added."
+    ],
+    "feature": "FEATURE_NOT_LIVE / SQL_UNAPPLIED / default provider and contracts inactive",
+    "followingSlice": "none"
+  }
+}

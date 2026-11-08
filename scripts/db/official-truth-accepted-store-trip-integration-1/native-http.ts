@@ -15,6 +15,7 @@ const rpcNames=['official_truth_trip_store_reserve_v1','official_truth_trip_stor
 export type NativeRpcName=typeof rpcNames[number]
 export type NativeHttpFaults={
   beforeRpc?:(name:NativeRpcName,payload:Record<string,unknown>)=>Promise<void>;
+  afterRpcDispatch?:(name:NativeRpcName,payload:Record<string,unknown>,backendPid:number)=>void;
   afterCommit?:(name:NativeRpcName,payload:Record<string,unknown>,result:unknown)=>Promise<'drop'|void>;
   graph?:(raw:Record<string,unknown>)=>Record<string,unknown>;
   graphHold?:{phase:'headers'|'body';released:Promise<void>;entered:()=>void};
@@ -107,7 +108,15 @@ export async function startNativeHttp(cluster:LocalProofCluster) {
       let result:unknown
       try {
         result=await transaction(role,jwt,async c=>{
-          const rows=await c.query(`select public.${name}($1::jsonb) as result`,[pgText(JSON.stringify(body.payload))])
+          const onDispatch=faults.afterRpcDispatch
+          const backendPid=onDispatch?Number((await c.query('select pg_backend_pid()::text as pid'))[0]!.pid):null
+          // Non-COMMIT query() writes its actual native frame before its first
+          // await. Observe that dispatch, after role/JWT/timeout setup, without
+          // changing the SQL, transaction, result or acknowledgement ordering.
+          const pending=c.query(`select public.${name}($1::jsonb) as result`,[pgText(JSON.stringify(body.payload))])
+          try {if(onDispatch){assert(Number.isInteger(backendPid)&&backendPid!>0);onDispatch(name,body.payload,backendPid!)}}
+          catch(error){await pending.catch(()=>undefined);throw error}
+          const rows=await pending
           return JSON.parse(rows[0]!.result!)
         },name==='official_truth_trip_store_finalize_v1'?30_000:name==='official_truth_trip_store_cleanup_v1'?5_000:20_000)
         evidence.push({rpc:name,committed:true,sqlState:null})

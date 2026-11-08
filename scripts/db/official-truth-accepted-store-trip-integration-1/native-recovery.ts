@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import type { TestContext } from 'node:test'
 import { startLocalProofCluster,assertLocalProofEnvironment } from '../official-truth-integrated-pilot-1/local-cluster'
 import { LocalPgConnection } from '../official-truth-integrated-pilot-1/pg-wire'
-import { nativeSql,installNativeSchema } from './native-schema'
+import { nativeSql,installNativeSchema,quote } from './native-schema'
 import { startNativeHttp } from './native-http'
 import { nativeProductRuntime,type NativeRuntimeState } from './native-loader'
 import { seedNativeRows,seedNativeCatalog,nativeBinding,declareNativeTrip } from './native-fixture'
@@ -101,42 +101,116 @@ export async function nativeRecoveryProof(t:TestContext){
 
     stage='R4 cleanup races actual pending authenticated Finalize and preserves committed history'
     const raceOwner=new AbortController();state.successor=true
-    let entered=false,finished=false
+    let entered=false,finished=false,raceToken:string|null=null,disposalAttempts=0,disposalRemoved:number|null=null
+    let afterAbortEvidence=0,afterAbortRequests=0,afterAbortAuth=0
+    let reserved:{createdAt:string;expiresAt:string;originalExpiry:string}|null=null
     const raceFrom=http.evidence.length,beforeWitness=witness.casCount()
-    http.faults.beforeRpc=async(name)=>{if(name==='official_truth_trip_store_finalize_v1'&&!entered){
-      entered=true;held.connection=await LocalPgConnection.connect(cluster);await held.connection.query('begin')
-      await held.connection.query('select pg_advisory_xact_lock(1869901924,2)')
-    }}
+    http.faults.beforeRpc=async(name,payload)=>{
+      if(name==='official_truth_trip_store_cleanup_v1'&&payload.token!==null){
+        assert(raceOwner.signal.aborted);assert.equal(payload.token,raceToken)
+        disposalAttempts++;assert.equal(disposalAttempts,1,'R4 permits exactly one acquired-token disposal attempt')
+      }
+      if(name==='official_truth_trip_store_finalize_v1'&&!entered){
+        assert.equal(typeof payload.token,'string');raceToken=payload.token as string
+        assert.match(raceToken,/^[a-f0-9-]{36}$/)
+        entered=true;held.connection=await LocalPgConnection.connect(cluster);await held.connection.query('begin')
+        await held.connection.query('select pg_advisory_xact_lock(1869901924,2)')
+      }
+    }
+    http.faults.afterCommit=async(name,payload,result)=>{
+      if(name==='official_truth_trip_store_cleanup_v1'&&payload.token===raceToken)disposalRemoved=(result as {removed:number}).removed
+    }
     const publication=runtime.producer.publishAcceptedStore(raceOwner.signal).finally(()=>{finished=true})
     try {
       await observe(()=>held.connection!==null||finished,15_000);assert(held.connection&&!finished)
       await observe(()=>Number(sql(`select count(*) from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock'
         and query like 'select public.official_truth_trip_store_finalize_v1(%'`))===1,1_000)
+      assert(raceToken)
+      reserved=JSON.parse(sql(`select jsonb_build_object('createdAt',created_at,'expiresAt',expires_at,'originalExpiry',original_expiry)
+        from official_accepted_trip_private.reservations where token=${quote(raceToken)} and purpose='publish' and state='prepared'`))
+      assert(reserved);assert(Date.parse(reserved.createdAt)<Date.parse(reserved.expiresAt))
+      assert(Date.parse(reserved.expiresAt)<=Date.parse(reserved.originalExpiry))
+      assert.equal(count('reservations'),1);assert.equal(count('stages'),1)
+      afterAbortEvidence=http.evidence.length;afterAbortRequests=http.requests.length;afterAbortAuth=http.counts().authRequests
       raceOwner.abort()
       await observe(()=>Number(sql(`select count(*) from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock'
         and query like 'select public.official_truth_trip_store_cleanup_v1(%'`))===1,700)
       await held.connection.query('commit');held.connection.close();held.connection=null
       assert.equal((await publication).status,'unavailable')
     } finally {
-      raceOwner.abort();delete http.faults.beforeRpc
+      raceOwner.abort()
       if(held.connection){await held.connection.query('rollback').catch(()=>[]);held.connection.close();held.connection=null}
       await publication;await http.settle()
+      delete http.faults.beforeRpc;delete http.faults.afterCommit
     }
     const final=http.evidence.slice(raceFrom).find(value=>value.rpc==='official_truth_trip_store_finalize_v1')
-    assert(final);assert(http.evidence.slice(raceFrom).some(value=>value.rpc==='official_truth_trip_store_cleanup_v1'&&value.committed))
-    assert.equal(count('reservations'),0);assert.equal(count('stages'),0);assert.equal(witness.casCount(),beforeWitness)
+    assert(final);assert(raceToken&&reserved);assert.equal(disposalAttempts,1)
+    assert.equal(http.counts().authRequests,afterAbortAuth)
+    assert.deepEqual(http.requests.slice(afterAbortRequests).map(value=>value.path),['/rest/v1/rpc/official_truth_trip_store_cleanup_v1'])
+    const disposals=http.evidence.slice(afterAbortEvidence).filter(value=>value.rpc==='official_truth_trip_store_cleanup_v1')
+    assert.equal(disposals.length,1)
+    const disposal=disposals[0]!
+    // The producer's earlier ordinary null-token sweep is deliberately outside
+    // this evidence window. A contended R4 request may honestly remain unknown;
+    // its one-second SQL lock bound is not a promise of physical deletion.
+    if(disposal.committed){
+      assert.equal(disposal.sqlState,null);assert.equal(disposalRemoved,1)
+      assert.equal(count('reservations'),0);assert.equal(count('stages'),0)
+    }else {
+      assert.equal(disposal.sqlState,'55P03');assert.equal(disposalRemoved,null)
+      assert.equal(count('reservations'),1);assert.equal(count('stages'),1)
+      assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations r
+        join official_accepted_trip_private.stages s using(operation_id)
+        where r.token=${quote(raceToken)} and r.purpose='publish' and r.state=${quote(final.committed?'finalized':'prepared')}
+        and (r.result is not null)=${final.committed}
+        and r.created_at=${quote(reserved.createdAt)}::timestamptz and r.expires_at=${quote(reserved.expiresAt)}::timestamptz
+        and r.original_expiry=${quote(reserved.originalExpiry)}::timestamptz`),'1')
+    }
+    assert.equal(witness.casCount(),beforeWitness)
+    assert.equal(count('originals'),final.committed?2:1);assert.equal(count('ciphertexts'),final.committed?2:1)
     if(final.committed){
       assert.equal(count('versions'),2);assert.equal(count('operations'),2)
       const sources=state.sourceStarts;assert.equal(await runtime.producer.reconcileAcceptedStore(signal()),'reconciled')
       assert.equal(state.sourceStarts,sources);assert.equal(witness.casCount(),beforeWitness+1)
     }else {assert.equal(count('versions'),1);assert.equal(count('operations'),1)}
-    isCurrent(await read());proofs.push(stage)
+    // Reconciliation above is a separate explicit internal action, never a
+    // post-abort producer continuation. The next explicit reader alone owns
+    // expiry sweeping; no disposal retry or direct fixture deletion occurs.
+    const history=()=>sql(`select jsonb_build_object(
+      'versions',(select jsonb_agg(to_jsonb(v) order by receipt) from official_accepted_trip_private.versions v),
+      'supports',(select jsonb_agg(to_jsonb(v) order by receipt,position) from official_accepted_trip_private.version_supports v),
+      'originals',(select jsonb_agg(to_jsonb(v) order by receipt) from official_accepted_trip_private.originals v),
+      'ciphertexts',(select jsonb_agg(to_jsonb(v) order by receipt) from official_accepted_trip_private.ciphertexts v),
+      'current',(select jsonb_agg(to_jsonb(v) order by cell) from official_accepted_trip_private.current_versions v),
+      'operations',(select jsonb_agg(to_jsonb(v) order by sequence) from official_accepted_trip_private.operations v),
+      'heads',(select jsonb_agg(to_jsonb(v) order by cell) from official_accepted_trip_private.heads v),
+      'acknowledgements',(select jsonb_agg(to_jsonb(v) order by sequence) from official_accepted_trip_private.witness_acknowledgements v))`)
+    const durableBeforeSweep=history(),raceSources=state.sourceStarts
+    let raceSwept:number|null=null
+    if(!disposal.committed){
+      const remaining=Number(sql(`select greatest(0,ceil(extract(epoch from expires_at-clock_timestamp())*1000))
+        from official_accepted_trip_private.reservations where token=${quote(raceToken)}`))
+      assert(remaining>=0&&remaining<=45_000)
+      t.diagnostic(JSON.stringify({proof:'native-r4-contended-disposal-checkpoint',finalizeCommitted:final.committed,
+        disposalAttempts,sqlState:disposal.sqlState,residualReservations:1,residualStages:1,originalExpiryWaitMs:remaining}))
+      await new Promise<void>(resolve=>setTimeout(resolve,remaining+25))
+      assert.equal(sql(`select count(*) from official_accepted_trip_private.reservations where token=${quote(raceToken)}
+        and expires_at=${quote(reserved.expiresAt)}::timestamptz and expires_at<=clock_timestamp()`),'1')
+    }
+    http.faults.afterCommit=async(name,payload,result)=>{
+      if(name==='official_truth_trip_store_cleanup_v1'&&payload.token===null)raceSwept=(result as {removed:number}).removed
+    }
+    try{isCurrent(await read())}finally{delete http.faults.afterCommit;await http.settle()}
+    assert.equal(raceSwept,disposal.committed?0:1);assert.equal(count('reservations'),0);assert.equal(count('stages'),0)
+    assert.equal(history(),durableBeforeSweep);assert.equal(state.sourceStarts,raceSources);assert.equal(disposalAttempts,1)
+    proofs.push(stage)
     await http.settle()
     const peers=()=>Number(sql(`select count(*) from pg_stat_activity where pid<>pg_backend_pid() and datname=current_database() and backend_type='client backend'`))
     await observe(()=>peers()===0,2_000)
     assert(witness.keyCopies.every(key=>key.every(byte=>byte===0)))
     t.diagnostic(JSON.stringify({proof:'native-disposal-and-recovery',proofs,lateReadNoPositive:true,unknownDisposalAckHonest:true,
       expiredOrphansSwept:32,readerRecoverySourceFetches:0,finalizeRaceCommitted:final.committed,
+      acquiredTokenDisposalAttempts:disposalAttempts,disposalSqlState:disposal.sqlState,raceExpiredResidueSwept:raceSwept,
       immutableVersions:count('versions'),durableOperations:count('operations'),ownedClientBackends:0}))
   } catch(error){t.diagnostic(JSON.stringify({failedRecoveryStage:stage,proofs,lastRpcOutcomes:http?.evidence.slice(-10)}));throw error}
   finally {
