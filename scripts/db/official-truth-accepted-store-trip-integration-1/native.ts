@@ -112,6 +112,19 @@ export async function nativeAcceptedStoreProof(t:TestContext):Promise<void> {
     assert.equal(state.sourceStarts,callsBeforeReconcile);assert.equal(count('versions'),2)
     const b=current(await read());assert.notEqual(b.receiptFingerprint,a.receiptFingerprint)
     assert.equal(b.evaluations.find(e=>e.result!=='unknown')!.result,'required');completed++
+    // The actual successor support preserves every retained Schema-2 identity
+    // field. This runs only after genuine successor COMMIT and fresh read B.
+    assert.equal(sql(`select (count(*)=1 and bool_and(
+      (s.identity_schema,s.content_item_id,s.content_item_version,s.representation_id,s.representation_version,
+       s.identity_profile_id,s.identity_profile_version,s.content_type,s.rule_scope_key,s.version_id,s.source_id,
+       s.evidence_lifecycle,s.evidence_validation_state,s.source_class)
+      =(e.identity_schema,e.content_item_id,e.content_item_version,e.representation_id,e.representation_version,
+       e.identity_profile_id,e.identity_profile_version,e.content_type,e.rule_scope_key,e.version_id,e.source_id,
+       e.lifecycle,e.validation_state,src.source_class)))::text
+      from official_accepted_trip_private.current_versions cv join official_accepted_trip_private.versions v on v.receipt=cv.receipt
+      join private.official_rule_claim_support s on s.claim_id=v.claim_id
+      join private.official_evidence_versions e on e.version_id=s.version_id
+      join private.official_sources src on src.source_id=e.source_id`),'true')
 
     stage='partial restore: latest head and external witness cannot bless old current projection'
     const headBefore=sql('select row_to_json(h)::text from official_accepted_trip_private.heads h')

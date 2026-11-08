@@ -303,7 +303,7 @@ create function official_accepted_trip_private.publish_legacy_v1(operation uuid)
 language plpgsql volatile parallel unsafe security definer set search_path='' as $$
 declare r official_accepted_trip_private.reservations%rowtype; a official_accepted_trip_private.admissions%rowtype;
   m jsonb; e jsonb; c jsonb; f jsonb; sc jsonb; p jsonb; prior official_accepted_trip_private.versions%rowtype;
-  claim bigint; accepted timestamptz:=date_trunc('milliseconds',clock_timestamp()); ignored jsonb;
+  claim bigint; accepted timestamptz:=date_trunc('milliseconds',clock_timestamp()); ignored jsonb; support_written bigint;
 begin
   select * into strict r from official_accepted_trip_private.reservations where operation_id=operation and purpose='publish' and state='prepared';
   select * into strict a from official_accepted_trip_private.admissions where cell=r.cell;
@@ -346,11 +346,35 @@ begin
   else
     -- The complete prior payload is already immutable in prior.manifest and
     -- prior.legacy_projection. Only these approved current columns change.
+    set constraints private.official_rule_claims_fact_payload,
+      private.official_rule_claim_requirement_effect_fact_payload,
+      private.official_rule_claims_support_count_v2,
+      private.official_rule_support_count_v2 deferred;
     update private.official_rule_claims set accepted_at=accepted where claim_id=claim;
     update private.official_rule_claim_requirement_effect set effect=f->>'effect',visa_mode=f->>'visaMode' where claim_id=claim;
     delete from private.official_rule_claim_support where claim_id=claim;
-    insert into private.official_rule_claim_support(claim_id,rule_scope_key,version_id,source_id,evidence_lifecycle,evidence_validation_state,source_class)
-      values(claim,a.scope_key,e->>'versionId',e->>'sourceId','accepted','valid','official_authority');
+    insert into private.official_rule_claim_support(identity_schema,content_item_id,content_item_version,
+      representation_id,representation_version,identity_profile_id,identity_profile_version,content_type,
+      claim_id,rule_scope_key,version_id,source_id,evidence_lifecycle,evidence_validation_state,source_class)
+    select ev.identity_schema,ev.content_item_id,ev.content_item_version,ev.representation_id,ev.representation_version,
+      ev.identity_profile_id,ev.identity_profile_version,ev.content_type,
+      claim,a.scope_key,ev.version_id,ev.source_id,ev.lifecycle,ev.validation_state,src.source_class
+    from private.official_evidence_versions ev join private.official_sources src on src.source_id=ev.source_id
+    where ev.version_id=e->>'versionId' and ev.rule_scope_key=a.scope_key and ev.source_id=e->>'sourceId'
+      and ev.identity_schema=(e->>'identitySchema')::integer and ev.content_item_id=e->>'contentItemId'
+      and ev.content_item_version=(e->>'contentItemVersion')::integer and ev.representation_id=e->>'representationId'
+      and ev.representation_version=(e->>'representationVersion')::integer and ev.identity_profile_id=e->>'identityProfileId'
+      and ev.identity_profile_version=(e->>'identityProfileVersion')::integer and ev.content_type=e->>'contentType'
+      and ev.lifecycle=e->>'lifecycle' and ev.validation_state=e->>'validationState' and src.source_class='official_authority';
+    get diagnostics support_written=row_count;
+    perform official_accepted_trip_private.require_v1(support_written=1);
+    -- PG16 fires deferred invoker checks as the currently active principal.
+    -- Complete these four legacy checks here; the outer final guard still
+    -- follows its unchanged ALL IMMEDIATE validation of the full publication.
+    set constraints private.official_rule_claims_fact_payload,
+      private.official_rule_claim_requirement_effect_fact_payload,
+      private.official_rule_claims_support_count_v2,
+      private.official_rule_support_count_v2 immediate;
   end if;
   select jsonb_build_object('claim',to_jsonb(cc),'fact',to_jsonb(ff),'supports',
     (select jsonb_agg(to_jsonb(ss) order by ss.version_id) from private.official_rule_claim_support ss where ss.claim_id=cc.claim_id))
@@ -800,6 +824,13 @@ do $$ declare t text; f record; begin
     execute format('grant execute on function %s to ot_accepted_trip_exec',f.signature);
   end loop;
 end $$;
+-- R6: complete pure invoker-helper dependency set of the four postgres-owned
+-- bridges. Schema ownership alone grants no EXECUTE on executor-owned helpers.
+grant execute on function official_accepted_trip_private.require_v1(boolean),
+  official_accepted_trip_private.object_v1(jsonb,text[]),
+  official_accepted_trip_private.hash_v1(jsonb),
+  official_accepted_trip_private.scope_columns_v1(jsonb),
+  official_accepted_trip_private.accept_binding_v1(jsonb,official_accepted_trip_private.admissions) to postgres;
 create trigger stage_immutable before update on official_accepted_trip_private.stages for each row execute function official_accepted_trip_private.immutable_v1();
 grant usage on schema official_provenance_api to ot_accepted_trip_exec;
 grant usage on type official_provenance_api.artifact_input_v1 to ot_accepted_trip_exec;

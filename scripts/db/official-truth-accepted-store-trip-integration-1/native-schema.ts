@@ -44,6 +44,39 @@ const evidenceSources=[
   '20261011111839_official_truth_original_custody_lifecycle_1.sql','20261013184409_official_truth_ch_de_application_pilot_1.sql',
   '20261023153726_official_truth_current_version_lookup_1.sql',
 ]
+const custodyRoleMigration='20261011111839_official_truth_original_custody_lifecycle_1.sql'
+const custodyRoles=['ot_original_producer','ot_original_reviewer','ot_original_reader','ot_original_lifecycle'] as const
+function throwFailures(failures:unknown[],message:string) {
+  if(failures.length===1)throw failures[0]
+  if(failures.length>1)throw new AggregateError(failures,message)
+}
+function assertRuntimeOwner(sql:ReturnType<typeof nativeSql>) {
+  assert.equal(sql(`select (not rolsuper and not rolinherit and not rolcanlogin and not rolcreaterole
+    and not rolcreatedb and not rolreplication and rolbypassrls
+    and not exists(select 1 from pg_auth_members where member=pg_roles.oid))::text
+    from pg_roles where rolname='postgres'`),'true')
+}
+function installCustodyMigration(sql:ReturnType<typeof nativeSql>) {
+  assertRuntimeOwner(sql)
+  const failures:unknown[]=[]
+  try {
+    // R6: only this exact original transaction creates four NOLOGIN roles.
+    // Its owner stays postgres; no original SQL or runtime membership changes.
+    sql('alter role postgres createrole')
+    sql(`set role postgres;${source(custodyRoleMigration)}`)
+  } catch(error){failures.push(error)}
+  // Each cleanup is attempted even if an earlier cleanup failed. PG16 creates
+  // ADMIN-only memberships automatically; NOCREATEROLE alone is insufficient.
+  try {sql('alter role postgres nocreaterole')} catch(error){failures.push(error)}
+  for(const role of custodyRoles) {
+    try {sql(`do $cleanup$ begin
+      if exists(select 1 from pg_roles where rolname=${quote(role)}) then
+        execute 'revoke ${role} from postgres';
+      end if; end $cleanup$;`)} catch(error){failures.push(error)}
+  }
+  try {assertRuntimeOwner(sql)} catch(error){failures.push(error)}
+  throwFailures(failures,'native custody installation and role cleanup failed')
+}
 export function installNativeSchema(sql:ReturnType<typeof nativeSql>) {
   sql(`create role anon nologin noinherit;create role authenticated nologin noinherit;
     create role service_role nologin noinherit bypassrls;create role postgres nologin noinherit bypassrls nosuperuser;
@@ -63,6 +96,7 @@ export function installNativeSchema(sql:ReturnType<typeof nativeSql>) {
     create schema private authorization postgres;revoke all on schema private from public;
     grant usage,create on schema public to postgres;
     create schema extensions authorization postgres;create extension pg_trgm with schema extensions;
+    create extension pgcrypto with schema extensions;
     create table public.profiles(user_id uuid primary key references auth.users on delete cascade,role text not null,status text not null);
     alter table public.profiles owner to postgres;alter table public.profiles enable row level security;
     create policy own_read on public.profiles for select to authenticated using(user_id=auth.uid());
@@ -88,15 +122,22 @@ export function installNativeSchema(sql:ReturnType<typeof nativeSql>) {
   // Original CREATE SCHEMA IF NOT EXISTS still checks database CREATE. Grant
   // it only for installation in this newly owned cluster; runtime postgres
   // stays NOSUPERUSER and loses this installation privilege before proofs.
-  sql(`do $install$ begin execute format('grant create on database %I to postgres',current_database()); end $install$;`)
+  const failures:unknown[]=[]
   try {
+    sql(`do $install$ begin execute format('grant create on database %I to postgres',current_database()); end $install$;`)
     for(const file of tripSources)sql(`set role postgres;${source(file)}`)
-    for(const file of evidenceSources)sql(`set role postgres;${source(file)}`)
-  } finally {
-    sql(`do $install$ begin execute format('revoke create on database %I from postgres',current_database()); end $install$;`)
-  }
-  assert.equal(sql(`select (not has_database_privilege('postgres',current_database(),'create')
-    and not (select rolsuper from pg_roles where rolname='postgres'))::text`),'true')
+    for(const file of evidenceSources) {
+      if(file===custodyRoleMigration)installCustodyMigration(sql)
+      else sql(`set role postgres;${source(file)}`)
+    }
+  } catch(error){failures.push(error)}
+  try {sql(`do $install$ begin execute format('revoke create on database %I from postgres',current_database()); end $install$;`)}
+  catch(error){failures.push(error)}
+  try {
+    assert.equal(sql(`select (not has_database_privilege('postgres',current_database(),'create'))::text`),'true')
+    assertRuntimeOwner(sql)
+  } catch(error){failures.push(error)}
+  throwFailures(failures,'native migration installation and privilege cleanup failed')
   // Actual unchanged #1142 guard and ownership. Auth tables above are explicit
   // synthetic infrastructure; this is not managed Auth/JWT target evidence.
   sql(pinnedSource('scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql'))
@@ -104,6 +145,27 @@ export function installNativeSchema(sql:ReturnType<typeof nativeSql>) {
   for(const file of ['storage.sql','url-idna-data.sql','url-codec.sql','semantic-v2.sql'])
     sql(pinnedSource(`scripts/db/official-truth-integrated-pilot-1/${file}`))
   sql(readFileSync('scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql','utf8'))
+  // The five pure invoker helpers are the complete R6 bridge dependency set;
+  // postgres has no membership in the executor and obtains no other helpers.
+  assertRuntimeOwner(sql)
+  const permitted=JSON.parse(sql(`select coalesce(jsonb_agg(p.oid::regprocedure::text order by p.oid::regprocedure::text),'[]')
+    from pg_proc p join pg_namespace n on n.oid=p.pronamespace join pg_roles r on r.oid=p.proowner
+    where n.nspname='official_accepted_trip_private' and r.rolname='ot_accepted_trip_exec'
+      and has_function_privilege('postgres',p.oid,'execute')`)) as string[]
+  assert.deepEqual(permitted,[
+    'official_accepted_trip_private.accept_binding_v1(jsonb,official_accepted_trip_private.admissions)',
+    'official_accepted_trip_private.hash_v1(jsonb)',
+    'official_accepted_trip_private.object_v1(jsonb,text[])',
+    'official_accepted_trip_private.require_v1(boolean)',
+    'official_accepted_trip_private.scope_columns_v1(jsonb)',
+  ])
+  assert.equal(sql(`select bool_and(not p.prosecdef and p.proconfig=array['search_path=""']::text[])
+    from pg_proc p join pg_namespace n on n.oid=p.pronamespace join pg_roles r on r.oid=p.proowner
+    where n.nspname='official_accepted_trip_private' and r.rolname='ot_accepted_trip_exec'
+      and has_function_privilege('postgres',p.oid,'execute')`),'t')
+  assert.equal(sql(`select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace,
+    lateral aclexplode(p.proacl) a where n.nspname='official_accepted_trip_private'
+      and a.grantee='postgres'::regrole and a.is_grantable`),'0')
 }
 
 /** Independent RLS query used by the loopback PostgREST protocol fixture. It

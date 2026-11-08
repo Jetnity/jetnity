@@ -1,0 +1,581 @@
+{
+  "schema": "jetnity-atomic-required-gate-four-run-readonly-diagnosis-v1",
+  "reviewer": "/root/refresh_independent_review",
+  "policy": "No rerun, no code/workflow/timeout/hosted mutation. Existing required gate retained.",
+  "runs": {
+    "main": {
+      "head": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "runId": 42435728151,
+      "jobId": 128594031618,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42435728151/job/128594031618",
+      "rawLogPath": "/workspace/scratch/9de5b942a09c/accepted-store-atomic-gate-diagnosis-20261108/main-atomic-log.log",
+      "rawLogSha256": "9d69be45e06b7680e0af7c8ff611d210579ddb67fba071a657b91cd478851c21",
+      "bytes": 178059,
+      "runnerVersion": "2.338.2",
+      "region": "southcentralus",
+      "imageVersion": "20261101.360.1",
+      "nodeVersion": "v22.23.4",
+      "npmVersion": "10.9.9",
+      "checkoutDescription": null,
+      "testCommandTime": "2026-11-08T01:47:46.0759082Z",
+      "markerCount": 152,
+      "orderedMarkerPrefixIdentical": true,
+      "complete": true,
+      "lastMarkerElapsedMs": 576459,
+      "parentReserveMs": 323541,
+      "tapPass": 1,
+      "tapFail": 0,
+      "tapCancelled": 0,
+      "tapSkipped": 0,
+      "sqlProbes": [
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 1908
+        },
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 536
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 3054
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 490
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 2262
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 635
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 4020
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 548
+        }
+      ],
+      "graphProbes": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5548820,
+          "workerMs": 381
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5548820,
+          "workerMs": 58
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5570960,
+          "workerMs": 457
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5570960,
+          "workerMs": 59
+        }
+      ],
+      "positiveSqlTotalMs": [
+        5761.439,
+        6401.379
+      ],
+      "comparisonToMain": {
+        "comparableTimingMetrics": 41,
+        "selection": "all top-level verifyMs/workerMs/statementMs markers with main duration >=100ms",
+        "medianDurationRatio": 1.0,
+        "minDurationRatio": 1.0,
+        "maxDurationRatio": 1.0,
+        "allFunctionInvocationCountsIdentical": true,
+        "invocationProfilesCompared": 12
+      },
+      "terminalCases": [
+        {
+          "case": "unknown_commit",
+          "elapsedMs": 403963
+        },
+        {
+          "case": "readback_failure",
+          "elapsedMs": 428327
+        },
+        {
+          "case": "cleanup_after_bound",
+          "elapsedMs": 502037
+        },
+        {
+          "case": "reader_after_bound",
+          "elapsedMs": 576111
+        }
+      ],
+      "finalCleanup": {
+        "started": 9369,
+        "settled": 9369,
+        "pending": 0,
+        "connections": 248,
+        "closed": 248,
+        "stoppedClusters": 11
+      },
+      "parseNote": "One TAP diagnostic quoted bigint message needed doubled-backslash unescaping for JSON analysis only; raw downloaded logs unchanged."
+    },
+    "docs": {
+      "head": "6585e9c22aed67e510cef12b84803ea29330c0a5",
+      "runId": 42444174660,
+      "jobId": 128619516618,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42444174660/job/128619516618",
+      "rawLogPath": "/workspace/scratch/9de5b942a09c/accepted-store-atomic-gate-diagnosis-20261108/6585-atomic-log.log",
+      "rawLogSha256": "56134575c3a95b31d93a6f32c6da209c9e4ba3538ed8dbf7b1eaf3dd4a9911aa",
+      "bytes": 173556,
+      "runnerVersion": "2.338.2",
+      "region": "eastus",
+      "imageVersion": "20261101.360.1",
+      "nodeVersion": "v22.23.4",
+      "npmVersion": "10.9.9",
+      "checkoutDescription": "d8c8e60db Merge 6585e9c22aed67e510cef12b84803ea29330c0a5 into e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "testCommandTime": "2026-11-08T03:48:43.5284774Z",
+      "markerCount": 146,
+      "orderedMarkerPrefixIdentical": true,
+      "complete": false,
+      "lastMarkerElapsedMs": 827062,
+      "parentReserveMs": null,
+      "tapPass": 0,
+      "tapFail": 0,
+      "tapCancelled": 1,
+      "tapSkipped": 0,
+      "sqlProbes": [
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 4242
+        },
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 1188
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 5051
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 1092
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 4724
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 1281
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 5766
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 1175
+        }
+      ],
+      "graphProbes": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5548820,
+          "workerMs": 791
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5548820,
+          "workerMs": 95
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5570960,
+          "workerMs": 924
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5570960,
+          "workerMs": 97
+        }
+      ],
+      "positiveSqlTotalMs": [
+        12727.414,
+        14114.394
+      ],
+      "comparisonToMain": {
+        "comparableTimingMetrics": 41,
+        "selection": "all top-level verifyMs/workerMs/statementMs markers with main duration >=100ms",
+        "medianDurationRatio": 2.2145104895104897,
+        "minDurationRatio": 1.4343283582089552,
+        "maxDurationRatio": 2.329383886255924,
+        "allFunctionInvocationCountsIdentical": true,
+        "invocationProfilesCompared": 12
+      },
+      "terminalCases": [
+        {
+          "case": "unknown_commit",
+          "elapsedMs": 773854
+        },
+        {
+          "case": "readback_failure",
+          "elapsedMs": 827062
+        }
+      ],
+      "finalCleanup": null,
+      "parseNote": "One TAP diagnostic quoted bigint message needed doubled-backslash unescaping for JSON analysis only; raw downloaded logs unchanged."
+    },
+    "impl": {
+      "head": "94b6b063333d2c867eb14145a2512dd4da85bcfa",
+      "runId": 42447382905,
+      "jobId": 128629130922,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42447382905/job/128629130922",
+      "rawLogPath": "/workspace/scratch/9de5b942a09c/accepted-store-atomic-gate-diagnosis-20261108/94b6-atomic-log.log",
+      "rawLogSha256": "94559b84d7b59b151aaac3372908469da3fe44a95b3000432e7faa5f101dabda",
+      "bytes": 177261,
+      "runnerVersion": "2.338.2",
+      "region": "westcentralus",
+      "imageVersion": "20261101.360.1",
+      "nodeVersion": "v22.23.4",
+      "npmVersion": "10.9.9",
+      "checkoutDescription": "f31eabca7 Merge 94b6b063333d2c867eb14145a2512dd4da85bcfa into e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "testCommandTime": "2026-11-08T04:36:16.9667309Z",
+      "markerCount": 148,
+      "orderedMarkerPrefixIdentical": true,
+      "complete": false,
+      "lastMarkerElapsedMs": 846564,
+      "parentReserveMs": null,
+      "tapPass": 0,
+      "tapFail": 0,
+      "tapCancelled": 1,
+      "tapSkipped": 0,
+      "sqlProbes": [
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 3754
+        },
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 1058
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 4875
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 954
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 4137
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 1151
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 5843
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 1026
+        }
+      ],
+      "graphProbes": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5564972,
+          "workerMs": 762
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5564972,
+          "workerMs": 94
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5587112,
+          "workerMs": 881
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5587112,
+          "workerMs": 92
+        }
+      ],
+      "positiveSqlTotalMs": [
+        11129.225,
+        12108.5
+      ],
+      "comparisonToMain": {
+        "comparableTimingMetrics": 41,
+        "selection": "all top-level verifyMs/workerMs/statementMs markers with main duration >=100ms",
+        "medianDurationRatio": 1.9412587412587412,
+        "minDurationRatio": 1.4534825870646766,
+        "maxDurationRatio": 2.0497630331753554,
+        "allFunctionInvocationCountsIdentical": true,
+        "invocationProfilesCompared": 12
+      },
+      "terminalCases": [
+        {
+          "case": "unknown_commit",
+          "elapsedMs": 712807
+        },
+        {
+          "case": "readback_failure",
+          "elapsedMs": 760434
+        },
+        {
+          "case": "cleanup_after_bound",
+          "elapsedMs": 846564
+        }
+      ],
+      "finalCleanup": null,
+      "parseNote": "One TAP diagnostic quoted bigint message needed doubled-backslash unescaping for JSON analysis only; raw downloaded logs unchanged."
+    },
+    "fix2": {
+      "head": "f8017c63ddf5c2f5f93bc53cc3b406a35d7acc5d",
+      "runId": 42449017089,
+      "jobId": 128634031633,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42449017089/job/128634031633",
+      "rawLogPath": "/workspace/scratch/9de5b942a09c/accepted-store-atomic-gate-diagnosis-20261108/f801-atomic-log.log",
+      "rawLogSha256": "5bcbb879682e3c2301942f147ebb2e079c4a58e062f66267d63f932fce3d3852",
+      "bytes": 179142,
+      "runnerVersion": "2.338.2",
+      "region": "centralus",
+      "imageVersion": "20261101.360.1",
+      "nodeVersion": "v22.23.4",
+      "npmVersion": "10.9.9",
+      "checkoutDescription": "8525c3dc3 Merge f8017c63ddf5c2f5f93bc53cc3b406a35d7acc5d into e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "testCommandTime": "2026-11-08T05:01:01.9568494Z",
+      "markerCount": 152,
+      "orderedMarkerPrefixIdentical": true,
+      "complete": true,
+      "lastMarkerElapsedMs": 561240,
+      "parentReserveMs": 338760,
+      "tapPass": 1,
+      "tapFail": 0,
+      "tapCancelled": 0,
+      "tapSkipped": 0,
+      "sqlProbes": [
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 1891
+        },
+        {
+          "mode": "primary",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 544
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 3048
+        },
+        {
+          "mode": "primary",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 536
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "reference",
+          "verifyMs": 2129
+        },
+        {
+          "mode": "composed",
+          "kind": "retained",
+          "implementation": "current",
+          "verifyMs": 588
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "reference",
+          "verifyMs": 3597
+        },
+        {
+          "mode": "composed",
+          "kind": "raw",
+          "implementation": "current",
+          "verifyMs": 526
+        }
+      ],
+      "graphProbes": [
+        {
+          "mode": "primary",
+          "implementation": "r8_reference",
+          "artifacts": 63,
+          "canonicalBytes": 5564972,
+          "workerMs": 382
+        },
+        {
+          "mode": "primary",
+          "implementation": "current",
+          "artifacts": 63,
+          "canonicalBytes": 5564972,
+          "workerMs": 53
+        },
+        {
+          "mode": "composed",
+          "implementation": "r8_reference",
+          "artifacts": 72,
+          "canonicalBytes": 5587112,
+          "workerMs": 432
+        },
+        {
+          "mode": "composed",
+          "implementation": "current",
+          "artifacts": 72,
+          "canonicalBytes": 5587112,
+          "workerMs": 55
+        }
+      ],
+      "positiveSqlTotalMs": [
+        5503.578,
+        6069.988
+      ],
+      "comparisonToMain": {
+        "comparableTimingMetrics": 41,
+        "selection": "all top-level verifyMs/workerMs/statementMs markers with main duration >=100ms",
+        "medianDurationRatio": 0.9655330882352942,
+        "minDurationRatio": 0.8947761194029851,
+        "maxDurationRatio": 1.0938775510204082,
+        "allFunctionInvocationCountsIdentical": true,
+        "invocationProfilesCompared": 12
+      },
+      "terminalCases": [
+        {
+          "case": "unknown_commit",
+          "elapsedMs": 390005
+        },
+        {
+          "case": "readback_failure",
+          "elapsedMs": 414068
+        },
+        {
+          "case": "cleanup_after_bound",
+          "elapsedMs": 487535
+        },
+        {
+          "case": "reader_after_bound",
+          "elapsedMs": 561006
+        }
+      ],
+      "finalCleanup": {
+        "started": 9354,
+        "settled": 9354,
+        "pending": 0,
+        "connections": 248,
+        "closed": 248,
+        "stoppedClusters": 11
+      },
+      "parseNote": "One TAP diagnostic quoted bigint message needed doubled-backslash unescaping for JSON analysis only; raw downloaded logs unchanged."
+    }
+  },
+  "source": {
+    "workflowGitBlob": "5623adc59ec9dcd7887283651c54e18462910d05",
+    "nativeTestGitBlob": "1b04f7375080ebfa53123751c9bbc83a70d38290",
+    "oldSharedBundleGitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1",
+    "newSharedBundleGitBlob": "df97aafc7222210a0da1d2198007ac6563a1508f",
+    "parentMs": 900000,
+    "workflowMinutes": 20,
+    "comparisons": {
+      "mainToDocs": "12 added docs/evidence files only; no old code/package/workflow changes",
+      "mainToImpl": "Old Atomic test/coordinator/candidate/reference/fixture/lifetime/workflow and npm dependencies unchanged. Shared captured module adds R2 wrapper; shared Supabase factory imports optional lifetime. Measured old corpus grows16152 bytes without new artifacts.",
+      "implToFix2": "Only R5 doc, two unrelated guard tests and new-package native-schema installer; old native inputs/corpus size unchanged."
+    }
+  },
+  "conclusions": [
+    "Timeouts were real900000ms node:test cancellations, not job20-minute timeout or affirmative passing acceptance.",
+    "Same ordered scenario prefix and same PostgreSQL function invocation counts; docs and94b6 SQL timings are roughly2.2x and1.94x main. f801 is0.966x median with unchanged94b6 corpus byte sizes.",
+    "The implementation grows primary/composed corpus by16152 bytes (0.2911%/0.2899%) without changing63/72 artifacts. This real dependency effect must be acknowledged, but cannot explain the twofold slowdown also observed before implementation, or the f801 recovery with same corpus.",
+    "All four jobs report same runner software/image and Node/npm versions, different Azure regions. CPU model/count/load/pressure and per-query CPU/IO were not captured; exact host cause remains unproved.",
+    "No timeout/workflow/performance rewrite currently justified. Preserve R8/R9 900s parent,20min job,full152markers and all runtime deadlines. Required final-head and actual-main gates remain mandatory. Record historical variability as operational P2 without classifying failures away."
+  ]
+}
