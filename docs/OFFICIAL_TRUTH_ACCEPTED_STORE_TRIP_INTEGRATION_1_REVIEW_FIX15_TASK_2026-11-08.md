@@ -1,3 +1,15 @@
+# Fix15 TASK V1.2 — preserve TypeScript coverage after R11 moves
+
+Frozen 2026-11-08 14:06:49 UTC, before this added implementation change. Full V1.1 and V1 remain unchanged below.
+
+Root's direct preflight found that current `tsconfig.json`, blob `187583dcb17aed1abef60ebddf9b9be01a013641`, includes app/components/lib/types and generated Next types, but not scripts. Moving the eight existing lib wrappers would otherwise remove their explicit TypeScript roots and could lose transitive checking of the same native helpers, while tsx runtime transpilation alone would not restore that coverage.
+
+Additionally authorized: add exactly `scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/*.test.ts` to `tsconfig.json` include. Preserve every compiler option, previous include and exclusion. This recreates the eight moved TypeScript roots and their existing transitive imports; it does not broaden to unrelated scripts or change production code.
+
+The existing CI coverage guard adaptation also verifies this scoped include and the eight-entry exact set. All source/runtime/CI gates in V1.1 remain mandatory. The author may continue already-authorized fixture work; this additional TypeScript-root edit is authorized only from this version. No product scope, SQL, timeout or Owner gate changes.
+
+---
+
 # Fix15 TASK V1.1 — Root clarification before implementation
 
 Frozen 2026-11-08 14:02:41 UTC. This version adds only the concrete active CI-guard adaptation and npm alias composition identified by independent source review. The full V1 follows unchanged below.
