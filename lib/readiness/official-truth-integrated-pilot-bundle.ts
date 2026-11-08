@@ -33,6 +33,8 @@ export const INTEGRATED_PILOT_BUNDLE_LIMITS = Object.freeze({
 })
 /** R1 changes only the explicitly selected LOCAL transport/storage profile. */
 export const LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE = 'ot-integrated-pilot-local-closure-v2' as const
+/** R2: explicit accepted-store structural contract; not acceptance authority. */
+export const ACCEPTED_STORE_TRIP_CLOSURE_PROFILE = 'ot-accepted-store-trip-closure-v1' as const
 const custodyKinds = ['GlobalCellAdmissionV1', 'AcceptedEvidenceCustodyV1', 'SupportSelectionDefinitionV1',
   'SelectedSupportManifestV1', 'GlobalRepresentationQualificationV1', 'AutonomousReviewConstructionV1'] as const
 const manifestKinds = ['catalog_snapshot', 'identity_profile', 'extractor_registry', 'policy_registry',
@@ -858,4 +860,14 @@ export function verifyLocalIntegratedPilotBundle(input: LocalIntegratedPilotEnve
   if (!ownRecord(input, ['profile', 'bundle']) || input.profile !== LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE) return fail('unsupported_version')
   const result = verifyBundle(input.bundle, 16)
   return result.ok ? success({ ...result.value, profile: LOCAL_INTEGRATED_PILOT_CLOSURE_PROFILE }) : result
+}
+
+/** Complete structural/semantic proof only. The new protected ledger, current
+ * authority, originals and independent witness must separately bind this profile. */
+export function verifyAcceptedStoreIntegratedBundleV1(input: Readonly<{
+  profile: typeof ACCEPTED_STORE_TRIP_CLOSURE_PROFILE; bundle: IntegratedPilotBundleInput
+}>): Result<IntegratedPilotVerifiedBundle & Readonly<{ profile: typeof ACCEPTED_STORE_TRIP_CLOSURE_PROFILE }>> {
+  if (!ownRecord(input, ['profile', 'bundle']) || input.profile !== ACCEPTED_STORE_TRIP_CLOSURE_PROFILE) return fail('unsupported_version')
+  const result = verifyBundle(input.bundle, 16)
+  return result.ok ? success({ ...result.value, profile: ACCEPTED_STORE_TRIP_CLOSURE_PROFILE }) : result
 }

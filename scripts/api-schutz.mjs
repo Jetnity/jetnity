@@ -93,6 +93,25 @@ for (const datei of routenDateien(API_ADMIN)) {
 
 const anzahl = routenDateien(API_ADMIN).length
 
+// #1155: exact dormant explicit-read route. Its package handler owns the
+// default-closed deployment, same-origin, body, Auth, rate and own-Trip gates.
+// The native entry executes that handler; this check pins thin delegation.
+const acceptedStoreRoute = 'app/api/readiness/accepted-store/route.ts'
+try {
+  const source = readFileSync(join(WURZEL, acceptedStoreRoute), 'utf8')
+  const methods = HTTP_METHODEN.filter(method => handlerKörper(source, method) !== null)
+  const body = handlerKörper(source, 'POST') ?? ''
+  if (methods.length !== 1 || methods[0] !== 'POST'
+    || !source.includes("from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/request-server'")
+    || !/const response\s*=\s*await acceptedStoreTripRequest\(req\)/.test(body)
+    || !/return NextResponse\.json\(response\.body,\{status:response\.status,headers:readinessHttpHeader\(\)\}\)/.test(body)
+    || !/export const runtime\s*=\s*'nodejs'/.test(source)) {
+    beanstandungen.push(`${acceptedStoreRoute}: exakte geschützte POST-Delegation fehlt`)
+  }
+} catch {
+  beanstandungen.push(`${acceptedStoreRoute}: freigegebene geschützte Route fehlt`)
+}
+
 if (beanstandungen.length > 0) {
   console.error(`API-Schutz: ${beanstandungen.length} Beanstandung(en)\n`)
   for (const zeile of beanstandungen) console.error(`  - ${zeile}`)
@@ -114,3 +133,4 @@ if (anzahl === 0) {
     console.log('Hinweis: app/api/admin existiert nicht – nichts zu prüfen.')
   }
 }
+

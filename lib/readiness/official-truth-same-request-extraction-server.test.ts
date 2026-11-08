@@ -979,7 +979,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     }
   })
 
-  test('21 nur die Bindung importiert den Katalogtransport-Helfer', () => {
+  test('21 nur die Bindung und der freigegebene Accepted-Store-Produzent importieren den Katalogtransport-Helfer', () => {
     const treffer: string[] = []
     for (const start of ['lib', 'app', 'components', 'hooks', 'types']) {
       for (const pfad of dateienUnter(start)) {
@@ -988,7 +988,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         if (text.includes(HELFER)) treffer.push(pfad.slice(wurzel.length + 1))
       }
     }
-    assert.deepEqual(treffer.sort(), [ABRUF_DATEI, DATEI].sort())
+    assert.deepEqual(treffer.sort(), [ABRUF_DATEI, DATEI,
+      'lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts'].sort())
     assert.match(datei(DATEI), new RegExp(`import[\\s\\S]*${HELFER}`))
     const abruf = datei(ABRUF_DATEI)
     const live = abruf.slice(
@@ -1519,3 +1520,4 @@ export const compositionCaptureFixture = {
   transportFuer, realeEingaben, eingabe, definition, anfrage,
   publications: R2_PUBLICATIONS, urls: [REAL_URL, INNEN_URL],
 }
+

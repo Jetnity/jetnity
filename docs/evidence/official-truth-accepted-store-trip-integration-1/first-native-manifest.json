@@ -1,0 +1,349 @@
+{
+  "schema": "accepted-store-first-native-publication-checkpoint-v1",
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "expectedRemoteParent": "6585e9c22aed67e510cef12b84803ea29330c0a5",
+  "status": "DRAFT implementation snapshot; native/SSR/Workspace unverified; no Ready or PASS",
+  "files": [
+    {
+      "path": "app/api/readiness/accepted-store/route.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "5c58a3a640bc209e6d2b8d7c760b2fbfa32ff8df",
+      "sha256": "d4a380252aa605bddd8fcab9ee8a9bd91eb5b98adf79ed3bc100b5cfa806af20",
+      "bytes": 453,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/app/api/readiness/accepted-store/route.ts"
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "change": "modified",
+      "baselineGitBlob": "5d3d6f84088c84853d8995e9740d55e259ef4335",
+      "gitBlob": "f1704f8fe17389626b1640c49bc45637dbd40d46",
+      "sha256": "448d61ff5450a764f5b20ea4910eb1e396e196bdc9a058416a35959ab8166c19",
+      "bytes": 9268,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/admin/account-counts-delivery/schema-reference.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "a07822bbb6f036c07bf5d2a30350e77893766fd6",
+      "sha256": "cedd10541b0acdaef5d272add581f9c90443c4bf208857ae9d7b0e34c45f0433",
+      "bytes": 4526,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "e926ee3fab1c7725583f62f7e070b99377999c99",
+      "sha256": "0415f45a0ac62a014282235eddfd46552d7a0f33287d31ce18814879b29825fb",
+      "bytes": 1639,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+      "sha256": "f72b3711e69902e7784d9987ff575304c61feee030d1509da6c87616089cf74a",
+      "bytes": 8409,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/catalog-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "7f35af169e1f1edfbc1e781e1e626c4fcacb2a7b",
+      "sha256": "ea54eeaf7d317d2253e41fc3ff89e48b4e7d823614674e60f98884a47dc12e59",
+      "bytes": 1898,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/catalog-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/custody-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "25fe0b075b7cbb66cef8b1ddf48dc8eb6fdb009c",
+      "sha256": "fbafa0c85502039657f1b0fdf9cec6d24088e4413faa43c6f86f06ba93294478",
+      "bytes": 4876,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/custody-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+      "sha256": "873b55b662ad7dc214659b78749cbc6a3ddebd4d4dab4caebe7c5c39b2bc938a",
+      "bytes": 7920,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "sha256": "040f43c12aacb7f947bd274b115a75207a6168f3d6376bb3179e2eabdb0a0910",
+      "bytes": 8568,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "b77667a2b345ff272a5379aaa9a08d409e25d208",
+      "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572",
+      "bytes": 9176,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/protocol-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "51385742139dad5512806bc75a77bb380adba076",
+      "sha256": "3b3137ee7a8125d20705505b633b0b9eb82a4c51193571c9b2830ccad55f1d6f",
+      "bytes": 4233,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/protocol-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "942a9492388e09ea15ae1ae4f603cb6446841e80",
+      "sha256": "24d2f918109e0e7d46e7e5179c9a51705d40ce3459a897efdd01b47c98b8762f",
+      "bytes": 15099,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "ae774999e048f21f9a3a9983cb0d815f88932659",
+      "sha256": "27962b7b1a5d622b4111d06a3750e914a39833301aa99ec20ad38337b0d3a7c2",
+      "bytes": 8271,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "a0f8e284f87f9cb6dd970a728537db6662f7b0ed",
+      "sha256": "35edfcdf78d4add36dfd3eb58e2712d6f18b46ff27267b1ccbde37e0529d255e",
+      "bytes": 11111,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/request-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "f7e81d8c72ef33222fc9bb4f5827c2cafba0519d",
+      "sha256": "a4f7d62d10ca3f8843ef56d4868bbef5cc28935b3ac99c801f05974168f26e3c",
+      "bytes": 2458,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/request-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/result.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "40ac21ecfebcda9176846c5a4ff7b1195d3ffba9",
+      "sha256": "47e5dd14ea82e0d72cc2e0b7655e98c90046b4445b0a85c4d84936293a81968a",
+      "bytes": 1390,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/result.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384",
+      "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+      "bytes": 5505,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "76bb9f387d4ba1958124a81cde271dcc58ca6aa4",
+      "sha256": "f634dd33e00ab698e85c8a606983fd135942b6bc2ad6c9e7581211c77d9a1a28",
+      "bytes": 1844,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "sha256": "6e1cb57342dcb8bca591bcd307cf700ec3c333cd1977dc87fdf4b699b777446b",
+      "bytes": 308,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "change": "modified",
+      "baselineGitBlob": "a5ac40322b0e8fbd45efb600fa7f315dc9676d4c",
+      "gitBlob": "0b62446771b696a90b91a485f22236deb9aeff51",
+      "sha256": "19f2a56b796b8c92548ffcd2e72e65e63c11866625b19164d235f4569f29f486",
+      "bytes": 45296,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-content-identity.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-integrated-pilot-bundle.ts",
+      "change": "modified",
+      "baselineGitBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1",
+      "gitBlob": "df97aafc7222210a0da1d2198007ac6563a1508f",
+      "sha256": "44a50ea82ea1a132cd40f2d68a7473e8651c8321702973766ba115c3228a58e9",
+      "bytes": 71539,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-integrated-pilot-bundle.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-same-request-extraction-server.test.ts",
+      "change": "modified",
+      "baselineGitBlob": "98cdc78dc602309e4425f325a7baa503a7d4ee71",
+      "gitBlob": "befd65cf8186eb570a6bec7c1e3263adbd30a139",
+      "sha256": "7ed252caf820ebf31529efc40bce626612c78d7d799b70ee6f59f07e36d48528",
+      "bytes": 68137,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-same-request-extraction-server.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "change": "modified",
+      "baselineGitBlob": "ef6d30c6cd26acf948a35c2d3c4427b9c73f9f4e",
+      "gitBlob": "b821a0a6dd8bfed70249a7f485135f3faab685f0",
+      "sha256": "814011761b508586123aa41895d5fc8e3c2fe19297ceb4c3a6c0055b0f6bf7ce",
+      "bytes": 56890,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts"
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "change": "modified",
+      "baselineGitBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "gitBlob": "3fbd123a23468a22b3f7cdbfd6bde2e0886469f0",
+      "sha256": "17cc3290c7686bcdc6142c95556d003f48b6508cbf425fa80db1f169acb099af",
+      "bytes": 5378,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/supabase/server.ts"
+    },
+    {
+      "path": "lib/trips/daten.ts",
+      "change": "modified",
+      "baselineGitBlob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+      "gitBlob": "565bb875367410e09bc7b3cb5abb9cf015e0c971",
+      "sha256": "924b7bda361697e2ae75cb8b145baf4774e44d71a6a1fc602c623ffc340438df",
+      "bytes": 5434,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/lib/trips/daten.ts"
+    },
+    {
+      "path": "scripts/api-schutz.mjs",
+      "change": "modified",
+      "baselineGitBlob": "dbd6081a6989cc915fae140231e6c6a83a34aaf1",
+      "gitBlob": "e3b474ae8c0cfeb85689544271c70a21a268e0a4",
+      "sha256": "0fb97358453ec31dccac585788786075789c14e941a44b3632fb454c34808d53",
+      "bytes": 4831,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/api-schutz.mjs"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "09ae1e6013985e6fb665c7f8dd8bf66377ebdcd6",
+      "sha256": "41e68fea4da2a9af56c037bc1048849d0ab4daaaefd53cc1fdae39d63793a3c1",
+      "bytes": 71986,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "2069e3859345ce44746c49a7ec0e70243787a564",
+      "sha256": "20ecb97d246f599aa4b04f8626c97c277ab9bd7950860989ee0361b51af8c2f9",
+      "bytes": 11552,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "94b76c861618761e5678563e1cd0a6ed3fcd0e35",
+      "sha256": "bb84498d248f36f55180e510b5d7faf606fb3926c2995369a59023b28cc5460b",
+      "bytes": 12156,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "324f38e1e7d85641cce9a7abd646e0a91dc19828",
+      "sha256": "1177e76851543d430ea06a627bf253ae0cb151f0b673977d0321222651b641c3",
+      "bytes": 8796,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "2b293a69ec4600977117cb0a09798e32b0722f77",
+      "sha256": "bbc19ec156d29a1cab0892f2947406a394f225b9ff21bf194ebb31b89ea76475",
+      "bytes": 6069,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "ecdf511941cb21446da15d04fd9a98ccbeabe2b7",
+      "sha256": "69646966c4709142e519e936f15c2b86384792d5a7ad115125a26ebf84818608",
+      "bytes": 9267,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "3954aa501176bb4a8edc3e3ed05aa2a98fca9099",
+      "sha256": "d30d45c6f4c39d47884bdf4b6831b97fdf319e51378a9dcff13089aa931142b0",
+      "bytes": 15082,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/preflight.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "4652a0baa01983a60b6e5ef99dbea7b375082491",
+      "sha256": "f4895dd248e1f44a50d01a3bd63312cd6f39ad2cc1b360455694099656233df1",
+      "bytes": 4488,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/preflight.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/source-anchors.ts",
+      "change": "new",
+      "baselineGitBlob": null,
+      "gitBlob": "3abc11ed0ff0d9d69c98550d85a1e05f1021018e",
+      "sha256": "27a30b04d2a52d6b7cb1ec0723cccbd5b2269cb99c647626addff57c92411ccc",
+      "bytes": 9504,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/source-anchors.ts"
+    },
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "change": "modified",
+      "baselineGitBlob": "ed872c854b11a815e7d67e86cbbde5c4dfc634f2",
+      "gitBlob": "192a2f9002515cccc2d67db4782bfedbff6748b1",
+      "sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403",
+      "bytes": 9788,
+      "snapshotPath": "/workspace/scratch/9de5b942a09c/accepted-store-first-native-manifest-20261108/files/scripts/db/verwendung.mjs"
+    }
+  ],
+  "excluded": [
+    "All existing remote frozen TASK/design/ACK/amendment/evidence documents; local read copies are never publication inputs"
+  ],
+  "requiredNextCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+  "remaining": [
+    "Actual Node22 + PG16 + pinned SSR0.6.1 execution and fixes",
+    "Full SDK cancellation and request/key/target matrix",
+    "Actual Workspace hook / renderer and mandatory mounted browser proof",
+    "Full independent TL gating and repository handoff/current status"
+  ],
+  "localEvidence": {
+    "structural": "/workspace/scratch/9de5b942a09c/accepted-store-first-code-preflight-20261108/evidence.json",
+    "typecheck": "/workspace/scratch/9de5b942a09c/accepted-store-typecheck-first-vertical.log",
+    "typecheckStatus": "Partial mirror lacks Next/React/SSR; no PASS. No new-package diagnostics in this run."
+  }
+}
