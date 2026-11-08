@@ -11,6 +11,7 @@ import { regelScopeAusEvidenceScope } from '@/lib/readiness/rule-claims'
 import { ACCEPTED_STORE_TRIP_CLOSURE_PROFILE } from '@/lib/readiness/official-truth-integrated-pilot-bundle'
 import type { AcceptedStoreBinding,StoreHead } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server'
 import type { Trip } from '@/types/trips'
+import type { PilotDeclaration } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/context'
 import { pgText } from '../official-truth-integrated-pilot-1/pg-wire'
 import { nativeUser,nativeSession,nativeTrip,type startNativeHttp } from './native-http'
 import { quote,type nativeSql } from './native-schema'
@@ -77,13 +78,13 @@ export async function seedNativeCatalog(protocol:Protocol) {
   assert(result.ok,JSON.stringify(result))
 }
 
-export async function declareNativeTrip(protocol:Protocol,runtime:Runtime):Promise<Trip> {
+export async function declareNativeTrip(protocol:Protocol,runtime:Runtime,declaration:Partial<PilotDeclaration>={}):Promise<Trip> {
   const loaded=await runtime.trips.reiseLaden(nativeTrip);assert.equal(loaded.problem,null)
   const trip=loaded.zeilen[0];assert(trip)
   const context={version:1,evidenceClass:'user_attestation',tripId:trip.id,tripRevision:trip.revision+1,
     startDate:trip.startDate,endDate:trip.endDate,graphFingerprint:runtime.context.pilotGraphFingerprint(trip),
     declaration:{travellerClientRef:'synthetic-traveller',documentClientRef:'synthetic-passport',citizenshipClientRef:'synthetic-citizenship',
-      credentialOptionRef:'synthetic-traveller:synthetic-passport',passportClass:'ordinary',purpose:'tourism',originCountryCode:'CH',route:'complete_direct_ch_de'}}
+      credentialOptionRef:'synthetic-traveller:synthetic-passport',passportClass:'ordinary',purpose:'tourism',originCountryCode:'CH',route:'complete_direct_ch_de',...declaration}}
   const value=await protocol.transaction('authenticated',protocol.claims,async c=>{
     const rows=await c.query('select public.trip_regulatory_context_save_v1($1::jsonb) as result',[pgText(JSON.stringify({
       tripId:trip.id,revision:trip.revision,mutationId:`synthetic-context-${trip.revision}`,context}))])
@@ -97,7 +98,8 @@ export async function declareNativeTrip(protocol:Protocol,runtime:Runtime):Promi
 
 /** Durable filesystem fixture OUTSIDE the database cluster/restore root. Every
  * write fsyncs both file and containing directory before acknowledging CAS. */
-export async function nativeBinding(targetUrl:string,sql:ReturnType<typeof nativeSql>) {
+export async function nativeBinding(targetUrl:string,sql:ReturnType<typeof nativeSql>,sourceMaxAgeSeconds:15|300=300) {
+  assert(sourceMaxAgeSeconds===15||sourceMaxAgeSeconds===300)
   const contract=fixtureContract(),codeDigest=fixtureCodeDigest(contract),domain='synthetic-external-witness-v1',keyId='synthetic-ephemeral-key'
   const key=randomBytes(32),policyDigest=createHash('sha256').update('synthetic-process-owned-custody-v1').digest('hex')
   const seed=createHash('sha256').update(JSON.stringify({domain,profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,contract:contract.digest})).digest('hex')
@@ -117,7 +119,7 @@ export async function nativeBinding(targetUrl:string,sql:ReturnType<typeof nativ
     return value.head
   }
   await write({profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,domain,head:{sequence:0,hash:seed},operationId:null})
-  const binding:AcceptedStoreBinding={targetUrl,contract,codeDigest,sourceMaxAgeSeconds:300,retentionSeconds:3600,displaySeconds:15,current:()=>live,
+  const binding:AcceptedStoreBinding={targetUrl,contract,codeDigest,sourceMaxAgeSeconds,retentionSeconds:3600,displaySeconds:15,current:()=>live,
     key:{id:keyId,policyDigest,resolve:async signal=>{signal.throwIfAborted();const value=Uint8Array.from(key);keyCopies.push(value);return value}},
     witness:{domain,read,compareAndSwap:(prior,successor,operationId,signal)=>{
       const operation=serial.then(async()=>{
@@ -130,7 +132,7 @@ export async function nativeBinding(targetUrl:string,sql:ReturnType<typeof nativ
     }}}
   sql(`insert into official_accepted_trip_private.admissions values(${quote(contract.id)},${quote(contract.digest)},${quote(codeDigest)},
     ${quote(ACCEPTED_STORE_TRIP_CLOSURE_PROFILE)},${quote(scope.key)},${quote(JSON.stringify(scope.scope))}::jsonb,
-    ${quote(JSON.stringify(contract.source.binding))}::jsonb,${quote(keyId)},${quote(policyDigest)},${quote(domain)},${quote(seed)},300,3600,15);
+    ${quote(JSON.stringify(contract.source.binding))}::jsonb,${quote(keyId)},${quote(policyDigest)},${quote(domain)},${quote(seed)},${sourceMaxAgeSeconds},3600,15);
     insert into official_accepted_trip_private.heads values(${quote(contract.id)},0,${quote(seed)},0,${quote(seed)});`)
   return {binding,directory,path,keyCopies,casCount:()=>casCount,setLive:(value:boolean)=>{live=value},
     async close(){live=false;await serial;key.fill(0);for(const copy of keyCopies)copy.fill(0);await rm(directory,{recursive:true,force:true})}}

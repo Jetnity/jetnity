@@ -25,6 +25,7 @@ import { registryLaden } from '@/lib/traveller/account-registry-daten'
 import { registryTripAnzeigenAus } from '@/lib/traveller/account-registry-trip'
 import { tripOfficialEvaluationsAuswerten } from '@/lib/readiness/trip-official-evaluations-server'
 import { applicationPilotAvailable } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server'
+import { acceptedStoreAvailable } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 
@@ -87,6 +88,7 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
       reise={reise}
       officialEvaluations={officialEvaluations}
       officialPilotAvailable={applicationPilotAvailable()}
+      officialStoreAvailable={acceptedStoreAvailable()}
       ohneTag={reise.ohneTag}
       registry={{
         problem: registry.problem,

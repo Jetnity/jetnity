@@ -126,9 +126,13 @@ export async function createServerActionClient<Db = Database>(): Promise<Supabas
      nicht nach, der Inhalt stammt aus dem Cookie. Wer serverseitig
      entscheidet, muss `auth.getUser()` verwenden.
 
-   Der eine verbliebene Service-Role-Zugang sitzt in lib/modell/kontingent.ts:
-   cookie-los, nicht exportiert, nur die zwei Kontingent-RPCs. Begruendung in
-   DECISIONS.md ADR-0052 (Nachtrag). */
+   lib/modell/kontingent.ts besitzt einen cookie-losen, nicht exportierten
+   Service-Role-Zugang fuer die zwei Kontingent-RPCs; Begruendung in
+   DECISIONS.md ADR-0052 (Nachtrag). Der standardmaessig geschlossene
+   AcceptedStoreDatabase-Pfad besitzt zusaetzlich einen getrennt erfassten,
+   cookie-losen Service-Client fuer genau Prepare, Snapshot, Confirm und
+   Cleanup. Reserve und Finalize verwenden dort weiterhin den authentifizierten
+   eigenen Benutzer; der Service-Client uebernimmt keine Benutzeridentitaet. */
 
 /* ───────────── Kompatibilitätsschicht ─────────────
    Viele Dateien importieren `createServerClient` direkt.

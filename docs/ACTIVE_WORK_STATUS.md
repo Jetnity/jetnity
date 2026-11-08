@@ -1,5 +1,18 @@
 # Jetnity – Active Work Status
 
+<!-- ACCEPTED_STORE_TRIP_INTEGRATION_1_CONTINUITY_BEGIN -->
+> **08.11.2026 — Fortsetzungsanker für Datenbank und Einreiseanforderungen:**  
+> Verbindliches Paket: **Official Truth Accepted Store Trip Integration 1**, [Work #1155](https://github.com/Jetnity/jetnity/issues/1155), [PR #1156](https://github.com/Jetnity/jetnity/pull/1156), Branch `feat/official-truth-accepted-store-trip-integration-1-20261108`. [Versionierter Auftrag](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_TASK_2026-11-08.md) und eingefrorene TL-Entscheidungen R1–R7 gelten gemeinsam. Der [vollständige Author-Handoff](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md) und die [Akzeptanzmatrix](OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md) beschreiben die Lieferung; ihre Ausführungsstände sind mit der neuesten Live-Evidence abzugleichen. Unveränderliche Ausgangsbasis: main `e1fe0c696ade9f39b417772b5c065f87530204d6`.
+>
+> Tatsächlicher Autor: **Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1**, Session `/root/accepted_store_trip_integration_writer`. ChatGPT / Technical Lead steuert, prüft unabhängig und entscheidet allein über PASS, Ready und Merge. Agenten-Self-Review ist keine TL-Freigabe; jeder neue Head benötigt vollständige neue Gates.
+>
+> Exakten aktuellen Head, Draft-/Merge-Status, CI, Preview/Production und ersten offenen Schritt aus dem PR, dem dortigen neuesten TL-Checkpoint sowie [kanonischer Continuity #751](https://github.com/Jetnity/jetnity/issues/751) und [Einreise-/Datenbank-Handoff #917](https://github.com/Jetnity/jetnity/issues/917) **live** rekonstruieren. Diese Datei ist ein dauerhafter Einstiegsanker, kein fortgeschriebener Exact-Head-PASS.
+>
+> Paketgrenze: geschlossene Verbindung von geschützter Akzeptanz und unveränderlicher Datenbankhistorie über frischen tatsächlichen Trip-/Pass-Read zur Workspace-Anzeige; SQL-Kandidat bleibt UNAPPLIED, Provider und Contracts bleiben inaktiv. #917-Readback-Refusal, #1131-Transport-Hold sowie alle besonderen Source-/Owner-/Key-/Retention-/Privacy-/ownerMac-/Aktivierungs-Gates bleiben eigenständig. Kein Retry oder Umweg um abgelehnte Aktionen und kein automatischer Folgeslice.
+>
+> **Die folgenden älteren Einträge sind historische Snapshots. Sie erteilen keine konkurrierenden Writer-Aufträge und ersetzen keine neuere Live-Evidence.**
+<!-- ACCEPTED_STORE_TRIP_INTEGRATION_1_CONTINUITY_END -->
+
 > **04.11.2026 – Trip Maps JS V1, Draft [#1112](https://github.com/Jetnity/jetnity/pull/1112):** Codex ist alleiniger Writer auf `feat/trip-maps-js-v1-20261104`, Baseline main `d2f38f78`. Implementation zur Prüfung; Google Maps bleibt im Code und in der Cloud OFF. Keine Cursor-Session, keine DB-/Auth-/Provider-STOP-Änderung, kein Merge. [Handoff mit Kostenkontrolle und offenen Gates](TRIP_MAPS_JS_V1_HANDOFF_2026-11-04.md).
 
 > **02.11.2026 — Homepage Reiseintelligenz 2:** Root ist alleiniger Writer auf

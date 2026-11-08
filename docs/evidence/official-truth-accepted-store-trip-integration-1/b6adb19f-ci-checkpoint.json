@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "kind": "technical-lead-exact-head-ci-checkpoint",
+  "capturedAt": "2026-11-08 05:51:31 UTC",
+  "repository": "Jetnity/jetnity",
+  "pr": 1156,
+  "head": "b6adb19f21a44860fe1f486fb0cb5a54c14f5ddb",
+  "main": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "run": {
+    "id": 42451142700,
+    "attempt": 1,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42451142700",
+    "conclusion": "failure"
+  },
+  "jobs": {
+    "core": {
+      "id": 128640429691,
+      "conclusion": "failure",
+      "typecheck": "success",
+      "lint": "success",
+      "tests": 8200,
+      "pass": 8197,
+      "fail": 1,
+      "cancelled": 0,
+      "preexistingSkipped": 2,
+      "durationMs": 695211.661854,
+      "newNativeCompletedFamilies": 0,
+      "newNativeFailure": {
+        "stage": "schema/catalog seed",
+        "message": "{\"ok\":false,\"reason\":\"catalog_failed\"}",
+        "location": "native-fixture.ts:73",
+        "sourceDiagnosedCause": "Duplicate RowDescription names from three unaliased set_config expressions in the new native-http transaction setup; unchanged strict pg-wire rejects duplicate_column before catalog call.",
+        "rootCauseIndependentlyReviewed": true,
+        "correction": "Only assign unique result aliases to all three calls; preserve roles, claims, settings, transaction, parser, old SQL and ACLs.",
+        "correctionReviewManifestSha256": "3955ee0ec1c47e6fb644ace4603f7406b28cd0fd1e9ec99bf746b2daefcca886"
+      },
+      "remainingHygieneAndBuild": "skipped after failure"
+    },
+    "persisted": {
+      "id": 128640429811,
+      "conclusion": "success",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 181641.870792
+    },
+    "auth": {
+      "id": 128640429912,
+      "conclusion": "success",
+      "values": 55,
+      "branchKeys": 243
+    },
+    "atomic": {
+      "id": 128640429921,
+      "conclusion": "failure",
+      "failureType": "testTimeoutFailure",
+      "timeoutMs": 900000,
+      "tests": 1,
+      "pass": 0,
+      "fail": 0,
+      "cancelled": 1,
+      "skipped": 0,
+      "durationMs": 901111.834881,
+      "rawPhaseMarkers": 146,
+      "lastCompletedPhase": {
+        "elapsedMs": 838360,
+        "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+        "case": "readback_failure"
+      },
+      "completeCleanupMarkerPresent": false,
+      "priorDiagnosis": "docs/evidence/official-truth-accepted-store-trip-integration-1/atomic-gate-diagnosis.json",
+      "disposition": "Actual red gate retained. No rerun, timeout, workflow or old-source change. Earlier measured variability does not replace final exact-head success."
+    },
+    "aggregate": {
+      "id": 128643598810,
+      "conclusion": "failure"
+    }
+  },
+  "fullTranche": {
+    "published": false,
+    "nativeSsrReactExecutionPassed": false,
+    "requiredReviewFollowups": [
+      "actual outgoing Request/init/query-only cancellation and response body settlement",
+      "strict R2 rehashed false-fact contradiction reaching retained_fact_invalid",
+      "exact inherited/new TASK8 mapping"
+    ],
+    "sameAuthorSession": "/root/accepted_store_trip_integration_writer"
+  },
+  "decision": "CHANGES REQUIRED. No Ready, merge or implementation PASS; same author coherent correction and complete fresh gates required."
+}

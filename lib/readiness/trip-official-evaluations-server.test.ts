@@ -18,6 +18,7 @@ import { requirementsProviderNachZustand, type ReadinessUmgebung } from '@/lib/r
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { itineraryZweiTransits } from '@/lib/route/fixtures'
 import { applicationPilotAvailable } from '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server'
+import { acceptedStoreAvailable } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server'
 import { istKontoKennung } from '@/lib/trips/daten'
 import { leseRequestParam } from '@/lib/next/request-api'
 import type { Lesung } from '@/lib/api/datenbank-lesen'
@@ -263,6 +264,7 @@ function pageTest(options: {
       return result
     } },
     '@/lib/readiness/official-truth-ch-de-application-pilot-1/availability-server': { applicationPilotAvailable },
+    '@/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server': { acceptedStoreAvailable },
     '@/lib/readiness/trip-official-evaluations-server': { async tripOfficialEvaluationsAuswerten(trip: Trip) {
       assert.ok(events.includes('loaded'))
       assert.equal(trip, snapshot)
@@ -286,6 +288,7 @@ describe('B01 authenticated page and account handoff', () => {
     assert.ok(React.isValidElement<AccountProps>(result))
     assert.equal(result.type, Account)
     assert.equal(result.props.officialPilotAvailable, false)
+    assert.equal(result.props.officialStoreAvailable, false)
     assert.equal(result.props.reise, page.snapshot)
     assert.equal(result.props.officialEvaluations, page.evaluations.at(-1))
     assert.equal(result.props.registry?.travellers, page.registryDisplay)
@@ -355,6 +358,8 @@ describe('B01 authenticated page and account handoff', () => {
     dependencies['@/components/trips/TripWorkspace'] = { default: Workspace }
     dependencies['./OfficialTruthPilotForm'] = { default: () => null }
     dependencies['./useOfficialTruthPilot'] = { useOfficialTruthPilot: (_trip: unknown, evaluations: OfficialEvaluation[]) => ({ evaluations, invalidate() { invalidations += 1 } }) }
+    dependencies['./useAcceptedStoreTrip'] = { useAcceptedStoreTrip: () => ({ engaged:false, evaluations:[], invalidate() {} }),
+      useOfficialTruthReadOwnership: (_trip:Trip,pilot:{evaluations:OfficialEvaluation[];invalidate:()=>void}) => ({ evaluations:pilot.evaluations,invalidate:pilot.invalidate }) }
     const account = laden<{ default: typeof KontoArbeitsbereich }>(ACCOUNT, dependencies)
     const snapshot = einfrieren(reise())
     const rows = einfrieren(await tripOfficialEvaluationsAuswerten(snapshot))

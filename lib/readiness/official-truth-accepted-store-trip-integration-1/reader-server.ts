@@ -47,6 +47,10 @@ export async function readAcceptedStoreTrip(tripId:string,revision:number,signal
     const selected=selectedTripBinding(trip,binding.contract)
     if(!selected){result={status:200,body:negative(trip,'unsupported_context')};return result}
     const actualValues=tripValueBinding(trip)
+    // A committed Reserve can lose its ACK before this process learns a token.
+    // Sweep only expired provisional work in this explicit, owned read lifetime
+    // so recovery never depends on a new producer/source operation.
+    await db.cleanup({token:null});requireCurrent(binding,life)
     const reserveStarted=performance.now()
     const reserved=checkReservation(await db.reserve({cell:binding.contract.id,contractDigest:binding.contract.digest,
       profile:ACCEPTED_STORE_TRIP_CLOSURE_PROFILE,purpose:'read',tripId,revision}),binding,life,reserveStarted,userId)

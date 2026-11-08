@@ -17,6 +17,8 @@ export type NativeHttpFaults={
   beforeRpc?:(name:NativeRpcName,payload:Record<string,unknown>)=>Promise<void>;
   afterCommit?:(name:NativeRpcName,payload:Record<string,unknown>,result:unknown)=>Promise<'drop'|void>;
   graph?:(raw:Record<string,unknown>)=>Record<string,unknown>;
+  graphHold?:{phase:'headers'|'body';released:Promise<void>;entered:()=>void};
+  onRefresh?:()=>void;
   refresh:'normal'|'pending';
 }
 export async function startNativeHttp(cluster:LocalProofCluster) {
@@ -46,7 +48,7 @@ export async function startNativeHttp(cluster:LocalProofCluster) {
     try {
       await connection.query('begin isolation level read committed')
       await connection.query(`set local role ${role}`)
-      await connection.query("select set_config('request.jwt.claims',$1,true),set_config('statement_timeout',$2,true),set_config('lock_timeout','2s',true)",
+      await connection.query("select set_config('request.jwt.claims',$1,true) as jwt_settings,set_config('statement_timeout',$2,true) as statement_bound,set_config('lock_timeout','2s',true) as lock_bound",
         [pgText(JSON.stringify(jwt)),pgText(`${timeout}ms`)])
       const result=await run(connection)
       await connection.query('commit')
@@ -59,6 +61,7 @@ export async function startNativeHttp(cluster:LocalProofCluster) {
     try {
       if(url.pathname==='/auth/v1/token'&&req.method==='POST') {
         refreshRequests++
+        faults.onRefresh?.()
         if(faults.refresh==='pending') {await new Promise<void>(done=>res.once('close',done));return}
         // Normal Auth protocol refresh, never a fabricated stop-retry response.
         send(res,200,{access_token:accessToken,refresh_token:'SYNTHETIC-LOCAL-REFRESH',token_type:'bearer',expires_in:3600,user});return
@@ -80,7 +83,19 @@ export async function startNativeHttp(cluster:LocalProofCluster) {
         assert.equal(url.searchParams.get('limit'),'1')
         const id=url.searchParams.get('id')?.replace(/^eq\./,'');assert(id&&/^[a-f0-9-]{36}$/.test(id))
         const data=await transaction(role,jwt,async c=>(await c.query(ownTripQuery,[pgText(id)])).map(row=>JSON.parse(row.graph!)))
-        send(res,200,(data as Record<string,unknown>[]).map(raw=>faults.graph?faults.graph(raw):raw));return
+        const graph=(data as Record<string,unknown>[]).map(raw=>faults.graph?faults.graph(raw):raw)
+        const hold=faults.graphHold
+        if(hold) {
+          // Preserve the exact real RLS query result and JSON bytes. This local
+          // transport fixture delays only delivery, never fabricates an Auth,
+          // SQL, or positive evaluation response.
+          const text=JSON.stringify(graph)
+          if(hold.phase==='body'){res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.write(text.slice(0,1))}
+          hold.entered();await hold.released
+          if(!res.destroyed){if(hold.phase==='headers')send(res,200,graph);else res.end(text.slice(1))}
+          return
+        }
+        send(res,200,graph);return
       }
       const name=url.pathname.replace('/rest/v1/rpc/','') as NativeRpcName
       if(req.method!=='POST'||!rpcNames.includes(name)){send(res,404,{message:'closed fixture endpoint'});return}

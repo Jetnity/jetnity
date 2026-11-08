@@ -1,0 +1,1071 @@
+{
+  "schema": 1,
+  "purpose": "Complete coherent author implementation and invoked native/mounted acceptance matrix for independent Root review and exact-head CI. Prior actual head is CHANGES REQUIRED. No author/TL PASS, Ready, merge, hosted apply, source/key/retention activation or next slice.",
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 \u2014 Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "issue": 1155,
+  "draftPr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "expectedRemoteParent": "b6adb19f21a44860fe1f486fb0cb5a54c14f5ddb",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "originalTaskBlob": "e3336c869472fe50e94473797c1555419f6d82a6",
+  "authorizationBlobs": {
+    "R1": "9aeb099b1ce8d568eefc300a382ed48f553ed533",
+    "R2": "2ac74eb06a0228a749fbd35a885beefd38adf799",
+    "R3": "0dfe1e3afbc8f28647f0fc0be20c82197efea006",
+    "R4": "729875aaa3fc454b79cee9b1dc22676479bc7b62",
+    "R5": "71d22361ea88191407a7cab4587942579517c1d9",
+    "R6": "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "R7": "875c9f5d5cce49e4ec51b2806c775d28353c91d9"
+  },
+  "files": [
+    {
+      "path": "app/(public)/reisen/[tripId]/page.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "f520aa3f02cb241a87b092ecec81133ba2681033",
+      "expectedRemoteBlob": "f520aa3f02cb241a87b092ecec81133ba2681033",
+      "gitBlob": "5f6701cefeb826aa138031676d40a17f6949ab19",
+      "sha256": "8a0517b3bf19871f2733b6801eb04753ddba398e3f3c22b5ac942a287e96e5de",
+      "bytes": 4213,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/app/(public)/reisen/[tripId]/page.tsx"
+    },
+    {
+      "path": "app/api/readiness/accepted-store/route.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "5c58a3a640bc209e6d2b8d7c760b2fbfa32ff8df",
+      "gitBlob": "5c58a3a640bc209e6d2b8d7c760b2fbfa32ff8df",
+      "sha256": "d4a380252aa605bddd8fcab9ee8a9bd91eb5b98adf79ed3bc100b5cfa806af20",
+      "bytes": 453,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/app/api/readiness/accepted-store/route.ts"
+    },
+    {
+      "path": "components/trips/KontoArbeitsbereich.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "7cb91f6e0ede0fa832750c6c10896f787bfe8938",
+      "expectedRemoteBlob": "7cb91f6e0ede0fa832750c6c10896f787bfe8938",
+      "gitBlob": "653d230ce6168be75b187c3feb0118ecdcee5d16",
+      "sha256": "7e04c859dbffc1f166b09d5c0bb2dcf109b48affac1ef026c4cf5624b5af9a52",
+      "bytes": 15291,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/KontoArbeitsbereich.tsx"
+    },
+    {
+      "path": "components/trips/Reisevorbereitung.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "71490d3e74dec6f525719ad72452038192ad9329",
+      "expectedRemoteBlob": "71490d3e74dec6f525719ad72452038192ad9329",
+      "gitBlob": "36b8f1db2760d50ea4eb1dc56583f3e1afffe8e5",
+      "sha256": "6007857aaa3414c4865fd4428d76376c24f3d87d79706c80851505e5cf3e5385",
+      "bytes": 43135,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/Reisevorbereitung.tsx"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "b70a1954dc275deda1849fb702e5aa2ad27d67e0",
+      "expectedRemoteBlob": "b70a1954dc275deda1849fb702e5aa2ad27d67e0",
+      "gitBlob": "7149e3d3586f3af258fed25d475fd68ff3eba024",
+      "sha256": "1140b5ec33843ea05bafde57d324e9c7bb5e6023ed52076022d844862efc94bf",
+      "bytes": 68240,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/TripWorkspace.tsx"
+    },
+    {
+      "path": "components/trips/useAcceptedStoreTrip.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "ada9d5ca91bcfd30d9644e2b5d4d1ffc57c659f9",
+      "sha256": "ca5b987d5d367247f68790da365d9459082b1ecb94d14cb37b8324c042edba79",
+      "bytes": 8231,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useAcceptedStoreTrip.ts"
+    },
+    {
+      "path": "components/trips/useOfficialTruthPilot.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+      "expectedRemoteBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+      "gitBlob": "406671a47edf0bd3bd21e8e583d82599469f5a7a",
+      "sha256": "c986b7922ef4af0372a06e804fbe6d472778e01eb961e0cf097396f09d4e568a",
+      "bytes": 5217,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useOfficialTruthPilot.ts"
+    },
+    {
+      "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "expectedRemoteBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "gitBlob": "10bf30e9a9907c1b02e3cac85aff61160709e85c",
+      "sha256": "776a302ee1ebd112f82d7ceaaf91f6e1889deb55465fddc9ee7d6879be047c01",
+      "bytes": 31931,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useTripTravellerSnapshotLifecycle.ts"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "64f1a706dd845d19a9e3381ab51a8828ec6e3a4e",
+      "sha256": "2ba178f5889ca6f9477d5d3838017d8724a8df99aef0c0e2f2f3775d60f97ad2",
+      "bytes": 15897,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "9c0b8fcfb762183584dc2f8aa67472588a8802ef",
+      "sha256": "1d3c0857506372e8987c20684c94e31de576bb48ed61ce3bd449247a83ee2696",
+      "bytes": 22996,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/effective-target.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "7557e554ac27989e15260eb1e16af9d76d114410",
+      "expectedRemoteBlob": "5f6f2283d0f7faedd298f39a3d7c19fde8f65152",
+      "gitBlob": "5f6f2283d0f7faedd298f39a3d7c19fde8f65152",
+      "sha256": "e6ee289b51c6b1e1ce2b529fdc5bc2f252634776f59307697b1fcb78a4caaae4",
+      "bytes": 5358,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/admin/account-counts-delivery/effective-target.test.ts"
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "5d3d6f84088c84853d8995e9740d55e259ef4335",
+      "expectedRemoteBlob": "f1704f8fe17389626b1640c49bc45637dbd40d46",
+      "gitBlob": "f1704f8fe17389626b1640c49bc45637dbd40d46",
+      "sha256": "448d61ff5450a764f5b20ea4910eb1e396e196bdc9a058416a35959ab8166c19",
+      "bytes": 9268,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/admin/account-counts-delivery/schema-reference.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "61bebba9ab4dda02bbef8bc9fe7f844549545282",
+      "sha256": "3315fd6b952bce46504e7321e48ac0bec61b64291ff9051ba10dcf2f5f0f2005",
+      "bytes": 325,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c651f842b99a22dc6ec7fe84ed9775ad42eb65b9",
+      "sha256": "c15a62cd5800c8522d618a9db128070f1bd366b1ed78d6a76f62f5146d4da48b",
+      "bytes": 295,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "205bf91cba2be9a7023f885b1874815f82fd2926",
+      "sha256": "61eef1f1ced149e559aeff388d8bb8ad6cbfef8cce70fa4e94fda791b4aed8f7",
+      "bytes": 301,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "gitBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+      "sha256": "6e1cb57342dcb8bca591bcd307cf700ec3c333cd1977dc87fdf4b699b777446b",
+      "bytes": 308,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "f2705c72d6d4364cd3a056905533fc286aab0ff5",
+      "sha256": "28414f71f78621bbf2f54b20029b240c151aab8d2cadbf08837c42213a3ac98f",
+      "bytes": 301,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "a07822bbb6f036c07bf5d2a30350e77893766fd6",
+      "gitBlob": "a07822bbb6f036c07bf5d2a30350e77893766fd6",
+      "sha256": "cedd10541b0acdaef5d272add581f9c90443c4bf208857ae9d7b0e34c45f0433",
+      "bytes": 4526,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "e926ee3fab1c7725583f62f7e070b99377999c99",
+      "gitBlob": "e926ee3fab1c7725583f62f7e070b99377999c99",
+      "sha256": "0415f45a0ac62a014282235eddfd46552d7a0f33287d31ce18814879b29825fb",
+      "bytes": 1639,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+      "gitBlob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+      "sha256": "f72b3711e69902e7784d9987ff575304c61feee030d1509da6c87616089cf74a",
+      "bytes": 8409,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/catalog-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "7f35af169e1f1edfbc1e781e1e626c4fcacb2a7b",
+      "gitBlob": "7f35af169e1f1edfbc1e781e1e626c4fcacb2a7b",
+      "sha256": "ea54eeaf7d317d2253e41fc3ff89e48b4e7d823614674e60f98884a47dc12e59",
+      "bytes": 1898,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/catalog-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/client-result.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c6cea75e6ff4bd9d3af0848d5e880818e28089dd",
+      "sha256": "328bd9535a48a0b2fdc0ea48a1382334a9e0af542a6e60c899816bd4123cb25e",
+      "bytes": 5056,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/client-result.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/custody-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "25fe0b075b7cbb66cef8b1ddf48dc8eb6fdb009c",
+      "gitBlob": "25fe0b075b7cbb66cef8b1ddf48dc8eb6fdb009c",
+      "sha256": "fbafa0c85502039657f1b0fdf9cec6d24088e4413faa43c6f86f06ba93294478",
+      "bytes": 4876,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/custody-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+      "gitBlob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+      "sha256": "873b55b662ad7dc214659b78749cbc6a3ddebd4d4dab4caebe7c5c39b2bc938a",
+      "bytes": 7920,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/display-clock.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "b00c38a19f3e6975a5b61e180f8d17f972fe176a",
+      "sha256": "6311608f65453fb91b8ca487141402a92e9f8f05a080af865c33e0dd0cfe88b1",
+      "bytes": 2416,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/display-clock.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "gitBlob": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "sha256": "040f43c12aacb7f947bd274b115a75207a6168f3d6376bb3179e2eabdb0a0910",
+      "bytes": 8568,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "b77667a2b345ff272a5379aaa9a08d409e25d208",
+      "gitBlob": "b77667a2b345ff272a5379aaa9a08d409e25d208",
+      "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572",
+      "bytes": 9176,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/protocol-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "51385742139dad5512806bc75a77bb380adba076",
+      "gitBlob": "51385742139dad5512806bc75a77bb380adba076",
+      "sha256": "3b3137ee7a8125d20705505b633b0b9eb82a4c51193571c9b2830ccad55f1d6f",
+      "bytes": 4233,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/protocol-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "942a9492388e09ea15ae1ae4f603cb6446841e80",
+      "gitBlob": "942a9492388e09ea15ae1ae4f603cb6446841e80",
+      "sha256": "24d2f918109e0e7d46e7e5179c9a51705d40ce3459a897efdd01b47c98b8762f",
+      "bytes": 15099,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "ae774999e048f21f9a3a9983cb0d815f88932659",
+      "gitBlob": "5ecc2e66a71df615f8d602d91b793b8aa47da924",
+      "sha256": "e780d1e1571b8687bb88f4cbc02f03e4902659cc0cbe6e2c0adb073b72d1875e",
+      "bytes": 8565,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "a0f8e284f87f9cb6dd970a728537db6662f7b0ed",
+      "gitBlob": "a0f8e284f87f9cb6dd970a728537db6662f7b0ed",
+      "sha256": "35edfcdf78d4add36dfd3eb58e2712d6f18b46ff27267b1ccbde37e0529d255e",
+      "bytes": 11111,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/request-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "f7e81d8c72ef33222fc9bb4f5827c2cafba0519d",
+      "gitBlob": "f7e81d8c72ef33222fc9bb4f5827c2cafba0519d",
+      "sha256": "a4f7d62d10ca3f8843ef56d4868bbef5cc28935b3ac99c801f05974168f26e3c",
+      "bytes": 2458,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/request-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/result.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "40ac21ecfebcda9176846c5a4ff7b1195d3ffba9",
+      "gitBlob": "40ac21ecfebcda9176846c5a4ff7b1195d3ffba9",
+      "sha256": "47e5dd14ea82e0d72cc2e0b7655e98c90046b4445b0a85c4d84936293a81968a",
+      "bytes": 1390,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/result.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "d057eefed5640abffc4dd05561358a53ee3de939",
+      "sha256": "aa7a38a8ac70090bf9c7de884aa61f5fa7de7d528e4ca97afc7643eb6d122bb5",
+      "bytes": 1329,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384",
+      "gitBlob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384",
+      "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+      "bytes": 5505,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "76bb9f387d4ba1958124a81cde271dcc58ca6aa4",
+      "gitBlob": "76bb9f387d4ba1958124a81cde271dcc58ca6aa4",
+      "sha256": "f634dd33e00ab698e85c8a606983fd135942b6bc2ad6c9e7581211c77d9a1a28",
+      "bytes": 1844,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "ff0eb432e3cc3c7589b71bf20a26a33115ccd502",
+      "expectedRemoteBlob": "7e6a8a34e5ff16bae5ef34360d68efb61922f64d",
+      "gitBlob": "7e6a8a34e5ff16bae5ef34360d68efb61922f64d",
+      "sha256": "1ef474944007985a817d065401cc7bf79a7da3e8641ff422498fd6a611e5a090",
+      "bytes": 48531,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "a5ac40322b0e8fbd45efb600fa7f315dc9676d4c",
+      "expectedRemoteBlob": "0b62446771b696a90b91a485f22236deb9aeff51",
+      "gitBlob": "0b62446771b696a90b91a485f22236deb9aeff51",
+      "sha256": "19f2a56b796b8c92548ffcd2e72e65e63c11866625b19164d235f4569f29f486",
+      "bytes": 45296,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-content-identity.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-integrated-pilot-bundle.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "ee4a35d224b7177c6b07efcf4b131433751f70d1",
+      "expectedRemoteBlob": "df97aafc7222210a0da1d2198007ac6563a1508f",
+      "gitBlob": "df97aafc7222210a0da1d2198007ac6563a1508f",
+      "sha256": "44a50ea82ea1a132cd40f2d68a7473e8651c8321702973766ba115c3228a58e9",
+      "bytes": 71539,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-integrated-pilot-bundle.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-same-request-extraction-server.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "98cdc78dc602309e4425f325a7baa503a7d4ee71",
+      "expectedRemoteBlob": "befd65cf8186eb570a6bec7c1e3263adbd30a139",
+      "gitBlob": "befd65cf8186eb570a6bec7c1e3263adbd30a139",
+      "sha256": "7ed252caf820ebf31529efc40bce626612c78d7d799b70ee6f59f07e36d48528",
+      "bytes": 68137,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-same-request-extraction-server.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "ef6d30c6cd26acf948a35c2d3c4427b9c73f9f4e",
+      "expectedRemoteBlob": "b821a0a6dd8bfed70249a7f485135f3faab685f0",
+      "gitBlob": "b821a0a6dd8bfed70249a7f485135f3faab685f0",
+      "sha256": "814011761b508586123aa41895d5fc8e3c2fe19297ceb4c3a6c0055b0f6bf7ce",
+      "bytes": 56890,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts"
+    },
+    {
+      "path": "lib/readiness/trip-official-evaluations-server.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "expectedRemoteBlob": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "gitBlob": "4c9bac5b8a2d8a06242b77760258e08fd917b80f",
+      "sha256": "d615d48879178e5f5829c97b1f5e55271db55717cf60bb2e97403361324c6f9c",
+      "bytes": 23359,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/trip-official-evaluations-server.test.ts"
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "expectedRemoteBlob": "3fbd123a23468a22b3f7cdbfd6bde2e0886469f0",
+      "gitBlob": "b8b6b92e1e93ccad2ee8a51226737be49b01db44",
+      "sha256": "d6dd60009a8622bceb1bb5cc64698df750f72612408e83add4572a84e1142f76",
+      "bytes": 5704,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/supabase/server.ts"
+    },
+    {
+      "path": "lib/trips/daten.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "3f498e2b750f62348fe8edd42c904a8040f41adc",
+      "expectedRemoteBlob": "565bb875367410e09bc7b3cb5abb9cf015e0c971",
+      "gitBlob": "565bb875367410e09bc7b3cb5abb9cf015e0c971",
+      "sha256": "924b7bda361697e2ae75cb8b145baf4774e44d71a6a1fc602c623ffc340438df",
+      "bytes": 5434,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/trips/daten.ts"
+    },
+    {
+      "path": "scripts/api-schutz.mjs",
+      "changeAgainstMain": "modified",
+      "mainBlob": "dbd6081a6989cc915fae140231e6c6a83a34aaf1",
+      "expectedRemoteBlob": "e3b474ae8c0cfeb85689544271c70a21a268e0a4",
+      "gitBlob": "e3b474ae8c0cfeb85689544271c70a21a268e0a4",
+      "sha256": "0fb97358453ec31dccac585788786075789c14e941a44b3632fb454c34808d53",
+      "bytes": 4831,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/api-schutz.mjs"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "a08fedb881ad96e4ae80bbcfa2b5f82f67b1c1aa",
+      "gitBlob": "a08fedb881ad96e4ae80bbcfa2b5f82f67b1c1aa",
+      "sha256": "b849be1bc76f2abbdd0b9d5cb6800c1bcf2bac5719fd47a50b799788016a63a9",
+      "bytes": 74520,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "7454abb43831d03a0044cf0ff7138e1f62e18487",
+      "sha256": "2f460290b9f722f8503352c1d23dca6fbac95a77536b35ed98c2fac5062ff462",
+      "bytes": 3265,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "544f05290dfe8b9f58f835fefe10f9c3a81443d8",
+      "sha256": "4cdc01213108ab910aca664d8b66c9def41d59288851535025812d632c581fb1",
+      "bytes": 3931,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "fdc38eff71404976fa8b863ab9dbed6b45350ff9",
+      "sha256": "bb599d5f929df64d5b6b1ea91de8223417ffdbc142db0c8efe6a9ed14b1280d5",
+      "bytes": 24113,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "09ce7135292b8921b380512306fd03f28f8cab68",
+      "gitBlob": "09ce7135292b8921b380512306fd03f28f8cab68",
+      "sha256": "e501ca48f8beb073042a4047c31fa9614c317156a0033ffa47e0ba66781ee2ae",
+      "bytes": 11552,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-acceptance-failures.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "1e13561c205f4df0bb732376d5837ceab4b35157",
+      "sha256": "5403ab495cb9d9e7d59d50658ba2250a72bd0c5a49a5bea558c09b8afd2d1fbc",
+      "bytes": 10759,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-acceptance-failures.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "f5e763728c15982d1916b296585571547ba68cd5",
+      "sha256": "c2342ca181e51390ff4124361c863db3a306176b9890b71aba35e53f880f99c0",
+      "bytes": 10582,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-context.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "15a15cd105cff3ff8fc7de061b501e75cf114fbb",
+      "sha256": "48da82cf47d9a3497d5cd30b4dd7ad93321e555eaca8f510e4c075cba9c74b4c",
+      "bytes": 8960,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-context.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "82df96c253d7a345d4266b763bcfe37e5350ffea",
+      "sha256": "6f0b828c892507ab359f385c54ad6b24414054edcda0ab25f6864b1a0c8b7b99",
+      "bytes": 10391,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "16d79143eb94d24e65b12ee9a9b92d1378b57b80",
+      "gitBlob": "4fa6bf98546e3344ae7647d85d444c1b3c4e9c8b",
+      "sha256": "0b7def5a586413ea160dbc8a3d18be77dea12c4887a29f77347a52762d7b7f1c",
+      "bytes": 12454,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "324f38e1e7d85641cce9a7abd646e0a91dc19828",
+      "gitBlob": "4a95d5d1a85dae059a321431ffaeb7881978d09e",
+      "sha256": "9bfc185dc10dce2206c2f0bdb71f2b1ff6ae8a2df59410179b96184c8e07a5b1",
+      "bytes": 9631,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-integrity.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "a5304da22e46f39f9e222599862f891f727b3154",
+      "sha256": "001d0b9686ee781929393d10352708865a75556216d397d3214486b071b2e2eb",
+      "bytes": 7392,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-integrity.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "bf418ce41a3b3be82cb99385b3ab31912671e500",
+      "gitBlob": "7f79dba1cbdc4a6807f094a4873ba3ad635b7b46",
+      "sha256": "49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298",
+      "bytes": 6501,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "1b1d03e6e658f30bc5e36a2cc2c78296a46afc75",
+      "sha256": "144d8de5268304fc8924241bc7e5640ea7394c9fd750744be3a39d2885bca437",
+      "bytes": 11779,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "06624198210a8cfb2ea67fcf78da88416ec35a52",
+      "gitBlob": "06624198210a8cfb2ea67fcf78da88416ec35a52",
+      "sha256": "2fe93d8a4e3cf0b645a428ec13e1ced0c06646d2139610f5b841a2a0461a11a0",
+      "bytes": 13676,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c702442219a3d43c018bb728229f173b577a7e9b",
+      "sha256": "1eadf1f8270e3c189e89da032d8fc0e1e420afed6bcfa510dfdbf3479846ec12",
+      "bytes": 11253,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "4abaf6a0904e3efe52b57e0ee0739cd10c93f874",
+      "sha256": "9d2d440f3073f5d4081f8647a784c9b319d789cb5307d25b8588a7e3ac316d42",
+      "bytes": 4749,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "d07d532f62dda92df2a3c07724cfe374be97ed24",
+      "gitBlob": "f33362b826304e5a0be485783676d7e705648764",
+      "sha256": "fa74689b677bfa39a2874a05d3068cce0f1845ee9437fa975fcfe31f385203be",
+      "bytes": 17122,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/source-anchors.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "3abc11ed0ff0d9d69c98550d85a1e05f1021018e",
+      "gitBlob": "3abc11ed0ff0d9d69c98550d85a1e05f1021018e",
+      "sha256": "27a30b04d2a52d6b7cb1ec0723cccbd5b2269cb99c647626addff57c92411ccc",
+      "bytes": 9504,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/source-anchors.ts"
+    },
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "changeAgainstMain": "modified",
+      "mainBlob": "ed872c854b11a815e7d67e86cbbde5c4dfc634f2",
+      "expectedRemoteBlob": "192a2f9002515cccc2d67db4782bfedbff6748b1",
+      "gitBlob": "192a2f9002515cccc2d67db4782bfedbff6748b1",
+      "sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403",
+      "bytes": 9788,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/verwendung.mjs"
+    }
+  ],
+  "publicationDelta": [
+    {
+      "path": "app/(public)/reisen/[tripId]/page.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "f520aa3f02cb241a87b092ecec81133ba2681033",
+      "expectedRemoteBlob": "f520aa3f02cb241a87b092ecec81133ba2681033",
+      "gitBlob": "5f6701cefeb826aa138031676d40a17f6949ab19",
+      "sha256": "8a0517b3bf19871f2733b6801eb04753ddba398e3f3c22b5ac942a287e96e5de",
+      "bytes": 4213,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/app/(public)/reisen/[tripId]/page.tsx"
+    },
+    {
+      "path": "components/trips/KontoArbeitsbereich.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "7cb91f6e0ede0fa832750c6c10896f787bfe8938",
+      "expectedRemoteBlob": "7cb91f6e0ede0fa832750c6c10896f787bfe8938",
+      "gitBlob": "653d230ce6168be75b187c3feb0118ecdcee5d16",
+      "sha256": "7e04c859dbffc1f166b09d5c0bb2dcf109b48affac1ef026c4cf5624b5af9a52",
+      "bytes": 15291,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/KontoArbeitsbereich.tsx"
+    },
+    {
+      "path": "components/trips/Reisevorbereitung.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "71490d3e74dec6f525719ad72452038192ad9329",
+      "expectedRemoteBlob": "71490d3e74dec6f525719ad72452038192ad9329",
+      "gitBlob": "36b8f1db2760d50ea4eb1dc56583f3e1afffe8e5",
+      "sha256": "6007857aaa3414c4865fd4428d76376c24f3d87d79706c80851505e5cf3e5385",
+      "bytes": 43135,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/Reisevorbereitung.tsx"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "changeAgainstMain": "modified",
+      "mainBlob": "b70a1954dc275deda1849fb702e5aa2ad27d67e0",
+      "expectedRemoteBlob": "b70a1954dc275deda1849fb702e5aa2ad27d67e0",
+      "gitBlob": "7149e3d3586f3af258fed25d475fd68ff3eba024",
+      "sha256": "1140b5ec33843ea05bafde57d324e9c7bb5e6023ed52076022d844862efc94bf",
+      "bytes": 68240,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/TripWorkspace.tsx"
+    },
+    {
+      "path": "components/trips/useAcceptedStoreTrip.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "ada9d5ca91bcfd30d9644e2b5d4d1ffc57c659f9",
+      "sha256": "ca5b987d5d367247f68790da365d9459082b1ecb94d14cb37b8324c042edba79",
+      "bytes": 8231,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useAcceptedStoreTrip.ts"
+    },
+    {
+      "path": "components/trips/useOfficialTruthPilot.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+      "expectedRemoteBlob": "41fd00ad3bbe0e53c1583f46c41a4a85153b503e",
+      "gitBlob": "406671a47edf0bd3bd21e8e583d82599469f5a7a",
+      "sha256": "c986b7922ef4af0372a06e804fbe6d472778e01eb961e0cf097396f09d4e568a",
+      "bytes": 5217,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useOfficialTruthPilot.ts"
+    },
+    {
+      "path": "components/trips/useTripTravellerSnapshotLifecycle.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "expectedRemoteBlob": "4c2a446128d3c172ba64c96c37b4e46ad6819dd3",
+      "gitBlob": "10bf30e9a9907c1b02e3cac85aff61160709e85c",
+      "sha256": "776a302ee1ebd112f82d7ceaaf91f6e1889deb55465fddc9ee7d6879be047c01",
+      "bytes": 31931,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/components/trips/useTripTravellerSnapshotLifecycle.ts"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "64f1a706dd845d19a9e3381ab51a8828ec6e3a4e",
+      "sha256": "2ba178f5889ca6f9477d5d3838017d8724a8df99aef0c0e2f2f3775d60f97ad2",
+      "bytes": 15897,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "9c0b8fcfb762183584dc2f8aa67472588a8802ef",
+      "sha256": "1d3c0857506372e8987c20684c94e31de576bb48ed61ce3bd449247a83ee2696",
+      "bytes": 22996,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "61bebba9ab4dda02bbef8bc9fe7f844549545282",
+      "sha256": "3315fd6b952bce46504e7321e48ac0bec61b64291ff9051ba10dcf2f5f0f2005",
+      "bytes": 325,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.acceptance.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c651f842b99a22dc6ec7fe84ed9775ad42eb65b9",
+      "sha256": "c15a62cd5800c8522d618a9db128070f1bd366b1ed78d6a76f62f5146d4da48b",
+      "bytes": 295,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.browser.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "205bf91cba2be9a7023f885b1874815f82fd2926",
+      "sha256": "61eef1f1ced149e559aeff388d8bb8ad6cbfef8cce70fa4e94fda791b4aed8f7",
+      "bytes": 301,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.context.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "f2705c72d6d4364cd3a056905533fc286aab0ff5",
+      "sha256": "28414f71f78621bbf2f54b20029b240c151aab8d2cadbf08837c42213a3ac98f",
+      "bytes": 301,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.recovery.test.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/client-result.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c6cea75e6ff4bd9d3af0848d5e880818e28089dd",
+      "sha256": "328bd9535a48a0b2fdc0ea48a1382334a9e0af542a6e60c899816bd4123cb25e",
+      "bytes": 5056,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/client-result.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/display-clock.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "b00c38a19f3e6975a5b61e180f8d17f972fe176a",
+      "sha256": "6311608f65453fb91b8ca487141402a92e9f8f05a080af865c33e0dd0cfe88b1",
+      "bytes": 2416,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/display-clock.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "ae774999e048f21f9a3a9983cb0d815f88932659",
+      "gitBlob": "5ecc2e66a71df615f8d602d91b793b8aa47da924",
+      "sha256": "e780d1e1571b8687bb88f4cbc02f03e4902659cc0cbe6e2c0adb073b72d1875e",
+      "bytes": 8565,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "d057eefed5640abffc4dd05561358a53ee3de939",
+      "sha256": "aa7a38a8ac70090bf9c7de884aa61f5fa7de7d528e4ca97afc7643eb6d122bb5",
+      "bytes": 1329,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard.ts"
+    },
+    {
+      "path": "lib/readiness/trip-official-evaluations-server.test.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "expectedRemoteBlob": "310211af15a8cc6f17329d84a5d6b018aeb6f677",
+      "gitBlob": "4c9bac5b8a2d8a06242b77760258e08fd917b80f",
+      "sha256": "d615d48879178e5f5829c97b1f5e55271db55717cf60bb2e97403361324c6f9c",
+      "bytes": 23359,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/readiness/trip-official-evaluations-server.test.ts"
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "changeAgainstMain": "modified",
+      "mainBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "expectedRemoteBlob": "3fbd123a23468a22b3f7cdbfd6bde2e0886469f0",
+      "gitBlob": "b8b6b92e1e93ccad2ee8a51226737be49b01db44",
+      "sha256": "d6dd60009a8622bceb1bb5cc64698df750f72612408e83add4572a84e1142f76",
+      "bytes": 5704,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/lib/supabase/server.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "7454abb43831d03a0044cf0ff7138e1f62e18487",
+      "sha256": "2f460290b9f722f8503352c1d23dca6fbac95a77536b35ed98c2fac5062ff462",
+      "bytes": 3265,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-bundle.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "544f05290dfe8b9f58f835fefe10f9c3a81443d8",
+      "sha256": "4cdc01213108ab910aca664d8b66c9def41d59288851535025812d632c581fb1",
+      "bytes": 3931,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "fdc38eff71404976fa8b863ab9dbed6b45350ff9",
+      "sha256": "bb599d5f929df64d5b6b1ea91de8223417ffdbc142db0c8efe6a9ed14b1280d5",
+      "bytes": 24113,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-acceptance-failures.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "1e13561c205f4df0bb732376d5837ceab4b35157",
+      "sha256": "5403ab495cb9d9e7d59d50658ba2250a72bd0c5a49a5bea558c09b8afd2d1fbc",
+      "bytes": 10759,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-acceptance-failures.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "f5e763728c15982d1916b296585571547ba68cd5",
+      "sha256": "c2342ca181e51390ff4124361c863db3a306176b9890b71aba35e53f880f99c0",
+      "bytes": 10582,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-context.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "15a15cd105cff3ff8fc7de061b501e75cf114fbb",
+      "sha256": "48da82cf47d9a3497d5cd30b4dd7ad93321e555eaca8f510e4c075cba9c74b4c",
+      "bytes": 8960,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-context.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "82df96c253d7a345d4266b763bcfe37e5350ffea",
+      "sha256": "6f0b828c892507ab359f385c54ad6b24414054edcda0ab25f6864b1a0c8b7b99",
+      "bytes": 10391,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "16d79143eb94d24e65b12ee9a9b92d1378b57b80",
+      "gitBlob": "4fa6bf98546e3344ae7647d85d444c1b3c4e9c8b",
+      "sha256": "0b7def5a586413ea160dbc8a3d18be77dea12c4887a29f77347a52762d7b7f1c",
+      "bytes": 12454,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "324f38e1e7d85641cce9a7abd646e0a91dc19828",
+      "gitBlob": "4a95d5d1a85dae059a321431ffaeb7881978d09e",
+      "sha256": "9bfc185dc10dce2206c2f0bdb71f2b1ff6ae8a2df59410179b96184c8e07a5b1",
+      "bytes": 9631,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-integrity.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "a5304da22e46f39f9e222599862f891f727b3154",
+      "sha256": "001d0b9686ee781929393d10352708865a75556216d397d3214486b071b2e2eb",
+      "bytes": 7392,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-integrity.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "bf418ce41a3b3be82cb99385b3ab31912671e500",
+      "gitBlob": "7f79dba1cbdc4a6807f094a4873ba3ad635b7b46",
+      "sha256": "49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298",
+      "bytes": 6501,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "1b1d03e6e658f30bc5e36a2cc2c78296a46afc75",
+      "sha256": "144d8de5268304fc8924241bc7e5640ea7394c9fd750744be3a39d2885bca437",
+      "bytes": 11779,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c702442219a3d43c018bb728229f173b577a7e9b",
+      "sha256": "1eadf1f8270e3c189e89da032d8fc0e1e420afed6bcfa510dfdbf3479846ec12",
+      "bytes": 11253,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "4abaf6a0904e3efe52b57e0ee0739cd10c93f874",
+      "sha256": "9d2d440f3073f5d4081f8647a784c9b319d789cb5307d25b8588a7e3ac316d42",
+      "bytes": 4749,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+      "changeAgainstMain": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": "d07d532f62dda92df2a3c07724cfe374be97ed24",
+      "gitBlob": "f33362b826304e5a0be485783676d7e705648764",
+      "sha256": "fa74689b677bfa39a2874a05d3068cce0f1845ee9437fa975fcfe31f385203be",
+      "bytes": 17122,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-complete-implementation-final-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native.ts"
+    }
+  ],
+  "counts": {
+    "completeFiles": 65,
+    "deltaAgainstExpectedRemote": 34,
+    "newAgainstMain": 47,
+    "modifiedAgainstMain": 18
+  },
+  "priorSourceReviews": [
+    {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-ui-r5-coherent-review-20261108/manifest.json",
+      "sha256": "be6b275c752df7ce3a53d1d89ad4959700d83148ffc7192932808111240595d3"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-semantic-final-review-20261108/manifest.json",
+      "sha256": "a0bb9916e68b3be299863664e45e73cbf39608b9056e86a6c8f4bcb20b5e2cd2"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/accepted-store-outgoing-final-review-r3-20261108/manifest.json",
+      "sha256": "d48107fec0d98fe1b281361bd4c2a349e7b28d8a48cd4208f69ec8304ef9316e"
+    }
+  ],
+  "lastReviewedOutgoingDelta": "Only a documented test-only type accommodation passes the genuine Web ReadableStream unchanged to public isErrored; local exact @types/node22.20.1 TS2345 errors corrected, runtime logic unchanged.",
+  "validation": {
+    "requiredNativeNode22SsrPostgresBrowser": "NOT YET RUN for complete tranche; no local runtime substitutes",
+    "latestActualCi": {
+      "head": "b6adb19f21a44860fe1f486fb0cb5a54c14f5ddb",
+      "run": 42451142700,
+      "core": "typecheck/lint pass;8200 total/8197 pass/1 failure/0 cancelled/2 existing skips;native catalog setup stopped before families;duplicate set_config column names diagnosed and corrected",
+      "persisted": "PASS 1 test,0 skips,181641.870792ms",
+      "auth": "PASS 55 values/243 keys",
+      "atomic": "CANCELLED at unchanged900000ms;146 phase markers;last838360ms/readback_failure;no final cleanup marker;aggregate FAIL"
+    },
+    "partialTypecheck": {
+      "exitCode": 2,
+      "reason": "Incomplete mirror and missing Next/React/Playwright dependencies; diagnostic only",
+      "nativeAndProductPackageDiagnostics": 0,
+      "nodeTypes": "22.20.1",
+      "logPath": "/workspace/scratch/9de5b942a09c/accepted-store-typecheck-final-typed-stream.log",
+      "logSha256": "15c5f09bf0ab87a7e7beb6d0aabf30b4e360f81ce3f314263db643b5bd702534"
+    },
+    "actualLocalStructuralPreflight": {
+      "evidencePath": "/workspace/scratch/9de5b942a09c/accepted-store-full-tranche-preflight-20261108/evidence.json",
+      "sha256": "59110003fa41eb6cc6c06c22725d6aba161659f46b9557b9cc72ce50083949c1",
+      "boundary": "Fresh canonical/strictR2 structure only; no native/Auth/SSR/browser/COMMIT proof",
+      "finalSourcePinsUnchanged": 121
+    }
+  },
+  "excluded": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/preflight.ts",
+      "reason": "Unpublished historical R1 diagnostic pinned to old verifier; immutable Root evidence remains separate"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "reason": "Root owns the narrow active startup pointer; no author mutation or publication entry."
+    }
+  ]
+}

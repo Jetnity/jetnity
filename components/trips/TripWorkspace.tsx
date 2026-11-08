@@ -81,6 +81,7 @@ import { readinessAnsicht } from '@/lib/readiness/status'
 import type { PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
+import { travellerDraftBlocksOfficial,officialTravellerDraftMessage } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard'
 import { usePersonalPreparationLifecycle } from '@/components/trips/usePersonalPreparationLifecycle'
 import {
   useTripTravellerSnapshotLifecycle,
@@ -340,6 +341,7 @@ type TripWorkspaceProps = {
     }>
   }) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
+  onTravellerEntwurfAenderung?: () => void
   officialPilot?: React.ReactNode
   registryUebernahme?: React.ReactNode
   registrySteuerung?: (steuerung: TripTravellerIntakeSteuerung) => React.ReactNode
@@ -422,11 +424,12 @@ export default function TripWorkspace({
   readinessKanonischeReise,
   onTravellerSetzen,
   onTravellerEntfernen,
+  onTravellerEntwurfAenderung,
   registryUebernahme,
   registrySteuerung,
   onGuestGraphUebernehmen,
-  officialPilot,
-  officialEvaluations,
+  officialPilot: geliefertesOfficialPilot,
+  officialEvaluations: gelieferteOfficialEvaluations,
   safetyEvaluations,
   seasonalEvaluations,
   anfangsBereich,
@@ -456,7 +459,13 @@ export default function TripWorkspace({
     onEntfernen: onTravellerEntfernen,
     onAktualisieren: onReadinessAktualisieren,
     onGuestGraphUebernehmen,
+    onEntwurfAenderung: onTravellerEntwurfAenderung,
   })
+  const entwurfOffen = travellerDraftBlocksOfficial(reise, travellerSteuerung)
+  const officialEvaluations = entwurfOffen ? undefined : gelieferteOfficialEvaluations
+  const officialPilot = entwurfOffen
+    ? <p role="status" data-official-draft-blocked className="text-sm leading-6 text-ink-900">{officialTravellerDraftMessage}</p>
+    : geliefertesOfficialPilot
   const registryKnoten = registrySteuerung
     ? registrySteuerung(travellerSteuerung.intake)
     : React.isValidElement(registryUebernahme)

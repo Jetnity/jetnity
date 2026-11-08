@@ -8,6 +8,10 @@ import { nativeSql,installNativeSchema,quote } from './native-schema'
 import { nativeProductRuntime,type NativeRuntimeState } from './native-loader'
 import { startNativeHttp,nativeTrip } from './native-http'
 import { seedNativeRows,seedNativeCatalog,nativeBinding,declareNativeTrip,nativeIds } from './native-fixture'
+import { nativeBoundaryProof } from './native-boundaries'
+import { retainedIntegrityProof } from './native-integrity'
+import { nativeWaitProof } from './native-waits'
+import { nativeSemanticReproof } from './native-semantic-reproof'
 import type { AcceptedStoreTripResult } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/result'
 
 const signal=()=>new AbortController().signal
@@ -51,6 +55,8 @@ export async function nativeAcceptedStoreProof(t:TestContext):Promise<void> {
     let trip=await declareNativeTrip(http,runtime)
     assert.equal(trip.party?.length,2);assert.equal(trip.ohneTag.length,1)
     assert(runtime.tripBinding.selectedTripBinding(trip,witness.binding.contract))
+    stage='actual pinned SSR and request/key/target lifetime boundaries'
+    await nativeBoundaryProof(t,runtime,state,http,witness,sql)
     const count=(table:string)=>Number(sql(`select count(*) from official_accepted_trip_private.${table}`))
     const publication=async()=>{
       const output=await runtime.producer.publishAcceptedStore(signal())
@@ -86,6 +92,9 @@ export async function nativeAcceptedStoreProof(t:TestContext):Promise<void> {
     t.diagnostic(JSON.stringify({proof:'actual-producer-commit-fresh-reader',postgres:cluster.version,node:process.versions.node,
       receipt:first.receipt,sourceCheckedAt:a.sourceCheckedAt,acceptedAt:a.acceptedAt,readAt:a.readAt,expiresAt:a.expiresAt,
       selectedPositive:1,otherCellsUnknown:true,independentReaderSourceCalls:0,deadlineFromRequestStartMs:a.deadlineFromRequestStartMs}))
+
+    stage='strict R2-rehashed false fact reaches actual retained canonical extraction'
+    await nativeSemanticReproof(t,runtime,http,witness,sql,trip);completed++
 
     stage='prepare rejects archive / claim and evidence mismatches before persistence'
     for(const mutate of [
@@ -143,6 +152,9 @@ export async function nativeAcceptedStoreProof(t:TestContext):Promise<void> {
     restoreCurrent(first.receipt);unknown(await read());assert.equal(sql('select row_to_json(h)::text from official_accepted_trip_private.heads h'),headBefore)
     assert.equal(witness.casCount(),2);restoreCurrent(b.receiptFingerprint!);current(await read());completed++
 
+    stage='actual retained Evidence, support, archive and custody row integrity'
+    await retainedIntegrityProof(t,sql,http,witness,b.receiptFingerprint!,read);completed++
+
     stage='actual RLS identity and persisted context changes'
     runtime.rate.readinessRateLeeren()
     const foreign=await runtime.reader.readAcceptedStoreTrip(nativeIds.foreignTrip,trip.revision,signal())
@@ -150,6 +162,9 @@ export async function nativeAcceptedStoreProof(t:TestContext):Promise<void> {
     assert.equal(foreign.status,404);assert.deepEqual(foreign,missing)
     sql(`update public.trip_traveller_documents set expires_on='2031-12-31' where id=${quote(nativeIds.nationalId)}`)
     unknown(await read());trip=await declareNativeTrip(http,runtime);current(await read());completed++
+
+    stage='genuine native blocked Finalize with fresh authority, expiry and Trip closure'
+    trip=await nativeWaitProof(t,cluster,sql,runtime,http,trip);completed++
 
     stage='protected native internal lifecycle conflict and withdrawal'
     assert.equal((await runtime.producer.conflictAcceptedStore(signal())).status,'confirmed');unknown(await read())

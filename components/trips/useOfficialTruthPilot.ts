@@ -21,6 +21,10 @@ export function useOfficialTruthPilot(trip: Trip, serverEvaluations: OfficialEva
     generation.current++;inFlight.current?.abort();inFlight.current=null
     setResult(null);setInvalid(true);setBusy(false);setError('');setStatus('context_changed')
   },[])
+  const cancel=React.useCallback(() => {
+    generation.current++;inFlight.current?.abort();inFlight.current=null
+    setResult(null);setInvalid(true);setBusy(false);setError('');setStatus('disabled')
+  },[])
   React.useEffect(() => {
     if (!result?.expiresAt) return
     const expire=() => { generation.current++;setResult(null);setInvalid(true);setStatus('expired') }
@@ -67,7 +71,7 @@ export function useOfficialTruthPilot(trip: Trip, serverEvaluations: OfficialEva
   const visible=result && result.contextFingerprint===fingerprint
   const displayedStatus=!trip.regulatoryContext ? 'context_missing' : !pilotContextCurrent(trip) ? 'context_changed'
     : result && !visible ? 'context_changed' : status==='context_missing' ? 'disabled' : status
-  return { status:displayedStatus as PilotStatus|'checking'|'expired',busy,error,invalidate,
+  return { status:displayedStatus as PilotStatus|'checking'|'expired',busy,error,invalidate,cancel,
     evaluations:visible ? result.evaluations : invalid || result ? requirementsLokalFuerReise(trip) : serverEvaluations,
     save:(declaration:PilotDeclaration) => request('save',declaration),check:() => { void request('check') } }
 }

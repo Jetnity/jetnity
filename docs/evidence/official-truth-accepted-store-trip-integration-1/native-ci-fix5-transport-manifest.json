@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 \u2014 Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "expectedRemoteParent": "b6adb19f21a44860fe1f486fb0cb5a54c14f5ddb",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "purpose": "Review-only exact immediate transport fix against published b6. No publication yet: alias fix will join the coherent full tranche. Unique column aliases preserve all three set_config calls and all actual role, JWT, timeout and transaction semantics. No old parser/product/ACL change. No execution PASS.",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "kind": "modified",
+      "expectedBaselineBlob": "324f38e1e7d85641cce9a7abd646e0a91dc19828",
+      "gitBlob": "2406453fb71766010fec32846ec34f539085ad2c",
+      "sha256": "e9f6dfaceb4ad4696831477214603a1d4b20078d699cf4bbb589a8889a2a346b",
+      "bytes": 8845,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix5-transport-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts"
+    }
+  ]
+}
