@@ -1,0 +1,167 @@
+{
+  "created_at": "2026-11-08T03:13:21.811553+00:00",
+  "purpose": "read-only actual pinned SDK synthetic lifetime investigation; supporting evidence, not project/SSR/RSC/CI PASS",
+  "repo": "Jetnity/jetnity",
+  "r1_head": "3e5f9e418c2ebc48d0351ae7185e71f07a30d3db",
+  "package_lock_blob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3",
+  "node": "v24.22.1",
+  "node_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "ci_node_major": 22,
+  "packages": {
+    "auth-js": {
+      "version": "2.71.1",
+      "integrity": "sha512-mMIQHBRc+SKpZFRB2qtupuzulaUhFYupNyxqDj5Jp/LyPvcWvjaJzZzObv6URtL/O6lPxkanASnotGtNpS3H2Q==",
+      "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.71.1.tgz",
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js"
+    },
+    "supabase-js": {
+      "version": "2.57.2",
+      "integrity": "sha512-MxaZqZKUPK1ExzOilgSZqCPCxVPjevUrh6bcWz1SrDZexFc9VJ2cJbVP1EG1hKQx/bfLdTUjIZMoIrYpYqAPYw==",
+      "resolved": "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.57.2.tgz",
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/supabase-js"
+    },
+    "postgrest-js": {
+      "version": "1.21.3",
+      "integrity": "sha512-rg3DmmZQKEVCreXq6Am29hMVe1CzemXyIWVYyyua69y6XubfP+DzGfLxME/1uvdgwqdoaPbtjBDpEBhqxq1ZwA==",
+      "resolved": "https://registry.npmjs.org/@supabase/postgrest-js/-/postgrest-js-1.21.3.tgz",
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/postgrest-js"
+    }
+  },
+  "missing_runtime": {
+    "package": "@supabase/ssr",
+    "version": "0.6.1",
+    "integrity": "sha512-QtQgEMvaDzr77Mk3vZ3jWg2/y+D8tExYF7vcJT+wQ8ysuvOeGGjYbZlvj5bHYsj/SpC0bihcisnwPrM4Gp5G4g==",
+    "evidence": "No installed package in scanned scratch/runtime module roots; no npm _cacache/index-v5 or package tarball in scanned roots. Official pinned source read only, no install attempted."
+  },
+  "runs": [
+    {
+      "command": "node /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/observe-sdk-lifetime.cjs > /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-lifetime.original.jsonl 2> /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-lifetime.original.stderr.log",
+      "exit_code": 0,
+      "case_count": 8,
+      "first_started_at": "2026-11-08T03:08:03.626Z"
+    },
+    {
+      "command": "node /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/observe-sdk-initial-barrier.cjs > /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-initial-barrier.original.jsonl 2> /workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-initial-barrier.original.stderr.log",
+      "exit_code": 0,
+      "case_count": 4,
+      "first_started_at": "2026-11-08T03:10:45.467Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/auth-js-GoTrueClient-v2.71.1.source.json",
+      "bytes": 103465,
+      "sha256": "dd85623b0402021a40ad81f48954322db80cf08fc6f8848d7d4f7d0c526aaa65",
+      "git_blob_sha1": "ec729cd56d496aeae6a6e5dc1cf3e1943a32bbc4"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/observe-sdk-initial-barrier.cjs",
+      "bytes": 13495,
+      "sha256": "408652074b00322af137dce44cb9124429c908bc5ff72182795a155e5631eb12",
+      "git_blob_sha1": "8be40fe86b455841e906a9f4a75254e9b1d5c60b"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/observe-sdk-lifetime.cjs",
+      "bytes": 12490,
+      "sha256": "66d7181e77e0879a198ef3b7395ce027a98cdb1af2727d4e9daec89424bf3cc1",
+      "git_blob_sha1": "0797e0a1f9ba69d7dd4beb2f6aaf46dce5774a9c"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-initial-barrier.original.jsonl",
+      "bytes": 50886,
+      "sha256": "c902c4d84f7ae76048f87b6df5d941c03df5b0bd5fcba41456a44e8d9550c8aa",
+      "git_blob_sha1": "4f97ae575ba7bab3c78de07b85135c86cb44f8b3"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-initial-barrier.original.stderr.log",
+      "bytes": 12162,
+      "sha256": "9345dbe987ea76bc2a5b8a14a1d8bb6e0435069b6c6b7fef7d7ff779f4fbe5e9",
+      "git_blob_sha1": "3fe882a6900bfef3478d8d5a8ea279ded980082a"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-lifetime.original.jsonl",
+      "bytes": 54828,
+      "sha256": "5432c92c58d80c30ba6d43dedb16cc919a58436a218cc3677c856794f5c34531",
+      "git_blob_sha1": "8baa94a4886b24fce7f87383dd97d6f5433c834a"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/sdk-lifetime.original.stderr.log",
+      "bytes": 13517,
+      "sha256": "906877d2b820b14117ae4bba80580a2ad660744a171aea4ce000c61972e10b84",
+      "git_blob_sha1": "7474a1206ae5dde5f66f50a7f1bab058bf4b910c"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/ssr-cookies-v0.6.1.source.json",
+      "bytes": 16760,
+      "sha256": "f14dba7d8a23a6d4fed3ad4899bdb221cc9ba7b50cd9f828d87d78db8c4520f2",
+      "git_blob_sha1": "3047bc62c5aa26f72e949b29dd39571df77594db"
+    },
+    {
+      "path": "/workspace/scratch/9de5b942a09c/sdk-lifetime-audit-20261108/ssr-createServerClient-v0.6.1.source.json",
+      "bytes": 8032,
+      "sha256": "4271bf265ba9b63b02bd3add185ec32676c9ca84ffd00c1a27038f2e9139816d",
+      "git_blob_sha1": "bf60bc28c3f16f5142307b31e968c17f73840a51"
+    }
+  ],
+  "installed_sources": [
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js/src/GoTrueClient.ts",
+      "bytes": 100100,
+      "sha256": "facb89baaca4a4f37bc2618a18b08d0ca5bfbc295aaf87879a33cd3406f0e657",
+      "git_blob_sha1": "9a38e9d77e37c25a3a3ae6a12a83e474a579bfad"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js/dist/main/GoTrueClient.js",
+      "bytes": 112519,
+      "sha256": "61bed3f7be6cebb37d02ab28ea5ee7d020e69ea4c5a6a9129ea96567bbc43cd9",
+      "git_blob_sha1": "dc7c003d442008a2f78c2d71e022ad4901af89a3"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js/src/lib/fetch.ts",
+      "bytes": 7270,
+      "sha256": "6760c295d83ec439fbaa5897bcafa99f1ba64d83f0343ee7b3639ec85f93ff09",
+      "git_blob_sha1": "014e9b26c5e294f8cbcc0500fa3a799680f0cec8"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js/src/lib/helpers.ts",
+      "bytes": 12065,
+      "sha256": "ceeb2ee257dd8ea309958d460dfbd9ef8c9a5117c214c52824ad5ee8d6633085",
+      "git_blob_sha1": "65606f7e37f1baa8e025fa3c202472ef775fba26"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/auth-js/src/lib/constants.ts",
+      "bytes": 1122,
+      "sha256": "d150215e006971b6b6cb66be94760d09300f5f8134b00c51fbb69776bb444bae",
+      "git_blob_sha1": "edb77ef6f2bb20637742b039000c82914de409a9"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/supabase-js/src/SupabaseClient.ts",
+      "bytes": 13172,
+      "sha256": "bce26a3de3f098a5440e7ce3f8baca418181a0344848aed26884ad766d759f36",
+      "git_blob_sha1": "4676621783db5866fdecc3648ef7485de8c53aab"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/supabase-js/src/lib/fetch.ts",
+      "bytes": 1207,
+      "sha256": "ccee19de24f4483ad40cc7e6efc21183b758f62c8704c57f0c07bd019c62b5fd",
+      "git_blob_sha1": "c3ec5f429ba63e99fb6786d796ceed36cf89d4f1"
+    },
+    {
+      "path": "/workspace/scratch/fca0aa91f0dd/aa-application-protocol2-tools/node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts",
+      "bytes": 9660,
+      "sha256": "6b8c1bb4710977b50a580a2306a4fdd66c0c654614184486e0d10b84c73b4d92",
+      "git_blob_sha1": "5a1ceb80bea83ce211adc3a7a29cf18142337952"
+    }
+  ],
+  "constraints": [
+    "Only loopback fixtures; all credentials synthetic",
+    "Native fetch with real abort; no Auth response fabricated; no SDK/clock monkeypatch; no dependency install/upgrade",
+    "Additional public subscribers reproduce listener count/options only, not SSR package execution",
+    "Diagnostic callback only records counters/stages, no token/session arguments",
+    "Condition-based observation; extra100ms is a stability observation, never used to claim pending work was cancelled",
+    "No arbitrary-clock rollback runtime test; retry-window limitation is source-derived",
+    "Post-abort loopback server TCP-accept observed; connect-initiation time not instrumented",
+    "HTTP requests and native-fetch starts after owner abort were zero",
+    "Original project/code/branch/GitHub/hosted systems untouched"
+  ]
+}
