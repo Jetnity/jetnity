@@ -1,0 +1,760 @@
+{
+  "schema_version": 1,
+  "package_id": "DEV-PACKAGE-1",
+  "version": "V2",
+  "revision": "R0",
+  "date_local": "2026-11-08",
+  "timezone": "Europe/Zurich",
+  "source_main": "608414441651b407cf56ab976c1cd116db45de0c",
+  "document_role": "Docs-only Dev decision package and binding product-target plan; not an execution or activation artifact",
+  "intended_target": {
+    "environment": "Development",
+    "branch": "develop",
+    "ref": "yfvbxvijcorffwxbxahl",
+    "production_parent_excluded": "qscbgcdmivbbnzrcyegn"
+  },
+  "effective_dev_ready": false,
+  "effective_migration_version": null,
+  "effective_installation_artifact_sha256": null,
+  "actual_stage1_ledger_id": null,
+  "current_database_actions_executed": false,
+  "human_sql_instruction_issued": false,
+  "policy": "Accepted evidence retains its explicit scope. A historical missing Owner artifact alone is not a new impossible release gate. Current target evidence and original preserved gates still determine effective readiness.",
+  "status_vocabulary": [
+    "ACCEPTED_HISTORICAL",
+    "OWNER_CONFIRMED_HISTORICAL_GAP",
+    "ACCEPTED_SCOPED_EVIDENCE",
+    "HUMAN_ATTESTED_PARTIAL",
+    "MISSING",
+    "ACCEPTED_SNAPSHOT",
+    "PARTIAL",
+    "ACCEPTED_HISTORICAL_SCOPED_EVIDENCE",
+    "ACCEPTED_HISTORICAL_NEEDS_CURRENT_BINDING",
+    "ACCEPTED_SOURCE_IDENTITY",
+    "ACCEPTED_HISTORICAL_NATIVE_EVIDENCE",
+    "NOT_AUTHORED_PENDING_TARGET",
+    "NOT_EXECUTED",
+    "NOT_PROVEN",
+    "NO_VERIFIED_CLEARANCE",
+    "RESERVED_NOT_REQUESTED",
+    "PRESERVED_OUT_OF_SCOPE",
+    "ACCEPTED_CURRENT_CI_SNAPSHOT"
+  ],
+  "rows": [
+    {
+      "id": "E01",
+      "subject": "Stage1-Apply-Antwort",
+      "status": "ACCEPTED_HISTORICAL",
+      "accepted_evidence": "Supabase meldete am 14.10.2026 für den einmaligen genehmigten Stage1-Apply success=true; keine tatsächliche Ledger-ID wurde zurückgegeben.",
+      "remaining_gap": "Kein unabhängiger vollständiger Post-Apply-Ledger-/Katalogreadback aus diesem Vorgang.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Tatsächlichen heutigen Stage1-/Ledgerzustand auf zulässiger Evidence abgleichen; keine historische ID aus dem Dateinamen ableiten.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E02",
+      "subject": "Keine weiteren historischen Owner-Belege",
+      "status": "OWNER_CONFIRMED_HISTORICAL_GAP",
+      "accepted_evidence": "Sasa bestätigt am 08.11.2026: keine weiteren alten Belege des ursprünglichen Stage1-Laufs vorhanden. Root hat diese abgeschlossene historische Belegsuche in STAGE1-HISTORICAL-GAP-V1 / 6726914934 persistiert.",
+      "remaining_gap": "Zusätzliche damalige Owner-Screenshots/Protokolle sind nicht nachlieferbar. Dies behauptet nichts über den Verbleib der vorhandenen Run2-Dateien.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Lücke als solche dokumentieren; kein Nachstellen, kein erneuter Original-Lauf und keine neue Owner-Nachfrage nach denselben alten Belegen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine weiteren alten Belege anfordern.",
+      "phase": "DOCUMENTED_HISTORICAL_LIMITATION",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E03",
+      "subject": "Run2-Artefakt und erfolgreiche menschliche Ausführung",
+      "status": "ACCEPTED_SCOPED_EVIDENCE",
+      "accepted_evidence": "Original-CSV und JSON-Integrität, eine audit_report-Zeile, alle 16 Sektionen/8532 Records, READ ONLY während SELECT, PostgreSQL 17.6; erfolgreiche menschliche Vollausführung berichtet.",
+      "remaining_gap": "Export bewertet weder gesamten Datenbanksicherheitszustand noch Auth-Sessionverhalten.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Diese positiven Teilnachweise weiterhin verwenden; keine pauschale Rückstufung auf NOT_EXECUTED/UNKNOWN.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_EVIDENCE_REUSE",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E04",
+      "subject": "Run2-Zuordnung zum tatsächlichen Ziel",
+      "status": "HUMAN_ATTESTED_PARTIAL",
+      "accepted_evidence": "Owner ordnet Run2 Dev/develop/yfvbxvijcorffwxbxahl zu. R4 band diesen Branch am 06.11.2026 historisch über die parent-scoped Inventur.",
+      "remaining_gap": "CSV selbst enthält keine unabhängige Projektattestation. Historische R4-Inventur beweist nicht den später verwendeten SQL-Editor-Kontext.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Vor einer tatsächlichen Änderung muss der konkrete zulässige Ausführungskontext eindeutig auf Dev gebunden sein; vorhandene historische Evidence bewerten, fehlende alte Evidence nicht rekonstruieren.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E05",
+      "subject": "Run2-Transaktionsabschluss",
+      "status": "HUMAN_ATTESTED_PARTIAL",
+      "accepted_evidence": "Owner berichtet vollständiges unverändertes Skript einschließlich BEGIN READ ONLY und ROLLBACK ohne Fehler; SELECT meldet READ ONLY=true.",
+      "remaining_gap": "CSV liegt zeitlich vor dem abschließenden ROLLBACK und attestiert dessen Abschluss nicht selbst.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Beleggrenze im Stage1-Bericht erhalten. Für eine neue wirksame Transaktion ist ein eigener eindeutiger Ablauf-/Commitabschlussnachweis erforderlich; kein Wiederholen von Run2 zur Nachstellung.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "DOCUMENTED_HISTORICAL_LIMITATION",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E06",
+      "subject": "Tatsächliches Migrationsledger",
+      "status": "MISSING",
+      "accepted_evidence": "Historische Pre-Apply-Evidence dokumentiert vorherige Historie; Run2 deklariert migration_ledger=out_of_scope.",
+      "remaining_gap": "Reale neue Ledger-ID, neuer Count/Einträge und Vergleich zur früheren Historie fehlen.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Zulässige tatsächliche Ledger-Evidence muss den erfolgreichen Apply nachvollziehbar zuordnen und Drift benennen. Kein Reapply, History-Repair oder Erfassen des Quellzeitstempels als festgestellte ID.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E07",
+      "subject": "Stage2-Objektbestand",
+      "status": "PARTIAL",
+      "accepted_evidence": "Stage2 wurde im dokumentierten Ablauf nicht versucht. Die Run2-Allowlist redigiert die relevanten Pilot-/Grantnamen. Ein zusätzlicher Offline-Vergleich findet keinen Fingerprinttreffer für die ausgewählten kanonischen Originaltupel von trip_regulatory_context_save_v1 (c4a38658bd96b497c80eef27236c0163070e6e23b91c9c1b17f4e955c4323eae) und official_truth_application_pilot_run_v1 (169b5e214e98666fb00be90f7bc50e85c7f88b76205f76c773af572e278d6628), beide aus Gitblob 87639107883cb9771ed5b19db68994ba08a6c930. Der Export enthält zugleich sieben public-Routinen mit jsonb → jsonb und redigierten Namen: OIDs 72738, 73009, 73056, 73903, 73917, 74079, 74084. SOURCE_MANIFEST.json bindet diesen begrenzten Offline-Vergleich; keine neue Datenbankabfrage.",
+      "remaining_gap": "Gegenwärtige Anwesenheit/Abwesenheit und genaue Definition von beiden Pilot-RPCs und Granttabelle sind weiterhin nicht bewiesen. Ein fehlender exakter Body-/Konfigurationstupeltreffer beweist keine Abwesenheit eines benannten Objekts; abweichende Definitionen können andere Fingerprints haben.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Eindeutigen tatsächlichen Objektbestand zulässig binden; bei Abwesenheit vollständigen nötigen Zielumfang entwerfen, bei Vorhandensein Rechte/Daten/Abhängigkeiten abgleichen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true,
+      "local_evidence_files": [
+        "SOURCE_MANIFEST.json",
+        "STAGE1_ACCEPTANCE_REPORT.md"
+      ]
+    },
+    {
+      "id": "E08",
+      "subject": "Stage1-Capability-Definition und ausgegebene Rechte",
+      "status": "ACCEPTED_SNAPSHOT",
+      "accepted_evidence": "Run2 OID 74181 entspricht ursprünglichem Stage1-Body-/Konfigurationstupel; erwartete Signatur, INVOKER/STABLE/PARALLEL SAFE/search_path=pg_catalog und ausgegebene ACLs belegt.",
+      "remaining_gap": "Belegt die alte Stage1-Fassung, nicht eine wirksame #1142-Ersetzung.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Als konkrete Baseline verwenden; nach späterer genehmigter Ersetzung die neue Definition und effektiven Rechte unabhängig vergleichen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_EVIDENCE_REUSE",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E09",
+      "subject": "Weitere Helfer und Request-Identitätskette",
+      "status": "PARTIAL",
+      "accepted_evidence": "aktuelle_rolle, hat_rolle_mindestens und aktuelles_admin_aal2 passen in Body-/Konfigurationstupeln zu ihren Repository-Quellen. Zusätzlich stimmt der ausgewählte rollenrang-Quelltupelhash 0b4f93560983e564b678d36d6b0e4bf37198a480e681b777d17ac7e24a52e041 aus Gitblob 41c9455bbc88a7b5165d4c929b8f86182cda8fd0 exakt mit public/OID 72351 im unveränderten Run2-Export überein. Separate Metadaten belegen (text) → integer, SQL, IMMUTABLE, PARALLEL SAFE, INVOKER und search_path=pg_catalog. Dies ist ein positiver Offline-Tupelbeleg; der Routinenname ist redigiert.",
+      "remaining_gap": "Der rollenrang-Tupeltreffer beweist die tatsächliche Namens-/Aufrufauflösung nicht. auth.uid/auth.jwt sowie die tatsächlich vertrauenswürdige JWT-/Sessionkette sind ebenfalls nicht vollständig durch Run2 belegt.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Alle tatsächlich aufgerufenen Zielabhängigkeiten samt vertrauenswürdigem Requestkontext eindeutig abgleichen; synthetische GUC-Claims nicht als signierte JWTs ausgeben.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/supabase/migrations/20260817100000_rollenmodell.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true,
+      "local_evidence_files": [
+        "SOURCE_MANIFEST.json",
+        "STAGE1_ACCEPTANCE_REPORT.md"
+      ]
+    },
+    {
+      "id": "E10",
+      "subject": "Profiles-Struktur und RLS",
+      "status": "ACCEPTED_SCOPED_EVIDENCE",
+      "accepted_evidence": "profiles/OID 71476 mit user_id UUID NOT NULL und role/status text NOT NULL, RLS, PK/Unique-/FK-/Policy-Metadaten beobachtet.",
+      "remaining_gap": "Policy-/Constraintsemantik und tatsächlich sichtbare Zeilen sind nicht aus Flags/Hashes allein bewiesen.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Relevanten Rollen-/Status-/Ownership-/RLS-Vertrag der Zielmutation an die ausgewählten tatsächlichen Definitionen binden; kein allgemeiner RLS-PASS.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E11",
+      "subject": "Profile-Trigger und FK",
+      "status": "PARTIAL",
+      "accepted_evidence": "Zwei Triggerbindungen und ihre Body-/Konfigurationstupel passen zu Source; profiles-FK ist validiert, mit ON DELETE CASCADE zu externer OID 16499/Spalte 2.",
+      "remaining_gap": "Der Name/gesamte Auth-Vertrag des externen FK-Ziels und reale Trigger-/Cascade-/Lockausführung bleiben nicht attestiert.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Ziel-FK-/Trigger-/Lockvertrag eindeutig identifizieren und erwartete Auswirkungen in isolierter geeigneter Prüfung absichern; kein reales Owner-Konto sperren oder löschen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E12",
+      "subject": "Ausgewählte Auth-Spalten",
+      "status": "ACCEPTED_HISTORICAL_SCOPED_EVIDENCE",
+      "accepted_evidence": "R4 las 13 ausgewählte auth.users/auth.sessions-Spalten und Typen einschließlich auth.aal_level und unterschiedlicher refreshed_at/not_after-Zeittypen.",
+      "remaining_gap": "Ausgewählte R4-Spalten bleiben im historischen Umfang anerkannt. Vollständige nicht erfasste Auth-Verträge sind separat E13; konkrete Drift vor künftigem Apply wäre neu zu bewerten.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Vorhandene R4-Evidence verwenden und verbliebene tatsächliche Voraussetzungen gezielt klären; keine Deutung unbekannter Felder oder Policies.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_EVIDENCE_REUSE",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E13",
+      "subject": "Managed-Auth-FK/Lifecycle/Enum/Rechte",
+      "status": "MISSING",
+      "accepted_evidence": "Native Tests modellieren eigene Auth-Zeilen, AAL-Enum, Session-FK und benötigte Rechte ausdrücklich synthetisch.",
+      "remaining_gap": "Tatsächlicher Zielvertrag für Widerruf/Löschung/Sperren, Enumlabels, FK und Lockinteraktion ist damit nicht belegt.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Zulässige Zielmetadaten und Vertrags-/Lifecycle-Evidence binden, bevor Fixtureannahmen als deploybar behandelt werden.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E14",
+      "subject": "Dev-Session-Policy",
+      "status": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "accepted_evidence": "R4 plus heutige bestehende Main-CI 42513853717 auf 60841444: Original-Authjob 128832463670 am 08.11.2026 um 19:13:09 UTC meldet 55 erwartete Werte/243 Schlüssel, sämtliche Sollwerte stimmen. Root hat die vier Werte timebox=0 / inactivity_timeout=0 / single_per_user=false / mfa_allow_low_aal=false über aktuelle gepinnte Vergleichsquellen gebunden; Autor las diese Quellen ebenfalls.",
+      "remaining_gap": "Keine pauschale UNKNOWN-Policy. Der akzeptierte Snapshot bleibt zeitlich und auf Development begrenzt; konkrete Drift beziehungsweise geänderter Zielstand vor späterem Apply braucht Bewertung. Kein Production-Nachweis.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Aktuellen CI-Snapshot als tatsächliche Policy-Evidence anerkennen und im finalen Zielpaket mit Zeitpunkt/Quellpins referenzieren. Fehlende oder abweichende Werte werden von der bestehenden Vergleichskette abgelehnt.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+        "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463670"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E15",
+      "subject": "Ausführungsowner und nötige Zielprivilegien",
+      "status": "PARTIAL",
+      "accepted_evidence": "Run2 zeigt postgres als Capability-Owner, BYPASSRLS=true und kein Superuser. Neue Kandidatfunktionen/Pilot schlagen postgres ausdrücklich als Owner vor.",
+      "remaining_gap": "BYPASSRLS ersetzt keine nötigen SELECT-/UPDATE-/Schema-/Funktionsrechte auf Auth/Profiles/Trips/Grants; native Fixture-Extra-Grants sind keine Zielrechte.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Vorhandene erforderliche Zielrechte und Ownership vollständig nachweisen; keine automatischen Zusatzgrants, keine Superuser-/Service-Role-Ausweichlösung.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E16",
+      "subject": "Direkte, Default- und geerbte ACLs",
+      "status": "PARTIAL",
+      "accepted_evidence": "Ausgegebene Stage1-ACLs und erfasste Rollenrechte sind akzeptiert; Kandidaten enthalten gezielte REVOKE/GRANTs für benannte Rollen.",
+      "remaining_gap": "OR REPLACE bewahrt zusätzliche existierende ACLs; tatsächliche Default-ACLs/weitere Rollen/Owner-Mitgliedschaften können neue oder erhaltene Rechte verursachen.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Effektive Zielrechte für alle berührten Objekte einschließlich Installer-Defaults und Vererbung vollständig gegen beabsichtigte Rechte abgleichen. Unbekannte zusätzliche Rechte stoppen die Freigabe.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E17",
+      "subject": "Neue Schema-/Funktionsidentitäten",
+      "status": "MISSING",
+      "accepted_evidence": "Authority-Quelle verlangt CREATE SCHEMA jetnity_ot_auth und CREATE der beiden internen Funktionen; kein IF NOT EXISTS und kein Wiederholungsmodus.",
+      "remaining_gap": "Run2 inventarisiert nur public/private; die tatsächliche Existenz oder Abwesenheit von jetnity_ot_auth ist unbekannt.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Exakte Zielidentität/Kollisionsfreiheit vor wirksamer Änderung belegen. Bei Kollision Reconciliation, kein Überschreiben, Übernehmen, DROP CASCADE oder blinder Retry.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E18",
+      "subject": "Schema- und Daten-API-Exposition",
+      "status": "MISSING",
+      "accepted_evidence": "Quellvertrag verlangt jetnity_ot_auth außerhalb der exponierten API-Schemas; Schema-USAGE allein ist kein API-Expositionsbeleg.",
+      "remaining_gap": "Tatsächliche Exposition einschließlich relevanter REST/GraphQL-Zugänge ist aus Run2/R4 nicht vollständig bestätigt.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Konkrete Ziel-API-Konfiguration und erreichbare erlaubte Caller binden; keine neue generische Exposition oder globale API-Konfigurationsänderung.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E19",
+      "subject": "Unveränderte Kandidatquelle",
+      "status": "ACCEPTED_SOURCE_IDENTITY",
+      "accepted_evidence": "Alle vier #1142-Dateiblobs stimmen an main 60841444 mit den gemergten PR-Dateien überein; Gitblob und SHA256 nachgerechnet.",
+      "remaining_gap": "Quellidentität ist kein installierter Zielbestand und kein eigenes neues Runtime-PASS.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Exakte Source-Pins im Paket beibehalten; jede spätere Änderung braucht neue Versions-/Reviewbindung.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+        "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_EVIDENCE_REUSE",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E20",
+      "subject": "Vorhandene historische und aktuelle Abnahme der 27 nativen Fälle",
+      "status": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "accepted_evidence": "Historischer R5-PASS und heutige bestehende Main-CI 42513853717 auf 60841444. Root hat Core-Original 128832463566 geprüft: Source-Guard ok 1567; nativer Parent ok 1568, alle 27 Kinder PASS/keine Skips, 22791.237512 ms. Für die Dokumentenprüfung von V1/V2 hat der Autor keinen neuen Native-/Hosted-Test gestartet. Eine spätere automatische Docs-PR-CI ist separat an deren tatsächlichen Head und Ergebnisse zu binden.",
+      "remaining_gap": "Synthetische Auth-/JWT-/FK-/ACL-Fixture; kein Hosted-/Signaturbeweis. Der Source-Review dieser Version verwendet bereits vorhandene main-CI-Evidence; Ergebnisse einer späteren automatischen Docs-PR-CI werden nicht vorweggenommen.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Als unveränderte sourcegebundene Regressionsevidence verwenden; tatsächliche spätere Zielbedingungen und neue Artefakte separat prüfen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
+        "https://github.com/Jetnity/jetnity/actions/runs/42513853717/job/128832463566"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "ACCEPTED_CURRENT_CI_SNAPSHOT",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E21",
+      "subject": "Endgültige Migration und Transaktionsgrenze",
+      "status": "NOT_AUTHORED_PENDING_TARGET",
+      "accepted_evidence": "Die zwei bestehenden Kandidaten haben jeweils eigene BEGIN-/COMMIT-Grenzen; Pilot braucht Stage2-Voraussetzungen.",
+      "remaining_gap": "Keine endgültige zielgebundene Installationsdatei, kein gemeinsamer atomarer Apply, keine festgelegte tatsächliche Ledger-Version.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Nach bestätigtem Zielbestand genaues atomisches Artefakt oder expliziten abgesicherten Mehrphasenplan mit eigenen Hashes/Review/Recovery erstellen; keine äußere BEGIN-Umhüllung der unveränderten COMMIT-Dateien als Atomaritätsbeweis.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_ARTIFACT_COMPLETION",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E22",
+      "subject": "Aktuelle Recovery-Basis und geprüfte Gegenänderung",
+      "status": "MISSING",
+      "accepted_evidence": "Historische Work/UI-Backup-Metadaten wurden nur für den damaligen engen Umfang akzeptiert.",
+      "remaining_gap": "Kein aktueller getesteter Restore-Punkt, Verlustfenster oder exakt geprüfte kompensierende sichere Änderung für neue Authority-/Pilot-Ersetzung bestätigt.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Vor einer wirksamen Änderung aktuelle Vorher-Definitionen/ACLs/Abhängigkeiten und geeignete Recovery-Basis sichern und prüfen; alte P1-Autorität nicht als sichere aktivierte Rückfallversion behandeln.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164171285",
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_RECOVERY_READINESS",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E23",
+      "subject": "Tatsächliche Dev-Postchecks",
+      "status": "NOT_EXECUTED",
+      "accepted_evidence": "Messbare Nachprüfungsbedingungen sind in POSTCHECK_AND_RECOVERY.md vorbereitet.",
+      "remaining_gap": "Erwartete Phase-C-Ausführung nach spezifischer Freigabe: tatsächliche Zielinstallation und Postchecks noch nicht durchgeführt. Dieser heutige Ausführungsstatus ist kein Vor-PO-Blocker; der genaue Plan muss vorher fertig geprüft sein.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Erst an vollständig gebundenes, zulässiges und konkret freigegebenes Zielpaket koppeln; Fehler/Unknown sind kein PASS.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "POST_APPLY_ACCEPTANCE",
+      "blocks_pre_po_package": false,
+      "pre_po_requirement": "Vollständiger messbarer Postcheck-/Abbruch-/Evidenzplan, nicht bereits erfolgreiche Post-Apply-Ergebnisse.",
+      "post_apply_requirement": "Tatsächliche Ergebnisse zu Definition/ACL/Ledger/Commit und genehmigten Verhaltenstests vor effektiver #1139-Abnahme."
+    },
+    {
+      "id": "E24",
+      "subject": "Signierte Dev-Session und isolierter QA-Vertrag",
+      "status": "NOT_PROVEN",
+      "accepted_evidence": "Run2-Aufrufer ist postgres; native Tests setzen synthetische Claims in einer eigenen lokalen Fixture.",
+      "remaining_gap": "Vor PO fehlt noch die konkrete zulässige Dev-/QA- und Requestpfadbindung des finalen Pakets. Tatsächliche signierte Post-Apply-Ergebnisse werden erst nach Freigabe erwartet.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Spätere konkrete Ziel-/QA-Prüfung versionieren und im reservierten Auth-/DB-Paket prüfen. Keine realen Owner-/Produktivkonten verändern und keine Tokens/PII in öffentliche Evidence aufnehmen.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_QA_PLAN_THEN_POST_APPLY_ACCEPTANCE",
+      "blocks_pre_po_package": true,
+      "pre_po_requirement": "Exakte zulässige QA-Identitäts-/Ziel-/Requestpfadbindung und Plan ohne reale Owner-/Produktivkontenmanipulation.",
+      "post_apply_requirement": "Die genehmigten signierten Dev-Requests tatsächlich prüfen und Ergebnisse unabhängig bewerten; synthetische Claims niemals als reale Signaturprüfung darstellen."
+    },
+    {
+      "id": "E25",
+      "subject": "Spezifischer #917-Plattform-STOP",
+      "status": "NO_VERIFIED_CLEARANCE",
+      "accepted_evidence": "Originale SELECT-only-Nachprüfung wurde vom Tool-Sicherheitsverfahren abgewiesen; erfolgreiche separate Evidence hebt dies nicht automatisch auf.",
+      "remaining_gap": "Kein verifizierter regulärer Freigabeweg für den noch benötigten ursprünglich verweigerten Umfang dokumentiert.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Nur bereits vorhandene zulässige Evidence auswerten; betroffenen Live-Teil erst nach belegter zulässiger Klärung. Kein Retry/Rephrasing, anderer Operator/Tool/Verbindung oder menschlicher Ersatzlauf.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+        "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6726660349",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_LEGITIMATE_ACCESS",
+      "blocks_pre_po_package": true
+    },
+    {
+      "id": "E26",
+      "subject": "Besondere PO-Entscheidung für wirksame Änderung",
+      "status": "RESERVED_NOT_REQUESTED",
+      "accepted_evidence": "Owner autorisiert TASK V2 zur Fortführung des konkreten Vorbereitungs-/Reviewpakets einschließlich verbindlichem Automatisierungsziel. Allgemeine Zustimmung und die festgelegte automatische Routineannahme bleiben gültig.",
+      "remaining_gap": "Besondere Entscheidung zur konkreten wirksamen Auth-/DB-Änderung folgt auf ein vollständig prüffähiges Phase-A-Paket. Das ist keine dauerhafte Einzelregelfreigabe und keine erneute Grundsatzentscheidung zur Automatisierung.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Root legt erst das vollständige geprüfte Paket mit exakten Änderungen, Nachprüfung und Recovery zur spezifischen PO-Entscheidung vor; keine erneute pauschale Zustimmung anfordern.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PO_DECISION",
+      "blocks_pre_po_package": false,
+      "pre_po_requirement": "Root muss zuerst das konkrete vollständige Paket fertigstellen.",
+      "post_apply_requirement": "Die wirksame Ausführung muss von der danach gegebenen konkreten Entscheidung gedeckt sein."
+    },
+    {
+      "id": "E27",
+      "subject": "Andere Produkt-/Aktivierungsgates",
+      "status": "PRESERVED_OUT_OF_SCOPE",
+      "accepted_evidence": "Stage2 NOT_ATTEMPTED im dokumentierten Ablauf; Accepted Store SQL_UNAPPLIED/FEATURE_NOT_LIVE; #1131 und weitere besondere Gates bleiben. TASK V2 präzisiert die seit 02.10. verbindliche autonome Routineannahme nach einmaliger Methode und mindestens zwei amtlichen Primärquellen.",
+      "remaining_gap": "Dieses Paket liefert weder echte Source-Zulassung noch Pilot-/Store-/Production-/Launch-Freigabe.",
+      "remaining_gap_blocks_effective_dev": false,
+      "closure_criterion_or_disposition": "Eigenständige Gates erhalten; Stage1-Teil- oder Gesamtabnahme nicht als Abschluss des breiten Feature-Issues #917 ausgeben. Einzelregelfreigaben dürfen nicht als Dauerbetrieb vorausgesetzt werden. Konkrete technische Auth-/DB-/Provider-/Rollout-Freigaben bleiben eigenständig. Für die erste öffentliche Regelpublikation gelten bereits mindestens zwei geeignete amtliche Primärquellen; alte Einquellenkandidaten erhalten keine neue öffentliche Pilotfreigabe.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+        "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6726660349",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRESERVED_OTHER_GATES",
+      "blocks_pre_po_package": false
+    },
+    {
+      "id": "E28",
+      "subject": "Unveränderte übrige Consumer-/Source-Catalog-Verträge",
+      "status": "PARTIAL",
+      "accepted_evidence": "Ausgewählte Funktions-/Triggerdefinitionen sind durch Run2-Hashvergleich belegt.",
+      "remaining_gap": "Kein allgemeiner Drift-PASS der übrigen Consumer-/Source-Catalog-Verträge aus dem einzelnen Snapshot.",
+      "remaining_gap_blocks_effective_dev": true,
+      "closure_criterion_or_disposition": "Für tatsächlich berührte Caller und die ursprüngliche Stage1-Abnahme geeignete vorhandene Vergleichsevidence zuordnen; keine pauschale Unverändertheit behaupten.",
+      "evidence_urls": [
+        "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+        "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+      ],
+      "owner": "Root / Technical Lead",
+      "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+      "phase": "PRE_PO_TARGET_BINDING",
+      "blocks_pre_po_package": true
+    }
+  ],
+  "references": {
+    "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "run2": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+    "human": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+    "baseline1139": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045",
+    "continuity": "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6726660349",
+    "apply": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+    "pre": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607",
+    "r4": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+    "r5": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+    "post": "https://github.com/Jetnity/jetnity/pull/1142#issuecomment-6690979366",
+    "recovery": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164171285",
+    "auth": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+    "pilot": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+    "test": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+    "historical_gap": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
+    "task_v1": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
+    "autonomy_directive": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md"
+  },
+  "readiness_phases": {
+    "phase_a": "PRE_PO_PACKAGE_READINESS: actual relevant baseline, exact final artifacts, complete bounded test/QA plan, applicable reviewed recovery and independent review.",
+    "phase_b": "PO_DECISION: the reserved specific decision after Phase A; not a prerequisite for preparing/reviewing the package.",
+    "phase_c": "POST_APPROVAL_APPLY_AND_ACCEPTANCE: actual execution and postchecks required for effective-fix acceptance/issue closure; their current NOT_EXECUTED is expected and does not by itself block Phase A."
+  },
+  "blocking_flag_semantics": "remaining_gap_blocks_effective_dev concerns final effective-fix acceptance; it must not be read as requiring all post-apply results before PO approval. phase and blocks_pre_po_package distinguish the decision boundary.",
+  "current_pre_po_blocker_rows": [
+    "E01",
+    "E04",
+    "E06",
+    "E07",
+    "E09",
+    "E10",
+    "E11",
+    "E13",
+    "E15",
+    "E16",
+    "E17",
+    "E18",
+    "E21",
+    "E22",
+    "E24",
+    "E25",
+    "E28"
+  ],
+  "expected_post_approval_acceptance_rows": [
+    "E23",
+    "E24"
+  ],
+  "product_target_contract": {
+    "status": "BINDING_OWNER_TARGET",
+    "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "prior_autonomy_directive_git_blob": "e220c045661db8489feefff0cdb27b8178449c04",
+    "automatic_routine_acceptance_after_method_approval": true,
+    "per_rule_owner_approval_required": false,
+    "minimum_agreeing_official_primary_sources": 2,
+    "proposer_may_write_accepted_database": false,
+    "jetnity_importer_exclusive_accepted_writer": true,
+    "public_result_before_accepted_import_and_cache": false,
+    "passport_number_mrz_or_photo_storage": false,
+    "supplied_personal_document_data_required": false,
+    "target_response_under_ms": 1000,
+    "measured_performance_pass": false,
+    "research_is_separate_background_path": true,
+    "live_automation_activated_in_this_task": false,
+    "target_plan_file": "PRODUCT_TARGET_PLAN.md",
+    "boundary": "The product target and planned follow-ups do not erase E01–E28 or authorize implementation, database calls, providers, schedules or rollout. Product method decisions are not new blockers for preparing the current #1139 package.",
+    "source_limit_rule": "At least two independently qualified official sources must support the same normalized claim in the same scope and validity context. Duplicate URLs, translations, mirrors or model agreement do not automatically supply independent evidence. A relevant conflicting source is not outvoted by two agreeing sources.",
+    "minimum_two_sources_applies_to_first_public_rule_publish": true,
+    "missing_automation_or_public_cache_blocks_narrow_1139_fix": false,
+    "visitor_inputs": [
+      "destination_country",
+      "one_or_more_citizenships"
+    ],
+    "standard_output": "Conditional rule overview per citizenship, with visible global purpose/duration/transit/document-type/date conditions; no automatic best-pass selection.",
+    "additional_personal_questionnaire_authorized": false,
+    "visitor_residence_or_travel_profile_persisted": false
+  },
+  "product_implementation_rows": [
+    {
+      "id": "P01",
+      "owner_requirement": "Automatische Regelannahme nach einmaliger Methode; mindestens zwei amtliche Primärquellen; Konflikte blockieren.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Autonomy Directive und flüchtiger Preacceptance-/Same-Request-Witness existieren; globale Producer-Wurzel bleibt custody_missing. Der konkret gelesene Canonical Store und SQL-Kandidat verlangen genau eine Stütze. Allgemeine Mehrquellenkomposition bindet bereits mindestens zwei verschiedene ContentItems und eingefrorene Policy-/Extractorversionen; beide allgemeinen Produktionsregister sind leer. Verschiedene ContentItems allein beweisen noch keine amtliche Unabhängigkeit/Konkordanz.",
+      "planned_change": "Vorhandene Foundation wiederverwenden; neue Methoden-/Maschinenautorität und Zwei-Quellen-Vertrag gemeinsam in TypeScript, SQL, Custody, Provenienz, Refresh und Read-Reproof versionieren. Keine gefälschte menschliche Sitzung.",
+      "acceptance": "Zwei vollständige kontextgleiche Primärstützen erlauben automatische Annahme; relevante Widersprüche, fehlende/alte Stützen oder falsche Proofversion blockieren ohne Owner-Einzelklick.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-provenance-record-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-composition-policy-registry.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-trusted-fact-extractor-registry.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    },
+    {
+      "id": "P02",
+      "owner_requirement": "Strukturierte Fakten, Quellen, Abrufdatum, Gültigkeit und Version.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Evidence-, Rule-/Content-Identity-, Fingerprint- und Provenienzprimitive bestehen. Historische Hashes sind keine Herkunfts-/Schreibautorität.",
+      "planned_change": "Normalisierten Fakt und Kontext mit allen Stützen sowie Methoden-, Regel- und Cacheversion binden. Altverträge nicht nachträglich als neue Annahme etikettieren.",
+      "acceptance": "Jede öffentliche Aussage ist auf tatsächliche Quellenprüfzeit, Gültigkeit und unverwechselbaren akzeptierten Evidenzsatz rückführbar; Cachebauzeit verjüngt keine Evidence.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-evidence.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-provenance-artifact.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-support-selection-server.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    },
+    {
+      "id": "P03",
+      "owner_requirement": "Automatische Quellenüberwachung, Aktualisierung, Versionierung, Prüfspur und Rollback.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Refresh-Diff und atomare Versions-/Persistenzkandidaten bestehen; Accepted-Store-Producer besitzt Accept/Withdraw/Conflict/Confirm-Verträge, jedoch keinen aktiven Schedule und keine Deploymentbindung.",
+      "planned_change": "Dauerhafte Überwachung mit begrenzten Jobs, Frischefenstern, Invalidierung, Kill-Switch und Recovery an die neue mehrquellige Methode anbinden.",
+      "acceptance": "Änderungen/Fristende/Konflikt sperren betroffene Projektionen; Wiederholung/Neustart ist idempotent; Restore aktiviert keine heute ungültige Regel.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-refresh-diff.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    },
+    {
+      "id": "P04",
+      "owner_requirement": "Anbieterneutrale Vorschläge; ausschließlich Jetnity-Import-Dienst prüft und schreibt akzeptierte Daten.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Quellenregistry, Server-Catalog, reine Research-Request-Funktion und SearchHitPort existieren; letzterer ist hier nur durch Fixture-Transport implementiert. Aktueller Store-Datenbankadapter verwendet echte User-Reserve/Finalize. Grok-Intake existiert als offline RESEARCH_ONLY-Quarantäne mit same_executor_not_independent, acceptedRules=0 und databaseWrites=0; diese Grenze wird wiederverwendet.",
+      "planned_change": "Begrenzte Proposal-Schnittstelle und eigenen Maschinenvertrag ergänzen; untrusted Vorschläge und akzeptierte Daten strukturell trennen. Bestehende neutrale Schnittstellen und Determinismus wiederverwenden.",
+      "acceptance": "Anbieterwechsel braucht keine Annahmelogikänderung; Researcher/TL/KI erhalten keine DB-/Publishrechte; Dienst arbeitet ohne Person/Chat; kopierte Rollen/Receipts und freie SQL-Payloads scheitern.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/source-registry.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-source-discovery-v1/search-bridge-1/port.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-grok-research-intake-v1.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    },
+    {
+      "id": "P05",
+      "owner_requirement": "Zielland und mehrere Staatsangehörigkeiten; vorberechnete schnelle Antwort mit Stand/amtlicher Quelle; keine Passnummer/MRZ/Passfotos.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Heutiger Accepted-Store-Reader ist enger CH→DE-Trip-Pfad mit genau einer CH-Staatsangehörigkeit, Nutzerkontext und 45-Sekunden-Lifetime. Allgemeiner Requirements-Provider liefert null; kein Beleg für einen aktiven öffentlichen Cache. Allgemeine Requirements-Typen tragen bereits Staatsangehörigkeitsarrays und mehrere Credential-Optionen. Aktueller HTTP-Vertrag ist private,no-store.",
+      "planned_change": "Öffentliche datensparsame Projektion aus akzeptierten Regeln ergänzen; Einzelzellen je Staatsangehörigkeit/globalem Regelkontext und deterministische Kombination. Standardausgabe mit sichtbaren Bedingungen; nur Zielland/Staatsangehörigkeiten als Besuchereingabe, kein neuer persönlicher Fragebogen oder Wohnsitz-/Reiseprofil. SLO als Vorschlag messen.",
+      "acceptance": "Keine günstigste-Pass-Heuristik; keine Vermischung von Regelkontexten; geplantes p95 unter 1.000 ms in festgelegtem Referenznetz/Zielregion für Cache/Pending nachweisen; keine personenbezogenen Reisedokumentdaten in Pipeline/Cache/Logs/Fehlern.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/provider.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    },
+    {
+      "id": "P06",
+      "owner_requirement": "Fehlende Kombination zeigt wird geprüft; automatische Hintergrundrecherche mit unveränderter Annahmeschwelle.",
+      "status": "BINDING_TARGET_WITH_PARTIAL_SOURCE_FOUNDATION",
+      "accepted_source_evidence": "Research-Request unterscheidet current/missing/recheck_needed/invalid und wählt keine Credential-Option. Heutiger Store-Reader startet keinen Producer oder Source-Fetch bei Miss. Deterministische Request-Keys und offizielle registrierte Source-Ausführungspläne bestehen bereits und werden wiederverwendet.",
+      "planned_change": "Deduplizierte dauerhafte Queue, Leases/Wiederaufnahme/Backoff und Pending-Ausgabe ergänzen. Keine synchronen Rechercheantworten oder schwächere Cache-Miss-Schwelle.",
+      "acceptance": "Höchstens ein aktiver Job je regulatorischem Kontext/Methode; Veröffentlichung erst nach bestätigter Annahme/Import/Cacheversion. Unbekannte Regelbedingungen bleiben offen, ohne zusätzliche persönliche Besucherdaten anzufordern.",
+      "source_urls": [
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-research-request.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+        "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-research-execution-plan.ts"
+      ],
+      "phase": "FUTURE_IMPLEMENTATION_PLAN_NO_ACTIVATION",
+      "blocks_current_dev_package_preparation": false,
+      "new_execution_evidence": "NOT_EXECUTED"
+    }
+  ],
+  "product_owner_decisions": [
+    {
+      "id": "D1",
+      "subject": "Konkrete Methode und belegter Betriebsrahmen",
+      "already_fixed": "Automatische Routineannahme, Mindestzahl zwei amtliche Primärquellen, keine Veröffentlichung bei Unsicherheit/Konflikt.",
+      "proposal": "M1 mit qualifizierten unabhängigen Publikationen, gemeinsamem Kontext/Gültigkeit, striktem Negativverhalten und konkretem Budget-/Frische-/Eskalationsrahmen. Stündliche Prüfung/24-Stunden-Maximalalter sind Vorschlag, keine vorhandene Garantie. CH→DE bleibt der bereits entschiedene Erstpfad; keine erneute Wahl des Startbereichs.",
+      "decision_time": "Erst nach vollständiger prüfbarer Methodenfassung und Gegenbeispielen; keine Einzelfreigabe je Regel."
+    }
+  ],
+  "product_source_map_evidence": {
+    "reviewer": "/root/release_live_audit",
+    "sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
+    "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+    "source_readbacks": 50,
+    "test_source_pins": 16,
+    "scope": "Bounded source mapping; read levels distinguish complete, targeted and tree-only evidence. No new SQL, database, provider or native test execution.",
+    "repository_manifest_file": "SOURCE_MANIFEST.json"
+  }
+}

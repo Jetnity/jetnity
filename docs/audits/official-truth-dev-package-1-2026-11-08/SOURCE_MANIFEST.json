@@ -1,0 +1,631 @@
+{
+  "schema_version": 1,
+  "package_version": "DEV-PACKAGE-1 V2",
+  "date_europe_zurich": "2026-11-08",
+  "baseline_main": "608414441651b407cf56ab976c1cd116db45de0c",
+  "baseline_tree": "b7d6f19bddb035f9b445904f7e0582658047a6b6",
+  "intended_target": {
+    "environment": "Development",
+    "branch": "develop",
+    "project_ref": "yfvbxvijcorffwxbxahl",
+    "current_independent_binding": "OPEN"
+  },
+  "production_excluded": {
+    "project_ref": "qscbgcdmivbbnzrcyegn"
+  },
+  "package_kind": "documentation_and_source_review_only",
+  "effective_change_ready": false,
+  "task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+  "owner_historical_gap_url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
+  "source_files": [
+    {
+      "path": "supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql",
+      "git_blob": "43a590682f1d3f569f418fb2572b8fb010de9291",
+      "sha256": "635151c127efde6e2953cc14c68e81ecccf10dba545329fe46c09dcdf50996a2",
+      "bytes": 1210,
+      "lines": 30,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    },
+    {
+      "path": "supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql",
+      "git_blob": "87639107883cb9771ed5b19db68994ba08a6c930",
+      "sha256": "5782f26d35c9a8e778f65a23383d324b9b5cb12c709bf45d21d2fce6873196f0",
+      "bytes": 8781,
+      "lines": 115,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    },
+    {
+      "path": "scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "git_blob": "407c28bc7623f659e49c3f408bee28302ef717e1",
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+      "bytes": 5873,
+      "lines": 107,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    },
+    {
+      "path": "scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+      "git_blob": "e1cccc61773a5adf71d177252d12d047ecf2d627",
+      "sha256": "d5eecdb50a4f00a1ba73bc6aa54f76a601bf0ee1461bb902aff3b1c5e561691e",
+      "bytes": 2987,
+      "lines": 39,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_OWNER_SESSION_CANDIDATE_1_2026-11-06.md",
+      "git_blob": "c09ee127e665846b139cee059ecc22ecdf89c382",
+      "sha256": "d56acf3ca2b2b114157f4e2d2b6037b7258d5b1a524db2265a24acd135dc79d1",
+      "bytes": 16470,
+      "lines": 108,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    },
+    {
+      "path": "lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+      "git_blob": "15f5ebd04452d1aff302dcc487087032863e293b",
+      "sha256": "9498b7a2ee91c72bbd4c2dc96039664f1a903940c475adb81168abd1d594e36b",
+      "bytes": 39704,
+      "lines": 537,
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c"
+    }
+  ],
+  "native_test_source_anchors": [
+    {
+      "path": "supabase/migrations/20260815060111_baseline.sql",
+      "git_blob": "429a2f6106cd4dd0f9d4cb031fd03757a359b28b"
+    },
+    {
+      "path": "supabase/migrations/20260817100000_rollenmodell.sql",
+      "git_blob": "41c9455bbc88a7b5165d4c929b8f86182cda8fd0"
+    },
+    {
+      "path": "supabase/migrations/20260817100500_rollenwechsel_beim_anlegen.sql",
+      "git_blob": "e6ac1e2a2c28089871ac138f4b4782a8554542ea"
+    },
+    {
+      "path": "supabase/migrations/20260817120300_generisches_profil.sql",
+      "git_blob": "aa2655aa49bdefdc54bf23052c540ecc59079515"
+    },
+    {
+      "path": "supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql",
+      "git_blob": "4d24d28ff5789a253d0abc6ebd8aa0d6e22a2375"
+    },
+    {
+      "path": "supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql",
+      "git_blob": "43a590682f1d3f569f418fb2572b8fb010de9291"
+    },
+    {
+      "path": "supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql",
+      "git_blob": "87639107883cb9771ed5b19db68994ba08a6c930"
+    },
+    {
+      "path": "supabase/migrations/20260817120000_reiseschema.sql",
+      "git_blob": "37bb78ddb919b16bd4cd8e00b0a1445a9718c4ba"
+    },
+    {
+      "path": "supabase/migrations/20260820010000_reise_stage_revision.sql",
+      "git_blob": "8d8b79a7206bd06bdd6f9fa850be94e46510c12a"
+    },
+    {
+      "path": "supabase/migrations/20260820060000_reise_graph_revision.sql",
+      "git_blob": "77b34f5c0e9e6c35b10759ea2f43b291888ea16d"
+    },
+    {
+      "path": "supabase/migrations/20260820080000_reise_tage_eindeutig_aufgeschoben.sql",
+      "git_blob": "938de8c1d333a07ba3313435e65b374bb727a6f8"
+    },
+    {
+      "path": "supabase/migrations/20260821100000_trip_items_booking_status.sql",
+      "git_blob": "8b68cee2d5b799f797794412d2d0c2461743aaa6"
+    },
+    {
+      "path": "supabase/migrations/20260822010000_trip_readiness_items.sql",
+      "git_blob": "472362d7f0f29136f206fbabb6ba4b84f7c028fc"
+    },
+    {
+      "path": "supabase/migrations/20260822020000_trip_travellers.sql",
+      "git_blob": "c5c0b447b78e34e453919fdcbda084a2a25f7912"
+    },
+    {
+      "path": "supabase/migrations/20260822160000_traveller_context_intelligence.sql",
+      "git_blob": "aa1a617085e72e6f6ababf4fe4cd053fcf242f8c"
+    },
+    {
+      "path": "supabase/migrations/20260829201500_account_traveller_registry_persistence.sql",
+      "git_blob": "9a485b4f01426edc2f39b1fcffe89a0c21089454"
+    }
+  ],
+  "accepted_run2_artifacts": [
+    {
+      "kind": "run2_original_csv",
+      "bytes": 1725273,
+      "sha256": "96d6fc7ac398fcb8a0e73719c06730e4637090a141c2dbcbfaa731d62a732471",
+      "source_url": "https://github.com/user-attachments/files/34553906/Supabase.Snippet.Untitled.query.csv"
+    },
+    {
+      "kind": "run2_raw_json_cell",
+      "bytes": 1505775,
+      "sha256": "4d0ff64abe2cf6d12d8ada7fd418fe1d9047fb6a5a7da52616bf290d685b551c",
+      "source_url": "https://github.com/user-attachments/files/34553906/Supabase.Snippet.Untitled.query.csv"
+    },
+    {
+      "kind": "run2_sql_source",
+      "path": "docs/audits/official-truth-human-readonly-2026-11-08/public-private-catalog.sql",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "bytes": 24271,
+      "git_blob": "24468d8e164512c062dc4d84a2b998e4cd6518ac",
+      "sha256": "a260b66efe49a54ff223b78298b995b5f9a9789cb9b04b9f821a25ae79479601"
+    }
+  ],
+  "evidence_receipts": [
+    {
+      "id": 6163574059,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163574059",
+      "updated_at": "2026-10-14T07:50:03Z"
+    },
+    {
+      "id": 6163936607,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607",
+      "updated_at": "2026-10-14T08:12:45Z"
+    },
+    {
+      "id": 6164171285,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164171285",
+      "updated_at": "2026-10-14T08:26:46Z"
+    },
+    {
+      "id": 6164202501,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+      "updated_at": "2026-10-14T08:28:42Z"
+    },
+    {
+      "id": 6726410780,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+      "updated_at": "2026-11-08T20:02:27Z"
+    },
+    {
+      "id": 6726637224,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+      "updated_at": "2026-11-08T20:22:29Z"
+    },
+    {
+      "id": 6726648045,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045",
+      "updated_at": "2026-11-08T20:23:26Z"
+    },
+    {
+      "id": 6688370759,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+      "updated_at": "2026-11-06T15:22:36Z"
+    },
+    {
+      "id": 6690991614,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+      "updated_at": "2026-11-06T17:22:43Z"
+    },
+    {
+      "id": 6726914934,
+      "url": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726914934",
+      "updated_at": "2026-11-08T20:47:31Z"
+    }
+  ],
+  "verification_in_this_package": {
+    "all_six_source_file_git_blobs_recomputed": true,
+    "all_six_source_file_sha256_computed": true,
+    "all_16_native_source_anchors_match_pinned_main_tree": true,
+    "run2_artifact_hashes_rechecked_offline": true,
+    "database_sql_executed": false,
+    "hosted_mutation": false,
+    "current_ledger_attested": false,
+    "stage2_absence_attested": false,
+    "existing_current_main_original_core_and_auth_logs_read": true,
+    "additional_run2_comparisons_offline_only": true,
+    "new_native_or_hosted_test_execution_by_document_review": false,
+    "observation_scope": "Frozen source/document review before publication; ordinary automatic CI for the later documentation PR is separately reported against its exact head.",
+    "product_plan_source_pins_from_current_main": 25,
+    "product_plan_source_bytes_independently_rehashed_by_root": 23,
+    "all_25_product_source_pins_match_pinned_main_tree": true
+  },
+  "notes": [
+    "Source file hashes describe unchanged approved repository inputs, not installed target state.",
+    "Historic original Stage1 evidence is not further available from Owner; existing receipts and Run2 remain accepted in scope.",
+    "Package file SHA256 identities and independent review decisions are in REVIEW.md; publishing commit identifies all final files without self-referential hashes.",
+    "No new executable migration, verification query or rollback script is included.",
+    "Existing main CI is accepted at its own head. New documentation PR checks, if automatically triggered by publication, are not pre-certified by this manifest and are recorded in the PR/continuity receipts.",
+    "V2 preserves the reviewed V1/R1 findings and adds the binding Owner automation direction. Historical V1/R1 byte reviews do not certify modified V2 files."
+  ],
+  "current_main_existing_ci": {
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42513853717",
+    "run_id": 42513853717,
+    "attempt": 1,
+    "event": "push",
+    "head_sha": "608414441651b407cf56ab976c1cd116db45de0c",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-08T19:12:19Z",
+    "updated_at": "2026-11-08T19:30:32Z",
+    "jobs": [
+      {
+        "id": 128832463420,
+        "name": "Accepted store trip integration — native (store)",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463566,
+        "name": "Repository verification",
+        "conclusion": "success",
+        "steps": 18
+      },
+      {
+        "id": 128832463576,
+        "name": "Atomic version refresh — native",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463601,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463648,
+        "name": "Persisted canonical read — native",
+        "conclusion": "success",
+        "steps": 10
+      },
+      {
+        "id": 128832463670,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success",
+        "steps": 9
+      },
+      {
+        "id": 128837126954,
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success",
+        "steps": 3
+      }
+    ],
+    "total_jobs": 7,
+    "total_steps": 70,
+    "core_original_log_review": {
+      "job_id": 128832463566,
+      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
+      "source_guard_tap": "ok 1567",
+      "native_parent_tap": "ok 1568",
+      "native_children_executed": 27,
+      "native_children_passed": 27,
+      "native_children_failed": 0,
+      "native_children_skipped": 0,
+      "parent_duration_ms": 22791.237512,
+      "total_core_tests": 8200,
+      "total_core_pass": 8198,
+      "total_core_fail": 0,
+      "total_core_skipped": 2,
+      "skip_scope": "Two pre-existing browser/layout skips outside this native parent.",
+      "verification": "Root independently read the original existing job log; peer independently confirmed. No new test run started for this document review."
+    },
+    "auth_original_log_review": {
+      "job_id": 128832463670,
+      "actual_checkout": "608414441651b407cf56ab976c1cd116db45de0c",
+      "result_at_utc": "2026-11-08T19:13:09.2284794Z",
+      "expected_values": 55,
+      "reported_keys": 243,
+      "all_expected_values_match": true,
+      "bound_candidate_policy": {
+        "timebox": 0,
+        "inactivity_timeout": 0,
+        "single_per_user": false,
+        "mfa_allow_low_aal": false
+      },
+      "scope": "Existing configured Development-branch policy snapshot; not a new independent project attestation and not Production.",
+      "verification": "Root independently read the original existing job log and mapped the four values through the pinned expectation/report/runner/config sources."
+    },
+    "exact_head_limit": "This existing main pass is source/runtime evidence. It is not a pass for a future documentation PR head or for a new target installation."
+  },
+  "auth_policy_source_pins": [
+    {
+      "path": "supabase/config.toml",
+      "git_blob": "43950d4d90e9ddb38487631aa83d2140bed5c04c",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/supabase/config.toml"
+    },
+    {
+      "path": "lib/supabase/auth-erwartung.ts",
+      "git_blob": "0dfd71702f0d1226cd35cdac449b3260c961e31a",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/supabase/auth-erwartung.ts"
+    },
+    {
+      "path": "lib/supabase/auth-bericht.ts",
+      "git_blob": "272db17b128c5f1f84b550fbfad9b4a0edadf9ff",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/supabase/auth-bericht.ts"
+    },
+    {
+      "path": "scripts/auth/pruefen.ts",
+      "git_blob": "c8fd418105c211a8827361300c92e13c8535bb8b",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/auth/pruefen.ts"
+    },
+    {
+      "path": "scripts/auth/ziel.ts",
+      "git_blob": "6620f9746dbce409c5e8555fc33206aff2c28651",
+      "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+      "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/auth/ziel.ts"
+    }
+  ],
+  "additional_offline_run2_comparisons": {
+    "formula": "sha256(UTF8 PostgreSQL JSONB text of [prosrc, probin, prosqlbody::text, proargdefaults::text, proconfig, proargnames])); signature/owner/security flags compared separately. Routine name is excluded from this tuple.",
+    "source_commit": "608414441651b407cf56ab976c1cd116db45de0c",
+    "rollenrang": {
+      "source_path": "supabase/migrations/20260817100000_rollenmodell.sql",
+      "source_git_blob": "41c9455bbc88a7b5165d4c929b8f86182cda8fd0",
+      "selected_tuple_sha256": "0b4f93560983e564b678d36d6b0e4bf37198a480e681b777d17ac7e24a52e041",
+      "observed_oid": "72351",
+      "schema": "public",
+      "input_type_oids": [
+        "25"
+      ],
+      "result_type_oid": "23",
+      "known_name": null,
+      "tuple_match": true,
+      "actual_name_or_caller_resolution_attested": false
+    },
+    "stage2_original_sources": [
+      {
+        "source_name": "trip_regulatory_context_save_v1",
+        "source_git_blob": "87639107883cb9771ed5b19db68994ba08a6c930",
+        "selected_tuple_sha256": "c4a38658bd96b497c80eef27236c0163070e6e23b91c9c1b17f4e955c4323eae",
+        "exact_tuple_matches": 0
+      },
+      {
+        "source_name": "official_truth_application_pilot_run_v1",
+        "source_git_blob": "87639107883cb9771ed5b19db68994ba08a6c930",
+        "selected_tuple_sha256": "169b5e214e98666fb00be90f7bc50e85c7f88b76205f76c773af572e278d6628",
+        "exact_tuple_matches": 0
+      }
+    ],
+    "observed_public_jsonb_to_jsonb_routine_oids": [
+      "72738",
+      "73009",
+      "73056",
+      "73903",
+      "73917",
+      "74079",
+      "74084"
+    ],
+    "stage2_absence_inference": "NONE: seven matching-signature routines have redacted names; changed definitions have different hashes. A missing exact tuple match does not prove named-object absence.",
+    "new_database_queries": 0
+  },
+  "task_v1_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756",
+  "product_direction": {
+    "current_owner_directive": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "historical_autonomy_source": "docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
+    "historical_autonomy_git_blob": "e220c045661db8489feefff0cdb27b8178449c04",
+    "current_direction_prevails_on_conflict": true,
+    "per_rule_human_approval_required_in_target": false,
+    "one_time_method_approval_required": true,
+    "minimum_agreeing_official_primary_sources": 2,
+    "research_proposal_only": true,
+    "jetnity_owned_verifying_importer_only": true,
+    "public_answer_after_accepted_version_and_cache_binding": true,
+    "visitor_target_response_ms": 1000,
+    "target_response_measured": false,
+    "passport_number_mrz_photo_storage_allowed": false,
+    "background_automation_activated_in_this_task": false,
+    "implementation_first_step": [
+      "917_stage1_evidence",
+      "1139_effective_owner_session_fix"
+    ],
+    "target_response_comparison": "<1000ms; proposed p95 reference-network SLO, not measured",
+    "only_visitor_inputs": [
+      "destination_country",
+      "citizenship_country_codes"
+    ],
+    "new_personal_context_questions_authorized": false
+  },
+  "product_source_mapping": {
+    "mapping_task_url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6727237878",
+    "mapping_main": "608414441651b407cf56ab976c1cd116db45de0c",
+    "peer_mapping_sha256": "02d3a9de846896e8be08ea8a16701ba2c7eabd894df12e43eac4d2685613fd27",
+    "product_source_pins": [
+      {
+        "path": "docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
+        "git_blob": "e220c045661db8489feefff0cdb27b8178449c04",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/docs/JETNITY_ENTRY_REQUIREMENTS_OFFICIAL_TRUTH_AUTONOMY_DIRECTIVE_2026-10-02.md",
+        "read_level": "complete_source",
+        "bytes": 7213,
+        "sha256": "726769282241d1981bffbea8b5e5daca8f312fa00a8787170a0b71cbbf3bef5a"
+      },
+      {
+        "path": "lib/readiness/anfrage.ts",
+        "git_blob": "e49fb6b7b43a0286e1fe4a871aa0c5dcd2326728",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/anfrage.ts",
+        "read_level": "targeted_source",
+        "bytes": 1369,
+        "sha256": "9993c4cfe5fc6d7ed90aebf8724efd6d2fdac3522303d3057c5c09085b8c7658"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+        "git_blob": "e926ee3fab1c7725583f62f7e070b99377999c99",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/binding-server.ts",
+        "read_level": "complete_source",
+        "bytes": 1639,
+        "sha256": "0415f45a0ac62a014282235eddfd46552d7a0f33287d31ce18814879b29825fb"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+        "git_blob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+        "read_level": "complete_source",
+        "bytes": 8409,
+        "sha256": "f72b3711e69902e7784d9987ff575304c61feee030d1509da6c87616089cf74a"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "git_blob": "b44e4ce03a3582a4e83723208a272fe7d83a0a9c",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts",
+        "read_level": "complete_source",
+        "bytes": 7920,
+        "sha256": "873b55b662ad7dc214659b78749cbc6a3ddebd4d4dab4caebe7c5c39b2bc938a"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "git_blob": "b77667a2b345ff272a5379aaa9a08d409e25d208",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "read_level": "complete_source",
+        "bytes": 9176,
+        "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+        "git_blob": "1d5f7b4dd2695dfb3b1a826fe1fab651e84db535",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+        "read_level": "complete_source",
+        "bytes": 8657,
+        "sha256": "131176059e649d7f86b92bb38e409ec9b7bc434248a65be4a0d00137e231d49a"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+        "git_blob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+        "read_level": "complete_source",
+        "bytes": 5505,
+        "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c"
+      },
+      {
+        "path": "lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts",
+        "git_blob": "d5af58a6d85dae93ba856f2d7b66a7a71f4796ad",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-preacceptance-witness-server.ts",
+        "read_level": "complete_source",
+        "bytes": 4044,
+        "sha256": "2a357da98924e7107a5dcb0f010293f39c6a1b598af3a4500192138347dfe955"
+      },
+      {
+        "path": "lib/readiness/official-truth-autonomous-provenance-artifact.ts",
+        "git_blob": "3c3aaeb3cc73e223b0a0cf2df1d9ceb27ff161cf",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-provenance-artifact.ts",
+        "read_level": "source_header_and_contract_comments"
+      },
+      {
+        "path": "lib/readiness/official-truth-autonomous-provenance-record-server.ts",
+        "git_blob": "6c95703d0f8a68b75cc7e0494dc9b59efe443dfb",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-autonomous-provenance-record-server.ts",
+        "read_level": "complete_source",
+        "bytes": 2317,
+        "sha256": "ef00c4bbb7b211d6c1f52e34f1e6c29afaa3e2ec221ec03a3ab75773bde4cb94"
+      },
+      {
+        "path": "lib/readiness/official-truth-composition-policy-registry.ts",
+        "git_blob": "7b6a97a10052f925de8ab49a247fa0f32fcc3a81",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-composition-policy-registry.ts",
+        "read_level": "targeted_source",
+        "bytes": 59175,
+        "sha256": "a5346d7d5141b98b0e2ada2d68e652083acfbc733c72791ff7e081c06c41a552"
+      },
+      {
+        "path": "lib/readiness/official-truth-fact-entry-authority-server.ts",
+        "git_blob": "058d746043b466ac5777e8bd060b12d10010048d",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-fact-entry-authority-server.ts",
+        "read_level": "complete_source",
+        "bytes": 6537,
+        "sha256": "1681a4136afb5605783b1b0fe0baf8f62e8e5f74f127c53cbbecb6e56ef91d52"
+      },
+      {
+        "path": "lib/readiness/official-truth-grok-research-intake-v1.ts",
+        "git_blob": "dacfca4bb52e319b42af70b839cc9fc04dbc20c4",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-grok-research-intake-v1.ts",
+        "read_level": "targeted_source",
+        "bytes": 11904,
+        "sha256": "bde8a99cc788cf7a61695cf23790d861530ec02fcb2a25dcaace4bea4993484d"
+      },
+      {
+        "path": "lib/readiness/official-truth-refresh-diff.ts",
+        "git_blob": "b146a9d2f0394dc3236dc529cdee6f65fc4be778",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-refresh-diff.ts",
+        "read_level": "complete_source",
+        "bytes": 8796,
+        "sha256": "385b3e5d2059fa3b07038871b9b2035ab5b3a1f9f229abefc020df1d23c97fb8"
+      },
+      {
+        "path": "lib/readiness/official-truth-research-execution-plan.ts",
+        "git_blob": "e998a7e98289aebb917e13887eb971238a83cb85",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-research-execution-plan.ts",
+        "read_level": "targeted_source",
+        "bytes": 8014,
+        "sha256": "4632c2ddb1b05101217da763e11524de7a38e6c268be9ffaf3b8109a7bc84239"
+      },
+      {
+        "path": "lib/readiness/official-truth-research-request.ts",
+        "git_blob": "b91eedb8e929dcb16e8cc031609af000de447f86",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-research-request.ts",
+        "read_level": "targeted_source",
+        "bytes": 13791,
+        "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce"
+      },
+      {
+        "path": "lib/readiness/official-truth-source-catalog-server.ts",
+        "git_blob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-source-catalog-server.ts",
+        "read_level": "targeted_source",
+        "bytes": 24091,
+        "sha256": "6d2cf2f4c9dd2f73554af0a5068f7554ec56b306f3c54fc8bbd81f711f3dd7b1"
+      },
+      {
+        "path": "lib/readiness/official-truth-source-discovery-v1/search-bridge-1/port.ts",
+        "git_blob": "f6f0dc32b969959b1c396f62981317d33774944a",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-source-discovery-v1/search-bridge-1/port.ts",
+        "read_level": "complete_source",
+        "bytes": 1083,
+        "sha256": "4143dd2bf3ce92dc9a9af841f388cc31da4d80688740e5bdf5eb8623b09e2ae9"
+      },
+      {
+        "path": "lib/readiness/official-truth-support-selection-server.ts",
+        "git_blob": "d8e865c5beb29ee8c9159984ee856dc7e94abbdf",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-support-selection-server.ts",
+        "read_level": "source_header_and_contract_comments"
+      },
+      {
+        "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+        "git_blob": "9f407dca147f8ba41280133dd64c7198c82c10a7",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+        "read_level": "targeted_source",
+        "bytes": 51757,
+        "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62"
+      },
+      {
+        "path": "lib/readiness/provider.ts",
+        "git_blob": "3028961f1711620da860c7eeef50a4b71f82529c",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/provider.ts",
+        "read_level": "complete_source",
+        "bytes": 3440,
+        "sha256": "af1548a85460ab9f723242709378ebb4cb3f976c090c5824950695d1db2ff7b1"
+      },
+      {
+        "path": "lib/readiness/source-registry.ts",
+        "git_blob": "672a316209cdeba279988e1691ce1e15e0dfb1b3",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/source-registry.ts",
+        "read_level": "targeted_source",
+        "bytes": 9165,
+        "sha256": "058c9a69f11c703594415f56ed77ed15bf9804de7ae53aae5fb46c05511e22bc"
+      },
+      {
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "git_blob": "c123817d2f332f6471fbf37a8cf91ec11fee98a1",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+        "read_level": "targeted_source",
+        "bytes": 74690,
+        "sha256": "d18cc49d45e867bd02abd65073c9e64b49c075d8792e27f57af4d5ce88390223"
+      },
+      {
+        "path": "scripts/db/official-truth-atomic-version-refresh-1/contract.ts",
+        "git_blob": "7dc82045ce1e32ceabedd70089e50f53d06e1658",
+        "url": "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-atomic-version-refresh-1/contract.ts",
+        "read_level": "complete_source",
+        "bytes": 3664,
+        "sha256": "a7578346b147b4319fce497dae0ed2fdb80af102448adf2161d27874759f1468"
+      }
+    ]
+  }
+}
