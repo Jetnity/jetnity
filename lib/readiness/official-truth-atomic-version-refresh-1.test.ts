@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 import { test } from 'node:test'
@@ -161,4 +162,72 @@ test('actual native parent signal owns every test hook and keeps the complete fi
   assert.throws(() => inOrder(native.replace(firstAwait, ''), parentBinding, firstAwait))
   assert.throws(() => inOrder(lifetime.replace(finalDrain, ''), actualStop, finalDrain))
   assert.doesNotMatch(lifetime, /\bfetch\s*\(|DATABASE_URL|SUPABASE|pg_terminate_backend|process\.kill/)
+})
+
+test('R9 graph representation reverses exactly to the pinned worker and leaves every other SQL byte unchanged', () => {
+  const sql = read('scripts/db/official-truth-integrated-pilot-1/semantic-v2.sql')
+  const reference = read(`${packageRoot}graph-reference-r9.fixture.sql`)
+  const digest = (value: string) => createHash('sha256').update(value).digest('hex')
+  assert.equal(digest(reference), 'e01025d2ff40c374835729519c9e62e9c7eff03bcd8f68f6847d4983e2204f0c')
+  const worker = sql.match(/^CREATE FUNCTION official_provenance_private\.validate_inspected_graph_v2\([\s\S]*?END \$\$;\n/m)?.[0]
+  const renamed = reference.match(/^CREATE FUNCTION official_refresh_graph_reference_r9\.validate_inspected_graph_v2\([\s\S]*?END \$\$;\n/m)?.[0]
+  assert.ok(worker && renamed)
+  const original = renamed.replace('official_refresh_graph_reference_r9.validate_inspected_graph_v2', 'official_provenance_private.validate_inspected_graph_v2')
+  assert.equal(Buffer.byteLength(original), 6147)
+  assert.equal(digest(original), '17af51e55da5c3ed65007904ddaf62f7875f28a8b3e9b91a71edb88c8976ea39')
+  let reversed = worker
+  const reverse = (before: string, after: string) => {
+    assert.equal(reversed.split(before).length, 2, 'each selected representation hunk exists exactly once')
+    reversed = reversed.replace(before, after)
+  }
+  reverse(" graph jsonb := '{}'::jsonb; adjacency jsonb; starts jsonb := '[]'::jsonb; work jsonb[] := '{}'::jsonb[]; work_head integer:=1; work_tail integer:=0; item jsonb;",
+    " graph jsonb := '{}'::jsonb; starts jsonb := '[]'::jsonb; work jsonb; item jsonb;")
+  reverse("  adjacency:='[]'::jsonb;\n", '')
+  reverse('   adjacency:=adjacency||pg_catalog.to_jsonb(target);', '   graph:=pg_catalog.jsonb_set(graph,ARRAY[key],graph->key||pg_catalog.to_jsonb(target));')
+  reverse('  graph:=pg_catalog.jsonb_set(graph,ARRAY[key],adjacency);\n', '')
+  reverse(' -- R9: the pending FIFO is exactly work[work_head..work_tail]. Simple local\n -- element assignments retain expanded-array storage and release consumed items.\n -- At most 16 expansions per node enqueue at most 16*E+R items; E+R+1<=1024.\n FOR item IN SELECT pg_catalog.jsonb_array_elements(starts) LOOP\n  work_tail:=work_tail+1; work[work_tail]:=item;\n END LOOP;', ' work:=starts;')
+  reverse(' WHILE work_head<=work_tail LOOP', ' WHILE pg_catalog.jsonb_array_length(work)>0 LOOP')
+  reverse("  item:=work[work_head]; work[work_head]:=NULL; work_head:=work_head+1; key:=item->>'key'; depth:=(item->>'depth')::integer;",
+    "  item:=work->0; work:=work-0; key:=item->>'key'; depth:=(item->>'depth')::integer;")
+  reverse("   work_tail:=work_tail+1;\n   work[work_tail]:=pg_catalog.jsonb_build_object('key',target,'depth',depth+1,'path',item->'path'||pg_catalog.to_jsonb(key));",
+    "   work:=work||pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('key',target,'depth',depth+1,'path',item->'path'||pg_catalog.to_jsonb(key)));")
+  reverse("   IF work_tail-work_head+1>16384 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;",
+    "   IF pg_catalog.jsonb_array_length(work)>16384 THEN RAISE EXCEPTION 'bound_exceeded'; END IF;")
+  assert.equal(reversed, original, 'all validation, error order, paths, counters and relaxation are unchanged')
+  assert.equal(digest(sql.replace(worker, () => original)), 'f1e610c259f91b4e429b376f13f6b6a7068da2467ea8da1d607b87cee5c7c2af')
+})
+
+test('R9 owner-only graph oracle checks exact native failures without opening a runtime path', () => {
+  const reference = read(`${packageRoot}graph-reference-r9.fixture.sql`), native = read(`${packageRoot}native.test.ts`)
+  const fixtureRead = "const graphReferenceSql = readFileSync(new URL('./graph-reference-r9.fixture.sql', import.meta.url), 'utf8')"
+  const parentPreparation = (source: string) => {
+    const anchors = ["test('atomic refresh:", 'new OwnedTestLifetime(t.signal)', 'await lifetime.run(abortLifetimeRegression)', fixtureRead,
+      'validateGraphReferenceSource(graphReferenceSql)', 'const primary = await lifetime.run(']
+    const positions = anchors.map(anchor => source.indexOf(anchor))
+    assert.ok(positions.every(position => position >= 0), 'every R9 parent preparation anchor must exist')
+    assert.ok(positions.every((position, index) => index === 0 || positions[index - 1]! < position), 'R9 reference preparation must stay inside the bound parent')
+    assert.equal(source.split(fixtureRead).length - 1, 1, 'exactly one R9 fixture read')
+  }
+  parentPreparation(native)
+  assert.throws(() => parentPreparation(fixtureRead + '\n' + native.replace(fixtureRead, '')))
+  assert.throws(() => parentPreparation(native.replace('new OwnedTestLifetime(t.signal)', 'new OwnedTestLifetime(new AbortController().signal)')))
+  assert.throws(() => parentPreparation(native.replace(fixtureRead, '')))
+  assert.throws(() => parentPreparation(native.replace('validateGraphReferenceSource(graphReferenceSql)', '')))
+  assert.equal((reference.match(/^CREATE FUNCTION /gm) ?? []).length, 1)
+  assert.match(reference, /REVOKE ALL ON SCHEMA official_refresh_graph_reference_r9 FROM PUBLIC;/)
+  assert.match(reference, /REVOKE ALL ON ALL FUNCTIONS IN SCHEMA official_refresh_graph_reference_r9 FROM PUBLIC;/)
+  assert.doesNotMatch(reference, /^GRANT |CREATE (?:TYPE|TABLE)|SECURITY DEFINER/m)
+  for (const file of ['contract.ts', 'refresh.ts', 'test-lifetime.ts', 'fixtures.ts']) {
+    assert.doesNotMatch(read(`${packageRoot}${file}`), /graph-reference-r9|official_refresh_graph_reference_r9|GET STACKED DIAGNOSTICS/)
+  }
+  assert.match(native, /await h\.compareGraphWorker\('primary'\)/)
+  assert.match(native, /await c\.compareGraphWorker\('composed'\)/)
+  assert.match(native, /GET STACKED DIAGNOSTICS state_=RETURNED_SQLSTATE,message_=MESSAGE_TEXT/)
+  assert.match(native, /state_ IS DISTINCT FROM \(fixture_->>'sqlstate'\) OR message_ IS DISTINCT FROM \(fixture_->>'message'\)/)
+  assert.match(native, /'later deeper shared path refuses depth17'[^\n]+message: 'bound_exceeded'/)
+  assert.match(native, /'cycle before an already dominating visit'[^\n]+message: 'cycle'/)
+  assert.match(native, /'later deeper shared path accepts exact depth16'[^\n]+sqlstate: null, message: null/)
+  assert.match(native, /assert\.equal\(cases\.length, 14\)/)
+  assert.match(native, /assert\.equal\(delta\[0\]!\.calls, 1\)/)
+  assert.match(native, /R9 structural graph-worker equivalence; no canonical acceptance claim/)
 })

@@ -30,6 +30,18 @@ const migrations = [
 const packageSql = readFileSync(new URL('./refresh-candidate.sql', import.meta.url), 'utf8')
 const rollbackSql = readFileSync(new URL('./refresh-candidate.rollback.sql', import.meta.url), 'utf8')
 const referenceSql = readFileSync(new URL('./semantic-reference-r5.fixture.sql', import.meta.url), 'utf8')
+const graphWorkerName = 'validate_inspected_graph_v2'
+const graphReferenceSchema = 'official_refresh_graph_reference_r9'
+const graphWorkerSignature = `${graphWorkerName}(text,text,bytea,bytea,official_provenance_api.artifact_input_v1[],jsonb)`
+const validateGraphReferenceSource = (graphReferenceSql: string) => {
+  assert.equal(createHash('sha256').update(graphReferenceSql).digest('hex'), 'e01025d2ff40c374835729519c9e62e9c7eff03bcd8f68f6847d4983e2204f0c')
+  assert.equal((graphReferenceSql.match(/^CREATE FUNCTION /gm) ?? []).length, 1)
+  const definition = graphReferenceSql.match(/^CREATE FUNCTION official_refresh_graph_reference_r9\.validate_inspected_graph_v2\([\s\S]*?END \$\$;\n/m)?.[0]
+  assert.ok(definition)
+  const original = definition.replace(`${graphReferenceSchema}.${graphWorkerName}`, `official_provenance_private.${graphWorkerName}`)
+  assert.equal(Buffer.byteLength(original), 6147)
+  assert.equal(createHash('sha256').update(original).digest('hex'), '17af51e55da5c3ed65007904ddaf62f7875f28a8b3e9b91a71edb88c8976ea39')
+}
 const referenceDefinitions = [
   ['validate_graph_v2', 5137, 'dbdc6616e3a6b9de6b46aecc64b6f92921233717c4adcb33e726c15ee52402ef'],
   ['validate_semantics_v2', 27604, 'c2a4b0e6ccfd6e25c7c95de5588ae629210f8a3f01bb0ace4ed1f5a9a3b21cb1'],
@@ -184,6 +196,8 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   try {
   await lifetime.run(abortLifetimeRegression)
   validateReferenceSource()
+  const graphReferenceSql = readFileSync(new URL('./graph-reference-r9.fixture.sql', import.meta.url), 'utf8')
+  validateGraphReferenceSource(graphReferenceSql)
   const primary = await lifetime.run(() => actuallyFreshObservations('primary', 3, lifetime.signal))
   const composed = await lifetime.run(() => actuallyFreshObservations('composed', 2, lifetime.signal))
   note('five independent actual fresh executions; full capsules retained; later observations, unchanged bytes and mutually compatible immutable artifact identities asserted')
@@ -561,6 +575,273 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         }
         note('same backend re-read later corrupt bytes/links and restored all 17 tables; no cross-invocation proof cache')
       }
+      const compareGraphWorker = async (mode: 'primary' | 'composed') => {
+        // R9 comparisons are graph-worker proofs only. Full authenticated
+        // closure/semantic/refresh acceptance above and below stays mandatory.
+        const baseline = await snapshot(owner)
+        const typeInventory = `SELECT n.nspname,t.typname,t.typtype,t.oid::text FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace
+          WHERE n.nspname LIKE 'official_%' ORDER BY n.nspname,t.typname`
+        const typesBefore = await owner.query(typeInventory)
+        await owner.query(graphReferenceSql)
+        assert.deepEqual(await owner.query(typeInventory), typesBefore, 'R9 reference adds no SQL type')
+        const connection = await connect()
+        let pid: string | null = null, profile: Awaited<ReturnType<typeof executionSettings>> | undefined
+        let tracking: string | null | undefined, failed = false, failure: unknown
+        type StoredNode = { id: string; version: string; digest: string; type: string; family: string; contract: string; bytes: Buffer }
+        type Edge = { slot: string; pin: Record<string, unknown>; expected_type: string | null }
+        type Inspection = Record<string, Edge[]>
+        try {
+          pid = (await connection.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
+          profile = await executionSettings(connection.query.bind(connection))
+          tracking = (await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting
+          assert.ok(tracking)
+          await connection.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+          const qualified = `${graphReferenceSchema}.${graphWorkerSignature}`
+          assert.deepEqual(await connection.query(`SELECT r.rolname AS owner,p.prosecdef::text AS definer,p.provolatile::text AS volatility,
+            (p.proconfig=ARRAY['search_path=""','TimeZone=UTC'])::text AS config FROM pg_proc p JOIN pg_roles r ON r.oid=p.proowner
+            WHERE p.oid=$1::regprocedure`, [pgText(qualified)]), [{ owner: cluster.user, definer: 'false', volatility: 'i', config: 'true' }])
+          assert.equal((await connection.query("SELECT encode(sha256(convert_to(p.prosrc,'UTF8')),'hex') AS digest FROM pg_proc p WHERE p.oid=$1::regprocedure",
+            [pgText(qualified)]))[0]?.digest, '658b89a62bf3482611df4f94eeefe941e5adc2e599ec0e5e6e112be58f32895e')
+          assert.deepEqual(await connection.query(`SELECT r.rolname,a.privilege_type,a.is_grantable::text AS grantable
+            FROM pg_proc p CROSS JOIN LATERAL aclexplode(p.proacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee
+            WHERE p.oid=$1::regprocedure`, [pgText(qualified)]), [{ rolname: cluster.user, privilege_type: 'EXECUTE', grantable: 'false' }])
+          assert.deepEqual(await connection.query(`SELECT r.rolname,a.privilege_type,a.is_grantable::text AS grantable FROM pg_namespace n
+            CROSS JOIN LATERAL aclexplode(n.nspacl) a LEFT JOIN pg_roles r ON r.oid=a.grantee WHERE n.nspname='official_refresh_graph_reference_r9'
+            ORDER BY a.privilege_type`), ['CREATE', 'USAGE'].map(privilege_type => ({ rolname: cluster.user, privilege_type, grantable: 'false' })))
+          const denied = ['anon', 'authenticated', 'service_role', 'ot_provenance_writer', 'ot_provenance_reader',
+            'ot_original_test_writer', 'ot_original_test_reader', ATOMIC_REFRESH_ROLE, ATOMIC_REFRESH_LOGIN]
+          for (const role of denied) {
+            assert.deepEqual(await connection.query("SELECT has_function_privilege($1::name,$2::text,'EXECUTE')::text AS execute_allowed,has_schema_privilege($1::name,$3::text,'USAGE')::text AS usage_allowed",
+              [pgText(role), pgText(qualified), pgText(graphReferenceSchema)]), [{ execute_allowed: 'false', usage_allowed: 'false' }])
+            await connection.query(`SAVEPOINT graph_role; SET LOCAL ROLE ${role}`)
+            await assert.rejects(connection.query(`SELECT ${graphReferenceSchema}.${graphWorkerName}(NULL::text,NULL::text,NULL::bytea,NULL::bytea,NULL::official_provenance_api.artifact_input_v1[],NULL::jsonb)`), code('42501'))
+            await connection.query('ROLLBACK TO SAVEPOINT graph_role')
+          }
+          note('R9 graph reference owner-only ACL and exact pinned definition', { mode, deniedRoles: denied.length, referenceDefinitionSha256: '17af51e55da5c3ed65007904ddaf62f7875f28a8b3e9b91a71edb88c8976ea39' })
+
+          // Derive the full stored closure exactly once BEFORE any measured
+          // worker call. No capsule is truncated and no inspection flag is
+          // supplied by the runtime caller. These are private owner test inputs.
+          const fingerprint = initial.envelope.bundle.recordFingerprint
+          const stored = await connection.query(`WITH closure AS MATERIALIZED (
+            SELECT * FROM official_provenance_private.inspected_closure_v2($1::text))
+            SELECT 'artifact'::text AS kind,a.ordinality::text AS ordinal,a.artifact_id,a.artifact_version::text,a.digest,a.artifact_type,
+              a.byte_contract_family,a.artifact_contract_version::text,a.canonical_bytes,NULL::text AS inspection
+            FROM closure c CROSS JOIN LATERAL unnest(c.artifacts) WITH ORDINALITY a
+            UNION ALL SELECT 'inspection',NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::bytea,c.inspected_edges::text FROM closure c`, [pgText(fingerprint)])
+          const inspections = stored.filter(row => row.kind === 'inspection')
+          assert.equal(inspections.length, 1)
+          assert.ok(inspections[0]!.inspection)
+          const actualInspection = JSON.parse(inspections[0]!.inspection!) as Inspection
+          const artifactRows = stored.filter(row => row.kind === 'artifact').sort((a, b) => Number(a.ordinal) - Number(b.ordinal))
+          assert.equal(artifactRows.length, initial.envelope.bundle.artifacts.length)
+          assert.equal(stored.length, artifactRows.length + 1)
+          const nodes: StoredNode[] = artifactRows.map((row, index) => {
+            assert.equal(row.ordinal, String(index + 1))
+            const original = initial.envelope.bundle.artifacts.find(a => a.pin.id === row.artifact_id && String(a.pin.version) === row.artifact_version)
+            assert.ok(original)
+            assert.equal(row.digest, original.pin.digest); assert.equal(row.artifact_type, original.artifactType)
+            assert.equal(row.byte_contract_family, original.artifactType === 'global_cell' ? 'global_definition_v1' : original.artifactType.endsWith('V1') ? 'custody_v1' : 'manifest_v1')
+            assert.equal(row.artifact_contract_version, String(original.artifactContractVersion))
+            assert.match(row.canonical_bytes ?? '', /^\\x(?:[a-f0-9]{2})+$/)
+            const bytes = Buffer.from(row.canonical_bytes!.slice(2), 'hex')
+            assert.deepEqual(bytes, Buffer.from(original.canonicalBytes))
+            return { id: row.artifact_id!, version: row.artifact_version!, digest: row.digest!, type: row.artifact_type!,
+              family: row.byte_contract_family!, contract: row.artifact_contract_version!, bytes }
+          })
+          const keyOf = (node: StoredNode) => `${node.id}:${node.version}:${node.digest}`
+          assert.equal(new Set(nodes.map(keyOf)).size, nodes.length)
+          assert.equal(Object.keys(actualInspection).length, nodes.length)
+          assert.ok(nodes.every(node => Array.isArray(actualInspection[keyOf(node)])))
+          const material = (await connection.query(`SELECT r.canonical_payload_bytes AS receipt,bb.canonical_bytes AS binding
+            FROM official_provenance_private.receipts r JOIN official_provenance_private.custody_bindings cb USING(record_fingerprint)
+            JOIN official_provenance_private.artifact_blobs bb ON bb.digest=cb.binding_digest WHERE r.record_fingerprint=$1::text`, [pgText(fingerprint)]))[0]
+          assert.ok(material)
+          assert.match(material.receipt ?? '', /^\\x(?:[a-f0-9]{2})+$/); assert.match(material.binding ?? '', /^\\x(?:[a-f0-9]{2})+$/)
+          const receipt = Buffer.from(material.receipt!.slice(2), 'hex'), binding = Buffer.from(material.binding!.slice(2), 'hex')
+          assert.deepEqual(receipt, Buffer.from(initial.envelope.bundle.receiptBytes)); assert.deepEqual(binding, Buffer.from(initial.envelope.bundle.custodyBindingBytes))
+          const artifacts = pgCompositeArray(oids.array, oids.element, nodes.map(node => [pgText(node.id), pgText(node.version, 20), pgText(node.digest),
+            pgText(node.type), pgText(node.family), pgText(node.contract, 23), pgBytes(node.bytes)]))
+          const parameters = (inspection: Inspection) => [pgText(initial.envelope.profile), pgText(fingerprint), pgBytes(receipt), pgBytes(binding), artifacts, pgText(JSON.stringify(inspection), 3802)]
+          const actualParameters = parameters(actualInspection)
+          const invoke = (implementation: 'r8_reference' | 'current', prepared: readonly PgParameter[]) => {
+            const schema = implementation === 'r8_reference' ? graphReferenceSchema : 'official_provenance_private'
+            return connection.query(`SELECT ${schema}.${graphWorkerName}($1::text,$2::text,$3::bytea,$4::bytea,$5::official_provenance_api.artifact_input_v1[],$6::jsonb)`, prepared)
+          }
+          const stats = () => connection.query(`SELECT schemaname,funcname,calls::text,total_time::text,self_time::text FROM pg_stat_xact_user_functions
+            WHERE schemaname IN ('official_provenance_private','official_refresh_graph_reference_r9')
+              AND funcname IN ('validate_inspected_graph_v2','artifact_v2') ORDER BY schemaname,funcname`)
+          await connection.query("SET LOCAL track_functions='all'")
+          for (const implementation of ['r8_reference', 'current'] as const) {
+            const before = await stats(), started = performance.now()
+            await invoke(implementation, actualParameters)
+            const workerMs = Math.round(performance.now() - started), after = await stats()
+            const delta = after.map(row => {
+              const prior = before.find(value => value.schemaname === row.schemaname && value.funcname === row.funcname)
+              return { schema: row.schemaname!, function: row.funcname!, calls: Number(row.calls) - Number(prior?.calls ?? '0'),
+                totalMs: Number(row.total_time) - Number(prior?.total_time ?? '0'), selfMs: Number(row.self_time) - Number(prior?.self_time ?? '0') }
+            }).filter(row => row.calls > 0)
+            assert.equal(delta.length, 1)
+            assert.equal(delta[0]!.schema, implementation === 'r8_reference' ? graphReferenceSchema : 'official_provenance_private')
+            assert.equal(delta[0]!.function, graphWorkerName); assert.equal(delta[0]!.calls, 1)
+            assert.ok(Number.isFinite(delta[0]!.totalMs) && delta[0]!.totalMs >= 0 && Number.isFinite(delta[0]!.selfMs) && delta[0]!.selfMs >= 0)
+            note('R9 fixed R8/new graph worker probe on complete retained inputs', { mode, implementation, artifacts: nodes.length,
+              canonicalBytes: nodes.reduce((sum, node) => sum + node.bytes.length, 0), workerMs, invocationDelta: delta })
+          }
+
+          if (mode === 'primary') {
+            const rootRows = await connection.query(`SELECT r.slot,r.pin::text,r.expected_type,
+              (CASE WHEN r.slot IN ('globalAdmission','selectedSupportManifest','autonomousReviewConstruction') THEN 2 ELSE 1 END)::text AS depth
+              FROM (SELECT * FROM official_provenance_private.receipt_roots(official_provenance_private.decode($1::bytea,262144))
+              UNION ALL SELECT * FROM official_provenance_private.binding_roots(official_provenance_private.decode($2::bytea,4096),$3::text)) r`,
+            [pgBytes(receipt), pgBytes(binding), pgText(fingerprint)])
+            const roots = rootRows.map(row => { const pin = JSON.parse(row.pin!) as { id: string; version: number; digest: string }
+              return { key: `${pin.id}:${pin.version}:${pin.digest}`, depth: Number(row.depth) } })
+            assert.ok(roots.length > 1 && roots.every(root => nodes.some(node => keyOf(node) === root.key) && [1, 2].includes(root.depth)))
+            const firstRoot = roots.find(root => root.depth === 1)!, deeperRoot = roots.find(root => root.depth === 2)!
+            assert.ok(firstRoot && deeperRoot)
+            const start = nodes.find(node => keyOf(node) === firstRoot.key)!, deepStart = nodes.find(node => keyOf(node) === deeperRoot.key)!
+            const free = nodes.filter(node => !roots.some(root => root.key === keyOf(node)))
+            assert.ok(free.length >= 16)
+            const edge = (node: StoredNode, index: number): Edge => ({ slot: `/r9/${index}`, pin: { id: node.id, version: Number(node.version), digest: node.digest }, expected_type: node.type })
+            const empty = (): Inspection => Object.fromEntries(nodes.map(node => [keyOf(node), []]))
+            const star = (): Inspection => { const value = empty(); value[keyOf(start)] = nodes.filter(node => node !== start).map(edge); return value }
+            const chain = (maximumDepth: 16 | 17): Inspection => {
+              const value = empty(), shared = free[0]!, end = free[1]!, middle = free.slice(2, maximumDepth - 1)
+              assert.equal(middle.length, maximumDepth - 3)
+              const used = new Set([keyOf(start), keyOf(shared), keyOf(end), ...middle.map(keyOf)])
+              value[keyOf(start)] = [shared, middle[0]!, ...nodes.filter(node => !used.has(keyOf(node)))].map(edge)
+              for (let i = 0; i < middle.length; i++) value[keyOf(middle[i]!)] = [edge(middle[i + 1] ?? shared, 0)]
+              value[keyOf(shared)] = [edge(end, 0)]; return value
+            }
+            // This arithmetic describes the explicit graph-only fixture; it
+            // is neither a typed-capsule validator nor a SQL execution trace.
+            const arithmetic = (inspection: Inspection) => {
+              const queue = roots.map(root => ({ ...root, path: [] as string[] })), longest = new Map<string, number>()
+              let head = 0, deepest = 0, laterDeeper = 0, maxPending = queue.length, dominated = 0
+              while (head < queue.length) {
+                const item = queue[head++]!; deepest = Math.max(deepest, item.depth)
+                if (item.depth > 16) return { outcome: 'depth', deepest, laterDeeper, maxPending, dominated, cycleDominated: false }
+                if (item.path.includes(item.key)) return { outcome: 'cycle', deepest, laterDeeper, maxPending, dominated,
+                  cycleDominated: (longest.get(item.key) ?? 0) >= item.depth }
+                const previous = longest.get(item.key)
+                if (previous !== undefined && previous >= item.depth) { dominated++; continue }
+                if (previous !== undefined) laterDeeper++
+                longest.set(item.key, item.depth)
+                for (const next of inspection[item.key] ?? []) {
+                  queue.push({ key: `${next.pin.id}:${next.pin.version}:${next.pin.digest}`, depth: item.depth + 1, path: [...item.path, item.key] })
+                  maxPending = Math.max(maxPending, queue.length - head)
+                }
+              }
+              return { outcome: longest.size === nodes.length ? 'complete' : 'unsolicited', deepest, laterDeeper, maxPending, dominated, cycleDominated: false }
+            }
+            const duplicate = star(); duplicate[keyOf(start)]!.push(edge(free[0]!, 900), edge(free[1]!, 901), edge(free[0]!, 902))
+            const depth16 = chain(16), depth17 = chain(17), cycle = star()
+            cycle[keyOf(deepStart)] = [edge(free[0]!, 0)]; cycle[keyOf(free[0]!)] = [edge(free[0]!, 0)]
+            const wide = star()
+            while (wide[keyOf(start)]!.length + roots.length + 1 < 1024) wide[keyOf(start)]!.push(edge(free[0]!, wide[keyOf(start)]!.length))
+            const excessive = { ...wide, [keyOf(start)]: [...wide[keyOf(start)]!, edge(free[0]!, 2000)] }
+            assert.equal(arithmetic(star()).outcome, 'complete')
+            assert.ok(Object.values(star()).filter(list => list.length === 0).length === nodes.length - 1)
+            assert.ok(arithmetic(duplicate).dominated > 0)
+            assert.equal(arithmetic(depth16).outcome, 'complete'); assert.equal(arithmetic(depth16).deepest, 16); assert.ok(arithmetic(depth16).laterDeeper > 0)
+            assert.equal(arithmetic(depth17).outcome, 'depth'); assert.equal(arithmetic(depth17).deepest, 17)
+            assert.equal(arithmetic(cycle).outcome, 'cycle'); assert.equal(arithmetic(cycle).cycleDominated, true)
+            assert.equal(wide[keyOf(start)]!.length + roots.length + 1, 1024); assert.ok(arithmetic(wide).maxPending >= 900)
+            assert.equal(excessive[keyOf(start)]!.length + roots.length + 1, 1025)
+            const invalidVersion = { ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: 'not-a-bigint' } }
+            const missingTarget = { ...edge(free[0]!, 1), pin: { ...edge(free[0]!, 1).pin, id: 'r9-missing-target' } }
+            const withFirst = (...entries: Edge[]): Inspection => ({ ...star(), [keyOf(start)]: [...entries, ...star()[keyOf(start)]!] })
+            const missingInspection = star(), missingKey = keyOf(nodes[0]!)
+            delete missingInspection[missingKey]; missingInspection['r9-unused-inspection-key'] = []
+            const spelling = withFirst({ ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: `0${free[0]!.version}` } })
+            const cases: { name: string; inspection: Inspection; sqlstate: string | null; message: string | null; nullFirstKey?: boolean }[] = [
+              { name: 'reachable empty adjacency', inspection: star(), sqlstate: null, message: null },
+              { name: 'ordered duplicate edges retained', inspection: duplicate, sqlstate: null, message: null },
+              { name: 'later deeper shared path accepts exact depth16', inspection: depth16, sqlstate: null, message: null },
+              { name: 'later deeper shared path refuses depth17', inspection: depth17, sqlstate: 'P0001', message: 'bound_exceeded' },
+              { name: 'cycle before an already dominating visit', inspection: cycle, sqlstate: 'P0001', message: 'cycle' },
+              { name: 'wide pending FIFO and duplicate edges total1024', inspection: wide, sqlstate: null, message: null },
+              { name: 'duplicate edges total1025 refuse', inspection: excessive, sqlstate: 'P0001', message: 'bound_exceeded' },
+              { name: 'edge order: invalid bigint before missing target', inspection: withFirst(invalidVersion, missingTarget), sqlstate: '22P02', message: 'invalid input syntax for type bigint: "not-a-bigint"' },
+              { name: 'edge order: missing target before invalid bigint', inspection: withFirst(missingTarget, invalidVersion), sqlstate: 'P0001', message: 'dependency_missing' },
+              { name: 'NULL expected type refuses', inspection: withFirst({ ...edge(free[0]!, 0), expected_type: null }), sqlstate: 'P0001', message: 'dependency_missing' },
+              { name: 'missing inspected key at unchanged cardinality', inspection: missingInspection, sqlstate: 'P0001', message: 'semantic_mismatch' },
+              { name: 'NULL artifact key precedes missing inspection', inspection: actualInspection, sqlstate: '22023', message: 'argument 1: key must not be null', nullFirstKey: true },
+              { name: 'bigint-equal version spelling preserves original target key', inspection: spelling, sqlstate: 'P0001', message: 'unsolicited_artifact' },
+              { name: 'NULL edge version refuses', inspection: withFirst({ ...edge(free[0]!, 0), pin: { ...edge(free[0]!, 0).pin, version: null } }), sqlstate: 'P0001', message: 'dependency_missing' },
+            ]
+            assert.equal(cases.length, 14)
+            // The shared driver intentionally redacts error messages. Inspect
+            // them inside owner-only anonymous SQL blocks instead of adding
+            // a function/grant or weakening that driver. An expected P0001 must
+            // also be the exact depth/cycle/refusal message, never an early
+            // input error that happens to share the SQLSTATE. quote_literal is
+            // performed by PostgreSQL; no case value becomes unquoted SQL.
+            // One finite case pair per statement keeps the existing 25-second
+            // statement bound. Every case derives its complete stored input
+            // before both calls; all of this remains inside the 900s Parent.
+            for (const [index, fixture] of cases.entries()) {
+              const quoted = (await connection.query('SELECT quote_literal($1::text) AS fixture,quote_literal($2::text) AS fingerprint,quote_literal($3::text) AS profile',
+                [pgText(JSON.stringify(fixture)), pgText(fingerprint), pgText(initial.envelope.profile)]))[0]!
+              assert.ok(quoted.fixture && quoted.fingerprint && quoted.profile)
+              const block = `DECLARE original_ official_provenance_api.artifact_input_v1[]; input_ official_provenance_api.artifact_input_v1[];
+              receipt_ bytea; binding_ bytea; fixture_ jsonb:=${quoted.fixture}::jsonb; implementation_ text; state_ text; message_ text; checked_ integer:=0;
+              BEGIN
+               SELECT c.artifacts INTO STRICT original_ FROM official_provenance_private.inspected_closure_v2(${quoted.fingerprint}) c;
+               SELECT r.canonical_payload_bytes,bb.canonical_bytes INTO STRICT receipt_,binding_ FROM official_provenance_private.receipts r
+                JOIN official_provenance_private.custody_bindings cb USING(record_fingerprint)
+                JOIN official_provenance_private.artifact_blobs bb ON bb.digest=cb.binding_digest WHERE r.record_fingerprint=${quoted.fingerprint};
+                input_:=original_;
+                IF fixture_->>'nullFirstKey'='true' THEN
+                 SELECT ARRAY(SELECT ROW(CASE WHEN a.ordinality=1 THEN NULL::text ELSE a.artifact_id END,
+                  a.artifact_version,a.digest,a.artifact_type,a.byte_contract_family,a.artifact_contract_version,a.canonical_bytes)::official_provenance_api.artifact_input_v1
+                  FROM unnest(original_) WITH ORDINALITY a ORDER BY a.ordinality) INTO input_;
+                END IF;
+                FOREACH implementation_ IN ARRAY ARRAY['r8_reference','current'] LOOP
+                 state_:=NULL; message_:=NULL;
+                 BEGIN
+                  IF implementation_='r8_reference' THEN
+                   PERFORM official_refresh_graph_reference_r9.validate_inspected_graph_v2(${quoted.profile},${quoted.fingerprint},receipt_,binding_,input_,fixture_->'inspection');
+                  ELSE
+                   PERFORM official_provenance_private.validate_inspected_graph_v2(${quoted.profile},${quoted.fingerprint},receipt_,binding_,input_,fixture_->'inspection');
+                  END IF;
+                 EXCEPTION WHEN OTHERS THEN GET STACKED DIAGNOSTICS state_=RETURNED_SQLSTATE,message_=MESSAGE_TEXT;
+                 END;
+                 IF state_ IS DISTINCT FROM (fixture_->>'sqlstate') OR message_ IS DISTINCT FROM (fixture_->>'message') THEN
+                  RAISE EXCEPTION 'r9_exact_worker_outcome_mismatch' USING ERRCODE='P79${String(index + 1).padStart(2, '0')}';
+                 END IF;
+                 checked_:=checked_+1;
+                END LOOP;
+               IF checked_<>2 THEN RAISE EXCEPTION 'r9_case_count_mismatch' USING ERRCODE='P7999'; END IF;
+              END`
+              assert.equal(block.includes('$r9_graph_cases$'), false)
+              await connection.query(`DO $r9_graph_cases$ ${block} $r9_graph_cases$`)
+              // Completion proves both actual invocations matched both fields
+              // (or genuinely succeeded for the four structural positives).
+              note('R9 structural graph-worker equivalence; no canonical acceptance claim', {
+                case: fixture.name, sqlstate: fixture.sqlstate, message: fixture.message, implementationsCheckedInSql: 2,
+              })
+            }
+          }
+          assert.deepEqual(await snapshot(connection), baseline)
+        } catch (error) { failed = true; failure = error }
+        finally {
+          const cleanupErrors: unknown[] = []
+          const cleanup = async (operation: () => unknown) => { try { await operation() } catch (error) { cleanupErrors.push(error) } }
+          await cleanup(async () => {
+            await connection.query('ROLLBACK')
+            assert.ok(profile && tracking)
+            assert.deepEqual(await executionSettings(connection.query.bind(connection)), profile)
+            assert.equal((await connection.query("SELECT current_setting('track_functions') AS setting"))[0]?.setting, tracking)
+          })
+          await cleanup(() => close(connection)); if (pid) await cleanup(() => gone([pid!]))
+          await cleanup(async () => { assert.deepEqual(await snapshot(owner), baseline); await locksReleased() })
+          if (cleanupErrors.length) throw new AggregateError(failed ? [failure, ...cleanupErrors] : cleanupErrors, 'graph_comparison_cleanup_failed')
+        }
+        if (failed) throw failure
+        note('R9 worker comparison restored settings, full stored state and owned backend departure', { mode })
+      }
       const publicationProbe = async (next: PreparedOriginals) => {
         const before = await snapshot(owner), writer = await connect('ot_original_test_writer')
         const pid = (await writer.query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
@@ -686,7 +967,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
         assert.deepEqual(await snapshot(owner), before); await locksReleased()
         note('negative direct SQL with complete rollback', { case: name, sqlstate: (caught as LocalPgError).code })
       }
-      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference,
+      return { cluster, owner, key, connect, close, gone, oids, reviewer, lifecycle, initialReview, align, review, seed, request, observed, negative, locksReleased, publicationProbe, compareJit, compareReference, compareGraphWorker,
         get witness() { return witness }, set witness(value: Cursor) { witness = value },
         stop() { lifetime.stopCluster(cluster) } }
     } catch (error) { lifetime.stopCluster(cluster); throw error }
@@ -704,6 +985,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
     assert.deepEqual(installed, [{ definer: 'true', owner: 'true', config: 'true' }])
     await h.compareJit()
     await h.compareReference('primary')
+    await h.compareGraphWorker('primary')
     assert.deepEqual(await h.owner.query(`SELECT rolsuper::text,rolbypassrls::text,rolcanlogin::text,rolinherit::text FROM pg_roles WHERE rolname='${ATOMIC_REFRESH_ROLE}'`),
       [{ rolsuper: 'false', rolbypassrls: 'false', rolcanlogin: 'false', rolinherit: 'false' }])
     assert.deepEqual(await h.owner.query(`SELECT r.rolname FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid WHERE m.member='${ATOMIC_REFRESH_LOGIN}'::regrole ORDER BY r.rolname`), [{ rolname: ATOMIC_REFRESH_ROLE }])
@@ -871,6 +1153,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   try {
     await c.publicationProbe(composed[1]!)
     await c.compareReference('composed')
+    await c.compareGraphWorker('composed')
     const req = await c.request(composed[1]!, 'composed')
     await c.negative('composed reversed original support order', { ...req, bodies: [...req.bodies].reverse() })
     await c.negative('composed reversed receipt supports', { ...req, envelope: corruptReceipt(req.envelope, p => { (p.supports as unknown[]).reverse() }) })
