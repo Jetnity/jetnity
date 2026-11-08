@@ -1,3 +1,29 @@
+# Current acceptance status V9 / Fix13
+
+Date: 2026-11-08 UTC. Exact parent `41c365c444727b6fc29d9f28511eb86b3276e720`, tree `049c9aa5e299be59fb20d2ca825e5ea74948a5d0`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; TASK/R1–R10 remain unchanged.
+
+**Overall CHANGES REQUIRED.** Actual run42475654207/Core128716320202: Typecheck/Lint PASS,8208 tests/8205 pass/1 fail/0 cancelled/2 inherited skips,795831.655797ms; hygiene/build skipped. Original4038669 bytes,SHA256 `5c5eebb39582bbc78306f3e706dd4a7d2d867256f367ad8f5a2fd5081b81d5b3`, independently fetched and hashed by the author.
+
+| Current41c boundary | Actual result and limitation |
+| --- | --- |
+| Browser | Only initial closed stage completes. First explicit read times out with zero fixture store/pilot requests and zero Playwright request/response/body observations. One passive fetch entry exists before the missing signal/native-fetch progression. No full mounted PASS |
+| Native publication | Full suite completes89704ms,1554/1554 operations settled,293/293 connections closed,zero pending/backends/provisional rows,one stopped cluster. Real A/R8, strict retained semantic refusal, successor/lost-ACK/reconciliation/restore cases and final cleanup complete |
+| Other R10 suites | Boundaries85596ms,integrity122969ms,wait/lifecycle129665ms all complete actual final resource/key/cluster assertions |
+| Other package entries | Acceptance, Context, Implementation and Recovery PASS |
+| Companion gates | Root and independent backend review confirm actual41c Auth55/243, Persisted95 phases/45 reads and full Atomic151 parseable/152 raw markers with complete cleanup. Aggregate128720370458 fails solely for Core; none of these passes transfers to Fix13 |
+
+The fixed source defect is confined to serialization of the passive browser observer. Actual tsx4.20.5 enables esbuild0.25.9 keepNames, which wraps the locally assigned arrow with module-scoped __name. Playwright1.55.0 serializes the supplied function alone. An EventListenerObject.handleEvent method avoids this compiler-generated outer binding, as confirmed by the pinned compiler method guard and official golden output. The exact original41c exception is not logged; this is a source-established mechanism consistent with the observations, not a claimed captured ReferenceError or local transform execution.
+
+Only that listener representation and its already-aborted invocation change. All observation fields/signals/options, exact original fetch promise and Response/error, immediate owned CDP read,55 assertions,13 ordered proof stages,45-second bounds and complete remaining browser bytes stay unchanged. No timeout, retry, product callback, fake positive, helper injection or compiler configuration change.
+
+Atomic128716320369 completes with one pass/no failure/cancellation/skip:1009133.978674ms subtest,1010001.464558ms total. Final1009130ms has10943/10943 settled,pending0,248/248 closed,11 clusters,parentAbortedfalse,reserve190870ms. Its original is180270 bytes,SHA256 `15cf8943567e2446cf5c5cdad05f26a31d0076bdad62a876eb55bf661d0a654a`. Persisted totals235912.117766ms and completes at235020ms; Root's separate41c checkpoint preserves the full original evidence.
+
+The strict R2 false-fact negative now reaches retained_fact_invalid at41c with unchanged originals/history/witness and genuine positive controls. This does not identify b5's unrecorded semantic failure. Both original b5 causes remain unknown.
+
+All prior V8/V7/V6/V5 coverage and evidence below remain verbatim historical text. Candidate execution is unperformed: no local TypeScript/Node/native/mounted/CI PASS. Root publishes alone after independent review and fully gates the new head; all feature-off/SQL-unapplied/held-action boundaries remain exact.
+
+---
+
 # Current acceptance status V8 / Fix12
 
 Date: 2026-11-08 UTC. Exact parent `b5abb39934faf0c7277159ad4ad94eb9c186297e`, tree `49690de729f290a139130ecef1d13b9395a45300`; main `e1fe0c696ade9f39b417772b5c065f87530204d6`. Same author/session/Generation1; unchanged TASK/R1–R10. Root authorization: [6720613252](https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6720613252).

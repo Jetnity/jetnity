@@ -128,13 +128,15 @@ export async function mountedAcceptedStoreProof(t:TestContext){
         if(observation.reads.length>32){observation.reads.shift();observation.omitted++}
         const signal=init?.signal??(input instanceof Request?input.signal:null)
         let response:Response|null=null
-        const aborted=()=>{
+        // An object method survives tsx keepNames + Playwright serialization
+        // without capturing esbuild's module-scoped __name helper.
+        const aborted={handleEvent(){
           entry.abortedAt=performance.now();entry.bodyUsedAtAbort=response?.bodyUsed??null;entry.bodyLockedAtAbort=response?.body?.locked??null
           const workspace=document.querySelector('[data-native-workspace]')
           entry.abortDom={status:workspace?.getAttribute('data-store-status')??null,busy:workspace?.getAttribute('data-store-busy')??null,
             visibility:document.visibilityState}
-        }
-        if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true})
+        }}
+        if(signal?.aborted)aborted.handleEvent();else signal?.addEventListener('abort',aborted,{once:true})
         const originalPromise=original(input,init)
         // Observe on a handled side branch; the hook receives exactly the native
         // promise, without waiting behind this diagnostic reaction.
