@@ -1,3 +1,18 @@
+# Fix15 TASK V1.1 — Root clarification before implementation
+
+Frozen 2026-11-08 14:02:41 UTC. This version adds only the concrete active CI-guard adaptation and npm alias composition identified by independent source review. The full V1 follows unchanged below.
+
+- Additionally authorized file: `lib/readiness/official-truth-atomic-version-refresh-1.test.ts`, exact baseline blob `0969ef271969c262ff41ab137691dbe0fbcd7851`. Root read its current mandatory-CI test at lines94–104. Adapt that existing test for the fourth job family; retain its old Atomic/always/strict-success protections and explicitly guard the two matrix groups, exact union of eight unchanged wrappers, Core identity entry and no optional execution. Do not modify the Atomic implementation or native matrix.
+- Use a composed local alias `test:accepted-store-native` = `npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle`. Each of the two underlying commands keeps its four explicit files and concurrency1 from V1. No wildcard or custom discovery is necessary.
+- Exact npm `test` composition becomes `npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native`. CI still runs the two accepted-store groups independently with matrix fail-fast:false, so one group failure does not cancel the other.
+- Required wrapper destination remains V1's `required-tests/` folder; adapt imports to `../<actual existing implementation>`. Preserve all8 names/callbacks/timeouts and the pure implementation wrapper bytes.
+- Independent source mapping found595 original Core test files; the intended partition is587 Core +8 required runtime files, still595 unique files. This is a source-discovery count, not a runtime PASS.
+- Refined actual comparable setup measurement: checkout/setup-node/npm-ci/setup-check/operating-mode took63.316s on114 and48.289s on4fbe. Import, test and teardown time must still fit the fresh20min group execution; observed timing is not a hard guarantee.
+
+This is still the same immediate Fix15/R11 correction of #1155, not a new product slice. Author, scope, source evidence limits, ownership, all existing test/product bounds and special gates remain as V1.
+
+---
+
 # Official Truth Accepted Store Trip Integration 1 — Review Fix15 TASK V1
 
 Status: ROOT-AUTHORIZED bounded corrective work for open #1155 after merged #1156. Frozen 2026-11-08 14:01:13 UTC.
