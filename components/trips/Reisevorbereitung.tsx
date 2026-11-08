@@ -8,6 +8,7 @@ import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
 import EigeneReisevorbereitung from '@/components/trips/EigeneReisevorbereitung'
 import type { PersonalSteuerung } from '@/components/trips/usePersonalPreparationLifecycle'
 import type { TripTravellerSteuerung } from '@/components/trips/useTripTravellerSnapshotLifecycle'
+import { travellerDraftBlocksOfficial,officialTravellerDraftMessage } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
@@ -78,13 +79,13 @@ const BEREICH_TITEL = Object.fromEntries(PREPARATION_BEREICHE.map((bereich) => [
 
 export default function Reisevorbereitung({
   reise,
-  officialEvaluations,
+  officialEvaluations: gelieferteOfficialEvaluations,
   onSetzen,
   onEntfernen,
   onTravellerSetzen,
   onTravellerEntfernen,
   registryUebernahme,
-  officialPilot,
+  officialPilot: geliefertesOfficialPilot,
   offeneBereiche,
   onBereichOffen,
   onZiel,
@@ -113,6 +114,11 @@ export default function Reisevorbereitung({
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
 }) {
   const [meldung, setMeldung] = React.useState('')
+  const entwurfOffen = travellerDraftBlocksOfficial(reise, travellerSteuerung)
+  const officialEvaluations = entwurfOffen ? undefined : gelieferteOfficialEvaluations
+  const officialPilot = entwurfOffen
+    ? <p role="status" data-official-draft-blocked className="text-sm leading-6 text-ink-900">{officialTravellerDraftMessage}</p>
+    : geliefertesOfficialPilot
   const { items, summary, evaluations } = readinessAnsicht(reise, officialEvaluations)
   const sichtbareItems = readinessWorkspaceSichtbar(items)
   const sichtbareZusammenfassung = readinessWorkspaceZusammenfassung(summary, items)

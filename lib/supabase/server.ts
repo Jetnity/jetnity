@@ -4,6 +4,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
+import { serverClientLifetime } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -63,7 +64,28 @@ function mutableCookiesAdapter(store: CookieStore) {
 }
 
 /** Für Server Components (RSC) – Cookies read-only */
-export async function createServerComponentClient<Db = Database>(): Promise<SupabaseClient<Db>> {
+export async function createServerComponentClient<Db = Database>(signal?: AbortSignal): Promise<SupabaseClient<Db>> {
+  // The no-argument identity/cookie/options path is unchanged. The bounded path
+  // owns actual initialization too; fetch abort alone does not settle Auth.
+  const lifetime = signal ? serverClientLifetime(signal) : null
+  if (lifetime) {
+    lifetime.assertCurrent()
+    const boundedStore = await cookies()
+    lifetime.assertCurrent()
+    assertEnvAnon()
+    const observation = lifetime.observeAuthConstruction()
+    let boundedClient: SupabaseClient<Db>
+    try {
+      boundedClient = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+        cookies: rscCookiesAdapter(boundedStore),
+        global: { fetch: (input, init) => lifetime.fetch(input, init) },
+        auth: { debug: observation.debug },
+      }) as unknown as SupabaseClient<Db>
+    } finally { observation.constructionComplete() }
+    await lifetime.run(() => boundedClient.auth.initialize())
+    lifetime.assertCurrent()
+    return boundedClient
+  }
   const store = await cookies()
   assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
@@ -104,9 +126,13 @@ export async function createServerActionClient<Db = Database>(): Promise<Supabas
      nicht nach, der Inhalt stammt aus dem Cookie. Wer serverseitig
      entscheidet, muss `auth.getUser()` verwenden.
 
-   Der eine verbliebene Service-Role-Zugang sitzt in lib/modell/kontingent.ts:
-   cookie-los, nicht exportiert, nur die zwei Kontingent-RPCs. Begruendung in
-   DECISIONS.md ADR-0052 (Nachtrag). */
+   lib/modell/kontingent.ts besitzt einen cookie-losen, nicht exportierten
+   Service-Role-Zugang fuer die zwei Kontingent-RPCs; Begruendung in
+   DECISIONS.md ADR-0052 (Nachtrag). Der standardmaessig geschlossene
+   AcceptedStoreDatabase-Pfad besitzt zusaetzlich einen getrennt erfassten,
+   cookie-losen Service-Client fuer genau Prepare, Snapshot, Confirm und
+   Cleanup. Reserve und Finalize verwenden dort weiterhin den authentifizierten
+   eigenen Benutzer; der Service-Client uebernimmt keine Benutzeridentitaet. */
 
 /* ───────────── Kompatibilitätsschicht ─────────────
    Viele Dateien importieren `createServerClient` direkt.

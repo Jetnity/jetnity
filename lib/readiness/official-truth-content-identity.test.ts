@@ -483,6 +483,11 @@ describe('dormancy and architectural boundaries', () => {
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)
   })
   const reviewedContentIdentityImporters = [
+    // #1155 R1/R2: exact dormant canonical producer and historical reproof.
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/provenance-server.ts',
+    'lib/readiness/official-truth-accepted-store-trip-integration-1/reproof-server.ts',
+    'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
     'lib/readiness/evidence.ts',
     // R6 v3 / #1143: exact type-only shared contract for the unregistered,
     // current=false AA candidate; its own AST guard forbids a runtime import.

@@ -39,7 +39,7 @@ import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
 export type { Reisegraph }
 
-type GraphZeile = ReiseZeile & {
+export type GraphZeile = ReiseZeile & {
   trip_stages: EtappeZeile[] | null
   trip_days: TagZeile[] | null
   trip_items: PunktZeile[] | null
@@ -82,7 +82,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
   return { problem: null, zeilen: uebersichtAusZeilen(ergebnis.zeilen) }
 }
 
-function graphZeileZuReise(zeile: GraphZeile): Reisegraph {
+export function graphZeileZuReise(zeile: GraphZeile): Reisegraph {
   const graph = reiseAus(
     zeile,
     zeile.trip_stages ?? [],
@@ -104,7 +104,7 @@ function graphZeileZuReise(zeile: GraphZeile): Reisegraph {
  */
 export async function reiseLaden(id: string, signal?: AbortSignal): Promise<Lesung<Reisegraph>> {
   signal?.throwIfAborted()
-  const supabase = await createServerComponentClient()
+  const supabase = await createServerComponentClient(signal)
   signal?.throwIfAborted()
 
   const abfrage = (columns: string) => {

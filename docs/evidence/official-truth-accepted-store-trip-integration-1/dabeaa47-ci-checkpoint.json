@@ -1,0 +1,2541 @@
+{
+  "schema": "jetnity-partial-exact-head-ci-checkpoint-v1",
+  "recordedAt": "2026-11-08 09:54:37 UTC",
+  "reviewer": "Root / Technical Lead",
+  "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+  "tree": "4f15205a7765ea9e3dc9052ff8c46ec77e131d59",
+  "parent": "a75e709f074576d3f1ad1d4ac8fec54956fcb02a",
+  "main": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "runId": 42468672936,
+  "attempt": 1,
+  "disposition": "DRAFT / CHANGES REQUIRED; same-author/session Fix10",
+  "core": {
+    "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+    "run": 42468672936,
+    "job": 128694046043,
+    "sha256": "fd0a1341bc0514b2b4f9b36e2438ffa23459e3c3923be18cb6b7de80c38f64c7",
+    "bytes": 194150,
+    "testsExecuted": false,
+    "typecheck": "PASS",
+    "lint": "FAIL",
+    "rawLines": 1696,
+    "error": {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts",
+      "line": 24,
+      "column": 7,
+      "rule": "prefer-const",
+      "message": "'removeStop' is never reassigned. Use 'const' instead"
+    },
+    "errorCount": 1,
+    "warningCount": 197,
+    "bom": true,
+    "lf": 1695,
+    "newNativeMountedTests": "NOT_EXECUTED"
+  },
+  "auth": {
+    "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+    "run": 42468672936,
+    "job": 128694046053,
+    "status": "PASS",
+    "values": 55,
+    "keys": 243,
+    "node": "22.23.4",
+    "checkout": "bf87ce379ec4132d2f28c6bf9dcca99a54b189cd",
+    "sha256": "31f341e61f9cda64c4d1ca91fe565eb30152af3275b7895fd603372e51290a59",
+    "bytes": 20332,
+    "fullOriginalRead": true
+  },
+  "preview": {
+    "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+    "deployment": "dpl_ZmMQ512ymtccTymVhhSNUDNC91Sy",
+    "status": 200,
+    "ids": [
+      "dpl_ZmMQ512ymtccTymVhhSNUDNC91Sy"
+    ],
+    "xRobotsTag": "noindex",
+    "project": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM",
+    "target": null,
+    "aliasError": null,
+    "metadataVerified": true
+  },
+  "otherJobsAtCheckpoint": [
+    {
+      "id": 128694045902,
+      "name": "Persisted canonical read — native",
+      "status": "in_progress",
+      "conclusion": null,
+      "terminalCleanupVerified": false
+    },
+    {
+      "id": 128694046133,
+      "name": "Atomic version refresh — native",
+      "status": "in_progress",
+      "conclusion": null,
+      "terminalCleanupVerified": false
+    }
+  ],
+  "checkout": {
+    "sha": "bf87ce379ec4132d2f28c6bf9dcca99a54b189cd",
+    "tree": "4f15205a7765ea9e3dc9052ff8c46ec77e131d59",
+    "parents": [
+      "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "dabeaa479b039d41215d1e95446de79cadc173b2"
+    ],
+    "independentlyRead": true
+  },
+  "sourcePublication": {
+    "manifest": {
+      "gitBlob": "319cce5365bf29508a226659486501974ebb562d",
+      "sha256": "2912ddc79c699ac67165f17f93dfd45ec0fcac976d8a80b59fd905d056d30397",
+      "bytes": 20252
+    },
+    "parentChanges": 28,
+    "totalPrFiles": 115,
+    "ahead": 14,
+    "behind": 0,
+    "sourceReviewComment": 6719994911,
+    "continuityComments": [
+      6720017488,
+      6720017746
+    ],
+    "all28LeafPinsVerified": true
+  },
+  "nextCorrection": {
+    "name": "Fix10",
+    "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+    "session": "/root/accepted_store_trip_integration_writer",
+    "scope": "Minimal synchronous-registration-safe removeStop declaration, concise historical-status doc additions, immutable manifest; no suppression/config/time/case/product/SQL change.",
+    "localExecutionAvailable": false,
+    "expectedParent": "dabeaa479b039d41215d1e95446de79cadc173b2",
+    "allNewHeadGatesRequired": true
+  },
+  "risk": {
+    "scope": "Official Truth Accepted Store Trip Integration 1 / #1155 / #1156",
+    "p0": "No new confirmed P0 in source review; full native/mounted runtime not executed at dabe because lint fails.",
+    "p1": [
+      "dabe exact-head Core lint failure blocks all Core/native/mounted/hygiene/build gates; same-session Fix10 and full new-head gates required.",
+      "#917 independent hosted readback remains unknown after automatic refusal; no retry/workaround or inferred installed target authority.",
+      "#1139 target Owner/account/session authority remains an activation prerequisite.",
+      "#1131 held response-framing correction remains separate and is neither inspected/copied nor represented as solved by local parser/native fixture evidence.",
+      "#968 Preview/Production Supabase isolation remains relevant to future authenticated target QA; current Preview check is only the closed landing response."
+    ],
+    "p2": [
+      "Public evidence privacy work #911/#913 remains independent.",
+      "Existing dependency report: 16 untriaged advisories (9 moderate/7 high); this is not an overall dependency/security clearance.",
+      "Pinned SSR retry bookkeeping may drain beyond the business lifetime; no fixed wall-clock-rollback-safe SDK return ceiling is claimed."
+    ],
+    "p3": [
+      "Current a75 and e51 CI each report197 lint warnings/0errors;2 inherited browser-layout skips remain. No new optional skip."
+    ],
+    "feature": "FEATURE_NOT_LIVE / SQL_UNAPPLIED / default provider and contracts inactive",
+    "followingSlice": "none"
+  },
+  "limits": {
+    "coreNativeMounted": "NOT_EXECUTED; skipped after lint failure",
+    "historicalA75": "unchanged RED, no older success transfers",
+    "otherNativeJobs": "running at this timestamp, no outcome inferred",
+    "feature": "FEATURE_NOT_LIVE",
+    "sql": "UNAPPLIED",
+    "bindingContractsProvider": "inactive",
+    "issue917": "INDEPENDENT_READBACK_PENDING/ledgerUNKNOWN/Stage2NOT_ATTEMPTED; no retry/alternate route",
+    "issue1131": "independently held/uninspected",
+    "nextSlice": "none"
+  },
+  "references": {
+    "run": "https://github.com/Jetnity/jetnity/actions/runs/42468672936",
+    "sourceReview": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6719994911",
+    "changesRequired": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6720053845"
+  },
+  "followupObservation": {
+    "observedAt": "2026-11-08 09:57:18 UTC",
+    "persisted": {
+      "head": "dabeaa479b039d41215d1e95446de79cadc173b2",
+      "run": 42468672936,
+      "job": 128694045902,
+      "status": "PASS",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "totalDurationMs": 327593.22361,
+      "markers": 95,
+      "readerResults": 45,
+      "distribution": {
+        "no_match": 7,
+        "synthetic_persisted_requirements_verified": 5,
+        "refused": 29,
+        "unavailable": 3,
+        "ambiguous": 1
+      },
+      "fullOrderedSignatureMatchesA75": true,
+      "terminal": [
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+          "elapsedMs": 244836
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+          "elapsedMs": 326499
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 326499
+        }
+      ],
+      "sha256": "320e1e6f196eb0b004d53ba9dba840c87dd74dd64f9922bb664e050a00ce5e84",
+      "bytes": 152969,
+      "originalBOM": true,
+      "originalLF": 1171,
+      "checkout": "bf87ce379ec4132d2f28c6bf9dcca99a54b189cd",
+      "node": "22.23.4"
+    },
+    "persistedPhases": [
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "actual fresh primary and composed capsules; alternate and contradiction are labelled historical negative fixtures",
+        "elapsedMs": 11809
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 15107,
+        "readId": 1,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 19,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 21130,
+        "readId": 2,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 18,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 27169,
+        "readId": 3,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 18,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "rollback and uncommitted disconnect are not a persisted-path proof",
+        "elapsedMs": 27170
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 51852,
+        "readId": 4,
+        "mode": "primary",
+        "status": "synthetic_persisted_requirements_verified",
+        "reason": null,
+        "readMs": 8258,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1231,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1062,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2124,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1077,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1067,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "primary: acknowledged COMMIT, producer gone, distinct fresh guarded and archive backends, one synthetic Visa",
+        "elapsedMs": 51855
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "legacy lookup and custody metadata contracts preserved",
+        "elapsedMs": 57864
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60149,
+        "readId": 5,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 2266,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1201,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "missing original ciphertext",
+        "elapsedMs": 60163
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60208,
+        "readId": 6,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "selection_refused",
+        "readMs": 35,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 30,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "wrong raw digest",
+        "elapsedMs": 60221
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60265,
+        "readId": 7,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "selection_refused",
+        "readMs": 33,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 29,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "wrong support order",
+        "elapsedMs": 60278
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60305,
+        "readId": 8,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "selection_refused",
+        "readMs": 18,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "missing rule binding",
+        "elapsedMs": 60319
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60362,
+        "readId": 9,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "selection_refused",
+        "readMs": 33,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 29,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "mismatched review key",
+        "elapsedMs": 60375
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60391,
+        "readId": 10,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 15,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 60408,
+        "readId": 11,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 15,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 62675,
+        "readId": 12,
+        "mode": "primary",
+        "status": "unavailable",
+        "reason": "read_failed",
+        "readMs": 2266,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1211,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 62693,
+        "readId": 13,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 16,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 70815,
+        "readId": 14,
+        "mode": "primary",
+        "status": "synthetic_persisted_requirements_verified",
+        "reason": null,
+        "readMs": 8108,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1208,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1056,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2082,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 26,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1080,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1052,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "foreign/stale/head-expired witnesses and wrong key fail; invocation owns witness before first await",
+        "elapsedMs": 70816
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 72031,
+        "readId": 15,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 1211,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1208,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "withdrawn cannot yield cached projection",
+        "elapsedMs": 72045
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 73271,
+        "readId": 16,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 1223,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1220,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "conflicted cannot yield cached projection",
+        "elapsedMs": 73289
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 74512,
+        "readId": 17,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 1220,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1215,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "superseded cannot yield cached projection",
+        "elapsedMs": 74527
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 76808,
+        "readId": 18,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 2278,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1206,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "source_withdrawn cannot yield cached projection",
+        "elapsedMs": 76822
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 79077,
+        "readId": 19,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 2253,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1196,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "profile_withdrawn cannot yield cached projection",
+        "elapsedMs": 79090
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 81361,
+        "readId": 20,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 2262,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1198,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 82562,
+        "readId": 21,
+        "mode": "primary",
+        "status": "no_match",
+        "reason": null,
+        "readMs": 1196,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1193,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "expiry before read and actual disposal never yield retained positive",
+        "elapsedMs": 82576
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 90714,
+        "readId": 22,
+        "mode": "primary",
+        "status": "synthetic_persisted_requirements_verified",
+        "reason": null,
+        "readMs": 8137,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1196,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1061,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2103,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 1
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1067,
+            "beforeMs": 0,
+            "afterMs": 1
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1057,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "guard SHARE lock held after archive COMMIT and after awaited canonical Requirements",
+        "elapsedMs": 90716
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "fixed deadline calibration from actual healthy primary read",
+        "elapsedMs": 90716,
+        "fullReadMs": 8137,
+        "maxOriginalSqlMs": 1062,
+        "reserveMs": 5000,
+        "windowMs": 14198
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 95887,
+        "readId": 23,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "cancelled",
+        "readMs": 5170,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1185,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1051,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2076,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "specific cancellation boundary reached",
+        "elapsedMs": 95910,
+        "boundary": "archive_commit",
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 103922,
+        "readId": 24,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "cancelled",
+        "readMs": 8009,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1175,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1047,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2068,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1072,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1052,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "specific cancellation boundary reached",
+        "elapsedMs": 103924,
+        "boundary": "final_originals",
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 110966,
+        "readId": 25,
+        "mode": "primary",
+        "status": "unavailable",
+        "reason": "read_failed",
+        "readMs": 7041,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1209,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1059,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2092,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1059,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": null,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "cancellation after archive/final read and final transport failure release guards without positive",
+        "elapsedMs": 110968
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 126240,
+        "readId": 26,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 15260,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1189,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1061,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2089,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1071,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 7156,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "retention crossing during awaited operation is refused by final actual SQL recheck",
+        "elapsedMs": 126254
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "bounded staging before final SQL",
+        "elapsedMs": 133315,
+        "cause": "retention",
+        "stagingMs": 0
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "successful final SQL response delayed across actual bound",
+        "elapsedMs": 140459,
+        "cause": "retention",
+        "hooks": 1,
+        "pauseMs": 6101
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 140460,
+        "readId": 27,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "freshness_lost",
+        "readMs": 14196,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1189,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1066,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2097,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1064,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1043,
+            "beforeMs": 0,
+            "afterMs": 6101
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "retention deadline crossed after successful final SQL reply: no positive output",
+        "elapsedMs": 140475
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "bounded staging before final SQL",
+        "elapsedMs": 147574,
+        "cause": "freshness",
+        "stagingMs": 0
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "successful final SQL response delayed across actual bound",
+        "elapsedMs": 154680,
+        "cause": "freshness",
+        "hooks": 1,
+        "pauseMs": 6032
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 154681,
+        "readId": 28,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "freshness_lost",
+        "readMs": 14196,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1186,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1060,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2109,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1082,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1073,
+            "beforeMs": 0,
+            "afterMs": 6033
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "freshness deadline crossed after successful final SQL reply: no positive output",
+        "elapsedMs": 154694
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "bounded staging before final SQL",
+        "elapsedMs": 161719,
+        "cause": "lifecycle",
+        "stagingMs": 0
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "successful final SQL response delayed across actual bound",
+        "elapsedMs": 168899,
+        "cause": "lifecycle",
+        "hooks": 1,
+        "pauseMs": 6123
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 168899,
+        "readId": 29,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "freshness_lost",
+        "readMs": 14204,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1187,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1053,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2085,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1063,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1057,
+            "beforeMs": 0,
+            "afterMs": 6123
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "lifecycle deadline crossed after successful final SQL reply: no positive output",
+        "elapsedMs": 168913
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 176967,
+        "readId": 30,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 8054,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1186,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1048,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2076,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 9,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1061,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1065,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "missing bound",
+        "elapsedMs": 176969,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 184998,
+        "readId": 31,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 8028,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1179,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1048,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2068,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1054,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1047,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "invalid timestamp",
+        "elapsedMs": 184999,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 193097,
+        "readId": 32,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 8097,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1187,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1056,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2086,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1075,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1066,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "expired bound",
+        "elapsedMs": 193099,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 201205,
+        "readId": 33,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 8106,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1199,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1061,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2088,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1072,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1064,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "inconsistent lifecycle interval",
+        "elapsedMs": 201207,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 209322,
+        "readId": 34,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_changed",
+        "readMs": 8115,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1192,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1069,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2104,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1069,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1059,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "mismatched stable material",
+        "elapsedMs": 209325,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 217446,
+        "readId": 35,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 8120,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1198,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1058,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2093,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1078,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1054,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "changed bound",
+        "elapsedMs": 217448,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 219703,
+        "readId": 36,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 2254,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1184,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1066,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "initial read also requires all actual bound metadata",
+        "elapsedMs": 219704
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "bounded staging before earliest-bound final SQL",
+        "elapsedMs": 231766,
+        "stagingMs": 0
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "earliest bound is decisive at actual response delivery",
+        "elapsedMs": 235345,
+        "initialDelayHooks": 1,
+        "initialSuccess": 1,
+        "laterSuccess": 1,
+        "separationMs": 5010,
+        "afterFirstMs": 2506,
+        "beforeFinalMs": 2504,
+        "pauseMs": 2524,
+        "actualPauseMs": 2525
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 235345,
+        "readId": 37,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "freshness_lost",
+        "readMs": 15629,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1185,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1063,
+            "beforeMs": 5001,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2078,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 21,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1072,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1053,
+            "beforeMs": 0,
+            "afterMs": 2525
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "earliest confirmed monotonic bound preserved across the faster later recheck",
+        "elapsedMs": 235360
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 243600,
+        "readId": 38,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "deadline",
+        "readMs": 8240,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1209,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1076,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2143,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 22,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1083,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1073,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "monotonic 60s budget enforced even before timeout callback delivery",
+        "elapsedMs": 243602
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+        "elapsedMs": 244836
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "existing non-reader roles denied without new grants",
+        "elapsedMs": 244845
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 263683,
+        "readId": 39,
+        "mode": "composed",
+        "status": "synthetic_persisted_requirements_verified",
+        "reason": null,
+        "readMs": 11015,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2420,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1183,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2302,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2253,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1150,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "composed: acknowledged COMMIT, producer gone, distinct fresh guarded and archive backends, one synthetic Visa",
+        "elapsedMs": 263686
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 274668,
+        "readId": 40,
+        "mode": "composed",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 10982,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2392,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1170,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2287,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 12,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2256,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1160,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "swapped composed bound/material rows refuse",
+        "elapsedMs": 274670,
+        "hooks": 1
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 284216,
+        "readId": 41,
+        "mode": "primary",
+        "status": "ambiguous",
+        "reason": null,
+        "readMs": 3557,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 3553,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 284237,
+        "readId": 42,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "selection_refused",
+        "readMs": 17,
+        "originalReads": 0,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 13,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 296900,
+        "readId": 43,
+        "mode": "primary",
+        "status": "synthetic_persisted_requirements_verified",
+        "reason": null,
+        "readMs": 12649,
+        "originalReads": 2,
+        "lookups": 2,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 3495,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1071,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2124,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "lookup",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 3298,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 2,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1035,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "ambiguous versions refuse, damaged rival refuses entire set, supersession selects exactly the remaining unchanged-fact version",
+        "elapsedMs": 296902
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 312153,
+        "readId": 44,
+        "mode": "primary",
+        "status": "refused",
+        "reason": "material_or_lifecycle_refused",
+        "readMs": 9292,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 4516,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 1067,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 2089,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "archive_commit",
+            "count": 0,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 14,
+            "beforeMs": 0,
+            "afterMs": 0
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "fully rehashed stored fact passes native publication and closure but is rejected against actual originals",
+        "elapsedMs": 312157
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "owned reader result",
+        "elapsedMs": 316746,
+        "readId": 45,
+        "mode": "composed",
+        "status": "unavailable",
+        "reason": "read_failed",
+        "readMs": 4583,
+        "originalReads": 1,
+        "lookups": 1,
+        "queries": [
+          {
+            "phase": "lookup",
+            "count": 1,
+            "sqlSucceeded": true,
+            "failed": false,
+            "sqlMs": 4580,
+            "beforeMs": 0,
+            "afterMs": 0
+          },
+          {
+            "phase": "originals",
+            "count": 1,
+            "sqlSucceeded": false,
+            "failed": true,
+            "sqlMs": null,
+            "beforeMs": 0,
+            "afterMs": null
+          }
+        ]
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+        "elapsedMs": 326499
+      },
+      {
+        "schema": "official-truth-persisted-canonical-read-1",
+        "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+        "elapsedMs": 326499
+      }
+    ],
+    "qualifier": "This later completed-job evidence supersedes only the earlier Persisted-running observation. The original checkpoint timestamp/job snapshot is retained. Atomic remains without a terminal outcome in this artifact; no pass or cleanup inferred."
+  }
+}

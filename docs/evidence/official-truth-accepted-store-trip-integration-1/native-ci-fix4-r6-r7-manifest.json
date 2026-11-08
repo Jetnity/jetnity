@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 \u2014 Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "expectedRemoteParent": "f8017c63ddf5c2f5f93bc53cc3b406a35d7acc5d",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "authorizationBlobs": [
+    "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "875c9f5d5cce49e4ec51b2806c775d28353c91d9"
+  ],
+  "purpose": "Combined exact R6/R7 CI fix. native.ts is frozen published baseline plus successor support assertion only; larger native/UI matrix remains separate unpublished working tranche. No native PASS.",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts",
+      "kind": "modified",
+      "expectedBaselineBlob": "74de317f98623d8eaec9734bb5872a2842c3ce1b",
+      "gitBlob": "06624198210a8cfb2ea67fcf78da88416ec35a52",
+      "sha256": "2fe93d8a4e3cf0b645a428ec13e1ced0c06646d2139610f5b841a2a0461a11a0",
+      "bytes": 13676,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix4-r6-r7-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-schema.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+      "kind": "modified",
+      "expectedBaselineBlob": "09ae1e6013985e6fb665c7f8dd8bf66377ebdcd6",
+      "gitBlob": "a08fedb881ad96e4ae80bbcfa2b5f82f67b1c1aa",
+      "sha256": "b849be1bc76f2abbdd0b9d5cb6800c1bcf2bac5719fd47a50b799788016a63a9",
+      "bytes": 74520,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix4-r6-r7-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+      "kind": "modified",
+      "expectedBaselineBlob": "3954aa501176bb4a8edc3e3ed05aa2a98fca9099",
+      "gitBlob": "d07d532f62dda92df2a3c07724cfe374be97ed24",
+      "sha256": "976d6a88cf549abdd18a7eb2176ecb326121d06ba976d3016da8e3ef6940f72c",
+      "bytes": 16246,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix4-r6-r7-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native.ts"
+    }
+  ]
+}

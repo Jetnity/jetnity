@@ -1,0 +1,373 @@
+{
+  "schema": "jetnity-author-frozen-api-candidate-v1",
+  "title": "Official Truth Accepted Store Trip Integration 1 — coherent Fix9 R8/R9/R10 candidate V1",
+  "repository": "Jetnity/jetnity",
+  "issue": 1155,
+  "pullRequest": 1156,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "expectedRemoteParent": "a75e709f074576d3f1ad1d4ac8fec54956fcb02a",
+  "expectedParentTree": "dda70c1886773385e6ff6564d2b4d7dbce178b47",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "disposition": "CHANGES REQUIRED remains on published a75. Complete source candidate for independent Root review; no runtime, full typecheck, TL PASS, Ready or merge.",
+  "authorization": {
+    "task": "e3336c869472fe50e94473797c1555419f6d82a6",
+    "R1": "9aeb099b1ce8d568eefc300a382ed48f553ed533",
+    "R2": "2ac74eb06a0228a749fbd35a885beefd38adf799",
+    "R3": "0dfe1e3afbc8f28647f0fc0be20c82197efea006",
+    "R4": "729875aaa3fc454b79cee9b1dc22676479bc7b62",
+    "R5": "71d22361ea88191407a7cab4587942579517c1d9",
+    "R6": "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "R7": "875c9f5d5cce49e4ec51b2806c775d28353c91d9",
+    "R8": "83a25e0e906392597fb931cd073de5a540eac239",
+    "R9": "33e578d1b87b7a6fbf40254759e21912160a93b0",
+    "R10": "30179f835e30ab15c6daf2d1c1fc0ad63b678864",
+    "apiRecovery": "Root explicitly permits immutable blob objects only in approved scope; author may not create trees/commits/refs or publish. New/reconstructed candidate bytes require full new source review."
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "5623adc59ec9dcd7887283651c54e18462910d05",
+      "mainBlob": "5623adc59ec9dcd7887283651c54e18462910d05",
+      "gitBlob": "fdd853ce5ee3f5756dc61f17e32a2a040b3e8b0b",
+      "sha256": "6a0413552355537868ade387b94e48bcd4526e7dc7a64ebcd7a31e0d73c8f0f5",
+      "bytes": 8207,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/fdd853ce5ee3f5756dc61f17e32a2a040b3e8b0b"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "673c315b64e779247e078328d50689d6f5609d8e",
+      "mainBlob": null,
+      "gitBlob": "56325dc468432561bbaa95a432162fe75c345be0",
+      "sha256": "e67ef8bdc166c3327f38877f0e0c74bc1549b3bdc0a6037aaff2f2ac52a08fc4",
+      "bytes": 30069,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/56325dc468432561bbaa95a432162fe75c345be0"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "59f2bacfebb7d5140979f3cabb50d7532c8e7260",
+      "mainBlob": null,
+      "gitBlob": "76f80e7e6869464f808fdfa80baafd5bd014f955",
+      "sha256": "882c448aba8e6d007dd987ac8f711776fe4649a7941908efad23d10a7ffe5420",
+      "bytes": 47926,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/76f80e7e6869464f808fdfa80baafd5bd014f955"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.boundaries.test.ts",
+      "changeAgainstParent": "new",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "7c6ebaf9c268e46e530d1854cf2d12756a5afdad",
+      "sha256": "c6f36b629fba3d5dae93151f0edf1d7e50d3a0128647b514a06538aa512c9fc7",
+      "bytes": 331,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/7c6ebaf9c268e46e530d1854cf2d12756a5afdad"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.integrity.test.ts",
+      "changeAgainstParent": "new",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "e20c1d9e76f23fdac9fc89adf279c4b2b852a622",
+      "sha256": "6fa199289cc40f82e7d2b023c8e02f0c00de2ecf0b130cb629ea118e5eb58e5b",
+      "bytes": 326,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/e20c1d9e76f23fdac9fc89adf279c4b2b852a622"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.wait-lifecycle.test.ts",
+      "changeAgainstParent": "new",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "3a29d4499cf43951c4d029b90fa50a88e153bd96",
+      "sha256": "3a2240a22ae283c19d15394a572cc21900ef28fe4cc2eccde581945c53ef0cfb",
+      "bytes": 337,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/3a29d4499cf43951c4d029b90fa50a88e153bd96"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/client-result.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "c6cea75e6ff4bd9d3af0848d5e880818e28089dd",
+      "mainBlob": null,
+      "gitBlob": "81cdf171cd4472dfe5aaf4a537d792ed1bb2c9d4",
+      "sha256": "91ddb3a648c5e0dc1f3b9ac766d579d1170e38c5bc764eb4691be553f2ae7425",
+      "bytes": 5148,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/81cdf171cd4472dfe5aaf4a537d792ed1bb2c9d4"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/engine-reference.ts",
+      "changeAgainstParent": "new",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "b26c73a4ff070679983ae9339562dc9ed19e18bf",
+      "sha256": "75b4efc58d2ca4a557f705fdce2347071f759651f5ddba1aea54bdf99bb2be08",
+      "bytes": 491,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/b26c73a4ff070679983ae9339562dc9ed19e18bf"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/reader-server.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "5ecc2e66a71df615f8d602d91b793b8aa47da924",
+      "mainBlob": null,
+      "gitBlob": "1d5f7b4dd2695dfb3b1a826fe1fab651e84db535",
+      "sha256": "131176059e649d7f86b92bb38e409ec9b7bc434248a65be4a0d00137e231d49a",
+      "bytes": 8657,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/1d5f7b4dd2695dfb3b1a826fe1fab651e84db535"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-boundaries.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "f5e763728c15982d1916b296585571547ba68cd5",
+      "mainBlob": null,
+      "gitBlob": "713d50d3d1221c1e0d2b1d10df7b9f091bd86fd6",
+      "sha256": "f26c8d0c2afbf2ebc34e3ef3cd2aafae4a4259b1d77a4038fbfdd3b9a45fe8dc",
+      "bytes": 12212,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/713d50d3d1221c1e0d2b1d10df7b9f091bd86fd6"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fetch-boundaries.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "82df96c253d7a345d4266b763bcfe37e5350ffea",
+      "mainBlob": null,
+      "gitBlob": "802e4401eacd675e0a08aa1f7fad7a722af3ae00",
+      "sha256": "ea8df5d0d5c8b098d24c39b887ffac628ba13f437a9717b16aede83eab59ea9b",
+      "bytes": 11679,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/802e4401eacd675e0a08aa1f7fad7a722af3ae00"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-fixture.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "4fa6bf98546e3344ae7647d85d444c1b3c4e9c8b",
+      "mainBlob": null,
+      "gitBlob": "beed45b25942dfeb3eddabd4a5da53481e3b58bc",
+      "sha256": "866996ae775aa3eb5c54ac2336904c2ca3e140393795f2f481dae9abd7548e42",
+      "bytes": 14357,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/beed45b25942dfeb3eddabd4a5da53481e3b58bc"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "d04cdd45183b05c3c23eac266e06d4b8d690c516",
+      "mainBlob": null,
+      "gitBlob": "208b5a3366fbfa072722a78aaf23546050bfd58f",
+      "sha256": "939bd41ca52d16ef1a63c26d3218a17ca34af65205fd112708fec5ec62c2939d",
+      "bytes": 13007,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/208b5a3366fbfa072722a78aaf23546050bfd58f"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "dd95f1d91ea1e5208e12570dc13dad4dd7df6712",
+      "mainBlob": null,
+      "gitBlob": "01deefefc028efaa3c6df21f0ac41a2f49c7e67f",
+      "sha256": "273bc9f7bc29a31c0e888216d693beafefe4466c8be5dcfe579b9bd7a6424daf",
+      "bytes": 18249,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/01deefefc028efaa3c6df21f0ac41a2f49c7e67f"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-semantic-reproof.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "c702442219a3d43c018bb728229f173b577a7e9b",
+      "mainBlob": null,
+      "gitBlob": "9a59a2bf9561bec519228da923d298a34e1a26f6",
+      "sha256": "f9f912c3acec433368d373fc738d9767fbf6a2d5300f3736c5b9b496a610c232",
+      "bytes": 12037,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/9a59a2bf9561bec519228da923d298a34e1a26f6"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-suite.ts",
+      "changeAgainstParent": "new",
+      "expectedRemoteBlob": null,
+      "mainBlob": null,
+      "gitBlob": "666d79c925b37150c23ce612c70ef39e1d81bcd0",
+      "sha256": "b2786c8d21a9ded44d216ae74c8660625c39adedd8f8d1202a8ef03c6c2ec406",
+      "bytes": 14467,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/666d79c925b37150c23ce612c70ef39e1d81bcd0"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "02aec55ea364d6111bafaf0404622552584a742a",
+      "mainBlob": null,
+      "gitBlob": "fef8dc233ddf8ffce373a1741351258b9faa1a52",
+      "sha256": "57d21a22fad9273272ad6acb4f1757f6d8ea62726d2c119ebc945ce5e87a71b5",
+      "bytes": 7990,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/fef8dc233ddf8ffce373a1741351258b9faa1a52"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "f33362b826304e5a0be485783676d7e705648764",
+      "mainBlob": null,
+      "gitBlob": "1a0dd77cb45ac1eaf9dbef63012684f38cb84936",
+      "sha256": "ae1cb357c3246803316444cbe91586a642e122a9b2046c9d653d384af3f23f53",
+      "bytes": 16460,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/1a0dd77cb45ac1eaf9dbef63012684f38cb84936"
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/native.test.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "1b04f7375080ebfa53123751c9bbc83a70d38290",
+      "mainBlob": "1b04f7375080ebfa53123751c9bbc83a70d38290",
+      "gitBlob": "25b864e3b80642c8b744a27e3e5e57686dcb7351",
+      "sha256": "673c388dfab232569680563d3570f2999c427772345d8e6acdef5f1f4545322d",
+      "bytes": 136481,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/25b864e3b80642c8b744a27e3e5e57686dcb7351"
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "changeAgainstParent": "modified",
+      "expectedRemoteBlob": "dfafa09b6bac17561f42f76ab15646656f84bf20",
+      "mainBlob": "dfafa09b6bac17561f42f76ab15646656f84bf20",
+      "gitBlob": "b1a81a0f63fb0debaffa4db739adbb483ac1efc5",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "bytes": 9025,
+      "blobUrl": "https://api.github.com/repos/Jetnity/jetnity/git/blobs/b1a81a0f63fb0debaffa4db739adbb483ac1efc5"
+    }
+  ],
+  "fileCounts": {
+    "total": 20,
+    "newAgainstParent": 5,
+    "modifiedAgainstParent": 15
+  },
+  "unchangedRelevantEntry": {
+    "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.native.test.ts",
+    "gitBlob": "6f61d9b7d6b1cc10567a0b567732e3bd0e1d6b40",
+    "timeoutMs": 240000
+  },
+  "codeScope": {
+    "R8": "Strict shared exact81 ot-provenance-v1 -> exact79 ot-accepted-v1 preserves all64 lowercase digest characters; server/client exact binding; full envelope/SQL/AAD/history/witness receipt unchanged. Genuine native client/savedTrip and helper-source-closure regression, altered-reference and malformed canonical inputs.",
+    "R4Observer": "Only non-null acquired race token, actual aborted owner, one disposal attempt and exact token equality may attribute afterCommit. Initial null-token producer sweep excluded; all residue/history/expiry/sweep and zero-versus-null assertions retained.",
+    "R9": "Atomic aggregate parent/reserve 1200000ms; only duration comments and refresh_native job25min. Actual case bodies/order/assertions, operation bounds, failure drain35s and final cleanup unchanged.",
+    "R10": "Four independent mandatory240000ms native suites; same real scenarios and stateful sequences. Genuine A/B bootstrap per integrity/wait suite. Existing OwnedTestLifetime runtime; actual t.signal + monotonic parent checks, independent controllers, acquired-resource registration before postcheck, stop/release before drain, retained actual setup/acquire/cleanup errors, healthy key checks before witness.close, final suite success after complete teardown.",
+    "noOtherChanges": "No SQL candidate/product deadline/Auth/RLS/old engine/dependency/runner/concurrency/held code/source activation/hosted changes. ACTIVE_WORK_STATUS remains Root-owned."
+  },
+  "coverage": [
+    {
+      "entry": "boundaries",
+      "export": "nativeAcceptedStoreBoundariesProof",
+      "harness": "nativeBoundaryProof / nativeFetchBoundaryProof",
+      "parentMs": 240000,
+      "required": "own real setup; all3 SSR+8 outgoing+target/preabort/legacy/incoming-body/key-late cases; all healthy ACL/provisional/HTTP/backend/key and final owner teardown gates"
+    },
+    {
+      "entry": "native",
+      "export": "nativeAcceptedStoreProof",
+      "parentMs": 240000,
+      "required": "closed request gate; actual A/current+R8client; semantic reproof; four staged refusals; actual B COMMITlostACK/reconcile/full15support; partialrestore/recovery; all healthy and teardown gates",
+      "familyGroups": 5
+    },
+    {
+      "entry": "integrity",
+      "export": "nativeAcceptedStoreIntegrityProof",
+      "parentMs": 240000,
+      "required": "own genuine A+B/currentB; all7 retained integrity/current cases; actual own/foreign/missing Trip and context reattestation; all healthy and teardown gates",
+      "familyGroups": 2,
+      "bootstrapNotLostAckOrRestoreCredit": true
+    },
+    {
+      "entry": "wait-lifecycle",
+      "export": "nativeAcceptedStoreWaitLifecycleProof",
+      "parentMs": 240000,
+      "required": "own genuine A+B/currentB; all4 genuine blockedFinalize refusal/control pairs; conflict/withdraw/no-reactivation2versions4operations; all healthy and teardown gates",
+      "familyGroups": 2,
+      "bootstrapNotLostAckOrRestoreCredit": true
+    },
+    {
+      "entry": "context/recovery/acceptance/browser/implementation",
+      "required": "Existing mandatory discovered entries remain; only R8 observer changes recovery. Browser genuine current decoder and all later actual mounted lifecycle gates must pass; no positive DTO or optional skip."
+    }
+  ],
+  "recoveredExactOriginals": {
+    "count": 11,
+    "R8FocusedManifestSha256": "76cad3eb07edf6a5ee3ed8aeec45577f59a6c4c2c69771bff31b08bb58f8693a",
+    "R9FocusedManifestSha256": "e2adaac08728a26f5fcd513d8fd0c39eeefadf64e0336ba2db22f8b1d097096e",
+    "R10InitialFocusedManifestSha256": "a145a596ee97cb914e32e627804699018804d45937b8104131a84c429646cc31",
+    "qualifier": "All11 original Gitblob/SHA256/UTF8 counts independently recovered/read by Root. The original a145 helper remained CHANGES REQUIRED; subsequent candidates are new fully reviewable bytes.",
+    "reviewedRetentionIntermediate": "10cbef25f946df31f97f5bad646be44ef3ceac67",
+    "coherentR10CodeManifest": "5516545603547328045c5f1514544557c590f454"
+  },
+  "verification": {
+    "immutableReadback": {
+      "fileCount": 20,
+      "exactSourceStrings": true,
+      "gitBlobSha1": true,
+      "sha256": true,
+      "utf8Bytes": true,
+      "method": "Actual GitHub create_blob server identity plus fetch of every returned immutable blob and byte-for-byte comparison in functions JavaScript."
+    },
+    "execution": {
+      "available": false,
+      "reason": "Local environment unavailable; no local exec attempts after Root stop instruction.",
+      "newFullTypecheck": false,
+      "newNode22Native": false,
+      "newPinnedSSR": false,
+      "newMountedBrowser": false,
+      "newCI": false
+    },
+    "historicalSupport": "Pre-outage R8 local Node24 pure source-identity/helper observations and earlier focused syntax/source reviews are historical only. They do not execute the new R10 candidate or replace CI.",
+    "review": "Root and independent reviewers must inspect full actual source/docs and prior-family mapping; no author self-review PASS."
+  },
+  "latestPublishedEvidence": {
+    "rootCheckpointBlob": "85e80612cc11f474d63246d24dc4365c9a7df561",
+    "measurementBlob": "b04310fcee5ca74a1ffece77ac653943c3c9f630",
+    "head": "a75e709f074576d3f1ad1d4ac8fec54956fcb02a",
+    "run": 42460406775,
+    "core": {
+      "job": 128668274935,
+      "tests": 8205,
+      "pass": 8200,
+      "fail": 2,
+      "cancelled": 1,
+      "skipped": 2,
+      "durationMs": 989476.838021,
+      "typecheck": "PASS",
+      "lint": "PASS",
+      "warnings": 197,
+      "logSha256": "e6f56550a9aa490a69dc41959badcbd8821be4e525350f3a4513ffd75572ae56",
+      "native": "Only2 explicit main-family markers; SSR25439/25427/25424 and8outgoing+owned-boundaries complete;240000 timeout, exact internal stage and final cleanup unobserved. e51seven do not carry forward.",
+      "browser": "Actual genuine response/current mounted Trip decoder response_binding_invalid before current wait. Full81->unchanged engine80->null chain source-confirmed; normalized original row not logged.",
+      "recovery": "First3stages complete; race FinalizeCOMMIT/Cleanup55P03 then0!==null at observer. Later residue/history/reconciliation/global cleanup unproved.",
+      "hygieneBuild": "SKIPPED"
+    },
+    "persisted": {
+      "job": 128668274813,
+      "status": "PASS",
+      "tests": 1,
+      "skipped": 0,
+      "durationMs": 174237.246362
+    },
+    "auth": {
+      "job": 128668274976,
+      "status": "PASS",
+      "values": 55,
+      "keys": 243
+    },
+    "atomic": {
+      "job": 128668274962,
+      "status": "CANCELLED/FAILURE",
+      "oldParentMs": 900000,
+      "subtestDurationMs": 900232.717684,
+      "lastPhase": "readback_failure",
+      "lastPhaseMs": 836148,
+      "rawMarkers": 146,
+      "parseableMarkers": 145,
+      "finalBoundCasesAndCleanup": false,
+      "logSha256": "6b33e97b19ac593d0056b7cc9d8e5488b08855cab47741602c6aea0b9a0605b1",
+      "qualifier": "R9 explicitly changes future aggregate parent/job contract. This historical failure remains red; no favorable rerun or future performance claim."
+    }
+  },
+  "holds": {
+    "feature": "FEATURE_NOT_LIVE",
+    "sql": "UNAPPLIED",
+    "binding": "absent",
+    "sourceAdmission": false,
+    "issue917": "Independent hosted readback pending/ledgerUNKNOWN/stage2NOT_ATTEMPTED after automatic refusal. No retry/rephrase/alternate tool-agent-operator or bypass.",
+    "issue1131": "Independently held; no inspection/copy/reimplementation/Ready/merge.",
+    "other": "All real-source/key/retention/witness/privacy/Owner/hosted activation gates remain."
+  },
+  "rootPublication": "Root adds its frozen R8/R9/R10 documents, a75 CI checkpoint and measured Atomic evidence separately; author20files do not modify those or ACTIVE. Only Root may publish a leased commit/ref after independent review, then every exact-head gate reruns.",
+  "followingSlice": "none"
+}

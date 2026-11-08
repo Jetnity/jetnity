@@ -66,6 +66,12 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
         sqlPath: regel.sqlPath,
       })),
       [
+        ...['official_truth_trip_store_reserve_v1', 'official_truth_trip_store_prepare_v1', 'official_truth_trip_store_snapshot_v1',
+          'official_truth_trip_store_finalize_v1', 'official_truth_trip_store_confirm_v1', 'official_truth_trip_store_cleanup_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts',
+          sqlPath: 'scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql',
+        })),
         { name: 'trip_regulatory_context_save_v1',
           sourcePath: 'lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts',
           sqlPath: 'supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql' },
@@ -207,3 +213,4 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
     assert.equal(factEntry.befunde.find((befund) => befund.name === FACT_ENTRY_RPC)?.grund, 'missing-sql')
   })
 })
+

@@ -53,6 +53,12 @@ const RPC_RE = /\.rpc\(\s*['"`]([\w.]+)['"`]/g
  * sourcePath and only while its sqlPath still contains that name.
  */
 export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
+  ...['official_truth_trip_store_reserve_v1', 'official_truth_trip_store_prepare_v1', 'official_truth_trip_store_snapshot_v1',
+    'official_truth_trip_store_finalize_v1', 'official_truth_trip_store_confirm_v1', 'official_truth_trip_store_cleanup_v1'].map(name => Object.freeze({
+    name,
+    sourcePath: 'lib/readiness/official-truth-accepted-store-trip-integration-1/database-server.ts',
+    sqlPath: 'scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql',
+  })),
   ...['trip_regulatory_context_save_v1', 'official_truth_application_pilot_run_v1'].map(name => Object.freeze({
     name,
     sourcePath: 'lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts',
@@ -255,3 +261,4 @@ function main() {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main()
+

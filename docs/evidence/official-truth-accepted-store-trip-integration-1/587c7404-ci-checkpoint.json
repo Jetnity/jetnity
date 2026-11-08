@@ -1,0 +1,310 @@
+{
+  "schema": "jetnity.official-truth-accepted-store-trip-integration-1.exact-head-ci-checkpoint.v1",
+  "recordedAt": "2026-11-08 07:00:04 UTC",
+  "author": "ChatGPT / Technical Lead (Root)",
+  "disposition": "DRAFT / CHANGES REQUIRED; same-session Fix7 in progress. No overall TL PASS, Ready or merge.",
+  "repository": "Jetnity/jetnity",
+  "workIssue": 1155,
+  "pr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "head": "587c74047b343f63d407c5dc6e2dfd1996581478",
+  "tree": "57aca10327a38e46f08d6f928b61c1ba5eee4311",
+  "parent": "3050e56fc2316d6c9a7a7fc54c7758dddaeb42d3",
+  "base": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "mergeBase": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "ahead": 11,
+  "behind": 0,
+  "run": {
+    "id": 42455385666,
+    "attempt": 1,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42455385666",
+    "status": "completed",
+    "conclusion": "failure",
+    "checkout": "33b79d6e296e5a1887d1d713a92902e12001d10c",
+    "checkoutTreeMatchesHead": true,
+    "node": "22.23.4"
+  },
+  "gates": {
+    "head": "587c74047b343f63d407c5dc6e2dfd1996581478",
+    "sourceReview": "complete",
+    "ci": "CHANGES REQUIRED",
+    "preview": {
+      "status": "verified",
+      "id": "dpl_7tGkifhSkQrhKD8ix4CSWBwzQRpL",
+      "http": 200,
+      "head": "587c74047b343f63d407c5dc6e2dfd1996581478",
+      "robots": "noindex"
+    },
+    "base": {
+      "main": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "mergeBase": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "ahead": 11,
+      "behind": 0
+    },
+    "threads": {
+      "open": 0,
+      "reviews": 0,
+      "checkedAt": "2026-11-08T06:37:08Z"
+    },
+    "ready": false,
+    "merge": false,
+    "production": "pending-after-merge",
+    "ciMerge": {
+      "sha": "33b79d6e296e5a1887d1d713a92902e12001d10c",
+      "tree": "57aca10327a38e46f08d6f928b61c1ba5eee4311",
+      "parents": [
+        "e1fe0c696ade9f39b417772b5c065f87530204d6",
+        "587c74047b343f63d407c5dc6e2dfd1996581478"
+      ],
+      "matchesHead": true
+    },
+    "auth": {
+      "status": "pass",
+      "job": 128653158271,
+      "values": 55,
+      "keys": 243
+    },
+    "productionBeforeMerge": {
+      "id": "dpl_CdVxLc7qro63mQURvC1CVUoNiQSW",
+      "sha": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+      "ready": true,
+      "checkedAt": "2026-11-08T06:37:46Z"
+    },
+    "typecheck": {
+      "status": "pass",
+      "job": 128653158264
+    },
+    "lint": {
+      "status": "pass",
+      "job": 128653158264
+    },
+    "persisted": {
+      "status": "pass",
+      "job": 128653158131,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 167195.765968,
+      "phaseMarkers": 95,
+      "readerResults": 45,
+      "finalPhaseElapsedMs": 166465,
+      "logSha256": "0a8fb4e4ed4b5bfb0d911c2a55eaf0d781b09ff0a2be2ef1e7dcc8b98e27b3b7"
+    },
+    "atomic": {
+      "status": "pass",
+      "job": 128653158272,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 767073.577365,
+      "rawPhases": 152,
+      "parseablePhases": 151,
+      "cleanup": {
+        "started": 9986,
+        "settled": 9986,
+        "pending": 0,
+        "connections": 248,
+        "closed": 248,
+        "stoppedClusters": 11
+      },
+      "parentAborted": false,
+      "finalElapsedMs": 766383,
+      "parentReserveMs": 133617,
+      "logSha256": "0d7bdefa83500f731db9c7a2e453e1fc7508794549b39b1212ec98d0703b2fe0"
+    },
+    "core": {
+      "status": "failure",
+      "job": 128653158264,
+      "tests": 8205,
+      "pass": 8200,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 2,
+      "durationMs": 842093.619398,
+      "failures": [
+        "browser closed initial mount: Invalid or unexpected token",
+        "native abort-key barrier: Reserve SQLSTATE23514 before key acquisition",
+        "recovery orphan quota: Missing expected rejection after Reserve SQLSTATE23514"
+      ],
+      "logSha256": "4e2cdf112d4ff491bcfc92877f59269bdf472e175361c3c5308dbb3c27ec0a26"
+    },
+    "hygiene": "skipped-after-Core-failure",
+    "build": "skipped-after-Core-failure",
+    "aggregate": {
+      "job": 128656506526,
+      "status": "failure"
+    },
+    "disposition": "DRAFT / CHANGES REQUIRED; same author Fix7"
+  },
+  "coreEvidence": {
+    "rawLog": {
+      "path": "accepted-store-587-ci-review-20261108/core-128653158264-original.log",
+      "bytes": 4009723,
+      "sha256": "4e2cdf112d4ff491bcfc92877f59269bdf472e175361c3c5308dbb3c27ec0a26",
+      "originalBytesPreserved": true
+    },
+    "newCompleteEntries": [
+      {
+        "name": "acceptance",
+        "modes": [
+          "unbound_archive",
+          "unbound_legacy_claim",
+          "source_expiry_after_constraints"
+        ],
+        "sourceExpiry": {
+          "deferredObserved": true,
+          "waitMs": 20205,
+          "sqlState": "22023",
+          "committedVersions": 0
+        },
+        "ownedClientBackends": 0
+      },
+      {
+        "name": "context",
+        "families": 12,
+        "sixRpcAuthoritySeparation": true,
+        "positiveControlsAfterEach": true,
+        "originalMultiPersonMultiOptionPositive": true,
+        "sourceFetchesDuringReads": 0,
+        "ownedClientBackends": 0
+      },
+      {
+        "name": "complete multi-capsule implementation identity",
+        "result": "pass"
+      }
+    ],
+    "previousRegressionsNowPassed": [
+      "existing manual flight callback test",
+      "existing manual lodging callback test",
+      "existing FAQ geometry browser proof"
+    ],
+    "partialFailedEntries": [
+      {
+        "name": "mounted Workspace",
+        "failure": "page.waitForFunction Timeout 45000ms at browser.ts:115; stage closed initial mount",
+        "error": "Invalid or unexpected token",
+        "completedFamilies": 0,
+        "storeRequests": 0,
+        "pilotRequests": 0,
+        "nativeReservePrepareFinalizeConfirmActuallyCommitted": true
+      },
+      {
+        "name": "main native",
+        "failure": "producer ended before abort key acquisition at native-boundaries.ts:133",
+        "lastReserve": {
+          "committed": false,
+          "sqlState": "23514"
+        },
+        "completeMainFamilies": 0,
+        "actualPartialPasses": {
+          "ssrModes": [
+            {
+              "mode": "constructor_only",
+              "elapsedMs": 25450
+            },
+            {
+              "mode": "concurrent_get_user",
+              "elapsedMs": 25431
+            },
+            {
+              "mode": "query_abort_then_owner",
+              "elapsedMs": 25431
+            }
+          ],
+          "outgoingNativeCases": [
+            "request_signal",
+            "init_signal",
+            "owner_signal",
+            "complete_body",
+            "late_headers",
+            "abort_at_headers",
+            "actual_factory_query_only",
+            "actual_factory_owner"
+          ]
+        }
+      },
+      {
+        "name": "recovery",
+        "failure": "Missing expected rejection at native-recovery.ts:76",
+        "lastReserve": {
+          "committed": false,
+          "sqlState": "23514"
+        },
+        "committedUnacknowledgedReservesBeforeFailure": 6,
+        "completedStages": [
+          "genuine finalized read response arrives after original validation window",
+          "R4 acquired token disposal loses ACK but performs one actual bounded cleanup"
+        ],
+        "pending": [
+          "quota exhaustion",
+          "orphan expiry and explicit reader recovery",
+          "Finalize / R4 disposal race",
+          "complete final cleanup assertion"
+        ]
+      }
+    ]
+  },
+  "independentlyReviewedSourceDiagnostics": {
+    "reserve": {
+      "blob": "a08fedb881ad96e4ae80bbcfa2b5f82f67b1c1aa",
+      "file": "scripts/db/official-truth-accepted-store-trip-integration-1/accepted-store-candidate.sql",
+      "finding": "Reserve uses separate clock_timestamp() evaluations for created_at and expiry+45s while the unchanged table CHECK requires expires_at<=created_at+45s. Any positive interval between evaluations violates this CHECK when original Auth expiry is later. The quota guard is earlier and emits 22023 instead.",
+      "proposedFix": "One fresh timestamp after require_owner_v1, shared by both fields; keep original Auth expiry, strict CHECK and 32-reservation quota.",
+      "runtimeLimit": "Original sanitized wire evidence records SQLSTATE23514 but not a constraint name or individual clock samples."
+    },
+    "browser": {
+      "file": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "blob": "fdc38eff71404976fa8b863ab9dbed6b45350ff9",
+      "finding": "UTF-8 source bundle was served as classic text/javascript with no charset and HTML had no charset header or meta. Two actual transpiled client modules containing Unicode identifiers parse as UTF-8 and fail with SyntaxError Invalid or unexpected token when the identical bytes are decoded as windows-1252.",
+      "exactSourceBlobs": {
+        "official": "dbaf9738cee8583e1b29577896547d47d236a35c",
+        "engine": "f105d59c1653e3382cb8ddce4b3101b87de31750"
+      },
+      "staticProbe": {
+        "node": "24.22.1",
+        "typescript": "5.9.3",
+        "visitedMaterializedProjectModules": 70,
+        "sha256": "e1768e575a784c9b19a1864d8499c3ed99f3e8c4a26c75111b39e29a48e35a5b",
+        "missingLookups": 12,
+        "uniqueMissingPaths": 11,
+        "externalImportSpecifiersNotSubstituted": 8,
+        "externalPackageRootsNotSubstituted": 6
+      },
+      "proposedFix": "Explicit HTML and JavaScript UTF-8; early meta; actual response-header/document.characterSet assertions; parse the full generated bundle without executing it before native setup.",
+      "runtimeLimit": "The original failing browser characterSet was not recorded. Static Node24 parser reproduction is supporting mechanism evidence, not a browser or pinned Node22 PASS.",
+      "specifications": [
+        "https://html.spec.whatwg.org/multipage/scripting.html#prepare-the-script-element",
+        "https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-script"
+      ]
+    }
+  },
+  "continuation": {
+    "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+    "session": "/root/accepted_store_trip_integration_writer",
+    "request": "Narrow same-session Fix7, frozen against this head, independent source review, then full fresh exact-head CI/Preview/base/thread/ruleset gating.",
+    "forbiddenShortcuts": [
+      "favorable rerun",
+      "timeout or CI relaxation",
+      "quota or assertion weakening",
+      "invented positive DTO/provider",
+      "claiming partial proof as complete"
+    ],
+    "receipts": {
+      "review": "https://github.com/Jetnity/jetnity/pull/1156#issuecomment-6718477566",
+      "continuity": "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6718481526",
+      "entryHandoff": "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6718481704"
+    }
+  },
+  "limits": [
+    "SQL candidate UNAPPLIED; no hosted database action",
+    "default binding/contracts/provider absent and inactive; feature not live",
+    "#917 independent readback remains pending/unknown after automatic refusal; no retry/rephrase/alternate path/Stage1 replay/Stage2",
+    "#1131 held transport remains separate; no inspection/copy/reimplementation/Ready/merge retry",
+    "all Owner/source/key/retention/witness/privacy/ownerMac/activation holds unchanged",
+    "no real government fetch, actual key, paid call, public launch/indexing or automatic following slice"
+  ]
+}

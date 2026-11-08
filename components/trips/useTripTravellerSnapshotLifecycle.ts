@@ -223,6 +223,7 @@ export function useTripTravellerSnapshotLifecycle({
   onEntfernen,
   onAktualisieren,
   onGuestGraphUebernehmen,
+  onEntwurfAenderung,
 }: {
   tripId: string
   reise: Trip
@@ -232,6 +233,7 @@ export function useTripTravellerSnapshotLifecycle({
   onEntfernen?: (clientRef: string) => Promise<string | null>
   onAktualisieren?: () => Promise<Lesung>
   onGuestGraphUebernehmen?: (reise: Trip) => void
+  onEntwurfAenderung?: () => void
 }): TripTravellerSteuerung {
   const quelle = seam === 'account' && kanonisch ? kanonisch : reise
   const [ledger, setLedger] = React.useState<Ledger>(() => leerLedger(tripId))
@@ -259,9 +261,14 @@ export function useTripTravellerSnapshotLifecycle({
   }, [ledger])
 
   const commit = React.useCallback((next: Ledger) => {
+    const vorher = bestand.current
+    if (onEntwurfAenderung && next.tripId === vorher.tripId && Object.entries(next.drafts).some(([ref, entwurf]) => {
+      const bisher = vorher.drafts[ref]
+      return bisher && (entwurf.generation !== bisher.generation || fingerprintFelder(entwurf) !== fingerprintFelder(bisher))
+    })) onEntwurfAenderung()
     bestand.current = next
     setLedger(next)
-  }, [])
+  }, [onEntwurfAenderung])
 
   React.useEffect(() => {
     setzenRef.current = onSetzen

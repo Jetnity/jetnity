@@ -24,7 +24,9 @@ import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/
 
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 // #899 permits this one fixed-corpus developer execution, never a live importer.
-const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts']
+const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
+  'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
+  'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts']
 function fixtureImporterErlaubt(path: string): boolean { return FIXTURE_IMPORTER.includes(path) }
 const ZEIT = '2026-10-03T00:00:00.000Z'
 const SCOPE = `rule-scope:v1:${'a'.repeat(64)}`
@@ -820,6 +822,9 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       'lib/readiness/official-truth-same-request-extraction-server.ts',
       'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts',
       'scripts/official-truth-ch-de-application-pilot-1/application-browser.ts',
+      'lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts',
+      'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
+      'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts',
     ]
     const produktion: string[] = []
     const naht: string[] = []
@@ -1365,3 +1370,4 @@ function fixtureRef(sourceId: string) {
   const { contentItemId } = fixturePin(sourceId)
   return { sourceId, contentItemId }
 }
+

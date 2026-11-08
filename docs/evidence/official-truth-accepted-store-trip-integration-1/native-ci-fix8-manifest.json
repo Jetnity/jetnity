@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "issue": 1155,
+  "draftPr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "originalTaskBlob": "e3336c869472fe50e94473797c1555419f6d82a6",
+  "authorizationBlobs": {
+    "R1": "9aeb099b1ce8d568eefc300a382ed48f553ed533",
+    "R2": "2ac74eb06a0228a749fbd35a885beefd38adf799",
+    "R3": "0dfe1e3afbc8f28647f0fc0be20c82197efea006",
+    "R4": "729875aaa3fc454b79cee9b1dc22676479bc7b62",
+    "R5": "71d22361ea88191407a7cab4587942579517c1d9",
+    "R6": "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "R7": "875c9f5d5cce49e4ec51b2806c775d28353c91d9"
+  },
+  "purpose": "Same-author narrow Fix8 fixture corrections and diagnostic-only unresolved browser boundary. Independent Root review and regular full next-head gates pending; no author PASS, Ready, publication, merge, hosted apply, activation, timeout/quota relaxation or next slice.",
+  "expectedRemoteParent": "e51d856876d1e5d55591b30103453ea774be44bc",
+  "parentTree": "4ba8ceaeb5183acbc3e5ba59a812b6c015360edb",
+  "additionalScope": "Root explicit same-session Fix8 acknowledgements: R4 exact-token COMMIT-versus-55P03 residue/expiry/new-reader recovery; fully acquired existing official_sources lock, actual native dispatch and async exact waiter/blocker/relation observation; bounded read-only actual client validator/current mounted Trip diagnostics. TASK/R1-R7 remain unchanged.",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "2deb1bac261a77d0b6289e74ce170ab7599201d3",
+      "gitBlob": "dd95f1d91ea1e5208e12570dc13dad4dd7df6712",
+      "sha256": "a4f08e41910bc4257087d56ed3581937a05f1fabdd335854c75ae79df7cc7612",
+      "bytes": 18174,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-recovery.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "4abaf6a0904e3efe52b57e0ee0739cd10c93f874",
+      "gitBlob": "02aec55ea364d6111bafaf0404622552584a742a",
+      "sha256": "6d8f77f693d8aa4e0505a222e730f3126bad891be8f496955d6c8933eea311d6",
+      "bytes": 6853,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "4a95d5d1a85dae059a321431ffaeb7881978d09e",
+      "gitBlob": "d04cdd45183b05c3c23eac266e06d4b8d690c516",
+      "sha256": "58f03a1d3002e58df2556e3932309ba025eadd3f9b432a4aedfabed39f4b8a47",
+      "bytes": 10364,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/native-http.ts"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "544f05290dfe8b9f58f835fefe10f9c3a81443d8",
+      "gitBlob": "be00b710a8529cb93639e747de8abb955ac8e9be",
+      "sha256": "fb0d1582f42e39ce590240b65810d216bc05bb56d18d16be222add4335cf3055",
+      "bytes": 5944,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser-entry.tsx"
+    },
+    {
+      "path": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "201527a82430d087b8e01be853cb2d54d6e5bd81",
+      "gitBlob": "31b4677156c2797e611ef3863f8866b93192b290",
+      "sha256": "6aa693ae4efc036576bf13f0efcb6f060cd103472c424618d04d1ce4078dd01c",
+      "bytes": 26598,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "7d0b40597d4e1ae0e041b7743edbf843e5047898",
+      "gitBlob": "59f2bacfebb7d5140979f3cabb50d7532c8e7260",
+      "sha256": "f1b1e0f526d0898070d31661349cec6f1fcb338cce8e7175ff9fbfe7649065fb",
+      "bytes": 37174,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "8d6be93bd3b81d5c5470720ce13829776d3d8e28",
+      "gitBlob": "673c315b64e779247e078328d50689d6f5609d8e",
+      "sha256": "aa20b6894e22ee2457e41384bba6b7e23c12a72ab17c1d03c15a314fec848036",
+      "bytes": 22656,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix8-e51-doc-review-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    }
+  ],
+  "counts": {
+    "files": 7,
+    "newAgainstParent": 0,
+    "modifiedAgainstParent": 7
+  },
+  "scopeVerification": {
+    "knownAuthorFilesCheckedAgainstE51": 69,
+    "changedExactlyDeclaredPaths": true,
+    "fiveTestFixtureFilesAndTwoExistingDocsOnly": true,
+    "allProductAndCandidateSqlBlobsUnchanged": true,
+    "rootOwnedStatusAndCiCheckpointExcluded": true,
+    "allSevenParentBlobsFetchedAtActualE51AndMatched": true
+  },
+  "validation": {
+    "actualE51": {
+      "run": 42457513850,
+      "coreJob": 128659585782,
+      "coreLogSha256": "8dde55552193fc0af49cd750c63e45c31682b9f599d579257cbf9ec38c6ab332",
+      "typecheck": "PASS",
+      "lint": "PASS",
+      "tests": 8205,
+      "pass": 8200,
+      "fail": 3,
+      "cancelled": 0,
+      "existingSkips": 2,
+      "durationMs": 591389.787969,
+      "completeAcceptanceContextImplementation": "PASS",
+      "completedMainNativeFamilies": 7,
+      "mainNativeDurationMs": 201256.251388,
+      "ownedBoundariesThreePinnedSsrAndEightOutgoing": "Completed; remaining wait/lifecycle/final ACL and backend gates not complete.",
+      "recovery": "Three stages completed: late final response, lost disposal ACK, real32lostACK quota/bounds/original-expiry/reader sweep. Race observes Finalize COMMIT, acquired-token Cleanup55P03 and1reservation; later stage/history/final-backend assertions not reached.",
+      "browser": "UTF8 headers/document charset, closed mount and one genuine HTTP200/current response established. Current-status wait fails before positive count; original DOM status and validation cause unobserved.",
+      "persisted": "PASS",
+      "atomic": {
+        "job": 128659586063,
+        "status": "FAIL cancelled at unchanged900000ms",
+        "rawPhaseMarkers": 146,
+        "lastMarker": "readback_failure",
+        "lastMarkerMs": 826365,
+        "finalCleanup": false,
+        "missingFinalCases": [
+          "cleanup_after_bound",
+          "reader_after_bound"
+        ],
+        "originalLogSha256": "f6bc2d517d925b20d390368c6c84de031a0263cff31687e0685e2c11fa03b2c6"
+      },
+      "headBoundary": "All evidence belongs to exacte51; no success automatically carries to Fix8 new head."
+    },
+    "fix8SourceChanges": {
+      "wait": "Test-only earlier existing official_sources lock, lock-ready + actual native dispatch, async owned observer and actual waiter/blocker/relation. Same1s/240s, exact42501/22023 and four positive controls.",
+      "recovery": "Exactly one acquired-token disposal, no post-abort Auth/Confirm/witness continuation, actual COMMIT or55P03 state/rows, original expiry + new ordinary reader sweep and byte-equal durable rows. No retries/time extension.",
+      "browser": "Diagnostic-only actual acceptedStoreClientResult on genuine reply + current mounted Trip; bounded fixed errors/Zodcodes-paths, passive status/time/visibility/DOM only. No displayClock method calls or state/DTO/renderer changes. Cause remains unresolved."
+    },
+    "localSyntax": {
+      "node": "24.22.1",
+      "typescript": "5.9.3",
+      "fiveChangedTypeScriptFilesTranspileAndParse": true,
+      "transpileErrors": 0,
+      "evidencePath": "/workspace/scratch/9de5b942a09c/accepted-store-fix8-source-syntax.json",
+      "evidenceSha256": "8bc49866c29ee2ddbb018a746a89a9083598f3200096142327de7d48c5c677c5"
+    },
+    "partialTypecheck": {
+      "fullPass": false,
+      "threeChangedNativeFilesDiagnostics": 0,
+      "limitations": "React/ReactDOM/Playwright/Next/SSR dependencies and unrelated baseline files missing locally; browser typecheck and full project cannot pass here.",
+      "logPath": "/workspace/scratch/9de5b942a09c/accepted-store-fix8-partial-typecheck.log",
+      "logSha256": "25edcd53f03ffefba9df6f7595801aad7c95a15c1f3591b2fc64ab69e8f52241"
+    },
+    "newHead": "Not run. Native/SSR/browser not executed locally. Regular full exact-head CI including unchanged240s entries and Atomic mandatory."
+  },
+  "excluded": [
+    "ACTIVE_WORK_STATUS and separate Root e51 CI checkpoint",
+    "unchanged TASK/R1-R7",
+    "all product modules and candidate SQL",
+    "old helper/SDK/engine/hook/renderer changes",
+    "fake positive DTO or positive evaluator",
+    "timeout/quota/limiter/workflow/dependency/partition changes",
+    "held #917/#1131 actions"
+  ],
+  "supersedesManifestSha256": "924514f019e043f94cd9da4af73d47f7fe73cd072c5b7dc4042583fcb844cf0c",
+  "documentationReviewFix": {
+    "changedPaths": [
+      "scripts/db/official-truth-accepted-store-trip-integration-1/native-waits.ts",
+      "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    ],
+    "scope": "One native-waits comment and one HANDOFF sentence qualify unsynchronized source ordering; original dispatch/internal runtime position remains unobserved. No logic changes; all other five file blobs identical to prior independently reviewed freeze.",
+    "unchangedOtherFileBlobs": 5,
+    "syntaxEvidenceBoundary": "Prior five-file parse/transpile evidence remains unchanged and historical; the only subsequent TypeScript change is the precisely asserted comment wording above."
+  }
+}

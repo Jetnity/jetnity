@@ -288,8 +288,16 @@ test('Arbeitsbereiche verdrahten den engen Callback mit Server-Refresh bzw. gesp
   let refreshes = 0
   let accountError = false
   let invalidations = 0
+  const callbackReact = { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }),
+    useState: (initial: unknown) => [typeof initial === 'function' ? initial() : initial, () => {}],
+    useCallback: (callback: unknown) => callback,
+    useSyncExternalStore: (_subscribe: unknown, snapshot: () => unknown) => snapshot() }
+  // Execute the actual closed-store and ownership hooks in this callback-only
+  // adapter. Mounted lifecycle evidence belongs to the native browser test.
+  const acceptedHooks = laden<typeof import('@/components/trips/useAcceptedStoreTrip')>('components/trips/useAcceptedStoreTrip.ts', { react: callbackReact })
   const account = laden<{ default: (props: { reise: typeof reise; ohneTag: TripItem[] }) => React.ReactElement<{ children: WorkspaceElement; onChangeCapture: () => void }> }>('components/trips/KontoArbeitsbereich.tsx', {
-    react: { ...React, useEffect: () => {}, useRef: (initial: unknown) => ({ current: initial }), useState: (initial: unknown) => [initial, () => {}] },
+    react: callbackReact,
+    './useAcceptedStoreTrip': acceptedHooks,
     './OfficialTruthPilotForm': { default: () => null },
     './useOfficialTruthPilot': { useOfficialTruthPilot: () => ({ evaluations: [], invalidate() { invalidations++ } }) },
     'next/navigation': { useRouter: () => ({ refresh: () => { refreshes++ } }) },

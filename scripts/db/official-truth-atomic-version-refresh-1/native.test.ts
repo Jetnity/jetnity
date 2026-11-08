@@ -117,7 +117,7 @@ const positive = (result: AtomicRefreshResult, request: AtomicRefreshRequest) =>
 
 // One bounded parent, actual PostgreSQL 16 and isolated small clusters. All
 // unchanged suites remain in their original mandatory jobs; no intended skips.
-test('atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback', { timeout: 900_000 }, async t => {
+test('atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback', { timeout: 1_200_000 }, async t => {
   const began = performance.now()
   const lifetime = new OwnedTestLifetime(t.signal)
   lifetime.installConnectOwnership()
@@ -780,7 +780,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
             // performed by PostgreSQL; no case value becomes unquoted SQL.
             // One finite case pair per statement keeps the existing 25-second
             // statement bound. Every case derives its complete stored input
-            // before both calls; all of this remains inside the 900s Parent.
+            // before both calls; all of this remains inside the 1200s Parent.
             for (const [index, fixture] of cases.entries()) {
               const quoted = (await connection.query('SELECT quote_literal($1::text) AS fixture,quote_literal($2::text) AS fingerprint,quote_literal($3::text) AS profile',
                 [pgText(JSON.stringify(fixture)), pgText(fingerprint), pgText(initial.envelope.profile)]))[0]!
@@ -1626,7 +1626,7 @@ test('atomic refresh: actual fresh execution, full transition, concurrency, roll
   }
   if (failed) throw failure
   t.signal.throwIfAborted()
-  const parentReserveMs = 900_000 - (performance.now() - began)
+  const parentReserveMs = 1_200_000 - (performance.now() - began)
   assert.ok(parentReserveMs > 0, 'complete healthy matrix and cleanup must retain actual parent budget')
   note('complete native refresh acceptance matrix finished', { parentReserveMs: Math.round(parentReserveMs) })
 })

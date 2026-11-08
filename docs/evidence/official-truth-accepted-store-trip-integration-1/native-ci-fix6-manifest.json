@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "purpose": "Same-author immediate CHANGES REQUIRED fixes for actual 3050 CI failures; no PASS, Ready, merge, hosted apply, activation, workflow/timeout/skip change or following slice. Root publishes after independent review.",
+  "author": "Jetnity Official Truth Accepted Store Trip Integration 1 — Codex Generation 1",
+  "session": "/root/accepted_store_trip_integration_writer",
+  "issue": 1155,
+  "draftPr": 1156,
+  "branch": "feat/official-truth-accepted-store-trip-integration-1-20261108",
+  "expectedRemoteParent": "3050e56fc2316d6c9a7a7fc54c7758dddaeb42d3",
+  "baselineMain": "e1fe0c696ade9f39b417772b5c065f87530204d6",
+  "originalTaskBlob": "e3336c869472fe50e94473797c1555419f6d82a6",
+  "authorizationBlobs": {
+    "R1": "9aeb099b1ce8d568eefc300a382ed48f553ed533",
+    "R2": "2ac74eb06a0228a749fbd35a885beefd38adf799",
+    "R3": "0dfe1e3afbc8f28647f0fc0be20c82197efea006",
+    "R4": "729875aaa3fc454b79cee9b1dc22676479bc7b62",
+    "R5": "71d22361ea88191407a7cab4587942579517c1d9",
+    "R6": "2c1e69e3e6963dc2f196e7f449326b62b54b6700",
+    "R7": "875c9f5d5cce49e4ec51b2806c775d28353c91d9"
+  },
+  "additionalScope": "Root same-session CHANGES REQUIRED #1156 comment6718172519 and explicit test-only FAQ animation-settlement acknowledgement; TASK/R1-R7 unchanged.",
+  "files": [
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "a07822bbb6f036c07bf5d2a30350e77893766fd6",
+      "gitBlob": "063c0c55c089b133f64114ca63dcc3c127ba1d09",
+      "sha256": "77c03f243591d5969f0105d8232e493d89f042c74dbabad69ea76783e7b4dfe0",
+      "bytes": 4810,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1/archive-server.ts"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "new",
+      "mainBlob": null,
+      "expectedRemoteBlob": null,
+      "gitBlob": "c8976e37ac3cd330197a82a2aec97dfb40398b87",
+      "sha256": "fa9ae836fe164ca9630d4e30b84eeb8444adfa609f3703709a8cdd2f48db13d2",
+      "bytes": 1966,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts"
+    },
+    {
+      "path": "lib/trips/flug-manuell.test.ts",
+      "changeAgainstMain": "modified",
+      "changeAgainstParent": "modified",
+      "mainBlob": "09937066b34c70b62225dae27ad6832268f755cf",
+      "expectedRemoteBlob": "09937066b34c70b62225dae27ad6832268f755cf",
+      "gitBlob": "b4c8cf4de9920ba9eb641c58f87a750aa16bbe92",
+      "sha256": "9ef3c1fed897f17281c242de2fa899407baa3aae6d40ac03e6f3ef031747034a",
+      "bytes": 43393,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/lib/trips/flug-manuell.test.ts"
+    },
+    {
+      "path": "lib/trips/unterkunft-manuell.test.ts",
+      "changeAgainstMain": "modified",
+      "changeAgainstParent": "modified",
+      "mainBlob": "5eea96cd3769fa85ac7e3290a90b71b27875d849",
+      "expectedRemoteBlob": "5eea96cd3769fa85ac7e3290a90b71b27875d849",
+      "gitBlob": "7efb399500cd378c17ae949a6cc0bf691c2447f2",
+      "sha256": "7b9887b61223b6fbe307f9bf1be98f9d5b9bc846d80dcebe485dab22f155ad0c",
+      "bytes": 20011,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/lib/trips/unterkunft-manuell.test.ts"
+    },
+    {
+      "path": "lib/ui/white-mint-home-workspace-1/browser.test.ts",
+      "changeAgainstMain": "modified",
+      "changeAgainstParent": "modified",
+      "mainBlob": "289aa819cda8f6e1a83c02c232453aeb81e01d62",
+      "expectedRemoteBlob": "289aa819cda8f6e1a83c02c232453aeb81e01d62",
+      "gitBlob": "97b8c5bedea49b5d937f5b803576071e6b8245c1",
+      "sha256": "d63194bba8a735c4d823e8e6b515d7995403c44cb821a4f14fbb692055d38b34",
+      "bytes": 47890,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/lib/ui/white-mint-home-workspace-1/browser.test.ts"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "9c0b8fcfb762183584dc2f8aa67472588a8802ef",
+      "gitBlob": "057cb0e693d0c1d6029d2610e4447455ca8e3e3c",
+      "sha256": "0d70717071bbb3e35e0e7accdb86f0d8e1fe12b2ad8afa71cc8b7fc282b9e2f4",
+      "bytes": 26390,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md",
+      "changeAgainstMain": "new",
+      "changeAgainstParent": "modified",
+      "mainBlob": null,
+      "expectedRemoteBlob": "64f1a706dd845d19a9e3381ab51a8828ec6e3a4e",
+      "gitBlob": "c52fd6cd6c4fe831b2f8cbc99928a8bfabe9c3a1",
+      "sha256": "d60b0a621c4f15b620a9579057f4f06b7edd5d0f1718387f3abbb318bb7fee0f",
+      "bytes": 17540,
+      "frozenPath": "/workspace/scratch/9de5b942a09c/accepted-store-native-ci-fix6-3050-doc-review-20261108/files/docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    }
+  ],
+  "counts": {
+    "files": 7,
+    "newAgainstParent": 1,
+    "modifiedAgainstParent": 6
+  },
+  "validation": {
+    "actual3050": {
+      "run": 42453393988,
+      "coreJob": 128647175092,
+      "typecheck": "PASS",
+      "lint": "PASS",
+      "tests": 8204,
+      "pass": 8194,
+      "fail": 8,
+      "cancelled": 0,
+      "existingSkips": 2,
+      "durationMs": 574887.238659,
+      "nativeIntegrationFamiliesCompleted": 0,
+      "partialR3": "Three pinned Node22/SSR0.6.1 abort modes and eight outgoing cases completed before later producer/key failure.",
+      "atomic": "Cancelled at unchanged900000ms; last readback_failure832803ms; no final cleanup marker."
+    },
+    "localPureBefore": {
+      "node": "24.22.1",
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts",
+      "exitCode": 1,
+      "exactFailure": "implementation_changed on actual fresh canonical + strict R2 verified multi-capsule bundle"
+    },
+    "localPureAfter": {
+      "node": "24.22.1",
+      "exitCode": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 1670.942521,
+      "checks": [
+        "actual complete source list larger than1MiB passes exact path/fullutf8 comparison",
+        "unchanged single-artifact codec still refuses wholearray",
+        "changedbyte",
+        "changedpath",
+        "missingfile",
+        "duplicatepath",
+        "extrafile"
+      ],
+      "boundary": "Pure canonical/structural/current-source regression only; no Node22/native SQL/SSR/React/browser PASS"
+    },
+    "newHead": "Full actual regular CI still required; legacy callback/browser harnesses cannot be executed in the partial local runtime."
+  },
+  "excluded": [
+    "ACTIVE_WORK_STATUS (Root owned)",
+    "unchanged old provenance codec/limits",
+    "no production homepage/CSS changes",
+    "no fixture acceptance mocks or positive DTOs",
+    "no changed TASK/R1-R7",
+    "no held #1131/#917 work"
+  ],
+  "documentationReviewCorrection": {
+    "supersedesManifestSha256": "bedf035cb3b75e80ea2b623f0df52b48c15b6298a40603c9c53001d4c6be0cd4",
+    "changedFiles": [
+      "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_HANDOFF_2026-11-08.md",
+      "docs/OFFICIAL_TRUTH_ACCEPTED_STORE_TRIP_INTEGRATION_1_ACCEPTANCE_MATRIX_2026-11-08.md"
+    ],
+    "codeAndTestBlobsIdentical": true,
+    "reason": "FAQ transition explanation is a source-supported timing diagnosis; original CI log has no rect/transform observations and local browser probe could not start. Actual attribution requires the next regular CI run."
+  }
+}
