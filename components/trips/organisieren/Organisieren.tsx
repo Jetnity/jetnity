@@ -22,8 +22,10 @@ import type { Trip, TripStage } from '@/types/trips'
 import Flugsuche, { type FlugSpeichern } from './Flugsuche'
 import Hotelsuche from './Hotelsuche'
 import Aktivitaeten from './Aktivitaeten'
-import Verbindungen from './Verbindungen'
+import dynamic from 'next/dynamic'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
+
+const OmioImReiseplan = dynamic(() => import('./omio/OmioImReiseplan'), { ssr: false })
 
 const tabs = [
   { key: 'fluege', label: 'Flüge', icon: Plane },
@@ -91,7 +93,19 @@ export default function Organisieren({
   flugSpeichern?: FlugSpeichern
 }) {
   const uid = useId()
-  const [tab, setTab] = useState<Kategorie>('fluege')
+  const [tab, setTab] = useState<Kategorie>(() => {
+    if (typeof window === 'undefined') return 'fluege'
+    const initial = new URLSearchParams(window.location.search).get('kategorie')
+    return tabs.find(t => t.key === initial)?.key ?? 'fluege'
+  })
+  function kategorieWaehlen(k: Kategorie) {
+    setTab(k)
+    const url = new URL(window.location.href)
+    if (url.searchParams.has('kategorie')) {
+      url.searchParams.set('kategorie',k)
+      window.history.replaceState(window.history.state,'',url)
+    }
+  }
   const [hotelStart, setHotelStart] = useState<TripStage | undefined>()
   const [suchId, setSuchId] = useState(0)
   const erste = reise.stages[0]
@@ -107,7 +121,7 @@ export default function Organisieren({
       waehlen={(s) => {
         setHotelStart(s)
         setSuchId((x) => x + 1)
-        setTab('unterkunft')
+        kategorieWaehlen('unterkunft')
         document.getElementById(uid + '-tabs')?.scrollIntoView({ block: 'nearest' })
       }}
     />
@@ -115,7 +129,7 @@ export default function Organisieren({
   function wechsle(k: Kategorie) {
     if (k !== tab) {
       setHotelStart(undefined)
-      setTab(k)
+      kategorieWaehlen(k)
     }
   }
   function taste(e: KeyboardEvent, index: number) {
@@ -209,7 +223,7 @@ export default function Organisieren({
           )}
           {tab === 'aktivitaeten' && <Aktivitaeten reise={reise} partner={partnerAktivitaeten} />}
           {tab === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {tab === 'verbindungen' && <Verbindungen reise={reise} etappen={etappen} />}
+          {tab === 'verbindungen' && <OmioImReiseplan reise={reise} etappen={etappen}/>}
         </div>
         <footer className="org-footer">
           {details}
