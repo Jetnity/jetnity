@@ -1,0 +1,54 @@
+{
+  "artifactSchema": "jetnity.official-truth.n1-root-review.v1",
+  "reviewedAt": "2026-11-09T10:56:08Z",
+  "reviewer": "Root / Technical Lead",
+  "authorSession": "/root/v3_n1_ingress_writer",
+  "secondReadOnlyReviewSession": "/root/v3_method_review",
+  "taskSeed": "ec371ebd6914407aeb8f72f405d57ed70967a01f",
+  "inheritedContractHead": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+  "inheritedContractSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+  "authorManifestSha256": "f0a2bd43db30e9e01529dcb1dba35686ea6e95de0b94754987e1a89709347334",
+  "scope": "Three ingress runtime files, both test suites, synthetic fixture, all N1 documents, exact R2 contract change and N1G1 guard diff",
+  "contentAssessment": "ACCEPTED_FOR_DRAFT_PUBLICATION",
+  "rootActualChecks": {
+    "fullRuntimeAndTestRead": true,
+    "manifestFilePinsVerified": 15,
+    "relativeLinksResolved": 15,
+    "runtime": "Node 22.23.4",
+    "targetedTests": 142,
+    "testPass": 142,
+    "testFail": 0,
+    "testSkip": 0,
+    "testDurationMilliseconds": 3427.057866,
+    "testCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/ingress/file.test.ts lib/readiness/official-truth-product-v3/ingress/service.test.ts lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts lib/readiness/official-truth-product-v3/import/interface.test.ts lib/readiness/official-truth-product-v3/import/service.test.ts lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+    "testOutputSha256": "972310fa1aaad50a68cb1ff091944b11a92c5c6b040e240e88c5fe84db7bddae",
+    "fullTypecheckExit": 0,
+    "typecheckCommand": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "typecheckOutputBytes": 0,
+    "guardScannerAndPriorAssertionsUnchanged": true
+  },
+  "secondReviewerActualTests": { "passed": 46, "failed": 0, "skipped": 0 },
+  "runtimePins": {
+    "file-server.ts": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+    "service-server.ts": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+    "types.ts": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c"
+  },
+  "remainingGates": [
+    "Fresh CI and Preview for the actual published head",
+    "Controlled finite S1/N1 union after final S1 review",
+    "Actual File-to-S1-SQL-to-I1 integration in mandatory supported native CI",
+    "Real runner selection/provenance and separately approved hosted/production activation"
+  ],
+  "limits": [
+    "Real local file and descriptor evidence uses a synthetic intake, not a durable database",
+    "Linux procfs only; no path fallback",
+    "Runner-owned root is a trust boundary; a privileged device-node race may open before fstat refuses it, but never reads it",
+    "Logical budget drains owned work; it is not a hard kernel cancellation guarantee",
+    "recorded means untrusted bytes only, never method/source/job/accepted authority"
+  ],
+  "newActionableRuntimeDefects": [],
+  "ready": false,
+  "merge": false,
+  "activation": false,
+  "specific917RefusalRetriedOrRoutedAround": false
+}
