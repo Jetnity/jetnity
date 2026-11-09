@@ -43,7 +43,7 @@ export function readV3IntakeBinding(value: unknown): V3ReadResult<V3IntakeBindin
       || !matches(row.runnerId, /^runner3_[a-f0-9]{32}$/)
       || !matches(row.deliveryId, /^delivery3_[a-f0-9]{32}$/)
       || !matches(row.inputRevision, /^(?:git:[a-f0-9]{40}|snapshot:[a-f0-9]{64})$/)) return failure()
-    return Object.freeze({ ok: true, value: immutable({ schema: 3, kind: 'proposal_intake_binding',
+    return Object.freeze({ ok: true, value: immutable<V3IntakeBinding>({ schema: 3, kind: 'proposal_intake_binding',
       operationId: row.operationId, jobId: row.jobId, contextKey: row.contextKey,
       method: { methodId: method.methodId, revision: method.revision },
       runnerId: row.runnerId, deliveryId: row.deliveryId, inputRevision: row.inputRevision }) })
