@@ -1,4 +1,4 @@
-"""Build the local search index from Omio's advertiser-format Swiss catalog."""
+"""Build the private route index from Omio's advertiser-format Swiss catalog."""
 import argparse
 from datetime import date
 import csv
@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 cli = argparse.ArgumentParser(description=__doc__)
 cli.add_argument('quelle', type=Path)
 cli.add_argument('--stand', required=True, type=date.fromisoformat, help='Exportdatum YYYY-MM-DD')
-cli.add_argument('--ziel', type=Path, default=Path(__file__).resolve().parents[2] / 'public/omio-prototyp/katalog.json')
+cli.add_argument('--ziel', type=Path, default=Path(__file__).resolve().parents[2] / 'data/omio/ch.json')
 args = cli.parse_args()
 places, routes, counts, publishers = {}, {}, {}, set()
 modes = ('train', 'bus', 'flight', 'ferry')

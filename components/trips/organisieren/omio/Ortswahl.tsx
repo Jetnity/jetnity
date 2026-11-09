@@ -1,7 +1,7 @@
 'use client'
 import { useId, useMemo, useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
-import { land, normal, type Ort } from './katalog'
+import { land, normal, type Ort } from '@/lib/providers/omio/katalog'
 
 export default function Ortswahl({
   titel,

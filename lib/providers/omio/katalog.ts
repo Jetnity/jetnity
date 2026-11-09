@@ -7,6 +7,7 @@ export type Ort = {
   lat: number | null
   lng: number | null
   weight?: number
+  placeId?: string | null
 }
 export type Paar = [number | null, number | null]
 export type Katalog = {
@@ -15,6 +16,7 @@ export type Katalog = {
   places: Ort[]
   routes: Record<string, Partial<Record<Modus, Paar>>>
 }
+export type Register = Pick<Katalog, 'date' | 'publisher' | 'places'>
 export type Abschnitt = { von: Ort; nach: Ort; datum: string }
 export type Wahl = { mode: Modus; preis: number | null; minuten: number | null }
 export const normal = (s: string) =>
@@ -67,10 +69,10 @@ export function ausEtappe(orte: Ort[], ort: Ort) {
     (Math.abs(ort.lat - kandidat.lat) > 0.65 || Math.abs(ort.lng - kandidat.lng) > 0.65)
   )
     return ort
-  return kandidat
+  return ort.placeId ? { ...kandidat, placeId: ort.placeId } : kandidat
 }
-export function angebote(katalog: Katalog, von: Ort, nach: Ort): Wahl[] {
-  const row = katalog.routes[von.id + '/' + nach.id] || {}
+export function angebote(katalog: Katalog, von: string, nach: string): Wahl[] {
+  const row = katalog.routes[von + '/' + nach] || {}
   return (Object.keys(namen) as Modus[]).flatMap((mode) => {
     const pair = row[mode]
     return pair ? [{ mode, preis: pair[0], minuten: pair[1] }] : []

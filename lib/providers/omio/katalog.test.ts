@@ -10,10 +10,10 @@ const katalog: Katalog = {
   routes: { '373297/388252': { train: [4726, 197], bus: [1365, 210] } },
 }
 test('directional prices, absent return route, and independent missing metrics', () => {
-  assert.equal(angebote(katalog, z, m)[0]?.preis, 4726)
-  assert.deepEqual(angebote(katalog, m, z), [])
+  assert.equal(angebote(katalog, z.id, m.id)[0]?.preis, 4726)
+  assert.deepEqual(angebote(katalog, m.id, z.id), [])
   const partial = { ...katalog, routes: { '373297/388252': { ferry: [null, 50] as [null, number] } } }
-  assert.deepEqual(angebote(partial, z, m), [{ mode: 'ferry', preis: null, minuten: 50 }])
+  assert.deepEqual(angebote(partial, z.id, m.id), [{ mode: 'ferry', preis: null, minuten: 50 }])
 })
 test('name matching respects region, coordinates and ambiguous places', () => {
   const original = { ...z, id: 'reise:1' }

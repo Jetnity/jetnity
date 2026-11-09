@@ -19,8 +19,9 @@ import {
 } from 'lucide-react'
 import Ortswahl from './Ortswahl'
 import Streckenkarte from './Streckenkarte'
+import WeitereVerbindungen from './WeitereVerbindungen'
+import { useStreckenwerte } from './Streckenwerte'
 import {
-  angebote,
   ausEtappe,
   datumText,
   dauer,
@@ -31,10 +32,10 @@ import {
   partnerlink,
   tag,
   type Abschnitt,
-  type Katalog,
+  type Register,
   type Modus,
   type Ort,
-} from './katalog'
+} from '@/lib/providers/omio/katalog'
 
 const icons = { train: TrainFront, bus: BusFront, flight: Plane, ferry: Ship }
 const schmal = () => window.matchMedia('(max-width:780px)').matches
@@ -43,7 +44,7 @@ function beobachteBreite(notify: () => void) {
   q.addEventListener('change', notify)
   return () => q.removeEventListener('change', notify)
 }
-const merkenKey = 'jetnity:omio-test:v1:'
+const merkenKey = 'jetnity:verbindungen:v1:'
 const none: Record<string, Modus> = {}
 function leseMerkliste(id: string): Record<string, Modus> {
   try {
@@ -57,10 +58,14 @@ export default function OmioVergleich({
   katalog,
   abschnitte,
   kontext,
+  reisende,
+  waehrung,
 }: {
-  katalog: Katalog
+  katalog: Register
   abschnitte: Abschnitt[]
   kontext: string
+  reisende: number
+  waehrung: string
 }) {
   const uid = useId(),
     mobil = useSyncExternalStore(beobachteBreite, schmal, () => false)
@@ -83,12 +88,13 @@ export default function OmioVergleich({
   )
   const bevorzugt = useMemo(() => new Set(etappen.flatMap((s) => [s.von.id, s.nach.id])), [etappen])
   const start = etappen[0]
+  const anzahl = Math.max(1, Math.min(9, reisende))
+  const [personen, setPersonen] = useState(anzahl),
+    [vergleichPersonen, setVergleichPersonen] = useState(anzahl)
   const [von, setVon] = useState<Ort | null>(start?.von ?? null),
     [nach, setNach] = useState<Ort | null>(start?.nach ?? null)
-  const [datum, setDatum] = useState(start?.datum || heute()),
-    [treffer, setTreffer] = useState<Abschnitt | null>(
-      start ? { ...start, datum: start.datum || heute() } : null,
-    )
+  const [datum, setDatum] = useState(start?.datum ?? ''),
+    [treffer, setTreffer] = useState<Abschnitt | null>(start ?? null)
   const [version, neu] = useState(0),
     [sort, setSort] = useState('auswahl'),
     [fehler, setFehler] = useState(''),
@@ -102,14 +108,16 @@ export default function OmioVergleich({
     window.addEventListener('storage', sync)
     return () => window.removeEventListener('storage', sync)
   }, [kontext])
-  const ergebnisse = treffer ? angebote(katalog, treffer.von, treffer.nach) : []
+  const werte = useStreckenwerte(treffer, katalog.date)
+  const ergebnisse = [...werte.options]
   if (sort === 'preis') ergebnisse.sort((a, b) => (a.preis ?? Infinity) - (b.preis ?? Infinity))
   if (sort === 'dauer') ergebnisse.sort((a, b) => (a.minuten ?? Infinity) - (b.minuten ?? Infinity))
   const preise = ergebnisse.flatMap((e) => (e.preis === null ? [] : [e.preis]))
   const mindestpreis = preise.length > 1 ? Math.min(...preise) : null
   const routekey = treffer ? treffer.von.id + '/' + treffer.nach.id + '/' + treffer.datum : ''
   function merken(mode: Modus) {
-    const neu = { ...leseMerkliste(kontext) }
+    const zuletzt = leseMerkliste(kontext)
+    const neu = { ...(zuletzt === none ? merkliste : zuletzt) }
     if (neu[routekey] === mode) {
       delete neu[routekey]
       setMeldung('Vormerkung entfernt.')
@@ -129,7 +137,8 @@ export default function OmioVergleich({
     setMeldung('')
   }
   function auswahl(s: Abschnitt) {
-    const d = s.datum || heute()
+    const d = s.datum
+    setVergleichPersonen(personen)
     setVon(s.von)
     setNach(s.nach)
     setDatum(d)
@@ -141,7 +150,12 @@ export default function OmioVergleich({
   const link = treffer ? partnerlink(katalog.publisher, treffer.von, treffer.nach, treffer.datum) : null
   const offen =
     !!treffer &&
-    (!von || !nach || von.id !== treffer.von.id || nach.id !== treffer.nach.id || datum !== treffer.datum)
+    (!von ||
+      !nach ||
+      von.id !== treffer.von.id ||
+      nach.id !== treffer.nach.id ||
+      datum !== treffer.datum ||
+      personen !== vergleichPersonen)
   return (
     <section className="ov" aria-label="Verbindungen vergleichen">
       <form
@@ -156,7 +170,7 @@ export default function OmioVergleich({
             setFehler('Start und Ziel müssen verschiedene Orte sein.')
             return
           }
-          if (!tag(datum) || datum < heute()) {
+          if (datum && (!tag(datum) || datum < heute())) {
             setFehler('Bitte wähle heute oder einen zukünftigen Reisetag.')
             return
           }
@@ -211,7 +225,6 @@ export default function OmioVergleich({
               <CalendarDays size={17} />
               <input
                 type="date"
-                required
                 value={datum}
                 onChange={(e) => {
                   setDatum(e.target.value)
@@ -219,6 +232,23 @@ export default function OmioVergleich({
                 }}
               />
             </span>
+          </label>
+          <label className="ov-people">
+            Reisende
+            <select
+              aria-label="Anzahl Reisende"
+              value={personen}
+              onChange={(e) => {
+                setPersonen(Number(e.target.value))
+                bearbeiten()
+              }}
+            >
+              {Array.from({ length: 9 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1} {i === 0 ? 'Erwachsener' : 'Erwachsene'}
+                </option>
+              ))}
+            </select>
           </label>
           <button className="ov-primary" type="submit">
             <Search size={18} />
@@ -293,6 +323,19 @@ export default function OmioVergleich({
           </button>
           <div className={'ov-layout' + (mobileKarte ? ' ov-showmap' : '')}>
             <div className="ov-list">
+              {werte.laedt && (
+                <p className="ov-hint" role="status">
+                  Vergleichswerte werden geladen …
+                </p>
+              )}
+              {werte.fehler && (
+                <p className="ov-warning" role="alert">
+                  Die Omio-Werte sind gerade nicht erreichbar.{' '}
+                  <button type="button" className="underline" onClick={werte.wiederholen}>
+                    Erneut versuchen
+                  </button>
+                </p>
+              )}
               {ergebnisse.map((row) => {
                 const Symbol = icons[row.mode],
                   url = partnerlink(katalog.publisher, treffer.von, treffer.nach, treffer.datum, row.mode),
@@ -312,6 +355,7 @@ export default function OmioVergleich({
                       <button
                         type="button"
                         className="ov-save"
+                        disabled={offen}
                         aria-label={
                           namen[row.mode] +
                           (gemerkt ? ' aus Vormerkung entfernen' : ' für diese Etappe vormerken')
@@ -350,7 +394,7 @@ export default function OmioVergleich({
                   </article>
                 )
               })}
-              {!ergebnisse.length && (
+              {!werte.laedt && !werte.fehler && !ergebnisse.length && (
                 <article className="ov-empty">
                   <span className="ov-icon">
                     <Route />
@@ -375,17 +419,25 @@ export default function OmioVergleich({
               )}
               {!link && (
                 <p className="ov-warning">
-                  Wähle einen zukünftigen Reisetag, um Abfahrten bei Omio zu prüfen.
+                  Wähle einen Reisetag und bestätige mit „Vergleichen“, um die Abfahrten bei Omio zu prüfen.
                 </p>
               )}
               <p className="ov-disclosure">
                 <Info size={15} />
                 <span>
-                  Omio-Katalog · {datumText(katalog.date)}. Preis und kürzeste Dauer sind getrennte
-                  Streckenwerte. Abfahrtszeiten und Verfügbarkeit für deinen Reisetag zeigt Omio. Bei einer
-                  vermittelten Buchung kann Jetnity eine Provision erhalten.
+                  Omio-Katalog · {datumText(werte.stand)}. Preis und kürzeste Dauer sind getrennte
+                  Streckenwerte. Abfahrtszeiten, Verfügbarkeit und Preis für deine Reisegruppe zeigt Omio. Bei
+                  einer vermittelten Buchung kann Jetnity eine Provision erhalten.
                 </span>
               </p>
+              {!offen && (
+                <WeitereVerbindungen
+                  key={routekey + '/' + vergleichPersonen}
+                  abschnitt={treffer}
+                  personen={vergleichPersonen}
+                  waehrung={waehrung}
+                />
+              )}
             </div>
             <div id={uid + '-map'} className="ov-mapcol">
               {(!mobil || mobileKarte) && (

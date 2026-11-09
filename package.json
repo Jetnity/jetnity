@@ -5,6 +5,7 @@
     "official-truth:pilot-1": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-integrated-pilot-1/run.ts",
     "official-truth:pilot-1:source": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-integrated-pilot-1/official-source.ts --run-official-source",
     "dev": "next dev",
+    "omio:katalog-archivieren": "node --import tsx scripts/omio/archivieren.ts",
     "build": "next build",
     "start": "next start",
     "check:setup": "tsx check-jetnity-setup.ts",

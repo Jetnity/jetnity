@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowUpRight, MapPinned } from 'lucide-react'
 import { attachCmpBridge } from '@/lib/privacy/privacybee-cmp/bruecke'
 import { readCmpApi } from '@/lib/privacy/privacybee-cmp/schnappschuss'
-import { land, type Ort } from './katalog'
+import { land, type Ort } from '@/lib/providers/omio/katalog'
 
 function erlaubt() {
   if (window.PrivacyBee === undefined) return true

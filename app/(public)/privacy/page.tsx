@@ -34,6 +34,11 @@ export default async function PrivacyPage() {
           <p className="mt-3">Die Reisefotos und Hotelprofile lädt Jetnity von der eigenen Website. In der Kartenübersicht lädt dein Browser Kartenausschnitte von OpenStreetMap. Wählst du Google Maps, öffnet Jetnity eine Karte mit dem öffentlichen Namen und Standort des ausgewählten Hotels. Die Kartendienste erhalten dabei Verbindungsdaten wie deine IP-Adresse.</p>
           <p className="mt-3">Öffnest du ein Hotel bei Booking.com, leitet dich CJ weiter. CJ und Booking.com erhalten das gewählte Hotel, die ausgefüllten Reisedaten, die Anzahl der Erwachsenen und Zimmer, die Anzeigewährung und die Partnerkennung. Bei einer vermittelten Buchung kann Jetnity eine Provision erhalten.</p>
         </section>
+        <section aria-label="Omio" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
+          <h2 className="text-lg font-semibold text-brand-800">Verbindungen mit Omio</h2>
+          <p className="mt-3">Jetnity vergleicht Streckenwerte aus dem Schweizer Omio-Katalog. Vormerkungen liegen im jeweiligen Browser. Beim Öffnen eines Partnerlinks erhalten Impact und Omio Start, Ziel, Reisedatum, gegebenenfalls das Verkehrsmittel sowie Sprache, Währung und Partnerkennung. Eine vermittelte Buchung kann Jetnity eine Provision einbringen.</p>
+          <p className="mt-3">Die Kartenübersicht nutzt OpenStreetMap. Google Maps lädt beim Auswählen der Google-Ansicht den gewählten Standort. Beim Laden von Karten fallen beim Kartendienst Verbindungsdaten wie die IP-Adresse an. Über „Route öffnen“ übergibst du Start und Ziel an Google Maps.</p>
+        </section>
         <section aria-label="DiscoverCars" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
           <h2 className="text-lg font-semibold text-brand-800">Mietwagensuche mit DiscoverCars</h2>
           <p className="mt-3">

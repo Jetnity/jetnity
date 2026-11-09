@@ -9,6 +9,7 @@ try {
 
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingIncludes: { '/api/mobility/omio': ['./data/omio/ch.katalog'] },
 
   // Next 16: typedRoutes ist stabil und gehört nicht mehr nach experimental.
   typedRoutes: true,

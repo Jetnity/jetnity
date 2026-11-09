@@ -1,61 +1,62 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
 import type { Trip } from '@/types/trips'
+import { reiseAbschnitte } from '@/lib/providers/omio/reise'
+import type { Register } from '@/lib/providers/omio/katalog'
 import OmioVergleich from './OmioVergleich'
-import { type Katalog, type Ort } from './katalog'
+import Verbindungen from '../Verbindungen'
 
-/** Local pilot. Its catalog is provided by the Swiss advertiser export. */
-export default function OmioImReiseplan({ reise }: { reise: Trip }) {
-  const [katalog, setKatalog] = useState<Katalog | null>(null),
+export default function OmioImReiseplan({ reise, etappen }: { reise: Trip; etappen: React.ReactNode }) {
+  const [register, setRegister] = useState<Register | null>(null),
     [fehler, setFehler] = useState(false),
     [versuch, setVersuch] = useState(0)
   useEffect(() => {
     const request = new AbortController()
-    fetch('/omio-prototyp/katalog.json', { signal: request.signal })
+    fetch('/api/mobility/omio', { signal: request.signal })
       .then(async (res) => {
         if (!res.ok) throw Error()
-        const data = (await res.json()) as Katalog
-        if (!Array.isArray(data.places) || !data.routes || !data.publisher) throw Error()
-        if (!request.signal.aborted) setKatalog(data)
+        const data: Register = await res.json()
+        if (!request.signal.aborted) setRegister(data)
       })
       .catch(() => {
         if (!request.signal.aborted) setFehler(true)
       })
     return () => request.abort()
   }, [versuch])
-  const abschnitte = useMemo(() => {
-    const stationen: { ort: Ort; datum: string }[] = reise.stages.map((s) => ({
-      ort: {
-        id: 'reise:' + s.id,
-        name: s.name,
-        country: s.countryCode ?? '',
-        lat: s.latitude,
-        lng: s.longitude,
-      },
-      datum: s.arrivalDate ?? '',
-    }))
-    if (reise.origin && reise.origin !== stationen[0]?.ort.name)
-      stationen.unshift({
-        ort: { id: 'reise:ursprung', name: reise.origin, country: '', lat: null, lng: null },
-        datum: reise.startDate ?? '',
-      })
-    return stationen.slice(1).map((s, i) => ({ von: stationen[i]!.ort, nach: s.ort, datum: s.datum }))
-  }, [reise])
+  const abschnitte = useMemo(() => reiseAbschnitte(reise), [reise])
   if (fehler)
     return (
-      <p role="status">
-        Der Omio-Katalog konnte nicht geladen werden.{' '}
-        <button
-          type="button"
-          onClick={() => {
-            setFehler(false)
-            setVersuch((v) => v + 1)
-          }}
-        >
-          Erneut versuchen
-        </button>
+      <>
+        <p className="ov-hint" role="status">
+          Omio-Katalog vorübergehend nicht verfügbar.{' '}
+          <button
+            type="button"
+            className="underline"
+            onClick={() => {
+              setFehler(false)
+              setVersuch((v) => v + 1)
+            }}
+          >
+            Erneut laden
+          </button>
+        </p>
+        <Verbindungen reise={reise} etappen={etappen} />
+      </>
+    )
+  if (!register)
+    return (
+      <p className="ov-hint" role="status">
+        Streckenkatalog wird geladen …
       </p>
     )
-  if (!katalog) return <p role="status">Streckenkatalog wird geladen …</p>
-  return <OmioVergleich katalog={katalog} abschnitte={abschnitte} kontext={reise.id} />
+  return (
+    <OmioVergleich
+      key={reise.id}
+      katalog={register}
+      abschnitte={abschnitte}
+      kontext={reise.id}
+      reisende={reise.travellers}
+      waehrung={reise.currency}
+    />
+  )
 }
