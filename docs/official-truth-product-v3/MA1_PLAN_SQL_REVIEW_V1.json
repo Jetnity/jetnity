@@ -1,0 +1,287 @@
+{
+  "schema": "jetnity-ma1-plan-v1-sql-peer-review-v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "author_reviewed": "/root/v3_method_authority_writer",
+  "status": "CHANGES_REQUIRED_PLAN_ONLY; NOT_TL_PASS; PHASE_B_NOT_AUTHORIZED",
+  "worktree": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+  "bound_input": {
+    "seed_head": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+    "seed_tree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+    "plan_path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V1.md",
+    "plan_sha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+    "plan_bytes": 44728,
+    "source_pin_path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+    "source_pin_sha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+    "task_sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4"
+  },
+  "scope": [
+    "SQL signatures and state transitions",
+    "exact #1142 Auth helper and actor custody",
+    "pre-normalization and final ACLs",
+    "operation serialization/replay/CAS/terminal epoch",
+    "post-wait human and method checks",
+    "rollback and real native race acceptance"
+  ],
+  "required_findings": [
+    {
+      "id": "MA1-PLAN-SQL-R1",
+      "severity": "P2",
+      "kind": "Concrete rollback design/acceptance gap",
+      "plan_lines": [
+        240,
+        242,
+        276
+      ],
+      "problem": "The stated rollback algorithm specifies local/schema guards, ACCESS EXCLUSIVE locks, post-wait emptiness and finite RESTRICT drops, while promising refusal of unknown ACL grants and role memberships. RESTRICT does not itself preserve an unexpected membership when dropping its role, nor make an ACL grant on an object being dropped a protected external dependent object. Without explicit checks, the promised refusal can silently remove the unexpected grant/membership.",
+      "repository_evidence": [
+        {
+          "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+          "lines": [
+            58,
+            350,
+            354
+          ],
+          "observation": "S1 grants its caller role to ot_s1_test_runner, then successfully drops candidate roles while preserving the runner. That pattern cannot prove MA1 unknown-membership refusal."
+        },
+        {
+          "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+          "lines": [
+            17,
+            38,
+            44,
+            45
+          ],
+          "observation": "S1 finite RESTRICT object teardown and DROP ROLE are a dependency-removal pattern, not a complete ACL/membership inventory guard."
+        }
+      ],
+      "required_fix": "Freeze a finite explicit post-table-lock, pre-DROP validation of the exact MA1 object/owner/ACL inventory and new-reader role attributes/memberships. Reject unknown ACL grants/grant options or memberships with no normalization/revoke/drop of the unexpected state. The native harness must explicitly remove only its known fixture reader membership before the successful rollback case; unknown membership/grants remain unchanged after refusal. Keep existing three-table post-wait empty guard and RESTRICT external-dependency protection.",
+      "required_evidence": "Existing acceptance group12 must explicitly exercise unexpected membership and direct object/column ACL grant, then inspect preserved candidate objects, membership and grant on fresh observation. No new shared installer/helper/default changes.",
+      "basis": "Source reasoning and actual repository pattern; no native execution.",
+      "root_disposition": "Root independently accepted this finding for same-session CHANGES REQUIRED."
+    }
+  ],
+  "wording_corrections": [
+    {
+      "id": "MA1-PLAN-SQL-W1",
+      "plan_lines": [
+        217,
+        266
+      ],
+      "severity": "Required acceptance-wording correction, no new architecture",
+      "problem": "The phrase poisoned creator function/table/schema/column default privileges treats column privileges as an ALTER DEFAULT PRIVILEGES object class. There is no column-default privilege form.",
+      "fix": "Name supported function/table/schema default poisoning separately from explicit column ACL inspection/direct-grant negatives. Direct column grants can be included in the bounded rollback ACL-refusal fixture; do not invent an event-trigger or other mechanism merely to simulate nonexistent column defaults.",
+      "root_disposition": "Root requested this exact finite wording correction."
+    }
+  ],
+  "accepted_source_design_points_not_runtime_pass": [
+    "Issued TASK identity, fixed14-scalar command/confirm shape, ten finite MA1 functions and three bounded row formats align without shared-contract changes.",
+    "Fresh exact #1142 helper follows operation/method/table/head/revision waits; DB actor comes from auth.uid after helper; no Auth FK or raw-claim/session retention.",
+    "Before/after historical operations are separate from live authority; exact replay precedes NEW-state CAS/predecessor/future-until/exhaustion; confirm absence writes nothing and requires original invocation join for terminal reconciliation.",
+    "Epoch2147483647 is reserved for terminal revocation after last permissible approval2147483646; no backward revision or implicit identity rollover.",
+    "Machine read and private final checker use actual FOR SHARE plus fresh post-wait DB clock; final shared publication remains explicitly outside MA1.",
+    "Exact signature-to-role ACL matrix and creator-default inspection before normalization address the earlier S1-copy hazards. Existing postgres/default privileges/#1142 remain untouched.",
+    "Native minimal fixture and genuine restricted session_user prevent bootstrap-superuser escalation-test vacuity. Three-table post-lock rollback emptiness and actual wait predicates are explicit.",
+    "SQL timestamp and remaining_ms plan uses strict canonical input and conservative full-precision DB remaining duration; complementary lifetime reviewer owns adapter reproof clipping/control-drain issues."
+  ],
+  "integrity": {
+    "source_pin_count": 30,
+    "source_pin_checks": [
+      {
+        "path": "docs/official-truth-product-v3/MA1_TASK_V1.md",
+        "expected_sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4",
+        "observed_sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V1.md",
+        "expected_sha256": "7bf537879b37b1a056c3e5f3a831d9a7cde57f08bdb536d9a5a52e15b89976e0",
+        "observed_sha256": "7bf537879b37b1a056c3e5f3a831d9a7cde57f08bdb536d9a5a52e15b89976e0",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+        "expected_sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+        "observed_sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_A_V1.json",
+        "expected_sha256": "c986ced50b5a0f2652fb3580d2f3d32ad160c3e4f39d21a6614d39a467310a5c",
+        "observed_sha256": "c986ced50b5a0f2652fb3580d2f3d32ad160c3e4f39d21a6614d39a467310a5c",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_B_V1.json",
+        "expected_sha256": "9788fd6d505875cc60edb03c552d6dab65cc315add4a6d0b4df88de97950fa97",
+        "observed_sha256": "9788fd6d505875cc60edb03c552d6dab65cc315add4a6d0b4df88de97950fa97",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/contract.ts",
+        "expected_sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "observed_sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+        "expected_sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "observed_sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/digest.ts",
+        "expected_sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "observed_sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "expected_sha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+        "observed_sha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-content-identity.test.ts",
+        "expected_sha256": "2d9702199e2e2733170e974e5d8a93cf04b0e91de67a5879fac5d31e9ba1ec66",
+        "observed_sha256": "2d9702199e2e2733170e974e5d8a93cf04b0e91de67a5879fac5d31e9ba1ec66",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+        "expected_sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "observed_sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "expected_sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "observed_sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+        "expected_sha256": "9498b7a2ee91c72bbd4c2dc96039664f1a903940c475adb81168abd1d594e36b",
+        "observed_sha256": "9498b7a2ee91c72bbd4c2dc96039664f1a903940c475adb81168abd1d594e36b",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+        "expected_sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+        "observed_sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+        "expected_sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "observed_sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+        "expected_sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "observed_sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+        "expected_sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+        "observed_sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+        "expected_sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "observed_sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+        "expected_sha256": "25def6c1748012a420fb7e9dac74ec7d994613c4ea01be71a6baa4daf006c0eb",
+        "observed_sha256": "25def6c1748012a420fb7e9dac74ec7d994613c4ea01be71a6baa4daf006c0eb",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+        "expected_sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "observed_sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+        "expected_sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "observed_sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+        "expected_sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+        "observed_sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+        "matches": true
+      },
+      {
+        "path": "scripts/erreichbarkeit.mjs",
+        "expected_sha256": "7fd38c4ddce5608f2c74ed1db035e3a4ba6663753a14f5e66046fcc7b6fd0f7b",
+        "observed_sha256": "7fd38c4ddce5608f2c74ed1db035e3a4ba6663753a14f5e66046fcc7b6fd0f7b",
+        "matches": true
+      },
+      {
+        "path": "scripts/exporte.mjs",
+        "expected_sha256": "da90b3758f2232e95c066d647efec9cabe9ea3b17a465935c31b2b4c3809c0b9",
+        "observed_sha256": "da90b3758f2232e95c066d647efec9cabe9ea3b17a465935c31b2b4c3809c0b9",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/verwendung.mjs",
+        "expected_sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403",
+        "observed_sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403",
+        "matches": true
+      },
+      {
+        "path": "package.json",
+        "expected_sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+        "observed_sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20260817100000_rollenmodell.sql",
+        "expected_sha256": "f25bf22fe955c28724a19c4984bec3669550c3a353ca6808b43d83d5962a804a",
+        "observed_sha256": "f25bf22fe955c28724a19c4984bec3669550c3a353ca6808b43d83d5962a804a",
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20260817120300_generisches_profil.sql",
+        "expected_sha256": "d533f7040466e6aaee051a75099b05e0218139464311eb13aeb3739aebc91da6",
+        "observed_sha256": "d533f7040466e6aaee051a75099b05e0218139464311eb13aeb3739aebc91da6",
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql",
+        "expected_sha256": "ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934",
+        "observed_sha256": "ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934",
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql",
+        "expected_sha256": "635151c127efde6e2953cc14c68e81ecccf10dba545329fe46c09dcdf50996a2",
+        "observed_sha256": "635151c127efde6e2953cc14c68e81ecccf10dba545329fe46c09dcdf50996a2",
+        "matches": true
+      }
+    ],
+    "helper_body_expected_sha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+    "helper_body_observed_sha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+    "helper_body_matches": true
+  },
+  "limits": {
+    "repo_files_modified": false,
+    "plan_modified": false,
+    "tests_executed": false,
+    "runtime_code_executed": false,
+    "native_processes_started": false,
+    "hosted_access": false,
+    "remote_calls": false,
+    "git_ref_mutation_or_fetch": false,
+    "implementation_assessed": false,
+    "tl_pass_claimed": false
+  },
+  "next": "Same writer revises the plan only after Root combined CHANGES REQUIRED; independently re-read changed frozen plan/hash before Phase B authorization."
+}

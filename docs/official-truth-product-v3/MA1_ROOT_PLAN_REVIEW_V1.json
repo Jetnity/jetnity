@@ -1,0 +1,55 @@
+{
+  "schema": "jetnity-ma1-root-plan-review-v1",
+  "at": "2026-11-09T15:07:56.233744+00:00",
+  "reviewer": "/root Technical Lead",
+  "actualWriter": "/root/v3_method_authority_writer",
+  "writerName": "Jetnity Official Truth V3 Method Authority 1 — Codex Generation 1",
+  "head": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "planSha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+  "sourcePinsSha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+  "status": "CHANGES_REQUIRED_PLAN_ONLY",
+  "githubComment": 6743404112,
+  "rootVerified": {
+    "fullPlanRead": true,
+    "sourcePinsAndSizes": 30,
+    "helperBodySha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+    "sourceOnlyNoProductExecution": true
+  },
+  "supportingReviews": [
+    {
+      "file": "ma1-plan-v1-lifetime-peer-review.json",
+      "sha256": "27dc5d6da92be81c39ad87b54d3aab4462d61d7484f9865cdee6e9a5a48f25d7"
+    },
+    {
+      "file": "ma1-plan-v1-sql-peer-review.json",
+      "sha256": "0a88b5e495d403ab53fcda952cf6dc9aabefc61c1f77fa1f065dc88495b6c696"
+    }
+  ],
+  "required": [
+    {
+      "id": "MA1-PLAN-LIFETIME-1",
+      "severity": "P2",
+      "correction": "Fresh finite reproof remaining_ms clips retained custody monotonically; verify after actual drain and prevent later revival."
+    },
+    {
+      "id": "MA1-PLAN-LIFETIME-2",
+      "severity": "P2",
+      "correction": "Prove target and per-call control backend disappearance including late/partly identified acquisition paths before executor settlement and slot release; parent final cleanup alone is insufficient."
+    },
+    {
+      "id": "MA1-PLAN-ROLLBACK-1",
+      "severity": "P2",
+      "correction": "After all rollback locks and before DROP explicitly verify exact object/owner/ACL and reader membership inventory; unexpected grants/membership survive refusal; fixture explicitly removes only its known reader membership for successful rollback."
+    }
+  ],
+  "wording": "Separate supported function/table/schema creator default poisoning from column ACL inspection/direct grant negatives. No invented column default privilege form.",
+  "next": "Same writer creates bounded V2 plan, source pins and correction matrix; preserve V1 unchanged. Root and peers re-review before Phase B.",
+  "boundaries": [
+    "No implementation authorization yet",
+    "No local PostgreSQL/socket/native retry",
+    "No hosted DB/Auth/RLS/ACL/migration/credential action",
+    "No #917 retry/rephrase/delegation/alternate transport/human substitute",
+    "Method NOT_APPROVED; #1139 NOT_RELEASE_READY; no database or Production activation"
+  ]
+}
