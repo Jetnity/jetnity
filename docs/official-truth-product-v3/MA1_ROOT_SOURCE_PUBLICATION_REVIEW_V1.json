@@ -1,0 +1,313 @@
+{
+  "schema": "jetnity.ma1.root-source-publication-review.v1",
+  "at": "2026-11-09T16:24:13.116414+00:00",
+  "reviewer": "/root",
+  "status": "SOURCE_REVIEW_SUFFICIENT_FOR_DRAFT_CI_PUBLICATION_NOT_FINAL_TL_PASS",
+  "publishedParent": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "acceptedCodeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "mainObserved": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+  "productionObserved": {
+    "domains": [
+      "jetnity.com",
+      "jetnity-app.vercel.app"
+    ],
+    "deployment": "dpl_9iu5bD976NN7p4SZNAA8HsYYQGzr",
+    "state": "READY",
+    "sha": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+    "aliasError": null
+  },
+  "openReviewThreads": 0,
+  "implementationPins": {
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+    "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+    "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+    "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13"
+  },
+  "independentRuntime": {
+    "receipt": "MA1_ROOT_RUNTIME_SOURCE_OFFLINE_REVIEW_R1.json",
+    "sha256": "5f2e6d1ad9e5ea9e6a9af3eec4a3f981bb7e4dddf1e95c0172802e96d04ef773",
+    "tests": 270,
+    "pass": 270,
+    "fail": 0,
+    "skip": 0,
+    "exitCode": 0,
+    "scope": "Exact nine-file offline selection; no native inference"
+  },
+  "authorStatic": {
+    "ledger": "MA1_NATIVE_AUTHOR_ATTEMPTS_V1.json",
+    "finalAttemptIds": [
+      "native-author-verification-023",
+      "native-author-verification-024",
+      "native-author-verification-025",
+      "native-author-verification-026",
+      "native-author-verification-027",
+      "native-author-verification-028",
+      "native-author-verification-029"
+    ],
+    "allFinalExitZero": true,
+    "logsIndependentlyHashed": [
+      {
+        "id": "native-author-verification-001",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_001_NEXT_TYPEGEN.txt",
+        "sha256": "a54be73281c43d7de87d137a91ca027b375462d4cf4f91f029759065b2069972",
+        "bytes": 233
+      },
+      {
+        "id": "native-author-verification-002",
+        "exitCode": 2,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_002_WHOLE_TYPESCRIPT.txt",
+        "sha256": "a4a64cdfb19c513543d3cf2d4bd0dd6063239c1dc7992bea08c4f5a386f34ddc",
+        "bytes": 95
+      },
+      {
+        "id": "native-author-verification-003",
+        "exitCode": 1,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_003_SCOPED_LINT.txt",
+        "sha256": "4532e224c55dc04366a795762ae5e9301b20c2a290d13bea6608bf8409bc5a6b",
+        "bytes": 377
+      },
+      {
+        "id": "native-author-verification-004",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_004_HYGIENE_DEAD.txt",
+        "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7",
+        "bytes": 285
+      },
+      {
+        "id": "native-author-verification-005",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_005_HYGIENE_EXPORTS.txt",
+        "sha256": "75eead2ab53f53313e85d75a8d45a7f411fbae8ea10a5cc2d9fe49a6511b46ca",
+        "bytes": 266
+      },
+      {
+        "id": "native-author-verification-006",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_006_HYGIENE_DEPS.txt",
+        "sha256": "2107ad33b2ba47bdb1ba30a38a227ce6231276978604360593d9d1cfbe96ff17",
+        "bytes": 460
+      },
+      {
+        "id": "native-author-verification-007",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_007_HYGIENE_API.txt",
+        "sha256": "76e8a6a75344b277af751507c3378ba167d20748210dba73692e73fb6fffd7e6",
+        "bytes": 246
+      },
+      {
+        "id": "native-author-verification-008",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_008_HYGIENE_SCHEMA.txt",
+        "sha256": "8deccd6e093a16bb85317c635ba3e5f5124c744a72dcd707b5c502ecdd20f644",
+        "bytes": 3422
+      },
+      {
+        "id": "native-author-verification-009",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_009_WHOLE_TYPESCRIPT_AFTER_FIXTURE_SYNTAX.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "id": "native-author-verification-010",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_010_SCOPED_LINT_AFTER_FIXTURE_SYNTAX.txt",
+        "sha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f",
+        "bytes": 174
+      },
+      {
+        "id": "native-author-verification-011",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_011_FINAL_HYGIENE_DEAD.txt",
+        "sha256": "612191271378a30876015bfe888f17c7bece578f41996f4b09fc9f661360e11a",
+        "bytes": 284
+      },
+      {
+        "id": "native-author-verification-012",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_012_FINAL_HYGIENE_EXPORTS.txt",
+        "sha256": "4be09b1618ad346845e08bc3589d226440be6f5bdfcfc5dc8f6df20cae8da819",
+        "bytes": 266
+      },
+      {
+        "id": "native-author-verification-013",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_013_FINAL_HYGIENE_DEPS.txt",
+        "sha256": "f559cb5c285c0acd7a1b947f39baa975c5369b1c0aa1ad55dfc3947397bf31f5",
+        "bytes": 460
+      },
+      {
+        "id": "native-author-verification-014",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_014_FINAL_HYGIENE_API.txt",
+        "sha256": "f8c3e4a8c0bd7bd9a6c659517ae691ac3222208b9145470a4d738761d2d23dc6",
+        "bytes": 246
+      },
+      {
+        "id": "native-author-verification-015",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_015_FINAL_HYGIENE_SCHEMA.txt",
+        "sha256": "139ca02131d44d4b3327eb40aaa95c4c7fa43b8e7938e743b66688908ad05ab3",
+        "bytes": 3422
+      },
+      {
+        "id": "native-author-verification-016",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_016_FINAL_WHOLE_TYPESCRIPT.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "id": "native-author-verification-017",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_017_FINAL_SCOPED_LINT.txt",
+        "sha256": "790bfbbaceb894cc92ed5cbf51888ba8386d9e1fbadd14813ce55f01655ff2f1",
+        "bytes": 175
+      },
+      {
+        "id": "native-author-verification-018",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_018_FINAL_HYGIENE_DEAD_R2.txt",
+        "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7",
+        "bytes": 285
+      },
+      {
+        "id": "native-author-verification-019",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_019_FINAL_HYGIENE_EXPORTS_R2.txt",
+        "sha256": "9f10f001d8dc61c9585b21276b6da38ffe135fd1d4ac408dc345b48179b5f84a",
+        "bytes": 266
+      },
+      {
+        "id": "native-author-verification-020",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_020_FINAL_HYGIENE_DEPS_R2.txt",
+        "sha256": "bb0ece750162034be77d1fa85653f156e670a3c270f17ecc60b0b79b6f690fc6",
+        "bytes": 460
+      },
+      {
+        "id": "native-author-verification-021",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_021_FINAL_HYGIENE_API_R2.txt",
+        "sha256": "ceded4b2dee0a69d4d1cce7da132651a1f8705b279197db656b786280d857631",
+        "bytes": 246
+      },
+      {
+        "id": "native-author-verification-022",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_022_FINAL_HYGIENE_SCHEMA_R2.txt",
+        "sha256": "dafbd04e5389e9fd3ff2eb5b67f4139a9ae3452b1a7e73782416b6e846b14c8c",
+        "bytes": 3422
+      },
+      {
+        "id": "native-author-verification-023",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_023_FINAL_WHOLE_TYPESCRIPT_R3.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "id": "native-author-verification-024",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_024_FINAL_SCOPED_LINT_R3.txt",
+        "sha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f",
+        "bytes": 174
+      },
+      {
+        "id": "native-author-verification-025",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_025_FINAL_HYGIENE_DEAD_R3.txt",
+        "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7",
+        "bytes": 285
+      },
+      {
+        "id": "native-author-verification-026",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_026_FINAL_HYGIENE_EXPORTS_R3.txt",
+        "sha256": "9f10f001d8dc61c9585b21276b6da38ffe135fd1d4ac408dc345b48179b5f84a",
+        "bytes": 266
+      },
+      {
+        "id": "native-author-verification-027",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_027_FINAL_HYGIENE_DEPS_R3.txt",
+        "sha256": "bb0ece750162034be77d1fa85653f156e670a3c270f17ecc60b0b79b6f690fc6",
+        "bytes": 460
+      },
+      {
+        "id": "native-author-verification-028",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_028_FINAL_HYGIENE_API_R3.txt",
+        "sha256": "ceded4b2dee0a69d4d1cce7da132651a1f8705b279197db656b786280d857631",
+        "bytes": 246
+      },
+      {
+        "id": "native-author-verification-029",
+        "exitCode": 0,
+        "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_029_FINAL_HYGIENE_SCHEMA_R3.txt",
+        "sha256": "dafbd04e5389e9fd3ff2eb5b67f4139a9ae3452b1a7e73782416b6e846b14c8c",
+        "bytes": 3422
+      }
+    ],
+    "allTwelveSourcePinsMatch": true,
+    "scope": "Author actual exit codes and logs inspected; not relabeled Root execution"
+  },
+  "sourceReview": {
+    "runtime": "Full contract, adapter,32 tests and exact21-addition guard read; independent270-test result on unchanged four runtime sources.",
+    "sql": "Full candidate and rollback plus exact CHECK literal corrections inspected; fixed-source deparser compatibility awaits CI.",
+    "native": "Full primary sources read progressively against retained snapshots, then exact final diffs; helper/role/lock/cleanup/poisoning/IPC/rollback reasoning independently reviewed. No local native execution.",
+    "childTerminal": {
+      "before": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+      "closeFix": "6b1edc5e031a8124dad35d8ff26eca8dbfb1082df9f03e100b43ae2930b9657e",
+      "withRegression": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "decision": "Root inspected complete final startWorker and delta. Actual close owns terminal cleanup; real exit additionally required for successful started children. Fixed CI-only missing-executable regression asserts independent ENOENT, actual close, no exit/PID, visible rejection, joined reads/jobs, released timer/listeners, absent child tracking, unchanged SQL dispatch. Source closure only; actual CI pending."
+    },
+    "peerReceipts": [
+      {
+        "path": "MA1_PEER_NATIVE_GROUPS_REVIEW_V1.json",
+        "sha256": "ae4d010b74402b63985117069d6d78b043b6ab793ad0a5f4561daac181391462"
+      },
+      {
+        "path": "MA1_PEER_NATIVE_GROUPS_REVIEW_R1.json",
+        "sha256": "ce7bf77e5ad05e5e0fa58e1b4227a13bec9bce7b5cd3cccead8b3a2c0b276789"
+      },
+      {
+        "path": "MA1_PEER_NATIVE_GROUPS_REVIEW_R2.json",
+        "sha256": "1eb969f5768a4ad1cb61b38d3cbc6c5b52eace8b1102f31d3c8c7567a6b03b85"
+      },
+      {
+        "path": "MA1_PEER_FAILED_SPAWN_REVIEW_V1.json",
+        "sha256": "a04dea881891cd9cb7f4037116b2787bc6b95e839b0bb9aea90eeb7eae80860f"
+      }
+    ]
+  },
+  "risks": {
+    "P0": "No observed new P0 in reviewed dormant source; no claim of global production audit.",
+    "P1": "No observed new P1 in reviewed source; real method remains NOT_APPROVED and target activation prohibited.",
+    "P2": [
+      "Native SQL/deparser/transaction/role/lock/clock/cleanup/process proof still unexecuted; full new-head CI mandatory.",
+      "Current main has advanced through external PR1174; entire V3 stack integration and complete renewed gates required before Ready/merge.",
+      "D1 method/source/operations package and #1139 seventeen pre-Owner gaps remain open."
+    ],
+    "P3": [
+      "Publication contains historical failed attempts and bounded source-only receipts; only exact current-head live gates may establish final acceptance."
+    ]
+  },
+  "boundary": [
+    "No local PostgreSQL/socket/native retry or alternate transport.",
+    "No #917 refused readback retry, rephrase, delegation, reroute or human SQL substitute.",
+    "No hosted DB/Auth/RLS/ACL/migration/credential, real sources/provider, public route, scheduler, notification, cost or activation.",
+    "Unchanged existing Auth CI is not target truth.",
+    "No Ready/merge, real method approval or automatic follow-on."
+  ],
+  "next": "Root validates final author freeze, publishes exact Draft implementation head with expected-ref lease, then independently inspects complete CI/native/Preview plus current refs and threads. Any failure returns to original author/session and requires new-head full gating."
+}

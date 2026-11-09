@@ -1,0 +1,46 @@
+{
+  "schema": "jetnity-ma1-root-early-sql-review-v1",
+  "at": "2026-11-09T15:50:09.022773+00:00",
+  "reviewer": "/root Technical Lead",
+  "baseHead": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "status": "CHANGES_REQUIRED_WORKING_SOURCE_NOT_FINAL_HEAD_REVIEW",
+  "actualImplementer": "/root/v3_method_authority_writer",
+  "acceptedPlanSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+  "rootReadCompleteSnapshots": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-early-method-candidate.sql.snapshot",
+      "bytes": 47760,
+      "sha256": "c2baaca0e1d834daf159028aa2af79ecc9fd0e740394373155d72dfc252a84af"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-early-method-candidate.rollback.sql.snapshot",
+      "bytes": 16695,
+      "sha256": "cbd83db04f6920585ed48460a5297bafd5b6be4fb220be82e2af74ca7aa1c2ca"
+    }
+  ],
+  "independentPeerReceipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-review-v1.json",
+    "bytes": 11176,
+    "sha256": "c1f0d7c4143b9c353f0796d2b2c43033cc68446ae7f60f0f676cedb0bdcd8250"
+  },
+  "finding": {
+    "id": "MA1-EARLY-SQL-P2-1",
+    "severity": "P2",
+    "problem": "Exact finite installation/rollback inventory checks CHECK names/type/flags, but not the actual three CHECK definitions. Same-name heads_v1_shape CHECK(true) is indistinguishable on an otherwise empty fixture.",
+    "rootDecision": "Pin source-owned deterministic literal PostgreSQL deparser definitions for all three CHECK constraints in both finite inventories. No install-time self-derived metadata receipt or new persistent object, function, or architectural boundary.",
+    "requiredEvidence": "Mandatory CI actual PostgreSQL must accept pristine installation/rollback and refuse a same-name changed CHECK, preserving changed definition and all candidate objects after refusal. Any deparser format mismatch is a preserved failed attempt followed by same-session literal correction and full re-gating.",
+    "nativePending": true
+  },
+  "installerDiagnosticBoundary": "Root permits fixed source split and three bounded deparser observations in the same existing fixture connection/transaction, with prefix+suffix byte-equal to actual candidate and unchanged BEGIN/COMMIT and acceptance logic. Any failure rolls back and fails. Diagnostics are not authority.",
+  "otherReadAreas": "Closed commands, op history before new state, lock/Auth order, epoch/revision limits, clock flooring, fixed negative states, creator/final ACL, role/column ACL/membership, post-lock rollback emptiness and finite RESTRICT drops. No other concrete source defect identified in this early read.",
+  "operations": {
+    "nativeOrSqlExecution": false,
+    "hostedAccess": false,
+    "authorSourceEdits": false,
+    "gitRefChanges": false
+  },
+  "limitations": [
+    "Source reasoning only; no SQL syntax, install, race or rollback execution claimed.",
+    "Actual implementation still in progress; final frozen-head code/native review required."
+  ]
+}

@@ -930,6 +930,8 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'official-truth-product-v3/contract.ts'),
       // #1173 C1 P2-R3: exact dormant mapper's pure metadata/preimage canonicalization.
       join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
+      // #1175 MA1: exact dormant method draft/preimage/clock reader only.
+      join(hier, 'official-truth-product-v3/method/contract.ts'),
       // #1164 I1 Guard R1: exact reviewed server and its existing synthetic tests.
       join(hier, 'official-truth-product-v3/import/service-server.ts'),
       join(hier, 'official-truth-product-v3/import/service.test.ts'),
@@ -961,6 +963,24 @@ describe('regulierungs-anwendbarkeit', () => {
       `${hier}/official-truth-product-v3/unreviewed.ts`,
       `${hier}/official-truth-product-v30/contract.ts`,
       `${wurzel}/app/api/official-truth-product-v3/contract.ts`,
+    ]) assert.equal(eigene.has(pfad), false, pfad)
+    assert.equal(eigene.has(join(hier, 'official-truth-product-v3/method/contract.ts')), true)
+    for (const pfad of [
+      `${hier}/official-truth-product-v3/method/contract.ts.evil.ts`,
+      `${hier}/official-truth-product-v3/method/contract-server.ts`,
+      `${hier}/official-truth-product-v3/method/contract.test.ts`,
+      `${hier}/official-truth-product-v3/method/contract.ts/../unreviewed.ts`,
+      `${hier}/official-truth-product-v3/method/../method/contract.ts`,
+      `${hier}/official-truth-product-v3/method/./contract.ts`,
+      '@/lib/readiness/official-truth-product-v3/method/contract.ts',
+      'lib/readiness/official-truth-product-v3/method/contract.ts',
+      `${hier}/official-truth-product-v3/methods/contract.ts`,
+      `${hier}/official-truth-product-v30/method/contract.ts`,
+      `${hier}/official-truth-product-v3/method/authority-postgres.ts`,
+      `${hier}/official-truth-product-v3/method/unreviewed.ts`,
+      `${wurzel}/app/official-truth-product-v3/method/contract.ts`,
+      `${wurzel}/app/api/official-truth-product-v3/method/contract.ts`,
+      `${wurzel}/scripts/official-truth-product-v3/method/contract.ts`,
     ]) assert.equal(eigene.has(pfad), false, pfad)
     assert.equal(eigene.has(join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts')), true)
     // Raw spellings stay raw: neither traversal nor aliases acquire exact-path permission.
@@ -1059,6 +1079,7 @@ describe('regulierungs-anwendbarkeit', () => {
         join(hier, 'official-truth-composition-policy-registry.ts'),
         join(hier, 'official-truth-product-v3/contract.ts'),
         join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
+        join(hier, 'official-truth-product-v3/method/contract.ts'),
         join(hier, 'official-truth-product-v3/import/service-server.ts'),
         join(hier, 'official-truth-product-v3/visitor/presentation.ts'),
         join(hier, 'official-truth-product-v3/visitor/query.ts'),

@@ -1,0 +1,59 @@
+{
+  "schema": "ma1-root-early-native-source-review-r1",
+  "at": "2026-11-09T15:56:55.864368+00:00",
+  "reviewer": "/root Technical Lead",
+  "actualImplementer": "/root/v3_method_authority_writer",
+  "baseHead": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "status": "TWO_BOUNDED_SOURCE_CORRECTIONS_REVIEWED_NATIVE_PROOF_PENDING",
+  "originalSnapshots": [
+    {
+      "file": "ma1-root-early-process-worker.ts.snapshot",
+      "bytes": 5653,
+      "sha256": "a5ede473a94053808a38ede8d95b2cb5da79c6803b0d21dd21543a5e3ef4eb43"
+    },
+    {
+      "file": "ma1-root-early-native.ts.snapshot",
+      "bytes": 30499,
+      "sha256": "a3201bdbc247c2543a38f584ccb0584d446618ebbefbbf8d67c96902493f004e"
+    }
+  ],
+  "correctedSnapshots": [
+    {
+      "file": "ma1-root-second-process-worker.ts.snapshot",
+      "bytes": 5739,
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0"
+    },
+    {
+      "file": "ma1-root-second-native.ts.snapshot",
+      "bytes": 31178,
+      "sha256": "679f5dadb025a5caadca592a844b7d9d65b14830dbdf782d6598a26133afc583"
+    }
+  ],
+  "findings": [
+    {
+      "id": "MA1-NATIVE-P2-1",
+      "severity": "P2",
+      "cause": "Worker and native composition pass the four-key binding into port methods which strictly accept only methodId/revision. Actual resolve would refuse before dispatch, so positive/restart proof cannot run.",
+      "correction": "Same author created frozen exact two-key method object/projection for every current port call; factory, read request and row decoder keep full binding. Runtime/shared strictness unchanged.",
+      "rootRecheck": "Read complete worker delta and every native resolve/reprove invocation against the strict requestFor source.",
+      "remaining": "Actual mandatory native positive composition and real child restart must show fresh SQL dispatch and successful controls."
+    },
+    {
+      "id": "MA1-NATIVE-P2-2",
+      "severity": "P2",
+      "cause": "Same-operation and competing-approval waits occur at advisory mutexes before table locks. Default waitBlocked requires caller head-table relation lock, so it cannot recognize those actual waits.",
+      "correction": "Finite per-case advisory namespace/key or relation resource proof; operation750101/exact operation ID and method750102/exact method ID. PID+backend_start+active Lock+exact dispatched SQL+actual blocker+pending retained.",
+      "rootRecheck": "Read full revised observer SQL using unsigned hashtext object ID and objsubid2, and case-specific calls. No sleep/callback substitute.",
+      "remaining": "Real CI must observe intended waits and complete both collision/concurrency outcomes."
+    }
+  ],
+  "nativeExecuted": false,
+  "sqlExecuted": false,
+  "localSocketExecuted": false,
+  "hostedAccess": false,
+  "limitations": [
+    "Native suite still in development; this is not final frozen source review or overall acceptance.",
+    "Early snapshots remain preserved. Same author owns immediate fixes.",
+    "SQL exact CHECK-definition P2 remains independently tracked; actual native install and rollback proof still required."
+  ]
+}

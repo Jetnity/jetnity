@@ -1,0 +1,46 @@
+{
+  "schema": "jetnity.ma1.review-evidence-index.v3",
+  "at": "2026-11-09T16:24:13.116414+00:00",
+  "priorIndex": {
+    "path": "MA1_ROOT_REVIEW_EVIDENCE_INDEX_V2.json",
+    "sha256": "cf1db6a3d7692e8b69c0464c8d92714ddd7266c9c76fa9f6626b58f5ec79dc4f"
+  },
+  "newEntries": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_V1.json",
+      "sha256": "ae4d010b74402b63985117069d6d78b043b6ab793ad0a5f4561daac181391462",
+      "bytes": 11667
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R1.json",
+      "sha256": "ce7bf77e5ad05e5e0fa58e1b4227a13bec9bce7b5cd3cccead8b3a2c0b276789",
+      "bytes": 7118
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R2.json",
+      "sha256": "1eb969f5768a4ad1cb61b38d3cbc6c5b52eace8b1102f31d3c8c7567a6b03b85",
+      "bytes": 1900
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_FAILED_SPAWN_REVIEW_V1.json",
+      "sha256": "a04dea881891cd9cb7f4037116b2787bc6b95e839b0bb9aea90eeb7eae80860f",
+      "bytes": 4605
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NATIVE_CHILD_TERMINAL_REVIEW_V1.json",
+      "sha256": "be4d84b5bae85dd5eeeb26d7a9387e691748a6a2861ca83cee216b3d02b3e256",
+      "bytes": 1558
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_SOURCE_PUBLICATION_REVIEW_V1.json",
+      "sha256": "cd1c6a172567677ee0f80b53c82d69ba9ccaadfc272d4174d00b52bf00d1cd96",
+      "bytes": 15092
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-before-child-terminal-r1.ts.txt",
+      "sha256": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+      "bytes": 73663
+    }
+  ],
+  "note": "Immutable retained Root/peer source evidence and failed-source bytes, separate from author delivery. No native PASS."
+}

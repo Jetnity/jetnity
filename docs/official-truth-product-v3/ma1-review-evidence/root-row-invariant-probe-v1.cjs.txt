@@ -1,0 +1,14 @@
+// Root independent offline observation-shape probe; no SQL/native/server/hosted work.
+const { readMa1CurrentRows } = require('/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/contract.ts');
+const { createV3PostgresMethodAuthority } = require('/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/authority-postgres.ts');
+const binding = { methodId: 'ma1_probe', revision: 1, methodDigest: 'a'.repeat(64), packageDigest: 'b'.repeat(64) };
+const row = { status: 'approved', method_id: binding.methodId, revision: '1', method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: '1', approval_mode: 'until', approval_until: '2026-11-09T15:00:00.001Z', observed_at: '2026-11-09T15:00:00.000Z', remaining_ms: '5000' };
+(async () => {
+ const parsed = readMa1CurrentRows([row], binding);
+ const authority = createV3PostgresMethodAuthority(binding, { async readCurrent() { return { status: 'rows', rows: [row] }; } });
+ const result = await authority.resolveCurrent({ methodId: binding.methodId, revision: 1 }, row.observed_at);
+ const futureRow = { ...row, approval_until: '2026-11-09T15:00:01.000Z', remaining_ms: '1000' };
+ const futureAuthority = createV3PostgresMethodAuthority(binding, { async readCurrent() { return { status: 'rows', rows: [futureRow] }; } });
+ const futureResult = await futureAuthority.resolveCurrent({ methodId: binding.methodId, revision: 1 }, '2026-11-09T15:00:02.000Z');
+ process.stdout.write(JSON.stringify({ kind: 'root-offline-malformed-row-probe', actualNativeSql: false, expected: 'Both impossible approved observations must fail unavailable under frozen strict-result/caller-clock contract', ttlLargerThanUntilInterval: { readerOk: parsed.ok, portStatus: result.status, intervalMs: Date.parse(row.approval_until) - Date.parse(row.observed_at), claimedRemainingMs: Number(row.remaining_ms) }, expiresBeforeCheckedAt: { portStatus: futureResult.status } }) + '\n');
+})().catch(error => { process.stderr.write(String(error.stack || error)); process.exitCode = 1; });

@@ -1,0 +1,68 @@
+{
+  "schema": "ma1-root-native-source-corrections-r2",
+  "at": "2026-11-09T16:10:18.263168+00:00",
+  "reviewer": "/root Technical Lead",
+  "status": "BOUNDED_SOURCE_CORRECTIONS_VERIFIED_ACTUAL_NATIVE_CI_PENDING",
+  "actualAuthor": "/root/v3_method_authority_writer",
+  "publishedBase": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "sqlCorrection": {
+    "finding": "MA1-EARLY-SQL-P2-1",
+    "candidate": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-second-method-candidate.sql.snapshot",
+      "sha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "bytes": 52632
+    },
+    "rollback": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-second-method-candidate.rollback.sql.snapshot",
+      "sha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "bytes": 21567
+    },
+    "review": "Read the complete identical added literal loops and fixed local search_path in both scripts. All3 expected CHECK definitions are source-owned; mismatch refuses, with no learned definition or normalization. Root read exact diagnostic split on same connection/transaction; final source still needs actual CI deparser compatibility and pristine/mutated rollback results.",
+    "peerReceipt": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-review-r1.json",
+      "sha256": "3b88a159efe3a7abf2c2ac66a07f184ccb7bf8542069df3c111ef167a153c2fe",
+      "bytes": 8502
+    }
+  },
+  "identityCorrection": {
+    "finding": "MA1-NATIVE-P2-3",
+    "rootAmendment": {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_IDENTITY_AMENDMENT_V1.md",
+      "sha256": "6c78881cd8b48b5dd679a577c10adb9ff194238d273fc36a239a84f8942b30e5",
+      "bytes": 4955
+    },
+    "adapter": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-second-native-adapter.ts.snapshot",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880
+    },
+    "nativeFixture": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-fifth-native.ts.snapshot",
+      "sha256": "b9f55b512edf68ab8e9c9c2097e0a9825398056c54ea2997a87e0421631f354a",
+      "bytes": 59078
+    },
+    "review": "Root read original and corrected acquisition deltas and independently checked all5 pinned PostgreSQL source files. Capture actual restricted login PID/birth first, assert initial session/current login, select fixed assigned role, then assert same PID/session and exact current role. No ACL/membership broadening. Latest fixture delta adds the required pre-role session/current assertions in the same SELECT.",
+    "peerInitial": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-review-v1.json",
+      "sha256": "bcf99e02a2f441e495f45b046b1ff3c78e194b53e3efb090730a056dc9334a3c",
+      "bytes": 11231
+    },
+    "peerCorrection": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-review-r1.json",
+      "sha256": "89cc6b2a27b740ff152f77084dfb4f50a5e720f3ceb4b34e12e28f1bca0d8e68",
+      "bytes": 6134
+    },
+    "sourceEvidence": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/postgres-identity-visibility-evidence.json",
+      "sha256": "3906d0449d6396c4ae88152ed55ad1c59002b70efe66f3ae73b02c125ce43d62",
+      "bytes": 8947
+    }
+  },
+  "finiteCapacityEvidenceSource": "Root read new separate-authority fifth-call native executor refusal (admitted count unchanged, refusal count increases) and actual observer-lane hook/evidence asserting1running+3waiting after SQL. New target/control disappearances, primitive joins and poison checks remain required in CI.",
+  "earlierNativeFindings": "Method-reference projection and exact advisory wait-resource fixes retain source closure from R1; full future native/frozen-head results remain required.",
+  "notClaimed": [
+    "No native/SQL/socket/hosted execution or successful installation/race/rollback result.",
+    "No complete frozen-native-scope/MA1 PASS: native.ts remains in active development.",
+    "No current-main integration/Ready/merge/real method/Dev/Production approval."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schema": "jetnity-ma1-root-early-runtime-review-r1",
+  "at": "2026-11-09T15:50:09.022773+00:00",
+  "reviewer": "/root Technical Lead",
+  "baseHead": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "status": "BOUNDED_WORKING_SOURCE_FINDING_CLOSED_NOT_WHOLE_MA1_PASS",
+  "findingId": "MA1-RUNTIME-P2-1",
+  "originalReview": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/MA1_ROOT_EARLY_RUNTIME_REVIEW_V1.json",
+    "bytes": 2774,
+    "sha256": "467a3223f80ef6f54b44f050194c2aba1ed47404eaf1288ac4e6ab9c201d1c9f"
+  },
+  "originalReviewComment": "https://github.com/Jetnity/jetnity/pull/1175#issuecomment-6744176881",
+  "actualImplementer": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "source": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/contract.ts",
+      "bytes": 10485,
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 6696,
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b"
+    }
+  ],
+  "rootReview": "Read both source-file deltas from original independently copied snapshots. Mandatory checkedAt in the MA1-owned row reader refuses contradictions; canonical formatted timestamps supply only upper-bound impossibility checks, never a positive TTL. Adapter passes request.checkedAt, retains SQL full-precision remaining and original call-start anchor. Shared port unchanged.",
+  "probe": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-row-invariant-probe-v2.cjs",
+    "bytes": 2751,
+    "sha256": "51acd6a1541a0b21dbdf91b97b7546c2bb3123701fc5127e5e712c2ad9af5652"
+  },
+  "log": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-row-invariant-probe-v2.log",
+    "bytes": 726,
+    "sha256": "187610d443fe4856e84c92244c9ed3ce808549d7862e56c3485998b87909ee63"
+  },
+  "observedResult": {
+    "kind": "root-offline-malformed-row-recheck",
+    "actualNativeSql": false,
+    "passed": 7,
+    "cases": [
+      "impossible interval rejected by row reader",
+      "impossible interval resolve refused",
+      "expiry before checkedAt resolve refused",
+      "consistent finite control resolves",
+      "impossible interval reproof refused",
+      "expiry before checkedAt reproof refused",
+      "consistent finite reproof control succeeds"
+    ]
+  },
+  "exitCode": null,
+  "exitCodeNote": "Seven successful assertions are independently observed from the complete structured log. The earlier tool completion exit field is not retained in this continuation; no numeric exit code is inferred. Final named offline run will capture the actual completion code.",
+  "limitations": [
+    "Malformed executor-result admission proof only, not actual native SQL.",
+    "No hosted/local socket/native execution.",
+    "Author files still unfrozen. Full runtime/lifetime/SQL/native/frozen-head review remains required."
+  ]
+}

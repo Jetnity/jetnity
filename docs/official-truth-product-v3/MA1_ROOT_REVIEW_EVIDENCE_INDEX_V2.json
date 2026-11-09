@@ -1,0 +1,26 @@
+{
+  "schema": "ma1-root-review-evidence-index-v2",
+  "priorIndex": {
+    "path": "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V1.json",
+    "sha256": "3468ba07b8302b8650db182c7d1a20afc0e42351cb1bc85a3da0f7127a28d9b6",
+    "bytes": 7719
+  },
+  "note": "Additive source correction/peer evidence only. AllV1 bytes remain untouched; actual native CI pending.",
+  "added": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NATIVE_SOURCE_CORRECTIONS_R2.json",
+      "sha256": "82a48a28846e7b95f623eef0d91edecdb3152cfaf0acb304c6c25dc62a580eaf",
+      "bytes": 4195
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_R1.json",
+      "sha256": "3b88a159efe3a7abf2c2ac66a07f184ccb7bf8542069df3c111ef167a153c2fe",
+      "bytes": 8502
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-diagnostic-final-binding.json",
+      "sha256": "5911dfe8f98a2d7633037c352f9d4151e8fe88a60e9966e605d381c8a09c7539",
+      "bytes": 2138
+    }
+  ]
+}

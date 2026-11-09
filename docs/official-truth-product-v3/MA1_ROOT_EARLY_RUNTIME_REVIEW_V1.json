@@ -1,0 +1,50 @@
+{
+  "schema": "jetnity-ma1-root-early-runtime-review-v1",
+  "at": "2026-11-09T15:39:00.362Z",
+  "reviewer": "/root Technical Lead",
+  "status": "CHANGES_REQUIRED_WORKING_TREE_SOURCE_NOT_FINAL_HEAD_REVIEW",
+  "baseHead": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "actualImplementer": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "source": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "cd2cc8afc869ecc68c6cba4da1ed1172df609df2fb97ee0053e6b03922261d04"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "a156b24aeac45aa46450e2f54cf3552e1ce88a87df93557307b4666f48aea824"
+    }
+  ],
+  "finding": {
+    "id": "MA1-RUNTIME-P2-1",
+    "severity": "P2",
+    "problem": "Strict finite approved result admission accepts impossible remaining lifetime and contradicts the validated caller checkedAt bound.",
+    "observed": [
+      {
+        "row": "observed_at 2026-11-09T15:00:00.000Z, approval_until 2026-11-09T15:00:00.001Z, remaining_ms5000",
+        "readerOk": true,
+        "portStatus": "approved"
+      },
+      {
+        "row": "approval_until 2026-11-09T15:00:01.000Z, checkedAt 2026-11-09T15:00:02.000Z, remaining_ms1000",
+        "portStatus": "approved"
+      }
+    ],
+    "required": "Reject inconsistent approved finite rows/requests for resolve and reproof. Canonical formatted timestamps may only be used for conservative upper-bound/contradiction checks; do not derive or grant a positive lifetime from rounded observed_at. Preserve DB full-precision remaining_ms, original call-start anchor and monotone retained deadline.",
+    "scope": "Existing accepted PLANV2 strict impossible-row/caller-clock behavior; no new architecture or shared-port change."
+  },
+  "evidence": {
+    "probe": "ma1-root-row-invariant-probe.cjs",
+    "probeSha256": "2306c79ec99d7e3a8705db687efe84908835333d013417eeac1c483987a5d216",
+    "log": "ma1-root-row-invariant-probe-v1.log",
+    "logSha256": "7524c76d9839fb33d59c81711ab6eb18f8d52b5cbcf17e4d2182c956fecead92",
+    "command": "Node22 --import ./scripts/server-only-test-register.mjs --import tsx root probe",
+    "exitCode": 0,
+    "interpretation": "Probe completed and exposed two contract failures; no passing acceptance verdict.",
+    "nativeSql": false,
+    "hosted": false,
+    "localSocket": false,
+    "selectionReason": "New source review identified observable malformed-result invariants; bounded independent pure-offline probe verifies the concrete remaining risk."
+  },
+  "next": "Same runtime implementer fixes and adds offline regressions; Root re-runs exact probe and reviews final frozen source. SQL/native author continues separately; actual native acceptance still required."
+}

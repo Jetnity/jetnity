@@ -1,0 +1,94 @@
+{
+  "schema": "ma1-root-runtime-source-offline-review-r1",
+  "at": "2026-11-09T15:54:22.675029+00:00",
+  "reviewer": "/root Technical Lead",
+  "status": "RUNTIME_SOURCE_AND_NAMED_OFFLINE_PASS_NATIVE_INTEGRATION_PENDING",
+  "publishedBase": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "actualRuntimeAuthor": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "bytes": 10485
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "bytes": 6696
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "bytes": 32450
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942
+    }
+  ],
+  "sourceReview": {
+    "completeFiles": [
+      "method/contract.ts",
+      "method/authority-postgres.ts",
+      "method/authority.test.ts"
+    ],
+    "existingGuard": "Read exact21 additions/0 deletions in existing guard: sole authorized consumer in both finite inventories plus raw-path negative cases; prior C1 and all previous assertions preserved.",
+    "areas": [
+      "Closed immutable4-scalar binding via unchanged shared reader/canonicalizer and exact package bytes, bounded65536 copy/no retained body",
+      "Root3 literal synthetic vectors preserved; canonical status/newline identity distinctions",
+      "Strict10-cell fixed wire response/request, canonical civil time, remaining-ms impossible-positive refusal",
+      "Fixed query and code-owned executor; same-instance frozen opaque WeakMap receipts",
+      "Original monotonic5000ms cap and strict finite remaining, monotone retained reproof minimum including concurrent delayed larger result",
+      "4active calls/no queue; await actual executor settlement, no detached race; per-call abort then final cutoff",
+      "Negative mapping and explicit absence of generic revocation latch per accepted task; fresh SQL still needed for every positive",
+      "No application construction, credentials, file discovery, shared port, policy, provider or activation change"
+    ]
+  },
+  "independentRootRun": {
+    "receipt": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/MA1_ROOT_NAMED_OFFLINE_R1.json",
+      "bytes": 3139,
+      "sha256": "3cde5e23d9f2a8cade676c6b82d678ea44d27409c3a3f06c75bd81d7f111923a"
+    },
+    "log": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-root-named-offline-r1.txt",
+      "sha256": "390df13c69122bca4472b94305aca5a558c2ec150b314573ed448fc203423b1e",
+      "bytes": 77586
+    },
+    "tests": 270,
+    "passed": 270,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "exitCode": 0,
+    "sourceUnchangedDuringRun": true
+  },
+  "authorEvidenceChecked": {
+    "manifest": {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "bytes": 17170,
+      "sha256": "5310078ea2c39589fdde02b41a7c833a0a333b3e27ba29dd97bb4426a151c7db"
+    },
+    "handoff": {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_HANDOFF_V1.md",
+      "bytes": 7350,
+      "sha256": "877c2e2a0fd5f03f040818720297f8b3b22adba3bc40e599f31ae0545124b4fb"
+    },
+    "all4OwnedSourcesMatch": true,
+    "all30BaselineCurrentPinsMatch": true,
+    "unchangedBaselineEntries": 29,
+    "soleAuthorizedChangedBaseline": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+    "all20ArtifactHashesMatch": true,
+    "all16AttemptLogHashesMatch": true,
+    "retainedFailures": "Read TS2352 attempt10 intentional invalid-executor test cast, explicit unknown correction; runner bookkeeping error and uncaptured11-13 preserved; actual recorded14-16 replacement exits0. Earlier whole-type/hygiene results are not final integrated evidence."
+  },
+  "boundedFinding": "MA1-RUNTIME-P2-1 closed against exact contract+adapter hashes; original Root evidence and same-session R1 preserved.",
+  "limits": [
+    "Not a complete MA1 Technical Lead PASS.",
+    "Native SQL candidate/rollback/executor/worker/suite still being implemented and reviewed.",
+    "No actual SQL/native/socket execution here; offline controlled promises/time mocks are not database proof.",
+    "Every changed source/head requires applicable renewed gates.",
+    "No current-main integration acceptance; ed97a01\u2026 is a separately tracked explicit integration prerequisite."
+  ]
+}

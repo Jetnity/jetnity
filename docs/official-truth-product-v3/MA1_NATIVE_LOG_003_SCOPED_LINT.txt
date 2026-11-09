@@ -1,0 +1,8 @@
+(node:10) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/fixtures.ts
+  31:0  error  Parsing error: '}' expected
+
+✖ 1 problem (1 error, 0 warnings)
+

@@ -1,0 +1,1069 @@
+{
+  "schema": "jetnity-v3-current-main-integration-plan-v1",
+  "assembledAt": "2026-11-09T15:33:17.526Z",
+  "author": "/root/handoff_recovery_audit",
+  "status": "READ_ONLY_INTEGRATION_RECOMMENDATION_NOT_ISSUED_TASK_NOT_TL_PASS",
+  "scope": "Future integration route for the already selected V3 stack. This does not authorize implementation, branch creation, base synchronization, Ready, merge, activation or a follow-on product slice.",
+  "recommendation": {
+    "preferred": "A separate Root-controlled aggregate integration branch and Draft PR against then-current main, after final MA1 implementation has its own full independent acceptance.",
+    "reason": "One existing tip already contains every V3 code branch by Git ancestry. Combining that final accepted tip with current main once preserves component heads and their historical evidence, isolates the compatibility gate, and avoids repeatedly changing accepted upstream branches.",
+    "currentCheckpointIsNotFinalMA1": "4371024788442b0edb83d8600135d5095f61fa0b contains MA1 task/plan/review documents only. Phase B is running and its eventual accepted source head is not yet selected.",
+    "selectedFutureMain": null,
+    "selectedFutureV3SourceHead": null,
+    "preferredAncestry": "Create the future aggregate from then-current main; a real integration merge has that exact main as first parent and the final accepted V3/MA1 tip as second parent. Preserve original component refs/commits. Review and gate its resulting tree and exact head as new evidence.",
+    "mergeMechanism": "Repository metadata currently permits merge commits. Prefer an ancestry-preserving merge for the final aggregate; do not silently squash/rebase/replay the entire stack or overwrite main's tree with the old V3 tree.",
+    "whyNotStackSynchronization": "Updating S0/main then cascading into I1/U1/M1/E1/S1/IN1/C1/MA1 would produce many new heads and repeated gates. Updating only the MA1 feature branch introduces external main files into its C1-relative author diff and changes the frozen assignment. Neither is necessary with the present non-overlapping changes.",
+    "separateD1": "D1 PR1169 is not an ancestor of the V3 code tip and is not implicitly included or accepted. Keep it separate unless Root explicitly reviews and includes a precisely bounded documentation change; no method approval or Dev readiness is inferred.",
+    "componentPrDisposition": "Leave original component heads/evidence intact. Do not individually merge parallel branches again or mass-mark Ready. After any eventual aggregate merge, Root verifies actual ancestry and PR state, then records which component work was integrated and handles closure without rewriting historical acceptance."
+  },
+  "facts": {
+    "repository": "Jetnity/jetnity",
+    "originalMain": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "actualMainRef": {
+      "ref": "refs/heads/main",
+      "node_id": "REF_kwDOPM7Rz69yZWZzL2hlYWRzL21haW4",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/git/refs/heads/main",
+      "object": {
+        "sha": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+        "type": "commit",
+        "url": "https://api.github.com/repos/Jetnity/jetnity/git/commits/ed97a01ccc6640df45167aaf60a1abe28a65e9fd"
+      }
+    },
+    "currentPublishedCheckpoint": "4371024788442b0edb83d8600135d5095f61fa0b",
+    "latestAcceptedCodeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "currentMainComparison": {
+      "status": "diverged",
+      "aheadBy": 34,
+      "behindBy": 3,
+      "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "totalV3SideCommits": 34,
+      "url": "https://github.com/Jetnity/jetnity/compare/ed97a01ccc6640df45167aaf60a1abe28a65e9fd...4371024788442b0edb83d8600135d5095f61fa0b"
+    },
+    "mainMovement": {
+      "pr": 1174,
+      "mergedAt": "2026-11-09T14:45:32Z",
+      "mergeCommit": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+      "commits": [
+        {
+          "sha": "6d2e42611fac64ae185f2608f187899e182420af",
+          "parents": [
+            "ce3366e26de73961d4682236af92347bfc3a4ca8"
+          ],
+          "subject": "Organisieren: reisebezogene Suche, Hotelfotos und Karten integrieren"
+        },
+        {
+          "sha": "ec33049acf0f770a06cbf4d29d4a6c8d8f01f967",
+          "parents": [
+            "6d2e42611fac64ae185f2608f187899e182420af"
+          ],
+          "subject": "Reisekarten-Stile im Routenlayout laden und Kontoeinstieg isolieren"
+        },
+        {
+          "sha": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+          "parents": [
+            "ce3366e26de73961d4682236af92347bfc3a4ca8",
+            "ec33049acf0f770a06cbf4d29d4a6c8d8f01f967"
+          ],
+          "subject": "Merge pull request #1174 from Jetnity/feat/organisieren-reisesuche"
+        }
+      ]
+    },
+    "localObjectTruth": {
+      "shallow": false,
+      "localMainAndOriginMainStill": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "newMainCommitObjectAvailable": false,
+      "probe": "GIT_NO_LAZY_FETCH=1 git cat-file -e ed97a01ccc6640df45167aaf60a1abe28a65e9fd^{commit}",
+      "probeExit": 128,
+      "probeMessage": "Not a valid object name",
+      "fetchedObjects": false,
+      "note": "Authoritative new-main ancestry/file evidence came from read-only GitHub GET/compare responses, not a local fetch or a simulated merge."
+    },
+    "prSnapshots": [
+      {
+        "number": 1163,
+        "url": "https://github.com/Jetnity/jetnity/pull/1163",
+        "title": "feat(official-truth): V3 shared proposal and visitor contract S0",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T01:21:23Z",
+        "base": {
+          "ref": "main",
+          "sha": "ce3366e26de73961d4682236af92347bfc3a4ca8"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-shared-contract-1-20261109",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450"
+        },
+        "merge_commit_sha": "214bbc161772749eaf85e8f4a315f20672480333",
+        "mergeable": null,
+        "changed_files": 12,
+        "commits": 4
+      },
+      {
+        "number": 1164,
+        "url": "https://github.com/Jetnity/jetnity/pull/1164",
+        "title": "feat(official-truth): V3 neutral proposal intake and import decisions I1",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T02:00:59Z",
+        "base": {
+          "ref": "feat/official-truth-v3-shared-contract-1-20261109",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-import-1-20261109",
+          "sha": "63b97e8ab6139c38746aaaa4caa4054c83219b1d"
+        },
+        "merge_commit_sha": "14588df937e55b023efdadcf0d04d5ea5c7ce968",
+        "mergeable": true,
+        "changed_files": 14,
+        "commits": 5
+      },
+      {
+        "number": 1165,
+        "url": "https://github.com/Jetnity/jetnity/pull/1165",
+        "title": "feat(official-truth): V3 visitor query and conditional cache projection U1",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T02:01:54Z",
+        "base": {
+          "ref": "feat/official-truth-v3-shared-contract-1-20261109",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-visitor-cache-1-20261109",
+          "sha": "d110545a551baf6b6f18687042238a30514addda"
+        },
+        "merge_commit_sha": "70861c66f7eecf2fa38c28ac2e13d20f9898c6e8",
+        "mergeable": true,
+        "changed_files": 33,
+        "commits": 7
+      },
+      {
+        "number": 1166,
+        "url": "https://github.com/Jetnity/jetnity/pull/1166",
+        "title": "feat(official-truth): V3 source monitoring jobs and version recovery M1",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T01:37:48Z",
+        "base": {
+          "ref": "feat/official-truth-v3-shared-contract-1-20261109",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-monitor-jobs-1-20261109",
+          "sha": "40ca2f0348862bb763e8d42728418bda4c63405f"
+        },
+        "merge_commit_sha": "5c21bf46e73cba526c7474f257f14274bf200e4a",
+        "mergeable": true,
+        "changed_files": 22,
+        "commits": 3
+      },
+      {
+        "number": 1167,
+        "url": "https://github.com/Jetnity/jetnity/pull/1167",
+        "title": "feat(official-truth): V3 composed research import and visitor flow E1",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T02:20:40Z",
+        "base": {
+          "ref": "feat/official-truth-v3-shared-contract-1-20261109",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-integration-1-20261109",
+          "sha": "97629e9130a907b8b9b8072d06bda1956758aa6e"
+        },
+        "merge_commit_sha": "dc605823b64d9590c1276d1e4921821d87538b57",
+        "mergeable": true,
+        "changed_files": 91,
+        "commits": 17
+      },
+      {
+        "number": 1168,
+        "url": "https://github.com/Jetnity/jetnity/pull/1168",
+        "title": "Official Truth V3 S1: durable proposal intake and import quarantine",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T12:21:30Z",
+        "base": {
+          "ref": "feat/official-truth-v3-integration-1-20261109",
+          "sha": "97629e9130a907b8b9b8072d06bda1956758aa6e"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-intake-store-1-20261109",
+          "sha": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+        },
+        "merge_commit_sha": "08f6c1f34076d49fe23165cf93f81f9af3b8947a",
+        "mergeable": true,
+        "changed_files": 33,
+        "commits": 4
+      },
+      {
+        "number": 1169,
+        "url": "https://github.com/Jetnity/jetnity/pull/1169",
+        "title": "Official Truth V3 D1: concrete method approval package",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T11:07:22Z",
+        "base": {
+          "ref": "feat/official-truth-v3-integration-1-20261109",
+          "sha": "97629e9130a907b8b9b8072d06bda1956758aa6e"
+        },
+        "head": {
+          "ref": "docs/official-truth-v3-method-package-1-20261109",
+          "sha": "300946991376b8969b383a087d47b49a7636f722"
+        },
+        "merge_commit_sha": "7898489b982c695c4074aa36c27493346deb5b7f",
+        "mergeable": true,
+        "changed_files": 8,
+        "commits": 2
+      },
+      {
+        "number": 1170,
+        "url": "https://github.com/Jetnity/jetnity/pull/1170",
+        "title": "Official Truth V3 N1: neutral research file ingress",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T12:07:17Z",
+        "base": {
+          "ref": "feat/official-truth-v3-intake-store-1-20261109",
+          "sha": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-research-ingress-1-20261109",
+          "sha": "10d3e4f44460513e6425714af2c8c0b3ab4678a6"
+        },
+        "merge_commit_sha": null,
+        "mergeable": false,
+        "changed_files": 16,
+        "commits": 2
+      },
+      {
+        "number": 1171,
+        "url": "https://github.com/Jetnity/jetnity/pull/1171",
+        "title": "Official Truth V3 IN1 — real file-to-SQL intake composition",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T13:01:44Z",
+        "base": {
+          "ref": "feat/official-truth-v3-intake-store-1-20261109",
+          "sha": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-intake-composition-1-20261109",
+          "sha": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5"
+        },
+        "merge_commit_sha": "a654c47deeef58fb2e43d720f18cf8c5cb7dcf4d",
+        "mergeable": true,
+        "changed_files": 26,
+        "commits": 4
+      },
+      {
+        "number": 1173,
+        "url": "https://github.com/Jetnity/jetnity/pull/1173",
+        "title": "Official Truth V3 C1: preserve global application conditions",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "merged_at": null,
+        "updated_at": "2026-11-09T14:41:20Z",
+        "base": {
+          "ref": "feat/official-truth-v3-intake-composition-1-20261109",
+          "sha": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-global-conditions-1-20261109",
+          "sha": "5558367eb0bff97162c369bbb8963123839f4b0e"
+        },
+        "merge_commit_sha": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+        "mergeable": true,
+        "changed_files": 39,
+        "commits": 3
+      },
+      {
+        "number": 1174,
+        "url": "https://github.com/Jetnity/jetnity/pull/1174",
+        "title": "Organisieren: zentrale Reisesuche mit Fotokopf, Etappen und Hotelkarte",
+        "state": "closed",
+        "draft": false,
+        "merged": true,
+        "merged_at": "2026-11-09T14:45:32Z",
+        "updated_at": "2026-11-09T14:45:32Z",
+        "base": {
+          "ref": "main",
+          "sha": "ce3366e26de73961d4682236af92347bfc3a4ca8"
+        },
+        "head": {
+          "ref": "feat/organisieren-reisesuche",
+          "sha": "ec33049acf0f770a06cbf4d29d4a6c8d8f01f967"
+        },
+        "merge_commit_sha": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+        "mergeable": null,
+        "changed_files": 39,
+        "commits": 2
+      },
+      {
+        "number": 1175,
+        "url": "https://github.com/Jetnity/jetnity/pull/1175",
+        "title": "Official Truth V3 MA1: durable method authority and revocation",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "updated_at": "2026-11-09T15:28:56Z",
+        "base": {
+          "ref": "feat/official-truth-v3-global-conditions-1-20261109",
+          "sha": "5558367eb0bff97162c369bbb8963123839f4b0e"
+        },
+        "head": {
+          "ref": "feat/official-truth-v3-method-authority-1-20261109",
+          "sha": "4371024788442b0edb83d8600135d5095f61fa0b"
+        },
+        "changed_files": 22,
+        "commits": 2,
+        "mergeable": true
+      }
+    ],
+    "ancestry": [
+      {
+        "pr": 1163,
+        "head": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t4"
+      },
+      {
+        "pr": 1164,
+        "head": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t9"
+      },
+      {
+        "pr": 1165,
+        "head": "d110545a551baf6b6f18687042238a30514addda",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t11"
+      },
+      {
+        "pr": 1166,
+        "head": "40ca2f0348862bb763e8d42728418bda4c63405f",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t7"
+      },
+      {
+        "pr": 1167,
+        "head": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t21"
+      },
+      {
+        "pr": 1168,
+        "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t25"
+      },
+      {
+        "pr": 1169,
+        "head": "300946991376b8969b383a087d47b49a7636f722",
+        "ancestorOfPublishedCheckpoint": false,
+        "ancestorCheckExit": 1,
+        "deltaFromOriginalMain": "0\t23"
+      },
+      {
+        "pr": 1170,
+        "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t26"
+      },
+      {
+        "pr": 1171,
+        "head": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t29"
+      },
+      {
+        "pr": 1173,
+        "head": "5558367eb0bff97162c369bbb8963123839f4b0e",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t32"
+      },
+      {
+        "pr": 1175,
+        "head": "4371024788442b0edb83d8600135d5095f61fa0b",
+        "ancestorOfPublishedCheckpoint": true,
+        "ancestorCheckExit": 0,
+        "deltaFromOriginalMain": "0\t34"
+      }
+    ],
+    "parallelCompositionEdges": [
+      {
+        "integration": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+        "parents": [
+          "3f8c84239e1e847af4b63be6134db34854aa3914",
+          "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+          "d110545a551baf6b6f18687042238a30514addda",
+          "40ca2f0348862bb763e8d42728418bda4c63405f"
+        ],
+        "meaning": "E1 already records the I1/U1/M1 heads as parents."
+      },
+      {
+        "integration": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+        "parents": [
+          "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+          "10d3e4f44460513e6425714af2c8c0b3ab4678a6"
+        ],
+        "meaning": "IN1 already combines S1 via task parent a7a6156 and N1 as its second parent."
+      }
+    ],
+    "stalePrMetadata": [
+      {
+        "pr": 1163,
+        "baseRef": "main",
+        "reportedBaseSha": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+        "actualRefSha": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd"
+      },
+      {
+        "pr": 1170,
+        "baseRef": "feat/official-truth-v3-intake-store-1-20261109",
+        "reportedBaseSha": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+        "actualRefSha": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+        "reportedMergeable": false,
+        "actualS1N1MergeBase": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+        "actualS1VsN1LeftRightCount": "1 2",
+        "note": "A component PR's conflict/stale base snapshot is not the state of the already composed IN1/C1/MA1 tip. Resolve branch refs and ancestry before acting."
+      }
+    ],
+    "repositoryMergeSettings": {
+      "full_name": "Jetnity/jetnity",
+      "default_branch": "main",
+      "allow_merge_commit": true,
+      "allow_rebase_merge": true,
+      "allow_squash_merge": true,
+      "allow_auto_merge": false,
+      "delete_branch_on_merge": false
+    }
+  },
+  "overlapEvidence": {
+    "comparisonBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "mainNetChangedPathCount": 39,
+    "v3CheckpointNetChangedPathCount": 203,
+    "exactPathIntersection": [],
+    "mainChangedPaths": [
+      {
+        "path": "app/(public)/privacy/page.tsx",
+        "status": "modified",
+        "blobSha": "f5b05fbaf6bbd79ea5e5e02e04df30cb55834889"
+      },
+      {
+        "path": "app/(public)/reisen/[tripId]/layout.tsx",
+        "status": "added",
+        "blobSha": "dbd7f87e3ec64bbad8859043b8113cdfcec20137"
+      },
+      {
+        "path": "app/(public)/ui-audit/trip-workspace/page.tsx",
+        "status": "modified",
+        "blobSha": "e2867d1eb49911aa81d9f69533a311b5fa839b1f"
+      },
+      {
+        "path": "components/trips/AktivitaetenBereich.tsx",
+        "status": "modified",
+        "blobSha": "cf7a07dd364a3d5bb04ebd91bb193209f10fff4e"
+      },
+      {
+        "path": "components/trips/FlugKarte.tsx",
+        "status": "modified",
+        "blobSha": "75f33e8af9a8e1b7430c2277b5d19a244748755f"
+      },
+      {
+        "path": "components/trips/TripWorkspace.tsx",
+        "status": "modified",
+        "blobSha": "3dd1ba34e135e16b520b8ad9214f68406ec400ce"
+      },
+      {
+        "path": "components/trips/TwelveGoTimetable.tsx",
+        "status": "modified",
+        "blobSha": "e169faf0f9f858b5c3572cc0716e228bd27cbbc4"
+      },
+      {
+        "path": "components/trips/organisieren/Aktivitaeten.tsx",
+        "status": "added",
+        "blobSha": "4bb47b1a07ba0540e5e5fc99dd07ee8a7f0eb20f"
+      },
+      {
+        "path": "components/trips/organisieren/Flugsuche.tsx",
+        "status": "added",
+        "blobSha": "aff02cf06b75edfac35bdc8ade76114f57541624"
+      },
+      {
+        "path": "components/trips/organisieren/Hotelkarte.tsx",
+        "status": "added",
+        "blobSha": "d1f211032e741ca0b636d09891ce2bce6c757ead"
+      },
+      {
+        "path": "components/trips/organisieren/Hotelsuche.tsx",
+        "status": "added",
+        "blobSha": "e7738ddc2effb9d78755dec4ea4283d0c22d9ba9"
+      },
+      {
+        "path": "components/trips/organisieren/Organisieren.tsx",
+        "status": "added",
+        "blobSha": "720337c1a252e6a13d7e5f084868a68af1e440c4"
+      },
+      {
+        "path": "components/trips/organisieren/Reisefoto.tsx",
+        "status": "added",
+        "blobSha": "c6e6c5e4bf344b72ae83094eab66ede8c6913f40"
+      },
+      {
+        "path": "components/trips/organisieren/Suchfelder.tsx",
+        "status": "added",
+        "blobSha": "da8af0f65b16807ea3ee2324b096a8f00cc4fcfb"
+      },
+      {
+        "path": "components/trips/organisieren/Verbindungen.tsx",
+        "status": "added",
+        "blobSha": "a921cce91502f37ab16b862472f7b95efeeef39b"
+      },
+      {
+        "path": "components/trips/organisieren/organisieren.css",
+        "status": "added",
+        "blobSha": "b69bc96a2eb4ea019d428f6554462c7144016033"
+      },
+      {
+        "path": "components/trips/rental/DiscoverCarsMietwagen.tsx",
+        "status": "modified",
+        "blobSha": "5bb5adf8fb7ac77076fe153dc0482356d47c5351"
+      },
+      {
+        "path": "components/trips/rental/StationField.tsx",
+        "status": "modified",
+        "blobSha": "96efc5cad21a35569c6bd019998be8d272178419"
+      },
+      {
+        "path": "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+        "status": "added",
+        "blobSha": "5d16e3626f9547126d95e1915f8b74e6224da4c2"
+      },
+      {
+        "path": "lib/trips/organisieren/katalog.test.ts",
+        "status": "added",
+        "blobSha": "ce207aff133906859f740f96b5501bb45ed897ef"
+      },
+      {
+        "path": "lib/trips/organisieren/katalog.ts",
+        "status": "added",
+        "blobSha": "fcaa6576e98ae56e9b75bd3eb5b15fba866d08c8"
+      },
+      {
+        "path": "package-lock.json",
+        "status": "modified",
+        "blobSha": "7b5394006458d34c833cdb5438b06f9f6af28353"
+      },
+      {
+        "path": "package.json",
+        "status": "modified",
+        "blobSha": "013c173422793a8455bddeff2f7b19f3d2fcdffe"
+      },
+      {
+        "path": "public/images/organisieren/Bildnachweise.txt",
+        "status": "added",
+        "blobSha": "9d55c9ee01c70f42aefca33e28ce3d7ddf6a0bc0"
+      },
+      {
+        "path": "public/images/organisieren/angsana.webp",
+        "status": "added",
+        "blobSha": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0"
+      },
+      {
+        "path": "public/images/organisieren/bangkok.webp",
+        "status": "added",
+        "blobSha": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e"
+      },
+      {
+        "path": "public/images/organisieren/canal.webp",
+        "status": "added",
+        "blobSha": "5846ad75132b2c133b34f178ab8cfdadddef7d7d"
+      },
+      {
+        "path": "public/images/organisieren/chang.webp",
+        "status": "added",
+        "blobSha": "3cc4484c01d4551a5a322107ab98742f4ae14a14"
+      },
+      {
+        "path": "public/images/organisieren/hero.webp",
+        "status": "added",
+        "blobSha": "b069ec8b21405b3cab5f3958bed9d784a64da905"
+      },
+      {
+        "path": "public/images/organisieren/katathani.webp",
+        "status": "added",
+        "blobSha": "50473504a6f75fc3b98f46eaa63dbe25442f5983"
+      },
+      {
+        "path": "public/images/organisieren/mandarin.webp",
+        "status": "added",
+        "blobSha": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe"
+      },
+      {
+        "path": "public/images/organisieren/oldtown.webp",
+        "status": "added",
+        "blobSha": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056"
+      },
+      {
+        "path": "public/images/organisieren/paradise.webp",
+        "status": "added",
+        "blobSha": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a"
+      },
+      {
+        "path": "public/images/organisieren/peninsula.webp",
+        "status": "added",
+        "blobSha": "88a99b48c2533b7f6d6671009f629bf4042e70ef"
+      },
+      {
+        "path": "public/images/organisieren/phuket.webp",
+        "status": "added",
+        "blobSha": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2"
+      },
+      {
+        "path": "public/images/organisieren/reise.webp",
+        "status": "added",
+        "blobSha": "3804565ca9563836d4f6a194c7e14d5f8661a9dc"
+      },
+      {
+        "path": "public/images/organisieren/shangri.webp",
+        "status": "added",
+        "blobSha": "d460ac804bd4fe16be3b41282bbd241e565caf84"
+      },
+      {
+        "path": "public/images/organisieren/waterfall.webp",
+        "status": "added",
+        "blobSha": "9f64069cb58c1176c0a3bdf22437e54ce931148c"
+      },
+      {
+        "path": "public/images/organisieren/watpho.webp",
+        "status": "added",
+        "blobSha": "ab2c76d69809104477b59bf3647c24303507824c"
+      }
+    ],
+    "v3CheckpointChangedPaths": [
+      ".github/workflows/ci.yml",
+      "ARCHITECTURE.md",
+      "DECISIONS.md",
+      "JETNITY_START_HERE.md",
+      "JETNITY_VISION.md",
+      "ROADMAP.md",
+      "components/readiness/OfficialTruthVisitorV3.tsx",
+      "docs/ACTIVE_WORK_STATUS.md",
+      "docs/official-truth-product-v3/C1_EVIDENCE_V1.md",
+      "docs/official-truth-product-v3/C1_FINAL_CONSISTENCY_REVIEW_V1.json",
+      "docs/official-truth-product-v3/C1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/C1_LEGACY_IDENTITIES_V1.json",
+      "docs/official-truth-product-v3/C1_MAPPING_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/C1_PLAN_V1.md",
+      "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+      "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+      "docs/official-truth-product-v3/C1_REVISION2_IDENTITIES_V1.json",
+      "docs/official-truth-product-v3/C1_ROOT_FINAL_ACCEPTANCE_V1.json",
+      "docs/official-truth-product-v3/C1_ROOT_NEW_HEAD_UI_REVIEW_R3.json",
+      "docs/official-truth-product-v3/C1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/C1_ROOT_REVIEW_R2.json",
+      "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+      "docs/official-truth-product-v3/C1_SYNTHETIC_CONTEXT_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/C1_TASK_V1.md",
+      "docs/official-truth-product-v3/C1_TASK_V2.md",
+      "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "docs/official-truth-product-v3/C1_TEST_RUNS_V1.json",
+      "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+      "docs/official-truth-product-v3/D0_DEV_READINESS_DELTA_2026-11-09.md",
+      "docs/official-truth-product-v3/E1_CONTRACT.md",
+      "docs/official-truth-product-v3/E1_GUARD_G1_TASK.md",
+      "docs/official-truth-product-v3/E1_GUARD_G2_TASK.md",
+      "docs/official-truth-product-v3/E1_GUARD_REVIEW_G1.md",
+      "docs/official-truth-product-v3/E1_GUARD_REVIEW_G2.md",
+      "docs/official-truth-product-v3/E1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R1.json",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R2.json",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R3.json",
+      "docs/official-truth-product-v3/E1_MANIFEST.md",
+      "docs/official-truth-product-v3/E1_REVIEW_R1_FIX_PLAN.md",
+      "docs/official-truth-product-v3/E1_REVIEW_R1_TASK.md",
+      "docs/official-truth-product-v3/E1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/E1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/E1_TASK_V1.md",
+      "docs/official-truth-product-v3/I1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/I1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/I1_INTERFACE.md",
+      "docs/official-truth-product-v3/I1_REVIEW_R3_FIX_PLAN.md",
+      "docs/official-truth-product-v3/I1_REVIEW_R3_TASK.md",
+      "docs/official-truth-product-v3/I1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/I1_TASK_R2.md",
+      "docs/official-truth-product-v3/I1_TASK_V1.md",
+      "docs/official-truth-product-v3/IMPLEMENTATION_CHECKPOINT_2026-11-09.md",
+      "docs/official-truth-product-v3/IN1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json",
+      "docs/official-truth-product-v3/IN1_PLAN_V1.md",
+      "docs/official-truth-product-v3/IN1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/IN1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/IN1_TASK_V1.md",
+      "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json",
+      "docs/official-truth-product-v3/M1_CONTRACT.md",
+      "docs/official-truth-product-v3/M1_FILE_MANIFEST.md",
+      "docs/official-truth-product-v3/M1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/M1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/M1_REVIEW_R1_FIX_PLAN.md",
+      "docs/official-truth-product-v3/M1_REVIEW_R2_FIX_PLAN.md",
+      "docs/official-truth-product-v3/M1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/M1_TASK_R2.md",
+      "docs/official-truth-product-v3/M1_TASK_V1.md",
+      "docs/official-truth-product-v3/MA1_IMPLEMENTATION_SUBTASKS_V1.md",
+      "docs/official-truth-product-v3/MA1_MAIN_DRIFT_RECONCILIATION_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_CORRECTIONS_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+      "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V2.md",
+      "docs/official-truth-product-v3/MA1_ROOT_PHASE_A_ACCEPTANCE_V2.json",
+      "docs/official-truth-product-v3/MA1_ROOT_PLAN_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+      "docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+      "docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_A_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_B_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_V1.md",
+      "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "docs/official-truth-product-v3/PROGRAM_V1.md",
+      "docs/official-truth-product-v3/RECOVERY_CHECKPOINT_2026-11-09.md",
+      "docs/official-truth-product-v3/RECOVERY_LIVE_EVIDENCE_2026-11-09.json",
+      "docs/official-truth-product-v3/RECOVERY_ROOT_REVIEW_2026-11-09.json",
+      "docs/official-truth-product-v3/S0_CONTRACT.md",
+      "docs/official-truth-product-v3/S0_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/S0_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/S1_GUARD_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/S1_PLAN_V1.md",
+      "docs/official-truth-product-v3/S1_RECOVERY_TASK_V2.md",
+      "docs/official-truth-product-v3/S1_SELF_REVIEW_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/S1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/S1_TASK_V1.md",
+      "docs/official-truth-product-v3/S1_VERIFICATION_RECEIPT_V2.json",
+      "docs/official-truth-product-v3/U1_CONTRACT.md",
+      "docs/official-truth-product-v3/U1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/U1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/U1_MANIFEST.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R4_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R5_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R5_TASK.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R6_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R6_TASK.md",
+      "docs/official-truth-product-v3/U1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/U1_TASK_R2.md",
+      "docs/official-truth-product-v3/U1_TASK_R3.md",
+      "docs/official-truth-product-v3/U1_TASK_V1.md",
+      "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "lib/readiness/official-truth-content-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/contract.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+      "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
+      "lib/readiness/official-truth-product-v3/monitor/runtime.ts",
+      "lib/readiness/official-truth-product-v3/monitor/test-support.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+      "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "scripts/db/official-truth-v3-intake-store-1/fixtures.ts",
+      "scripts/db/official-truth-v3-intake-store-1/generate-retention-shape.ts",
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+      "scripts/db/official-truth-v3-intake-store-1/retention-fixtures.ts",
+      "scripts/official-truth-product-v3-ui/benchmark.ts",
+      "scripts/official-truth-product-v3-ui/browser.mjs",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "scripts/official-truth-product-v3-ui/evidence.mjs",
+      "scripts/official-truth-product-v3-ui/mount.tsx",
+      "scripts/official-truth-product-v3-ui/run.mjs",
+      "scripts/official-truth-product-v3-ui/synthetic-server.ts",
+      "scripts/official-truth-product-v3-ui/tsconfig.json"
+    ],
+    "mainChangedV3ReadinessOrDatabaseOrWorkflowPaths": [],
+    "dependencyChange": {
+      "runtime": {
+        "leaflet": "1.9.4"
+      },
+      "development": {
+        "@types/leaflet": "1.9.21"
+      },
+      "transitive": {
+        "@types/geojson": "7946.0.16"
+      },
+      "manifests": [
+        "package.json",
+        "package-lock.json"
+      ],
+      "v3CheckpointTouchesEitherManifest": false
+    },
+    "interpretation": "No exact changed-file overlap is established at these pinned inputs; this is not a clean-merge proof, an integration test, or proof of no semantic interaction. Main introduces dependencies and trip routes/UI that the combined V3 tree has not yet been tested with."
+  },
+  "laterBoundedSequence": [
+    {
+      "step": 1,
+      "action": "Finish the currently authorized MA1 implementation, same-session review fixes, exact-head CI/native and independent Root acceptance on the frozen C1 base. Do not widen the author's ownership to main integration."
+    },
+    {
+      "step": 2,
+      "action": "Only after Root selects integration work, freeze an integration task/manifest that pins then-current main and final accepted V3 tip, maps all component acceptance receipts and explicitly treats D1 and every special gate. Re-read branch refs, source tree, delta and open review state; the numbers in this note are historical by then."
+    },
+    {
+      "step": 3,
+      "action": "In a separate isolated aggregate branch/worktree, combine the exact inputs without altering original feature refs. Any conflict or compatibility correction receives explicit bounded ownership and review. Preserve main-only files/package lock and V3-only files; verify the resulting net diff, tree and both parent ancestries."
+    },
+    {
+      "step": 4,
+      "action": "Publish a new Draft aggregate PR against main. Run all required repository, type/lint/build, architecture/privacy/hygiene, mandatory CI-native and relevant V3/UI/preview gates against its exact head and resulting combined dependency tree. Verify new main's trip-search behavior at the integration boundary where relevant. Native evidence remains in authorized mandatory CI; do not reroute to local PostgreSQL."
+    },
+    {
+      "step": 5,
+      "action": "Root independently reviews the full aggregate diff and evidence, unresolved threads and exact current base/head. Any changed head or further main drift invalidates the candidate integration verdict until reconciled and re-gated. Old component evidence remains historical at its recorded SHA."
+    },
+    {
+      "step": 6,
+      "action": "Only Root decides Ready/merge under the operating standard and existing special gates. After any actual merge, independently verify main ancestry/tree, required CI and production binding, and persist a new continuity checkpoint. Integration does not apply SQL or approve the method/Dev package."
+    }
+  ],
+  "firstUnfinishedStep": "MA1 Phase B implementation and its own complete independent acceptance are still in progress. The first later integration action is a Root decision and versioned aggregate task with freshly resolved main and final accepted V3 inputs; no branch/PR is created by this plan.",
+  "risks": [
+    {
+      "severity": "P2",
+      "state": "OPEN",
+      "id": "CURRENT_MAIN_INTEGRATION_GATE",
+      "fact": "Published checkpoint is ahead34/behind3 of ed97a01… and has no full combined-tree acceptance.",
+      "closure": "New explicitly pinned aggregate head plus complete independent gates."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN",
+      "id": "DEPENDENCY_AND_SHARED_BUILD_COMPATIBILITY",
+      "fact": "Main adds leaflet, its types and a transitive type package and changes trip route/UI; zero path overlap does not validate the combined installation/build/runtime.",
+      "closure": "Actual combined lockfile installation/build/required regressions and relevant preview/UI evidence."
+    },
+    {
+      "severity": "P2",
+      "state": "CONTROLLED_BY_PLAN",
+      "id": "STALE_BASE_METADATA_AND_HISTORICAL_VERDICTS",
+      "fact": "Two PR base SHA snapshots differ from resolved target refs; old receipts and local main ref describe earlier trees.",
+      "closure": "Resolve live refs and record new exact-head evidence without relabelling old PASS."
+    },
+    {
+      "severity": "P3",
+      "state": "DEFERRED_UNTIL_ACTUAL_INTEGRATION",
+      "id": "COMPONENT_AND_D1_TRACKING",
+      "fact": "The nine upstream V3 code PR heads1163–1168,1170,1171,1173 are ancestors of the current MA1 documentation checkpoint; D1#1169 is a separate documentation branch and remains gated.",
+      "closure": "Root inclusion manifest and explicit post-integration disposition; no inferred D1 approval."
+    }
+  ],
+  "sourceEvidence": [
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/git/ref/heads/main"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/git/ref/heads/feat/official-truth-v3-intake-store-1-20261109"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1174/files?per_page=100",
+      "count": 39,
+      "paginationComplete": true
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/compare/ce3366e26de73961d4682236af92347bfc3a4ca8...ed97a01ccc6640df45167aaf60a1abe28a65e9fd"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/compare/ed97a01ccc6640df45167aaf60a1abe28a65e9fd...4371024788442b0edb83d8600135d5095f61fa0b"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1163"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1164"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1165"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1166"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1167"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1168"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1169"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1170"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1171"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1173"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1174"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity/pulls/1175"
+    },
+    {
+      "type": "github_get",
+      "url": "https://api.github.com/repos/Jetnity/jetnity",
+      "scope": "Merge-method settings only; not branch-protection/ruleset verification."
+    },
+    {
+      "type": "pinned_repository_document",
+      "commit": "4371024788442b0edb83d8600135d5095f61fa0b",
+      "path": "docs/official-truth-product-v3/MA1_MAIN_DRIFT_RECONCILIATION_V1.json",
+      "scope": "Root's supplied main CI and production verification accepted as attributed evidence; not repeated by this planning review."
+    },
+    {
+      "type": "pinned_repository_document",
+      "commit": "4371024788442b0edb83d8600135d5095f61fa0b",
+      "path": "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+      "lines": [
+        210,
+        250
+      ],
+      "scope": "Exact-head gates, new-head invalidation, only TL Ready/merge, special Owner gates."
+    },
+    {
+      "type": "local_read_only_git",
+      "commands": [
+        "GIT_NO_LAZY_FETCH=1 git merge-base",
+        "GIT_NO_LAZY_FETCH=1 git merge-base --is-ancestor",
+        "GIT_NO_LAZY_FETCH=1 git rev-list --left-right --count",
+        "GIT_NO_LAZY_FETCH=1 git diff --name-only / --name-status",
+        "GIT_NO_LAZY_FETCH=1 git log --format=%H %P %s",
+        "GIT_NO_LAZY_FETCH=1 git cat-file -e",
+        "GIT_NO_LAZY_FETCH=1 git show"
+      ]
+    }
+  ],
+  "limitations": [
+    "No merge, merge-tree dry run, rebase, cherry-pick, branch update or Ready action was executed.",
+    "No new local Git object was fetched; new main is deliberately absent locally.",
+    "No tests, runtime/native/database/provider/CI/production actions were performed.",
+    "PR mergeability and repository allowed merge methods are metadata, not an acceptance verdict or complete branch-rules read.",
+    "Main CI42637809650 and production dpl_9iu5bD976NN7p4SZNAA8HsYYQGzr READY are Root-attributed existing evidence; they do not cover the future combined V3 head.",
+    "Method remains NOT_APPROVED; Dev#1139 NOT_RELEASE_READY; #917 refusal and all existing Product Owner gates remain. No source freshness or actual target truth is manufactured.",
+    "Only this scratch planning artifact is written; no repository source/docs/ref is changed."
+  ]
+}

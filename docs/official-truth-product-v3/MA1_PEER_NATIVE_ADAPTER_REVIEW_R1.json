@@ -1,0 +1,78 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "recordedAt": "2026-11-09T16:05:01.135966+00:00",
+  "scope": "Bounded necessary delta after active author changed early native executor and identity callsites during V1 review; compare copied V1/V2 source only.",
+  "priorReceipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-review-v1.json",
+    "sha256": "bcf99e02a2f441e495f45b046b1ff3c78e194b53e3efb090730a056dc9334a3c",
+    "preserved": true
+  },
+  "sourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v2/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880,
+      "currentSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v2/native-callsite.ts",
+      "sha256": "32d6a92e7c79895227aa6a4e43c0495de75acacc4e765f7fdb0e5dfb6dcf08c1",
+      "bytes": 55054,
+      "currentSha256": "32d6a92e7c79895227aa6a4e43c0495de75acacc4e765f7fdb0e5dfb6dcf08c1",
+      "unchangedAtReviewEnd": true
+    }
+  ],
+  "supportPins": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24"
+    }
+  ],
+  "outcome": "SPECIFIC_P2_SOURCE_CLOSURE_ON_REVIEWED_SNAPSHOTS; mandatory native evidence pending; not a TL PASS",
+  "finding": {
+    "id": "MA1-EARLY-NATIVE-P2-1",
+    "priorStatus": "OPEN_AT_b5cd2f_snapshot",
+    "reviewedStatus": "CLOSED_AT_SOURCE_LEVEL",
+    "correction": "The reader now acquires its actual PID/backend_start as the genuine restricted login before selecting the assigned role. The same connection then executes the fixed SET ROLE statement and verifies returned PID equals captured PID, session_user remains ot_ma1_reader, and current_user is exactly ot_v3_method_reader. The human/reader createFixture.connect callsite likewise captures birth before role selection and proves same PID and exact two roles afterwards.",
+    "authorityBoundary": "No pg_read_all_stats/reverse membership/extra Auth/table privileges were added. Existing auth-fixture bytes remain cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58. Birth validation remains strict.",
+    "abortAndCleanup": "The target identity is stored before installing the one-shot abort handler. An already-aborted signal is handled before role/API dispatch; abort during role verification cannot dispatch the authority read. Exact target cancellation remains joined; normal proof still requires both identities absent and all primitives settled. Setup/identity failure remains visibly poisoned with owned stop.",
+    "limits": "This is a source reasoning closure only. No native reproduction or assertion of successful current PostgreSQL execution. The native suite must pass using actual restricted sessions on the final published head."
+  },
+  "additionalDeltaReviewed": [
+    {
+      "change": "Native fixture capacity independent of each authority instance",
+      "assessment": "New separate authority instance shares the same native executor while four original calls are actually blocked. The source now asserts no new admission and refusedCapacity increment, directly exercising the executor cap rather than only the original runtime instance cap."
+    },
+    {
+      "change": "Actual serialized cleanup lane evidence",
+      "assessment": "New beforeObserve hook runs within the actual lane; evidence counts running/waiting contexts and healthy state checks both zero. Source case holds one running plus three waiting, verifies both original and fresh adapter refusal, releases the owned gate and awaits every call. All hook promises remain in the primitive ledger, and the existing releaseFaultGates path releases the known gate on poison/parent stop."
+    },
+    {
+      "change": "No new self-join/transport",
+      "assessment": "The delta adds no pool, driver, cluster acquisition mechanism or whole-call SLA. Lane tail still resolves in finally, and failure drains only call primitives. The pending hook is awaited before proveBothAbsent returns, so its inclusion in the later allSettled ledger is not self-await."
+    }
+  ],
+  "newConcreteFindings": [],
+  "remainingGate": "Full independent frozen-source review plus mandatory native CI remain Root-owned. Source under author development may change again; receipt applies only to its copied hashes.",
+  "operations": "Read/hash/copy/diff and write recovery receipts only. No tests, product imports, SQL, local native/socket/server/browser, network/hosted queries, author source/plan changes, Git refs or remote mutation."
+}

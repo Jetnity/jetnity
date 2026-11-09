@@ -1,0 +1,19 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "at": "2026-11-09T16:18:40.177233+00:00",
+  "scope": "Final bounded named-listener cleanup delta following worker-close lifecycle correction; no native execution or final acceptance.",
+  "preservedReview": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-review-r1.json",
+    "sha256": "ce7bf77e5ad05e5e0fa58e1b4227a13bec9bce7b5cd3cccead8b3a2c0b276789"
+  },
+  "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+  "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v2/native-after-static-correction.ts",
+  "snapshotSha256": "6b1edc5e031a8124dad35d8ff26eca8dbfb1082df9f03e100b43ae2930b9657e",
+  "currentSha256": "6b1edc5e031a8124dad35d8ff26eca8dbfb1082df9f03e100b43ae2930b9657e",
+  "unchangedAtReceipt": true,
+  "result": "Specific source-level lifecycle closure retained; no new concrete defect.",
+  "delta": "Exit and disconnect listeners are now named, and join finally removes exit/error/disconnect listeners after actual close plus read-job drain. The original exit callback behavior is unchanged. This additionally cleans an unfired exit listener on asynchronous spawn failure. Actual terminal-close ownership, fatal startup errors, observed real exit/code/signal for success, pending-read abort/join, and original positive/negative native groups remain unchanged.",
+  "remaining": "Mandatory CI must execute real child/SQL/rollback cases on final frozen source. This record closes only the inspected source defect and does not assert a reproduced spawn-error path, native PASS, TL PASS, Ready or merge.",
+  "operations": "Read/hash/source-copy/textual-diff/recovery receipt only; no worktree, refs, network, imports/tests/SQL/native/process execution."
+}

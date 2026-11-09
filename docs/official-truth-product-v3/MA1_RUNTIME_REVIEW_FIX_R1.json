@@ -1,0 +1,130 @@
+{
+  "schema": "ma1-runtime-working-tree-review-fix-r1",
+  "at": "2026-11-09T15:40:47.025235+00:00",
+  "author": "Jetnity Official Truth V3 Method Authority Runtime 1 — Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "parentSession": "/root/v3_method_authority_writer",
+  "status": "ROOT_CLOSED_BOUNDED_WORKING_SOURCE_FINDING_FULL_REVIEW_PENDING",
+  "checkpoint": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "finding": "Finite approved response can claim remaining_ms above its formatted expiry interval or beyond checkedAt. Root independently demonstrated readerOk/approved for impossible rows.",
+  "preFixSources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "cd2cc8afc869ecc68c6cba4da1ed1172df609df2fb97ee0053e6b03922261d04",
+      "bytes": 9941
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "a156b24aeac45aa46450e2f54cf3552e1ce88a87df93557307b4666f48aea824",
+      "bytes": 6685
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "12c834cb928c83136d562102392027dc9c1f8789f832c438b8935cae24b4fd1f",
+      "bytes": 30245
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942
+    }
+  ],
+  "rootEvidence": [
+    {
+      "path": "recovery/ma1-root-row-invariant-probe.cjs",
+      "sha256": "2306c79ec99d7e3a8705db687efe84908835333d013417eeac1c483987a5d216",
+      "bytes": 2128
+    },
+    {
+      "path": "recovery/ma1-root-row-invariant-probe-v1.log",
+      "sha256": "7524c76d9839fb33d59c81711ab6eb18f8d52b5cbcf17e4d2182c956fecead92",
+      "bytes": 875
+    },
+    {
+      "path": "recovery/ma1-early-runtime-contract.ts.snapshot",
+      "sha256": "cd2cc8afc869ecc68c6cba4da1ed1172df609df2fb97ee0053e6b03922261d04",
+      "bytes": 9941
+    },
+    {
+      "path": "recovery/ma1-early-runtime-authority-postgres.ts.snapshot",
+      "sha256": "a156b24aeac45aa46450e2f54cf3552e1ce88a87df93557307b4666f48aea824",
+      "bytes": 6685
+    }
+  ],
+  "plannedCorrection": "Closed reader validates original request checkedAt and uses until-observedAt and until-checkedAt only as upper-bound inconsistency refusals; never grants TTL from formatted clocks. Resolve/reproof regressions.",
+  "execution": "Root probe is independent offline execution; child has not executed product tests yet. No SQL/native/local socket/hosted work.",
+  "ownedSignatureAmendment": "Primary author confirmed readMa1CurrentRows(rows, expectedBinding, checkedAt:string); shared port unchanged.",
+  "postFixSources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "bytes": 10485
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "bytes": 6696
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "bytes": 32450
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942
+    }
+  ],
+  "childEvidence": {
+    "attempt": 1,
+    "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_001_TESTS_INITIAL.txt",
+    "sha256": "0c3d119ca746312df36cde08f05411bc5b90145f19d60964daf8111571c3ed17",
+    "result": "73 tests passed;0 failed;0 skipped. Only new authority.test.ts and existing applicability guard."
+  },
+  "originalRootObservation": {
+    "kind": "root-offline-malformed-row-probe",
+    "actualNativeSql": false,
+    "expected": "Both impossible approved observations must fail unavailable under frozen strict-result/caller-clock contract",
+    "ttlLargerThanUntilInterval": {
+      "readerOk": true,
+      "portStatus": "approved",
+      "intervalMs": 1,
+      "claimedRemainingMs": 5000
+    },
+    "expiresBeforeCheckedAt": {
+      "portStatus": "approved"
+    }
+  },
+  "rootRecheck": {
+    "reportedBy": "/root Technical Lead",
+    "scope": "RUNTIME-P2-1 only, exact working contract77d88e20 and adaptere116aef2; full frozen-head authority/lifetime/CI review pending",
+    "passed": 7,
+    "observation": {
+      "kind": "root-offline-malformed-row-recheck",
+      "actualNativeSql": false,
+      "passed": 7,
+      "cases": [
+        "impossible interval rejected by row reader",
+        "impossible interval resolve refused",
+        "expiry before checkedAt resolve refused",
+        "consistent finite control resolves",
+        "impossible interval reproof refused",
+        "expiry before checkedAt reproof refused",
+        "consistent finite reproof control succeeds"
+      ]
+    },
+    "evidence": [
+      {
+        "path": "recovery/ma1-root-row-invariant-probe-v2.cjs",
+        "sha256": "51acd6a1541a0b21dbdf91b97b7546c2bb3123701fc5127e5e712c2ad9af5652",
+        "bytes": 2751
+      },
+      {
+        "path": "recovery/ma1-root-row-invariant-probe-v2.log",
+        "sha256": "187610d443fe4856e84c92244c9ed3ce808549d7862e56c3485998b87909ee63",
+        "bytes": 726
+      }
+    ]
+  }
+}
