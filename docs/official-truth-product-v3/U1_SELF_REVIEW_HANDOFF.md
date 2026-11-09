@@ -1,12 +1,78 @@
-# U1 — Selbstprüfung und Übergabe R5
+# U1 — Selbstprüfung und Übergabe R6
 
-## Aktueller Status R5
+## Aktueller Status R6
+
+**Enger Textzoom-/CI-Inventarfix geliefert; neuer tatsächlicher CI-Lauf und unabhängige UI-Abnahme offen. STOP. Kein Ready-/Merge-/Aktivierungs-PASS.**
+
+Gleicher Autor **Jetnity Official Truth V3 Visitor Cache 1 — Codex Generation 1**, tatsächliche Session `/root/v3_visitor_writer`, kein Cursor-Agent. Auftrag: `U1_REVIEW_R6_TASK.md` und [#1165 Kommentar 6730217681](https://github.com/Jetnity/jetnity/pull/1165#issuecomment-6730217681). Basis-HEAD **`ac60045bbc7566150440c48f1f538e7258766bfc`**, Tree **`0312574a5e12c7f6a093b55b71375ac7b28ce837`**, Branch `feat/official-truth-v3-visitor-cache-1-20261109`. Vor R6 war ausschließlich der Root-Task untracked. Der persistierte `U1_REVIEW_R6_FIX_PLAN.md` wurde vor Code durch Root vollständig gelesen und ausdrücklich bestätigt.
+
+## Tatsächlicher R6-Befund
+
+Run **42546439936**, UI-Job **128932438904**, sauberer Checkout **fe5df0dd4d84489ac84081f350ac905f1e45c384**, Source **ac60045bbc7566150440c48f1f538e7258766bfc**: Der reguläre einzelne Sandbox-Launch von Google Chrome **156.0.8078.79** funktionierte. Alle acht normalen Breiten **280/320/360/375/390/430/768/1280 px** und **Landscape 844×390** bestanden tatsächlich. Die R5-Korrektur ist für diese neun Layoutfälle belegt. Die beiden vorherigen Tastatur-/Mixed-Antwort-Interaktionen bestanden ebenfalls; keine externen Browserrequests oder Seitenfehler.
+
+Bei **320 px/200 % Text** scheiterte die Dokumentbreite anschließend mit **376 px**. Die aufgeführten überlaufenden Elemente gehören nur zum Harness-Aside/Testfallfeld; Selectbreite **310,546875 px**. Die Produktspalten liegen jetzt innerhalb des Viewports. Der echte Screenshot zeigt jedoch zusätzlich zu starke horizontale Platzverluste durch verschachtelte, mit dem Text wachsende `rem`-Paddings: nur **174 px** Formularfeldbreite, **384 px** Submit-Höhe, sehr schmale Bedingungen. Dies bleibt trotz verhinderten Produktüberlaufs ein konkreter Lesbarkeitsbefund.
+
+Autor las Audit, Bindung, Task und Code selbst, betrachtete `official-truth-v3-analysis/u1-ac600-ci-ui/failure.png` und prüfte dessen SHA256 erneut: **`808185d5eb353caa1be08853901690e2410ae9af8040d61a5ed15d09001d7e32`**. Root dokumentierte Artifact **13643916169** mit ZIP-SHA256 **`a57ebf79012e09cb73c4be9e7dd7603c85941be57489c78fc2c8b741abd46fbd`**.
+
+Der verbindliche R6-Task dokumentiert außerdem den einzigen Fehler im abgeschlossenen älteren Core-Run **42545059046**, Job **128928236694**: Die bestehende Atomic-Refresh-CI-Inventur erwartet noch vier statt der verpflichtenden fünf Familien. Ihr Accepted-Blockregex schließt den dazwischenliegenden UI-Job ein und würde dessen verpflichtenden Artefakt-`always()`-Schritt fälschlich gegen den nativen `no-if`-Guard prüfen. Autor las die vollständige Guarddatei und die tatsächlichen Workflowgrenzen; Workflowänderung ist nicht erforderlich.
+
+## Drei eng begrenzte Änderungen
+
+1. **`scripts/official-truth-product-v3-ui/mount.tsx`:** Aside und Feldwrapper erhalten explizite Null-Minimum-Spalten und begrenzte Breiten, das Aside vererbt vollständigen Wortumbruch. Der Select bleibt maximal containerbreit. Mobile horizontale Außen-/Asideabstände sind auf `min(bisheriges rem-Maß, 4vw)` begrenzt. R4-Label/ID, Szenarien, Transport, vertikale Abstände und Schrift bleiben erhalten.
+2. **`components/readiness/OfficialTruthVisitorV3.tsx`:** Ausschließlich mobile horizontale Abstände ändern sich: Karten/Formular/Buttons maximal 4vw, innere Bedingungs-/Hinweisflächen maximal 3vw, Listeneinrückung maximal 6vw, jeweils begrenzt durch das bisherige rem-Maß. Ab `sm` gelten die bisherigen Abstände; vertikales Padding bleibt erhalten. Der Text darf weiterhin vollständig mitvergrößern. Kein Clipping, kleinerer Text, verlorene Mindest-Touchhöhe oder inhaltlicher Eingriff.
+3. **`lib/readiness/official-truth-atomic-version-refresh-1.test.ts`:** Die exakte Inventur verlangt fünf benannte Familien einschließlich `official_truth_v3_ui`; die vorhandene Aggregate-Prüfung verlangt zusätzlich deren Ergebnisbindung und `success`. Der Accepted-Block endet exakt vor `official_truth_v3_ui`. Alle bisherigen Native-Befehle, Hashes, Matrizen, Lifecycle-/SQL-Quellguards sowie `no-if`, `no-continue-on-error` und `always()`-Anforderungen bleiben bestehen.
+
+Workflow selbst, alte vier Native-/Core-Familien und Authjob, `run.mjs`, vollständige Browsermatrix/Assertions/Fristen, Browserlaunch, bestehende CI-Negativtests, Runtime/Controller/Query/Presenter, S0 und shared Country/CSS wurden nicht geändert und sind gegen die Basis bytegleich geprüft. Schriftgrößen, Wortlaut, Fakten, Bedingungen, Quellen-/Abrufzeit, Fokus und Polling bleiben unverändert.
+
+## R6-Nachprüfung
+
+| Prüfung | Tatsächliches Ergebnis |
+| --- | --- |
+| Vollständige bestehende Atomic-Refresh-Guarddatei | **10/10 PASS**, inklusive unveränderter Native-/Hash-/Lifecycle-Guards und korrigierter Pflicht-CI-Inventur. |
+| Bestehende U1-/CI-Vertragstests | **47/47 PASS**, einschließlich aller fünf Familien mit success/failure/cancelled/skipped. |
+| Gemeinsamer Testlauf | **57/57 PASS**, 6 Suites, 0 Fail/Skip/Cancel/Todo; **1479,960218 ms**. |
+| Repository-TypeScript | **PASS, Exit 0**. |
+| Harness-TypeScript | **PASS, Exit 0**. |
+| Fokussiertes ESLint der drei geänderten Dateien | **PASS, Exit 0**. |
+| Vorhandener Bundle-/Loopback-HTTP-Smoke | **PASS**, sechs bestehende Fälle einschließlich synthetischer Pending→Accepted-Abfolge. |
+| Diff-/Scopeprüfung | **PASS**; ausschließlich drei benannte Code-/Testdateien plus Plan/Handoff/Manifest. |
+| Lokaler Browser | **Nicht gestartet**. |
+| Neuer tatsächlicher CI-/PNG-/UI-Nachweis | **Offen**; auf dem neuen veröffentlichten Head erforderlich. |
+
+Befehle im U1-Worktree mit Node22 (`v22.23.4`, `/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node`):
+
+```bash
+node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-atomic-version-refresh-1.test.ts lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
+node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false
+node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false -p scripts/official-truth-product-v3-ui/tsconfig.json
+node node_modules/eslint/bin/eslint.js components/readiness/OfficialTruthVisitorV3.tsx scripts/official-truth-product-v3-ui/mount.tsx lib/readiness/official-truth-atomic-version-refresh-1.test.ts
+node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs --smoke
+git diff --check
+```
+
+Keine neue Testklasse, zusätzliche Browsermatrix oder Ersatzrenderer. Bestehende Runtime-Proxy-/Browserslist-Hinweise bleiben ohne Fehler; keine neue Dependencyinstallation. Kein neuer Benchmark, öffentlicher p95-Beleg oder Production-Build behauptet.
+
+## R6-Übergabe und verbleibende Gates
+
+Sechs eigene Dateien bilden den R6-Diff: die drei oben genannten Dateien sowie R6-Plan, Handoff und Manifest. Der Root-eigene `U1_REVIEW_R6_TASK.md` bleibt separat und unverändert. `U1_MANIFEST.md` enthält die vollständigen aktuellen Hashes einschließlich des nun ausdrücklich zum Scope gehörenden Atomic-Guards. S0 bleibt SHA256 **`871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`**.
+
+Root muss nach eigenem Review einen neuen Head veröffentlichen und den vollständigen unveränderten CI-/Browserlauf prüfen. Die neun bestandenen Layoutfälle gelten für ac60045; der neue Head benötigt alle Gates erneut, insbesondere 200 % Text, echte PNG-Lesbarkeit und die nachfolgenden Fehler-/Privacy-/Pollinginteraktionen. Kein UI-PASS aufgrund der lokalen Prüfungen. Ein weiterer konkreter Reviewbefund bleibt bei demselben Autor/derselben Session.
+
+Alle Produktports bleiben ungebunden; keine DB-/Auth-/Provider-/Production-Ausführung oder #917-Aktion, kein öffentlicher Einstieg und keine Aktivierung. Kein eigener Commit/Push/GitHubwrite/Ready/Merge/Folgeslice. D0 und Methodenfreigabe bleiben separat. **STOP bestätigt.**
+
+---
+
+## Archivierte R5-Übergabe vor dem tatsächlichen ac60045-UI-Lauf
+
+Der folgende Stand ist historisch. Die damals offene Layoutprüfung wurde durch den oben dokumentierten echten Lauf konkretisiert: neun Layoutfälle bestanden, 200 % Text und vollständige UI-Abnahme weiter offen.
+
+### Aktueller Status R5
 
 **Enger responsiver Reviewfix geliefert; neuer tatsächlicher UI-CI-Lauf und unabhängige Abnahme offen. STOP. Kein Ready-/Merge-/Aktivierungs-PASS.**
 
 Gleicher Autor **Jetnity Official Truth V3 Visitor Cache 1 — Codex Generation 1**, tatsächliche Session `/root/v3_visitor_writer`, kein Cursor-Agent. Auftrag: `U1_REVIEW_R5_TASK.md` und [#1165 Kommentar 6730040798](https://github.com/Jetnity/jetnity/pull/1165#issuecomment-6730040798). Basis-HEAD **`20a4e497a4a23c7aa972d13352c155729f95a7ab`**, Tree **`7c0aebdc53285a31637029e8a534711b35ceefe3`**, Branch `feat/official-truth-v3-visitor-cache-1-20261109`. Vor R5 war nur der von Root bereitgestellte Task untracked. `U1_REVIEW_R5_FIX_PLAN.md` wurde vor Code persistiert, von Root gelesen und ausdrücklich freigegeben.
 
-## Tatsächlicher R5-Befund und Korrektur
+### Tatsächlicher R5-Befund und Korrektur
 
 Der neue reguläre Run **42545059046**, UI-Job **128928236799**, verwendete den sauberen Checkout **77096cfea008ee5164a834306ef9d0dcfec71293** für Source **20a4e497a4a23c7aa972d13352c155729f95a7ab**. Google Chrome **156.0.8078.79** startete einmal regulär sandboxed. Der R4-Label-/Tastaturablauf und die erste Mixed-Antwort inklusive Fokus, Originalquellenzeit und Bedingungen bestanden tatsächlich. Der frühere Labelbefund ist damit konkret nachgeprüft.
 
@@ -16,7 +82,7 @@ Die Codeursache liegt in den impliziten `auto`-Spalten der lokalen verschachtelt
 
 **Einzige Codeänderung:** `components/readiness/OfficialTruthVisitorV3.tsx`. Lokale einspaltige Grids definieren jetzt `minmax(0, 1fr)` über `grid-cols-1`; die vorhandene Desktop-Zeile behält ihre zweispaltige Form. Lokale Wrapper und die Legende können innerhalb der Spalte schrumpfen, Buttons und Links bleiben maximal containerbreit. Die Section vererbt `overflow-wrap: anywhere`; bisherige einzelne `break-words`-Overrides sind entfernt. Mehrzeilige Beschriftungen bleiben vollständig, Touchhöhen und sämtliche Schriftgrößen bleiben erhalten. Kein Clipping, kein versteckter Überlauf, keine Inhaltskürzung oder kleinere Schrift. Wortlaut, Fakten, Bedingungen, Quelle, Abrufzeit, Eingabe-/Fokus-/Pollinglogik sind unverändert.
 
-## R5-Nachprüfung
+### R5-Nachprüfung
 
 | Prüfung | Tatsächliches Ergebnis |
 | --- | --- |
@@ -43,7 +109,7 @@ git diff --check
 
 Das bestehende Tailwind-Bundle meldet unverändert alte Browserslist-Metadaten; dies führte zu keinem Fehler und wurde nicht durch eine neue Installation verändert. Der vorhandene Runtime-Proxy warnt über sein experimentelles Node-Feature. Keine Browserersatzabnahme, neue Testmatrix, neue Zeitmessung oder Production-Build-Behauptung.
 
-## R5-Übergabe und verbleibendes Gate
+### R5-Übergabe und verbleibendes Gate
 
 `U1_MANIFEST.md` enthält die vollständigen aktuellen U1-Hashes einschließlich des R5-Plans. Vier eigene Dateien bilden den R5-Diff: Produktkomponente, R5-Plan, Handoff und Manifest. Der Root-eigene `U1_REVIEW_R5_TASK.md` wurde weder bearbeitet noch als eigene Lieferung vereinnahmt. Die S0-Vertragsdatei bleibt SHA256 **`871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`**.
 

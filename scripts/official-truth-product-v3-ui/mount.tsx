@@ -18,14 +18,14 @@ function Harness() {
     // DTO. Future production transport still needs a reviewed decoding seam.
     return await response.json() as Ladung<V3VisitorView>
   }, [scenario])
-  return <main className="min-h-screen bg-background p-4 text-foreground sm:p-8">
-    <aside className="mx-auto mb-8 grid max-w-4xl gap-3 rounded-2xl border border-border bg-citrus-300 p-4" aria-label="Isolierte Testumgebung">
+  return <main className="min-h-screen bg-background px-[min(1rem,4vw)] py-4 text-foreground sm:p-8">
+    <aside className="mx-auto mb-8 grid w-full min-w-0 max-w-4xl grid-cols-1 gap-3 rounded-2xl border border-border bg-citrus-300 px-[min(1rem,4vw)] py-4 [overflow-wrap:anywhere] sm:px-4" aria-label="Isolierte Testumgebung">
       <p className="font-semibold">Jetnity · Lokaler Entwicklungstest</p>
       <p className="text-sm leading-6">Ausschließlich synthetische Daten. Die fiktive Testbehörde und die Regeln sind erfunden. Keine echte Einreiseauskunft.</p>
-      <div className="grid gap-2 text-sm font-medium">
+      <div className="grid min-w-0 grid-cols-1 gap-2 text-sm font-medium">
         <label htmlFor={scenarioId}>Testfall</label>
         <select id={scenarioId} value={scenario} onChange={(event) => setScenario(event.target.value)}
-          className="min-h-11 w-full min-w-0 rounded-xl border border-border bg-card px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-border bg-card px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <option value="mixed">Cachetreffer und Recherche</option>
           <option value="conflict">Widerspruch</option>
           <option value="unbound">Anschlüsse nicht verfügbar</option>

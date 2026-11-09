@@ -9,14 +9,14 @@ import { createV3VisitorController, unboundV3VisitorLoad,
   type V3VisitorLoad, type V3VisitorUiState } from '@/lib/readiness/official-truth-product-v3/visitor/controller'
 import type { V3VisitorViewResult } from '@/lib/readiness/official-truth-product-v3/visitor/presentation'
 
-const secondary = 'min-h-11 min-w-0 max-w-full whitespace-normal rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+const secondary = 'min-h-11 min-w-0 max-w-full whitespace-normal rounded-full border border-border px-[min(1rem,4vw)] py-2 text-sm font-medium text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4'
 
 function Result({ result }: { result: V3VisitorViewResult }) {
-  if (result.status !== 'accepted') return <article className="min-w-0 space-y-2 rounded-2xl border border-border bg-muted p-5">
+  if (result.status !== 'accepted') return <article className="min-w-0 space-y-2 rounded-2xl border border-border bg-muted px-[min(1.25rem,4vw)] py-5 sm:p-5">
     <h4 className="font-semibold text-foreground">{result.title}</h4>
     <p className="text-sm leading-6 text-ink-950">{result.message}</p>
   </article>
-  return <article className="min-w-0 space-y-4 rounded-2xl border border-border bg-card p-5">
+  return <article className="min-w-0 space-y-4 rounded-2xl border border-border bg-card px-[min(1.25rem,4vw)] py-5 sm:p-5">
     <h4 className="text-lg font-semibold tracking-tight text-foreground">{result.title}</h4>
     <ul className="space-y-3 text-ink-950">
       {result.statements.map((item, index) => <li key={index} className="min-w-0">
@@ -25,9 +25,9 @@ function Result({ result }: { result: V3VisitorViewResult }) {
           : <p className="font-medium leading-6">{item.text}</p>}
       </li>)}
     </ul>
-    <div className="rounded-xl bg-surface-50 p-4">
+    <div className="rounded-xl bg-surface-50 px-[min(1rem,3vw)] py-4 sm:px-4">
       <p className="mb-2 text-sm font-semibold text-foreground">Diese Bedingungen gelten</p>
-      <ul className="list-disc space-y-1 pl-5 text-sm leading-6 text-ink-950">
+      <ul className="list-disc space-y-1 pl-[min(1.25rem,6vw)] text-sm leading-6 text-ink-950 sm:pl-5">
         {result.conditions.map((text, index) => <li key={index}>{text}</li>)}
       </ul>
     </div>
@@ -72,7 +72,7 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
       <h2 id={`${id}-title`} className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Einreisebestimmungen</h2>
       <p className="max-w-2xl text-base leading-7 text-ink-950">Wähle dein Zielland und deine Staatsangehörigkeiten. Du erhältst die Angaben für jede Staatsangehörigkeit getrennt, mit ihren Bedingungen und amtlichen Quellen.</p>
     </header>
-    <form onSubmit={submit} noValidate className="grid min-w-0 grid-cols-1 gap-5 rounded-3xl border border-border bg-card p-5 sm:p-8">
+    <form onSubmit={submit} noValidate className="grid min-w-0 grid-cols-1 gap-5 rounded-3xl border border-border bg-card px-[min(1.25rem,4vw)] py-5 sm:p-8">
       <LandFeld id={`${id}-destination`} label="Zielland" value={destination} optional={false} searchable={false}
         onChange={(country) => changed(() => setDestination(country))} />
       <fieldset className="grid min-w-0 grid-cols-1 gap-3" aria-describedby={`${id}-citizenship-help`}>
@@ -89,7 +89,7 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
       </fieldset>
       <div className="min-w-0 space-y-2 border-t border-border pt-5">
         <button type="submit" disabled={!valid || state.phase === 'loading'} aria-describedby={!valid ? `${id}-selection-help` : undefined}
-          className="min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full bg-primary px-5 py-3 font-semibold text-primary-foreground transition-colors hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto">
+          className="min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full bg-primary px-[min(1.25rem,4vw)] py-3 font-semibold text-primary-foreground transition-colors hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-5">
           {state.phase === 'loading' ? 'Angaben werden geladen …' : 'Einreisebestimmungen anzeigen'}
         </button>
         {!valid ? <p id={`${id}-selection-help`} className="text-sm leading-6 text-ink-950">Bitte wähle ein Zielland und in jedem Feld eine Staatsangehörigkeit.</p> : null}
@@ -99,8 +99,8 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
       {state.phase === 'loading' ? 'Einreisebestimmungen werden geladen.' : state.phase === 'ready'
         ? state.message ?? `Ergebnisse für ${state.view.cells.length} Staatsangehörigkeiten geladen.` : state.phase === 'error' ? state.message : ''}
     </p>
-    {state.phase === 'loading' ? <p className="rounded-2xl bg-muted p-5 text-ink-950">Vorbereitete Angaben werden abgerufen …</p> : null}
-    {state.phase === 'error' ? <div className="min-w-0 space-y-2 rounded-2xl border border-border bg-muted p-5">
+    {state.phase === 'loading' ? <p className="rounded-2xl bg-muted px-[min(1.25rem,4vw)] py-5 text-ink-950 sm:p-5">Vorbereitete Angaben werden abgerufen …</p> : null}
+    {state.phase === 'error' ? <div className="min-w-0 space-y-2 rounded-2xl border border-border bg-muted px-[min(1.25rem,4vw)] py-5 sm:p-5">
       <h3 ref={heading} tabIndex={-1} className="font-semibold focus:outline-none">Abfrage fehlgeschlagen</h3>
       <p className="text-ink-950">{state.message}</p>
     </div> : null}
@@ -108,8 +108,8 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
       <div className="min-w-0 space-y-2">
         <h3 ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">Einreise nach {landAnzeigeText(state.view.input.destinationCountryCode)}</h3>
         <p className="text-sm leading-6 text-ink-950">Es gelten die jeweils angegebenen Bedingungen. Die Übersicht ist keine individuelle Einreisezusage.</p>
-        {state.message ? <p className="rounded-xl bg-muted p-3 text-sm leading-6 text-ink-950">{state.message}</p> : null}
-        {state.view.synthetic ? <p className="rounded-xl border border-border bg-citrus-300 p-3 text-sm font-semibold text-brand-900">Synthetische Testdaten · Keine echte Einreiseauskunft</p> : null}
+        {state.message ? <p className="rounded-xl bg-muted px-[min(0.75rem,3vw)] py-3 text-sm leading-6 text-ink-950 sm:px-3">{state.message}</p> : null}
+        {state.view.synthetic ? <p className="rounded-xl border border-border bg-citrus-300 px-[min(0.75rem,3vw)] py-3 text-sm font-semibold text-brand-900 sm:px-3">Synthetische Testdaten · Keine echte Einreiseauskunft</p> : null}
       </div>
       {state.view.cells.map((cell) => <section key={cell.country} className="grid min-w-0 grid-cols-1 gap-3" aria-label={`Staatsangehörigkeit ${landAnzeigeText(cell.country)}`}>
         <h3 className="text-lg font-semibold">Staatsangehörigkeit {landAnzeigeText(cell.country)}</h3>
