@@ -1,0 +1,30 @@
+{
+  "schema": "jetnity.m04.phase-a.author-delivery.v1",
+  "authorSession": "/root/m04_durable_jobs_writer",
+  "logicalAuthor": "Jetnity Official Truth V3 Durable Jobs1 \u2014 Codex Generation1",
+  "head": "14889b050bc6e8b814bc778730c80f70d20c0d47",
+  "files": [
+    {
+      "path": "M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e"
+    },
+    {
+      "path": "M04_PHASE_A_SOURCE_PINS_V1.json",
+      "bytes": 28544,
+      "sha256": "fe70d74f42638c1fb9b40304818fb6b278232752be038734a5ba5277a8001c11"
+    },
+    {
+      "path": "M04_PHASE_A_SELF_REVIEW_V1.md",
+      "bytes": 11029,
+      "sha256": "9eb56ec078c4a00dc76f0f2416e7379bfcd34b4fd8502d4ec02fc2d1daf4fb9d"
+    },
+    {
+      "path": "M04_PHASE_A_STATUS_V1.md",
+      "bytes": 6602,
+      "sha256": "54e5df45041a849d969653e07c6c9d20557cae033577e06676ad6f627b1c903a"
+    }
+  ],
+  "status": "STOP_FOR_ROOT_FREEZE",
+  "runtimePermission": false
+}

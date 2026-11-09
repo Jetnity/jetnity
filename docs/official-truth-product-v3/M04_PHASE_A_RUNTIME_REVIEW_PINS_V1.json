@@ -1,0 +1,646 @@
+{
+  "schema": "jetnity.m04.specialist.final-phase-a-review.v1",
+  "capturedAt": "2026-11-09T23:01:32.408757+00:00",
+  "reviewerSession": "/root/m04_uncertainty_advisory",
+  "authorSession": "/root/m04_durable_jobs_writer",
+  "role": "Read-only independent runtime, identity and lifetime design specialist",
+  "disposition": "NO_OPEN_RUNTIME_IDENTITY_LIFETIME_DESIGN_BLOCKERS",
+  "rootPass": false,
+  "runtimeAcceptance": false,
+  "dispatchPermission": false,
+  "baseline": {
+    "sourceMain": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+    "seed": "14889b050bc6e8b814bc778730c80f70d20c0d47",
+    "liveMainReportedByRoot": "be79ea2591e990111bfabea7ddf500023c20a188",
+    "liveMainIndependentlyReattested": false
+  },
+  "report": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/final-phase-a-review-v1.md",
+    "bytes": 14800,
+    "sha256": "be5b6db6cafd5ee5657d2b34d274a5cb8f4b642ff8f27d425fe1ca30fff85682"
+  },
+  "frozenDelivery": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_SOURCE_PINS_V1.json",
+      "bytes": 28544,
+      "sha256": "fe70d74f42638c1fb9b40304818fb6b278232752be038734a5ba5277a8001c11"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_SELF_REVIEW_V1.md",
+      "bytes": 11029,
+      "sha256": "9eb56ec078c4a00dc76f0f2416e7379bfcd34b4fd8502d4ec02fc2d1daf4fb9d"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_STATUS_V1.md",
+      "bytes": 6602,
+      "sha256": "54e5df45041a849d969653e07c6c9d20557cae033577e06676ad6f627b1c903a"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/receipt.json",
+      "bytes": 975,
+      "sha256": "0bdea0b9d161ac983f62724784d4197b0d6488938281e9c22b6519849e2ad7a7"
+    }
+  ],
+  "readCoverage": {
+    "previousCompletePlan": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/working-plan-snapshot-v2.md",
+      "bytes": 102615,
+      "sha256": "a98fc797fb0091ca58ae78b19e35007582df9950e6d0240f868c64313950fae6"
+    },
+    "finalPlan": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e"
+    },
+    "method": "Complete previously reviewed V2 plan plus complete exact final delta; complete final pin document, self-review and status; substantive protected-source reading retained from same session with queue post-CAS sequence reread. Truncated initial diff sections were reread in bounded exact ranges.",
+    "finalPlanLines": 562,
+    "changedHunks": 31,
+    "removedLines": 47,
+    "addedLines": 105,
+    "wholeFileHashingIsNotFullCodeReview": true
+  },
+  "closedFindings": [
+    {
+      "id": "R2-01",
+      "status": "RESOLVED_IN_DESIGN",
+      "planLines": [
+        462,
+        464,
+        466
+      ],
+      "subject": "Conservative post-terminal Held/database cap and exclusive same-receipt observation/effect custody"
+    },
+    {
+      "id": "R2-02",
+      "status": "RESOLVED_IN_DESIGN",
+      "planLines": [
+        120,
+        376,
+        381,
+        386
+      ],
+      "subject": "Actual evidence/history callback accounting and finite lane retirement"
+    },
+    {
+      "id": "R2-03",
+      "status": "RESOLVED_IN_DESIGN",
+      "planLines": [
+        122,
+        381,
+        382
+      ],
+      "subject": "Execution-processing scope distinct from producer termination and outer-owned failure transaction"
+    },
+    {
+      "id": "R2-04",
+      "status": "RESOLVED_IN_DESIGN",
+      "planLines": [
+        332,
+        445,
+        446,
+        452,
+        454,
+        456,
+        562
+      ],
+      "subject": "Exact original Claim/read/terminal-confirm continuation and private recovery attempt locator"
+    }
+  ],
+  "openBlockers": [],
+  "implementationAllocationsWithinExistingDesign": [
+    {
+      "id": "I-01",
+      "subject": "Retire unresolved-only continuation after validated committed terminal CAS before generic confirmed() post-CAS current read; never infer settlement from row-only or ambiguous ACK.",
+      "source": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "sourceLines": [
+        138,
+        150,
+        184,
+        186
+      ],
+      "newProtocolRequired": false
+    },
+    {
+      "id": "I-02",
+      "subject": "Seal original processing subtree after PREPARED; queue Complete and later E1 reopen/repeated I1 remain outer-owned, all subsequent evidence/history callbacks sharing invocation ledger and lane retirement.",
+      "planLines": [
+        21,
+        120,
+        122,
+        376,
+        381,
+        386,
+        476
+      ],
+      "newScopeRequired": false
+    }
+  ],
+  "repositorySourceIdentityChecks": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/AGENTS.md",
+      "bytes": 21982,
+      "sha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
+      "repositoryPath": "AGENTS.md",
+      "category": "governance",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/JETNITY_START_HERE.md",
+      "bytes": 96406,
+      "sha256": "8b6ff0563a0aef871fb5f6469f99f15f11ec1853358591e8fda43a8fe1ca5cdf",
+      "repositoryPath": "JETNITY_START_HERE.md",
+      "category": "governance",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+      "bytes": 26159,
+      "sha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
+      "repositoryPath": "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+      "category": "governance",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/ACTIVE_WORK_STATUS.md",
+      "bytes": 134379,
+      "sha256": "fabd04dcd4dfaf82c58b3edf326af89694aaa78e9352e8dfefc9793649100538",
+      "repositoryPath": "docs/ACTIVE_WORK_STATUS.md",
+      "category": "governance",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/.jetnity/operating-mode.json",
+      "bytes": 6718,
+      "sha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+      "repositoryPath": ".jetnity/operating-mode.json",
+      "category": "governance",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_TASK_V1.md",
+      "bytes": 25712,
+      "sha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
+      "repositoryPath": "docs/official-truth-product-v3/M04_TASK_V1.md",
+      "category": "task",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_HANDOFF_V1.md",
+      "bytes": 4571,
+      "sha256": "8bb4717c1f1223b1987eccbdbafef9a79e02c803a8c170a8403770fecd3a4299",
+      "repositoryPath": "docs/official-truth-product-v3/M04_HANDOFF_V1.md",
+      "category": "task",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_INPUT_INDEX_V1.md",
+      "bytes": 2871,
+      "sha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
+      "repositoryPath": "docs/official-truth-product-v3/M04_INPUT_INDEX_V1.md",
+      "category": "task",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_INPUT_PHASE_A_OPEN_POINTS_V1.md",
+      "bytes": 22084,
+      "sha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
+      "repositoryPath": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_OPEN_POINTS_V1.md",
+      "category": "advisory",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_ADVISORY_V1.md",
+      "bytes": 22015,
+      "sha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
+      "repositoryPath": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_ADVISORY_V1.md",
+      "category": "advisory",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_INPUT_PHASE_A_SOURCE_PINS_V1.json",
+      "bytes": 3279,
+      "sha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
+      "repositoryPath": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_SOURCE_PINS_V1.json",
+      "category": "advisory",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_SOURCE_PINS_V1.json",
+      "bytes": 7325,
+      "sha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
+      "repositoryPath": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_SOURCE_PINS_V1.json",
+      "category": "advisory",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/MI1_POST_MERGE_CLOSURE_V1.md",
+      "bytes": 7343,
+      "sha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
+      "repositoryPath": "docs/official-truth-product-v3/MI1_POST_MERGE_CLOSURE_V1.md",
+      "category": "continuity",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/contract.ts",
+      "bytes": 61555,
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/contract.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/regulierungs-anwendbarkeit.ts",
+      "bytes": 108170,
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "repositoryPath": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/rule-claims.ts",
+      "bytes": 46056,
+      "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+      "repositoryPath": "lib/readiness/rule-claims.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-research-request.ts",
+      "bytes": 13791,
+      "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
+      "repositoryPath": "lib/readiness/official-truth-research-request.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/domain.ts",
+      "bytes": 3637,
+      "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "repositoryPath": "lib/readiness/domain.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/country/katalog.ts",
+      "bytes": 2499,
+      "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+      "repositoryPath": "lib/country/katalog.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/types/trips.ts",
+      "bytes": 17666,
+      "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+      "repositoryPath": "types/trips.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "bytes": 3443,
+      "sha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "bytes": 19888,
+      "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "bytes": 8739,
+      "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "bytes": 5699,
+      "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "bytes": 22886,
+      "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "bytes": 23971,
+      "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/import/interface.ts",
+      "bytes": 2538,
+      "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "bytes": 20238,
+      "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/contract.ts",
+      "bytes": 10485,
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 6696,
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 32450,
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "bytes": 3840,
+      "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "bytes": 2934,
+      "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "bytes": 12288,
+      "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "bytes": 10348,
+      "sha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "bytes": 3701,
+      "sha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "bytes": 22054,
+      "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "category": "runtime",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "bytes": 88575,
+      "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+      "repositoryPath": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "category": "sql_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "bytes": 3189,
+      "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "repositoryPath": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "category": "sql_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "bytes": 5181,
+      "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+      "repositoryPath": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "bytes": 33866,
+      "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "repositoryPath": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "bytes": 52631,
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "repositoryPath": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "category": "sql_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "bytes": 21566,
+      "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "repositoryPath": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "category": "sql_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "bytes": 6536,
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "repositoryPath": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "bytes": 13880,
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "repositoryPath": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "bytes": 77127,
+      "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "repositoryPath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "bytes": 154,
+      "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "category": "test_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/package.json",
+      "bytes": 6467,
+      "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+      "repositoryPath": "package.json",
+      "category": "ci_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/.github/workflows/ci.yml",
+      "bytes": 12329,
+      "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+      "repositoryPath": ".github/workflows/ci.yml",
+      "category": "ci_source",
+      "matchesDeclaredPin": true,
+      "coverage": "Local byte identity reverified; substantive source-reading coverage is described separately in the report and prior same-session reviews."
+    }
+  ],
+  "specialistInputIdentityChecks": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-sql-phase-a-review/SQL_BOUNDARY_ADVISORY_V1.md",
+      "bytes": 14553,
+      "sha256": "37a3274f9967bb82e9fa6bb0813a9c24619bfe7e00637211e46dcffc9c728218",
+      "matchesDeclaredPin": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/checklist-v1.md",
+      "bytes": 9734,
+      "sha256": "291e717855caa362fb2e5f76044cfca18cf1f3907cbfb6c1c131ce4695319c35",
+      "matchesDeclaredPin": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/native-identity-notes-v1.md",
+      "bytes": 7392,
+      "sha256": "216445a94cd8ecb87ac47f04491f015a533ab2bbef095b2f6b7719ed842b1a0f",
+      "matchesDeclaredPin": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/canonical-original-restriction-addendum-v1.md",
+      "bytes": 7037,
+      "sha256": "0844ef642e654a9fc10f3044a86072a54b31a588125d2c638c34a8939eeb76af",
+      "matchesDeclaredPin": true
+    }
+  ],
+  "counts": {
+    "repositoryPinsVerified": 49,
+    "specialistPinsVerified": 4,
+    "mismatches": 0
+  },
+  "priorSameSessionReview": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/working-plan-review-v2.md",
+    "bytes": 12672,
+    "sha256": "189a92fba6f5cd1c009bc1f972e9449a68da1f57c7d78969a62f27f178b85d94"
+  },
+  "actions": {
+    "sourceEdits": 0,
+    "tests": 0,
+    "nativeExecutions": 0,
+    "sockets": 0,
+    "gitOperations": 0,
+    "networkOperations": 0,
+    "hostedOperations": 0,
+    "providerCalls": 0,
+    "authLogOrCredentialOperations": 0,
+    "readyOrMerge": 0,
+    "forbiddenReadbackRetryOrReroute": 0,
+    "outputWrites": [
+      "recovery/m04-runtime-phase-a-review/final-phase-a-review-v1.md",
+      "recovery/m04-runtime-phase-a-review/final-phase-a-review-v1.json"
+    ]
+  },
+  "limitations": [
+    "Design review only. Full native, runtime, parity, wire-size and CI proofs remain future.",
+    "Independent SQL specialist and Root own full SQL acceptance.",
+    "Live service state and unchanged protected inputs on live main are Root-reported, not independently queried here.",
+    "Method NOT_APPROVED, #1139 NOT_RELEASE_READY, #917 refusal and all Product-Owner holds unchanged."
+  ],
+  "nextAction": "STOP; Root alone may freeze or dispatch."
+}
