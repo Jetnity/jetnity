@@ -1,12 +1,69 @@
-# U1 — Selbstprüfung und Übergabe R4
+# U1 — Selbstprüfung und Übergabe R5
 
-## Aktueller Status
+## Aktueller Status R5
+
+**Enger responsiver Reviewfix geliefert; neuer tatsächlicher UI-CI-Lauf und unabhängige Abnahme offen. STOP. Kein Ready-/Merge-/Aktivierungs-PASS.**
+
+Gleicher Autor **Jetnity Official Truth V3 Visitor Cache 1 — Codex Generation 1**, tatsächliche Session `/root/v3_visitor_writer`, kein Cursor-Agent. Auftrag: `U1_REVIEW_R5_TASK.md` und [#1165 Kommentar 6730040798](https://github.com/Jetnity/jetnity/pull/1165#issuecomment-6730040798). Basis-HEAD **`20a4e497a4a23c7aa972d13352c155729f95a7ab`**, Tree **`7c0aebdc53285a31637029e8a534711b35ceefe3`**, Branch `feat/official-truth-v3-visitor-cache-1-20261109`. Vor R5 war nur der von Root bereitgestellte Task untracked. `U1_REVIEW_R5_FIX_PLAN.md` wurde vor Code persistiert, von Root gelesen und ausdrücklich freigegeben.
+
+## Tatsächlicher R5-Befund und Korrektur
+
+Der neue reguläre Run **42545059046**, UI-Job **128928236799**, verwendete den sauberen Checkout **77096cfea008ee5164a834306ef9d0dcfec71293** für Source **20a4e497a4a23c7aa972d13352c155729f95a7ab**. Google Chrome **156.0.8078.79** startete einmal regulär sandboxed. Der R4-Label-/Tastaturablauf und die erste Mixed-Antwort inklusive Fokus, Originalquellenzeit und Bedingungen bestanden tatsächlich. Der frühere Labelbefund ist damit konkret nachgeprüft.
+
+Die erste responsive Prüfung **mixed-280** scheiterte anschließend: Viewport **280 px**, Dokumentbreite **386 px**, Produkt-Selectbreiten **328,484375 px**. Null vollständige Layoutfälle bestanden. Autor las Task, Audit und Runbindung selbst und betrachtete den echten Screenshot in `official-truth-v3-analysis/u1-20a4-ci-ui/`. PNG-SHA256 selbst nachgeprüft: **`4bfc7a6c8a57b8f582db4e6a0f7ebd3b40b669eb84553b9ecbdbf71c843b3525`**. Root dokumentierte für Artifact 13642773993 den ZIP-SHA256 `53f20a75b5ae91aa9191222a8ac6cb09cf8aa895d4838651a43e2ec58a2ad539`.
+
+Die Codeursache liegt in den impliziten `auto`-Spalten der lokalen verschachtelten Grids. `min-w-0` am Container hebt deren intrinsische Mindestgröße nicht auf; die ungetrennte Überschrift zieht das äußere Grid breit. `break-words` bedeutet im installierten Tailwind `overflow-wrap: break-word` und senkt diese intrinsische Mindestgröße nicht. LandFeld selbst hat bereits minimale Breite null und volle begrenzte Breite; seine zu großen Selects folgen der zu großen Spur. Die vorhandenen Country- und globalen CSS-Dateien wurden gelesen und bleiben unverändert.
+
+**Einzige Codeänderung:** `components/readiness/OfficialTruthVisitorV3.tsx`. Lokale einspaltige Grids definieren jetzt `minmax(0, 1fr)` über `grid-cols-1`; die vorhandene Desktop-Zeile behält ihre zweispaltige Form. Lokale Wrapper und die Legende können innerhalb der Spalte schrumpfen, Buttons und Links bleiben maximal containerbreit. Die Section vererbt `overflow-wrap: anywhere`; bisherige einzelne `break-words`-Overrides sind entfernt. Mehrzeilige Beschriftungen bleiben vollständig, Touchhöhen und sämtliche Schriftgrößen bleiben erhalten. Kein Clipping, kein versteckter Überlauf, keine Inhaltskürzung oder kleinere Schrift. Wortlaut, Fakten, Bedingungen, Quelle, Abrufzeit, Eingabe-/Fokus-/Pollinglogik sind unverändert.
+
+## R5-Nachprüfung
+
+| Prüfung | Tatsächliches Ergebnis |
+| --- | --- |
+| Bestehende U1-/CI-Vertragstests | **47/47 PASS**, 6 Suites, 0 Fail/Skip/Cancel/Todo; **1400,253122 ms**. |
+| Repository-TypeScript | **PASS, Exit 0**. |
+| Harness-TypeScript | **PASS, Exit 0**. |
+| Komponenten-ESLint | **PASS, Exit 0**. |
+| Vorhandener Bundle-/Loopback-HTTP-Smoke | **PASS**, sechs vorhandene Fälle einschließlich Pending→Accepted nach synthetischer Cachebefüllung. |
+| Diff-/Scopeprüfung | **PASS**. Nur lokale Produktkomponente und U1-R5-Plan/Handoff/Manifest geändert; Root-Task bleibt separat. |
+| Harness, Matrix, CI, Runtime, shared Dateien | **Bytegleich zur Basis** per Git-Vergleich; R4-Label erhalten. |
+| Lokaler Browser | **Nicht gestartet**. |
+| Neuer vollständiger Browser-/PNG-/UI-Nachweis | **Offen**, auf dem neuen veröffentlichten Head erforderlich. |
+
+Befehle im U1-Worktree mit Node22 (`v22.23.4`, `/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node`):
+
+```bash
+node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
+node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false
+node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false -p scripts/official-truth-product-v3-ui/tsconfig.json
+node node_modules/eslint/bin/eslint.js components/readiness/OfficialTruthVisitorV3.tsx
+node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs --smoke
+git diff --check
+```
+
+Das bestehende Tailwind-Bundle meldet unverändert alte Browserslist-Metadaten; dies führte zu keinem Fehler und wurde nicht durch eine neue Installation verändert. Der vorhandene Runtime-Proxy warnt über sein experimentelles Node-Feature. Keine Browserersatzabnahme, neue Testmatrix, neue Zeitmessung oder Production-Build-Behauptung.
+
+## R5-Übergabe und verbleibendes Gate
+
+`U1_MANIFEST.md` enthält die vollständigen aktuellen U1-Hashes einschließlich des R5-Plans. Vier eigene Dateien bilden den R5-Diff: Produktkomponente, R5-Plan, Handoff und Manifest. Der Root-eigene `U1_REVIEW_R5_TASK.md` wurde weder bearbeitet noch als eigene Lieferung vereinnahmt. Die S0-Vertragsdatei bleibt SHA256 **`871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`**.
+
+Die responsive Abnahme bleibt blockiert, bis Root einen neuen Head veröffentlicht und die **unveränderte** CI-Browsermatrix tatsächlich besteht: alle acht Breiten von 280 bis 1280 px, Landscape 844×390 und 320 px mit 200 % Text, zusätzlich vorhandene Fokus-/Privacy-/Fehler-/Pollinginteraktionen. Root prüft die echten PNGs unabhängig. Die bisherigen lokalen Prüfungen belegen nur diesen Arbeitsbaum auf Basis 20a4 und sind kein Exact-Head-TL-PASS. Ein weiterer konkreter Befund bleibt bei demselben Autor/derselben Session.
+
+Query-/Cache-/Methoden-/Queueports bleiben ungebunden, E1-Schnittstelle unverändert. Kein öffentlicher Einstieg, Commit, Push, GitHubwrite, Ready, Merge, Folgeslice, DB-/Auth-/Provider-/Production-Aufruf oder #917-Schritt. D0-/Methodenfreigabe bleibt separat. **STOP bestätigt.**
+
+---
+
+## Archivierte R4-Übergabe vor dem tatsächlichen 20a4-UI-Lauf
+
+Dieser Abschnitt ist historisch. Die damals offene Nachprüfung ist durch den oben belegten echten Lauf und den R5-Fix konkretisiert; die gesamte UI-Abnahme bleibt weiterhin offen.
+
+### Status zum damaligen R4-Abschluss
 
 **Enger Reviewfix geliefert; neuer tatsächlicher UI-CI-Lauf und unabhängige Abnahme offen. STOP. Kein Ready-/Merge-/Aktivierungs-PASS.**
 
 Gleicher Autor **Jetnity Official Truth V3 Visitor Cache 1 — Codex Generation 1**, tatsächliche Session `/root/v3_visitor_writer`, kein Cursor-Agent. Auftrag [#1165 Review R4, Kommentar 6729875979](https://github.com/Jetnity/jetnity/pull/1165#issuecomment-6729875979). Basis **`b8a65f8b4d341768f69df01ba1ca96f8eba4ee14`**, Tree `e94bec8d4d987973e924053dbc77eeb7a5c250e9`, Branch `feat/official-truth-v3-visitor-cache-1-20261109`. Der Worktree war vor R4 sauber. Plan vor Code persistiert und ausdrücklich durch Root bestätigt; siehe `U1_REVIEW_R4_FIX_PLAN.md`.
 
-## Tatsächlicher neuer Befund und Korrektur
+### Tatsächlicher neuer Befund und Korrektur
 
 Im regulären CI-Run **42543765403**, UI-Job **128924237021**, startete sandboxed Google Chrome **156.0.8078.79** erfolgreich. Checkout `14b2c419cf5852d21bd231e02184c8153a039584`, Source b8a65, sauber. Anschließend scheiterte der unveränderte exakte `getByLabel('Testfall', { exact: true })` nach Tab mit 30-s-Timeout. Null abgeschlossene Interaktions-/Layoutfälle; ein echter Fehlerscreenshot. Dies ist ein tatsächlicher Harnessfehler, kein Browserstartproblem.
 
@@ -16,7 +73,7 @@ Die Ursache wurde anhand des installierten Playwright-Codes bestätigt: `getElem
 
 **Einzige Codeänderung:** `scripts/official-truth-product-v3-ui/mount.tsx` erhält ein separates Label und Select mit gemeinsamem React-`useId`, `htmlFor` und `id`. Der zugeordnete Labelknoten enthält ausschließlich `Testfall`; Wrapper, Darstellung und Options bleiben erhalten. Keine zusätzliche ARIA-Ersatzbezeichnung. Keine Änderung an `run.mjs`, exakten Label-/Keyboard-/Fokus-/Layout-/Privacy-/Pollingassertions, Fristen, Launchoptionen, CI-Familien, Produktkomponente oder E1-Schnittstelle.
 
-## R4-Nachprüfung
+### R4-Nachprüfung
 
 | Prüfung | Ergebnis |
 | --- | --- |
@@ -38,7 +95,7 @@ node --import ./scripts/server-only-test-register.mjs --import tsx scripts/offic
 
 Keine neue Test- oder DOM-Ersatzprüfung wurde zur UI-Abnahme erklärt. Die echte vollständige Matrix bleibt unverändert. Der alte Screenshot zeigt die lange Produktüberschrift randnah; die schmalen Viewports wurden noch nicht geprüft. Root bestätigte ausdrücklich, weitere echte Layoutbefunde im nächsten CI-Lauf zu beurteilen und anschließend in derselben Session zu korrigieren. Kein vorgezogener Layout-PASS oder verdecktes Abschwächen von Assertions.
 
-## Übergabe und Grenzen
+### Übergabe und Grenzen
 
 `U1_MANIFEST.md` enthält die aktuellen vollständigen U1-Dateihashes einschließlich des R4-Plans. Nur Mount, R4-Plan, Handoff und Manifest bilden den R4-Diff. S0-Vertragscode, shared Guards, I1/M1/E1-Schnittstellen und Workflow bleiben unverändert. Alle Produktports bleiben ungebunden. Keine DB-/Auth-/Provider-/Production-Aktion, keine neuen Kosten, kein #917-Schritt. Kein eigener Commit/Push/GitHubwrite/Ready/Merge und keine selbstständige Folgearbeit.
 

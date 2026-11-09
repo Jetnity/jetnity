@@ -1,13 +1,13 @@
-# U1 — Liefermanifest R4
+# U1 — Liefermanifest R5
 
-Basis-HEAD `b8a65f8b4d341768f69df01ba1ca96f8eba4ee14`, Tree `e94bec8d4d987973e924053dbc77eeb7a5c250e9`. Dieses Manifest umfasst die gesamte U1-Lieferung einschließlich unveränderter R2/R3-Dateien. Der enge R4-Diff besteht ausschließlich aus dem isolierten Mount, R4-Plan, Handoff und diesem Manifest. Alle R4-Änderungen liegen uncommittet zur Root-Prüfung vor. Kein eigener Commit oder Exact-Head-TL-PASS; das Manifest schließt sich selbst aus.
+Basis-HEAD `20a4e497a4a23c7aa972d13352c155729f95a7ab`, Tree `7c0aebdc53285a31637029e8a534711b35ceefe3`. Dieses Manifest umfasst die gesamte U1-Lieferung einschließlich unveränderter R2/R3/R4-Dateien. Der enge R5-Diff besteht ausschließlich aus Produktkomponente, R5-Plan, Handoff und diesem Manifest. Die Änderungen liegen uncommittet zur Root-Prüfung vor. Kein eigener Commit oder Exact-Head-TL-PASS; das Manifest schließt sich selbst aus.
 
-S0-Vertragscode unverändert, SHA256 `871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`. Root besitzt gemeinsame Guards/TASK-/Startupdateien; diese wurden im R4 nicht geändert.
+S0-Vertragscode unverändert, SHA256 `871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`. Root besitzt gemeinsame Guards/TASK-/Startupdateien; diese wurden in R5 nicht geändert. Der von Root bereitgestellte `U1_REVIEW_R5_TASK.md` ist keine eigene Implementierungsdatei und steht separat im Arbeitsbaum. Harness samt R4-Label, gesamte Browsermatrix, CI, Controller/Query/Presenter und shared Country/CSS bleiben bytegleich zur Basis.
 
 | Datei | SHA256 | Bytes |
 | --- | --- | ---: |
 | `.github/workflows/ci.yml` | `b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb` | 12329 |
-| `components/readiness/OfficialTruthVisitorV3.tsx` | `6a0a7ea1989e4f13b8abb8e9546cb5bc2b71ada0953a421600a6a86e74fa9df0` | 9466 |
+| `components/readiness/OfficialTruthVisitorV3.tsx` | `849536e878d4b072f94670c0cbfe457aa34682442e535d6f777ee5b26755f432` | 9630 |
 | `lib/readiness/official-truth-product-v3/visitor/controller.test.ts` | `821bc479a89cbd8dafe8e084ac7d505be68929a2dc58527d701d4fbba04361f7` | 15732 |
 | `lib/readiness/official-truth-product-v3/visitor/controller.ts` | `d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf` | 9573 |
 | `lib/readiness/official-truth-product-v3/visitor/presentation.test.ts` | `898d95a077b33bed15e29eb593faf3609aaadaaba4d4609d6f0a8b6edcab3688` | 6126 |
@@ -26,6 +26,7 @@ S0-Vertragscode unverändert, SHA256 `871b7eb7f4863fda0777593677b9bc265a0b6d22df
 | `docs/official-truth-product-v3/U1_IMPLEMENTATION_PLAN.md` | `6bcff6a5b4c6e1068d75585b286cbd805031072256187f4c20f6eed39f1565e3` | 7138 |
 | `docs/official-truth-product-v3/U1_CONTRACT.md` | `a8aa3c6069173465beb0885459c15a568e30d47427a866d69ce6d409784e2ef6` | 10489 |
 | `docs/official-truth-product-v3/U1_REVIEW_R4_FIX_PLAN.md` | `2c92ec39db02e4ad8fc84f995e982d6e91c0e10654b71868ba2ffc275d89240f` | 4505 |
-| `docs/official-truth-product-v3/U1_SELF_REVIEW_HANDOFF.md` | `b2ff851962eb1af75d34f56ae346509839ecc4aa0f3ca2ed6576ef781206e88d` | 20560 |
+| `docs/official-truth-product-v3/U1_REVIEW_R5_FIX_PLAN.md` | `e28803505ed4fa95bb9e51cc5cd566af2757ac4662552e77484ad09af66c33d5` | 6783 |
+| `docs/official-truth-product-v3/U1_SELF_REVIEW_HANDOFF.md` | `2b47cddaf1dacb8afc07304b80acfc864806291de94bec9a0639cb39ce162383` | 27253 |
 
-21 Dateien gehasht, zusätzlich dieses Manifest. Keine DB-/Provider-/Auth-/Production-Aktion. Neuer tatsächlicher CI-/PNG-/UI-Nachweis erforderlich. STOP.
+22 Dateien gehasht, zusätzlich dieses Manifest. 47/47 bestehende Tests, beide Typprüfungen, Lint, Bundle-/HTTP-Smoke und Diffprüfung bestanden. Kein lokaler Browserstart. Neuer tatsächlicher CI-/PNG-/UI-Nachweis bleibt erforderlich; responsive Abnahme offen. Keine DB-/Provider-/Auth-/Production-Aktion. STOP.
