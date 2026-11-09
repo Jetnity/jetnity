@@ -4,7 +4,8 @@ import { Check, MapPin } from 'lucide-react'
 import type { RentalStation } from '@/lib/providers/discovercars/search/contract'
 import { FIELD, rentalRequest } from './client'
 
-export default function StationField({ label, value, query, onQuery, onSelect }: {
+export default function StationField({ label, value, query, onQuery, onSelect, nurBeiFokus = false }: {
+  nurBeiFokus?: boolean
   label: string; value: RentalStation | null; query: string
   onQuery: (value: string) => void; onSelect: (value: RentalStation) => void
 }) {
@@ -14,8 +15,9 @@ export default function StationField({ label, value, query, onQuery, onSelect }:
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
   const input = useRef<HTMLInputElement>(null)
+  const sucheAktiv = !nurBeiFokus || open
   useEffect(() => {
-    if (value || query.trim().length < 2) return
+    if (value || query.trim().length < 2 || !sucheAktiv) return
     const controller = new AbortController()
     const timer = setTimeout(async () => {
       setMessage('Orte werden gesucht …')
@@ -28,7 +30,7 @@ export default function StationField({ label, value, query, onQuery, onSelect }:
       } catch { if (!controller.signal.aborted) setMessage('Orte konnten nicht geladen werden. Bitte gib den Ort erneut ein.') }
     }, 350)
     return () => { clearTimeout(timer); controller.abort() }
-  }, [query, value])
+  }, [query, value, sucheAktiv])
   const select = (station: RentalStation) => { onSelect(station); setOptions([]); setOpen(false); setMessage(''); setActive(-1); input.current?.focus() }
   return <div className="relative min-w-0" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}>
     <label htmlFor={id} className="mb-1 block text-sm font-medium text-brand-800">{label}</label>

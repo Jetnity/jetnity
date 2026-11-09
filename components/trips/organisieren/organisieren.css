@@ -1,0 +1,779 @@
+/* The search shares the workspace navigation. The hero and form use the approved travel view. */
+[data-reisesuche] > div {
+  max-width: none;
+}
+.workspace-content [data-reisesuche] > div {
+  padding-inline: 0;
+  padding-top: 0;
+}
+.org-workspace {
+  --org-ink: #153a33;
+  --org-muted: #506760;
+  --org-line: #d9e2da;
+  --org-bg: #f5f7f2;
+  --org-white: #fff;
+  min-width: 0;
+  grid-column: 1/-1;
+  background: var(--org-bg);
+  color: var(--org-ink);
+}
+[data-workspace-theme='green'] .org-workspace {
+  --org-ink: var(--workspace-ink);
+  --org-muted: var(--workspace-muted);
+  --org-white: var(--workspace-panel);
+  --org-bg: var(--workspace-bg);
+  --org-line: var(--workspace-edge);
+}
+.org-wrap {
+  width: min(1200px, calc(100% - 72px));
+  margin-inline: auto;
+}
+.org-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #163c34;
+  color: white;
+  min-height: 252px;
+}
+.org-hero > img {
+  position: absolute;
+  inset: 0 0 0 auto !important;
+  width: 68% !important;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.org-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    #113a32 8%,
+    #123a33 29%,
+    rgba(18, 56, 48, 0.9) 42%,
+    rgba(18, 52, 44, 0.53) 62%,
+    rgba(14, 39, 34, 0.08) 88%
+  );
+}
+.org-heading {
+  padding-block: 27px 55px;
+}
+.org-kicker,
+.org-meta,
+.org-meta > span,
+.org-tabs button,
+.org-go,
+.org-cardactions a,
+.org-cardactions button,
+.org-maphead strong,
+.org-actgrid a,
+.org-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.org-kicker {
+  color: #e0edc4;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.135em;
+}
+.org-heading h1 {
+  color: #fff;
+  font-size: clamp(44px, 5vw, 66px);
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+  margin: 6px 0 9px;
+  overflow-wrap: anywhere;
+}
+.org-route {
+  font-size: 16px;
+  font-weight: 550;
+  overflow-wrap: anywhere;
+}
+.org-route i {
+  color: #bdd6c6;
+  font-style: normal;
+  padding-inline: 4px;
+}
+.org-meta {
+  flex-wrap: wrap;
+  gap: 16px 23px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #f1f6ed;
+}
+.org-meta svg {
+  width: 15px;
+  height: 15px;
+}
+.org-body {
+  position: relative;
+  margin-top: -35px;
+  padding-bottom: 24px;
+}
+.org-tabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 5px;
+  padding: 13px 20px;
+  background: var(--org-white);
+  border: 1px solid var(--org-line);
+  border-radius: 18px 18px 0 0;
+  scroll-margin-block-start: 5rem;
+}
+.org-tabs button {
+  min-height: 39px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.org-tabs button[aria-selected='true'],
+.org-go {
+  background: #153a33;
+  color: white;
+}
+.org-tabs button:hover:not([aria-selected='true']) {
+  background: var(--org-bg);
+}
+.org-tabs svg {
+  width: 18px;
+  height: 18px;
+}
+.org-workspace :is(button, a, select, input, summary):focus-visible {
+  outline: 3px solid #6b9f8e;
+  outline-offset: 2px;
+}
+.org-form {
+  position: relative;
+  min-width: 0;
+  padding: 19px 22px 21px;
+  border: 1px solid var(--org-line);
+  border-top: 0;
+  border-radius: 0 0 18px 18px;
+  background: var(--org-white);
+  box-shadow: 0 7px 25px #112f220c;
+}
+.org-formtop,
+.org-sectionhead,
+.org-cardactions,
+.org-maphead,
+.org-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.org-formtop {
+  margin-bottom: 14px;
+  min-height: 31px;
+}
+.org-formtop h2,
+.org-results > h2,
+.org-sectionhead h2 {
+  font-size: 24px;
+  line-height: 1.17;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+}
+.org-formtop > select,
+.org-sectionhead select,
+.org-sub select,
+.org-sub input:not([type='checkbox']) {
+  border: 1px solid var(--org-line);
+  background: var(--org-white);
+  color: var(--org-ink);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+.org-formtop > select {
+  border-radius: 18px;
+}
+.org-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1.2fr)) repeat(2, minmax(0, 0.94fr)) minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+}
+.org-fields.org-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+}
+.org-rentalfields {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+}
+.org-field,
+.org-station {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 8px 12px;
+  min-height: 61px;
+  border: 1px solid var(--org-line);
+  border-radius: 10px;
+  background: var(--org-white);
+}
+.org-field:focus-within,
+.org-station:focus-within {
+  border-color: #739584;
+}
+.org-field > span,
+.org-field > label,
+.org-station label {
+  font-size: 11px;
+  font-weight: 610;
+  color: var(--org-muted);
+}
+.org-field :is(select, input),
+.org-station input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  outline: 0;
+  color: var(--org-ink);
+  font-size: 14px;
+  font-weight: 620;
+  letter-spacing: -0.015em;
+  line-height: 1.45;
+  padding: 1px 0;
+}
+.org-field input[type='date'] {
+  min-height: 22px;
+}
+.org-station input {
+  min-height: 24px;
+  padding-right: 1.4rem;
+}
+.org-station .absolute svg {
+  height: 15px;
+}
+.org-station p {
+  font-size: 10px;
+  line-height: 1.25;
+}
+.org-fields .org-go {
+  padding: 0 19px;
+  min-height: 44px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 650;
+  justify-content: center;
+}
+.org-go svg {
+  height: 18px;
+  width: 18px;
+}
+.org-go:disabled {
+  opacity: 0.65;
+}
+.org-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: var(--org-muted);
+  font-size: 12px;
+}
+.org-sub label,
+.org-sub .org-field {
+  display: inline-flex;
+  flex-flow: row;
+  align-items: center;
+  gap: 6px;
+}
+.org-sub .org-field {
+  min-height: 0;
+  border: 0;
+  padding: 0;
+}
+.org-sub .org-field > div {
+  max-width: 9rem;
+}
+.org-sub .org-field input {
+  border: 1px solid var(--org-line);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 12px;
+}
+.org-sub input[type='checkbox'] {
+  accent-color: #153a33;
+}
+.org-rentalsub input[type='number'] {
+  width: 5rem;
+}
+.org-rentalsub select {
+  max-width: 11rem;
+}
+.org-form p[role='alert'] {
+  color: #a44528;
+  margin-top: 12px;
+  font-size: 14px;
+}
+.org-results {
+  margin-top: 26px;
+}
+.org-results h3 {
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  font-weight: 650;
+}
+.org-sectionhead {
+  margin-bottom: 14px;
+}
+.org-sectionhead p,
+.org-results > p,
+.org-mapfoot p,
+.org-hoteltext p,
+.org-actgrid p,
+.org-item p {
+  color: var(--org-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.org-sectionhead small,
+.org-note,
+.org-footer {
+  color: var(--org-muted);
+  font-size: 12px;
+}
+.org-stages,
+.org-actgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.org-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 14px;
+  text-align: left;
+  color: white;
+  height: 158px;
+  background: #18392f;
+}
+.org-stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform 0.25s;
+}
+.org-stage:hover img {
+  transform: scale(1.03);
+}
+.org-stage::before {
+  position: absolute;
+  content: '';
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(0deg, #051a13de, #05141210 80%);
+}
+.org-stagecaption {
+  position: absolute;
+  bottom: 17px;
+  left: 19px;
+  right: 45px;
+}
+.org-stagecaption small {
+  font-size: 11px;
+}
+.org-stagecaption b {
+  display: block;
+  font-size: 27px;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+.org-circle {
+  position: absolute;
+  right: 15px;
+  bottom: 18px;
+  border: 1px solid #ffffff80;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+}
+.org-hotelgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(270px, 0.82fr);
+  gap: 18px;
+  align-items: start;
+}
+.org-list {
+  display: grid;
+  gap: 11px;
+}
+.org-hotel,
+.org-item,
+.org-actgrid article,
+.org-mapbox {
+  border: 1px solid var(--org-line);
+  background: var(--org-white);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.org-hotel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  scroll-margin-top: 6rem;
+}
+.org-selected {
+  border-color: #749a83;
+  box-shadow: inset 0 0 0 1px #749a83;
+}
+.org-thumb {
+  position: relative;
+  flex: none;
+}
+.org-thumb img {
+  width: 152px;
+  height: 107px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.org-thumb small {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  font-size: 9px;
+  background: #153a33;
+  color: white;
+  padding: 2px;
+}
+.org-hoteltext {
+  flex: 1;
+  min-width: 0;
+}
+.org-pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  background: #eaf2e8;
+  color: #315646;
+  font-weight: 650;
+}
+.org-cardactions {
+  margin-top: 7px;
+  flex-wrap: wrap;
+}
+.org-cardactions button,
+.org-actgrid a {
+  font-size: 12px;
+  font-weight: 650;
+  min-height: 31px;
+}
+.org-cardactions a {
+  background: #ecf2eb;
+  color: #153a33;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 630;
+}
+.org-mapbox {
+  position: sticky;
+  top: 5rem;
+}
+.org-maphead,
+.org-mapfoot {
+  padding: 12px 13px;
+  font-size: 13px;
+}
+.org-maphead div {
+  display: flex;
+  gap: 3px;
+}
+.org-maphead button {
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+.org-maphead button[aria-pressed='true'] {
+  background: #153a33;
+  color: white;
+}
+.org-mapcanvas {
+  display: block;
+  width: 100%;
+  height: 275px;
+  isolation: isolate;
+  background: #edf1e7;
+  border: 0;
+  z-index: 0;
+}
+.org-marker {
+  border: 2px solid white;
+  border-radius: 50% 50% 50% 4px;
+  background: #153a33;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 1px 5px #153a3350;
+}
+.org-mapfoot b {
+  font-size: 15px;
+}
+.org-results .org-note {
+  font-size: 12px;
+  margin-top: 13px;
+}
+.org-footer {
+  margin-top: 21px;
+  align-items: flex-start;
+}
+.org-footer > a {
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.org-details {
+  min-width: 0;
+  flex: 1;
+}
+.org-details summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.org-details[open] {
+  color: var(--org-ink);
+}
+.org-activityfields {
+  grid-template-columns: 1fr 1fr auto;
+}
+.org-activityfields small {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--org-muted);
+}
+.org-actgrid {
+  margin-block: 12px;
+}
+.org-actgrid article > img {
+  height: 156px;
+  width: 100%;
+  object-fit: cover;
+}
+.org-actgrid article > div {
+  padding: 14px 16px;
+}
+.org-actgrid a {
+  margin-top: 9px;
+}
+.org-item,
+.org-empty {
+  padding: 16px;
+  margin-top: 10px;
+}
+.org-results > h3 {
+  margin-block: 14px 6px;
+}
+.org-check {
+  font-size: 12px;
+}
+@media (max-width: 1100px) and (min-width: 701px) {
+  .org-wrap {
+    width: calc(100% - 40px);
+  }
+  .org-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .org-fields.org-four,
+  .org-rentalfields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .org-go {
+    min-height: 45px;
+  }
+  .org-tabs button {
+    padding-inline: 11px;
+  }
+  .org-thumb img {
+    width: 96px;
+  }
+}
+@media (max-width: 700px) {
+  .org-wrap {
+    width: calc(100% - 24px);
+  }
+  .org-hero {
+    min-height: 208px;
+  }
+  .org-hero > img {
+    width: 100% !important;
+  }
+  .org-shade {
+    background: linear-gradient(90deg, #0f352ef2, #183e34b9 48%, #193d3136);
+  }
+  .org-heading {
+    padding-block: 23px 38px;
+  }
+  .org-heading h1 {
+    font-size: 45px;
+  }
+  .org-route {
+    font-size: 14px;
+  }
+  .org-meta {
+    gap: 9px 13px;
+    font-size: 10px;
+  }
+  .org-body {
+    margin-top: -21px;
+  }
+  .org-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 7px 5px;
+    gap: 1px;
+  }
+  .org-tabs button {
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 0;
+    font-size: clamp(8.5px, 2.2vw, 11px);
+    min-height: 46px;
+    border-radius: 7px;
+    letter-spacing: -0.04em;
+  }
+  .org-tabs svg {
+    width: 17px;
+    height: 17px;
+  }
+  .org-form {
+    padding: 14px 11px;
+  }
+  .org-formtop h2,
+  .org-sectionhead h2,
+  .org-results > h2 {
+    font-size: 21px;
+  }
+  .org-fields,
+  .org-fields.org-four,
+  .org-activityfields,
+  .org-rentalfields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .org-activityfields small {
+    grid-column: 1/-1;
+  }
+  .org-field,
+  .org-station {
+    padding: 7px 9px;
+    min-height: 54px;
+  }
+  .org-field input,
+  .org-field select,
+  .org-station input {
+    font-size: 13px;
+  }
+  .org-sub {
+    gap: 8px 10px;
+  }
+  .org-fields .org-go {
+    padding: 0 11px;
+  }
+  .org-results {
+    margin-top: 19px;
+  }
+  .org-sectionhead {
+    margin-bottom: 10px;
+  }
+  .org-stages {
+    gap: 6px;
+  }
+  .org-stage {
+    height: 126px;
+    border-radius: 9px;
+  }
+  .org-stagecaption {
+    left: 8px;
+    right: 5px;
+    bottom: 11px;
+  }
+  .org-stagecaption b {
+    font-size: 17px;
+  }
+  .org-stagecaption small {
+    font-size: 9px;
+  }
+  .org-circle {
+    display: none;
+  }
+  .org-hotelgrid {
+    grid-template-columns: 1fr;
+  }
+  .org-mapbox {
+    position: static;
+  }
+  .org-hotel {
+    padding: 9px;
+    gap: 10px;
+  }
+  .org-thumb img {
+    width: 83px;
+    height: 96px;
+  }
+  .org-hoteltext h3,
+  .org-actgrid h3 {
+    font-size: 16px;
+  }
+  .org-actgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .org-actgrid article > img {
+    height: 102px;
+  }
+  .org-actgrid article > div {
+    padding: 10px;
+  }
+  .org-sectionhead small {
+    font-size: 10px;
+  }
+  .org-formtop > select {
+    max-width: 45%;
+  }
+  .org-mapcanvas {
+    height: 230px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .org-stage img {
+    transition: none;
+  }
+}
+
+.org-marker.org-marker-selected {
+  background: #e8f985;
+  color: #153a33;
+  border-color: #153a33;
+}

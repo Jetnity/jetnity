@@ -15,7 +15,7 @@
 import * as React from 'react'
 import { tripMapEntryVisible } from '@/lib/maps/config'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Route as RouteIcon } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
 import { cn } from '@/lib/utils'
@@ -70,6 +70,8 @@ import ReiseSicherheit from '@/components/trips/ReiseSicherheit'
 import ReisezeitHinweise from '@/components/trips/ReisezeitHinweise'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { FlugSegmentManuell, PlanpunktFormular } from '@/lib/trips/schema'
+import Organisieren from './organisieren/Organisieren'
+import type { FlugSpeichern } from './organisieren/Flugsuche'
 import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
@@ -1060,6 +1062,8 @@ export default function TripWorkspace({
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
   const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
   const detailVerborgen = !detailOffen
+  const organisierenStart = modusBereit && modus.ansicht === 'organisieren' && !modus.bereich && !detailOffen
+  const flugProps = React.isValidElement<{ onUebernehmen?: FlugSpeichern }>(flugsuche) ? flugsuche.props : null
   const domainNavSichtbar = modusBereit && modus.ansicht === 'organisieren' && !(kompakt && detailOffen)
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
@@ -1299,9 +1303,23 @@ export default function TripWorkspace({
     arbeitsflaecheZeigen(fokus)
   }, [modus, modusBereit, preparationAnfrage])
 
+  const identitaet = (
+    <TripWorkspaceKopf
+      reise={reise}
+      quelle={quelle}
+      kompakt={kompakt}
+      uebersicht={uebersicht}
+      kopfzeile={kopfzeile}
+      reiseoptionen={reiseoptionen}
+      workspace={Boolean(shell)}
+      uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
+    />
+  )
+
   return (
     <main
       data-workspace-premium="3"
+      data-reisesuche={organisierenStart || undefined}
       data-unified-workspace={shell ? "true" : undefined}
       className="min-h-screen bg-surface-75 pb-[max(5rem,var(--ux-u1a-nav-offset,0px))] [overflow-anchor:none]"
     >
@@ -1314,19 +1332,10 @@ export default function TripWorkspace({
           Meine Reisen
         </Link>
 
-        <WorkspacePortal slot="title"><span>{reise.title}</span></WorkspacePortal>
+        <WorkspacePortal slot="title"><span>{organisierenStart ? 'Reiseplanung › Organisieren' : reise.title}</span></WorkspacePortal>
         {hinweis}
 
-        <TripWorkspaceKopf
-          reise={reise}
-          quelle={quelle}
-          kompakt={kompakt}
-          uebersicht={uebersicht}
-          kopfzeile={kopfzeile}
-          reiseoptionen={reiseoptionen}
-          workspace={Boolean(shell)}
-          uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
-        />
+        {!organisierenStart && identitaet}
 
         {modusBereit ? (
           <>
@@ -1338,7 +1347,10 @@ export default function TripWorkspace({
               onWechsel={onModus}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
-              <WorkspacePortal slot="actions"><TripWorkspaceAktionen
+              <WorkspacePortal slot="actions">{organisierenStart && <button type="button" className="workspace-button" onClick={() => {
+                const details = document.querySelector<HTMLDetailsElement>('.org-details')
+                if (details) { details.open = true; details.querySelector('summary')?.focus() }
+              }}><RouteIcon size={16} aria-hidden="true" />Reisedetails</button>}<TripWorkspaceAktionen
                 aenderungOffen={aenderungOffen}
                 begleiterOffen={begleiterOffen}
                 begleiterVorhanden={begleiter != null}
@@ -1424,7 +1436,15 @@ export default function TripWorkspace({
             </section>
           ) : null}
 
-          {domainNavSichtbar ? (
+          {organisierenStart ? (
+            <Organisieren key={reise.id+':'+reise.revision} reise={reise} partnerAktivitaeten={aktivitaetensuche}
+              flugSpeichern={flugProps?.onUebernehmen}
+              details={<details className="org-details"><summary>Reisedetails und gespeicherte Buchungen</summary>
+                {identitaet}
+                <TripWorkspaceDomainNavigation abdeckungen={uebersicht.abdeckungen} aktiv={null} onWaehlen={domain=>oeffneGap(domain)} />
+              </details>}
+            />
+          ) : domainNavSichtbar ? (
             <section aria-labelledby="workspace-organisieren-titel" className="col-span-full mt-4 min-w-0" data-workspace-modus="organisieren">
               <h2
                 id="workspace-organisieren-titel"
