@@ -1,6 +1,8 @@
 'use client'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Car, ExternalLink, Loader2, Search, X } from 'lucide-react'
+import { Feld, SucheKnopf } from '@/components/trips/organisieren/Suchfelder'
+import { hotelDaten } from '@/lib/trips/organisieren/katalog'
 import LandFeld from '@/components/country/LandFeld'
 import DiscoverCarsSuche from '@/components/trips/DiscoverCarsSuche'
 import { DISCOVERCARS_GENERISCH_HREF } from '@/lib/providers/discovercars/affiliate/ziel'
@@ -11,17 +13,18 @@ import StationField from './StationField'
 import { OfferCard, OfferComparison, OfferDetails } from './Offers'
 import { BUTTON, CATEGORY, FIELD, PRIMARY, rentalDate, rentalRequest } from './client'
 
-export default function DiscoverCarsMietwagen({ reise }: { reise: Trip }) {
+export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reise: Trip; zentral?: boolean }) {
   const id = useId()
+  const zeitraum = hotelDaten(reise, reise.stages[0])
   const [pickup, setPickup] = useState<RentalStation | null>(null)
   const [dropoff, setDropoff] = useState<RentalStation | null>(null)
-  const [pickupQuery, setPickupQuery] = useState('')
+  const [pickupQuery, setPickupQuery] = useState(zentral ? reise.stages[0]?.name ?? '' : '')
   const [dropoffQuery, setDropoffQuery] = useState('')
   const [oneWay, setOneWay] = useState(false)
-  const [pickupDate, setPickupDate] = useState(reise.startDate ?? '')
-  const [dropoffDate, setDropoffDate] = useState(reise.endDate ?? '')
-  const [pickupTime, setPickupTime] = useState('')
-  const [dropoffTime, setDropoffTime] = useState('')
+  const [pickupDate, setPickupDate] = useState(zentral ? zeitraum.anreise : reise.startDate ?? '')
+  const [dropoffDate, setDropoffDate] = useState(zentral ? zeitraum.abreise : reise.endDate ?? '')
+  const [pickupTime, setPickupTime] = useState(zentral ? '10:00' : '')
+  const [dropoffTime, setDropoffTime] = useState(zentral ? '10:00' : '')
   const [age, setAge] = useState('')
   const [residence, setResidence] = useState('')
   const [currency, setCurrency] = useState<string>((SEARCH_CURRENCIES as readonly string[]).includes(reise.currency) ? reise.currency : 'CHF')
@@ -98,7 +101,24 @@ export default function DiscoverCarsMietwagen({ reise }: { reise: Trip }) {
   const comparison = result?.offers.filter(o => compare.includes(o.offer_id)) ?? []
   const categories = [...new Set(result?.offers.map(o => o.car.category).filter((c): c is string => !!c) ?? [])]
   return <section aria-label="Mietwagen suchen und vergleichen" data-discovercars-native="1" className="grid min-w-0 gap-7">
-    <div className={ORGANISIEREN_FLAECHE_KLASSE}>
+    <div className={zentral ? 'org-form' : ORGANISIEREN_FLAECHE_KLASSE}>
+      {zentral ? <form onSubmit={submit} onChangeCapture={invalidate}>
+        <div className="org-formtop"><h2>Mietwagen suchen</h2><label className="org-check"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)}/> Andere Rückgabestation</label></div>
+        <div className={'org-fields org-rentalfields ' + (oneWay ? 'org-four' : '')}>
+          <div className="org-station"><StationField nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
+          {oneWay&&<div className="org-station"><StationField nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
+          <Feld label="Abholung"><input required type="date" value={pickupDate} onChange={e=>setPickupDate(e.target.value)}/></Feld>
+          <Feld label="Rückgabe"><input required type="date" min={pickupDate} value={dropoffDate} onChange={e=>setDropoffDate(e.target.value)}/></Feld>
+          <SucheKnopf busy={loading}/>
+        </div>
+        <div className="org-sub org-rentalsub">
+          <label>Abholzeit <input required type="time" value={pickupTime} onChange={e=>setPickupTime(e.target.value)}/></label>
+          <label>Rückgabezeit <input required type="time" value={dropoffTime} onChange={e=>setDropoffTime(e.target.value)}/></label>
+          <label>Fahreralter <input required type="number" min={18} max={99} value={age} placeholder="Alter" onChange={e=>setAge(e.target.value)}/></label>
+          <LandFeld label="Wohnsitzland" value={residence} onChange={v=>{invalidate();setResidence(v)}} optional={false} searchable={false}/>
+          <label>Währung <select value={currency} onChange={e=>setCurrency(e.target.value)}>{SEARCH_CURRENCIES.map(c=><option key={c}>{c}</option>)}</select></label>
+        </div>
+      </form> : <>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-700"><Car className="h-6 w-6" aria-hidden="true" /></span>
@@ -145,7 +165,7 @@ export default function DiscoverCarsMietwagen({ reise }: { reise: Trip }) {
           <p className="max-w-xl text-xs leading-5 text-ink-600">Für die Suche werden nur deine Suchangaben an DiscoverCars übermittelt. Deine gespeicherte Reise bleibt in Jetnity.</p>
           <button type="submit" disabled={loading} className={`${PRIMARY} shrink-0`}>{loading ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Search className="h-4 w-4" aria-hidden="true" />}{loading ? 'Mietwagen werden gesucht …' : 'Mietwagen vergleichen'}</button>
         </div>
-      </form>
+      </form></>}
       {loading ? <p role="status" className="mt-4 text-sm text-ink-800">Verfügbare Fahrzeuge und aktuelle Preise werden abgefragt. Das kann einige Sekunden dauern.</p> : null}
       {message ? <p role="alert" className="mt-4 rounded-2xl bg-surface-50 p-4 text-sm text-brand-800">{message}</p> : null}
       {unavailable ? <details className="mt-4"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-brand-800">Alternatives Suchformular öffnen</summary><DiscoverCarsSuche /></details> : null}

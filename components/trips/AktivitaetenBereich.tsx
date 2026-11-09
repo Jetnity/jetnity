@@ -131,6 +131,7 @@ type Lokal = {
 
 export default function AktivitaetenBereich({
   reise,
+  organisierenEtappe,
   tagId: gesteuerteTagId,
   onTagWechseln,
   onUebernehmen,
@@ -139,6 +140,7 @@ export default function AktivitaetenBereich({
   bestaetigteOrte,
 }: {
   reise: Trip
+  organisierenEtappe?: string
   /** Gemeinsame Tagesauswahl mit dem Plan, wenn der Arbeitsbereich sie setzt. */
   tagId?: string
   onTagWechseln?: (id: string) => void
@@ -211,7 +213,7 @@ export default function AktivitaetenBereich({
     etappen: reise.stages,
     tage: reise.days,
     tagId: wirksamerTagId || null,
-    gewaehlteEtappeId: lokal?.etappeId ?? null,
+    gewaehlteEtappeId: organisierenEtappe ?? lokal?.etappeId ?? null,
     tagEntscheidung: lokal?.tag ?? { art: 'automatisch' },
     orte,
   })
@@ -447,7 +449,7 @@ export default function AktivitaetenBereich({
         ) : null}
       </div>
 
-      {wahl.ziele.length > 0 ? (
+      {!organisierenEtappe && wahl.ziele.length > 0 ? (
         <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
           <label className="grid min-w-0 gap-1 text-sm text-ink-800" htmlFor="activity-destination-select">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Ziel</span>

@@ -13,6 +13,8 @@
 // nicht erfahren, dass sie existiert. RLS liefert in beiden Fällen null Zeilen,
 // und diese Seite macht daraus dieselbe Antwort.
 
+import 'leaflet/dist/leaflet.css'
+import '@/components/trips/organisieren/organisieren.css'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'

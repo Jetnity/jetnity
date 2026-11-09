@@ -34,7 +34,7 @@ function TimetableCards({ data }: { data: TimetableAntwort }) {
   </>
 }
 
-function TimetableDetails({ request }: { request: TimetableAnfrage }) {
+export function TimetableDetails({ request }: { request: TimetableAnfrage }) {
   const [result, setResult] = useState<Ladung<TimetableAntwort> | null>(null)
   const [retry, setRetry] = useState(0)
   const { from, to, country, fromPlaceId, toPlaceId } = request

@@ -40,7 +40,7 @@ export default function FlugKarte({
   option: FlugOptionSichtbar
   refs?: FlughafenReferenzKarte
   laeuft: boolean
-  onUebernehmen: () => void
+  onUebernehmen?: () => void
 }) {
   const anzeige = routeAnzeigeAusOption(option, refs)
   const itinerary = itineraryAusFlugOption(option, refs)
@@ -115,7 +115,7 @@ export default function FlugKarte({
             {betragLesbar(option.priceAmount, option.priceCurrency)}
           </p>
         </div>
-        <button
+        {onUebernehmen && <button
           type="button"
           onClick={onUebernehmen}
           disabled={laeuft}
@@ -123,7 +123,7 @@ export default function FlugKarte({
         >
           <Plane className="h-4 w-4" />
           In die Reise
-        </button>
+        </button>}
       </div>
 
       {option.reasons.length > 0 && (
