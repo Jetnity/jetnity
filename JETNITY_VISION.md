@@ -341,3 +341,13 @@ Dabei gilt immer:
 - bei wichtigen Änderungen den Nutzer entscheiden lassen
 
 Das Zielbild ist nicht „mehr Features“, sondern ein Reisebegleiter, der die **richtige Information und die richtige nächste Handlung im richtigen Moment** liefert und dadurch spürbar Arbeit und Stress reduziert.
+
+### Verbindliches Zielbild Einreise — Ownerauftrag V3, 9. November 2026
+
+Jetnity soll Einreisebestimmungen selbstständig recherchieren, prüfen, versionieren und aktuell halten. Der Owner genehmigt einmal die konkrete Methode; einzelne klare Regeln benötigen danach keinen manuellen Freigabeklick. Pflicht ist eine eindeutige amtliche Primärquelle des Ziellandes. Wenn eine unabhängige amtliche Gegenquelle verfügbar ist, wird sie berücksichtigt; ihr Fehlen allein blockiert die Veröffentlichung nicht. Echte vergleichbare Widersprüche und unklare Primäraussagen werden gesperrt und an den Owner eskaliert. Ein bekannter Konflikt verschwindet nicht durch einen späteren Abruffehler.
+
+Rechercheanbieter liefern ausschließlich Vorschläge an einen anbieterunabhängigen Vertrag. Nur Jetnitys eigener Import-Dienst darf daraus nach der genehmigten Methode geprüfte Fakten übernehmen. Quellenidentität, tatsächlicher Abrufstand, rechtliche Gültigkeit, Methoden- und Regelversion sowie Prüfspur bleiben nachvollziehbar; Änderungen und zulässige Rücknahmen werden versioniert.
+
+Besucher geben Zielland und eine oder mehrere Staatsangehörigkeiten an. Sie erhalten vorberechnete, nach Staatsangehörigkeit getrennte **bedingte Regeln** mit „Stand vom …“ und amtlicher Quelle, ohne automatische Wahl eines vermeintlich besten Passes und ohne individuelle Einreisezusage. Passnummern, MRZ und Passfotos gehören nicht in diesen Weg. Fehlende Kombinationen erhalten einen ehrlichen Prüfstatus und lösen begrenzte Hintergrundrecherche aus. Das Leistungsziel ist p95 unter einer Sekunde bis zur sichtbaren Antwort; es ist vor Abnahme zu messen.
+
+Dies ist das beauftragte Zielbild, keine Behauptung eines bereits aktiven Dienstes oder einer Gleichwertigkeit mit einem externen Anbieter. [PROGRAM V1](docs/official-truth-product-v3/PROGRAM_V1.md) setzt zuerst den gemeinsamen Vertrag und danach parallele Implementierungen um. Datenbank- und Production-Aktivierung bleiben bis zur ausdrücklichen Freigabe des vollständigen Dev-Pakets und der konkreten Methode geschlossen.
