@@ -1,0 +1,290 @@
+{
+  "schema": "jetnity-in1-verification-v1",
+  "recordedAt": "2026-11-09T12:21:54.340075+00:00",
+  "status": "OFFLINE_PASS_NATIVE_PENDING_NOT_TL_PASS",
+  "candidate": "uncommitted worktree on taskseed; no new published head claimed",
+  "taskseed": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+  "sourceInputs": {
+    "S1": {
+      "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+      "tree": "17a35e395cab636d47c451dbc943315ab5ede314",
+      "nativeAtDispatch": "PENDING CI42613102499; no later result asserted by writer"
+    },
+    "N1": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "tree": "f5993025cd78e91f27e3492df00a1551a396909e",
+      "sourceReview": "Root input pin; inherited files byte-identical"
+    },
+    "commonMergeBase": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81"
+  },
+  "nodeVersion": "v22.23.4",
+  "checks": [
+    {
+      "name": "v3-offline",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts"
+      ],
+      "startedAt": "2026-11-09T12:18:09.881622+00:00",
+      "endedAt": "2026-11-09T12:18:14.263085+00:00",
+      "exitCode": 0,
+      "seconds": 4.38,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/v3-offline.log",
+      "logSha256": "cb668bae8f589ee7bc8c30ca926e6cdcdfea58c6492b8d9764b941480994ad54",
+      "summary": [
+        "# tests 311",
+        "# pass 311",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    },
+    {
+      "name": "guards",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts"
+      ],
+      "startedAt": "2026-11-09T12:18:14.263356+00:00",
+      "endedAt": "2026-11-09T12:18:18.236635+00:00",
+      "exitCode": 0,
+      "seconds": 3.97,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/guards.log",
+      "logSha256": "0da8af9486e47c44c6d5c2effb1ed9f933e842d848a8e4b2747522172410afb8",
+      "summary": [
+        "# tests 148",
+        "# pass 148",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "startedAt": "2026-11-09T12:18:09.881237+00:00",
+      "endedAt": "2026-11-09T12:18:43.183747+00:00",
+      "exitCode": 0,
+      "seconds": 33.3,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/typecheck.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": []
+    },
+    {
+      "name": "lint",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+        "lib/readiness/official-truth-product-v3/ingress/types.ts"
+      ],
+      "startedAt": "2026-11-09T12:18:43.184280+00:00",
+      "endedAt": "2026-11-09T12:18:44.764739+00:00",
+      "exitCode": 0,
+      "seconds": 1.58,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/lint.log",
+      "logSha256": "202a87a00ef76091d8a32984349b989f52b738f07047864bf3713d162d3dcc74",
+      "summary": []
+    },
+    {
+      "name": "dead",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T12:18:09.893708+00:00",
+      "endedAt": "2026-11-09T12:18:10.866618+00:00",
+      "exitCode": 0,
+      "seconds": 0.97,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/dead.log",
+      "logSha256": "283fa4a0e5b4c4637b24050ad452bde8bb8b5f6452cdfb09b5a0ac70da63551a",
+      "summary": []
+    },
+    {
+      "name": "exports",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T12:18:10.866849+00:00",
+      "endedAt": "2026-11-09T12:18:20.654633+00:00",
+      "exitCode": 0,
+      "seconds": 9.79,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/exports.log",
+      "logSha256": "1884e744589dc5f5c54370d9a955f6afd0c090f41b67ded9df612be476840a8e",
+      "summary": []
+    },
+    {
+      "name": "deps",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T12:18:20.654824+00:00",
+      "endedAt": "2026-11-09T12:18:20.923560+00:00",
+      "exitCode": 0,
+      "seconds": 0.27,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/deps.log",
+      "logSha256": "cb953a05809b86b95bd5de25f4c3560fff7992fe5e52f39b1af1326d3acd3fba",
+      "summary": []
+    },
+    {
+      "name": "api-schutz",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T12:18:20.923715+00:00",
+      "endedAt": "2026-11-09T12:18:20.976427+00:00",
+      "exitCode": 0,
+      "seconds": 0.05,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/api-schutz.log",
+      "logSha256": "cb73ed2d8b857a9e3194577147de9f958c148bcd0496af7d3bfa44d81838ad25",
+      "summary": []
+    },
+    {
+      "name": "schema-bezug",
+      "args": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T12:18:20.976634+00:00",
+      "endedAt": "2026-11-09T12:18:21.170813+00:00",
+      "exitCode": 0,
+      "seconds": 0.19,
+      "sourceSha256": {
+        "scripts/db/official-truth-v3-intake-composition-1/native.ts": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5"
+      },
+      "log": "/workspace/scratch/01cbe1264212/recovery/in1-verification-r1/schema-bezug.log",
+      "logSha256": "1f8d4c95e5a4f0821eac7cfeabddfa1870249dd0540d71e1da33e2e366e9278a",
+      "summary": []
+    }
+  ],
+  "totals": {
+    "offlineV3N1": {
+      "passed": 311,
+      "failed": 0,
+      "skipped": 0
+    },
+    "preciseGuards": {
+      "passed": 148,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "deliberateLocalNativeExclusions": [
+    "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+    "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts"
+  ],
+  "native": {
+    "status": "NOT_EXECUTED_BY_WRITER",
+    "reason": "Root explicitly prohibits local PostgreSQL launch/retry; mandatory unchanged normal CI is execution environment",
+    "ciSkipAdded": false,
+    "driverOrBudgetChange": false,
+    "hostedFallback": false,
+    "freshConnectionsAreProcessRestartEvidence": false
+  },
+  "build": "NOT_RUN_BY_WRITER; Root exact-head CI/build/Preview required",
+  "priorAttempt": {
+    "directory": "/workspace/scratch/01cbe1264212/recovery/in1-verification",
+    "offlineChecksPassed": true,
+    "supersededBy": "Root R1 corrected an actual concurrency-proof coverage gap; all offline gates rerun on corrected source",
+    "nativeExecuted": false
+  },
+  "n1HistoricalEvidenceErratum": {
+    "historicalFile": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+    "incorrectHistoricalToken": "import/interface.test.ts",
+    "newerEvidence": "https://github.com/Jetnity/jetnity/pull/1170#issuecomment-6739652097",
+    "correctedRootRun": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "885ba68c20a92b5c350f847f593800fa1df130e002d01f81677286d369b44d79"
+    },
+    "inputRewritten": false
+  }
+}

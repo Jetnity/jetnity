@@ -1,0 +1,65 @@
+{
+  "schema": "jetnity-in1-input-snapshot-v1",
+  "observedAt": "2026-11-09T12:21:54.340075+00:00",
+  "author": "Jetnity Official Truth V3 Intake Composition 1 — Codex Generation 1",
+  "session": "/root/v3_intake_composition_writer",
+  "worktree": "/workspace/scratch/01cbe1264212/jetnity-v3-intake-composition",
+  "branch": "feat/official-truth-v3-intake-composition-1-20261109",
+  "taskseed": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+  "localHead": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+  "mergeHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+  "writerCommits": 0,
+  "remoteWrites": 0,
+  "sourceInputs": {
+    "S1": {
+      "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+      "tree": "17a35e395cab636d47c451dbc943315ab5ede314",
+      "nativeAtDispatch": "PENDING CI42613102499; no later result asserted by writer"
+    },
+    "N1": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "tree": "f5993025cd78e91f27e3492df00a1551a396909e",
+      "sourceReview": "Root input pin; inherited files byte-identical"
+    },
+    "commonMergeBase": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81"
+  },
+  "main": {
+    "head": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "authority": "Root TASK V1 live dispatch evidence; writer verifies this local object, not a fresh remote fetch",
+    "localMergeBaseWithTaskseed": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "localMainOnlyCommits": 0,
+    "localTaskseedOnlyCommits": 26
+  },
+  "planAcceptance": {
+    "url": "https://github.com/Jetnity/jetnity/pull/1171#issuecomment-6739662645",
+    "sha256": "b545601eb6dc3171f5f76c02a1fc1abb1dfc5ba6b4556b0e4fd92b5a151e2489"
+  },
+  "rootReviewR1": {
+    "status": "same-session source correction implemented; Root independent re-review pending",
+    "finding": "Concurrent promises alone could pass under serialized SQL; require observed real second capture lock wait caused by first held precommit transaction"
+  },
+  "n1HistoricalEvidenceErratum": {
+    "historicalFile": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+    "incorrectHistoricalToken": "import/interface.test.ts",
+    "newerEvidence": "https://github.com/Jetnity/jetnity/pull/1170#issuecomment-6739652097",
+    "correctedRootRun": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "885ba68c20a92b5c350f847f593800fa1df130e002d01f81677286d369b44d79"
+    },
+    "inputRewritten": false
+  },
+  "reservedGates": [
+    "method NOT_APPROVED",
+    "Dev package NOT_RELEASE_READY",
+    "SQL UNAPPLIED",
+    "#917 independent readback/ledger incomplete; specific refused readback not retried",
+    "#1139 17 pre-Owner gaps",
+    "#1131 Ready-STOP",
+    "#1135",
+    "#968",
+    "separate Owner approval before DB/Production activation"
+  ]
+}

@@ -1,0 +1,324 @@
+{
+  "schema": "jetnity-in1-root-publication-review-r1",
+  "recordedAt": "2026-11-09T12:25:14.996122+00:00",
+  "reviewAuthority": "Root / Technical Lead",
+  "status": "SOURCE_ACCEPTED_FOR_DRAFT_PUBLICATION_NATIVE_EXACT_HEAD_PENDING",
+  "author": {
+    "name": "Jetnity Official Truth V3 Intake Composition 1 — Codex Generation 1",
+    "session": "/root/v3_intake_composition_writer",
+    "sameSessionR1": true
+  },
+  "taskseed": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+  "parents": {
+    "first": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+    "additionalN1": "10d3e4f44460513e6425714af2c8c0b3ab4678a6"
+  },
+  "sourcePins": {
+    "S1": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "N1": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+    "nativeSha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+    "wrapperSha256": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+    "foundationSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+    "authorManifestSha256": "56ff7a748e4502c596c328855a4beb7847219e20855cb13eca0fb181e3db6495",
+    "intakeContractSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b"
+  },
+  "rootReview": {
+    "allNewSourceRead": true,
+    "foundationDiffIsExactAuthorizedUnion": true,
+    "runtimeChanges": false,
+    "R1": "https://github.com/Jetnity/jetnity/pull/1171#issuecomment-6739819285",
+    "R1Closure": "Observed independent second SQL CAPTURE Lock/PID/birth/known first blocker after held real INSERT; both ACK=0 before release; exact responses/single original; cleanup release/abort/join/close. Source closed, execution pending."
+  },
+  "independentSourceReview": {
+    "schema": "jetnity.in1-independent-source-review.r1",
+    "reviewedAt": "2026-11-09T12:20:45.649145+00:00",
+    "reviewer": "/root/live_release_recovery",
+    "reviewKind": "read-only supporting review, not TL PASS",
+    "taskseed": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+    "nativeSha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+    "wrapperSha256": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+    "guardSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+    "contractSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+    "n1Input": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+    "n1Paths": [
+      {
+        "path": "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+        "equal": true,
+        "sha256": "300f5f0f8537c4610a3f11c4c94fff5a38504dc5d4b8ad0dcd8d2ef7f2a324dc"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+        "equal": true,
+        "sha256": "0370ab8a782a51866772989cd6728ea39070e153677301847179a9a95d41234a"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+        "equal": true,
+        "sha256": "f0a2bd43db30e9e01529dcb1dba35686ea6e95de0b94754987e1a89709347334"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_PLAN_V1.md",
+        "equal": true,
+        "sha256": "201e8127cfa06cb29199f66c799a87a5a16858b4c7b09e3c43a6e360a5585cb2"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+        "equal": true,
+        "sha256": "1835d897b2670fa9213f23ecea0652abc771a93a2d9a8fa14fd1394233b5e2fa"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+        "equal": true,
+        "sha256": "947321735985f0b532335c5be5c0d7481eb7892b8a52be9caf09ea655e6e3e4c"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_STATUS_V1.md",
+        "equal": true,
+        "sha256": "d34b3cb1672e06a02923b7013c578d38aa2eb1363a992b1822c0f7f0401fdf1e"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_TASK_V1.md",
+        "equal": true,
+        "sha256": "f1c19e275fa0b6255a64d3c7c63a7429c23289f92784219a916f118d40c73585"
+      },
+      {
+        "path": "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+        "equal": true,
+        "sha256": "1d9fc9d5ad4502cc81e5886e46b1d2276197da59317fbb4816dc1212f360e768"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+        "equal": true,
+        "sha256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "equal": true,
+        "sha256": "8d4ebd93d94bbee326edb6212709bae49d1e848ae69169028e3974d4fe446a7d"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+        "equal": true,
+        "sha256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "equal": true,
+        "sha256": "06d719ee9b1e4b2f908dcb0b3250c462463e47d5b24594c098bba3bc3cce0694"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+        "equal": true,
+        "sha256": "60e6d44f63bef4554ad6e1bc225255e02b35300364294e1b5b0b17a62965a283"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+        "equal": true,
+        "sha256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c"
+      }
+    ],
+    "s1Input": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "unexpectedTrackedDifferenceFromS1": [],
+    "closedFinding": {
+      "id": "IN1-R0-P2-1",
+      "sourceStatus": "CLOSED_IN_SOURCE",
+      "rootR1": "https://github.com/Jetnity/jetnity/pull/1171#issuecomment-6739819285",
+      "assertions": [
+        "First actual captured result matches exact reference, then precommit hook holds its INSERT",
+        "Second distinct PID and birth are captured using the existing adapter hook",
+        "Observer requires exact active CAPTURE statement with Lock wait and known first PID blocker",
+        "Observer binds first PID and birth and idle-in-transaction state",
+        "Both signals un-aborted and zero acknowledgements before release",
+        "Only after observation latch releases and both real deliveries must return exact recorded references",
+        "Each executor has exactly one CAPTURE call, one actual commit acknowledgment and one completed backend drain",
+        "One original retained; whitespace and binding collisions preserve original data",
+        "Failure cleanup releases latch, aborts both external controllers, joins all pending deliveries and closes observer; child abort also releases latch"
+      ]
+    },
+    "remainingP1P2SourceFindings": [],
+    "nativeResult": "NOT_EXECUTED_BY_REVIEWER; mandatory exact integrated-head CI remains pending",
+    "verificationCommands": "Read-only file/Git comparisons; no tests while author owns verification",
+    "hostedQueries": false,
+    "nativeLaunch": false,
+    "repoEdits": false,
+    "ready": false,
+    "merge": false,
+    "activation": false
+  },
+  "rootManifestRecheck": {
+    "at": "2026-11-09T12:24:04.934783+00:00",
+    "head": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+    "manifestSha256": "56ff7a748e4502c596c328855a4beb7847219e20855cb13eca0fb181e3db6495",
+    "manifestEntriesVerified": 34,
+    "inheritedS1FilesVerified": 8938,
+    "unexpectedChanges": [],
+    "logs": [
+      {
+        "name": "v3-offline",
+        "sha256": "cb668bae8f589ee7bc8c30ca926e6cdcdfea58c6492b8d9764b941480994ad54",
+        "bytes": 91642,
+        "tail": [
+          "1..79",
+          "# tests 311",
+          "# suites 29",
+          "# pass 311",
+          "# fail 0",
+          "# cancelled 0",
+          "# skipped 0",
+          "# todo 0",
+          "# duration_ms 4306.645041"
+        ]
+      },
+      {
+        "name": "guards",
+        "sha256": "0da8af9486e47c44c6d5c2effb1ed9f933e842d848a8e4b2747522172410afb8",
+        "bytes": 35663,
+        "tail": [
+          "1..65",
+          "# tests 148",
+          "# suites 7",
+          "# pass 148",
+          "# fail 0",
+          "# cancelled 0",
+          "# skipped 0",
+          "# todo 0",
+          "# duration_ms 3900.211217"
+        ]
+      },
+      {
+        "name": "typecheck",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "tail": []
+      },
+      {
+        "name": "lint",
+        "sha256": "202a87a00ef76091d8a32984349b989f52b738f07047864bf3713d162d3dcc74",
+        "bytes": 175,
+        "tail": [
+          "(Use `node --trace-warnings ...` to show where the warning was created)"
+        ]
+      },
+      {
+        "name": "dead",
+        "sha256": "283fa4a0e5b4c4637b24050ad452bde8bb8b5f6452cdfb09b5a0ac70da63551a",
+        "bytes": 284,
+        "tail": [
+          "Keine unbegruendet verwaiste Datei."
+        ]
+      },
+      {
+        "name": "exports",
+        "sha256": "1884e744589dc5f5c54370d9a955f6afd0c090f41b67ded9df612be476840a8e",
+        "bytes": 266,
+        "tail": [
+          "Kein unbegruendeter Export ohne Aufrufer."
+        ]
+      },
+      {
+        "name": "deps",
+        "sha256": "cb953a05809b86b95bd5de25f4c3560fff7992fe5e52f39b1af1326d3acd3fba",
+        "bytes": 460,
+        "tail": [
+          "nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide"
+        ]
+      },
+      {
+        "name": "api-schutz",
+        "sha256": "cb73ed2d8b857a9e3194577147de9f958c148bcd0496af7d3bfa44d81838ad25",
+        "bytes": 246,
+        "tail": [
+          "API-Schutz: 12 Admin-Route(n) geprüft, alle nutzen requireAdminApi()."
+        ]
+      },
+      {
+        "name": "schema-bezug",
+        "sha256": "1f8d4c95e5a4f0821eac7cfeabddfa1870249dd0540d71e1da33e2e366e9278a",
+        "bytes": 3422,
+        "tail": [
+          "LOCAL/UNAPPLIED RPC trip_regulatory_context_save_v1 from lib/readiness/official-truth-ch-de-application-pilot-1/database-server.ts → supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql (not in generated schema)"
+        ]
+      }
+    ]
+  },
+  "rootOfflineTests": {
+    "startedAt": "2026-11-09T12:24:17.400083+00:00",
+    "seconds": 4.734,
+    "command": [
+      "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+      "--import",
+      "./scripts/server-only-test-register.mjs",
+      "--import",
+      "tsx",
+      "--test",
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "lib/readiness/official-truth-content-identity.test.ts"
+    ],
+    "exitCode": 0,
+    "log": "/workspace/scratch/01cbe1264212/recovery/in1-root-offline.log",
+    "logSha256": "d5293b1d9ef88ba98e63b9c2cc0ecea8e08885e75df211d1d178763282960a8e",
+    "nativeRun": false,
+    "tail": [
+      "  ...",
+      "1..144",
+      "# tests 459",
+      "# suites 36",
+      "# pass 459",
+      "# fail 0",
+      "# cancelled 0",
+      "# skipped 0",
+      "# todo 0",
+      "# duration_ms 4659.066999"
+    ]
+  },
+  "upstreamS1NativePass": {
+    "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "review": "https://github.com/Jetnity/jetnity/pull/1168#issuecomment-6739931009",
+    "run": 42613102499,
+    "coreJob": 129146214674,
+    "nativeChildrenPass": 12,
+    "nativeSkip": 0,
+    "corePass": 8476,
+    "coreFail": 0,
+    "coreExistingSkips": 2,
+    "allEightJobs": "SUCCESS",
+    "preview": "dpl_2T6zZ3Z79F9xiXiYBkZN35amZb3q",
+    "previewState": "READY",
+    "nativeTapExcerptSha256": "49f116adab59a16fa4b068c52fe560e51ef33d47bec3da0ba4dd56dc8bfae803"
+  },
+  "pending": [
+    "actual mandatory IN1 native execution on published integration head",
+    "complete exact-head core/native/UI/Auth/aggregate CI",
+    "exact-head Preview readiness",
+    "fresh main/mode/Guardian/review thread checks before TL final code acceptance"
+  ],
+  "reservedGates": [
+    "method NOT_APPROVED",
+    "Dev package NOT_RELEASE_READY",
+    "SQL UNAPPLIED",
+    "no hosted DB/Auth/RLS/ACL/migration/credential operations",
+    "specific refused #917 readback not retried, rerouted, delegated or replaced with human SQL",
+    "#917 ledger unknown and full independent readback pending",
+    "#1139 effective fix not accepted;17 pre-Owner gaps",
+    "#1131 Ready-STOP;#1135;#968;#911/#913",
+    "no Ready/merge/activation by this publication"
+  ],
+  "nextStep": "Root publishes exact reviewed source with true N1 merge parent, verifies actual CI/native logs and Preview, returns any finding to same writer. Every new head invalidates earlier exact-head gates."
+}
