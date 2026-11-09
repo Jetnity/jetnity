@@ -217,7 +217,6 @@ export default function Organisieren({
               key={suchId}
               reise={reise}
               start={hotelStart ?? erste}
-              sofort={Boolean(hotelStart)}
               etappen={etappen}
             />
           )}
