@@ -1,6 +1,20 @@
-# I1 — Self-Review und Handoff, TASK V1/R2 und TL-Review R2
+# I1 — Self-Review und Handoff, aktueller TL-Review R3
 
 Stand: 2026-11-09. Autor **Jetnity Official Truth V3 Import 1 — Codex Generation 1**, tatsächliche Session `/root/v3_import_writer`. Draft [#1164](https://github.com/Jetnity/jetnity/pull/1164), Branch `feat/official-truth-v3-import-1-20261109`. Dies ist Autoren-Evidence, **kein unabhängiger Technical-Lead-PASS, kein Ready und kein Merge**.
+
+## Aktuelle Lieferung — unmittelbarer Foundation-Guardfix R3
+
+Basis vor dieser Lieferung: sauberer HEAD `ae22ea79068a4946e68b08dc5a9b101fb3f55ab5`, Tree `f0f3829d8b88a5885406f9e74c43c5fd9ffe9466`. Root bestätigte den engen Plan vor Code; der vollständige Auftrag steht in `I1_REVIEW_R3_TASK.md`, Planung, genaue Umsetzung und Manifest in `I1_REVIEW_R3_FIX_PLAN.md`.
+
+Die einzige Änderung außerhalb eigener Dokumentation sind 22 zusätzliche Zeilen, 0 Löschungen, in `lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts`: genau der bestehende I1-Servicepfad, genau das Artifact-Modul und genau `ownRecord`/`immutable`; dazu zwei positive und 20 negative Proben. Predicate, vollständiger Scanner, Exact-Set-Vergleich und alle alten Assertions bleiben erhalten. I1-Runtime, vorhandene I1-Tests, S0 und die zwei anderen Guards wurden nicht verändert.
+
+Neue tatsächliche Gates: **242/242 Tests** aus allen fünf vollständigen Korpora, 21 Suites, 0 Fail/Cancel/Skip/Todo; vollständiges TypeScript, fokussiertes ESLint und Diffprüfung jeweils Exit 0. Alle neun geschützten Vorherdateien einschließlich des von Root gelieferten Auftrags sind bytegleich. Guard-SHA-256: `647c8446241a206b7d22d9b6624f9420e1211366bcc43afe380b1dc70d037b3c`, Git-Blob `60da79b334166702715622cae23971c6a7b8a320`.
+
+Die fehlgeschlagene alte CI `42543222801` wird nicht erneut als gleicher Head gestartet. Vollständige CI auf dem neu veröffentlichten Head bleibt Root-Gate. Produktionsanschlüsse bleiben geschlossen; kein DB-/Auth-/Provider-/Browser-/GitHub-Schreibzugriff, kein eigener Commit/Push/Ready/Merge. **STOP nach dieser Lieferung.** Das vollständige finale Manifest liegt unter `/workspace/scratch/e03d2839d4e5/official-truth-v3-analysis/i1-tl-r3-final-manifest.json`.
+
+## Historische R2-Lieferung und unveränderte Runtime-Evidence
+
+Die folgenden Abschnitte dokumentieren den früheren R2-Arbeitsstand vor dessen Veröffentlichung. Dort genannte damalige uncommittete Dateien und Basispins sind historische Evidence. Die exakten Runtime-/Service-Testbytes gelten weiterhin und wurden für R3 nochmals als unverändert geprüft; aktuelle Änderungen und Gates stehen oben.
 
 ## 1. Exakter Lieferstand
 
