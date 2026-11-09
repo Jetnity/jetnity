@@ -4,7 +4,7 @@
 
 **Session:** `/root/v3_contract_writer`; Modell laut Session: GPT-6 Astra Pro
 
-**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1 einschließlich [TL-Amendment R3](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729202622), Programmissue #1162, Draft-PR #1163
+**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1 einschließlich [TL-Amendment R3](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729202622) und [TL CHANGES REQUIRED R4](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729560511), Programmissue #1162, Draft-PR #1163
 
 **Branch:** `feat/official-truth-v3-shared-contract-1-20261109`
 
@@ -12,9 +12,11 @@
 
 **Ursprünglicher Seedhead:** `7f940d5620ef194c86a82b570751b2fea94fef92`
 
-**R3-Basis / unveränderter Autoren-HEAD:** `19c4736a73f639daaf5337465386155607792a4f`
+**R3-Basis, historisch:** `19c4736a73f639daaf5337465386155607792a4f`
 
-**Stand:** R3-Implementierung und lokale fokussierte Prüfungen abgeschlossen; unabhängiger TL-Re-Review/Freeze der neuen Bytes offen. Der frühere Freeze bleibt Evidence für den publizierten 19c-Head. Diese Übergabe bindet die unten genannten R3-Arbeitsdateien. Kein TL-PASS, kein Ready und kein Merge durch den Autor.
+**R4-Basis / unveränderter Autoren-HEAD:** `ab26914ff01dde64020879b9e41cea8b1e1738aa`
+
+**Stand:** R4-Testinventare korrigiert und lokal geprüft; unabhängiger TL-Review und neue vollständige CI offen. R4 ändert ausschließlich die zwei beauftragten Guardtests sowie S0-Plan/Handoff. Runtime, bestehender S0-Testkorpus und S0_CONTRACT bleiben unverändert. Kein TL-PASS, kein Ready und kein Merge durch den Autor.
 
 ## 1. Gelieferte Bytes und Ownership
 
@@ -22,22 +24,24 @@
 | --- | --- |
 | `lib/readiness/official-truth-product-v3/contract.ts` | Ruhende versionierte Runtime-Leser, Identitätsbildung, reine Quellenanzeigeauflösung und getrennte unbound Methodenautoritätsnaht |
 | `lib/readiness/official-truth-product-v3/contract.test.ts` | 63 lokale synthetische Tests, ohne Netzwerk-/DB-/Provider- oder Secretbedarf |
+| `lib/readiness/official-truth-content-identity.test.ts` | R4: genau ein geprüfter S0-Importer im bestehenden endlichen Inventar, positive Exaktpfad- und sieben negative Pfadproben |
+| `lib/readiness/regulierungs-anwendbarkeit.test.ts` | R4: derselbe exakte S0-Importer in eigener/Produktionsmenge, positive Exaktpfad- und sieben negative Pfadproben |
 | `docs/official-truth-product-v3/S0_IMPLEMENTATION_PLAN.md` | Vor Implementierung festgehaltener enger Plan und Grenzen |
 | `docs/official-truth-product-v3/S0_CONTRACT.md` | Konkrete API, Kompatibilitätszuordnung und Integrationspflichten für I1/U1/M1 |
 | `docs/official-truth-product-v3/S0_SELF_REVIEW_HANDOFF.md` | Diese tatsächlichen Prüfergebnisse und Übergabe |
 
 Es gibt keine `fixtures.ts`; sämtliche fiktiven `.example`-Daten und die ausdrücklich synthetischen Passseiten-Fakten bleiben in der Testdatei. Kein produktiver Fallback und keine echte Visa-Aussage wurden angelegt.
 
-Der Autor hat keine anderen Dateien geändert, keinen Git-Commit/Push und keine GitHub-Mutation ausgeführt. Die zuvor von Root aktualisierten zentralen Dateien `ARCHITECTURE.md`, `DECISIONS.md`, `JETNITY_VISION.md` und `ROADMAP.md` sind Teil der publizierten R3-Basis; sie wurden für R3 vom Autor nicht geändert. `PROGRAM_V1.md` blieb unverändert. Ein UI-Rename der Session wurde nicht behauptet.
+Der Autor hat keine anderen Dateien geändert, keinen Git-Commit/Push und keine GitHub-Mutation ausgeführt. Root erweiterte die Ownership für R4 ausdrücklich um genau die beiden Guarddateien; andere Lanes ändern diese nicht. Die zentralen Dokumente und `PROGRAM_V1.md` blieben unverändert. Ein UI-Rename der Session wurde nicht behauptet.
 
-### Code-/Testidentität vor Root-Publikation
+### Unveränderte Runtime- und S0-Testidentität
 
 | Datei | SHA-256 | Gitblob, ohne Schreiben ermittelt |
 | --- | --- | --- |
 | `contract.ts` | `871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4` | `62f73e6a01c31de48732ce378e70a2f8936f7835` |
 | `contract.test.ts` | `59aa173100b9a28c05311eae745b777233aab5b0092ffa9ac516d818d2748fd9` | `864a7b163ad80e32a10c0d32da5972566ba65b17` |
 
-Root publiziert die geprüften Bytes und stellt den tatsächlichen neuen Head fest. Der Autoren-HEAD enthält den bisherigen S0-Vertrag, aber noch nicht die uncommittete R3-Erweiterung; die Tabellenwerte binden exakt die geprüften Arbeitsdateien und sind keine Commit- oder Herkunftsreceipts.
+Diese Runtime-/S0-Testbytes gehören bereits zum publizierten R4-Basishead und wurden vor und nach der Korrektur unverändert nachgewiesen. Die neuen Guardtest-Identitäten stehen im R4-Abschnitt. Root publiziert die Korrektur und stellt den tatsächlichen neuen Head fest; die lokalen Hashes sind keine Herkunftsreceipts.
 
 ## 2. Acceptance Criteria — tatsächlicher Stand
 
@@ -95,7 +99,7 @@ Der vollständige [TL-Auftrag R3 / 6729202622](https://github.com/Jetnity/jetnit
 | 4. Adversariale Regressionen | Zehn neue Tests behandeln Normalisierung, Paar-/Methodendrift, Länder/PII/Unknownkeys, Getter/Zyklen/Größe, Jobart-/Discriminatorverwechslung, gültige und ungültige Leases/Backoff/Revisionen, historische Reclaim-Lesbarkeit und getrennte Pending-Zellen. Alle 53 vorhandenen Tests unverändert. |
 | 5. Dokumentation und Gates | R3-Plan, API-/Anschlussdokumentation und diese Übergabe; die vier folgenden Node-22-Gates wurden auf den neuen Code-/Testbytes tatsächlich erneut ausgeführt. Keine neue Dependency oder Produktionsbindung. |
 
-### Finale R3-Gates auf den oben genannten Code-/Testbytes
+### Historische R3-Gates auf den unveränderten Runtime-/S0-Testbytes
 
 ```bash
 /home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/contract.test.ts
@@ -125,9 +129,52 @@ Der vollständige [TL-Auftrag R3 / 6729202622](https://github.com/Jetnity/jetnit
 
 **Historische unabhängige Root-Rückmeldung zu R2:** Root hatte 53/53 Tests (gemeldete Dauer 1314 ms), tsc Exit 0 und ESLint Exit 0 reproduziert. Außerdem meldete Root 0 unerreichbare Dateien, 0 Exporte ohne Aufrufer, 0 ungenutzte Pakete, API-Schutz 12/12 sowie eine erfolgreiche lokale Prüfung der generierten DB-Typverwendung. Diese früheren unabhängigen Resultate und der publizierte 19c-Freeze gelten nicht automatisch für die neuen R3-Bytes. Root muss R3 gesondert prüfen und pinnen.
 
+### R4: CI-Befund, enge Korrektur und aktuelle Gates
+
+Der vollständige [R4-Auftrag](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729560511), Roots persistierte Fehlerzusammenfassung und sein lokales Fehlerlog wurden gelesen. Die vollständige CI auf `ab26914ff01dde64020879b9e41cea8b1e1738aa` (Run `42539983421`, Corejob `128912624543`) meldete **8263 Tests, 8259 bestanden, 2 fehlgeschlagen und 2 geerbte Skips**. Root reproduzierte dieselben beiden Fehler mit **90 Tests, 88 bestanden, 2 fehlgeschlagen, 0 Skips**. Die damaligen fokussierten S0-Gates hatten diese vorhandenen Repository-Inventare nicht abgedeckt; daraus wird nachträglich kein vollständiger CI-PASS.
+
+Nach dem vor Code gemeldeten und von Root ausdrücklich bestätigten Plan wurde ausschließlich `lib/readiness/official-truth-product-v3/contract.ts` in die bestehenden endlichen Inventare aufgenommen. Der Content-Identity-Set-Vergleich und der exakte Anwendbarkeits-Produktionsvergleich bleiben erhalten. Alle bisherigen Assertions und Ablehnungen sind unverändert; die beiden Guard-Diffs enthalten ausschließlich Ergänzungen. Beide Guards prüfen sieben neue negative Varianten: Dateisuffix-Lookalike, ähnlicher Servername, Traversal zu einer ungeprüften Datei, rohe Traversalalias-Schreibweise zum erlaubten Pfad, ungeprüfte Nachbardatei, ähnlicher Ordnername und App-Pfad. Keine Wildcard, dynamische Dateiexistenz-Erlaubnis, Testausnahme oder vorab zugelassene I1-/U1-/M1-Datei.
+
+| Geänderter Guardtest | SHA-256 | Gitblob ohne Schreiben |
+| --- | --- | --- |
+| `official-truth-content-identity.test.ts` | `1a944277ec49fa5ca50203def58e9fdcc9fd80009bcdacedcb0231e1dbd7ba8c` | `0e452218b7413c989a1551f4a26bd268afc502c6` |
+| `regulierungs-anwendbarkeit.test.ts` | `59fb7a2a39bb2a56b1cefe18be22d0d755987acba43433ce87a026e760ea5258` | `658a7f7f2a0699920fca48a348ad1699a2f32fd0` |
+
+Tatsächlich ausgeführter vollständiger Lauf der drei beauftragten Testdateien:
+
+```bash
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/contract.test.ts lib/readiness/official-truth-content-identity.test.ts lib/readiness/regulierungs-anwendbarkeit.test.ts
+```
+
+**Exit 0: 153 Tests, 16 Suiten, 153 bestanden, 0 fehlgeschlagen, 0 abgebrochen, 0 übersprungen, 0 todo; 1891,12112 ms.** Die bisher roten Leaf-Tests liefen erfolgreich im vollständigen jeweiligen Dateikorpus. Die zusätzlichen Gegenproben erweitern bestehende Tests und erhöhen daher nicht deren Anzahl. Kein Runtime-/S0-Test wurde geändert.
+
+Weitere tatsächlich ausgeführte R4-Gates mit demselben Node 22.23.4:
+
+```bash
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node node_modules/eslint/bin/eslint.js lib/readiness/official-truth-content-identity.test.ts lib/readiness/regulierungs-anwendbarkeit.test.ts
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/erreichbarkeit.mjs
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/exporte.mjs
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/pakete.mjs
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/api-schutz.mjs
+/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/db/verwendung.mjs --pruefen
+```
+
+| Gate | Reales Ergebnis |
+| --- | --- |
+| TypeScript / gezieltes ESLint | Jeweils Exit 0, keine Diagnosen |
+| Erreichbarkeit | Exit 0; 1122 Startpunkte, 2069 erreichbare Module, 0 verwaist |
+| Exporte | Exit 0; 1509 Dateien, 0 Exporte ohne Aufrufer |
+| Pakete | Exit 0; 12 Dependencies und 2 DevDependencies geprüft, jeweils 0 ohne Verwendung; bestehende konfigurationsgebundene Ausnahmen separat vom Skript ausgewiesen |
+| API-Schutz | Exit 0; 12 Admin-Routen verwenden den zentralen Gate |
+| Lokaler Schema-Bezug | Exit 0; gegen 22 Tabellen/Views und 25 Funktionen der generierten Typdatei geprüft; bestehende LOCAL/UNAPPLIED-Verweise separat ausgewiesen. Ausschließlich Dateianalyse, kein Datenbankzugang und kein Live-Schemanachweis |
+| Diff-/Identitätskontrolle | `git diff --check` Exit 0; exakt die zwei Guardtests und S0-Plan/Handoff geändert. Runtime, S0-Testkorpus und S0_CONTRACT unverändert |
+
+Die bestehenden experimentellen `EnvHttpProxyAgent`-Warnungen waren vorhanden, ohne Testskip oder unterdrückte Fehler. Der erste vollständige R4-Lauf bestand alle Fälle. Ein neuer vollständiger CI-/Build-Erfolg wird hier nicht behauptet; Root führt die neuen Exact-Head-Gates nach Veröffentlichung aus.
+
 ### Nicht ausgeführt / nicht behauptet
 
-Kein eigener `npm ci`: Root stellte den vorhandenen npm-ci-Bestand über den lokal ignorierten untracked `node_modules`-Symlink bereit. Keine Dependency- oder Lockfileänderung. Kein Production-Build, keine vollständige bestehende Testsuite und kein vollständiger Hygiene-/CI-Lauf; Root hatte fokussierte Runtime-Tests, tsc und Lint als erste Gates beauftragt. Keine Browser-, Real-Device-, Vercel-, Datenbank-, Auth-, RLS-, ACL-, Credential-, Provider- oder Production-Prüfung wurde durchgeführt. S0 besitzt dafür keinen aktiven Produktpfad.
+Kein eigener `npm ci`: Root stellte den vorhandenen npm-ci-Bestand über den lokal ignorierten untracked `node_modules`-Symlink bereit. Keine Dependency- oder Lockfileänderung. Kein Production-Build, keine vollständige Repository-Testsuite und kein eigener vollständiger Hosted-CI-Lauf. Die drei vollständigen beauftragten Testdateien und lokalen Hygieneprüfungen liefen wie oben protokolliert. Keine Browser-, Real-Device-, Vercel-, Datenbank-, Auth-, RLS-, ACL-, Credential-, Provider- oder Production-Prüfung wurde durchgeführt. S0 besitzt dafür keinen aktiven Produktpfad.
 
 ## 4. Selbstreview: materielle Grenzen und verbleibende Risiken
 
@@ -149,7 +196,7 @@ Kein eigener `npm ci`: Root stellte den vorhandenen npm-ci-Bestand über den lok
 
 ## 5. Nächster verantwortlicher Schritt und STOP
 
-**Root/TL:** Die neuen R3-Code-/Test-/Dokumentbytes unabhängig prüfen, den konkreten neuen Codehead publizieren und den geprüften Pin ausdrücklich an I1/U1/M1 übergeben. Der bisherige 19c-Freeze ist keine Freigabe des geänderten Heads. Root hält zentrale Architektur-/Entscheidungs-/Continuity-Dokumente und GitHub-/CI-/Release-Evidence aktuell.
+**Root/TL:** Den engen R4-Guard-/Dokumentdiff unabhängig prüfen, den konkreten neuen Head publizieren und vollständige Exact-Head-Gates ausführen. Weitere fertige I1-/U1-/M1-Importer erst nach eigenem Review mit exakten Branchpins seriell zuweisen; R4 erlaubt davon keinen Pfad vorab. Root hält zentrale Architektur-/Entscheidungs-/Continuity-Dokumente und GitHub-/CI-/Release-Evidence aktuell.
 
 **Autor:** STOP nach dieser Lieferung. Kein Ready, kein Merge, kein Commit/Push und kein Folgeslice. Unmittelbare konkrete Reviewkorrekturen erfolgen bei Bedarf in derselben Session und führen zu neuen Bytes und erneuten Gates.
 
