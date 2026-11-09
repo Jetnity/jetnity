@@ -9,12 +9,14 @@ import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
   OFFICIAL_TRUTH_V3_BINDINGS, OFFICIAL_TRUTH_V3_LIMITS,
   createV3WorkIdentity, createV3TransitionIdempotencyKey,
+  createV3CombinationDiscoveryIdentity, readV3CombinationDiscoveryJobRecord,
   readV3VisitorInput, readV3GlobalRuleContext, readV3ResearchProposal, readV3MethodRevisionDraft,
   readV3SourceDecisionRecord, readV3RuleVersionRecord, readV3TransitionPlan, readV3ResearchJobRecord,
   readV3ConflictArchiveRecord,
   readV3PublicProjectionRecord, readV3PublicResponseRecord,
   resolveV3PublicSourceDisplay,
   type V3ReadResult, type V3GlobalRuleContext,
+  type V3CombinationDiscoveryIdentity, type V3CombinationDiscoveryJobRecord,
 } from './contract'
 
 // SYNTHETIC TEST DATA ONLY. The fictional .example publications and nine-page
@@ -178,6 +180,17 @@ function job() {
     revision: 1, predecessorRevision: null, state: 'queued' as const,
     createdAt: SOURCE_TIME, updatedAt: SOURCE_TIME, attempt: 0, attemptLimit: 3,
     lease: null, nextAttemptAt: null, lastFailure: null, resultDecisionRef: null,
+  }
+}
+function discoveryIdentity(citizenshipCountryCode = 'CH', destinationCountryCode = 'DE', method = METHOD): V3CombinationDiscoveryIdentity {
+  return ok(createV3CombinationDiscoveryIdentity({ destinationCountryCode, citizenshipCountryCode, method }))
+}
+function discoveryJob(citizenship = 'CH'): V3CombinationDiscoveryJobRecord {
+  return {
+    schema: 3, kind: 'combination_discovery_job_record', identity: discoveryIdentity(citizenship),
+    jobId: JOB, operationId: OPERATION, revision: 1, predecessorRevision: null, state: 'queued',
+    createdAt: SOURCE_TIME, updatedAt: SOURCE_TIME, attempt: 0, attemptLimit: 3,
+    lease: null, nextAttemptAt: null, lastFailure: null, resultDiscoveryRef: null,
   }
 }
 function transition() {
@@ -687,6 +700,166 @@ describe('V3 bounded research jobs', () => {
     assert.equal(readV3ResearchJobRecord({ ...base, state: 'succeeded', attempt: 1, resultDecisionRef: decision().reference }).ok, true)
     assert.equal(readV3ResearchJobRecord({ ...base, state: 'exhausted', attempt: 3, lastFailure: 'commit_unconfirmed' }).ok, true)
     rejected(readV3ResearchJobRecord({ ...base, state: 'exhausted', attempt: 2, lastFailure: 'unreachable' }))
+  })
+})
+
+describe('V3 neutral combination discovery', () => {
+  const pending = (identity = discoveryIdentity('RS')) => ({
+    status: 'pending' as const, jobKind: 'combination_discovery' as const, jobKey: identity.jobKey, identity,
+  })
+  const withPending = (item: unknown) => ({ ...response(), cells: [
+    response().cells[0], { citizenshipCountryCode: 'RS', results: [item] },
+  ] })
+
+  test('represents an unknown pair without inferred rule, route, document or purpose', () => {
+    const input = { destinationCountryCode: ' de ', citizenshipCountryCode: ' ch ', method: { ...METHOD } }
+    const identity = ok(createV3CombinationDiscoveryIdentity(input))
+    assert.deepEqual(Object.keys(identity).sort(), ['citizenshipCountryCode', 'destinationCountryCode', 'jobKey', 'kind', 'method'])
+    assert.equal(identity.kind, 'combination_discovery')
+    assert.equal(identity.destinationCountryCode, 'DE')
+    assert.equal(identity.citizenshipCountryCode, 'CH')
+    assert.deepEqual(identity, discoveryIdentity())
+    assert.equal(Object.isFrozen(identity.method), true)
+    input.method.revision = 2
+    assert.equal(identity.method.revision, 1)
+    assert.equal(input.destinationCountryCode, ' de ')
+    const parsed = ok(readV3CombinationDiscoveryJobRecord(discoveryJob()))
+    assert.equal(parsed.state, 'queued')
+    for (const key of ['context', 'contextKey', 'research', 'factKind', 'route', 'credentialOption', 'conditions']) {
+      assert.equal(Object.hasOwn(parsed, key), false)
+      assert.equal(Object.hasOwn(parsed.identity, key), false)
+    }
+  })
+  test('deduplicates canonical pair and method independently of job and operation IDs', () => {
+    const base = discoveryJob()
+    const repeated = ok(readV3CombinationDiscoveryJobRecord({ ...base,
+      jobId: `job3_${'c'.repeat(32)}`, operationId: `op3_${'d'.repeat(32)}` }))
+    assert.equal(repeated.identity.jobKey, base.identity.jobKey)
+    for (const other of [discoveryIdentity('RS'), discoveryIdentity('CH', 'FR'),
+      discoveryIdentity('CH', 'DE', { ...METHOD, revision: 2 }),
+      discoveryIdentity('CH', 'DE', { ...METHOD, methodId: 'other-synthetic-method' })]) {
+      assert.notEqual(other.jobKey, base.identity.jobKey)
+    }
+    assert.notEqual(base.identity.jobKey, work().jobKey)
+    assert.match(base.identity.jobKey, /^combination-discovery-job:v3:[a-f0-9]{64}$/)
+  })
+  test('rejects noncatalog countries, multiple citizenships and invalid method revisions', () => {
+    for (const country of ['ZZ', 'XK', 'EU', 'USA', '', 'DE'.repeat(5)]) {
+      rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: country, citizenshipCountryCode: 'CH', method: METHOD }))
+      rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: 'DE', citizenshipCountryCode: country, method: METHOD }))
+    }
+    rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: 'DE', citizenshipCountryCode: ['CH', 'RS'], method: METHOD }))
+    rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'], method: METHOD }))
+    for (const revision of [0, -1, 1.5, 2_147_483_648]) {
+      rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: 'DE', citizenshipCountryCode: 'CH', method: { ...METHOD, revision } }))
+    }
+    rejected(createV3CombinationDiscoveryIdentity({ destinationCountryCode: 'DE', citizenshipCountryCode: 'CH', method: null }))
+  })
+  test('rejects private data, legal defaults, URLs, raw payloads and authority claims at every new boundary', () => {
+    const input = { destinationCountryCode: 'DE', citizenshipCountryCode: 'CH', method: METHOD }
+    for (const extra of [{ passportNumber: 'private-sentinel' }, { rawText: 'private-sentinel' },
+      { url: 'https://destination.example/private-sentinel' }, { context: globalContext() },
+      { route: 'direct_entry' }, { credentialOption: { mode: 'not_applicable' } },
+      { purpose: 'visitor' }, { factKind: 'blank_passport_pages' }, { accepted: true }, { approved: true }]) {
+      rejected(createV3CombinationDiscoveryIdentity({ ...input, ...extra }))
+      rejected(readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), ...extra }))
+      rejected(readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), identity: { ...discoveryIdentity(), ...extra } }))
+      rejected(readV3PublicResponseRecord(withPending({ ...pending(), ...extra }), REGISTRY, CLOCK))
+    }
+    rejected(readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), state: 'accepted' }))
+    rejected(createV3CombinationDiscoveryIdentity({ ...input, method: { ...METHOD, approved: true } }))
+  })
+  test('binds the exact discovery discriminator and key and rejects rule jobs in both directions', () => {
+    const base = discoveryJob()
+    for (const changed of [{ ...base.identity, destinationCountryCode: 'FR' },
+      { ...base.identity, citizenshipCountryCode: 'RS' }, { ...base.identity, method: { ...METHOD, revision: 2 } },
+      { ...base.identity, jobKey: work().jobKey }, { ...base.identity, jobKey: ref('combination-discovery-job', 'wrong-pair') },
+      { ...base.identity, kind: 'rule_research' }]) {
+      rejected(readV3CombinationDiscoveryJobRecord({ ...base, identity: changed }))
+    }
+    rejected(readV3CombinationDiscoveryJobRecord(job()))
+    rejected(readV3ResearchJobRecord(base))
+    rejected(readV3CombinationDiscoveryJobRecord({ ...job(), kind: 'combination_discovery_job_record', identity: base.identity }))
+    rejected(readV3ResearchJobRecord({ ...base, kind: 'research_job_record', jobKey: work().jobKey }))
+    rejected(readV3CombinationDiscoveryJobRecord({ ...base, resultDecisionRef: null }))
+  })
+  test('reuses bounded revision, lease and generation rules without acquiring or expiring historical leases', () => {
+    const lease = { leaseId: `lease3_${'e'.repeat(32)}`, generation: 2,
+      acquiredAt: CHECK_TIME, expiresAt: '2026-11-09T08:06:00.000Z' }
+    const leased = { ...discoveryJob(), state: 'leased', revision: 2, predecessorRevision: 1,
+      attempt: 1, updatedAt: CHECK_TIME, lease }
+    assert.equal(ok(readV3CombinationDiscoveryJobRecord(leased)).lease?.generation, 2)
+    // Historical data remains readable after expiry; reclaim requires a separate fenced CAS.
+    assert.deepEqual(ok(readV3CombinationDiscoveryJobRecord(leased)).lease, lease)
+    for (const change of [{ lease: { ...lease, generation: 3 } }, { lease: { ...lease, expiresAt: CHECK_TIME } },
+      { lease: { ...lease, expiresAt: '2026-11-09T09:00:00.000Z' } }, { lease: null },
+      { predecessorRevision: 2 }, { revision: 1 }, { attempt: 0 }, { state: 'queued' }]) {
+      rejected(readV3CombinationDiscoveryJobRecord({ ...leased, ...change }))
+    }
+    rejected(readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), createdAt: '2026-02-30T08:00:00.000Z' }))
+  })
+  test('requires bounded backoff and completion reference without promoting discovery to acceptance', () => {
+    const base = discoveryJob(), backoff = { ...base, state: 'backoff', revision: 3, predecessorRevision: 2,
+      attempt: 1, updatedAt: CHECK_TIME, lastFailure: 'unreachable', nextAttemptAt: '2026-11-09T08:10:00.000Z' }
+    assert.equal(readV3CombinationDiscoveryJobRecord(backoff).ok, true)
+    for (const change of [{ nextAttemptAt: SOURCE_TIME }, { nextAttemptAt: null }, { lastFailure: null },
+      { attempt: 0 }, { attempt: 3 }, { attemptLimit: 17 }]) {
+      rejected(readV3CombinationDiscoveryJobRecord({ ...backoff, ...change }))
+    }
+    assert.equal(readV3CombinationDiscoveryJobRecord({ ...base, state: 'exhausted', attempt: 3, lastFailure: 'unreachable' }).ok, true)
+    rejected(readV3CombinationDiscoveryJobRecord({ ...base, state: 'exhausted', attempt: 2, lastFailure: 'unreachable' }))
+    const completed = { ...base, state: 'succeeded', attempt: 1,
+      resultDiscoveryRef: ref('combination-discovery-result', 'synthetic-discovery-result') }
+    assert.equal(readV3CombinationDiscoveryJobRecord(completed).ok, true)
+    rejected(readV3CombinationDiscoveryJobRecord({ ...completed, resultDiscoveryRef: null }))
+    rejected(readV3CombinationDiscoveryJobRecord({ ...completed, resultDiscoveryRef: decision().reference }))
+    rejected(readV3CombinationDiscoveryJobRecord({ ...completed, state: 'queued' }))
+    rejected(readV3PublicProjectionRecord(completed, REGISTRY, CLOCK))
+    rejected(readV3PublicResponseRecord(withPending({ status: 'accepted', projection: completed }), REGISTRY, CLOCK))
+  })
+  test('applies bounded JSON preflight and sanitized failures before field access', () => {
+    let accessed = false
+    const getter = Object.defineProperty({}, 'destinationCountryCode', { enumerable: true, get: () => { accessed = true; return 'DE' } })
+    rejected(createV3CombinationDiscoveryIdentity(getter))
+    assert.equal(accessed, false)
+    const cyclic: Record<string, unknown> = { ...discoveryJob() }
+    cyclic.identity = cyclic
+    rejected(readV3CombinationDiscoveryJobRecord(cyclic))
+    const huge = readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), extra: 'private-sentinel'.repeat(70_000) })
+    assert.deepEqual(huge, { ok: false, reason: 'bound_exceeded' })
+    assert.equal(JSON.stringify(huge).includes('private-sentinel'), false)
+    rejected(readV3CombinationDiscoveryJobRecord({ ...discoveryJob(), identity: { ...discoveryIdentity(), sessionId: 'private-sentinel' } }))
+  })
+  test('keeps existing rule pending and adds explicitly discriminated discovery pending per citizenship', () => {
+    assert.equal(readV3PublicResponseRecord(response(), REGISTRY, CLOCK).ok, true)
+    assert.equal(readV3PublicResponseRecord(withPending({ status: 'pending', jobKind: 'rule_research',
+      jobKey: work(globalContext('RS')).jobKey }), REGISTRY, CLOCK).ok, true)
+    const result = ok(readV3PublicResponseRecord(withPending(pending()), REGISTRY, CLOCK)).cells[1].results[0]
+    assert.equal(result.status, 'pending')
+    if (result.status !== 'pending' || result.jobKind !== 'combination_discovery') assert.fail('wrong pending discriminator')
+    assert.equal(result.identity.citizenshipCountryCode, 'RS')
+    assert.equal(result.jobKey, result.identity.jobKey)
+    assert.equal(Object.isFrozen(result.identity.method), true)
+    const unknownPairs = { ...response(), cells: ['CH', 'RS'].map((citizenshipCountryCode) => ({
+      citizenshipCountryCode, results: [pending(discoveryIdentity(citizenshipCountryCode))],
+    })) }
+    const parsed = ok(readV3PublicResponseRecord(unknownPairs, REGISTRY, CLOCK))
+    assert.deepEqual(parsed.cells.map((cell) => cell.results[0].status), ['pending', 'pending'])
+    assert.notEqual(unknownPairs.cells[0].results[0].jobKey, unknownPairs.cells[1].results[0].jobKey)
+  })
+  test('rejects missing or mismatched pending discriminator, pair, method and job identity', () => {
+    const base = pending(), identity = base.identity
+    for (const changed of [{ status: 'pending', jobKey: base.jobKey },
+      { status: 'pending', jobKey: base.jobKey, identity },
+      { status: 'pending', jobKind: 'combination_discovery', jobKey: base.jobKey },
+      { ...base, jobKind: 'rule_research' }, { ...base, jobKey: work(globalContext('RS')).jobKey },
+      { ...base, jobKey: discoveryIdentity().jobKey },
+      { ...base, identity: { ...identity, method: { ...METHOD, revision: 2 } } },
+      pending(discoveryIdentity('CH')), pending(discoveryIdentity('RS', 'FR')),
+      { status: 'pending', jobKind: 'combination_discovery', jobKey: work().jobKey, identity: work() },
+      { status: 'pending', jobKind: 'rule_research', jobKey: base.jobKey }]) {
+      rejected(readV3PublicResponseRecord(withPending(changed), REGISTRY, CLOCK))
+    }
   })
 })
 

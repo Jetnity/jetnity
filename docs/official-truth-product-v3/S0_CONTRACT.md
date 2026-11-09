@@ -4,7 +4,7 @@
 
 **Session:** `/root/v3_contract_writer`
 
-**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1, #1162 / Draft #1163
+**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1 einschließlich [TL-Amendment R3](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729202622), #1162 / Draft #1163
 
 **Status:** Gemeinsamer Runtime-Datenvertrag zur unabhängigen Prüfung. Keine Methodenfreigabe, kein produktiver Import, keine öffentliche Aktivierung.
 
@@ -23,6 +23,7 @@ Alle produktiven Anschlüsse in `OFFICIAL_TRUTH_V3_BINDINGS` sind `null`; `metho
 | `readV3VisitorInput` | Zielland und eine bis fünf rohe Staatsangehörigkeitsangaben; kanonisch sortierte, eindeutige ISO-Codes | Kein Wohnsitz, Datum, Zweck, Dokument oder persönlicher Identifikator |
 | `readV3GlobalRuleContext` | Bestehender Scope plus explizite Routenart und globale Bedingungen | Genau eine Staatsangehörigkeit je Regelzelle; kein Besucherprofil |
 | `createV3WorkIdentity` | Kontext, Faktart, Methodenreferenz und bestehender Recherchegrund → Scope-/Kontext-/Research-/Job-Identitäten | Nur deterministische Identität; kein Auftrag wird ausgeführt |
+| `createV3CombinationDiscoveryIdentity` | Genau ein Zielland-/Staatsangehörigkeitspaar und eine Methodenreferenz → kanonische `combination_discovery`-Identität mit eigenem Jobschlüssel | Kein erfundener Regelkontext, keine Faktart, kein Enqueue und keine gefundene Regel |
 | `readV3ResearchProposal` | `untrusted_research_proposal`, Job-/Operation-ID, Kontext, Research-Identität, vorgeschlagener Fakt, Quellenreferenzen | Vorschlag bleibt untrusted; keine Methode/Registry/Approval/Schreibrechte im Envelope |
 | `readV3MethodRevisionDraft` | Versionierter Methodenentwurf und vorgeschlagene Betriebsparameter | Nur `DRAFT` oder `NOT_APPROVED` |
 | `readV3SourceDecisionRecord` | Pflichtquelle, optionale Versuche, aktive Konflikthistorie, Auflösungsrecords und unmittelbarer Vorgänger; optionaler vierter Parameter `archiveAppend` | Beziehungen werden gelesen; Qualifikation, Vergleich, Auflösung und tatsächliche Archiv-Custody benötigen echten Reproof |
@@ -31,6 +32,7 @@ Alle produktiven Anschlüsse in `OFFICIAL_TRUTH_V3_BINDINGS` sind `null`; `metho
 | `readV3TransitionPlan` | Erwarteter Pointer, neue Version, Operation, Methoden-/Evidence-/Decision-/Recovery-Referenzen | Ein CAS-/Reproof-/Confirm-Plan; keine Mutation |
 | `createV3TransitionIdempotencyKey` | Gültiger vollständiger Transitionsplan → Prüfsummenkennung | Keine Exactly-once-Zusage und kein Receipt |
 | `readV3ResearchJobRecord` | Deduplizierbarer Auftrag mit Revision, Lease, Attempt-Limit und Backoff | Kein Scheduler, keine Lease-Akquisition, kein Provideraufruf |
+| `readV3CombinationDiscoveryJobRecord` | Neutraler Discovery-Job mit geprüfter Paar-/Methodenidentität, gleichem Lifecycle und eigener Ergebnisreferenz | Kein Enqueue-ACK, keine Accepted-Entscheidung und kein Quellen-/Coverage-Nachweis |
 | `readV3PublicProjectionRecord` | Versionierte Projektion plus getrennt gelieferte Uhr/gesetzlicher Kalendertag | Prüft Form und Zeit; tatsächlichen aktuellen accepted Pointer liefert U1 separat |
 | `resolveV3PublicSourceDisplay` | Exakt gepinnte ContentIdentity plus bestehender Registry-Snapshot → amtlicher Name und URL | Synchroner Lookup; keine zweite Registry, kein Abruf und keine Herkunftsfreigabe |
 | `readV3PublicResponseRecord` | Vollständige Staatsangehörigkeitszellen mit einzelnen Ergebniszuständen | Kein Gesamt-accepted, kein Ranking und keine automatisch gewählte Dokumentoption |
@@ -51,6 +53,7 @@ Die exportierten Typnamen enthalten `Record` oder `Draft`, wo leicht eine Autori
 | `ev2_`-Evidence-IDs und Contenthash | Unveränderte Verweise samt Quelle, Protokoll, Hash, Abrufzeit und rechtlicher Gültigkeit | Die reduzierte Hülle rekonstruiert keinen Ursprung und keine vollständige kanonische Evidence-Version |
 | `OfficialTruthRechercheAnfrage`, `officialTruthRechercheEntscheiden` | Gleiche Research-Request-/Scope-/Fact-/Grund-Identität | Der zusätzliche Jobschlüssel ist nur Deduplizierung, keine zweite Rechercheengine |
 | `schema2DatenPruefen`, `schema2Kanonisch`, `civilDateOrdinalLesen` | Vorprüfung von JSON, deterministische Serialisierung und strenge Kalendertage | `Date.parse` allein normalisiert ungültige Tage und genügt nicht |
+| S0-Länder-, Methoden-, Job-/Operation-ID-, Zeit- und Lease-/Attempt-/Backoff-Primitive | Discovery verwendet dieselben Feldschemas und dieselbe interne Lifecycle-Prüfung wie der bestehende Regeljob | Eigener Jobtyp und eigener Namespace, ohne neue Regeltaxonomie oder Ausführungsengine |
 
 Der Legacy-Store `official-truth-store-server.ts` nimmt gerade **keine** Schema-1-Anwendbarkeit und **keine** Schema-2-Faktträger an. Die V3-Hülle ist deshalb kein `PersistierbarerRegelFakt`. I1 muss diese Grenze ausdrücklich integrieren oder geschlossen halten; Casts, Bedingungsverlust oder ein als `trustedRuleFact` umbenannter Researchervorschlag sind unzulässig. S0 ändert weder Store noch Annahmepfad und übernimmt keine Bytes aus #1135.
 
@@ -84,7 +87,36 @@ Regelversionen, Quellenentscheidungen und öffentliche Projektionen sind getrenn
 
 Der Transitionsplan beschreibt explizit `accept`, `withdraw`, `conflict`, `reaccept` und `recover`. CAS bindet erwartete Revision, erwarteten Status und exakte alte Versionsreferenz; die neue Revision erhöht sich um eins und besitzt eine neue Referenz. `accept` überschreibt keinen conflicted-/withdrawn-Pointer. Wiederannahme aus conflict benötigt Auflösungsreferenzen. Recovery verweist auf eine historische Version, erzeugt jedoch eine frische Version und verlangt aktuellen Reproof sowie tatsächliche Commitbestätigung. Die Datenhülle führt nichts davon aus; insbesondere fehlt weiterhin die konkrete autorisierte Transaktion.
 
-Der Jobschlüssel enthält vollständigen V3-Kontext, Faktart und Methodenrevision. Unterschiedliche Besucher, Operation-IDs und `missing`-/`recheck_needed`-Gründe erzeugen dadurch keine parallelen aktiven Jobs für dieselbe Zelle. Der bestehende Research-Key hält den Recherchegrund separat fest. Lease-ID, Generation, Revision und Versuchslimit liefern den Anschluss für spätere Sperrung und Wiederaufnahme. Eine abgelaufene Lease bleibt lesbar; der Leser erwirbt oder verlängert sie nicht. Backoff, Erfolg und Erschöpfung bleiben unterschiedliche Records. Es gibt keine Exactly-once-Ausführungsbehauptung.
+Der Regeljobschlüssel enthält vollständigen V3-Kontext, Faktart und Methodenrevision. Unterschiedliche Besucher, Operation-IDs und `missing`-/`recheck_needed`-Gründe erzeugen dadurch keine parallelen aktiven Jobs für dieselbe Zelle. Der bestehende Research-Key hält den Recherchegrund separat fest. Lease-ID, Generation, Revision und Versuchslimit liefern den Anschluss für spätere Sperrung und Wiederaufnahme. Eine abgelaufene Lease bleibt lesbar; der Leser erwirbt oder verlängert sie nicht. Backoff, Erfolg und Erschöpfung bleiben unterschiedliche Records. Es gibt keine Exactly-once-Ausführungsbehauptung.
+
+### R3: Discovery vor einem noch unbekannten Regelkontext
+
+Wenn für ein Länderpaar auch der globale Kontextplan fehlt, dürfen U1/M1 weder Pass-/Routen-/Zweckbedingungen erfinden noch Unwissen als `not_applicable` ausgeben. Dafür besteht nun die getrennte API:
+
+```ts
+createV3CombinationDiscoveryIdentity(value: unknown): V3ReadResult<V3CombinationDiscoveryIdentity>
+readV3CombinationDiscoveryJobRecord(value: unknown): V3ReadResult<V3CombinationDiscoveryJobRecord>
+```
+
+Die Identitätsfunktion nimmt ausschließlich `{ destinationCountryCode, citizenshipCountryCode, method }` entgegen. Sie liefert `{ kind: 'combination_discovery', destinationCountryCode, citizenshipCountryCode, method, jobKey }`. Beide Länder werden mit den bestehenden S0-Parsern normalisiert und gegen den Katalog geprüft. Genau eine Staatsangehörigkeit ist erlaubt. `jobKey` lautet `combination-discovery-job:v3:<sha256>` und bindet die kanonischen drei Eingabefelder einschließlich Methoden-ID und Revision. Unterschiedliche Job-/Operation-IDs erzeugen keine neue Paaridentität; anderes Zielland, andere Staatsangehörigkeit oder Methode tun dies. Ein Mehrstaatsangehörigkeitsrequest wird über den bestehenden Besucherinput normalisiert und in solche Einzelpaare zerlegt.
+
+Der Discovery-Job enthält `schema: 3`, `kind: 'combination_discovery_job_record'`, die vollständige `identity`, `jobId`, `operationId`, `revision`, `predecessorRevision`, `state`, `createdAt`, `updatedAt`, `attempt`, `attemptLimit`, `lease`, `nextAttemptAt`, `lastFailure` und `resultDiscoveryRef`. Der Jobschlüssel liegt in `identity.jobKey`; ein freies zweites Schlüsselfeld ist unzulässig. Die Zustände bleiben `queued`, `leased`, `backoff`, `succeeded`, `exhausted`. Revision und begrenzte Lease/Generation, maximal 16 Versuche sowie Backoff-/Zeitbeziehungen werden durch dieselbe interne Prüfung wie beim Regeljob gelesen. Eine historisch abgelaufene Lease bleibt für separat abgesicherten Reclaim lesbar. Es gibt weder eine Uhr mit Nebenwirkung noch automatische Akquisition, Verlängerung oder Queueausführung.
+
+`resultDiscoveryRef` ist nur bei `succeeded` gesetzt und verwendet den eigenen Namespace `combination-discovery-result:v3:<sha256>`. Es ist eine begrenzte Referenz auf das separat zu behandelnde Discovery-Ergebnis, keine Quelle, Regelentscheidung, Coveragebestätigung oder accepted-Projektion. Der Job enthält weder URL noch Rohtext, Fakten, Regelkontext oder Freigabebehauptungen. Gefundene Vorschläge müssen anschließend durch die bestehenden servereigenen Qualifikations-, Original-, Proposal-, Methoden- und Importgrenzen. Ein erfolgreicher Discovery-Job wird nicht zu einer öffentlichen positiven Regelantwort.
+
+### R3: Rückwärtskompatible Pending-Identität
+
+| Pending-Variante | Zulässige Form | Prüfung und Bedeutung |
+| --- | --- | --- |
+| Bisheriger Regeljob | `{ status: 'pending', jobKey: 'research-job:v3:…' }` | Unverändert gültig; U1/M1 müssen tatsächliche Jobbestätigung und Kontextzuordnung getrennt beibringen |
+| Expliziter Regeljob | Gleiche Form plus `jobKind: 'rule_research'` | Derselbe Regeljob-Namespace, ohne Discovery-Identität |
+| Discovery | `{ status: 'pending', jobKind: 'combination_discovery', jobKey, identity }` | Discriminator und vollständige Discovery-Identität sind Pflicht; beide Schlüssel müssen gleich sein, der Identitätsschlüssel wird neu berechnet, Zielland und Staatsangehörigkeit müssen exakt zur Antwortzelle passen |
+
+Die neuen Typen erlauben die eindeutige Verzweigung `result.status === 'pending' && result.jobKind === 'combination_discovery'`. Ein umbenannter Regeljob, ein Discovery-Schlüssel ohne Discriminator/Identität oder ein vertauschtes Länderpaar scheitert. Die bestehenden Proposal-/RuleContext-/Regeljob-Schemas und deren semantische Prüfungen bleiben unverändert strikt; die 53 bisherigen Tests bleiben unverändert bestehen.
+
+**Anschluss U1/M1:** U1 darf Discovery-pending erst nach tatsächlicher, separat erbrachter Bestätigung eines passenden aktiven Discovery-Jobs anzeigen. Ein berechneter Schlüssel oder erfolgreiches `readV3CombinationDiscoveryJobRecord` ist kein ACK. Der lesbare `succeeded`-Record ist ebenfalls keine Bestätigung noch laufender Recherche. M1 muss Enqueue/Deduplizierung, aktuelle Methodenfreigabe, Lease-Fencing und Wiederaufnahme in seinem eigenen autorisierten Jobport absichern. S0 implementiert keinen solchen Port. Eine bestätigte Discovery kann später vorhandene kontextbezogene Regeljobs vorbereiten; die normalen Quellen-/Import-/Projektionsprüfungen bleiben erforderlich.
+
+### Öffentliche Projektionen und Quellenanzeige
 
 Jede öffentliche Antwort muss genau die angefragten Staatsangehörigkeitszellen enthalten. Jede Zelle enthält eigene accepted/pending/conflict/unavailable/error-Ergebnisse, einschließlich getrennt ungeklärter Optionen. Keine positive erste Zelle verdeckt eine zweite fehlende Zelle. Die accepted-Projektion trägt ihre exakte Regel-/Evidence-/Decision-/Methodenreferenz und strukturierte Bedingungen. `sourceCheckedAt` muss dem ursprünglichen Abrufzeitpunkt entsprechen; `builtAt` darf ihn nicht ersetzen. `expiresAt` darf die Quellenfrische nicht verlängern. Der Leser prüft Fristgrenzen exklusiv am Zeitpunkt und rechtliche Datumsintervalle inklusiv am getrennt übergebenen gesetzlichen Kalendertag. Eine amtliche Zeitzone wird nicht aus UTC erraten.
 
