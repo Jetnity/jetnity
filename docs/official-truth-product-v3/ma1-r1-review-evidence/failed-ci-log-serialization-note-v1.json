@@ -1,0 +1,19 @@
+{
+  "schema": "ma1-ci-log-serialization-note-v1",
+  "at": "2026-11-09T16:46:10.918763+00:00",
+  "scope": "Two byte representations of the same actual decoded GitHub core log, preserved explicitly for historical hashes. No source or test change.",
+  "firstSavedRepresentation": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391-first-save.log",
+    "sha256": "579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d",
+    "bytes": 4149612,
+    "note": "Original apply_patch save appended one blank terminal line. Root read this representation and its R1 task accurately records this hash."
+  },
+  "exactDecodedToolRepresentation": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log",
+    "sha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+    "bytes": 4149611,
+    "note": "Matches full tool string including UTF-8 BOM and original single final newline; peer final receipt binds this representation."
+  },
+  "soleDifference": "firstSavedRepresentation == exactDecodedToolRepresentation + one LF byte",
+  "unchangedLogContents": true
+}

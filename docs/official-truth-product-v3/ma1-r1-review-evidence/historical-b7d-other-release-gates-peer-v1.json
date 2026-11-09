@@ -1,0 +1,335 @@
+{
+  "schema": "jetnity.ma1.peer-release-gates.v1",
+  "reviewer": "/root/ma1_release_gating",
+  "at": "2026-11-09T16:41:42.137692+00:00",
+  "status": "ASSIGNED_EXISTING_NATIVE_AND_ISOLATED_UI_GATES_VERIFIED_FROM_ACTUAL_CI_EVIDENCE_ROOT_FINAL_ACCEPTANCE_PENDING",
+  "runId": 42654936800,
+  "runAttempt": 1,
+  "sourceHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "checkout": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+  "tree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "checkoutCommitApiEvidence": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/ui-checkout-metadata.json",
+  "checkedOutMergeParents": [
+    "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "b7d247145c27f31fed1e42f2764e9ec91b558a87"
+  ],
+  "checkoutTreeMatchesSourceTree": true,
+  "nativeJobs": [
+    {
+      "kind": "persisted",
+      "jobId": 129290779652,
+      "name": "Persisted canonical read \u2014 native",
+      "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+      "checkoutObserved": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T16:34:07Z",
+      "logPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/persisted-job-129290779652-raw.txt",
+      "logSha256": "2273a089a3f23102ad09fae5f9d5a2379c61cac20d677341c939c8eb1726d898",
+      "logBytes": 156166,
+      "tap": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "executedTests": [
+        "persisted canonical bridge: closed committed producer, fresh native reader, final lifecycle proof"
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+          "elapsedMs": 248399
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "composed: acknowledged COMMIT, producer gone, distinct fresh guarded and archive backends, one synthetic Visa",
+          "elapsedMs": 267608
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 331114
+        }
+      ]
+    },
+    {
+      "kind": "store",
+      "jobId": 129290779280,
+      "name": "Accepted store trip integration \u2014 native (store)",
+      "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+      "checkoutObserved": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T16:35:12Z",
+      "logPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/store-job-129290779280-raw.txt",
+      "logSha256": "5d14519c55fda70c56e23e4e3fda86b3e47180fb03bf071b42553b8ff104c360",
+      "logBytes": 134917,
+      "tap": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "executedTests": [
+        "Accepted Store Trip Integration 1: actual unbound archive/legacy refusal and final source expiry",
+        "Accepted Store Trip Integration 1: actual saved Trip date, person, credential and declaration boundaries",
+        "Accepted Store Trip Integration 1: actual retained-row integrity and own-Trip recovery with independent A/B",
+        "Accepted Store Trip Integration 1: actual native producer, durable commit, fresh reader and restore refusal"
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "proof": "native-semantic-cleanup-observation",
+          "snapshotTokenMatched": true,
+          "ordinary": {
+            "entries": 1,
+            "tokenMatches": 1,
+            "commits": 1,
+            "committedRemovedOne": true,
+            "acknowledged": true,
+            "beforeStop": null,
+            "settled": {
+              "httpEntries": 1,
+              "server": [
+                {
+                  "authenticated": true,
+                  "bodyParsed": true,
+                  "beforeRpc": true,
+                  "rpcCommitted": true,
+                  "status": 200,
+                  "headersSent": true,
+                  "finished": true,
+                  "closed": true,
+                  "acknowledgement": "response_end_called"
+                }
+              ],
+              "serverOmitted": 0,
+              "beforeRpcEntries": 1,
+              "tokenMatches": 1,
+              "commits": 1,
+              "committedRemovedOne": true,
+              "acknowledged": true,
+              "client": {
+                "calls": 1,
+                "started": 1,
+                "settled": 1,
+                "pending": 0,
+                "synchronousThrows": 0,
+                "observerErrors": 0,
+                "omitted": 0,
+                "records": [
+                  {
+                    "outcome": "fulfilled",
+                    "status": 200,
+                    "error": null
+                  }
+                ]
+              }
+            }
+          },
+          "disposal": {
+            "status": "acknowledged",
+            "removed": 0,
+            "intervalCleanupHttpEntries": 1,
+            "intervalCleanupRpcOutcomes": [
+              {
+                "committed": true,
+                "sqlState": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "kind": "lifecycle",
+      "jobId": 129290779548,
+      "name": "Accepted store trip integration \u2014 native (lifecycle)",
+      "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+      "checkoutObserved": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T16:38:12Z",
+      "logPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/lifecycle-job-129290779548-raw.txt",
+      "logSha256": "bb40d38acc722df48cc1bb24a3b403882e871e6168a155dd3899a654fcc1ce67",
+      "logBytes": 176340,
+      "tap": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "executedTests": [
+        "Accepted Store Trip Integration 1: actual pinned SSR, outgoing signals and owned request/key/target boundaries",
+        "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+        "Accepted Store Trip Integration 1: native abandonment, late reply, R4 race and orphan expiry recovery",
+        "Accepted Store Trip Integration 1: actual four Finalize waits, authority/Trip controls and immutable lifecycle"
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-09T16:30:06.293Z",
+          "readAt": "2026-11-09T16:32:36.150Z",
+          "expiresAt": "2026-11-09T16:32:51.150Z",
+          "deadlineFromRequestStartMs": 18010,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        },
+        {
+          "proof": "native-disposal-and-recovery",
+          "proofs": [
+            "genuine finalized read response arrives after original validation window",
+            "R4 acquired token disposal loses ACK but performs one actual bounded cleanup",
+            "expired unacknowledged read reservations recover through explicit reader alone",
+            "R4 cleanup races actual pending authenticated Finalize and preserves committed history"
+          ],
+          "lateReadNoPositive": true,
+          "unknownDisposalAckHonest": true,
+          "expiredOrphansSwept": 32,
+          "readerRecoverySourceFetches": 0,
+          "finalizeRaceCommitted": true,
+          "acquiredTokenDisposalAttempts": 1,
+          "disposalSqlState": "55P03",
+          "raceExpiredResidueSwept": 1,
+          "immutableVersions": 2,
+          "durableOperations": 2,
+          "ownedClientBackends": 0
+        }
+      ]
+    },
+    {
+      "kind": "atomic",
+      "jobId": 129290779200,
+      "name": "Atomic version refresh \u2014 native",
+      "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+      "checkoutObserved": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T16:40:09Z",
+      "logPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/atomic-job-129290779200-raw.txt",
+      "logSha256": "4c7011aae223393038d304a98a08b0ca7ca27cd42eae55b4ecd6b158218abfc2",
+      "logBytes": 183045,
+      "tap": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "executedTests": [
+        "atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback"
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "actual parent-lifetime abort stops pending SQL and connection gate, restores hooks and removes own backends",
+          "elapsedMs": 715,
+          "sleepingSeen": true,
+          "gateSeen": true,
+          "actorsSettled": 2,
+          "ownBackendsGone": 3,
+          "abortCleanupMs": 223,
+          "cleanup": {
+            "started": 11,
+            "settled": 11,
+            "pending": 0,
+            "connections": 3,
+            "closed": 3,
+            "stoppedClusters": 1
+          },
+          "nextScenario": 0,
+          "nextCluster": 0
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+          "elapsedMs": 711263,
+          "cleanup": {
+            "started": 9788,
+            "settled": 9788,
+            "pending": 0,
+            "connections": 248,
+            "closed": 248,
+            "stoppedClusters": 11
+          },
+          "parentAborted": false
+        }
+      ]
+    }
+  ],
+  "isolatedUi": {
+    "jobId": 129290778833,
+    "conclusion": "success",
+    "receipt": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/isolated-ui-review-v1.json",
+    "sha256": "b4309673b592e20772ecec170797290fc8f4dba5a68fb8f9b384649846e10198",
+    "actualTests": 50,
+    "layouts": 12,
+    "interactions": 11,
+    "screenshots": 10,
+    "allHashesVerified": true,
+    "allTenPngIdenticalToAcceptedC1R3": true,
+    "freshVisualInspection": false,
+    "browserErrors": 0,
+    "externalRequests": 0,
+    "syntheticP95Ms": 7.210969999999975,
+    "publicSloVerified": false
+  },
+  "unreviewedByThisPeer": {
+    "repositoryCoreAndNew14Ma1Native": "Owned by /root/handoff_recovery_audit and Root; no inferred acceptance here",
+    "auth": "Only jobSUCCESS metadata observed. No Auth log read and no target/production truth inferred",
+    "mainProductionPreview": "Root-owned fresh live gates; not independently reread by this subagent"
+  },
+  "actualLimits": [
+    "All native examples are isolated synthetic CI; no hosted target or real method approval claim.",
+    "UI benchmark is in-process synthetic cache with no real network or storage SLO.",
+    "All10PNG bytes are identical to prior C1R3; this peer did not open images for new visual inspection.",
+    "A local poll-rate guard refused one too-early orchestration invocation before any network call; no job/test rerun occurred."
+  ],
+  "operations": [
+    "Authorized GitHub GET/log/artifact connector calls only; no workflow reruns.",
+    "Root explicitly authorized one exact connector-returned signed artifact GET; URL was not printed by the download script and request file was deleted after the bounded download.",
+    "Bounded ZIP size/count/path/symlink checks, extraction and hashes; all files confined to recovery.",
+    "No tests/product imports/browser/server/native/SQL/socket/hostedDB/#917 access, no source/docs/index/refs/remote changes, no Ready/merge or finalTL verdict."
+  ],
+  "next": "Root independently reads relevant receipts/logs, combines new MA1 core/native results and fresh live gates. Any new head invalidates these exact-head gates."
+}

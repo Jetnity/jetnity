@@ -1,0 +1,217 @@
+{
+  "schema": "jetnity-ma1-ci-attempt1-independent-review-v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "createdAt": "2026-11-09T16:45:35.805652+00:00",
+  "scope": "Independent read-only review of actual completed Repository verification job, plus bounded attribution to published source. No TL acceptance.",
+  "status": "CI_FAILURE_NATIVE_NOT_VERIFIED",
+  "binding": {
+    "repository": "Jetnity/jetnity",
+    "pr": 1175,
+    "sourceHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "sourceTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+    "baseHead": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "runId": 42654936800,
+    "runAttempt": 1,
+    "jobId": 129290779391,
+    "jobName": "Repository verification",
+    "jobStatus": "completed",
+    "jobConclusion": "failure",
+    "jobUrl": "https://github.com/Jetnity/jetnity/actions/runs/42654936800/job/129290779391",
+    "checkedOutHead": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+    "checkoutMessage": "Merge b7d247145c27f31fed1e42f2764e9ec91b558a87 into 5558367eb0bff97162c369bbb8963123839f4b0e",
+    "evidence": "Run API head/tree and PR tuple; actual checkout log lines 728-731; operating-mode head/base lines 827-828; independent read-only commit metadata confirms SHA/message. Local HEAD/tree matched source head/tree.",
+    "checkoutTreeIndependentlyRead": false,
+    "checkoutTreeLimit": "The synthetic merge object is absent locally. A GIT_NO_LAZY_FETCH=1 git cat-file check failed without fetching; no merge-tree equality is claimed by this receipt."
+  },
+  "coreActual": {
+    "tests": 8606,
+    "suites": 969,
+    "pass": 8602,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "durationMs": 659762.650947,
+    "exitCode": 1,
+    "summaryLogLines": [
+      62662,
+      62670
+    ],
+    "inheritedSkipNames": [
+      "T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout",
+      "shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu"
+    ],
+    "laterHygieneAndBuild": [
+      {
+        "name": "Schutz der Admin-API",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10
+      },
+      {
+        "name": "Bezug auf das Schema",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11
+      },
+      {
+        "name": "Unerreichbarer Code",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12
+      },
+      {
+        "name": "Exporte ohne Aufrufer",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 13
+      },
+      {
+        "name": "Ungenutzte Pakete",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 14
+      },
+      {
+        "name": "Production build",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 15
+      }
+    ]
+  },
+  "ma1Actual": {
+    "parentName": "MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup",
+    "parentTapNumber": 1670,
+    "parentResult": "not ok",
+    "durationMs": 682.019915,
+    "failureType": "testCodeFailure",
+    "error": "local_pg_duplicate_column",
+    "code": "duplicate_column",
+    "stackLocation": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:138:53",
+    "parentLogLines": [
+      33801,
+      33816
+    ],
+    "expectedChildren": 14,
+    "announcedChildren": 0,
+    "resultChildren": 0,
+    "childrenPassed": 0,
+    "nativePass": false,
+    "cleanup": {
+      "started": 5,
+      "settled": 5,
+      "pending": 0,
+      "connections": 2,
+      "closed": 2,
+      "stoppedClusters": 1
+    },
+    "cleanupScope": "Actual initial-fixture failure cleanup only. Does not prove the unexecuted 14 scenarios or their terminal cleanup."
+  },
+  "findings": [
+    {
+      "id": "MA1-CI-A1-FOUNDATION-INVENTORY",
+      "priority": "P2",
+      "blocking": true,
+      "evidenceKind": "Actual CI failure plus source inspection",
+      "actualError": "unexpected foundation consumer lib/readiness/official-truth-product-v3/method/authority-postgres.ts: official-truth-autonomous-provenance-artifact (ownRecord)",
+      "guardPath": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "guardLine": 505,
+      "logLines": [
+        22115,
+        22142
+      ],
+      "sourceImports": [
+        {
+          "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+          "line": 4
+        },
+        {
+          "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+          "line": 6
+        }
+      ],
+      "boundedRecommendation": "Same-author exact finite consumer registration for only the two approved paths and ownRecord, preserving strict path/module/name checks with focused negatives. Root owns task scope and correction review."
+    },
+    {
+      "id": "MA1-CI-A1-NATIVE-DUPLICATE-COLUMN",
+      "priority": "P2",
+      "blocking": true,
+      "evidenceKind": "Actual CI duplicate_column plus source attribution; no local reproduction",
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "line": 103,
+      "sourceSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "description": "Observer configuration selects two pg_catalog.set_config expressions without distinct aliases; the unchanged wire reader rejects duplicate result-column names at pg-wire.ts:138. This is before Auth/candidate installation and before all 14 t.test children. Two connections and five tracked operations match that early setup path.",
+      "boundedRecommendation": "Distinct fixed aliases in the MA1-owned setup query, consistent with the already aliased native-adapter configureSql. Preserve the shared duplicate-column guard and all native scenarios."
+    }
+  ],
+  "sourcePins": {
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    ".github/workflows/ci.yml": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+    "package.json": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a"
+  },
+  "evidenceFiles": {
+    "run-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/run-initial.json",
+      "sha256": "975c59b5db5dc0bb20513478c2fe5dae929121c74f74c6db726b42d849ac3831",
+      "bytes": 13883
+    },
+    "jobs-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/jobs-conclusive.json",
+      "sha256": "713766ab73e243a2e00e99ebcab7d6b5573e52cb75f3b88f9d84c34a21263df2",
+      "bytes": 15144
+    },
+    "core-job-129290779391.log": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log",
+      "sha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+      "bytes": 4149611
+    },
+    "core-relevant-excerpts.txt": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-relevant-excerpts.txt",
+      "sha256": "fcd583b31029dd9f838d7c2d6fbbb41f932348d6c3c5940beae2aa880c86c290",
+      "bytes": 8596
+    },
+    "expected-source-inventory.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/expected-source-inventory.json",
+      "sha256": "a6a8a00d8bcbbdd225965e1b5c42c9badfa1baddb7cbda7440d36adfa17a780e",
+      "bytes": 2399
+    },
+    "actual-ma1-child-presence.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/actual-ma1-child-presence.json",
+      "sha256": "07a4951120ae07cbbaa422a65716fbdaa2c10c4a9ef43e6f3968df8237e1bca9",
+      "bytes": 2560
+    },
+    "checkout-merge-commit.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/checkout-merge-commit.json",
+      "sha256": "578acf3d2bc28c8267b8bbc0d60d429554405f5741e86ddc84f98fefc2dfd31e",
+      "bytes": 2170926
+    }
+  },
+  "logPersistence": {
+    "tool": "github_fetch_workflow_job_logs",
+    "decodedToolUtf16CodeUnits": 4140407,
+    "savedUtf8Bytes": 4149611,
+    "savedSha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+    "exactToolDecodedText": true,
+    "note": "Saved UTF-8 preserves tool-decoded BOM and line content. Removed the one terminal newline added by apply_patch to match original decoded text. Initial scratch assertion used Python codepoint count against JS UTF-16 units and failed before writes; corrected to UTF-16 units. No test was executed by this analysis."
+  },
+  "actions": {
+    "githubReadsOnly": true,
+    "noWorkflowRerun": true,
+    "noSourceOrWorktreeEdit": true,
+    "noRefMutationOrGitFetch": true,
+    "noLocalTestNativeProcessSqlOrDbExecution": true,
+    "noAuthLogRead": true,
+    "rootAndOriginalAuthorNotified": true,
+    "furtherReleaseJobsNotReviewed": true
+  },
+  "limits": [
+    "No TL PASS, Ready, merge or activation decision.",
+    "The 14 MA1 native acceptance scenarios remain unexecuted in this attempt.",
+    "No hosted target truth, #917 readback, #1139 completion, method approval or production claim.",
+    "Corrections require a new exact head and full independent re-gating; prior source reviews do not substitute for the missing native proof."
+  ]
+}

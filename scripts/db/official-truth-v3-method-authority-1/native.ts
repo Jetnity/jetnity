@@ -100,7 +100,7 @@ async function createFixture(lifetime: OwnedTestLifetime, t: TestContext, instal
     return connection
   }
   const owner = await connect(), observer = await connect()
-  await observer.query("SELECT pg_catalog.set_config('statement_timeout','1000',false),pg_catalog.set_config('lock_timeout','1000',false)")
+  await observer.query("SELECT pg_catalog.set_config('statement_timeout','1000',false) AS statement_cap,pg_catalog.set_config('lock_timeout','1000',false) AS lock_cap")
   await installMa1AuthFixture(owner)
   await owner.query(fixtureMarker)
   if (install) {

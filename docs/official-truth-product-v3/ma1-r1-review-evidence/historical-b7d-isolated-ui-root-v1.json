@@ -1,0 +1,23 @@
+{
+  "schema": "jetnity.ma1.root-isolated-ui-artifact-review.v1",
+  "at": "2026-11-09T16:33:19.472816+00:00",
+  "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "checkout": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+  "tree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "runId": 42654936800,
+  "attempt": 1,
+  "jobId": 129290778833,
+  "rootObservedLog": {
+    "sha256": "4e7258c5f9d522f567547d8f9f5a58266d50d15b9334461e609c042736250bb9",
+    "tests": 50,
+    "pass": 50,
+    "fail": 0,
+    "skip": 0
+  },
+  "zipSha256": "7a786f33655fe24daacff16ba4520473d4b3238b926f64ffa159c0563fa44819",
+  "all15FilesRootRehashed": true,
+  "sameTenImagesAsAcceptedC1": true,
+  "newVisualInspection": false,
+  "scope": "Fresh exact-head isolated CI and artifact binding inspected, Root actual bytes hashed. No public/production/native method acceptance or public p95 claim.",
+  "peerReceiptSha256": "b4309673b592e20772ecec170797290fc8f4dba5a68fb8f9b384649846e10198"
+}

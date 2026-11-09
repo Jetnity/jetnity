@@ -1,0 +1,93 @@
+{
+  "sources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "before": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "after": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "bytes": 6696,
+      "unchanged": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "before": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "after": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "bytes": 32450,
+      "unchanged": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "before": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "after": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "bytes": 10485,
+      "unchanged": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "before": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "after": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "bytes": 154,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "before": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "after": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "bytes": 6536,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "before": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "after": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "bytes": 2050,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "before": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "after": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "bytes": 21567,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "before": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "after": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "bytes": 52632,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "before": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "after": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "before": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "after": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "bytes": 77127,
+      "unchanged": false
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "before": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "after": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "bytes": 5739,
+      "unchanged": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "before": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "after": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942,
+      "unchanged": true
+    }
+  ],
+  "trackedChanges": [
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts"
+  ],
+  "implementationUnchangedExceptOneAliasLine": true
+}

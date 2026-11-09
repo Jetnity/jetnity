@@ -325,6 +325,9 @@ const reviewedFoundationImports = new Map<string, readonly string[]>([
   // N1G1 / IN1: exact descriptor-aware input/ack reader; shared S1 entry above.
   // These pure helpers grant no issuer, source, custody or production authority.
   ['lib/readiness/official-truth-product-v3/ingress/service-server.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  // MA1: exact descriptor-aware shape readers; no historical or live authority.
+  ['lib/readiness/official-truth-product-v3/method/authority-postgres.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  ['lib/readiness/official-truth-product-v3/method/contract.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-artifact',
     ['decodeProvenanceBytes', 'historicalValuesEqual', 'ownRecord', 'pinsEqual', 'provenanceCanonical', 'provenanceHash', 'readPin', 'Pin']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-record',
@@ -463,6 +466,34 @@ test('N1G1 exact finite consumers retain negative path/module/name-set gates', (
     ['immutable', 'ownRecord', 'ownRecord'], ['immutable', 'ownRecord', 'readPin'],
     ['immutable', 'ownRecord', 'historicalPinFor'], ['immutable', 'ownRecord', 'runOfficialTruthGlobalProduction']]) {
     assert.equal(foundationImporterAllowed(s1, artifactModule, names), false)
+  }
+})
+test('MA1 exact shape-reader consumers retain raw path, module and single-name gates', () => {
+  const artifactModule = 'official-truth-autonomous-provenance-artifact'
+  const directory = 'lib/readiness/official-truth-product-v3/method'
+  for (const name of ['authority-postgres', 'contract']) {
+    const path = `${directory}/${name}.ts`
+    assert.equal(foundationImporterAllowed(path, artifactModule, ['ownRecord']), true)
+    for (const unknown of [path + '.evil.ts', path + 'x', './' + path,
+      `${directory}/${name}-copy.ts`, `${directory}/./${name}.ts`,
+      `${directory}/../method/${name}.ts`, `${directory}/${name}.test.ts`,
+      `${directory}/test-support/${name}.ts`,
+      `lib/readiness/official-truth-product-v3/storage/${name}.ts`,
+      `lib/readiness/official-truth-product-v3/methods/${name}.ts`,
+      `app/api/official-truth-product-v3/method/${name}.ts`,
+      `scripts/db/official-truth-v3-method-authority-1/${name}.ts`]) {
+      assert.equal(foundationImporterAllowed(unknown, artifactModule, ['ownRecord']), false)
+    }
+    for (const wrongModule of ['', 'official-truth-autonomous-provenance-record',
+      'official-truth-autonomous-provenance-record-server',
+      'official-truth-autonomous-provenance-artifact-copy', artifactModule + '.ts']) {
+      assert.equal(foundationImporterAllowed(path, wrongModule, ['ownRecord']), false)
+    }
+    for (const names of [[], ['*'], ['default'], ['immutable'], ['OwnRecord'], ['ownRecord', 'ownRecord'],
+      ['ownRecord', '*'], ['ownRecord', 'default'], ['ownRecord', 'immutable'],
+      ['ownRecord', 'readPin'], ['ownRecord', 'historicalPinFor'], ['ownRecord', 'runOfficialTruthGlobalProduction']]) {
+      assert.equal(foundationImporterAllowed(path, artifactModule, names), false)
+    }
   }
 })
 test('zero-I/O foundation fences; finite pure consumers and no public issuer/test factory', () => {

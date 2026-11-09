@@ -1,0 +1,78 @@
+{
+  "scope": "Full actual core log exact-name check; no local test execution",
+  "expectedChildren": 14,
+  "announcedChildren": 0,
+  "resultChildren": 0,
+  "children": [
+    {
+      "name": "creator function/table/schema defaults refuse atomically without normalization",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "real active own Owner and exact account/session/profile negative matrix",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "human method wait precedes fresh unchanged session/profile authority check",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    },
+    {
+      "name": "rollback takes all removal locks before checking concurrently committed history",
+      "subtestAnnouncements": 0,
+      "resultLines": []
+    }
+  ]
+}
