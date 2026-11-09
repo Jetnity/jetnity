@@ -15,8 +15,9 @@ export default function StationField({ label, value, query, onQuery, onSelect, n
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
   const input = useRef<HTMLInputElement>(null)
+  const sucheAktiv = !nurBeiFokus || open
   useEffect(() => {
-    if (value || query.trim().length < 2 || (nurBeiFokus && !open)) return
+    if (value || query.trim().length < 2 || !sucheAktiv) return
     const controller = new AbortController()
     const timer = setTimeout(async () => {
       setMessage('Orte werden gesucht …')
@@ -29,7 +30,7 @@ export default function StationField({ label, value, query, onQuery, onSelect, n
       } catch { if (!controller.signal.aborted) setMessage('Orte konnten nicht geladen werden. Bitte gib den Ort erneut ein.') }
     }, 350)
     return () => { clearTimeout(timer); controller.abort() }
-  }, [query, value, nurBeiFokus, open])
+  }, [query, value, sucheAktiv])
   const select = (station: RentalStation) => { onSelect(station); setOptions([]); setOpen(false); setMessage(''); setActive(-1); input.current?.focus() }
   return <div className="relative min-w-0" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}>
     <label htmlFor={id} className="mb-1 block text-sm font-medium text-brand-800">{label}</label>
