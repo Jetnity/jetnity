@@ -6,6 +6,32 @@ import { createV3VisitorQuery } from './query'
 import { presentV3VisitorAnswer } from './presentation'
 import { syntheticV3Fixture } from './test-fixtures'
 
+for (const unconditional of [false, true]) test(`C1 real query/reproof displays all application restrictions with unconditional expression=${unconditional}`, async () => {
+  const f = syntheticV3Fixture(), item = unconditional ? f.applicationUnconditional : f.application
+  f.cache.set(item.projection.rule.subject.contextKey, item.projection)
+  const result = await createV3VisitorQuery({ ...f.ports, coverage: { targets: async () => ({ problem: null,
+    zeilen: [{ context: item.rule.subject.context, factKind: 'blank_passport_pages' }] }) } })({
+    destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'],
+  })
+  if (!result.ok) assert.fail(result.reason)
+  const view = presentV3VisitorAnswer(result.answer), displayed = view.cells[0].results[0]
+  if (displayed.status !== 'accepted') assert.fail(`expected synthetic proof, received ${displayed.status}`)
+  assert.equal(view.synthetic, true)
+  assert.equal(f.counts.reproof, 1); assert.equal(f.counts.confirm, 1)
+  const text = displayed.conditions.join('\n')
+  assert.match(text, /Reisezweck: Tourismus/)
+  assert.match(text, /Reisebeginn und Reiseende müssen zwischen 2026-11-07 und 2026-11-13 liegen \(beide Grenzen eingeschlossen\)\./)
+  assert.match(text, /Direkte Einreise ohne Transit/)
+  assert.match(text, /Reisepass; Ausstellungsland .*Schweiz; zugeordnete Staatsangehörigkeit .*Schweiz/)
+  if (!unconditional) {
+    assert.match(text, /gewöhnliches Reisedokument/)
+    assert.match(text, /Reisebeginn: .*Schweiz/)
+  }
+  assert.doesNotMatch(text, /Keine weiteren Bedingungen|Reisezweck: Besuch|höchstens 5 Tage/)
+  assert.equal(displayed.validityText, 'Gültigkeit: ab 2026-11-01 · bis 2026-12-31')
+  assert.equal(f.counts.queue, 0)
+})
+
 const deadline: EventDeadlineV2 = { schema: 2, kind: 'event_deadline', action: 'stay_extension_application',
   reference: { event: 'current_stay_permission_expiry', countryCode: 'DE' }, relation: 'before', semantics: 'mandatory' }
 const stay: StayOutcomeV2 = { perVisit: { value: 30, unit: 'days' },

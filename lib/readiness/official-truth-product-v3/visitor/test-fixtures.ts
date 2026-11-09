@@ -44,6 +44,18 @@ export function syntheticV3Fixture() {
     if (!read.ok) throw new Error('synthetic context')
     return read.value
   }
+  // Separate fictional nine-page example, never an AA/global visa qualification.
+  const applicationContext = (unconditional = false): V3GlobalRuleContext => {
+    const read = readV3GlobalRuleContext({ ...context(), contextRevision: 2,
+      conditions: unconditional ? { status: 'unconditional' } : { status: 'specified', expression: { op: 'all', operands: [
+        { op: 'atomic', predicate: { kind: 'document_class', documentClass: 'ordinary' } },
+        { op: 'atomic', predicate: { kind: 'journey_origin', place: { kind: 'country', countryCode: 'CH' } } },
+      ] } },
+      application: { purpose: 'tourism', tripStartAndEndWindow: { from: '2026-11-07', through: '2026-11-13' } },
+    })
+    if (!read.ok) throw new Error('synthetic application context')
+    return read.value
+  }
   const make = (value = context()) => {
     const identity = createV3WorkIdentity({ context: value, method: METHOD, factKind: 'blank_passport_pages', researchReason: { status: 'missing' } })
     const lookup = contentEvidenceLookupV3(value.scope, { sourceId: source.sourceId, contentItemId: source.contentItemId, representationId: source.representationId })
@@ -72,7 +84,9 @@ export function syntheticV3Fixture() {
     return { decision, rule: rule.value, projection: prepared.projection }
   }
   const accepted = make()
-  const originals = new Map([accepted.projection, make(context('RS')).projection, make(context('CH', 'business')).projection]
+  const application = make(applicationContext()), applicationUnconditional = make(applicationContext(true))
+  const originals = new Map([accepted.projection, make(context('RS')).projection, make(context('CH', 'business')).projection,
+    application.projection, applicationUnconditional.projection]
     .map((projection) => [projection.rule.subject.contextKey, projection]))
   const cache = new Map<string, V3PublicProjectionRecord>([[accepted.projection.rule.subject.contextKey, accepted.projection]])
   const jobs = new Map<string, V3ResearchJobRecord>()
@@ -142,7 +156,7 @@ export function syntheticV3Fixture() {
     } },
     ids: () => { sequence += 1; return { jobId: `job3_${sequence.toString(16).padStart(32, '0')}`, operationId: `op3_${sequence.toString(16).padStart(32, '0')}` } },
   }
-  return { ports, context, make, accepted, cache, jobs, discoveryJobs, counts,
+  return { ports, context, applicationContext, application, applicationUnconditional, make, accepted, cache, jobs, discoveryJobs, counts,
     setClock: (value: V3ReadClock) => { clock = value }, revoke: () => { approved = false },
     setState: (value: typeof state) => { state = value }, methodReceipt }
 }

@@ -4,14 +4,16 @@ import { test } from 'node:test'
 import { sha256Hex } from '@/lib/readiness/digest'
 import { readV3ProposalUpload } from '../import/interface'
 import { readV3RetainableProposal } from './proposal-bytes'
-import { s1RetentionShapeAllows } from './retention-shape'
+import { S1_RETENTION_SHAPE, s1RetentionShapeAllows } from './retention-shape'
 import { retentionFixtures, unknownMemberMutations } from '../../../../scripts/db/official-truth-v3-intake-store-1/retention-fixtures'
 import { shapeSql } from '../../../../scripts/db/official-truth-v3-intake-store-1/generate-retention-shape'
 import { s1Fixture } from '../../../../scripts/db/official-truth-v3-intake-store-1/fixtures'
+import { c1Fixture, c1InvalidShapes } from '../global-conditions/test-support/fixture'
+import { readV3GlobalRuleContext } from '../contract'
 
 test('S1 SQL retention shape pins actual canonical reader sources, not just its own generator', () => {
   const hashes: Record<string, string> = {
-    'lib/readiness/official-truth-product-v3/contract.ts': '871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4',
+    'lib/readiness/official-truth-product-v3/contract.ts': '7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c',
     'lib/readiness/official-truth-product-v3/import/interface.ts': 'd98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6',
     'lib/readiness/official-truth-product-v3/import/service-server.ts': '2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09',
     'lib/readiness/rule-claims.ts': '52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a',
@@ -54,4 +56,40 @@ test('complete actual I1 outcomes and audits are closed at every nested object b
     for (const bad of unknownMemberMutations(value.outcome)) assert.equal(s1RetentionShapeAllows(bad, 'outcome'), false)
     for (const bad of unknownMemberMutations(value.audit)) assert.equal(s1RetentionShapeAllows(bad, 'audit'), false)
   }
+})
+
+test('C1 descriptor revision preserves both context forms and changes only the generated SQL block', () => {
+  assert.equal(S1_RETENTION_SHAPE.revision, 2)
+  assert.equal(s1RetentionShapeAllows(s1Fixture('c1-legacy-retention').proposal), true)
+  const f = c1Fixture('c1-revision2-retention')
+  assert.equal(s1RetentionShapeAllows(f.proposal), true)
+  assert.equal(readV3RetainableProposal(f.text, f.originals.registry).ok, true)
+  const manifest = JSON.parse(readFileSync('docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json', 'utf8'))
+  const { path, mask, sha256 } = manifest.sqlOutsideDescriptor
+  const sql = readFileSync(path, 'utf8')
+  assert.equal(sha256Hex(sql.replace(/-- S1_RETENTION_SHAPE_BEGIN[\s\S]*?-- S1_RETENTION_SHAPE_END/, mask)), sha256)
+})
+
+test('C1 retention closes all new subtrees and does not claim canonical ordering or identity proof', () => {
+  const f = c1Fixture('c1-retention-negative')
+  for (const row of c1InvalidShapes(f.proposal)) {
+    assert.equal(s1RetentionShapeAllows(row.value), false, row.label)
+    assert.equal(readV3RetainableProposal(JSON.stringify(row.value), f.originals.registry).ok, false, row.label)
+  }
+  const reversed = { ...f.proposal, context: { ...f.context, application: { ...f.context.application,
+    tripStartAndEndWindow: { from: '2026-11-14', through: '2026-11-13' } } } }
+  assert.equal(s1RetentionShapeAllows(reversed), true, 'shape validates two civil dates; canonical reader owns ordering')
+  assert.equal(readV3GlobalRuleContext(reversed.context).ok, false)
+  assert.equal(readV3RetainableProposal(JSON.stringify(reversed), f.originals.registry).ok, false)
+  const wrongKey = { ...f.proposal, contextKey: `official-truth-context:v3:${'0'.repeat(64)}` }
+  assert.equal(s1RetentionShapeAllows(wrongKey), true, 'shape is not checksum or acceptance authority')
+  assert.equal(readV3RetainableProposal(JSON.stringify(wrongKey), f.originals.registry).ok, false)
+})
+
+test('C1 full prepared outcome shape retains new decision/observation/version subtrees without widening them', async () => {
+  const f = c1Fixture('c1-retention-completion'), value = await f.completion()
+  assert.equal(value.outcome.status, 'prepared')
+  assert.equal(s1RetentionShapeAllows(value.outcome, 'outcome'), true)
+  assert.equal(s1RetentionShapeAllows(value.audit, 'audit'), true)
+  for (const bad of unknownMemberMutations(value.outcome)) assert.equal(s1RetentionShapeAllows(bad, 'outcome'), false)
 })

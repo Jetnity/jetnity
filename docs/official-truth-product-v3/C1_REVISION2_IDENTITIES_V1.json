@@ -1,0 +1,226 @@
+{
+  "schema": "root-c1-revision2-context-goldens-v1",
+  "base": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+  "basis": "Pre-implementation reference calculation using unchanged canonical scope/expression helpers; no new revision2 reader or mapper executed",
+  "rows": [
+    {
+      "label": "fixed-pilot",
+      "context": {
+        "contextRevision": 2,
+        "scope": {
+          "destinationCountryCode": "DE",
+          "transitCountryCode": null,
+          "citizenship": {
+            "mode": "required",
+            "countryCodes": [
+              "CH"
+            ]
+          },
+          "credentialOption": {
+            "mode": "option",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "relatedCitizenshipCountryCode": "CH"
+          },
+          "residence": {
+            "mode": "not_applicable"
+          },
+          "requirementType": "visa",
+          "validity": {
+            "mode": "not_applicable"
+          }
+        },
+        "route": "direct_entry",
+        "conditions": {
+          "status": "specified",
+          "expression": {
+            "op": "all",
+            "operands": [
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "document_class",
+                  "documentClass": "ordinary"
+                }
+              },
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "journey_origin",
+                  "place": {
+                    "kind": "country",
+                    "countryCode": "CH"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "application": {
+          "purpose": "tourism",
+          "tripStartAndEndWindow": {
+            "from": "2026-11-07",
+            "through": "2026-11-13"
+          }
+        }
+      },
+      "canonicalPreimage": "{\"application\":{\"purpose\":\"tourism\",\"tripStartAndEndWindow\":{\"from\":\"2026-11-07\",\"through\":\"2026-11-13\"}},\"conditions\":{\"expression\":\"rule-applicability-structure:v2:{\\\"op\\\":\\\"all\\\",\\\"operands\\\":[{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"documentClass\\\":\\\"ordinary\\\",\\\"kind\\\":\\\"document_class\\\"}},{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"kind\\\":\\\"journey_origin\\\",\\\"place\\\":{\\\"countryCode\\\":\\\"CH\\\",\\\"kind\\\":\\\"country\\\"}}}]}\",\"status\":\"specified\"},\"contextRevision\":2,\"route\":\"direct_entry\",\"scope\":{\"citizenship\":{\"countryCodes\":[\"CH\"],\"mode\":\"required\"},\"credentialOption\":{\"documentType\":\"passport\",\"issuingCountryCode\":\"CH\",\"mode\":\"option\",\"relatedCitizenshipCountryCode\":\"CH\"},\"destinationCountryCode\":\"DE\",\"requirementType\":\"visa\",\"residence\":{\"mode\":\"not_applicable\"},\"transitCountryCode\":null,\"validity\":{\"mode\":\"not_applicable\"}}}",
+      "contextKey": "official-truth-context:v3:b50acf3db6f8b5451374ec558040b07fc6526b9a1cc6ecd94315f527aefd2669",
+      "ruleScopeKey": "rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f",
+      "syntheticJob": {
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "requirement_effect",
+        "jobKey": "research-job:v3:8c2501d8a99cb1cac2efd64254d556d7ae280d36d4838aff865f622445bc2b43"
+      }
+    },
+    {
+      "label": "changed-from",
+      "context": {
+        "contextRevision": 2,
+        "scope": {
+          "destinationCountryCode": "DE",
+          "transitCountryCode": null,
+          "citizenship": {
+            "mode": "required",
+            "countryCodes": [
+              "CH"
+            ]
+          },
+          "credentialOption": {
+            "mode": "option",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "relatedCitizenshipCountryCode": "CH"
+          },
+          "residence": {
+            "mode": "not_applicable"
+          },
+          "requirementType": "visa",
+          "validity": {
+            "mode": "not_applicable"
+          }
+        },
+        "route": "direct_entry",
+        "conditions": {
+          "status": "specified",
+          "expression": {
+            "op": "all",
+            "operands": [
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "document_class",
+                  "documentClass": "ordinary"
+                }
+              },
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "journey_origin",
+                  "place": {
+                    "kind": "country",
+                    "countryCode": "CH"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "application": {
+          "purpose": "tourism",
+          "tripStartAndEndWindow": {
+            "from": "2026-11-08",
+            "through": "2026-11-13"
+          }
+        }
+      },
+      "canonicalPreimage": "{\"application\":{\"purpose\":\"tourism\",\"tripStartAndEndWindow\":{\"from\":\"2026-11-08\",\"through\":\"2026-11-13\"}},\"conditions\":{\"expression\":\"rule-applicability-structure:v2:{\\\"op\\\":\\\"all\\\",\\\"operands\\\":[{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"documentClass\\\":\\\"ordinary\\\",\\\"kind\\\":\\\"document_class\\\"}},{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"kind\\\":\\\"journey_origin\\\",\\\"place\\\":{\\\"countryCode\\\":\\\"CH\\\",\\\"kind\\\":\\\"country\\\"}}}]}\",\"status\":\"specified\"},\"contextRevision\":2,\"route\":\"direct_entry\",\"scope\":{\"citizenship\":{\"countryCodes\":[\"CH\"],\"mode\":\"required\"},\"credentialOption\":{\"documentType\":\"passport\",\"issuingCountryCode\":\"CH\",\"mode\":\"option\",\"relatedCitizenshipCountryCode\":\"CH\"},\"destinationCountryCode\":\"DE\",\"requirementType\":\"visa\",\"residence\":{\"mode\":\"not_applicable\"},\"transitCountryCode\":null,\"validity\":{\"mode\":\"not_applicable\"}}}",
+      "contextKey": "official-truth-context:v3:5dfa9e9479c950a62e4585f810459a1155c754f64b57c5132bcb1052dee1a932",
+      "ruleScopeKey": "rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f",
+      "syntheticJob": {
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "requirement_effect",
+        "jobKey": "research-job:v3:fb76baf50acc8be7b6e8ce3420d2daf40b7f2d8963f6e26f237d9d04a92d907a"
+      }
+    },
+    {
+      "label": "changed-through",
+      "context": {
+        "contextRevision": 2,
+        "scope": {
+          "destinationCountryCode": "DE",
+          "transitCountryCode": null,
+          "citizenship": {
+            "mode": "required",
+            "countryCodes": [
+              "CH"
+            ]
+          },
+          "credentialOption": {
+            "mode": "option",
+            "documentType": "passport",
+            "issuingCountryCode": "CH",
+            "relatedCitizenshipCountryCode": "CH"
+          },
+          "residence": {
+            "mode": "not_applicable"
+          },
+          "requirementType": "visa",
+          "validity": {
+            "mode": "not_applicable"
+          }
+        },
+        "route": "direct_entry",
+        "conditions": {
+          "status": "specified",
+          "expression": {
+            "op": "all",
+            "operands": [
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "document_class",
+                  "documentClass": "ordinary"
+                }
+              },
+              {
+                "op": "atomic",
+                "predicate": {
+                  "kind": "journey_origin",
+                  "place": {
+                    "kind": "country",
+                    "countryCode": "CH"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "application": {
+          "purpose": "tourism",
+          "tripStartAndEndWindow": {
+            "from": "2026-11-07",
+            "through": "2026-11-12"
+          }
+        }
+      },
+      "canonicalPreimage": "{\"application\":{\"purpose\":\"tourism\",\"tripStartAndEndWindow\":{\"from\":\"2026-11-07\",\"through\":\"2026-11-12\"}},\"conditions\":{\"expression\":\"rule-applicability-structure:v2:{\\\"op\\\":\\\"all\\\",\\\"operands\\\":[{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"documentClass\\\":\\\"ordinary\\\",\\\"kind\\\":\\\"document_class\\\"}},{\\\"op\\\":\\\"atomic\\\",\\\"predicate\\\":{\\\"kind\\\":\\\"journey_origin\\\",\\\"place\\\":{\\\"countryCode\\\":\\\"CH\\\",\\\"kind\\\":\\\"country\\\"}}}]}\",\"status\":\"specified\"},\"contextRevision\":2,\"route\":\"direct_entry\",\"scope\":{\"citizenship\":{\"countryCodes\":[\"CH\"],\"mode\":\"required\"},\"credentialOption\":{\"documentType\":\"passport\",\"issuingCountryCode\":\"CH\",\"mode\":\"option\",\"relatedCitizenshipCountryCode\":\"CH\"},\"destinationCountryCode\":\"DE\",\"requirementType\":\"visa\",\"residence\":{\"mode\":\"not_applicable\"},\"transitCountryCode\":null,\"validity\":{\"mode\":\"not_applicable\"}}}",
+      "contextKey": "official-truth-context:v3:7a86fa5c2ac1fb08da3e69e36f3ba71dd42f989192909d272c728eaeb12083c0",
+      "ruleScopeKey": "rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f",
+      "syntheticJob": {
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "requirement_effect",
+        "jobKey": "research-job:v3:462cb1b5ff5a5630f519741bb3ceb7da545c8beaee4d7e098d3f65aad12d1c46"
+      }
+    }
+  ]
+}

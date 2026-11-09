@@ -71,3 +71,20 @@ test('UI harness has exactly one sandboxed launch and no download or launch fall
   assert.ok(runner.indexOf('report.browserPath = selectU1SystemBrowser()') < runner.indexOf('chromium.launch('))
   assert.doesNotMatch(runner, /--no-sandbox|--disable-setuid-sandbox|playwright install|channel:\s*['"]chrome/)
 })
+
+test('C1 synthetic application scenario requires actual narrow and enlarged-text restriction proof', () => {
+  const runner = readFileSync(new URL('./run.mjs', import.meta.url), 'utf8')
+  const server = readFileSync(new URL('./synthetic-server.ts', import.meta.url), 'utf8')
+  const mount = readFileSync(new URL('./mount.tsx', import.meta.url), 'utf8')
+  assert.match(mount, /option value="application"/)
+  assert.match(server, /application: createV3VisitorQuery/)
+  assert.match(server, /applicationFixture\.application\.projection/)
+  assert.match(runner, /scenario\('application'\)/)
+  for (const name of ['application-320', 'application-320-text200']) {
+    assert.ok(runner.includes(`layout('${name}')`))
+    assert.ok(runner.includes(`screenshot('${name}')`))
+  }
+  assert.ok(runner.includes('Reisebeginn und Reiseende müssen zwischen 2026-11-07 und 2026-11-13 liegen (beide Grenzen eingeschlossen).'))
+  assert.equal((runner.match(/await assertApplicationRestrictions\(\)/g) ?? []).length, 2)
+  assert.match(runner, /box\.scrollWidth <= box\.width \+ 1 && box\.scrollHeight <= box\.height \+ 1/)
+})

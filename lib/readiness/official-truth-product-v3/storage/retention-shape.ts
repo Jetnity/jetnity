@@ -87,15 +87,8 @@ const expression = (schema: 1 | 2) => union(
   object({ op: enumeration(['all', 'any']), operands: array(ref(`expression${schema}`), 1, 8) }),
   object({ op: lit('not'), operand: ref(`expression${schema}`) }),
 )
-const definitions: Record<string, S1Shape> = {
-  predicate1: union(...legacyPredicates),
-  predicate2: union(...legacyPredicates,
-    kind('activity_characteristic', { characteristic: enumeration(['remunerative_activity', 'income_earning_activity', 'profit_making_business_operation', 'business_contacts']) }),
-    kind('national_passport_for_citizenship', { countryCode: country }),
-    kind('planned_stay_duration', { comparison: enumeration(['at_most', 'more_than']), duration: quantity,
-      counting: enumeration(['unspecified', 'calendar_dates_inclusive', 'calendar_dates_exit_exclusive']) })),
-  expression1: expression(1), expression2: expression(2),
-  context: object({ scope: object({ destinationCountryCode: country, transitCountryCode: nullable(country),
+const contextFields = {
+  scope: object({ destinationCountryCode: country, transitCountryCode: nullable(country),
     citizenship: object({ mode: lit('required'), countryCodes: array(country, 1, 1) }),
     credentialOption: union(mode('not_applicable'), object({ mode: lit('option'), documentType: enumeration(TRAVELLER_DOCUMENT_TYPES),
       issuingCountryCode: country, relatedCitizenshipCountryCode: nullable(country) })),
@@ -104,7 +97,21 @@ const definitions: Record<string, S1Shape> = {
   }), route: enumeration(['direct_entry', 'transit', 'unresolved']), conditions: union(
     object({ status: lit('unconditional') }), object({ status: lit('specified'), expression: ref('expression2') }),
     object({ status: lit('unresolved'), missing: array(enumeration(['document_class', 'travel_purpose', 'planned_stay_duration', 'transit', 'other_rule_conditions']), 1, 5, true) }),
-  ) }),
+  ),
+}
+const definitions: Record<string, S1Shape> = {
+  predicate1: union(...legacyPredicates),
+  predicate2: union(...legacyPredicates,
+    kind('activity_characteristic', { characteristic: enumeration(['remunerative_activity', 'income_earning_activity', 'profit_making_business_operation', 'business_contacts']) }),
+    kind('national_passport_for_citizenship', { countryCode: country }),
+    kind('planned_stay_duration', { comparison: enumeration(['at_most', 'more_than']), duration: quantity,
+      counting: enumeration(['unspecified', 'calendar_dates_inclusive', 'calendar_dates_exit_exclusive']) })),
+  expression1: expression(1), expression2: expression(2),
+  // Closed custody shape only. Window ordering and context-key semantics are
+  // validated by the canonical V3 reader before normal intake, not this shape.
+  context: union(object(contextFields), object({ contextRevision: lit(2), ...contextFields,
+    application: object({ purpose: lit('tourism'), tripStartAndEndWindow: object({ from: { type: 'date' }, through: { type: 'date' } }) }),
+  })),
   research: object({ key: hashRef('research-request:v1'), ruleScopeKey: hashRef('rule-scope:v1'), factKind: enumeration(REGEL_FAKT_ARTEN),
     researchReason: union(object({ status: lit('missing') }), object({ status: lit('recheck_needed'), reason: enumeration(['valid_from_in_future', 'valid_until_elapsed', 'max_age_exceeded']) })) }),
   fact1: union(kind('requirement_effect', { effect, visaMode: visa }), ...effectFacts(1),
@@ -192,7 +199,7 @@ function freeze<T>(value: T): T {
   return value
 }
 /** Embedded in SQL by a reviewed source generator; never supplied by the caller. */
-export const S1_RETENTION_SHAPE = freeze({ revision: 1, root: 'proposal', countries: [...ISO_3166_1_ALPHA2], definitions })
+export const S1_RETENTION_SHAPE = freeze({ revision: 2, root: 'proposal', countries: [...ISO_3166_1_ALPHA2], definitions })
 
 /** Mandatory before ORIGINAL retention, in addition to the canonical S0 parser. */
 export function s1RetentionShapeAllows(input: unknown, root: 'proposal' | 'outcome' | 'audit' = 'proposal'): boolean {

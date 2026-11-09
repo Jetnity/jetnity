@@ -71,7 +71,12 @@ function contextText(context: V3GlobalRuleContext): string[] {
   if (context.scope.residence.mode === 'required') output.push(`Wohnsitz: ${landAnzeigeText(context.scope.residence.countryCode)}`)
   if (context.conditions.status === 'specified') output.push(v3ConditionText(context.conditions.expression))
   else if (context.conditions.status === 'unresolved') output.push('Weitere Regelbedingungen sind noch ungeklärt')
-  else output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
+  else if (!('contextRevision' in context)) output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
+  if ('contextRevision' in context) {
+    const window = context.application.tripStartAndEndWindow
+    output.push('Reisezweck: Tourismus',
+      `Reisebeginn und Reiseende müssen zwischen ${window.from} und ${window.through} liegen (beide Grenzen eingeschlossen).`)
+  }
   return output
 }
 

@@ -8,7 +8,7 @@ import { quellenRegistryErstellen } from '@/lib/readiness/source-registry'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
   OFFICIAL_TRUTH_V3_BINDINGS, OFFICIAL_TRUTH_V3_LIMITS,
-  createV3WorkIdentity, createV3TransitionIdempotencyKey,
+  createV3ContextIdentity, createV3WorkIdentity, createV3TransitionIdempotencyKey,
   createV3CombinationDiscoveryIdentity, readV3CombinationDiscoveryJobRecord,
   readV3VisitorInput, readV3GlobalRuleContext, readV3ResearchProposal, readV3MethodRevisionDraft,
   readV3SourceDecisionRecord, readV3RuleVersionRecord, readV3TransitionPlan, readV3ResearchJobRecord,
@@ -162,8 +162,8 @@ function projection(context = globalContext()) {
     builtAt: BUILD_TIME, expiresAt: '2026-11-09T08:30:00.000Z',
   }
 }
-function proposal() {
-  const context = globalContext(), identity = work(context)
+function proposal(context = globalContext()) {
+  const identity = work(context)
   return {
     schema: 3 as const, kind: 'untrusted_research_proposal' as const, jobId: JOB, operationId: OPERATION,
     context, contextKey: identity.contextKey, research: identity.research,
@@ -172,8 +172,8 @@ function proposal() {
       claimedRetrievedAt: SOURCE_TIME, claimedValidity: observation(context).evidence.legalValidity }],
   }
 }
-function job() {
-  const context = globalContext(), identity = work(context)
+function job(context = globalContext()) {
+  const identity = work(context)
   return {
     schema: 3 as const, kind: 'research_job_record' as const, jobId: JOB, operationId: OPERATION,
     jobKey: identity.jobKey, context, contextKey: identity.contextKey, research: identity.research, method: METHOD,
@@ -215,6 +215,113 @@ function response() {
     ],
   }
 }
+
+function applicationContext(from = '2026-11-07', through = '2026-11-13') {
+  return { ...globalContext(), contextRevision: 2 as const,
+    conditions: { status: 'specified' as const, expression: { op: 'all' as const, operands: [
+      { op: 'atomic' as const, predicate: { kind: 'document_class' as const, documentClass: 'ordinary' as const } },
+      { op: 'atomic' as const, predicate: { kind: 'journey_origin' as const, place: { kind: 'country' as const, countryCode: 'CH' } } },
+    ] } },
+    application: { purpose: 'tourism' as const, tripStartAndEndWindow: { from, through } },
+  }
+}
+
+describe('C1 strict global application carrier', () => {
+  test('keeps finite inclusive windows separate from legal validity and stay duration', () => {
+    for (const [from, through] of [['2026-11-07', '2026-11-13'], ['2028-02-29', '2028-02-29'], ['2027-12-31', '2028-01-02']]) {
+      const input = applicationContext(from, through), parsed = ok(readV3GlobalRuleContext(input))
+      assert.deepEqual(parsed, input)
+      assert.ok('contextRevision' in parsed)
+      assert.equal(parsed.contextRevision, 2)
+      assert.deepEqual(parsed.application, { purpose: 'tourism', tripStartAndEndWindow: { from, through } })
+      assert.deepEqual(parsed.scope.validity, { mode: 'not_applicable' })
+      assert.ok(Object.isFrozen(parsed.application.tripStartAndEndWindow))
+      assert.ok(!Object.isFrozen(input.application.tripStartAndEndWindow))
+      input.application.tripStartAndEndWindow.from = '2000-01-01'
+      assert.equal(parsed.application.tripStartAndEndWindow.from, from)
+    }
+  })
+  test('selects exact closed legacy or revision2 form without fallback or field stripping', () => {
+    const input = applicationContext(), legacy = globalContext()
+    const cases: unknown[] = [
+      { ...legacy, contextRevision: 1 }, { ...legacy, application: input.application },
+      { ...legacy, contextRevision: 2 }, { ...input, contextRevision: null }, { ...input, contextRevision: '2' },
+      { ...input, contextRevision: 3 }, { ...input, application: null },
+      { ...input, application: {} }, { ...input, application: { ...input.application, purpose: 'visitor' } },
+      { ...input, application: { ...input.application, purpose: 'business' } },
+      { ...input, application: { ...input.application, tripStartAndEndWindow: null } },
+      { ...input, application: { ...input.application, tripStartAndEndWindow: { from: '2026-11-07' } } },
+      { ...input, application: { ...input.application, tripStartAndEndWindow: { through: '2026-11-13' } } },
+      { ...input, extra: true }, { ...input, application: { ...input.application, extra: true } },
+      { ...input, application: { ...input.application, tripStartAndEndWindow: { ...input.application.tripStartAndEndWindow, extra: true } } },
+    ]
+    for (const bad of cases) { rejected(readV3GlobalRuleContext(bad)); rejected(createV3ContextIdentity(bad)) }
+    assert.deepEqual(readV3GlobalRuleContext({ ...legacy, extra: true }), { ok: false, reason: 'unexpected_fields' })
+    assert.equal('contextRevision' in ok(readV3GlobalRuleContext(legacy)), false)
+  })
+  test('rejects impossible, reversed, missing or typed-as-nondate bounds', () => {
+    for (const [from, through] of [
+      ['2026-02-29', '2026-03-01'], ['2026-11-14', '2026-11-13'], ['2026-11-07', '2026-11-31'],
+      ['2026-11-07T00:00:00.000Z', '2026-11-13'], ['', '2026-11-13'], ['2026-11-07', ' 2026-11-13'],
+    ]) rejected(readV3GlobalRuleContext(applicationContext(from, through)))
+    for (const key of ['from', 'through']) for (const bad of [null, 0, false, [], {}, undefined]) {
+      const input = applicationContext()
+      Object.assign(input.application.tripStartAndEndWindow, { [key]: bad })
+      rejected(readV3GlobalRuleContext(input))
+    }
+  })
+  test('preflights new subtrees before getters or private payloads can be read', () => {
+    let reads = 0
+    for (const key of ['application', 'tripStartAndEndWindow', 'from', 'through']) {
+      const input = applicationContext()
+      const target = key === 'application' ? input : key === 'tripStartAndEndWindow' ? input.application : input.application.tripStartAndEndWindow
+      Object.defineProperty(target, key, { enumerable: true, get() { reads++; return 'PRIVATE_CANARY' } })
+      rejected(readV3GlobalRuleContext(input)); rejected(createV3ContextIdentity(input))
+    }
+    assert.equal(reads, 0)
+    for (const key of ['passportNumber', 'mrz', 'rawText']) {
+      const input = applicationContext()
+      Object.assign(input.application.tripStartAndEndWindow, { [key]: 'PRIVATE_CANARY' })
+      assert.deepEqual(readV3GlobalRuleContext(input), { ok: false, reason: 'personal_data_forbidden' })
+    }
+    const exotic = applicationContext()
+    Object.setPrototypeOf(exotic.application, { extra: true })
+    rejected(readV3GlobalRuleContext(exotic))
+  })
+  test('all nested canonical records keep application restrictions and separate evidence validity', () => {
+    const input = ok(readV3GlobalRuleContext(applicationContext())), identity = work(input)
+    const p = ok(readV3ResearchProposal(proposal(input), REGISTRY)), j = ok(readV3ResearchJobRecord(job(input)))
+    const d = ok(readV3SourceDecisionRecord(decision(input), REGISTRY))
+    const v = ok(readV3RuleVersionRecord(version(input), REGISTRY, d))
+    const projectionRead = ok(readV3PublicProjectionRecord(projection(input), REGISTRY, CLOCK))
+    for (const context of [p.context, j.context, d.context, v.subject.context, projectionRead.rule.subject.context]) assert.deepEqual(context, input)
+    assert.equal(d.primary.status, 'clear')
+    if (d.primary.status !== 'clear') assert.fail('synthetic clear primary')
+    assert.deepEqual(d.primary.observation.context, input)
+    assert.deepEqual(v.subject.evidence.legalValidity, { status: 'specified', validFrom: '2026-11-01', validUntil: '2026-12-31' })
+    assert.equal(identity.contextKey, j.contextKey)
+    const publicResponse = { ...response(), input: { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] },
+      cells: [{ citizenshipCountryCode: 'CH', results: [{ status: 'accepted', projection: projection(input) }] }] }
+    const publicRead = ok(readV3PublicResponseRecord(publicResponse, REGISTRY, CLOCK))
+    assert.deepEqual(publicRead.cells[0].results[0], publicResponse.cells[0].results[0])
+  })
+  test('changed or stripped application cannot retain old keys in any nested carrier', () => {
+    const input = ok(readV3GlobalRuleContext(applicationContext()))
+    const plain = { scope: input.scope, route: input.route, conditions: input.conditions }
+    const changed = ok(readV3GlobalRuleContext(applicationContext('2026-11-08')))
+    for (const context of [plain, changed]) {
+      rejected(readV3ResearchProposal({ ...proposal(input), context }, REGISTRY))
+      rejected(readV3ResearchJobRecord({ ...job(input), context }))
+      rejected(readV3SourceDecisionRecord({ ...decision(input), context }, REGISTRY))
+      const d = decision(input)
+      rejected(readV3SourceDecisionRecord({ ...d, primary: { ...d.primary, observation: { ...d.primary.observation, context } } }, REGISTRY))
+      const v = version(input)
+      rejected(readV3RuleVersionRecord({ ...v, subject: { ...v.subject, context } }, REGISTRY, decision(input)))
+      const p = projection(input)
+      rejected(readV3PublicProjectionRecord({ ...p, rule: { ...p.rule, subject: { ...p.rule.subject, context } } }, REGISTRY, CLOCK))
+    }
+  })
+})
 
 describe('V3 visitor input and global context', () => {
   test('normalizes only destination and a bounded, sorted, deduplicated citizenship set', () => {

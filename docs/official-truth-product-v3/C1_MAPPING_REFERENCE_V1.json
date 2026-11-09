@@ -1,0 +1,194 @@
+{
+  "schema": "root-c1-independent-mapping-reference-v1",
+  "base": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+  "basis": "Unchanged baseline AA metadata plus Root pre-implementation context and literal keys; no new mapper imported or executed",
+  "reviewedMetadataDigest": "0c5d46528329e799f930d04077b15a3bd9f114d72342d40ebe9dc19382623e23",
+  "applicationMetadataDigest": "6b58c2febd0a8e455ffd1494eacb9949c39855a331082d66a7b31a88b4830291",
+  "applicationContractId": "aa-ch-de-visa-v1",
+  "applicationContractDigest": "668a84286d09c085adda49ada6ee9c75cae2ce348a63122f3b5d601221c492f6",
+  "mappingDigest": "19844fee3c9cb53c1a4d3bd5dc25573ccf0af705e604fb2a421a47cd20719076",
+  "projection": {
+    "mappingRevision": 1,
+    "reviewedMetadata": {
+      "mappingVersion": 1,
+      "contractId": "aa-ch-de-visa-v1",
+      "applicationScope": "ch-ordinary-tourism-direct-de-v1",
+      "travelDates": {
+        "from": "2026-11-07",
+        "through": "2026-11-13"
+      },
+      "binding": {
+        "sourceId": "de-aa-staatenliste-visumpflicht",
+        "contentItemId": "aa-staatenliste-visumpflicht-207820",
+        "contentItemVersion": 1,
+        "representationId": "aa-staatenliste-visumpflicht-html-de",
+        "representationVersion": 1,
+        "identityProfileId": "de-aa-visa-table-html-de-candidate",
+        "identityProfileVersion": 1
+      },
+      "requestUrl": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "canonicalUrl": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "finalUrl": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "contentType": "text/html",
+      "locale": "de",
+      "schema": "article",
+      "sourceFingerprintProtocol": 2,
+      "sourceContentHash": "fc34bb51f8493a8776b6a300c8aed493a4a4fe08fba269148292ed7d9a334979",
+      "coverage": {
+        "destinationCountryCodes": [
+          "DE"
+        ],
+        "transitCountryCodes": [],
+        "requirementTypes": [
+          "visa"
+        ],
+        "citizenship": {
+          "mode": "exact",
+          "countryCodes": [
+            "CH"
+          ]
+        },
+        "residence": {
+          "mode": "not_applicable"
+        },
+        "documents": {
+          "mode": "exact",
+          "options": [
+            {
+              "documentType": "passport",
+              "issuingCountryCode": "CH"
+            }
+          ]
+        }
+      },
+      "extractorId": "otx_aa_ch_de_visa",
+      "extractorVersion": 1,
+      "sourceFamilyId": "otf_aa_visa_table",
+      "schemaFamily": "ots_aa_visa_table_html_de",
+      "policyId": null,
+      "policyVersion": null,
+      "requiredFieldPaths": [],
+      "fact": {
+        "kind": "requirement_effect",
+        "effect": "not_required",
+        "visaMode": "visa_exempt"
+      },
+      "recognition": "complete-v2-pin-and-unqualified-s1-swiss-row-v1",
+      "validitySemantics": "recognized-unknown-legal-bounds-null-null-otherwise-refuse-v1"
+    },
+    "applicationMetadata": {
+      "id": "aa-ch-de-visa-v1",
+      "digest": "668a84286d09c085adda49ada6ee9c75cae2ce348a63122f3b5d601221c492f6",
+      "applicationScope": "ch-ordinary-tourism-direct-de-v1",
+      "travelDates": {
+        "from": "2026-11-07",
+        "through": "2026-11-13"
+      },
+      "source": {
+        "sourceId": "de-aa-staatenliste-visumpflicht",
+        "url": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+        "binding": {
+          "sourceId": "de-aa-staatenliste-visumpflicht",
+          "contentItemId": "aa-staatenliste-visumpflicht-207820",
+          "contentItemVersion": 1,
+          "representationId": "aa-staatenliste-visumpflicht-html-de",
+          "representationVersion": 1,
+          "identityProfileId": "de-aa-visa-table-html-de-candidate",
+          "identityProfileVersion": 1
+        },
+        "coverage": {
+          "destinationCountryCodes": [
+            "DE"
+          ],
+          "transitCountryCodes": [],
+          "requirementTypes": [
+            "visa"
+          ],
+          "citizenship": {
+            "mode": "exact",
+            "countryCodes": [
+              "CH"
+            ]
+          },
+          "residence": {
+            "mode": "not_applicable"
+          },
+          "documents": {
+            "mode": "exact",
+            "options": [
+              {
+                "documentType": "passport",
+                "issuingCountryCode": "CH"
+              }
+            ]
+          }
+        }
+      },
+      "extractorId": "otx_aa_ch_de_visa",
+      "extractorVersion": 1
+    },
+    "context": {
+      "contextRevision": 2,
+      "scope": {
+        "destinationCountryCode": "DE",
+        "transitCountryCode": null,
+        "citizenship": {
+          "mode": "required",
+          "countryCodes": [
+            "CH"
+          ]
+        },
+        "credentialOption": {
+          "mode": "option",
+          "documentType": "passport",
+          "issuingCountryCode": "CH",
+          "relatedCitizenshipCountryCode": "CH"
+        },
+        "residence": {
+          "mode": "not_applicable"
+        },
+        "requirementType": "visa",
+        "validity": {
+          "mode": "not_applicable"
+        }
+      },
+      "route": "direct_entry",
+      "conditions": {
+        "status": "specified",
+        "expression": {
+          "op": "all",
+          "operands": [
+            {
+              "op": "atomic",
+              "predicate": {
+                "kind": "document_class",
+                "documentClass": "ordinary"
+              }
+            },
+            {
+              "op": "atomic",
+              "predicate": {
+                "kind": "journey_origin",
+                "place": {
+                  "kind": "country",
+                  "countryCode": "CH"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "application": {
+        "purpose": "tourism",
+        "tripStartAndEndWindow": {
+          "from": "2026-11-07",
+          "through": "2026-11-13"
+        }
+      }
+    },
+    "contextIdentity": {
+      "contextKey": "official-truth-context:v3:b50acf3db6f8b5451374ec558040b07fc6526b9a1cc6ecd94315f527aefd2669",
+      "ruleScopeKey": "rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f"
+    }
+  }
+}

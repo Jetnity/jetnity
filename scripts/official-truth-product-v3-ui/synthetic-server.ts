@@ -12,6 +12,9 @@ export function syntheticServer() {
   const conditionsFixture = syntheticV3Fixture()
   const business = conditionsFixture.make(conditionsFixture.context('CH', 'business')).projection
   conditionsFixture.cache.set(business.rule.subject.contextKey, business)
+  const applicationFixture = syntheticV3Fixture()
+  const applicationProjection = applicationFixture.application.projection
+  applicationFixture.cache.set(applicationProjection.rule.subject.contextKey, applicationProjection)
   const normal = createV3VisitorQuery(fixture.ports)
   const completionFixture = syntheticV3Fixture()
   const completion = createV3VisitorQuery(completionFixture.ports)
@@ -27,6 +30,10 @@ export function syntheticServer() {
         ? { zeilen: [{ context: conditionsFixture.context(), factKind: 'blank_passport_pages' },
           { context: conditionsFixture.context('CH', 'business'), factKind: 'blank_passport_pages' }], problem: null }
         : conditionsFixture.ports.coverage.targets(input, signal) } }),
+    application: createV3VisitorQuery({ ...applicationFixture.ports, coverage: { targets: async (input, signal) =>
+      input.destinationCountryCode === 'DE' && input.citizenshipCountryCode === 'CH'
+        ? { zeilen: [{ context: applicationFixture.applicationContext(), factKind: 'blank_passport_pages' }], problem: null }
+        : applicationFixture.ports.coverage.targets(input, signal) } }),
     slow: normal,
     complete: async (input: unknown, signal: AbortSignal) => {
       const parsed = readV3VisitorInput(input)

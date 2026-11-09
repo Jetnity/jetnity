@@ -206,15 +206,39 @@ const conditionsSchema = z.discriminatedUnion('status', [
   z.object({ status: z.literal('unresolved'), missing: z.array(missingConditionSchema).min(1).max(5)
     .refine((items) => new Set(items).size === items.length).transform((items) => items.sort()) }).strict(),
 ])
-const contextSchema = z.object({
+const contextBaseSchema = z.object({
   scope: scopeSchema,
   route: z.enum(['direct_entry', 'transit', 'unresolved']),
   conditions: conditionsSchema,
-}).strict().superRefine((value, context) => {
+}).strict()
+function refineContextRoute(value: z.infer<typeof contextBaseSchema>, context: z.RefinementCtx): void {
   if (value.route === 'direct_entry' && value.scope.transitCountryCode !== null) invalid(context)
   if (value.route === 'transit' && value.scope.transitCountryCode === null) invalid(context)
+}
+const legacyContextSchema = contextBaseSchema.superRefine(refineContextRoute)
+const applicationSchema = z.object({
+  purpose: z.literal('tourism'),
+  // Inclusive application restriction: from <= trip start <= trip end <= through.
+  // Neither personal trip dates nor legal-validity/stay-duration evidence.
+  tripStartAndEndWindow: z.object({ from: dateSchema, through: dateSchema }).strict().superRefine((window, context) => {
+    const from = civilDateOrdinalLesen(window.from), through = civilDateOrdinalLesen(window.through)
+    if (from !== null && through !== null && from > through) invalid(context)
+  }),
+}).strict()
+const revision2ContextSchema = contextBaseSchema.extend({
+  contextRevision: z.literal(2), application: applicationSchema,
+}).strict().superRefine(refineContextRoute)
+export type V3GlobalRuleContext = z.infer<typeof legacyContextSchema> | z.infer<typeof revision2ContextSchema>
+const contextSchema = z.unknown().transform<V3GlobalRuleContext>((value, context) => {
+  // Select by tag presence, never by successful fallback. Untagged failures keep
+  // the legacy reader's exact issues; tagged data cannot lose its restrictions.
+  const parser = value && typeof value === 'object' && 'contextRevision' in value
+    ? revision2ContextSchema : legacyContextSchema
+  const result = parser.safeParse(value)
+  if (result.success) return result.data
+  for (const issue of result.error.issues) context.addIssue(issue)
+  return z.NEVER
 })
-export type V3GlobalRuleContext = z.infer<typeof contextSchema>
 export function readV3GlobalRuleContext(value: unknown): V3ReadResult<V3GlobalRuleContext> {
   return read(value, contextSchema)
 }
@@ -225,10 +249,18 @@ function contextIdentity(value: V3GlobalRuleContext): { contextKey: string; rule
   const conditions = value.conditions.status === 'specified'
     ? { status: 'specified', expression: regulierungsAusdruckV2StrukturSchluessel(value.conditions.expression) }
     : value.conditions
+  const legacy = { scope: scope.scope, route: value.route, conditions }
+  const identity = 'contextRevision' in value
+    ? { contextRevision: value.contextRevision, ...legacy, application: value.application } : legacy
   return {
     ruleScopeKey: scope.key,
-    contextKey: `official-truth-context:v3:${sha256Hex(schema2Kanonisch({ scope: scope.scope, route: value.route, conditions }))}`,
+    contextKey: `official-truth-context:v3:${sha256Hex(schema2Kanonisch(identity))}`,
   }
+}
+
+/** Complete context checksum only; no method, job, receipt or authority. */
+export function createV3ContextIdentity(value: unknown): V3ReadResult<{ contextKey: string; ruleScopeKey: string }> {
+  return read(value, contextSchema.transform(contextIdentity))
 }
 
 function contextResolved(value: V3GlobalRuleContext): boolean {
