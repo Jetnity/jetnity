@@ -1,0 +1,235 @@
+{
+  "schema": "jetnity.ma1.peer-isolated-ui-gate.v1",
+  "reviewer": "/root/ma1_release_gating",
+  "at": "2026-11-09T16:57:51.008445+00:00",
+  "scope": "Actual isolated UI CI for corrected24d55ee; no core/MA1-native or production acceptance",
+  "runId": 42659466404,
+  "attempt": 1,
+  "jobId": 129306791395,
+  "jobConclusion": "success",
+  "head": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "checkout": "0672f3b2351288b2374bc37b126fccac8706eda9",
+  "checkoutTree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "checkoutParents": [
+    "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "24d55eeda100490ad3fd20b48551b5314b5c4f8a"
+  ],
+  "expectedTree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "treeMatchesHead": true,
+  "rawLog": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-24d55ee/ui-job-129306791395-raw.txt",
+    "sha256": "8251f81033984e6914e43bffabc476c92919cc1847f4273a73e8d19fa7c820c7",
+    "bytes": 140671
+  },
+  "unitSelection": {
+    "tests": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifact": {
+    "artifactId": 13692899588,
+    "zipSha256": "5ee9914dd0d8a50b459d5e5cc97c56c26d21689aaa484d9040f9674b0973f10e",
+    "zipBytes": 3740746,
+    "zipPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-24d55ee/ui-artifact-13692899588.zip",
+    "extractedDirectory": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-24d55ee/ui-artifact",
+    "files": [
+      {
+        "path": "application-320.png",
+        "bytes": 324576,
+        "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad"
+      },
+      {
+        "path": "benchmark.json",
+        "bytes": 656,
+        "sha256": "f155cf4898f67faa78980d6d33eeed86485d91f3569ba7ee44626bc1663ca0d6"
+      },
+      {
+        "path": "audit.json",
+        "bytes": 21034,
+        "sha256": "301ec8b8822f217aed1e94c6df5cbb2478e03f80133a76d4c8137e5d4aee9c42"
+      },
+      {
+        "path": "application-320-text200.png",
+        "bytes": 562618,
+        "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55"
+      },
+      {
+        "path": "bundle-inputs.json",
+        "bytes": 1183,
+        "sha256": "00834656f33a8fb8a6c975af359ab2d1d98e4c86b252750a0145aabfd2162474"
+      },
+      {
+        "path": "conflict-320.png",
+        "bytes": 284135,
+        "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+      },
+      {
+        "path": "http-smoke.json",
+        "bytes": 1310,
+        "sha256": "9daae2cd6bab67cec604ab039f4b764c8a9a8d1a1b36e1d15f235cbdb7490423"
+      },
+      {
+        "path": "loading-320.png",
+        "bytes": 255951,
+        "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+      },
+      {
+        "path": "mixed-1280.png",
+        "bytes": 416617,
+        "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+      },
+      {
+        "path": "mixed-280.png",
+        "bytes": 349662,
+        "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8"
+      },
+      {
+        "path": "mixed-320-text200.png",
+        "bytes": 620516,
+        "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+      },
+      {
+        "path": "mixed-390.png",
+        "bytes": 365462,
+        "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+      },
+      {
+        "path": "poll-accepted-390.png",
+        "bytes": 333176,
+        "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+      },
+      {
+        "path": "poll-pending-390.png",
+        "bytes": 302917,
+        "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+      },
+      {
+        "path": "run-binding.json",
+        "bytes": 412,
+        "sha256": "1dce5ff73b8a1b4e5418f8b7aade3536aaea5658b35ba512e7e68c5abc15a4fb"
+      }
+    ]
+  },
+  "binding": {
+    "checkedOutHead": "0672f3b2351288b2374bc37b126fccac8706eda9",
+    "sourceHead": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+    "worktreeDirty": false,
+    "githubSha": "0672f3b2351288b2374bc37b126fccac8706eda9",
+    "runId": "42659466404",
+    "runAttempt": "1",
+    "event": "pull_request"
+  },
+  "allFiveJsonBindingsMatch": true,
+  "layouts": 12,
+  "noLayoutOrControlOverflow": true,
+  "noControlsUnder44px": true,
+  "interactions": [
+    "Empty form stays disabled; keyboard reaches test selector then destination",
+    "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+    "Conflict suppresses positive rule and source link",
+    "Cache read failure remains error; no fake pending or raw failure",
+    "Unbound production seam is honest unavailable",
+    "Transport failure has a focused, retryable error state",
+    "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+    "Multiple context statements are displayed fully without choosing a best credential",
+    "Synthetic tourism restriction retains passport/origin/direct route and inclusive trip start/end window at 320px and 200% text through actual query/reproof",
+    "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+    "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "allTenPngHashesMatchAudit": true,
+  "screenshotComparisons": [
+    {
+      "name": "mixed-280.png",
+      "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "c1r3Sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "b7dSha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "identicalToBoth": true
+    },
+    {
+      "name": "mixed-390.png",
+      "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "c1r3Sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "b7dSha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "identicalToBoth": true
+    },
+    {
+      "name": "mixed-1280.png",
+      "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "c1r3Sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "b7dSha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "identicalToBoth": true
+    },
+    {
+      "name": "mixed-320-text200.png",
+      "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "c1r3Sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "b7dSha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "identicalToBoth": true
+    },
+    {
+      "name": "conflict-320.png",
+      "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "c1r3Sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "b7dSha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "identicalToBoth": true
+    },
+    {
+      "name": "loading-320.png",
+      "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "c1r3Sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "b7dSha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "identicalToBoth": true
+    },
+    {
+      "name": "application-320.png",
+      "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "c1r3Sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "b7dSha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "identicalToBoth": true
+    },
+    {
+      "name": "application-320-text200.png",
+      "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "c1r3Sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "b7dSha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "identicalToBoth": true
+    },
+    {
+      "name": "poll-pending-390.png",
+      "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "c1r3Sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "b7dSha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "identicalToBoth": true
+    },
+    {
+      "name": "poll-accepted-390.png",
+      "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "c1r3Sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "b7dSha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "identicalToBoth": true
+    }
+  ],
+  "visualInspectionThisReview": false,
+  "benchmark": {
+    "p95Ms": 5.899973999999986,
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "pendingJobs": 0,
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports"
+  },
+  "preview": {
+    "id": "dpl_mQqd2bh71sZmwXvxKGJw1e7W7X1d",
+    "url": "jetnity-ebq0lyvkg-jetnity-e1b93c82.vercel.app",
+    "state": "READY",
+    "target": null,
+    "sha": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+    "ref": "feat/official-truth-v3-method-authority-1-20261109",
+    "aliasError": null
+  },
+  "boundaries": "Authorized GitHub and Vercel metadata reads, exactly one Root-authorized connector-returned signed artifact GET and bounded extraction/hash checks only. No browser/test/native/SQL/socket/hosted action, Auth log, source/index/ref change, or finalTL/Ready/merge."
+}

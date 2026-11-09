@@ -1,0 +1,393 @@
+{
+  "schema": "MA1_REVIEW_R2_SOURCE_MANIFEST_V1",
+  "at": "2026-11-09T17:13:58.729109+00:00",
+  "status": "FROZEN_SOURCE_CORRECTION_PENDING_ROOT_AND_ENTIRE_NEW_HEAD_CI",
+  "primarySession": "/root/v3_method_authority_writer",
+  "identity": "Jetnity Official Truth V3 Method Authority 1 — Codex Generation 1 (explicit Codex fallback; no Cursor identity)",
+  "runtimeChildR2Assignment": null,
+  "baseHead": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "baseTree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "branch": "feat/official-truth-v3-method-authority-1-20261109",
+  "task": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_TASK_V1.md",
+    "sha256": "5f6b7b79303841f0ac5ebfbc9d7560547fd75f070dd625e5ecaa456000d166e3",
+    "bytes": 5454
+  },
+  "priorSourceManifest": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_SOURCE_MANIFEST_V1.json",
+    "sha256": "e43f72e28470fcde846e719cdd2570782ab346a5eeaca07bf70fa6b2e7dea0c3",
+    "bytes": 38605
+  },
+  "changedSources": [
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "beforeSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "afterSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "beforeBytes": 52632,
+      "afterBytes": 52631,
+      "soleChange": {
+        "operation": "delete",
+        "literal": "operations_v1_shape",
+        "literalOffset": 1643,
+        "fileOffset": 42939,
+        "old": ")",
+        "new": ""
+      },
+      "beforeComparisons": [
+        {
+          "name": "revisions_v1_shape",
+          "beforeBytes": 280,
+          "beforeSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+          "actualBytes": 280,
+          "actualSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+          "equalBefore": true
+        },
+        {
+          "name": "heads_v1_shape",
+          "beforeBytes": 879,
+          "beforeSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "actualBytes": 879,
+          "actualSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "equalBefore": true
+        },
+        {
+          "name": "operations_v1_shape",
+          "beforeBytes": 2801,
+          "beforeSha256": "66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3",
+          "actualBytes": 2800,
+          "actualSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "equalBefore": false
+        }
+      ],
+      "allThreeFinalLiteralsEqualActualCi": true,
+      "allOtherFileBytesUnchanged": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "beforeSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "afterSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "beforeBytes": 21567,
+      "afterBytes": 21566,
+      "soleChange": {
+        "operation": "delete",
+        "literal": "operations_v1_shape",
+        "literalOffset": 1643,
+        "fileOffset": 10345,
+        "old": ")",
+        "new": ""
+      },
+      "beforeComparisons": [
+        {
+          "name": "revisions_v1_shape",
+          "beforeBytes": 280,
+          "beforeSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+          "actualBytes": 280,
+          "actualSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+          "equalBefore": true
+        },
+        {
+          "name": "heads_v1_shape",
+          "beforeBytes": 879,
+          "beforeSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "actualBytes": 879,
+          "actualSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "equalBefore": true
+        },
+        {
+          "name": "operations_v1_shape",
+          "beforeBytes": 2801,
+          "beforeSha256": "66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3",
+          "actualBytes": 2800,
+          "actualSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "equalBefore": false
+        }
+      ],
+      "allThreeFinalLiteralsEqualActualCi": true,
+      "allOtherFileBytesUnchanged": true
+    }
+  ],
+  "totalSourceBytesDeleted": 2,
+  "totalSourceBytesAdded": 0,
+  "currentImplementationInventory": [
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "sha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "bytes": 59181
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "bytes": 6696
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "bytes": 32450
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "bytes": 10485
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "bytes": 154
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "bytes": 6536
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "bytes": 2050
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "bytes": 21566
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "bytes": 52631
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "bytes": 77127
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "bytes": 5739
+    }
+  ],
+  "currentImplementationAggregateSha256": "b6e5ec6d9d5bb1acc2e684a413e3165d3c95589f803f4ead814d321a50f5fd62",
+  "aggregateDefinition": "SHA256 of UTF-8 JSON of currentImplementationInventory sorted by path, sort_keys=True, separators=(comma,colon), no trailing newline",
+  "unchangedOther11Sources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "bytes": 6696
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "bytes": 32450
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "bytes": 10485
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "bytes": 154
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "bytes": 6536
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "bytes": 2050
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "bytes": 77127
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "bytes": 5739
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "bytes": 80942
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "sha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "bytes": 59181
+    }
+  ],
+  "preservedTrackedDocsAndRootR2ArtifactCount": 251,
+  "preservedEvidenceInventory": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_COMPARISON_V1.json",
+    "sha256": "cde27f8a0a848deab2e3d7d03a21a9b9e6d1ef6634b00cb1ecf2eb6fc1588988",
+    "bytes": 44815
+  },
+  "authorEvidence": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_EDIT_COMMAND_V1.py.txt",
+      "sha256": "a372d9ef68f6c6b8c926d29329d0af48453ad7fedd5c80e88c02668051a05006",
+      "bytes": 8000
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_ATTEMPTS_V1.json",
+      "sha256": "e0929bde4e78155bf9e380b5599a99ae59e5ef7844d394d5aafc1042674e9f28",
+      "bytes": 1963
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_COMPARISON_V1.json",
+      "sha256": "cde27f8a0a848deab2e3d7d03a21a9b9e6d1ef6634b00cb1ecf2eb6fc1588988",
+      "bytes": 44815
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_001_BYTE_EDIT_AND_COMPARISON.txt",
+      "sha256": "cde27f8a0a848deab2e3d7d03a21a9b9e6d1ef6634b00cb1ecf2eb6fc1588988",
+      "bytes": 44815
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_002_DIFF_CHECK.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_HANDOFF_V1.md",
+      "sha256": "dd37d5af5b47cca98b0efd8390633ef88ab802ddd9c175aa32917d7cefe779ee",
+      "bytes": 6149
+    }
+  ],
+  "rootFailureEvidence": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_FAILURE_EVIDENCE_V1.json",
+    "sha256": "2f7b05953073eaed2b69818215a23a93fc6420ddd9b26281bb1729e9bd68b22b",
+    "bytes": 4544
+  },
+  "actualCommands": [
+    {
+      "id": "ma1-review-r2-primary-001",
+      "kind": "fixed_two_byte_source_edit_and_read_only_comparison",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_EDIT_COMMAND_V1.py.txt"
+      ],
+      "commandSourceSha256": "a372d9ef68f6c6b8c926d29329d0af48453ad7fedd5c80e88c02668051a05006",
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "startedAt": "2026-11-09T17:12:17.541107+00:00",
+      "status": "COMPLETED",
+      "localNativeSqlSocket": false,
+      "gitIndexRefMutation": false,
+      "finishedAt": "2026-11-09T17:12:17.711093+00:00",
+      "durationSeconds": 0.17,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_001_BYTE_EDIT_AND_COMPARISON.txt",
+      "logSha256": "cde27f8a0a848deab2e3d7d03a21a9b9e6d1ef6634b00cb1ecf2eb6fc1588988",
+      "logBytes": 44815
+    },
+    {
+      "id": "ma1-review-r2-primary-002",
+      "kind": "read_only_diff_whitespace_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "environmentOverride": {
+        "GIT_NO_LAZY_FETCH": "1"
+      },
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "startedAt": "2026-11-09T17:13:58.713171+00:00",
+      "status": "COMPLETED",
+      "localNativeSqlSocket": false,
+      "gitIndexRefMutation": false,
+      "finishedAt": "2026-11-09T17:13:58.721657+00:00",
+      "durationSeconds": 0.008,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_002_DIFF_CHECK.txt",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logBytes": 0
+    }
+  ],
+  "actualFailedCi": {
+    "run": 42659466404,
+    "attempt": 1,
+    "coreJob": 129306791905,
+    "conclusion": "failure",
+    "tests": 8608,
+    "passed": 8605,
+    "failed": 1,
+    "existingSkips": 2,
+    "cancelled": 0,
+    "r1FoundationCasesPassed": true,
+    "ma1ChildrenStarted": 1,
+    "ma1ChildrenPassed": 1,
+    "ma1ChildrenNotReached": 13,
+    "parentError": "local_pg_P7505",
+    "parentDurationMs": 836.611411,
+    "cleanup": {
+      "started": 46,
+      "settled": 46,
+      "pending": 0,
+      "connections": 5,
+      "closed": 5,
+      "stoppedClusters": 1
+    },
+    "exactDecodedCoreLog": {
+      "run": 42659466404,
+      "attempt": 1,
+      "coreJob": 129306791905,
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/core-job-129306791905.log",
+      "bytes": 4156039,
+      "sha256": "5c3521bdd6d94b4712c4a7527bc89383f4cd5384c29dd96f445a59bfc8dd5f38",
+      "diagnosticLine": 33806
+    },
+    "laterCoreHygieneAndBuild": "skipped",
+    "otherSixJobs": "success only on the old exact head; no acceptance transfer",
+    "qualification": "The literal mismatch necessarily rejects exact equality. Shared P7505 does not uniquely locate the first RAISE or exclude another inventory mismatch. All14 native children and parent still require full new-head CI."
+  },
+  "verificationScope": {
+    "filesystemByteComparison": true,
+    "allSixFinalLiteralsMatchImmutableDiagnostic": true,
+    "soleFixedDeletionPerFile": true,
+    "remaining11SourceHashesMatchR1AndGitHead": true,
+    "wholeTypeScriptRerun": false,
+    "lintRerun": false,
+    "offlineRerun": false,
+    "localNativeSqlPostgresSocket": false,
+    "reasonForNoUnchangedSuiteRerun": "Root R2 task explicitly limits this round to two SQL source-literal bytes and new full CI after publication",
+    "priorOfflineEvidence": "Historical R1 ten-file 329/329 only; no new-head CI acceptance"
+  },
+  "rootNextStep": "Independent exact two-byte review, new leased head, full mandatory CI including all14 MA1 children+parent and other native/core/hygiene/build/UI/Preview/checkout/thread gates; no unchanged failed-head retry.",
+  "boundaries": {
+    "gitIndexRefCommitPush": false,
+    "noExistingSourceBeyondTwoExpectedLiteralBytesChanged": true,
+    "allPriorFailedOutcomesPreserved": true,
+    "hostedDatabaseAuthRlsAclMigrationCredentialAction": false,
+    "realSourceProviderResearcherCall": false,
+    "publicRouteSchedulerNotificationCostActivation": false,
+    "specific917Refusal": "No retry/rephrase/delegation/reroute/alternate transport/human substitution",
+    "method": "NOT_APPROVED",
+    "dev1139": "NOT_RELEASE_READY;17 pre-Owner gaps",
+    "1131": "Ready STOP",
+    "1135": "held research",
+    "968": "Preview isolation",
+    "911_913": "privacy gates persist",
+    "currentMainIntegration": "Root-owned separate open P2; no integration task issued",
+    "authorSelfPass": false,
+    "automaticNextSlice": false
+  }
+}

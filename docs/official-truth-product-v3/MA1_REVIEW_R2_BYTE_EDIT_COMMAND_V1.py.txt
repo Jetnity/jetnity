@@ -1,0 +1,162 @@
+# Recorded one-time R2 filesystem byte comparison/edit command, not runtime SQL.
+# This command reads immutable CI output and source bytes. It never executes SQL.
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+import re
+import subprocess
+
+ROOT = Path('/workspace/scratch/01cbe1264212/jetnity-v3-method-authority')
+DOCS = ROOT / 'docs/official-truth-product-v3'
+HEAD = '24d55eeda100490ad3fd20b48551b5314b5c4f8a'
+TREE = '4d08dc7201a5c5b62e10a007d288fc7749d9a92b'
+TASK_SHA = '5f6b7b79303841f0ac5ebfbc9d7560547fd75f070dd625e5ecaa456000d166e3'
+R1_SHA = 'e43f72e28470fcde846e719cdd2570782ab346a5eeaca07bf70fa6b2e7dea0c3'
+LOG = ROOT.parent / 'recovery/ma1-ci-r1-peer/core-job-129306791905.log'
+LOG_SHA = '5c3521bdd6d94b4712c4a7527bc89383f4cd5384c29dd96f445a59bfc8dd5f38'
+MARKER = b'# MA1 pre-validator exact CHECK definitions (DDL diagnostics only):'
+SOURCES = {
+    'scripts/db/official-truth-v3-method-authority-1/method-candidate.sql': (
+        'dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845',
+        '269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6'),
+    'scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql': (
+        'aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124',
+        'e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709'),
+}
+LITERAL_PINS = {
+    'heads_v1_shape': (879, 'd978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258'),
+    'operations_v1_shape': (2800, '64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51'),
+    'revisions_v1_shape': (280, '60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243'),
+}
+LITERAL_RE = re.compile(rb"\('([^']+)',\$ma1_expected\$(.*?)\$ma1_expected\$\)", re.S)
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT,
+        env={**os.environ, 'GIT_NO_LAZY_FETCH': '1'})
+
+def literals(data):
+    matches = list(LITERAL_RE.finditer(data))
+    assert len(matches) == 3
+    result = {m.group(1).decode(): m for m in matches}
+    assert set(result) == set(LITERAL_PINS)
+    return result
+
+assert git('rev-parse', 'HEAD').decode().strip() == HEAD
+assert git('rev-parse', 'HEAD^{tree}').decode().strip() == TREE
+assert git('diff', '--name-only') == b''
+assert git('diff', '--cached', '--name-only') == b''
+assert sha((DOCS / 'MA1_REVIEW_R2_TASK_V1.md').read_bytes()) == TASK_SHA
+r1_bytes = (DOCS / 'MA1_REVIEW_R1_SOURCE_MANIFEST_V1.json').read_bytes()
+assert sha(r1_bytes) == R1_SHA
+inventory = json.loads(r1_bytes)['currentImplementationInventory']
+assert len(inventory) == 13
+for entry in inventory:
+    assert sha((ROOT / entry['path']).read_bytes()) == entry['sha256']
+
+preserved_docs = {}
+for raw in git('ls-files', '-z', 'docs/official-truth-product-v3').split(b'\0'):
+    if raw:
+        path = raw.decode()
+        preserved_docs[path] = sha((ROOT / path).read_bytes())
+for path in [DOCS / 'MA1_REVIEW_R2_TASK_V1.md', DOCS / 'MA1_REVIEW_R2_ROOT_FAILURE_EVIDENCE_V1.json',
+        *sorted((DOCS / 'ma1-r2-review-evidence').glob('*'))]:
+    if path.is_file():
+        preserved_docs[path.relative_to(ROOT).as_posix()] = sha(path.read_bytes())
+
+raw_log = LOG.read_bytes()
+assert sha(raw_log) == LOG_SHA
+diagnostics = [(i, line) for i, line in enumerate(raw_log.splitlines(), 1) if MARKER in line]
+assert len(diagnostics) == 1
+line_number, diagnostic_line = diagnostics[0]
+assert line_number == 33806
+actual_rows = json.loads(diagnostic_line.split(MARKER, 1)[1].strip())
+assert len(actual_rows) == 3
+actual = {row['conname']: row['expression'].encode() for row in actual_rows}
+assert set(actual) == set(LITERAL_PINS)
+for name, value in actual.items():
+    assert (len(value), sha(value)) == LITERAL_PINS[name]
+
+planned = []
+for path, (before_sha, after_sha) in SOURCES.items():
+    before = (ROOT / path).read_bytes()
+    assert sha(before) == before_sha
+    assert git('show', HEAD + ':' + path) == before
+    old_literals = literals(before)
+    comparisons = []
+    for name, match in old_literals.items():
+        value = match.group(2)
+        if name == 'operations_v1_shape':
+            assert len(value) == 2801
+            assert sha(value) == '66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3'
+            assert value[1643:1644] == b')'
+            assert value[:1643] + value[1644:] == actual[name]
+            assert value.count(b"until'::text)))) AND ((before_state") == 1
+        else:
+            assert value == actual[name]
+        comparisons.append({'name': name, 'beforeBytes': len(value), 'beforeSha256': sha(value),
+            'actualBytes': len(actual[name]), 'actualSha256': sha(actual[name]),
+            'equalBefore': value == actual[name]})
+    offset = old_literals['operations_v1_shape'].start(2) + 1643
+    # Fixed, reviewed one-byte source edit; never construct SQL from CI definitions.
+    after = before[:offset] + before[offset + 1:]
+    assert sha(after) == after_sha
+    assert len(before) - len(after) == 1
+    assert before[offset:offset + 1] == b')'
+    assert all(m.group(2) == actual[name] for name, m in literals(after).items())
+    planned.append({'path': path, 'before': before, 'after': after, 'offset': offset,
+        'comparisons': comparisons})
+
+# All inputs and both complete proposed files were checked before either write.
+for item in planned:
+    assert (ROOT / item['path']).read_bytes() == item['before']
+    (ROOT / item['path']).write_bytes(item['after'])
+
+for item in planned:
+    final = (ROOT / item['path']).read_bytes()
+    assert final == item['after']
+    assert all(m.group(2) == actual[name] for name, m in literals(final).items())
+assert set(git('diff', '--name-only').decode().splitlines()) == set(SOURCES)
+assert git('diff', '--cached', '--name-only') == b''
+assert git('rev-parse', 'HEAD').decode().strip() == HEAD
+for path, digest in preserved_docs.items():
+    assert sha((ROOT / path).read_bytes()) == digest
+unchanged = []
+current_inventory = []
+for entry in inventory:
+    data = (ROOT / entry['path']).read_bytes()
+    current_inventory.append({'path': entry['path'], 'sha256': sha(data), 'bytes': len(data)})
+    if entry['path'] not in SOURCES:
+        assert sha(data) == entry['sha256']
+        assert git('show', HEAD + ':' + entry['path']) == data
+        unchanged.append(entry)
+assert len(unchanged) == 11
+
+report = {
+    'schema': 'MA1_REVIEW_R2_BYTE_COMPARISON_V1',
+    'at': datetime.now(timezone.utc).isoformat(),
+    'author': '/root/v3_method_authority_writer',
+    'status': 'SOURCE_BYTES_CORRECTED_PENDING_ROOT_AND_NEW_HEAD_CI',
+    'headUnchanged': HEAD, 'treeUnchanged': TREE,
+    'taskSha256': TASK_SHA, 'r1ManifestSha256': R1_SHA,
+    'immutableActualCi': {'run': 42659466404, 'attempt': 1, 'coreJob': 129306791905,
+        'path': str(LOG), 'bytes': len(raw_log), 'sha256': LOG_SHA, 'diagnosticLine': line_number},
+    'changedSources': [{'path': x['path'], 'beforeSha256': sha(x['before']), 'afterSha256': sha(x['after']),
+        'beforeBytes': len(x['before']), 'afterBytes': len(x['after']),
+        'soleChange': {'operation': 'delete', 'literal': 'operations_v1_shape',
+            'literalOffset': 1643, 'fileOffset': x['offset'], 'old': ')', 'new': ''},
+        'beforeComparisons': x['comparisons'], 'allThreeFinalLiteralsEqualActualCi': True,
+        'allOtherFileBytesUnchanged': True} for x in planned],
+    'totalSourceBytesDeleted': 2,
+    'currentImplementationInventory': current_inventory,
+    'unchangedOther11Sources': unchanged,
+    'preservedTrackedDocsAndRootR2Artifacts': preserved_docs,
+    'qualification': 'The literal mismatch necessarily rejects exact equality. Shared P7505 does not uniquely locate the first RAISE or exclude another inventory mismatch. All14 native children and parent still require full new-head CI.',
+    'localSqlNativeSocketExecuted': False,
+    'gitIndexRefCommitPushChanged': False,
+}
+print(json.dumps(report, indent=2))
