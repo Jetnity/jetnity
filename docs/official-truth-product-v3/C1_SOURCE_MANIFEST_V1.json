@@ -1,0 +1,153 @@
+{
+  "schema": "c1-source-manifest-v1",
+  "writer": "Jetnity Official Truth V3 Global Conditions 1 — Codex Generation 1",
+  "session": "/root/v3_global_conditions_writer",
+  "taskseedHead": "772397b9b83480b640f4b18bf5cc34c2338b5046",
+  "in1Base": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+  "branch": "feat/official-truth-v3-global-conditions-1-20261109",
+  "implementationState": "uncommitted worktree source freeze; no writer commit/ref/remote mutation",
+  "publishedImplementationHead": null,
+  "rootExactHeadGates": "pending",
+  "sourceFileCount": 20,
+  "files": [
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "bytes": 36471,
+      "sha256": "37c1353d471cf2c5c305b7c806f7ce6abf1dc29a0494ed341b5a61aed9cfed7c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "bytes": 81893,
+      "sha256": "47864ce6e62ff227b744fb8d92c0c89227b8c50048fc68a6641878500a12722a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "bytes": 61555,
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "bytes": 3099,
+      "sha256": "beb5a479d594e28122ffe89a788e83ed5300bee402cdc089d9fcfa69ae4d8521"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "bytes": 6102,
+      "sha256": "5f32381e4b501cb9d828308c5a7019ea8a66724da75fa92dd941a4af3de0ba6c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+      "bytes": 3693,
+      "sha256": "5842037f3160a7ff939e95fc58d6ae2191439796715e96bebf23e6292c2a0f4f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+      "bytes": 8967,
+      "sha256": "d649f1907d29e3cc7d750130612551d4eb0ce33bfb199916ff649b9788f70f30"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "bytes": 6008,
+      "sha256": "8b344987292b8eae594655d2efe1d2d02f3395ab07e4322b9af8422da4c387ef"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+      "bytes": 164,
+      "sha256": "9237a77ce2af7c05fe89cd961f981b0ede3b8b2652eda6f77d7b58d0fdaf6b25"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "bytes": 6824,
+      "sha256": "d34c11d04994c285c829293fe3279df08ff86cc7fe554515605b5547ee83cd66"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "bytes": 22054,
+      "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "bytes": 7840,
+      "sha256": "e3d82ba66494e4f68ab5181d8fb3b7f1b01dbf36eb8ccd8b7881e0ee7f35ee66"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+      "bytes": 18180,
+      "sha256": "77ee2179e29c81236e5cb6551106684a238453e8f4ff57eba550e2f47b1fff51"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+      "bytes": 13070,
+      "sha256": "0571a839414ec2de86f318eab6dcd479dc5f3f2bfb040f4795628a4add8b4bf5"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+      "bytes": 16521,
+      "sha256": "ad574f5420f37e1f52960de9bfd6d9a0626ec04b3e2f612c77c125f8aa4f69c7"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "bytes": 88575,
+      "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "bytes": 5252,
+      "sha256": "96db2a116279a5aa70285fce7215377e31c673359b92dc13cee87f3e10a82354"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/mount.tsx",
+      "bytes": 3150,
+      "sha256": "07f94d88eb736930938e1e005e3c7463e46379c4968ad99de7f9ec4dff03e6dc"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/run.mjs",
+      "bytes": 21038,
+      "sha256": "e050f7a60abb0088f3a47c79b9593f344adb7ddd172ee467f61c192e911b60e3"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/synthetic-server.ts",
+      "bytes": 4136,
+      "sha256": "b0c0e1285fbd027c7f82aa7f9d7446fbf25ce8cc227ca5f453174fdfc2736da6"
+    }
+  ],
+  "references": [
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V1.md",
+      "sha256": "d9a7f5b803ed39354e0b8f061674e5bfc6313bd291c7c012bf4abf6bbfeca368"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V2.md",
+      "sha256": "f651cb7367dd961828aaba471aba011f149b49d5f20b4daface87b38a9256788"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_PLAN_V1.md",
+      "sha256": "1513c5784d3b2b45afd76db67b9bb2d51162f535b98747aae3a7bb48205f100b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_LEGACY_IDENTITIES_V1.json",
+      "sha256": "97b40395e44b8bc0608aff9262de022aa34ae18f7b1559f1c6762874336e6c4b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_REVISION2_IDENTITIES_V1.json",
+      "sha256": "d873b0a68e264330dd9d00bf6b3e7e4e263204b1e7755718c345b35c3331e03c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_MAPPING_REFERENCE_V1.json",
+      "sha256": "d9704b4c39326dabd0ea9c4c7ae39a26013a0b2dc57b24d79f815199e3bb7efa"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SYNTHETIC_CONTEXT_REFERENCE_V1.json",
+      "sha256": "8573baaa6431d6fff27e3ed2a9a00749dfff78adc5d88d055c38b0d3da6a9d09"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+      "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650"
+    }
+  ],
+  "supersedesStage2ManifestSha256": "e2bd4bb788dec74af59ff12640d49ad56c803792f60474bd8c2bc19267411498",
+  "supersedesReason": "private test-helper export correction and exact TASK V2 isolation-guard amendment; Stage1/runtime/SQL and native/UI files unchanged",
+  "supersedesSourceManifestSha256": "786eddca24ee07104d0087772f350b2299e7abf03d1d2446d705ca7b6acedc94",
+  "reviewCorrection": "P2-R2 under TASK V2: finite mapper export surface and forwarding regressions; only mapping.test.ts changed since the prior complete20-file manifest.",
+  "priorSourcePreservedAt": ".next/c1-evidence/before-p2-r2/"
+}

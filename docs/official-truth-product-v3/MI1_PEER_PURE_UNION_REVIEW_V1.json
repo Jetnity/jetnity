@@ -1,0 +1,1300 @@
+{
+  "schema": "jetnity.mi1.peer-pure-union-review.v1",
+  "reviewer": "/root/current_main_audit",
+  "at": "2026-11-09T17:55:35.558705+00:00",
+  "scope": "Independent immutable pure union verification before continuity-doc modifications/publication",
+  "taskSha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+  "rootReceiptSha256": "ffd0dc46cbd1652b28968a2bc1c7ba1ef64735d7fa0f003b85c5a9de2e27b4e5",
+  "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+  "mainTree": "c417811ff67248c4910bb2c5154bb51885d787eb",
+  "ma1": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "ma1Tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "exclusiveCommits": {
+    "main": 7,
+    "ma1": 37
+  },
+  "changedPaths": {
+    "main": [
+      ".env.example",
+      "app/(public)/privacy/page.tsx",
+      "app/(public)/reisen/[tripId]/layout.tsx",
+      "app/(public)/ui-audit/trip-workspace/page.tsx",
+      "app/api/mobility/omio/route.ts",
+      "components/trips/AktivitaetenBereich.tsx",
+      "components/trips/FlugKarte.tsx",
+      "components/trips/TripWorkspace.tsx",
+      "components/trips/TwelveGoTimetable.tsx",
+      "components/trips/organisieren/Aktivitaeten.tsx",
+      "components/trips/organisieren/Flugsuche.tsx",
+      "components/trips/organisieren/Hotelkarte.tsx",
+      "components/trips/organisieren/Hotelsuche.tsx",
+      "components/trips/organisieren/Organisieren.tsx",
+      "components/trips/organisieren/Reisefoto.tsx",
+      "components/trips/organisieren/Suchfelder.tsx",
+      "components/trips/organisieren/Verbindungen.tsx",
+      "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+      "components/trips/organisieren/omio/OmioVergleich.tsx",
+      "components/trips/organisieren/omio/Ortswahl.tsx",
+      "components/trips/organisieren/omio/Streckenkarte.tsx",
+      "components/trips/organisieren/omio/Streckenwerte.ts",
+      "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+      "components/trips/organisieren/omio/vergleich.css",
+      "components/trips/organisieren/organisieren.css",
+      "components/trips/rental/DiscoverCarsMietwagen.tsx",
+      "components/trips/rental/StationField.tsx",
+      "data/omio/.gitignore",
+      "data/omio/ch.katalog",
+      "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+      "lib/providers/omio/archiv.test.ts",
+      "lib/providers/omio/archiv.ts",
+      "lib/providers/omio/daten-server.ts",
+      "lib/providers/omio/katalog.test.ts",
+      "lib/providers/omio/katalog.ts",
+      "lib/providers/omio/reise.test.ts",
+      "lib/providers/omio/reise.ts",
+      "lib/trips/organisieren/katalog.test.ts",
+      "lib/trips/organisieren/katalog.ts",
+      "package-lock.json",
+      "package.json",
+      "public/images/organisieren/Bildnachweise.txt",
+      "public/images/organisieren/angsana.webp",
+      "public/images/organisieren/bangkok.webp",
+      "public/images/organisieren/canal.webp",
+      "public/images/organisieren/chang.webp",
+      "public/images/organisieren/hero.webp",
+      "public/images/organisieren/katathani.webp",
+      "public/images/organisieren/mandarin.webp",
+      "public/images/organisieren/oldtown.webp",
+      "public/images/organisieren/paradise.webp",
+      "public/images/organisieren/peninsula.webp",
+      "public/images/organisieren/phuket.webp",
+      "public/images/organisieren/reise.webp",
+      "public/images/organisieren/shangri.webp",
+      "public/images/organisieren/waterfall.webp",
+      "public/images/organisieren/watpho.webp",
+      "scripts/omio/archivieren.ts",
+      "scripts/omio/importiere-katalog.py"
+    ],
+    "v3": [
+      ".github/workflows/ci.yml",
+      "ARCHITECTURE.md",
+      "DECISIONS.md",
+      "JETNITY_START_HERE.md",
+      "JETNITY_VISION.md",
+      "ROADMAP.md",
+      "components/readiness/OfficialTruthVisitorV3.tsx",
+      "docs/ACTIVE_WORK_STATUS.md",
+      "docs/official-truth-product-v3/C1_EVIDENCE_V1.md",
+      "docs/official-truth-product-v3/C1_FINAL_CONSISTENCY_REVIEW_V1.json",
+      "docs/official-truth-product-v3/C1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/C1_LEGACY_IDENTITIES_V1.json",
+      "docs/official-truth-product-v3/C1_MAPPING_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/C1_PLAN_V1.md",
+      "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+      "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+      "docs/official-truth-product-v3/C1_REVISION2_IDENTITIES_V1.json",
+      "docs/official-truth-product-v3/C1_ROOT_FINAL_ACCEPTANCE_V1.json",
+      "docs/official-truth-product-v3/C1_ROOT_NEW_HEAD_UI_REVIEW_R3.json",
+      "docs/official-truth-product-v3/C1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/C1_ROOT_REVIEW_R2.json",
+      "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+      "docs/official-truth-product-v3/C1_SYNTHETIC_CONTEXT_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/C1_TASK_V1.md",
+      "docs/official-truth-product-v3/C1_TASK_V2.md",
+      "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "docs/official-truth-product-v3/C1_TEST_RUNS_V1.json",
+      "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+      "docs/official-truth-product-v3/D0_DEV_READINESS_DELTA_2026-11-09.md",
+      "docs/official-truth-product-v3/E1_CONTRACT.md",
+      "docs/official-truth-product-v3/E1_GUARD_G1_TASK.md",
+      "docs/official-truth-product-v3/E1_GUARD_G2_TASK.md",
+      "docs/official-truth-product-v3/E1_GUARD_REVIEW_G1.md",
+      "docs/official-truth-product-v3/E1_GUARD_REVIEW_G2.md",
+      "docs/official-truth-product-v3/E1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R1.json",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R2.json",
+      "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R3.json",
+      "docs/official-truth-product-v3/E1_MANIFEST.md",
+      "docs/official-truth-product-v3/E1_REVIEW_R1_FIX_PLAN.md",
+      "docs/official-truth-product-v3/E1_REVIEW_R1_TASK.md",
+      "docs/official-truth-product-v3/E1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/E1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/E1_TASK_V1.md",
+      "docs/official-truth-product-v3/I1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/I1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/I1_INTERFACE.md",
+      "docs/official-truth-product-v3/I1_REVIEW_R3_FIX_PLAN.md",
+      "docs/official-truth-product-v3/I1_REVIEW_R3_TASK.md",
+      "docs/official-truth-product-v3/I1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/I1_TASK_R2.md",
+      "docs/official-truth-product-v3/I1_TASK_V1.md",
+      "docs/official-truth-product-v3/IMPLEMENTATION_CHECKPOINT_2026-11-09.md",
+      "docs/official-truth-product-v3/IN1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json",
+      "docs/official-truth-product-v3/IN1_PLAN_V1.md",
+      "docs/official-truth-product-v3/IN1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/IN1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/IN1_TASK_V1.md",
+      "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json",
+      "docs/official-truth-product-v3/M1_CONTRACT.md",
+      "docs/official-truth-product-v3/M1_FILE_MANIFEST.md",
+      "docs/official-truth-product-v3/M1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/M1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/M1_REVIEW_R1_FIX_PLAN.md",
+      "docs/official-truth-product-v3/M1_REVIEW_R2_FIX_PLAN.md",
+      "docs/official-truth-product-v3/M1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/M1_TASK_R2.md",
+      "docs/official-truth-product-v3/M1_TASK_V1.md",
+      "docs/official-truth-product-v3/MA1_AUTHOR_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_CURRENT_MAIN_INTEGRATION_PLANNING_V1.json",
+      "docs/official-truth-product-v3/MA1_IMPLEMENTATION_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/MA1_IMPLEMENTATION_STATUS_V1.md",
+      "docs/official-truth-product-v3/MA1_IMPLEMENTATION_SUBTASKS_V1.md",
+      "docs/official-truth-product-v3/MA1_MAIN_DRIFT_RECONCILIATION_V1.json",
+      "docs/official-truth-product-v3/MA1_NATIVE_AUTHOR_ATTEMPTS_V1.json",
+      "docs/official-truth-product-v3/MA1_NATIVE_IDENTITY_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_001_NEXT_TYPEGEN.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_002_WHOLE_TYPESCRIPT.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_003_SCOPED_LINT.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_004_HYGIENE_DEAD.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_005_HYGIENE_EXPORTS.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_006_HYGIENE_DEPS.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_007_HYGIENE_API.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_008_HYGIENE_SCHEMA.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_009_WHOLE_TYPESCRIPT_AFTER_FIXTURE_SYNTAX.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_010_SCOPED_LINT_AFTER_FIXTURE_SYNTAX.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_011_FINAL_HYGIENE_DEAD.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_012_FINAL_HYGIENE_EXPORTS.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_013_FINAL_HYGIENE_DEPS.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_014_FINAL_HYGIENE_API.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_015_FINAL_HYGIENE_SCHEMA.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_016_FINAL_WHOLE_TYPESCRIPT.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_017_FINAL_SCOPED_LINT.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_018_FINAL_HYGIENE_DEAD_R2.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_019_FINAL_HYGIENE_EXPORTS_R2.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_020_FINAL_HYGIENE_DEPS_R2.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_021_FINAL_HYGIENE_API_R2.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_022_FINAL_HYGIENE_SCHEMA_R2.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_023_FINAL_WHOLE_TYPESCRIPT_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_024_FINAL_SCOPED_LINT_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_025_FINAL_HYGIENE_DEAD_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_026_FINAL_HYGIENE_EXPORTS_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_027_FINAL_HYGIENE_DEPS_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_028_FINAL_HYGIENE_API_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_LOG_029_FINAL_HYGIENE_SCHEMA_R3.txt",
+      "docs/official-truth-product-v3/MA1_NATIVE_PROOF_MATRIX_V1.json",
+      "docs/official-truth-product-v3/MA1_PEER_FAILED_SPAWN_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R2.json",
+      "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PEER_RUNTIME_SOURCE_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_CORRECTIONS_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V2.json",
+      "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+      "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_AUTHOR_ATTEMPTS_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_AUTHOR_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_CI_FAILURE_EXCERPTS_V1.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_001_WHOLE_TYPESCRIPT.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_002_CHANGED_FILES_LINT.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_PREVIOUS_STATUS_BLOCKS_V1.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_ROOT_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_ATTEMPTS_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_CI_FAILURE_EXCERPTS_V1.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_DIFF_V1.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_001_NAMED_TEN_FILE_OFFLINE_SELECTION.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_002_FOUNDATION_CHANGED_FILE_LINT.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_ATTEMPTS_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_COMPARISON_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_EDIT_COMMAND_V1.py.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_001_BYTE_EDIT_AND_COMPARISON.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_002_DIFF_CHECK.txt",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_FAILURE_EVIDENCE_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_MANIFEST_VERIFICATION_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_SOURCE_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/MA1_REVIEW_R2_TASK_V1.md",
+      "docs/official-truth-product-v3/MA1_ROOT_EARLY_NATIVE_SOURCE_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_EARLY_SQL_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_FINAL_FREEZE_VERIFICATION_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V2.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V3.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V4.md",
+      "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V5.md",
+      "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1_LOG.txt",
+      "docs/official-truth-product-v3/MA1_ROOT_NATIVE_CHILD_TERMINAL_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_NATIVE_SOURCE_CORRECTIONS_R2.json",
+      "docs/official-truth-product-v3/MA1_ROOT_PHASE_A_ACCEPTANCE_V2.json",
+      "docs/official-truth-product-v3/MA1_ROOT_PLAN_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V2.json",
+      "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V3.json",
+      "docs/official-truth-product-v3/MA1_ROOT_RUNTIME_SOURCE_OFFLINE_REVIEW_R1.json",
+      "docs/official-truth-product-v3/MA1_ROOT_SOURCE_PUBLICATION_REVIEW_V1.json",
+      "docs/official-truth-product-v3/MA1_RUNTIME_ATTEMPTS_V1.json",
+      "docs/official-truth-product-v3/MA1_RUNTIME_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_001_TESTS_INITIAL.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_002_EXPLICIT_OFFLINE_AFFECTED_SELECTION.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_003_SCOPED_LINT.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_004_HYGIENE_DEAD.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_005_HYGIENE_EXPORTS.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_006_HYGIENE_DEPS.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_007_HYGIENE_API.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_008_HYGIENE_SCHEMA.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_009_NEXT_TYPEGEN.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_010_WHOLE_TYPESCRIPT.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_011_WHOLE_TYPESCRIPT_AFTER_TEST_CAST_FIX.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_012_FINAL_NAMED_OFFLINE_SELECTION.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_013_FINAL_SCOPED_LINT.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_014_WHOLE_TYPESCRIPT_CONFIRMED.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_015_NAMED_OFFLINE_SELECTION_CONFIRMED.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_LOG_016_SCOPED_LINT_CONFIRMED.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_REVIEW_FIX_R1.json",
+      "docs/official-truth-product-v3/MA1_RUNTIME_RUNNER_FAILURE_001.txt",
+      "docs/official-truth-product-v3/MA1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+      "docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+      "docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_A_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_B_V1.json",
+      "docs/official-truth-product-v3/MA1_TASK_V1.md",
+      "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "docs/official-truth-product-v3/PROGRAM_V1.md",
+      "docs/official-truth-product-v3/RECOVERY_CHECKPOINT_2026-11-09.md",
+      "docs/official-truth-product-v3/RECOVERY_LIVE_EVIDENCE_2026-11-09.json",
+      "docs/official-truth-product-v3/RECOVERY_ROOT_REVIEW_2026-11-09.json",
+      "docs/official-truth-product-v3/S0_CONTRACT.md",
+      "docs/official-truth-product-v3/S0_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/S0_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/S1_GUARD_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/S1_PLAN_V1.md",
+      "docs/official-truth-product-v3/S1_RECOVERY_TASK_V2.md",
+      "docs/official-truth-product-v3/S1_SELF_REVIEW_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/S1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/S1_TASK_V1.md",
+      "docs/official-truth-product-v3/S1_VERIFICATION_RECEIPT_V2.json",
+      "docs/official-truth-product-v3/U1_CONTRACT.md",
+      "docs/official-truth-product-v3/U1_GUARD_REVIEW_R1.md",
+      "docs/official-truth-product-v3/U1_IMPLEMENTATION_PLAN.md",
+      "docs/official-truth-product-v3/U1_MANIFEST.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R4_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R5_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R5_TASK.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R6_FIX_PLAN.md",
+      "docs/official-truth-product-v3/U1_REVIEW_R6_TASK.md",
+      "docs/official-truth-product-v3/U1_SELF_REVIEW_HANDOFF.md",
+      "docs/official-truth-product-v3/U1_TASK_R2.md",
+      "docs/official-truth-product-v3/U1_TASK_R3.md",
+      "docs/official-truth-product-v3/U1_TASK_V1.md",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-core-relevant-excerpts.txt",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-log-serialization-note-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-ma1-child-presence.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-peer-review-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-peer-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-root-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-other-release-gates-peer-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/peer-source-review-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/root-manifest-verification-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/root-named-ten-file-offline.txt",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/root-offline-review-v1.json",
+      "docs/official-truth-product-v3/ma1-r1-review-evidence/root-source-comparison-v1.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/actual-check-comparison.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/failed-r1-ci-peer-review.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-peer-v1.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-root-v1.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-other-release-gates-peer-v1.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-root-complete-scope.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/peer-source-review-v1.json",
+      "docs/official-truth-product-v3/ma1-r2-review-evidence/root-literal-attribution-v1.json",
+      "docs/official-truth-product-v3/ma1-review-evidence/method-candidate-before-r1.sql.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/method-rollback-before-r1.sql.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/native-adapter-before-r1.ts.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/native-before-child-terminal-r1.ts.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/native-before-r1.ts.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/native-diagnostic-final-binding.json",
+      "docs/official-truth-product-v3/ma1-review-evidence/postgres-identity-visibility-evidence.json",
+      "docs/official-truth-product-v3/ma1-review-evidence/process-worker-before-r1.ts.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1-log.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1.cjs.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2-log.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2.cjs.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/runtime-adapter-before-r1.ts.txt",
+      "docs/official-truth-product-v3/ma1-review-evidence/runtime-contract-before-r1.ts.txt",
+      "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "lib/readiness/official-truth-content-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/contract.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+      "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
+      "lib/readiness/official-truth-product-v3/monitor/runtime.ts",
+      "lib/readiness/official-truth-product-v3/monitor/test-support.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+      "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+      "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "scripts/db/official-truth-v3-intake-store-1/fixtures.ts",
+      "scripts/db/official-truth-v3-intake-store-1/generate-retention-shape.ts",
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+      "scripts/db/official-truth-v3-intake-store-1/retention-fixtures.ts",
+      "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "scripts/official-truth-product-v3-ui/benchmark.ts",
+      "scripts/official-truth-product-v3-ui/browser.mjs",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "scripts/official-truth-product-v3-ui/evidence.mjs",
+      "scripts/official-truth-product-v3-ui/mount.tsx",
+      "scripts/official-truth-product-v3-ui/run.mjs",
+      "scripts/official-truth-product-v3-ui/synthetic-server.ts",
+      "scripts/official-truth-product-v3-ui/tsconfig.json"
+    ],
+    "intersection": []
+  },
+  "includedAncestors": {
+    "S0": {
+      "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "I1": {
+      "sha": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "U1": {
+      "sha": "d110545a551baf6b6f18687042238a30514addda",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "M1": {
+      "sha": "40ca2f0348862bb763e8d42728418bda4c63405f",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "E1": {
+      "sha": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "S1": {
+      "sha": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "N1": {
+      "sha": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "IN1": {
+      "sha": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "C1": {
+      "sha": "5558367eb0bff97162c369bbb8963123839f4b0e",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    },
+    "MA1": {
+      "sha": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+      "ancestorOfAcceptedMa1": true,
+      "exit": 0
+    }
+  },
+  "d1": {
+    "sha": "300946991376b8969b383a087d47b49a7636f722",
+    "ancestorOfMa1": false,
+    "isAncestorExit": 1
+  },
+  "method": "Pure Python trie of actual Git ls-tree entries; canonical raw tree records/SHA-1. Compared separately with Root tree object and private index; no index writer or Git write-tree used by peer.",
+  "independentlyComputedPureTree": "eb6f3878ffd44f125818fa764dba10a535404bd0",
+  "actualRootPureTreeMatches": true,
+  "privateIndexMatches": true,
+  "privateIndexBeforeAfterSha256": "119ce5363fd46a79e13096044022efdb4fa1f66a815b6f2535119fe75e11ef3d",
+  "unionFileCount": 9214,
+  "allMain59EntriesExact": true,
+  "allV3Changed358EntriesRetained": true,
+  "allOtherMa1EntriesRetained": true,
+  "actualMainTextChecks": [
+    {
+      "path": ".env.example",
+      "sha": "4b13a2a193e33f660f2b6fa649acc5a9f4bfb177",
+      "bytes": 8698,
+      "mode": "100644"
+    },
+    {
+      "path": "package-lock.json",
+      "sha": "7b5394006458d34c833cdb5438b06f9f6af28353",
+      "bytes": 320689,
+      "mode": "100644"
+    },
+    {
+      "path": "package.json",
+      "sha": "3e8a2b7a40007af29320919401369f17ee53672a",
+      "bytes": 6467,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+      "sha": "3dd154417f1dbabcde109c8cd3a54b04049edeec",
+      "bytes": 3535,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/AktivitaetenBereich.tsx",
+      "sha": "cf7a07dd364a3d5bb04ebd91bb193209f10fff4e",
+      "bytes": 26554,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/FlugKarte.tsx",
+      "sha": "75f33e8af9a8e1b7430c2277b5d19a244748755f",
+      "bytes": 5318,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "sha": "3dd1ba34e135e16b520b8ad9214f68406ec400ce",
+      "bytes": 69625,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/TwelveGoTimetable.tsx",
+      "sha": "e169faf0f9f858b5c3572cc0716e228bd27cbbc4",
+      "bytes": 8541,
+      "mode": "100644"
+    },
+    {
+      "path": "data/omio/.gitignore",
+      "sha": "5389fee249bb0f01715333a26088652c51e7fdd1",
+      "bytes": 8,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/omio/archivieren.ts",
+      "sha": "069c1fc9c3d9ebbce1398dfa0e195498bb9d7d88",
+      "bytes": 857,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/omio/importiere-katalog.py",
+      "sha": "dc584a347a93ed13c9be520903a09c683fb854f7",
+      "bytes": 3100,
+      "mode": "100644"
+    },
+    {
+      "path": "app/(public)/privacy/page.tsx",
+      "sha": "78dec458016483a9bcb2f8a0640269aeec5ef878",
+      "bytes": 7871,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Aktivitaeten.tsx",
+      "sha": "4bb47b1a07ba0540e5e5fc99dd07ee8a7f0eb20f",
+      "bytes": 2875,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Flugsuche.tsx",
+      "sha": "aff02cf06b75edfac35bdc8ade76114f57541624",
+      "bytes": 8814,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Hotelkarte.tsx",
+      "sha": "d1f211032e741ca0b636d09891ce2bce6c757ead",
+      "bytes": 5463,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Hotelsuche.tsx",
+      "sha": "e7738ddc2effb9d78755dec4ea4283d0c22d9ba9",
+      "bytes": 9719,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Organisieren.tsx",
+      "sha": "717c0589d2d95d1bd6ff97f1957e25b1860bafbc",
+      "bytes": 7848,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Reisefoto.tsx",
+      "sha": "c6e6c5e4bf344b72ae83094eab66ede8c6913f40",
+      "bytes": 481,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Suchfelder.tsx",
+      "sha": "da8af0f65b16807ea3ee2324b096a8f00cc4fcfb",
+      "bytes": 2094,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/Verbindungen.tsx",
+      "sha": "a921cce91502f37ab16b862472f7b95efeeef39b",
+      "bytes": 5641,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/organisieren.css",
+      "sha": "b69bc96a2eb4ea019d428f6554462c7144016033",
+      "bytes": 14015,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/rental/DiscoverCarsMietwagen.tsx",
+      "sha": "5bb5adf8fb7ac77076fe153dc0482356d47c5351",
+      "bytes": 21214,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/rental/StationField.tsx",
+      "sha": "96efc5cad21a35569c6bd019998be8d272178419",
+      "bytes": 4278,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/archiv.test.ts",
+      "sha": "b76437809314b1aee53e03601c75fc1315da8037",
+      "bytes": 582,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/archiv.ts",
+      "sha": "a208884d474c1f58cfb55761fc1b59706cac4c82",
+      "bytes": 1382,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/daten-server.ts",
+      "sha": "f2f42521c658665d4304d403de5c84b7f946990e",
+      "bytes": 1672,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/katalog.test.ts",
+      "sha": "b722ae96b1294636bbf5f5bf0d53b06ad90168a0",
+      "bytes": 2139,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/katalog.ts",
+      "sha": "5a390be1d0a43d8cae5f782d6998a54f7b6df1ec",
+      "bytes": 3714,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/reise.test.ts",
+      "sha": "56b5a528a5954e2c0349e87d0a66cdbf9c3263cb",
+      "bytes": 2038,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/providers/omio/reise.ts",
+      "sha": "2c1547cfdca0b423ce2ac4b22b0ddf136fdb8a52",
+      "bytes": 1409,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.test.ts",
+      "sha": "ce207aff133906859f740f96b5501bb45ed897ef",
+      "bytes": 2710,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.ts",
+      "sha": "fcaa6576e98ae56e9b75bd3eb5b15fba866d08c8",
+      "bytes": 7100,
+      "mode": "100644"
+    },
+    {
+      "path": "public/images/organisieren/Bildnachweise.txt",
+      "sha": "9d55c9ee01c70f42aefca33e28ce3d7ddf6a0bc0",
+      "bytes": 3699,
+      "mode": "100644"
+    },
+    {
+      "path": "app/(public)/reisen/[tripId]/layout.tsx",
+      "sha": "f93c8471ea42ecc40f8f6d838e6e6b6bcccacff3",
+      "bytes": 289,
+      "mode": "100644"
+    },
+    {
+      "path": "app/(public)/ui-audit/trip-workspace/page.tsx",
+      "sha": "77e973a547da712fb8ba594cd7f25d45061b6866",
+      "bytes": 1033,
+      "mode": "100644"
+    },
+    {
+      "path": "app/api/mobility/omio/route.ts",
+      "sha": "7635cd828f0f3bd4b37355162a414a5d5e3e10fa",
+      "bytes": 1323,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+      "sha": "01db05030d909a25d444b8ca2119218ecd31293f",
+      "bytes": 1891,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/OmioVergleich.tsx",
+      "sha": "db616e012811543db9f1a1b762bdea49a3467319",
+      "bytes": 15864,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/Ortswahl.tsx",
+      "sha": "d3e6b7bff3c495aab502f1d93a2a9f2a2863a86f",
+      "bytes": 4387,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/Streckenkarte.tsx",
+      "sha": "2c3aa1dcbd022ea344dfb83f4878e0d9c66e9be0",
+      "bytes": 6764,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/Streckenwerte.ts",
+      "sha": "f48fa09d0b13ba164d4d8efb4a07f94337dd8ace",
+      "bytes": 1465,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+      "sha": "d0265128bb360902c4c19986d29f33fb3d2da7b2",
+      "bytes": 3240,
+      "mode": "100644"
+    },
+    {
+      "path": "components/trips/organisieren/omio/vergleich.css",
+      "sha": "b3c1e90f0a6aa55262c83afbd2b58b2303afd21b",
+      "bytes": 13731,
+      "mode": "100644"
+    }
+  ],
+  "unavailableBinaryChecks": [
+    {
+      "path": "data/omio/ch.katalog",
+      "sha": "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/angsana.webp",
+      "sha": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/bangkok.webp",
+      "sha": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/canal.webp",
+      "sha": "5846ad75132b2c133b34f178ab8cfdadddef7d7d",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/chang.webp",
+      "sha": "3cc4484c01d4551a5a322107ab98742f4ae14a14",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/hero.webp",
+      "sha": "b069ec8b21405b3cab5f3958bed9d784a64da905",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/katathani.webp",
+      "sha": "50473504a6f75fc3b98f46eaa63dbe25442f5983",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/mandarin.webp",
+      "sha": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/oldtown.webp",
+      "sha": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/paradise.webp",
+      "sha": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/peninsula.webp",
+      "sha": "88a99b48c2533b7f6d6671009f629bf4042e70ef",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/phuket.webp",
+      "sha": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/reise.webp",
+      "sha": "3804565ca9563836d4f6a194c7e14d5f8661a9dc",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/shangri.webp",
+      "sha": "d460ac804bd4fe16be3b41282bbd241e565caf84",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/waterfall.webp",
+      "sha": "9f64069cb58c1176c0a3bdf22437e54ce931148c",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    },
+    {
+      "path": "public/images/organisieren/watpho.webp",
+      "sha": "ab2c76d69809104477b59bf3647c24303507824c",
+      "mode": "100644",
+      "actualBytesAbsent": true,
+      "retainedByExactMainObjectId": true
+    }
+  ],
+  "localCheckoutIsCompleteCombinedTree": false,
+  "originalMa1WorktreeHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "originalMa1WorktreeClean": true,
+  "integrationWorktreeHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "eventualParentOrder": [
+    "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  ],
+  "actualTwoParentIntegrationCommitVerified": false,
+  "actualTwoParentIntegrationCommitNote": "No integration commit was supplied yet; verify actual ordered parents after publication. This receipt proves only the pure input union.",
+  "continuityWriterFilesReadAsFrozen": false,
+  "sourceIndexRefWorktreeMutationByPeer": false,
+  "noBinaryRetrieval": true,
+  "noSqlNativeTestsBuildHostedOrProviderAction": true,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-list",
+        "--left-right",
+        "--count",
+        "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a...845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a^{tree}"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf^{tree}"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "ce3366e26de73961d4682236af92347bfc3a4ca8"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "d110545a551baf6b6f18687042238a30514addda",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "40ca2f0348862bb763e8d42728418bda4c63405f",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "97629e9130a907b8b9b8072d06bda1956758aa6e",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "5558367eb0bff97162c369bbb8963123839f4b0e",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "300946991376b8969b383a087d47b49a7636f722",
+        "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "eb6f3878ffd44f125818fa764dba10a535404bd0"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "1a37bde9bb150dda3ed3f518a79df89ccc7984a0"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "5846ad75132b2c133b34f178ab8cfdadddef7d7d"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "3cc4484c01d4551a5a322107ab98742f4ae14a14"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "b069ec8b21405b3cab5f3958bed9d784a64da905"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "50473504a6f75fc3b98f46eaa63dbe25442f5983"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "7a9a8acec40cf6ade579dbead5afb2a889b8e82a"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "88a99b48c2533b7f6d6671009f629bf4042e70ef"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "5c860f45f6f38cce4af9bfb2368c196d46aa43a2"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "3804565ca9563836d4f6a194c7e14d5f8661a9dc"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "d460ac804bd4fe16be3b41282bbd241e565caf84"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "9f64069cb58c1176c0a3bdf22437e54ce931148c"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "ab2c76d69809104477b59bf3647c24303507824c"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 1
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+      "exit": 0
+    }
+  ],
+  "finding": null,
+  "decisionScope": "No concrete defect in the bounded pure-union construction. Not final integrated-head acceptance, Ready, merge, runtime or activation approval."
+}

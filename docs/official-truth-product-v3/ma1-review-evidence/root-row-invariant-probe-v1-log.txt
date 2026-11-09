@@ -1,0 +1,7 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"kind":"root-offline-malformed-row-probe","actualNativeSql":false,"expected":"Both impossible approved observations must fail unavailable under frozen strict-result/caller-clock contract","ttlLargerThanUntilInterval":{"readerOk":true,"portStatus":"approved","intervalMs":1,"claimedRemainingMs":5000},"expiresBeforeCheckedAt":{"portStatus":"approved"}}
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,67 @@
+{
+  "schema": "ma1-plan-v1-lifetime-peer-review-v1",
+  "reviewer": "/root/live_release_recovery",
+  "at": "2026-11-09T15:04:50.157100+00:00",
+  "reviewKind": "Independent complementary source-only Phase A plan review; no TL PASS",
+  "status": "TWO_P2_PLAN_LIFETIME_FINDINGS_OPEN",
+  "writer": "/root/v3_method_authority_writer",
+  "seedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "seedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "reviewedPlan": {
+    "path": "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+    "sha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36"
+  },
+  "reviewedSourcePins": {
+    "path": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+    "sha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+    "planDigestMatches": true,
+    "sourceCount": 30,
+    "allHashesAndSizesMatch": true
+  },
+  "worktreeObservation": "Seed unchanged; only the two expected untracked author Phase A documents; no runtime source change. All Git reads used GIT_NO_LAZY_FETCH=1.",
+  "findings": [
+    {
+      "id": "MA1-PHASE-A-LIFETIME-P2-1",
+      "severity": "P2",
+      "state": "OPEN",
+      "area": "Reproof fresh remaining lifetime after executor cleanup",
+      "planLocation": "Section7, reproof lifetime paragraph; contrasted with resolve deadline formula and Section6 full-precision remaining_ms",
+      "evidence": "The plan explicitly clips resolve to start+remaining_ms, but reproof only rechecks the original receipt deadline after awaiting executor settlement. The row can contain a newly shorter finite horizon from current full-precision DB time or the conservative checkedAt bound.",
+      "concreteScenario": "After an original receipt is minted, a subsequent DB clock advancement can leave only1ms of approval at a reproof observation while the old monotonic5s receipt deadline is still in the future. If owned cleanup takes100ms, checking only that old deadline permits current after the freshly observed finite horizon was consumed.",
+      "requiredCorrection": "Clip each positive reproof to min(originalReceiptDeadline, reproofCallStart+5000, reproofCallStart+freshRemainingMs) and recheck after actual drain. Fresh horizon may only shorten custody (retain the minimum or invalidate consumed custody); no later reproof regains it and no renewal/extension occurs.",
+      "acceptance": "Controlled immutable tuple/epoch rows plus delayed executor drain demonstrate refusal after the fresh shorter horizon, stable original cap, and no later revival; real native finite-expiry evidence remains required as planned."
+    },
+    {
+      "id": "MA1-PHASE-A-LIFETIME-P2-2",
+      "severity": "P2",
+      "state": "OPEN",
+      "area": "Per-call control backend and acquisition/identity-failure cleanup",
+      "planLocation": "Section7 native executor steps1\u20136, especially step6 control close and parent-final cleanup",
+      "evidence": "Target backend disappearance is explicitly observed. The per-call control connection is only closed before executor return, and absence is deferred to the final parent lifetime. Actual pg-wire close() merely sends Terminate/end and sets its local closed flag; it does not await backend disappearance.",
+      "concreteScenario": "A successful read can finish target cleanup and release its adapter slot while its per-call control backend is still alive. Repeated calls therefore reuse four slots before all call-owned transports have drained. Abort during acquisition or failure before identity capture has the same unclosed accounting boundary if it relies only on close()/parent final teardown.",
+      "requiredCorrection": "Freeze a finite mechanism proving cleanup of every call-owned transport, including control and late/partially identified acquisitions, before executor settlement/slot release. A fixture-owned observer or explicit failure followed by owning-lifetime stop-and-join may provide that proof without driver/pool changes. Parent-wide final cleanup is a backstop, not successful per-call drain evidence.",
+      "acceptance": "Prove target and control absence for successful/aborted calls and no slot reuse before joins; identity/acquisition failure must produce visible failure/nonpositive result and owned lifetime cleanup, never a false drained success."
+    }
+  ],
+  "otherReviewedBoundaries": [
+    "Actual shared reader detaches/freezes successful drafts; plan preserves canonical statuses and independent method/package preimages.",
+    "Existing port signatures remain unchanged and no caller AbortSignal is invented.",
+    "Strict10-cell machine row shape, fixed requested identity, status/epoch/digest checks and closed unavailable behavior are specified.",
+    "Factory/executor remain code-owned, fixed read SELECT only, no runtime activation or arbitrary SQL.",
+    "Canonical UTC/civil-date validation and full-precision SQL remaining_ms avoid formatted-observation rounding authority.",
+    "Four slots, no wait queue, no detached Promise.race, five-second positive cutoff and no whole-call SLA are otherwise explicit.",
+    "Same-instance WeakMap opaque receipt, no strong retention/per-receipt timers or serialized bearer authority.",
+    "Generation/request IDs,4096-byte frames, finite pending state, abort forwarding, parent-only Pg custody and actual child death/new generation are specified.",
+    "Native wait evidence requires actual PID/birth/active Lock/blocker/pending operation; fresh readback and unconditional native wrapper are specified.",
+    "Only new method/contract.ts needs the explicitly owned applicability consumer inventory extension; shared contract/drivers/authority helpers remain unchanged."
+  ],
+  "notifications": [
+    "Both findings sent to Root and the same actual writer; no author-plan edit made by this reviewer."
+  ],
+  "limits": [
+    "Phase B remains unauthorized; no implementation or TL acceptance is issued.",
+    "No tests, product code, native/server/browser execution, local or hosted DB, remote operation or ref mutation.",
+    "Review is against the recorded frozen plan/source pins; later author revisions require a delta review.",
+    "Only this bounded scratch receipt and earlier baseline notes were written."
+  ]
+}

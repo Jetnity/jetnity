@@ -1,0 +1,207 @@
+{
+  "schema": "MA1_REVIEW_R1_ROOT_REVIEW_V1",
+  "createdAt": "2026-11-09T16:52:53.165175+00:00",
+  "reviewer": "/root",
+  "status": "BOUNDED_TWO_FILE_SOURCE_AND_EXPLICIT_OFFLINE_PASS_NEW_HEAD_FULL_CI_REQUIRED",
+  "repository": "Jetnity/jetnity",
+  "pr": 1175,
+  "expectedParent": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "expectedParentTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "task": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+    "sha256": "563a62394d5cdd2970bf551a14e93097ca6f59d2a0dd6890c9cadafd796af874",
+    "bytes": 4914
+  },
+  "sameActualAuthors": [
+    "/root/v3_method_authority_writer",
+    "/root/v3_method_authority_writer/ma1_runtime_writer"
+  ],
+  "cursorSessionClaim": false,
+  "changedSources": [
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "beforeSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+      "beforeBytes": 57057,
+      "afterSha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "afterBytes": 59181
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "beforeSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "beforeBytes": 77098,
+      "afterSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "afterBytes": 77127
+    }
+  ],
+  "independentSourceObservations": [
+    "Read actual two-file diff from published b7d2471: foundation31 additions/0 deletions; native exactly one aliased SELECT replacement.",
+    "Foundation exact raw path/module/single ownRecord consumer pairs only. Existing predicate, scanner, prior entries/assertions and seen-set guard unchanged. New bounded positives and suffix/copy/dot/traversal/directory/module/name-set negatives retained.",
+    "Native aliases statement_cap and lock_cap match existing adapter convention; query count, ordering, both1000ms values, connection, all SQL/Auth/driver/role/cleanup/scenarios unchanged.",
+    "All11 other old MA1 source hashes unchanged; actual complete tracked diff contains only the two authorized paths. All153 source/evidence hash occurrences across140 unique manifest paths matched actual bytes.",
+    "Read actual failed core checkout/foundation/native/cleanup/summary excerpts. Independently compared both complete log representations: exact difference is one terminal LF, preserving both identities."
+  ],
+  "independentOffline": {
+    "schema": "MA1_REVIEW_R1_ROOT_OFFLINE_V1",
+    "reviewer": "/root",
+    "baseHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "command": [
+      "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+      "--import",
+      "./scripts/server-only-test-register.mjs",
+      "--import",
+      "tsx",
+      "--test",
+      "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "lib/readiness/official-truth-content-identity.test.ts",
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts"
+    ],
+    "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+    "before": {
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+    },
+    "startedAt": "2026-11-09T16:49:59.833594+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-09T16:50:04.594876+00:00",
+    "log": "/workspace/scratch/01cbe1264212/recovery/ma1-r1-root/named-ten-file-offline.txt",
+    "logSha256": "1df8a32a665294ced17c1591573e03d3891ca1dd680fb6ebc01bf14a0cc2a6ca",
+    "logBytes": 90469,
+    "after": {
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+    },
+    "sourceUnchanged": true,
+    "tapSummary": {
+      "tests": 329,
+      "suites": 29,
+      "pass": 329,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "authorChecksReviewed": {
+    "wholeTypeScript": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "twoChangedFilesLint": {
+      "exitCode": 0,
+      "logSha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f"
+    },
+    "rootClaim": "Reviewed actual author commands, exits, stable source hashes and hashed logs; Root independently executed only the explicit offline suite."
+  },
+  "historicalFailedCi": {
+    "run": 42654936800,
+    "attempt": 1,
+    "sourceHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "checkout": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+    "checkoutTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+    "checkoutTreeEvidence": "Root separately read GitHub Git commit metadata and exact parent/tree tuple; peer receipt explicitly does not independently make this claim.",
+    "coreTests": 8606,
+    "passed": 8602,
+    "failed": 2,
+    "existingSkips": 2,
+    "ma1NativeChildrenStarted": 0,
+    "ma1NativeChildrenPassed": 0,
+    "otherSixJobs": "SUCCESS on old head only; bounded actual native/UI Root review recorded separately",
+    "postTestHygieneAndBuild": "SKIPPED",
+    "rootReviewComment": "https://github.com/Jetnity/jetnity/pull/1175#issuecomment-6745760777"
+  },
+  "copiedEvidence": [
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-named-ten-file-offline.txt",
+      "sha256": "1df8a32a665294ced17c1591573e03d3891ca1dd680fb6ebc01bf14a0cc2a6ca",
+      "bytes": 90469
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-offline-review-v1.json",
+      "sha256": "791a57690ed96491d69cf4c4410f8e58fbf69f6c85f7e2dfd7778a1c0215843c",
+      "bytes": 2215
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-source-comparison-v1.json",
+      "sha256": "f2d273b708697a035a08493bc3706dd32932dadae6669912d4a2b0584c9a79df",
+      "bytes": 3925
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-manifest-verification-v1.json",
+      "sha256": "02a14498076ad2a79ecca6b9488c6a71e59a45167915f78fe29a3e8dfe7c7cc2",
+      "bytes": 28243
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-peer-review-v1.json",
+      "sha256": "0f3ff3e16554d88d1f9ee1accc265d727967435d73270aa6b3ff22dfe2905e9c",
+      "bytes": 9721
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-log-serialization-note-v1.json",
+      "sha256": "1768f2f0e4d07d4626a067dad03d97e5b28d261647717896b9476585f204713a",
+      "bytes": 1171
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-core-relevant-excerpts.txt",
+      "sha256": "fcd583b31029dd9f838d7c2d6fbbb41f932348d6c3c5940beae2aa880c86c290",
+      "bytes": 8596
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-ma1-child-presence.json",
+      "sha256": "07a4951120ae07cbbaa422a65716fbdaa2c10c4a9ef43e6f3968df8237e1bca9",
+      "bytes": 2560
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-other-release-gates-peer-v1.json",
+      "sha256": "e065bc0a500721f0726c68237c0be6a8292d3b754c847b626de438c5f8201600",
+      "bytes": 14211
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-peer-v1.json",
+      "sha256": "b4309673b592e20772ecec170797290fc8f4dba5a68fb8f9b384649846e10198",
+      "bytes": 8593
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-root-v1.json",
+      "sha256": "825f5f3bb72548d3ec532dc41ac9ce694dd55491a47e5a41d4f2b71c30840909",
+      "bytes": 958
+    }
+  ],
+  "sourceManifestSha256": "e43f72e28470fcde846e719cdd2570782ab346a5eeaca07bf70fa6b2e7dea0c3",
+  "findings": [
+    {
+      "id": "R1-P2-A",
+      "status": "source-and-explicit-offline-closed; new-head whole CI still required"
+    },
+    {
+      "id": "R1-P2-B",
+      "status": "specific source defect corrected; no native PASS until new-head CI reaches and passes14 children"
+    }
+  ],
+  "remainingGates": [
+    "Full new-head mandatory CI including14 MA1 native children plus parent and all inherited native gates.",
+    "Actual checkout tree/head/clean binding, complete core counts/failures/skips, five hygiene steps and production build.",
+    "New-head isolated UI artifact/evidence and exact Vercel Preview, open review threads and operating mode.",
+    "Explicit current-main integration and complete combined re-gating before Ready/merge."
+  ],
+  "boundaries": {
+    "localNativeSqlSocketRetry": false,
+    "hostedDbAuthRlsAclMigrationCredentialAction": false,
+    "realSourceProviderSchedulerPublicActivation": false,
+    "method": "NOT_APPROVED",
+    "dev1139": "NOT_RELEASE_READY",
+    "devGaps": 17,
+    "specific917Refusal": "No retry, rephrase, delegation, reroute, alternate transport or human substitute",
+    "draft": true,
+    "ready": false,
+    "merged": false,
+    "automaticNextSlice": false
+  }
+}

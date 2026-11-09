@@ -1,0 +1,200 @@
+{
+  "schema": "ma1-phase-a-source-pins-v1",
+  "author": "Jetnity Official Truth V3 Method Authority 1 — Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer",
+  "assignmentComment": 6742826954,
+  "at": "2026-11-09T14:57:31.495043+00:00",
+  "status": "PHASE_A_PLAN_ONLY_AWAITING_ROOT_ACCEPTANCE",
+  "seedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "seedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "codeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "planPath": "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+  "planSha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+  "sourceReferences": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_V1.md",
+      "sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4",
+      "bytes": 18897
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V1.md",
+      "sha256": "7bf537879b37b1a056c3e5f3a831d9a7cde57f08bdb536d9a5a52e15b89976e0",
+      "bytes": 3289
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+      "sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+      "bytes": 9378
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_A_V1.json",
+      "sha256": "c986ced50b5a0f2652fb3580d2f3d32ad160c3e4f39d21a6614d39a467310a5c",
+      "bytes": 8659
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_B_V1.json",
+      "sha256": "9788fd6d505875cc60edb03c552d6dab65cc315add4a6d0b4df88de97950fa97",
+      "bytes": 5745
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+      "bytes": 61555
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "bytes": 108170
+    },
+    {
+      "path": "lib/readiness/digest.ts",
+      "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+      "bytes": 3013
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+      "bytes": 79529
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "sha256": "2d9702199e2e2733170e974e5d8a93cf04b0e91de67a5879fac5d31e9ba1ec66",
+      "bytes": 50523
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+      "bytes": 23971
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+      "bytes": 12288
+    },
+    {
+      "path": "lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+      "sha256": "9498b7a2ee91c72bbd4c2dc96039664f1a903940c475adb81168abd1d594e36b",
+      "bytes": 39704
+    },
+    {
+      "path": "scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+      "bytes": 5873
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "bytes": 5280
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "bytes": 22433
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "bytes": 9025
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+      "bytes": 5181
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+      "sha256": "25def6c1748012a420fb7e9dac74ec7d994613c4ea01be71a6baa4daf006c0eb",
+      "bytes": 2324
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "bytes": 33866
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+      "bytes": 88575
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "bytes": 3189
+    },
+    {
+      "path": "scripts/erreichbarkeit.mjs",
+      "sha256": "7fd38c4ddce5608f2c74ed1db035e3a4ba6663753a14f5e66046fcc7b6fd0f7b",
+      "bytes": 5267
+    },
+    {
+      "path": "scripts/exporte.mjs",
+      "sha256": "da90b3758f2232e95c066d647efec9cabe9ea3b17a465935c31b2b4c3809c0b9",
+      "bytes": 4449
+    },
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403",
+      "bytes": 9788
+    },
+    {
+      "path": "package.json",
+      "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+      "bytes": 6330
+    },
+    {
+      "path": "supabase/migrations/20260817100000_rollenmodell.sql",
+      "sha256": "f25bf22fe955c28724a19c4984bec3669550c3a353ca6808b43d83d5962a804a",
+      "bytes": 6430
+    },
+    {
+      "path": "supabase/migrations/20260817120300_generisches_profil.sql",
+      "sha256": "d533f7040466e6aaee051a75099b05e0218139464311eb13aeb3739aebc91da6",
+      "bytes": 9604
+    },
+    {
+      "path": "supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql",
+      "sha256": "ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934",
+      "bytes": 5098
+    },
+    {
+      "path": "supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql",
+      "sha256": "635151c127efde6e2953cc14c68e81ecccf10dba545329fe46c09dcdf50996a2",
+      "bytes": 1210
+    }
+  ],
+  "helperBodySha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+  "preimplementationReference": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+  "analysisSupport": {
+    "session": "/root/v3_method_authority_writer/ma1_executor_plan_audit",
+    "scope": "Read-only exact transport/lifetime/IPC/guard source audit; no file edit or execution",
+    "reportedDiscoveryFailure": "One exploratory rg named nonexistent native.ts paths and exited2; corrected with rg --files. This was source path discovery, not product or test execution."
+  },
+  "rootReviewInputs": [
+    "Post-lock rollback emptiness prevents concurrent-history erasure",
+    "Actual restricted session_user required for SET ROLE denial",
+    "Creator ACL inspection before normalization, no existing default changes",
+    "Five-second receipt cap does not compose all unapproved D1 timing paths"
+  ],
+  "phaseAOperations": [
+    "File/source reads and SHA256 only",
+    "Git reads with GIT_NO_LAZY_FETCH=1",
+    "Created MA1_PLAN_V1.md and this source-pin file only"
+  ],
+  "executed": {
+    "productModules": false,
+    "tests": false,
+    "localPostgres": false,
+    "databaseSql": false,
+    "hostedQueries": false,
+    "browserOrServer": false,
+    "remoteMutations": false,
+    "gitRefMutations": false
+  },
+  "boundaries": [
+    "Method NOT_APPROVED",
+    "Dev NOT_RELEASE_READY",
+    "No #917 retry/rephrase/delegation/alternate transport/human substitute",
+    "No local PostgreSQL/socket retry",
+    "No Phase B before explicit Root acceptance"
+  ]
+}

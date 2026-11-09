@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "status": "ROOT_PREPUBLICATION_REVIEW_PASS_WITH_RELEASE_GATES_OPEN",
+  "program": 1162,
+  "pr": 1167,
+  "reviewer": "ChatGPT Technical Lead / Root",
+  "recordedAt": "2026-11-09T01:57:16Z",
+  "basisSeed": "3f8c84239e1e847af4b63be6134db34854aa3914",
+  "inputSnapshot": "E1_INPUT_SNAPSHOT_R3.json",
+  "authorManifest": "E1_MANIFEST.md",
+  "changedHeadRequiresFreshGates": true,
+  "rootTests": {
+    "tests": 440,
+    "suites": 34,
+    "pass": 440,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 3652.874867,
+    "scope": [
+      "S0",
+      "I1",
+      "U1",
+      "M1",
+      "E1",
+      "content identity guard",
+      "applicability guard",
+      "foundation guard",
+      "extractor guard",
+      "atomic CI guard",
+      "UI CI contract"
+    ],
+    "logSha256": "eefebc5c6addd2c1708e6568cd68628950263e34d93c4b327a23561d7e5cf0bb"
+  },
+  "rootTypecheck": {
+    "exit": 0,
+    "incremental": false,
+    "scope": "complete repository before final U1R6 input; complete composed-head CI remains mandatory"
+  },
+  "rootAdversarialReplay": {
+    "probeSha256": "c14be38cf909ffab2f36b444952a7e1b180764fecef46466ceed6bb5115cfbbd",
+    "beforeExit": 1,
+    "afterExit": 0,
+    "cases": [
+      "changed duration in old claim replay is unconfirmed with no import/version",
+      "foreign-country historical version cannot publish during recovery"
+    ],
+    "authorFixScope": "only synthetic custody adapters plus two durable regressions; no runtime or port change"
+  },
+  "uiEvidence": {
+    "run": 42547489573,
+    "job": 128935623779,
+    "artifact": 13643669225,
+    "zipSha256": "37724a3eebc37af3824851672ecbefa9191347a03dccd856b67ebd85338da5a4",
+    "binding": {
+      "checkedOutHead": "70861c66f7eecf2fa38c28ac2e13d20f9898c6e8",
+      "sourceHead": "d110545a551baf6b6f18687042238a30514addda",
+      "worktreeDirty": false,
+      "githubSha": "70861c66f7eecf2fa38c28ac2e13d20f9898c6e8",
+      "runId": "42547489573",
+      "runAttempt": "1",
+      "event": "pull_request"
+    },
+    "browserVersion": "156.0.8078.79",
+    "layouts": [
+      {
+        "name": "mixed-280",
+        "width": 280,
+        "scrollWidth": 280,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-320",
+        "width": 320,
+        "scrollWidth": 320,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-360",
+        "width": 360,
+        "scrollWidth": 360,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-375",
+        "width": 375,
+        "scrollWidth": 375,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-390",
+        "width": 390,
+        "scrollWidth": 390,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-430",
+        "width": 430,
+        "scrollWidth": 430,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-768",
+        "width": 768,
+        "scrollWidth": 768,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-1280",
+        "width": 1280,
+        "scrollWidth": 1280,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "landscape-844x390",
+        "width": 844,
+        "scrollWidth": 844,
+        "font": "16px",
+        "overflowing": []
+      },
+      {
+        "name": "mixed-320-text200",
+        "width": 320,
+        "scrollWidth": 320,
+        "font": "32px",
+        "overflowing": []
+      }
+    ],
+    "interactions": [
+      "Empty form stays disabled; keyboard reaches test selector then destination",
+      "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+      "Conflict suppresses positive rule and source link",
+      "Cache read failure remains error; no fake pending or raw failure",
+      "Unbound production seam is honest unavailable",
+      "Transport failure has a focused, retryable error state",
+      "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+      "Multiple context statements are displayed fully without choosing a best credential",
+      "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+      "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "screenshotPins": [
+      {
+        "name": "mixed-280",
+        "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8"
+      },
+      {
+        "name": "mixed-390",
+        "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+      },
+      {
+        "name": "mixed-1280",
+        "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+      },
+      {
+        "name": "mixed-320-text200",
+        "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+      },
+      {
+        "name": "conflict-320",
+        "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+      },
+      {
+        "name": "loading-320",
+        "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+      },
+      {
+        "name": "poll-pending-390",
+        "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+      },
+      {
+        "name": "poll-accepted-390",
+        "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+      }
+    ],
+    "rootVisuallyReviewed": [
+      "mixed-280",
+      "mixed-320-text200",
+      "mixed-1280",
+      "poll-accepted-390"
+    ],
+    "scope": "Synthetic loopback Chromium; real component and server orchestration, no live rule claim",
+    "notRealDeviceAcceptance": true
+  },
+  "performance": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 2.7482270000000426,
+    "p95Ms": 6.0813249999999925,
+    "maximumMs": 11.089531999999963,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "70861c66f7eecf2fa38c28ac2e13d20f9898c6e8",
+      "sourceHead": "d110545a551baf6b6f18687042238a30514addda",
+      "worktreeDirty": false,
+      "githubSha": "70861c66f7eecf2fa38c28ac2e13d20f9898c6e8",
+      "runId": "42547489573",
+      "runAttempt": "1",
+      "event": "pull_request"
+    }
+  },
+  "openGates": [
+    "full published E1 CI and exact Preview",
+    "fresh current-head reviews and drift",
+    "actual durable authority/storage/source/original adapters not bound",
+    "Owner approval of mature Dev package and concrete method before DB/Production activation",
+    "#917 specific platform boundary; no retry or alternate operator",
+    "#1139 target effective fix not accepted",
+    "public p95 SLO not verified"
+  ],
+  "ready": false,
+  "merged": false,
+  "activation": false
+}

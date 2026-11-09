@@ -1,0 +1,150 @@
+{
+  "schema": "jetnity-ma1-task-draft-peer-review-v1",
+  "author": "/root/handoff_recovery_audit",
+  "status": "NO_REMAINING_ISSUANCE_BLOCKER_IN_REVIEWED_DESIGN; SOURCE_ONLY_NOT_IMPLEMENTATION_OR_TL_PASS",
+  "task_path": "/workspace/scratch/01cbe1264212/recovery/MA1_TASK_V1_DRAFT.md",
+  "reviewed_task_sha256": "28ba2051749894adec0e19d16f259bc2d55d4b2f5774cdf16986ccf4089ee206",
+  "task_sha256_at_receipt": "28ba2051749894adec0e19d16f259bc2d55d4b2f5774cdf16986ccf4089ee206",
+  "original_task_path": "/workspace/scratch/01cbe1264212/recovery/MA1_TASK_V1_DRAFT_BEFORE_COUNTERREVIEW.md",
+  "original_task_sha256": "c1d8c4a1e7599a80b27fb001f483d77b174b08fec2d35d30c3d6d8bd01fa2905",
+  "synthetic_reference_path": "/workspace/scratch/01cbe1264212/recovery/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+  "synthetic_reference_sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+  "base_status": "Corrected C1 5558367eb0bff97162c369bbb8963123839f4b0e remains subject to Root actual complete gates and repin; no task issued by this reviewer.",
+  "closed_findings": [
+    {
+      "id": "MA1-PLAN-P2-01",
+      "severity": "P2",
+      "basis": "Concrete source-design reasoning; no execution",
+      "original_problem": "Until-revoked approval at epoch2147483647 could not be revoked when every revocation must increment and overflow/reuse is forbidden.",
+      "closure": "Approval/reapproval result capped at2147483646;2147483647 reserved exclusively for terminal revocation; no approval/reset/implicit method-ID rollover afterwards. Native boundary acceptance explicitly added.",
+      "status": "CLOSED_AT_TASK_DESIGN_ONLY"
+    },
+    {
+      "id": "MA1-PLAN-REPLAY-ORDER",
+      "severity": "design clarification",
+      "basis": "Peer finding independently inspected in corrected draft",
+      "original_problem": "Current CAS/future-until/exhaustion checks applied before historical lookup could suppress a committed approval ACK after expiry/revoke/supersession.",
+      "closure": "Strict complete command + serialization + fresh current human helper + actor comparison precede exact historical replay; only new mutation uses current-state checks; replay/confirm never mint a current receipt. Native lost-ACK cases cross expiry/revoke.",
+      "status": "CLOSED_AT_TASK_DESIGN_ONLY"
+    },
+    {
+      "id": "MA1-PLAN-CONFIRM-ABSENCE",
+      "severity": "wording clarification",
+      "basis": "Read final exact task paragraph33",
+      "closure": "Serialized absent confirm returns explicit absence with no mutation/history or new-state checks. Only mutation APIs proceed; terminal reconciliation first joins the original owned invocation, so absence is not a promise against a not-yet-dispatched future request.",
+      "status": "CLOSED_AT_TASK_DESIGN_ONLY"
+    }
+  ],
+  "phase_a_obligations_not_new_blockers": [
+    "Derive finite executor acquisition/cancellation/join accounting from the actual unchanged wire and owned lifetime. Five seconds is abort/positive-result threshold, not proof of15s/35s complete call. No detached race or slot release before terminal settlement.",
+    "ACL validation must cover grants inherited from the actual CREATE installer, not only final postgres owner. Built-in PUBLIC EXECUTE is revoked on new functions atomically; unexpected custom grants fail candidate without globally changing defaults.",
+    "Current approval observations remain preliminary; the later joint publication path must use the owner-only post-lock checker and all proofs/end-clock after all waits."
+  ],
+  "literal_reference_analysis": {
+    "method": "Data-only Python json/hashlib calculations over supplied literal strings; no repository code imported or executed.",
+    "vectors": [
+      {
+        "name": "not-approved-revision1",
+        "independent_sorted_literal_preimage_matches": true,
+        "literal_method_preimage_sha256_matches": true,
+        "literal_package_bytes_sha256_matches": true,
+        "literal_without_final_newline_sha256_matches": true,
+        "literal_method_file_sha256_matches_manifest_entry": true,
+        "literal_method_file_parses_to_same_draft": true,
+        "literal_package_binds_same_method_digest": true
+      },
+      {
+        "name": "draft-revision1",
+        "independent_sorted_literal_preimage_matches": true,
+        "literal_method_preimage_sha256_matches": true,
+        "literal_package_bytes_sha256_matches": true,
+        "literal_without_final_newline_sha256_matches": true,
+        "literal_method_file_sha256_matches_manifest_entry": true,
+        "literal_method_file_parses_to_same_draft": true,
+        "literal_package_binds_same_method_digest": true
+      },
+      {
+        "name": "not-approved-revision2",
+        "independent_sorted_literal_preimage_matches": true,
+        "literal_method_preimage_sha256_matches": true,
+        "literal_package_bytes_sha256_matches": true,
+        "literal_without_final_newline_sha256_matches": true,
+        "literal_method_file_sha256_matches_manifest_entry": true,
+        "literal_method_file_parses_to_same_draft": true,
+        "literal_package_binds_same_method_digest": true
+      }
+    ],
+    "unchanged_shared_source_pin_matches": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/contract.ts",
+        "expected_sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "observed_sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+        "expected_sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "observed_sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/digest.ts",
+        "expected_sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "observed_sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "matches": true
+      }
+    ]
+  },
+  "source_sha256": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/lib/readiness/official-truth-product-v3/contract.ts",
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/lib/readiness/regulierungs-anwendbarkeit.ts",
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/lib/readiness/digest.ts",
+      "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896"
+    }
+  ],
+  "limits": {
+    "repo_edits": false,
+    "repo_tests_executed": false,
+    "shared_runtime_code_executed": false,
+    "native_processes_started": false,
+    "hosted_queries": false,
+    "remote_calls": false,
+    "implementation_reviewed": false,
+    "implementation_started_or_authorized": false,
+    "native_suite_pass_claimed": false,
+    "task_issued": false,
+    "production_or_method_approval": false
+  },
+  "prior_receipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-task-v1-draft-peer-review-before-final-precision.json",
+    "sha256": "48824e07e18864e28fc743d0e61407f413e05d2e69dd5fa116f3ec7e4c8d4a66",
+    "reviewed_task_sha256": "caacaa0237d360c899aff4a8a5d829ce544d92eda6ea016abd09b559fb41d32f"
+  }
+}

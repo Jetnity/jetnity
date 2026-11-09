@@ -1,0 +1,171 @@
+{
+  "schema": "jetnity.mi1.root-isolated-ui-review.v1",
+  "at": "2026-11-09T20:23:04.819598+00:00",
+  "reviewer": "/root",
+  "binding": {
+    "checkedOutHead": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+    "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "worktreeDirty": false,
+    "githubSha": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+    "runId": "42671681106",
+    "runAttempt": "3",
+    "event": "pull_request"
+  },
+  "checkoutTree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+  "checkoutParents": [
+    "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2"
+  ],
+  "checkoutGitDataPersonallyRead": true,
+  "jobId": 129413233941,
+  "rawLog": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-ui/ui-job-129413233941-raw.txt",
+    "sha256": "aeb769709e7d63e11ef5edb72626ee75b1f65c2c075f8ecea9043027b9fa140b",
+    "bytes": 140199
+  },
+  "counts": {
+    "tests": 50,
+    "pass": 50,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "artifact": {
+    "id": 13707462276,
+    "bytes": 3734046,
+    "sha256": "e4e7e902e830bfa8391f89c10394b3f87063fe915328aa1eb447c36db8c90786",
+    "files": [
+      {
+        "path": "application-320-text200.png",
+        "bytes": 562618,
+        "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55"
+      },
+      {
+        "path": "application-320.png",
+        "bytes": 324576,
+        "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad"
+      },
+      {
+        "path": "audit.json",
+        "bytes": 21034,
+        "sha256": "1e218a836b5ed2d8a3a66202e491573927ca5be1a28280b3b7bf76c9a1667db5"
+      },
+      {
+        "path": "benchmark.json",
+        "bytes": 657,
+        "sha256": "e7466993860b842ba8384c16ab18eb991b039e9c6fec5c1357ebd29d8d3b7376"
+      },
+      {
+        "path": "bundle-inputs.json",
+        "bytes": 1183,
+        "sha256": "f845aa251ecec896fd3094529bb3c3fdacce8869b6781e6d258d4005a3c2a425"
+      },
+      {
+        "path": "conflict-320.png",
+        "bytes": 284135,
+        "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+      },
+      {
+        "path": "http-smoke.json",
+        "bytes": 1310,
+        "sha256": "c692e927d0c5798452734f6e8414831f62f80420b86901c1dd5c251283026899"
+      },
+      {
+        "path": "loading-320.png",
+        "bytes": 255951,
+        "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+      },
+      {
+        "path": "mixed-1280.png",
+        "bytes": 416617,
+        "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+      },
+      {
+        "path": "mixed-280.png",
+        "bytes": 343356,
+        "sha256": "ecb911789c707ba653ede2ad857dc718f63a670425af8ec371e75d385aa5606b"
+      },
+      {
+        "path": "mixed-320-text200.png",
+        "bytes": 620516,
+        "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+      },
+      {
+        "path": "mixed-390.png",
+        "bytes": 365462,
+        "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+      },
+      {
+        "path": "poll-accepted-390.png",
+        "bytes": 333176,
+        "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+      },
+      {
+        "path": "poll-pending-390.png",
+        "bytes": 302917,
+        "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+      },
+      {
+        "path": "run-binding.json",
+        "bytes": 412,
+        "sha256": "c076e8f8482735b23ffcdcef72458c3203168b418dd7715537168e68f7596d89"
+      }
+    ]
+  },
+  "layouts": 12,
+  "interactions": [
+    "Empty form stays disabled; keyboard reaches test selector then destination",
+    "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+    "Conflict suppresses positive rule and source link",
+    "Cache read failure remains error; no fake pending or raw failure",
+    "Unbound production seam is honest unavailable",
+    "Transport failure has a focused, retryable error state",
+    "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+    "Multiple context statements are displayed fully without choosing a best credential",
+    "Synthetic tourism restriction retains passport/origin/direct route and inclusive trip start/end window at 320px and 200% text through actual query/reproof",
+    "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+    "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "visualInspection": {
+    "rootViewed": [
+      "mixed-280.png",
+      "application-320-text200.png"
+    ],
+    "observations": [
+      "Actual synthetic fixture identity and not-a-real-entry-answer labels visible.",
+      "Full rule conditions, origin/ordinary-passport/tourism/date constraints and per-citizenship pending state retained.",
+      "Narrow and 200% headings wrap midword; native select visible country label clips at200%. Existing baseline visual limitation, no perfect/public/real-device UX claim."
+    ],
+    "residualSeverity": "P3 isolated-view presentation; public UI acceptance still separate"
+  },
+  "benchmark": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 2.0997090000000753,
+    "p95Ms": 4.191997000000015,
+    "maximumMs": 7.109570000000076,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+      "worktreeDirty": false,
+      "githubSha": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "runId": "42671681106",
+      "runAttempt": "3",
+      "event": "pull_request"
+    }
+  },
+  "verdict": "BOUNDED_ISOLATED_UI_GATE_PASS_WITH_RECORDED_EXISTING_PRESENTATION_LIMITS",
+  "notClaimed": [
+    "Actual public route or real official-source acceptance",
+    "Public p95 SLO",
+    "Complete MI1 integration PASS",
+    "Hosted database truth"
+  ]
+}

@@ -1,0 +1,339 @@
+{
+  "schema": "ma1-runtime-implementation-attempts-v1",
+  "author": "Jetnity Official Truth V3 Method Authority Runtime 1 — Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "checkpoint": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "planSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+  "sourceReads": "TASK/PLAN/acceptance/handoff/subtasks; actual shared reader/canonicalizer/preflight/clock/digest, adjacent quarantine/intake, exact consumer guards, package/tsconfig/test loader/export hygiene; all read commands exited0. Two initial batched outputs truncated; exact missing slices were subsequently read. Git reads use GIT_NO_LAZY_FETCH=1. No product execution before first recorded test.",
+  "reviewHistory": [
+    "MA1_RUNTIME_REVIEW_FIX_R1.json preserves Root independent malformed-row probe and pre-fix hashes."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "kind": "explicit_offline_tests",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T15:42:19.701652+00:00",
+      "durationSeconds": 0.762,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_001_TESTS_INITIAL.txt",
+      "sha256": "0c3d119ca746312df36cde08f05411bc5b90145f19d60964daf8111571c3ed17"
+    },
+    {
+      "attempt": 2,
+      "kind": "explicit_offline_affected_selection",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts"
+      ],
+      "startedAt": "2026-11-09T15:43:16.693835+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_002_EXPLICIT_OFFLINE_AFFECTED_SELECTION.txt",
+      "durationSeconds": 3.499,
+      "exitCode": 0,
+      "sha256": "7c942d7ba047d6ec64a459beb28c40f7811b68f7174a501491ce585d4efd53af"
+    },
+    {
+      "attempt": 3,
+      "kind": "scoped_lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T15:43:16.694323+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_003_SCOPED_LINT.txt",
+      "durationSeconds": 3.5,
+      "exitCode": 0,
+      "sha256": "357d92a12b89b0b80a0734e8b5802fc8f95280beb9778c6110550b880f7b5e12"
+    },
+    {
+      "attempt": 4,
+      "kind": "hygiene_dead",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T15:43:55.049997+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_004_HYGIENE_DEAD.txt",
+      "durationSeconds": 0.372,
+      "exitCode": 0,
+      "sha256": "6a53f968579a9fad113cc1b8e009221caaa92d8a19e883ff290720eea6b6a1eb"
+    },
+    {
+      "attempt": 5,
+      "kind": "hygiene_exports",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T15:43:55.050402+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_005_HYGIENE_EXPORTS.txt",
+      "durationSeconds": 9.008,
+      "exitCode": 0,
+      "sha256": "7536897c4ac30f09de123740fc92bd7de913ccf79aa2c192c6b6126496e9d666"
+    },
+    {
+      "attempt": 6,
+      "kind": "hygiene_deps",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T15:43:55.050724+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_006_HYGIENE_DEPS.txt",
+      "durationSeconds": 9.008,
+      "exitCode": 0,
+      "sha256": "e44a278219c626b71ff3af292ca032300c8e382fe1820a099ac4e4d370c6d2f7"
+    },
+    {
+      "attempt": 7,
+      "kind": "hygiene_api",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T15:43:55.051085+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_007_HYGIENE_API.txt",
+      "durationSeconds": 9.009,
+      "exitCode": 0,
+      "sha256": "4fbc6b7767cf257ae19743bcbe97cd5dd01f6debd4a11a83f68734e86af41696"
+    },
+    {
+      "attempt": 8,
+      "kind": "hygiene_schema",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T15:43:55.051407+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_008_HYGIENE_SCHEMA.txt",
+      "durationSeconds": 9.009,
+      "exitCode": 0,
+      "sha256": "cfb970fc44085ae6fcfe5f9e5b1744dc6bddceb8e0943caab664c233ab4eabc4"
+    },
+    {
+      "attempt": 9,
+      "kind": "next_typegen",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/next/dist/bin/next",
+        "typegen"
+      ],
+      "startedAt": "2026-11-09T15:43:55.051720+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_009_NEXT_TYPEGEN.txt",
+      "durationSeconds": 9.009,
+      "exitCode": 0,
+      "sha256": "5a94d876cb17dd791dcb950c092fbe60e82411adf39e3f9eaae2f5ac9b7504f0"
+    },
+    {
+      "attempt": 10,
+      "kind": "whole_typescript",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "startedAt": "2026-11-09T15:44:04.060914+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_010_WHOLE_TYPESCRIPT.txt",
+      "durationSeconds": 30.366,
+      "exitCode": 2,
+      "sha256": "222e7698af425cb0d3ca908dc4a4dc07ce8f7db18388988c491901a2651627dc"
+    },
+    {
+      "attempt": 11,
+      "kind": "whole_typescript_after_test_cast_fix",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "status": "EXIT_NOT_CAPTURED_AFTER_VALIDATION_RUNNER_ERROR",
+      "exitCode": null,
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_011_WHOLE_TYPESCRIPT_AFTER_TEST_CAST_FIX.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Orchestration attempted item assignment on the ledger Path after launching the authorized subprocess; do not infer success from output."
+    },
+    {
+      "attempt": 12,
+      "kind": "final_named_offline_selection",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts"
+      ],
+      "status": "EXIT_NOT_CAPTURED_AFTER_VALIDATION_RUNNER_ERROR",
+      "exitCode": null,
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_012_FINAL_NAMED_OFFLINE_SELECTION.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Orchestration attempted item assignment on the ledger Path after launching the authorized subprocess; do not infer success from output."
+    },
+    {
+      "attempt": 13,
+      "kind": "final_scoped_lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "status": "EXIT_NOT_CAPTURED_AFTER_VALIDATION_RUNNER_ERROR",
+      "exitCode": null,
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_013_FINAL_SCOPED_LINT.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Orchestration attempted item assignment on the ledger Path after launching the authorized subprocess; do not infer success from output."
+    },
+    {
+      "attempt": 14,
+      "kind": "whole_typescript_confirmed",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "startedAt": "2026-11-09T15:47:20.296643+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_014_WHOLE_TYPESCRIPT_CONFIRMED.txt",
+      "ownedPid": 6,
+      "wallSecondsThroughCollection": 35.287,
+      "exitCode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": 15,
+      "kind": "named_offline_selection_confirmed",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts"
+      ],
+      "startedAt": "2026-11-09T15:47:20.297430+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_015_NAMED_OFFLINE_SELECTION_CONFIRMED.txt",
+      "ownedPid": 7,
+      "wallSecondsThroughCollection": 35.287,
+      "exitCode": 0,
+      "sha256": "9292f1a7c4f151c78f5cd6ded1d422a3faf991f672f86cfd8f35e650cc1a4baf"
+    },
+    {
+      "attempt": 16,
+      "kind": "scoped_lint_confirmed",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T15:47:20.298314+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_016_SCOPED_LINT_CONFIRMED.txt",
+      "ownedPid": 8,
+      "wallSecondsThroughCollection": 35.287,
+      "exitCode": 0,
+      "sha256": "119993fee89521c0aae7896b4a56857f0721429ac7a7a287dd47c5031fa4b6fd"
+    }
+  ],
+  "nativeExecuted": false,
+  "sqlExecuted": false,
+  "hostedAccess": false,
+  "refsModified": false,
+  "logPersistence": "Repository ignores*.log. All child validation logs were renamed byte-for-byte to MA1_RUNTIME_LOG_*.txt before handoff; recorded hashes are unchanged.",
+  "harnessFailures": [
+    {
+      "at": "2026-11-09T15:46:54.597948+00:00",
+      "kind": "python_validation_runner",
+      "exitCode": 1,
+      "log": "docs/official-truth-product-v3/MA1_RUNTIME_RUNNER_FAILURE_001.txt",
+      "sha256": "1ad728109b3864d5737d31d95666d24754baef40133afab7bf1a69620273109e",
+      "affectedAttempts": [
+        11,
+        12,
+        13
+      ]
+    }
+  ],
+  "failedAttemptDisposition": {
+    "attempt": 10,
+    "cause": "TS2352 intentional invalid-executor cast",
+    "correction": "Explicit unknown cast; runtime unchanged",
+    "verification": "Attempts14-16 are the fully captured replacements; prior attempt10 type error and wrapper failure are retained."
+  },
+  "status": "AUTHOR_RUNTIME_FROZEN_AWAITING_PARENT_INTEGRATION_AND_ROOT_REVIEW",
+  "frozenAt": "2026-11-09T15:50:58.427922+00:00",
+  "validationScope": "Attempts14-16 bind the unchanged final runtime/test sources. Whole TypeScript and5hygiene checks passed at that worktree moment before primary native wrapper/integration completion; primary owns final integrated type/hygiene/native CI gates. No runtime/native implementation acceptance is inferred.",
+  "parallelTimingNote": "Parallel duration fields include time until results were collected; they are execution accounting, not benchmarks or authority/performance guarantees."
+}

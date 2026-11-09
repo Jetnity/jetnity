@@ -1,0 +1,158 @@
+{
+  "schema": "jetnity.ma1.root-isolated-ui-review.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T17:26:22.317110+00:00",
+  "binding": {
+    "checkedOutHead": "f8e73260118621728f980139552aea2bc633b234",
+    "sourceHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "worktreeDirty": false,
+    "githubSha": "f8e73260118621728f980139552aea2bc633b234",
+    "runId": "42663861884",
+    "runAttempt": "1",
+    "event": "pull_request"
+  },
+  "checkoutTree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "checkoutParents": [
+    "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  ],
+  "checkoutGitApiIndependentlyRead": true,
+  "actualRawLogSha256": "1e9e8ce47d5e78955c2eb43641d36bcc890de546995f847232407ccdf2af4d43",
+  "unitTests": {
+    "pass": 50,
+    "fail": 0,
+    "skip": 0
+  },
+  "artifact": {
+    "id": 13694728421,
+    "zipSha256": "304f7f9b0860aba08600e073dd0f901047fcc678b76f13082af23e04790f3202",
+    "bytes": 3740739,
+    "files": [
+      {
+        "path": "application-320-text200.png",
+        "bytes": 562618,
+        "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55"
+      },
+      {
+        "path": "application-320.png",
+        "bytes": 324576,
+        "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad"
+      },
+      {
+        "path": "audit.json",
+        "bytes": 21034,
+        "sha256": "c1723a69af8cf227b9347e8a3b0b2cd91182402ca49f15b1ad9316c1f77c415a"
+      },
+      {
+        "path": "benchmark.json",
+        "bytes": 648,
+        "sha256": "96e51f6fe94ac261f6e9d6db8542f273dd36819f9b71f578577eaf69f481c8e9"
+      },
+      {
+        "path": "bundle-inputs.json",
+        "bytes": 1183,
+        "sha256": "b8733a35fcc4a5b2ba7ee63b7c9633f998e7303d9fc0f42407a5a3ad8c5a1f6d"
+      },
+      {
+        "path": "conflict-320.png",
+        "bytes": 284135,
+        "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+      },
+      {
+        "path": "http-smoke.json",
+        "bytes": 1310,
+        "sha256": "9e7b7eb6e6609583d2f89af62bfc43bb1ac0e71494a4611de916bccbdaeffe3e"
+      },
+      {
+        "path": "loading-320.png",
+        "bytes": 255951,
+        "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+      },
+      {
+        "path": "mixed-1280.png",
+        "bytes": 416617,
+        "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+      },
+      {
+        "path": "mixed-280.png",
+        "bytes": 349662,
+        "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8"
+      },
+      {
+        "path": "mixed-320-text200.png",
+        "bytes": 620516,
+        "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+      },
+      {
+        "path": "mixed-390.png",
+        "bytes": 365462,
+        "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+      },
+      {
+        "path": "poll-accepted-390.png",
+        "bytes": 333176,
+        "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+      },
+      {
+        "path": "poll-pending-390.png",
+        "bytes": 302917,
+        "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+      },
+      {
+        "path": "run-binding.json",
+        "bytes": 412,
+        "sha256": "3b721ade868de2440c458b04b01f78348d467ab9fd362d8fcebe1b713a9599c4"
+      }
+    ]
+  },
+  "allFiveJsonBindingsMatch": true,
+  "layouts": 12,
+  "interactions": [
+    "Empty form stays disabled; keyboard reaches test selector then destination",
+    "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+    "Conflict suppresses positive rule and source link",
+    "Cache read failure remains error; no fake pending or raw failure",
+    "Unbound production seam is honest unavailable",
+    "Transport failure has a focused, retryable error state",
+    "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+    "Multiple context statements are displayed fully without choosing a best credential",
+    "Synthetic tourism restriction retains passport/origin/direct route and inclusive trip start/end window at 320px and 200% text through actual query/reproof",
+    "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+    "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "noOverflowOrControlsUnder44px": true,
+  "allTenPngHashesMatchAudit": true,
+  "allTenPngBytesMatchPrior24dArtifact": true,
+  "freshVisualInspectionClaimed": false,
+  "benchmark": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 4.295097999999939,
+    "p95Ms": 7.615364,
+    "maximumMs": 13.699850999999853,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "f8e73260118621728f980139552aea2bc633b234",
+      "sourceHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+      "worktreeDirty": false,
+      "githubSha": "f8e73260118621728f980139552aea2bc633b234",
+      "runId": "42663861884",
+      "runAttempt": "1",
+      "event": "pull_request"
+    }
+  },
+  "preview": {
+    "id": "dpl_DMMpoJypAnMupkVVomoGoYFGHz9X",
+    "readyState": "READY",
+    "sourceHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "aliasError": null,
+    "independentlyReadByRoot": true
+  },
+  "scope": "Exact845 isolated CI/UI only; complete MA1 native/Core acceptance remains pending. Prior C1 actual image inspection is historical; unchanged pixels are not a fresh visual run. No public SLO claim."
+}

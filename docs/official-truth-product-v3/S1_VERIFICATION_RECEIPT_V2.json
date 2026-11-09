@@ -1,0 +1,358 @@
+{
+  "schema": "jetnity.s1.author-verification-receipt.v2",
+  "recordedAt": "2026-11-09T11:52:46.919945+00:00",
+  "state": "AUTHOR_OFFLINE_VERIFICATION_COMPLETE__TL_AND_NATIVE_PENDING",
+  "task": "S1_RECOVERY_TASK_V2.md",
+  "taskEvidence": "https://github.com/Jetnity/jetnity/pull/1168#issuecomment-6739217916",
+  "pr": 1168,
+  "originalAuthor": {
+    "name": "Jetnity Official Truth V3 Intake Store 1 — Codex Generation 1",
+    "session": "/root/v3_s1_storage_writer",
+    "state": "Unavailable after interrupted chat; Root attempted exact-session followup and received live agent path not found."
+  },
+  "successorAuthor": {
+    "name": "Jetnity Official Truth V3 Intake Store 1 — Codex Generation 2",
+    "session": "/root/v3_s1_storage_writer_g2",
+    "cursorSessionClaimed": false
+  },
+  "worktree": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+  "branch": "feat/official-truth-v3-intake-store-1-20261109",
+  "localHead": "0bd187324c1d050bda19b44fd7cec0b53e8f0fcf",
+  "candidateState": "Preserved uncommitted S1 implementation; this receipt does not attest a published candidate commit.",
+  "remoteContractHead": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+  "e1Baseline": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+  "mainBaseline": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "runtime": {
+    "executable": "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+    "version": "v22.23.4",
+    "dependenciesSymlinkTarget": "/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules",
+    "shellCommandWrappers": "Python subprocess.run argv arrays; Node22 directory prepended to inherited PATH; stdout/stderr captured to the referenced local logs."
+  },
+  "sourceManifest": "S1_SOURCE_MANIFEST_V1.json",
+  "checks": [
+    {
+      "name": "v3-unit",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:30.168460+00:00",
+      "exitCode": 0,
+      "durationMs": 3907,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/v3-unit.log",
+      "logBytes": 80969,
+      "logSha256": "c238a113eb255a0bb785c817b89a809ea0fe70ec969eb5da0a45834be70b1b6f",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "265 passed; 29 suites; no failed/cancelled/skipped/todo tests. Native wrapper not selected by this offline command.",
+      "tapSummary": {
+        "tests": 265,
+        "suites": 29,
+        "pass": 265,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "guards",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:34.075539+00:00",
+      "exitCode": 0,
+      "durationMs": 3728,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/guards.log",
+      "logBytes": 35444,
+      "logSha256": "09aaf81c7588203b822a0155e4ebe5cfaa0078e16ea0dbe57e699b7c42896e9c",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "147 passed; 7 suites; no failed/cancelled/skipped/todo tests.",
+      "tapSummary": {
+        "tests": 147,
+        "suites": 7,
+        "pass": 147,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "typecheck",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--pretty",
+        "false"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:30.167552+00:00",
+      "exitCode": 0,
+      "durationMs": 32725,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/typecheck.log",
+      "logBytes": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "Entire repository typecheck exited 0 with empty diagnostics."
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+        "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "scripts/db/official-truth-v3-intake-store-1/fixtures.ts",
+        "scripts/db/official-truth-v3-intake-store-1/generate-retention-shape.ts",
+        "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+        "scripts/db/official-truth-v3-intake-store-1/native.ts",
+        "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+        "scripts/db/official-truth-v3-intake-store-1/retention-fixtures.ts",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:52:02.892720+00:00",
+      "exitCode": 0,
+      "durationMs": 1814,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/lint.log",
+      "logBytes": 175,
+      "logSha256": "202a87a00ef76091d8a32984349b989f52b738f07047864bf3713d162d3dcc74",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "Scoped ESLint exited 0; no lint findings. Experimental EnvHttpProxyAgent warning belongs to the supplied environment."
+    },
+    {
+      "name": "check:dead",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:30.351614+00:00",
+      "exitCode": 0,
+      "durationMs": 737,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/check-dead.log",
+      "logBytes": 284,
+      "logSha256": "69f7d8a21c0fef881873488ac8fe8499fa5b18f01455f7a6e7266bcf7cc3f9cf",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "1149 entry points; 2121 reachable modules; 0 unexplained orphan files."
+    },
+    {
+      "name": "check:exports",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:31.088820+00:00",
+      "exitCode": 0,
+      "durationMs": 9943,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/check-exports.log",
+      "logBytes": 266,
+      "logSha256": "1f1366d32f78b25ae5f4fc8f24c30d7cce542fe651024e44e156f88fd0543bc7",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "1548 files checked; 0 exports without consumers."
+    },
+    {
+      "name": "check:deps",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:41.031552+00:00",
+      "exitCode": 0,
+      "durationMs": 303,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/check-deps.log",
+      "logBytes": 460,
+      "logSha256": "cb953a05809b86b95bd5de25f4c3560fff7992fe5e52f39b1af1326d3acd3fba",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "12 dependencies and 2 devDependencies checked; 0 unused. Tool-design configuration dependencies excluded by the existing script."
+    },
+    {
+      "name": "check:api-schutz",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:41.334683+00:00",
+      "exitCode": 0,
+      "durationMs": 69,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/check-api-schutz.log",
+      "logBytes": 246,
+      "logSha256": "cb73ed2d8b857a9e3194577147de9f958c148bcd0496af7d3bfa44d81838ad25",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "All 12 checked admin routes use requireAdminApi()."
+    },
+    {
+      "name": "check:schema-bezug",
+      "argv": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "cwd": "/workspace/scratch/e03d2839d4e5/jetnity-v3-s1",
+      "startedAt": "2026-11-09T11:51:41.403595+00:00",
+      "exitCode": 0,
+      "durationMs": 216,
+      "log": "/workspace/scratch/01cbe1264212/recovery/s1-g2-r4/check-schema-bezug.log",
+      "logBytes": 3422,
+      "logSha256": "1f8d4c95e5a4f0821eac7cfeabddfa1870249dd0540d71e1da33e2e366e9278a",
+      "logAvailability": "Local recovery workspace; not a GitHub Actions artifact or remote exact-head record.",
+      "observedResult": "Exit 0; existing LOCAL/UNAPPLIED RPC references reported. No hosted schema or installed-state verification is implied."
+    }
+  ],
+  "notExecuted": [
+    {
+      "check": "Native PostgreSQL S1 wrapper",
+      "state": "BLOCKED_BY_ENVIRONMENT_INHERITED__NOT_ATTEMPTED_IN_GENERATION_2",
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+      "reason": "Prior verified PostgreSQL16 build/initdb hit UNIX socket creation denial. Root prohibited local retry, alternative transport/socket or workaround. Existing normal GitHub CI is the required execution environment. No native PASS or skip is claimed."
+    },
+    {
+      "check": "Full repository test:core, production build, exact-head GitHub Actions and Preview",
+      "state": "PENDING_ROOT_PUBLICATION_AND_VERIFICATION",
+      "reason": "Generation 2 has no remote-write authorization and this candidate is still uncommitted."
+    },
+    {
+      "check": "Offline PL/pgSQL body parsing",
+      "state": "HISTORICAL_GENERATION_1_EVIDENCE_ONLY",
+      "reason": "Historical Generation1 handoff records PL/pgSQL parser success. Generation2 repeated outer SQL parsing after R4 (recorded separately) but did not repeat body parsing; neither is native evidence."
+    },
+    {
+      "check": "Hosted Supabase schema/RLS/migrations, Production and specifically refused #917 readback",
+      "state": "NOT_ATTEMPTED__OWNER_AND_PLATFORM_BOUNDARIES_UNCHANGED",
+      "reason": "No hosted connection or substitute operator authorized by this bounded recovery task."
+    }
+  ],
+  "authorSourceReview": {
+    "scope": "Inherited S1 runtime, retention codec/parser, candidate SQL and rollback, native adapter/process proof and exact two approved guard additions.",
+    "finding": "Root independently identified P2 rollback dependency loss and potentially undispatched cancellation evidence. Same-session R4 fixes are manifested and returned for independent re-review. Native execution and TL acceptance remain pending."
+  },
+  "riskState": {
+    "P0": "No activation or hosted mutation performed; production remains unbound.",
+    "P1": "Mandatory native execution and independent exact-head TL review remain open.",
+    "P2": "official_actions remains deliberately excluded; production adapter, registry admission and live durable operation remain unaccepted.",
+    "P3": "Operational hosting, retention lifecycle and subsequent integrations remain outside S1."
+  },
+  "stop": {
+    "authorStopped": true,
+    "ready": false,
+    "merge": false,
+    "nextSlice": false,
+    "commitsOrRefUpdates": false,
+    "remoteWrites": false,
+    "nextStep": "Root independently reviews, reconciles with published frozen-contract parent, publishes complete Draft #1168 candidate, then verifies native/Core CI/build/Preview on that exact head; CHANGES REQUIRED returns to this successor session while available."
+  },
+  "reviewEvidence": [
+    {
+      "round": "R4",
+      "reviewer": "Root / Technical Lead",
+      "state": "CHANGES_REQUIRED",
+      "evidence": "https://github.com/Jetnity/jetnity/pull/1168#issuecomment-6739317869",
+      "findingSeverity": "P2",
+      "sameSessionFixes": "/root/v3_s1_storage_writer_g2",
+      "finalTLReReview": "PENDING"
+    }
+  ],
+  "implementationChanges": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "before": "export const V3_QUARANTINE_OUTCOME_BYTES = 524_288",
+      "after": "const V3_QUARANTINE_OUTCOME_BYTES = 524_288",
+      "reason": "Unused external export; existing limit and internal uses preserved."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "reviewFinding": "R4a",
+      "change": "Replaced both DROP SCHEMA CASCADE statements with an explicitly ordered finite teardown of 4 API functions, 3 known triggers, 10 private functions, 3 tables and 2 schemas, all using RESTRICT. Transactional refusal preserves external dependents and the candidate. Existing fixture identity and DROP ROLE dependency guards remain."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "reviewFinding": "R4a",
+      "change": "Added installer-owned public dependent view; require 2BP01 refusal, preserved view and data plus candidate table and previously dropped API function, then drop view and complete normal teardown/reinstall."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "reviewFinding": "R4b",
+      "change": "Replaced fixed150ms abort with bounded exact PID+backend_start observation through a separate autocommit owner connection. Requires dispatched=1, active exact read_v1 query, Lock wait and known blocking owner PID before abort. Requires target absence after drain while lock remains held; failure to observe lock fails the native scenario."
+    }
+  ],
+  "offlineSqlSyntax": [
+    {
+      "name": "offline-sql-parse:intake-candidate.sql",
+      "startedAt": "2026-11-09T11:51:30.187473+00:00",
+      "parser": "pglast v8.7",
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "sha256": "5fd53363da16ea5ae9a2497b19e5212649d5d7af0906d18d0ea8b5937965014a",
+      "statements": 64,
+      "exitCode": 0,
+      "durationMs": 5,
+      "limitation": "SQL syntax only; no PostgreSQL server, native execution, dependencies, ownership, ACL or transaction behavior is validated."
+    },
+    {
+      "name": "offline-sql-parse:intake-candidate.rollback.sql",
+      "startedAt": "2026-11-09T11:51:30.192567+00:00",
+      "parser": "pglast v8.7",
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "statements": 28,
+      "exitCode": 0,
+      "durationMs": 1,
+      "limitation": "SQL syntax only; no PostgreSQL server, native execution, dependencies, ownership, ACL or transaction behavior is validated."
+    }
+  ],
+  "offlineSqlSyntaxCommand": {
+    "interpreter": "python3",
+    "program": "from pathlib import Path\nimport sys\nsys.path.insert(0, '/workspace/scratch/e03d2839d4e5/audit-parser')\nfrom pglast import parse_sql\nfor name in ['intake-candidate.sql', 'intake-candidate.rollback.sql']:\n    path = Path('scripts/db/official-truth-v3-intake-store-1') / name\n    print(name, len(parse_sql(path.read_text())))\n",
+    "note": "Equivalent complete parser operations; harness additionally records timestamps, duration, SHA256 and JSON result metadata. No PostgreSQL server is launched."
+  },
+  "priorRecoveryRun": {
+    "logDirectory": "/workspace/scratch/01cbe1264212/recovery/s1-g2",
+    "state": "Pre-R4 offline results retained locally, superseded for current source by the post-R4 checks in this receipt.",
+    "v3Passed": 265,
+    "guardPassed": 147,
+    "nativeExecuted": false
+  }
+}

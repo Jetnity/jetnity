@@ -1,0 +1,328 @@
+{
+  "schema": "jetnity-ma1-main-drift-reconciliation-v1",
+  "observedAt": "2026-11-09T15:22:12.634Z",
+  "observer": "/root Technical Lead",
+  "oldMain": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "newMain": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+  "externalMergedPr": {
+    "number": 1174,
+    "head": "ec33049acf0f770a06cbf4d29d4a6c8d8f01f967",
+    "mergedAt": "2026-11-09T14:45:32Z",
+    "mergedBy": "Jetnity",
+    "title": "Organisieren: zentrale Reisesuche mit Fotokopf, Etappen und Hotelkarte"
+  },
+  "changedFiles": [
+    {
+      "path": "app/(public)/privacy/page.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "path": "app/(public)/reisen/[tripId]/layout.tsx",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0
+    },
+    {
+      "path": "app/(public)/ui-audit/trip-workspace/page.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/AktivitaetenBereich.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 2
+    },
+    {
+      "path": "components/trips/FlugKarte.tsx",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "status": "modified",
+      "additions": 34,
+      "deletions": 14
+    },
+    {
+      "path": "components/trips/TwelveGoTimetable.tsx",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "components/trips/organisieren/Aktivitaeten.tsx",
+      "status": "added",
+      "additions": 78,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Flugsuche.tsx",
+      "status": "added",
+      "additions": 242,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Hotelkarte.tsx",
+      "status": "added",
+      "additions": 156,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Hotelsuche.tsx",
+      "status": "added",
+      "additions": 271,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Organisieren.tsx",
+      "status": "added",
+      "additions": 223,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Reisefoto.tsx",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Suchfelder.tsx",
+      "status": "added",
+      "additions": 67,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/Verbindungen.tsx",
+      "status": "added",
+      "additions": 166,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/organisieren/organisieren.css",
+      "status": "added",
+      "additions": 779,
+      "deletions": 0
+    },
+    {
+      "path": "components/trips/rental/DiscoverCarsMietwagen.tsx",
+      "status": "modified",
+      "additions": 28,
+      "deletions": 8
+    },
+    {
+      "path": "components/trips/rental/StationField.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 3
+    },
+    {
+      "path": "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.test.ts",
+      "status": "added",
+      "additions": 63,
+      "deletions": 0
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.ts",
+      "status": "added",
+      "additions": 245,
+      "deletions": 0
+    },
+    {
+      "path": "package-lock.json",
+      "status": "modified",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "path": "package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/Bildnachweise.txt",
+      "status": "added",
+      "additions": 61,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/angsana.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/bangkok.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/canal.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/chang.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/hero.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/katathani.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/mandarin.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/oldtown.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/paradise.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/peninsula.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/phuket.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/reise.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/shangri.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/waterfall.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "public/images/organisieren/watpho.webp",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    }
+  ],
+  "reviewScope": "Complete changed-path manifest; actual package/lockfile, trip-layout/TripWorkspace and integration-note diffs for MA1 overlap. Not a new independent acceptance audit of external PR1174 or live behavior.",
+  "readinessDatabaseWorkflowDeltaPaths": [],
+  "dependencyDelta": "Adds leaflet1.9.4, @types/leaflet1.9.21 and transitive @types/geojson; no MA1-owned or shared Auth/driver/V3 contract changes.",
+  "currentPr": {
+    "number": 1175,
+    "head": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+    "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "draft": true,
+    "mergeBaseWithMain": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "aheadOfMain": 33,
+    "behindMain": 3
+  },
+  "mainCI": {
+    "run": 42637809650,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 129230532845,
+        "name": "Repository verification",
+        "conclusion": "success"
+      },
+      {
+        "id": 129230533198,
+        "name": "Persisted canonical read — native",
+        "conclusion": "success"
+      },
+      {
+        "id": 129230533207,
+        "name": "Atomic version refresh — native",
+        "conclusion": "success"
+      },
+      {
+        "id": 129230533270,
+        "name": "Accepted store trip integration — native (store)",
+        "conclusion": "success"
+      },
+      {
+        "id": 129230533297,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "conclusion": "success"
+      },
+      {
+        "id": 129230533299,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success"
+      },
+      {
+        "id": 129237720471,
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "production": {
+    "id": "dpl_9iu5bD976NN7p4SZNAA8HsYYQGzr",
+    "readyState": "READY",
+    "target": "production",
+    "head": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+    "aliases": [
+      "jetnity.com",
+      "jetnity-app.vercel.app"
+    ],
+    "aliasError": null
+  },
+  "decision": "Continue the explicitly frozen dormant MA1 implementation on accepted C1 base; no author base/ref/package change. Preserve historical exact-head acceptance. Reconcile full V3 stack with then-current main and rerun exact-head gates before any Ready/merge; existing narrow code acceptance must not be presented as current-main integration acceptance.",
+  "risks": [
+    {
+      "level": "P2",
+      "state": "OPEN_INTEGRATION_GATE",
+      "description": "V3 stack is now3commits behind current main and needs explicit later integration/complete re-gating before Ready/merge."
+    }
+  ],
+  "boundaries": [
+    "No main/Production mutation by this task",
+    "No V3 activation from PR1174 observed",
+    "No hosted DB/Auth/RLS/ACL/migration/credential operation or #917 retry",
+    "Method NOT_APPROVED; Dev NOT_RELEASE_READY"
+  ]
+}

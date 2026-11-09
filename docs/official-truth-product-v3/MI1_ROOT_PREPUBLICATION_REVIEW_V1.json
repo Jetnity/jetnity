@@ -1,0 +1,183 @@
+{
+  "schema": "jetnity.mi1.root-prepublication-review.v1",
+  "at": "2026-11-09T18:08:01.894940+00:00",
+  "reviewer": "/root Technical Lead",
+  "decision": "FROZEN_DOCUMENTS_ACCEPTED_FOR_EXACT_TREE_PUBLICATION_ONLY",
+  "integrationAcceptance": "PENDING_NEW_HEAD_GATES",
+  "inputMain": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+  "inputMa1": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "inputTrees": {
+    "main": "c417811ff67248c4910bb2c5154bb51885d787eb",
+    "ma1": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+    "pureUnion": "eb6f3878ffd44f125818fa764dba10a535404bd0"
+  },
+  "liveRefresh": {
+    "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "ma1": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "note": "Root personally read live GitHub main ref and PR1175 head immediately before this frozen-source check; publication rechecks follow.",
+    "observedBeforeReceiptAt": "2026-11-09T18:08:01.894940+00:00"
+  },
+  "taskSha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+  "authorFiles": [
+    {
+      "path": "JETNITY_START_HERE.md",
+      "sha256": "433053cc69153cf71924fc3cdb61c07e434c23c71be46a25d08ad19de0194c1c",
+      "gitBlob": "17223f135424c94cf7e1ec66199fac594ab950f5",
+      "bytes": 96972,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "sha256": "eb896826b987dbc8a0c7751abbd632bc663463d02e2491e821f5a4bc3725c339",
+      "gitBlob": "7ea094969137f5d16f3965270118aa337d7c8b1d",
+      "bytes": 134945,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+      "sha256": "c5d5fb7c70a864fddfd350fcef76c53bef64ff3cd83f431f8019e7a987f4ecdf",
+      "gitBlob": "8aa40cd2fcafcf55593e538fe9dd91d43fb64dcc",
+      "bytes": 6535,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "sha256": "7545f50f13861045ee4791dd7f7241ea1cd18ccac6bafeb67c00ae35f606256f",
+      "gitBlob": "e8a67c83ccb005b2a623431558e870f0ff94278e",
+      "bytes": 14334,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+      "sha256": "46b0353fab557e7f14e5485cad1b35536584d269c9c96639d19916edb24ae35b",
+      "gitBlob": "db368dbce639edc39301efcb9d870fbf3083ae5b",
+      "bytes": 7044,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_SOURCE_MANIFEST_V1.json",
+      "sha256": "b3b99a286c1d83b898aa42a5323e9bf3a6fdeba065b6c124046027e34d160b3d",
+      "gitBlob": "f0e11940c47b6f16df2bdec33ef8e46f2f73ce79",
+      "bytes": 37974
+    }
+  ],
+  "sourceRows": 399,
+  "sourceAggregate": "645088279d80e3b4bac639765c0209756fab1d80b1e1f87d60f184f06cd17c24",
+  "blocks": [
+    {
+      "path": "JETNITY_START_HERE.md",
+      "originalBlockBytes": 3051,
+      "originalBlockSha256": "e184d107387e5de4301d0214bc79ae044c4a8af4c476fbef27da0ff309888d4a",
+      "newBlockSha256": "4b025e00bd2c00284dd31c9b866c43c3ef7e40ca58b423b944210d2e4f9ddb3a",
+      "outsideBytesPreserved": true,
+      "archiveOccurrences": 1
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "originalBlockBytes": 3031,
+      "originalBlockSha256": "736972382da15147d9fa7831bca02c4b36a48a69e91e9326fe6982aa698db7bc",
+      "newBlockSha256": "5a8b7d0e8104583dd6a93cfc890cb69dc576ae2523c2caad56c71ad6ed692232",
+      "outsideBytesPreserved": true,
+      "archiveOccurrences": 1
+    }
+  ],
+  "rootDocumentPins": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_CHECK_COMPATIBILITY_V1.json",
+      "sha256": "58148d0ae31f0271b96b3968c9992e784e0f14d092c27a90d099e73a66ccfdbd",
+      "bytes": 8628
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_EXCERPT_V1.txt",
+      "sha256": "c793fd2a017a2a7eb5befa16e3f397d24f03675567fb7956cf7051be0ee548f0",
+      "bytes": 85896
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_PEER_REVIEW_V1.json",
+      "sha256": "2504449f62b06af9bc36b5a0e532d3889f46f1527716200f0d2a1ff09bcd9be7",
+      "bytes": 20683
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_ROOT_REVIEW_V1.json",
+      "sha256": "358b4a67254ae99b679686cc8551229b83520dce6b3a3e98819970dee0cb0897",
+      "bytes": 8571
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json",
+      "sha256": "8bfe353fb092d579f550d6d2a24e82f09dfdc4d46f89636859271c14491ff4dc",
+      "bytes": 9556
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_RELEASE_PEER_REVIEW_V1.json",
+      "sha256": "9537561804f4e830c3fa3d73a308eefa445abe082aede95f8c898d553ca51700",
+      "bytes": 15305
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json",
+      "sha256": "b1e6ad6b6c5f611b2a33525ee4d5cad145a3672d2743828139fb4b7e97e20aba",
+      "bytes": 1003
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_FINAL_UI_ROOT_REVIEW_V1.json",
+      "sha256": "eb9a2230c83d8682cfd00857b486c8f1fea559be3da8e12903acd3464af84cbe",
+      "bytes": 5918
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+      "sha256": "97749fb674afd1502143e6a8aec1848684d00b556c45aaf21c6649a169914acb",
+      "bytes": 7743
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_ROOT_INPUT_IMPORT_V1.json",
+      "sha256": "b07fcd426a6e435965151cbfb02e3f460038338aa56cbb61f47482ac52983089",
+      "bytes": 596
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_ROOT_PURE_UNION_V1.json",
+      "sha256": "ffd0dc46cbd1652b28968a2bc1c7ba1ef64735d7fa0f003b85c5a9de2e27b4e5",
+      "bytes": 90425
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_TASK_V1.md",
+      "sha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+      "bytes": 8583
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_PEER_PURE_UNION_REVIEW_V1.json",
+      "sha256": "3968fad3976d9c138d70f7eda4631814ee64056111a81623f44d3b1b62f603e4",
+      "bytes": 53742
+    }
+  ],
+  "localLinksChecked": 25,
+  "peerContinuity": {
+    "path": "docs/official-truth-product-v3/MI1_PEER_CONTINUITY_REVIEW_V1.json",
+    "sha256": "38926cc2d38934a9c2451f09483bcb18155c71a5dd3b585aae58d6215632aa03",
+    "scope": "Independent six-file source review; no integration PASS"
+  },
+  "partialLocalPreparation": {
+    "completeCheckout": false,
+    "mainTextPaths": 43,
+    "unavailableBinaryObjects": 16,
+    "placeholderOrAlternateRetrieval": false,
+    "fullCheckoutAndInstallationDeferredToActualCI": true
+  },
+  "ownership": {
+    "actualAuthor": "/root/v3_method_authority_writer",
+    "logicalAuthor": "Jetnity Official Truth V3 Main Integration1 — Codex Generation1",
+    "authorStopped": true,
+    "rootAloneReadyMerge": true,
+    "originalMa1CleanAndHeadUnchanged": true,
+    "worktreeIndexUnchanged": true
+  },
+  "semanticReview": [
+    "Live recovery pointers, actual ten component pins and separate excluded D1 are consistent with immutable input evidence.",
+    "Only two current top blocks changed; historical surrounding bytes and exact previous blocks preserved. Temporal archive-before-write is author-record evidence; Root independently proves actual final bytes.",
+    "MA1 successful and failed CI history retained with exact-source and synthetic/UI limits. No invented MI1 PR, head, CI, Preview or acceptance.",
+    "Main external product provenance and Leaflet dependency/16 absent binary limits remain explicit. Full CI required.",
+    "All required full Core/native/UI/Preview/live gates and changed-head invalidation remain explicit. Vercel direct toolbar-thread visibility remains a capability limitation to report honestly, not invent.",
+    "Method NOT_APPROVED; #1139 NOT_RELEASE_READY and17 gaps; #917 specific refused-readback STOP; #1131 Ready STOP; #1135 research hold; #968 isolation; #911/#913 privacy unchanged."
+  ],
+  "prohibitedActionsPerformed": false,
+  "localRuntimeSqlNativeSocketExecution": false,
+  "next": "Compute final pure-union plus21 authorized documentation entries; verify exact Git Data tree and ordered parents; publish new Draft PR and require complete independent new-head gating. No automatic follow-on."
+}

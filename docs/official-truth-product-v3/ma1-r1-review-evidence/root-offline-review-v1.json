@@ -1,0 +1,48 @@
+{
+  "schema": "MA1_REVIEW_R1_ROOT_OFFLINE_V1",
+  "reviewer": "/root",
+  "baseHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "command": [
+    "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+    "--import",
+    "./scripts/server-only-test-register.mjs",
+    "--import",
+    "tsx",
+    "--test",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+    "lib/readiness/official-truth-product-v3/contract.test.ts",
+    "lib/readiness/official-truth-product-v3/import/service.test.ts",
+    "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+    "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+    "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+    "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+    "lib/readiness/official-truth-content-identity.test.ts",
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts"
+  ],
+  "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+  "before": {
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+  },
+  "startedAt": "2026-11-09T16:49:59.833594+00:00",
+  "exitCode": 0,
+  "finishedAt": "2026-11-09T16:50:04.594876+00:00",
+  "log": "/workspace/scratch/01cbe1264212/recovery/ma1-r1-root/named-ten-file-offline.txt",
+  "logSha256": "1df8a32a665294ced17c1591573e03d3891ca1dd680fb6ebc01bf14a0cc2a6ca",
+  "logBytes": 90469,
+  "after": {
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+  },
+  "sourceUnchanged": true,
+  "tapSummary": {
+    "tests": 329,
+    "suites": 29,
+    "pass": 329,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  }
+}

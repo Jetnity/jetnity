@@ -1,0 +1,203 @@
+N1 local author test evidence V1 — 9 November 2026
+Author: Jetnity Official Truth V3 Research Ingress1 — Codex Generation1
+Session: /root/v3_n1_ingress_writer
+Taskseed: ec371ebd6914407aeb8f72f405d57ed70967a01f; candidate bytes are in N1_MANIFEST_V1.json.
+S1 R2 intake-contract SHA256: 49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b
+N1G1 authorization: https://github.com/Jetnity/jetnity/pull/1170#issuecomment-6738189101
+
+This is actual local test-run completion output, not TL-PASS or database/production evidence.
+The first output chunk contained only toolchain startup warnings; all test results and the final summary are below.
+
+Command:
+/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/ingress/file.test.ts lib/readiness/official-truth-product-v3/ingress/service.test.ts lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts lib/readiness/official-truth-product-v3/import/service.test.ts lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts
+
+Process exit: 0
+Full repository TypeScript: exit 0
+Scoped ESLint (ingress + amended Foundation test) and git diff --check: exit 0
+
+✔ C27 exact #855 C/H bytes, UTF-16/numeric key order and LF domain separation (3.261407ms)
+✔ C22 canonical decoder rejects duplicate (0.30511ms)
+✔ C22 canonical decoder rejects nestedDuplicate (0.241153ms)
+✔ C22 canonical decoder rejects escapedDuplicate (0.184358ms)
+✔ C22 canonical decoder rejects whitespace (0.103016ms)
+✔ C22 canonical decoder rejects exponent (0.15274ms)
+✔ C22 canonical decoder rejects negativeZero (0.150737ms)
+✔ C22 canonical decoder rejects fraction (0.114182ms)
+✔ C22 canonical decoder rejects unsafeInteger (0.333713ms)
+✔ C22 canonical decoder rejects bom (0.3851ms)
+✔ C22 canonical decoder rejects trailingLF (0.07907ms)
+✔ C22 canonical decoder rejects ordering (0.128303ms)
+✔ C22 canonical decoder rejects surrogate (0.087031ms)
+✔ C22 canonical decoder rejects slashEscape (0.053581ms)
+✔ C22 invalid UTF-8, prototypes/accessors/symbols/sparse arrays/cycles reject without getters (0.660085ms)
+✔ C23 exact byte/depth bounds and deeper shared structural paths (52.838705ms)
+✔ C27 global definition exception and exact versioned custody artifact bytes (22.582694ms)
+✔ C12 exact Pin type/version/digest, no ID/latest alias or unknown codec (8.652734ms)
+✔ C15/C20 forbidden userId, including hashes, rejected at exact domain schemas (8.155835ms)
+✔ C15/C20 forbidden tripId, including hashes, rejected at exact domain schemas (6.084102ms)
+✔ C15/C20 forbidden requestId, including hashes, rejected at exact domain schemas (2.913512ms)
+✔ C15/C20 forbidden sessionId, including hashes, rejected at exact domain schemas (3.977236ms)
+✔ C15/C20 forbidden travellerId, including hashes, rejected at exact domain schemas (4.078168ms)
+✔ C15/C20 forbidden passportNumber, including hashes, rejected at exact domain schemas (2.858129ms)
+✔ C15/C20 forbidden prompt, including hashes, rejected at exact domain schemas (3.059162ms)
+✔ C15/C20 forbidden model, including hashes, rejected at exact domain schemas (2.978249ms)
+✔ C15/C20 forbidden personalHash, including hashes, rejected at exact domain schemas (2.889145ms)
+✔ C15/C20 forbidden conversationHash, including hashes, rejected at exact domain schemas (2.913552ms)
+✔ C16 exact admission categories and seven fields; no qualifier/citizenship substitution (15.895292ms)
+✔ C04 full custody identity comparison rejects same hash under another context (61.028256ms)
+✔ C08 deterministic primary/composed exact selection retains complete snapshot (79.236616ms)
+✔ C08 selection rejects missing with no subset/latest fallback (15.021955ms)
+✔ C08 selection rejects duplicate with no subset/latest fallback (45.120991ms)
+✔ C08 selection rejects ambiguous with no subset/latest fallback (38.405567ms)
+✔ C08 selection rejects extra with no subset/latest fallback (32.277379ms)
+✔ C08 selection rejects ineligible with no subset/latest fallback (21.790139ms)
+✔ C08 selection rejects same-item-representation with no subset/latest fallback (43.62794ms)
+✔ C08 selection rejects policy-null with no subset/latest fallback (7.552506ms)
+✔ C08 selection rejects snapshot-missing with no subset/latest fallback (3.453336ms)
+✔ C08 selection rejects bound with no subset/latest fallback (178.775888ms)
+✔ C07 proposal-null review construction and immutable input/output; no notes in identity (106.670452ms)
+✔ C21 separate custody binding matches exact admission/manifest/review and fingerprint (48.374455ms)
+✔ C05/C27 #855 support receipt retains original/fresh clocks, required nulls and exact bytes (5.959835ms)
+✔ C12 legacy/v1 fact values never accept v2 carriers or mislabel applicability (2.607301ms)
+✔ C17 full finite synthetic qualification accepts only entire non-personal response/transport (6.316983ms)
+✔ C01/C14 private issuance: forged DTO/brand/cast, clones, cross invocation, wrong stage/predecessor, post-close (49.25978ms)
+✔ C02/C13/C29 historical bytes, correct caller IDs and pins cannot mint live authority (19.437342ms)
+✔ foundation finite importer guard rejects unknown paths, modules, namespace and extra imports (0.293633ms)
+✔ N1G1 exact finite consumers retain negative path/module/name-set gates (0.162896ms)
+✔ zero-I/O foundation fences; finite pure consumers and no public issuer/test factory (1066.541166ms)
+✔ explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures (540.641563ms)
+✔ C16 global evaluation-date plan is required exactly for a dated category (9.258337ms)
+✔ C08/C21 conflicting bytes for one custody id/version cannot be deduplicated (21.648556ms)
+✔ C14 successful complete private stage chain closes all handles against replay (8.154833ms)
+✔ C22 outer DTO accessors/cycles cannot run caller code before value validation (0.26582ms)
+✔ C07/C20 review refuses legacy note/model metadata and arbitrary hashed extensions (50.049271ms)
+✔ C03/C13 absent origin or required nulls are not repaired from matching current values (8.598843ms)
+✔ C27 #855 fact/candidate/proof preimages use exact domains and cannot be widened with custody (34.224469ms)
+(node:11) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ I1 neutral proposal intake and quarantine
+  ✔ same neutral S0 envelope works for two independent fictional supplier adapters (67.010484ms)
+  ✔ invalid/private/oversized/authority payloads never reach quarantine storage or providers (9.928818ms)
+  ✔ operation replay returns the confirmed historical outcome; other bytes collide without overwrite (15.083955ms)
+  ✔ atomic reservation prevents concurrent identical operations from duplicating verification (12.045668ms)
+  ✔ a lost finish acknowledgement is unknown, then confirmed replay resolves it without a second write (7.773229ms)
+✔ I1 neutral proposal intake and quarantine (112.832788ms)
+▶ I1 method and source authority boundaries
+  ✔ production entry remains closed and contains no injectable approval or live fallback (0.363078ms)
+  ✔ unapproved or unavailable method never reaches original verification (5.498049ms)
+  ✔ method revocation during source await closes the prepared handoff (11.138186ms)
+  ✔ freshness expiring during the final method await cannot produce prepared output (5.776908ms)
+  ✔ cloned evidence receipt fails despite matching DTOs and hashes (7.206504ms)
+  ✔ provider exception content never reaches result, audit or quarantine output (3.531264ms)
+  ✔ researcher fact and claimed retrieval date cannot become canonical extracted truth (5.529516ms)
+  ✔ foreign jurisdiction, wrong method, fact kind and source-context mutations are quarantined (18.58721ms)
+  ✔ source or actual history change after inspection prevents preparation (6.760832ms)
+✔ I1 method and source authority boundaries (65.132193ms)
+▶ I1 automatic V3 outcomes and explicit future commit boundary
+  ✔ one clear destination primary suffices for every unsuccessful optional-check state (27.152883ms)
+  ✔ independent agreement prepares but same-publication mirror cannot count as agreement (16.959407ms)
+  ✔ unclear mandatory primary escalates once per context/method reason without an accepted version (5.935507ms)
+  ✔ true comparable conflict escalates without majority and persists after optional outage (33.598971ms)
+  ✔ nonexclusive optional visa addition can be compatible without a fabricated second matching fact (14.882927ms)
+  ✔ a new prepared version retains expected predecessor, operation and invalidated projection references (11.03744ms)
+  ✔ caller abort prevents continuation and never implies a successful write (2.012774ms)
+  ✔ transport error result remains bounded and contains no raw upload data (0.739675ms)
+✔ I1 automatic V3 outcomes and explicit future commit boundary (112.787229ms)
+▶ TL I1 R1 — archived history and uncertain bounded operations
+  ✔ a verified current archive append permits the next import without dropping its history pointer (31.01128ms)
+  ✔ missing, foreign or mutated archive proof for the current history remains invalid (84.293173ms)
+  ✔ reserve write followed by lost response is unknown, with the same reserved operation retained (5.565541ms)
+  ✔ a never-settling inspector times out; late resolution cannot start finish (22.128348ms)
+  ✔ external abort releases an uncooperative reserve await and late reservation remains unknown (2.638678ms)
+  ✔ a hanging finish that later records cannot produce success before its acknowledgement (22.456874ms)
+✔ TL I1 R1 — archived history and uncertain bounded operations (168.497383ms)
+▶ TL I1 R2 — complete persisted escalation evidence
+  ✔ archive and predecessor survive atomic JSON persistence and replay for primary_unclear (32.451752ms)
+  ✔ missing, foreign and mutated archive appends cannot create an escalation for primary_unclear (62.569545ms)
+  ✔ archive and predecessor survive atomic JSON persistence and replay for comparable_conflict (38.113577ms)
+  ✔ missing, foreign and mutated archive appends cannot create an escalation for comparable_conflict (58.319437ms)
+✔ TL I1 R2 — complete persisted escalation evidence (191.853983ms)
+(node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ N1 reads real whitespace UTF8 bytes exactly, closes both handles before capture, and creates no source receipt (46.779692ms)
+✔ N1 rejects traversal, nested, absolute, hidden, extension, control and oversized names before IO (13.205808ms)
+✔ N1 requires closed delivery data and never invokes property getters (15.864927ms)
+✔ N1 refuses actual symlink before capture with all handles closed (22.669885ms)
+✔ N1 refuses actual hardlink before capture with all handles closed (16.242957ms)
+✔ N1 refuses actual directory before capture with all handles closed (31.538404ms)
+✔ N1 refuses actual fifo before capture with all handles closed (20.643911ms)
+✔ N1 O_NONBLOCK rejects a regular-file-to-FIFO race without waiting for a writer (9.522165ms)
+✔ N1 refuses a symlink raced into the opened child path (6.140718ms)
+✔ N1 rejects wrong root pin, symlink root, writable staging and root replacement before open (17.849718ms)
+✔ N1 held directory descriptor stays on the pinned root when its pathname is replaced (22.009884ms)
+✔ N1 refuses replace during an actual descriptor read (11.749773ms)
+✔ N1 refuses in_place during an actual descriptor read (27.117235ms)
+✔ N1 refuses grow during an actual descriptor read (6.319377ms)
+✔ N1 refuses unlink during an actual descriptor read (22.648443ms)
+✔ N1 refuses new_hardlink during an actual descriptor read (20.495027ms)
+✔ N1 observes at most 65537 actual bytes when a file grows during reading (5.296324ms)
+✔ N1 refuses cleanup failure before capture and still closes the remaining root handle (11.045171ms)
+✔ N1 abort after a real read drains IO and closes both handles without capture (7.705777ms)
+✔ N1 reports missing input with fixed categories, no path or file contents (3.904867ms)
+(node:15) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ N1 unbound and dormant Production entry perform no filesystem or intake IO (61.595266ms)
+✔ N1 refuses invalid root selection and budgets before IO (18.298925ms)
+✔ N1 refuses already-aborted invocations before IO and preserves caller-owned mutable input (12.986318ms)
+✔ N1 refuses actual json upload bytes before intake (22.044522ms)
+✔ N1 refuses actual pii upload bytes before intake (15.326265ms)
+✔ N1 refuses actual unknown_field upload bytes before intake (27.695072ms)
+✔ N1 refuses actual invalid_utf8 upload bytes before intake (6.082609ms)
+✔ N1 refuses actual bom upload bytes before intake (46.488553ms)
+✔ N1 refuses actual utf16 upload bytes before intake (10.880713ms)
+✔ N1 refuses actual size upload bytes before intake (12.936912ms)
+✔ N1 refuses actual empty upload bytes before intake (17.183976ms)
+✔ N1 exact UTF8 boundary and legal JSON whitespace are kept rather than normalised (16.907247ms)
+✔ N1 runner binding must match proposal operation, job and context (24.840698ms)
+✔ N1 git revision is runner identity only and no researcher metadata grants approval (11.502134ms)
+✔ N1 same-operation replay and two real concurrent deliveries retain one fake-intake row (24.930733ms)
+✔ N1 changed whitespace under the same operation reports collision, never retries with a new operation (23.976335ms)
+✔ N1 lost capture ACK is drained before exactly one same-reference confirm (36.53398ms)
+✔ N1 uncertain capture remains unconfirmed when confirm reports absence or a lost reply (44.892637ms)
+✔ N1 new reader instance confirms exact retained reference after original file deletion, with no file ledger (16.570891ms)
+✔ N1 validates every acknowledgement reference field and rejects extra fields/getters (164.000278ms)
+✔ N1 a malformed recorded confirm never substitutes a new reference or creates positive proof (13.805593ms)
+✔ N1 forwards fixed S1 refusals including duplicate-key preflight without alternate storage (33.276871ms)
+✔ N1 explicit confirm may report no attempt; unknown capture cannot (2.408001ms)
+✔ N1 abort during settled capture returns exact unconfirmed reference and never starts confirm (15.243759ms)
+✔ N1 owned timeout drains capture instead of abandoning it or returning a positive late reply (203.859312ms)
+✔ N1 timeout while draining a real open closes its handle and performs no later file/capture IO (254.037136ms)
+(node:25) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ S1 shared intake identity reader
+  ✔ accepts both bounded runner revision kinds without claiming authority (2.3212ms)
+  ✔ rejects unknown and personal fields at both closed levels (0.429157ms)
+  ✔ never reads getters or inherited records (0.167623ms)
+  ✔ validates exact operation, job, context, delivery and runner identities (0.736861ms)
+  ✔ bounds method revision and identifier without coercion (0.387203ms)
+  ✔ reference is exact, bounded and detached (0.649149ms)
+✔ S1 shared intake identity reader (5.998333ms)
+ℹ tests 142
+ℹ suites 6
+ℹ pass 142
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3827.609979

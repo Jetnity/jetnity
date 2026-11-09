@@ -26,6 +26,7 @@ const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 // #899 permits this one fixed-corpus developer execution, never a live importer.
 const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
   'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
+  'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts',
   'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts']
 function fixtureImporterErlaubt(path: string): boolean { return FIXTURE_IMPORTER.includes(path) }
 const ZEIT = '2026-10-03T00:00:00.000Z'
@@ -854,6 +855,19 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       'scripts/official-truth-integrated-pilot-1/official-source.ts', 'scripts/official-truth-integrated-pilot-1/unknown.ts',
       'scripts/official-truth-integrated-pilot-2/engine.ts', 'scripts/official-truth-integrated-pilot-1/engine.ts/../unknown.ts',
       'app/scripts/official-truth-integrated-pilot-1/engine.ts']) assert.equal(fixtureImporterErlaubt(path), false, path)
+    const e1Originals = 'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts'
+    assert.equal(fixtureImporterErlaubt(e1Originals), true)
+    for (const path of [e1Originals + '.evil.ts', './' + e1Originals,
+      'lib/readiness/official-truth-product-v3/integration/test-support/originals-copy.ts',
+      'lib/readiness/official-truth-product-v3/integration/test-support/../test-support/originals.ts',
+      'lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts',
+      'lib/readiness/official-truth-product-v3/integration/test-support/store.ts',
+      'lib/readiness/official-truth-product-v3/integration/coordinator.ts',
+      'lib/readiness/official-truth-product-v3/integration/ports.ts',
+      'lib/readiness/official-truth-product-v3/integration-next/test-support/originals.ts',
+      'app/lib/readiness/official-truth-product-v3/integration/test-support/originals.ts']) {
+      assert.equal(fixtureImporterErlaubt(path), false, path)
+    }
   })
 
   test('der kanonische Scope erreicht den Matcher unverändert und ohne Auswahl', () => {

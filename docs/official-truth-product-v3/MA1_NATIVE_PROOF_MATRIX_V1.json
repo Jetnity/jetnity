@@ -1,0 +1,134 @@
+{
+  "schema": "ma1-native-proof-matrix-v1",
+  "status": "SOURCE_DEFINED_NOT_EXECUTED_LOCALLY_MANDATORY_CI_PENDING",
+  "at": "2026-11-09T16:23:00.092340+00:00",
+  "primarySession": "/root/v3_method_authority_writer",
+  "source": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+  "sourceSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+  "wrapper": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+  "discovery": "Unconditional existing test:core discovery, unchanged workflow/package; no skip",
+  "parentWatchdogMs": 420000,
+  "childWatchdogMs": 60000,
+  "groups": [
+    {
+      "id": 1,
+      "name": "creator function/table/schema defaults refuse atomically without normalization",
+      "requiredAssertions": [
+        "Actual creator function/table/schema default poisoning; atomic refusal before normalization; defaults preserved; no candidate object or reader role remains"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 2,
+      "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+      "requiredAssertions": [
+        "Three immutable Root vectors; absent/draft/approved composition; distinct method status digest collision; staged successor preserves old head and receipt; strict canonical clock/null/action-shape inputs; genuine human/reader identity and privilege negatives; immutable revision/history rejection"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 3,
+      "name": "real active own Owner and exact account/session/profile negative matrix",
+      "requiredAssertions": [
+        "Real unchanged #1142 helper against wrong/missing/foreign session, account/profile/claim/AAL states; snapshot preservation; deleting synthetic Auth user does not erase method history"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 4,
+      "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+      "requiredAssertions": [
+        "Exact operation duplicate; same revision same bytes with new operation; missing predecessor refusal; actor/command mismatch; provisional result before actual COMMIT; same-ID advisory serialization; competing exact expected epoch one effect"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 5,
+      "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+      "requiredAssertions": [
+        "Actual committed operation result deliberately discarded; serialized exact confirmation through expiry/revoke/supersession; stale unknown confirmation writes nothing; no backward approval"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 6,
+      "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+      "requiredAssertions": [
+        "Synthetic owner boundary epoch2147483645; last new approval2147483646; terminal revoke2147483647; no reset/reuse; exhaustion retains state and historical ACK"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 7,
+      "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+      "requiredAssertions": [
+        "Actual full-precision finite clock and caller-conservative expiry; submillisecond nonpositive reader; actual receipt cap versus durable until_revoked; epoch/revision changes revoke retained receipt"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 8,
+      "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+      "requiredAssertions": [
+        "Actual PID/birth/SQL/active Lock/holder/relation evidence; revoke-first refusal; protected synthetic marker first; expiry after wait; RR/Serializable failure closed"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 9,
+      "name": "human method wait precedes fresh unchanged session/profile authority check",
+      "requiredAssertions": [
+        "Actual head wait before unchanged human helper; concurrent session/profile invalidation followed by refusal; no state/history effect"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 10,
+      "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+      "requiredAssertions": [
+        "Four actual blocked reads and fifth same-/different-adapter refusal before acquisition; exact cancellation and both target/control disappearance; true cleanup lane1running/3waiting with all slots retained"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 11,
+      "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+      "requiredAssertions": [
+        "Actual held late acquisition; control/target identity and observer failure; visible poison, owned-cluster stop and primitive joins; already-active provisional positives suppressed"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 12,
+      "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+      "requiredAssertions": [
+        "Real child receipt custody; clone refusal; actual SIGKILL and close; new generation with no old receipt and fresh SQL; child death while parent owns a blocked read; one fixed missing-executable ENOENT/close/no-exit regression with visible disposal failure, zero pending/tracked work, timer/listener release and no SQL"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 13,
+      "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+      "requiredAssertions": [
+        "Known reader membership explicitly removed by harness; wrong marker/current-owner and forged-descriptor ownership refusal; real owned-connection shape; both-direction unknown membership, table/column ACL, unexpected object and same-name CHECK(true) preservation; external FK RESTRICT restores earlier drops; empty removal retains #1142 and fixture logins; nonempty history preserved"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    },
+    {
+      "id": 14,
+      "name": "rollback takes all removal locks before checking concurrently committed history",
+      "requiredAssertions": [
+        "Byte-identical unique lock-span split, same original transaction; real waiting rollback versus uncommitted mutator; actual COMMIT precedes post-all-lock emptiness rejection; fresh retained revision/history and metadata"
+      ],
+      "actualNativeResult": "NOT_RUN_LOCALLY_CI_PENDING"
+    }
+  ],
+  "offlineComplement": "Runtime child and Root independent270/270 named offline results remain separate; no SQL/native inference",
+  "instrumentation": "Root-authorized candidate and rollback fixed byte-identical splits on same owned connection and transaction; no predicate/role/SQL changes or learned authority",
+  "connectionEvidenceBoundary": "Actual genuine owned Unix connection inspected and forged descriptor rejected before acquisition. Foreign/TCP/wrong-database SQL execution not exercised and never retried through an alternate seam.",
+  "nativeRisks": [
+    "Exact PostgreSQL CHECK deparser literal compatibility not yet executed",
+    "Actual SQL/Auth/RLS/ACL/lock/transaction/child/cancel/drain semantics await mandatory CI",
+    "No hosted target or real method/package/source authority established"
+  ]
+}

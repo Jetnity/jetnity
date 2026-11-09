@@ -1,0 +1,5 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"kind":"root-offline-malformed-row-recheck","actualNativeSql":false,"passed":7,"cases":["impossible interval rejected by row reader","impossible interval resolve refused","expiry before checkedAt resolve refused","consistent finite control resolves","impossible interval reproof refused","expiry before checkedAt reproof refused","consistent finite reproof control succeeds"]}

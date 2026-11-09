@@ -1,0 +1,56 @@
+{
+  "schema": "mi1-protected-source-amendment-v1",
+  "rootTask": {
+    "path": "docs/official-truth-product-v3/MI1_REVIEW_FIX_R1_TASK_V1.md",
+    "sha256": "070e11c1d2283f5f95642062e44572a98e4d2c62f799b717b1712db6f6188e45",
+    "decision": "https://github.com/Jetnity/jetnity/pull/1177#issuecomment-6750777757"
+  },
+  "failedIntegration": {
+    "head": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "tree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+    "runId": "42671681106",
+    "runAttempt": 3,
+    "coreJobId": "129413233452"
+  },
+  "historicalManifest": {
+    "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+    "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+    "unchangedRows": 40,
+    "preservedHistoricalRows": 38
+  },
+  "reviewedMain": {
+    "head": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "tree": "c417811ff67248c4910bb2c5154bb51885d787eb"
+  },
+  "files": [
+    {
+      "path": "package-lock.json",
+      "historical": {
+        "bytes": 319637,
+        "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e"
+      },
+      "reviewed": {
+        "bytes": 320689,
+        "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+        "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353",
+        "mode": "100644"
+      },
+      "reason": "Preserve the exact existing main lockfile containing Leaflet 1.9.4, @types/leaflet 1.9.21 and its @types/geojson entry. R1 does not modify dependencies or this file."
+    },
+    {
+      "path": "package.json",
+      "historical": {
+        "bytes": 6330,
+        "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a"
+      },
+      "reviewed": {
+        "bytes": 6467,
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a",
+        "mode": "100644"
+      },
+      "reason": "Preserve the exact existing main package file containing the Omio archive script entry, Leaflet 1.9.4 and @types/leaflet 1.9.21. R1 does not modify this file or accept the external products."
+    }
+  ],
+  "boundary": "Exactly these two immutable main inputs amend the historical C1 guard. The historical manifest and all other 38 protected files remain pinned; no wildcard, runtime-selected baseline, skipped row, automatic repinning or product activation."
+}

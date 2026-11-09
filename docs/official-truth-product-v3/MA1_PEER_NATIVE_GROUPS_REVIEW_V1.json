@@ -1,0 +1,153 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "originalAuthor": "/root/v3_method_authority_writer",
+  "at": "2026-11-09T16:16:47.587463+00:00",
+  "scope": "Independent bounded source review of now-present actual-child restart/death IPC and rollback acceptance groups plus helper functions; source snapshots only, no complete native acceptance.",
+  "sourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/native.ts",
+      "sha256": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+      "bytes": 73663,
+      "lines": 937,
+      "currentSha256": "491b3799e056d97b60f12fced755b0809fc8b794dbcd7ebb8cb43aae77c37760",
+      "unchangedAtReviewEnd": false
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/process-worker.ts",
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "bytes": 5739,
+      "lines": 95,
+      "currentSha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880,
+      "lines": 220,
+      "currentSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/method-candidate.sql",
+      "sha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "bytes": 52632,
+      "lines": 656,
+      "currentSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/method-candidate.rollback.sql",
+      "sha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "bytes": 21567,
+      "lines": 224,
+      "currentSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "bytes": 6536,
+      "lines": 89,
+      "currentSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/fixtures.ts",
+      "sha256": "7791b89b2fa5ac3f7f1820053108ae6122c2862b0e211be04b7580a534daf6c3",
+      "bytes": 2046,
+      "lines": 30,
+      "currentSha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "unchangedAtReviewEnd": false
+    }
+  ],
+  "result": "ONE_CONCRETE_P2_LIFECYCLE_FINDING; remainder of inspected new groups has no additional concrete source defect",
+  "findings": [
+    {
+      "id": "MA1-NATIVE-GROUPS-P2-1",
+      "severity": "P2",
+      "status": "OPEN_AT_REVIEWED_SNAPSHOT",
+      "title": "Worker join cannot terminate after asynchronous spawn failure without an exit event",
+      "file": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "lines": [
+        244,
+        249,
+        263,
+        318,
+        331,
+        333,
+        336,
+        917,
+        922
+      ],
+      "sourceEvidence": "startWorker creates its terminal promise with only child.once(exit). The error listener calls stop, which latches fatal/closing, aborts pending controllers, rejects the command and attempts SIGKILL, but never settles that promise. join awaits exit before its try/finally cleanup; parent finally awaits worker.dispose before actor/lifetime drain.",
+      "failureSequence": "An asynchronous fork/spawn failure can emit error and close without exit. Its issue promise rejects, but dispose -> join waits forever for exit. The60s watchdog and parent lifetime abort both repeat stop without releasing this wait, so the parent cleanup cannot reach its finite drain/dispose sequence. An observed startup error must remain fatal, not be reported as a successful exit.",
+      "evidenceKind": "Source-derived failure-path analysis. No process was spawned, no event sequence was reproduced, and no native runtime claim is made.",
+      "requiredBoundedCorrection": "Account for actual terminal close and startup/error state in the owned child lifecycle. Preserve actual exit/code/SIGKILL evidence for successfully started children, abort and join pending read jobs, and release timer/listeners on failure. Do not synthesize an exit event or add an alternate executor/driver/connection seam.",
+      "notification": "Sent promptly to Root and same primary writer. Root owns formal adoption and gating."
+    }
+  ],
+  "reviewedAcceptancePaths": [
+    {
+      "area": "Actual child custody and restart",
+      "files": "native.ts789-819; process-worker.ts1-95; startWorker233-349",
+      "assessment": "A real fork runs the actual authority adapter and owns its receipt only in child memory. First positive requires a real parent SQL dispatch; serialized clone refuses. Parent awaits SIGKILL exit, joins jobs and checks both DB backends absent. A new generation has no retained receipt and performs a fresh real SQL resolve. No persisted/history ACK is reconstructed as authority."
+    },
+    {
+      "area": "Killed pending actual read",
+      "files": "native.ts805-818; startWorker251-308",
+      "assessment": "The parent holds a real head row lock, waits for the child-owned request to have actual native PID/birth, then independently observes exact SELECT, active Lock state, expected blocking PID and relevant relation while the command remains pending. killAndJoin aborts parent-owned controllers and joins native jobs before asserting active/read counts zero and checking both backend absences. This is source of the intended real CI proof, not an execution result."
+    },
+    {
+      "area": "Finite closed IPC",
+      "files": "native.ts225-316; process-worker.ts5-95",
+      "assessment": "Exact plain-object key sets, generation, increasing bounded IDs, fixed tuple,4 reads,1 command and4096byte frames are checked. Child receives no cluster/socket/SQL credentials, requests only fixed typed method reads, validates returned rows and resolves normal requests only after parent executor settlement. Errors remain fatal/unavailable; no provider/approval authority is created."
+    },
+    {
+      "area": "Fresh atomic-refusal snapshots",
+      "files": "native.ts184-223;822-881",
+      "assessment": "catalogSnapshot acquires a fresh owned connection and compares candidate schemas/relations/columns/constraints/functions/triggers/policies, reader rights/memberships and defaults before and after refusal. Changes are never accepted as install authority. applyRollback rolls back an aborted transaction and preserves cleanup errors."
+    },
+    {
+      "area": "Wrong marker, caller and connection shape",
+      "files": "native.ts827-843; rollback.sql4-17",
+      "assessment": "Actual wrong marker and wrong effective-owner SQL refusals preserve metadata. Foreign descriptor refusal occurs before acquisition, and the fixture positively checks actual local SQL connection shape. Per Root decision, this is honestly labeled and is not treated as a missing foreign/TCP/wrong-database execution test."
+    },
+    {
+      "area": "Rights, object and CHECK preservation",
+      "files": "native.ts844-865",
+      "assessment": "Both-direction unexpected reader membership, full table grant, column grant and extra object must refuse with exact changed catalog preserved via a fresh connection. The same-name heads_v1_shape CHECK(true) must refuse and retain its actual expression; only an explicit test-fixture repair follows preservation proof. SQL literal compatibility remains mandatory CI evidence."
+    },
+    {
+      "area": "RESTRICT dependency and successful empty removal",
+      "files": "native.ts866-881; rollback.sql206-224",
+      "assessment": "An external public FK creates a real dependency on revisions_v1. Candidate inventory excludes internal RI triggers, so the intended failure proceeds to RESTRICT rather than a trigger-count guard. It expects2BP01 and restoration of candidate metadata after earlier drops, confirms the external FK survives, then explicitly removes only the fixture dependency. Successful empty rollback must remove only MA1 schemas/reader and retain the two genuine logins plus the exact#1142 helper owner/ACL/body/config on a fresh connection."
+    },
+    {
+      "area": "Post-lock history preservation",
+      "files": "native.ts884-915; rollback.sql18-28",
+      "assessment": "The exact original rollback bytes are split only around the fixed three-table LOCK statement. A real staged revision/history transaction holds conflicting locks; exact PID/birth/query/blocker/relation observation precedes COMMIT. After all removal locks are acquired, the original suffix must refuseP7507. Fresh state verifies one revision and one operation, historical confirmation remains recorded without granting authority, and metadata remains unchanged. Finally releases mutator, joins pending lock and rolls back remover."
+    }
+  ],
+  "preservedBoundaries": [
+    "Existing candidate/rollback literals and shared pg-wire/local-cluster/OwnedTestLifetime are unchanged at the reviewed snapshot.",
+    "No actual hosted database/source/method/Owner approval is inferred.",
+    "No automatic follow-on task, publication, Ready or merge."
+  ],
+  "limitations": [
+    "This review did not execute Node/product imports, tests, child processes, SQL, PostgreSQL/native/socket/server/browser or network/hosted calls.",
+    "Source is still being integrated; source hashes are bound and rechecked, not a final published exact-head gate.",
+    "Some broad discovery output was truncated; the affected worker and rollback helper/group sections were subsequently read in exact bounded slices.",
+    "Actual native CI must still execute all claimed positive/negative controls and cleanups."
+  ],
+  "operations": "Read, source-copy, hash, textual diff and recovery receipt writes only. No author source/docs/index/refs or remote/database mutation.",
+  "next": "Same primary addresses the finite worker terminal-state defect; independently inspect its delta and then let Root gate frozen source and mandatory CI."
+}

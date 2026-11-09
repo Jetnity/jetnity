@@ -1,0 +1,69 @@
+Observed peer raw CI log: /workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log
+Observed SHA256: 7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b
+Root task separately cites raw-log SHA256 579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d; provenance difference reported to Root.
+No log normalization or rewrite occurred. The following are exact selected lines, with original line numbers.
+
+22115: 2026-11-09T16:31:34.3532951Z # Subtest: zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22116: 2026-11-09T16:31:34.3533442Z not ok 615 - zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22117: 2026-11-09T16:31:34.3533688Z   ---
+22118: 2026-11-09T16:31:34.3533833Z   duration_ms: 1657.826424
+22119: 2026-11-09T16:31:34.3533957Z   type: 'test'
+22120: 2026-11-09T16:31:34.3534701Z   location: '/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:2:46276'
+22121: 2026-11-09T16:31:34.3535057Z   failureType: 'testCodeFailure'
+22122: 2026-11-09T16:31:34.3536043Z   error: 'unexpected foundation consumer lib/readiness/official-truth-product-v3/method/authority-postgres.ts: official-truth-autonomous-provenance-artifact (ownRecord)'
+22123: 2026-11-09T16:31:34.3536194Z   code: 'ERR_ASSERTION'
+22124: 2026-11-09T16:31:34.3536349Z   name: 'AssertionError'
+22125: 2026-11-09T16:31:34.3536497Z   expected: true
+22126: 2026-11-09T16:31:34.3536631Z   actual: false
+22127: 2026-11-09T16:31:34.3536749Z   operator: '=='
+22128: 2026-11-09T16:31:34.3536893Z   stack: |-
+22129: 2026-11-09T16:31:34.3537646Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:505:22)
+22130: 2026-11-09T16:31:34.3538136Z     visitNode2 (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32449:18)
+22131: 2026-11-09T16:31:34.3538825Z     forEachChildInImportDeclaration (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32755:100)
+22132: 2026-11-09T16:31:34.3539396Z     Object.forEachChild (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32970:35)
+22133: 2026-11-09T16:31:34.3540143Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:509:14)
+22134: 2026-11-09T16:31:34.3540669Z     visitNodes (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32457:22)
+22135: 2026-11-09T16:31:34.3541290Z     forEachChildInSourceFile (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32670:12)
+22136: 2026-11-09T16:31:34.3541887Z     Object.forEachChild (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32970:35)
+22137: 2026-11-09T16:31:34.3542647Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:509:14)
+22138: 2026-11-09T16:31:34.3543510Z     scan (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:511:9)
+22139: 2026-11-09T16:31:34.3543656Z   ...
+22140: 2026-11-09T16:31:34.3544767Z # Subtest: explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures
+22141: 2026-11-09T16:31:34.3545754Z ok 616 - explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures
+22142: 2026-11-09T16:31:34.3545909Z   ---
+22143: 2026-11-09T16:31:34.3546075Z   duration_ms: 876.189508
+22144: 2026-11-09T16:31:34.3546226Z   type: 'test'
+22145: 2026-11-09T16:31:34.3546359Z   ...
+22146: 2026-11-09T16:31:34.3546844Z # Subtest: C16 global evaluation-date plan is required exactly for a dated category
+22147: 2026-11-09T16:31:34.3547299Z ok 617 - C16 global evaluation-date plan is required exactly for a dated category
+22148: 2026-11-09T16:31:34.3547445Z   ---
+22149: 2026-11-09T16:31:34.3547576Z   duration_ms: 12.006337
+22150: 2026-11-09T16:31:34.3547717Z   type: 'test'
+
+33801: 2026-11-09T16:40:17.7079238Z # Subtest: MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33802: 2026-11-09T16:40:17.7079863Z not ok 1670 - MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33803: 2026-11-09T16:40:17.7079991Z   ---
+33804: 2026-11-09T16:40:17.7080113Z   duration_ms: 682.019915
+33805: 2026-11-09T16:40:17.7080239Z   type: 'test'
+33806: 2026-11-09T16:40:17.7080806Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-method-authority-1/native.ts:33:9005'
+33807: 2026-11-09T16:40:17.7080972Z   failureType: 'testCodeFailure'
+33808: 2026-11-09T16:40:17.7081157Z   error: 'local_pg_duplicate_column'
+33809: 2026-11-09T16:40:17.7081309Z   code: 'duplicate_column'
+33810: 2026-11-09T16:40:17.7081439Z   stack: |-
+33811: 2026-11-09T16:40:17.7082101Z     LocalPgConnection.result (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:138:53)
+33812: 2026-11-09T16:40:17.7082461Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+33813: 2026-11-09T16:40:17.7083129Z     async LocalPgConnection.query (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:316:14)
+33814: 2026-11-09T16:40:17.7084045Z     async <anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts:50:27)
+33815: 2026-11-09T16:40:17.7084169Z   ...
+33816: 2026-11-09T16:40:17.7085053Z # MA1 owned lifetime terminal evidence: {"started":5,"settled":5,"pending":0,"connections":2,"closed":2,"stoppedClusters":1}
+
+62662: 2026-11-09T16:41:10.3603923Z # tests 8606
+62663: 2026-11-09T16:41:10.3604138Z # suites 969
+62664: 2026-11-09T16:41:10.3604350Z # pass 8602
+62665: 2026-11-09T16:41:10.3604579Z # fail 2
+62666: 2026-11-09T16:41:10.3604783Z # cancelled 0
+62667: 2026-11-09T16:41:10.3605195Z # skipped 2
+62668: 2026-11-09T16:41:10.3605424Z # todo 0
+62669: 2026-11-09T16:41:10.3605664Z # duration_ms 659762.650947
+62670: 2026-11-09T16:41:10.3612488Z ##[error]Process completed with exit code 1.
+

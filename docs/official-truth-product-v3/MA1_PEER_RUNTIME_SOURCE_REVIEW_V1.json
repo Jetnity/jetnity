@@ -1,0 +1,213 @@
+{
+  "schema": "ma1-early-runtime-source-review-v1",
+  "at": "2026-11-09T15:55:45.643776+00:00",
+  "reviewer": "/root/handoff_recovery_audit",
+  "actualRuntimeWriter": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "primaryWriter": "/root/v3_method_authority_writer",
+  "status": "NO_NEW_CONCRETE_ACTIONABLE_FINDING_IN_BOUND_RUNTIME_SOURCE_NOT_TL_PASS",
+  "scope": "Independent source-only reading of method contract, PostgreSQL authority adapter and offline test source against accepted MA1 TASK V1/PLAN V2, immutable Root vectors and child allocation. No runtime/module/test execution.",
+  "publicationStatus": "These runtime files are unpublished within ongoing MA1 implementation. Root reported scoped runtime freeze at15:50:58; native/whole-MA1 implementation is still in progress. This receipt binds file content, not a published Git implementation head.",
+  "snapshotsTakenAt": "2026-11-09T15:49:50.560330+00:00",
+  "initialManifest": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/snapshot-manifest.json",
+    "sha256": "85b2da4f3ee15ed90faf4abd0fa1c4c2cfa9671169d5d2c56a94945dbdf3a3ac",
+    "bytes": 2842,
+    "lines": 55
+  },
+  "runtimeSources": [
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/contract.ts",
+        "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+        "bytes": 10485,
+        "lines": 158
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/contract.ts",
+        "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+        "bytes": 10485,
+        "lines": 158
+      },
+      "unchangedDuringReview": true
+    },
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+        "bytes": 6696,
+        "lines": 104
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/authority-postgres.ts",
+        "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+        "bytes": 6696,
+        "lines": 104
+      },
+      "unchangedDuringReview": true
+    },
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+        "bytes": 32450,
+        "lines": 508
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/authority.test.ts",
+        "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+        "bytes": 32450,
+        "lines": 508
+      },
+      "unchangedDuringReview": true
+    }
+  ],
+  "sharedSupportSnapshots": [
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/contract.ts",
+        "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "bytes": 61555,
+        "lines": 1056
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/shared-v3-contract.ts",
+        "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "bytes": 61555,
+        "lines": 1056
+      }
+    },
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-autonomous-provenance-artifact.ts",
+        "sha256": "1bdf271bf078d1c46fbc0f510789129e361bfdabce7cdd6e03a27a21071f323b",
+        "bytes": 9517,
+        "lines": 179
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/shared-own-record.ts",
+        "sha256": "1bdf271bf078d1c46fbc0f510789129e361bfdabce7cdd6e03a27a21071f323b",
+        "bytes": 9517,
+        "lines": 179
+      }
+    },
+    {
+      "source": {
+        "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/regulierungs-anwendbarkeit.ts",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "bytes": 108170,
+        "lines": 2479
+      },
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/shared-regulierungs-anwendbarkeit.ts",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "bytes": 108170,
+        "lines": 2479
+      }
+    }
+  ],
+  "planAndTask": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/MA1_PLAN_V2.md",
+      "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+      "bytes": 55990,
+      "lines": 321
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/MA1_TASK_V1.md",
+      "sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4",
+      "bytes": 18897,
+      "lines": 87
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/MA1_IMPLEMENTATION_SUBTASKS_V1.md",
+      "sha256": "9d76ffedd9a720a24dabf09fb3f71c55c94ac54aa2bf69ccefd618d62bfdc298",
+      "bytes": 3244,
+      "lines": 23
+    }
+  ],
+  "rootLiteralReference": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-runtime-source-v1/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+    "sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+    "bytes": 9378,
+    "lines": 122
+  },
+  "findings": [],
+  "knownFixedIssueNotReopened": {
+    "issue": "Root R1 malformed positive finite remaining interval",
+    "source": "contract.ts:95,141-150; authority-postgres.ts:59",
+    "observation": "checkedAt is mandatory, canonical and supplied from the actual request. A positive finite remaining_ms cannot exceed either expiry-minus-formatted-observation or expiry-minus-checkedAt. These comparisons only refuse inconsistent rows; the TTL continues to use the SQL-provided independently floored remaining_ms.",
+    "focusedTestSource": "authority.test.ts:229-239,336-350 contains impossible-duration/request-expired negatives plus the distinction between SQL remainder999 and rounded formatted interval1000. Tests were inspected, not run by this reviewer."
+  },
+  "sourceAssessments": [
+    {
+      "area": "Method/package identity",
+      "source": "contract.ts:44-85; shared-v3-contract.ts:89-105,423-443",
+      "assessment": "The existing shared method draft reader performs admission and detached parsing before unchanged canonical hashing. The returned method document is still DRAFT/NOT_APPROVED. Package bytes use a bounded actual typed-array copy, exact raw SHA256 and expected code-owned checksum; no file discovery, generic policy parser or approval is inferred. Final binding is detached/frozen scalar data.",
+      "evidence": "Root vector artifact hash790ecbbf… is unchanged. Test source contains three independent literal method/package digest pairs and raw newline/status/property-order distinctions."
+    },
+    {
+      "area": "Closed request/result protocol",
+      "source": "contract.ts:76-157; authority-postgres.ts:37-65",
+      "assessment": "The sole fixed request admits only the configured tuple and canonical checkedAt. One plain wire row is required with exactly ten own data keys, bounded string-or-null cells, finite canonical integer spellings and status-dependent tuple/epoch/mode checks. Invalid envelopes, rows and private errors produce unavailable. No new port parameters or product-selected SQL/role/target are introduced."
+    },
+    {
+      "area": "Opaque same-instance receipt custody",
+      "source": "authority-postgres.ts:21-29,68-87",
+      "assessment": "Receipts are frozen empty objects authenticated solely by the factory-local WeakMap. Copying/serialization/foreign instances cannot create entries. Metadata retains only fixed binding, epoch, bounded observation and deadline. No strong receipt Set, package body, per-receipt timer or persisted bearer token was introduced.",
+      "testSource": "authority.test.ts:243-295 distinguishes fresh reads, detached factory input, bad custody and foreign/serialized/clone receipts."
+    },
+    {
+      "area": "Original resolve cap and monotone reproof horizon",
+      "source": "authority-postgres.ts:69-101",
+      "assessment": "Start is captured before validation/dispatch. Positive resolve uses min(originalStart+5000, originalStart+remainingMs) and checks again after executor settlement. Reproof reads and mutates the same current Held object after await, setting min(latestHeldDeadline, reproofStart+5000, reproofStart+freshRemainingMs) before final checks without another await. Same-epoch expiry stores a consumed deadline. Later or earlier-started overlapping larger observations cannot extend it.",
+      "testSource": "authority.test.ts:355-439 covers response delay consuming validity, timer-independent positive cutoff, unchanged original cap, shorter still-valid horizon, same-epoch expiry and the earlier-started/larger-result overlap case using two deferred executor responses."
+    },
+    {
+      "area": "Status/epoch outcomes",
+      "source": "contract.ts:105-156; authority-postgres.ts:73-101",
+      "assessment": "Positive rows require exact fixed tuple, nonterminal positive epoch and valid mode/duration. Absent/draft/revoked/expired resolve nonpositive; binding mismatch is unavailable. Changed epoch or selected revision/revoke prevents current reproof. Same-epoch finite expiry consumes local custody. Current is only an observation and cannot serve as a later separate transaction publication grant."
+    },
+    {
+      "area": "Four slots and actual executor settlement contract",
+      "source": "authority-postgres.ts:14-19,47-65,83-101",
+      "assessment": "Capacity is checked synchronously before dispatch, capped at four per adapter with no pending admission queue. The abort timer requests cancellation but does not race/detach the read promise. The slot and timer remain owned until the executor promise and result decoding settle; positive resolve/reproof then checks actual monotonic time and abort. No absolute wall-time guarantee can be derived for a noncompliant executor.",
+      "testSource": "authority.test.ts:443-497 holds four promises unsettled across timer abort, refuses fifth calls, then reuses only settled slots. It also distinguishes settled rejection and reproof deadlines. This is adapter-control evidence only, not proof that real database acquisition/cancellation/drain occurred."
+    },
+    {
+      "area": "Unchanged shared port and activation boundaries",
+      "source": "shared-v3-contract.ts:446-461; authority-postgres.ts:5,27",
+      "assessment": "The same V3MethodAuthorityPort signature has no AbortSignal; the adapter owns its internal signal. Existing global bindings remain null/NOT_APPROVED in the unchanged shared source. No Source/Accepted/cache/production authority was added."
+    }
+  ],
+  "preciseLimits": [
+    "This review executed no product code, tests, SQL, native runner, server, socket, database or network call.",
+    "Offline authority.test.ts uses synthetic rows, deferred promises, controlled monotonic time and mock timers. Those meaningful cases can validate adapter decisions, but cannot establish real SQL roles, locks, startup, PID+birth cancellation, target/control disappearance or per-call resource cleanup.",
+    "The actual native executor remains responsible for finite owned acquisition/abort/join, shared fixture admission, poison propagation to already active work, real target/control backend absence and fail-closed cleanup. It is not validated by these three runtime files or their fakes.",
+    "An approved/current read is preliminary. Actual later publication requires the separate owner-only post-all-waits method/proof/time transaction boundary; no complete M03/M04/Accepted composition is claimed.",
+    "Receipt lifetime is technical custody and remains distinct from one-time until_revoked/explicit-until method approval. No public p95, caller cancellation or longer U1/I1 budget is claimed.",
+    "Package checksum and a successful shared draft read do not prove package completeness, real method approval, source freshness or Dev target evidence.",
+    "No final native/whole-MA1 or current-main integration verdict is provided. Every later changed source/head requires its relevant renewed review/gates."
+  ],
+  "rootReportedSeparateEvidence": {
+    "attribution": "Parent Root message; not repeated or independently executed here",
+    "runtimeFreezeReportedAt": "2026-11-09T15:50:58Z",
+    "offlineSelection": "9 named files, exit0,270pass,0skip",
+    "offlineLogSha256": "390df13c69122bca4472b94305aca5a558c2ec150b314573ed448fc203423b1e",
+    "note": "The source hashes in this receipt independently match the runtime files Root reported. The guard21-line delta, child artifact manifest, and all30/all20 hash validation are Root evidence outside this bounded source review."
+  },
+  "excludedAlreadyAssignedFinding": "SQL CHECK-definition P2 belongs to the primary writer and is not duplicated or closed by this runtime review.",
+  "operations": {
+    "sourceEdits": false,
+    "repositoryDocsEdits": false,
+    "gitReadsOrFetches": false,
+    "testsOrRuntimeImports": false,
+    "sqlNativeServerSocket": false,
+    "databaseHostedNetwork": false,
+    "readyMerge": false,
+    "scratchOnly": [
+      "Immutable source/document snapshot copies",
+      "Text/JSON source reading and content hashing",
+      "This review receipt"
+    ]
+  }
+}

@@ -130,11 +130,11 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
     acceptedRoot + 'required-tests/*.test.ts', '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])
   const workflow = read('.github/workflows/ci.yml')
   assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)
-  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native\]/)
+  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui\]/)
   assert.match(workflow, /REFRESH_NATIVE_RESULT: \$\{\{ needs.refresh_native.result \}\}/)
   assert.match(workflow, /"\$REFRESH_NATIVE_RESULT" != "success"/)
   assert.match(workflow, /if: \$\{\{ always\(\) \}\}/)
-  const accepted = workflow.match(/^  accepted_store_native:\n([\s\S]*?)(?=^  required_verify:)/m)?.[0]
+  const accepted = workflow.match(/^  accepted_store_native:\n([\s\S]*?)(?=^  official_truth_v3_ui:)/m)?.[0]
   assert.ok(accepted)
   assert.match(accepted, /runs-on: ubuntu-latest/)
   assert.match(accepted, /timeout-minutes: 20/)
@@ -155,7 +155,8 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
   const aggregate = workflow.match(/^  required_verify:\n([\s\S]*?)(?=^  auth-konfiguration:)/m)?.[0]
   assert.ok(aggregate)
   for (const [name, family] of [['CORE_RESULT', 'verify'], ['PERSISTED_NATIVE_RESULT', 'persisted_native'],
-    ['REFRESH_NATIVE_RESULT', 'refresh_native'], ['ACCEPTED_STORE_NATIVE_RESULT', 'accepted_store_native']]) {
+    ['REFRESH_NATIVE_RESULT', 'refresh_native'], ['ACCEPTED_STORE_NATIVE_RESULT', 'accepted_store_native'],
+    ['OFFICIAL_TRUTH_V3_UI_RESULT', 'official_truth_v3_ui']]) {
     assert.ok(aggregate.includes(name + ': ${{ needs.' + family + '.result }}'))
     assert.ok(aggregate.includes('"$' + name + '" != "success"'))
   }

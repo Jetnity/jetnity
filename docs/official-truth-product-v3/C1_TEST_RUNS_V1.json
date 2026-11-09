@@ -1,0 +1,670 @@
+{
+  "schema": "c1-writer-test-runs-v1",
+  "sourceManifest": "C1_SOURCE_MANIFEST_V1.json",
+  "sourceManifestSha256": "bf0841829017aa8b4c3c931df9192e562c7f44a7b64d23cc774b571fc6e6e10e",
+  "workspace": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions",
+  "node": {
+    "path": "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+    "version": "v22.23.4"
+  },
+  "rawLogsPersistedInWorkspace": true,
+  "allAttemptsRetained": true,
+  "nativeAndActualBrowserExecutedLocally": false,
+  "finalGuardSha256": "37c1353d471cf2c5c305b7c806f7ce6abf1dc29a0494ed341b5a61aed9cfed7c",
+  "finalSourceRuns": [
+    25,
+    26,
+    27,
+    28
+  ],
+  "offlineSelection": {
+    "included": [
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+    ],
+    "excludedNativeNeverRunLocally": [
+      "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts"
+    ]
+  },
+  "runs": [
+    {
+      "name": "01-contract-mapper",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 2.337,
+      "log": ".next/c1-evidence/01-contract-mapper.log",
+      "sha256": "f6634fe38d11a62ec8de0e737b5bf0c737112767cd38b434b05bb808202cbd04",
+      "tapSummary": {
+        "tests": 85,
+        "suites": 10,
+        "pass": 85,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "02-typecheck-carrier",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/npm/bin/npm-cli.js",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 1,
+      "seconds": 0.047,
+      "log": ".next/c1-evidence/02-typecheck-carrier.log",
+      "sha256": "fdbc679f6b092a933953892321ba884c63b6b92f7f2989aa5a900a076f0efc3a"
+    },
+    {
+      "name": "03-typecheck-carrier",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 2,
+      "seconds": 33.998,
+      "log": ".next/c1-evidence/03-typecheck-carrier.log",
+      "sha256": "435cb2244917d15c0489cbede33195a647dd521606c5fe1d32c88e2af2116fe6"
+    },
+    {
+      "name": "04-carrier-retention",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 3.17,
+      "log": ".next/c1-evidence/04-carrier-retention.log",
+      "sha256": "a47f2ba5a6ea086ba6e3d57e5aa78563d7d0d130bd5e42dd2fdf1495b79140ae",
+      "tapSummary": {
+        "tests": 92,
+        "suites": 10,
+        "pass": 92,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "05-typecheck-carrier",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 11.531,
+      "log": ".next/c1-evidence/05-typecheck-carrier.log",
+      "sha256": "4602be62b916e5222a02da6b5256e1ae1390ae078fdbc3eef4a73bdfe14b2677"
+    },
+    {
+      "name": "06-composition-visitor",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.788,
+      "log": ".next/c1-evidence/06-composition-visitor.log",
+      "sha256": "1e54fcfd8012464ed1ef068b583f07c2685be9ba22d7764fd9f538348f356151",
+      "tapSummary": {
+        "tests": 55,
+        "suites": 6,
+        "pass": 55,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "07-typecheck-native-source",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 7.593,
+      "log": ".next/c1-evidence/07-typecheck-native-source.log",
+      "sha256": "411e86e9cfd0c11ce1109aa4d1848625a7ea1fdc9b19d0e9dad56cacc5b22ff2"
+    },
+    {
+      "name": "08-independent-fixture-offline",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 2.008,
+      "log": ".next/c1-evidence/08-independent-fixture-offline.log",
+      "sha256": "2339bc3abb4b05bcb504e14e94817d1a422d843f4cd46b4126a500aba236aeb5",
+      "tapSummary": {
+        "tests": 23,
+        "suites": 1,
+        "pass": 23,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "09-relevant-offline",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 1,
+      "seconds": 7.284,
+      "log": ".next/c1-evidence/09-relevant-offline.log",
+      "sha256": "5c311e7335b5288585c11d42a6678360c4aeb3fe38d1b96326f48c10db81d891",
+      "tapSummary": {
+        "tests": 434,
+        "suites": 30,
+        "pass": 433,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "10-scoped-lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+        "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+        "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "scripts/official-truth-product-v3-ui/mount.tsx",
+        "scripts/official-truth-product-v3-ui/run.mjs",
+        "scripts/official-truth-product-v3-ui/synthetic-server.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 4.437,
+      "log": ".next/c1-evidence/10-scoped-lint.log",
+      "sha256": "34f6d8cd193d6f8eda75957984e67011a3bdfab6383d950dbaa6bc473cf10640"
+    },
+    {
+      "name": "11-check-dead",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:dead"
+      ],
+      "exitCode": 0,
+      "seconds": 1.118,
+      "log": ".next/c1-evidence/11-check-dead.log",
+      "sha256": "9e8b80ac93aa83b9f993a9f94ff31467f987f4c12b604f0f5754b29c8b038326"
+    },
+    {
+      "name": "12-check-exports",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:exports"
+      ],
+      "exitCode": 1,
+      "seconds": 10.645,
+      "log": ".next/c1-evidence/12-check-exports.log",
+      "sha256": "bf259761d72d699e30a911c48ea16746a1cd8b876a6e0ca63fb833e55da6ee36"
+    },
+    {
+      "name": "13-check-deps",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:deps"
+      ],
+      "exitCode": 0,
+      "seconds": 0.638,
+      "log": ".next/c1-evidence/13-check-deps.log",
+      "sha256": "602ef3bfa6b3d1ef119826289007837b8b3df8b1c312463ce7078b5b54cd4d9e"
+    },
+    {
+      "name": "14-check-api-schutz",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:api-schutz"
+      ],
+      "exitCode": 0,
+      "seconds": 0.277,
+      "log": ".next/c1-evidence/14-check-api-schutz.log",
+      "sha256": "af13cf70e99aad4e4199e1194aed42b369599cef7f826ace426e9284ef832dc2"
+    },
+    {
+      "name": "15-check-schema-bezug",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:schema-bezug"
+      ],
+      "exitCode": 0,
+      "seconds": 0.375,
+      "log": ".next/c1-evidence/15-check-schema-bezug.log",
+      "sha256": "83d5f3b1834a0e719462a688b6915228f5e51bbef0aca74eabedec312afb7943"
+    },
+    {
+      "name": "16-check-exports-fixed",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:exports"
+      ],
+      "exitCode": 0,
+      "seconds": 10.45,
+      "log": ".next/c1-evidence/16-check-exports-fixed.log",
+      "sha256": "7c0ad4c47aff1b0d538d3dc80565225e44b9a13e79bf0d5c4c5140374db8828b"
+    },
+    {
+      "name": "17-relevant-offline-guard-fixed",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 9.743,
+      "log": ".next/c1-evidence/17-relevant-offline-guard-fixed.log",
+      "sha256": "94cbbae7f2c5453d19c6f4fcdf8662bd769ec581693e5b245984ac2ec70a4b38",
+      "tapSummary": {
+        "tests": 436,
+        "suites": 30,
+        "pass": 436,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "18-typecheck-final-source",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 11.933,
+      "log": ".next/c1-evidence/18-typecheck-final-source.log",
+      "sha256": "3bcca6b530039d9692968cd68a00104449279580fd90a0f177a1431f470dec03"
+    },
+    {
+      "name": "19-lint-final-source",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+        "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+        "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "scripts/official-truth-product-v3-ui/mount.tsx",
+        "scripts/official-truth-product-v3-ui/run.mjs",
+        "scripts/official-truth-product-v3-ui/synthetic-server.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 6.129,
+      "log": ".next/c1-evidence/19-lint-final-source.log",
+      "sha256": "226b623d1e00c45c22605130db57b3e0c98a0e874e4481f603898c69692957ec"
+    },
+    {
+      "name": "20-check-exports-final",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:exports"
+      ],
+      "exitCode": 0,
+      "seconds": 9.676,
+      "log": ".next/c1-evidence/20-check-exports-final.log",
+      "sha256": "a9bc351646da6d49f32fdd7f6d1835e8ec3811950ba249df60a0356d0b17fffa"
+    },
+    {
+      "name": "21-relevant-offline-frozen-guard",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 8.27,
+      "log": ".next/c1-evidence/21-relevant-offline-frozen-guard.log",
+      "sha256": "f8a6d2847fed1640724db534ca48d0b8e4ac6889d75e222de4d8a4a6b3e506da",
+      "tapSummary": {
+        "tests": 436,
+        "suites": 30,
+        "pass": 436,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "22-typecheck-frozen-guard",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 8.871,
+      "log": ".next/c1-evidence/22-typecheck-frozen-guard.log",
+      "sha256": "5cddffc3fb1f752386774b58a54f995449dc2709af83d94a7bac2eb70e019336"
+    },
+    {
+      "name": "23-lint-frozen-guard",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+        "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+        "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "scripts/official-truth-product-v3-ui/mount.tsx",
+        "scripts/official-truth-product-v3-ui/run.mjs",
+        "scripts/official-truth-product-v3-ui/synthetic-server.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 5.399,
+      "log": ".next/c1-evidence/23-lint-frozen-guard.log",
+      "sha256": "5b7547513ddb5fbaa7b0be23938c584f500e6ac93185d9234c9018b13bc9a7b9"
+    },
+    {
+      "name": "24-check-exports-frozen-guard",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:exports"
+      ],
+      "exitCode": 0,
+      "seconds": 8.876,
+      "log": ".next/c1-evidence/24-check-exports-frozen-guard.log",
+      "sha256": "4f166561cea5a76260190d1762010c755c5cac858cbbc53f5460aaf0d48396a9"
+    },
+    {
+      "name": "25-relevant-offline-p2-r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+        "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+        "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 8.462,
+      "log": ".next/c1-evidence/25-relevant-offline-p2-r2.log",
+      "sha256": "ec60071b20f5cc12230b8e2670d9bfb0fe5c894fe8eb5385870cd49cf552738b",
+      "tapSummary": {
+        "tests": 437,
+        "suites": 30,
+        "pass": 437,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "26-typecheck-p2-r2",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 9.28,
+      "log": ".next/c1-evidence/26-typecheck-p2-r2.log",
+      "sha256": "44dfd4a73c19e1da0b80f40b0082f7cb4ea1fb6b3c9b749d4f2504d85015c17c"
+    },
+    {
+      "name": "27-lint-p2-r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+        "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+        "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+        "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+        "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "scripts/official-truth-product-v3-ui/mount.tsx",
+        "scripts/official-truth-product-v3-ui/run.mjs",
+        "scripts/official-truth-product-v3-ui/synthetic-server.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 5.209,
+      "log": ".next/c1-evidence/27-lint-p2-r2.log",
+      "sha256": "5b7547513ddb5fbaa7b0be23938c584f500e6ac93185d9234c9018b13bc9a7b9"
+    },
+    {
+      "name": "28-check-exports-p2-r2",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+        "run",
+        "check:exports"
+      ],
+      "exitCode": 0,
+      "seconds": 8.95,
+      "log": ".next/c1-evidence/28-check-exports-p2-r2.log",
+      "sha256": "723d2ac27b2ef34b718edb27ddc0caf3a3c2affbe81ad434b1facaf7c5317244"
+    }
+  ],
+  "supersededWriterGates": {
+    "runs": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "reason": "Final TASK V2 and P2-R2 guard-only revisions; earlier actual passing results retained but not treated as current source acceptance."
+  },
+  "supersedesTestRunManifestSha256": "4d1a6a13b38ba1837bf9c3e060c6931a2a2361edf4b7ab962e096a027505ac40"
+}

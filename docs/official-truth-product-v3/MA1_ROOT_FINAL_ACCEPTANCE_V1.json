@@ -1,0 +1,252 @@
+{
+  "schema": "jetnity.ma1.root-final-acceptance.v1",
+  "reviewer": "/root / Technical Lead",
+  "at": "2026-11-09 17:46:30 UTC",
+  "decision": "PASS — bounded dormant code/native/isolated-UI scope",
+  "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "ci": {
+    "runId": 42663861884,
+    "attempt": 1,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 129322189331,
+        "name": "Repository verification",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189431,
+        "name": "Official truth V3 — isolated UI",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189644,
+        "name": "Accepted store trip integration — native (store)",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189663,
+        "name": "Persisted canonical read — native",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189721,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189813,
+        "name": "Atomic version refresh — native",
+        "conclusion": "success"
+      },
+      {
+        "id": 129322189968,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "conclusion": "success"
+      },
+      {
+        "id": 129332855604,
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "core": {
+    "tests": 8621,
+    "suites": 969,
+    "pass": 8619,
+    "fail": 0,
+    "cancelled": 0,
+    "inheritedSkips": 2
+  },
+  "ma1Native": {
+    "children": 14,
+    "passed": 14,
+    "parentPassed": true,
+    "cleanup": {
+      "started": 1562,
+      "settled": 1562,
+      "pending": 0,
+      "connections": 229,
+      "closed": 229,
+      "stoppedClusters": 8
+    }
+  },
+  "evidence": [
+    {
+      "label": "corePeer",
+      "path": "recovery/ma1-ci-r2-peer/independent-review.json",
+      "sha256": "2504449f62b06af9bc36b5a0e532d3889f46f1527716200f0d2a1ff09bcd9be7",
+      "bytes": 20683
+    },
+    {
+      "label": "coreRoot",
+      "path": "recovery/ma1-ci-r2-peer/root-core-native-review-v1.json",
+      "sha256": "358b4a67254ae99b679686cc8551229b83520dce6b3a3e98819970dee0cb0897",
+      "bytes": 8571
+    },
+    {
+      "label": "releasePeer",
+      "path": "recovery/ma1-release-gating-845a118/release-gate-review-v1.json",
+      "sha256": "9537561804f4e830c3fa3d73a308eefa445abe082aede95f8c898d553ca51700",
+      "bytes": 15305
+    },
+    {
+      "label": "uiRoot",
+      "path": "recovery/ma1-release-gating-845a118/root-isolated-ui-review-v1.json",
+      "sha256": "eb9a2230c83d8682cfd00857b486c8f1fea559be3da8e12903acd3464af84cbe",
+      "bytes": 5918
+    },
+    {
+      "label": "scopeRoot",
+      "path": "recovery/ma1-r2-publication/root-complete-scope.json",
+      "sha256": "b1e6ad6b6c5f611b2a33525ee4d5cad145a3672d2743828139fb4b7e97e20aba",
+      "bytes": 1003
+    }
+  ],
+  "otherNativeGates": [
+    {
+      "name": "persisted",
+      "job": 129322189663,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "rawLogSha256": "b632677f423ef4374c39e1efc495b544041755f48b763c2aed59a1582206c298",
+      "bytes": 156135,
+      "rootInspectedActualSemanticAndCleanupDiagnostics": true
+    },
+    {
+      "name": "store",
+      "job": 129322189644,
+      "counts": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "rawLogSha256": "0d541567dca78d7bc2dfec49ce3a9b01bcf8bf1c4d4240331b95b5733c3ae7b8",
+      "bytes": 134277,
+      "rootInspectedActualSemanticAndCleanupDiagnostics": true
+    },
+    {
+      "name": "lifecycle",
+      "job": 129322189968,
+      "counts": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "rawLogSha256": "68959f240f9b2bf07051923e36cd4e9750f1009bbdf047ae2df7f6391f10a1bc",
+      "bytes": 175506,
+      "rootInspectedActualSemanticAndCleanupDiagnostics": true
+    },
+    {
+      "name": "atomic",
+      "job": 129322189813,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "rawLogSha256": "9adf949f830eabb126ac07c1b03c5073c355583d086290a0ad12a3ca5532a80c",
+      "bytes": 183492,
+      "rootInspectedActualSemanticAndCleanupDiagnostics": true
+    }
+  ],
+  "atomicTerminal": {
+    "schema": "official-truth-atomic-version-refresh-1",
+    "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+    "elapsedMs": 1039105,
+    "cleanup": {
+      "started": 11029,
+      "settled": 11029,
+      "pending": 0,
+      "connections": 248,
+      "closed": 248,
+      "stoppedClusters": 11
+    },
+    "parentAborted": false
+  },
+  "workingTreeClean": true,
+  "isolatedUi": {
+    "testsPassed": 50,
+    "layouts": 12,
+    "interactions": 11,
+    "screenshots": 10,
+    "errors": 0,
+    "externalRequests": 0,
+    "artifactId": 13694728421,
+    "artifactSha256": "304f7f9b0860aba08600e073dd0f901047fcc678b76f13082af23e04790f3202",
+    "freshVisualInspection": false,
+    "syntheticP95Ms": 7.615364,
+    "publicSloVerified": false
+  },
+  "preview": {
+    "id": "dpl_DMMpoJypAnMupkVVomoGoYFGHz9X",
+    "readyState": "READY",
+    "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  },
+  "sourceScope": {
+    "prPaths": 179,
+    "allRemoteLocalBlobsMatch": true,
+    "r2SourceBytesDeleted": 2,
+    "r2NoOtherImplementationChanges": true
+  },
+  "unresolvedGitHubThreads": 0,
+  "closedObservedDefects": [
+    "R1 exact finite foundation ownRecord consumers",
+    "R1 aliased native observer columns; strict duplicate-column driver unchanged",
+    "R2 source-owned operations CHECK literal transcription in candidate and rollback"
+  ],
+  "preservedFailedRuns": [
+    42654936800,
+    42659466404
+  ],
+  "main": {
+    "sha": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "runId": 42663958375,
+    "conclusion": "success"
+  },
+  "decisionBoundaries": {
+    "ready": false,
+    "merged": false,
+    "currentMainIntegration": "P2 OPEN; explicit separately issued scope required",
+    "method": "NOT_APPROVED",
+    "devPackage": "NOT_RELEASE_READY",
+    "preOwnerGaps": 17,
+    "sql": "UNAPPLIED",
+    "hostedProof": "NOT_CLAIMED",
+    "authCi": "metadata only; not target truth",
+    "protectedFinalSeam": "synthetic marker; actual Accepted publication integration remains open",
+    "productionActivation": false,
+    "publicAnswer": false
+  },
+  "risks": {
+    "P0": "No new observed bounded-scope finding; no blanket security or launch PASS.",
+    "P1": "Existing #1139 effective target fix/readback/QA/recovery and #968 isolation gates remain; no verified regular path for the specific refused #917 scope.",
+    "P2": "Current-main integration and existing #911/#913 privacy remain outside this accepted component.",
+    "P3": "Actual public performance/operational delivery remains unproven; synthetic p95 is not public SLO."
+  },
+  "receiptAssemblyAttempts": [
+    {
+      "exit": 1,
+      "result": "Root receipt parser encountered an unrelated non-JSON diagnostic beginning '# {'; no final receipt written and no source/test/CI outcome changed."
+    },
+    {
+      "exit": 0,
+      "result": "Corrected evidence parser selects the single exact terminal diagnostic; all immutable hashes, TAP counts and current clean source verified."
+    }
+  ],
+  "firstUnfinishedStep": "Root may issue bounded current-main integration against freshly bound d7e27f5 and this accepted tip; no automatic further product slice or Owner activation."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "ma1-root-native-child-terminal-review-v1",
+  "at": "2026-11-09T16:17:00.345866+00:00",
+  "reviewer": "/root Technical Lead",
+  "status": "CHANGES_REQUIRED",
+  "finding": "MA1-NATIVE-P2-4",
+  "severity": "P2",
+  "actualAuthor": "/root/v3_method_authority_writer",
+  "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+  "sourceSha256": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+  "preservedSnapshot": "docs/official-truth-product-v3/ma1-review-evidence/native-before-child-terminal-r1.ts.txt",
+  "cause": "exit-only worker join can remain unresolved on asynchronous spawn failure with error/close but no exit; parent awaits dispose before lifetime finalization, so watchdog merely repeats stop.",
+  "primaryReference": "https://nodejs.org/api/child_process.html#event-close",
+  "referenceScope": "Root read current official close/error/exit/spawn documentation. Version-specific22 archived URLs were inaccessible; no archived-content success claim. Local Node package version is22.23.4.",
+  "correction": "Actual close terminal + separately observed spawn/exit; retain genuine successful-child SIGKILL/exit0 assertions, abort and join pending reads, clear timers/listeners after terminal accounting. No synthetic exit or detached early return.",
+  "executed": {
+    "native": false,
+    "postgres": false,
+    "childSpawn": false,
+    "hosted": false
+  },
+  "remaining": "Same-session source correction, independently inspect final source and required gates, then actual mandatory native CI."
+}

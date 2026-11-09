@@ -1,0 +1,215 @@
+{
+  "schema": "jetnity.ma1.peer-isolated-ui-gate.v1",
+  "reviewer": "/root/ma1_release_gating",
+  "at": "2026-11-09T16:32:39.669709+00:00",
+  "scope": "Actual isolated UI CI evidence for b7d2471; no native MA1 acceptance or production/source correctness claim",
+  "runId": 42654936800,
+  "attempt": 1,
+  "jobId": 129290778833,
+  "jobConclusion": "success",
+  "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "checkout": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+  "checkoutTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "checkoutParents": [
+    "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "b7d247145c27f31fed1e42f2764e9ec91b558a87"
+  ],
+  "expectedTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "checkoutTreeMatchesHead": true,
+  "rawLog": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/ui-job-129290778833-raw.txt",
+    "sha256": "4e7258c5f9d522f567547d8f9f5a58266d50d15b9334461e609c042736250bb9"
+  },
+  "unitSelection": {
+    "tests": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifact": {
+    "artifactId": 13692340239,
+    "zipSha256": "7a786f33655fe24daacff16ba4520473d4b3238b926f64ffa159c0563fa44819",
+    "zipBytes": 3740736,
+    "zipPath": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/ui-artifact-13692340239.zip",
+    "extractedDirectory": "/workspace/scratch/01cbe1264212/recovery/ma1-release-gating-b7d2471/ui-artifact",
+    "files": [
+      {
+        "path": "application-320-text200.png",
+        "bytes": 562618,
+        "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55"
+      },
+      {
+        "path": "application-320.png",
+        "bytes": 324576,
+        "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad"
+      },
+      {
+        "path": "audit.json",
+        "bytes": 21034,
+        "sha256": "7cac35507683e40ddf7df181ee7615c46e7a1889da8871fef6f1004358cb9888"
+      },
+      {
+        "path": "benchmark.json",
+        "bytes": 655,
+        "sha256": "682479035d78691b48ca67b0a6a519c2789dfb4782c15a3706d125df4f8e52ec"
+      },
+      {
+        "path": "bundle-inputs.json",
+        "bytes": 1183,
+        "sha256": "ea4b8712459e9cd1c4eb11d3677e38c33876d3c820ef3a934d5c9f5d69ceef3e"
+      },
+      {
+        "path": "http-smoke.json",
+        "bytes": 1310,
+        "sha256": "e609bdcf134247d6186beeebe336c58af47c5a1deed3ffe4cc709274b8efde97"
+      },
+      {
+        "path": "conflict-320.png",
+        "bytes": 284135,
+        "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+      },
+      {
+        "path": "loading-320.png",
+        "bytes": 255951,
+        "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+      },
+      {
+        "path": "mixed-1280.png",
+        "bytes": 416617,
+        "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+      },
+      {
+        "path": "mixed-280.png",
+        "bytes": 349662,
+        "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8"
+      },
+      {
+        "path": "mixed-320-text200.png",
+        "bytes": 620516,
+        "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+      },
+      {
+        "path": "mixed-390.png",
+        "bytes": 365462,
+        "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+      },
+      {
+        "path": "poll-accepted-390.png",
+        "bytes": 333176,
+        "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+      },
+      {
+        "path": "poll-pending-390.png",
+        "bytes": 302917,
+        "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+      },
+      {
+        "path": "run-binding.json",
+        "bytes": 412,
+        "sha256": "bf3d80a7412b0c79bb98389d6e5896159465dbb056dede94446b1445d59146ae"
+      }
+    ]
+  },
+  "binding": {
+    "checkedOutHead": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+    "sourceHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "worktreeDirty": false,
+    "githubSha": "d1caa8eebc8b96ccd43c1face025874f3d5633ce",
+    "runId": "42654936800",
+    "runAttempt": "1",
+    "event": "pull_request"
+  },
+  "fiveJsonBindingsMatch": true,
+  "layouts": 12,
+  "layoutOverflow": 0,
+  "controlsUnder44px": 0,
+  "interactions": [
+    "Empty form stays disabled; keyboard reaches test selector then destination",
+    "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+    "Conflict suppresses positive rule and source link",
+    "Cache read failure remains error; no fake pending or raw failure",
+    "Unbound production seam is honest unavailable",
+    "Transport failure has a focused, retryable error state",
+    "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+    "Multiple context statements are displayed fully without choosing a best credential",
+    "Synthetic tourism restriction retains passport/origin/direct route and inclusive trip start/end window at 320px and 200% text through actual query/reproof",
+    "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+    "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "allTenPngHashesMatchAudit": true,
+  "c1r3ScreenshotComparison": [
+    {
+      "path": "mixed-280.png",
+      "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "c1r3Sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "identical": true
+    },
+    {
+      "path": "mixed-390.png",
+      "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "c1r3Sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "identical": true
+    },
+    {
+      "path": "mixed-1280.png",
+      "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "c1r3Sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "identical": true
+    },
+    {
+      "path": "mixed-320-text200.png",
+      "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "c1r3Sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "identical": true
+    },
+    {
+      "path": "conflict-320.png",
+      "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "c1r3Sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "identical": true
+    },
+    {
+      "path": "loading-320.png",
+      "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "c1r3Sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "identical": true
+    },
+    {
+      "path": "application-320.png",
+      "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "c1r3Sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "identical": true
+    },
+    {
+      "path": "application-320-text200.png",
+      "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "c1r3Sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "identical": true
+    },
+    {
+      "path": "poll-pending-390.png",
+      "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "c1r3Sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "identical": true
+    },
+    {
+      "path": "poll-accepted-390.png",
+      "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "c1r3Sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "identical": true
+    }
+  ],
+  "visualInspectionThisReview": false,
+  "benchmark": {
+    "p95Ms": 7.210969999999975,
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "pendingJobs": 0,
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports"
+  },
+  "boundaries": "Only authorized connector GitHub reads and one Root-explicitly authorized exact signed artifact GET; local recovery receipt/ZIP extraction/hash reads. No new browser/server/test/native/SQL/hosted operation, no Auth log, no source/ref mutations. No final TL PASS or Ready/merge."
+}

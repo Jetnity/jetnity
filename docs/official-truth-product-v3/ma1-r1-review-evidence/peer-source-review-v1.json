@@ -1,0 +1,166 @@
+{
+  "schema": "ma1-r1-independent-bounded-source-review-v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "at": "2026-11-09T16:52:28.957393+00:00",
+  "status": "BOTH_SPECIFIC_R1_SOURCE_DEFECTS_CLOSED_NEW_HEAD_NATIVE_CI_STILL_REQUIRED",
+  "scope": "Source-only review of the frozen two-file correction to actual CI attempt1 failures. No implementation, local tests or native execution.",
+  "baseHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "baseTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "task": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+    "sha256": "563a62394d5cdd2970bf551a14e93097ca6f59d2a0dd6890c9cadafd796af874"
+  },
+  "authorManifest": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_SOURCE_MANIFEST_V1.json",
+    "sha256": "e43f72e28470fcde846e719cdd2570782ab346a5eeaca07bf70fa6b2e7dea0c3"
+  },
+  "changedSources": [
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "beforeSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+      "afterSha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "beforeBytes": 57057,
+      "afterBytes": 59181
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "beforeSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "afterSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "beforeBytes": 77098,
+      "afterBytes": 77127
+    }
+  ],
+  "trackedSourceDeltaExactlyTwoFiles": true,
+  "diff": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-r1-peer-source/two-source-files.diff",
+    "sha256": "5e39d4d4c3eee50b03f77b0ee7c1be16efd6583be303bb52a8f071f7e8ecd058",
+    "foundationInsertions": 31,
+    "foundationDeletions": 0,
+    "nativeInsertions": 1,
+    "nativeDeletions": 1
+  },
+  "foundationReview": {
+    "result": "Specific unregistered-consumer defect closed at source",
+    "exactNewConsumers": [
+      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "lib/readiness/official-truth-product-v3/method/contract.ts"
+    ],
+    "module": "official-truth-autonomous-provenance-artifact",
+    "onlyAllowedNamedImport": "ownRecord",
+    "priorEntriesAndAssertionsPreserved": true,
+    "predicateByteIdentical": true,
+    "entireOldScannerAndSubsequentSourceByteIdentical": true,
+    "noPrefixOrNormalizationException": true,
+    "sourceCases": {
+      "positiveExactTuples": 2,
+      "rawPathNegatives": 24,
+      "wrongModuleNegatives": 10,
+      "invalidNameSetNegatives": 24
+    },
+    "reviewedNegatives": [
+      "raw suffix/tsx/copy/dot-prefix/dot-component/traversal/test/support/wrong-directory/app/scripts paths",
+      "empty, record, record-server, copied artifact and suffixed module names",
+      "empty/default/wildcard/wrong-case/duplicate/extra capability name sets"
+    ],
+    "note": "Counts describe inspected assertions, not test execution by this reviewer."
+  },
+  "nativeReview": {
+    "result": "Specific duplicate result-column defect closed at source",
+    "exactSingleQueryReplacementVerified": true,
+    "aliases": [
+      "statement_cap",
+      "lock_cap"
+    ],
+    "originalStatementAndLockTimeoutsMs": 1000,
+    "sameConnectionQueryOrderAndCleanup": true,
+    "sharedWireDuplicateColumnGuardUnchanged": true,
+    "nativeScenarioCountUnchanged": 14,
+    "runtimeNativeExecutionVerified": false
+  },
+  "unchangedSources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "sha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "sha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "matchesPublishedBaseline": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "matchesPublishedBaseline": true
+    }
+  ],
+  "unchangedSourcesCount": 11,
+  "originalTrackedMa1ArtifactHashesMatched": 114,
+  "regressionsFound": [],
+  "sourceHashesStableAtReviewEnd": true,
+  "priorFailureEvidence": {
+    "receipt": "recovery/ma1-ci-attempt1-peer-review.json",
+    "sha256": "0f3ff3e16554d88d1f9ee1accc265d727967435d73270aa6b3ff22dfe2905e9c",
+    "actualNativeChildrenExecuted": 0,
+    "actualInitialFailureCleanup": {
+      "started": 5,
+      "settled": 5,
+      "pending": 0,
+      "connections": 2,
+      "closed": 2,
+      "stoppedClusters": 1
+    },
+    "preservedAsFailure": true
+  },
+  "reportedVerificationNotPerformedByPeer": {
+    "RootMessage": "Explicit ten-file selection329/329 exit0 completed independently by Root",
+    "authorManifest": "Child ten-file329/329; whole TypeScript and changed-file lint exit0",
+    "sourceOnlyPeerDidNotExecuteOrReclassifyTheseRuns": true
+  },
+  "limits": [
+    "No source, worktree, index, refs, remote or workflow changes by reviewer; snapshots/receipt only in recovery.",
+    "No tests, module imports, native process, socket, SQL, hosted DB/Auth or refused readback performed by reviewer.",
+    "No native PASS, final PR acceptance, Ready, merge, method approval or production activation is issued.",
+    "The new published head must independently pass mandatory full CI including actual14 MA1 children plus parent and full cleanup; the failed attempt remains failed."
+  ]
+}

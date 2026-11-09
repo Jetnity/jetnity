@@ -1,0 +1,1294 @@
+{
+  "schema": "jetnity.mi1.attempt3.release-peer-review.v1",
+  "reviewer": "/root/mi1_resume_release_audit",
+  "recordedAt": "2026-11-09T20:39:21.826462+00:00",
+  "scopeStatus": "ALL_ASSIGNED_NATIVE_GATES_VERIFIED_BUT_COMPLETE_RUN_FAILED_CORE_NO_RELEASE_PASS",
+  "repository": "Jetnity/jetnity",
+  "pr": 1177,
+  "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+  "sourceTree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+  "actualCheckout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+  "actualCheckoutParents": [
+    "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2"
+  ],
+  "checkoutTreeMatchesSourceTree": true,
+  "checkoutProofFile": "checkout-commit.json",
+  "run": {
+    "id": 42671681106,
+    "attempt": 3,
+    "status": "completed",
+    "conclusion": "failure",
+    "head": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "startedAt": "2026-11-09T20:19:12Z",
+    "updatedAt": "2026-11-09T20:37:38Z"
+  },
+  "allEightJobs": [
+    {
+      "id": 129413233257,
+      "name": "Persisted canonical read \u2014 native",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:26:10Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129413233452,
+      "name": "Repository verification",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:31:23Z",
+      "failedSteps": [
+        "Tests"
+      ],
+      "skippedSteps": [
+        "Schutz der Admin-API",
+        "Bezug auf das Schema",
+        "Unerreichbarer Code",
+        "Exporte ohne Aufrufer",
+        "Ungenutzte Pakete",
+        "Production build",
+        "Post Run actions/setup-node@v4"
+      ]
+    },
+    {
+      "id": 129413233503,
+      "name": "Auth-Konfiguration gegen config.toml",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:20:29Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129413233638,
+      "name": "Accepted store trip integration \u2014 native (lifecycle)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:31:10Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129413233639,
+      "name": "Accepted store trip integration \u2014 native (store)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:19Z",
+      "completedAt": "2026-11-09T20:25:15Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129413233685,
+      "name": "Atomic version refresh \u2014 native",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:37:32Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129413233941,
+      "name": "Official truth V3 \u2014 isolated UI",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-09T20:19:18Z",
+      "completedAt": "2026-11-09T20:20:24Z",
+      "failedSteps": [],
+      "skippedSteps": []
+    },
+    {
+      "id": 129423479771,
+      "name": "Typecheck, Lint & Build",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-09T20:37:35Z",
+      "completedAt": "2026-11-09T20:37:37Z",
+      "failedSteps": [
+        "Require all five verification job families to succeed"
+      ],
+      "skippedSteps": []
+    }
+  ],
+  "nativeProofs": [
+    {
+      "schema": "jetnity.mi1.attempt3.native-peer-review.v1",
+      "reviewer": "/root/mi1_resume_release_audit",
+      "kind": "persisted",
+      "jobId": 129413233257,
+      "runId": 42671681106,
+      "runAttempt": 3,
+      "reviewedAt": "2026-11-09 20:28:37 UTC",
+      "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+      "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "tree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T20:26:10Z",
+      "tap": {
+        "tests": "1",
+        "suites": "0",
+        "pass": "1",
+        "fail": "0",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "339796.672609"
+      },
+      "rawLog": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-release/persisted-job-129413233257-raw.txt",
+        "sha256": "b35e094a9359b55c79bfa147d60a0a399e0bb4369964a93d60b4a40d306e0e95",
+        "bytes": 156365,
+        "endsWithLF": true,
+        "meaning": "Exact UTF-8 bytes of connector-decoded native job log"
+      },
+      "actualDiagnosticCount": 95,
+      "allActualDiagnosticsInspected": true,
+      "executedTests": [
+        "ok 1 - persisted canonical bridge: closed committed producer, fresh native reader, final lifecycle proof"
+      ],
+      "verdict": "ASSIGNED_BOUNDED_NATIVE_JOB_VERIFIED_ROOT_INTEGRATION_ACCEPTANCE_PENDING",
+      "limits": [
+        "Isolated synthetic native CI only; not hosted target truth, method approval or real official entry data.",
+        "No earlier-head or earlier-attempt pass transferred.",
+        "No local test/native/SQL/socket or hosted action performed by reviewer."
+      ],
+      "readerResults": {
+        "count": 45,
+        "distinctIds": 45,
+        "statuses": {
+          "no_match": 7,
+          "synthetic_persisted_requirements_verified": 5,
+          "refused": 29,
+          "unavailable": 3,
+          "ambiguous": 1
+        }
+      },
+      "selectedActualDiagnostics": [
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "primary: acknowledged COMMIT, producer gone, distinct fresh guarded and archive backends, one synthetic Visa",
+          "elapsedMs": 53395
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancellation after archive/final read and final transport failure release guards without positive",
+          "elapsedMs": 115741
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "retention deadline crossed after successful final SQL reply: no positive output",
+          "elapsedMs": 145686
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "freshness deadline crossed after successful final SQL reply: no positive output",
+          "elapsedMs": 160105
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "lifecycle deadline crossed after successful final SQL reply: no positive output",
+          "elapsedMs": 174521
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "earliest bound is decisive at actual response delivery",
+          "elapsedMs": 243374,
+          "initialDelayHooks": 1,
+          "initialSuccess": 1,
+          "laterSuccess": 1,
+          "separationMs": 4957,
+          "afterFirstMs": 2480,
+          "beforeFinalMs": 2478,
+          "pauseMs": 2082,
+          "actualPauseMs": 2082
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "earliest confirmed monotonic bound preserved across the faster later recheck",
+          "elapsedMs": 243389
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "monotonic 60s budget enforced even before timeout callback delivery",
+          "elapsedMs": 252036
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "cancelled lifecycle lock wait cannot return positive; reader backends actually cleared",
+          "elapsedMs": 253335
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "composed: acknowledged COMMIT, producer gone, distinct fresh guarded and archive backends, one synthetic Visa",
+          "elapsedMs": 272854
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "fully rehashed stored fact passes native publication and closure but is rejected against actual originals",
+          "elapsedMs": 323703
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+          "elapsedMs": 338610
+        },
+        {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 338610
+        }
+      ],
+      "cleanup": "Actual successful cancellation/backend-clearing phase observed. No numeric aggregate cleanup counter is emitted by this job; none invented.",
+      "assessment": "One full native shared parent executed with 45 actual reader results. Positive controls are labelled synthetic; retained corruption, withdrawal, conflict, changed metadata, cancellation, delayed final-reply bounds, ambiguity, forged facts and rollback retain nonpositive outcomes. All95diagnostics inspected, including separately re-read initially truncated middle."
+    },
+    {
+      "schema": "jetnity.mi1.attempt3.native-peer-review.v1",
+      "reviewer": "/root/mi1_resume_release_audit",
+      "kind": "store",
+      "jobId": 129413233639,
+      "runId": 42671681106,
+      "runAttempt": 3,
+      "reviewedAt": "2026-11-09 20:28:37 UTC",
+      "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+      "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "tree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T20:25:15Z",
+      "tap": {
+        "tests": "4",
+        "suites": "0",
+        "pass": "4",
+        "fail": "0",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "297256.413398"
+      },
+      "rawLog": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-release/store-job-129413233639-raw.txt",
+        "sha256": "2c9d6d161563f567760c1802d569035a33fe862c84bd9f9f33ebcd8967859605",
+        "bytes": 134944,
+        "endsWithLF": true,
+        "meaning": "Exact UTF-8 bytes of connector-decoded native job log"
+      },
+      "actualDiagnosticCount": 39,
+      "allActualDiagnosticsInspected": true,
+      "executedTests": [
+        "ok 1 - Accepted Store Trip Integration 1: actual unbound archive/legacy refusal and final source expiry",
+        "ok 2 - Accepted Store Trip Integration 1: actual saved Trip date, person, credential and declaration boundaries",
+        "ok 3 - Accepted Store Trip Integration 1: actual retained-row integrity and own-Trip recovery with independent A/B",
+        "ok 4 - Accepted Store Trip Integration 1: actual native producer, durable commit, fresh reader and restore refusal"
+      ],
+      "verdict": "ASSIGNED_BOUNDED_NATIVE_JOB_VERIFIED_ROOT_INTEGRATION_ACCEPTANCE_PENDING",
+      "limits": [
+        "Isolated synthetic native CI only; not hosted target truth, method approval or real official entry data.",
+        "No earlier-head or earlier-attempt pass transferred.",
+        "No local test/native/SQL/socket or hosted action performed by reviewer."
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "proof": "native-acceptance-refusal",
+          "mode": "unbound_archive",
+          "seeded": true,
+          "deferredObserved": false,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": true,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "proof": "native-acceptance-refusal",
+          "mode": "unbound_legacy_claim",
+          "seeded": true,
+          "deferredObserved": false,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": true,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "proof": "native-final-expiry-checkpoint",
+          "deferredObserved": true,
+          "sqlState": "22023",
+          "waitMs": 23276,
+          "committedVersions": 0
+        },
+        {
+          "proof": "native-acceptance-refusal",
+          "mode": "source_expiry_after_constraints",
+          "seeded": false,
+          "deferredObserved": true,
+          "sqlState": "22023",
+          "oldArtifactNotAdopted": false,
+          "readerPositive": false,
+          "ownedClientBackends": 0
+        },
+        {
+          "proof": "actual-saved-Trip-context-negatives",
+          "proofs": [
+            "actual six-RPC role separation and caller authority refusal",
+            "wrong expected revision before any Reserve",
+            "explicit other traveller and passport",
+            "explicit national ID instead of selected ordinary passport",
+            "unknown passport class",
+            "unsupported purpose",
+            "incomplete route",
+            "unsupported origin",
+            "foreign citizenship reference cannot be saved as the own selected document",
+            "actual start_date outside compiled application slot",
+            "actual end_date outside compiled application slot",
+            "extra credential after attestation invalidates saved context"
+          ],
+          "sourceFetchesDuringReads": 0,
+          "targetContextStatusProved": true,
+          "positiveControlsAfterEach": true,
+          "originalMultiPersonMultiOptionPositive": true,
+          "ownedClientBackends": 0
+        },
+        {
+          "proof": "native-retained-row-integrity",
+          "cases": [
+            "missing current version despite retained journal",
+            "ambiguous second current row refused by actual unique constraint",
+            "actual retained legacy Evidence content identity",
+            "actual retained version support and original pin",
+            "actual retained archive binding bytes",
+            "actual retained custody metadata",
+            "actual retained ciphertext envelope"
+          ],
+          "positiveControlAfterEveryExactRestore": true,
+          "journalAndExternalWitnessUnchanged": true,
+          "boundary": "Local physical-restore corruption only; canonical schemas, policies and runtime mutators remain unchanged"
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 93633,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 2,
+          "rpcCommits": 86,
+          "rpcRefusals": 6,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 2266,
+          "ownedSettled": 2266,
+          "ownedPending": 0,
+          "ownedConnections": 444,
+          "ownedClosed": 444,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "proof": "actual-producer-commit-fresh-reader",
+          "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)",
+          "node": "22.23.4",
+          "receipt": "ot-provenance-v1:b88daf5619c63c1ed4f2a9c868de8dd73a89ae46f6063aa999b5a57b08535826",
+          "sourceCheckedAt": "2026-11-09T20:24:10.461Z",
+          "acceptedAt": "2026-11-09T20:24:12.733Z",
+          "readAt": "2026-11-09T20:24:20.580Z",
+          "expiresAt": "2026-11-09T20:24:35.580Z",
+          "selectedPositive": 1,
+          "otherCellsUnknown": true,
+          "independentReaderSourceCalls": 0,
+          "deadlineFromRequestStartMs": 17487,
+          "actualClientDecoderPassed": true,
+          "fullReceiptLength": 81,
+          "engineReferenceLength": 79,
+          "alteredReferenceRefused": true,
+          "referenceHelperInActualSourceClosure": true
+        },
+        {
+          "proof": "native-semantic-cleanup-observation",
+          "snapshotTokenMatched": true,
+          "ordinary": {
+            "entries": 1,
+            "tokenMatches": 1,
+            "commits": 1,
+            "committedRemovedOne": true,
+            "acknowledged": true,
+            "beforeStop": null,
+            "settled": {
+              "httpEntries": 1,
+              "server": [
+                {
+                  "authenticated": true,
+                  "bodyParsed": true,
+                  "beforeRpc": true,
+                  "rpcCommitted": true,
+                  "status": 200,
+                  "headersSent": true,
+                  "finished": true,
+                  "closed": true,
+                  "acknowledgement": "response_end_called"
+                }
+              ],
+              "serverOmitted": 0,
+              "beforeRpcEntries": 1,
+              "tokenMatches": 1,
+              "commits": 1,
+              "committedRemovedOne": true,
+              "acknowledged": true,
+              "client": {
+                "calls": 1,
+                "started": 1,
+                "settled": 1,
+                "pending": 0,
+                "synchronousThrows": 0,
+                "observerErrors": 0,
+                "omitted": 0,
+                "records": [
+                  {
+                    "outcome": "fulfilled",
+                    "status": 200,
+                    "error": null
+                  }
+                ]
+              }
+            }
+          },
+          "disposal": {
+            "status": "acknowledged",
+            "removed": 0,
+            "intervalCleanupHttpEntries": 1,
+            "intervalCleanupRpcOutcomes": [
+              {
+                "committed": true,
+                "sqlState": null
+              }
+            ]
+          }
+        },
+        {
+          "proof": "native-snapshot-rehashed-fact-semantic-refusal",
+          "profile": "ot-accepted-store-trip-closure-v1",
+          "originalReceipt": "ot-provenance-v1:b88daf5619c63c1ed4f2a9c868de8dd73a89ae46f6063aa999b5a57b08535826",
+          "forgedReceipt": "ot-provenance-v1:04e69d0e651716aedc05eae62d272c36270feae1baab12a375f79ab3c8ef91b5",
+          "originalHash": "875bffd5d8fe1fa8d28c0e0dd0f085a5520162829e679647f094ed38b6db6e21",
+          "bindingCases": [
+            "stale compiled contract binding",
+            "stale copied code definition binding",
+            "forged recorded decision review",
+            "forged retained Evidence support",
+            "unavailable current source profile pin",
+            "changed current closed-fixture extractor definition"
+          ],
+          "strictStructuralPass": true,
+          "exactRefusal": "retained_fact_invalid",
+          "untouchedPositiveBeforeAndAfter": true,
+          "originalBytesAndArtifactPinsUnchanged": true,
+          "durableHistoryAndWitnessUnchanged": true,
+          "boundary": "Direct historical reproof negative over a genuine native snapshot; no forged SQL publication or accepted authority is claimed"
+        },
+        {
+          "proof": "native-publication-restore-families",
+          "completedFamilies": 5,
+          "projectionRestoreRejected": true,
+          "custodyEnvelopeDigest": "b44bf98c085dfa2f3c718471f1a4123f92890e9ec0c50f4e79dcafeaaf48efab"
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "native-publication",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 7,
+          "elapsedMs": 66276,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 6,
+          "rpcCommits": 69,
+          "rpcRefusals": 5,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 1574,
+          "ownedSettled": 1574,
+          "ownedPending": 0,
+          "ownedConnections": 296,
+          "ownedClosed": 296,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ],
+      "cleanup": [
+        {
+          "proof": "native-suite-complete",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 93633,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 2,
+          "rpcCommits": 86,
+          "rpcRefusals": 6,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 2266,
+          "ownedSettled": 2266,
+          "ownedPending": 0,
+          "ownedConnections": 444,
+          "ownedClosed": 444,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "native-publication",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 7,
+          "elapsedMs": 66276,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 6,
+          "rpcCommits": 69,
+          "rpcRefusals": 5,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 1574,
+          "ownedSettled": 1574,
+          "ownedPending": 0,
+          "ownedConnections": 296,
+          "ownedClosed": 296,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ],
+      "assessment": "All four store wrappers executed. Actual expiry/unbound/context refusal, independent A/B retained-integrity recovery, semantic rehash refusal, staged mismatches, successor COMMIT/lost-ACK reconciliation and restore controls completed. Both owned-suite cleanup counters are balanced with zero residue."
+    },
+    {
+      "schema": "jetnity.mi1.attempt3.native-peer-review.v1",
+      "reviewer": "/root/mi1_resume_release_audit",
+      "kind": "lifecycle",
+      "jobId": 129413233638,
+      "runId": 42671681106,
+      "runAttempt": 3,
+      "reviewedAt": "2026-11-09 20:32:22 UTC",
+      "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+      "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "tree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T20:31:10Z",
+      "tap": {
+        "tests": "4",
+        "suites": "0",
+        "pass": "4",
+        "fail": "0",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "643151.635013"
+      },
+      "rawLog": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-release/lifecycle-job-129413233638-raw.txt",
+        "sha256": "df9e891d384b981a3863fa9960d44b504d6e7e4f197145c8a349e8b4e23a48bf",
+        "bytes": 176465,
+        "endsWithLF": true,
+        "meaning": "Exact UTF-8 bytes of connector-decoded native job log"
+      },
+      "actualDiagnosticCount": 29,
+      "allActualDiagnosticsInspected": true,
+      "executedTests": [
+        "ok 1 - Accepted Store Trip Integration 1: actual pinned SSR, outgoing signals and owned request/key/target boundaries",
+        "ok 2 - Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+        "ok 3 - Accepted Store Trip Integration 1: native abandonment, late reply, R4 race and orphan expiry recovery",
+        "ok 4 - Accepted Store Trip Integration 1: actual four Finalize waits, authority/Trip controls and immutable lifecycle"
+      ],
+      "cleanup": [
+        {
+          "proof": "native-suite-complete",
+          "suite": "boundaries",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 2,
+          "elapsedMs": 84595,
+          "journalOperations": 0,
+          "immutableVersions": 0,
+          "sourceFetches": 2,
+          "rpcCommits": 10,
+          "rpcRefusals": 0,
+          "witnessAdvances": 0,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 581,
+          "ownedSettled": 581,
+          "ownedPending": 0,
+          "ownedConnections": 90,
+          "ownedClosed": 90,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "wait-lifecycle",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 161655,
+          "journalOperations": 4,
+          "immutableVersions": 2,
+          "sourceFetches": 3,
+          "rpcCommits": 99,
+          "rpcRefusals": 7,
+          "witnessAdvances": 4,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 6316,
+          "ownedSettled": 6316,
+          "ownedPending": 0,
+          "ownedConnections": 476,
+          "ownedClosed": 476,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "constructor_only",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25435,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 0,
+          "queryCalls": 0,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "concurrent_get_user",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25426,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 1,
+          "queryCalls": 0,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "proof": "actual-pinned-SSR-factory-abort",
+          "mode": "query_abort_then_owner",
+          "node": "22.23.4",
+          "ssr": "0.6.1",
+          "supabase": "2.57.2",
+          "auth": "2.71.1",
+          "elapsedMs": 25433,
+          "httpRefreshRequests": 1,
+          "nativeFetchStarts": 1,
+          "nativeStartsAfterAbort": 0,
+          "positive": false,
+          "userCalls": 0,
+          "queryCalls": 1,
+          "subscribers": 2,
+          "initialCompletions": 2,
+          "observedPending": 0,
+          "boundary": "No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed"
+        },
+        {
+          "proof": "actual-outgoing-native-fetch-and-query-boundaries",
+          "cases": [
+            "request_signal",
+            "init_signal",
+            "owner_signal",
+            "complete_body",
+            "late_headers",
+            "abort_at_headers",
+            "actual_factory_query_only",
+            "actual_factory_owner"
+          ],
+          "realNativeResponses": true,
+          "actualRlsTripBytes": true,
+          "allRequestInitOwnerSignalsComposed": true,
+          "headersDoNotSettlePendingBody": true,
+          "postHeadersPreReaderAbortTerminal": true,
+          "bodyReadersReleased": true,
+          "queryOnlyOwnerRemainsLive": true,
+          "noNativeStartsAfterOwnerAbort": true,
+          "allClientAndServerWorkAwaited": true,
+          "boundary": "No instantaneous TCP-close claim; actual native fetch/body and fixture HTTP handlers are separately awaited"
+        },
+        {
+          "proof": "owned-boundaries",
+          "unsafeTargetNoActivity": true,
+          "preabortNoActivity": true,
+          "legacyFactoryModesPreserved": true,
+          "requestSourceDisposalAwaited": true,
+          "lateKeyAbortWiped": true,
+          "lateKeyBindingClosureWiped": true
+        },
+        {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-09T20:22:00.784Z",
+          "readAt": "2026-11-09T20:24:53.424Z",
+          "expiresAt": "2026-11-09T20:25:08.424Z",
+          "deadlineFromRequestStartMs": 18542,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        },
+        {
+          "proof": "native-orphan-expiry-checkpoint",
+          "genuineUnacknowledgedReserves": 32,
+          "storedReservationBoundsChecked": 32,
+          "quotaActuallyRefused": true,
+          "waitMs": 43962
+        },
+        {
+          "proof": "native-r4-contended-disposal-checkpoint",
+          "finalizeCommitted": true,
+          "disposalAttempts": 1,
+          "sqlState": "55P03",
+          "residualReservations": 1,
+          "residualStages": 1,
+          "originalExpiryWaitMs": 31737
+        },
+        {
+          "proof": "native-disposal-and-recovery",
+          "proofs": [
+            "genuine finalized read response arrives after original validation window",
+            "R4 acquired token disposal loses ACK but performs one actual bounded cleanup",
+            "expired unacknowledged read reservations recover through explicit reader alone",
+            "R4 cleanup races actual pending authenticated Finalize and preserves committed history"
+          ],
+          "lateReadNoPositive": true,
+          "unknownDisposalAckHonest": true,
+          "expiredOrphansSwept": 32,
+          "readerRecoverySourceFetches": 0,
+          "finalizeRaceCommitted": true,
+          "acquiredTokenDisposalAttempts": 1,
+          "disposalSqlState": "55P03",
+          "raceExpiredResidueSwept": 1,
+          "immutableVersions": 2,
+          "durableOperations": 2,
+          "ownedClientBackends": 0
+        },
+        {
+          "proof": "native-after-wait-authority-and-trip",
+          "cases": [
+            "auth_revoked",
+            "auth_expired",
+            "child_change",
+            "child_aba"
+          ],
+          "actualBlockedFinalizeObserved": true,
+          "holderReadyBeforeDispatch": true,
+          "actualWaiterAndBlockerMatched": true,
+          "blockedRelation": "private.official_sources",
+          "observationBoundMs": 1000,
+          "positiveControlAfterEach": true,
+          "boundary": "Value-plus-MVCC closure; no claim to detect every fully vanished child ABA. Engine values remain the exact reserved own Trip."
+        },
+        {
+          "proof": "native-wait-lifecycle-families",
+          "completedFamilies": 2,
+          "prerequisitePublications": 2,
+          "journalOperations": 4,
+          "immutableVersions": 2,
+          "bootstrapNotCountedAsLostAckOrRestoreProof": true
+        }
+      ],
+      "assessment": "All four lifecycle wrappers executed. Actual pinned SSR/outgoing signals and key disposal, native result through mounted Workspace, timed abandonment/orphan recovery and contended Finalize, and four real wait/revocation/Trip cases completed. Cleanup is balanced without residual work or provisional rows.",
+      "verdict": "ASSIGNED_BOUNDED_NATIVE_JOB_VERIFIED_OVERALL_CORE_FAILED_NO_RELEASE_ACCEPTANCE",
+      "limits": [
+        "Overall attempt3 Core failed. This native success does not create an integration PASS.",
+        "Closed native fixture and actual hook/presentation mount only, not full hosted Next/managed Auth/origin proof.",
+        "Pinned SDK proof explicitly does not assert a fixed clock-rollback-safe return ceiling; business and new native work stay closed.",
+        "No instantaneous TCP close claim; actual native fetch/body and fixture HTTP handlers separately awaited.",
+        "No local test/native/SQL/socket or hosted action performed by reviewer."
+      ]
+    },
+    {
+      "schema": "jetnity.mi1.attempt3.native-peer-review.v1",
+      "reviewer": "/root/mi1_resume_release_audit",
+      "kind": "atomic",
+      "jobId": 129413233685,
+      "runId": 42671681106,
+      "runAttempt": 3,
+      "reviewedAt": "2026-11-09T20:39:21.826462+00:00",
+      "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+      "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+      "tree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+      "conclusion": "success",
+      "completedAt": "2026-11-09T20:37:32Z",
+      "tap": {
+        "tests": "1",
+        "suites": "0",
+        "pass": "1",
+        "fail": "0",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "1016247.738853"
+      },
+      "rawLog": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-release/atomic-job-129413233685-raw.txt",
+        "sha256": "b930f8369314613112660e79f6638e32bba629fcc0a605929e0ab26756d7f392",
+        "bytes": 183652,
+        "endsWithLF": true,
+        "meaning": "Exact UTF-8 bytes of connector-decoded native job log"
+      },
+      "actualDiagnosticCount": 151,
+      "allActualDiagnosticsInspected": true,
+      "executedTests": [
+        "ok 1 - atomic refresh: actual fresh execution, full transition, concurrency, rollback and independent readback"
+      ],
+      "cleanup": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "actual parent-lifetime abort stops pending SQL and connection gate, restores hooks and removes own backends",
+          "elapsedMs": 1489,
+          "sleepingSeen": true,
+          "gateSeen": true,
+          "actorsSettled": 2,
+          "ownBackendsGone": 3,
+          "abortCleanupMs": 140,
+          "cleanup": {
+            "started": 11,
+            "settled": 11,
+            "pending": 0,
+            "connections": 3,
+            "closed": 3,
+            "stoppedClusters": 1
+          },
+          "nextScenario": 0,
+          "nextCluster": 0
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+          "elapsedMs": 1015347,
+          "cleanup": {
+            "started": 10960,
+            "settled": 10960,
+            "pending": 0,
+            "connections": 248,
+            "closed": 248,
+            "stoppedClusters": 11
+          },
+          "parentAborted": false
+        }
+      ],
+      "selectedActualDiagnostics": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "actual cutoff during asynchronous arming; no COMMIT dispatch and no persisted probe",
+          "elapsedMs": 591611
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "actually running deferred COMMIT terminated by the shorter server guard",
+          "elapsedMs": 594117,
+          "deferredCommitElapsedMs": 2503
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "delayed guard transport bounded evidence",
+          "elapsedMs": 597624,
+          "requestedGuardDelayMs": 700,
+          "guardDelayMs": 701,
+          "earlierBudgetMs": 3500,
+          "deferredWorkMs": 3000,
+          "observedHook": true,
+          "guardArmed": true,
+          "commitObserved": true,
+          "resultCode": "57P01",
+          "dispatched": true,
+          "acknowledged": false,
+          "deferredAfterBoundMs": 232,
+          "deferredBeforeRelativeRestartMs": 469
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "real delayed guard transport preserves earlier monotonic cutoff",
+          "elapsedMs": 597629,
+          "guardDelayMs": 701
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 624028,
+          "case": "expiry",
+          "lockSeen": true,
+          "refreshSqlstate": "55000",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 653020,
+          "case": "abort",
+          "lockSeen": true,
+          "refreshSqlstate": "55P03",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 682065,
+          "case": "timeout",
+          "lockSeen": true,
+          "refreshSqlstate": "55P03",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "three race actors settled and concrete backends removed",
+          "elapsedMs": 727494,
+          "lockProofReached": true,
+          "readerHeld": true,
+          "firstWriterReady": true,
+          "secondWriterReady": true,
+          "firstDispatched": true,
+          "secondDispatched": true,
+          "outcomes": [
+            "fulfilled",
+            "fulfilled",
+            "fulfilled"
+          ],
+          "cleanupFailures": 0
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 781357,
+          "case": "unknown_commit"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 835097,
+          "case": "readback_failure"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 925279,
+          "case": "cleanup_after_bound"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "truthful nonpositive terminal outcome independently inspected without replay",
+          "elapsedMs": 1015125,
+          "case": "reader_after_bound"
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "complete native refresh acceptance matrix finished",
+          "elapsedMs": 1015347,
+          "parentReserveMs": 184653
+        }
+      ],
+      "coordinatorResults": {
+        "unavailable": 1,
+        "synthetic_atomic_refresh_verified": 2,
+        "refused": 3,
+        "commit_outcome_unknown": 1,
+        "committed_readback_unavailable": 3
+      },
+      "allRecordedCoordinatorBackendsClosed": true,
+      "assessment": "Full native atomic-refresh parent executed. Separate parent abort, complete original/current verification and negative equivalence, role refusals, real predecessor/successor transitions, transactional fault rollback, contention, deadline/COMMIT arming, competing writers, lost acknowledgements and post-commit readback failure controls completed. The real final cleanup is balanced across10960 operations,248connections and11clusters.",
+      "verdict": "ASSIGNED_BOUNDED_NATIVE_JOB_VERIFIED_OVERALL_CORE_FAILED_NO_RELEASE_ACCEPTANCE",
+      "limits": [
+        "Overall attempt3 Core failed and aggregate failed; this native success is not an integration PASS.",
+        "All source/authority/reader examples are isolated synthetic CI, not hosted target or real entry data.",
+        "No earlier-head or earlier-attempt acceptance transferred.",
+        "No local test/native/SQL/socket or hosted action performed by reviewer."
+      ]
+    }
+  ],
+  "nativeWrapperTotal": 10,
+  "nativePassed": 10,
+  "nativeFailed": 0,
+  "nativeCancelled": 0,
+  "nativeSkipped": 0,
+  "aggregate": {
+    "jobId": 129423479771,
+    "conclusion": "failure",
+    "core": "failure",
+    "persisted": "success",
+    "refresh": "success",
+    "acceptedStore": "success",
+    "isolatedUi": "success",
+    "exitCode": 1,
+    "assessment": "Existing aggregate correctly refused release because Core failed; all other four verification families succeeded."
+  },
+  "auth": {
+    "jobId": 129413233503,
+    "conclusion": "success",
+    "scope": "Metadata only. Auth log not read; no hosted-target or #1139 truth inferred."
+  },
+  "core": {
+    "jobId": 129413233452,
+    "conclusion": "failure",
+    "failedStep": "Tests",
+    "scope": "This peer inspected terminal job metadata only. Concrete Core failure and all14MA1 outcomes are independently reviewed by Root/other peer; no inferred diagnosis here.",
+    "followingGatesSkipped": [
+      "Schutz der Admin-API",
+      "Bezug auf das Schema",
+      "Unerreichbarer Code",
+      "Exporte ohne Aufrufer",
+      "Ungenutzte Pakete",
+      "Production build",
+      "Post Run actions/setup-node@v4"
+    ]
+  },
+  "ui": {
+    "jobId": 129413233941,
+    "conclusion": "success",
+    "scope": "Job metadata only in this followup; actual UI artifact belongs to the separate assigned reviewer."
+  },
+  "earlierHistory": {
+    "resumeReceipt": "../mi1-resume-release/release-review-v1.json",
+    "resumeReceiptSha256": "630b550bc97d3f47b2b3c6cbde3f6ab378c5d7d07f493a039a6b4d9a89910398",
+    "priorReceiptUnchanged": true,
+    "attempts1and2": "Historical infrastructure failures preserved. These actual attempt3 native results are fresh; no earlier pass transferred."
+  },
+  "limits": [
+    "All four native jobs are isolated synthetic CI, no public visa/entry rule or hosted database acceptance.",
+    "No local test/native/SQL/socket/server/browser/alternate retrieval or specifically refused #917 action.",
+    "No workflow rerun, source/docs/index/ref/remote changes, Ready, merge, method approval or activation by this reviewer.",
+    "No current-main/Production reread in this native-only followup; Root owns final live gates.",
+    "A future source head invalidates all exact-head gates.",
+    "Store/Persisted perjob receipts were saved before Core failure; final run receipt controls overall status and never transfers a partial pass."
+  ],
+  "evidenceFiles": [
+    {
+      "name": "aggregate-job-129423479771-raw.json",
+      "bytes": 4169,
+      "sha256": "8654817ca7c0a721e9d6b6c0ba53d133bd88f582fce44160aa4e9b61394b0bf3"
+    },
+    {
+      "name": "aggregate-job-129423479771-raw.txt",
+      "bytes": 3983,
+      "sha256": "0a750a855e2135757743b1cf2323c76deb22a8305db3d2fec7f186bf61248154"
+    },
+    {
+      "name": "atomic-job-129413233685-raw.json",
+      "bytes": 190735,
+      "sha256": "f37a2939a70ed0cc3f4802d66c4b85b25dbbf1c56a050eab28d6ad8a39d9f6ca"
+    },
+    {
+      "name": "atomic-job-129413233685-raw.txt",
+      "bytes": 183652,
+      "sha256": "b930f8369314613112660e79f6638e32bba629fcc0a605929e0ab26756d7f392"
+    },
+    {
+      "name": "atomic-parsed.json",
+      "bytes": 79467,
+      "sha256": "2465408a491ec204843ade16799701b7e0f7e423e670882d64a50f5933c47df4"
+    },
+    {
+      "name": "atomic-review-output.txt",
+      "bytes": 70898,
+      "sha256": "440e136e19858c24d0531a24c7185606dbf04976ec0dad67ef2aed32bcb0a3fd"
+    },
+    {
+      "name": "atomic-review-v1.json",
+      "bytes": 7537,
+      "sha256": "f580c3e018fbc6a4b67297654e236aab58fdc4889109fc4c1a35f889674e739f"
+    },
+    {
+      "name": "checkout-commit.json",
+      "bytes": 2775,
+      "sha256": "881ecefe7052a39f93252ceb557a41b32a727986b98a982be795488536fe504d"
+    },
+    {
+      "name": "first-two-terminal-metadata.json",
+      "bytes": 7436,
+      "sha256": "678262c472dcbe48ed427bfa0bd565b9c7c203badad5f853b5ce5dbef82d1d21"
+    },
+    {
+      "name": "initial-jobs.json",
+      "bytes": 26849,
+      "sha256": "7662c7c320996bb356575f69d4d45a2cd262467990ac88271ba2f9a3b35ac4e7"
+    },
+    {
+      "name": "lifecycle-job-129413233638-raw.json",
+      "bytes": 179008,
+      "sha256": "c6f0335e8e4fb279fab1c3c17a24ad6d8200e5d5307753edd40baa088f7bcf54"
+    },
+    {
+      "name": "lifecycle-job-129413233638-raw.txt",
+      "bytes": 176465,
+      "sha256": "df9e891d384b981a3863fa9960d44b504d6e7e4f197145c8a349e8b4e23a48bf"
+    },
+    {
+      "name": "lifecycle-parsed.json",
+      "bytes": 13603,
+      "sha256": "1dd770a5ade8e4e79102593820b3dacc5707b6d989d6d22e316cc5001bf2d46a"
+    },
+    {
+      "name": "lifecycle-review-v1.json",
+      "bytes": 11434,
+      "sha256": "435fe0b59153134a22ec295281ab516b2f6389c702b30c6508c80e59c2baf59e"
+    },
+    {
+      "name": "lifecycle-terminal-metadata.json",
+      "bytes": 12797,
+      "sha256": "ea98ef02aceff8db90a11a1655fb7c41f688e20f4ac2c423d1a6fef7a2f91f60"
+    },
+    {
+      "name": "parse_native_log.py",
+      "bytes": 1913,
+      "sha256": "7b5aa6934413002739d629769d753c1e3e848e3917c623e057e79a91cf4e30dc"
+    },
+    {
+      "name": "persisted-job-129413233257-raw.json",
+      "bytes": 162207,
+      "sha256": "5b32fae3c6e188d4145055c5cdd4490fe74457c53ed81daece315bbd1686a5a2"
+    },
+    {
+      "name": "persisted-job-129413233257-raw.txt",
+      "bytes": 156365,
+      "sha256": "b35e094a9359b55c79bfa147d60a0a399e0bb4369964a93d60b4a40d306e0e95"
+    },
+    {
+      "name": "persisted-parsed.json",
+      "bytes": 58710,
+      "sha256": "c4f66e3c51afc989ca757d70b1484bf3d05c51c0e55b4447921067d72f7a832e"
+    },
+    {
+      "name": "persisted-review-v1.json",
+      "bytes": 5243,
+      "sha256": "494abf5658ae14e7db2bebc6be9570e329480d2cf09d37396d3daac2dc58e219"
+    },
+    {
+      "name": "store-job-129413233639-raw.json",
+      "bytes": 137220,
+      "sha256": "0dbf9c22fcfd8951c7d3f2a8732d3bef3f1155c7108cf8bc463714648c0f6767"
+    },
+    {
+      "name": "store-job-129413233639-raw.txt",
+      "bytes": 134944,
+      "sha256": "2c9d6d161563f567760c1802d569035a33fe862c84bd9f9f33ebcd8967859605"
+    },
+    {
+      "name": "store-parsed.json",
+      "bytes": 15142,
+      "sha256": "b1c2da2ce0bd0757636612fcc59f04a0b4b39d26fdbf540c89867b52bb561685"
+    },
+    {
+      "name": "store-review-v1.json",
+      "bytes": 11867,
+      "sha256": "a1b8daf8ed64fd51ba4ae91515bca5b55fb56c41f9c68f72b54ef8ff91fd62d1"
+    },
+    {
+      "name": "terminal-jobs.json",
+      "bytes": 30916,
+      "sha256": "b3989cde5899d004b30a93deb109d46696333e4c83cfec59a0ae7ac302b35f5a"
+    },
+    {
+      "name": "terminal-run.json",
+      "bytes": 14101,
+      "sha256": "347a08490971b1b23e3f38b23a17d04bd815d1823bc1d4c7d72630586788612e"
+    }
+  ],
+  "next": "Preserve failed exact source evidence. Root determines finite CHANGES REQUIRED and unavailable-session recovery from the concrete Core failure; any new head requires complete new gating. No release acceptance or favorable rerun from this receipt.",
+  "stop": true
+}

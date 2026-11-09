@@ -1,0 +1,137 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "originalAuthor": "/root/v3_method_authority_writer",
+  "recordedAt": "2026-11-09T16:08:11.512464+00:00",
+  "scope": "Bounded source-only re-review of corrected candidate/rollback SQL CHECK-definition delta and same-transaction native installer diagnostic split; not a full new SQL/runtime/native acceptance.",
+  "status": "SPECIFIC_CHECK_DEFINITION_P2_CLOSED_AT_SOURCE_LEVEL; actual PostgreSQL literal compatibility and manipulated-CHECK preservation pending mandatory CI",
+  "priorReceipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-review-v1.json",
+    "sha256": "c1f0d7c4143b9c353f0796d2b2c43033cc68446ae7f60f0f676cedb0bdcd8250",
+    "preserved": true
+  },
+  "rootDecision": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/MA1_ROOT_EARLY_SQL_REVIEW_V1.json",
+    "sha256": "a5556d8460815e7a0f71d99828cbcb275d8abc769deb17c4db1a5f34c0241efa",
+    "appliedBoundary": "Source-owned exact deparser literals; no install-time learned receipt or new object; fixed diagnostic split in same existing connection/transaction; mismatches fail closed and require documented same-session correction/full re-gating."
+  },
+  "sourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-r1/method-candidate.sql",
+      "sha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "bytes": 52632,
+      "lines": 656,
+      "currentSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-r1/method-candidate.rollback.sql",
+      "sha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "bytes": 21567,
+      "lines": 224,
+      "currentSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-r1/native.ts",
+      "sha256": "32d6a92e7c79895227aa6a4e43c0495de75acacc4e765f7fdb0e5dfb6dcf08c1",
+      "bytes": 55054,
+      "lines": 728,
+      "currentSha256": "135c6abc6b2415449572d1badd7a6ece229ac5419ffcc7de106d093de1ef91f8",
+      "unchangedAtReviewEnd": false
+    }
+  ],
+  "staticTextObservations": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-r1/static-delta-observations.json",
+    "sha256": "6d5531e22f80e37c07610f066da8833d4356f210eb35dfef74a5b87cecb7c4d5",
+    "result": {
+      "candidateLiteralCount": 3,
+      "rollbackLiteralCount": 3,
+      "literalNames": [
+        "revisions_v1_shape",
+        "heads_v1_shape",
+        "operations_v1_shape"
+      ],
+      "allLiteralPairsExactlyEqual": true,
+      "literalPins": [
+        {
+          "name": "revisions_v1_shape",
+          "bytes": 280,
+          "sha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        },
+        {
+          "name": "heads_v1_shape",
+          "bytes": 879,
+          "sha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258"
+        },
+        {
+          "name": "operations_v1_shape",
+          "bytes": 2801,
+          "sha256": "66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3"
+        }
+      ],
+      "candidateBoundarySha256": "0dcc6356694d2867899c14fa9d5c7d3a7736f9b45ed803183ef97170f3c0c892",
+      "rollbackBoundarySha256": "f51ce3892e39576463e6163197e73bc258aaa79d5ed36b982515e0d76b5cee3b",
+      "boundaryBytesEqualAfterOnlyErrorCodeBinding": true,
+      "candidateTopLevelBeginCount": 1,
+      "candidateTopLevelCommitCount": 1,
+      "rollbackTopLevelBeginCount": 1,
+      "rollbackTopLevelCommitCount": 1,
+      "candidateMarkerCount": 1,
+      "candidatePrefixContainsCommit": false,
+      "candidateSplitByteExact": true
+    },
+    "method": "Literal text extraction/byte comparison only. No SQL parser, deparser execution, module import or test run."
+  },
+  "findingClosure": {
+    "id": "MA1-EARLY-SQL-P2-1",
+    "previous": "Names/type/flags permitted same-name CHECK(true) without binding expressions.",
+    "corrected": "Both inventories now enumerate exactly revisions_v1_shape, heads_v1_shape, operations_v1_shape with source-owned dollar-quoted expected expressions. A fixed schema/name/type lookup requires pg_catalog.pg_get_expr(c.conbin,c.conrelid,false)=expected; no matching expression, including NULL, raises the existing fixed boundary error.",
+    "positions": {
+      "candidateLiteralGuard": [
+        547,
+        561
+      ],
+      "rollbackLiteralGuard": [
+        97,
+        111
+      ],
+      "candidateFixedSearchPath": 4,
+      "rollbackFixedSearchPath": 3,
+      "nativeDiagnosticSplit": [
+        68,
+        83
+      ]
+    },
+    "consistency": "All three expression name/value pairs are byte-identical between candidate and rollback. The entire exact-boundary DO block is identical after only its intentionally distinct P7505/P7506 error binding. Existing exact inventory/column/constraint counts remain ahead of the literal checks. No mutation/normalization was added to make a mismatch pass.",
+    "searchPath": "Each complete candidate/rollback transaction now sets LOCAL search_path=pg_catalog immediately after BEGIN. The exact deparser calls explicitly use pretty=false; security-definer/helper function search paths remain fixed. No role/global/schema default privilege change was introduced.",
+    "diagnostic": "native.installCandidate finds exactly one fixed source marker, slices exact prefix/suffix, verifies byte reconstruction, executes prefix containing the original BEGIN but no COMMIT, reads only the three CHECK definitions on the same connection under that transaction/search path, then runs untouched boundary+COMMIT suffix. A failure issues ROLLBACK and propagates. Observed definitions are diagnostics only and never replace the literals.",
+    "sourceOutcome": "No additional concrete defect found in this bounded delta. Source-level missing-definition gap is closed at reviewed hashes.",
+    "nativeNotInferred": "No claim that these hand-pinned deparser bytes are accepted by actual PostgreSQL or that rollback preservation works at runtime. Both remain explicit mandatory CI obligations."
+  },
+  "pendingNativeObligations": [
+    "Pristine actual candidate installation under the fixed path must accept all three exact literals; preserve any compatibility failure instead of normalizing it away.",
+    "Pristine empty rollback after removal of only known fixture reader membership must succeed and leave unrelated/helper state intact.",
+    "Same-name modified heads_v1_shape CHECK(true) must cause boundary refusal; a fresh connection must observe the modified CHECK definition and all candidate objects unchanged.",
+    "Other accepted rollback/race/ACL native groups remain in author development and were not claimed complete by this source review."
+  ],
+  "rootAmendmentAcknowledged": "Root step1 additionally requires pre-role session_user/current_user equal the genuine login in native createFixture.connect. Primary owns that same-SELECT amendment; adapter already has it. This receipt does not turn that known pending amendment into another P2 or wider scope, and does not accept the whole native file.",
+  "newConcreteFindings": [],
+  "operations": {
+    "sourceEdits": false,
+    "repoDocsEdits": false,
+    "gitRefOrIndexChanges": false,
+    "networkOrHosted": false,
+    "sqlOrNativeExecution": false,
+    "productImportsOrTests": false,
+    "scratchOnly": "Copied current SQL/native snapshots, read prior receipts and source delta, computed literal/text hashes, and wrote this independent receipt."
+  },
+  "limits": [
+    "Active author source, not a final freeze/exact-head gate.",
+    "No TL PASS, Ready, merge, live target evidence, method/package approval or database/Production activation.",
+    "Original early review and failed-state evidence remain intact."
+  ]
+}

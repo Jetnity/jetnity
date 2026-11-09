@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-09T16:08:28.931315+00:00",
+  "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+  "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-r1/native-current-at-sql-review-end.ts",
+  "sourceSha256": "135c6abc6b2415449572d1badd7a6ece229ac5419ffcc7de106d093de1ef91f8",
+  "installerFunctionUnchanged": true,
+  "installerFunctionSha256": "8cc475f8c975dbb382c6dc2d42520ac5917e5c263ce5a8f1b4de061eff343d57",
+  "checkDefinitionsStatementUnchanged": true,
+  "checkDefinitionsStatementSha256": "06cdf1dce78a2ed4cb6b323d76b887df89e04b2ef13afe89c270520333d0a7bf",
+  "identitySql": "const identitySql = 'SELECT pg_catalog.pg_backend_pid()::text AS pid,backend_start::text AS birth,session_user::text AS session_user,current_user::text AS current_user FROM pg_catalog.pg_stat_activity WHERE pid=pg_catalog.pg_backend_pid()'",
+  "connectExcerpt": "  const connect = async (login = cluster.user, role?: 'authenticated' | 'ot_v3_method_reader' | 'postgres') => {\n    const connection = await LocalPgConnection.connect(cluster, login); connections.add(connection)\n    // Capture the genuine login's own birth before NOINHERIT SET ROLE hides it.\n    const rows = await connection.query(identitySql)\n    assert.equal(rows.length, 1); assert.ok(rows[0]!.pid && rows[0]!.birth)\n    assert.equal(rows[0]!.session_user, login); assert.equal(rows[0]!.current_user, login)\n    identities.set(connection, Object.freeze({ pid: rows[0]!.pid, birth: rows[0]!.birth }))\n    if (role) await connection.query('SET ROLE ' + role)\n    if (login === MA1_AUTH.humanLogin || login === MA1_AUTH.readerLogin) {\n      assert.deepEqual(await connection.query('SELECT pg_catalog.pg_backend_pid()::text AS pid,session_user::text AS session_user,current_user::text AS current_user'),\n        [{ pid: rows[0]!.pid, session_user: login, current_user: role! }])\n    }\n    return connection\n  }\n",
+  "scope": "Read-only exact text comparison of known installer seam after native.ts changed; no acceptance of unrelated native additions and no execution."
+}

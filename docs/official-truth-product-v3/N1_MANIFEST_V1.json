@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "kind": "n1_author_local_candidate_manifest",
+  "capturedAt": "2026-11-09T10:54:47.141818+00:00",
+  "author": "Jetnity Official Truth V3 Research Ingress1 — Codex Generation1",
+  "session": "/root/v3_n1_ingress_writer",
+  "taskseed": "ec371ebd6914407aeb8f72f405d57ed70967a01f",
+  "s1ContractHead": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+  "guardAmendment": "https://github.com/Jetnity/jetnity/pull/1170#issuecomment-6738189101",
+  "authority": "none",
+  "independentTechnicalLeadReview": "pending",
+  "productionActivation": false,
+  "selfExcluded": true,
+  "files": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "bytes": 6368,
+      "sha256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "bytes": 11215,
+      "sha256": "8d4ebd93d94bbee326edb6212709bae49d1e848ae69169028e3974d4fe446a7d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "bytes": 9313,
+      "sha256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "bytes": 14319,
+      "sha256": "06d719ee9b1e4b2f908dcb0b3250c462463e47d5b24594c098bba3bc3cce0694"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "bytes": 3967,
+      "sha256": "60e6d44f63bef4554ad6e1bc225255e02b35300364294e1b5b0b17a62965a283"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "bytes": 2419,
+      "sha256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "bytes": 55104,
+      "sha256": "9636f46f9fa9bc0a4fbc988175d36255a0b03949f6279d04bfee4a21a196696f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "bytes": 3840,
+      "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "bytes": 2170,
+      "sha256": "300f5f0f8537c4610a3f11c4c94fff5a38504dc5d4b8ad0dcd8d2ef7f2a324dc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "bytes": 3736,
+      "sha256": "0370ab8a782a51866772989cd6728ea39070e153677301847179a9a95d41234a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "bytes": 6813,
+      "sha256": "201e8127cfa06cb29199f66c799a87a5a16858b4c7b09e3c43a6e360a5585cb2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "bytes": 4260,
+      "sha256": "947321735985f0b532335c5be5c0d7481eb7892b8a52be9caf09ea655e6e3e4c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "bytes": 8141,
+      "sha256": "d34b3cb1672e06a02923b7013c578d38aa2eb1363a992b1822c0f7f0401fdf1e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "bytes": 7102,
+      "sha256": "f1c19e275fa0b6255a64d3c7c63a7429c23289f92784219a916f118d40c73585"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "bytes": 17294,
+      "sha256": "1d9fc9d5ad4502cc81e5886e46b1d2276197da59317fbb4816dc1212f360e768"
+    }
+  ]
+}

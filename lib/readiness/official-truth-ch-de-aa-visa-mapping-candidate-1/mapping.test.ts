@@ -2,8 +2,9 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { test } from 'node:test'
+import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { fixtureTrip, loadFixtureModule, protocol2Fixture } from '../../../scripts/official-truth-ch-de-application-pilot-1/fixtures'
 import { AA_VISA_TABLE_IDENTITY_CANDIDATE } from '../official-truth-aa-visa-table-identity-candidate'
@@ -331,31 +332,183 @@ for (const [name, options] of [
   assert.equal(run.trace.acceptedRules, 0)
 })
 
+const c1Mapper = 'lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts'
+const candidateStem = 'official-truth-ch-de-aa-visa-mapping-candidate-1'
+const candidateOwn = new Set([`${directory}/mapping.ts`, `${directory}/reviewed-source.ts`])
+const c1MetadataImports = new Map([
+  [`@/${directory}/mapping`, 'AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE'],
+  [`@/${directory}/reviewed-source`, 'AA_CH_DE_VISA_REVIEWED_SOURCE_CANDIDATE'],
+])
+
+/** Resolve the existing @/* and baseUrl/relative conventions without executing
+ * imports. Normalized parent segments and JS/TS module extensions cannot hide a
+ * reference to either dormant boundary. All string literals are checked, also
+ * require/import/export forms and strings that could be passed to a loader. */
+function isolationModulePath(root: string, name: string, specifier: string): string {
+  if (specifier.startsWith('file:')) {
+    try { return fileURLToPath(specifier).replace(/\.(?:[cm]?[jt]s|[jt]sx)$/, '') }
+    catch { return 'invalid-file-url' }
+  }
+  const bare = specifier.replace(/[?#].*$/, '')
+  const path = bare.startsWith('@/') ? resolve(root, bare.slice(2))
+    : bare.startsWith('.') ? resolve(dirname(resolve(root, name)), bare) : resolve(root, bare)
+  return path.replace(/\.(?:[cm]?[jt]s|[jt]sx)$/, '')
+}
+
+function assertCandidateImportIsolation(root: string, name: string, source: string): void {
+  const parsed = ts.createSourceFile(name, source, ts.ScriptTarget.Latest, true)
+  const mapperModule = isolationModulePath(root, name, `@/${c1Mapper}`)
+  const oldModules = new Set([...candidateOwn].map(path => isolationModulePath(root, name, `@/${path}`)))
+  const owned = candidateOwn.has(name), mapper = name === c1Mapper, seen = new Set<string>(), exported = new Set<string>()
+  if (owned) {
+    // Original two-file checks remain unchanged.
+    assert(source.startsWith("import 'server-only'"))
+    assert.doesNotMatch(source, /official-truth-content-identity|official-truth-aa-visa-table-identity-candidate|\bfetch\s*\(|execute_sql|createClient/)
+  }
+  function check(node: ts.Node): void {
+    if (mapper) {
+      assert.equal(ts.isIdentifier(node) && node.text === 'require', false, 'C1 mapper has no loader or hidden require')
+      assert.equal(ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword, false, 'C1 mapper has no loader or dynamic import')
+      assert.equal(ts.isIdentifier(node) && (node.text === 'module' || node.text === 'exports'), false,
+        'C1 mapper export surface forbids CommonJS forwarding')
+      assert.equal(ts.isExportDeclaration(node) || ts.isExportAssignment(node), false,
+        'C1 mapper export surface forbids re-exports, local aliases and default/export-equals assignments')
+      const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined
+      if (modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+        assert.equal(modifiers.length, 1, 'C1 mapper export surface has no default/declare/async modifier')
+        assert.equal(node.parent, parsed, 'C1 mapper export surface contains only the two top-level declarations')
+        const allowed = ts.isFunctionDeclaration(node) && node.name?.text === 'createV3AaPilotContextCandidate'
+          || ts.isTypeAliasDeclaration(node) && node.name.text === 'V3AaPilotContextCandidate'
+        assert.ok(allowed, 'C1 mapper export surface is exactly its candidate function and candidate type')
+        const exportedName = (node as ts.FunctionDeclaration | ts.TypeAliasDeclaration).name!.text
+        assert.equal(exported.has(exportedName), false, 'C1 mapper export surface has no duplicate declaration')
+        exported.add(exportedName)
+      }
+    }
+    if (ts.isStringLiteralLike(node)) {
+      const target = isolationModulePath(root, name, node.text)
+      assert.notEqual(target, mapperModule, `dormant C1 mapper referenced by non-test source: ${name}`)
+      if (!owned && (node.text.includes(candidateStem) || oldModules.has(target))) {
+        if (!mapper) assert.fail(`candidate referenced by production source: ${name}`)
+        const statement = node.parent, expected = c1MetadataImports.get(node.text)
+        assert.ok(expected && ts.isImportDeclaration(statement) && statement.moduleSpecifier === node,
+          'only the two exact C1 static metadata imports are allowed')
+        const clause = statement.importClause
+        assert.ok(clause && !clause.name && !clause.isTypeOnly && clause.namedBindings && ts.isNamedImports(clause.namedBindings),
+          'C1 metadata import must be named, never default/namespace/type-only')
+        const names = clause.namedBindings.elements
+        assert.equal(names.length, 1, 'no additional candidate symbol')
+        assert.equal(names[0]!.isTypeOnly, false)
+        assert.equal((names[0]!.propertyName ?? names[0]!.name).text, expected)
+        assert.equal(seen.has(node.text), false, 'no duplicate metadata import')
+        seen.add(node.text)
+      }
+    }
+    ts.forEachChild(node, check)
+  }
+  check(parsed)
+  if (mapper) {
+    assert.deepEqual([...seen].sort(), [...c1MetadataImports.keys()].sort(), 'both exact current metadata imports are required')
+    assert.deepEqual([...exported].sort(), ['V3AaPilotContextCandidate', 'createV3AaPilotContextCandidate'],
+      'C1 mapper export surface requires exactly its current type and function')
+    assert(parsed.statements.some(statement => ts.isImportDeclaration(statement) && !statement.importClause
+      && ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text === 'server-only'))
+    assert.doesNotMatch(source, /\bfetch\s*\(|execute_sql|createClient|\bDate\b|\bperformance\b|\.\s*(?:validity|extract|match|register)\s*\(/)
+  }
+}
+
 test('full repository candidate import isolation (requires complete checkout)', () => {
-  const root = process.cwd(), stem = 'official-truth-ch-de-aa-visa-mapping-candidate-1'
+  const root = process.cwd()
   const directories = new Set(readdirSync(root, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name))
   for (const required of ['app', 'apps', 'components', 'lib', 'scripts', 'tests', 'types']) {
     assert(directories.has(required), `full repository source required: ${required}`)
   }
-  const own = new Set([`${directory}/mapping.ts`, `${directory}/reviewed-source.ts`])
   function visit(path: string): void {
     for (const entry of readdirSync(path, { withFileTypes: true })) {
       if (entry.isDirectory() && ['node_modules', '.git', '.next', '.vercel', 'dist', 'out'].includes(entry.name)) continue
       const file = join(path, entry.name), name = relative(root, file)
       if (entry.isDirectory()) { visit(file); continue }
       if (!/\.[cm]?[jt]sx?$/.test(entry.name) || /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(entry.name)) continue
-      const source = readFileSync(file, 'utf8'), parsed = ts.createSourceFile(name, source, ts.ScriptTarget.Latest, true)
-      if (own.has(name)) {
-        assert(source.startsWith("import 'server-only'"))
-        assert.doesNotMatch(source, /official-truth-content-identity|official-truth-aa-visa-table-identity-candidate|\bfetch\s*\(|execute_sql|createClient/)
-      } else {
-        function check(node: ts.Node): void {
-          if (ts.isStringLiteralLike(node) && node.text.includes(stem)) assert.fail(`candidate referenced by production source: ${name}`)
-          ts.forEachChild(node, check)
-        }
-        check(parsed)
-      }
+      assertCandidateImportIsolation(root, name, readFileSync(file, 'utf8'))
     }
   }
   visit(root)
+})
+
+test('C1 isolation permits only the exact dormant mapper and two current named metadata imports', () => {
+  const root = process.cwd(), source = readFileSync(c1Mapper, 'utf8')
+  assert.doesNotThrow(() => assertCandidateImportIsolation(root, c1Mapper, source))
+  for (const name of ['scripts/pilot-context.ts', c1Mapper.replace('.ts', '-copy.ts'), `${directory}/not-owned.ts`]) {
+    assert.throws(() => assertCandidateImportIsolation(root, name, source))
+  }
+  const application = `import { AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE as application } from '@/${directory}/mapping'`
+  assert.ok(source.includes(application), 'negative mutations replace the actual permitted import')
+  const forbidden = [
+    `import application from '@/${directory}/mapping'`,
+    `import * as application from '@/${directory}/mapping'`,
+    `import type { AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE as application } from '@/${directory}/mapping'`,
+    `import { AA_CH_DE_VISA_EXTRACTOR_CANDIDATE as application } from '@/${directory}/mapping'`,
+    `import { AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE as application, AA_CH_DE_VISA_EXTRACTOR_CANDIDATE } from '@/${directory}/mapping'`,
+    `const application = require('@/${directory}/mapping')`,
+    `const application = import('@/${directory}/mapping')`,
+    `export { AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE } from '@/${directory}/mapping'`,
+    `import { AA_CH_DE_VISA_APPLICATION_CONTRACT_CANDIDATE as application } from '../../official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.js'`,
+    `const application = '@/${directory}/mapping'`,
+    application + '\n' + application,
+    '',
+  ]
+  for (const replacement of forbidden) assert.throws(() => assertCandidateImportIsolation(root, c1Mapper, source.replace(application, replacement)))
+  // Even when both permitted imports remain, a split-string loader cannot use
+  // this exception to conceal another candidate reference.
+  for (const hidden of [
+    "void import('@/lib/readiness/official-truth-ch-de-aa-' + 'visa-mapping-candidate-1/mapping')",
+    "require('@/lib/readiness/official-truth-ch-de-aa-' + 'visa-mapping-candidate-1/mapping')",
+    "const loader = require; loader('@/lib/readiness/official-truth-ch-de-aa-' + 'visa-mapping-candidate-1/mapping')",
+  ]) assert.throws(() => assertCandidateImportIsolation(root, c1Mapper, source + '\n' + hidden), /C1 mapper has no loader/)
+})
+
+test('C1 mapper rejects appended local/default/value forwarding while both permitted metadata imports remain', () => {
+  const root = process.cwd(), source = readFileSync(c1Mapper, 'utf8')
+  for (const forwarding of [
+    'export { application }',
+    'export { reviewed as forwardedReviewed }',
+    'export default application',
+    'export default reviewed',
+    'export const forwardedApplication = application',
+    'export const forwardedReviewed = reviewed',
+    'export { createV3AaPilotContextCandidate as anotherCandidate }',
+    'export type { V3AaPilotContextCandidate as AnotherCandidate }',
+    'export function forwardedMetadata() { return application }',
+    'export default function forwardedMetadata() { return reviewed }',
+    'export = application',
+    'module.exports = application',
+    'exports.forwardedReviewed = reviewed',
+  ]) assert.throws(() => assertCandidateImportIsolation(root, c1Mapper, source + '\n' + forwarding), /C1 mapper export surface/)
+})
+
+test('C1 transitive isolation rejects alias/relative/normalized/extension callers including scripts and literal loaders', () => {
+  const root = process.cwd(), mapperPath = c1Mapper.replace(/\.ts$/, '')
+  const cases: Array<[string, string]> = [
+    ['app/example.ts', `import { createV3AaPilotContextCandidate } from '@/${mapperPath}'`],
+    ['lib/readiness/example.ts', "import './official-truth-product-v3/global-conditions/pilot-context.ts'"],
+    ['app/example/page.tsx', `export * from '../../${mapperPath}.js'`],
+    ['scripts/c1-smoke.ts', `export { createV3AaPilotContextCandidate } from '../${mapperPath}'`],
+    ['scripts/c1-smoke.ts', `void import('../${mapperPath}.mjs')`],
+    ['scripts/c1-smoke.ts', `const mapper = require('@/${mapperPath}.cjs')`],
+    ['app/example.ts', `const path = '@/${mapperPath}'`],
+    ['lib/readiness/example.ts', "void import('./official-truth-product-v3/global-conditions/../global-conditions/pilot-context')"],
+    ['app/example.ts', `export * from '@/lib/../${mapperPath}.mts'`],
+    ['app/example.ts', `import type { V3AaPilotContextCandidate } from '${mapperPath}.tsx'`],
+    ['app/example.ts', `void import(${JSON.stringify(resolve(root, c1Mapper))})`],
+    ['scripts/c1-smoke.ts', `void import(${JSON.stringify('file://' + resolve(root, c1Mapper) + '?proof=1#context')})`],
+    ['scripts/c1-smoke.ts', `void import('@/${mapperPath}.ts?proof=1#context')`],
+    [`${directory}/mapping.ts`, `import 'server-only'\nexport * from '../official-truth-product-v3/global-conditions/pilot-context'`],
+  ]
+  for (const [name, source] of cases) assert.throws(() => assertCandidateImportIsolation(root, name, source), /dormant C1 mapper referenced/)
+  // Keep original old-stem protection, including a normalized relative old
+  // reference whose literal text does not itself contain the old directory stem.
+  for (const [name, source] of [
+    ['scripts/c1-smoke.ts', `void import('@/${directory}/mapping')`],
+    [`${directory}/not-owned.ts`, "const candidate = require('./nested/../mapping.js')"],
+  ]) assert.throws(() => assertCandidateImportIsolation(root, name!, source!), /candidate referenced/)
 })

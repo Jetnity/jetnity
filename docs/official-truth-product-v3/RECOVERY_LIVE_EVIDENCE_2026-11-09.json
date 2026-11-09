@@ -1,0 +1,1326 @@
+{
+  "schemaVersion": 1,
+  "observedAtUtc": "2026-11-09T11:44:25Z",
+  "observer": "Jetnity V3 live release recovery — read-only supporting audit",
+  "session": "/root/live_release_recovery",
+  "authority": "Supporting evidence only; no Technical Lead PASS or activation approval",
+  "main": {
+    "sha": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "tree": "34550fc83fb64cc27c08e0cb918a2f0a20cb648b",
+    "protected": true,
+    "url": "https://api.github.com/repos/Jetnity/jetnity/branches/main"
+  },
+  "repository": {
+    "openPrCount": 20,
+    "openIssueCount": 48,
+    "allOpenPrsDraft": true,
+    "openIssues": [
+      {
+        "number": 751,
+        "title": "Guardian Intelligence Current State — canonical live index",
+        "updated": "2026-11-09T10:54:51Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/751"
+      },
+      {
+        "number": 1162,
+        "title": "Official Truth Produktziel V3 — parallele Implementierung S0/I1/U1/M1 und Dev-Freigabepaket",
+        "updated": "2026-11-09T10:35:42Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1162"
+      },
+      {
+        "number": 1139,
+        "title": "Official Truth P1 — Kontostatus-/Session-Witness vor Owner-AAL2-Produktionsfreigabe",
+        "updated": "2026-11-08T23:48:12Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139"
+      },
+      {
+        "number": 917,
+        "title": "Official Truth CH→DE first real visa-status vertical 1 — source to Trip Workspace",
+        "updated": "2026-11-08T23:48:02Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/917"
+      },
+      {
+        "number": 748,
+        "title": "Guardian Intelligence Inbox — Grok / Chief of Staff reports",
+        "updated": "2026-11-08T14:28:45Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/748"
+      },
+      {
+        "number": 968,
+        "title": "P1 – Vercel Preview erbt Production-Supabase: Development-QA-Gate für PR #955",
+        "updated": "2026-11-06T21:23:55Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/968"
+      },
+      {
+        "number": 1134,
+        "title": "Official Truth Grok Bridge V2 – seven-country research-only review queue",
+        "updated": "2026-11-06T08:00:50Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1134"
+      },
+      {
+        "number": 1130,
+        "title": "Official Truth: enforce declared HTTP Content-Length in server-owned government source retrieval",
+        "updated": "2026-11-06T00:13:46Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1130"
+      },
+      {
+        "number": 1127,
+        "title": "Official Truth CH→DE: exact AA visa table proposition decoder (offline, no acceptance)",
+        "updated": "2026-11-05T22:12:54Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1127"
+      },
+      {
+        "number": 1124,
+        "title": "Official Truth Grok V1: prepare deterministic multi-country review queue (offline, no DB writes)",
+        "updated": "2026-11-05T20:00:54Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1124"
+      },
+      {
+        "number": 1120,
+        "title": "Official Truth Grok Research Intake Quarantine V1 – actual batch format",
+        "updated": "2026-11-05T16:50:26Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1120"
+      },
+      {
+        "number": 741,
+        "title": "HIGH PRIORITY — Jetnity Copilot Pro autonomous Official Truth approval",
+        "updated": "2026-11-05T16:34:19Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/741"
+      },
+      {
+        "number": 1114,
+        "title": "Trip Maps JS V1 – geschützter Google-Preview-Pilot: Preflight, Isolation und PO-Gates",
+        "updated": "2026-11-04T18:17:14Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1114"
+      },
+      {
+        "number": 1118,
+        "title": "Reiseplan V2 – öffentliche Google Maps auf jetnity.com: Production Release & Consent/Cost Gates",
+        "updated": "2026-11-04T18:15:48Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1118"
+      },
+      {
+        "number": 1115,
+        "title": "Reiseplan Map-first Canvas V1 – einheitliche Route/Tagesansicht und grosse dauerhafte Karte",
+        "updated": "2026-11-04T15:12:13Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1115"
+      },
+      {
+        "number": 1023,
+        "title": "R108 V5 — Aktivitäten: bebilderte Viator-/GetYourGuide-Angebote und passende Ausflüge",
+        "updated": "2026-11-01T14:42:31Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1023"
+      },
+      {
+        "number": 1078,
+        "title": "R108 Viator S1 – Sandbox-first Full Access Affiliate: Suche, Inhalte, Kalender, Live-Check und unveränderte Produktlinks",
+        "updated": "2026-10-31T22:27:25Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1078"
+      },
+      {
+        "number": 1087,
+        "title": "P1 / Product-Owner-Gate — gemeinsame Consent-/Privacy-Lösung für DiscoverCars und 12Go",
+        "updated": "2026-10-31T21:01:47Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1087"
+      },
+      {
+        "number": 1083,
+        "title": "DiscoverCars V2 – offizielles Mietwagen-Suchwidget und Search-API-/Bildrechte-Gate",
+        "updated": "2026-10-29T21:35:29Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1083"
+      },
+      {
+        "number": 1085,
+        "title": "12Go V2 – offizielles allgemeines Suchwidget nach Opt-in, Privacy-/Network-Gate",
+        "updated": "2026-10-29T21:33:05Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1085"
+      },
+      {
+        "number": 1055,
+        "title": "12Go Mobility Affiliate Linkout V1 — bestätigte Strecken und sichere externe Suche, ohne API",
+        "updated": "2026-10-28T21:18:19Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1055"
+      },
+      {
+        "number": 1067,
+        "title": "UX V1 U1-B – Desktop-Route neben Detail, mobiler Detailwechsel und sichere Rückkehr",
+        "updated": "2026-10-28T18:16:03Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1067"
+      },
+      {
+        "number": 1064,
+        "title": "Trip Workspace UX/UI V1 — Work 12-page specification: U0 reality alignment, bounded implementation and A01–A16 gates",
+        "updated": "2026-10-28T11:19:25Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1064"
+      },
+      {
+        "number": 1065,
+        "title": "UX V1 U1-A – Kompakter Reisekopf, adaptive Vier-Tab-Navigation und Übersicht",
+        "updated": "2026-10-28T11:19:03Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1065"
+      },
+      {
+        "number": 1073,
+        "title": "P1 – GetYourGuide Analyzer: Datenschutz-/Consent-Prüfung und separate Product-Owner-Entscheidung",
+        "updated": "2026-10-28T10:17:39Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1073"
+      },
+      {
+        "number": 1072,
+        "title": "CHATGPT NEW CHAT CONTINUITY — Jetnity Hauptplan 59 → nächster TL, 28.10.2026 (N12 POST, F05 R2, UX V1)",
+        "updated": "2026-10-28T00:31:40Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1072"
+      },
+      {
+        "number": 1069,
+        "title": "UX V1 U4 – Unabhängige Work-Abnahme der 16 A01–A16 Szenarien auf Exact Production",
+        "updated": "2026-10-28T00:09:50Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1069"
+      },
+      {
+        "number": 1068,
+        "title": "UX V1 U3-A – Organisieren mit stabilem Aufenthalts-/Tageskontext und ehrlichen Suchzuständen",
+        "updated": "2026-10-28T00:09:46Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1068"
+      },
+      {
+        "number": 1060,
+        "title": "V2-N12 – Reisetage in echter Kalenderreihenfolge im Trip Workspace zeigen",
+        "updated": "2026-10-27T22:57:55Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1060"
+      },
+      {
+        "number": 1056,
+        "title": "Trip.com – Affiliate-Antrag läuft: Partnerwerkzeuge/Bankprüfung bis Genehmigung HOLD",
+        "updated": "2026-10-27T18:00:38Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1056"
+      },
+      {
+        "number": 1046,
+        "title": "Guest-trip V2 Work QA 2026-10-27 — F01–F11 + N12 triage, bounded Phase-1 correction plan",
+        "updated": "2026-10-27T17:22:08Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1046"
+      },
+      {
+        "number": 1050,
+        "title": "V2-S3 — Gast-Fortsetzen live aktualisieren + Reiseansicht-Tabs bei 200% Text (F08 + F09)",
+        "updated": "2026-10-27T16:17:21Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1050"
+      },
+      {
+        "number": 1049,
+        "title": "V2-S2 — Reisendenzahl, Vorbereitungshinweise und Statusbedienung (F04 + F10 + F11)",
+        "updated": "2026-10-27T16:17:17Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1049"
+      },
+      {
+        "number": 1048,
+        "title": "V2-S1 — Nächtebilanz und ehrlicher Hotelzeitraum (F02 + F03)",
+        "updated": "2026-10-27T16:17:13Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1048"
+      },
+      {
+        "number": 1047,
+        "title": "V2-S0 — Trip-Kalender und Reisetag-Absicht: F01 + N12 als verbindlicher Fachvertrag",
+        "updated": "2026-10-27T16:16:28Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/1047"
+      },
+      {
+        "number": 236,
+        "title": "Strategy Register – differentiated product opportunities (do not auto-start)",
+        "updated": "2026-10-26T09:20:55Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/236"
+      },
+      {
+        "number": 982,
+        "title": "Official Truth Whole-Source Current Request 1 — Protocol 3 mit geschlossenem vollständigem Nachweis",
+        "updated": "2026-10-24T09:39:28Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/982"
+      },
+      {
+        "number": 944,
+        "title": "Official Truth Bundesportal BP1 Observation 1 — konkreten Quellenanschluss vorbereiten",
+        "updated": "2026-10-23T16:26:45Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/944"
+      },
+      {
+        "number": 960,
+        "title": "Development Places Search QA Unblock 1 — mandatory trip destination lookup returns no options",
+        "updated": "2026-10-23T13:14:26Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/960"
+      },
+      {
+        "number": 911,
+        "title": "P2 — Public Evidence Privacy Hygiene 1 (bounded current-tree remediation)",
+        "updated": "2026-10-14T09:51:11Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/911"
+      },
+      {
+        "number": 936,
+        "title": "B-EXECUTOR-APP-1 — private App setup, secure custody and code-only Bern executor integration",
+        "updated": "2026-10-13T18:28:06Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/936"
+      },
+      {
+        "number": 934,
+        "title": "Official Truth Bern G3-RQ-FETCH-1 — guarded developer-only 128KiB one-shot research",
+        "updated": "2026-10-13T13:05:56Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/934"
+      },
+      {
+        "number": 294,
+        "title": "Entry Requirements Detail Architecture – binding target, do not auto-start",
+        "updated": "2026-10-01T18:01:37Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/294"
+      },
+      {
+        "number": 440,
+        "title": "PO Standing Authorization – autonomous bounded Jetnity work until return",
+        "updated": "2026-09-30T14:30:36Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/440"
+      },
+      {
+        "number": 626,
+        "title": "Development Security Event Logging and Retention 1 — active; final authenticated E2E pending",
+        "updated": "2026-09-30T09:41:00Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/626"
+      },
+      {
+        "number": 395,
+        "title": "PO Gate – First Flight provider access decision",
+        "updated": "2026-09-30T09:33:40Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/395"
+      },
+      {
+        "number": 585,
+        "title": "Legal residual – PrivacyBee Infomaniak legal-basis wording",
+        "updated": "2026-09-28T17:03:16Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/585"
+      },
+      {
+        "number": 20,
+        "title": "Future – Gemeinsame Reiseplanung für Paare, Familien und Gruppen",
+        "updated": "2026-08-20T16:07:52Z",
+        "url": "https://github.com/Jetnity/jetnity/issues/20"
+      }
+    ]
+  },
+  "prs": [
+    {
+      "number": 1163,
+      "head": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "branch": "feat/official-truth-v3-shared-contract-1-20261109",
+      "baseBranch": "main",
+      "base": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T01:21:23Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1163",
+      "actions": [
+        {
+          "id": 42542787998,
+          "name": "CI",
+          "head": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42542787998",
+          "created": "2026-11-09T00:55:24Z",
+          "updated": "2026-11-09T01:14:15Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_FzrWsMfuc7P5HPQuCo8RMG4MkAKo",
+          "sha": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-6u47xbcxq-jetnity-e1b93c82.vercel.app",
+          "created": 1794185722052
+        }
+      ]
+    },
+    {
+      "number": 1164,
+      "head": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+      "branch": "feat/official-truth-v3-import-1-20261109",
+      "baseBranch": "feat/official-truth-v3-shared-contract-1-20261109",
+      "base": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T02:00:59Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1164",
+      "actions": [
+        {
+          "id": 42545804470,
+          "name": "CI",
+          "head": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42545804470",
+          "created": "2026-11-09T01:29:08Z",
+          "updated": "2026-11-09T01:47:31Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_2keakibwvAd9A2EsWtMPSs3DYVtH",
+          "sha": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-j12kftxhy-jetnity-e1b93c82.vercel.app",
+          "created": 1794187744747
+        }
+      ]
+    },
+    {
+      "number": 1165,
+      "head": "d110545a551baf6b6f18687042238a30514addda",
+      "branch": "feat/official-truth-v3-visitor-cache-1-20261109",
+      "baseBranch": "feat/official-truth-v3-shared-contract-1-20261109",
+      "base": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T02:01:54Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1165",
+      "actions": [
+        {
+          "id": 42547489573,
+          "name": "CI",
+          "head": "d110545a551baf6b6f18687042238a30514addda",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42547489573",
+          "created": "2026-11-09T01:48:27Z",
+          "updated": "2026-11-09T02:00:48Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_AXzzsyfg48W8drtuhYZsjsCKKqQT",
+          "sha": "d110545a551baf6b6f18687042238a30514addda",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-2o89dttnc-jetnity-e1b93c82.vercel.app",
+          "created": 1794188904775
+        }
+      ]
+    },
+    {
+      "number": 1166,
+      "head": "40ca2f0348862bb763e8d42728418bda4c63405f",
+      "branch": "feat/official-truth-v3-monitor-jobs-1-20261109",
+      "baseBranch": "feat/official-truth-v3-shared-contract-1-20261109",
+      "base": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T01:37:48Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1166",
+      "actions": [
+        {
+          "id": 42544840538,
+          "name": "CI",
+          "head": "40ca2f0348862bb763e8d42728418bda4c63405f",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42544840538",
+          "created": "2026-11-09T01:18:05Z",
+          "updated": "2026-11-09T01:36:10Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_GWfcZeMfyfd7hRwKFqwZVDU2qumu",
+          "sha": "40ca2f0348862bb763e8d42728418bda4c63405f",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-km7u8kbpa-jetnity-e1b93c82.vercel.app",
+          "created": 1794187080456
+        }
+      ]
+    },
+    {
+      "number": 1167,
+      "head": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "branch": "feat/official-truth-v3-integration-1-20261109",
+      "baseBranch": "feat/official-truth-v3-shared-contract-1-20261109",
+      "base": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T02:20:40Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1167",
+      "actions": [
+        {
+          "id": 42548474576,
+          "name": "CI",
+          "head": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42548474576",
+          "created": "2026-11-09T02:00:04Z",
+          "updated": "2026-11-09T02:16:59Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_FH1QcLuaDkwG8NMhzW9brQ5E9vcR",
+          "sha": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-bbv9z6fg9-jetnity-e1b93c82.vercel.app",
+          "created": 1794189526469
+        }
+      ]
+    },
+    {
+      "number": 1168,
+      "head": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+      "branch": "feat/official-truth-v3-intake-store-1-20261109",
+      "baseBranch": "feat/official-truth-v3-integration-1-20261109",
+      "base": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "unstable",
+      "updated": "2026-11-09T11:32:29Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1168",
+      "actions": [
+        {
+          "id": 42603186195,
+          "name": "CI",
+          "head": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "failure",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42603186195",
+          "created": "2026-11-09T10:44:07Z",
+          "updated": "2026-11-09T10:59:20Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_2HoEUrwCN56WRHPrk4vfKfhAmheN",
+          "sha": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-yw2z3h5oe-jetnity-e1b93c82.vercel.app",
+          "created": 1794223904172
+        }
+      ],
+      "inlineThreads": []
+    },
+    {
+      "number": 1169,
+      "head": "300946991376b8969b383a087d47b49a7636f722",
+      "branch": "docs/official-truth-v3-method-package-1-20261109",
+      "baseBranch": "feat/official-truth-v3-integration-1-20261109",
+      "base": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T11:07:22Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169",
+      "actions": [
+        {
+          "id": 42603595191,
+          "name": "CI",
+          "head": "300946991376b8969b383a087d47b49a7636f722",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42603595191",
+          "created": "2026-11-09T10:46:29Z",
+          "updated": "2026-11-09T11:03:15Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_GxM7GF2xyuhha4J62wfz9u96nM7n",
+          "sha": "300946991376b8969b383a087d47b49a7636f722",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-91hgxxe5b-jetnity-e1b93c82.vercel.app",
+          "created": 1794221184582
+        }
+      ],
+      "inlineThreads": []
+    },
+    {
+      "number": 1170,
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "branch": "feat/official-truth-v3-research-ingress-1-20261109",
+      "baseBranch": "feat/official-truth-v3-intake-store-1-20261109",
+      "base": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "mergeable_state": "clean",
+      "updated": "2026-11-09T11:02:34Z",
+      "url": "https://github.com/Jetnity/jetnity/pull/1170",
+      "actions": [
+        {
+          "id": 42605139395,
+          "name": "CI",
+          "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "attempt": 1,
+          "url": "https://github.com/Jetnity/jetnity/actions/runs/42605139395",
+          "created": "2026-11-09T10:57:52Z",
+          "updated": "2026-11-09T11:12:57Z"
+        }
+      ],
+      "preview": [
+        {
+          "id": "dpl_5DWPKXa34HvrZcU6LdYzRByM8jsg",
+          "sha": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+          "state": "READY",
+          "target": null,
+          "url": "jetnity-azcfgm2gu-jetnity-e1b93c82.vercel.app",
+          "created": 1794221869710
+        }
+      ],
+      "inlineThreads": []
+    }
+  ],
+  "mainActions": [
+    {
+      "id": 42532553997,
+      "name": "CI",
+      "head": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42532553997",
+      "created": "2026-11-08T22:54:37Z",
+      "updated": "2026-11-08T23:08:35Z"
+    }
+  ],
+  "greenRunJobSteps": [
+    {
+      "id": 42532553997,
+      "total": 7,
+      "jobs": [
+        {
+          "id": 128889733227,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T23:02:12Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128889733349,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T22:59:31Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128889733415,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T23:08:30Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128889733442,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T22:55:41Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128889733457,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T23:03:54Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128889733461,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T23:05:12Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128893262605,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-08T23:08:35Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42542787998,
+      "total": 7,
+      "jobs": [
+        {
+          "id": 128921203929,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:00:20Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128921204104,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T00:56:23Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128921204146,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:03:10Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128921204147,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:14:09Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128921204202,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:10:44Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128921204270,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:03:29Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128926364290,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:14:14Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42545804470,
+      "total": 7,
+      "jobs": [
+        {
+          "id": 128930450136,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:47:26Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128930450319,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:29:57Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128930450449,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:40:48Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128930450497,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:36:50Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128930450580,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:39:49Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128930450647,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:32:55Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935259248,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:47:30Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42547489573,
+      "total": 8,
+      "jobs": [
+        {
+          "id": 128935623616,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:52:38Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935623779,
+          "name": "Official truth V3 — isolated UI",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:50:15Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935623822,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:59:52Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935623830,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:53:25Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935623834,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:00:42Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935623971,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:58:47Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128935624111,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:49:47Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938730137,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:00:47Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42544840538,
+      "total": 7,
+      "jobs": [
+        {
+          "id": 128927471034,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:24:32Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128927471148,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:23:07Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128927471198,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:19:10Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128927471212,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:29:46Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128927471239,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:32:54Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128927471338,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:36:05Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128932279914,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T01:36:09Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42548474576,
+      "total": 8,
+      "jobs": [
+        {
+          "id": 128938543756,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:12:09Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938543900,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:08:00Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938543905,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:16:00Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938543943,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:01:04Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938544019,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:16:53Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938544097,
+          "name": "Official truth V3 — isolated UI",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:01:52Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128938544118,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:05:01Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 128943366479,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T02:16:58Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42603595191,
+      "total": 8,
+      "jobs": [
+        {
+          "id": 129113740173,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:47:35Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113740711,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:53:04Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113740812,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:03:09Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113740888,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:54:13Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113740965,
+          "name": "Official truth V3 — isolated UI",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:48:04Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113740984,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:02:09Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129113741376,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:50:55Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129121519445,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:03:15Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 42605139395,
+      "total": 8,
+      "jobs": [
+        {
+          "id": 129119084784,
+          "name": "Persisted canonical read — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:03:00Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085080,
+          "name": "Repository verification",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:12:51Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085137,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:07:40Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085141,
+          "name": "Accepted store trip integration — native (store)",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:05:43Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085170,
+          "name": "Official truth V3 — isolated UI",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:59:49Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085182,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T10:58:38Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129119085212,
+          "name": "Atomic version refresh — native",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:12:05Z",
+          "failedOrSkippedSteps": []
+        },
+        {
+          "id": 129126060256,
+          "name": "Typecheck, Lint & Build",
+          "conclusion": "success",
+          "status": "completed",
+          "completed": "2026-11-09T11:12:56Z",
+          "failedOrSkippedSteps": []
+        }
+      ]
+    }
+  ],
+  "s1ContractHeadFailure": {
+    "run": 42603186195,
+    "job": 129112597322,
+    "head": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+    "diagnostics": [
+      "2026-11-09T10:48:31.8656608Z not ok 614 - zero-I/O foundation fences; finite pure consumers and no public issuer/test factory",
+      "2026-11-09T10:48:31.8659216Z   failureType: 'testCodeFailure'",
+      "2026-11-09T10:48:31.8660408Z   error: 'unexpected foundation consumer lib/readiness/official-truth-product-v3/storage/intake-contract.ts: official-truth-autonomous-provenance-artifact (immutable, ownRecord)'",
+      "2026-11-09T10:59:12.5851272Z # tests 8441",
+      "2026-11-09T10:59:12.5851452Z # pass 8438",
+      "2026-11-09T10:59:12.5851533Z # fail 1",
+      "2026-11-09T10:59:12.5851708Z # skipped 2"
+    ]
+  },
+  "production": {
+    "id": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+    "state": "READY",
+    "target": "production",
+    "sha": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "aliasError": null,
+    "aliases": [
+      "jetnity.com",
+      "jetnity-app.vercel.app",
+      "jetnity-app-jetnity-e1b93c82.vercel.app",
+      "jetnity-app-git-main-jetnity-e1b93c82.vercel.app"
+    ],
+    "url": "jetnity-s3rklbqq4-jetnity-e1b93c82.vercel.app"
+  },
+  "aliases": [
+    {
+      "alias": "jetnity.com",
+      "deploymentId": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+      "projectId": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM",
+      "redirect": null
+    },
+    {
+      "alias": "jetnity-app.vercel.app",
+      "deploymentId": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+      "projectId": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM",
+      "redirect": null
+    }
+  ],
+  "vercelUnresolvedToolbarThreads": {
+    "threads": [],
+    "pagination": {
+      "current": 0
+    }
+  },
+  "ruleset": {
+    "id": 21875372,
+    "enforcement": "active",
+    "bypassActors": [],
+    "conditions": {
+      "ref_name": {
+        "exclude": [],
+        "include": [
+          "refs/heads/main"
+        ]
+      }
+    },
+    "rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": false,
+          "required_reviewers": [],
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": false,
+          "allowed_merge_methods": [
+            "merge"
+          ]
+        }
+      },
+      {
+        "type": "non_fast_forward"
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "Typecheck, Lint & Build",
+              "integration_id": 15368
+            },
+            {
+              "context": "Auth-Konfiguration gegen config.toml",
+              "integration_id": 15368
+            },
+            {
+              "context": "Vercel",
+              "integration_id": 8329
+            }
+          ]
+        }
+      }
+    ],
+    "url": "https://api.github.com/repos/Jetnity/jetnity/rulesets/21875372"
+  },
+  "publicHttpRead": {
+    "status": "UNVERIFIED_TOOL_UNAVAILABLE",
+    "attemptedUrls": [
+      "https://jetnity.com/",
+      "https://jetnity.com/robots.txt",
+      "https://jetnity-app.vercel.app/"
+    ],
+    "result": "Public web retrieval tool reported URL not accessible for all three. No HTTP 200, robots policy, or rendered runtime acceptance claimed. No alternate fetch or protected-link creation attempted."
+  },
+  "continuity": {
+    "indexUpdated": "2026-11-09T10:54:51Z",
+    "latestIndexBlockTimestamp": "2026-11-09T10:54:00Z",
+    "indexCommentsSince1000Utc": 0,
+    "guardianCommentsSince": "2026-11-08T14:28:45Z",
+    "newGuardianCommentCount": 0,
+    "staleIndexClaims": [
+      "N1 body still calls ec371ebd a taskseed/active writer; live head is published 10d3e4f4 and actual current CI successful.",
+      "D1 body still says current CI pending; current exact CI succeeded."
+    ]
+  },
+  "database": {
+    "liveQueriesPerformed": false,
+    "scopeReason": "PROGRAM_V1 explicitly excludes hosted DB/Auth/RLS/ACL/migration/credential reads and writes for this wave. No list_migrations, execute_sql, catalog query, or alternate operator/transport attempted.",
+    "stage1": "APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING",
+    "ledgerId": "UNKNOWN",
+    "stage2Documented": "NOT_ATTEMPTED",
+    "stage2CurrentAbsence": "NOT_PROVEN",
+    "issue1139": "OPEN / P1 EFFECTIVE FIX NOT ACCEPTED",
+    "devPackage": "NOT_RELEASE_READY",
+    "missingPreOwnerRows": [
+      "E01",
+      "E04",
+      "E06",
+      "E07",
+      "E09",
+      "E10",
+      "E11",
+      "E13",
+      "E15",
+      "E16",
+      "E17",
+      "E18",
+      "E21",
+      "E22",
+      "E24",
+      "E25",
+      "E28"
+    ],
+    "latestReceipts": [
+      "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6728875756",
+      "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6728877536"
+    ]
+  },
+  "limitations": [
+    "No source/SQL implementation review by this audit; Root owns independent code review.",
+    "Existing native CI jobs passing on N1/D1 do not execute unpublished S1 native code.",
+    "No production mutation, deploy, Ready, merge, issue post, user message or credential operation performed.",
+    "Current snapshots are bound to listed heads; new heads require fresh gates."
+  ]
+}
