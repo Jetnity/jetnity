@@ -31,6 +31,7 @@ function Harness() {
           <option value="transport_error">Transportfehler</option>
           <option value="slow">Verzögerte Antwort</option>
           <option value="conditions">Mehrere vollständige Bedingungen</option>
+          <option value="complete">Recherche wird fertig</option>
         </select>
       </label>
     </aside>

@@ -55,7 +55,9 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
   const heading = useRef<HTMLHeadingElement>(null)
   const controller = useMemo(() => createV3VisitorController(query, setState), [query])
   useEffect(() => () => controller.dispose(), [controller])
-  useEffect(() => { if (state.phase === 'ready' || state.phase === 'error') heading.current?.focus() }, [state])
+  useEffect(() => {
+    if ((state.phase === 'ready' || state.phase === 'error') && state.focusResult) heading.current?.focus()
+  }, [state])
   const selected = [...new Set(citizenships.filter(istKatalogLand))].sort()
   const valid = istKatalogLand(destination) && selected.length > 0 && citizenships.every((country) => istKatalogLand(country)) && citizenships.length <= 5
   const changed = (action: () => void) => { controller.invalidate(); action() }
@@ -95,7 +97,7 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
     </form>
     <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
       {state.phase === 'loading' ? 'Einreisebestimmungen werden geladen.' : state.phase === 'ready'
-        ? `Ergebnisse für ${state.view.cells.length} Staatsangehörigkeiten geladen.` : state.phase === 'error' ? state.message : ''}
+        ? state.message ?? `Ergebnisse für ${state.view.cells.length} Staatsangehörigkeiten geladen.` : state.phase === 'error' ? state.message : ''}
     </p>
     {state.phase === 'loading' ? <p className="rounded-2xl bg-muted p-5 text-ink-950">Vorbereitete Angaben werden abgerufen …</p> : null}
     {state.phase === 'error' ? <div className="space-y-2 rounded-2xl border border-border bg-muted p-5">
@@ -106,6 +108,7 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
       <div className="space-y-2">
         <h3 ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">Einreise nach {landAnzeigeText(state.view.input.destinationCountryCode)}</h3>
         <p className="text-sm leading-6 text-ink-950">Es gelten die jeweils angegebenen Bedingungen. Die Übersicht ist keine individuelle Einreisezusage.</p>
+        {state.message ? <p className="rounded-xl bg-muted p-3 text-sm leading-6 text-ink-950">{state.message}</p> : null}
         {state.view.synthetic ? <p className="rounded-xl border border-border bg-citrus-300 p-3 text-sm font-semibold text-brand-900">Synthetische Testdaten · Keine echte Einreiseauskunft</p> : null}
       </div>
       {state.view.cells.map((cell) => <section key={cell.country} className="grid min-w-0 gap-3" aria-label={`Staatsangehörigkeit ${landAnzeigeText(cell.country)}`}>

@@ -3,19 +3,21 @@
 // Only loopback HTTP; no production route, external resource or provider call.
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import syntheticServerModule from './synthetic-server.ts'
+import { selectU1SystemBrowser } from './browser.mjs'
+import { U1_EVIDENCE_DIRECTORY, writeU1Evidence } from './evidence.mjs'
 
 const require = createRequire(import.meta.url)
 const { syntheticServer } = syntheticServerModule
 const esbuild = createRequire(require.resolve('tsx'))('esbuild')
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..')
-const OUT = join(REPO, 'test-results/official-truth-product-v3-ui')
+const OUT = U1_EVIDENCE_DIRECTORY
 const WIDTHS = [280, 320, 360, 375, 390, 430, 768, 1280]
 const serving = process.argv.includes('--serve')
 const smoke = process.argv.includes('--smoke')
@@ -63,7 +65,7 @@ const server = createServer(async (request, response) => {
 })
 await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
 origin = `http://127.0.0.1:${server.address().port}`
-await writeFile(join(OUT, 'bundle-inputs.json'), JSON.stringify({ inputs, bytes: bundle.outputFiles[0].contents.length }, null, 2))
+writeU1Evidence('bundle-inputs.json', { inputs, bytes: bundle.outputFiles[0].contents.length })
 if (serving) {
   process.stdout.write(`U1 synthetic local harness: ${origin}\nEvidence: ${OUT}\n`)
   process.on('SIGINT', () => server.close(() => process.exit(0)))
@@ -77,6 +79,7 @@ if (serving) {
     for (const [scenario, destinationCountryCode, expected] of [
       ['mixed', 'DE', ['accepted', 'pending']], ['mixed', 'FR', ['pending', 'pending']],
       ['read_error', 'DE', ['error', 'error']], ['unbound', 'DE', ['unavailable', 'unavailable']],
+      ['complete', 'DE', ['accepted', 'pending']], ['complete', 'DE', ['accepted', 'accepted']],
     ]) {
       const response = await fetch(`${origin}/query`, { method: 'POST',
         headers: { origin, 'content-type': 'application/json', 'x-jetnity-synthetic-test': 'U1' },
@@ -93,22 +96,27 @@ if (serving) {
   } catch (error) { report.status = 'fail'; report.failure = String(error); process.exitCode = 1 }
   finally {
     await new Promise((resolve) => server.close(resolve))
-    await writeFile(join(OUT, 'http-smoke.json'), JSON.stringify(report, null, 2))
+    writeU1Evidence('http-smoke.json', report)
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`)
   }
 } else {
-  let browser
+  let browser, page
   const report = { scope: 'Synthetic loopback Chromium; real component and server orchestration, no live rule claim',
     node: process.version, bundleBytes: bundle.outputFiles[0].contents.length, layouts: [], interactions: [], externalRequests: [], errors: [], screenshots: [] }
   try {
-    try { browser = await chromium.launch({ headless: true }) }
-    catch { browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/chromium' }) }
+    report.browserPath = selectU1SystemBrowser()
+    browser = await chromium.launch({ headless: true, executablePath: report.browserPath, chromiumSandbox: true })
+    report.browserVersion = browser.version()
     const context = await browser.newContext({ locale: 'de-DE', reducedMotion: 'reduce', viewport: { width: 390, height: 844 } })
+    const testTime = new Date('2026-11-09T08:04:00.000Z')
+    await context.clock.install({ time: testTime })
+    await context.clock.pauseAt(testTime)
+    report.clock = 'Playwright controlled browser time for deterministic polling; no timing/SLO claim'
     await context.route('**/*', async (route) => {
       if (new URL(route.request().url()).origin === origin) await route.continue()
       else { report.externalRequests.push(route.request().url()); await route.abort() }
     })
-    const page = await context.newPage()
+    page = await context.newPage()
     page.on('pageerror', (error) => report.errors.push(error.message))
     const posted = []
     page.on('request', (request) => { if (request.method() === 'POST') posted.push(JSON.parse(request.postData())) })
@@ -208,6 +216,30 @@ if (serving) {
     assert.equal(await page.getByText('Diese Bedingungen gelten', { exact: true }).count(), 2)
     assert.match(await page.locator('body').innerText(), /Geschäftsreise/)
     report.interactions.push('Multiple context statements are displayed fully without choosing a best credential')
+    await page.setViewportSize({ width: 390, height: 844 })
+    await scenario('complete'); await selectPair('DE', 'RS'); await submit()
+    await page.getByRole('heading', { name: 'Wird geprüft', exact: true }).waitFor()
+    await page.getByLabel('Zielland', { exact: true }).focus()
+    const countBeforePoll = posted.length
+    await page.evaluate(() => {
+      window.__u1PollLoadingScreen = false
+      window.__u1PollObserver = new MutationObserver(() => {
+        if ([...document.querySelectorAll('p')].some((item) => item.textContent === 'Vorbereitete Angaben werden abgerufen …')) window.__u1PollLoadingScreen = true
+      })
+      window.__u1PollObserver.observe(document.body, { childList: true, subtree: true })
+    })
+    await screenshot('poll-pending-390')
+    await context.clock.runFor(2_000)
+    await page.getByText('Mindestens 9 freie Passseiten', { exact: true }).waitFor()
+    assert.equal(posted.length, countBeforePoll + 1)
+    assert.equal(await page.getByLabel('Zielland', { exact: true }).evaluate((element) => element === document.activeElement), true)
+    assert.equal(await page.evaluate(() => window.__u1PollLoadingScreen), false)
+    await page.evaluate(() => window.__u1PollObserver.disconnect())
+    assert.equal(await page.getByRole('heading', { name: 'Wird geprüft', exact: true }).count(), 0)
+    await screenshot('poll-accepted-390')
+    await context.clock.runFor(120_000)
+    assert.equal(posted.length, countBeforePoll + 1)
+    report.interactions.push('Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls')
     for (const post of posted) {
       assert.deepEqual(Object.keys(post).sort(), ['input', 'scenario'])
       assert.deepEqual(Object.keys(post.input).sort(), ['citizenshipCountryCodes', 'destinationCountryCode'])
@@ -221,10 +253,17 @@ if (serving) {
     report.status = 'fail'
     report.failure = String(error)
     process.exitCode = 1
+    if (page && !page.isClosed()) {
+      try {
+        const path = join(OUT, 'failure.png')
+        await page.screenshot({ path, fullPage: true })
+        report.screenshots.push({ name: 'failure', path, sha256: createHash('sha256').update(await readFile(path)).digest('hex') })
+      } catch (captureError) { report.captureFailure = String(captureError) }
+    }
   } finally {
-    await browser?.close()
+    try { await browser?.close() } catch (cleanupError) { report.cleanupFailure = String(cleanupError); report.status = 'fail'; process.exitCode = 1 }
     await new Promise((resolve) => server.close(resolve))
-    await writeFile(join(OUT, 'audit.json'), JSON.stringify(report, null, 2))
+    writeU1Evidence('audit.json', report)
     process.stdout.write(`${JSON.stringify({ status: report.status, failure: report.failure, layouts: report.layouts.length,
       interactions: report.interactions.length, screenshots: report.screenshots.length, evidence: OUT }, null, 2)}\n`)
   }

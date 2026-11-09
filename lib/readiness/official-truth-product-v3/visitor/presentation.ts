@@ -13,10 +13,10 @@ import type { V3VisitorAnswer } from './query'
 type Statement = Readonly<{ text: string; when: string | null; href: string | null }>
 export type V3VisitorViewResult =
   | Readonly<{ status: 'accepted'; title: string; conditions: readonly string[]; statements: readonly Statement[];
-      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number }>
+      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string }>
   | Readonly<{ status: 'pending' | 'conflict' | 'unavailable' | 'error'; title: string; message: string }>
 export type V3VisitorView = Readonly<{
-  input: V3VisitorInput; synthetic: boolean;
+  input: V3VisitorInput; generatedAt: string; synthetic: boolean;
   cells: readonly Readonly<{ country: string; label: string; results: readonly V3VisitorViewResult[] }>[];
 }>
 
@@ -160,7 +160,7 @@ function factText(container: V3RuleFact): Statement[] {
 
 /** Called after server validation/reproof; no raw payload or exception is shown. */
 export function presentV3VisitorAnswer(answer: V3VisitorAnswer): V3VisitorView {
-  return { input: answer.response.input, synthetic: answer.response.dataMode === 'synthetic_test',
+  return { input: answer.response.input, generatedAt: answer.response.generatedAt, synthetic: answer.response.dataMode === 'synthetic_test',
     cells: answer.response.cells.map((cell) => ({ country: cell.citizenshipCountryCode,
       label: landAnzeigeText(cell.citizenshipCountryCode), results: cell.results.map((result): V3VisitorViewResult => {
         if (result.status === 'accepted') {
@@ -172,9 +172,9 @@ export function presentV3VisitorAnswer(answer: V3VisitorAnswer): V3VisitorView {
             source: { label: source.authorityName, href: source.href },
             checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),
             validityText: validity.status === 'specified' ? `Gültigkeit: ${validity.validFrom ? `ab ${validity.validFrom}` : 'kein Beginn angegeben'} · ${validity.validUntil ? `bis ${validity.validUntil}` : 'kein Ende angegeben'}` : 'Gültigkeit noch ungeklärt',
-            ruleVersion: projection.rule.revision }
+            ruleVersion: projection.rule.revision, expiresAt: projection.expiresAt }
         }
-        if (result.status === 'pending') return { status: 'pending', title: 'Wird geprüft', message: 'Die Recherche zu amtlichen Angaben wurde angenommen. Bitte später erneut abrufen.' }
+        if (result.status === 'pending') return { status: 'pending', title: 'Wird geprüft', message: 'Die Recherche zu amtlichen Angaben wurde angenommen. Ein Ergebnis liegt noch nicht vor.' }
         if (result.status === 'conflict') return { status: 'conflict', title: 'Amtliche Angaben werden geklärt', message: result.reason === 'primary_unclear'
           ? 'Die maßgebliche amtliche Aussage ist unklar. Bis zur Klärung wird keine Regel angezeigt.'
           : 'Amtliche Quellen widersprechen sich. Bis zur Klärung wird keine Regel angezeigt.' }

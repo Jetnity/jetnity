@@ -1,6 +1,6 @@
-# U1 — Besucher-/Cachevertrag V1 mit TASK R2
+# U1 — Besucher-/Cachevertrag V1 mit TASK R3
 
-Stand 9. November 2026. Gemeinsamer S0-Vertrag: `ab26914ff01dde64020879b9e41cea8b1e1738aa`; Entwicklung, keine Aktivierungsfreigabe. U1 liefert ruhenden Code innerhalb Draft #1165. Alle positiven lokalen Adapter sind ausdrücklich synthetische Tests.
+Stand 9. November 2026. Gemeinsamer S0-Vertrag unverändert: `ab26914ff01dde64020879b9e41cea8b1e1738aa`; Entwicklung, keine Aktivierungsfreigabe. R3-Basis-HEAD `2489eb19ea16308e5d84ec96bada3edc09a76688`, Vertrag `U1_TASK_R3.md`. U1 liefert ruhenden Code innerhalb Draft #1165. Alle positiven lokalen Adapter sind ausdrücklich synthetische Tests.
 
 ## Öffentlicher ruhender Einstieg
 
@@ -41,7 +41,25 @@ Initialer ungültiger Projektionsinhalt wird als `invalid_data` unterdrückt. S0
 
 Die reine Darstellung erhält sämtliche logischen Bedingungen, Negationen, Zweige und Otherwise-Fälle. Schema-2-Aufenthaltsregeln zeigen Erstbewilligung, Einheit, Gesamtdauer, Antrag, Behörde, Frist und Grenzermessen; Fristen unterscheiden Pflicht/Empfehlung. Amtliche Aktions-/Anforderungs-/Visa-Bezeichnungen und Länderanzeige stammen aus vorhandenen Modulen. Quellenname, originale Quellenzeit, Gültigkeit und Regelrevision werden angezeigt.
 
-Der Client importiert keine serverseitigen Ports, Registry, Custody-, Methoden- oder Testfixture-Module. Er erhält ausschließlich eine Anzeige-DTO über eine explizite Funktion. Neue Auswahl leert alte Antworten sofort; Abbruch, Requestgeneration und Antwortpaar-Prüfung verhindern Überschreiben durch alte Antworten. Rohe Fehler werden nicht ausgegeben. Der spätere produktive HTTP-Transport und seine Decodierung sind noch nicht angebunden. Die Oberfläche aktualisiert nach einer neuen Abfrage; ein automatischer Abschluss-Push/Polling aus M1 ist noch nicht angebunden.
+Der Client importiert keine serverseitigen Ports, Registry, Custody-, Methoden- oder Testfixture-Module. Er erhält ausschließlich eine Anzeige-DTO über eine explizite Funktion. Neue Auswahl leert alte Antworten sofort; Abbruch, Requestgeneration und Antwortpaar-Prüfung verhindern Überschreiben durch alte Antworten. Rohe Fehler werden nicht ausgegeben. Der spätere produktive HTTP-Transport und seine Decodierung sind noch nicht angebunden.
+
+## R3: Begrenztes automatisches Nachlesen
+
+Ein tatsächlich vom Querypfad bestätigtes Pending startet höchstens sechs automatische Folgeabfragen mit 2/4/8/16/30/45 Sekunden Backoff. Die harte Gesamtdauer beträgt 120 Sekunden ab ausdrücklicher Besucherabfrage, einschließlich Transportdauer. Es läuft höchstens ein Request gleichzeitig; jeder Request hat zusätzlich 10 Sekunden Timeout. Der Poll liest denselben serverseitigen Querypfad und erhält daher erneut dessen aktuelle Methoden-, Pointer-, Frist- und Queue-Nachweise. Er kann keine Quelle oder Methode selbst freigeben.
+
+Auswahlwechsel, neue ausdrückliche Abfrage und Unmount brechen Timer und Request ab. Eine nur verspätet eintreffende Antwort wird ignoriert. Kein Pending mehr oder ein terminaler Fehler-/Conflict-/Unavailable-Zustand stoppt die automatische Serie. Nach ausgeschöpftem Fenster bleibt die Recherche als noch nicht abgeschlossen bezeichnet; die vorhandene manuelle Abfrage erlaubt einen späteren erneuten Abruf. Der endliche Clientzyklus beendet keinen Rechercheworker.
+
+Während Hintergrundabfragen bleiben Ergebnisrahmen und Pending-Zellen erhalten; frühere positive Karten werden durch einen Aktualisierungshinweis ersetzt. Keine alte positive Aussage dient als Ausfall-Fallback. Die Anzeige-DTO enthält dazu die ursprüngliche Antwortzeit `generatedAt` und für positive Karten deren unverändertes Projektions-`expiresAt`. Ein konservativer Clienttimer subtrahiert die gesamte gemessene Requestdauer von der serverseitigen Restdauer und entfernt abgelaufene Karten auch zwischen Abfragen. Diese reine Anzeigeentscheidung kann keine Aussage verlängern und ist kein neuer S0-Vertrag oder Authority-Proof.
+
+Nur Ergebnisse einer ausdrücklichen manuellen Abfrage dürfen den Fokus auf die Ergebnisüberschrift setzen. Poll-, Ablauf-, Budget- und automatische Fehlerwechsel haben `focusResult: false`; der Statusbereich informiert ohne Fokuswechsel. Die injizierbare monotone Uhr/Timer-Schnittstelle dient deterministischen Tests, nicht einer produktiven Methodenbindung.
+
+## R3: Isolierte UI-CI
+
+Der zusätzliche `official_truth_v3_ui`-Job verwendet bestehende Dependencies, Setup-/Operating-mode-Gates, U1-/CI-Vertragstests, Harness-Typecheck, lokalen HTTP-Smoke, lokalen Prozessbenchmark und den echten Browseraudit. Es erfolgt keine Produktanbindung. Die vier alten Verifikationsfamilien und Auth bleiben unverändert; das Aggregat verlangt nun ausdrücklich auch den Erfolg des fünften Jobs.
+
+Der Harness wählt vor dem einzigen Launch einen vorhandenen ausführbaren Systembrowser aus `/usr/bin/google-chrome`, `/usr/bin/chromium`, `/usr/bin/chromium-browser`. Er startet genau einmal mit `chromiumSandbox: true`, ohne zusätzliche Schutz-abschwächende Flags, Download oder Launch-Fallback. Browserfehlen/-fehler ist FAIL. Die bekannte lokale Umgebungsgrenze wird nicht erneut ausprobiert; tatsächliche CI-/PNG-Belege und unabhängige visuelle Prüfung bleiben Root-Gates.
+
+Audit, HTTP-Smoke, Benchmark und Bundleinventar tragen tatsächlichen Checkout-Head, gegebenenfalls angeforderten Quell-Head, Worktreezustand, Run-ID/-Attempt und GitHub-SHA. Bei Pull Requests kann Checkout ein Merge-Commit sein; beide Heads werden getrennt festgehalten und die Quell-Commit-Abstammung geprüft. Artefakte werden auch nach Fehlern gespeichert; `not_started` ist kein PASS. Lokale uncommittete Prüfungen heißen ausdrücklich `worktreeDirty: true` und behaupten keinen veröffentlichten Exact-Head-Beleg.
 
 ## Ungebunden und offen
 

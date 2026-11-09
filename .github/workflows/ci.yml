@@ -185,27 +185,87 @@ jobs:
       - name: Accepted store native proof
         run: npm run test:accepted-store-native:${{ matrix.group }}
 
+  official_truth_v3_ui:
+    name: Official truth V3 — isolated UI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      JETNITY_U1_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Bind synthetic evidence to this run and checkout
+        run: node scripts/official-truth-product-v3-ui/evidence.mjs --initialize
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup check
+        run: npm run check:setup:ci
+
+      - name: Operating mode
+        env:
+          JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}
+          JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}
+          JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run check:operating-mode
+
+      - name: Visitor, polling and isolated CI contract tests
+        run: node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
+
+      - name: Isolated harness typecheck
+        run: node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false -p scripts/official-truth-product-v3-ui/tsconfig.json
+
+      - name: Synthetic HTTP composition
+        run: node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs --smoke
+
+      - name: Local process benchmark
+        run: node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/benchmark.ts
+
+      - name: Actual isolated browser audit
+        run: node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs
+
+      - name: Preserve actual synthetic evidence, including failures
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-truth-v3-ui-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+          path: test-results/official-truth-product-v3-ui/
+          if-no-files-found: error
+          retention-days: 14
+
   required_verify:
     name: Typecheck, Lint & Build
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    needs: [verify, persisted_native, refresh_native, accepted_store_native]
+    needs: [verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui]
     if: ${{ always() }}
 
     steps:
-      - name: Require all four verification job families to succeed
+      - name: Require all five verification job families to succeed
         env:
           CORE_RESULT: ${{ needs.verify.result }}
           PERSISTED_NATIVE_RESULT: ${{ needs.persisted_native.result }}
           REFRESH_NATIVE_RESULT: ${{ needs.refresh_native.result }}
           ACCEPTED_STORE_NATIVE_RESULT: ${{ needs.accepted_store_native.result }}
+          OFFICIAL_TRUTH_V3_UI_RESULT: ${{ needs.official_truth_v3_ui.result }}
         run: |
-          printf 'Core result: %.32s\nPersisted native result: %.32s\nRefresh native result: %.32s\nAccepted store native result: %.32s\n' "$CORE_RESULT" "$PERSISTED_NATIVE_RESULT" "$REFRESH_NATIVE_RESULT" "$ACCEPTED_STORE_NATIVE_RESULT"
-          if [ "$CORE_RESULT" != "success" ] || [ "$PERSISTED_NATIVE_RESULT" != "success" ] || [ "$REFRESH_NATIVE_RESULT" != "success" ] || [ "$ACCEPTED_STORE_NATIVE_RESULT" != "success" ]; then
-            printf '%s\n' 'All four verification job families must succeed.'
+          printf 'Core result: %.32s\nPersisted native result: %.32s\nRefresh native result: %.32s\nAccepted store native result: %.32s\nOfficial truth V3 UI result: %.32s\n' "$CORE_RESULT" "$PERSISTED_NATIVE_RESULT" "$REFRESH_NATIVE_RESULT" "$ACCEPTED_STORE_NATIVE_RESULT" "$OFFICIAL_TRUTH_V3_UI_RESULT"
+          if [ "$CORE_RESULT" != "success" ] || [ "$PERSISTED_NATIVE_RESULT" != "success" ] || [ "$REFRESH_NATIVE_RESULT" != "success" ] || [ "$ACCEPTED_STORE_NATIVE_RESULT" != "success" ] || [ "$OFFICIAL_TRUTH_V3_UI_RESULT" != "success" ]; then
+            printf '%s\n' 'All five verification job families must succeed.'
             exit 1
           fi
-          printf '%s\n' 'All four verification job families succeeded.'
+          printf '%s\n' 'All five verification job families succeeded.'
 
   # Die Auth-Konfiguration liegt nicht in der Datenbank, sondern beim
   # Auth-Server des Branches. Sie kann sich also ohne Commit ändern – ein Klick

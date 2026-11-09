@@ -3,6 +3,7 @@ import type { Ladung } from '@/lib/admin/ladezustand'
 import { createV3VisitorQuery, queryOfficialTruthVisitorV3 } from '@/lib/readiness/official-truth-product-v3/visitor/query'
 import { presentV3VisitorAnswer, type V3VisitorView } from '@/lib/readiness/official-truth-product-v3/visitor/presentation'
 import { syntheticV3Fixture } from '@/lib/readiness/official-truth-product-v3/visitor/test-fixtures'
+import { readV3VisitorInput } from '@/lib/readiness/official-truth-product-v3/contract'
 
 export function syntheticServer() {
   const fixture = syntheticV3Fixture()
@@ -12,6 +13,9 @@ export function syntheticServer() {
   const business = conditionsFixture.make(conditionsFixture.context('CH', 'business')).projection
   conditionsFixture.cache.set(business.rule.subject.contextKey, business)
   const normal = createV3VisitorQuery(fixture.ports)
+  const completionFixture = syntheticV3Fixture()
+  const completion = createV3VisitorQuery(completionFixture.ports)
+  let completionReads = 0
   const queries = {
     mixed: normal,
     conflict: createV3VisitorQuery(conflictFixture.ports),
@@ -24,6 +28,19 @@ export function syntheticServer() {
           { context: conditionsFixture.context('CH', 'business'), factKind: 'blank_passport_pages' }], problem: null }
         : conditionsFixture.ports.coverage.targets(input, signal) } }),
     slow: normal,
+    complete: async (input: unknown, signal: AbortSignal) => {
+      const parsed = readV3VisitorInput(input)
+      if (parsed.ok && parsed.value.destinationCountryCode === 'DE' && parsed.value.citizenshipCountryCodes.includes('RS')) {
+        completionReads += 1
+        if (completionReads > 1) {
+          // Explicit synthetic research completion. This is not an M1 worker,
+          // database commit or method approval; the real U1 reproof still runs.
+          const prepared = completionFixture.make(completionFixture.context('RS')).projection
+          completionFixture.cache.set(prepared.rule.subject.contextKey, prepared)
+        }
+      }
+      return completion(input, signal)
+    },
   }
   return async (raw: unknown, signal: AbortSignal): Promise<Ladung<V3VisitorView>> => {
     const error: Ladung<V3VisitorView> = { daten: null, fehler: { meldung: 'Synthetic failure', wiederholbar: true } }
