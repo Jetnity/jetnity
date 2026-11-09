@@ -928,6 +928,8 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'official-truth-composition-policy-registry.test.ts'),
       // #1163 S0 R4: exact reviewed dormant V3 contract; no runtime activation.
       join(hier, 'official-truth-product-v3/contract.ts'),
+      // #1173 C1 P2-R3: exact dormant mapper's pure metadata/preimage canonicalization.
+      join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
       // #1164 I1 Guard R1: exact reviewed server and its existing synthetic tests.
       join(hier, 'official-truth-product-v3/import/service-server.ts'),
       join(hier, 'official-truth-product-v3/import/service.test.ts'),
@@ -959,6 +961,25 @@ describe('regulierungs-anwendbarkeit', () => {
       `${hier}/official-truth-product-v3/unreviewed.ts`,
       `${hier}/official-truth-product-v30/contract.ts`,
       `${wurzel}/app/api/official-truth-product-v3/contract.ts`,
+    ]) assert.equal(eigene.has(pfad), false, pfad)
+    assert.equal(eigene.has(join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts')), true)
+    // Raw spellings stay raw: neither traversal nor aliases acquire exact-path permission.
+    for (const pfad of [
+      `${hier}/official-truth-product-v3/global-conditions/pilot-context.ts.evil.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/pilot-context-server.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/pilot-context.test.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/pilot-context.ts/../unreviewed.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/../global-conditions/pilot-context.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/./pilot-context.ts`,
+      '@/lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts',
+      'lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts',
+      `${hier}/official-truth-product-v3/global-condition/pilot-context.ts`,
+      `${hier}/official-truth-product-v3/global-conditions-other/pilot-context.ts`,
+      `${hier}/official-truth-product-v30/global-conditions/pilot-context.ts`,
+      `${hier}/official-truth-product-v3/global-conditions/unreviewed.ts`,
+      `${wurzel}/app/official-truth-product-v3/global-conditions/pilot-context.ts`,
+      `${wurzel}/app/api/official-truth-product-v3/global-conditions/pilot-context.ts`,
+      `${wurzel}/scripts/official-truth-product-v3/global-conditions/pilot-context.ts`,
     ]) assert.equal(eigene.has(pfad), false, pfad)
     assert.equal(eigene.has(join(hier, 'official-truth-product-v3/import/service-server.ts')), true)
     assert.equal(eigene.has(join(hier, 'official-truth-product-v3/import/service.test.ts')), true)
@@ -1037,6 +1058,7 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'temporal.ts'),
         join(hier, 'official-truth-composition-policy-registry.ts'),
         join(hier, 'official-truth-product-v3/contract.ts'),
+        join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
         join(hier, 'official-truth-product-v3/import/service-server.ts'),
         join(hier, 'official-truth-product-v3/visitor/presentation.ts'),
         join(hier, 'official-truth-product-v3/visitor/query.ts'),
