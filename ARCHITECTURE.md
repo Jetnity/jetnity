@@ -1,5 +1,9 @@
 # Jetnity – Architektur
 
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
+> **09.11.2026 — Datenbank und Einreiseanforderungen, MI1 abgeschlossen / M04 ausgewählt:** Die bisherigen V3-Module sind über [MI1#1177](https://github.com/Jetnity/jetnity/pull/1177) in main `7ae1394a00e2b23a60da98d2a029fd6a10c8189d` integriert und auf tatsächlichem main abgenommen ([POST-MERGE-PASS](https://github.com/Jetnity/jetnity/pull/1177#issuecomment-6751913752), [Closure](docs/official-truth-product-v3/MI1_POST_MERGE_CLOSURE_V1.md)). Root hat [M04 Durable Jobs1](docs/official-truth-product-v3/M04_TASK_V1.md) ausgewählt: dauerhafte Rechercheaufträge und Ausführungsmetadaten mit tatsächlicher S1-Originalspeicherung und MA1-Autorität. Aktuell Phase-A-Dokumentationsseed, keine neue Runtime/SQL. [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md); spätere Heads/Session/Dispatch und Gates live in [#751](https://github.com/Jetnity/jetnity/issues/751)/[#1162](https://github.com/Jetnity/jetnity/issues/1162). D1#1169, Methodenfreigabe, #1139-Dev-Paket und Datenbank-/Feature-Aktivierung bleiben getrennt offen. Vorherige datierte Absätze sind historische Snapshots; frühere In-Arbeit-Aussagen stellen keinen aktuellen Auftrag dar.
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
+
 > **09.11.2026 – Official Truth Produktziel V3, Implementierung beauftragt:** [Programm #1162](https://github.com/Jetnity/jetnity/issues/1162) beginnt mit dem gemeinsamen S0-Vertrag in [Draft #1163](https://github.com/Jetnity/jetnity/pull/1163). Erst dessen unabhängig geprüfter, exakt gepinnter Stand trägt die parallelen Teile Import/Schnittstelle (I1), Besucher/Cache (U1) und Überwachung/Versionierung (M1). [PROGRAM V1](docs/official-truth-product-v3/PROGRAM_V1.md) hebt den früheren Plan-only-Auftrag für diese Implementierungen auf. Die konkrete Methodenfreigabe sowie Datenbank-/Production-Aktivierung bleiben getrennte Owner-Gates.
 
 ### Architekturgrenzen des V3-Auftrags

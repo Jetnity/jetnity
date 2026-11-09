@@ -1,0 +1,179 @@
+{
+  "schema": "m04-uncertainty-reenqueue-static-advisory-v1",
+  "reviewer": "/root/m04_uncertainty_advisory",
+  "createdAt": "2026-11-09T21:28:53.559348+00:00",
+  "status": "STATIC_ADVISORY_ONLY_STOP_FOR_ROOT_NO_M04_DISPATCH",
+  "sourceHead": "cd14956928e3cc0143f3d6279e517a7cd294dab3",
+  "sourceTree": "2062a975b200d908a59e0c58c5ce5be6001615b6",
+  "sameTreeAsLocalActualMergeObject": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+  "gitReadEnvironment": "GIT_NO_LAZY_FETCH=1",
+  "worktreeCleanAtReview": true,
+  "files": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "bytes": 61555,
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+      "gitBlob": "354c18e153f90a7febb7ea8f14558626202c187e",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "bytes": 108170,
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "bytes": 19888,
+      "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+      "gitBlob": "a6b0215def84931cddd96248cf4dbf347ce5a621",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "bytes": 17666,
+      "sha256": "4abe12e03f68025c3c6f69b661f2fe11ad4d2ba633e971c95526b71288457a3d",
+      "gitBlob": "786c378eca2e500348358004606a87729538c9b3",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "bytes": 8739,
+      "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+      "gitBlob": "b411123af2baa3aee1fcd3bc4a836bd93897ccf6",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "bytes": 3443,
+      "sha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
+      "gitBlob": "cd107022522a725cbbafe7589028aec5f341cefa",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "bytes": 5699,
+      "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+      "gitBlob": "3a66e8e44ea06061dbfdc1d9a341bd2c61c5866d",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "bytes": 22886,
+      "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+      "gitBlob": "bcdbfedc6e702185f270520a9685ab5700eaed92",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+      "bytes": 14581,
+      "sha256": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+      "gitBlob": "5b2ecf3bc472304b9447df64c3650466b4a8541d",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "bytes": 10485,
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "gitBlob": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 6696,
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "gitBlob": "ab9754d332b988d81b84e738c997d01bb37966d3",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "bytes": 88575,
+      "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+      "gitBlob": "8ef08c3131e2aeee61a16a565e51b2fb322c8572",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "bytes": 3189,
+      "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "gitBlob": "ae39ae3b6296c7800668f14cfe8c7d61601ce0fa",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "bytes": 33866,
+      "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "gitBlob": "49c06a696154dfbb871fd7c23e35488f43198c07",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "bytes": 52631,
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "gitBlob": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "bytes": 21566,
+      "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "gitBlob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
+      "localMatchesPinnedGitBlob": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "bytes": 6536,
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "gitBlob": "eaa35fd57eee7b7c86de91dd77e96ef263f61d8b",
+      "localMatchesPinnedGitBlob": true
+    }
+  ],
+  "priorAdvisoriesUnchanged": [
+    {
+      "path": "PLANNING_REVIEW_V1.md",
+      "bytes": 29389,
+      "sha256": "a43cbe353f176da74d4071cdd4db1f9a787a63ad407358d31758d3ff3e2b453f"
+    },
+    {
+      "path": "PHASE_A_OPEN_POINTS_V1.md",
+      "bytes": 22084,
+      "sha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d"
+    },
+    {
+      "path": "phase-a-source-pins-v1.json",
+      "bytes": 3279,
+      "sha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1"
+    }
+  ],
+  "report": {
+    "path": "UNCERTAINTY_REENQUEUE_REVIEW_V1.md",
+    "bytes": 22015,
+    "sha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42"
+  },
+  "officialDocumentationRead": [
+    "https://www.postgresql.org/docs/16/sql-createfunction.html",
+    "https://www.postgresql.org/docs/16/ddl-priv.html",
+    "https://www.postgresql.org/docs/16/ddl-depend.html",
+    "https://www.postgresql.org/docs/16/sql-alterfunction.html"
+  ],
+  "actions": {
+    "sourceRead": true,
+    "staticReasoning": true,
+    "sqlExecuted": false,
+    "testsRun": false,
+    "hostedAccess": false,
+    "codeModified": false,
+    "refModified": false,
+    "pullRequestModified": false,
+    "productionActivation": false,
+    "readback917AttemptedOrRerouted": false,
+    "m04AuthorDispatched": false
+  },
+  "limits": [
+    "No native execution or database installation proof.",
+    "No overall main post-merge PASS; Root alone owns that decision.",
+    "A different method revision is a different existing work identity; no cross-method or cross-kind provider exactly-once claim.",
+    "Producer and source/Accepted/publication integrations remain outside this dormant custody proposal."
+  ]
+}

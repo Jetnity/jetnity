@@ -1,0 +1,101 @@
+[
+  {
+    "n": 1164,
+    "module": "I1",
+    "head": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+    "base": "feat/official-truth-v3-shared-contract-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751922701,
+    "closedAt": "2026-11-09T21:28:14Z"
+  },
+  {
+    "n": 1165,
+    "module": "U1",
+    "head": "d110545a551baf6b6f18687042238a30514addda",
+    "base": "feat/official-truth-v3-shared-contract-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751923750,
+    "closedAt": "2026-11-09T21:28:17Z"
+  },
+  {
+    "n": 1166,
+    "module": "M1",
+    "head": "40ca2f0348862bb763e8d42728418bda4c63405f",
+    "base": "feat/official-truth-v3-shared-contract-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751924893,
+    "closedAt": "2026-11-09T21:28:20Z"
+  },
+  {
+    "n": 1167,
+    "module": "E1",
+    "head": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+    "base": "feat/official-truth-v3-shared-contract-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751925928,
+    "closedAt": "2026-11-09T21:28:23Z"
+  },
+  {
+    "n": 1168,
+    "module": "S1",
+    "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "base": "feat/official-truth-v3-integration-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751927085,
+    "closedAt": "2026-11-09T21:28:26Z"
+  },
+  {
+    "n": 1170,
+    "module": "N1",
+    "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+    "base": "feat/official-truth-v3-intake-store-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751928198,
+    "closedAt": "2026-11-09T21:28:29Z"
+  },
+  {
+    "n": 1171,
+    "module": "IN1",
+    "head": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+    "base": "feat/official-truth-v3-intake-store-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751929135,
+    "closedAt": "2026-11-09T21:28:32Z"
+  },
+  {
+    "n": 1173,
+    "module": "C1",
+    "head": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "base": "feat/official-truth-v3-intake-composition-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751930320,
+    "closedAt": "2026-11-09T21:28:35Z"
+  },
+  {
+    "n": 1175,
+    "module": "MA1",
+    "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "base": "feat/official-truth-v3-global-conditions-1-20261109",
+    "state": "closed",
+    "draft": true,
+    "merged": false,
+    "commentId": 6751931393,
+    "closedAt": "2026-11-09T21:28:38Z"
+  }
+]
