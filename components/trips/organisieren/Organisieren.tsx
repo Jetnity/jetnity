@@ -23,7 +23,10 @@ import Flugsuche, { type FlugSpeichern } from './Flugsuche'
 import Hotelsuche from './Hotelsuche'
 import Aktivitaeten from './Aktivitaeten'
 import Verbindungen from './Verbindungen'
+import dynamic from 'next/dynamic'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
+
+const OmioImReiseplan = dynamic(() => import('./omio/OmioImReiseplan'), { ssr: false })
 
 const tabs = [
   { key: 'fluege', label: 'Flüge', icon: Plane },
@@ -209,7 +212,10 @@ export default function Organisieren({
           )}
           {tab === 'aktivitaeten' && <Aktivitaeten reise={reise} partner={partnerAktivitaeten} />}
           {tab === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {tab === 'verbindungen' && <Verbindungen reise={reise} etappen={etappen} />}
+          {tab === 'verbindungen' && (process.env.NEXT_PUBLIC_JETNITY_OMIO_PROTOTYP === '1' ? <>
+            <OmioImReiseplan reise={reise}/>
+            <details className="ov-bestehend"><summary>Weitere Mobilitätsangebote und 12Go-Fahrplan</summary><Verbindungen reise={reise} etappen={etappen}/></details>
+          </> : <Verbindungen reise={reise} etappen={etappen}/>)}
         </div>
         <footer className="org-footer">
           {details}
