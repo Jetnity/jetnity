@@ -4,38 +4,40 @@
 
 **Session:** `/root/v3_contract_writer`; Modell laut Session: GPT-6 Astra Pro
 
-**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1, Programmissue #1162, Draft-PR #1163
+**Auftrag:** `PROGRAM_V1.md`, S0 TASK V1 einschließlich [TL-Amendment R3](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729202622), Programmissue #1162, Draft-PR #1163
 
 **Branch:** `feat/official-truth-v3-shared-contract-1-20261109`
 
 **Basemain:** `ce3366e26de73961d4682236af92347bfc3a4ca8`
 
-**Seedhead / unveränderter Autoren-HEAD:** `7f940d5620ef194c86a82b570751b2fea94fef92`
+**Ursprünglicher Seedhead:** `7f940d5620ef194c86a82b570751b2fea94fef92`
 
-**Stand:** R2-Korrektur, Implementierung und lokale fokussierte Prüfungen abgeschlossen; unabhängiger TL-Re-Review/Freeze offen. Die früheren 46-Test-Hashes sind historisch; diese Übergabe bindet die unten genannten R2-Bytes. Kein TL-PASS, kein Ready und kein Merge durch den Autor.
+**R3-Basis / unveränderter Autoren-HEAD:** `19c4736a73f639daaf5337465386155607792a4f`
+
+**Stand:** R3-Implementierung und lokale fokussierte Prüfungen abgeschlossen; unabhängiger TL-Re-Review/Freeze der neuen Bytes offen. Der frühere Freeze bleibt Evidence für den publizierten 19c-Head. Diese Übergabe bindet die unten genannten R3-Arbeitsdateien. Kein TL-PASS, kein Ready und kein Merge durch den Autor.
 
 ## 1. Gelieferte Bytes und Ownership
 
 | Datei | Zweck |
 | --- | --- |
 | `lib/readiness/official-truth-product-v3/contract.ts` | Ruhende versionierte Runtime-Leser, Identitätsbildung, reine Quellenanzeigeauflösung und getrennte unbound Methodenautoritätsnaht |
-| `lib/readiness/official-truth-product-v3/contract.test.ts` | 53 lokale synthetische Tests, ohne Netzwerk-/DB-/Provider- oder Secretbedarf |
+| `lib/readiness/official-truth-product-v3/contract.test.ts` | 63 lokale synthetische Tests, ohne Netzwerk-/DB-/Provider- oder Secretbedarf |
 | `docs/official-truth-product-v3/S0_IMPLEMENTATION_PLAN.md` | Vor Implementierung festgehaltener enger Plan und Grenzen |
 | `docs/official-truth-product-v3/S0_CONTRACT.md` | Konkrete API, Kompatibilitätszuordnung und Integrationspflichten für I1/U1/M1 |
 | `docs/official-truth-product-v3/S0_SELF_REVIEW_HANDOFF.md` | Diese tatsächlichen Prüfergebnisse und Übergabe |
 
 Es gibt keine `fixtures.ts`; sämtliche fiktiven `.example`-Daten und die ausdrücklich synthetischen Passseiten-Fakten bleiben in der Testdatei. Kein produktiver Fallback und keine echte Visa-Aussage wurden angelegt.
 
-Der Autor hat keine anderen Dateien geändert, keinen Git-Commit/Push und keine GitHub-Mutation ausgeführt. Root hat parallel die vier zentralen Dateien `ARCHITECTURE.md`, `DECISIONS.md`, `JETNITY_VISION.md` und `ROADMAP.md` geändert; diese Änderungen gehören nicht zum Autoren-Self-Review. `PROGRAM_V1.md` blieb unverändert. Ein UI-Rename der Session wurde nicht behauptet.
+Der Autor hat keine anderen Dateien geändert, keinen Git-Commit/Push und keine GitHub-Mutation ausgeführt. Die zuvor von Root aktualisierten zentralen Dateien `ARCHITECTURE.md`, `DECISIONS.md`, `JETNITY_VISION.md` und `ROADMAP.md` sind Teil der publizierten R3-Basis; sie wurden für R3 vom Autor nicht geändert. `PROGRAM_V1.md` blieb unverändert. Ein UI-Rename der Session wurde nicht behauptet.
 
 ### Code-/Testidentität vor Root-Publikation
 
 | Datei | SHA-256 | Gitblob, ohne Schreiben ermittelt |
 | --- | --- | --- |
-| `contract.ts` | `651bba4c771d642f9c50637f02dad80aabfeff482f6f00c4f7be8decf99f67f3` | `4b86a991cca66bcbaead25924272c0b586c36fc2` |
-| `contract.test.ts` | `d6ba46d83fb24de53ca4c108014eff8100901267e236d9438b2dfe5f84270ada` | `bad6b32a8fc4c580fa9b33877dc22025e25370b4` |
+| `contract.ts` | `871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4` | `62f73e6a01c31de48732ce378e70a2f8936f7835` |
+| `contract.test.ts` | `59aa173100b9a28c05311eae745b777233aab5b0092ffa9ac516d818d2748fd9` | `864a7b163ad80e32a10c0d32da5972566ba65b17` |
 
-Root publiziert die geprüften Bytes und stellt den tatsächlichen neuen Head fest. Dieser Autoren-HEAD enthält die uncommitteten Implementierungsdateien noch nicht; die Tabellenwerte binden exakt die geprüften Arbeitsdateien und sind keine Commit- oder Herkunftsreceipts.
+Root publiziert die geprüften Bytes und stellt den tatsächlichen neuen Head fest. Der Autoren-HEAD enthält den bisherigen S0-Vertrag, aber noch nicht die uncommittete R3-Erweiterung; die Tabellenwerte binden exakt die geprüften Arbeitsdateien und sind keine Commit- oder Herkunftsreceipts.
 
 ## 2. Acceptance Criteria — tatsächlicher Stand
 
@@ -48,8 +50,8 @@ Root publiziert die geprüften Bytes und stellt den tatsächlichen neuen Head fe
 | 5. Methoden-/Autoritätsgrenze | Methodendrafts ausschließlich DRAFT/NOT_APPROVED; `V3MethodAuthorityPort<Receipt extends object>` als getrennte Codeschnittstelle. Kein Leser erzeugt einen Receipt. Alle produktiven Bindungen bleiben null. |
 | 6. Quellenentscheid | Klare qualifizierte Pflichtquelle, unklare Primärquelle, ungeklärte Bedingungen, kompatible Aussagen und vergleichbarer Konflikt sind getrennt. Optionale Nichtverfügbarkeit allein blockiert nicht; bekannte Konflikte bleiben am Vorgänger oder an einer exakt gebundenen Archivseite erhalten. Neue methodenbezogene Auflösungen erhalten eigene Referenzen/Vorgänger und einen eigenen historischen gesetzlichen Tag. |
 | 7. Versionen/CAS/Recovery | Evidence-/Decision-/Version-/Projection-Referenzen, exakter erwarteter Pointer, neue Revision, Operation-/Idempotenzbindung, explizite withdrawal/conflict/reaccept/recover-Pläne. Kein Übergang wird ausgeführt. |
-| 8. Öffentliche Zustände/Jobs | accepted/pending/conflict/unavailable/error je Staatsangehörigkeitszelle; Quelle und Prüfstand bleiben referenziert. Originale Quellenzeit statt Cachebauzeit, abgelaufene Projektionen werden abgewiesen. Deduplizierbarer Job mit Lease/Generation/Backoff/Versuchslimit, ohne Exactly-once-Behauptung. |
-| 9. Adversariale Tests | 53 Tests / 8 Suiten: Normalisierung, echte vorhandene Parser, unbekannte Länder/Keys, falsche Referenzen, Bedingungen, Konflikterhalt, historische Auflösung, Archivfortschreibung, methodengebundene Kompatibilität, Methodenwechsel, Dokumentunabhängigkeit, Uhr-/Datumsgrenzen, CAS/Recovery, Mehrfachzellen, wiederverwendbare Evidence, Getter/Zyklen/Prototypen/PII/Größen und geschlossene Bindungen. |
+| 8. Öffentliche Zustände/Jobs | accepted/pending/conflict/unavailable/error je Staatsangehörigkeitszelle; Quelle und Prüfstand bleiben referenziert. Originale Quellenzeit statt Cachebauzeit, abgelaufene Projektionen werden abgewiesen. Regeljob und getrennte neutrale Discovery besitzen deduplizierbare Identitäten, gemeinsame Lease/Generation/Backoff/Versuchslimits und unterschiedliche Ergebnisreferenzen, ohne Exactly-once-Behauptung. |
+| 9. Adversariale Tests | 63 Tests / 9 Suiten: alle 53 bestehenden Fälle unverändert plus zehn R3-Fälle für neutrale Paar-/Methodenidentität, Deduplizierung, fehlende Rechtsdefaults, Discriminator-/Zellbindung, Jobartverwechslung, Lifecycle und Datenminimierung. |
 | 10. Self-Review/Handoff | Reale Kommandos, Ergebnisse, frühere Fehlversuche, Checksummen, unbound Grenzen und nächster verantwortlicher Akteur sind hier dokumentiert. Root-Review ist weiterhin erforderlich. |
 
 ## 3. Reale Prüfkommandos und Ergebnisse
@@ -79,15 +81,27 @@ Die anschließenden **46/46 Tests** und damaligen Codehashes sind historisch. [T
 | A1-F7 / F7B | Identische unbedingte Legacy/V1/V2-Aussagen können agrees sein; kompatible nicht identische Aussagen besitzen einen methodengebundenen Reproof-Record; einfache optionale Visa-Erweiterung wird nicht als Konflikt akzeptiert |
 | Root-Exporthygiene | `OFFICIAL_TRUTH_V3_SCHEMA` ist kein unbenutzter öffentlicher Export mehr; die private Konstante bindet tatsächlich alle Envelope-Schemas |
 
-Der erste R2-Lauf bestand **52/52 Tests**; nach der zusätzlichen expliziten F5-Regression folgte der unten protokollierte finale Lauf. Kein bestehender kanonischer Reader oder vorhandener Test wurde abgeschwächt.
+Der erste R2-Lauf bestand **52/52 Tests**; nach der zusätzlichen expliziten F5-Regression folgten **53/53 Tests in 8 Suiten**, Dauer 1953,85718 ms. Root publizierte die bisherige S0-Lieferung anschließend im Head `19c4736a73f639daaf5337465386155607792a4f`. Kein bestehender kanonischer Reader oder vorhandener Test wurde abgeschwächt.
 
-### Finale Gates auf den oben genannten Code-/Testbytes
+### R3-Auftrag und konkrete Erweiterung
+
+Der vollständige [TL-Auftrag R3 / 6729202622](https://github.com/Jetnity/jetnity/pull/1163#issuecomment-6729202622) wurde vor Implementierung gelesen. Root bestätigte die kleine typisierte API; U1 bestätigte deren Kompatibilität. M1 war während der Änderung auf Root-Anweisung pausiert. Die neuen Imports werden erst nach Roots unabhängig geprüftem neuen Pin integriert.
+
+| R3-Acceptance | Tatsächlicher Nachweis |
+| --- | --- |
+| 1. Neutrale bounded Hülle | `createV3CombinationDiscoveryIdentity` bindet ein normalisiertes Katalog-Länderpaar und Methoden-ID/-Revision. `readV3CombinationDiscoveryJobRecord` liest ausschließlich diese Identität, Job-/Operation-/Lifecycle-Felder und eine begrenzte eigene Ergebnisreferenz. Kein RuleContext, Dokument, Route, Zweck oder Faktdefault. |
+| 2. Wiederverwendung und kompatibles Pending | Bisherige Länder-/ID-/Methoden-/Zeit-/bounded-JSON-Schemas und intern gemeinsame Lifecycle-Prüfung. Bisheriges Regelpending bleibt gültig; optional `jobKind: rule_research`. Discovery-pending benötigt `jobKind: combination_discovery`, vollständige geprüfte Identität, gleiche Jobschlüssel und exaktes Antwortzellenpaar. |
+| 3. Getrennte Autorität | Jobreader erzeugt weder Enqueue-ACK noch Methodenfreigabe, Coverage oder accepted Import. `succeeded` benötigt `combination-discovery-result:v3:` statt einer Regel-/Decision-/Projektionsreferenz. U1/M1 müssen tatsächliche aktuelle Jobbestätigung separat erbringen. |
+| 4. Adversariale Regressionen | Zehn neue Tests behandeln Normalisierung, Paar-/Methodendrift, Länder/PII/Unknownkeys, Getter/Zyklen/Größe, Jobart-/Discriminatorverwechslung, gültige und ungültige Leases/Backoff/Revisionen, historische Reclaim-Lesbarkeit und getrennte Pending-Zellen. Alle 53 vorhandenen Tests unverändert. |
+| 5. Dokumentation und Gates | R3-Plan, API-/Anschlussdokumentation und diese Übergabe; die vier folgenden Node-22-Gates wurden auf den neuen Code-/Testbytes tatsächlich erneut ausgeführt. Keine neue Dependency oder Produktionsbindung. |
+
+### Finale R3-Gates auf den oben genannten Code-/Testbytes
 
 ```bash
 /home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/contract.test.ts
 ```
 
-**Exit 0; 53 Tests, 8 Suiten, 53 bestanden, 0 fehlgeschlagen, 0 übersprungen, 0 todo.** Gemeldete gesamte Testdauer: 1953,85718 ms. Dies ist die Dauer dieses lokalen Unit-Testlaufs und kein öffentliches Cache-p95 oder SLO-Nachweis.
+**Exit 0; 63 Tests, 9 Suiten, 63 bestanden, 0 fehlgeschlagen, 0 abgebrochen, 0 übersprungen, 0 todo.** Gemeldete gesamte Testdauer: 1953,51785 ms. Der erste vollständige R3-Lauf bestand bereits alle Fälle. Dies ist die Dauer dieses lokalen Unit-Testlaufs und kein öffentliches Cache-p95 oder SLO-Nachweis.
 
 ```bash
 /home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false
@@ -105,11 +119,11 @@ Der erste R2-Lauf bestand **52/52 Tests**; nach der zusätzlichen expliziten F5-
 /home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node scripts/exporte.mjs
 ```
 
-**Exit 0; 1509 Dateien geprüft, 0 unbegründete Exporte ohne Aufrufer.** Dies behebt den zuvor von Root konkret gemeldeten Exporthygienefehler ohne Ausnahme oder künstlichen Dummyimport.
+**Exit 0; 1509 Dateien geprüft, 0 unbegründete Exporte ohne Aufrufer.** Beide neuen öffentlichen Funktionen und Typen werden im tatsächlichen Vertragskorpus verwendet. Keine Hygieneausnahme und kein künstlicher Dummyimport.
 
-`git diff --check` lief mit Exit 0; weil die Autoren-Dateien vor Root-Publikation untracked sind, bindet dies zunächst nur den getrackten Diff. Zusätzlich wurde jede der fünf neuen Dateien mit `git diff --no-index --check /dev/null <Datei>` geprüft. Dabei zunächst gefundene Markdown-Zeilenendleerzeichen in den Metadaten wurden entfernt; die finalen fünf Aufrufe lieferten jeweils Exit 1 ohne Ausgabe. Exit 1 zeigt hier den erwarteten neuen Dateiinhalt gegenüber `/dev/null`, ohne Whitespace-Diagnosen. `sha256sum` und `git hash-object` lieferten die oben dokumentierten Code-/Testidentitäten.
+`git diff --check` prüfte die fünf jetzt getrackten R3-Dateien mit Exit 0 ohne Whitespace-Diagnose. `sha256sum` und `git hash-object` lieferten die oben dokumentierten Code-/Testidentitäten. Es wurde kein Gitobjekt geschrieben und kein Commit erzeugt.
 
-**Unabhängige Root-Rückmeldung:** Root hat auf denselben finalen Code-/Testbytes 53/53 Tests (gemeldete Dauer 1314 ms), tsc Exit 0 und ESLint Exit 0 reproduziert. Außerdem meldete Root 0 unerreichbare Dateien, 0 Exporte ohne Aufrufer, 0 ungenutzte Pakete, API-Schutz 12/12 sowie eine erfolgreiche lokale Prüfung der generierten DB-Typverwendung. Root hat den vollständigen Vertrag, die geänderten Tests, Vertragsdokumentation und den Plan gelesen. Dies sind ausdrücklich von Root gemeldete unabhängige Resultate; der abschließende A1-Re-Review und TL-Freeze bleiben davon getrennt.
+**Historische unabhängige Root-Rückmeldung zu R2:** Root hatte 53/53 Tests (gemeldete Dauer 1314 ms), tsc Exit 0 und ESLint Exit 0 reproduziert. Außerdem meldete Root 0 unerreichbare Dateien, 0 Exporte ohne Aufrufer, 0 ungenutzte Pakete, API-Schutz 12/12 sowie eine erfolgreiche lokale Prüfung der generierten DB-Typverwendung. Diese früheren unabhängigen Resultate und der publizierte 19c-Freeze gelten nicht automatisch für die neuen R3-Bytes. Root muss R3 gesondert prüfen und pinnen.
 
 ### Nicht ausgeführt / nicht behauptet
 
@@ -123,6 +137,8 @@ Kein eigener `npm ci`: Root stellte den vorhandenen npm-ci-Bestand über den lok
 
 **Persistenz und Recovery:** CAS, Lease-Fencing, durable Queue, Transaktion, Widerruf, Commit/Confirm, atomare Cacheinvalidierung und historische Archivierung sind hier Datenobligationen, keine implementierten Datenbankoperationen. Der gebundene Archivappend erhält vollständige aufgelöste Records auf begrenzten Seiten und verlängert eine unveränderliche Pointerkette; er bestätigt keine tatsächliche Speicherung. M1/I1 müssen Archiv-Custody und aktuelle Methodenbedeutung vor beziehungsweise atomar mit der Head-Fortschreibung nachweisen; der Archivport bleibt null. Der Idempotenzhash ist keine verbrauchte Operation oder Annahmebestätigung. Recovery muss gegen die dann gültige Methode und aktuelle Pflichtquelle neu geprüft werden; ein alter Receipt erhält keine nachträgliche V3-Bedeutung.
 
+**R3-Discovery und Pending:** Die neue Paaridentität beschreibt unbekannte Kombinationen ohne behaupteten Regelplan. Sie ersetzt weder die tatsächliche aktuelle Methodenfreigabe noch den separat besessenen Enqueue-/Reclaim-Port. Ein lesbarer Jobrecord kann synthetisch oder kopiert sein. U1 muss vor Discovery-pending einen tatsächlich bestätigten passenden aktiven Job nachweisen; `succeeded` ist keine Bestätigung noch laufender Recherche. Die opaque Ergebnisreferenz beschreibt keine gefundenen Regeln und erlaubt keine öffentliche Annahme. Spätere Discovery-Ergebnisse müssen durch die vorhandenen Qualifikations-/Original-/Proposal-/Importgrenzen. Die tatsächliche Queue, dauerhafte Deduplizierung, Ergebnisauflösung und Workerimplementierung gehören nicht zu S0. Der vollständige Anschluss für U1/M1 ist in `S0_CONTRACT.md` beschrieben.
+
 **Kompatibilität:** Der Legacy-Store schließt Schema-1-Anwendbarkeit und Schema-2-Träger aus. Strukturierte V3-Fakten bleiben deshalb dort unbound; kein Cast oder Abflachen wurde eingeführt. I1 muss einen ausdrücklich geprüften kompatiblen Pfad anbinden. Es gibt keinen stillen Import aus #1135 und keinen zweiten Truth-Store.
 
 **Zeit und Leistung:** Der gesetzliche Kalendertag wird getrennt übergeben, weil UTC keine amtliche Zeitzonenentscheidung ersetzt. Die tatsächliche methodengültige Berechnung von Frischefristen muss später der gebundene Produzent liefern. S0 verhindert nur widersprüchliche oder abgelaufene Datenhüllen. Stunden-/24h-Parameter bleiben Betriebsentwürfe. Kein gemessenes öffentliches p95, keine Quellenverfügbarkeitsgarantie und keine Exactly-once-Zusage.
@@ -133,7 +149,7 @@ Kein eigener `npm ci`: Root stellte den vorhandenen npm-ci-Bestand über den lok
 
 ## 5. Nächster verantwortlicher Schritt und STOP
 
-**Root/TL:** Nach der bereits gemeldeten unabhängigen Code-/Gate-Prüfung die finale Übergabe übernehmen, den konkreten Codehead publizieren, A1-Re-Review einschließlich aller R1-/R2-Findings abschließen und erst danach S0 exakt für I1/U1/M1 einfrieren. Root hält zentrale Architektur-/Entscheidungs-/Continuity-Dokumente und GitHub-/CI-/Release-Evidence aktuell.
+**Root/TL:** Die neuen R3-Code-/Test-/Dokumentbytes unabhängig prüfen, den konkreten neuen Codehead publizieren und den geprüften Pin ausdrücklich an I1/U1/M1 übergeben. Der bisherige 19c-Freeze ist keine Freigabe des geänderten Heads. Root hält zentrale Architektur-/Entscheidungs-/Continuity-Dokumente und GitHub-/CI-/Release-Evidence aktuell.
 
 **Autor:** STOP nach dieser Lieferung. Kein Ready, kein Merge, kein Commit/Push und kein Folgeslice. Unmittelbare konkrete Reviewkorrekturen erfolgen bei Bedarf in derselben Session und führen zu neuen Bytes und erneuten Gates.
 
