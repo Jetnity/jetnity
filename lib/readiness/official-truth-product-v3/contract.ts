@@ -136,6 +136,7 @@ const archiveRefSchema = reference('conflict-archive:v3')
 const versionRefSchema = reference('rule-version:v3')
 const projectionRefSchema = reference('rule-projection:v3')
 const jobKeySchema = reference('research-job:v3')
+const discoveryJobKeySchema = reference('combination-discovery-job:v3')
 
 const dateSchema = z.string().refine((value) => civilDateOrdinalLesen(value) !== null)
 const timestampSchema = z.string().refine((value) => {
@@ -274,6 +275,27 @@ export type V3WorkIdentity = ReturnType<typeof workIdentity>
 /** Identity/checksum only; no request is enqueued and no authority is issued. */
 export function createV3WorkIdentity(value: unknown): V3ReadResult<V3WorkIdentity> {
   return read(value, workInputSchema.transform(workIdentity))
+}
+
+const combinationDiscoveryInputSchema = z.object({
+  destinationCountryCode: countrySchema, citizenshipCountryCode: countrySchema, method: methodRefSchema,
+}).strict()
+function combinationDiscoveryIdentity(value: z.infer<typeof combinationDiscoveryInputSchema>) {
+  return {
+    kind: 'combination_discovery' as const, ...value,
+    jobKey: `combination-discovery-job:v3:${sha256Hex(schema2Kanonisch(value))}`,
+  }
+}
+const combinationDiscoveryIdentitySchema = combinationDiscoveryInputSchema.extend({
+  kind: z.literal('combination_discovery'), jobKey: discoveryJobKeySchema,
+}).strict().superRefine((value, context) => {
+  const { destinationCountryCode, citizenshipCountryCode, method } = value
+  if (combinationDiscoveryIdentity({ destinationCountryCode, citizenshipCountryCode, method }).jobKey !== value.jobKey) invalid(context)
+})
+export type V3CombinationDiscoveryIdentity = z.infer<typeof combinationDiscoveryIdentitySchema>
+/** Neutral pair/method identity only: no RuleContext, enqueue or discovered rule. */
+export function createV3CombinationDiscoveryIdentity(value: unknown): V3ReadResult<V3CombinationDiscoveryIdentity> {
+  return read(value, combinationDiscoveryInputSchema.transform(combinationDiscoveryIdentity))
 }
 
 const representationSchema = external<RepresentationRef>((value) => {
@@ -810,10 +832,8 @@ const leaseSchema = z.object({
   leaseId: z.string().regex(/^lease3_[a-f0-9]{32}$/),
   generation: revisionSchema, acquiredAt: timestampSchema, expiresAt: timestampSchema,
 }).strict()
-const jobSchema = z.object({
-  schema: z.literal(OFFICIAL_TRUTH_V3_SCHEMA), kind: z.literal('research_job_record'),
-  jobId: jobIdSchema, operationId: operationIdSchema, jobKey: jobKeySchema,
-  context: contextSchema, contextKey: contextKeySchema, research: researchIdentitySchema, method: methodRefSchema,
+const jobLifecycleSchema = z.object({
+  jobId: jobIdSchema, operationId: operationIdSchema,
   revision: revisionSchema, predecessorRevision: z.number().int().min(1).max(2_147_483_646).nullable(),
   state: z.enum(['queued', 'leased', 'backoff', 'succeeded', 'exhausted']),
   createdAt: timestampSchema, updatedAt: timestampSchema,
@@ -821,12 +841,11 @@ const jobSchema = z.object({
   attemptLimit: z.number().int().min(1).max(OFFICIAL_TRUTH_V3_LIMITS.jobAttempts),
   lease: leaseSchema.nullable(), nextAttemptAt: timestampSchema.nullable(),
   lastFailure: z.enum(['unreachable', 'invalid_proposal', 'verification_unavailable', 'commit_unconfirmed']).nullable(),
-  resultDecisionRef: decisionRefSchema.nullable(),
-}).strict().superRefine((value, context) => {
-  const expected = workIdentity({ context: value.context, method: value.method,
-    factKind: value.research.factKind, researchReason: value.research.researchReason })
-  if (!same(expected.research, value.research) || expected.contextKey !== value.contextKey || expected.jobKey !== value.jobKey
-    || (value.predecessorRevision === null ? value.revision !== 1 : value.predecessorRevision + 1 !== value.revision)
+}).strict()
+function checkJobLifecycle(
+  value: z.infer<typeof jobLifecycleSchema>, resultRef: string | null, context: z.RefinementCtx,
+): void {
+  if ((value.predecessorRevision === null ? value.revision !== 1 : value.predecessorRevision + 1 !== value.revision)
     || value.createdAt > value.updatedAt || value.attempt > value.attemptLimit) invalid(context)
   if (value.state === 'leased') {
     const lease = value.lease
@@ -840,13 +859,34 @@ const jobSchema = z.object({
       || value.lastFailure === null || value.attempt < 1 || value.attempt >= value.attemptLimit) invalid(context)
   } else if (value.nextAttemptAt !== null) invalid(context)
   if (value.state === 'queued' && (value.attempt !== 0 || value.lastFailure !== null)) invalid(context)
-  if (value.state === 'succeeded' ? value.resultDecisionRef === null || value.attempt < 1 : value.resultDecisionRef !== null) invalid(context)
+  if (value.state === 'succeeded' ? resultRef === null || value.attempt < 1 : resultRef !== null) invalid(context)
   if (value.state === 'exhausted' && (value.attempt !== value.attemptLimit || value.lastFailure === null)) invalid(context)
+}
+const jobSchema = jobLifecycleSchema.extend({
+  schema: z.literal(OFFICIAL_TRUTH_V3_SCHEMA), kind: z.literal('research_job_record'),
+  jobKey: jobKeySchema, context: contextSchema, contextKey: contextKeySchema,
+  research: researchIdentitySchema, method: methodRefSchema, resultDecisionRef: decisionRefSchema.nullable(),
+}).strict().superRefine((value, context) => {
+  const expected = workIdentity({ context: value.context, method: value.method,
+    factKind: value.research.factKind, researchReason: value.research.researchReason })
+  if (!same(expected.research, value.research) || expected.contextKey !== value.contextKey || expected.jobKey !== value.jobKey) invalid(context)
+  checkJobLifecycle(value, value.resultDecisionRef, context)
 })
 export type V3ResearchJobRecord = z.infer<typeof jobSchema>
 /** Expired leases remain readable for recovery; a reader does not acquire one. */
 export function readV3ResearchJobRecord(value: unknown): V3ReadResult<V3ResearchJobRecord> {
   return read(value, jobSchema)
+}
+
+const combinationDiscoveryJobSchema = jobLifecycleSchema.extend({
+  schema: z.literal(OFFICIAL_TRUTH_V3_SCHEMA), kind: z.literal('combination_discovery_job_record'),
+  identity: combinationDiscoveryIdentitySchema,
+  resultDiscoveryRef: reference('combination-discovery-result:v3').nullable(),
+}).strict().superRefine((value, context) => checkJobLifecycle(value, value.resultDiscoveryRef, context))
+export type V3CombinationDiscoveryJobRecord = z.infer<typeof combinationDiscoveryJobSchema>
+/** Shape/lifecycle only. A result reference is neither enqueue proof nor an accepted rule. */
+export function readV3CombinationDiscoveryJobRecord(value: unknown): V3ReadResult<V3CombinationDiscoveryJobRecord> {
+  return read(value, combinationDiscoveryJobSchema)
 }
 
 function projectionSchema(registry: QuellenRegistry) {
@@ -907,16 +947,22 @@ export function resolveV3PublicSourceDisplay(
 }
 
 function responseSchema(registry: QuellenRegistry) {
-  const resultSchema = z.discriminatedUnion('status', [
+  const discoveryPendingSchema = z.object({
+    status: z.literal('pending'), jobKind: z.literal('combination_discovery'),
+    jobKey: discoveryJobKeySchema, identity: combinationDiscoveryIdentitySchema,
+  }).strict().superRefine((value, context) => {
+    if (value.jobKey !== value.identity.jobKey) invalid(context)
+  })
+  const resultSchema = z.union([z.discriminatedUnion('status', [
     z.object({ status: z.literal('accepted'), projection: projectionSchema(registry) }).strict(),
-    z.object({ status: z.literal('pending'), jobKey: jobKeySchema }).strict(),
+    z.object({ status: z.literal('pending'), jobKind: z.literal('rule_research').optional(), jobKey: jobKeySchema }).strict(),
     z.object({ status: z.literal('conflict'), decisionRef: decisionRefSchema,
       reason: z.enum(['comparable_conflict', 'primary_unclear']) }).strict(),
     z.object({ status: z.literal('unavailable'), reason: z.enum([
       'unbound', 'no_qualified_primary', 'conditions_unresolved', 'withdrawn', 'expired',
     ]) }).strict(),
     z.object({ status: z.literal('error'), code: z.enum(['temporary_failure', 'invalid_data']), retryable: z.boolean() }).strict(),
-  ])
+  ]), discoveryPendingSchema])
   return z.object({
     schema: z.literal(OFFICIAL_TRUTH_V3_SCHEMA), kind: z.literal('conditional_rule_overview_record'),
     dataMode: z.enum(['synthetic_test', 'official_projection']),
@@ -938,6 +984,9 @@ function responseSchema(registry: QuellenRegistry) {
     for (const cell of value.cells) {
       const subjects = new Set<string>()
       for (const result of cell.results) {
+        if (result.status === 'pending' && result.jobKind === 'combination_discovery'
+          && (result.identity.destinationCountryCode !== value.input.destinationCountryCode
+            || result.identity.citizenshipCountryCode !== cell.citizenshipCountryCode)) invalid(context)
         if (result.status !== 'accepted') continue
         const projection = result.projection, rule = projection.rule
         if (rule.subject.context.scope.destinationCountryCode !== value.input.destinationCountryCode
