@@ -1,0 +1,228 @@
+{
+  "schema": "c1-final-consistency-review-v1",
+  "reviewer": "/root/live_release_recovery",
+  "at": "2026-11-09T14:36:58.294417+00:00",
+  "scope": "Existing C1 source and persisted-evidence consistency only; no acceptance on Root behalf",
+  "repository": {
+    "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions",
+    "head": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "tree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+    "clean": true,
+    "porcelain": "",
+    "observations": "Exact local head/tree and clean porcelain independently read at start and end of local source checks."
+  },
+  "manifestFiles": [
+    {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V1.json",
+      "sha256": "bf0841829017aa8b4c3c931df9192e562c7f44a7b64d23cc774b571fc6e6e10e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+      "sha256": "f48256432d137ec7256e6c7b347287c228e01214a1dd4d7137ff73712d4facd3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V1.json",
+      "sha256": "ca7cdafb105f9d2b83c5d75096c9b6b275cdbebc7f7a4343950e6ebb3b7cf3c1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+      "sha256": "940d462be24caab81a11f4038fc79e10b9683ff4d52938c3deeb6b9b04b1a3b6"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+      "sha256": "7413422138da1b10698186bb88fd5fbf5a463d7989034e707b7d936a363143bf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_ROOT_REVIEW_R2.json",
+      "sha256": "d0df8a512971dfc77b7622695894b5866b8461272e38f43342f0fcce0c967610"
+    }
+  ],
+  "sourceEvidenceChecksAlreadyCompleted": {
+    "all21V2SourceHashesMatch": true,
+    "all9V2ReferenceHashesMatch": true,
+    "original20SourceRowsAnd8ReferenceRowsPreservedVerbatim": true,
+    "all12HistoricalDocumentHashesMatch": true,
+    "rootR2FrozenFileHashesMatch": true,
+    "rootOfflineReceiptEmbeddedVerbatim": true,
+    "peerSourceReceiptEmbeddedVerbatimAndHashMatched": true,
+    "all28OriginalAttemptRecordsPreserved": true,
+    "all31AuthorLogHashesMatch": true,
+    "guardSha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+    "historicalStatusNote": "Frozen author manifests and Root R2 correctly retain prepublication/pending status at their original timestamps. Current published head/tree are separately bound above."
+  },
+  "rootOfflineEvidence": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/c1-root-offline-r3.json",
+    "sha256": "43e2c5e8701ec43f4c2e61b3daa982f1a47449f3f331443f33da1d9d3cfde194",
+    "originalRunBase": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+    "all21CodeHashesMatchPublishedSource": true,
+    "rawLogSha256": "86d9f2bfc43769d04e36cc04f9d8ea175984506743c89817c639ed93dbe85464",
+    "rawLogHashIndependentlyMatched": true,
+    "actualTapSummary": {
+      "tests": 527,
+      "suites": 37,
+      "pass": 527,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "reviewerDidNotExecuteRun": true
+  },
+  "uiEvidence": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-root-ui-review.json",
+    "sha256": "cdc90c1ccb6709fb9450b5162da1ba96bca474272cf9b18603fcef8eff065ccc",
+    "binding": {
+      "checkedOutHead": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+      "sourceHead": "5558367eb0bff97162c369bbb8963123839f4b0e",
+      "worktreeDirty": false,
+      "githubSha": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+      "runId": "42632507668",
+      "runAttempt": "1",
+      "event": "pull_request"
+    },
+    "checkedOutTree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+    "sourceTree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+    "checkoutParents": [
+      "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+      "5558367eb0bff97162c369bbb8963123839f4b0e"
+    ],
+    "localMergeObjectIndependentlyRead": true,
+    "jobId": 129212104722,
+    "artifactId": 13682076069,
+    "zipSha256": "c6c3c27c60ef8d67c0a4d17aadcd87c3b8855e2207f7fd0bbc98130e6ad453d7",
+    "zipHashIndependentlyMatched": true,
+    "all5ReportHashesAndBindingsMatch": true,
+    "layouts": 12,
+    "interactions": 11,
+    "screenshots": 10,
+    "all10ScreenshotHashesMatchAndBytesEqualPriorArtifact": true,
+    "browserErrors": 0,
+    "externalRequests": 0,
+    "syntheticBenchmarkExactlyMatchesReceipt": true,
+    "publicSloClaim": false,
+    "reviewerDidNotRunBrowserOrRepeatVisualInspection": true,
+    "scope": "Fictional loopback component/orchestration and synthetic process benchmark only; no qualified real rule or public runtime claim."
+  },
+  "nativeEvidence": {
+    "existingExcerpts": [
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-atomic-native-evidence.txt",
+        "sha256": "d6d8bb614019fbc5d930b939e9930345f90b696919d9321858d3a5d51453ad12",
+        "tapTotals": {
+          "tests": 1,
+          "suites": 0,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "checkedOutMergePresent": true,
+        "durationMs": 935504.276635
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-core-native-evidence.txt",
+        "sha256": "9895fb3f20fcc67e8123529347c52653b2bd34293ca6b7a8b6ea748d33c6b139",
+        "tapTotals": {
+          "tests": 8573,
+          "suites": 965,
+          "pass": 8571,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 2,
+          "todo": 0
+        },
+        "checkedOutMergePresent": true
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-lifecycle-native-evidence.txt",
+        "sha256": "bbd2884bd52eaa7a09d4ad9323fecdd31eee56a46ead51b286f2844f1d788df4",
+        "tapTotals": {
+          "tests": 4,
+          "suites": 0,
+          "pass": 4,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "checkedOutMergePresent": true
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-persisted-native-evidence.txt",
+        "sha256": "d2aed5ab091f261638d72b8af223809169a4cf0f508db200ffa4f0e14fc0e28d",
+        "tapTotals": {
+          "tests": 1,
+          "suites": 0,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "checkedOutMergePresent": true
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-r3-store-native-evidence.txt",
+        "sha256": "f3a89c0c7f6477fea70da83a8d44af06d8abddc96b96b6a27a72261b037ac188",
+        "tapTotals": {
+          "tests": 4,
+          "suites": 0,
+          "pass": 4,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "checkedOutMergePresent": true
+      }
+    ],
+    "coreC1ChildCasesPassed": 4,
+    "coreC1ParentPassed": true,
+    "inheritedIn1ChildCasesPassed": 7,
+    "inheritedS1ChildCasesPassed": 12,
+    "coreInheritedSkips": 2,
+    "inheritedSkipDescriptions": [
+      "T09 shared guest/account Workspace browser layout",
+      "shared responsive layout requires explicitly enabled loopback audit server"
+    ],
+    "atomicFinalCleanup": {
+      "started": 10590,
+      "settled": 10590,
+      "pending": 0,
+      "connections": 248,
+      "closed": 248,
+      "stoppedClusters": 11
+    },
+    "atomicScope": "Root owns full actual atomic-log review; this reviewer checked persisted excerpt totals, final cleanup and merge/source binding.",
+    "bindingNote": "Atomic excerpt names checked-out merge7d3c87fdc rather than source555 directly; locally read merge object binds that commit to exact source tree and source parent.",
+    "reviewerExecutedNative": false
+  },
+  "parentReportedFinalLiveGates": {
+    "run": 42632507668,
+    "attempt": 1,
+    "jobsSuccess": 8,
+    "mergeable": "clean",
+    "openReviewThreads": 0,
+    "preview": "exact head READY",
+    "mainAndProduction": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "independentlyQueriedLiveByThisReviewer": false
+  },
+  "findings": [],
+  "processDeviation": {
+    "kind": "One unintended implicit Git promisor fetch during intended local object read",
+    "command": "git show -s --format=%H %T %P 7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+    "evidence": "Existing partial clone has remote.origin.promisor=true; new promisor packs appeared at2026-11-09T14:33:48Z during this read. The merge object was successfully read.",
+    "reportedToRoot": true,
+    "rootAcknowledged": true,
+    "changesToRefsOrWorktree": false,
+    "remoteMutation": false,
+    "dbBoundaryChanged": false,
+    "mitigation": "All subsequent Git reads used GIT_NO_LAZY_FETCH=1. No zero-network claim is made."
+  },
+  "receiptAssemblyNote": "An initial receipt-writing script failed while parsing all JSON-like atomic excerpt lines. Extraction was narrowed to the already-inspected exact final cleanup diagnostic. This was an evidence-format parsing attempt, not a product/test/database execution; no product failure or repeated gate is claimed.",
+  "limits": [
+    "No new tests, product code, browser/server or local/hosted database execution.",
+    "No remote mutation, Ready or merge; the one implicit read-only Git object fetch is disclosed above.",
+    "No independent live Actions/Preview/Production query in this final consistency subtask; Root owns final live gates and TL decision.",
+    "No TL PASS is issued by this reviewer.",
+    "Method remains NOT_APPROVED; Dev package remains NOT_RELEASE_READY; database/Production activation and special Owner gates remain separate.",
+    "This receipt neither issues nor implements MA1."
+  ]
+}

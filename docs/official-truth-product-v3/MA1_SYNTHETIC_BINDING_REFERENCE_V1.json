@@ -1,0 +1,122 @@
+{
+  "schema": "ma1-root-preimplementation-method-vectors-v1",
+  "basisHead": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "status": "SYNTHETIC_REFERENCE_ONLY_NO_MA1_IMPLEMENTATION_OR_AUTHORITY",
+  "generatedBy": "Root / Technical Lead using unchanged shared reader/canonicalizer before MA1 implementation",
+  "probeHistory": [
+    {
+      "attempt": 1,
+      "result": "ESM stdin named import rejected because repository TS modules load through CJS; no reference file or code mutation produced"
+    },
+    {
+      "attempt": 2,
+      "result": "Explicit CommonJS stdin uses existing tsx/register; all existing shared exports execute"
+    }
+  ],
+  "sourceReferences": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c"
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+    },
+    {
+      "path": "lib/readiness/digest.ts",
+      "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190"
+    }
+  ],
+  "vectors": [
+    {
+      "name": "not-approved-revision1",
+      "draft": {
+        "schema": 3,
+        "method": {
+          "methodId": "ma1-synthetic-root-vector",
+          "revision": 1
+        },
+        "predecessor": null,
+        "status": "NOT_APPROVED",
+        "createdAt": "2026-11-09T00:00:00.000Z",
+        "primaryPolicy": "one_clear_qualified_destination_primary",
+        "counterCheckPolicy": "when_available",
+        "conflictPolicy": "positive_method_valid_resolution",
+        "operatingProposal": {
+          "primaryMaxAgeSeconds": 60,
+          "checkIntervalSeconds": 30,
+          "optionalAttemptLimit": 1,
+          "optionalTimeBudgetMilliseconds": 100,
+          "attemptPlanRevision": 1
+        }
+      },
+      "canonicalMethodPreimage": "{\"conflictPolicy\":\"positive_method_valid_resolution\",\"counterCheckPolicy\":\"when_available\",\"createdAt\":\"2026-11-09T00:00:00.000Z\",\"method\":{\"methodId\":\"ma1-synthetic-root-vector\",\"revision\":1},\"operatingProposal\":{\"attemptPlanRevision\":1,\"checkIntervalSeconds\":30,\"optionalAttemptLimit\":1,\"optionalTimeBudgetMilliseconds\":100,\"primaryMaxAgeSeconds\":60},\"predecessor\":null,\"primaryPolicy\":\"one_clear_qualified_destination_primary\",\"schema\":3,\"status\":\"NOT_APPROVED\"}",
+      "methodDigest": "8f356f4d4ed89fe83843d523bc3e5d4b947b5e826a8a78daf79b73ec45d29453",
+      "methodFileBytes": "{\n  \"schema\": 3,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 1\n  },\n  \"predecessor\": null,\n  \"status\": \"NOT_APPROVED\",\n  \"createdAt\": \"2026-11-09T00:00:00.000Z\",\n  \"primaryPolicy\": \"one_clear_qualified_destination_primary\",\n  \"counterCheckPolicy\": \"when_available\",\n  \"conflictPolicy\": \"positive_method_valid_resolution\",\n  \"operatingProposal\": {\n    \"primaryMaxAgeSeconds\": 60,\n    \"checkIntervalSeconds\": 30,\n    \"optionalAttemptLimit\": 1,\n    \"optionalTimeBudgetMilliseconds\": 100,\n    \"attemptPlanRevision\": 1\n  }\n}\n",
+      "packageBytes": "{\n  \"schema\": \"ma1-root-synthetic-package-v1\",\n  \"syntheticOnly\": true,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 1\n  },\n  \"methodDigest\": \"8f356f4d4ed89fe83843d523bc3e5d4b947b5e826a8a78daf79b73ec45d29453\",\n  \"entries\": [\n    {\n      \"path\": \"synthetic-method.json\",\n      \"sha256\": \"8a8980c72aa56efeb5fa1967ee973f76883be6c21fc32bbee222051c097f18bb\"\n    }\n  ]\n}\n",
+      "packageDigest": "3478b33b5bd068eff06d70997882af7226d39eefb35aa3e78d6b54286b6c7a22",
+      "packageWithoutTrailingNewlineDigest": "b709919fa4ef8a75fa44b501bfe023659289774e27541b62468e63c18d796e34"
+    },
+    {
+      "name": "draft-revision1",
+      "draft": {
+        "schema": 3,
+        "method": {
+          "methodId": "ma1-synthetic-root-vector",
+          "revision": 1
+        },
+        "predecessor": null,
+        "status": "DRAFT",
+        "createdAt": "2026-11-09T00:00:00.000Z",
+        "primaryPolicy": "one_clear_qualified_destination_primary",
+        "counterCheckPolicy": "when_available",
+        "conflictPolicy": "positive_method_valid_resolution",
+        "operatingProposal": {
+          "primaryMaxAgeSeconds": 60,
+          "checkIntervalSeconds": 30,
+          "optionalAttemptLimit": 1,
+          "optionalTimeBudgetMilliseconds": 100,
+          "attemptPlanRevision": 1
+        }
+      },
+      "canonicalMethodPreimage": "{\"conflictPolicy\":\"positive_method_valid_resolution\",\"counterCheckPolicy\":\"when_available\",\"createdAt\":\"2026-11-09T00:00:00.000Z\",\"method\":{\"methodId\":\"ma1-synthetic-root-vector\",\"revision\":1},\"operatingProposal\":{\"attemptPlanRevision\":1,\"checkIntervalSeconds\":30,\"optionalAttemptLimit\":1,\"optionalTimeBudgetMilliseconds\":100,\"primaryMaxAgeSeconds\":60},\"predecessor\":null,\"primaryPolicy\":\"one_clear_qualified_destination_primary\",\"schema\":3,\"status\":\"DRAFT\"}",
+      "methodDigest": "0c0ee0f62565a3dccc8abdb81402c32670d8220495827ed5920417015b5cb117",
+      "methodFileBytes": "{\n  \"schema\": 3,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 1\n  },\n  \"predecessor\": null,\n  \"status\": \"DRAFT\",\n  \"createdAt\": \"2026-11-09T00:00:00.000Z\",\n  \"primaryPolicy\": \"one_clear_qualified_destination_primary\",\n  \"counterCheckPolicy\": \"when_available\",\n  \"conflictPolicy\": \"positive_method_valid_resolution\",\n  \"operatingProposal\": {\n    \"primaryMaxAgeSeconds\": 60,\n    \"checkIntervalSeconds\": 30,\n    \"optionalAttemptLimit\": 1,\n    \"optionalTimeBudgetMilliseconds\": 100,\n    \"attemptPlanRevision\": 1\n  }\n}\n",
+      "packageBytes": "{\n  \"schema\": \"ma1-root-synthetic-package-v1\",\n  \"syntheticOnly\": true,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 1\n  },\n  \"methodDigest\": \"0c0ee0f62565a3dccc8abdb81402c32670d8220495827ed5920417015b5cb117\",\n  \"entries\": [\n    {\n      \"path\": \"synthetic-method.json\",\n      \"sha256\": \"0dc2ae68cbb22ac75707576da9300e9a1436e1b42a6d3536bb2be869222c3110\"\n    }\n  ]\n}\n",
+      "packageDigest": "f9892975f1044e4f204e53ba62d557127efb75aebc92040d43a4c0e77d9e4b2c",
+      "packageWithoutTrailingNewlineDigest": "3e6e8ce547fd47f20afd907103277d8c351d77d0c73b5e808598b9569490dbc3"
+    },
+    {
+      "name": "not-approved-revision2",
+      "draft": {
+        "schema": 3,
+        "method": {
+          "methodId": "ma1-synthetic-root-vector",
+          "revision": 2
+        },
+        "predecessor": {
+          "methodId": "ma1-synthetic-root-vector",
+          "revision": 1
+        },
+        "status": "NOT_APPROVED",
+        "createdAt": "2026-11-09T00:00:00.000Z",
+        "primaryPolicy": "one_clear_qualified_destination_primary",
+        "counterCheckPolicy": "when_available",
+        "conflictPolicy": "positive_method_valid_resolution",
+        "operatingProposal": {
+          "primaryMaxAgeSeconds": 60,
+          "checkIntervalSeconds": 30,
+          "optionalAttemptLimit": 1,
+          "optionalTimeBudgetMilliseconds": 100,
+          "attemptPlanRevision": 1
+        }
+      },
+      "canonicalMethodPreimage": "{\"conflictPolicy\":\"positive_method_valid_resolution\",\"counterCheckPolicy\":\"when_available\",\"createdAt\":\"2026-11-09T00:00:00.000Z\",\"method\":{\"methodId\":\"ma1-synthetic-root-vector\",\"revision\":2},\"operatingProposal\":{\"attemptPlanRevision\":1,\"checkIntervalSeconds\":30,\"optionalAttemptLimit\":1,\"optionalTimeBudgetMilliseconds\":100,\"primaryMaxAgeSeconds\":60},\"predecessor\":{\"methodId\":\"ma1-synthetic-root-vector\",\"revision\":1},\"primaryPolicy\":\"one_clear_qualified_destination_primary\",\"schema\":3,\"status\":\"NOT_APPROVED\"}",
+      "methodDigest": "911a69c43b809c7854104092f781c26b4434b39d0ad006395a15075c56d06f9b",
+      "methodFileBytes": "{\n  \"schema\": 3,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 2\n  },\n  \"predecessor\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 1\n  },\n  \"status\": \"NOT_APPROVED\",\n  \"createdAt\": \"2026-11-09T00:00:00.000Z\",\n  \"primaryPolicy\": \"one_clear_qualified_destination_primary\",\n  \"counterCheckPolicy\": \"when_available\",\n  \"conflictPolicy\": \"positive_method_valid_resolution\",\n  \"operatingProposal\": {\n    \"primaryMaxAgeSeconds\": 60,\n    \"checkIntervalSeconds\": 30,\n    \"optionalAttemptLimit\": 1,\n    \"optionalTimeBudgetMilliseconds\": 100,\n    \"attemptPlanRevision\": 1\n  }\n}\n",
+      "packageBytes": "{\n  \"schema\": \"ma1-root-synthetic-package-v1\",\n  \"syntheticOnly\": true,\n  \"method\": {\n    \"methodId\": \"ma1-synthetic-root-vector\",\n    \"revision\": 2\n  },\n  \"methodDigest\": \"911a69c43b809c7854104092f781c26b4434b39d0ad006395a15075c56d06f9b\",\n  \"entries\": [\n    {\n      \"path\": \"synthetic-method.json\",\n      \"sha256\": \"5d247de7416acfd1d078a4cb31cf9edd2e5fdc1937ebc6e53086d473aee1ee83\"\n    }\n  ]\n}\n",
+      "packageDigest": "6322851a9a1386854a5f3acdf794e42259593547fee20739c03ad1a221c53ceb",
+      "packageWithoutTrailingNewlineDigest": "dcd0fcf01a24f2437a6ecd57e8abd4a261370a6595cdb08b77793b2b30fd245d"
+    }
+  ]
+}

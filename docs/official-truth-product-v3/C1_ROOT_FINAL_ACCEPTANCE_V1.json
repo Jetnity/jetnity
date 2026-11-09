@@ -1,0 +1,294 @@
+{
+  "schema": "jetnity-c1-root-final-exact-head-acceptance-v1",
+  "reviewer": "Root / Technical Lead",
+  "at": "2026-11-09T14:37:17.554064+00:00",
+  "status": "CODE_NATIVE_ISOLATED_UI_PASS",
+  "ready": false,
+  "merged": false,
+  "activationApproved": false,
+  "source": {
+    "pr": 1173,
+    "head": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "tree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+    "base": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+    "main": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "baseBehind": 0,
+    "baseAhead": 3,
+    "mainBehind": 0,
+    "mainAhead": 32,
+    "clean": true,
+    "changedCodeFiles": 21,
+    "changedDocumentationFiles": 18
+  },
+  "authorship": {
+    "name": "Jetnity Official Truth V3 Global Conditions 1 — Codex Generation 1",
+    "session": "/root/v3_global_conditions_writer",
+    "provenance": "Explicit Codex fallback; no claimed Cursor session",
+    "reviewFixes": "P2-R2 and P2-R3 returned to same actual writer/session; root independently reviewed and published"
+  },
+  "history": {
+    "previousHead": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+    "failedRun": 42627981316,
+    "failedJob": 129196610763,
+    "finding": "P2-R3: legitimate dormant mapper absent from both strict applicability-consumer inventories",
+    "changesRequiredComment": 6742027998,
+    "sourceCorrectionComment": 6742198195,
+    "fix": "22 additions, zero removals in one existing guard; exact inventory entry plus one positive and15 raw-path negatives;20 prior C1 implementation files byte-identical; prior failed run and all31 actual author attempts preserved"
+  },
+  "independentSourceRun": {
+    "receipt": "c1-root-offline-r3.json",
+    "sha256": "43e2c5e8701ec43f4c2e61b3daa982f1a47449f3f331443f33da1d9d3cfde194",
+    "logSha256": "86d9f2bfc43769d04e36cc04f9d8ea175984506743c89817c639ed93dbe85464",
+    "tests": 527,
+    "pass": 527,
+    "fail": 0,
+    "skipped": 0,
+    "scope": "23 named offline files;21 source SHA256 values unchanged before/after and match published head; no local native/browser execution"
+  },
+  "ci": {
+    "runId": 42632507668,
+    "attempt": 1,
+    "conclusion": "success",
+    "checkedOutHead": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+    "checkedOutTree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+    "checkoutParents": [
+      "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+      "5558367eb0bff97162c369bbb8963123839f4b0e"
+    ],
+    "jobs": [
+      {
+        "id": 129212104062,
+        "name": "Repository verification",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:26:07Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104062"
+      },
+      {
+        "id": 129212104477,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:14:10Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104477"
+      },
+      {
+        "id": 129212104498,
+        "name": "Persisted canonical read — native",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:16:59Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104498"
+      },
+      {
+        "id": 129212104582,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:22:51Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104582"
+      },
+      {
+        "id": 129212104610,
+        "name": "Accepted store trip integration — native (store)",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:21:02Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104610"
+      },
+      {
+        "id": 129212104720,
+        "name": "Atomic version refresh — native",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:29:56Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104720"
+      },
+      {
+        "id": 129212104722,
+        "name": "Official truth V3 — isolated UI",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:14:52Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129212104722"
+      },
+      {
+        "id": 129221611082,
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success",
+        "completedAt": "2026-11-09T14:30:02Z",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/42632507668/job/129221611082"
+      }
+    ],
+    "core": {
+      "tests": 8573,
+      "pass": 8571,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "suites": 965,
+      "durationMs": 570870.532513,
+      "inheritedSkips": [
+        "T09 shared guest/account Workspace keyboard/pagination/320px/200% browser layout",
+        "Shared responsive layout needing explicit SHARED_LAYOUT_AUDIT_BASE"
+      ],
+      "newNative": {
+        "C1Children": 4,
+        "IN1Children": 7,
+        "S1Children": 12,
+        "allActual": true,
+        "skips": 0
+      },
+      "typecheckLintHygieneProductionBuild": "all successful"
+    },
+    "authJobBoundary": "Existing mandatory Auth configuration check remained unchanged. Its success is not #1139 target-bound Dev truth; no Auth log-body read or new hosted query was performed for this acceptance."
+  },
+  "native": {
+    "persisted": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 175106.54992
+    },
+    "store": {
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 401300.131953
+    },
+    "lifecycle": {
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 515907.882468,
+      "mountedWorkspace": {
+        "nativeCurrentResults": 22,
+        "sourceFetchesDuringReads": 0,
+        "started": 61,
+        "settled": 61,
+        "pending": 0,
+        "retainedBytes": 0,
+        "observerErrors": 0
+      }
+    },
+    "atomic": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 935504.276635,
+      "actualLockRaces": true,
+      "expiryAbortTimeoutRollbackVerified": true,
+      "lostAcknowledgementRemainsNonpositive": true,
+      "cleanup": {
+        "started": 10590,
+        "settled": 10590,
+        "pending": 0,
+        "connections": 248,
+        "closed": 248,
+        "stoppedClusters": 11
+      }
+    },
+    "scope": "Actual mandatory GitHub CI PostgreSQL with synthetic fixtures; not new hosted installation/readback or real source qualification"
+  },
+  "ui": {
+    "receiptSha256": "cdc90c1ccb6709fb9450b5162da1ba96bca474272cf9b18603fcef8eff065ccc",
+    "artifactId": 13682076069,
+    "artifactZipSha256": "c6c3c27c60ef8d67c0a4d17aadcd87c3b8855e2207f7fd0bbc98130e6ad453d7",
+    "layouts": 12,
+    "interactions": 11,
+    "pngs": 10,
+    "browserErrors": 0,
+    "externalRequests": 0,
+    "allNewReportBindingsVerified": true,
+    "visualReview": "All10 newly generated PNGs match their manifest and are byte-identical to prior artifact. Root had visually inspected application320, application320text200, mixed1280, conflict320 and pollaccepted390 there; new exact-head UI actually reran. No repeated image viewing claimed.",
+    "syntheticProcessP95Ms": 7.77272,
+    "publicP95Verified": false
+  },
+  "live": {
+    "reviewThreads": 0,
+    "mergeable": true,
+    "mergeableState": "clean",
+    "requiredRulesetId": 21875372,
+    "strictRequiredChecks": [
+      "Typecheck, Lint & Build",
+      "Auth-Konfiguration gegen config.toml",
+      "Vercel"
+    ],
+    "bypassActors": 0,
+    "preview": {
+      "id": "dpl_D2p928K2SYcrExSZbjxY1crDWmSL",
+      "status": "READY",
+      "target": null,
+      "url": "jetnity-5g4fn8xjl-jetnity-e1b93c82.vercel.app",
+      "head": "5558367eb0bff97162c369bbb8963123839f4b0e",
+      "aliasError": null
+    },
+    "productionJetnityCom": {
+      "id": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+      "status": "READY",
+      "target": "production",
+      "url": "jetnity-s3rklbqq4-jetnity-e1b93c82.vercel.app",
+      "head": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "aliasError": null
+    },
+    "productionAppAlias": {
+      "id": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+      "status": "READY",
+      "target": "production",
+      "url": "jetnity-s3rklbqq4-jetnity-e1b93c82.vercel.app",
+      "head": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+      "aliasError": null
+    }
+  },
+  "riskAssessment": {
+    "P0": "No unresolved C1-scope P0 finding found in independently reviewed exact source and executions; activation stays closed.",
+    "P1": "Real source qualification, revocable current method authority and durable operational publication remain open; method NOT_APPROVED and Dev NOT_RELEASE_READY prevent activation.",
+    "P2": "All raised C1 P2 findings corrected by same author and independently re-gated; no unresolved C1 source finding.",
+    "P3": "Inherited skips and action-runtime deprecation warnings retained transparently; no public performance or hosted runtime claim."
+  },
+  "boundaries": [
+    "C1 closes expression/identity/transport and isolated evidence only, not complete global source qualification.",
+    "All candidates remain UNAPPLIED; no real method approval, Ready, merge, hosted DB or Production activation.",
+    "No retry, rephrase, alternate transport, delegation or human substitute for #917 refused readback.",
+    "#1139 retains17 pre-Owner gaps; #1131 Ready STOP, #1135 scope, #968 isolation, #911/#913 and all special Owner gates remain.",
+    "No arbitrary author follow-on. Root deliberately selects MA1 under authorized PROGRAM V1 only after this C1 acceptance and separate finite Phase A plan review."
+  ],
+  "finalConsistencyReview": {
+    "session": "/root/live_release_recovery",
+    "sha256": "cfe328ec82ac36aa191b88ff4e5d5969d97299f97868fb36c01ba58b55a75763",
+    "findings": [],
+    "scope": "Read-only existing-source/evidence consistency; no TL PASS by reviewer",
+    "processDeviation": "One disclosed implicit Git promisor object read; no refs, worktree, remote mutation or database action; subsequent reads GIT_NO_LAZY_FETCH=1"
+  },
+  "evidenceFiles": [
+    {
+      "file": "c1-root-offline-r3.json",
+      "sha256": "43e2c5e8701ec43f4c2e61b3daa982f1a47449f3f331443f33da1d9d3cfde194"
+    },
+    {
+      "file": "c1-r3-root-ui-review.json",
+      "sha256": "cdc90c1ccb6709fb9450b5162da1ba96bca474272cf9b18603fcef8eff065ccc"
+    },
+    {
+      "file": "c1-r3-guard-peer-review.json",
+      "sha256": "5ba451a0330a3ede3be1603508123a74f6a750a5aa8fd2073703045ede5b8a98"
+    },
+    {
+      "file": "c1-r3-core-native-evidence.txt",
+      "sha256": "9895fb3f20fcc67e8123529347c52653b2bd34293ca6b7a8b6ea748d33c6b139"
+    },
+    {
+      "file": "c1-r3-persisted-native-evidence.txt",
+      "sha256": "d2aed5ab091f261638d72b8af223809169a4cf0f508db200ffa4f0e14fc0e28d"
+    },
+    {
+      "file": "c1-r3-store-native-evidence.txt",
+      "sha256": "f3a89c0c7f6477fea70da83a8d44af06d8abddc96b96b6a27a72261b037ac188"
+    },
+    {
+      "file": "c1-r3-lifecycle-native-evidence.txt",
+      "sha256": "bbd2884bd52eaa7a09d4ad9323fecdd31eee56a46ead51b286f2844f1d788df4"
+    },
+    {
+      "file": "c1-r3-atomic-native-evidence.txt",
+      "sha256": "d6d8bb614019fbc5d930b939e9930345f90b696919d9321858d3a5d51453ad12"
+    },
+    {
+      "file": "c1-r3-ui-job-evidence.txt",
+      "sha256": "67b06781972355816a99dafbeedfbbd9faffe5cc7442c0e8d190ba18dcc1619b"
+    }
+  ]
+}
