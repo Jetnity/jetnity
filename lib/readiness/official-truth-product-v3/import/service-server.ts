@@ -61,7 +61,8 @@ export type V3ImportPrepared = Readonly<{
 }>
 export type V3ImportOutcome =
   | Readonly<{ status: 'prepared'; value: V3ImportPrepared }>
-  | Readonly<{ status: 'escalation'; key: string; reason: 'primary_unclear' | 'comparable_conflict'; decision: V3SourceDecisionRecord }>
+  | Readonly<{ status: 'escalation'; key: string; reason: 'primary_unclear' | 'comparable_conflict';
+    decision: V3SourceDecisionRecord; previousDecision: V3SourceDecisionRecord | null; archiveAppend: V3ConflictArchiveRecord | null }>
   | Readonly<{ status: 'quarantined'; reason: 'conditions_unresolved' | 'invalid_verification' | 'history_changed' | 'method_not_current' }>
   | Readonly<{ status: 'unavailable'; reason: 'method_not_approved' | 'method_unavailable' | 'verification_unavailable' | 'history_unavailable' | 'aborted' | 'temporary_failure' }>
 export type V3ImportResult =
@@ -80,15 +81,18 @@ export type V3ImportAudit = Readonly<{
 /**
  * Atomic acquisition/finish; no in-memory production implementation or blind replay.
  * A durable adapter must retain the operation/digest and use a bounded lease and
- * fenced ticket for crash recovery. Reclaim never changes the digest or permits
- * an expired worker to finish. Unknown responses are reconciled on that same
+ * fenced ticket bound to a monotonically advancing reservation revision for
+ * crash recovery. Reclaim never changes the digest or permits an expired worker
+ * or obsolete revision to finish. Unknown responses are reconciled on that same
  * operation; the caller must not create a replacement operation to bypass it.
+ * Completed replay returns the full confirmed outcome, including the exact
+ * previousDecision/archiveAppend bound to an escalation, never only references.
  */
 export interface V3ImportQuarantinePort<Ticket extends object> {
   reserve(upload: V3ProposalUpload, signal: AbortSignal): Promise<
     { status: 'acquired'; ticket: Ticket } | { status: 'completed'; outcome: V3ImportOutcome }
     | { status: 'collision' | 'busy' | 'unavailable' }>
-  /** Outcome, audit and escalation outbox key must be recorded atomically. */
+  /** Full outcome (decision/predecessor/archive), audit and outbox key are atomic. */
   finish(ticket: Ticket, outcome: V3ImportOutcome, audit: V3ImportAudit, signal: AbortSignal): Promise<
     { status: 'recorded' } | { status: 'unconfirmed' }>
 }
@@ -305,7 +309,8 @@ async function prepare<M extends object, E extends object, H extends object, T e
     if (value.conclusion === 'primary_unclear' || value.conclusion === 'comparable_conflict') {
       const key = ref('source-escalation', { contextKey: value.contextKey, factKind: value.factKind, method: value.method,
         reason: value.conclusion, conflicts: value.knownConflicts.filter((item) => item.resolution === null).map((item) => item.reference).sort() })
-      return Object.freeze({ status: 'escalation', key, reason: value.conclusion, decision: value })
+      return Object.freeze({ status: 'escalation', key, reason: value.conclusion, decision: value,
+        previousDecision: history.decision, archiveAppend: archiveValue })
     }
     if (value.conclusion !== 'clear_primary' || value.primary.status !== 'clear') return quarantined('conditions_unresolved')
     return prepareVersion(value, value.primary, history, archiveValue, upload, done, ports.registry)

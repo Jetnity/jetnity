@@ -926,7 +926,37 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'temporal.ts'),
       join(hier, 'official-truth-composition-policy-registry.ts'),
       join(hier, 'official-truth-composition-policy-registry.test.ts'),
+      // #1163 S0 R4: exact reviewed dormant V3 contract; no runtime activation.
+      join(hier, 'official-truth-product-v3/contract.ts'),
+      // #1164 I1 Guard R1: exact reviewed server and its existing synthetic tests.
+      join(hier, 'official-truth-product-v3/import/service-server.ts'),
+      join(hier, 'official-truth-product-v3/import/service.test.ts'),
     ])
+    assert.equal(eigene.has(join(hier, 'official-truth-product-v3/contract.ts')), true)
+    // Keep raw traversal spellings: join() must not normalize an alias into permission.
+    for (const pfad of [
+      `${hier}/official-truth-product-v3/contract.ts.evil.ts`,
+      `${hier}/official-truth-product-v3/contract-server.ts`,
+      `${hier}/official-truth-product-v3/contract.ts/../unreviewed.ts`,
+      `${hier}/official-truth-product-v3/../official-truth-product-v3/contract.ts`,
+      `${hier}/official-truth-product-v3/unreviewed.ts`,
+      `${hier}/official-truth-product-v30/contract.ts`,
+      `${wurzel}/app/api/official-truth-product-v3/contract.ts`,
+    ]) assert.equal(eigene.has(pfad), false, pfad)
+    assert.equal(eigene.has(join(hier, 'official-truth-product-v3/import/service-server.ts')), true)
+    assert.equal(eigene.has(join(hier, 'official-truth-product-v3/import/service.test.ts')), true)
+    for (const pfad of [
+      `${hier}/official-truth-product-v3/import/service-server.ts.evil.ts`,
+      `${hier}/official-truth-product-v3/import/service.test.ts.evil.ts`,
+      `${hier}/official-truth-product-v3/import/service.ts`,
+      `${hier}/official-truth-product-v3/import/service-server.ts/../unreviewed.ts`,
+      `${hier}/official-truth-product-v3/import/service.test.ts/../unreviewed.ts`,
+      `${hier}/official-truth-product-v3/import/../import/service-server.ts`,
+      `${hier}/official-truth-product-v3/import/../import/service.test.ts`,
+      `${hier}/official-truth-product-v3/import/unreviewed.ts`,
+      `${hier}/official-truth-product-v3/importer/service-server.ts`,
+      `${wurzel}/app/api/official-truth-product-v3/import/service-server.ts`,
+    ]) assert.equal(eigene.has(pfad), false, pfad)
     const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
     assert.deepEqual(fremd, [])
     const produktion = dateien(wurzel).filter(
@@ -940,6 +970,8 @@ describe('regulierungs-anwendbarkeit', () => {
         join(hier, 'rule-claims.ts'),
       join(hier, 'temporal.ts'),
         join(hier, 'official-truth-composition-policy-registry.ts'),
+        join(hier, 'official-truth-product-v3/contract.ts'),
+        join(hier, 'official-truth-product-v3/import/service-server.ts'),
       ].sort(),
     )
     const claims = readFileSync(join(hier, 'rule-claims.ts'), 'utf8')

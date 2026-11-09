@@ -1,4 +1,4 @@
-# I1 — Neutraler Rechercheeingang und Import-Orchestrierung, Schnittstelle V1
+# I1 — Neutraler Rechercheeingang und Import-Orchestrierung, Schnittstelle V1 / TL-Review R2
 
 Autor: **Jetnity Official Truth V3 Import 1 — Codex Generation 1**, Session `/root/v3_import_writer`, Draft #1164, TASK V1. Diese Implementierung aktiviert keine Quelle, Methode, Datenbank oder öffentliche Route.
 
@@ -72,7 +72,7 @@ Das folgende Beispiel zeigt keine echte Einreisebestimmung. `.example`-Quellen, 
 6. Aus den servereigenen Prüfresultaten die Quellenentscheidung mit S0 erstellen. Eine klare qualifizierte Pflichtquelle genügt; erfolglose optionale Gegenprüfungen allein sperren sie nicht. Bekannte ungelöste Konflikte bleiben erhalten. Ein echter Konflikt oder eine unklare Pflichtquelle erzeugt eine deduplizierbare Eskalation; ungeklärte Bedingungen bleiben in Quarantäne.
 7. Quellen-/Original-/Vergleichs-/Archiv-Reproof, aktuellen History-Head und Methodenfreigabe erneut prüfen. Zwischenzeitlich abgelaufene Quellenprüfung, legaler Tageswechsel, Zeitrückschritt, Widerruf oder geänderter Head verhindern die positive Übergabe.
 8. Eine neue vorbereitete Version und einen exakten CAS-Transitionsplan erstellen. Fakt und echte Quellenzeit stammen aus der verifizierten Primärbeobachtung. Abweichende Researcherwerte werden als `superseded_by_source` markiert; sie bestimmen die neue Regel nicht.
-9. Ergebnis, minimierte Auditzeile und gegebenenfalls Eskalationsschlüssel über den Quarantäne-Port atomar bestätigen. Erst danach liefert der Dienst `completed`. Diese Bestätigung betrifft nur den Importversuch, nicht den Accepted Store.
+9. Das vollständige gebundene Ergebnis, die minimierte Auditzeile und gegebenenfalls den Eskalationsschlüssel über den Quarantäne-Port atomar bestätigen. Bei einer Eskalation gehören dazu die Entscheidung, der geprüfte unmittelbare Vorgänger `previousDecision` und der exakte geprüfte `archiveAppend` (jeweils gegebenenfalls `null`). Ein gleichzeitig archivierter gelöster Konflikt darf nicht hinter einem bloßen Archive-Head verschwinden. Erst danach liefert der Dienst `completed`. Diese Bestätigung betrifft nur den Importversuch, nicht den Accepted Store.
 
 Der gesamte Aufruf besitzt ein lokales Budget von standardmäßig maximal 30 Sekunden und ein Abort-Race. Ein unkooperativer Port kann die Rückgabe nicht unbegrenzt aufhalten. Timer und Listener werden entfernt. Ein später aufgelöster Read darf keine weiteren mutierenden Schritte starten. Ein Timeout oder verlorener Reply nach möglicherweise erfolgter Reserve/Finish bleibt `outcome_unknown`; ein später tatsächlich erfolgter Write wird nicht als nicht geschrieben dargestellt.
 
@@ -83,7 +83,7 @@ Der gesamte Aufruf besitzt ein lokales Budget von standardmäßig maximal 30 Sek
 | `V3MethodAuthorityPort` | getrennte Freigabeauflösung und erneuter Reproof derselben Methodenrevision | tatsächliche einmalige Owner-Methodenfreigabe, Widerruf und aktuelle Gültigkeit; kein selbst ausgestellter JSON-Receipt |
 | `V3ImportEvidencePort` | strikte S0-Konsistenz, Zielland-/Methoden-/Evidence-/Kontextbindung, Fristen, getrennte Prüfung vor Übergabe | amtliche Zuständigkeit, echte Original-Custody, kanonische Extraktion, unabhängige Publikationen, methodengültige semantische Vergleichs-/Auflösungsbelege und Archiv-Custody |
 | `V3ImportHistoryPort` | aktueller Pointer plus passender Version/Entscheidung, unmittelbarer Vorgänger und genauer Archivappend; erneute Head-Prüfung | wirklich aktueller Store-Head und unverfälschte historische Records samt append-only Archiv |
-| `V3ImportQuarantinePort` | Operation/Digest-Reservierung, Replay/Kollision, atomare Ergebnis-/Audit-/Eskalationsbestätigung | dauerhafte Speicherung, Lease/Fencing und Crash-Recovery; keine neue Reservation mit geändertem Digest, kein alter Worker nach Reclaim |
+| `V3ImportQuarantinePort` | Operation/Digest-Reservierung, Replay/Kollision, atomare Bestätigung des vollständigen Ergebnisses samt Entscheidung/Vorgänger/Archiv, Audit und Eskalationsschlüssel | dauerhafte Speicherung, begrenzte Lease und Ticket-Fencing an monoton steigender Reservationsrevision; Crash-Recovery, vollständiger bestätigter Replay, kein geänderter Digest und kein alter Worker beziehungsweise veraltete Revision nach Reclaim |
 
 Die Port-Objekte sind eine bewusst separate Codeschnittstelle, keine Endpunkte und keine vom Researcher konfigurierbaren JSON-Felder. `createV3ImportCoordinator` enthält die wirkliche Orchestrierung für überprüfte Adapter beziehungsweise isolierte Tests. **`importV3ResearchProposalProduction()` bleibt fest `unavailable/unbound`**, ohne Argument für einen positiven Adapter und ohne Environment-Schalter. Kein bestehender App-/API-Aufrufer importiert die neue Koordination.
 
@@ -96,12 +96,14 @@ Die Quelle eines nach eigener Methode rechtlich kompatiblen oder widersprüchlic
 | `rejected` | Upload ungültig, Größenlimit oder Operation-ID-Kollision; kein neuer positiver Import |
 | `busy` | Dieselbe Operation ist reserviert; keine zweite parallele Verifikation |
 | `completed` / `prepared` | lokal geprüfte neue Version/Entscheidung/Transition und bestätigter Importversuch; **kein Commit in den Accepted Store** |
-| `completed` / `escalation` | fachlicher Sperrgrund plus deduplizierbarer Outboxschlüssel; kein externer Versand durch I1 |
+| `completed` / `escalation` | fachlicher Sperrgrund, Entscheidung, exakter geprüfter Vorgänger/Archivappend und deduplizierbarer Outboxschlüssel; kein externer Versand durch I1 |
 | `completed` / `quarantined` | ungültige/veränderte Nachweise, Methodensperre oder ungeklärte Bedingungen |
 | `completed` / `unavailable` | keine belastbare Aussage wegen fehlendem Anschluss oder technischem Fehler; keine behauptete Leere |
 | `outcome_unknown` | mutierender Port kann geschrieben haben; dieselbe Operation ist gezielt abzugleichen |
 
 Ein Replay liefert den zuvor bestätigten **historischen Importausgang**, auch wenn inzwischen eine Quelle oder Methode veraltet ist. Er stellt keine neue Freigabe aus. Das `prepared`-Bündel führt deshalb ausdrücklich `acceptance: not_committed` und `reproof: required_before_commit`. M1/E1 darf daraus erst nach erneuter aktueller Prüfung einen echten atomaren Commit/Confirm aufbauen.
+
+Auch beide Eskalationsgründe (`primary_unclear`, `comparable_conflict`) behalten die vollständige geprüfte Entscheidungsbindung durch Persistenz und Replay: `decision`, `previousDecision`, `archiveAppend`. Damit kann der unveränderte S0-Leser eine Entscheidung nach gleichzeitiger Konfliktarchivierung erneut mit genau ihrem Vorgänger und Archivappend lesen. Der Quarantäneadapter darf diese Records weder entfernen noch allein durch Referenzen, Hashes oder den Outboxschlüssel ersetzen. Sie sind historische Prüfdaten, keine neue Freigabe und kein Accepted-Receipt.
 
 Das Bündel enthält `proposalDigest`, `decision`, `previousDecision`, `archiveAppend`, `version`, `transition` und die Erklärung `matched` beziehungsweise `superseded_by_source`. Ein `reaccept` aus conflicted/withdrawn erzeugt eine neue Version und benötigt die im S0-Plan vorgeschriebenen Auflösungsbelege; alte Versionen werden nicht direkt umgeschaltet. Vollständige Produkt-Recovery bleibt M1.
 

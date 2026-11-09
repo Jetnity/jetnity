@@ -14,7 +14,7 @@ import type { RegelFakt } from '@/lib/readiness/rule-claims'
 import type { OfficialRequirementType } from '@/types/trips'
 import {
   createV3WorkIdentity, readV3GlobalRuleContext, readV3SourceDecisionRecord, readV3RuleVersionRecord, type V3ReadResult,
-  type V3SourceDecisionRecord, type V3SourceObservationRecord,
+  type V3SourceDecisionRecord, type V3SourceObservationRecord, type V3ConflictArchiveRecord,
 } from '../contract'
 import { readV3ProposalUpload, V3_PROPOSAL_INTERFACE } from './interface'
 import {
@@ -473,4 +473,120 @@ describe('TL I1 R1 — archived history and uncertain bounded operations', () =>
     const replay = await h.run.submit(JSON.stringify(h.proposal()))
     assert.equal(replay.status, 'completed'); assert.equal(h.counters.finish, 1)
   })
+})
+
+describe('TL I1 R2 — complete persisted escalation evidence', () => {
+  type Reason = 'primary_unclear' | 'comparable_conflict'
+  type ArchiveChange = 'missing' | 'foreign' | 'mutated'
+
+  async function archivingEscalation(reason: Reason, change: ArchiveChange | null = null) {
+    const h = harness({ counterFact: { kind: 'blank_passport_pages', minimumPages: 8 } })
+    const first = outcome(await h.run.submit(JSON.stringify(h.proposal(`seed-${reason}`))))
+    if (first.status !== 'prepared' || first.value.decision.primary.status !== 'clear') assert.fail('prepared fixture')
+    const primary = first.value.decision.primary.observation
+    const conflictRef = ref('source-conflict', `resolved-before-${reason}`)
+    const previous = ok(readV3SourceDecisionRecord({ ...first.value.decision,
+      reference: ref('source-decision', `resolved-before-${reason}`),
+      knownConflicts: [{ reference: conflictRef, detectedDecisionRef: ref('source-decision', `old-conflict-${reason}`), detectedAt: AT,
+        primary, counter: h.extracted(COUNTER, { kind: 'blank_passport_pages', minimumPages: 7 }),
+        resolution: { reference: ref('conflict-resolution', `corrected-${reason}`), predecessor: null, conflictRef, method: METHOD,
+          resolvedAt: AT, legalAsOfDate: DAY, basis: 'corrected_publication',
+          observations: [h.extracted(COUNTER, { kind: 'blank_passport_pages', minimumPages: 9 })] } }],
+    }, h.reg))
+    const version = ok(readV3RuleVersionRecord({ ...first.value.version,
+      reference: ref('rule-version', `resolved-before-${reason}`), sourceDecisionRef: previous.reference }, h.reg, previous))
+    h.state.history = { pointer: { state: 'accepted', revision: 1, versionRef: version.reference }, version,
+      decision: previous, decisionPredecessor: null, decisionArchiveAppend: null, invalidatedProjectionRefs: [] }
+    h.state.primaryUnclear = reason === 'primary_unclear'
+    h.state.counter = reason === 'comparable_conflict' ? 'conflicts' : 'not_found'
+
+    const inspect = h.ports.evidence.inspect.bind(h.ports.evidence)
+    const receipts = new WeakMap<object, { request: V3ImportVerificationRequest; parts: string; archive: string }>()
+    const verifiedArchives: V3ConflictArchiveRecord[] = []
+    h.ports.evidence.inspect = async (request, signal) => {
+      const checked = await inspect(request, signal)
+      if (checked.status !== 'inspected') return checked
+      const parts = structuredClone(checked.parts)
+      const archived = parts.knownConflicts.filter((entry) => entry.reference === conflictRef)
+      assert.equal(archived.length, 1)
+      assert.notEqual(archived[0].resolution, null)
+      const archive: V3ConflictArchiveRecord = {
+        schema: 3, kind: 'resolved_conflict_archive_record',
+        head: { reference: ref('conflict-archive', `append-${reason}`), revision: 1, totalConflicts: 1 },
+        predecessor: null, contextKey: request.contextKey, factKind: request.factKind,
+        fromDecisionRef: previous.reference, archivedAt: AT, entries: archived,
+      }
+      verifiedArchives.push(structuredClone(archive))
+      parts.knownConflicts = parts.knownConflicts.filter((entry) => entry.reference !== conflictRef)
+      parts.historyArchive = archive.head
+      if (change === 'foreign') archive.fromDecisionRef = ref('source-decision', 'foreign-predecessor')
+      if (change === 'mutated') archive.entries[0].detectedDecisionRef = ref('source-decision', 'rewritten-conflict')
+      const archiveAppend = change === 'missing' ? null : archive
+      const receipt = Object.freeze({})
+      receipts.set(receipt, { request, parts: schema2Kanonisch(parts), archive: schema2Kanonisch(archiveAppend) })
+      return { ...checked, receipt, parts, archiveAppend }
+    }
+    h.ports.evidence.reprove = async (receipt, request, decision, archive) => {
+      h.counters.reprove++
+      const held = receipts.get(receipt)
+      const parts = { primary: decision.primary, counterCheck: decision.counterCheck,
+        knownConflicts: decision.knownConflicts, historyArchive: decision.historyArchive }
+      return { status: held?.request === request && held.parts === schema2Kanonisch(parts)
+        && held.archive === schema2Kanonisch(archive) ? 'current' : 'changed' }
+    }
+
+    // The local atomic port records JSON, rather than retaining the live return
+    // object. Replay consequently has only the evidence actually persisted.
+    const persisted: string[] = []
+    const finish = h.ports.quarantine.finish.bind(h.ports.quarantine)
+    h.ports.quarantine.finish = async (ticket, value, audit, signal) => {
+      const bytes = JSON.stringify(value)
+      const result = await finish(ticket, JSON.parse(bytes), JSON.parse(JSON.stringify(audit)), signal)
+      if (result.status === 'recorded') persisted.push(bytes)
+      return result
+    }
+    return { h, previous, verifiedArchives, persisted }
+  }
+
+  for (const reason of ['primary_unclear', 'comparable_conflict'] as const) {
+    test(`archive and predecessor survive atomic JSON persistence and replay for ${reason}`, async () => {
+      const { h, previous, verifiedArchives, persisted } = await archivingEscalation(reason)
+      const before = { ...h.counters }, auditCount = h.audits.length
+      const text = JSON.stringify(h.proposal(`escalation-${reason}`))
+      const first = await h.run.submit(text), value = outcome(first)
+      assert.equal(first.status === 'completed' && first.replayed, false)
+      if (value.status !== 'escalation') assert.fail(JSON.stringify(value))
+      assert.equal(value.reason, reason)
+      assert.deepEqual(value.previousDecision, previous)
+      assert.deepEqual(value.archiveAppend, verifiedArchives[0])
+      assert.equal(readV3SourceDecisionRecord(value.decision, h.reg, value.previousDecision, value.archiveAppend).ok, true)
+      assert.equal(readV3SourceDecisionRecord(value.decision, h.reg, value.previousDecision).ok, false)
+      assert.equal(readV3SourceDecisionRecord(value.decision, h.reg, null, value.archiveAppend).ok, false)
+      assert.equal(persisted.length, 1)
+      assert.deepEqual(JSON.parse(persisted[0]), value)
+
+      const replay = await h.run.submit(text), replayed = outcome(replay)
+      assert.equal(replay.status === 'completed' && replay.replayed, true)
+      assert.deepEqual(replayed, value)
+      assert.notEqual(replayed, value)
+      if (replayed.status !== 'escalation') assert.fail('escalation replay')
+      assert.equal(readV3SourceDecisionRecord(replayed.decision, h.reg, replayed.previousDecision, replayed.archiveAppend).ok, true)
+      assert.equal(h.counters.inspect, before.inspect + 1)
+      assert.equal(h.counters.finish, before.finish + 1)
+      assert.equal(h.audits.length, auditCount + 1)
+      assert.equal(h.audits.at(-1)?.escalationKey, replayed.key)
+      assert.equal(h.escalations.size, 1)
+    })
+    test(`missing, foreign and mutated archive appends cannot create an escalation for ${reason}`, async () => {
+      for (const change of ['missing', 'foreign', 'mutated'] as const) {
+        const { h, persisted } = await archivingEscalation(reason, change)
+        const before = h.counters.reprove
+        const value = outcome(await h.run.submit(JSON.stringify(h.proposal(`invalid-${reason}-${change}`))))
+        assert.deepEqual(value, { status: 'quarantined', reason: 'invalid_verification' })
+        assert.deepEqual(JSON.parse(persisted[0]), value)
+        assert.equal(h.counters.reprove, before)
+        assert.equal(h.escalations.size, 0)
+      }
+    })
+  }
 })
