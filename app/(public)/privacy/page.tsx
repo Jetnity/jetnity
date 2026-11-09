@@ -29,6 +29,17 @@ export default async function PrivacyPage() {
     <main className="bg-surface-75 text-brand-800">
       <article className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
         <PrivacyBeeEinbettung flaeche="datenschutz" einbetten={einbetten} />
+        <section aria-label="Booking.com" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
+          <h2 className="text-lg font-semibold text-brand-800">Hotel- und Flugsuche mit Booking.com</h2>
+          <p className="mt-3">
+            Wenn du die Suche bei Booking.com öffnest, leitet dich unser Affiliate-Partner CJ weiter.
+            Dabei erhalten CJ und Booking.com die Suchangaben aus dem Formular. Dazu gehören Ziel oder Flughäfen,
+            Reisedaten, Anzahl der Erwachsenen, Zimmer oder Reiseklasse sowie die Anzeigewährung.
+            CJ erhält die Website- und Platzierungskennung, damit eine Buchung Jetnity zugeordnet werden kann.
+            Die Anbieter erhalten beim Öffnen auch Verbindungsdaten wie deine IP-Adresse.
+            Du prüfst Preise und Verfügbarkeit und buchst direkt bei Booking.com. Jetnity kann dafür eine Provision erhalten.
+          </p>
+        </section>
         <section aria-label="DiscoverCars" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
           <h2 className="text-lg font-semibold text-brand-800">Mietwagensuche mit DiscoverCars</h2>
           <p className="mt-3">

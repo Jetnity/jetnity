@@ -7,7 +7,9 @@ import { flughafenAusReiseort, type FlughafenAuswahl } from '@/lib/airports/ausw
 import type { Trip } from '@/types/trips'
 import type { FlightLegPreview, KayakSearch } from '@/lib/providers/kayak/contract'
 import { ORGANISIEREN_EINGABE_KLASSE as inputClass, ORGANISIEREN_FLAECHE_KLASSE as panelClass } from '@/lib/trips/organize-premium-experience-6'
-import { PreviewNotice, PreviewFeedback, PreviewSearchButton, previewMoney, useKayakPreview } from './PreviewShared'
+import BookingSearchForm from '../BookingSearchForm'
+import { bookingHandoff, bookingStartPages } from '@/lib/providers/booking/search'
+import { PreviewFeedback, previewMoney, useKayakPreview } from './PreviewShared'
 
 type Cabin = Extract<KayakSearch, { kind: 'flights' }>['cabin']
 export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: string | null }) {
@@ -24,16 +26,23 @@ export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: str
   const preview = useKayakPreview()
   const id = React.useId()
   const flights = [...(preview.data?.flights ?? [])].filter((flight) => !direct || flight.legs.every((leg) => leg.stops === 0)).sort((a, b) => sort === 'duration' ? totalDuration(a.legs) - totalDuration(b.legs) : (a.price ?? Infinity) - (b.price ?? Infinity))
-  return <section aria-label="Flüge mit KAYAK entdecken" className="grid min-w-0 gap-5">
+  return <section aria-label="Flugsuche für deine Reise" className="grid min-w-0 gap-5">
     <div className={panelClass}>
-      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><Plane className="h-6 w-6" aria-hidden="true" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Deine Anreise</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Der passende Flug für deine Reise.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Flugzeiten, Zwischenstopps und Preise direkt in deiner Reiseübersicht.</p></div></div>
-      <PreviewNotice />
-      <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
-        event.preventDefault()
-        if (!origin || !destination) { preview.setError('Bitte wähle Abflug- und Zielflughafen aus den Vorschlägen.'); return }
-        setVisible(12)
-        void preview.search({ kind: 'flights', origin: origin.iata, destination: destination.iata, departure, ...(roundTrip ? { returnDate } : {}), adults, cabin })
-      }}>
+      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><Plane className="h-6 w-6" aria-hidden="true" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Deine Anreise</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Flug suchen</h2><p className="mt-2 text-sm leading-6 text-ink-800">Wähle deine Flughäfen und vergleiche Verbindungen auf Booking.com.</p></div></div>
+      <BookingSearchForm
+        handoff={bookingHandoff({ kind: 'flights', origin: origin?.iata, destination: destination?.iata, departure, returnDate: roundTrip ? returnDate : undefined, cabin, adults, currency: reise.currency })}
+        label="Flüge bei Booking.com suchen"
+        startPage={bookingStartPages.flights}
+        previewHint="Beispielpreise in der gelieferten Währung."
+        busy={preview.busy}
+        onChange={preview.reset}
+        onError={preview.setError}
+        onPreview={() => {
+          if (!origin || !destination) { preview.setError('Bitte wähle Abflug- und Zielflughafen aus den Vorschlägen.'); return }
+          setVisible(12)
+          void preview.search({ kind: 'flights', origin: origin.iata, destination: destination.iata, departure, ...(roundTrip ? { returnDate } : {}), adults, cabin })
+        }}
+      >
         <div className="flex flex-wrap items-center gap-4"><label className="flex min-h-11 items-center gap-2 text-sm font-medium text-brand-800"><input type="checkbox" checked={roundTrip} onChange={(e) => setRoundTrip(e.target.checked)} className="h-4 w-4 accent-brand-800" />Hin- und Rückflug</label><p className="text-xs text-ink-600">Reiseroute: {reise.origin || 'Abflug offen'} → {reise.stages[0]?.name || 'Ziel offen'}</p></div>
         <div className="grid gap-4 md:grid-cols-2">
           <div><label htmlFor={`${id}-origin`} className="mb-2 block text-sm font-medium text-brand-800">Abflughafen</label><FlughafenSuche inputId={`${id}-origin`} value={origin} onChange={(value) => { setOrigin(value); preview.reset() }} placeholder="Stadt oder Flughafen suchen" inputClassName={inputClass} /></div>
@@ -45,8 +54,7 @@ export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: str
           <label className="grid gap-2 text-sm font-medium text-brand-800">Erwachsene<input type="number" className={inputClass} min={1} max={9} required value={adults} onChange={(e) => setAdults(Number(e.target.value))} /></label>
           <label className="grid gap-2 text-sm font-medium text-brand-800">Reiseklasse<select className={inputClass} value={cabin} onChange={(e) => setCabin(e.target.value as Cabin)}><option value="economy">Economy</option><option value="premium">Premium Economy</option><option value="business">Business</option><option value="first">First Class</option></select></label>
         </div>
-        <div className="mt-1 flex flex-wrap items-center gap-3"><PreviewSearchButton busy={preview.busy} /><p className="text-xs leading-5 text-ink-600">Testsuche für Erwachsene · Preise in der gelieferten Währung</p></div>
-      </form>
+      </BookingSearchForm>
       <PreviewFeedback busy={preview.busy} error={preview.error} complete={preview.data?.complete} />
     </div>
     {preview.data && <div>

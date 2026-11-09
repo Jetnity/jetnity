@@ -6,7 +6,9 @@ import type { Trip } from '@/types/trips'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { HOTELZEITRAUM_OFFEN, naechteZwischen } from '@/lib/hotels/quartier-kontext'
 import { ORGANISIEREN_EINGABE_KLASSE as inputClass, ORGANISIEREN_FLAECHE_KLASSE as panelClass } from '@/lib/trips/organize-premium-experience-6'
-import { PreviewNotice, PreviewFeedback, PreviewSearchButton, previewMoney, useKayakPreview } from './PreviewShared'
+import BookingSearchForm from '../BookingSearchForm'
+import { bookingHandoff, bookingStartPages } from '@/lib/providers/booking/search'
+import { PreviewFeedback, previewMoney, useKayakPreview } from './PreviewShared'
 
 export default function KayakHotels({ reise }: { reise: Trip }) {
   const [stageId, setStageId] = React.useState(reise.stages[0]?.id ?? '')
@@ -22,15 +24,22 @@ export default function KayakHotels({ reise }: { reise: Trip }) {
   const id = React.useId()
   const hotels = [...(preview.data?.hotels ?? [])].filter((hotel) => rating === 'all' || (hotel.rating ?? 0) >= 8).sort((a, b) => sort === 'rating' ? (b.rating ?? -1) - (a.rating ?? -1) : (a.price ?? Infinity) - (b.price ?? Infinity))
   const coordinates = stage && Number.isFinite(stage.latitude) && Number.isFinite(stage.longitude) && stage.latitude !== null && stage.longitude !== null
-  return <section aria-label="Hotels mit KAYAK entdecken" className="grid min-w-0 gap-5">
+  return <section aria-label="Unterkunftssuche" className="grid min-w-0 gap-5">
     <div className={panelClass}>
-      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><BedDouble aria-hidden="true" className="h-6 w-6" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Dein Aufenthalt</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Ein guter Ort zum Ankommen.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Entdecke Unterkünfte und vergleiche Lage, Ausstattung und Preise in einer Übersicht.</p></div></div>
-      <PreviewNotice />
-      <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
-        event.preventDefault()
-        if (!coordinates || !stage) { preview.setError('Für dieses Reiseziel fehlt der genaue Ort. Bitte bestätige das Ziel zuerst unter „Reise ändern“.'); return }
-        void preview.search({ kind: 'hotels', latitude: stage.latitude!, longitude: stage.longitude!, checkIn, checkOut, adults, rooms })
-      }}>
+      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><BedDouble aria-hidden="true" className="h-6 w-6" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Dein Aufenthalt</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Unterkunft suchen</h2><p className="mt-2 text-sm leading-6 text-ink-800">Wähle eine Etappe und vergleiche verfügbare Unterkünfte auf Booking.com.</p></div></div>
+      <BookingSearchForm
+        handoff={bookingHandoff({ kind: 'hotels', place: stage?.name ?? '', country: stage?.countryCode ?? null, checkIn, checkOut, adults, rooms, currency: reise.currency })}
+        label="Unterkünfte bei Booking.com suchen"
+        startPage={bookingStartPages.hotels}
+        previewHint="Maximal 30 Übernachtungen. Beispielpreise in USD."
+        busy={preview.busy}
+        onChange={preview.reset}
+        onError={preview.setError}
+        onPreview={() => {
+          if (!coordinates || !stage) { preview.setError('Für dieses Reiseziel fehlt der genaue Ort. Bitte bestätige das Ziel zuerst unter „Reise ändern“.'); return }
+          void preview.search({ kind: 'hotels', latitude: stage.latitude!, longitude: stage.longitude!, checkIn, checkOut, adults, rooms })
+        }}
+      >
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <label className="grid gap-2 text-sm font-medium text-brand-800 xl:col-span-2" htmlFor={`${id}-place`}>Reiseziel<select id={`${id}-place`} className={inputClass} value={stageId} required onChange={(event) => {
             setStageId(event.target.value)
@@ -45,12 +54,11 @@ export default function KayakHotels({ reise }: { reise: Trip }) {
           <label className="grid gap-2 text-sm font-medium text-brand-800">Anreise<input type="date" className={inputClass} required value={checkIn} onChange={(event) => setCheckIn(event.target.value)} /></label>
           <label className="grid gap-2 text-sm font-medium text-brand-800">Abreise<input type="date" className={inputClass} required min={checkIn} value={checkOut} onChange={(event) => setCheckOut(event.target.value)} /></label>
         </div>
-        <div className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr]">
+        <div className="grid items-end gap-4 sm:grid-cols-2">
           <label className="grid gap-2 text-sm font-medium text-brand-800">Erwachsene<input type="number" min={1} max={9} required className={inputClass} value={adults} onChange={(event) => setAdults(Number(event.target.value))} /></label>
           <label className="grid gap-2 text-sm font-medium text-brand-800">Zimmer<input type="number" min={1} max={Math.min(4, adults)} required className={inputClass} value={rooms} onChange={(event) => setRooms(Number(event.target.value))} /></label>
-          <div className="flex flex-col items-start gap-2"><PreviewSearchButton busy={preview.busy} /><p className="text-xs leading-5 text-ink-600">Testsuche für Erwachsene · maximal 30 Übernachtungen · Preise in USD</p></div>
         </div>
-      </form>
+      </BookingSearchForm>
       <PreviewFeedback busy={preview.busy} error={preview.error} complete={preview.data?.complete} />
     </div>
     {preview.data && <div>

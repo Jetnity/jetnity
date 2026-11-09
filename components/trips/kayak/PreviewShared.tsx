@@ -40,7 +40,7 @@ export function useKayakPreview() {
 }
 
 export function PreviewSearchButton({ busy }: { busy: boolean }) {
-  return <button type="submit" disabled={busy} className={ORGANISIEREN_PRIMAR_KLASSE}>
+  return <button type="submit" value="kayak-preview" disabled={busy} className={ORGANISIEREN_PRIMAR_KLASSE}>
     {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Search className="h-4 w-4" aria-hidden="true" />}
     {busy ? 'Testangebote werden geladen …' : 'Testangebote ansehen'}
   </button>

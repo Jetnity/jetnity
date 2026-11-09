@@ -13,14 +13,41 @@ try {
   const context=await browser.newContext({viewport:{width,height:width===390?844:1000}});
   await context.addInitScript(p=>sessionStorage.setItem('jetnity:ui-audit:workspace',JSON.stringify(p)),{reise,quelle:'guest',mitSuche:true});
   const page=await context.newPage(); let count=0; let mode='success'; let lastInput;
+  await page.clock.setFixedTime(new Date('2026-11-09T12:00:00Z'));
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/api/kayak/preview',async route=>{count++;lastInput=route.request().postDataJSON();const kind=lastInput.kind;if(mode==='error')return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({message:'Die Testsuche ist vorübergehend nicht verfügbar.'})});await route.fulfill({contentType:'application/json',body:JSON.stringify({mode:'sandbox',kind,complete:true,checkedAt:new Date().toISOString(),hotels:kind==='hotels'&&mode!=='empty'?hotels:[],flights:kind==='flights'&&mode!=='empty'?flights:[]})});});
   for(const kind of ['hotels','flights']){
    mode='success';const before=count;
    await page.goto(base+'/ui-audit/trip-workspace?ansicht=organisieren&bereich='+(kind==='hotels'?'unterkunft':'fluege'));
    await page.getByRole('button',{name:kind==='hotels'?'Unterkunft suchen':'Flug suchen',exact:true}).click();
-   const section=page.getByRole('region',{name:kind==='hotels'?'Hotels mit KAYAK entdecken':'Flüge mit KAYAK entdecken',exact:true});await section.waitFor();
+   const section=page.getByRole('region',{name:kind==='hotels'?'Unterkunftssuche':'Flugsuche für deine Reise',exact:true});await section.waitFor();
    assert.equal(count,before,'No automatic search');
+   const placement = kind === 'hotels' ? 'jetnity-hotel' : 'jetnity-flug';
+   const clickRoute = '**/click-101919996-14082404*';
+   await context.route(clickRoute, route => route.fulfill({contentType:'text/plain',body:'CJ handoff captured locally'}));
+   const beforeHandoff = page.url();
+   const [outbound] = await Promise.all([
+     context.waitForEvent('page'),
+     section.getByRole('button',{name:kind==='hotels'?'Unterkünfte bei Booking.com suchen':'Flüge bei Booking.com suchen'}).click(),
+   ]);
+   await outbound.waitForURL(clickRoute);
+   const click = new URL(outbound.url());
+   assert.deepEqual([...click.searchParams.keys()].sort(), ['sid','url']);
+   assert.equal(click.searchParams.get('sid'), placement);
+   const destination = new URL(click.searchParams.get('url'));
+   if (kind==='hotels') {
+     assert.equal(destination.searchParams.get('ss'), 'Bangkok, Thailand');
+     assert.equal(destination.searchParams.get('group_adults'), '2');
+     assert.equal(destination.searchParams.get('checkin'), reise.startDate);
+   } else {
+     assert.equal(destination.pathname, '/flights/ZRH.AIRPORT-BKK.AIRPORT/');
+     assert.equal(destination.searchParams.get('return'), reise.endDate);
+   }
+   assert.equal(page.url(), beforeHandoff);
+   assert.equal(count, before, 'Booking.com submit does not load KAYAK');
+   await outbound.close();
+   await context.unroute(clickRoute);
+   await section.getByText('KAYAK-Testvorschau',{exact:true}).click();
    await section.getByRole('button',{name:'Testangebote ansehen',exact:true}).click();
    await section.getByRole('heading',{name:kind==='hotels'?'5 Unterkünfte zum Entdecken':'3 Flugverbindungen im Vergleich',exact:true}).waitFor();
    assert.equal(lastInput.kind,kind);if(kind==='flights'){assert.equal(lastInput.origin,'ZRH');assert.equal(lastInput.destination,'BKK');}
