@@ -1,5 +1,5 @@
 // Isolated local test entry. This is never imported by the Next application.
-import { StrictMode, useCallback, useState } from 'react'
+import { StrictMode, useCallback, useId, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import OfficialTruthVisitorV3 from '@/components/readiness/OfficialTruthVisitorV3'
 import type { Ladung } from '@/lib/admin/ladezustand'
@@ -7,6 +7,7 @@ import type { V3VisitorLoad } from '@/lib/readiness/official-truth-product-v3/vi
 import type { V3VisitorView } from '@/lib/readiness/official-truth-product-v3/visitor/presentation'
 
 function Harness() {
+  const scenarioId = useId()
   const [scenario, setScenario] = useState('mixed')
   const query: V3VisitorLoad = useCallback(async (input, signal) => {
     const response = await fetch('/query', { method: 'POST', signal,
@@ -21,8 +22,9 @@ function Harness() {
     <aside className="mx-auto mb-8 grid max-w-4xl gap-3 rounded-2xl border border-border bg-citrus-300 p-4" aria-label="Isolierte Testumgebung">
       <p className="font-semibold">Jetnity · Lokaler Entwicklungstest</p>
       <p className="text-sm leading-6">Ausschließlich synthetische Daten. Die fiktive Testbehörde und die Regeln sind erfunden. Keine echte Einreiseauskunft.</p>
-      <label className="grid gap-2 text-sm font-medium">Testfall
-        <select value={scenario} onChange={(event) => setScenario(event.target.value)}
+      <div className="grid gap-2 text-sm font-medium">
+        <label htmlFor={scenarioId}>Testfall</label>
+        <select id={scenarioId} value={scenario} onChange={(event) => setScenario(event.target.value)}
           className="min-h-11 w-full min-w-0 rounded-xl border border-border bg-card px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <option value="mixed">Cachetreffer und Recherche</option>
           <option value="conflict">Widerspruch</option>
@@ -33,7 +35,7 @@ function Harness() {
           <option value="conditions">Mehrere vollständige Bedingungen</option>
           <option value="complete">Recherche wird fertig</option>
         </select>
-      </label>
+      </div>
     </aside>
     <OfficialTruthVisitorV3 key={scenario} query={query} />
   </main>

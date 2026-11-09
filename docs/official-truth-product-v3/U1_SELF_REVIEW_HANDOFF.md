@@ -1,6 +1,56 @@
-# U1 — Selbstprüfung und Übergabe R3
+# U1 — Selbstprüfung und Übergabe R4
 
-## Status und exakte Basis
+## Aktueller Status
+
+**Enger Reviewfix geliefert; neuer tatsächlicher UI-CI-Lauf und unabhängige Abnahme offen. STOP. Kein Ready-/Merge-/Aktivierungs-PASS.**
+
+Gleicher Autor **Jetnity Official Truth V3 Visitor Cache 1 — Codex Generation 1**, tatsächliche Session `/root/v3_visitor_writer`, kein Cursor-Agent. Auftrag [#1165 Review R4, Kommentar 6729875979](https://github.com/Jetnity/jetnity/pull/1165#issuecomment-6729875979). Basis **`b8a65f8b4d341768f69df01ba1ca96f8eba4ee14`**, Tree `e94bec8d4d987973e924053dbc77eeb7a5c250e9`, Branch `feat/official-truth-v3-visitor-cache-1-20261109`. Der Worktree war vor R4 sauber. Plan vor Code persistiert und ausdrücklich durch Root bestätigt; siehe `U1_REVIEW_R4_FIX_PLAN.md`.
+
+## Tatsächlicher neuer Befund und Korrektur
+
+Im regulären CI-Run **42543765403**, UI-Job **128924237021**, startete sandboxed Google Chrome **156.0.8078.79** erfolgreich. Checkout `14b2c419cf5852d21bd231e02184c8153a039584`, Source b8a65, sauber. Anschließend scheiterte der unveränderte exakte `getByLabel('Testfall', { exact: true })` nach Tab mit 30-s-Timeout. Null abgeschlossene Interaktions-/Layoutfälle; ein echter Fehlerscreenshot. Dies ist ein tatsächlicher Harnessfehler, kein Browserstartproblem.
+
+Autor las Kommentar, Audit und Runbindung, betrachtete den Screenshot selbst und prüfte die Artefakthashes erneut. ZIP: `fe26da543c12dc7711b4fae2f3cde56efbeee97e8e1a47d1837446dc16a894f2`; PNG: `6514068dac3c65d076e0c831513a6da5530849cc135e17e12e8e375cc135722c`. Die heruntergeladene Evidence liegt bei Root unter `official-truth-v3-analysis/u1-b8a65-ci-ui/`.
+
+Die Ursache wurde anhand des installierten Playwright-Codes bestätigt: `getElementLabels` liest die zugeordneten Labels über `elementText`; die rekursive Textsammlung nahm im bisherigen impliziten Label auch alle verschachtelten Options-Texte auf. Deshalb entsprach der vollständige Labeltext nicht exakt `Testfall`. Die Fokusgleichheit wurde wegen des fehlenden Locator-Matches noch nicht geprüft; der Screenshot zeigt den Select tatsächlich fokussiert.
+
+**Einzige Codeänderung:** `scripts/official-truth-product-v3-ui/mount.tsx` erhält ein separates Label und Select mit gemeinsamem React-`useId`, `htmlFor` und `id`. Der zugeordnete Labelknoten enthält ausschließlich `Testfall`; Wrapper, Darstellung und Options bleiben erhalten. Keine zusätzliche ARIA-Ersatzbezeichnung. Keine Änderung an `run.mjs`, exakten Label-/Keyboard-/Fokus-/Layout-/Privacy-/Pollingassertions, Fristen, Launchoptionen, CI-Familien, Produktkomponente oder E1-Schnittstelle.
+
+## R4-Nachprüfung
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| Bestehende U1-/CI-Vertragstests | **47/47 PASS**, 6 Suites, 0 Fail/Skip/Cancel/Todo, 1236,324583 ms. |
+| Harness-TypeScript | **PASS, Exit 0**. |
+| ESLint des geänderten Mounts | **PASS, Exit 0**. |
+| Existierender Bundle-/Loopback-HTTP-Smoke | **PASS**, sechs bestehende Fälle einschließlich synthetischer Pending→Accepted-Abfolge. |
+| Lokaler Browser | **Nicht gestartet**, bekannte Grenze nicht wiederholt. |
+| Neuer vollständiger CI-/PNG-/UI-Beleg | **Offen; erforderlich auf dem neuen veröffentlichten Head.** |
+
+Befehle im U1-Worktree mit Node22 (`v22.23.4`):
+
+```bash
+node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=spec lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
+node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false -p scripts/official-truth-product-v3-ui/tsconfig.json
+node node_modules/eslint/bin/eslint.js scripts/official-truth-product-v3-ui/mount.tsx
+node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs --smoke
+```
+
+Keine neue Test- oder DOM-Ersatzprüfung wurde zur UI-Abnahme erklärt. Die echte vollständige Matrix bleibt unverändert. Der alte Screenshot zeigt die lange Produktüberschrift randnah; die schmalen Viewports wurden noch nicht geprüft. Root bestätigte ausdrücklich, weitere echte Layoutbefunde im nächsten CI-Lauf zu beurteilen und anschließend in derselben Session zu korrigieren. Kein vorgezogener Layout-PASS oder verdecktes Abschwächen von Assertions.
+
+## Übergabe und Grenzen
+
+`U1_MANIFEST.md` enthält die aktuellen vollständigen U1-Dateihashes einschließlich des R4-Plans. Nur Mount, R4-Plan, Handoff und Manifest bilden den R4-Diff. S0-Vertragscode, shared Guards, I1/M1/E1-Schnittstellen und Workflow bleiben unverändert. Alle Produktports bleiben ungebunden. Keine DB-/Auth-/Provider-/Production-Aktion, keine neuen Kosten, kein #917-Schritt. Kein eigener Commit/Push/GitHubwrite/Ready/Merge und keine selbstständige Folgearbeit.
+
+Root veröffentlicht und prüft auf dem neuen Head den vollständigen CI-Lauf samt tatsächlichen Screenshots. Die lokalen R4-Prüfungen sind Arbeitsbaumbelege auf Basis b8a65 und kein veröffentlichter Exact-Head-TL-PASS. **STOP bestätigt.**
+
+---
+
+## Archivierte R3-Übergabe vor dem tatsächlichen b8a65-UI-Lauf
+
+Der folgende Stand ist historisch. Seine Aussagen über damals noch nicht ausgeführte CI wurden durch den oben dokumentierten tatsächlichen Lauf und R4-Fix ersetzt. R3-Leistungsmessungen bleiben ausschließlich lokale Prozessmessungen.
+
+### Status und exakte Basis
 
 **Implementierung zur unabhängigen TL-Prüfung geliefert; UI-Abnahme und Integration offen. Kein Ready-/Merge-/Aktivierungs-PASS. STOP.**
 
@@ -10,7 +60,7 @@ Worktree: `official-truth-v3-visitor`; Branch `feat/official-truth-v3-visitor-ca
 
 Gemeinsamer S0-R3-Pin: `ab26914ff01dde64020879b9e41cea8b1e1738aa`. SHA256 der unveränderten `contract.ts`: `871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4`. S0 wurde nur gelesen. Root bestätigte die Weiterarbeit nach dessen eigenem Review. Diese Selbstprüfung ersetzt dieses oder ein zukünftiges TL-Review nicht.
 
-## Konkret geliefert
+### Konkret geliefert
 
 `visitor/query.ts` implementiert eine server-only Projektionsvorbereitung und eine ruhende Query-Orchestrierung. Cachelesung unterscheidet echte Leere und Fehler, bindet vollständigen Kontext/Fakt/Methode, prüft aktuelle Original-/Versions-/Decision-/Evidence-Proofs und bestätigt alle positiven Kandidaten zusammen mit der Methode in einem finalen atomaren Port. Quellenstand und Quelle werden unverfälscht aus dem exakten kanonischen Pin ausgegeben. Fristablauf während Await, Withdraw, Conflict, falsche Bytes/Pointer oder widerrufene Methode entfernen positive Inhalte.
 
@@ -26,7 +76,7 @@ Der isolierte Harness benutzt die echte Komponente, den echten Query-/Presenterp
 
 **R3 ergänzt den isolierten CI-Job:** `.github/workflows/ci.yml` erhält ausschließlich den neuen `official_truth_v3_ui`-Job plus dessen strikte Pflicht im bestehenden Aggregat. Alter `verify`, `persisted_native`, `refresh_native`, `accepted_store_native` und `auth-konfiguration` wurden byteweise gegen die Basis verglichen: unverändert. Keine Secret-/Auth-/DB-/Provideranbindung. Der Browser wird vorher aus den drei festgelegten Systempfaden gewählt und genau einmal mit `chromiumSandbox: true` gestartet; kein Launch-Fallback oder Download. Prüfberichte/PNG-Artefakte tragen Checkout-/Quell-Head und Runbindung, Fehler werden als Fehler gesichert. CI ist hier vorbereitet, noch nicht ausgeführt oder als bestanden behauptet.
 
-## Ausgeführte Prüfungen
+### Ausgeführte Prüfungen
 
 Runtime: Node `v22.23.4`, konkret `/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node`. Die von Root bereitgestellte Dependencyinstallation wurde verwendet; kein eigener `npm ci`- oder Installations-PASS behauptet.
 
@@ -44,7 +94,7 @@ Runtime: Node `v22.23.4`, konkret `/home/agent/.npm/_npx/361c55be1121897e/node_m
 
 Die Tests prüfen echte Orchestrierung mit separater privater Methoden-/Receiptidentität im Testadapter, Bindungs-/Hash-Manipulation, finalen Methodenwiderruf, Fristwechsel während Await, falsche Quellpins, unterschiedliche Kontexte derselben Staatsangehörigkeit, Regel- und Discovery-Dedup, Lost ACK, Fehler/Leere, PII-Abweisung sowie Abbruch und veraltete Clientantworten. Neun neue deterministische Polltests prüfen Pending→Accepted/Conflict, alle Backoffs, maximal sechs Folgeabfragen, Deadline während In-flight, Timeout, Wechsel/Unmount, keine Überlappung und keine verlängerte positive Anzeige. Darstellungs-Konformanztests decken sämtliche Schema-2-Aufenthaltsfelder, Otherwise-Zweige, Pflicht-/Empfehlungsfristen und unabhängige Visaoptionen ab. Die Darstellungstests sind keine Authority- oder Cache-Publikationsbelege. Browserauswahltests prüfen ausschließlich Pfad-/Ausführbarkeitsvorbedingungen und starten keinen Browser.
 
-### Tatsächliche lokale Leistungsmessung
+#### Tatsächliche lokale Leistungsmessung
 
 Gemessen wurde **nur ein einzelner Node-Prozess mit einem vorbereiteten Cachetreffer für eine Zelle und synthetischen In-Memory-Ports**. 20 Warmups, 200 Messungen, keine Jobs erzeugt:
 
@@ -56,7 +106,7 @@ Gemessen wurde **nur ein einzelner Node-Prozess mit einem vorbereiteten Cachetre
 
 Das belegt weder öffentliche End-to-End-Latenz noch DB-, Netzwerk-, Regionen-, Cold-Start-, Last- oder Browserrenderkosten. Das Produktziel **öffentlich p95 < 1 s bleibt unbewiesen**. Die Query begrenzt ihre Portkoordination auf 750 ms; das ist kein gemessenes öffentliches SLO. Echte Adapter müssen ihre Abortsignale/Timeouts selbst einhalten.
 
-### Fehlversuche und offene Browsergrenze
+#### Fehlversuche und offene Browsergrenze
 
 Während Implementierung wurden Typnarrowing, fehlende Schema-2-Darstellungstypen, eine Testfixture mit falschem Visa-Enum und eine Flaggen-sensitive Assertion korrigiert; abschließende Tests/Typechecks sind oben belegt. Der erste Harnessstart scheiterte an ESM/CJS-Interop des synthetischen Servermoduls; der Import wurde korrigiert und der echte HTTP-Smoke lief danach erfolgreich.
 
@@ -66,7 +116,7 @@ Ein erster rein textueller Vergleich der alten Workflowblöcke meldete irrtümli
 
 Umgebungswarnungen: vorhandene Browserslist-Daten sind laut Build 14 Monate alt; der vorhandene EnvHttpProxyAgent meldet eine experimentelle API. Keine Dependencyaktualisierung außerhalb dieses Tasks. Diese Warnungen sind kein Testskip.
 
-## Reproduzierbare Befehle
+### Reproduzierbare Befehle
 
 Im U1-Worktree mit Node 22 im PATH:
 
@@ -86,7 +136,7 @@ node --import ./scripts/server-only-test-register.mjs --import tsx scripts/offic
 
 Lokale, ignorierte R3-Ausgaben: `test-results/official-truth-product-v3-ui/http-smoke.json`, `benchmark.json`, `run-binding.json`, `audit.json`, `bundle-inputs.json`. Die Initialisierung schreibt `audit.json` ausdrücklich als `not_started`, da R3 lokal keinen Browser erneut startete. Die neuen Artefakte nennen Basis-HEAD `2489eb19ea16308e5d84ec96bada3edc09a76688` mit `worktreeDirty: true` und ohne CI-Run-ID; kein veröffentlichter Exact-Head-Beleg. Keine neuen PNGs. Das Repository persistiert Befehle, Ergebniszusammenfassung und offene Gates; diese transienten Dateien sind kein unabhängiger TL-Beleg.
 
-## Grenzen, Risiken und nächste konkrete Handlung
+### Grenzen, Risiken und nächste konkrete Handlung
 
 **Datenbank/Security/Kosten:** keine Migration, RLS, ACL, Auth, Supabase, Secrets, Provider, echte amtliche Recherche, Worker, Scheduler oder Production-Aktion. Keine neuen laufenden Kosten. #917-Readback wurde weder wiederholt noch umformuliert/delegiert/an Menschen umgeleitet. #1131 STOP, #1135 separat und #968 Preview-Sensitivität bleiben erhalten.
 
