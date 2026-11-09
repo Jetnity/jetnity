@@ -1,0 +1,1106 @@
+{
+  "artifactSchema": "jetnity.official-truth.method-decision-package.v1",
+  "packageId": "D1-METHOD-PACKAGE-1",
+  "version": 1,
+  "revision": 0,
+  "createdAt": "2026-11-09T10:32:22.549Z",
+  "artifactRole": "review_draft_not_runtime_authority",
+  "method": {
+    "methodId": "jetnity-destination-primary-ch-de-visa",
+    "revision": 1
+  },
+  "status": {
+    "documentation": "AUTHOR_CANDIDATE_FOR_INDEPENDENT_TL_REVIEW",
+    "method": "NOT_APPROVED",
+    "devPackage": "NOT_RELEASE_READY",
+    "productionActivation": "NOT_AUTHORIZED",
+    "currentSourceQualification": "NOT_PERFORMED",
+    "hostedCallsPerformed": false,
+    "messagesSent": false
+  },
+  "author": {
+    "logicalName": "Jetnity Official Truth V3 Method Package 1",
+    "generation": 1,
+    "implementationEnvironment": "Codex",
+    "session": "/root/v3_d1_method_writer",
+    "cursorSessionClaimed": false,
+    "reviewAuthority": "Root / Technical Lead"
+  },
+  "sourceBaseline": {
+    "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+    "tree": "8759d8a3e39143c84810c8cca1641c2c91cbdd66",
+    "mainAtTaskCreation": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "taskSeed": "23d9645ec68fc3f27b4332c2f8f91ce9cfea05e8",
+    "draftPr": 1169,
+    "runtimePolicyImplementation": "not_bound",
+    "selfHashIncluded": false
+  },
+  "alreadyBindingOwnerDecisions": {
+    "destinationPrimaryRequired": true,
+    "minimumIndependentCounterSources": 0,
+    "counterCheck": "when_available",
+    "missingOptionalAloneBlocks": false,
+    "realComparableConflictOrUnclearPrimary": "block_and_escalate",
+    "routinePerRuleOwnerApproval": false,
+    "firstPath": "CH_to_DE",
+    "multipleCitizenships": "separate_cells",
+    "passportNumberMrzPhotosStored": false
+  },
+  "candidateScope": {
+    "destinationCountryCode": "DE",
+    "citizenshipCountryCodes": [
+      "CH"
+    ],
+    "factKinds": [
+      "requirement_effect"
+    ],
+    "requirementTypes": [
+      "visa"
+    ],
+    "documentType": "passport",
+    "documentIssuingCountryCode": "CH",
+    "documentClass": "ordinary",
+    "pilotPurpose": "tourism",
+    "pilotRoute": "complete_direct_ch_de",
+    "pilotTravelWindow": {
+      "from": "2026-11-07",
+      "through": "2026-11-13",
+      "meaning": "application_pin_not_legal_validity"
+    },
+    "legalBoundsInCandidate": {
+      "validFrom": null,
+      "validUntil": null,
+      "meaning": "recognized_unknown_legal_bounds_not_unlimited_validity"
+    },
+    "currentGlobalV3Mapping": "NOT_IMPLEMENTED",
+    "globalContextRecord": null,
+    "mappingGap": "AA requires travel_date; V3 global scope requires not_applicable. Pilot tourism is not automatically the broader visitor predicate. No field deletion, scope widening or unconditional conversion allowed.",
+    "stayLimitFactSupported": false,
+    "completeEntryChecklistSupported": false,
+    "currentVisaTruthAsserted": false
+  },
+  "sourceCandidate": {
+    "sourceId": "de-aa-staatenliste-visumpflicht",
+    "contentItemId": "aa-staatenliste-visumpflicht-207820",
+    "contentItemVersion": 1,
+    "representationId": "aa-staatenliste-visumpflicht-html-de",
+    "representationVersion": 1,
+    "identityProfileId": "de-aa-visa-table-html-de-candidate",
+    "identityProfileVersion": 1,
+    "extractorId": "otx_aa_ch_de_visa",
+    "extractorVersion": 1,
+    "current": false,
+    "sourceFingerprintProtocol": 2,
+    "sourceContentHash": "fc34bb51f8493a8776b6a300c8aed493a4a4fe08fba269148292ed7d9a334979",
+    "sourceFetchInD1": false,
+    "sourceAdmissionInD1": false,
+    "counterSourcePins": [],
+    "optionalSelectionProposal": [
+      "qualifying EDA publication applicable to CH visa context",
+      "second independent official publication only if actually comparable"
+    ],
+    "namesAreNotQualifiedSourcePins": true
+  },
+  "operatingCandidate": {
+    "approvalStatus": "NOT_APPROVED",
+    "measured": false,
+    "primaryMaxAgeSeconds": 300,
+    "checkIntervalSeconds": 120,
+    "optionalAttemptLimit": 2,
+    "optionalTimeBudgetMilliseconds": 8000,
+    "attemptPlanRevision": 1,
+    "primaryFetchBudgetMilliseconds": 10000,
+    "optionalSingleFetchMilliseconds": 4000,
+    "importInvocationMilliseconds": 30000,
+    "publicProjectionMaxAgeSeconds": 60,
+    "publicProjectionReproofEverySeconds": 30,
+    "effectiveExpiry": "minimum(original_retrieval_plus_method_age, actual_source_custody_proof_deadlines, method_deadline, legal_validity, projection_deadline)",
+    "existingHardBounds": {
+      "globalOfficialFreshnessSeconds": 3600,
+      "tripSourceMaxAgeSeconds": 300,
+      "tripRawRetentionMaxSeconds": 3600,
+      "tripDisplayMaxSeconds": 15,
+      "stricterBoundWins": true,
+      "tripDisplayNotExtendedByPublicProjection": true
+    },
+    "legalCalendarProposal": "Europe/Berlin",
+    "legalCalendarRuntimeBinding": "NOT_IMPLEMENTED_OR_MEASURED",
+    "retry": {
+      "maximumAttemptsPerScheduledJob": 3,
+      "backoffSeconds": [
+        15,
+        30
+      ],
+      "maximumBackoffSeconds": 60,
+      "unknownCommit": "confirm_same_operation_only"
+    },
+    "concurrency": {
+      "perPublication": 1,
+      "perRuleMethodJob": 1
+    },
+    "sourceStarts": {
+      "scheduledPrimaryPerDay": 720,
+      "scheduledWithTwoOptionalPerDay": 2160,
+      "threeAttemptTheoreticalPlanPerDay": 6480,
+      "proposedHardDailyCapIncludingRetries": 2160,
+      "capMeasuredOrApproved": false,
+      "priority": "scheduled_primary_before_optional_retries",
+      "perSourceQuotaKnown": false
+    },
+    "paidResearchCallsAuthorized": 0,
+    "moneyCost": "NOT_MEASURED",
+    "newLiveRecurringCostAuthorized": false,
+    "visitorServerBudgetMilliseconds": 750,
+    "publicEndToEndP95TargetMilliseconds": 1000,
+    "publicSloVerified": false
+  },
+  "escalationProposal": {
+    "channel": "protected_jetnity_admin_inbox",
+    "implemented": false,
+    "deliveryTargetSeconds": 60,
+    "attemptLimit": 3,
+    "backoffSeconds": [
+      15,
+      30
+    ],
+    "technicalAck": "durable_inbox_insert_confirmation",
+    "humanSeen": "separate_state_not_resolution",
+    "externalEmailPush": "not_bound_not_sent",
+    "dedupe": "existing_method_context_conflict_version_key",
+    "failedDeliveryDoesNotAllowRule": true
+  },
+  "retentionProposal": {
+    "approvalStatus": "NOT_APPROVED",
+    "personalVisitorDocumentData": "not_collected",
+    "rawOfficialOriginals": "existing_approved_source_custody_bound_only_no_extension",
+    "terminalUntrustedProposalDays": 7,
+    "fullyDetachedAuditMetadataDays": 365,
+    "liveConflictHeadReplayDependencies": "retain_until_proven_safe_to_detach",
+    "automaticDeletionImplemented": false,
+    "expiredOriginalsAreNotReconstructableFromHash": true,
+    "recoveryAfterOriginalExpiry": "new_qualified_retrieval_and_new_version"
+  },
+  "approvalPrerequisites": [
+    {
+      "id": "M01",
+      "subject": "Qualified current destination-primary and exact original/extractor custody",
+      "status": "OPEN"
+    },
+    {
+      "id": "M02",
+      "subject": "Lossless narrow AA pilot to global conditional V3 mapping",
+      "status": "OPEN"
+    },
+    {
+      "id": "M03",
+      "subject": "Real current revocable method administration and separate machine authority",
+      "status": "OPEN"
+    },
+    {
+      "id": "M04",
+      "subject": "Real durable job/history/accepted/cache and final atomic authority proofs",
+      "status": "OPEN"
+    },
+    {
+      "id": "M05",
+      "subject": "Measured timing/source quotas/cost caps, kill switch, delivery and retention",
+      "status": "OPEN"
+    },
+    {
+      "id": "M06",
+      "subject": "Exact final package pin and independent TL method counterexample review",
+      "status": "OPEN"
+    },
+    {
+      "id": "M07",
+      "subject": "Target-bound Dev package and separate authorized activation",
+      "status": "NOT_RELEASE_READY"
+    }
+  ],
+  "devEvidence": {
+    "stage1": "APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING",
+    "actualLedgerId": null,
+    "stage2": "NOT_ATTEMPTED",
+    "issue1139": "OPEN / P1 EFFECTIVE FIX NOT ACCEPTED",
+    "oldOwnerEvidenceFurtherAvailable": false,
+    "beforeOwnerBlockerIds": [
+      "E01",
+      "E04",
+      "E06",
+      "E07",
+      "E09",
+      "E10",
+      "E11",
+      "E13",
+      "E15",
+      "E16",
+      "E17",
+      "E18",
+      "E21",
+      "E22",
+      "E24",
+      "E25",
+      "E28"
+    ],
+    "beforeOwnerBlockerRows": [
+      {
+        "id": "E01",
+        "subject": "Stage1-Apply-Antwort",
+        "status": "ACCEPTED_HISTORICAL",
+        "accepted_evidence": "Supabase meldete am 14.10.2026 für den einmaligen genehmigten Stage1-Apply success=true; keine tatsächliche Ledger-ID wurde zurückgegeben.",
+        "remaining_gap": "Kein unabhängiger vollständiger Post-Apply-Ledger-/Katalogreadback aus diesem Vorgang.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Tatsächlichen heutigen Stage1-/Ledgerzustand auf zulässiger Evidence abgleichen; keine historische ID aus dem Dateinamen ableiten.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E04",
+        "subject": "Run2-Zuordnung zum tatsächlichen Ziel",
+        "status": "HUMAN_ATTESTED_PARTIAL",
+        "accepted_evidence": "Owner ordnet Run2 Dev/develop/yfvbxvijcorffwxbxahl zu. R4 band diesen Branch am 06.11.2026 historisch über die parent-scoped Inventur.",
+        "remaining_gap": "CSV selbst enthält keine unabhängige Projektattestation. Historische R4-Inventur beweist nicht den später verwendeten SQL-Editor-Kontext.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Vor einer tatsächlichen Änderung muss der konkrete zulässige Ausführungskontext eindeutig auf Dev gebunden sein; vorhandene historische Evidence bewerten, fehlende alte Evidence nicht rekonstruieren.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726410780",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E06",
+        "subject": "Tatsächliches Migrationsledger",
+        "status": "MISSING",
+        "accepted_evidence": "Historische Pre-Apply-Evidence dokumentiert vorherige Historie; Run2 deklariert migration_ledger=out_of_scope.",
+        "remaining_gap": "Reale neue Ledger-ID, neuer Count/Einträge und Vergleich zur früheren Historie fehlen.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Zulässige tatsächliche Ledger-Evidence muss den erfolgreichen Apply nachvollziehbar zuordnen und Drift benennen. Kein Reapply, History-Repair oder Erfassen des Quellzeitstempels als festgestellte ID.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6163936607",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E07",
+        "subject": "Stage2-Objektbestand",
+        "status": "PARTIAL",
+        "accepted_evidence": "Stage2 wurde im dokumentierten Ablauf nicht versucht. Die Run2-Allowlist redigiert die relevanten Pilot-/Grantnamen. Ein zusätzlicher Offline-Vergleich findet keinen Fingerprinttreffer für die ausgewählten kanonischen Originaltupel von trip_regulatory_context_save_v1 (c4a38658bd96b497c80eef27236c0163070e6e23b91c9c1b17f4e955c4323eae) und official_truth_application_pilot_run_v1 (169b5e214e98666fb00be90f7bc50e85c7f88b76205f76c773af572e278d6628), beide aus Gitblob 87639107883cb9771ed5b19db68994ba08a6c930. Der Export enthält zugleich sieben public-Routinen mit jsonb → jsonb und redigierten Namen: OIDs 72738, 73009, 73056, 73903, 73917, 74079, 74084. SOURCE_MANIFEST.json bindet diesen begrenzten Offline-Vergleich; keine neue Datenbankabfrage.",
+        "remaining_gap": "Gegenwärtige Anwesenheit/Abwesenheit und genaue Definition von beiden Pilot-RPCs und Granttabelle sind weiterhin nicht bewiesen. Ein fehlender exakter Body-/Konfigurationstupeltreffer beweist keine Abwesenheit eines benannten Objekts; abweichende Definitionen können andere Fingerprints haben.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Eindeutigen tatsächlichen Objektbestand zulässig binden; bei Abwesenheit vollständigen nötigen Zielumfang entwerfen, bei Vorhandensein Rechte/Daten/Abhängigkeiten abgleichen.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/supabase/migrations/20261013184409_official_truth_ch_de_application_pilot_1.sql"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true,
+        "local_evidence_files": [
+          "SOURCE_MANIFEST.json",
+          "STAGE1_ACCEPTANCE_REPORT.md"
+        ]
+      },
+      {
+        "id": "E09",
+        "subject": "Weitere Helfer und Request-Identitätskette",
+        "status": "PARTIAL",
+        "accepted_evidence": "aktuelle_rolle, hat_rolle_mindestens und aktuelles_admin_aal2 passen in Body-/Konfigurationstupeln zu ihren Repository-Quellen. Zusätzlich stimmt der ausgewählte rollenrang-Quelltupelhash 0b4f93560983e564b678d36d6b0e4bf37198a480e681b777d17ac7e24a52e041 aus Gitblob 41c9455bbc88a7b5165d4c929b8f86182cda8fd0 exakt mit public/OID 72351 im unveränderten Run2-Export überein. Separate Metadaten belegen (text) → integer, SQL, IMMUTABLE, PARALLEL SAFE, INVOKER und search_path=pg_catalog. Dies ist ein positiver Offline-Tupelbeleg; der Routinenname ist redigiert.",
+        "remaining_gap": "Der rollenrang-Tupeltreffer beweist die tatsächliche Namens-/Aufrufauflösung nicht. auth.uid/auth.jwt sowie die tatsächlich vertrauenswürdige JWT-/Sessionkette sind ebenfalls nicht vollständig durch Run2 belegt.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Alle tatsächlich aufgerufenen Zielabhängigkeiten samt vertrauenswürdigem Requestkontext eindeutig abgleichen; synthetische GUC-Claims nicht als signierte JWTs ausgeben.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/supabase/migrations/20260817100000_rollenmodell.sql"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true,
+        "local_evidence_files": [
+          "SOURCE_MANIFEST.json",
+          "STAGE1_ACCEPTANCE_REPORT.md"
+        ]
+      },
+      {
+        "id": "E10",
+        "subject": "Profiles-Struktur und RLS",
+        "status": "ACCEPTED_SCOPED_EVIDENCE",
+        "accepted_evidence": "profiles/OID 71476 mit user_id UUID NOT NULL und role/status text NOT NULL, RLS, PK/Unique-/FK-/Policy-Metadaten beobachtet.",
+        "remaining_gap": "Policy-/Constraintsemantik und tatsächlich sichtbare Zeilen sind nicht aus Flags/Hashes allein bewiesen.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Relevanten Rollen-/Status-/Ownership-/RLS-Vertrag der Zielmutation an die ausgewählten tatsächlichen Definitionen binden; kein allgemeiner RLS-PASS.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E11",
+        "subject": "Profile-Trigger und FK",
+        "status": "PARTIAL",
+        "accepted_evidence": "Zwei Triggerbindungen und ihre Body-/Konfigurationstupel passen zu Source; profiles-FK ist validiert, mit ON DELETE CASCADE zu externer OID 16499/Spalte 2.",
+        "remaining_gap": "Der Name/gesamte Auth-Vertrag des externen FK-Ziels und reale Trigger-/Cascade-/Lockausführung bleiben nicht attestiert.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Ziel-FK-/Trigger-/Lockvertrag eindeutig identifizieren und erwartete Auswirkungen in isolierter geeigneter Prüfung absichern; kein reales Owner-Konto sperren oder löschen.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E13",
+        "subject": "Managed-Auth-FK/Lifecycle/Enum/Rechte",
+        "status": "MISSING",
+        "accepted_evidence": "Native Tests modellieren eigene Auth-Zeilen, AAL-Enum, Session-FK und benötigte Rechte ausdrücklich synthetisch.",
+        "remaining_gap": "Tatsächlicher Zielvertrag für Widerruf/Löschung/Sperren, Enumlabels, FK und Lockinteraktion ist damit nicht belegt.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Zulässige Zielmetadaten und Vertrags-/Lifecycle-Evidence binden, bevor Fixtureannahmen als deploybar behandelt werden.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E15",
+        "subject": "Ausführungsowner und nötige Zielprivilegien",
+        "status": "PARTIAL",
+        "accepted_evidence": "Run2 zeigt postgres als Capability-Owner, BYPASSRLS=true und kein Superuser. Neue Kandidatfunktionen/Pilot schlagen postgres ausdrücklich als Owner vor.",
+        "remaining_gap": "BYPASSRLS ersetzt keine nötigen SELECT-/UPDATE-/Schema-/Funktionsrechte auf Auth/Profiles/Trips/Grants; native Fixture-Extra-Grants sind keine Zielrechte.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Vorhandene erforderliche Zielrechte und Ownership vollständig nachweisen; keine automatischen Zusatzgrants, keine Superuser-/Service-Role-Ausweichlösung.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E16",
+        "subject": "Direkte, Default- und geerbte ACLs",
+        "status": "PARTIAL",
+        "accepted_evidence": "Ausgegebene Stage1-ACLs und erfasste Rollenrechte sind akzeptiert; Kandidaten enthalten gezielte REVOKE/GRANTs für benannte Rollen.",
+        "remaining_gap": "OR REPLACE bewahrt zusätzliche existierende ACLs; tatsächliche Default-ACLs/weitere Rollen/Owner-Mitgliedschaften können neue oder erhaltene Rechte verursachen.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Effektive Zielrechte für alle berührten Objekte einschließlich Installer-Defaults und Vererbung vollständig gegen beabsichtigte Rechte abgleichen. Unbekannte zusätzliche Rechte stoppen die Freigabe.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E17",
+        "subject": "Neue Schema-/Funktionsidentitäten",
+        "status": "MISSING",
+        "accepted_evidence": "Authority-Quelle verlangt CREATE SCHEMA jetnity_ot_auth und CREATE der beiden internen Funktionen; kein IF NOT EXISTS und kein Wiederholungsmodus.",
+        "remaining_gap": "Run2 inventarisiert nur public/private; die tatsächliche Existenz oder Abwesenheit von jetnity_ot_auth ist unbekannt.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Exakte Zielidentität/Kollisionsfreiheit vor wirksamer Änderung belegen. Bei Kollision Reconciliation, kein Überschreiben, Übernehmen, DROP CASCADE oder blinder Retry.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E18",
+        "subject": "Schema- und Daten-API-Exposition",
+        "status": "MISSING",
+        "accepted_evidence": "Quellvertrag verlangt jetnity_ot_auth außerhalb der exponierten API-Schemas; Schema-USAGE allein ist kein API-Expositionsbeleg.",
+        "remaining_gap": "Tatsächliche Exposition einschließlich relevanter REST/GraphQL-Zugänge ist aus Run2/R4 nicht vollständig bestätigt.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Konkrete Ziel-API-Konfiguration und erreichbare erlaubte Caller binden; keine neue generische Exposition oder globale API-Konfigurationsänderung.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6688370759",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726648045"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E21",
+        "subject": "Endgültige Migration und Transaktionsgrenze",
+        "status": "NOT_AUTHORED_PENDING_TARGET",
+        "accepted_evidence": "Die zwei bestehenden Kandidaten haben jeweils eigene BEGIN-/COMMIT-Grenzen; Pilot braucht Stage2-Voraussetzungen.",
+        "remaining_gap": "Keine endgültige zielgebundene Installationsdatei, kein gemeinsamer atomarer Apply, keine festgelegte tatsächliche Ledger-Version.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Nach bestätigtem Zielbestand genaues atomisches Artefakt oder expliziten abgesicherten Mehrphasenplan mit eigenen Hashes/Review/Recovery erstellen; keine äußere BEGIN-Umhüllung der unveränderten COMMIT-Dateien als Atomaritätsbeweis.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_ARTIFACT_COMPLETION",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E22",
+        "subject": "Aktuelle Recovery-Basis und geprüfte Gegenänderung",
+        "status": "MISSING",
+        "accepted_evidence": "Historische Work/UI-Backup-Metadaten wurden nur für den damaligen engen Umfang akzeptiert.",
+        "remaining_gap": "Kein aktueller getesteter Restore-Punkt, Verlustfenster oder exakt geprüfte kompensierende sichere Änderung für neue Authority-/Pilot-Ersetzung bestätigt.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Vor einer wirksamen Änderung aktuelle Vorher-Definitionen/ACLs/Abhängigkeiten und geeignete Recovery-Basis sichern und prüfen; alte P1-Autorität nicht als sichere aktivierte Rückfallversion behandeln.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164171285",
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_RECOVERY_READINESS",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E24",
+        "subject": "Signierte Dev-Session und isolierter QA-Vertrag",
+        "status": "NOT_PROVEN",
+        "accepted_evidence": "Run2-Aufrufer ist postgres; native Tests setzen synthetische Claims in einer eigenen lokalen Fixture.",
+        "remaining_gap": "Vor PO fehlt noch die konkrete zulässige Dev-/QA- und Requestpfadbindung des finalen Pakets. Tatsächliche signierte Post-Apply-Ergebnisse werden erst nach Freigabe erwartet.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Spätere konkrete Ziel-/QA-Prüfung versionieren und im reservierten Auth-/DB-Paket prüfen. Keine realen Owner-/Produktivkonten verändern und keine Tokens/PII in öffentliche Evidence aufnehmen.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614",
+          "https://github.com/Jetnity/jetnity/blob/608414441651b407cf56ab976c1cd116db45de0c/lib/readiness/official-truth-owner-session-candidate-local.test.ts"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_QA_PLAN_THEN_POST_APPLY_ACCEPTANCE",
+        "blocks_pre_po_package": true,
+        "pre_po_requirement": "Exakte zulässige QA-Identitäts-/Ziel-/Requestpfadbindung und Plan ohne reale Owner-/Produktivkontenmanipulation.",
+        "post_apply_requirement": "Die genehmigten signierten Dev-Requests tatsächlich prüfen und Ergebnisse unabhängig bewerten; synthetische Claims niemals als reale Signaturprüfung darstellen."
+      },
+      {
+        "id": "E25",
+        "subject": "Spezifischer #917-Plattform-STOP",
+        "status": "NO_VERIFIED_CLEARANCE",
+        "accepted_evidence": "Originale SELECT-only-Nachprüfung wurde vom Tool-Sicherheitsverfahren abgewiesen; erfolgreiche separate Evidence hebt dies nicht automatisch auf.",
+        "remaining_gap": "Kein verifizierter regulärer Freigabeweg für den noch benötigten ursprünglich verweigerten Umfang dokumentiert.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Nur bereits vorhandene zulässige Evidence auswerten; betroffenen Live-Teil erst nach belegter zulässiger Klärung. Kein Retry/Rephrasing, anderer Operator/Tool/Verbindung oder menschlicher Ersatzlauf.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6164202501",
+          "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6726660349",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6726886756"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_LEGITIMATE_ACCESS",
+        "blocks_pre_po_package": true
+      },
+      {
+        "id": "E28",
+        "subject": "Unveränderte übrige Consumer-/Source-Catalog-Verträge",
+        "status": "PARTIAL",
+        "accepted_evidence": "Ausgewählte Funktions-/Triggerdefinitionen sind durch Run2-Hashvergleich belegt.",
+        "remaining_gap": "Kein allgemeiner Drift-PASS der übrigen Consumer-/Source-Catalog-Verträge aus dem einzelnen Snapshot.",
+        "remaining_gap_blocks_effective_dev": true,
+        "closure_criterion_or_disposition": "Für tatsächlich berührte Caller und die ursprüngliche Stage1-Abnahme geeignete vorhandene Vergleichsevidence zuordnen; keine pauschale Unverändertheit behaupten.",
+        "evidence_urls": [
+          "https://github.com/Jetnity/jetnity/issues/917#issuecomment-6726637224",
+          "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6690991614"
+        ],
+        "owner": "Root / Technical Lead",
+        "human_action_now": "Keine neue menschliche Ausführung oder pauschale Zustimmung erforderlich.",
+        "phase": "PRE_PO_TARGET_BINDING",
+        "blocks_pre_po_package": true
+      }
+    ],
+    "rowsClosedByD1": [],
+    "refusedReadbackRetryOrAlternateRoute": "FORBIDDEN",
+    "humanSqlInstructionIssued": false,
+    "existing1142CandidateReused": true,
+    "sourceTransactions": {
+      "authorityDdlAclOperations": 13,
+      "pilotDdlAclOperations": 4,
+      "independentTransactions": 2,
+      "combinedAtomicApplyOrRollback": false
+    }
+  },
+  "acceptanceCases": [
+    {
+      "id": "D1-S01",
+      "case": "clear_primary_no_optional",
+      "expected": "Automatic publication after actual technical gates; no per-rule Owner approval.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S02",
+      "case": "clear_primary_optional_unreachable_unclear_not_applicable",
+      "expected": "Optional failure alone does not block; retain truthful attempt status.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S03",
+      "case": "qualified_independent_agreement",
+      "expected": "Publish with both real observation references.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S04",
+      "case": "different_context_or_nonoverlapping_validity",
+      "expected": "Not comparable; never fabricate agreement or conflict.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S05",
+      "case": "real_comparable_conflict",
+      "expected": "Suppress affected current answer, preserve complete evidence, deduplicate escalation.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S06",
+      "case": "unclear_primary_or_unresolved_conditions",
+      "expected": "No positive publication; distinguish primary escalation from mapping quarantine.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S07",
+      "case": "known_conflict_then_optional_failure",
+      "expected": "Keep conflict active until positive method-valid resolution.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S08",
+      "case": "positive_resolution_and_archived_predecessor",
+      "expected": "New version with full previousDecision and exact archiveAppend; no historical overwrite.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S09",
+      "case": "native_expiry_legal_day_change_or_authority_change_during_await",
+      "expected": "No positive commit/read after actual bound; no renewed clock from cache build.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S10",
+      "case": "concurrent_worker_reclaim_restart_lost_response",
+      "expected": "Durable exact operation identity; old fence rejected; same-operation confirmation only.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S11",
+      "case": "multiple_citizenships_and_cache_miss",
+      "expected": "Separate conditional results; pending only after actual current queue ACK.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S12",
+      "case": "delivery_retention_quota_recovery",
+      "expected": "Real ACK distinct from seen; quota before calls; keep live conflict/replay dependencies; new qualified version for recovery.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    },
+    {
+      "id": "D1-S13",
+      "case": "deployed_performance_and_cost",
+      "expected": "Measure network/server/render and cold/warm separately; actual public p95 below1000ms before claiming SLO.",
+      "concreteMethodExecution": "NOT_EXECUTED",
+      "syntheticFoundation": "see pinned existing V3 tests; no live proof inferred"
+    }
+  ],
+  "measurementPlan": {
+    "status": "PROPOSED_NOT_EXECUTED",
+    "syntheticWarmQueriesPerPath": 1000,
+    "syntheticColdQueriesPerScenario": 100,
+    "separateDimensions": [
+      "network",
+      "server",
+      "render",
+      "warm",
+      "cold"
+    ],
+    "hostedOrSourceExecutionAuthorizedByThisArtifact": false
+  },
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "utf8Bytes": 59657,
+      "sha256": "871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4",
+      "gitBlob": "62f73e6a01c31de48732ce378e70a2f8936f7835",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/contract.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "utf8Bytes": 74425,
+      "sha256": "59aa173100b9a28c05311eae745b777233aab5b0092ffa9ac516d818d2748fd9",
+      "gitBlob": "864a7b163ad80e32a10c0d32da5972566ba65b17",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/contract.test.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "utf8Bytes": 2538,
+      "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+      "gitBlob": "c549d0dfe80e2283f8852022637c3d1c8e7a3d5d",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/import/interface.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "utf8Bytes": 23971,
+      "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+      "gitBlob": "43036718191c3a733aaeaca1fde9f499174cee53",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "utf8Bytes": 44071,
+      "sha256": "68bec04bec516749153c599778393f8cdd96f97d5cd870f4552bc1d72faeca01",
+      "gitBlob": "5e7b4db0e627a35249943f410c37b096e11471cd",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "utf8Bytes": 19888,
+      "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+      "gitBlob": "a6b0215def84931cddd96248cf4dbf347ce5a621",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "utf8Bytes": 8739,
+      "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+      "gitBlob": "b411123af2baa3aee1fcd3bc4a836bd93897ccf6",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+      "utf8Bytes": 15204,
+      "sha256": "f74a719086b63277eb50a7d38f165e00d3387cf20beb465882bf8fde0bff0e8a",
+      "gitBlob": "0d29c60f54bf002a5d81f1a07670d742a25e08b1",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
+      "utf8Bytes": 18379,
+      "sha256": "767aa7465281c7f38d8bf3b748f41d94f4204b26867b11719b77f833d259c899",
+      "gitBlob": "467904b945b53b84ab916b3f40cf67dfe47942c1",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/monitor/recovery.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "utf8Bytes": 5699,
+      "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+      "gitBlob": "3a66e8e44ea06061dbfdc1d9a341bd2c61c5866d",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "utf8Bytes": 22886,
+      "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+      "gitBlob": "bcdbfedc6e702185f270520a9685ab5700eaed92",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "utf8Bytes": 31359,
+      "sha256": "7d9e4ba0ab3adc8359cf591264106d6f8528b7112a6fa607f9e64b0e1bea852e",
+      "gitBlob": "e23d00822f8d196d758002e56b13a6d26ff5d456",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "utf8Bytes": 20238,
+      "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+      "gitBlob": "9ba1fcb92775107e4c0ec99bac96312a0b9c120a",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "utf8Bytes": 9573,
+      "sha256": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+      "gitBlob": "64923b938ba962315f3171761e0c82963c9b14f7",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/source-registry.ts",
+      "utf8Bytes": 9165,
+      "sha256": "058c9a69f11c703594415f56ed77ed15bf9804de7ae53aae5fb46c05511e22bc",
+      "gitBlob": "672a316209cdeba279988e1691ce1e15e0dfb1b3",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/source-registry.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-source-catalog-server.ts",
+      "utf8Bytes": 24091,
+      "sha256": "6d2cf2f4c9dd2f73554af0a5068f7554ec56b306f3c54fc8bbd81f711f3dd7b1",
+      "gitBlob": "66f2c0b52dd5e791d52e1b4758799bb8947198ee",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-source-catalog-server.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.ts",
+      "utf8Bytes": 27496,
+      "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+      "gitBlob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-content-identity.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+      "utf8Bytes": 51757,
+      "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+      "gitBlob": "9f407dca147f8ba41280133dd64c7198c82c10a7",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts",
+      "utf8Bytes": 2142,
+      "sha256": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+      "gitBlob": "e00f71f993fe558d657ca409436ee62410869b25",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.ts",
+      "utf8Bytes": 7053,
+      "sha256": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+      "gitBlob": "d2233cd7f882d46520ce59df1281875fe912e097",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "utf8Bytes": 25849,
+      "sha256": "9180f141209862b737ce8946a8385d82ba7881f16f69d4a562513afc1a68636a",
+      "gitBlob": "9285836e6ff8b8eeec0ee3c9bd5b13d5f9068181",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+      "utf8Bytes": 1438,
+      "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+      "gitBlob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts",
+      "utf8Bytes": 10554,
+      "sha256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+      "gitBlob": "9f061404abbab9498f4a57e0cd35e29258cc7cd7",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+      "utf8Bytes": 5505,
+      "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+      "gitBlob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts",
+      "utf8Bytes": 1844,
+      "sha256": "f634dd33e00ab698e85c8a606983fd135942b6bc2ad6c9e7581211c77d9a1a28",
+      "gitBlob": "76bb9f387d4ba1958124a81cde271dcc58ca6aa4",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-accepted-store-trip-integration-1/wire.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+      "utf8Bytes": 8409,
+      "sha256": "f72b3711e69902e7784d9987ff575304c61feee030d1509da6c87616089cf74a",
+      "gitBlob": "958923cfc13ee1643d38e362f48931f78966e2ec",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-source-budget-128k-1.ts",
+      "utf8Bytes": 6390,
+      "sha256": "8ffe78364851f37eb25d70adbb86fba4b2831f2c49ce9848849c97ea050366f7",
+      "gitBlob": "8212e90e15ec1c87df58525867d0d095ecabedf0",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-ch-de-source-budget-128k-1.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official.ts",
+      "utf8Bytes": 13839,
+      "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+      "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "utf8Bytes": 108170,
+      "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/regulierungs-anwendbarkeit.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "utf8Bytes": 5873,
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+      "gitBlob": "407c28bc7623f659e49c3f408bee28302ef717e1",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+      "utf8Bytes": 2987,
+      "sha256": "d5eecdb50a4f00a1ba73bc6aa54f76a601bf0ee1461bb902aff3b1c5e561691e",
+      "gitBlob": "e1cccc61773a5adf71d177252d12d047ecf2d627",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/scripts/db/official-truth-owner-session-candidate-1/pilot-candidate.sql",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+      "utf8Bytes": 39704,
+      "sha256": "9498b7a2ee91c72bbd4c2dc96039664f1a903940c475adb81168abd1d594e36b",
+      "gitBlob": "15f5ebd04452d1aff302dcc487087032863e293b",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/lib/readiness/official-truth-owner-session-candidate-local.test.ts",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/D0_DEV_READINESS_DELTA_2026-11-09.md",
+      "utf8Bytes": 11246,
+      "sha256": "282157493f541dc99d1dfd841bdcc010b760eb6c346b5ee5e77058d36471f5db",
+      "gitBlob": "4dc2c75df8225b73123b0b33de627e3e568b7ccc",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/D0_DEV_READINESS_DELTA_2026-11-09.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/audits/official-truth-dev-package-1-2026-11-08/DEV_PACKAGE.md",
+      "utf8Bytes": 28821,
+      "sha256": "6e61c4d7d375d643c5d790701cf4f6b54a9cbc74bb28911e0c671dd9d8a82796",
+      "gitBlob": "13ab963a70a2eabfdd220df89d10824c861dda9b",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/audits/official-truth-dev-package-1-2026-11-08/DEV_PACKAGE.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/audits/official-truth-dev-package-1-2026-11-08/POSTCHECK_AND_RECOVERY.md",
+      "utf8Bytes": 31183,
+      "sha256": "a2687284099ec3d2d788c7948eaf5f8603a8dac5e656c940d697e732db2985d1",
+      "gitBlob": "cefc9af143fa4f91bc7892c8e5948cbfe2990695",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/audits/official-truth-dev-package-1-2026-11-08/POSTCHECK_AND_RECOVERY.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/audits/official-truth-dev-package-1-2026-11-08/STAGE1_ACCEPTANCE_REPORT.md",
+      "utf8Bytes": 20328,
+      "sha256": "7391d34998f4abad8daba16d697208022341ea5305df403d92a46349e53b4c94",
+      "gitBlob": "61a4cf9c69b2acecbb2b4827890880042c3aa40e",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/audits/official-truth-dev-package-1-2026-11-08/STAGE1_ACCEPTANCE_REPORT.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/audits/official-truth-dev-package-1-2026-11-08/TARGET_EVIDENCE_MATRIX.json",
+      "utf8Bytes": 68867,
+      "sha256": "8cf070059e7b57e0fc64579e05bf21e349cb145549b2f2c82cc56e0f8e0e46d7",
+      "gitBlob": "0b3afb4840a2d5175a9855af80d069383e5244ab",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/audits/official-truth-dev-package-1-2026-11-08/TARGET_EVIDENCE_MATRIX.json",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/audits/official-truth-dev-package-1-2026-11-08/PRODUCT_TARGET_PLAN.md",
+      "utf8Bytes": 25686,
+      "sha256": "6a302f327143e61126b19eda6c8527b4a2a15f74e40de77ac3866262969eec2c",
+      "gitBlob": "f7b8b00aecfdc984bdcf25d6b691603f5c2b8127",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/audits/official-truth-dev-package-1-2026-11-08/PRODUCT_TARGET_PLAN.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/PROGRAM_V1.md",
+      "utf8Bytes": 8707,
+      "sha256": "110b5c33156904210a72e891dcfa87fc81aabb0f6daf6e742cc37fdaba170d97",
+      "gitBlob": "3c6258e61e2a94f9d563a4f64e318aa81774c926",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/PROGRAM_V1.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/S0_CONTRACT.md",
+      "utf8Bytes": 26098,
+      "sha256": "d71ecf9997778d29560ef05c6e56ce6923380aa7b5b89c8de87500c0a493bab8",
+      "gitBlob": "83d79ffea2a4ec798223a7ae827312bda323f01d",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/S0_CONTRACT.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_INTERFACE.md",
+      "utf8Bytes": 12794,
+      "sha256": "1685723a05129be0bc19f29605153aeaee20a56e1978db44907c40835c2ad512",
+      "gitBlob": "d9e96f1c39974f950b240f4f4a6bf5d284dbce03",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/I1_INTERFACE.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_CONTRACT.md",
+      "utf8Bytes": 16540,
+      "sha256": "287736c2b56c898ca1c3bb6dbc3c2fff00ef8d7042f001b36069942ef87a9cb7",
+      "gitBlob": "9e21b403cac5896be21b821cca0227100326a287",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/M1_CONTRACT.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_CONTRACT.md",
+      "utf8Bytes": 10489,
+      "sha256": "a8aa3c6069173465beb0885459c15a568e30d47427a866d69ce6d409784e2ef6",
+      "gitBlob": "982100a0dffc9bd56311a1b70eb6c646a1cb65e2",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/U1_CONTRACT.md",
+      "verifiedEqualToImmutableCommit": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_CONTRACT.md",
+      "utf8Bytes": 12814,
+      "sha256": "ccbe672a373cbff1ada3974b5e1948b3b707039cde39d3847cf779ef8e625455",
+      "gitBlob": "d747e0048d94313170b0d9a614417342be073b46",
+      "commit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+      "url": "https://github.com/Jetnity/jetnity/blob/97629e9130a907b8b9b8072d06bda1956758aa6e/docs/official-truth-product-v3/E1_CONTRACT.md",
+      "verifiedEqualToImmutableCommit": true
+    }
+  ],
+  "documentPins": [
+    {
+      "path": "docs/official-truth-product-v3/D1_TASK_V1.md",
+      "utf8Bytes": 5181,
+      "sha256": "787dc79a4a369109d15161a949357e6f06f7b2615c904bd169c8a91ffd0ffb62",
+      "gitBlob": "9b98da24b328cec7ce47d93f7813c024eaae44e2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/D1_PLAN_V1.md",
+      "utf8Bytes": 2932,
+      "sha256": "d6a957ca952ea4d20387a801a652380f23f0d102b377fed87045999ee0bdf742",
+      "gitBlob": "f8cb5aa3fc1e6ba8876e7b4a81fc902720b0b8de"
+    },
+    {
+      "path": "docs/official-truth-product-v3/D1_METHOD_PACKAGE_V1.md",
+      "utf8Bytes": 30508,
+      "sha256": "0867d61929d2ebc91e0a800819bab5ff4c32ee89e7faa5135c858d7b4e8c352f",
+      "gitBlob": "660791efac9e9c1dc2a5e38e6ea9520d439d0176"
+    },
+    {
+      "path": "docs/official-truth-product-v3/D1_METHOD_DRAFT_V1.json",
+      "utf8Bytes": 567,
+      "sha256": "518326cabf53f0593c1ebdab951d8a17230e2deb86c062cf126bc6fd99b4f6d0",
+      "gitBlob": "be11a16be3de83cf2a9a57afc1000d30cfc6a95e"
+    }
+  ],
+  "publication": "Root_only_after_independent_review",
+  "authorStopAfterHandoff": true
+}

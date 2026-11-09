@@ -1,0 +1,49 @@
+{
+  "artifactSchema": "jetnity.official-truth.d1-local-validation.v1",
+  "createdAt": "2026-11-09T10:34:00.339Z",
+  "scope": "documentation_and_actual_dormant_S0_reader_only",
+  "sourceCommit": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+  "sourcePinCount": 44,
+  "documentPinCount": 4,
+  "pinChecks": "PASS_all_byte_count_sha256_git_blob_and_immutable_source_equalities",
+  "relativeLinkCount": 36,
+  "relativeLinkChecks": "PASS_existing_local_targets",
+  "blockerCount": 17,
+  "blockerCopy": "PASS_exact_full_row_copy_from_existing_matrix",
+  "blockersClosed": 0,
+  "existingTrackedFilesChangedSinceTaskSeed": 0,
+  "actualRuntimeReader": {
+    "runtime": "v22.23.4",
+    "actualReader": "readV3MethodRevisionDraft",
+    "draftReadable": true,
+    "notApproved": true,
+    "approvedStatusRejected": true,
+    "extraAuthorityFieldRejected": true,
+    "actualProductionBindingsNull": true,
+    "draftSha256": "518326cabf53f0593c1ebdab951d8a17230e2deb86c062cf126bc6fd99b4f6d0"
+  },
+  "candidateOperatingValuesMeasured": false,
+  "actualMethodAcceptanceCasesExecuted": false,
+  "hostedCallsPerformed": false,
+  "officialSourceFetchesPerformed": false,
+  "productionBuildOrFullCiRunByD1": false,
+  "manifestSha256": "3c9bd501e4dd4bd0eb0977da6457e562ad507e4c747e9452d683ba5baf5bebf9",
+  "validationAttempts": [
+    {
+      "attempt": 1,
+      "result": "FAIL",
+      "cause": "Verifier incorrectly required zero tracked difference from E1, although the already-published D1 task seed is one legitimate added file. No source/data failure was found."
+    },
+    {
+      "attempt": 2,
+      "result": "PASS",
+      "change": "Require exactly D1_TASK_V1.md as the existing tracked E1 difference and zero tracked changes against the D1 task seed; preserve all source-byte/hash/link/blocker assertions."
+    }
+  ],
+  "commandEvidence": [
+    "Node22.23.4 --import server-only-test-register.mjs --import tsx: real S0 readV3MethodRevisionDraft accepted NOT_APPROVED and rejected APPROVED/extra accepted field; actual production binding entries remain null.",
+    "Python3: hash every source/document against bytes and Git objects; resolve every relative Markdown link; compare all17 full blocker rows; confirm no tracked baseline changes outside published task seed."
+  ],
+  "lastDocumentPinVerificationAt": "2026-11-09T10:38:30.478472Z",
+  "editorialPinRefresh": "PASS: final spacing cleanup only; all 48 pins, 36 relative links, 17 full blocker rows and unchanged tracked baseline reverified."
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 3,
+  "method": {
+    "methodId": "jetnity-destination-primary-ch-de-visa",
+    "revision": 1
+  },
+  "predecessor": null,
+  "status": "NOT_APPROVED",
+  "createdAt": "2026-11-09T10:32:22.549Z",
+  "primaryPolicy": "one_clear_qualified_destination_primary",
+  "counterCheckPolicy": "when_available",
+  "conflictPolicy": "positive_method_valid_resolution",
+  "operatingProposal": {
+    "primaryMaxAgeSeconds": 300,
+    "checkIntervalSeconds": 120,
+    "optionalAttemptLimit": 2,
+    "optionalTimeBudgetMilliseconds": 8000,
+    "attemptPlanRevision": 1
+  }
+}
