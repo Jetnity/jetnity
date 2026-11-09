@@ -1,0 +1,467 @@
+{
+  "schema": "c1-root-correction-source-review-r2",
+  "at": "2026-11-09T14:12:42.774065+00:00",
+  "reviewer": "Root / Technical Lead",
+  "basePublishedHead": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+  "status": "P2_R3_SOURCE_CORRECTION_ACCEPTED_FOR_PUBLICATION_FULL_NEW_HEAD_GATES_PENDING",
+  "taskComment": "https://github.com/Jetnity/jetnity/pull/1173#issuecomment-6742027998",
+  "sameWriter": "Jetnity Official Truth V3 Global Conditions 1 — Codex Generation 1",
+  "actualSession": "/root/v3_global_conditions_writer",
+  "decision": "Exact22-line applicability consumer inventory correction independently read; no old lines removed or changed; all20 prior C1 code hashes unchanged. No overall C1 PASS. Publish reviewed correction, then full new-head gates.",
+  "frozenFiles": [
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "sha256": "275ca3c1fa032c3fe41b1069d6f6a5740538dc088a249e9192d6bfcabc978fbc",
+      "bytes": 5315
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+      "sha256": "7413422138da1b10698186bb88fd5fbf5a463d7989034e707b7d936a363143bf",
+      "bytes": 7555
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+      "sha256": "f48256432d137ec7256e6c7b347287c228e01214a1dd4d7137ff73712d4facd3",
+      "bytes": 10257
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+      "sha256": "940d462be24caab81a11f4038fc79e10b9683ff4d52938c3deeb6b9b04b1a3b6",
+      "bytes": 37432
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+      "bytes": 79529
+    }
+  ],
+  "rootOffline": {
+    "schema": "c1-root-independent-offline-run-v3",
+    "at": "2026-11-09T14:08:39.199396+00:00",
+    "base": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+    "guardCorrection": "P2-R3",
+    "command": [
+      "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+      "--import",
+      "./scripts/server-only-test-register.mjs",
+      "--import",
+      "tsx",
+      "--test",
+      "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "lib/readiness/official-truth-content-identity.test.ts"
+    ],
+    "exitCode": 0,
+    "seconds": 7.522,
+    "logSha256": "86d9f2bfc43769d04e36cc04f9d8ea175984506743c89817c639ed93dbe85464",
+    "codeHashes": {
+      "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts": "37c1353d471cf2c5c305b7c806f7ce6abf1dc29a0494ed341b5a61aed9cfed7c",
+      "lib/readiness/official-truth-product-v3/contract.test.ts": "47864ce6e62ff227b744fb8d92c0c89227b8c50048fc68a6641878500a12722a",
+      "lib/readiness/official-truth-product-v3/contract.ts": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+      "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts": "beb5a479d594e28122ffe89a788e83ed5300bee402cdc089d9fcfa69ae4d8521",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts": "5f32381e4b501cb9d828308c5a7019ea8a66724da75fa92dd941a4af3de0ba6c",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts": "5842037f3160a7ff939e95fc58d6ae2191439796715e96bebf23e6292c2a0f4f",
+      "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts": "d649f1907d29e3cc7d750130612551d4eb0ce33bfb199916ff649b9788f70f30",
+      "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts": "8b344987292b8eae594655d2efe1d2d02f3395ab07e4322b9af8422da4c387ef",
+      "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts": "9237a77ce2af7c05fe89cd961f981b0ede3b8b2652eda6f77d7b58d0fdaf6b25",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts": "d34c11d04994c285c829293fe3279df08ff86cc7fe554515605b5547ee83cd66",
+      "lib/readiness/official-truth-product-v3/storage/retention-shape.ts": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts": "e3d82ba66494e4f68ab5181d8fb3b7f1b01dbf36eb8ccd8b7881e0ee7f35ee66",
+      "lib/readiness/official-truth-product-v3/visitor/presentation.ts": "77ee2179e29c81236e5cb6551106684a238453e8f4ff57eba550e2f47b1fff51",
+      "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts": "0571a839414ec2de86f318eab6dcd479dc5f3f2bfb040f4795628a4add8b4bf5",
+      "scripts/db/official-truth-v3-global-conditions-1/native.ts": "ad574f5420f37e1f52960de9bfd6d9a0626ec04b3e2f612c77c125f8aa4f69c7",
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs": "96db2a116279a5aa70285fce7215377e31c673359b92dc13cee87f3e10a82354",
+      "scripts/official-truth-product-v3-ui/mount.tsx": "07f94d88eb736930938e1e005e3c7463e46379c4968ad99de7f9ec4dff03e6dc",
+      "scripts/official-truth-product-v3-ui/run.mjs": "e050f7a60abb0088f3a47c79b9593f344adb7ddd172ee467f61c192e911b60e3",
+      "scripts/official-truth-product-v3-ui/synthetic-server.ts": "b0c0e1285fbd027c7f82aa7f9d7446fbf25ce8cc227ca5f453174fdfc2736da6",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5"
+    },
+    "codeStableDuringRun": true,
+    "nativeExecuted": false,
+    "browserExecuted": false,
+    "tail": [
+      "  type: 'test'",
+      "  ...",
+      "1..207",
+      "# tests 527",
+      "# suites 37",
+      "# pass 527",
+      "# fail 0",
+      "# cancelled 0",
+      "# skipped 0",
+      "# todo 0",
+      "# duration_ms 7435.138093"
+    ]
+  },
+  "peerSourceReview": {
+    "schema": "c1-r3-guard-peer-review-v1",
+    "reviewer": "/root/live_release_recovery",
+    "reviewKind": "read-only source review; no runtime execution or Technical Lead PASS",
+    "observedAt": "2026-11-09T14:09:32.631047+00:00",
+    "worktree": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions",
+    "base": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+    "observedHead": "932f55b1bf4d890b0167e09e3601dbd32f8c11e6",
+    "task": {
+      "path": "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "sha256": "275ca3c1fa032c3fe41b1069d6f6a5740538dc088a249e9192d6bfcabc978fbc"
+    },
+    "guard": {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "beforeSha256": "5bd910f030938f193c6a67f088aeb2075ae76024ac3da42a873efcfda8b9fb4f",
+      "afterSha256": "667c61b03f834babfc0fe3ddfa7b65e0f172661d59e6b46661b11713d71082e5",
+      "beforeLines": 1346,
+      "afterLines": 1368,
+      "insertions": 22,
+      "deletions": 0,
+      "editKinds": [
+        "insert",
+        "insert",
+        "insert"
+      ]
+    },
+    "reviewedManifest": {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V1.json",
+      "sha256": "bf0841829017aa8b4c3c931df9192e562c7f44a7b64d23cc774b571fc6e6e10e"
+    },
+    "sourceVerification": [
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+        "expectedSha256": "37c1353d471cf2c5c305b7c806f7ce6abf1dc29a0494ed341b5a61aed9cfed7c",
+        "actualSha256": "37c1353d471cf2c5c305b7c806f7ce6abf1dc29a0494ed341b5a61aed9cfed7c",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "expectedSha256": "47864ce6e62ff227b744fb8d92c0c89227b8c50048fc68a6641878500a12722a",
+        "actualSha256": "47864ce6e62ff227b744fb8d92c0c89227b8c50048fc68a6641878500a12722a",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/contract.ts",
+        "expectedSha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "actualSha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+        "expectedSha256": "beb5a479d594e28122ffe89a788e83ed5300bee402cdc089d9fcfa69ae4d8521",
+        "actualSha256": "beb5a479d594e28122ffe89a788e83ed5300bee402cdc089d9fcfa69ae4d8521",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "expectedSha256": "5f32381e4b501cb9d828308c5a7019ea8a66724da75fa92dd941a4af3de0ba6c",
+        "actualSha256": "5f32381e4b501cb9d828308c5a7019ea8a66724da75fa92dd941a4af3de0ba6c",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+        "expectedSha256": "5842037f3160a7ff939e95fc58d6ae2191439796715e96bebf23e6292c2a0f4f",
+        "actualSha256": "5842037f3160a7ff939e95fc58d6ae2191439796715e96bebf23e6292c2a0f4f",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+        "expectedSha256": "d649f1907d29e3cc7d750130612551d4eb0ce33bfb199916ff649b9788f70f30",
+        "actualSha256": "d649f1907d29e3cc7d750130612551d4eb0ce33bfb199916ff649b9788f70f30",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+        "expectedSha256": "8b344987292b8eae594655d2efe1d2d02f3395ab07e4322b9af8422da4c387ef",
+        "actualSha256": "8b344987292b8eae594655d2efe1d2d02f3395ab07e4322b9af8422da4c387ef",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+        "expectedSha256": "9237a77ce2af7c05fe89cd961f981b0ede3b8b2652eda6f77d7b58d0fdaf6b25",
+        "actualSha256": "9237a77ce2af7c05fe89cd961f981b0ede3b8b2652eda6f77d7b58d0fdaf6b25",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "expectedSha256": "d34c11d04994c285c829293fe3279df08ff86cc7fe554515605b5547ee83cd66",
+        "actualSha256": "d34c11d04994c285c829293fe3279df08ff86cc7fe554515605b5547ee83cd66",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "expectedSha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+        "actualSha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+        "expectedSha256": "e3d82ba66494e4f68ab5181d8fb3b7f1b01dbf36eb8ccd8b7881e0ee7f35ee66",
+        "actualSha256": "e3d82ba66494e4f68ab5181d8fb3b7f1b01dbf36eb8ccd8b7881e0ee7f35ee66",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+        "expectedSha256": "77ee2179e29c81236e5cb6551106684a238453e8f4ff57eba550e2f47b1fff51",
+        "actualSha256": "77ee2179e29c81236e5cb6551106684a238453e8f4ff57eba550e2f47b1fff51",
+        "matches": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+        "expectedSha256": "0571a839414ec2de86f318eab6dcd479dc5f3f2bfb040f4795628a4add8b4bf5",
+        "actualSha256": "0571a839414ec2de86f318eab6dcd479dc5f3f2bfb040f4795628a4add8b4bf5",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+        "expectedSha256": "ad574f5420f37e1f52960de9bfd6d9a0626ec04b3e2f612c77c125f8aa4f69c7",
+        "actualSha256": "ad574f5420f37e1f52960de9bfd6d9a0626ec04b3e2f612c77c125f8aa4f69c7",
+        "matches": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+        "expectedSha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "actualSha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "matches": true
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "expectedSha256": "96db2a116279a5aa70285fce7215377e31c673359b92dc13cee87f3e10a82354",
+        "actualSha256": "96db2a116279a5aa70285fce7215377e31c673359b92dc13cee87f3e10a82354",
+        "matches": true
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/mount.tsx",
+        "expectedSha256": "07f94d88eb736930938e1e005e3c7463e46379c4968ad99de7f9ec4dff03e6dc",
+        "actualSha256": "07f94d88eb736930938e1e005e3c7463e46379c4968ad99de7f9ec4dff03e6dc",
+        "matches": true
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/run.mjs",
+        "expectedSha256": "e050f7a60abb0088f3a47c79b9593f344adb7ddd172ee467f61c192e911b60e3",
+        "actualSha256": "e050f7a60abb0088f3a47c79b9593f344adb7ddd172ee467f61c192e911b60e3",
+        "matches": true
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/synthetic-server.ts",
+        "expectedSha256": "b0c0e1285fbd027c7f82aa7f9d7446fbf25ce8cc227ca5f453174fdfc2736da6",
+        "actualSha256": "b0c0e1285fbd027c7f82aa7f9d7446fbf25ce8cc227ca5f453174fdfc2736da6",
+        "matches": true
+      }
+    ],
+    "referenceVerification": [
+      {
+        "path": "docs/official-truth-product-v3/C1_TASK_V1.md",
+        "expectedSha256": "d9a7f5b803ed39354e0b8f061674e5bfc6313bd291c7c012bf4abf6bbfeca368",
+        "actualSha256": "d9a7f5b803ed39354e0b8f061674e5bfc6313bd291c7c012bf4abf6bbfeca368",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_TASK_V2.md",
+        "expectedSha256": "f651cb7367dd961828aaba471aba011f149b49d5f20b4daface87b38a9256788",
+        "actualSha256": "f651cb7367dd961828aaba471aba011f149b49d5f20b4daface87b38a9256788",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_PLAN_V1.md",
+        "expectedSha256": "1513c5784d3b2b45afd76db67b9bb2d51162f535b98747aae3a7bb48205f100b",
+        "actualSha256": "1513c5784d3b2b45afd76db67b9bb2d51162f535b98747aae3a7bb48205f100b",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_LEGACY_IDENTITIES_V1.json",
+        "expectedSha256": "97b40395e44b8bc0608aff9262de022aa34ae18f7b1559f1c6762874336e6c4b",
+        "actualSha256": "97b40395e44b8bc0608aff9262de022aa34ae18f7b1559f1c6762874336e6c4b",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_REVISION2_IDENTITIES_V1.json",
+        "expectedSha256": "d873b0a68e264330dd9d00bf6b3e7e4e263204b1e7755718c345b35c3331e03c",
+        "actualSha256": "d873b0a68e264330dd9d00bf6b3e7e4e263204b1e7755718c345b35c3331e03c",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_MAPPING_REFERENCE_V1.json",
+        "expectedSha256": "d9704b4c39326dabd0ea9c4c7ae39a26013a0b2dc57b24d79f815199e3bb7efa",
+        "actualSha256": "d9704b4c39326dabd0ea9c4c7ae39a26013a0b2dc57b24d79f815199e3bb7efa",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_SYNTHETIC_CONTEXT_REFERENCE_V1.json",
+        "expectedSha256": "8573baaa6431d6fff27e3ed2a9a00749dfff78adc5d88d055c38b0d3da6a9d09",
+        "actualSha256": "8573baaa6431d6fff27e3ed2a9a00749dfff78adc5d88d055c38b0d3da6a9d09",
+        "matches": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+        "expectedSha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+        "actualSha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+        "matches": true
+      }
+    ],
+    "findings": [],
+    "conclusions": [
+      "Task V3 permits only the existing applicability architecture guard and focused exact-path negative assertions.",
+      "The mapper imports the unchanged pure schema2Kanonisch helper solely for metadata pins and complete mapping preimages; retaining this explicit import is preferable to duplicating or obscuring the canonicalizer.",
+      "The correction adds exactly the dormant mapper path to both existing finite inventories.",
+      "Repository traversal, literal detection, complete non-test consumer equality, source restrictions, prior entries, prior negatives and domain behavior tests remain unchanged.",
+      "New raw-string negatives cover suffixed/adjacent/test filenames, traversal/alias spellings, sibling directories, unreviewed files, app/API and scripts without join normalization.",
+      "Existing AA import/export/no-runtime-consumer isolation guard and the mapper retain their prior reviewed bytes."
+    ],
+    "limits": [
+      "No tests, product code, browser, server, database, remote operation or hosted readback executed by this reviewer.",
+      "No TL PASS, Ready, merge, complete CI success, deployed runtime or production activation conclusion.",
+      "Source review binds only the recorded guard and manifest hashes; later changes require renewed review.",
+      "Root independent 527/527 offline run is separate Root evidence and was not rerun or independently executed by this reviewer.",
+      "Final consistency review reads existing author and Root evidence; recorded process exit codes are not independent process executions by this reviewer."
+    ],
+    "finalConsistencyReview": {
+      "observedAt": "2026-11-09T14:12:09.255642+00:00",
+      "reviewKind": "read-only final source, manifest, preserved history, command records and existing raw-log consistency; no reviewer test execution",
+      "frozenDocuments": [
+        {
+          "path": "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+          "sha256": "7413422138da1b10698186bb88fd5fbf5a463d7989034e707b7d936a363143bf"
+        },
+        {
+          "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+          "sha256": "f48256432d137ec7256e6c7b347287c228e01214a1dd4d7137ff73712d4facd3"
+        },
+        {
+          "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+          "sha256": "940d462be24caab81a11f4038fc79e10b9683ff4d52938c3deeb6b9b04b1a3b6"
+        }
+      ],
+      "guardStillMatchesRecordedAfterSha256": true,
+      "all20PriorSourceFilesMatchV1PinsAndActualBaseGitBytes": true,
+      "all8PriorReferencesMatchV1PinsAndActualBaseGitBytes": true,
+      "v2SourceEntries": 21,
+      "v2Original20EntriesVerbatim": true,
+      "v2OnlyAdditionalSource": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "v2ReferenceEntries": 9,
+      "v2Original8ReferencesVerbatim": true,
+      "v2OnlyAdditionalReference": "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "all21SourceAnd9ReferenceHashesMatch": true,
+      "unchangedHistoricalDocumentCount": 12,
+      "allHistoricalDocumentsMatchPinsAndActualBaseGitBytes": true,
+      "original28TestAttemptRecordsVerbatim": true,
+      "totalAttemptRecords": 31,
+      "rawLogsReadAndHashMatched": 31,
+      "authorFinalOffline": {
+        "run": 29,
+        "explicitSelectionFiles": 23,
+        "previous21FilesPreserved": true,
+        "additions": [
+          "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+          "lib/readiness/official-truth-content-identity.test.ts"
+        ],
+        "nativeWrappersExcluded": true,
+        "recordedExitCode": 0,
+        "actualTapSummary": {
+          "tests": 527,
+          "suites": 37,
+          "pass": 527,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "rawLogSha256": "379374860c5447a634cd0fe021f2527843db59517f9e987e0c8a38eef6835c8b"
+      },
+      "authorTypecheck": {
+        "run": 30,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/npm",
+          "run",
+          "typecheck"
+        ],
+        "recordedExitCode": 0,
+        "logRead": true,
+        "rawLogSha256": "fa7d784e601eb57fdeef50679e1c44baf29a7cc0aa6af0815276b1a1ece30208"
+      },
+      "authorScopedLint": {
+        "run": 31,
+        "paths": 20,
+        "exactV2SourceSetExceptSql": true,
+        "recordedExitCode": 0,
+        "logRead": true,
+        "rawLogSha256": "5b7547513ddb5fbaa7b0be23938c584f500e6ac93185d9234c9018b13bc9a7b9"
+      },
+      "rootEvidenceSeparate": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/c1-root-offline-r3.json",
+        "sha256": "43e2c5e8701ec43f4c2e61b3daa982f1a47449f3f331443f33da1d9d3cfde194",
+        "notRerunByReviewer": true
+      },
+      "materialOverclaimFindings": [],
+      "reportingAssessment": "Historical failed overall CI, its limited native/UI successes, author offline evidence, independent Root offline evidence, and still-pending corrected-head CI/native/UI/build/Preview are explicitly separated. No full C1 PASS is claimed."
+    }
+  },
+  "peerReceiptSha256": "5ba451a0330a3ede3be1603508123a74f6a750a5aa8fd2073703045ede5b8a98",
+  "historicalFailure": {
+    "run": 42627981316,
+    "attempt": 1,
+    "coreJob": 129196610763,
+    "tests": 8573,
+    "pass": 8570,
+    "fail": 1,
+    "inheritedSkips": 2,
+    "failure": "regulierungs-anwendbarkeit.test.ts missing exact dormant mapper in full consumer inventories",
+    "actualC1NativeChildrenPassed": 4,
+    "nativeParentPassed": true,
+    "isolatedUi": {
+      "layouts": 12,
+      "interactions": 11,
+      "pngHashesVerified": 10,
+      "viewsInspected": 5,
+      "receiptComment": 6741711054
+    },
+    "noNewHeadWaiver": true,
+    "excerptSha256": "3087aa3ebea47f02f4ef2d9d0ad2b83df066b2720749c16c5639df8ccdb236dd"
+  },
+  "authorLogVerification": {
+    "all31ByteHashesMatch": true,
+    "first28RecordsUnchanged": true
+  },
+  "frozenHistoricalEvidence": true,
+  "runtimeCodeChangedInR3": false,
+  "nativeExecutedLocally": false,
+  "browserExecutedLocally": false,
+  "gates": {
+    "newHeadCI": "PENDING",
+    "nativeActualLogs": "PENDING",
+    "newHeadUiArtifacts": "PENDING",
+    "productionBuild": "PENDING",
+    "exactPreview": "PENDING",
+    "method": "NOT_APPROVED",
+    "devPackage": "NOT_RELEASE_READY",
+    "productionActivation": "NOT_AUTHORIZED"
+  },
+  "liveBaseline": {
+    "main": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "production": "dpl_8PHbgbvk281DiTv1XV9AkAanRq8H",
+    "productionReady": true,
+    "openPrs": 23,
+    "allDraft": true,
+    "openIssues": 48,
+    "pr1173ReviewThreads": 0,
+    "unrelatedNewPr": 1174,
+    "unrelatedScopeUntouched": true
+  }
+}

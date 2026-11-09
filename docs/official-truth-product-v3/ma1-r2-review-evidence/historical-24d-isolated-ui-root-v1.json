@@ -1,0 +1,217 @@
+{
+  "schema": "jetnity.ma1.root-isolated-ui-artifact-review.r1.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T16:58:57.959570+00:00",
+  "binding": {
+    "checkedOutHead": "0672f3b2351288b2374bc37b126fccac8706eda9",
+    "sourceHead": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+    "worktreeDirty": false,
+    "githubSha": "0672f3b2351288b2374bc37b126fccac8706eda9",
+    "runId": "42659466404",
+    "runAttempt": "1",
+    "event": "pull_request"
+  },
+  "tree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "checkoutMetadataIndependentlyReadThroughGithub": true,
+  "checkoutParents": [
+    "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "24d55eeda100490ad3fd20b48551b5314b5c4f8a"
+  ],
+  "jobId": 129306791395,
+  "actualRawLogSha256": "8251f81033984e6914e43bffabc476c92919cc1847f4273a73e8d19fa7c820c7",
+  "actualTapCounts": {
+    "tests": 50,
+    "pass": 50,
+    "fail": 0,
+    "skipped": 0
+  },
+  "artifactId": 13692899588,
+  "zipSha256": "5ee9914dd0d8a50b459d5e5cc97c56c26d21689aaa484d9040f9674b0973f10e",
+  "all15ZipAndExtractedFilesRootRehashed": true,
+  "allFiveJsonBindingsRootChecked": true,
+  "layoutCount": 12,
+  "interactionCount": 11,
+  "layouts": [
+    {
+      "name": "mixed-280",
+      "width": 280,
+      "scrollWidth": 280,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-320",
+      "width": 320,
+      "scrollWidth": 320,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-360",
+      "width": 360,
+      "scrollWidth": 360,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-375",
+      "width": 375,
+      "scrollWidth": 375,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-390",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-430",
+      "width": 430,
+      "scrollWidth": 430,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-768",
+      "width": 768,
+      "scrollWidth": 768,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-1280",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "landscape-844x390",
+      "width": 844,
+      "scrollWidth": 844,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "mixed-320-text200",
+      "width": 320,
+      "scrollWidth": 320,
+      "font": "32px",
+      "overflowing": []
+    },
+    {
+      "name": "application-320",
+      "width": 320,
+      "scrollWidth": 320,
+      "font": "16px",
+      "overflowing": []
+    },
+    {
+      "name": "application-320-text200",
+      "width": 320,
+      "scrollWidth": 320,
+      "font": "32px",
+      "overflowing": []
+    }
+  ],
+  "interactions": [
+    "Empty form stays disabled; keyboard reaches test selector then destination",
+    "Separate accepted CH and pending RS; exact source/time and full conditions; focus reaches result heading",
+    "Conflict suppresses positive rule and source link",
+    "Cache read failure remains error; no fake pending or raw failure",
+    "Unbound production seam is honest unavailable",
+    "Transport failure has a focused, retryable error state",
+    "Edit during loading aborts stale answer; unknown FR/CH gets neutral Discovery ACK and pending",
+    "Multiple context statements are displayed fully without choosing a best credential",
+    "Synthetic tourism restriction retains passport/origin/direct route and inclusive trip start/end window at 320px and 200% text through actual query/reproof",
+    "Confirmed pending becomes an authentic synthetic cache hit through one automatic query; focus remains on destination; no new loading screen or further polls",
+    "All browser requests stayed loopback; visitor payload contains only destination and citizenships"
+  ],
+  "noErrorsExternalRequestsOrOverflow": true,
+  "controlsMinimumHeight": 44,
+  "pngs": [
+    {
+      "name": "application-320.png",
+      "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "sameAsC1": true
+    },
+    {
+      "name": "application-320-text200.png",
+      "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "sameAsC1": true
+    },
+    {
+      "name": "conflict-320.png",
+      "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "sameAsC1": true
+    },
+    {
+      "name": "loading-320.png",
+      "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "sameAsC1": true
+    },
+    {
+      "name": "mixed-1280.png",
+      "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "sameAsC1": true
+    },
+    {
+      "name": "mixed-280.png",
+      "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "sameAsC1": true
+    },
+    {
+      "name": "mixed-320-text200.png",
+      "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "sameAsC1": true
+    },
+    {
+      "name": "mixed-390.png",
+      "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "sameAsC1": true
+    },
+    {
+      "name": "poll-accepted-390.png",
+      "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "sameAsC1": true
+    },
+    {
+      "name": "poll-pending-390.png",
+      "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "sameAsC1": true
+    }
+  ],
+  "newVisualInspection": false,
+  "visualScope": "All10 newly generated files byte-identical to immutable accepted C1 artifact. Previous actual five Root views remain historical; no new visual inspection claimed.",
+  "c1RootReceiptSha256": "cdc90c1ccb6709fb9450b5162da1ba96bca474272cf9b18603fcef8eff065ccc",
+  "syntheticBenchmark": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 3.256420999999932,
+    "p95Ms": 5.899973999999986,
+    "maximumMs": 9.699851999999964,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "0672f3b2351288b2374bc37b126fccac8706eda9",
+      "sourceHead": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+      "worktreeDirty": false,
+      "githubSha": "0672f3b2351288b2374bc37b126fccac8706eda9",
+      "runId": "42659466404",
+      "runAttempt": "1",
+      "event": "pull_request"
+    }
+  },
+  "peerReceiptSha256": "2839440b2da276828c058bc11347bbf580358321dba703d5c02680d9fb399982",
+  "limitations": [
+    "Synthetic isolated loopback data, no live source qualification or DB truth.",
+    "No public or Production p95 claim.",
+    "Does not establish MA1 native/fullCI acceptance."
+  ]
+}

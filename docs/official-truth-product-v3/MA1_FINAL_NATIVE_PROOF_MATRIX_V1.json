@@ -1,0 +1,199 @@
+{
+  "schema": "ma1-r2-actual-native-proof-matrix-v1",
+  "run": 42663861884,
+  "attempt": 1,
+  "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "parent": {
+    "name": "MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup",
+    "result": "actual_ci_pass",
+    "logLine": 33869,
+    "durationMs": 28765.29745
+  },
+  "children": [
+    {
+      "number": 1,
+      "name": "creator function/table/schema defaults refuse atomically without normalization",
+      "status": "actual_ci_pass",
+      "logLine": 33785,
+      "durationMs": 65.215788,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 398,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Function/table/schema creator default grants are refused atomically and retained; no privilege normalization."
+    },
+    {
+      "number": 2,
+      "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+      "status": "actual_ci_pass",
+      "logLine": 33791,
+      "durationMs": 139.896438,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 418,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Independent literal vectors, genuine restricted logins/assigned roles, closed direct inputs and actual adapter/SQL composition."
+    },
+    {
+      "number": 3,
+      "name": "real active own Owner and exact account/session/profile negative matrix",
+      "status": "actual_ci_pass",
+      "logLine": 33797,
+      "durationMs": 291.645633,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 483,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Current human Owner/account/Auth session/AAL/profile positive and negative cases via unchanged #1142 helper."
+    },
+    {
+      "number": 4,
+      "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+      "status": "actual_ci_pass",
+      "logLine": 33803,
+      "durationMs": 124.314009,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 519,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Exact operation/actor/command replay, collisions, fresh expected-state CAS and real committed acknowledgement."
+    },
+    {
+      "number": 5,
+      "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+      "status": "actual_ci_pass",
+      "logLine": 33809,
+      "durationMs": 854.010628,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 566,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Historical confirmation after lost response remains historical through expiry/revoke/supersession; no current authority inferred."
+    },
+    {
+      "number": 6,
+      "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+      "status": "actual_ci_pass",
+      "logLine": 33815,
+      "durationMs": 29.311697,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 592,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Explicit synthetic high-epoch setup tests last approval and terminal revoke/exhaustion; no billions-of-operations history claim."
+    },
+    {
+      "number": 7,
+      "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+      "status": "actual_ci_pass",
+      "logLine": 33821,
+      "durationMs": 7136.869295,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 611,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Authoritative database clock, caller conservatism, finite method expiry and nonrenewable technical receipt lifetime remain separate."
+    },
+    {
+      "number": 8,
+      "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+      "status": "actual_ci_pass",
+      "logLine": 33827,
+      "durationMs": 1098.127659,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 668,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Owner-only protected seam tests actual revoke-first/protected-first ordering and expiry after observed wait; protected marker only, no Accepted integration."
+    },
+    {
+      "number": 9,
+      "name": "human method wait precedes fresh unchanged session/profile authority check",
+      "status": "actual_ci_pass",
+      "logLine": 33833,
+      "durationMs": 121.505842,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 712,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Human method serialization wait precedes fresh unchanged Auth session/profile checks."
+    },
+    {
+      "number": 10,
+      "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+      "status": "actual_ci_pass",
+      "logLine": 33839,
+      "durationMs": 5204.577951,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 734,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Four actually blocked reads, fifth admission refusal, exact target identity cancellation, target/control disappearance and slot release after drain."
+    },
+    {
+      "number": 11,
+      "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+      "status": "actual_ci_pass",
+      "logLine": 33845,
+      "durationMs": 9716.269542,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 777,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Actual late acquisition/identity/observer failures poison their owned fixture, stop it and join pending calls."
+    },
+    {
+      "number": 12,
+      "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+      "status": "actual_ci_pass",
+      "logLine": 33851,
+      "durationMs": 1140.74729,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 821,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Real process death/restart, generation custody and fresh SQL; killed pending read joined; actual missing-executable error/close without fabricated exit."
+    },
+    {
+      "number": 13,
+      "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+      "status": "actual_ci_pass",
+      "logLine": 33857,
+      "durationMs": 984.45629,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 862,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "Guarded empty rollback preserves altered CHECK/object/ACL/column-grant/membership/dependency on refusal; success retains unchanged #1142."
+    },
+    {
+      "number": 14,
+      "name": "rollback takes all removal locks before checking concurrently committed history",
+      "status": "actual_ci_pass",
+      "logLine": 33863,
+      "durationMs": 759.383403,
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceLine": 927,
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "proofScope": "All rollback removal locks precede empty check; concurrently committed revision/history causes post-wait refusal and preservation."
+    }
+  ],
+  "cleanup": {
+    "started": 1562,
+    "settled": 1562,
+    "pending": 0,
+    "connections": 229,
+    "closed": 229,
+    "stoppedClusters": 8
+  },
+  "explicitActualDiagnostics": [
+    {
+      "line": 33875,
+      "text": "2026-11-09T17:31:04.8942515Z # Epoch2147483645 is explicit synthetic owner setup; no billions-of-operations history claim."
+    },
+    {
+      "line": 33876,
+      "text": "2026-11-09T17:31:04.8942818Z # Protected marker is synthetic only; no Accepted/publication integration is claimed."
+    },
+    {
+      "line": 33882,
+      "text": "2026-11-09T17:31:04.9203394Z # Actual fixed missing-executable error+close joined; no exit/PID was invented and no SQL dispatched."
+    },
+    {
+      "line": 33884,
+      "text": "2026-11-09T17:31:04.9276718Z # Fixture action: revoked only known ot_ma1_reader -> ot_v3_method_reader membership before empty rollback."
+    },
+    {
+      "line": 33885,
+      "text": "2026-11-09T17:31:04.9277697Z # Connection negative is pre-acquisition owned-descriptor rejection; no foreign/TCP/wrong-database SQL was executed."
+    }
+  ],
+  "scope": "Actual mandatory CI PostgreSQL with synthetic fixtures; reviewed source/test intent is distinguished from hosted target truth."
+}

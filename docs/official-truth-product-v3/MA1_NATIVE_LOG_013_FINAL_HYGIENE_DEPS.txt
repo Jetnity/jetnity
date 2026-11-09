@@ -1,0 +1,8 @@
+(node:11) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+dependencies: 12 geprueft, 0 ohne Verwendung
+
+devDependencies: 2 geprueft, 0 ohne Verwendung
+
+nicht geprueft (wirken ueber Konfiguration): next, react, react-dom, typescript, tailwindcss, postcss, autoprefixer, eslint, eslint-config-next, tailwindcss-animate, tailwind-scrollbar-hide

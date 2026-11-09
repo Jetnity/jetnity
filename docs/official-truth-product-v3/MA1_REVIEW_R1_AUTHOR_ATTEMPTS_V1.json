@@ -1,0 +1,129 @@
+{
+  "schema": "ma1-review-r1-primary-attempts-v1",
+  "at": "2026-11-09T16:47:01.680214+00:00",
+  "status": "FROZEN_R1_AUTHOR_DELIVERY_ROOT_REVIEW_AND_NEW_HEAD_CI_PENDING",
+  "actualSession": "/root/v3_method_authority_writer",
+  "runtimeChild": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "baseHead": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "baseTree": "29e1d4cd79bbd54535e2f9d1523c2a1d3d35b8b3",
+  "task": {
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+    "sha256": "563a62394d5cdd2970bf551a14e93097ca6f59d2a0dd6890c9cadafd796af874"
+  },
+  "failedCi": {
+    "run": 42654936800,
+    "attempt": 1,
+    "coreJob": 129290779391,
+    "conclusion": "failure",
+    "tests": 8606,
+    "passed": 8602,
+    "failed": 2,
+    "existingSkips": 2,
+    "cancelled": 0,
+    "nativeSubtestsReached": 0,
+    "nativeParentFailure": "local_pg_duplicate_column",
+    "foundationFailure": "unregistered method/authority-postgres.ts importing only ownRecord; method/contract.ts same exact helper also absent from registry",
+    "actualCleanup": {
+      "started": 5,
+      "settled": 5,
+      "pending": 0,
+      "connections": 2,
+      "closed": 2,
+      "stoppedClusters": 1
+    },
+    "observedPeerLogPath": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log",
+    "observedPeerLogSha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+    "observedPeerLogBytes": 4149611,
+    "rootTaskClaimedRawLogSha256": "579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d",
+    "provenanceDifference": "Reported to Root; no attempt to substitute hashes or modify task/log. Actual failures/totals agree.",
+    "exactExcerpt": {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_CI_FAILURE_EXCERPTS_V1.txt",
+      "sha256": "e98b9b76da663c733fc2678661d6f9c5f866e327a37cf2820d3592ecc0a2039a"
+    },
+    "provenanceResolution": {
+      "notePath": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-log-serialization-note.json",
+      "noteSha256": "1768f2f0e4d07d4626a067dad03d97e5b28d261647717896b9476585f204713a",
+      "firstSavePath": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391-first-save.log",
+      "firstSaveSha256": "579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d",
+      "firstSaveBytes": 4149612,
+      "exactBytesIndependentlyVerified": "first-save representation equals decoded-tool representation plus exactly one final LF byte",
+      "outcome": "Root task accurately cites preserved first representation; both failures/totals identical. Earlier mismatch observation and all original bytes remain."
+    }
+  },
+  "nativeCorrection": {
+    "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+    "beforeSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+    "afterSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+    "exactByteReplacementVerified": true,
+    "scope": "One observer timeout SELECT only; add statement_cap and lock_cap, preserve values1000, order, connection, query count, roles and cleanup",
+    "sameClassSourceInspection": "Read new MA1 multi-column wire projections: adapter timeout aliases, identity/current-role, CHECK definitions, head/state, lock observer, paired absence, catalog/default/helper/connection shape. No additional duplicate result-name instance found; no other queries changed."
+  },
+  "attempts": [
+    {
+      "id": "ma1-review-r1-primary-001",
+      "kind": "whole_typescript",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "startedAt": "2026-11-09T16:47:31.047812+00:00",
+      "durationSeconds": 6.763,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_001_WHOLE_TYPESCRIPT.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "ma1-review-r1-primary-002",
+      "kind": "changed_files_lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native.ts"
+      ],
+      "startedAt": "2026-11-09T16:47:31.047912+00:00",
+      "durationSeconds": 2.427,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_002_CHANGED_FILES_LINT.txt",
+      "sha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f"
+    }
+  ],
+  "priorEvidence": "All V1 author/child/Root artifacts unchanged; R1 is additive",
+  "boundaries": {
+    "localNativeSqlPgSocketExecuted": false,
+    "hostedOrExternalTargets": false,
+    "runtimeSqlHelperDriverWorkflowPackageChange": false,
+    "gitRefIndexPublicationMutation": false,
+    "method": "NOT_APPROVED",
+    "dev": "NOT_RELEASE_READY"
+  },
+  "combinedSourceHashesBefore": {
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+  },
+  "combinedSourceHashesAfter": {
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+  },
+  "combinedSourcesUnchangedDuringChecks": true,
+  "frozenAt": "2026-11-09T16:50:32.750922+00:00",
+  "combinedFrozenChanges": [
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "beforeSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+      "beforeBytes": 57057,
+      "afterSha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "afterBytes": 59181
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "beforeSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+      "beforeBytes": 77098,
+      "afterSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "afterBytes": 77127
+    }
+  ]
+}

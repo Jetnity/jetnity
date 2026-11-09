@@ -1,0 +1,281 @@
+{
+  "schema": "jetnity.ma1.root-core-native-review.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T17:38:35.237277+00:00",
+  "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "runId": 42663861884,
+  "attempt": 1,
+  "jobId": 129322189331,
+  "conclusion": "success",
+  "checkout": "f8e73260118621728f980139552aea2bc633b234",
+  "checkoutTreeVerifiedViaGitApi": true,
+  "rawLog": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/core-job-129322189331.log",
+    "sha256": "e95392fd196fbfff0c3fa3f56465f83d843be64d049ce686e68d0ab9b1d5b908",
+    "bytes": 4235644
+  },
+  "coreCounts": {
+    "tests": 8621,
+    "suites": 969,
+    "pass": 8619,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2
+  },
+  "ma1Children": [
+    {
+      "number": 1,
+      "name": "creator function/table/schema defaults refuse atomically without normalization",
+      "actualResult": "pass"
+    },
+    {
+      "number": 2,
+      "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+      "actualResult": "pass"
+    },
+    {
+      "number": 3,
+      "name": "real active own Owner and exact account/session/profile negative matrix",
+      "actualResult": "pass"
+    },
+    {
+      "number": 4,
+      "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+      "actualResult": "pass"
+    },
+    {
+      "number": 5,
+      "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+      "actualResult": "pass"
+    },
+    {
+      "number": 6,
+      "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+      "actualResult": "pass"
+    },
+    {
+      "number": 7,
+      "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+      "actualResult": "pass"
+    },
+    {
+      "number": 8,
+      "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+      "actualResult": "pass"
+    },
+    {
+      "number": 9,
+      "name": "human method wait precedes fresh unchanged session/profile authority check",
+      "actualResult": "pass"
+    },
+    {
+      "number": 10,
+      "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+      "actualResult": "pass"
+    },
+    {
+      "number": 11,
+      "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+      "actualResult": "pass"
+    },
+    {
+      "number": 12,
+      "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+      "actualResult": "pass"
+    },
+    {
+      "number": 13,
+      "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+      "actualResult": "pass"
+    },
+    {
+      "number": 14,
+      "name": "rollback takes all removal locks before checking concurrently committed history",
+      "actualResult": "pass"
+    }
+  ],
+  "parent": {
+    "number": 1671,
+    "actualResult": "pass",
+    "durationMs": 28765.29745
+  },
+  "actualTerminalLedger": {
+    "started": 1562,
+    "settled": 1562,
+    "pending": 0,
+    "connections": 229,
+    "closed": 229,
+    "stoppedClusters": 8
+  },
+  "sourcePins": [
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "bytes": 52631,
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "bytes": 21566,
+      "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "bytes": 77127,
+      "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a"
+    }
+  ],
+  "allJobSteps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-09T17:21:49Z",
+      "completed_at": "2026-11-09T17:21:50Z"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-09T17:21:50Z",
+      "completed_at": "2026-11-09T17:22:04Z"
+    },
+    {
+      "name": "Run actions/setup-node@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-09T17:22:04Z",
+      "completed_at": "2026-11-09T17:22:10Z"
+    },
+    {
+      "name": "Install dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-11-09T17:22:10Z",
+      "completed_at": "2026-11-09T17:22:40Z"
+    },
+    {
+      "name": "Setup check",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-09T17:22:40Z",
+      "completed_at": "2026-11-09T17:22:40Z"
+    },
+    {
+      "name": "Operating mode",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-11-09T17:22:40Z",
+      "completed_at": "2026-11-09T17:22:41Z"
+    },
+    {
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-11-09T17:22:41Z",
+      "completed_at": "2026-11-09T17:23:04Z"
+    },
+    {
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-11-09T17:23:04Z",
+      "completed_at": "2026-11-09T17:23:50Z"
+    },
+    {
+      "name": "Tests",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-11-09T17:23:50Z",
+      "completed_at": "2026-11-09T17:32:06Z"
+    },
+    {
+      "name": "Schutz der Admin-API",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-11-09T17:32:06Z",
+      "completed_at": "2026-11-09T17:32:06Z"
+    },
+    {
+      "name": "Bezug auf das Schema",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-11-09T17:32:07Z",
+      "completed_at": "2026-11-09T17:32:07Z"
+    },
+    {
+      "name": "Unerreichbarer Code",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2026-11-09T17:32:07Z",
+      "completed_at": "2026-11-09T17:32:07Z"
+    },
+    {
+      "name": "Exporte ohne Aufrufer",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13,
+      "started_at": "2026-11-09T17:32:07Z",
+      "completed_at": "2026-11-09T17:32:14Z"
+    },
+    {
+      "name": "Ungenutzte Pakete",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 14,
+      "started_at": "2026-11-09T17:32:14Z",
+      "completed_at": "2026-11-09T17:32:15Z"
+    },
+    {
+      "name": "Production build",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 15,
+      "started_at": "2026-11-09T17:32:15Z",
+      "completed_at": "2026-11-09T17:32:54Z"
+    },
+    {
+      "name": "Post Run actions/setup-node@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 29,
+      "started_at": "2026-11-09T17:32:54Z",
+      "completed_at": "2026-11-09T17:32:54Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 30,
+      "started_at": "2026-11-09T17:32:54Z",
+      "completed_at": "2026-11-09T17:32:54Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 31,
+      "started_at": "2026-11-09T17:32:54Z",
+      "completed_at": "2026-11-09T17:32:54Z"
+    }
+  ],
+  "inheritedSkips": [
+    "ok 2470 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+    "ok 2660 - shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+  ],
+  "actualMissingExecutableJoinVerified": true,
+  "rootReadActualChildAndParentTapAndCleanupAndPostTestCommands": true,
+  "scope": "Core and actual14 MA1 native children/parent accepted in this bounded read; complete MA1 TL acceptance still awaits separate Atomic and aggregate gates. No hosted installation, method approval, public SLO or #1139 target-truth claim."
+}

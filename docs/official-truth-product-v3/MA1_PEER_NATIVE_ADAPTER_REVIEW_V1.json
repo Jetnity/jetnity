@@ -1,0 +1,165 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "issuedBy": "/root",
+  "recordedAt": "2026-11-09T16:03:58.958665+00:00",
+  "scope": "Independent early source-only review of MA1 native executor ownership/identity/capacity/cancellation/drain against accepted PLAN V2 sections7,9,11 and pinned unchanged helpers.",
+  "sourceState": "Actively developed, uncommitted source snapshots; not a final freeze or exact-head gate.",
+  "outcome": "ONE_CONCRETE_P2_SOURCE_FINDING; no native execution or TL acceptance",
+  "sourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/native-adapter.ts",
+      "snapshotSha256": "b5cd2f32991b45793d1f3c26ee5b73565b78e0397cd5a73d3beba892adbbbe2a",
+      "currentSha256": "1562de58250f7745ca01f9986bf35d39c843b494ce9d37c6b6d77b4ed48a5bce",
+      "unchangedAtReviewEnd": false,
+      "bytes": 12819,
+      "lines": 202
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/native-callsite.ts",
+      "snapshotSha256": "e4f8472f9cdbb7c5b743b2b9d6d664c79b4a985e3abad2982d7603368e2e63b7",
+      "currentSha256": "35ffc7f865467e26250191b4c7a23b2406df98d33db4be7b637bd89d6183fb90",
+      "unchangedAtReviewEnd": false,
+      "bytes": 54018,
+      "lines": 718
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/auth-fixture.ts",
+      "snapshotSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "currentSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "unchangedAtReviewEnd": true,
+      "bytes": 6536,
+      "lines": 89
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/test-lifetime.ts",
+      "snapshotSha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "currentSha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "unchangedAtReviewEnd": true,
+      "bytes": 9025,
+      "lines": 187
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/pg-wire.ts",
+      "snapshotSha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "currentSha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "unchangedAtReviewEnd": true,
+      "bytes": 22433,
+      "lines": 332
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/local-cluster.ts",
+      "snapshotSha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "currentSha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "unchangedAtReviewEnd": true,
+      "bytes": 5280,
+      "lines": 69
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/MA1_PLAN_V2.md",
+      "snapshotSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+      "currentSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+      "unchangedAtReviewEnd": true,
+      "bytes": 55990,
+      "lines": 321
+    }
+  ],
+  "supportingPrimarySource": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/postgres-identity-visibility-evidence.json",
+    "sha256": "3906d0449d6396c4ae88152ed55ad1c59002b70efe66f3ae73b02c125ce43d62",
+    "description": "Preserved local PostgreSQL16.15 source bytes and exact excerpts. Read only; not a runtime reproduction or claim about hosted PostgreSQL."
+  },
+  "findings": [
+    {
+      "id": "MA1-EARLY-NATIVE-P2-1",
+      "severity": "P2",
+      "status": "OPEN_AT_SNAPSHOT",
+      "title": "Restricted SET ROLE hides backend_start from the genuine login session, preventing normal identity proof",
+      "affected": [
+        {
+          "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+          "lines": [
+            24,
+            26,
+            31,
+            142,
+            145,
+            146,
+            147
+          ]
+        },
+        {
+          "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+          "lines": [
+            88,
+            90,
+            91,
+            92,
+            94,
+            106
+          ]
+        },
+        {
+          "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+          "lines": [
+            57,
+            58,
+            60
+          ]
+        }
+      ],
+      "evidenceKind": "Derived from actual implementation plus primary PostgreSQL16.15 source; not executed.",
+      "mechanism": "The target logs in as ot_ma1_reader, switches current_user to ot_v3_method_reader, then selects its backend_start from pg_stat_activity. PostgreSQL pgstatfuncs.c39 tests inherited privileges of GetUserId() over the backend st_userid; backend_status.c345 sets st_userid=GetSessionUserId(). After the role switch, the reader role has no privileges of its member login and no pg_read_all_stats membership. pgstatfuncs.c364/477 and624-631 consequently null backend_start. identity() requires a string at line31. The same ordering in createFixture.connect affects the authenticated human login as well.",
+      "impact": "The mandatory native path cannot establish genuine restricted identities: its normal reader stops/poisons the fixture before authority dispatch, and human fixture setup also rejects. Weakening birth validation or widening reader/Auth privileges would invalidate the accepted proof boundary.",
+      "minimalRequiredCorrection": "Within owned native files, obtain actual PID/backend_start while current_user is still the genuine restricted login, then select its fixed assigned role and prove the same PID plus exact session_user/current_user before any API dispatch; an equivalent fixed privileged-control identity check is acceptable. Preserve abort/poison checks, actual identity custody, and all normal/failure cleanup obligations. Do not add pg_read_all_stats, reverse role membership, superuser credentials or extra Auth/table grants.",
+      "verificationRequired": "Independent source reread of the bounded identity-order change and mandatory CI native execution using genuine NOINHERIT/NOSUPERUSER sessions; retain post-role identity/SET ROLE postgres refusal and exact PID/birth cleanup proof.",
+      "notification": "Sent promptly to /root and /root/v3_method_authority_writer with exact local source paths/hashes; Root independently verifying before formal adoption."
+    }
+  ],
+  "sourceObservations": [
+    {
+      "topic": "Four admitted contexts",
+      "assessment": "The single returned executor checks active>=MA1_LIMITS.activeReads before either per-call acquisition and retains its context through cleanup/failure accounting. Attached runtime/IPC adapters that share this executor therefore share this counter. Its observer lane contains only admitted contexts. No new pool or global registry is needed for this reviewed design."
+    },
+    {
+      "topic": "Primitive ownership and cancellation",
+      "assessment": "The per-call ledger owns acquisition, setup, identity, read, cancellation, hooks and absence observations. Rejection handlers are installed immediately. Target termination uses PID plus backend_start and is joined before connection close. Normal cleanup requires both target/control absence, settled primitive ledger and a final poison check."
+    },
+    {
+      "topic": "Poison and late acquisition",
+      "assessment": "fail() latches poison, aborts the fixture signal, releases the known fault gate, closes returned connections and calls the existing actual cluster stop before idempotent lifetime bookkeeping. Active calls recheck poison before returning rows; late acquisition continuations enter the same conservative failure path and close returned objects. This is source reasoning only."
+    },
+    {
+      "topic": "No promise self-join",
+      "assessment": "Executor failure drains only its primitive ledger; it never invokes lifetime.dispose or drains top-level executor/adapter actors. Parent native finally separately joins actors then disposes the unchanged lifetime."
+    },
+    {
+      "topic": "Actual stop and finite accounting",
+      "assessment": "Unchanged local-cluster stop performs pg_ctl stop/postmaster-absence verification; unchanged wire close alone is not treated as absence. The source does not claim a5/15/30/35s whole-call SLA. If stop/drain fails, poison remains and the case cannot claim joined/drained success."
+    },
+    {
+      "topic": "Native test source",
+      "assessment": "Inspected group11 source for four actual locked reads, PID/birth/blocker assertions, held cleanup, injected identity/observer/late-handoff failures and poisoning another active provisional read. These are intended test paths only; none was run, and the concrete role/identity defect currently prevents their positive setup."
+    }
+  ],
+  "knownIssuesNotDuplicated": [
+    "Worker four-key method-shape bug already Root-reported/primary-fixed.",
+    "Advisory lock resource observation bug already Root-reported/primary-fixed.",
+    "SQL CHECK-definition inventory finding is assigned to primary, outside this bounded rereview.",
+    "Runtime finite-remaining-interval finding already fixed; preserved runtime source receipt970ac2839c1583d6d07667e6108a19fa990888cd351931eb9b0c7507f5a20158 remains unchanged."
+  ],
+  "limitations": [
+    "No tests, imports, SQL, PostgreSQL/native launch, socket, server, browser, hosted calls or network were performed.",
+    "No worktree source, plans, Git refs, index, remote or database were modified. Only recovery snapshots/receipts were written.",
+    "PostgreSQL source reasoning does not replace mandatory native CI on the final frozen published head.",
+    "No runtime/native/whole-MA1 PASS, Ready, merge, production activation, method approval or Owner-gate closure is asserted."
+  ],
+  "nextStep": "Same primary author corrects the finite role/identity acquisition path; Root independently reviews the changed bytes and later gates mandatory CI. No automatic new slice."
+}

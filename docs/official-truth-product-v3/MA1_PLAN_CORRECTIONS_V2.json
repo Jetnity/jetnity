@@ -1,0 +1,115 @@
+{
+  "schema": "ma1-phase-a-plan-corrections-v2",
+  "at": "2026-11-09T15:17:14.625977+00:00",
+  "author": "Jetnity Official Truth V3 Method Authority 1 — Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer",
+  "status": "PROPOSED_PLAN_CORRECTIONS_ONLY_AWAITING_ROOT_AND_SAME_PEERS",
+  "rootChangesRequired": {
+    "comment": 6743404112,
+    "url": "https://github.com/Jetnity/jetnity/pull/1175#issuecomment-6743404112",
+    "receiptSha256": "191df2325deb6fe27f3e791e0808c503c3a64bedc47b1c7a35fdab1d8e5233ff"
+  },
+  "seedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "seedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "codeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "preservedV1": {
+    "planPath": "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+    "planSha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+    "sourcePinsPath": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+    "sourcePinsSha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+    "priorBytesPreserved": true
+  },
+  "v2": {
+    "planPath": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+    "planSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+    "planBytes": 55990,
+    "sourcePinsPath": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+    "sourcePinsSha256": "14aec53f3d4c5cf4cadc78d6dc9121365cb1952f9c857a312bec4a09d7ba1eb7",
+    "sourcePinsBytes": 9572
+  },
+  "readIndependentInputs": [
+    {
+      "path": "recovery/MA1_ROOT_PLAN_REVIEW_V1.json",
+      "sha256": "191df2325deb6fe27f3e791e0808c503c3a64bedc47b1c7a35fdab1d8e5233ff",
+      "bytes": 2704
+    },
+    {
+      "path": "recovery/ma1-plan-v1-sql-peer-review.json",
+      "sha256": "0a88b5e495d403ab53fcda952cf6dc9aabefc61c1f77fa1f065dc88495b6c696",
+      "bytes": 16197
+    },
+    {
+      "path": "recovery/ma1-plan-v1-lifetime-peer-review.json",
+      "sha256": "27dc5d6da92be81c39ad87b54d3aab4462d61d7484f9865cdee6e9a5a48f25d7",
+      "bytes": 6238
+    }
+  ],
+  "corrections": [
+    {
+      "rootId": "MA1-PLAN-LIFETIME-1",
+      "peerId": "MA1-PHASE-A-LIFETIME-P2-1",
+      "severity": "P2",
+      "locations": [
+        "Section7 receipt lifetime",
+        "Section11 group8"
+      ],
+      "change": "After actual drain, validated same-tuple/epoch reproof stores min(latest retained deadline, callStart+5000, callStart+fresh remaining_ms) before final checks. Same-epoch expired rows retain at most callStart. Concurrent larger results cannot revive custody.",
+      "plannedEvidence": "Controlled shorter1ms horizon consumed during100ms drain despite a longer original cap; retained expiry, still-valid shortening, expired-row retention and later/concurrent larger-result refusal. Existing native full-precision expiry remains.",
+      "executed": false
+    },
+    {
+      "rootId": "MA1-PLAN-LIFETIME-2",
+      "peerId": "MA1-PHASE-A-LIFETIME-P2-2",
+      "severity": "P2",
+      "locations": [
+        "Section7 native executor",
+        "Section11 group11"
+      ],
+      "change": "One fixture-owned observer with at most4 admitted cleanup owners proves both per-call control and target identities absent in at most20 paired observations. Per-call slots remain through joins; late/unknown identity or cleanup error poisons active and new work, actually stops owned cluster and joins own primitives without lifetime self-join.",
+      "plannedEvidence": "Actual success/abort target+control absence, retained slots while cleanup lane is held, late startup and identity/observer failure stop/join evidence, active-call positive refusal on poison, no parent-final-only success.",
+      "executed": false
+    },
+    {
+      "rootId": "MA1-PLAN-ROLLBACK-1",
+      "peerId": "MA1-PLAN-SQL-R1",
+      "severity": "P2",
+      "locations": [
+        "Section10 post-lock rollback inventory",
+        "Section11 group12"
+      ],
+      "change": "Before any DROP after all table locks, exact object/owner/metadata/ACL/column ACL and reader role attribute/both-direction membership validation. Harness removes only known reader-login membership before allowed empty rollback. No unexpected-right normalization; RESTRICT is separate external-dependency protection.",
+      "plannedEvidence": "Unknown membership, direct object grant and explicit column grant refuse with unchanged objects/rights on fresh observation; existing concurrent-history post-wait refusal retained.",
+      "executed": false
+    },
+    {
+      "rootId": "MA1-PLAN-SQL-WORDING",
+      "peerId": "MA1-PLAN-SQL-W1",
+      "severity": "WORDING",
+      "locations": [
+        "Section9 ACL inspection",
+        "Section11 groups2 and12"
+      ],
+      "change": "Supported function/table/schema creator-default poisoning is separate from direct column ACL/explicit-grant negatives. No column-default privilege form or new event-trigger mechanism.",
+      "executed": false
+    }
+  ],
+  "scopeUnchanged": [
+    "IssuedTASK and Root seed/reference bytes",
+    "Existing port/shared contract/driver/lifetime/#1142 helper/CI/package/default ACLs",
+    "SQL identity/state/locks/epochs/closed input and output plan",
+    "Four slots and fixed5000ms receipt cap",
+    "No implementation or tests; no local native/socket/SQL; no hosted or remote action; no Git mutation",
+    "Method NOT_APPROVED; Dev NOT_RELEASE_READY; all existing Owner gates"
+  ],
+  "attemptAccounting": "Document-only correction and source/hash reads; no product/test attempt. EarlierV1 read-discovery failure remains preserved in V1/sourcePins.analysisSupport.",
+  "next": "STOP for Root and same independent reviewers; PhaseB requires explicit Root acceptance of exact plan and base.",
+  "rootSetupClarification": {
+    "scope": "Existing genuine NOINHERIT fixture only, not a new architecture/finding",
+    "locations": [
+      "Section7 native reader setup and finite work inventory",
+      "Section9 genuine restricted fixture logins"
+    ],
+    "change": "Explicitly select only assigned authenticated/reader role and assert genuine restricted session_user plus intended current_user; no bootstrap-superuser negative proof. One fixed reader-role setup statement is counted.",
+    "executed": false
+  }
+}

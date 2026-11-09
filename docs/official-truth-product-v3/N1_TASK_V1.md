@@ -1,0 +1,35 @@
+# N1 — anbieterneutraler Recherche-Dateieingang, TASK V1
+
+9. November2026. Root/TL-Auftrag innerhalb [PROGRAM_V1](PROGRAM_V1.md), [Anschlussplanung](https://github.com/Jetnity/jetnity/issues/1162#issuecomment-6730597160) und ausdrücklicher Ownerfortsetzung. Code und echte Dateisystemtests jetzt; kein Liveanbieter oder Hosted-Schreibweg.
+
+## Baseline, Contract und Autor
+
+Live main `ce3366e26de73961d4682236af92347bfc3a4ca8`, E1 `97629e9130a907b8b9b8072d06bda1956758aa6e`. N1 auf S1-Contractfreeze `15401cac83b475180ca2a93272551366e2e066fa` gestapelt; S1-Speicher bleibt parallel in Arbeit. Gemeinsame Datei `storage/intake-contract.ts` SHA256`bc16c566f725d56564113027648ea02f1d47bf920a6bf0c208b62d2d7ae60fde`; Rootread plus6/6Node22Tests. API `V3ProposalIntakePort.capture(text,binding,signal)` / `confirm(reference,signal)` und geschlossene Binding-/Reference-Reader unverändert übernehmen. Kein zweiter Intake-/Manifestautoritätsstore.
+
+Branch `feat/official-truth-v3-research-ingress-1-20261109`. Einziger Writer **Jetnity Official Truth V3 Research Ingress1 — Codex Generation1**, Session `/root/v3_n1_ingress_writer`; keine behauptete Cursor-Session. Vor Code kurzer `N1_PLAN_V1.md` an Root: genaue Pfad-/FD-/Race-/Abbruchgrenzen und Dateiliste. Danach eigenständig innerhalb des abgenommenen Plans implementieren. Nur Root veröffentlicht/entscheidet PASS/Ready/Merge.
+
+## Scope und Dateien
+
+Tatsächlicher serverseitiger Leser für einen vom Jetnity-Runner ausgewählten lokalen Repository-Snapshot oder Dropfolder. Nur untrusted UTF8-Proposalbytes an den einen S1-Intake übergeben. Anbietername/Grok/KI/TL sind keine Persistenzautorität. Eigene Dateien unter `lib/readiness/official-truth-product-v3/ingress/`, `scripts/official-truth-v3-research-ingress-1/` soweit nötig und `docs/official-truth-product-v3/N1_*`. Keine Änderungen an S0/I1/S1/Monitor/Accepted/Quellenregistry/zentralen Guards/CI/Dependencies ohne konkreten TL-Nachtrag.
+
+## Acceptance Criteria
+
+1. Exakter Runner-Delivery-Auftrag, getrennt vom Forschungsinhalt. Binding und erwarteter Dateiname/Revision stammen vom Code-owned Runner; untrusted Sidecar/Repo-Metadaten vergeben keine Methode, Registry, Lease, Operation oder Freigabe. `git:<sha>` ist allein keine Attestation, dass irgendein Directory diesen Commit enthält. Tatsächliche Snapshotprovenienz bleibt vor späterer Betriebsanbindung zu belegen.
+2. Endlicher einzelner regulärer JSON-Dateieingang pro Aufruf. Keine Archive, Netzwerk-/URL-Downloads, Unterprozesse, git-Hooks oder fremde Pfadausführung. Keine absolute/nested/traversal/NUL-/Dotfile-Pfade. Nur ein eng validierter direkter Dateiname unter dem runner-eigenen Root. Symlinks und Hardlinks verweigern; nichtreguläre Dateien/FIFO/Sockets/Devices vor blockierendem Read ausschließen. Offene Descriptoren und tatsächliche Inodes an geprüften Root binden; bloß `realpath` plus späteres ungebundenes `readFile` ist TOCTOU-anfällig. Plattformgrenzen ehrlich behandeln; kein unsicherer Portabilitätsfallback.
+3. Exaktes Bytearray lesen, niemals mehr als65537Bytes als Grenzprobe; Fatales UTF8-Decoding ohne BOM-/Replacement-Normalisierung. Vor-/Nach-Metadaten und FD-/Pfadbindung prüfen, Größenänderung/Replacement/In-place-Änderung verweigern. Originaltext unverändert an S1. Bestehender I1-Reader bleibt Formatschema. S1-R1 verwirft duplicate JSON keys vor jedem Persistenzwrite; N1 darf keinen alternativen schwächeren Schreibweg besitzen.
+4. Aufrufer kann `AbortSignal` übergeben; vor jedem begonnenen Sideeffect erneut prüfen. Begrenzter Gesamtaufruf und Ressourcenbesitz: keine detached Reads/Promises, keine offenen Handles nach Erfolg/Fehler/Abort. Kein generischer positiver Timeoutfallback. Bei fehlender gebundener Intake-Abhängigkeit sofort unavailable, ohne Filesystem-/DB-/Netzstart. Keine öffentliche Next-Route oder produktive Aktivierung.
+5. Same-operation-Confirm bei verlorener Capture-Antwort. N1 bestätigt nur vollständige, streng geparste exakt passende Binding/Digest/Bytezahl. Ein Portwert `recorded` ohne passenden vollständigen Reference ist unconfirmed/unavailable, kein Beweis. Kein automatisches neuer-Operation-Retry, keine dauerhaft beschreibbare Dateimanifestautorität. Replay desselben Deliverys darf keine neue Delivery-ID erfinden.
+6. Ergebniszustände/Fehler sind feste technische Kategorien ohne Dateiinhalte, reale Pfade, PII oder Secrets. `recorded` bedeutet allein untrusted Proposal dauerhaft angenommen; weder bestätigte M1-Researcher-Ausführung noch I1 prepared/Accepted/amtliche Wahrheit. E1 artifact open/resume/reprove bleiben ohne tatsächlichen Job-/Result-/Fence-/Quellenbeleg unverfügbar; niemals aus Dateilesen einen privaten Receipt erzeugen.
+7. Echte temp-Filesystem-Tests: unberührte UTF8-/Whitespacebytes; PII/unknownfield/invalidJSON/invalidUTF8/zu groß; Symlink/Hardlink/Traversal/nested/absolute/Device-FIFO soweit sicher; Änderungen während Read; Abort vor/bei Capture; Handlecleanup; zwei konkurrierende Lieferungen; Neustart/Re-Entry; LostACK und exakter Confirm; falsche Reference; ungebundene Factory ohne IO. Reale DB-Kombinationstest mit S1 später getrennt, Synthetic-Intake darf nicht als Datenbanknachweis gelten. Keine Quellenextraktorregistration/Testfixtures in produktivem Weg.
+
+## Gemeinsame Integration
+
+N1 bindet nur den veröffentlichten S1-Contract. Root integriert später finalen S1-Speicher und N1 auf exakten geprüften Heads und testet reale File→SQL→I1-Quarantäne im vorhandenen CI-Nativeweg. Nicht eigenmächtig private S1-Dateien ändern oder aus unbekannten lokalen Zwischenständen kopieren. Benötigte reine Reader-/Typdetails vorher melden; kein eigener konkurrierender Vertrag. Keine neue Dependency erforderlich.
+
+## Grenzen, Lieferung und STOP
+
+Keine Hosted-DB/Auth/ACL/RLS/Migration/Credentials, keine echten amtlichen Quellen-/Provider-/Researcheraufrufe, kein Scheduler/Notification/öffentliche Route oder neue Kosten. Spezifisch verweigerten #917-Readback nie wiederholen/umformulieren/delegieren/alternativ verbinden oder Menschen als Ersatz schicken. #917Stage1/17D0-Lücken/#1139NOT_ACCEPTED/#1131/#1135/#968/Privacygates bleiben. Keine Genehmigung der Methode oder Aktivierung durch Codeauftrag. Lokale Dateien sind eigene synthetische Testfixtures, keine Live-Einreiseaussage.
+
+Root hat lokale PostgreSQL-Socketerstellung als vom Umfeld verweigert festgestellt. N1 benötigt keine lokale DB. Kein Retry/Transportwechsel/Schutzabbau; echte spätere Nativekombination läuft im ohnehin verpflichtenden unveränderten GitHub-CI-Weg, keine Auslassung.
+
+Code, tatsächlich ausgeführte Tests/Typecheck/Lint/Hygiene, Manifest, Status/Handoff/Selfreview mit verbleibenden realen Anschlüssen liefern. Node22`/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node` und bestehende Repo-Abhängigkeiten verwenden. Nur eigener Worktree; keine Remote-Mutation. **do not mark Ready; do not merge; do not start a follow-up slice.** STOP für unabhängigen TL-Review; gleicher Autor für unmittelbare Reviewfixes, jeder neue Head braucht frische Gates.

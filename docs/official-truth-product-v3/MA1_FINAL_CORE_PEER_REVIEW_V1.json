@@ -1,0 +1,439 @@
+{
+  "schema": "ma1-r2-independent-new-head-core-native-review-v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "at": "2026-11-09T17:40:13.557644+00:00",
+  "status": "ACTUAL_NEW_HEAD_CORE_AND_MA1_NATIVE_EVIDENCE_VERIFIED",
+  "tlPassIssued": false,
+  "binding": {
+    "repository": "Jetnity/jetnity",
+    "pr": 1175,
+    "run": 42663861884,
+    "attempt": 1,
+    "coreJob": 129322189331,
+    "jobUrl": "https://github.com/Jetnity/jetnity/actions/runs/42663861884/job/129322189331",
+    "sourceHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "sourceTree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+    "checkedOutMerge": "f8e73260118621728f980139552aea2bc633b234",
+    "actualCheckoutLogLine": 723,
+    "mergeTree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+    "mergeParents": [
+      "5558367eb0bff97162c369bbb8963123839f4b0e",
+      "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+    ],
+    "checkoutTreeEqualsSourceTree": true,
+    "bindingSources": "Independent raw run/PR/Git-data GET metadata and actual complete Core checkout log; no local Git object fetch."
+  },
+  "core": {
+    "conclusion": "success",
+    "actualSummary": {
+      "tests": 8621,
+      "suites": 969,
+      "pass": 8619,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0,
+      "duration_ms": 496461.081663
+    },
+    "actualSkips": [
+      {
+        "line": 59117,
+        "text": "2026-11-09T17:31:05.6566692Z ok 2470 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP"
+      },
+      {
+        "line": 61610,
+        "text": "2026-11-09T17:31:30.6262377Z ok 2660 - shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      }
+    ],
+    "allStepsSuccess": true,
+    "typecheck": {
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7
+    },
+    "lint": {
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8
+    },
+    "fiveHygieneSteps": [
+      {
+        "name": "Schutz der Admin-API",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "Bezug auf das Schema",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Unerreichbarer Code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Exporte ohne Aufrufer",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13
+      },
+      {
+        "name": "Ungenutzte Pakete",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14
+      }
+    ],
+    "build": {
+      "name": "Production build",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 15
+    },
+    "actualCommandLines": {
+      "check:api-schutz": [
+        {
+          "line": 62741,
+          "text": "2026-11-09T17:32:06.8843761Z ##[group]Run npm run check:api-schutz"
+        }
+      ],
+      "check:schema-bezug": [
+        {
+          "line": 62750,
+          "text": "2026-11-09T17:32:07.0028779Z ##[group]Run npm run check:schema-bezug"
+        }
+      ],
+      "check:dead": [
+        {
+          "line": 62772,
+          "text": "2026-11-09T17:32:07.2161965Z ##[group]Run npm run check:dead"
+        }
+      ],
+      "check:exports": [
+        {
+          "line": 62786,
+          "text": "2026-11-09T17:32:07.5389698Z ##[group]Run npm run check:exports"
+        }
+      ],
+      "check:deps": [
+        {
+          "line": 62798,
+          "text": "2026-11-09T17:32:14.7467747Z ##[group]Run npm run check:deps"
+        }
+      ],
+      "build": [
+        {
+          "line": 62812,
+          "text": "2026-11-09T17:32:15.0121038Z ##[group]Run npm run build"
+        }
+      ]
+    },
+    "actualBuildCompiledAndGenerated28Pages": true
+  },
+  "ma1": {
+    "actualChildrenPassed": 14,
+    "actualChildrenSkipped": 0,
+    "actualChildrenFailed": 0,
+    "actualParentPassed": true,
+    "actualPlan14Present": true,
+    "parentDurationMs": 28765.29745,
+    "children": [
+      {
+        "number": 1,
+        "name": "creator function/table/schema defaults refuse atomically without normalization",
+        "status": "actual_ci_pass",
+        "logLine": 33785,
+        "durationMs": 65.215788,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 398,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Function/table/schema creator default grants are refused atomically and retained; no privilege normalization."
+      },
+      {
+        "number": 2,
+        "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+        "status": "actual_ci_pass",
+        "logLine": 33791,
+        "durationMs": 139.896438,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 418,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Independent literal vectors, genuine restricted logins/assigned roles, closed direct inputs and actual adapter/SQL composition."
+      },
+      {
+        "number": 3,
+        "name": "real active own Owner and exact account/session/profile negative matrix",
+        "status": "actual_ci_pass",
+        "logLine": 33797,
+        "durationMs": 291.645633,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 483,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Current human Owner/account/Auth session/AAL/profile positive and negative cases via unchanged #1142 helper."
+      },
+      {
+        "number": 4,
+        "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+        "status": "actual_ci_pass",
+        "logLine": 33803,
+        "durationMs": 124.314009,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 519,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Exact operation/actor/command replay, collisions, fresh expected-state CAS and real committed acknowledgement."
+      },
+      {
+        "number": 5,
+        "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+        "status": "actual_ci_pass",
+        "logLine": 33809,
+        "durationMs": 854.010628,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 566,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Historical confirmation after lost response remains historical through expiry/revoke/supersession; no current authority inferred."
+      },
+      {
+        "number": 6,
+        "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+        "status": "actual_ci_pass",
+        "logLine": 33815,
+        "durationMs": 29.311697,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 592,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Explicit synthetic high-epoch setup tests last approval and terminal revoke/exhaustion; no billions-of-operations history claim."
+      },
+      {
+        "number": 7,
+        "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+        "status": "actual_ci_pass",
+        "logLine": 33821,
+        "durationMs": 7136.869295,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 611,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Authoritative database clock, caller conservatism, finite method expiry and nonrenewable technical receipt lifetime remain separate."
+      },
+      {
+        "number": 8,
+        "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+        "status": "actual_ci_pass",
+        "logLine": 33827,
+        "durationMs": 1098.127659,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 668,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Owner-only protected seam tests actual revoke-first/protected-first ordering and expiry after observed wait; protected marker only, no Accepted integration."
+      },
+      {
+        "number": 9,
+        "name": "human method wait precedes fresh unchanged session/profile authority check",
+        "status": "actual_ci_pass",
+        "logLine": 33833,
+        "durationMs": 121.505842,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 712,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Human method serialization wait precedes fresh unchanged Auth session/profile checks."
+      },
+      {
+        "number": 10,
+        "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+        "status": "actual_ci_pass",
+        "logLine": 33839,
+        "durationMs": 5204.577951,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 734,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Four actually blocked reads, fifth admission refusal, exact target identity cancellation, target/control disappearance and slot release after drain."
+      },
+      {
+        "number": 11,
+        "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+        "status": "actual_ci_pass",
+        "logLine": 33845,
+        "durationMs": 9716.269542,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 777,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Actual late acquisition/identity/observer failures poison their owned fixture, stop it and join pending calls."
+      },
+      {
+        "number": 12,
+        "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+        "status": "actual_ci_pass",
+        "logLine": 33851,
+        "durationMs": 1140.74729,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 821,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Real process death/restart, generation custody and fresh SQL; killed pending read joined; actual missing-executable error/close without fabricated exit."
+      },
+      {
+        "number": 13,
+        "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+        "status": "actual_ci_pass",
+        "logLine": 33857,
+        "durationMs": 984.45629,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 862,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "Guarded empty rollback preserves altered CHECK/object/ACL/column-grant/membership/dependency on refusal; success retains unchanged #1142."
+      },
+      {
+        "number": 14,
+        "name": "rollback takes all removal locks before checking concurrently committed history",
+        "status": "actual_ci_pass",
+        "logLine": 33863,
+        "durationMs": 759.383403,
+        "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "sourceLine": 927,
+        "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "proofScope": "All rollback removal locks precede empty check; concurrently committed revision/history causes post-wait refusal and preservation."
+      }
+    ],
+    "cleanup": {
+      "started": 1562,
+      "settled": 1562,
+      "pending": 0,
+      "connections": 229,
+      "closed": 229,
+      "stoppedClusters": 8
+    },
+    "cleanupLogLine": 33887,
+    "allOwnedCountsBalanced": true,
+    "all8ClusterStopsRecorded": true,
+    "explicitActualDiagnostics": [
+      {
+        "line": 33875,
+        "text": "2026-11-09T17:31:04.8942515Z # Epoch2147483645 is explicit synthetic owner setup; no billions-of-operations history claim."
+      },
+      {
+        "line": 33876,
+        "text": "2026-11-09T17:31:04.8942818Z # Protected marker is synthetic only; no Accepted/publication integration is claimed."
+      },
+      {
+        "line": 33882,
+        "text": "2026-11-09T17:31:04.9203394Z # Actual fixed missing-executable error+close joined; no exit/PID was invented and no SQL dispatched."
+      },
+      {
+        "line": 33884,
+        "text": "2026-11-09T17:31:04.9276718Z # Fixture action: revoked only known ot_ma1_reader -> ot_v3_method_reader membership before empty rollback."
+      },
+      {
+        "line": 33885,
+        "text": "2026-11-09T17:31:04.9277697Z # Connection negative is pre-acquisition owned-descriptor rejection; no foreign/TCP/wrong-database SQL was executed."
+      }
+    ]
+  },
+  "sqlLiteralCompatibility": {
+    "actualDiagnosticSets": 8,
+    "definitionsPerSet": 3,
+    "all24ExpressionsExactlyMatchBothSourceInventories": true,
+    "noNormalization": true,
+    "candidateSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+    "rollbackSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+    "operationsLiteralBytes": 2800,
+    "operationsLiteralSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+    "correctionNowActuallyExercisedInNewCi": true
+  },
+  "sourceBinding": {
+    "manifestPath": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_REVIEW_R2_SOURCE_MANIFEST_V1.json",
+    "manifestSha256": "3e07782246db7dca2896cad21fb0873646132d00b3eed8d53a2db6f666845654",
+    "all13SourcePinsMatchedDuringReview": true,
+    "pins": {
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927",
+      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+      "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0"
+    },
+    "unchangedSharedBoundaryPins": {
+      "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+    },
+    "interpretation": "Current actual TAP outcomes are mapped to the same hash-bound native harness and dependencies independently source-reviewed earlier. No previous test success is transferred."
+  },
+  "earlierFailuresPreserved": {
+    "initialRun": 42654936800,
+    "r1Run": 42659466404,
+    "bothRemainFailed": true,
+    "thisIsNewHeadRunAttempt1": true
+  },
+  "findings": [],
+  "evidenceFiles": {
+    "run-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/run-initial.json",
+      "sha256": "00b1e8c484e7cbcd6917eb38a5ee3fafbe1228db7b8874b03ac77c95f06c2370",
+      "bytes": 13876
+    },
+    "pr-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/pr-initial.json",
+      "sha256": "d9ac6ae657787445f89da2c700aeeb0d818c15469cd27ba24102ffa4b983585f",
+      "bytes": 23587
+    },
+    "merge-commit-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/merge-commit-initial.json",
+      "sha256": "0004f53ce4407310e7ab462bb0a6df517e3fe5ca33f8db6ed464ec614438c76d",
+      "bytes": 2819
+    },
+    "jobs-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/jobs-conclusive.json",
+      "sha256": "286310923ce4a5f6b3d702094337e0e63ac4250cf6b8fda7ea6d84bb474123a6",
+      "bytes": 14287
+    },
+    "core-job-129322189331.log": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/core-job-129322189331.log",
+      "sha256": "e95392fd196fbfff0c3fa3f56465f83d843be64d049ce686e68d0ab9b1d5b908",
+      "bytes": 4235644
+    },
+    "core-relevant-excerpts.txt": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/core-relevant-excerpts.txt",
+      "sha256": "bbea53301748806a5edd7d01af7b8b09c6c144495b780e315b2c54753d0db2d3",
+      "bytes": 17401
+    },
+    "actual-check-compatibility.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/actual-check-compatibility.json",
+      "sha256": "58148d0ae31f0271b96b3968c9992e784e0f14d092c27a90d099e73a66ccfdbd",
+      "bytes": 8628
+    },
+    "actual-ma1-proof-matrix.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r2-peer/actual-ma1-proof-matrix.json",
+      "sha256": "8bfe353fb092d579f550d6d2a24e82f09dfdc4d46f89636859271c14491ff4dc",
+      "bytes": 9556
+    }
+  },
+  "serialization": {
+    "rawLogRetrievedOnceAfterCompletion": true,
+    "decodedToolUtf16CodeUnits": 4226071,
+    "savedUtf8Bytes": 4235644,
+    "utf8BomAndSingleOriginalFinalLfPreserved": true,
+    "rawSha256": "e95392fd196fbfff0c3fa3f56465f83d843be64d049ce686e68d0ab9b1d5b908",
+    "noLogEditsOrNormalization": true
+  },
+  "scopeLimits": [
+    "This verifies actual mandatory CI with synthetic PostgreSQL/Auth/method fixtures. It is not hosted target installation/readback or a real method/package approval.",
+    "Protected marker proves the owner-only transactional seam; no Accepted/cache publication integration is claimed.",
+    "High epoch is explicit synthetic owner setup, not billions of historical operations. Foreign/TCP/wrong-database negatives are declared pre-acquisition descriptor rejection, not executed connections.",
+    "No local tests/module imports/native processes/SQL/sockets, hosted DB/Auth calls or #917 refusal retry were performed by reviewer.",
+    "No source/worktree/docs/ref/remote/workflow/Ready/merge mutation by reviewer; scratch evidence only.",
+    "Other CI jobs, Preview/Production/current-main integration/threads and final Technical-Lead acceptance are separately owned by Root; no whole-PR or release PASS is issued here.",
+    "Method remains NOT_APPROVED and Dev package NOT_RELEASE_READY; special Owner gates are unchanged."
+  ]
+}

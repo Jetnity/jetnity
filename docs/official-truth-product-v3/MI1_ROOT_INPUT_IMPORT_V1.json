@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-09T17:50:59.753624+00:00",
+  "taskSha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+  "artifactsVerified": 169,
+  "exactObjectsImported": 79,
+  "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "exclusiveCountsMainMa1": [
+    7,
+    37
+  ],
+  "isolatedWorktree": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+  "initialHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "initialClean": true,
+  "originalMa1WorktreeUnchanged": true,
+  "missingBinaryBlobsRemain": 16,
+  "noBinaryRetrieval": true,
+  "gitNoLazyFetch": true
+}

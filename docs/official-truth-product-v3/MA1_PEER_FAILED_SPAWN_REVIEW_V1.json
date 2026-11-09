@@ -1,0 +1,61 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "originalAuthor": "/root/v3_method_authority_writer",
+  "at": "2026-11-09T16:23:22.557629+00:00",
+  "scope": "Only delta from reviewed native.ts6b1edc5e\u2026 to current fixed missing-executable regression and lifecycle evidence. No repeated full-source acceptance.",
+  "sourceSnapshot": {
+    "at": "2026-11-09T16:22:19.724326+00:00",
+    "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+    "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-failed-spawn-source-v1/native.ts",
+    "sha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+    "bytes": 77098,
+    "lines": 980,
+    "baseline": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v2/native-after-static-correction.ts",
+    "baselineSha256": "6b1edc5e031a8124dad35d8ff26eca8dbfb1082df9f03e100b43ae2930b9657e",
+    "mode": "source-only; no processes/imports/SQL/tests"
+  },
+  "currentSha256": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+  "unchangedAtReviewEnd": true,
+  "result": "NO_CONCRETE_SOURCE_DEFECT_FOUND_IN_BOUNDED_FAILED_SPAWN_REGRESSION; execution pending mandatory CI",
+  "observations": [
+    {
+      "topic": "Fixed test-owned invocation",
+      "source": "native.ts233-242",
+      "assessment": "The only new mode is the literal union normal|missing-executable, checked again at runtime. The alternate execPath is a fixed sibling path resolved from import.meta.url and must not exist before fork. No pathname, executable, DB transport or mode is accepted from IPC/runtime input; the normal path remains unchanged."
+    },
+    {
+      "topic": "Independent actual failure witnesses",
+      "source": "native.ts247-285;849-861",
+      "assessment": "observedError is assigned only by the actual ChildProcess error listener, observedClose only by actual close, and observedExit only by actual exit. The test requires actual ENOENT, non-null close, null exit and undefined child PID. It does not synthesize process events or assert a fabricated successful exit."
+    },
+    {
+      "topic": "Visible failed disposal",
+      "source": "native.ts338-369;849-853",
+      "assessment": "The command is observed immediately and dispose must reject visibly. Disposal awaits real close, drains parent read jobs and keeps any startup/send failure fatal. A generic send failure may remain the primary fatal while a separately captured actual ENOENT proves the intended spawn failure; this is explicitly visible in the source and never interpreted as success."
+    },
+    {
+      "topic": "Owned cleanup evidence",
+      "source": "native.ts340-363;854-860",
+      "assessment": "After joining actual close and owned jobs, the source clears the watchdog and removes its stop callback plus named message/exit/error/disconnect/stdout/stderr listeners. The regression asserts joined/timerReleased/listenersReleased, actual owned-listener absence, zero pending jobs/reads, removal from tracked children, globally empty children set and no additional SQL dispatch."
+    },
+    {
+      "topic": "Preserved normal protocol and success truth",
+      "source": "native.ts291-336;351-380;812-848",
+      "assessment": "Generation/ID/binding/frame validation and parent SQL ownership are unchanged. Normal success still requires independently observed exit matching terminal close, and earlier actual SIGKILL/exit0/restart/custody/blocked-read proofs remain. The new diagnostic accessor exposes test evidence only; no receipt or authority boundary changes."
+    }
+  ],
+  "priorLifecycleSourceClosure": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-review-r2.json",
+    "sha256": "1eb969f5768a4ad1cb61b38d3cbc6c5b52eace8b1102f31d3c8c7567a6b03b85",
+    "status": "Preserved; this adds the requested source regression, not an executed reproduction."
+  },
+  "newFindings": [],
+  "limits": [
+    "No process was spawned, and no imports/tests/SQL/native/socket/network/hosted execution was performed by this reviewer.",
+    "The error+close/no-exit sequence and cleanup assertions must actually pass in mandatory CI on the final frozen published head.",
+    "Source may still receive author static corrections; receipt binds the copied SHA and final observed hash only.",
+    "No TL PASS, Ready, merge, activation or Owner approval."
+  ],
+  "operations": "Read/copy/hash/textual diff and scratch receipt only; no author source, refs/index, remote or database mutation."
+}

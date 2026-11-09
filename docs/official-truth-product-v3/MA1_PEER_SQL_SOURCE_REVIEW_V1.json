@@ -1,0 +1,187 @@
+{
+  "schema": "ma1-early-sql-source-review-v1",
+  "at": "2026-11-09T15:43:16.861702+00:00",
+  "reviewer": "/root/handoff_recovery_audit",
+  "originalAuthorSession": "/root/v3_method_authority_writer",
+  "status": "ONE_REQUIRED_P2_SOURCE_FIX_REPORTED_AUTHOR_ACKNOWLEDGED_UNFROZEN_NO_ACCEPTANCE",
+  "scope": "Early read-only candidate SQL and disposable rollback review against accepted MA1 PLAN V2. Source was changing, not frozen or published. No runtime/native proof or final exact-head verdict.",
+  "publishedDocumentationCheckpoint": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "inputs": {
+    "acceptedPlan": {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+      "bytes": 55990,
+      "lines": 321
+    },
+    "unchangedAuthorityHelper": {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+      "bytes": 5873,
+      "lines": 107
+    },
+    "initialCandidateSnapshot": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-v1.sql",
+      "sha256": "a9c5e254c2da2197406c45aa250837e0148fee0bc1cae8ef69eed0d9f4ceff09",
+      "bytes": 34372,
+      "lines": 478
+    },
+    "updatedCandidateSnapshot": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-v1-update1.sql",
+      "sha256": "c2baaca0e1d834daf159028aa2af79ecc9fd0e740394373155d72dfc252a84af",
+      "bytes": 47760,
+      "lines": 641
+    },
+    "rollbackSnapshot": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-rollback-v1.sql",
+      "sha256": "cbd83db04f6920585ed48460a5297bafd5b6be4fb220be82e2af74ca7aa1c2ca",
+      "bytes": 16695,
+      "lines": 209
+    }
+  },
+  "snapshotSequence": [
+    {
+      "at": "2026-11-09T15:36:14.418022+00:00",
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-v1.sql",
+        "sha256": "a9c5e254c2da2197406c45aa250837e0148fee0bc1cae8ef69eed0d9f4ceff09",
+        "bytes": 34372,
+        "lines": 478
+      },
+      "note": "Snapshot taken before source reading. This unfinished draft ended with a comment reserving final inventory and no COMMIT; not treated as a finished-delivery defect."
+    },
+    {
+      "at": "2026-11-09T15:38:01.465085+00:00",
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-v1-update1.sql",
+        "sha256": "c2baaca0e1d834daf159028aa2af79ecc9fd0e740394373155d72dfc252a84af",
+        "bytes": 47760,
+        "lines": 641
+      },
+      "note": "Author changed source during review. Read only necessary delta: added explicit non-null successor predecessor guard and full final inventory plus COMMIT. Initial source findings and line references are not silently attributed to this new hash."
+    },
+    {
+      "at": "2026-11-09T15:38:01.465913+00:00",
+      "snapshot": {
+        "path": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-rollback-v1.sql",
+        "sha256": "cbd83db04f6920585ed48460a5297bafd5b6be4fb220be82e2af74ca7aa1c2ca",
+        "bytes": 16695,
+        "lines": 209
+      },
+      "note": "Rollback appeared within the same bounded SQL scope and was snapshotted before reading."
+    }
+  ],
+  "currentAuthorFileObservationsAtReceipt": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "sha256": "c2baaca0e1d834daf159028aa2af79ecc9fd0e740394373155d72dfc252a84af",
+      "bytes": 47760,
+      "lines": 641
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "sha256": "cbd83db04f6920585ed48460a5297bafd5b6be4fb220be82e2af74ca7aa1c2ca",
+      "bytes": 16695,
+      "lines": 209
+    }
+  ],
+  "currentFilesMatchReviewedSnapshotAtReceipt": true,
+  "findings": [
+    {
+      "id": "MA1-EARLY-SQL-P2-1",
+      "severity": "P2",
+      "status": "OPEN_FIX_ACKNOWLEDGED_BY_ORIGINAL_AUTHOR",
+      "title": "Exact rollback inventory omits the actual three CHECK definitions",
+      "evidenceKind": "REASONED_FROM_SOURCE_NOT_EXECUTED",
+      "locations": [
+        {
+          "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-rollback-v1.sql",
+          "lines": [
+            87,
+            112
+          ],
+          "sourcePath": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql"
+        },
+        {
+          "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-sql-source-v1-update1.sql",
+          "lines": [
+            537,
+            562
+          ],
+          "sourcePath": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql"
+        },
+        {
+          "planPath": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            258,
+            264
+          ]
+        }
+      ],
+      "cause": "The inventory checks the three CHECK constraints by name/type and validated/nondeferrable flags. Its following exact key/reference loop covers only PK/UNIQUE/FK constraints. Neither conbin, pg_get_constraintdef nor another expected definition comparison binds the CHECK expressions.",
+      "concreteCounterexample": "On an otherwise empty valid owned fixture, replace heads_v1_shape with a validated same-name CHECK(true). The checked name/type/flags and all PK/UNIQUE/FK fields remain unchanged, so the current inventory cannot distinguish that altered metadata and rollback may drop it. This contradicts the accepted exact expected-constraints/altered-metadata refusal contract.",
+      "boundedRequiredCorrection": "Validate deterministic exact definitions of revisions_v1_shape, heads_v1_shape and operations_v1_shape in the finite inventory shared by installation and rollback; no broader architecture, new live privilege or source authority.",
+      "requiredEvidence": "One actual mandatory native same-name changed-CHECK case must refuse rollback and fresh readback must preserve the changed definition and all candidate objects. The pristine positive rollback must still succeed.",
+      "notification": "Sent to Root and original writer; writer explicitly acknowledged the missing CHECK-body comparison and accepted same-session correction. This reviewer did not edit author files or issue an expanded task."
+    }
+  ],
+  "reviewedSourceObservations": [
+    {
+      "area": "Closed scalar command and timestamp parsing",
+      "locations": "candidate update1:35-130",
+      "assessment": "No additional concrete defect found in this early source read. Null/unused fields, operation IDs, exact method/digest tuple, predecessor, expected head and approval modes are validated before state checks. Time syntax/civil round-trip is separate from future-expiry decisions."
+    },
+    {
+      "area": "History before NEW-state checks and actor custody",
+      "locations": "candidate update1:204-236 and mutator entrypoints238,276,334",
+      "assessment": "Mutators reuse confirm in the same transaction. Exact command+fresh actor returns historical record before CAS/predecessor/future expiry/exhaustion; absent confirm writes no history. Actor is derived after the unchanged helper, and stored history is not a current-authority receipt."
+    },
+    {
+      "area": "Actual lock/Auth order",
+      "locations": "candidate update1:215-225; helper:67-106",
+      "assessment": "Operation advisory mutex precedes method mutex; three table locks, current head FOR UPDATE and selected/predecessor/expected revision FOR SHARE precede the exact helper. The helper uses own user/session/profile SHARE NOWAIT and post-lock actual clock. No new Auth grants, statement-Boolean substitute or catch-and-allow appeared."
+    },
+    {
+      "area": "States, immutable revisions and terminal epoch",
+      "locations": "candidate update1:132-202,238-364",
+      "assessment": "Stage leaves current authority untouched. Approval requires registered revision1 on absence or same/immediate next revision under exact CAS. Approval/reapproval cannot produce epoch2147483647; terminal revoke can. Operation history append and state transition remain in one transaction. The original predecessor-NULL table-check gap was tightened by the author in the reviewed delta; no unresolved API path was found."
+    },
+    {
+      "area": "Machine observation and private locked check",
+      "locations": "candidate update1:367-421",
+      "assessment": "Read_current locks head FOR SHARE and samples clock afterward, distinguishes fixed negative states and floors full-precision remaining time against greatest(DB time, caller time). Owner-only final checker locks then uses actual DB time and exact tuple/epoch. Source comments correctly keep later joint-publication waits/reproof out of this preliminary read authority claim."
+    },
+    {
+      "area": "Creator ACL and final privileges",
+      "locations": "candidate update1:424-477 and final inventory479-639",
+      "assessment": "Creator grants are inspected before ownership transfer/normalization. Machine gets only API usage and read-current execute; human role gets only four human entrypoints; private functions/tables have no external grants. Final checks include inherited effective privileges, role attributes/membership and direct column ACLs. Actual native installation remains unexecuted."
+    },
+    {
+      "area": "Rollback order, emptiness, rights and scope",
+      "locations": "rollback:1-209",
+      "assessment": "Owned local fixture guards precede three ACCESS EXCLUSIVE locks and post-all-wait emptiness. Exact role/membership/ACL checks precede finite RESTRICT drops; unknown rights are not normalized. The identified CHECK-definition omission remains the specific metadata gap. Foreign dependency failure restores transaction. No #1142/default-role/Auth deletion is included."
+    }
+  ],
+  "notClaimed": [
+    "No frozen-source or exact-head Technical Lead PASS.",
+    "No successful SQL installation, native test, lock race, rollback or syntax execution.",
+    "No acceptance of implementation files beyond these snapshots.",
+    "No approval of any real method package, source truth, Dev target or production action."
+  ],
+  "operations": {
+    "sourceEdits": false,
+    "repositoryDocsEdits": false,
+    "gitRefChanges": false,
+    "network": false,
+    "runtimeImports": false,
+    "tests": false,
+    "sqlOrNativeExecution": false,
+    "databaseAccess": false,
+    "scratchOnly": [
+      "Copied immutable SQL snapshots before reading",
+      "Read source/plan/helper bytes",
+      "Computed SHA256 and line-number/diff evidence",
+      "Wrote this review receipt"
+    ]
+  },
+  "next": "Original writer supplies bounded CHECK-definition fix; independently inspect that delta and later repeat final review against a frozen published head with actual required CI/native evidence. Root alone decides acceptance."
+}

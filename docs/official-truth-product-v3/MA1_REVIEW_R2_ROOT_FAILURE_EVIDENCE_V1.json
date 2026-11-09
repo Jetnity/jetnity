@@ -1,0 +1,117 @@
+{
+  "schema": "MA1_R2_ROOT_FAILURE_EVIDENCE_V1",
+  "at": "2026-11-09T17:10:28.980899+00:00",
+  "reviewer": "/root",
+  "status": "CHANGES_REQUIRED_R2",
+  "head": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "tree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "run": 42659466404,
+  "attempt": 1,
+  "core": {
+    "job": 129306791905,
+    "tests": 8608,
+    "pass": 8605,
+    "fail": 1,
+    "skip": 2,
+    "cancelled": 0,
+    "ma1ChildrenStarted": 1,
+    "ma1ChildrenPassed": 1,
+    "ma1ChildrenNotReached": 13,
+    "parentPass": false,
+    "cleanup": {
+      "started": 46,
+      "settled": 46,
+      "pending": 0,
+      "connections": 5,
+      "closed": 5,
+      "stoppedClusters": 1
+    }
+  },
+  "r1Fixes": "Actual new finite-consumer case and original foundation scan passed. Observer setup advanced past original duplicate columns.",
+  "sourceFinding": "Root independently parsed actual diagnostic from full exact raw log and compared with both SQL literals: one extra closing parenthesis at offset1643 in operations_v1_shape expectation; heads/revisions identical. Exact proposed source hashes pinned in R2 task.",
+  "qualification": "No final native PASS. P7505 is shared; first RAISE location is not uniquely proven and other inventory failures remain possible.",
+  "otherSixJobs": "SUCCESS only on24d; Root independently read all native TAP counts, selected actual semantic/cleanup diagnostics, and UI artifact bytes/metadata.",
+  "rootReadOtherNative": {
+    "persisted": {
+      "tests": 1,
+      "failed": 0,
+      "skipped": 0,
+      "rawSha256": "8a2b971283bddf76e6cbafa0ef0f9fc93490a8bf0bfb326eafa06a032942184d"
+    },
+    "store": {
+      "tests": 4,
+      "failed": 0,
+      "skipped": 0,
+      "rawSha256": "44bcba459d06ed235d2f58f955f4943b1b12cb3c6cbf6eeb4d9c90d2640d3e76"
+    },
+    "lifecycle": {
+      "tests": 4,
+      "failed": 0,
+      "skipped": 0,
+      "rawSha256": "a91dbac1bc272251d49c032bb681d2f24a325097233ed54168c65ef2d569a3e9",
+      "mountedObserverStarted": 61,
+      "mountedObserverSettled": 61,
+      "pending": 0,
+      "nativeCurrentResults": 22,
+      "sourceFetchesDuringRead": 0,
+      "finalSuiteStarted": 5726,
+      "finalSuiteSettled": 5726,
+      "finalConnections": 476,
+      "finalClosed": 476
+    },
+    "atomic": {
+      "tests": 1,
+      "failed": 0,
+      "skipped": 0,
+      "rawSha256": "1e193cb8fdf2f96ae88e7f3014ac36096f30d46ba0aa3cd8b511b5d8cec70ed9",
+      "started": 9424,
+      "settled": 9424,
+      "pending": 0,
+      "connections": 248,
+      "closed": 248,
+      "stoppedClusters": 11,
+      "parentAborted": false
+    }
+  },
+  "files": [
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/failed-r1-ci-peer-review.json",
+      "sha256": "9e14980ff93a1c960537fffdcdd79278d6f1a232531ac0e6e7ace494a7f9fa80",
+      "bytes": 16292
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/actual-check-comparison.json",
+      "sha256": "27281bb705aa8fe63e56b14d5cd555caf58d5c74d88a796e8915eab6759a1533",
+      "bytes": 10680
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/root-literal-attribution-v1.json",
+      "sha256": "8a6ccd5c4634c17032dc5355aa8e1994e833a64c6ae5dc1c871d7c795db27ab0",
+      "bytes": 2363
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-other-release-gates-peer-v1.json",
+      "sha256": "fcbaece03a262f9595b6bb02618a1c20db69cc006c3a1ce77038c1b1cee96ae3",
+      "bytes": 14960
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-peer-v1.json",
+      "sha256": "2839440b2da276828c058bc11347bbf580358321dba703d5c02680d9fb399982",
+      "bytes": 9829
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-root-v1.json",
+      "sha256": "123fe88ad8462cbabf22e4b704e5ef1de487f0c48e0ec4f24726f9cdaff55210",
+      "bytes": 6848
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-root-complete-scope.json",
+      "sha256": "035b59bea64171c1f43a05f48d2c20a536160200230b4b1e3ac2d56d4bd67cb0",
+      "bytes": 710
+    }
+  ],
+  "rootReviewComment": "https://github.com/Jetnity/jetnity/pull/1175#issuecomment-6746356590",
+  "allPriorFailedOutcomesPreserved": true,
+  "noLocalNativeOrHostedAction": true,
+  "remaining": "Same author two-byte correction, independent source audit, new leased exact head and full mandatory CI. No readiness/merge/activation or automatic next slice."
+}

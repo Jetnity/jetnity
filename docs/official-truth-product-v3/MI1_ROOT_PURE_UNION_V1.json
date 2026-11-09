@@ -1,0 +1,2780 @@
+{
+  "schema": "jetnity.mi1.root-pure-union.v1",
+  "at": "2026-11-09T17:52:58.143985+00:00",
+  "taskSha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+  "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+  "mainTree": "c417811ff67248c4910bb2c5154bb51885d787eb",
+  "ma1": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "ma1Tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "parentOrder": [
+    "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  ],
+  "expectedPureUnionTree": "eb6f3878ffd44f125818fa764dba10a535404bd0",
+  "mainChangedPaths": 59,
+  "v3ChangedPaths": 358,
+  "exactPathIntersection": [],
+  "includedAncestorPins": {
+    "S0": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+    "I1": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+    "U1": "d110545a551baf6b6f18687042238a30514addda",
+    "M1": "40ca2f0348862bb763e8d42728418bda4c63405f",
+    "E1": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+    "S1": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "N1": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+    "IN1": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+    "C1": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "MA1": "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  },
+  "d1Excluded": "300946991376b8969b383a087d47b49a7636f722",
+  "mainEntries": [
+    {
+      "path": ".env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b13a2a193e33f660f2b6fa649acc5a9f4bfb177",
+      "size": 8698
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b5394006458d34c833cdb5438b06f9f6af28353",
+      "size": 320689
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e8a2b7a40007af29320919401369f17ee53672a",
+      "size": 6467
+    },
+    {
+      "path": "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dd154417f1dbabcde109c8cd3a54b04049edeec",
+      "size": 3535
+    },
+    {
+      "path": "components/trips/AktivitaetenBereich.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf7a07dd364a3d5bb04ebd91bb193209f10fff4e",
+      "size": 26554
+    },
+    {
+      "path": "components/trips/FlugKarte.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75f33e8af9a8e1b7430c2277b5d19a244748755f",
+      "size": 5318
+    },
+    {
+      "path": "components/trips/TripWorkspace.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dd1ba34e135e16b520b8ad9214f68406ec400ce",
+      "size": 69625
+    },
+    {
+      "path": "components/trips/TwelveGoTimetable.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e169faf0f9f858b5c3572cc0716e228bd27cbbc4",
+      "size": 8541
+    },
+    {
+      "path": "data/omio/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5389fee249bb0f01715333a26088652c51e7fdd1",
+      "size": 8
+    },
+    {
+      "path": "data/omio/ch.katalog",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18",
+      "size": 249406
+    },
+    {
+      "path": "scripts/omio/archivieren.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "069c1fc9c3d9ebbce1398dfa0e195498bb9d7d88",
+      "size": 857
+    },
+    {
+      "path": "scripts/omio/importiere-katalog.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc584a347a93ed13c9be520903a09c683fb854f7",
+      "size": 3100
+    },
+    {
+      "path": "app/(public)/privacy/page.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78dec458016483a9bcb2f8a0640269aeec5ef878",
+      "size": 7871
+    },
+    {
+      "path": "components/trips/organisieren/Aktivitaeten.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bb47b1a07ba0540e5e5fc99dd07ee8a7f0eb20f",
+      "size": 2875
+    },
+    {
+      "path": "components/trips/organisieren/Flugsuche.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aff02cf06b75edfac35bdc8ade76114f57541624",
+      "size": 8814
+    },
+    {
+      "path": "components/trips/organisieren/Hotelkarte.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1f211032e741ca0b636d09891ce2bce6c757ead",
+      "size": 5463
+    },
+    {
+      "path": "components/trips/organisieren/Hotelsuche.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e7738ddc2effb9d78755dec4ea4283d0c22d9ba9",
+      "size": 9719
+    },
+    {
+      "path": "components/trips/organisieren/Organisieren.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "717c0589d2d95d1bd6ff97f1957e25b1860bafbc",
+      "size": 7848
+    },
+    {
+      "path": "components/trips/organisieren/Reisefoto.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6e6c5e4bf344b72ae83094eab66ede8c6913f40",
+      "size": 481
+    },
+    {
+      "path": "components/trips/organisieren/Suchfelder.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da8af0f65b16807ea3ee2324b096a8f00cc4fcfb",
+      "size": 2094
+    },
+    {
+      "path": "components/trips/organisieren/Verbindungen.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a921cce91502f37ab16b862472f7b95efeeef39b",
+      "size": 5641
+    },
+    {
+      "path": "components/trips/organisieren/organisieren.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b69bc96a2eb4ea019d428f6554462c7144016033",
+      "size": 14015
+    },
+    {
+      "path": "components/trips/rental/DiscoverCarsMietwagen.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bb5adf8fb7ac77076fe153dc0482356d47c5351",
+      "size": 21214
+    },
+    {
+      "path": "components/trips/rental/StationField.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96efc5cad21a35569c6bd019998be8d272178419",
+      "size": 4278
+    },
+    {
+      "path": "lib/providers/omio/archiv.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b76437809314b1aee53e03601c75fc1315da8037",
+      "size": 582
+    },
+    {
+      "path": "lib/providers/omio/archiv.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a208884d474c1f58cfb55761fc1b59706cac4c82",
+      "size": 1382
+    },
+    {
+      "path": "lib/providers/omio/daten-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2f42521c658665d4304d403de5c84b7f946990e",
+      "size": 1672
+    },
+    {
+      "path": "lib/providers/omio/katalog.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b722ae96b1294636bbf5f5bf0d53b06ad90168a0",
+      "size": 2139
+    },
+    {
+      "path": "lib/providers/omio/katalog.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a390be1d0a43d8cae5f782d6998a54f7b6df1ec",
+      "size": 3714
+    },
+    {
+      "path": "lib/providers/omio/reise.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56b5a528a5954e2c0349e87d0a66cdbf9c3263cb",
+      "size": 2038
+    },
+    {
+      "path": "lib/providers/omio/reise.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c1547cfdca0b423ce2ac4b22b0ddf136fdb8a52",
+      "size": 1409
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce207aff133906859f740f96b5501bb45ed897ef",
+      "size": 2710
+    },
+    {
+      "path": "lib/trips/organisieren/katalog.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fcaa6576e98ae56e9b75bd3eb5b15fba866d08c8",
+      "size": 7100
+    },
+    {
+      "path": "public/images/organisieren/Bildnachweise.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d55c9ee01c70f42aefca33e28ce3d7ddf6a0bc0",
+      "size": 3699
+    },
+    {
+      "path": "public/images/organisieren/angsana.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0",
+      "size": 51116
+    },
+    {
+      "path": "public/images/organisieren/bangkok.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e",
+      "size": 52710
+    },
+    {
+      "path": "public/images/organisieren/canal.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5846ad75132b2c133b34f178ab8cfdadddef7d7d",
+      "size": 76134
+    },
+    {
+      "path": "public/images/organisieren/chang.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cc4484c01d4551a5a322107ab98742f4ae14a14",
+      "size": 78222
+    },
+    {
+      "path": "public/images/organisieren/hero.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b069ec8b21405b3cab5f3958bed9d784a64da905",
+      "size": 42864
+    },
+    {
+      "path": "public/images/organisieren/katathani.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50473504a6f75fc3b98f46eaa63dbe25442f5983",
+      "size": 112276
+    },
+    {
+      "path": "public/images/organisieren/mandarin.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe",
+      "size": 73502
+    },
+    {
+      "path": "public/images/organisieren/oldtown.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056",
+      "size": 76258
+    },
+    {
+      "path": "public/images/organisieren/paradise.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a",
+      "size": 108340
+    },
+    {
+      "path": "public/images/organisieren/peninsula.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88a99b48c2533b7f6d6671009f629bf4042e70ef",
+      "size": 64286
+    },
+    {
+      "path": "public/images/organisieren/phuket.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2",
+      "size": 37166
+    },
+    {
+      "path": "public/images/organisieren/reise.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3804565ca9563836d4f6a194c7e14d5f8661a9dc",
+      "size": 94226
+    },
+    {
+      "path": "public/images/organisieren/shangri.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d460ac804bd4fe16be3b41282bbd241e565caf84",
+      "size": 117162
+    },
+    {
+      "path": "public/images/organisieren/waterfall.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f64069cb58c1176c0a3bdf22437e54ce931148c",
+      "size": 81090
+    },
+    {
+      "path": "public/images/organisieren/watpho.webp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab2c76d69809104477b59bf3647c24303507824c",
+      "size": 57680
+    },
+    {
+      "path": "app/(public)/reisen/[tripId]/layout.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f93c8471ea42ecc40f8f6d838e6e6b6bcccacff3",
+      "size": 289
+    },
+    {
+      "path": "app/(public)/ui-audit/trip-workspace/page.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77e973a547da712fb8ba594cd7f25d45061b6866",
+      "size": 1033
+    },
+    {
+      "path": "app/api/mobility/omio/route.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7635cd828f0f3bd4b37355162a414a5d5e3e10fa",
+      "size": 1323
+    },
+    {
+      "path": "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01db05030d909a25d444b8ca2119218ecd31293f",
+      "size": 1891
+    },
+    {
+      "path": "components/trips/organisieren/omio/OmioVergleich.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db616e012811543db9f1a1b762bdea49a3467319",
+      "size": 15864
+    },
+    {
+      "path": "components/trips/organisieren/omio/Ortswahl.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3e6b7bff3c495aab502f1d93a2a9f2a2863a86f",
+      "size": 4387
+    },
+    {
+      "path": "components/trips/organisieren/omio/Streckenkarte.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c3aa1dcbd022ea344dfb83f4878e0d9c66e9be0",
+      "size": 6764
+    },
+    {
+      "path": "components/trips/organisieren/omio/Streckenwerte.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f48fa09d0b13ba164d4d8efb4a07f94337dd8ace",
+      "size": 1465
+    },
+    {
+      "path": "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d0265128bb360902c4c19986d29f33fb3d2da7b2",
+      "size": 3240
+    },
+    {
+      "path": "components/trips/organisieren/omio/vergleich.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3c1e90f0a6aa55262c83afbd2b58b2303afd21b",
+      "size": 13731
+    }
+  ],
+  "v3Entries": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f64ff6cfe706121cee2f27ba8788b78f71a6cdd3"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09ce3cda0bbec8de92f63672bab1ef2b4902700c"
+    },
+    {
+      "path": "DECISIONS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84f1f153c119aea463083d3b8e6f058e13c25e49"
+    },
+    {
+      "path": "JETNITY_START_HERE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07c87520e86ba0af0cf518911c78757644c1b9e9"
+    },
+    {
+      "path": "JETNITY_VISION.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "decc261962bd1fb516b851ac7fafe89fedb7868a"
+    },
+    {
+      "path": "ROADMAP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7edcf90b54d2907f4d5117087233bacd9b28e62"
+    },
+    {
+      "path": "components/readiness/OfficialTruthVisitorV3.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2726ba94d8d9e2ce81d21002d45a0dfd6eb0d843"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81c81f420cdf42bb910cb1325f368dde87e73976"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_EVIDENCE_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b02bc7d203824099f91aa12b0187e1dc1906199"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_FINAL_CONSISTENCY_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ce566b66a67761c271dc8ebb5aa84ef6c89df18"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1495fd2b06dbfc8469987fa8b6142fe558026163"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_LEGACY_IDENTITIES_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60e3cd3f832d72e2bcc579143aaf34559376a1a3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_MAPPING_REFERENCE_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1eec97cfda7166d47469cf6b6a9c7ae690ff51f9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_PLAN_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77705dde9cccf216eda8433b7f689909f7f788ff"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b5fa630722aa07114102da2f4dcb814e83e43715"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_R3_EVIDENCE_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4359fc66760dc22c2949d074cc652bdc0ff4405"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_REVISION2_IDENTITIES_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11eef31da566b9a3c72c5fb0b9143660f58ee5a8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_ROOT_FINAL_ACCEPTANCE_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a75a700d4934b18728f3ca13239d67c795faefe"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_ROOT_NEW_HEAD_UI_REVIEW_R3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e84ce2cc3edb784f24dba442aa0e1d7e698714fb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_ROOT_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41dc420b16d7bcbf1bbe93711ea862852333ce20"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_ROOT_REVIEW_R2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "540ca1bfed5809255c5bdf30681223be95bc134f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78ab48902be42422d4f19545f3ac3c3a68bd8e44"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SOURCE_MANIFEST_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37a3b6ba90d3fc9971abee3ad3c0793b5b2edb95"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_SYNTHETIC_CONTEXT_REFERENCE_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6be77ccacd91d7ffcb40375594337df77b95c981"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d0f56b0aed73bca4c2fede35221c0ef0df68658"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "901dd0b89b7a1c9cc5544f4df92d253b676c078c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TASK_V3.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3eeec7443278e521df15178d8db885797dc82b1e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bab3f8dd165dab3df43d20d2378d78cfacb8a442"
+    },
+    {
+      "path": "docs/official-truth-product-v3/C1_TEST_RUNS_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e236184b85b54093704a8cca391d6c51b115eac5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/D0_DEV_READINESS_DELTA_2026-11-09.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4dc2c75df8225b73123b0b33de627e3e568b7ccc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_CONTRACT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d747e0048d94313170b0d9a614417342be073b46"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_GUARD_G1_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fbd58f624a5121e11ff6b26faf834e0fd5d0c21"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_GUARD_G2_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22badf23a72fcc37366733d67fd9363eda208fc8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_GUARD_REVIEW_G1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a94264644d34ff060079f514055a0f65ebd4f26"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_GUARD_REVIEW_G2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e19159af232838b30d2ea31b488feab4e9acdab2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_IMPLEMENTATION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df4c1154d8f832b89b52108a3d0a67f4f0e8ece9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6863596f4e0700de34b09648419965a65266a28a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb62fdbef7fb99d1fc1c299150bfa06fb4f8a71a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_INPUT_SNAPSHOT_R3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "46c0fa3f08f53c9fc3b6858b376955491d030b57"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_MANIFEST.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d8d5fd84991a4a556ad14b11b77596a543553fc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_REVIEW_R1_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bfced6d3aa472995c44afa731feecf1968a786b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_REVIEW_R1_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae868ae12ae6c6370f7c0751cfc0807063600775"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_ROOT_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f5d5a5a9d99cb02b6652d5263e51e72911b528e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_SELF_REVIEW_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a1d11ab34426e822ce218f651954cb471ba3a6a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/E1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53356b7771af73fa1638b639e89269673755105b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_GUARD_REVIEW_R1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c104d0e947381e1b31512616992ab4faa29a863a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_IMPLEMENTATION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "662b300122531a3b0185bef22ae47af1b26ffe41"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_INTERFACE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9e96f1c39974f950b240f4f4a6bf5d284dbce03"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_REVIEW_R3_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7a1e8ce895ba70e3a85d8a9e3c0615b6a3528df"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_REVIEW_R3_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "222ee984ecef1c692452f62505eacd768dd783c7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_SELF_REVIEW_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "262a1888373a1f37c6f8df2a6fc1e1ce60ed41f2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_TASK_R2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39d3c15a1f0e652d1f753ec28c9bef2190acaeb3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/I1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0f93460895d35a20590bc565a77463e40d88a35"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IMPLEMENTATION_CHECKPOINT_2026-11-09.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e7a46b63d8acdb5d94cc3f0a8c4dc47a6825c36"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6baf828496ac1399d67beb955de10b9dd7b05af"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77cce813f34b293f9a7fcf69bfd3c10ccd577a8f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_PLAN_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c66de4de2d65c55386a6cf36ab48dafa41b167be"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_ROOT_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05f6adde943c82088a43ee6bc6ae9287f9f00ea7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d6a829e20585684bee6c4b518e05e908ca75522"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7594f1b6dd0f8194817e903821280946fe32a0be"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c518bc20c79fecc8405a26a5b2d24fc496b636ac"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b102c0967d17476a01e7128d4e139ff21d32482"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_CONTRACT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e21b403cac5896be21b821cca0227100326a287"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_FILE_MANIFEST.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d8a35dcbf87608ccab919d5905f7916a3be82d5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_GUARD_REVIEW_R1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2075883d2a6f764cd0de377a40f899942348d3ca"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_IMPLEMENTATION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "999096e2e132a40c15a18d497cbe0a1569509d25"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_REVIEW_R1_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "290945319a314bcdb466b7b6ddfa7756c652aaa4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_REVIEW_R2_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c510967bc3a3e97bb6d8ef66467b24b3bc8c728f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_SELF_REVIEW_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0139fdc029e16a8c2c66558899c9829ded427f1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_TASK_R2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8876723793675e724429d36cb225755d68720354"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b4305d6cf7b827211895b0c6fd9b3467ac146a2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_AUTHOR_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97e08d6f1f7eff69d76c086e4b9150ed5bcd52d7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_CURRENT_MAIN_INTEGRATION_PLANNING_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "391e97603f18a8649214a29739a9925490bae968"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_IMPLEMENTATION_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c38d4b5d22a0b6469e281274f143dff06f90862a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_IMPLEMENTATION_STATUS_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8804a777093833dadba422b437dd68dc25824d78"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_IMPLEMENTATION_SUBTASKS_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab5d5d0e95d554e4c7de5374ef8e00ba379e4685"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_MAIN_DRIFT_RECONCILIATION_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d9fef04f0bf6dfeec21628e80b7331962d096f0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_AUTHOR_ATTEMPTS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2ee92bbbab8b69694f8ccad7a82cc66f1281a40"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_IDENTITY_AMENDMENT_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e44e8a7d796c82046250bbde89f6501e48e23bbf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_001_NEXT_TYPEGEN.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "79cdd2a408e1ae968eb83e1d549860dc6d0ccd43"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_002_WHOLE_TYPESCRIPT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "448b3651b962a991b73489b2b55ad31246e98b52"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_003_SCOPED_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d016e513b0107d4a896cff279c8cf7867275830c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_004_HYGIENE_DEAD.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d275d2beffbf98a17b0dc507d84d7566cfffe43a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_005_HYGIENE_EXPORTS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1693c126cde7ecd1f195d3938ffc82bd92847104"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_006_HYGIENE_DEPS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f506598b032950088a60fdc131b1ecc2775a0ea5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_007_HYGIENE_API.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a06422ab36db8d6028536358f2815e9f165cf71c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_008_HYGIENE_SCHEMA.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e86673ecebaa748e391e887d570ea1ebdc3a61d4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_009_WHOLE_TYPESCRIPT_AFTER_FIXTURE_SYNTAX.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_010_SCOPED_LINT_AFTER_FIXTURE_SYNTAX.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef60e1cc42e6382a93403d8c87c2a3f5d9717a52"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_011_FINAL_HYGIENE_DEAD.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c329f1ed0042b87cd2e600ba2a842959a734c027"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_012_FINAL_HYGIENE_EXPORTS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42ff9e44e9552ba7f9f6128b8f550fbecb30e582"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_013_FINAL_HYGIENE_DEPS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31a2905e7926544ce31696fa6a075a41d5b45768"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_014_FINAL_HYGIENE_API.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8311f899e7ab48b959e9f46472778cdd77055452"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_015_FINAL_HYGIENE_SCHEMA.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83cf662fcb84ca824ffe80762545229cab29da58"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_016_FINAL_WHOLE_TYPESCRIPT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_017_FINAL_SCOPED_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f538ba9dbe29363c8f769c5d53709d1445a4f82"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_018_FINAL_HYGIENE_DEAD_R2.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d275d2beffbf98a17b0dc507d84d7566cfffe43a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_019_FINAL_HYGIENE_EXPORTS_R2.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a97b659d502432f521ad642ab3acb7600f44759"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_020_FINAL_HYGIENE_DEPS_R2.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2623a2c836c6f9c386cfd13f22fda7c5a9c46ce2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_021_FINAL_HYGIENE_API_R2.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c401eece084944ffc29f201afc4bbd9e790903e2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_022_FINAL_HYGIENE_SCHEMA_R2.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2beb16bd969ec2707516417adfd986645008931f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_023_FINAL_WHOLE_TYPESCRIPT_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_024_FINAL_SCOPED_LINT_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef60e1cc42e6382a93403d8c87c2a3f5d9717a52"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_025_FINAL_HYGIENE_DEAD_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d275d2beffbf98a17b0dc507d84d7566cfffe43a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_026_FINAL_HYGIENE_EXPORTS_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a97b659d502432f521ad642ab3acb7600f44759"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_027_FINAL_HYGIENE_DEPS_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2623a2c836c6f9c386cfd13f22fda7c5a9c46ce2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_028_FINAL_HYGIENE_API_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c401eece084944ffc29f201afc4bbd9e790903e2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_LOG_029_FINAL_HYGIENE_SCHEMA_R3.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2beb16bd969ec2707516417adfd986645008931f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_NATIVE_PROOF_MATRIX_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b217ab71055a077652840934fb56f5855e2a159"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_FAILED_SPAWN_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86c198583cdea7e6b64813ba322890ab37b16639"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85a98c06d3ed8817a9b8cb22440529d83f333a45"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "add4ab280df4738eb4f3f5c14c4b29edce9c03f0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa9475d854215c3c1c6cf90198bcd64beba7615b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_R2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "974fe5138e82d38dc7082f0818d0fecf746ca7d7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_NATIVE_GROUPS_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "177c76e76ac1f1857c8f4c4af2ca3cc45844d7a0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_RUNTIME_SOURCE_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47f2127c47132a8cb4bfcb867681ce8759eae7c6"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd2b9b020cc9d6cfc0644233be10d5953814c652"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51a3e6be61d23295897cd3de954b6850fb888e8f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_CORRECTIONS_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dc034601f2f2ad4bd47090c21fc32f10fc3bc06"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a50f73d6ff42c46448d605a22ed446f7acef7458"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_LIFETIME_REVIEW_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f961b9451c29868d7d8ce3e824eeb95222967de9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b4b2bbfdc73c0afb39c63e9ce2fa29947acf5f4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_SQL_REVIEW_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2804126b519b554212def16d6bc161071d0e103"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98b6af30c0054b218a420a087868a97f0d3144d4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b7e32be81fd471cd8f336b0fb50cedf1a3c4e47"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_AUTHOR_ATTEMPTS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7688f5f535687d88e9a0df6612b66e2eb9107dae"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_AUTHOR_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e040383afc99aaeb126385b337be996dce3fc9d4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_CI_FAILURE_EXCERPTS_V1.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c29a746f3d0e98050e0072a6ea0db0bad20245e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_001_WHOLE_TYPESCRIPT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_LOG_002_CHANGED_FILES_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef60e1cc42e6382a93403d8c87c2a3f5d9717a52"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_PREVIOUS_STATUS_BLOCKS_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77bd03a9e425cde70763a57431ae9a3a326ef344"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_ROOT_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "537aaf48ad806d449c63513faecedc37ba0d150e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_ATTEMPTS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3237339e50cf4597f4392aa36a0664bda858838b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_CI_FAILURE_EXCERPTS_V1.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "17574b656a050c3d8d834c0138f884b5cc01f36b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_DIFF_V1.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23f90d36e52863db93cbc3debe3644f31db32a5c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "558693eeae5d335658b8460ba5d76e7771a1004d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_001_NAMED_TEN_FILE_OFFLINE_SELECTION.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25080919f81545a975d9b1c218210e23c1ff505a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_002_FOUNDATION_CHANGED_FILE_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e01422e2f541ce35010799646f3ab8b715d8612b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e897dad354f76cb4b026dfd54ae64aa5b5fbbd2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a00dde4681815721b5a48d9d5e0bed4fc18128f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25ec09d96276c42d7a490c8dba89fe26eba98412"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_ATTEMPTS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f922337d48b0dbd55bdafd9b340ae1ed78380207"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_AUTHOR_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb8a9c8ae374fc400faa6b4208e081d98db57187"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_COMPARISON_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2850a712590aa3ee6e14ddd3e6cfd7201affa0d1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_BYTE_EDIT_COMMAND_V1.py.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d93cfef1f8005608c04f574ea57b7144f53f6557"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_001_BYTE_EDIT_AND_COMPARISON.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2850a712590aa3ee6e14ddd3e6cfd7201affa0d1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_LOG_002_DIFF_CHECK.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_FAILURE_EVIDENCE_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d21eba05086bc8aaf0e55260d3f83efe301eeffd"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_MANIFEST_VERIFICATION_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e028b7c0f32d8aa9a6ec3cee3bd5e5c9bb4d47b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_ROOT_SOURCE_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e5e04d0dfe23ef9f74449ea89d029c8f4a85cc0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec9b5e86a20995b9eeec8739b59a0207166ff190"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_REVIEW_R2_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75e7825fc25e16fadeeb2081733f5b7cd5cc90eb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_EARLY_NATIVE_SOURCE_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26c8f8c4bdac8734c682ce2df6e648d5fba54cc0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd79ba63879cd20f641bcf6ed097d8b4330a6ebf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3e0ec4739ab0568e55f6dbee0445cf80bc84b58"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_EARLY_SQL_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "317b6ef73076845f77733403335909973bb7154d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_FINAL_FREEZE_VERIFICATION_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e8896770c8eae6f0fc39d7ab7f054ef5e293313"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc5456285ebdb5a5624441a8131674ad22ff5bcd"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa9487cda00f706e52608efef3a5f2f3f4ae1090"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V3.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0cf1b777f6635cc017a10e1febcaa0be6da11e3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V4.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f20fb58fc0c5497d277df96904b77500fdc41c8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_HANDOFF_V5.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91b2c98fc766b738863715d736a0e077cf2fd395"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41e722293088548cd88b3566c6167a9cb2a5d002"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1_LOG.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ccc1035758ca52789d53162b6a6a0519a1928ce7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NATIVE_CHILD_TERMINAL_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b120026ca21e34b21b62d5d10f790b3c9de48f7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_NATIVE_SOURCE_CORRECTIONS_R2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47bb796d6ce68ab030c3c01d203d7993ee0e2fb7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_PHASE_A_ACCEPTANCE_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e191ba38ef983e6fbe8bcbc73db29c49e357ebb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_PLAN_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55e08fee3906e23ae06be98f549f37611fe0fab8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5edd24310eb7a5bc52031df2aa56bd925534c532"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8278a25c86ea19aff150ed8be979357ae05c49e7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_REVIEW_EVIDENCE_INDEX_V3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e66df73257aaa634880800b2db138cb54a1b993"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_RUNTIME_SOURCE_OFFLINE_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b554ea5b19329eb3c3e51b9b26c674211e279ae2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_ROOT_SOURCE_PUBLICATION_REVIEW_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aaf7001af8f13cf562c26104c6752db70e0282a5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_ATTEMPTS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "353f512aa709103a170f969bc338e2c0fb21af12"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f8eeec81d4c3d3079a8f03f1183f1d04816fc61"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_001_TESTS_INITIAL.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec6226a2ebfae608c0270c6f37c00425b47506be"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_002_EXPLICIT_OFFLINE_AFFECTED_SELECTION.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6d90c9b696dd95ff73fc203153b732da40049bf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_003_SCOPED_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e01422e2f541ce35010799646f3ab8b715d8612b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_004_HYGIENE_DEAD.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7dfe06d07376bef0ede40690540ddcfb56d3504"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_005_HYGIENE_EXPORTS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67c1abfa1f58998ff1b0d6af6de529563c45bde3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_006_HYGIENE_DEPS.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3840a58278807689933c0c8b29b5c8dda7805004"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_007_HYGIENE_API.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bbe0e788c92714aa5c53eab9b4edb5d97238913b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_008_HYGIENE_SCHEMA.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a8b5d146d3253b0731b48ed52a5239a9fd2b80b5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_009_NEXT_TYPEGEN.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aacd3fd6dcf5d420b008c870327d500f7eb75a43"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_010_WHOLE_TYPESCRIPT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18dfed42e78c51cfcbce66834b74b364eeb2a2c1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_011_WHOLE_TYPESCRIPT_AFTER_TEST_CAST_FIX.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_012_FINAL_NAMED_OFFLINE_SELECTION.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_013_FINAL_SCOPED_LINT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_014_WHOLE_TYPESCRIPT_CONFIRMED.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_015_NAMED_OFFLINE_SELECTION_CONFIRMED.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73bb05c0feee221f6c009cb609ac47d3cb5c42d8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_016_SCOPED_LINT_CONFIRMED.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "753b702bccb662a084684774504c61a312ea710a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_REVIEW_FIX_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "210a7de4d5e87afc7ef6f381127f3ce27f8d7ec6"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_RUNNER_FAILURE_001.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce72aa0e4d7278b044026cc7559ee9c6a9f6216c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a87bfcaa920a0d9059e954ef4950d7c126a26673"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2856bebc9ce12c35b757bb3154063263e408c68"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2da464149afd7ed7a38a10e352baff647e425407"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72fc6ee8792f87cddd5fd10466653ea68ae8d2cc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_A_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc129340cb88f8d2223982df01f57b0925d412b1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_DRAFT_REVIEW_B_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2703017d47b88f17f7b986eece6e9c5ccf027bdc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99fca136951db47a826ef5ac0a0a26efbcb1dfd6"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe148cdb4a0116a962b3439075e20a08586d5c81"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18c2a357af2db81c786e396c9583c4f1a5e78f0e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec1ceb26f37881bf18ad9e8c7918960ef52ad6de"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f8867b14772ff5717b258b6c43e091d7a17aea5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37cd0609ee9b264f2d9a7393b7e55b32ff290d3f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6ec5f100caa0e2725203e1be11e761c5a77b696"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db73fca1fbd06ae1826176fac527c03fe373b2a3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78d72f84afc4dbee68ea39d20a157881bbfe7903"
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b20f62dea4c121eef3eed8adb0eed616532519e7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/PROGRAM_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c6258e61e2a94f9d563a4f64e318aa81774c926"
+    },
+    {
+      "path": "docs/official-truth-product-v3/RECOVERY_CHECKPOINT_2026-11-09.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db65df04e914246f270b5b27662147c78bb31e33"
+    },
+    {
+      "path": "docs/official-truth-product-v3/RECOVERY_LIVE_EVIDENCE_2026-11-09.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b364575a0b4a1d92eedbfa53846a405334803794"
+    },
+    {
+      "path": "docs/official-truth-product-v3/RECOVERY_ROOT_REVIEW_2026-11-09.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "487a6f9568e856e938c6ffc16f96994938211258"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S0_CONTRACT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83d79ffea2a4ec798223a7ae827312bda323f01d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S0_IMPLEMENTATION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b325206155834f2429dd3f86cce822f9701c586"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S0_SELF_REVIEW_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ffdc7858434db208e410dc04332f27004d5a321"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_GUARD_AMENDMENT_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a7d1e22543cac0e58fdcb8c1bbefd674e38c947"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_PLAN_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3486aa27a9ee24b3f62f3335dd16a565f14c0392"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_RECOVERY_TASK_V2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf0f080662306f41c82efb9fbd6d75758f7c3878"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_SELF_REVIEW_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76b4e428b93d7dd89fb82efdc282dcee09b4fe55"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_SOURCE_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc65f298485578ef57cba98ba035ef595634d6a8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f24ae293e2dbecf3e2920e65a7ba101e001fee24"
+    },
+    {
+      "path": "docs/official-truth-product-v3/S1_VERIFICATION_RECEIPT_V2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6516c739c59f970dbaee9d1c7634e0523d01cb80"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_CONTRACT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "982100a0dffc9bd56311a1b70eb6c646a1cb65e2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_GUARD_REVIEW_R1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a03b28659dcdf1b1dbb0cb1bdb021f14ff1ecac"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_IMPLEMENTATION_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f71c3673b4d52e1bcd518d43eb2fd33e22b0a66"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_MANIFEST.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3b82f876bdd2bdefbd8f7c6a6a30a3cabdf8d27"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_REVIEW_R4_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "970f013c14db9f973bf671719312c547a2c49eee"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_REVIEW_R5_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6d67e5ac575d72e11198292b717fd05e8345a02"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_REVIEW_R5_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b8a455d8e6af024b924eaf819458f1d10b53160"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_REVIEW_R6_FIX_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78f573ad5f21dd532d41f73317d1f056c43613a4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_REVIEW_R6_TASK.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18e07b2a1a4b1e659f513588aff0fbba18f923da"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_SELF_REVIEW_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b82e68c070abae4dfb9f45c328cb4f3d98497e2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_TASK_R2.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0d4512c473c2e1d93e85c1724093ece0c068d3a4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_TASK_R3.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e275798c74366cd007e8cc3a5815f64a0f8047f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/U1_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d764a358077dcbd4987d8ed4dc0bfac3f70e32a6"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-core-relevant-excerpts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a06604f33ccadc1c609e04d98bb9874ac0c845bf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-log-serialization-note-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a8f07a339f55957378f7ee9ca43bcea4362e5642"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-ma1-child-presence.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56e73dc0a93e48ab6fda58724d8a9e67b3072e49"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/failed-ci-peer-review-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ae320aad6a183f89250f88f0af76a7f1b66419e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-peer-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ebfe48789baa1963ff43b17b1ce1f798bbcf3de"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-isolated-ui-root-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ec6c7ba4dd77623547aa6f9bd8d9d94d577d8b0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/historical-b7d-other-release-gates-peer-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1027357f3f17773a6811956414c1e58a5446300b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/peer-source-review-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "872a8f289a7d55d8cd0700e37cd63ee7effb517a"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-manifest-verification-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd645a8569d0ac1e19f4e5eea6c66cf5a965b0d2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-named-ten-file-offline.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2392c5f6fef38c4d25d53201b31a7cf55449f30b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-offline-review-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c74b0d76261a4a0b118b7558076efdb9aa912cbf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r1-review-evidence/root-source-comparison-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6de012f1e12de38dfd960b2ee95657c47b48bc3"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/actual-check-comparison.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e196ebefc3b7abbad6eb54681e1c3dd34a97231"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/failed-r1-ci-peer-review.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40e8fd8288e8890d941b707bc1e96c586285143c"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-peer-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4e6aec810b940e79390f8b56298c2466af143d8"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-isolated-ui-root-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90dbae9003b3a674eefbb8dd95c8b143261434bb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-other-release-gates-peer-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f495d8c6545610873830157688ad815e6fda56e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/historical-24d-root-complete-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e978d0279b5b5d3904d37b51a01bb04365fd174"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/peer-source-review-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00a388859d282438a23f3197182c3331578187e4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-r2-review-evidence/root-literal-attribution-v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f991cbecd0bebe28ef995a2b4b64380c0993063d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/method-candidate-before-r1.sql.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df98a8e2cee7d15a3a3e832f68486135268725ba"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/method-rollback-before-r1.sql.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f2e141add79e989d6c4770f23e40c95ba72b4ff"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-adapter-before-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dc99b7a513f5072591be55f25331f235e04ec76"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-before-child-terminal-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4425c66f097f491ba7219217218dfa313487fef"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-before-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2aa59bedd3c9244dfe7e326ed2b5fc53210c287"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/native-diagnostic-final-binding.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76c56300b6d0b52a1b0203ae54b302d4946f4c41"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/postgres-identity-visibility-evidence.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72ecdb17b214fad9f93f77157e7b9adadc8c2205"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/process-worker-before-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "27858ec1b4551f04c5d9fc55931f7ba29440470d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1-log.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1dd8b77efe5ac3f9c76f4a0b4bc035b2fd65176"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1.cjs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd4a091ee7ece3f1688349595b2ca34701b06599"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2-log.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab36cb8e4f71e1d9c70fa8da1216f1daab15f35f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2.cjs.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "376fb35f1effae4e6b7d0efce81f8bc6ca7d3500"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/runtime-adapter-before-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c59919fce07097119e16bcd99b58fffaa164805"
+    },
+    {
+      "path": "docs/official-truth-product-v3/ma1-review-evidence/runtime-contract-before-r1.ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72a05c6635739f5312679553a39253339103804d"
+    },
+    {
+      "path": "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "702bab677f4ef407ae94924816beb86d9504f469"
+    },
+    {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc1456a43ab5b96551080278fef3fe67a225aefc"
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0818f254edb186abd24ac0b978ba11b284771448"
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3244c8b219af0f24ee935940d4c61c4a8418f7a0"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "329e4f6b28232e6668660e4ccb1b6e587c8f5059"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/contract.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "354c18e153f90a7febb7ea8f14558626202c187e"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/legacy-identity.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b85ef96369b551d2b4577285b083887d9fd6246f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6e0010273757060723a0e55d5bdf3c71e4f56ce"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "611c4460bd4773abcf717d35ccc9f0cb17cf0df4"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/test-support/fixture.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "24403c73e7897bc359d0f99b787b347daedb96ec"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/transport.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e23eed87783808a4cf8a82882adfe482f79e8846"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c549d0dfe80e2283f8852022637c3d1c8e7a3d5d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43036718191c3a733aaeaca1fde9f499174cee53"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e7b4db0e627a35249943f410c37b096e11471cd"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "afd363a808905faf32dc1a7af5c4bb950cb17bce"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4dbf5795277bf941a569582b4658e68f632b99c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93715d6e173ccc8a853c685400ca62a5d8b73a4e"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e600366dbd96e9b746188aebf13dacb1a18c2c1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4deb0aec975ea5567735579933a957e2c841dbd"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38b9da675fafe392976df7f42640f0b5974fa3de"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e23d00822f8d196d758002e56b13a6d26ff5d456"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bcdbfedc6e702185f270520a9685ab5700eaed92"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/global-conditions-native.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95827523b1ead06e54f8db8a95ff31e43f690e74"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c20d63ad7b73f27b4f75e4d232640154b15b23ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a66e8e44ea06061dbfdc1d9a341bd2c61c5866d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b2ecf3bc472304b9447df64c3650466b4a8541d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f7915790ce334b16e24bbea84848e318cd1d0f89"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "addf597505eaedfdf3da0ba925f4b2e6ef96e7ba"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab9754d332b988d81b84e738c997d01bb37966d3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d4647b4110b41481579e9929678e5f37761dce7"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fc91d0a46ce713568384e7607ae5064bad215de2"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd107022522a725cbbafe7589028aec5f341cefa"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/monitor.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ca765fa01befbecf13a0b8c3aeb97dec744e21c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0d29c60f54bf002a5d81f1a07670d742a25e08b1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "786c378eca2e500348358004606a87729538c9b3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a6b0215def84931cddd96248cf4dbf347ce5a621"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/recovery.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3878530ad058dbb4e7a42f072cb33776e7c27d20"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "467904b945b53b84ab916b3f40cf67dfe47942c1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/runtime.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a60e3ee2eae975646ce17ac193f51b0d9af4f063"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/test-support.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb287133142fb1206b367b98ecd017f2c18bac22"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/worker.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29958a3be792fccd40f5322b0ebf3fa5da70669f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b411123af2baa3aee1fcd3bc4a836bd93897ccf6"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0aebf5c5a9e61a68e72d284dff132a98040c938b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e2e4947b03f4f444691ed8177dcc3ca98a71b69"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-native.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b0451ce7eeee07bd1e73bd4bb1da37584e805a9a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-server.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b77864911b6a8cc36bdc3a17474d60c32ef8df56"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0605decae43995be0fd0a5183a501067e8a03685"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c731f673fe35a896a40d33a9a8d78faca599942f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dee361d8a5b2a54747da22fd9a405066c57eb905"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f33353d1e4077effad9e7527c9a6c25a703261cf"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5337acae909ead313de210edb12df8eaf19394d1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b47357190f0d7dddc1dfca2f2c2330af6ccfb63"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/controller.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd7966fca7b5c44110dd8bd25e62eb96809bbeac"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64923b938ba962315f3171761e0c82963c9b14f7"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/presentation.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c046b09a22a073e5d3b9484498a2b26df266c609"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/presentation.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b27461814e7f9adbaf228e9a018cf1dc40f6b2d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/query.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "076347b14d13032ae97f1c5ac6214e8abea146b1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9ba1fcb92775107e4c0ec99bac96312a0b9c120a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/test-fixtures.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e3275a569014f4bd02821d4fe6f66713238996b"
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3724447805b0762d142b8203253068fbd0f7bebd"
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc17fa8df7d25b4ad48d06f000b618f8aa9f6dc8"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c732123e058ac7db3d50253d299fa0fc7d88d73"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18439d9f1600aa590c9b76276fbda728ae3e39de"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/fixtures.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9df822ff30a766a3ee9137ab4ac92840dd12fa4b"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/generate-retention-shape.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf84b9119939cc2760434f3b2a69f0ec6f99b25c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae39ae3b6296c7800668f14cfe8c7d61601ce0fa"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8ef08c3131e2aeee61a16a565e51b2fb322c8572"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42d6dae8d5d41181396749fb320c6eeeb4edeb35"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49c06a696154dfbb871fd7c23e35488f43198c07"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/process-worker.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd8495e76eb70f88a1ece139df11177f4ca7446c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/retention-fixtures.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "beb65bc3b2454bf46a7759fcbb271eb23fb414ee"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaa35fd57eee7b7c86de91dd77e96ef263f61d8b"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af7919f26cbb36038ba61a1b849815a3a29aac4b"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30a4731214a6bc7e4508ee0183027903d550d51d"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10c5be53c91c27693af569e13c83c12c0db51102"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1390764f645afbcd6aead32f42fe5b40f8140c3"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/benchmark.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "746c3b86a8416493f6870d0a41f24e12d7625f11"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/browser.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81da5c1a0ff9e0cdfbc7b158da3326ee3795d098"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35d8a447a420f53913e11d535cd3bf9fb34c7f18"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/evidence.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f793e62bf8786b287b594886e1ae877efba5906"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/mount.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99bf79de4cbe9abc7c7b69738be1428894c94c87"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/run.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d30c238559d3ef143f087e42964f818d4d0a0af"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/synthetic-server.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ac089611204b71b3b8f8b6f5024f103d0b4259f"
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/tsconfig.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efbb06b3095251cb78de4e6bee6a2cfeac5cc441"
+    }
+  ],
+  "localWorktree": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+  "initialHead": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "copiedMainTextPaths": [
+    ".env.example",
+    "package-lock.json",
+    "package.json",
+    "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+    "components/trips/AktivitaetenBereich.tsx",
+    "components/trips/FlugKarte.tsx",
+    "components/trips/TripWorkspace.tsx",
+    "components/trips/TwelveGoTimetable.tsx",
+    "data/omio/.gitignore",
+    "scripts/omio/archivieren.ts",
+    "scripts/omio/importiere-katalog.py",
+    "app/(public)/privacy/page.tsx",
+    "components/trips/organisieren/Aktivitaeten.tsx",
+    "components/trips/organisieren/Flugsuche.tsx",
+    "components/trips/organisieren/Hotelkarte.tsx",
+    "components/trips/organisieren/Hotelsuche.tsx",
+    "components/trips/organisieren/Organisieren.tsx",
+    "components/trips/organisieren/Reisefoto.tsx",
+    "components/trips/organisieren/Suchfelder.tsx",
+    "components/trips/organisieren/Verbindungen.tsx",
+    "components/trips/organisieren/organisieren.css",
+    "components/trips/rental/DiscoverCarsMietwagen.tsx",
+    "components/trips/rental/StationField.tsx",
+    "lib/providers/omio/archiv.test.ts",
+    "lib/providers/omio/archiv.ts",
+    "lib/providers/omio/daten-server.ts",
+    "lib/providers/omio/katalog.test.ts",
+    "lib/providers/omio/katalog.ts",
+    "lib/providers/omio/reise.test.ts",
+    "lib/providers/omio/reise.ts",
+    "lib/trips/organisieren/katalog.test.ts",
+    "lib/trips/organisieren/katalog.ts",
+    "public/images/organisieren/Bildnachweise.txt",
+    "app/(public)/reisen/[tripId]/layout.tsx",
+    "app/(public)/ui-audit/trip-workspace/page.tsx",
+    "app/api/mobility/omio/route.ts",
+    "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+    "components/trips/organisieren/omio/OmioVergleich.tsx",
+    "components/trips/organisieren/omio/Ortswahl.tsx",
+    "components/trips/organisieren/omio/Streckenkarte.tsx",
+    "components/trips/organisieren/omio/Streckenwerte.ts",
+    "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+    "components/trips/organisieren/omio/vergleich.css"
+  ],
+  "locallyUnavailableBinaryObjects": [
+    {
+      "path": "data/omio/ch.katalog",
+      "sha": "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18",
+      "mode": "100644",
+      "bytes": 249406,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/angsana.webp",
+      "sha": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0",
+      "mode": "100644",
+      "bytes": 51116,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/bangkok.webp",
+      "sha": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e",
+      "mode": "100644",
+      "bytes": 52710,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/canal.webp",
+      "sha": "5846ad75132b2c133b34f178ab8cfdadddef7d7d",
+      "mode": "100644",
+      "bytes": 76134,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/chang.webp",
+      "sha": "3cc4484c01d4551a5a322107ab98742f4ae14a14",
+      "mode": "100644",
+      "bytes": 78222,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/hero.webp",
+      "sha": "b069ec8b21405b3cab5f3958bed9d784a64da905",
+      "mode": "100644",
+      "bytes": 42864,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/katathani.webp",
+      "sha": "50473504a6f75fc3b98f46eaa63dbe25442f5983",
+      "mode": "100644",
+      "bytes": 112276,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/mandarin.webp",
+      "sha": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe",
+      "mode": "100644",
+      "bytes": 73502,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/oldtown.webp",
+      "sha": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056",
+      "mode": "100644",
+      "bytes": 76258,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/paradise.webp",
+      "sha": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a",
+      "mode": "100644",
+      "bytes": 108340,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/peninsula.webp",
+      "sha": "88a99b48c2533b7f6d6671009f629bf4042e70ef",
+      "mode": "100644",
+      "bytes": 64286,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/phuket.webp",
+      "sha": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2",
+      "mode": "100644",
+      "bytes": 37166,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/reise.webp",
+      "sha": "3804565ca9563836d4f6a194c7e14d5f8661a9dc",
+      "mode": "100644",
+      "bytes": 94226,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/shangri.webp",
+      "sha": "d460ac804bd4fe16be3b41282bbd241e565caf84",
+      "mode": "100644",
+      "bytes": 117162,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/waterfall.webp",
+      "sha": "9f64069cb58c1176c0a3bdf22437e54ce931148c",
+      "mode": "100644",
+      "bytes": 81090,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    },
+    {
+      "path": "public/images/organisieren/watpho.webp",
+      "sha": "ab2c76d69809104477b59bf3647c24303507824c",
+      "mode": "100644",
+      "bytes": 57680,
+      "reason": "connector rejected non-UTF8 blob; no alternative retrieval",
+      "actualBytesLocallyAvailable": false
+    }
+  ],
+  "localCheckoutIsCompleteCombinedTree": false,
+  "missingBinaryObjectsPreservedByExactExistingMainId": true,
+  "nativeOrBuildExecution": "not attempted locally; full new CI required",
+  "privateIndexOnly": "/workspace/scratch/01cbe1264212/recovery/mi1-pure-union.index",
+  "noPublishedUnionYet": true,
+  "noInputRefModified": true,
+  "inputAcquisitionManifestSha256": "0962410b5cbcca86c33f7b4e38ae3938293134a00fef8922a54da4b58a32fb50"
+}

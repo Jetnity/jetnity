@@ -1,0 +1,268 @@
+{
+  "schema": "MA1_REVIEW_R1_RUNTIME_ATTEMPTS_V1",
+  "createdAt": "2026-11-09T16:46:43.355508+00:00",
+  "author": "Jetnity Official Truth V3 Method Authority Runtime 1 \u2014 Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "primarySession": "/root/v3_method_authority_writer",
+  "status": "FROZEN_AUTHOR_R1_P2_A_DELIVERY_AWAITING_ROOT_REVIEW",
+  "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+  "taskPath": "docs/official-truth-product-v3/MA1_REVIEW_R1_TASK_V1.md",
+  "taskSha256": "563a62394d5cdd2970bf551a14e93097ca6f59d2a0dd6890c9cadafd796af874",
+  "issue": "R1-P2-A",
+  "onlyOwnedSource": {
+    "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+    "beforeSha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+    "afterSha256": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927"
+  },
+  "sourceReadNotes": [
+    "Read entire R1 task before edit; exact HEAD verified.",
+    "Read actual prior CI bytes, failure blocks, cleanup and test totals. Initial broad read output was truncated; targeted reads completed before edit.",
+    "Read actual finite registry, predicate, importer scan and both ownRecord imports; preserved predicate/scans/earlier assertions."
+  ],
+  "priorCiFailure": {
+    "runId": 42654936800,
+    "attempt": 1,
+    "jobId": 129290779391,
+    "head": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log",
+    "actualSha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+    "bytes": 4149611,
+    "taskCitedSha256": "579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d",
+    "hashDifference": "Reported to primary; actual peer file bytes retained. Root attribution pending. No task or prior log rewritten.",
+    "tests": 8606,
+    "pass": 8602,
+    "fail": 2,
+    "skipped": 2,
+    "cancelled": 0,
+    "failures": [
+      "unexpected foundation consumer method/authority-postgres.ts: official-truth-autonomous-provenance-artifact (ownRecord)",
+      "MA1 native setup local_pg_duplicate_column before14 native child cases"
+    ],
+    "nativeCleanup": {
+      "started": 5,
+      "settled": 5,
+      "pending": 0,
+      "connections": 2,
+      "closed": 2,
+      "stoppedClusters": 1
+    },
+    "excerptPath": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_CI_FAILURE_EXCERPTS_V1.txt",
+    "excerptSha256": "7f43dc07a0630948ad5a266045bfc3ca7c985f243713f8a50a604ab6726b40ad",
+    "provenanceResolution": {
+      "status": "RESOLVED_EXACTLY_ONE_TERMINAL_LF_BYTE",
+      "verifiedAt": "2026-11-09T16:48:48.243499+00:00",
+      "notePath": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-log-serialization-note.json",
+      "noteSha256": "1768f2f0e4d07d4626a067dad03d97e5b28d261647717896b9476585f204713a",
+      "representations": {
+        "schema": "ma1-ci-log-serialization-note-v1",
+        "at": "2026-11-09T16:46:10.918763+00:00",
+        "scope": "Two byte representations of the same actual decoded GitHub core log, preserved explicitly for historical hashes. No source or test change.",
+        "firstSavedRepresentation": {
+          "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391-first-save.log",
+          "sha256": "579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d",
+          "bytes": 4149612,
+          "note": "Original apply_patch save appended one blank terminal line. Root read this representation and its R1 task accurately records this hash."
+        },
+        "exactDecodedToolRepresentation": {
+          "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log",
+          "sha256": "7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b",
+          "bytes": 4149611,
+          "note": "Matches full tool string including UTF-8 BOM and original single final newline; peer final receipt binds this representation."
+        },
+        "soleDifference": "firstSavedRepresentation == exactDecodedToolRepresentation + one LF byte",
+        "unchangedLogContents": true
+      },
+      "independentChildByteComparison": "firstSavedRepresentation bytes == exactDecodedToolRepresentation bytes + one LF byte",
+      "historicalMismatchReportPreserved": true,
+      "priorLogsRewrittenByChild": false
+    }
+  },
+  "protectedRuntimeSources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "unchangedFromRuntimeFreeze": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "unchangedFromRuntimeFreeze": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "sha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+      "unchangedFromRuntimeFreeze": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "sha256": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+      "unchangedFromRuntimeFreeze": true
+    }
+  ],
+  "preservedV1Evidence": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_ATTEMPTS_V1.json",
+      "sha256": "475eb9b42add3d6271156afcb4f696b0117e06e01f1009a4addd0fda0d74a00f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_HANDOFF_V1.md",
+      "sha256": "877c2e2a0fd5f03f040818720297f8b3b22adba3bc40e599f31ae0545124b4fb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_001_TESTS_INITIAL.txt",
+      "sha256": "0c3d119ca746312df36cde08f05411bc5b90145f19d60964daf8111571c3ed17"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_002_EXPLICIT_OFFLINE_AFFECTED_SELECTION.txt",
+      "sha256": "7c942d7ba047d6ec64a459beb28c40f7811b68f7174a501491ce585d4efd53af"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_003_SCOPED_LINT.txt",
+      "sha256": "357d92a12b89b0b80a0734e8b5802fc8f95280beb9778c6110550b880f7b5e12"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_004_HYGIENE_DEAD.txt",
+      "sha256": "6a53f968579a9fad113cc1b8e009221caaa92d8a19e883ff290720eea6b6a1eb"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_005_HYGIENE_EXPORTS.txt",
+      "sha256": "7536897c4ac30f09de123740fc92bd7de913ccf79aa2c192c6b6126496e9d666"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_006_HYGIENE_DEPS.txt",
+      "sha256": "e44a278219c626b71ff3af292ca032300c8e382fe1820a099ac4e4d370c6d2f7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_007_HYGIENE_API.txt",
+      "sha256": "4fbc6b7767cf257ae19743bcbe97cd5dd01f6debd4a11a83f68734e86af41696"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_008_HYGIENE_SCHEMA.txt",
+      "sha256": "cfb970fc44085ae6fcfe5f9e5b1744dc6bddceb8e0943caab664c233ab4eabc4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_009_NEXT_TYPEGEN.txt",
+      "sha256": "5a94d876cb17dd791dcb950c092fbe60e82411adf39e3f9eaae2f5ac9b7504f0"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_010_WHOLE_TYPESCRIPT.txt",
+      "sha256": "222e7698af425cb0d3ca908dc4a4dc07ce8f7db18388988c491901a2651627dc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_011_WHOLE_TYPESCRIPT_AFTER_TEST_CAST_FIX.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_012_FINAL_NAMED_OFFLINE_SELECTION.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_013_FINAL_SCOPED_LINT.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_014_WHOLE_TYPESCRIPT_CONFIRMED.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_015_NAMED_OFFLINE_SELECTION_CONFIRMED.txt",
+      "sha256": "9292f1a7c4f151c78f5cd6ded1d422a3faf991f672f86cfd8f35e650cc1a4baf"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_LOG_016_SCOPED_LINT_CONFIRMED.txt",
+      "sha256": "119993fee89521c0aae7896b4a56857f0721429ac7a7a287dd47c5031fa4b6fd"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_REVIEW_FIX_R1.json",
+      "sha256": "ee8bf0ce5780bc5c0c740bcef7341039cf85c192b344d6c479ba421551a877ba"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_RUNNER_FAILURE_001.txt",
+      "sha256": "1ad728109b3864d5737d31d95666d24754baef40133afab7bf1a69620273109e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_RUNTIME_SOURCE_MANIFEST_V1.json",
+      "sha256": "5310078ea2c39589fdde02b41a7c833a0a333b3e27ba29dd97bb4426a151c7db"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "kind": "NAMED_TEN_FILE_OFFLINE_SELECTION",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "--import",
+        "./scripts/server-only-test-register.mjs",
+        "--import",
+        "tsx",
+        "--test",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/contract.test.ts",
+        "lib/readiness/official-truth-product-v3/import/service.test.ts",
+        "lib/readiness/official-truth-product-v3/integration/coordinator.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/intake-contract.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/quarantine-codec.test.ts",
+        "lib/readiness/official-truth-product-v3/storage/retention-shape.test.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+        "lib/readiness/official-truth-content-identity.test.ts",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:46:52.285491+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_001_NAMED_TEN_FILE_OFFLINE_SELECTION.txt",
+      "ownedPid": 6,
+      "finishedAt": "2026-11-09T16:46:57.527421+00:00",
+      "exitCode": 0,
+      "wallSecondsThroughCollection": 5.241,
+      "sha256": "b836884230c746ee2ebfa2af3a9a7e341757a4891ee2816a60ef264757c90b05"
+    },
+    {
+      "attempt": 2,
+      "kind": "FOUNDATION_CHANGED_FILE_LINT",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:46:52.286713+00:00",
+      "status": "COMPLETED",
+      "log": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_LOG_002_FOUNDATION_CHANGED_FILE_LINT.txt",
+      "ownedPid": 7,
+      "finishedAt": "2026-11-09T16:46:57.528132+00:00",
+      "exitCode": 0,
+      "wallSecondsThroughCollection": 5.24,
+      "sha256": "357d92a12b89b0b80a0734e8b5802fc8f95280beb9778c6110550b880f7b5e12"
+    }
+  ],
+  "boundaries": {
+    "nativeExecuted": false,
+    "sqlExecuted": false,
+    "socketAttempted": false,
+    "hostedAccess": false,
+    "refsModified": false,
+    "networkAction": false,
+    "runtimeSourceModified": false,
+    "method": "NOT_APPROVED",
+    "dev": "NOT_RELEASE_READY",
+    "independentTlAcceptance": false
+  },
+  "frozenAt": "2026-11-09T16:48:48.243499+00:00",
+  "validationResult": {
+    "tests": 329,
+    "pass": 329,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "sourceDiff": {
+    "added": 31,
+    "deleted": 0,
+    "path": "docs/official-truth-product-v3/MA1_REVIEW_R1_RUNTIME_DIFF_V1.txt",
+    "sha256": "b023c00329f9c0525a147959136a9c9614ee288a6666d367ef730b055bd20a56"
+  },
+  "observedCombinedImplementationChanges": [
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts"
+  ],
+  "verificationScope": "Only the explicit ten-file offline selection and own changed-file ESLint were run by this child. Primary owns combined whole TypeScript and changed-file lint; Root owns renewed full native/new-head CI and independent acceptance."
+}

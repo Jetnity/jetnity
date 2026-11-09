@@ -1,0 +1,1900 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:21) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:21) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Content Identity exact registered-host boundary
+    # Subtest: general source resolution still accepts descendants; content identity requires explicit hosts
+    ok 1 - general source resolution still accepts descendants; content identity requires explicit hosts
+      ---
+      duration_ms: 10.857957
+      type: 'test'
+      ...
+    # Subtest: explicit host remains usable alongside a parent domain; parent/child blocking remains fail-closed
+    ok 2 - explicit host remains usable alongside a parent domain; parent/child blocking remains fail-closed
+      ---
+      duration_ms: 1.039246
+      type: 'test'
+      ...
+    1..2
+ok 1 - Content Identity exact registered-host boundary
+  ---
+  duration_ms: 15.966397
+  type: 'suite'
+  ...
+# Subtest: content support identity is an authority-scoped pair
+    # Subtest: two items on one authority, and the same local id on two authorities, stay distinct
+    ok 1 - two items on one authority, and the same local id on two authorities, stay distinct
+      ---
+      duration_ms: 0.551542
+      type: 'test'
+      ...
+    # Subtest: HTML/API streams share exactly one support; a repeated pair fails instead of deduplicating
+    ok 2 - HTML/API streams share exactly one support; a repeated pair fails instead of deduplicating
+      ---
+      duration_ms: 0.75641
+      type: 'test'
+      ...
+    # Subtest: sort is source then item, independent of input and object key order
+    ok 3 - sort is source then item, independent of input and object key order
+      ---
+      duration_ms: 0.250307
+      type: 'test'
+      ...
+    # Subtest: strict bounded ids, exact shapes, nonempty bounded support lists
+    ok 4 - strict bounded ids, exact shapes, nonempty bounded support lists
+      ---
+      duration_ms: 0.353884
+      type: 'test'
+      ...
+    1..4
+ok 2 - content support identity is an authority-scoped pair
+  ---
+  duration_ms: 2.133766
+  type: 'suite'
+  ...
+# Subtest: complete fail-closed content identity graph
+    # Subtest: two items under one source plus two renderings and another authority are valid
+    ok 1 - two items under one source plus two renderings and another authority are valid
+      ---
+      duration_ms: 1.592901
+      type: 'test'
+      ...
+    # Subtest: empty catalog is valid and makes no publication eligible
+    ok 2 - empty catalog is valid and makes no publication eligible
+      ---
+      duration_ms: 0.306542
+      type: 'test'
+      ...
+    # Subtest: external identity cannot inflate supports, including historical rows and reversed order
+    ok 3 - external identity cannot inflate supports, including historical rows and reversed order
+      ---
+      duration_ms: 0.653104
+      type: 'test'
+      ...
+    # Subtest: duplicate item versions and multiple current versions fail
+    ok 4 - duplicate item versions and multiple current versions fail
+      ---
+      duration_ms: 0.547946
+      type: 'test'
+      ...
+    # Subtest: every representation binds an existing exact item version, and current binds current
+    ok 5 - every representation binds an existing exact item version, and current binds current
+      ---
+      duration_ms: 1.944601
+      type: 'test'
+      ...
+    # Subtest: duplicate representation versions and current stream versions fail
+    ok 6 - duplicate representation versions and current stream versions fail
+      ---
+      duration_ms: 0.540344
+      type: 'test'
+      ...
+    # Subtest: format or locale changes require another representation stream
+    ok 7 - format or locale changes require another representation stream
+      ---
+      duration_ms: 0.508527
+      type: 'test'
+      ...
+    # Subtest: URL collision between items or streams fails in either order
+    ok 8 - URL collision between items or streams fails in either order
+      ---
+      duration_ms: 0.868569
+      type: 'test'
+      ...
+    # Subtest: final-only URLs participate in uniqueness and resolution
+    ok 9 - final-only URLs participate in uniqueness and resolution
+      ---
+      duration_ms: 0.632112
+      type: 'test'
+      ...
+    # Subtest: historical URL reservation forbids another item or representation; old URL is not current
+    ok 10 - historical URL reservation forbids another item or representation; old URL is not current
+      ---
+      duration_ms: 1.772292
+      type: 'test'
+      ...
+    # Subtest: same-domain sibling and different query remain unregistered; fragments are not request identity
+    ok 11 - same-domain sibling and different query remain unregistered; fragments are not request identity
+      ---
+      duration_ms: 0.713716
+      type: 'test'
+      ...
+    # Subtest: source boundary, blocked domains and providers cannot be bypassed
+    ok 12 - source boundary, blocked domains and providers cannot be bypassed
+      ---
+      duration_ms: 1.956068
+      type: 'test'
+      ...
+    # Subtest: invalid authority registries fail, rather than selecting first matching domain
+    ok 13 - invalid authority registries fail, rather than selecting first matching domain
+      ---
+      duration_ms: 0.362707
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: http://gov.example/a
+    ok 14 - noncanonical or forbidden descriptor URL: http://gov.example/a
+      ---
+      duration_ms: 0.65016
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://user:password@gov.example/a
+    ok 15 - noncanonical or forbidden descriptor URL: https://user:password@gov.example/a
+      ---
+      duration_ms: 0.956412
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://localhost/a
+    ok 16 - noncanonical or forbidden descriptor URL: https://localhost/a
+      ---
+      duration_ms: 3.274065
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://sub.localhost/a
+    ok 17 - noncanonical or forbidden descriptor URL: https://sub.localhost/a
+      ---
+      duration_ms: 1.574183
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://host.local/a
+    ok 18 - noncanonical or forbidden descriptor URL: https://host.local/a
+      ---
+      duration_ms: 1.31357
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://gov.example:8443/a
+    ok 19 - noncanonical or forbidden descriptor URL: https://gov.example:8443/a
+      ---
+      duration_ms: 0.356617
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://gov.example/*
+    ok 20 - noncanonical or forbidden descriptor URL: https://gov.example/*
+      ---
+      duration_ms: 0.268615
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: HTTPS://GOV.EXAMPLE/a
+    ok 21 - noncanonical or forbidden descriptor URL: HTTPS://GOV.EXAMPLE/a
+      ---
+      duration_ms: 0.316147
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://gov.example/a\#part
+    ok 22 - noncanonical or forbidden descriptor URL: https://gov.example/a\#part
+      ---
+      duration_ms: 0.338621
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL:  https://gov.example/a
+    ok 23 - noncanonical or forbidden descriptor URL:  https://gov.example/a
+      ---
+      duration_ms: 0.254464
+      type: 'test'
+      ...
+    # Subtest: noncanonical or forbidden descriptor URL: https://gov.example/a/../b
+    ok 24 - noncanonical or forbidden descriptor URL: https://gov.example/a/../b
+      ---
+      duration_ms: 0.279472
+      type: 'test'
+      ...
+    # Subtest: malformed media type is not normalized into permission
+    ok 25 - malformed media type is not normalized into permission
+      ---
+      duration_ms: 1.429455
+      type: 'test'
+      ...
+    # Subtest: profiles must exist at exact current version; synthetic profiles are not production defaults
+    ok 26 - profiles must exist at exact current version; synthetic profiles are not production defaults
+      ---
+      duration_ms: 1.369494
+      type: 'test'
+      ...
+    # Subtest: default registry admits the exact GOV.UK profile and rejects wrong ids or versions
+    ok 27 - default registry admits the exact GOV.UK profile and rejects wrong ids or versions
+      ---
+      duration_ms: 1.13465
+      type: 'test'
+      ...
+    # Subtest: profile duplicates, executable definitions in data, and malformed definitions fail
+    ok 28 - profile duplicates, executable definitions in data, and malformed definitions fail
+      ---
+      duration_ms: 6.277292
+      type: 'test'
+      ...
+    # Subtest: strict descriptor data rejects unknown fields, accessors, prototypes, symbols and functions without invoking them
+    ok 29 - strict descriptor data rejects unknown fields, accessors, prototypes, symbols and functions without invoking them
+      ---
+      duration_ms: 1.05483
+      type: 'test'
+      ...
+    # Subtest: bounded arrays, metadata, versions and duplicate request URLs
+    ok 30 - bounded arrays, metadata, versions and duplicate request URLs
+      ---
+      duration_ms: 7.739397
+      type: 'test'
+      ...
+    # Subtest: all exposed data and helper outputs are deeply frozen and detached from input
+    ok 31 - all exposed data and helper outputs are deeply frozen and detached from input
+      ---
+      duration_ms: 11.445182
+      type: 'test'
+      ...
+    # Subtest: graph canonical order is independent of all input ordering
+    ok 32 - graph canonical order is independent of all input ordering
+      ---
+      duration_ms: 2.54072
+      type: 'test'
+      ...
+    # Subtest: resolver defensively rejects ambiguous forged graphs and wrong authority
+    ok 33 - resolver defensively rejects ambiguous forged graphs and wrong authority
+      ---
+      duration_ms: 0.409758
+      type: 'test'
+      ...
+    1..33
+ok 3 - complete fail-closed content identity graph
+  ---
+  duration_ms: 59.647504
+  type: 'suite'
+  ...
+# Subtest: future v3 lookup and ev2 identity serialization only
+    # Subtest: v3 preserves the canonical regulatory parser and every legacy cell field
+    ok 1 - v3 preserves the canonical regulatory parser and every legacy cell field
+      ---
+      duration_ms: 6.639068
+      type: 'test'
+      ...
+    # Subtest: source, item, representation and each regulatory cell dimension affect v3
+    ok 2 - source, item, representation and each regulatory cell dimension affect v3
+      ---
+      duration_ms: 12.342474
+      type: 'test'
+      ...
+    # Subtest: invalid scopes fail through the existing parser, including citizenship and credential invariants
+    ok 3 - invalid scopes fail through the existing parser, including citizenship and credential invariants
+      ---
+      duration_ms: 0.535717
+      type: 'test'
+      ...
+    # Subtest: ev2 has exact fixed-order material and independent SHA-256 proof
+    ok 4 - ev2 has exact fixed-order material and independent SHA-256 proof
+      ---
+      duration_ms: 4.457249
+      type: 'test'
+      ...
+    # Subtest: every bound field changes ev2, including both validity and all descriptor/profile versions
+    ok 5 - every bound field changes ev2, including both validity and all descriptor/profile versions
+      ---
+      duration_ms: 15.303919
+      type: 'test'
+      ...
+    # Subtest: malformed ev2 fields, dates, URL, key, metadata extras and old identity schema fail
+    ok 6 - malformed ev2 fields, dates, URL, key, metadata extras and old identity schema fail
+      ---
+      duration_ms: 8.75723
+      type: 'test'
+      ...
+    1..6
+ok 4 - future v3 lookup and ev2 identity serialization only
+  ---
+  duration_ms: 48.434427
+  type: 'suite'
+  ...
+# Subtest: dormancy and architectural boundaries
+    # Subtest: production registry is exactly the existing frozen GOV.UK profile object
+    ok 1 - production registry is exactly the existing frozen GOV.UK profile object
+      ---
+      duration_ms: 0.326362
+      type: 'test'
+      ...
+    # Subtest: module has only reviewed pure imports and no dynamic registration or effect authority
+    ok 2 - module has only reviewed pure imports and no dynamic registration or effect authority
+      ---
+      duration_ms: 1.020679
+      type: 'test'
+      ...
+    # Subtest: finite content-identity guard refuses unknown or lookalike application and developer importers
+    ok 3 - finite content-identity guard refuses unknown or lookalike application and developer importers
+      ---
+      duration_ms: 0.361926
+      type: 'test'
+      ...
+    # Subtest: repository search pins the finite R3 application and isolated developer importers
+    ok 4 - repository search pins the finite R3 application and isolated developer importers
+      ---
+      duration_ms: 138.493116
+      type: 'test'
+      ...
+    1..4
+ok 5 - dormancy and architectural boundaries
+  ---
+  duration_ms: 140.510036
+  type: 'suite'
+  ...
+# (node:21) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:21) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:22) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:22) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: C1 strict global application carrier
+    # Subtest: keeps finite inclusive windows separate from legal validity and stay duration
+    ok 1 - keeps finite inclusive windows separate from legal validity and stay duration
+      ---
+      duration_ms: 14.996325
+      type: 'test'
+      ...
+    # Subtest: selects exact closed legacy or revision2 form without fallback or field stripping
+    ok 2 - selects exact closed legacy or revision2 form without fallback or field stripping
+      ---
+      duration_ms: 21.912189
+      type: 'test'
+      ...
+    # Subtest: rejects impossible, reversed, missing or typed-as-nondate bounds
+    ok 3 - rejects impossible, reversed, missing or typed-as-nondate bounds
+      ---
+      duration_ms: 23.419626
+      type: 'test'
+      ...
+    # Subtest: preflights new subtrees before getters or private payloads can be read
+    ok 4 - preflights new subtrees before getters or private payloads can be read
+      ---
+      duration_ms: 6.170341
+      type: 'test'
+      ...
+    # Subtest: all nested canonical records keep application restrictions and separate evidence validity
+    ok 5 - all nested canonical records keep application restrictions and separate evidence validity
+      ---
+      duration_ms: 46.082863
+      type: 'test'
+      ...
+    # Subtest: changed or stripped application cannot retain old keys in any nested carrier
+    ok 6 - changed or stripped application cannot retain old keys in any nested carrier
+      ---
+      duration_ms: 66.435235
+      type: 'test'
+      ...
+    1..6
+ok 6 - C1 strict global application carrier
+  ---
+  duration_ms: 180.343499
+  type: 'suite'
+  ...
+# Subtest: V3 visitor input and global context
+    # Subtest: normalizes only destination and a bounded, sorted, deduplicated citizenship set
+    ok 1 - normalizes only destination and a bounded, sorted, deduplicated citizenship set
+      ---
+      duration_ms: 0.331129
+      type: 'test'
+      ...
+    # Subtest: rejects syntactically plausible noncatalog countries and empty or oversized sets
+    ok 2 - rejects syntactically plausible noncatalog countries and empty or oversized sets
+      ---
+      duration_ms: 0.755639
+      type: 'test'
+      ...
+    # Subtest: rejects visitor questionnaires, personal identifiers and best-pass defaults
+    ok 3 - rejects visitor questionnaires, personal identifiers and best-pass defaults
+      ---
+      duration_ms: 0.385782
+      type: 'test'
+      ...
+    # Subtest: keeps one global citizenship and explicit credential linkage per rule
+    ok 4 - keeps one global citizenship and explicit credential linkage per rule
+      ---
+      duration_ms: 1.682696
+      type: 'test'
+      ...
+    # Subtest: reuses the rule scope key while binding purpose, duration, ordinary class and route separately
+    ok 5 - reuses the rule scope key while binding purpose, duration, ordinary class and route separately
+      ---
+      duration_ms: 4.653304
+      type: 'test'
+      ...
+    # Subtest: normalizes commutative existing expressions and separates method revisions
+    ok 6 - normalizes commutative existing expressions and separates method revisions
+      ---
+      duration_ms: 2.655052
+      type: 'test'
+      ...
+    # Subtest: rejects unknown countries and unknown keys within condition predicates
+    ok 7 - rejects unknown countries and unknown keys within condition predicates
+      ---
+      duration_ms: 0.901469
+      type: 'test'
+      ...
+    1..7
+ok 7 - V3 visitor input and global context
+  ---
+  duration_ms: 11.71626
+  type: 'suite'
+  ...
+# Subtest: V3 untrusted proposals and method authority
+    # Subtest: parses the existing fact taxonomy without promoting a researcher fact
+    ok 1 - parses the existing fact taxonomy without promoting a researcher fact
+      ---
+      duration_ms: 10.075878
+      type: 'test'
+      ...
+    # Subtest: rejects all self-asserted authority, method, registry, writes and accepted claims
+    ok 2 - rejects all self-asserted authority, method, registry, writes and accepted claims
+      ---
+      duration_ms: 50.271016
+      type: 'test'
+      ...
+    # Subtest: rejects mismatched research identity, requirement taxonomy and unregistered references
+    ok 3 - rejects mismatched research identity, requirement taxonomy and unregistered references
+      ---
+      duration_ms: 13.132074
+      type: 'test'
+      ...
+    # Subtest: preserves schema-2 structured conditional facts through the canonical parser
+    ok 4 - preserves schema-2 structured conditional facts through the canonical parser
+      ---
+      duration_ms: 4.545933
+      type: 'test'
+      ...
+    # Subtest: keeps method operating parameters as an unapproved proposal with closed production seams
+    ok 5 - keeps method operating parameters as an unapproved proposal with closed production seams
+      ---
+      duration_ms: 0.648738
+      type: 'test'
+      ...
+    1..5
+ok 8 - V3 untrusted proposals and method authority
+  ---
+  duration_ms: 78.918587
+  type: 'suite'
+  ...
+# Subtest: V3 source decisions preserve the single primary rule and known conflicts
+    # Subtest: one clear qualified primary succeeds with missing, unreachable or unclear optional checks
+    ok 1 - one clear qualified primary succeeds with missing, unreachable or unclear optional checks
+      ---
+      duration_ms: 29.167671
+      type: 'test'
+      ...
+    # Subtest: requires a bounded attempted check without inventing evidence for an unsuccessful fetch
+    ok 2 - requires a bounded attempted check without inventing evidence for an unsuccessful fetch
+      ---
+      duration_ms: 13.161338
+      type: 'test'
+      ...
+    # Subtest: host/class never substitutes for represented destination jurisdiction and method binding
+    ok 3 - host/class never substitutes for represented destination jurisdiction and method binding
+      ---
+      duration_ms: 7.435407
+      type: 'test'
+      ...
+    # Subtest: unclear mandatory source and unresolved global conditions never become clear by default
+    ok 4 - unclear mandatory source and unresolved global conditions never become clear by default
+      ---
+      duration_ms: 10.28893
+      type: 'test'
+      ...
+    # Subtest: explicit document independence remains usable without inventing a passport option
+    ok 5 - explicit document independence remains usable without inventing a passport option
+      ---
+      duration_ms: 7.408441
+      type: 'test'
+      ...
+    # Subtest: a comparable conflicting statement persists despite agreement elsewhere; no majority vote
+    ok 6 - a comparable conflicting statement persists despite agreement elsewhere; no majority vote
+      ---
+      duration_ms: 18.815642
+      type: 'test'
+      ...
+# (node:22) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:22) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+    # Subtest: different full contexts, nonoverlapping dates and same-publication representations are not independent agreement
+    ok 7 - different full contexts, nonoverlapping dates and same-publication representations are not independent agreement
+      ---
+      duration_ms: 24.217715
+      type: 'test'
+      ...
+    # Subtest: cannot hide comparable counter-evidence as not-comparable or false agreement
+    ok 8 - cannot hide comparable counter-evidence as not-comparable or false agreement
+      ---
+      duration_ms: 8.733283
+      type: 'test'
+      ...
+    # Subtest: a failed optional refresh cannot drop a known conflict or manufacture a resolution
+    ok 9 - a failed optional refresh cannot drop a known conflict or manufacture a resolution
+      ---
+      duration_ms: 38.280062
+      type: 'test'
+      ...
+    # Subtest: retains a positive resolution record bound to the exact conflict, method and fresh evidence
+    ok 10 - retains a positive resolution record bound to the exact conflict, method and fresh evidence
+      ---
+      duration_ms: 46.77762
+      type: 'test'
+      ...
+    # Subtest: a method revision requires a new linked resolution instead of deleting or rewriting its history
+    ok 11 - a method revision requires a new linked resolution instead of deleting or rewriting its history
+      ---
+      duration_ms: 60.452011
+      type: 'test'
+      ...
+    # Subtest: binds evidence lookup, support IDs, requirement kind and provenance tuple
+    ok 12 - binds evidence lookup, support IDs, requirement kind and provenance tuple
+      ---
+      duration_ms: 20.119196
+      type: 'test'
+      ...
+    1..12
+ok 9 - V3 source decisions preserve the single primary rule and known conflicts
+  ---
+  duration_ms: 285.594878
+  type: 'suite'
+  ...
+# Subtest: V3 time, versions, CAS and recovery plans
+    # Subtest: rejects impossible calendar days and malformed UTC timestamps instead of Date.parse normalization
+    ok 1 - rejects impossible calendar days and malformed UTC timestamps instead of Date.parse normalization
+      ---
+      duration_ms: 26.514085
+      type: 'test'
+      ...
+    # Subtest: rejects reversed, expired and unknown primary validity and future observations
+    ok 2 - rejects reversed, expired and unknown primary validity and future observations
+      ---
+      duration_ms: 7.340144
+      type: 'test'
+      ...
+    # Subtest: requires matching clear source decisions for accepted version records
+    ok 3 - requires matching clear source decisions for accepted version records
+      ---
+      duration_ms: 36.210502
+      type: 'test'
+      ...
+    # Subtest: binds operation idempotency to all relevant context, method, primary and decision references
+    ok 4 - binds operation idempotency to all relevant context, method, primary and decision references
+      ---
+      duration_ms: 6.998388
+      type: 'test'
+      ...
+    # Subtest: requires predecessor CAS, fresh versions and explicit reaccept rather than overwriting a blocked state
+    ok 5 - requires predecessor CAS, fresh versions and explicit reaccept rather than overwriting a blocked state
+      ---
+      duration_ms: 6.998329
+      type: 'test'
+      ...
+    # Subtest: recovery revalidates into a new version; historical identities are never reactivated in place
+    ok 6 - recovery revalidates into a new version; historical identities are never reactivated in place
+      ---
+      duration_ms: 8.449917
+      type: 'test'
+      ...
+    1..6
+ok 10 - V3 time, versions, CAS and recovery plans
+  ---
+  duration_ms: 92.929366
+  type: 'suite'
+  ...
+# Subtest: R2 historical resolution, bounded archive and compatible statements
+    # Subtest: historical resolution remains valid on its own date while the new mandatory primary is current
+    ok 1 - historical resolution remains valid on its own date while the new mandatory primary is current
+      ---
+      duration_ms: 32.089249
+      type: 'test'
+      ...
+    # Subtest: a bounded archive append carries exact resolved records beyond eight lifetime conflicts
+    ok 2 - a bounded archive append carries exact resolved records beyond eight lifetime conflicts
+      ---
+      duration_ms: 879.985512
+      type: 'test'
+      ...
+    # Subtest: archive append cannot erase an unresolved conflict, forge counts, sever history or replace archived bytes
+    ok 3 - archive append cannot erase an unresolved conflict, forge counts, sever history or replace archived bytes
+      ---
+      duration_ms: 57.010594
+      type: 'test'
+      ...
+    # Subtest: the same unconditional effect agrees across canonical legacy, explicit schema-1 and schema-2 encodings
+    ok 4 - the same unconditional effect agrees across canonical legacy, explicit schema-1 and schema-2 encodings
+      ---
+      duration_ms: 12.45196
+      type: 'test'
+      ...
+    # Subtest: nonexclusive optional visa additions have a method-bound compatible record without a false conflict
+    ok 5 - nonexclusive optional visa additions have a method-bound compatible record without a false conflict
+      ---
+      duration_ms: 14.885086
+      type: 'test'
+      ...
+    # Subtest: a true required-versus-not-required statement cannot be relabeled compatible
+    ok 6 - a true required-versus-not-required statement cannot be relabeled compatible
+      ---
+      duration_ms: 3.598705
+      type: 'test'
+      ...
+    1..6
+ok 11 - R2 historical resolution, bounded archive and compatible statements
+  ---
+  duration_ms: 1000.388649
+  type: 'suite'
+  ...
+# Subtest: V3 bounded research jobs
+    # Subtest: deduplicates normalized context/fact/method independently of requester and recheck reason
+    ok 1 - deduplicates normalized context/fact/method independently of requester and recheck reason
+      ---
+      duration_ms: 3.487687
+      type: 'test'
+      ...
+    # Subtest: binds bounded leases to revision/generation and leaves expired leases readable for reclaim
+    ok 2 - binds bounded leases to revision/generation and leaves expired leases readable for reclaim
+      ---
+      duration_ms: 6.825358
+      type: 'test'
+      ...
+    # Subtest: requires bounded backoff, exhausted attempts and explicit completion references
+    ok 3 - requires bounded backoff, exhausted attempts and explicit completion references
+      ---
+      duration_ms: 6.107545
+      type: 'test'
+      ...
+    1..3
+ok 12 - V3 bounded research jobs
+  ---
+  duration_ms: 16.583317
+  type: 'suite'
+  ...
+# Subtest: V3 neutral combination discovery
+    # Subtest: represents an unknown pair without inferred rule, route, document or purpose
+    ok 1 - represents an unknown pair without inferred rule, route, document or purpose
+      ---
+      duration_ms: 1.071355
+      type: 'test'
+      ...
+    # Subtest: deduplicates canonical pair and method independently of job and operation IDs
+    ok 2 - deduplicates canonical pair and method independently of job and operation IDs
+      ---
+      duration_ms: 3.668831
+      type: 'test'
+      ...
+    # Subtest: rejects noncatalog countries, multiple citizenships and invalid method revisions
+    ok 3 - rejects noncatalog countries, multiple citizenships and invalid method revisions
+      ---
+      duration_ms: 0.724953
+      type: 'test'
+      ...
+    # Subtest: rejects private data, legal defaults, URLs, raw payloads and authority claims at every new boundary
+    ok 4 - rejects private data, legal defaults, URLs, raw payloads and authority claims at every new boundary
+      ---
+      duration_ms: 40.472326
+      type: 'test'
+      ...
+    # Subtest: binds the exact discovery discriminator and key and rejects rule jobs in both directions
+    ok 5 - binds the exact discovery discriminator and key and rejects rule jobs in both directions
+      ---
+      duration_ms: 5.741173
+      type: 'test'
+      ...
+    # Subtest: reuses bounded revision, lease and generation rules without acquiring or expiring historical leases
+    ok 6 - reuses bounded revision, lease and generation rules without acquiring or expiring historical leases
+      ---
+      duration_ms: 1.219158
+      type: 'test'
+      ...
+    # Subtest: requires bounded backoff and completion reference without promoting discovery to acceptance
+    ok 7 - requires bounded backoff and completion reference without promoting discovery to acceptance
+      ---
+      duration_ms: 6.139425
+      type: 'test'
+      ...
+    # Subtest: applies bounded JSON preflight and sanitized failures before field access
+    ok 8 - applies bounded JSON preflight and sanitized failures before field access
+      ---
+      duration_ms: 0.41174
+      type: 'test'
+      ...
+    # Subtest: keeps existing rule pending and adds explicitly discriminated discovery pending per citizenship
+    ok 9 - keeps existing rule pending and adds explicitly discriminated discovery pending per citizenship
+      ---
+      duration_ms: 17.656634
+      type: 'test'
+      ...
+    # Subtest: rejects missing or mismatched pending discriminator, pair, method and job identity
+    ok 10 - rejects missing or mismatched pending discriminator, pair, method and job identity
+      ---
+      duration_ms: 57.668817
+      type: 'test'
+      ...
+    1..10
+ok 13 - V3 neutral combination discovery
+  ---
+  duration_ms: 135.247333
+  type: 'suite'
+  ...
+# Subtest: V3 public projection and separate citizenship results
+    # Subtest: resolves required source label and URL from exact pinned existing registry identities without network work
+    ok 1 - resolves required source label and URL from exact pinned existing registry identities without network work
+      ---
+      duration_ms: 2.495041
+      type: 'test'
+      ...
+    # Subtest: retains accepted CH and pending RS with original source time and explicit synthetic notice
+    ok 2 - retains accepted CH and pending RS with original source time and explicit synthetic notice
+      ---
+      duration_ms: 2.245375
+      type: 'test'
+      ...
+    # Subtest: never hides a missing second citizenship, duplicates a result cell or selects a best passport
+    ok 3 - never hides a missing second citizenship, duplicates a result cell or selects a best passport
+      ---
+      duration_ms: 5.560401
+      type: 'test'
+      ...
+    # Subtest: separate accepted citizenships keep distinct immutable projection/version/evidence references
+    ok 4 - separate accepted citizenships keep distinct immutable projection/version/evidence references
+      ---
+      duration_ms: 9.298707
+      type: 'test'
+      ...
+    # Subtest: one canonical evidence observation may support separate global condition contexts without changing its identity
+    ok 5 - one canonical evidence observation may support separate global condition contexts without changing its identity
+      ---
+      duration_ms: 6.133496
+      type: 'test'
+      ...
+    # Subtest: preserves conflict, unavailable and error as distinct honest results
+    ok 6 - preserves conflict, unavailable and error as distinct honest results
+      ---
+      duration_ms: 7.150709
+      type: 'test'
+      ...
+    # Subtest: rejects expiry at the exact boundary and does not rejuvenate source age with cache rebuilds
+    ok 7 - rejects expiry at the exact boundary and does not rejuvenate source age with cache rebuilds
+      ---
+      duration_ms: 7.965536
+      type: 'test'
+      ...
+    # Subtest: requires explicit classification and safe exact error enums instead of free text
+    ok 8 - requires explicit classification and safe exact error enums instead of free text
+      ---
+      duration_ms: 4.552462
+      type: 'test'
+      ...
+    1..8
+ok 14 - V3 public projection and separate citizenship results
+  ---
+  duration_ms: 45.820036
+  type: 'suite'
+  ...
+# Subtest: V3 adversarial data and dormant boundaries
+    # Subtest: preflight never invokes getters and rejects cycles, prototypes, sparse arrays and non-JSON values
+    ok 1 - preflight never invokes getters and rejects cycles, prototypes, sparse arrays and non-JSON values
+      ---
+      duration_ms: 0.366553
+      type: 'test'
+      ...
+    # Subtest: enforces shared UTF-8 size, nesting and node bounds before a parser or error can echo payloads
+    ok 2 - enforces shared UTF-8 size, nesting and node bounds before a parser or error can echo payloads
+      ---
+      duration_ms: 3.199923
+      type: 'test'
+      ...
+    # Subtest: nested PII, content blobs and source-URL personal data never enter proposal/cache/job records
+    ok 3 - nested PII, content blobs and source-URL personal data never enter proposal/cache/job records
+      ---
+      duration_ms: 6.413336
+      type: 'test'
+      ...
+    # Subtest: arbitrary official-host action paths are rejected without exact registered content identity
+    ok 4 - arbitrary official-host action paths are rejected without exact registered content identity
+      ---
+      duration_ms: 3.105311
+      type: 'test'
+      ...
+    # Subtest: serialization, hash fields or boolean flags cannot create a method approval or a trusted receipt
+    ok 5 - serialization, hash fields or boolean flags cannot create a method approval or a trusted receipt
+      ---
+      duration_ms: 10.786719
+      type: 'test'
+      ...
+    # Subtest: the contract imports no fixtures and exposes no network, database, activation or acceptance side effect
+    ok 6 - the contract imports no fixtures and exposes no network, database, activation or acceptance side effect
+      ---
+      duration_ms: 1.049342
+      type: 'test'
+      ...
+    1..6
+ok 15 - V3 adversarial data and dormant boundaries
+  ---
+  duration_ms: 25.21654
+  type: 'suite'
+  ...
+# (node:23) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:23) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: I1 neutral proposal intake and quarantine
+    # Subtest: same neutral S0 envelope works for two independent fictional supplier adapters
+    ok 1 - same neutral S0 envelope works for two independent fictional supplier adapters
+      ---
+      duration_ms: 93.706828
+      type: 'test'
+      ...
+    # Subtest: invalid/private/oversized/authority payloads never reach quarantine storage or providers
+    ok 2 - invalid/private/oversized/authority payloads never reach quarantine storage or providers
+      ---
+      duration_ms: 5.799452
+      type: 'test'
+      ...
+    # Subtest: operation replay returns the confirmed historical outcome; other bytes collide without overwrite
+    ok 3 - operation replay returns the confirmed historical outcome; other bytes collide without overwrite
+      ---
+      duration_ms: 24.653195
+      type: 'test'
+      ...
+    # Subtest: atomic reservation prevents concurrent identical operations from duplicating verification
+    ok 4 - atomic reservation prevents concurrent identical operations from duplicating verification
+      ---
+      duration_ms: 21.513869
+      type: 'test'
+      ...
+    # Subtest: a lost finish acknowledgement is unknown, then confirmed replay resolves it without a second write
+    ok 5 - a lost finish acknowledgement is unknown, then confirmed replay resolves it without a second write
+      ---
+      duration_ms: 17.098873
+      type: 'test'
+      ...
+    1..5
+ok 16 - I1 neutral proposal intake and quarantine
+  ---
+  duration_ms: 164.590217
+  type: 'suite'
+  ...
+# Subtest: I1 method and source authority boundaries
+    # Subtest: production entry remains closed and contains no injectable approval or live fallback
+    ok 1 - production entry remains closed and contains no injectable approval or live fallback
+      ---
+      duration_ms: 0.485522
+      type: 'test'
+      ...
+    # Subtest: unapproved or unavailable method never reaches original verification
+    ok 2 - unapproved or unavailable method never reaches original verification
+      ---
+      duration_ms: 18.673177
+      type: 'test'
+      ...
+    # Subtest: method revocation during source await closes the prepared handoff
+    ok 3 - method revocation during source await closes the prepared handoff
+      ---
+      duration_ms: 17.806981
+      type: 'test'
+      ...
+    # Subtest: freshness expiring during the final method await cannot produce prepared output
+    ok 4 - freshness expiring during the final method await cannot produce prepared output
+      ---
+      duration_ms: 19.399732
+      type: 'test'
+      ...
+    # Subtest: cloned evidence receipt fails despite matching DTOs and hashes
+    ok 5 - cloned evidence receipt fails despite matching DTOs and hashes
+      ---
+      duration_ms: 6.530613
+      type: 'test'
+      ...
+    # Subtest: provider exception content never reaches result, audit or quarantine output
+    ok 6 - provider exception content never reaches result, audit or quarantine output
+      ---
+      duration_ms: 2.413919
+      type: 'test'
+      ...
+    # Subtest: researcher fact and claimed retrieval date cannot become canonical extracted truth
+    ok 7 - researcher fact and claimed retrieval date cannot become canonical extracted truth
+      ---
+      duration_ms: 7.384631
+      type: 'test'
+      ...
+    # Subtest: foreign jurisdiction, wrong method, fact kind and source-context mutations are quarantined
+    ok 8 - foreign jurisdiction, wrong method, fact kind and source-context mutations are quarantined
+      ---
+      duration_ms: 44.508659
+      type: 'test'
+      ...
+    # Subtest: source or actual history change after inspection prevents preparation
+    ok 9 - source or actual history change after inspection prevents preparation
+      ---
+      duration_ms: 15.063495
+      type: 'test'
+      ...
+    1..9
+ok 17 - I1 method and source authority boundaries
+  ---
+  duration_ms: 133.040668
+  type: 'suite'
+  ...
+# Subtest: I1 automatic V3 outcomes and explicit future commit boundary
+    # Subtest: one clear destination primary suffices for every unsuccessful optional-check state
+    ok 1 - one clear destination primary suffices for every unsuccessful optional-check state
+      ---
+      duration_ms: 36.127336
+      type: 'test'
+      ...
+    # Subtest: independent agreement prepares but same-publication mirror cannot count as agreement
+    ok 2 - independent agreement prepares but same-publication mirror cannot count as agreement
+      ---
+      duration_ms: 14.305593
+      type: 'test'
+      ...
+    # Subtest: unclear mandatory primary escalates once per context/method reason without an accepted version
+    ok 3 - unclear mandatory primary escalates once per context/method reason without an accepted version
+      ---
+      duration_ms: 7.601007
+      type: 'test'
+      ...
+    # Subtest: true comparable conflict escalates without majority and persists after optional outage
+    ok 4 - true comparable conflict escalates without majority and persists after optional outage
+      ---
+      duration_ms: 56.618293
+      type: 'test'
+      ...
+    # Subtest: nonexclusive optional visa addition can be compatible without a fabricated second matching fact
+    ok 5 - nonexclusive optional visa addition can be compatible without a fabricated second matching fact
+      ---
+      duration_ms: 27.548615
+      type: 'test'
+      ...
+    # Subtest: a new prepared version retains expected predecessor, operation and invalidated projection references
+    ok 6 - a new prepared version retains expected predecessor, operation and invalidated projection references
+      ---
+      duration_ms: 23.008913
+      type: 'test'
+      ...
+    # Subtest: caller abort prevents continuation and never implies a successful write
+    ok 7 - caller abort prevents continuation and never implies a successful write
+      ---
+      duration_ms: 4.406512
+      type: 'test'
+      ...
+    # Subtest: transport error result remains bounded and contains no raw upload data
+    ok 8 - transport error result remains bounded and contains no raw upload data
+      ---
+      duration_ms: 1.031725
+      type: 'test'
+      ...
+    1..8
+ok 18 - I1 automatic V3 outcomes and explicit future commit boundary
+  ---
+  duration_ms: 171.258033
+  type: 'suite'
+  ...
+# Subtest: TL I1 R1 — archived history and uncertain bounded operations
+    # Subtest: a verified current archive append permits the next import without dropping its history pointer
+    ok 1 - a verified current archive append permits the next import without dropping its history pointer
+      ---
+      duration_ms: 53.792062
+      type: 'test'
+      ...
+    # Subtest: missing, foreign or mutated archive proof for the current history remains invalid
+    ok 2 - missing, foreign or mutated archive proof for the current history remains invalid
+      ---
+      duration_ms: 94.178781
+      type: 'test'
+      ...
+    # Subtest: reserve write followed by lost response is unknown, with the same reserved operation retained
+    ok 3 - reserve write followed by lost response is unknown, with the same reserved operation retained
+      ---
+      duration_ms: 2.523103
+      type: 'test'
+      ...
+# (node:23) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:23) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+    # Subtest: a never-settling inspector times out; late resolution cannot start finish
+    ok 4 - a never-settling inspector times out; late resolution cannot start finish
+      ---
+      duration_ms: 23.2202
+      type: 'test'
+      ...
+    # Subtest: external abort releases an uncooperative reserve await and late reservation remains unknown
+    ok 5 - external abort releases an uncooperative reserve await and late reservation remains unknown
+      ---
+      duration_ms: 2.880192
+      type: 'test'
+      ...
+    # Subtest: a hanging finish that later records cannot produce success before its acknowledgement
+    ok 6 - a hanging finish that later records cannot produce success before its acknowledgement
+      ---
+      duration_ms: 26.055991
+      type: 'test'
+      ...
+    1..6
+ok 19 - TL I1 R1 — archived history and uncertain bounded operations
+  ---
+  duration_ms: 203.172945
+  type: 'suite'
+  ...
+# Subtest: TL I1 R2 — complete persisted escalation evidence
+    # Subtest: archive and predecessor survive atomic JSON persistence and replay for primary_unclear
+    ok 1 - archive and predecessor survive atomic JSON persistence and replay for primary_unclear
+      ---
+      duration_ms: 46.238692
+      type: 'test'
+      ...
+    # Subtest: missing, foreign and mutated archive appends cannot create an escalation for primary_unclear
+    ok 2 - missing, foreign and mutated archive appends cannot create an escalation for primary_unclear
+      ---
+      duration_ms: 100.454869
+      type: 'test'
+      ...
+    # Subtest: archive and predecessor survive atomic JSON persistence and replay for comparable_conflict
+    ok 3 - archive and predecessor survive atomic JSON persistence and replay for comparable_conflict
+      ---
+      duration_ms: 66.797066
+      type: 'test'
+      ...
+    # Subtest: missing, foreign and mutated archive appends cannot create an escalation for comparable_conflict
+    ok 4 - missing, foreign and mutated archive appends cannot create an escalation for comparable_conflict
+      ---
+      duration_ms: 78.136237
+      type: 'test'
+      ...
+    1..4
+ok 20 - TL I1 R2 — complete persisted escalation evidence
+  ---
+  duration_ms: 291.927358
+  type: 'suite'
+  ...
+# (node:29) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:29) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: E1 actual module composition; external adapters are synthetic only
+    # Subtest: two citizenship misses become actual Discovery jobs, real workers/imports/versions/cache and full presentation
+    ok 1 - two citizenship misses become actual Discovery jobs, real workers/imports/versions/cache and full presentation
+      ---
+      duration_ms: 397.829934
+      type: 'test'
+      ...
+    # Subtest: two provider implementations use the same neutral interface, and proposed one-page facts never override original nine-page facts
+    ok 2 - two provider implementations use the same neutral interface, and proposed one-page facts never override original nine-page facts
+      ---
+      duration_ms: 130.35817
+      type: 'test'
+      ...
+    # Subtest: optional counter-source outage alone permits the clear original primary
+    ok 3 - optional counter-source outage alone permits the clear original primary
+      ---
+      duration_ms: 50.179768
+      type: 'test'
+      ...
+    # Subtest: artifact digest mismatch, foreign citizenship and forged receipt cannot enter I1
+    ok 4 - artifact digest mismatch, foreign citizenship and forged receipt cannot enter I1
+      ---
+      duration_ms: 28.362772
+      type: 'test'
+      ...
+    # Subtest: lost artifact response resumes the exact completed worker claim without another research execution
+    ok 5 - lost artifact response resumes the exact completed worker claim without another research execution
+      ---
+      duration_ms: 71.320454
+      type: 'test'
+      ...
+    # Subtest: R1 exact claim command binding rejects changed duration and corrupt custody while original replay remains valid
+    ok 6 - R1 exact claim command binding rejects changed duration and corrupt custody while original replay remains valid
+      ---
+      duration_ms: 52.763002
+      type: 'test'
+      ...
+    # Subtest: artifact lease, generation, original job operation and result reference grafts stop before import
+    ok 7 - artifact lease, generation, original job operation and result reference grafts stop before import
+      ---
+      duration_ms: 44.983526
+      type: 'test'
+      ...
+    # Subtest: accessor uploads are rejected without executing them and corrupt resumed result DTOs cannot enter import
+    ok 8 - accessor uploads are rejected without executing them and corrupt resumed result DTOs cannot enter import
+      ---
+      duration_ms: 9.228921
+      type: 'test'
+      ...
+    # Subtest: lost actual queue ACK is an error until the same operation is confirmed, with no duplicate job
+    ok 9 - lost actual queue ACK is an error until the same operation is confirmed, with no duplicate job
+      ---
+      duration_ms: 4.350949
+      type: 'test'
+      ...
+    # Subtest: lost version and projection replies reconcile the same immutable operation without another mutation
+    ok 10 - lost version and projection replies reconcile the same immutable operation without another mutation
+      ---
+      duration_ms: 168.365925
+      type: 'test'
+      ...
+    # Subtest: unknown publication confirmation never triggers a blind second write or a replacement operation
+    ok 11 - unknown publication confirmation never triggers a blind second write or a replacement operation
+      ---
+      duration_ms: 62.91253
+      type: 'test'
+      ...
+    # Subtest: real conflicting primary/counter decision creates a new conflicted version, retained audit/outbox and hides old projection
+    ok 12 - real conflicting primary/counter decision creates a new conflicted version, retained audit/outbox and hides old projection
+      ---
+      duration_ms: 98.108142
+      type: 'test'
+      ...
+    # Subtest: unclear primary withdraws the accepted version and removes its positive public answer
+    ok 13 - unclear primary withdraws the accepted version and removes its positive public answer
+      ---
+      duration_ms: 73.590496
+      type: 'test'
+      ...
+    # Subtest: first conflict without an accepted version remains sticky even when optional counter later disappears
+    ok 14 - first conflict without an accepted version remains sticky even when optional counter later disappears
+      ---
+      duration_ms: 65.777278
+      type: 'test'
+      ...
+    # Subtest: first escalation lost ACK replays full custody once; changed source proof cannot create a first block
+    ok 15 - first escalation lost ACK replays full custody once; changed source proof cannot create a first block
+      ---
+      duration_ms: 26.509789
+      type: 'test'
+      ...
+    # Subtest: positive corrected original reaccepts as a new version, then archived escalation preserves full prior and archive through replay
+    ok 16 - positive corrected original reaccepts as a new version, then archived escalation preserves full prior and archive through replay
+      ---
+      duration_ms: 179.846274
+      type: 'test'
+      ...
+    # Subtest: actual monitor queues changed source bytes without claiming a changed rule; actual rule worker refreshes the version
+    ok 17 - actual monitor queues changed source bytes without claiming a changed rule; actual rule worker refreshes the version
+      ---
+      duration_ms: 93.876334
+      type: 'test'
+      ...
+    # Subtest: actual monitor suppresses expired projection with an audit once despite primary outage
+    ok 18 - actual monitor suppresses expired projection with an audit once despite primary outage
+      ---
+      duration_ms: 37.155906
+      type: 'test'
+      ...
+    # Subtest: recovery uses independently fresh original and existing historical basis but creates a third version
+    ok 19 - recovery uses independently fresh original and existing historical basis but creates a third version
+      ---
+      duration_ms: 154.193632
+      type: 'test'
+      ...
+    # Subtest: R1 recovery rejects foreign or forged immutable historical records and accepts its actual same-context basis
+    ok 20 - R1 recovery rejects foreign or forged immutable historical records and accepts its actual same-context basis
+      ---
+      duration_ms: 182.245957
+      type: 'test'
+      ...
+    # Subtest: method revocation, head replacement and expiry after publication await forbid publishing
+    ok 21 - method revocation, head replacement and expiry after publication await forbid publishing
+      ---
+      duration_ms: 87.061971
+      type: 'test'
+      ...
+    # Subtest: the final awaited source proof cannot carry a revoked method, changed head/archive or expired projection into atomic publication
+    ok 22 - the final awaited source proof cannot carry a revoked method, changed head/archive or expired projection into atomic publication
+      ---
+      duration_ms: 91.200976
+      type: 'test'
+      ...
+    # Subtest: two real imports prepared against one missing head compete atomically and only one publishes
+    ok 23 - two real imports prepared against one missing head compete atomically and only one publishes
+      ---
+      duration_ms: 46.178311
+      type: 'test'
+      ...
+    # Subtest: current batch removes positives for every citizenship if method is revoked during the final await
+    ok 24 - current batch removes positives for every citizenship if method is revoked during the final await
+      ---
+      duration_ms: 51.383542
+      type: 'test'
+      ...
+    # Subtest: failed cache read does not become a new pending job
+    ok 25 - failed cache read does not become a new pending job
+      ---
+      duration_ms: 28.718598
+      type: 'test'
+      ...
+    # Subtest: private/unknown input is rejected before persistence and production has no positive bindings
+    ok 26 - private/unknown input is rejected before persistence and production has no positive bindings
+      ---
+      duration_ms: 3.275107
+      type: 'test'
+      ...
+    # Subtest: missing publication or joint version adapter cannot fake a finished pipeline
+    ok 27 - missing publication or joint version adapter cannot fake a finished pipeline
+      ---
+      duration_ms: 27.576206
+      type: 'test'
+      ...
+    1..27
+ok 21 - E1 actual module composition; external adapters are synthetic only
+  ---
+  duration_ms: 2269.980969
+  type: 'suite'
+  ...
+# (node:29) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:29) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:30) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:30) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:30) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# Subtest: MA1 exact synthetic binding and closed wire readers
+    # Subtest: preserves all three independently frozen Root vectors
+    ok 1 - preserves all three independently frozen Root vectors
+      ---
+      duration_ms: 5.153448
+      type: 'test'
+      ...
+    # Subtest: canonical draft identity ignores property order but preserves status and raw package newline
+    ok 2 - canonical draft identity ignores property order but preserves status and raw package newline
+      ---
+      duration_ms: 1.153068
+      type: 'test'
+      ...
+    # Subtest: detaches the draft and package without freezing or retaining caller inputs
+    ok 3 - detaches the draft and package without freezing or retaining caller inputs
+      ---
+      duration_ms: 0.649199
+      type: 'test'
+      ...
+    # Subtest: shared draft admission rejects authority fields, personal fields, malformed predecessors and getters
+    ok 4 - shared draft admission rejects authority fields, personal fields, malformed predecessors and getters
+      ---
+      duration_ms: 1.635175
+      type: 'test'
+      ...
+    # Subtest: bounds byte copying, uses actual typed bytes and never trusts an overridden iterator or byteLength
+    ok 5 - bounds byte copying, uses actual typed bytes and never trusts an overridden iterator or byteLength
+      ---
+      duration_ms: 1.955528
+      type: 'test'
+      ...
+    # Subtest: package checksum and draft parsing alone never supply approval
+    ok 6 - package checksum and draft parsing alone never supply approval
+      ---
+      duration_ms: 1.027649
+      type: 'test'
+      ...
+    # Subtest: fixed binding is closed, bounded, detached and has no role or target selectors
+    ok 7 - fixed binding is closed, bounded, detached and has no role or target selectors
+      ---
+      duration_ms: 0.344639
+      type: 'test'
+      ...
+    # Subtest: timestamps use exact canonical UTC milliseconds and real civil dates
+    ok 8 - timestamps use exact canonical UTC milliseconds and real civil dates
+      ---
+      duration_ms: 0.5575
+      type: 'test'
+      ...
+    # Subtest: decodes all finite states and actual null-prototype wire rows without creating authority
+    ok 9 - decodes all finite states and actual null-prototype wire rows without creating authority
+      ---
+      duration_ms: 1.124635
+      type: 'test'
+      ...
+    # Subtest: rejects extra, missing, exotic, accessor and non-string wire cells before using them
+    ok 10 - rejects extra, missing, exotic, accessor and non-string wire cells before using them
+      ---
+      duration_ms: 0.607426
+      type: 'test'
+      ...
+    # Subtest: rejects noncanonical integers and impossible state/identity/mode combinations
+    ok 11 - rejects noncanonical integers and impossible state/identity/mode combinations
+      ---
+      duration_ms: 3.064439
+      type: 'test'
+      ...
+    # Subtest: Root R1: finite remaining_ms cannot exceed either conservative interval and never derives a TTL from it
+    ok 12 - Root R1: finite remaining_ms cannot exceed either conservative interval and never derives a TTL from it
+      ---
+      duration_ms: 0.237758
+      type: 'test'
+      ...
+    1..12
+ok 22 - MA1 exact synthetic binding and closed wire readers
+  ---
+  duration_ms: 18.670012
+  type: 'suite'
+  ...
+# Subtest: MA1 opaque receipt custody and actual executor observations
+    # Subtest: valid observations use the fixed frozen tuple, explicit checkedAt and a fresh read for every current result
+    ok 1 - valid observations use the fixed frozen tuple, explicit checkedAt and a fresh read for every current result
+      ---
+      duration_ms: 1.483626
+      type: 'test'
+      ...
+    # Subtest: factory configuration is detached, and invalid/null executors cannot resolve
+    ok 2 - factory configuration is detached, and invalid/null executors cannot resolve
+      ---
+      duration_ms: 0.788609
+      type: 'test'
+      ...
+    # Subtest: closed method/clock inputs and bad custody cause no SQL dispatch or getter invocation
+    ok 3 - closed method/clock inputs and bad custody cause no SQL dispatch or getter invocation
+      ---
+      duration_ms: 0.534275
+      type: 'test'
+      ...
+    # Subtest: foreign, cloned, serialized and invented receipts do not carry authority
+    ok 4 - foreign, cloned, serialized and invented receipts do not carry authority
+      ---
+      duration_ms: 0.680616
+      type: 'test'
+      ...
+    # Subtest: nonapproved states stay negative and binding mismatch remains unavailable
+    ok 5 - nonapproved states stay negative and binding mismatch remains unavailable
+      ---
+      duration_ms: 0.966036
+      type: 'test'
+      ...
+    # Subtest: actual changed epochs, supersession and revoke refuse the retained receipt
+    ok 6 - actual changed epochs, supersession and revoke refuse the retained receipt
+      ---
+      duration_ms: 0.831303
+      type: 'test'
+      ...
+    # Subtest: errors and malformed envelopes/rows remain unavailable and release only settled calls
+    ok 7 - errors and malformed envelopes/rows remain unavailable and release only settled calls
+      ---
+      duration_ms: 0.956772
+      type: 'test'
+      ...
+    # Subtest: Root R1: impossible duration and request-expired rows cannot resolve or reprove
+    ok 8 - Root R1: impossible duration and request-expired rows cannot resolve or reprove
+      ---
+      duration_ms: 1.716698
+      type: 'test'
+      ...
+    1..8
+ok 23 - MA1 opaque receipt custody and actual executor observations
+  ---
+  duration_ms: 8.168583
+  type: 'suite'
+  ...
+# Subtest: MA1 original and monotonically shortened receipt deadlines
+    # Subtest: resolve anchors finite validity to call start, including time spent in owned drain
+    ok 1 - resolve anchors finite validity to call start, including time spent in owned drain
+      ---
+      duration_ms: 0.737792
+      type: 'test'
+      ...
+    # Subtest: five-second positive cutoff is checked even before the abort timer can run
+    ok 2 - five-second positive cutoff is checked even before the abort timer can run
+      ---
+      duration_ms: 0.300573
+      type: 'test'
+      ...
+    # Subtest: reproof never renews the original finite cap or accepts an already-expired receipt
+    ok 3 - reproof never renews the original finite cap or accepts an already-expired receipt
+      ---
+      duration_ms: 0.474906
+      type: 'test'
+      ...
+    # Subtest: fresh one-millisecond reproof horizon is retained when consumed during drain
+    ok 4 - fresh one-millisecond reproof horizon is retained when consumed during drain
+      ---
+      duration_ms: 1.128241
+      type: 'test'
+      ...
+    # Subtest: an overlapping earlier read with a larger remainder cannot revive shortened custody
+    ok 5 - an overlapping earlier read with a larger remainder cannot revive shortened custody
+      ---
+      duration_ms: 0.807327
+      type: 'test'
+      ...
+    # Subtest: a shorter still-valid horizon survives later successful reproof without extension
+    ok 6 - a shorter still-valid horizon survives later successful reproof without extension
+      ---
+      duration_ms: 0.467525
+      type: 'test'
+      ...
+    # Subtest: same-epoch expired SQL result consumes custody even before the original cap
+    ok 7 - same-epoch expired SQL result consumes custody even before the original cap
+      ---
+      duration_ms: 0.403228
+      type: 'test'
+      ...
+    # Subtest: until_revoked still has the original five-second receipt cap
+    ok 8 - until_revoked still has the original five-second receipt cap
+      ---
+      duration_ms: 0.592353
+      type: 'test'
+      ...
+    1..8
+ok 24 - MA1 original and monotonically shortened receipt deadlines
+  ---
+  duration_ms: 5.216924
+  type: 'suite'
+  ...
+# Subtest: MA1 four slots persist through abort, acquisition and real promise settlement
+    # Subtest: abort requests do not detach four calls or admit a fifth before their drain settles
+    ok 1 - abort requests do not detach four calls or admit a fifth before their drain settles
+      ---
+      duration_ms: 1.627303
+      type: 'test'
+      ...
+    # Subtest: a rejected fully settled call frees its slot and does not leak timer or private error
+    ok 2 - a rejected fully settled call frees its slot and does not leak timer or private error
+      ---
+      duration_ms: 0.784823
+      type: 'test'
+      ...
+    # Subtest: reproof slots likewise wait for executor settlement after their shorter receipt deadline
+    ok 3 - reproof slots likewise wait for executor settlement after their shorter receipt deadline
+      ---
+      duration_ms: 1.172367
+      type: 'test'
+      ...
+    1..3
+ok 25 - MA1 four slots persist through abort, acquisition and real promise settlement
+  ---
+  duration_ms: 3.797103
+  type: 'suite'
+  ...
+# Subtest: MA1 dormant runtime has no file discovery, credentials, provider or publication side effects
+ok 26 - MA1 dormant runtime has no file discovery, credentials, provider or publication side effects
+  ---
+  duration_ms: 0.534706
+  type: 'test'
+  ...
+# (node:41) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:41) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: S1 shared intake identity reader
+    # Subtest: accepts both bounded runner revision kinds without claiming authority
+    ok 1 - accepts both bounded runner revision kinds without claiming authority
+      ---
+      duration_ms: 1.709847
+      type: 'test'
+      ...
+    # Subtest: rejects unknown and personal fields at both closed levels
+    ok 2 - rejects unknown and personal fields at both closed levels
+      ---
+      duration_ms: 0.152901
+      type: 'test'
+      ...
+    # Subtest: never reads getters or inherited records
+    ok 3 - never reads getters or inherited records
+      ---
+      duration_ms: 0.141453
+      type: 'test'
+      ...
+    # Subtest: validates exact operation, job, context, delivery and runner identities
+    ok 4 - validates exact operation, job, context, delivery and runner identities
+      ---
+      duration_ms: 0.635789
+      type: 'test'
+      ...
+    # Subtest: bounds method revision and identifier without coercion
+    ok 5 - bounds method revision and identifier without coercion
+      ---
+      duration_ms: 0.213703
+      type: 'test'
+      ...
+    # Subtest: reference is exact, bounded and detached
+    ok 6 - reference is exact, bounded and detached
+      ---
+      duration_ms: 5.952002
+      type: 'test'
+      ...
+    1..6
+ok 27 - S1 shared intake identity reader
+  ---
+  duration_ms: 9.803578
+  type: 'suite'
+  ...
+# (node:41) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:41) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:52) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:52) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: S1 complete durable outcome codec
+    # Subtest: actual I1 prepared result and audit survive a detached immutable roundtrip
+    ok 1 - actual I1 prepared result and audit survive a detached immutable roundtrip
+      ---
+      duration_ms: 104.031801
+      type: 'test'
+      ...
+    # Subtest: replays full primary_unclear predecessor and archive; omission or mutation refuses
+    ok 2 - replays full primary_unclear predecessor and archive; omission or mutation refuses
+      ---
+      duration_ms: 149.961603
+      type: 'test'
+      ...
+    # Subtest: replays full comparable_conflict predecessor and archive; omission or mutation refuses
+    ok 3 - replays full comparable_conflict predecessor and archive; omission or mutation refuses
+      ---
+      duration_ms: 121.216244
+      type: 'test'
+      ...
+    # Subtest: all terminal negative variants are closed, fully bound and roundtrip
+    ok 4 - all terminal negative variants are closed, fully bound and roundtrip
+      ---
+      duration_ms: 46.654233
+      type: 'test'
+      ...
+    # Subtest: prepared cross-record substitutions and accidental acceptance are rejected
+    ok 5 - prepared cross-record substitutions and accidental acceptance are rejected
+      ---
+      duration_ms: 57.543072
+      type: 'test'
+      ...
+    # Subtest: every audit identity/status field is bound; no unknown fields or earlier timestamp
+    ok 6 - every audit identity/status field is bound; no unknown fields or earlier timestamp
+      ---
+      duration_ms: 63.636956
+      type: 'test'
+      ...
+    # Subtest: malformed objects, getters, huge values and payload errors are never mirrored
+    ok 7 - malformed objects, getters, huge values and payload errors are never mirrored
+      ---
+      duration_ms: 16.281592
+      type: 'test'
+      ...
+    1..7
+ok 28 - S1 complete durable outcome codec
+  ---
+  duration_ms: 560.983391
+  type: 'suite'
+  ...
+# (node:52) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:52) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:55) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:55) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: S1 SQL retention shape pins actual canonical reader sources, not just its own generator
+ok 29 - S1 SQL retention shape pins actual canonical reader sources, not just its own generator
+  ---
+  duration_ms: 24.312907
+  type: 'test'
+  ...
+# Subtest: all claimed fact families are valid in the actual S0 reader; URL variant is explicitly S0-valid/S1-rejected
+ok 30 - all claimed fact families are valid in the actual S0 reader; URL variant is explicitly S0-valid/S1-rejected
+  ---
+  duration_ms: 212.640817
+  type: 'test'
+  ...
+# Subtest: every nested proposal object rejects an unknown private payload and all top-level structured values reject primitives
+ok 31 - every nested proposal object rejects an unknown private payload and all top-level structured values reject primitives
+  ---
+  duration_ms: 212.104694
+  type: 'test'
+  ...
+# Subtest: complete actual I1 outcomes and audits are closed at every nested object before durable finish
+ok 32 - complete actual I1 outcomes and audits are closed at every nested object before durable finish
+  ---
+  duration_ms: 1168.920994
+  type: 'test'
+  ...
+# Subtest: C1 descriptor revision preserves both context forms and changes only the generated SQL block
+ok 33 - C1 descriptor revision preserves both context forms and changes only the generated SQL block
+  ---
+  duration_ms: 9.765119
+  type: 'test'
+  ...
+# Subtest: C1 retention closes all new subtrees and does not claim canonical ordering or identity proof
+ok 34 - C1 retention closes all new subtrees and does not claim canonical ordering or identity proof
+  ---
+  duration_ms: 22.249748
+  type: 'test'
+  ...
+# Subtest: C1 full prepared outcome shape retains new decision/observation/version subtrees without widening them
+ok 35 - C1 full prepared outcome shape retains new decision/observation/version subtrees without widening them
+  ---
+  duration_ms: 122.503043
+  type: 'test'
+  ...
+# (node:55) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:55) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:166) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:166) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: regulierungs-anwendbarkeit
+    # Subtest: Grenzen und leere Regionspins
+    ok 1 - Grenzen und leere Regionspins
+      ---
+      duration_ms: 1.14805
+      type: 'test'
+      ...
+    # Subtest: 1–3 Wahrheitswerte, NOT unknown und sonst-Zweig
+    ok 2 - 1–3 Wahrheitswerte, NOT unknown und sonst-Zweig
+      ---
+      duration_ms: 8.382214
+      type: 'test'
+      ...
+    # Subtest: 4–5 ausdrückliches Falsch und Abwesenheit
+    ok 3 - 4–5 ausdrückliches Falsch und Abwesenheit
+      ---
+      duration_ms: 2.357664
+      type: 'test'
+      ...
+    # Subtest: 6 zwei verneinte Nutzeraussagen tragen otherwise und context_asserted
+    ok 4 - 6 zwei verneinte Nutzeraussagen tragen otherwise und context_asserted
+      ---
+      duration_ms: 0.786366
+      type: 'test'
+      ...
+    # Subtest: 7–10 Kurzschluss, NOT-Polarität, aufgezeichnet und unbedingt
+    ok 5 - 7–10 Kurzschluss, NOT-Polarität, aufgezeichnet und unbedingt
+      ---
+      duration_ms: 0.718243
+      type: 'test'
+      ...
+    # Subtest: 11–14 Konflikt, kein Zweig, fehlende Fakten, ungepinnte Region
+    ok 6 - 11–14 Konflikt, kein Zweig, fehlende Fakten, ungepinnte Region
+      ---
+      duration_ms: 1.490447
+      type: 'test'
+      ...
+    # Subtest: 15–19 Staatsangehörigkeit, Aussteller, Verknüpfung und Dokumentklasse
+    ok 7 - 15–19 Staatsangehörigkeit, Aussteller, Verknüpfung und Dokumentklasse
+      ---
+      duration_ms: 0.497009
+      type: 'test'
+      ...
+    # Subtest: kanonische Staatsangehörigkeit und Dokumentbezug
+    ok 8 - kanonische Staatsangehörigkeit und Dokumentbezug
+      ---
+      duration_ms: 0.616018
+      type: 'test'
+      ...
+    # Subtest: 20–22 Personen, Herkunft und Grenzen
+    ok 9 - 20–22 Personen, Herkunft und Grenzen
+      ---
+      duration_ms: 1.826994
+      type: 'test'
+      ...
+    # Subtest: 23–26 Normalisierung, Fingerabdruck und Stützen
+    ok 10 - 23–26 Normalisierung, Fingerabdruck und Stützen
+      ---
+      duration_ms: 9.172225
+      type: 'test'
+      ...
+    # Subtest: 27–35 Wirkungs- und Visa-Formen
+    ok 11 - 27–35 Wirkungs- und Visa-Formen
+      ---
+      duration_ms: 1.649716
+      type: 'test'
+      ...
+    # Subtest: 36–40 Quelle bleibt ohne Quellenvokabular, Kontext-Hash und Importeur
+    ok 12 - 36–40 Quelle bleibt ohne Quellenvokabular, Kontext-Hash und Importeur
+      ---
+      duration_ms: 353.641017
+      type: 'test'
+      ...
+    # Subtest: der support-freie Strukturschlüssel ignoriert Stütz-IDs und Operandenfolge
+    ok 13 - der support-freie Strukturschlüssel ignoriert Stütz-IDs und Operandenfolge
+      ---
+      duration_ms: 0.748017
+      type: 'test'
+      ...
+    1..13
+ok 36 - regulierungs-anwendbarkeit
+  ---
+  duration_ms: 384.808767
+  type: 'suite'
+  ...
+# Subtest: Schema 2: pure applicability conformance
+    # Subtest: frozen v1 unconditional fingerprint and explicit context version dispatch
+    ok 1 - frozen v1 unconditional fingerprint and explicit context version dispatch
+      ---
+      duration_ms: 3.513486
+      type: 'test'
+      ...
+    # Subtest: activity remunerative_activity: true/false/unknown and no purpose inference
+    ok 2 - activity remunerative_activity: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 5.274511
+      type: 'test'
+      ...
+    # Subtest: activity income_earning_activity: true/false/unknown and no purpose inference
+    ok 3 - activity income_earning_activity: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 3.832256
+      type: 'test'
+      ...
+    # Subtest: activity profit_making_business_operation: true/false/unknown and no purpose inference
+    ok 4 - activity profit_making_business_operation: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 3.999919
+      type: 'test'
+      ...
+    # Subtest: activity business_contacts: true/false/unknown and no purpose inference
+    ok 5 - activity business_contacts: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 4.522708
+      type: 'test'
+      ...
+    # Subtest: activity independence, raw duplicate bound and conflicts before unrelated OR
+    ok 6 - activity independence, raw duplicate bound and conflicts before unrelated OR
+      ---
+      duration_ms: 8.522527
+      type: 'test'
+      ...
+    # Subtest: direct threshold 89 same-unit days
+    ok 7 - direct threshold 89 same-unit days
+      ---
+      duration_ms: 1.401703
+      type: 'test'
+      ...
+    # Subtest: direct threshold 90 same-unit days
+    ok 8 - direct threshold 90 same-unit days
+      ---
+      duration_ms: 0.798394
+      type: 'test'
+      ...
+    # Subtest: direct threshold 91 same-unit days
+    ok 9 - direct threshold 91 same-unit days
+      ---
+      duration_ms: 0.892606
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2028-02-28..2028-03-01
+    ok 10 - civil arithmetic 2028-02-28..2028-03-01
+      ---
+      duration_ms: 1.658349
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2026-10-06..2026-10-06
+    ok 11 - civil arithmetic 2026-10-06..2026-10-06
+      ---
+      duration_ms: 1.133208
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2026-03-28..2026-03-30
+    ok 12 - civil arithmetic 2026-03-28..2026-03-30
+      ---
+      duration_ms: 1.828736
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 0001-01-01..0001-01-02
+    ok 13 - civil arithmetic 0001-01-01..0001-01-02
+      ---
+      duration_ms: 1.047989
+      type: 'test'
+      ...
+    # Subtest: declaration/date conflict detected under declaration convention before any rule
+    ok 14 - declaration/date conflict detected under declaration convention before any rule
+      ---
+      duration_ms: 1.214171
+      type: 'test'
+      ...
+    # Subtest: equal date/assertion candidates retain both dates and assertion provenance
+    ok 15 - equal date/assertion candidates retain both dates and assertion provenance
+      ---
+      duration_ms: 1.143724
+      type: 'test'
+      ...
+    # Subtest: open-ended is unknown, conflicts with finite declaration
+    ok 16 - open-ended is unknown, conflicts with finite declaration
+      ---
+      duration_ms: 1.214701
+      type: 'test'
+      ...
+    # Subtest: months use only matching direct assertion; no conversions or date rounding
+    ok 17 - months use only matching direct assertion; no conversions or date rounding
+      ---
+      duration_ms: 2.039484
+      type: 'test'
+      ...
+    # Subtest: exact duration gap precedence
+    ok 18 - exact duration gap precedence
+      ---
+      duration_ms: 2.179996
+      type: 'test'
+      ...
+    # Subtest: technical quantity bounds, negative zero and no malformed civil dates
+    ok 19 - technical quantity bounds, negative zero and no malformed civil dates
+      ---
+      duration_ms: 3.590482
+      type: 'test'
+      ...
+    # Subtest: D=3660 supports exit-exclusive, inclusive candidate blocks without clamping
+    ok 20 - D=3660 supports exit-exclusive, inclusive candidate blocks without clamping
+      ---
+      duration_ms: 1.558199
+      type: 'test'
+      ...
+    # Subtest: national true is independent of issuer and ordinary class
+    ok 21 - national true is independent of issuer and ordinary class
+      ---
+      duration_ms: 1.943069
+      type: 'test'
+      ...
+    # Subtest: national false limbs dominate unknown; partial citizenship nonmembership stays unknown
+    ok 22 - national false limbs dominate unknown; partial citizenship nonmembership stays unknown
+      ---
+      duration_ms: 0.825525
+      type: 'test'
+      ...
+    # Subtest: national categorical conflicts and absent recorded citizenship rejection
+    ok 23 - national categorical conflicts and absent recorded citizenship rejection
+      ---
+      duration_ms: 1.096734
+      type: 'test'
+      ...
+    # Subtest: outer binding is checked even for unconditional facts
+    ok 24 - outer binding is checked even for unconditional facts
+      ---
+      duration_ms: 0.778924
+      type: 'test'
+      ...
+    # Subtest: branch conflict / disturbing unknown / identical outcome / otherwise
+    ok 25 - branch conflict / disturbing unknown / identical outcome / otherwise
+      ---
+      duration_ms: 6.892468
+      type: 'test'
+      ...
+    # Subtest: canonical v2 fingerprints sort keys/branches/operands/support; retain every semantic axis
+    ok 26 - canonical v2 fingerprints sort keys/branches/operands/support; retain every semantic axis
+      ---
+      duration_ms: 12.469616
+      type: 'test'
+      ...
+    # Subtest: strict JSON rejects accessors without invocation, cycles, symbols, prototypes and extra fields
+    ok 27 - strict JSON rejects accessors without invocation, cycles, symbols, prototypes and extra fields
+      ---
+      duration_ms: 17.932389
+      type: 'test'
+      ...
+    # Subtest: raw and normalized expression limits, branches and support boundaries
+    ok 28 - raw and normalized expression limits, branches and support boundaries
+      ---
+      duration_ms: 4.145509
+      type: 'test'
+      ...
+    1..28
+ok 37 - Schema 2: pure applicability conformance
+  ---
+  duration_ms: 98.686404
+  type: 'suite'
+  ...
+1..37
+# tests 270
+# suites 29
+# pass 270
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3439.674958

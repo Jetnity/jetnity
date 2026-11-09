@@ -1,0 +1,619 @@
+{
+  "schema": "jetnity.mi1.author-source-manifest.v1",
+  "at": "2026-11-09T18:02:19.156539+00:00",
+  "status": "FROZEN_SIX_FILE_DOCUMENT_DELIVERY_PENDING_ROOT_REVIEW_AND_FULL_COMBINED_HEAD_GATES",
+  "logicalAuthor": "Jetnity Official Truth V3 Main Integration1 — Codex Generation1",
+  "actualReusedSession": "/root/v3_method_authority_writer",
+  "cursorSessionClaimed": false,
+  "runtimeChildAssignment": null,
+  "task": {
+    "path": "docs/official-truth-product-v3/MI1_TASK_V1.md",
+    "sha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+    "assignment": "https://github.com/Jetnity/jetnity/issues/1162#issuecomment-6747321570"
+  },
+  "worktree": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+  "localHead": {
+    "sha": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+    "detached": true,
+    "isCombinedIntegrationHead": false
+  },
+  "inputs": {
+    "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "mainTree": "c417811ff67248c4910bb2c5154bb51885d787eb",
+    "acceptedMa1": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "acceptedMa1Tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+    "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "exclusiveCommits": {
+      "main": 7,
+      "ma1": 37
+    },
+    "changedPaths": {
+      "main": 59,
+      "v3": 358,
+      "intersection": 0
+    },
+    "pureUnionBeforeContinuityAndDossier": "eb6f3878ffd44f125818fa764dba10a535404bd0",
+    "eventualOrderedParents": [
+      "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+      "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+    ],
+    "actualOrderedIntegrationParentsVerifiedByAuthor": false,
+    "inputAcquisitionManifestSha256": "0962410b5cbcca86c33f7b4e38ae3938293134a00fef8922a54da4b58a32fb50"
+  },
+  "includedCodeComponents": {
+    "S0": "6b7beebd33a686d494a26cbda8a6311a51dc3450",
+    "I1": "63b97e8ab6139c38746aaaa4caa4054c83219b1d",
+    "U1": "d110545a551baf6b6f18687042238a30514addda",
+    "M1": "40ca2f0348862bb763e8d42728418bda4c63405f",
+    "E1": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+    "S1": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+    "N1": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+    "IN1": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+    "C1": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "MA1": "845a118f697fe38722ad91a6fbf9aab40028f3cf"
+  },
+  "excludedSeparateD1": {
+    "pr": 1169,
+    "head": "300946991376b8969b383a087d47b49a7636f722",
+    "inCodeAncestry": false,
+    "reviewDoesNotApproveMethod": true
+  },
+  "ownedFiles": [
+    {
+      "path": "JETNITY_START_HERE.md",
+      "sha256": "433053cc69153cf71924fc3cdb61c07e434c23c71be46a25d08ad19de0194c1c",
+      "gitBlob": "17223f135424c94cf7e1ec66199fac594ab950f5",
+      "bytes": 96972,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "sha256": "eb896826b987dbc8a0c7751abbd632bc663463d02e2491e821f5a4bc3725c339",
+      "gitBlob": "7ea094969137f5d16f3965270118aa337d7c8b1d",
+      "bytes": 134945,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+      "sha256": "c5d5fb7c70a864fddfd350fcef76c53bef64ff3cd83f431f8019e7a987f4ecdf",
+      "gitBlob": "8aa40cd2fcafcf55593e538fe9dd91d43fb64dcc",
+      "bytes": 6535,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "sha256": "7545f50f13861045ee4791dd7f7241ea1cd18ccac6bafeb67c00ae35f606256f",
+      "gitBlob": "e8a67c83ccb005b2a623431558e870f0ff94278e",
+      "bytes": 14334,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+      "sha256": "46b0353fab557e7f14e5485cad1b35536584d269c9c96639d19916edb24ae35b",
+      "gitBlob": "db368dbce639edc39301efcb9d870fbf3083ae5b",
+      "bytes": 7044,
+      "mode": "100644"
+    }
+  ],
+  "selfManifest": {
+    "path": "docs/official-truth-product-v3/MI1_SOURCE_MANIFEST_V1.json",
+    "sha256Binding": "Full exact SHA256 supplied externally in author freeze and Root publication evidence; intentionally no recursive self-hash."
+  },
+  "exactOwnedFiles": 6,
+  "preservation": {
+    "onlyTwoExistingTopBlocksChanged": true,
+    "topBlockChecks": [
+      {
+        "path": "JETNITY_START_HERE.md",
+        "originalBlockBytes": 3051,
+        "originalBlockSha256": "e184d107387e5de4301d0214bc79ae044c4a8af4c476fbef27da0ff309888d4a",
+        "newBlockSha256": "4b025e00bd2c00284dd31c9b866c43c3ef7e40ca58b423b944210d2e4f9ddb3a",
+        "verbatimArchiveOccurrences": 1,
+        "surroundingBytesUnchanged": true
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "originalBlockBytes": 3031,
+        "originalBlockSha256": "736972382da15147d9fa7831bca02c4b36a48a69e91e9326fe6982aa698db7bc",
+        "newBlockSha256": "5a8b7d0e8104583dd6a93cfc890cb69dc576ae2523c2caad56c71ad6ed692232",
+        "verbatimArchiveOccurrences": 1,
+        "surroundingBytesUnchanged": true
+      }
+    ],
+    "otherAcceptedFileBytesUnchanged": true,
+    "mainTextOverlayCount": 43,
+    "readOnlyInputRows": 399,
+    "inputAggregateBefore": "645088279d80e3b4bac639765c0209756fab1d80b1e1f87d60f184f06cd17c24",
+    "inputAggregateAfter": "645088279d80e3b4bac639765c0209756fab1d80b1e1f87d60f184f06cd17c24",
+    "aggregateDefinition": "SHA256 of UTF-8 json.dumps(sorted(rows,key=path),sort_keys=True,separators=(',',':')), default ensure_ascii=True. Rows bind path, gitBlob, mode, sha256, bytes for all358 V3 delta entries except2 mutable pointers plus43 main text entries. Root union receipt supplies the exact source inventory.",
+    "rootDocumentPins": [
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_CHECK_COMPATIBILITY_V1.json",
+        "sha256": "58148d0ae31f0271b96b3968c9992e784e0f14d092c27a90d099e73a66ccfdbd",
+        "bytes": 8628
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_EXCERPT_V1.txt",
+        "sha256": "c793fd2a017a2a7eb5befa16e3f397d24f03675567fb7956cf7051be0ee548f0",
+        "bytes": 85896
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_PEER_REVIEW_V1.json",
+        "sha256": "2504449f62b06af9bc36b5a0e532d3889f46f1527716200f0d2a1ff09bcd9be7",
+        "bytes": 20683
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_CORE_ROOT_REVIEW_V1.json",
+        "sha256": "358b4a67254ae99b679686cc8551229b83520dce6b3a3e98819970dee0cb0897",
+        "bytes": 8571
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json",
+        "sha256": "8bfe353fb092d579f550d6d2a24e82f09dfdc4d46f89636859271c14491ff4dc",
+        "bytes": 9556
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_RELEASE_PEER_REVIEW_V1.json",
+        "sha256": "9537561804f4e830c3fa3d73a308eefa445abe082aede95f8c898d553ca51700",
+        "bytes": 15305
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json",
+        "sha256": "b1e6ad6b6c5f611b2a33525ee4d5cad145a3672d2743828139fb4b7e97e20aba",
+        "bytes": 1003
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_FINAL_UI_ROOT_REVIEW_V1.json",
+        "sha256": "eb9a2230c83d8682cfd00857b486c8f1fea559be3da8e12903acd3464af84cbe",
+        "bytes": 5918
+      },
+      {
+        "path": "docs/official-truth-product-v3/MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+        "sha256": "97749fb674afd1502143e6a8aec1848684d00b556c45aaf21c6649a169914acb",
+        "bytes": 7743
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_ROOT_INPUT_IMPORT_V1.json",
+        "sha256": "b07fcd426a6e435965151cbfb02e3f460038338aa56cbb61f47482ac52983089",
+        "bytes": 596
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_ROOT_PURE_UNION_V1.json",
+        "sha256": "ffd0dc46cbd1652b28968a2bc1c7ba1ef64735d7fa0f003b85c5a9de2e27b4e5",
+        "bytes": 90425
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_TASK_V1.md",
+        "sha256": "1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a",
+        "bytes": 8583
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_PEER_PURE_UNION_REVIEW_V1.json",
+        "sha256": "3968fad3976d9c138d70f7eda4631814ee64056111a81623f44d3b1b62f603e4",
+        "bytes": 53742
+      }
+    ],
+    "rootDocumentsReadOnly": 13,
+    "originalMa1WorktreeTouchedByAuthor": false,
+    "priorFailureEvidencePreserved": true
+  },
+  "partialLocalUnion": {
+    "completeCheckout": false,
+    "locallyUnavailableBinaryContents": 16,
+    "description": "Encrypted Omio catalog and15 WebP assets remain absent locally; exact existing main blob IDs and modes are preserved in Root/peer union receipts.",
+    "binaryRetrieval": false,
+    "placeholderBytes": false,
+    "dependencyInstallation": false,
+    "buildOrNativeExecution": false,
+    "rootPrivateIndexOnly": "Root preparation remains separate and was not changed by this author."
+  },
+  "publicationAtAuthorSnapshot": {
+    "integrationBranch": null,
+    "integrationPr": null,
+    "integrationHead": null,
+    "integrationCi": null,
+    "integrationPreview": null,
+    "status": "NOT_PUBLISHED_AT_AUTHOR_FREEZE",
+    "futureIdentityGuessed": false,
+    "firstUnfinishedAcceptanceGate": "Full new-head integration CI/native/UI/Preview and independent review, preceded by Root final-doc/tree review, fresh input/gate reconciliation and exact publication."
+  },
+  "historicalMa1Acceptance": {
+    "rootReceiptSha256": "97749fb674afd1502143e6a8aec1848684d00b556c45aaf21c6649a169914acb",
+    "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+    "comment": "https://github.com/Jetnity/jetnity/pull/1175#issuecomment-6747230732",
+    "run": 42663861884,
+    "attempt": 1,
+    "jobsPassed": 8,
+    "core": {
+      "tests": 8621,
+      "passed": 8619,
+      "failed": 0,
+      "inheritedSkips": 2
+    },
+    "ma1Native": {
+      "childrenPassed": 14,
+      "parentPassed": true
+    },
+    "acceptedBy": "Root / Technical Lead",
+    "notNewCombinedAcceptance": true,
+    "preservedFailedRuns": [
+      42654936800,
+      42659466404
+    ]
+  },
+  "checks": [
+    {
+      "id": "mi1-author-001",
+      "scope": "Pre-edit finite source/document/hash/identity checks only",
+      "command": "python3 - <<'PY'\nfrom pathlib import Path\nimport hashlib,json,os,stat,subprocess\nr=Path('/workspace/scratch/01cbe1264212/jetnity-v3-main-integration')\nd=r/'docs/official-truth-product-v3'\nsha=lambda b:hashlib.sha256(b).hexdigest()\nblob=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()\nenv={**os.environ,'GIT_NO_LAZY_FETCH':'1','GIT_OPTIONAL_LOCKS':'0'}\ngit=lambda *a:subprocess.check_output(['git',*a],cwd=r,env=env)\nu=json.loads((d/'MI1_ROOT_PURE_UNION_V1.json').read_text())\nassert sha((d/'MI1_TASK_V1.md').read_bytes())=='1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a'\nassert sha((d/'MA1_ROOT_FINAL_ACCEPTANCE_V1.json').read_bytes())=='97749fb674afd1502143e6a8aec1848684d00b556c45aaf21c6649a169914acb'\nassert git('rev-parse','HEAD').decode().strip()==u['ma1']\nassert git('rev-parse','HEAD^{tree}').decode().strip()==u['ma1Tree']\nassert git('diff','--cached','--name-only')==b''\nroot_names=['MA1_FINAL_CHECK_COMPATIBILITY_V1.json','MA1_FINAL_CORE_EXCERPT_V1.txt','MA1_FINAL_CORE_PEER_REVIEW_V1.json','MA1_FINAL_CORE_ROOT_REVIEW_V1.json','MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json','MA1_FINAL_RELEASE_PEER_REVIEW_V1.json','MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json','MA1_FINAL_UI_ROOT_REVIEW_V1.json','MA1_ROOT_FINAL_ACCEPTANCE_V1.json','MI1_ROOT_INPUT_IMPORT_V1.json','MI1_ROOT_PURE_UNION_V1.json','MI1_TASK_V1.md']\nroot_paths={'docs/official-truth-product-v3/'+n for n in root_names}\nroot_pins=[{'path':p,'sha256':sha((r/p).read_bytes()),'bytes':len((r/p).read_bytes())} for p in sorted(root_paths)]\nmutable={'JETNITY_START_HERE.md','docs/ACTIVE_WORK_STATUS.md'}\nmain_paths=set(u['copiedMainTextPaths'])\nassert len(main_paths)==43 and len(u['mainEntries'])==59 and len(u['v3Entries'])==358\nassert not ({x['path'] for x in u['mainEntries']} & {x['path'] for x in u['v3Entries']})\nmain_map={x['path']:x for x in u['mainEntries']}\npins=[]\nfor e in u['v3Entries']+[main_map[p] for p in sorted(main_paths)]:\n p=r/e['path']; b=p.read_bytes(); mode='100755' if p.stat().st_mode & stat.S_IXUSR else '100644'\n assert e['type']=='blob' and blob(b)==e['sha'] and mode==e['mode'], e['path']\n if e['path'] not in mutable:\n  pins.append({'path':e['path'],'gitBlob':e['sha'],'mode':mode,'sha256':sha(b),'bytes':len(b)})\nfor e in u['locallyUnavailableBinaryObjects']:\n assert not (r/e['path']).exists(), e['path']\nassert len(u['locallyUnavailableBinaryObjects'])==16\ntracked={p.decode() for p in git('ls-files','-z').split(b'\\0') if p}\nchanged={p.decode() for p in git('diff','--name-only','-z').split(b'\\0') if p}\nuntracked={p.decode() for p in git('ls-files','--others','--exclude-standard','-z').split(b'\\0') if p}\nassert changed==main_paths & tracked,(changed,main_paths & tracked)\nassert untracked==(main_paths-tracked)|root_paths,(untracked,(main_paths-tracked)|root_paths)\nstart=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->';end=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->'\nblocks=[]\nfor path in sorted(mutable):\n b=(r/path).read_bytes(); assert b==git('show',u['ma1']+':'+path)\n assert b.count(start)==1 and b.count(end)==1\n a=b.index(start);z=b.index(end,a)+len(end)\n blocks.append({'path':path,'originalFileSha256':sha(b),'originalFileBytes':len(b),'blockSha256':sha(b[a:z]),'blockBytes':z-a,'blockUtf8':b[a:z].decode(),'beforePrefixSha256':sha(b[:a]),'afterSuffixSha256':sha(b[z:])})\nprint(json.dumps({'head':u['ma1'],'tree':u['ma1Tree'],'rootDocumentPins':root_pins,'sourceInputRows':len(pins),'sourceInputAggregateSha256':sha(json.dumps(sorted(pins,key=lambda x:x['path']),sort_keys=True,separators=(',',':')).encode()),'all358V3And43MainTextBlobsAndModesMatch':True,'missingBinaryPathsRemain16':True,'baselineTrackedDiffPaths':sorted(changed),'baselineUntrackedPaths':sorted(untracked),'previousBlocks':blocks,'indexUnchanged':True,'localTestsNativeSqlSocket':False},ensure_ascii=False,indent=2))\nPY",
+      "exitCode": 0,
+      "summary": {
+        "all358V3And43MainTextBlobsAndModesMatch": true,
+        "inputRows": 399,
+        "rootDocsAtThatMoment": 12,
+        "baselineTrackedDiffPaths": [
+          ".env.example",
+          "app/(public)/privacy/page.tsx",
+          "app/(public)/ui-audit/trip-workspace/page.tsx",
+          "components/trips/AktivitaetenBereich.tsx",
+          "components/trips/FlugKarte.tsx",
+          "components/trips/TripWorkspace.tsx",
+          "components/trips/TwelveGoTimetable.tsx",
+          "components/trips/rental/DiscoverCarsMietwagen.tsx",
+          "components/trips/rental/StationField.tsx",
+          "package-lock.json",
+          "package.json"
+        ],
+        "baselineUntrackedPaths": [
+          "app/(public)/reisen/[tripId]/layout.tsx",
+          "app/api/mobility/omio/route.ts",
+          "components/trips/organisieren/Aktivitaeten.tsx",
+          "components/trips/organisieren/Flugsuche.tsx",
+          "components/trips/organisieren/Hotelkarte.tsx",
+          "components/trips/organisieren/Hotelsuche.tsx",
+          "components/trips/organisieren/Organisieren.tsx",
+          "components/trips/organisieren/Reisefoto.tsx",
+          "components/trips/organisieren/Suchfelder.tsx",
+          "components/trips/organisieren/Verbindungen.tsx",
+          "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+          "components/trips/organisieren/omio/OmioVergleich.tsx",
+          "components/trips/organisieren/omio/Ortswahl.tsx",
+          "components/trips/organisieren/omio/Streckenkarte.tsx",
+          "components/trips/organisieren/omio/Streckenwerte.ts",
+          "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+          "components/trips/organisieren/omio/vergleich.css",
+          "components/trips/organisieren/organisieren.css",
+          "data/omio/.gitignore",
+          "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+          "docs/official-truth-product-v3/MA1_FINAL_CHECK_COMPATIBILITY_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_EXCERPT_V1.txt",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_PEER_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_RELEASE_PEER_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_UI_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+          "docs/official-truth-product-v3/MI1_ROOT_INPUT_IMPORT_V1.json",
+          "docs/official-truth-product-v3/MI1_ROOT_PURE_UNION_V1.json",
+          "docs/official-truth-product-v3/MI1_TASK_V1.md",
+          "lib/providers/omio/archiv.test.ts",
+          "lib/providers/omio/archiv.ts",
+          "lib/providers/omio/daten-server.ts",
+          "lib/providers/omio/katalog.test.ts",
+          "lib/providers/omio/katalog.ts",
+          "lib/providers/omio/reise.test.ts",
+          "lib/providers/omio/reise.ts",
+          "lib/trips/organisieren/katalog.test.ts",
+          "lib/trips/organisieren/katalog.ts",
+          "public/images/organisieren/Bildnachweise.txt",
+          "scripts/omio/archivieren.ts",
+          "scripts/omio/importiere-katalog.py"
+        ],
+        "missingBinaryPaths": 16
+      }
+    },
+    {
+      "id": "mi1-author-002",
+      "scope": "Verify both original blocks archived byte-for-byte before replacement",
+      "command": "python3 - <<'PY'\nfrom pathlib import Path\nr=Path('/workspace/scratch/01cbe1264212/jetnity-v3-main-integration')\na=(r/'docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md').read_bytes()\ns=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->';e=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->'\nfor p in ['JETNITY_START_HERE.md','docs/ACTIVE_WORK_STATUS.md']:\n b=(r/p).read_bytes(); x=b[b.index(s):b.index(e)+len(e)]; assert a.count(x)==1\nprint('Both original blocks archived byte-for-byte before source replacement.')\nPY",
+      "exitCode": 0,
+      "output": "Both original blocks archived byte-for-byte before source replacement.\n"
+    },
+    {
+      "id": "mi1-author-003",
+      "scope": "Final finite owned-document consistency, unchanged input/root-doc hashes, surrounding bytes, exact path scope and local link checks; before writing this self-manifest",
+      "command": "python3 - <<'PY'\nfrom pathlib import Path\nfrom datetime import datetime,timezone\nimport hashlib,json,os,re,stat,subprocess\nr=Path('/workspace/scratch/01cbe1264212/jetnity-v3-main-integration');d=r/'docs/official-truth-product-v3'\nsha=lambda b:hashlib.sha256(b).hexdigest()\nblob=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()\nenv={**os.environ,'GIT_NO_LAZY_FETCH':'1','GIT_OPTIONAL_LOCKS':'0'}\ngit=lambda *a:subprocess.check_output(['git',*a],cwd=r,env=env)\nroot_pins=json.loads(r'''[{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_CHECK_COMPATIBILITY_V1.json\",\"sha256\":\"58148d0ae31f0271b96b3968c9992e784e0f14d092c27a90d099e73a66ccfdbd\",\"bytes\":8628},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_CORE_EXCERPT_V1.txt\",\"sha256\":\"c793fd2a017a2a7eb5befa16e3f397d24f03675567fb7956cf7051be0ee548f0\",\"bytes\":85896},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_CORE_PEER_REVIEW_V1.json\",\"sha256\":\"2504449f62b06af9bc36b5a0e532d3889f46f1527716200f0d2a1ff09bcd9be7\",\"bytes\":20683},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_CORE_ROOT_REVIEW_V1.json\",\"sha256\":\"358b4a67254ae99b679686cc8551229b83520dce6b3a3e98819970dee0cb0897\",\"bytes\":8571},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json\",\"sha256\":\"8bfe353fb092d579f550d6d2a24e82f09dfdc4d46f89636859271c14491ff4dc\",\"bytes\":9556},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_RELEASE_PEER_REVIEW_V1.json\",\"sha256\":\"9537561804f4e830c3fa3d73a308eefa445abe082aede95f8c898d553ca51700\",\"bytes\":15305},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json\",\"sha256\":\"b1e6ad6b6c5f611b2a33525ee4d5cad145a3672d2743828139fb4b7e97e20aba\",\"bytes\":1003},{\"path\":\"docs/official-truth-product-v3/MA1_FINAL_UI_ROOT_REVIEW_V1.json\",\"sha256\":\"eb9a2230c83d8682cfd00857b486c8f1fea559be3da8e12903acd3464af84cbe\",\"bytes\":5918},{\"path\":\"docs/official-truth-product-v3/MA1_ROOT_FINAL_ACCEPTANCE_V1.json\",\"sha256\":\"97749fb674afd1502143e6a8aec1848684d00b556c45aaf21c6649a169914acb\",\"bytes\":7743},{\"path\":\"docs/official-truth-product-v3/MI1_ROOT_INPUT_IMPORT_V1.json\",\"sha256\":\"b07fcd426a6e435965151cbfb02e3f460038338aa56cbb61f47482ac52983089\",\"bytes\":596},{\"path\":\"docs/official-truth-product-v3/MI1_ROOT_PURE_UNION_V1.json\",\"sha256\":\"ffd0dc46cbd1652b28968a2bc1c7ba1ef64735d7fa0f003b85c5a9de2e27b4e5\",\"bytes\":90425},{\"path\":\"docs/official-truth-product-v3/MI1_TASK_V1.md\",\"sha256\":\"1e6f6956c6dfe38ea8693cd04c6e8b0f2faf67adc8421d3e7e3d47cebdbd199a\",\"bytes\":8583},{\"path\":\"docs/official-truth-product-v3/MI1_PEER_PURE_UNION_REVIEW_V1.json\",\"sha256\":\"3968fad3976d9c138d70f7eda4631814ee64056111a81623f44d3b1b62f603e4\"}]''')\nfor p in root_pins:\n b=(r/p['path']).read_bytes();assert sha(b)==p['sha256'];p['bytes']=len(b)\nu=json.loads((d/'MI1_ROOT_PURE_UNION_V1.json').read_text())\nassert git('rev-parse','HEAD').decode().strip()==u['ma1']\nassert git('rev-parse','HEAD^{tree}').decode().strip()==u['ma1Tree']\nassert git('diff','--cached','--name-only')==b''\nmutable={'JETNITY_START_HERE.md','docs/ACTIVE_WORK_STATUS.md'}\nnew_docs={'docs/official-truth-product-v3/'+n for n in ['MI1_HANDOFF_V1.md','MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md','MI1_AUTHOR_HANDOFF_V1.md','MI1_SOURCE_MANIFEST_V1.json']}\nmanifest_path='docs/official-truth-product-v3/MI1_SOURCE_MANIFEST_V1.json'\nassert not (r/manifest_path).exists()\nmain_paths=set(u['copiedMainTextPaths']);main_map={x['path']:x for x in u['mainEntries']}\ninput_pins=[]\nfor e in u['v3Entries']+[main_map[p] for p in sorted(main_paths)]:\n if e['path'] in mutable:continue\n p=r/e['path'];b=p.read_bytes();mode='100755' if p.stat().st_mode & stat.S_IXUSR else '100644'\n assert blob(b)==e['sha'] and mode==e['mode'],e['path']\n input_pins.append({'path':e['path'],'gitBlob':e['sha'],'mode':mode,'sha256':sha(b),'bytes':len(b)})\naggregate=sha(json.dumps(sorted(input_pins,key=lambda x:x['path']),sort_keys=True,separators=(',',':')).encode())\nassert len(input_pins)==399 and aggregate=='645088279d80e3b4bac639765c0209756fab1d80b1e1f87d60f184f06cd17c24'\nassert len(u['locallyUnavailableBinaryObjects'])==16\nfor e in u['locallyUnavailableBinaryObjects']:assert not (r/e['path']).exists()\ntracked={p.decode() for p in git('ls-files','-z').split(b'\\0') if p}\nchanged={p.decode() for p in git('diff','--name-only','-z').split(b'\\0') if p}\nuntracked={p.decode() for p in git('ls-files','--others','--exclude-standard','-z').split(b'\\0') if p}\nroot_paths={p['path'] for p in root_pins}\nassert changed==(main_paths & tracked)|mutable\nassert untracked==(main_paths-tracked)|root_paths|(new_docs-{manifest_path})\nstart=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->';end=b'<!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->'\narchive=(d/'MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md').read_bytes()\nblock_checks=[];link_inputs=[]\nfor path in sorted(mutable):\n old=git('show',u['ma1']+':'+path);cur=(r/path).read_bytes()\n assert cur.count(start)==1 and cur.count(end)==1\n a=old.index(start);z=old.index(end,a)+len(end);b=cur.index(start);y=cur.index(end,b)+len(end)\n assert old[:a]==cur[:b] and old[z:]==cur[y:]\n assert archive.count(old[a:z])==1\n block_checks.append({'path':path,'originalBlockBytes':z-a,'originalBlockSha256':sha(old[a:z]),'newBlockSha256':sha(cur[b:y]),'verbatimArchiveOccurrences':1,'surroundingBytesUnchanged':True})\n link_inputs.append((path,cur[b:y].decode()))\nfor path in sorted(new_docs-{manifest_path,'docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md'}):link_inputs.append((path,(r/path).read_text()))\nlinks=[]\nfor path,text in link_inputs:\n for dest in re.findall(r'\\[[^\\]]*\\]\\(([^)]+)\\)',text):\n  if dest.startswith(('https://','http://','#')):continue\n  target=(r/path).parent/dest.split('#',1)[0]\n  assert target.resolve()==(r/manifest_path).resolve() or target.is_file(),(path,dest)\n  links.append({'from':path,'target':dest,'exists':target.is_file(),'plannedManifestOnly':not target.exists()})\nhandoff=(d/'MI1_HANDOFF_V1.md').read_text()\nfor pin in u['includedAncestorPins'].values():assert pin in handoff\nassert u['d1Excluded'] in handoff and 'not in this code ancestry' in handoff\nassert 'PENDING' in handoff and 'NOT_APPROVED' in handoff and 'NOT_RELEASE_READY' in handoff\nassert 'APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING' in handoff\ncheck=subprocess.run(['git','diff','--check','--',*sorted(mutable)],cwd=r,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)\nassert check.returncode==0,check.stdout\nfiles=[]\nfor path in sorted(mutable|new_docs-{manifest_path}):\n b=(r/path).read_bytes();files.append({'path':path,'sha256':sha(b),'gitBlob':blob(b),'bytes':len(b),'mode':'100644'})\nprint(json.dumps({'at':datetime.now(timezone.utc).isoformat(),'head':u['ma1'],'tree':u['ma1Tree'],'ownedFilesExcludingSelfManifest':files,'exactAuthorizedOwnedFileCount':6,'inputRowsPreserved':len(input_pins),'inputAggregateSha256':aggregate,'rootDocumentPins':root_pins,'topBlockChecks':block_checks,'localLinkChecks':links,'trackedDiffPaths':sorted(changed),'untrackedBeforeManifest':sorted(untracked),'readOnlyDiffCheck':{'command':['git','diff','--check','--',*sorted(mutable)],'exitCode':check.returncode,'output':check.stdout.decode()},'noExtraTrackedOrUntrackedPaths':True,'allTenHeadPinsAndSeparateD1Bound':True,'sixteenBinaryPathsRemainAbsent':True,'indexUnchanged':True,'localExecution':'none: document/hash/read-only Git checks only'},indent=2))\nPY",
+      "exitCode": 0,
+      "summary": {
+        "inputRowsPreserved": 399,
+        "rootDocs": 13,
+        "topBlockChecks": [
+          {
+            "path": "JETNITY_START_HERE.md",
+            "originalBlockBytes": 3051,
+            "originalBlockSha256": "e184d107387e5de4301d0214bc79ae044c4a8af4c476fbef27da0ff309888d4a",
+            "newBlockSha256": "4b025e00bd2c00284dd31c9b866c43c3ef7e40ca58b423b944210d2e4f9ddb3a",
+            "verbatimArchiveOccurrences": 1,
+            "surroundingBytesUnchanged": true
+          },
+          {
+            "path": "docs/ACTIVE_WORK_STATUS.md",
+            "originalBlockBytes": 3031,
+            "originalBlockSha256": "736972382da15147d9fa7831bca02c4b36a48a69e91e9326fe6982aa698db7bc",
+            "newBlockSha256": "5a8b7d0e8104583dd6a93cfc890cb69dc576ae2523c2caad56c71ad6ed692232",
+            "verbatimArchiveOccurrences": 1,
+            "surroundingBytesUnchanged": true
+          }
+        ],
+        "localLinkChecks": [
+          {
+            "from": "JETNITY_START_HERE.md",
+            "target": "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "JETNITY_START_HERE.md",
+            "target": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "JETNITY_START_HERE.md",
+            "target": "docs/ACTIVE_WORK_STATUS.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "JETNITY_START_HERE.md",
+            "target": "docs/official-truth-product-v3/MI1_TASK_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "JETNITY_START_HERE.md",
+            "target": "docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/ACTIVE_WORK_STATUS.md",
+            "target": "JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/ACTIVE_WORK_STATUS.md",
+            "target": "official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/ACTIVE_WORK_STATUS.md",
+            "target": "ACTIVE_WORK_STATUS.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/ACTIVE_WORK_STATUS.md",
+            "target": "official-truth-product-v3/MI1_TASK_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/ACTIVE_WORK_STATUS.md",
+            "target": "official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+            "target": "MI1_TASK_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+            "target": "MI1_SOURCE_MANIFEST_V1.json",
+            "exists": false,
+            "plannedManifestOnly": true
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+            "target": "MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+            "target": "MI1_HANDOFF_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_TASK_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "../../JETNITY_START_HERE.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "../JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "../ACTIVE_WORK_STATUS.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_ROOT_PURE_UNION_V1.json",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_PEER_PURE_UNION_REVIEW_V1.json",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_ROOT_INPUT_IMPORT_V1.json",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_AUTHOR_HANDOFF_V1.md",
+            "exists": true,
+            "plannedManifestOnly": false
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MI1_SOURCE_MANIFEST_V1.json",
+            "exists": false,
+            "plannedManifestOnly": true
+          },
+          {
+            "from": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+            "target": "MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+            "exists": true,
+            "plannedManifestOnly": false
+          }
+        ],
+        "trackedDiffPaths": [
+          ".env.example",
+          "JETNITY_START_HERE.md",
+          "app/(public)/privacy/page.tsx",
+          "app/(public)/ui-audit/trip-workspace/page.tsx",
+          "components/trips/AktivitaetenBereich.tsx",
+          "components/trips/FlugKarte.tsx",
+          "components/trips/TripWorkspace.tsx",
+          "components/trips/TwelveGoTimetable.tsx",
+          "components/trips/rental/DiscoverCarsMietwagen.tsx",
+          "components/trips/rental/StationField.tsx",
+          "docs/ACTIVE_WORK_STATUS.md",
+          "package-lock.json",
+          "package.json"
+        ],
+        "untrackedBeforeSelfManifest": [
+          "app/(public)/reisen/[tripId]/layout.tsx",
+          "app/api/mobility/omio/route.ts",
+          "components/trips/organisieren/Aktivitaeten.tsx",
+          "components/trips/organisieren/Flugsuche.tsx",
+          "components/trips/organisieren/Hotelkarte.tsx",
+          "components/trips/organisieren/Hotelsuche.tsx",
+          "components/trips/organisieren/Organisieren.tsx",
+          "components/trips/organisieren/Reisefoto.tsx",
+          "components/trips/organisieren/Suchfelder.tsx",
+          "components/trips/organisieren/Verbindungen.tsx",
+          "components/trips/organisieren/omio/OmioImReiseplan.tsx",
+          "components/trips/organisieren/omio/OmioVergleich.tsx",
+          "components/trips/organisieren/omio/Ortswahl.tsx",
+          "components/trips/organisieren/omio/Streckenkarte.tsx",
+          "components/trips/organisieren/omio/Streckenwerte.ts",
+          "components/trips/organisieren/omio/WeitereVerbindungen.tsx",
+          "components/trips/organisieren/omio/vergleich.css",
+          "components/trips/organisieren/organisieren.css",
+          "data/omio/.gitignore",
+          "docs/ORGANISIEREN_REISESUCHE_2026-11-09.md",
+          "docs/official-truth-product-v3/MA1_FINAL_CHECK_COMPATIBILITY_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_EXCERPT_V1.txt",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_PEER_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_CORE_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_NATIVE_PROOF_MATRIX_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_RELEASE_PEER_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_SCOPE_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_FINAL_UI_ROOT_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MA1_ROOT_FINAL_ACCEPTANCE_V1.json",
+          "docs/official-truth-product-v3/MI1_AUTHOR_HANDOFF_V1.md",
+          "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+          "docs/official-truth-product-v3/MI1_PEER_PURE_UNION_REVIEW_V1.json",
+          "docs/official-truth-product-v3/MI1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+          "docs/official-truth-product-v3/MI1_ROOT_INPUT_IMPORT_V1.json",
+          "docs/official-truth-product-v3/MI1_ROOT_PURE_UNION_V1.json",
+          "docs/official-truth-product-v3/MI1_TASK_V1.md",
+          "lib/providers/omio/archiv.test.ts",
+          "lib/providers/omio/archiv.ts",
+          "lib/providers/omio/daten-server.ts",
+          "lib/providers/omio/katalog.test.ts",
+          "lib/providers/omio/katalog.ts",
+          "lib/providers/omio/reise.test.ts",
+          "lib/providers/omio/reise.ts",
+          "lib/trips/organisieren/katalog.test.ts",
+          "lib/trips/organisieren/katalog.ts",
+          "public/images/organisieren/Bildnachweise.txt",
+          "scripts/omio/archivieren.ts",
+          "scripts/omio/importiere-katalog.py"
+        ],
+        "noExtraTrackedOrUntrackedPaths": true,
+        "allTenHeadPinsAndSeparateD1Bound": true,
+        "indexUnchanged": true
+      }
+    },
+    {
+      "id": "mi1-author-003-git-diff",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "JETNITY_START_HERE.md",
+        "docs/ACTIVE_WORK_STATUS.md"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "localVerificationLimits": {
+    "tests": false,
+    "typescript": false,
+    "lint": false,
+    "hygiene": false,
+    "build": false,
+    "native": false,
+    "sql": false,
+    "postgresSocket": false,
+    "remoteReleaseOrOwnerTruth": false,
+    "runtimeReaudit": false,
+    "allAuthorCommandExits": 0,
+    "newCombinedGateResult": "PENDING"
+  },
+  "boundaries": {
+    "method": "NOT_APPROVED",
+    "dev1139": "NOT_RELEASE_READY;17 pre-Owner gaps",
+    "sql": "UNAPPLIED",
+    "refused917": "APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING; ledger UNKNOWN; Stage2 NOT_ATTEMPTED. No retry/rephrase/delegation/reroute/alternate transport/human substitution.",
+    "ready1131": "STOP",
+    "research1135": "HOLD",
+    "preview968": "exact isolation persists",
+    "privacy911_913": "remain separate gates",
+    "hostedDbAuthRlsAclMigrationCredentialAction": false,
+    "realSourceProviderResearcherCall": false,
+    "publicRouteSchedulerNotificationCostFlagActivation": false,
+    "authorGitIndexRefCommitPush": false,
+    "authorReadyMerge": false,
+    "authorSelfPass": false,
+    "automaticFollowOn": false
+  },
+  "nextActor": "Root / Technical Lead; original author STOP, same-session finite MI1 fixes only if explicitly assigned"
+}
+

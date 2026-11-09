@@ -1,0 +1,399 @@
+// Mandatory native CI proof only. Never optional, hosted or locally rerouted.
+import assert from 'node:assert/strict'
+import { fork, type ChildProcess } from 'node:child_process'
+import { randomBytes } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { performance } from 'node:perf_hooks'
+import { fileURLToPath } from 'node:url'
+import { test, type TestContext } from 'node:test'
+import { startLocalProofCluster, type LocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
+import { LocalPgConnection, LocalPgError, pgText, type PgRows } from '../official-truth-integrated-pilot-1/pg-wire'
+import { OwnedTestLifetime } from '../official-truth-atomic-version-refresh-1/test-lifetime'
+import { createV3PostgresMethodAuthority, MA1_READ_CURRENT_SQL, type Ma1MethodReceipt } from '../../../lib/readiness/official-truth-product-v3/method/authority-postgres'
+import { readMa1CurrentRequest, readMa1CurrentRows, type Ma1MethodBinding } from '../../../lib/readiness/official-truth-product-v3/method/contract'
+import { installMa1AuthFixture, MA1_AUTH, ma1Claims, resetMa1Humans } from './auth-fixture'
+import { ma1Operation, ma1RootVectors, ma1SyntheticTuple } from './fixtures'
+import { createMa1NativeExecutor } from './native-adapter'
+
+const candidate = readFileSync(new URL('./method-candidate.sql', import.meta.url), 'utf8')
+const rollback = readFileSync(new URL('./method-candidate.rollback.sql', import.meta.url), 'utf8')
+const identitySql = 'SELECT pg_catalog.pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_catalog.pg_stat_activity WHERE pid=pg_catalog.pg_backend_pid()'
+const fixtureMarker = "SELECT pg_catalog.set_config('jetnity.ma1_fixture','jetnity-ma1-disposable-native-v1',false)"
+const CHECK_DEFINITIONS = `SELECT c.conname,pg_catalog.pg_get_expr(c.conbin,c.conrelid,false) AS expression,
+  pg_catalog.pg_get_constraintdef(c.oid,false) AS definition FROM pg_catalog.pg_constraint c
+  WHERE c.connamespace='official_v3_method_private'::pg_catalog.regnamespace AND c.contype='c' ORDER BY c.conname`
+const args = (types: readonly ('text' | 'integer')[]) => types.map((type, index) =>
+  `NULLIF($${index + 1}::text,'')${type === 'integer' ? '::integer' : ''}`).join(',')
+const STAGE_SQL = `SELECT official_v3_method_api.stage_draft_v1(${args(['text', 'text', 'integer', 'text', 'text', 'integer'])}) AS result`
+const APPROVE_SQL = `SELECT official_v3_method_api.approve_v1(${args(['text', 'text', 'integer', 'text', 'text', 'integer', 'text', 'text', 'integer', 'text', 'text', 'text'])}) AS result`
+const REVOKE_SQL = `SELECT official_v3_method_api.revoke_v1(${args(['text', 'text', 'integer', 'text', 'text', 'integer'])}) AS result`
+const CONFIRM_SQL = `SELECT official_v3_method_api.confirm_operation_v1(${args(['text', 'text', 'text', 'integer', 'text', 'text', 'integer', 'integer', 'text', 'text', 'integer', 'text', 'text', 'text'])}) AS result`
+const LOCKED_SQL = 'SELECT official_v3_method_private.require_current_locked_v1($1::text,$2::integer,$3::text,$4::text,$5::integer)'
+type Identity = Readonly<{ pid: string; birth: string }>
+type Expected = Readonly<Ma1MethodBinding & { epoch: number; status: 'approved' | 'revoked' }>
+type Command = Readonly<{ operation: string; action: 'stage' | 'approve' | 'revoke'; binding: Ma1MethodBinding;
+  expected?: Expected; mode?: 'until' | 'until_revoked'; until?: string }>
+type Ack = Readonly<{ status: string; operationId: string; action?: string; actorId?: string;
+  before?: Record<string, unknown> | null; after?: Record<string, unknown> | null }>
+type Native = Awaited<ReturnType<typeof createMa1NativeExecutor>>
+let operationIndex = 0
+const op = () => ma1Operation(++operationIndex)
+const now = () => new Date().toISOString()
+const parameters = (values: readonly (string | number | null)[]) => values.map(value => pgText(value === null ? '' : String(value)))
+const tupleParameters = (binding: Ma1MethodBinding) => [pgText(binding.methodId), pgText(String(binding.revision), 23), pgText(binding.methodDigest), pgText(binding.packageDigest)]
+const code = (state: string) => (error: unknown) => error instanceof LocalPgError && error.code === state
+function ack(rows: PgRows): Ack {
+  assert.equal(rows.length, 1); assert.ok(typeof rows[0]!.result === 'string' && rows[0]!.result.length < 8192)
+  return JSON.parse(rows[0]!.result) as Ack
+}
+function values(command: Command): readonly (string | number | null)[] {
+  const b = command.binding, e = command.expected
+  if (command.action === 'stage') return [command.operation, b.methodId, b.revision, b.methodDigest, b.packageDigest, b.revision === 1 ? null : b.revision - 1]
+  if (command.action === 'revoke') return [command.operation, b.methodId, b.revision, b.methodDigest, b.packageDigest, e?.epoch ?? null]
+  return [command.operation, b.methodId, b.revision, b.methodDigest, b.packageDigest, e?.revision ?? null,
+    e?.methodDigest ?? null, e?.packageDigest ?? null, e?.epoch ?? 0, e?.status ?? null, command.mode ?? null, command.until ?? null]
+}
+function confirmationValues(command: Command): readonly (string | number | null)[] {
+  const b = command.binding, e = command.expected
+  return [command.operation, command.action, b.methodId, b.revision, b.methodDigest, b.packageDigest,
+    command.action === 'stage' && b.revision > 1 ? b.revision - 1 : null,
+    e?.revision ?? null, e?.methodDigest ?? null, e?.packageDigest ?? null,
+    command.action === 'stage' ? null : e?.epoch ?? 0, e?.status ?? null, command.mode ?? null, command.until ?? null]
+}
+const queryFor = (command: Command) => command.action === 'stage' ? STAGE_SQL : command.action === 'approve' ? APPROVE_SQL : REVOKE_SQL
+const invoke = (connection: LocalPgConnection, command: Command) => connection.query(queryFor(command), parameters(values(command)))
+const confirm = async (connection: LocalPgConnection, command: Command) => ack(await connection.query(CONFIRM_SQL, parameters(confirmationValues(command))))
+
+async function installCandidate(connection: LocalPgConnection, t: TestContext): Promise<void> {
+  const marker = 'DO $ma1_exact_boundary$'
+  const at = candidate.indexOf(marker)
+  assert.ok(at > 0); assert.equal(candidate.indexOf(marker, at + marker.length), -1)
+  const prefix = candidate.slice(0, at), suffix = candidate.slice(at)
+  assert.equal(prefix + suffix, candidate, 'fixed diagnostic split cannot alter candidate bytes')
+  try {
+    await connection.query(prefix)
+    // Same existing connection, still inside the candidate's exact BEGIN/COMMIT.
+    const definitions = await connection.query(CHECK_DEFINITIONS)
+    assert.equal(definitions.length, 3)
+    assert.ok(Buffer.byteLength(JSON.stringify(definitions)) < 32768)
+    t.diagnostic('MA1 pre-validator exact CHECK definitions (DDL diagnostics only): ' + JSON.stringify(definitions))
+    await connection.query(suffix)
+  } catch (error) { await connection.query('ROLLBACK'); throw error }
+}
+
+async function createFixture(lifetime: OwnedTestLifetime, t: TestContext, install = true) {
+  const cluster = lifetime.startCluster(startLocalProofCluster)
+  const connections = new Set<LocalPgConnection>(), identities = new Map<LocalPgConnection, Identity>()
+  const connect = async (login = cluster.user, role?: 'authenticated' | 'ot_v3_method_reader' | 'postgres') => {
+    const connection = await LocalPgConnection.connect(cluster, login); connections.add(connection)
+    if (role) await connection.query('SET ROLE ' + role)
+    const rows = await connection.query(identitySql)
+    assert.equal(rows.length, 1); assert.ok(rows[0]!.pid && rows[0]!.birth)
+    identities.set(connection, Object.freeze({ pid: rows[0]!.pid, birth: rows[0]!.birth }))
+    if (login === MA1_AUTH.humanLogin || login === MA1_AUTH.readerLogin) {
+      assert.deepEqual(await connection.query('SELECT session_user::text AS session_user,current_user::text AS current_user'),
+        [{ session_user: login, current_user: role! }])
+    }
+    return connection
+  }
+  const owner = await connect(), observer = await connect()
+  await observer.query("SELECT pg_catalog.set_config('statement_timeout','1000',false),pg_catalog.set_config('lock_timeout','1000',false)")
+  await installMa1AuthFixture(owner)
+  await owner.query(fixtureMarker)
+  if (install) {
+    await installCandidate(owner, t)
+    await owner.query(`GRANT ot_v3_method_reader TO ${MA1_AUTH.readerLogin}`)
+  }
+  const human = async (claims: Readonly<Record<string, unknown>> = ma1Claims()) => {
+    const connection = await connect(MA1_AUTH.humanLogin, 'authenticated')
+    await connection.query("SELECT pg_catalog.set_config('request.jwt.claims',$1,false)", [pgText(JSON.stringify(claims))])
+    return connection
+  }
+  const state = async (binding: Ma1MethodBinding) => {
+    const fresh = await connect()
+    try { return await fresh.query(`SELECT
+      (SELECT COALESCE(jsonb_agg(to_jsonb(r) ORDER BY revision),'[]'::jsonb)::text FROM official_v3_method_private.revisions_v1 r WHERE method_id=$1::text) AS revisions,
+      (SELECT COALESCE(jsonb_agg(to_jsonb(h)),'[]'::jsonb)::text FROM official_v3_method_private.heads_v1 h WHERE method_id=$1::text) AS heads,
+      (SELECT COALESCE(jsonb_agg(to_jsonb(o) ORDER BY operation_id),'[]'::jsonb)::text FROM official_v3_method_private.operations_v1 o WHERE method_id=$1::text) AS operations`, [pgText(binding.methodId)]) }
+    finally { fresh.close() }
+  }
+  const head = async (binding: Ma1MethodBinding): Promise<Expected> => {
+    const rows = await owner.query('SELECT revision::text,method_digest,package_digest,epoch::text,status FROM official_v3_method_private.heads_v1 WHERE method_id=$1::text', [pgText(binding.methodId)])
+    assert.equal(rows.length, 1)
+    return Object.freeze({ methodId: binding.methodId, revision: Number(rows[0]!.revision), methodDigest: rows[0]!.method_digest!,
+      packageDigest: rows[0]!.package_digest!, epoch: Number(rows[0]!.epoch), status: rows[0]!.status as 'approved' | 'revoked' })
+  }
+  const stage = async (connection: LocalPgConnection, binding: Ma1MethodBinding) => {
+    const command: Command = { action: 'stage', operation: op(), binding }
+    assert.equal(ack(await invoke(connection, command)).status, 'recorded'); return command
+  }
+  const approve = async (connection: LocalPgConnection, binding: Ma1MethodBinding, expected?: Expected, until?: string) => {
+    const command: Command = { action: 'approve', operation: op(), binding, expected,
+      mode: until ? 'until' : 'until_revoked', ...(until ? { until } : {}) }
+    assert.equal(ack(await invoke(connection, command)).status, 'recorded'); return command
+  }
+  const revoke = async (connection: LocalPgConnection, binding: Ma1MethodBinding) => {
+    const command: Command = { action: 'revoke', operation: op(), binding, expected: await head(binding) }
+    assert.equal(ack(await invoke(connection, command)).status, 'recorded'); return command
+  }
+  const close = () => { for (const connection of connections) connection.close() }
+  return { cluster, owner, observer, connections, identities, connect, human, state, head, stage, approve, revoke, close }
+}
+type Fixture = Awaited<ReturnType<typeof createFixture>>
+
+async function until(lifetime: OwnedTestLifetime, predicate: () => Promise<boolean>, message: string, milliseconds = 3000): Promise<void> {
+  const deadline = performance.now() + milliseconds
+  do { if (await predicate()) return; await lifetime.wait(10) } while (performance.now() < deadline)
+  assert.fail(message)
+}
+function observe<T>(promise: Promise<T>) {
+  let settled = false
+  const result = promise.then(value => { settled = true; return { value, error: undefined } }, error => { settled = true; return { value: undefined, error } })
+  return { result, isSettled: () => settled }
+}
+async function waitBlocked(f: Fixture, lifetime: OwnedTestLifetime, caller: Identity, holder: Identity,
+  expectedSql: string, pending: () => boolean, relation = 'official_v3_method_private.heads_v1'): Promise<void> {
+  await until(lifetime, async () => {
+    const rows = await f.observer.query(`SELECT a.state,a.wait_event_type,a.query,
+      ($3::integer=ANY(pg_catalog.pg_blocking_pids(a.pid)))::text AS actual_holder,
+      EXISTS(SELECT 1 FROM pg_catalog.pg_locks l WHERE l.pid=a.pid AND l.relation=$4::regclass)::text AS relevant_relation
+      FROM pg_catalog.pg_stat_activity a WHERE a.pid=$1::integer AND a.backend_start=$2::timestamptz`,
+    [pgText(caller.pid, 23), pgText(caller.birth), pgText(holder.pid, 23), pgText(relation)])
+    return rows.length === 1 && rows[0]!.state === 'active' && rows[0]!.wait_event_type === 'Lock'
+      && rows[0]!.query === expectedSql && rows[0]!.actual_holder === 'true' && rows[0]!.relevant_relation === 'true' && pending()
+  }, 'actual PID/birth/query/Lock/blocker/relation/pending proof missing')
+}
+async function assertBothAbsent(f: Fixture, native: Native): Promise<void> {
+  native.assertHealthy()
+  for (const entry of native.evidence.calls) {
+    assert.ok(entry.joined && entry.pending === 0 && entry.targetAbsent && entry.controlAbsent && !entry.stoppedFailure)
+    for (const id of [entry.target!, entry.control!]) {
+      const rows = await f.observer.query('SELECT count(*)::text AS n FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer AND backend_start=$2::timestamptz',
+        [pgText(id.pid, 23), pgText(id.birth)])
+      assert.equal(rows[0]!.n, '0')
+    }
+  }
+}
+
+test('MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup', { timeout: 420_000 }, async t => {
+  const lifetime = new OwnedTestLifetime(t.signal), actors = new Set<Promise<unknown>>(), children = new Set<ChildProcess>()
+  const fixtures: Fixture[] = [], natives: Native[] = []
+  lifetime.installConnectOwnership()
+  const tracked = <T>(promise: Promise<T>): Promise<T> => {
+    actors.add(promise); lifetime.track(promise)
+    void promise.then(() => actors.delete(promise), () => actors.delete(promise)); return promise
+  }
+  lifetime.onStop(() => { for (const child of children) child.kill('SIGKILL') })
+  const make = async (install = true) => { const f = await createFixture(lifetime, t, install); fixtures.push(f); return f }
+  let primaryError: unknown
+  try {
+    const f = await make(false)
+    await t.test('creator function/table/schema defaults refuse atomically without normalization', async () => {
+      for (const [index, objectType, privilege] of [[1, 'FUNCTIONS', 'EXECUTE'], [2, 'TABLES', 'SELECT'], [3, 'SCHEMAS', 'USAGE']] as const) {
+        const creator = 'ot_ma1_creator_' + index
+        await f.owner.query(`CREATE ROLE ${creator} LOGIN SUPERUSER NOINHERIT;
+          SET ROLE ${creator}; ALTER DEFAULT PRIVILEGES GRANT ${privilege} ON ${objectType} TO ${MA1_AUTH.alien}; RESET ROLE;`)
+        const before = await f.owner.query('SELECT defaclrole::text,defaclnamespace::text,defaclobjtype::text,defaclacl::text FROM pg_catalog.pg_default_acl ORDER BY 1,2,3')
+        const installer = await f.connect(creator)
+        await assert.rejects(installCandidate(installer, t), code('P7505'))
+        assert.deepEqual(await f.owner.query('SELECT defaclrole::text,defaclnamespace::text,defaclobjtype::text,defaclacl::text FROM pg_catalog.pg_default_acl ORDER BY 1,2,3'), before)
+        assert.equal((await f.owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_namespace WHERE nspname IN ('official_v3_method_private','official_v3_method_api')"))[0]!.n, '0')
+        assert.equal((await f.owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_roles WHERE rolname='ot_v3_method_reader'"))[0]!.n, '0')
+        installer.close()
+      }
+    })
+    await installCandidate(f.owner, t)
+    await f.owner.query(`GRANT ot_v3_method_reader TO ${MA1_AUTH.readerLogin}`)
+    const native = await createMa1NativeExecutor(f.cluster, lifetime); natives.push(native)
+    const human = await f.human()
+    const helperBefore = await f.owner.query("SELECT proowner::text,proacl::text,prosrc,proconfig::text FROM pg_catalog.pg_proc WHERE oid='jetnity_ot_auth.require_current_owner_session_v1()'::regprocedure")
+    const rootVectors = ma1RootVectors(), rootBinding = rootVectors[0]!.binding
+    await t.test('literal vectors, exact owned roles, strict direct inputs and real adapter composition', async () => {
+      assert.equal(rootVectors.length, 3)
+      const authority = createV3PostgresMethodAuthority(rootBinding, native.executor)
+      assert.equal((await authority.resolveCurrent(rootBinding, now())).status, 'not_approved')
+      await f.stage(human, rootBinding)
+      assert.equal((await authority.resolveCurrent(rootBinding, now())).status, 'not_approved')
+      const before = await f.state(rootBinding)
+      await assert.rejects(invoke(human, { action: 'stage', operation: op(), binding: rootVectors[1]!.binding }), code('P7502'))
+      assert.deepEqual(await f.state(rootBinding), before)
+      await f.approve(human, rootBinding)
+      const resolved = await authority.resolveCurrent(rootBinding, now()); assert.equal(resolved.status, 'approved')
+      if (resolved.status !== 'approved') assert.fail('actual approved receipt')
+      const approvedHead = await f.head(rootBinding)
+      await f.stage(human, rootVectors[2]!.binding)
+      assert.deepEqual(await f.head(rootBinding), approvedHead, 'staging successor cannot alter authority')
+      assert.equal((await authority.reproveAtCommit(resolved.receipt, rootBinding, now())).status, 'current')
+      const foreign = createV3PostgresMethodAuthority(rootBinding, native.executor)
+      assert.equal((await foreign.reproveAtCommit(resolved.receipt, rootBinding, now())).status, 'unavailable')
+      assert.equal((await authority.reproveAtCommit(JSON.parse(JSON.stringify(resolved.receipt)) as Ma1MethodReceipt, rootBinding, now())).status, 'unavailable')
+      const reader = await f.connect(MA1_AUTH.readerLogin, 'ot_v3_method_reader')
+      for (const timestamp of ['0000-01-01T00:00:00.000Z', '2026-02-30T00:00:00.000Z', '2026-01-01T24:00:00.000Z',
+        '2026-01-01T00:00:60.000Z', '2026-01-01T00:00:00.0000Z', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00.000+00:00', 'infinity', ' 2026-01-01T00:00:00.000Z']) {
+        await assert.rejects(reader.query(MA1_READ_CURRENT_SQL, [...tupleParameters(rootBinding), pgText(timestamp)]), code('P7501'))
+      }
+      await assert.rejects(reader.query("SELECT * FROM official_v3_method_api.read_current_v1(NULL,1,$1,$2,$3)",
+        [pgText(rootBinding.methodDigest), pgText(rootBinding.packageDigest), pgText(now())]), code('P7501'))
+      const closed = values({ action: 'stage', operation: op(), binding: ma1SyntheticTuple('invalid') })
+      for (const index of [0, 1, 2, 3, 4]) {
+        const invalid = [...closed]; invalid[index] = null
+        await assert.rejects(human.query(STAGE_SQL, parameters(invalid)), code('P7501'))
+      }
+      await assert.rejects(reader.query('SET ROLE postgres'), code('42501'))
+      await assert.rejects(human.query('SET ROLE postgres'), code('42501'))
+      for (const sql of ['SELECT * FROM official_v3_method_private.heads_v1', 'SELECT * FROM official_v3_method_private.operations_v1',
+        'SELECT * FROM auth.users', 'SELECT * FROM auth.sessions', 'SELECT jetnity_ot_auth.require_current_owner_session_v1()',
+        "SELECT official_v3_method_private.require_current_locked_v1('bad',1,'bad','bad',1)",
+        "SELECT official_v3_method_api.stage_draft_v1('bad','bad',1,'bad','bad',NULL)",
+        "SELECT official_v3_method_api.approve_v1('bad','bad',1,'bad','bad',NULL,NULL,NULL,0,NULL,'until_revoked',NULL)",
+        "SELECT official_v3_method_api.revoke_v1('bad','bad',1,'bad','bad',1)",
+        "SELECT official_v3_method_api.confirm_operation_v1('bad','stage','bad',1,'bad','bad',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)"]) {
+        await assert.rejects(reader.query(sql), code('42501'))
+      }
+      await assert.rejects(human.query(MA1_READ_CURRENT_SQL, [...tupleParameters(rootBinding), pgText(now())]), code('42501'))
+      await assert.rejects(human.query('SELECT * FROM official_v3_method_private.revisions_v1'), code('42501'))
+      for (const role of ['anon', 'service_role']) {
+        const roleConnection = await f.connect(); await roleConnection.query('SET ROLE ' + role)
+        await assert.rejects(roleConnection.query(STAGE_SQL, parameters(closed)), code('42501'))
+        await assert.rejects(roleConnection.query(MA1_READ_CURRENT_SQL, [...tupleParameters(rootBinding), pgText(now())]), code('42501'))
+        roleConnection.close()
+      }
+      await assert.rejects(f.owner.query('UPDATE official_v3_method_private.revisions_v1 SET staged_at=staged_at'), code('P7508'))
+      await assert.rejects(f.owner.query('DELETE FROM official_v3_method_private.operations_v1'), code('P7508'))
+      reader.close(); await assertBothAbsent(f, native)
+    })
+
+    await t.test('real active own Owner and exact account/session/profile negative matrix', async () => {
+      const binding = ma1SyntheticTuple('auth-negative')
+      const negatives: Readonly<Record<string, unknown>>[] = [
+        { role: 'service_role' }, { aal: 'aal1' }, { session_id: null }, { session_id: MA1_AUTH.foreignSession },
+        { sub: 'not-a-uuid' }, { sub: '44444444-4444-4444-8444-444444444444' }, { exp: 0 }, { exp: '9999999999' },
+      ]
+      for (const changes of negatives) {
+        const caller = await f.human(ma1Claims(changes)), before = await f.state(binding)
+        await assert.rejects(invoke(caller, { action: 'stage', operation: op(), binding }), code('42501'))
+        assert.deepEqual(await f.state(binding), before); caller.close()
+      }
+      const invalidations = [
+        `UPDATE auth.users SET deleted_at=clock_timestamp() WHERE id='${MA1_AUTH.owner}'`,
+        `UPDATE auth.users SET banned_until=clock_timestamp()+interval '1 hour' WHERE id='${MA1_AUTH.owner}'`,
+        `UPDATE auth.users SET is_anonymous=true WHERE id='${MA1_AUTH.owner}'`,
+        `UPDATE auth.sessions SET not_after=clock_timestamp() WHERE id='${MA1_AUTH.session}'`,
+        `UPDATE auth.sessions SET aal='aal1' WHERE id='${MA1_AUTH.session}'`,
+        `DELETE FROM auth.sessions WHERE id='${MA1_AUTH.session}'`,
+        `UPDATE public.profiles SET status='disabled' WHERE user_id='${MA1_AUTH.owner}'`,
+        `UPDATE public.profiles SET role='admin' WHERE user_id='${MA1_AUTH.owner}'`,
+        `DELETE FROM public.profiles WHERE user_id='${MA1_AUTH.owner}'`,
+      ]
+      for (const invalidation of invalidations) {
+        await resetMa1Humans(f.owner); await f.owner.query(invalidation)
+        const before = await f.state(binding)
+        await assert.rejects(invoke(human, { action: 'stage', operation: op(), binding }), code('42501'))
+        assert.deepEqual(await f.state(binding), before)
+      }
+      await resetMa1Humans(f.owner)
+      await f.stage(human, binding)
+      const retained = await f.state(binding)
+      await f.owner.query(`DELETE FROM auth.users WHERE id='${MA1_AUTH.owner}'`)
+      assert.deepEqual(await f.state(binding), retained, 'Auth deletion must not erase audit actor/history')
+      await resetMa1Humans(f.owner)
+    })
+
+    await t.test('exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement', async () => {
+      const binding = ma1SyntheticTuple('operations'), staged = await f.stage(human, binding)
+      const original = await confirm(human, staged)
+      assert.deepEqual(ack(await invoke(human, staged)), original)
+      assert.deepEqual(await confirm(human, staged), original)
+      const before = await f.state(binding)
+      await assert.rejects(invoke(human, { ...staged, binding: { ...binding, methodDigest: 'c'.repeat(64) } }), code('P7502'))
+      const other = await f.human(ma1Claims({ sub: MA1_AUTH.other, session_id: MA1_AUTH.foreignSession }))
+      await assert.rejects(invoke(other, staged), code('P7502')); other.close()
+      assert.deepEqual(await f.state(binding), before)
+      const command: Command = { operation: op(), action: 'approve', binding, mode: 'until_revoked' }
+      await human.query('BEGIN')
+      assert.equal(ack(await invoke(human, command)).status, 'recorded')
+      assert.equal((await f.owner.query('SELECT count(*)::text AS n FROM official_v3_method_private.operations_v1 WHERE operation_id=$1', [pgText(command.operation)]))[0]!.n, '0', 'function result precedes COMMIT')
+      await human.query('COMMIT')
+      assert.ok(human.operationDiagnostics.some(entry => entry.phase === 'commit' && entry.commitAcknowledged))
+      assert.equal((await confirm(human, command)).status, 'recorded')
+      const approved = await f.head(binding), frozen = await f.state(binding)
+      await assert.rejects(invoke(human, { ...command, operation: op() }), code('P7503'))
+      assert.deepEqual(await f.state(binding), frozen)
+      const a = await f.human(), b = await f.human()
+      const same: Command = { action: 'approve', operation: op(), binding, expected: approved, mode: 'until_revoked' }
+      await a.query('BEGIN'); const first = ack(await invoke(a, same))
+      const second = observe(tracked(invoke(b, same)))
+      await waitBlocked(f, lifetime, f.identities.get(b)!, f.identities.get(a)!, APPROVE_SQL, () => !second.isSettled())
+      await a.query('COMMIT')
+      const secondResult = await second.result; assert.ifError(secondResult.error); assert.deepEqual(ack(secondResult.value!), first)
+      const expected = await f.head(binding), nextA: Command = { action: 'approve', operation: op(), binding, expected, mode: 'until_revoked' }
+      const nextB: Command = { ...nextA, operation: op() }
+      await a.query('BEGIN'); await invoke(a, nextA)
+      const competing = observe(tracked(invoke(b, nextB)))
+      await waitBlocked(f, lifetime, f.identities.get(b)!, f.identities.get(a)!, APPROVE_SQL, () => !competing.isSettled())
+      await a.query('COMMIT'); assert.ok(code('P7503')((await competing.result).error))
+      assert.equal((await f.head(binding)).epoch, expected.epoch + 1)
+      a.close(); b.close()
+    })
+
+    await t.test('lost response confirms immutable truth across expiry, revoke and supersession', async () => {
+      const binding = ma1SyntheticTuple('lost-ack'), revision2 = ma1SyntheticTuple('lost-ack', 2)
+      await f.stage(human, binding)
+      const expiry = new Date(Date.now() + 800).toISOString()
+      const command: Command = { operation: op(), action: 'approve', binding, mode: 'until', until: expiry }
+      const caller = await f.human(); await caller.query('BEGIN'); await invoke(caller, command); await caller.query('COMMIT')
+      assert.ok(caller.operationDiagnostics.some(entry => entry.phase === 'commit' && entry.commitAcknowledged))
+      // Deliberately discard the returned record only AFTER actual committed backend completion.
+      caller.close()
+      await f.owner.query('SELECT pg_catalog.pg_sleep(GREATEST(0::double precision,extract(epoch FROM ($1::timestamptz-clock_timestamp()))::double precision)+0.02)', [pgText(expiry)])
+      const confirmed = await confirm(human, command); assert.equal(confirmed.status, 'recorded')
+      await f.revoke(human, binding)
+      assert.deepEqual(await confirm(human, command), confirmed)
+      await f.stage(human, revision2); await f.approve(human, revision2, await f.head(binding))
+      const current = await f.state(binding)
+      assert.deepEqual(ack(await invoke(human, command)), confirmed)
+      assert.deepEqual(await confirm(human, command), confirmed)
+      assert.deepEqual(await f.state(binding), current, 'historical ACK cannot restore authority')
+      const unknown = { ...command, operation: op() }
+      assert.deepEqual(await confirm(human, unknown), { status: 'absent', operationId: unknown.operation })
+      assert.deepEqual(await f.state(binding), current, 'serialized absence writes no history despite stale NEW-state expiry/CAS')
+      const backward: Command = { action: 'approve', operation: op(), binding, expected: await f.head(binding), mode: 'until_revoked' }
+      await assert.rejects(invoke(human, backward), code('P7503'))
+      assert.deepEqual(await f.state(binding), current)
+    })
+
+    await t.test('last approval retains a terminal revoke; epoch exhaustion never resets history', async () => {
+      const binding = ma1SyntheticTuple('terminal')
+      await f.stage(human, binding); await f.approve(human, binding)
+      await f.owner.query('UPDATE official_v3_method_private.heads_v1 SET epoch=2147483645 WHERE method_id=$1', [pgText(binding.methodId)])
+      t.diagnostic('Epoch2147483645 is explicit synthetic owner setup; no billions-of-operations history claim.')
+      await f.approve(human, binding, await f.head(binding))
+      assert.equal((await f.head(binding)).epoch, 2147483646)
+      let snapshot = await f.state(binding)
+      await assert.rejects(invoke(human, { action: 'approve', operation: op(), binding, expected: await f.head(binding), mode: 'until_revoked' }), code('P7503'))
+      assert.deepEqual(await f.state(binding), snapshot)
+      const terminal = await f.revoke(human, binding)
+      assert.equal((await f.head(binding)).epoch, 2147483647)
+      const historical = await confirm(human, terminal); snapshot = await f.state(binding)
+      await assert.rejects(invoke(human, { action: 'approve', operation: op(), binding, expected: await f.head(binding), mode: 'until_revoked' }), code('P7503'))
+      await assert.rejects(invoke(human, { ...terminal, operation: op() }), code('P7503'))
+      assert.deepEqual(await confirm(human, terminal), historical)
+      assert.deepEqual(await f.state(binding), snapshot)
+    })
+
+    // Remaining real lock/capacity/process/rollback groups are appended below.
+    assert.deepEqual(await f.owner.query("SELECT proowner::text,proacl::text,prosrc,proconfig::text FROM pg_catalog.pg_proc WHERE oid='jetnity_ot_auth.require_current_owner_session_v1()'::regprocedure"), helperBefore)
+  } catch (error) { primaryError = error }
+  finally {
+    for (const child of children) child.kill('SIGKILL')
+    for (const native of natives) native.closeObserver()
+    for (const fixture of fixtures) fixture.close()
+    try {
+      await lifetime.drain([...actors])
+      const final = await lifetime.dispose()
+      assert.equal(final.pending, 0); assert.equal(final.started, final.settled); assert.equal(final.connections, final.closed)
+      t.diagnostic('MA1 owned lifetime terminal evidence: ' + JSON.stringify(final))
+    } catch (error) { primaryError = primaryError ? new AggregateError([primaryError, error], 'ma1 primary and cleanup failures') : error }
+  }
+  if (primaryError) throw primaryError
+})

@@ -1,0 +1,152 @@
+{
+  "schema": "ma1-root-review-evidence-index-v1",
+  "status": "UNCHANGED_REVIEW_RECORDS_SOURCE_HASH_BOUND_NOT_FINAL_NATIVE_PASS",
+  "purpose": "Preserve pre-fix working snapshots, independent reviews, Root offline checks, actual failed observations and future current-main integration planning. Earlier scratch paths in unchanged receipts are mapped to persistent repository copies below. Code snapshots/probes with .txt suffix are review artifacts, not imported implementation.",
+  "artifacts": [
+    {
+      "scratchOriginal": "MA1_ROOT_EARLY_RUNTIME_REVIEW_V1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_V1.json",
+      "sha256": "467a3223f80ef6f54b44f050194c2aba1ed47404eaf1288ac4e6ab9c201d1c9f",
+      "bytes": 2774
+    },
+    {
+      "scratchOriginal": "MA1_ROOT_EARLY_RUNTIME_REVIEW_R1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_EARLY_RUNTIME_REVIEW_R1.json",
+      "sha256": "c59e420688e2a491f97e76605ba6a97d7fe37cfc0b7f54e77828689555ce8417",
+      "bytes": 3088
+    },
+    {
+      "scratchOriginal": "MA1_ROOT_NAMED_OFFLINE_R1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1.json",
+      "sha256": "3cde5e23d9f2a8cade676c6b82d678ea44d27409c3a3f06c75bd81d7f111923a",
+      "bytes": 3139
+    },
+    {
+      "scratchOriginal": "MA1_ROOT_RUNTIME_SOURCE_OFFLINE_REVIEW_R1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_RUNTIME_SOURCE_OFFLINE_REVIEW_R1.json",
+      "sha256": "5f2e6d1ad9e5ea9e6a9af3eec4a3f981bb7e4dddf1e95c0172802e96d04ef773",
+      "bytes": 4743
+    },
+    {
+      "scratchOriginal": "MA1_ROOT_EARLY_SQL_REVIEW_V1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_EARLY_SQL_REVIEW_V1.json",
+      "sha256": "a5556d8460815e7a0f71d99828cbcb275d8abc769deb17c4db1a5f34c0241efa",
+      "bytes": 3045
+    },
+    {
+      "scratchOriginal": "MA1_ROOT_EARLY_NATIVE_SOURCE_REVIEW_R1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_EARLY_NATIVE_SOURCE_REVIEW_R1.json",
+      "sha256": "cec94e816e4f63c81f234e447ad92fe1256236d601f126b6640dc9db07dc5dda",
+      "bytes": 3105
+    },
+    {
+      "scratchOriginal": "ma1-early-runtime-source-review-v1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_PEER_RUNTIME_SOURCE_REVIEW_V1.json",
+      "sha256": "970ac2839c1583d6d07667e6108a19fa990888cd351931eb9b0c7507f5a20158",
+      "bytes": 13922
+    },
+    {
+      "scratchOriginal": "ma1-early-sql-source-review-v1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_PEER_SQL_SOURCE_REVIEW_V1.json",
+      "sha256": "c1f0d7c4143b9c353f0796d2b2c43033cc68446ae7f60f0f676cedb0bdcd8250",
+      "bytes": 11176
+    },
+    {
+      "scratchOriginal": "ma1-early-native-adapter-source-review-v1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_V1.json",
+      "sha256": "bcf99e02a2f441e495f45b046b1ff3c78e194b53e3efb090730a056dc9334a3c",
+      "bytes": 11231
+    },
+    {
+      "scratchOriginal": "ma1-early-native-adapter-source-review-r1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_PEER_NATIVE_ADAPTER_REVIEW_R1.json",
+      "sha256": "89cc6b2a27b740ff152f77084dfb4f50a5e720f3ceb4b34e12e28f1bca0d8e68",
+      "bytes": 6134
+    },
+    {
+      "scratchOriginal": "ma1-root-named-offline-r1.txt",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_ROOT_NAMED_OFFLINE_R1_LOG.txt",
+      "sha256": "390df13c69122bca4472b94305aca5a558c2ec150b314573ed448fc203423b1e",
+      "bytes": 77586
+    },
+    {
+      "scratchOriginal": "ma1-root-row-invariant-probe.cjs",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1.cjs.txt",
+      "sha256": "2306c79ec99d7e3a8705db687efe84908835333d013417eeac1c483987a5d216",
+      "bytes": 2128
+    },
+    {
+      "scratchOriginal": "ma1-root-row-invariant-probe-v2.cjs",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2.cjs.txt",
+      "sha256": "51acd6a1541a0b21dbdf91b97b7546c2bb3123701fc5127e5e712c2ad9af5652",
+      "bytes": 2751
+    },
+    {
+      "scratchOriginal": "ma1-root-row-invariant-probe-v1.log",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v1-log.txt",
+      "sha256": "7524c76d9839fb33d59c81711ab6eb18f8d52b5cbcf17e4d2182c956fecead92",
+      "bytes": 875
+    },
+    {
+      "scratchOriginal": "ma1-root-row-invariant-probe-v2.log",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/root-row-invariant-probe-v2-log.txt",
+      "sha256": "187610d443fe4856e84c92244c9ed3ce808549d7862e56c3485998b87909ee63",
+      "bytes": 726
+    },
+    {
+      "scratchOriginal": "ma1-early-runtime-contract.ts.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/runtime-contract-before-r1.ts.txt",
+      "sha256": "cd2cc8afc869ecc68c6cba4da1ed1172df609df2fb97ee0053e6b03922261d04",
+      "bytes": 9941
+    },
+    {
+      "scratchOriginal": "ma1-early-runtime-authority-postgres.ts.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/runtime-adapter-before-r1.ts.txt",
+      "sha256": "a156b24aeac45aa46450e2f54cf3552e1ce88a87df93557307b4666f48aea824",
+      "bytes": 6685
+    },
+    {
+      "scratchOriginal": "ma1-root-early-method-candidate.sql.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/method-candidate-before-r1.sql.txt",
+      "sha256": "c2baaca0e1d834daf159028aa2af79ecc9fd0e740394373155d72dfc252a84af",
+      "bytes": 47760
+    },
+    {
+      "scratchOriginal": "ma1-root-early-method-candidate.rollback.sql.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/method-rollback-before-r1.sql.txt",
+      "sha256": "cbd83db04f6920585ed48460a5297bafd5b6be4fb220be82e2af74ca7aa1c2ca",
+      "bytes": 16695
+    },
+    {
+      "scratchOriginal": "ma1-root-early-process-worker.ts.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/process-worker-before-r1.ts.txt",
+      "sha256": "a5ede473a94053808a38ede8d95b2cb5da79c6803b0d21dd21543a5e3ef4eb43",
+      "bytes": 5653
+    },
+    {
+      "scratchOriginal": "ma1-root-early-native.ts.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/native-before-r1.ts.txt",
+      "sha256": "a3201bdbc247c2543a38f584ccb0584d446618ebbefbbf8d67c96902493f004e",
+      "bytes": 30499
+    },
+    {
+      "scratchOriginal": "ma1-root-early-native-adapter.ts.snapshot",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/native-adapter-before-r1.ts.txt",
+      "sha256": "b5cd2f32991b45793d1f3c26ee5b73565b78e0397cd5a73d3beba892adbbbe2a",
+      "bytes": 12819
+    },
+    {
+      "scratchOriginal": "ma1-early-native-adapter-source-v1/postgres-identity-visibility-evidence.json",
+      "repositoryCopy": "docs/official-truth-product-v3/ma1-review-evidence/postgres-identity-visibility-evidence.json",
+      "sha256": "3906d0449d6396c4ae88152ed55ad1c59002b70efe66f3ae73b02c125ce43d62",
+      "bytes": 8947
+    },
+    {
+      "scratchOriginal": "v3-current-main-integration-plan-v1.json",
+      "repositoryCopy": "docs/official-truth-product-v3/MA1_CURRENT_MAIN_INTEGRATION_PLANNING_V1.json",
+      "sha256": "657502d4ad5cee12ca18168fdb29d09e07929c9baf290053173f4f78c275a3e0",
+      "bytes": 48315
+    }
+  ],
+  "boundaries": "No hosted/SQL/native/socket execution, authority, Ready/merge or activation occurs by copying evidence. Actual implementation remains under review. Root-owned docs; authors must not alter these artifacts."
+}

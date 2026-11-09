@@ -1,0 +1,72 @@
+{
+  "schema": "jetnity-ma1-root-phase-a-acceptance-v2",
+  "at": "2026-11-09T15:25:23.417Z",
+  "reviewer": "/root Technical Lead",
+  "status": "PHASE_A_PLAN_ACCEPTED_PHASE_B_AUTHORIZED_AFTER_PUBLISHED_CHECKPOINT_ANNOUNCEMENT",
+  "implementationAcceptance": false,
+  "seedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "seedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "codeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "plan": {
+    "path": "MA1_PLAN_V2.md",
+    "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24"
+  },
+  "pins": {
+    "path": "MA1_SOURCE_PINS_V2.json",
+    "sha256": "14aec53f3d4c5cf4cadc78d6dc9121365cb1952f9c857a312bec4a09d7ba1eb7"
+  },
+  "corrections": {
+    "path": "MA1_PLAN_CORRECTIONS_V2.json",
+    "sha256": "2d2016d820b0cfec5b95bf4cb7f666779eb5f2363c50fe2f8c3868a5d9f8c7a0"
+  },
+  "sameWriter": {
+    "name": "Jetnity Official Truth V3 Method Authority 1 — Codex Generation 1",
+    "session": "/root/v3_method_authority_writer"
+  },
+  "rootReview": [
+    "Read full V1 and full V1-to-V2 delta; inspected unchanged transport/lifetime/cluster-stop source directly.",
+    "Independently verified all30 V1 source hashes and sizes plus unchanged Owner-helper body; V2 references are identical.",
+    "Verified all frozen V1/V2 artifact bytes and both independent V2 receipts.",
+    "Accepted exact retained-time minimum across overlapping reproofs, full target/control cleanup with explicit failure joins, and post-lock inventory/ACL/membership refusal.",
+    "No optional cross-call revocation-latch expansion: port stays preliminary; actual final method proof is required in the future joint publication transaction."
+  ],
+  "closedPlanFindings": [
+    "MA1-PLAN-LIFETIME-1",
+    "MA1-PLAN-LIFETIME-2",
+    "MA1-PLAN-ROLLBACK-1",
+    "MA1-PLAN-SQL-WORDING"
+  ],
+  "supportingReviews": [
+    {
+      "path": "MA1_PLAN_SQL_REVIEW_V2.json",
+      "sha256": "f4d510bd8dcc94b646c9d34c6dd7ae182727f9a690e9a125496e0bd81db0e810"
+    },
+    {
+      "path": "MA1_PLAN_LIFETIME_REVIEW_V2.json",
+      "sha256": "cb22da9c52386da875e61e1468fad6650313806cbfe17cfde0006c4a68addb82"
+    }
+  ],
+  "mainReconciliation": {
+    "path": "MA1_MAIN_DRIFT_RECONCILIATION_V1.json",
+    "sha256": "147bff277df7ec4df5a09cbed67998ecb7fe8805a9e7a943c1f50bbdf6c2888e",
+    "currentMain": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+    "currentProduction": "dpl_9iu5bD976NN7p4SZNAA8HsYYQGzr",
+    "openGate": "P2 current-main integration: existing seed ahead33/behind3; deliberately retain exact accepted C1 implementation base. Reconcile entire V3 stack and fully regate before Ready/merge."
+  },
+  "implementationOwnership": "MA1_TASK_V1 plus MA1_IMPLEMENTATION_SUBTASKS_V1; main author coordinates one explicitly bounded runtime child, records actual session before code, and retains SQL/native ownership. Same actual implementer handles immediate review fixes. Root alone publishes, gates, Ready/merges.",
+  "validationStillRequired": [
+    "Actual code and independent source/diff review",
+    "Explicit offline tests, typecheck, scoped lint and existing hygiene gates with all failures retained",
+    "Mandatory real native SQL/ACL/replay/race/restart/drain/rollback evidence in existing CI",
+    "Full exact-head CI/UI/build/Preview and fresh open-thread/base/main/Production gates",
+    "Current-main integration gate remains separate and open"
+  ],
+  "hardBoundaries": [
+    "Method NOT_APPROVED; #1139 NOT_RELEASE_READY; no database or Production activation",
+    "No #917 retry/rephrase/delegation/alternate transport/human substitute",
+    "No local PostgreSQL/native/socket retry; native execution only existing mandatory CI",
+    "No hosted DB/Auth/RLS/ACL/migration/credential action; no real source/provider/researcher, public route, scheduler, notification or cost",
+    "No author commit/ref/remote publication/Ready/merge/automatic next slice"
+  ],
+  "firstUnfinishedStep": "After Root publishes and announces this exact planning checkpoint, same writer implements the frozen finite MA1 task, then freezes author evidence for independent review."
+}

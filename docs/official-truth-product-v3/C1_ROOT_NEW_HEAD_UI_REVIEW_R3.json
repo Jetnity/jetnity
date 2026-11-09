@@ -1,0 +1,116 @@
+{
+  "schema": "c1-root-new-head-ui-review-r3",
+  "at": "2026-11-09T14:16:47.066928+00:00",
+  "reviewer": "Root / Technical Lead",
+  "status": "ISOLATED_SYNTHETIC_UI_PASS_FULL_CI_PENDING",
+  "binding": {
+    "checkedOutHead": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+    "sourceHead": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "worktreeDirty": false,
+    "githubSha": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+    "runId": "42632507668",
+    "runAttempt": "1",
+    "event": "pull_request"
+  },
+  "checkedOutTree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+  "sourceTree": "59c0704ffbb5ecfb544b853c3d17d0bcdac90aee",
+  "checkoutParents": [
+    "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+    "5558367eb0bff97162c369bbb8963123839f4b0e"
+  ],
+  "jobId": 129212104722,
+  "artifactId": 13682076069,
+  "zipSha256": "c6c3c27c60ef8d67c0a4d17aadcd87c3b8855e2207f7fd0bbc98130e6ad453d7",
+  "layoutCount": 12,
+  "interactionCount": 11,
+  "noBrowserErrors": true,
+  "noExternalRequests": true,
+  "pngs": [
+    {
+      "name": "mixed-280",
+      "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "mixed-390",
+      "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "mixed-1280",
+      "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "mixed-320-text200",
+      "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "conflict-320",
+      "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "loading-320",
+      "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "application-320",
+      "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "application-320-text200",
+      "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "poll-pending-390",
+      "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    },
+    {
+      "name": "poll-accepted-390",
+      "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf",
+      "byteIdenticalToPreviousInspectedArtifact": true
+    }
+  ],
+  "visualReview": "All10 newly generated PNGs are byte-identical to prior exact SHA-verified artifact. Root had visually inspected application320,application320text200,mixed1280,conflict320,pollaccepted390 in that artifact; no new pixels require repeated viewing. New job ran independently at source5558367; all5 report bindings and bundle inputs verified.",
+  "previousRootUiReceiptSha256": "064674aa53067122b5af2419a172cb9dd6f47f9bfd4a3e18e041acf0fde63d2d",
+  "reportSha256": {
+    "audit.json": "7a48148e9e68b330cff4ffc19a5a9d94453c2f1f37cd7003b2529f49dc890823",
+    "bundle-inputs.json": "0f8be220f24443f388106cda522cf0171883fc4413264059ab65a62739bb9440",
+    "run-binding.json": "529358c16c490b5704d21b5570d6d2f2d4c41d6161ef06a4aad354a0d2050dfa",
+    "benchmark.json": "1d132753399fe02ea8c86ce30794b2c274022f5612440d131dd4b205a843cfa4",
+    "http-smoke.json": "2d0e75fa8b4e0646ffb046493e5a5941a7a87dbb892edc8bdaa509804b6bf44f"
+  },
+  "syntheticProcessBenchmark": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 4.561275000000023,
+    "p95Ms": 7.772719999999936,
+    "maximumMs": 15.878793000000087,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+      "sourceHead": "5558367eb0bff97162c369bbb8963123839f4b0e",
+      "worktreeDirty": false,
+      "githubSha": "7d3c87fdc43caf581912b98f934b6e8bb03e4616",
+      "runId": "42632507668",
+      "runAttempt": "1",
+      "event": "pull_request"
+    }
+  },
+  "limitations": [
+    "Fictional isolated data; not a real AA rule or production source qualification",
+    "Synthetic process benchmark is not public p95",
+    "No public route, hosted DB, source/provider call or activation",
+    "Other exact-head gates remain pending"
+  ]
+}

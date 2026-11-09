@@ -1,0 +1,68 @@
+{
+  "schema": "MA1_R2_ROOT_LITERAL_ATTRIBUTION_V1",
+  "reviewer": "/root",
+  "at": "2026-11-09T17:08:12.219312+00:00",
+  "head": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "logSha256": "5c3521bdd6d94b4712c4a7527bc89383f4cd5384c29dd96f445a59bfc8dd5f38",
+  "actualDiagnosticLine": 33806,
+  "sourceComparisons": [
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "beforeSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "proposedOneByteCorrectionSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "sourceLiteralBytes": 2801,
+      "actualLiteralBytes": 2800,
+      "actualLiteralSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+      "diffs": {
+        "revisions_v1_shape": [],
+        "heads_v1_shape": [],
+        "operations_v1_shape": [
+          {
+            "tag": "delete",
+            "expectedRange": [
+              1643,
+              1644
+            ],
+            "actualRange": [
+              1643,
+              1643
+            ],
+            "old": ")",
+            "new": ""
+          }
+        ]
+      },
+      "noSourceWritten": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "beforeSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "proposedOneByteCorrectionSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "sourceLiteralBytes": 2801,
+      "actualLiteralBytes": 2800,
+      "actualLiteralSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+      "diffs": {
+        "revisions_v1_shape": [],
+        "heads_v1_shape": [],
+        "operations_v1_shape": [
+          {
+            "tag": "delete",
+            "expectedRange": [
+              1643,
+              1644
+            ],
+            "actualRange": [
+              1643,
+              1643
+            ],
+            "old": ")",
+            "new": ""
+          }
+        ]
+      },
+      "noSourceWritten": true
+    }
+  ],
+  "qualification": "Actual byte mismatch necessarily fails this guard. Shared P7505 stack does not uniquely locate its first RAISE or exclude an additional inventory mismatch; new full native CI remains necessary.",
+  "sourceOrSqlExecution": false
+}

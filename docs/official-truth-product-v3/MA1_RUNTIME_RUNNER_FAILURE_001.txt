@@ -1,0 +1,8 @@
+Documented validation-runner failure, no native/SQL work.
+The wrapper launched the three authorized checks before its ledger update failed.
+Traceback (most recent call last):
+  File "<stdin>", line 12, in <module>
+TypeError: 'PosixPath' object does not support item assignment
+
+Correction: update the parsed record dictionary, not the ledger Path.
+Exits from the orphaned wrapper are not claimed; retain outputs and repeat only these checks after no matching running process remains.

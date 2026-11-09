@@ -1,0 +1,177 @@
+{
+  "schema": "ma1-phase-a-v2-sql-peer-review-v1",
+  "at": "2026-11-09T15:22:20.378020+00:00",
+  "reviewer": "/root/handoff_recovery_audit",
+  "authorSession": "/root/v3_method_authority_writer",
+  "status": "PRIOR_SQL_PLAN_FINDING_CLOSED_NO_NEW_IN_SCOPE_DELTA_BLOCKER",
+  "authority": "SOURCE_AND_PLAN_REVIEW_ONLY_NOT_TL_PASS_NO_PHASE_B_AUTHORIZATION",
+  "scope": "Only frozen V1-to-V2 SQL/Auth/ACL/state/rollback delta, prior rollback finding, column-default wording, and regressions introduced by those changes. No repeat of the entire task review.",
+  "worktree": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority",
+  "issuedSeedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "issuedSeedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "codeBase": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "inputs": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_TASK_V1.md",
+      "sha256": "0368cbcd82220f043249427fe68fcf7a2ddb7976c509624d31213d77ae500fd4",
+      "bytes": 18897
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V1.md",
+      "sha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+      "bytes": 44728
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+      "bytes": 55990
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_SOURCE_PINS_V1.json",
+      "sha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+      "bytes": 7920
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+      "sha256": "14aec53f3d4c5cf4cadc78d6dc9121365cb1952f9c857a312bec4a09d7ba1eb7",
+      "bytes": 9572
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/docs/official-truth-product-v3/MA1_PLAN_CORRECTIONS_V2.json",
+      "sha256": "2d2016d820b0cfec5b95bf4cb7f666779eb5f2363c50fe2f8c3868a5d9f8c7a0",
+      "bytes": 6223
+    }
+  ],
+  "priorReviewPreserved": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-plan-v1-sql-peer-review.json",
+    "sha256": "0a88b5e495d403ab53fcda952cf6dc9aabefc61c1f77fa1f065dc88495b6c696",
+    "bytes": 16197
+  },
+  "integrity": {
+    "allSixBoundInputHashesMatchedBeforeAndAfterReview": true,
+    "preservedV1PlanAndPinsMatchedPriorHashes": true,
+    "sourceReferencesUnchangedFromV1": true,
+    "sourceReferenceCount": 30,
+    "helperBodyPinUnchanged": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+    "preimplementationLiteralReferenceUnchanged": true,
+    "noNewSourceReexecutionOrFullTaskReReview": true,
+    "gitStatusReadOnly": "GIT_NO_LAZY_FETCH=1 git status --short showed only eight untracked MA1 planning/review documents and no tracked product changes; three preserved V1 review copies were expressly identified as Root-owned."
+  },
+  "findingClosure": [
+    {
+      "id": "MA1-PLAN-SQL-R1",
+      "rootId": "MA1-PLAN-ROLLBACK-1",
+      "priorSeverity": "P2",
+      "disposition": "CLOSED_AT_PLAN_LEVEL_ONLY",
+      "evidence": [
+        {
+          "file": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            258,
+            264
+          ],
+          "detail": "All three ACCESS EXCLUSIVE table locks precede post-wait emptiness and exact finite object/owner/metadata/schema/table/function/column ACL and reader-role membership guards. Both pg_auth_members roleid and member directions must be empty. Harness removes only its known fixture membership outside rollback. Unknown grants are not normalized. Finite RESTRICT drops run only after all guards; external dependency errors abort transaction."
+        },
+        {
+          "file": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            298,
+            300
+          ],
+          "detail": "Group12 requires deliberately unknown membership, extra direct object grant and explicit column-grant refusals with fresh observations preserving every original right and candidate object. Concurrent committed history after an observed rollback wait still blocks removal. Observed wait uses exact PID, birth, dispatched SQL and blocker, not scheduling."
+        }
+      ],
+      "judgment": "The explicit preflight now supplies the protection missing from RESTRICT alone. No implementation or native evidence is claimed."
+    },
+    {
+      "id": "MA1-PLAN-SQL-W1",
+      "rootId": "MA1-PLAN-SQL-WORDING",
+      "priorSeverity": "WORDING",
+      "disposition": "CLOSED_AT_PLAN_LEVEL_ONLY",
+      "evidence": [
+        {
+          "file": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            235,
+            235
+          ],
+          "detail": "Supported creator-default classes function/table/schema are explicitly separate from direct column ACL inspection."
+        },
+        {
+          "file": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            288,
+            288
+          ],
+          "detail": "Group2 explicitly disclaims a column-default grant form or event-trigger invention; direct column negatives belong to group12."
+        },
+        {
+          "file": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+          "lines": [
+            298,
+            298
+          ],
+          "detail": "Explicit column-grant preservation is an actual planned refusal case."
+        }
+      ],
+      "judgment": "No unsupported PostgreSQL column-default mechanism remains promised."
+    }
+  ],
+  "crossBoundaryAndRegressionAssessment": [
+    {
+      "topic": "Genuine restricted caller evidence",
+      "evidence": "MA1_PLAN_V2.md:250-254",
+      "judgment": "Explicit fixed SET ROLE for genuine NOINHERIT logins and session_user/current_user assertions clarify real authorization without adding production/helper rights. Bootstrap-superuser SET ROLE remains excluded as a negative proof."
+    },
+    {
+      "topic": "Pre-normalization install and final ACL map",
+      "evidence": "MA1_PLAN_V2.md:233-246",
+      "judgment": "Unchanged exact ownership and final signature-to-role map remain in force. Unknown creator grants fail before provenance-erasing normalization; no existing/default/Auth ACL repair is introduced."
+    },
+    {
+      "topic": "Owned disposable scope",
+      "evidence": "MA1_PLAN_V2.md:262-264",
+      "judgment": "The plan correctly limits catalog-race claims to the owned disposable fixture and preserves #1142, unrelated roles and defaults. It does not claim hosted rollback or exclusion of concurrent privileged catalog mutation."
+    },
+    {
+      "topic": "Method state, human Auth, lock order and terminal epoch",
+      "judgment": "No new SQL/Auth/state regression identified in the bounded V2 delta. Prior unchanged plan review remains the underlying evidence; this is not a new runtime audit."
+    }
+  ],
+  "complementaryFindings": [
+    {
+      "rootId": "MA1-PLAN-LIFETIME-1",
+      "disposition": "V2_CORRECTION_PRESENT_FINAL_CLOSURE_DEFERRED_TO_ASSIGNED_LIFETIME_PEER",
+      "note": "Retained deadline shortening and post-drain checks are described; no independent full lifetime closure claimed here."
+    },
+    {
+      "rootId": "MA1-PLAN-LIFETIME-2",
+      "disposition": "V2_CORRECTION_PRESENT_FINAL_CLOSURE_DEFERRED_TO_ASSIGNED_LIFETIME_PEER",
+      "note": "Both per-call transport disappearance and poisoned-fixture cleanup are described; no native execution or independent full lifecycle closure claimed here."
+    }
+  ],
+  "newInScopeBlockingFindings": [],
+  "executed": {
+    "repositorySourceOrPlanEdits": false,
+    "runtimeImports": false,
+    "tests": false,
+    "nativePostgres": false,
+    "databaseOrHostedCalls": false,
+    "networkCalls": false,
+    "gitOrRemoteMutation": false,
+    "scratchReceiptOnly": true,
+    "operations": [
+      "Read frozen plan delta and relevant exact lines",
+      "Read JSON inputs and compare declared source pin arrays",
+      "Compute content SHA256 for review binding",
+      "Read git status with GIT_NO_LAZY_FETCH=1",
+      "Write this scratch receipt"
+    ]
+  },
+  "limits": [
+    "Plan sufficiency is not implemented correctness.",
+    "All native acceptance cases remain unexecuted by this reviewer.",
+    "Phase B, final plan acceptance, publication, CI gates, Ready and merge remain exclusively Root decisions.",
+    "Method remains NOT_APPROVED; Dev remains NOT_RELEASE_READY; existing Product Owner and platform boundaries are unchanged."
+  ]
+}

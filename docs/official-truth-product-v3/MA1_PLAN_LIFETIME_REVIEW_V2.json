@@ -1,0 +1,74 @@
+{
+  "schema": "ma1-plan-v2-lifetime-peer-review-v1",
+  "reviewer": "/root/live_release_recovery",
+  "at": "2026-11-09T15:22:08.095093+00:00",
+  "reviewKind": "Bounded independent source-only complementary V2 plan delta review; no TL PASS",
+  "status": "TWO_PRIOR_LIFETIME_FINDINGS_CLOSED_AT_PLAN_LEVEL_NO_NEW_BLOCKER",
+  "writer": "/root/v3_method_authority_writer",
+  "seedHead": "b8b8737bcb0e225616829d870c0773b6c766a9f8",
+  "seedTree": "d2574147dbf1396c0967920859cdb59c2954b7cb",
+  "reviewedArtifacts": [
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_V2.md",
+      "sha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_SOURCE_PINS_V2.json",
+      "sha256": "14aec53f3d4c5cf4cadc78d6dc9121365cb1952f9c857a312bec4a09d7ba1eb7"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MA1_PLAN_CORRECTIONS_V2.json",
+      "sha256": "2d2016d820b0cfec5b95bf4cb7f666779eb5f2363c50fe2f8c3868a5d9f8c7a0"
+    }
+  ],
+  "preservedV1": {
+    "planSha256": "e4e834d2b3f2d82c197b0a67e06f1551579b6bd80ec4b75d9b2fd490b2c81d36",
+    "sourcePinsSha256": "217d6ab4025cc30c9ff6542ffad7278248b97f918be45c8fecd04612d6ad3dfc",
+    "originalLifetimeReviewPath": "/workspace/scratch/01cbe1264212/recovery/ma1-plan-v1-lifetime-peer-review.json",
+    "originalLifetimeReviewSha256": "27dc5d6da92be81c39ad87b54d3aab4462d61d7484f9865cdee6e9a5a48f25d7",
+    "original30ReferenceRowsPreservedVerbatim": true,
+    "all30ActualSourceHashesAndSizesMatch": true
+  },
+  "worktreeObservation": "Seed unchanged; only the expected five author Phase A documents plus three preserved Root-owned V1 review copies are untracked. No runtime source or ref changes observed.",
+  "closedFindings": [
+    {
+      "id": "MA1-PHASE-A-LIFETIME-P2-1",
+      "severity": "P2",
+      "state": "CLOSED_AT_PLAN_LEVEL",
+      "closure": "After actual executor settlement, a shape-valid same-tuple/same-epoch observation decreases the latest retained WeakMap deadline by min(latest retained deadline, callStart+5000, callStart+freshRemainingMs), before final signal/time checks and without another await. Same-epoch expired rows retain at most callStart. Concurrent reproof reads latest metadata, so an older/larger result cannot restore a consumed horizon.",
+      "acceptanceBound": "Controlled shorter1ms/100ms-drain regression, subsequent and already-active larger results, still-valid shortening and expired-row retention are explicitly added; real SQL finite-expiry tests remain required.",
+      "noRuntimeProofYet": true
+    },
+    {
+      "id": "MA1-PHASE-A-LIFETIME-P2-2",
+      "severity": "P2",
+      "state": "CLOSED_AT_PLAN_LEVEL",
+      "closure": "One precreated fixture-owned observer proves paired target/control PID+backend_start absence. At most four fixture contexts span all attached adapters/IPC, with one running plus three waiting cleanup owners. Slots remain occupied until both absence and all call primitives settle. Abort/cancel work is joined before connection close; no later per-call dispatch follows close.",
+      "failureClosure": "Unknown/failed acquisition or identity, cancellation failure and observer failure latch fixture poison, suppress new and already-active positive paths, release known gates, close returned handles, perform actual owned cluster.stop and join each failing call\u2019s own primitive ledger including late startup results. No executor waits for lifetime.dispose or a drain containing itself; parent separately joins top-level actors then disposes. Fatal stop/drain failure remains visible and permits no later fixture work or false drained success.",
+      "acceptanceBound": "Native group11 covers target+control disappearance, held cleanup lane slots, late acquisition, identity/observer failure, already-active positive refusal after poison and no self-join; parent final cleanup is only a backstop.",
+      "noRuntimeProofYet": true
+    }
+  ],
+  "regressionAssessment": [
+    "Opaque same-instance WeakMap custody and fixed-size metadata are preserved; retained time only decreases and no automatic renewal is introduced.",
+    "Existing port,5000ms cap,four adapter slots,fixed SELECT and no read COMMIT remain unchanged.",
+    "Fixture cleanup serialization is bounded by the four already-admitted contexts; it creates no public request queue,pool or transport abstraction.",
+    "Genuine restricted NOINHERIT reader uses only its assigned fixed SET ROLE, with session_user/current_user assertions; no new privilege bridge.",
+    "Cleanup accounting explicitly includes initial setup under existing defaults,1000ms observer/control statements, at most20 paired probes/19 waits,30s inactivity rather than absolute startup, actual stop helper and separate35s teardown. No whole-call SLA is claimed.",
+    "Fixed4096-byte generation/request-bound IPC and actual child death/new generation are unchanged; new fixture cap also includes attached IPC instances.",
+    "Rollback/ACL changes are bounded to the separate SQL review findings; no unrelated runtime/source scope expansion observed."
+  ],
+  "rootSemanticQuestion": {
+    "question": "Must a newer concurrent reproof observing revoke/changed epoch permanently latch rejection of an older approved observation?",
+    "assessment": "No new plan blocker under the issued task. Each port reproof remains preliminary, while the private locked final seam must check actual tuple/epoch/status in a future joint publication transaction. The explicit retained-time closure is mandatory and supplied; a general cross-call permanent revocation latch is not separately required by this task. No additional architecture or optional test scope requested."
+  },
+  "remainingFindings": [],
+  "limits": [
+    "These are plan-level closures only; no implementation/native execution or operational acceptance exists from this review.",
+    "Root alone decides acceptance of the exact plan and whether to authorize Phase B.",
+    "No tests, product/runtime modules, browser/server, local or hosted DB, remote/network/ref mutations were performed.",
+    "All Git reads used GIT_NO_LAZY_FETCH=1.",
+    "No author document was edited; only this bounded scratch review was written.",
+    "Actual implementation must realize the specified synchronous minimum, final poison checks and actual primitive/backend cleanup; later source/evidence review remains mandatory."
+  ]
+}

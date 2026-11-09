@@ -1,0 +1,108 @@
+ORIGINAL LOG LINES 696..735
+696: 2026-11-09T16:27:42.8538284Z Updating files:  87% (7932/9117)
+697: 2026-11-09T16:27:42.8597740Z Updating files:  88% (8023/9117)
+698: 2026-11-09T16:27:42.8648257Z Updating files:  89% (8115/9117)
+699: 2026-11-09T16:27:42.8694454Z Updating files:  90% (8206/9117)
+700: 2026-11-09T16:27:42.8758617Z Updating files:  91% (8297/9117)
+701: 2026-11-09T16:27:42.8826112Z Updating files:  92% (8388/9117)
+702: 2026-11-09T16:27:42.9073286Z Updating files:  93% (8479/9117)
+703: 2026-11-09T16:27:42.9150120Z Updating files:  94% (8570/9117)
+704: 2026-11-09T16:27:42.9239103Z Updating files:  95% (8662/9117)
+705: 2026-11-09T16:27:42.9313070Z Updating files:  96% (8753/9117)
+706: 2026-11-09T16:27:42.9364620Z Updating files:  97% (8844/9117)
+707: 2026-11-09T16:27:42.9465656Z Updating files:  98% (8935/9117)
+708: 2026-11-09T16:27:42.9530081Z Updating files:  99% (9026/9117)
+709: 2026-11-09T16:27:42.9530613Z Updating files: 100% (9117/9117)
+710: 2026-11-09T16:27:42.9531103Z Updating files: 100% (9117/9117), done.
+711: 2026-11-09T16:27:42.9661329Z Note: switching to 'refs/remotes/pull/1175/merge'.
+712: 2026-11-09T16:27:42.9662097Z 
+713: 2026-11-09T16:27:42.9662445Z You are in 'detached HEAD' state. You can look around, make experimental
+714: 2026-11-09T16:27:42.9663416Z changes and commit them, and you can discard any commits you make in this
+715: 2026-11-09T16:27:42.9664303Z state without impacting any branches by switching back to a branch.
+716: 2026-11-09T16:27:42.9664753Z 
+717: 2026-11-09T16:27:42.9665320Z If you want to create a new branch to retain commits you create, you may
+718: 2026-11-09T16:27:42.9666093Z do so (now or later) by using -c with the switch command. Example:
+719: 2026-11-09T16:27:42.9666640Z 
+720: 2026-11-09T16:27:42.9666845Z   git switch -c <new-branch-name>
+721: 2026-11-09T16:27:42.9667268Z 
+722: 2026-11-09T16:27:42.9667455Z Or undo this operation with:
+723: 2026-11-09T16:27:42.9667776Z 
+724: 2026-11-09T16:27:42.9668050Z   git switch -
+725: 2026-11-09T16:27:42.9668273Z 
+726: 2026-11-09T16:27:42.9668672Z Turn off this advice by setting config variable advice.detachedHead to false
+727: 2026-11-09T16:27:42.9669149Z 
+728: 2026-11-09T16:27:42.9669697Z HEAD is now at d1caa8eeb Merge b7d247145c27f31fed1e42f2764e9ec91b558a87 into 5558367eb0bff97162c369bbb8963123839f4b0e
+729: 2026-11-09T16:27:42.9751196Z ##[endgroup]
+730: 2026-11-09T16:27:42.9797900Z [command]/usr/bin/git log -1 --format=%H
+731: 2026-11-09T16:27:42.9821532Z d1caa8eebc8b96ccd43c1face025874f3d5633ce
+732: 2026-11-09T16:27:43.0092919Z ##[group]Run actions/setup-node@v4
+733: 2026-11-09T16:27:43.0093319Z with:
+734: 2026-11-09T16:27:43.0093631Z   node-version: 22.x
+735: 2026-11-09T16:27:43.0093927Z   cache: npm
+
+ORIGINAL LOG LINES 827..828
+827: 2026-11-09T16:28:36.8336587Z   JETNITY_OPERATING_MODE_BASE_SHA: 5558367eb0bff97162c369bbb8963123839f4b0e
+828: 2026-11-09T16:28:36.8337221Z   JETNITY_OPERATING_MODE_HEAD_SHA: b7d247145c27f31fed1e42f2764e9ec91b558a87
+
+ORIGINAL LOG LINES 22112..22143
+22112: 2026-11-09T16:31:34.3532231Z   duration_ms: 0.31967
+22113: 2026-11-09T16:31:34.3532347Z   type: 'test'
+22114: 2026-11-09T16:31:34.3532459Z   ...
+22115: 2026-11-09T16:31:34.3532951Z # Subtest: zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22116: 2026-11-09T16:31:34.3533442Z not ok 615 - zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22117: 2026-11-09T16:31:34.3533688Z   ---
+22118: 2026-11-09T16:31:34.3533833Z   duration_ms: 1657.826424
+22119: 2026-11-09T16:31:34.3533957Z   type: 'test'
+22120: 2026-11-09T16:31:34.3534701Z   location: '/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:2:46276'
+22121: 2026-11-09T16:31:34.3535057Z   failureType: 'testCodeFailure'
+22122: 2026-11-09T16:31:34.3536043Z   error: 'unexpected foundation consumer lib/readiness/official-truth-product-v3/method/authority-postgres.ts: official-truth-autonomous-provenance-artifact (ownRecord)'
+22123: 2026-11-09T16:31:34.3536194Z   code: 'ERR_ASSERTION'
+22124: 2026-11-09T16:31:34.3536349Z   name: 'AssertionError'
+22125: 2026-11-09T16:31:34.3536497Z   expected: true
+22126: 2026-11-09T16:31:34.3536631Z   actual: false
+22127: 2026-11-09T16:31:34.3536749Z   operator: '=='
+22128: 2026-11-09T16:31:34.3536893Z   stack: |-
+22129: 2026-11-09T16:31:34.3537646Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:505:22)
+22130: 2026-11-09T16:31:34.3538136Z     visitNode2 (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32449:18)
+22131: 2026-11-09T16:31:34.3538825Z     forEachChildInImportDeclaration (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32755:100)
+22132: 2026-11-09T16:31:34.3539396Z     Object.forEachChild (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32970:35)
+22133: 2026-11-09T16:31:34.3540143Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:509:14)
+22134: 2026-11-09T16:31:34.3540669Z     visitNodes (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32457:22)
+22135: 2026-11-09T16:31:34.3541290Z     forEachChildInSourceFile (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32670:12)
+22136: 2026-11-09T16:31:34.3541887Z     Object.forEachChild (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32970:35)
+22137: 2026-11-09T16:31:34.3542647Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:509:14)
+22138: 2026-11-09T16:31:34.3543510Z     scan (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:511:9)
+22139: 2026-11-09T16:31:34.3543656Z   ...
+22140: 2026-11-09T16:31:34.3544767Z # Subtest: explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures
+22141: 2026-11-09T16:31:34.3545754Z ok 616 - explicit zero HTTP/DB/Evidence/Rule/store/provider/model/registration/activation calls across complete pure fixtures
+22142: 2026-11-09T16:31:34.3545909Z   ---
+22143: 2026-11-09T16:31:34.3546075Z   duration_ms: 876.189508
+
+ORIGINAL LOG LINES 33801..33816
+33801: 2026-11-09T16:40:17.7079238Z # Subtest: MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33802: 2026-11-09T16:40:17.7079863Z not ok 1670 - MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33803: 2026-11-09T16:40:17.7079991Z   ---
+33804: 2026-11-09T16:40:17.7080113Z   duration_ms: 682.019915
+33805: 2026-11-09T16:40:17.7080239Z   type: 'test'
+33806: 2026-11-09T16:40:17.7080806Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-method-authority-1/native.ts:33:9005'
+33807: 2026-11-09T16:40:17.7080972Z   failureType: 'testCodeFailure'
+33808: 2026-11-09T16:40:17.7081157Z   error: 'local_pg_duplicate_column'
+33809: 2026-11-09T16:40:17.7081309Z   code: 'duplicate_column'
+33810: 2026-11-09T16:40:17.7081439Z   stack: |-
+33811: 2026-11-09T16:40:17.7082101Z     LocalPgConnection.result (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:138:53)
+33812: 2026-11-09T16:40:17.7082461Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+33813: 2026-11-09T16:40:17.7083129Z     async LocalPgConnection.query (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:316:14)
+33814: 2026-11-09T16:40:17.7084045Z     async <anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts:50:27)
+33815: 2026-11-09T16:40:17.7084169Z   ...
+33816: 2026-11-09T16:40:17.7085053Z # MA1 owned lifetime terminal evidence: {"started":5,"settled":5,"pending":0,"connections":2,"closed":2,"stoppedClusters":1}
+
+ORIGINAL LOG LINES 62662..62670
+62662: 2026-11-09T16:41:10.3603923Z # tests 8606
+62663: 2026-11-09T16:41:10.3604138Z # suites 969
+62664: 2026-11-09T16:41:10.3604350Z # pass 8602
+62665: 2026-11-09T16:41:10.3604579Z # fail 2
+62666: 2026-11-09T16:41:10.3604783Z # cancelled 0
+62667: 2026-11-09T16:41:10.3605195Z # skipped 2
+62668: 2026-11-09T16:41:10.3605424Z # todo 0
+62669: 2026-11-09T16:41:10.3605664Z # duration_ms 659762.650947
+62670: 2026-11-09T16:41:10.3612488Z ##[error]Process completed with exit code 1.

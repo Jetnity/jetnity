@@ -1,0 +1,21 @@
+// Root independent offline recheck of MA1-RUNTIME-P2-1; no SQL/native/server/hosted work.
+const assert = require('node:assert/strict');
+const { readMa1CurrentRows } = require('/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/contract.ts');
+const { createV3PostgresMethodAuthority } = require('/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/lib/readiness/official-truth-product-v3/method/authority-postgres.ts');
+const binding = { methodId: 'ma1_probe', revision: 1, methodDigest: 'a'.repeat(64), packageDigest: 'b'.repeat(64) };
+const method = { methodId: binding.methodId, revision: 1 };
+const row = { status: 'approved', method_id: binding.methodId, revision: '1', method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: '1', approval_mode: 'until', approval_until: '2026-11-09T15:00:00.001Z', observed_at: '2026-11-09T15:00:00.000Z', remaining_ms: '5000' };
+const validRow = { ...row, approval_until: '2026-11-09T15:00:01.000Z', remaining_ms: '1000' };
+(async () => {
+ const results = [];
+ assert.equal(readMa1CurrentRows([row], binding, row.observed_at).ok, false); results.push('impossible interval rejected by row reader');
+ const make = get => createV3PostgresMethodAuthority(binding, { async readCurrent() { return { status: 'rows', rows: [get()] }; } });
+ assert.equal((await make(() => row).resolveCurrent(method, row.observed_at)).status, 'unavailable'); results.push('impossible interval resolve refused');
+ assert.equal((await make(() => validRow).resolveCurrent(method, '2026-11-09T15:00:02.000Z')).status, 'unavailable'); results.push('expiry before checkedAt resolve refused');
+ let selected = validRow; const authority = make(() => selected); const initial = await authority.resolveCurrent(method, validRow.observed_at);
+ assert.equal(initial.status, 'approved'); results.push('consistent finite control resolves');
+ selected = row; assert.equal((await authority.reproveAtCommit(initial.receipt, method, row.observed_at)).status, 'unavailable'); results.push('impossible interval reproof refused');
+ selected = validRow; assert.equal((await authority.reproveAtCommit(initial.receipt, method, '2026-11-09T15:00:02.000Z')).status, 'unavailable'); results.push('expiry before checkedAt reproof refused');
+ assert.equal((await authority.reproveAtCommit(initial.receipt, method, validRow.observed_at)).status, 'current'); results.push('consistent finite reproof control succeeds');
+ process.stdout.write(JSON.stringify({ kind: 'root-offline-malformed-row-recheck', actualNativeSql: false, passed: results.length, cases: results }) + '\n');
+})().catch(error => { process.stderr.write(String(error.stack || error)); process.exitCode = 1; });

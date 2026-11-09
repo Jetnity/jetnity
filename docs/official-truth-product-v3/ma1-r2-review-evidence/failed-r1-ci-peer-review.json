@@ -1,0 +1,383 @@
+{
+  "schema": "ma1-r1-new-head-ci-independent-review-v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "at": "2026-11-09T17:08:58.347771+00:00",
+  "status": "CI_FAILURE_ONE_NATIVE_CHILD_PASSED_THIRTEEN_NOT_REACHED",
+  "scope": "Independent actual new-head core CI evidence review; no TL acceptance, local execution or changes.",
+  "binding": {
+    "repository": "Jetnity/jetnity",
+    "pr": 1175,
+    "head": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+    "tree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+    "parent": "b7d247145c27f31fed1e42f2764e9ec91b558a87",
+    "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+    "run": 42659466404,
+    "attempt": 1,
+    "coreJob": 129306791905,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42659466404/job/129306791905",
+    "checkedOutMerge": "0672f3b2351288b2374bc37b126fccac8706eda9",
+    "checkoutBindingEvidence": "Actual log lines724-727: Merge24d55eeda100490ad3fd20b48551b5314b5c4f8a into5558367eb0bff97162c369bbb8963123839f4b0e. Run metadata independently binds source head/tree/base; local source HEAD/tree were clean and equal at review start.",
+    "checkoutTreeSeparatelyReadByPeer": false,
+    "newHeadRunNotUnchangedRerun": true
+  },
+  "core": {
+    "status": "completed",
+    "conclusion": "failure",
+    "actualSummary": {
+      "tests": 8608,
+      "suites": 969,
+      "pass": 8605,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0,
+      "duration_ms": 548503.036125
+    },
+    "failedNames": [
+      "MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup"
+    ],
+    "typecheck": {
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7
+    },
+    "lint": {
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8
+    },
+    "hygieneAndBuild": [
+      {
+        "name": "Schutz der Admin-API",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10
+      },
+      {
+        "name": "Bezug auf das Schema",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11
+      },
+      {
+        "name": "Unerreichbarer Code",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12
+      },
+      {
+        "name": "Exporte ohne Aufrufer",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 13
+      },
+      {
+        "name": "Ungenutzte Pakete",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 14
+      },
+      {
+        "name": "Production build",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 15
+      }
+    ]
+  },
+  "r1CorrectionsActual": {
+    "newFiniteConsumerGuard": "ok615",
+    "existingZeroIoFoundationFence": "ok616",
+    "duplicateResultColumnBlocker": "Passed setup; no duplicate_column failure, first native child reached and passed",
+    "noPriorGreenTransfer": true
+  },
+  "ma1": {
+    "parent": "not ok1671",
+    "parentDurationMs": 836.611411,
+    "error": "local_pg_P7505",
+    "code": "P7505",
+    "expectedChildren": 14,
+    "actuallyPassedChildren": 1,
+    "notReachedChildren": 13,
+    "passedChild": "creator function/table/schema defaults refuse atomically without normalization",
+    "children": [
+      {
+        "name": "creator function/table/schema defaults refuse atomically without normalization",
+        "announcements": [
+          {
+            "line": 33785,
+            "text": "2026-11-09T17:05:32.1473322Z     # Subtest: creator function/table/schema defaults refuse atomically without normalization"
+          }
+        ],
+        "results": [
+          {
+            "line": 33786,
+            "text": "2026-11-09T17:05:32.1473545Z     ok 1 - creator function/table/schema defaults refuse atomically without normalization",
+            "passed": true,
+            "skipped": false
+          }
+        ],
+        "executionStatus": "passed"
+      },
+      {
+        "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "real active own Owner and exact account/session/profile negative matrix",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "human method wait precedes fresh unchanged session/profile authority check",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      },
+      {
+        "name": "rollback takes all removal locks before checking concurrently committed history",
+        "announcements": [],
+        "results": [],
+        "executionStatus": "not_reached"
+      }
+    ],
+    "terminalCleanup": {
+      "started": 46,
+      "settled": 46,
+      "pending": 0,
+      "connections": 5,
+      "closed": 5,
+      "stoppedClusters": 1
+    },
+    "cleanupBalanced": true,
+    "cleanupScope": "Actual first-child/installation-failure scope only; no inference about remaining scenarios.",
+    "nativePass": false
+  },
+  "literalCompatibility": {
+    "diagnosticOccurrences": 1,
+    "actualCatalogDiagnosticLogLine": 33806,
+    "sourceCandidateSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "sourceRollbackSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "comparison": [
+      {
+        "name": "heads_v1_shape",
+        "equal": true,
+        "expectedBytes": 879,
+        "actualBytes": 879,
+        "expectedSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+        "actualSha256": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+        "changes": []
+      },
+      {
+        "name": "operations_v1_shape",
+        "equal": false,
+        "expectedBytes": 2801,
+        "actualBytes": 2800,
+        "expectedSha256": "66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3",
+        "actualSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+        "changes": [
+          {
+            "tag": "delete",
+            "expectedRange": [
+              1643,
+              1644
+            ],
+            "actualRange": [
+              1643,
+              1643
+            ],
+            "expected": ")",
+            "actual": "",
+            "expectedContext": "::text), ((command -> 'approval'::text) ->> 'until'::text)))) AND ((before_state IS NULL) OR ((jsonb_typeof(before_state)",
+            "actualContext": "::text), ((command -> 'approval'::text) ->> 'until'::text))) AND ((before_state IS NULL) OR ((jsonb_typeof(before_state)"
+          }
+        ]
+      },
+      {
+        "name": "revisions_v1_shape",
+        "equal": true,
+        "expectedBytes": 280,
+        "actualBytes": 280,
+        "expectedSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+        "actualSha256": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243",
+        "changes": []
+      }
+    ],
+    "result": "heads_v1_shape and revisions_v1_shape match exactly; operations_v1_shape expected literal contains one extra closing parenthesis."
+  },
+  "finding": {
+    "id": "MA1-CI-R1-P2-CHECK-LITERAL",
+    "priority": "P2",
+    "blocking": true,
+    "sourceLocations": [
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+        "line": 553
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+        "line": 103
+      }
+    ],
+    "expectedOperationsBytes": 2801,
+    "actualOperationsBytes": 2800,
+    "extraExpectedByte": ")",
+    "zeroBasedOffset": 1643,
+    "actualOperationsSha256": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+    "expectedOperationsSha256": "66cdd04deb21243789325f646de1a7687b47346aee3de2a25627efde6b9064d3",
+    "evidenceKind": "Actual CI SQL diagnostic compared byte-for-byte with both source-owned literal inventories; no SQL executed by reviewer.",
+    "attributionLimit": "P7505 is shared by several inventory guards; the stack does not identify one RAISE line. The independently observed literal mismatch necessarily makes the specific equality guard reject this actual DDL.",
+    "boundedRecommendation": "Same original primary/session, Root-issued bounded correction to exactly the identical operations expected literal in candidate and rollback. Preserve actual CHECK DDL, equality/ACL/metadata guards, driver, diagnostic split and tests. No install-time learned receipt or normalization. New exact head/full CI remains required."
+  },
+  "unverifiedAcceptanceScopes": [
+    "Complete pristine candidate install and rollback",
+    "Human current Owner/Auth/account/session matrix",
+    "Replay/actor/command/CAS/COMMIT and lost-response history",
+    "Epoch terminal revoke and expiry/receipt lifetime",
+    "Actual method/Auth lock waits and serialization",
+    "Four-read admission/cancel/drain and poison/restart boundaries",
+    "Real child death, restart and missing-executable case",
+    "Rollback altered CHECK/object/ACL/membership/dependency preservation and post-wait retained-history refusal"
+  ],
+  "sourcePins": {
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+    "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+    "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+    "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13",
+    "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts": "e042e34a44df4d82006cbbec36e08a12c5c69affb3883a721b3c5e2396796927"
+  },
+  "boundaryPins": {
+    ".github/workflows/ci.yml": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+    "package.json": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+    "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+    "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+    "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+  },
+  "evidence": {
+    "run-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/run-initial.json",
+      "sha256": "5dada45bf3a72bccad9ae600aaddb62e151cb4e3aa1d7787c963cf3a41b261c6",
+      "bytes": 13882
+    },
+    "jobs-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/jobs-conclusive.json",
+      "sha256": "2e4101ad231aaba573f96cb2144378fce8484f0aa83ff50a4183dbf7c45bd2f2",
+      "bytes": 15144
+    },
+    "core-job-129306791905.log": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/core-job-129306791905.log",
+      "sha256": "5c3521bdd6d94b4712c4a7527bc89383f4cd5384c29dd96f445a59bfc8dd5f38",
+      "bytes": 4156039
+    },
+    "core-relevant-excerpts.txt": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/core-relevant-excerpts.txt",
+      "sha256": "eb3cc07ba8cd1f71376fd9fe7152882f631b6c06cadedcc0fdd7cd9386c9f70a",
+      "bytes": 12669
+    },
+    "actual-ma1-child-results.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/actual-ma1-child-results.json",
+      "sha256": "e0b6b0e2755d2242a287063b4871feccd76a7f1694fb5755ae31aae21ce61e91",
+      "bytes": 3352
+    },
+    "expected-source-inventory.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/expected-source-inventory.json",
+      "sha256": "2c85cc2fc55b7028bdffee0a7c0e01bbb7d68d815ae1da89d780815a4449e107",
+      "bytes": 4889
+    },
+    "expected-check-literals.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/expected-check-literals.json",
+      "sha256": "7e7beb4366cdde5ec9f6fcef8b823231b5e8dc6fafd16cdb5e27155d6b931366",
+      "bytes": 4835
+    },
+    "observed-check-comparison.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/ma1-ci-r1-peer/observed-check-comparison.json",
+      "sha256": "27281bb705aa8fe63e56b14d5cd555caf58d5c74d88a796e8915eab6759a1533",
+      "bytes": 10680
+    }
+  },
+  "serialization": {
+    "exactDecodedToolLogSavedOnce": true,
+    "utf16CodeUnits": 4146835,
+    "utf8Bytes": 4156039,
+    "utf8BomPreserved": true,
+    "singleOriginalTerminalLfPreserved": true,
+    "noLogRewritingOrNormalization": true
+  },
+  "boundaries": {
+    "noLocalTestsOrImportsOrPgSqlSockets": true,
+    "noHostedDbAuthOrRefusedReadback": true,
+    "noAuthLogRead": true,
+    "noSourceDocsRefRemoteRerunReadyMergeMutation": true,
+    "scratchEvidenceOnly": true,
+    "noOtherJobSuccessTransferred": true,
+    "rootNotifiedPromptly": true,
+    "noTlPass": true
+  }
+}

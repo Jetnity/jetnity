@@ -1,0 +1,48 @@
+Read-only excerpts of prior failed CI, not a new execution.
+Source: /workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-peer/core-job-129290779391.log
+Actual SHA256: 7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b
+Root task separately cites SHA256: 579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d
+This source was not rewritten or normalized.
+
+22115: 2026-11-09T16:31:34.3532951Z # Subtest: zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22116: 2026-11-09T16:31:34.3533442Z not ok 615 - zero-I/O foundation fences; finite pure consumers and no public issuer/test factory
+22117: 2026-11-09T16:31:34.3533688Z   ---
+22118: 2026-11-09T16:31:34.3533833Z   duration_ms: 1657.826424
+22119: 2026-11-09T16:31:34.3533957Z   type: 'test'
+22120: 2026-11-09T16:31:34.3534701Z   location: '/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:2:46276'
+22121: 2026-11-09T16:31:34.3535057Z   failureType: 'testCodeFailure'
+22122: 2026-11-09T16:31:34.3536043Z   error: 'unexpected foundation consumer lib/readiness/official-truth-product-v3/method/authority-postgres.ts: official-truth-autonomous-provenance-artifact (ownRecord)'
+22123: 2026-11-09T16:31:34.3536194Z   code: 'ERR_ASSERTION'
+22124: 2026-11-09T16:31:34.3536349Z   name: 'AssertionError'
+22125: 2026-11-09T16:31:34.3536497Z   expected: true
+22126: 2026-11-09T16:31:34.3536631Z   actual: false
+22127: 2026-11-09T16:31:34.3536749Z   operator: '=='
+22128: 2026-11-09T16:31:34.3536893Z   stack: |-
+22129: 2026-11-09T16:31:34.3537646Z     visit (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts:505:22)
+22130: 2026-11-09T16:31:34.3538136Z     visitNode2 (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32449:18)
+22131: 2026-11-09T16:31:34.3538825Z     forEachChildInImportDeclaration (/home/runner/work/jetnity/jetnity/node_modules/typescript/lib/typescript.js:32755:100)
+33801: 2026-11-09T16:40:17.7079238Z # Subtest: MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33802: 2026-11-09T16:40:17.7079863Z not ok 1670 - MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup
+33803: 2026-11-09T16:40:17.7079991Z   ---
+33804: 2026-11-09T16:40:17.7080113Z   duration_ms: 682.019915
+33805: 2026-11-09T16:40:17.7080239Z   type: 'test'
+33806: 2026-11-09T16:40:17.7080806Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-method-authority-1/native.ts:33:9005'
+33807: 2026-11-09T16:40:17.7080972Z   failureType: 'testCodeFailure'
+33808: 2026-11-09T16:40:17.7081157Z   error: 'local_pg_duplicate_column'
+33809: 2026-11-09T16:40:17.7081309Z   code: 'duplicate_column'
+33810: 2026-11-09T16:40:17.7081439Z   stack: |-
+33811: 2026-11-09T16:40:17.7082101Z     LocalPgConnection.result (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:138:53)
+33812: 2026-11-09T16:40:17.7082461Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+33813: 2026-11-09T16:40:17.7083129Z     async LocalPgConnection.query (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-integrated-pilot-1/pg-wire.ts:316:14)
+33814: 2026-11-09T16:40:17.7084045Z     async <anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts:50:27)
+33815: 2026-11-09T16:40:17.7084169Z   ...
+33816: 2026-11-09T16:40:17.7085053Z # MA1 owned lifetime terminal evidence: {"started":5,"settled":5,"pending":0,"connections":2,"closed":2,"stoppedClusters":1}
+33817: 2026-11-09T16:40:17.7085507Z # Subtest: M1 source monitor preserves source comparison and suppression truth
+62662: 2026-11-09T16:41:10.3603923Z # tests 8606
+62664: 2026-11-09T16:41:10.3604350Z # pass 8602
+62665: 2026-11-09T16:41:10.3604579Z # fail 2
+62666: 2026-11-09T16:41:10.3604783Z # cancelled 0
+62667: 2026-11-09T16:41:10.3605195Z # skipped 2
+
+Provenance reconciliation addendum 2026-11-09T16:48:48.243499+00:00
+The historical mismatch report above is preserved. Independently read and hashed both preserved representations: first-save.log SHA256 579775f4ca90918c6044bc6aac110ebd1840b5d9bbf165e1c00e0058ae08545d (4,149,612 bytes) is exactly current .log SHA256 7d96e13690ecc60a60bf306b93e1a6e7469718701f435be9c8920339594d346b (4,149,611 bytes) plus one terminal LF byte. The actual CI failure content is identical. Neither original file was edited by this child. Source note: /workspace/scratch/01cbe1264212/recovery/ma1-ci-attempt1-log-serialization-note.json SHA256 1768f2f0e4d07d4626a067dad03d97e5b28d261647717896b9476585f204713a

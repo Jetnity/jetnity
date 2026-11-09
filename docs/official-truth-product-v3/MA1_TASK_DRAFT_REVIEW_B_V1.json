@@ -1,0 +1,72 @@
+{
+  "schema": "ma1-task-draft-counter-review-v1",
+  "reviewer": "/root/live_release_recovery",
+  "reviewedAt": "2026-11-09T14:27:58.644015+00:00",
+  "kind": "read-only complementary architecture/task-draft source review; no implementation acceptance",
+  "draftIssued": false,
+  "originalDraft": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/MA1_TASK_V1_DRAFT_BEFORE_COUNTERREVIEW.md",
+    "sha256": "c1d8c4a1e7599a80b27fb001f483d77b174b08fec2d35d30c3d6d8bd01fa2905"
+  },
+  "finalReviewedDraft": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/MA1_TASK_V1_DRAFT.md",
+    "sha256": "28ba2051749894adec0e19d16f259bc2d55d4b2f5774cdf16986ccf4089ee206"
+  },
+  "syntheticReference": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json",
+    "sha256": "790ecbbf909f53bf76801249bf3dbae7fd5e5a185f68b608dea0e1d96600eeb6",
+    "verification": "existing reference bytes hashed only; no product reader or test execution by this review"
+  },
+  "unchangedSourcesRead": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+      "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-global-conditions/lib/readiness/official-truth-product-v3/contract.ts",
+      "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c"
+    }
+  ],
+  "findings": [
+    {
+      "id": "historical-operation-before-new-state-checks",
+      "origin": "independent complementary review by /root/live_release_recovery",
+      "state": "closed in final reviewed draft",
+      "scenario": "A committed approval with lost acknowledgement must still return immutable historical truth after its until expiry or later revoke/supersession, despite stale current CAS/predecessor or exhausted epoch.",
+      "closure": "Canonical parse, same-operation/method locks, fresh current-human helper and complete command/actor comparison precede exact historical return; only new mutations apply current CAS/predecessor/future-until/exhaustion. Historical replay neither mutates head/history nor constructs a current authority receipt."
+    },
+    {
+      "id": "terminal-epoch-must-preserve-revocation",
+      "origin": "peer /root/handoff_recovery_audit; independently evaluated and agreed by complementary reviewer",
+      "state": "closed in final reviewed draft",
+      "scenario": "Approval at maximum integer epoch with mandatory increment and forbidden overflow would strand until_revoked authority.",
+      "closure": "Approval/reapproval maximum is 2147483646; epoch2147483647 is reserved exclusively for terminal revocation. No new approval after terminal revoke, no reset/reuse/silent new identity; explicit native boundary and unchanged-state/history proof required."
+    },
+    {
+      "id": "unknown-confirmation-is-observation-only",
+      "origin": "independent correction-delta review by /root/live_release_recovery",
+      "state": "closed in final reviewed draft",
+      "scenario": "An unknown confirm ID must not fall through into new-mutation validation/effects or reject absence solely because its unused command expiry/CAS has become stale.",
+      "closure": "Serialized unknown confirmation returns explicit absence without mutation/history append or new-state checks. It does not promise against a not-yet-dispatched original; terminal caller reconciliation first joins the owned original invocation."
+    }
+  ],
+  "otherReviewedInvariants": [
+    "Immutable revision/package tuple and predecessor; staging preserves current authority and expiry.",
+    "Fixed operation mutex then method mutex/head then unchanged current Owner Auth user/session/profile helper; no Auth-before-method wait.",
+    "Existing postgres owns definers and owner-only helper remains unchanged; dedicated machine reader receives no human/internal/Auth/history authority.",
+    "Historical operation truth is separate from current method authority and receipt custody.",
+    "Private final checker holds actual head FOR SHARE and checks exact tuple/epoch plus fresh post-wait DB time; future publication still requires joint rechecks after all waits.",
+    "Atomic unapplied installation, exact ACL/default-grant validation and no global default-privilege or existing-role/helper edits.",
+    "Rollback restricted to disposable owned native fixture, named RESTRICT removals, refuse retained history/unknown dependencies; never remove #1142 or claim #1139 recovery.",
+    "Unchanged no-AbortSignal port, four active reads, bounded positive-result/receipt lifetime, no early detached race, awaited executor settlement/drain.",
+    "Phase A must account for unchanged wire startup30s, separate35s teardown and sequential acquisition/cleanup; no invented whole-call SLA or new pool/driver."
+  ],
+  "remainingSourceFindings": [],
+  "limits": [
+    "Task remains a Root draft, unissued; no implementation or writer plan is accepted by this receipt.",
+    "C1 full exact-head acceptance and explicit Root acceptance of a finite Phase A plan remain prerequisites; live CI status was not queried by this reviewer.",
+    "No tests, product code, local PostgreSQL, browser/server, hosted DB/Auth/RLS/catalog, remote operation or repository edit occurred.",
+    "No TL PASS, Ready, merge, current hosted installation, real approval, production activation, public p95 or future joint-publication guarantee is established.",
+    "Phase A must freeze exact SQL signatures/errors/state result shapes, direct-SQL canonical timestamp behavior, finite IPC/native ownership and genuine event/cleanup proof before implementation."
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "jetnity.source-only-peer-review.v1",
+  "reviewer": "/root/handoff_recovery_audit",
+  "originalAuthor": "/root/v3_method_authority_writer",
+  "at": "2026-11-09T16:18:08.532092+00:00",
+  "scope": "Bounded independent rereview of same-session native worker lifecycle correction plus noticed fixture syntax delta. Source-only closure; original review remains intact.",
+  "priorReceipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-review-v1.json",
+    "sha256": "ae4d010b74402b63985117069d6d78b043b6ab793ad0a5f4561daac181391462",
+    "preserved": true
+  },
+  "changedSourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v2/native.ts",
+      "sha256": "491b3799e056d97b60f12fced755b0809fc8b794dbcd7ebb8cb43aae77c37760",
+      "bytes": 74336,
+      "currentSha256": "6b1edc5e031a8124dad35d8ff26eca8dbfb1082df9f03e100b43ae2930b9657e",
+      "unchangedAtReviewEnd": false
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v2/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "bytes": 2050,
+      "currentSha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "unchangedAtReviewEnd": true
+    }
+  ],
+  "unchangedSupportingSourcePins": [
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/process-worker.ts",
+      "sha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "bytes": 5739,
+      "lines": 95,
+      "currentSha256": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/native-adapter.ts",
+      "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "bytes": 13880,
+      "lines": 220,
+      "currentSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/method-candidate.sql",
+      "sha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "bytes": 52632,
+      "lines": 656,
+      "currentSha256": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/method-candidate.rollback.sql",
+      "sha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "bytes": 21567,
+      "lines": 224,
+      "currentSha256": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+      "unchangedAtReviewEnd": true
+    },
+    {
+      "source": "/workspace/scratch/01cbe1264212/jetnity-v3-method-authority/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-native-groups-source-v1/auth-fixture.ts",
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "bytes": 6536,
+      "lines": 89,
+      "currentSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "unchangedAtReviewEnd": true
+    }
+  ],
+  "result": "MA1-NATIVE-GROUPS-P2-1 CLOSED_AT_SOURCE_LEVEL; no new concrete defect in reviewed delta; actual native CI pending",
+  "closure": {
+    "id": "MA1-NATIVE-GROUPS-P2-1",
+    "before": "Terminal promise resolved solely on exit; asynchronous spawn error without exit left parent dispose awaiting it before global lifetime cleanup.",
+    "after": "Parent now tracks actual close as the terminal ownership promise and independently records the real exit event. Error remains fatal; an unexpected close or close without real exit cannot become a successful result. The child remains in the owned children set until close. join awaits close, drains parent-owned read jobs, asserts maps empty, and releases its watchdog/listeners. Before any successful return it requires observedExit and exact equality of close/exit code+signal; existing SIGKILL and exit0 assertions remain.",
+    "failureReasoning": "On asynchronous startup error followed by close with no exit, stop records fatal/rejects the command; close resolves terminal ownership; join drains jobs and cleans listeners, then rethrows fatal. It does not synthesize exit or claim successful startup/termination. Parent finally can proceed to global actor/lifetime cleanup.",
+    "positiveReasoning": "For started workers, actual exit evidence remains mandatory in addition to close. Waiting for close also retains ownership through stdio closure. Existing killed pending-read abort and both-backend absence requirements remain unchanged.",
+    "limits": "No child process or fault sequence was executed by this reviewer. Source closure does not replace actual mandatory native CI or final exact-head review."
+  },
+  "otherDelta": {
+    "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+    "change": "Two missing function-closing braces were added to ma1RootVectors and ma1SyntheticTuple while the author integrated static verification. No tuple/vector bytes or authority semantics changed. This was an active unfinished-source syntax correction, not an additional unreported product finding."
+  },
+  "newConcreteFindings": [],
+  "retainedPriorAssessment": "The independent V1 source assessment of actual restart/fresh reads, killed pending SQL wait, bounded IPC, fresh rollback catalog preservation, both-direction memberships, column ACLs, changed CHECK, external dependency, empty cleanup retaining#1142 and post-lock committed-history refusal still applies to unchanged portions. No runtime success is inferred.",
+  "operations": "Only source reads/copies, SHA256, textual diff and recovery receipt writes. No product imports/tests, process spawn, SQL/native/socket/network/hosted calls, source/index/ref/remote/database mutation.",
+  "next": "Root reviews frozen integrated source and mandatory CI; no TL PASS/Ready/merge/activation or new task is issued by this reviewer."
+}

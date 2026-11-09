@@ -1,0 +1,27 @@
+{
+  "schema": "jetnity.ma1.root-complete-scope.v1",
+  "at": "2026-11-09T17:27:51.592165+00:00",
+  "head": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+  "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "parent": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "tree": "4656e5de29c76ffd79c2160002d63d9fb7418362",
+  "completePrFiles": 179,
+  "all179GitHubBlobsEqualLocalGitObjects": true,
+  "incrementalR2Paths": 22,
+  "incrementalImplementationPaths": [
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql"
+  ],
+  "deltaMatchesFrozenManifest": true,
+  "fullV3PathsSinceMergeBase": 358,
+  "mainComparison": {
+    "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "mergeBase": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "ahead": 37,
+    "behind": 7,
+    "githubCompareTruncatedAt": 300,
+    "notUsedAsCompleteInventory": true
+  },
+  "workingTreeClean": true,
+  "gitNoLazyFetch": true
+}

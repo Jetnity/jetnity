@@ -1,0 +1,604 @@
+{
+  "schema": "ma1-native-author-attempts-v1",
+  "author": "Jetnity Official Truth V3 Method Authority 1 \u2014 Codex Generation 1",
+  "actualSession": "/root/v3_method_authority_writer",
+  "runtimeChild": "/root/v3_method_authority_writer/ma1_runtime_writer",
+  "checkpointHead": "4371024788442b0edb83d8600135d5095f61fa0b",
+  "acceptedPlanSha256": "d088a12a7955f352dd262f6a488c221e19f8c4d6f2d4f891f9a05024aedccf24",
+  "status": "FROZEN_AUTHOR_DELIVERY_ROOT_REVIEW_AND_MANDATORY_CI_PENDING",
+  "attempts": [
+    {
+      "id": "source-generation-1",
+      "kind": "Python filesystem authoring only; no SQL/product execution",
+      "command": "python3 heredoc: append finite SQL inventory validator and write guarded rollback SQL",
+      "exitCode": 1,
+      "failure": "NameError: name 'json' is not defined. Did you forget to import 'json'?",
+      "failureLocation": "Final reporting print at script line220, after both file writes completed",
+      "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 220, in <module>\nNameError: name 'json' is not defined. Did you forget to import 'json'?\n",
+      "disposition": "Preserved. Both SQL files were written; no generator rerun or false successful execution claim. Subsequent source-only review corrected an explicit nullable predecessor constraint and schema-qualified POSITION syntax."
+    },
+    {
+      "id": "identity-lane-patch-1",
+      "kind": "Source apply_patch only",
+      "outcome": "aborted before dispatch",
+      "effect": "Subsequent source read confirmed no changes; no product or test executed"
+    },
+    {
+      "id": "identity-lane-patch-2",
+      "kind": "Source apply_patch only",
+      "outcome": "verification failed: invalid hunk at line25; trailing empty Update file hunk",
+      "effect": "Atomic patch rejected; corrected bounded patch applied afterward; no product or test executed"
+    },
+    {
+      "id": "native-author-verification-001",
+      "kind": "next_typegen",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/next/dist/bin/next",
+        "typegen"
+      ],
+      "startedAt": "2026-11-09T16:12:14.261370+00:00",
+      "durationSeconds": 0.365,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_001_NEXT_TYPEGEN.txt",
+      "sha256": "a54be73281c43d7de87d137a91ca027b375462d4cf4f91f029759065b2069972"
+    },
+    {
+      "id": "native-author-verification-002",
+      "kind": "whole_typescript",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "startedAt": "2026-11-09T16:12:14.627054+00:00",
+      "durationSeconds": 5.959,
+      "exitCode": 2,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_002_WHOLE_TYPESCRIPT.txt",
+      "sha256": "a4a64cdfb19c513543d3cf2d4bd0dd6063239c1dc7992bea08c4f5a386f34ddc"
+    },
+    {
+      "id": "native-author-verification-003",
+      "kind": "scoped_lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/native.test.ts",
+        "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+        "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:12:14.261637+00:00",
+      "durationSeconds": 2.33,
+      "exitCode": 1,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_003_SCOPED_LINT.txt",
+      "sha256": "4532e224c55dc04366a795762ae5e9301b20c2a290d13bea6608bf8409bc5a6b"
+    },
+    {
+      "id": "native-author-verification-004",
+      "kind": "hygiene_dead",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T16:12:14.262414+00:00",
+      "durationSeconds": 0.442,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_004_HYGIENE_DEAD.txt",
+      "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7"
+    },
+    {
+      "id": "native-author-verification-005",
+      "kind": "hygiene_exports",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T16:12:14.626622+00:00",
+      "durationSeconds": 9.373,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_005_HYGIENE_EXPORTS.txt",
+      "sha256": "75eead2ab53f53313e85d75a8d45a7f411fbae8ea10a5cc2d9fe49a6511b46ca"
+    },
+    {
+      "id": "native-author-verification-006",
+      "kind": "hygiene_deps",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T16:12:14.705192+00:00",
+      "durationSeconds": 0.414,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_006_HYGIENE_DEPS.txt",
+      "sha256": "2107ad33b2ba47bdb1ba30a38a227ce6231276978604360593d9d1cfbe96ff17"
+    },
+    {
+      "id": "native-author-verification-007",
+      "kind": "hygiene_api",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T16:12:15.119512+00:00",
+      "durationSeconds": 0.075,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_007_HYGIENE_API.txt",
+      "sha256": "76e8a6a75344b277af751507c3378ba167d20748210dba73692e73fb6fffd7e6"
+    },
+    {
+      "id": "native-author-verification-008",
+      "kind": "hygiene_schema",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T16:12:15.194864+00:00",
+      "durationSeconds": 0.254,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_008_HYGIENE_SCHEMA.txt",
+      "sha256": "8deccd6e093a16bb85317c635ba3e5f5124c744a72dcd707b5c502ecdd20f644"
+    },
+    {
+      "id": "native-author-verification-009",
+      "kind": "whole_typescript_after_fixture_syntax",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "startedAt": "2026-11-09T16:12:57.095201+00:00",
+      "durationSeconds": 41.415,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_009_WHOLE_TYPESCRIPT_AFTER_FIXTURE_SYNTAX.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "native-author-verification-010",
+      "kind": "scoped_lint_after_fixture_syntax",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/native.test.ts",
+        "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+        "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:12:57.095492+00:00",
+      "durationSeconds": 2.301,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_010_SCOPED_LINT_AFTER_FIXTURE_SYNTAX.txt",
+      "sha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f"
+    },
+    {
+      "id": "native-author-verification-011",
+      "kind": "final_hygiene_dead",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T16:14:12.866853+00:00",
+      "durationSeconds": 0.412,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_011_FINAL_HYGIENE_DEAD.txt",
+      "sha256": "612191271378a30876015bfe888f17c7bece578f41996f4b09fc9f661360e11a"
+    },
+    {
+      "id": "native-author-verification-012",
+      "kind": "final_hygiene_exports",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T16:14:12.866985+00:00",
+      "durationSeconds": 8.841,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_012_FINAL_HYGIENE_EXPORTS.txt",
+      "sha256": "4be09b1618ad346845e08bc3589d226440be6f5bdfcfc5dc8f6df20cae8da819"
+    },
+    {
+      "id": "native-author-verification-013",
+      "kind": "final_hygiene_deps",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T16:14:12.868225+00:00",
+      "durationSeconds": 0.34,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_013_FINAL_HYGIENE_DEPS.txt",
+      "sha256": "f559cb5c285c0acd7a1b947f39baa975c5369b1c0aa1ad55dfc3947397bf31f5"
+    },
+    {
+      "id": "native-author-verification-014",
+      "kind": "final_hygiene_api",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T16:14:13.208829+00:00",
+      "durationSeconds": 0.084,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_014_FINAL_HYGIENE_API.txt",
+      "sha256": "f8c3e4a8c0bd7bd9a6c659517ae691ac3222208b9145470a4d738761d2d23dc6"
+    },
+    {
+      "id": "native-author-verification-015",
+      "kind": "final_hygiene_schema",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T16:14:13.279170+00:00",
+      "durationSeconds": 0.203,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_015_FINAL_HYGIENE_SCHEMA.txt",
+      "sha256": "139ca02131d44d4b3327eb40aaa95c4c7fa43b8e7938e743b66688908ad05ab3"
+    },
+    {
+      "id": "worker-close-patch-1",
+      "kind": "Source apply_patch only",
+      "outcome": "verification failed: invalid hunk at line2; empty Update file hunk",
+      "effect": "Atomic patch rejected; corrected patch applied next; no product/test/native execution"
+    },
+    {
+      "id": "native-author-verification-016",
+      "kind": "final_whole_typescript",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "startedAt": "2026-11-09T16:17:30.055782+00:00",
+      "durationSeconds": 6.7,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_016_FINAL_WHOLE_TYPESCRIPT.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "native-author-verification-017",
+      "kind": "final_scoped_lint",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/native.test.ts",
+        "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+        "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:17:30.057067+00:00",
+      "durationSeconds": 2.691,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_017_FINAL_SCOPED_LINT.txt",
+      "sha256": "790bfbbaceb894cc92ed5cbf51888ba8386d9e1fbadd14813ce55f01655ff2f1"
+    },
+    {
+      "id": "native-author-verification-018",
+      "kind": "final_hygiene_dead_r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T16:17:30.057447+00:00",
+      "durationSeconds": 0.581,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_018_FINAL_HYGIENE_DEAD_R2.txt",
+      "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7"
+    },
+    {
+      "id": "native-author-verification-019",
+      "kind": "final_hygiene_exports_r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T16:17:30.638704+00:00",
+      "durationSeconds": 9.335,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_019_FINAL_HYGIENE_EXPORTS_R2.txt",
+      "sha256": "9f10f001d8dc61c9585b21276b6da38ffe135fd1d4ac408dc345b48179b5f84a"
+    },
+    {
+      "id": "native-author-verification-020",
+      "kind": "final_hygiene_deps_r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T16:17:32.748739+00:00",
+      "durationSeconds": 0.338,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_020_FINAL_HYGIENE_DEPS_R2.txt",
+      "sha256": "bb0ece750162034be77d1fa85653f156e670a3c270f17ecc60b0b79b6f690fc6"
+    },
+    {
+      "id": "native-author-verification-021",
+      "kind": "final_hygiene_api_r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T16:17:33.087518+00:00",
+      "durationSeconds": 0.074,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_021_FINAL_HYGIENE_API_R2.txt",
+      "sha256": "ceded4b2dee0a69d4d1cce7da132651a1f8705b279197db656b786280d857631"
+    },
+    {
+      "id": "native-author-verification-022",
+      "kind": "final_hygiene_schema_r2",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T16:17:33.162292+00:00",
+      "durationSeconds": 0.192,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_022_FINAL_HYGIENE_SCHEMA_R2.txt",
+      "sha256": "dafbd04e5389e9fd3ff2eb5b67f4139a9ae3452b1a7e73782416b6e846b14c8c"
+    },
+    {
+      "id": "native-author-verification-023",
+      "kind": "final_whole_typescript_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "startedAt": "2026-11-09T16:21:46.652406+00:00",
+      "durationSeconds": 5.858,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_023_FINAL_WHOLE_TYPESCRIPT_R3.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "native-author-verification-024",
+      "kind": "final_scoped_lint_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "lib/readiness/official-truth-product-v3/method/native.test.ts",
+        "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+        "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+        "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "scripts/db/official-truth-v3-method-authority-1/process-worker.ts",
+        "lib/readiness/regulierungs-anwendbarkeit.test.ts"
+      ],
+      "startedAt": "2026-11-09T16:21:46.652547+00:00",
+      "durationSeconds": 2.004,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_024_FINAL_SCOPED_LINT_R3.txt",
+      "sha256": "6e0397817ffa2805772b72ae58ea3485d3ba1711148a601f88d00a91fab8934f"
+    },
+    {
+      "id": "native-author-verification-025",
+      "kind": "final_hygiene_dead_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/erreichbarkeit.mjs"
+      ],
+      "startedAt": "2026-11-09T16:21:46.653109+00:00",
+      "durationSeconds": 0.465,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_025_FINAL_HYGIENE_DEAD_R3.txt",
+      "sha256": "25c5363cb90acfc22b0c7b2bf0ba0aacb7ddf5b4ad249a4a7b874ffc542fd8a7"
+    },
+    {
+      "id": "native-author-verification-026",
+      "kind": "final_hygiene_exports_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/exporte.mjs"
+      ],
+      "startedAt": "2026-11-09T16:21:47.118687+00:00",
+      "durationSeconds": 8.71,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_026_FINAL_HYGIENE_EXPORTS_R3.txt",
+      "sha256": "9f10f001d8dc61c9585b21276b6da38ffe135fd1d4ac408dc345b48179b5f84a"
+    },
+    {
+      "id": "native-author-verification-027",
+      "kind": "final_hygiene_deps_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/pakete.mjs"
+      ],
+      "startedAt": "2026-11-09T16:21:48.657430+00:00",
+      "durationSeconds": 0.341,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_027_FINAL_HYGIENE_DEPS_R3.txt",
+      "sha256": "bb0ece750162034be77d1fa85653f156e670a3c270f17ecc60b0b79b6f690fc6"
+    },
+    {
+      "id": "native-author-verification-028",
+      "kind": "final_hygiene_api_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/api-schutz.mjs"
+      ],
+      "startedAt": "2026-11-09T16:21:48.998908+00:00",
+      "durationSeconds": 0.058,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_028_FINAL_HYGIENE_API_R3.txt",
+      "sha256": "ceded4b2dee0a69d4d1cce7da132651a1f8705b279197db656b786280d857631"
+    },
+    {
+      "id": "native-author-verification-029",
+      "kind": "final_hygiene_schema_r3",
+      "command": [
+        "/workspace/scratch/e03d2839d4e5/v3-toolchain/node_modules/node/bin/node",
+        "scripts/db/verwendung.mjs",
+        "--pruefen"
+      ],
+      "startedAt": "2026-11-09T16:21:49.057654+00:00",
+      "durationSeconds": 0.208,
+      "exitCode": 0,
+      "log": "docs/official-truth-product-v3/MA1_NATIVE_LOG_029_FINAL_HYGIENE_SCHEMA_R3.txt",
+      "sha256": "dafbd04e5389e9fd3ff2eb5b67f4139a9ae3452b1a7e73782416b6e846b14c8c"
+    },
+    {
+      "id": "worker-spawn-regression-patch-1",
+      "kind": "Source apply_patch only",
+      "outcome": "verification failed because expected close-event context had changed with the preceding named-listener correction",
+      "effect": "Atomic patch rejected; fresh source reread followed by correct bounded patch. No tests/native/SQL were executed by that attempt."
+    }
+  ],
+  "executedLocally": {
+    "sql": false,
+    "native": false,
+    "postgresOrSocket": false,
+    "hosted": false,
+    "remoteMutation": false,
+    "gitMutation": false
+  },
+  "validation": "Next typegen001 and final source-bound static attempts023\u2013029 are captured; inspect exit codes. Initial syntax failures002/003, earlier passing snapshots, rejected patches and independent source findings remain. Runtime child/Root270 offline evidence is separate and unchanged. Native/SQL/PostgreSQL/socket NOT_RUN locally; no author TL PASS.",
+  "reviewFindings": [
+    {
+      "id": "SQL-CHECK-DEFINITION-P2",
+      "reviewer": "Root and /root/handoff_recovery_audit",
+      "preFixCandidateHashPrefix": "c2baaca0",
+      "preFixRollbackHashPrefix": "cbd83db0",
+      "finding": "Exact inventory omitted semantic definitions of the three named CHECK constraints; same-name CHECK(true) could pass.",
+      "disposition": "Source-owned exact pg_get_expr(...,false) literals for all3 CHECK expressions are present in the identical final/rollback inventory, under fixed pg_catalog search_path. No live learned receipt/new object/function. Native same-name CHECK(true) refusal/preservation is being added. Literal formatting remains unexecuted and must exactly pass mandatory CI; any mismatch remains a failed attempt requiring same-session literal-only correction.",
+      "execution": "Source review only; no native result"
+    },
+    {
+      "id": "NATIVE-METHOD-REF-SHAPE-P2",
+      "reviewer": "/root Technical Lead",
+      "preFixWorkerSha256": "a5ede473a94053808a38ede8d95b2cb5da79c6803b0d21dd21543a5e3ef4eb43",
+      "preFixNativeSha256": "a3201bdbc247c2543a38f584ccb0584d446618ebbefbbf8d67c96902493f004e",
+      "finding": "Four-key binding was incorrectly passed to unchanged exact two-key method port, preventing actual native/child positive dispatch.",
+      "disposition": "All author-owned native/worker port calls now use explicit frozen {methodId,revision}; factory and read requests retain four-key binding. Native positives and post-restart dispatch remain mandatory.",
+      "execution": "Source correction only; no native result"
+    },
+    {
+      "id": "NATIVE-ADVISORY-WAIT-P2",
+      "reviewer": "Root and author source pass",
+      "preFixNativeSha256": "a3201bdbc247c2543a38f584ccb0584d446618ebbefbbf8d67c96902493f004e",
+      "finding": "same-operation/method contention occurs on advisory mutex before acquiring heads table relation lock; previous observer demanded that premature relation lock",
+      "disposition": "Finite relation or exact advisory namespace/hash-key/objsubid resource check now selected per case. All PID/birth/active Lock/exact SQL/actual blocker/pending checks retained.",
+      "execution": "Source correction only; no native result"
+    },
+    {
+      "id": "MA1-NATIVE-P2-3",
+      "reviewer": "Root and /root/handoff_recovery_audit",
+      "preFixAdapterSha256Prefix": "b5cd2f329",
+      "finding": "NOINHERIT SET ROLE changed GetUserId while backend session_user stayed login; login birth was hidden by pg_stat_activity permissions",
+      "disposition": "Native executor and fixture now capture genuine-login PID/birth before SET ROLE, then prove same PID plus exact session_user/current_user after role selection. No extra stats privileges/reverse role membership.",
+      "execution": "Source correction only; native CI pending",
+      "rootAmendment": "MA1_NATIVE_IDENTITY_AMENDMENT_V1.md",
+      "rootAmendmentSha256": "6c78881cd8b48b5dd679a577c10adb9ff194238d273fc36a239a84f8942b30e5"
+    },
+    {
+      "id": "NATIVE-CAPACITY-EVIDENCE",
+      "reviewer": "/root Technical Lead",
+      "finding": "Same adapter fifth-call refusal did not reach shared native executor; pre-drain gate did not occupy actual serialized observer lane",
+      "disposition": "Existing group now uses separate real adapter instances to hit native fixture cap without new acquisitions. A finite hook inside real observer lane proves one-running/three-waiting with all contexts retained until release and both absences; no driver/pool.",
+      "execution": "Native source only; CI pending"
+    },
+    {
+      "id": "MA1-AUTHOR-STATIC-1",
+      "finding": "Initial whole TypeScript and scoped lint found two missing closing braces in new fixtures.ts; no SQL or native execution occurred.",
+      "preFixSha256": "7791b89b2fa5ac3f7f1820053108ae6122c2862b0e211be04b7580a534daf6c3",
+      "correction": "Added only the missing function braces. Exact initial failures remain in logs002 and003.",
+      "status": "Corrected; actual whole TypeScript exit0 in log009, scoped lint exit0 in log010; native not executed"
+    },
+    {
+      "id": "MA1-NATIVE-P2-4",
+      "reviewer": "Root and /root/handoff_recovery_audit",
+      "preFixNativeSha256": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+      "finding": "Exit-only child join could remain pending after asynchronous spawn error that emits close without exit, preventing parent lifetime cleanup.",
+      "disposition": "Parent joins actual terminal close separately from a recorded real exit. A missing actual exit or spawn/error remains fatal; successful child returns still require matching real exit+close and SIGKILL/exit0 assertions. Pending native read jobs are joined and timers/listeners removed on either path. No fabricated exit or detached result.",
+      "execution": "Final static attempts023\u2013029 are captured; actual child spawn/exit/close proof remains mandatory CI only.",
+      "regression": "Root explicitly required one fixed test-owned missing-executable mode in the existing child group. Native source preserves actual ENOENT error separately, joins real close without inventing exit/PID, requires visible dispose rejection and zero jobs/reads/tracked child plus released timer/listeners. No SQL dispatch or arbitrary executable selector."
+    }
+  ],
+  "staticSourcePinsBefore": {
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+    "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+    "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "7791b89b2fa5ac3f7f1820053108ae6122c2862b0e211be04b7580a534daf6c3",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+    "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13"
+  },
+  "staticSourcePinsAfter": {
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+    "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+    "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "7791b89b2fa5ac3f7f1820053108ae6122c2862b0e211be04b7580a534daf6c3",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f2fded1a3174774b4b76d98e162e20bc905f71f409be9ad88caf63e72e6a8a86",
+    "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13"
+  },
+  "staticSourcesUnchanged": true,
+  "finalStaticSourcePins": {
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+    "lib/readiness/official-truth-product-v3/method/contract.ts": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+    "lib/readiness/official-truth-product-v3/method/native.test.ts": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+    "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+    "scripts/db/official-truth-v3-method-authority-1/fixtures.ts": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql": "aac2d325e55614e717901c3fcd8dfe0b614d4e3217f9ce93b160f213c2b99124",
+    "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql": "dccd1bc22a293947fe8a9f18a04b3fad08968268def4199eff26194a25c02845",
+    "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+    "scripts/db/official-truth-v3-method-authority-1/native.ts": "f618eb49eb112ab11619457aab8e1defcea929186d19e9ec653d3273b03d9964",
+    "scripts/db/official-truth-v3-method-authority-1/process-worker.ts": "056e105ae435f6f386fd376049b1656edb67beaeb82d4ac25d53e2f10593b8a0",
+    "lib/readiness/regulierungs-anwendbarkeit.test.ts": "dd567ed129af20ca60f147df2a344bc08911d0f4e53e8900e055e5dd3cc3ee13"
+  },
+  "finalHygieneSourcesUnchanged": true,
+  "finalStaticSourcesUnchanged": true,
+  "finalStaticAttempts": [
+    "native-author-verification-023",
+    "native-author-verification-024",
+    "native-author-verification-025",
+    "native-author-verification-026",
+    "native-author-verification-027",
+    "native-author-verification-028",
+    "native-author-verification-029"
+  ],
+  "frozenAt": "2026-11-09T16:23:00.092340+00:00"
+}

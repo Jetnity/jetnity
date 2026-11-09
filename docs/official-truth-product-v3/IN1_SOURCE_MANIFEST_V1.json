@@ -1,0 +1,512 @@
+{
+  "schema": "jetnity-in1-source-manifest-v1",
+  "recordedAt": "2026-11-09T12:21:54.340075+00:00",
+  "taskseed": "a7a61562c6af0ceeb29100ef4497fd7af8f4d178",
+  "sourceInputs": {
+    "S1": {
+      "head": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c",
+      "tree": "17a35e395cab636d47c451dbc943315ab5ede314",
+      "nativeAtDispatch": "PENDING CI42613102499; no later result asserted by writer"
+    },
+    "N1": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "tree": "f5993025cd78e91f27e3492df00a1551a396909e",
+      "sourceReview": "Root input pin; inherited files byte-identical"
+    },
+    "commonMergeBase": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81"
+  },
+  "selfExcludedToAvoidCircularHash": true,
+  "manifestAcceptance": "Root must pin this manifest and the complete published head independently",
+  "importedN1": [
+    {
+      "path": "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "bytes": 2170,
+      "sha256": "300f5f0f8537c4610a3f11c4c94fff5a38504dc5d4b8ad0dcd8d2ef7f2a324dc",
+      "gitBlob": "fe148cdb4a0116a962b3439075e20a08586d5c81",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "fe148cdb4a0116a962b3439075e20a08586d5c81",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "bytes": 3736,
+      "sha256": "0370ab8a782a51866772989cd6728ea39070e153677301847179a9a95d41234a",
+      "gitBlob": "18c2a357af2db81c786e396c9583c4f1a5e78f0e",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "18c2a357af2db81c786e396c9583c4f1a5e78f0e",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+      "bytes": 3488,
+      "sha256": "f0a2bd43db30e9e01529dcb1dba35686ea6e95de0b94754987e1a89709347334",
+      "gitBlob": "ec1ceb26f37881bf18ad9e8c7918960ef52ad6de",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "ec1ceb26f37881bf18ad9e8c7918960ef52ad6de",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "bytes": 6813,
+      "sha256": "201e8127cfa06cb29199f66c799a87a5a16858b4c7b09e3c43a6e360a5585cb2",
+      "gitBlob": "8f8867b14772ff5717b258b6c43e091d7a17aea5",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "8f8867b14772ff5717b258b6c43e091d7a17aea5",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+      "bytes": 3167,
+      "sha256": "1835d897b2670fa9213f23ecea0652abc771a93a2d9a8fa14fd1394233b5e2fa",
+      "gitBlob": "37cd0609ee9b264f2d9a7393b7e55b32ff290d3f",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "37cd0609ee9b264f2d9a7393b7e55b32ff290d3f",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "bytes": 4260,
+      "sha256": "947321735985f0b532335c5be5c0d7481eb7892b8a52be9caf09ea655e6e3e4c",
+      "gitBlob": "c6ec5f100caa0e2725203e1be11e761c5a77b696",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "c6ec5f100caa0e2725203e1be11e761c5a77b696",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "bytes": 8141,
+      "sha256": "d34b3cb1672e06a02923b7013c578d38aa2eb1363a992b1822c0f7f0401fdf1e",
+      "gitBlob": "db73fca1fbd06ae1826176fac527c03fe373b2a3",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "db73fca1fbd06ae1826176fac527c03fe373b2a3",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "bytes": 7102,
+      "sha256": "f1c19e275fa0b6255a64d3c7c63a7429c23289f92784219a916f118d40c73585",
+      "gitBlob": "78d72f84afc4dbee68ea39d20a157881bbfe7903",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "78d72f84afc4dbee68ea39d20a157881bbfe7903",
+      "byteIdentical": true
+    },
+    {
+      "path": "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "bytes": 17294,
+      "sha256": "1d9fc9d5ad4502cc81e5886e46b1d2276197da59317fbb4816dc1212f360e768",
+      "gitBlob": "b20f62dea4c121eef3eed8adb0eed616532519e7",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "b20f62dea4c121eef3eed8adb0eed616532519e7",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "bytes": 6368,
+      "sha256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+      "gitBlob": "afd363a808905faf32dc1a7af5c4bb950cb17bce",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "afd363a808905faf32dc1a7af5c4bb950cb17bce",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "bytes": 11215,
+      "sha256": "8d4ebd93d94bbee326edb6212709bae49d1e848ae69169028e3974d4fe446a7d",
+      "gitBlob": "f4dbf5795277bf941a569582b4658e68f632b99c",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "f4dbf5795277bf941a569582b4658e68f632b99c",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "bytes": 9313,
+      "sha256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+      "gitBlob": "93715d6e173ccc8a853c685400ca62a5d8b73a4e",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "93715d6e173ccc8a853c685400ca62a5d8b73a4e",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "bytes": 14319,
+      "sha256": "06d719ee9b1e4b2f908dcb0b3250c462463e47d5b24594c098bba3bc3cce0694",
+      "gitBlob": "7e600366dbd96e9b746188aebf13dacb1a18c2c1",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "7e600366dbd96e9b746188aebf13dacb1a18c2c1",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "bytes": 3967,
+      "sha256": "60e6d44f63bef4554ad6e1bc225255e02b35300364294e1b5b0b17a62965a283",
+      "gitBlob": "a4deb0aec975ea5567735579933a957e2c841dbd",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "a4deb0aec975ea5567735579933a957e2c841dbd",
+      "byteIdentical": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "bytes": 2419,
+      "sha256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+      "gitBlob": "38b9da675fafe392976df7f42640f0b5974fa3de",
+      "sourceHead": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "sourceGitBlob": "38b9da675fafe392976df7f42640f0b5974fa3de",
+      "byteIdentical": true
+    }
+  ],
+  "inheritedS1Verification": {
+    "checkedTrackedFiles": 8938,
+    "allByteIdenticalExceptAuthorizedFoundation": true,
+    "authorizedException": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+    "comparison": "actual local Git-blob bytes against every inherited S1 tracked blob; no local unpublished S1 input"
+  },
+  "protectedUnchangedFiles": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "bytes": 3840,
+      "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+      "gitBlob": "0e2e4947b03f4f444691ed8177dcc3ca98a71b69",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "bytes": 77722,
+      "sha256": "5bd910f030938f193c6a67f088aeb2075ae76024ac3da42a873efcfda8b9fb4f",
+      "gitBlob": "45be2a8cf2b0a3a7921783b034013fa2b15657e2",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "bytes": 50523,
+      "sha256": "2d9702199e2e2733170e974e5d8a93cf04b0e91de67a5879fac5d31e9ba1ec66",
+      "gitBlob": "3244c8b219af0f24ee935940d4c61c4a8418f7a0",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "bytes": 22433,
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "gitBlob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "bytes": 5280,
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "gitBlob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "bytes": 5181,
+      "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+      "gitBlob": "42d6dae8d5d41181396749fb320c6eeeb4edeb35",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "bytes": 33866,
+      "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "gitBlob": "49c06a696154dfbb871fd7c23e35488f43198c07",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "bytes": 86047,
+      "sha256": "5fd53363da16ea5ae9a2497b19e5212649d5d7af0906d18d0ea8b5937965014a",
+      "gitBlob": "0626bf5f0aa302e3fb91610b831fd6f9cefd9ddb",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "package.json",
+      "bytes": 6330,
+      "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+      "gitBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 319637,
+      "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+      "gitBlob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 12329,
+      "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+      "gitBlob": "f64ff6cfe706121cee2f27ba8788b78f71a6cdd3",
+      "sourceHead": "bb5ce4d69f9e479867581ecf0262e549bfc20e6c"
+    }
+  ],
+  "foundation": {
+    "candidate": {
+      "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "bytes": 57057,
+      "sha256": "9aa2eae4e3e3ff548b7f85a15f4970bbe848889231a1139478d6ea7e098dbdd5",
+      "gitBlob": "bc320c9a5d33ab49df2fd29830677fa78e7f45cd"
+    },
+    "sourceS1GitBlob": "8aaa98466bf27b8a148f0fe114a584f9cdf975dc",
+    "sourceN1GitBlob": "b2af28fdca692be94b871a4b00bbbe9b71573a2e",
+    "diffFromS1Sha256": "d4b551ad79c7baecea3aaab67ca9dec85ff407d5871b6b4e76957f9e323394fa",
+    "module": "official-truth-autonomous-provenance-artifact",
+    "finiteUnion": {
+      "storage/intake-contract.ts": [
+        "immutable",
+        "ownRecord"
+      ],
+      "storage/quarantine-codec.ts": [
+        "immutable",
+        "ownRecord",
+        "provenanceCanonical"
+      ],
+      "storage/quarantine-postgres.ts": [
+        "immutable",
+        "ownRecord"
+      ],
+      "storage/retention-shape.ts": [
+        "provenanceCanonical"
+      ],
+      "ingress/service-server.ts": [
+        "ownRecord"
+      ]
+    },
+    "scannerChanged": false,
+    "bothBranchesNegativeAssertionsRetained": true
+  },
+  "ownedFiles": [
+    {
+      "path": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "bytes": 23204,
+      "sha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+      "gitBlob": "18439d9f1600aa590c9b76276fbda728ae3e39de"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "bytes": 158,
+      "sha256": "f98960abfa829ff9517c8a4be0924b0891207755f9853c71d19d1d55da838506",
+      "gitBlob": "c20d63ad7b73f27b4f75e4d232640154b15b23ca"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_HANDOFF_V1.md",
+      "bytes": 6999,
+      "sha256": "10ce5b12722067ce3b6421f44df8b4828f1b608553a023d997774911baed377b",
+      "gitBlob": "d6baf828496ac1399d67beb955de10b9dd7b05af"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json",
+      "bytes": 2812,
+      "sha256": "654d0b515952a328c87a64d8cd9fad75672167ed88c7b13e370d34fa80676d9c",
+      "gitBlob": "77cce813f34b293f9a7fcf69bfd3c10ccd577a8f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_PLAN_V1.md",
+      "bytes": 5258,
+      "sha256": "b545601eb6dc3171f5f76c02a1fc1abb1dfc5ba6b4556b0e4fd92b5a151e2489",
+      "gitBlob": "c66de4de2d65c55386a6cf36ab48dafa41b167be"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md",
+      "bytes": 7135,
+      "sha256": "049091a261e2e1930578c715706cdef09aef6451098b61bd166003945cc31948",
+      "gitBlob": "4d6a829e20585684bee6c4b518e05e908ca75522"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_TASK_V1.md",
+      "bytes": 8420,
+      "sha256": "ce0f50796ce8dcd1ad9bb3df621c1502772ce2804f11a8f8467d0145a9540110",
+      "gitBlob": "c518bc20c79fecc8405a26a5b2d24fc496b636ac"
+    },
+    {
+      "path": "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json",
+      "bytes": 14195,
+      "sha256": "6508f262b909932e7841e1781702f28faca699e384e1b92b0c05c05e19fad312",
+      "gitBlob": "9b102c0967d17476a01e7128d4e139ff21d32482"
+    }
+  ],
+  "n1HistoricalEvidenceErratum": {
+    "historicalFile": "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+    "incorrectHistoricalToken": "import/interface.test.ts",
+    "newerEvidence": "https://github.com/Jetnity/jetnity/pull/1170#issuecomment-6739652097",
+    "correctedRootRun": {
+      "head": "10d3e4f44460513e6425714af2c8c0b3ab4678a6",
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "885ba68c20a92b5c350f847f593800fa1df130e002d01f81677286d369b44d79"
+    },
+    "inputRewritten": false
+  },
+  "finalScopeAudit": {
+    "checkedAt": "2026-11-09T12:22:48.258766+00:00",
+    "changedFilesAgainstS1IncludingUntracked": [
+      "docs/official-truth-product-v3/IN1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json",
+      "docs/official-truth-product-v3/IN1_PLAN_V1.md",
+      "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/IN1_SOURCE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/IN1_TASK_V1.md",
+      "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json",
+      "docs/official-truth-product-v3/N1_GUARD_AMENDMENT_V1.md",
+      "docs/official-truth-product-v3/N1_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/N1_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/N1_PLAN_V1.md",
+      "docs/official-truth-product-v3/N1_ROOT_REVIEW_R1.json",
+      "docs/official-truth-product-v3/N1_SELF_REVIEW_V1.md",
+      "docs/official-truth-product-v3/N1_STATUS_V1.md",
+      "docs/official-truth-product-v3/N1_TASK_V1.md",
+      "docs/official-truth-product-v3/N1_TEST_EVIDENCE_V1.txt",
+      "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/file.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "lib/readiness/official-truth-product-v3/ingress/service.test.ts",
+      "lib/readiness/official-truth-product-v3/ingress/test-support/fixture.ts",
+      "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts",
+      "scripts/db/official-truth-v3-intake-composition-1/native.ts"
+    ],
+    "onlyAuthorizedFiles": true,
+    "allManifestFileHashesRechecked": true,
+    "whitespaceChecks": [
+      {
+        "args": [
+          "git",
+          "diff",
+          "--check",
+          "--cached"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": false
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": false
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_HANDOFF_V1.md"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_INPUT_SNAPSHOT_V1.json"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_PLAN_V1.md"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_SELF_REVIEW_V1.md"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_SOURCE_MANIFEST_V1.json"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "docs/official-truth-product-v3/IN1_VERIFICATION_RECEIPT_V1.json"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "lib/readiness/official-truth-product-v3/integration/intake-native.test.ts"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      },
+      {
+        "args": [
+          "git",
+          "diff",
+          "--no-index",
+          "--check",
+          "/dev/null",
+          "scripts/db/official-truth-v3-intake-composition-1/native.ts"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "noWhitespaceDiagnostic": true,
+        "expectedDifferentFileExitAllowed": true
+      }
+    ],
+    "initialAuditHarnessCorrection": "Initial temporary verifier expected exit 0 from git diff --no-index --check against /dev/null; Git returned 1 with no diagnostics because the new file differs. Corrected verifier accepts 0/1 only for no-index while requiring empty combined output; no source/guard change.",
+    "commitCreated": false,
+    "remoteMutation": false
+  }
+}

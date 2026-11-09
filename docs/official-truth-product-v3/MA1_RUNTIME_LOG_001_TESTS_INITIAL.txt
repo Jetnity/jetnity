@@ -1,0 +1,509 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# Subtest: MA1 exact synthetic binding and closed wire readers
+    # Subtest: preserves all three independently frozen Root vectors
+    ok 1 - preserves all three independently frozen Root vectors
+      ---
+      duration_ms: 6.072975
+      type: 'test'
+      ...
+    # Subtest: canonical draft identity ignores property order but preserves status and raw package newline
+    ok 2 - canonical draft identity ignores property order but preserves status and raw package newline
+      ---
+      duration_ms: 1.568785
+      type: 'test'
+      ...
+    # Subtest: detaches the draft and package without freezing or retaining caller inputs
+    ok 3 - detaches the draft and package without freezing or retaining caller inputs
+      ---
+      duration_ms: 0.908539
+      type: 'test'
+      ...
+    # Subtest: shared draft admission rejects authority fields, personal fields, malformed predecessors and getters
+    ok 4 - shared draft admission rejects authority fields, personal fields, malformed predecessors and getters
+      ---
+      duration_ms: 2.160747
+      type: 'test'
+      ...
+    # Subtest: bounds byte copying, uses actual typed bytes and never trusts an overridden iterator or byteLength
+    ok 5 - bounds byte copying, uses actual typed bytes and never trusts an overridden iterator or byteLength
+      ---
+      duration_ms: 2.225885
+      type: 'test'
+      ...
+    # Subtest: package checksum and draft parsing alone never supply approval
+    ok 6 - package checksum and draft parsing alone never supply approval
+      ---
+      duration_ms: 1.395293
+      type: 'test'
+      ...
+    # Subtest: fixed binding is closed, bounded, detached and has no role or target selectors
+    ok 7 - fixed binding is closed, bounded, detached and has no role or target selectors
+      ---
+      duration_ms: 0.57722
+      type: 'test'
+      ...
+    # Subtest: timestamps use exact canonical UTC milliseconds and real civil dates
+    ok 8 - timestamps use exact canonical UTC milliseconds and real civil dates
+      ---
+      duration_ms: 0.865765
+      type: 'test'
+      ...
+    # Subtest: decodes all finite states and actual null-prototype wire rows without creating authority
+    ok 9 - decodes all finite states and actual null-prototype wire rows without creating authority
+      ---
+      duration_ms: 1.687253
+      type: 'test'
+      ...
+    # Subtest: rejects extra, missing, exotic, accessor and non-string wire cells before using them
+    ok 10 - rejects extra, missing, exotic, accessor and non-string wire cells before using them
+      ---
+      duration_ms: 0.898745
+      type: 'test'
+      ...
+    # Subtest: rejects noncanonical integers and impossible state/identity/mode combinations
+    ok 11 - rejects noncanonical integers and impossible state/identity/mode combinations
+      ---
+      duration_ms: 1.937621
+      type: 'test'
+      ...
+    # Subtest: Root R1: finite remaining_ms cannot exceed either conservative interval and never derives a TTL from it
+    ok 12 - Root R1: finite remaining_ms cannot exceed either conservative interval and never derives a TTL from it
+      ---
+      duration_ms: 0.381145
+      type: 'test'
+      ...
+    1..12
+ok 1 - MA1 exact synthetic binding and closed wire readers
+  ---
+  duration_ms: 24.092157
+  type: 'suite'
+  ...
+# Subtest: MA1 opaque receipt custody and actual executor observations
+    # Subtest: valid observations use the fixed frozen tuple, explicit checkedAt and a fresh read for every current result
+    ok 1 - valid observations use the fixed frozen tuple, explicit checkedAt and a fresh read for every current result
+      ---
+      duration_ms: 1.622957
+      type: 'test'
+      ...
+    # Subtest: factory configuration is detached, and invalid/null executors cannot resolve
+    ok 2 - factory configuration is detached, and invalid/null executors cannot resolve
+      ---
+      duration_ms: 2.569313
+      type: 'test'
+      ...
+    # Subtest: closed method/clock inputs and bad custody cause no SQL dispatch or getter invocation
+    ok 3 - closed method/clock inputs and bad custody cause no SQL dispatch or getter invocation
+      ---
+      duration_ms: 0.946867
+      type: 'test'
+      ...
+    # Subtest: foreign, cloned, serialized and invented receipts do not carry authority
+    ok 4 - foreign, cloned, serialized and invented receipts do not carry authority
+      ---
+      duration_ms: 1.158547
+      type: 'test'
+      ...
+    # Subtest: nonapproved states stay negative and binding mismatch remains unavailable
+    ok 5 - nonapproved states stay negative and binding mismatch remains unavailable
+      ---
+      duration_ms: 1.478479
+      type: 'test'
+      ...
+    # Subtest: actual changed epochs, supersession and revoke refuse the retained receipt
+    ok 6 - actual changed epochs, supersession and revoke refuse the retained receipt
+      ---
+      duration_ms: 1.533382
+      type: 'test'
+      ...
+    # Subtest: errors and malformed envelopes/rows remain unavailable and release only settled calls
+    ok 7 - errors and malformed envelopes/rows remain unavailable and release only settled calls
+      ---
+      duration_ms: 1.480031
+      type: 'test'
+      ...
+    # Subtest: Root R1: impossible duration and request-expired rows cannot resolve or reprove
+    ok 8 - Root R1: impossible duration and request-expired rows cannot resolve or reprove
+      ---
+      duration_ms: 1.998683
+      type: 'test'
+      ...
+    1..8
+ok 2 - MA1 opaque receipt custody and actual executor observations
+  ---
+  duration_ms: 13.103873
+  type: 'suite'
+  ...
+# Subtest: MA1 original and monotonically shortened receipt deadlines
+    # Subtest: resolve anchors finite validity to call start, including time spent in owned drain
+    ok 1 - resolve anchors finite validity to call start, including time spent in owned drain
+      ---
+      duration_ms: 1.040308
+      type: 'test'
+      ...
+    # Subtest: five-second positive cutoff is checked even before the abort timer can run
+    ok 2 - five-second positive cutoff is checked even before the abort timer can run
+      ---
+      duration_ms: 0.431641
+      type: 'test'
+      ...
+    # Subtest: reproof never renews the original finite cap or accepts an already-expired receipt
+    ok 3 - reproof never renews the original finite cap or accepts an already-expired receipt
+      ---
+      duration_ms: 0.702569
+      type: 'test'
+      ...
+    # Subtest: fresh one-millisecond reproof horizon is retained when consumed during drain
+    ok 4 - fresh one-millisecond reproof horizon is retained when consumed during drain
+      ---
+      duration_ms: 0.851804
+      type: 'test'
+      ...
+    # Subtest: an overlapping earlier read with a larger remainder cannot revive shortened custody
+    ok 5 - an overlapping earlier read with a larger remainder cannot revive shortened custody
+      ---
+      duration_ms: 0.891754
+      type: 'test'
+      ...
+    # Subtest: a shorter still-valid horizon survives later successful reproof without extension
+    ok 6 - a shorter still-valid horizon survives later successful reproof without extension
+      ---
+      duration_ms: 0.746806
+      type: 'test'
+      ...
+    # Subtest: same-epoch expired SQL result consumes custody even before the original cap
+    ok 7 - same-epoch expired SQL result consumes custody even before the original cap
+      ---
+      duration_ms: 0.624201
+      type: 'test'
+      ...
+    # Subtest: until_revoked still has the original five-second receipt cap
+    ok 8 - until_revoked still has the original five-second receipt cap
+      ---
+      duration_ms: 0.512653
+      type: 'test'
+      ...
+    1..8
+ok 3 - MA1 original and monotonically shortened receipt deadlines
+  ---
+  duration_ms: 6.205905
+  type: 'suite'
+  ...
+# Subtest: MA1 four slots persist through abort, acquisition and real promise settlement
+    # Subtest: abort requests do not detach four calls or admit a fifth before their drain settles
+    ok 1 - abort requests do not detach four calls or admit a fifth before their drain settles
+      ---
+      duration_ms: 2.225615
+      type: 'test'
+      ...
+    # Subtest: a rejected fully settled call frees its slot and does not leak timer or private error
+    ok 2 - a rejected fully settled call frees its slot and does not leak timer or private error
+      ---
+      duration_ms: 0.881819
+      type: 'test'
+      ...
+    # Subtest: reproof slots likewise wait for executor settlement after their shorter receipt deadline
+    ok 3 - reproof slots likewise wait for executor settlement after their shorter receipt deadline
+      ---
+      duration_ms: 1.474513
+      type: 'test'
+      ...
+    1..3
+ok 4 - MA1 four slots persist through abort, acquisition and real promise settlement
+  ---
+  duration_ms: 4.841278
+  type: 'suite'
+  ...
+# Subtest: MA1 dormant runtime has no file discovery, credentials, provider or publication side effects
+ok 5 - MA1 dormant runtime has no file discovery, credentials, provider or publication side effects
+  ---
+  duration_ms: 0.536349
+  type: 'test'
+  ...
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: regulierungs-anwendbarkeit
+    # Subtest: Grenzen und leere Regionspins
+    ok 1 - Grenzen und leere Regionspins
+      ---
+      duration_ms: 0.817983
+      type: 'test'
+      ...
+    # Subtest: 1–3 Wahrheitswerte, NOT unknown und sonst-Zweig
+    ok 2 - 1–3 Wahrheitswerte, NOT unknown und sonst-Zweig
+      ---
+      duration_ms: 3.68854
+      type: 'test'
+      ...
+    # Subtest: 4–5 ausdrückliches Falsch und Abwesenheit
+    ok 3 - 4–5 ausdrückliches Falsch und Abwesenheit
+      ---
+      duration_ms: 1.310555
+      type: 'test'
+      ...
+    # Subtest: 6 zwei verneinte Nutzeraussagen tragen otherwise und context_asserted
+    ok 4 - 6 zwei verneinte Nutzeraussagen tragen otherwise und context_asserted
+      ---
+      duration_ms: 0.675108
+      type: 'test'
+      ...
+    # Subtest: 7–10 Kurzschluss, NOT-Polarität, aufgezeichnet und unbedingt
+    ok 5 - 7–10 Kurzschluss, NOT-Polarität, aufgezeichnet und unbedingt
+      ---
+      duration_ms: 0.799055
+      type: 'test'
+      ...
+    # Subtest: 11–14 Konflikt, kein Zweig, fehlende Fakten, ungepinnte Region
+    ok 6 - 11–14 Konflikt, kein Zweig, fehlende Fakten, ungepinnte Region
+      ---
+      duration_ms: 1.212017
+      type: 'test'
+      ...
+    # Subtest: 15–19 Staatsangehörigkeit, Aussteller, Verknüpfung und Dokumentklasse
+    ok 7 - 15–19 Staatsangehörigkeit, Aussteller, Verknüpfung und Dokumentklasse
+      ---
+      duration_ms: 0.495486
+      type: 'test'
+      ...
+    # Subtest: kanonische Staatsangehörigkeit und Dokumentbezug
+    ok 8 - kanonische Staatsangehörigkeit und Dokumentbezug
+      ---
+      duration_ms: 0.522508
+      type: 'test'
+      ...
+    # Subtest: 20–22 Personen, Herkunft und Grenzen
+    ok 9 - 20–22 Personen, Herkunft und Grenzen
+      ---
+      duration_ms: 0.859285
+      type: 'test'
+      ...
+    # Subtest: 23–26 Normalisierung, Fingerabdruck und Stützen
+    ok 10 - 23–26 Normalisierung, Fingerabdruck und Stützen
+      ---
+      duration_ms: 3.328448
+      type: 'test'
+      ...
+    # Subtest: 27–35 Wirkungs- und Visa-Formen
+    ok 11 - 27–35 Wirkungs- und Visa-Formen
+      ---
+      duration_ms: 1.013888
+      type: 'test'
+      ...
+    # Subtest: 36–40 Quelle bleibt ohne Quellenvokabular, Kontext-Hash und Importeur
+    ok 12 - 36–40 Quelle bleibt ohne Quellenvokabular, Kontext-Hash und Importeur
+      ---
+      duration_ms: 198.616632
+      type: 'test'
+      ...
+    # Subtest: der support-freie Strukturschlüssel ignoriert Stütz-IDs und Operandenfolge
+    ok 13 - der support-freie Strukturschlüssel ignoriert Stütz-IDs und Operandenfolge
+      ---
+      duration_ms: 0.883201
+      type: 'test'
+      ...
+    1..13
+ok 6 - regulierungs-anwendbarkeit
+  ---
+  duration_ms: 215.358469
+  type: 'suite'
+  ...
+# Subtest: Schema 2: pure applicability conformance
+    # Subtest: frozen v1 unconditional fingerprint and explicit context version dispatch
+    ok 1 - frozen v1 unconditional fingerprint and explicit context version dispatch
+      ---
+      duration_ms: 2.569273
+      type: 'test'
+      ...
+    # Subtest: activity remunerative_activity: true/false/unknown and no purpose inference
+    ok 2 - activity remunerative_activity: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 2.371295
+      type: 'test'
+      ...
+    # Subtest: activity income_earning_activity: true/false/unknown and no purpose inference
+    ok 3 - activity income_earning_activity: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 2.473108
+      type: 'test'
+      ...
+    # Subtest: activity profit_making_business_operation: true/false/unknown and no purpose inference
+    ok 4 - activity profit_making_business_operation: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 2.254729
+      type: 'test'
+      ...
+    # Subtest: activity business_contacts: true/false/unknown and no purpose inference
+    ok 5 - activity business_contacts: true/false/unknown and no purpose inference
+      ---
+      duration_ms: 1.656867
+      type: 'test'
+      ...
+    # Subtest: activity independence, raw duplicate bound and conflicts before unrelated OR
+    ok 6 - activity independence, raw duplicate bound and conflicts before unrelated OR
+      ---
+      duration_ms: 1.146308
+      type: 'test'
+      ...
+    # Subtest: direct threshold 89 same-unit days
+    ok 7 - direct threshold 89 same-unit days
+      ---
+      duration_ms: 0.771413
+      type: 'test'
+      ...
+    # Subtest: direct threshold 90 same-unit days
+    ok 8 - direct threshold 90 same-unit days
+      ---
+      duration_ms: 0.925175
+      type: 'test'
+      ...
+    # Subtest: direct threshold 91 same-unit days
+    ok 9 - direct threshold 91 same-unit days
+      ---
+      duration_ms: 0.587696
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2028-02-28..2028-03-01
+    ok 10 - civil arithmetic 2028-02-28..2028-03-01
+      ---
+      duration_ms: 1.066668
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2026-10-06..2026-10-06
+    ok 11 - civil arithmetic 2026-10-06..2026-10-06
+      ---
+      duration_ms: 0.991474
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 2026-03-28..2026-03-30
+    ok 12 - civil arithmetic 2026-03-28..2026-03-30
+      ---
+      duration_ms: 0.797022
+      type: 'test'
+      ...
+    # Subtest: civil arithmetic 0001-01-01..0001-01-02
+    ok 13 - civil arithmetic 0001-01-01..0001-01-02
+      ---
+      duration_ms: 0.536319
+      type: 'test'
+      ...
+    # Subtest: declaration/date conflict detected under declaration convention before any rule
+    ok 14 - declaration/date conflict detected under declaration convention before any rule
+      ---
+      duration_ms: 0.580975
+      type: 'test'
+      ...
+    # Subtest: equal date/assertion candidates retain both dates and assertion provenance
+    ok 15 - equal date/assertion candidates retain both dates and assertion provenance
+      ---
+      duration_ms: 0.572463
+      type: 'test'
+      ...
+    # Subtest: open-ended is unknown, conflicts with finite declaration
+    ok 16 - open-ended is unknown, conflicts with finite declaration
+      ---
+      duration_ms: 0.688828
+      type: 'test'
+      ...
+    # Subtest: months use only matching direct assertion; no conversions or date rounding
+    ok 17 - months use only matching direct assertion; no conversions or date rounding
+      ---
+      duration_ms: 0.86223
+      type: 'test'
+      ...
+    # Subtest: exact duration gap precedence
+    ok 18 - exact duration gap precedence
+      ---
+      duration_ms: 1.025276
+      type: 'test'
+      ...
+    # Subtest: technical quantity bounds, negative zero and no malformed civil dates
+    ok 19 - technical quantity bounds, negative zero and no malformed civil dates
+      ---
+      duration_ms: 2.28847
+      type: 'test'
+      ...
+    # Subtest: D=3660 supports exit-exclusive, inclusive candidate blocks without clamping
+    ok 20 - D=3660 supports exit-exclusive, inclusive candidate blocks without clamping
+      ---
+      duration_ms: 1.287311
+      type: 'test'
+      ...
+    # Subtest: national true is independent of issuer and ordinary class
+    ok 21 - national true is independent of issuer and ordinary class
+      ---
+      duration_ms: 1.659361
+      type: 'test'
+      ...
+    # Subtest: national false limbs dominate unknown; partial citizenship nonmembership stays unknown
+    ok 22 - national false limbs dominate unknown; partial citizenship nonmembership stays unknown
+      ---
+      duration_ms: 1.244376
+      type: 'test'
+      ...
+    # Subtest: national categorical conflicts and absent recorded citizenship rejection
+    ok 23 - national categorical conflicts and absent recorded citizenship rejection
+      ---
+      duration_ms: 0.830822
+      type: 'test'
+      ...
+    # Subtest: outer binding is checked even for unconditional facts
+    ok 24 - outer binding is checked even for unconditional facts
+      ---
+      duration_ms: 0.910863
+      type: 'test'
+      ...
+    # Subtest: branch conflict / disturbing unknown / identical outcome / otherwise
+    ok 25 - branch conflict / disturbing unknown / identical outcome / otherwise
+      ---
+      duration_ms: 1.97025
+      type: 'test'
+      ...
+    # Subtest: canonical v2 fingerprints sort keys/branches/operands/support; retain every semantic axis
+    ok 26 - canonical v2 fingerprints sort keys/branches/operands/support; retain every semantic axis
+      ---
+      duration_ms: 4.163586
+      type: 'test'
+      ...
+    # Subtest: strict JSON rejects accessors without invocation, cycles, symbols, prototypes and extra fields
+    ok 27 - strict JSON rejects accessors without invocation, cycles, symbols, prototypes and extra fields
+      ---
+      duration_ms: 8.62379
+      type: 'test'
+      ...
+    # Subtest: raw and normalized expression limits, branches and support boundaries
+    ok 28 - raw and normalized expression limits, branches and support boundaries
+      ---
+      duration_ms: 1.555414
+      type: 'test'
+      ...
+    1..28
+ok 7 - Schema 2: pure applicability conformance
+  ---
+  duration_ms: 47.149214
+  type: 'suite'
+  ...
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+1..7
+# tests 73
+# suites 6
+# pass 73
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 710.6645

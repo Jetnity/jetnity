@@ -1,0 +1,465 @@
+{
+  "schema": "root-c1-legacy-goldens-v1",
+  "base": "0b704d0fa5d90031ca3ee80aabf2d8578d4cd2d5",
+  "contractSha256": "871b7eb7f4863fda0777593677b9bc265a0b6d22df99cc3caa2e1f0e59c672c4",
+  "rows": [
+    {
+      "label": "ch-visitor",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": null,
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "CH"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "CH",
+              "relatedCitizenshipCountryCode": "CH"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "direct_entry",
+          "conditions": {
+            "status": "specified",
+            "expression": {
+              "op": "all",
+              "operands": [
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "planned_stay_duration",
+                    "comparison": "at_most",
+                    "duration": {
+                      "value": 5,
+                      "unit": "days"
+                    },
+                    "counting": "calendar_dates_inclusive"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "document_class",
+                    "documentClass": "ordinary"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "travel_purpose",
+                    "purpose": "visitor"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+        "contextKey": "official-truth-context:v3:155dd55afe824666e966e43e13c88a12f989601296a02f8fa0e286c48b364e0b",
+        "research": {
+          "key": "research-request:v1:8f488be87b096b63789ba4c74633771122ce8802a2dc63b88fd6b9868185f13c",
+          "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:d58a4fb93967fd57bce95081539d4844f4ad6e2556792274fda1bc1800389196"
+      }
+    },
+    {
+      "label": "ch-business",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": null,
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "CH"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "CH",
+              "relatedCitizenshipCountryCode": "CH"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "direct_entry",
+          "conditions": {
+            "status": "specified",
+            "expression": {
+              "op": "all",
+              "operands": [
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "planned_stay_duration",
+                    "comparison": "at_most",
+                    "duration": {
+                      "value": 5,
+                      "unit": "days"
+                    },
+                    "counting": "calendar_dates_inclusive"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "document_class",
+                    "documentClass": "ordinary"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "travel_purpose",
+                    "purpose": "business"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+        "contextKey": "official-truth-context:v3:512445b8d1f20bd0868a0f8fe3f85eb48c37d679c92d1eb0317b5a3f1420363b",
+        "research": {
+          "key": "research-request:v1:8f488be87b096b63789ba4c74633771122ce8802a2dc63b88fd6b9868185f13c",
+          "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:933e8c83aa569fa34728f9ee88e16fd9981459cfd6f75f15ea92ed5cf4031381"
+      }
+    },
+    {
+      "label": "rs-visitor",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": null,
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "RS"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "RS",
+              "relatedCitizenshipCountryCode": "RS"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "direct_entry",
+          "conditions": {
+            "status": "specified",
+            "expression": {
+              "op": "all",
+              "operands": [
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "planned_stay_duration",
+                    "comparison": "at_most",
+                    "duration": {
+                      "value": 5,
+                      "unit": "days"
+                    },
+                    "counting": "calendar_dates_inclusive"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "document_class",
+                    "documentClass": "ordinary"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "travel_purpose",
+                    "purpose": "visitor"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:8c0c8fb7685c25eec8ec406005254398bc3997ee770252ee7187442515128a68",
+        "contextKey": "official-truth-context:v3:d1e209d5c947132a8f0ba93979be95c3cd0321aabe769e30896704fb0179bbbd",
+        "research": {
+          "key": "research-request:v1:83410358f9bad952cf4d91f11ca50c3fa93f40319ded6abc1683072baab959f9",
+          "ruleScopeKey": "rule-scope:v1:8c0c8fb7685c25eec8ec406005254398bc3997ee770252ee7187442515128a68",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:9ce930ecbce42df09a66ba981e9eb3f4cc35f122f23903e9cc111561a8497d93"
+      }
+    },
+    {
+      "label": "ch-unconditional",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": null,
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "CH"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "CH",
+              "relatedCitizenshipCountryCode": "CH"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "direct_entry",
+          "conditions": {
+            "status": "unconditional"
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+        "contextKey": "official-truth-context:v3:1b1c14dd506c4f36f2c513469f6f8ac5db9463e2f6f6eee4b17325ba7ffc2fd1",
+        "research": {
+          "key": "research-request:v1:8f488be87b096b63789ba4c74633771122ce8802a2dc63b88fd6b9868185f13c",
+          "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:a6b9fd683b37bcaf953088bca42e3bef1644ee73d27c4f4ed89605283607faed"
+      }
+    },
+    {
+      "label": "ch-unresolved",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": null,
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "CH"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "CH",
+              "relatedCitizenshipCountryCode": "CH"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "direct_entry",
+          "conditions": {
+            "status": "unresolved",
+            "missing": [
+              "document_class",
+              "travel_purpose"
+            ]
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+        "contextKey": "official-truth-context:v3:f142981e277de63a1646aa7b90bb30afdcab965a854c69c87babe160f392c5cd",
+        "research": {
+          "key": "research-request:v1:8f488be87b096b63789ba4c74633771122ce8802a2dc63b88fd6b9868185f13c",
+          "ruleScopeKey": "rule-scope:v1:9d139b8e655122ba1c6ee91da7689362b55edcb0d4cc5c7ec8b20e0e40b2fbc9",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:e81b283a0ad23dd5e69583cbe36890c6eec4e93a37b8fb4650880616dfe995bc"
+      }
+    },
+    {
+      "label": "ch-transit",
+      "input": {
+        "context": {
+          "scope": {
+            "destinationCountryCode": "DE",
+            "transitCountryCode": "AT",
+            "citizenship": {
+              "mode": "required",
+              "countryCodes": [
+                "CH"
+              ]
+            },
+            "credentialOption": {
+              "mode": "option",
+              "documentType": "passport",
+              "issuingCountryCode": "CH",
+              "relatedCitizenshipCountryCode": "CH"
+            },
+            "residence": {
+              "mode": "not_applicable"
+            },
+            "requirementType": "blank_passport_pages",
+            "validity": {
+              "mode": "not_applicable"
+            }
+          },
+          "route": "transit",
+          "conditions": {
+            "status": "specified",
+            "expression": {
+              "op": "all",
+              "operands": [
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "planned_stay_duration",
+                    "comparison": "at_most",
+                    "duration": {
+                      "value": 5,
+                      "unit": "days"
+                    },
+                    "counting": "calendar_dates_inclusive"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "document_class",
+                    "documentClass": "ordinary"
+                  }
+                },
+                {
+                  "op": "atomic",
+                  "predicate": {
+                    "kind": "travel_purpose",
+                    "purpose": "visitor"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "method": {
+          "methodId": "synthetic-method",
+          "revision": 1
+        },
+        "factKind": "blank_passport_pages",
+        "researchReason": {
+          "status": "missing"
+        }
+      },
+      "expected": {
+        "ruleScopeKey": "rule-scope:v1:2044b39c4a6ec59fcb2ca99f5abf618ceb703dee4283315de5f1b2a3113b0b41",
+        "contextKey": "official-truth-context:v3:6ec89ef7fd65877f8c74f2d9d16810dec02a968a53d26b31568c8511dbf2aba7",
+        "research": {
+          "key": "research-request:v1:ef0b43656f3193f89d9c3737a4fa4f99b1cee3ba508bdfd707c865828570fb76",
+          "ruleScopeKey": "rule-scope:v1:2044b39c4a6ec59fcb2ca99f5abf618ceb703dee4283315de5f1b2a3113b0b41",
+          "factKind": "blank_passport_pages",
+          "researchReason": {
+            "status": "missing"
+          }
+        },
+        "jobKey": "research-job:v3:63738351ad19755dfcab73a91fd27b71a36723b9721d84236b6453a78260b9c6"
+      }
+    }
+  ]
+}

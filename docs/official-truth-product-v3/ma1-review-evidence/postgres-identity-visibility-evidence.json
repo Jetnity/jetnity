@@ -1,0 +1,91 @@
+{
+  "capturedAt": "2026-11-09T16:02:22.700965+00:00",
+  "mode": "source-only; no SQL or imports executed",
+  "files": [
+    {
+      "path": "/workspace/scratch/e03d2839d4e5/postgresql-toolchain/postgresql-16.15/src/backend/utils/adt/pgstatfuncs.c",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/pgstatfuncs.c",
+      "sha256": "f96e2c795441fb60e2174f00e438225e70bb49fff8d7266bbf575682bc588b35",
+      "excerpts": [
+        {
+          "from": 39,
+          "to": 39,
+          "text": "39: #define HAS_PGSTAT_PERMISSIONS(role)\t (has_privs_of_role(GetUserId(), ROLE_PG_READ_ALL_STATS) || has_privs_of_role(GetUserId(), role))"
+        },
+        {
+          "from": 363,
+          "to": 365,
+          "text": "363: \t\t/* Values only available to role member or pg_read_all_stats */\n364: \t\tif (HAS_PGSTAT_PERMISSIONS(beentry->st_userid))\n365: \t\t{"
+        },
+        {
+          "from": 477,
+          "to": 480,
+          "text": "477: \t\t\tif (beentry->st_proc_start_timestamp != 0)\n478: \t\t\t\tvalues[10] = TimestampTzGetDatum(beentry->st_proc_start_timestamp);\n479: \t\t\telse\n480: \t\t\t\tnulls[10] = true;"
+        },
+        {
+          "from": 624,
+          "to": 632,
+          "text": "624: \t\t\tvalues[5] = CStringGetTextDatum(\"<insufficient privilege>\");\n625: \t\t\tnulls[4] = true;\n626: \t\t\tnulls[6] = true;\n627: \t\t\tnulls[7] = true;\n628: \t\t\tnulls[8] = true;\n629: \t\t\tnulls[9] = true;\n630: \t\t\tnulls[10] = true;\n631: \t\t\tnulls[11] = true;\n632: \t\t\tnulls[12] = true;"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/e03d2839d4e5/postgresql-toolchain/postgresql-16.15/src/backend/utils/activity/backend_status.c",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/backend_status.c",
+      "sha256": "349e47e29e314b6949e6c86ee4f7c190f839b99a4da48eed559ea507e240e3c4",
+      "excerpts": [
+        {
+          "from": 333,
+          "to": 347,
+          "text": "333: \tlbeentry.st_procpid = MyProcPid;\n334: \tlbeentry.st_backendType = MyBackendType;\n335: \tlbeentry.st_proc_start_timestamp = MyStartTimestamp;\n336: \tlbeentry.st_activity_start_timestamp = 0;\n337: \tlbeentry.st_state_start_timestamp = 0;\n338: \tlbeentry.st_xact_start_timestamp = 0;\n339: \tlbeentry.st_databaseid = MyDatabaseId;\n340: \n341: \t/* We have userid for client-backends, wal-sender and bgworker processes */\n342: \tif (lbeentry.st_backendType == B_BACKEND\n343: \t\t|| lbeentry.st_backendType == B_WAL_SENDER\n344: \t\t|| lbeentry.st_backendType == B_BG_WORKER)\n345: \t\tlbeentry.st_userid = GetSessionUserId();\n346: \telse\n347: \t\tlbeentry.st_userid = InvalidOid;"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/e03d2839d4e5/postgresql-toolchain/postgresql-16.15/src/backend/utils/adt/acl.c",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/acl.c",
+      "sha256": "d7022b114917f95e3d249e374f211d6bc14db68be8bcb1708ef032103377512c",
+      "excerpts": [
+        {
+          "from": 4962,
+          "to": 4996,
+          "text": "4962: \tcached_role[type] = roleid;\n4963: \n4964: \t/* And now we can return the answer */\n4965: \treturn cached_roles[type];\n4966: }\n4967: \n4968: \n4969: /*\n4970:  * Does member have the privileges of role (directly or indirectly)?\n4971:  *\n4972:  * This is defined not to recurse through grants that are not inherited,\n4973:  * and only inherited grants confer the associated privileges automatically.\n4974:  *\n4975:  * See also member_can_set_role, below.\n4976:  */\n4977: bool\n4978: has_privs_of_role(Oid member, Oid role)\n4979: {\n4980: \t/* Fast path for simple case */\n4981: \tif (member == role)\n4982: \t\treturn true;\n4983: \n4984: \t/* Superusers have every privilege, so are part of every role */\n4985: \tif (superuser_arg(member))\n4986: \t\treturn true;\n4987: \n4988: \t/*\n4989: \t * Find all the roles that member has the privileges of, including\n4990: \t * multi-level recursion, then see if target role is any one of them.\n4991: \t */\n4992: \treturn list_member_oid(roles_is_member_of(member, ROLERECURSE_PRIVS,\n4993: \t\t\t\t\t\t\t\t\t\t\t  InvalidOid, NULL),\n4994: \t\t\t\t\t\t   role);\n4995: }\n4996: "
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/e03d2839d4e5/postgresql-toolchain/postgresql-16.15/src/backend/utils/init/miscinit.c",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/miscinit.c",
+      "sha256": "556e72104ec6b03446e4c333c0c89f005b7138c59430763ea3a2e993339b0588",
+      "excerpts": [
+        {
+          "from": 464,
+          "to": 487,
+          "text": "464:  * We have to track several different values associated with the concept\n465:  * of \"user ID\".\n466:  *\n467:  * AuthenticatedUserId is determined at connection start and never changes.\n468:  *\n469:  * SessionUserId is initially the same as AuthenticatedUserId, but can be\n470:  * changed by SET SESSION AUTHORIZATION (if AuthenticatedUserIsSuperuser).\n471:  * This is the ID reported by the SESSION_USER SQL function.\n472:  *\n473:  * OuterUserId is the current user ID in effect at the \"outer level\" (outside\n474:  * any transaction or function).  This is initially the same as SessionUserId,\n475:  * but can be changed by SET ROLE to any role that SessionUserId is a\n476:  * member of.  (XXX rename to something like CurrentRoleId?)\n477:  *\n478:  * CurrentUserId is the current effective user ID; this is the one to use\n479:  * for all normal permissions-checking purposes.  At outer level this will\n480:  * be the same as OuterUserId, but it changes during calls to SECURITY\n481:  * DEFINER functions, as well as locally in some specialized commands.\n482:  *\n483:  * SecurityRestrictionContext holds flags indicating reason(s) for changing\n484:  * CurrentUserId.  In some cases we need to lock down operations that are\n485:  * not directly controlled by privilege settings, and this provides a\n486:  * convenient way to do it.\n487:  * ----------------------------------------------------------------"
+        },
+        {
+          "from": 505,
+          "to": 514,
+          "text": "505:  * GetUserId - get the current effective user ID.\n506:  *\n507:  * Note: there's no SetUserId() anymore; use SetUserIdAndSecContext().\n508:  */\n509: Oid\n510: GetUserId(void)\n511: {\n512: \tAssert(OidIsValid(CurrentUserId));\n513: \treturn CurrentUserId;\n514: }"
+        },
+        {
+          "from": 1000,
+          "to": 1030,
+          "text": "1000:  * to restore a prior value of the ROLE GUC variable.)\n1001:  */\n1002: void\n1003: SetCurrentRoleId(Oid roleid, bool is_superuser)\n1004: {\n1005: \t/*\n1006: \t * Get correct info if it's SET ROLE NONE\n1007: \t *\n1008: \t * If SessionUserId hasn't been set yet, do nothing beyond updating\n1009: \t * SetRoleIsActive --- the eventual SetSessionAuthorization call will\n1010: \t * update the derived state.  This is needed since we will get called\n1011: \t * during GUC initialization.\n1012: \t */\n1013: \tif (!OidIsValid(roleid))\n1014: \t{\n1015: \t\tSetRoleIsActive = false;\n1016: \n1017: \t\tif (!OidIsValid(SessionUserId))\n1018: \t\t\treturn;\n1019: \n1020: \t\troleid = SessionUserId;\n1021: \t\tis_superuser = SessionUserIsSuperuser;\n1022: \t}\n1023: \telse\n1024: \t\tSetRoleIsActive = true;\n1025: \n1026: \tSetOuterUserId(roleid, is_superuser);\n1027: }\n1028: \n1029: \n1030: /*"
+        }
+      ]
+    },
+    {
+      "path": "/workspace/scratch/e03d2839d4e5/postgresql-toolchain/postgresql-16.15/src/backend/catalog/system_views.sql",
+      "snapshot": "/workspace/scratch/01cbe1264212/recovery/ma1-early-native-adapter-source-v1/system_views.sql",
+      "sha256": "1c47b3f1172e7ff8a0736d6747cd4487a3e970cc8f437705b1484baf2aae29e0",
+      "excerpts": [
+        {
+          "from": 844,
+          "to": 870,
+          "text": "844: CREATE VIEW pg_stat_activity AS\n845:     SELECT\n846:             S.datid AS datid,\n847:             D.datname AS datname,\n848:             S.pid,\n849:             S.leader_pid,\n850:             S.usesysid,\n851:             U.rolname AS usename,\n852:             S.application_name,\n853:             S.client_addr,\n854:             S.client_hostname,\n855:             S.client_port,\n856:             S.backend_start,\n857:             S.xact_start,\n858:             S.query_start,\n859:             S.state_change,\n860:             S.wait_event_type,\n861:             S.wait_event,\n862:             S.state,\n863:             S.backend_xid,\n864:             s.backend_xmin,\n865:             S.query_id,\n866:             S.query,\n867:             S.backend_type\n868:     FROM pg_stat_get_activity(NULL) AS S\n869:         LEFT JOIN pg_database AS D ON (S.datid = D.oid)\n870:         LEFT JOIN pg_authid AS U ON (S.usesysid = U.oid);"
+        }
+      ]
+    }
+  ]
+}

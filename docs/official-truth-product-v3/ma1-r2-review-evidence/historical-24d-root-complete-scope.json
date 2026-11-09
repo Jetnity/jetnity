@@ -1,0 +1,21 @@
+{
+  "schema": "ma1-r1-root-live-pr-scope-check-v1",
+  "head": "24d55eeda100490ad3fd20b48551b5314b5c4f8a",
+  "base": "5558367eb0bff97162c369bbb8963123839f4b0e",
+  "tree": "4d08dc7201a5c5b62e10a007d288fc7749d9a92b",
+  "mergeBaseWithMain": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+  "main": "ed97a01ccc6640df45167aaf60a1abe28a65e9fd",
+  "aheadMain": 36,
+  "behindMain": 3,
+  "fullRestPages": [
+    100,
+    59
+  ],
+  "completePrPaths": 159,
+  "allRemoteBlobShasMatchLocalExactHead": true,
+  "worktreeClean": true,
+  "newMainCompareFilesCappedAt300": true,
+  "fullLocalNetV3Paths": 338,
+  "mainPathOverlap": 0,
+  "scope": "Root source/tree/path verification, not combined-main compatibility or CI acceptance"
+}
