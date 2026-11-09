@@ -1,0 +1,1223 @@
+{
+  "schema": "jetnity.mi1.r1.independent-static-review.v1",
+  "reviewedAtUTC": "2026-11-09T20:47:57.664844+00:00",
+  "reviewer": "/root/mi1_attempt3_core_review",
+  "role": "Independent read-only reviewer; not implementation author and not Technical Lead acceptance",
+  "status": "INDEPENDENT_BOUNDED_SOURCE_REVIEW_COMPLETE_NO_FINDINGS",
+  "task": {
+    "path": "docs/official-truth-product-v3/MI1_REVIEW_FIX_R1_TASK_V1.md",
+    "bytes": 8279,
+    "sha256": "070e11c1d2283f5f95642062e44572a98e4d2c62f799b717b1712db6f6188e45",
+    "gitBlob": "03882bf4eaf6d80d14cf8cec1bcefd931f68a15c",
+    "mode": "100644"
+  },
+  "frozenAuthorManifest": {
+    "path": "docs/official-truth-product-v3/MI1_R1_SOURCE_MANIFEST_V1.json",
+    "bytes": 20833,
+    "sha256": "8f96ea6d0eecbac71e7ea9d42e16122eaa19a40348cef8714eb7b78600944d0a",
+    "gitBlob": "773ba4d77c2cd2b2d1da309f7d27920836ed6a83",
+    "mode": "100644",
+    "freezeConfirmedBy": "Author Generation2 and Root messages before this review",
+    "allSevenBindingsVerified": true,
+    "sameFreezeAtEnd": true
+  },
+  "authorFiles": [
+    {
+      "path": "JETNITY_START_HERE.md",
+      "bytes": 97599,
+      "sha256": "f2c335f5c6fdaa4f06876ad5d7c53c3775eba2f04ba21b6e92337c5201a124f4",
+      "gitBlob": "d15281575ec2ddf1a11624d663cb8979d1cf5616",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "bytes": 135567,
+      "sha256": "f389db6366b71884723348f368ce3df9cd15318c1cc2806ac398224b61f65c3f",
+      "gitBlob": "0f33a02e4a6f6eb79c44e20f1309650d8cd2581c",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "bytes": 19618,
+      "sha256": "b19fdbebfbe5e6fec2076fb6f2ba258121c6f5282e15bee8f1e03b2b9a054c89",
+      "gitBlob": "4221e9fcc01c56d81e08d2073676d4fe37987f41",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "bytes": 2414,
+      "sha256": "63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f",
+      "gitBlob": "8edcf4befc19e3a6c743824da59e4634d0393ec9",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_R1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+      "bytes": 8287,
+      "sha256": "5da538c4bc22e45bea9df6b49a6eb3c895ab0072c73f85ffc97ccbf0b50f62a5",
+      "gitBlob": "7a8abd2019ccac81799d507dc09e0b63865a8f94",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_R1_AUTHOR_HANDOFF_V1.md",
+      "bytes": 10167,
+      "sha256": "1ec070aa3a60a0217a73b0fe6ad4641fe9aa569f32087db6b912bbef343ccdcd",
+      "gitBlob": "ea09540b1efc46a9250f7a62d798c09d2ea0e1d9",
+      "mode": "100644"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "bytes": 7591,
+      "sha256": "3d030714e1b4813cc7fb35611e1390dc42de2fec086d675d97414a788f4e7001",
+      "gitBlob": "5f0fc5183ccc805eb808ad2dfe72b1386d678403",
+      "mode": "100644"
+    }
+  ],
+  "scope": {
+    "authorFilesTotal": 8,
+    "modifiedTrackedPaths": [
+      "JETNITY_START_HERE.md",
+      "docs/ACTIVE_WORK_STATUS.md",
+      "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+    ],
+    "stagedPaths": [],
+    "gitDiffCheckExit": 0,
+    "repositoryStatusSnapshot": " M JETNITY_START_HERE.md\n M docs/ACTIVE_WORK_STATUS.md\n M docs/official-truth-product-v3/MI1_HANDOFF_V1.md\n M lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts\n?? docs/official-truth-product-v3/MI1_ATTEMPT3_CORE_REVIEW_V1.json\n?? docs/official-truth-product-v3/MI1_ATTEMPT3_RELEASE_REVIEW_V1.json\n?? docs/official-truth-product-v3/MI1_ATTEMPT3_UI_ROOT_REVIEW_V1.json\n?? docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json\n?? docs/official-truth-product-v3/MI1_R1_AUTHOR_HANDOFF_V1.md\n?? docs/official-truth-product-v3/MI1_R1_PREVIOUS_START_STATUS_BLOCKS_V1.md\n?? docs/official-truth-product-v3/MI1_R1_ROOT_FINDING_V1.json\n?? docs/official-truth-product-v3/MI1_R1_SOURCE_MANIFEST_V1.json\n?? docs/official-truth-product-v3/MI1_REVIEW_FIX_R1_TASK_V1.md\n",
+    "rootOwnedAdditionalDocuments": "Separate Root-owned task, finding and attempt3 receipts; not author delivery or acceptance of new source. Root may add independent final receipts.",
+    "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "sourceTree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+    "mainInput": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "mainInputTree": "c417811ff67248c4910bb2c5154bb51885d787eb",
+    "newCommit": null,
+    "newRun": null
+  },
+  "rejectedEvidencePreserved": {
+    "baselinePath": "/workspace/scratch/01cbe1264212/recovery/mi1-r1-core-review/baseline-v1.json",
+    "baseline": {
+      "bytes": 2725,
+      "sha256": "1ce50831c0f0eaedf22fedef6339e4765e2f2e82d211588b95506d5b842a51e4",
+      "gitBlob": "bd9243b13cddfea096dbc389348e8894c1b37e1d"
+    },
+    "priorIndependentReviewPath": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/independent-review-v1.json",
+    "priorIndependentReview": {
+      "bytes": 48618,
+      "sha256": "357acb955467ce94c44acaabaa8f5adfb575d5dfbda8049c0140358972a8d5ca",
+      "gitBlob": "606c2bbffe6139711c1d6db6323e86ba0af56fd9"
+    },
+    "rawCoreLogPath": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/core-job-129413233452.log",
+    "rawCoreLog": {
+      "bytes": 4225501,
+      "sha256": "ed5c6aca0c4b5d8c0e8f3c02a211c26c467ca32da15ee7d7ca6baca1734a833f",
+      "gitBlob": "16f73f952eba2dd8dd2233a754bcf3fd49c3e16f"
+    },
+    "rawLogFetchedAgain": false,
+    "actualFailureStillRejected": true
+  },
+  "historicalManifest": {
+    "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+    "bytes": 12086,
+    "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+    "gitBlob": "b5fa630722aa07114102da2f4dcb814e83e43715",
+    "mode": "100644",
+    "equals33e": true,
+    "equalsAcceptedMA1": true,
+    "equalsOwnFrozenBaseline": true
+  },
+  "amendment": {
+    "path": "docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json",
+    "bytes": 2414,
+    "sha256": "63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f",
+    "gitBlob": "8edcf4befc19e3a6c743824da59e4634d0393ec9",
+    "entireDocumentHashPinnedInGuard": true,
+    "exactPaths": [
+      "package-lock.json",
+      "package.json"
+    ],
+    "rootTaskAndFailedRunAndMainMetadataVerified": true,
+    "literalPackageIdentities": [
+      {
+        "path": "package-lock.json",
+        "historical": {
+          "bytes": 319637,
+          "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+          "gitBlob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3"
+        },
+        "main": {
+          "bytes": 320689,
+          "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "source": {
+          "bytes": 320689,
+          "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "local": {
+          "bytes": 320689,
+          "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "mainTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "mainSourceAndLocalByteEqual": true
+      },
+      {
+        "path": "package.json",
+        "historical": {
+          "bytes": 6330,
+          "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+          "gitBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795"
+        },
+        "main": {
+          "bytes": 6467,
+          "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "source": {
+          "bytes": 6467,
+          "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "local": {
+          "bytes": 6467,
+          "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "mainTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "mainSourceAndLocalByteEqual": true
+      }
+    ]
+  },
+  "allProtectedRows": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "actual": {
+        "bytes": 12329,
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "gitBlob": "f64ff6cfe706121cee2f27ba8788b78f71a6cdd3"
+      },
+      "historicalBytes": 12329,
+      "historicalSHA256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": ".jetnity/operating-mode.json",
+      "actual": {
+        "bytes": 6718,
+        "sha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "gitBlob": "1912bf56751a940acc56fad84e2bf9e6a174e0fa"
+      },
+      "historicalBytes": 6718,
+      "historicalSHA256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "components/readiness/OfficialTruthVisitorV3.tsx",
+      "actual": {
+        "bytes": 9935,
+        "sha256": "62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35",
+        "gitBlob": "2726ba94d8d9e2ce81d21002d45a0dfd6eb0d843"
+      },
+      "historicalBytes": 9935,
+      "historicalSHA256": "62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/country/katalog.ts",
+      "actual": {
+        "bytes": 2499,
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "gitBlob": "dfde5361642edbe30f1abc6f18df3200b046f448"
+      },
+      "historicalBytes": 2499,
+      "historicalSHA256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/domain.ts",
+      "actual": {
+        "bytes": 3637,
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "gitBlob": "27ffd5d9f7b118a09741e92fee32d9cb08401927"
+      },
+      "historicalBytes": 3637,
+      "historicalSHA256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+      "actual": {
+        "bytes": 5505,
+        "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+        "gitBlob": "e1ccee2cfef9ee47bcfb0806f618cfba24135384"
+      },
+      "historicalBytes": 5505,
+      "historicalSHA256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.ts",
+      "actual": {
+        "bytes": 7053,
+        "sha256": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+        "gitBlob": "d2233cd7f882d46520ce59df1281875fe912e097"
+      },
+      "historicalBytes": 7053,
+      "historicalSHA256": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts",
+      "actual": {
+        "bytes": 2142,
+        "sha256": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+        "gitBlob": "e00f71f993fe558d657ca409436ee62410869b25"
+      },
+      "historicalBytes": 2142,
+      "historicalSHA256": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+      "actual": {
+        "bytes": 1438,
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+        "gitBlob": "90b9dd0108ed3e4d8049a3f8d35323c09b52e23f"
+      },
+      "historicalBytes": 1438,
+      "historicalSHA256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts",
+      "actual": {
+        "bytes": 10554,
+        "sha256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+        "gitBlob": "9f061404abbab9498f4a57e0cd35e29258cc7cd7"
+      },
+      "historicalBytes": 10554,
+      "historicalSHA256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-content-identity.ts",
+      "actual": {
+        "bytes": 27496,
+        "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+        "gitBlob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18"
+      },
+      "historicalBytes": 27496,
+      "historicalSHA256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+      "actual": {
+        "bytes": 2538,
+        "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "gitBlob": "c549d0dfe80e2283f8852022637c3d1c8e7a3d5d"
+      },
+      "historicalBytes": 2538,
+      "historicalSHA256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "actual": {
+        "bytes": 23971,
+        "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "gitBlob": "43036718191c3a733aaeaca1fde9f499174cee53"
+      },
+      "historicalBytes": 23971,
+      "historicalSHA256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+      "actual": {
+        "bytes": 6368,
+        "sha256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+        "gitBlob": "afd363a808905faf32dc1a7af5c4bb950cb17bce"
+      },
+      "historicalBytes": 6368,
+      "historicalSHA256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+      "actual": {
+        "bytes": 9313,
+        "sha256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+        "gitBlob": "93715d6e173ccc8a853c685400ca62a5d8b73a4e"
+      },
+      "historicalBytes": 9313,
+      "historicalSHA256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+      "actual": {
+        "bytes": 2419,
+        "sha256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+        "gitBlob": "38b9da675fafe392976df7f42640f0b5974fa3de"
+      },
+      "historicalBytes": 2419,
+      "historicalSHA256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+      "actual": {
+        "bytes": 14581,
+        "sha256": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+        "gitBlob": "5b2ecf3bc472304b9447df64c3650466b4a8541d"
+      },
+      "historicalBytes": 14581,
+      "historicalSHA256": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+      "actual": {
+        "bytes": 7930,
+        "sha256": "a1b360b31bcc4140ad5e8fc9d66017166c58b69f92456dd73feb4f11b34343b1",
+        "gitBlob": "f7915790ce334b16e24bbea84848e318cd1d0f89"
+      },
+      "historicalBytes": 7930,
+      "historicalSHA256": "a1b360b31bcc4140ad5e8fc9d66017166c58b69f92456dd73feb4f11b34343b1",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+      "actual": {
+        "bytes": 35281,
+        "sha256": "534529284cdc76090cd648561f3b4f51f16d7e3590f13c39067ab092e55a7d90",
+        "gitBlob": "addf597505eaedfdf3da0ba925f4b2e6ef96e7ba"
+      },
+      "historicalBytes": 35281,
+      "historicalSHA256": "534529284cdc76090cd648561f3b4f51f16d7e3590f13c39067ab092e55a7d90",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+      "actual": {
+        "bytes": 3840,
+        "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "gitBlob": "0e2e4947b03f4f444691ed8177dcc3ca98a71b69"
+      },
+      "historicalBytes": 3840,
+      "historicalSHA256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+      "actual": {
+        "bytes": 2934,
+        "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "gitBlob": "0605decae43995be0fd0a5183a501067e8a03685"
+      },
+      "historicalBytes": 2934,
+      "historicalSHA256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+      "actual": {
+        "bytes": 3701,
+        "sha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "gitBlob": "c731f673fe35a896a40d33a9a8d78faca599942f"
+      },
+      "historicalBytes": 3701,
+      "historicalSHA256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+      "actual": {
+        "bytes": 10348,
+        "sha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "gitBlob": "f33353d1e4077effad9e7527c9a6c25a703261cf"
+      },
+      "historicalBytes": 10348,
+      "historicalSHA256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "actual": {
+        "bytes": 12288,
+        "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "gitBlob": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e"
+      },
+      "historicalBytes": 12288,
+      "historicalSHA256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+      "actual": {
+        "bytes": 9573,
+        "sha256": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+        "gitBlob": "64923b938ba962315f3171761e0c82963c9b14f7"
+      },
+      "historicalBytes": 9573,
+      "historicalSHA256": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+      "actual": {
+        "bytes": 20238,
+        "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "gitBlob": "9ba1fcb92775107e4c0ec99bac96312a0b9c120a"
+      },
+      "historicalBytes": 20238,
+      "historicalSHA256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+      "actual": {
+        "bytes": 51757,
+        "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+        "gitBlob": "9f407dca147f8ba41280133dd64c7198c82c10a7"
+      },
+      "historicalBytes": 51757,
+      "historicalSHA256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/official.ts",
+      "actual": {
+        "bytes": 13839,
+        "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+        "gitBlob": "dbaf9738cee8583e1b29577896547d47d236a35c"
+      },
+      "historicalBytes": 13839,
+      "historicalSHA256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+      "actual": {
+        "bytes": 108170,
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "gitBlob": "cac99bc39eefa470f3269892808f76c6b76d8130"
+      },
+      "historicalBytes": 108170,
+      "historicalSHA256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/rule-claims.ts",
+      "actual": {
+        "bytes": 46056,
+        "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "gitBlob": "c61d06ca67d87e8c9b6435c23c8ac62965a251f6"
+      },
+      "historicalBytes": 46056,
+      "historicalSHA256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "lib/readiness/temporal.ts",
+      "actual": {
+        "bytes": 14833,
+        "sha256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+        "gitBlob": "2b45246938196127124539302634e175a172b4b6"
+      },
+      "historicalBytes": 14833,
+      "historicalSHA256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "package-lock.json",
+      "actual": {
+        "bytes": 320689,
+        "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+        "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+      },
+      "historicalBytes": 319637,
+      "historicalSHA256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+      "binding": "reviewed literal d7 main input",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "package.json",
+      "actual": {
+        "bytes": 6467,
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+      },
+      "historicalBytes": 6330,
+      "historicalSHA256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+      "binding": "reviewed literal d7 main input",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "actual": {
+        "bytes": 5280,
+        "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "gitBlob": "dc5a2583cd540b83062e8662cdb4b6af4befb376"
+      },
+      "historicalBytes": 5280,
+      "historicalSHA256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "actual": {
+        "bytes": 22433,
+        "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "gitBlob": "c8bae7b92950a318e6555aaad930002c6726ca3e"
+      },
+      "historicalBytes": 22433,
+      "historicalSHA256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "actual": {
+        "bytes": 23204,
+        "sha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "gitBlob": "18439d9f1600aa590c9b76276fbda728ae3e39de"
+      },
+      "historicalBytes": 23204,
+      "historicalSHA256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+      "actual": {
+        "bytes": 5181,
+        "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "gitBlob": "42d6dae8d5d41181396749fb320c6eeeb4edeb35"
+      },
+      "historicalBytes": 5181,
+      "historicalSHA256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "actual": {
+        "bytes": 33866,
+        "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "gitBlob": "49c06a696154dfbb871fd7c23e35488f43198c07"
+      },
+      "historicalBytes": 33866,
+      "historicalSHA256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "scripts/official-truth-product-v3-ui/browser.mjs",
+      "actual": {
+        "bytes": 660,
+        "sha256": "1fee7a0522426739286888fb424adc19465ea1000701f8eed80dcbe72695d0b0",
+        "gitBlob": "81da5c1a0ff9e0cdfbc7b158da3326ee3795d098"
+      },
+      "historicalBytes": 660,
+      "historicalSHA256": "1fee7a0522426739286888fb424adc19465ea1000701f8eed80dcbe72695d0b0",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    },
+    {
+      "path": "types/trips.ts",
+      "actual": {
+        "bytes": 17666,
+        "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "gitBlob": "15b8506a5c005bb7a5afcc466bc26881e3083d6d"
+      },
+      "historicalBytes": 17666,
+      "historicalSHA256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+      "binding": "unchanged historical C1",
+      "source33eByteEqual": true,
+      "utf8RoundtripExact": true
+    }
+  ],
+  "counts": {
+    "historicalRowsStillStrict": 38,
+    "reviewedLiteralMainRowsStillStrict": 2,
+    "uniqueProtectedRows": 40,
+    "historicalOnlyMismatches": [
+      "package-lock.json",
+      "package.json"
+    ],
+    "otherProtectedFilesChanged": 0
+  },
+  "guardReview": {
+    "changedFinalTestOnly": true,
+    "importsAndFirstFourTestsPrefix": {
+      "bytes": 5600,
+      "sha256": "3b04449852a4f38d5c62dd72d1e78d99de9462a4b05a6731bb36d0e2b16aa6e8",
+      "gitBlob": "f19474c74b50f0399acf08804c7c7edef36e6d55"
+    },
+    "fiveExistingTestDeclarationsPreserved": true,
+    "historicalManifestHasLiteralSHA256Pin": true,
+    "amendmentHasLiteralSHA256Pin": true,
+    "exactTwoPathArrayRequired": true,
+    "bothHistoricalRowIdentitiesRequiredBeforeReviewedValues": true,
+    "fortyUniqueProtectedRowsRequired": true,
+    "actualUTF8RoundtripAndByteLengthAndSHA256RequiredForEachRow": true,
+    "exactTwoReviewedRowsRequired": true,
+    "failureBehaviorReasoning": [
+      "Missing file throws from readFileSync; no catch converts failure to success.",
+      "Any malformed, expanded or modified evidence cannot match the complete literal SHA256 pin, and malformed JSON also throws.",
+      "The exact ordered amendment path array is package-lock.json then package.json; no extension, duplicate or wildcard is accepted.",
+      "Both changed historical identities are compared against immutable original manifest rows before new expectations are used.",
+      "The nullish expression retains the original pinned row for every non-amended file; it does not use actual content as an expected value.",
+      "All forty unique rows must complete strict byte-length and SHA256 comparison, including the two reviewed d7 package files.",
+      "No user-selected baseline, automatic repinning, skipped test/row, runtime dependency mutation or source behavior change appears in the final-test diff."
+    ],
+    "negativeMutationTestsExecutedByReviewer": false
+  },
+  "historyPreservation": {
+    "startAndStatus": [
+      {
+        "path": "JETNITY_START_HERE.md",
+        "priorBlock": {
+          "bytes": 3845,
+          "sha256": "4b025e00bd2c00284dd31c9b866c43c3ef7e40ca58b423b944210d2e4f9ddb3a",
+          "gitBlob": "ab4a0bb975e836a2925be6b5440ef65279d30e37"
+        },
+        "priorBlockOccurrencesInArchive": 1,
+        "priorPrefix": {
+          "bytes": 54,
+          "sha256": "53bbb6344fa3417ab16f755baea9fde914b459d98e754a17422a1f19e740b74c",
+          "gitBlob": "535f9b4cafc0b1b9cb24358659adaa48af1ef542"
+        },
+        "priorSuffix": {
+          "bytes": 93073,
+          "sha256": "f70f2466535c7643ab2020b638915d4c75a6d14a7fd3ff3db9f1c51c69d67e06",
+          "gitBlob": "5b38c86dc595078e58ddc009aaee5adbac756129"
+        },
+        "prefixUnchanged": true,
+        "suffixUnchanged": true,
+        "newBlock": {
+          "bytes": 4472,
+          "sha256": "0f252223f5abd08a8d7f6e864571e9d211d55d98c507b3234c5033536c952172",
+          "gitBlob": "102a04ba8e4f9b7daef57a1c7114fcef7f06c438"
+        },
+        "oneBeginAndEndMarker": true
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "priorBlock": {
+          "bytes": 3820,
+          "sha256": "5a8b7d0e8104583dd6a93cfc890cb69dc576ae2523c2caad56c71ad6ed692232",
+          "gitBlob": "6f62336635a994e4b068d7201f89718abb960689"
+        },
+        "priorBlockOccurrencesInArchive": 1,
+        "priorPrefix": {
+          "bytes": 34,
+          "sha256": "c56cce685b7856f30287fcd926015aff1994b024b6602775e58be5a1015ab208",
+          "gitBlob": "36208bb1df759e71aef5817cb2f6cd2a2efbd6fd"
+        },
+        "priorSuffix": {
+          "bytes": 131091,
+          "sha256": "eef68dbdc8e60b107074fabf8535e951ca775dc771da3d2f4a8195251c53b6c8",
+          "gitBlob": "8e34fdacf07e0697f5bb4fb0cad6fef24a6914b0"
+        },
+        "prefixUnchanged": true,
+        "suffixUnchanged": true,
+        "newBlock": {
+          "bytes": 4442,
+          "sha256": "367c4258acb47c19cb2020602847029d4f6b6389b5475981a6ec7d114a5a30f5",
+          "gitBlob": "a52946e6b3c56eb9d134f8750923cde57a6c9f1f"
+        },
+        "oneBeginAndEndMarker": true
+      }
+    ],
+    "archive": {
+      "path": "docs/official-truth-product-v3/MI1_R1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+      "bytes": 8287,
+      "sha256": "5da538c4bc22e45bea9df6b49a6eb3c895ab0072c73f85ffc97ccbf0b50f62a5",
+      "gitBlob": "7a8abd2019ccac81799d507dc09e0b63865a8f94"
+    },
+    "oldFullHandoff": {
+      "bytes": 14334,
+      "sha256": "7545f50f13861045ee4791dd7f7241ea1cd18ccac6bafeb67c00ae35f606256f",
+      "gitBlob": "e8a67c83ccb005b2a623431558e870f0ff94278e"
+    },
+    "oldHandoffIsSingleVerbatimSuffix": true,
+    "newDelimitedHandoffPrefix": {
+      "bytes": 5284,
+      "sha256": "0a963453d8a3a25a64bf5e9da88ce2b95b5a54e4bb2c76592c64c53a1acb7ff5",
+      "gitBlob": "ccab994024e2f57f0eda2f15b74044380b7d77e8"
+    },
+    "newSectionOnlyBeforeEntireOldHandoff": true
+  },
+  "authorEvidenceReview": {
+    "testLogs": [
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-r1-author/pilot-before.log",
+        "identity": {
+          "bytes": 1464,
+          "sha256": "5ff49040e6c517f90ccaaa6c0da7e716bb9f9967a6b99df825c8dc288998a867",
+          "gitBlob": "bb0c6e6b28e605158f45641255466e8be8ff2ae7"
+        },
+        "commandAsRecordedByAuthor": [
+          "node",
+          "--import",
+          "./scripts/server-only-test-register.mjs",
+          "--import",
+          "tsx",
+          "--test",
+          "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+        ],
+        "environmentAsRecordedByAuthor": {},
+        "authorRecordedExitCode": 1,
+        "actualSummaryFromLog": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "scope": "file-level test runner failure before five source tests execute; not guard reproduction"
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-r1-author/pilot-before-cache.log",
+        "identity": {
+          "bytes": 1957,
+          "sha256": "9d4b66ceb383fc1b88c5425afd54344e5bca1ccc7a244499f82ae74b1c184358",
+          "gitBlob": "61906a882f68e439a8eeb164b8f7bcb6741cb8d3"
+        },
+        "commandAsRecordedByAuthor": [
+          "node",
+          "--import",
+          "./scripts/server-only-test-register.mjs",
+          "--import",
+          "/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules/tsx/dist/loader.mjs",
+          "--test",
+          "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+        ],
+        "environmentAsRecordedByAuthor": {
+          "NODE_PATH": "/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules"
+        },
+        "authorRecordedExitCode": 1,
+        "actualSummaryFromLog": {
+          "tests": 5,
+          "pass": 4,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "scope": "author-retained narrow test log; independently read, not executed by this reviewer"
+      },
+      {
+        "path": "/workspace/scratch/01cbe1264212/recovery/mi1-r1-author/pilot-after-cache.log",
+        "identity": {
+          "bytes": 654,
+          "sha256": "46056fb7e61ccd98ef37f293c3de1f65bed6cff50e1b8ac0c2bb9865ff9dccab",
+          "gitBlob": "c5b3468e9e3586cc90ed1792cc62b39f5fde8d8f"
+        },
+        "commandAsRecordedByAuthor": [
+          "node",
+          "--import",
+          "./scripts/server-only-test-register.mjs",
+          "--import",
+          "/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules/tsx/dist/loader.mjs",
+          "--test",
+          "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+        ],
+        "environmentAsRecordedByAuthor": {
+          "NODE_PATH": "/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules"
+        },
+        "authorRecordedExitCode": 0,
+        "actualSummaryFromLog": {
+          "tests": 5,
+          "pass": 5,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "scope": "author-retained narrow test log; independently read, not executed by this reviewer"
+      }
+    ],
+    "localVerification": {
+      "bytes": 10210,
+      "sha256": "8dee222a670e377b030f47045fae01accf0d453d9ebaf797da2a7add2c38a1aa",
+      "gitBlob": "e3618c6781f8e2217082655f1538352ed4a83b21"
+    },
+    "embeddedSourceVerificationMatchesRetainedReceipt": true,
+    "allFortyAuthorFileIdentitiesIndependentlyCorroborated": true,
+    "localNodeAsRecorded": "24.22.1",
+    "targetCiNode": "22.x",
+    "localCacheSuccessIsNotNewHeadCI": true,
+    "amendmentByteCountInFinalHandoff": 2414,
+    "correctedHandoffHash": "1ec070aa3a60a0217a73b0fe6ad4641fe9aa569f32087db6b912bbef343ccdcd"
+  },
+  "missingBinaryBoundary": {
+    "count": 16,
+    "allRemainAbsentSkipWorktreeWithSourceGitIDs": true,
+    "entries": [
+      {
+        "path": "data/omio/ch.katalog",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "0b3f61fdc6f8d744b8c3b7217ea718a5b90a1a18",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/angsana.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "1a37bde9bb150dda3ed3f518a79df89ccc7984a0",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/bangkok.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "ffb730d00691f3e97c3ed5c53abe3ad1dc59157e",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/canal.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "5846ad75132b2c133b34f178ab8cfdadddef7d7d"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "5846ad75132b2c133b34f178ab8cfdadddef7d7d",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/chang.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "3cc4484c01d4551a5a322107ab98742f4ae14a14"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "3cc4484c01d4551a5a322107ab98742f4ae14a14",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/hero.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "b069ec8b21405b3cab5f3958bed9d784a64da905"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "b069ec8b21405b3cab5f3958bed9d784a64da905",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/katathani.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "50473504a6f75fc3b98f46eaa63dbe25442f5983"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "50473504a6f75fc3b98f46eaa63dbe25442f5983",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/mandarin.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "3d74bd33e8ce567bcb626f2663c1a057c41ff5fe",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/oldtown.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "5aff79112c7eeab6c9e3ff9a23f5b6218ac68056",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/paradise.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "7a9a8acec40cf6ade579dbead5afb2a889b8e82a",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/peninsula.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "88a99b48c2533b7f6d6671009f629bf4042e70ef"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "88a99b48c2533b7f6d6671009f629bf4042e70ef",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/phuket.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "5c860f45f6f38cce4af9bfb2368c196d46aa43a2",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/reise.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "3804565ca9563836d4f6a194c7e14d5f8661a9dc"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "3804565ca9563836d4f6a194c7e14d5f8661a9dc",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/shangri.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "d460ac804bd4fe16be3b41282bbd241e565caf84"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "d460ac804bd4fe16be3b41282bbd241e565caf84",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/waterfall.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "9f64069cb58c1176c0a3bdf22437e54ce931148c"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "9f64069cb58c1176c0a3bdf22437e54ce931148c",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      },
+      {
+        "path": "public/images/organisieren/watpho.webp",
+        "sourceTreeEntry": {
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "ab2c76d69809104477b59bf3647c24303507824c"
+        },
+        "index": {
+          "mode": "100644",
+          "gitBlob": "ab2c76d69809104477b59bf3647c24303507824c",
+          "stage": "0"
+        },
+        "localPresent": false,
+        "blobContentRead": false
+      }
+    ],
+    "binaryContentsFetchedOrRead": false
+  },
+  "findings": [],
+  "remainingRisks": [
+    {
+      "priority": "P2",
+      "state": "OPEN_GATE",
+      "description": "MI1 integration remains unaccepted. Published33e failed actual CI; the corrected unpublished delivery still requires a new immutable head and complete independent exact-head CI/native/UI/Preview and release gating."
+    },
+    {
+      "priority": "LIMITATION",
+      "state": "EXPLICIT",
+      "description": "No complete local checkout, target-Node22 test run, native/SQL/Postgres/socket execution, Production build or hosted verification by this reviewer; sixteen binary contents remain deliberately absent."
+    }
+  ],
+  "standingGates": [
+    "Method NOT_APPROVED",
+    "#1139 NOT_RELEASE_READY; 17 pre-Owner gaps",
+    "#917 specifically refused readback remains pending; no retry/rephrase/delegation/reroute/transport switch/human substitute",
+    "#1131 Ready STOP",
+    "#1135 Research Hold and independent platform Ready STOP",
+    "#968 exact Preview isolation",
+    "#911/#913 Privacy"
+  ],
+  "actionsNotPerformed": [
+    "Source or repository mutation",
+    "Git fetch, index/ref/commit/push operations",
+    "Any test execution by this reviewer",
+    "Native, SQL, PostgreSQL or socket execution",
+    "Hosted DB/Auth/RLS/ACL/migration/credential queries or writes",
+    "Workflow retry",
+    "Ready, merge or Technical-Lead PASS",
+    "New product follow-on"
+  ],
+  "decisionBoundary": "No blocking finding in the finite frozen R1 source correction. Root alone decides publication and then requires complete new-head gates. This receipt is not Technical-Lead PASS, CI acceptance, method approval, activation or merge permission. Reviewer STOP."
+}

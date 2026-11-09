@@ -84,11 +84,36 @@ test('pure metadata mapping does not execute old travel-date validity or extract
   assert.equal(calls, 0)
 })
 
-test('protected old canonical, AA, catalog, transport, authority and workflow files stay byte-identical', () => {
-  const manifest = JSON.parse(readFileSync('docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json', 'utf8')) as {
-    baselineFiles: Array<{ path: string; sha256: string; changePolicy: string }>
+test('protected sources retain historical C1 identities and the two reviewed MI1 main package identities', () => {
+  const historicalBytes = readFileSync('docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json', 'utf8')
+  assert.equal(sha256Hex(historicalBytes), '76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650')
+  const manifest = JSON.parse(historicalBytes) as {
+    baselineFiles: Array<{ path: string; bytes: number; sha256: string; changePolicy: string }>
   }
-  for (const row of manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')) {
-    assert.equal(sha256Hex(readFileSync(row.path, 'utf8')), row.sha256, row.path)
+  // Root's finite MI1 R1 amendment pins existing main inputs; it does not select
+  // hashes from the working tree or rewrite the historical C1 evidence.
+  const amendmentBytes = readFileSync('docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json', 'utf8')
+  assert.equal(sha256Hex(amendmentBytes), '63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f')
+  const amendment = JSON.parse(amendmentBytes) as {
+    files: Array<{ path: string; historical: { bytes: number; sha256: string }; reviewed: { bytes: number; sha256: string } }>
   }
+  assert.deepEqual(amendment.files.map(row => row.path), ['package-lock.json', 'package.json'])
+  const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
+  assert.equal(protectedRows.length, 40)
+  assert.equal(new Set(protectedRows.map(row => row.path)).size, 40)
+  let reviewedMainRows = 0
+  for (const row of protectedRows) {
+    const changed = amendment.files.find(file => file.path === row.path)
+    if (changed) {
+      assert.deepEqual({ bytes: row.bytes, sha256: row.sha256 }, changed.historical, row.path)
+      reviewedMainRows++
+    }
+    const expected = changed?.reviewed ?? row
+    const bytes = readFileSync(row.path)
+    const text = bytes.toString('utf8')
+    assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
+    assert.equal(bytes.length, expected.bytes, row.path)
+    assert.equal(sha256Hex(text), expected.sha256, row.path)
+  }
+  assert.equal(reviewedMainRows, 2)
 })

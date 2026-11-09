@@ -1,0 +1,488 @@
+{
+  "schema": "jetnity.mi1.r1.root-prepublication-review.v1",
+  "at": "2026-11-09T20:48:29.137352+00:00",
+  "reviewer": "/root",
+  "verdict": "FINITE_R1_CORRECTION_ACCEPTED_FOR_PUBLICATION_AND_FULL_NEW_HEAD_GATING_ONLY",
+  "tlIntegrationPass": false,
+  "oldRejectedHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+  "oldTree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+  "reviewedMain": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+  "newHead": null,
+  "newHeadEvidence": "The actual published commit, tree and new gates must be bound in the following Root PR receipt; no future identity is invented here.",
+  "task": {
+    "path": "docs/official-truth-product-v3/MI1_REVIEW_FIX_R1_TASK_V1.md",
+    "bytes": 8279,
+    "sha256": "070e11c1d2283f5f95642062e44572a98e4d2c62f799b717b1712db6f6188e45"
+  },
+  "taskIssuedBeforeDispatch": "https://github.com/Jetnity/jetnity/pull/1177#issuecomment-6750777757",
+  "logicalAuthor": "Jetnity Official Truth V3 Main Integration1 — Codex Generation2",
+  "actualSession": "/root/mi1_guard_compatibility_writer",
+  "authorFrozenManifest": {
+    "path": "docs/official-truth-product-v3/MI1_R1_SOURCE_MANIFEST_V1.json",
+    "bytes": 20833,
+    "sha256": "8f96ea6d0eecbac71e7ea9d42e16122eaa19a40348cef8714eb7b78600944d0a"
+  },
+  "boundAuthorFiles": [
+    {
+      "path": "JETNITY_START_HERE.md",
+      "bytes": 97599,
+      "sha256": "f2c335f5c6fdaa4f06876ad5d7c53c3775eba2f04ba21b6e92337c5201a124f4"
+    },
+    {
+      "path": "docs/ACTIVE_WORK_STATUS.md",
+      "bytes": 135567,
+      "sha256": "f389db6366b71884723348f368ce3df9cd15318c1cc2806ac398224b61f65c3f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "bytes": 19618,
+      "sha256": "b19fdbebfbe5e6fec2076fb6f2ba258121c6f5282e15bee8f1e03b2b9a054c89"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "bytes": 2414,
+      "sha256": "63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_R1_PREVIOUS_START_STATUS_BLOCKS_V1.md",
+      "bytes": 8287,
+      "sha256": "5da538c4bc22e45bea9df6b49a6eb3c895ab0072c73f85ffc97ccbf0b50f62a5"
+    },
+    {
+      "path": "docs/official-truth-product-v3/MI1_R1_AUTHOR_HANDOFF_V1.md",
+      "bytes": 10167,
+      "sha256": "1ec070aa3a60a0217a73b0fe6ad4641fe9aa569f32087db6b912bbef343ccdcd"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "bytes": 7591,
+      "sha256": "3d030714e1b4813cc7fb35611e1390dc42de2fec086d675d97414a788f4e7001"
+    }
+  ],
+  "independentPeerReceipt": {
+    "path": "docs/official-truth-product-v3/MI1_R1_PEER_REVIEW_V1.json",
+    "bytes": 47560,
+    "sha256": "3ae074844952b1025727dd22015b301410ee5ee141d2b4f7f35c9d5003828a5e"
+  },
+  "rootPersonalReview": [
+    "Read actual final test diff and fixed amendment; historical manifest and amendment are closed SHA256 identities before use.",
+    "Confirmed exactly two amended ordered paths, both historical identities and reviewed main bytes; no wildcard, skipped row, runtime-selected baseline or automatic repinning.",
+    "Independently checked all40 protected files and literal unchanged package bytes against old head and main;38 remain historical C1 identities.",
+    "First four tests and imports are unchanged; only final guard test and documentation are amended.",
+    "Read final author handoff, source manifest, current startup/status/handoff blocks and verified every bound file identity.",
+    "Verified previous startup/status blocks verbatim in archive, unchanged outer history and entire old MI1 handoff suffix.",
+    "Observed draft PR1177 at33e and main d7 directly from GitHub; observed actual terminal attempt3 failure and all8job outcomes.",
+    "Read actual Core failure/counters/native outcomes and earlier UI artifact/screenshots; no partial test family is overall PASS.",
+    "Read actual Store/Persisted/Lifecycle/Atomic diagnostics and aggregate failure evidence, preserving exact raw logs."
+  ],
+  "sourceVerification": {
+    "schema": "mi1-r1-root-source-verification-v1",
+    "head": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "main": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+    "historicalManifestSha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+    "historicalManifestUnchanged": true,
+    "protectedRows": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "bytes": 12329,
+        "binding": "historical"
+      },
+      {
+        "path": ".jetnity/operating-mode.json",
+        "sha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "bytes": 6718,
+        "binding": "historical"
+      },
+      {
+        "path": "components/readiness/OfficialTruthVisitorV3.tsx",
+        "sha256": "62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35",
+        "bytes": 9935,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/country/katalog.ts",
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "bytes": 2499,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/domain.ts",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "bytes": 3637,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+        "sha256": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+        "bytes": 5505,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.ts",
+        "sha256": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+        "bytes": 7053,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts",
+        "sha256": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+        "bytes": 2142,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "sha256": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+        "bytes": 1438,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts",
+        "sha256": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+        "bytes": 10554,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-content-identity.ts",
+        "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+        "bytes": 27496,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+        "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "bytes": 2538,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+        "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "bytes": 23971,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+        "sha256": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+        "bytes": 6368,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+        "sha256": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+        "bytes": 9313,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+        "sha256": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+        "bytes": 2419,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+        "sha256": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+        "bytes": 14581,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+        "sha256": "a1b360b31bcc4140ad5e8fc9d66017166c58b69f92456dd73feb4f11b34343b1",
+        "bytes": 7930,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+        "sha256": "534529284cdc76090cd648561f3b4f51f16d7e3590f13c39067ab092e55a7d90",
+        "bytes": 35281,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+        "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "bytes": 3840,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+        "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "bytes": 2934,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+        "sha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "bytes": 3701,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+        "sha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "bytes": 10348,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "bytes": 12288,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+        "sha256": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+        "bytes": 9573,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+        "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "bytes": 20238,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+        "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+        "bytes": 51757,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/official.ts",
+        "sha256": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+        "bytes": 13839,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "bytes": 108170,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/rule-claims.ts",
+        "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "bytes": 46056,
+        "binding": "historical"
+      },
+      {
+        "path": "lib/readiness/temporal.ts",
+        "sha256": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+        "bytes": 14833,
+        "binding": "historical"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+        "bytes": 320689,
+        "binding": "reviewed-main"
+      },
+      {
+        "path": "package.json",
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "bytes": 6467,
+        "binding": "reviewed-main"
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+        "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "bytes": 5280,
+        "binding": "historical"
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+        "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "bytes": 22433,
+        "binding": "historical"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+        "sha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "bytes": 23204,
+        "binding": "historical"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+        "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "bytes": 5181,
+        "binding": "historical"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+        "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "bytes": 33866,
+        "binding": "historical"
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/browser.mjs",
+        "sha256": "1fee7a0522426739286888fb424adc19465ea1000701f8eed80dcbe72695d0b0",
+        "bytes": 660,
+        "binding": "historical"
+      },
+      {
+        "path": "types/trips.ts",
+        "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "bytes": 17666,
+        "binding": "historical"
+      }
+    ],
+    "counts": {
+      "historical": 38,
+      "reviewedMain": 2,
+      "total": 40
+    },
+    "firstFourTestPrefix": {
+      "bytes": 5600,
+      "sha256": "3b04449852a4f38d5c62dd72d1e78d99de9462a4b05a6731bb36d0e2b16aa6e8",
+      "unchanged": true
+    },
+    "history": [
+      {
+        "path": "JETNITY_START_HERE.md",
+        "oldBlockBytes": 3845,
+        "oldBlockSha256": "4b025e00bd2c00284dd31c9b866c43c3ef7e40ca58b423b944210d2e4f9ddb3a",
+        "outerHistoryUnchanged": true
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "oldBlockBytes": 3820,
+        "oldBlockSha256": "5a8b7d0e8104583dd6a93cfc890cb69dc576ae2523c2caad56c71ad6ed692232",
+        "outerHistoryUnchanged": true
+      }
+    ],
+    "previousHandoffWholeSuffixUnchanged": true,
+    "missingBinaryPaths": [
+      "data/omio/ch.katalog",
+      "public/images/organisieren/angsana.webp",
+      "public/images/organisieren/bangkok.webp",
+      "public/images/organisieren/canal.webp",
+      "public/images/organisieren/chang.webp",
+      "public/images/organisieren/hero.webp",
+      "public/images/organisieren/katathani.webp",
+      "public/images/organisieren/mandarin.webp",
+      "public/images/organisieren/oldtown.webp",
+      "public/images/organisieren/paradise.webp",
+      "public/images/organisieren/peninsula.webp",
+      "public/images/organisieren/phuket.webp",
+      "public/images/organisieren/reise.webp",
+      "public/images/organisieren/shangri.webp",
+      "public/images/organisieren/waterfall.webp",
+      "public/images/organisieren/watpho.webp"
+    ],
+    "trackedChangedPaths": [
+      "JETNITY_START_HERE.md",
+      "docs/ACTIVE_WORK_STATUS.md",
+      "docs/official-truth-product-v3/MI1_HANDOFF_V1.md",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts"
+    ],
+    "diffCheckExit": 0
+  },
+  "rootTargetedTests": {
+    "command": "NODE_PATH=/workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules node --import ./scripts/server-only-test-register.mjs --import /workspace/scratch/e03d2839d4e5/jetnity-v3-next/node_modules/tsx/dist/loader.mjs --test lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+    "cwd": "/workspace/scratch/01cbe1264212/jetnity-v3-main-integration",
+    "node": "24.22.1",
+    "targetCiNode": "22.x",
+    "exitCode": 0,
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "rawBytes": 654,
+    "rawSha256": "cc7ee558242882506947be5c9c5a3806c2c1634bce3461f84d59fd21ee7b9492",
+    "dependencyInstallation": false,
+    "targetCiEquivalent": false
+  },
+  "failedAttempt3Preserved": {
+    "runId": 42671681106,
+    "attempt": 3,
+    "conclusion": "failure",
+    "completedAt": "2026-11-09T20:37:38Z",
+    "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+    "core": {
+      "tests": 8631,
+      "pass": 8628,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 2
+    },
+    "coreFailure": "Historical C1 pins for the two existing main package files; no runtime source defect found in this specific failure.",
+    "hygieneAndProductionBuild": "Skipped after Core failure; not accepted.",
+    "nativeWrapperResults": {
+      "persisted": "1/1",
+      "store": "4/4",
+      "lifecycle": "4/4",
+      "atomic": "1/1"
+    },
+    "atomicRawLog": {
+      "bytes": 183652,
+      "sha256": "b930f8369314613112660e79f6638e32bba629fcc0a605929e0ab26756d7f392"
+    },
+    "atomicDiagnosticClarification": {
+      "literalDiagnosticLines": 152,
+      "jsonParseableDiagnosticLines": 151,
+      "oneAdditionalLineManuallyRead": "edge order: invalid bigint before missing target; sqlstate22P02; implementationsCheckedInSql2",
+      "reason": "TAP-escaped quotes in the literal message make this line unsuitable for direct JSON.parse. Root read it literally; raw bytes and frozen peer receipts are not normalized or overwritten."
+    },
+    "atomicCleanup": {
+      "started": 10960,
+      "settled": 10960,
+      "pending": 0,
+      "connections": 248,
+      "closed": 248,
+      "stoppedClusters": 11
+    },
+    "aggregate": "Correctly failed because Core failed; no old-head rerun selected.",
+    "auth": "Existing unchanged Auth job metadata only; no hosted target or1139 truth inferred.",
+    "receipts": [
+      {
+        "path": "docs/official-truth-product-v3/MI1_R1_ROOT_FINDING_V1.json",
+        "bytes": 14157,
+        "sha256": "690c2b0722b756e7d480985c76f63e16c63cefd21c347151ed7651486e63cb48"
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_ATTEMPT3_CORE_REVIEW_V1.json",
+        "bytes": 48618,
+        "sha256": "357acb955467ce94c44acaabaa8f5adfb575d5dfbda8049c0140358972a8d5ca"
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_ATTEMPT3_UI_ROOT_REVIEW_V1.json",
+        "bytes": 6369,
+        "sha256": "0bcfe78ec38fcd0d29ebe5bd1e740ee84efd762b791082c89cc268b59da8680d"
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_ATTEMPT3_RELEASE_REVIEW_V1.json",
+        "bytes": 50625,
+        "sha256": "bdbf989b3c320a6e805697fc34313a07df8f499ff17e9d6e37c1ed139200e444"
+      }
+    ]
+  },
+  "rootPublicationScope": "Exactly15 paths:8 author files plus7 Root task/finding/peer/review/evidence documents. Only one source delta, the final guard test. Compute actual tree independently before remote ref mutation; retain all16 missing binary IDs.",
+  "mandatoryNextGates": [
+    "Full new-head CI",
+    "Actual native families and lifecycle/cleanup evidence",
+    "Exact-head isolated UI artifact",
+    "Exact Preview",
+    "Full actual diff and main ancestry",
+    "GitHub and Vercel review threads",
+    "Fresh mode/rules/Guardian and special Owner gates",
+    "Root alone PASS/Ready/merge",
+    "Actual-main CI and Production after any merge"
+  ],
+  "risks": {
+    "P0": "No new P0 observed within this finite correction; no global security or launch clearance.",
+    "P1": "Activation remains blocked by unapproved method, incomplete Dev target package and unresolved production proof; no activation permitted.",
+    "P2": "Integration acceptance pending full new-head gates; inherited dependency notices remain unaudited for public launch;16 missing local binary contents preclude full local checkout/build.",
+    "P3": "Existing narrow-screen heading/selection presentation limits retained; no perfect public UX or real-device claim."
+  },
+  "standingBoundaries": {
+    "method": "NOT_APPROVED",
+    "dev1139": "NOT_RELEASE_READY",
+    "preOwnerGaps": 17,
+    "917": "APPLY_RESPONSE_SUCCESS / INDEPENDENT_READBACK_PENDING; ledger UNKNOWN; Stage2 NOT_ATTEMPTED. No retry, rephrase, delegation, rerouting, transport change or human replacement of the specifically refused readback.",
+    "1131": "READY_STOP",
+    "1135": "RESEARCH_HOLD_AND_INDEPENDENT_PLATFORM_READY_STOP",
+    "968": "EXACT_PREVIEW_ISOLATION",
+    "911_913": "PRIVACY",
+    "forbiddenWithinTask": "Hosted DB/Auth/RLS/ACL/migration/credential actions, real sources/providers/research, scheduler/notification/new cost, method approval, public V3 or Production feature activation.",
+    "newM04Dispatch": false
+  },
+  "selfHash": "Excluded to avoid recursion; bound in publication manifest and following Root PR receipt."
+}

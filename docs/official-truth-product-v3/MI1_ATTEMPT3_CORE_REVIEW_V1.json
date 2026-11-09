@@ -1,0 +1,1160 @@
+{
+  "schema": "mi1-attempt3-independent-core-native-review-v1",
+  "reviewer": "/root/mi1_attempt3_core_review",
+  "at": "2026-11-09T20:33:21.113897+00:00",
+  "status": "ACTUAL_CORE_FAILURE_REQUIRES_CHANGES",
+  "tlPassIssued": false,
+  "binding": {
+    "repository": "Jetnity/jetnity",
+    "pr": 1177,
+    "run": 42671681106,
+    "attempt": 3,
+    "coreJob": 129413233452,
+    "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "sourceTree": "0351e84ef3242dc972d557cb54d33b2a4b5058d5",
+    "checkout": "fc7a6e969cccf308cf35baa508d747faa1b851bd",
+    "orderedParents": [
+      "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+      "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2"
+    ],
+    "actualCheckoutEvidence": [
+      {
+        "line": 728,
+        "text": "2026-11-09T20:19:36.7224680Z fc7a6e969cccf308cf35baa508d747faa1b851bd"
+      }
+    ],
+    "noSourceChangeOrRerunByReviewer": true
+  },
+  "core": {
+    "actualSummary": {
+      "tests": 8631,
+      "suites": 970,
+      "pass": 8628,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0,
+      "duration_ms": 581914.458992
+    },
+    "skips": [
+      {
+        "line": 59209,
+        "text": "2026-11-09T20:30:14.4575316Z ok 2478 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP"
+      },
+      {
+        "line": 61702,
+        "text": "2026-11-09T20:30:42.3136291Z ok 2668 - shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      }
+    ],
+    "failureLines": [
+      {
+        "line": 32817,
+        "text": "2026-11-09T20:30:13.1977603Z not ok 1613 - protected old canonical, AA, catalog, transport, authority and workflow files stay byte-identical"
+      }
+    ],
+    "jobConclusion": "failure",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-09T20:19:19Z",
+        "completed_at": "2026-11-09T20:19:19Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-09T20:19:19Z",
+        "completed_at": "2026-11-09T20:19:36Z"
+      },
+      {
+        "name": "Run actions/setup-node@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-09T20:19:36Z",
+        "completed_at": "2026-11-09T20:19:40Z"
+      },
+      {
+        "name": "Install dependencies",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-09T20:19:40Z",
+        "completed_at": "2026-11-09T20:20:18Z"
+      },
+      {
+        "name": "Setup check",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-09T20:20:18Z",
+        "completed_at": "2026-11-09T20:20:19Z"
+      },
+      {
+        "name": "Operating mode",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-09T20:20:19Z",
+        "completed_at": "2026-11-09T20:20:19Z"
+      },
+      {
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-09T20:20:19Z",
+        "completed_at": "2026-11-09T20:20:46Z"
+      },
+      {
+        "name": "Lint",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-09T20:20:46Z",
+        "completed_at": "2026-11-09T20:21:38Z"
+      },
+      {
+        "name": "Tests",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 9,
+        "started_at": "2026-11-09T20:21:38Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Schutz der Admin-API",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Bezug auf das Schema",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Unerreichbarer Code",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Exporte ohne Aufrufer",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 13,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Ungenutzte Pakete",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 14,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Production build",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 15,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@v4",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 29,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-11-09T20:31:20Z",
+        "completed_at": "2026-11-09T20:31:20Z"
+      }
+    ],
+    "commands": {
+      "npm ci": [
+        {
+          "line": 756,
+          "text": "2026-11-09T20:19:40.7745930Z ##[group]Run npm ci"
+        }
+      ],
+      "npm run check:setup:ci": [
+        {
+          "line": 776,
+          "text": "2026-11-09T20:20:18.8857500Z ##[group]Run npm run check:setup:ci"
+        }
+      ],
+      "npm run check:operating-mode": [
+        {
+          "line": 819,
+          "text": "2026-11-09T20:20:19.3765096Z ##[group]Run npm run check:operating-mode"
+        }
+      ],
+      "npm run typecheck": [
+        {
+          "line": 833,
+          "text": "2026-11-09T20:20:19.5411401Z ##[group]Run npm run typecheck"
+        }
+      ],
+      "npm run lint": [
+        {
+          "line": 843,
+          "text": "2026-11-09T20:20:46.5469383Z ##[group]Run npm run lint"
+        }
+      ],
+      "npm run test:core": [
+        {
+          "line": 1700,
+          "text": "2026-11-09T20:21:38.4044033Z ##[group]Run npm run test:core"
+        }
+      ],
+      "npm run check:api-schutz": [],
+      "npm run check:schema-bezug": [],
+      "npm run check:dead": [],
+      "npm run check:exports": [],
+      "npm run check:deps": [],
+      "npm run build": []
+    },
+    "actualBuildOutput": []
+  },
+  "native": {
+    "MA1": {
+      "name": "MA1 mandatory native PostgreSQL: current human method authority, exact custody and owned cleanup",
+      "sourcePath": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+      "sourceSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+      "children": [
+        {
+          "number": 1,
+          "name": "creator function/table/schema defaults refuse atomically without normalization",
+          "status": "passed",
+          "durationMs": 95.059239,
+          "logLine": 33852
+        },
+        {
+          "number": 2,
+          "name": "literal vectors, exact owned roles, strict direct inputs and real adapter composition",
+          "status": "passed",
+          "durationMs": 125.714196,
+          "logLine": 33858
+        },
+        {
+          "number": 3,
+          "name": "real active own Owner and exact account/session/profile negative matrix",
+          "status": "passed",
+          "durationMs": 307.901589,
+          "logLine": 33864
+        },
+        {
+          "number": 4,
+          "name": "exact replay, actor/command collisions, fresh CAS and real COMMIT acknowledgement",
+          "status": "passed",
+          "durationMs": 126.706645,
+          "logLine": 33870
+        },
+        {
+          "number": 5,
+          "name": "lost response confirms immutable truth across expiry, revoke and supersession",
+          "status": "passed",
+          "durationMs": 880.548704,
+          "logLine": 33876
+        },
+        {
+          "number": 6,
+          "name": "last approval retains a terminal revoke; epoch exhaustion never resets history",
+          "status": "passed",
+          "durationMs": 31.42785,
+          "logLine": 33882
+        },
+        {
+          "number": 7,
+          "name": "finite DB clock, caller conservatism, method expiry and receipt lifetime remain distinct",
+          "status": "passed",
+          "durationMs": 7225.838246,
+          "logLine": 33888
+        },
+        {
+          "number": 8,
+          "name": "locked final seam proves revoke-first, protected-first and expiry-after-real-wait",
+          "status": "passed",
+          "durationMs": 1163.132024,
+          "logLine": 33894
+        },
+        {
+          "number": 9,
+          "name": "human method wait precedes fresh unchanged session/profile authority check",
+          "status": "passed",
+          "durationMs": 147.895028,
+          "logLine": 33900
+        },
+        {
+          "number": 10,
+          "name": "four real blocked reads, fifth refusal, exact cancellation and both-backend disappearance",
+          "status": "passed",
+          "durationMs": 5174.782663,
+          "logLine": 33906
+        },
+        {
+          "number": 11,
+          "name": "actual late/identity/observer failures visibly stop their owned fixture and join all calls",
+          "status": "passed",
+          "durationMs": 9988.474448,
+          "logLine": 33912
+        },
+        {
+          "number": 12,
+          "name": "actual child death, new generation and fresh SQL; parent joins a killed pending read",
+          "status": "passed",
+          "durationMs": 1070.578213,
+          "logLine": 33918
+        },
+        {
+          "number": 13,
+          "name": "guarded empty rollback refuses exact metadata, grants, memberships and external dependency changes",
+          "status": "passed",
+          "durationMs": 1089.5364,
+          "logLine": 33924
+        },
+        {
+          "number": 14,
+          "name": "rollback takes all removal locks before checking concurrently committed history",
+          "status": "passed",
+          "durationMs": 781.727446,
+          "logLine": 33930
+        }
+      ],
+      "actualPassedChildren": 14,
+      "plan": [
+        "1..14"
+      ],
+      "parentPassed": true,
+      "parentLogLine": 33936,
+      "parentDurationMs": 29471.151819
+    },
+    "C1": {
+      "name": "C1 mandatory native PostgreSQL: revision2 original and complete nested outcome survive real custody",
+      "sourcePath": "scripts/db/official-truth-v3-global-conditions-1/native.ts",
+      "sourceSha256": "ad574f5420f37e1f52960de9bfd6d9a0626ec04b3e2f612c77c125f8aa4f69c7",
+      "children": [
+        {
+          "number": 1,
+          "name": "unapproved method: actual file capture, fresh SQL original and honest unavailable completion",
+          "status": "passed",
+          "durationMs": 288.705612,
+          "logLine": 33548
+        },
+        {
+          "number": 2,
+          "name": "synthetic approved method: full prepared nested outcome commits, reopens and replays without acceptance",
+          "status": "passed",
+          "durationMs": 302.304075,
+          "logLine": 33554
+        },
+        {
+          "number": 3,
+          "name": "actual SQL rejects the new closed-subtree negatives and exposes its shape-only boundary",
+          "status": "passed",
+          "durationMs": 983.192014,
+          "logLine": 33560
+        },
+        {
+          "number": 4,
+          "name": "duplicate purpose/from including escaped names are rejected before any original SQL retention",
+          "status": "passed",
+          "durationMs": 21.297411,
+          "logLine": 33567
+        }
+      ],
+      "actualPassedChildren": 4,
+      "plan": [
+        "1..4"
+      ],
+      "parentPassed": true,
+      "parentLogLine": 33573,
+      "parentDurationMs": 2356.220706
+    },
+    "IN1": {
+      "name": "IN1 mandatory native PostgreSQL: real file to durable custody to reopened-original import",
+      "sourcePath": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+      "sourceSha256": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+      "children": [
+        {
+          "number": 1,
+          "name": "real file bytes survive file removal; only reopened SQL bytes feed I1 and full replay",
+          "status": "passed",
+          "durationMs": 457.519322,
+          "logLine": 33580
+        },
+        {
+          "number": 2,
+          "name": "duplicate original members and unsafe file are refused before any intake SQL or retention",
+          "status": "passed",
+          "durationMs": 31.103651,
+          "logLine": 33586
+        },
+        {
+          "number": 3,
+          "name": "concurrent real deliveries converge; different bytes or runner binding cannot mutate custody",
+          "status": "passed",
+          "durationMs": 319.004998,
+          "logLine": 33592
+        },
+        {
+          "number": 4,
+          "name": "actual lost capture ACK is confirmed only after drain; lost confirm stays uncertain across file removal",
+          "status": "passed",
+          "durationMs": 251.391297,
+          "logLine": 33598
+        },
+        {
+          "number": 5,
+          "name": "actual precommit SQL lock wait propagates external_abort, drains and leaves no custody",
+          "status": "passed",
+          "durationMs": 186.061445,
+          "logLine": 33604
+        },
+        {
+          "number": 6,
+          "name": "actual precommit SQL lock wait propagates deadline, drains and leaves no custody",
+          "status": "passed",
+          "durationMs": 5138.246561,
+          "logLine": 33610
+        },
+        {
+          "number": 7,
+          "name": "untrusted custody cannot approve a method; actual I1 persists method_not_approved",
+          "status": "passed",
+          "durationMs": 241.860029,
+          "logLine": 33616
+        }
+      ],
+      "actualPassedChildren": 7,
+      "plan": [
+        "1..7"
+      ],
+      "parentPassed": true,
+      "parentLogLine": 33622,
+      "parentDurationMs": 7490.34053
+    },
+    "S1": {
+      "name": "S1 mandatory native PostgreSQL: durable intake, strict custody and owned transactions",
+      "sourcePath": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+      "sourceSha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+      "children": [
+        {
+          "number": 1,
+          "name": "installer foreign default grants cause complete atomic refusal without changing defaults",
+          "status": "passed",
+          "durationMs": 60.190549,
+          "logLine": 34448
+        },
+        {
+          "number": 2,
+          "name": "exact least privileges, FORCE RLS, fixed definers, no PUBLIC or API roles, immutable originals",
+          "status": "passed",
+          "durationMs": 55.731056,
+          "logLine": 34454
+        },
+        {
+          "number": 3,
+          "name": "direct RPC retains supported full shapes and rejects PII/null/free-text at every depth before INSERT",
+          "status": "passed",
+          "durationMs": 1051.489462,
+          "logLine": 34460
+        },
+        {
+          "number": 4,
+          "name": "byte-preserving capture/reconnect, whitespace collision and complete server binding collisions",
+          "status": "passed",
+          "durationMs": 323.793293,
+          "logLine": 34466
+        },
+        {
+          "number": 5,
+          "name": "independent concurrent clients serialize; expiry reclaims generation and rejects old ticket",
+          "status": "passed",
+          "durationMs": 722.982459,
+          "logLine": 34472
+        },
+        {
+          "number": 6,
+          "name": "I1 uses durable quarantine for every terminal outcome and full archived escalation replay",
+          "status": "passed",
+          "durationMs": 1722.717602,
+          "logLine": 34478
+        },
+        {
+          "number": 7,
+          "name": "finish direct RPC refuses null, incomplete nested records and free text without storing a completion",
+          "status": "passed",
+          "durationMs": 258.291559,
+          "logLine": 34484
+        },
+        {
+          "number": 8,
+          "name": "actual commit then lost acknowledgement requires same-operation readback, with no duplicate completion",
+          "status": "passed",
+          "durationMs": 230.842195,
+          "logLine": 34490
+        },
+        {
+          "number": 9,
+          "name": "failure before commit, transaction abort and post-write lease lapse leave no partial data",
+          "status": "passed",
+          "durationMs": 2171.977627,
+          "logLine": 34496
+        },
+        {
+          "number": 10,
+          "name": "cancellation owns, terminates and drains a genuinely blocked PostgreSQL call",
+          "status": "passed",
+          "durationMs": 189.421068,
+          "logLine": 34502
+        },
+        {
+          "number": 11,
+          "name": "actual importer process interruption and new process reconnect preserve original and completed outcome",
+          "status": "passed",
+          "durationMs": 1358.757463,
+          "logLine": 34508
+        },
+        {
+          "number": 12,
+          "name": "guarded fixture removal refuses default execution, then removes only candidate and reinstalls cleanly",
+          "status": "passed",
+          "durationMs": 71.322619,
+          "logLine": 34514
+        }
+      ],
+      "actualPassedChildren": 12,
+      "plan": [
+        "1..12"
+      ],
+      "parentPassed": true,
+      "parentLogLine": 34520,
+      "parentDurationMs": 9252.222897
+    }
+  },
+  "ma1Cleanup": {
+    "value": {
+      "started": 1558,
+      "settled": 1558,
+      "pending": 0,
+      "connections": 229,
+      "closed": 229,
+      "stoppedClusters": 8
+    },
+    "line": 33954
+  },
+  "checkLiteralCompatibility": {
+    "exactSets": 8,
+    "sets": [
+      {
+        "line": 33941,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33944,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33945,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33946,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33947,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33948,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33950,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33953,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      }
+    ],
+    "withoutNormalization": true
+  },
+  "actualNativeDiagnostics": [
+    {
+      "line": 33565,
+      "text": "2026-11-09T20:30:13.2170189Z     # 29 direct SQL shape negatives left zero originals/reservations/completions; separate valid capture retained complete revision2"
+    },
+    {
+      "line": 33627,
+      "text": "2026-11-09T20:30:13.2185080Z # {\"schema\":\"in1-native-v1\",\"database\":\"postgres (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)\",\"realFilesystem\":true,\"realSqlTransactions\":true,\"sourceCalls\":0,\"acceptedWrites\":0,\"hosted\":false,\"mandatory\":true,\"processRestartEvidence\":\"inherited S1 suite only; these fresh connections are not process restarts\"}"
+    },
+    {
+      "line": 33942,
+      "text": "2026-11-09T20:30:13.2324284Z # Epoch2147483645 is explicit synthetic owner setup; no billions-of-operations history claim."
+    },
+    {
+      "line": 33943,
+      "text": "2026-11-09T20:30:13.2324864Z # Protected marker is synthetic only; no Accepted/publication integration is claimed."
+    },
+    {
+      "line": 33949,
+      "text": "2026-11-09T20:30:13.2605375Z # Actual fixed missing-executable error+close joined; no exit/PID was invented and no SQL dispatched."
+    },
+    {
+      "line": 33951,
+      "text": "2026-11-09T20:30:13.2645949Z # Fixture action: revoked only known ot_ma1_reader -> ot_v3_method_reader membership before empty rollback."
+    },
+    {
+      "line": 33952,
+      "text": "2026-11-09T20:30:13.2646607Z # Connection negative is pre-acquisition owned-descriptor rejection; no foreign/TCP/wrong-database SQL was executed."
+    },
+    {
+      "line": 33954,
+      "text": "2026-11-09T20:30:13.2722223Z # MA1 owned lifetime terminal evidence: {\"started\":1558,\"settled\":1558,\"pending\":0,\"connections\":229,\"closed\":229,\"stoppedClusters\":8}"
+    },
+    {
+      "line": 34525,
+      "text": "2026-11-09T20:30:13.2993328Z # Actual child SIGKILL, fresh child readback, real PostgreSQL commits; test-only IPC owns database transports in parent."
+    },
+    {
+      "line": 34526,
+      "text": "2026-11-09T20:30:13.2994040Z # {\"schema\":\"s1-native-v1\",\"database\":\"postgres (PostgreSQL) 16.15 (Ubuntu 16.15-1.pgdg24.04+2)\",\"hosted\":false,\"acceptedWrites\":0,\"mandatory\":true}"
+    }
+  ],
+  "findings": [
+    "Core failed or cancelled tests present",
+    "Actual command missing or duplicated: npm run check:api-schutz",
+    "Actual command missing or duplicated: npm run check:schema-bezug",
+    "Actual command missing or duplicated: npm run check:dead",
+    "Actual command missing or duplicated: npm run check:exports",
+    "Actual command missing or duplicated: npm run check:deps",
+    "Actual command missing or duplicated: npm run build",
+    "Actual Core job failed; integration cannot pass",
+    "A Core job step did not succeed",
+    "Actual successful compilation output missing"
+  ],
+  "evidenceFiles": {
+    "core-job-129413233452.log": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/core-job-129413233452.log",
+      "bytes": 4225501,
+      "sha256": "ed5c6aca0c4b5d8c0e8f3c02a211c26c467ca32da15ee7d7ca6baca1734a833f"
+    },
+    "failure-analysis-v1.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/failure-analysis-v1.json",
+      "bytes": 18874,
+      "sha256": "983c2da3c1ed106d6018deb5280d4180f6bb1e4d972e3bfddceacb4637dc1d49"
+    },
+    "jobs-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/jobs-conclusive.json",
+      "bytes": 19726,
+      "sha256": "8787398b051df568170ad15fca95be18c02bac8f8ab8fdab4fe2f567ddce5178"
+    },
+    "jobs-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/jobs-initial.json",
+      "bytes": 16615,
+      "sha256": "c9001dfabf9c13fd9259ef214872a392cf11fb0cbbf78d1bcb8776e09d734c4d"
+    },
+    "merge-commit-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/merge-commit-initial.json",
+      "bytes": 2572,
+      "sha256": "083a397f19e475c2f1078c01a9941ebdf0b8ec2a69e6166d2da88b400c7b1b4a"
+    },
+    "pr-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/pr-conclusive.json",
+      "bytes": 22103,
+      "sha256": "d83dd54b09d3d8dc98e8ee1a99ef30d0b91b4ed4687e69f63c0121aa9e6967f8"
+    },
+    "pr-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/pr-initial.json",
+      "bytes": 23918,
+      "sha256": "bcbf11c1153a3e4b6e508e556f5d24d991e4382aad8264a07bece48b523b5b34"
+    },
+    "review-core.py": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/review-core.py",
+      "bytes": 10771,
+      "sha256": "ff7640c9fd4a454b33569d19c4eda346a233f33cf8acade34c1a7d1129dcfef7"
+    },
+    "run-conclusive.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/run-conclusive.json",
+      "bytes": 12552,
+      "sha256": "38c22377ab7bfd96a9fb32ede77b703a7a416d7ffecaeee2b88584178a64ac59"
+    },
+    "run-initial.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/run-initial.json",
+      "bytes": 12552,
+      "sha256": "38c22377ab7bfd96a9fb32ede77b703a7a416d7ffecaeee2b88584178a64ac59"
+    },
+    "source-mapping.json": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/mi1-attempt3-core/source-mapping.json",
+      "bytes": 7862,
+      "sha256": "3ed4eb698d691b5c05a5dd5d3c283d580c5008bc9bc8bc8d9f5528c7ac31ca50"
+    }
+  },
+  "rawLogSerialization": {
+    "bytes": 4225501,
+    "sha256": "ed5c6aca0c4b5d8c0e8f3c02a211c26c467ca32da15ee7d7ca6baca1734a833f",
+    "startsWithUtf8Bom": true,
+    "endsWithLf": true,
+    "fetchedOnceAfterCompletion": true,
+    "noNormalization": true,
+    "toolUtf16CodeUnits": 4216283,
+    "storageChunks": 71
+  },
+  "scopeLimits": [
+    "Actual isolated CI execution with fictional data and owned PostgreSQL fixtures; no hosted target or installed migration claim.",
+    "MA1 protected marker is synthetic, not Accepted/cache/publication integration or actual method approval.",
+    "S1 process restart is actual; IN1 fresh connections are explicitly not process-restart evidence.",
+    "Reviewer performed read-only metadata/source/log analysis and scratch evidence writes, no local tests/native/SQL/sockets/hosted/Auth calls or specifically refused #917 retry.",
+    "Other jobs/UI/Preview/Production/threads/final TL PASS are owned separately by Root. Method NOT_APPROVED and Dev NOT_RELEASE_READY remain."
+  ],
+  "primaryFailure": {
+    "schema": "mi1-attempt3-core-failure-analysis-v1",
+    "at": "2026-11-09T20:33:08.777533+00:00",
+    "sourceHead": "33e5f4eed79fdbc0a4bb5d8052142325febd8ee2",
+    "run": 42671681106,
+    "attempt": 3,
+    "job": 129413233452,
+    "classification": "DETERMINISTIC_INTEGRATION_HASH_GUARD_BASELINE_MISMATCH",
+    "severity": "P2 integration acceptance blocker; no product-safety regression established by this assertion",
+    "failedTest": {
+      "number": 1613,
+      "name": "protected old canonical, AA, catalog, transport, authority and workflow files stay byte-identical",
+      "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "sourceLine": 92,
+      "sourceSha256": "5f32381e4b501cb9d828308c5a7019ea8a66724da75fa92dd941a4af3de0ba6c",
+      "code": "ERR_ASSERTION",
+      "failureType": "testCodeFailure",
+      "logLine": 32817,
+      "fullFailureExcerpt": [
+        "2026-11-09T20:30:13.1977603Z not ok 1613 - protected old canonical, AA, catalog, transport, authority and workflow files stay byte-identical",
+        "2026-11-09T20:30:13.1977712Z   ---",
+        "2026-11-09T20:30:13.1977816Z   duration_ms: 9.39427",
+        "2026-11-09T20:30:13.1978084Z   type: 'test'",
+        "2026-11-09T20:30:13.1978669Z   location: '/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts:2:7539'",
+        "2026-11-09T20:30:13.1978821Z   failureType: 'testCodeFailure'",
+        "2026-11-09T20:30:13.1978932Z   error: |-",
+        "2026-11-09T20:30:13.1979054Z     package-lock.json",
+        "2026-11-09T20:30:13.1979170Z     + actual - expected",
+        "2026-11-09T20:30:13.1979257Z     ",
+        "2026-11-09T20:30:13.1979550Z     + '71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e'",
+        "2026-11-09T20:30:13.1979841Z     - 'a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e'",
+        "2026-11-09T20:30:13.1979942Z     ",
+        "2026-11-09T20:30:13.1980066Z   code: 'ERR_ASSERTION'",
+        "2026-11-09T20:30:13.1980191Z   name: 'AssertionError'",
+        "2026-11-09T20:30:13.1980505Z   expected: 'a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e'",
+        "2026-11-09T20:30:13.1980826Z   actual: '71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e'",
+        "2026-11-09T20:30:13.1980953Z   operator: 'strictEqual'",
+        "2026-11-09T20:30:13.1981059Z   stack: |-",
+        "2026-11-09T20:30:13.1981742Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts:92:12)",
+        "2026-11-09T20:30:13.1981940Z     Test.runInAsyncScope (node:async_hooks:214:14)",
+        "2026-11-09T20:30:13.1982138Z     Test.run (node:internal/test_runner/test:1047:25)",
+        "2026-11-09T20:30:13.1982423Z     Test.processPendingSubtests (node:internal/test_runner/test:744:18)",
+        "2026-11-09T20:30:13.1982633Z     Test.postRun (node:internal/test_runner/test:1173:19)",
+        "2026-11-09T20:30:13.1982825Z     Test.run (node:internal/test_runner/test:1101:12)",
+        "2026-11-09T20:30:13.1983134Z     async Test.processPendingSubtests (node:internal/test_runner/test:744:7)",
+        "2026-11-09T20:30:13.1983233Z   ...",
+        "2026-11-09T20:30:13.1983795Z # Subtest: C1 actual I1 preparation and full codec replay preserve application in every nested synthetic observation"
+      ]
+    },
+    "manifest": {
+      "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+      "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+      "unchangedRows": 40,
+      "matchingRows": 38,
+      "mismatches": [
+        {
+          "path": "package-lock.json",
+          "expected": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+          "actual": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+          "matched": false,
+          "currentMain": {
+            "commit": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+            "bytes": 320689,
+            "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+            "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+          },
+          "acceptedMA1": {
+            "commit": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+            "bytes": 319637,
+            "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+            "gitBlob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3"
+          }
+        },
+        {
+          "path": "package.json",
+          "expected": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+          "actual": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+          "matched": false,
+          "currentMain": {
+            "commit": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+            "bytes": 6467,
+            "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+            "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+          },
+          "acceptedMA1": {
+            "commit": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+            "bytes": 6330,
+            "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+            "gitBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795"
+          }
+        }
+      ],
+      "guardAndHistoricalManifestByteEqualAcceptedMA1": true
+    },
+    "all40Rows": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "expected": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "actual": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "matched": true
+      },
+      {
+        "path": ".jetnity/operating-mode.json",
+        "expected": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "actual": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "matched": true
+      },
+      {
+        "path": "components/readiness/OfficialTruthVisitorV3.tsx",
+        "expected": "62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35",
+        "actual": "62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35",
+        "matched": true
+      },
+      {
+        "path": "lib/country/katalog.ts",
+        "expected": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "actual": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/domain.ts",
+        "expected": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "actual": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/trip-binding-server.ts",
+        "expected": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+        "actual": "77947dc3fc619d5e47f759d915acebd7f22a761eaa204424ec24efda990e5c5c",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/mapping.ts",
+        "expected": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+        "actual": "6b54bdd24965c251e30b78f70be6371d12315f79d1d969976d02ae9ee39fe72d",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts",
+        "expected": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+        "actual": "478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts",
+        "expected": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+        "actual": "d2b512cd4b2a0756dc566e56bab319be10adc35e021bd80539a9c21b818502c2",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-first-visa-vertical-1/read-request.ts",
+        "expected": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+        "actual": "4d7b5c6f70cd400f0e3e7204439b470781ef41dcc9c8b10709f09f9f726baa8b",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-content-identity.ts",
+        "expected": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+        "actual": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+        "expected": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "actual": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+        "expected": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "actual": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/file-server.ts",
+        "expected": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+        "actual": "42fd01c33c014c0f1810b1f342369072e7ae901c3ce3258c329156cf0c8e9cc9",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/service-server.ts",
+        "expected": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+        "actual": "27cf8a4790b60ada89dddc9e417e76141d3295cb41aa98a51a50763359ee1b8c",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/ingress/types.ts",
+        "expected": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+        "actual": "cc6a635560671e1742454c0d7b3c403eb16937da5b92d333554af394159e223c",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/fixture.ts",
+        "expected": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+        "actual": "79000659ebfd007984ca8a6e98b75f062f81b3eed40ecbb02aee1b6ca6ee56af",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+        "expected": "a1b360b31bcc4140ad5e8fc9d66017166c58b69f92456dd73feb4f11b34343b1",
+        "actual": "a1b360b31bcc4140ad5e8fc9d66017166c58b69f92456dd73feb4f11b34343b1",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/test-support/store.ts",
+        "expected": "534529284cdc76090cd648561f3b4f51f16d7e3590f13c39067ab092e55a7d90",
+        "actual": "534529284cdc76090cd648561f3b4f51f16d7e3590f13c39067ab092e55a7d90",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+        "expected": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "actual": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+        "expected": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "actual": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+        "expected": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "actual": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+        "expected": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "actual": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "expected": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "actual": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/controller.ts",
+        "expected": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+        "actual": "d432402228b55b1649d5f62d02716bda6d302d1fafefbdbc809a014c38b6debf",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+        "expected": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "actual": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.ts",
+        "expected": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+        "actual": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/official.ts",
+        "expected": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+        "actual": "0351c6d695dce1c4351ff283ce3a3ffec308a0f8947020420d30da5231298bd4",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+        "expected": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "actual": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/rule-claims.ts",
+        "expected": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "actual": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "matched": true
+      },
+      {
+        "path": "lib/readiness/temporal.ts",
+        "expected": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+        "actual": "768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8",
+        "matched": true
+      },
+      {
+        "path": "package-lock.json",
+        "expected": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+        "actual": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+        "matched": false,
+        "currentMain": {
+          "commit": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+          "bytes": 320689,
+          "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+          "gitBlob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+        },
+        "acceptedMA1": {
+          "commit": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+          "bytes": 319637,
+          "sha256": "a1745501dcd33c931ee4bb21d3c73aca7d1ea92bd7d5213df69fd3105a1f898e",
+          "gitBlob": "8f50e69821be6cd5a95beb8e97271b6fc72117f3"
+        }
+      },
+      {
+        "path": "package.json",
+        "expected": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+        "actual": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "matched": false,
+        "currentMain": {
+          "commit": "d7e27f59b3e3cbc96bb63f5d37a33fa029c0e74a",
+          "bytes": 6467,
+          "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+          "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a"
+        },
+        "acceptedMA1": {
+          "commit": "845a118f697fe38722ad91a6fbf9aab40028f3cf",
+          "bytes": 6330,
+          "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a",
+          "gitBlob": "98031bb1fac76eba8db59abbf2e0ef1a8a26a795"
+        }
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+        "expected": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "actual": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "matched": true
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+        "expected": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "actual": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "matched": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-composition-1/native.ts",
+        "expected": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "actual": "7aa5fb2ee14c4cc01937f366bced637f5ffae2069f01c993a1544cd0a45a47d0",
+        "matched": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+        "expected": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "actual": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "matched": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+        "expected": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "actual": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "matched": true
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/browser.mjs",
+        "expected": "1fee7a0522426739286888fb424adc19465ea1000701f8eed80dcbe72695d0b0",
+        "actual": "1fee7a0522426739286888fb424adc19465ea1000701f8eed80dcbe72695d0b0",
+        "matched": true
+      },
+      {
+        "path": "types/trips.ts",
+        "expected": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "actual": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "matched": true
+      }
+    ],
+    "historicalComparison": {
+      "acceptedMA1Run": 42663861884,
+      "coreJob": 129322189331,
+      "actualOldSuccessLine": "2026-11-09T17:31:04.8674614Z ok 1606 - protected old canonical, AA, catalog, transport, authority and workflow files stay byte-identical",
+      "notTransferredAsCurrentPass": true
+    },
+    "inference": "Current main deliberately changes package and lockfile. The retained C1 historical guard still compares against pre-main input hashes. It deterministically stops on lockfile first, hiding the second package.json mismatch. Both actual integrated files equal the exact current-main Git objects; all other 38 unchanged rows still match. No timing exception or flaky-test inference is needed.",
+    "proposedFiniteCorrection": "Preserve C1 historical manifest and exact main package/lock bytes. Root may version a narrowly bound MI1 integration provenance manifest and explicit guard for the two reviewed main inputs, while retaining strict coverage of every other protected file. No deletion/skip/automatic repinning or rerun of failed unchanged source.",
+    "executionLimitations": [
+      "Five hygiene checks and Production build skipped due to Core failure; not executed and not accepted.",
+      "All actual MA1/C1/IN1/S1 native children and parents passed independently but cannot compensate for failed integration CI.",
+      "No source change, test rerun, local native execution or hosted call performed by this reviewer."
+    ]
+  },
+  "observationLimitations": [
+    "One initial direct actions/jobs GET was rejected as unsupported by github_fetch; no retry of that URL. Documented job-steps connector and run/jobs collection provided subsequent observations.",
+    "Read-only source inspection attempted one nonexistent guessed intake/native.test.ts path; resolved via rg to actual storage/intake-native.test.ts. No product execution or code mutation."
+  ]
+}
