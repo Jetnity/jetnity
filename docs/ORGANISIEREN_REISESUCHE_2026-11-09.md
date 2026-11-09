@@ -5,8 +5,7 @@ Grundlage ist der am 9. November freigegebene Entwurf. Im regulären Gast- und K
 ## Suchergebnisse
 
 - Flüge übernehmen Startort, erste und letzte Etappe, Termine, Reisende und Währung. Für verschiedene Hin- und Rückflugorte ist ein Gabelflug vorausgewählt. Die Jetnity-Flugsuche liefert verfügbare Optionen oder den aktuellen Anbieterstatus.
-- Unterkünfte kombinieren die bestehende Hotelsuche mit sieben redaktionell ausgewählten Profilen für Bangkok, Ko Chang und Phuket. Jede Profilkarte führt über die freigeschaltete Jetnity-Werbefläche bei CJ zum konkreten Hotel auf Booking.com. Die mitgegebenen Daten sind Aufenthalt, Belegung und Währung. Aktuelle Booking.com-Preise und Verfügbarkeit sind auf der Hotelseite sichtbar. Für weitere Reiseziele hängt die Trefferliste vom angebundenen Hoteldienst ab.
-- Die Übersicht zeichnet öffentliche Hotelstandorte auf OpenStreetMap ein. Google Maps zeigt das gewählte Hotel. Beide Ansichten verwenden öffentliche Ortsangaben. Die Karten übertragen keine Reise-ID, Termine oder Kontodaten.
+- Unterkünfte öffnen über den freigegebenen CJ-Partnerlink die Booking.com-Suchergebnisse für die gewählte Etappe. Beim bewussten Klick werden Ziel, Belegung, Währung und gegebenenfalls die Aufenthaltsdaten übergeben. In dieser Übergangsphase zeigt Booking.com die Hotelprofile, Fotos und Preise.
 - Aktivitäten öffnen mit der ersten Etappe. Redaktionelle Ideen und vorhandene Partnerangebote folgen der gewählten Etappe.
 - Mietwagen verwenden die DiscoverCars-Stations- und Angebotssuche. Verbindungen nutzen die Mobilitätssuche sowie den vorhandenen 12Go-Fahrplan für unterstützte Strecken.
 

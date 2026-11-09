@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import type { TripStage } from '@/types/trips'
-import { bookingHotelLink, etappenZiel, reiseFoto, vorgeschlagenerFlughafen } from './katalog'
+import {
+  BOOKING_HOTEL_PARTNERLINK,
+  bookingHotelSuche,
+  etappenZiel,
+  reiseFoto,
+  vorgeschlagenerFlughafen,
+} from './katalog'
 
 const etappe: TripStage = {
   id: 'bkk',
@@ -15,9 +21,8 @@ const etappe: TripStage = {
   departureDate: null,
 }
 describe('Reisefotos, Flughafenwahl und Hotelübergabe', () => {
-  it('findet verifizierte Profile und das Fotomotiv für die echte Reiseetappe', () => {
-    assert.equal(etappenZiel(etappe)?.hotels.length, 3)
-    assert.equal(etappenZiel({ ...etappe, placeId: null })?.hotels.length, 3)
+  it('findet das Fotomotiv für die echte Reiseetappe', () => {
+    assert.equal(etappenZiel(etappe), etappenZiel({ ...etappe, placeId: null }))
     assert.notEqual(reiseFoto(etappe, true), reiseFoto(undefined, true))
     assert.equal(etappenZiel({ ...etappe, countryCode: 'US' }), null)
     assert.equal(etappenZiel({ ...etappe, placeId: 'unbekannt' }), null)
@@ -29,15 +34,15 @@ describe('Reisefotos, Flughafenwahl und Hotelübergabe', () => {
     assert.equal(vorgeschlagenerFlughafen(letzte.placeId, letzte.name, letzte)?.iata, 'HKT')
     assert.equal(vorgeschlagenerFlughafen(null, 'Unbekannt'), null)
   })
-  it('öffnet das einzelne Hotel mit Belegung, Währung und gültigen Daten', () => {
-    const hotel = etappenZiel(etappe)!.hotels[1]!
+  it('übergibt Reiseziel, Belegung und Termine an die weltweite Booking.com-Suche', () => {
+    assert.equal(BOOKING_HOTEL_PARTNERLINK, 'https://www.anrdoezrs.net/click-101919996-14082404')
     const daten = { anreise: '2090-11-15', abreise: '2090-11-21', gaeste: 3, zimmer: 2, waehrung: 'CHF' }
-    const link = new URL(bookingHotelLink(hotel, daten))
-    assert.equal(link.pathname, '/click-101919996-14082404')
-    const ziel = new URL(link.searchParams.get('url')!)
-    assert.equal(ziel.hostname, 'www.booking.com')
-    assert.equal(ziel.pathname, '/hotel/th/the-peninsula-bangkok.de.html')
+    const suche = bookingHotelSuche({ name: 'Paris', countryCode: 'FR' }, daten)
+    assert.ok('ziel' in suche)
+    const ziel = new URL(suche.ziel)
+    assert.equal(ziel.origin + ziel.pathname, 'https://www.booking.com/searchresults.de.html')
     assert.deepEqual(Object.fromEntries(ziel.searchParams), {
+      ss: 'Paris, Frankreich',
       checkin: daten.anreise,
       checkout: daten.abreise,
       group_adults: '3',
@@ -45,19 +50,22 @@ describe('Reisefotos, Flughafenwahl und Hotelübergabe', () => {
       group_children: '0',
       selected_currency: 'CHF',
     })
+    const offen = bookingHotelSuche(
+      { name: 'Ko Chang', countryCode: null },
+      { ...daten, anreise: '', abreise: '' },
+    )
+    assert.ok('ziel' in offen)
+    assert.equal(new URL(offen.ziel).searchParams.get('ss'), 'Ko Chang')
+    assert.equal(new URL(offen.ziel).searchParams.has('checkin'), false)
+    assert.equal(new URL(offen.ziel).searchParams.has('checkout'), false)
     for (const [anreise, abreise] of [
-      ['', ''],
-      ['2090-02-30', '2090-03-06'],
+      ['2090-02-30', '2090-03-04'],
+      ['', '2090-11-21'],
+      ['2090-11-15', ''],
       ['2010-11-15', '2010-11-21'],
       ['2090-11-15', '2090-11-15'],
     ]) {
-      const z = new URL(
-        new URL(bookingHotelLink(hotel, { ...daten, anreise: anreise!, abreise: abreise! })).searchParams.get(
-          'url',
-        )!,
-      )
-      assert.equal(z.searchParams.has('checkin'), false)
-      assert.equal(z.searchParams.has('checkout'), false)
+      assert.ok('fehler' in bookingHotelSuche(etappe, { ...daten, anreise, abreise }))
     }
   })
 })
