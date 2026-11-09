@@ -1,6 +1,8 @@
-# S1 implementation plan V1 — awaiting Root contract freeze
+# S1 implementation plan V1 — approved, implementation candidate delivered
 
-Author: **Jetnity Official Truth V3 Intake Store 1 — Codex Generation 1**, `/root/v3_s1_storage_writer`; PR #1168, seed `0bd187324c1d050bda19b44fd7cec0b53e8f0fcf`. 9 November 2026. TASK V1 governs. Implementation has not started.
+Author: **Jetnity Official Truth V3 Intake Store 1 — Codex Generation 1**, `/root/v3_s1_storage_writer`; PR #1168, seed `0bd187324c1d050bda19b44fd7cec0b53e8f0fcf`. 9 November 2026. TASK V1 governs. This plan was submitted and approved by Root before implementation. The sections below retain that design; the completion record and precise limitations are in `S1_SELF_REVIEW_HANDOFF_V1.md`.
+
+Root approved the API and dedicated privilege design, then published contract Freeze R2 at `78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81`. Exact `intake-contract.ts` SHA256: `49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b`. R2 changes only literal type inference, not API/semantics. R1 rejects duplicate original JSON members at every depth; R3 adds a fixed closed retention shape to both SQL writes and TS, with the explicitly approved exclusion of `official_actions`. No frozen S0/I1 runtime file changes.
 
 ## Shared N1/S1 entry proposed for freeze
 
@@ -58,4 +60,4 @@ Tests exercise actual SQL with two independent clients, byte-preserving replay, 
 
 Existing governance/AGENTS, V3 program/contract/import code, integration ports, canonical S0 readers and native cluster/transport pattern were inspected. No shared S0/I1 semantics change. Any exact importer-allowlist additions will be sent to Root. No Hosted DB/Production/Provider/Method activation; #917 refusal and #1139/#1131/#1135/#968 gates remain. `prepared` still requires current canonical evidence before a separate commit; this slice has no Accepted-Head/cache/outbox delivery authority. Rollback candidate is only run-owned local candidate removal, not Dev recovery.
 
-**STOP at plan boundary until Root approves the API and private privilege design.** After approval implement only this task, then STOP for independent TL review. Do not mark Ready, merge, or start a follow-up slice.
+The pre-implementation STOP was satisfied by Root approval. The author now stops at implementation handoff for independent TL review and actual mandatory native CI. Do not mark Ready, merge, or start a follow-up slice.

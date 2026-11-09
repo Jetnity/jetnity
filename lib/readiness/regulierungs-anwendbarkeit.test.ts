@@ -943,6 +943,11 @@ describe('regulierungs-anwendbarkeit', () => {
       // #1167 E1 Guard G1: exact pure shape reader and synthetic storage equality.
       join(hier, 'official-truth-product-v3/integration/coordinator.ts'),
       join(hier, 'official-truth-product-v3/integration/test-support/store.ts'),
+      // #1168 S1G1: exact dormant shape/equality consumers plus source-pin test.
+      join(hier, 'official-truth-product-v3/storage/quarantine-codec.ts'),
+      join(hier, 'official-truth-product-v3/storage/quarantine-postgres.ts'),
+      join(hier, 'official-truth-product-v3/storage/retention-shape.ts'),
+      join(hier, 'official-truth-product-v3/storage/retention-shape.test.ts'),
     ])
     assert.equal(eigene.has(join(hier, 'official-truth-product-v3/contract.ts')), true)
     // Keep raw traversal spellings: join() must not normalize an alias into permission.
@@ -1009,6 +1014,15 @@ describe('regulierungs-anwendbarkeit', () => {
       `${hier}/official-truth-product-v3/integration/test-support/unreviewed.ts`,
       `${hier}/official-truth-product-v3/integration/unreviewed.ts`,
     ]) assert.equal(eigene.has(pfad), false, pfad)
+    for (const name of ['quarantine-codec.ts', 'quarantine-postgres.ts', 'retention-shape.ts', 'retention-shape.test.ts']) {
+      assert.equal(eigene.has(join(hier, `official-truth-product-v3/storage/${name}`)), true)
+      for (const pfad of [`${hier}/official-truth-product-v3/storage/${name}.evil.ts`,
+        `${hier}/official-truth-product-v3/storage/${name}/../unreviewed.ts`, `${hier}/official-truth-product-v3/storage/../storage/${name}`,
+        `${hier}/official-truth-product-v3/storages/${name}`, `${wurzel}/app/api/official-truth-product-v3/storage/${name}`]) {
+        assert.equal(eigene.has(pfad), false, pfad)
+      }
+    }
+    assert.equal(eigene.has(`${hier}/official-truth-product-v3/storage/unreviewed.ts`), false)
     const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
     assert.deepEqual(fremd, [])
     const produktion = dateien(wurzel).filter(
@@ -1032,6 +1046,9 @@ describe('regulierungs-anwendbarkeit', () => {
         join(hier, 'official-truth-product-v3/monitor/test-support.ts'),
         join(hier, 'official-truth-product-v3/integration/coordinator.ts'),
         join(hier, 'official-truth-product-v3/integration/test-support/store.ts'),
+        join(hier, 'official-truth-product-v3/storage/quarantine-codec.ts'),
+        join(hier, 'official-truth-product-v3/storage/quarantine-postgres.ts'),
+        join(hier, 'official-truth-product-v3/storage/retention-shape.ts'),
       ].sort(),
     )
     const claims = readFileSync(join(hier, 'rule-claims.ts'), 'utf8')

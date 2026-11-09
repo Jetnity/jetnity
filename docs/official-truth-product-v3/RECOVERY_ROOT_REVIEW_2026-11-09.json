@@ -1,0 +1,128 @@
+{
+  "schema": "jetnity.official-truth.v3.recovery-root-review.v1",
+  "recordedAt": "2026-11-09T11:55:28.476684+00:00",
+  "reviewer": "Root / Technical Lead",
+  "scope": "Preserved S1 implementation, approved finite guards, R4 correction, recovery and current-state evidence. Source acceptance for Draft publication only; native and new-head gates pending.",
+  "author": {
+    "name": "Jetnity Official Truth V3 Intake Store 1 — Codex Generation 2",
+    "session": "/root/v3_s1_storage_writer_g2",
+    "originalSession": "/root/v3_s1_storage_writer",
+    "originalResumeResult": "live agent path not found",
+    "task": "S1_RECOVERY_TASK_V2.md",
+    "taskEvidence": "https://github.com/Jetnity/jetnity/pull/1168#issuecomment-6739217916"
+  },
+  "reconciliation": {
+    "localTaskseed": "0bd187324c1d050bda19b44fd7cec0b53e8f0fcf",
+    "remoteParent": "78ae1691cb9e8e75a3c353d2be0f83a2e2f82b81",
+    "baseE1": "97629e9130a907b8b9b8072d06bda1956758aa6e",
+    "main": "ce3366e26de73961d4682236af92347bfc3a4ca8",
+    "resetOrCleanUsed": false,
+    "preservedUncommittedFiles": true
+  },
+  "authorManifest": {
+    "path": "S1_SOURCE_MANIFEST_V1.json",
+    "sha256": "2151dabb3957dac609dff6dd3f5397e382bbd6f0cf5e36c275bf750e50e77170",
+    "deliverablePinsVerified": 27,
+    "protectedInputPinsVerified": 6
+  },
+  "authorReceipt": {
+    "path": "S1_VERIFICATION_RECEIPT_V2.json",
+    "sha256": "5f569af8548451005747478db9eaebf18383dbfc5f8239f7227134a05ab51077",
+    "allNineCommandLogsRehashed": true,
+    "postR4Tests": {
+      "passed": 412,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": 0,
+    "lint": 0,
+    "fiveHygieneExits": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "rootActualChecks": {
+    "runtimeAndTestsRead": true,
+    "sqlCandidateAndRollbackRead": true,
+    "finiteGuardDiffRead": true,
+    "nativeHarnessRead": true,
+    "frozenContractUnchanged": true,
+    "frozenContractSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+    "runtime": "Node22.23.4",
+    "offlineTests": {
+      "startedAt": "2026-11-09T11:49:45.851925+00:00",
+      "endedAt": "2026-11-09T11:49:50.830474+00:00",
+      "files": 17,
+      "passed": 412,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "93fe7f674694285b5f406960a07cc7581c7dcccf8f2354c1007d97ab57026e16",
+      "excluded": "Mandatory intake-native.test.ts, due inherited local socket denial; not a CI exclusion. R4 only changes native proof/rollback subsequently independently source-reviewed."
+    }
+  },
+  "reviewR4": {
+    "evidence": "https://github.com/Jetnity/jetnity/pull/1168#issuecomment-6739317869",
+    "findings": [
+      {
+        "id": "R4a",
+        "priority": "P2",
+        "problem": "Schema CASCADE may erase installer-owned external dependent view.",
+        "correction": "Finite explicit RESTRICT teardown and exact dependent-view atomic-refusal regression.",
+        "status": "SOURCE_CORRECTION_VERIFIED_NATIVE_PENDING"
+      },
+      {
+        "id": "R4b",
+        "priority": "P2",
+        "problem": "Timed abort could pass before blocked query dispatched.",
+        "correction": "Observe exact PID/birth, active exact statement, actual Lock wait and owner blocker before abort; then prove target absence before lock release.",
+        "status": "SOURCE_CORRECTION_VERIFIED_NATIVE_PENDING"
+      }
+    ],
+    "fixedFileSha256": {
+      "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "scripts/db/official-truth-v3-intake-store-1/native.ts": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded"
+    }
+  },
+  "independentSupport": {
+    "sqlNativeReviewer": "/root/handoff_recovery_audit",
+    "releaseAndN1Reviewer": "/root/live_release_recovery",
+    "noAuthorSelfReviewPromotedToTLPass": true,
+    "liveEvidencePath": "RECOVERY_LIVE_EVIDENCE_2026-11-09.json",
+    "liveEvidenceSha256": "fa813a4d850050c96ff737790cd43056f1d9f4ccfed3f323ce2510f31b3102e6",
+    "r4SecondReview": {
+      "reviewer": "/root/handoff_recovery_audit",
+      "status": "Both P2 source findings closed; no additional actionable P1/P2 in reviewed SQL/native scope; execution remains pending.",
+      "parsedInventory": {
+        "roles": 2,
+        "schemas": 2,
+        "tables": 3,
+        "functions": 14,
+        "triggers": 3
+      },
+      "nativeExecuted": false
+    },
+    "originalAuditArtifactSha256": "01cf17128db5ccb403e1645f8d1b053fc4f4557b12e31e61d9b1ab090cbddaa2",
+    "liveEvidencePublicationNormalization": "Only redundant EOF blank line removed; JSON values unchanged."
+  },
+  "decision": "ACCEPTED_FOR_DRAFT_PUBLICATION_WITH_MANDATORY_NATIVE_AND_EXACT_HEAD_GATES_PENDING",
+  "requiredNext": [
+    "Publish reviewed candidate onto exact remote contract parent without overwriting other work.",
+    "Inspect actual mandatory S1 native/Core CI, all required job families and exact Preview on new head.",
+    "Return any failure to this same Generation2 session; all changed heads require re-gating.",
+    "Compose final S1 and N1 on explicit reviewed heads for real File-to-SQL-to-I1 evidence, as already required by N1 TASK V1."
+  ],
+  "limits": [
+    "Source/codec/shape tests do not prove PostgreSQL16 transactions, RLS, ACLs, lock cancellation or durable process restart.",
+    "No live hosted DB/Auth/RLS/ACL/migration/credential operations authorized by this wave.",
+    "No external HTTP200/robots/runtime proof obtained in this recovery; deployment metadata and aliases are distinct.",
+    "official_actions deliberately excluded pending registered-publication admission; stored proposals are untrusted.",
+    "#917 refused readback not repeated or routed around; #1139 Dev package and method remain unaccepted."
+  ],
+  "ready": false,
+  "merge": false,
+  "hostedApply": false,
+  "productionActivation": false
+}
