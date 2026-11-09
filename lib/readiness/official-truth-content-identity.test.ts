@@ -500,6 +500,11 @@ describe('dormancy and architectural boundaries', () => {
     'lib/readiness/official-truth-govuk-content-api-identity-profile.ts',
     // #899 pure bundle validation reuses the existing complete identity codecs.
     'lib/readiness/official-truth-integrated-pilot-bundle.ts',
+    // #1163 S0 R4: exact reviewed dormant V3 contract; no runtime activation.
+    'lib/readiness/official-truth-product-v3/contract.ts',
+    // #1166 M1 Guard R1: exact identity reader and isolated synthetic helper.
+    'lib/readiness/official-truth-product-v3/monitor/monitor.ts',
+    'lib/readiness/official-truth-product-v3/monitor/test-support.ts',
     'lib/readiness/official-truth-refresh-diff.ts',
     'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
     'lib/readiness/official-truth-retrieved-material.ts',
@@ -579,6 +584,29 @@ describe('dormancy and architectural boundaries', () => {
       'app/api/official-truth-aa-visa-table-identity-candidate.ts',
       'apps/official-truth-aa-visa-table-identity-candidate.ts',
     ]) assert.equal(contentIdentityImporterAllowed(path), false, path)
+    assert.equal(contentIdentityImporterAllowed('lib/readiness/official-truth-product-v3/contract.ts'), true)
+    for (const path of [
+      'lib/readiness/official-truth-product-v3/contract.ts.evil.ts',
+      'lib/readiness/official-truth-product-v3/contract-server.ts',
+      'lib/readiness/official-truth-product-v3/contract.ts/../unreviewed.ts',
+      'lib/readiness/official-truth-product-v3/../official-truth-product-v3/contract.ts',
+      'lib/readiness/official-truth-product-v3/unreviewed.ts',
+      'lib/readiness/official-truth-product-v30/contract.ts',
+      'app/api/official-truth-product-v3/contract.ts',
+    ]) assert.equal(contentIdentityImporterAllowed(path), false, path)
+    for (const name of ['monitor.ts', 'test-support.ts']) {
+      assert.equal(contentIdentityImporterAllowed(`lib/readiness/official-truth-product-v3/monitor/${name}`), true)
+      for (const path of [
+        `lib/readiness/official-truth-product-v3/monitor/${name}.evil.ts`,
+        `lib/readiness/official-truth-product-v3/monitor/${name}/../unreviewed.ts`,
+        `lib/readiness/official-truth-product-v3/monitor/../monitor/${name}`,
+        `lib/readiness/official-truth-product-v3/monitors/${name}`,
+        `app/api/official-truth-product-v3/monitor/${name}`,
+      ]) assert.equal(contentIdentityImporterAllowed(path), false, path)
+    }
+    for (const name of ['unreviewed.ts', 'internal.ts', 'recovery.ts', 'recovery.test.ts']) {
+      assert.equal(contentIdentityImporterAllowed(`lib/readiness/official-truth-product-v3/monitor/${name}`), false)
+    }
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unreviewed.ts',
       'scripts/official-truth-integrated-pilot-1/unreviewed.ts', 'scripts/official-truth-integrated-pilot-2/engine.ts',
       'scripts/official-truth-integrated-pilot-1/engine.ts/../unreviewed.ts',
