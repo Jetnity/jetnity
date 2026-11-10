@@ -1,0 +1,42 @@
+{
+  "scope": "M04 new candidate + empty rollback + initial native fixture static source review only",
+  "originalCandidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
+  "reviewedAmendedCandidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+  "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+  "nativeStartSha256": "a69f41cf8126c419c60ee174f746588e8841884e40362de79f3ce871bd0eb5a6",
+  "nativeEndSha256": "38468cb9c2c3022129825cf172caf3d7e51994501ec5ee4e6dd0f31335ae9d28",
+  "findings": [
+    {
+      "id": "R11-owner-record-alias",
+      "priority": "P1",
+      "source": "jobs-candidate.sql:1228-1231 (original)",
+      "defect": "DO owners declares p RECORD and reads SELECT p.oid ... FROM pg_proc p before assigning p. PL/pgSQL qualified record and table-alias references collide.",
+      "impact": "Installation can fail during owner transfer before final catalog seed.",
+      "fixObserved": "G2 writer renamed loop record to function_row and each loop-body use; SQL aliases and owner decisions unchanged.",
+      "verification": "Source delta independently read; mandatory native execution still required."
+    },
+    {
+      "id": "R11-catalog-record-alias",
+      "priority": "P1",
+      "source": "jobs-candidate.sql:797-816 (original)",
+      "defect": "assert_catalog_v1 loop x RECORD contains object_identity/fingerprint while structural subqueries reuse x for pg_constraint, pg_index, pg_policy, pg_trigger, referencing absent record fields.",
+      "impact": "Final install assert_catalog_v1 and later runtime/rollback catalog assertion can fail during expression planning.",
+      "fixObserved": "G2 writer renamed loop record to binding_row and actual predecessor-row field uses; structural SQL aliases retained.",
+      "verification": "Source delta independently read; mandatory native execution still required."
+    }
+  ],
+  "furtherConcreteFindings": [],
+  "boundary": "No repository edits by reviewer; no native/SQL/Postgres/socket execution; no hosted or credential/Auth access. This review is not a native or overall TL PASS.",
+  "reviewedAreas": [
+    "T01-T03/frozen-plan boundaries",
+    "11 protected predecessor signatures/body pins/ACL defaults",
+    "29-function ownership and privilege setup",
+    "7-table FK/constraint/index/trigger inventory against initial native assertions",
+    "catalog fingerprints and parsed bridge dependencies",
+    "canonical metadata and PG rowtype usage",
+    "finite guarded rollback order and absence of CASCADE"
+  ],
+  "primaryReference": "https://www.postgresql.org/docs/16/plpgsql-implementation.html",
+  "implementationReference": "https://doxygen.postgresql.org/pl__comp_8c_source.html",
+  "mainDrift": "Parent reported live main advanced to 890dfe9323b4b6d3644c372d81cb8893b6548d11 during followup; former be79 live-audit conclusion is historical. Parent handles re-verification."
+}

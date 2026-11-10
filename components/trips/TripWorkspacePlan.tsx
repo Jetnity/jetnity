@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { tripMapEntryVisible } from '@/lib/maps/config'
+import Etappenplan from './reiseplan/Etappenplan'
 import TripWorkspaceMap from '@/components/trips/TripWorkspaceMap'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import TripIntegratedDay from '@/components/trips/TripIntegratedDay'
@@ -47,7 +48,7 @@ import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
 import { darfFokussieren } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
 import { hinweisText, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
 import { cn } from '@/lib/utils'
-import { type Trip, type TripItem, type TripItemKind } from '@/types/trips'
+import { type Trip, type TripItem, type TripItemKind, type TripSource } from '@/types/trips'
 
 const langesDatum = new Intl.DateTimeFormat('de-CH', {
   weekday: 'long',
@@ -120,6 +121,8 @@ function gewaehltenTagSichtbarHalten(tagId: string) {
 export default function TripWorkspacePlan({
   reise,
   ohneTag,
+  quelle,
+  onReiseGespeichert,
   aktiverTag,
   kompakt,
   eingebettet = false,
@@ -150,6 +153,8 @@ export default function TripWorkspacePlan({
   onPreparation?: (ziel: PreparationZiel) => void
   onVerbindungAnlegen?: (values: MobilityManuellEingabe) => Promise<string | null>
   reise: Trip
+  quelle?: TripSource
+  onReiseGespeichert?: (graph: Trip) => void
   ohneTag: TripItem[]
   aktiverTag: string
   kompakt: boolean
@@ -183,6 +188,7 @@ export default function TripWorkspacePlan({
   const tripIdRef = React.useRef(reise.id)
   const [geseheneReise, setGeseheneReise] = React.useState(reise.id)
   const [formularTag, setFormularTag] = React.useState(aktiverTag)
+  const [initialKind, setInitialKind] = React.useState<TripItemKind>('activity')
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [bearbeiten, setBearbeiten] = React.useState<TripItem | undefined>()
   const [meldung, setMeldung] = React.useState('')
@@ -347,6 +353,7 @@ export default function TripWorkspacePlan({
         <PlanpunktEditor
           key={`${reise.id}:${formularTag}:new:${leben.editorGeneration}`}
           {...editorProps}
+          initialKind={initialKind}
           tagId={formularTag}
           onAbbrechen={() => zurueck(null)}
           onFertig={() => gespeichert(null)}
@@ -397,7 +404,7 @@ export default function TripWorkspacePlan({
       <button
         type="button"
         data-plan-hinzufuegen
-        onClick={(event) => { leben.oeffnen(); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setFormularTag(tag.id); setFormularOffen((offen) => !offen); setErfolg('') }}
+        onClick={(event) => { leben.oeffnen(); editorTrigger.current = event.currentTarget; setBearbeiten(undefined); setInitialKind('activity'); setFormularTag(tag.id); setFormularOffen((offen) => !offen); setErfolg('') }}
         aria-expanded={formularOffen}
         className={cn(
           'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 sm:w-auto',
@@ -453,6 +460,70 @@ export default function TripWorkspacePlan({
     </>
   )
 
+  const ungeplant = (timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
+        <div className="mt-5 border-t border-line-200 pt-5">
+          <p tabIndex={-1} data-plan-ungeplant className={cn('rounded text-xs font-semibold uppercase tracking-[0.16em] text-ink-700', fokusRing)}>
+            Noch nicht eingeplant
+          </p>
+          <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
+            {timeline.ungeplante.map((punkt) => (
+              <Planpunkt
+                key={punkt.id}
+                punkt={punkt}
+                zeit={lokalePlanzeit(punkt.startsAt)}
+                gesperrt={leben.loescht}
+                gewaehlt={gewaehlterPunktId === punkt.id}
+                onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
+                onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
+                onEntfernen={() => entfernen('', punkt.id)}
+                mutationTag=""
+              />
+            ))}
+          </ol>
+          {formularOffen && bearbeiten && bearbeiten.dayId == null ? (
+            <PlanpunktEditor
+              key={`${reise.id}:${bearbeiten.id}:edit:${leben.editorGeneration}`}
+              {...editorProps}
+              tagId=""
+              item={bearbeiten}
+              onAbbrechen={() => zurueck(bearbeiten.id)}
+              onFertig={() => gespeichert(bearbeiten.id)}
+            />
+          ) : null}
+        </div>
+      )
+
+  const tagesDetails = <>
+        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
+          <details className="mt-4 overflow-hidden rounded-[20px] border border-line-200 bg-white">
+            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+              Zusätzliche Tagesdetails
+            </summary>
+            <div className="border-t border-line-200 p-3 sm:p-4">
+              <TripIntegratedDay
+                reise={{ ...reise, ohneTag }}
+                dayId={tag.id}
+                ordered={tagesansicht.gewaehlterTagId === tag.id ? tagesansicht.tagesplan.flatMap((group) => group.punkte.map((entry) => entry.punkt)) : []}
+                selected={gewaehlterPunktId}
+                tasks={readinessItems}
+                onItem={onPunktOeffnen}
+                onPreparation={onPreparation}
+                onVerbindungAnlegen={onVerbindungAnlegen}
+              />
+            </div>
+          </details>
+        ) : null}
+        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
+          <details className="mt-3 overflow-hidden rounded-[20px] border border-line-200 bg-white">
+            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
+              Zeit- und Konfliktprüfung
+            </summary>
+            <div className="border-t border-line-200 p-3 sm:p-4">
+              <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} />
+            </div>
+          </details>
+        ) : null}
+  </>
   const routeInhalt = (
     <div>
       <div>
@@ -485,40 +556,31 @@ export default function TripWorkspacePlan({
         </p>
       )}
 
-      {(timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
-        <div className="mt-5 border-t border-line-200 pt-5">
-          <p tabIndex={-1} data-plan-ungeplant className={cn('rounded text-xs font-semibold uppercase tracking-[0.16em] text-ink-700', fokusRing)}>
-            Noch nicht eingeplant
-          </p>
-          <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
-            {timeline.ungeplante.map((punkt) => (
-              <Planpunkt
-                key={punkt.id}
-                punkt={punkt}
-                zeit={lokalePlanzeit(punkt.startsAt)}
-                gesperrt={leben.loescht}
-                gewaehlt={gewaehlterPunktId === punkt.id}
-                onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
-                onBearbeiten={onPunktBearbeiten ? () => { leben.oeffnen(); editorTrigger.current = document.activeElement as HTMLElement; setBearbeiten(punkt); setFormularOffen(true); setErfolg('') } : undefined}
-                onEntfernen={() => entfernen('', punkt.id)}
-                mutationTag=""
-              />
-            ))}
-          </ol>
-          {formularOffen && bearbeiten && bearbeiten.dayId == null ? (
-            <PlanpunktEditor
-              key={`${reise.id}:${bearbeiten.id}:edit:${leben.editorGeneration}`}
-              {...editorProps}
-              tagId=""
-              item={bearbeiten}
-              onAbbrechen={() => zurueck(bearbeiten.id)}
-              onFertig={() => gespeichert(bearbeiten.id)}
-            />
-          ) : null}
-        </div>
-      )}
+      {ungeplant}
     </div>
   )
+
+  if (quelle && gemessen && !hinweis && !kanteUnlesbar && !itemSichtbar) {
+    return <section ref={root} className="col-span-full min-w-0" aria-label="Reiseplan" data-tagesplan-modul="ein" data-plan-premium="4">
+      <Etappenplan key={reise.id} reise={reise} quelle={quelle} route={route.zeilen} tagId={kanonischerTagId}
+        focusRoute={routeBetont} onRoute={onZurRoute} onDay={onTagWechseln} onItem={onPunktOeffnen}
+        onEdge={onKanteWaehlen} onSaved={onReiseGespeichert} editor={editorHalt} editorOffen={formularOffen && !!formularTag}
+        edge={routeBetont || !kanteId ? null : kanteWahl.art === 'eindeutig' ? <KanteDetail zeile={kanteWahl.zeile} onAlleVerbindungen={onAlleVerbindungen}/> :
+          kanteWahl.art === 'mehrdeutig' || kanteWahl.art === 'nicht-verfuegbar' ? <KanteHinweis art={kanteWahl.art}/> : null}
+        day={<>{tagesKopf}{tagesFelder}{tagesDetails}</>} unassigned={ungeplant}
+        status={<>{erfolg && <p role="status">{erfolg}</p>}{meldung && <p ref={meldungRef} tabIndex={-1} role="alert">{meldung}</p>}</>}
+        onAdd={(dayId,kind) => {
+          leben.oeffnen()
+          editorTrigger.current = document.activeElement as HTMLElement
+          setBearbeiten(undefined)
+          setFormularTag(dayId)
+          setInitialKind(kind)
+          setFormularOffen(true)
+          setErfolg('')
+        }}
+      />
+    </section>
+  }
 
   return (
     <section ref={root}
@@ -612,35 +674,7 @@ export default function TripWorkspacePlan({
             </div>
           </div>
         ) : null}
-        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
-          <details className="mt-4 overflow-hidden rounded-[20px] border border-line-200 bg-white">
-            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
-              Zusätzliche Tagesdetails
-            </summary>
-            <div className="border-t border-line-200 p-3 sm:p-4">
-              <TripIntegratedDay
-                reise={{ ...reise, ohneTag }}
-                dayId={tag.id}
-                ordered={tagesansicht.gewaehlterTagId === tag.id ? tagesansicht.tagesplan.flatMap((group) => group.punkte.map((entry) => entry.punkt)) : []}
-                selected={gewaehlterPunktId}
-                tasks={readinessItems}
-                onItem={onPunktOeffnen}
-                onPreparation={onPreparation}
-                onVerbindungAnlegen={onVerbindungAnlegen}
-              />
-            </div>
-          </details>
-        ) : null}
-        {kanteWahl.art !== 'eindeutig' && tag && !tagFehlt ? (
-          <details className="mt-3 overflow-hidden rounded-[20px] border border-line-200 bg-white">
-            <summary className={cn('flex min-h-11 cursor-pointer items-center px-4 text-sm font-semibold text-brand-800', fokusRing)}>
-              Zeit- und Konfliktprüfung
-            </summary>
-            <div className="border-t border-line-200 p-3 sm:p-4">
-              <TripTimelineZeitpruefung reise={reise} ohneTag={ohneTag} tagId={tag.id} onPunktOeffnen={onPunktOeffnen} gesperrt={leben.loescht} />
-            </div>
-          </details>
-        ) : null}
+        {tagesDetails}
       </div>
     </section>
   )

@@ -1,55 +1,70 @@
 # M04 Phase-B author self-review V1
 
-**SAVED INTERRUPTED SELF-REVIEW — R9 CHANGES REQUIRED AND NATIVE CI OPEN.** User requested an exact new-chat handoff before the R9 correction. This is not completed delivery or a Technical-Lead PASS.
+**GENERATION2 AUTHOR SELF-REVIEW — INDEPENDENT ROOT REVIEW AND CURRENT NATIVE CI STILL REQUIRED.** Author statements are not Technical-Lead acceptance.
 
-Author/session: Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1, `/root/m04_durable_jobs_writer`. The eighteen-file source cut is pinned in `M04_PHASE_B_SOURCE_MANIFEST_V1.json`, aggregate SHA256 `def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd`. Scope and dispatch are recorded in `M04_PHASE_B_STATUS_V1.md`.
+Author/session: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, `/root/m04_durable_jobs_writer_g2`. This is a new documented context-loss continuation of d9, not a claim to Generation1's old session. [Dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057); [TaskV2](M04_RECOVERY_TASK_V2.md). Exact eighteen-source digest **`cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f`**; individual pins and check commands are in [source manifest](M04_PHASE_B_SOURCE_MANIFEST_V1.json).
 
-## Source boundary reviewed
+## R9: what is now directly demonstrated
 
-| Area | Implemented boundary and evidence limit |
-|---|---|
-| Identity | JS admission calls actual S0 normalization. Native wire accepts the closed normalized DTO, validates full context/work/command preimages and rejects duplicate fields and noncanonical metadata. The original proposal remains byte-exact; semantic integer spellings such as `18.0`, `18e0` and `1.8e1` are admitted without rewriting the retained original. |
-| M04-D01 | Every original in a Rule/Discovery delivery is fully admitted before the first S1 effect. Parsed original context/research must equal their normalized S0 values; this is not whole-original canonicalization and does not introduce a proposed-fact normal-form restriction. Existing S1 originals remain readable and unchanged even when ineligible for M04 preparation. |
-| Public authority | Joint factory exposes three finite operations only. No receipt, epoch, native token, general SQL executor or alternate method-check export. Standalone MA1 behavior/limits remain intact. Private same-Held observation/effect exclusion and conservative post-terminal deadline mapping apply only in the joint composition. |
-| Unknown history | Stable semantic subject serialization scans retained history across cycles/reasons/epochs. A new claim cannot escape an older unresolved start. Original PREPARED continuation requires the exact live claim/fence and current authority; completed recovery uses its full original claim metadata without another producer. |
-| Failure | Only private winning custody, terminated delivery/processing callbacks and actual native drain justify the atomic matching queue-fail/disposition transaction. Busy, unavailable, unknown finish/ACK and pre-START lookup uncertainty do not manufacture failure. Terminal reserve is scoped to the original claim/attempt/command. |
-| Lifetime | Actual S1 and MA1 native promises are registered beneath existing facade races. Non-native callbacks share bounded active/cumulative accounting and may retire a lane until terminal observation. Processing seal does not seal separately owned Complete and later E1 imports. Arbitrary hostile JavaScript is not sandboxed: dependency admission requires the documented code-owned, SQL-incapable producer/evidence/history ports. |
-| SQL | Seven tables, twenty-nine functions, fourteen immutable guards, seven RLS policies; exact prerequisite owner/body/language/ACL/default/membership bindings. The final transaction consumes full actual S1 read replies and actual current MA1 state. All uncontrolled waits precede the final authority/clock gate; bounded reply construction precedes that gate. |
-| Rollback | Guarded empty-history teardown, RESTRICT dependencies, exact finite order and no CASCADE. SQL source is a candidate; installation, dependency failures and rollback atomicity remain unexecuted until CI. |
+The two added full-factory protocol tests retain the actual nested S1 reserve executor under real M04/I1/worker control flow. In the natural I1 case, the unchanged5000ms facade deadline expires and a subsequent fail `queue_confirm` is observed while that executor is still pending. In the caller-abort case, cancellation propagates and the outward factory remains pending. Three other same-facade method calls retain the remaining lanes. A fifth invalid call is `unavailable` while all four are occupied and becomes `invalid` only after the original reserve is released and actually joined; the three other promises remain pending at both checks. No terminal fail/complete CAS, backoff state, finish or late native admission is observed. Every gate is released and each started promise is joined in finally.
 
-## Same-session review corrections included
+An additional test directly invokes the existing exported `composeM04Invocation` with a real owned scope, actual standalone MA1 and an explicitly handwritten fixed-request protocol bridge. It observes the **raw integration result** `unconfirmed` while the same reserve remains pending, then separately observes `scope.drainNative()` and `scope.finish()` remain pending with one occupied lane. Releasing the reserve permits both to complete and releases the lane. This test does not measure private `authorityCore`, a separately held raw worker promise or a natural30000ms worker expiry. The full-factory tests retain actual private wiring coverage. No protected code or production debug API was introduced.
 
-| Review | Correction in this source cut |
-|---|---|
-| B1 | Ordinary safe copied objects preserve compatibility with strict S0 readers; positive actual S0 record decode regression. |
-| B2 | Removed quadratic sixteen-by-sixteen JS S1 reopening. Native full-batch reference proof combines with held immutable bytes; actual sixteen-original unit flow uses 48 JS S1 reads and stays inside 256 calls. |
-| R3 | Private failure custody also gates pre-START uncertainty; reserved final sequence includes its necessary authority/read/CAS calls; JSON whitespace is exactly space, tab, CR and LF. |
-| R4 | Narrow creator-default exception, original numeric semantic normalization, explicit required non-NULL/type checks, non-NULL settled-failure reason, and actual historical archive/revision contracts. |
-| R5 | Incoming/outgoing protected memberships, exact role flags and prerequisite language, final actual due/lease checks, reply ordering, advisory domain and rollback inventory. |
-| R6 / T01 / T02 | Finite integer transport, cancellation errors retained through unconditional drain, safe explicit pg_catalog/pg_temp order for new objects only, authoritative catalog observers and unsafe-ambient shadow fixtures. |
-| R7 / T03 | Intentional child close retains native cleanup failures; inherited commit guard/control connections and transient observers are counted; actual backend disappearance assertions supplement close calls. |
-| R8 | Subtest failures cannot produce a successful receipt; registered child-wrapper cleanup is joined on failure; actual two-start contention and independent security/index/constraint matrices added. |
+The native group uses exact S1 operation2 (`reserve_v1`), which is inside I1 and distinct from pre-I1 capture/read. A separate holder locks the real captured operation row; target PID, backend birth, blocking holder and relation must be observed before cancellation. It then keeps that same executor at its existing `beforeDrain` hook. Target/control backends are already closed there: the test explicitly queries their absence and separately asserts retained executor/context ownership. It never calls that retained context a live backend.
 
-These are author implementation statements against the frozen bytes. Root's final independent review decides whether the corrections are sufficient.
+Three pre-enqueued independent work calls use the same outward facade. Each performs its actual native MA1 read and retains its original executor promise with the unchanged30s work budget; they cannot start a producer while held. They enter before the nested native cleanup gate because the adapter serializes cleanup. Both lane checks require these three still pending, eliminating accidental method expiry as the explanation. The natural case also observes fail-confirm; explicit caller cancellation is labelled separately and does not claim a separately observed raw native worker return. Before/after snapshots include exact S1 operations, reservations and completions plus full M04 state. The original nested call must be dispatched, drained and uncommitted; admissions/state remain unchanged after join. Cleanup releases and joins all calls in finally. **These native assertions have not executed for this cut.**
 
-## Checks actually run
+## R10/R11 and diagnostic correctness
 
-The named five-file non-native run passed **61/61**, with **0 failures and 0 skips**. Focused TypeScript over sixteen allowed roots reported **0 diagnostics**. Targeted ESLint reported **0 errors and 0 warnings**. Commands/results and source pins are in the manifest. All 49 protected inputs were compared to the dispatch: 47 identical, with only the two allowed authority paths differing; four Phase-A documents and sixteen skip-worktree entries are preserved.
+All four double `set_config` queries now return unique column names. This repairs a concrete incompatibility with unchanged `pg-wire` duplicate-column rejection while preserving statement/call counts. Source tracing correlates the historical18-operation setup stop to the fixture-marker query; the historical AggregateError did not independently reveal the code. New fixture-only diagnostics emit a finite phase and bounded sanitized LocalPgError/SQLSTATE or fixed error kind, with at most eight causes and depth2. Raw exception messages/stacks, SQL and parameters are excluded. Cleanup assertion errors are collected before the receipt so nativePass cannot become true on terminal failure, and errors still propagate.
 
-Earlier WIP checks failed while implementation was incomplete. A broad TypeScript attempt included unfinished annotations and an unrelated missing leaflet dependency; only the final focused program is claimed as passing. An archive/revision test initially expected a prepared result from a protected synthetic qualifier that qualifies revision 1 only. The corrected test uses the actual valid revision-2 unclear-primary escalation plus its linked revision-1 predecessor/archive; the protected qualifier was not changed and no invented authority was added.
+The new SQL candidate's two PL/pgSQL record aliases now have distinct names (`binding_row`, `function_row`), avoiding collision with catalog relation aliases. Protected SQL, decoder, runtime authority contract, `variable_conflict`, budgets and workflow remain unchanged. Installation, runtime catalog assertions and rollback require actual CI.
 
-The actual S0 maximum-cardinality fixture and finite field-count calculation give a conservative native-wire upper bound of **160,772 bytes**, below the unchanged **262,144-byte** limit. This is an offline size proof; the corresponding native admission/reply-size assertions still need CI.
+## Full frozen proof map
 
-## Honest proof limits
+The machine-readable evidence contains all22 U01–U07/N01–N15 rows, exact test/group anchors, assertion descriptions and practical limits. The table below is a navigation map, not a claim that a source test name proves every proposed variant or that native persistence passed.
 
-- No local PostgreSQL, native SQL/socket, full repository `test:core` or build ran. Native syntax, catalog inventory, real transaction behavior, restart/lock/error paths and total native duration remain CI gates.
-- The 240-call terminal regression uses the actual generic queue, standalone MA1 and scope through a handwritten fixed bridge. It is not a direct private `authorityCore`-at-240 test. No production test escape was added.
-- U06/N12 combines separate scope-native-join, pending actual I1-evidence, actual nested S1 finish-ACK-loss and native acquisition/cancellation-drain assertions. There is no dedicated combined native witness holding a nested I1 S1 query beyond the I1 facade race. Root explicitly issued CHANGES REQUIRED R9 for this gap. A bounded actual-composition regression and a controlled real native nested S1 operation beyond the I1 race must be added in the same session. No R9 source edit or new check occurred before the user requested this handoff.
-- Same-Held exclusion is a private source boundary; original standalone overlap tests still pass. Public receipt extraction or a test-only exported permit was not introduced to inspect it.
-- Native proof receipt is absent. A future `M04_NATIVE_RECEIPT` must match the published candidate/rollback hashes and show all assertions plus actual terminal cleanup; a source manifest or green seed CI cannot substitute for it.
+| ID | Requirement | Concrete test files or native groups | Evidence state |
+|---|---|---|---|
+| U01 | Closed contract, all seventeen predicate families, strict shape/numeric/JSON admission | contract.test.ts | Named offline suite PASS; protocol/source limit |
+| U02 | Full identity and support stripping after actual S0 validation | contract.test.ts | Named offline suite PASS; protocol/source limit |
+| U03 | Immutable command and original claim/replay binding | composition.test.ts, contract.test.ts, postgres.test.ts | Named offline suite PASS; protocol/source limit |
+| U04 | Whole-original/whole-batch D01 admission and bounded wire | composition.test.ts, contract.test.ts | Named offline suite PASS; protocol/source limit |
+| U05 | MA1 custody, monotone deadlines and closed private outward surface | authority.test.ts, composition.test.ts | Named offline suite PASS; protocol/source limit |
+| U06 | Nested I1/worker race and actual owned drain/retired lane | composition.test.ts, owned-scope.test.ts | Named offline suite PASS; protocol/source limit |
+| U07 | Uncertain I1 results cannot create known failure | composition.test.ts, owned-scope.test.ts | Named offline suite PASS; protocol/source limit |
+| N01 | Exact fictional install and security/catalog inventory | N01, N01/N14/T02 | Source implemented; current native NOT RUN |
+| N02 | Native canonical/direct-entry identity | N02, N02/U04 | Source implemented; current native NOT RUN |
+| N03 | Durable commands, exact replay and dedup | N03 | Source implemented; current native NOT RUN |
+| N04 | One original START winner, ACK uncertainty and restart | N04/N06, N04/N06/N10, N05/N09, N04/N10/N12 | Source implemented; current native NOT RUN |
+| N05 | All older unknown and finite history/ledger caps | N05/N09, N05/A03, N05 | Source implemented; current native NOT RUN |
+| N06 | Preflight/start contention and independent progress | N04/N06, N04/N06/N10 | Source implemented; current native NOT RUN |
+| N07 | Actual Rule S1/I1/PREPARED/completion/E1 path | N07, N07/R4 | Source implemented; current native NOT RUN |
+| N08 | Sixteen persisted originals and whole-batch admission | N08, N08/U04, N04/N10/N12 | Source implemented; current native NOT RUN |
+| N09 | Fresh-process PREPARED/completed recovery and claim fidelity | N05/N09, N09 | Source implemented; current native NOT RUN |
+| N10 | Known failure versus unknown callback/native outcome | N04/N06/N10, N10/U06, N04/N10/N12, N13, N05/A03 | Source implemented; current native NOT RUN |
+| N11 | Real waits followed by final authority/clock | N11 | Source implemented; current native NOT RUN |
+| N12 | Acquisition/cancellation/ACK and nested executor terminal ownership | N12, N04/N10/N12, N12/U06/R9, N12/R7-03 | Source implemented; current native NOT RUN |
+| N13 | Legacy original preserved but ineligible for M04 preparation | N13 | Source implemented; current native NOT RUN |
+| N14 | Creator defaults, prerequisite drift and actual dependencies | N14, N01/N14/T02 | Source implemented; current native NOT RUN |
+| N15 | Guarded rollback with nonempty and concurrent late history | N15, N15/T02 | Source implemented; current native NOT RUN |
+
+## Preserved implementation boundaries
+
+The dormant factory still exposes only enqueueRule/enqueueDiscovery/workOnce; actual existing S0/S1/I1/M1/E1 composition and original-byte custody remain. Whole-batch D01 admission precedes the first S1 effect. Older unresolved starts remain blockers across identities/reasons/epochs; known failure still requires privately justified original custody and actual child terminality. The new candidate remains seven tables/twenty-nine functions/fourteen guards/seven policies with actual final S1/MA1 proof, fixed dependencies and guarded companion-first rollback. No source change in this continuation alters those runtime designs.
+
+Only four of eighteen sources changed. All49 protected input paths equal d9, including the two previously allowed authority files. Frozen plan and historical V7 evidence remain historical and unmodified. Root owns current-main integration after concurrent PR#1180 and all global continuity documents. No author Git mutation or publication occurred.
+
+## Executed checks and honest limits
+
+The five named nonnative files passed **64/64**,0 failures/cancellations/skips,8102.282633ms. Focused sixteen-root TypeScript5.9.3 has0 diagnostics; ESLint has0 errors/warnings. Node24.22.1 differs from CI22. During authoring, one initial full-factory timeout witness intercepted an original remaining method read because its helper hold was armed before coordinator microtasks settled; the finite test sequencing was corrected. The added raw bridge initially needed its explicitly test-only nominal request type. Final frozen checks passed; neither interim test issue established a production ownership defect.
+
+The historical d9 native run failed before all groups and is separately recorded. Current native SQL syntax/installation, transactions, catalog/ACL assertions, real waits/process restart, full budget and terminal cleanup remain unexecuted until unchanged GitHub CI. No local PostgreSQL, native SQL/socket, full test:core/build or package installation ran.
+
+The240-call terminal test is actual generic queue, standalone MA1 and scope through a handwritten fixed bridge; it is not a private-authorityCore-at240 proof. Source-derived wire bound160772 is below262144, but its native entry/reply assertion is pending. Same-Held exclusion remains a reviewed private source boundary, with no test-only production export. Arbitrary hostile JavaScript is not sandboxed: code-owned SQL-incapable producer/evidence/history ports remain a design premise. Native group N08's uncertainty coverage uses a separate finish-ACK-loss witness; no distinct sixteenth-write-loss execution is claimed.
 
 ## Risk and disposition
 
-No P0/P1 production change is activated by this dormant slice. Missing native proof prevents an acceptance claim. P2 operational limits are deliberate: unknown history and exhausted/retired capacity fail conservatively, rather than retrying a producer with uncertain prior effects. Provider execution, scheduler operation, database installation and public product readiness remain outside this slice. P3 diagnostics/UI refinements are not implemented here.
+P0/P1 prevention (authority, full identity/privacy, original uncertainty, atomicity and terminal lifetime) is implemented but still requires independent exact-source/native acceptance before release. This author delivery activates no production change. P2 conservative unknown/capacity refusal, unbound provider/scheduler operation, public-p95 and inherited dependency/operational gaps remain. P3 inherited presentation limitations stay outside scope.
 
-**STOP FOR USER-REQUESTED HANDOFF. R9 correction and final coverage map remain unfinished; native CI has not run.** The eighteen V7 source files remain unchanged. Resume this same generation for R9, then repeat exact-source review and the existing CI gates. Method remains NOT_APPROVED; #1139 NOT_RELEASE_READY with 17 gaps; #917's specific refused readback is not retried or substituted. #1131, both #1135 holds, #968 and #911/#913 remain. No Ready, merge, activation or automatic following slice.
+**AUTHOR STOP FOR ROOT REVIEW; no Ready/merge/follow-up slice.** Root must decide R9/R10/R11 sufficiency, integrate latest main, publish a new head and independently inspect all new exact-head CI/Preview/Production/thread evidence. Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #917's refused readback is not retried/substituted. #1131, both #1135 holds, #968 and #911/#913 remain. No hosted DB/Auth/RLS/ACL/migration/credentials/Auth logs, provider/source research, scheduler, notification, cost or public activation.

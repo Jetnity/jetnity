@@ -794,15 +794,15 @@ END $$;
 
 CREATE FUNCTION official_v3_jobs_private.assert_catalog_v1() RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; actual jsonb; n integer;
+DECLARE binding_row record; actual jsonb; n integer;
 BEGIN
   SELECT count(*) INTO n FROM official_v3_jobs_private.catalog_binding_v1;
   IF n NOT BETWEEN 11 AND 32 THEN RAISE EXCEPTION 'm04 catalog invariant' USING ERRCODE='P7603'; END IF;
-  FOR x IN SELECT * FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity LIKE 'fn:%' LOOP
+  FOR binding_row IN SELECT * FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity LIKE 'fn:%' LOOP
     SELECT jsonb_build_object('oid',p.oid,'owner',p.proowner,'acl',p.proacl,'config',p.proconfig,'definer',p.prosecdef,
       'volatility',p.provolatile,'parallel',p.proparallel,'strict',p.proisstrict,'defaults',p.pronargdefaults,
-      'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) INTO actual FROM pg_proc p WHERE p.oid=to_regprocedure(substring(x.object_identity,4));
-    IF actual IS DISTINCT FROM x.fingerprint THEN RAISE EXCEPTION 'm04 predecessor drift' USING ERRCODE='P7603'; END IF;
+      'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) INTO actual FROM pg_proc p WHERE p.oid=to_regprocedure(substring(binding_row.object_identity,4));
+    IF actual IS DISTINCT FROM binding_row.fingerprint THEN RAISE EXCEPTION 'm04 predecessor drift' USING ERRCODE='P7603'; END IF;
   END LOOP;
   SELECT jsonb_agg(jsonb_build_object('oid',p.oid,'name',p.proname,'signature',pg_get_function_identity_arguments(p.oid),
     'owner',p.proowner,'acl',p.proacl,'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
@@ -1225,10 +1225,10 @@ BEGIN
 END $created_acl$;
 GRANT USAGE,CREATE ON SCHEMA official_v3_jobs_private TO ot_v3_intake_owner;
 DO $owners$
-DECLARE p record;
+DECLARE function_row record;
 BEGIN
-  FOR p IN SELECT p.oid,p.proname,n.nspname,pg_get_function_identity_arguments(p.oid) args FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api') LOOP
-    EXECUTE format('ALTER FUNCTION %I.%I(%s) OWNER TO %I',p.nspname,p.proname,p.args,CASE WHEN p.proname IN ('s1_read_v1','s1_shape_v1') THEN 'ot_v3_intake_owner' ELSE 'postgres' END);
+  FOR function_row IN SELECT p.oid,p.proname,n.nspname,pg_get_function_identity_arguments(p.oid) args FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api') LOOP
+    EXECUTE format('ALTER FUNCTION %I.%I(%s) OWNER TO %I',function_row.nspname,function_row.proname,function_row.args,CASE WHEN function_row.proname IN ('s1_read_v1','s1_shape_v1') THEN 'ot_v3_intake_owner' ELSE 'postgres' END);
   END LOOP;
 END $owners$;
 REVOKE CREATE ON SCHEMA official_v3_jobs_private FROM ot_v3_intake_owner;

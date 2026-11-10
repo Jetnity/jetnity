@@ -19,7 +19,8 @@ import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { landName } from '@/lib/country/darstellung'
 import type { Trip, TripStage } from '@/types/trips'
-import Flugsuche, { type FlugSpeichern } from './Flugsuche'
+import Flugsuche from './Flugsuche'
+import type { Suchkategorie } from '@/lib/trips/workspace-mode'
 import Hotelsuche from './Hotelsuche'
 import Aktivitaeten from './Aktivitaeten'
 import dynamic from 'next/dynamic'
@@ -34,7 +35,7 @@ const tabs = [
   { key: 'mietwagen', label: 'Mietwagen', icon: CarFront },
   { key: 'verbindungen', label: 'Verbindungen', icon: Route },
 ] as const
-type Kategorie = (typeof tabs)[number]['key']
+
 
 function Etappenkarten({ reise, waehlen }: { reise: Trip; waehlen: (s: TripStage) => void }) {
   if (!reise.stages.length)
@@ -83,29 +84,16 @@ function Etappenkarten({ reise, waehlen }: { reise: Trip; waehlen: (s: TripStage
 
 export default function Organisieren({
   reise,
-  details,
+  tab,
+  kategorieWaehlen,
   partnerAktivitaeten,
-  flugSpeichern,
 }: {
   reise: Trip
-  details: ReactNode
+  tab: Suchkategorie
+  kategorieWaehlen: (kategorie: Suchkategorie) => void
   partnerAktivitaeten?: ReactNode
-  flugSpeichern?: FlugSpeichern
 }) {
   const uid = useId()
-  const [tab, setTab] = useState<Kategorie>(() => {
-    if (typeof window === 'undefined') return 'fluege'
-    const initial = new URLSearchParams(window.location.search).get('kategorie')
-    return tabs.find(t => t.key === initial)?.key ?? 'fluege'
-  })
-  function kategorieWaehlen(k: Kategorie) {
-    setTab(k)
-    const url = new URL(window.location.href)
-    if (url.searchParams.has('kategorie')) {
-      url.searchParams.set('kategorie',k)
-      window.history.replaceState(window.history.state,'',url)
-    }
-  }
   const [hotelStart, setHotelStart] = useState<TripStage | undefined>()
   const [suchId, setSuchId] = useState(0)
   const erste = reise.stages[0]
@@ -126,7 +114,7 @@ export default function Organisieren({
       }}
     />
   )
-  function wechsle(k: Kategorie) {
+  function wechsle(k: Suchkategorie) {
     if (k !== tab) {
       setHotelStart(undefined)
       kategorieWaehlen(k)
@@ -211,7 +199,7 @@ export default function Organisieren({
           ))}
         </div>
         <div id={uid + '-panel'} role="tabpanel" aria-labelledby={uid + '-' + tab}>
-          {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} speichern={flugSpeichern} />}
+          {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {tab === 'unterkunft' && (
             <Hotelsuche
               key={suchId}
@@ -225,7 +213,6 @@ export default function Organisieren({
           {tab === 'verbindungen' && <OmioImReiseplan reise={reise} etappen={etappen}/>}
         </div>
         <footer className="org-footer">
-          {details}
           <a href="/images/organisieren/Bildnachweise.txt" target="_blank" rel="noopener">
             Bildnachweise
           </a>

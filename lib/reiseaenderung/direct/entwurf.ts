@@ -23,6 +23,12 @@ export const manuellSchema = z.object({
   travelWish: text(GRENZEN.reisewunsch, true).optional(),
   startDate: datum.optional(),
   duration: z.number().int().min(1).max(GRENZEN.reisetageJeReise).optional(),
+  neuerStopp: z.object({
+    name: text(GRENZEN.ort),
+    nachEtappeId: id.nullable(),
+    tage: z.number().int().min(1).max(AENDERUNG_GRENZEN.neueEtappenTage),
+    position: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).strict().nullable(),
+  }).strict().optional(),
   stages: z.array(etappe).max(GRENZEN.etappenJeReise).optional(),
 }).strict()
 export type ManuellerEntwurf = z.infer<typeof manuellSchema>
@@ -75,7 +81,17 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
       if (delta) { total += delta; ops.push(operation('etappe_dauer', { etappeId: stage.id, tageDelta: delta })) }
     }
   }
-  const struktur = ops.some(op => op.art === 'etappe_dauer' || op.art === 'etappe_entfernen')
+  if (v.neuerStopp) {
+    const stopp = v.neuerStopp
+    if (vorher.stages.length >= GRENZEN.etappenJeReise || total + stopp.tage > GRENZEN.reisetageJeReise)
+      return fehler('Die neue Etappe überschreitet die maximale Reiselänge.', 'neuerStopp')
+    if (stopp.nachEtappeId && !vorher.stages.some(s => s.id === stopp.nachEtappeId))
+      return fehler('Die gewählte vorherige Etappe gehört nicht mehr zur Reise.', 'neuerStopp')
+    ops.push({ ...operation('etappe_hinzufuegen', { name: stopp.name, tage: stopp.tage, nachEtappeId: stopp.nachEtappeId }),
+      manuellePosition: stopp.position })
+    total += stopp.tage
+  }
+  const struktur = !!v.neuerStopp || ops.some(op => op.art === 'etappe_dauer' || op.art === 'etappe_entfernen')
   if (struktur && v.duration !== undefined && v.duration !== total)
     return fehler(`Die Etappen ergeben ${total} Tage. Bitte Gesamtdauer und Etappen auf denselben Wert bringen.`, 'duration')
   if (!struktur && v.duration !== undefined && v.duration !== vorher.days.length) {

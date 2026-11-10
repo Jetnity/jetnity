@@ -1,65 +1,53 @@
-// app/account/page.tsx
-//
-// Persönliche Account-Übersicht. Reisen kommen ausschliesslich aus
-// `reisenLaden()`, bestätigte Besuche ausschliesslich aus `besucheLaden()`.
-// Empty und Error bleiben je Seite getrennt: ein Ausfall der einen Quelle darf
-// die andere nicht als leer erscheinen lassen. aktiv/kommend klassifiziert der
-// Client am Geräte-Kalendertag, nicht der Server.
-//
-// Die Länderflächen werden hier ausgewählt, nicht im Browser: die vollständige
-// Kartografie bleibt auf dem Server, der Client bekommt nur die Pfade der
-// Länder, die dieses Konto betreffen.
-
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { ChevronRight, Fingerprint, FolderLock, UserRound, UsersRound } from 'lucide-react'
 
-import AccountUebersichtLive from '@/components/account/AccountUebersichtLive'
 import { begruessungName } from '@/lib/account/begruessung'
-import { besucheLaden } from '@/lib/account/besuche-daten'
-import { weltBesuchtAbleiten } from '@/lib/account/welt-ansicht'
-import { weltLaenderLaden } from '@/lib/account/welt-geometrie'
-import { worldMapAbleiten } from '@/lib/account/world-map'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import { reisenLaden } from '@/lib/trips/daten'
 
 export const metadata: Metadata = {
-  title: 'Konto',
-  description: 'Dein persönliches Jetnity-Zuhause.',
+  title: 'Mein Konto',
+  description: 'Persönliche Daten, Reisende und Sicherheit verwalten.',
   robots: { index: false, follow: false },
 }
 
 export const dynamic = 'force-dynamic'
 
+const bereiche = [
+  { href: '/account/travellers', name: 'Reisende verwalten', text: 'Dein Reiseprofil und deine Mitreisenden', icon: UsersRound },
+  { href: '/account/security', name: 'Anmeldung & Sicherheit', text: 'Passwort, Zwei-Faktor-Anmeldung und Sitzung', icon: Fingerprint },
+  { href: '/account/settings#account-datenexport-title', name: 'Daten & Datenschutz', text: 'Kontodaten exportieren und Konto verwalten', icon: FolderLock },
+] as const
+
 export default async function AccountSeite() {
   const supabase = await createServerComponentClient()
-  const { data } = await supabase.auth.getUser()
-  const nutzer = data.user
-  const name = begruessungName({
-    name: typeof nutzer?.user_metadata?.name === 'string' ? nutzer.user_metadata.name : null,
-    email: nutzer?.email ?? null,
-  })
+  const { data: { user } } = await supabase.auth.getUser()
+  const profilname = user?.user_metadata?.name ?? user?.user_metadata?.full_name
+  const name = typeof profilname === 'string' ? profilname.trim() : ''
 
-  const [reisenLesung, besucheLesung] = await Promise.all([reisenLaden(), besucheLaden()])
-  const reisen = reisenLesung.zeilen ?? []
-  const besucht = weltBesuchtAbleiten({
-    besuche: besucheLesung.zeilen ?? [],
-    problem: besucheLesung.problem,
-  })
-  const laender = weltLaenderLaden({
-    besucht: besucht.laenderCodes,
-    geplant: worldMapAbleiten({ problem: reisenLesung.problem, reisen }).laenderCodes,
-  })
+  const initiale = begruessungName({ name, email: user?.email })?.slice(0, 1).toLocaleUpperCase('de-CH')
 
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-6xl">
-        <AccountUebersichtLive
-          name={name}
-          problem={reisenLesung.problem}
-          reisen={reisen}
-          besucht={besucht}
-          laender={laender}
-        />
-      </div>
+    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-8 sm:py-14">
+      <h1 className="mb-6 text-3xl font-semibold tracking-[-0.045em] text-brand-800 sm:text-5xl">Mein Konto</h1>
+      <section aria-label="Kontoprofil" className="flex min-w-0 items-center gap-4 rounded-t-[26px] bg-brand-800 px-5 py-7 text-white sm:gap-6 sm:px-8">
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/25 bg-white/10 text-2xl font-semibold">
+          {initiale ? initiale : <UserRound aria-hidden="true" />}
+        </span>
+        <div className="min-w-0">
+          {name ? <h2 className="break-words text-2xl font-semibold tracking-tight">{name}</h2> : null}
+          {user?.email ? <p className="break-all text-sm text-white/90">{user.email}</p> : null}
+        </div>
+      </section>
+      <nav aria-label="Konto verwalten" className="divide-y divide-line-100 overflow-hidden rounded-b-[26px] border border-t-0 border-line-200 bg-white">
+        {bereiche.map(({ href, name: titel, text, icon: Icon }) => (
+          <Link key={href} href={href} className="group flex min-h-20 items-center gap-4 px-5 py-5 outline-offset-[-3px] hover:bg-surface-50 sm:px-8">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-100 text-brand-800"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1"><strong className="block text-base text-brand-800">{titel}</strong><span className="mt-1 block text-sm text-ink-700">{text}</span></span>
+            <ChevronRight className="h-5 w-5 shrink-0 text-ink-600" aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
     </main>
   )
 }

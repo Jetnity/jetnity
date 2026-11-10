@@ -1,3 +1,4 @@
+import { atlasServerActions } from '@/scripts/trip-plan-browser/server-actions'
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { createServer, type Server } from 'node:http'
@@ -98,7 +99,7 @@ async function bundeln(): Promise<string> {
     define: { 'process.env.NODE_ENV': '"production"' },
     banner: { js: 'var __name=(target)=>target;globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};globalThis.global=globalThis;' },
     alias: { '@': process.cwd() },
-    plugins: [
+    plugins: [atlasServerActions,
       {
         name: 'next-shims',
         setup(build) {
@@ -262,7 +263,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
   before(async () => {
     const css = await projektCss()
     const js = await bundeln()
-    const dokument = html(css, js)
+    const dokument = html(css+'\n'+readFileSync('components/trips/reiseplan/etappen.css','utf8'), js)
     server = createServer((req, res) => {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' })
       res.end(dokument)
@@ -354,7 +355,13 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
       const { page, fehler } = await oeffnen(viewport.width, viewport.height)
       await page.getByRole('button', { name: 'Reiseplan', exact: true }).click()
       await page.waitForFunction(() => document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') === 'plan')
-      await page.waitForFunction(() => (document.body.textContent || '').includes('Synthetische Planzeile 100'))
+      const atlas = page.locator('[data-trip-atlas]')
+      const etappenKnoepfe = atlas.locator('[data-u1c-lauf]')
+      const laufZahl = await etappenKnoepfe.count()
+      assert.equal(laufZahl, 5, viewport.name+' chronologische Abschnitte')
+      await atlas.locator('[data-u1c-lauf][data-u1c-tage~="day-1"]').click()
+      await atlas.locator('.et-tabs').getByRole('button', {name:'Tagesplan'}).click()
+      await atlas.getByText(/Synthetische Planzeile 100/).first().waitFor()
       const vorher = await geometrie(page)
       assert.equal(vorher.scrollHeight > viewport.height + 900, true, JSON.stringify(knapp(vorher)))
       const punkte: Record<string, unknown> = {}
@@ -372,10 +379,9 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
         assert.equal((stand.ansichtHeight ?? 999) < 420, true, JSON.stringify(knapp(stand)))
         assert.equal(stand.ancestorOverflow.length, 0, stand.ancestorOverflow.join(','))
         assert.equal(stand.suchfelder, 0)
-        // The long scroll fixture is the day-1 note, which is the default detail.
-        // Compact route renders that run's day button, not all 22 at once.
-        assert.equal(stand.tage, 1, `${viewport.name} sichtbarer Standardlauf`)
-        assert.equal(await page.locator('[data-u1c-lauf]').count(), 5, `${viewport.name} Läufe`)
+        // Day 1 is an individual travel day in the fixture.
+        assert.equal(stand.tage, 1, viewport.name+' Tagesauswahl')
+        assert.equal(await atlas.locator('.et-days [aria-current="date"]').getAttribute('data-timeline-tag'),'day-1')
         if (y === 0) {
           assert.equal(stand.navTop > stand.headerBottom, true, JSON.stringify(knapp(stand)))
         } else {
@@ -387,11 +393,10 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
       }
       await scrollZu(page, 0)
       const erreicht = new Set<string>()
-      const laufZahl = await page.locator('[data-u1c-lauf]').count()
       for (let index = 0; index < laufZahl; index += 1) {
-        const lauf = page.locator('[data-u1c-lauf]').nth(index)
-        if (!(await lauf.isVisible())) await page.locator('[data-u1b-zur-route]').click()
-        await lauf.click()
+        await atlas.getByRole('button',{name:'Alle Etappen',exact:true}).click()
+        await etappenKnoepfe.nth(index).click()
+        await atlas.locator('.et-tabs').getByRole('button',{name:'Tagesplan'}).click()
         const ids = await page.locator('[data-timeline-tag]').evaluateAll((knoten) => knoten.map((el) => el.getAttribute('data-timeline-tag') ?? ''))
         for (const id of ids) if (id) erreicht.add(id)
       }
@@ -504,8 +509,12 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     }
     await bild(page, 'bottom-390-dejavu')
 
+    // The named font is optional on macOS. Reserve enough real inset to make
+    // at least one measured label too wide for its cell under the current font.
+    const longest = Math.max(...weit.knoepfe.map(button => button.textRight - button.textLeft))
+    const inset = Math.ceil((390 - 4 * (longest - 8)) / 2)
     await page.addStyleTag({
-      content: '[data-shell-nav="bottom"] { padding-left: 24px !important; padding-right: 24px !important; }',
+      content: `[data-shell-nav="bottom"] { padding-inline: ${inset}px !important; }`,
     })
     await page.setViewportSize({ width: 391, height: 844 })
     await page.setViewportSize({ width: 390, height: 844 })

@@ -14,8 +14,6 @@
 // Angabe könnte Next die Antwort eines Kontos an das nächste ausliefern.
 
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
 
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
@@ -25,7 +23,6 @@ import {
   MEINE_REISEN_INNEN,
   MEINE_REISEN_KOPF,
   MEINE_REISEN_LEAD,
-  MEINE_REISEN_NEU,
   MEINE_REISEN_TITEL,
 } from '@/lib/trips/my-trips-premium-hub-ux-1'
 import type { SammlungSuchparameter } from '@/lib/trips/reisen-sammlung-abfrage'
@@ -63,20 +60,9 @@ export default async function ReisenSeite({
         <div className={MEINE_REISEN_INNEN}>
           <div className={MEINE_REISEN_KOPF}>
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Jetnity</p>
               <h1 className={MEINE_REISEN_TITEL}>Meine Reisen</h1>
-              <p className={MEINE_REISEN_LEAD}>
-                {angemeldet
-                  ? 'Deine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.'
-                  : 'Ohne Konto bleibt ein Reiseentwurf privat in diesem Browser. Mit einem Konto werden deine Reisen dauerhaft gespeichert.'}
-              </p>
+              {angemeldet ? null : <p className={MEINE_REISEN_LEAD}>Deine Gastreise ist in diesem Browser gespeichert. Melde dich an, um sie auf anderen Geräten zu öffnen.</p>}
             </div>
-            {angemeldet ? (
-              <Link href="/planen" className={MEINE_REISEN_NEU}>
-                <Plus className="h-4 w-4" />
-                Neue Reise
-              </Link>
-            ) : null}
           </div>
 
           {angemeldet ? <KontoReisen parameter={parameter} /> : <GastReisen />}

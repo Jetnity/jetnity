@@ -193,7 +193,9 @@ let op = 1000
 const stageSQL = 'SELECT official_v3_method_api.stage_draft_v1($1::text,$2::text,$3::integer,$4::text,$5::text,NULLIF($6::text,\'\')::integer) AS result'
 const approveSQL = `SELECT official_v3_method_api.approve_v1($1::text,$2::text,$3::integer,$4::text,$5::text,
  NULLIF($6::text,'')::integer,NULLIF($7::text,''),NULLIF($8::text,''),$9::integer,NULLIF($10::text,''),$11::text,NULLIF($12::text,'')) AS result`
-async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalProofCluster, install = true, approve = true) {
+async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalProofCluster, install = true, approve = true,
+  phase: (step: string) => void = () => {}) {
+  phase('fixture_acquire')
   const cluster = allocate(), all = new Set<LocalPgConnection>()
   let maxFixtureConnections = 0
   async function connect(login = cluster.user, role?: string) {
@@ -207,13 +209,19 @@ async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalPro
     return { connection, identity: { pid: id.pid!, birth: id.birth! } }
   }
   const { connection: owner } = await connect(), { connection: observer } = await connect()
+  phase('fixture_config')
   await owner.query('SET search_path=pg_catalog,pg_temp')
   await observer.query("SET statement_timeout='1500'; SET lock_timeout='1500'")
+  phase('auth_fixture')
   await installMa1AuthFixture(owner)
-  await owner.query("SELECT set_config('jetnity.ma1_fixture','jetnity-ma1-disposable-native-v1',false),set_config('jetnity.s1_owned_fixture','s1_disposable_native_test_v1',false)")
-  await owner.query(ma1Candidate); await owner.query(s1Candidate)
+  phase('fixture_markers')
+  await owner.query("SELECT set_config('jetnity.ma1_fixture','jetnity-ma1-disposable-native-v1',false) AS ma1_fixture,set_config('jetnity.s1_owned_fixture','s1_disposable_native_test_v1',false) AS s1_fixture")
+  phase('method_candidate'); await owner.query(ma1Candidate)
+  phase('intake_candidate'); await owner.query(s1Candidate)
+  phase('predecessor_catalog')
   const predecessorCatalog = await catalog(owner)
-  if (install) { await owner.query(candidate); unchangedPredecessors(predecessorCatalog, await catalog(owner)) }
+  if (install) { phase('jobs_candidate'); await owner.query(candidate); phase('predecessor_unchanged'); unchangedPredecessors(predecessorCatalog, await catalog(owner)) }
+  phase('human_fixture')
   const human = (await connect(MA1_AUTH.humanLogin, 'authenticated')).connection
   await human.query("SELECT set_config('request.jwt.claims',$1::text,false)", [pgText(JSON.stringify(ma1Claims()))])
   async function head() {
@@ -234,7 +242,9 @@ async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalPro
       text([ma1Operation(++op), binding.methodId, binding.revision, binding.methodDigest, binding.packageDigest, h.epoch]))).status, 'recorded')
   }
   if (approve) {
+    phase('method_stage')
     assert.equal(result(await human.query(stageSQL, text([ma1Operation(++op), binding.methodId, binding.revision, binding.methodDigest, binding.packageDigest, null]))).status, 'recorded')
+    phase('method_approve')
     await approveCurrent()
   }
   async function grantRunners() {
@@ -427,6 +437,20 @@ async function blocked(f: Fixture, lifetime: OwnedTestLifetime, waiter: Identity
   }, 'actual matching PID/birth/holder/relation/native wait absent')
 }
 
+// Fixture-only diagnostics: closed error categories and bounded SQLSTATE/wire
+// codes, never raw messages, stacks, SQL, parameter values or original bytes.
+function nativeFailure(error: unknown, depth = 0): Readonly<{ kind: string; code: string; causes?: readonly unknown[] }> {
+  if (error instanceof LocalPgError) {
+    const wireCodes = ['unsafe_socket', 'connection_failed', 'connection_closed', 'response_bound', 'authentication_forbidden',
+      'duplicate_column', 'row_bound', 'column_count', 'commit_deadline_not_armed', 'commit_bound_elapsed', 'connection_state', 'parameter_bound', 'query_failed']
+    return { kind: 'postgres', code: /^[0-9A-Z]{5}$/.test(error.code) || wireCodes.includes(error.code) ? error.code : 'unclassified' }
+  }
+  if (error instanceof assert.AssertionError) return { kind: 'assertion', code: 'assertion_failed' }
+  if (error instanceof AggregateError) return { kind: 'aggregate', code: 'multiple_failures',
+    causes: depth < 2 ? error.errors.slice(0, 8).map(value => nativeFailure(value, depth + 1)) : [] }
+  return { kind: 'fixture', code: 'unclassified_failure' }
+}
+
 test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership', { timeout: 300000 }, async t => {
   const effectAbort = new AbortController(), parent = AbortSignal.any([t.signal, effectAbort.signal])
   const lifetime = new OwnedTestLifetime(parent), started = performance.now(), children = new Set<ChildProcess>()
@@ -436,6 +460,9 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   lifetime.installConnectOwnership()
   const cleanup: (() => Promise<void> | void)[] = []
   const proofs: { id: string; milliseconds: number }[] = []
+  const nestedRaceWitnesses: Readonly<Record<string, unknown>>[] = []
+  let phase = 'initial_setup', primaryPhase: string | null = null
+  const setPhase = (value: string) => { assert.match(value, /^[A-Za-z0-9_:/-]{1,80}$/); phase = value }
   // T03: test fault families may coexist with the idle base family. Count
   // their extra observers explicitly and enforce the SAME aggregate work
   // lane limits across every instance; never multiply the runtime family cap.
@@ -465,6 +492,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   let minimumInheritedConnections = 0, inheritedCommitGuardPairs = 0
   const backendInventory = (observer: LocalPgConnection) => observer.query("SELECT pid::text,backend_start::text AS birth FROM pg_catalog.pg_stat_activity WHERE backend_type='client backend' AND datname=current_database() ORDER BY pid")
   async function proof(id: string, name: string, run: () => Promise<void>) {
+    setPhase('proof_' + (proofs.length + 1) + ':' + id)
     lifetime.check(); assert.ok(performance.now() - started < 240000)
     const at = performance.now()
     const before = activeObserver ? await backendInventory(activeObserver) : undefined
@@ -481,9 +509,11 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   }
   let primary: unknown, cleanupReceipt: Awaited<ReturnType<OwnedTestLifetime['dispose']>> | undefined
   try {
-    const f = await makeFixture(lifetime, allocate)
+    const f = await makeFixture(lifetime, allocate, true, true, setPhase)
     cleanup.push(() => f.close())
+    setPhase('grant_runners')
     await f.grantRunners()
+    setPhase('native_executors')
     const native = await ownedNative(f.cluster), underlyingMethod = await createMa1NativeExecutor(f.cluster, lifetime)
     methodObservers++
     let methodClosed = false
@@ -1047,6 +1077,119 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         } finally { await fault.dispose() }
       }
     })
+    await proof('N12/U06/R9', 'actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races', async () => {
+      for (const [index, boundary] of ['i1_timeout', 'worker_caller_abort'].entries()) {
+        const input = m04Fixture('native-r9-' + boundary, { context: contextFor(60 + index * 4) })
+        const helpers = Array.from({ length: 3 }, (_, n) => m04Fixture('native-r9-helper-' + boundary + '-' + n,
+          { context: contextFor(61 + index * 4 + n) }))
+        const holder = await f.connect(), entered = latch(lifetime), releaseDrain = latch(lifetime), releaseMethods = latch(lifetime)
+        const caller = new AbortController(), pendingCalls: Promise<unknown>[] = []
+        let target: Identity | undefined, control: Identity | undefined, nestedSignal: AbortSignal | undefined, heldCallId = 0
+        let drainEntered = false, failConfirmObserved = false, terminalEffects = 0, holdMethods = false, heldMethods = 0, completedMethods = 0
+        const fault = await ownedNative(f.cluster, {
+          async beforeQuery(call, signal) {
+            if (call.kind !== 'intake' || call.operation !== '2') return
+            assert.equal(heldCallId, 0, 'one exact nested reserve, not capture or pre-I1 read')
+            await holder.connection.query('BEGIN')
+            const locked = await holder.connection.query("SELECT operation_id FROM official_v3_intake_private.operations_v1 WHERE binding->>'jobId'=$1 FOR UPDATE", text([input.ruleInput.jobId]))
+            assert.equal(locked.length, 1, 'actual earlier capture created the original row')
+            target = call.targetId; control = call.controlId; nestedSignal = signal; heldCallId = call.id; entered.release()
+          },
+          async beforeDrain(call) {
+            if (call.id !== heldCallId) return
+            assert.equal(call.kind, 'intake'); assert.equal(call.operation, '2')
+            drainEntered = true; await releaseDrain.promise
+          },
+          releaseGates() { releaseDrain.release(); releaseMethods.release() },
+        })
+        const api = createV3PostgresDurableJobs(config(input, fault, method, {
+          methodExecutor: { async readCurrent(request, signal) {
+            const actual = await method.executor.readCurrent(request, signal)
+            if (!holdMethods) return actual
+            // The actual MA1 native read has terminated; its caller's original
+            // executor promise deliberately remains owned by the outer scope.
+            assert.equal(signal.aborted, false); heldMethods++
+            try { await releaseMethods.promise; return { status: 'unavailable' } }
+            finally { completedMethods++ }
+          } },
+          jobsExecutor: { async executeFixed(request, signal) {
+            const q = JSON.parse(request.operationText)
+            if (q.body.command?.input?.jobKey === input.identity.jobKey) {
+              if (q.operation === 'queue_confirm' && q.body.command.action === 'fail') failConfirmObserved = true
+              if (q.operation === 'queue_cas' && ['fail', 'complete'].includes(q.body.command.action)) terminalEffects++
+            }
+            return fault.jobs.executeFixed(request, signal)
+          } },
+        }))
+        const s1State = () => f.owner.query(`SELECT to_jsonb(o)::text AS original,
+          (SELECT jsonb_agg(to_jsonb(r) ORDER BY r.generation)::text FROM official_v3_intake_private.reservations_v1 r WHERE r.operation_id=o.operation_id) AS reservations,
+          (SELECT jsonb_agg(to_jsonb(c))::text FROM official_v3_intake_private.completions_v1 c WHERE c.operation_id=o.operation_id) AS completions
+          FROM official_v3_intake_private.operations_v1 o WHERE o.binding->>'jobId'=$1`, text([input.ruleInput.jobId]))
+        try {
+          assert.equal((await api.enqueueRule(input.ruleInput)).status, 'confirmed')
+          for (const helper of helpers) assert.equal((await api.enqueueRule(helper.ruleInput)).status, 'confirmed')
+          const work = observe(lifetime.track(api.workOnce(input.claim(), caller.signal))); pendingCalls.push(work.joined)
+          await entered.promise; assert.ok(target && control && nestedSignal)
+          await blocked(f, lifetime, target, holder.identity, 'official_v3_intake_private.operations_v1', () => !work.terminal())
+          const before = await f.state(input.identity.jobKey), beforeS1 = await s1State()
+          const state = JSON.parse(before[0]!.state!)
+          assert.equal(state.subjects[0].current_job.state, 'leased'); assert.equal(state.commands.length, 2)
+          assert.equal(state.starts.length, 1); assert.equal(state.results, null); assert.equal(state.dispositions, null)
+          // Start these before the S1 cleanup gate: that adapter serializes
+          // drains. Each helper uses the unchanged 30s work budget and cannot
+          // reach a producer while its actual method executor promise is held.
+          holdMethods = true
+          const other = helpers.map(helper => observe(lifetime.track(api.workOnce(helper.claim()))))
+          pendingCalls.push(...other.map(call => call.joined))
+          await until(lifetime, async () => heldMethods === 3, 'three independent same-facade method calls did not enter')
+          holdMethods = false
+          if (boundary === 'worker_caller_abort') caller.abort()
+          // Caller cancellation exercises the unchanged worker/integration
+          // race path. It does not measure their raw return or a 30s expiry.
+          await until(lifetime, async () => !!nestedSignal?.aborted && drainEntered,
+            'actual nested reserve did not receive abort and retain terminal drain', 6500)
+          if (boundary === 'i1_timeout') await until(lifetime, async () => failConfirmObserved,
+            'actual I1 facade did not return into the worker failure-confirm path', 2000)
+          // beforeDrain runs after target/control close. The earlier real SQL
+          // wait is proven above; here the context/promise (not a live backend)
+          // is retained. Prove the distinct backend absence explicitly.
+          for (const id of [target, control]) await until(lifetime, async () =>
+            (await f.observer.query('SELECT count(*)::text AS n FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer AND backend_start=$2::timestamptz', text([id.pid, id.birth])))[0]?.n === '0',
+          'closed nested target/control backend still present')
+          assert.equal(work.terminal(), false); assert.equal(fault.snapshot().intake, 1)
+          assert.equal(completedMethods, 0); assert.ok(other.every(call => !call.terminal()))
+          const beforeDrainSlot = await api.workOnce(null)
+          assert.equal(beforeDrainSlot.status, 'unavailable', 'all four outer slots remain owned until the original native drain')
+          assert.equal(terminalEffects, 0); assert.deepEqual(await f.state(input.identity.jobKey), before)
+          assert.deepEqual(await s1State(), beforeS1)
+          releaseDrain.release()
+          const done = await work.joined
+          assert.equal(done.error, undefined); assert.notEqual(done.value?.status, 'processed')
+          assert.equal(completedMethods, 0); assert.ok(other.every(call => !call.terminal()))
+          const afterDrainSlot = await api.workOnce(null)
+          assert.equal(afterDrainSlot.status, 'invalid', 'only the original drained invocation released its outer lane')
+          const originalCall = fault.evidence.calls.find(call => call.id === heldCallId)
+          assert.ok(originalCall?.drained && originalCall.dispatched && !originalCall.committed)
+          assert.equal(fault.snapshot().intake, 0); assert.equal(terminalEffects, 0)
+          assert.deepEqual(await f.state(input.identity.jobKey), before); assert.deepEqual(await s1State(), beforeS1)
+          const admissions = fault.evidence.admitted
+          await lifetime.wait(5) // late-work check, not the native wait/drain witness
+          assert.equal(fault.evidence.admitted, admissions); assert.deepEqual(await s1State(), beforeS1)
+          assert.equal(input.producerCalls(), 1)
+          nestedRaceWitnesses.push({ boundary, operation: 'reserve_v1', target, control, holder: holder.identity,
+            realSqlWaitObserved: true, abortDelivered: nestedSignal.aborted, retainedExecutorDrained: originalCall.drained,
+            backendAbsentWhileExecutorHeld: true, failConfirmObserved, terminalEffects,
+            beforeDrainSlot: beforeDrainSlot.status, afterDrainSlot: afterDrainSlot.status, heldMethods, completedMethods,
+            outwardStatus: done.value?.status, nativeAdmissionsAfterDrain: admissions })
+        } finally {
+          holdMethods = false; caller.abort(); releaseDrain.release(); releaseMethods.release()
+          try { await holder.connection.query('ROLLBACK') }
+          finally { await Promise.allSettled(pendingCalls); holder.connection.close(); await fault.dispose() }
+        }
+        assert.equal(completedMethods, heldMethods); assert.equal(fault.snapshot().contexts, 0)
+        assert.equal(fault.evidence.admitted, fault.evidence.drained)
+      }
+    })
     await proof('N12/R7-03', 'intentional child crash retains a thrown actual native cancellation cleanup failure', async () => {
       const acquired = latch(lifetime), release = latch(lifetime)
       let injected = false
@@ -1349,7 +1492,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       writer.connection.close(); destroyer.connection.close()
     })
     assert.ok(performance.now() - started < 240000, 'effect/test work stayed inside frozen 240s')
-  } catch (error) { primary = error }
+  } catch (error) { primary = error; primaryPhase = phase }
   finally {
     clearTimeout(timer)
     const cleanupStarted = performance.now(), errors: unknown[] = []
@@ -1357,21 +1500,26 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
     for (const finalize of [...unfinishedChildren]) { try { await finalize() } catch (error) { errors.push(error) } }
     for (const dispose of cleanup.reverse()) { try { await dispose() } catch (error) { errors.push(error) } }
     try { cleanupReceipt = await lifetime.dispose() } catch (error) { errors.push(error) }
-    assert.ok(performance.now() - cleanupStarted <= 60000, 'whole cleanup includes synchronous cluster stop and actual child/native joins')
-    assert.equal(children.size, 0, 'every actual child close observed')
-    assert.deepEqual(familyCalls, { jobs: 0, intake: 0, method: 0 })
-    assert.equal(familyObservers, 0); assert.equal(methodObservers, 0)
-    if (cleanupReceipt) {
-      assert.equal(cleanupReceipt.pending, 0); assert.equal(cleanupReceipt.started, cleanupReceipt.settled)
-      assert.equal(cleanupReceipt.connections, cleanupReceipt.closed); assert.equal(cleanupReceipt.stoppedClusters, clusters)
-      assert.ok(cleanupReceipt.connections >= minimumInheritedConnections, 'actual inherited guard/control acquisitions remain in owned lifetime receipt')
-    }
+    try {
+      assert.ok(performance.now() - cleanupStarted <= 60000, 'whole cleanup includes synchronous cluster stop and actual child/native joins')
+      assert.equal(children.size, 0, 'every actual child close observed')
+      assert.deepEqual(familyCalls, { jobs: 0, intake: 0, method: 0 })
+      assert.equal(familyObservers, 0); assert.equal(methodObservers, 0)
+      if (cleanupReceipt) {
+        assert.equal(cleanupReceipt.pending, 0); assert.equal(cleanupReceipt.started, cleanupReceipt.settled)
+        assert.equal(cleanupReceipt.connections, cleanupReceipt.closed); assert.equal(cleanupReceipt.stoppedClusters, clusters)
+        assert.ok(cleanupReceipt.connections >= minimumInheritedConnections, 'actual inherited guard/control acquisitions remain in owned lifetime receipt')
+      }
+    } catch (error) { errors.push(error) }
     t.diagnostic('M04_NATIVE_RECEIPT ' + JSON.stringify({ schema: 'jetnity.m04.native.v1', candidateSha256: digest(candidate), rollbackSha256: digest(rollback),
       executed: true, effectAndCleanupMilliseconds: Math.ceil(performance.now() - started), cleanupMilliseconds: Math.ceil(performance.now() - cleanupStarted),
       clusters, childProcesses: children.size, lifetime: cleanupReceipt ?? null, groups: proofs,
+      nestedRaceWitnesses,
       connections: { aggregateWorkConnectionBound: 40, maximumJobs: familyMaximum.jobs, maximumIntake: familyMaximum.intake,
         maximumMethod: familyMaximum.method, m04ObserverLimit: 2, maximumM04Observers: maximumFamilyObservers,
         methodObserverLimit: 1, fixturePerClusterLimit: 16, inheritedCommitGuardPairs, minimumOwned: minimumInheritedConnections },
+      failure: primary ? { phase: primaryPhase, error: nativeFailure(primary) } : null,
+      cleanupFailures: errors.slice(0, 8).map(error => nativeFailure(error)), cleanupFailureCount: errors.length,
       nativePass: !primary && errors.length === 0 }))
     if (primary || errors.length) throw new AggregateError([...(primary ? [primary] : []), ...errors], 'M04 native proof or terminal cleanup failed')
   }

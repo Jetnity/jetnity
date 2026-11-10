@@ -1,18 +1,41 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "SAVED_V7_INTERRUPTION_CHECKPOINT_R9_CHANGES_REQUIRED_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T00:34:19.223504+00:00",
-  "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1",
-  "session": "/root/m04_durable_jobs_writer",
+  "status": "GENERATION2_AUTHOR_DELIVERY_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T01:50:52.386483+00:00",
+  "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
+  "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537",
+  "dispatchHead": "d9d62c690658444e06d04becf93f21ffb9112165",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057",
+  "originalPhaseBDispatch": {
+    "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
+    "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
+  },
+  "continuation": {
+    "task": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V2.md",
+    "originalAuthor": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1",
+    "originalSession": "/root/m04_durable_jobs_writer",
+    "originalSessionAvailable": false,
+    "sameOriginalSessionClaimed": false,
+    "implementationEnvironment": "Codex fallback; no Cursor session claim",
+    "soleWriter": true,
+    "sourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "sourceFilesChanged": [
+      "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    ],
+    "sourceFilesUnchanged": 14,
+    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "mainIntegration": "Root owns concurrent PR1180/main integration and ROADMAP reconciliation; this author cut is relative to d9 and is not a claim that current main is integrated."
+  },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
-      "bytes": 17362,
-      "sha256": "073219ff29e73bcf694f01de304ad0315152132aa00b19b900a097362f210ccc"
+      "bytes": 27466,
+      "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
@@ -81,18 +104,18 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 135856,
-      "sha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0"
+      "bytes": 135962,
+      "sha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
-      "bytes": 13278,
-      "sha256": "b5c91faedd6ffb2da258d0614d29e7193fc538523b9176a51f18460f788ecdae"
+      "bytes": 13389,
+      "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 125663,
-      "sha256": "a69f41cf8126c419c60ee174f746588e8841884e40362de79f3ce871bd0eb5a6"
+      "bytes": 136951,
+      "sha256": "670f4a62b0f7b8964de8f2df4fd3ef99044067c9c92484e1d7c1fd53374deaac"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -100,311 +123,324 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+  "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
     "checked": 49,
-    "identical": 47,
-    "authorizedChanged": [
-      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "lib/readiness/official-truth-product-v3/method/authority.test.ts"
-    ],
+    "identical": 49,
     "files": [
       {
         "path": "AGENTS.md",
-        "dispatchSha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
+        "baselineSha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
         "sha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
         "identicalToDispatch": true
       },
       {
         "path": "JETNITY_START_HERE.md",
-        "dispatchSha256": "87679df6ab04a6c3dac6cc7b61a87e10d19898bcd53998389399084b1bb3a9fa",
-        "sha256": "87679df6ab04a6c3dac6cc7b61a87e10d19898bcd53998389399084b1bb3a9fa",
+        "baselineSha256": "a3c17cf0be10fb2db0f25bda8227509847b54a50c5c9e60c22f331120bdfe3a7",
+        "sha256": "a3c17cf0be10fb2db0f25bda8227509847b54a50c5c9e60c22f331120bdfe3a7",
         "identicalToDispatch": true
       },
       {
         "path": "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
-        "dispatchSha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
+        "baselineSha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
         "sha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
         "identicalToDispatch": true
       },
       {
         "path": "docs/ACTIVE_WORK_STATUS.md",
-        "dispatchSha256": "24008da660411e332c6099e5d84aa4692cbce9e611afd6c1a18a56c20f4ad6d9",
-        "sha256": "24008da660411e332c6099e5d84aa4692cbce9e611afd6c1a18a56c20f4ad6d9",
+        "baselineSha256": "a25f8cffce4c2784b014fce2ddfafa439792fb7198bbb8a7b59461e07f4110e3",
+        "sha256": "a25f8cffce4c2784b014fce2ddfafa439792fb7198bbb8a7b59461e07f4110e3",
         "identicalToDispatch": true
       },
       {
         "path": ".jetnity/operating-mode.json",
-        "dispatchSha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "baselineSha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
         "sha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_TASK_V1.md",
-        "dispatchSha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
+        "baselineSha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
         "sha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_HANDOFF_V1.md",
-        "dispatchSha256": "ae1aa207e53f792742ea5b58865cd17dc46a9a49c835cdbcfa36f04388872270",
-        "sha256": "ae1aa207e53f792742ea5b58865cd17dc46a9a49c835cdbcfa36f04388872270",
+        "baselineSha256": "52886bb66dc9e85fd9f8a297e8cfa854add6954e3f56b0de6759d78cd4c6c8b5",
+        "sha256": "52886bb66dc9e85fd9f8a297e8cfa854add6954e3f56b0de6759d78cd4c6c8b5",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_INPUT_INDEX_V1.md",
-        "dispatchSha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
+        "baselineSha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
         "sha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_OPEN_POINTS_V1.md",
-        "dispatchSha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
+        "baselineSha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
         "sha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_ADVISORY_V1.md",
-        "dispatchSha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
+        "baselineSha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
         "sha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_SOURCE_PINS_V1.json",
-        "dispatchSha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
+        "baselineSha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
         "sha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_SOURCE_PINS_V1.json",
-        "dispatchSha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
+        "baselineSha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
         "sha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
         "identicalToDispatch": true
       },
       {
         "path": "docs/official-truth-product-v3/MI1_POST_MERGE_CLOSURE_V1.md",
-        "dispatchSha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
+        "baselineSha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
         "sha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/contract.ts",
-        "dispatchSha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "baselineSha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
         "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
-        "dispatchSha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "baselineSha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
         "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/rule-claims.ts",
-        "dispatchSha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "baselineSha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
         "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-research-request.ts",
-        "dispatchSha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
+        "baselineSha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
         "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/domain.ts",
-        "dispatchSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "baselineSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
         "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
         "identicalToDispatch": true
       },
       {
         "path": "lib/country/katalog.ts",
-        "dispatchSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "baselineSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
         "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
         "identicalToDispatch": true
       },
       {
         "path": "types/trips.ts",
-        "dispatchSha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "baselineSha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
         "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/monitor/internal.ts",
-        "dispatchSha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
+        "baselineSha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
         "sha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
-        "dispatchSha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+        "baselineSha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
         "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
-        "dispatchSha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+        "baselineSha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
         "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
-        "dispatchSha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+        "baselineSha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
         "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
-        "dispatchSha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+        "baselineSha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
         "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
-        "dispatchSha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "baselineSha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
         "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
-        "dispatchSha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "baselineSha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
         "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
-        "dispatchSha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "baselineSha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
         "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
-        "dispatchSha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+        "baselineSha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
         "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-        "dispatchSha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+        "baselineSha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
         "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
-        "identicalToDispatch": false
+        "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
-        "dispatchSha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+        "baselineSha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
         "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
-        "identicalToDispatch": false
+        "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
-        "dispatchSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "baselineSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
         "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
-        "dispatchSha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "baselineSha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
         "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-        "dispatchSha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "baselineSha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
         "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
-        "dispatchSha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "baselineSha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
         "sha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
-        "dispatchSha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "baselineSha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
         "sha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
-        "dispatchSha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+        "baselineSha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
         "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
-        "dispatchSha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "baselineSha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
         "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
-        "dispatchSha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+        "baselineSha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
         "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
-        "dispatchSha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "baselineSha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
         "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
-        "dispatchSha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "baselineSha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
         "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
-        "dispatchSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+        "baselineSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
         "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
-        "dispatchSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+        "baselineSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
         "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
-        "dispatchSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+        "baselineSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
         "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
-        "dispatchSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+        "baselineSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
         "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
         "identicalToDispatch": true
       },
       {
         "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
-        "dispatchSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "baselineSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
         "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
         "identicalToDispatch": true
       },
       {
         "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
-        "dispatchSha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+        "baselineSha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
         "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
         "identicalToDispatch": true
       },
       {
         "path": "package.json",
-        "dispatchSha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "baselineSha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
         "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
         "identicalToDispatch": true
       },
       {
         "path": ".github/workflows/ci.yml",
-        "dispatchSha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "baselineSha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
         "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
         "identicalToDispatch": true
       }
-    ]
+    ],
+    "capturedAt": "2026-11-10T01:50:52.386483+00:00",
+    "limit": "Generation2 comparison with d9 before Root current-main integration/pointer updates. Generation1 earlier changes remain historical."
+  },
+  "historicalGeneration1": {
+    "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+    "protectedDispatchComparison": {
+      "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
+      "checked": 49,
+      "identical": 47,
+      "authorizedChanged": [
+        "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "lib/readiness/official-truth-product-v3/method/authority.test.ts"
+      ]
+    },
+    "unitPassed": 61,
+    "sourceCommit": "d9d62c690658444e06d04becf93f21ffb9112165"
   },
   "phaseAOriginalFilesUnchanged": true,
   "skipWorktreeEntriesPreserved": [
@@ -427,28 +463,112 @@
   ],
   "authorChecks": [
     {
-      "name": "named non-native contract/scope/postgres/composition/MA1 suite",
-      "passed": 61,
+      "name": "named nonnative contract/scope/postgres/composition/MA1 suite",
+      "executedAt": "2026-11-10T01:44:53.284427+00:00",
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap lib/readiness/official-truth-product-v3/jobs/composition.test.ts lib/readiness/official-truth-product-v3/jobs/contract.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts lib/readiness/official-truth-product-v3/jobs/postgres.test.ts lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "tests": 64,
+      "passed": 64,
       "failed": 0,
+      "cancelled": 0,
       "skipped": 0,
-      "milliseconds": 2566.50708,
-      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/jobs/contract.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts lib/readiness/official-truth-product-v3/jobs/postgres.test.ts lib/readiness/official-truth-product-v3/jobs/composition.test.ts lib/readiness/official-truth-product-v3/method/authority.test.ts"
+      "suites": 5,
+      "milliseconds": 8102.282633,
+      "node": "v24.22.1",
+      "logSha256": "253efbfab26d27a629561ab13ed21508f29e9814a690a91e2d73ac586f5dc88b",
+      "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution."
     },
     {
       "name": "focused TypeScript noEmit",
-      "rootFiles": 16,
+      "status": "PASS",
+      "check": "focused TypeScript static compilation",
       "diagnostics": 0,
-      "configuration": "tsconfig.json compilerOptions; incremental:false; exact16 TypeScript paths from sourceFiles only"
+      "rootSourceFiles": 16,
+      "sourcesStable": true,
+      "nativeExecuted": false,
+      "fullRepositoryTypecheck": false,
+      "node": "v24.22.1",
+      "typescript": "5.9.3",
+      "configuration": "Repository tsconfig.json options; incremental:false; noEmit:true; tsBuildInfoFile removed; exactly the sixteen .ts roots in sourceFiles; getPreEmitDiagnostics plus config.errors; source pins compared before/after.",
+      "checkerSourceSha256": "25aba8eb20f44b6a7105079649bcc60609adb2f8476a921b257910f5a4bf668c",
+      "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636"
     },
     {
-      "name": "targeted ESLint no-cache",
+      "name": "targeted ESLint",
       "rootFiles": 16,
+      "command": "node node_modules/eslint/bin/eslint.js lib/readiness/official-truth-product-v3/jobs/composition.test.ts lib/readiness/official-truth-product-v3/jobs/composition.ts lib/readiness/official-truth-product-v3/jobs/contract.test.ts lib/readiness/official-truth-product-v3/jobs/contract.ts lib/readiness/official-truth-product-v3/jobs/native.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.ts lib/readiness/official-truth-product-v3/jobs/postgres.test.ts lib/readiness/official-truth-product-v3/jobs/postgres.ts lib/readiness/official-truth-product-v3/method/authority-postgres.ts lib/readiness/official-truth-product-v3/method/authority.test.ts scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts scripts/db/official-truth-v3-durable-jobs-1/native.ts scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "exitCode": 0,
       "errors": 0,
-      "warnings": 0
+      "warnings": 0,
+      "output": "empty stdout and stderr",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ],
-  "nativeProof": "PENDING_UNCHANGED_GITHUB_CI_UNCONDITIONAL_NATIVE_ENTRY",
+  "corrections": {
+    "R9": {
+      "status": "IMPLEMENTED_FOR_INDEPENDENT_REVIEW_NATIVE_PENDING",
+      "unitWitnesses": 3,
+      "nativeWitnessCases": [
+        "natural I1 fixed5000ms timeout",
+        "explicit worker/integration caller abort"
+      ],
+      "nestedOperation": "actual composed S1 reserve_v1 operation2, distinct from earlier capture/read",
+      "rawBoundaryObservation": "Additional direct-composition unit measures raw integration return only; labelled handwritten fixed bridge plus actual standalone MA1.",
+      "notClaimed": [
+        "separately observed raw worker promise",
+        "elapsed30000ms worker timer",
+        "live backend while beforeDrain holds after close",
+        "native execution of current source"
+      ],
+      "scope": "No protected source, budget or public debug export changed."
+    },
+    "R10": {
+      "status": "SOURCE_CORRECTED_NATIVE_CONFIRMATION_PENDING",
+      "distinctAliasQueries": 4,
+      "diagnostics": "Finite setup/proof phase, bounded sanitized LocalPgError/SQLSTATE code or fixed error kind; AggregateError max8 causes and depth2. No raw message/stack/SQL/parameter output.",
+      "queryCountsChangedByAliasFix": false,
+      "protectedDecoderChanged": false
+    },
+    "R11": {
+      "status": "SOURCE_CORRECTED_NATIVE_CONFIRMATION_PENDING",
+      "changes": [
+        "assert_catalog_v1 loop record x renamed binding_row and references updated",
+        "DO owners loop record p renamed function_row and references updated"
+      ],
+      "variableConflictSettingChanged": false
+    }
+  },
+  "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+  "nativeProof": "CURRENT_SOURCE_NOT_EXECUTED_PENDING_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
+  "historicalCI": {
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "runId": 42732722870,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42732722870",
+    "repositoryVerificationJobId": 129554463494,
+    "conclusion": "failure",
+    "source": "Root live audit and downloaded Repository verification log; independently read by Generation2, no native reproduction.",
+    "core": {
+      "tests": 8661,
+      "passed": 8658,
+      "failed": 1,
+      "skipped": 2
+    },
+    "native": {
+      "executed": true,
+      "nativePass": false,
+      "groups": [],
+      "started": 18,
+      "settled": 18,
+      "connections": 2,
+      "closed": 2,
+      "clusters": 1,
+      "stoppedClusters": 1,
+      "childProcesses": 0
+    },
+    "candidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
+    "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+    "diagnosis": "Source-derived duplicate unnamed set_config columns at first fixture marker; protected decoder rejects duplicate_column. Corrected source requires actual CI confirmation; old AggregateError did not expose the cause."
+  },
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
   "localPostgresExecuted": false,
@@ -457,12 +577,11 @@
   "runtimePass": false,
   "ready": false,
   "merge": false,
-  "handoffAt": "2026-11-10T00:51:30.244438+00:00",
   "openGates": [
-    "R9 actual composition/native nested I1-S1 race and terminal drain regression",
-    "Final complete U01-U07/N01-N15 assertion map",
-    "Root independent review of corrected source",
-    "Exact published-head unchanged GitHub CI native proof"
+    "Independent Root exact-source review of R9/R10/R11 and coverage",
+    "Root reconciliation with concurrent main, publication and new exact head",
+    "Unchanged existing CI including mandatory native groups and actual cleanup receipt",
+    "Root exact-head Preview/Production/live-thread/Owner-gate review"
   ],
-  "r9SourceEdits": false
+  "disposition": "AUTHOR_STOP_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE"
 }

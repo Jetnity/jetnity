@@ -271,8 +271,8 @@ function etappeHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kenn
     countryCode: op.laendercode,
     arrivalDate: null,
     departureDate: null,
-    latitude: null,
-    longitude: null,
+    latitude: op.manuellePosition?.lat ?? null,
+    longitude: op.manuellePosition?.lng ?? null,
     placeId: null,
   }
   reise.stages = reise.stages.map((etappe) =>

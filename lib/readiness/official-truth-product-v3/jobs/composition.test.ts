@@ -1,8 +1,10 @@
 // Protocol doubles exercise actual coordinator control flow, not persistence/native proof.
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { createV3PostgresDurableJobs } from '../method/authority-postgres'
-import { readM04Command, type M04Config, type M04FixedRequest } from './contract'
+import { createV3PostgresDurableJobs, createV3PostgresMethodAuthority } from '../method/authority-postgres'
+import { readM04Command, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation, type M04FixedRequest } from './contract'
+import { composeM04Invocation } from './composition'
+import { createM04LanePool, createM04InvocationScope } from './owned-scope'
 import { fixture, ids, METHOD } from '../monitor/test-support'
 import type { V3QueueCommit, V3ManagedJobRecord } from '../monitor/queue'
 import type { V3GlobalRuleContext } from '../contract'
@@ -101,7 +103,14 @@ test('uncertain execution lookup after claim cannot manufacture a generic queue 
 
 // This double is an explicit protocol/control-flow test. Only native.test proves SQL.
 type ImportFault = 'read_unavailable' | 'reserve_busy' | 'reserve_unavailable' | 'reserve_collision' | 'finish_unknown' | 'completion_read_unknown' | 'quarantined'
-async function fullBatchHarness(count: number, corruptLast = false, context?: V3GlobalRuleContext, importFault?: ImportFault) {
+type RaceHooks = {
+  reserve(signal: AbortSignal): Promise<void>
+  method(signal: AbortSignal): Promise<boolean>
+  request(request: M04FixedRequest): void
+  ready(api: M04Facade, input: unknown, abort: AbortController): void
+  work?(config: M04Config, claim: unknown, signal: AbortSignal): ReturnType<M04Facade['workOnce']>
+}
+async function fullBatchHarness(count: number, corruptLast = false, context?: V3GlobalRuleContext, importFault?: ImportFault, race?: RaceHooks) {
   const { m04Fixture, M04_TEST_BINDING } = await import('../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures')
   const { readV3RetainableProposal } = await import('../storage/proposal-bytes')
   const unresolved: V3GlobalRuleContext | undefined = importFault === 'quarantined'
@@ -114,7 +123,9 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
   const counts = { method: 0, jobs: 0, intake: 0, capture: 0, read: 0, reserve: 0, finish: 0, artifactRead: 0 }
   const terminal = new AbortController()
   const config: M04Config = { binding: M04_TEST_BINDING, registry: f.originals.registry, clock: f.clock,
-    methodExecutor: { async readCurrent() { counts.method++; return { status: 'rows', rows: [{ status: 'approved',
+    methodExecutor: { async readCurrent(_request, signal) { counts.method++
+      if (race && !await race.method(signal)) return { status: 'unavailable' }
+      return { status: 'rows', rows: [{ status: 'approved',
       method_id: M04_TEST_BINDING.methodId, revision: '1', method_digest: M04_TEST_BINDING.methodDigest,
       package_digest: M04_TEST_BINDING.packageDigest, epoch: '1', approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] } } },
     intakeExecutor: { async execute(statement, params, signal) {
@@ -133,6 +144,7 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       }
       else if (statement.includes('.reserve_v1(')) {
         counts.reserve++; assert.ok(old)
+        if (race) { await race.reserve(signal); return { status: 'unconfirmed' } }
         reply = importFault === 'reserve_busy' ? { status: 'busy' }
           : importFault === 'reserve_collision' ? { status: 'collision' }
           : importFault === 'reserve_unavailable' ? { status: 'unavailable' }
@@ -148,6 +160,7 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
     } },
     jobsExecutor: { async executeFixed(request, signal) {
       counts.jobs++; assert.equal(signal.aborted, false)
+      race?.request(request)
       const q = JSON.parse(request.operationText), b = q.body
       let reply: unknown
       if (q.operation === 'queue_confirm') {
@@ -183,9 +196,11 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       return { status: 'delivered', deliveries: result.deliveries.map((d, i) => i === result.deliveries.length - 1 ? { ...d, text: '{"broken":true}' } : d) }
     } }, evidence: f.evidence, history: f.history }
   const api = createV3PostgresDurableJobs(config)
-  assert.equal((await (importFault ? api.enqueueRule(f.ruleInput) : api.enqueueDiscovery(f.discoveryInput))).status, 'confirmed')
+  assert.equal((await (importFault || race ? api.enqueueRule(f.ruleInput) : api.enqueueDiscovery(f.discoveryInput))).status, 'confirmed')
   for (const k of Object.keys(counts) as (keyof typeof counts)[]) counts[k] = 0
-  const result = await api.workOnce(f.claim(importFault ? 'rule_research' : 'combination_discovery'), terminal.signal)
+  race?.ready(api, f.ruleInput, terminal)
+  const claim = f.claim(importFault || race ? 'rule_research' : 'combination_discovery')
+  const result = await (race?.work ? race.work(config, claim, terminal.signal) : api.workOnce(claim, terminal.signal))
   return { result, counts, f, bindings, operations }
 }
 
@@ -234,5 +249,144 @@ test('U07: actual I1 busy/unavailable/collision/unknown never manufacture failur
       assert.equal(failures.length, 0, fault + ' must preserve unknown without generic Fail CAS/audit')
       assert.equal(operations.at(-1)?.next.state, 'leased')
     }
+  }
+})
+
+for (const boundary of ['i1_timeout', 'worker_caller_abort'] as const) {
+  test('U06/R9: actual composed nested S1 reserve remains owned past ' + boundary, { timeout: 10000 }, async () => {
+    function gate() { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve }); return { promise, release } }
+    const entered = gate(), released = gate(), aborted = gate(), failObserved = gate(), methodsReleased = gate()
+    let api!: M04Facade, input: unknown, caller!: AbortController, nestedSignal: AbortSignal | undefined
+    let reservePending = false, holdMethods = false, heldMethods = 0, completedMethods = 0, workTerminal = false
+    const requests: M04FixedRequest[] = [], otherCalls: Promise<unknown>[] = []
+    const work = fullBatchHarness(1, false, undefined, undefined, {
+      ready(value, enqueue, signal) { api = value; input = enqueue; caller = signal },
+      async reserve(signal) {
+        nestedSignal = signal; reservePending = true; entered.release()
+        const onAbort = () => aborted.release()
+        signal.addEventListener('abort', onAbort, { once: true })
+        try { if (signal.aborted) onAbort(); await released.promise }
+        finally { signal.removeEventListener('abort', onAbort); reservePending = false }
+      },
+      async method(signal) {
+        if (!holdMethods) return true
+        assert.equal(signal.aborted, false); heldMethods++
+        try { await methodsReleased.promise; return false } finally { completedMethods++ }
+      },
+      request(request) {
+        requests.push(request)
+        const r = JSON.parse(request.operationText)
+        if (r.operation === 'queue_confirm' && r.body.command.action === 'fail') failObserved.release()
+      },
+    }).then(value => { workTerminal = true; return value }, error => { workTerminal = true; throw error })
+    const until = async (condition: () => boolean) => {
+      for (let n = 0; n < 100 && !condition(); n++) await new Promise(resolve => setTimeout(resolve, 1))
+      assert.equal(condition(), true, 'bounded test handshake did not complete')
+    }
+    try {
+      await entered.promise
+      assert.equal(reservePending, true); assert.equal(nestedSignal?.aborted, false)
+      if (boundary === 'worker_caller_abort') caller.abort()
+      await aborted.promise
+      if (boundary === 'i1_timeout') await failObserved.promise // actual worker reached fail after actual I1 facade returned
+      // Drain the finite coordinator microtasks before enabling the unrelated
+      // held-method calls; otherwise they could also intercept the original
+      // worker's final refusal read. No native promise is released here.
+      await new Promise<void>(resolve => setImmediate(resolve))
+      // Explicit caller abort is not a claim that the 30s worker timer elapsed.
+      assert.equal(reservePending, true); assert.equal(workTerminal, false)
+      holdMethods = true
+      for (let n = 0; n < 3; n++) otherCalls.push(api.enqueueRule(input))
+      await until(() => heldMethods === 3)
+      assert.equal(completedMethods, 0)
+      assert.equal((await api.workOnce(null)).status, 'unavailable', 'four outer lanes include the still-owned nested reserve')
+      assert.equal(workTerminal, false); assert.equal(reservePending, true)
+      const terminalEffects = () => requests.map(r => JSON.parse(r.operationText)).filter(r => r.operation === 'queue_cas'
+        && (r.body.command.action === 'fail' || r.body.command.action === 'complete'))
+      assert.equal(terminalEffects().length, 0)
+      released.release()
+      const result = await work
+      assert.equal(reservePending, false); assert.notEqual(result.result.status, 'processed')
+      assert.equal(completedMethods, 0, 'other three actual method promises are still held')
+      assert.equal((await api.workOnce(null)).status, 'invalid', 'only actual nested drain releases the fourth lane')
+      assert.equal(terminalEffects().length, 0)
+      assert.equal(result.counts.capture, 1); assert.equal(result.counts.reserve, 1); assert.equal(result.counts.finish, 0)
+      assert.equal([...result.operations.values()].at(-1)?.next.state, 'leased')
+      const intakeCalls = result.counts.intake, requestCount = requests.length
+      await Promise.resolve(); await Promise.resolve()
+      assert.equal(result.counts.intake, intakeCalls); assert.equal(requests.length, requestCount, 'no late native admission after drain')
+    } finally {
+      released.release(); methodsReleased.release(); caller?.abort()
+      await Promise.allSettled([work, ...otherCalls])
+    }
+    assert.equal(completedMethods, heldMethods)
+  })
+}
+
+test('U06/R9: raw composition returns on caller abort before the same nested reserve and owned scope drain', { timeout: 10000 }, async () => {
+  function gate() { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve }); return { promise, release } }
+  const entered = gate(), releaseReserve = gate(), pool = createM04LanePool()
+  let scope: NonNullable<ReturnType<typeof createM04InvocationScope>> | undefined, caller: AbortController | undefined
+  let reservePending = false, nestedSignal: AbortSignal | undefined, drainTerminal = false, finishTerminal = false
+  const joins: Promise<void>[] = [], requests: M04FixedRequest[] = []
+  const work = fullBatchHarness(1, false, undefined, undefined, {
+    ready(_api, _input, signal) { caller = signal },
+    async reserve(signal) {
+      nestedSignal = signal; reservePending = true; entered.release()
+      try { await releaseReserve.promise } finally { reservePending = false }
+    },
+    async method() { return true },
+    request(request) { requests.push(request) },
+    async work(config, claim, signal) {
+      const owned = createM04InvocationScope(pool, 30000, signal); assert.ok(owned); scope = owned
+      const authorityFor = (group: 'outer' | 'processing') => createV3PostgresMethodAuthority(config.binding, {
+        async readCurrent(request, child) {
+          const result = await owned.native('method', group, s => config.methodExecutor.readCurrent(request, s), child)
+          return result.ok ? result.value : { status: 'unavailable' }
+        },
+      })
+      // Handwritten fixed-request protocol bridge, not private authorityCore.
+      // Real standalone MA1 and raw composition run over the existing doubles;
+      // only the actual full-factory/native cases establish private wiring.
+      const fixedFor = (group: 'outer' | 'processing'): M04FixedOperation => async (operation, child) => {
+        const reply = await owned.native('jobs', group, s => config.jobsExecutor.executeFixed({
+          ...config.binding, operationText: canonical({ ...operation, phase: 'authorized' }), epoch: 1,
+          budget: { deadline: owned.deadline }, notAfter: new Date(Date.parse(config.clock().now) + 5000).toISOString(),
+        } as M04FixedRequest, s), child)
+        if (!reply.ok || reply.value.status !== 'acknowledged') return { status: 'unconfirmed' }
+        return readM04NativeReply(reply.value.rows, operation.operation) ?? { status: 'unconfirmed' }
+      }
+      const raw = composeM04Invocation({ config, scope: owned, authority: authorityFor('outer'),
+        processingAuthority: authorityFor('processing'), fixed: fixedFor('outer'), processingFixed: fixedFor('processing') })
+      return raw.workOnce(claim, owned.signal)
+    },
+  })
+  try {
+    await entered.promise; assert.ok(scope && caller && nestedSignal)
+    caller.abort()
+    const result = await work
+    assert.equal(result.result.status, 'unconfirmed', 'raw integration facade returned before the held executor')
+    assert.equal(nestedSignal.aborted, true); assert.equal(reservePending, true)
+    assert.equal(scope.snapshot().activeNative, 1); assert.equal(pool.snapshot().intake, 1)
+    assert.equal(pool.snapshot().occupied, 1)
+    joins.push(scope.drainNative().then(() => { drainTerminal = true }))
+    joins.push(scope.finish().then(() => { finishTerminal = true }))
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(drainTerminal, false); assert.equal(finishTerminal, false)
+    assert.equal(scope.snapshot().retired, true); assert.equal(pool.snapshot().occupied, 1)
+    const terminalEffects = () => requests.map(request => JSON.parse(request.operationText))
+      .filter(q => q.operation === 'queue_cas' && ['fail', 'complete'].includes(q.body.command.action))
+    assert.equal(terminalEffects().length, 0)
+    releaseReserve.release(); await Promise.all(joins)
+    assert.equal(reservePending, false); assert.equal(scope.snapshot().activeNative, 0)
+    assert.equal(pool.snapshot().intake, 0); assert.equal(pool.snapshot().occupied, 0)
+    assert.equal(result.counts.reserve, 1); assert.equal(result.counts.finish, 0)
+    assert.equal([...result.operations.values()].at(-1)?.next.state, 'leased')
+    const admissions = scope.snapshot().nativeTotal
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(scope.snapshot().nativeTotal, admissions); assert.equal(terminalEffects().length, 0)
+  } finally {
+    releaseReserve.release(); caller?.abort()
+    await Promise.allSettled([work, ...joins]); await scope?.finish()
   }
 })

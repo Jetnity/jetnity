@@ -42,7 +42,7 @@ function identity(rows: PgRows, login: string, role: string): Identity {
 export async function createM04NativeExecutors(cluster: LocalProofCluster, lifetime: OwnedTestLifetime, hooks: Hooks = {}) {
   assertOwnedLocalProofCluster(cluster)
   const observer = await lifetime.run(() => LocalPgConnection.connect(cluster))
-  await observer.query("SELECT set_config('statement_timeout','1000',false),set_config('lock_timeout','1000',false)")
+  await observer.query("SELECT set_config('statement_timeout','1000',false) AS statement_timeout,set_config('lock_timeout','1000',false) AS lock_timeout")
   const contexts = new Set<Call>(), active = { jobs: 0, intake: 0 }, stop = new AbortController()
   let nextId = 0, poisoned = false, stopped = false, cleanupTail = Promise.resolve()
   const evidence = { admitted: 0, dispatched: 0, acknowledged: 0, lost: 0, aborted: 0, drained: 0,
@@ -94,7 +94,7 @@ export async function createM04NativeExecutors(cluster: LocalProofCluster, lifet
     try {
       call.control = await lifetime.run(() => LocalPgConnection.connect(cluster))
       call.controlId = identity(await call.control.query(IDENTITY_SQL), cluster.user, cluster.user)
-      await call.control.query("SELECT set_config('statement_timeout','1000',false),set_config('lock_timeout','1000',false)")
+      await call.control.query("SELECT set_config('statement_timeout','1000',false) AS statement_timeout,set_config('lock_timeout','1000',false) AS lock_timeout")
       call.target = await lifetime.run(() => LocalPgConnection.connect(cluster, M04_TEST_LOGIN[kind]))
       // Capture the login's own visible birth before NOINHERIT SET ROLE.
       call.targetId = identity(await call.target.query(IDENTITY_SQL), M04_TEST_LOGIN[kind], M04_TEST_LOGIN[kind])
@@ -104,7 +104,7 @@ export async function createM04NativeExecutors(cluster: LocalProofCluster, lifet
       await hooks.afterAcquisition?.(call, signal)
       if (signal.aborted || stop.signal.aborted || performance.now() >= deadline) { abort(); return { status: 'unavailable' as const } }
       await call.target.query('BEGIN ISOLATION LEVEL READ COMMITTED'); began = true
-      await call.target.query("SELECT set_config('statement_timeout',$1::text,true),set_config('lock_timeout',$1::text,true)",
+      await call.target.query("SELECT set_config('statement_timeout',$1::text,true) AS statement_timeout,set_config('lock_timeout',$1::text,true) AS lock_timeout",
         [pgText(String(Math.max(1, Math.floor(deadline - performance.now()))))])
       await hooks.beforeQuery?.(call, signal)
       if (signal.aborted || stop.signal.aborted || performance.now() >= deadline) return { status: 'unconfirmed' as const }

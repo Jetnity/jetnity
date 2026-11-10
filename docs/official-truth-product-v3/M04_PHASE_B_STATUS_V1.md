@@ -1,56 +1,55 @@
 # M04 Phase-B author delivery status V1
 
-**SAVED INTERRUPTION CHECKPOINT — CHANGES REQUIRED R9 OPEN; NATIVE CI OPEN.** User requested saving the exact state for a new chat. This is not completed delivery, Technical-Lead acceptance, Ready, merge, installation or activation.
+**GENERATION2 CORRECTIONS DELIVERED FOR INDEPENDENT ROOT REVIEW — CURRENT NATIVE CI PENDING.** This is an author delivery, not a Technical-Lead PASS, Ready, merge, database installation or activation.
 
-Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1**, actual same session `/root/m04_durable_jobs_writer`. Phase-B dispatch: [PR #1178 comment 6753900537](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537). Dispatch HEAD `05b30109ec4daa57a2ffcad7cd4dab9db292d4e1`, tree `d3eee5780fa481f726937c9152a0c7e9f55ff092`. Frozen plan SHA256 `1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e`.
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, actual new session `/root/m04_durable_jobs_writer_g2`. [Recovery dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057) on exact HEAD `d9d62c690658444e06d04becf93f21ffb9112165`; binding supplement [M04_RECOVERY_TASK_V2.md](M04_RECOVERY_TASK_V2.md). Generation1 `/root/m04_durable_jobs_writer` is unavailable after context loss. No same-session continuity with Generation1 or Cursor session is claimed. Immediate corrections return to this actual Generation2 session.
 
-## Saved source and first remaining work
+## What this continuation changes
 
-After Root issued R9, the author only read existing sources. **No R9 source edit and no new test run occurred.** The eighteen-file V7 source cut is unchanged. R9 requires a bounded actual-composition regression and a real native controlled nested S1 operation held beyond the I1 facade return, proving no false failure/disposition, premature slot release or late SQL before terminal drain. Both additions remain unfinished.
-
-Resume the same author session and generation, complete R9 within the existing eighteen-file scope and budgets, refresh source pins and targeted checks, then obtain independent Root review and actual unchanged GitHub CI. No protected source or local native execution is authorized.
-
-## Exact saved source
-
-The eighteen permitted source/test/SQL files are frozen in `M04_PHASE_B_SOURCE_MANIFEST_V1.json`. Aggregate source SHA256: **`def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd`**. The manifest records the individual bytes/hashes and aggregate algorithm. Evidence files are outside that source digest to avoid a self-referential hash.
-
-Source baseline `7ae1394a00e2b23a60da98d2a029fd6a10c8189d` is historical. Root's latest reported live main is `be79ea2591e990111bfabea7ddf500023c20a188`, already integrated in the dispatch HEAD. Author did not independently query GitHub or change refs. A green dispatch-head CI/Preview does not verify these new unpublished source bytes.
-
-The manifest compares all 49 protected inputs with the dispatch commit: 47 are byte-identical; only the two explicitly permitted authority adapter/test paths changed. The four authored Phase-A documents are unchanged. All sixteen existing skip-worktree paths remain. No protected contracts, predecessor SQL, workflow, dependency, timeout, route, UI or fixture source changed.
-
-## Implemented candidate
-
-- Dormant joint factory with only `enqueueRule`, `enqueueDiscovery` and `workOnce`; finite canonical identity/reply admission, original claim custody and same-receipt authority/effect exclusion.
-- Actual existing S0/S1/I1/M1/E1 composition, whole-batch M04-D01 admission, original bytes retained, all seventeen predicate families, linear sixteen-original reopening, and exact original recovery metadata.
-- Owned native/callback lifetimes, immutable command replay, stable all-older-unknown blocking, privately justified terminal failure, and sixteen reserved terminal admissions.
-- New seven-table/twenty-nine-function SQL candidate and guarded rollback; actual full S1 and MA1 final transaction proof, fixed ACL/catalog prerequisites, bounded reply before the final clock, and exact teardown inventory.
-- Unconditional native CI entry, finite fictional fixture, separate child processes, actual contention/restart/fault assertions, before/after catalogs and backend ownership receipts. These native assertions have **not yet run**.
-
-## Author checks actually executed
-
-| Check | Result | Limit |
-|---|---|---|
-| Five named unit files: jobs contract/scope/postgres/composition and method authority | **61 passed, 0 failed, 0 skipped**; 2,566.50708 ms | Protocol doubles and pure source checks; no native database proof |
-| Focused TypeScript program using repository options, all sixteen allowed TS roots | **0 diagnostics** | Not a full repository typecheck/build |
-| ESLint over those allowed TS paths | **0 errors, 0 warnings** | Static check |
-| Source/protected input comparison | Eighteen pins stable; 47/49 protected unchanged, two allowed differences | Dispatch comparison, not a live deployment assertion |
-
-The exact commands and results are in the source manifest. `postgres.test.ts` exercises the real generic queue, standalone MA1 and scope at 240 ordinary calls through final confirmation/CAS/read using a handwritten fixed bridge; it does **not** execute the private `authorityCore` bridge at that boundary. Native success remains pending.
-
-## Approved finite allocations
-
-| Allocation | Exact limit |
+| Finding | Finite correction and evidence limit |
 |---|---|
-| [T01](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754518445) | Only the new native SQL literal parameter 6 uses `NULLIF($6::text,'')::integer`; probe/authorized integer semantics remain closed. |
-| [T02](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754713898) | Both new SQL scripts and all twenty-nine new functions use `pg_catalog,pg_temp`; eleven predecessor config pins remain unchanged. |
-| [T03](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754943624) | Four connections per committing M04/S1 lane, two per MA1 read lane; aggregate 4+4+4 lanes bound native work at forty connections. Test observers and raw fixture sessions are counted separately. |
+| R9 | Three added composition unit witnesses and one native proof group with two cases: natural unchanged5s I1 timeout and explicit worker/integration caller abort. The same nested S1 `reserve_v1` executor remains held; no fail/complete CAS or early lane release. Direct raw-composition unit observes integration return separately from actual drain. Native PID/birth/SQL wait, backend absence during held cleanup and exact S1 state assertions await CI. |
+| R10 | Four double `set_config` SELECTs now have distinct output aliases, preserving query counts and the protected duplicate-column decoder. Finite fixture/proof phase and bounded sanitized error-code diagnostics expose setup/assertion/cleanup failure without raw SQL, errors or parameters. |
+| R11 | New candidate `assert_catalog_v1` loop record is `binding_row`; installer ownership loop is `function_row`. This removes PL/pgSQL record/catalog alias collisions without changing protected SQL or `variable_conflict`. Actual installation still requires CI. |
 
-The native suite keeps the existing CI timeout unchanged: 240 seconds of effect work plus 60 seconds of whole cleanup, at most three sequential clusters, two children and sixteen raw fixture connections. Base and fault executor families share aggregate lane counters. The fixture separately bounds M04 observers at two and the MA1 observer at one. These are implemented bounds awaiting real CI receipts, not measured native outcomes.
+No runtime defect in the existing nested ownership design was established by R9. This delivery supplies the missing combined proof. The initial extra raw-composition TypeScript check reported its nominal request brand; the explicitly labelled test-only protocol bridge was typed accordingly and the final focused check is clean.
 
-## First unfinished step and handoff
+## Exact source cut
 
-**Author STOP for the requested handoff.** Root may persist this reviewable Draft checkpoint. R9 and native CI remain OPEN; the first resumed implementation step is R9 above. The full final U01–U07/N01–N15 assertion map is also unfinished. `M04_PHASE_B_NATIVE_EVIDENCE_V1.json` records the saved source, executed non-native checks and open gates. A changed source head invalidates prior exact-head gates. Same-session correction only; no next slice.
+All eighteen sources are pinned in [M04_PHASE_B_SOURCE_MANIFEST_V1.json](M04_PHASE_B_SOURCE_MANIFEST_V1.json). Aggregate SHA256 **`cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f`** uses sorted `SHA256 SPACE decimalBytes SPACE repositoryPath LF`. Evidence files are excluded from their own source digest. Four source paths changed from d9; fourteen are byte-identical.
 
-No local PostgreSQL, native SQL/socket test, full `test:core`, build, install, network retrieval, Git mutation, hosted operation or real provider/source call was performed. Root exclusively publishes, accepts, marks Ready and merges.
+| Changed source | Bytes | SHA256 |
+|---|---:|---|
+| `lib/readiness/official-truth-product-v3/jobs/composition.test.ts` | 27466 | `4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c` |
+| `scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql` | 135962 | `3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb` |
+| `scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts` | 13389 | `5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57` |
+| `scripts/db/official-truth-v3-durable-jobs-1/native.ts` | 136951 | `670f4a62b0f7b8964de8f2df4fd3ef99044067c9c92484e1d7c1fd53374deaac` |
 
-Method **NOT_APPROVED**; #1139 **NOT_RELEASE_READY / 17 gaps**. #917's specific readback refusal remains binding with no retry, reformulation, delegation, alternate transport or human substitute. #1131, both #1135 holds, #968 and #911/#913 remain. No database/production activation, scheduler, public route, notification or cost was authorized or performed.
+The unchanged rollback is SHA256 `9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66`. Frozen plan remains120753 bytes, SHA256 `1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e`. All49 protected input paths were independently compared with d9 and are byte-identical in this Generation2 cut; the two authority paths changed earlier by Generation1 are unchanged here. Historical Phase-A/V7 documents and sixteen omitted binary/skip-worktree paths remain untouched by this author.
+
+Root reports concurrent main `890dfe9323b4b6d3644c372d81cb8893b6548d11` after PR#1180. It does not overlap these eighteen sources. Root owns current-main integration and the shared ROADMAP addition. This source cut is relative to d9 and does not assert that integration/publication has already happened.
+
+## Checks actually completed on this cut
+
+| Check | Result | Practical limit |
+|---|---|---|
+| Five named nonnative contract/scope/postgres/composition/MA1 files | **64/64 PASS**,0 failed/cancelled/skipped;8102.282633ms | Protocol doubles and actual existing coordinator control flow; no native persistence evidence |
+| Focused TypeScript with repository options and sixteen allowed roots | **PASS,0 diagnostics**; TypeScript5.9.3 | Static noEmit program, not full repository build/typecheck |
+| ESLint over sixteen allowed TS sources | **PASS,0 errors/warnings**, empty output | Static only |
+| Source and protected input comparison |18 pinned sources;49/49 protected inputs equal d9 | Before Root integration/pointer updates; no live deployment assertion |
+
+Node was24.22.1; CI uses22. Exact commands, results and log hashes are stored in the manifest. No package installation or missing binary retrieval occurred. The full U01–U07/N01–N15 map is in [M04_PHASE_B_NATIVE_EVIDENCE_V1.json](M04_PHASE_B_NATIVE_EVIDENCE_V1.json) and the companion self-review. A map records concrete assertions and limits; it is not native acceptance.
+
+## Actual historical CI and required next gate
+
+[Run42732722870](https://github.com/Jetnity/jetnity/actions/runs/42732722870) did execute d9 and failed. Core8661/8658pass/1fail/2inherited skips; M04 failed setup before every N01–N15 group. Its truthful receipt reports18/18 operations settled,2/2 connections closed, one cluster stopped and nativePass:false. The old AggregateError masked the inner error. Distinct-alias R10 is a source-derived correction of a concrete decoder incompatibility; corrected CI must confirm progression. R11 installer fixes likewise remain source-verified only.
+
+**This new source cut has not run native CI.** Its `nativeExecuted:false` is separate from the recorded failed historical run. The unchanged mandatory `jobs/native.test.ts` entry has no availability skip. Existing budget remains240s effect work plus60s whole cleanup, at most three sequential clusters, two children, sixteen fixture sessions per cluster, aggregate4+4+4 native lanes/40 work connections, two M04 observers and one MA1 observer. T01–T03 remain unchanged.
+
+Root must independently review the exact sources/map, reconcile current main, publish a new exact head and inspect actual unchanged CI/native receipts plus exact-head Preview/Production and remaining gates. Changed heads invalidate previous gates.
+
+## STOP and unchanged Owner boundaries
+
+**AUTHOR STOP FOR ROOT REVIEW.** No Ready, merge or automatic follow-up slice. R9/R10/R11 are source-addressed for independent review; native acceptance remains open. No local PostgreSQL/native SQL/socket, full core/build, Git mutation/fetch/push, hosted DB/Auth/RLS/ACL/migration/credential operation, Auth-log access or real provider/source call occurred.
+
+Method **NOT_APPROVED**; #1139 **NOT_RELEASE_READY /17 gaps**. #917 specific readback refusal remains binding: no retry, reformulation, delegation, alternate transport or human substitute. #1131 Ready STOP, both #1135 holds, #968 and #911/#913 remain. No production activation, scheduler, public route, notification or cost is authorized by this delivery.

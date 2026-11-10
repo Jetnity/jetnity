@@ -13,9 +13,8 @@
 // starten erst nach ausdrücklicher Aktion. Aktivitäten öffnen Angebote mit dem Bereich.
 
 import * as React from 'react'
-import { tripMapEntryVisible } from '@/lib/maps/config'
 import Link from 'next/link'
-import { ArrowLeft, Route as RouteIcon } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
 import { cn } from '@/lib/utils'
@@ -37,7 +36,6 @@ import {
   domainRasterKlasse,
 } from '@/lib/trips/cross-device-interaction-1'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
-import { ORGANISIEREN_RUECKKEHR_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { AttentionAktion } from '@/lib/trips/attention'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import {
@@ -47,7 +45,6 @@ import {
   detailAuswahlAusBereich,
   detailBereinigen,
   detailDomainVon,
-  gapAuswahl,
   gapDetailAbleiten,
   itemAuswahl,
   itemDetailAbleiten,
@@ -71,8 +68,6 @@ import ReisezeitHinweise from '@/components/trips/ReisezeitHinweise'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { FlugSegmentManuell, PlanpunktFormular } from '@/lib/trips/schema'
 import Organisieren from './organisieren/Organisieren'
-import type { FlugSpeichern } from './organisieren/Flugsuche'
-import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
 import WorkspaceTripChrome, { WorkspacePortal } from '@/components/workspace/WorkspaceTripChrome'
@@ -100,6 +95,7 @@ import {
   modusAusQuery,
   modusUrl,
   type WorkspaceAnsicht,
+  kategorieFuerBereich,
   type WorkspaceModus,
 } from '@/lib/trips/workspace-mode'
 import FlugBestand from '@/components/trips/FlugBestand'
@@ -223,9 +219,6 @@ function passendeVerbindung(
 }
 
 function auswahlAusModus(modus: WorkspaceModus): WorkspaceDetailAuswahl {
-  if (modus.ansicht === 'organisieren' && modus.bereich) {
-    return gapAuswahl(modus.bereich, undefined, modus.bereich === 'aktivitaeten')
-  }
   if (modus.ansicht === 'plan' && modus.itemId) return itemAuswahl(modus.itemId)
   return leereDetailAuswahl()
 }
@@ -293,9 +286,12 @@ function historieSchreiben(
   else window.history.replaceState(stand, '', url)
 }
 
+type RouteRueckkehr = { art: 'tag' | 'punkt'; id: string } | { art: 'kante'; id: string; tagId?: string }
+
 type TripWorkspaceProps = {
   reise: Trip
   quelle: TripSource
+  onReiseGespeichert?: (graph: Trip) => void
   ohneTag?: TripItem[]
   onVerbindungAnlegen?: (values: MobilityManuellEingabe) => Promise<string | null>
   onPunktBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
@@ -403,6 +399,7 @@ function FlaecheHuelle({
 export default function TripWorkspace({
   reise,
   quelle,
+  onReiseGespeichert,
   ohneTag = [],
   onPunktAnlegen,
   onPunktBearbeiten,
@@ -513,7 +510,7 @@ export default function TripWorkspace({
   const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
   const [editorAktiv, setEditorAktiv] = React.useState(false)
   const routeLageRef = React.useRef({ top: 0, windowY: 0, streifenLeft: 0, erfasst: false })
-  const routeRueckAnkerRef = React.useRef<{ art: 'tag' | 'punkt'; id: string } | null>(null)
+  const routeRueckAnkerRef = React.useRef<RouteRueckkehr | null>(null)
   const splitRef = React.useRef<HTMLDivElement>(null)
   const setHinweisBeide = React.useCallback((wert: Hinweis | null) => {
     hinweisRef.current = wert
@@ -563,10 +560,7 @@ export default function TripWorkspace({
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
   const planItemGewaehlt = modus.ansicht === 'plan' && bereinigt.art === 'item'
-  const detailOffen =
-    modusBereit &&
-    ((modus.ansicht === 'organisieren' && modus.bereich != null && bereinigt.art === 'gap') ||
-      (planItemGewaehlt && !(routeBetont && u1bAnordnung === 'schmal')))
+  const detailOffen = modusBereit && planItemGewaehlt && !(routeBetont && u1bAnordnung === 'schmal')
   const gewaehlterPunktId = bereinigt.art === 'item' ? bereinigt.itemId : undefined
 
   React.useEffect(() => {
@@ -685,12 +679,11 @@ export default function TripWorkspace({
     navigationAnwenden(validiert, true)
   }, [reise, ungeplantePunkte, navigationAnwenden])
 
-  const oeffneGap = (domain: DetailDomain, signalId?: string) => {
+  const oeffneGap = (domain: DetailDomain) => {
     verbindungsAusloeserRef.current = null
     merkeAusloeser()
     modusTastaturRef.current = false
-    modusSetzen({ ansicht: 'organisieren', bereich: domain, urlAnpassen: false }, 'push', true)
-    setAuswahl(gapAuswahl(domain, signalId, domain === 'aktivitaeten'))
+    modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie: kategorieFuerBereich(domain), urlAnpassen: false }, 'push', true)
   }
 
   const routeLageMerken = (ziel?: EventTarget | null) => {
@@ -771,9 +764,15 @@ export default function TripWorkspace({
     }
   }
 
-  const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
+  const routeZiel = (anker: RouteRueckkehr | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
+    if (anker?.art === 'kante') {
+      const gleich = Array.from(route.querySelectorAll<HTMLElement>('[data-u1c-kante-id]'))
+        .filter(el => el.dataset.u1cKanteId === anker.id && darfFokussieren(el))
+      const kante = gleich.find(el => el.dataset.u1cRueckTag === anker.tagId) ?? gleich[0]
+      if (kante) return kante
+    }
     const kanteKnopf = route.querySelector<HTMLElement>('[data-u1c-kante][aria-pressed="true"]')
     if (darfFokussieren(kanteKnopf)) return kanteKnopf
     if (anker?.art === 'tag') {
@@ -796,7 +795,12 @@ export default function TripWorkspace({
     const anker = punkt
       ? (punkt.dayId && reise.days.some((tag) => tag.id === punkt.dayId) ? { art: 'tag' as const, id: punkt.dayId } : { art: 'punkt' as const, id: punkt.id })
       : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
-    routeRueckAnkerRef.current = anker
+    routeRueckAnkerRef.current = modus.kanteId
+      ? { art: 'kante', id: modus.kanteId, tagId: modus.tagId }
+      : anker
+    if (modus.ansicht === 'plan' && (modus.tagId || modus.kanteId || modus.itemId)) {
+      modusSetzen({ ansicht: 'plan', bereich: null, urlAnpassen: false }, 'push')
+    }
     setRouteBetont(true)
     setRouteFokus((stand) => stand + 1)
   }
@@ -950,7 +954,7 @@ export default function TripWorkspace({
       preparationOeffnen(aktion.preparationZiel ?? undefined)
       return
     }
-    if (ziel && ziel.art === 'gap') oeffneGap(ziel.domain, ziel.signalId)
+    if (ziel && ziel.art === 'gap') oeffneGap(ziel.domain)
   }
 
   const onModus = (ansicht: WorkspaceAnsicht, tastatur: boolean) => {
@@ -959,8 +963,7 @@ export default function TripWorkspace({
       planTagRef.current = modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? modus.tagId : ''
       planGesehenRef.current = true
     }
-    const ersterTag = reise.days.some((tag) => tag.id === aktiverTag) ? aktiverTag : ''
-    const tagId = ansicht === 'plan' ? (planGesehenRef.current ? planTagRef.current : ersterTag) : ''
+    const tagId = ansicht === 'plan' && planGesehenRef.current ? planTagRef.current : ''
     modusSetzen({ ansicht, bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
   }
 
@@ -1062,9 +1065,7 @@ export default function TripWorkspace({
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
   const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
   const detailVerborgen = !detailOffen
-  const organisierenStart = modusBereit && modus.ansicht === 'organisieren' && !modus.bereich && !detailOffen
-  const flugProps = React.isValidElement<{ onUebernehmen?: FlugSpeichern }>(flugsuche) ? flugsuche.props : null
-  const domainNavSichtbar = modusBereit && modus.ansicht === 'organisieren' && !(kompakt && detailOffen)
+  const organisierenStart = modusBereit && modus.ansicht === 'organisieren'
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
   const reisezeit = <ReisezeitHinweise reise={reise} evaluations={seasonalEvaluations} />
@@ -1089,6 +1090,8 @@ export default function TripWorkspace({
 
   const plan = (
     <TripWorkspacePlan
+      quelle={quelle}
+      onReiseGespeichert={onReiseGespeichert}
       mapsActive={modusBereit && modus.ansicht === 'plan'}
       reise={reise}
       ohneTag={ungeplantePunkte}
@@ -1165,7 +1168,6 @@ export default function TripWorkspace({
   const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
 
   const sucheSichtbar = sucheIstOffen(bereinigt)
-  const aktivitaetenDirekt = detailOffen && aktiveDomain === 'aktivitaeten' && bereinigt.art === 'gap'
   const aktivitaeten = sucheMitTag(
     aktivitaetensuche,
     aktiverTag,
@@ -1180,9 +1182,6 @@ export default function TripWorkspace({
     weit,
   })
   const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
-  const planNeben = modusBereit && modus.ansicht === 'plan' && u1bAnordnung === 'neben'
-  // Keep item/gap details below the route, not over the persistent map canvas.
-  const planMapCanvas = planNeben && tripMapEntryVisible(true, false)
 
   React.useLayoutEffect(() => {
     const el = splitRef.current
@@ -1279,7 +1278,6 @@ export default function TripWorkspace({
     }
     const tastatur = modusTastaturRef.current
     modusTastaturRef.current = false
-    if (modus.ansicht === 'organisieren' && modus.bereich) return
     if (modus.ansicht === 'plan' && detailOffen) return
     const heading = document.querySelector('[data-workspace-modus-heading]')
     if (!(heading instanceof HTMLElement) || !darfFokussieren(heading)) return
@@ -1335,7 +1333,7 @@ export default function TripWorkspace({
         <WorkspacePortal slot="title"><span>{organisierenStart ? 'Reiseplanung › Organisieren' : reise.title}</span></WorkspacePortal>
         {hinweis}
 
-        {!organisierenStart && identitaet}
+        {modusBereit && modus.ansicht === 'uebersicht' && identitaet}
 
         {modusBereit ? (
           <>
@@ -1347,10 +1345,7 @@ export default function TripWorkspace({
               onWechsel={onModus}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
-              <WorkspacePortal slot="actions">{organisierenStart && <button type="button" className="workspace-button" onClick={() => {
-                const details = document.querySelector<HTMLDetailsElement>('.org-details')
-                if (details) { details.open = true; details.querySelector('summary')?.focus() }
-              }}><RouteIcon size={16} aria-hidden="true" />Reisedetails</button>}<TripWorkspaceAktionen
+              <WorkspacePortal slot="actions"><TripWorkspaceAktionen
                 aenderungOffen={aenderungOffen}
                 begleiterOffen={begleiterOffen}
                 begleiterVorhanden={begleiter != null}
@@ -1389,12 +1384,11 @@ export default function TripWorkspace({
 
         <div
           ref={splitRef}
-          className={cn(rasterKlasse, 'min-w-0 max-w-full', modus.ansicht === 'organisieren' && 'gap-6', planNeben && 'rounded-[28px] border border-line-200 bg-white p-3 shadow-[0_14px_40px_rgba(15,46,42,0.07)] sm:p-5')}
+          className={cn(rasterKlasse, 'min-w-0 max-w-full', modus.ansicht === 'organisieren' && 'gap-6')}
           data-workspace-split={anordnung}
           data-organisieren-breite={modus.ansicht === 'organisieren' ? 'voll' : undefined}
           data-u1b-anordnung={u1bAnordnung}
           data-u1b-route-betont={routeBetont ? 'ja' : 'nein'}
-          style={planNeben ? { display: 'grid', gridTemplateColumns: 'minmax(20rem, 0.92fr) minmax(28rem, 1.65fr)', columnGap: '1.5rem', rowGap: '1rem', alignItems: 'start' } : undefined}
         >
           {modusBereit && modus.ansicht === 'uebersicht' ? (
             <FlaecheHuelle name="uebersicht" verborgen={false}>
@@ -1404,6 +1398,7 @@ export default function TripWorkspace({
                 uebersicht={uebersicht}
                 attention={attention}
                 destinationEssentials={destinationEssentials}
+                onItem={oeffneItem}
                 onLuecke={oeffneGap}
                 onAttention={onAttention}
                 workspace={Boolean(shell)}
@@ -1427,8 +1422,7 @@ export default function TripWorkspace({
                 id="workspace-plan-titel"
                 tabIndex={-1}
                 data-workspace-modus-heading
-                style={planNeben ? { gridColumn: '1 / -1' } : undefined}
-                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+                className="sr-only text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
               >
                 Reiseplan
               </h2>
@@ -1437,34 +1431,13 @@ export default function TripWorkspace({
           ) : null}
 
           {organisierenStart ? (
-            <Organisieren key={reise.id+':'+reise.revision} reise={reise} partnerAktivitaeten={aktivitaetensuche}
-              flugSpeichern={flugProps?.onUebernehmen}
-              details={<details className="org-details"><summary>Reisedetails und gespeicherte Buchungen</summary>
-                {identitaet}
-                <TripWorkspaceDomainNavigation abdeckungen={uebersicht.abdeckungen} aktiv={null} onWaehlen={domain=>oeffneGap(domain)} />
-              </details>}
+            <Organisieren
+              key={reise.id + ':' + reise.revision}
+              reise={reise}
+              partnerAktivitaeten={aktivitaetensuche}
+              tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}
+              kategorieWaehlen={kategorie => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, urlAnpassen: false }, 'replace')}
             />
-          ) : domainNavSichtbar ? (
-            <section aria-labelledby="workspace-organisieren-titel" className="col-span-full mt-4 min-w-0" data-workspace-modus="organisieren">
-              <h2
-                id="workspace-organisieren-titel"
-                tabIndex={-1}
-                data-workspace-modus-heading
-                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
-              >
-                Organisieren
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-ink-800">
-                Wähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.
-              </p>
-              <div className="mt-4">
-                <TripWorkspaceDomainNavigation
-                  abdeckungen={uebersicht.abdeckungen}
-                  aktiv={modus.bereich}
-                  onWaehlen={(domain) => oeffneGap(domain)}
-                />
-              </div>
-            </section>
           ) : null}
 
           {modusBereit && modus.ansicht === 'vorbereitung' ? (
@@ -1499,7 +1472,6 @@ export default function TripWorkspace({
               'min-w-0 max-w-full [overflow-wrap:anywhere] [word-break:break-word]',
               modus.ansicht === 'organisieren' && 'col-span-full',
             )}
-            style={planNeben ? { gridColumn: planMapCanvas ? 1 : 2, gridRow: planMapCanvas ? 4 : 2, minWidth: 0 } : undefined}
             ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {
               if (ereignis.key !== 'Escape' || !detailOffen) return
@@ -1512,7 +1484,7 @@ export default function TripWorkspace({
               verborgen={detailVerborgen}
               sichtbarKlasse="min-w-0 max-w-full scroll-mt-[calc(72px+3.75rem)] [overflow-wrap:anywhere] [word-break:break-word]"
             >
-              {detailOffen && !aktivitaetenDirekt ? (
+              {detailOffen ? (
                 <TripWorkspaceDetail
                   auswahl={bereinigt}
                   gap={gap}
@@ -1522,12 +1494,6 @@ export default function TripWorkspace({
                   onSuche={sucheAusdruecklich}
                   fokusRef={detailFokusRef}
                 />
-              ) : null}
-              {aktivitaetenDirekt && !kompakt ? (
-                <button type="button" onClick={rueckkehr.ausfuehren} className={ORGANISIEREN_RUECKKEHR_KLASSE}>
-                  <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-                  {rueckkehr.label}
-                </button>
               ) : null}
             </FlaecheHuelle>
             <div
