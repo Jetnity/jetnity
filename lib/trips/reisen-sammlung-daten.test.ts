@@ -93,6 +93,10 @@ function client(zeilen: UebersichtZeile[], antwort?: Leseantwort<UebersichtZeile
           aufrufe.push({ name: 'neq', args: [spalte, wert] })
           return api
         },
+        filter(spalte: string, operator: string, wert: string) {
+          aufrufe.push({ name: 'filter', args: [spalte, operator, wert] })
+          return api
+        },
         or(filter: string) {
           lokal.push({ name: 'or', args: [filter] })
           aufrufe.push({ name: 'or', args: [filter] })
@@ -228,7 +232,9 @@ describe('Sammlung liest 49 und zeigt 48', () => {
   test('gibt die Suchzeichenfolge weiter und trennt den Lesefehler', async () => {
     const zugang = client(bestand())
     await reisenSammlungAusParametern({ q: '100%', archiv: 'offen' }, zugang)
-    assert.equal(zugang.aufrufe.some((aufruf) => aufruf.name === 'or' && aufruf.args[0] === suchOder('100%')), true)
+    assert.deepEqual(zugang.aufrufe.find((aufruf) => aufruf.name === 'filter')?.args, ['suchstopp.name', 'imatch', '100%'])
+    assert.ok(zugang.aufrufe.some((aufruf) => aufruf.name === 'select' && aufruf.args[0] === UEBERSICHT_SPALTEN + ',suchstopp:trip_stages()'))
+    assert.equal(zugang.aufrufe.some((aufruf) => aufruf.name === 'or' && aufruf.args[0] === suchOder('100%') + ',suchstopp.not.is.null'), true)
     assert.equal(zugang.aufrufe.some((aufruf) => aufruf.name === 'neq' && aufruf.args[1] === 'archived'), true)
     const fehler = client([], { data: null, error: { message: 'db' }, status: 500 })
     const ergebnis = await reisenSammlungAusParametern({}, fehler)

@@ -2,6 +2,7 @@
 //
 // Nur für den lokalen Account-Shell-UI-Audit. Production immer 404.
 
+import '@/components/account/world-explorer-1/atlas.css'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'

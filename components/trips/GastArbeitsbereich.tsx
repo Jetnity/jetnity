@@ -256,6 +256,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
     <TripWorkspace
       reise={reise}
       quelle="guest"
+      onReiseGespeichert={gleicheReiseUebernehmen}
       onVerbindungAnlegen={async values => {
         try { gleicheReiseUebernehmen(gastMobilitaetAnlegen(reise, values)); return null }
         catch (error) { return error instanceof Error ? error.message : 'Die Verbindung konnte nicht gespeichert werden.' }

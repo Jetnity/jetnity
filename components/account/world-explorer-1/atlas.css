@@ -1,0 +1,46 @@
+.jetnity-atlas { margin-top: .5rem; min-width: 0; color: var(--color-brand-800, #173c33); }
+.jetnity-atlas-summary { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; align-items: baseline; color: var(--color-ink-800, #49665d); }
+.jetnity-atlas-summary strong { font-weight: 720; color: var(--color-brand-800, #173c33); }
+.jetnity-atlas-tools { margin: 1.4rem 0 .85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .65rem 1rem; }
+.jetnity-atlas-search { display:flex; align-items:center; gap:.6rem; width:min(100%,24rem); border:1px solid var(--color-line-200,#cbdad3); background:var(--color-surface-0,white); border-radius:.85rem; padding:0 .85rem; }
+.jetnity-atlas-search:focus-within { outline:2px solid var(--color-brand-600,#28755a); }
+.jetnity-atlas-filters { display:flex; max-width:100%; gap:.15rem; align-items:center; padding:.2rem; border-radius:.9rem; background:var(--color-surface-100,#e8f0eb); flex-wrap:wrap; }
+.jetnity-atlas-filters button { padding:0 .85rem; min-height:44px; font-weight:650; font-size:.88rem; border-radius:.7rem; }
+.jetnity-atlas-filters button[aria-pressed="true"] { background:var(--color-brand-800,#173c33); color:white; }
+.jetnity-atlas button:focus-visible,.jetnity-atlas-country:focus-visible { outline:3px solid var(--color-brand-600,#28755a); outline-offset:2px; }
+.jetnity-atlas-board { display:grid; min-width:0; align-items:start; gap:1rem; }
+@media (min-width:960px) { .jetnity-atlas-board[data-selected="true"] { grid-template-columns:minmax(0,1fr) minmax(16rem,27%); } }
+.jetnity-atlas-map { position:relative; min-width:0; display:flex; flex-flow:row wrap; align-items:center; column-gap:.4rem; background:var(--color-surface-0,white); border:1px solid var(--color-line-200,#cbdad3); border-radius:1.1rem; overflow:clip; }
+.jetnity-atlas-frame { order:-1; width:100%; background:#bedde1; overflow:hidden; }
+.jetnity-atlas-frame [data-explorer-viewport],.jetnity-atlas-frame [data-explorer-viewport] > div { border-radius:0; }
+.jetnity-atlas-frame [data-explorer-viewport]:focus-visible { outline-offset:-3px; }
+.jetnity-atlas-controls,.jetnity-atlas-directions { display:flex; align-items:center; gap:.09rem; flex-wrap:wrap; }
+.jetnity-atlas-controls { flex:1; padding:.25rem 0 .25rem .4rem; }
+.jetnity-atlas-directions { padding:.25rem .4rem .25rem 0; }
+.jetnity-atlas-controls button,.jetnity-atlas-directions button { padding:0; border:0; }
+.jetnity-atlas-controls button[aria-pressed="true"] { background:var(--color-surface-100,#e8f0eb); }
+.jetnity-atlas-map > [id$="-gruppe"] { flex:0 0 100%; margin:0; border-radius:0; }
+.jetnity-atlas-labels { pointer-events:none; position:absolute; inset:0; overflow:hidden; }
+.jetnity-atlas-label { position:absolute; transform:translate(-50%,-50%); white-space:nowrap; color:#314e46; font-size:clamp(.63rem,.78vw,.76rem); font-weight:650; line-height:1; text-shadow:0 0 3px #fff,1px 0 2px #f5faf5,-1px 0 2px #f5faf5; }
+.jetnity-atlas-country { cursor:pointer; fill:transparent; }
+.jetnity-atlas-country:is(:hover,:focus-visible),.jetnity-atlas-country[data-active="true"] { fill:#eff7bd55; stroke:#244c3e; stroke-width:2; vector-effect:non-scaling-stroke; }
+.jetnity-atlas [data-welt-land-zustand="besucht"]:is(path),.jetnity-atlas [data-welt-land-zustand="beides"]:is(path) { fill:#417c63; fill-opacity:.86; }
+.jetnity-atlas [data-welt-land-zustand="geplant"]:is(path) { fill:#e1edb0; fill-opacity:.8; }
+.jetnity-atlas [data-welt-zustaende] path[fill="none"][data-atlas-planned] { stroke:#214d3b; stroke-dasharray:4 2; }
+.jetnity-atlas [data-welt-zustaende] path[fill="none"][data-atlas-both] { stroke:#e7f68b; stroke-dasharray:4 2; }
+.jetnity-atlas .atlas-details { border:1px solid var(--color-line-200,#cbdad3); background:var(--color-surface-0,white); border-radius:1.1rem; padding:1.15rem; box-shadow:0 9px 26px #183d3210; }
+.jetnity-atlas .atlas-detail-head { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; }
+@media (max-width:959px) {
+ .jetnity-atlas .atlas-details { position:fixed; z-index:80; inset:auto 0 0; width:min(100%,42rem); margin:0 auto; max-height:min(48dvh,28rem); overflow-y:auto; overscroll-behavior:contain; border-radius:1.25rem 1.25rem 0 0; padding:.8rem 1.2rem max(1rem,env(safe-area-inset-bottom)); box-shadow:0 -10px 40px #193b3028; }
+ .atlas-details:before { content:""; display:block; height:4px; width:2.2rem; margin:0 auto .7rem; border-radius:1rem; background:var(--color-line-200,#cbdad3); }
+}
+@media (max-width:500px) {
+ .jetnity-atlas-search,.jetnity-atlas-filters { width:100%; }
+ .jetnity-atlas-filters button { flex:1; padding:0 .45rem; }
+ .jetnity-atlas-directions { display:none; }
+ .jetnity-atlas-frame { padding:1.35rem 0; }
+ .jetnity-atlas-summary { font-size:.88rem; }
+}
+.jetnity-atlas [data-atlas-key="besucht"] rect:first-of-type,.jetnity-atlas [data-atlas-key="beides"] rect:first-of-type { fill:#417c63; }
+.jetnity-atlas [data-atlas-key="geplant"] rect:first-of-type { fill:#e1edb0; }
+.jetnity-atlas [data-atlas-key="geplant"] rect:last-of-type,.jetnity-atlas [data-atlas-key="beides"] rect:last-of-type { stroke-dasharray:4 2; }

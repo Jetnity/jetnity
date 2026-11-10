@@ -97,7 +97,7 @@ async function messen(page) {
       const labels = links.map((link) => link.textContent.trim())
       if (
         JSON.stringify(labels) !==
-        JSON.stringify(['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'])
+        JSON.stringify(['Mein Konto', 'Reisen', 'Meine Welt', 'Reisende', 'Einstellungen'])
       ) {
         fehler.push(`Nav-Reihenfolge ${labels.join(' → ')}`)
       }

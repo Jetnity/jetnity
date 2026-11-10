@@ -59,3 +59,14 @@ Lizenz: https://creativecommons.org/licenses/by/4.0/
 
 oldtown.webp – Thalang Road 1.jpg – Slleong – CC0
 Original: https://commons.wikimedia.org/wiki/File:Thalang_Road_1.jpg
+
+nusa-penida.webp – Broken Bay, Nusa Penida.jpg – Georgi Kovachev – CC BY-SA 4.0
+Original: https://commons.wikimedia.org/wiki/File:Broken_Bay,_Nusa_Penida.jpg
+Lizenz: https://creativecommons.org/licenses/by-sa/4.0/ – verkleinert, als WebP gespeichert und im Layout beschnitten.
+
+panama.webp – Panama Papers (148830809).jpeg – Dronepicr – CC BY 3.0
+Original: https://commons.wikimedia.org/wiki/File:Panama_Papers_(148830809).jpeg
+Lizenz: https://creativecommons.org/licenses/by/3.0/ – verkleinert, als WebP gespeichert und im Layout beschnitten.
+
+reiseatlas.webp – Kartengrundlage Natural Earth, gemeinfrei (v5.1.2, 1:50m), grafisch für Jetnity aufbereitet.
+Quelle: https://www.naturalearthdata.com/

@@ -24,6 +24,9 @@ describe('Reisefotos, Flughafenwahl und Hotelübergabe', () => {
   it('findet das Fotomotiv für die echte Reiseetappe', () => {
     assert.equal(etappenZiel(etappe), etappenZiel({ ...etappe, placeId: null }))
     assert.notEqual(reiseFoto(etappe, true), reiseFoto(undefined, true))
+    assert.match(reiseFoto({ ...etappe, name: 'Nusa Penida', placeId: 'geonames:1631470', countryCode: 'ID' }), /nusa-penida/)
+    assert.match(reiseFoto({ ...etappe, name: 'Republic of Panama', placeId: 'geonames:3703430', countryCode: 'PA' }), /panama/)
+    assert.equal(reiseFoto({ ...etappe, name: 'Anderer Ort', placeId: null, countryCode: 'PA' }), reiseFoto())
     assert.equal(etappenZiel({ ...etappe, countryCode: 'US' }), null)
     assert.equal(etappenZiel({ ...etappe, placeId: 'unbekannt' }), null)
     assert.equal(etappenZiel({ ...etappe, countryCode: null, placeId: null }), null)

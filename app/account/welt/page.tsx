@@ -6,6 +6,7 @@
 // andere eine gültige Aussage – und der Ausfall wird als Ausfall gezeigt, nicht
 // als leere Historie.
 
+import '@/components/account/world-explorer-1/atlas.css'
 import type { Metadata } from 'next'
 
 import AccountBesuche from '@/components/account/AccountBesuche'
@@ -18,7 +19,7 @@ import { worldMapAbleiten } from '@/lib/account/world-map'
 import { reisenLaden } from '@/lib/trips/daten'
 
 export const metadata: Metadata = {
-  title: 'Deine Welt',
+  title: 'Meine Welt',
   description: 'Bestätigte Besuche in deinem Jetnity-Konto.',
   robots: { index: false, follow: false },
 }
@@ -47,8 +48,8 @@ export default async function AccountWeltSeite() {
   })
 
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-6xl">
+    <main className="px-4 py-6 sm:px-7 lg:px-10 lg:py-9">
+      <div className="mx-auto max-w-[94rem]">
         <ReiseFensterRahmen wert={{ fenster, neuLadenHref: '/account/welt' }}>
           <AccountBesuche
             welt={welt}

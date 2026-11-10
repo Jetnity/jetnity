@@ -9,7 +9,6 @@ import { useReiseFenster } from '@/components/account/account-home-export-1/Reis
 import WorldExplorer from '@/components/account/world-explorer-1/WorldExplorer'
 import {
   geplanteAussage,
-  weltReichweiteText,
   type ReiseFenster,
 } from '@/lib/account/account-home-export-1/fenster'
 
@@ -19,7 +18,6 @@ import {
   WeltMusterDefs,
   WeltPunktMarken,
   WeltZustandProbe,
-  weltMusterId,
 } from '@/components/account/WeltZustaende'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
 import {
@@ -426,7 +424,7 @@ export default function AccountWeltKarte(props: {
   const neuLadenHref = props.neuLadenHref ?? rahmen?.neuLadenHref
   return props.darstellung === 'uebersicht'
     ? <BestehendeWeltKarte {...props} fenster={fenster} neuLadenHref={neuLadenHref} />
-    : <WorldExplorer welt={props.welt} besucht={props.besucht} laender={props.laender} aktion={props.aktion} reichweiteText={fenster ? weltReichweiteText(fenster) : undefined} fenster={fenster} neuLadenHref={neuLadenHref} />
+    : <WorldExplorer welt={props.welt} besucht={props.besucht} laender={props.laender} aktion={props.aktion} fenster={fenster} neuLadenHref={neuLadenHref} />
 }
 
 /** Existing compact experience is kept independent of explorer state and controls. */

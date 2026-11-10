@@ -93,7 +93,7 @@ function zitiere(wert: string): string {
   return `"${wert.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
 }
 
-function muster(nadel: string): string {
+export function literalesSuchmuster(nadel: string): string {
   let ausgabe = ''
   for (const zeichen of nadel) {
     ausgabe += META.has(zeichen) ? `\\${zeichen}` : zeichen
@@ -103,7 +103,7 @@ function muster(nadel: string): string {
 
 export function suchOder(nadel: string): string | null {
   if (nadel.length === 0) return null
-  const zitiert = zitiere(muster(nadel))
+  const zitiert = zitiere(literalesSuchmuster(nadel))
   return `title.imatch.${zitiert},origin.imatch.${zitiert}`
 }
 

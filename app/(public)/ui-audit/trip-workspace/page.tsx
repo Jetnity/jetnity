@@ -4,6 +4,7 @@
 // Audit-Flag immer 404. Ausserhalb von Production braucht es JETNITY_UI_AUDIT.
 // Keine Fake-Reisen im Produktweg.
 
+import '@/components/trips/reiseplan/etappen.css'
 import 'leaflet/dist/leaflet.css'
 import '@/components/trips/organisieren/omio/vergleich.css'
 import '@/components/trips/organisieren/organisieren.css'

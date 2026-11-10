@@ -25,7 +25,7 @@ export default function KontoReiseEintrag({
     <article
       data-reisen-karte={lage}
       className={cn(
-        'flex h-full min-w-0 flex-col overflow-hidden rounded-[26px] border-x border-b border-black/5 border-t-2 bg-white shadow-[0_12px_40px_rgba(15,46,42,0.06)]',
+        'relative flex h-full min-w-0 flex-col overflow-hidden rounded-[26px] border-x border-b border-black/5 border-t-2 bg-white shadow-[0_12px_40px_rgba(15,46,42,0.06)]',
         kartenKanteKlasse(lage),
       )}
     >
@@ -36,9 +36,7 @@ export default function KontoReiseEintrag({
         schale
         ueberschrift="h3"
       />
-      <div className="mt-auto border-t border-line-100 bg-surface-75 px-3 py-3">
-        <KontoReiseArchivAktion reise={reise} workflow={workflow} />
-      </div>
+      <KontoReiseArchivAktion reise={reise} workflow={workflow} />
     </article>
   )
 }

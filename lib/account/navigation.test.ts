@@ -20,7 +20,7 @@ describe('Account-Navigation', () => {
   test('zeigt vorhandene Account-Ziele in der Rail-Reihenfolge', () => {
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.label),
-      ['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'],
+      ['Mein Konto', 'Reisen', 'Meine Welt', 'Reisende', 'Einstellungen'],
     )
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.href),

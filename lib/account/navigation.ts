@@ -4,9 +4,9 @@
 // Favoriten und Abonnement bleiben bewusst draußen.
 
 export const ACCOUNT_NAVIGATION = [
-  { label: 'Übersicht', href: '/account' },
+  { label: 'Mein Konto', href: '/account' },
   { label: 'Reisen', href: '/reisen' },
-  { label: 'Deine Welt', href: '/account/welt' },
+  { label: 'Meine Welt', href: '/account/welt' },
   { label: 'Reisende', href: '/account/travellers' },
   { label: 'Einstellungen', href: '/account/settings' },
 ] as const

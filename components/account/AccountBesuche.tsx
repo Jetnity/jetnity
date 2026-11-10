@@ -13,7 +13,7 @@
 // Jede Schreibaktion gehört zu einem Vorgang. Eine angenommene Antwort räumt
 // nur den Entwurf oder die Bestätigung, deren Epoche und Absicht noch passen.
 
-import { AlertCircle, MapPin, Pencil, Trash2 } from 'lucide-react'
+import { AlertCircle, MapPin, Plus, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import AccountBesuchFormular, {
@@ -349,10 +349,7 @@ export default function AccountBesuche({
 
   return (
     <div data-account-besuche={besucht.lage}>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-        {BESUCHE_COPY.seitenEyebrow}
-      </p>
-      <div className="mt-2 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h1 className="min-w-0 break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
           {BESUCHE_COPY.seitenTitel}
         </h1>
@@ -365,14 +362,12 @@ export default function AccountBesuche({
             aria-expanded={formularOffen}
             aria-controls="account-besuch-anlegen"
             onClick={hinzufuegenUmschalten}
-            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
           >
-            {BESUCHE_COPY.hinzufuegenAktion}
+            <Plus size={17} aria-hidden /> {BESUCHE_COPY.hinzufuegenAktion}
           </button>
         )}
       </div>
-      <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">{BESUCHE_COPY.seitenLead}</p>
-      <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">{BESUCHE_COPY.seitenHinweis}</p>
 
       <AccountWeltKarte welt={welt} besucht={besucht} laender={laender} />
 

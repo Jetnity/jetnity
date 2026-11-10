@@ -5,10 +5,10 @@
 // Eine montierte Sammlung für /reisen. Suche, Auswahl und Blätterung
 // wechseln die Adresse. Sie tauschen diese Instanz nicht aus.
 
-import { useEffect, useState } from 'react'
-import { AlertCircle, MapPin, Plus, Search } from 'lucide-react'
+import { useState } from 'react'
+import { AlertCircle, MapPin, Plus, RefreshCw, Search, X } from 'lucide-react'
 
-import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { useGeraetekalendertag } from '@/components/account/account-home-export-1/useGeraetekalendertag'
 import { archivierteReisenAus, kontoReisenSichten, offeneReisenAus } from '@/lib/account/reise-archiv'
 import KontoReiseEintrag from '@/components/trips/KontoReiseEintrag'
 import { useMyTripsCollectionNavigation } from '@/components/trips/useMyTripsCollectionNavigation'
@@ -17,7 +17,6 @@ import {
   abschnittTitelKlasse,
   hubDarstellung,
   kartenRasterKlasse,
-  leistenKlasse,
   MEINE_REISEN_SUCHE,
   zaehlungAus,
   type MeineReisenGruppenKey,
@@ -78,12 +77,9 @@ export default function MyTripsCollection({
   const problem = angenommen?.problem ?? null
   const lesung = angenommen && !angenommen.ungueltig && problem === null ? 'gelesen' : 'nicht-gelesen'
   const archiv = useTripArchiveWorkflow(zeilen, problem, undefined, lesung)
-  const [entwurf, setEntwurf] = useState('')
-  const [heute, setHeute] = useState<string | null>(null)
-
-  useEffect(() => {
-    setHeute(heutigesDatum())
-  }, [])
+  const [entwurf, setEntwurf] = useState<string | null>(null)
+  const [gesuchterText, setGesuchterText] = useState<string | null>(null)
+  const heute = useGeraetekalendertag()
 
   const q = angenommen?.q ?? ''
   const auswahl = angenommen?.archiv ?? 'alle'
@@ -97,7 +93,11 @@ export default function MyTripsCollection({
   const keineAuswahl = Boolean(
     angenommen && !angenommen.ungueltig && !problem && zeilen.length === 0 && q === '' && auswahl !== 'alle' && cursor === null,
   )
-  const entwurfOffen = entwurf.trim() !== q
+  if (gesuchterText !== null && gesuchterText === q) {
+    setGesuchterText(null)
+    if (entwurf?.trim() === q) setEntwurf(null)
+  }
+  const suchfeld = entwurf ?? q
   const besitz = angenommen
     ? angenommen.ungueltig
       ? 'Die angezeigte Meldung gehört zu einer ungültigen Adresse.'
@@ -115,7 +115,8 @@ export default function MyTripsCollection({
 
   function absenden(ereignis: { preventDefault: () => void }) {
     ereignis.preventDefault()
-    navigation.abschicken('commit', sammlungHref({ q: entwurf.trim(), archiv: auswahl, cursor: null }))
+    setGesuchterText(suchfeld.trim())
+    navigation.abschicken('commit', sammlungHref({ q: suchfeld.trim(), archiv: auswahl, cursor: null }))
   }
 
   return (
@@ -129,94 +130,35 @@ export default function MyTripsCollection({
       data-sammlung-einig={einig ? '1' : '0'}
       className="min-w-0 space-y-6 overflow-x-hidden"
     >
-      <form onSubmit={absenden} className="rounded-[28px] border border-line-200 bg-white p-3 shadow-[0_10px_30px_rgba(15,46,42,0.04)] sm:p-4">
-        <label className="block">
-          <span className="sr-only">Reise suchen</span>
-          <span className="relative block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-600" />
-            <input
-              type="search"
-              value={entwurf}
-              onChange={(ereignis) => setEntwurf(ereignis.target.value)}
-              placeholder="Reise suchen"
-              autoComplete="off"
-              data-sammlung-suche
-              className={MEINE_REISEN_SUCHE}
-            />
-          </span>
-        </label>
-        <p className="mt-3 text-sm leading-6 text-ink-700">Suche in Titel und Herkunft.</p>
-        {entwurfOffen ? <p className="mt-1 text-sm leading-6 text-ink-700">Der Entwurf ist noch nicht die Suche.</p> : null}
-        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Archivauswahl">
+      <form onSubmit={absenden} role="search" className="flex min-w-0 flex-wrap items-center gap-3">
+        <div className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto sm:flex-1">
+          <label className="relative min-w-0 flex-1">
+            <span className="sr-only">Nach Reisetitel, Reiseziel oder Abreiseort suchen</span>
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-600" aria-hidden="true" />
+            <input type="search" value={suchfeld} onChange={(e) => setEntwurf(e.target.value)} placeholder="Reisetitel, Ziel oder Abreiseort" autoComplete="off" data-sammlung-suche className={MEINE_REISEN_SUCHE} />
+          </label>
+          <button type="submit" aria-label="Suchen" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white">
+            <Search className="h-4 w-4 sm:hidden" aria-hidden="true" /><span className="hidden sm:inline">Suchen</span>
+          </button>
+        </div>
+        <div role="group" aria-label="Archivauswahl" className="inline-flex max-w-full flex-wrap gap-1 rounded-2xl border border-line-200 bg-white p-1 sm:rounded-full">
           {AUSWAHL.map((eintrag) => (
-            <button
-              key={eintrag.wert}
-              type="button"
-              data-sammlung-archiv={eintrag.wert}
-              aria-pressed={auswahl === eintrag.wert}
+            <button key={eintrag.wert} type="button" data-sammlung-archiv={eintrag.wert} aria-pressed={auswahl === eintrag.wert}
               onClick={() => navigation.abschicken('selection', sammlungHref({ q, archiv: eintrag.wert, cursor: null }))}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800"
-            >
+              className="min-h-11 rounded-full px-3 text-sm font-semibold text-ink-700 aria-pressed:bg-brand-800 aria-pressed:text-white sm:px-4">
               {eintrag.text}
             </button>
           ))}
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="submit"
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white"
-          >
-            Suchen
-          </button>
-          <button
-            type="button"
-            data-sammlung-leeren
-            onClick={() => navigation.abschicken('clear', sammlungHref({ archiv: auswahl, cursor: null }))}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800"
-          >
-            Suche leeren
-          </button>
-          <button
-            type="button"
-            data-sammlung-neu
-            onClick={() => navigation.abschicken('restart', '/reisen')}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800"
-          >
-            Ansicht zurücksetzen
-          </button>
-          <button
-            type="button"
-            data-sammlung-erneut
-            disabled={!erneutFrei}
-            onClick={() => navigation.erneut()}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Ansicht erneut laden
-          </button>
-          <button
-            type="button"
-            data-sammlung-weiter
-            disabled={!weiterFrei}
-            onClick={() => {
-              if (!angenommen?.naechsterCursor) return
-              navigation.abschicken(
-                'continue',
-                sammlungHref({ q, archiv: auswahl, cursor: angenommen.naechsterCursor }),
-              )
-            }}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Weitere Reisen
-          </button>
-        </div>
+        {(q || suchfeld) ? <button type="button" data-sammlung-leeren onClick={() => {
+          setEntwurf('')
+          setGesuchterText('')
+          navigation.abschicken('clear', sammlungHref({ archiv: auswahl, cursor: null }))
+        }} className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-brand-800"><X aria-hidden="true" className="h-4 w-4" />Suche leeren</button> : null}
       </form>
 
-      {navigation.laden ? <p className="text-sm leading-6 text-ink-700">Diese Ansicht wird geladen.</p> : null}
-      {besitz ? (
-        <p data-sammlung-besitz className="text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
-          {besitz}
-        </p>
-      ) : null}
+      {navigation.laden ? <p role="status" className="text-sm text-ink-700">Reisen werden geladen …</p> : null}
+      {besitz ? <p data-sammlung-besitz className="sr-only">{besitz}</p> : null}
       {!einig ? (
         <p data-sammlung-ziel className="text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
           {zielSatz}
@@ -224,16 +166,10 @@ export default function MyTripsCollection({
           {angenommen?.ungueltig ? ' Die bisherige Meldung bleibt sichtbar.' : null}
         </p>
       ) : null}
-      {angenommen && !angenommen.ungueltig && !problem && zeilen.length > 0 ? (
-        <p className="text-sm leading-6 text-ink-700">
-          {zeilen.length === 1 ? '1 Reise auf dieser Seite.' : `${zeilen.length} Reisen auf dieser Seite.`} Das ist nicht
-          die Zahl aller Reisen im Konto.
-        </p>
-      ) : null}
-
       {angenommen?.ungueltig ? (
         <section className="rounded-[26px] border border-line-200 bg-white px-6 py-10 text-center" role="alert">
-          <h2 className="text-xl font-semibold text-brand-800">Diese Adresse ist keine gültige Ansicht.</h2>
+          <h2 className="text-xl font-semibold text-brand-800">Diese Reiseauswahl ist ungültig.</h2>
+          <button type="button" data-sammlung-neu className="mt-3 min-h-11 rounded-full border px-4" onClick={() => { setEntwurf(null); navigation.abschicken('restart', '/reisen') }}>Alle Reisen öffnen</button>
         </section>
       ) : null}
 
@@ -244,6 +180,7 @@ export default function MyTripsCollection({
           </span>
           <h2 className="mt-5 text-xl font-semibold text-red-800">{fehlerTitel}</h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">{fehlerHinweis}</p>
+          <button type="button" data-sammlung-erneut disabled={!erneutFrei} onClick={() => navigation.erneut()} className="mt-3 min-h-11 rounded-full border bg-white px-4 text-sm font-semibold text-brand-800">Erneut versuchen</button>
         </section>
       ) : null}
 
@@ -273,17 +210,6 @@ export default function MyTripsCollection({
       {!angenommen?.ungueltig && !problem && zeilen.length > 0 ? (
         sicht && darstellung ? (
           <div className="space-y-6">
-            <ul className="flex flex-wrap gap-2" aria-label="Reisegruppen">
-              {darstellung.leiste
-                .filter((eintrag) => eintrag.sichtbar)
-                .map((eintrag) => (
-                  <li key={eintrag.key}>
-                    <span className={leistenKlasse(eintrag)}>
-                      {eintrag.titel} {eintrag.anzahl}
-                    </span>
-                  </li>
-                ))}
-            </ul>
             {darstellung.leiste
               .filter((eintrag) => eintrag.karten)
               .map((eintrag) => (
@@ -312,6 +238,15 @@ export default function MyTripsCollection({
         )
       ) : null}
 
+      {angenommen?.hatWeiter && angenommen.naechsterCursor ? <button type="button" data-sammlung-weiter disabled={!weiterFrei} onClick={() => {
+        navigation.abschicken('continue', sammlungHref({ q, archiv: auswahl, cursor: angenommen.naechsterCursor }))
+      }} className="mx-auto block min-h-11 rounded-full border border-line-300 bg-white px-5 text-sm font-semibold text-brand-800">Weitere Reisen</button> : null}
+      {!problem && !angenommen?.ungueltig && zeilen.length > 0 ? (
+        <div className="flex items-center justify-end gap-2 text-xs text-ink-600">
+          <a href="/images/organisieren/Bildnachweise.txt" target="_blank" rel="noopener" className="p-2 underline">Bildnachweise</a>
+          <button type="button" data-sammlung-erneut disabled={!erneutFrei} onClick={() => navigation.erneut()} aria-label="Reiseauswahl aktualisieren" title="Reiseauswahl aktualisieren" className="grid h-11 w-11 place-items-center rounded-full hover:bg-surface-100 disabled:opacity-50"><RefreshCw aria-hidden="true" className="h-4 w-4" /></button>
+        </div>
+      ) : null}
       {verborgen.length > 0 ? (
         <div data-archiv-protokoll className="space-y-2 rounded-2xl border border-line-200 bg-white px-4 py-3">
           {verborgen.map((vorgang) => (

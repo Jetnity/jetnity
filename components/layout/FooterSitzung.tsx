@@ -84,7 +84,7 @@ function FooterSitzungseintrag({
   if (eintrag.art === 'link') {
     return (
       <Link href={eintrag.href} className={workspace ? 'workspace-session-link' : footerLinkClass}>
-        {eintrag.label}
+        {workspace && eintrag.href === '/account' ? 'Mein Konto' : eintrag.label}
       </Link>
     )
   }

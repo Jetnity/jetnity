@@ -3,7 +3,7 @@ import { flughafenAusReiseort, type FlughafenAuswahl } from '@/lib/airports/ausw
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { tageDifferenz } from '@/lib/activities/zeit'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
-import type { Trip, TripStage } from '@/types/trips'
+import type { Trip, TripStage, TripSummaryStage } from '@/types/trips'
 
 const foto = (name: string) => '/images/organisieren/' + name + '.webp'
 
@@ -95,7 +95,7 @@ const ziele = new Map<string, Ziel>([
   ['airport:HKT', phuket],
 ])
 
-export function etappenZiel(etappe: TripStage | undefined): Ziel | null {
+export function etappenZiel(etappe: Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'> | undefined): Ziel | null {
   if (!etappe || (etappe.countryCode && etappe.countryCode !== 'TH')) return null
   const bekannt = ziele.get(etappe.placeId ?? '')
   if (bekannt) return bekannt
@@ -114,9 +114,12 @@ export function etappenZiel(etappe: TripStage | undefined): Ziel | null {
   }
 }
 
-export function reiseFoto(etappe?: TripStage, titel = false): string {
+export function reiseFoto(etappe?: Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'>, titel = false): string {
   const ziel = etappenZiel(etappe)
   if (ziel) return (titel && ziel.kopf) || ziel.bild
+  if (etappe?.placeId === 'geonames:1631470' || (etappe?.countryCode === 'ID' && etappe.name.trim().toLowerCase() === 'nusa penida')) return foto('nusa-penida')
+  if (etappe?.placeId === 'geonames:3703430' || etappe?.placeId === 'geonames:3703443') return foto('panama')
+  if (etappe?.placeId === 'geonames:1605651') return foto('hero')
   const weitere: Record<string, string> = {
     'geonames:2759794': 'amsterdam',
     'geonames:2267057': 'lisbon',

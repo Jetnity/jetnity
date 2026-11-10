@@ -193,7 +193,7 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex">
-          {eintraege.map((eintrag) => (
+          {eintraege.filter((eintrag) => eintrag.art === 'link').map((eintrag) => (
             <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
           ))}
           <GastCreateLink

@@ -1,7 +1,7 @@
 // lib/trips/reisen-sammlung-daten.ts
 //
 // Eine begrenzte Seite der Kontoreisen für /reisen.
-// Account-Start und Welt bleiben bei reisenLaden().
+// Der Atlas lädt seine Übersicht separat.
 
 import 'server-only'
 
@@ -11,6 +11,7 @@ import {
   REISEN_SAMMLUNG_ABRUF,
   REISEN_SAMMLUNG_SEITENGROESSE,
   cursorCodieren,
+  literalesSuchmuster,
   sammlungAnfrageAus,
   sammlungHref,
   ungueltigeAdresse,
@@ -24,6 +25,7 @@ export type SammlungKette = PromiseLike<Leseantwort<UebersichtZeile>> & {
   select(spalten: string): SammlungKette
   eq(spalte: string, wert: string): SammlungKette
   neq(spalte: string, wert: string): SammlungKette
+  filter(spalte: string, operator: string, wert: string): SammlungKette
   or(filter: string): SammlungKette
   order(spalte: string, optionen: { ascending: boolean }): SammlungKette
   limit(anzahl: number): SammlungKette
@@ -52,10 +54,15 @@ export async function reisenSammlungLaden(
   client?: SammlungClient,
 ): Promise<Pick<SammlungErgebnis, 'zeilen' | 'problem' | 'hatWeiter' | 'naechsterCursor'>> {
   const supabase = (client ?? (await createServerComponentClient())) as SammlungClient
-  let kette = supabase.from('trips').select(UEBERSICHT_SPALTEN)
+  // Der Alias prüft auf eine passende Etappe. Die ursprüngliche Relation liefert weiterhin die ganze Route.
+  const spalten = anfrage.suchOder ? UEBERSICHT_SPALTEN + ',suchstopp:trip_stages()' : UEBERSICHT_SPALTEN
+  let kette = supabase.from('trips').select(spalten)
   if (anfrage.archiv === 'offen') kette = kette.neq('status', 'archived')
   if (anfrage.archiv === 'archiv') kette = kette.eq('status', 'archived')
-  if (anfrage.suchOder) kette = kette.or(anfrage.suchOder)
+  if (anfrage.suchOder) {
+    kette = kette.filter('suchstopp.name', 'imatch', literalesSuchmuster(anfrage.q))
+      .or(anfrage.suchOder + ',suchstopp.not.is.null')
+  }
   if (anfrage.keysetOder) kette = kette.or(anfrage.keysetOder)
   kette = kette.order('updated_at', { ascending: false }).order('id', { ascending: false })
 
