@@ -1,5 +1,38 @@
 # M04 Phase-B author delivery status V1
 
+**R12 SAME-SESSION CORRECTION PREPARED — INDEPENDENT ROOT REVIEW AND NEW NATIVE CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, actual session `/root/m04_durable_jobs_writer_g2`. [R12 CHANGES REQUIRED](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845) resumes the same Generation2 session against published head `7ac9c4bc3f284775e5236d5d862e90fabbf2822b`, tree `155189bf6a71f9f56909bea2a976b56b97def43c`. Root owns the Task V3 supplement, review and publication.
+
+## Current correction and source identity
+
+Only two CASE expressions in `jobs-candidate.sql` gain enclosing parentheses: the predecessor-default comparison and the final queue-CAS quota condition. These are two line edits adding **four ASCII bytes**. Values, comparisons, branches, quotas and all other source bytes are unchanged. The valid ACL expression at line 72 is unchanged.
+
+PostgreSQL 16's [PL/pgSQL grammar](https://github.com/postgres/postgres/blob/REL_16_STABLE/src/pl/plpgsql/src/pl_gram.y), fetched blob `cd172ef2f8d6c792b0ee26f5162ced0c90694277`, reads an IF condition until the first THEN outside parentheses/brackets. An unparenthesized SQL CASE therefore terminates that condition at its inner THEN, leaving an incomplete expression. The first occurrence is in the predecessor-pins DO block; the same defect also exists in the queue-CAS function. Parentheses preserve the full CASE expression for SQL parsing.
+
+The bounded source inspection found those two occurrences among 262 IF/ELSIF sites and no remaining occurrence after correction. This is **source inspection, not PostgreSQL parsing or execution**.
+
+- Corrected SQL: **135,966 bytes**, SHA256 `ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c`.
+- Eighteen-source aggregate: **`c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a`**.
+- The other seventeen source pins are retained unchanged from 7ac9c4. Rollback and all TypeScript sources are unchanged.
+- The complete U01–U07/N01–N15 map remains in the author evidence JSON, with historical unit results and current native-pending status explicitly separated.
+
+## Actual failed CI and verification limit
+
+[CI 42739327115](https://github.com/Jetnity/jetnity/actions/runs/42739327115), Repository verification job 129576216777, executed 7ac9c4 and failed at **jobs_candidate / PostgreSQL 42601**. Its pinned candidate hash is the prior `3f17aebe…`. The receipt contains **no native groups and no R9 witnesses**, nativePass:false, 22/22 operations settled, 2/2 connections closed, one stopped cluster and no cleanup errors. Core totals are **8,658 tests: 8,655 passed, one failed, two skipped**. The complete safe receipt is preserved in the updated evidence.
+
+The execution environment is now **unavailable**. No new local tests, typecheck, lint, SQL/parser/native execution, installation, build or replacement environment was attempted. The earlier **64/64 unit PASS**, TypeScript 0 diagnostics and lint 0 warnings/errors apply to unchanged TypeScript bytes and were **not rerun**; they do not validate the SQL correction. Corrected native execution remains a new-head CI gate.
+
+## STOP and unchanged gates
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root must review and publish the two-line correction, then independently inspect new exact-head unchanged CI/native receipts and live deployment/thread gates. No unchanged-code CI retry, Ready, merge, database installation or automatic follow-up slice was performed.
+
+Method **NOT_APPROVED**; #1139 **NOT_RELEASE_READY / 17 gaps**. #917's specific readback refusal remains binding; no retry or substitute. #1131, both #1135 holds, #968 and #911/#913 remain. No hosted DB/Auth/RLS/ACL/migration/credential/Auth-log operation, real source/provider call, scheduler, notification, cost or activation.
+
+## Previous Generation2 delivery — historical snapshot before R12
+
+The following record describes the earlier source cut published in 7ac9c4. Its old source digest, “current” wording and executed checks are historical; the R12 status and pins above take precedence.
+
 **GENERATION2 CORRECTIONS DELIVERED FOR INDEPENDENT ROOT REVIEW — CURRENT NATIVE CI PENDING.** This is an author delivery, not a Technical-Lead PASS, Ready, merge, database installation or activation.
 
 Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, actual new session `/root/m04_durable_jobs_writer_g2`. [Recovery dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057) on exact HEAD `d9d62c690658444e06d04becf93f21ffb9112165`; binding supplement [M04_RECOVERY_TASK_V2.md](M04_RECOVERY_TASK_V2.md). Generation1 `/root/m04_durable_jobs_writer` is unavailable after context loss. No same-session continuity with Generation1 or Cursor session is claimed. Immediate corrections return to this actual Generation2 session.

@@ -72,7 +72,7 @@ BEGIN
       OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(p.proacl,acldefault('f',p.proowner))) a
         WHERE NOT(a.grantee=ANY(allowed)) OR a.is_grantable OR a.privilege_type<>'EXECUTE' OR a.grantor<>p.proowner) THEN
       RAISE EXCEPTION 'm04 exact predecessor mismatch' USING ERRCODE='P7601'; END IF;
-    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END THEN
+    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM (CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END) THEN
       RAISE EXCEPTION 'm04 predecessor defaults mismatch' USING ERRCODE='P7601'; END IF;
   END LOOP;
 END $predecessor_pins$;
@@ -1017,7 +1017,7 @@ BEGIN
   END IF;
   new_credit:=CASE WHEN next_record->>'state'='leased' THEN
     CASE WHEN c->>'action'='claim' THEN c->>'operationId' ELSE s.terminal_credit_claim END ELSE NULL END;
-  IF COALESCE(s.operation_count,0)+1+CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END>256
+  IF COALESCE(s.operation_count,0)+1+(CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END)>256
     OR (c->>'action'='claim' AND next_record->>'state'='leased' AND s.start_count>=64) THEN
     RETURN jsonb_build_object('reply',jsonb_build_object('status','quota'),'authority',false); END IF;
   IF s.job_key IS NULL THEN

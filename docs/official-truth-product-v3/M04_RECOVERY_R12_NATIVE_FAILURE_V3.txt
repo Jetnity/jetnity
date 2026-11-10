@@ -1,0 +1,8 @@
+2026-11-10T02:12:23.7297559Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T02:12:23.7299217Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T02:12:23.7327618Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":975,"cleanupMilliseconds":154,"clusters":1,"childProcesses":0,"lifetime":{"started":22,"settled":22,"pending":0,"connections":2,"closed":2,"stoppedClusters":1},"groups":[],"nestedRaceWitnesses":[],"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":0,"maximumIntake":0,"maximumMethod":0,"m04ObserverLimit":2,"maximumM04Observers":0,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"jobs_candidate","error":{"kind":"postgres","code":"42601"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+2026-11-10T02:13:04.0649017Z # tests 8658
+2026-11-10T02:13:04.0649405Z # pass 8655
+2026-11-10T02:13:04.0649597Z # fail 1
+2026-11-10T02:13:04.0650050Z # cancelled 0
+2026-11-10T02:13:04.0650265Z # skipped 2

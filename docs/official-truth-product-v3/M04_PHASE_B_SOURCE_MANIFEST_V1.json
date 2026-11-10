@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "GENERATION2_AUTHOR_DELIVERY_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T01:50:52.386483+00:00",
+  "status": "R12_SAME_GENERATION2_SOURCE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T02:22:52.389Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "d9d62c690658444e06d04becf93f21ffb9112165",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057",
+  "dispatchHead": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,16 +19,20 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "sourceBaseline": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
     "sourceFilesChanged": [
+      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql"
+    ],
+    "sourceFilesUnchanged": 17,
+    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "mainIntegration": "R12 starts from published7ac9c4. Root owns current-main ancestry/integration and publication; author performed no Git mutation.",
+    "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
-    ],
-    "sourceFilesUnchanged": 14,
-    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "Root owns concurrent PR1180/main integration and ROADMAP reconciliation; this author cut is relative to d9 and is not a claim that current main is integrated."
+    ]
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -104,8 +108,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 135962,
-      "sha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb"
+      "bytes": 135966,
+      "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -123,7 +127,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+  "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -426,7 +430,9 @@
       }
     ],
     "capturedAt": "2026-11-10T01:50:52.386483+00:00",
-    "limit": "Generation2 comparison with d9 before Root current-main integration/pointer updates. Generation1 earlier changes remain historical."
+    "limit": "Generation2 comparison with d9 before Root current-main integration/pointer updates. Generation1 earlier changes remain historical.",
+    "historicalForR12": true,
+    "r12Limit": "Preserved d9 comparison predating R12/current-main integration; not rerun. R12 only transforms the pinned candidate SQL."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -475,7 +481,9 @@
       "milliseconds": 8102.282633,
       "node": "v24.22.1",
       "logSha256": "253efbfab26d27a629561ab13ed21508f29e9814a690a91e2d73ac586f5dc88b",
-      "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution."
+      "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution.",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -490,7 +498,9 @@
       "typescript": "5.9.3",
       "configuration": "Repository tsconfig.json options; incremental:false; noEmit:true; tsBuildInfoFile removed; exactly the sixteen .ts roots in sourceFiles; getPreEmitDiagnostics plus config.errors; source pins compared before/after.",
       "checkerSourceSha256": "25aba8eb20f44b6a7105079649bcc60609adb2f8476a921b257910f5a4bf668c",
-      "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636"
+      "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     },
     {
       "name": "targeted ESLint",
@@ -500,7 +510,9 @@
       "errors": 0,
       "warnings": 0,
       "output": "empty stdout and stderr",
-      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     }
   ],
   "corrections": {
@@ -535,39 +547,123 @@
         "DO owners loop record p renamed function_row and references updated"
       ],
       "variableConflictSettingChanged": false
+    },
+    "R12": {
+      "finding": "R12",
+      "status": "TWO_PARENTHESES_PAIRS_PREPARED_FOR_ROOT_REVIEW_NATIVE_PENDING",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845",
+      "baselineHead": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+      "baselineTree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+      "baselineCandidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "candidate": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 135966,
+        "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
+      },
+      "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+      "correction": "Parenthesize only the SQL CASE expressions in predecessor-pins IF and tx_queue_cas_v1 quota IF; two line edits, four added ASCII bytes, same values/branches/limits.",
+      "exactReplacements": [
+        {
+          "old": "    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END THEN",
+          "new": "    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM (CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END) THEN"
+        },
+        {
+          "old": "  IF COALESCE(s.operation_count,0)+1+CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END>256",
+          "new": "  IF COALESCE(s.operation_count,0)+1+(CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END)>256"
+        }
+      ],
+      "grammarEvidence": {
+        "repository": "postgres/postgres",
+        "ref": "REL_16_STABLE",
+        "path": "src/pl/plpgsql/src/pl_gram.y",
+        "blob": "cd172ef2f8d6c792b0ee26f5162ced0c90694277",
+        "url": "https://github.com/postgres/postgres/blob/REL_16_STABLE/src/pl/plpgsql/src/pl_gram.y",
+        "explanation": "stmt_if consumes expr_until_then; that calls read_sql_expression(K_THEN). read_sql_construct terminates at K_THEN with parenthesis depth zero and counts only parentheses/brackets, not CASE nesting. The earlier CASE THEN therefore ends an incomplete IF SQL expression."
+      },
+      "boundedSourceInspection": {
+        "ifElsifSites": 262,
+        "unparenthesizedCaseConditionsBefore": 2,
+        "unparenthesizedCaseConditionsAfter": 0,
+        "sites": [
+          75,
+          1020
+        ],
+        "line72Changed": false,
+        "limit": "Source token inspection and grammar reading only, not a PostgreSQL parser, SQL execution or test."
+      },
+      "environment": "UNAVAILABLE",
+      "newLocalExecution": false,
+      "localTestsRun": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "previousChecks": "64/64 named tests, TypeScript 0 diagnostics and lint 0 warnings/errors predate R12 and apply to unchanged TypeScript bytes; none were rerun and none validate this SQL correction.",
+      "independentReview": "Read-only reviewer independently confirmed both source sites and primary PostgreSQL grammar; Root owns final acceptance.",
+      "scope": "Only candidate SQL and four author evidence files; no runtime, protected helper, predecessor SQL, budget, package/workflow, hosted or Owner-gate change.",
+      "nextGate": "Root publication followed by new exact-head unchanged CI; no rerun of unchanged known-bad code and no native PASS claim."
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "CURRENT_SOURCE_NOT_EXECUTED_PENDING_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R12_CURRENT_SQL_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
-    "runId": 42732722870,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42732722870",
-    "repositoryVerificationJobId": 129554463494,
+    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+    "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+    "runId": 42739327115,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42739327115",
+    "repositoryVerificationJobId": 129576216777,
     "conclusion": "failure",
-    "source": "Root live audit and downloaded Repository verification log; independently read by Generation2, no native reproduction.",
+    "source": "Generation2 independently read the exact GitHub Repository verification job log; no local/native reproduction.",
     "core": {
-      "tests": 8661,
-      "passed": 8658,
+      "tests": 8658,
+      "passed": 8655,
       "failed": 1,
       "skipped": 2
     },
     "native": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "nativePass": false,
-      "groups": [],
-      "started": 18,
-      "settled": 18,
-      "connections": 2,
-      "closed": 2,
+      "effectAndCleanupMilliseconds": 975,
+      "cleanupMilliseconds": 154,
       "clusters": 1,
-      "stoppedClusters": 1,
-      "childProcesses": 0
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 22,
+        "settled": 22,
+        "pending": 0,
+        "connections": 2,
+        "closed": 2,
+        "stoppedClusters": 1
+      },
+      "groups": [],
+      "nestedRaceWitnesses": [],
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 0,
+        "maximumIntake": 0,
+        "maximumMethod": 0,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 0,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "jobs_candidate",
+        "error": {
+          "kind": "postgres",
+          "code": "42601"
+        }
+      },
+      "cleanupFailures": [],
+      "cleanupFailureCount": 0,
+      "nativePass": false
     },
-    "candidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
-    "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
-    "diagnosis": "Source-derived duplicate unnamed set_config columns at first fixture marker; protected decoder rejects duplicate_column. Corrected source requires actual CI confirmation; old AggregateError did not expose the cause."
+    "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+    "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+    "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
   },
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
@@ -578,10 +674,107 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of R9/R10/R11 and coverage",
-    "Root reconciliation with concurrent main, publication and new exact head",
-    "Unchanged existing CI including mandatory native groups and actual cleanup receipt",
-    "Root exact-head Preview/Production/live-thread/Owner-gate review"
+    "Independent Root exact-source review of the two R12 SQL parenthesizations and author evidence",
+    "Root new-head publication preserving current main and all unchanged source bytes",
+    "New exact-head unchanged CI including mandatory native groups, nested R9 witnesses and actual cleanup receipt",
+    "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE"
+  "disposition": "AUTHOR_STOP_R12_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "previousRecoveryDispatch": {
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057"
+  },
+  "historicalCIRuns": [
+    {
+      "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+      "runId": 42732722870,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42732722870",
+      "repositoryVerificationJobId": 129554463494,
+      "conclusion": "failure",
+      "source": "Root live audit and downloaded Repository verification log; independently read by Generation2, no native reproduction.",
+      "core": {
+        "tests": 8661,
+        "passed": 8658,
+        "failed": 1,
+        "skipped": 2
+      },
+      "native": {
+        "executed": true,
+        "nativePass": false,
+        "groups": [],
+        "started": 18,
+        "settled": 18,
+        "connections": 2,
+        "closed": 2,
+        "clusters": 1,
+        "stoppedClusters": 1,
+        "childProcesses": 0
+      },
+      "candidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
+      "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+      "diagnosis": "Source-derived duplicate unnamed set_config columns at first fixture marker; protected decoder rejects duplicate_column. Corrected source requires actual CI confirmation; old AggregateError did not expose the cause."
+    },
+    {
+      "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+      "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+      "runId": 42739327115,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42739327115",
+      "repositoryVerificationJobId": 129576216777,
+      "conclusion": "failure",
+      "source": "Generation2 independently read the exact GitHub Repository verification job log; no local/native reproduction.",
+      "core": {
+        "tests": 8658,
+        "passed": 8655,
+        "failed": 1,
+        "skipped": 2
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 975,
+        "cleanupMilliseconds": 154,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 22,
+          "settled": 22,
+          "pending": 0,
+          "connections": 2,
+          "closed": 2,
+          "stoppedClusters": 1
+        },
+        "groups": [],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 0,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 0,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "jobs_candidate",
+          "error": {
+            "kind": "postgres",
+            "code": "42601"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+      "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
+    }
+  ],
+  "environment": "UNAVAILABLE",
+  "newLocalExecutionForR12": false
 }

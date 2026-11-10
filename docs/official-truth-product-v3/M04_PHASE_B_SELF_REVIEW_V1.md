@@ -1,5 +1,31 @@
 # M04 Phase-B author self-review V1
 
+**R12 SAME GENERATION2 / SAME SESSION — SOURCE CORRECTION ONLY; NEW NATIVE CI PENDING.** This is author self-review, not Technical-Lead acceptance.
+
+Author/session: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, `/root/m04_durable_jobs_writer_g2`. [R12 dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845) follows failed published head `7ac9c4bc3f284775e5236d5d862e90fabbf2822b`.
+
+## R12 grammar finding and minimal correction
+
+The actual CI receipt reports jobs_candidate / SQLSTATE 42601, with zero native groups/R9 witnesses. Exact source reading identifies two unparenthesized SQL CASE expressions inside PL/pgSQL IF conditions: predecessor defaults (line 75) and queue-CAS quota (line 1020). PostgreSQL 16 `stmt_if` uses `expr_until_then`, which calls `read_sql_expression(K_THEN)`; `read_sql_construct` stops at THEN when parenthesis depth is zero. It tracks parentheses/brackets, not CASE nesting. Thus the inner CASE THEN prematurely terminates an incomplete IF expression. This is a source-derived diagnosis consistent with the real error; the receipt does not provide an exact error position.
+
+Both CASE expressions now have parentheses. Four ASCII bytes are added; values, limits, branch logic and all remaining source bytes stay unchanged. No ACL expression, helper, predecessor or conflict setting changes. The briefly proposed extra-parenthesis issue at line 72 was withdrawn after exact-byte rereading; that valid line is unchanged.
+
+Primary source: [PostgreSQL REL_16_STABLE pl_gram.y](https://github.com/postgres/postgres/blob/REL_16_STABLE/src/pl/plpgsql/src/pl_gram.y), blob `cd172ef2f8d6c792b0ee26f5162ced0c90694277`. A bounded token inspection found exactly two naked CASE-in-IF occurrences among 262 IF/ELSIF sites and zero after correction. This check is not a PostgreSQL parser and establishes no native runtime acceptance.
+
+Corrected SQL: 135,966 bytes, SHA256 `ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c`. New eighteen-source aggregate: **`c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a`**. Other seventeen source pins unchanged.
+
+## Current evidence boundary and STOP
+
+[CI 42739327115](https://github.com/Jetnity/jetnity/actions/runs/42739327115), job 129576216777: 8,658 core tests, 8,655 passed, one failed, two skipped. M04 failed candidate setup; nativePass:false, all 22 owned operations settled, both connections closed, one cluster stopped, cleanup failures zero. This is a failed historical run against the prior SQL bytes, not corrected-source proof.
+
+The execution environment is unavailable. **No tests, typecheck, lint, SQL/parser/native execution or build ran for R12.** Previous 64/64 unit results and static checks remain historical evidence for unchanged TypeScript bytes; they do not validate this SQL correction. R9 code and assertions are unchanged, and their actual native execution is still open. The full proof map is retained below and in JSON with those limits explicit.
+
+**STOP for Root independent review, new-head publication and unchanged CI.** No Ready, merge, activation, Git mutation/publication or automatic next slice. All existing Owner/hosted/#917 gates remain unchanged.
+
+## Previous Generation2 self-review — historical snapshot before R12
+
+The following text records the earlier reviewed source cut and offline checks. Its old aggregate and execution statements are historical and subordinate to the R12 boundary above.
+
 **GENERATION2 AUTHOR SELF-REVIEW — INDEPENDENT ROOT REVIEW AND CURRENT NATIVE CI STILL REQUIRED.** Author statements are not Technical-Lead acceptance.
 
 Author/session: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, `/root/m04_durable_jobs_writer_g2`. This is a new documented context-loss continuation of d9, not a claim to Generation1's old session. [Dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057); [TaskV2](M04_RECOVERY_TASK_V2.md). Exact eighteen-source digest **`cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f`**; individual pins and check commands are in [source manifest](M04_PHASE_B_SOURCE_MANIFEST_V1.json).

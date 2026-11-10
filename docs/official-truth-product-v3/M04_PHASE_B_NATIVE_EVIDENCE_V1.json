@@ -1,13 +1,13 @@
 {
   "schema": "jetnity.m04.phase-b.native-evidence.v1",
-  "status": "GENERATION2_AUTHOR_DELIVERY_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "savedAt": "2026-11-10T01:50:52.386483+00:00",
+  "status": "R12_SAME_GENERATION2_SOURCE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "savedAt": "2026-11-10T02:22:52.389Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "d9d62c690658444e06d04becf93f21ffb9112165",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057",
-  "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+  "dispatchHead": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845",
+  "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
   "sourcePins": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -81,8 +81,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 135962,
-      "sha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb"
+      "bytes": 135966,
+      "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -107,35 +107,66 @@
   "hostedAccess": false,
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
-  "executionMeaning": "nativeExecuted=false refers to this new source cut. Historical d9 CI did execute and failed setup; its separate evidence follows.",
+  "executionMeaning": "nativeExecuted=false refers to corrected R12 source. Published7ac9c4 and prior d9 CI each executed and failed before every native group; preserved historicalCIRuns contain the actual failures.",
   "historicalCI": {
-    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
-    "runId": 42732722870,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42732722870",
-    "repositoryVerificationJobId": 129554463494,
+    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+    "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+    "runId": 42739327115,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42739327115",
+    "repositoryVerificationJobId": 129576216777,
     "conclusion": "failure",
-    "source": "Root live audit and downloaded Repository verification log; independently read by Generation2, no native reproduction.",
+    "source": "Generation2 independently read the exact GitHub Repository verification job log; no local/native reproduction.",
     "core": {
-      "tests": 8661,
-      "passed": 8658,
+      "tests": 8658,
+      "passed": 8655,
       "failed": 1,
       "skipped": 2
     },
     "native": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "nativePass": false,
-      "groups": [],
-      "started": 18,
-      "settled": 18,
-      "connections": 2,
-      "closed": 2,
+      "effectAndCleanupMilliseconds": 975,
+      "cleanupMilliseconds": 154,
       "clusters": 1,
-      "stoppedClusters": 1,
-      "childProcesses": 0
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 22,
+        "settled": 22,
+        "pending": 0,
+        "connections": 2,
+        "closed": 2,
+        "stoppedClusters": 1
+      },
+      "groups": [],
+      "nestedRaceWitnesses": [],
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 0,
+        "maximumIntake": 0,
+        "maximumMethod": 0,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 0,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "jobs_candidate",
+        "error": {
+          "kind": "postgres",
+          "code": "42601"
+        }
+      },
+      "cleanupFailures": [],
+      "cleanupFailureCount": 0,
+      "nativePass": false
     },
-    "candidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
-    "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
-    "diagnosis": "Source-derived duplicate unnamed set_config columns at first fixture marker; protected decoder rejects duplicate_column. Corrected source requires actual CI confirmation; old AggregateError did not expose the cause."
+    "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+    "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+    "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
   },
   "continuation": {
     "task": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V2.md",
@@ -145,16 +176,20 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "sourceBaseline": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
     "sourceFilesChanged": [
+      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql"
+    ],
+    "sourceFilesUnchanged": 17,
+    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "mainIntegration": "R12 starts from published7ac9c4. Root owns current-main ancestry/integration and publication; author performed no Git mutation.",
+    "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
-    ],
-    "sourceFilesUnchanged": 14,
-    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "Root owns concurrent PR1180/main integration and ROADMAP reconciliation; this author cut is relative to d9 and is not a claim that current main is integrated."
+    ]
   },
   "corrections": {
     "R9": {
@@ -188,6 +223,59 @@
         "DO owners loop record p renamed function_row and references updated"
       ],
       "variableConflictSettingChanged": false
+    },
+    "R12": {
+      "finding": "R12",
+      "status": "TWO_PARENTHESES_PAIRS_PREPARED_FOR_ROOT_REVIEW_NATIVE_PENDING",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845",
+      "baselineHead": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+      "baselineTree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+      "baselineCandidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "candidate": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 135966,
+        "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
+      },
+      "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+      "correction": "Parenthesize only the SQL CASE expressions in predecessor-pins IF and tx_queue_cas_v1 quota IF; two line edits, four added ASCII bytes, same values/branches/limits.",
+      "exactReplacements": [
+        {
+          "old": "    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END THEN",
+          "new": "    IF x.defaults>0 AND pg_get_expr(p.proargdefaults,0) IS DISTINCT FROM (CASE x.defaults WHEN 3 THEN '0, 16, 8192' ELSE '0' END) THEN"
+        },
+        {
+          "old": "  IF COALESCE(s.operation_count,0)+1+CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END>256",
+          "new": "  IF COALESCE(s.operation_count,0)+1+(CASE WHEN new_credit IS NULL THEN 0 ELSE 1 END)>256"
+        }
+      ],
+      "grammarEvidence": {
+        "repository": "postgres/postgres",
+        "ref": "REL_16_STABLE",
+        "path": "src/pl/plpgsql/src/pl_gram.y",
+        "blob": "cd172ef2f8d6c792b0ee26f5162ced0c90694277",
+        "url": "https://github.com/postgres/postgres/blob/REL_16_STABLE/src/pl/plpgsql/src/pl_gram.y",
+        "explanation": "stmt_if consumes expr_until_then; that calls read_sql_expression(K_THEN). read_sql_construct terminates at K_THEN with parenthesis depth zero and counts only parentheses/brackets, not CASE nesting. The earlier CASE THEN therefore ends an incomplete IF SQL expression."
+      },
+      "boundedSourceInspection": {
+        "ifElsifSites": 262,
+        "unparenthesizedCaseConditionsBefore": 2,
+        "unparenthesizedCaseConditionsAfter": 0,
+        "sites": [
+          75,
+          1020
+        ],
+        "line72Changed": false,
+        "limit": "Source token inspection and grammar reading only, not a PostgreSQL parser, SQL execution or test."
+      },
+      "environment": "UNAVAILABLE",
+      "newLocalExecution": false,
+      "localTestsRun": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "previousChecks": "64/64 named tests, TypeScript 0 diagnostics and lint 0 warnings/errors predate R12 and apply to unchanged TypeScript bytes; none were rerun and none validate this SQL correction.",
+      "independentReview": "Read-only reviewer independently confirmed both source sites and primary PostgreSQL grammar; Root owns final acceptance.",
+      "scope": "Only candidate SQL and four author evidence files; no runtime, protected helper, predecessor SQL, budget, package/workflow, hosted or Owner-gate change.",
+      "nextGate": "Root publication followed by new exact-head unchanged CI; no rerun of unchanged known-bad code and no native PASS claim."
     }
   },
   "executedNonNativeChecks": [
@@ -204,7 +292,9 @@
       "milliseconds": 8102.282633,
       "node": "v24.22.1",
       "logSha256": "253efbfab26d27a629561ab13ed21508f29e9814a690a91e2d73ac586f5dc88b",
-      "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution."
+      "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution.",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -219,7 +309,9 @@
       "typescript": "5.9.3",
       "configuration": "Repository tsconfig.json options; incremental:false; noEmit:true; tsBuildInfoFile removed; exactly the sixteen .ts roots in sourceFiles; getPreEmitDiagnostics plus config.errors; source pins compared before/after.",
       "checkerSourceSha256": "25aba8eb20f44b6a7105079649bcc60609adb2f8476a921b257910f5a4bf668c",
-      "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636"
+      "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     },
     {
       "name": "targeted ESLint",
@@ -229,14 +321,16 @@
       "errors": 0,
       "warnings": 0,
       "output": "empty stdout and stderr",
-      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executedForR12": false,
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
     }
   ],
   "coverageMatrix": [
     {
       "id": "U01",
       "requirement": "Closed contract, all seventeen predicate families, strict shape/numeric/JSON admission",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -260,12 +354,13 @@
         "Duplicate status members, accessor rows, extra fields and negative-zero metadata rejected; only four JSON whitespace characters admitted.",
         "Raw Unicode/trim aliases normalize at JS edge; cycles/getters and excessive nesting/cardinality refuse. Native direct-entry checks are N02."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance."
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance.",
+      "executedForR12": false
     },
     {
       "id": "U02",
       "requirement": "Full identity and support stripping after actual S0 validation",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -285,12 +380,13 @@
         "Changed research reason preserves stable subject; invalid support rejects before stripping; support-stripped duplicate operands collapse on second pass.",
         "Legacy/revision-2 and unresolved variants are included in finite identity vectors."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance."
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance.",
+      "executedForR12": false
     },
     {
       "id": "U03",
       "requirement": "Immutable command and original claim/replay binding",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -314,12 +410,13 @@
         "START positive reply must bind original leased record and exact claim duration.",
         "Generic queue fail confirmation/CAS/post-CAS read uses retained immutable command; persistent replay/collision tests are N03/N09."
       ],
-      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240."
+      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240.",
+      "executedForR12": false
     },
     {
       "id": "U04",
       "requirement": "Whole-original/whole-batch D01 admission and bounded wire",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -347,12 +444,13 @@
         "Sixteen-original success preserves bytes, performs sixteen captures/reserves/finishes and48 reads within256 admissions.",
         "18.0/18e0/1.8e1 originals retain semantic compatibility; source-derived maximum160772 bytes is below262144. Native wire/row and actual persistence tests remain N02/N08."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance."
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance.",
+      "executedForR12": false
     },
     {
       "id": "U05",
       "requirement": "MA1 custody, monotone deadlines and closed private outward surface",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
@@ -380,12 +478,13 @@
         "Four owned calls retain slots through abort; joint outward object has exactly three methods and no receipt/epoch/general-SQL escape.",
         "Actual private bridge uses terminal observedAt plus remaining original Held cap and refuses delayed positive ACK."
       ],
-      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged."
+      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged.",
+      "executedForR12": false
     },
     {
       "id": "U06",
       "requirement": "Nested I1/worker race and actual owned drain/retired lane",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -418,12 +517,13 @@
         "Separate raw composition test directly observes raw integration unconfirmed while the same reserve and scope drain/finish remain pending; actual standalone MA1 plus labelled handwritten fixed bridge.",
         "No fail/complete CAS, no backoff state, no finish or late native admission; all held promises released and joined."
       ],
-      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut."
+      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut.",
+      "executedForR12": false
     },
     {
       "id": "U07",
       "requirement": "Uncertain I1 results cannot create known failure",
-      "execution": "NAMED_OFFLINE_SUITE_PASS",
+      "execution": "HISTORICAL_OFFLINE_PASS_UNCHANGED_TS_NOT_RERUN_FOR_R12",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -447,12 +547,13 @@
         "Confirmed quarantine and privately owned known producer failure may produce one backoff; uncertain pre-START lookup cannot.",
         "Final failure reservation is excluded from processing terminality and retains sixteen admissions."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance."
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance.",
+      "executedForR12": false
     },
     {
       "id": "N01",
       "requirement": "Exact fictional install and security/catalog inventory",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N01",
@@ -468,12 +569,13 @@
       "assertions": [
         "Independent29-function/seven-table/fourteen-guard/seven-policy inventory; fixed ownership, FORCE RLS, exact signatures/ACL/index/constraint checks; narrow runtime and denial paths; temporary catalog shadows."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N02",
       "requirement": "Native canonical/direct-entry identity",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N02",
@@ -489,12 +591,13 @@
       "assertions": [
         "Actual S0 parity vectors, closed fixed wire entry and malformed/duplicate/noncanonical/identity/bound refusal; maximum cardinality wire and response bounds. Forged locators are collision-defense fixtures, not manufactured SHA256 collisions."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N03",
       "requirement": "Durable commands, exact replay and dedup",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N03",
@@ -505,12 +608,13 @@
       "assertions": [
         "Database-backed command envelope replay, independent semantic subjects, cycle collision and active dedup assertions."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N04",
       "requirement": "One original START winner, ACK uncertainty and restart",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -536,12 +640,13 @@
       "assertions": [
         "Two actual native starts contend after preflight, one acknowledged winner; older active start blocks new claim; process crash and lost START ACK do not create a second producer permit."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N05",
       "requirement": "All older unknown and finite history/ledger caps",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -562,12 +667,13 @@
       "assertions": [
         "Crash-preserved unknown across changed IDs/reason/reapproved epoch;254/255/256 command boundary and sole original terminal credit;64 retained starts and65th claim refusal; contradictory pointer detected and restored without history deletion."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N06",
       "requirement": "Preflight/start contention and independent progress",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -583,12 +689,13 @@
       "assertions": [
         "Real competing native starts and actual row/advisory blocking; losing claim cannot change attempts/revision; separate subject progresses while original producer remains active."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N07",
       "requirement": "Actual Rule S1/I1/PREPARED/completion/E1 path",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N07",
@@ -604,12 +711,13 @@
       "assertions": [
         "Actual capture/read/reserve/finish and full S1 consumption, exact original bytes and decision reference, final MA1; archived history and linked method revision2 consumption."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N08",
       "requirement": "Sixteen persisted originals and whole-batch admission",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N08",
@@ -630,12 +738,13 @@
       "assertions": [
         "Sixteen actual persisted originals complete within fixed admission bounds and reopen later; duplicate/missing final member refuses before first S1 effect. Separate nested finish ACK-loss witness covers uncertainty, not a claim of a distinct16th-write-loss scenario."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N09",
       "requirement": "Fresh-process PREPARED/completed recovery and claim fidelity",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -651,12 +760,13 @@
       "assertions": [
         "Process crash and separate fresh-process recovery of prepared/completed lost acknowledgement with original claim, no producer reuse; changed claim/revoked epoch recovery refusal assertions."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N10",
       "requirement": "Known failure versus unknown callback/native outcome",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06/N10",
@@ -687,12 +797,13 @@
       "assertions": [
         "Active producer/pending I1 evidence or lost START/finish acknowledgement preserves unknown; pre-S1 D01 failure may settle privately; actual final command/disposition ledger boundary is atomic. Source proof is separate from a measured native result."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N11",
       "requirement": "Real waits followed by final authority/clock",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N11",
@@ -723,12 +834,13 @@
       "assertions": [
         "PID+backend_start+holder+relation observed for MA1, subject, advisory, table, S1 operation, unique and immediate FK waits; due/lease checks, revoke and deferred-trigger drift; full staged state unchanged on refusal."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N12",
       "requirement": "Acquisition/cancellation/ACK and nested executor terminal ownership",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N12",
@@ -754,12 +866,13 @@
       "assertions": [
         "Four held acquisitions refuse fifth; control failure and intentional child crash retain cleanup failures. New natural I1 timeout and explicit caller-abort reserve cases prove actual wait before cancellation, backend absence while same executor remains held, all four outer lanes, no terminal effects, exact S1 operations/reservations/completions unchanged, then same-operation join and no late admissions."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N13",
       "requirement": "Legacy original preserved but ineligible for M04 preparation",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N13",
@@ -770,12 +883,13 @@
       "assertions": [
         "Actual unchanged S1 accepts/reopens retained raw-alias original byte-for-byte; M04 full consumer refuses it; fresh privately owned D01 failure occurs before any new S1 call."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N14",
       "requirement": "Creator defaults, prerequisite drift and actual dependencies",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N14",
@@ -796,12 +910,13 @@
       "assertions": [
         "Finite creator ACL, role/membership/owner/body/language/ACL drift matrix refuses before creation with exact catalog restoration. Empty predecessor histories and clean reader membership reach actual2BP01 dependencies; wrong errors are not accepted."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     },
     {
       "id": "N15",
       "requirement": "Guarded rollback with nonempty and concurrent late history",
-      "execution": "CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R12_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N15",
@@ -822,7 +937,8 @@
       "assertions": [
         "Any existing retained history blocks teardown; exact empty companion-first teardown preserves predecessors/defaults despite shadows; actual table-lock late writer forces post-wait recheck and refusal."
       ],
-      "limits": "Source assertion map only. Historical d9 native startup failed before all groups; no current-group native PASS is claimed."
+      "limits": "Source assertion map only. Both historical CI runs failed before native groups; corrected R12 installation and every native group remain unexecuted.",
+      "executedForR12": false
     }
   ],
   "nativeGroupInventory": [
@@ -983,6 +1099,8 @@
     }
   ],
   "evidencePrecision": [
+    "R12 adds only four ASCII parentheses bytes to two SQL CASE expressions; no local tests/typecheck/lint/parser/native/build execution occurred because the environment is unavailable.",
+    "Previous64/64 and static checks are historical results for unchanged TypeScript bytes; they do not validate the R12 SQL correction. Actual7ac9c4 CI failed jobs_candidate/42601 with no groups/R9 witnesses.",
     "64 named unit tests passed with no failures/cancellations/skips. These are protocol/pure/control-flow checks, not persistence proof.",
     "All22 frozen U01-U07/N01-N15 rows map to concrete assertions; this map does not assert every proposed variant has an independent test or grant native acceptance.",
     "R9 natural I1 return is observed through fail queue_confirm; explicit caller abort is labelled separately.",
@@ -1030,10 +1148,10 @@
     }
   ],
   "nextSteps": [
-    "Independent Root exact-source review of R9/R10/R11 and coverage",
-    "Root reconciliation with concurrent main, publication and new exact head",
-    "Unchanged existing CI including mandatory native groups and actual cleanup receipt",
-    "Root exact-head Preview/Production/live-thread/Owner-gate review"
+    "Independent Root exact-source review of the two R12 SQL parenthesizations and author evidence",
+    "Root new-head publication preserving current main and all unchanged source bytes",
+    "New exact-head unchanged CI including mandatory native groups, nested R9 witnesses and actual cleanup receipt",
+    "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
   "holdState": {
     "method": "NOT_APPROVED",
@@ -1050,5 +1168,102 @@
     "ready": false,
     "merged": false
   },
-  "disposition": "AUTHOR_STOP_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE"
+  "disposition": "AUTHOR_STOP_R12_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "previousRecoveryDispatch": {
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057"
+  },
+  "historicalCIRuns": [
+    {
+      "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+      "runId": 42732722870,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42732722870",
+      "repositoryVerificationJobId": 129554463494,
+      "conclusion": "failure",
+      "source": "Root live audit and downloaded Repository verification log; independently read by Generation2, no native reproduction.",
+      "core": {
+        "tests": 8661,
+        "passed": 8658,
+        "failed": 1,
+        "skipped": 2
+      },
+      "native": {
+        "executed": true,
+        "nativePass": false,
+        "groups": [],
+        "started": 18,
+        "settled": 18,
+        "connections": 2,
+        "closed": 2,
+        "clusters": 1,
+        "stoppedClusters": 1,
+        "childProcesses": 0
+      },
+      "candidateSha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
+      "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+      "diagnosis": "Source-derived duplicate unnamed set_config columns at first fixture marker; protected decoder rejects duplicate_column. Corrected source requires actual CI confirmation; old AggregateError did not expose the cause."
+    },
+    {
+      "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+      "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+      "runId": 42739327115,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42739327115",
+      "repositoryVerificationJobId": 129576216777,
+      "conclusion": "failure",
+      "source": "Generation2 independently read the exact GitHub Repository verification job log; no local/native reproduction.",
+      "core": {
+        "tests": 8658,
+        "passed": 8655,
+        "failed": 1,
+        "skipped": 2
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 975,
+        "cleanupMilliseconds": 154,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 22,
+          "settled": 22,
+          "pending": 0,
+          "connections": 2,
+          "closed": 2,
+          "stoppedClusters": 1
+        },
+        "groups": [],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 0,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 0,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "jobs_candidate",
+          "error": {
+            "kind": "postgres",
+            "code": "42601"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
+      "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
+    }
+  ],
+  "environment": "UNAVAILABLE",
+  "newLocalExecutionForR12": false
 }
