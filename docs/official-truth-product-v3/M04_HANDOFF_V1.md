@@ -1,3 +1,39 @@
+# M04 current handoff — R32 / Recovery V23
+
+**2026-11-10 20:51:29 UTC — M04 R32 / Recovery V23: CHANGES REQUIRED on published R31; the bounded command-validation reuse is independently source-reviewed, publication and new-head execution pending.** Draft [#1183](https://github.com/Jetnity/jetnity/pull/1183), expected parent **46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8**, current main/merge-base **e7aae86c18238033c2186722e24c84dc7a5f69b9**. This is a pre-publication snapshot. Later exact-head receipts and live evidence take precedence.
+
+R31 [CI 42885977970 / attempt 1](https://github.com/Jetnity/jetnity/actions/runs/42885977970) is terminal FAILURE: **23/31 M04 groups**, including successful N02 and both real R9 waits; the unchanged 240-second budget expires during N05/A03 ledger fill. There are 243 acknowledged commits and one unacknowledged command outcome UNKNOWN. Complete cleanup: 26794/26794 operations settled, 4242/4242 connections closed, one stopped cluster, zero pending/children/errors. All six companion jobs passed, including the actual mounted Lifecycle browser. Core 8696/8692 PASS/2 FAIL/2 inherited skips; five hygiene checks and Build did not run. [Complete terminal receipt](https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778720831).
+
+R32 changes only the body of assert_history_v1: it reuses the complete command validation already performed for the same row, then executes all 56 existing transition statement lines in a freshly initialized nested block. Four copied text locals explicitly preserve default collation. Both envelope canonicalizations, every history row, prior-job validation, all authority boundaries and all 29 declarations remain. Candidate SQL **146813 bytes / SHA256 b4774a30188443162caec517543b7a6c8d6c90009882e5180c54b8c06384326a**; all other 17 source files, including native, are unchanged. Eighteen-source aggregate **afc52b76596a7f5d6416a5412a5706deec3208ba32a69bf9ac0cd5ad02408507**. Static work reduction is not a measured speedup or runtime PASS.
+
+**First unfinished step:** Root publishes the reviewed source and nine bounded continuity files using the expected parent, verifies all content and the complete tree, then requires fresh full CI/native/Preview and live gates. All eight jobs and 31 native groups remain mandatory. No TL-PASS, Ready or merge. Same actual author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3**, session **/root/m04_durable_jobs_writer_g3**, independent reviewer **/root/m04_recovery_source_review_g3**. Only Root publishes, sets Ready or merges.
+
+[Current handoff](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [V23 task](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_TASK_V23.md) · [Root source review](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V23.md) · [complete V23 evidence](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_R32_EVIDENCE_V23.json) · [binding V23 v2](https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778784989). All 24 failure observations and genuine R21/R29 PR successes remain. No unchanged rerun was requested. The preserved V22 evidence distinguishes both e7 main attempts and their carried-forward companion statuses.
+
+Production last confirmed READY on exact e7 through both aliases; the R31 Preview remains READY on exact46b4fa8. Readiness is not native acceptance. All 36 parallel #1181 leaves remain unchanged. SQL UNAPPLIED; Method NOT_APPROVED; #1139 NOT_RELEASE_READY with 17 pre-Owner gaps; #1131 Ready STOP, both #1135 holds, target-specific #968 isolation and #911/#913 privacy remain. #917 UNKNOWN / Stage2 NOT_ATTEMPTED, without retry or substitute. All local/hosted/Auth/provider/credential stops remain. D1 #1169 is separately unfinished.
+
+After a genuine corrected actual-main PASS, the mandatory separate eight-path documentation completion still needs its own PR/main/Production gates. Final receipts stay on the existing PR/#751 without a self-attestation commit loop, then STOP. **No automatic following slice.**
+
+## Exact continuation contract
+
+Read M04_RECOVERY_TASK_V23.md, M04_RECOVERY_R32_EVIDENCE_V23.json and M04_RECOVERY_ROOT_REVIEW_V23.md, then the current PR #1183/#751 receipts and live state. Do not infer execution or a merger from a source review. The complete prior V22 handoff is preserved verbatim below.
+
+The candidate publication is a child of 46b4fa8 on the existing R30 branch, using an expected-head nonforce update. Exactly ten delta paths: one SQL file, three new V23 records and six current entry files. The cumulative PR scope becomes 17 paths. Expected tree: 10250 entries / 9413 leaves / 9403 unchanged prior leaves / three new leaves / zero removals. All older evidence and all 36 parallel #1181 leaves remain unchanged.
+
+The unchanged full native suite must pass all 31 groups, including complete N02 oracles, both genuine nested R9 waits, full 254/255/256 ledger and 64/65 cycle boundaries, inherited761/minOwned4182, final rollback/late-writer and complete cleanup. All eight jobs, actual mounted Lifecycle, Core, all five hygiene checks and Production Build are mandatory. The 240s effect + 60s cleanup / 300s total limits remain unchanged. A zero inherited counter in an unreached group is not a successful zero result.
+
+R32 retains quadratic history work. The candidate removes an immediately repeated command-validation subtree within each row, but both envelope traversals and all transition checks remain. The inline body has a source-maintenance obligation and may incur extra snapshots for stable expressions in the volatile caller. Its SQLSTATE/messages remain; the diagnostic exception-context stack loses the former inner transition frame. No performance gain is claimed before execution.
+
+There is no new malformed-persisted-envelope negative oracle. Existing immutable-history guards prevent a plain owner UPDATE. Root declined any new trigger/replication-role tamper mechanism and left native byte-for-byte unchanged. Literal statement identity and the existing complete positive/negative suite are the selected verification.
+
+No local project/parser/SQL/native/socket/build execution, clone, installation, binary download or replacement environment. No Auth logs, hosted Database/Auth/RLS/ACL/migration/credential/provider action or #917 retry/substitute. Only the existing CI executes reviewed project changes. No new recurring cost, scheduler, notification or public V3 activation.
+
+After code-PR PASS and expected-head merge, actual new main must independently pass full CI/native and Production through both aliases. Only then start the already mandated separate eight-path completion documentation, with its own full PR/main gates. No automatic product follow-up slice.
+
+## Historical V22 pre-publication snapshot — retained unchanged
+
+The following is historical evidence. Its pending publication and execution statements describe its earlier timestamp. The current V23 section and later live receipts above take precedence.
+
 # M04 current handoff — R31 / Recovery V22
 
 **2026-11-10 19:26:20 UTC — M04 R31 / Recovery V22: CHANGES REQUIRED on R30; the exact two-byte correction is independently reviewed, publication and new-head execution pending.** Existing Draft [#1183](https://github.com/Jetnity/jetnity/pull/1183), expected head **dfd0fcf0ca70a955ae568e19f0d4b633cb0d7066**, current main/merge-base **e7aae86c18238033c2186722e24c84dc7a5f69b9**. Live evidence and later exact-head receipts win over this pre-publication snapshot.
