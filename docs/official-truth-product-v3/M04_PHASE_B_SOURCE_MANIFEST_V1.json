@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R26_SAME_GENERATION2_INVOCATION_LOCAL_CANONICAL_OBJECT_REUSE_FOR_ROOT_REVIEW_CI_PENDING",
-  "capturedAt": "2026-11-10T14:46:48Z",
+  "status": "R27_SAME_GENERATION2_NODE_MINIMUM_WEIGHTS_FOR_ROOT_REVIEW_CI_PENDING",
+  "capturedAt": "2026-11-10T15:33:27Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1182,
-  "dispatchHead": "45be21e57988d91dca3ee0758712f3ef5f39d744",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334",
+  "dispatchHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,14 +19,14 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+    "sourceBaseline": "b8415a5f349a258f99109435ac174c9ed5b7a259",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 16,
     "rootReportedNewMain": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
-    "mainIntegration": "Existing Draft #1182 remains the linked post-merge fix on actual main 4bfa. Published 45be passed Typecheck/Lint, N02 including the 36-case/72-mode matrix and both R9, then failed the unchanged ledger deadline. The separate lifecycle version preflight also failed before fixture/browser creation. R26 changes only two canonical_v1 body sites and adds 18 direct N02 oracles; Root alone publishes and re-gates.",
+    "mainIntegration": "Existing Draft #1182 remains the linked post-merge fix on actual main 4bfa. Published b841 passed Typecheck/Lint, 24 native groups including both R9 and the full ledger, and the separate unchanged lifecycle proof; cycle group 25 then failed the unchanged 240s deadline. R27 changes only the nodes_v1 body and adds 12 fixed N02 queries. Root alone publishes and re-gates.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -34,7 +34,7 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V17.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V18.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -110,8 +110,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 139163,
-      "sha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820"
+      "bytes": 139439,
+      "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -120,8 +120,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 177160,
-      "sha256": "d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c"
+      "bytes": 178978,
+      "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -129,7 +129,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba",
+  "sourceDigestSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -462,7 +462,9 @@
     "historicalForR25": true,
     "r25Limit": "Historical d9 comparison was not rerun. Immutable 1aecc reads and pure text/hash comparison bind one exact_keys_v1 body replacement and only one comment/two labels in Native. All outside bytes, 29 declarations, 31 groups and 16 other source pins remain exact. No project/parser/SQL/native execution.",
     "historicalForR26": true,
-    "r26Limit": "Historical d9 comparison was not rerun. Immutable 45be reads and pure text/hash comparison bind two canonical_v1 body hunks and one 2010-byte N02 insertion. Inverse deltas recover exact sources; all other bytes, 29 declarations, 31 groups and 16 other source pins remain exact. No project/parser/SQL/native execution."
+    "r26Limit": "Historical d9 comparison was not rerun. Immutable 45be reads and pure text/hash comparison bind two canonical_v1 body hunks and one 2010-byte N02 insertion. Inverse deltas recover exact sources; all other bytes, 29 declarations, 31 groups and 16 other source pins remain exact. No project/parser/SQL/native execution.",
+    "historicalForR27": true,
+    "r27Limit": "Historical d9 comparison was not rerun. Immutable b841 reads and pure text/hash comparison bind one 957-to-1233-byte nodes_v1 body replacement and one 1818-byte N02 insertion. Inverse deltas recover exact sources; all other bytes, 29 declarations, 31 groups and 16 other source pins remain exact. No project/parser/SQL/native execution."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -541,7 +543,9 @@
       "executedForR25": false,
       "r25Applicability": "Historical author result only; no R25 local project check was executed.",
       "executedForR26": false,
-      "r26Applicability": "Historical author result only; no R26 local project check was executed."
+      "r26Applicability": "Historical author result only; no R26 local project check was executed.",
+      "executedForR27": false,
+      "r27Applicability": "Historical author result only; no R27 local project check was executed."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -586,7 +590,9 @@
       "executedForR25": false,
       "r25Applicability": "Historical author result only; no R25 local project check was executed.",
       "executedForR26": false,
-      "r26Applicability": "Historical author result only; no R26 local project check was executed."
+      "r26Applicability": "Historical author result only; no R26 local project check was executed.",
+      "executedForR27": false,
+      "r27Applicability": "Historical author result only; no R27 local project check was executed."
     },
     {
       "name": "targeted ESLint",
@@ -626,12 +632,14 @@
       "executedForR25": false,
       "r25Applicability": "Historical author result only; no R25 local project check was executed.",
       "executedForR26": false,
-      "r26Applicability": "Historical author result only; no R26 local project check was executed."
+      "r26Applicability": "Historical author result only; no R26 local project check was executed.",
+      "executedForR27": false,
+      "r27Applicability": "Historical author result only; no R27 local project check was executed."
     }
   ],
   "corrections": {
     "R9": {
-      "status": "CURRENT_R26_NATIVE_PENDING_HISTORICAL_45BE_BOTH_R9_PASSED",
+      "status": "CURRENT_R27_NATIVE_PENDING_HISTORICAL_B841_BOTH_R9_PASSED",
       "unitWitnesses": 3,
       "nativeWitnessCases": [
         "natural I1 fixed5000ms timeout",
@@ -2119,67 +2127,752 @@
         "scripts/db/official-truth-v3-durable-jobs-1/native.ts": "ac42eb501c68fa3f47e57175504d055e11d764b8"
       },
       "sourceDigestSha256": "aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba"
+    },
+    "R27": {
+      "status": "PREPARED_FROZEN_SOURCE_ONLY_PENDING_FULL_NEW_HEAD_CI",
+      "change": "Only the nodes_v1 body counts immediate minimum weights and recursively corrects actual container children. No expiry/lease, canonical, history, command or transition change.",
+      "sqlBody": {
+        "oldBytes": 957,
+        "oldSha256": "7657de3fa922600cdef33e5033fb75d22fe61d74e3dbed917a48be8e991656d1",
+        "newBytes": 1233,
+        "newSha256": "5ff44fe67873008132eb44531c873ef27233bdfdb867c54547e40c5257fcc034"
+      },
+      "equivalence": [
+        "The complete original entry guard remains byte-identical. SQL NULL or invalid depth/cap parameters still return -1; every scalar category, including JSON null, counts as one.",
+        "For an object with K children the weight is 1+2K+sum(m-1) over container children; for an array with N children it is 1+N+sum(m-1). Every valid recursive m is at least one.",
+        "Any nonempty container at the maximum depth returns -1 before filtering. Empty containers retain one; recursive calls keep the same d+1/max_d/max_n parameters and cap checks.",
+        "The bigint immediate count is checked against the cap before integer assignment. Thereafter n and m are at most 65536, so n+m-1 is at most 131071 before the unchanged cap refusal.",
+        "Scalar contents and all key bytes remain count-only. No ASCII/canonical validation is added or bypassed; invalid node/depth/cap outcomes remain the same -1 sentinel."
+      ],
+      "native": {
+        "insertionBytes": 1818,
+        "insertionSha256": "54b02b8de7d77ce75d250186890be86187f20156e8429ea4b382c26465780e3e",
+        "insertionGitBlob": "df260291c93402b89e5ae8caeb1652cca033b8c1",
+        "location": "Immediately before the unique existing R20 timestamp comment inside N02",
+        "additionalDirectCalls": 12,
+        "tupleJsonBytes": 1189,
+        "tupleJsonSha256": "72bdb47fef878e4ae2461de6d5c1feb5a52dfc26a5c5b9e30f339dd86b9ebf06",
+        "tuples": [
+          [
+            "01 object scalar exact",
+            "{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",
+            0,
+            24,
+            33,
+            33
+          ],
+          [
+            "02 object scalar over",
+            "{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",
+            0,
+            24,
+            32,
+            -1
+          ],
+          [
+            "03 array scalar exact",
+            "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",
+            0,
+            24,
+            17,
+            17
+          ],
+          [
+            "04 array scalar over",
+            "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",
+            0,
+            24,
+            16,
+            -1
+          ],
+          [
+            "05 early container exact",
+            "{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",
+            0,
+            24,
+            11,
+            11
+          ],
+          [
+            "06 early container over",
+            "{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",
+            0,
+            24,
+            10,
+            -1
+          ],
+          [
+            "07 late container exact",
+            "{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",
+            0,
+            24,
+            11,
+            11
+          ],
+          [
+            "08 late container over",
+            "{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",
+            0,
+            24,
+            10,
+            -1
+          ],
+          [
+            "09 mixed array exact",
+            "[null,{},{\"a\":[false,0]}]",
+            0,
+            3,
+            8,
+            8
+          ],
+          [
+            "10 mixed array over",
+            "[null,{},{\"a\":[false,0]}]",
+            0,
+            3,
+            7,
+            -1
+          ],
+          [
+            "11 late depth failure",
+            "{\"a\":{},\"b\":[null]}",
+            23,
+            24,
+            65536,
+            -1
+          ],
+          [
+            "12 key bytes counted",
+            "{\"\":null,\"\\u001f\":[],\"\\u00e9\":{}}",
+            23,
+            24,
+            7,
+            7
+          ]
+        ],
+        "transport": "Existing owner connection and existing four-parameter NULLIF nodes_v1 SELECT with text([raw,depth,maxDepth,maxNodes]); exact [{nodes:String(expected)}] assertion.",
+        "internalBranchReceiptInvented": false
+      },
+      "sourceWorkModel": {
+        "meaning": "Source-derived per-job PL/pgSQL child-loop iterations only; not profiling or timing attribution",
+        "queuedDiscovery": {
+          "before": 23,
+          "after": 2
+        },
+        "leasedDiscovery": {
+          "before": 27,
+          "after": 3
+        },
+        "recursiveContainerCallsPreserved": true,
+        "additionalObjectCost": "Full jsonb_object_keys key-list/allocation and count aggregate query.",
+        "retainedMaterializationCost": "jsonb_each and jsonb_array_elements still materialize all child values before the SQL filter.",
+        "arrayLength": "Reads the existing JSONB header.",
+        "aggregateHistoryCallEstimateAsserted": false,
+        "historyStillQuadratic": true
+      },
+      "preserved": [
+        "Every historical row and independent command/journal/transition/job/node/hash/time/authority check",
+        "All 29 declarations/attributes/LANGUAGE/search_path, all other SQL bytes and 16 other source pins",
+        "All 31 proof groups/order, 36-case/72-mode key matrix and every earlier oracle",
+        "Full 254/255/256 ledger, 64/65 cycles, both R9, inherited 761 pairs/minOwned4182, final N15/late-writer/cleanup",
+        "All 240s effects + 60s cleanup/300s overall and existing connection/lane/resource bounds",
+        "Browser source and complete mandatory lifecycle job"
+      ],
+      "primaryPostgresRef": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "primarySource": {
+        "path": "src/backend/utils/adt/jsonfuncs.c",
+        "bytes": 150652,
+        "sha256": "d36a4e15730cd6afd2eac6e636ecdeb72755dfdd1d3b864b02c8f6a2dc480eda",
+        "gitBlob": "70cb922e6b7aa45629483bb64d3380d07a1e81a0"
+      },
+      "limitations": [
+        "No current project/compiler/SQL/native execution",
+        "Added object-key scan/aggregate and retained value materialization costs remain; no measured speedup or sufficient budget margin",
+        "No server profile, causal runner/helper claim, aggregate history-call estimate, full-cap Rule latency or Production SLO claim",
+        "Source-only reconstruction and review are not runtime or Technical-Lead PASS; full exact-head/main gates remain"
+      ],
+      "localExecution": false,
+      "hostedAccess": false,
+      "publishedByAuthor": false,
+      "technicalLeadPass": false,
+      "ready": false,
+      "merge": false,
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923",
+      "investigation": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771031785",
+      "historyEvidence": {
+        "url": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771379206",
+        "prettyJsonBytes": 38889,
+        "prettyJsonSha256": "46d76c6da0f91c001706a1fccd595e86833c373ab9edaa10d46bba8c0c8d16d1",
+        "meaning": "Complete actual R26 failure 17 copied unchanged; not current R27 execution."
+      },
+      "rootFiles": {
+        "task": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V18.md",
+        "review": "docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V18.md",
+        "evidence": "docs/official-truth-product-v3/M04_RECOVERY_R27_EVIDENCE_V18.json",
+        "excerpt": {
+          "path": "docs/official-truth-product-v3/M04_RECOVERY_R27_NATIVE_FAILURE_V18.txt",
+          "bytes": 11448,
+          "sha256": "8baa8fc8eeeaf1f6c3783130ee383d7af9370987dcf1be5429fc7214d0814d5f",
+          "gitBlob": "bd5b4ed48a8bea7b80e94e0ff416e828cddeb31a",
+          "preparedByRoot": true,
+          "publishedAtAuthorSnapshot": false,
+          "meaning": "Actual R26 failure and separate lifecycle success; not an executed R27 result."
+        }
+      },
+      "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+      "baselineTree": "bf5f7c0e826fcfcb1218178c31b7b28336c9189a",
+      "changedSources": [
+        {
+          "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+          "bytes": 139439,
+          "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+          "bytes": 178978,
+          "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744"
+        }
+      ],
+      "sourceGitBlobs": {
+        "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql": "9cb6c7da7ee6de12c3056cfcf29a36c3a047b264",
+        "scripts/db/official-truth-v3-durable-jobs-1/native.ts": "408e8a62481401335b79a1b53a4609f26cf86c1c"
+      },
+      "sourceDigestSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761"
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R26_CURRENT_SOURCE_NOT_EXECUTED_PENDING_FULL_NEW_EXACT_HEAD_AND_ACTUAL_MAIN_CI",
+  "nativeProof": "R27_CURRENT_SOURCE_NOT_EXECUTED_PENDING_FULL_NEW_EXACT_HEAD_AND_ACTUAL_MAIN_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
-    "tree": "95046b7d80b9d7e44d01c9a8a15b187577303c76",
-    "runId": 42830921607,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42830921607",
-    "event": "pull_request",
+    "schema": "jetnity.m04.actual-r26-failure.v1",
+    "head": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "tree": "bf5f7c0e826fcfcb1218178c31b7b28336c9189a",
+    "pullRequest": 1182,
+    "runId": 42839339313,
     "attempt": 1,
+    "event": "pull_request",
     "status": "completed",
     "conclusion": "failure",
-    "runUpdatedAt": "2026-11-10T14:25:57Z",
-    "repositoryTerminalObservedByRootAt": "2026-11-10T14:24:33Z",
-    "allTerminalReportedAt": "2026-11-10T14:27:12Z",
-    "repositoryVerificationJobId": 129880385645,
-    "repositoryVerificationStatus": "completed",
-    "repositoryVerificationConclusion": "failure",
-    "aggregateJobId": 129891193431,
-    "aggregateConclusion": "failure",
-    "allJobs": {
-      "total": 8,
-      "terminal": 8,
-      "success": 5,
-      "failure": 3
-    },
-    "companions": "Five SUCCESS; lifecycle FAILURE separately recorded below. Auth metadata only.",
-    "source": "Root observed terminal Repository metadata before reading its complete non-Auth log and separately verified the lifecycle failure. Author read only the persisted sanitized dispatch/receipt and lifecycle diagnosis, never logs.",
-    "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832",
-    "fullLogSha256": "2ce8011a95f02a1821e202d9dd067c97bc0ba41e019ba9df2f26863aeffd6102",
-    "fullLogBytes": 4251944,
-    "steps": {
-      "typecheck": "success",
-      "lint": "success",
-      "tests": "failure",
-      "hygiene": "skipped",
-      "build": "skipped"
-    },
-    "core": {
-      "tests": 8682,
-      "passed": 8678,
-      "failed": 2,
-      "skipped": 2,
-      "cancelled": 0,
-      "milliseconds": 834133.467501,
-      "skipMeaning": "Two inherited layout skips, no M04 skip"
+    "updatedAt": "2026-11-10T15:11:27Z",
+    "observedTerminalByRootAt": "2026-11-10 15:13:42 UTC",
+    "repositoryTerminalObservedAt": "2026-11-10 15:10:43 UTC",
+    "repositoryVerificationJobId": 129910026311,
+    "jobs": [
+      {
+        "id": 129910025864,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Atomic refresh native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026216,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026271,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Persisted native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026311,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Tests",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Schutz der Admin-API",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Bezug auf das Schema",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Unerreichbarer Code",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Exporte ohne Aufrufer",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Ungenutzte Pakete",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Production build",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026326,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Zugang vorhanden?",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Abgleich",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026399,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026621,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Bind synthetic evidence to this run and checkout",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Visitor, polling and isolated CI contract tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Isolated harness typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Synthetic HTTP composition",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Local process benchmark",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Actual isolated browser audit",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve actual synthetic evidence, including failures",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129918492076,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Require all five verification job families to succeed",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "log": {
+      "bytes": 4251751,
+      "sha256": "067633a068fcf83d5a9c9e7216ab177b7cb114a69a289ec4e8ff3ec56c033024",
+      "lines": 63152,
+      "chars": 4242533,
+      "observedTerminalAt": "2026-11-10 15:10:43 UTC",
+      "fetchedAt": "2026-11-10 15:11:01 UTC"
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
-      "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
+      "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 240365,
-      "cleanupMilliseconds": 29,
+      "effectAndCleanupMilliseconds": 240348,
+      "cleanupMilliseconds": 16,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 27068,
-        "settled": 27068,
+        "started": 27438,
+        "settled": 27438,
         "pending": 0,
         "connections": 4242,
         "closed": 4242,
@@ -2188,95 +2881,99 @@
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 34
+          "milliseconds": 26
         },
         {
           "id": "N02",
-          "milliseconds": 1742
+          "milliseconds": 1465
         },
         {
           "id": "N03",
-          "milliseconds": 2173
+          "milliseconds": 1697
         },
         {
           "id": "N07",
-          "milliseconds": 10662
+          "milliseconds": 8729
         },
         {
           "id": "N07/R4",
-          "milliseconds": 1006
+          "milliseconds": 837
         },
         {
           "id": "N08",
-          "milliseconds": 13465
+          "milliseconds": 10235
         },
         {
           "id": "N08/U04",
-          "milliseconds": 3689
+          "milliseconds": 2427
         },
         {
           "id": "N02/U04",
-          "milliseconds": 1393
+          "milliseconds": 822
         },
         {
           "id": "N04/N06",
-          "milliseconds": 2964
+          "milliseconds": 2072
         },
         {
           "id": "N04/N06/N10",
-          "milliseconds": 2946
+          "milliseconds": 2303
         },
         {
           "id": "N05/N09",
-          "milliseconds": 3055
+          "milliseconds": 2405
         },
         {
           "id": "N09",
-          "milliseconds": 19645
+          "milliseconds": 17389
         },
         {
           "id": "N10/U06",
-          "milliseconds": 7531
+          "milliseconds": 6584
         },
         {
           "id": "N11",
-          "milliseconds": 2311
+          "milliseconds": 2033
         },
         {
           "id": "N11",
-          "milliseconds": 182
+          "milliseconds": 144
         },
         {
           "id": "N12",
-          "milliseconds": 161
+          "milliseconds": 172
         },
         {
           "id": "N04/N10/N12",
-          "milliseconds": 5089
+          "milliseconds": 3755
         },
         {
           "id": "N12/U06/R9",
-          "milliseconds": 14635
+          "milliseconds": 12495
         },
         {
           "id": "N12/R7-03",
-          "milliseconds": 591
+          "milliseconds": 528
         },
         {
           "id": "N11",
-          "milliseconds": 3134
+          "milliseconds": 2602
         },
         {
           "id": "N11",
-          "milliseconds": 295
+          "milliseconds": 316
         },
         {
           "id": "N11",
-          "milliseconds": 342
+          "milliseconds": 298
         },
         {
           "id": "N13",
-          "milliseconds": 3348
+          "milliseconds": 2624
+        },
+        {
+          "id": "N05/A03",
+          "milliseconds": 89735
         }
       ],
       "nestedRaceWitnesses": [
@@ -2284,16 +2981,16 @@
           "boundary": "i1_timeout",
           "operation": "reserve_v1",
           "target": {
-            "pid": "25472",
-            "birth": "2026-11-10 14:19:26.377695+00"
+            "pid": "25120",
+            "birth": "2026-11-10 15:06:25.329161+00"
           },
           "control": {
-            "pid": "25470",
-            "birth": "2026-11-10 14:19:26.372734+00"
+            "pid": "25119",
+            "birth": "2026-11-10 15:06:25.325989+00"
           },
           "holder": {
-            "pid": "25129",
-            "birth": "2026-11-10 14:19:22.08803+00"
+            "pid": "24800",
+            "birth": "2026-11-10 15:06:21.601083+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -2312,16 +3009,16 @@
           "boundary": "worker_caller_abort",
           "operation": "reserve_v1",
           "target": {
-            "pid": "26226",
-            "birth": "2026-11-10 14:19:36.055987+00"
+            "pid": "25964",
+            "birth": "2026-11-10 15:06:33.577842+00"
           },
           "control": {
-            "pid": "26225",
-            "birth": "2026-11-10 14:19:36.05024+00"
+            "pid": "25963",
+            "birth": "2026-11-10 15:06:33.573594+00"
           },
           "holder": {
-            "pid": "25863",
-            "birth": "2026-11-10 14:19:31.493458+00"
+            "pid": "25578",
+            "birth": "2026-11-10 15:06:30.433008+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -2338,42 +3035,42 @@
         }
       ],
       "quotaProgress": {
-        "currentGroup": "N05/A03",
-        "boundary": "ledger_fill",
+        "currentGroup": "N05",
+        "boundary": "cycle_claim",
         "indexBase": 0,
         "millisecondsCap": 300000,
         "timingMeaning": "client await durations including construction/transport; not server statement profiling",
         "ledger": {
-          "lastStartedIndex": 237,
-          "lastCompletedIndex": 236,
-          "commandRequestsStarted": 238,
-          "commandRequestsCompleted": 238,
-          "commandRequestMilliseconds": 489,
-          "fixedCallsStarted": 239,
-          "fixedCallsCompleted": 238,
-          "fixedCallMilliseconds": 138598,
-          "commandCallsStarted": 238,
-          "commandCallsCompleted": 237,
-          "commandCommits": 237,
-          "startCallsStarted": 0,
-          "startCallsCompleted": 0,
-          "startReservations": 0
+          "lastStartedIndex": 253,
+          "lastCompletedIndex": 253,
+          "commandRequestsStarted": 258,
+          "commandRequestsCompleted": 258,
+          "commandRequestMilliseconds": 454,
+          "fixedCallsStarted": 260,
+          "fixedCallsCompleted": 260,
+          "fixedCallMilliseconds": 89490,
+          "commandCallsStarted": 258,
+          "commandCallsCompleted": 258,
+          "commandCommits": 256,
+          "startCallsStarted": 1,
+          "startCallsCompleted": 1,
+          "startReservations": 1
         },
         "cycles": {
-          "lastStartedIndex": null,
-          "lastCompletedIndex": null,
-          "commandRequestsStarted": 0,
-          "commandRequestsCompleted": 0,
-          "commandRequestMilliseconds": 0,
-          "fixedCallsStarted": 0,
-          "fixedCallsCompleted": 0,
-          "fixedCallMilliseconds": 0,
-          "commandCallsStarted": 0,
-          "commandCallsCompleted": 0,
-          "commandCommits": 0,
-          "startCallsStarted": 0,
-          "startCallsCompleted": 0,
-          "startReservations": 0
+          "lastStartedIndex": 50,
+          "lastCompletedIndex": 49,
+          "commandRequestsStarted": 152,
+          "commandRequestsCompleted": 152,
+          "commandRequestMilliseconds": 270,
+          "fixedCallsStarted": 203,
+          "fixedCallsCompleted": 202,
+          "fixedCallMilliseconds": 67763,
+          "commandCallsStarted": 152,
+          "commandCallsCompleted": 151,
+          "commandCommits": 151,
+          "startCallsStarted": 50,
+          "startCallsCompleted": 50,
+          "startReservations": 50
         }
       },
       "connections": {
@@ -2389,7 +3086,7 @@
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "proof_24:N05/A03",
+        "phase": "proof_25:N05",
         "error": {
           "kind": "fixture",
           "code": "unclassified_failure"
@@ -2399,60 +3096,655 @@
       "cleanupFailureCount": 0,
       "nativePass": false
     },
-    "nativeReceiptCompactBytes": 3767,
-    "nativeReceiptCompactSha256": "71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299",
-    "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
-    "nativeSourceSha256": "ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a",
-    "sourceDigestSha256": "7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d",
-    "reportedFailure": {
-      "phase": "proof_24:N05/A03",
-      "groupOrder": 24,
-      "groupId": "N05/A03",
-      "groupMilliseconds": 138860.852048,
-      "message": "M04 240s effect budget exceeded",
-      "nextDatabaseOutcome": "UNKNOWN"
+    "nativeReceiptCompactHash": {
+      "bytes": 3814,
+      "sha256": "88acd57cdfde50baaeaea4957c6506a017dece854f928ba1c8bfa2028d555b8e"
     },
-    "completedGroups": 23,
-    "first23Milliseconds": 100393,
-    "diagnosis": "Actual R25 Typecheck/Lint, N02 including 36 cases/72 modes and both R9 passed. Ledger reached the global 240s deadline at zero-based lastStarted237/lastCompleted236 after 237 acknowledged commands; no START/cycles. These are client/fixture observations, not helper attribution, runner causality or a measured optimization gain.",
-    "lifecycle": {
-      "jobId": 129880386234,
-      "status": "completed",
-      "conclusion": "failure",
-      "source": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769782473",
-      "fullLogBytes": 163043,
-      "fullLogSha256": "41d1323fb876ac1686e9c933364b7f6f426217cb126138a989c5f15c3413e6c6",
-      "tests": {
-        "total": 4,
-        "passed": 3,
-        "failed": 1,
-        "cancelled": 0,
-        "skipped": 0,
-        "milliseconds": 382904.746
+    "assessment": {
+      "pass": false,
+      "issues": [
+        "mandatory native enclosing test did not pass exactly once",
+        "native failed or incomplete",
+        "not all 31 groups completed",
+        "core totals not expected full suite",
+        "exact named native group pass missing",
+        "quota not complete",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations",
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "receipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240348,
+        "cleanupMilliseconds": 16,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27438,
+          "settled": 27438,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 26
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1465
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1697
+          },
+          {
+            "id": "N07",
+            "milliseconds": 8729
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 837
+          },
+          {
+            "id": "N08",
+            "milliseconds": 10235
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 2427
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 822
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2072
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2303
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2405
+          },
+          {
+            "id": "N09",
+            "milliseconds": 17389
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 6584
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2033
+          },
+          {
+            "id": "N11",
+            "milliseconds": 144
+          },
+          {
+            "id": "N12",
+            "milliseconds": 172
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 3755
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 12495
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 528
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2602
+          },
+          {
+            "id": "N11",
+            "milliseconds": 316
+          },
+          {
+            "id": "N11",
+            "milliseconds": 298
+          },
+          {
+            "id": "N13",
+            "milliseconds": 2624
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 89735
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25120",
+              "birth": "2026-11-10 15:06:25.329161+00"
+            },
+            "control": {
+              "pid": "25119",
+              "birth": "2026-11-10 15:06:25.325989+00"
+            },
+            "holder": {
+              "pid": "24800",
+              "birth": "2026-11-10 15:06:21.601083+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25964",
+              "birth": "2026-11-10 15:06:33.577842+00"
+            },
+            "control": {
+              "pid": "25963",
+              "birth": "2026-11-10 15:06:33.573594+00"
+            },
+            "holder": {
+              "pid": "25578",
+              "birth": "2026-11-10 15:06:30.433008+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05",
+          "boundary": "cycle_claim",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 454,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 89490,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 50,
+            "lastCompletedIndex": 49,
+            "commandRequestsStarted": 152,
+            "commandRequestsCompleted": 152,
+            "commandRequestMilliseconds": 270,
+            "fixedCallsStarted": 203,
+            "fixedCallsCompleted": 202,
+            "fixedCallMilliseconds": 67763,
+            "commandCallsStarted": 152,
+            "commandCallsCompleted": 151,
+            "commandCommits": 151,
+            "startCallsStarted": 50,
+            "startCallsCompleted": 50,
+            "startReservations": 50
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_25:N05",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
       },
-      "failedTest": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
-      "failedTestMilliseconds": 5011.436339,
-      "sourcePath": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
-      "sourceBlob": "b79caba69dc741a818367b501dd33df51ce24901",
-      "sourceLine": 55,
-      "operation": "execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:5_000})",
-      "error": "spawnSync /usr/bin/google-chrome ETIMEDOUT",
-      "preflightMilliseconds": 5000,
-      "mountedLifecycleAssertionsReached": false,
-      "underlyingTimeoutCause": "UNKNOWN",
-      "browserSourceChanged": false,
-      "limitation": "Failure occurred before bundle/cluster/fixture/browser creation; no lifecycle PASS, flaky/runner attribution, timeout increase, skip or tautological version comparison. Complete unchanged lifecycle proof is mandatory on the genuinely changed new head.",
-      "failedTestFixtureCreated": false,
-      "failedTestBrowserLaunched": false
+      "core": {
+        "tests": {
+          "matches": 1,
+          "value": 8683
+        },
+        "pass": {
+          "matches": 1,
+          "value": 8679
+        },
+        "fail": {
+          "matches": 1,
+          "value": 2
+        },
+        "cancelled": {
+          "matches": 1,
+          "value": 0
+        },
+        "skipped": {
+          "matches": 1,
+          "value": 2
+        },
+        "duration_ms": {
+          "matches": 1,
+          "value": 646060.30101
+        }
+      },
+      "exactNames": [
+        {
+          "index": 1,
+          "id": "N01",
+          "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 2,
+          "id": "N02",
+          "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 3,
+          "id": "N03",
+          "name": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 4,
+          "id": "N07",
+          "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 5,
+          "id": "N07/R4",
+          "name": "actual S1 archived history and linked method revision survive full native consumption",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 6,
+          "id": "N08",
+          "name": "sixteen actual persisted originals complete inside fixed call budgets",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 7,
+          "id": "N08/U04",
+          "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 8,
+          "id": "N02/U04",
+          "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 9,
+          "id": "N04/N06",
+          "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 10,
+          "id": "N04/N06/N10",
+          "name": "older active start blocks a new claim while an independent subject progresses",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 11,
+          "id": "N05/N09",
+          "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 12,
+          "id": "N09",
+          "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 13,
+          "id": "N10/U06",
+          "name": "delivered producer does not terminate a pending I1 evidence callback",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 14,
+          "id": "N11",
+          "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 15,
+          "id": "N11",
+          "name": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 16,
+          "id": "N12",
+          "name": "acquisition, control failure and real drain never free a live native lane",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 17,
+          "id": "N04/N10/N12",
+          "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 18,
+          "id": "N12/U06/R9",
+          "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 19,
+          "id": "N12/R7-03",
+          "name": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 20,
+          "id": "N11",
+          "name": "staged PREPARED waits on the actual S1 operation before final current MA1",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 21,
+          "id": "N11",
+          "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 22,
+          "id": "N11",
+          "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 23,
+          "id": "N13",
+          "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 24,
+          "id": "N05/A03",
+          "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 25,
+          "id": "N05",
+          "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+          "passedLines": 0,
+          "failedLines": 1
+        },
+        {
+          "index": 26,
+          "id": "N15",
+          "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 27,
+          "id": "N14",
+          "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 28,
+          "id": "N01/N14/T02",
+          "name": "temporary catalog/type shadows do not influence the new install or runtime",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 29,
+          "id": "N14",
+          "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 30,
+          "id": "N15/T02",
+          "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 31,
+          "id": "N15",
+          "name": "rollback waits for actual late writer then rechecks nonempty history atomically",
+          "passedLines": 0,
+          "failedLines": 0
+        }
+      ],
+      "skips": [
+        "T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+        "shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      ],
+      "skipsMatch": true,
+      "r9Problems": [],
+      "quotaProblems": [
+        "quota not complete",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations"
+      ],
+      "cleanupProblems": [],
+      "limitProblems": [
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "groupPassCount": 24,
+      "timing": {
+        "completedGroupSum": 171693,
+        "effectAndCleanupMilliseconds": 240348,
+        "cleanupMilliseconds": 16
+      }
     },
-    "safeExcerpt": {
-      "path": "docs/official-truth-product-v3/M04_RECOVERY_R26_NATIVE_FAILURE_V17.txt",
-      "bytes": 10385,
-      "sha256": "6ab2683e2c19a5f586ae8b6cdf0a56debbe6be14808efe6918778d752d6df0f9",
-      "gitBlob": "ae0766eec18667ff2fe9820d89660f314f5b263b",
-      "publication": "Root-prepared V17 relative path, not claimed present at historical head 45be."
+    "separateLifecycleSuccess": {
+      "jobId": 129910026216,
+      "terminalObservedAt": "2026-11-10 15:07:23 UTC",
+      "log": {
+        "bytes": 177393,
+        "sha256": "f488d548c2353cab2c77bf0f21c1b13e9ea8718cdf19acab7879257309c48b9e",
+        "lines": 1613,
+        "observedTerminalAt": "2026-11-10 15:07:23 UTC",
+        "fetchedAt": "2026-11-10 15:07:33 UTC"
+      },
+      "assessment": {
+        "pass": true,
+        "issues": [],
+        "summary": {
+          "tests": {
+            "matches": 1,
+            "value": 4
+          },
+          "pass": {
+            "matches": 1,
+            "value": 4
+          },
+          "fail": {
+            "matches": 1,
+            "value": 0
+          },
+          "cancelled": {
+            "matches": 1,
+            "value": 0
+          },
+          "skipped": {
+            "matches": 1,
+            "value": 0
+          },
+          "duration_ms": {
+            "matches": 1,
+            "value": 519776.545378
+          }
+        },
+        "exactMountedPass": true,
+        "receipt": {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-10T15:00:07.319Z",
+          "readAt": "2026-11-10T15:02:17.371Z",
+          "expiresAt": "2026-11-10T15:02:32.371Z",
+          "deadlineFromRequestStartMs": 17499,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        }
+      },
+      "rootEvidenceURL": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770954619",
+      "priorR25CauseStillUnknown": true
     },
-    "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_AND_SEPARATE_LIFECYCLE_PREFLIGHT_FAILURE_NO_CURRENT_R26_PASS"
+    "preview": {
+      "id": "dpl_9UgJBk5iSy2nYM2rmqRny13CwBma",
+      "url": "jetnity-mqdk7u0xi-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+      "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+      "aliasError": null,
+      "target": null
+    },
+    "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "mainAccepted": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "closureHeld": true
   },
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
@@ -2463,15 +3755,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Root independently reconstructs/reviews the two SQL hunks, sole 2010-byte Native insertion and four author files on expected45be; immediate corrections stay in this same author/session.",
-    "Root publishes with expected-head lease and verifies full blobs/tree/ancestry. Complete unchanged new-head CI must pass all31native groups, Typecheck/Lint/hygiene/build and the actual lifecycle proof, plus Preview/reviews/rules and Owner gates.",
-    "Only Root may PASS/Ready/merge after full acceptance. Mandatory actual-main CI/native/Production must pass before closure. No older-green reuse, unchanged-known-bad rerun, Chrome timeout alteration or lifecycle skip.",
+    "Root independently reconstructs/reviews the single nodes_v1 body replacement, sole 1818-byte Native insertion and four author files on expected b841; immediate corrections stay in this same author/session.",
+    "Root publishes with expected-head lease and verifies full blobs/tree/ancestry. Complete unchanged new-head CI must pass all 31 native groups, both R9, full ledger/cycles, inherited 761 pairs/minOwned4182, late-writer/cleanup, Typecheck/Lint/hygiene/build and actual lifecycle, plus Preview/reviews/rules/Owner gates.",
+    "Only Root may PASS/Ready/merge after full acceptance. Mandatory actual-main CI/native/Production must pass before closure. No older-green reuse, unchanged-known-bad rerun, browser alteration or lifecycle skip.",
     "All Owner, SQL UNAPPLIED, Method/#1139, forbidden #917, privacy/hosted/credential/resource gates remain. No author execution/publication/Ready/merge or automatic next slice."
   ],
-  "disposition": "AUTHOR_STOP_R26_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R27_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908"
+    "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334"
   },
   "historicalCIRuns": [
     {
@@ -5622,6 +6914,1409 @@
         "publication": "Root-prepared V17 relative path, not claimed present at historical head 45be."
       },
       "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_AND_SEPARATE_LIFECYCLE_PREFLIGHT_FAILURE_NO_CURRENT_R26_PASS"
+    },
+    {
+      "schema": "jetnity.m04.actual-r26-failure.v1",
+      "head": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+      "tree": "bf5f7c0e826fcfcb1218178c31b7b28336c9189a",
+      "pullRequest": 1182,
+      "runId": 42839339313,
+      "attempt": 1,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T15:11:27Z",
+      "observedTerminalByRootAt": "2026-11-10 15:13:42 UTC",
+      "repositoryTerminalObservedAt": "2026-11-10 15:10:43 UTC",
+      "repositoryVerificationJobId": 129910026311,
+      "jobs": [
+        {
+          "id": 129910025864,
+          "name": "Atomic version refresh — native",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Atomic refresh native proof",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026216,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026271,
+          "name": "Persisted canonical read — native",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Persisted native proof",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026311,
+          "name": "Repository verification",
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Tests",
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Schutz der Admin-API",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Bezug auf das Schema",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Unerreichbarer Code",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Exporte ohne Aufrufer",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Ungenutzte Pakete",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026326,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Zugang vorhanden?",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Abgleich",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026399,
+          "name": "Accepted store trip integration — native (store)",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129910026621,
+          "name": "Official truth V3 — isolated UI",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bind synthetic evidence to this run and checkout",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Visitor, polling and isolated CI contract tests",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Isolated harness typecheck",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Synthetic HTTP composition",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Local process benchmark",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Actual isolated browser audit",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preserve actual synthetic evidence, including failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 129918492076,
+          "name": "Typecheck, Lint & Build",
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require all five verification job families to succeed",
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "log": {
+        "bytes": 4251751,
+        "sha256": "067633a068fcf83d5a9c9e7216ab177b7cb114a69a289ec4e8ff3ec56c033024",
+        "lines": 63152,
+        "chars": 4242533,
+        "observedTerminalAt": "2026-11-10 15:10:43 UTC",
+        "fetchedAt": "2026-11-10 15:11:01 UTC"
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240348,
+        "cleanupMilliseconds": 16,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27438,
+          "settled": 27438,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 26
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1465
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1697
+          },
+          {
+            "id": "N07",
+            "milliseconds": 8729
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 837
+          },
+          {
+            "id": "N08",
+            "milliseconds": 10235
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 2427
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 822
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2072
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2303
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2405
+          },
+          {
+            "id": "N09",
+            "milliseconds": 17389
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 6584
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2033
+          },
+          {
+            "id": "N11",
+            "milliseconds": 144
+          },
+          {
+            "id": "N12",
+            "milliseconds": 172
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 3755
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 12495
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 528
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2602
+          },
+          {
+            "id": "N11",
+            "milliseconds": 316
+          },
+          {
+            "id": "N11",
+            "milliseconds": 298
+          },
+          {
+            "id": "N13",
+            "milliseconds": 2624
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 89735
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25120",
+              "birth": "2026-11-10 15:06:25.329161+00"
+            },
+            "control": {
+              "pid": "25119",
+              "birth": "2026-11-10 15:06:25.325989+00"
+            },
+            "holder": {
+              "pid": "24800",
+              "birth": "2026-11-10 15:06:21.601083+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25964",
+              "birth": "2026-11-10 15:06:33.577842+00"
+            },
+            "control": {
+              "pid": "25963",
+              "birth": "2026-11-10 15:06:33.573594+00"
+            },
+            "holder": {
+              "pid": "25578",
+              "birth": "2026-11-10 15:06:30.433008+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05",
+          "boundary": "cycle_claim",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 454,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 89490,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 50,
+            "lastCompletedIndex": 49,
+            "commandRequestsStarted": 152,
+            "commandRequestsCompleted": 152,
+            "commandRequestMilliseconds": 270,
+            "fixedCallsStarted": 203,
+            "fixedCallsCompleted": 202,
+            "fixedCallMilliseconds": 67763,
+            "commandCallsStarted": 152,
+            "commandCallsCompleted": 151,
+            "commandCommits": 151,
+            "startCallsStarted": 50,
+            "startCallsCompleted": 50,
+            "startReservations": 50
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_25:N05",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptCompactHash": {
+        "bytes": 3814,
+        "sha256": "88acd57cdfde50baaeaea4957c6506a017dece854f928ba1c8bfa2028d555b8e"
+      },
+      "assessment": {
+        "pass": false,
+        "issues": [
+          "mandatory native enclosing test did not pass exactly once",
+          "native failed or incomplete",
+          "not all 31 groups completed",
+          "core totals not expected full suite",
+          "exact named native group pass missing",
+          "quota not complete",
+          "cycles.lastStartedIndex",
+          "cycles.lastCompletedIndex",
+          "cycles.commandRequestsStarted",
+          "cycles.commandRequestsCompleted",
+          "cycles.fixedCallsStarted",
+          "cycles.fixedCallsCompleted",
+          "cycles.commandCallsStarted",
+          "cycles.commandCallsCompleted",
+          "cycles.commandCommits",
+          "cycles.startCallsStarted",
+          "cycles.startCallsCompleted",
+          "cycles.startReservations",
+          "inherited boundary evidence incomplete",
+          "exact inherited 761-pair/minOwned4182 evidence mismatch"
+        ],
+        "receipt": {
+          "schema": "jetnity.m04.native.v1",
+          "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+          "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+          "executed": true,
+          "effectAndCleanupMilliseconds": 240348,
+          "cleanupMilliseconds": 16,
+          "clusters": 1,
+          "childProcesses": 0,
+          "lifetime": {
+            "started": 27438,
+            "settled": 27438,
+            "pending": 0,
+            "connections": 4242,
+            "closed": 4242,
+            "stoppedClusters": 1
+          },
+          "groups": [
+            {
+              "id": "N01",
+              "milliseconds": 26
+            },
+            {
+              "id": "N02",
+              "milliseconds": 1465
+            },
+            {
+              "id": "N03",
+              "milliseconds": 1697
+            },
+            {
+              "id": "N07",
+              "milliseconds": 8729
+            },
+            {
+              "id": "N07/R4",
+              "milliseconds": 837
+            },
+            {
+              "id": "N08",
+              "milliseconds": 10235
+            },
+            {
+              "id": "N08/U04",
+              "milliseconds": 2427
+            },
+            {
+              "id": "N02/U04",
+              "milliseconds": 822
+            },
+            {
+              "id": "N04/N06",
+              "milliseconds": 2072
+            },
+            {
+              "id": "N04/N06/N10",
+              "milliseconds": 2303
+            },
+            {
+              "id": "N05/N09",
+              "milliseconds": 2405
+            },
+            {
+              "id": "N09",
+              "milliseconds": 17389
+            },
+            {
+              "id": "N10/U06",
+              "milliseconds": 6584
+            },
+            {
+              "id": "N11",
+              "milliseconds": 2033
+            },
+            {
+              "id": "N11",
+              "milliseconds": 144
+            },
+            {
+              "id": "N12",
+              "milliseconds": 172
+            },
+            {
+              "id": "N04/N10/N12",
+              "milliseconds": 3755
+            },
+            {
+              "id": "N12/U06/R9",
+              "milliseconds": 12495
+            },
+            {
+              "id": "N12/R7-03",
+              "milliseconds": 528
+            },
+            {
+              "id": "N11",
+              "milliseconds": 2602
+            },
+            {
+              "id": "N11",
+              "milliseconds": 316
+            },
+            {
+              "id": "N11",
+              "milliseconds": 298
+            },
+            {
+              "id": "N13",
+              "milliseconds": 2624
+            },
+            {
+              "id": "N05/A03",
+              "milliseconds": 89735
+            }
+          ],
+          "nestedRaceWitnesses": [
+            {
+              "boundary": "i1_timeout",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "25120",
+                "birth": "2026-11-10 15:06:25.329161+00"
+              },
+              "control": {
+                "pid": "25119",
+                "birth": "2026-11-10 15:06:25.325989+00"
+              },
+              "holder": {
+                "pid": "24800",
+                "birth": "2026-11-10 15:06:21.601083+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": true,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "worker_only",
+              "nativeAdmissionsAfterDrain": 45
+            },
+            {
+              "boundary": "worker_caller_abort",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "25964",
+                "birth": "2026-11-10 15:06:33.577842+00"
+              },
+              "control": {
+                "pid": "25963",
+                "birth": "2026-11-10 15:06:33.573594+00"
+              },
+              "holder": {
+                "pid": "25578",
+                "birth": "2026-11-10 15:06:30.433008+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": false,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "unconfirmed",
+              "nativeAdmissionsAfterDrain": 44
+            }
+          ],
+          "quotaProgress": {
+            "currentGroup": "N05",
+            "boundary": "cycle_claim",
+            "indexBase": 0,
+            "millisecondsCap": 300000,
+            "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+            "ledger": {
+              "lastStartedIndex": 253,
+              "lastCompletedIndex": 253,
+              "commandRequestsStarted": 258,
+              "commandRequestsCompleted": 258,
+              "commandRequestMilliseconds": 454,
+              "fixedCallsStarted": 260,
+              "fixedCallsCompleted": 260,
+              "fixedCallMilliseconds": 89490,
+              "commandCallsStarted": 258,
+              "commandCallsCompleted": 258,
+              "commandCommits": 256,
+              "startCallsStarted": 1,
+              "startCallsCompleted": 1,
+              "startReservations": 1
+            },
+            "cycles": {
+              "lastStartedIndex": 50,
+              "lastCompletedIndex": 49,
+              "commandRequestsStarted": 152,
+              "commandRequestsCompleted": 152,
+              "commandRequestMilliseconds": 270,
+              "fixedCallsStarted": 203,
+              "fixedCallsCompleted": 202,
+              "fixedCallMilliseconds": 67763,
+              "commandCallsStarted": 152,
+              "commandCallsCompleted": 151,
+              "commandCommits": 151,
+              "startCallsStarted": 50,
+              "startCallsCompleted": 50,
+              "startReservations": 50
+            }
+          },
+          "connections": {
+            "aggregateWorkConnectionBound": 40,
+            "maximumJobs": 4,
+            "maximumIntake": 1,
+            "maximumMethod": 2,
+            "m04ObserverLimit": 2,
+            "maximumM04Observers": 2,
+            "methodObserverLimit": 1,
+            "fixturePerClusterLimit": 16,
+            "inheritedCommitGuardPairs": 0,
+            "minimumOwned": 0
+          },
+          "failure": {
+            "phase": "proof_25:N05",
+            "error": {
+              "kind": "fixture",
+              "code": "unclassified_failure"
+            }
+          },
+          "cleanupFailures": [],
+          "cleanupFailureCount": 0,
+          "nativePass": false
+        },
+        "core": {
+          "tests": {
+            "matches": 1,
+            "value": 8683
+          },
+          "pass": {
+            "matches": 1,
+            "value": 8679
+          },
+          "fail": {
+            "matches": 1,
+            "value": 2
+          },
+          "cancelled": {
+            "matches": 1,
+            "value": 0
+          },
+          "skipped": {
+            "matches": 1,
+            "value": 2
+          },
+          "duration_ms": {
+            "matches": 1,
+            "value": 646060.30101
+          }
+        },
+        "exactNames": [
+          {
+            "index": 1,
+            "id": "N01",
+            "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 2,
+            "id": "N02",
+            "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 3,
+            "id": "N03",
+            "name": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 4,
+            "id": "N07",
+            "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 5,
+            "id": "N07/R4",
+            "name": "actual S1 archived history and linked method revision survive full native consumption",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 6,
+            "id": "N08",
+            "name": "sixteen actual persisted originals complete inside fixed call budgets",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 7,
+            "id": "N08/U04",
+            "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 8,
+            "id": "N02/U04",
+            "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 9,
+            "id": "N04/N06",
+            "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 10,
+            "id": "N04/N06/N10",
+            "name": "older active start blocks a new claim while an independent subject progresses",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 11,
+            "id": "N05/N09",
+            "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 12,
+            "id": "N09",
+            "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 13,
+            "id": "N10/U06",
+            "name": "delivered producer does not terminate a pending I1 evidence callback",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 14,
+            "id": "N11",
+            "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 15,
+            "id": "N11",
+            "name": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 16,
+            "id": "N12",
+            "name": "acquisition, control failure and real drain never free a live native lane",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 17,
+            "id": "N04/N10/N12",
+            "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 18,
+            "id": "N12/U06/R9",
+            "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 19,
+            "id": "N12/R7-03",
+            "name": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 20,
+            "id": "N11",
+            "name": "staged PREPARED waits on the actual S1 operation before final current MA1",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 21,
+            "id": "N11",
+            "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 22,
+            "id": "N11",
+            "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 23,
+            "id": "N13",
+            "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 24,
+            "id": "N05/A03",
+            "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+            "passedLines": 1,
+            "failedLines": 0
+          },
+          {
+            "index": 25,
+            "id": "N05",
+            "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+            "passedLines": 0,
+            "failedLines": 1
+          },
+          {
+            "index": 26,
+            "id": "N15",
+            "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+            "passedLines": 0,
+            "failedLines": 0
+          },
+          {
+            "index": 27,
+            "id": "N14",
+            "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+            "passedLines": 0,
+            "failedLines": 0
+          },
+          {
+            "index": 28,
+            "id": "N01/N14/T02",
+            "name": "temporary catalog/type shadows do not influence the new install or runtime",
+            "passedLines": 0,
+            "failedLines": 0
+          },
+          {
+            "index": 29,
+            "id": "N14",
+            "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+            "passedLines": 0,
+            "failedLines": 0
+          },
+          {
+            "index": 30,
+            "id": "N15/T02",
+            "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+            "passedLines": 0,
+            "failedLines": 0
+          },
+          {
+            "index": 31,
+            "id": "N15",
+            "name": "rollback waits for actual late writer then rechecks nonempty history atomically",
+            "passedLines": 0,
+            "failedLines": 0
+          }
+        ],
+        "skips": [
+          "T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+          "shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+        ],
+        "skipsMatch": true,
+        "r9Problems": [],
+        "quotaProblems": [
+          "quota not complete",
+          "cycles.lastStartedIndex",
+          "cycles.lastCompletedIndex",
+          "cycles.commandRequestsStarted",
+          "cycles.commandRequestsCompleted",
+          "cycles.fixedCallsStarted",
+          "cycles.fixedCallsCompleted",
+          "cycles.commandCallsStarted",
+          "cycles.commandCallsCompleted",
+          "cycles.commandCommits",
+          "cycles.startCallsStarted",
+          "cycles.startCallsCompleted",
+          "cycles.startReservations"
+        ],
+        "cleanupProblems": [],
+        "limitProblems": [
+          "inherited boundary evidence incomplete",
+          "exact inherited 761-pair/minOwned4182 evidence mismatch"
+        ],
+        "groupPassCount": 24,
+        "timing": {
+          "completedGroupSum": 171693,
+          "effectAndCleanupMilliseconds": 240348,
+          "cleanupMilliseconds": 16
+        }
+      },
+      "separateLifecycleSuccess": {
+        "jobId": 129910026216,
+        "terminalObservedAt": "2026-11-10 15:07:23 UTC",
+        "log": {
+          "bytes": 177393,
+          "sha256": "f488d548c2353cab2c77bf0f21c1b13e9ea8718cdf19acab7879257309c48b9e",
+          "lines": 1613,
+          "observedTerminalAt": "2026-11-10 15:07:23 UTC",
+          "fetchedAt": "2026-11-10 15:07:33 UTC"
+        },
+        "assessment": {
+          "pass": true,
+          "issues": [],
+          "summary": {
+            "tests": {
+              "matches": 1,
+              "value": 4
+            },
+            "pass": {
+              "matches": 1,
+              "value": 4
+            },
+            "fail": {
+              "matches": 1,
+              "value": 0
+            },
+            "cancelled": {
+              "matches": 1,
+              "value": 0
+            },
+            "skipped": {
+              "matches": 1,
+              "value": 0
+            },
+            "duration_ms": {
+              "matches": 1,
+              "value": 519776.545378
+            }
+          },
+          "exactMountedPass": true,
+          "receipt": {
+            "proof": "actual-native-mounted-workspace",
+            "node": "22.23.4",
+            "react": "19.2.8",
+            "playwright": "1.55.0",
+            "browser": "156.0.8078.79",
+            "binaryVersion": "Google Chrome 156.0.8078.79",
+            "actualModules": [
+              "components/trips/useAcceptedStoreTrip.ts",
+              "components/trips/useOfficialTruthPilot.ts",
+              "components/trips/Reisevorbereitung.tsx"
+            ],
+            "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+            "bundleModules": 113,
+            "repoModules": 85,
+            "documentCharset": "UTF-8",
+            "proofs": [
+              "closed initial mount",
+              "actual native result in unchanged preparation renderer",
+              "real traveller buttons synchronously invalidate without persistence",
+              "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+              "actual reload editing save and matching native re-read recover",
+              "actual document and citizenship add remove preserve save recovery",
+              "local edit and confirmed fresh read independent of pilot invalid latch",
+              "loss of availability and context cannot revive old positive",
+              "out-of-order native reply after edit and newer confirmed read",
+              "irreversible wall-clock expiry and regression in current and pending attempts",
+              "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+              "latest lane owns pending results and failure without positive fallback",
+              "original monotonic deadline survives rerenders and expires"
+            ],
+            "storeRequests": 23,
+            "pilotRequests": 3,
+            "travellerWrites": 4,
+            "observerOwnership": {
+              "started": 61,
+              "settled": 61,
+              "pending": 0,
+              "retainedBytes": 0,
+              "observerErrors": 0
+            },
+            "nativeCurrentResults": 22,
+            "sourceFetchesDuringReads": 0,
+            "sourceCheckedAt": "2026-11-10T15:00:07.319Z",
+            "readAt": "2026-11-10T15:02:17.371Z",
+            "expiresAt": "2026-11-10T15:02:32.371Z",
+            "deadlineFromRequestStartMs": 17499,
+            "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+          }
+        },
+        "rootEvidenceURL": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770954619",
+        "priorR25CauseStillUnknown": true
+      },
+      "preview": {
+        "id": "dpl_9UgJBk5iSy2nYM2rmqRny13CwBma",
+        "url": "jetnity-mqdk7u0xi-jetnity-e1b93c82.vercel.app",
+        "state": "READY",
+        "sha": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+        "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+        "aliasError": null,
+        "target": null
+      },
+      "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "mainAccepted": false,
+      "technicalLeadPass": false,
+      "ready": false,
+      "merge": false,
+      "closureHeld": true
     }
   ],
   "environment": "EXACT_GITHUB_FILE_READS_AND_IN_SESSION_TEXT_DATA_HASH_ONLY",
@@ -5686,6 +8381,10 @@
     {
       "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908"
+    },
+    {
+      "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334"
     }
   ],
   "newLocalExecutionForR13": false,
@@ -6079,5 +8778,6 @@
   ],
   "newLocalExecutionForR24": false,
   "newLocalExecutionForR25": false,
-  "newLocalExecutionForR26": false
+  "newLocalExecutionForR26": false,
+  "newLocalExecutionForR27": false
 }

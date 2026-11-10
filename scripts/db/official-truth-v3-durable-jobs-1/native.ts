@@ -735,6 +735,25 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
         assert.deepEqual(rows, [{ nodes: String(expected) }], 'R19 node count/depth/cap/NULL oracle')
       }
+      // R27: fixed minimum weights and recursive container corrections.
+      const r27NodeCases = [
+        ["01 object scalar exact","{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",0,24,33,33],
+        ["02 object scalar over","{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",0,24,32,-1],
+        ["03 array scalar exact","[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",0,24,17,17],
+        ["04 array scalar over","[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",0,24,16,-1],
+        ["05 early container exact","{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",0,24,11,11],
+        ["06 early container over","{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",0,24,10,-1],
+        ["07 late container exact","{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",0,24,11,11],
+        ["08 late container over","{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",0,24,10,-1],
+        ["09 mixed array exact","[null,{},{\"a\":[false,0]}]",0,3,8,8],
+        ["10 mixed array over","[null,{},{\"a\":[false,0]}]",0,3,7,-1],
+        ["11 late depth failure","{\"a\":{},\"b\":[null]}",23,24,65536,-1],
+        ["12 key bytes counted","{\"\":null,\"\\u001f\":[],\"\\u00e9\":{}}",23,24,7,7],
+      ] as const
+      for (const [label, raw, depth, maxDepth, maxNodes, expected] of r27NodeCases) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
+        assert.deepEqual(rows, [{ nodes: String(expected) }], 'R27 ' + label)
+      }
       // R20: both kinds retain exact timestamp validation before same-text reuse.
       const timeAt = '2026-11-09T00:00:00.000Z'
       const timeCases = [

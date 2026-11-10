@@ -109,24 +109,28 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.nodes_v1(v jsonb,d integer,max_d integer,max_n integer) RETURNS integer
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE e jsonb; n integer:=1; m integer;
+DECLARE e jsonb; n integer:=1; m integer; child_count bigint;
 BEGIN
   IF v IS NULL OR d IS NULL OR max_d IS NULL OR max_n IS NULL OR d<0 OR d>max_d OR max_d>24 OR max_n>65536 OR max_n<1 THEN RETURN -1; END IF;
   IF jsonb_typeof(v)='object' THEN
-    FOR e IN SELECT value FROM jsonb_each(v) LOOP
-      IF d+1>max_d THEN RETURN -1; END IF;
-      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
-      ELSE m:=1; END IF;
+    SELECT count(*) INTO child_count FROM jsonb_object_keys(v);
+    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;
+    IF child_count>(max_n-1)/2 THEN RETURN -1; END IF;
+    n:=1+2*child_count;
+    FOR e IN SELECT j.value FROM jsonb_each(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
       IF m<0 THEN RETURN -1; END IF;
-      n:=n+m+1; IF n>max_n THEN RETURN -1; END IF;
+      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   ELSIF jsonb_typeof(v)='array' THEN
-    FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
-      IF d+1>max_d THEN RETURN -1; END IF;
-      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
-      ELSE m:=1; END IF;
+    child_count:=jsonb_array_length(v);
+    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;
+    IF child_count>max_n-1 THEN RETURN -1; END IF;
+    n:=1+child_count;
+    FOR e IN SELECT j.value FROM jsonb_array_elements(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
       IF m<0 THEN RETURN -1; END IF;
-      n:=n+m; IF n>max_n THEN RETURN -1; END IF;
+      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   END IF;
   RETURN n;

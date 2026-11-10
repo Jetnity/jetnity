@@ -1,3 +1,31 @@
+# R27 / Recovery Task V18 — node weights prepared; current execution pending
+
+Snapshot: 2026-11-10T15:33:27Z. Same Generation2 author/session. Draft #1182 baseline is `b8415a5f349a258f99109435ac174c9ed5b7a259`; actual main remains `4bfa8b466ebc0af761fc5050bb4c51d7e73400c7`. Root's [v2 authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) selects one `nodes_v1` body replacement and twelve additive N02 queries. All current R27 execution, coverage, Typecheck, native, TL PASS, Ready and merge flags remain **false**.
+
+## Actual historical R26 result
+
+[Complete Root evidence](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771379206) is copied unchanged as failure 17. Run 42839339313 completed with six successful jobs and Repository/aggregate failure. Typecheck/Lint, 24/31 native groups, both R9 and the full ledger passed. Cycle group 25 exhausted the unchanged 240s effect budget at started 50/completed 49, after 151 acknowledged cycle commands and 50 STARTs. The following database outcome is **UNKNOWN**.
+
+All 27438 effects settled and all 4242 connections closed, with no pending work or cleanup errors; receipt total/cleanup were 240348/16ms. The separate unchanged lifecycle job genuinely passed 4/4 tests and all 13 mounted stages. That result does not establish R27 acceptance or explain the earlier R25 Chrome preflight timeout. All sixteen earlier failures, genuine R21 PR success, corrected separate R22 metadata and the complete previous Markdown tail remain exact.
+
+## Frozen correction
+
+The counter uses object minimum `1+2K` or array minimum `1+N`, then adds each actual container child's `m-1`. The original entry guard, recursive arguments, depth/cap outcomes and count-only scalar/key semantics remain. Twelve fixed literal cases cover exact/over caps, early/late containers, mixed arrays, later depth failure and empty/control/Unicode keys. Every older oracle and all 31 groups remain.
+
+Source-derived child-loop iterations per queued/leased Discovery job are 23→2 and 27→3. Object-key counting adds a full key-list/allocation and aggregate query; value materialization remains. No aggregate history-call estimate, measured speedup or sufficient margin is asserted; history remains quadratic.
+
+- Candidate: 139439 bytes; SHA256 `25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce`.
+- Native: 178978 bytes; SHA256 `3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744`.
+- All 18 sources: aggregate `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761`; other sixteen pins unchanged.
+
+## Remaining gates
+
+Root owns review, publication, the full unchanged new-head CI, exact Preview and all subsequent actual-main CI/native/Production checks. Root's V18 Task/Review/Evidence and `M04_RECOVERY_R27_NATIVE_FAILURE_V18.txt` are prepared for publication; the excerpt describes actual R26, not executed R27. Excerpt: 11448 bytes, SHA256 `8baa8fc8eeeaf1f6c3783130ee383d7af9370987dcf1be5429fc7214d0814d5f`.
+
+SQL remains UNAPPLIED; Method remains NOT_APPROVED. All Owner, #1139, forbidden #917, privacy/hosted/credential and resource gates persist. No local/project/parser/SQL/native execution or author publication occurred. **AUTHOR STOP** after this finite delivery; no automatic follow-up slice.
+
+---
+
 # R26 / Recovery Task V17 — canonical object reuse, CI pending
 
 Captured: 2026-11-10T14:46:48Z. Same Generation2 author/session `/root/m04_durable_jobs_writer_g2`. Existing Draft #1182, baseline `45be21e57988d91dca3ee0758712f3ef5f39d744`, tree `95046b7d80b9d7e44d01c9a8a15b187577303c76`; origin #1178 remains historically merged.

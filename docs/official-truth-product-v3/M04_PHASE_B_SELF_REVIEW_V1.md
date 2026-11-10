@@ -1,3 +1,38 @@
+# R27 author self-review — source reasoning only
+
+Snapshot: 2026-11-10T15:33:27Z. Same author `/root/m04_durable_jobs_writer_g2`, same Draft #1182 and frozen b841 baseline. [Recovery Task V18 v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) is the complete implementation authorization. This author review is **not** a compiler, native, performance or Technical-Lead PASS.
+
+## Selected delta and equivalence
+
+Only the 957-byte `nodes_v1` body becomes the selected 1233-byte body. Its original entry guard is exact. For objects, every immediate field contributes one key and one minimum value node; for arrays each immediate value contributes one minimum node. Thus object weight is `1+2K+Σ(m−1)` and array weight is `1+N+Σ(m−1)`, with corrections only for actual container children.
+
+Every successful recursive count is at least one, so corrections cannot reduce the minimum. Minimum cap refusal is equivalent to eventual old-loop refusal. Nonempty maximum-depth containers still refuse before filtering; empty containers and scalar roots retain one. Recursive depth/cap arguments remain identical. The bigint count is capped before assigning the integer total; later `n+m−1` is at most 131071 before the cap check. SQL NULL/invalid parameters return the same -1 sentinel. Unicode/control/empty key bytes remain count-only; no canonical guard moves or disappears.
+
+The sole Native insertion is 1818 bytes, SHA256 `54b02b8de7d77ce75d250186890be86187f20156e8429ea4b382c26465780e3e`. The twelve labeled tuples exactly match the authorized 1189-byte JSON, SHA256 `72bdb47fef878e4ae2461de6d5c1feb5a52dfc26a5c5b9e30f339dd86b9ebf06`. Each awaits the existing owner connection and four-parameter NULLIF query, then checks an independent literal count or -1:
+
+- Sixteen scalar fields: 33 at cap 33; refusal at cap 32.
+- Sixteen scalar array values: 17 at cap 17; refusal at cap 16.
+- Early and late mixed container placement: 11 at cap 11; refusal at cap 10 for each.
+- Mixed array: 8 at cap 8; refusal at cap 7.
+- A later nonempty container at depth 24: refusal after a valid earlier empty container.
+- Empty/control/Unicode keys with empty children at the limit: 7.
+
+Every previous R19 NULL/scalar/depth/cap case, all R20–R26 oracles, the 36-case/72-mode key matrix, all 31 groups and their order remain exact. Inverse text transformations recover the published sources; all 29 declarations/attributes, every byte outside the body/insertion and sixteen other source pins remain unchanged. Current source aggregate is `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761`.
+
+## Cost limits and historical evidence
+
+The source model is limited to queued/leased Discovery child-loop iterations, 23→2 and 27→3. All recursive container validation remains. PG16 `jsonfuncs.c` at immutable ref `c372fbbd8e911f2412b80a8c39d7079366565d67`, blob `70cb922e6b7aa45629483bb64d3380d07a1e81a0`, shows the additional object-key allocation/count and retained each/elements materialization; array length reads the header. No aggregate history count, measured speedup, server profile, runner-cause claim or adequate margin is inferred.
+
+The complete [actual R26 object](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771379206), 38889 pretty-JSON bytes/SHA256 `46d76c6da0f91c001706a1fccd595e86833c373ab9edaa10d46bba8c0c8d16d1`, is appended as failure 17 without alteration. It includes 24 completed groups, both R9/full ledger, cycle deadline failure, exact cleanup and the genuine separate lifecycle success. All sixteen earlier failures, genuine R21 success, corrected R22 metadata and the previous Markdown tail remain exact. No history is upgraded into current R27 coverage.
+
+## Disposition
+
+No local/project/parser/SQL/native/compiler/build execution occurred. All current R27 execution and 22 coverage rows remain unexecuted; PASS/Ready/merge remain false. Full history, 254/255/256 and 64/65 boundaries, both R9, inherited 761 pairs/minOwned4182, final N15, all time/resource bounds and every Owner/hosted/#917 gate remain.
+
+Root must independently reconstruct and review, publish with the expected b841 lease, then accept the full unchanged new-head CI and exact Preview. Actual new main CI/native/Production and finite closure follow separately. **AUTHOR STOP**; no Ready, merge or next slice by the author.
+
+---
+
 # R26 / Recovery Task V17 — bounded author self-review
 
 Captured: 2026-11-10T14:46:48Z. Same Generation2 session; baseline `45be21e57988d91dca3ee0758712f3ef5f39d744`. [Binding authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334). Prepared source only: no local project/compiler/parser/SQL/native execution and no runtime or Technical-Lead PASS.
