@@ -1,0 +1,11 @@
+2026-11-10T03:59:00.8054708Z     # Subtest: N07/R4 actual S1 archived history and linked method revision survive full native consumption
+2026-11-10T03:59:00.8055406Z     not ok 5 - N07/R4 actual S1 archived history and linked method revision survive full native consumption
+2026-11-10T03:59:00.8057116Z       error: 'local_pg_P7604'
+2026-11-10T03:59:00.8057280Z       code: 'P7604'
+2026-11-10T03:59:00.8075519Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":18928,"cleanupMilliseconds":169,"clusters":1,"childProcesses":0,"lifetime":{"started":4576,"settled":4576,"pending":0,"connections":870,"closed":870,"stoppedClusters":1},"groups":[{"id":"N01","milliseconds":42},{"id":"N02","milliseconds":2227},{"id":"N03","milliseconds":2728},{"id":"N07","milliseconds":12322}],"nestedRaceWitnesses":[],"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":1,"maximumIntake":1,"maximumMethod":1,"m04ObserverLimit":2,"maximumM04Observers":1,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"proof_5:N07/R4","error":{"kind":"postgres","code":"P7604"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+2026-11-10T04:00:08.8988225Z # tests 8663
+2026-11-10T04:00:08.8988915Z # pass 8659
+2026-11-10T04:00:08.8989112Z # fail 2
+2026-11-10T04:00:08.8989305Z # cancelled 0
+2026-11-10T04:00:08.8989509Z # skipped 2
+2026-11-10T04:00:08.8989910Z # duration_ms 766356.131562

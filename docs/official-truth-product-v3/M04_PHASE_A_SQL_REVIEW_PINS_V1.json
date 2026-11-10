@@ -1,0 +1,522 @@
+{
+  "schema": "jetnity.m04.sql-phase-a-design-review.v1",
+  "reviewer": "/root/m04_sql_phase_a_review",
+  "sameSession": true,
+  "disposition": "DESIGN_REVIEW_COMPLETE_NO_OPEN_DESIGN_BLOCKER",
+  "scope": [
+    "SQL objects and ACL",
+    "actual S1/MA1 authority and dependency graph",
+    "transaction and lock ordering",
+    "budget mapping and exclusive Held custody",
+    "terminal capacity",
+    "original continuation and recovery attemptKey",
+    "guarded rollback"
+  ],
+  "rootFreezeIssued": false,
+  "runtimePass": false,
+  "technicalLeadPass": false,
+  "implementationPermission": false,
+  "remainingDesignBlockers": [],
+  "receipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/receipt.json",
+    "bytes": 975,
+    "sha256": "0bdea0b9d161ac983f62724784d4197b0d6488938281e9c22b6519849e2ad7a7"
+  },
+  "deliveryFiles": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_SOURCE_PINS_V1.json",
+      "bytes": 28544,
+      "sha256": "fe70d74f42638c1fb9b40304818fb6b278232752be038734a5ba5277a8001c11"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_SELF_REVIEW_V1.md",
+      "bytes": 11029,
+      "sha256": "9eb56ec078c4a00dc76f0f2416e7379bfcd34b4fd8502d4ec02fc2d1daf4fb9d"
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PHASE_A_STATUS_V1.md",
+      "bytes": 6602,
+      "sha256": "54e5df45041a849d969653e07c6c9d20557cae033577e06676ad6f627b1c903a"
+    }
+  ],
+  "review": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-sql-phase-a-review/final-phase-a-review-v1.md",
+    "bytes": 16334,
+    "sha256": "01c5c8e4b101f99568a4cf5ac146d66e68f56368b5da2a4085b00b09482e3bc0"
+  },
+  "planReadingCoverage": {
+    "previousSnapshot": {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/working-plan-snapshot-v2.md",
+      "bytes": 102615,
+      "sha256": "a98fc797fb0091ca58ae78b19e35007582df9950e6d0240f868c64313950fae6"
+    },
+    "previousSnapshotReadCompletely": true,
+    "finalLineCount": 562,
+    "completeFinalDeltaRead": true,
+    "changedBlocks": [
+      {
+        "kind": "replace",
+        "oldLines": [
+          3,
+          3
+        ],
+        "finalLines": [
+          3,
+          3
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          5,
+          5
+        ],
+        "finalLines": [
+          5,
+          5
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          21,
+          21
+        ],
+        "finalLines": [
+          21,
+          21
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          23,
+          23
+        ],
+        "finalLines": [
+          23,
+          23
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          25,
+          36
+        ],
+        "finalLines": [
+          25,
+          25
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          64,
+          64
+        ],
+        "finalLines": [
+          53,
+          53
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          97,
+          97
+        ],
+        "finalLines": [
+          86,
+          86
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          131,
+          131
+        ],
+        "finalLines": [
+          120,
+          120
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          133,
+          133
+        ],
+        "finalLines": [
+          122,
+          122
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          135,
+          135
+        ],
+        "finalLines": [
+          124,
+          124
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          139,
+          139
+        ],
+        "finalLines": [
+          128,
+          128
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          143,
+          143
+        ],
+        "finalLines": [
+          132,
+          132
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          194,
+          194
+        ],
+        "finalLines": [
+          183,
+          183
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          204,
+          204
+        ],
+        "finalLines": [
+          193,
+          193
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          219,
+          219
+        ],
+        "finalLines": [
+          208,
+          208
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          279,
+          279
+        ],
+        "finalLines": [
+          268,
+          268
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          293,
+          293
+        ],
+        "finalLines": [
+          282,
+          282
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          308,
+          308
+        ],
+        "finalLines": [
+          297,
+          297
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          315,
+          319
+        ],
+        "finalLines": [
+          304,
+          308
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          387,
+          387
+        ],
+        "finalLines": [
+          376,
+          376
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          392,
+          392
+        ],
+        "finalLines": [
+          381,
+          381
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          397,
+          397
+        ],
+        "finalLines": [
+          386,
+          386
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          414,
+          414
+        ],
+        "finalLines": [
+          403,
+          403
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          425,
+          425
+        ],
+        "finalLines": [
+          414,
+          414
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          456,
+          457
+        ],
+        "finalLines": [
+          445,
+          446
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          463,
+          463
+        ],
+        "finalLines": [
+          452,
+          454
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          471,
+          471
+        ],
+        "finalLines": [
+          462,
+          462
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          473,
+          473
+        ],
+        "finalLines": [
+          464,
+          464
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          475,
+          475
+        ],
+        "finalLines": [
+          466,
+          466
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          477,
+          477
+        ],
+        "finalLines": [
+          468,
+          468
+        ]
+      },
+      {
+        "kind": "replace",
+        "oldLines": [
+          504,
+          504
+        ],
+        "finalLines": [
+          495,
+          562
+        ]
+      }
+    ],
+    "otherDeliveredDocumentsReadCompletely": true
+  },
+  "deliveredSourceManifestRows": 49,
+  "independentlyCheckedRelevantSourceRows": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/docs/official-truth-product-v3/M04_TASK_V1.md",
+      "bytes": 25712,
+      "sha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
+      "computedGitBlobSha1": "f6f7d01887d69ed7f0d0ab3d5e584d3024dfa6f8",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "bytes": 19888,
+      "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+      "computedGitBlobSha1": "a6b0215def84931cddd96248cf4dbf347ce5a621",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/contract.ts",
+      "bytes": 10485,
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "computedGitBlobSha1": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 6696,
+      "sha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+      "computedGitBlobSha1": "ab9754d332b988d81b84e738c997d01bb37966d3",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+      "bytes": 88575,
+      "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+      "computedGitBlobSha1": "8ef08c3131e2aeee61a16a565e51b2fb322c8572",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+      "bytes": 3189,
+      "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+      "computedGitBlobSha1": "ae39ae3b6296c7800668f14cfe8c7d61601ce0fa",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "bytes": 52631,
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "computedGitBlobSha1": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "bytes": 21566,
+      "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+      "computedGitBlobSha1": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs/scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+      "bytes": 6536,
+      "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+      "computedGitBlobSha1": "eaa35fd57eee7b7c86de91dd77e96ef263f61d8b",
+      "matchesDeliveredSourcePin": true,
+      "readingScope": "Relevant source sections reviewed across the same SQL-review session; byte identity is whole-file. Full method authority and rollback sources read; large generated S1 descriptor is not represented as a fresh exhaustive semantic review."
+    }
+  ],
+  "sourceAttestationLimit": "No Git command or network lookup in this formal review. Computed blob SHA1 is verified against delivered seed pins. Root separately reports complete 49-row validation against seed, 7ae source parent and be79 live main; this specialist attests only the listed local-byte comparisons.",
+  "rootReportedLiveMain": "be79ea2591e990111bfabea7ddf500023c20a188",
+  "sourceBaseline": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+  "taskSeed": "14889b050bc6e8b814bc778730c80f70d20c0d47",
+  "closedAtDesignLevel": [
+    "A01 negative oracle and all-old-history guard",
+    "A01 exact original PREPARED and owned terminal continuation",
+    "A02 conservative terminal-decode cap",
+    "A02 exclusive same-Held effect and unchanged standalone behavior",
+    "A03 terminal command capacity",
+    "SQL-01 exact predecessor-hardened default ACL",
+    "SQL-02 finite runtime relation/row/advisory matrix",
+    "SQL-03 29-function guarded teardown"
+  ],
+  "predecessorBridgeFunctionGraph": [
+    "official_v3_intake_api.read_v1(jsonb,text,integer)",
+    "official_v3_intake_private.binding_valid_v1(jsonb)",
+    "official_v3_intake_private.exact_keys_v1(jsonb,text[])",
+    "official_v3_intake_private.record_v1(text)",
+    "official_v3_intake_private.proposal_retainable_v1(jsonb)",
+    "official_v3_intake_private.data_nodes_v1(jsonb,integer,integer,integer)",
+    "official_v3_intake_private.proposal_shape_v1()",
+    "official_v3_intake_private.shape_matches_v1(jsonb,jsonb,jsonb,jsonb,integer)",
+    "official_v3_intake_private.safe_data_v1(jsonb,integer)",
+    "official_v3_method_private.require_current_locked_v1(text,integer,text,text,integer)",
+    "official_v3_method_private.tuple_valid_v1(text,integer,text,text)"
+  ],
+  "graphEvidence": "Existing source closure only; future new SQL-standard direct OID edges and actual 2BP01 behavior remain mandatory native proof.",
+  "testsRun": 0,
+  "sqlExecutions": 0,
+  "nativeExecutions": 0,
+  "gitOperations": 0,
+  "networkCalls": 0,
+  "hostedOperations": 0,
+  "repositoryChanges": false,
+  "writtenArtifactsOnly": [
+    "final-phase-a-review-v1.md",
+    "final-phase-a-review-v1-pins.json"
+  ],
+  "specialGates": "All method/Owner/Production gates unchanged. Specifically refused #917 readback not attempted or rerouted. Root alone freezes/dispatches/Ready/merges.",
+  "stop": true
+}

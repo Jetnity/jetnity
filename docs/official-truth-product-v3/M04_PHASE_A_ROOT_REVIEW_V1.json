@@ -1,0 +1,138 @@
+{
+  "schema": "jetnity.m04.phase-a.root-review.v1",
+  "capturedAt": "2026-11-09T23:04:00Z",
+  "root": "/root",
+  "decision": "DESIGN_ACCEPTED_FOR_FINITE_IMPLEMENTATION_ON_PUBLISHED_FREEZE_AND_EXPLICIT_DISPATCH",
+  "runtimePass": false,
+  "ready": false,
+  "merge": false,
+  "phaseBDispatchedByThisFile": false,
+  "author": {
+    "logicalName": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1",
+    "session": "/root/m04_durable_jobs_writer",
+    "sameSession": true
+  },
+  "seed": "14889b050bc6e8b814bc778730c80f70d20c0d47",
+  "sourceMain": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+  "liveMain": "be79ea2591e990111bfabea7ddf500023c20a188",
+  "runtimeFiles": [
+    "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+    "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+    "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+    "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+    "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+    "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+    "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+    "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+    "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+    "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+    "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+    "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+    "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+    "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+    "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+    "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+    "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+    "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts"
+  ],
+  "authorEvidenceFiles": [
+    "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+    "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+    "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+    "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json"
+  ],
+  "evidence": [
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_SQL_REVIEW_V1.md",
+      "bytes": 16334,
+      "sha256": "01c5c8e4b101f99568a4cf5ac146d66e68f56368b5da2a4085b00b09482e3bc0",
+      "copiedVerbatimFrom": "recovery/m04-sql-phase-a-review/final-phase-a-review-v1.md"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_SQL_REVIEW_PINS_V1.json",
+      "bytes": 15821,
+      "sha256": "99e28b5f9e65b7ab8b08888472a89c8340957d2ce3d9ba17850bdbaa98881d46",
+      "copiedVerbatimFrom": "recovery/m04-sql-phase-a-review/final-phase-a-review-v1-pins.json"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_RUNTIME_REVIEW_V1.md",
+      "bytes": 14800,
+      "sha256": "be5b6db6cafd5ee5657d2b34d274a5cb8f4b642ff8f27d425fe1ca30fff85682",
+      "copiedVerbatimFrom": "recovery/m04-runtime-phase-a-review/final-phase-a-review-v1.md"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_RUNTIME_REVIEW_PINS_V1.json",
+      "bytes": 34446,
+      "sha256": "805ac7677941ddbe42b1b5dd22f198f2d38af152895082a9ec7cc72be5fc5508",
+      "copiedVerbatimFrom": "recovery/m04-runtime-phase-a-review/final-phase-a-review-v1.json"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_AUTHOR_DELIVERY_V1.json",
+      "bytes": 975,
+      "sha256": "0bdea0b9d161ac983f62724784d4197b0d6488938281e9c22b6519849e2ad7a7",
+      "copiedVerbatimFrom": "recovery/m04-root-review/author-delivery-v1/receipt.json"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_SOURCE_PINS_V1.json",
+      "bytes": 28544,
+      "sha256": "fe70d74f42638c1fb9b40304818fb6b278232752be038734a5ba5277a8001c11"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_SELF_REVIEW_V1.md",
+      "bytes": 11029,
+      "sha256": "9eb56ec078c4a00dc76f0f2416e7379bfcd34b4fd8502d4ec02fc2d1daf4fb9d"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_A_STATUS_V1.md",
+      "bytes": 6602,
+      "sha256": "54e5df45041a849d969653e07c6c9d20557cae033577e06676ad6f627b1c903a"
+    }
+  ],
+  "freeze": {
+    "path": "docs/official-truth-product-v3/M04_PHASE_A_FREEZE_V1.md",
+    "bytes": 14767,
+    "sha256": "f50d11ff553026722914f7205063a4ec1bba93405aeab430046f864ab80b2032"
+  },
+  "sourceValidation": {
+    "path": "docs/official-truth-product-v3/M04_PHASE_A_ROOT_SOURCE_VALIDATION_V1.json",
+    "sha256": "74d2b0d2bbf55396a9dfeb4f831f51d852796443c72bebd92ba60e160c51cb8a"
+  },
+  "reviewCoverage": "Complete previous V2 plan plus complete final delta, complete final author documents and both complete final specialist reports; independent source identity and relevant control-flow checks. No execution claim.",
+  "openDesignBlockers": [],
+  "runtimeProof": "Not implemented or tested at freeze. U01–U07/N01–N15 remain mandatory.",
+  "protectedMainDelta": {
+    "pr": 1179,
+    "paths": 6,
+    "touchesM04ProtectedInputs": false
+  },
+  "production": {
+    "sha": "be79ea2591e990111bfabea7ddf500023c20a188",
+    "deployment": "dpl_3EJhkpbtraFP3yYAxDNuAkJt3z9v",
+    "aliases": [
+      "jetnity.com",
+      "jetnity-app.vercel.app"
+    ],
+    "state": "READY"
+  },
+  "mainCi": {
+    "runId": 42712761377,
+    "attempt": 1,
+    "conclusion": "success",
+    "jobs": 8
+  },
+  "boundaries": {
+    "method": "NOT_APPROVED",
+    "dev1139": "NOT_RELEASE_READY",
+    "preOwnerGaps": 17,
+    "917RefusalPreserved": true,
+    "hostedOperations": 0,
+    "nativeExecutions": 0,
+    "testsExecutedForFreeze": 0,
+    "missingBinaryContents": 16
+  }
+}

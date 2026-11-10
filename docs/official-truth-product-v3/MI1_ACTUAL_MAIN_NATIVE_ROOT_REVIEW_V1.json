@@ -1,0 +1,434 @@
+{
+  "schema": "jetnity.mi1.actual-main.root-native-final.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T21:25:41.272048+00:00",
+  "main": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+  "tree": "2062a975b200d908a59e0c58c5ce5be6001615b6",
+  "run": 42699153419,
+  "attempt": 1,
+  "event": "push",
+  "scopedVerdict": "Four actual-main native jobs independently reviewed and verified. Overall postmerge acceptance separately requires Core, UI, aggregate and final release gates.",
+  "records": [
+    {
+      "family": "store",
+      "job": 129438925670,
+      "rawBytes": 134086,
+      "rawSha256": "759d31735c74668a688d76e78aa626e64083544d86ea7dcb0f7e30d277233c7e",
+      "peerReceiptSha256": "7de9b4d97106689e15f8fdc9a547ad9724f68921aee6a1916c37d0ff0feafd8a",
+      "tap": {
+        "tests": [
+          "4"
+        ],
+        "suites": [
+          "0"
+        ],
+        "pass": [
+          "4"
+        ],
+        "fail": [
+          "0"
+        ],
+        "cancelled": [
+          "0"
+        ],
+        "skipped": [
+          "0"
+        ],
+        "todo": [
+          "0"
+        ],
+        "duration_ms": [
+          "393711.24027"
+        ]
+      },
+      "diagnostics": {
+        "literalCount": 39,
+        "jsonCount": 39,
+        "parseFailures": [],
+        "allLiteralLinesAccounted": true,
+        "allFreshMainDiagnosticsIndependentlyRead": true
+      },
+      "rootPersonallyReadAllFreshRawDiagnosticLinesBeforeFinalization": true,
+      "priorPrTestVerdictInherited": false,
+      "cleanup": [
+        {
+          "proof": "native-suite-complete",
+          "suite": "integrity-rls",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 133265,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 2,
+          "rpcCommits": 86,
+          "rpcRefusals": 6,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 2266,
+          "ownedSettled": 2266,
+          "ownedPending": 0,
+          "ownedConnections": 444,
+          "ownedClosed": 444,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "native-publication",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 7,
+          "elapsedMs": 89965,
+          "journalOperations": 2,
+          "immutableVersions": 2,
+          "sourceFetches": 6,
+          "rpcCommits": 69,
+          "rpcRefusals": 5,
+          "witnessAdvances": 2,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 1574,
+          "ownedSettled": 1574,
+          "ownedPending": 0,
+          "ownedConnections": 296,
+          "ownedClosed": 296,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ]
+    },
+    {
+      "family": "persisted",
+      "job": 129438925753,
+      "rawBytes": 155254,
+      "rawSha256": "4a109ebaa10319647be332f9d99f014993a8f0c654ac23126fd76354301e5aa5",
+      "peerReceiptSha256": "0fa52c9775492b545df7c9384bccbd4b41e536e927677c16a712b5fd34352bcc",
+      "tap": {
+        "tests": [
+          "1"
+        ],
+        "suites": [
+          "0"
+        ],
+        "pass": [
+          "1"
+        ],
+        "fail": [
+          "0"
+        ],
+        "cancelled": [
+          "0"
+        ],
+        "skipped": [
+          "0"
+        ],
+        "todo": [
+          "0"
+        ],
+        "duration_ms": [
+          "333365.99356"
+        ]
+      },
+      "diagnostics": {
+        "literalCount": 95,
+        "jsonCount": 95,
+        "parseFailures": [],
+        "allLiteralLinesAccounted": true,
+        "allFreshMainDiagnosticsIndependentlyRead": true
+      },
+      "rootPersonallyReadAllFreshRawDiagnosticLinesBeforeFinalization": true,
+      "priorPrTestVerdictInherited": false,
+      "cleanupBoundary": "Actual cancellation/guard/backend/complete-suite milestones reviewed; no numerical aggregate total is present or inferred."
+    },
+    {
+      "family": "atomic",
+      "job": 129438925563,
+      "rawBytes": 181966,
+      "rawSha256": "0530b6aaf4ca70889c7a4d29215e1f20bf6ab4c4e24254c102bc0bfcc3172ef7",
+      "peerReceiptSha256": "ab5f0d18130fa50e594682b4778627998ee1ea0fbbd2627c18f6260db2469288",
+      "tap": {
+        "tests": [
+          "1"
+        ],
+        "suites": [
+          "0"
+        ],
+        "pass": [
+          "1"
+        ],
+        "fail": [
+          "0"
+        ],
+        "cancelled": [
+          "0"
+        ],
+        "skipped": [
+          "0"
+        ],
+        "todo": [
+          "0"
+        ],
+        "duration_ms": [
+          "615633.79865"
+        ]
+      },
+      "diagnostics": {
+        "literalCount": 152,
+        "jsonCount": 151,
+        "manualCount": 1,
+        "manualLiteralReviews": [
+          {
+            "logLine": 1232,
+            "analysisLine": "# {\"schema\":\"official-truth-atomic-version-refresh-1\",\"phase\":\"R9 structural graph-worker equivalence; no canonical acceptance claim\",\"elapsedMs\":77284,\"case\":\"edge order: invalid bigint before missing target\",\"sqlstate\":\"22P02\",\"message\":\"invalid input syntax for type bigint: \\\\\"not-a-bigint\\\\\"\",\"implementationsCheckedInSql\":2}",
+            "originalLine": "2026-11-09T21:16:32.7343320Z # {\"schema\":\"official-truth-atomic-version-refresh-1\",\"phase\":\"R9 structural graph-worker equivalence; no canonical acceptance claim\",\"elapsedMs\":77284,\"case\":\"edge order: invalid bigint before missing target\",\"sqlstate\":\"22P02\",\"message\":\"invalid input syntax for type bigint: \\\\\"not-a-bigint\\\\\"\",\"implementationsCheckedInSql\":2}",
+            "parseError": "Expecting ',' delimiter: line 1 column 280 (char 279)",
+            "manuallyReviewed": true,
+            "reviewedFields": {
+              "case": "edge order: invalid bigint before missing target",
+              "sqlstate": "22P02",
+              "implementationsCheckedInSql": 2,
+              "phase": "R9 structural graph-worker equivalence; no canonical acceptance claim"
+            },
+            "reviewMethod": "Exact original Main raw log line1232 read literally. TAP escaping makes this non-JSON. Raw line unchanged; no repair or normalization."
+          }
+        ],
+        "allLiteralLinesAccounted": true,
+        "allFreshMainDiagnosticsIndependentlyRead": true
+      },
+      "rootPersonallyReadAllFreshRawDiagnosticLinesBeforeFinalization": true,
+      "priorPrTestVerdictInherited": false,
+      "cleanupAndBoundaries": [
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "actual parent-lifetime abort stops pending SQL and connection gate, restores hooks and removes own backends",
+          "elapsedMs": 1524,
+          "sleepingSeen": true,
+          "gateSeen": true,
+          "actorsSettled": 2,
+          "ownBackendsGone": 3,
+          "abortCleanupMs": 142,
+          "cleanup": {
+            "started": 11,
+            "settled": 11,
+            "pending": 0,
+            "connections": 3,
+            "closed": 3,
+            "stoppedClusters": 1
+          },
+          "nextScenario": 0,
+          "nextCluster": 0
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "delayed guard transport bounded evidence",
+          "elapsedMs": 321228,
+          "requestedGuardDelayMs": 700,
+          "guardDelayMs": 700,
+          "earlierBudgetMs": 3500,
+          "deferredWorkMs": 3000,
+          "observedHook": true,
+          "guardArmed": true,
+          "commitObserved": true,
+          "resultCode": "57P01",
+          "dispatched": true,
+          "acknowledged": false,
+          "deferredAfterBoundMs": 226,
+          "deferredBeforeRelativeRestartMs": 474
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 340815,
+          "case": "expiry",
+          "lockSeen": true,
+          "refreshSqlstate": "55000",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 363166,
+          "case": "abort",
+          "lockSeen": true,
+          "refreshSqlstate": "55P03",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "blocked actors settled and owned backend cleanup inspected",
+          "elapsedMs": 385474,
+          "case": "timeout",
+          "lockSeen": true,
+          "refreshSqlstate": "55P03",
+          "coordinatorSettled": true,
+          "hooksSettled": 5,
+          "rejectedHooks": 0,
+          "ownedConnections": 7,
+          "recordedPids": 7,
+          "cleanupFailures": 0,
+          "primaryFailure": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "three race actors settled and concrete backends removed",
+          "elapsedMs": 409240,
+          "lockProofReached": true,
+          "readerHeld": true,
+          "firstWriterReady": true,
+          "secondWriterReady": true,
+          "firstDispatched": true,
+          "secondDispatched": true,
+          "outcomes": [
+            "fulfilled",
+            "fulfilled",
+            "fulfilled"
+          ],
+          "cleanupFailures": 0
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+          "elapsedMs": 615000,
+          "cleanup": {
+            "started": 9453,
+            "settled": 9453,
+            "pending": 0,
+            "connections": 248,
+            "closed": 248,
+            "stoppedClusters": 11
+          },
+          "parentAborted": false
+        },
+        {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "complete native refresh acceptance matrix finished",
+          "elapsedMs": 615000,
+          "parentReserveMs": 585000
+        }
+      ]
+    },
+    {
+      "family": "lifecycle",
+      "job": 129438925708,
+      "rawBytes": 175596,
+      "rawSha256": "dfcad0b6a951ef5f3a1cc5611099cdda9f57518b4b16221083d046ba54ee605a",
+      "peerReceiptSha256": "62896e25ae7e3ffad42158ab79da8877e9f60b5ebd232ddc8957b55b8d55e9b7",
+      "tap": {
+        "tests": [
+          "4"
+        ],
+        "suites": [
+          "0"
+        ],
+        "pass": [
+          "4"
+        ],
+        "fail": [
+          "0"
+        ],
+        "cancelled": [
+          "0"
+        ],
+        "skipped": [
+          "0"
+        ],
+        "todo": [
+          "0"
+        ],
+        "duration_ms": [
+          "642104.032643"
+        ]
+      },
+      "diagnostics": {
+        "literalCount": 29,
+        "jsonCount": 29,
+        "parseFailures": [],
+        "allLiteralLinesAccounted": true,
+        "allFreshMainDiagnosticsIndependentlyRead": true
+      },
+      "rootPersonallyReadAllFreshRawDiagnosticLinesBeforeFinalization": true,
+      "priorPrTestVerdictInherited": false,
+      "cleanup": [
+        {
+          "proof": "native-suite-complete",
+          "suite": "boundaries",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 2,
+          "elapsedMs": 85207,
+          "journalOperations": 0,
+          "immutableVersions": 0,
+          "sourceFetches": 2,
+          "rpcCommits": 10,
+          "rpcRefusals": 0,
+          "witnessAdvances": 0,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 581,
+          "ownedSettled": 581,
+          "ownedPending": 0,
+          "ownedConnections": 90,
+          "ownedClosed": 90,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        },
+        {
+          "proof": "native-suite-complete",
+          "suite": "wait-lifecycle",
+          "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+          "semanticStep": null,
+          "completedPhases": 4,
+          "elapsedMs": 157555,
+          "journalOperations": 4,
+          "immutableVersions": 2,
+          "sourceFetches": 3,
+          "rpcCommits": 99,
+          "rpcRefusals": 7,
+          "witnessAdvances": 4,
+          "activeSql": 0,
+          "ownedClientBackends": 0,
+          "provisionalReservations": 0,
+          "provisionalStages": 0,
+          "keyCopiesWipedBeforeWitnessClose": true,
+          "ownedStarted": 6184,
+          "ownedSettled": 6184,
+          "ownedPending": 0,
+          "ownedConnections": 476,
+          "ownedClosed": 476,
+          "stoppedClusters": 1,
+          "teardownComplete": true
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Closed synthetic CI fixtures only; no hosted DB/Auth/RLS/ACL/migration/credential action or public feature activation.",
+    "Auth CI metadata only, no Auth log read or hosted-truth inference.",
+    "Atomic152 literal diagnostics include151 parseable and1 original escaped line1232 manually reviewed; no raw repair.",
+    "Existing Method NOT_APPROVED, #1139 NOT_RELEASE_READY17gaps and all reserved gates preserved.",
+    "Main-specific Atomic9453 and Lifecycle6184 operation counts used; no prior PR counters copied."
+  ]
+}

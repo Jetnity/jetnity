@@ -1,0 +1,148 @@
+{
+  "schema": "jetnity.mi1.actual-main.root-core-review.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T21:26:49.044719+00:00",
+  "main": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+  "tree": "2062a975b200d908a59e0c58c5ce5be6001615b6",
+  "run": 42699153419,
+  "attempt": 1,
+  "job": 129438925814,
+  "scopedVerdict": "Actual-main Core and37nativechildren independently verified; overall postmerge acceptance separately recorded.",
+  "rawLog": {
+    "bytes": 4240247,
+    "sha256": "2e970ffaba50617e129f5752dd5132b5c6785c9f5289be999bc009cb50ebc1b8"
+  },
+  "peerReceiptSha256": "d28512e63c990a7c8cf9a78c0ffbb3066e51bd2d908ee421e39dd562b06e96c1",
+  "rootPersonallyRead": [
+    "Both SHA command contexts: origin/main rev-parse648 and actual checkout log719.",
+    "All37 actual native child passes MA1(14)/S1(12)/IN1(7)/C1(4), their diagnostics and bounded claims.",
+    "Complete8203-character literal CHECK payload personally read; all8 exact repeated payloads rehashed equal a92189f1383bfcd2ac62b3f4bc507dda2c6c65a19dafb36d5b903aa4bd4f603a.",
+    "ActualMA1cleanup1580/1580 operations229/229connections8stoppedclusters0pending.",
+    "Correctedguardok1613, full totals, two inherited skips, all5hygieneoutputs and successful28/28build."
+  ],
+  "sourceFilesIndependentlyRehashed": 58,
+  "core": {
+    "tests": 8631,
+    "suites": 970,
+    "pass": 8629,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "duration_ms": 766058.894443
+  },
+  "skips": [
+    {
+      "line": 59176,
+      "text": "2026-11-09T21:20:36.3751833Z ok 2478 - T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP"
+    },
+    {
+      "line": 61669,
+      "text": "2026-11-09T21:20:36.4497672Z ok 2668 - shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+    }
+  ],
+  "nativeChildren": {
+    "MA1": 14,
+    "S1": 12,
+    "IN1": 7,
+    "C1": 4,
+    "includedInCoreTotals": true
+  },
+  "ma1Cleanup": {
+    "value": {
+      "started": 1580,
+      "settled": 1580,
+      "pending": 0,
+      "connections": 229,
+      "closed": 229,
+      "stoppedClusters": 8
+    },
+    "line": 33921
+  },
+  "checkLiteralCompatibility": {
+    "exactSets": 8,
+    "sets": [
+      {
+        "line": 33908,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33911,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33912,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33913,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33914,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33915,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33917,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      },
+      {
+        "line": 33920,
+        "exactSourceEquality": true,
+        "expressions": {
+          "heads_v1_shape": "d978b0c81b68a7f3bf78e59b3d335543b27d7a8e851857e34c15e92e0ef9e258",
+          "operations_v1_shape": "64678ff1541d107cf12ced52e99cae1cbd881417087330ebc67930a9fc157a51",
+          "revisions_v1_shape": "60d220d66084557ef4e1a279c2d94a9e5285b2d7426cc6cad05b87f620a20243"
+        }
+      }
+    ],
+    "withoutNormalization": true,
+    "allThreeLiteralPgConstraintDefinitionsCheckedWithoutNormalization": true
+  },
+  "limits": [
+    "197existingLintwarnings0errors;16dependencyfindings9moderate7high unclassified.",
+    "Two inherited browser skips not erased by CorePASS; actual isolatedUIevidence assessed separately.",
+    "No hostedSQL/Auth/RLS/ACL/migration/credentials/source/provider/scheduler/activation.",
+    "No priorPRtestverdict inherited; actualmainnewrun personally inspected.",
+    "Preliminaryreviewerextractorv1 remains historical; v2 corrects commandcontext assumption, no productfinding or guard weakening."
+  ]
+}

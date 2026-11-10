@@ -1,5 +1,17 @@
 # Jetnity – Roadmap
 
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
+
+### M04 current — R21 / Recovery V12, source reviewed; full exact-head acceptance pending
+
+**2026-11-10 10:20:27 UTC.** [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V12](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V12.md) · [Task V12](docs/official-truth-product-v3/M04_RECOVERY_TASK_V12.md) · [Evidence](docs/official-truth-product-v3/M04_RECOVERY_R21_EVIDENCE_V12.json) · [live PR#1178](https://github.com/Jetnity/jetnity/pull/1178). Later head-bound receipts/live evidence supersede this pre-publication snapshot.
+
+Published baseline **d51d420a0ba83c56c7cf72166b5d328491fe54a5**, main **890dfe9323b4b6d3644c372d81cb8893b6548d11**, ahead 13 / behind 0, 107 paths. Actual CI 42771272293 FAILURE: 23/31 groups passed, R9 passed; N05/A03 reached 215 acknowledged commits then 240 s deadline; next DB outcome UNKNOWN; cleanup complete. No runtime/TL-PASS, Ready or merge. R21 changes only three already-validated JSONB string outputs plus nine direct N02 queries; source aggregate **11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6**. Same real Generation2 author/reviewer/auditor resumed; four unfinished author documents now completed and independently reviewed. First unfinished step: Root publication/readback, then full unchanged exact-head CI/all 31groups and final gates. D1 remains separately unfinished; no automatic next slice.
+
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback remains pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute. #1131/#1135/#968/#911/#913 holds and all hosted/local/environment boundaries remain as detailed in V12.
+
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
+
 > **10.11.2026 – Reiseplanung und persönlicher Bereich:** Die gemeinsame Änderung umfasst Etappen mit manuellen Stopps und Karte, die direkten Einstiege in die Reisesuche, den Konto- und Reisebereich und den Weltatlas. Hotels und Flüge öffnen bis zur Freigabe offizieller Daten über die CJ-Partnersuche. [Umfang und Prüfung](docs/REISEBEREICHE_2026-11-10.md).
 
 > **09.11.2026 – Produktziel V3 wird implementiert:** Ownerauftrag und [PROGRAM V1 / #1162](https://github.com/Jetnity/jetnity/issues/1162) erlauben jetzt Code, Tests und PRs. **In Arbeit:** S0 gemeinsames Datenformat in [Draft #1163](https://github.com/Jetnity/jetnity/pull/1163), parallel unabhängiger Reuse-Abgleich und D0 Dev-Paket #917/#1139. **Danach parallel:** I1 Import mit V3-Quellenentscheidung, U1 Besucherabfrage/Cache mit isolierten Testdaten, M1 Quellenüberwachung/Versionen/Queue/Recovery. **Anschließend:** E1 gemeinsame Integration, Fehler-/Konkurrenz-/Privacy- und gemessene Leistungstests. Erste überprüfbare Gesamtfassung grob 3–5 Arbeitstage; Schätzung, keine Aktivierungszusage. **Weiter gehalten:** tatsächliche #1139-Zielkorrektur, unabhängiger Stage1-Readback, #1131-STOP sowie konkrete Methoden-, Datenbank- und Production-Freigabe. Keine weiteren alten Stage1-Belege vom Owner vorhanden; keine erneute oder umgeleitete gesperrte Nachprüfung. Das eingefrorene V3-Dev-Paket dokumentiert seinen früheren Plan-only-Auftrag, nicht diesen neuen Implementierungsstand.

@@ -1,5 +1,9 @@
 # Jetnity – Architektur
 
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
+> **10.11.2026 — M04-Unterbrechungscheckpoint, nicht fertig:** [PR #1178](https://github.com/Jetnity/jetnity/pull/1178) sichert den vorhandenen V7-Code und alle finalen Reviews als Draft. **[Aktueller Chat-Checkpoint](docs/official-truth-product-v3/M04_CHAT_TRANSITION_2026-11-10.md)** und [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) sind maßgeblich; exakten neuen Head/CI/Preview live aus #1178/#751/#1162 lesen. **R9 (tatsächlicher verschachtelter I1/S1-Race-/Drain-Nachweis) bleibt offen**, kein R9-Test implementiert. Root61/61 nichtnative Tests plus fokussierter TypeScript-/Lint-Lauf erfolgreich; keine native oder vollständige Runtime-Abnahme. Autor Codex Generation1 `/root/m04_durable_jobs_writer` und beide Reviewer STOP. Nur Root darf publizieren/PASS/Ready/Merge. main/Production zuletztbe79; MI1#1177 bereits abgenommen, separate #1180 nicht vermischen. MethodeNOT_APPROVED, #1139/17Lücken, #917-Verweigerung und alle besonderen Gates bleiben. Kein automatischer Folgeslice, keine Hosted-/öffentliche Aktivierung. Historische Absätze sind keine aktuelle Implementierungsevidence.
+<!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
+
 > **09.11.2026 – Official Truth Produktziel V3, Implementierung beauftragt:** [Programm #1162](https://github.com/Jetnity/jetnity/issues/1162) beginnt mit dem gemeinsamen S0-Vertrag in [Draft #1163](https://github.com/Jetnity/jetnity/pull/1163). Erst dessen unabhängig geprüfter, exakt gepinnter Stand trägt die parallelen Teile Import/Schnittstelle (I1), Besucher/Cache (U1) und Überwachung/Versionierung (M1). [PROGRAM V1](docs/official-truth-product-v3/PROGRAM_V1.md) hebt den früheren Plan-only-Auftrag für diese Implementierungen auf. Die konkrete Methodenfreigabe sowie Datenbank-/Production-Aktivierung bleiben getrennte Owner-Gates.
 
 ### Architekturgrenzen des V3-Auftrags

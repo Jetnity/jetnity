@@ -1,0 +1,211 @@
+{
+  "schema": "jetnity.m04.recovery.r12.v3",
+  "capturedAt": "2026-11-10 02:23:09 UTC",
+  "baseline": {
+    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+    "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
+    "main": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "ahead": 4,
+    "behind": 0
+  },
+  "ci": {
+    "runId": 42739327115,
+    "attempt": 1,
+    "jobId": 129576216777,
+    "conclusion": "failure",
+    "receipt": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "executed": true,
+      "effectAndCleanupMilliseconds": 975,
+      "cleanupMilliseconds": 154,
+      "clusters": 1,
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 22,
+        "settled": 22,
+        "pending": 0,
+        "connections": 2,
+        "closed": 2,
+        "stoppedClusters": 1
+      },
+      "groups": [],
+      "nestedRaceWitnesses": [],
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 0,
+        "maximumIntake": 0,
+        "maximumMethod": 0,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 0,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "jobs_candidate",
+        "error": {
+          "kind": "postgres",
+          "code": "42601"
+        }
+      },
+      "cleanupFailures": [],
+      "cleanupFailureCount": 0,
+      "nativePass": false
+    },
+    "core": {
+      "tests": 8658,
+      "passed": 8655,
+      "failed": 1,
+      "skipped": 2,
+      "cancelled": 0
+    },
+    "log": {
+      "logSha256": "61e849c769bc9078a5b20a9ccf1a12b8a5b847f014a1ea5c2976c1a24bf319c4",
+      "excerptSha256": "fa9502da8b34be6223ecfb4eb0175d5ddf02c67e272ab2e070ab298fedddef48"
+    }
+  },
+  "correction": {
+    "task": "M04_RECOVERY_TASK_V3.md",
+    "sameSession": "/root/m04_durable_jobs_writer_g2",
+    "changedSourcePaths": [
+      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql"
+    ],
+    "addedASCIIBytes": 4,
+    "changedLines": [
+      75,
+      1020
+    ],
+    "candidateBytes": 135966,
+    "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+    "candidateGitBlob": "935c21d0008eed09ed0843490ce254d178808aab",
+    "sourceAggregate": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+    "sourceFiles": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+        "bytes": 27466,
+        "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+        "bytes": 22124,
+        "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+        "bytes": 13319,
+        "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+        "bytes": 27249,
+        "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+        "bytes": 150,
+        "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+        "bytes": 4330,
+        "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+        "bytes": 8816,
+        "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+        "bytes": 5985,
+        "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+        "bytes": 12578,
+        "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "bytes": 16656,
+        "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "bytes": 37608,
+        "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+        "bytes": 6321,
+        "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+        "bytes": 6324,
+        "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+        "bytes": 6175,
+        "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 135966,
+        "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+        "bytes": 13389,
+        "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 136951,
+        "sha256": "670f4a62b0f7b8964de8f2df4fd3ef99044067c9c92484e1d7c1fd53374deaac"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+        "bytes": 8128,
+        "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
+      }
+    ]
+  },
+  "review": {
+    "rootIndependent": true,
+    "grammarBlob": "cd172ef2f8d6c792b0ee26f5162ced0c90694277",
+    "withdrawnPreliminaryFinding": "Line72 fourth closing parenthesis allegation disproved; source unchanged.",
+    "boundedDisposition": "SOURCE_CORRECTION_ACCEPTED_FOR_CI_ONLY",
+    "reviewers": [
+      "/root/m04_r9_review_g2",
+      "/root/m04_live_audit_g2"
+    ]
+  },
+  "capability": {
+    "localEnvironment": "unavailable",
+    "newLocalExecution": false,
+    "sqlParsingExecuted": false,
+    "nativeExecuted": false,
+    "fullBuildExecuted": false,
+    "hostedRead": false,
+    "hostedWrite": false,
+    "authLogsRead": false,
+    "alternateExecutionEnvironment": false,
+    "hashIntegrityVerificationOnly": true,
+    "baselineTreeReconstructed": true,
+    "baselineTreeEntries": 10160
+  },
+  "state": {
+    "draft": true,
+    "nativePass": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merged": false,
+    "publicActivation": false,
+    "next": "Publish reviewed correction with expected-head lease, then full unchanged exact-head CI and all remaining gates."
+  }
+}

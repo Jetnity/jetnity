@@ -1,0 +1,137 @@
+{
+  "schema": "jetnity.mi1.actual-main.root-ui-review.v1",
+  "reviewer": "/root",
+  "at": "2026-11-09T21:11:37.569897+00:00",
+  "binding": {
+    "checkedOutHead": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+    "sourceHead": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+    "worktreeDirty": false,
+    "githubSha": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+    "runId": "42699153419",
+    "runAttempt": "1",
+    "event": "push"
+  },
+  "notOverallMainPass": true,
+  "peerReceiptSha256": "70259aa292a34011e3ad907e0869467b4cd33e540f2ce6487342163ecec268a4",
+  "rawLogSha256": "41df46d1ec44544d79c065c1f416f9235e1db5af68e3f04d79df5932de97895f",
+  "artifactSha256": "2b37ff1a238b484299b0a2a4f26e8a080f0ece42fd1ebcf6b7d8f2a81c5a1672",
+  "rootActions": [
+    "Independently rehashed all 15 actual artifact files",
+    "Read five JSON binding inputs and inspected actual core UI counters in raw log",
+    "Root visually inspected fresh mixed-280 and application-320-text200 PNGs",
+    "Actual fields show separate citizenships, synthetic labels, full contextual restrictions and source/date/version",
+    "Observed long-word wraps and clipped native destination selection at 200 percent; retained P3, no perfect accessibility claim"
+  ],
+  "tests": 50,
+  "layouts": 12,
+  "interactions": 11,
+  "httpSmokes": 6,
+  "errors": [],
+  "externalRequests": [],
+  "benchmark": {
+    "scope": "single Node process, prepared one-cell cache hit with synthetic in-memory ports",
+    "realNetwork": false,
+    "productionSloVerified": false,
+    "node": "v22.23.4",
+    "warmupSamples": 20,
+    "measuredSamples": 200,
+    "p50Ms": 4.471132000000011,
+    "p95Ms": 7.548811999999998,
+    "maximumMs": 12.214316000000053,
+    "pendingJobs": 0,
+    "binding": {
+      "checkedOutHead": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+      "sourceHead": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+      "worktreeDirty": false,
+      "githubSha": "7ae1394a00e2b23a60da98d2a029fd6a10c8189d",
+      "runId": "42699153419",
+      "runAttempt": "1",
+      "event": "push"
+    }
+  },
+  "fileManifest": [
+    {
+      "path": "application-320-text200.png",
+      "bytes": 562618,
+      "sha256": "6b7f6cd6bf21d28b56b63caa9a41835da3d8d100849b4c1e0577e0b725124c55"
+    },
+    {
+      "path": "application-320.png",
+      "bytes": 324576,
+      "sha256": "82db0c5671fe79a885902af8e60c7b1f1f538a60e5f479a1426f532bf104c6ad"
+    },
+    {
+      "path": "audit.json",
+      "bytes": 21026,
+      "sha256": "f8a56839e50cff38e6d70f05bb5ba9903eb80c949103d9dd6d94641686cfe36e"
+    },
+    {
+      "path": "benchmark.json",
+      "bytes": 649,
+      "sha256": "9e31a393769d38d5b2dd6cfac4ff349dd88039c778d566fe660856fff2489acc"
+    },
+    {
+      "path": "bundle-inputs.json",
+      "bytes": 1175,
+      "sha256": "81c969e9ccaf05a4cdb8c8dcce52bc479c9771fac0a6e35317cee760b12494ae"
+    },
+    {
+      "path": "conflict-320.png",
+      "bytes": 284135,
+      "sha256": "0f2efb3b0348beac62fc32c753e04c45130ce0cc82a2a701801ddeb52382a174"
+    },
+    {
+      "path": "http-smoke.json",
+      "bytes": 1302,
+      "sha256": "2d6277cdb172a63336cf60f366d8b63cbbe2a6066a5fbaa4c6483c25c964b8e2"
+    },
+    {
+      "path": "loading-320.png",
+      "bytes": 255951,
+      "sha256": "e3d2bc37dcae7adf9ecf6a3fa175a6519a476d5105d69ba13147ca75e6759892"
+    },
+    {
+      "path": "mixed-1280.png",
+      "bytes": 416617,
+      "sha256": "fa3d939f2168fdda51af5c3a5b8332cdb4129054ff7372ba1637cd0479372df1"
+    },
+    {
+      "path": "mixed-280.png",
+      "bytes": 349662,
+      "sha256": "986cf3a252aad5fd68328f91b7b501a1666a1ba5ae83c9f0bbc32ac689d292f8"
+    },
+    {
+      "path": "mixed-320-text200.png",
+      "bytes": 620516,
+      "sha256": "1f0f278a0075bb8bf696760bc807b74d52bcae5bf5020bd0dca466bbada9d81f"
+    },
+    {
+      "path": "mixed-390.png",
+      "bytes": 365462,
+      "sha256": "a5da0ff6c6f5a2464ddb5f335688556d943545d4cf3ba29a181955d9ab75c27d"
+    },
+    {
+      "path": "poll-accepted-390.png",
+      "bytes": 333176,
+      "sha256": "f955e89acd4710e8e1f1a4a99b45218ecbde558ab91f85d8d83969f00fb050cf"
+    },
+    {
+      "path": "poll-pending-390.png",
+      "bytes": 302917,
+      "sha256": "018f91a542d0b834fce866946a2398e701d00c5b13b766e8dcc6dd66d8e003d1"
+    },
+    {
+      "path": "run-binding.json",
+      "bytes": 404,
+      "sha256": "567548ccc4523d70874e2c9c001f30c3359b4d1f7c162c67d6939686e2a74539"
+    }
+  ],
+  "remaining": [
+    "Core and four native gates pending",
+    "Fresh actual-main overall release check pending"
+  ],
+  "limits": [
+    "No public page/real-source/hosted/real-device/activation/SLO claim",
+    "No dependency-security classification or approval;16 findings9moderate7high remain recorded"
+  ]
+}

@@ -1,0 +1,40 @@
+2026-11-10T01:16:20.1720054Z # Subtest: M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T01:16:20.1722183Z not ok 1693 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T01:16:20.1723187Z   ---
+2026-11-10T01:16:20.1723573Z   duration_ms: 845.263502
+2026-11-10T01:16:20.1723991Z   type: 'test'
+2026-11-10T01:16:20.1724940Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:401'
+2026-11-10T01:16:20.1726272Z   failureType: 'testCodeFailure'
+2026-11-10T01:16:20.1726908Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T01:16:20.1727497Z   code: 'ERR_TEST_FAILURE'
+2026-11-10T01:16:20.1727926Z   name: 'AggregateError'
+2026-11-10T01:16:20.1728321Z   stack: |-
+2026-11-10T01:16:20.1729290Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:1376:41)
+2026-11-10T01:16:20.1730602Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-11-10T01:16:20.1731470Z     async Test.run (node:internal/test_runner/test:1054:7)
+2026-11-10T01:16:20.1732303Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+2026-11-10T01:16:20.1732972Z   ...
+2026-11-10T01:16:20.1738823Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":842,"cleanupMilliseconds":154,"clusters":1,"childProcesses":0,"lifetime":{"started":18,"settled":18,"pending":0,"connections":2,"closed":2,"stoppedClusters":1},"groups":[],"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":0,"maximumIntake":0,"maximumMethod":0,"m04ObserverLimit":2,"maximumM04Observers":0,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"nativePass":false}
+2026-11-10T01:16:20.1743656Z # Subtest: actual native promise owns its lane after abort until terminal drain
+2026-11-10T01:16:20.1744736Z ok 1694 - actual native promise owns its lane after abort until terminal drain
+2026-11-10T01:16:20.1745414Z   ---
+2026-11-10T01:16:20.1762464Z   duration_ms: 6.616559
+2026-11-10T01:16:20.1762929Z   type: 'test'
+2026-11-10T01:16:20.1763313Z   ...
+2026-11-10T01:17:17.4223803Z       duration_ms: 0.244007
+2026-11-10T01:17:17.4224034Z       type: 'test'
+2026-11-10T01:17:17.4224240Z       ...
+2026-11-10T01:17:17.4224512Z     # Subtest: forbidden deletion during HOLD => fail
+2026-11-10T01:17:17.4224878Z     ok 16 - forbidden deletion during HOLD => fail
+2026-11-10T01:17:17.4225244Z       ---
+2026-11-10T01:17:17.4225450Z       duration_ms: 0.461865
+2026-11-10T01:17:17.4225980Z       type: 'test'
+2026-11-10T01:17:17.4226196Z       ...
+2026-11-10T01:17:17.4226382Z     1..16
+2026-11-10T01:17:17.4226644Z ok 2716 - operating-mode guard fixtures
+2026-11-10T01:17:17.4226921Z   ---
+2026-11-10T01:17:17.4227130Z   duration_ms: 16.366171
+2026-11-10T01:17:17.4227374Z   type: 'suite'
+2026-11-10T01:17:17.4227578Z   ...
+2026-11-10T01:17:17.4227775Z 1..2716
+2026-11-10T01:17:17.4227971Z # tests 8661

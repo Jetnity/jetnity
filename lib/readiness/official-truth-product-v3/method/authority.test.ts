@@ -5,8 +5,10 @@ import { performance } from 'node:perf_hooks'
 import { describe, test, type TestContext } from 'node:test'
 import { MA1_LIMITS, readMa1MethodBinding, readMa1FixedBinding, readMa1CurrentRequest, readMa1CurrentRows,
   type Ma1MethodBinding, type Ma1CurrentRequest, type Ma1ReadResult } from './contract'
-import { createV3PostgresMethodAuthority, MA1_READ_CURRENT_SQL,
+import { createV3PostgresMethodAuthority, createV3PostgresDurableJobs, MA1_READ_CURRENT_SQL,
   type Ma1MethodReceipt, type Ma1MethodSqlExecutor } from './authority-postgres'
+import type { M04Config, M04FixedRequest } from '../jobs/contract'
+import { m04Fixture, M04_TEST_BINDING } from '../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures'
 
 // Literal expectations belong to Root's preimplementation artifact, not this adapter.
 const referenceBytes = readFileSync(new URL('../../../../docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json', import.meta.url))
@@ -505,4 +507,70 @@ test('MA1 dormant runtime has no file discovery, credentials, provider or public
     assert.equal(/\bfetch\s*\(|process\.env|node:fs|LocalPgConnection|createClient\s*\(|\.from\s*\(|\.rpc\s*\(/.test(source), false, file)
     assert.equal(/Promise\.race\s*\(/.test(source), false, file)
   }
+})
+
+function jointFixture(overrides: Partial<M04Config> = {}) {
+  const f = m04Fixture('ma1-joint-boundary', { fixedNow: CHECKED })
+  const config: M04Config = { binding: M04_TEST_BINDING, registry: f.originals.registry, clock: f.clock,
+    methodExecutor: { async readCurrent(request) { return rows(approved({ method_id: request.methodId, revision: String(request.revision),
+      method_digest: request.methodDigest, package_digest: request.packageDigest, observed_at: request.checkedAt })) } },
+    jobsExecutor: { async executeFixed() { return { status: 'unavailable' } } }, intakeExecutor: { async execute() { return { status: 'unavailable' } }, },
+    producer: f.producer, evidence: f.evidence, history: f.history, ...overrides }
+  return { f, config, api: createV3PostgresDurableJobs(config) }
+}
+describe('M04 private joint factory retains MA1 authority and original budgets', () => {
+  test('outward surface is exactly three methods, with no receipt, epoch or native constructor escape', async () => {
+    const { api } = jointFixture()
+    assert.deepEqual(Reflect.ownKeys(api).sort(), ['enqueueDiscovery', 'enqueueRule', 'workOnce'])
+    assert.equal(Object.isFrozen(api), true)
+    assert.equal(Object.hasOwn(api, 'resolveCurrent'), false); assert.equal(Object.hasOwn(api, 'reproveAtCommit'), false)
+    assert.equal((await api.enqueueRule({})).status, 'invalid')
+  })
+  test('probe clock is validated before dispatch; slow synchronous callback consumes original remainder', async t => {
+    const setNow = monotonic(t)
+    let jobs = 0, methods = 0
+    const bad = jointFixture({ clock: () => ({ now: 'invalid', legalDate: '2026-11-09' }),
+      jobsExecutor: { async executeFixed() { jobs++; return { status: 'unavailable' } } },
+      methodExecutor: { async readCurrent() { methods++; return { status: 'unavailable' } } } })
+    assert.notEqual((await bad.api.enqueueRule(bad.f.ruleInput)).status, 'confirmed')
+    assert.equal(jobs, 0); assert.equal(methods, 0)
+    for (const offset of [-60000, 60000]) {
+      const beginning = performance.now(), clockValue = new Date(Date.parse(CHECKED) + offset).toISOString()
+      let captured: M04FixedRequest | undefined
+      const x = jointFixture({ clock: () => { setNow(beginning + 200); return { now: clockValue, legalDate: clockValue.slice(0, 10) } },
+        jobsExecutor: { async executeFixed(request) { captured = request; return { status: 'acknowledged', rows: [{ result: '{"status":"blocked"}' }] } } },
+        methodExecutor: { async readCurrent() { methods++; return { status: 'unavailable' } } } })
+      assert.notEqual((await x.api.enqueueRule(x.f.ruleInput)).status, 'confirmed')
+      assert.ok(captured); assert.equal(captured.epoch, null)
+      assert.equal(captured.budget.deadline, beginning + 5000)
+      assert.equal(Date.parse(captured.notAfter), Date.parse(clockValue) + 4800)
+      assert.equal(methods, 0, 'fixed negative probe never observes MA1')
+    }
+    const beginning = performance.now()
+    const expired = jointFixture({ clock: () => { setNow(beginning + 5001); return { now: CHECKED, legalDate: CHECKED.slice(0, 10) } },
+      jobsExecutor: { async executeFixed() { jobs++; return { status: 'unavailable' } } } })
+    assert.notEqual((await expired.api.enqueueRule(expired.f.ruleInput)).status, 'confirmed'); assert.equal(jobs, 0)
+  })
+  test('actual private bridge shrinks database cap at terminal observation and refuses late acknowledgement', async t => {
+    const setNow = monotonic(t)
+    let observation = 0, captured: M04FixedRequest | undefined
+    const x = jointFixture({ methodExecutor: { async readCurrent(request) {
+      observation++; setNow(3000)
+      return rows(approved({ method_id: request.methodId, revision: String(request.revision), method_digest: request.methodDigest,
+        package_digest: request.packageDigest, observed_at: new Date(Date.parse(CHECKED) + 2000).toISOString() }))
+    } }, jobsExecutor: { async executeFixed(request) {
+      const q = JSON.parse(request.operationText)
+      if (q.operation === 'queue_confirm') return { status: 'acknowledged', rows: [{ result: '{"status":"not_attempted"}' }] }
+      if (q.operation === 'queue_read') return { status: 'acknowledged', rows: [{ result: '{"status":"absent"}' }] }
+      assert.equal(q.operation, 'queue_cas'); captured = request
+      // Represents the actual executor's delayed terminal ACK/drain, not a
+      // cancellation promise or a claim that the database rolled back.
+      setNow(6000)
+      return { status: 'acknowledged', rows: [{ result: JSON.stringify({ status: 'committed', record: q.body.commit.next }) }] }
+    } } })
+    assert.equal((await x.api.enqueueRule(x.f.ruleInput)).status, 'unconfirmed')
+    assert.ok(observation >= 1 && captured)
+    assert.equal(captured.budget.deadline, 5000)
+    assert.equal(Date.parse(captured.notAfter), Date.parse(CHECKED) + 4000, 'observedAt + floor(original Held deadline - actual terminal b)')
+  })
 })

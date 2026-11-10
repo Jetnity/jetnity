@@ -1,0 +1,171 @@
+{
+  "schema": "jetnity.m04.recovery-live-audit.v2",
+  "observedAt": "2026-11-10T01:48:37.060Z",
+  "reader": "/root",
+  "recoveredCheckpoint": {
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "tree": "ee51fd891fd836a355c8434ad5765862d578524b",
+    "verifiedChangedBlobs": 64,
+    "base": "be79ea2591e990111bfabea7ddf500023c20a188"
+  },
+  "historicalFailure": {
+    "run": 42732722870,
+    "attempt": 1,
+    "job": 129554463494,
+    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+    "conclusion": "failure",
+    "core": {
+      "tests": 8661,
+      "pass": 8658,
+      "fail": 1,
+      "skipped": 2
+    },
+    "native": {
+      "executed": true,
+      "pass": false,
+      "groups": [],
+      "started": 18,
+      "settled": 18,
+      "pending": 0,
+      "connections": 2,
+      "closed": 2,
+      "clusters": 1,
+      "stoppedClusters": 1
+    },
+    "typecheck": "success",
+    "lint": "success",
+    "hygiene": "skipped",
+    "build": "skipped",
+    "logSha256": "eaeea1cf3ade09c4f48c6f88b52bda691b2c85efa8b3bb8333a168cbddd62d32",
+    "excerptSha256": "b261d5080819192bd48c9efb6e879bcfd637d55ade7a09e1d03eeced0b50459a"
+  },
+  "main": {
+    "head": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "tree": "8c611ec31d518cce88a3a5abb75aecf6620d794c",
+    "sourcePr": 1180,
+    "run": 42736015143,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 129565321305,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321371,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321380,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321400,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321448,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321485,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129565321511,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129570826638,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "mainReconciliation": {
+    "ahead": 3,
+    "behind": 22,
+    "mergeBase": "be79ea2591e990111bfabea7ddf500023c20a188",
+    "mainChangedPaths": 80,
+    "overlaps": [
+      "ROADMAP.md"
+    ],
+    "utf8SnapshotsVerified": 73,
+    "missingBinaryBlobsRetrieved": 0,
+    "newBinaryObjectIdsOnly": 6
+  },
+  "production": {
+    "observedAt": "2026-11-10T01:46:35.193Z",
+    "root_alias_primary": {
+      "alias": "jetnity.com",
+      "deploymentId": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "depId": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "projectId": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM"
+    },
+    "root_alias_secondary": {
+      "alias": "jetnity-app.vercel.app",
+      "deploymentId": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "depId": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "projectId": "prj_wTTVawPItEO7a4HihEmaU3PsuaXM"
+    },
+    "root_production": {
+      "id": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "state": "READY",
+      "target": "production",
+      "sha": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+      "aliasError": null,
+      "url": "jetnity-e087tbs28-jetnity-e1b93c82.vercel.app"
+    }
+  },
+  "reviews": {
+    "formal": 0,
+    "inline": 0,
+    "issueCommentRequirements": [
+      "R9",
+      "R10",
+      "R11"
+    ],
+    "ruleSet": 21875372,
+    "requiredStrict": true,
+    "currentUserBypass": "never"
+  },
+  "guardian": {
+    "since": "2026-11-10T00:00:00Z",
+    "new751Comments": 0,
+    "new748Comments": 0
+  },
+  "sessions": {
+    "original": "/root/m04_durable_jobs_writer",
+    "originalAvailable": false,
+    "replacement": "/root/m04_durable_jobs_writer_g2",
+    "generation": 2,
+    "runtimeReviewer": "/root/m04_r9_review_g2",
+    "sqlLiveReviewer": "/root/m04_live_audit_g2",
+    "cursorAvailable": false
+  },
+  "gates": {
+    "method": "NOT_APPROVED",
+    "issue1139": "NOT_RELEASE_READY",
+    "preOwnerGaps": 17,
+    "issue917": "INDEPENDENT_READBACK_PENDING_NO_RETRY",
+    "hostedStateRead": false,
+    "localNativeExecuted": false,
+    "newHeadNativePass": false,
+    "ready": false,
+    "merged": false
+  }
+}
