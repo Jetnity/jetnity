@@ -325,13 +325,15 @@ export default function Etappenplan({
                   </>
                 ) : (
                   <>
-                    <div className="et-days" data-plan-tag-streifen>
+                    <div className="et-days" data-plan-tag-streifen role="group" aria-label="Reisetage">
                       {days.map((d) => (
                         <button
                           type="button"
                           key={d.id}
                           data-timeline-tag={d.id}
                           aria-pressed={activeDay?.id === d.id}
+                          aria-label={['Tag '+d.dayIndex, date(d.dayDate)].filter(Boolean).join(', ')}
+                          aria-current={activeDay?.id === d.id ? 'date' : undefined}
                           onClick={() => onDay(d.id)}
                         >
                           Tag {d.dayIndex}
@@ -365,7 +367,7 @@ export default function Etappenplan({
                   </button>
                 )}
               </div>
-              <div className="et-stages">
+              <div className="et-stages" data-u1c-route>
                 {outbound && (
                   <div className="et-end">
                     <Plane size={15} />
@@ -385,11 +387,15 @@ export default function Etappenplan({
                       key={r.occurrenceKey}
                       type="button"
                       className="et-leg"
+                      data-u1c-kante={r.occurrenceKey}
+                      data-u1c-kante-id={r.kanteId}
+                      data-u1c-rueck-tag={r.rueckTagId}
+                      data-u1c-kante-gesperrt={r.mehrdeutig?'mehrdeutig':!r.waehlbar?'nein':undefined}
                       disabled={!r.waehlbar || !onEdge}
                       onClick={() => onEdge?.(r.kanteId, r.rueckTagId)}
                     >
                       <Route size={15} />
-                      <span>Verbindung · {r.titel}</span>
+                      <span>Verbindung · {r.titel}{r.mehrdeutig && ' · Abschnitt mehrfach vorhanden'}</span>
                       <ChevronRight size={14} />
                     </button>
                   ) : (
