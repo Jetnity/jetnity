@@ -136,7 +136,7 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
   assert.match(workflow, /if: \$\{\{ always\(\) \}\}/)
   const accepted = workflow.match(/^  accepted_store_native:\n([\s\S]*?)(?=^  official_truth_v3_ui:)/m)?.[0]
   assert.ok(accepted)
-  assert.match(accepted, /runs-on: ubuntu-latest/)
+  assert.match(accepted, /runs-on: ubuntu-24\.04/)
   assert.match(accepted, /timeout-minutes: 20/)
   assert.match(accepted, /strategy:\n      fail-fast: false\n      matrix:\n        group: \[store, lifecycle\]/)
   assert.match(accepted, /fetch-depth: 0/)

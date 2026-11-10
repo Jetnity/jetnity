@@ -1,65 +1,57 @@
-# M04 current handoff — R27 / Recovery V18
+# M04 current handoff — R28 / Recovery V19
 
-**2026-11-10 15:41:16 UTC: CHANGES REQUIRED R27 / Recovery Task V18, implementation v2.** Independently source/document-reviewed pre-publication snapshot. The prepared R27 correction has not executed. PR #1182 remains Draft; no current native/TL PASS, Ready, merge or actual-main acceptance. Later exact-head live evidence supersedes this snapshot.
+**2026-11-10 16:13:22 UTC: CHANGES REQUIRED R28 / Recovery V19, binding scope v2.** Independently reviewed pre-publication snapshot. R28 has not executed. #1182 remains Draft; no current runtime/TL PASS, Ready, merge or actual-main acceptance. Later exact-head live evidence supersedes this dated snapshot.
 
-[Draft #1182](https://github.com/Jetnity/jetnity/pull/1182) · [Root R26 failure / R27 investigation v1](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771031785) · [binding implementation v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) · [actual R26 lifecycle success](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770954619)
+[Draft #1182](https://github.com/Jetnity/jetnity/pull/1182) · [R28 v1 investigation](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772056631) · [binding v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772232105) · [complete actual R27 failure18](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772268521)
 
-Published blocked baseline head **b8415a5f349a258f99109435ac174c9ed5b7a259**, tree **bf5f7c0e826fcfcb1218178c31b7b28336c9189a**, sole parent **45be21e57988d91dca3ee0758712f3ef5f39d744**; ahead **5**, behind **0** of actual main/merge-base **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7**, tree **793026a2c26725da06ff281924aaa561d43ee32f**. #1178 is historically MERGED after genuine R21 PR acceptance; the later actual-main failure remains independently true and unresolved. #1182 is the same immediate dormant post-merge repair.
+Published R27 baseline **ec4de0958227d9733610b9a9125b2c3480631a36**, tree **f2c07e2fb8640c6c9ba3da13b6f280d7f9662a92**, sole parent **b8415a5f349a258f99109435ac174c9ed5b7a259**; ahead **6**, behind **0** of actual main/merge-base **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7**, tree **793026a2c26725da06ff281924aaa561d43ee32f**. #1178 is historically merged after genuine R21 PR acceptance. The later actual-main failure remains independently true and unresolved. #1182 is the same immediate dormant post-merge recovery.
 
-## Actual R26 execution and preserved history
+## Actual R27 execution, not current acceptance
 
-[CI 42839339313](https://github.com/Jetnity/jetnity/actions/runs/42839339313), attempt 1 / pull_request, completed FAILURE, updated **2026-11-10T15:11:27Z**. Root independently observed Repository job **129910026311** terminal FAILURE at **2026-11-10 15:10:43 UTC** before reading its completed non-Auth log; the complete eight-job terminal state was observed at **15:13:42 UTC**. Six jobs succeeded; Repository verification and aggregate **129918492076** failed. Typecheck/Lint passed; Tests failed; later hygiene/build skipped.
+[CI42847124579](https://github.com/Jetnity/jetnity/actions/runs/42847124579), attempt1/pull_request, completed FAILURE, updated2026-11-10T15:52:03Z. Root observed the complete terminal state at **2026-11-10 15:53:19 UTC** before reading completed Repository job **129937503558**. All eight jobs are terminal: Auth and isolated UI SUCCESS; Repository, Atomic, Persisted, Store, Lifecycle and aggregate FAILURE. Repository Typecheck/Lint passed; Tests failed; later hygiene/build skipped. Auth was inspected by metadata only.
 
-**24/31 groups passed**. N02 old and new fixed oracles, both actual R9 race/drain witnesses and the complete 254/255/256 ledger boundary passed. First 23 groups total **81958 ms**; ledger receipt **89735 ms**, test duration **89732.148034 ms**. Ledger lastStarted/lastCompleted **253/253**, requests **258/258**, fixed calls **260/260**, command calls **258/258**, **256 ACKs**, **1 START**.
+The M04 receipt preserves **executed:true** because the harness entered, but **fixture_acquire** failed before any of31 native groups. Raw work/connection counters are zero; raw clusters1/stoppedClusters0 and **one cleanup assertion failure** remain unchanged. The cluster counter does not establish a created database, and zero work does not constitute a clean-cleanup PASS. Neither R9 race, quota boundary, inherited761/minOwned4182 nor rollback is proved. Total19ms/cleanup17ms is setup-failure timing, not a performance improvement.
 
-Group 25 N05 failed after **67874.463317 ms** with **M04 240s effect budget exceeded**. Cycle started/completed indexes **50/49**, requests **152/152**, fixed **203/202**, command calls **152/151**, **151 ACKs**, **50 START/reservations**. The following unacknowledged fixture-database outcome remains **UNKNOWN**.
+Core **8521 tests /8462 pass /19 fail /33 cancelled /7 skipped**,411784.945222ms. Five PostgreSQL-unavailable skips are additional to the two inherited layout skips and are not accepted. Full Repository log3997458bytes/SHA256 **2748162df4c6937f16cca5470ef08574133f598323f376e230dfd574e2ded036**; compact receipt1818bytes/SHA256 **2c0c3fd65c04ec64805cd569968c5b75303e56c646461ab0381ec1cd262c3a6b**.
 
-Complete cleanup: **27438/27438** settled, **4242/4242** connections closed, **0** pending/children/cleanup errors, one cluster stopped; **240348 ms** total, **16 ms** cleanup. Core **8683 tests / 8679 pass / 2 fail / 2 inherited skips / 0 cancelled**, **646060.30101 ms**. Log **4251751 bytes**, SHA256 **067633a068fcf83d5a9c9e7216ab177b7cb114a69a289ec4e8ff3ec56c033024**. Compact receipt **3814 bytes**, SHA256 **88acd57cdfde50baaeaea4957c6506a017dece854f928ba1c8bfa2028d555b8e**.
+Four separate completed native jobs report **local_postgresql_not_available** before database proof: Atomic129937503029 (1 test/1 fail), Persisted129937503338 (1/1), Store129937503537 (4/4), Lifecycle129937503780 (4/4). Lifecycle has no actual mounted receipt. Root observed those jobs terminal at15:44:33UTC before reading their logs; the complete pins and counts are in V19 JSON/excerpt. This differs from R25 Chrome-version timeout; its underlying cause remains UNKNOWN.
 
-The unchanged separate R26 lifecycle job **129910026216** passed all **4** tests and all **13** actual mounted stages; **61/61** observations settled, **0** pending/retained bytes/errors, **22** actual current native results, **0** source fetches during reads. Root read its completed non-Auth log only after terminal SUCCESS at **15:07:23 UTC**. Log **177393 bytes**, SHA256 **f488d548c2353cab2c77bf0f21c1b13e9ea8718cdf19acab7879257309c48b9e**. The earlier R25 lifecycle failure cause remains UNKNOWN; no runner/flakiness inference or unchanged rerun is asserted.
+R27 is the **18th actual failed run**. All17 earlier failure objects, the genuine R21 full success, original R22 in-progress observation plus corrected separate terminal metadata, and all earlier source/review/receipt records remain exact. [Prior complete V18 evidence](https://github.com/Jetnity/jetnity/blob/ec4de0958227d9733610b9a9125b2c3480631a36/docs/official-truth-product-v3/M04_RECOVERY_R27_EVIDENCE_V18.json).
 
-R26 is the **17th actual failed run**. All **16** prior failure objects, the genuine full R21 success, the original R22 in-progress observation plus separate corrected terminal observation, and prior V13–V17 source/review/receipt records remain unchanged. [Pinned complete prior evidence](https://github.com/Jetnity/jetnity/blob/b8415a5f349a258f99109435ac174c9ed5b7a259/docs/official-truth-product-v3/M04_RECOVERY_R26_EVIDENCE_V17.json). Complete current failure, all group/race/quota/cleanup fields and lifecycle receipt are in the V18 JSON and sanitized excerpt.
+## Exactly authorized implementation and review
 
-## Selected bounded implementation
+All five PostgreSQL-dependent job executions used **ubuntu26/20261101.186**. The preceding R26 lifecycle used **ubuntu24/20261101.360**. Official actions/runner-images READMEs identify PostgreSQL18.6 and16.15 respectively. The unchanged fixed detector recognizes supported roots through17 and requires all four binaries. This supports a concrete CI OS-family compatibility repair, not M04 semantic correctness, improved timing or an explanation of older budget failures.
 
-Exactly one body changes: `official_v3_jobs_private.nodes_v1` DECLARE through END. The original entry guard, function declaration and all attributes stay exact. A bigint count forms the immediate minimum: objects `1 + 2*K`, arrays `1 + N`. Every actual container child is still recursively checked with the same d+1/max_d/max_n and contributes m−1. Every scalar value and object key is counted. Nonempty depth-boundary containers refuse before the child filter; empty ones remain valid. The count is capped before integer assignment; later sums stay at most131071 before the existing cap refusal. Every caller, canonical, history, command, transition and authority statement remains exact. No lease/expiry staging or cross-call state is included.
+The original M04 scope forbids silent workflow expansion and sends concrete incompatibilities to Root. Root explicitly versions this ordinary prerequisite repair under Operating Standard §§2/4C; mode NORMAL. It crosses no reserved Owner, Production, secret, permission, provider, cost or access gate.
 
-Queued Discovery child-loop iterations change23→2 and leased27→3 while recursive container calls remain. Object counting adds a key-list scan/allocation and aggregate query; SQL child filters still receive fully materialized jsonb_each/jsonb_array_elements values. These countercosts are retained in the review, not treated as free. No aggregate history-invocation estimate is asserted.
+Exactly four runs-on values in **.github/workflows/ci.yml** change ubuntu-latest to ubuntu-24.04: verify, persisted_native, refresh_native and accepted_store_native. The latter retains both store/lifecycle matrix entries. UI, Auth and aggregate remain unchanged. All job identities, commands, steps, dependencies, matrix, timeouts, concurrency, permissions, environment and guards remain byte-identical.
 
-## Additive fixed native oracles
+Independent review found an existing contract selecting accepted_store_native and requiring ubuntu-latest. Version2 authorizes exactly one additional line in **lib/readiness/official-truth-atomic-version-refresh-1.test.ts**: the same assertion now requires the literal ubuntu-24.04 (escaped regex dot). All128 assert calls remain; every other byte is unchanged. Both inverse deltas recover the immutable ec4de baseline exactly. No guard/policy change, optional alternative, skipped check or installation/discovery fallback.
 
-One1818-byte additive N02 block named `r27NodeCases`, directly before the existing R20 timestamp comment. Exactly12 awaited owner SELECTs use the existing four-parameter NULLIF/text transport and fixed literal expectations. Cases: scalar object33/cap32, scalar array17/cap16, early and late mixed-container objects11/cap10, nested mixed array8/cap7, later depth failure and counted empty/control/Unicode keys7. Existing R19 SQLNULL/scalar/depth/cap matrix and all R20–R26 oracles remain byte-exact. No new helper, connection, group, fixture or bound.
+All18 M04 source pins are **unchanged R27**, aggregate **d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761**. Thus R27 SQL,12 added fixed N02 queries, all earlier oracles,31 named groups, predecessor bodies, attributes and rollback remain exact. This repair changes zero M04 source files. The detector remains5280bytes/SHA256 f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10.
 
-Source-derived operation counts are not runtime measurements. No reliable speedup, budget margin, general latency or Production SLO is claimed.
-
-
-## Prepared source identity
-
-Aggregate of all 18 ordered source pins: **d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761**.
-
-| Path | Bytes | SHA256 | Git blob |
+| Changed file | Bytes | SHA256 | Git blob |
 |---|---:|---|---|
-| scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql | 139439 | 25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce | 9cb6c7da7ee6de12c3056cfcf29a36c3a047b264 |
-| scripts/db/official-truth-v3-durable-jobs-1/native.ts | 178978 | 3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744 | 408e8a62481401335b79a1b53a4609f26cf86c1c |
+| .github/workflows/ci.yml | 12325 | 3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18 | 22f6e50aaff600749814bf7e77e24c728b1cd5d5 |
+| lib/readiness/official-truth-atomic-version-refresh-1.test.ts | 24091 | 06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102 | e405dbd711b6dc56697b407d1f6178fb5f873a62 |
 
-Other 16 source pins are unchanged. Four author-document pins and complete independent review assertions are in V18 evidence.
-
+Ubuntu24.04 binds the OS family, not an immutable image or guaranteed future patch. Actual runner/toolchain and every unchanged proof must be established by new CI. Root and the same independent reviewer confirmed source identity only; neither author self-review nor source review grants TL PASS.
 
 ## First unfinished step and acceptance sequence
 
-1. Root alone publishes the reviewed source/document set to the existing branch with expected-head **b8415a5f349a258f99109435ac174c9ed5b7a259**, no force, then reads back the complete commit/parents/tree and every changed file. Preserve all unchanged leaves and all 22 binary IDs.
-2. Complete unchanged new exact-head CI: all eight jobs, 31 named M04 groups, both R9 witnesses, complete ledger and 64/65-cycle boundaries, exact inherited 761 pairs/minimumOwned4182, final rollback/late-writer, full cleanup, Core with only two inherited skips, hygiene/build, and unchanged lifecycle. No unfinished or old-head result counts.
-3. Independently recheck actual main/merge-base/ahead/behind/diff, exact Preview, reviews/threads, strict rules, NORMAL mode, Guardian and existing permitted Owner gates. Only Root can record TL PASS, set Ready and merge the expected exact head.
-4. After merge, actual new main must independently pass full CI/native and both Production aliases must resolve to its exact READY deployment. PR success cannot substitute.
-5. Only then prepare the finite docs closure; gate its own exact head and its resulting actual main, record final receipts on existing PR/status without another source commit, and STOP. No automatic next product slice.
+1. Root alone publishes the independently reviewed two implementation files, four author documents and ten Root continuity files with expected-head **ec4de0958227d9733610b9a9125b2c3480631a36**, no force. Read back complete commit/parents/tree and every changed file. Preserve all unchanged leaves and all22 binary IDs.
+2. Require the complete new exact-head CI: all eight jobs,31 named M04 groups, both R9 witnesses, full254/255/256 ledger and64/65-cycle boundaries, inherited761 pairs/minimumOwned4182, final rollback/late-writer, full cleanup, Core with only two inherited skips, hygiene/build and unchanged lifecycle. Check actual runner metadata. No unfinished, prior-head or source-only result counts.
+3. Independently recheck main/merge-base/ahead/behind/actual diff, exact Preview, reviews/threads, strict rules, NORMAL mode, Guardian and permitted Owner gates. Only Root records TL PASS, sets Ready and merges the exact expected head.
+4. Actual new main must independently pass full CI/native and both Production aliases resolve to that exact READY deployment. PR success cannot substitute.
+5. Only then complete finite docs closure: its exact-head CI/Preview/gates and resulting actual-main CI/native/Production; final receipts on existing PR/status without another source commit, then STOP. No automatic next slice.
 
-If any gate fails: CHANGES REQUIRED, same author/session immediate fix, new head and full re-gating. No unchanged known-bad rerun.
+Failure means CHANGES REQUIRED to the same author/session, a new head and full re-gating. No unchanged known-bad rerun.
 
-## Actual authorship and continuity
+## Actual continuity
 
-Author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, actual session `/root/m04_durable_jobs_writer_g2`; independent reviewer `/root/m04_r9_review_g2`; metadata auditor `/root/m04_live_audit_g2`. These are actual Codex G2 sessions, not an invented Cursor session. Author/reviewer self-review never grants TL PASS. Only Root publishes/sets Ready/merges. Author delivery STOP is preserved after the named task.
+Author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session /root/m04_durable_jobs_writer_g2; independent reviewer /root/m04_r9_review_g2; metadata auditor /root/m04_live_audit_g2. These are the actual resumed Codex G2 sessions; no Cursor session is invented. Only Root publishes, sets Ready or merges. Author delivery is stopped after this task.
 
-Original checkout `/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs` remains unrecovered; no replacement project environment, local execution or reconstruction was used. Live GitHub immutable source and pure text/data checks establish source pins; runtime evidence comes only from unchanged CI.
+Original checkout /workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs remains unrecovered. No replacement project environment, local project/parser/SQL/native/build execution, download or reconstruction was used. Pure text/data transforms and immutable GitHub reads establish source identity. Runtime proof comes only from the existing CI with this narrowly authorized runner selection.
 
 ## Frozen boundaries and Owner gates
 
@@ -67,6 +59,6 @@ Original checkout `/workspace/scratch/01cbe1264212/jetnity-v3-durable-jobs` rema
 
 Method **NOT_APPROVED**. #1139 **NOT_RELEASE_READY**, pre-Owner gaps E01, E04, E06, E07, E09, E10, E11, E13, E15, E16, E17, E18, E21, E22, E24, E25, E28. #917 specifically refused independent readback remains pending, ledger UNKNOWN, Stage2 NOT_ATTEMPTED: no retry, rephrasing, delegation, rerouting, transport switch, human SQL substitute or renewed old Owner evidence request. #1131 Ready STOP; both #1135 holds; #968 preview isolation and #911/#913 privacy remain.
 
-No hosted DB/Auth/RLS/ACL/migration/credential action or Auth-log access, real source/provider/research call, scheduler, notification, new cost or public V3 activation. No local PostgreSQL/native/socket/parser/project/build execution, installation/download, missing binary retrieval, clone/reconstruction or replacement environment. Native proof only in the unchanged existing GitHub CI. No git fetch/push; any local git reads require GIT_NO_LAZY_FETCH=1 and GIT_OPTIONAL_LOCKS=0. Preserve all 22 omitted binary IDs. No automatic next product slice.
+No hosted DB/Auth/RLS/ACL/migration/credential action or Auth-log access, real source/provider/research call, scheduler, notification, new cost or public V3 activation. No local PostgreSQL/native/socket/parser/project/build execution, installation/download, missing binary retrieval, clone/reconstruction or replacement environment. Native proof only in the existing GitHub CI with exactly the R28 v2 runner/contract selection; all proof commands and budgets unchanged. No git fetch/push; any local git reads require GIT_NO_LAZY_FETCH=1 and GIT_OPTIONAL_LOCKS=0. Preserve all 22 omitted binary IDs. No automatic next product slice.
 
-SQL remains **UNAPPLIED**. Deployment READY proves neither hosted schema nor native acceptance. No signature/LANGUAGE/attribute/search_path/ACL/role/predecessor/rollback change; no history omission, seed, reduced quota/group, raised budget, workflow/package change, cross-call cache, trust marker or broad command/history/transition rewrite. All older direct oracles remain. D1 #1169 and unrelated PRs remain separate.
+The two explicit R28 implementation paths are the only exception to prior workflow/test-file freeze. No other workflow/package/guard change, reduced group/quota, raised budget, seeded/omitted history, cross-call cache, trust marker, broad command/history/transition rewrite or signature/LANGUAGE/attribute/search_path/ACL/role/predecessor/rollback change. SQL **UNAPPLIED**. Deployment READY is not schema/native acceptance. D1#1169 and unrelated PRs remain separate.

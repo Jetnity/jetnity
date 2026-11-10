@@ -1,3 +1,35 @@
+# R28 / Recovery Task V19 — CI runner repair prepared; execution pending
+
+Snapshot: 2026-11-10T16:03:09Z. Same Generation2 author/session; Draft #1182 baseline `ec4de0958227d9733610b9a9125b2c3480631a36`. Root's [v1 scope exception](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772056631) and [v2 contract alignment](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772232105) authorize exactly two CI prerequisite files. **All 18 M04 sources remain unchanged. Current R28 execution, all 22 coverage rows, PASS, Ready and merge remain false.**
+
+## Exact prepared change
+
+Four runner values in `.github/workflows/ci.yml` select `ubuntu-24.04`: verify, persisted_native, refresh_native and accepted_store_native. The latter keeps both store/lifecycle matrix groups. UI, Auth and aggregate keep their existing runners.
+
+The existing atomic CI-contract test independently revealed a conflicting accepted-store `ubuntu-latest` expectation. Under v2, only that expectation now requires `ubuntu-24\.04`, with the literal dot escaped. Every other assertion remains. Both inverse deltas recover exact ec4de files.
+
+- Workflow: 12325 bytes; SHA256 `3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18`.
+- Contract: 24091 bytes; SHA256 `06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102`.
+- Unchanged 18-source aggregate: `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761`.
+
+## Actual R27 failure remains historical
+
+[Complete terminal Root evidence](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772268521) is appended unchanged as failure 18. Run 42847124579 had two successful jobs (Auth/UI) and six failures. Typecheck/Lint passed; Tests failed and later hygiene/build were skipped.
+
+The raw M04 receipt says `executed:true` because the harness entered, but fixture acquisition failed before any of 31 groups. R9 and quotas were not reached. Zero-work counters, `clusters:1`, `stoppedClusters:0` and one cleanup assertion failure remain exact; they establish neither cluster creation nor clean cleanup. Core totals were 8521 tests, 8462 pass, 19 fail, 33 cancelled and 7 skipped. Five extra PostgreSQL-unavailable skips are not accepted inherited skips.
+
+Four companion native jobs reported `local_postgresql_not_available` on the observed Ubuntu26 image. This explains the concrete CI compatibility prerequisite, not older timing failures or R27 algorithm correctness. All seventeen prior failures, genuine R21 success, corrected separate R22 metadata and previous Markdown tails remain exact.
+
+## Remaining gates
+
+The OS-family pin is not an immutable image build or a future PostgreSQL patch guarantee. Root must verify actual runner metadata, all eight CI jobs, all 31 native groups, both R9, full quotas/cleanup/lifecycle, Core/hygiene/build and exact Preview. Actual new main CI/native/Production remain separate gates.
+
+Root's V19 files are prepared for publication. The actual-R27 excerpt `M04_RECOVERY_R28_NATIVE_FAILURE_V19.txt` is 12261 bytes, SHA256 `cdfd4d497030a4747ab29175917796b46270dfc09da9a3eb9dde32f0173248f0`; it is not R28 execution evidence.
+
+No installation, detector fallback, local/project/parser/SQL/native execution or author publication occurred. SQL UNAPPLIED, Method NOT_APPROVED and all Owner/privacy/hosted/#917 gates remain. **AUTHOR STOP** after this finite delivery; no automatic next slice.
+
+---
+
 # R27 / Recovery Task V18 — node weights prepared; current execution pending
 
 Snapshot: 2026-11-10T15:33:27Z. Same Generation2 author/session. Draft #1182 baseline is `b8415a5f349a258f99109435ac174c9ed5b7a259`; actual main remains `4bfa8b466ebc0af761fc5050bb4c51d7e73400c7`. Root's [v2 authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) selects one `nodes_v1` body replacement and twelve additive N02 queries. All current R27 execution, coverage, Typecheck, native, TL PASS, Ready and merge flags remain **false**.

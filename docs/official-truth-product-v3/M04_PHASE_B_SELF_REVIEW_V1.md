@@ -1,3 +1,35 @@
+# R28 author self-review — explicit CI prerequisite exception
+
+Snapshot: 2026-11-10T16:03:09Z. Same author `/root/m04_durable_jobs_writer_g2`, exact ec4de baseline. Root [v1](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772056631) and [v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772232105) explicitly authorize the two-path repair. This is source reasoning and text/hash verification, **not runtime or Technical-Lead PASS**.
+
+## Scope and inverse proof
+
+The workflow changes exactly lines 15, 83, 120 and 153 from `ubuntu-latest` to `ubuntu-24.04`. Seven job definitions still expand to eight jobs; both accepted-store matrix groups remain mandatory. Every other workflow byte remains exact: names, commands, dependencies, matrix, timeouts, concurrency, environment, permissions and guards. UI/Auth/aggregate runners remain unchanged.
+
+The independent reviewer found that the existing atomic contract selects exactly accepted_store_native and requires ubuntu-latest. The author confirmed it from the immutable source and stopped that unapproved expansion. Root v2 then authorized exactly line 139 to require `/runs-on: ubuntu-24\.04/`. The assertion remains; the escaped dot checks the literal separator. No other assertion or byte changes.
+
+Both inverse deltas recover the exact published sources. Prepared workflow is 12325 bytes/SHA256 `3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18`; prepared contract is 24091 bytes/SHA256 `06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102`.
+
+**Zero M04 source changes:** all 18 pins and aggregate `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761` remain exact. No SQL, Native oracle, detector, predecessor, rollback or browser source changed. All 31 groups/order, full quotas, both R9, inherited 761 pairs/minOwned4182, final N15 and time/resource bounds remain.
+
+## Contract and compatibility limits
+
+Immutable mode is NORMAL; mode metadata and guards were read and remain unchanged. The UI contract explicitly retains ubuntu-latest for unchanged UI. Package commands, aggregate requirements and the other read CI protections remain. The fixed four-binary PostgreSQL detector was independently hash-checked: 5280 bytes/SHA256 `f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10`.
+
+Root's complete historical evidence records the observed Ubuntu26 toolchain incompatibility and official runner-image documentation. Selecting Ubuntu24.04 does not install binaries, widen discovery to PostgreSQL18, add fallback, or guarantee a future image patch. No timing gain, sufficient margin or future success is claimed.
+
+## Exact historical failure and current false flags
+
+Failure 18 is copied completely from [Root's terminal R27 object](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772268521): 37967 pretty-JSON bytes including trailing LF, SHA256 `db7b166bbcff8941604c7ef73e5f358a4752817e0b19a218990f206fe1b47897`. All seventeen earlier failure objects, genuine R21 success, corrected R22 metadata and the previous Markdown tail remain exact.
+
+Historical `executed:true` means harness entry, with zero native groups, fixture_acquire failure and cleanupFailureCount 1. Raw clusters 1/stoppedClusters 0 are preserved without claiming a created cluster or clean cleanup. Core's five extra PostgreSQL-unavailable skips are not accepted. All four companion native bootstrap failures remain part of that historical result; Auth evidence is metadata only.
+
+No current local/project/test/parser/compiler/SQL/native/build execution occurred. All 22 current R28 coverage rows, execution/PASS/Ready/merge flags remain false. Root must independently reconstruct, publish with the exact ec4de lease and verify complete new-head CI/runner/native/lifecycle/Preview evidence, followed by actual-main CI/native/Production. All Owner, SQL UNAPPLIED, Method NOT_APPROVED, privacy/hosted/#917 hard stops persist.
+
+**AUTHOR STOP.** No author publication, Ready, merge or automatic follow-up slice.
+
+---
+
 # R27 author self-review — source reasoning only
 
 Snapshot: 2026-11-10T15:33:27Z. Same author `/root/m04_durable_jobs_writer_g2`, same Draft #1182 and frozen b841 baseline. [Recovery Task V18 v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) is the complete implementation authorization. This author review is **not** a compiler, native, performance or Technical-Lead PASS.

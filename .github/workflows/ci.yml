@@ -12,7 +12,7 @@ concurrency:
 jobs:
   verify:
     name: Repository verification
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
 
     steps:
@@ -80,7 +80,7 @@ jobs:
 
   persisted_native:
     name: Persisted canonical read — native
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
@@ -117,7 +117,7 @@ jobs:
 
   refresh_native:
     name: Atomic version refresh — native
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
 
     steps:
@@ -150,7 +150,7 @@ jobs:
 
   accepted_store_native:
     name: Accepted store trip integration — native (${{ matrix.group }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       fail-fast: false
