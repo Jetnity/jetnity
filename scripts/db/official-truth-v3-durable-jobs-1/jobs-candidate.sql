@@ -234,9 +234,9 @@ BEGIN
   month_value:=substring(t,6,2)::integer;
   day_value:=substring(t,9,2)::integer;
   IF year_value BETWEEN 1 AND 9999 AND month_value BETWEEN 1 AND 12
-    AND day_value BETWEEN 1 AND CASE WHEN month_value=2 THEN
+    AND day_value BETWEEN 1 AND (CASE WHEN month_value=2 THEN
       CASE WHEN year_value%4=0 AND (year_value%100<>0 OR year_value%400=0) THEN 29 ELSE 28 END
-      WHEN month_value IN (4,6,9,11) THEN 30 ELSE 31 END THEN
+      WHEN month_value IN (4,6,9,11) THEN 30 ELSE 31 END) THEN
     d:=make_date(year_value,month_value,day_value);
     RETURN to_char(d,'YYYY-MM-DD')=t;
   END IF;

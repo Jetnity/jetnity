@@ -1,3 +1,31 @@
+# M04 current handoff — R31 / Recovery V22
+
+**2026-11-10 19:26:20 UTC — M04 R31 / Recovery V22: CHANGES REQUIRED on R30; the exact two-byte correction is independently reviewed, publication and new-head execution pending.** Existing Draft [#1183](https://github.com/Jetnity/jetnity/pull/1183), expected head **dfd0fcf0ca70a955ae568e19f0d4b633cb0d7066**, current main/merge-base **e7aae86c18238033c2186722e24c84dc7a5f69b9**. Live evidence and later exact-head receipts win over this pre-publication snapshot.
+
+R30 CI42881395864/attempt1 is terminal FAILURE: **jobs_candidate / PostgreSQL42601,0/31 native groups**. Complete cleanup22/22 operations,2/2connections,1cluster,0errors. All six companion jobs succeeded. Author, Root and independent source review missed an unparenthesized CASE inside a PL/pgSQL IF. The precise parser cause is now independently verified; R31 adds only two parentheses. Corrected SQL SHA256 **fa111694fb535b867bbb16e3d7b334d48d4e4092bf1f312dd2838a7eed2c37aa**, native remains unchanged;18-source aggregate **c7361e9411c218ed98f94715a8eb3c852f71c2f8a67720dbb3048807b17d1664**. No corrected-head runtime or TL-PASS.
+
+**First unfinished step:** Root publishes the reviewed source and nine bounded continuity files on the same branch, independently verifies complete readback, then requires fresh full CI/native/Preview and live gates. Every new head invalidates earlier gates. Same author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3**, actual session **/root/m04_durable_jobs_writer_g3**; reviewer **/root/m04_recovery_source_review_g3**. Only Root publishes, sets Ready or merges.
+
+[Current handoff](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [V22 task](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_TASK_V22.md) · [Root review](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V22.md) · [full V22 evidence](https://github.com/Jetnity/jetnity/blob/fix/official-truth-v3-m04-postmerge-r30-20261110/docs/official-truth-product-v3/M04_RECOVERY_R31_EVIDENCE_V22.json) · [binding task](https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6777004330). All20 earlier failures and genuineR21/R29 successes remain. Additional failures21–23 separately retain e7 attempt1 (23/31), R30 (0/31) and external e7 attempt2 (24/31). The two e7 attempts share one run ID; five companion SUCCESS statuses in attempt2 carry forward earlier evidence. Root triggered no rerun.
+
+Production last independently confirmed READY on exact e7 through both aliases; deployment readiness does not pass native acceptance. All36 parallel#1181 changes remain preserved. SQL UNAPPLIED; Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #1131 ReadySTOP, both#1135 holds, target-specific#968 isolation and#911/#913 privacy remain. #917 UNKNOWN / Stage2 NOT_ATTEMPTED, no retry or substitute. All local/hosted/Auth/provider/credential stops remain; D1#1169 separately unfinished.
+
+After genuine corrected actual-main PASS, the mandatory separate8-path documentation completion still requires its own PR/main/Production gates. Final receipts on existing PR/#751 without a self-attestation commit loop, then STOP. **No automatic following slice.**
+
+## Exact continuation contract
+
+This current section supersedes the dated V21 snapshot retained verbatim below. Read M04_RECOVERY_TASK_V22.md, M04_RECOVERY_R31_EVIDENCE_V22.json and M04_RECOVERY_ROOT_REVIEW_V22.md, then current PR#1183/#751 receipts and live state. Do not infer execution or merger from a source-only review.
+
+The next publication is a child of dfd on the existing R30 branch, with an expected-head nonforce update. Exactly10 delta paths: oneSQL,three newV22 records,six current entry files. Cumulative PR scope14paths; expected10247tree entries/9410leaves/9400prior leaves unchanged. All older evidence and all other17 M04 sources remain unchanged.
+
+Both R30 and e7 attempt2 are final failures, not pending runs. R30 M04 did not reach any group. The external e7 attempt2 passed the full ledger but hit240s at cycle_start with45START calls/44acknowledged reservations and an UNKNOWN outstanding outcome; all26999owned operations and4242connections subsequently drained/closed. V22 JSON carries complete original native receipts and final job/log identities. Never turn an unexecuted inherited counter0 into a valid zero result.
+
+All31 groups and8jobs remain mandatory, including the full newly added N02 oracles, realR9,full ledger/cycles,inherited761/minOwned4182,final rollback/late-writer and complete cleanup. The240s+60s/300s budgets and full historical validation remain unchanged. No local project/parser/SQL/build/native execution or environment reconstruction. No Auth logs, hosted/RLS/ACL/migration/credential/provider action or #917 retry/substitute. Only existing CI executes reviewed project changes.
+
+## Historical V21 pre-publication snapshot — retained unchanged
+
+The following is historical evidence. Its pending publication/main-run statements describe its own earlier timestamp; the current V22 section and live receipts above take precedence.
+
 # M04 current handoff — R30 / Recovery V21
 
 **2026-11-10 19:00:35 UTC: independently reviewed finite source correction; current-base publication and new-head execution pending.** This file is a pre-publication snapshot. Later exact-head receipts in the linked R30 Draft PR, [origin PR #1182](https://github.com/Jetnity/jetnity/pull/1182), and [canonical #751](https://github.com/Jetnity/jetnity/issues/751) determine the live state. Source review is not runtime or Technical-Lead PASS.
