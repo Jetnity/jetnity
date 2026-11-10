@@ -1,3 +1,4 @@
+import type { Trip } from '@/types/trips'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fixture, conflictFixture } from '@/scripts/direct-trip-editing-1/fixture'
@@ -151,4 +152,32 @@ test('canonical protected route facts survive metadata and date changes exactly'
  const canonical=reiseLesen(before)!;assert(canonical)
  const after=apply({title:'Neue Reise',startDate:'2026-10-10'},canonical).nachher
  assert.deepEqual(after.days[3].items,canonical.days[3].items);assert.equal(after.originPlaceId,before.originPlaceId)
+})
+
+test('manual stop inserts owned days and an optional pin, survives readback and retry', async () => {
+  let current = fixture()
+  const existing = current.stages.map(stage => stage.id)
+  const req = { neuerStopp: { name: 'Ayutthaya', tage: 2, nachEtappeId: existing[0], position: { lat: 14.35, lng: 100.57 } } }
+  const proposed = await manuellVorschau(current, req, seed, 'account')
+  assert(proposed.ok)
+  let writes = 0
+  const ports = {
+    quelle: 'account' as const,
+    lesen: async () => current,
+    schreiben: async (trip: Trip, mutation: string, revision: number) => {
+      writes++
+      current = { ...trip, lastMutationId: mutation, revision: revision + 1 }
+      return { konflikt: false }
+    },
+  }
+  const result = await manuellSpeichern(proposed.vorschau.anfrage, ports)
+  assert(result.ok)
+  const stop = current.stages.find(s => s.name === 'Ayutthaya')!
+  assert.equal(stop.position, 2)
+  assert.deepEqual([stop.latitude,stop.longitude,stop.placeId], [14.35,100.57,null])
+  assert.equal(current.days.filter(d => d.stageId === stop.id).length, 2)
+  assert.equal((await manuellSpeichern(proposed.vorschau.anfrage, ports)).ok, true)
+  assert.equal(writes, 1)
+  assert.equal(manuellerEntwurf(current, { neuerStopp: { ...req.neuerStopp, nachEtappeId: 'fremd' } }, vorschauKennungen(seed)).ok, false)
+  assert.equal(manuellerEntwurf(current, { neuerStopp: { ...req.neuerStopp, position: { lat: 91,lng: 0 } } }, vorschauKennungen(seed)).ok,false)
 })

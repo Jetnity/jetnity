@@ -29,6 +29,7 @@ export default function PlanpunktEditor({
   tagId,
   item,
   generation,
+  initialKind = 'activity',
   onAnlegen,
   onBearbeiten,
   onFertig,
@@ -40,6 +41,7 @@ export default function PlanpunktEditor({
   tagId: string
   item?: TripItem
   generation: number
+  initialKind?: TripItemKind
   onAnlegen: (tagId: string, values: PlanpunktFormular) => Promise<string | null>
   onBearbeiten?: (original: TripItem, change: PlanAenderung) => Promise<string | null>
   onFertig: () => void
@@ -49,7 +51,7 @@ export default function PlanpunktEditor({
 }) {
   const [original] = React.useState(item)
   const [clientRef] = React.useState(() => crypto.randomUUID())
-  const [kind, setKind] = React.useState<TripItemKind>(item?.kind ?? 'activity')
+  const [kind, setKind] = React.useState<TripItemKind>(item?.kind ?? initialKind)
   const [title, setTitle] = React.useState(item?.title ?? '')
   const [note, setNote] = React.useState(item?.note ?? '')
   // Only NEW forms visibly suggest the selected date. Existing null stays null.

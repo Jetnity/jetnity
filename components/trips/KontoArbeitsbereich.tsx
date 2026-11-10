@@ -137,6 +137,15 @@ export default function KontoArbeitsbereich({
         onChange={invalidate} onSave={declaration => { accepted.invalidate(); return pilot.save(declaration) }} onCheck={truth.checkPilot} />
     : <p className="rounded-2xl border border-line-200 bg-surface-25 p-4 text-sm leading-6 text-ink-900">Die CH–DE-Prüfung ist derzeit nicht verfügbar. Angaben können noch nicht gespeichert oder geprüft werden.</p>
 
+  const uebernehmeReise = (graph?: Trip) => {
+    if (graph && graph.id === reise.id && graph.revision > reise.revision) {
+      invalidate()
+      order.next()
+      setBestaetigt({ basis: serverReise, graph })
+    }
+    router.refresh()
+  }
+
   return (
     <div onChangeCapture={invalidate}>
     <TripWorkspace
@@ -155,6 +164,7 @@ export default function KontoArbeitsbereich({
         </div>
       ) : pilotControls}
       quelle="account"
+      onReiseGespeichert={uebernehmeReise}
       ohneTag={ohneTag}
       onVerbindungAnlegen={async values => {
         invalidate()
@@ -253,14 +263,7 @@ export default function KontoArbeitsbereich({
         return null
       }}
       aenderung={
-        <ReiseAenderung reise={reise} quelle="account" onGespeichert={(graph) => {
-          if (graph && graph.id === reise.id && graph.revision > reise.revision) {
-            invalidate()
-            order.next()
-            setBestaetigt({ basis: serverReise, graph })
-          }
-          router.refresh()
-        }} />
+        <ReiseAenderung reise={reise} quelle="account" onGespeichert={uebernehmeReise} />
       }
       begleiter={<Reisebegleiter reise={reise} />}
       flugsuche={

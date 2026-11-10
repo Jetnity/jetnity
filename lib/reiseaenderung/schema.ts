@@ -202,7 +202,11 @@ export const modellaenderungSchema = modellaenderungRoh.superRefine((wert, ctx) 
   wert.operationen.forEach((op, stelle) => operationPruefen(op, ctx, stelle))
 })
 
-export type Modelloperation = z.infer<typeof operationRoh>
+// Only the validated manual form can attach a user-selected point. Model output
+// still passes through the unchanged closed operation schema.
+export type Modelloperation = z.infer<typeof operationRoh> & {
+  manuellePosition?: { lat: number; lng: number } | null
+}
 export type Modellaenderung = z.infer<typeof modellaenderungSchema>
 
 export const reiseaenderungSchema = modellaenderungRoh

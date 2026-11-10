@@ -249,7 +249,7 @@ export async function manuelleAenderungUebernehmen(roh: unknown): Promise<Speich
       return read.zeilen[0] ?? null
     },
     schreiben: async (trip, mutationId, revision) => {
-      // No places lookup: this subset cannot change location and uses server-loaded facts.
+      // A manual pin describes a new stop and never changes a canonical place.
       const { error } = await supabase.rpc('reise_aendern', { _aenderung: aenderungAlsNutzlast(trip, mutationId, revision) })
       return { konflikt: error?.code === 'P0001' }
     },
