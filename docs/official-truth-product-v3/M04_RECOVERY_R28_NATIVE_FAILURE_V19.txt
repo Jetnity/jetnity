@@ -1,0 +1,266 @@
+M04 R28 / Recovery V19 input: actual R27 terminal failure18
+Head ec4de0958227d9733610b9a9125b2c3480631a36
+Tree f2c07e2fb8640c6c9ba3da13b6f280d7f9662a92
+Run 42847124579 attempt1 pull_request; 2026-11-10T15:52:03Z; Root terminal observation 2026-11-10 15:53:19 UTC
+Full Repository log: 3997458 bytes; SHA256 2748162df4c6937f16cca5470ef08574133f598323f376e230dfd574e2ded036
+Exact compact native receipt: 1818 bytes; SHA256 2c0c3fd65c04ec64805cd569968c5b75303e56c646461ab0381ec1cd262c3a6b
+No Auth-job log, Vercel build log, hosted database query or local project execution.
+
+Disposition
+- All8 jobs terminal: Auth and isolated UI success; Repository, Atomic, Persisted, Store, Lifecycle and aggregate failure.
+- Repository Typecheck/Lint success; Tests failure; later hygiene and build skipped.
+- Native harness entered: raw executed:true. Fixture_acquire failed before all31 actual groups.
+- Raw cluster counter1 is preserved; stoppedClusters0; zero work/connection counters; cleanup assertion failure1. No native or clean-cleanup PASS.
+- Core8521/8462pass/19fail/33cancelled/7skipped. Five native-unavailable skips are additional to the two historical layout skips and are not accepted.
+- All31 M04 groups, bothR9, full quota/history/rollback, inherited761/minOwned4182 and full lifecycle remain unproved.
+- Four separate native companion jobs independently report local_postgresql_not_available.
+- Repository and all four companions used ubuntu26/20261101.186. Prior successful R26 lifecycle used ubuntu24/20261101.360.
+- Official image READMEs identify PG18.6 vs PG16.15; unchanged fixed detector recognizes supported roots through17. R28 repairs OS-family compatibility only; no runtime or timing conclusion.
+- No R28 execution, TL PASS, Ready or merge. Actual main4bfa remains unaccepted.
+
+Exact native receipt
+{
+  "schema": "jetnity.m04.native.v1",
+  "candidateSha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+  "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+  "executed": true,
+  "effectAndCleanupMilliseconds": 19,
+  "cleanupMilliseconds": 17,
+  "clusters": 1,
+  "childProcesses": 0,
+  "lifetime": {
+    "started": 0,
+    "settled": 0,
+    "pending": 0,
+    "connections": 0,
+    "closed": 0,
+    "stoppedClusters": 0
+  },
+  "groups": [],
+  "nestedRaceWitnesses": [],
+  "quotaProgress": {
+    "currentGroup": "none",
+    "boundary": "not_started",
+    "indexBase": 0,
+    "millisecondsCap": 300000,
+    "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+    "ledger": {
+      "lastStartedIndex": null,
+      "lastCompletedIndex": null,
+      "commandRequestsStarted": 0,
+      "commandRequestsCompleted": 0,
+      "commandRequestMilliseconds": 0,
+      "fixedCallsStarted": 0,
+      "fixedCallsCompleted": 0,
+      "fixedCallMilliseconds": 0,
+      "commandCallsStarted": 0,
+      "commandCallsCompleted": 0,
+      "commandCommits": 0,
+      "startCallsStarted": 0,
+      "startCallsCompleted": 0,
+      "startReservations": 0
+    },
+    "cycles": {
+      "lastStartedIndex": null,
+      "lastCompletedIndex": null,
+      "commandRequestsStarted": 0,
+      "commandRequestsCompleted": 0,
+      "commandRequestMilliseconds": 0,
+      "fixedCallsStarted": 0,
+      "fixedCallsCompleted": 0,
+      "fixedCallMilliseconds": 0,
+      "commandCallsStarted": 0,
+      "commandCallsCompleted": 0,
+      "commandCommits": 0,
+      "startCallsStarted": 0,
+      "startCallsCompleted": 0,
+      "startReservations": 0
+    }
+  },
+  "connections": {
+    "aggregateWorkConnectionBound": 40,
+    "maximumJobs": 0,
+    "maximumIntake": 0,
+    "maximumMethod": 0,
+    "m04ObserverLimit": 2,
+    "maximumM04Observers": 0,
+    "methodObserverLimit": 1,
+    "fixturePerClusterLimit": 16,
+    "inheritedCommitGuardPairs": 0,
+    "minimumOwned": 0
+  },
+  "failure": {
+    "phase": "fixture_acquire",
+    "error": {
+      "kind": "fixture",
+      "code": "unclassified_failure"
+    }
+  },
+  "cleanupFailures": [
+    {
+      "kind": "assertion",
+      "code": "assertion_failed"
+    }
+  ],
+  "cleanupFailureCount": 1,
+  "nativePass": false
+}
+
+Actual Core summary
+{
+  "tests": 8521,
+  "pass": 8462,
+  "fail": 19,
+  "cancelled": 33,
+  "skipped": 7,
+  "durationMilliseconds": 411784.945222
+}
+
+Exact skipped test names
+- native PG: declaration revision/RLS/shape/idempotence and protected finite one-shot admission # SKIP
+- Official Truth current-owner native diagnostic: KNOWN status/session GAP — RELEASE NO-GO # SKIP native PostgreSQL unavailable; no native proof or authorization PASS
+- Owner/AAL2: source-defined SQL helpers in a disconnected disposable PG cluster # SKIP
+- Official Truth owner-session candidate native PG: corrected authority and real pilot concurrency # SKIP native PostgreSQL unavailable; candidate native proof NOT RUN
+- Official Truth private schema: real 7-migration chain rejects direct API roles in isolated PG # SKIP
+- T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP
+- shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server
+
+Actual companion failure summary
+{
+  "atomic": {
+    "jobId": 129937503029,
+    "status": "completed",
+    "conclusion": "failure",
+    "log": {
+      "jobId": 129937503029,
+      "bytes": 108733,
+      "sha256": "d2f35107c8eb6fd65a7c99add680bdf5f7e476bdbced2f6cb2b8d3003eb20940",
+      "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+      "fetchedAt": "2026-11-10 15:49:35 UTC"
+    },
+    "runner": {
+      "osFamily": "ubuntu-26.04",
+      "image": "ubuntu26/20261101.186"
+    },
+    "totals": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 851.495722
+    },
+    "error": "local_postgresql_not_available",
+    "phase": "native fixture setup",
+    "nativeProofCompleted": false,
+    "details": "Required native test setup fails before native database proof."
+  },
+  "persisted": {
+    "jobId": 129937503338,
+    "status": "completed",
+    "conclusion": "failure",
+    "log": {
+      "jobId": 129937503338,
+      "bytes": 107985,
+      "sha256": "34c22aa95bbb4d0b2b688075a8cf1c644bafa1826e8bfb762cca59a9d353e252",
+      "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+      "fetchedAt": "2026-11-10 15:49:35 UTC"
+    },
+    "runner": {
+      "osFamily": "ubuntu-26.04",
+      "image": "ubuntu26/20261101.186"
+    },
+    "totals": {
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 12165.470991
+    },
+    "error": "local_postgresql_not_available",
+    "phase": "native fixture setup",
+    "nativeProofCompleted": false,
+    "details": "Required native test setup fails before native database proof."
+  },
+  "store": {
+    "jobId": 129937503537,
+    "status": "completed",
+    "conclusion": "failure",
+    "log": {
+      "jobId": 129937503537,
+      "bytes": 114612,
+      "sha256": "09f8cce20ccefbfd9e0a4bf9fb196e2d5675f6458ba33ca7ba8f730a1c79ca08",
+      "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+      "fetchedAt": "2026-11-10 15:49:35 UTC"
+    },
+    "runner": {
+      "osFamily": "ubuntu-26.04",
+      "image": "ubuntu26/20261101.186"
+    },
+    "totals": {
+      "tests": 4,
+      "pass": 0,
+      "fail": 4,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 3600.24441
+    },
+    "error": "local_postgresql_not_available",
+    "phase": "native fixture setup",
+    "nativeProofCompleted": false,
+    "details": "Required native test setup fails before native database proof."
+  },
+  "lifecycle": {
+    "jobId": 129937503780,
+    "status": "completed",
+    "conclusion": "failure",
+    "log": {
+      "bytes": 114489,
+      "sha256": "339444a82cff701a135766f0b91e5642fdeabde6a2b466e5b8f37cc5b630d3d0",
+      "lines": 945,
+      "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+      "fetchedAt": "2026-11-10 15:45:48 UTC"
+    },
+    "runner": {
+      "osFamily": "ubuntu-26.04",
+      "image": "ubuntu26/20261101.186"
+    },
+    "totals": {
+      "tests": 4,
+      "pass": 0,
+      "fail": 4,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 7342.833061
+    },
+    "error": "local_postgresql_not_available",
+    "phase": "native fixture setup",
+    "nativeProofCompleted": false,
+    "mountedReceiptPresent": false,
+    "details": "All four tests fail; mounted Workspace fails in startLocalProofCluster at local-cluster.ts:34 through browser.ts:56. Boundaries and wait-lifecycle report native_suite_failed at setup with 0 completed phases; recovery has the same direct PostgreSQL-unavailable error. This is distinct from R25 Chrome-version timeout."
+  }
+}
+
+Safe Repository native failure excerpt
+2026-11-10T15:49:12.0874046Z   ...
+2026-11-10T15:49:12.0874825Z # Subtest: M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T15:49:12.0875677Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T15:49:12.0875816Z   ---
+2026-11-10T15:49:12.0875966Z   duration_ms: 23.353738
+2026-11-10T15:49:12.0876099Z   type: 'test'
+2026-11-10T15:49:12.0876760Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+2026-11-10T15:49:12.0876958Z   failureType: 'testCodeFailure'
+2026-11-10T15:49:12.0877863Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T15:49:12.0878036Z   code: 'ERR_TEST_FAILURE'
+2026-11-10T15:49:12.0878245Z   name: 'AggregateError'
+2026-11-10T15:49:12.0878426Z   stack: |-
+2026-11-10T15:49:12.0879151Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:2036:41)
+2026-11-10T15:49:12.0879455Z     async Test.run (node:internal/test_runner/test:1054:7)
+2026-11-10T15:49:12.0879882Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+2026-11-10T15:49:12.0880019Z   ...
+2026-11-10T15:49:12.0932728Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":19,"cleanupMilliseconds":17,"clusters":1,"childProcesses":0,"lifetime":{"started":0,"settled":0,"pending":0,"connections":0,"closed":0,"stoppedClusters":0},"groups":[],"nestedRaceWitnesses":[],"quotaProgress":{"currentGroup":"none","boundary":"not_started","indexBase":0,"millisecondsCap":300000,"timingMeaning":"client await durations including construction/transport; not server statement profiling","ledger":{"lastStartedIndex":null,"lastCompletedIndex":null,"commandRequestsStarted":0,"commandRequestsCompleted":0,"commandRequestMilliseconds":0,"fixedCallsStarted":0,"fixedCallsCompleted":0,"fixedCallMilliseconds":0,"commandCallsStarted":0,"commandCallsCompleted":0,"commandCommits":0,"startCallsStarted":0,"startCallsCompleted":0,"startReservations":0},"cycles":{"lastStartedIndex":null,"lastCompletedIndex":null,"commandRequestsStarted":0,"commandRequestsCompleted":0,"commandRequestMilliseconds":0,"fixedCallsStarted":0,"fixedCallsCompleted":0,"fixedCallMilliseconds":0,"commandCallsStarted":0,"commandCallsCompleted":0,"commandCommits":0,"startCallsStarted":0,"startCallsCompleted":0,"startReservations":0}},"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":0,"maximumIntake":0,"maximumMethod":0,"m04ObserverLimit":2,"maximumM04Observers":0,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"fixture_acquire","error":{"kind":"fixture","code":"unclassified_failure"}},"cleanupFailures":[{"kind":"assertion","code":"assertion_failed"}],"cleanupFailureCount":1,"nativePass":false}
+
+Full machine-readable Root failure object: https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772268521
+37967 bytes / db7b166bbcff8941604c7ef73e5f358a4752817e0b19a218990f206fe1b47897, JSON with trailing LF.
+All17 earlier failure objects and genuine R21 remain verbatim in author JSON.

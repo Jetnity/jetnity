@@ -1,0 +1,1971 @@
+{
+  "schema": "jetnity.m04.r28-recovery-v19",
+  "capturedAt": "2026-11-10 16:13:22 UTC",
+  "status": "CHANGES_REQUIRED_R28_PRE_PUBLICATION_SOURCE_REVIEW_ONLY",
+  "baselineHead": "ec4de0958227d9733610b9a9125b2c3480631a36",
+  "baselineTree": "f2c07e2fb8640c6c9ba3da13b6f280d7f9662a92",
+  "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+  "pullRequest": 1182,
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "bytes": 27466,
+      "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c",
+      "blob": "2909b02861c4fef06edf8d1c4adf7109df0db97b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "bytes": 22124,
+      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34",
+      "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "bytes": 13319,
+      "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895",
+      "blob": "01db56a4f260ad698a0dcb60d7f208407c51b37a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "bytes": 27249,
+      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d",
+      "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9",
+      "blob": "4bbfa957f78dabc539be864671ce775eff57455b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "bytes": 4330,
+      "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326",
+      "blob": "39693def8fe2c9b6fa3f873752dc58dc6d9b9f75"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "bytes": 8816,
+      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e",
+      "blob": "c80c48cca369cc8ea0c30bc5f620cada639a1e05"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "bytes": 5985,
+      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183",
+      "blob": "e2caa902072b421f8b5ed00bbad72eadf995cdce"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "bytes": 12578,
+      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8",
+      "blob": "3c519e73fc440146bafe168983ae96d765b4a66f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16656,
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 37608,
+      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+      "blob": "4986199904f8e2b0fb8ab83b04f7f585e651f364"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "bytes": 6321,
+      "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927",
+      "blob": "5280246b707f506c5d9d83929562965faea9279c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "bytes": 6324,
+      "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7",
+      "blob": "b3c25d9276e5d36e6ed7083da53de87fc8642056"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "blob": "bb371a26f018107439d0031f5f72c23675aaf97c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 139439,
+      "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+      "blob": "9cb6c7da7ee6de12c3056cfcf29a36c3a047b264"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "bytes": 13389,
+      "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57",
+      "blob": "66e7dd443c51b7db8d90d99c8b6422d1226ff237"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 178978,
+      "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744",
+      "blob": "408e8a62481401335b79a1b53a4609f26cf86c1c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "bytes": 8128,
+      "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033",
+      "blob": "f3bd0bb399d5b5f7c0578d67c61adbce2adf5329"
+    }
+  ],
+  "sourceAggregateSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+  "changedM04Sources": [],
+  "unchangedM04Sources": 18,
+  "implementationPins": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 12325,
+      "sha256": "3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18",
+      "blobSha": "22f6e50aaff600749814bf7e77e24c728b1cd5d5"
+    },
+    {
+      "path": "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "bytes": 24091,
+      "sha256": "06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102",
+      "blobSha": "e405dbd711b6dc56697b407d1f6178fb5f873a62"
+    }
+  ],
+  "workflowHunks": [
+    {
+      "job": "verify",
+      "old": "  verify:\n    name: Repository verification\n    runs-on: ubuntu-latest\n",
+      "next": "  verify:\n    name: Repository verification\n    runs-on: ubuntu-24.04\n"
+    },
+    {
+      "job": "persisted_native",
+      "old": "  persisted_native:\n    name: Persisted canonical read — native\n    runs-on: ubuntu-latest\n",
+      "next": "  persisted_native:\n    name: Persisted canonical read — native\n    runs-on: ubuntu-24.04\n"
+    },
+    {
+      "job": "refresh_native",
+      "old": "  refresh_native:\n    name: Atomic version refresh — native\n    runs-on: ubuntu-latest\n",
+      "next": "  refresh_native:\n    name: Atomic version refresh — native\n    runs-on: ubuntu-24.04\n"
+    },
+    {
+      "job": "accepted_store_native",
+      "old": "  accepted_store_native:\n    name: Accepted store trip integration — native (${{ matrix.group }})\n    runs-on: ubuntu-latest\n",
+      "next": "  accepted_store_native:\n    name: Accepted store trip integration — native (${{ matrix.group }})\n    runs-on: ubuntu-24.04\n"
+    }
+  ],
+  "contractHunk": {
+    "old": "  assert.match(accepted, /runs-on: ubuntu-latest/)\n",
+    "new": "  assert.match(accepted, /runs-on: ubuntu-24\\.04/)\n"
+  },
+  "authorDocumentPins": [
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+      "bytes": 398121,
+      "sha256": "b191be217a8bc41eb82adc95e8986d5248f14bd5a240d6ddc359cda6cd4d3180",
+      "blob": "9ec2a36440a606cf43225f7f34a7fd41cb3fad77"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+      "bytes": 694338,
+      "sha256": "ffc286f22f97418071babb922c7f9dd8b247fd1d255be240fd17cf13d8ffa93f",
+      "blob": "9c7675ef954661fcd611fb7aed76bb1488d2c1f2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+      "bytes": 77715,
+      "sha256": "7e6da7f52cfcbe7f3b063aa46fe55078a4fbda3cd5a761a66d221fe6f60b0972",
+      "blob": "207ec3fd6b8a89e7245360d1aedabf2af70b119f"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+      "bytes": 94737,
+      "sha256": "3c1d0817c64ddc9944d563c3e6df1e836062a43830ecf1d7f9bebfccd2d3d4b3",
+      "blob": "3edf425b2d24be0b5de0fe324307ac15342dd4ce"
+    }
+  ],
+  "rootSourceReview": {
+    "sourceOnly": true,
+    "exactInverse": true,
+    "workflowChangedLines": [
+      15,
+      83,
+      120,
+      153
+    ],
+    "contractChangedLines": [
+      139
+    ],
+    "unchangedM04SourceAggregate": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+    "runtimeExecuted": false,
+    "sourceReviewPass": true,
+    "technicalLeadPass": false,
+    "assertCallsPreserved": 128,
+    "all18SourceBlobsMatchPublishedTree": true
+  },
+  "independentSourceReview": {
+    "agent": "/root/m04_r9_review_g2",
+    "generation": 2,
+    "scopeVersion": 2,
+    "workflowPin": {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 12325,
+      "sha256": "3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18",
+      "blobSha": "22f6e50aaff600749814bf7e77e24c728b1cd5d5"
+    },
+    "contractPin": {
+      "path": "lib/readiness/official-truth-atomic-version-refresh-1.test.ts",
+      "bytes": 24091,
+      "sha256": "06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102",
+      "blobSha": "e405dbd711b6dc56697b407d1f6178fb5f873a62"
+    },
+    "fourWorkflowLines": [
+      15,
+      83,
+      120,
+      153
+    ],
+    "oneContractLine": 139,
+    "assertCallsPreserved": 128,
+    "inverseByteExact": true,
+    "allOtherBytesIdentical": true,
+    "unchangedM04SourceAggregate": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+    "sourceBlockerResolved": true,
+    "runtimeExecuted": false,
+    "technicalLeadPass": false,
+    "reviewerStopped": true
+  },
+  "rootAuthorDocumentReview": {
+    "pass": true,
+    "checks": [
+      {
+        "name": "manifest prior17 failures exact",
+        "pass": true
+      },
+      {
+        "name": "manifest full failure18 exact",
+        "pass": true
+      },
+      {
+        "name": "manifest all18 source pins exact",
+        "pass": true
+      },
+      {
+        "name": "manifest current execution gates false",
+        "pass": true
+      },
+      {
+        "name": "manifest zero M04 source changes",
+        "pass": true
+      },
+      {
+        "name": "manifest old dispatch history preserved",
+        "pass": true
+      },
+      {
+        "name": "manifest old correction records preserved",
+        "pass": true
+      },
+      {
+        "name": "evidence prior17 failures exact",
+        "pass": true
+      },
+      {
+        "name": "evidence full failure18 exact",
+        "pass": true
+      },
+      {
+        "name": "evidence all18 source pins exact",
+        "pass": true
+      },
+      {
+        "name": "evidence current execution gates false",
+        "pass": true
+      },
+      {
+        "name": "evidence zero M04 source changes",
+        "pass": true
+      },
+      {
+        "name": "evidence old dispatch history preserved",
+        "pass": true
+      },
+      {
+        "name": "evidence old correction records preserved",
+        "pass": true
+      },
+      {
+        "name": "22 rows new flags false",
+        "pass": true
+      },
+      {
+        "name": "all existing coverage assertions exact",
+        "pass": true
+      },
+      {
+        "name": "native history appended without changes",
+        "pass": true
+      },
+      {
+        "name": "CI observation history appended without changes",
+        "pass": true
+      },
+      {
+        "name": "Markdown tails byte exact",
+        "pass": true
+      },
+      {
+        "name": "raw receipt historical meaning preserved",
+        "pass": true
+      },
+      {
+        "name": "current native receipt absent",
+        "pass": true
+      },
+      {
+        "name": "all31 group inventory exact",
+        "pass": true
+      },
+      {
+        "name": "genuine R21 success both documents exact",
+        "pass": true
+      },
+      {
+        "name": "corrected R22 metadata exact",
+        "pass": true
+      },
+      {
+        "name": "bounds and original amendments unchanged",
+        "pass": true
+      },
+      {
+        "name": "full historical precision tail unchanged",
+        "pass": true
+      }
+    ],
+    "authorPins": [
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+        "bytes": 398121,
+        "sha256": "b191be217a8bc41eb82adc95e8986d5248f14bd5a240d6ddc359cda6cd4d3180",
+        "blob": "9ec2a36440a606cf43225f7f34a7fd41cb3fad77"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+        "bytes": 694338,
+        "sha256": "ffc286f22f97418071babb922c7f9dd8b247fd1d255be240fd17cf13d8ffa93f",
+        "blob": "9c7675ef954661fcd611fb7aed76bb1488d2c1f2"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+        "bytes": 77715,
+        "sha256": "7e6da7f52cfcbe7f3b063aa46fe55078a4fbda3cd5a761a66d221fe6f60b0972",
+        "blob": "207ec3fd6b8a89e7245360d1aedabf2af70b119f"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+        "bytes": 94737,
+        "sha256": "3c1d0817c64ddc9944d563c3e6df1e836062a43830ecf1d7f9bebfccd2d3d4b3",
+        "blob": "3edf425b2d24be0b5de0fe324307ac15342dd4ce"
+      }
+    ],
+    "transformPin": {
+      "bytes": 8519,
+      "sha256": "556eb0b4cda003a0fbdbdbab97657d4baa3777d76ba332a755d1eef43a3feb07"
+    },
+    "orderedDataPin": {
+      "bytes": 41495,
+      "sha256": "11ecc0b90dfc92be1a48cc7d9bd4204bc645bbb1dc05458d5282644977fa3775"
+    },
+    "runtimeExecuted": false,
+    "technicalLeadPass": false
+  },
+  "independentAuthorDocumentReview": {
+    "agent": "/root/m04_r9_review_g2",
+    "generation": 2,
+    "sourceAndDocumentReviewPass": true,
+    "blockingFindings": [],
+    "allSixPartsAndFourPinsReconstructed": true,
+    "prior17FailuresExact": true,
+    "failure18Exact": true,
+    "genuineR21Exact": true,
+    "correctedR22Exact": true,
+    "markdownTailsExact": true,
+    "currentCoverageRowsFalse": 22,
+    "nativeGroupsUnchanged": 31,
+    "m04SourcePinsUnchanged": 18,
+    "aggregate": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+    "historicalRawHarnessAndCleanupFailurePrecise": true,
+    "scopeVersion": 2,
+    "runtimeExecuted": false,
+    "technicalLeadPass": false,
+    "reviewerStopped": true
+  },
+  "historicalR27Failure": {
+    "schema": "jetnity.m04.actual-r27-failure.v1",
+    "head": "ec4de0958227d9733610b9a9125b2c3480631a36",
+    "tree": "f2c07e2fb8640c6c9ba3da13b6f280d7f9662a92",
+    "pullRequest": 1182,
+    "runId": 42847124579,
+    "attempt": 1,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "failure",
+    "updatedAt": "2026-11-10T15:52:03Z",
+    "observedTerminalByRootAt": "2026-11-10 15:53:19 UTC",
+    "repositoryTerminalObservedAt": "2026-11-10 15:53:19 UTC",
+    "repositoryVerificationJobId": 129937503558,
+    "jobs": [
+      {
+        "id": 129937503029,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Atomic refresh native proof",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503243,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Zugang vorhanden?",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Abgleich",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503338,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Persisted native proof",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503537,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503558,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Tests",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Schutz der Admin-API",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Bezug auf das Schema",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Unerreichbarer Code",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Exporte ohne Aufrufer",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Ungenutzte Pakete",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Production build",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503586,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Bind synthetic evidence to this run and checkout",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Visitor, polling and isolated CI contract tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Isolated harness typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Synthetic HTTP composition",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Local process benchmark",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Actual isolated browser audit",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve actual synthetic evidence, including failures",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129937503780,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129943510600,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Require all five verification job families to succeed",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "log": {
+      "bytes": 3997458,
+      "sha256": "2748162df4c6937f16cca5470ef08574133f598323f376e230dfd574e2ded036",
+      "lines": 62287,
+      "chars": 3989116,
+      "observedTerminalAt": "2026-11-10 15:53:19 UTC",
+      "fetchedAt": "2026-11-10 15:54:37 UTC"
+    },
+    "native": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "executed": true,
+      "effectAndCleanupMilliseconds": 19,
+      "cleanupMilliseconds": 17,
+      "clusters": 1,
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 0,
+        "settled": 0,
+        "pending": 0,
+        "connections": 0,
+        "closed": 0,
+        "stoppedClusters": 0
+      },
+      "groups": [],
+      "nestedRaceWitnesses": [],
+      "quotaProgress": {
+        "currentGroup": "none",
+        "boundary": "not_started",
+        "indexBase": 0,
+        "millisecondsCap": 300000,
+        "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+        "ledger": {
+          "lastStartedIndex": null,
+          "lastCompletedIndex": null,
+          "commandRequestsStarted": 0,
+          "commandRequestsCompleted": 0,
+          "commandRequestMilliseconds": 0,
+          "fixedCallsStarted": 0,
+          "fixedCallsCompleted": 0,
+          "fixedCallMilliseconds": 0,
+          "commandCallsStarted": 0,
+          "commandCallsCompleted": 0,
+          "commandCommits": 0,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        },
+        "cycles": {
+          "lastStartedIndex": null,
+          "lastCompletedIndex": null,
+          "commandRequestsStarted": 0,
+          "commandRequestsCompleted": 0,
+          "commandRequestMilliseconds": 0,
+          "fixedCallsStarted": 0,
+          "fixedCallsCompleted": 0,
+          "fixedCallMilliseconds": 0,
+          "commandCallsStarted": 0,
+          "commandCallsCompleted": 0,
+          "commandCommits": 0,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        }
+      },
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 0,
+        "maximumIntake": 0,
+        "maximumMethod": 0,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 0,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "fixture_acquire",
+        "error": {
+          "kind": "fixture",
+          "code": "unclassified_failure"
+        }
+      },
+      "cleanupFailures": [
+        {
+          "kind": "assertion",
+          "code": "assertion_failed"
+        }
+      ],
+      "cleanupFailureCount": 1,
+      "nativePass": false
+    },
+    "nativeReceiptCompactHash": {
+      "bytes": 1818,
+      "sha256": "2c0c3fd65c04ec64805cd569968c5b75303e56c646461ab0381ec1cd262c3a6b"
+    },
+    "assessment": {
+      "pass": false,
+      "issues": [
+        "mandatory native enclosing test did not pass exactly once",
+        "native failed or incomplete",
+        "not all 31 groups completed",
+        "inherited skip inventory changed",
+        "core totals not expected full suite",
+        "exact named native group pass missing",
+        "two witnesses required",
+        "missing i1_timeout",
+        "missing worker_caller_abort",
+        "quota not complete",
+        "ledger.lastStartedIndex",
+        "ledger.lastCompletedIndex",
+        "ledger.commandRequestsStarted",
+        "ledger.commandRequestsCompleted",
+        "ledger.fixedCallsStarted",
+        "ledger.fixedCallsCompleted",
+        "ledger.commandCallsStarted",
+        "ledger.commandCallsCompleted",
+        "ledger.commandCommits",
+        "ledger.startCallsStarted",
+        "ledger.startCallsCompleted",
+        "ledger.startReservations",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations",
+        "native lifetime not fully drained",
+        "children or cleanup failure",
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "receipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 19,
+        "cleanupMilliseconds": 17,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 0,
+          "settled": 0,
+          "pending": 0,
+          "connections": 0,
+          "closed": 0,
+          "stoppedClusters": 0
+        },
+        "groups": [],
+        "nestedRaceWitnesses": [],
+        "quotaProgress": {
+          "currentGroup": "none",
+          "boundary": "not_started",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          },
+          "cycles": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 0,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 0,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "fixture_acquire",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [
+          {
+            "kind": "assertion",
+            "code": "assertion_failed"
+          }
+        ],
+        "cleanupFailureCount": 1,
+        "nativePass": false
+      },
+      "core": {
+        "tests": {
+          "matches": 1,
+          "value": 8521
+        },
+        "pass": {
+          "matches": 1,
+          "value": 8462
+        },
+        "fail": {
+          "matches": 1,
+          "value": 19
+        },
+        "cancelled": {
+          "matches": 1,
+          "value": 33
+        },
+        "skipped": {
+          "matches": 1,
+          "value": 7
+        },
+        "duration_ms": {
+          "matches": 1,
+          "value": 411784.945222
+        }
+      },
+      "exactNames": [
+        {
+          "index": 1,
+          "id": "N01",
+          "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 2,
+          "id": "N02",
+          "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 3,
+          "id": "N03",
+          "name": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 4,
+          "id": "N07",
+          "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 5,
+          "id": "N07/R4",
+          "name": "actual S1 archived history and linked method revision survive full native consumption",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 6,
+          "id": "N08",
+          "name": "sixteen actual persisted originals complete inside fixed call budgets",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 7,
+          "id": "N08/U04",
+          "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 8,
+          "id": "N02/U04",
+          "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 9,
+          "id": "N04/N06",
+          "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 10,
+          "id": "N04/N06/N10",
+          "name": "older active start blocks a new claim while an independent subject progresses",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 11,
+          "id": "N05/N09",
+          "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 12,
+          "id": "N09",
+          "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 13,
+          "id": "N10/U06",
+          "name": "delivered producer does not terminate a pending I1 evidence callback",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 14,
+          "id": "N11",
+          "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 15,
+          "id": "N11",
+          "name": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 16,
+          "id": "N12",
+          "name": "acquisition, control failure and real drain never free a live native lane",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 17,
+          "id": "N04/N10/N12",
+          "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 18,
+          "id": "N12/U06/R9",
+          "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 19,
+          "id": "N12/R7-03",
+          "name": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 20,
+          "id": "N11",
+          "name": "staged PREPARED waits on the actual S1 operation before final current MA1",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 21,
+          "id": "N11",
+          "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 22,
+          "id": "N11",
+          "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 23,
+          "id": "N13",
+          "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 24,
+          "id": "N05/A03",
+          "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 25,
+          "id": "N05",
+          "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 26,
+          "id": "N15",
+          "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 27,
+          "id": "N14",
+          "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 28,
+          "id": "N01/N14/T02",
+          "name": "temporary catalog/type shadows do not influence the new install or runtime",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 29,
+          "id": "N14",
+          "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 30,
+          "id": "N15/T02",
+          "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 31,
+          "id": "N15",
+          "name": "rollback waits for actual late writer then rechecks nonempty history atomically",
+          "passedLines": 0,
+          "failedLines": 0
+        }
+      ],
+      "skips": [
+        "native PG: declaration revision/RLS/shape/idempotence and protected finite one-shot admission # SKIP",
+        "Official Truth current-owner native diagnostic: KNOWN status/session GAP — RELEASE NO-GO # SKIP native PostgreSQL unavailable; no native proof or authorization PASS",
+        "Owner/AAL2: source-defined SQL helpers in a disconnected disposable PG cluster # SKIP",
+        "Official Truth owner-session candidate native PG: corrected authority and real pilot concurrency # SKIP native PostgreSQL unavailable; candidate native proof NOT RUN",
+        "Official Truth private schema: real 7-migration chain rejects direct API roles in isolated PG # SKIP",
+        "T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+        "shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      ],
+      "skipsMatch": false,
+      "r9Problems": [
+        "two witnesses required",
+        "missing i1_timeout",
+        "missing worker_caller_abort"
+      ],
+      "quotaProblems": [
+        "quota not complete",
+        "ledger.lastStartedIndex",
+        "ledger.lastCompletedIndex",
+        "ledger.commandRequestsStarted",
+        "ledger.commandRequestsCompleted",
+        "ledger.fixedCallsStarted",
+        "ledger.fixedCallsCompleted",
+        "ledger.commandCallsStarted",
+        "ledger.commandCallsCompleted",
+        "ledger.commandCommits",
+        "ledger.startCallsStarted",
+        "ledger.startCallsCompleted",
+        "ledger.startReservations",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations"
+      ],
+      "cleanupProblems": [
+        "native lifetime not fully drained",
+        "children or cleanup failure"
+      ],
+      "limitProblems": [
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "groupPassCount": 0,
+      "timing": {
+        "completedGroupSum": 0,
+        "effectAndCleanupMilliseconds": 19,
+        "cleanupMilliseconds": 17
+      }
+    },
+    "separateNativeFailures": {
+      "atomic": {
+        "jobId": 129937503029,
+        "status": "completed",
+        "conclusion": "failure",
+        "log": {
+          "jobId": 129937503029,
+          "bytes": 108733,
+          "sha256": "d2f35107c8eb6fd65a7c99add680bdf5f7e476bdbced2f6cb2b8d3003eb20940",
+          "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+          "fetchedAt": "2026-11-10 15:49:35 UTC"
+        },
+        "runner": {
+          "osFamily": "ubuntu-26.04",
+          "image": "ubuntu26/20261101.186"
+        },
+        "totals": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0,
+          "duration_ms": 851.495722
+        },
+        "error": "local_postgresql_not_available",
+        "phase": "native fixture setup",
+        "nativeProofCompleted": false,
+        "details": "Required native test setup fails before native database proof."
+      },
+      "persisted": {
+        "jobId": 129937503338,
+        "status": "completed",
+        "conclusion": "failure",
+        "log": {
+          "jobId": 129937503338,
+          "bytes": 107985,
+          "sha256": "34c22aa95bbb4d0b2b688075a8cf1c644bafa1826e8bfb762cca59a9d353e252",
+          "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+          "fetchedAt": "2026-11-10 15:49:35 UTC"
+        },
+        "runner": {
+          "osFamily": "ubuntu-26.04",
+          "image": "ubuntu26/20261101.186"
+        },
+        "totals": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0,
+          "duration_ms": 12165.470991
+        },
+        "error": "local_postgresql_not_available",
+        "phase": "native fixture setup",
+        "nativeProofCompleted": false,
+        "details": "Required native test setup fails before native database proof."
+      },
+      "store": {
+        "jobId": 129937503537,
+        "status": "completed",
+        "conclusion": "failure",
+        "log": {
+          "jobId": 129937503537,
+          "bytes": 114612,
+          "sha256": "09f8cce20ccefbfd9e0a4bf9fb196e2d5675f6458ba33ca7ba8f730a1c79ca08",
+          "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+          "fetchedAt": "2026-11-10 15:49:35 UTC"
+        },
+        "runner": {
+          "osFamily": "ubuntu-26.04",
+          "image": "ubuntu26/20261101.186"
+        },
+        "totals": {
+          "tests": 4,
+          "pass": 0,
+          "fail": 4,
+          "cancelled": 0,
+          "skipped": 0,
+          "duration_ms": 3600.24441
+        },
+        "error": "local_postgresql_not_available",
+        "phase": "native fixture setup",
+        "nativeProofCompleted": false,
+        "details": "Required native test setup fails before native database proof."
+      },
+      "lifecycle": {
+        "jobId": 129937503780,
+        "status": "completed",
+        "conclusion": "failure",
+        "log": {
+          "bytes": 114489,
+          "sha256": "339444a82cff701a135766f0b91e5642fdeabde6a2b466e5b8f37cc5b630d3d0",
+          "lines": 945,
+          "observedTerminalAt": "2026-11-10 15:44:33 UTC",
+          "fetchedAt": "2026-11-10 15:45:48 UTC"
+        },
+        "runner": {
+          "osFamily": "ubuntu-26.04",
+          "image": "ubuntu26/20261101.186"
+        },
+        "totals": {
+          "tests": 4,
+          "pass": 0,
+          "fail": 4,
+          "cancelled": 0,
+          "skipped": 0,
+          "duration_ms": 7342.833061
+        },
+        "error": "local_postgresql_not_available",
+        "phase": "native fixture setup",
+        "nativeProofCompleted": false,
+        "mountedReceiptPresent": false,
+        "details": "All four tests fail; mounted Workspace fails in startLocalProofCluster at local-cluster.ts:34 through browser.ts:56. Boundaries and wait-lifecycle report native_suite_failed at setup with 0 completed phases; recovery has the same direct PostgreSQL-unavailable error. This is distinct from R25 Chrome-version timeout."
+      }
+    },
+    "runnerCompatibility": {
+      "repositoryRunner": {
+        "osFamily": "ubuntu-26.04",
+        "image": "ubuntu26/20261101.186"
+      },
+      "previousR26LifecycleRunner": {
+        "osFamily": "ubuntu-24.04",
+        "image": "ubuntu24/20261101.360"
+      },
+      "observedFailure": "Four separate required native jobs report local_postgresql_not_available. M04 receipt enters its harness but fails fixture_acquire, completes no native group and reports one cleanup assertion failure.",
+      "detector": {
+        "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+        "bytes": 5280,
+        "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "blob": "dc5a2583cd540b83062e8662cdb4b6af4befb376"
+      },
+      "workflow": {
+        "path": ".github/workflows/ci.yml",
+        "bytes": 12329,
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "blob": "f64ff6cfe706121cee2f27ba8788b78f71a6cdd3"
+      },
+      "officialImageSources": {
+        "ubuntu24": {
+          "repository": "actions/runner-images",
+          "path": "images/ubuntu/Ubuntu2404-Readme.md",
+          "ref": "ubuntu24/20261101.360",
+          "bytes": 16330,
+          "sha256": "5993072a61c810a3bf5057bba6322e576a5d83307b87afc1c8600e05b811b124",
+          "blob": "707d839e521e51c4e9b7dabd4511890be83b0fc2"
+        },
+        "ubuntu26": {
+          "repository": "actions/runner-images",
+          "path": "images/ubuntu/Ubuntu2604-Readme.md",
+          "ref": "ubuntu26/20261101.186",
+          "bytes": 15952,
+          "sha256": "96726820a76acc3c80bb4716babf0f8a99bcd76bdf28edd3c35ea20ca2771fd4",
+          "blob": "a0fba64bf8ccbb95f625595e99b689bb5512b1d4"
+        }
+      },
+      "postgresVersions": {
+        "previousSupportedImage": "16.15",
+        "newLatestImage": "18.6"
+      },
+      "inference": "The observed ubuntu-latest migration to Ubuntu26 no longer supplies a toolchain in the unchanged supported detector roots. A scoped OS-family selection is the next prerequisite repair; it establishes neither R27 semantic correctness nor improved timing and does not explain older timing failures."
+    },
+    "interpretation": {
+      "nativeHarnessEntered": true,
+      "actualNativeGroupsCompleted": 0,
+      "actualNativeProofPassed": false,
+      "rawReceiptExecuted": true,
+      "doNotRewriteExecutedFalse": true,
+      "cleanCleanupPassed": false,
+      "cleanupFailureCount": 1,
+      "rawClusters": 1,
+      "rawStoppedClusters": 0,
+      "rawClusterCounterDoesNotProveClusterCreated": true,
+      "r9WitnessesCompleted": 0,
+      "quotasCompleted": false,
+      "inheritedCommitGuardPairs": 0,
+      "minimumOwned": 0,
+      "core": {
+        "tests": 8521,
+        "pass": 8462,
+        "fail": 19,
+        "cancelled": 33,
+        "skipped": 7,
+        "durationMilliseconds": 411784.945222
+      },
+      "extraNativeUnavailableSkips": 5,
+      "acceptedInheritedSkips": 2,
+      "skipsAccepted": false,
+      "repositoryTypecheck": "success",
+      "repositoryLint": "success",
+      "repositoryTests": "failure",
+      "repositoryHygiene": "skipped",
+      "repositoryProductionBuild": "skipped",
+      "authEvidence": "SUCCESS metadata only; no Auth-job logs accessed",
+      "remainingGates": "All31 M04 groups, both R9 witnesses, complete quotas, 761 inherited pairs/minimumOwned4182, cleanup, lifecycle, Core/hygiene/build and full eight-job CI must be re-established on a new exact head."
+    },
+    "preview": {
+      "id": "dpl_HugzCBwJeVzsKZfqNpVfJf1Fguk3",
+      "url": "jetnity-cfol4lkru-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "ec4de0958227d9733610b9a9125b2c3480631a36",
+      "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+      "aliasError": null,
+      "target": null
+    },
+    "production": {
+      "id": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD",
+      "url": "jetnity-7xkqhmvs9-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "branch": "main",
+      "aliasError": null,
+      "target": "production"
+    },
+    "productionAliases": [
+      {
+        "alias": "jetnity.com",
+        "deploymentId": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD"
+      },
+      {
+        "alias": "jetnity-app.vercel.app",
+        "deploymentId": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD"
+      }
+    ],
+    "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "mainAccepted": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "closureHeld": true
+  },
+  "historicalFailureExcerpt": {
+    "path": "docs/official-truth-product-v3/M04_RECOVERY_R28_NATIVE_FAILURE_V19.txt",
+    "bytes": 12261,
+    "sha256": "cdfd4d497030a4747ab29175917796b46270dfc09da9a3eb9dde32f0173248f0",
+    "blobSha": "20df2bdd0c201a7d19c92a8da767b3fef0e10a9d"
+  },
+  "priorCompleteEvidence": {
+    "head": "ec4de0958227d9733610b9a9125b2c3480631a36",
+    "path": "docs/official-truth-product-v3/M04_RECOVERY_R27_EVIDENCE_V18.json",
+    "bytes": 74044,
+    "sha256": "6402ee96891cabbee02486e122d2e4870a50fe8a0c9a2a0871d9ef22e4a00c69",
+    "blob": "f1df61026678093f955442ffa03b6dfd47cfd015"
+  },
+  "previousFailureObjectsPreserved": 17,
+  "totalHistoricalFailureObjects": 18,
+  "genuineR21SuccessPreservedSeparately": true,
+  "correctedR22TerminalObservationPreserved": true,
+  "primaryImageEvidence": {
+    "ubuntu24": {
+      "repository": "actions/runner-images",
+      "path": "images/ubuntu/Ubuntu2404-Readme.md",
+      "ref": "ubuntu24/20261101.360",
+      "bytes": 16330,
+      "sha256": "5993072a61c810a3bf5057bba6322e576a5d83307b87afc1c8600e05b811b124",
+      "blob": "707d839e521e51c4e9b7dabd4511890be83b0fc2"
+    },
+    "ubuntu26": {
+      "repository": "actions/runner-images",
+      "path": "images/ubuntu/Ubuntu2604-Readme.md",
+      "ref": "ubuntu26/20261101.186",
+      "bytes": 15952,
+      "sha256": "96726820a76acc3c80bb4716babf0f8a99bcd76bdf28edd3c35ea20ca2771fd4",
+      "blob": "a0fba64bf8ccbb95f625595e99b689bb5512b1d4"
+    }
+  },
+  "requiredNativeGroups": [
+    {
+      "id": "N01",
+      "test": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02",
+      "test": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N03",
+      "test": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07",
+      "test": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07/R4",
+      "test": "actual S1 archived history and linked method revision survive full native consumption",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08",
+      "test": "sixteen actual persisted originals complete inside fixed call budgets",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08/U04",
+      "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02/U04",
+      "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06",
+      "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06/N10",
+      "test": "older active start blocks a new claim while an independent subject progresses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/N09",
+      "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N09",
+      "test": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N10/U06",
+      "test": "delivered producer does not terminate a pending I1 evidence callback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12",
+      "test": "acquisition, control failure and real drain never free a live native lane",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N10/N12",
+      "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/U06/R9",
+      "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/R7-03",
+      "test": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "staged PREPARED waits on the actual S1 operation before final current MA1",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N13",
+      "test": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/A03",
+      "test": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05",
+      "test": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N01/N14/T02",
+      "test": "temporary catalog/type shadows do not influence the new install or runtime",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15/T02",
+      "test": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "rollback waits for actual late writer then rechecks nonempty history atomically",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    }
+  ],
+  "limits": "240 s effects + 60 s cleanup / 300 s total; four outer lanes and four native operations per family; eight active native / 256 total with 16 terminal admissions reserved; eight callbacks / 128 total; 30 s outer / 5 s child; three clusters / two children / 40 aggregate work connections / two M04 observers / one method observer / 16 fixture connections per cluster.",
+  "ownerGates": "Method **NOT_APPROVED**. #1139 **NOT_RELEASE_READY**, pre-Owner gaps E01, E04, E06, E07, E09, E10, E11, E13, E15, E16, E17, E18, E21, E22, E24, E25, E28. #917 specifically refused independent readback remains pending, ledger UNKNOWN, Stage2 NOT_ATTEMPTED: no retry, rephrasing, delegation, rerouting, transport switch, human SQL substitute or renewed old Owner evidence request. #1131 Ready STOP; both #1135 holds; #968 preview isolation and #911/#913 privacy remain.",
+  "boundaries": "No hosted DB/Auth/RLS/ACL/migration/credential action or Auth-log access, real source/provider/research call, scheduler, notification, new cost or public V3 activation. No local PostgreSQL/native/socket/parser/project/build execution, installation/download, missing binary retrieval, clone/reconstruction or replacement environment. Native proof only in the existing GitHub CI with exactly the R28 v2 runner/contract selection; all proof commands and budgets unchanged. No git fetch/push; any local git reads require GIT_NO_LAZY_FETCH=1 and GIT_OPTIONAL_LOCKS=0. Preserve all 22 omitted binary IDs. No automatic next product slice.",
+  "liveBaseline": {
+    "rootSafeGatesAt": "2026-11-10 16:04:48 UTC",
+    "baselineMain": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "baselineHead": "ec4de0958227d9733610b9a9125b2c3480631a36",
+    "mode": "NORMAL",
+    "ruleset": 21875372,
+    "bypassActors": [],
+    "formalReviews": 0,
+    "inlineThreads": 0,
+    "unresolvedVercelThreads": 0,
+    "openDraftPRs": 15,
+    "openNonPRIssues": 48,
+    "preview": {
+      "id": "dpl_HugzCBwJeVzsKZfqNpVfJf1Fguk3",
+      "url": "jetnity-cfol4lkru-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "ec4de0958227d9733610b9a9125b2c3480631a36",
+      "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+      "aliasError": null,
+      "target": null
+    },
+    "production": {
+      "id": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD",
+      "url": "jetnity-7xkqhmvs9-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "branch": "main",
+      "aliasError": null,
+      "target": "production"
+    },
+    "bothProductionAliasesMatch": true,
+    "permittedOwnerIssueUpdatesUnchanged": [
+      {
+        "number": 1139,
+        "updatedAt": "2026-11-08T23:48:12Z"
+      },
+      {
+        "number": 1131,
+        "updatedAt": "2026-11-06T00:37:27Z"
+      },
+      {
+        "number": 1135,
+        "updatedAt": "2026-11-06T09:13:19Z"
+      },
+      {
+        "number": 968,
+        "updatedAt": "2026-11-06T21:23:55Z"
+      },
+      {
+        "number": 911,
+        "updatedAt": "2026-10-14T09:51:11Z"
+      },
+      {
+        "number": 913,
+        "updatedAt": "2026-10-09T17:57:51Z"
+      }
+    ],
+    "guardianNewComments": {
+      "748": 0,
+      "751": 0
+    },
+    "sourceFreezePRStillDraft": true,
+    "noUnchangedRerun": true,
+    "prepublicationCompare": {
+      "ahead": 6,
+      "behind": 0,
+      "mergeBase": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "cumulativePaths": 36
+    },
+    "productionAliases": [
+      {
+        "alias": "jetnity.com",
+        "deploymentId": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD"
+      },
+      {
+        "alias": "jetnity-app.vercel.app",
+        "deploymentId": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD"
+      }
+    ],
+    "deploymentObservedByRootAt": "2026-11-10 16:05:40 UTC"
+  },
+  "currentExecution": {
+    "executed": false,
+    "nativePass": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "actualMainAccepted": false
+  },
+  "continuity": {
+    "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
+    "authorSession": "/root/m04_durable_jobs_writer_g2",
+    "reviewerSession": "/root/m04_r9_review_g2",
+    "auditorSession": "/root/m04_live_audit_g2",
+    "sameSessions": true,
+    "authorStop": true,
+    "originalCheckoutNotRecovered": true,
+    "projectExecutionPerformed": false,
+    "noReconstruction": true,
+    "all22BinaryIdsMustRemain": true,
+    "priorRecordsUnchanged": true
+  },
+  "firstUnfinishedStep": "Root expected-head publication/full readback; full new exact-head CI/native/lifecycle/Preview/live gates; mandatory actual-main CI/native/Production; finite docs closure; STOP"
+}

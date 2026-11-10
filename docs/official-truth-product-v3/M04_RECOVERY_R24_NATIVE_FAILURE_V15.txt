@@ -1,0 +1,79 @@
+M04 R24 / Recovery Task V15 — actual R23 native failure (original completed non-Auth job excerpts)
+Repository: Jetnity/jetnity
+PR: 1182; exact head: ca6fcb8930e68e394156d67351ee087c4cddb180
+CI: 42812226588; attempt: 1; event: pull_request
+Repository verification: 129816262544; completed FAILURE
+Root independently observed terminal run/job metadata: 2026-11-10 12:15:16 UTC, before this log read.
+Full original log: 4251695 UTF-8 bytes; 4242477 characters; 63151 split lines
+Full original log SHA256: 2b15d0fe865df0cce10a6b7bba74c45797927cbc54138118e8258dbd90672b09
+Full compact actual receipt: 3816 bytes; SHA256 4341b23118a220ce190efd38b21ee0fcb8c070ad9e3f7b5a5b00682566da849c
+The complete receipt is preserved in Root V15 JSON and PR comment 6767105970.
+These original line excerpts are selective evidence, not the complete job log.
+24/31 native groups passed; the cycle group hit the unchanged 240s effect deadline.
+All 26926 effects settled, all 4242 connections closed; pending 0, cleanup errors 0.
+Following database outcome UNKNOWN. Groups 26–31 and inherited boundary were not reached.
+Client await measurements are not server profiling. Historical R21 success remains separately true.
+
+--- Original lines 33735–33740 ---
+33735: 2026-11-10T12:13:00.0255133Z     # Subtest: N02 actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses
+33736: 2026-11-10T12:13:00.0256118Z     ok 2 - N02 actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses
+33737: 2026-11-10T12:13:00.0256795Z       ---
+33738: 2026-11-10T12:13:00.0257812Z       duration_ms: 1471.62948
+33739: 2026-11-10T12:13:00.0258237Z       type: 'test'
+33740: 2026-11-10T12:13:00.0258621Z       ...
+
+--- Original lines 33831–33836 ---
+33831: 2026-11-10T12:13:00.0481287Z     # Subtest: N12/U06/R9 actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races
+33832: 2026-11-10T12:13:00.0482415Z     ok 18 - N12/U06/R9 actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races
+33833: 2026-11-10T12:13:00.0483418Z       ---
+33834: 2026-11-10T12:13:00.0483829Z       duration_ms: 12838.472144
+33835: 2026-11-10T12:13:00.0484268Z       type: 'test'
+33836: 2026-11-10T12:13:00.0484668Z       ...
+
+--- Original lines 33867–33902 ---
+33867: 2026-11-10T12:13:00.0509851Z     # Subtest: N05/A03 actual 254/255/256 ledger boundary preserves the sole original terminal credit
+33868: 2026-11-10T12:13:00.0510809Z     ok 24 - N05/A03 actual 254/255/256 ledger boundary preserves the sole original terminal credit
+33869: 2026-11-10T12:13:00.0511407Z       ---
+33870: 2026-11-10T12:13:00.0511775Z       duration_ms: 106540.434516
+33871: 2026-11-10T12:13:00.0512164Z       type: 'test'
+33872: 2026-11-10T12:13:00.0512526Z       ...
+33873: 2026-11-10T12:13:42.7173059Z     # Subtest: N05 sixty-four actual starts retain all older history and refuse the sixty-fifth claim
+33874: 2026-11-10T12:13:42.7199166Z     not ok 25 - N05 sixty-four actual starts retain all older history and refuse the sixty-fifth claim
+33875: 2026-11-10T12:13:42.7281409Z       ---
+33876: 2026-11-10T12:13:42.7297987Z       duration_ms: 42668.60444
+33877: 2026-11-10T12:13:42.7354141Z       type: 'test'
+33878: 2026-11-10T12:13:42.7388028Z       location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:6219'
+33879: 2026-11-10T12:13:42.7444018Z       failureType: 'testCodeFailure'
+33880: 2026-11-10T12:13:42.7553370Z       error: 'M04 240s effect budget exceeded'
+33881: 2026-11-10T12:13:42.7644026Z       code: 'ERR_TEST_FAILURE'
+33882: 2026-11-10T12:13:42.7686409Z       stack: |-
+33883: 2026-11-10T12:13:42.7738464Z         Timeout.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:457:52)
+33884: 2026-11-10T12:13:42.7795508Z         listOnTimeout (node:internal/timers:585:17)
+33885: 2026-11-10T12:13:42.7887800Z         process.processTimers (node:internal/timers:521:7)
+33886: 2026-11-10T12:13:42.7937709Z       ...
+33887: 2026-11-10T12:13:42.8029001Z     1..25
+33888: 2026-11-10T12:13:42.8050173Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+33889: 2026-11-10T12:13:42.8077790Z   ---
+33890: 2026-11-10T12:13:42.8168676Z   duration_ms: 240473.244269
+33891: 2026-11-10T12:13:42.8198078Z   type: 'test'
+33892: 2026-11-10T12:13:42.8216055Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+33893: 2026-11-10T12:13:42.8245565Z   failureType: 'testCodeFailure'
+33894: 2026-11-10T12:13:42.8276538Z   error: 'M04 native proof or terminal cleanup failed'
+33895: 2026-11-10T12:13:42.8334621Z   code: 'ERR_TEST_FAILURE'
+33896: 2026-11-10T12:13:42.8359006Z   name: 'AggregateError'
+33897: 2026-11-10T12:13:42.8359523Z   stack: |-
+33898: 2026-11-10T12:13:42.8360436Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:1928:41)
+33899: 2026-11-10T12:13:42.8361579Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+33900: 2026-11-10T12:13:42.8362365Z     async Test.run (node:internal/test_runner/test:1054:7)
+33901: 2026-11-10T12:13:42.8363553Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+33902: 2026-11-10T12:13:42.8364199Z   ...
+
+--- Original lines 63126–63133 ---
+63126: 2026-11-10T12:14:53.8914413Z # tests 8683
+63127: 2026-11-10T12:14:53.8914588Z # suites 971
+63128: 2026-11-10T12:14:53.8914753Z # pass 8679
+63129: 2026-11-10T12:14:53.8914918Z # fail 2
+63130: 2026-11-10T12:14:53.8915084Z # cancelled 0
+63131: 2026-11-10T12:14:53.8915258Z # skipped 2
+63132: 2026-11-10T12:14:53.8915416Z # todo 0
+63133: 2026-11-10T12:14:53.8915592Z # duration_ms 662219.128845

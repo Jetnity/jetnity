@@ -86,8 +86,8 @@ GRANT USAGE ON SCHEMA official_v3_jobs_api TO ot_v3_jobs_caller;
 CREATE FUNCTION official_v3_jobs_private.exact_keys_v1(v jsonb, expected text[]) RETURNS boolean
 LANGUAGE sql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
   SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
-    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
-    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])
+    ARRAY(SELECT k FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k ORDER BY k COLLATE "C")
+    = ARRAY(SELECT k FROM unnest(expected) k ORDER BY k COLLATE "C")
 $$;
 CREATE FUNCTION official_v3_jobs_private.unique_json_v1(v json, d integer) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
@@ -109,31 +109,35 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.nodes_v1(v jsonb,d integer,max_d integer,max_n integer) RETURNS integer
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE e jsonb; n integer:=1; m integer;
+DECLARE e jsonb; n integer:=1; m integer; child_count bigint;
 BEGIN
   IF v IS NULL OR d IS NULL OR max_d IS NULL OR max_n IS NULL OR d<0 OR d>max_d OR max_d>24 OR max_n>65536 OR max_n<1 THEN RETURN -1; END IF;
   IF jsonb_typeof(v)='object' THEN
-    FOR e IN SELECT value FROM jsonb_each(v) LOOP
-      IF d+1>max_d THEN RETURN -1; END IF;
-      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
-      ELSE m:=1; END IF;
+    SELECT count(*) INTO child_count FROM jsonb_object_keys(v);
+    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;
+    IF child_count>(max_n-1)/2 THEN RETURN -1; END IF;
+    n:=1+2*child_count;
+    FOR e IN SELECT j.value FROM jsonb_each(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
       IF m<0 THEN RETURN -1; END IF;
-      n:=n+m+1; IF n>max_n THEN RETURN -1; END IF;
+      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   ELSIF jsonb_typeof(v)='array' THEN
-    FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
-      IF d+1>max_d THEN RETURN -1; END IF;
-      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
-      ELSE m:=1; END IF;
+    child_count:=jsonb_array_length(v);
+    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;
+    IF child_count>max_n-1 THEN RETURN -1; END IF;
+    n:=1+child_count;
+    FOR e IN SELECT j.value FROM jsonb_array_elements(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
       IF m<0 THEN RETURN -1; END IF;
-      n:=n+m; IF n>max_n THEN RETURN -1; END IF;
+      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   END IF;
   RETURN n;
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric;
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
@@ -143,7 +147,16 @@ BEGIN
       e:=x.value;
       IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
       CASE jsonb_typeof(e)
-      WHEN 'object' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'object' THEN
+        IF retained_object IS NULL THEN
+          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+          retained_object:=e; retained_object_canonical:=child_text;
+        ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
+          child_text:=retained_object_canonical;
+        ELSE
+          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+          retained_object:=e; retained_object_canonical:=child_text;
+        END IF;
       WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
       WHEN 'string' THEN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
@@ -349,15 +362,18 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.subject_v1(kind text,v jsonb) RETURNS jsonb
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE m jsonb:=v->'method'; context jsonb; s jsonb; o jsonb; r jsonb; preimage jsonb; ck text; jk text; sk text; rk text; legacy text; research jsonb; countries text[]:=ARRAY['AD','AE','AF','AG','AI','AL','AM','AO','AQ','AR','AS','AT','AU','AW','AX','AZ','BA','BB','BD','BE','BF','BG','BH','BI','BJ','BL','BM','BN','BO','BQ','BR','BS','BT','BV','BW','BY','BZ','CA','CC','CD','CF','CG','CH','CI','CK','CL','CM','CN','CO','CR','CU','CV','CW','CX','CY','CZ','DE','DJ','DK','DM','DO','DZ','EC','EE','EG','EH','ER','ES','ET','FI','FJ','FK','FM','FO','FR','GA','GB','GD','GE','GF','GG','GH','GI','GL','GM','GN','GP','GQ','GR','GS','GT','GU','GW','GY','HK','HM','HN','HR','HT','HU','ID','IE','IL','IM','IN','IO','IQ','IR','IS','IT','JE','JM','JO','JP','KE','KG','KH','KI','KM','KN','KP','KR','KW','KY','KZ','LA','LB','LC','LI','LK','LR','LS','LT','LU','LV','LY','MA','MC','MD','ME','MF','MG','MH','MK','ML','MM','MN','MO','MP','MQ','MR','MS','MT','MU','MV','MW','MX','MY','MZ','NA','NC','NE','NF','NG','NI','NL','NO','NP','NR','NU','NZ','OM','PA','PE','PF','PG','PH','PK','PL','PM','PN','PR','PS','PT','PW','PY','QA','RE','RO','RS','RU','RW','SA','SB','SC','SD','SE','SG','SH','SI','SJ','SK','SL','SM','SN','SO','SR','SS','ST','SV','SX','SY','SZ','TC','TD','TF','TG','TH','TJ','TK','TL','TM','TN','TO','TR','TT','TV','TW','TZ','UA','UG','UM','US','UY','UZ','VA','VC','VE','VG','VI','VN','VU','WF','WS','YE','YT','ZA','ZM','ZW'];
+DECLARE m jsonb:=v->'method'; context jsonb; s jsonb; o jsonb; r jsonb; preimage jsonb; ck text; jk text; sk text; rk text; legacy text; research jsonb; pair_text text; countries text[]:=ARRAY['AD','AE','AF','AG','AI','AL','AM','AO','AQ','AR','AS','AT','AU','AW','AX','AZ','BA','BB','BD','BE','BF','BG','BH','BI','BJ','BL','BM','BN','BO','BQ','BR','BS','BT','BV','BW','BY','BZ','CA','CC','CD','CF','CG','CH','CI','CK','CL','CM','CN','CO','CR','CU','CV','CW','CX','CY','CZ','DE','DJ','DK','DM','DO','DZ','EC','EE','EG','EH','ER','ES','ET','FI','FJ','FK','FM','FO','FR','GA','GB','GD','GE','GF','GG','GH','GI','GL','GM','GN','GP','GQ','GR','GS','GT','GU','GW','GY','HK','HM','HN','HR','HT','HU','ID','IE','IL','IM','IN','IO','IQ','IR','IS','IT','JE','JM','JO','JP','KE','KG','KH','KI','KM','KN','KP','KR','KW','KY','KZ','LA','LB','LC','LI','LK','LR','LS','LT','LU','LV','LY','MA','MC','MD','ME','MF','MG','MH','MK','ML','MM','MN','MO','MP','MQ','MR','MS','MT','MU','MV','MW','MX','MY','MZ','NA','NC','NE','NF','NG','NI','NL','NO','NP','NR','NU','NZ','OM','PA','PE','PF','PG','PH','PK','PL','PM','PN','PR','PS','PT','PW','PY','QA','RE','RO','RS','RU','RW','SA','SB','SC','SD','SE','SG','SH','SI','SJ','SK','SL','SM','SN','SO','SR','SS','ST','SV','SX','SY','SZ','TC','TD','TF','TG','TH','TJ','TK','TL','TM','TN','TO','TR','TT','TV','TW','TZ','UA','UG','UM','US','UY','UZ','VA','VC','VE','VG','VI','VN','VU','WF','WS','YE','YT','ZA','ZM','ZW'];
 BEGIN
   IF official_v3_jobs_private.exact_keys_v1(m,ARRAY['methodId','revision']) IS NOT TRUE OR jsonb_typeof(m->'methodId') IS DISTINCT FROM 'string' OR (m->>'methodId' ~ '^[a-z][a-z0-9_-]{1,63}$') IS NOT TRUE
     OR jsonb_typeof(m->'revision') IS DISTINCT FROM 'number' OR m->>'revision' !~ '^[1-9][0-9]{0,9}$' OR (m->>'revision')::numeric>2147483647 THEN RAISE EXCEPTION 'm04 invalid method' USING ERRCODE='P7601'; END IF;
   IF kind='combination_discovery' THEN
     IF official_v3_jobs_private.exact_keys_v1(v,ARRAY['destinationCountryCode','citizenshipCountryCode','method']) IS NOT TRUE
       OR (v->>'destinationCountryCode'=ANY(countries)) IS NOT TRUE OR (v->>'citizenshipCountryCode'=ANY(countries)) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid pair' USING ERRCODE='P7601'; END IF;
-    jk:='combination-discovery-job:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(v,0),'UTF8')),'hex');
-    RETURN jsonb_build_object('kind',kind,'jobKey',jk,'subjectText',official_v3_jobs_private.canonical_v1(v||jsonb_build_object('kind',kind),0),'contextKey',NULL);
+    pair_text:=official_v3_jobs_private.canonical_v1(v,0);
+    jk:='combination-discovery-job:v3:'||encode(sha256(convert_to(pair_text,'UTF8')),'hex');
+    RETURN jsonb_build_object('kind',kind,'jobKey',jk,'subjectText',(CASE WHEN jsonb_typeof(v->'citizenshipCountryCode')='string' AND jsonb_typeof(v->'destinationCountryCode')='string'
+      THEN overlay(pair_text placing ',"kind":'||official_v3_jobs_private.canonical_v1(to_jsonb(kind),1) from strpos(pair_text COLLATE "C",',"method":') for 0)
+      ELSE official_v3_jobs_private.canonical_v1(v||jsonb_build_object('kind',kind),0) END),'contextKey',NULL);
   END IF;
   IF kind IS DISTINCT FROM 'rule_research' OR official_v3_jobs_private.exact_keys_v1(v,ARRAY['context','method','factKind','researchReason']) IS NOT TRUE
     OR (v->>'factKind' IN ('passport_validity','blank_passport_pages','requirement_effect','visa_options','stay_limit','transit_conditions','official_actions','temporal_rule')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid subject' USING ERRCODE='P7601'; END IF;
@@ -420,9 +436,9 @@ BEGIN
     IF official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) IS NOT TRUE
       OR (l->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(l->'generation') IS DISTINCT FROM 'number'
       OR (l->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (l->>'generation')::numeric NOT BETWEEN 1 AND revision OR attempt<1
-      OR official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') NOT BETWEEN created AND updated
+      OR (CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END) NOT BETWEEN created AND updated
       OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')<=updated
-      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')>official_v3_jobs_private.timestamp_v1(l->>'acquiredAt')+interval '900 seconds' THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')>(CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END)+interval '900 seconds' THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
   ELSIF l<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
   IF state='backoff' THEN
     IF official_v3_jobs_private.timestamp_v1(v->>'nextAttemptAt')<=updated OR v->'lastFailure'='null'::jsonb OR attempt<1 OR attempt>=lim THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
