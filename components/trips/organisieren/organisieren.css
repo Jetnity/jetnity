@@ -549,18 +549,6 @@
   text-decoration: underline;
   white-space: nowrap;
 }
-.org-details {
-  min-width: 0;
-  flex: 1;
-}
-.org-details summary {
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-.org-details[open] {
-  color: var(--org-ink);
-}
 .org-activityfields {
   grid-template-columns: 1fr 1fr auto;
 }

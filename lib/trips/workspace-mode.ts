@@ -13,16 +13,29 @@ import type { Trip, TripItem } from '@/types/trips'
 
 export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung'] as const
 const WORKSPACE_BEREICHE = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
-export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'vorbereitung', 'reisender'] as const
+export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'vorbereitung', 'reisender'] as const
 /** Opaque plan selection. Not travel intent. Stage ids are at most 80 characters each. */
 export const WORKSPACE_KANTE_MAX = 200
 
 export type WorkspaceAnsicht = (typeof WORKSPACE_ANSICHTEN)[number]
 export type WorkspaceBereich = (typeof WORKSPACE_BEREICHE)[number]
 
+const SUCHKATEGORIEN = ['fluege', 'unterkunft', 'aktivitaeten', 'mietwagen', 'verbindungen'] as const
+export type Suchkategorie = (typeof SUCHKATEGORIEN)[number]
+
+function istSuchkategorie(wert: unknown): wert is Suchkategorie {
+  return SUCHKATEGORIEN.some(kategorie => kategorie === wert)
+}
+
+export function kategorieFuerBereich(bereich: WorkspaceBereich | null): Suchkategorie {
+  if (bereich === 'mobilitaet') return 'verbindungen'
+  return bereich ?? 'fluege'
+}
+
 export type WorkspaceModus = {
   ansicht: WorkspaceAnsicht
   bereich: WorkspaceBereich | null
+  kategorie?: Suchkategorie
   tagId?: string
   itemId?: string
   /** Existing connection id, for example `connection:<stageId>:<stageId>`. Presentation only. */
@@ -96,6 +109,8 @@ function rohLesen(params: URLSearchParams): Navigation {
   }
   if (ansicht === 'organisieren') {
     const bereich = einzeln(params, 'bereich')
+    const kategorie = einzeln(params, 'kategorie')
+    if (istSuchkategorie(kategorie)) return { ansicht, bereich: null, kategorie }
     return { ansicht, bereich: istWorkspaceBereich(bereich) ? bereich : null }
   }
   return { ansicht: 'uebersicht', bereich: null }
@@ -107,7 +122,10 @@ export function queryFuerModus(aktuell: URLSearchParams, modus: Navigation): URL
   for (const key of WORKSPACE_QUERY_KEYS) next.delete(key)
   if (modus.ansicht === 'uebersicht') return next
   next.append('ansicht', modus.ansicht)
-  if (modus.ansicht === 'organisieren' && istWorkspaceBereich(modus.bereich)) next.append('bereich', modus.bereich)
+  if (modus.ansicht === 'organisieren') {
+    if (istSuchkategorie(modus.kategorie)) next.append('kategorie', modus.kategorie)
+    else if (istWorkspaceBereich(modus.bereich)) next.append('bereich', modus.bereich)
+  }
   if (modus.ansicht === 'plan') {
     if (refGueltig(modus.tagId, 80)) next.append('tag', modus.tagId)
     if (refGueltig(modus.itemId, 80) && (!modus.tagId || refGueltig(modus.tagId, 80))) next.append('punkt', modus.itemId)
