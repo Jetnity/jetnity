@@ -286,6 +286,8 @@ function historieSchreiben(
   else window.history.replaceState(stand, '', url)
 }
 
+type RouteRueckkehr = { art: 'tag' | 'punkt'; id: string } | { art: 'kante'; id: string; tagId?: string }
+
 type TripWorkspaceProps = {
   reise: Trip
   quelle: TripSource
@@ -508,7 +510,7 @@ export default function TripWorkspace({
   const anordnungBisherRef = React.useRef<U1bAnordnung | null>(null)
   const [editorAktiv, setEditorAktiv] = React.useState(false)
   const routeLageRef = React.useRef({ top: 0, windowY: 0, streifenLeft: 0, erfasst: false })
-  const routeRueckAnkerRef = React.useRef<{ art: 'tag' | 'punkt'; id: string } | null>(null)
+  const routeRueckAnkerRef = React.useRef<RouteRueckkehr | null>(null)
   const splitRef = React.useRef<HTMLDivElement>(null)
   const setHinweisBeide = React.useCallback((wert: Hinweis | null) => {
     hinweisRef.current = wert
@@ -762,9 +764,15 @@ export default function TripWorkspace({
     }
   }
 
-  const routeZiel = (anker: { art: 'tag' | 'punkt'; id: string } | null) => {
+  const routeZiel = (anker: RouteRueckkehr | null) => {
     const route = document.querySelector('[data-u1b-route]')
     if (!(route instanceof HTMLElement)) return null
+    if (anker?.art === 'kante') {
+      const gleich = Array.from(route.querySelectorAll<HTMLElement>('[data-u1c-kante-id]'))
+        .filter(el => el.dataset.u1cKanteId === anker.id && darfFokussieren(el))
+      const kante = gleich.find(el => el.dataset.u1cRueckTag === anker.tagId) ?? gleich[0]
+      if (kante) return kante
+    }
     const kanteKnopf = route.querySelector<HTMLElement>('[data-u1c-kante][aria-pressed="true"]')
     if (darfFokussieren(kanteKnopf)) return kanteKnopf
     if (anker?.art === 'tag') {
@@ -787,7 +795,9 @@ export default function TripWorkspace({
     const anker = punkt
       ? (punkt.dayId && reise.days.some((tag) => tag.id === punkt.dayId) ? { art: 'tag' as const, id: punkt.dayId } : { art: 'punkt' as const, id: punkt.id })
       : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
-    routeRueckAnkerRef.current = anker
+    routeRueckAnkerRef.current = modus.kanteId
+      ? { art: 'kante', id: modus.kanteId, tagId: modus.tagId }
+      : anker
     if (modus.ansicht === 'plan' && (modus.tagId || modus.kanteId || modus.itemId)) {
       modusSetzen({ ansicht: 'plan', bereich: null, urlAnpassen: false }, 'push')
     }
