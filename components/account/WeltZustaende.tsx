@@ -45,7 +45,7 @@ const UMRISS: Readonly<Record<WeltLandZustand, string>> = {
   beides: 'stroke-brand-900',
 }
 
-export function weltMusterId(basis: string): string {
+function weltMusterId(basis: string): string {
   return `${basis}-geplant-schraffur`
 }
 
