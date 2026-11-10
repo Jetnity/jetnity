@@ -1,11 +1,12 @@
 'use client'
 
 import { Fragment, useState, type ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, BedDouble, CalendarDays, ChevronRight, ListTree, Map as MapIcon, Plane, Plus, Route, Users, NotebookPen, Ticket, BusFront } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BedDouble, CalendarDays, ChevronRight, ListTree, Map as MapIcon, MapPin, Plane, Plus, Route, Users, NotebookPen, Ticket, BusFront } from 'lucide-react'
 import type { Trip, TripItemKind, TripSource } from '@/types/trips'
 import { landName } from '@/lib/country/darstellung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { reiseFoto } from '@/lib/trips/organisieren/katalog'
+import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
@@ -58,6 +59,9 @@ export default function Etappenplan({ reise, quelle, route, tagId, focusRoute, o
   const allCountry = stages.length && stages[0]?.countryCode && stages.every(s => s.countryCode === stages[0].countryCode)
     ? landName(stages[0].countryCode,'de') : null
   const hero = reise.title === stages[0]?.name && stages.length > 1 && allCountry ? allCountry : reise.title
+  const legs = mobilitaetsAbdeckung(reise, reise.ohneTag).kanten
+  const outbound = legs.find(l => l.art === 'outbound')
+  const inbound = legs.find(l => l.art === 'return')
   const stageRow = (id: string) => stages.find(s => s.id === id)
   function choose(id: string, dayId?: string) {
     setStoppForm(false); setTab('uebersicht'); setAnsicht('plan')
@@ -74,8 +78,8 @@ export default function Etappenplan({ reise, quelle, route, tagId, focusRoute, o
     const entries = entryDays.reduce((n,d) => n+d.items.length,0) + (stage ? reise.ohneTag.filter(p => p.stageId === id).length : 0)
     return <button type="button" className="et-stage" data-u1c-route-lauf data-timeline-tag={dayIds[0]} onClick={() => id ? choose(id,dayIds[0]) : choose('',dayIds[0])}>
       <span className={'et-number' + (stage ? '' : ' transit')}>{stage ? index+1 : <Plane size={15}/>}</span>
-      {stage && <span className="et-thumb" style={{ backgroundImage: 'url('+reiseFoto(stage)+')' }} />}
-      <span className="et-tiletext"><b>{title}</b><small>{range || (entryDays.length ? entryDays.length + ' Tage' : 'Zeitraum offen')}{entries ? ' · '+entries+(entries===1?' Eintrag':' Einträge') : ''}</small></span><ChevronRight size={18}/>
+      <span className="et-stage-surface">{stage && <span className="et-thumb" style={{ backgroundImage: 'url('+reiseFoto(stage)+')' }} />}
+      <span className="et-tiletext"><b>{title}</b><small>{range || (entryDays.length ? entryDays.length + ' Tage' : 'Zeitraum offen')}</small><small>{entries===0?'Noch keine Einträge':entries+(entries===1?' Eintrag':' Einträge')}</small></span><ChevronRight size={18}/></span>
     </button>
   }
   return <div className="et-atlas" data-trip-atlas>
@@ -111,8 +115,12 @@ export default function Etappenplan({ reise, quelle, route, tagId, focusRoute, o
           <div className="et-row"><div><h2>Deine Route</h2><p>{stages.length} {stages.length===1?'Etappe':'Etappen'} · {reise.days.length} {reise.days.length===1?'Reisetag':'Reisetage'}</p></div>
             {onSaved && <button type="button" className="et-primary" onClick={openStop}><Plus size={16}/> Stopp hinzufügen</button>}</div>
           <div className="et-stages">
-            {route.map(r => r.art === 'kante' ? <button key={r.occurrenceKey} type="button" className="et-leg" disabled={!r.waehlbar || !onEdge} onClick={() => onEdge?.(r.kanteId,r.rueckTagId)}><Route size={15}/><span>{r.titel}</span><ChevronRight size={14}/></button> : <Fragment key={r.schluessel}>{stageTile(r.stageId || '',r.tagIds,r.name)}</Fragment>)}
+            {outbound && <div className="et-end"><Plane size={15}/><span><b>{outbound.originName}</b> Abreise{reise.startDate && ' · '+date(reise.startDate)}</span></div>}
+            {outbound && <div className="et-leg et-journey"><Plane size={13}/> Hinreise · {outbound.originName} → {outbound.destinationName}</div>}
+            {route.map(r => r.art === 'kante' ? <button key={r.occurrenceKey} type="button" className="et-leg" disabled={!r.waehlbar || !onEdge} onClick={() => onEdge?.(r.kanteId,r.rueckTagId)}><Route size={15}/><span>Verbindung · {r.titel}</span><ChevronRight size={14}/></button> : <Fragment key={r.schluessel}>{stageTile(r.stageId || '',r.tagIds,r.name)}</Fragment>)}
             {stages.filter(s => !route.some(r => r.art==='lauf' && r.stageId===s.id)).map(s => <Fragment key={s.id}>{stageTile(s.id,reise.days.filter(d => d.stageId===s.id).map(d => d.id),s.name)}</Fragment>)}
+            {inbound && <div className="et-leg et-journey"><Plane size={13}/> Rückreise · {inbound.originName} → {inbound.destinationName}</div>}
+            {inbound && <div className="et-end"><MapPin size={15}/><span><b>{inbound.destinationName}</b> Rückkehr{reise.endDate && ' · '+date(reise.endDate)}</span></div>}
             {!route.length && !stages.length && <p>Füge deinen ersten Stopp hinzu.</p>}
           </div>{unassigned}</>}
         {status}

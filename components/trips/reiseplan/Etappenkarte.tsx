@@ -49,6 +49,7 @@ export default function Etappenkarte({ reise, auswahl, onAuswahl, setzen, onPosi
     if (!host.current) return
     const node = host.current
     let closed = false
+    const abort = new AbortController()
     let dispose: undefined | (() => void)
     void import('leaflet').then(L => {
       if (closed) return
@@ -58,14 +59,33 @@ export default function Etappenkarte({ reise, auswahl, onAuswahl, setzen, onPosi
       map.attributionControl.addAttribution('Kartengrundlage © Natural Earth · Luftlinien')
       L.imageOverlay('/images/reiseatlas/world.webp', [[-85.05112878,-180],[85.05112878,180]], { interactive: false }).addTo(map)
       L.imageOverlay('/images/reiseatlas/asia.webp', [[-1,89],[26,114]], { interactive: false }).addTo(map)
+      const names = L.layerGroup().addTo(map)
+      let countries: [string, number, number, number][] = []
+      function drawNames() {
+        names.clearLayers()
+        const zoom = map.getZoom()
+        const bounds = map.getBounds()
+        for (const [name, lat, lng, minimum] of countries) {
+          if (zoom < minimum || !bounds.contains([lat,lng])) continue
+          const label = document.createElement('span')
+          label.className = 'et-map-country'
+          label.textContent = name
+          L.marker([lat,lng], { interactive: false, keyboard: false, zIndexOffset: -500,
+            icon: L.divIcon({ className: 'et-map-name', html: label, iconSize: [0,0] }) }).addTo(names)
+        }
+      }
+      map.on('moveend zoomend', drawNames)
+      void fetch('/images/reiseatlas/laender.json', { signal: abort.signal }).then(r => r.ok ? r.json() : [])
+        .then(labels => { if (!closed && Array.isArray(labels)) { countries = labels; drawNames() } }).catch(() => {})
+      L.control.scale({ imperial: false, position: 'bottomleft', maxWidth: 80 }).addTo(map)
       const points: LatLngTuple[] = []
       let previous: LatLngTuple | null = null
       let focus: LatLngTuple | null = null
       for (const m of markers) {
         if (!m.point) { previous = null; continue }
-        const lng = m.point.lng + (previous ? 360 * Math.round((previous[1] - m.point.lng) / 360) : 0)
+        const lng = m.point.lng
         const coords: LatLngTuple = [m.point.lat, lng]
-        if (previous && Math.abs(lng) <= 180) L.polyline([previous, coords], { color: '#386c60', weight: 3, dashArray: '7 7', interactive: false }).addTo(map)
+        if (previous && Math.abs(lng - previous[1]) <= 180) L.polyline([previous, coords], { color: '#386c60', weight: 3, dashArray: '7 7', interactive: false }).addTo(map)
         // Keep the marker over the local basemap even when an itinerary crosses the date line.
         const pin: LatLngTuple = [m.point.lat, m.point.lng]
         previous = coords
@@ -93,7 +113,7 @@ export default function Etappenkarte({ reise, auswahl, onAuswahl, setzen, onPosi
       observer.observe(node)
       dispose = () => { observer.disconnect(); map.remove() }
     }).catch(() => { if (!closed) setError('Die Karte konnte nicht geladen werden.') })
-    return () => { closed = true; dispose?.() }
+    return () => { closed = true; abort.abort(); dispose?.() }
   }, [markers, auswahl, mitAnreise])
   return <aside className="et-map" aria-label="Interaktive Reisekarte">
     <div className="et-map-tools"><button type="button" aria-pressed={!mitAnreise} onClick={() => setMitAnreise(false)}>Etappen</button>
