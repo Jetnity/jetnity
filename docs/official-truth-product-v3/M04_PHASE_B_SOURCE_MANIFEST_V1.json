@@ -1,0 +1,468 @@
+{
+  "schema": "jetnity.m04.phase-b.source-manifest.v1",
+  "status": "SAVED_V7_INTERRUPTION_CHECKPOINT_R9_CHANGES_REQUIRED_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T00:34:19.223504+00:00",
+  "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1",
+  "session": "/root/m04_durable_jobs_writer",
+  "pullRequest": 1178,
+  "dispatchHead": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537",
+  "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
+  "sourceFiles": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "bytes": 17362,
+      "sha256": "073219ff29e73bcf694f01de304ad0315152132aa00b19b900a097362f210ccc"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "bytes": 22124,
+      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "bytes": 13319,
+      "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "bytes": 27249,
+      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "bytes": 4330,
+      "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "bytes": 8816,
+      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "bytes": 5985,
+      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "bytes": 12578,
+      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16656,
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 37608,
+      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "bytes": 6321,
+      "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "bytes": 6324,
+      "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 135856,
+      "sha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "bytes": 13278,
+      "sha256": "b5c91faedd6ffb2da258d0614d29e7193fc538523b9176a51f18460f788ecdae"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 125663,
+      "sha256": "a69f41cf8126c419c60ee174f746588e8841884e40362de79f3ce871bd0eb5a6"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "bytes": 8128,
+      "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
+    }
+  ],
+  "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+  "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
+  "protectedDispatchComparison": {
+    "checked": 49,
+    "identical": 47,
+    "authorizedChanged": [
+      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "lib/readiness/official-truth-product-v3/method/authority.test.ts"
+    ],
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "dispatchSha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
+        "sha256": "b0e74b36978bd461eec45880390b7ab2b78ffbd09f8d9c555da60313de36a5f9",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "JETNITY_START_HERE.md",
+        "dispatchSha256": "87679df6ab04a6c3dac6cc7b61a87e10d19898bcd53998389399084b1bb3a9fa",
+        "sha256": "87679df6ab04a6c3dac6cc7b61a87e10d19898bcd53998389399084b1bb3a9fa",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+        "dispatchSha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
+        "sha256": "0e873a78c99bc66941c21b2728ac6532d41772e185bd515224ecf90bb38b8664",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/ACTIVE_WORK_STATUS.md",
+        "dispatchSha256": "24008da660411e332c6099e5d84aa4692cbce9e611afd6c1a18a56c20f4ad6d9",
+        "sha256": "24008da660411e332c6099e5d84aa4692cbce9e611afd6c1a18a56c20f4ad6d9",
+        "identicalToDispatch": true
+      },
+      {
+        "path": ".jetnity/operating-mode.json",
+        "dispatchSha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "sha256": "5ba2aeb21d0201edb155bfdd9dae0f54afbc8d635707f88df44c418dc6f3e047",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_TASK_V1.md",
+        "dispatchSha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
+        "sha256": "2b35db258b7e45cb71962592a3af602f38243d86fb3fa48f091565816edc1af2",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_HANDOFF_V1.md",
+        "dispatchSha256": "ae1aa207e53f792742ea5b58865cd17dc46a9a49c835cdbcfa36f04388872270",
+        "sha256": "ae1aa207e53f792742ea5b58865cd17dc46a9a49c835cdbcfa36f04388872270",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_INPUT_INDEX_V1.md",
+        "dispatchSha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
+        "sha256": "1dbd9bf66129f957db8993a68de8df847070e482f460ec2eff9a00195daa5b5a",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_OPEN_POINTS_V1.md",
+        "dispatchSha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
+        "sha256": "6613692e208462979bda8c8878780ea9a2947088cec02ea51dab4c341d3c659d",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_ADVISORY_V1.md",
+        "dispatchSha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
+        "sha256": "eeae1cb3fe6fc39856a8799d41b62f4dd4793f1302e8db416ab7664055353f42",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_INPUT_PHASE_A_SOURCE_PINS_V1.json",
+        "dispatchSha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
+        "sha256": "08dd0ebda32941578e5c573134e79dcf26af04f915eb5b8d55d07cfd81bc91a1",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_INPUT_UNCERTAINTY_SOURCE_PINS_V1.json",
+        "dispatchSha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
+        "sha256": "d25dcb089b862d4ce86010f81d44873ca21bcdcc84d30740286f2f3a82a58b7e",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/MI1_POST_MERGE_CLOSURE_V1.md",
+        "dispatchSha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
+        "sha256": "4ad3f98b3f54ef0e2b5e7f736d310aa947f208477d5392a1db3e5b635e0e8f0c",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/contract.ts",
+        "dispatchSha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+        "dispatchSha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/rule-claims.ts",
+        "dispatchSha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-research-request.ts",
+        "dispatchSha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
+        "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/domain.ts",
+        "dispatchSha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "sha256": "e4b2e779f398b6a45916e7fc1a232194a0a374833cfb39884a5c312d69ded587",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/country/katalog.ts",
+        "dispatchSha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "sha256": "ebaed24988b7c34ac352cdc10e7ed6031fbb25bf93f6efd280769878c7891f8c",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "types/trips.ts",
+        "dispatchSha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/monitor/internal.ts",
+        "dispatchSha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
+        "sha256": "dc9f237166705be5346819bf4156b34846558ab8debec28d025a1352028a07ff",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+        "dispatchSha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+        "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+        "dispatchSha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+        "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
+        "dispatchSha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+        "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
+        "dispatchSha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+        "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+        "dispatchSha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
+        "dispatchSha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "sha256": "d98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
+        "dispatchSha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+        "dispatchSha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+        "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "dispatchSha256": "e116aef22769a05eb5312c89c002040c5f8911ac31d352f5a459a36227dae33b",
+        "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+        "identicalToDispatch": false
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "dispatchSha256": "1e1a6edef32012ebd2a098dd881b7cc37eb6fdd72ab464ffc502dbfe10c111cb",
+        "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+        "identicalToDispatch": false
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
+        "dispatchSha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "sha256": "49c4c4f5c2fd0b163be4f387af47032ed8c030fd75e7bfecd875af775bf6f69b",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+        "dispatchSha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "dispatchSha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-codec.ts",
+        "dispatchSha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "sha256": "adb16487346cea677b8c49683d0d75ef177359ac4cfaf0abb944ab1a8a76a989",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
+        "dispatchSha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "sha256": "4208d024e54657919617ef5a392f3eae86ff0421c32e890874643748f51aae19",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
+        "dispatchSha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+        "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.sql",
+        "dispatchSha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "sha256": "db3256889195ce4f68daa847b55f23a7e7433d4f4c8bb5e49cfda3be54484719",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/intake-candidate.rollback.sql",
+        "dispatchSha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+        "sha256": "c069feb85d804285fc8c06fc1c80f4bb4475e8f829c9f71b3e2263993e332125",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native-adapter.ts",
+        "dispatchSha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "sha256": "cfa3d3d3e691af942324bafba9d03efc241f5ea3a71486d1cb6d83866d046896",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-intake-store-1/native.ts",
+        "dispatchSha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "sha256": "1bba89b4e5487c38faf7fb606a4d2517b2b2b5f1231f43b84c367f922050aded",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+        "dispatchSha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+        "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+        "dispatchSha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+        "sha256": "e7794fb3862cbc7f916be1fa4e2d0af75e67647c1048e9d805a183ef5e57e709",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+        "dispatchSha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+        "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+        "dispatchSha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+        "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-method-authority-1/native.ts",
+        "dispatchSha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "sha256": "f36024b32e57d18b76b9cc28227dffe3e9da38f8dec9485d8a3f6666f824fa2a",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/native.test.ts",
+        "dispatchSha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+        "sha256": "6a90ad307068a00c19d4dd91b348aa196a85385abfb73b6c37ee8ffce49c0d3a",
+        "identicalToDispatch": true
+      },
+      {
+        "path": "package.json",
+        "dispatchSha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "identicalToDispatch": true
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "dispatchSha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb",
+        "identicalToDispatch": true
+      }
+    ]
+  },
+  "phaseAOriginalFilesUnchanged": true,
+  "skipWorktreeEntriesPreserved": [
+    "data/omio/ch.katalog",
+    "public/images/organisieren/angsana.webp",
+    "public/images/organisieren/bangkok.webp",
+    "public/images/organisieren/canal.webp",
+    "public/images/organisieren/chang.webp",
+    "public/images/organisieren/hero.webp",
+    "public/images/organisieren/katathani.webp",
+    "public/images/organisieren/mandarin.webp",
+    "public/images/organisieren/oldtown.webp",
+    "public/images/organisieren/paradise.webp",
+    "public/images/organisieren/peninsula.webp",
+    "public/images/organisieren/phuket.webp",
+    "public/images/organisieren/reise.webp",
+    "public/images/organisieren/shangri.webp",
+    "public/images/organisieren/waterfall.webp",
+    "public/images/organisieren/watpho.webp"
+  ],
+  "authorChecks": [
+    {
+      "name": "named non-native contract/scope/postgres/composition/MA1 suite",
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "milliseconds": 2566.50708,
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/jobs/contract.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts lib/readiness/official-truth-product-v3/jobs/postgres.test.ts lib/readiness/official-truth-product-v3/jobs/composition.test.ts lib/readiness/official-truth-product-v3/method/authority.test.ts"
+    },
+    {
+      "name": "focused TypeScript noEmit",
+      "rootFiles": 16,
+      "diagnostics": 0,
+      "configuration": "tsconfig.json compilerOptions; incremental:false; exact16 TypeScript paths from sourceFiles only"
+    },
+    {
+      "name": "targeted ESLint no-cache",
+      "rootFiles": 16,
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "nativeProof": "PENDING_UNCHANGED_GITHUB_CI_UNCONDITIONAL_NATIVE_ENTRY",
+  "nativeExecuted": false,
+  "fullCoreExecuted": false,
+  "fullBuildExecuted": false,
+  "localPostgresExecuted": false,
+  "hostedAccess": false,
+  "gitMutations": false,
+  "runtimePass": false,
+  "ready": false,
+  "merge": false,
+  "handoffAt": "2026-11-10T00:51:30.244438+00:00",
+  "openGates": [
+    "R9 actual composition/native nested I1-S1 race and terminal drain regression",
+    "Final complete U01-U07/N01-N15 assertion map",
+    "Root independent review of corrected source",
+    "Exact published-head unchanged GitHub CI native proof"
+  ],
+  "r9SourceEdits": false
+}

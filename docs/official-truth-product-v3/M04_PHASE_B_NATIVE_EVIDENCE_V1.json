@@ -1,0 +1,141 @@
+{
+  "schema": "jetnity.m04.phase-b.native-evidence.v1",
+  "status": "SAVED_V7_INTERRUPTION_CHECKPOINT_R9_CHANGES_REQUIRED_NATIVE_PENDING",
+  "savedAt": "2026-11-10T00:51:30.244438+00:00",
+  "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation1",
+  "session": "/root/m04_durable_jobs_writer",
+  "pullRequest": 1178,
+  "dispatchHead": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
+  "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 135856,
+      "sha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 125663,
+      "sha256": "a69f41cf8126c419c60ee174f746588e8841884e40362de79f3ce871bd0eb5a6"
+    }
+  ],
+  "nativeExecuted": false,
+  "nativePass": false,
+  "nativeReceipt": null,
+  "localPostgresExecuted": false,
+  "hostedAccess": false,
+  "fullCoreExecuted": false,
+  "fullBuildExecuted": false,
+  "sourceState": "All eighteen V7 source files unchanged after R9; only reads occurred before user requested handoff.",
+  "r9": {
+    "status": "CHANGES_REQUIRED_OPEN",
+    "sourceEditsStarted": false,
+    "checksAfterR9": false,
+    "required": "Add one bounded actual-composition regression and one real native controlled nested S1 operation held beyond the I1 facade return; prove exact PID/birth/native wait, no false failure/disposition, no early slot release and no late work before actual drain.",
+    "existingSeparateAssertions": [
+      "Owned scope keeps actual promise until drain",
+      "Actual I1 evidence callback outlives facade return",
+      "Nested S1 finish acknowledgement loss preserves unknown",
+      "Native adapter acquisition/cancellation/actual drain"
+    ],
+    "coverageLimit": "These separate assertions do not replace the required combined composition race/drain witness.",
+    "permission": "Same author/session; existing eighteen files and fixed budgets only; no protected source, local PostgreSQL/native SQL or publication."
+  },
+  "executedNonNativeChecks": [
+    {
+      "name": "named non-native contract/scope/postgres/composition/MA1 suite",
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "milliseconds": 2566.50708,
+      "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/jobs/contract.test.ts lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts lib/readiness/official-truth-product-v3/jobs/postgres.test.ts lib/readiness/official-truth-product-v3/jobs/composition.test.ts lib/readiness/official-truth-product-v3/method/authority.test.ts"
+    },
+    {
+      "name": "focused TypeScript noEmit",
+      "rootFiles": 16,
+      "diagnostics": 0,
+      "configuration": "tsconfig.json compilerOptions; incremental:false; exact16 TypeScript paths from sourceFiles only"
+    },
+    {
+      "name": "targeted ESLint no-cache",
+      "rootFiles": 16,
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "evidencePrecision": [
+    "61 unit tests passed with zero failures/skips; protocol doubles and pure checks are not native persistence evidence.",
+    "The 240-call final-disposition unit exercises real generic queue, standalone MA1 and scope through a handwritten fixed bridge, not the private authorityCore bridge at that limit.",
+    "Final full U01-U07/N01-N15 assertion map remains unfinished at interruption.",
+    "Green dispatch-head CI/Preview does not verify these unpublished runtime bytes."
+  ],
+  "ciEntry": {
+    "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+    "unconditional": true,
+    "availabilitySkip": false,
+    "existingWorkflowUnchanged": true
+  },
+  "implementedNativeBoundsAwaitingCI": {
+    "effectMs": 240000,
+    "wholeCleanupMs": 60000,
+    "testMs": 300000,
+    "maxSequentialClusters": 3,
+    "maxChildren": 2,
+    "maxFixtureConnectionsPerCluster": 16,
+    "aggregateJobsLanes": 4,
+    "aggregateIntakeLanes": 4,
+    "aggregateMethodLanes": 4,
+    "aggregateWorkConnections": 40,
+    "maxM04Observers": 2,
+    "maxMethodObservers": 1
+  },
+  "amendments": [
+    {
+      "id": "T01",
+      "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754518445",
+      "boundary": "Only new fixed parameter 6 uses NULLIF($6::text, empty string)::integer."
+    },
+    {
+      "id": "T02",
+      "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754713898",
+      "boundary": "New scripts and all twenty-nine new functions use pg_catalog,pg_temp; eleven predecessor config pins unchanged."
+    },
+    {
+      "id": "T03",
+      "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6754943624",
+      "boundary": "Four connections per committing M04/S1 lane, two per MA1 read lane; observers/fixture sessions counted separately; no cap increase."
+    }
+  ],
+  "nextSteps": [
+    "Same-session R9 implementation and source-bound targeted checks",
+    "Finish final assertion map/self-review and update all changed source hashes",
+    "Root independent corrected-source review and exact-head publication",
+    "Existing GitHub CI including unconditional native assertions and actual cleanup receipt"
+  ],
+  "holdState": {
+    "method": "NOT_APPROVED",
+    "issue1139": "NOT_RELEASE_READY / 17 gaps",
+    "issue917": "Specific readback refusal remains; no retry, reformulation, delegation, transport switch or human substitute",
+    "other": [
+      "#1131",
+      "both #1135 holds",
+      "#968",
+      "#911",
+      "#913"
+    ],
+    "activation": false,
+    "ready": false,
+    "merged": false
+  },
+  "disposition": "STOP_FOR_USER_REQUESTED_HANDOFF_NO_AUTOMATIC_FOLLOWUP_SLICE"
+}

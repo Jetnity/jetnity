@@ -1,0 +1,248 @@
+{
+  "schema": "jetnity.m04.readonly-native-ownership-final-delta-review.v1",
+  "reviewer": "/root/m04_uncertainty_advisory",
+  "capturedAt": "2026-11-10T00:41:26.745107+00:00",
+  "disposition": "NO_OPEN_BLOCKING_SOURCE_FINDING_IN_BOUNDED_RUNTIME_LIFETIME_DELTA_NATIVE_CI_PENDING",
+  "snapshotReceipt": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/receipt.json",
+    "bytes": 3884,
+    "sha256": "26a3478177679d3713b3dfb53a5f79de8bd6a954a3edb2703056cef87a4008e8",
+    "coverage": "Complete receipt read."
+  },
+  "sourceManifest": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/source-manifest.json",
+    "bytes": 21710,
+    "sha256": "d8034825c45e3e5899e95ee402e6e297a623078b82993c4b5c1c2a031856c48f",
+    "coverage": "Complete manifest read; all18 source-file pins independently reproduced. Protected-dispatch comparisons and author checks remain attributed claims, not repeated Git/CI proof."
+  },
+  "sourceDigest": {
+    "format": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
+    "recomputedSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
+    "matches": true,
+    "fileCount": 18
+  },
+  "resolvedAtSource": [
+    "W6-01/R8 scenario failure propagation and truthful group receipt",
+    "W6-02/R8 registered complete worker finalizers and teardown ordering",
+    "W5-01/R7-03 closing rejection retention plus native child-owner regression source",
+    "W5-02/M04-T03 finite physical-work/transient-observer accounting and terminal backend inventory",
+    "V6 N04/N06 scope qualification through actual post-preflight START race"
+  ],
+  "priorCorrectedUnchanged": [
+    "R6-01 adapter cancellation cleanup source"
+  ],
+  "remainingProof": [
+    "Actual native execution in unchanged CI",
+    "Full exact-head integration/release gates",
+    "Root/SQL-peer substantive scopes"
+  ],
+  "nonblockingLimits": [
+    "IPC transit not subtracted from reconstructed parent monotonic timer; immutable absolute cap and original child Held check unchanged.",
+    "Final cleanup assertions outside error collector may replace final aggregate diagnostic if cleanup itself fails, but precede positive receipt.",
+    "Connection bounds are source-derived; no measured peak or performance evidence claimed."
+  ],
+  "authorityDelta": {
+    "oldSha256": "c6c94442f4ed1fbd36d77933fc7cc4df35090213185e6c1d7c104277ef0f83cf",
+    "newSha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+    "change": "Removal of unused _terminal = false fourth parameter only; no behavioral delta."
+  },
+  "independentNativeExecution": false,
+  "testExecution": false,
+  "runtimePass": false,
+  "technicalLeadPass": false,
+  "phaseBAccepted": false,
+  "ready": false,
+  "merge": false,
+  "actions": {
+    "authorSourceEdited": false,
+    "git": false,
+    "network": false,
+    "nativeSqlSocket": false,
+    "hosted": false,
+    "forbiddenReadback": false
+  },
+  "files": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "bytes": 17362,
+      "sha256": "073219ff29e73bcf694f01de304ad0315152132aa00b19b900a097362f210ccc",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "bytes": 22124,
+      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34",
+      "coverage": "Unchanged prior independently reviewed source hash; inherited custody/known-failure chronology.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "bytes": 13319,
+      "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "bytes": 27249,
+      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d",
+      "coverage": "Unchanged prior independently reviewed source hash.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9",
+      "coverage": "Unchanged unconditional native import previously read in full.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "bytes": 4330,
+      "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "bytes": 8816,
+      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e",
+      "coverage": "Unchanged prior independently reviewed source hash.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "bytes": 5985,
+      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "bytes": 12578,
+      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8",
+      "coverage": "Unchanged prior independently reviewed source hash.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16656,
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+      "coverage": "Complete finite V4-to-V7 diff; sole deletion is unused fourth function parameter; prior complete source review inherited.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 37608,
+      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "bytes": 6321,
+      "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "bytes": 6324,
+      "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 135856,
+      "sha256": "e44904fd6c4451308e327ef5f3e416a466f27084d3f5389077d0dbe7e2cb1cb0",
+      "coverage": "Hash/byte identity only for this bounded review; substantive review is Root/SQL-peer scope or inherited where explicitly stated.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "bytes": 13278,
+      "sha256": "b5c91faedd6ffb2da258d0614d29e7193fc538523b9176a51f18460f788ecdae",
+      "coverage": "Identical hash to fully read corrected V5/V6 adapter; inherited prior review, not reread.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 125663,
+      "sha256": "a69f41cf8126c419c60ee174f746588e8841884e40362de79f3ce871bd0eb5a6",
+      "coverage": "Bounded V6-to-V7 runtime ownership delta: child helper, scenario wrapper, fixture aggregate admission/inventory, full final teardown, N04/N06 race, N09 recovery ownership, N12/R6/R7/fifth-call custody; other business/SQL matrices owned by Root and SQL peer.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "matchesReceipt": true
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-final-candidate-v7/scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "bytes": 8128,
+      "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033",
+      "coverage": "Identical hash to fully read V5/V6 worker; inherited prior review, not reread.",
+      "repositoryPath": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "matchesReceipt": true
+    }
+  ],
+  "baselines": [
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-native-wip-v6/scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 81571,
+      "sha256": "67b316cb862c1d63eb3186975d699ac796d22a9196d4c98868b4655a9567e9b1",
+      "coverage": "V6 prior-review baseline; used for bounded delta comparison."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/phase-b-coherent-wip-v4/lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16675,
+      "sha256": "c6c94442f4ed1fbd36d77933fc7cc4df35090213185e6c1d7c104277ef0f83cf",
+      "coverage": "Prior reviewed authority bytes for exact finite diff."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-root-review/author-delivery-v1/M04_PLAN_V1.md",
+      "bytes": 120753,
+      "sha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
+      "coverage": "Frozen task contract inherited from prior complete review; N06 /start wording and finite lifecycle gates."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/phase-b-native-wip-review-v6.md",
+      "bytes": 13441,
+      "sha256": "ceaef6a1a4d3460e913f8530d2a1ef34b2e5bbc5859f8c05a54cf9f986f3d5e8",
+      "coverage": "Previous reviewer conclusions preserved and resolved explicitly."
+    },
+    {
+      "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/phase-b-native-wip-review-v5.md",
+      "bytes": 14706,
+      "sha256": "5e440f86b23f44494738b923371a5ab58bb1d90bbd19c779187165201a8ba7f7",
+      "coverage": "Prior R6/R7/T03/IPC conclusions and Root T03 adjudication."
+    }
+  ],
+  "report": {
+    "path": "/workspace/scratch/01cbe1264212/recovery/m04-runtime-phase-a-review/final-phase-b-native-review-v7.md",
+    "bytes": 16031,
+    "sha256": "24f433b11452e5aacd80aa05186b8a4fd96819543047493b1230b61814decda7",
+    "coverage": "Complete final bounded reviewer report."
+  }
+}
