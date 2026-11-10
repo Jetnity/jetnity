@@ -12,6 +12,8 @@ import Link from 'next/link'
 import { ArrowRight, CalendarDays, CloudOff, ListChecks, Users } from 'lucide-react'
 
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { reiseFoto } from '@/lib/trips/organisieren/katalog'
+import Reisefoto from '@/components/trips/organisieren/Reisefoto'
 import { reiseOrte } from '@/lib/trips/reise-orte'
 import { cn } from '@/lib/utils'
 import type { TripSource, TripSummary } from '@/types/trips'
@@ -44,6 +46,9 @@ export default function Reisekarte({
   ueberschrift?: 'h2' | 'h3'
 }) {
   const Titel = ueberschrift
+  const ziel = reise.stages[0]
+  const foto = reiseFoto(ziel, true)
+  const atlas = foto === reiseFoto(undefined, true)
 
   return (
     <Link
@@ -51,45 +56,56 @@ export default function Reisekarte({
       className={cn(
         'group min-w-0 outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-brand-600/30',
         schale
-          ? 'flex h-full flex-col bg-white p-4 transition-colors hover:bg-surface-50'
-          : 'block rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_12px_40px_rgba(15,46,42,0.06)] transition-colors hover:border-brand-600/30',
+          ? 'flex h-full flex-col bg-white transition-colors hover:bg-surface-50'
+          : 'block overflow-hidden rounded-[26px] border border-black/5 bg-white shadow-[0_12px_40px_rgba(15,46,42,0.06)] transition-colors hover:border-brand-600/30',
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
-              {STATUS_BEZEICHNUNG[reise.status]}
-            </span>
-            {quelle === 'guest' ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
-                <CloudOff className="h-3 w-3" />
-                Nur auf diesem Gerät
-              </span>
+      <div className="relative aspect-[2.55] overflow-hidden bg-surface-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover">
+        {atlas ? (
+          <svg aria-hidden="true" className="h-full w-full" viewBox="0 8 360 144" preserveAspectRatio="xMidYMid slice">
+            <image href="/images/organisieren/reiseatlas.webp" width="360" height="180" />
+            {typeof ziel?.latitude === 'number' && typeof ziel?.longitude === 'number' ? (
+              <circle cx={ziel.longitude + 180} cy={90 - ziel.latitude} r="4" fill="#164339" stroke="white" strokeWidth="1.5" />
             ) : null}
-          </div>
-          <Titel className="mt-2 hyphens-auto break-words text-lg font-semibold tracking-[-0.03em] text-brand-800 sm:text-xl">
-            {reise.title}
-          </Titel>
-          <p className="mt-1 hyphens-auto break-words text-sm leading-5 text-ink-700">{reiseOrte(reise)}</p>
-        </div>
-        <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-ink-600 transition-colors group-hover:text-brand-600" />
+          </svg>
+        ) : <Reisefoto src={foto} breite={680} hoehe={267} />}
       </div>
+      <div className="p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
+                {STATUS_BEZEICHNUNG[reise.status]}
+              </span>
+              {quelle === 'guest' ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+                  <CloudOff className="h-3 w-3" />
+                  Nur auf diesem Gerät
+                </span>
+              ) : null}
+            </div>
+            <Titel className="mt-2 hyphens-auto break-words text-lg font-semibold tracking-[-0.03em] text-brand-800 sm:text-xl">
+              {reise.title}
+            </Titel>
+            <p className="mt-1 hyphens-auto break-words text-sm leading-5 text-ink-700">{reiseOrte(reise)}</p>
+          </div>
+          <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-ink-600 transition-colors group-hover:text-brand-600" />
+        </div>
 
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line-100 pt-3 text-xs leading-5 text-ink-800">
-        <span className="flex min-w-0 items-start gap-2">
-          <CalendarDays className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
-          {zeitraum(reise)}
-        </span>
-        <span className="flex min-w-0 items-start gap-2">
-          <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
-          {reise.travellers} {reise.travellers === 1 ? 'Person' : 'Personen'}
-        </span>
-        <span className="flex min-w-0 items-start gap-2">
-          <ListChecks className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
-          {reise.dayCount} {reise.dayCount === 1 ? 'Tag' : 'Tage'} · {reise.itemCount}{' '}
-          {reise.itemCount === 1 ? 'Punkt' : 'Punkte'}
-        </span>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line-100 pt-3 text-xs leading-5 text-ink-800">
+          <span className="flex min-w-0 items-start gap-2">
+            <CalendarDays className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+            {zeitraum(reise)}
+          </span>
+          <span className="flex min-w-0 items-start gap-2">
+            <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+            {reise.travellers} {reise.travellers === 1 ? 'Person' : 'Personen'}
+          </span>
+          <span className="flex min-w-0 items-start gap-2">
+            <ListChecks aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
+            {reise.dayCount} {reise.dayCount === 1 ? 'Tag' : 'Tage'}{reise.itemCount > 0 ? ` · ${reise.itemCount} ${reise.itemCount === 1 ? 'Planpunkt' : 'Planpunkte'}` : ''}
+          </span>
+        </div>
       </div>
     </Link>
   )

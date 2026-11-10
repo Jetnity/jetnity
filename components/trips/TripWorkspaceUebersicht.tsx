@@ -6,7 +6,9 @@ import { ArrowRightLeft, BedDouble, ChevronRight, Compass, PenLine, Plane, Spark
 import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
-import { INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { buchungZeittext } from '@/lib/account/buchungen'
+import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { ART_BEZEICHNUNG, INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { AttentionAbleitung, AttentionAktion } from '@/lib/trips/attention'
 import {
   workspacePraeferenzHatInhalt,
@@ -107,6 +109,7 @@ export default function TripWorkspaceUebersicht({
   onAttention,
   workspace = false,
   onRoute,
+  onItem,
 }: {
   reise: Trip
   ungeplantePunkte?: readonly TripItem[]
@@ -117,8 +120,11 @@ export default function TripWorkspaceUebersicht({
   onAttention: (aktion: AttentionAktion) => void
   workspace?: boolean
   onRoute?: (tagId?: string) => void
+  onItem?: (itemId: string) => void
 }) {
   const praeferenzen = workspacePraeferenzSicht(reise)
+  const buchungen = [...reise.days.flatMap((tag) => tag.items), ...(ungeplantePunkte ?? reise.ohneTag)]
+    .filter((punkt) => kannBuchungMarkieren(punkt) && istGebucht(punkt))
 
   return (
     <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className="mt-2 grid min-w-0 max-w-full gap-2">
@@ -179,6 +185,37 @@ export default function TripWorkspaceUebersicht({
           })}
         </ul>
       </section>
+
+      {buchungen.length > 0 ? (
+        <section aria-labelledby="reise-buchungen" className="overflow-hidden rounded-[24px] border border-line-200 bg-white">
+          <h3 id="reise-buchungen" className="px-4 pt-4 text-lg font-semibold text-brand-800">Buchungen dieser Reise</h3>
+          <p className="px-4 pb-3 text-sm text-ink-700">In Jetnity als gebucht markiert</p>
+          <ul className="divide-y divide-line-100 border-t border-line-100">
+            {buchungen.map((punkt) => {
+              const zeit = buchungZeittext(punkt)
+              const inhalt = (
+                <span className="min-w-0">
+                  <strong className="block break-words text-sm text-brand-800">{punkt.title}</strong>
+                  <span className="text-xs text-ink-700">{ART_BEZEICHNUNG[punkt.kind]}{zeit ? ` · ${zeit}` : ''}</span>
+                </span>
+              )
+              return (
+                <li key={punkt.id}>
+                  {onItem ? (
+                    <button
+                      type="button"
+                      onClick={() => onItem(punkt.id)}
+                      className="flex min-h-12 w-full items-center justify-between px-4 py-3 text-left hover:bg-surface-50"
+                    >
+                      {inhalt}<ChevronRight aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    </button>
+                  ) : <div className="px-4 py-3">{inhalt}</div>}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} /> : null}
 

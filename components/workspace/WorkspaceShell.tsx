@@ -16,7 +16,7 @@ import './workspace-surfaces.css'
 
 const PERSONAL = [
   { label: 'Meine Reisen', href: '/reisen', icon: Luggage },
-  { label: 'Deine Welt', href: '/account/welt', icon: Globe2 },
+  { label: 'Meine Welt', href: '/account/welt', icon: Globe2 },
   { label: 'Reisende', href: '/account/travellers', icon: UsersRound },
   { label: 'Einstellungen', href: '/account/settings', icon: Settings2 },
 ] as const
@@ -162,7 +162,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     [navigation, mobile, actions, title, closeNavigation, finishNavigation])
   const heading = pathname === '/planen' ? 'Reise planen'
     : pathname === '/reisen' ? 'Meine Reisen'
-    : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
+    : pathname === '/account/welt' ? 'Meine Welt' : pathname === '/account' ? 'Mein Konto' : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
 
   return (
     <WorkspaceContext.Provider value={slots}>

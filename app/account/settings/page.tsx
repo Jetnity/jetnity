@@ -31,8 +31,7 @@ export default function AccountEinstellungenSeite() {
             Einstellungen
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">
-            Hier verwaltest du die vorhandenen Kontoeinstellungen. Weitere Bereiche folgen, sobald sie
-            fachlich bereit sind.
+            Verwalte deine Sicherheit und lade eine Kopie deiner gespeicherten Daten herunter.
           </p>
         </header>
 

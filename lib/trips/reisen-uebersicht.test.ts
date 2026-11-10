@@ -72,7 +72,7 @@ describe('gemeinsame Reiseübersicht', () => {
     assert.match(daten, /accountGraphLesen/)
     const konto = readFileSync(join(hier, '../../app/account/page.tsx'), 'utf8')
     const welt = readFileSync(join(hier, '../../app/account/welt/page.tsx'), 'utf8')
-    assert.match(konto, /reisenLaden/)
+    assert.doesNotMatch(konto, /reisenLaden|besucheLaden/)
     assert.match(welt, /reisenLaden/)
     assert.equal(konto.includes('reisenSammlung'), false)
     assert.equal(welt.includes('reisenSammlung'), false)

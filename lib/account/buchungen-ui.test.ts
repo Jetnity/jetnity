@@ -27,7 +27,7 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
   test('Account-Navigation führt Buchungen weiterhin nicht als eigenen Punkt', () => {
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.label),
-      ['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'],
+      ['Mein Konto', 'Reisen', 'Meine Welt', 'Reisende', 'Einstellungen'],
     )
     const hrefs: string[] = ACCOUNT_NAVIGATION.map((eintrag) => eintrag.href)
     assert.equal(hrefs.includes('/account/bookings'), false)
