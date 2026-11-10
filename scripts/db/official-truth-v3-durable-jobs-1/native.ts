@@ -864,6 +864,66 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
           else await assert.rejects(query, code('P7601'), 'R22 ' + kind + ': ' + label)
         }
       }
+      // R24: 36 fixed keysets, default/C results and the untouched original expression in one SELECT.
+      // SQL NULL literals exercise the actual NULL guards; the 33-key and multidimensional cases use fallback.
+      const exactKeyRows = await f.owner.query(String.raw`WITH cases(label,v,expected,wanted) AS (VALUES
+          ('01 exact keys','{"a":1,"b":2}'::jsonb,ARRAY['a','b']::text[],true),
+          ('02 reordered keys','{"a":1,"b":2}'::jsonb,ARRAY['b','a']::text[],true),
+          ('03 nested arbitrary values','{"b":{"deeper":{"x":null}},"a":[true,{"ignored":1}]}'::jsonb,ARRAY['b','a']::text[],true),
+          ('04 empty key','{"":1}'::jsonb,ARRAY['']::text[],true),
+          ('05 Unicode keys','{"é":1,"中":2}'::jsonb,ARRAY['中','é']::text[],true),
+          ('06 control key',jsonb_build_object(chr(1),1),ARRAY[chr(1)]::text[],true),
+          ('07 escaped key text',$r24$ {"quote\"":1,"backslash\\":2,"slash/":3} $r24$::jsonb,ARRAY['quote"','backslash'||chr(92),'slash/']::text[],true),
+          ('08 missing key','{"a":1}'::jsonb,ARRAY['a','b']::text[],false),
+          ('09 extra key','{"a":1,"b":2}'::jsonb,ARRAY['a']::text[],false),
+          ('10 wrong equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a','c']::text[],false),
+          ('11 nested only key','{"outer":{"a":1}}'::jsonb,ARRAY['a']::text[],false),
+          ('12 duplicate equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a','a']::text[],false),
+          ('13 NULL equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a',NULL]::text[],false),
+          ('14 duplicate NULL equal cardinality','{"a":1,"b":2,"c":3}'::jsonb,ARRAY['a','a',NULL]::text[],false),
+          ('15 excess duplicate','{"a":1}'::jsonb,ARRAY['a','a']::text[],false),
+          ('16 only NULL element','{}'::jsonb,ARRAY[NULL]::text[],false),
+          ('17 SQL NULL value',NULL::jsonb,ARRAY['a']::text[],false),
+          ('18 SQL NULL expected','{"a":1}'::jsonb,NULL::text[],false),
+          ('19 both SQL NULL',NULL::jsonb,NULL::text[],false),
+          ('20 JSON null','null'::jsonb,'{}'::text[],false),
+          ('21 JSON boolean','true'::jsonb,ARRAY['true']::text[],false),
+          ('22 JSON number','18'::jsonb,ARRAY['18']::text[],false),
+          ('23 JSON string','"a"'::jsonb,ARRAY['a']::text[],false),
+          ('24 JSON array','["a"]'::jsonb,ARRAY['a']::text[],false),
+          ('25 empty object and expected','{}'::jsonb,'{}'::text[],true),
+          ('26 empty expected nonempty object','{"a":1}'::jsonb,'{}'::text[],false),
+          ('27 zero lower bound','{"a":1,"b":2}'::jsonb,'[0:1]={b,a}'::text[],true),
+          ('28 negative lower bound','{"a":1,"b":2}'::jsonb,'[-2:-1]={b,a}'::text[],true),
+          ('29 multidimensional exact','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,a}}'::text[],true),
+          ('30 multidimensional wrong','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,z}}'::text[],false),
+          ('31 multidimensional NULL','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,NULL}}'::text[],false),
+          ('32 multidimensional duplicate','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,c}}'::text[],false),
+          ('33 exact 32 keys','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32}'::jsonb,ARRAY['k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k01']::text[],true),
+          ('34 exact 33 keys fallback','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32,"k33":33}'::jsonb,ARRAY['k33','k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k01']::text[],true),
+          ('35 wrong 33 key set fallback','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32,"k33":33}'::jsonb,ARRAY['k01','k02','k03','k04','k05','k06','k07','k08','k09','k10','k11','k12','k13','k14','k15','k16','k17','k18','k19','k20','k21','k22','k23','k24','k25','k26','k27','k28','k29','k30','k31','k32','k99']::text[],false),
+          ('36 literal NULL key','{"NULL":1}'::jsonb,ARRAY['NULL']::text[],true)
+        ), checks AS (
+          SELECT label,wanted,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original FROM cases
+        ), c_checks AS (
+          SELECT label,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual_c,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original_c
+          FROM (SELECT label,v,expected COLLATE "C" AS expected FROM cases) c_input
+        ) SELECT checks.label,wanted::text,actual::text,original::text,actual_c::text,original_c::text
+          FROM checks JOIN c_checks USING(label) ORDER BY checks.label COLLATE "C"`)
+      assert.equal(exactKeyRows.length, 36)
+      for (const row of exactKeyRows) {
+        assert.ok(row.wanted === 'true' || row.wanted === 'false', 'R24 literal boolean: ' + row.label)
+        assert.equal(row.actual, row.wanted, 'R24 default fixed oracle: ' + row.label)
+        assert.equal(row.actual, row.original, 'R24 default original expression: ' + row.label)
+        assert.equal(row.actual_c, row.wanted, 'R24 C fixed oracle: ' + row.label)
+        assert.equal(row.actual_c, row.original_c, 'R24 C original expression: ' + row.label)
+      }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,

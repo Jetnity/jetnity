@@ -1,3 +1,37 @@
+# R24 / Recovery Task V15 — source delivery, new CI pending
+
+Captured: 2026-11-10T12:55:53Z. Same actual author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. Existing **Draft #1182**, baseline `ca6fcb8930e68e394156d67351ee087c4cddb180`, tree `c688145cd14af3c7675d63e4174f8c07f6b772f9`. Origin #1178 remains historically merged; this is its linked post-merge review fix, not another product slice.
+
+**Current R24 Typecheck/native/runtime/TL-PASS/Ready/merge: false / not executed.** Root's [finite implementation authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250) selects only the capped positive path in `exact_keys_v1` and an additive N02 matrix. No author project/SQL/parser/test execution, publication or hosted access occurred.
+
+## Exact source delivery
+
+- SQL: 139034 bytes / SHA256 `9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42` / blob `af60edee3776d9eba5b13b6db3cfad733b245567`.
+- Native: 175160 bytes / SHA256 `f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a` / blob `560c1cebc71ce21936b08d3d6296de0a8edea843`.
+- All-18 aggregate: `daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3`.
+
+Only the existing helper body changes. An actual nested CASE selects object JSONB with a one-dimensional expected array of at most 32 elements. Membership, deletion-empty and equal cardinality must all prove true; every other case uses the full original expression verbatim. The selector is not a new acceptance limit. All 29 declarations/attributes, other SQL bytes and 16 other source pins remain unchanged.
+
+One 6625-byte N02 insertion adds **36 fixed cases in one read-only SELECT**, with literal booleans and the original expression as independent comparison, each in default and explicit C mode. All previous queries, the existing 36-query R22 block, R23 annotation and all 31 group names/order remain exact. Current runtime coverage is pending.
+
+## Actual preceding failure
+
+Root's [R24 investigation receipt](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767105970) records terminal [CI 42812226588](https://github.com/Jetnity/jetnity/actions/runs/42812226588): Repository verification 129816262544 and aggregate failed; six companions passed. Typecheck/Lint passed; Tests failed; hygiene/build were skipped. **24/31 native groups passed**, including N02, both R9 witnesses and full ledger. Cycle group 25 reached the unchanged 240s budget at indices 37/36 after **113 acknowledged commands and 38 STARTs**; the following database outcome is **UNKNOWN**.
+
+All 26926 effects settled and all 4242 connections closed; one cluster stopped, zero pending/children/cleanup errors. Total 240470ms / cleanup 21ms. Core: 8683 total / 8679 pass / 2 fail / 2 inherited layout skips / 0 cancelled. Full terminal log SHA256 `2b15d0fe865df0cce10a6b7bba74c45797927cbc54138118e8258dbd90672b09`; complete compact receipt SHA256 `4341b23118a220ce190efd38b21ee0fcb8c070ad9e3f7b5a5b00682566da849c`.
+
+This is the **fourteenth distinct failure**. All 13 earlier failure objects and the complete genuine R21 PR success remain exact. Separately appended later metadata records R22 run 42810301725 as terminal FAILURE with six companions successful; its original 11:49:52 in-progress snapshot remains untouched, and its Tests/M04 never executed.
+
+Root-prepared relative excerpt: `docs/official-truth-product-v3/M04_RECOVERY_R24_NATIVE_FAILURE_V15.txt`, 5880 bytes / SHA256 `4de4a4325b4987078774e75fb62a2a6d7f2e4ed6a36f57288c25e0a0f29ead7e`. This new V15 file is not claimed present at historical ca6f.
+
+## Remaining gate and ownership
+
+Root independently reconstructs/reviews, publishes with the expected-head lease, and requires full new-head CI/native/Preview/reviews plus mandatory actual-main CI/native/Production before closure. The 240s effects + 60s cleanup / 300s total, both full quotas, R9, inherited 761-pair/minOwned4182 proof, final N15 and all resource bounds remain unchanged. No measured speedup, budget margin or Production SLO is claimed; history validation remains quadratic.
+
+SQL UNAPPLIED, Method NOT_APPROVED, #1139/17 gaps, forbidden #917 lane and every other Owner/privacy/hosted gate remain. **AUTHOR STOP** after this finite delivery; no Ready, merge or automatic next slice.
+
+## Previous author status — preserved verbatim
+
 # M04 Phase B — R23 / Recovery Task V14 current author status
 
 **AUTHOR STOP; the new type-only correction is prepared and unexecuted.** Current PR [#1182](https://github.com/Jetnity/jetnity/pull/1182) remains Draft; origin #1178 remains historically merged. Same Generation2 author/session.

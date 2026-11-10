@@ -85,9 +85,16 @@ GRANT USAGE ON SCHEMA official_v3_jobs_api TO ot_v3_jobs_caller;
 
 CREATE FUNCTION official_v3_jobs_private.exact_keys_v1(v jsonb, expected text[]) RETURNS boolean
 LANGUAGE sql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-  SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+  SELECT CASE WHEN
+    CASE WHEN jsonb_typeof(v)='object' AND array_ndims(expected)=1 AND cardinality(expected)<=32
+    THEN v ?& expected AND (v-expected)='{}'::jsonb
+      AND (SELECT count(*) FROM jsonb_object_keys(v))=cardinality(expected)
+    ELSE false END
+  THEN true ELSE
+    v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
     COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
     = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])
+  END
 $$;
 CREATE FUNCTION official_v3_jobs_private.unique_json_v1(v json, d integer) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$

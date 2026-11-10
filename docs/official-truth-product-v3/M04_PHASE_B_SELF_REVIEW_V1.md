@@ -1,3 +1,37 @@
+# R24 / Recovery Task V15 — bounded author self-review
+
+Captured: 2026-11-10T12:55:53Z. Same Generation2 author/session. Baseline `ca6fcb8930e68e394156d67351ee087c4cddb180`; existing Draft #1182. [Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250). This is a source/data review, not a Typecheck, SQL execution, native proof or Technical-Lead PASS.
+
+## Exact-key equivalence
+
+The only changed SQL body is `exact_keys_v1`. An actual nested CASE protects the new delete and key-count operations with object JSONB, one-dimensional expected array and cardinality <=32. The complete prior guards, two C-sorted array_agg/COALESCE expressions and original comparison remain verbatim in the fallback.
+
+Let K be the actual keys and U the distinct non-NULL expected elements. Membership proves U subset K; deletion-empty proves K subset U. Equal actual-key count and full expected cardinality then exclude duplicate and NULL positions. The original C-sorted arrays are byte-identical on the selected positive path. False, NULL and nonselected cases execute the original expression, preserving collation-sensitive equality. The 32 selector is not an acceptance restriction; all current caller lists are at most 20 keys.
+
+Primary PostgreSQL 16 source was read at commit `c372fbbd8e911f2412b80a8c39d7079366565d67`: `jsonb_op.c` blob `054351f0a31e7621c2eec8e20d20c11808c9ffeb`, `jsonfuncs.c` blob `70cb922e6b7aa45629483bb64d3380d07a1e81a0`, and SQL-function parameter collation in `functions.c` blob `f55424eb5ad8a97ba3c76169860762c05015d8cd`. JSONB deletion rejects scalar/multidimensional inputs, so the CASE placement is material. The unchanged LANGUAGE sql/search_path and original fallback remain part of the reasoning. No nondeterministic-collation execution is claimed.
+
+The source model counts 14 helper calls per representative queued Discovery dedup history row. The planned ledger has 253 squared = 64009 such row validations, hence 896126 helper calls / 1792252 original aggregate-plus-COALESCE expressions. These are written-operation counts only. JSONB membership/deletion/count add their own cost; no measured timing or speedup follows. No command/history/transition validation or error order is removed, and history remains quadratic.
+
+## Prepared finite oracles
+
+A sole 6625-byte N02 insertion contains 36 fixed VALUES cases in one SELECT. Every row has a literal boolean, actual helper and complete original-expression result, in default and explicit C modes: 72 case/mode observations awaiting CI. Coverage includes reordered/exact keys, arbitrary nested values, empty/Unicode/control/escaped keys, missing/extra/wrong/nested-only keys, duplicates/NULLs at matching raw cardinality, SQL NULL distinct from JSON null, every scalar/array category, empty arrays, zero/negative lower bounds, correct/incorrect multidimensional inputs and exact 32/33 boundaries.
+
+The SQL NULL cases use actual `NULL::jsonb` / `NULL::text[]` literals. String.raw preserves the escaped-key SQL text. Fixed results use `boolean::text` values `true`/`false`; the original differential appears twice verbatim. No availability skip, collation object, extra connection, history seed, any/suppression/domain cast or modified existing oracle is added. The existing R22 36-query block and R23 safe annotation remain exact.
+
+SQL pin: 139034 / `9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42` / `af60edee3776d9eba5b13b6db3cfad733b245567`. Native pin: 175160 / `f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a` / `560c1cebc71ce21936b08d3d6296de0a8edea843`. Aggregate: `daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3`. Pure text comparison preserves every outside byte, all 29 declarations, 31 proof labels/order and 16 other source pins. Independent review separately reconstructed the same final source pins; that is source review only.
+
+## Evidence, risk and STOP
+
+Actual ca6f Typecheck/Lint and 24 groups passed, including N02/both R9/full ledger. Cycle group 25 failed at global 240s after 113 acknowledged commands and 38 STARTs; later database outcome UNKNOWN. Cleanup: 26926/26926 settled, 4242/4242 closed, no pending/errors, 240470ms total / 21ms cleanup. First 23 groups 90403ms, ledger 106544ms, failed cycle 42668.60444ms. Full receipt and Root log pins are preserved in the fourteenth historical record; no current R24 runtime result is inferred.
+
+All 13 prior failures, separate genuine R21 success and Markdown tails remain exact. The later terminal status of the old R22 run is appended separately without rewriting its original snapshot or inventing native/cleanup execution. Earlier local 64-test/TypeScript/lint evidence remains historical, not R24 execution.
+
+P1 remains unmet full exact-head and actual-main acceptance under unchanged bounds. No source-only proof guarantees enough runtime margin, full-cap Rule latency or a Production SLO. Root owns Task/Review/Evidence/Excerpt V15, publication and re-gating. SQL remains UNAPPLIED and every Owner/hosted/privacy/#917 gate remains in force.
+
+**AUTHOR STOP.** No author local/project/parser/SQL/native/typecheck/build execution, installation, replacement environment, hosted access, publication, Ready, merge or next slice.
+
+## Previous author self-review — preserved verbatim
+
 # M04 Phase B — R23 / Recovery Task V14 current author self-review
 
 **Source/data review only; AUTHOR STOP.** Same `/root/m04_durable_jobs_writer_g2` session, existing Draft #1182. No new runtime or Technical-Lead acceptance.

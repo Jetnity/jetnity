@@ -2,17 +2,19 @@
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
-### M04 current — R23 / Recovery V14, Typecheck fix prepared; full acceptance pending
+### M04 current — R24 / Recovery V15, bounded key-proof correction; full acceptance pending
 
-**2026-11-10 11:59:50 UTC.** [Current Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V14](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V14.md) · [Task V14](official-truth-product-v3/M04_RECOVERY_TASK_V14.md) · [Evidence V14](official-truth-product-v3/M04_RECOVERY_R23_EVIDENCE_V14.json) · [live Draft #1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
+**2026-11-10 13:11:03 UTC.** [Current Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V15](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V15.md) · [Task V15](official-truth-product-v3/M04_RECOVERY_TASK_V15.md) · [Evidence V15](official-truth-product-v3/M04_RECOVERY_R24_EVIDENCE_V15.json) · [live Draft #1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
 
-Published R22 head **54c475a25e626fd811a2c523a3247a7523d1891c** is blocked: CI 42810301725 Repository-verification Typecheck **TS7022**, native.ts:861. Tests/M04 did not execute; no new native/cleanup receipt. Exact Preview ERROR. Same G2 author delivered only a **25-byte safe type annotation**; Root and reviewer independently matched Native **dbc3ad51567753dd5ebc71fe6106504f5a6d112f73aed8e62f136454a8c626a2** and all-18 aggregate **1d30c2168051a359797cd6700ee3e1d6dab7b023a026119a1377cd8ee880d2bc**. Other 17 sources, initializer/runtime bytes, 36 queries, 31 groups and all budgets remain exact. New head/CI still pending at this snapshot.
+Published ca6f remains blocked: **CI42812226588 failed at native group25 after 24/31 passes**, including both R9 witnesses and full ledger. Cycle index37/36; following DB outcome UNKNOWN. All26926 effects settled/all4242 connections closed; no cleanup error. Typecheck/Lint and six companions succeeded, exact Preview READY; this does not accept native failure.
 
-Origin #1178 remains genuinely R21-passed/MERGED. Mandatory actual-main CI 42801478210 on **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** subsequently FAILED at group 25 after 24 passing groups; cleanup completed, following DB outcome UNKNOWN. That gate remains open. All 12 previous failures plus distinct Typecheck failure and genuine historical success remain separated. **M04 remains unfinished.**
+Same G2 author delivered a capped positive-only exact-key proof with **complete original fallback**, preserving all declarations/history/error order and budgets. Native adds **36 fixed cases / 1 SELECTs** inside existing N02. Root/reviewer independently matched SQL **9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42**, Native **f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a**, aggregate **daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3**; other16source pins, all prior36queries/31groups remain exact. New-head execution is pending.
 
-First unfinished step: Root publishes/readbacks the finite R23 correction on existing Draft branch **fix/official-truth-v3-m04-postmerge-r22-20261110**, then complete new exact-head CI/Preview/live gates and actual-main CI/Production. No Ready/Merge from agents, no unchanged-known-bad rerun. Production READY on old main 4bfa does not close CI. D1 remains separately unfinished/Draft; no automatic next slice.
+Actual main **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** remains unaccepted after its separate native failure. Origin #1178 remains genuinely R21-passed/MERGED. Preserve all13older failure objects, new14thfailure and genuine success separately. **M04 remains unfinished.**
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED, without retry/substitute. #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. All hosted/local/environment boundaries remain detailed in V14.
+First unfinished step: Root expected-ca6f publish/full readback, then complete new exact-head CI/Preview/live gates and mandatory actual-main CI/native/Production. No agent Ready/Merge, no unchanged-known-bad rerun. D1 #1169 and concurrent #1181 remain separate unfinished work; no automatic next slice.
+
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute; #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. SQL UNAPPLIED; no hosted/local/environment action. Full boundaries in V15.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->
 
