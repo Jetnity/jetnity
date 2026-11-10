@@ -560,8 +560,8 @@ export default function TripWorkspacePlan({
     </div>
   )
 
-  if (quelle && gemessen && mapsActive && !hinweis && !kanteUnlesbar && !itemSichtbar) {
-    return <section ref={root} className="col-span-full min-w-0" aria-label="Reiseplan" data-plan-premium="4">
+  if (quelle && gemessen && !hinweis && !kanteUnlesbar && !itemSichtbar) {
+    return <section ref={root} className="col-span-full min-w-0" aria-label="Reiseplan" data-tagesplan-modul="ein" data-plan-premium="4">
       <Etappenplan key={reise.id} reise={reise} quelle={quelle} route={route.zeilen} tagId={kanonischerTagId}
         focusRoute={routeBetont} onRoute={onZurRoute} onDay={onTagWechseln} onItem={onPunktOeffnen}
         onEdge={onKanteWaehlen} onSaved={onReiseGespeichert} editor={editorHalt} editorOffen={formularOffen && !!formularTag}

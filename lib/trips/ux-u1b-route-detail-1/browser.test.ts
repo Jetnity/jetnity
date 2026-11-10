@@ -138,8 +138,14 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
   before(async () => {
     const css = await projektCss()
     const js = await bundeln()
-    const dokument = html(css, js)
-    server = createServer((_req, res) => {
+    const dokument = html(css + '\n' + readFileSync('components/trips/reiseplan/etappen.css', 'utf8'), js)
+    server = createServer((req, res) => {
+      const file = ['/images/reiseatlas/laender.json','/images/reiseatlas/world.webp','/images/reiseatlas/asia.webp'].find(path => req.url === path)
+      if (file) {
+        res.setHeader('Content-Type', file.endsWith('.json') ? 'application/json' : 'image/webp')
+        res.end(readFileSync('public'+file))
+        return
+      }
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' })
       res.end(dokument)
     })
@@ -157,12 +163,46 @@ describe('mounted route and detail', { timeout: 300_000 }, () => {
     const page = await browser.newPage({ viewport: { width, height } })
     const netz: string[] = []
     page.on('request', (request) => {
-      if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') netz.push(request.url())
+      if ((request.resourceType() === 'fetch' || request.resourceType() === 'xhr') && !request.url().startsWith(origin + '/images/reiseatlas/')) netz.push(request.url())
     })
     await page.goto(`${origin}/${search}`, { waitUntil: 'networkidle' })
     await page.waitForSelector('[data-tagesplan-modul="ein"]')
     return { page, netz }
   }
+
+  test('Reiseatlas: echter Tageslink, Tastatur-Rückkehr, Verlauf, mobiler Kartenwechsel und gebundener Editor', async () => {
+    const { page, netz } = await offen(390, 844, '?ansicht=plan&tag=day-11&foreign=1#marke')
+    try {
+      const atlas = page.locator('[data-trip-atlas]')
+      await atlas.getByRole('button', {name: 'Punkt hinzufügen',exact:true}).waitFor()
+      const selected = atlas.locator('.et-days [aria-pressed="true"]')
+      assert.equal(await selected.getAttribute('data-timeline-tag'), 'day-11')
+      await atlas.getByRole('button',{name:'Alle Etappen',exact:true}).focus()
+      await page.keyboard.press('Enter')
+      await page.waitForFunction(() => !new URL(location.href).searchParams.has('tag') && document.activeElement?.matches('[data-u1c-lauf]'))
+      assert.equal(new URL(page.url()).hash,'#marke')
+      assert.equal(new URL(page.url()).searchParams.get('foreign'),'1')
+      await atlas.locator('.et-mobile-tabs').getByRole('button',{name:'Karte'}).click()
+      assert(await atlas.locator('.et-map').isVisible())
+      await atlas.locator('.et-mobile-tabs').getByRole('button',{name:'Reiseplan'}).click()
+      await page.goBack()
+      await page.waitForFunction(() => new URL(location.href).searchParams.get('tag') === 'day-11')
+      await atlas.locator('.et-tabs').getByRole('button',{name:'Tagesplan'}).click()
+      await atlas.getByRole('button',{name:'Punkt hinzufügen',exact:true}).click()
+      const input = page.getByLabel('Ort oder Aktivität')
+      await input.fill('Mein Entwurf für Tag elf')
+      await page.locator('[data-u1b-anlegen-halten]').click()
+      await atlas.getByRole('button',{name:'Speichern',exact:true}).click()
+      await page.waitForFunction(() => document.querySelector('form[aria-label="Punkt hinzufügen"]')?.getAttribute('aria-busy')==='true')
+      await modus(page,'Übersicht')
+      await page.setViewportSize({width:1280,height:800})
+      assert.equal(await input.inputValue(),'Mein Entwurf für Tag elf')
+      await modus(page,'Reiseplan')
+      assert.equal(await input.inputValue(),'Mein Entwurf für Tag elf')
+      assert.deepEqual(await page.evaluate(()=> (window as unknown as {__u1b:{writes:string[]}}).__u1b.writes),['day-11:Mein Entwurf für Tag elf'])
+      assert.deepEqual(netz,[])
+    } finally {await page.close()}
+  })
 
   test('390 zeigt zuerst die Route, Zur Route gilt für Tag und Punkt, derselbe Tag öffnet wieder', async () => {
     const { page, netz } = await offen(390, 844, '?ansicht=plan&foreign=1#marke')

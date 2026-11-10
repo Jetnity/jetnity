@@ -79,7 +79,7 @@ export default function Etappenplan({
   unassigned,
 }: Props) {
   const [ansicht, setAnsicht] = useState<'plan' | 'karte'>('plan')
-  const [tab, setTab] = useState<'uebersicht' | 'tage'>('uebersicht')
+  const [tab, setTab] = useState<'uebersicht' | 'tage'>(() => tagId ? 'tage' : 'uebersicht')
   const [stoppForm, setStoppForm] = useState(false)
   const [punkt, setPunkt] = useState<{ lat: number; lng: number } | null>(null)
   const [platzieren, setPlatzieren] = useState(false)
@@ -146,6 +146,9 @@ export default function Etappenplan({
         type="button"
         className="et-stage"
         data-u1c-route-lauf
+        data-u1c-lauf={id || dayIds[0]}
+        data-u1c-tage={dayIds.join(' ')}
+        data-u1c-tag-ids={JSON.stringify(dayIds)}
         data-timeline-tag={dayIds[0]}
         onClick={() => choose(id, dayIds[0])}
       >
@@ -338,7 +341,6 @@ export default function Etappenplan({
                     </div>
                     {activeDay && days.some((d) => d.id === activeDay.id) && (
                       <>
-                        {editor}
                         {day}
                       </>
                     )}
@@ -423,6 +425,9 @@ export default function Etappenplan({
               {unassigned}
             </>
           )}
+          <div hidden={!(editorOffen && showDetail && !stoppForm && !edge)} inert={!(editorOffen && showDetail && !stoppForm && !edge)}>
+            {editor}
+          </div>
           {status}
         </section>
         <div className="et-map-wrap">
