@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R13_SAME_GENERATION2_SOURCE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T02:50:47Z",
+  "status": "R14_SAME_GENERATION2_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T03:15:26Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "82b116fbb4c6f001f72e60459e83965edcaf8302",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662",
+  "dispatchHead": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,14 +19,13 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+    "sourceBaseline": "313c1db0d96d62f94f22c5db94c74bb75779f542",
     "sourceFilesChanged": [
-      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "sourceFilesUnchanged": 16,
+    "sourceFilesUnchanged": 17,
     "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R13 starts from published82b116f. Root owns current-main ancestry, review and publication; the author performed no Git mutation.",
+    "mainIntegration": "R14 starts from published 313c1db. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -34,7 +33,7 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V4.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V5.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -120,8 +119,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 138948,
-      "sha256": "5b586cb8291caeb954f6afffb80d82a1666c9050e209e1df3bf0f81dc169f87c"
+      "bytes": 139506,
+      "sha256": "5cf0852b7ad101d6fa0a1d792c88657df9bb1d35a32d2bf7e2b4bd3765219921"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -129,7 +128,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
+  "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -436,7 +435,9 @@
     "historicalForR12": true,
     "r12Limit": "Preserved d9 comparison predating R12/current-main integration; not rerun. R12 only transforms the pinned candidate SQL.",
     "historicalForR13": true,
-    "r13Limit": "Historical d9 comparison predating current-main integration and R13; not rerun. R13 transforms only the two explicitly pinned owned source files."
+    "r13Limit": "Historical d9 comparison predating current-main integration and R13; not rerun. R13 transforms only the two explicitly pinned owned source files.",
+    "historicalForR14": true,
+    "r14Limit": "Historical d9 comparison, not rerun. The sole R14 source transformation is the approved native.ts fixture replacement; other 17 pins retained from 313c."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -489,7 +490,9 @@
       "executedForR12": false,
       "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
       "executedForR13": false,
-      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
+      "executedForR14": false,
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -508,7 +511,9 @@
       "executedForR12": false,
       "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
       "executedForR13": false,
-      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
+      "executedForR14": false,
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
     },
     {
       "name": "targeted ESLint",
@@ -522,7 +527,9 @@
       "executedForR12": false,
       "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
       "executedForR13": false,
-      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
+      "executedForR14": false,
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
     }
   ],
   "corrections": {
@@ -684,19 +691,59 @@
       "fullBuildExecuted": false,
       "previousChecks": "Historical 64/64 named tests and focused TypeScript/lint checks were not rerun. native.ts now changes, so the earlier static checks do not validate the current source.",
       "scope": "Only jobs-candidate.sql, native.ts and four author evidence files. No grant, ownership/role change, protected source/helper, new connection, budget, workflow/package, hosted or Owner-gate change.",
-      "nextGate": "Independent Root exact-source review and publication, followed by new exact-head unchanged CI. No unchanged-code retry, native PASS, Ready or merge is claimed."
+      "nextGate": "Independent Root exact-source review and publication, followed by new exact-head unchanged CI. No unchanged-code retry, native PASS, Ready or merge is claimed.",
+      "historicalSnapshotBeforeR14": true,
+      "laterCIObservation": {
+        "runId": 42746442139,
+        "repositoryVerificationJobId": 129599589985,
+        "boundedRuntimePath": "INFERRED_COMPLETED_BEFORE_N02_LINE617_FAILURE",
+        "meaning": "Inferred from sequential execution reaching the explicit line 617 assertion: the earlier four denied USAGE assertions, restricted-runtime success, same-OID rename refusal, finally restoration/full-catalog equality and later probe success completed. No individual per-assertion receipt exists. This is bounded R13 evidence, not completion of N02, 31 native groups or R9.",
+        "N02OverallPass": false,
+        "R9NativeWitnesses": [],
+        "nativePass": false
+      }
+    },
+    "R14": {
+      "finding": "R14",
+      "status": "FINITE_N02_FIXTURE_CORRECTION_PREPARED_NATIVE_PENDING",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444",
+      "baselineHead": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+      "baselineTree": "fdc1b62d266aba6f28a04c85ba358966f915dd36",
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 139506,
+        "sha256": "5cf0852b7ad101d6fa0a1d792c88657df9bb1d35a32d2bf7e2b4bd3765219921"
+      },
+      "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
+      "exactReplacement": {
+        "old": "      const alternate = createM04SubjectIdentity('rule_research', { ...valid.ruleInput, context: contextFor(60) })\n      assert.ok(alternate)",
+        "new": "      assert.equal(createM04SubjectIdentity('rule_research', { ...valid.ruleInput, context: contextFor(60) }), null,\n        'enqueue-shaped input is rejected by the strict subject identity reader')\n      const alternate = createM04SubjectIdentity('rule_research', {\n        context: contextFor(60), method: valid.ruleInput.method,\n        factKind: valid.ruleInput.factKind, researchReason: valid.ruleInput.researchReason,\n      })\n      assert.ok(alternate)\n      assert.notEqual(alternate.jobKey, valid.identity.jobKey, 'alternate fixture has a distinct job locator')\n      assert.notEqual(alternate.subjectText, prospective.body.subjectText, 'alternate fixture has a distinct canonical subject')"
+      },
+      "cause": "A full enqueue-shaped object contains operationId/jobId/attemptLimit beyond the subject identity reader strict context/method/factKind/researchReason fields. The reader correctly returned null.",
+      "correction": "Retain that exact bad shape as an explicit null assertion; construct the alternate from the four explicit identity fields with contextFor(60); require existence and distinct jobKey/subjectText before the unchanged wrong-subject SQL refusal.",
+      "preserved": "All actual P7601 wrong-subject/forged-command, P7504 epoch and unchanged-state assertions stay byte-identical; contract/reader/SQL/rollback and 17 other sources unchanged.",
+      "environment": "UNAVAILABLE",
+      "newLocalExecution": false,
+      "nativeExecuted": false,
+      "localTestsRun": false,
+      "fullBuildExecuted": false,
+      "previousChecks": "64/64 and static checks are historical, not rerun. The 313c CI executed the bounded R13 path before failing N02; corrected R14 source remains unexecuted.",
+      "scope": "Only native.ts plus four author evidence files; no protected source/helper/role/ACL/budget/workflow/package or hosted change.",
+      "nextGate": "Independent Root review, expected-head publication and new exact-head unchanged complete CI; no Ready/merge/automatic next slice."
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R13_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R14_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
-    "runId": 42742925010,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42742925010",
-    "repositoryVerificationJobId": 129588134830,
-    "conclusion": "failure",
-    "source": "Generation2 independently read the exact non-Auth Repository verification job log through GitHub; no local/native reproduction.",
+    "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+    "tree": "fdc1b62d266aba6f28a04c85ba358966f915dd36",
+    "runId": 42746442139,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42746442139",
+    "repositoryVerificationJobId": 129599589985,
+    "repositoryVerificationConclusion": "failure",
+    "source": "Generation2 independently fetched the exact non-Auth Repository verification job log through GitHub; no local reproduction.",
+    "fullLogSha256": "cd8fe512ca2409cdaa4a48019a6f6a15b466fa54bc7d39659c78b388884f8a33",
     "core": {
       "tests": 8660,
       "passed": 8656,
@@ -706,16 +753,16 @@
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
-      "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+      "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 3020,
-      "cleanupMilliseconds": 209,
+      "effectAndCleanupMilliseconds": 2569,
+      "cleanupMilliseconds": 162,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 551,
-        "settled": 551,
+        "started": 587,
+        "settled": 587,
         "pending": 0,
         "connections": 90,
         "closed": 90,
@@ -724,7 +771,7 @@
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 41
+          "milliseconds": 28
         }
       ],
       "nestedRaceWitnesses": [],
@@ -743,17 +790,41 @@
       "failure": {
         "phase": "proof_2:N02",
         "error": {
-          "kind": "postgres",
-          "code": "42501"
+          "kind": "assertion",
+          "code": "assertion_failed"
         }
       },
       "cleanupFailures": [],
       "cleanupFailureCount": 0,
       "nativePass": false
     },
-    "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
-    "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
-    "diagnosis": "CI proves candidate installation and N01 completion, then proof_2:N02/42501 with no R9 witnesses. Source/PG16 call-path inspection identifies runtime predecessor name resolution under postgres without S1 schema USAGE. The first fixed runtime probe is a source-derived location, not an exact SQL position from the receipt."
+    "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+    "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
+    "exactFailure": {
+      "file": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "line": 617,
+      "column": 14,
+      "assertion": "assert.ok(alternate)",
+      "code": "ERR_ASSERTION"
+    },
+    "r13BoundedObservation": "Inferred from sequential execution reaching the explicit line 617 assertion: the earlier four denied USAGE assertions, restricted-runtime success, same-OID rename refusal, finally restoration/full-catalog equality and later probe success completed. No individual per-assertion receipt exists. This is bounded R13 evidence, not completion of N02, 31 native groups or R9.",
+    "diagnosis": "The failing fixture spread the full enqueue-shaped input into a strict four-field subject reader; operationId/jobId/attemptLimit correctly cause null. The reader and all actual negative SQL assertions remain unchanged.",
+    "status": "completed",
+    "conclusion": "failure",
+    "terminalVerification": {
+      "checkedAt": "2026-11-10T03:15:26Z",
+      "source": "Generation2 independently fetched commit workflow runs and run jobs through GitHub; no Auth logs accessed.",
+      "successfulCompanionJobs": 6,
+      "aggregateJobId": 129604596107,
+      "aggregateConclusion": "failure",
+      "repositoryVerificationSteps": {
+        "typecheck": "success",
+        "lint": "success",
+        "tests": "failure",
+        "hygiene": "skipped",
+        "productionBuild": "skipped"
+      }
+    }
   },
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
@@ -764,15 +835,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of the R13 OID predicate, restricted-role regression and four author evidence files",
-    "Root publication preserving current-main ancestry and every other source byte",
-    "New exact-head unchanged CI: all mandatory native groups, R9 witnesses, bounded lifetime and complete cleanup receipts",
-    "Root exact-head deployment, review-thread and Owner-gate review; no activation or automatic follow-up slice"
+    "Independent Root exact-source review of the R14 fixture replacement and four author evidence files",
+    "Root expected-head publication preserving all 17 other sources, current-main ancestry and protected files",
+    "New exact-head unchanged complete CI with all 31 native groups, R9 witnesses and actual bounded cleanup evidence",
+    "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_R13_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R14_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845"
+    "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662"
   },
   "historicalCIRuns": [
     {
@@ -928,6 +999,97 @@
       "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
       "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
       "diagnosis": "CI proves candidate installation and N01 completion, then proof_2:N02/42501 with no R9 witnesses. Source/PG16 call-path inspection identifies runtime predecessor name resolution under postgres without S1 schema USAGE. The first fixed runtime probe is a source-derived location, not an exact SQL position from the receipt."
+    },
+    {
+      "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+      "tree": "fdc1b62d266aba6f28a04c85ba358966f915dd36",
+      "runId": 42746442139,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42746442139",
+      "repositoryVerificationJobId": 129599589985,
+      "repositoryVerificationConclusion": "failure",
+      "source": "Generation2 independently fetched the exact non-Auth Repository verification job log through GitHub; no local reproduction.",
+      "fullLogSha256": "cd8fe512ca2409cdaa4a48019a6f6a15b466fa54bc7d39659c78b388884f8a33",
+      "core": {
+        "tests": 8660,
+        "passed": 8656,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 2569,
+        "cleanupMilliseconds": 162,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 587,
+          "settled": 587,
+          "pending": 0,
+          "connections": 90,
+          "closed": 90,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 28
+          }
+        ],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 1,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 1,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_2:N02",
+          "error": {
+            "kind": "assertion",
+            "code": "assertion_failed"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+      "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
+      "exactFailure": {
+        "file": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "line": 617,
+        "column": 14,
+        "assertion": "assert.ok(alternate)",
+        "code": "ERR_ASSERTION"
+      },
+      "r13BoundedObservation": "Inferred from sequential execution reaching the explicit line 617 assertion: the earlier four denied USAGE assertions, restricted-runtime success, same-OID rename refusal, finally restoration/full-catalog equality and later probe success completed. No individual per-assertion receipt exists. This is bounded R13 evidence, not completion of N02, 31 native groups or R9.",
+      "diagnosis": "The failing fixture spread the full enqueue-shaped input into a strict four-field subject reader; operationId/jobId/attemptLimit correctly cause null. The reader and all actual negative SQL assertions remain unchanged.",
+      "status": "completed",
+      "conclusion": "failure",
+      "terminalVerification": {
+        "checkedAt": "2026-11-10T03:15:26Z",
+        "source": "Generation2 independently fetched commit workflow runs and run jobs through GitHub; no Auth logs accessed.",
+        "successfulCompanionJobs": 6,
+        "aggregateJobId": 129604596107,
+        "aggregateConclusion": "failure",
+        "repositoryVerificationSteps": {
+          "typecheck": "success",
+          "lint": "success",
+          "tests": "failure",
+          "hygiene": "skipped",
+          "productionBuild": "skipped"
+        }
+      }
     }
   ],
   "environment": "UNAVAILABLE",
@@ -940,7 +1102,12 @@
     {
       "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845"
+    },
+    {
+      "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662"
     }
   ],
-  "newLocalExecutionForR13": false
+  "newLocalExecutionForR13": false,
+  "newLocalExecutionForR14": false
 }

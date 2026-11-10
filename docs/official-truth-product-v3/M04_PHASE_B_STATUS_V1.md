@@ -1,3 +1,39 @@
+# M04 Phase-B author delivery status V1 — R14 current
+
+**R14 SAME-SESSION FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Task V5 dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444); baseline `313c1db0d96d62f94f22c5db94c74bb75779f542`, tree `fdc1b62d266aba6f28a04c85ba358966f915dd36`.
+
+## Finite correction
+
+Only the N02 alternate-identity fixture in native.ts changes. The previously supplied full enqueue-shaped object is now explicitly required to return null. The alternate is constructed from exactly context, method, factKind and researchReason, using contextFor(60). It must exist and have a different jobKey and subjectText before the unchanged actual wrong-subject P7601 assertion.
+
+The strict reader, forged-command/epoch rejections and unchanged-state checks remain intact. All seventeen other source files are byte-identical, including candidate SQL `a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59` and rollback `9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66`.
+
+- native.ts: **139506 bytes**, SHA256 `5cf0852b7ad101d6fa0a1d792c88657df9bb1d35a32d2bf7e2b4bd3765219921`.
+- Eighteen-source aggregate: `23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f`.
+- Both JSON files retain all eighteen pins, twenty-two coverage rows and thirty-one native group obligations.
+
+## Actual evidence
+
+[CI 42746442139](https://github.com/Jetnity/jetnity/actions/runs/42746442139) is independently verified **completed/failure**. Repository verification 129599589985 failed; all six companion jobs succeeded; aggregate 129604596107 failed. Repository typecheck/lint succeeded, tests failed, hygiene/build were skipped.
+
+N01 passed in 28 ms. N02 failed at `assert.ok(alternate)`, native.ts:617:14. Core: 8660 tests / 8656 passed / 2 failed / 2 skipped / 0 cancelled; cleanup: 587/587 settled, 0 pending, 90/90 closed, 1 cluster stopped, 0 errors; 2569 ms total. R9 witnesses remain empty.
+
+Completion of the earlier R13 restricted-runtime and same-OID rename/restoration checks is **inferred from sequential arrival at line 617**, with no individual assertion receipts. N02, all 31 groups and R9 have not passed. All four failed CI histories remain preserved.
+
+Environment **UNAVAILABLE**. No new local test/typecheck/lint/parser/native/build execution. Previous 64/64 checks are historical; this corrected source is unexecuted.
+
+## Author STOP
+
+**STOP FOR ROOT REVIEW.** Root owns Task V5, independent acceptance, publication and complete exact-head re-gating. No Ready, merge, hosted operation or follow-up slice. Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refusal and all other existing Owner gates remain.
+
+---
+
+## Historical R13 and earlier author records
+
+The exact prior record follows. Its current wording and pins are historical; this R14 block and the updated JSON fields govern this delivery.
+
 # M04 Phase-B author delivery status V1 — R13 current
 
 **R13 SAME-SESSION CORRECTION PREPARED. INDEPENDENT ROOT REVIEW AND NEW EXACT-HEAD NATIVE CI REQUIRED.**

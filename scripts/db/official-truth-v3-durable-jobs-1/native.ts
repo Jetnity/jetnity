@@ -613,8 +613,15 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       const valid = m04Fixture('native-full-boundary', { context: contextFor(59) })
       const prospective = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: valid.ruleInput }, null)
       const untouched = await f.state(valid.identity.jobKey)
-      const alternate = createM04SubjectIdentity('rule_research', { ...valid.ruleInput, context: contextFor(60) })
+      assert.equal(createM04SubjectIdentity('rule_research', { ...valid.ruleInput, context: contextFor(60) }), null,
+        'enqueue-shaped input is rejected by the strict subject identity reader')
+      const alternate = createM04SubjectIdentity('rule_research', {
+        context: contextFor(60), method: valid.ruleInput.method,
+        factKind: valid.ruleInput.factKind, researchReason: valid.ruleInput.researchReason,
+      })
       assert.ok(alternate)
+      assert.notEqual(alternate.jobKey, valid.identity.jobKey, 'alternate fixture has a distinct job locator')
+      assert.notEqual(alternate.subjectText, prospective.body.subjectText, 'alternate fixture has a distinct canonical subject')
       await assert.rejects(fixed(runtime, { ...prospective, body: { ...prospective.body, subjectText: alternate.subjectText } }, await currentEpoch()), code('P7601'))
       await assert.rejects(fixed(runtime, { ...prospective, body: { ...prospective.body,
         commit: { ...prospective.body.commit, commandKey: 'queue-command:v3:' + '0'.repeat(64) } } }, await currentEpoch()), code('P7601'))

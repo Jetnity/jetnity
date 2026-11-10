@@ -1,3 +1,35 @@
+# M04 Phase-B author self-review V1 — R14 current
+
+**R14 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444) resumes `/root/m04_durable_jobs_writer_g2` against `313c1db0d96d62f94f22c5db94c74bb75779f542`.
+
+## Cause and source-only correction
+
+The exact CI stack identifies `assert.ok(alternate)` at native.ts:617:14. [The strict identity reader](https://github.com/Jetnity/jetnity/blob/313c1db0d96d62f94f22c5db94c74bb75779f542/lib/readiness/official-truth-product-v3/jobs/contract.ts) permits only context/method/factKind/researchReason. The failing spread additionally includes operationId/jobId/attemptLimit; returning null is correct.
+
+The old bad shape is retained as an explicit rejection assertion. A separate four-field alternate uses contextFor(60) and the valid method/factKind/researchReason, then requires non-null and distinct jobKey/subjectText. The real wrong-subject SQL P7601, forged-command P7601, epoch P7504 and state-equality checks are untouched. No reader relaxation, removed negative case, skip or substituted persistence assertion.
+
+Only native.ts changes: 139506 bytes, SHA256 `5cf0852b7ad101d6fa0a1d792c88657df9bb1d35a32d2bf7e2b4bd3765219921`; aggregate `23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f`. Seventeen other source pins, including SQL/rollback, remain unchanged. Root and the read-only reviewer independently reconstructed the exact source bytes and found no additional blocker in this finite correction; this is source review only.
+
+## Execution truth
+
+I independently fetched [Repository job 129599589985](https://github.com/Jetnity/jetnity/actions/runs/42746442139/job/129599589985). Full non-Auth log SHA256: `cd8fe512ca2409cdaa4a48019a6f6a15b466fa54bc7d39659c78b388884f8a33`. Run/jobs metadata subsequently confirmed terminal failure, six successful companion jobs and failed aggregate 129604596107. Typecheck/lint succeeded; tests failed; hygiene/build were skipped.
+
+The native receipt contains N01 only (28 ms), N02 assertion failure, no R9 witness and nativePass:false. Cleanup: 587/587 settled, 90/90 closed, one stopped cluster, zero errors; 2569 ms total / 162 ms cleanup. Core: 8660 tests / 8656 passed / 2 failed / 2 skipped / 0 cancelled.
+
+Earlier R13 checks completed by inference from sequential arrival at line 617; there are no per-assertion receipts. This does not establish N02 completion or broader native acceptance. All four failed CI histories and all 22/31 coverage obligations are retained.
+
+The environment is **UNAVAILABLE**. No new local SQL/parser/test/typecheck/lint/native/build execution occurred. Historical 64/64 checks do not validate this native-source change. A new exact-head unchanged complete CI remains mandatory.
+
+**AUTHOR STOP FOR ROOT REVIEW.** No publication, Ready, merge or automatic next slice. All existing protected-source, resource, hosted and Owner gates remain; #917 is not retried or substituted.
+
+---
+
+## Historical R13 and earlier author self-reviews
+
+The exact prior record follows. Its old current claims and pins are historical; the R14 block above governs this delivery.
+
 # M04 Phase-B author self-review V1 — R13 current
 
 **R13 SAME GENERATION2 / SAME SESSION. SOURCE CORRECTION PREPARED; NEW NATIVE CI PENDING.** Author self-review is not Technical-Lead acceptance.
