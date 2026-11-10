@@ -3,7 +3,7 @@ import { writeFileSync } from 'node:fs'
 import { build } from 'esbuild'
 import { chromium } from 'playwright'
 const output = 'docs/evidence/account-world-explorer-1'
-const result = await build({ entryPoints: ['scripts/account-world-explorer-1-props.tsx'], bundle: true, write: false, platform: 'browser', jsx: 'automatic', define: { 'process.env': '{"NODE_ENV":"production"}' } })
+const result = await build({ entryPoints: ['scripts/account-world-explorer-1-props.tsx'], bundle: true, write: false, platform: 'browser', jsx: 'automatic', loader: { '.css': 'empty' }, define: { 'process.env': '{"NODE_ENV":"production"}' } })
 const browser = await chromium.launch({ channel: 'chrome' })
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
 const checks = []

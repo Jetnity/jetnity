@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Minus, Plus, RotateCcw } from 'lucide-react'
-import { WeltFuellungen, WeltMusterDefs, WeltPunktMarken } from '@/components/account/WeltZustaende'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Minus, Move, Plus, RotateCcw } from 'lucide-react'
+import { WeltFuellungen, WeltMusterDefs } from '@/components/account/WeltZustaende'
 import type { WeltLandFlaeche } from '@/lib/account/welt-laender'
 import { WORLD_MAP_GRENZ_PFADE, WORLD_MAP_LAND_PFADE, WORLD_MAP_SEE_PFADE } from '@/lib/account/world-map-geografie'
-import { weltKartenAnsicht, WORLD_MAP_RAHMEN_VIEWBOX } from '@/lib/account/world-map-ansicht'
+import { weltKartenAnsicht, weltPunktLage, WORLD_MAP_RAHMEN_VIEWBOX } from '@/lib/account/world-map-ansicht'
+import AtlasBeschriftung, { landPosition } from './AtlasBeschriftung'
 import { recordStatus, type ExplorerRecord } from '@/lib/account/world-explorer-1/presentation'
-import { clampViewport, RESET_VIEWPORT, viewportMarkers, viewportPoint, zoomViewport, type Viewport } from '@/lib/account/world-explorer-1/viewport'
+import { clampViewport, RESET_VIEWPORT, viewportMarkers, zoomViewport, type Viewport } from '@/lib/account/world-explorer-1/viewport'
 
 const LAND = WORLD_MAP_LAND_PFADE.join(' ')
 const SEE = WORLD_MAP_SEE_PFADE.join(' ')
@@ -30,6 +31,22 @@ export default function ExplorerMap({ records, flaechen, selected, onSelect }: {
   const [openGroup, setOpenGroup] = useState<string | null>(null)
   const drag = useRef<{ id: number; x: number; y: number; view: Viewport; moved: boolean } | null>(null)
   const suppressClick = useRef(false)
+  const markerRecords = useMemo(() => records.map((record) => {
+    const land = record.flaeche?.punkt
+    return land ? { ...record, punkt: weltPunktLage(land.x, land.y) } : record
+  }), [records])
+  const [lastSelection, setLastSelection] = useState<string | null>(null)
+  if (selected !== lastSelection) {
+    setLastSelection(selected)
+    const record = markerRecords.find((entry) => entry.id === selected)
+    const center = record?.punkt ?? (record?.flaeche?.pfad ? landPosition(record.flaeche.code) : null)
+    if (center) {
+      const scale = Math.max(2.5, view.scale)
+      setView(clampViewport({ scale, x: 0.5 - center.links / 100 * scale, y: 0.5 - center.oben / 100 * scale }))
+    } else if (!selected) {
+      setView(RESET_VIEWPORT)
+    }
+  }
   useEffect(() => {
     const element = surface.current
     if (!element) return
@@ -41,28 +58,28 @@ export default function ExplorerMap({ records, flaechen, selected, onSelect }: {
   }, [])
   // Normalized pan remains clamped under resize; only screen-space grouping changes.
   const bounded = clampViewport(view)
-  const groups = useMemo(() => viewportMarkers(records, view, size.width, size.height), [records, view, size])
+  const groups = useMemo(() => viewportMarkers(markerRecords, view, size.width, size.height), [markerRecords, view, size])
   const activeGroup = groups.find((g) => g.id === openGroup && g.records.length > 1)
   const zoom = (delta: number) => { setView((v) => zoomViewport(v, v.scale + delta)); setOpenGroup(null) }
   const pan = (x: number, y: number) => { setView((v) => clampViewport({ ...v, x: v.x + x, y: v.y + y })); setOpenGroup(null) }
   const reset = () => { setView(RESET_VIEWPORT); setMovement(false); setOpenGroup(null); drag.current = null }
   const transform = `translate(${bounded.x * RAHMEN.width} ${bounded.y * RAHMEN.height}) translate(0 ${RAHMEN.y}) scale(${bounded.scale}) translate(0 ${-RAHMEN.y})`
   return (
-    <div className="min-w-0" data-explorer-map>
-      <div role="group" aria-label="Kartenbedienung" className="mb-3 flex flex-wrap items-center gap-2">
+    <div className="jetnity-atlas-map" data-explorer-map>
+      <div role="group" aria-label="Kartenbedienung" className="jetnity-atlas-controls">
         <button type="button" className={BUTTON} aria-label="Karte vergrössern" disabled={view.scale >= 4} onClick={() => zoom(0.5)}><Plus size={18} aria-hidden /></button>
         <button type="button" className={BUTTON} aria-label="Karte verkleinern" disabled={view.scale <= 1} onClick={() => zoom(-0.5)}><Minus size={18} aria-hidden /></button>
         <output className="min-w-12 text-center text-sm text-brand-800" aria-label="Kartenzoom">{view.scale.toFixed(1)}×</output>
-        <button type="button" className={`${BUTTON} gap-2`} onClick={reset}><RotateCcw size={16} aria-hidden />Zurücksetzen</button>
+        <button type="button" className={`${BUTTON} gap-2`} onClick={reset}><RotateCcw size={16} aria-hidden /><span className="sr-only">Zurücksetzen</span></button>
         <button type="button" className={BUTTON} aria-pressed={movement} onClick={() => { setMovement((v) => !v); drag.current = null }}>
-          {movement ? 'Kartenbewegung beenden' : 'Karte verschieben'}
+          <Move size={17} aria-hidden /><span className="sr-only">{movement ? 'Kartenbewegung beenden' : 'Karte verschieben'}</span>
         </button>
       </div>
-      <p id={`${id}-hilfe`} className="mb-3 text-xs leading-5 text-ink-800">
+      <p id={`${id}-hilfe`} className="sr-only">
         {movement ? 'Kartenbewegung aktiv: Ziehen verschiebt die Karte. Zum Seitenscrollen Bewegung beenden.' : 'Die Seite lässt sich über der Karte normal scrollen. Zum Ziehen „Karte verschieben“ einschalten.'}
         {' '}Karte fokussieren: Pfeiltasten verschieben, + / − zoomen. Browser-Zoom bleibt verfügbar.
       </p>
-      <div data-world-map-rahmen="ein" className="rounded-[22px] bg-brand-900 p-6 shadow-[0_18px_40px_rgba(15,46,42,0.16)]">
+      <div data-world-map-rahmen="ein" className="jetnity-atlas-frame">
         <div ref={surface} role="group" aria-label="Weltkarte bewegen" aria-describedby={`${id}-hilfe`} tabIndex={0}
           data-explorer-viewport data-scale={bounded.scale} data-pan-x={bounded.x} data-pan-y={bounded.y}
           className="relative rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-citrus-400"
@@ -96,24 +113,29 @@ export default function ExplorerMap({ records, flaechen, selected, onSelect }: {
           onPointerLeave={(event) => { if (!event.currentTarget.hasPointerCapture(event.pointerId)) drag.current = null }}
           onClickCapture={(event) => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false } }}>
           <div className="overflow-hidden rounded-xl">
-            <svg viewBox={BASIS.viewBox} role="img" aria-labelledby={`${id}-titel ${id}-desc`} className="block h-auto w-full">
+            <svg viewBox={BASIS.viewBox} role="group" aria-labelledby={`${id}-titel ${id}-desc`} className="block h-auto w-full">
               <title id={`${id}-titel`}>Deine Weltkarte</title>
               <desc id={`${id}-desc`}>Länderflächen und Orte folgen Suche und Filter. Alle Treffer sind auch über die Liste erreichbar.</desc>
-              <WeltMusterDefs id={id} />
+              <WeltMusterDefs id={id} atlas />
+              <defs><clipPath id={`${id}-land`}><path d={LAND} clipRule="evenodd" /></clipPath></defs>
               <g transform={transform} data-explorer-transform>
-                <rect x={RAHMEN.x} y={RAHMEN.y} width={RAHMEN.width} height={RAHMEN.height} className="fill-brand-900" />
-                <path d={LAND} fillRule="evenodd" data-world-map-land="ein" className="fill-surface-75 stroke-brand-800/80 [vector-effect:non-scaling-stroke]" strokeWidth="1" />
+                <rect x={RAHMEN.x} y={RAHMEN.y} width={RAHMEN.width} height={RAHMEN.height} fill="#bedde1" />
+                <path d={LAND} fillRule="evenodd" data-world-map-land="ein" fill="#e8e4cc" stroke="#9caaa1" vectorEffect="non-scaling-stroke" strokeWidth=".65" />
+                <image href="/maps/erde-relief.webp" x="0" y="0" width="360" height="180" preserveAspectRatio="none" clipPath={`url(#${id}-land)`} />
                 <WeltFuellungen id={id} flaechen={flaechen} />
-                <path d={SEE} fillRule="evenodd" className="fill-brand-900" />
-                <path d={GRENZEN} fill="none" className="stroke-brand-900/65 [vector-effect:non-scaling-stroke]" strokeWidth="0.7" />
-                {BASIS.gitter.map((line) => <line key={line.schluessel} x1={line.x1} x2={line.x2} y1={line.y1} y2={line.y2} className="stroke-surface-0/20 [vector-effect:non-scaling-stroke]" strokeWidth="0.5" />)}
+                {flaechen.map((land) => land.pfad ? <path key={land.code} d={land.pfad}
+                  className="jetnity-atlas-country" fillRule="evenodd" pointerEvents="fill"
+                  tabIndex={0} role="button" aria-label={`${land.label}, ${land.zustand === 'beides' ? 'besucht und geplant' : land.zustand}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(`land:${land.code}`) } }}
+                  data-atlas-country={land.code} data-active={selected === `land:${land.code}`}
+                  onClick={() => onSelect(`land:${land.code}`)}><title>{land.label}</title></path> : null)}
+                <path d={SEE} fillRule="evenodd" fill="#bedde1" />
+                <path d={GRENZEN} fill="none" stroke="#687f77" pointerEvents="none" vectorEffect="non-scaling-stroke" strokeWidth=".65" />
+                {BASIS.gitter.map((line) => <line key={line.schluessel} x1={line.x1} x2={line.x2} y1={line.y1} y2={line.y2} stroke="#719ea2" opacity=".24" pointerEvents="none" vectorEffect="non-scaling-stroke" strokeWidth=".6" />)}
               </g>
             </svg>
           </div>
-          <WeltPunktMarken flaechen={flaechen} lageTransform={(p) => {
-            const next = viewportPoint(p, bounded)
-            return next.links >= 0 && next.links <= 100 && next.oben >= 0 && next.oben <= 100 ? next : null
-          }} />
+          <AtlasBeschriftung view={bounded} width={size.width} height={size.height} gruppen={groups} />
           {size.width > 0 ? groups.map((group) => <button key={group.id} type="button"
             data-explorer-marker={group.id} data-marker-count={group.records.length}
             aria-label={group.records.map((r) => `${r.label}, ${recordStatus(r)}`).join('; ')}
@@ -128,7 +150,7 @@ export default function ExplorerMap({ records, flaechen, selected, onSelect }: {
           </button>) : null}
         </div>
       </div>
-      <div role="group" aria-label="Kartenausschnitt verschieben" className="mt-3 flex flex-wrap gap-2">
+      <div role="group" aria-label="Kartenausschnitt verschieben" className="jetnity-atlas-directions">
         {([{ label: 'Westen', icon: ArrowLeft, x: 0.1, y: 0 }, { label: 'Osten', icon: ArrowRight, x: -0.1, y: 0 }, { label: 'Norden', icon: ArrowUp, x: 0, y: 0.1 }, { label: 'Süden', icon: ArrowDown, x: 0, y: -0.1 }]).map(({ label, icon: Icon, x, y }) => <button key={label} type="button" className={BUTTON} aria-label={`Kartenausschnitt nach ${label}`} disabled={view.scale === 1} onClick={() => pan(x, y)}><Icon size={18} aria-hidden /></button>)}
       </div>
       {activeGroup ? <div id={`${id}-gruppe`} className="mt-3 rounded-2xl border border-line-200 bg-surface-50 p-3">

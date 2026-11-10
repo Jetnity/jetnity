@@ -11,7 +11,7 @@
 export const BESUCHE_COPY = {
   einstieg: 'Besuchte Orte verwalten',
   seitenEyebrow: 'Deine Welt',
-  seitenTitel: 'Wo du schon warst',
+  seitenTitel: 'Meine Welt',
   seitenLead:
     'Trage hier ein, wo du wirklich gewesen bist – auch Reisen von lange vor Jetnity. Nur was du hier bestätigst, färbt deine Karte.',
   seitenHinweis:

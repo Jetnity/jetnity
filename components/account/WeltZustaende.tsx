@@ -53,17 +53,17 @@ export function weltMusterId(basis: string): string {
  * Definition der Schraffur. Die Musterweite steht in Projektionsgrad, damit sie
  * bei jeder Kartenbreite denselben Anteil der Fläche bedeckt.
  */
-export function WeltMusterDefs({ id }: { id: string }) {
+export function WeltMusterDefs({ id, atlas = false }: { id: string; atlas?: boolean }) {
   return (
     <defs>
       <pattern
         id={weltMusterId(id)}
-        width="4"
-        height="4"
+        width={atlas ? 1.8 : 4}
+        height={atlas ? 1.8 : 4}
         patternUnits="userSpaceOnUse"
         patternTransform="rotate(45)"
       >
-        <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/80" strokeWidth="1.7" />
+        <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/80" strokeWidth={atlas ? .22 : 1.7} />
       </pattern>
     </defs>
   )
@@ -199,6 +199,8 @@ export function WeltFuellungen({
           d={flaeche.pfad}
           fill="none"
           className={`${UMRISS[flaeche.zustand]} [vector-effect:non-scaling-stroke]`}
+          data-atlas-planned={flaeche.zustand === 'geplant' ? true : undefined}
+          data-atlas-both={flaeche.zustand === 'beides' ? true : undefined}
           strokeWidth="1.25"
           strokeLinejoin="round"
         />
@@ -226,7 +228,7 @@ export function WeltZustandProbe({
   const musterId = `${useId()}-probe`
 
   return (
-    <span aria-hidden="true" className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+    <span aria-hidden="true" data-atlas-key={zustand} className="relative flex h-5 w-5 shrink-0 items-center justify-center">
       <svg viewBox="0 0 16 16" className="h-4 w-4">
         <defs>
           <pattern
