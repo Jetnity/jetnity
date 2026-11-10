@@ -1,0 +1,281 @@
+M04 R27 / Recovery V18 — actual R26 failed execution, preserved before correction
+Head b8415a5f349a258f99109435ac174c9ed5b7a259; tree bf5f7c0e826fcfcb1218178c31b7b28336c9189a
+Run 42839339313 attempt 1 pull_request completed failure; full terminal Root observation 2026-11-10 15:13:42 UTC.
+Repository job 129910026311 terminal independently observed 2026-11-10 15:10:43 UTC before completed non-Auth log read.
+Complete log SHA256 067633a068fcf83d5a9c9e7216ab177b7cb114a69a289ec4e8ff3ec56c033024; 4251751 UTF-8 bytes.
+
+2026-11-10T15:08:10.2004179Z       ---
+2026-11-10T15:08:10.2004579Z       duration_ms: 89732.148034
+2026-11-10T15:08:10.2005410Z       ...
+2026-11-10T15:09:18.0860771Z     # Subtest: N05 sixty-four actual starts retain all older history and refuse the sixty-fifth claim
+2026-11-10T15:09:18.0885711Z     not ok 25 - N05 sixty-four actual starts retain all older history and refuse the sixty-fifth claim
+2026-11-10T15:09:18.0886495Z       ---
+2026-11-10T15:09:18.0886931Z       duration_ms: 67874.463317
+2026-11-10T15:09:18.0888193Z       location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:6219'
+2026-11-10T15:09:18.0889044Z       failureType: 'testCodeFailure'
+2026-11-10T15:09:18.0889593Z       error: 'M04 240s effect budget exceeded'
+2026-11-10T15:09:18.0890119Z       code: 'ERR_TEST_FAILURE'
+2026-11-10T15:09:18.0890578Z       stack: |-
+2026-11-10T15:09:18.0891445Z         Timeout.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:457:52)
+2026-11-10T15:09:18.0892349Z         listOnTimeout (node:internal/timers:585:17)
+2026-11-10T15:09:18.0893180Z         process.processTimers (node:internal/timers:521:7)
+2026-11-10T15:09:18.0894040Z       ...
+2026-11-10T15:09:18.0894450Z     1..25
+2026-11-10T15:09:18.0895387Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T15:09:18.0903082Z   ---
+2026-11-10T15:09:18.0903523Z   duration_ms: 240350.357393
+2026-11-10T15:09:18.0904808Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+2026-11-10T15:09:18.0905667Z   failureType: 'testCodeFailure'
+2026-11-10T15:09:18.0906262Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T15:09:18.0906799Z   code: 'ERR_TEST_FAILURE'
+2026-11-10T15:09:18.0907232Z   name: 'AggregateError'
+2026-11-10T15:09:18.0907653Z   stack: |-
+2026-11-10T15:09:18.0908523Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:2017:41)
+2026-11-10T15:09:18.0909652Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-11-10T15:09:18.0910615Z     async Test.run (node:internal/test_runner/test:1054:7)
+2026-11-10T15:09:18.0911381Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+2026-11-10T15:09:18.0912027Z   ...
+2026-11-10T15:09:18.1703289Z   ---
+2026-11-10T15:09:18.1703673Z   duration_ms: 4.833264
+
+COMPLETE ACTUAL M04 RECEIPT (not a future acceptance):
+{
+  "schema": "jetnity.m04.native.v1",
+  "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+  "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+  "executed": true,
+  "effectAndCleanupMilliseconds": 240348,
+  "cleanupMilliseconds": 16,
+  "clusters": 1,
+  "childProcesses": 0,
+  "lifetime": {
+    "started": 27438,
+    "settled": 27438,
+    "pending": 0,
+    "connections": 4242,
+    "closed": 4242,
+    "stoppedClusters": 1
+  },
+  "groups": [
+    {
+      "id": "N01",
+      "milliseconds": 26
+    },
+    {
+      "id": "N02",
+      "milliseconds": 1465
+    },
+    {
+      "id": "N03",
+      "milliseconds": 1697
+    },
+    {
+      "id": "N07",
+      "milliseconds": 8729
+    },
+    {
+      "id": "N07/R4",
+      "milliseconds": 837
+    },
+    {
+      "id": "N08",
+      "milliseconds": 10235
+    },
+    {
+      "id": "N08/U04",
+      "milliseconds": 2427
+    },
+    {
+      "id": "N02/U04",
+      "milliseconds": 822
+    },
+    {
+      "id": "N04/N06",
+      "milliseconds": 2072
+    },
+    {
+      "id": "N04/N06/N10",
+      "milliseconds": 2303
+    },
+    {
+      "id": "N05/N09",
+      "milliseconds": 2405
+    },
+    {
+      "id": "N09",
+      "milliseconds": 17389
+    },
+    {
+      "id": "N10/U06",
+      "milliseconds": 6584
+    },
+    {
+      "id": "N11",
+      "milliseconds": 2033
+    },
+    {
+      "id": "N11",
+      "milliseconds": 144
+    },
+    {
+      "id": "N12",
+      "milliseconds": 172
+    },
+    {
+      "id": "N04/N10/N12",
+      "milliseconds": 3755
+    },
+    {
+      "id": "N12/U06/R9",
+      "milliseconds": 12495
+    },
+    {
+      "id": "N12/R7-03",
+      "milliseconds": 528
+    },
+    {
+      "id": "N11",
+      "milliseconds": 2602
+    },
+    {
+      "id": "N11",
+      "milliseconds": 316
+    },
+    {
+      "id": "N11",
+      "milliseconds": 298
+    },
+    {
+      "id": "N13",
+      "milliseconds": 2624
+    },
+    {
+      "id": "N05/A03",
+      "milliseconds": 89735
+    }
+  ],
+  "nestedRaceWitnesses": [
+    {
+      "boundary": "i1_timeout",
+      "operation": "reserve_v1",
+      "target": {
+        "pid": "25120",
+        "birth": "2026-11-10 15:06:25.329161+00"
+      },
+      "control": {
+        "pid": "25119",
+        "birth": "2026-11-10 15:06:25.325989+00"
+      },
+      "holder": {
+        "pid": "24800",
+        "birth": "2026-11-10 15:06:21.601083+00"
+      },
+      "realSqlWaitObserved": true,
+      "abortDelivered": true,
+      "retainedExecutorDrained": true,
+      "backendAbsentWhileExecutorHeld": true,
+      "failConfirmObserved": true,
+      "terminalEffects": 0,
+      "beforeDrainSlot": "unavailable",
+      "afterDrainSlot": "invalid",
+      "heldMethods": 3,
+      "completedMethods": 0,
+      "outwardStatus": "worker_only",
+      "nativeAdmissionsAfterDrain": 45
+    },
+    {
+      "boundary": "worker_caller_abort",
+      "operation": "reserve_v1",
+      "target": {
+        "pid": "25964",
+        "birth": "2026-11-10 15:06:33.577842+00"
+      },
+      "control": {
+        "pid": "25963",
+        "birth": "2026-11-10 15:06:33.573594+00"
+      },
+      "holder": {
+        "pid": "25578",
+        "birth": "2026-11-10 15:06:30.433008+00"
+      },
+      "realSqlWaitObserved": true,
+      "abortDelivered": true,
+      "retainedExecutorDrained": true,
+      "backendAbsentWhileExecutorHeld": true,
+      "failConfirmObserved": false,
+      "terminalEffects": 0,
+      "beforeDrainSlot": "unavailable",
+      "afterDrainSlot": "invalid",
+      "heldMethods": 3,
+      "completedMethods": 0,
+      "outwardStatus": "unconfirmed",
+      "nativeAdmissionsAfterDrain": 44
+    }
+  ],
+  "quotaProgress": {
+    "currentGroup": "N05",
+    "boundary": "cycle_claim",
+    "indexBase": 0,
+    "millisecondsCap": 300000,
+    "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+    "ledger": {
+      "lastStartedIndex": 253,
+      "lastCompletedIndex": 253,
+      "commandRequestsStarted": 258,
+      "commandRequestsCompleted": 258,
+      "commandRequestMilliseconds": 454,
+      "fixedCallsStarted": 260,
+      "fixedCallsCompleted": 260,
+      "fixedCallMilliseconds": 89490,
+      "commandCallsStarted": 258,
+      "commandCallsCompleted": 258,
+      "commandCommits": 256,
+      "startCallsStarted": 1,
+      "startCallsCompleted": 1,
+      "startReservations": 1
+    },
+    "cycles": {
+      "lastStartedIndex": 50,
+      "lastCompletedIndex": 49,
+      "commandRequestsStarted": 152,
+      "commandRequestsCompleted": 152,
+      "commandRequestMilliseconds": 270,
+      "fixedCallsStarted": 203,
+      "fixedCallsCompleted": 202,
+      "fixedCallMilliseconds": 67763,
+      "commandCallsStarted": 152,
+      "commandCallsCompleted": 151,
+      "commandCommits": 151,
+      "startCallsStarted": 50,
+      "startCallsCompleted": 50,
+      "startReservations": 50
+    }
+  },
+  "connections": {
+    "aggregateWorkConnectionBound": 40,
+    "maximumJobs": 4,
+    "maximumIntake": 1,
+    "maximumMethod": 2,
+    "m04ObserverLimit": 2,
+    "maximumM04Observers": 2,
+    "methodObserverLimit": 1,
+    "fixturePerClusterLimit": 16,
+    "inheritedCommitGuardPairs": 0,
+    "minimumOwned": 0
+  },
+  "failure": {
+    "phase": "proof_25:N05",
+    "error": {
+      "kind": "fixture",
+      "code": "unclassified_failure"
+    }
+  },
+  "cleanupFailures": [],
+  "cleanupFailureCount": 0,
+  "nativePass": false
+}
+
+Core totals: {"tests":{"matches":1,"value":8683},"pass":{"matches":1,"value":8679},"fail":{"matches":1,"value":2},"cancelled":{"matches":1,"value":0},"skipped":{"matches":1,"value":2},"duration_ms":{"matches":1,"value":646060.30101}}
+Separate unchanged lifecycle SUCCESS: {"jobId":129910026216,"terminalObservedAt":"2026-11-10 15:07:23 UTC","log":{"bytes":177393,"sha256":"f488d548c2353cab2c77bf0f21c1b13e9ea8718cdf19acab7879257309c48b9e","lines":1613,"observedTerminalAt":"2026-11-10 15:07:23 UTC","fetchedAt":"2026-11-10 15:07:33 UTC"},"assessment":{"pass":true,"issues":[],"summary":{"tests":{"matches":1,"value":4},"pass":{"matches":1,"value":4},"fail":{"matches":1,"value":0},"cancelled":{"matches":1,"value":0},"skipped":{"matches":1,"value":0},"duration_ms":{"matches":1,"value":519776.545378}},"exactMountedPass":true,"receipt":{"proof":"actual-native-mounted-workspace","node":"22.23.4","react":"19.2.8","playwright":"1.55.0","browser":"156.0.8078.79","binaryVersion":"Google Chrome 156.0.8078.79","actualModules":["components/trips/useAcceptedStoreTrip.ts","components/trips/useOfficialTruthPilot.ts","components/trips/Reisevorbereitung.tsx"],"bundleSha256":"76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9","bundleModules":113,"repoModules":85,"documentCharset":"UTF-8","proofs":["closed initial mount","actual native result in unchanged preparation renderer","real traveller buttons synchronously invalidate without persistence","retained unsaved draft blocks newer confirmed Trip and genuine fresh native result","actual reload editing save and matching native re-read recover","actual document and citizenship add remove preserve save recovery","local edit and confirmed fresh read independent of pilot invalid latch","loss of availability and context cannot revive old positive","out-of-order native reply after edit and newer confirmed read","irreversible wall-clock expiry and regression in current and pending attempts","pending hidden/pagehide resume suppresses late native reply and never auto-retries","latest lane owns pending results and failure without positive fallback","original monotonic deadline survives rerenders and expires"],"storeRequests":23,"pilotRequests":3,"travellerWrites":4,"observerOwnership":{"started":61,"settled":61,"pending":0,"retainedBytes":0,"observerErrors":0},"nativeCurrentResults":22,"sourceFetchesDuringReads":0,"sourceCheckedAt":"2026-11-10T15:00:07.319Z","readAt":"2026-11-10T15:02:17.371Z","expiresAt":"2026-11-10T15:02:32.371Z","deadlineFromRequestStartMs":17499,"boundary":"Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."}},"rootEvidenceURL":"https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770954619","priorR25CauseStillUnknown":true}
+
+No new source/native/project execution or timing guarantee. No TL PASS, Ready, merge or main acceptance.

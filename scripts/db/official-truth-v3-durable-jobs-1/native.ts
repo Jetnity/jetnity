@@ -735,6 +735,25 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
         assert.deepEqual(rows, [{ nodes: String(expected) }], 'R19 node count/depth/cap/NULL oracle')
       }
+      // R27: fixed minimum weights and recursive container corrections.
+      const r27NodeCases = [
+        ["01 object scalar exact","{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",0,24,33,33],
+        ["02 object scalar over","{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",0,24,32,-1],
+        ["03 array scalar exact","[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",0,24,17,17],
+        ["04 array scalar over","[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",0,24,16,-1],
+        ["05 early container exact","{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",0,24,11,11],
+        ["06 early container over","{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",0,24,10,-1],
+        ["07 late container exact","{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",0,24,11,11],
+        ["08 late container over","{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",0,24,10,-1],
+        ["09 mixed array exact","[null,{},{\"a\":[false,0]}]",0,3,8,8],
+        ["10 mixed array over","[null,{},{\"a\":[false,0]}]",0,3,7,-1],
+        ["11 late depth failure","{\"a\":{},\"b\":[null]}",23,24,65536,-1],
+        ["12 key bytes counted","{\"\":null,\"\\u001f\":[],\"\\u00e9\":{}}",23,24,7,7],
+      ] as const
+      for (const [label, raw, depth, maxDepth, maxNodes, expected] of r27NodeCases) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
+        assert.deepEqual(rows, [{ nodes: String(expected) }], 'R27 ' + label)
+      }
       // R20: both kinds retain exact timestamp validation before same-text reuse.
       const timeAt = '2026-11-09T00:00:00.000Z'
       const timeCases = [
@@ -793,6 +812,165 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       ] as const
       for (const [raw, expected] of mixedStringReuseCases) {
         assert.deepEqual(await canonicalAt(raw, 0), [{ canonical: expected }], 'R21 successive and nested string bytes')
+      }
+      // R26: retain only successful same-depth objects; fixed bytes cover reuse and refusal.
+      const retainedObjectCases = [
+        ["{\"a\":{\"v\":\"A\"},\"b\":\"between\",\"c\":{\"v\":\"A\"}}",0,"{\"a\":{\"v\":\"A\"},\"b\":\"between\",\"c\":{\"v\":\"A\"}}"],
+        ["{\"a\":{\"v\":1},\"b\":[3,1,{\"x\":\"B\"}],\"c\":{\"v\":1}}",0,"{\"a\":{\"v\":1},\"b\":[3,1,{\"x\":\"B\"}],\"c\":{\"v\":1}}"],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":1}}",0,"{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":1}}"],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":2}}",0,"{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":2}}"],
+        ["{\"a\":{\"s\":\"A\",\"n\":9007199254740991},\"b\":{\"s\":\"a\",\"n\":9007199254740990}}",0,"{\"a\":{\"n\":9007199254740991,\"s\":\"A\"},\"b\":{\"n\":9007199254740990,\"s\":\"a\"}}"],
+        ["{\"a\":{},\"b\":\"between\",\"c\":{}}",23,"{\"a\":{},\"b\":\"between\",\"c\":{}}"],
+        ["{\"z\":{\"b\":2,\"A\":1},\"a\":{\"A\":1,\"b\":2}}",0,"{\"a\":{\"A\":1,\"b\":2},\"z\":{\"A\":1,\"b\":2}}"],
+      ] as const
+      for (const [raw, depth, expected] of retainedObjectCases) {
+        assert.deepEqual(await canonicalAt(raw, depth), [{ canonical: expected }], 'R26 retained object canonical bytes')
+      }
+      const rejectedRetainedObjects = [
+        ["{\"a\":{\"v\":\"\\u00e9\"},\"b\":{\"v\":\"\\u00e9\"}}",0],
+        ["{\"a\":{\"v\":\"A\"},\"b\":{\"v\":\"\\u001f\"}}",0],
+        ["{\"a\":{\"v\":\"A\"},\"b\":{\"v\":\"\\u00e9\"}}",0],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":9007199254740992}}",0],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":0.5}}",0],
+        ["{\"a\":{},\"\\u007f\":{}}",0],
+        ["{\"a\":{},\"b\":{}}",24],
+        ["{\"a\":{},\"b\":{\"v\":0}}",23],
+        ["{\"a\":{\"v\":0},\"b\":{\"v\":0}}",23],
+        [null,0],
+        ["{\"a\":{}}",null],
+      ] as const
+      for (const [raw, depth] of rejectedRetainedObjects) {
+        await assert.rejects(canonicalAt(raw, depth), code('P7601'), 'R26 object guards before reuse')
+      }
+      // R22: fixed Discovery bytes/digests and bounded same-text lease-time reuse.
+      // These expectations are literal independent inputs; no function under test builds them.
+      const subjectReuseCases = [
+        ["representative reordered keys","{\"method\":{\"revision\":17,\"methodId\":\"m04_fixture-1\"},\"destinationCountryCode\":\"NO\",\"citizenshipCountryCode\":\"DE\"}","{\"citizenshipCountryCode\":\"DE\",\"destinationCountryCode\":\"NO\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"m04_fixture-1\",\"revision\":17}}","combination-discovery-job:v3:d70b8ea47efcee1340b1b587302045063b85b85fcb9d549884a147e6f02efea3"],
+        ["minimum MethodId and revision","{\"destinationCountryCode\":\"IS\",\"method\":{\"revision\":1,\"methodId\":\"aa\"},\"citizenshipCountryCode\":\"CH\"}","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}","combination-discovery-job:v3:29462a8a134a608b3a6dda2e2458c7620b8e9bc5f665d442a883789281da68aa"],
+        ["maximum MethodId and revision","{\"method\":{\"revision\":2147483647,\"methodId\":\"z_______________________________________________________________\"},\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\"}","{\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"z_______________________________________________________________\",\"revision\":2147483647}}","combination-discovery-job:v3:bfe68f82f44aadb4463c0120d82e09d59f2db2bf9dda4f527c338e692f87eb93"],
+      ] as const
+      for (const [label, raw, subjectText, jobKey] of subjectReuseCases) {
+        const parsed = result(await f.owner.query("SELECT official_v3_jobs_private.subject_v1('combination_discovery',$1::jsonb) AS result", text([raw])))
+        assert.deepEqual(parsed, { kind: 'combination_discovery', jobKey, subjectText, contextKey: null }, 'R22 Discovery: ' + label)
+      }
+      const invalidSubjectReuseCases = [
+        ["extra pair metadata","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":1},\"metadata\":\",\\\"method\\\":{\\\"methodId\\\":\\\"injected\\\",\\\"revision\\\":1}\"}"],
+        ["missing country key","{\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}"],
+        ["invalid country","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"ZZ\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}"],
+        ["hostile MethodId","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\\\",\\\"method\\\":{\",\"revision\":1}}"],
+        ["revision above limit","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":2147483648}}"],
+        ["MethodId above limit","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"z________________________________________________________________\",\"revision\":1}}"],
+      ] as const
+      for (const [label, raw] of invalidSubjectReuseCases) {
+        await assert.rejects(f.owner.query("SELECT official_v3_jobs_private.subject_v1('combination_discovery',$1::jsonb) AS result", text([raw])), code('P7601'), 'R22 Discovery refusal: ' + label)
+      }
+      await f.owner.query(`DO $r22_subject_order$
+        DECLARE actual_message text; bad_input jsonb; expected_message text;
+        BEGIN
+          FOR bad_input,expected_message IN SELECT * FROM (VALUES
+            ('{"citizenshipCountryCode":"CH","destinationCountryCode":"ZZ","method":{"methodId":"aa","revision":1,"extra":true}}'::jsonb,'m04 invalid method'::text),
+            ('{"citizenshipCountryCode":"CH","destinationCountryCode":"ZZ","method":{"methodId":"aa","revision":1},"metadata":true}'::jsonb,'m04 invalid pair'::text)
+          ) AS oracle(value,expected) LOOP
+            BEGIN
+              PERFORM official_v3_jobs_private.subject_v1('combination_discovery',bad_input);
+              RAISE EXCEPTION 'r22 invalid Discovery accepted';
+            EXCEPTION WHEN SQLSTATE 'P7601' THEN
+              GET STACKED DIAGNOSTICS actual_message = MESSAGE_TEXT;
+              IF actual_message IS DISTINCT FROM expected_message THEN RAISE EXCEPTION 'r22 subject guard order'; END IF;
+            END;
+          END LOOP;
+        END $r22_subject_order$`)
+      const leaseUpdated = '2026-11-09T00:00:02.000Z'
+      const leaseTimeCases = [
+        ['equal valid exact 900s', leaseUpdated, '2026-11-09T00:15:02.000Z', true, false],
+        ['older valid exact 900s', '2026-11-09T00:00:01.000Z', '2026-11-09T00:15:01.000Z', true, false],
+        ['future acquired', '2026-11-09T00:00:03.000Z', '2026-11-09T00:15:02.000Z', false, false],
+        ['acquired before created', '2026-11-08T23:59:59.999Z', '2026-11-09T00:15:02.000Z', false, false],
+        ['JSON null acquired', null, '2026-11-09T00:15:02.000Z', false, false],
+        ['object acquired', {}, '2026-11-09T00:15:02.000Z', false, false],
+        ['malformed acquired', 'not-a-time', '2026-11-09T00:15:02.000Z', false, false],
+        ['same instant different text', '2026-11-09T00:00:02.000+00:00', '2026-11-09T00:15:02.000Z', false, false],
+        ['expiry equals updated', leaseUpdated, leaseUpdated, false, false],
+        ['malformed expiry', leaseUpdated, 'not-a-time', false, false],
+        ['equal acquired over 900s', leaseUpdated, '2026-11-09T00:15:02.001Z', false, false],
+        ['older acquired over 900s but within updated bound', '2026-11-09T00:00:01.000Z', '2026-11-09T00:15:01.001Z', false, false],
+        ['extra lease key before malformed times', 'not-a-time', 'not-a-time', false, true],
+      ] as const
+      for (const kind of ['rule_research', 'combination_discovery'] as const) {
+        // Both records come from the unchanged actual queue; this helper never persists history.
+        const queued = await commandRequest({ action: 'enqueue', kind,
+          input: kind === 'rule_research' ? commandFixture.ruleInput : commandFixture.discoveryInput }, null, timeAt)
+        const claimed = await commandRequest({ action: 'claim', input: commandFixture.claim(kind) }, queued.body.commit.next, leaseUpdated)
+        const base = claimed.body.commit.next
+        assert.equal(base.state, 'leased'); assert.ok(base.lease)
+        assert.equal(base.createdAt, timeAt); assert.equal(base.updatedAt, leaseUpdated); assert.equal(base.lease.acquiredAt, leaseUpdated)
+        for (const [label, acquiredAt, expiresAt, valid, extraKey] of leaseTimeCases) {
+          // Only the final case intentionally fails at the earlier exact-lease-key guard.
+          const value: Record<string, unknown> = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
+          const query = f.owner.query('SELECT official_v3_jobs_private.job_v1($1::jsonb) AS result', text([JSON.stringify(value)]))
+          if (valid) assert.deepEqual(result(await query), value, 'R22 ' + kind + ': ' + label)
+          else await assert.rejects(query, code('P7601'), 'R22 ' + kind + ': ' + label)
+        }
+      }
+      // R24: 36 fixed keysets, default/C results and the untouched original expression in one SELECT.
+      // SQL NULL literals exercise the actual NULL guards; arrays retain empty, dimensional and lower-bound semantics.
+      const exactKeyRows = await f.owner.query(String.raw`WITH cases(label,v,expected,wanted) AS (VALUES
+          ('01 exact keys','{"a":1,"b":2}'::jsonb,ARRAY['a','b']::text[],true),
+          ('02 reordered keys','{"a":1,"b":2}'::jsonb,ARRAY['b','a']::text[],true),
+          ('03 nested arbitrary values','{"b":{"deeper":{"x":null}},"a":[true,{"ignored":1}]}'::jsonb,ARRAY['b','a']::text[],true),
+          ('04 empty key','{"":1}'::jsonb,ARRAY['']::text[],true),
+          ('05 Unicode keys','{"é":1,"中":2}'::jsonb,ARRAY['中','é']::text[],true),
+          ('06 control key',jsonb_build_object(chr(1),1),ARRAY[chr(1)]::text[],true),
+          ('07 escaped key text',$r24$ {"quote\"":1,"backslash\\":2,"slash/":3} $r24$::jsonb,ARRAY['quote"','backslash'||chr(92),'slash/']::text[],true),
+          ('08 missing key','{"a":1}'::jsonb,ARRAY['a','b']::text[],false),
+          ('09 extra key','{"a":1,"b":2}'::jsonb,ARRAY['a']::text[],false),
+          ('10 wrong equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a','c']::text[],false),
+          ('11 nested only key','{"outer":{"a":1}}'::jsonb,ARRAY['a']::text[],false),
+          ('12 duplicate equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a','a']::text[],false),
+          ('13 NULL equal cardinality','{"a":1,"b":2}'::jsonb,ARRAY['a',NULL]::text[],false),
+          ('14 duplicate NULL equal cardinality','{"a":1,"b":2,"c":3}'::jsonb,ARRAY['a','a',NULL]::text[],false),
+          ('15 excess duplicate','{"a":1}'::jsonb,ARRAY['a','a']::text[],false),
+          ('16 only NULL element','{}'::jsonb,ARRAY[NULL]::text[],false),
+          ('17 SQL NULL value',NULL::jsonb,ARRAY['a']::text[],false),
+          ('18 SQL NULL expected','{"a":1}'::jsonb,NULL::text[],false),
+          ('19 both SQL NULL',NULL::jsonb,NULL::text[],false),
+          ('20 JSON null','null'::jsonb,'{}'::text[],false),
+          ('21 JSON boolean','true'::jsonb,ARRAY['true']::text[],false),
+          ('22 JSON number','18'::jsonb,ARRAY['18']::text[],false),
+          ('23 JSON string','"a"'::jsonb,ARRAY['a']::text[],false),
+          ('24 JSON array','["a"]'::jsonb,ARRAY['a']::text[],false),
+          ('25 empty object and expected','{}'::jsonb,'{}'::text[],true),
+          ('26 empty expected nonempty object','{"a":1}'::jsonb,'{}'::text[],false),
+          ('27 zero lower bound','{"a":1,"b":2}'::jsonb,'[0:1]={b,a}'::text[],true),
+          ('28 negative lower bound','{"a":1,"b":2}'::jsonb,'[-2:-1]={b,a}'::text[],true),
+          ('29 multidimensional exact','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,a}}'::text[],true),
+          ('30 multidimensional wrong','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,z}}'::text[],false),
+          ('31 multidimensional NULL','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,NULL}}'::text[],false),
+          ('32 multidimensional duplicate','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'{{d,b},{c,c}}'::text[],false),
+          ('33 exact 32 keys','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32}'::jsonb,ARRAY['k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k01']::text[],true),
+          ('34 exact 33 keys','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32,"k33":33}'::jsonb,ARRAY['k33','k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k01']::text[],true),
+          ('35 wrong 33 key set','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32,"k33":33}'::jsonb,ARRAY['k01','k02','k03','k04','k05','k06','k07','k08','k09','k10','k11','k12','k13','k14','k15','k16','k17','k18','k19','k20','k21','k22','k23','k24','k25','k26','k27','k28','k29','k30','k31','k32','k99']::text[],false),
+          ('36 literal NULL key','{"NULL":1}'::jsonb,ARRAY['NULL']::text[],true)
+        ), checks AS (
+          SELECT label,wanted,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original FROM cases
+        ), c_checks AS (
+          SELECT label,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual_c,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original_c
+          FROM (SELECT label,v,expected COLLATE "C" AS expected FROM cases) c_input
+        ) SELECT checks.label,wanted::text,actual::text,original::text,actual_c::text,original_c::text
+          FROM checks JOIN c_checks USING(label) ORDER BY checks.label COLLATE "C"`)
+      assert.equal(exactKeyRows.length, 36)
+      for (const row of exactKeyRows) {
+        assert.ok(row.wanted === 'true' || row.wanted === 'false', 'R24 literal boolean: ' + row.label)
+        assert.equal(row.actual, row.wanted, 'R24 default fixed oracle: ' + row.label)
+        assert.equal(row.actual, row.original, 'R24 default original expression: ' + row.label)
+        assert.equal(row.actual_c, row.wanted, 'R24 C fixed oracle: ' + row.label)
+        assert.equal(row.actual_c, row.original_c, 'R24 C original expression: ' + row.label)
       }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)

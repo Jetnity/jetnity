@@ -84,7 +84,7 @@ test('pure metadata mapping does not execute old travel-date validity or extract
   assert.equal(calls, 0)
 })
 
-test('protected sources retain historical C1 identities and the two reviewed MI1 main package identities', () => {
+test('protected sources retain historical C1 identities and exact reviewed MI1 and M04 R28 amendments', () => {
   const historicalBytes = readFileSync('docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json', 'utf8')
   assert.equal(sha256Hex(historicalBytes), '76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650')
   const manifest = JSON.parse(historicalBytes) as {
@@ -98,17 +98,31 @@ test('protected sources retain historical C1 identities and the two reviewed MI1
     files: Array<{ path: string; historical: { bytes: number; sha256: string }; reviewed: { bytes: number; sha256: string } }>
   }
   assert.deepEqual(amendment.files.map(row => row.path), ['package-lock.json', 'package.json'])
+  // R29 acknowledges only the already reviewed R28 workflow identity.
+  // Historical C1 and MI1 evidence remains separately pinned and unchanged.
+  const runnerAmendmentBytes = readFileSync('docs/official-truth-product-v3/M04_R28_PROTECTED_SOURCE_AMENDMENT_V1.json', 'utf8')
+  assert.equal(sha256Hex(runnerAmendmentBytes), '2f8e301299f5e1aea9b414963032698236c5b241118062531e39c67c33549968')
+  const runnerAmendment = JSON.parse(runnerAmendmentBytes) as typeof amendment
+  assert.deepEqual(runnerAmendment.files.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set([...amendment.files, ...runnerAmendment.files].map(row => row.path)).size, 3)
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
   assert.equal(new Set(protectedRows.map(row => row.path)).size, 40)
   let reviewedMainRows = 0
+  let reviewedRunnerRows = 0
   for (const row of protectedRows) {
     const changed = amendment.files.find(file => file.path === row.path)
+    const runnerChanged = runnerAmendment.files.find(file => file.path === row.path)
     if (changed) {
       assert.deepEqual({ bytes: row.bytes, sha256: row.sha256 }, changed.historical, row.path)
       reviewedMainRows++
     }
-    const expected = changed?.reviewed ?? row
+    if (runnerChanged) {
+      assert.equal(changed, undefined, row.path)
+      assert.deepEqual({ bytes: row.bytes, sha256: row.sha256 }, runnerChanged.historical, row.path)
+      reviewedRunnerRows++
+    }
+    const expected = changed?.reviewed ?? runnerChanged?.reviewed ?? row
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -116,4 +130,5 @@ test('protected sources retain historical C1 identities and the two reviewed MI1
     assert.equal(sha256Hex(text), expected.sha256, row.path)
   }
   assert.equal(reviewedMainRows, 2)
+  assert.equal(reviewedRunnerRows, 1)
 })

@@ -1,3 +1,250 @@
+# R28 author self-review — explicit CI prerequisite exception
+
+Snapshot: 2026-11-10T16:03:09Z. Same author `/root/m04_durable_jobs_writer_g2`, exact ec4de baseline. Root [v1](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772056631) and [v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772232105) explicitly authorize the two-path repair. This is source reasoning and text/hash verification, **not runtime or Technical-Lead PASS**.
+
+## Scope and inverse proof
+
+The workflow changes exactly lines 15, 83, 120 and 153 from `ubuntu-latest` to `ubuntu-24.04`. Seven job definitions still expand to eight jobs; both accepted-store matrix groups remain mandatory. Every other workflow byte remains exact: names, commands, dependencies, matrix, timeouts, concurrency, environment, permissions and guards. UI/Auth/aggregate runners remain unchanged.
+
+The independent reviewer found that the existing atomic contract selects exactly accepted_store_native and requires ubuntu-latest. The author confirmed it from the immutable source and stopped that unapproved expansion. Root v2 then authorized exactly line 139 to require `/runs-on: ubuntu-24\.04/`. The assertion remains; the escaped dot checks the literal separator. No other assertion or byte changes.
+
+Both inverse deltas recover the exact published sources. Prepared workflow is 12325 bytes/SHA256 `3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18`; prepared contract is 24091 bytes/SHA256 `06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102`.
+
+**Zero M04 source changes:** all 18 pins and aggregate `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761` remain exact. No SQL, Native oracle, detector, predecessor, rollback or browser source changed. All 31 groups/order, full quotas, both R9, inherited 761 pairs/minOwned4182, final N15 and time/resource bounds remain.
+
+## Contract and compatibility limits
+
+Immutable mode is NORMAL; mode metadata and guards were read and remain unchanged. The UI contract explicitly retains ubuntu-latest for unchanged UI. Package commands, aggregate requirements and the other read CI protections remain. The fixed four-binary PostgreSQL detector was independently hash-checked: 5280 bytes/SHA256 `f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10`.
+
+Root's complete historical evidence records the observed Ubuntu26 toolchain incompatibility and official runner-image documentation. Selecting Ubuntu24.04 does not install binaries, widen discovery to PostgreSQL18, add fallback, or guarantee a future image patch. No timing gain, sufficient margin or future success is claimed.
+
+## Exact historical failure and current false flags
+
+Failure 18 is copied completely from [Root's terminal R27 object](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772268521): 37967 pretty-JSON bytes including trailing LF, SHA256 `db7b166bbcff8941604c7ef73e5f358a4752817e0b19a218990f206fe1b47897`. All seventeen earlier failure objects, genuine R21 success, corrected R22 metadata and the previous Markdown tail remain exact.
+
+Historical `executed:true` means harness entry, with zero native groups, fixture_acquire failure and cleanupFailureCount 1. Raw clusters 1/stoppedClusters 0 are preserved without claiming a created cluster or clean cleanup. Core's five extra PostgreSQL-unavailable skips are not accepted. All four companion native bootstrap failures remain part of that historical result; Auth evidence is metadata only.
+
+No current local/project/test/parser/compiler/SQL/native/build execution occurred. All 22 current R28 coverage rows, execution/PASS/Ready/merge flags remain false. Root must independently reconstruct, publish with the exact ec4de lease and verify complete new-head CI/runner/native/lifecycle/Preview evidence, followed by actual-main CI/native/Production. All Owner, SQL UNAPPLIED, Method NOT_APPROVED, privacy/hosted/#917 hard stops persist.
+
+**AUTHOR STOP.** No author publication, Ready, merge or automatic follow-up slice.
+
+---
+
+# R27 author self-review — source reasoning only
+
+Snapshot: 2026-11-10T15:33:27Z. Same author `/root/m04_durable_jobs_writer_g2`, same Draft #1182 and frozen b841 baseline. [Recovery Task V18 v2](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771362923) is the complete implementation authorization. This author review is **not** a compiler, native, performance or Technical-Lead PASS.
+
+## Selected delta and equivalence
+
+Only the 957-byte `nodes_v1` body becomes the selected 1233-byte body. Its original entry guard is exact. For objects, every immediate field contributes one key and one minimum value node; for arrays each immediate value contributes one minimum node. Thus object weight is `1+2K+Σ(m−1)` and array weight is `1+N+Σ(m−1)`, with corrections only for actual container children.
+
+Every successful recursive count is at least one, so corrections cannot reduce the minimum. Minimum cap refusal is equivalent to eventual old-loop refusal. Nonempty maximum-depth containers still refuse before filtering; empty containers and scalar roots retain one. Recursive depth/cap arguments remain identical. The bigint count is capped before assigning the integer total; later `n+m−1` is at most 131071 before the cap check. SQL NULL/invalid parameters return the same -1 sentinel. Unicode/control/empty key bytes remain count-only; no canonical guard moves or disappears.
+
+The sole Native insertion is 1818 bytes, SHA256 `54b02b8de7d77ce75d250186890be86187f20156e8429ea4b382c26465780e3e`. The twelve labeled tuples exactly match the authorized 1189-byte JSON, SHA256 `72bdb47fef878e4ae2461de6d5c1feb5a52dfc26a5c5b9e30f339dd86b9ebf06`. Each awaits the existing owner connection and four-parameter NULLIF query, then checks an independent literal count or -1:
+
+- Sixteen scalar fields: 33 at cap 33; refusal at cap 32.
+- Sixteen scalar array values: 17 at cap 17; refusal at cap 16.
+- Early and late mixed container placement: 11 at cap 11; refusal at cap 10 for each.
+- Mixed array: 8 at cap 8; refusal at cap 7.
+- A later nonempty container at depth 24: refusal after a valid earlier empty container.
+- Empty/control/Unicode keys with empty children at the limit: 7.
+
+Every previous R19 NULL/scalar/depth/cap case, all R20–R26 oracles, the 36-case/72-mode key matrix, all 31 groups and their order remain exact. Inverse text transformations recover the published sources; all 29 declarations/attributes, every byte outside the body/insertion and sixteen other source pins remain unchanged. Current source aggregate is `d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761`.
+
+## Cost limits and historical evidence
+
+The source model is limited to queued/leased Discovery child-loop iterations, 23→2 and 27→3. All recursive container validation remains. PG16 `jsonfuncs.c` at immutable ref `c372fbbd8e911f2412b80a8c39d7079366565d67`, blob `70cb922e6b7aa45629483bb64d3380d07a1e81a0`, shows the additional object-key allocation/count and retained each/elements materialization; array length reads the header. No aggregate history count, measured speedup, server profile, runner-cause claim or adequate margin is inferred.
+
+The complete [actual R26 object](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6771379206), 38889 pretty-JSON bytes/SHA256 `46d76c6da0f91c001706a1fccd595e86833c373ab9edaa10d46bba8c0c8d16d1`, is appended as failure 17 without alteration. It includes 24 completed groups, both R9/full ledger, cycle deadline failure, exact cleanup and the genuine separate lifecycle success. All sixteen earlier failures, genuine R21 success, corrected R22 metadata and the previous Markdown tail remain exact. No history is upgraded into current R27 coverage.
+
+## Disposition
+
+No local/project/parser/SQL/native/compiler/build execution occurred. All current R27 execution and 22 coverage rows remain unexecuted; PASS/Ready/merge remain false. Full history, 254/255/256 and 64/65 boundaries, both R9, inherited 761 pairs/minOwned4182, final N15, all time/resource bounds and every Owner/hosted/#917 gate remain.
+
+Root must independently reconstruct and review, publish with the expected b841 lease, then accept the full unchanged new-head CI and exact Preview. Actual new main CI/native/Production and finite closure follow separately. **AUTHOR STOP**; no Ready, merge or next slice by the author.
+
+---
+
+# R26 / Recovery Task V17 — bounded author self-review
+
+Captured: 2026-11-10T14:46:48Z. Same Generation2 session; baseline `45be21e57988d91dca3ee0758712f3ef5f39d744`. [Binding authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334). Prepared source only: no local project/compiler/parser/SQL/native execution and no runtime or Technical-Lead PASS.
+
+## Same-invocation equivalence
+
+The selected helper retains one input object and its successful canonical result in separate uninitialized local variables. Only the object-parent/object-child branch changes. The first object always calls the original recursive validator. Later objects reuse its result only when complete JSONB text representations compare equal under explicit C; otherwise the original call runs and both retained fields update only after success.
+
+The original parent-key ASCII guard and child-depth guard still precede lookup. The same parent invocation guarantees the same child depth. Scalar and array siblings execute their original checks and cannot overwrite the separate retained result. There is no prefilter, cross-call state, trust marker or map. Other canonical branches, ordering, key encoding and all other functions remain exact.
+
+Added retained state is one object/result per active invocation, input-sized under existing bounded application entrypoints and depth. This is not a universal byte cap for arbitrary private helper calls. Extra serialization, comparison and allocation are real costs.
+
+Independent source reasoning read PostgreSQL 16 at `c372fbbd8e911f2412b80a8c39d7079366565d67`: JSONB output is an iterator loop; its child iteration does not recursively expand the C stack in one call. Source blobs `cf43c3f2ded19aabd2a913ab914f84d6c70d3afc` and `9cc95b773dbf070123a657194c95d321ea05272d` are recorded in the JSON correction. This addresses the proposed depth-stack error concern, not elapsed-time or allocation guarantees.
+
+## Source work and regression boundary
+
+A representative queued Discovery job has three object containers, 23 keys and 21 scalar leaves. The two envelope traversals per dedup historical row can avoid six recursive entries and 46 key visits while adding eight JSONB text serializations. The planned 254-command fill entails 64009 dedup historical-row validations: 384054 entries and 2944414 key visits removed in that static model. Singleton-object parents add no comparison serialization.
+
+These are source counts only. Complete history remains quadratic; both command validations, both envelope validations and every row, job/node/hash/time/authority/error-order check remain. No measured speedup, sufficient budget margin, full-cap Rule latency or Production SLO claim.
+
+The sole 2010-byte N02 insertion adds 18 calls through existing canonicalAt: seven fixed output oracles and eleven P7601 refusals. It covers scalar/array interleaving, A/B/A and A/B/B, C-distinct strings/raw safe integers, normalized key order, same-depth empty objects and invalid first/second objects, keys, control/nonASCII strings, unsafe/fractional numbers, depth and true SQL NULL. Raw JSON strings preserve numeric precision; existing NULLIF reaches actual SQL NULL. No internal branch receipt is invented.
+
+Inverse deltas recover exact 45be SQL/native. All outside bytes, 29 declarations/attributes, 31 group names/order, prior 36-case/72-mode matrix and 16 other source pins remain unchanged. SQL: 139163 / `81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820`; Native: 177160 / `d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c`; all-18 aggregate `aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba`. Root independently reconstructed these source pins; that source review is not execution acceptance.
+
+## Historical evidence and remaining gates
+
+Actual 45be R25 passed Typecheck/Lint, 23 native groups and both R9, then reached the ledger deadline after 237 acknowledged commands. Later database outcome is UNKNOWN. All 27068 effects settled and 4242 connections closed, zero pending/errors. Independently, lifecycle stopped at the 5s Chrome-version preflight before its actual fixture/browser proof; cause UNKNOWN, browser source unchanged. Five jobs passed and three failed.
+
+All 15 prior failures, complete genuine R21 success, corrected separate R22 terminal metadata and Markdown tails remain exact. The full actual R25 receipt and separate lifecycle finding form failure 16. Earlier local 64-test/TypeScript/lint results stay historical; all 22 current rows and execution/PASS/Ready/merge fields remain false.
+
+P1 remains unmet full new-head and mandatory actual-main acceptance under unchanged limits. Both complete quotas, R9, inherited 761-pair/minOwned4182 boundary, final N15/latewriter/cleanup and actual lifecycle proof are mandatory. Root owns V17 Task/Review/Evidence/Excerpt, publication and re-gating; all Owner, SQL UNAPPLIED, Method/#1139, forbidden #917, privacy/hosted and resource gates remain.
+
+**AUTHOR STOP.** No author execution, installation, environment reconstruction, logs/hosted/#917 access, publication, Ready, merge or automatic follow-up slice.
+
+## Previous author self-review — preserved verbatim
+
+# R25 / Recovery Task V16 — bounded author self-review
+
+Captured: 2026-11-10T13:55:02Z. Same Generation2 author/session; baseline `1aecc862c4b2710bb12c900195259ee25eb6f70d`. [Exact Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908). Prepared source only; no Typecheck, SQL execution, native PASS or Technical-Lead acceptance is claimed.
+
+## Selected computation and equivalence
+
+The sole SQL-body replacement is:
+
+```sql
+  SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    ARRAY(SELECT k FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k ORDER BY k COLLATE "C")
+    = ARRAY(SELECT k FROM unnest(expected) k ORDER BY k COLLATE "C")
+```
+
+The original guards and safe nonobject CASE remain. Each constructor consumes the same sorted text sequence as the former array_agg. Duplicate and NULL elements remain; unchanged unnest flattens dimensions; nonempty result arrays have lower bound 1 and empty results match former COALESCE normalization. Selected `k` remains uncollated and C remains exclusively in ORDER BY. No new equality collation, key normalization, acceptance limit or exception is introduced.
+
+Primary PostgreSQL 16 sources were read at `c372fbbd8e911f2412b80a8c39d7079366565d67`. Array transition/finalization, ARRAY_SUBLINK and makeArrayResultAny establish the element/empty/bound behavior; parse_collate excludes ordering-only aggregate arguments from result collation and derives ARRAY result collation from selected `k`. Exact source blobs are recorded in the JSON correction. LANGUAGE sql, search_path and every declaration/attribute remain unchanged.
+
+SQL-function startup and executor initialization show why source structure is relevant: subplans can require initialization even when CASE avoids their evaluation. This does not mean the unused R24 fallback was evaluated. Three source subqueries become two, but the new valid path again sorts/builds arrays. No server plan/profile, causal R24 regression, timing advantage or sufficient budget margin was measured.
+
+## Native coverage and source boundary
+
+Only the selected comment and two case labels change. All 36 existing VALUES cases and 72 default/C observations retain literal booleans, original-expression comparison, exact input values, assertions, query/connection count and their position inside N02. The tests still cover SQL NULL distinct from JSON null, every scalar/array category, empty/Unicode/escaped/control keys, duplicates/NULLs, missing/extra/wrong/nested keys, multidimensional arrays, nonstandard lower bounds and 32/33-key cases. No new test or availability skip is introduced. Default/C are two selected modes, not proof of two distinct effective CI collations or executed nondeterministic collation coverage.
+
+Inverse text replacement restores exact 1aecc SQL/native. All outside bytes, 29 declarations, 31 proof labels/order, prior queries, R23 annotation and 16 other source pins remain exact. Root and the independent reviewer separately reconstructed the final source pins without a concrete source blocker; execution still awaits new CI.
+
+SQL: 138695 / `4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa` / blob `67f073a0d19b31309f8276bba62770a4f36f8fb9`. Native: 175150 / `ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a` / blob `89f8026cf0b96971f529d6ab59fe14a2fbfe6150`. All-18 aggregate: `7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d`.
+
+## Evidence precision and remaining risk
+
+Actual 1aecc Typecheck/Lint, N02 matrix and both R9 passed, with 23/31 groups complete. Ledger group 24 failed at global 240s after 228 acknowledged commands, no START/cycles; later DB outcome UNKNOWN. All 26776 effects settled and 4242 connections closed, zero pending/errors, 240422ms total / 38ms cleanup. These are historical client/fixture observations, not current R25 acceptance or server-cost attribution. No individual serialized per-case receipt is invented from the completed N02 group.
+
+All 14 old failure objects, complete genuine R21 PR success, corrected separate old-R22 terminal observation and Markdown tails remain exact. The full actual R24 receipt is appended as failure 15. Existing local 64-test/TypeScript/lint results remain historical. All 22 current rows and execution/PASS/Ready/merge fields remain false.
+
+P1 remains unmet full new-head and mandatory actual-main acceptance under unchanged bounds. Every history row, command/transition/authority/error-order check, both full quotas, R9, inherited 761-pair/minOwned4182 proof, final rollback and complete cleanup remain mandatory. History stays quadratic; no full-cap Rule latency or Production SLO claim. Root owns V16 Task/Review/Evidence/Excerpt, publication and re-gating. All Owner, SQL UNAPPLIED, Method/#1139, forbidden #917 and privacy/hosted gates remain.
+
+**AUTHOR STOP.** No author project/parser/SQL/native/tests/typecheck/build execution, installation, environment reconstruction, hosted access, publication, Ready, merge or automatic follow-up slice.
+
+## Previous author self-review — preserved verbatim
+
+# R24 / Recovery Task V15 — bounded author self-review
+
+Captured: 2026-11-10T12:55:53Z. Same Generation2 author/session. Baseline `ca6fcb8930e68e394156d67351ee087c4cddb180`; existing Draft #1182. [Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250). This is a source/data review, not a Typecheck, SQL execution, native proof or Technical-Lead PASS.
+
+## Exact-key equivalence
+
+The only changed SQL body is `exact_keys_v1`. An actual nested CASE protects the new delete and key-count operations with object JSONB, one-dimensional expected array and cardinality <=32. The complete prior guards, two C-sorted array_agg/COALESCE expressions and original comparison remain verbatim in the fallback.
+
+Let K be the actual keys and U the distinct non-NULL expected elements. Membership proves U subset K; deletion-empty proves K subset U. Equal actual-key count and full expected cardinality then exclude duplicate and NULL positions. The original C-sorted arrays are byte-identical on the selected positive path. False, NULL and nonselected cases execute the original expression, preserving collation-sensitive equality. The 32 selector is not an acceptance restriction; all current caller lists are at most 20 keys.
+
+Primary PostgreSQL 16 source was read at commit `c372fbbd8e911f2412b80a8c39d7079366565d67`: `jsonb_op.c` blob `054351f0a31e7621c2eec8e20d20c11808c9ffeb`, `jsonfuncs.c` blob `70cb922e6b7aa45629483bb64d3380d07a1e81a0`, and SQL-function parameter collation in `functions.c` blob `f55424eb5ad8a97ba3c76169860762c05015d8cd`. JSONB deletion rejects scalar/multidimensional inputs, so the CASE placement is material. The unchanged LANGUAGE sql/search_path and original fallback remain part of the reasoning. No nondeterministic-collation execution is claimed.
+
+The source model counts 14 helper calls per representative queued Discovery dedup history row. The planned ledger has 253 squared = 64009 such row validations, hence 896126 helper calls / 1792252 original aggregate-plus-COALESCE expressions. These are written-operation counts only. JSONB membership/deletion/count add their own cost; no measured timing or speedup follows. No command/history/transition validation or error order is removed, and history remains quadratic.
+
+## Prepared finite oracles
+
+A sole 6625-byte N02 insertion contains 36 fixed VALUES cases in one SELECT. Every row has a literal boolean, actual helper and complete original-expression result, in default and explicit C modes: 72 case/mode observations awaiting CI. Coverage includes reordered/exact keys, arbitrary nested values, empty/Unicode/control/escaped keys, missing/extra/wrong/nested-only keys, duplicates/NULLs at matching raw cardinality, SQL NULL distinct from JSON null, every scalar/array category, empty arrays, zero/negative lower bounds, correct/incorrect multidimensional inputs and exact 32/33 boundaries.
+
+The SQL NULL cases use actual `NULL::jsonb` / `NULL::text[]` literals. String.raw preserves the escaped-key SQL text. Fixed results use `boolean::text` values `true`/`false`; the original differential appears twice verbatim. No availability skip, collation object, extra connection, history seed, any/suppression/domain cast or modified existing oracle is added. The existing R22 36-query block and R23 safe annotation remain exact.
+
+SQL pin: 139034 / `9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42` / `af60edee3776d9eba5b13b6db3cfad733b245567`. Native pin: 175160 / `f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a` / `560c1cebc71ce21936b08d3d6296de0a8edea843`. Aggregate: `daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3`. Pure text comparison preserves every outside byte, all 29 declarations, 31 proof labels/order and 16 other source pins. Independent review separately reconstructed the same final source pins; that is source review only.
+
+## Evidence, risk and STOP
+
+Actual ca6f Typecheck/Lint and 24 groups passed, including N02/both R9/full ledger. Cycle group 25 failed at global 240s after 113 acknowledged commands and 38 STARTs; later database outcome UNKNOWN. Cleanup: 26926/26926 settled, 4242/4242 closed, no pending/errors, 240470ms total / 21ms cleanup. First 23 groups 90403ms, ledger 106544ms, failed cycle 42668.60444ms. Full receipt and Root log pins are preserved in the fourteenth historical record; no current R24 runtime result is inferred.
+
+All 13 prior failures, separate genuine R21 success and Markdown tails remain exact. The later terminal status of the old R22 run is appended separately without rewriting its original snapshot or inventing native/cleanup execution. Earlier local 64-test/TypeScript/lint evidence remains historical, not R24 execution.
+
+P1 remains unmet full exact-head and actual-main acceptance under unchanged bounds. No source-only proof guarantees enough runtime margin, full-cap Rule latency or a Production SLO. Root owns Task/Review/Evidence/Excerpt V15, publication and re-gating. SQL remains UNAPPLIED and every Owner/hosted/privacy/#917 gate remains in force.
+
+**AUTHOR STOP.** No author local/project/parser/SQL/native/typecheck/build execution, installation, replacement environment, hosted access, publication, Ready, merge or next slice.
+
+## Previous author self-review — preserved verbatim
+
+# M04 Phase B — R23 / Recovery Task V14 current author self-review
+
+**Source/data review only; AUTHOR STOP.** Same `/root/m04_durable_jobs_writer_g2` session, existing Draft #1182. No new runtime or Technical-Lead acceptance.
+
+## One permitted type annotation
+
+The exact published R22 source fails Typecheck TS7022 on the newly added local `value`. The only change is:
+
+```ts
+const value: Record<string, unknown> = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
+```
+
+`Record<string, unknown>` represents an object that intentionally includes valid and malformed negative-test variants. It does not assert that those variants are valid V3 domain records. There is no `any`, cast, suppression, ts-ignore, helper/contract edit or configuration exception. JSON serialization and equality assertions receive the same initializer. Exactly 25 added ASCII bytes are the entire source delta.
+
+Native pin: 168535 bytes / `dbc3ad51567753dd5ebc71fe6106504f5a6d112f73aed8e62f136454a8c626a2` / blob `2be195a3346213b12a9498a07ae398dc9922dae1`. All-18 aggregate: `1d30c2168051a359797cd6700ee3e1d6dab7b023a026119a1377cd8ee880d2bc`.
+
+Pure text comparison restores the complete exact-54c4 native file when the annotation is removed. All 17 other source pins, SQL, 36 queries, fixed expectations, 31 groups/order, R9, both full quotas, final N15 and every resource limit remain unchanged. The independent reviewer separately reconstructed these final source pins. Actual Typecheck and execution still require the new unchanged CI.
+
+## Historical evidence precision
+
+Root's terminal Repository verification job 129809743296 failed Typecheck in run 42810301725. Tests/M04 never executed; no native or cleanup receipt exists and no successful cleanup is inferred from ordinary job cleanup. Full non-Auth job log: 106133 bytes / 106065 characters / 869 lines, SHA256 `b48164c277aa81719c4f069024bbc28642b0a25b6360d394ce2c05b2a50655cf`. The author read only the sanitized [Root dispatch](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6766572359). Overall run was in progress at Root's stated 11:49:52 UTC observation.
+
+Exact Preview dpl_4Se4HcJSTKcnAmL7QAxAUKT7eEYU was ERROR / lint_or_type_error on head 54c4, according to Root's metadata verification. No Vercel/Auth logs were read. Root-prepared failure excerpt: 1989 bytes / SHA256 `6cd22336ecb4d4ddbefc46dd8cb897c35b475fb88210f9c78324ade5821b4751`.
+
+The twelve previous failure objects and complete separately stored genuine R21 PR success are preserved exactly. This thirteenth record is a confirmed Typecheck-job failure, distinct from earlier native budget failures. Last actually executed native progress remains historical main 4bfa. Current R23 execution/PASS fields remain false; the annotation is not a claim of measured performance or repaired native budget margin.
+
+P1 remains the failed Typecheck/Preview and unmet full exact-head plus actual-main acceptance. Existing quadratic-history performance limits and all Owner/hosted/privacy/#917 gates remain. Root owns Task/Review/Evidence/Excerpt V14, publication and complete re-gating. No author local execution, installation, environment reconstruction, publication, Ready, merge or next slice.
+
+## Previous author self-review — preserved verbatim
+
+# M04 Phase B — R22 / Recovery Task V13 current author self-review
+
+**Prepared source/data review only. AUTHOR STOP; no current native, runtime or Technical-Lead PASS.** Same Generation2/session `/root/m04_durable_jobs_writer_g2`. Origin #1178 is merged; the linked R22 fix PR remains pending Root creation.
+
+## Scope and equivalence
+
+1. `subject_v1` retains the existing first canonical validation in local `pair_text` and hashes those same bytes. For two actual country JSON strings, closed Pair/Method shapes and JSON escaping make the unescaped root `,"method":` token unique. `overlay` inserts the actual kind's depth-1 canonical scalar immediately before that property; `strpos` explicitly uses C collation. The existing original full second expression remains for other shapes. Every Method/Pair guard and all Rule code are unchanged. This selector adds no refusal or unchecked constant-kind normalization. An unusual-collation fallback execution is not claimed.
+2. At the two existing `acquiredAt` parser positions, exact original-text C equality permits reuse of already validated `updated`. Unequal or NULL text invokes the original parser at the same position. Created/updated order, both expiry parses, range/state/fence checks and the 900-second duration remain byte-identical outside these two expressions. There is no hoisting or expiry cache.
+3. All outside-scope SQL bytes, 29 declaration signatures/attributes and all native bytes outside the single N02 insertion are preserved; the other 16 source pins and 31 proof names/order are unchanged. No history row, command/journal/transition check, R9 witness, full quota, final N15 or resource limit is removed.
+
+## Finite independent oracles
+
+The 7192-byte insertion adds exactly 36 direct SQL queries: three fixed Discovery subject strings/job digests, six refusals, one anonymous DO with two fixed Method-before-Pair error-message oracles, and thirteen lease-time vectors for each of Rule and Discovery. Expected strings/digests are literal independently derived data. Minimum/maximum MethodId length and revision, reordered input keys, hostile metadata and closed-key/method/pair refusals are retained.
+
+Both leased bases are derived by the unchanged actual queue using prospective enqueue/claim envelopes; no journal is seeded. Cases cover equal/older valid acquiredAt at exactly 900 seconds, before-created/future times, JSON null/object/malformed/noncanonical same-instant input, expiry-at-updated/malformed/>900 refusal, and an older acquiredAt lasting 900.001 seconds while only 899.001 seconds have elapsed from updatedAt. The latter distinguishes correct fallback from unconditional reuse in the upper bound. The final extra-lease-key case intentionally fails at the earlier exact-key guard.
+
+These are prepared oracles, not execution evidence. The independent reviewer verified the final literal bytes, fixed digests and bounded source semantics; Root alone decides acceptance after full actual CI.
+
+## Pre-publication findings resolved
+
+[Root dispatch v4](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6766052044) approved exactly two immediate fixes in the same session: remove the new claim envelope's extra root `kind` while preserving `claim(kind)` and locator-derived kind; apply C collation only to the new anchor search. The earlier SQL `c9717766...` / native `e4f03b2c...` pins are explicitly discarded, unpublished and unexecuted. Neither issue caused the historical main failure.
+
+Final candidate SQL: 138753 bytes / SHA256 `9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f` / blob `50fa3a48fb6af74dea120dc71940945bb9500537`.
+
+Final native: 168510 bytes / SHA256 `e296958fec8e6d7afa113ccb4d24f4d7a2434cb1e3bc232ac120eb2a9efb2ec1` / blob `f59f4b571cb22592cef94af3cbaff2bf12ca30de`. Insertion SHA256 `bdfb119db60b0812fd8e83c98f112fbcf403014f4df11147fdca8ca04e591f5b`.
+
+All-18 aggregate: `8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b`.
+
+## Evidence precision and risks
+
+Genuine R21 PR CI 42798428417 passed all 31 groups/all eight jobs and received Root FINAL PASS before merge to main4bfa. Actual-main CI 42801478210 then failed group25/N05 after 24 groups, full ledger and both R9 witnesses. First23 groups totalled 90384ms, ledger group111659ms, failing cycle group37652.09814ms. Cycle counters show 103 acknowledged commands and 34 STARTs; the next database outcome remains UNKNOWN. No server profiling or causal runner/code explanation is asserted.
+
+All eleven old failed-run objects and Markdown tails are preserved; actual-main is appended as failure twelve. The complete successful PR receipt is held separately, not rewritten as failure or treated as current R22 acceptance. Root's actual-main full-log SHA256 is `a14ef9c860a87b331346edf23583161f80b43c69d562759401e76fb4275efa59`; the author read sanitized Root evidence only.
+
+P1 remains the unmet mandatory actual-main acceptance gate. P2 remains quadratic full-history work and unproved reliable margin, full-cap Rule latency and Production capacity/SLO. Source counts describe conditional avoided work only: three Discovery subject calls can avoid six repeated container loops/eighteen key encodings per representative dedup row while actual-kind validation remains; equal leased time text can avoid two timestamp and two civil-date calls. Added selector/search/overlay work exists; no speed guarantee follows. No new permitted-evidence Production incident is established. Existing Owner/privacy/hosted/#917 gates remain.
+
+No local project/parser/SQL/native/build/test execution, installation, forbidden logs/hosted access, Git mutation, Ready, merge or next slice by this author. Root owns Task V13, Root Review, failure evidence/excerpt, linked Draft publication and all fresh gates.
+
+## Previous author self-review — preserved verbatim
+
 # M04 Phase-B author self-review V1 — R21 current
 
 **SAME GENERATION2 SESSION. AUTHOR REVIEW IS NOT TL ACCEPTANCE.**

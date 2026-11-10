@@ -1,0 +1,2236 @@
+{
+  "schema": "jetnity.m04.r27-recovery-v18",
+  "capturedAt": "2026-11-10 15:41:16 UTC",
+  "status": "CHANGES_REQUIRED_R27_PRE_PUBLICATION_SOURCE_REVIEW_ONLY",
+  "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+  "baselineTree": "bf5f7c0e826fcfcb1218178c31b7b28336c9189a",
+  "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+  "pullRequest": 1182,
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "bytes": 27466,
+      "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c",
+      "blob": "2909b02861c4fef06edf8d1c4adf7109df0db97b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "bytes": 22124,
+      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34",
+      "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "bytes": 13319,
+      "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895",
+      "blob": "01db56a4f260ad698a0dcb60d7f208407c51b37a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "bytes": 27249,
+      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d",
+      "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9",
+      "blob": "4bbfa957f78dabc539be864671ce775eff57455b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "bytes": 4330,
+      "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326",
+      "blob": "39693def8fe2c9b6fa3f873752dc58dc6d9b9f75"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "bytes": 8816,
+      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e",
+      "blob": "c80c48cca369cc8ea0c30bc5f620cada639a1e05"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "bytes": 5985,
+      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183",
+      "blob": "e2caa902072b421f8b5ed00bbad72eadf995cdce"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "bytes": 12578,
+      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8",
+      "blob": "3c519e73fc440146bafe168983ae96d765b4a66f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16656,
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 37608,
+      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+      "blob": "4986199904f8e2b0fb8ab83b04f7f585e651f364"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "bytes": 6321,
+      "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927",
+      "blob": "5280246b707f506c5d9d83929562965faea9279c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "bytes": 6324,
+      "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7",
+      "blob": "b3c25d9276e5d36e6ed7083da53de87fc8642056"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "blob": "bb371a26f018107439d0031f5f72c23675aaf97c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 139439,
+      "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+      "blob": "9cb6c7da7ee6de12c3056cfcf29a36c3a047b264"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "bytes": 13389,
+      "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57",
+      "blob": "66e7dd443c51b7db8d90d99c8b6422d1226ff237"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 178978,
+      "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744",
+      "blob": "408e8a62481401335b79a1b53a4609f26cf86c1c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "bytes": 8128,
+      "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033",
+      "blob": "f3bd0bb399d5b5f7c0578d67c61adbce2adf5329"
+    }
+  ],
+  "sourceAggregateSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+  "authorDocumentPins": [
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+      "bytes": 347079,
+      "sha256": "68df179797cd08eca112da74dbf1639e3133f590428c9ccf47c2736bff2236ca",
+      "blob": "af9f0e270e0cc6c3c5bc913aea251d2284cfb148"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+      "bytes": 606716,
+      "sha256": "85394e2261f9b50ff7ab863193b19509d482ab86003eafc905b017954f4da18b",
+      "blob": "3215461a119e68f73f684b3cffb0ba87e44d4a8b"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+      "bytes": 74307,
+      "sha256": "41ef0003f9d6e907331e99535bf3d2785a3464844737eace21cc59fe6670edbb",
+      "blob": "326d6c262e427cbf29603e302b282a672f8c79df"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+      "bytes": 90705,
+      "sha256": "26d136627fec47c53e84ad5d8f5bfd6d0d4b15b3061aade784452711d79980eb",
+      "blob": "3451c5efe637638be85130d4bc798a2ab8c17ece"
+    }
+  ],
+  "rootSourceReview": {
+    "pass": true,
+    "sourceOnly": true,
+    "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "oneSelectedBodyOnly": true,
+    "all29DeclarationsAttributesExact": true,
+    "allOtherSQLBytesExact": true,
+    "entryGuardExact": true,
+    "sameRecursionArguments": true,
+    "onlyContainerIterations": true,
+    "scalarWeightsAllCounted": true,
+    "depthCheckBeforeFiltering": true,
+    "bigintCountCappedBeforeIntegerAssignment": true,
+    "additionBound131071": true,
+    "emptyContainersAtDepthBoundaryPreserved": true,
+    "allScalarKindsAndNonAsciiKeysStillCounted": true,
+    "canonicalAndAllCallersExact": true,
+    "noTrustCacheMarkerOrAggregateJsonbCopy": true,
+    "inverseDeltaRecoversBaseline": true,
+    "dollarQuotedTerminatorPreserved": true,
+    "sourceOnlyNoRuntime": true,
+    "technicalLeadPass": false,
+    "status": "INDEPENDENT_ROOT_SOURCE_ONLY_REVIEWED_FOR_NEW_CI",
+    "reviewedAt": "2026-11-10 15:30:40 UTC",
+    "sqlPin": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 139439,
+      "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+      "blob": "9cb6c7da7ee6de12c3056cfcf29a36c3a047b264"
+    },
+    "nativePin": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 178978,
+      "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744",
+      "blob": "408e8a62481401335b79a1b53a4609f26cf86c1c"
+    },
+    "insertionPin": {
+      "bytes": 1818,
+      "sha256": "54b02b8de7d77ce75d250186890be86187f20156e8429ea4b382c26465780e3e",
+      "blob": "df260291c93402b89e5ae8caeb1652cca033b8c1"
+    },
+    "sourceDigestSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+    "other16SourcePinsExact": true,
+    "onlySelectedBodyAndAdditiveNativeBlock": true,
+    "all31GroupNamesOrderExact": true,
+    "allPreviousNativeBytesExact": true,
+    "all12FixedOracleRowsExact": true,
+    "oracleReview": {
+      "pass": true,
+      "sourceOnly": true,
+      "literalJSONValid": true,
+      "tupleCount": 12,
+      "tuplePin": {
+        "bytes": 1189,
+        "sha256": "72bdb47fef878e4ae2461de6d5c1feb5a52dfc26a5c5b9e30f339dd86b9ebf06"
+      },
+      "fixedArithmeticWitnesses": [
+        {
+          "cases": [
+            1,
+            2
+          ],
+          "objectKeys": 16,
+          "scalarValues": 16,
+          "structuralCount": 33,
+          "caps": [
+            33,
+            32
+          ],
+          "expected": [
+            33,
+            -1
+          ]
+        },
+        {
+          "cases": [
+            3,
+            4
+          ],
+          "arrayItems": 16,
+          "structuralCount": 17,
+          "caps": [
+            17,
+            16
+          ],
+          "expected": [
+            17,
+            -1
+          ]
+        },
+        {
+          "cases": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "rootKeyCount": 3,
+          "arrayChildCount": 5,
+          "structuralCount": 11,
+          "caps": [
+            11,
+            10,
+            11,
+            10
+          ],
+          "expected": [
+            11,
+            -1,
+            11,
+            -1
+          ]
+        },
+        {
+          "cases": [
+            9,
+            10
+          ],
+          "rootArrayItems": 3,
+          "nestedObjectCount": 5,
+          "structuralCount": 8,
+          "maximumDepth": 3,
+          "caps": [
+            8,
+            7
+          ],
+          "expected": [
+            8,
+            -1
+          ]
+        },
+        {
+          "cases": [
+            11
+          ],
+          "structuralCount": 6,
+          "firstEmptyChildDepth": 24,
+          "laterNullDepth": 25,
+          "maximumDepth": 24,
+          "expected": -1
+        },
+        {
+          "cases": [
+            12
+          ],
+          "keys": [
+            "empty",
+            "control U+001F",
+            "Unicode U+00E9"
+          ],
+          "structuralCount": 7,
+          "emptyContainerDepth": 24,
+          "maximumDepth": 24,
+          "expected": 7
+        }
+      ],
+      "existingNullAndBoundsMatrixPreservedRequired": true,
+      "noProjectOrSQLExecution": true
+    },
+    "existingOwnerConnectionAndFourSQLParameters": true,
+    "noHelperConnectionGroupAdded": true,
+    "browserSourceUnchanged": true,
+    "allQuotasR9InheritedRollbackCleanupBoundsUnchanged": true,
+    "addedObjectKeyListAndAggregateCostAcknowledged": true,
+    "valueMaterializationsStillOccur": true,
+    "sourceWorkOnly": {
+      "queuedIterations": [
+        23,
+        2
+      ],
+      "leasedIterations": [
+        27,
+        3
+      ]
+    },
+    "measuredSpeedupOrMarginClaimed": false,
+    "typecheckExecuted": false,
+    "nativeExecuted": false
+  },
+  "independentSourceReview": {
+    "reviewer": "/root/m04_r9_review_g2",
+    "sameSession": true,
+    "sourceReviewPass": true,
+    "status": "SOURCE_ONLY_NO_CONCRETE_REMAINING_BLOCKER",
+    "observedAt": "2026-11-10 15:32:02 UTC",
+    "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "freshPublishedBaselineRead": true,
+    "sqlPin": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 139439,
+      "sha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+      "blob": "9cb6c7da7ee6de12c3056cfcf29a36c3a047b264"
+    },
+    "nativePin": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 178978,
+      "sha256": "3f5c018cff240de0769d3b100c42aa5e56d36a2762c48e8a1ab5286559d42744",
+      "blob": "408e8a62481401335b79a1b53a4609f26cf86c1c"
+    },
+    "insertionPin": {
+      "bytes": 1818,
+      "sha256": "54b02b8de7d77ce75d250186890be86187f20156e8429ea4b382c26465780e3e",
+      "blob": "df260291c93402b89e5ae8caeb1652cca033b8c1"
+    },
+    "sourceDigestSha256": "d2753193415468a06ea93f23e21b40e3e2b822a5dd6d3736d28db6eafd24f761",
+    "oneSelectedHelperBodyAndOneNativeBlockOnly": true,
+    "all29DeclarationsAttributesExact": true,
+    "all31GroupNamesOrderExact": true,
+    "other16SourcePinsExact": true,
+    "inverseDeltasRecoverExactBaseline": true,
+    "all12OracleDataRowsMatchV2": true,
+    "all12LiteralExpectedCountsIndependent": true,
+    "originalNodeScalarNullBoundsOraclesPreserved": true,
+    "allOldNativeBytesAndOraclesPreserved": true,
+    "typescriptArgumentsAndFourNullifParametersSourceReviewed": true,
+    "awaitAndAssertionPresent": true,
+    "bodyEntryGuardAndRecursionExact": true,
+    "depthCapEmptyAndScalarBehaviorPreserved": true,
+    "nonnegativeExtraAndIntegerBoundProofReviewed": true,
+    "extraObjectKeyScanAndMaterializationCostsAcknowledged": true,
+    "noCrossCallCacheTrustMarkerOrAggregateJsonbCopy": true,
+    "browserSourceUnchanged": true,
+    "allQuotasR9InheritedRollbackCleanupBoundsExact": true,
+    "authorDocumentsReviewed": false,
+    "typecheckExecuted": false,
+    "nativeExecuted": false,
+    "performanceMarginClaimed": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "stop": true
+  },
+  "rootAuthorDocumentReview": {
+    "pass": true,
+    "status": "ROOT_INDEPENDENT_AUTHOR_DOCUMENT_RECONSTRUCTION_AND_REVIEW",
+    "reviewedAt": "2026-11-10 15:40:07 UTC",
+    "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "transformPin": {
+      "bytes": 8196,
+      "sha256": "6ba8870b6c7f8b168e2e11345811ddf306dd316f6352e7a83f4f37d2cd4bc088"
+    },
+    "fullOrderedDataPin": {
+      "bytes": 41304,
+      "sha256": "8c4dd3e39afbb0e8d93908d3200d6f0ec26fbb0efe1daae67faa515856e07861"
+    },
+    "outputPins": [
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+        "bytes": 347079,
+        "sha256": "68df179797cd08eca112da74dbf1639e3133f590428c9ccf47c2736bff2236ca",
+        "blob": "af9f0e270e0cc6c3c5bc913aea251d2284cfb148"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+        "bytes": 606716,
+        "sha256": "85394e2261f9b50ff7ab863193b19509d482ab86003eafc905b017954f4da18b",
+        "blob": "3215461a119e68f73f684b3cffb0ba87e44d4a8b"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+        "bytes": 74307,
+        "sha256": "41ef0003f9d6e907331e99535bf3d2785a3464844737eace21cc59fe6670edbb",
+        "blob": "326d6c262e427cbf29603e302b282a672f8c79df"
+      },
+      {
+        "path": "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+        "bytes": 90705,
+        "sha256": "26d136627fec47c53e84ad5d8f5bfd6d0d4b15b3061aade784452711d79980eb",
+        "blob": "3451c5efe637638be85130d4bc798a2ab8c17ece"
+      }
+    ],
+    "reviews": {
+      "manifest": {
+        "priorFailureObjectsPreserved": 16,
+        "completeFailure17Exact": true,
+        "genuineR21AndCorrectedR22Preserved": true,
+        "sourcePins": 18
+      },
+      "evidence": {
+        "priorFailureObjectsPreserved": 16,
+        "completeFailure17Exact": true,
+        "genuineR21AndCorrectedR22Preserved": true,
+        "sourcePins": 18
+      }
+    },
+    "all16PreviousFailureObjectsExact": true,
+    "completeFailure17MatchesRootObject": true,
+    "genuineR21AndCorrectedR22Exact": true,
+    "currentCoverageRows": 22,
+    "currentAllUnexecuted": true,
+    "nativeGroupInventory": 31,
+    "sourcePins": 18,
+    "allOldCoverageExceptExplicitCurrentFieldsExact": true,
+    "allOldChecksAndHistoriesPreserved": true,
+    "bothPreviousMarkdownTailsExact": true,
+    "allCurrentAcceptanceFlagsFalse": true,
+    "selectedHunkAndOracleDescriptionsMatchReviewedSource": true,
+    "noPerformanceOrRunnerClaim": true,
+    "authorStopObserved": true,
+    "technicalLeadPass": false
+  },
+  "selectedSQLHunks": [
+    {
+      "old": "DECLARE e jsonb; n integer:=1; m integer;\nBEGIN\n  IF v IS NULL OR d IS NULL OR max_d IS NULL OR max_n IS NULL OR d<0 OR d>max_d OR max_d>24 OR max_n>65536 OR max_n<1 THEN RETURN -1; END IF;\n  IF jsonb_typeof(v)='object' THEN\n    FOR e IN SELECT value FROM jsonb_each(v) LOOP\n      IF d+1>max_d THEN RETURN -1; END IF;\n      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);\n      ELSE m:=1; END IF;\n      IF m<0 THEN RETURN -1; END IF;\n      n:=n+m+1; IF n>max_n THEN RETURN -1; END IF;\n    END LOOP;\n  ELSIF jsonb_typeof(v)='array' THEN\n    FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP\n      IF d+1>max_d THEN RETURN -1; END IF;\n      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);\n      ELSE m:=1; END IF;\n      IF m<0 THEN RETURN -1; END IF;\n      n:=n+m; IF n>max_n THEN RETURN -1; END IF;\n    END LOOP;\n  END IF;\n  RETURN n;\nEND $$;",
+      "next": "DECLARE e jsonb; n integer:=1; m integer; child_count bigint;\nBEGIN\n  IF v IS NULL OR d IS NULL OR max_d IS NULL OR max_n IS NULL OR d<0 OR d>max_d OR max_d>24 OR max_n>65536 OR max_n<1 THEN RETURN -1; END IF;\n  IF jsonb_typeof(v)='object' THEN\n    SELECT count(*) INTO child_count FROM jsonb_object_keys(v);\n    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;\n    IF child_count>(max_n-1)/2 THEN RETURN -1; END IF;\n    n:=1+2*child_count;\n    FOR e IN SELECT j.value FROM jsonb_each(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP\n      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);\n      IF m<0 THEN RETURN -1; END IF;\n      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;\n    END LOOP;\n  ELSIF jsonb_typeof(v)='array' THEN\n    child_count:=jsonb_array_length(v);\n    IF child_count>0 AND d+1>max_d THEN RETURN -1; END IF;\n    IF child_count>max_n-1 THEN RETURN -1; END IF;\n    n:=1+child_count;\n    FOR e IN SELECT j.value FROM jsonb_array_elements(v) j WHERE jsonb_typeof(j.value) IN ('object','array') LOOP\n      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);\n      IF m<0 THEN RETURN -1; END IF;\n      n:=n+m-1; IF n>max_n THEN RETURN -1; END IF;\n    END LOOP;\n  END IF;\n  RETURN n;\nEND $$;",
+      "function": "official_v3_jobs_private.nodes_v1",
+      "scope": "DECLARE-through-END body only; header and attributes unchanged"
+    }
+  ],
+  "selectedNativeOracles": [
+    [
+      "01 object scalar exact",
+      "{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",
+      0,
+      24,
+      33,
+      33
+    ],
+    [
+      "02 object scalar over",
+      "{\"k00\":0,\"k01\":1,\"k02\":2,\"k03\":3,\"k04\":4,\"k05\":5,\"k06\":6,\"k07\":7,\"k08\":8,\"k09\":9,\"k10\":10,\"k11\":11,\"k12\":12,\"k13\":13,\"k14\":14,\"k15\":15}",
+      0,
+      24,
+      32,
+      -1
+    ],
+    [
+      "03 array scalar exact",
+      "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",
+      0,
+      24,
+      17,
+      17
+    ],
+    [
+      "04 array scalar over",
+      "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]",
+      0,
+      24,
+      16,
+      -1
+    ],
+    [
+      "05 early container exact",
+      "{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",
+      0,
+      24,
+      11,
+      11
+    ],
+    [
+      "06 early container over",
+      "{\"a\":[{},{\"z\":1}],\"b\":null,\"c\":true}",
+      0,
+      24,
+      10,
+      -1
+    ],
+    [
+      "07 late container exact",
+      "{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",
+      0,
+      24,
+      11,
+      11
+    ],
+    [
+      "08 late container over",
+      "{\"a\":null,\"b\":true,\"c\":[{},{\"z\":1}]}",
+      0,
+      24,
+      10,
+      -1
+    ],
+    [
+      "09 mixed array exact",
+      "[null,{},{\"a\":[false,0]}]",
+      0,
+      3,
+      8,
+      8
+    ],
+    [
+      "10 mixed array over",
+      "[null,{},{\"a\":[false,0]}]",
+      0,
+      3,
+      7,
+      -1
+    ],
+    [
+      "11 late depth failure",
+      "{\"a\":{},\"b\":[null]}",
+      23,
+      24,
+      65536,
+      -1
+    ],
+    [
+      "12 key bytes counted",
+      "{\"\":null,\"\\u001f\":[],\"\\u00e9\":{}}",
+      23,
+      24,
+      7,
+      7
+    ]
+  ],
+  "primarySourceEvidence": [
+    {
+      "repository": "postgres/postgres",
+      "ref": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "path": "src/backend/utils/adt/jsonfuncs.c",
+      "bytes": 150652,
+      "sha256": "d36a4e15730cd6afd2eac6e636ecdeb72755dfdd1d3b864b02c8f6a2dc480eda",
+      "blob": "70cb922e6b7aa45629483bb64d3380d07a1e81a0",
+      "rootRead": true
+    }
+  ],
+  "historicalR26Failure": {
+    "schema": "jetnity.m04.actual-r26-failure.v1",
+    "head": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "tree": "bf5f7c0e826fcfcb1218178c31b7b28336c9189a",
+    "pullRequest": 1182,
+    "runId": 42839339313,
+    "attempt": 1,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "failure",
+    "updatedAt": "2026-11-10T15:11:27Z",
+    "observedTerminalByRootAt": "2026-11-10 15:13:42 UTC",
+    "repositoryTerminalObservedAt": "2026-11-10 15:10:43 UTC",
+    "repositoryVerificationJobId": 129910026311,
+    "jobs": [
+      {
+        "id": 129910025864,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Atomic refresh native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026216,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026271,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Persisted native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026311,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Tests",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Schutz der Admin-API",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Bezug auf das Schema",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Unerreichbarer Code",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Exporte ohne Aufrufer",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Ungenutzte Pakete",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Production build",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026326,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Zugang vorhanden?",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Abgleich",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026399,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Accepted store native proof",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129910026621,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Bind synthetic evidence to this run and checkout",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Setup check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Operating mode",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Visitor, polling and isolated CI contract tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Isolated harness typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Synthetic HTTP composition",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Local process benchmark",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Actual isolated browser audit",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve actual synthetic evidence, including failures",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 129918492076,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Require all five verification job families to succeed",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "log": {
+      "bytes": 4251751,
+      "sha256": "067633a068fcf83d5a9c9e7216ab177b7cb114a69a289ec4e8ff3ec56c033024",
+      "lines": 63152,
+      "chars": 4242533,
+      "observedTerminalAt": "2026-11-10 15:10:43 UTC",
+      "fetchedAt": "2026-11-10 15:11:01 UTC"
+    },
+    "native": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "executed": true,
+      "effectAndCleanupMilliseconds": 240348,
+      "cleanupMilliseconds": 16,
+      "clusters": 1,
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 27438,
+        "settled": 27438,
+        "pending": 0,
+        "connections": 4242,
+        "closed": 4242,
+        "stoppedClusters": 1
+      },
+      "groups": [
+        {
+          "id": "N01",
+          "milliseconds": 26
+        },
+        {
+          "id": "N02",
+          "milliseconds": 1465
+        },
+        {
+          "id": "N03",
+          "milliseconds": 1697
+        },
+        {
+          "id": "N07",
+          "milliseconds": 8729
+        },
+        {
+          "id": "N07/R4",
+          "milliseconds": 837
+        },
+        {
+          "id": "N08",
+          "milliseconds": 10235
+        },
+        {
+          "id": "N08/U04",
+          "milliseconds": 2427
+        },
+        {
+          "id": "N02/U04",
+          "milliseconds": 822
+        },
+        {
+          "id": "N04/N06",
+          "milliseconds": 2072
+        },
+        {
+          "id": "N04/N06/N10",
+          "milliseconds": 2303
+        },
+        {
+          "id": "N05/N09",
+          "milliseconds": 2405
+        },
+        {
+          "id": "N09",
+          "milliseconds": 17389
+        },
+        {
+          "id": "N10/U06",
+          "milliseconds": 6584
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2033
+        },
+        {
+          "id": "N11",
+          "milliseconds": 144
+        },
+        {
+          "id": "N12",
+          "milliseconds": 172
+        },
+        {
+          "id": "N04/N10/N12",
+          "milliseconds": 3755
+        },
+        {
+          "id": "N12/U06/R9",
+          "milliseconds": 12495
+        },
+        {
+          "id": "N12/R7-03",
+          "milliseconds": 528
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2602
+        },
+        {
+          "id": "N11",
+          "milliseconds": 316
+        },
+        {
+          "id": "N11",
+          "milliseconds": 298
+        },
+        {
+          "id": "N13",
+          "milliseconds": 2624
+        },
+        {
+          "id": "N05/A03",
+          "milliseconds": 89735
+        }
+      ],
+      "nestedRaceWitnesses": [
+        {
+          "boundary": "i1_timeout",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "25120",
+            "birth": "2026-11-10 15:06:25.329161+00"
+          },
+          "control": {
+            "pid": "25119",
+            "birth": "2026-11-10 15:06:25.325989+00"
+          },
+          "holder": {
+            "pid": "24800",
+            "birth": "2026-11-10 15:06:21.601083+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": true,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "worker_only",
+          "nativeAdmissionsAfterDrain": 45
+        },
+        {
+          "boundary": "worker_caller_abort",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "25964",
+            "birth": "2026-11-10 15:06:33.577842+00"
+          },
+          "control": {
+            "pid": "25963",
+            "birth": "2026-11-10 15:06:33.573594+00"
+          },
+          "holder": {
+            "pid": "25578",
+            "birth": "2026-11-10 15:06:30.433008+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": false,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "unconfirmed",
+          "nativeAdmissionsAfterDrain": 44
+        }
+      ],
+      "quotaProgress": {
+        "currentGroup": "N05",
+        "boundary": "cycle_claim",
+        "indexBase": 0,
+        "millisecondsCap": 300000,
+        "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+        "ledger": {
+          "lastStartedIndex": 253,
+          "lastCompletedIndex": 253,
+          "commandRequestsStarted": 258,
+          "commandRequestsCompleted": 258,
+          "commandRequestMilliseconds": 454,
+          "fixedCallsStarted": 260,
+          "fixedCallsCompleted": 260,
+          "fixedCallMilliseconds": 89490,
+          "commandCallsStarted": 258,
+          "commandCallsCompleted": 258,
+          "commandCommits": 256,
+          "startCallsStarted": 1,
+          "startCallsCompleted": 1,
+          "startReservations": 1
+        },
+        "cycles": {
+          "lastStartedIndex": 50,
+          "lastCompletedIndex": 49,
+          "commandRequestsStarted": 152,
+          "commandRequestsCompleted": 152,
+          "commandRequestMilliseconds": 270,
+          "fixedCallsStarted": 203,
+          "fixedCallsCompleted": 202,
+          "fixedCallMilliseconds": 67763,
+          "commandCallsStarted": 152,
+          "commandCallsCompleted": 151,
+          "commandCommits": 151,
+          "startCallsStarted": 50,
+          "startCallsCompleted": 50,
+          "startReservations": 50
+        }
+      },
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 4,
+        "maximumIntake": 1,
+        "maximumMethod": 2,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 2,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "proof_25:N05",
+        "error": {
+          "kind": "fixture",
+          "code": "unclassified_failure"
+        }
+      },
+      "cleanupFailures": [],
+      "cleanupFailureCount": 0,
+      "nativePass": false
+    },
+    "nativeReceiptCompactHash": {
+      "bytes": 3814,
+      "sha256": "88acd57cdfde50baaeaea4957c6506a017dece854f928ba1c8bfa2028d555b8e"
+    },
+    "assessment": {
+      "pass": false,
+      "issues": [
+        "mandatory native enclosing test did not pass exactly once",
+        "native failed or incomplete",
+        "not all 31 groups completed",
+        "core totals not expected full suite",
+        "exact named native group pass missing",
+        "quota not complete",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations",
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "receipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240348,
+        "cleanupMilliseconds": 16,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27438,
+          "settled": 27438,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 26
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1465
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1697
+          },
+          {
+            "id": "N07",
+            "milliseconds": 8729
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 837
+          },
+          {
+            "id": "N08",
+            "milliseconds": 10235
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 2427
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 822
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2072
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2303
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2405
+          },
+          {
+            "id": "N09",
+            "milliseconds": 17389
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 6584
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2033
+          },
+          {
+            "id": "N11",
+            "milliseconds": 144
+          },
+          {
+            "id": "N12",
+            "milliseconds": 172
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 3755
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 12495
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 528
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2602
+          },
+          {
+            "id": "N11",
+            "milliseconds": 316
+          },
+          {
+            "id": "N11",
+            "milliseconds": 298
+          },
+          {
+            "id": "N13",
+            "milliseconds": 2624
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 89735
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25120",
+              "birth": "2026-11-10 15:06:25.329161+00"
+            },
+            "control": {
+              "pid": "25119",
+              "birth": "2026-11-10 15:06:25.325989+00"
+            },
+            "holder": {
+              "pid": "24800",
+              "birth": "2026-11-10 15:06:21.601083+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25964",
+              "birth": "2026-11-10 15:06:33.577842+00"
+            },
+            "control": {
+              "pid": "25963",
+              "birth": "2026-11-10 15:06:33.573594+00"
+            },
+            "holder": {
+              "pid": "25578",
+              "birth": "2026-11-10 15:06:30.433008+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05",
+          "boundary": "cycle_claim",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 454,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 89490,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 50,
+            "lastCompletedIndex": 49,
+            "commandRequestsStarted": 152,
+            "commandRequestsCompleted": 152,
+            "commandRequestMilliseconds": 270,
+            "fixedCallsStarted": 203,
+            "fixedCallsCompleted": 202,
+            "fixedCallMilliseconds": 67763,
+            "commandCallsStarted": 152,
+            "commandCallsCompleted": 151,
+            "commandCommits": 151,
+            "startCallsStarted": 50,
+            "startCallsCompleted": 50,
+            "startReservations": 50
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_25:N05",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "core": {
+        "tests": {
+          "matches": 1,
+          "value": 8683
+        },
+        "pass": {
+          "matches": 1,
+          "value": 8679
+        },
+        "fail": {
+          "matches": 1,
+          "value": 2
+        },
+        "cancelled": {
+          "matches": 1,
+          "value": 0
+        },
+        "skipped": {
+          "matches": 1,
+          "value": 2
+        },
+        "duration_ms": {
+          "matches": 1,
+          "value": 646060.30101
+        }
+      },
+      "exactNames": [
+        {
+          "index": 1,
+          "id": "N01",
+          "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 2,
+          "id": "N02",
+          "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 3,
+          "id": "N03",
+          "name": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 4,
+          "id": "N07",
+          "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 5,
+          "id": "N07/R4",
+          "name": "actual S1 archived history and linked method revision survive full native consumption",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 6,
+          "id": "N08",
+          "name": "sixteen actual persisted originals complete inside fixed call budgets",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 7,
+          "id": "N08/U04",
+          "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 8,
+          "id": "N02/U04",
+          "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 9,
+          "id": "N04/N06",
+          "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 10,
+          "id": "N04/N06/N10",
+          "name": "older active start blocks a new claim while an independent subject progresses",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 11,
+          "id": "N05/N09",
+          "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 12,
+          "id": "N09",
+          "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 13,
+          "id": "N10/U06",
+          "name": "delivered producer does not terminate a pending I1 evidence callback",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 14,
+          "id": "N11",
+          "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 15,
+          "id": "N11",
+          "name": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 16,
+          "id": "N12",
+          "name": "acquisition, control failure and real drain never free a live native lane",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 17,
+          "id": "N04/N10/N12",
+          "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 18,
+          "id": "N12/U06/R9",
+          "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 19,
+          "id": "N12/R7-03",
+          "name": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 20,
+          "id": "N11",
+          "name": "staged PREPARED waits on the actual S1 operation before final current MA1",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 21,
+          "id": "N11",
+          "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 22,
+          "id": "N11",
+          "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 23,
+          "id": "N13",
+          "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 24,
+          "id": "N05/A03",
+          "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+          "passedLines": 1,
+          "failedLines": 0
+        },
+        {
+          "index": 25,
+          "id": "N05",
+          "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+          "passedLines": 0,
+          "failedLines": 1
+        },
+        {
+          "index": 26,
+          "id": "N15",
+          "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 27,
+          "id": "N14",
+          "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 28,
+          "id": "N01/N14/T02",
+          "name": "temporary catalog/type shadows do not influence the new install or runtime",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 29,
+          "id": "N14",
+          "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 30,
+          "id": "N15/T02",
+          "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+          "passedLines": 0,
+          "failedLines": 0
+        },
+        {
+          "index": 31,
+          "id": "N15",
+          "name": "rollback waits for actual late writer then rechecks nonempty history atomically",
+          "passedLines": 0,
+          "failedLines": 0
+        }
+      ],
+      "skips": [
+        "T09: shared guest/account Workspace keyboard, pagination, 320px and 200% browser layout # SKIP",
+        "shared responsive layout: real Guest Workspace, CSS zoom, text, targets and menu # SKIP NOT VERIFIED: set SHARED_LAYOUT_AUDIT_BASE to an explicitly enabled loopback UI-audit server"
+      ],
+      "skipsMatch": true,
+      "r9Problems": [],
+      "quotaProblems": [
+        "quota not complete",
+        "cycles.lastStartedIndex",
+        "cycles.lastCompletedIndex",
+        "cycles.commandRequestsStarted",
+        "cycles.commandRequestsCompleted",
+        "cycles.fixedCallsStarted",
+        "cycles.fixedCallsCompleted",
+        "cycles.commandCallsStarted",
+        "cycles.commandCallsCompleted",
+        "cycles.commandCommits",
+        "cycles.startCallsStarted",
+        "cycles.startCallsCompleted",
+        "cycles.startReservations"
+      ],
+      "cleanupProblems": [],
+      "limitProblems": [
+        "inherited boundary evidence incomplete",
+        "exact inherited 761-pair/minOwned4182 evidence mismatch"
+      ],
+      "groupPassCount": 24,
+      "timing": {
+        "completedGroupSum": 171693,
+        "effectAndCleanupMilliseconds": 240348,
+        "cleanupMilliseconds": 16
+      }
+    },
+    "separateLifecycleSuccess": {
+      "jobId": 129910026216,
+      "terminalObservedAt": "2026-11-10 15:07:23 UTC",
+      "log": {
+        "bytes": 177393,
+        "sha256": "f488d548c2353cab2c77bf0f21c1b13e9ea8718cdf19acab7879257309c48b9e",
+        "lines": 1613,
+        "observedTerminalAt": "2026-11-10 15:07:23 UTC",
+        "fetchedAt": "2026-11-10 15:07:33 UTC"
+      },
+      "assessment": {
+        "pass": true,
+        "issues": [],
+        "summary": {
+          "tests": {
+            "matches": 1,
+            "value": 4
+          },
+          "pass": {
+            "matches": 1,
+            "value": 4
+          },
+          "fail": {
+            "matches": 1,
+            "value": 0
+          },
+          "cancelled": {
+            "matches": 1,
+            "value": 0
+          },
+          "skipped": {
+            "matches": 1,
+            "value": 0
+          },
+          "duration_ms": {
+            "matches": 1,
+            "value": 519776.545378
+          }
+        },
+        "exactMountedPass": true,
+        "receipt": {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-10T15:00:07.319Z",
+          "readAt": "2026-11-10T15:02:17.371Z",
+          "expiresAt": "2026-11-10T15:02:32.371Z",
+          "deadlineFromRequestStartMs": 17499,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        }
+      },
+      "rootEvidenceURL": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770954619",
+      "priorR25CauseStillUnknown": true
+    },
+    "preview": {
+      "id": "dpl_9UgJBk5iSy2nYM2rmqRny13CwBma",
+      "url": "jetnity-mqdk7u0xi-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+      "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+      "aliasError": null,
+      "target": null
+    },
+    "main": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "mainAccepted": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "closureHeld": true
+  },
+  "historicalFailureExcerpt": {
+    "path": "docs/official-truth-product-v3/M04_RECOVERY_R27_NATIVE_FAILURE_V18.txt",
+    "bytes": 11448,
+    "sha256": "8baa8fc8eeeaf1f6c3783130ee383d7af9370987dcf1be5429fc7214d0814d5f",
+    "blob": "bd5b4ed48a8bea7b80e94e0ff416e828cddeb31a"
+  },
+  "priorCompleteEvidence": {
+    "head": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "path": "docs/official-truth-product-v3/M04_RECOVERY_R26_EVIDENCE_V17.json",
+    "bytes": 40633,
+    "sha256": "d3548c9de0ea3bd1f65f82caf21c08ee70b8df42876e5bc32e8fa456e2e02383",
+    "blob": "1042a69158d73b8e6959f9c0c82d28f173e4cdc6"
+  },
+  "previousFailureObjectsPreserved": 16,
+  "totalHistoricalFailureObjects": 17,
+  "genuineR21SuccessPreservedSeparately": true,
+  "correctedR22TerminalObservationPreserved": true,
+  "requiredNativeGroups": [
+    {
+      "id": "N01",
+      "test": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02",
+      "test": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N03",
+      "test": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07",
+      "test": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07/R4",
+      "test": "actual S1 archived history and linked method revision survive full native consumption",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08",
+      "test": "sixteen actual persisted originals complete inside fixed call budgets",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08/U04",
+      "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02/U04",
+      "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06",
+      "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06/N10",
+      "test": "older active start blocks a new claim while an independent subject progresses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/N09",
+      "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N09",
+      "test": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N10/U06",
+      "test": "delivered producer does not terminate a pending I1 evidence callback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12",
+      "test": "acquisition, control failure and real drain never free a live native lane",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N10/N12",
+      "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/U06/R9",
+      "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/R7-03",
+      "test": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "staged PREPARED waits on the actual S1 operation before final current MA1",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N13",
+      "test": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/A03",
+      "test": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05",
+      "test": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N01/N14/T02",
+      "test": "temporary catalog/type shadows do not influence the new install or runtime",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15/T02",
+      "test": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "rollback waits for actual late writer then rechecks nonempty history atomically",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    }
+  ],
+  "limits": "240 s effects + 60 s cleanup / 300 s total; four outer lanes and four native operations per family; eight active native / 256 total with 16 terminal admissions reserved; eight callbacks / 128 total; 30 s outer / 5 s child; three clusters / two children / 40 aggregate work connections / two M04 observers / one method observer / 16 fixture connections per cluster.",
+  "ownerGates": "Method **NOT_APPROVED**. #1139 **NOT_RELEASE_READY**, pre-Owner gaps E01, E04, E06, E07, E09, E10, E11, E13, E15, E16, E17, E18, E21, E22, E24, E25, E28. #917 specifically refused independent readback remains pending, ledger UNKNOWN, Stage2 NOT_ATTEMPTED: no retry, rephrasing, delegation, rerouting, transport switch, human SQL substitute or renewed old Owner evidence request. #1131 Ready STOP; both #1135 holds; #968 preview isolation and #911/#913 privacy remain.",
+  "boundaries": "No hosted DB/Auth/RLS/ACL/migration/credential action or Auth-log access, real source/provider/research call, scheduler, notification, new cost or public V3 activation. No local PostgreSQL/native/socket/parser/project/build execution, installation/download, missing binary retrieval, clone/reconstruction or replacement environment. Native proof only in the unchanged existing GitHub CI. No git fetch/push; any local git reads require GIT_NO_LAZY_FETCH=1 and GIT_OPTIONAL_LOCKS=0. Preserve all 22 omitted binary IDs. No automatic next product slice.",
+  "liveBaseline": {
+    "rootSafeGatesAt": "2026-11-10 15:08:32 UTC",
+    "sourceFreezeRefsObservedAt": "2026-11-10 15:40:45 UTC",
+    "terminalRunAt": "2026-11-10 15:13:42 UTC",
+    "baselineMain": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "baselineHead": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+    "mode": "NORMAL",
+    "ruleset": 21875372,
+    "bypassActors": [],
+    "formalReviews": 0,
+    "inlineThreads": 0,
+    "unresolvedVercelThreads": 0,
+    "toolbarAndCountsObserver": "same-session metadata auditor,2026-11-10 15:09:24–15:10:37 UTC; no additional Actions/log reads",
+    "openDraftPRs": 15,
+    "openNonPRIssues": 48,
+    "preview": {
+      "id": "dpl_9UgJBk5iSy2nYM2rmqRny13CwBma",
+      "url": "jetnity-mqdk7u0xi-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "b8415a5f349a258f99109435ac174c9ed5b7a259",
+      "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+      "aliasError": null,
+      "target": null
+    },
+    "production": {
+      "id": "dpl_99pQXe4BdoDExkYqxkL5eNdTJZrD",
+      "url": "jetnity-7xkqhmvs9-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "branch": "main",
+      "aliasError": null,
+      "target": "production"
+    },
+    "bothProductionAliasesMatch": true,
+    "deploymentObservation": "Root preview and aliases15:00:44 UTC; Production15:02:03 UTC, unchanged auditor snapshot15:09:24–15:10:37 UTC. Recheck at publication/acceptance.",
+    "permittedOwnerIssueUpdatesUnchanged": [
+      {
+        "number": 1139,
+        "updatedAt": "2026-11-08T23:48:12Z"
+      },
+      {
+        "number": 1131,
+        "updatedAt": "2026-11-06T00:37:27Z"
+      },
+      {
+        "number": 1135,
+        "updatedAt": "2026-11-06T09:13:19Z"
+      },
+      {
+        "number": 968,
+        "updatedAt": "2026-11-06T21:23:55Z"
+      },
+      {
+        "number": 911,
+        "updatedAt": "2026-10-14T09:51:11Z"
+      },
+      {
+        "number": 913,
+        "updatedAt": "2026-10-09T17:57:51Z"
+      }
+    ],
+    "sourceFreezePRStillDraft": true,
+    "noUnchangedRerun": true,
+    "prepublicationCompare": {
+      "ahead": 5,
+      "behind": 0,
+      "mergeBase": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "cumulativePaths": 32
+    }
+  },
+  "currentExecution": {
+    "executed": false,
+    "nativePass": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false,
+    "actualMainAccepted": false
+  },
+  "continuity": {
+    "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
+    "authorSession": "/root/m04_durable_jobs_writer_g2",
+    "reviewerSession": "/root/m04_r9_review_g2",
+    "auditorSession": "/root/m04_live_audit_g2",
+    "sameSessions": true,
+    "authorStop": true,
+    "originalCheckoutNotRecovered": true,
+    "projectExecutionPerformed": false,
+    "noReconstruction": true,
+    "all22BinaryIdsMustRemain": true,
+    "priorRecordsUnchanged": true
+  },
+  "firstUnfinishedStep": "Root expected-head publication/full readback, complete new exact-head CI/native/lifecycle/Preview/live gates, mandatory actual-main CI/native/Production, finite docs closure, STOP"
+}

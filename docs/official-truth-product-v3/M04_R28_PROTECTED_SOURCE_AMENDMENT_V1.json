@@ -1,0 +1,34 @@
+{
+  "schema": "m04-r28-protected-source-amendment-v1",
+  "rootTask": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6774340207",
+  "priorAuthorization": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6772232105",
+  "reviewedHead": "74a261716b851824bf3c3badf32b84a15e33c74a",
+  "reviewedTree": "8a785a60ba5b4da920832e558e35041ce6d78062",
+  "historicalManifest": {
+    "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+    "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+    "protectedRows": 40
+  },
+  "preservedMi1Amendment": {
+    "path": "docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json",
+    "sha256": "63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f",
+    "reviewedRows": 2
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "historical": {
+        "bytes": 12329,
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb"
+      },
+      "reviewed": {
+        "bytes": 12325,
+        "sha256": "3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18",
+        "gitBlob": "22f6e50aaff600749814bf7e77e24c728b1cd5d5",
+        "mode": "100644"
+      },
+      "reason": "R28 changes exactly four PostgreSQL-dependent runs-on values from ubuntu-latest to ubuntu-24.04. Every other workflow byte remains unchanged. This amendment does not change the workflow."
+    }
+  ],
+  "boundary": "Exactly one reviewed workflow identity amends the historical C1 guard. Preserve all 40 protected rows, the two separately counted MI1 package amendments and all UTF-8, length and digest checks. No alternate workflow, omitted row, automatic repinning or product activation."
+}
