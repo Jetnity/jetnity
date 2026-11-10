@@ -5,7 +5,11 @@ import FlughafenSuche from '@/components/airports/FlughafenSuche'
 import { ArrowUpRight } from 'lucide-react'
 import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
 import type { FlugKabine } from '@/lib/flights/domain'
-import { bookingFlugSuche, BOOKING_FLUG_PARTNERLINK, type Flugart } from '@/lib/trips/organisieren/booking-flug'
+import {
+  bookingFlugSuche,
+  BOOKING_FLUG_PARTNERLINK,
+  type Flugart,
+} from '@/lib/trips/organisieren/booking-flug'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
 import type { Trip } from '@/types/trips'
 import { Feld, Personen } from './Suchfelder'
@@ -34,13 +38,7 @@ function FlughafenFeld({
   )
 }
 
-export default function Flugsuche({
-  reise,
-  etappen,
-}: {
-  reise: Trip
-  etappen: ReactNode
-}) {
+export default function Flugsuche({ reise, etappen }: { reise: Trip; etappen: ReactNode }) {
   const erste = reise.stages[0],
     letzte = reise.stages.at(-1)
   const [von, setVon] = useState(() => vorgeschlagenerFlughafen(reise.originPlaceId, reise.origin))
@@ -64,19 +62,34 @@ export default function Flugsuche({
     [direkt, setDirekt] = useState(false)
   const [fehler, setFehler] = useState('')
   const suche = bookingFlugSuche({
-    art, von: von?.iata, nach: nach?.iata, rueckflugAb: zurueck?.iata, hin, rueck,
-    gaeste, kabine, direkt, waehrung: reise.currency,
+    art,
+    von: von?.iata,
+    nach: nach?.iata,
+    rueckflugAb: zurueck?.iata,
+    hin,
+    rueck,
+    gaeste,
+    kabine,
+    direkt,
+    waehrung: reise.currency,
   })
 
   return (
     <>
-      <form className="org-form" action={BOOKING_FLUG_PARTNERLINK} method="get" target="_blank"
-        rel="sponsored noopener noreferrer" onChange={() => setFehler('')} onSubmit={event => {
+      <form
+        className="org-form"
+        action={BOOKING_FLUG_PARTNERLINK}
+        method="get"
+        target="_blank"
+        rel="sponsored noopener noreferrer"
+        onChange={() => setFehler('')}
+        onSubmit={(event) => {
           if ('fehler' in suche) {
             event.preventDefault()
             setFehler(suche.fehler)
           }
-        }}>
+        }}
+      >
         <input type="hidden" name="sid" value="jetnity-flug" />
         {'ziel' in suche && <input type="hidden" name="url" value={suche.ziel} />}
         <div className="org-formtop">
@@ -119,7 +132,9 @@ export default function Flugsuche({
             </Feld>
           )}
           <Personen wert={gaeste} setzen={setGaeste} />
-          <button className="org-go" type="submit">Auf Booking.com suchen <ArrowUpRight aria-hidden="true" /></button>
+          <button className="org-go" type="submit">
+            Auf Booking.com suchen <ArrowUpRight aria-hidden="true" />
+          </button>
         </div>
         <div className="org-sub">
           {art === 'gabel' && (
@@ -146,7 +161,10 @@ export default function Flugsuche({
             Direktflüge
           </label>
         </div>
-        <p className="org-note mt-3">Flüge und Preise öffnen sich bei Booking.com in einem neuen Tab. Bei einer Buchung kann Jetnity eine Provision erhalten.</p>
+        <p className="org-note mt-3">
+          Flüge und Preise öffnen sich bei Booking.com in einem neuen Tab. Bei einer Buchung kann Jetnity eine
+          Provision erhalten.
+        </p>
         {fehler && <p role="alert">{fehler}</p>}
       </form>
       {etappen}

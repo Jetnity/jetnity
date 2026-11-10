@@ -4,8 +4,15 @@ import { bookingFlugSuche } from './booking-flug'
 import { kategorieFuerBereich, modusAusQuery, modusUrl } from '../workspace-mode'
 
 const basis = {
-  von: 'ZRH', nach: 'BKK', rueckflugAb: 'HKT', hin: '2027-03-12', rueck: '2027-03-19',
-  gaeste: 2, kabine: 'business' as const, direkt: true, waehrung: 'CHF',
+  von: 'ZRH',
+  nach: 'BKK',
+  rueckflugAb: 'HKT',
+  hin: '2027-03-12',
+  rueck: '2027-03-19',
+  gaeste: 2,
+  kabine: 'business' as const,
+  direkt: true,
+  waehrung: 'CHF',
 }
 const heute = '2027-01-01'
 
@@ -28,18 +35,31 @@ test('Booking übernimmt Termine, Strecke, Klasse und Direktflugwahl für jede R
 })
 
 test('Eine ungültige Strecke oder unvollständige Daten erzeugen keinen Partnerlink', () => {
-  for (const felder of [{ hin: '2027-02-31' }, { rueck: '2027-02-01' }, { nach: 'ZRH' }, { rueckflugAb: '' }, { gaeste: 0 }, { von: 'ZH?' }]) {
+  for (const felder of [
+    { hin: '2027-02-31' },
+    { rueck: '2027-02-01' },
+    { nach: 'ZRH' },
+    { rueckflugAb: '' },
+    { gaeste: 0 },
+    { von: 'ZH?' },
+  ]) {
     assert.ok('fehler' in bookingFlugSuche({ ...basis, art: 'gabel', ...felder }, heute))
   }
 })
 
 test('Neue Kategorien und bestehende Bereichslinks öffnen denselben Organisationsreiter', () => {
-  for (const bereich of ['fluege','unterkunft','aktivitaeten','mobilitaet'] as const) {
-    const vorher = modusAusQuery(new URLSearchParams({ansicht: 'organisieren', bereich}))
+  for (const bereich of ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const) {
+    const vorher = modusAusQuery(new URLSearchParams({ ansicht: 'organisieren', bereich }))
     assert.equal(kategorieFuerBereich(vorher.bereich), bereich === 'mobilitaet' ? 'verbindungen' : bereich)
   }
   const modus = modusAusQuery(new URLSearchParams('ansicht=organisieren&kategorie=mietwagen'))
   assert.equal(modus.kategorie, 'mietwagen')
   assert.equal(modusUrl('/reisen/test', modus), '/reisen/test?ansicht=organisieren&kategorie=mietwagen')
-  assert.equal(modusUrl('/reisen/test?ansicht=organisieren&kategorie=mietwagen', { ansicht:'uebersicht', bereich:null }), '/reisen/test')
+  assert.equal(
+    modusUrl('/reisen/test?ansicht=organisieren&kategorie=mietwagen', {
+      ansicht: 'uebersicht',
+      bereich: null,
+    }),
+    '/reisen/test',
+  )
 })

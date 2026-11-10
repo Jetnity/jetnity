@@ -17,7 +17,10 @@ interface FlugEingabe {
   waehrung: string
 }
 
-export function bookingFlugSuche(e: FlugEingabe, heute = heutigesDatum()): { ziel: string } | { fehler: string } {
+export function bookingFlugSuche(
+  e: FlugEingabe,
+  heute = heutigesDatum(),
+): { ziel: string } | { fehler: string } {
   const iata = (wert?: string): wert is string => typeof wert === 'string' && /^[A-Z]{3}$/.test(wert)
   if (!iata(e.von) || !iata(e.nach) || (e.art === 'gabel' && !iata(e.rueckflugAb))) {
     return { fehler: 'Bitte wähle alle Flughäfen aus den Vorschlägen.' }
@@ -25,7 +28,11 @@ export function bookingFlugSuche(e: FlugEingabe, heute = heutigesDatum()): { zie
   if (e.von === e.nach || (e.art === 'gabel' && e.von === e.rueckflugAb)) {
     return { fehler: 'Abflug und Ankunft müssen je Strecke verschieden sein.' }
   }
-  if (tageUtc(e.hin) === null || e.hin < heute || (e.art !== 'einfach' && (tageUtc(e.rueck) === null || e.rueck < e.hin))) {
+  if (
+    tageUtc(e.hin) === null ||
+    e.hin < heute ||
+    (e.art !== 'einfach' && (tageUtc(e.rueck) === null || e.rueck < e.hin))
+  ) {
     return { fehler: 'Bitte prüfe die Flugtermine.' }
   }
   if (!Number.isInteger(e.gaeste) || e.gaeste < 1 || e.gaeste > 9) {
@@ -36,7 +43,9 @@ export function bookingFlugSuche(e: FlugEingabe, heute = heutigesDatum()): { zie
   const multi = e.art === 'gabel'
   const von = multi ? start + '|' + e.rueckflugAb + '.AIRPORT' : start
   const nach = multi ? ende + '|' + start : ende
-  const ziel = new URL('https://flights.booking.com/flights/' + encodeURIComponent(von) + '-' + encodeURIComponent(nach) + '/')
+  const ziel = new URL(
+    'https://flights.booking.com/flights/' + encodeURIComponent(von) + '-' + encodeURIComponent(nach) + '/',
+  )
   const query = ziel.searchParams
   query.set('type', multi ? 'MULTISTOP' : e.art === 'retour' ? 'ROUNDTRIP' : 'ONEWAY')
   query.set('from', von)
