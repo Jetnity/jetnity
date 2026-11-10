@@ -148,14 +148,20 @@ END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
 DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text; object_keys text[]; object_values jsonb[]; part_index integer;
+  current_depth integer; child_depth integer; descend_object boolean; pending_positions integer[]; pending_cursor integer;
+  child_keys text[]; child_values jsonb[]; child_parts text[]; child_pending_positions integer[];
+  stack_parts text[]:='{}'; stack_keys text[]:='{}'; stack_values jsonb[]:='{}'; stack_pending integer[]:='{}';
+  frame_lengths integer[]:='{}'; frame_pending_lengths integer[]:='{}'; frame_cursors integer[]:='{}'; stack_level integer:=0;
+  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
+    current_depth:=d;
     SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),
       array_agg(j.value ORDER BY j.key COLLATE "C"),
       COALESCE(array_agg(
-        CASE WHEN j.key ~ '[^ -~]' OR d+1>24 THEN NULL
+        CASE WHEN j.key ~ '[^ -~]' OR current_depth+1>24 THEN NULL
         ELSE to_jsonb(j.key)::text||':'||
           CASE jsonb_typeof(j.value)
           WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
@@ -167,34 +173,85 @@ BEGIN
           END
         END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
       INTO object_keys,object_values,parts FROM jsonb_each(v) j;
-    FOREACH part_index IN ARRAY array_positions(parts,NULL::text) LOOP
-      IF object_keys[part_index] ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      e:=object_values[part_index];
-      IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      CASE jsonb_typeof(e)
-      WHEN 'object' THEN
-        IF retained_object IS NULL THEN
-          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-          retained_object:=e; retained_object_canonical:=child_text;
-        ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
-          child_text:=retained_object_canonical;
-        ELSE
-          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-          retained_object:=e; retained_object_canonical:=child_text;
-        END IF;
-      WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-      WHEN 'string' THEN
-        s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-        child_text:=e::text;
-      WHEN 'number' THEN
-        number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
-          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
-      WHEN 'boolean' THEN child_text:=e::text;
-      WHEN 'null' THEN child_text:='null';
-      ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
-      END CASE;
-      parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text;
-    END LOOP; RETURN '{'||array_to_string(parts,',')||'}';
+    pending_positions:=array_positions(parts,NULL::text); pending_cursor:=1;
+    LOOP
+      IF pending_cursor<=cardinality(pending_positions) THEN
+        part_index:=pending_positions[pending_cursor];
+        IF object_keys[part_index] ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        e:=object_values[part_index];
+        IF current_depth+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        CASE jsonb_typeof(e)
+        WHEN 'object' THEN
+          IF retained_object IS NULL THEN descend_object:=true;
+          ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
+            child_text:=retained_object_canonical; descend_object:=false;
+          ELSE descend_object:=true;
+          END IF;
+          IF descend_object THEN
+            child_depth:=current_depth+1;
+            IF e IS NULL OR child_depth IS NULL OR child_depth<0 OR child_depth>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+            SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),
+              array_agg(j.value ORDER BY j.key COLLATE "C"),
+              COALESCE(array_agg(
+                CASE WHEN j.key ~ '[^ -~]' OR child_depth+1>24 THEN NULL
+                ELSE to_jsonb(j.key)::text||':'||
+                  CASE jsonb_typeof(j.value)
+                  WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+                  WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+                    AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+                  WHEN 'boolean' THEN j.value::text
+                  WHEN 'null' THEN 'null'
+                  ELSE NULL
+                  END
+                END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+              INTO child_keys,child_values,child_parts FROM jsonb_each(e) j;
+            child_pending_positions:=array_positions(child_parts,NULL::text);
+            IF cardinality(child_pending_positions)=0 THEN
+              child_text:='{'||array_to_string(child_parts,',')||'}';
+              retained_object:=e; retained_object_canonical:=child_text;
+            ELSE
+              frame_lengths[stack_level+1]:=cardinality(parts);
+              frame_pending_lengths[stack_level+1]:=cardinality(pending_positions);
+              frame_cursors[stack_level+1]:=pending_cursor;
+              stack_parts:=stack_parts||parts; stack_keys:=stack_keys||object_keys; stack_values:=stack_values||object_values;
+              stack_pending:=stack_pending||pending_positions;
+              object_keys:=child_keys; object_values:=child_values; parts:=child_parts;
+              pending_positions:=child_pending_positions; pending_cursor:=1;
+              retained_object:=NULL; retained_object_canonical:=NULL;
+              stack_level:=stack_level+1; current_depth:=child_depth;
+              CONTINUE;
+            END IF;
+          END IF;
+        WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,current_depth+1);
+        WHEN 'string' THEN
+          s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+          child_text:=e::text;
+        WHEN 'number' THEN
+          number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+            RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
+        WHEN 'boolean' THEN child_text:=e::text;
+        WHEN 'null' THEN child_text:='null';
+        ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
+        END CASE;
+        parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text; pending_cursor:=pending_cursor+1;
+      ELSE
+        child_text:='{'||array_to_string(parts,',')||'}';
+        IF stack_level=0 THEN RETURN child_text; END IF;
+        frame_length:=frame_lengths[stack_level]; pending_length:=frame_pending_lengths[stack_level];
+        parent_length:=cardinality(stack_parts)-frame_length; parent_pending_length:=cardinality(stack_pending)-pending_length;
+        parts:=stack_parts[parent_length+1:parent_length+frame_length];
+        object_keys:=stack_keys[parent_length+1:parent_length+frame_length];
+        object_values:=stack_values[parent_length+1:parent_length+frame_length];
+        pending_positions:=stack_pending[parent_pending_length+1:parent_pending_length+pending_length];
+        pending_cursor:=frame_cursors[stack_level];
+        stack_parts:=stack_parts[1:parent_length]; stack_keys:=stack_keys[1:parent_length]; stack_values:=stack_values[1:parent_length];
+        stack_pending:=stack_pending[1:parent_pending_length];
+        stack_level:=stack_level-1; current_depth:=current_depth-1;
+        part_index:=pending_positions[pending_cursor];
+        retained_object:=object_values[part_index]; retained_object_canonical:=child_text;
+        parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text; pending_cursor:=pending_cursor+1;
+      END IF;
+    END LOOP;
   WHEN 'array' THEN
     FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
       IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
