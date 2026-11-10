@@ -1,7 +1,11 @@
 # Jetnity – Roadmap
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
-> **10.11.2026 — M04 Generation 2 / R16, neue Abnahme offen:** N01/N02/N03/N07 bestanden; N07/R4 scheiterte an einer Verwechslung zwischen Anwendungsdatensatz und roher S1-Antwort. Der native Testfix nutzt die tatsächliche Datenbankantwort und erhält alle strengen Negativ-/Archiv-/Revisionsprüfungen. [Checkpoint V7](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V7.md), [Task V7](docs/official-truth-product-v3/M04_RECOVERY_TASK_V7.md), [PR #1178](https://github.com/Jetnity/jetnity/pull/1178). Vollständige neue 31-Gruppen-/R9-/CI-Abnahme offen. Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending, alle Owner-Gates unverändert; kein Folgeslice.
+
+### Official Truth V3 / M04 R17 — quota fixture correction, Draft
+
+Baseline 69f4dcc passed23 native groups including both actual R9 witnesses, but CI 42754606380 failed the fixed 240 s budget at N05/A03; seven later groups remain unproved. R17 preserves actual 254/255/256 and 64/65 boundaries using distinct compact Discovery fixtures; SQL/authority/full history/budgets unchanged. Newhead requires all 31 groups and full gates. [Task V8](docs/official-truth-product-v3/M04_RECOVERY_TASK_V8.md) · [Root Review V8](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V8.md) · [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md). Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending; no hosted/public activation or next slice. Later exact-head PR receipts/live evidence govern.
+
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
 
 > **10.11.2026 – Reiseplanung und persönlicher Bereich:** Die gemeinsame Änderung umfasst Etappen mit manuellen Stopps und Karte, die direkten Einstiege in die Reisesuche, den Konto- und Reisebereich und den Weltatlas. Hotels und Flüge öffnen bis zur Freigabe offizieller Daten über die CJ-Partnersuche. [Umfang und Prüfung](docs/REISEBEREICHE_2026-11-10.md).

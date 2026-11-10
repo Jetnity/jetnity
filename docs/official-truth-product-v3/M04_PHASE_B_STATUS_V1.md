@@ -1,3 +1,48 @@
+# M04 Phase-B author delivery status V1 — R17 current
+
+**R17 SAME-SESSION DISCOVERY QUOTA FIXTURES PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Diagnosis dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759048050) and [exact implementation authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759160977); baseline `69f4dcc78e8670099fb5997f825edf1027956b33`, tree `4dab49a12f05d1c57ab287130f4127ca28135ab2`.
+
+## Authorized correction
+
+Only the two native quota blocks change. The actual ledger proof uses coherent Discovery CH → IS; the actual start-cap proof uses CH → NO. Existing originals.context builds both contexts. Explicit identity assertions distinguish these subjects and prior CH → AQ. Each performs a real fixed queue_read probe returning absent before its first write.
+
+Every actual 254-command fill, original claim 255 plus credit, START, blocked interstitial/no-effect snapshot, exact-token/fence terminal Fail 256, cleared credit/one disposition/exhausted state and beyond-cap refusal remains. All 64 enqueue/claim/START/fail cycles, 65th enqueue/refused claim, 193 commands/64 starts/64 dispositions and pointer-corruption refusal/restoration remain.
+
+All full SQL history/catalog/lock/authority checks remain. There is no manual journal population, SQL/protected-source change, profiling instrumentation, timeout increase or skipped group. The other seventeen sources and all 31 native groups are unchanged.
+
+- native.ts: **142485 bytes**, SHA256 `2e757ad2a3242e3881eba5b498c595a2447846157e3de698d17dd356d499375a`.
+- Git blob: `20247c75ed2dd9c834304429c138054383913b1f`.
+- Eighteen-source aggregate: `57169eb6ccf365164c1a334eee57bb887640c11e2342dd03d109c5444d999fc0`.
+- Eighteen pins, twenty-two matrix rows and thirty-one native group obligations remain.
+
+## Actual historical CI
+
+[CI 42754606380](https://github.com/Jetnity/jetnity/actions/runs/42754606380) is independently verified **completed/failure**. Repository job 129625959864 and aggregate 129630534969 failed; all six companion jobs succeeded. Typecheck/lint passed; tests failed; hygiene/build were skipped.
+
+The first **23 ordered groups passed**, including corrected N07/R4, all sixteen N08 originals and **both actual R9 witnesses**. R9 observed real S1 reserve waits, target/control/holder identities, backend absence while the executor remained held, unavailable admission before drain and invalid admission afterward, no terminal effects and actual retained-executor drain. Natural I1 timeout observed fail-confirm; the caller-abort case returned unconfirmed. This does not claim an elapsed 30-second worker timer.
+
+Group 24 N05/A03 timed out after **149149.71633 ms** at the unchanged global **240-second effect budget**. The failed iteration and individual SQL timings are unknown. Seven later groups were not reached. First-23 group times sum to 90307 ms.
+
+Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled; 655018.2848 ms. Cleanup: 26653/26653 settled, zero pending, 4242/4242 connections closed, one stopped cluster, zero child processes/errors; 240314 ms total / 20 ms cleanup. All seven failed CI histories remain; overall nativePass is false.
+
+## Performance limitation and author STOP
+
+The full planned 254-command fill requires 64516 historical transition validations; the following 192 commands and 64 START calls add 36864 and 12352 respectively. These are source-derived work counts, not profiling or the observed failed iteration.
+
+**This changes shared-cap fixture data complexity. It is not a runtime optimization, full-cap Rule latency proof or Production capacity/SLO approval.** Quadratic historical Rule validation remains a dormant performance limitation. Existing Rule/S1/I1 and Discovery/S1 coverage remains. No speedup or complete CI success is promised.
+
+Original checkout absent; no reconstruction, installation or local project/parser/test/SQL/native/build execution occurred. Historical 64/64 author checks do not validate this change. Corrected R17 source remains unexecuted.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root owns Task V8, publication and complete exact-head acceptance. No Ready, merge, hosted action or next slice. Method NOT_APPROVED, #1139 NOT_RELEASE_READY/17 gaps, #917 refusal and all existing Owner gates remain.
+
+---
+
+## Historical R16 and earlier author records
+
+The exact previous record follows. Its current wording and pins are historical; this R17 block and current JSON fields govern the new delivery.
+
 # M04 Phase-B author delivery status V1 — R16 current
 
 **R16 SAME-SESSION RAW-S1 FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**

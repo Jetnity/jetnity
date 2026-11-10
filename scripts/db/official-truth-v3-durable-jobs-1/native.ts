@@ -1351,71 +1351,78 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       assert.equal(state.results, null); assert.equal(state.dispositions[0].kind, 'settled_failure'); assert.equal(state.dispositions[0].failure_reason, 'invalid_proposal')
     })
     await proof('N05/A03', 'actual 254/255/256 ledger boundary preserves the sole original terminal credit', async () => {
-      const input = m04Fixture('native-ledger-quota', { context: contextFor(48) })
+      const base = m04Fixture('native-ledger-quota-base')
+      const input = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
+      assert.notEqual(input.discovery.jobKey, base.discovery.jobKey, 'ledger quota uses a distinct Discovery subject')
+      assert.equal((await fixed(runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
       let current: V3ManagedJobRecord | null = null
       const epoch = await currentEpoch()
       for (let n = 0; n < 254; n++) {
-        const q = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: { ...input.ruleInput,
+        const q = await commandRequest({ action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
           operationId: ids('op3', 'quota-enqueue-' + n), jobId: ids('job3', 'quota-cycle-' + n), attemptLimit: 1 } }, current)
         assert.equal((await fixed(runtime, q, epoch)).status, 'committed', 'ledger command ' + n)
         current = q.body.commit.next
       }
-      const originalClaim = { ...input.claim(), operationId: ids('op3', 'quota-boundary-claim') }
+      const originalClaim = { ...input.claim('combination_discovery'), operationId: ids('op3', 'quota-boundary-claim') }
       const claim = await commandRequest({ action: 'claim', input: originalClaim }, current)
       assert.equal((await fixed(runtime, claim, epoch)).status, 'committed'); current = claim.body.commit.next
-      assert.deepEqual(await f.owner.query('SELECT operation_count::text,terminal_credit_claim FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1', text([input.identity.jobKey])), [{ operation_count: '255', terminal_credit_claim: originalClaim.operationId }])
+      assert.deepEqual(await f.owner.query('SELECT operation_count::text,terminal_credit_claim FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1', text([input.discovery.jobKey])), [{ operation_count: '255', terminal_credit_claim: originalClaim.operationId }])
       const start = await fixed(runtime, { operation: 'execution_start', body: { claim: originalClaim, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
       assert.equal(start.status, 'reserved')
-      const before = await f.state(input.identity.jobKey)
-      const unentitled = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: { ...input.ruleInput, operationId: ids('op3', 'quota-cannot-steal'), jobId: ids('job3', 'quota-cannot-steal') } }, current)
+      const before = await f.state(input.discovery.jobKey)
+      const unentitled = await commandRequest({ action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-cannot-steal'), jobId: ids('job3', 'quota-cannot-steal') } }, current)
       assert.equal((await fixed(runtime, unentitled, epoch)).status, 'blocked', 'old unknown gate precedes otherwise possible interstitial command')
-      assert.deepEqual(await f.state(input.identity.jobKey), before)
+      assert.deepEqual(await f.state(input.discovery.jobKey), before)
       // This finite test caller owns a synchronously terminal failed producer and
       // has no callback/native children. The DB validates token/claim/command;
       // it does not infer that external terminal fact from a reason string.
-      const failure = await commandRequest({ action: 'fail', input: { operationId: ids('op3', 'quota-final-fail'), jobKey: input.identity.jobKey,
+      const failure = await commandRequest({ action: 'fail', input: { operationId: ids('op3', 'quota-final-fail'), jobKey: input.discovery.jobKey,
         fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
       const terminalRequest = { ...failure, body: { ...failure.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }
       assert.equal((await fixed(runtime, terminalRequest, epoch)).status, 'committed')
-      const final = JSON.parse((await f.state(input.identity.jobKey))[0]!.state!)
+      const final = JSON.parse((await f.state(input.discovery.jobKey))[0]!.state!)
       assert.equal(final.commands.length, 256); assert.equal(final.subjects[0].operation_count, 256); assert.equal(final.subjects[0].terminal_credit_claim, null)
       assert.equal(final.dispositions.length, 1); assert.equal(final.subjects[0].current_job.state, 'exhausted')
-      const beyond = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: { ...input.ruleInput, operationId: ids('op3', 'quota-beyond'), jobId: ids('job3', 'quota-beyond') } }, final.subjects[0].current_job)
+      const beyond = await commandRequest({ action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-beyond'), jobId: ids('job3', 'quota-beyond') } }, final.subjects[0].current_job)
       assert.equal((await fixed(runtime, beyond, epoch)).status, 'quota')
-      assert.deepEqual(JSON.parse((await f.state(input.identity.jobKey))[0]!.state!), final)
+      assert.deepEqual(JSON.parse((await f.state(input.discovery.jobKey))[0]!.state!), final)
     })
     await proof('N05', 'sixty-four actual starts retain all older history and refuse the sixty-fifth claim', async () => {
-      const input = m04Fixture('native-start-quota', { context: contextFor(49) }), epoch = await currentEpoch()
+      const base = m04Fixture('native-start-quota-base')
+      const input = m04Fixture('native-start-quota', { context: base.originals.context('CH', 'NO') }), epoch = await currentEpoch()
+      const ledger = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
+      assert.equal(new Set([base.discovery.jobKey, ledger.discovery.jobKey, input.discovery.jobKey]).size, 3, 'quota Discovery subjects are distinct from each other and the earlier default')
+      assert.equal((await fixed(runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
       let current: V3ManagedJobRecord | null = null
       for (let n = 0; n < 64; n++) {
-        const enqueue = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: { ...input.ruleInput,
+        const enqueue = await commandRequest({ action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
           operationId: ids('op3', 'start-quota-enqueue-' + n), jobId: ids('job3', 'start-quota-cycle-' + n), attemptLimit: 1 } }, current)
         assert.equal((await fixed(runtime, enqueue, epoch)).status, 'committed'); current = enqueue.body.commit.next
-        const c = { ...input.claim(), operationId: ids('op3', 'start-quota-claim-' + n), leaseId: ids('lease3', 'start-quota-' + n) }
+        const c = { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-claim-' + n), leaseId: ids('lease3', 'start-quota-' + n) }
         const claim = await commandRequest({ action: 'claim', input: c }, current)
         assert.equal((await fixed(runtime, claim, epoch)).status, 'committed'); current = claim.body.commit.next
         const start = await fixed(runtime, { operation: 'execution_start', body: { claim: c, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
         assert.equal(start.status, 'reserved')
-        const failed = await commandRequest({ action: 'fail', input: { operationId: ids('op3', 'start-quota-fail-' + n), jobKey: input.identity.jobKey,
+        const failed = await commandRequest({ action: 'fail', input: { operationId: ids('op3', 'start-quota-fail-' + n), jobKey: input.discovery.jobKey,
           fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
         assert.equal((await fixed(runtime, { ...failed, body: { ...failed.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }, epoch)).status, 'committed')
         current = failed.body.commit.next
       }
-      const last = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: { ...input.ruleInput,
+      const last = await commandRequest({ action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
         operationId: ids('op3', 'start-quota-65-enqueue'), jobId: ids('job3', 'start-quota-65-cycle') } }, current)
       assert.equal((await fixed(runtime, last, epoch)).status, 'committed'); current = last.body.commit.next
-      const before = await f.state(input.identity.jobKey)
-      const rejected = await commandRequest({ action: 'claim', input: { ...input.claim(), operationId: ids('op3', 'start-quota-65-claim') } }, current)
-      assert.equal((await fixed(runtime, rejected, epoch)).status, 'quota'); assert.deepEqual(await f.state(input.identity.jobKey), before)
+      const before = await f.state(input.discovery.jobKey)
+      const rejected = await commandRequest({ action: 'claim', input: { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-65-claim') } }, current)
+      assert.equal((await fixed(runtime, rejected, epoch)).status, 'quota'); assert.deepEqual(await f.state(input.discovery.jobKey), before)
       const history = JSON.parse(before[0]!.state!)
       assert.equal(history.starts.length, 64); assert.equal(history.dispositions.length, 64)
       assert.equal(history.commands.length, 193)
       // A contradictory retained pointer is detected by full-history comparison;
       // the controlled test restores exactly its prior value, never deletes rows.
-      await f.owner.query("UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=$2 WHERE job_key=$1", text([input.identity.jobKey, history.starts[0].attempt_key]))
-      await assert.rejects(fixed(runtime, { operation: 'queue_read', body: { jobKey: input.identity.jobKey, continuation: null } }, null, 'probe'), code('P7603'))
-      await f.owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=NULL WHERE job_key=$1', text([input.identity.jobKey]))
-      assert.deepEqual(await f.state(input.identity.jobKey), before)
+      await f.owner.query("UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=$2 WHERE job_key=$1", text([input.discovery.jobKey, history.starts[0].attempt_key]))
+      await assert.rejects(fixed(runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe'), code('P7603'))
+      await f.owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=NULL WHERE job_key=$1', text([input.discovery.jobKey]))
+      assert.deepEqual(await f.state(input.discovery.jobKey), before)
     })
     await proof('N15', 'nonempty real command/unknown/prepared/success/failure history forbids rollback', async () => {
       const snapshot = await catalog(f.owner)

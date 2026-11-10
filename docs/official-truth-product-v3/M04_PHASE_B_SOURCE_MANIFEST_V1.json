@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R16_SAME_GENERATION2_RAW_S1_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T04:06:31Z",
+  "status": "R17_SAME_GENERATION2_DISCOVERY_SHARED_QUOTA_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T04:43:03Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "07367f7ce4f811dabb43ba340650fab3f77585e5",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887",
+  "dispatchHead": "69f4dcc78e8670099fb5997f825edf1027956b33",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759048050",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,13 +19,13 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+    "sourceBaseline": "69f4dcc78e8670099fb5997f825edf1027956b33",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 17,
     "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R16 starts from published 07367f7. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
+    "mainIntegration": "R17 starts from published 69f4dcc. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -33,7 +33,7 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V7.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V8.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -119,8 +119,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 141437,
-      "sha256": "1e25514e6baecf7e0c38d0cdbdbbaaa14f38a11b9693149b76a97bc0b56932a5"
+      "bytes": 142485,
+      "sha256": "2e757ad2a3242e3881eba5b498c595a2447846157e3de698d17dd356d499375a"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -128,7 +128,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
+  "sourceDigestSha256": "57169eb6ccf365164c1a334eee57bb887640c11e2342dd03d109c5444d999fc0",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -441,7 +441,9 @@
     "historicalForR15": true,
     "r15Limit": "Historical d9 comparison was not rerun. R15 changes only the two approved N07 fixture hunks in native.ts; all 17 other pins are retained from 30c.",
     "historicalForR16": true,
-    "r16Limit": "Historical d9 comparison was not rerun. R16 changes only the two approved N07/R4 native.ts hunks; all 17 other pins remain from 073."
+    "r16Limit": "Historical d9 comparison was not rerun. R16 changes only the two approved N07/R4 native.ts hunks; all 17 other pins remain from 073.",
+    "historicalForR17": true,
+    "r17Limit": "Historical d9 comparison was not rerun. R17 changes only the two approved native quota blocks; all 17 other source pins remain from 69f4dcc."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -500,7 +502,9 @@
       "executedForR15": false,
       "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
       "executedForR16": false,
-      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun.",
+      "executedForR17": false,
+      "r17Applicability": "Historical pre-R17 author check only; native.ts changes and no local project check was rerun."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -525,7 +529,9 @@
       "executedForR15": false,
       "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
       "executedForR16": false,
-      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun.",
+      "executedForR17": false,
+      "r17Applicability": "Historical pre-R17 author check only; native.ts changes and no local project check was rerun."
     },
     {
       "name": "targeted ESLint",
@@ -545,12 +551,14 @@
       "executedForR15": false,
       "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
       "executedForR16": false,
-      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun.",
+      "executedForR17": false,
+      "r17Applicability": "Historical pre-R17 author check only; native.ts changes and no local project check was rerun."
     }
   ],
   "corrections": {
     "R9": {
-      "status": "IMPLEMENTED_FOR_INDEPENDENT_REVIEW_NATIVE_PENDING",
+      "status": "CURRENT_R17_NATIVE_PENDING_HISTORICAL_69_BOTH_R9_WITNESSES_PASSED",
       "unitWitnesses": 3,
       "nativeWitnessCases": [
         "natural I1 fixed5000ms timeout",
@@ -564,7 +572,73 @@
         "live backend while beforeDrain holds after close",
         "native execution of current source"
       ],
-      "scope": "No protected source, budget or public debug export changed."
+      "scope": "No protected source, budget or public debug export changed.",
+      "historical69Execution": {
+        "head": "69f4dcc78e8670099fb5997f825edf1027956b33",
+        "runId": 42754606380,
+        "group": "N12/U06/R9",
+        "milliseconds": 13075,
+        "witnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25511",
+              "birth": "2026-11-10 04:24:02.224758+00"
+            },
+            "control": {
+              "pid": "25510",
+              "birth": "2026-11-10 04:24:02.220379+00"
+            },
+            "holder": {
+              "pid": "25095",
+              "birth": "2026-11-10 04:23:58.641306+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26267",
+              "birth": "2026-11-10 04:24:11.157301+00"
+            },
+            "control": {
+              "pid": "26266",
+              "birth": "2026-11-10 04:24:11.151959+00"
+            },
+            "holder": {
+              "pid": "25854",
+              "birth": "2026-11-10 04:24:07.317901+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "fullNativePass": false,
+        "limit": "Actual historical exact-head evidence only. New R17 head must reprove both cases; no separately observed raw worker return or elapsed 30s worker timer claim."
+      }
     },
     "R10": {
       "status": "SOURCE_CORRECTED_NATIVE_CONFIRMATION_PENDING",
@@ -852,84 +926,269 @@
       },
       "nativeGitBlob": "732ec5389e26cc1f09c32626117588d23384e0d3",
       "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
+      "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION",
+      "historicalSnapshotBeforeR17": true,
+      "completionObservedIn69CI": {
+        "head": "69f4dcc78e8670099fb5997f825edf1027956b33",
+        "runId": 42754606380,
+        "group": "N07/R4",
+        "milliseconds": 812,
+        "groupPass": true,
+        "fullNativePass": false,
+        "limit": "Both archived-history revision cases passed in group 5; overall native proof later timed out in group 24."
+      }
+    },
+    "R17": {
+      "finding": "R17",
+      "status": "DISCOVERY_SHARED_QUOTA_FIXTURES_PREPARED_NATIVE_PENDING",
+      "cause": "The unchanged 240s effect budget expired in the Rule-based 254/255/256 quota group. Complete pre/post history validation repeatedly re-normalizes Rule contexts; no failed iteration or per-function timing is known.",
+      "correction": "Only the two quota blocks now use genuine compact Discovery histories built from coherent CH-to-IS and CH-to-NO contexts. Both perform a real fixed absent probe before writing; explicit identity assertions distinguish them and prior CH-to-AQ. All commands, inputs, claims and job keys consistently use Discovery.",
+      "preserved": "All 254 commands, original claim 255 plus credit, actual START, blocked interstitial/no-effect comparison, exact-token/fence terminal Fail 256, cleared credit/one disposition/exhausted state and beyond-cap refusal remain. All 64 actual enqueue/claim/START/fail cycles, 65th enqueue/refused claim, 193 commands/64 starts/64 dispositions and pointer-corruption refusal/restoration remain.",
+      "sourceFilesChanged": 1,
+      "sourceFilesUnchanged": 17,
+      "replacementCount": 2,
+      "additionalAbsentProbes": 2,
+      "sqlUnchanged": true,
+      "protectedSourcesUnchanged": true,
+      "budgetsUnchanged": true,
+      "profilingAdded": false,
+      "sourceWorkCounts": {
+        "ledger254FillHistoricalTransitions": 64516,
+        "following192CommandsHistoricalTransitions": 36864,
+        "following64StartsHistoricalTransitions": 12352,
+        "meaning": "Planned complete-loop control-flow counts only; no measured function cost or actual failing iteration."
+      },
+      "scope": "Only the two N05/A03 and N05 quota blocks in native.ts plus four author evidence files. Other 17 sources, SQL/rollback, roles/grants/schema, protected helpers, workflows/packages and all budgets unchanged.",
+      "performanceLimitation": "This is a shared-cap fixture correction, not a runtime optimization, full-cap Rule latency proof or Production capacity/SLO approval. Quadratic historical Rule validation remains a dormant performance limitation. No speedup or CI completion is promised.",
+      "localTestsRun": false,
+      "newLocalExecution": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "nextGate": "Independent Root exact-source/document review, Root publication and full unchanged exact-head CI. All 31 groups and both R9 witnesses must be proved again; no native/TL PASS, Ready, merge or next slice.",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759048050",
+      "authorization": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759160977",
+      "baselineHead": "69f4dcc78e8670099fb5997f825edf1027956b33",
+      "baselineTree": "4dab49a12f05d1c57ab287130f4127ca28135ab2",
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 142485,
+        "sha256": "2e757ad2a3242e3881eba5b498c595a2447846157e3de698d17dd356d499375a"
+      },
+      "nativeGitBlob": "20247c75ed2dd9c834304429c138054383913b1f",
+      "sourceDigestSha256": "57169eb6ccf365164c1a334eee57bb887640c11e2342dd03d109c5444d999fc0",
       "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION"
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R16_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R17_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "07367f7ce4f811dabb43ba340650fab3f77585e5",
-    "tree": "4c552ee182feb1da2234fa342012bf4b534ec6f3",
-    "runId": 42751380067,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42751380067",
-    "repositoryVerificationJobId": 129615553280,
+    "head": "69f4dcc78e8670099fb5997f825edf1027956b33",
+    "tree": "4dab49a12f05d1c57ab287130f4127ca28135ab2",
+    "runId": 42754606380,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42754606380",
+    "repositoryVerificationJobId": 129625959864,
     "repositoryVerificationConclusion": "failure",
     "status": "completed",
     "conclusion": "failure",
-    "source": "Generation2 independently fetched the complete non-Auth Repository verification log and terminal run/job metadata through GitHub.",
-    "fullLogSha256": "0b9d3b2907e8f32c5e5f80c5a4562b25ad4187d29eea1965a309caa362ae7f6b",
-    "fullLogBytes": 4240386,
+    "source": "Generation2 independently fetched the complete terminal non-Auth Repository verification log and terminal run/job metadata through GitHub.",
+    "fullLogSha256": "9ed6f37a9c2685c9e9b86e64493b4beb93e167a42e5f0da510b6f13ff108f64b",
+    "fullLogBytes": 4250048,
+    "fullLogLines": 63143,
     "core": {
-      "tests": 8663,
-      "passed": 8659,
+      "tests": 8682,
+      "passed": 8678,
       "failed": 2,
       "skipped": 2,
-      "cancelled": 0
+      "cancelled": 0,
+      "milliseconds": 655018.2848
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
       "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 18928,
-      "cleanupMilliseconds": 169,
+      "effectAndCleanupMilliseconds": 240314,
+      "cleanupMilliseconds": 20,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 4576,
-        "settled": 4576,
+        "started": 26653,
+        "settled": 26653,
         "pending": 0,
-        "connections": 870,
-        "closed": 870,
+        "connections": 4242,
+        "closed": 4242,
         "stoppedClusters": 1
       },
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 42
+          "milliseconds": 35
         },
         {
           "id": "N02",
-          "milliseconds": 2227
+          "milliseconds": 1428
         },
         {
           "id": "N03",
-          "milliseconds": 2728
+          "milliseconds": 1763
         },
         {
           "id": "N07",
-          "milliseconds": 12322
+          "milliseconds": 9648
+        },
+        {
+          "id": "N07/R4",
+          "milliseconds": 812
+        },
+        {
+          "id": "N08",
+          "milliseconds": 11290
+        },
+        {
+          "id": "N08/U04",
+          "milliseconds": 3159
+        },
+        {
+          "id": "N02/U04",
+          "milliseconds": 1367
+        },
+        {
+          "id": "N04/N06",
+          "milliseconds": 2638
+        },
+        {
+          "id": "N04/N06/N10",
+          "milliseconds": 2630
+        },
+        {
+          "id": "N05/N09",
+          "milliseconds": 2605
+        },
+        {
+          "id": "N09",
+          "milliseconds": 18475
+        },
+        {
+          "id": "N10/U06",
+          "milliseconds": 7382
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2213
+        },
+        {
+          "id": "N11",
+          "milliseconds": 165
+        },
+        {
+          "id": "N12",
+          "milliseconds": 164
+        },
+        {
+          "id": "N04/N10/N12",
+          "milliseconds": 4519
+        },
+        {
+          "id": "N12/U06/R9",
+          "milliseconds": 13075
+        },
+        {
+          "id": "N12/R7-03",
+          "milliseconds": 364
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2724
+        },
+        {
+          "id": "N11",
+          "milliseconds": 258
+        },
+        {
+          "id": "N11",
+          "milliseconds": 260
+        },
+        {
+          "id": "N13",
+          "milliseconds": 3333
         }
       ],
-      "nestedRaceWitnesses": [],
+      "nestedRaceWitnesses": [
+        {
+          "boundary": "i1_timeout",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "25511",
+            "birth": "2026-11-10 04:24:02.224758+00"
+          },
+          "control": {
+            "pid": "25510",
+            "birth": "2026-11-10 04:24:02.220379+00"
+          },
+          "holder": {
+            "pid": "25095",
+            "birth": "2026-11-10 04:23:58.641306+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": true,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "worker_only",
+          "nativeAdmissionsAfterDrain": 45
+        },
+        {
+          "boundary": "worker_caller_abort",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "26267",
+            "birth": "2026-11-10 04:24:11.157301+00"
+          },
+          "control": {
+            "pid": "26266",
+            "birth": "2026-11-10 04:24:11.151959+00"
+          },
+          "holder": {
+            "pid": "25854",
+            "birth": "2026-11-10 04:24:07.317901+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": false,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "unconfirmed",
+          "nativeAdmissionsAfterDrain": 44
+        }
+      ],
       "connections": {
         "aggregateWorkConnectionBound": 40,
-        "maximumJobs": 1,
+        "maximumJobs": 4,
         "maximumIntake": 1,
-        "maximumMethod": 1,
+        "maximumMethod": 3,
         "m04ObserverLimit": 2,
-        "maximumM04Observers": 1,
+        "maximumM04Observers": 2,
         "methodObserverLimit": 1,
         "fixturePerClusterLimit": 16,
         "inheritedCommitGuardPairs": 0,
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "proof_5:N07/R4",
+        "phase": "proof_24:N05/A03",
         "error": {
-          "kind": "postgres",
-          "code": "P7604"
+          "kind": "fixture",
+          "code": "unclassified_failure"
         }
       },
       "cleanupFailures": [],
@@ -937,20 +1196,23 @@
       "nativePass": false
     },
     "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
-    "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+    "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
     "reportedFailure": {
-      "phase": "proof_5:N07/R4",
-      "code": "P7604",
+      "phase": "proof_24:N05/A03",
+      "code": "unclassified_failure",
+      "error": "M04 240s effect budget exceeded",
+      "groupMilliseconds": 149149.71633,
+      "iteration": null,
       "sqlStatement": null,
-      "caseIndex": null,
-      "predicate": null
+      "predicate": null,
+      "perStatementTimings": null
     },
-    "completedGroups": "First N01/N02/N03/N07 passed in 42/2227/2728/12322 ms. The first N07 group includes the R15 three coherent contexts and all three original number spellings. Later compound groups are not thereby proved.",
-    "diagnosis": "Exact source confirms that store.open returns reference/text/upload/completion but the positive SQL consume requires reference/text/outcome/audit. This necessarily violates the entry-key guard; the log itself does not serialize the statement, case or predicate.",
+    "completedGroups": "First 23 ordered groups passed, including N07/R4, all 16 N08 originals and both native R9 witnesses. Group 24 N05/A03 timed out; seven later groups were not reached. Completed group times sum to 90307 ms; no overall native PASS.",
+    "diagnosis": "Full history is validated before and after each successful command. The planned 254-command fill entails 64516 historical transitions; the following 192 commands entail 36864 plus 12352 from 64 starts. These are source-derived full-loop counts, not profiling or the observed failing iteration. The fixture changes only representative kind/data complexity.",
     "terminalVerification": {
-      "checkedAt": "2026-11-10T04:06:31Z",
+      "checkedAt": "2026-11-10T04:43:03Z",
       "successfulCompanionJobs": 6,
-      "aggregateJobId": 129620812719,
+      "aggregateJobId": 129630534969,
       "aggregateConclusion": "failure",
       "repositoryVerificationSteps": {
         "typecheck": "success",
@@ -959,6 +1221,12 @@
         "hygiene": "skipped",
         "productionBuild": "skipped"
       }
+    },
+    "safeExcerpt": {
+      "path": "docs/official-truth-product-v3/M04_RECOVERY_R17_NATIVE_FAILURE_V8.txt",
+      "bytes": 4295,
+      "sha256": "04042931df1707308fc89cbd647901a17b7581dd901827de616450b5a67d7cdb",
+      "source": "Root-provided bounded excerpt pin; author independently verified the complete non-Auth log."
     }
   },
   "fullCoreExecuted": false,
@@ -970,15 +1238,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of R16 and four author evidence files",
+    "Independent Root exact-source review of the two R17 quota blocks and four author evidence files",
     "Root expected-head publication preserving all 17 other sources and current-main ancestry",
-    "New exact-head unchanged complete CI, all 31 native groups, both R9 witnesses and bounded cleanup receipts",
-    "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
+    "New exact-head unchanged complete CI: all 31 native groups, both R9 witnesses, actual quota boundaries and bounded cleanup",
+    "Root deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_R16_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R17_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "30c6299a76fda7b50493a46596a57af3777a7372",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727"
+    "head": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887"
   },
   "historicalCIRuns": [
     {
@@ -1427,6 +1695,253 @@
           "productionBuild": "skipped"
         }
       }
+    },
+    {
+      "head": "69f4dcc78e8670099fb5997f825edf1027956b33",
+      "tree": "4dab49a12f05d1c57ab287130f4127ca28135ab2",
+      "runId": 42754606380,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42754606380",
+      "repositoryVerificationJobId": 129625959864,
+      "repositoryVerificationConclusion": "failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "source": "Generation2 independently fetched the complete terminal non-Auth Repository verification log and terminal run/job metadata through GitHub.",
+      "fullLogSha256": "9ed6f37a9c2685c9e9b86e64493b4beb93e167a42e5f0da510b6f13ff108f64b",
+      "fullLogBytes": 4250048,
+      "fullLogLines": 63143,
+      "core": {
+        "tests": 8682,
+        "passed": 8678,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0,
+        "milliseconds": 655018.2848
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240314,
+        "cleanupMilliseconds": 20,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 26653,
+          "settled": 26653,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 35
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1428
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1763
+          },
+          {
+            "id": "N07",
+            "milliseconds": 9648
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 812
+          },
+          {
+            "id": "N08",
+            "milliseconds": 11290
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3159
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 1367
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2638
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2630
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2605
+          },
+          {
+            "id": "N09",
+            "milliseconds": 18475
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 7382
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2213
+          },
+          {
+            "id": "N11",
+            "milliseconds": 165
+          },
+          {
+            "id": "N12",
+            "milliseconds": 164
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 4519
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 13075
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 364
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2724
+          },
+          {
+            "id": "N11",
+            "milliseconds": 258
+          },
+          {
+            "id": "N11",
+            "milliseconds": 260
+          },
+          {
+            "id": "N13",
+            "milliseconds": 3333
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25511",
+              "birth": "2026-11-10 04:24:02.224758+00"
+            },
+            "control": {
+              "pid": "25510",
+              "birth": "2026-11-10 04:24:02.220379+00"
+            },
+            "holder": {
+              "pid": "25095",
+              "birth": "2026-11-10 04:23:58.641306+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26267",
+              "birth": "2026-11-10 04:24:11.157301+00"
+            },
+            "control": {
+              "pid": "26266",
+              "birth": "2026-11-10 04:24:11.151959+00"
+            },
+            "holder": {
+              "pid": "25854",
+              "birth": "2026-11-10 04:24:07.317901+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 3,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_24:N05/A03",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+      "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
+      "reportedFailure": {
+        "phase": "proof_24:N05/A03",
+        "code": "unclassified_failure",
+        "error": "M04 240s effect budget exceeded",
+        "groupMilliseconds": 149149.71633,
+        "iteration": null,
+        "sqlStatement": null,
+        "predicate": null,
+        "perStatementTimings": null
+      },
+      "completedGroups": "First 23 ordered groups passed, including N07/R4, all 16 N08 originals and both native R9 witnesses. Group 24 N05/A03 timed out; seven later groups were not reached. Completed group times sum to 90307 ms; no overall native PASS.",
+      "diagnosis": "Full history is validated before and after each successful command. The planned 254-command fill entails 64516 historical transitions; the following 192 commands entail 36864 plus 12352 from 64 starts. These are source-derived full-loop counts, not profiling or the observed failing iteration. The fixture changes only representative kind/data complexity.",
+      "terminalVerification": {
+        "checkedAt": "2026-11-10T04:43:03Z",
+        "successfulCompanionJobs": 6,
+        "aggregateJobId": 129630534969,
+        "aggregateConclusion": "failure",
+        "repositoryVerificationSteps": {
+          "typecheck": "success",
+          "lint": "success",
+          "tests": "failure",
+          "hygiene": "skipped",
+          "productionBuild": "skipped"
+        }
+      },
+      "safeExcerpt": {
+        "path": "docs/official-truth-product-v3/M04_RECOVERY_R17_NATIVE_FAILURE_V8.txt",
+        "bytes": 4295,
+        "sha256": "04042931df1707308fc89cbd647901a17b7581dd901827de616450b5a67d7cdb",
+        "source": "Root-provided bounded excerpt pin; author independently verified the complete non-Auth log."
+      }
     }
   ],
   "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION",
@@ -1451,10 +1966,15 @@
     {
       "head": "30c6299a76fda7b50493a46596a57af3777a7372",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727"
+    },
+    {
+      "head": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887"
     }
   ],
   "newLocalExecutionForR13": false,
   "newLocalExecutionForR14": false,
   "newLocalExecutionForR15": false,
-  "newLocalExecutionForR16": false
+  "newLocalExecutionForR16": false,
+  "newLocalExecutionForR17": false
 }

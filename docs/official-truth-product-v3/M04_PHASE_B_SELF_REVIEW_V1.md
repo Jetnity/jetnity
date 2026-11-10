@@ -1,3 +1,47 @@
+# M04 Phase-B author self-review V1 — R17 current
+
+**R17 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759048050) preceded edits. [Root authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759160977) permits only the two native quota blocks and four author files. Baseline: `69f4dcc78e8670099fb5997f825edf1027956b33`.
+
+## Diagnosis and equivalent shared-cap coverage
+
+The failed run reached the unchanged 240-second effect deadline during N05/A03. It does not identify the failing iteration or per-function/statement times. Source shows complete history validation before and after each successful command. A completed 254-command fill entails 64516 historical transitions; the following 192 commands entail 36864, plus 12352 from 64 starts. These are full-loop control-flow counts, not measured costs.
+
+The frozen Plan N05/A03 requires actual cap and full-history witnesses without prescribing a Rule-only subject. Shared SQL subject/count/credit/unknown/START/CAS predicates do not branch on Rule versus Discovery. Discovery identity/job validation still runs completely; locks, catalog and final MA1 proof remain. commandRequest selects the unchanged Discovery coordinator through the actual command kind/job-key namespace.
+
+The two blocks now use coherent contexts from originals.context('CH','IS') and originals.context('CH','NO'). Explicit key assertions distinguish the quota subjects and prior CH-to-AQ; actual fixed absent probes precede their first writes. Enqueue kind/input, claims and every state/fence/job locator consistently use Discovery.
+
+No journal row is manufactured or removed. The 254/255/256 original-credit proof and all 64 real enqueue/claim/START/fail cycles, refused 65th claim, 193 retained commands/64 starts/64 dispositions and pointer-corruption/restoration proof remain. Neither quota block previously consumed S1; all existing actual Rule/S1/I1 and Discovery/S1 groups are unchanged.
+
+## Frozen source and scope
+
+native.ts: **142485 bytes**, SHA256 `2e757ad2a3242e3881eba5b498c595a2447846157e3de698d17dd356d499375a`, Git blob `20247c75ed2dd9c834304429c138054383913b1f`.
+
+Eighteen-source aggregate: `57169eb6ccf365164c1a334eee57bb887640c11e2342dd03d109c5444d999fc0`. All seventeen other source pins, SQL/rollback, helpers, roles/grants, packages/workflows and budgets remain unchanged. Two exact bounded block replacements; 31 groups and both R9 cases retained. No profiling instrumentation added.
+
+## Independently fetched historical evidence
+
+[Repository verification 129625959864](https://github.com/Jetnity/jetnity/actions/runs/42754606380/job/129625959864): full non-Auth log **4250048 bytes / 63143 lines**, SHA256 `9ed6f37a9c2685c9e9b86e64493b4beb93e167a42e5f0da510b6f13ff108f64b`. Terminal metadata confirms run failure, six successful companions and failed aggregate 129630534969. Typecheck/lint passed; tests failed; hygiene/build skipped.
+
+First 23 groups passed, including R16 N07/R4 (812 ms), full N08 and both R9 witnesses (combined group 13075 ms). Actual R9 receipts distinguish real SQL waits from backend-absent retained executor cleanup, preserve the same executor until drain, show unavailable→invalid slot admission with the other three methods held, and record no terminal effects. I1 fail-confirm was observed; explicit worker caller abort is not an elapsed 30-second timer proof.
+
+N05/A03 then timed out after 149149.71633 ms; seven later groups were not reached. Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled, 655018.2848 ms. Cleanup: 26653/26653 settled, 0 pending, 4242/4242 closed, one stopped cluster, 0 children/errors; 240314 ms total / 20 ms cleanup. All seven histories, 18 pins, 22 rows and 31 groups remain. Historical R9 success is bound to exact 69f4dcc; overall nativePass remains false.
+
+## Limits and STOP
+
+**This is a shared-cap fixture correction, not a runtime optimization, full-cap Rule latency proof or Production capacity/SLO approval.** Repeated Rule-context validation at full caps is no longer the workload of these two groups; quadratic Rule history cost remains unchanged. No measured speedup or new CI success is asserted.
+
+No local project/parser/SQL/native/build execution, installation or checkout reconstruction occurred. Prior 64/64 author checks remain historical; corrected R17 source has not run. The complete unchanged CI must reprove all groups and both R9 cases on the published new head.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root alone publishes and accepts. No Ready, merge or next slice. Protected-source, resource, hosted and Owner gates remain; #917 is not retried or substituted.
+
+---
+
+## Historical R16 and earlier author self-reviews
+
+The exact previous record follows. Its former current claims and pins are historical; this R17 block governs the new delivery.
+
 # M04 Phase-B author self-review V1 — R16 current
 
 **R16 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
