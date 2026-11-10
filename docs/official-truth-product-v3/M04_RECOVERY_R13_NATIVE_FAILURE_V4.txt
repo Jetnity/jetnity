@@ -1,0 +1,10 @@
+2026-11-10T02:42:21.3387774Z     not ok 2 - N02 actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses
+2026-11-10T02:42:21.3389766Z       error: 'local_pg_42501'
+2026-11-10T02:42:21.3395319Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T02:42:21.3397111Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T02:42:21.3406791Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":3020,"cleanupMilliseconds":209,"clusters":1,"childProcesses":0,"lifetime":{"started":551,"settled":551,"pending":0,"connections":90,"closed":90,"stoppedClusters":1},"groups":[{"id":"N01","milliseconds":41}],"nestedRaceWitnesses":[],"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":0,"maximumIntake":1,"maximumMethod":0,"m04ObserverLimit":2,"maximumM04Observers":1,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"proof_2:N02","error":{"kind":"postgres","code":"42501"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+2026-11-10T02:43:04.1986767Z # tests 8660
+2026-11-10T02:43:04.1987152Z # pass 8656
+2026-11-10T02:43:04.1987346Z # fail 2
+2026-11-10T02:43:04.1987533Z # cancelled 0
+2026-11-10T02:43:04.1987734Z # skipped 2

@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R12_SAME_GENERATION2_SOURCE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T02:22:52.389Z",
+  "status": "R13_SAME_GENERATION2_SOURCE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T02:50:47Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845",
+  "dispatchHead": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,20 +19,22 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+    "sourceBaseline": "82b116fbb4c6f001f72e60459e83965edcaf8302",
     "sourceFilesChanged": [
-      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql"
+      "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "sourceFilesUnchanged": 17,
+    "sourceFilesUnchanged": 16,
     "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R12 starts from published7ac9c4. Root owns current-main ancestry/integration and publication; author performed no Git mutation.",
+    "mainIntegration": "R13 starts from published82b116f. Root owns current-main ancestry, review and publication; the author performed no Git mutation.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
-    ]
+    ],
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V4.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -108,8 +110,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 135966,
-      "sha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c"
+      "bytes": 135947,
+      "sha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -118,8 +120,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 136951,
-      "sha256": "670f4a62b0f7b8964de8f2df4fd3ef99044067c9c92484e1d7c1fd53374deaac"
+      "bytes": 138948,
+      "sha256": "5b586cb8291caeb954f6afffb80d82a1666c9050e209e1df3bf0f81dc169f87c"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -127,7 +129,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+  "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -432,7 +434,9 @@
     "capturedAt": "2026-11-10T01:50:52.386483+00:00",
     "limit": "Generation2 comparison with d9 before Root current-main integration/pointer updates. Generation1 earlier changes remain historical.",
     "historicalForR12": true,
-    "r12Limit": "Preserved d9 comparison predating R12/current-main integration; not rerun. R12 only transforms the pinned candidate SQL."
+    "r12Limit": "Preserved d9 comparison predating R12/current-main integration; not rerun. R12 only transforms the pinned candidate SQL.",
+    "historicalForR13": true,
+    "r13Limit": "Historical d9 comparison predating current-main integration and R13; not rerun. R13 transforms only the two explicitly pinned owned source files."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -483,7 +487,9 @@
       "logSha256": "253efbfab26d27a629561ab13ed21508f29e9814a690a91e2d73ac586f5dc88b",
       "scope": "Protocol doubles, actual existing coordinator control flow and pure/static assertions; no database execution.",
       "executedForR12": false,
-      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
+      "executedForR13": false,
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -500,7 +506,9 @@
       "checkerSourceSha256": "25aba8eb20f44b6a7105079649bcc60609adb2f8476a921b257910f5a4bf668c",
       "logSha256": "8eaa0f63402319fb9d5021bb64bf443c9b607a1fe449fefb05793b2b914ec636",
       "executedForR12": false,
-      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
+      "executedForR13": false,
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
     },
     {
       "name": "targeted ESLint",
@@ -512,7 +520,9 @@
       "output": "empty stdout and stderr",
       "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "executedForR12": false,
-      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation."
+      "r12Applicability": "Historical check of unchanged TypeScript bytes; no rerun and no SQL-correction validation.",
+      "executedForR13": false,
+      "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred."
     }
   ],
   "corrections": {
@@ -599,71 +609,151 @@
       "previousChecks": "64/64 named tests, TypeScript 0 diagnostics and lint 0 warnings/errors predate R12 and apply to unchanged TypeScript bytes; none were rerun and none validate this SQL correction.",
       "independentReview": "Read-only reviewer independently confirmed both source sites and primary PostgreSQL grammar; Root owns final acceptance.",
       "scope": "Only candidate SQL and four author evidence files; no runtime, protected helper, predecessor SQL, budget, package/workflow, hosted or Owner-gate change.",
-      "nextGate": "Root publication followed by new exact-head unchanged CI; no rerun of unchanged known-bad code and no native PASS claim."
+      "nextGate": "Root publication followed by new exact-head unchanged CI; no rerun of unchanged known-bad code and no native PASS claim.",
+      "historicalSnapshotBeforeR13": true,
+      "laterCIObservation": {
+        "runId": 42742925010,
+        "candidateInstallation": "SUCCEEDED",
+        "N01": "PASS",
+        "subsequentFailure": "proof_2:N02/42501",
+        "nativePass": false
+      }
+    },
+    "R13": {
+      "finding": "R13",
+      "status": "PINNED_OID_GUARD_AND_RESTRICTED_ROLE_REGRESSION_PREPARED_NATIVE_PENDING",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662",
+      "baselineHead": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+      "baselineCandidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+      "candidate": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 135947,
+        "sha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59"
+      },
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 138948,
+        "sha256": "5b586cb8291caeb954f6afffb80d82a1666c9050e209e1df3bf0f81dc169f87c"
+      },
+      "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
+      "cause": "execute_v1 is SECURITY DEFINER owned by postgres. Its SECURITY INVOKER assert_catalog_v1 resolves pinned S1 API/private names through to_regprocedure, which checks explicit namespace USAGE. postgres intentionally lacks those privileges.",
+      "correction": "Replace only the predecessor pg_proc lookup predicate with the already pinned fingerprint OID; retain the complete OID/owner/ACL/config/definer/volatility/parallel/strict/defaults/definition fingerprint comparison.",
+      "exactSqlReplacement": {
+        "old": "p.oid=to_regprocedure(substring(binding_row.object_identity,4))",
+        "new": "p.oid=(binding_row.fingerprint->>'oid')::oid"
+      },
+      "regression": [
+        "In existing N02, the actual jobs runtime asserts postgres and ot_v3_jobs_caller both lack USAGE on both S1 schemas; boolean::text expectations are false.",
+        "The real fixed runtime probe must return absent with unchanged restricted roles.",
+        "Rename only the disposable fixture binding_valid_v1(jsonb), which is pinned but not a direct parsed bridge target; explicitly verify the OID is unchanged.",
+        "The same runtime probe must refuse P7603 for predecessor identity drift.",
+        "Restore the exact function name in finally, compare the full catalog to the pre-rename snapshot, then require the real runtime probe to succeed again."
+      ],
+      "primarySourceEvidence": [
+        {
+          "repository": "postgres/postgres",
+          "ref": "REL_16_STABLE",
+          "path": "src/backend/utils/adt/regproc.c",
+          "blob": "296930eb3bca7ae56162ad9f3acfcd271c82db4f",
+          "url": "https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/utils/adt/regproc.c",
+          "meaning": "to_regprocedure delegates to regprocedurein, which uses FuncnameGetCandidates."
+        },
+        {
+          "repository": "postgres/postgres",
+          "ref": "REL_16_STABLE",
+          "path": "src/backend/catalog/namespace.c",
+          "blob": "4449f867413eebd65e529fce54cf756fb57cf3ff",
+          "url": "https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/catalog/namespace.c",
+          "meaning": "FuncnameGetCandidates uses LookupExplicitNamespace; explicit namespace lookup calls object_aclcheck with ACL_USAGE and raises the schema privilege error."
+        },
+        {
+          "repository": "postgres/postgres",
+          "ref": "REL_16_STABLE",
+          "path": "src/backend/utils/adt/ruleutils.c",
+          "blob": "5fd68ab48b4e4eceaec598124cd67605b6eeeeb1",
+          "url": "https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/utils/adt/ruleutils.c",
+          "meaning": "pg_get_functiondef looks up by PROCOID and always emits the qualified function namespace/name and arguments; the existing definition hash therefore preserves identity binding."
+        }
+      ],
+      "boundedSourceInspection": "The changed predicate is the sole runtime predecessor to_regprocedure lookup. Remaining name lookups are installer checks/pinning. The three parsed definer bridges and their consumed OIDs are unchanged. binding_valid_v1 is pinned and absent from their direct target list.",
+      "reviewCorrectionBeforePublication": "Root corrected the proposed four boolean::text expectations from f to false; only the corrected native pin above is delivered.",
+      "environment": "UNAVAILABLE",
+      "newLocalExecution": false,
+      "localTestsRun": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "previousChecks": "Historical 64/64 named tests and focused TypeScript/lint checks were not rerun. native.ts now changes, so the earlier static checks do not validate the current source.",
+      "scope": "Only jobs-candidate.sql, native.ts and four author evidence files. No grant, ownership/role change, protected source/helper, new connection, budget, workflow/package, hosted or Owner-gate change.",
+      "nextGate": "Independent Root exact-source review and publication, followed by new exact-head unchanged CI. No unchanged-code retry, native PASS, Ready or merge is claimed."
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R12_CURRENT_SQL_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R13_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
-    "tree": "155189bf6a71f9f56909bea2a976b56b97def43c",
-    "runId": 42739327115,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42739327115",
-    "repositoryVerificationJobId": 129576216777,
+    "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+    "runId": 42742925010,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42742925010",
+    "repositoryVerificationJobId": 129588134830,
     "conclusion": "failure",
-    "source": "Generation2 independently read the exact GitHub Repository verification job log; no local/native reproduction.",
+    "source": "Generation2 independently read the exact non-Auth Repository verification job log through GitHub; no local/native reproduction.",
     "core": {
-      "tests": 8658,
-      "passed": 8655,
-      "failed": 1,
-      "skipped": 2
+      "tests": 8660,
+      "passed": 8656,
+      "failed": 2,
+      "skipped": 2,
+      "cancelled": 0
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
-      "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
+      "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 975,
-      "cleanupMilliseconds": 154,
+      "effectAndCleanupMilliseconds": 3020,
+      "cleanupMilliseconds": 209,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 22,
-        "settled": 22,
+        "started": 551,
+        "settled": 551,
         "pending": 0,
-        "connections": 2,
-        "closed": 2,
+        "connections": 90,
+        "closed": 90,
         "stoppedClusters": 1
       },
-      "groups": [],
+      "groups": [
+        {
+          "id": "N01",
+          "milliseconds": 41
+        }
+      ],
       "nestedRaceWitnesses": [],
       "connections": {
         "aggregateWorkConnectionBound": 40,
         "maximumJobs": 0,
-        "maximumIntake": 0,
+        "maximumIntake": 1,
         "maximumMethod": 0,
         "m04ObserverLimit": 2,
-        "maximumM04Observers": 0,
+        "maximumM04Observers": 1,
         "methodObserverLimit": 1,
         "fixturePerClusterLimit": 16,
         "inheritedCommitGuardPairs": 0,
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "jobs_candidate",
+        "phase": "proof_2:N02",
         "error": {
           "kind": "postgres",
-          "code": "42601"
+          "code": "42501"
         }
       },
       "cleanupFailures": [],
       "cleanupFailureCount": 0,
       "nativePass": false
     },
-    "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
-    "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
-    "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
+    "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+    "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+    "diagnosis": "CI proves candidate installation and N01 completion, then proof_2:N02/42501 with no R9 witnesses. Source/PG16 call-path inspection identifies runtime predecessor name resolution under postgres without S1 schema USAGE. The first fixed runtime probe is a source-derived location, not an exact SQL position from the receipt."
   },
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
@@ -674,15 +764,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of the two R12 SQL parenthesizations and author evidence",
-    "Root new-head publication preserving current main and all unchanged source bytes",
-    "New exact-head unchanged CI including mandatory native groups, nested R9 witnesses and actual cleanup receipt",
-    "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
+    "Independent Root exact-source review of the R13 OID predicate, restricted-role regression and four author evidence files",
+    "Root publication preserving current-main ancestry and every other source byte",
+    "New exact-head unchanged CI: all mandatory native groups, R9 witnesses, bounded lifetime and complete cleanup receipts",
+    "Root exact-head deployment, review-thread and Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_R12_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R13_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "d9d62c690658444e06d04becf93f21ffb9112165",
-    "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057"
+    "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845"
   },
   "historicalCIRuns": [
     {
@@ -773,8 +863,84 @@
       "candidateSha256": "3f17aebedfb69891a1ad5ccea7a7f1326d2431ba6a73c9d790254c581fe65fdb",
       "sourceDigestSha256": "cc2e47f1afcec38ea749b1d3f88372a18ed01e14b2005501585e96dee4df1c3f",
       "diagnosis": "Receipt proves jobs_candidate/42601 and no native groups. Source/PG16 grammar identifies the two IF CASE delimiter defects; no exact error position or corrected execution is claimed."
+    },
+    {
+      "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
+      "runId": 42742925010,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42742925010",
+      "repositoryVerificationJobId": 129588134830,
+      "conclusion": "failure",
+      "source": "Generation2 independently read the exact non-Auth Repository verification job log through GitHub; no local/native reproduction.",
+      "core": {
+        "tests": 8660,
+        "passed": 8656,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 3020,
+        "cleanupMilliseconds": 209,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 551,
+          "settled": 551,
+          "pending": 0,
+          "connections": 90,
+          "closed": 90,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 41
+          }
+        ],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 1,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 1,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_2:N02",
+          "error": {
+            "kind": "postgres",
+            "code": "42501"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "ed8cf918bb595b6933d4517575d0b8bb6a583277302f5dcc83a6ccee150c123c",
+      "sourceDigestSha256": "c8062e47c23e11b1d7bfb1da66331ab779a11952c45651f492962d4ea6c9479a",
+      "diagnosis": "CI proves candidate installation and N01 completion, then proof_2:N02/42501 with no R9 witnesses. Source/PG16 call-path inspection identifies runtime predecessor name resolution under postgres without S1 schema USAGE. The first fixed runtime probe is a source-derived location, not an exact SQL position from the receipt."
     }
   ],
   "environment": "UNAVAILABLE",
-  "newLocalExecutionForR12": false
+  "newLocalExecutionForR12": false,
+  "recoveryDispatchHistory": [
+    {
+      "head": "d9d62c690658444e06d04becf93f21ffb9112165",
+      "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6756274057"
+    },
+    {
+      "head": "7ac9c4bc3f284775e5236d5d862e90fabbf2822b",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757102845"
+    }
+  ],
+  "newLocalExecutionForR13": false
 }

@@ -560,7 +560,26 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
+      const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,
+        has_schema_privilege('postgres','official_v3_intake_api','USAGE')::text AS owner_api,
+        has_schema_privilege('ot_v3_jobs_caller','official_v3_intake_private','USAGE')::text AS caller_private,
+        has_schema_privilege('ot_v3_jobs_caller','official_v3_intake_api','USAGE')::text AS caller_api`)
+      assert.deepEqual(s1SchemaUsage, [{ owner_private: 'false', owner_api: 'false', caller_private: 'false', caller_api: 'false' }])
       assert.deepEqual(await fixed(runtime, empty, null, 'probe'), { status: 'absent' }, 'T01 empty-text epoch is genuine SQL NULL')
+      // R13: the real restricted runtime must inspect pinned OIDs without S1 schema USAGE.
+      // This pinned predecessor is not a direct parsed bridge target: its rename isolates that fingerprint.
+      const catalogBeforeRename = await catalog(f.owner)
+      const predecessorOid = (await f.owner.query("SELECT 'official_v3_intake_private.binding_valid_v1(jsonb)'::regprocedure::oid::text AS oid"))[0]!.oid!
+      await f.owner.query('ALTER FUNCTION official_v3_intake_private.binding_valid_v1(jsonb) RENAME TO m04_r13_binding_drift')
+      try {
+        assert.deepEqual(await f.owner.query('SELECT oid::text,proname::text AS name FROM pg_catalog.pg_proc WHERE oid=$1::oid', text([predecessorOid])),
+          [{ oid: predecessorOid, name: 'm04_r13_binding_drift' }], 'rename preserves the pinned predecessor OID')
+        await assert.rejects(fixed(runtime, empty, null, 'probe'), code('P7603'), 'same-OID predecessor identity drift is refused')
+      } finally {
+        await f.owner.query('ALTER FUNCTION official_v3_intake_private.m04_r13_binding_drift(jsonb) RENAME TO binding_valid_v1')
+      }
+      assert.equal(await catalog(f.owner), catalogBeforeRename, 'disposable predecessor rename restores the exact full catalog without grants')
+      assert.deepEqual(await fixed(runtime, empty, null, 'probe'), { status: 'absent' }, 'restricted runtime succeeds again after exact restoration')
       await assert.rejects(fixed(runtime, empty, null), code('P7601'))
       await assert.rejects(runtime.query(M04_FIXED_SQL, text([m04Canonical({ ...empty, phase: 'authorized' }), binding.methodId, binding.revision,
         binding.methodDigest, binding.packageDigest, 'not-an-integer', 5000, new Date(Date.now() + 5000).toISOString()])), code('22P02'))

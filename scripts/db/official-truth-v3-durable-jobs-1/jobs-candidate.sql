@@ -801,7 +801,7 @@ BEGIN
   FOR binding_row IN SELECT * FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity LIKE 'fn:%' LOOP
     SELECT jsonb_build_object('oid',p.oid,'owner',p.proowner,'acl',p.proacl,'config',p.proconfig,'definer',p.prosecdef,
       'volatility',p.provolatile,'parallel',p.proparallel,'strict',p.proisstrict,'defaults',p.pronargdefaults,
-      'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) INTO actual FROM pg_proc p WHERE p.oid=to_regprocedure(substring(binding_row.object_identity,4));
+      'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) INTO actual FROM pg_proc p WHERE p.oid=(binding_row.fingerprint->>'oid')::oid;
     IF actual IS DISTINCT FROM binding_row.fingerprint THEN RAISE EXCEPTION 'm04 predecessor drift' USING ERRCODE='P7603'; END IF;
   END LOOP;
   SELECT jsonb_agg(jsonb_build_object('oid',p.oid,'name',p.proname,'signature',pg_get_function_identity_arguments(p.oid),

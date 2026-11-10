@@ -1,3 +1,44 @@
+# M04 Phase-B author delivery status V1 — R13 current
+
+**R13 SAME-SESSION CORRECTION PREPARED. INDEPENDENT ROOT REVIEW AND NEW EXACT-HEAD NATIVE CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, actual session `/root/m04_durable_jobs_writer_g2`. [R13 dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662) resumes this session against published head `82b116fbb4c6f001f72e60459e83965edcaf8302`. Root owns Task V4, independent acceptance and publication.
+
+## Correction and bounded regression
+
+The runtime `execute_v1` runs as its existing `postgres` definer. Its invoker catalog guard previously resolved protected S1 predecessor names through `to_regprocedure`. PostgreSQL checks schema USAGE during that lookup; this role intentionally lacks USAGE on both S1 schemas.
+
+The single SQL predicate now reads the OID already pinned in the fingerprint: `p.oid=(binding_row.fingerprint->>'oid')::oid`. The complete fingerprint comparison, including owner, ACL, configuration and definition hash, remains intact. The definition includes qualified function identity. No grant, role/owner change or protected predecessor edit is needed.
+
+The existing N02 fixture now asserts that both postgres and the jobs caller lack USAGE on both S1 schemas and that the real restricted runtime probe succeeds. It temporarily renames the pinned `binding_valid_v1(jsonb)`, confirms the same OID, requires P7603 from the same runtime probe, restores the exact name in finally, compares the full catalog, and requires probe success again. This predecessor is not a direct parsed bridge target, so the test targets predecessor identity drift. These assertions are prepared source, not an executed result.
+
+| Current source | Bytes | SHA256 |
+| --- | ---: | --- |
+| jobs-candidate.sql | 135947 | `a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59` |
+| native.ts | 138948 | `5b586cb8291caeb954f6afffb80d82a1666c9050e209e1df3bf0f81dc169f87c` |
+
+Eighteen-source aggregate: **`5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1`**. The other sixteen source pins are unchanged from 82b116f. All source pins and the complete U01-U07/N01-N15 map are in the two author JSON files.
+
+## Actual CI evidence and its limits
+
+[CI 42742925010](https://github.com/Jetnity/jetnity/actions/runs/42742925010), job129588134830, executed 82b116f: candidate installation succeeded, the first N01 group passed in41ms, and the first N02 group failed with PostgreSQL42501. The other29 groups, including both R9 native witnesses, were not reached. Core totals:8660 tests,8656 passed,2 failed(parent and N02),2 skipped,0 cancelled.
+
+The receipt reports551/551 owned operations settled,90/90 cumulative connections closed, one stopped cluster, zero cleanup failures and3020ms total. It does not supply an exact SQL position. Attribution to N02's first fixed runtime probe is source-derived. The d9 and7ac failures remain separately preserved, so all three failed CI runs remain available.
+
+The execution environment is **UNAVAILABLE**. No new local SQL/parser/unit/typecheck/lint/native/build execution occurred. Historical64/64 named tests and earlier static checks were not rerun; native.ts now changes, and those checks do not validate this correction.
+
+## Author STOP and next gate
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root must review these two source changes and four author files, publish the reviewed head, and inspect new unchanged CI plus exact-head deployment/thread gates. No unchanged-code CI rerun, Ready, merge or follow-up slice was performed.
+
+Method **NOT_APPROVED**; #1139 **NOT_RELEASE_READY /17 gaps**. #917's specific readback refusal remains binding. #1131, both #1135 holds, #968 and #911/#913 remain. No hosted DB/Auth/RLS/ACL/migration/credential/Auth-log operation, real provider/source, scheduler, cost or activation occurred.
+
+---
+
+## Historical R12 and earlier author records
+
+Everything below is the exact prior author record. Its old current-status wording, source pins and checks describe earlier cuts; the R13 state above and the current JSON fields take precedence.
+
 # M04 Phase-B author delivery status V1
 
 **R12 SAME-SESSION CORRECTION PREPARED — INDEPENDENT ROOT REVIEW AND NEW NATIVE CI REQUIRED.**

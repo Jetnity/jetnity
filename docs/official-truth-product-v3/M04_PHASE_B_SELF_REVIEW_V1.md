@@ -1,3 +1,41 @@
+# M04 Phase-B author self-review V1 — R13 current
+
+**R13 SAME GENERATION2 / SAME SESSION. SOURCE CORRECTION PREPARED; NEW NATIVE CI PENDING.** Author self-review is not Technical-Lead acceptance.
+
+Author/session: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, `/root/m04_durable_jobs_writer_g2`. [Dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662), baseline `82b116fbb4c6f001f72e60459e83965edcaf8302`.
+
+## Cause, identity protection and scope
+
+Actual [CI42742925010](https://github.com/Jetnity/jetnity/actions/runs/42742925010) installed the R12 candidate and passed N01, then failed `proof_2:N02` with SQLSTATE42501. It proves that phase and error, not an exact SQL location. Source inspection identifies `assert_catalog_v1`'s predecessor `to_regprocedure` lookup under the existing postgres definer. This restricted role has no S1 private/API USAGE.
+
+Primary PostgreSQL16 sources were independently read through GitHub:
+
+- [regproc.c](https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/utils/adt/regproc.c), blob `296930eb3bca7ae56162ad9f3acfcd271c82db4f`: to_regprocedure calls regprocedurein and FuncnameGetCandidates.
+- [namespace.c](https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/catalog/namespace.c), blob `4449f867413eebd65e529fce54cf756fb57cf3ff`: explicit namespace lookup checks ACL_USAGE and raises the privilege error.
+- [ruleutils.c](https://github.com/postgres/postgres/blob/REL_16_STABLE/src/backend/utils/adt/ruleutils.c), blob `5fd68ab48b4e4eceaec598124cd67605b6eeeeb1`: pg_get_functiondef resolves PROCOID and always emits the qualified namespace/name and arguments.
+
+Only the pg_proc predicate changes to the stored fingerprint OID. Every existing fingerprint component remains compared. A rename/signature/schema change alters the definition hash; removal of the pinned OID produces a missing actual fingerprint and refuses. No new grants, role/owner changes, protected code edits, connections or budget increase are introduced. Other to_regprocedure sites are installer-only; parsed bridges remain unchanged.
+
+## Prepared regression and independent-review correction
+
+N02 now checks all four absent S1 schema privileges, succeeds through the actual restricted runtime, renames the disposable pinned binding_valid_v1 while verifying its OID is unchanged, and requires P7603. That function is not a direct parsed bridge target. Finally restores the original name; the normal path then requires exact full-catalog equality and another successful runtime probe. No protected source file is changed by this disposable-fixture test.
+
+Root caught a pre-publication assertion mistake: boolean::text produces the strings `true`/`false`, so all four expected values are now `false`. Earlier proposed native pins were superseded and never executed or published. The delivered native pin is `5b586cb8291caeb954f6afffb80d82a1666c9050e209e1df3bf0f81dc169f87c` (138948bytes); SQL is `a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59` (135947bytes). Aggregate: `5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1`.
+
+## Executed evidence versus remaining gates
+
+The failed82b receipt reports N01 only, no R9 witnesses, nativePass:false,551/551 settled operations,90/90 closed cumulative connections, one stopped cluster,0 cleanup failures and3020ms total. Core8660/8656pass/2fail/2skip/0cancel. The d9 and7ac failures remain in historicalCIRuns.
+
+The environment is **UNAVAILABLE**. No new local or native execution, parser, typecheck, lint or build was attempted. Earlier64/64 unit and static results are historical; native.ts changes in R13. These new assertions and the SQL fix need new exact-head unchanged CI. Source inspection and primary-source reading are not execution.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root owns final acceptance, Task V4, publication, complete native re-gating and live exact-head review. No Ready/merge or automatic next slice. Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refusal and all other existing Owner gates remain.
+
+---
+
+## Historical R12 and earlier author self-reviews
+
+The exact previous record follows. Its former current claims and pins are historical; the R13 block above governs this delivery.
+
 # M04 Phase-B author self-review V1
 
 **R12 SAME GENERATION2 / SAME SESSION — SOURCE CORRECTION ONLY; NEW NATIVE CI PENDING.** This is author self-review, not Technical-Lead acceptance.
