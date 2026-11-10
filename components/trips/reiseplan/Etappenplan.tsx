@@ -38,7 +38,12 @@ const kinds = [
   { kind: 'transfer', title: 'Transport', Icon: BusFront },
   { kind: 'note', title: 'Notiz', Icon: NotebookPen },
 ] as const
-const date = (d: string | null) => d ? new Intl.DateTimeFormat('de-CH', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(d+'T12:00:00Z')) : ''
+const shortDate = new Intl.DateTimeFormat('de-CH', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+function date(value: string | null) {
+  if (!value) return ''
+  const day = new Date(value+'T12:00:00Z')
+  return Number.isFinite(day.getTime()) ? shortDate.format(day) : ''
+}
 export default function Etappenplan({ reise, quelle, route, tagId, focusRoute, onDay, onEdge, onRoute, onItem, onSaved, onAdd, edge, day, editor, status, editorOffen, unassigned }: Props) {
   const [ansicht, setAnsicht] = useState<'plan' | 'karte'>('plan')
   const [tab, setTab] = useState<'uebersicht' | 'tage'>('uebersicht')
@@ -91,7 +96,7 @@ export default function Etappenplan({ reise, quelle, route, tagId, focusRoute, o
     <div className="et-mobile-tabs"><button type="button" aria-pressed={ansicht==='plan'} onClick={() => setAnsicht('plan')}><ListTree size={17}/> Reiseplan</button><button type="button" aria-pressed={ansicht==='karte'} onClick={() => setAnsicht('karte')}><MapIcon size={17}/> Karte</button></div>
     <div className={'et-board mode-'+ansicht}>
       <section className="et-panel" aria-label="Reiseverlauf" data-u1b-route tabIndex={-1}>
-        {stoppForm && onSaved ? <StoppForm trip={reise} quelle={quelle} nach={activeStage?.id || null} position={punkt}
+        {stoppForm && onSaved ? <StoppForm trip={reise} quelle={quelle} nach={activeStage?.id || null} position={punkt} onPosition={setPunkt}
           onKarte={() => { setPlatzieren(true); setAnsicht('karte') }}
           onClose={() => { setStoppForm(false); setPlatzieren(false) }}
           onSaved={graph => { setStoppForm(false); setPlatzieren(false); onSaved(graph); back() }}/> : edge ? <><button type="button" className="et-back" data-u1b-zur-route onClick={back}><ArrowLeft size={16}/> Alle Etappen</button>{edge}</> : showDetail ? <>

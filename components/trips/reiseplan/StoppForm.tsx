@@ -10,12 +10,13 @@ import { gastManuellSpeichern } from '@/lib/reiseaenderung/direct/gast'
 import { manuellVorschau, type ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
 import { manuelleAenderungVorschau, manuelleAenderungUebernehmen } from '@/lib/reiseaenderung/aktionen'
 
-export default function StoppForm({ trip, quelle, nach, position, onKarte, onClose, onSaved }: {
+export default function StoppForm({ trip, quelle, nach, position, onKarte, onPosition, onClose, onSaved }: {
   trip: Trip
   quelle: TripSource
   nach: string | null
   position: { lat: number; lng: number } | null
   onKarte: () => void
+  onPosition: (point: { lat: number; lng: number } | null) => void
   onClose: () => void
   onSaved: (trip: Trip) => void
 }) {
@@ -24,6 +25,7 @@ export default function StoppForm({ trip, quelle, nach, position, onKarte, onClo
   const [tage, setTage] = useState('1')
   const [after, setAfter] = useState(nach ?? '')
   const [preview, setPreview] = useState<ManuelleVorschau | null>(null)
+  const [coordsText, setCoordsText] = useState<{ lat: string; lng: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const lock = useRef(false)
   const [status, setStatus] = useState('')
@@ -32,12 +34,19 @@ export default function StoppForm({ trip, quelle, nach, position, onKarte, onClo
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     if (lock.current || stale) return
+    const coord = (s: string) => s.trim() === '' ? NaN : Number(s.replace(',', '.'))
+    const pin = coordsText && (coordsText.lat.trim() || coordsText.lng.trim())
+      ? { lat: coord(coordsText.lat), lng: coord(coordsText.lng) } : position
+    if (pin && (!Number.isFinite(pin.lat) || Math.abs(pin.lat) > 90 || !Number.isFinite(pin.lng) || Math.abs(pin.lng) > 180)) {
+      setStatus('Gib einen Breitengrad von −90 bis 90 und einen Längengrad von −180 bis 180 ein.')
+      return
+    }
     lock.current = true
     setBusy(true)
     setStatus('')
     try {
       if (!preview) {
-        const eingabe = { neuerStopp: { name: name.trim(), tage: Number(tage), nachEtappeId: after || null, position } }
+        const eingabe = { neuerStopp: { name: name.trim(), tage: Number(tage), nachEtappeId: after || null, position: pin } }
         const seed = crypto.randomUUID()
         const result = quelle === 'guest' ? await manuellVorschau(basis, eingabe, seed) :
           await manuelleAenderungVorschau({ tripId: basis.id, basisRevision: basis.revision, eingabe, seed })
@@ -67,7 +76,12 @@ export default function StoppForm({ trip, quelle, nach, position, onKarte, onClo
         <div className="et-inputs"><label>Einfügen nach<select value={after} onChange={e => setAfter(e.target.value)}><option value="">Am Ende der Route</option>
           {[...basis.stages].sort((a,b) => a.position-b.position).map(s => <option value={s.id} key={s.id}>{s.name}</option>)}</select></label>
           <label>Aufenthalt in Tagen<input type="number" min={1} max={AENDERUNG_GRENZEN.neueEtappenTage} required value={tage} onChange={e => setTage(e.target.value)}/></label></div>
-        <button type="button" className="et-secondary" onClick={onKarte}><MapPin size={16}/>{position ? 'Kartenposition ändern' : 'Position auf Karte setzen'}</button>
+        <button type="button" className="et-secondary" onClick={() => { setCoordsText(null); onKarte() }}><MapPin size={16}/>{position ? 'Kartenposition ändern' : 'Position auf Karte setzen'}</button>
+        <details className="et-coord-fields"><summary>Koordinaten eingeben</summary>
+          <div className="et-inputs"><label>Breitengrad<input inputMode="decimal" placeholder="z. B. 14,35" value={coordsText?.lat ?? position?.lat ?? ''}
+            onChange={e => { setCoordsText({ lat: e.target.value, lng: coordsText?.lng ?? String(position?.lng ?? '') }); onPosition(null) }}/></label>
+            <label>Längengrad<input inputMode="decimal" placeholder="z. B. 100,57" value={coordsText?.lng ?? position?.lng ?? ''}
+            onChange={e => { setCoordsText({ lng: e.target.value, lat: coordsText?.lat ?? String(position?.lat ?? '') }); onPosition(null) }}/></label></div></details>
         {position && <small>{position.lat.toFixed(4)}°, {position.lng.toFixed(4)}°</small>}
       </fieldset>}
     {(status || stale) && <p role="alert">{stale ? 'Deine Reise hat sich geändert. Öffne die Erfassung mit dem aktuellen Reiseplan erneut.' : status}</p>}

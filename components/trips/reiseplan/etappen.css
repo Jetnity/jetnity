@@ -100,3 +100,5 @@
 .et-map-country {display:block;width:max-content;color:#5b7568;font:650 .62rem system-ui;letter-spacing:.15em;text-transform:uppercase;transform:translate(-50%,-50%);pointer-events:none;text-shadow:0 1px 3px #fffd}
 .et-map-note {bottom:2rem}
 @media(max-width:480px){.et-thumb {height:52px;flex-basis:54px}.et-tiletext b {font-size:1rem}.et-stage {gap:.45rem}}
+.et-coord-fields summary {min-height:44px;align-content:center;font-size:.84rem;font-weight:600;cursor:pointer}
+.et-coord-fields[open] {padding-bottom:.6rem}
