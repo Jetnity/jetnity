@@ -1,3 +1,35 @@
+# R25 / Recovery Task V16 — ARRAY alternative, CI pending
+
+Captured: 2026-11-10T13:55:02Z. Same author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. Existing Draft #1182; baseline `1aecc862c4b2710bb12c900195259ee25eb6f70d`, tree `bc79a7bc2bf09fcea57ab1f4e7ca4c773ce5b9f3`. Origin #1178 is historically merged; this remains its linked post-merge review fix.
+
+**Current R25 Typecheck/native/runtime/TL-PASS/Ready/merge are false / not executed.** [Root's exact selection](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908) replaces only the `exact_keys_v1` SELECT body with two ARRAY constructors. The R24 positive/fallback structure is removed. Original guards, safe object extraction, C-sorted element sequences and uncollated output `k` preserve the original NULL/duplicate/dimension/lower-bound/collation behavior.
+
+Native changes only one comment and two labels that previously described the removed fallback. All 36 fixed cases / 72 default+C observations, original-expression differentials, queries and assertions remain. These are two selected modes; they need not be different effective collations in CI. All 29 declarations/attributes, other SQL bytes, 31 groups/order and 16 other source pins remain exact.
+
+## Frozen source pins
+
+- SQL: 138695 bytes / SHA256 `4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa` / blob `67f073a0d19b31309f8276bba62770a4f36f8fb9`.
+- Native: 175150 bytes / SHA256 `ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a` / blob `89f8026cf0b96971f529d6ab59fe14a2fbfe6150`.
+- All-18 aggregate: `7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d`.
+
+## Actual preceding failure
+
+The [complete Root receipt](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6768973326) records terminal [CI 42822302417](https://github.com/Jetnity/jetnity/actions/runs/42822302417) on 1aecc: Typecheck/Lint and six companions passed; Repository verification 129850630615 and aggregate failed; hygiene/build were skipped. **23/31 native groups passed**, including N02's 36-case/72-mode matrix and both R9 witnesses.
+
+Ledger group 24 hit the unchanged 240s deadline at zero-based started228/completed227 after **228 acknowledged commands**, no START or cycles. Following database outcome **UNKNOWN**. First 23 groups: 102637ms; failed ledger: 136768.07127ms. Complete cleanup: 26776/26776 effects settled, 4242/4242 connections closed, one cluster stopped, zero pending/children/errors; 240422ms total / 38ms cleanup. Core: 8682 total / 8678 pass / 2 fail / 2 inherited skips / 0 cancelled.
+
+Full log: 4252208 bytes / SHA256 `d551f43143f1b712bf072256f4949f81a09594b805c5d6c479ae0c2086d5e3e5`. Compact receipt: 3767 bytes / `7676783e6c3abd4cbf8499c4568c53f0176dd9473f3e7a91646ff93f9aaea67d`. Root-prepared relative V16 excerpt: `docs/official-truth-product-v3/M04_RECOVERY_R25_NATIVE_FAILURE_V16.txt`, 5391 bytes / `7ff00463ce28764756dcf0ce8ff3d1e2817e6928c5735219fdcf9dcdd1ce433c`; not claimed present at historical 1aecc.
+
+This is the fifteenth distinct failure. All 14 prior failure objects, genuine R21 success, corrected separate R22 terminal metadata and both prior Markdown tails remain exact.
+
+## Gate and STOP
+
+The alternative reduces source subqueries from three to two and removes the aggregate/COALESCE and R24 extra operations; its valid path again sorts/builds both arrays. This is structural source reasoning, not a measured plan or speedup. Overall failed-run timings do not identify R24's helper as cause or establish regression. History remains quadratic; no budget-margin, full-cap Rule latency or Production SLO claim.
+
+Root owns publication and complete new-head CI/native/Preview/review acceptance, followed by mandatory actual-main CI/native/Production. All 31 groups, full quotas, R9, inherited boundary, final N15, cleanup and 240+60/300s/resource limits remain. All Owner/SQL UNAPPLIED/Method/#1139/#917/privacy/hosted gates remain. **AUTHOR STOP** after finite delivery; no local/project/SQL/parser execution, author publication, Ready, merge or next slice.
+
+## Previous author status — preserved verbatim
+
 # R24 / Recovery Task V15 — source delivery, new CI pending
 
 Captured: 2026-11-10T12:55:53Z. Same actual author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. Existing **Draft #1182**, baseline `ca6fcb8930e68e394156d67351ee087c4cddb180`, tree `c688145cd14af3c7675d63e4174f8c07f6b772f9`. Origin #1178 remains historically merged; this is its linked post-merge review fix, not another product slice.

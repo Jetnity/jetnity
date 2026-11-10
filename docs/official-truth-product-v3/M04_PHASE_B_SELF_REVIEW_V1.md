@@ -1,3 +1,43 @@
+# R25 / Recovery Task V16 — bounded author self-review
+
+Captured: 2026-11-10T13:55:02Z. Same Generation2 author/session; baseline `1aecc862c4b2710bb12c900195259ee25eb6f70d`. [Exact Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908). Prepared source only; no Typecheck, SQL execution, native PASS or Technical-Lead acceptance is claimed.
+
+## Selected computation and equivalence
+
+The sole SQL-body replacement is:
+
+```sql
+  SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    ARRAY(SELECT k FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k ORDER BY k COLLATE "C")
+    = ARRAY(SELECT k FROM unnest(expected) k ORDER BY k COLLATE "C")
+```
+
+The original guards and safe nonobject CASE remain. Each constructor consumes the same sorted text sequence as the former array_agg. Duplicate and NULL elements remain; unchanged unnest flattens dimensions; nonempty result arrays have lower bound 1 and empty results match former COALESCE normalization. Selected `k` remains uncollated and C remains exclusively in ORDER BY. No new equality collation, key normalization, acceptance limit or exception is introduced.
+
+Primary PostgreSQL 16 sources were read at `c372fbbd8e911f2412b80a8c39d7079366565d67`. Array transition/finalization, ARRAY_SUBLINK and makeArrayResultAny establish the element/empty/bound behavior; parse_collate excludes ordering-only aggregate arguments from result collation and derives ARRAY result collation from selected `k`. Exact source blobs are recorded in the JSON correction. LANGUAGE sql, search_path and every declaration/attribute remain unchanged.
+
+SQL-function startup and executor initialization show why source structure is relevant: subplans can require initialization even when CASE avoids their evaluation. This does not mean the unused R24 fallback was evaluated. Three source subqueries become two, but the new valid path again sorts/builds arrays. No server plan/profile, causal R24 regression, timing advantage or sufficient budget margin was measured.
+
+## Native coverage and source boundary
+
+Only the selected comment and two case labels change. All 36 existing VALUES cases and 72 default/C observations retain literal booleans, original-expression comparison, exact input values, assertions, query/connection count and their position inside N02. The tests still cover SQL NULL distinct from JSON null, every scalar/array category, empty/Unicode/escaped/control keys, duplicates/NULLs, missing/extra/wrong/nested keys, multidimensional arrays, nonstandard lower bounds and 32/33-key cases. No new test or availability skip is introduced. Default/C are two selected modes, not proof of two distinct effective CI collations or executed nondeterministic collation coverage.
+
+Inverse text replacement restores exact 1aecc SQL/native. All outside bytes, 29 declarations, 31 proof labels/order, prior queries, R23 annotation and 16 other source pins remain exact. Root and the independent reviewer separately reconstructed the final source pins without a concrete source blocker; execution still awaits new CI.
+
+SQL: 138695 / `4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa` / blob `67f073a0d19b31309f8276bba62770a4f36f8fb9`. Native: 175150 / `ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a` / blob `89f8026cf0b96971f529d6ab59fe14a2fbfe6150`. All-18 aggregate: `7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d`.
+
+## Evidence precision and remaining risk
+
+Actual 1aecc Typecheck/Lint, N02 matrix and both R9 passed, with 23/31 groups complete. Ledger group 24 failed at global 240s after 228 acknowledged commands, no START/cycles; later DB outcome UNKNOWN. All 26776 effects settled and 4242 connections closed, zero pending/errors, 240422ms total / 38ms cleanup. These are historical client/fixture observations, not current R25 acceptance or server-cost attribution. No individual serialized per-case receipt is invented from the completed N02 group.
+
+All 14 old failure objects, complete genuine R21 PR success, corrected separate old-R22 terminal observation and Markdown tails remain exact. The full actual R24 receipt is appended as failure 15. Existing local 64-test/TypeScript/lint results remain historical. All 22 current rows and execution/PASS/Ready/merge fields remain false.
+
+P1 remains unmet full new-head and mandatory actual-main acceptance under unchanged bounds. Every history row, command/transition/authority/error-order check, both full quotas, R9, inherited 761-pair/minOwned4182 proof, final rollback and complete cleanup remain mandatory. History stays quadratic; no full-cap Rule latency or Production SLO claim. Root owns V16 Task/Review/Evidence/Excerpt, publication and re-gating. All Owner, SQL UNAPPLIED, Method/#1139, forbidden #917 and privacy/hosted gates remain.
+
+**AUTHOR STOP.** No author project/parser/SQL/native/tests/typecheck/build execution, installation, environment reconstruction, hosted access, publication, Ready, merge or automatic follow-up slice.
+
+## Previous author self-review — preserved verbatim
+
 # R24 / Recovery Task V15 — bounded author self-review
 
 Captured: 2026-11-10T12:55:53Z. Same Generation2 author/session. Baseline `ca6fcb8930e68e394156d67351ee087c4cddb180`; existing Draft #1182. [Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250). This is a source/data review, not a Typecheck, SQL execution, native proof or Technical-Lead PASS.

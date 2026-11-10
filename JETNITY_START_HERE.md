@@ -2,19 +2,19 @@
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
-### M04 current — R24 / Recovery V15, bounded key-proof correction; full acceptance pending
+### M04 current — R25 / Recovery V16, exact array-constructor correction; full acceptance pending
 
-**2026-11-10 13:11:03 UTC.** [Current Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V15](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V15.md) · [Task V15](docs/official-truth-product-v3/M04_RECOVERY_TASK_V15.md) · [Evidence V15](docs/official-truth-product-v3/M04_RECOVERY_R24_EVIDENCE_V15.json) · [live Draft #1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
+**2026-11-10 14:05:59 UTC.** [Current Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V16](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V16.md) · [Task V16](docs/official-truth-product-v3/M04_RECOVERY_TASK_V16.md) · [Evidence V16](docs/official-truth-product-v3/M04_RECOVERY_R25_EVIDENCE_V16.json) · [live Draft#1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
 
-Published ca6f remains blocked: **CI42812226588 failed at native group25 after 24/31 passes**, including both R9 witnesses and full ledger. Cycle index37/36; following DB outcome UNKNOWN. All26926 effects settled/all4242 connections closed; no cleanup error. Typecheck/Lint and six companions succeeded, exact Preview READY; this does not accept native failure.
+Published1aecc remains blocked: CI42822302417 failed group24ledger after23/31passes, including new36case/72mode N02 and bothR9. Ledger228/227,228ACKs; cycles/latergroups not reached; following fixture DB outcome UNKNOWN. All26776effects settled/all4242connections closed,zero cleanup errors. Typecheck/Lint/sixcompanions and exact Preview passed; native acceptance did not.
 
-Same G2 author delivered a capped positive-only exact-key proof with **complete original fallback**, preserving all declarations/history/error order and budgets. Native adds **36 fixed cases / 1 SELECTs** inside existing N02. Root/reviewer independently matched SQL **9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42**, Native **f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a**, aggregate **daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3**; other16source pins, all prior36queries/31groups remain exact. New-head execution is pending.
+Same G2 author delivered only the exact_keys_v1 ARRAY body plus one explanatory comment/two case labels. All29declarations, other SQL bytes, query values/oracles/counts,36cases/72observations,31groups and budgets remain. Root/reviewer independently matched SQL **4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa**, Native **ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a**, all18aggregate **7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d**. Other16sourcepins unchanged. No new-head execution or speed claim.
 
-Actual main **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** remains unaccepted after its separate native failure. Origin #1178 remains genuinely R21-passed/MERGED. Preserve all13older failure objects, new14thfailure and genuine success separately. **M04 remains unfinished.**
+Actual main **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** remains separately unaccepted. Origin#1178 remains genuinely R21-passed/MERGED. Preserve14older failures, distinct15thfailure, genuine success and allV13/V14/V15history. **M04 unfinished.**
 
-First unfinished step: Root expected-ca6f publish/full readback, then complete new exact-head CI/Preview/live gates and mandatory actual-main CI/native/Production. No agent Ready/Merge, no unchanged-known-bad rerun. D1 #1169 and concurrent #1181 remain separate unfinished work; no automatic next slice.
+First unfinished step: Root expected1aecc publish/readback, full new-head CI/native/Preview/live gates, then actual-main CI/native/Production. No agentReady/Merge, unchanged-known-bad rerun or automatic next slice. D1#1169/#1181 separate.
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute; #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. SQL UNAPPLIED; no hosted/local/environment action. Full boundaries in V15.
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #917 UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute; #1131ReadySTOP, both#1135holds, #968isolation/#911/#913privacy remain. SQL UNAPPLIED; no hosted/local/project/environment action. Full boundaries inV16.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->
 
