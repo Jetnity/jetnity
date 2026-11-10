@@ -1,3 +1,64 @@
+# M04 Phase-B author self-review V1 — R20 current
+
+**SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760723089) and [finite authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760854161) bind this cut to `72868a287280a6c1d96222268a1413110ec95039`, tree `06ac3e6d4eedbb3e42795bff942b19364a45a848`.
+
+## Exact equivalence boundary
+
+In canonical_v1, one numeric local replaces repeated text-to-numeric conversion in the two inline leaf branches and root numeric branch. Each branch assigns that local before use; successive values cannot reuse a previous number. One existing assignment stays one assignment. Both trunc calls, the integral/safe-range condition, P7601 error and output structure remain. Numeric uses PostgreSQL exact numeric, not floating-point conversion. Every other canonical branch and depth/order/ASCII/string/node behavior remains.
+
+In job_v1, createdAt still passes timestamp_v1 first. The following updated assignment compares original extracted texts with explicit COLLATE C. Only exact equality reuses validated created. SQL NULL/JSON null yields an unknown comparison and takes the original parser fallback. Different text, even another representation of the same instant, also takes that parser. Invalid identical strings fail the mandatory created parse. The returned record remains the original input; no timestamp is rewritten.
+
+Only these two bodies change. All created, lease, backoff and final lifecycle predicates, timestamp_v1/civil_date_v1 and nodes_v1 bodies remain exact. No guard is reordered; no validation is dropped from history, command, transition, catalog, API/transaction staging or final authority. All 29 declarations/attributes, objects, indexes, roles/grants and resource limits remain.
+
+## Bounded independent regression oracles
+
+One 2417-byte N02 insertion adds exactly 24 direct queries. Existing commandRequest prepares a valid prospective queued record for each kind at a fixed timestamp; no journal write or new persisted subject is introduced.
+
+For each kind, two valid cases return the exact complete input record: equal timestamps and a different later updated timestamp. Eight refusal cases retain both keys: equal invalid calendar strings, different malformed updated text, JSON null, boolean, number, object, valid earlier updated time, and a same-instant +00:00 representation that violates the required Z syntax. Rejection requires P7601.
+
+Two raw numeric mixed object/array cases have fixed expected canonical strings for multiple values, signed zero, scaled and exponent-form safe endpoints. A near-safe-limit fractional root and an array with a valid first value followed by an unsafe exponent reject P7601. Inputs never round-trip through JavaScript numbers. The signed-zero expectations concern private JSONB canonicalization; raw wire negative-zero refusal remains unchanged.
+
+All existing R19 direct-helper tests, including root/object/array paths and NULL/depth/count boundaries, remain. All native bytes outside the insertion, 31 proof group names/order, R9, quotas/progress, histories, ownership and cleanup remain exact.
+
+## Frozen sources
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 138254 | `18c5d6c7f724e9c90c2f6e2aa96b429afb397d405db355057071d195b1c5417e` | `779f45640fa80d1f64282191d94ed365e7fdb31a` |
+| native.ts | 159763 | `7c1770792308989ee09dd460d97cc7df0c1193f45326612c842147abd3020810` | `810ed62e7c19e7f3d88d2ce9e88e767dcacaa39d` |
+
+Eighteen-source aggregate: `cd76347b518c7c8cecd5661e73886712a8597164c8f98b3c8acebc84be9ae87e`. Sixteen other source pins and rollback remain unchanged. Text-only reconstruction/scope comparison is source review, not execution evidence.
+
+## Historical actual receipt
+
+Root independently read [terminal Repository verification 129666585217](https://github.com/Jetnity/jetnity/actions/runs/42767273189/job/129666585217), then provided the exact safe receipt and terminal metadata. The R20 author made no network or log request. Full log: 4253591 UTF-8 bytes /4244373 characters /63178 lines, SHA256 `ef023cffe525fbaed3491199a8292dcb6cf92a30d62aad74f7ae4f5adebca2f8`.
+
+All six companions succeeded; Repository verification and aggregate 129670976070 failed. Typecheck/lint passed, tests failed, hygiene/build skipped. Core: 8689 tests /8685 passed /2 failed /2 skipped /0 cancelled; 557126.408018 ms. The two inherited layout skips are unchanged.
+
+First 30 groups passed, including R19 N02, both actual R9 witnesses and all ledger/start quota boundaries. Their times total 238267 ms: first 23 groups 75116 ms, ledger 78506 ms, cycles 83847 ms and groups 26–30 798 ms. Final N15 failed after 174.23375 ms because the global effect budget expired; the exact failing statement is not identified.
+
+Ledger completed index 253 with 256 commits/one START, 258 constructions/463 ms and 260 fulfilled fixed calls/78236 ms. Cycles completed index 63 with 193 commits/64 STARTs, 194 constructions/355 ms and 260 started/259 fulfilled fixed calls/83650 ms. The rejected pointer query explains the expected fulfilled-count difference; these counters are distinct from lifetime settlement and are client-await aggregates, not server timings.
+
+All 27554 lifetime operations settled; zero pending, 4245 connections closed, two clusters stopped, zero child processes/cleanup errors. Total 240184 ms, cleanup 16 ms. Inherited commit-guard pairs 761 and minimum-owned 4182 were reached. Historical R9 distinguishes actual SQL wait, closed backend and retained executor; no raw-worker-return or elapsed 30s timer claim is added.
+
+## Work model, limits and STOP
+
+Full pre/post history traversal for 254 writes yields 64516 row validations. Each row validates one queued job with identical created/updated original text, removing one timestamp_v1 and nested civil_date_v1 call under the new assignment. A representative Discovery dedup row has 39 numeric canonical leaf visits: command4+4, envelope12+12 and job7; four conversions become one, removing 117 written conversions per representative visit. These are source-derived operation counts. Every value and history row still validates.
+
+Execution overhead, catalog/hash/scan/transport work and total CI margin remain unmeasured for R20. No speedup or complete-CI guarantee is made. Discovery full-cap evidence does not establish Rule full-cap latency or Production SLO.
+
+Ten historical failures remain separately preserved. Current 18 source pins, 22 current-unexecuted matrix rows and 31 native obligations remain. Prior Markdown tails are byte-identical. Historical 64/64 author checks were not rerun; no local project/parser/SQL/native/build execution, environment reconstruction, network/log access or Git/hosted mutation occurred.
+
+Corrected R20 native/runtime/PASS flags remain false. Complete unchanged new-head CI must pass all 31 groups, both R9 cases, actual quotas and cleanup within 240s effects +60s cleanup/300s total. **AUTHOR STOP.** Root owns exact review, V11 publication and TL PASS/Ready/merge. No next slice or activation. Method NOT_APPROVED, #1139/17 gaps, #917 refusal, #1131, both #1135 holds, #968 and #911/#913 remain.
+
+---
+
+## Historical R19 and earlier author self-reviews
+
+The exact previous records follow unchanged. Their headings and execution statements do not grant R20 acceptance.
+
 # M04 Phase-B author self-review V1 — R19 current
 
 **R19 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**

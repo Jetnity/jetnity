@@ -735,6 +735,44 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
         assert.deepEqual(rows, [{ nodes: String(expected) }], 'R19 node count/depth/cap/NULL oracle')
       }
+      // R20: both kinds retain exact timestamp validation before same-text reuse.
+      const timeAt = '2026-11-09T00:00:00.000Z'
+      const timeCases = [
+        ['equal valid', timeAt, timeAt, true],
+        ['different valid', timeAt, '2026-11-09T00:00:00.001Z', true],
+        ['equal invalid calendar', '2026-02-30T00:00:00.000Z', '2026-02-30T00:00:00.000Z', false],
+        ['different malformed', timeAt, 'not-a-time', false],
+        ['JSON null', timeAt, null, false],
+        ['boolean', timeAt, false, false],
+        ['number', timeAt, 0, false],
+        ['object', timeAt, {}, false],
+        ['earlier valid', timeAt, '2026-11-08T23:59:59.999Z', false],
+        ['same instant different text', timeAt, '2026-11-09T00:00:00.000+00:00', false],
+      ] as const
+      for (const kind of ['rule_research', 'combination_discovery'] as const) {
+        // This existing helper prepares a prospective record; no journal write occurs.
+        const prepared = await commandRequest({ action: 'enqueue', kind,
+          input: kind === 'rule_research' ? commandFixture.ruleInput : commandFixture.discoveryInput }, null, timeAt)
+        for (const [label, createdAt, updatedAt, valid] of timeCases) {
+          const value = { ...prepared.body.commit.next, createdAt, updatedAt }
+          const query = f.owner.query('SELECT official_v3_jobs_private.job_v1($1::jsonb) AS result', text([JSON.stringify(value)]))
+          if (valid) assert.deepEqual(result(await query), value, 'R20 ' + kind + ': ' + label)
+          else await assert.rejects(query, code('P7601'), 'R20 ' + kind + ': ' + label)
+        }
+      }
+      // Raw numeric text and fixed expectations avoid JavaScript number rounding.
+      const reuseNumericCases = [
+        ['{"z":[-0,9007199254740991.000,-9007199254740991e0],"a":18.0}',
+          '{"a":18,"z":[0,9007199254740991,-9007199254740991]}'],
+        ['[1.8e1,{"max":9.007199254740991e15,"min":-9007199254740991.000,"zero":-0.0},2e0]',
+          '[18,{"max":9007199254740991,"min":-9007199254740991,"zero":0},2]'],
+      ] as const
+      for (const [raw, expected] of reuseNumericCases) {
+        assert.deepEqual(await canonicalAt(raw, 0), [{ canonical: expected }], 'R20 mixed numeric reuse')
+      }
+      for (const raw of ['9007199254740991.1', '[18,9.007199254740992e15]']) {
+        await assert.rejects(canonicalAt(raw, 0), code('P7601'), 'R20 exact numeric refusal')
+      }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,

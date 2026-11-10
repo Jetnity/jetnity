@@ -1,0 +1,37 @@
+# Root-selected terminal non-Auth evidence, R19 head 72868a287280a6c1d96222268a1413110ec95039
+Run42767273189 attempt1 / job129666585217 / terminalFAILURE
+Full log:4253591 UTF-8 bytes,63178 lines,SHA256 ef023cffe525fbaed3491199a8292dcb6cf92a30d62aad74f7ae4f5adebca2f8
+This finite excerpt is historical failed-head evidence, not a PASS. No Auth logs read.
+
+2026-11-10T06:25:54.1438766Z     not ok 31 - N15 rollback waits for actual late writer then rechecks nonempty history atomically
+2026-11-10T06:25:54.1460203Z       ---
+2026-11-10T06:25:54.1469535Z       duration_ms: 174.23375
+2026-11-10T06:25:54.1470152Z       type: 'test'
+2026-11-10T06:25:54.1488498Z       location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:6219'
+2026-11-10T06:25:54.1518393Z       failureType: 'testCodeFailure'
+2026-11-10T06:25:54.1521950Z       error: 'M04 240s effect budget exceeded'
+2026-11-10T06:25:54.1552327Z       code: 'ERR_TEST_FAILURE'
+2026-11-10T06:25:54.1587934Z       stack: |-
+2026-11-10T06:25:54.1588685Z         Timeout.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:457:52)
+2026-11-10T06:25:54.1589412Z         listOnTimeout (node:internal/timers:585:17)
+2026-11-10T06:25:54.1590350Z         process.processTimers (node:internal/timers:521:7)
+2026-11-10T06:25:54.1590758Z       ...
+2026-11-10T06:25:54.1591033Z     1..31
+2026-11-10T06:25:54.1591658Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+2026-11-10T06:25:54.1592231Z   ---
+2026-11-10T06:25:54.1592518Z   duration_ms: 240186.634507
+2026-11-10T06:25:54.1592846Z   type: 'test'
+2026-11-10T06:25:54.1593405Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+2026-11-10T06:25:54.1594009Z   failureType: 'testCodeFailure'
+2026-11-10T06:25:54.1594430Z   error: 'M04 native proof or terminal cleanup failed'
+2026-11-10T06:25:54.1594833Z   code: 'ERR_TEST_FAILURE'
+2026-11-10T06:25:54.1595164Z   name: 'AggregateError'
+2026-11-10T06:25:54.1595482Z   stack: |-
+
+2026-11-10T06:25:54.1615339Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"5a05e41a7834307b8f28279493620d65150d8fc1a9b5b7f679d905de638787f8","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":240184,"cleanupMilliseconds":16,"clusters":2,"childProcesses":0,"lifetime":{"started":27554,"settled":27554,"pending":0,"connections":4245,"closed":4245,"stoppedClusters":2},"groups":[{"id":"N01","milliseconds":22},{"id":"N02","milliseconds":1263},{"id":"N03","milliseconds":1685},{"id":"N07","milliseconds":6964},{"id":"N07/R4","milliseconds":660},{"id":"N08","milliseconds":9301},{"id":"N08/U04","milliseconds":2958},{"id":"N02/U04","milliseconds":739},{"id":"N04/N06","milliseconds":1593},{"id":"N04/N06/N10","milliseconds":1708},{"id":"N05/N09","milliseconds":2072},{"id":"N09","milliseconds":16591},{"id":"N10/U06","milliseconds":6569},{"id":"N11","milliseconds":1798},{"id":"N11","milliseconds":93},{"id":"N12","milliseconds":154},{"id":"N04/N10/N12","milliseconds":3416},{"id":"N12/U06/R9","milliseconds":12017},{"id":"N12/R7-03","milliseconds":475},{"id":"N11","milliseconds":2214},{"id":"N11","milliseconds":186},{"id":"N11","milliseconds":198},{"id":"N13","milliseconds":2440},{"id":"N05/A03","milliseconds":78506},{"id":"N05","milliseconds":83847},{"id":"N15","milliseconds":91},{"id":"N14","milliseconds":526},{"id":"N01/N14/T02","milliseconds":65},{"id":"N14","milliseconds":70},{"id":"N15/T02","milliseconds":46}],"nestedRaceWitnesses":[{"boundary":"i1_timeout","operation":"reserve_v1","target":{"pid":"25017","birth":"2026-11-10 06:22:55.532207+00"},"control":{"pid":"25016","birth":"2026-11-10 06:22:55.527697+00"},"holder":{"pid":"24684","birth":"2026-11-10 06:22:52.199534+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":true,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"worker_only","nativeAdmissionsAfterDrain":45},{"boundary":"worker_caller_abort","operation":"reserve_v1","target":{"pid":"25867","birth":"2026-11-10 06:23:03.702903+00"},"control":{"pid":"25866","birth":"2026-11-10 06:23:03.698958+00"},"holder":{"pid":"25477","birth":"2026-11-10 06:23:00.612576+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":false,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"unconfirmed","nativeAdmissionsAfterDrain":44}],"quotaProgress":{"currentGroup":"none","boundary":"done","indexBase":0,"millisecondsCap":300000,"timingMeaning":"client await durations including construction/transport; not server statement profiling","ledger":{"lastStartedIndex":253,"lastCompletedIndex":253,"commandRequestsStarted":258,"commandRequestsCompleted":258,"commandRequestMilliseconds":463,"fixedCallsStarted":260,"fixedCallsCompleted":260,"fixedCallMilliseconds":78236,"commandCallsStarted":258,"commandCallsCompleted":258,"commandCommits":256,"startCallsStarted":1,"startCallsCompleted":1,"startReservations":1},"cycles":{"lastStartedIndex":63,"lastCompletedIndex":63,"commandRequestsStarted":194,"commandRequestsCompleted":194,"commandRequestMilliseconds":355,"fixedCallsStarted":260,"fixedCallsCompleted":259,"fixedCallMilliseconds":83650,"commandCallsStarted":194,"commandCallsCompleted":194,"commandCommits":193,"startCallsStarted":64,"startCallsCompleted":64,"startReservations":64}},"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":4,"maximumIntake":1,"maximumMethod":3,"m04ObserverLimit":2,"maximumM04Observers":2,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":761,"minimumOwned":4182},"failure":{"phase":"proof_31:N15","error":{"kind":"fixture","code":"unclassified_failure"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+2026-11-10T06:26:33.8344394Z # tests 8689
+2026-11-10T06:26:33.8344624Z # pass 8685
+2026-11-10T06:26:33.8344733Z # fail 2
+2026-11-10T06:26:33.8344845Z # cancelled 0
+2026-11-10T06:26:33.8344959Z # skipped 2
+2026-11-10T06:26:33.8345188Z # duration_ms 557126.408018

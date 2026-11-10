@@ -133,7 +133,7 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text;
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
@@ -149,8 +149,8 @@ BEGIN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
         child_text:=to_jsonb(s)::text;
       WHEN 'number' THEN
-        s:=e::text; IF s::numeric<>trunc(s::numeric) OR s::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
-          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(s::numeric)::text;
+        number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
       WHEN 'boolean' THEN child_text:=e::text;
       WHEN 'null' THEN child_text:='null';
       ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
@@ -167,8 +167,8 @@ BEGIN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
         child_text:=to_jsonb(s)::text;
       WHEN 'number' THEN
-        s:=e::text; IF s::numeric<>trunc(s::numeric) OR s::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
-          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(s::numeric)::text;
+        number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
       WHEN 'boolean' THEN child_text:=e::text;
       WHEN 'null' THEN child_text:='null';
       ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
@@ -180,8 +180,8 @@ BEGIN
     s:=v#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
     RETURN to_jsonb(s)::text;
   WHEN 'number' THEN
-    s:=v::text; IF s::numeric<>trunc(s::numeric) OR s::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
-      RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; RETURN trunc(s::numeric)::text;
+    number_value:=v::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+      RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; RETURN trunc(number_value)::text;
   WHEN 'boolean' THEN RETURN v::text;
   WHEN 'null' THEN RETURN 'null';
   ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
@@ -414,7 +414,7 @@ BEGIN
   IF lim NOT BETWEEN 1 AND 16 OR attempt NOT BETWEEN 0 AND lim
     OR (v->'predecessorRevision'='null'::jsonb AND revision<>1)
     OR (v->'predecessorRevision'<>'null'::jsonb AND (v->'predecessorRevision' IS DISTINCT FROM to_jsonb(revision-1) OR revision<=1)) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
-  created:=official_v3_jobs_private.timestamp_v1(v->>'createdAt'); updated:=official_v3_jobs_private.timestamp_v1(v->>'updatedAt');
+  created:=official_v3_jobs_private.timestamp_v1(v->>'createdAt'); updated:=(CASE WHEN (v->>'updatedAt') COLLATE "C" = (v->>'createdAt') COLLATE "C" THEN created ELSE official_v3_jobs_private.timestamp_v1(v->>'updatedAt') END);
   IF created>updated OR (v->'lastFailure'<>'null'::jsonb AND (v->>'lastFailure' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
   IF state='leased' THEN
     IF official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) IS NOT TRUE

@@ -1,3 +1,52 @@
+# M04 Phase-B author delivery status V1 — R20 current
+
+**R20 LOCAL VALUE REUSE PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Failure diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760723089) and [finite authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760854161). Baseline `72868a287280a6c1d96222268a1413110ec95039`, tree `06ac3e6d4eedbb3e42795bff942b19364a45a848`.
+
+## Authorized correction
+
+Only canonical_v1's three numeric branches/declaration and job_v1's updated timestamp assignment change. Each accepted number uses one exact numeric conversion instead of four; both existing trunc calls and the original IF/output structure remain. Updated time reuses the already validated created time only when their original extracted texts compare equal under explicit C collation. Different or null text retains the original parser. Created validation and every lease/backoff/lifecycle predicate remain byte-identical.
+
+One N02 insertion adds exactly 24 direct queries: ten timestamp cases for each kind and four raw numeric cases. Prospective records use the existing coordinator helper without journal writes. The cases cover valid equality/fallback, invalid equality/fallback with keys retained, wrong types, reversed chronology, noncanonical same-instant text, mixed numeric leaves and precise fractional/unsafe refusal. Existing R19 cases remain unchanged.
+
+All other SQL/native bytes remain exact. All 29 function signatures, 31 proof groups/order, R9, actual quota histories, catalog/authority flow, ownership, resources and 240s effects +60s cleanup/300s total remain.
+
+## Frozen pins
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 138254 | `18c5d6c7f724e9c90c2f6e2aa96b429afb397d405db355057071d195b1c5417e` | `779f45640fa80d1f64282191d94ed365e7fdb31a` |
+| native.ts | 159763 | `7c1770792308989ee09dd460d97cc7df0c1193f45326612c842147abd3020810` | `810ed62e7c19e7f3d88d2ce9e88e767dcacaa39d` |
+
+Eighteen-source aggregate: `cd76347b518c7c8cecd5661e73886712a8597164c8f98b3c8acebc84be9ae87e`. Sixteen other source pins and rollback remain unchanged. This is a held-text preparation; no project/parser/SQL/native/build execution, environment reconstruction, network/log read or Git/hosted mutation occurred.
+
+## Actual historical execution
+
+[CI 42767273189](https://github.com/Jetnity/jetnity/actions/runs/42767273189) is terminal **completed/failure** at the baseline head. Root independently read the complete terminal non-Auth log and supplied its safe receipt. Repository 129666585217 and aggregate 129670976070 failed; all six companions succeeded. Typecheck/lint passed; tests failed; hygiene/build skipped.
+
+First **30 of 31** groups passed, including R19 N02, both R9 witnesses and both full quota groups. The first 23 group times sum to 75116 ms; ledger N05/A03 took 78506 ms, start-quota N05 took 83847 ms, and all 30 completed groups total 238267 ms. Final N15 hit the global 240-second effect budget after 174.23375 ms within that group. Its exact failing statement is unknown.
+
+Ledger: last fill index 253, 256 acknowledged commits and one START; 258 command preparations/463 ms and 260 fulfilled fixed calls/78236 ms. Cycles: last index 63, 193 commits and 64 STARTs; 194 preparations/355 ms and 260 fixed calls started/259 fulfilled/83650 ms, including the expected rejected pointer call. These are rounded client-await durations, not SQL-function profiling.
+
+Core: 8689 tests / 8685 passed / 2 failed / 2 skipped / 0 cancelled; 557126.408018 ms. Cleanup: 27554/27554 operations settled, zero pending, 4245/4245 connections closed, two stopped clusters, zero children/errors; 240184 ms total /16 ms cleanup. Inherited commit-guard pairs 761 and minimum-owned count 4182 were reached.
+
+Full non-Auth log: 4253591 UTF-8 bytes /63178 lines, SHA256 `ef023cffe525fbaed3491199a8292dcb6cf92a30d62aad74f7ae4f5adebca2f8`. All ten failed histories remain. Historical partial success is not current-head acceptance.
+
+## Work model and remaining gate
+
+The 254-fill pre/post history scans produce 64516 row validations. Their queued records have identical created/updated text, so the new assignment removes 64516 timestamp parser calls and the same number of nested civil-date calls in those transitions alone. A representative Discovery dedup row has 39 numeric canonical leaf visits, removing 117 written conversions. These are source-derived operation counts, with no measured or promised wall-time improvement or CI completion guarantee.
+
+Every history row and scalar remains checked. Historical full-cap fixtures use Discovery; full-cap Rule latency and Production capacity/SLO remain unproved.
+
+Current R20 source is **unexecuted**. Historical 64/64 author checks were not rerun. The 18 pins, 22 current-unexecuted coverage rows, 31 groups and exact previous Markdown records remain. **AUTHOR STOP FOR ROOT REVIEW.** Root owns V11, publication and complete unchanged exact-head CI, including final N15. No TL PASS, Ready, merge, activation or next slice. Method NOT_APPROVED, #1139/17 gaps, #917 refusal and all existing Owner gates remain.
+
+---
+
+## Historical R19 and earlier author records
+
+The exact previous records follow unchanged. Their current headings and execution claims belong to those historical cuts, not R20 acceptance.
+
 # M04 Phase-B author delivery status V1 — R19 current
 
 **R19 TWO-HELPER SCALAR INLINING PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
