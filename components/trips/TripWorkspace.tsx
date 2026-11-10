@@ -950,8 +950,7 @@ export default function TripWorkspace({
       planTagRef.current = modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? modus.tagId : ''
       planGesehenRef.current = true
     }
-    const ersterTag = reise.days.some((tag) => tag.id === aktiverTag) ? aktiverTag : ''
-    const tagId = ansicht === 'plan' ? (planGesehenRef.current ? planTagRef.current : ersterTag) : ''
+    const tagId = ansicht === 'plan' && planGesehenRef.current ? planTagRef.current : ''
     modusSetzen({ ansicht, bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
   }
 
