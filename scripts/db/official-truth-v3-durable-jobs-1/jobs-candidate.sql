@@ -147,14 +147,29 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text;
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text; object_keys text[]; object_values jsonb[]; part_index integer;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
-    FOR x IN SELECT * FROM jsonb_each(v) ORDER BY key COLLATE "C" LOOP
-      IF x.key ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      e:=x.value;
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),
+      array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(
+        CASE WHEN j.key ~ '[^ -~]' OR d+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||
+          CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text
+          WHEN 'null' THEN 'null'
+          ELSE NULL
+          END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO object_keys,object_values,parts FROM jsonb_each(v) j;
+    FOREACH part_index IN ARRAY array_positions(parts,NULL::text) LOOP
+      IF object_keys[part_index] ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      e:=object_values[part_index];
       IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
       CASE jsonb_typeof(e)
       WHEN 'object' THEN
@@ -178,7 +193,7 @@ BEGIN
       WHEN 'null' THEN child_text:='null';
       ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
       END CASE;
-      parts:=array_append(parts,to_jsonb(x.key)::text||':'||child_text);
+      parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text;
     END LOOP; RETURN '{'||array_to_string(parts,',')||'}';
   WHEN 'array' THEN
     FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
@@ -829,7 +844,7 @@ END $$;
 
 CREATE FUNCTION official_v3_jobs_private.assert_history_v1(k text) RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE s official_v3_jobs_private.subjects_v1%ROWTYPE; x record; c jsonb; e jsonb; unresolved text[]; ops integer; starts integer; credit jsonb;
+DECLARE s official_v3_jobs_private.subjects_v1%ROWTYPE; x record; c jsonb; e jsonb; unresolved text[]; ops integer; starts integer; credit jsonb; envelope_canonical text COLLATE "default";
 BEGIN
   SELECT * INTO s FROM official_v3_jobs_private.subjects_v1 WHERE job_key=k;
   IF NOT FOUND THEN RETURN; END IF;
@@ -841,15 +856,16 @@ BEGIN
   PERFORM official_v3_jobs_private.job_v1(s.current_job);
   FOR x IN SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE job_key=k LOOP
     c:=official_v3_jobs_private.command_v1(x.command_text::jsonb); e:=x.envelope_text::jsonb;
-    IF c->>'commandText'<>x.command_text OR c->>'commandKey'<>x.command_key OR c->>'operationId'<>x.operation_id OR c->>'jobKey'<>k
-      OR official_v3_jobs_private.canonical_v1(e,0)<>x.envelope_text OR e#>>'{audit,reference}'<>x.audit_reference THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
+    IF c->>'commandText'<>x.command_text OR c->>'commandKey'<>x.command_key OR c->>'operationId'<>x.operation_id OR c->>'jobKey'<>k THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
+    envelope_canonical:=official_v3_jobs_private.canonical_v1(e,0);
+    IF envelope_canonical<>x.envelope_text OR e#>>'{audit,reference}'<>x.audit_reference THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
     DECLARE command jsonb:=c->'value'; current_record jsonb:=e->'expected'; commit jsonb:=e;
       i jsonb:=command->'input'; expected jsonb; n jsonb; identity jsonb;
       a jsonb:=commit->'audit'; f jsonb:=i->'fence'; kind text COLLATE "default"; action text COLLATE "default":=command->>'action'; at_time timestamptz; end_time timestamptz;
       observed text COLLATE "default":=a->>'observedAt'; rev integer; delay_ms integer; result_key text COLLATE "default";
     BEGIN
       IF official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) IS NOT TRUE
-        OR octet_length(official_v3_jobs_private.canonical_v1(commit,0))>196608
+        OR octet_length(envelope_canonical)>196608
         OR official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) IS NOT TRUE
         OR commit->'operationId' IS DISTINCT FROM c->'operationId' OR commit->'commandKey' IS DISTINCT FROM c->'commandKey'
         OR commit->'jobKey' IS DISTINCT FROM c->'jobKey' OR commit->'expected' IS DISTINCT FROM current_record THEN RAISE EXCEPTION 'm04 invalid transition' USING ERRCODE='P7601'; END IF;

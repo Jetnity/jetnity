@@ -1,3 +1,35 @@
+# M04 current handoff — R33 / Recovery V24
+
+**2026-11-10 21:47:13 UTC — M04 R33 / Recovery V24 v2: CHANGES REQUIRED on published R32; the exact two-body correction is independently source-reviewed, publication and new-head execution pending.** Draft [#1183](https://github.com/Jetnity/jetnity/pull/1183), expected parent **b1265b2bf8b8822d035bdf68023383242b670fba**, current main/merge-base **e7aae86c18238033c2186722e24c84dc7a5f69b9**. This is a pre-publication snapshot; later exact-head receipts and live evidence take precedence.
+
+R32 [CI42900344809 / #4093 / attempt1](https://github.com/Jetnity/jetnity/actions/runs/42900344809) is fully terminal FAILURE, observation25: **24/31 M04 groups**, including N02, both real R9 witnesses and the complete254/255/256ledger boundary. The unchanged240s budget then expires in N05/cycle_fail: cycle17 begun/16 completed,53 acknowledged commits,18START reservations; next unacknowledged database outcome **UNKNOWN**. Full64/65cycles,inherited761/minOwned4182 and later rollback/late-writer remain unproved. Total240307ms,cleanup13ms;26686/26686operations settled,4242/4242connections closed,1cluster stopped,0pending/children/errors. All six companions passed, including actual-mountedLifecycle. Core8697/8693PASS/2FAIL/2inherited skips; Typecheck/Lint passed, five hygiene checks and Build SKIPPED. [Full terminal receipt and TaskV24v1](https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6779635862).
+
+[Binding V24 v2](https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6780021283) changes only canonical_v1 and assert_history_v1 in the existing SQL. Valid immediate object scalar slots are encoded together; containers/invalid entries retain ordered original guards through NULL sentinels. The first actual envelope canonical result is reused for the later byte limit. Every history row, prior/next validation, standalone transition, array/root scalar branches,29 declarations and authority/transaction boundaries remain. No raw stored-text shortcut or cross-call cache.
+
+SQL **147856bytes / SHA256 e0bb8eded96ad53737228e1d4e824057abc2cadf73ee08267c3a9011aee02ae8 / blob6465147678a3024748f98ad151b63bc412ccc6c4**. All17 other source files unchanged, including native191098bytes/f5d849c643ff22d264bc9adc1a7cd65f12caaac80a804647604851f22effbde0. New18source aggregate **d70a20d3b3881b56fb7274d3b30089e56e33081f2cb95deb7528b585540f4c76**. Author, Root and independent reviewer separately match all five spans and exact inverse. Source-derived full-history model across both quota proofs removes762655 canonical calls and moves11185347 remaining scalar PL iterations into SQL aggregate evaluation; **no measured speedup or240s PASS guarantee**. Request/front-door/reply and other per-call work is excluded from these counts and remains required. History remains quadratic. Three-array/aggregate/sort/copy memory costs and no unrestricted helper/OOM equivalence are explicit. Existing malformed-persisted-envelope negative-oracle limitation remains; no new tamper/trigger/replication-role mechanism.
+
+Same author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3**, actual session **/root/m04_durable_jobs_writer_g3**; independent source reviewer **/root/m04_recovery_source_review_g3**. Current independent CI/live auditor **/root/m04_recovery_live_audit_g3**. No fabricated historical Cursor-session continuation. Only Root publishes, sets TL-PASS/Ready and merges; immediate fixes return to the same author/session.
+
+**First unfinished step:** publish the reviewed SQL plus9continuity paths as a guarded nonforce child ofb126, after complete immutable10file/18source/fulltree/diff readback and fresh main/head/mode/rules/review/Owner gates. Then require all8CIjobs/31groups,completeN02,bothrealR9,full254/255/256and64/65,inherited761/minOwned4182,rollback/late-writer,drainedcleanup,actual-mountedLifecycle,Core,fivehygiene,Build and exactPreview. No earlier-head runtime gate passes this candidate.
+
+The complete25failed execution observations and genuineR21/R29PRsuccesses remain in M04_RECOVERY_R33_EVIDENCE_V24.json and immutable predecessor records. e7main attempts1/2 share a run ID; carried-forward companion statuses are explicit. Last independent live refresh21:24–21:26UTC:14DraftPRs/48issues,zeroformal/inline/Toolbarthreads,no newOwner/Guardianchange. Root re-read main/head/NORMAL at21:41UTC. Production dpl_2QAy8s3qEWtinWYUwBeQTeFjtUwf remains READY/exacte7 through bothaliases; R32Preview dpl_87AhJ5qmmDswG5EYeg256yJoXdTC READY/exactb126. These are baseline observations, not future R33 gates.
+
+After genuine PR PASS and expected-head merge, actual new main must independently pass fullCI/native and Production via bothaliases. The mandatory separate **eight-path documentation completion remains HELD** until that genuine corrected actual-main PASS, then needs its own fullPR/main/Production gates and final existingPR/#751receipts. **No automatic following slice.** D1#1169 separately unfinished.
+
+SQL **UNAPPLIED**; Method **NOT_APPROVED**; #1139 **NOT_RELEASE_READY**,17preOwnergaps; #1131ReadySTOP,both#1135holds,target-specific#968isolation,#911/#913privacy. Generic overlap removal done; concreteclient/SSR/Authbinding unproved. #917 **UNKNOWN / Stage2 NOT_ATTEMPTED**, no retry/rephrasing/delegation/reroute/transport switch/humanSQL substitute. All local/hosted/Auth/provider/credential execution stops remain. No premature Owner-approval question.
+
+## Exact continuation contract
+
+Read M04_RECOVERY_TASK_V24.md,M04_RECOVERY_R33_EVIDENCE_V24.json andM04_RECOVERY_ROOT_REVIEW_V24.md, then currentPR#1183/#751receipts and fresh live state. The current binding source amendment is V24v2. Source-only acceptance never substitutes for terminal execution.
+
+The next guarded publication is a child ofb126 on the existing branch. Exactly10delta paths:oneSQL,three newV24records andsix current entryfiles. CumulativePRscope20paths; expected10253entries/9416leaves/9406unchanged previous leaves/3new/0removed. All36parallel#1181leaves and allolder source/evidence remain preserved.
+
+After complete codePRgates and expected-headmerge, independently verify actual newmain fullCI/native/Production. Only then perform the already mandated separate8-path completiondocumentation with its own completePR/main/Production gates. No automatic product follow-up.
+
+## Historical V23 pre-publication snapshot — retained unchanged
+
+The following complete V23 handoff is historical. Its pending R32 publication/execution statements are superseded by the current V24 section and later exact live receipts. It remains verbatim exactly once.
+
 # M04 current handoff — R32 / Recovery V23
 
 **2026-11-10 20:51:29 UTC — M04 R32 / Recovery V23: CHANGES REQUIRED on published R31; the bounded command-validation reuse is independently source-reviewed, publication and new-head execution pending.** Draft [#1183](https://github.com/Jetnity/jetnity/pull/1183), expected parent **46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8**, current main/merge-base **e7aae86c18238033c2186722e24c84dc7a5f69b9**. This is a pre-publication snapshot. Later exact-head receipts and live evidence take precedence.
