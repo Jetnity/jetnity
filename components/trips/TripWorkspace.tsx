@@ -788,6 +788,9 @@ export default function TripWorkspace({
       ? (punkt.dayId && reise.days.some((tag) => tag.id === punkt.dayId) ? { art: 'tag' as const, id: punkt.dayId } : { art: 'punkt' as const, id: punkt.id })
       : (modus.tagId && reise.days.some((tag) => tag.id === modus.tagId) ? { art: 'tag' as const, id: modus.tagId } : null)
     routeRueckAnkerRef.current = anker
+    if (modus.ansicht === 'plan' && (modus.tagId || modus.kanteId || modus.itemId)) {
+      modusSetzen({ ansicht: 'plan', bereich: null, urlAnpassen: false }, 'push')
+    }
     setRouteBetont(true)
     setRouteFokus((stand) => stand + 1)
   }

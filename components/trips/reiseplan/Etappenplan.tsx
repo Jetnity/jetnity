@@ -148,7 +148,7 @@ export default function Etappenplan({
         className="et-stage"
         data-u1c-route-lauf
         data-timeline-tag={dayIds[0]}
-        onClick={() => (id ? choose(id, dayIds[0]) : choose('', dayIds[0]))}
+        onClick={() => choose(id, dayIds[0])}
       >
         <span className={'et-number' + (stage ? '' : ' transit')}>
           {stage ? index + 1 : <Plane size={15} />}
