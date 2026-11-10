@@ -143,8 +143,26 @@ function ueberBild(el: Element) {
   if (!wurzel) return false
   for (const bild of wurzel.querySelectorAll('img')) {
     const kasten = bild.getBoundingClientRect()
-    const kreuzt = rechteck.left < kasten.right && rechteck.right > kasten.left && rechteck.top < kasten.bottom && rechteck.bottom > kasten.top
-    if (kreuzt && kasten.width > 8 && kasten.height > 8) return true
+    if (kasten.width <= 8 || kasten.height <= 8) continue
+    let links = Math.max(rechteck.left, kasten.left)
+    let rechts = Math.min(rechteck.right, kasten.right)
+    let oben = Math.max(rechteck.top, kasten.top)
+    let unten = Math.min(rechteck.bottom, kasten.bottom)
+    // Map tiles extend far beyond their clipped viewport. Only painted image areas count.
+    for (let eltern = bild.parentElement; eltern && links < rechts && oben < unten; eltern = eltern.parentElement) {
+      const stil = getComputedStyle(eltern)
+      if (stil.overflowX === 'visible' && stil.overflowY === 'visible') continue
+      const ausschnitt = eltern.getBoundingClientRect()
+      if (stil.overflowX !== 'visible') {
+        links = Math.max(links, ausschnitt.left)
+        rechts = Math.min(rechts, ausschnitt.right)
+      }
+      if (stil.overflowY !== 'visible') {
+        oben = Math.max(oben, ausschnitt.top)
+        unten = Math.min(unten, ausschnitt.bottom)
+      }
+    }
+    if (links < rechts && oben < unten) return true
   }
   return false
 }

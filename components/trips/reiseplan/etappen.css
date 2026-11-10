@@ -599,3 +599,25 @@
 .et-coord-fields[open] {
   padding-bottom: 0.6rem;
 }
+.et-angebote {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-block: 1rem;
+}
+.et-angebote button {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .5rem .7rem;
+  min-height: 44px;
+  border: 1px solid var(--line, #bfd1c8);
+  border-radius: .75rem;
+  background: var(--surface);
+  color: inherit;
+  font-weight: 600;
+  font-size: .85rem;
+}
+.et-angebote button:hover {
+  background: var(--surface-soft, #e3efe9);
+}

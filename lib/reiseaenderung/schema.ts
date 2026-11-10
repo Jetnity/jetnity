@@ -13,6 +13,7 @@
 // Frei von Next, Supabase und `process.env`.
 
 import { z } from 'zod'
+import type { Ort } from '@/lib/places/domain'
 
 import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
 import { ohnePreisangabe, ohneSteuerzeichen } from '@/lib/reisevorschlag/normalisierung'
@@ -206,6 +207,7 @@ export const modellaenderungSchema = modellaenderungRoh.superRefine((wert, ctx) 
 // still passes through the unchanged closed operation schema.
 export type Modelloperation = z.infer<typeof operationRoh> & {
   manuellePosition?: { lat: number; lng: number } | null
+  katalogOrt?: Ort
 }
 export type Modellaenderung = z.infer<typeof modellaenderungSchema>
 

@@ -6,7 +6,7 @@ import type { Register } from '@/lib/providers/omio/katalog'
 import OmioVergleich from './OmioVergleich'
 import Verbindungen from '../Verbindungen'
 
-export default function OmioImReiseplan({ reise, etappen }: { reise: Trip; etappen: React.ReactNode }) {
+export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Trip; etappen: React.ReactNode; kanteId?: string }) {
   const [register, setRegister] = useState<Register | null>(null),
     [fehler, setFehler] = useState(false),
     [versuch, setVersuch] = useState(0)
@@ -24,6 +24,9 @@ export default function OmioImReiseplan({ reise, etappen }: { reise: Trip; etapp
     return () => request.abort()
   }, [versuch])
   const abschnitte = useMemo(() => reiseAbschnitte(reise), [reise])
+  const startIndex = kanteId ? abschnitte.findIndex(s => s.kanteId === kanteId) : 0
+  const start = abschnitte[startIndex]
+  const fehlt = Boolean(kanteId && !start)
   if (fehler)
     return (
       <>
@@ -40,7 +43,7 @@ export default function OmioImReiseplan({ reise, etappen }: { reise: Trip; etapp
             Erneut laden
           </button>
         </p>
-        <Verbindungen reise={reise} etappen={etappen} />
+        <Verbindungen reise={reise} etappen={etappen} start={start} abschnittFehlt={fehlt} />
       </>
     )
   if (!register)
@@ -50,13 +53,17 @@ export default function OmioImReiseplan({ reise, etappen }: { reise: Trip; etapp
       </p>
     )
   return (
-    <OmioVergleich
-      key={reise.id}
-      katalog={register}
-      abschnitte={abschnitte}
-      kontext={reise.id}
-      reisende={reise.travellers}
-      waehrung={reise.currency}
-    />
+    <>
+      {fehlt && <p className="ov-hint" role="status">Dieser Reiseabschnitt hat sich geändert. Wähle Start und Ziel erneut.</p>}
+      <OmioVergleich
+        key={reise.id}
+        startIndex={startIndex}
+        katalog={register}
+        abschnitte={abschnitte}
+        kontext={reise.id}
+        reisende={reise.travellers}
+        waehrung={reise.currency}
+      />
+    </>
   )
 }

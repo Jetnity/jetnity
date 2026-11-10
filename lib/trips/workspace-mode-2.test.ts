@@ -210,3 +210,18 @@ test('eine ungültige Tageskennung löscht die Kante nicht', () => {
   assert.equal(nach.urlAnpassen, true)
   assert.equal(modusUrl('/', detailElternModus({ ...nach, urlAnpassen: false })), '/?ansicht=plan&kante=connection%3Aa%3Ab')
 })
+
+test('Etappensuchen behalten den gewählten Ort oder Abschnitt beim direkten Öffnen', () => {
+  for (const kategorie of ['unterkunft', 'aktivitaeten']) {
+    const query = 'ansicht=organisieren&kategorie=' + kategorie + '&etappe=ko-chang'
+    assert.equal(lesen(query).modus.etappeId, 'ko-chang')
+    assert.equal(lesen(query).search, query)
+  }
+  for (const ziel of ['kategorie=verbindungen', 'bereich=mobilitaet']) {
+    const query = 'ansicht=organisieren&' + ziel + '&kante=connection%3Ako-chang%3Aphuket'
+    assert.equal(lesen(query).modus.kanteId, 'connection:ko-chang:phuket')
+    assert.equal(lesen(query).search, query)
+  }
+  assert.equal(lesen('ansicht=organisieren&kategorie=fluege&etappe=ko-chang&kante=alt').search,
+    'ansicht=organisieren&kategorie=fluege')
+})

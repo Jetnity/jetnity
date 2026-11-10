@@ -931,7 +931,7 @@ export default function TripWorkspace({
       ? { reiseId: reise.id, tagId, kanteId, occurrenceKey }
       : null
     modusTastaturRef.current = false
-    modusSetzen({ ansicht: 'organisieren', bereich: 'mobilitaet', urlAnpassen: false }, 'push', true)
+    modusSetzen({ ansicht: 'organisieren', bereich: 'mobilitaet', kanteId: kanteId || undefined, urlAnpassen: false }, 'push', true)
   }
 
   const preparationOeffnen = (preparationZiel?: PreparationZiel) => {
@@ -1118,6 +1118,10 @@ export default function TripWorkspace({
       kanteId={modus.ansicht === 'plan' ? modus.kanteId ?? null : null}
       kanteUnlesbar={kanteUnlesbar}
       onKanteWaehlen={kanteWechseln}
+      onEtappensuche={(kategorie, etappeId) => {
+        merkeAusloeser()
+        modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'push', true)
+      }}
       onAlleVerbindungen={alleVerbindungenOeffnen}
     />
   )
@@ -1434,9 +1438,11 @@ export default function TripWorkspace({
             <Organisieren
               key={reise.id + ':' + reise.revision}
               reise={reise}
+              etappeId={modus.etappeId}
+              kanteId={modus.kanteId}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}
-              kategorieWaehlen={kategorie => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, urlAnpassen: false }, 'replace')}
+              kategorieWaehlen={(kategorie, etappeId) => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'replace')}
             />
           ) : null}
 

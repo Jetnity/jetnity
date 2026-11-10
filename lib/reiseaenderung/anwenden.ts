@@ -11,6 +11,7 @@
 //
 // Frei von Next, Supabase und `process.env`.
 
+import { etappeMitOrt } from '@/lib/places/kanon'
 import { GRENZEN, reiseLesen } from '@/lib/trips/schema'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import { datumVerschieben } from '@/lib/trips/tage'
@@ -278,7 +279,7 @@ function etappeHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kenn
   reise.stages = reise.stages.map((etappe) =>
     etappe.position > nachPosition ? { ...etappe, position: etappe.position + 1 } : etappe,
   )
-  reise.stages.push(neu)
+  reise.stages.push(op.katalogOrt ? etappeMitOrt(neu, op.katalogOrt) : neu)
   const letzteDerVorigen =
     reise.days.filter((tag) => {
       const etappe = reise.stages.find((eintrag) => eintrag.id === tag.stageId)

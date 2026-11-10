@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { istOrtId, ortPasstZurRolle, type Ort } from '@/lib/places/domain'
 import { operationenAnwenden, type KennungFn } from '@/lib/reiseaenderung/anwenden'
 import { AENDERUNG_GRENZEN, type Modelloperation } from '@/lib/reiseaenderung/schema'
 import { GRENZEN } from '@/lib/trips/schema'
@@ -13,6 +14,10 @@ const etappe = z.union([
   z.object({ id, days: z.number().int().min(1).max(GRENZEN.reisetageJeReise) }).strict(),
   z.object({ id, remove: z.literal(true) }).strict(),
 ])
+const stoppRahmen = z.object({
+  nachEtappeId: id.nullable(),
+  tage: z.number().int().min(1).max(AENDERUNG_GRENZEN.neueEtappenTage),
+})
 export const manuellSchema = z.object({
   title: text(GRENZEN.titel).optional(),
   budgetAmount: z.number().finite().min(0).max(1_000_000)
@@ -23,12 +28,13 @@ export const manuellSchema = z.object({
   travelWish: text(GRENZEN.reisewunsch, true).optional(),
   startDate: datum.optional(),
   duration: z.number().int().min(1).max(GRENZEN.reisetageJeReise).optional(),
-  neuerStopp: z.object({
-    name: text(GRENZEN.ort),
-    nachEtappeId: id.nullable(),
-    tage: z.number().int().min(1).max(AENDERUNG_GRENZEN.neueEtappenTage),
-    position: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).strict().nullable(),
-  }).strict().optional(),
+  neuerStopp: z.union([
+    stoppRahmen.extend({
+      name: text(GRENZEN.ort),
+      position: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).strict().nullable(),
+    }).strict(),
+    stoppRahmen.extend({ ortId: z.string().max(80).refine(istOrtId) }).strict(),
+  ]).optional(),
   stages: z.array(etappe).max(GRENZEN.etappenJeReise).optional(),
 }).strict()
 export type ManuellerEntwurf = z.infer<typeof manuellSchema>
@@ -46,7 +52,7 @@ const gleich = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(
 const fehler = (meldung: string, feld = 'form'): EntwurfErgebnis => ({ ok: false, meldung, feld })
 
 /** Closed manual subset, no model text transformations and no location authority. */
-export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn, quelle: 'guest' | 'account' = 'guest'): EntwurfErgebnis {
+export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn, quelle: 'guest' | 'account' = 'guest', bestaetigterOrt?: Ort): EntwurfErgebnis {
   const parsed = manuellSchema.safeParse(roh)
   if (!parsed.success) return fehler(parsed.error.issues[0]?.message ?? 'Bitte Eingaben prüfen.', String(parsed.error.issues[0]?.path[0] ?? 'form'))
   const v = parsed.data
@@ -87,8 +93,14 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
       return fehler('Die neue Etappe überschreitet die maximale Reiselänge.', 'neuerStopp')
     if (stopp.nachEtappeId && !vorher.stages.some(s => s.id === stopp.nachEtappeId))
       return fehler('Die gewählte vorherige Etappe gehört nicht mehr zur Reise.', 'neuerStopp')
-    ops.push({ ...operation('etappe_hinzufuegen', { name: stopp.name, tage: stopp.tage, nachEtappeId: stopp.nachEtappeId }),
-      manuellePosition: stopp.position })
+    const felder = { tage: stopp.tage, nachEtappeId: stopp.nachEtappeId }
+    if ('ortId' in stopp) {
+      if (!bestaetigterOrt || bestaetigterOrt.id !== stopp.ortId || !ortPasstZurRolle(bestaetigterOrt, 'ziel'))
+        return fehler('Dieser Ort konnte nicht als Reiseziel bestätigt werden.', 'neuerStopp')
+      ops.push(operation('etappe_hinzufuegen', { ...felder, name: bestaetigterOrt.name, katalogOrt: bestaetigterOrt }))
+    } else {
+      ops.push(operation('etappe_hinzufuegen', { ...felder, name: stopp.name, manuellePosition: stopp.position }))
+    }
     total += stopp.tage
   }
   const struktur = !!v.neuerStopp || ops.some(op => op.art === 'etappe_dauer' || op.art === 'etappe_entfernen')

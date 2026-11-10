@@ -798,7 +798,7 @@ describe('rendered white/mint homepage and light workspace', () => {
     const gegensatz = await audit(page, '[data-synthetic-guest]', ['Nach dem Neuladen', 'Zweite Markierung'])
     assert.equal(gegensatz.urteil.ok, false)
     const zeile = gegensatz.urteil.fehler.find((eintrag) => eintrag.includes('Zweite Markierung'))
-    assert.ok(zeile)
+    assert.ok(zeile, JSON.stringify(gegensatz.paare.filter(paar => paar.name.includes('Zweite Markierung'))))
     assert.match(zeile, /pair [1-9]/)
     assert.equal(gegensatz.urteil.fehler.some((eintrag) => eintrag.includes('missing required label: Nach dem Neuladen')), false)
     assert.equal(fehler.length, 0, fehler.join('\n'))

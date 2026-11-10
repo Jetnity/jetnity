@@ -1,11 +1,13 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { MapPin, X } from 'lucide-react'
 import type { Trip, TripSource } from '@/types/trips'
 import { GRENZEN } from '@/lib/trips/schema'
+import OrtSuche from '@/components/places/OrtSuche'
+import type { OrtAuswahl } from '@/lib/places/auswahl'
+import StoppVorschau from './StoppVorschau'
 import { AENDERUNG_GRENZEN } from '@/lib/reiseaenderung/schema'
-import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { gastManuellSpeichern } from '@/lib/reiseaenderung/direct/gast'
 import { manuellVorschau, type ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
 import { manuelleAenderungVorschau, manuelleAenderungUebernehmen } from '@/lib/reiseaenderung/aktionen'
@@ -31,6 +33,8 @@ export default function StoppForm({
 }) {
   const [basis] = useState(trip)
   const [name, setName] = useState('')
+  const [ort, setOrt] = useState<OrtAuswahl | null>(null)
+  const ortFeld = useId()
   const [tage, setTage] = useState('1')
   const [after, setAfter] = useState(nach ?? '')
   const [preview, setPreview] = useState<ManuelleVorschau | null>(null)
@@ -63,8 +67,13 @@ export default function StoppForm({
     setStatus('')
     try {
       if (!preview) {
+        const rahmen = { tage: Number(tage), nachEtappeId: after || null }
         const eingabe = {
-          neuerStopp: { name: name.trim(), tage: Number(tage), nachEtappeId: after || null, position: pin },
+          neuerStopp: ort ? { ...rahmen, ortId: ort.id } : { ...rahmen, name: name.trim(), position: pin },
+        }
+        if (!ort && (!name.trim() || name.trim().length > GRENZEN.ort)) {
+          setStatus('Gib einen Ortsnamen mit höchstens ' + GRENZEN.ort + ' Zeichen ein.')
+          return
         }
         const seed = crypto.randomUUID()
         const result =
@@ -119,14 +128,7 @@ export default function StoppForm({
       </div>
       {preview ? (
         <>
-          <h4>{name.trim()}</h4>
-          <p>
-            {tage} {tage === '1' ? 'zusätzlicher Tag' : 'zusätzliche Tage'} · {preview.nachher.days.length}{' '}
-            Reisetage insgesamt
-          </p>
-          <p>
-            {etappenZeitraumAnzeigen(preview.nachher.startDate, preview.nachher.endDate) || 'Datum offen'}
-          </p>
+          <StoppVorschau vorschau={preview} />
           {!ungewiss && (
             <button type="button" className="et-secondary" disabled={busy} onClick={() => setPreview(null)}>
               Angaben ändern
@@ -135,16 +137,27 @@ export default function StoppForm({
         </>
       ) : (
         <fieldset disabled={busy || stale}>
-          <label>
-            Ortsname
-            <input
-              required
-              maxLength={GRENZEN.ort}
-              value={name}
-              placeholder="z. B. Ayutthaya"
-              onChange={(e) => setName(e.target.value)}
+          <div>
+            <label htmlFor={ortFeld}>Ortsname</label>
+            <OrtSuche
+              inputId={ortFeld}
+              rolle="ziel"
+              variante="field"
+              value={ort}
+              initialText={name}
+              placeholder="Stadt, Insel oder eigener Stopp"
+              disabled={busy || stale}
+              onChange={(wahl, text) => {
+                setName(text)
+                setOrt(wahl)
+                setStatus('')
+                if (wahl || ort) {
+                  setCoordsText(null)
+                  onPosition(null)
+                }
+              }}
             />
-          </label>
+          </div>
           <div className="et-inputs">
             <label>
               Einfügen nach
@@ -171,56 +184,64 @@ export default function StoppForm({
               />
             </label>
           </div>
-          <button
-            type="button"
-            className="et-secondary"
-            onClick={() => {
-              setCoordsText(null)
-              onKarte()
-            }}
-          >
-            <MapPin size={16} />
-            {position ? 'Kartenposition ändern' : 'Position auf Karte setzen'}
-          </button>
-          <details className="et-coord-fields">
-            <summary>Koordinaten eingeben</summary>
-            <div className="et-inputs">
-              <label>
-                Breitengrad
-                <input
-                  inputMode="decimal"
-                  placeholder="z. B. 14,35"
-                  value={coordsText?.lat ?? position?.lat ?? ''}
-                  onChange={(e) => {
-                    setCoordsText({
-                      lat: e.target.value,
-                      lng: coordsText?.lng ?? String(position?.lng ?? ''),
-                    })
-                    onPosition(null)
-                  }}
-                />
-              </label>
-              <label>
-                Längengrad
-                <input
-                  inputMode="decimal"
-                  placeholder="z. B. 100,57"
-                  value={coordsText?.lng ?? position?.lng ?? ''}
-                  onChange={(e) => {
-                    setCoordsText({
-                      lng: e.target.value,
-                      lat: coordsText?.lat ?? String(position?.lat ?? ''),
-                    })
-                    onPosition(null)
-                  }}
-                />
-              </label>
-            </div>
-          </details>
-          {position && (
-            <small>
-              {position.lat.toFixed(4)}°, {position.lng.toFixed(4)}°
+          {ort ? (
+            <small className="flex items-center gap-1">
+              <MapPin size={15} /> Standort aus dem Ortskatalog
             </small>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="et-secondary"
+                onClick={() => {
+                  setCoordsText(null)
+                  onKarte()
+                }}
+              >
+                <MapPin size={16} />
+                {position ? 'Kartenposition ändern' : 'Position auf Karte setzen'}
+              </button>
+              <details className="et-coord-fields">
+                <summary>Koordinaten eingeben</summary>
+                <div className="et-inputs">
+                  <label>
+                    Breitengrad
+                    <input
+                      inputMode="decimal"
+                      placeholder="z. B. 14,35"
+                      value={coordsText?.lat ?? position?.lat ?? ''}
+                      onChange={(e) => {
+                        setCoordsText({
+                          lat: e.target.value,
+                          lng: coordsText?.lng ?? String(position?.lng ?? ''),
+                        })
+                        onPosition(null)
+                      }}
+                    />
+                  </label>
+                  <label>
+                    Längengrad
+                    <input
+                      inputMode="decimal"
+                      placeholder="z. B. 100,57"
+                      value={coordsText?.lng ?? position?.lng ?? ''}
+                      onChange={(e) => {
+                        setCoordsText({
+                          lng: e.target.value,
+                          lat: coordsText?.lat ?? String(position?.lat ?? ''),
+                        })
+                        onPosition(null)
+                      }}
+                    />
+                  </label>
+                </div>
+              </details>
+              {position && (
+                <small>
+                  {position.lat.toFixed(4)}°, {position.lng.toFixed(4)}°
+                </small>
+              )}
+            </>
           )}
         </fieldset>
       )}

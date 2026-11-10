@@ -148,6 +148,7 @@ export default function TripWorkspacePlan({
   kanteUnlesbar = false,
   onKanteWaehlen,
   onAlleVerbindungen,
+  onEtappensuche,
 }: {
   readinessItems?: readonly ReadinessViewItem[]
   onPreparation?: (ziel: PreparationZiel) => void
@@ -178,6 +179,7 @@ export default function TripWorkspacePlan({
   kanteUnlesbar?: boolean
   onKanteWaehlen?: (kanteId: string, tagId: string) => void
   onAlleVerbindungen?: () => void
+  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string) => void
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)
@@ -564,6 +566,8 @@ export default function TripWorkspacePlan({
     return <section ref={root} className="col-span-full min-w-0" aria-label="Reiseplan" data-tagesplan-modul="ein" data-plan-premium="4">
       <Etappenplan key={reise.id} reise={reise} quelle={quelle} route={route.zeilen} tagId={kanonischerTagId}
         focusRoute={routeBetont} onRoute={onZurRoute} onDay={onTagWechseln} onItem={onPunktOeffnen}
+        onEtappensuche={onEtappensuche}
+        verbindung={!routeBetont && kanteWahl.art === 'eindeutig' ? kanteWahl.zeile : undefined}
         onEdge={onKanteWaehlen} onSaved={onReiseGespeichert} editor={editorHalt} editorOffen={formularOffen && !!formularTag}
         edge={routeBetont || !kanteId ? null : kanteWahl.art === 'eindeutig' ? <KanteDetail zeile={kanteWahl.zeile} onAlleVerbindungen={onAlleVerbindungen}/> :
           kanteWahl.art === 'mehrdeutig' || kanteWahl.art === 'nicht-verfuegbar' ? <KanteHinweis art={kanteWahl.art}/> : null}

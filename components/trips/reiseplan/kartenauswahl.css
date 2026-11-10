@@ -1,0 +1,24 @@
+.et-pin.et-pin-endpoint {
+  border-color: #174b39;
+  background: #dcf08b;
+  color: #123b2e;
+  box-shadow:
+    0 0 0 2px white,
+    0 3px 9px #123c3452;
+}
+.et-map-note.et-map-selection {
+  align-items: flex-start;
+  max-width: min(78%, 27rem);
+}
+.et-map-selection > svg {
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+}
+.et-map-selection strong,
+.et-map-selection span:not(:empty) {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.et-map-selection span:not(:empty) {
+  margin-top: 0.14rem;
+}

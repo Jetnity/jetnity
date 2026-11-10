@@ -181,3 +181,57 @@ test('manual stop inserts owned days and an optional pin, survives readback and 
   assert.equal(manuellerEntwurf(current, { neuerStopp: { ...req.neuerStopp, nachEtappeId: 'fremd' } }, vorschauKennungen(seed)).ok, false)
   assert.equal(manuellerEntwurf(current, { neuerStopp: { ...req.neuerStopp, position: { lat: 91,lng: 0 } } }, vorschauKennungen(seed)).ok,false)
 })
+
+test('catalog stops are resolved on preview and write and cannot import caller-supplied place data', async () => {
+  const before = fixture()
+  let current = before
+  let writes = 0
+  let reads = 0
+  const { ort, request } = katalogStopp(before)
+  const lesen = async () => { reads++; return { ok: true as const, wert: ort } }
+  const probe = await manuellVorschau(before, request, seed, 'account', lesen)
+  assert(probe.ok)
+  assert.equal(reads, 1)
+  const neu = probe.vorschau.nachher.stages.find(s => s.placeId === ort.id)!
+  assert.deepEqual([neu.name,neu.countryCode,neu.latitude,neu.longitude], [ort.name,ort.countryCode,ort.lat,ort.lon])
+  assert.equal(neu.position,2)
+  assert.equal(probe.vorschau.nachher.days.length,before.days.length+2)
+  assert.deepEqual(probe.vorschau.anfrage.eingabe,request)
+  const ports = { quelle: 'account' as const, ortLesen: lesen, lesen: async () => current,
+    schreiben: async (t: Trip, mutation: string, rev: number) => {
+      current = {...t, revision: rev+1, lastMutationId:mutation}; writes++; return {konflikt:false}
+    } }
+  const spoofed = {...probe.vorschau.anfrage, eingabe: {neuerStopp:{...request.neuerStopp, countryCode:'US', name:'Spoof', position:{lat:4,lng:8}}}}
+  assert.equal((await manuellSpeichern(spoofed,ports)).ok,false)
+  assert.equal(reads,1)
+  assert.equal((await manuellSpeichern(probe.vorschau.anfrage,{...ports,ortLesen:async()=>({ok:true,wert:{...ort,lon:0}})})).ok,false)
+  assert.equal((await manuellSpeichern(probe.vorschau.anfrage,{...ports,ortLesen:async()=>({ok:false,grund:'ausfall',meldung:'nicht erreichbar'})})).ok,false)
+  assert.equal(writes,0)
+  assert((await manuellSpeichern(probe.vorschau.anfrage,ports)).ok)
+  assert.equal(reads,2)
+  assert((await manuellSpeichern(probe.vorschau.anfrage,{...ports,ortLesen:async()=>{throw Error('should not read on replay')}})).ok)
+  assert.equal(writes,1)
+})
+
+test('guest persists confirmed catalog facts, handles unresolved, foreign and wrong-role results, and still supports free stops', async()=>{
+  storage()
+  const before = gastreiseSpeichern(fixture())
+  const {ort,request}=katalogStopp(before)
+  const lesen = async()=>({ok:true as const,wert:ort})
+  assert.equal((await manuellVorschau(before,request,seed,'guest',async()=>({ok:false,grund:'unbekannt',meldung:'Unbekannt'}))).ok,false)
+  assert.equal((await manuellVorschau(before,request,seed,'guest',async()=>({ok:true,wert:{...ort,id:'geonames:2'}}))).ok,false)
+  assert.equal((await manuellVorschau(before,request,seed,'guest',async()=>({ok:true,wert:{...ort,typ:'airport'}}))).ok,false)
+  const p=await manuellVorschau(before,request,seed,'guest',lesen); assert(p.ok)
+  const saved=await gastManuellSpeichern(p.vorschau.anfrage,lesen); assert(saved.ok)
+  assert(gastspeicherLaden().aktiv?.stages.some(s=>s.placeId===ort.id && s.latitude===ort.lat && s.countryCode===ort.countryCode))
+  assert((await gastManuellSpeichern(p.vorschau.anfrage)).ok)
+  const free = {neuerStopp:{name:'Picknickplatz',position:{lat:45,lng:8},nachEtappeId:null,tage:1}}
+  const draft=await manuellVorschau(saved.reise,free,'c5236669-7251-42f2-a533-74e008979aea','guest',()=>assert.fail('free stop need not access catalog')); assert(draft.ok)
+  const inserted=draft.vorschau.nachher.stages.at(-1)!
+  assert.deepEqual([inserted.name,inserted.placeId,inserted.countryCode,inserted.latitude,inserted.longitude],['Picknickplatz',null,null,45,8])
+})
+
+function katalogStopp(before: Trip) {
+  const ort: import('@/lib/places/domain').Ort = { id:'geonames:1621177', source:'geonames', sourceId:'1621177', name:'Ayutthaya', typ:'city', country:'Thailand', countryCode:'TH', region:null, lat:14.35, lon:100.57, iata:null, keywords:null }
+  return {ort,request:{neuerStopp:{ortId:ort.id,nachEtappeId:before.stages[0].id,tage:2}}}
+}
