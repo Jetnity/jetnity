@@ -53,3 +53,29 @@ test('single destination, empty trip and duplicate canonical stops', () => {
     [],
   )
 })
+
+test('jeder ausgewählte Abschnitt behält seine Etappen-IDs und sein vorgeschlagenes Datum', () => {
+  const phuket = ort('p:k', 'Phuket', 3, 'phuket')
+  const stages = [phuket, bangkok, koChang]
+  const tage = (ids: string[]) => ids.map((stageId, index) => ({
+    id: 'tag-' + index, dayIndex: index + 1, dayDate: '2026-11-' + (15 + index),
+    stageId, title: null, items: [],
+  }))
+  const days = tage(['b', 'k', 'k', 'p:k'])
+  const abschnitt = (aenderung: Partial<Trip>) => reiseAbschnitte({ ...reise, stages, days, ...aenderung })
+    .find(s => s.kanteId === 'connection:k:p:k')!
+  const leg = abschnitt({})
+  assert.deepEqual([leg.von.id, leg.nach.id, leg.datum, leg.ausTagesplan],
+    ['reise:k', 'reise:p:k', '2026-11-18', true])
+  const mitAnkunft = abschnitt({ stages: [bangkok, koChang, { ...phuket, arrivalDate: '2026-12-01' }] })
+  assert.equal(mitAnkunft.datum, '2026-12-01')
+  assert.equal(mitAnkunft.ausTagesplan, false)
+  for (const mehrdeutig of [
+    tage(['k', 'p:k', 'k', 'p:k']),
+    days.map(d => d.stageId === 'p:k' ? { ...d, dayIndex: 8 } : d),
+    days.map(d => d.stageId === 'p:k' ? { ...d, dayDate: '2026-02-30' } : d),
+    [...days, { ...days[3], id: 'duplikat' }],
+  ]) {
+    assert.equal(abschnitt({ days: mehrdeutig }).datum, '')
+  }
+})

@@ -119,7 +119,7 @@ export default function Organisieren({
   )
   function wechsle(k: Suchkategorie) {
     if (k !== tab) {
-      kategorieWaehlen(k)
+      kategorieWaehlen(k, k === 'unterkunft' || k === 'aktivitaeten' ? einstieg?.id : undefined)
     }
   }
   function taste(e: KeyboardEvent, index: number) {
@@ -204,15 +204,15 @@ export default function Organisieren({
           {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {tab === 'unterkunft' && (
             <Hotelsuche
-              key={suchId}
+              key={JSON.stringify([etappeId, suchId])}
               reise={reise}
               start={einstieg ?? erste}
               etappen={etappen}
             />
           )}
-          {tab === 'aktivitaeten' && <Aktivitaeten reise={reise} startId={einstieg?.id} partner={partnerAktivitaeten} />}
+          {tab === 'aktivitaeten' && <Aktivitaeten key={etappeId} reise={reise} startId={einstieg?.id} partner={partnerAktivitaeten} />}
           {tab === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {tab === 'verbindungen' && <OmioImReiseplan reise={reise} etappen={etappen} kanteId={kanteId} />}
+          {tab === 'verbindungen' && <OmioImReiseplan key={kanteId} reise={reise} etappen={etappen} kanteId={kanteId} />}
         </div>
         <footer className="org-footer">
           <a href="/images/organisieren/Bildnachweise.txt" target="_blank" rel="noopener">

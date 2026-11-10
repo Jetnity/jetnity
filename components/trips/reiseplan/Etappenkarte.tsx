@@ -14,7 +14,6 @@ import {
   type KartenVerbindung,
 } from '@/lib/maps/etappen-kartenauswahl'
 import { ortBestaetigen } from '@/lib/places/aktionen'
-import './kartenauswahl.css'
 
 type Leaflet = typeof import('leaflet')
 type Atlas = { L: Leaflet; map: LeafletMap }

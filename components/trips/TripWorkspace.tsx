@@ -1436,7 +1436,7 @@ export default function TripWorkspace({
 
           {organisierenStart ? (
             <Organisieren
-              key={JSON.stringify([reise.id, reise.revision, modus.etappeId, modus.kanteId])}
+              key={reise.id + ':' + reise.revision}
               reise={reise}
               etappeId={modus.etappeId}
               kanteId={modus.kanteId}

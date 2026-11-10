@@ -7,10 +7,14 @@ import { timetableAnfrageSchema } from '@/lib/providers/twelve-go/timetable/sche
 import { TimetableDetails } from '@/components/trips/TwelveGoTimetable'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { Trip } from '@/types/trips'
+import type { ReiseAbschnitt } from '@/lib/providers/omio/reise'
 import { Feld, Personen, SucheKnopf, useSuchanfrage } from './Suchfelder'
 
 export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: {
-  reise: Trip; etappen: ReactNode; start?: import('@/lib/providers/omio/katalog').Abschnitt & { ausTagesplan?: boolean }; abschnittFehlt?: boolean
+  reise: Trip
+  etappen: ReactNode
+  start?: ReiseAbschnitt
+  abschnittFehlt?: boolean
 }) {
   const stationen = [
     ...(reise.origin

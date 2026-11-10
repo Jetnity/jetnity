@@ -2,10 +2,11 @@ import { z } from 'zod'
 import type { OrtBestaetigung } from '@/lib/places/aktionen'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 
-type StoppOrtLesen = (id: string, rolle: 'ziel') => Promise<OrtBestaetigung>
 import { manuellSchema, manuellerEntwurf, vorschauKennungen } from './entwurf'
 import { bedeutung, bestaetigteReise, fingerprint, mutationskennung, KONFLIKT, UNGEWISS, type SpeicherErgebnis } from './bestaetigung'
 import type { Trip } from '@/types/trips'
+
+type StoppOrtLesen = (id: string, rolle: 'ziel') => Promise<OrtBestaetigung>
 
 const manuellAnfrageSchema = z.object({
   tripId: z.string().min(1).max(80), basisRevision: z.number().int().min(1),

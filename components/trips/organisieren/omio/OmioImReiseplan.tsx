@@ -56,14 +56,14 @@ export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Tr
     <>
       {fehlt && <p className="ov-hint" role="status">Dieser Reiseabschnitt hat sich geändert. Wähle Start und Ziel erneut.</p>}
       <OmioVergleich
-      key={reise.id}
-      startIndex={startIndex}
-      katalog={register}
-      abschnitte={abschnitte}
-      kontext={reise.id}
-      reisende={reise.travellers}
-      waehrung={reise.currency}
-    />
+        key={reise.id}
+        startIndex={startIndex}
+        katalog={register}
+        abschnitte={abschnitte}
+        kontext={reise.id}
+        reisende={reise.travellers}
+        waehrung={reise.currency}
+      />
     </>
   )
 }
