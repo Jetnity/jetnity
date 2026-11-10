@@ -1,3 +1,72 @@
+# M04 Phase-B author self-review V1 — R19 current
+
+**R19 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760204443) preceded [finite authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760293239). Baseline `f29ff3914f6731789f03970e1263a82b93844e3c`, tree `98a8b38b1f7d95fb2cd788dd347490d36f33a772`.
+
+## Exact equivalence boundary
+
+The candidate changes only canonical_v1 and nodes_v1 bodies. Function signatures, language, volatility, security/NULL attributes and fixed search paths remain. All root guards and canonical scalar-root branches remain byte-identical.
+
+In canonical object/array loops, child depth is checked before processing. Object key validation and C order remain; arrays retain input order. Containers recurse. Scalar strings use the original extraction, ASCII test and to_jsonb escaping; numbers use the original integral/safe-range test and trunc(numeric)::text; booleans and JSON null keep their original representation. Both loop blocks use identical scalar dispatch. The P7601 error text is unchanged.
+
+In nodes loops, child depth is checked before scalar weight one is used; containers recurse. Object accumulation still adds child weight plus one key; arrays add child weight only. The original maximum-count rejection follows accumulation. SQL NULL and invalid arguments still return -1; JSON null is one node. Empty containers at maximum depth remain valid and nonempty scalar-child containers remain invalid.
+
+No history validation is removed or moved. assert_history, command, transition, catalog, API/transaction flow, final MA1/deadline checks and all other SQL bytes remain exact. No signature, helper, cache/trust flag, object, index, role/grant, resource or timeout is added.
+
+## Finite direct native regression matrix
+
+Only one N02 block is inserted. Fixed scalar expected strings are used directly and in literal object/array wrappers; independent explicit order/depth strings and node counts avoid deriving an oracle from the changed SQL helpers.
+
+The cases cover:
+
+- Scalar roots and both object/array nested scalar paths, including JSON null, booleans, ASCII-edge strings and quote/backslash escaping.
+- C key order A, _, a, aa, b; array order; escaped quote/backslash keys; control/non-ASCII keys and values refused at root and nested positions.
+- Raw JSON text 18.0, 18e0 and 1.8e1; both safe integer endpoints; both just-outside endpoints and fractions. Values are not rounded through JavaScript numbers.
+- SQL NULL input/depth/limits, negative depth/limits, depth above maximum, max_d25 and max_n0/65537 refused. Small fixtures verify accepted max_d24/max_n65536.
+- At depth24, scalar/empty containers accepted and scalar-child containers refused. At depth23, empty child containers accepted and scalar grandchildren at25 refused.
+- JSON null=1, object {a:null}=3 versus array [null]=2, and mixed {a:1,b:[true,null]}=7; exact accepted cap and one-below refusals.
+- Node counting still accepts non-ASCII/fraction/unsafe-number scalar values as weight one; it does not accidentally inherit canonical-value validation.
+
+The existing text() helper converts JavaScript null to empty text. New nullable queries explicitly apply NULLIF before casts, reaching actual SQL NULL helper guards rather than empty-input JSON cast errors. Shared transport code is unchanged. The finite block contains 101 query calls by source counting; this is not an execution receipt.
+
+All other native bytes, R18 N02/N03, corrected Rule age 68, all 31 groups/order, R9, quota histories/progress, timers and cleanup remain unchanged.
+
+## Frozen source pins
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 138052 | `5a05e41a7834307b8f28279493620d65150d8fc1a9b5b7f679d905de638787f8` | `b33072933f6a674478888e78284625983a084756` |
+| native.ts | 157346 | `d50276c81d23f78c74baf12f110e72d6675aaa14e5061fbe13e4b2d199ffc582` | `6b5cc1a17f44fcb00acf2151f28d50887c3f2745` |
+
+Eighteen-source aggregate: `69a61d7e59970c2bc71212ebc3225fdd039e6edbb2f904a5943b3cf6c3b550c6`. Sixteen other sources and rollback remain unchanged. Pure text comparison verifies all outside-block SQL/native bytes and all 29 function declarations/attributes; no code/parser/SQL execution was used.
+
+## Historical observed evidence and uncertainty
+
+[Repository verification 129654116009](https://github.com/Jetnity/jetnity/actions/runs/42763390608/job/129654116009): complete terminal non-Auth log **4250826 bytes / 63142 lines**, SHA256 `63cdb80bd138389acb0fe6efbe52b5b54e0db6c502245dc252f687d726d59b91`. Terminal run/jobs independently confirm failure, six successful companions and failed aggregate 129658414629. Typecheck/lint passed; tests failed; hygiene/build skipped.
+
+First 23 groups passed, including R18 N02/N03 and both R9 witnesses; group-time sum 85796 ms. Actual R9 preserves the real SQL-wait and retained-executor/drain distinction. Natural I1 timeout and explicit caller abort remain distinct; no elapsed 30s worker timer is claimed.
+
+N05/A03 timed out after 153758.244793 ms. Its receipt records last started/completed indices 240/239, 241 resolved constructions (427 ms), 242 fixed calls started/241 resolved (153556 ms), and 240 acknowledged commits. No START occurred and the cycle group was not reached. The next command's final database outcome is UNKNOWN. These are rounded client-await timings, not server CPU/function profiles.
+
+Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled; 649469.896049 ms. All 27042 lifetime operations settled; 4242 connections closed; one cluster stopped; zero pending/children/cleanup errors; 240339 ms total / 22 ms cleanup. Nine historical failures, 18 pins, 22 current-unexecuted rows, 31 groups and prior Markdown tails remain.
+
+## Source model and acceptance limit
+
+Pre/post full-history traversal yields N squared visits for N new acknowledged fills: 57600 for 240; the planned 254 fill remains 64516. The planned 192 cycle commands remain 36864 visits and 64 STARTs add 12352. For a queued Discovery dedup row, recursive canonical entries 208→38 and node entries 24→3 are source-derived helper-entry counts. They exclude enclosing scans/catalog/authority/transport and do not measure speedup.
+
+Every scalar and every history row remains processed. Catalog work, leaf operations, scans, hashes, locks and transport remain. **No wall-time speedup or complete CI success is promised.** Full-cap Rule latency and Production capacity/SLO remain unproved.
+
+No local project/parser/test/SQL/native/build execution, installation, reconstruction or Git/hosted mutation occurred. Historical 64/64 author results are not reruns. Corrected R19 native/runtime/PASS fields remain false. Complete unchanged exact-head CI must prove all 31 groups, both R9 cases, quotas and cleanup inside 240s effects +60s cleanup/300s total.
+
+**AUTHOR STOP.** Root exclusively reviews, publishes and decides TL PASS/Ready/merge. No follow-up slice or activation. Method NOT_APPROVED, #1139/17 gaps, #917 refusal, #1131, both #1135 holds, #968 and #911/#913 remain.
+
+---
+
+## Historical R18 and earlier author self-reviews
+
+The exact previous records follow unchanged. Their headings and execution statements do not grant R19 acceptance.
+
 # M04 Phase-B author self-review V1 — R18 current
 
 **R18 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**

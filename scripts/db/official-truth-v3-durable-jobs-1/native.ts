@@ -627,6 +627,114 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
           END LOOP;
         END $r18_guards$`)
       await assert.rejects(f.owner.query("SELECT official_v3_jobs_private.command_v1('null'::jsonb)"), code('P7601'))
+      // R19: fixed direct-helper oracles cover scalar roots and both nested leaf paths.
+      const canonicalLeaves = [
+        ["null","null"],
+        ["true","true"],
+        ["false","false"],
+        ["\" ~\"","\" ~\""],
+        ["\"quote:\\\" slash:\\\\\"","\"quote:\\\" slash:\\\\\""],
+        ["18.0","18"],
+        ["18e0","18"],
+        ["1.8e1","18"],
+        ["9007199254740991","9007199254740991"],
+        ["-9007199254740991","-9007199254740991"],
+      ] as const
+      for (const [raw, expected] of canonicalLeaves) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.canonical_v1($1::jsonb,0) AS root_text, official_v3_jobs_private.canonical_v1(jsonb_build_object('v',$1::jsonb),0) AS object_text, official_v3_jobs_private.canonical_v1(jsonb_build_array($1::jsonb),0) AS array_text", text([raw]))
+        assert.deepEqual(rows, [{ root_text: expected, object_text: '{"v":' + expected + '}', array_text: '[' + expected + ']' }], 'R19 canonical scalar paths')
+      }
+      const canonicalAt = (raw: string | null, depth: number | null) =>
+        f.owner.query("SELECT official_v3_jobs_private.canonical_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer) AS canonical", text([raw, depth]))
+      const badCanonicalLeaves = ["\"\\u001f\"","\"\\u007f\"","\"\\u00e9\"","\"line\\nend\"","9007199254740992","-9007199254740992","0.5","-0.5"] as const
+      for (const raw of badCanonicalLeaves) {
+        for (const value of [raw, '{"v":' + raw + '}', '[' + raw + ']']) {
+          await assert.rejects(canonicalAt(value, 0), code('P7601'), 'R19 invalid scalar root/object/array')
+        }
+      }
+      const badCanonicalKeys = ["{\"\\u001f\":0}","{\"\\u00e9\":0}"] as const
+      for (const raw of badCanonicalKeys) {
+        for (const value of [raw, '{"v":' + raw + '}', '[' + raw + ']']) {
+          await assert.rejects(canonicalAt(value, 0), code('P7601'), 'R19 invalid nested key')
+        }
+      }
+      const canonicalDepthCases = [
+        ["{\"b\":0,\"aa\":1,\"a\":2,\"_\":3,\"A\":4}",0,"{\"A\":4,\"_\":3,\"a\":2,\"aa\":1,\"b\":0}"],
+        ["[3,1,2,false,null,\"x\"]",0,"[3,1,2,false,null,\"x\"]"],
+        ["{\"\\\\\":1,\"\\\"\":2}",0,"{\"\\\"\":2,\"\\\\\":1}"],
+        ["null",24,"null"],
+        ["true",24,"true"],
+        ["\"x\"",24,"\"x\""],
+        ["18.0",24,"18"],
+        ["{}",24,"{}"],
+        ["[]",24,"[]"],
+        ["{\"v\":{}}",23,"{\"v\":{}}"],
+        ["{\"v\":[]}",23,"{\"v\":[]}"],
+        ["[{}]",23,"[{}]"],
+        ["[[]]",23,"[[]]"],
+        ["{\"v\":[0]}",22,"{\"v\":[0]}"],
+      ] as const
+      for (const [raw, depth, expected] of canonicalDepthCases) {
+        assert.deepEqual(await canonicalAt(raw, depth), [{ canonical: expected }], 'R19 canonical order/escape/depth')
+      }
+      const invalidCanonicalDepths = [
+        [null,0],
+        ["null",null],
+        ["0",-1],
+        ["0",25],
+        ["{\"v\":0}",24],
+        ["[0]",24],
+        ["{\"v\":{\"v\":0}}",23],
+        ["{\"v\":[0]}",23],
+        ["[{\"v\":0}]",23],
+        ["[[0]]",23],
+      ] as const
+      for (const [raw, depth] of invalidCanonicalDepths) {
+        await assert.rejects(canonicalAt(raw, depth), code('P7601'), 'R19 canonical NULL/depth refusal')
+      }
+      // text() represents null as empty text; NULLIF above/below deliberately creates SQL NULL.
+      const nodeLeaves = ["null","true","false","\"\\u00e9\"","9007199254740992","0.5"] as const
+      for (const raw of nodeLeaves) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1($1::jsonb,0,24,65536)::text AS root_count, official_v3_jobs_private.nodes_v1(jsonb_build_object('v',$1::jsonb),0,24,65536)::text AS object_count, official_v3_jobs_private.nodes_v1(jsonb_build_array($1::jsonb),0,24,65536)::text AS array_count", text([raw]))
+        assert.deepEqual(rows, [{ root_count: '1', object_count: '3', array_count: '2' }], 'R19 scalar node weights without canonical validation')
+      }
+      const nodeCases = [
+        ["null",0,24,65536,1],
+        ["{\"a\":null}",0,24,3,3],
+        ["{\"a\":null}",0,24,2,-1],
+        ["[null]",0,24,2,2],
+        ["[null]",0,24,1,-1],
+        ["{\"a\":1,\"b\":[true,null]}",0,24,7,7],
+        ["{\"a\":1,\"b\":[true,null]}",0,24,6,-1],
+        ["null",24,24,1,1],
+        ["{}",24,24,1,1],
+        ["[]",24,24,1,1],
+        ["{\"a\":null}",24,24,65536,-1],
+        ["[null]",24,24,65536,-1],
+        ["{\"v\":{}}",23,24,3,3],
+        ["{\"v\":[]}",23,24,3,3],
+        ["[{}]",23,24,2,2],
+        ["[[]]",23,24,2,2],
+        ["{\"v\":{\"v\":0}}",23,24,65536,-1],
+        ["{\"v\":[0]}",23,24,65536,-1],
+        ["[{\"v\":0}]",23,24,65536,-1],
+        ["[[0]]",23,24,65536,-1],
+        [null,0,24,65536,-1],
+        ["null",null,24,65536,-1],
+        ["null",0,null,65536,-1],
+        ["null",0,24,null,-1],
+        ["null",-1,24,65536,-1],
+        ["null",0,-1,65536,-1],
+        ["null",1,0,65536,-1],
+        ["null",0,25,65536,-1],
+        ["null",0,24,0,-1],
+        ["null",0,24,-1,-1],
+        ["null",0,24,65537,-1],
+      ] as const
+      for (const [raw, depth, maxDepth, maxNodes, expected] of nodeCases) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.nodes_v1(NULLIF($1,'')::jsonb,NULLIF($2,'')::integer,NULLIF($3,'')::integer,NULLIF($4,'')::integer)::text AS nodes", text([raw, depth, maxDepth, maxNodes]))
+        assert.deepEqual(rows, [{ nodes: String(expected) }], 'R19 node count/depth/cap/NULL oracle')
+      }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,

@@ -1,0 +1,736 @@
+{
+  "schema": "jetnity.m04.recovery.r19.v10",
+  "timestamp": "2026-11-10 06:14:35 UTC",
+  "decision": "bounded_source_review_only_full_native_and_ci_open",
+  "baseline": {
+    "head": "f29ff3914f6731789f03970e1263a82b93844e3c",
+    "tree": "98a8b38b1f7d95fb2cd788dd347490d36f33a772",
+    "main": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "ahead": 11,
+    "behind": 0,
+    "changedFiles": 99,
+    "draft": true
+  },
+  "historicalCI": {
+    "runId": 42763390608,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42763390608",
+    "runAttempt": 1,
+    "head": "f29ff3914f6731789f03970e1263a82b93844e3c",
+    "tree": "98a8b38b1f7d95fb2cd788dd347490d36f33a772",
+    "status": "completed",
+    "conclusion": "failure",
+    "terminalUpdatedAt": "2026-11-10T05:51:36Z",
+    "repositoryJobId": 129654116009,
+    "aggregateJobId": 129658414629,
+    "jobs": [
+      {
+        "id": 129654115603,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129654115786,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129654115796,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129654115994,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129654116009,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 129654116043,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129654116110,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129658414629,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "typecheck": "success",
+    "lint": "success",
+    "tests": "failure",
+    "hygiene": "skipped",
+    "build": "skipped",
+    "core": {
+      "tests": 8682,
+      "passed": 8678,
+      "failed": 2,
+      "skipped": 2,
+      "cancelled": 0,
+      "milliseconds": 649469.896049
+    },
+    "nativeReceipt": {
+      "schema": "jetnity.m04.native.v1",
+      "candidateSha256": "520e9b3435676ce38eb8312b22a2935f8449afbf4c9d31d36a7bf7d92382d984",
+      "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "executed": true,
+      "effectAndCleanupMilliseconds": 240339,
+      "cleanupMilliseconds": 22,
+      "clusters": 1,
+      "childProcesses": 0,
+      "lifetime": {
+        "started": 27042,
+        "settled": 27042,
+        "pending": 0,
+        "connections": 4242,
+        "closed": 4242,
+        "stoppedClusters": 1
+      },
+      "groups": [
+        {
+          "id": "N01",
+          "milliseconds": 28
+        },
+        {
+          "id": "N02",
+          "milliseconds": 1337
+        },
+        {
+          "id": "N03",
+          "milliseconds": 1900
+        },
+        {
+          "id": "N07",
+          "milliseconds": 8569
+        },
+        {
+          "id": "N07/R4",
+          "milliseconds": 888
+        },
+        {
+          "id": "N08",
+          "milliseconds": 10388
+        },
+        {
+          "id": "N08/U04",
+          "milliseconds": 3042
+        },
+        {
+          "id": "N02/U04",
+          "milliseconds": 1186
+        },
+        {
+          "id": "N04/N06",
+          "milliseconds": 2367
+        },
+        {
+          "id": "N04/N06/N10",
+          "milliseconds": 2520
+        },
+        {
+          "id": "N05/N09",
+          "milliseconds": 2566
+        },
+        {
+          "id": "N09",
+          "milliseconds": 18179
+        },
+        {
+          "id": "N10/U06",
+          "milliseconds": 6671
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2148
+        },
+        {
+          "id": "N11",
+          "milliseconds": 153
+        },
+        {
+          "id": "N12",
+          "milliseconds": 164
+        },
+        {
+          "id": "N04/N10/N12",
+          "milliseconds": 4774
+        },
+        {
+          "id": "N12/U06/R9",
+          "milliseconds": 12585
+        },
+        {
+          "id": "N12/R7-03",
+          "milliseconds": 403
+        },
+        {
+          "id": "N11",
+          "milliseconds": 2376
+        },
+        {
+          "id": "N11",
+          "milliseconds": 286
+        },
+        {
+          "id": "N11",
+          "milliseconds": 236
+        },
+        {
+          "id": "N13",
+          "milliseconds": 3030
+        }
+      ],
+      "nestedRaceWitnesses": [
+        {
+          "boundary": "i1_timeout",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "25391",
+            "birth": "2026-11-10 05:47:35.006266+00"
+          },
+          "control": {
+            "pid": "25390",
+            "birth": "2026-11-10 05:47:35.001472+00"
+          },
+          "holder": {
+            "pid": "24893",
+            "birth": "2026-11-10 05:47:31.600817+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": true,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "worker_only",
+          "nativeAdmissionsAfterDrain": 45
+        },
+        {
+          "boundary": "worker_caller_abort",
+          "operation": "reserve_v1",
+          "target": {
+            "pid": "26083",
+            "birth": "2026-11-10 05:47:43.596569+00"
+          },
+          "control": {
+            "pid": "26082",
+            "birth": "2026-11-10 05:47:43.591254+00"
+          },
+          "holder": {
+            "pid": "25698",
+            "birth": "2026-11-10 05:47:40.09692+00"
+          },
+          "realSqlWaitObserved": true,
+          "abortDelivered": true,
+          "retainedExecutorDrained": true,
+          "backendAbsentWhileExecutorHeld": true,
+          "failConfirmObserved": false,
+          "terminalEffects": 0,
+          "beforeDrainSlot": "unavailable",
+          "afterDrainSlot": "invalid",
+          "heldMethods": 3,
+          "completedMethods": 0,
+          "outwardStatus": "unconfirmed",
+          "nativeAdmissionsAfterDrain": 44
+        }
+      ],
+      "quotaProgress": {
+        "currentGroup": "N05/A03",
+        "boundary": "ledger_fill",
+        "indexBase": 0,
+        "millisecondsCap": 300000,
+        "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+        "ledger": {
+          "lastStartedIndex": 240,
+          "lastCompletedIndex": 239,
+          "commandRequestsStarted": 241,
+          "commandRequestsCompleted": 241,
+          "commandRequestMilliseconds": 427,
+          "fixedCallsStarted": 242,
+          "fixedCallsCompleted": 241,
+          "fixedCallMilliseconds": 153556,
+          "commandCallsStarted": 241,
+          "commandCallsCompleted": 240,
+          "commandCommits": 240,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        },
+        "cycles": {
+          "lastStartedIndex": null,
+          "lastCompletedIndex": null,
+          "commandRequestsStarted": 0,
+          "commandRequestsCompleted": 0,
+          "commandRequestMilliseconds": 0,
+          "fixedCallsStarted": 0,
+          "fixedCallsCompleted": 0,
+          "fixedCallMilliseconds": 0,
+          "commandCallsStarted": 0,
+          "commandCallsCompleted": 0,
+          "commandCommits": 0,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        }
+      },
+      "connections": {
+        "aggregateWorkConnectionBound": 40,
+        "maximumJobs": 4,
+        "maximumIntake": 1,
+        "maximumMethod": 2,
+        "m04ObserverLimit": 2,
+        "maximumM04Observers": 2,
+        "methodObserverLimit": 1,
+        "fixturePerClusterLimit": 16,
+        "inheritedCommitGuardPairs": 0,
+        "minimumOwned": 0
+      },
+      "failure": {
+        "phase": "proof_24:N05/A03",
+        "error": {
+          "kind": "fixture",
+          "code": "unclassified_failure"
+        }
+      },
+      "cleanupFailures": [],
+      "cleanupFailureCount": 0,
+      "nativePass": false
+    },
+    "log": {
+      "characters": 4241608,
+      "bytes": 4250826,
+      "lines": 63142,
+      "sha256": "63cdb80bd138389acb0fe6efbe52b5b54e0db6c502245dc252f687d726d59b91"
+    },
+    "safeExcerpt": {
+      "path": "docs/official-truth-product-v3/M04_RECOVERY_R19_NATIVE_FAILURE_V10.txt",
+      "bytes": 5243,
+      "sha256": "9cd7474ff7eeb6094663fc3b7bc5c2ad573b3eec7877f6d6a43f86dbc457055e"
+    },
+    "authLogsAccessed": false,
+    "executionLimit": "First23 groups including newN02/N03 and bothR9 pass; group24N05/A03 global240s failed during outward241st queue call after240 acknowledged commits; seven later groups not reached. Fixed await timing is client aggregate, not server profiling or exact additive cost."
+  },
+  "diagnosis": {
+    "sourceDerivedHistoryVisitsFor240AcknowledgedFills": 57600,
+    "formula": "N^2 before considering the interrupted next call",
+    "sqlFunctionProfiling": false,
+    "measuredSpeedup": false,
+    "finalInterruptedCallDatabaseOutcome": "unknown",
+    "indexChange": false
+  },
+  "candidate": {
+    "sql": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 138052,
+      "sha256": "5a05e41a7834307b8f28279493620d65150d8fc1a9b5b7f679d905de638787f8",
+      "blob": "b33072933f6a674478888e78284625983a084756"
+    },
+    "native": {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 157346,
+      "sha256": "d50276c81d23f78c74baf12f110e72d6675aaa14e5061fbe13e4b2d199ffc582",
+      "blob": "6b5cc1a17f44fcb00acf2151f28d50887c3f2745"
+    },
+    "sourceDigestSha256": "69a61d7e59970c2bc71212ebc3225fdd039e6edbb2f904a5943b3cf6c3b550c6",
+    "sourcePins": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+        "bytes": 27466,
+        "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+        "bytes": 22124,
+        "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+        "bytes": 13319,
+        "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+        "bytes": 27249,
+        "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+        "bytes": 150,
+        "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+        "bytes": 4330,
+        "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+        "bytes": 8816,
+        "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+        "bytes": 5985,
+        "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+        "bytes": 12578,
+        "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "bytes": 16656,
+        "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+        "bytes": 37608,
+        "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+        "bytes": 6321,
+        "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+        "bytes": 6324,
+        "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+        "bytes": 6175,
+        "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 138052,
+        "sha256": "5a05e41a7834307b8f28279493620d65150d8fc1a9b5b7f679d905de638787f8"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+        "bytes": 13389,
+        "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 157346,
+        "sha256": "d50276c81d23f78c74baf12f110e72d6675aaa14e5061fbe13e4b2d199ffc582"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+        "bytes": 8128,
+        "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
+      }
+    ],
+    "changedSourceFiles": 2,
+    "other16Unchanged": true,
+    "rollbackUnchanged": true,
+    "nativeExecuted": false,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merge": false
+  },
+  "correction": {
+    "diagnosis": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760204443",
+    "authorization": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760293239",
+    "sqlFunctions": [
+      "nodes_v1",
+      "canonical_v1"
+    ],
+    "functionSignatures": 29,
+    "historyAndTransactionBytesUnchanged": true,
+    "rootAndScalarValidationPreserved": true,
+    "containerRecursionRetained": true,
+    "scalarChildDepthPreserved": true,
+    "objectKeyNodeWeightPreserved": true,
+    "nativeChange": "finite N02 direct helper regressions only",
+    "trustOrCrossCallCache": false,
+    "addedObjectsOrPrivileges": false,
+    "budgetChanges": false
+  },
+  "sourceReview": {
+    "independentReviewer": "/root/m04_r9_review_g2",
+    "noOpenConcreteSourceFindings": true,
+    "signaturesUnchanged": 29,
+    "nativeN02InsertionBytes": 5460,
+    "directRegressionQueries": 101,
+    "execution": false,
+    "technicalLeadPass": false
+  },
+  "requiredNativeGroups": [
+    {
+      "id": "N01",
+      "test": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02",
+      "test": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N03",
+      "test": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07",
+      "test": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N07/R4",
+      "test": "actual S1 archived history and linked method revision survive full native consumption",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08",
+      "test": "sixteen actual persisted originals complete inside fixed call budgets",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N08/U04",
+      "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N02/U04",
+      "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06",
+      "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N06/N10",
+      "test": "older active start blocks a new claim while an independent subject progresses",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/N09",
+      "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N09",
+      "test": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N10/U06",
+      "test": "delivered producer does not terminate a pending I1 evidence callback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12",
+      "test": "acquisition, control failure and real drain never free a live native lane",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N04/N10/N12",
+      "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/U06/R9",
+      "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N12/R7-03",
+      "test": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "staged PREPARED waits on the actual S1 operation before final current MA1",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N11",
+      "test": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N13",
+      "test": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05/A03",
+      "test": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N05",
+      "test": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N01/N14/T02",
+      "test": "temporary catalog/type shadows do not influence the new install or runtime",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N14",
+      "test": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15/T02",
+      "test": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    },
+    {
+      "id": "N15",
+      "test": "rollback waits for actual late writer then rechecks nonempty history atomically",
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
+    }
+  ],
+  "authorDocumentPins": [
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SOURCE_MANIFEST_V1.json",
+      "bytes": 129695,
+      "sha256": "bb76fdff66f84dfb8386f8f8081a835cac982f0e23757be5062c4b80d0cb6eb1",
+      "blob": "a3ab3d099643dc8ff5d764b495544afc305e01d4"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
+      "bytes": 220924,
+      "sha256": "8d75e52021ec64e1aa970531ab685706869b7333168a391000644e5a1d8ded0f",
+      "blob": "fdede5b324f5886369992390fd308adcec2862b2"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_STATUS_V1.md",
+      "bytes": 42160,
+      "sha256": "c19136d0484cd93bb84c4d01c64fc586eddf366b87f048f749d4f3320a8aeb80",
+      "blob": "7cf3d4acbc6b0b5c49b5fbc18bc5a8ae73c27b19"
+    },
+    {
+      "path": "docs/official-truth-product-v3/M04_PHASE_B_SELF_REVIEW_V1.md",
+      "bytes": 50210,
+      "sha256": "ed9b4e87568215ad08151126618aab7268b715a25ed1d0d56b86439cc2678344",
+      "blob": "3438030a007ab6f84993e539489d5847d76f78a2"
+    }
+  ],
+  "author": {
+    "name": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
+    "session": "/root/m04_durable_jobs_writer_g2",
+    "reviewer": "/root/m04_r9_review_g2",
+    "publicationAuthority": "Root"
+  },
+  "limits": {
+    "effectsMs": 240000,
+    "cleanupMs": 60000,
+    "totalMs": 300000
+  },
+  "auxiliaryLiveGates": {
+    "timestamp": "2026-11-10T06:13:03Z",
+    "source": "Independent read-only live auditor; Root independently verifies main/PR lease again before publication.",
+    "head": "f29ff3914f6731789f03970e1263a82b93844e3c",
+    "tree": "98a8b38b1f7d95fb2cd788dd347490d36f33a772",
+    "main": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+    "mainCI": {
+      "id": 42736015143,
+      "attempt": 1,
+      "conclusion": "success",
+      "successfulJobs": 8
+    },
+    "preview": {
+      "id": "dpl_6MuBYekGZzgJrQNStPmDHiUXSsZw",
+      "url": "jetnity-pbtv0kkmb-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "f29ff3914f6731789f03970e1263a82b93844e3c",
+      "branch": "feat/official-truth-v3-durable-jobs-1-20261109",
+      "aliasError": null,
+      "target": null
+    },
+    "production": {
+      "id": "dpl_7K4gHmn2d2HBqCq1CHBThRjAXHw7",
+      "url": "jetnity-e087tbs28-jetnity-e1b93c82.vercel.app",
+      "state": "READY",
+      "sha": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
+      "branch": "main",
+      "aliasError": null,
+      "target": "production"
+    },
+    "productionAliasesSeparatelyResolved": true,
+    "openPRs": 14,
+    "allOpenPRsDraft": true,
+    "openNonPRIssues": 48,
+    "formalReviews": 0,
+    "inlineThreads": 0,
+    "vercelUnresolvedThreads": 0,
+    "guardian": {
+      "since": "2026-11-10T05:40:00Z",
+      "issue748Comments": 0,
+      "issue751Comments": 0
+    },
+    "mode": "NORMAL",
+    "ruleset": 21875372,
+    "enforcement": "active",
+    "bypass": [],
+    "ownerGateChanges": false,
+    "issue917Accessed": false
+  },
+  "gates": {
+    "method": "NOT_APPROVED",
+    "release1139": "NOT_RELEASE_READY",
+    "preOwnerGapCount": 17,
+    "issue917": "specifically refused readback remains pending; no retry/substitute",
+    "ledger": "UNKNOWN",
+    "stage2": "NOT_ATTEMPTED",
+    "hostedActions": false,
+    "localProjectExecution": false,
+    "automaticNextSlice": false
+  }
+}

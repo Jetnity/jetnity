@@ -2,9 +2,9 @@
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
 
-### Official Truth V3 / M04 R18 — exact-head acceptance open
+### Official Truth V3 / M04 R19 — exact-head acceptance open
 
-Baseline 1d8 CI 42758402735 failed the fixed 240 s budget in N05/A03 after 23 groups/R9 passed. R18 permits two pure within-call SQL reuses, focused native regressions and finite progress receipts; full history/authority/all 31 groups/actual quota boundaries/budgets remain. [Task V9](docs/official-truth-product-v3/M04_RECOVERY_TASK_V9.md) · [Root Review V9](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V9.md) · [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md). Draft; no Ready/merge. Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending. Later PR receipts/live evidence win; no next slice.
+Baseline f29 CI 42763390608 failed the unchanged 240 s budget after 23 groups/R9 and 240 acknowledged quota commits. R19 inlines scalar-child work in two existing JSON helpers with direct N02 regressions; all guards, history rows, authority, quota boundaries, 31 groups and budgets remain. [Task V10](docs/official-truth-product-v3/M04_RECOVERY_TASK_V10.md) · [Root Review V10](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V10.md) · [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md). Draft; full native/CI pending. Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending. Later exact-head PR receipts/live state win; no next slice.
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
 

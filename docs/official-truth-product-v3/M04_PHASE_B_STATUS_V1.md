@@ -1,3 +1,56 @@
+# M04 Phase-B author delivery status V1 — R19 current
+
+**R19 TWO-HELPER SCALAR INLINING PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760204443) and [finite implementation authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760293239); baseline `f29ff3914f6731789f03970e1263a82b93844e3c`, tree `98a8b38b1f7d95fb2cd788dd347490d36f33a772`.
+
+## Authorized implementation
+
+Only canonical_v1 and nodes_v1 bodies change. Their existing object/array loops process scalar leaves directly and recurse into container children. Every scalar is still validated/formatted/counted. Child-depth checks precede scalar processing, preserving empty containers at maximum depth while refusing children beyond it.
+
+Canonical root guards and scalar branches, C key order, key/string ASCII checks, array order, escaping, safe integral-number rules with trunc(numeric)::text, boolean/JSON-null output and P7601 message remain unchanged. Nodes root argument guards, SQL NULL refusal, JSON null weight one, extra object-key weight, array weights and count/depth limits remain unchanged.
+
+All other SQL bytes remain exact, including full history scans, command/transition checks, catalog inspection, transaction staging, final S1/MA1 authority, R18 reuses, roles/ACL and rollback. All 29 function signatures/attributes remain.
+
+One finite N02 block adds fixed direct-helper oracles for roots and both nested scalar paths. It covers ordering/escaping, control/non-ASCII keys and values, raw numeric text, SQL NULL, depth/argument limits and exact small count/cap boundaries. Existing text() maps JavaScript null to empty text; only the new nullable queries use NULLIF before casts so actual SQL NULL reaches helper guards. The shared transport is unchanged.
+
+Every other native byte remains exact: R18 regressions and age 68 isolation correction, all 31 groups, both R9 cases, quota fixtures/diagnostics, histories, timers, ownership and cleanup.
+
+## Frozen pins
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 138052 | `5a05e41a7834307b8f28279493620d65150d8fc1a9b5b7f679d905de638787f8` | `b33072933f6a674478888e78284625983a084756` |
+| native.ts | 157346 | `d50276c81d23f78c74baf12f110e72d6675aaa14e5061fbe13e4b2d199ffc582` | `6b5cc1a17f44fcb00acf2151f28d50887c3f2745` |
+
+Eighteen-source aggregate: `69a61d7e59970c2bc71212ebc3225fdd039e6edbb2f904a5943b3cf6c3b550c6`. Sixteen other source pins remain unchanged. Scope checks were text-only; no project/parser/SQL/native/build execution occurred. Eighteen pins, twenty-two current-unexecuted coverage rows, thirty-one groups and exact previous Markdown records remain.
+
+## Actual historical failure
+
+[CI 42763390608](https://github.com/Jetnity/jetnity/actions/runs/42763390608) is independently verified **completed/failure**. Repository 129654116009 and aggregate 129658414629 failed; all six companions succeeded. Typecheck/lint passed; tests failed; hygiene/build skipped.
+
+First 23 groups passed, including R18 N02/N03 and both actual R9 witnesses. Their recorded group times sum to **85796 ms**. Group 24 N05/A03 reached the unchanged 240-second effect budget after **153758.244793 ms**. Seven later groups were not reached.
+
+The quota receipt reports zero-based last started/completed indices **240/239**, 241 successful command constructions (427 ms), 242 fixed calls started/241 resolved (153556 ms including the absent probe), and **240 acknowledged command commits** from 241 started command calls. No START was reached; the later cycle group did not start. **The final database outcome of the unfinished next call is UNKNOWN.** Durations are rounded client-await aggregates including transport, not server-function timings.
+
+Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled; 649469.896049 ms. Cleanup: 27042/27042 settled, zero pending, 4242/4242 connections closed, one stopped cluster, zero children/errors; 240339 ms total / 22 ms cleanup.
+
+Full non-Auth log: 4250826 UTF-8 bytes / 63142 lines, SHA256 `63cdb80bd138389acb0fe6efbe52b5b54e0db6c502245dc252f687d726d59b91`. All **nine** failed CI histories remain; historical partial progress is exact-head evidence, not current acceptance.
+
+## Work model, limits and STOP
+
+The source model gives N squared pre/post history-row visits for N acknowledged new fills: 57600 for the first 240. The representative queued Discovery dedup row changes recursive canonical-helper entries from 208 to 38 and node-helper entries from 24 to 3 while still processing every scalar. These are source-derived call counts, not measured costs or a predicted wall-time improvement.
+
+**No measured or promised speedup or full CI success.** Every history row remains checked; full-cap Rule latency and Production capacity/SLO remain unproved. All actual 254/255/256 and 64/65 boundaries and 240s effects +60s cleanup/300s total remain mandatory.
+
+Corrected R19 source is unexecuted. Historical 64/64 author checks were not rerun and do not validate it. **AUTHOR STOP FOR ROOT REVIEW.** Root owns Task V10, publication and full exact-head acceptance. No Ready, merge, hosted action or next slice. Method NOT_APPROVED, #1139/17 gaps, #917 specific refusal and all other Owner gates remain.
+
+---
+
+## Historical R18 and earlier author records
+
+The exact previous records follow unchanged. Their current headings and source/execution claims belong to those historical cuts, not R19 acceptance.
+
 # M04 Phase-B author delivery status V1 — R18 current
 
 **R18 SAME-SESSION PURE SQL REUSE AND QUOTA PROGRESS PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**

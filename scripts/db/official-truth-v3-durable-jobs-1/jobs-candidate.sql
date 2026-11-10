@@ -114,12 +114,18 @@ BEGIN
   IF v IS NULL OR d IS NULL OR max_d IS NULL OR max_n IS NULL OR d<0 OR d>max_d OR max_d>24 OR max_n>65536 OR max_n<1 THEN RETURN -1; END IF;
   IF jsonb_typeof(v)='object' THEN
     FOR e IN SELECT value FROM jsonb_each(v) LOOP
-      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n); IF m<0 THEN RETURN -1; END IF;
+      IF d+1>max_d THEN RETURN -1; END IF;
+      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
+      ELSE m:=1; END IF;
+      IF m<0 THEN RETURN -1; END IF;
       n:=n+m+1; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   ELSIF jsonb_typeof(v)='array' THEN
     FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
-      m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n); IF m<0 THEN RETURN -1; END IF;
+      IF d+1>max_d THEN RETURN -1; END IF;
+      IF jsonb_typeof(e) IN ('object','array') THEN m:=official_v3_jobs_private.nodes_v1(e,d+1,max_d,max_n);
+      ELSE m:=1; END IF;
+      IF m<0 THEN RETURN -1; END IF;
       n:=n+m; IF n>max_n THEN RETURN -1; END IF;
     END LOOP;
   END IF;
@@ -127,17 +133,48 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}';
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
     FOR x IN SELECT * FROM jsonb_each(v) ORDER BY key COLLATE "C" LOOP
       IF x.key ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      parts:=array_append(parts,to_jsonb(x.key)::text||':'||official_v3_jobs_private.canonical_v1(x.value,d+1));
+      e:=x.value;
+      IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      CASE jsonb_typeof(e)
+      WHEN 'object' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'string' THEN
+        s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        child_text:=to_jsonb(s)::text;
+      WHEN 'number' THEN
+        s:=e::text; IF s::numeric<>trunc(s::numeric) OR s::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(s::numeric)::text;
+      WHEN 'boolean' THEN child_text:=e::text;
+      WHEN 'null' THEN child_text:='null';
+      ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
+      END CASE;
+      parts:=array_append(parts,to_jsonb(x.key)::text||':'||child_text);
     END LOOP; RETURN '{'||array_to_string(parts,',')||'}';
   WHEN 'array' THEN
-    FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP parts:=array_append(parts,official_v3_jobs_private.canonical_v1(e,d+1)); END LOOP;
+    FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
+      IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      CASE jsonb_typeof(e)
+      WHEN 'object' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'string' THEN
+        s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        child_text:=to_jsonb(s)::text;
+      WHEN 'number' THEN
+        s:=e::text; IF s::numeric<>trunc(s::numeric) OR s::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(s::numeric)::text;
+      WHEN 'boolean' THEN child_text:=e::text;
+      WHEN 'null' THEN child_text:='null';
+      ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
+      END CASE;
+      parts:=array_append(parts,child_text);
+    END LOOP;
     RETURN '['||array_to_string(parts,',')||']';
   WHEN 'string' THEN
     s:=v#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
