@@ -57,12 +57,14 @@ function leseMerkliste(id: string): Record<string, Modus> {
 export default function OmioVergleich({
   katalog,
   abschnitte,
+  startIndex = 0,
   kontext,
   reisende,
   waehrung,
 }: {
   katalog: Register
-  abschnitte: Abschnitt[]
+  startIndex?: number
+  abschnitte: (Abschnitt & { ausTagesplan?: boolean })[]
   kontext: string
   reisende: number
   waehrung: string
@@ -87,7 +89,7 @@ export default function OmioVergleich({
     [katalog, etappen],
   )
   const bevorzugt = useMemo(() => new Set(etappen.flatMap((s) => [s.von.id, s.nach.id])), [etappen])
-  const start = etappen[0]
+  const start = etappen[startIndex]
   const anzahl = Math.max(1, Math.min(9, reisende))
   const [personen, setPersonen] = useState(anzahl),
     [vergleichPersonen, setVergleichPersonen] = useState(anzahl)
@@ -255,6 +257,8 @@ export default function OmioVergleich({
             Vergleichen
           </button>
         </div>
+        {datum && etappen.some(s => s.ausTagesplan && s.datum === datum && s.von.id === von?.id && s.nach.id === nach?.id) &&
+          <p className="ov-hint">Datum aus deinem Tagesplan vorgeschlagen.</p>}
         {etappen.length > 0 && (
           <div className="ov-legs" aria-label="Reiseetappen">
             <span>Reiseetappen</span>

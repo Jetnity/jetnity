@@ -252,7 +252,7 @@ export function KanteDetail({
             Alle Verbindungen öffnen
           </button>
           <p className="mt-2 text-xs leading-5 text-ink-700">
-            Öffnet die vorhandenen Verbindungen. Der gewählte Abschnitt wird nicht übernommen. Es startet keine Suche.
+            Start und Ziel dieses Abschnitts sind in der Verbindungssuche vorausgewählt.
           </p>
         </div>
       ) : null}

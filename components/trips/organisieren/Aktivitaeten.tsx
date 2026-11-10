@@ -7,8 +7,8 @@ import { etappenZiel } from '@/lib/trips/organisieren/katalog'
 import type { Trip } from '@/types/trips'
 import { Feld } from './Suchfelder'
 
-export default function Aktivitaeten({ reise, partner }: { reise: Trip; partner?: ReactNode }) {
-  const [id, setId] = useState(reise.stages[0]?.id ?? '')
+export default function Aktivitaeten({ reise, partner, startId }: { reise: Trip; partner?: ReactNode; startId?: string }) {
+  const [id, setId] = useState(startId ?? reise.stages[0]?.id ?? '')
   const [thema, setThema] = useState('')
   const stage = reise.stages.find((s) => s.id === id)
   const ideen = (etappenZiel(stage)?.aktivitaeten ?? []).filter((a) => !thema || a.thema === thema)

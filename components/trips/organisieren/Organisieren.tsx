@@ -87,15 +87,19 @@ export default function Organisieren({
   tab,
   kategorieWaehlen,
   partnerAktivitaeten,
+  etappeId,
+  kanteId,
 }: {
   reise: Trip
   tab: Suchkategorie
-  kategorieWaehlen: (kategorie: Suchkategorie) => void
+  kategorieWaehlen: (kategorie: Suchkategorie, etappeId?: string) => void
+  etappeId?: string
+  kanteId?: string
   partnerAktivitaeten?: ReactNode
 }) {
   const uid = useId()
-  const [hotelStart, setHotelStart] = useState<TripStage | undefined>()
   const [suchId, setSuchId] = useState(0)
+  const einstieg = reise.stages.find(s => s.id === etappeId)
   const erste = reise.stages[0]
   const land = erste?.countryCode
   const landTitel = land && reise.stages.every((s) => s.countryCode === land) ? landName(land, 'de') : null
@@ -107,16 +111,14 @@ export default function Organisieren({
     <Etappenkarten
       reise={reise}
       waehlen={(s) => {
-        setHotelStart(s)
         setSuchId((x) => x + 1)
-        kategorieWaehlen('unterkunft')
+        kategorieWaehlen('unterkunft', s.id)
         document.getElementById(uid + '-tabs')?.scrollIntoView({ block: 'nearest' })
       }}
     />
   )
   function wechsle(k: Suchkategorie) {
     if (k !== tab) {
-      setHotelStart(undefined)
       kategorieWaehlen(k)
     }
   }
@@ -204,13 +206,13 @@ export default function Organisieren({
             <Hotelsuche
               key={suchId}
               reise={reise}
-              start={hotelStart ?? erste}
+              start={einstieg ?? erste}
               etappen={etappen}
             />
           )}
-          {tab === 'aktivitaeten' && <Aktivitaeten reise={reise} partner={partnerAktivitaeten} />}
+          {tab === 'aktivitaeten' && <Aktivitaeten reise={reise} startId={einstieg?.id} partner={partnerAktivitaeten} />}
           {tab === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {tab === 'verbindungen' && <OmioImReiseplan reise={reise} etappen={etappen}/>}
+          {tab === 'verbindungen' && <OmioImReiseplan reise={reise} etappen={etappen} kanteId={kanteId} />}
         </div>
         <footer className="org-footer">
           <a href="/images/organisieren/Bildnachweise.txt" target="_blank" rel="noopener">

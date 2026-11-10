@@ -9,12 +9,14 @@ import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { Trip } from '@/types/trips'
 import { Feld, Personen, SucheKnopf, useSuchanfrage } from './Suchfelder'
 
-export default function Verbindungen({ reise, etappen }: { reise: Trip; etappen: ReactNode }) {
+export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: {
+  reise: Trip; etappen: ReactNode; start?: import('@/lib/providers/omio/katalog').Abschnitt & { ausTagesplan?: boolean }; abschnittFehlt?: boolean
+}) {
   const stationen = [
     ...(reise.origin
       ? [
           {
-            id: 'origin',
+            id: 'reise:ursprung',
             name: reise.origin,
             placeId: reise.originPlaceId,
             countryCode: null,
@@ -23,18 +25,18 @@ export default function Verbindungen({ reise, etappen }: { reise: Trip; etappen:
         ]
       : []),
     ...reise.stages.map((s) => ({
-      id: 'stage:' + s.id,
+      id: 'reise:' + s.id,
       name: s.name,
       placeId: s.placeId,
       countryCode: s.countryCode,
       datum: s.arrivalDate,
     })),
   ]
-  const erster = reise.stages.length > 1 ? 'stage:' + reise.stages[0]!.id : (stationen[0]?.id ?? '')
+  const erster = abschnittFehlt ? '' : start?.von.id ?? (stationen[0]?.id ?? '')
   const zweiter = stationen[stationen.findIndex((s) => s.id === erster) + 1]
   const [vonId, setVon] = useState(erster),
-    [nachId, setNach] = useState(zweiter?.id ?? '')
-  const [datum, setDatum] = useState(zweiter?.datum ?? ''),
+    [nachId, setNach] = useState(abschnittFehlt ? '' : start?.nach.id ?? zweiter?.id ?? '')
+  const [datum, setDatum] = useState(abschnittFehlt ? '' : start?.datum ?? zweiter?.datum ?? ''),
     [gaeste, setGaeste] = useState(Math.min(9, Math.max(1, reise.travellers)))
   const von = stationen.find((s) => s.id === vonId),
     nach = stationen.find((s) => s.id === nachId)
@@ -99,6 +101,7 @@ export default function Verbindungen({ reise, etappen }: { reise: Trip; etappen:
                 }
               }}
             >
+              <option value="">Start wählen</option>
               {optionen}
             </select>
           </Feld>
@@ -121,6 +124,9 @@ export default function Verbindungen({ reise, etappen }: { reise: Trip; etappen:
           <Personen wert={gaeste} setzen={setGaeste} />
           <SucheKnopf busy={suche.busy} />
         </div>
+        {abschnittFehlt && !vonId && <p role="status">Dieser Reiseabschnitt hat sich geändert. Wähle Start und Ziel erneut.</p>}
+        {start?.ausTagesplan && start.datum === datum && start.von.id === vonId && start.nach.id === nachId &&
+          <p>Datum aus deinem Tagesplan vorgeschlagen.</p>}
         {suche.fehler && <p role="alert">{suche.fehler}</p>}
       </form>
       {gesucht && von && nach ? (

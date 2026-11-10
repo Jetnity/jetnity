@@ -26,6 +26,7 @@ import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
+import EtappenTage from './EtappenTage'
 import StoppForm from './StoppForm'
 
 type Props = {
@@ -38,6 +39,8 @@ type Props = {
   onRoute?: () => void
   onEdge?: (id: string, day: string) => void
   onSaved?: (graph: Trip) => void
+  verbindung?: { vonId: string; nachId: string }
+  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string) => void
   onItem?: (id: string) => void
   onAdd: (tag: string, kind: TripItemKind) => void
   edge: ReactNode
@@ -69,6 +72,8 @@ export default function Etappenplan({
   onEdge,
   onRoute,
   onItem,
+  verbindung,
+  onEtappensuche,
   onSaved,
   onAdd,
   edge,
@@ -94,10 +99,8 @@ export default function Etappenplan({
       ? reise.days.filter((d) => activeRun.tagIds.includes(d.id))
       : []
   const showDetail = !!(activeDay || activeStage)
-  const items = [
-    ...days.flatMap((d) => d.items),
-    ...(activeStage ? reise.ohneTag.filter((i) => i.stageId === activeStage.id) : []),
-  ]
+  const ohneTag = activeStage ? reise.ohneTag.filter((item) => item.stageId === activeStage.id) : []
+  const eintraege = days.reduce((anzahl, tag) => anzahl + tag.items.length, ohneTag.length)
   const head = activeStage?.name || (activeRun?.art === 'lauf' && activeRun.name) || 'Reisetag'
   const country = activeStage?.countryCode ? landName(activeStage.countryCode, 'de') : ''
   const allCountry =
@@ -260,8 +263,8 @@ export default function Etappenplan({
                   <small>{country || 'Reiseplan'}</small>
                   <h2>{head}</h2>
                   <small>
-                    {days.length} {days.length === 1 ? 'Tag' : 'Tage'} · {items.length}{' '}
-                    {items.length === 1 ? 'Eintrag' : 'Einträge'}
+                    {days.length} {days.length === 1 ? 'Tag' : 'Tage'} · {eintraege}{' '}
+                    {eintraege === 1 ? 'Eintrag' : 'Einträge'}
                   </small>
                 </div>
               </div>
@@ -300,22 +303,30 @@ export default function Etappenplan({
                         ))}
                       </div>
                     )}
-                    <h3>Geplante Einträge</h3>
-                    {items.length ? (
-                      items.map((i) => (
-                        <button type="button" className="et-entry" key={i.id} onClick={() => onItem?.(i.id)}>
-                          <span>
-                            <b>{i.title}</b>
-                            <small>
-                              {ART_BEZEICHNUNG[i.kind]}
-                              {i.startsOn ? ' · ' + date(i.startsOn) : ''}
-                            </small>
-                          </span>
-                          <ChevronRight size={16} />
+                    <EtappenTage days={days} reise={reise} onDay={(id) => {
+                      setTab('tage')
+                      onDay(id)
+                    }} />
+                    {ohneTag.length > 0 && (
+                      <section>
+                        <h3>Ohne zugeordneten Tag</h3>
+                        {ohneTag.map((item) => (
+                          <button type="button" className="et-entry" key={item.id} onClick={() => onItem?.(item.id)}>
+                            <span><b>{item.title}</b><small>{ART_BEZEICHNUNG[item.kind]}</small></span>
+                            <ChevronRight size={16} />
+                          </button>
+                        ))}
+                      </section>
+                    )}
+                    {activeStage && onEtappensuche && (
+                      <div className="et-angebote" role="group" aria-label={'Angebote in ' + activeStage.name}>
+                        <button type="button" onClick={() => onEtappensuche('unterkunft', activeStage.id)}>
+                          <BedDouble size={17} /> Unterkünfte suchen <ArrowRight size={14} />
                         </button>
-                      ))
-                    ) : (
-                      <p>Hier erscheinen die Einträge für {head}.</p>
+                        <button type="button" onClick={() => onEtappensuche('aktivitaeten', activeStage.id)}>
+                          <Ticket size={17} /> Aktivitäten entdecken <ArrowRight size={14} />
+                        </button>
+                      </div>
                     )}
                     {onSaved && (
                       <button className="et-secondary" type="button" onClick={openStop}>
@@ -452,6 +463,7 @@ export default function Etappenplan({
           <Etappenkarte
             reise={reise}
             auswahl={activeStage?.id || null}
+            verbindung={verbindung}
             onAuswahl={(id) => choose(id)}
             setzen={platzieren}
             onPosition={(p) => {

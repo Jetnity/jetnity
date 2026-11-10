@@ -13,7 +13,7 @@ import type { Trip, TripItem } from '@/types/trips'
 
 export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung'] as const
 const WORKSPACE_BEREICHE = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
-export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'vorbereitung', 'reisender'] as const
+export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'etappe', 'vorbereitung', 'reisender'] as const
 /** Opaque plan selection. Not travel intent. Stage ids are at most 80 characters each. */
 export const WORKSPACE_KANTE_MAX = 200
 
@@ -36,6 +36,7 @@ export type WorkspaceModus = {
   ansicht: WorkspaceAnsicht
   bereich: WorkspaceBereich | null
   kategorie?: Suchkategorie
+  etappeId?: string
   tagId?: string
   itemId?: string
   /** Existing connection id, for example `connection:<stageId>:<stageId>`. Presentation only. */
@@ -110,8 +111,15 @@ function rohLesen(params: URLSearchParams): Navigation {
   if (ansicht === 'organisieren') {
     const bereich = einzeln(params, 'bereich')
     const kategorie = einzeln(params, 'kategorie')
-    if (istSuchkategorie(kategorie)) return { ansicht, bereich: null, kategorie }
-    return { ansicht, bereich: istWorkspaceBereich(bereich) ? bereich : null }
+    const ziel: Navigation = istSuchkategorie(kategorie)
+      ? { ansicht, bereich: null, kategorie }
+      : { ansicht, bereich: istWorkspaceBereich(bereich) ? bereich : null }
+    const reiter = ziel.kategorie ?? kategorieFuerBereich(ziel.bereich)
+    const etappeId = refLesen(params, 'etappe', 80)
+    const kanteId = refLesen(params, 'kante', WORKSPACE_KANTE_MAX)
+    if (etappeId && (reiter === 'unterkunft' || reiter === 'aktivitaeten')) ziel.etappeId = etappeId
+    if (kanteId && reiter === 'verbindungen') ziel.kanteId = kanteId
+    return ziel
   }
   return { ansicht: 'uebersicht', bereich: null }
 }
@@ -125,6 +133,9 @@ export function queryFuerModus(aktuell: URLSearchParams, modus: Navigation): URL
   if (modus.ansicht === 'organisieren') {
     if (istSuchkategorie(modus.kategorie)) next.append('kategorie', modus.kategorie)
     else if (istWorkspaceBereich(modus.bereich)) next.append('bereich', modus.bereich)
+    const reiter = modus.kategorie ?? kategorieFuerBereich(modus.bereich)
+    if ((reiter === 'unterkunft' || reiter === 'aktivitaeten') && refGueltig(modus.etappeId, 80)) next.append('etappe', modus.etappeId)
+    if (reiter === 'verbindungen' && refGueltig(modus.kanteId, WORKSPACE_KANTE_MAX)) next.append('kante', modus.kanteId)
   }
   if (modus.ansicht === 'plan') {
     if (refGueltig(modus.tagId, 80)) next.append('tag', modus.tagId)
@@ -154,6 +165,7 @@ export function modusUrl(href: string, modus: Navigation): string {
 /** Revalidiert jede Referenz am aktuellen Graph, auch nach Löschen/Verschieben. */
 export function modusFuerReise(modus: WorkspaceModus, reise: Trip, ohneTag: readonly TripItem[]): WorkspaceModus {
   const next = modusAusQuery(queryFuerModus(new URLSearchParams(), modus))
+  if (next.etappeId && !reise.stages.some(etappe => etappe.id === next.etappeId)) delete next.etappeId
   if (next.ansicht === 'plan') {
     if (next.tagId && !reise.days.some((tag) => tag.id === next.tagId)) delete next.tagId
     if (next.itemId) {

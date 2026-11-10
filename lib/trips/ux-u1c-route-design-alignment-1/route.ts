@@ -32,6 +32,8 @@ export type RouteKanteZeile = {
   art: 'kante'
   occurrenceKey: string
   kanteId: string
+  vonId: string
+  nachId: string
   vonSchluessel: string
   nachSchluessel: string
   rueckTagId: string
@@ -162,6 +164,8 @@ export function routeModell(reise: Trip): { gueltig: boolean; zeilen: RouteZeile
       art: 'kante',
       occurrenceKey: `${links.schluessel}=>${rechts.schluessel}`,
       kanteId,
+      vonId: links.stageId,
+      nachId: rechts.stageId,
       vonSchluessel: links.schluessel,
       nachSchluessel: rechts.schluessel,
       rueckTagId: rechtsZeile.tagIds[0] ?? linksZeile.tagIds[0] ?? '',
