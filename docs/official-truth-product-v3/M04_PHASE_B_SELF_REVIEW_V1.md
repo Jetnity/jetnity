@@ -1,3 +1,39 @@
+# R26 / Recovery Task V17 — bounded author self-review
+
+Captured: 2026-11-10T14:46:48Z. Same Generation2 session; baseline `45be21e57988d91dca3ee0758712f3ef5f39d744`. [Binding authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334). Prepared source only: no local project/compiler/parser/SQL/native execution and no runtime or Technical-Lead PASS.
+
+## Same-invocation equivalence
+
+The selected helper retains one input object and its successful canonical result in separate uninitialized local variables. Only the object-parent/object-child branch changes. The first object always calls the original recursive validator. Later objects reuse its result only when complete JSONB text representations compare equal under explicit C; otherwise the original call runs and both retained fields update only after success.
+
+The original parent-key ASCII guard and child-depth guard still precede lookup. The same parent invocation guarantees the same child depth. Scalar and array siblings execute their original checks and cannot overwrite the separate retained result. There is no prefilter, cross-call state, trust marker or map. Other canonical branches, ordering, key encoding and all other functions remain exact.
+
+Added retained state is one object/result per active invocation, input-sized under existing bounded application entrypoints and depth. This is not a universal byte cap for arbitrary private helper calls. Extra serialization, comparison and allocation are real costs.
+
+Independent source reasoning read PostgreSQL 16 at `c372fbbd8e911f2412b80a8c39d7079366565d67`: JSONB output is an iterator loop; its child iteration does not recursively expand the C stack in one call. Source blobs `cf43c3f2ded19aabd2a913ab914f84d6c70d3afc` and `9cc95b773dbf070123a657194c95d321ea05272d` are recorded in the JSON correction. This addresses the proposed depth-stack error concern, not elapsed-time or allocation guarantees.
+
+## Source work and regression boundary
+
+A representative queued Discovery job has three object containers, 23 keys and 21 scalar leaves. The two envelope traversals per dedup historical row can avoid six recursive entries and 46 key visits while adding eight JSONB text serializations. The planned 254-command fill entails 64009 dedup historical-row validations: 384054 entries and 2944414 key visits removed in that static model. Singleton-object parents add no comparison serialization.
+
+These are source counts only. Complete history remains quadratic; both command validations, both envelope validations and every row, job/node/hash/time/authority/error-order check remain. No measured speedup, sufficient budget margin, full-cap Rule latency or Production SLO claim.
+
+The sole 2010-byte N02 insertion adds 18 calls through existing canonicalAt: seven fixed output oracles and eleven P7601 refusals. It covers scalar/array interleaving, A/B/A and A/B/B, C-distinct strings/raw safe integers, normalized key order, same-depth empty objects and invalid first/second objects, keys, control/nonASCII strings, unsafe/fractional numbers, depth and true SQL NULL. Raw JSON strings preserve numeric precision; existing NULLIF reaches actual SQL NULL. No internal branch receipt is invented.
+
+Inverse deltas recover exact 45be SQL/native. All outside bytes, 29 declarations/attributes, 31 group names/order, prior 36-case/72-mode matrix and 16 other source pins remain unchanged. SQL: 139163 / `81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820`; Native: 177160 / `d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c`; all-18 aggregate `aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba`. Root independently reconstructed these source pins; that source review is not execution acceptance.
+
+## Historical evidence and remaining gates
+
+Actual 45be R25 passed Typecheck/Lint, 23 native groups and both R9, then reached the ledger deadline after 237 acknowledged commands. Later database outcome is UNKNOWN. All 27068 effects settled and 4242 connections closed, zero pending/errors. Independently, lifecycle stopped at the 5s Chrome-version preflight before its actual fixture/browser proof; cause UNKNOWN, browser source unchanged. Five jobs passed and three failed.
+
+All 15 prior failures, complete genuine R21 success, corrected separate R22 terminal metadata and Markdown tails remain exact. The full actual R25 receipt and separate lifecycle finding form failure 16. Earlier local 64-test/TypeScript/lint results stay historical; all 22 current rows and execution/PASS/Ready/merge fields remain false.
+
+P1 remains unmet full new-head and mandatory actual-main acceptance under unchanged limits. Both complete quotas, R9, inherited 761-pair/minOwned4182 boundary, final N15/latewriter/cleanup and actual lifecycle proof are mandatory. Root owns V17 Task/Review/Evidence/Excerpt, publication and re-gating; all Owner, SQL UNAPPLIED, Method/#1139, forbidden #917, privacy/hosted and resource gates remain.
+
+**AUTHOR STOP.** No author execution, installation, environment reconstruction, logs/hosted/#917 access, publication, Ready, merge or automatic follow-up slice.
+
+## Previous author self-review — preserved verbatim
+
 # R25 / Recovery Task V16 — bounded author self-review
 
 Captured: 2026-11-10T13:55:02Z. Same Generation2 author/session; baseline `1aecc862c4b2710bb12c900195259ee25eb6f70d`. [Exact Root authorization](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908). Prepared source only; no Typecheck, SQL execution, native PASS or Technical-Lead acceptance is claimed.

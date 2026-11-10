@@ -1,3 +1,35 @@
+# R26 / Recovery Task V17 — canonical object reuse, CI pending
+
+Captured: 2026-11-10T14:46:48Z. Same Generation2 author/session `/root/m04_durable_jobs_writer_g2`. Existing Draft #1182, baseline `45be21e57988d91dca3ee0758712f3ef5f39d744`, tree `95046b7d80b9d7e44d01c9a8a15b187577303c76`; origin #1178 remains historically merged.
+
+**Current R26 Typecheck/native/runtime/TL-PASS/Ready/merge are false / not executed.** [Root's finite selection](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334) permits two body changes in `canonical_v1` and 18 direct N02 oracles. Only a previously successful object at the same child depth may be reused, after exact full JSONB text equality under C. Parent-key/depth guards precede the lookup; a miss runs the original validator. All other functions, arrays/scalars, declarations, 31 groups and resource/time limits remain exact.
+
+## Frozen source pins
+
+- SQL: 139163 bytes / SHA256 `81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820` / blob `ba65ca6be73f529bcf1a5e9dcd10985e3f8c0763`.
+- Native: 177160 bytes / SHA256 `d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c` / blob `ac42eb501c68fa3f47e57175504d055e11d764b8`.
+- All-18 aggregate: `aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba`. Other 16 source pins unchanged.
+
+## Actual preceding R25 failure
+
+[CI 42830921607](https://github.com/Jetnity/jetnity/actions/runs/42830921607) on 45be is terminal failure: **five jobs passed; Repository, lifecycle and aggregate failed**. Typecheck/Lint passed; hygiene/build were skipped. The [complete Root receipt](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832) records **23/31 native groups passed**, including N02's 36-case/72-mode matrix and both R9 witnesses.
+
+Ledger group 24 hit the unchanged 240s deadline at zero-based started237/completed236 after **237 acknowledged commands**, no START/cycles; following database outcome **UNKNOWN**. First 23 groups: 100393ms; failed ledger: 138860.852048ms. Cleanup: 27068/27068 effects settled, 4242/4242 connections closed, one cluster stopped, zero pending/children/errors; 240365ms total / 29ms cleanup. Core: 8682 total / 8678 pass / 2 fail / 2 inherited skips / 0 cancelled.
+
+The [separate lifecycle finding](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769782473) is a 5s Chrome `--version` preflight timeout before fixture/browser creation and mounted assertions. Underlying cause is UNKNOWN. Browser source stays exact; its complete lifecycle proof remains mandatory on the changed head.
+
+Root-prepared relative excerpt: `docs/official-truth-product-v3/M04_RECOVERY_R26_NATIVE_FAILURE_V17.txt`, 10385 bytes / SHA256 `6ab2683e2c19a5f586ae8b6cdf0a56debbe6be14808efe6918778d752d6df0f9`; not claimed present at historical 45be. Full native receipt: 3767 bytes / `71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299`.
+
+All 15 prior failure objects, genuine R21 success, corrected separate R22 terminal metadata and both Markdown tails remain exact. Actual R25 is failure 16.
+
+## Gate and STOP
+
+The source model removes duplicate object traversals within one invocation; comparison/allocation overhead remains. History is still quadratic. No measured speedup, sufficient budget margin, causal runner/helper claim or Production SLO is asserted.
+
+Root owns full new-head CI/native/lifecycle/Preview/review acceptance and mandatory actual-main CI/native/Production. All Owner/SQL UNAPPLIED/Method/#1139/#917/privacy/hosted gates remain. **AUTHOR STOP** after finite delivery; no author execution, publication, Ready, merge or follow-up slice.
+
+## Previous author status — preserved verbatim
+
 # R25 / Recovery Task V16 — ARRAY alternative, CI pending
 
 Captured: 2026-11-10T13:55:02Z. Same author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. Existing Draft #1182; baseline `1aecc862c4b2710bb12c900195259ee25eb6f70d`, tree `bc79a7bc2bf09fcea57ab1f4e7ca4c773ce5b9f3`. Origin #1178 is historically merged; this remains its linked post-merge review fix.

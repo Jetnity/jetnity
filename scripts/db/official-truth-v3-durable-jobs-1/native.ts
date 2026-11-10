@@ -794,6 +794,35 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       for (const [raw, expected] of mixedStringReuseCases) {
         assert.deepEqual(await canonicalAt(raw, 0), [{ canonical: expected }], 'R21 successive and nested string bytes')
       }
+      // R26: retain only successful same-depth objects; fixed bytes cover reuse and refusal.
+      const retainedObjectCases = [
+        ["{\"a\":{\"v\":\"A\"},\"b\":\"between\",\"c\":{\"v\":\"A\"}}",0,"{\"a\":{\"v\":\"A\"},\"b\":\"between\",\"c\":{\"v\":\"A\"}}"],
+        ["{\"a\":{\"v\":1},\"b\":[3,1,{\"x\":\"B\"}],\"c\":{\"v\":1}}",0,"{\"a\":{\"v\":1},\"b\":[3,1,{\"x\":\"B\"}],\"c\":{\"v\":1}}"],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":1}}",0,"{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":1}}"],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":2}}",0,"{\"a\":{\"v\":1},\"b\":{\"v\":2},\"c\":{\"v\":2}}"],
+        ["{\"a\":{\"s\":\"A\",\"n\":9007199254740991},\"b\":{\"s\":\"a\",\"n\":9007199254740990}}",0,"{\"a\":{\"n\":9007199254740991,\"s\":\"A\"},\"b\":{\"n\":9007199254740990,\"s\":\"a\"}}"],
+        ["{\"a\":{},\"b\":\"between\",\"c\":{}}",23,"{\"a\":{},\"b\":\"between\",\"c\":{}}"],
+        ["{\"z\":{\"b\":2,\"A\":1},\"a\":{\"A\":1,\"b\":2}}",0,"{\"a\":{\"A\":1,\"b\":2},\"z\":{\"A\":1,\"b\":2}}"],
+      ] as const
+      for (const [raw, depth, expected] of retainedObjectCases) {
+        assert.deepEqual(await canonicalAt(raw, depth), [{ canonical: expected }], 'R26 retained object canonical bytes')
+      }
+      const rejectedRetainedObjects = [
+        ["{\"a\":{\"v\":\"\\u00e9\"},\"b\":{\"v\":\"\\u00e9\"}}",0],
+        ["{\"a\":{\"v\":\"A\"},\"b\":{\"v\":\"\\u001f\"}}",0],
+        ["{\"a\":{\"v\":\"A\"},\"b\":{\"v\":\"\\u00e9\"}}",0],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":9007199254740992}}",0],
+        ["{\"a\":{\"v\":1},\"b\":{\"v\":0.5}}",0],
+        ["{\"a\":{},\"\\u007f\":{}}",0],
+        ["{\"a\":{},\"b\":{}}",24],
+        ["{\"a\":{},\"b\":{\"v\":0}}",23],
+        ["{\"a\":{\"v\":0},\"b\":{\"v\":0}}",23],
+        [null,0],
+        ["{\"a\":{}}",null],
+      ] as const
+      for (const [raw, depth] of rejectedRetainedObjects) {
+        await assert.rejects(canonicalAt(raw, depth), code('P7601'), 'R26 object guards before reuse')
+      }
       // R22: fixed Discovery bytes/digests and bounded same-text lease-time reuse.
       // These expectations are literal independent inputs; no function under test builds them.
       const subjectReuseCases = [

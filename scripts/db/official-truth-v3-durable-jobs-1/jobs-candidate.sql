@@ -133,7 +133,7 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric;
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
@@ -143,7 +143,16 @@ BEGIN
       e:=x.value;
       IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
       CASE jsonb_typeof(e)
-      WHEN 'object' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+      WHEN 'object' THEN
+        IF retained_object IS NULL THEN
+          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+          retained_object:=e; retained_object_canonical:=child_text;
+        ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
+          child_text:=retained_object_canonical;
+        ELSE
+          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
+          retained_object:=e; retained_object_canonical:=child_text;
+        END IF;
       WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
       WHEN 'string' THEN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;

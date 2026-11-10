@@ -2,19 +2,19 @@
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
-### M04 current — R25 / Recovery V16, exact array-constructor correction; full acceptance pending
+### M04 current — R26 / Recovery V17; same-invocation object reuse, full acceptance pending
 
-**2026-11-10 14:05:59 UTC.** [Current Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V16](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V16.md) · [Task V16](docs/official-truth-product-v3/M04_RECOVERY_TASK_V16.md) · [Evidence V16](docs/official-truth-product-v3/M04_RECOVERY_R25_EVIDENCE_V16.json) · [live Draft#1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
+**2026-11-10 14:56:02 UTC.** [Current Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V17](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V17.md) · [Task V17](docs/official-truth-product-v3/M04_RECOVERY_TASK_V17.md) · [Evidence V17](docs/official-truth-product-v3/M04_RECOVERY_R26_EVIDENCE_V17.json) · [live Draft #1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
 
-Published1aecc remains blocked: CI42822302417 failed group24ledger after23/31passes, including new36case/72mode N02 and bothR9. Ledger228/227,228ACKs; cycles/latergroups not reached; following fixture DB outcome UNKNOWN. All26776effects settled/all4242connections closed,zero cleanup errors. Typecheck/Lint/sixcompanions and exact Preview passed; native acceptance did not.
+Published **45be21e57988d91dca3ee0758712f3ef5f39d744** remains blocked: full CI 42830921607 failed. M04 passed 23/31 groups including 36 key cases/72 observations and both R9, then hit the ledger budget at started 237/completed 236/237 ACKs. All 27068 effects settled, 4242 connections closed, zero cleanup errors; following fixture DB outcome UNKNOWN. A separate 5s Chrome-version preflight failed before the actual lifecycle proof. Browser source remains unchanged.
 
-Same G2 author delivered only the exact_keys_v1 ARRAY body plus one explanatory comment/two case labels. All29declarations, other SQL bytes, query values/oracles/counts,36cases/72observations,31groups and budgets remain. Root/reviewer independently matched SQL **4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa**, Native **ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a**, all18aggregate **7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d**. Other16sourcepins unchanged. No new-head execution or speed claim.
+Same G2 author delivered only canonical_v1's selected object-child reuse and 18 additional fixed N02 calls. Root/reviewer matched SQL **81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820**, Native **d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c**, all-18 aggregate **aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba**. All 29 declarations, other 16 sources, earlier oracles, 31 groups and bounds remain. No new-head execution or speed claim.
 
-Actual main **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** remains separately unaccepted. Origin#1178 remains genuinely R21-passed/MERGED. Preserve14older failures, distinct15thfailure, genuine success and allV13/V14/V15history. **M04 unfinished.**
+Actual main **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** remains separately unaccepted; origin #1178 remains genuinely R21-passed/MERGED. Preserve 15 old failures, distinct 16th failure, genuine success and all V13/V14/V15/V16 history. **M04 unfinished.**
 
-First unfinished step: Root expected1aecc publish/readback, full new-head CI/native/Preview/live gates, then actual-main CI/native/Production. No agentReady/Merge, unchanged-known-bad rerun or automatic next slice. D1#1169/#1181 separate.
+First unfinished step: Root expected-45be publication/readback, complete new-head CI/native/lifecycle/Preview/live gates, then actual-main CI/native/Production. No agent Ready/Merge, unchanged-known-bad rerun or automatic next slice. D1 #1169/#1181 remain separate.
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17gaps; #917 UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute; #1131ReadySTOP, both#1135holds, #968isolation/#911/#913privacy remain. SQL UNAPPLIED; no hosted/local/project/environment action. Full boundaries inV16.
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute; #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. SQL UNAPPLIED; no hosted/local-project/environment action. Full boundaries in V17.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->
 

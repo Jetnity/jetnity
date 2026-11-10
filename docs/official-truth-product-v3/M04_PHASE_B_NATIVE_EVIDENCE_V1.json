@@ -1,13 +1,13 @@
 {
   "schema": "jetnity.m04.phase-b.native-evidence.v1",
-  "status": "R25_SAME_GENERATION2_EXACT_KEYS_ARRAY_CONSTRUCTORS_FOR_ROOT_REVIEW_CI_PENDING",
-  "savedAt": "2026-11-10T13:55:02Z",
+  "status": "R26_SAME_GENERATION2_INVOCATION_LOCAL_CANONICAL_OBJECT_REUSE_FOR_ROOT_REVIEW_CI_PENDING",
+  "savedAt": "2026-11-10T14:46:48Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1182,
-  "dispatchHead": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908",
-  "sourceDigestSha256": "7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d",
+  "dispatchHead": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334",
+  "sourceDigestSha256": "aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba",
   "sourcePins": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -81,8 +81,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 138695,
-      "sha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa"
+      "bytes": 139163,
+      "sha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -91,8 +91,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 175150,
-      "sha256": "ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a"
+      "bytes": 177160,
+      "sha256": "d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -107,27 +107,35 @@
   "hostedAccess": false,
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
-  "executionMeaning": "Current R25 source is unexecuted. Actual 1aecc R24 CI failed after Typecheck/Lint and 23/31 native groups passed, including N02 with the 36-case/72-mode matrix and both R9 witnesses. Ledger group 24 hit 240s at started 228/completed 227 after 228 acknowledged commands; no START/cycles, and the following database outcome is UNKNOWN. Fourteen prior failures, genuine R21 PR success and the separately corrected R22 terminal metadata remain exact; 1aecc is the fifteenth failure.",
+  "executionMeaning": "Current R26 source is unexecuted. Actual 45be R25 CI failed after Typecheck/Lint and 23/31 native groups passed, including N02 with the 36-case/72-mode matrix and both R9. Ledger group 24 hit 240s at started237/completed236 after 237 acknowledged commands; no START/cycles and following database outcome UNKNOWN. Separately lifecycle failed its 5s Chrome version preflight before fixture/browser creation. All eight jobs were terminal: five success, Repository/lifecycle/aggregate failure. Fifteen prior failures, genuine R21 success and corrected separate R22 terminal metadata remain exact; 45be is failure 16.",
   "historicalCI": {
-    "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-    "tree": "bc79a7bc2bf09fcea57ab1f4e7ca4c773ce5b9f3",
-    "runId": 42822302417,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42822302417",
+    "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+    "tree": "95046b7d80b9d7e44d01c9a8a15b187577303c76",
+    "runId": 42830921607,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42830921607",
     "event": "pull_request",
     "attempt": 1,
     "status": "completed",
     "conclusion": "failure",
-    "statusObservedAt": "2026-11-10T13:35:33Z",
-    "repositoryVerificationJobId": 129850630615,
+    "runUpdatedAt": "2026-11-10T14:25:57Z",
+    "repositoryTerminalObservedByRootAt": "2026-11-10T14:24:33Z",
+    "allTerminalReportedAt": "2026-11-10T14:27:12Z",
+    "repositoryVerificationJobId": 129880385645,
     "repositoryVerificationStatus": "completed",
     "repositoryVerificationConclusion": "failure",
-    "aggregateJobId": 129859432419,
+    "aggregateJobId": 129891193431,
     "aggregateConclusion": "failure",
-    "companions": "All six SUCCESS; Auth metadata only",
-    "source": "Root independently confirmed terminal run/Repository metadata before reading the complete non-Auth log. Author read only the persisted sanitized dispatch and complete receipt.",
-    "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6768973326",
-    "fullLogSha256": "d551f43143f1b712bf072256f4949f81a09594b805c5d6c479ae0c2086d5e3e5",
-    "fullLogBytes": 4252208,
+    "allJobs": {
+      "total": 8,
+      "terminal": 8,
+      "success": 5,
+      "failure": 3
+    },
+    "companions": "Five SUCCESS; lifecycle FAILURE separately recorded below. Auth metadata only.",
+    "source": "Root observed terminal Repository metadata before reading its complete non-Auth log and separately verified the lifecycle failure. Author read only the persisted sanitized dispatch/receipt and lifecycle diagnosis, never logs.",
+    "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832",
+    "fullLogSha256": "2ce8011a95f02a1821e202d9dd067c97bc0ba41e019ba9df2f26863aeffd6102",
+    "fullLogBytes": 4251944,
     "steps": {
       "typecheck": "success",
       "lint": "success",
@@ -141,21 +149,21 @@
       "failed": 2,
       "skipped": 2,
       "cancelled": 0,
-      "milliseconds": 841782.545609,
+      "milliseconds": 834133.467501,
       "skipMeaning": "Two inherited layout skips, no M04 skip"
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
-      "candidateSha256": "9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42",
+      "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 240422,
-      "cleanupMilliseconds": 38,
+      "effectAndCleanupMilliseconds": 240365,
+      "cleanupMilliseconds": 29,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 26776,
-        "settled": 26776,
+        "started": 27068,
+        "settled": 27068,
         "pending": 0,
         "connections": 4242,
         "closed": 4242,
@@ -164,95 +172,95 @@
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 36
+          "milliseconds": 34
         },
         {
           "id": "N02",
-          "milliseconds": 1938
+          "milliseconds": 1742
         },
         {
           "id": "N03",
-          "milliseconds": 2397
+          "milliseconds": 2173
         },
         {
           "id": "N07",
-          "milliseconds": 11209
+          "milliseconds": 10662
         },
         {
           "id": "N07/R4",
-          "milliseconds": 1003
+          "milliseconds": 1006
         },
         {
           "id": "N08",
-          "milliseconds": 13326
+          "milliseconds": 13465
         },
         {
           "id": "N08/U04",
-          "milliseconds": 3719
+          "milliseconds": 3689
         },
         {
           "id": "N02/U04",
-          "milliseconds": 1466
+          "milliseconds": 1393
         },
         {
           "id": "N04/N06",
-          "milliseconds": 2952
+          "milliseconds": 2964
         },
         {
           "id": "N04/N06/N10",
-          "milliseconds": 2948
+          "milliseconds": 2946
         },
         {
           "id": "N05/N09",
-          "milliseconds": 3117
+          "milliseconds": 3055
         },
         {
           "id": "N09",
-          "milliseconds": 20366
+          "milliseconds": 19645
         },
         {
           "id": "N10/U06",
-          "milliseconds": 7763
+          "milliseconds": 7531
         },
         {
           "id": "N11",
-          "milliseconds": 2304
+          "milliseconds": 2311
         },
         {
           "id": "N11",
-          "milliseconds": 146
+          "milliseconds": 182
         },
         {
           "id": "N12",
-          "milliseconds": 169
+          "milliseconds": 161
         },
         {
           "id": "N04/N10/N12",
-          "milliseconds": 5390
+          "milliseconds": 5089
         },
         {
           "id": "N12/U06/R9",
-          "milliseconds": 14621
+          "milliseconds": 14635
         },
         {
           "id": "N12/R7-03",
-          "milliseconds": 570
+          "milliseconds": 591
         },
         {
           "id": "N11",
-          "milliseconds": 3153
+          "milliseconds": 3134
         },
         {
           "id": "N11",
-          "milliseconds": 457
+          "milliseconds": 295
         },
         {
           "id": "N11",
-          "milliseconds": 418
+          "milliseconds": 342
         },
         {
           "id": "N13",
-          "milliseconds": 3169
+          "milliseconds": 3348
         }
       ],
       "nestedRaceWitnesses": [
@@ -260,16 +268,16 @@
           "boundary": "i1_timeout",
           "operation": "reserve_v1",
           "target": {
-            "pid": "25519",
-            "birth": "2026-11-10 13:23:55.472291+00"
+            "pid": "25472",
+            "birth": "2026-11-10 14:19:26.377695+00"
           },
           "control": {
-            "pid": "25518",
-            "birth": "2026-11-10 13:23:55.466272+00"
+            "pid": "25470",
+            "birth": "2026-11-10 14:19:26.372734+00"
           },
           "holder": {
-            "pid": "25071",
-            "birth": "2026-11-10 13:23:50.90162+00"
+            "pid": "25129",
+            "birth": "2026-11-10 14:19:22.08803+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -288,16 +296,16 @@
           "boundary": "worker_caller_abort",
           "operation": "reserve_v1",
           "target": {
-            "pid": "26183",
-            "birth": "2026-11-10 13:24:04.888332+00"
+            "pid": "26226",
+            "birth": "2026-11-10 14:19:36.055987+00"
           },
           "control": {
-            "pid": "26182",
-            "birth": "2026-11-10 13:24:04.88409+00"
+            "pid": "26225",
+            "birth": "2026-11-10 14:19:36.05024+00"
           },
           "holder": {
-            "pid": "25850",
-            "birth": "2026-11-10 13:24:00.558353+00"
+            "pid": "25863",
+            "birth": "2026-11-10 14:19:31.493458+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -320,17 +328,17 @@
         "millisecondsCap": 300000,
         "timingMeaning": "client await durations including construction/transport; not server statement profiling",
         "ledger": {
-          "lastStartedIndex": 228,
-          "lastCompletedIndex": 227,
-          "commandRequestsStarted": 229,
-          "commandRequestsCompleted": 229,
-          "commandRequestMilliseconds": 491,
-          "fixedCallsStarted": 230,
-          "fixedCallsCompleted": 229,
-          "fixedCallMilliseconds": 136500,
-          "commandCallsStarted": 229,
-          "commandCallsCompleted": 228,
-          "commandCommits": 228,
+          "lastStartedIndex": 237,
+          "lastCompletedIndex": 236,
+          "commandRequestsStarted": 238,
+          "commandRequestsCompleted": 238,
+          "commandRequestMilliseconds": 489,
+          "fixedCallsStarted": 239,
+          "fixedCallsCompleted": 238,
+          "fixedCallMilliseconds": 138598,
+          "commandCallsStarted": 238,
+          "commandCallsCompleted": 237,
+          "commandCommits": 237,
           "startCallsStarted": 0,
           "startCallsCompleted": 0,
           "startReservations": 0
@@ -356,7 +364,7 @@
         "aggregateWorkConnectionBound": 40,
         "maximumJobs": 4,
         "maximumIntake": 1,
-        "maximumMethod": 3,
+        "maximumMethod": 2,
         "m04ObserverLimit": 2,
         "maximumM04Observers": 2,
         "methodObserverLimit": 1,
@@ -376,35 +384,59 @@
       "nativePass": false
     },
     "nativeReceiptCompactBytes": 3767,
-    "nativeReceiptCompactSha256": "7676783e6c3abd4cbf8499c4568c53f0176dd9473f3e7a91646ff93f9aaea67d",
-    "candidateSha256": "9dccc0108dd8397730c968c1bfb944100e963932f64dcc34442b00b1e71a0f42",
-    "nativeSourceSha256": "f1221afc362db3f49232ce02bfc45233f498590e4c79f00d5a559b3e907adf1a",
-    "sourceDigestSha256": "daf5cd8a8644e0a37d5903f2e95d95bec8b9b458ad19204751b0ddccebdbc9a3",
+    "nativeReceiptCompactSha256": "71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299",
+    "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
+    "nativeSourceSha256": "ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a",
+    "sourceDigestSha256": "7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d",
     "reportedFailure": {
       "phase": "proof_24:N05/A03",
       "groupOrder": 24,
       "groupId": "N05/A03",
-      "groupMilliseconds": 136768.07127,
+      "groupMilliseconds": 138860.852048,
       "message": "M04 240s effect budget exceeded",
       "nextDatabaseOutcome": "UNKNOWN"
     },
     "completedGroups": 23,
-    "first23Milliseconds": 102637,
-    "diagnosis": "Actual R24 Typecheck/Lint, N02 matrix and both R9 passed. Ledger hit the global 240s deadline at zero-based lastStarted228/lastCompleted227 after 228 acknowledged commands; no START/cycles. Client/fixture observations do not establish the helper as cause, R24 regression or measured speedup.",
-    "preview": {
-      "id": "dpl_6JpTt5vYStzuznEgmLfPYgfsJwAa",
-      "state": "READY",
-      "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-      "source": "Root metadata verification in the persisted dispatch; no author Vercel log read."
+    "first23Milliseconds": 100393,
+    "diagnosis": "Actual R25 Typecheck/Lint, N02 including 36 cases/72 modes and both R9 passed. Ledger reached the global 240s deadline at zero-based lastStarted237/lastCompleted236 after 237 acknowledged commands; no START/cycles. These are client/fixture observations, not helper attribution, runner causality or a measured optimization gain.",
+    "lifecycle": {
+      "jobId": 129880386234,
+      "status": "completed",
+      "conclusion": "failure",
+      "source": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769782473",
+      "fullLogBytes": 163043,
+      "fullLogSha256": "41d1323fb876ac1686e9c933364b7f6f426217cb126138a989c5f15c3413e6c6",
+      "tests": {
+        "total": 4,
+        "passed": 3,
+        "failed": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "milliseconds": 382904.746
+      },
+      "failedTest": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+      "failedTestMilliseconds": 5011.436339,
+      "sourcePath": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "sourceBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+      "sourceLine": 55,
+      "operation": "execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:5_000})",
+      "error": "spawnSync /usr/bin/google-chrome ETIMEDOUT",
+      "preflightMilliseconds": 5000,
+      "mountedLifecycleAssertionsReached": false,
+      "underlyingTimeoutCause": "UNKNOWN",
+      "browserSourceChanged": false,
+      "limitation": "Failure occurred before bundle/cluster/fixture/browser creation; no lifecycle PASS, flaky/runner attribution, timeout increase, skip or tautological version comparison. Complete unchanged lifecycle proof is mandatory on the genuinely changed new head.",
+      "failedTestFixtureCreated": false,
+      "failedTestBrowserLaunched": false
     },
     "safeExcerpt": {
-      "path": "docs/official-truth-product-v3/M04_RECOVERY_R25_NATIVE_FAILURE_V16.txt",
-      "bytes": 5391,
-      "sha256": "7ff00463ce28764756dcf0ce8ff3d1e2817e6928c5735219fdcf9dcdd1ce433c",
-      "gitBlob": "fabf9840ff3f7b2c3e2053b10dabcabb0a61aac6",
-      "publication": "Root-prepared V16 relative path; not claimed present at historical head 1aecc."
+      "path": "docs/official-truth-product-v3/M04_RECOVERY_R26_NATIVE_FAILURE_V17.txt",
+      "bytes": 10385,
+      "sha256": "6ab2683e2c19a5f586ae8b6cdf0a56debbe6be14808efe6918778d752d6df0f9",
+      "gitBlob": "ae0766eec18667ff2fe9820d89660f314f5b263b",
+      "publication": "Root-prepared V17 relative path, not claimed present at historical head 45be."
     },
-    "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_BUDGET_FAILURE_NO_CURRENT_R25_PASS"
+    "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_AND_SEPARATE_LIFECYCLE_PREFLIGHT_FAILURE_NO_CURRENT_R26_PASS"
   },
   "continuation": {
     "task": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V2.md",
@@ -414,14 +446,14 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
+    "sourceBaseline": "45be21e57988d91dca3ee0758712f3ef5f39d744",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 16,
     "rootReportedNewMain": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
-    "mainIntegration": "Existing Draft #1182 remains the linked post-merge fix on actual main 4bfa. Published 1aecc passed Typecheck/Lint, N02 including the 36-case/72-mode matrix and both R9 witnesses, then failed the unchanged ledger budget. R25 selects ARRAY constructors only in exact_keys_v1 plus three Native text clarifications; Root alone publishes and re-gates.",
+    "mainIntegration": "Existing Draft #1182 remains the linked post-merge fix on actual main 4bfa. Published 45be passed Typecheck/Lint, N02 including the 36-case/72-mode matrix and both R9, then failed the unchanged ledger deadline. The separate lifecycle version preflight also failed before fixture/browser creation. R26 changes only two canonical_v1 body sites and adds 18 direct N02 oracles; Root alone publishes and re-gates.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -429,11 +461,11 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V16.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V17.md"
   },
   "corrections": {
     "R9": {
-      "status": "CURRENT_R25_NATIVE_PENDING_HISTORICAL_1AECC_BOTH_R9_PASSED",
+      "status": "CURRENT_R26_NATIVE_PENDING_HISTORICAL_45BE_BOTH_R9_PASSED",
       "unitWitnesses": 3,
       "nativeWitnessCases": [
         "natural I1 fixed5000ms timeout",
@@ -1824,6 +1856,103 @@
         "scripts/db/official-truth-v3-durable-jobs-1/native.ts": "89f8026cf0b96971f529d6ab59fe14a2fbfe6150"
       },
       "sourceDigestSha256": "7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d"
+    },
+    "R26": {
+      "status": "PREPARED_FROZEN_SOURCE_ONLY_PENDING_FULL_NEW_HEAD_CI",
+      "change": "Only canonical_v1's DECLARE line gains two invocation-local variables and its first object-parent/object-child branch reuses a previously successful same-depth result after exact full JSONB text equality under explicit C. No prefilter or array/root-array change.",
+      "equivalence": [
+        "Parent-key ASCII and child-depth guards stay before lookup; top-level SQL NULL/depth guards remain exact.",
+        "First object always uses the original recursive call. Retained object/result publish only after success, and misses run the original call before replacing both.",
+        "Same parent invocation means the same child depth. Scalar and array siblings execute original validation and cannot overwrite the separately retained canonical result.",
+        "Complete serialized JSONB text under C is the reuse gate; no collation-normalized acceptance or caller assertion. One retained object/result per invocation, no cross-call state or unbounded map.",
+        "Additional retained bytes are input-sized per active invocation within existing bounded application inputs/depth. No new universal direct-helper byte cap or unchanged allocation-cost claim."
+      ],
+      "native": {
+        "insertionBytes": 2010,
+        "insertionSha256": "cbebc0294a94a13819b484b89c963dc25ac41e201449b6cb2d4d8d113a36775f",
+        "insertionGitBlob": "ba7a831e9adbd2d74fbd74e3ec405fff97e2f605",
+        "location": "Immediately before the existing R22 marker in N02",
+        "additionalDirectCalls": 18,
+        "successes": 7,
+        "failures": 11,
+        "expectedFailureCode": "P7601",
+        "transport": "Existing canonicalAt/raw JSON strings and NULLIF transport; true SQL NULL, exact numeric precision, existing connection.",
+        "oracles": "Scalar/array interleaving; A/B/A and A/B/B replacement; C-distinct text and raw safe integers; empty/deep objects; key/nonASCII/control/unsafe/fractional refusals; SQL NULL value/depth.",
+        "internalBranchReceiptInvented": false
+      },
+      "sourceWorkModel": {
+        "meaning": "Static representative queued Discovery dedup envelope only; not profiling or elapsed-time attribution",
+        "subtree": {
+          "containers": 3,
+          "keys": 23,
+          "stringLeaves": 11,
+          "numberLeaves": 5,
+          "nullLeaves": 5
+        },
+        "perHistoricalDedupRow": {
+          "canonicalEntriesRemoved": 6,
+          "keyVisitsRemoved": 46,
+          "stringGuardsReused": 22,
+          "numberGuardsReused": 10,
+          "addedJSONBTextSerializations": 8
+        },
+        "plannedLedger": {
+          "commands": 254,
+          "dedupRows": 253,
+          "dedupHistoricalValidations": 64009,
+          "canonicalEntriesRemoved": 384054,
+          "keyVisitsRemoved": 2944414
+        },
+        "singletonObjectParentTextComparisons": 0,
+        "historyStillQuadratic": true
+      },
+      "preserved": [
+        "Every historical row and independent command/journal/transition/job/node/hash/time/authority check",
+        "All29 declarations/attributes/LANGUAGE/search_path, all other SQL bytes and16 other source pins",
+        "All31 proof groups/order, 36case/72mode key matrix and all prior oracles",
+        "Full254/255/256ledger,64/65cycles,bothR9,inherited761pairs/minOwned4182,finalN15/latewriter/cleanup",
+        "All240s effects+60s cleanup/300s overall and existing connection/lane/resource bounds",
+        "Browser source and complete mandatory lifecycle job"
+      ],
+      "primaryPostgresRef": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "primarySourceBlobs": {
+        "src/backend/utils/adt/jsonb.c": "cf43c3f2ded19aabd2a913ab914f84d6c70d3afc",
+        "src/backend/utils/adt/jsonb_util.c": "9cc95b773dbf070123a657194c95d321ea05272d"
+      },
+      "primarySourceMeaning": "JSONB text output uses an iterator loop; child iteration does not recursively expand the C stack in one call. This resolves the proposed new depth-stack error concern, not allocation or timing uncertainty.",
+      "limitations": [
+        "No current project/compiler/SQL/native execution",
+        "Extra serialization/copy/comparison costs remain; no measured speedup or sufficient budget margin",
+        "No server profile, causal runner/helper claim, full-cap Rule latency or Production SLO claim",
+        "Source-only reconstruction and review are not runtime or Technical-Lead PASS; full exact-head/main gates remain."
+      ],
+      "localExecution": false,
+      "hostedAccess": false,
+      "publishedByAuthor": false,
+      "technicalLeadPass": false,
+      "ready": false,
+      "merge": false,
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6770330334",
+      "investigation": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832",
+      "baselineHead": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+      "baselineTree": "95046b7d80b9d7e44d01c9a8a15b187577303c76",
+      "changedSources": [
+        {
+          "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+          "bytes": 139163,
+          "sha256": "81bb875daa205d087b1f9faba7f3a41fd445bec14cbbe6b7a0aea628818ef820"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+          "bytes": 177160,
+          "sha256": "d413d4de82548af38cbd7f54f226c2a72c582b4fd3e913b557793d8a3e12548c"
+        }
+      ],
+      "sourceGitBlobs": {
+        "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql": "ba65ca6be73f529bcf1a5e9dcd10985e3f8c0763",
+        "scripts/db/official-truth-v3-durable-jobs-1/native.ts": "ac42eb501c68fa3f47e57175504d055e11d764b8"
+      },
+      "sourceDigestSha256": "aae92c558a32210c6f86d3140e00798fd6a36c5f942a9b4a8d9322ddc8a407ba"
     }
   },
   "executedNonNativeChecks": [
@@ -1868,7 +1997,9 @@
       "executedForR24": false,
       "r24Applicability": "Historical author result only; no R24 local project check was executed.",
       "executedForR25": false,
-      "r25Applicability": "Historical author result only; no R25 local project check was executed."
+      "r25Applicability": "Historical author result only; no R25 local project check was executed.",
+      "executedForR26": false,
+      "r26Applicability": "Historical author result only; no R26 local project check was executed."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -1911,7 +2042,9 @@
       "executedForR24": false,
       "r24Applicability": "Historical author result only; no R24 local project check was executed.",
       "executedForR25": false,
-      "r25Applicability": "Historical author result only; no R25 local project check was executed."
+      "r25Applicability": "Historical author result only; no R25 local project check was executed.",
+      "executedForR26": false,
+      "r26Applicability": "Historical author result only; no R26 local project check was executed."
     },
     {
       "name": "targeted ESLint",
@@ -1949,14 +2082,16 @@
       "executedForR24": false,
       "r24Applicability": "Historical author result only; no R24 local project check was executed.",
       "executedForR25": false,
-      "r25Applicability": "Historical author result only; no R25 local project check was executed."
+      "r25Applicability": "Historical author result only; no R25 local project check was executed.",
+      "executedForR26": false,
+      "r26Applicability": "Historical author result only; no R26 local project check was executed."
     }
   ],
   "coverageMatrix": [
     {
       "id": "U01",
       "requirement": "Closed contract, all seventeen predicate families, strict shape/numeric/JSON admission",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -1980,7 +2115,7 @@
         "Duplicate status members, accessor rows, extra fields and negative-zero metadata rejected; only four JSON whitespace characters admitted.",
         "Raw Unicode/trim aliases normalize at JS edge; cycles/getters and excessive nesting/cardinality refuse. Native direct-entry checks are N02."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2100,12 +2235,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U02",
       "requirement": "Full identity and support stripping after actual S0 validation",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -2125,7 +2281,7 @@
         "Changed research reason preserves stable subject; invalid support rejects before stripping; support-stripped duplicate operands collapse on second pass.",
         "Legacy/revision-2 and unresolved variants are included in finite identity vectors."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2245,12 +2401,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U03",
       "requirement": "Immutable command and original claim/replay binding",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -2274,7 +2451,7 @@
         "START positive reply must bind original leased record and exact claim duration.",
         "Generic queue fail confirmation/CAS/post-CAS read uses retained immutable command; persistent replay/collision tests are N03/N09."
       ],
-      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2394,12 +2571,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U04",
       "requirement": "Whole-original/whole-batch D01 admission and bounded wire",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -2427,7 +2625,7 @@
         "Sixteen-original success preserves bytes, performs sixteen captures/reserves/finishes and48 reads within256 admissions.",
         "18.0/18e0/1.8e1 originals retain semantic compatibility; source-derived maximum160772 bytes is below262144. Native wire/row and actual persistence tests remain N02/N08."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2638,12 +2836,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U05",
       "requirement": "MA1 custody, monotone deadlines and closed private outward surface",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
@@ -2671,7 +2890,7 @@
         "Four owned calls retain slots through abort; joint outward object has exactly three methods and no receipt/epoch/general-SQL escape.",
         "Actual private bridge uses terminal observedAt plus remaining original Held cap and refuses delayed positive ACK."
       ],
-      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2791,12 +3010,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U06",
       "requirement": "Nested I1/worker race and actual owned drain/retired lane",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -2829,7 +3069,7 @@
         "Separate raw composition test directly observes raw integration unconfirmed while the same reserve and scope drain/finish remain pending; actual standalone MA1 plus labelled handwritten fixed bridge.",
         "No fail/complete CAS, no backoff state, no finish or late native admission; all held promises released and joined."
       ],
-      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -3040,12 +3280,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "U07",
       "requirement": "Uncertain I1 results cannot create known failure",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R25",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R26",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -3069,7 +3330,7 @@
         "Confirmed quarantine and privately owned known producer failure may produce one backoff; uncertain pre-START lookup cannot.",
         "Final failure reservation is excluded from processing terminality and retains sixteen admissions."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -3189,12 +3450,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N01",
       "requirement": "Exact fictional install and security/catalog inventory",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N01",
@@ -3210,7 +3492,7 @@
       "assertions": [
         "Independent29-function/seven-table/fourteen-guard/seven-policy inventory; fixed ownership, FORCE RLS, exact signatures/ACL/index/constraint checks; narrow runtime and denial paths; temporary catalog shadows."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "First N01 group passed41ms; later N01/N14/T02 group not reached.",
@@ -3421,12 +3703,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N02",
       "requirement": "Native canonical/direct-entry identity",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N02",
@@ -3450,9 +3753,10 @@
         "R22: 36 additive direct queries comprise three literal Discovery subjectText/jobKey oracles, six P7601 refusals, one anonymous DO with two fixed Method-before-Pair messages, and thirteen lease-time cases per kind. Exact/unequal acquiredAt paths, NULL/object/malformed/noncanonical values, expiry refusals and 900-second bounds are checked; one explicit malformed-shape case fails earlier. Prospective actual-queue bases, no journal write. Prepared, not executed.",
         "R23 adds only Record<string, unknown> on the new lease-oracle local. All 36 prepared R22 queries and every runtime expression remain; no R23 execution is claimed.",
         "R24 adds 36 fixed exact-key cases in one read-only SELECT: literal booleans and the full original-expression differential, each in default and explicit C mode. SQL NULL/JSON null, scalars, escaped/Unicode/control keys, duplicates/NULLs, lower bounds, dimensions and 32/33 selector boundaries are retained. Prepared source only; existing 36-query R22 block is unchanged.",
-        "R25 retains all 36 fixed cases/72 default+C observations, literal booleans, original-expression differential and the sole SELECT. Only the inaccurate fallback comment/two labels change; no values, assertions, query count or connection change. Default and C are selected modes, not a claim that CI uses two distinct collations. Current execution remains pending."
+        "R25 retains all 36 fixed cases/72 default+C observations, literal booleans, original-expression differential and the sole SELECT. Only the inaccurate fallback comment/two labels change; no values, assertions, query count or connection change. Default and C are selected modes, not a claim that CI uses two distinct collations. Current execution remains pending.",
+        "R26 adds exactly 18 direct canonicalAt calls on the existing connection: seven independent fixed outputs and 11 P7601 refusals. Scalar/array interleaving, A/B/A and A/B/B, C-distinct text/raw safe integers, empty/deep objects, invalid keys/nonASCII/control/unsafe/fractional numbers and true SQL NULL are covered. All older queries, 36-case/72-mode matrix and 31 groups remain. Current execution pending; no internal branch receipt is manufactured."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "First N02 group failed42501; remaining N02 assertions and N02/U04 group not proved.",
@@ -3663,12 +3967,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N03",
       "requirement": "Durable commands, exact replay and dedup",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N03",
@@ -3680,7 +4005,7 @@
         "Database-backed command envelope replay, independent semantic subjects, cycle collision and active dedup assertions.",
         "R18: unused Rule age68 and coherent Discovery CH-to-SE each start with actual absent probe and two real initial/dedup commits. Identical malformed current/expected/next refuses prior validation; distinct valid forged next refuses with unchanged persisted state. No positive journal seeding. Prepared source, unexecuted."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3849,12 +4174,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N04",
       "requirement": "One original START winner, ACK uncertainty and restart",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -3880,7 +4226,7 @@
       "assertions": [
         "Two actual native starts contend after preflight, one acknowledged winner; older active start blocks new claim; process crash and lost START ACK do not create a second producer permit."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4133,12 +4479,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N05",
       "requirement": "All older unknown and finite history/ledger caps",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -4161,7 +4528,7 @@
         "R17: genuine Discovery CH-to-IS and CH-to-NO histories, distinct from each other/prior CH-to-AQ; actual absent probes precede first writes. All actual 254/255/256 and 64/65 boundaries, full retained history, original credit/token/fence, unchanged-state and pointer-corruption assertions remain. Prepared source, unexecuted.",
         "R18: existing real 254/255/256 and 64/65 proofs keep every command/start/credit/fence/state/pointer assertion. Two constant-size progress records add finite boundary, zero-based indices, invocation/resolution/commit/reservation counts and capped aggregate client-await durations, without changing errors or budgets. Prepared source, unexecuted."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. Actual-main ledger had 256 acknowledged commits/one START; cycles had 103 acknowledged commands/34 STARTs with next DB outcome UNKNOWN. No full-cap Rule latency, causal speedup, reliable margin or Production SLO claim. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. Actual-main ledger had 256 acknowledged commits/one START; cycles had 103 acknowledged commands/34 STARTs with next DB outcome UNKNOWN. No full-cap Rule latency, causal speedup, reliable margin or Production SLO claim. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4414,12 +4781,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N06",
       "requirement": "Preflight/start contention and independent progress",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -4435,7 +4823,7 @@
       "assertions": [
         "Real competing native starts and actual row/advisory blocking; losing claim cannot change attempts/revision; separate subject progresses while original producer remains active."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4646,12 +5034,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N07",
       "requirement": "Actual Rule S1/I1/PREPARED/completion/E1 path",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N07",
@@ -4669,7 +5078,7 @@
         "R15: coherent CH/DE/FR citizenship/passport contexts preserve age 18 and the three raw numeric spellings; inconsistent DE/FR variants explicitly reject; actual contextKey/jobKey sets must each have cardinality 3. Original-byte/prepared/completed/succeeded assertions remain. Prepared source, not executed.",
         "R16: actual raw S1 bridge reply must equal decoded completion; application DTO explicitly refuses P7604; both revision cases consume the raw reply with bounded labels and clone it for all four existing negatives; final store.open equality remains. Prepared source, not executed."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4880,12 +5289,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N08",
       "requirement": "Sixteen persisted originals and whole-batch admission",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N08",
@@ -4906,7 +5336,7 @@
       "assertions": [
         "Sixteen actual persisted originals complete within fixed admission bounds and reopen later; duplicate/missing final member refuses before first S1 effect. Separate nested finish ACK-loss witness covers uncertainty, not a claim of a distinct16th-write-loss scenario."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -5117,12 +5547,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N09",
       "requirement": "Fresh-process PREPARED/completed recovery and claim fidelity",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -5138,7 +5589,7 @@
       "assertions": [
         "Process crash and separate fresh-process recovery of prepared/completed lost acknowledgement with original claim, no producer reuse; changed claim/revoked epoch recovery refusal assertions."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -5349,12 +5800,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N10",
       "requirement": "Known failure versus unknown callback/native outcome",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06/N10",
@@ -5385,7 +5857,7 @@
       "assertions": [
         "Active producer/pending I1 evidence or lost START/finish acknowledgement preserves unknown; pre-S1 D01 failure may settle privately; actual final command/disposition ledger boundary is atomic. Source proof is separate from a measured native result."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -5638,12 +6110,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N11",
       "requirement": "Real waits followed by final authority/clock",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N11",
@@ -5674,7 +6167,7 @@
       "assertions": [
         "PID+backend_start+holder+relation observed for MA1, subject, advisory, table, S1 operation, unique and immediate FK waits; due/lease checks, revoke and deferred-trigger drift; full staged state unchanged on refusal."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -6011,12 +6504,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N12",
       "requirement": "Acquisition/cancellation/ACK and nested executor terminal ownership",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N12",
@@ -6042,7 +6556,7 @@
       "assertions": [
         "Four held acquisitions refuse fifth; control failure and intentional child crash retain cleanup failures. New natural I1 timeout and explicit caller-abort reserve cases prove actual wait before cancellation, backend absence while same executor remains held, all four outer lanes, no terminal effects, exact S1 operations/reservations/completions unchanged, then same-operation join and no late admissions."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -6337,12 +6851,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N13",
       "requirement": "Legacy original preserved but ineligible for M04 preparation",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N13",
@@ -6353,7 +6888,7 @@
       "assertions": [
         "Actual unchanged S1 accepts/reopens retained raw-alias original byte-for-byte; M04 full consumer refuses it; fresh privately owned D01 failure occurs before any new S1 call."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -6522,12 +7057,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N14",
       "requirement": "Creator defaults, prerequisite drift and actual dependencies",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N14",
@@ -6548,7 +7104,7 @@
       "assertions": [
         "Finite creator ACL, role/membership/owner/body/language/ACL drift matrix refuses before creation with exact catalog restoration. Empty predecessor histories and clean reader membership reach actual2BP01 dependencies; wrong errors are not accepted."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -6786,12 +7342,33 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     },
     {
       "id": "N15",
       "requirement": "Guarded rollback with nonempty and concurrent late history",
-      "execution": "R25_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R26_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N15",
@@ -6812,7 +7389,7 @@
       "assertions": [
         "Any existing retained history blocks teardown; exact empty companion-first teardown preserves predecessors/defaults despite shadows; actual table-lock late writer forces post-wait recheck and refusal."
       ],
-      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. R23 is unexecuted. Published 54c4 Typecheck failed before Tests/M04; no new native or cleanup observation exists. R24 remains unexecuted. Historical ca6f ordered receipt proves 24 groups, both R9 and full ledger; cycle failed, later groups not reached. This is not a current-head or per-row PASS. R25 remains unexecuted. Historical 1aecc ordered receipt proves 23 groups and both R9; ledger failed, later groups not reached. No current-head or per-row PASS is inferred. R26 remains unexecuted. Historical 45be proves 23 ordered groups and both R9, then ledger deadline failure; lifecycle separately stopped at version preflight. No current-head or per-row PASS is inferred.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -7050,6 +7627,27 @@
         "r9WitnessesPassed": 2,
         "receiptIsOrderedGroupEvidenceOnly": true,
         "currentR25Executed": false
+      },
+      "executedForR26": false,
+      "historical45beObservation": {
+        "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+        "runId": 42830921607,
+        "completedOrderedGroups": 23,
+        "totalOrderedGroups": 31,
+        "failedOrder": 24,
+        "failedId": "N05/A03",
+        "notReachedOrders": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "r9WitnessesPassed": 2,
+        "receiptIsOrderedGroupEvidenceOnly": true,
+        "currentR26Executed": false
       }
     }
   ],
@@ -7211,6 +7809,11 @@
     }
   ],
   "evidencePrecision": [
+    "R26 retains at most one successfully validated object/result per canonical invocation, only in the object-parent/object-child branch. Parent-key and child-depth guards remain before lookup; exact full JSONB text under C gates reuse; first object and every miss execute the original recursive validator.",
+    "Scalar and array siblings keep all original validations and cannot overwrite the retained canonical result. No prefilter, cross-call state, marker or lookup map is added. Eighteen fixed direct N02 calls are the only Native addition; all existing proof groups and bounds remain.",
+    "Source model only: two identical next-job traversals per deduplicated Discovery history row avoid 6 recursive entries/46 key visits while adding 8 JSONB text serializations; singleton-object parents add none. History stays quadratic. No server profile, measured speedup, sufficient margin or causal runner/helper claim.",
+    "Actual 45be completed 23 groups/both R9 before ledger deadline failure; all 27068 effects and 4242 connections settled/closed. Separate lifecycle Chrome-version preflight timed out before fixture/browser creation, underlying cause UNKNOWN. Full unchanged lifecycle proof remains mandatory.",
+    "All 15 prior failure objects, complete genuine R21 success, corrected separate R22 terminal metadata and Markdown tails remain exact. Failure 16 contains the full actual R25 receipt and distinct lifecycle finding; current R26 execution/PASS/Ready/merge remain false.",
     "R25 removes the R24 selection and uses two ARRAY subqueries with the original initial guards and safe nonobject CASE. Selected k stays uncollated, C stays only in ORDER BY, and NULLs/duplicates/flattening/lower bounds/empty-array normalization preserve the original result.",
     "Existing 36 cases/72 mode observations and all older oracles remain. Only one comment and two labels change. Default/C modes do not imply different effective CI collations; nondeterministic collation coverage remains source reasoning.",
     "Actual 1aecc passed Typecheck/Lint and 23 groups including N02/both R9, then hit the global ledger deadline. All 26776 effects and 4242 connections settled/closed. Aggregate timings do not establish R24 helper regression, cause or measured optimization speedup.",
@@ -7296,9 +7899,9 @@
     }
   ],
   "nextSteps": [
-    "Root independently reconstructs/reviews the exact SQL-body and three Native text replacements plus four author files on expected 1aecc; same-session corrections if needed.",
-    "Root publishes with expected-head lease and verifies full blobs/tree/ancestry, then requires complete unchanged new-head CI/31native/Typecheck/Lint/hygiene/build, Preview/reviews/rules and Owner gates.",
-    "Only Root may PASS/Ready/merge after full acceptance; mandatory actual-main CI/native/Production must pass before closure. No older-green gate reuse or unchanged-known-bad rerun.",
+    "Root independently reconstructs/reviews the two SQL hunks, sole 2010-byte Native insertion and four author files on expected45be; immediate corrections stay in this same author/session.",
+    "Root publishes with expected-head lease and verifies full blobs/tree/ancestry. Complete unchanged new-head CI must pass all31native groups, Typecheck/Lint/hygiene/build and the actual lifecycle proof, plus Preview/reviews/rules and Owner gates.",
+    "Only Root may PASS/Ready/merge after full acceptance. Mandatory actual-main CI/native/Production must pass before closure. No older-green reuse, unchanged-known-bad rerun, Chrome timeout alteration or lifecycle skip.",
     "All Owner, SQL UNAPPLIED, Method/#1139, forbidden #917, privacy/hosted/credential/resource gates remain. No author execution/publication/Ready/merge or automatic next slice."
   ],
   "holdState": {
@@ -7315,12 +7918,12 @@
     "activation": false,
     "ready": false,
     "merged": false,
-    "currentScope": "R25 unexecuted bounded ARRAY-constructor correction on existing Draft #1182; origin #1178 remains historically merged"
+    "currentScope": "R26 unexecuted invocation-local canonical object reuse on existing Draft #1182; origin #1178 remains historically merged"
   },
-  "disposition": "AUTHOR_STOP_R25_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R26_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "ca6fcb8930e68e394156d67351ee087c4cddb180",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250"
+    "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908"
   },
   "historicalCIRuns": [
     {
@@ -10141,6 +10744,336 @@
         "publication": "Root-prepared V16 relative path; not claimed present at historical head 1aecc."
       },
       "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_BUDGET_FAILURE_NO_CURRENT_R25_PASS"
+    },
+    {
+      "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+      "tree": "95046b7d80b9d7e44d01c9a8a15b187577303c76",
+      "runId": 42830921607,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42830921607",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "runUpdatedAt": "2026-11-10T14:25:57Z",
+      "repositoryTerminalObservedByRootAt": "2026-11-10T14:24:33Z",
+      "allTerminalReportedAt": "2026-11-10T14:27:12Z",
+      "repositoryVerificationJobId": 129880385645,
+      "repositoryVerificationStatus": "completed",
+      "repositoryVerificationConclusion": "failure",
+      "aggregateJobId": 129891193431,
+      "aggregateConclusion": "failure",
+      "allJobs": {
+        "total": 8,
+        "terminal": 8,
+        "success": 5,
+        "failure": 3
+      },
+      "companions": "Five SUCCESS; lifecycle FAILURE separately recorded below. Auth metadata only.",
+      "source": "Root observed terminal Repository metadata before reading its complete non-Auth log and separately verified the lifecycle failure. Author read only the persisted sanitized dispatch/receipt and lifecycle diagnosis, never logs.",
+      "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832",
+      "fullLogSha256": "2ce8011a95f02a1821e202d9dd067c97bc0ba41e019ba9df2f26863aeffd6102",
+      "fullLogBytes": 4251944,
+      "steps": {
+        "typecheck": "success",
+        "lint": "success",
+        "tests": "failure",
+        "hygiene": "skipped",
+        "build": "skipped"
+      },
+      "core": {
+        "tests": 8682,
+        "passed": 8678,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0,
+        "milliseconds": 834133.467501,
+        "skipMeaning": "Two inherited layout skips, no M04 skip"
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240365,
+        "cleanupMilliseconds": 29,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27068,
+          "settled": 27068,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 34
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1742
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2173
+          },
+          {
+            "id": "N07",
+            "milliseconds": 10662
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 1006
+          },
+          {
+            "id": "N08",
+            "milliseconds": 13465
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3689
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 1393
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2964
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2946
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 3055
+          },
+          {
+            "id": "N09",
+            "milliseconds": 19645
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 7531
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2311
+          },
+          {
+            "id": "N11",
+            "milliseconds": 182
+          },
+          {
+            "id": "N12",
+            "milliseconds": 161
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 5089
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 14635
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 591
+          },
+          {
+            "id": "N11",
+            "milliseconds": 3134
+          },
+          {
+            "id": "N11",
+            "milliseconds": 295
+          },
+          {
+            "id": "N11",
+            "milliseconds": 342
+          },
+          {
+            "id": "N13",
+            "milliseconds": 3348
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25472",
+              "birth": "2026-11-10 14:19:26.377695+00"
+            },
+            "control": {
+              "pid": "25470",
+              "birth": "2026-11-10 14:19:26.372734+00"
+            },
+            "holder": {
+              "pid": "25129",
+              "birth": "2026-11-10 14:19:22.08803+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26226",
+              "birth": "2026-11-10 14:19:36.055987+00"
+            },
+            "control": {
+              "pid": "26225",
+              "birth": "2026-11-10 14:19:36.05024+00"
+            },
+            "holder": {
+              "pid": "25863",
+              "birth": "2026-11-10 14:19:31.493458+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05/A03",
+          "boundary": "ledger_fill",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 237,
+            "lastCompletedIndex": 236,
+            "commandRequestsStarted": 238,
+            "commandRequestsCompleted": 238,
+            "commandRequestMilliseconds": 489,
+            "fixedCallsStarted": 239,
+            "fixedCallsCompleted": 238,
+            "fixedCallMilliseconds": 138598,
+            "commandCallsStarted": 238,
+            "commandCallsCompleted": 237,
+            "commandCommits": 237,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          },
+          "cycles": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_24:N05/A03",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptCompactBytes": 3767,
+      "nativeReceiptCompactSha256": "71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299",
+      "candidateSha256": "4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa",
+      "nativeSourceSha256": "ae583470991dd991e1775af845cd8dfe71c878770339adca00545e5e248b922a",
+      "sourceDigestSha256": "7617013b8a5f8fd83e59d8ec577cd2e9aacfb51849850944fae1e3e6744b0d6d",
+      "reportedFailure": {
+        "phase": "proof_24:N05/A03",
+        "groupOrder": 24,
+        "groupId": "N05/A03",
+        "groupMilliseconds": 138860.852048,
+        "message": "M04 240s effect budget exceeded",
+        "nextDatabaseOutcome": "UNKNOWN"
+      },
+      "completedGroups": 23,
+      "first23Milliseconds": 100393,
+      "diagnosis": "Actual R25 Typecheck/Lint, N02 including 36 cases/72 modes and both R9 passed. Ledger reached the global 240s deadline at zero-based lastStarted237/lastCompleted236 after 237 acknowledged commands; no START/cycles. These are client/fixture observations, not helper attribution, runner causality or a measured optimization gain.",
+      "lifecycle": {
+        "jobId": 129880386234,
+        "status": "completed",
+        "conclusion": "failure",
+        "source": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769782473",
+        "fullLogBytes": 163043,
+        "fullLogSha256": "41d1323fb876ac1686e9c933364b7f6f426217cb126138a989c5f15c3413e6c6",
+        "tests": {
+          "total": 4,
+          "passed": 3,
+          "failed": 1,
+          "cancelled": 0,
+          "skipped": 0,
+          "milliseconds": 382904.746
+        },
+        "failedTest": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+        "failedTestMilliseconds": 5011.436339,
+        "sourcePath": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+        "sourceBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+        "sourceLine": 55,
+        "operation": "execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:5_000})",
+        "error": "spawnSync /usr/bin/google-chrome ETIMEDOUT",
+        "preflightMilliseconds": 5000,
+        "mountedLifecycleAssertionsReached": false,
+        "underlyingTimeoutCause": "UNKNOWN",
+        "browserSourceChanged": false,
+        "limitation": "Failure occurred before bundle/cluster/fixture/browser creation; no lifecycle PASS, flaky/runner attribution, timeout increase, skip or tautological version comparison. Complete unchanged lifecycle proof is mandatory on the genuinely changed new head.",
+        "failedTestFixtureCreated": false,
+        "failedTestBrowserLaunched": false
+      },
+      "safeExcerpt": {
+        "path": "docs/official-truth-product-v3/M04_RECOVERY_R26_NATIVE_FAILURE_V17.txt",
+        "bytes": 10385,
+        "sha256": "6ab2683e2c19a5f586ae8b6cdf0a56debbe6be14808efe6918778d752d6df0f9",
+        "gitBlob": "ae0766eec18667ff2fe9820d89660f314f5b263b",
+        "publication": "Root-prepared V17 relative path, not claimed present at historical head 45be."
+      },
+      "disposition": "CONFIRMED_TERMINAL_NATIVE_LEDGER_AND_SEPARATE_LIFECYCLE_PREFLIGHT_FAILURE_NO_CURRENT_R26_PASS"
     }
   ],
   "environment": "EXACT_GITHUB_FILE_READS_AND_IN_SESSION_TEXT_DATA_HASH_ONLY",
@@ -10201,6 +11134,10 @@
     {
       "head": "ca6fcb8930e68e394156d67351ee087c4cddb180",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6767645250"
+    },
+    {
+      "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769130908"
     }
   ],
   "newLocalExecutionForR13": false,
@@ -10209,8 +11146,8 @@
   "newLocalExecutionForR16": false,
   "newLocalExecutionForR17": false,
   "historicalNativeProgress": {
-    "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-    "runId": 42822302417,
+    "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+    "runId": 42830921607,
     "completedOrderedGroups": 23,
     "totalOrderedGroups": 31,
     "failedOrder": 24,
@@ -10226,7 +11163,7 @@
     ],
     "r9WitnessesPassed": 2,
     "receiptIsOrderedGroupEvidenceOnly": true,
-    "currentR25Executed": false,
+    "currentR26Executed": false,
     "quotaProgress": {
       "currentGroup": "N05/A03",
       "boundary": "ledger_fill",
@@ -10234,17 +11171,17 @@
       "millisecondsCap": 300000,
       "timingMeaning": "client await durations including construction/transport; not server statement profiling",
       "ledger": {
-        "lastStartedIndex": 228,
-        "lastCompletedIndex": 227,
-        "commandRequestsStarted": 229,
-        "commandRequestsCompleted": 229,
-        "commandRequestMilliseconds": 491,
-        "fixedCallsStarted": 230,
-        "fixedCallsCompleted": 229,
-        "fixedCallMilliseconds": 136500,
-        "commandCallsStarted": 229,
-        "commandCallsCompleted": 228,
-        "commandCommits": 228,
+        "lastStartedIndex": 237,
+        "lastCompletedIndex": 236,
+        "commandRequestsStarted": 238,
+        "commandRequestsCompleted": 238,
+        "commandRequestMilliseconds": 489,
+        "fixedCallsStarted": 239,
+        "fixedCallsCompleted": 238,
+        "fixedCallMilliseconds": 138598,
+        "commandCallsStarted": 238,
+        "commandCallsCompleted": 237,
+        "commandCommits": 237,
         "startCallsStarted": 0,
         "startCallsCompleted": 0,
         "startReservations": 0
@@ -10266,7 +11203,7 @@
         "startReservations": 0
       }
     },
-    "acknowledgedCommandCommits": 228,
+    "acknowledgedCommandCommits": 237,
     "unfinishedCallDatabaseOutcome": "UNKNOWN",
     "fullNativePass": false
   },
@@ -10606,6 +11543,68 @@
         }
       },
       "acknowledgedCycleCommandCommits": 113,
+      "unfinishedCallDatabaseOutcome": "UNKNOWN",
+      "fullNativePass": false
+    },
+    {
+      "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
+      "runId": 42822302417,
+      "completedOrderedGroups": 23,
+      "totalOrderedGroups": 31,
+      "failedOrder": 24,
+      "failedId": "N05/A03",
+      "notReachedOrders": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "r9WitnessesPassed": 2,
+      "receiptIsOrderedGroupEvidenceOnly": true,
+      "currentR25Executed": false,
+      "quotaProgress": {
+        "currentGroup": "N05/A03",
+        "boundary": "ledger_fill",
+        "indexBase": 0,
+        "millisecondsCap": 300000,
+        "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+        "ledger": {
+          "lastStartedIndex": 228,
+          "lastCompletedIndex": 227,
+          "commandRequestsStarted": 229,
+          "commandRequestsCompleted": 229,
+          "commandRequestMilliseconds": 491,
+          "fixedCallsStarted": 230,
+          "fixedCallsCompleted": 229,
+          "fixedCallMilliseconds": 136500,
+          "commandCallsStarted": 229,
+          "commandCallsCompleted": 228,
+          "commandCommits": 228,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        },
+        "cycles": {
+          "lastStartedIndex": null,
+          "lastCompletedIndex": null,
+          "commandRequestsStarted": 0,
+          "commandRequestsCompleted": 0,
+          "commandRequestMilliseconds": 0,
+          "fixedCallsStarted": 0,
+          "fixedCallsCompleted": 0,
+          "fixedCallMilliseconds": 0,
+          "commandCallsStarted": 0,
+          "commandCallsCompleted": 0,
+          "commandCommits": 0,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        }
+      },
+      "acknowledgedCommandCommits": 228,
       "unfinishedCallDatabaseOutcome": "UNKNOWN",
       "fullNativePass": false
     }
@@ -10974,26 +11973,56 @@
   "typecheckPass": false,
   "newLocalExecutionForR23": false,
   "latestCIExecution": {
-    "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
-    "runId": 42822302417,
+    "head": "45be21e57988d91dca3ee0758712f3ef5f39d744",
+    "runId": 42830921607,
     "phase": "proof_24:N05/A03",
     "typecheckPassed": true,
     "nativeExecuted": true,
     "nativePass": false,
     "completedOrderedGroups": 23,
-    "nativeReceiptSource": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6768973326",
-    "nativeReceiptCompactSha256": "7676783e6c3abd4cbf8499c4568c53f0176dd9473f3e7a91646ff93f9aaea67d",
+    "nativeReceiptSource": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769908832",
+    "nativeReceiptCompactSha256": "71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299",
     "cleanup": {
-      "started": 26776,
-      "settled": 26776,
+      "started": 27068,
+      "settled": 27068,
       "pending": 0,
       "connections": 4242,
       "closed": 4242,
       "stoppedClusters": 1,
-      "milliseconds": 38,
+      "milliseconds": 29,
       "errors": 0
     },
-    "limit": "Historical 1aecc execution only; current R25 fields and all 22 rows remain false."
+    "lifecycle": {
+      "jobId": 129880386234,
+      "status": "completed",
+      "conclusion": "failure",
+      "source": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6769782473",
+      "fullLogBytes": 163043,
+      "fullLogSha256": "41d1323fb876ac1686e9c933364b7f6f426217cb126138a989c5f15c3413e6c6",
+      "tests": {
+        "total": 4,
+        "passed": 3,
+        "failed": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "milliseconds": 382904.746
+      },
+      "failedTest": "Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle",
+      "failedTestMilliseconds": 5011.436339,
+      "sourcePath": "scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts",
+      "sourceBlob": "b79caba69dc741a818367b501dd33df51ce24901",
+      "sourceLine": 55,
+      "operation": "execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:5_000})",
+      "error": "spawnSync /usr/bin/google-chrome ETIMEDOUT",
+      "preflightMilliseconds": 5000,
+      "mountedLifecycleAssertionsReached": false,
+      "underlyingTimeoutCause": "UNKNOWN",
+      "browserSourceChanged": false,
+      "limitation": "Failure occurred before bundle/cluster/fixture/browser creation; no lifecycle PASS, flaky/runner attribution, timeout increase, skip or tautological version comparison. Complete unchanged lifecycle proof is mandatory on the genuinely changed new head.",
+      "failedTestFixtureCreated": false,
+      "failedTestBrowserLaunched": false
+    },
+    "limit": "Historical 45be execution only; current R26 fields and all 22 rows remain false."
   },
   "laterHistoricalCIMetadata": [
     {
@@ -11049,7 +12078,30 @@
         "errors": 0
       },
       "limit": "Historical ca6f execution only; current R24 fields and all 22 rows remain false."
+    },
+    {
+      "head": "1aecc862c4b2710bb12c900195259ee25eb6f70d",
+      "runId": 42822302417,
+      "phase": "proof_24:N05/A03",
+      "typecheckPassed": true,
+      "nativeExecuted": true,
+      "nativePass": false,
+      "completedOrderedGroups": 23,
+      "nativeReceiptSource": "https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6768973326",
+      "nativeReceiptCompactSha256": "7676783e6c3abd4cbf8499c4568c53f0176dd9473f3e7a91646ff93f9aaea67d",
+      "cleanup": {
+        "started": 26776,
+        "settled": 26776,
+        "pending": 0,
+        "connections": 4242,
+        "closed": 4242,
+        "stoppedClusters": 1,
+        "milliseconds": 38,
+        "errors": 0
+      },
+      "limit": "Historical 1aecc execution only; current R25 fields and all 22 rows remain false."
     }
   ],
-  "newLocalExecutionForR25": false
+  "newLocalExecutionForR25": false,
+  "newLocalExecutionForR26": false
 }

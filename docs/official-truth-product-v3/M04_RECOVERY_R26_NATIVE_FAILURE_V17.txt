@@ -1,0 +1,92 @@
+M04 R26 / Recovery V17 — actual R25 native and separate lifecycle failure
+Prepared from complete terminal non-Auth logs independently read by Root.
+Repository: Jetnity/jetnity; Draft PR1182.
+Head: 45be21e57988d91dca3ee0758712f3ef5f39d744
+Tree: 95046b7d80b9d7e44d01c9a8a15b187577303c76
+CI: https://github.com/Jetnity/jetnity/actions/runs/42830921607
+Attempt1 / pull_request / terminal FAILURE; all8jobs complete.
+Repository verification129880385645 / lifecycle129880386234 / aggregate129891193431 FAILURE; other5 SUCCESS.
+Root Repository-terminal observation: 2026-11-10 14:24:33 UTC
+Root full-run-terminal observation: 2026-11-10 14:27:12 UTC
+Full Repository log: 4251944 UTF-8 bytes; SHA256 2ce8011a95f02a1821e202d9dd067c97bc0ba41e019ba9df2f26863aeffd6102
+Compact M04 receipt: 3767 bytes; SHA256 71fd08178097253737823af68d19fa887b973ccd126c50d45950ad50b39d5299
+Full lifecycle log: 163043 bytes; SHA256 41d1323fb876ac1686e9c933364b7f6f426217cb126138a989c5f15c3413e6c6
+Line numbers below are one-based lines of each original full decoded log.
+No current R26 execution or acceptance. Underlying browser preflight timeout cause UNKNOWN.
+Following unfinished M04 fixture-database outcome UNKNOWN.
+
+=== Repository: failed group and enclosing mandatory test ===
+33872: 2026-11-10T14:22:03.3416061Z     not ok 24 - N05/A03 actual 254/255/256 ledger boundary preserves the sole original terminal credit
+33873: 2026-11-10T14:22:03.3416946Z       ---
+33874: 2026-11-10T14:22:03.3417425Z       duration_ms: 138860.852048
+33875: 2026-11-10T14:22:03.3417941Z       type: 'test'
+33876: 2026-11-10T14:22:03.3419106Z       location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:6219'
+33877: 2026-11-10T14:22:03.3420191Z       failureType: 'testCodeFailure'
+33878: 2026-11-10T14:22:03.3420831Z       error: 'M04 240s effect budget exceeded'
+33879: 2026-11-10T14:22:03.3421463Z       code: 'ERR_TEST_FAILURE'
+33880: 2026-11-10T14:22:03.3421980Z       stack: |-
+33881: 2026-11-10T14:22:03.3423045Z         Timeout.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:457:52)
+33882: 2026-11-10T14:22:03.3424212Z         listOnTimeout (node:internal/timers:585:17)
+33883: 2026-11-10T14:22:03.3425167Z         process.processTimers (node:internal/timers:521:7)
+33884: 2026-11-10T14:22:03.3425887Z       ...
+33885: 2026-11-10T14:22:03.3426329Z     1..24
+33886: 2026-11-10T14:22:03.3427410Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+33887: 2026-11-10T14:22:03.3428598Z   ---
+33888: 2026-11-10T14:22:03.3429058Z   duration_ms: 240369.710189
+33889: 2026-11-10T14:22:03.3429560Z   type: 'test'
+33890: 2026-11-10T14:22:03.3430519Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+33891: 2026-11-10T14:22:03.3431558Z   failureType: 'testCodeFailure'
+33892: 2026-11-10T14:22:03.3432227Z   error: 'M04 native proof or terminal cleanup failed'
+33893: 2026-11-10T14:22:03.3432866Z   code: 'ERR_TEST_FAILURE'
+33894: 2026-11-10T14:22:03.3433363Z   name: 'AggregateError'
+33895: 2026-11-10T14:22:03.3433839Z   stack: |-
+33896: 2026-11-10T14:22:03.3434883Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:1988:41)
+33897: 2026-11-10T14:22:03.3436284Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+33898: 2026-11-10T14:22:03.3437390Z     async Test.run (node:internal/test_runner/test:1054:7)
+33899: 2026-11-10T14:22:03.3438531Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+
+=== Repository: exact compact M04 receipt ===
+33901: 2026-11-10T14:22:03.3456284Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"4861f083bffcc5fb662128bff01e687662d62f5e8e5bf6af3512efbaad8616aa","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":240365,"cleanupMilliseconds":29,"clusters":1,"childProcesses":0,"lifetime":{"started":27068,"settled":27068,"pending":0,"connections":4242,"closed":4242,"stoppedClusters":1},"groups":[{"id":"N01","milliseconds":34},{"id":"N02","milliseconds":1742},{"id":"N03","milliseconds":2173},{"id":"N07","milliseconds":10662},{"id":"N07/R4","milliseconds":1006},{"id":"N08","milliseconds":13465},{"id":"N08/U04","milliseconds":3689},{"id":"N02/U04","milliseconds":1393},{"id":"N04/N06","milliseconds":2964},{"id":"N04/N06/N10","milliseconds":2946},{"id":"N05/N09","milliseconds":3055},{"id":"N09","milliseconds":19645},{"id":"N10/U06","milliseconds":7531},{"id":"N11","milliseconds":2311},{"id":"N11","milliseconds":182},{"id":"N12","milliseconds":161},{"id":"N04/N10/N12","milliseconds":5089},{"id":"N12/U06/R9","milliseconds":14635},{"id":"N12/R7-03","milliseconds":591},{"id":"N11","milliseconds":3134},{"id":"N11","milliseconds":295},{"id":"N11","milliseconds":342},{"id":"N13","milliseconds":3348}],"nestedRaceWitnesses":[{"boundary":"i1_timeout","operation":"reserve_v1","target":{"pid":"25472","birth":"2026-11-10 14:19:26.377695+00"},"control":{"pid":"25470","birth":"2026-11-10 14:19:26.372734+00"},"holder":{"pid":"25129","birth":"2026-11-10 14:19:22.08803+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":true,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"worker_only","nativeAdmissionsAfterDrain":45},{"boundary":"worker_caller_abort","operation":"reserve_v1","target":{"pid":"26226","birth":"2026-11-10 14:19:36.055987+00"},"control":{"pid":"26225","birth":"2026-11-10 14:19:36.05024+00"},"holder":{"pid":"25863","birth":"2026-11-10 14:19:31.493458+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":false,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"unconfirmed","nativeAdmissionsAfterDrain":44}],"quotaProgress":{"currentGroup":"N05/A03","boundary":"ledger_fill","indexBase":0,"millisecondsCap":300000,"timingMeaning":"client await durations including construction/transport; not server statement profiling","ledger":{"lastStartedIndex":237,"lastCompletedIndex":236,"commandRequestsStarted":238,"commandRequestsCompleted":238,"commandRequestMilliseconds":489,"fixedCallsStarted":239,"fixedCallsCompleted":238,"fixedCallMilliseconds":138598,"commandCallsStarted":238,"commandCallsCompleted":237,"commandCommits":237,"startCallsStarted":0,"startCallsCompleted":0,"startReservations":0},"cycles":{"lastStartedIndex":null,"lastCompletedIndex":null,"commandRequestsStarted":0,"commandRequestsCompleted":0,"commandRequestMilliseconds":0,"fixedCallsStarted":0,"fixedCallsCompleted":0,"fixedCallMilliseconds":0,"commandCallsStarted":0,"commandCallsCompleted":0,"commandCommits":0,"startCallsStarted":0,"startCallsCompleted":0,"startReservations":0}},"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":4,"maximumIntake":1,"maximumMethod":2,"m04ObserverLimit":2,"maximumM04Observers":2,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"proof_24:N05/A03","error":{"kind":"fixture","code":"unclassified_failure"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+
+=== Repository: Core footer ===
+63124: 2026-11-10T14:24:10.9602311Z # tests 8682
+63125: 2026-11-10T14:24:10.9602523Z # suites 971
+63126: 2026-11-10T14:24:10.9602732Z # pass 8678
+63127: 2026-11-10T14:24:10.9602938Z # fail 2
+63128: 2026-11-10T14:24:10.9603148Z # cancelled 0
+63129: 2026-11-10T14:24:10.9603358Z # skipped 2
+63130: 2026-11-10T14:24:10.9603555Z # todo 0
+63131: 2026-11-10T14:24:10.9603778Z # duration_ms 834133.467501
+63132: 2026-11-10T14:24:10.9607428Z ##[error]Process completed with exit code 1.
+
+=== Separate lifecycle: preflight failure before fixture/browser ===
+1128: 2026-11-10T14:09:59.6044950Z # Subtest: Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle
+1129: 2026-11-10T14:09:59.6058602Z not ok 2 - Accepted Store Trip Integration 1: actual native result through mounted Workspace lifecycle
+1130: 2026-11-10T14:09:59.6059020Z   ---
+1131: 2026-11-10T14:09:59.6059207Z   duration_ms: 5011.436339
+1132: 2026-11-10T14:09:59.6059444Z   type: 'test'
+1133: 2026-11-10T14:09:59.6060013Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts:2:882'
+1134: 2026-11-10T14:09:59.6060716Z   failureType: 'testCodeFailure'
+1135: 2026-11-10T14:09:59.6061164Z   error: 'spawnSync /usr/bin/google-chrome ETIMEDOUT'
+1136: 2026-11-10T14:09:59.6061577Z   code: 'ETIMEDOUT'
+1137: 2026-11-10T14:09:59.6061882Z   stack: |-
+1138: 2026-11-10T14:09:59.6062251Z     Object.spawnSync (node:internal/child_process:1120:20)
+1139: 2026-11-10T14:09:59.6062697Z     spawnSync (node:child_process:902:24)
+1140: 2026-11-10T14:09:59.6063131Z     execFileSync (node:child_process:945:15)
+1141: 2026-11-10T14:09:59.6064534Z     TestContext.mountedAcceptedStoreProof (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-accepted-store-trip-integration-1/browser.ts:55:23)
+1142: 2026-11-10T14:09:59.6065572Z     Test.runInAsyncScope (node:async_hooks:214:14)
+1143: 2026-11-10T14:09:59.6066086Z     Test.run (node:internal/test_runner/test:1047:25)
+1144: 2026-11-10T14:09:59.6066841Z     Test.start (node:internal/test_runner/test:944:17)
+1145: 2026-11-10T14:09:59.6067443Z     startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+1146: 2026-11-10T14:09:59.6067912Z   ...
+
+=== Separate lifecycle: totals ===
+1352: 2026-11-10T14:14:49.6174210Z # tests 4
+1353: 2026-11-10T14:14:49.6174425Z # suites 0
+1354: 2026-11-10T14:14:49.6174644Z # pass 3
+1355: 2026-11-10T14:14:49.6180904Z # fail 1
+1356: 2026-11-10T14:14:49.6181181Z # cancelled 0
+1357: 2026-11-10T14:14:49.6181467Z # skipped 0
+1358: 2026-11-10T14:14:49.6181722Z # todo 0
+1359: 2026-11-10T14:14:49.6182025Z # duration_ms 382904.746
+1360: 2026-11-10T14:14:49.6317923Z ##[error]Process completed with exit code 1.
