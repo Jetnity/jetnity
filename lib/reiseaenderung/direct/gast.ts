@@ -1,24 +1,24 @@
 import { gastreiseAendern, gastspeicherLaden, aktiveGastreiseVorpruefen } from '@/lib/trips/gastspeicher'
-import { manuellerEntwurf, vorschauKennungen } from './entwurf'
+import { vorschauKennungen } from './entwurf'
+import type { OrtBestaetigung } from '@/lib/places/aktionen'
 import { manuellSpeichern } from './speichern'
 
-export async function gastManuellSpeichern(roh: unknown) {
+export async function gastManuellSpeichern(roh: unknown, ortLesen?: (id: string, rolle: 'ziel') => Promise<OrtBestaetigung>) {
   return manuellSpeichern(roh, {
     quelle: 'guest',
+    ortLesen,
     lesen: async () => {
       const preflight = aktiveGastreiseVorpruefen()
       if (preflight.art === 'speicher_unlesbar' || preflight.art === 'ungueltig') throw new Error('Guest storage unavailable')
       return gastspeicherLaden().aktiv
     },
-    schreiben: async (expected, mutationId, basisRevision) => {
+    schreiben: async (expected, mutationId, basisRevision, operationen) => {
       // Revalidate at the synchronous boundary. No awaited work between this load and write.
       const current = gastspeicherLaden().aktiv
       if (!current || current.id !== expected.id || current.revision !== basisRevision) return { konflikt: true }
-      const request = roh as { eingabe: unknown; seed: string }
-      const parsed = manuellerEntwurf(current, request.eingabe, vorschauKennungen(request.seed))
-      if (!parsed.ok) return { konflikt: true }
+      const request = roh as { seed: string }
       gastreiseAendern({ tripId: current.id, mutationId, basisRevision,
-        operationen: parsed.operationen, kennung: vorschauKennungen(request.seed) })
+        operationen, kennung: vorschauKennungen(request.seed) })
       return { konflikt: false }
     },
   })
