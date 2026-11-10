@@ -722,6 +722,11 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         const opened = await store.open(retained.reference, signal()); assert.equal(opened.status, 'recorded')
         if (opened.status !== 'recorded') throw Error('archive read')
         assert.equal(opened.record.text, value.text)
+        const completion = opened.record.completion; assert.ok(completion, 'actual S1 completion is required for archive proof')
+        const nativeReply = result(await f.owner.query('SELECT official_v3_jobs_private.s1_read_v1($1::jsonb,$2::text,$3::integer) AS result',
+          text([JSON.stringify(retained.reference.binding), retained.reference.proposalDigest, retained.reference.bytes])))
+        assert.deepEqual(nativeReply, { status: 'recorded', record: { reference: opened.record.reference, text: opened.record.text,
+          outcome: completion.outcome, audit: completion.audit } }, 'actual raw S1 reply matches the decoded original and completion')
         const queued = await commandRequest({ action: 'enqueue', kind: 'rule_research', input: {
           context: upload.value.proposal.context, method: value.binding.method, factKind: upload.value.proposal.research.factKind,
           researchReason: upload.value.proposal.research.researchReason, operationId: ids('op3', 'archive-queue-' + index),
@@ -730,10 +735,13 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         const job = queued.body.commit.next, decisionRef = value.completion.audit.decisionRef!
         const workerResult = { kind: 'rule_research', jobId: job.jobId, operationId: job.operationId, jobKey: queued.body.commit.jobKey,
           preparedAt: value.completion.audit.recordedAt, decisionRef }
-        await f.owner.query('SELECT official_v3_jobs_private.consume_s1_v1($1::jsonb,$2::jsonb,$3::jsonb,$4::text)',
-          text([JSON.stringify(opened), JSON.stringify(job), JSON.stringify(workerResult), 'prepare']))
+        await assert.rejects(f.owner.query('SELECT official_v3_jobs_private.consume_s1_v1($1::jsonb,$2::jsonb,$3::jsonb,$4::text)',
+          text([JSON.stringify(opened), JSON.stringify(job), JSON.stringify(workerResult), 'prepare'])), code('P7604'), 'application DTO is not a raw S1 SQL reply')
+        await assert.doesNotReject(f.owner.query('SELECT official_v3_jobs_private.consume_s1_v1($1::jsonb,$2::jsonb,$3::jsonb,$4::text)',
+          text([JSON.stringify(nativeReply), JSON.stringify(job), JSON.stringify(workerResult), 'prepare'])),
+          'N07/R4 raw case ' + index + ' method revision ' + value.binding.method.revision)
         for (const mutation of ['missing', 'audit', 'link', 'archive']) {
-          const bad = JSON.parse(JSON.stringify(opened))
+          const bad = JSON.parse(JSON.stringify(nativeReply))
           if (mutation === 'missing') { bad.record.outcome = null; bad.record.audit = null }
           else if (mutation === 'audit') bad.record.audit.decisionRef = 'source-decision:v3:' + '0'.repeat(64)
           else if (mutation === 'link') {

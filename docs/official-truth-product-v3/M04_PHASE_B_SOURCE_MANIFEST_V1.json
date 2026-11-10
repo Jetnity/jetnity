@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R15_SAME_GENERATION2_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T03:34:44Z",
+  "status": "R16_SAME_GENERATION2_RAW_S1_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T04:06:31Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "30c6299a76fda7b50493a46596a57af3777a7372",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727",
+  "dispatchHead": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,13 +19,13 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "30c6299a76fda7b50493a46596a57af3777a7372",
+    "sourceBaseline": "07367f7ce4f811dabb43ba340650fab3f77585e5",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 17,
     "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R15 starts from published 30c6299. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
+    "mainIntegration": "R16 starts from published 07367f7. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -33,7 +33,7 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V6.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V7.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -119,8 +119,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 140353,
-      "sha256": "a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea"
+      "bytes": 141437,
+      "sha256": "1e25514e6baecf7e0c38d0cdbdbbaaa14f38a11b9693149b76a97bc0b56932a5"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -128,7 +128,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+  "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -439,7 +439,9 @@
     "historicalForR14": true,
     "r14Limit": "Historical d9 comparison, not rerun. The sole R14 source transformation is the approved native.ts fixture replacement; other 17 pins retained from 313c.",
     "historicalForR15": true,
-    "r15Limit": "Historical d9 comparison was not rerun. R15 changes only the two approved N07 fixture hunks in native.ts; all 17 other pins are retained from 30c."
+    "r15Limit": "Historical d9 comparison was not rerun. R15 changes only the two approved N07 fixture hunks in native.ts; all 17 other pins are retained from 30c.",
+    "historicalForR16": true,
+    "r16Limit": "Historical d9 comparison was not rerun. R16 changes only the two approved N07/R4 native.ts hunks; all 17 other pins remain from 073."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -496,7 +498,9 @@
       "executedForR14": false,
       "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
       "executedForR15": false,
-      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
+      "executedForR16": false,
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -519,7 +523,9 @@
       "executedForR14": false,
       "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
       "executedForR15": false,
-      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
+      "executedForR16": false,
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
     },
     {
       "name": "targeted ESLint",
@@ -537,7 +543,9 @@
       "executedForR14": false,
       "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
       "executedForR15": false,
-      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed.",
+      "executedForR16": false,
+      "r16Applicability": "Historical pre-R16 evidence only; native.ts changes and no local project check was rerun."
     }
   ],
   "corrections": {
@@ -792,26 +800,79 @@
         "sha256": "a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea"
       },
       "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+      "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION",
+      "historicalSnapshotBeforeR16": true,
+      "completionObservedIn073CI": {
+        "runId": 42751380067,
+        "group": "N07",
+        "milliseconds": 12322,
+        "groupPass": true,
+        "fullNativePass": false,
+        "limit": "First N07 group completed all three contexts/spellings; the next N07/R4 group failed and R9 was not reached."
+      }
+    },
+    "R16": {
+      "finding": "R16",
+      "status": "ACTUAL_RAW_S1_REPLY_FIXTURE_PREPARED_NATIVE_PENDING",
+      "cause": "The application DTO returned by store.open was incorrectly passed to the raw SQL consumer and used as the base for archive mutations.",
+      "correction": "Require decoded completion; read actual raw S1 reply through the existing s1_read_v1 bridge with retained binding/digest/bytes; compare the entire actual envelope to decoded reference/text/outcome/audit. Retain the old DTO as a P7604 negative. Consume and clone only the actual raw reply.",
+      "diagnostics": "Positive assert.doesNotReject labels only the finite N07/R4 case index and method revision; protected wire/errors unchanged.",
+      "preserved": "Both actual revision cases, capture/reserve/finish/open, exact original text, all four missing/audit/link/archive P7604 negatives and final unchanged store.open equality remain. SQL and all 17 other sources unchanged.",
+      "replacementCount": 2,
+      "sourceFilesChanged": 1,
+      "sourceFilesUnchanged": 17,
+      "extraReadQueriesPerCase": 1,
+      "extraNegativeQueriesPerCase": 1,
+      "primarySources": [
+        {
+          "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+          "blob": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e",
+          "meaning": "V3StoredProposal contains upload/completion; stored() decodes the raw outcome/audit fields into the application DTO."
+        },
+        {
+          "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
+          "blob": "0605decae43995be0fd0a5183a501067e8a03685",
+          "meaning": "The exposed store.open is backend.read, so it returns that decoded DTO."
+        }
+      ],
+      "localTestsRun": false,
+      "newLocalExecution": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "scope": "Only N07/R4 native.ts plus four author evidence files. No protected source/helper, SQL/rollback, role/grant/schema, workflow/package, deadline/resource or hosted change.",
+      "nextGate": "Independent Root review/publication and new exact-head unchanged complete CI; no native/TL PASS, Ready, merge or automatic next slice.",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887",
+      "authorization": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758675083",
+      "baselineHead": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+      "baselineTree": "4c552ee182feb1da2234fa342012bf4b534ec6f3",
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 141437,
+        "sha256": "1e25514e6baecf7e0c38d0cdbdbbaaa14f38a11b9693149b76a97bc0b56932a5"
+      },
+      "nativeGitBlob": "732ec5389e26cc1f09c32626117588d23384e0d3",
+      "sourceDigestSha256": "fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e",
       "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION"
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R15_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R16_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "30c6299a76fda7b50493a46596a57af3777a7372",
-    "tree": "7746a6e6fe802262a94018005c4722c483142c82",
-    "runId": 42748744481,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42748744481",
-    "repositoryVerificationJobId": 129607034059,
+    "head": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+    "tree": "4c552ee182feb1da2234fa342012bf4b534ec6f3",
+    "runId": 42751380067,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42751380067",
+    "repositoryVerificationJobId": 129615553280,
     "repositoryVerificationConclusion": "failure",
     "status": "completed",
     "conclusion": "failure",
-    "source": "Generation2 independently fetched the exact non-Auth Repository verification log and terminal workflow/run-job metadata through GitHub.",
-    "fullLogSha256": "ee6012947a9e9faf770af914c21847274609d25ee588a8ebc12e12a612d65e0f",
+    "source": "Generation2 independently fetched the complete non-Auth Repository verification log and terminal run/job metadata through GitHub.",
+    "fullLogSha256": "0b9d3b2907e8f32c5e5f80c5a4562b25ad4187d29eea1965a309caa362ae7f6b",
+    "fullLogBytes": 4240386,
     "core": {
-      "tests": 8662,
-      "passed": 8658,
+      "tests": 8663,
+      "passed": 8659,
       "failed": 2,
       "skipped": 2,
       "cancelled": 0
@@ -821,30 +882,34 @@
       "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 5954,
-      "cleanupMilliseconds": 155,
+      "effectAndCleanupMilliseconds": 18928,
+      "cleanupMilliseconds": 169,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 2297,
-        "settled": 2297,
+        "started": 4576,
+        "settled": 4576,
         "pending": 0,
-        "connections": 426,
-        "closed": 426,
+        "connections": 870,
+        "closed": 870,
         "stoppedClusters": 1
       },
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 23
+          "milliseconds": 42
         },
         {
           "id": "N02",
-          "milliseconds": 1134
+          "milliseconds": 2227
         },
         {
           "id": "N03",
-          "milliseconds": 1532
+          "milliseconds": 2728
+        },
+        {
+          "id": "N07",
+          "milliseconds": 12322
         }
       ],
       "nestedRaceWitnesses": [],
@@ -861,10 +926,10 @@
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "proof_4:N07",
+        "phase": "proof_5:N07/R4",
         "error": {
-          "kind": "assertion",
-          "code": "assertion_failed"
+          "kind": "postgres",
+          "code": "P7604"
         }
       },
       "cleanupFailures": [],
@@ -872,21 +937,20 @@
       "nativePass": false
     },
     "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
-    "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
-    "exactFailure": {
-      "file": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "line": 662,
-      "column": 61,
-      "assertion": "assert.ok(parsed.ok)",
-      "code": "ERR_ASSERTION",
-      "serializedLoopIndex": null
+    "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+    "reportedFailure": {
+      "phase": "proof_5:N07/R4",
+      "code": "P7604",
+      "sqlStatement": null,
+      "caseIndex": null,
+      "predicate": null
     },
-    "completedGroups": "First N01/N02/N03 groups passed in 23/1134/1532 ms. N02 includes the complete R13 restricted-runtime/drift and R14 strict-identity/native-forgery assertions. Other compound groups sharing these IDs are not thereby proved.",
-    "diagnosis": "The N07 fixture changes only citizenship to DE/FR while retaining the CH passport link. The protected scope reader correctly refuses the inconsistent context. The stack identifies the assertion, not the loop index.",
+    "completedGroups": "First N01/N02/N03/N07 passed in 42/2227/2728/12322 ms. The first N07 group includes the R15 three coherent contexts and all three original number spellings. Later compound groups are not thereby proved.",
+    "diagnosis": "Exact source confirms that store.open returns reference/text/upload/completion but the positive SQL consume requires reference/text/outcome/audit. This necessarily violates the entry-key guard; the log itself does not serialize the statement, case or predicate.",
     "terminalVerification": {
-      "checkedAt": "2026-11-10T03:34:44Z",
+      "checkedAt": "2026-11-10T04:06:31Z",
       "successfulCompanionJobs": 6,
-      "aggregateJobId": 129611926295,
+      "aggregateJobId": 129620812719,
       "aggregateConclusion": "failure",
       "repositoryVerificationSteps": {
         "typecheck": "success",
@@ -906,15 +970,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of R15 and the four author evidence files",
-    "Root expected-head publication preserving the other 17 source files and current-main ancestry",
-    "New exact-head unchanged complete CI, all 31 native groups, R9 witnesses and bounded cleanup receipts",
+    "Independent Root exact-source review of R16 and four author evidence files",
+    "Root expected-head publication preserving all 17 other sources and current-main ancestry",
+    "New exact-head unchanged complete CI, all 31 native groups, both R9 witnesses and bounded cleanup receipts",
     "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_R15_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R16_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444"
+    "head": "30c6299a76fda7b50493a46596a57af3777a7372",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727"
   },
   "historicalCIRuns": [
     {
@@ -1260,6 +1324,109 @@
           "productionBuild": "skipped"
         }
       }
+    },
+    {
+      "head": "07367f7ce4f811dabb43ba340650fab3f77585e5",
+      "tree": "4c552ee182feb1da2234fa342012bf4b534ec6f3",
+      "runId": 42751380067,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42751380067",
+      "repositoryVerificationJobId": 129615553280,
+      "repositoryVerificationConclusion": "failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "source": "Generation2 independently fetched the complete non-Auth Repository verification log and terminal run/job metadata through GitHub.",
+      "fullLogSha256": "0b9d3b2907e8f32c5e5f80c5a4562b25ad4187d29eea1965a309caa362ae7f6b",
+      "fullLogBytes": 4240386,
+      "core": {
+        "tests": 8663,
+        "passed": 8659,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 18928,
+        "cleanupMilliseconds": 169,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 4576,
+          "settled": 4576,
+          "pending": 0,
+          "connections": 870,
+          "closed": 870,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 42
+          },
+          {
+            "id": "N02",
+            "milliseconds": 2227
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2728
+          },
+          {
+            "id": "N07",
+            "milliseconds": 12322
+          }
+        ],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 1,
+          "maximumIntake": 1,
+          "maximumMethod": 1,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 1,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_5:N07/R4",
+          "error": {
+            "kind": "postgres",
+            "code": "P7604"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+      "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+      "reportedFailure": {
+        "phase": "proof_5:N07/R4",
+        "code": "P7604",
+        "sqlStatement": null,
+        "caseIndex": null,
+        "predicate": null
+      },
+      "completedGroups": "First N01/N02/N03/N07 passed in 42/2227/2728/12322 ms. The first N07 group includes the R15 three coherent contexts and all three original number spellings. Later compound groups are not thereby proved.",
+      "diagnosis": "Exact source confirms that store.open returns reference/text/upload/completion but the positive SQL consume requires reference/text/outcome/audit. This necessarily violates the entry-key guard; the log itself does not serialize the statement, case or predicate.",
+      "terminalVerification": {
+        "checkedAt": "2026-11-10T04:06:31Z",
+        "successfulCompanionJobs": 6,
+        "aggregateJobId": 129620812719,
+        "aggregateConclusion": "failure",
+        "repositoryVerificationSteps": {
+          "typecheck": "success",
+          "lint": "success",
+          "tests": "failure",
+          "hygiene": "skipped",
+          "productionBuild": "skipped"
+        }
+      }
     }
   ],
   "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION",
@@ -1280,9 +1447,14 @@
     {
       "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444"
+    },
+    {
+      "head": "30c6299a76fda7b50493a46596a57af3777a7372",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727"
     }
   ],
   "newLocalExecutionForR13": false,
   "newLocalExecutionForR14": false,
-  "newLocalExecutionForR15": false
+  "newLocalExecutionForR15": false,
+  "newLocalExecutionForR16": false
 }

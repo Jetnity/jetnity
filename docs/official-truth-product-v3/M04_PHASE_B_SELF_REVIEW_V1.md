@@ -1,3 +1,39 @@
+# M04 Phase-B author self-review V1 — R16 current
+
+**R16 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Diagnosis](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887) was completed before edits; [Root authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758675083) then allowed only the finite N07/R4 native fixture correction and four author files. Baseline: `07367f7ce4f811dabb43ba340650fab3f77585e5`.
+
+## Confirmed boundary mismatch
+
+[Protected quarantine-postgres.ts](https://github.com/Jetnity/jetnity/blob/07367f7ce4f811dabb43ba340650fab3f77585e5/lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts), blob `3746b98623bc93d72abfe1cba8c8ebef42d0f34e`, decodes raw reference/text/outcome/audit into application reference/text/upload/completion. [intake-server.ts](https://github.com/Jetnity/jetnity/blob/07367f7ce4f811dabb43ba340650fab3f77585e5/lib/readiness/official-truth-product-v3/storage/intake-server.ts), blob `0605decae43995be0fd0a5183a501067e8a03685`, exposes that backend read as store.open.
+
+The positive fixture serialized this application DTO into consume_s1_v1, whose exact-key entry gate requires the raw shape. That source path necessarily rejects before archive checks. The P7604 log does not itself identify the statement, revision case or predicate. The SQL guard is correct and unchanged; archive.method remains an intentional unknown-field negative.
+
+## Source correction and retained proof
+
+After actual S1 capture/reserve/finish/open, the test requires completion and reads the actual raw reply through the existing private S1 bridge. Its full envelope must exactly equal the decoded reference/text/completion counterpart. Only this actual database reply is consumed positively and cloned for mutations.
+
+The old application DTO is now an explicit P7604 negative per case. Positive assert.doesNotReject reports only bounded case index and method revision. Both revision cases, four original negatives and the final immutable store.open comparison remain. No protected wire/errors or SQL validation change; one raw read and one explicit negative are added per existing case, without new connections or budget changes.
+
+Frozen native: **141437 bytes**, SHA256 `1e25514e6baecf7e0c38d0cdbdbbaaa14f38a11b9693149b76a97bc0b56932a5`, Git blob `732ec5389e26cc1f09c32626117588d23384e0d3`. Aggregate: `fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e`. All seventeen other source pins remain unchanged.
+
+## Evidence and remaining acceptance
+
+I independently fetched [Repository verification 129615553280](https://github.com/Jetnity/jetnity/actions/runs/42751380067/job/129615553280). Full non-Auth log: **4240386 bytes**, SHA256 `0b9d3b2907e8f32c5e5f80c5a4562b25ad4187d29eea1965a309caa362ae7f6b`. Terminal metadata confirms run failure, six successful companions and failed aggregate 129620812719; typecheck/lint passed, hygiene/build skipped.
+
+Historical first N01/N02/N03/N07 passed in 42/2227/2728/12322 ms, including R15's three variants. N07/R4 failed P7604; 26 later groups and R9 were not reached. Core: 8663 tests / 8659 passed / 2 failed / 2 skipped / 0 cancelled. Cleanup: 4576/4576 settled, 0 pending, 870/870 closed, one cluster stopped, 0 errors; 18928 ms total / 169 ms cleanup.
+
+All six failed histories and complete 18-pin/22-row/31-group inventory remain. No local project execution, parser, SQL/native run, installation or environment reconstruction occurred. Previous 64/64 checks remain historical; corrected R16 source has not run.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root alone publishes and accepts after new exact-head unchanged CI. No Ready, merge or automatic next slice. Protected-source, resource, hosted and Owner gates remain; #917 is not retried or substituted.
+
+---
+
+## Historical R15 and earlier author self-reviews
+
+The exact previous record follows. Its former current claims and pins are historical; this R16 block governs the new delivery.
+
 # M04 Phase-B author self-review V1 — R15 current
 
 **R15 SAME GENERATION2 / SAME SESSION. SOURCE REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**

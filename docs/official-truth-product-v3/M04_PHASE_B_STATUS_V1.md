@@ -1,3 +1,44 @@
+# M04 Phase-B author delivery status V1 — R16 current
+
+**R16 SAME-SESSION RAW-S1 FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Diagnosis dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758625887) and [exact implementation authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758675083); baseline `07367f7ce4f811dabb43ba340650fab3f77585e5`, tree `4c552ee182feb1da2234fa342012bf4b534ec6f3`.
+
+## Authorized correction
+
+N07/R4 previously passed the decoded application record (reference/text/upload/completion) to a SQL consumer requiring the raw record (reference/text/outcome/audit). The unchanged SQL exact-key guard correctly refuses that shape.
+
+The test now reads the actual raw persisted reply through the existing s1_read_v1 bridge using retained binding/digest/bytes. It requires decoded completion and exact equality between the actual raw envelope and decoded reference/text/outcome/audit. It does not fabricate a successful raw reply.
+
+Both revision cases retain the old application DTO as an explicit P7604 negative, positively consume the actual raw reply with a bounded case/revision label, and clone that raw reply for the four existing missing/audit/link/archive negatives. Actual capture/reserve/finish/open, original text and final unchanged store.open equality remain.
+
+Only native.ts changes. All seventeen other sources, SQL/rollback, protected helpers, permissions, packages, workflows and budgets are unchanged.
+
+- native.ts: **141437 bytes**, SHA256 `1e25514e6baecf7e0c38d0cdbdbbaaa14f38a11b9693149b76a97bc0b56932a5`.
+- Git blob: `732ec5389e26cc1f09c32626117588d23384e0d3`.
+- Eighteen-source aggregate: `fd829dbf93171d8bc2d352cd02aa92126e8ee8ab64ac2fc0392d4863f63fb19e`.
+- Eighteen pins, twenty-two matrix rows and thirty-one native group obligations remain.
+
+## Actual historical CI
+
+[CI 42751380067](https://github.com/Jetnity/jetnity/actions/runs/42751380067) is independently verified **completed/failure**. Repository job 129615553280 and aggregate 129620812719 failed; all six companion jobs succeeded. Typecheck/lint passed; tests failed; hygiene/build were skipped.
+
+First N01/N02/N03/N07 passed in **42/2227/2728/12322 ms**. N07 includes all three R15 contexts and original number spellings. The next N07/R4 group failed P7604; the receipt does not identify a statement, case or predicate. The entry-shape mismatch is confirmed by exact source, not by a more specific log message. The remaining 26 groups and R9 witnesses were not reached.
+
+Core: 8663 tests / 8659 passed / 2 failed / 2 skipped / 0 cancelled. Cleanup: 4576/4576 settled, zero pending, 870/870 connections closed, one stopped cluster, zero errors; 18928 ms total / 169 ms cleanup. All six failed CI histories remain preserved; nativePass is false.
+
+## Author STOP
+
+Original checkout absent; no reconstruction, installation or local project parser/test/SQL/native/build execution occurred. Historical 64/64 checks do not validate this source change. Corrected R16 source remains unexecuted until new unchanged complete CI.
+
+**STOP FOR ROOT REVIEW.** Root owns Task V7, publication and complete exact-head acceptance. No Ready, merge, hosted action or next slice. Method NOT_APPROVED, #1139 NOT_RELEASE_READY/17 gaps, #917 refusal and all existing Owner gates remain.
+
+---
+
+## Historical R15 and earlier author records
+
+The exact prior record follows. Its current wording and pins are historical; this R16 block and current JSON fields govern the new delivery.
+
 # M04 Phase-B author delivery status V1 — R15 current
 
 **R15 SAME-SESSION N07 FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
