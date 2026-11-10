@@ -147,7 +147,7 @@ BEGIN
       WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
       WHEN 'string' THEN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-        child_text:=to_jsonb(s)::text;
+        child_text:=e::text;
       WHEN 'number' THEN
         number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
           RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
@@ -165,7 +165,7 @@ BEGIN
       WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
       WHEN 'string' THEN
         s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-        child_text:=to_jsonb(s)::text;
+        child_text:=e::text;
       WHEN 'number' THEN
         number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
           RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
@@ -178,7 +178,7 @@ BEGIN
     RETURN '['||array_to_string(parts,',')||']';
   WHEN 'string' THEN
     s:=v#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-    RETURN to_jsonb(s)::text;
+    RETURN v::text;
   WHEN 'number' THEN
     number_value:=v::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
       RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; RETURN trunc(number_value)::text;

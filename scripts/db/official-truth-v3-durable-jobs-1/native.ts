@@ -773,6 +773,27 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       for (const raw of ['9007199254740991.1', '[18,9.007199254740992e15]']) {
         await assert.rejects(canonicalAt(raw, 0), code('P7601'), 'R20 exact numeric refusal')
       }
+      // R21: fixed byte oracles retain JSONB string normalization and every ASCII guard.
+      const stringReuseCases = [
+        ["\"\"","\"\""],
+        ["\"\\u0041\\u0020\\u007e\"","\"A ~\""],
+        ["\"\\/\"","\"/\""],
+        ["\"\\u0022\"","\"\\\"\""],
+        ["\"\\u005c\"","\"\\\\\""],
+        ["\"\\\\u0041\"","\"\\\\u0041\""],
+        ["\"null\"","\"null\""],
+      ] as const
+      for (const [raw, expected] of stringReuseCases) {
+        const rows = await f.owner.query("SELECT official_v3_jobs_private.canonical_v1($1::jsonb,0) AS root_text, official_v3_jobs_private.canonical_v1(jsonb_build_object('v',$1::jsonb),0) AS object_text, official_v3_jobs_private.canonical_v1(jsonb_build_array($1::jsonb),0) AS array_text", text([raw]))
+        assert.deepEqual(rows, [{ root_text: expected, object_text: '{"v":' + expected + '}', array_text: '[' + expected + ']' }], 'R21 string root/object/array bytes')
+      }
+      const mixedStringReuseCases = [
+        ["[\"\\u0041\",\"\",{\"z\":\"\\\\u0041\",\"a\":\"\\/\",\"q\":\"\\u0022\"},[\"\\u005c\",\"last\"]]","[\"A\",\"\",{\"a\":\"/\",\"q\":\"\\\"\",\"z\":\"\\\\u0041\"},[\"\\\\\",\"last\"]]"],
+        ["{\"z\":[\"third\",\"\\u0022\"],\"a\":{\"y\":\"\\u005c\",\"x\":\"\\u0042\"},\"m\":\"middle\"}","{\"a\":{\"x\":\"B\",\"y\":\"\\\\\"},\"m\":\"middle\",\"z\":[\"third\",\"\\\"\"]}"],
+      ] as const
+      for (const [raw, expected] of mixedStringReuseCases) {
+        assert.deepEqual(await canonicalAt(raw, 0), [{ canonical: expected }], 'R21 successive and nested string bytes')
+      }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,

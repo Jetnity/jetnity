@@ -2,13 +2,13 @@
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
-### M04 current — R20 / Recovery V11, source reviewed; full exact-head acceptance pending
+### M04 current — R21 / Recovery V12, source reviewed; full exact-head acceptance pending
 
-**2026-11-10 06:49:34 UTC.** [Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V11](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V11.md) · [Task V11](official-truth-product-v3/M04_RECOVERY_TASK_V11.md) · [Evidence](official-truth-product-v3/M04_RECOVERY_R20_EVIDENCE_V11.json) · [live PR #1178](https://github.com/Jetnity/jetnity/pull/1178). These links identify the current handoff/review/evidence; latest PR publication/CI receipts and live evidence supersede this explicitly pre-publication snapshot.
+**2026-11-10 10:20:27 UTC.** [Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V12](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V12.md) · [Task V12](official-truth-product-v3/M04_RECOVERY_TASK_V12.md) · [Evidence](official-truth-product-v3/M04_RECOVERY_R21_EVIDENCE_V12.json) · [live PR#1178](https://github.com/Jetnity/jetnity/pull/1178). Later head-bound receipts/live evidence supersede this pre-publication snapshot.
 
-Baseline **72868a287280a6c1d96222268a1413110ec95039**, main **890dfe9323b4b6d3644c372d81cb8893b6548d11**, ahead 12 / behind 0, 103 PR files. Actual CI 42767273189 terminal FAILURE: **30/31 groups passed**, both quota families and R9 passed, final N15 hit unchanged 240s deadline; complete cleanup. No runtime/TL-PASS, Ready or merge. Current finite R20 changes only repeated numeric conversion and exact-C-text timestamp reuse plus 24 direct N02 queries; source aggregate **cd76347b518c7c8cecd5661e73886712a8597164c8f98b3c8acebc84be9ae87e**. Author Generation2 /root/m04_durable_jobs_writer_g2, AUTHOR STOP after finite delivery. First unfinished step: Root publication/readback, then complete unchanged exact-head CI / all 31 groups and all final gates. D1 remains separately unfinished; no automatic next slice.
+Published baseline **d51d420a0ba83c56c7cf72166b5d328491fe54a5**, main **890dfe9323b4b6d3644c372d81cb8893b6548d11**, ahead 13 / behind 0, 107 paths. Actual CI 42771272293 FAILURE: 23/31 groups passed, R9 passed; N05/A03 reached 215 acknowledged commits then 240 s deadline; next DB outcome UNKNOWN; cleanup complete. No runtime/TL-PASS, Ready or merge. R21 changes only three already-validated JSONB string outputs plus nine direct N02 queries; source aggregate **11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6**. Same real Generation2 author/reviewer/auditor resumed; four unfinished author documents now completed and independently reviewed. First unfinished step: Root publication/readback, then full unchanged exact-head CI/all 31groups and final gates. D1 remains separately unfinished; no automatic next slice.
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback remains pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry or substitute. All #1131/#1135/#968/#911/#913 holds and hosted/local/environment boundaries remain as detailed in V11.
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback remains pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute. #1131/#1135/#968/#911/#913 holds and all hosted/local/environment boundaries remain as detailed in V12.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->
 

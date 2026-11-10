@@ -1,3 +1,40 @@
+# M04 Phase-B author delivery status V1 — R21 current
+
+**R21 FROZEN SOURCE / AUTHOR DOCUMENTS COMPLETE; NEW EXACT-HEAD EXECUTION PENDING.**
+
+Same author **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Finding](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761461251), [authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761489935). Baseline `d51d420a0ba83c56c7cf72166b5d328491fe54a5`, tree `dd75f8b57600f3dd588efbf4049b8642d77ca714`.
+
+## This correction
+
+Three canonical string outputs serialize the existing JSONB scalar instead of reconstructing it from decoded text. All type/ASCII checks, key encoding and every other SQL byte remain. One 1555-byte N02 insertion adds nine direct queries with fixed escape/empty/string-null and mixed nested-string oracles. All prior tests, 29 declarations, 31 groups/R9, histories, authority checks and 240s effects +60s cleanup/300s total remain.
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 138224 | `063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080` | `eef54d2e51a16987f9b77049fdf6efc8a3229df5` |
+| native.ts | 161318 | `c4001fd857386f2b789852f346086cb0167ffd627959802d65baf6d11bd86104` | `abbbd77b0896876877e8aa1dd0dd786d6d39c03f` |
+
+18-source aggregate: `11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6`. Sixteen other source pins remain unchanged. The transient store was lost during interruption; exact d51 GitHub reads and in-session hashes restored the already frozen sources and baseline author documents. The four R21 documents were unfinished before interruption and are completed in this delivery. No local project/parser/SQL/native/build execution or Git/hosted mutation occurred.
+
+## Latest historical failure
+
+[CI 42771272293](https://github.com/Jetnity/jetnity/actions/runs/42771272293): completed/failure; Repository 129679380018 and aggregate 129685618326 failed, six companions succeeded. Typecheck/lint passed; tests failed; hygiene/build skipped. Root independently reread the complete non-Auth log and supplied the exact receipt.
+
+First 23 groups passed, including all R20 N02 cases and both R9 witnesses; group-time sum 102604 ms. Group 24 N05/A03 hit the global effect deadline after 136801.231224 ms; seven later groups were unreached. Ledger indices started/completed: 215/214, with 215 acknowledged commits. **The next call's final database outcome is UNKNOWN.** No START or cycle group was reached.
+
+Core: 8682 tests, 8678 passed, 2 failed, 2 inherited skips, 0 cancelled. All 26644 operations settled and 4242 connections closed; one cluster stopped, zero pending/children/cleanup errors. Total 240376 ms, cleanup 26 ms. Full log 4251668 bytes/63148 lines/SHA256 `457e33fe7739810de9ae0b21f6b5206d976953120decddd61e44545054cc2470`. The newly recreated V12 excerpt is 6417 bytes/SHA256 `e2ace2b4101afc9b63f0bbcb636f003c33aaa9766f4950f27299155d2b9b0da9`.
+
+## Acceptance boundary
+
+The 106 avoided value reconstructions per representative dedup row are a source count only. No causal speed/runner conclusion, reliable budget margin or Production-SLO claim follows. Full-cap Rule latency remains unproved.
+
+All eleven historical failures remain separate; prior ten objects and Markdown tails are exact. All 18 pins, 22 current-unexecuted rows and 31 obligations remain. Current R21 execution/PASS/Ready/merge are false. Historical 64/64 author results were not rerun. **AUTHOR STOP.** Root owns V12 publication and complete unchanged new-head CI. All Owner gates, including Method NOT_APPROVED, #1139/17 gaps and #917 refusal, remain. No activation or next slice.
+
+---
+
+## Historical R20 and earlier author records
+
+The exact previous records follow unchanged; their current headings belong to those historical cuts.
+
 # M04 Phase-B author delivery status V1 — R20 current
 
 **R20 LOCAL VALUE REUSE PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**

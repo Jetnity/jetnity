@@ -1,3 +1,35 @@
+# M04 Phase-B author self-review V1 — R21 current
+
+**SAME GENERATION2 SESSION. AUTHOR REVIEW IS NOT TL ACCEPTANCE.**
+
+[R21 authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761489935) binds this delivery to baseline `d51d420a0ba83c56c7cf72166b5d328491fe54a5`. Only the approved three string outputs and one N02 block change.
+
+## Equivalence and regression scope
+
+Each unchanged canonical branch already establishes a JSONB string and validates its decoded text as printable ASCII. Serializing that original scalar preserves the same JSONB quoting/escaping previously obtained by reconstructing it with to_jsonb. Object-key reconstruction remains. No extraction, guard, order, depth, numeric rule, timestamp reuse or other SQL byte changes. History and command/transition failure ordering remain exact.
+
+Nine direct queries cover seven scalar cases at root/object/array: empty string, alternate ASCII escapes, escaped slash, quote, backslash, literal backslash-u without second interpretation, and string null. Two independent fixed mixed vectors cover successive/nested values. All expected bytes are explicit literals. Existing rejection cases and all R20 queries are untouched.
+
+The 1555-byte insertion leaves every other native byte unchanged. Source counts give 106 redundant value reconstructions per representative Discovery dedup history row; keys remain encoded. This is no server profile, measured speedup, reliable margin or full-cap Rule/Production SLO evidence.
+
+## Frozen evidence and interruption recovery
+
+SQL 138224 bytes/SHA256 `063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080`; native 161318 bytes/SHA256 `c4001fd857386f2b789852f346086cb0167ffd627959802d65baf6d11bd86104`. Aggregate `11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6`. The manifest records all 18 pins; the two changed-source Git blobs are in the status record. All 16 other sources, 29 declarations, 31 groups/order, R9, quotas and budgets remain.
+
+The transient store was lost after the source delivery; no completed R21 author documents existed then. After Root resumed the persisted authorization, exact GitHub file reads restored the d51 baseline. Pure text/hash reconstruction reproduced the frozen source pins exactly. No project/parser/SQL/native/build execution, installation, repository reconstruction, hosted action or git fetch/push occurred. Root alone reread terminal logs; author did not access logs.
+
+Root's rechecked CI 42771272293 receipt has compact-JSON SHA256 `a2c0bfa546603aaec6cc7835494e2e989c132ff2b62358d84aa2947678fb8acf`. First 23 groups and both R9 passed; group 24 timed out; 25–31 were unreached. The 215 acknowledged ledger commits do not establish the unfinished next call's database outcome. All 26644 operations settled and 4242 connections closed with zero cleanup errors; total 240376 ms/cleanup 26 ms. Core 8682/8678 passed/2 failed/2 skipped/0 cancelled, 844519.303993 ms. No causal performance conclusion is drawn.
+
+Full source/log evidence and the new 6417-byte V12 excerpt pin are in the JSON documents. The old lost unpublished excerpt is not used. All eleven historical failures, previous ten exact objects, previous Markdown tails, 18 source pins, 22 current-unexecuted rows and 31 groups are preserved. Historical 64/64 author checks were not rerun.
+
+**AUTHOR STOP.** Current R21 execution/native/runtime PASS/Ready/merge are false. Root independently reviews, publishes and gates the unchanged full CI, including actual quota boundaries and cleanup within 240s effects +60s/300s total. Method NOT_APPROVED, #1139/17 gaps, #1131, both #1135 holds, #968, #911/#913 and the specific #917 refusal remain. No automatic follow-up slice.
+
+---
+
+## Historical R20 and earlier author self-reviews
+
+The exact previous records follow unchanged and do not grant current R21 acceptance.
+
 # M04 Phase-B author self-review V1 — R20 current
 
 **SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
