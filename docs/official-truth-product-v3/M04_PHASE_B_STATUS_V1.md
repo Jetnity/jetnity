@@ -1,3 +1,25 @@
+# M04 Phase B — R23 / Recovery Task V14 current author status
+
+**AUTHOR STOP; the new type-only correction is prepared and unexecuted.** Current PR [#1182](https://github.com/Jetnity/jetnity/pull/1182) remains Draft; origin #1178 remains historically merged. Same Generation2 author/session.
+
+## Exact failure and correction
+
+Published head `54c475a25e626fd811a2c523a3247a7523d1891c` / tree `aaaea9f8c46909c8614c33d66a48a7900edcdc0e` failed Repository verification 129809743296 in [CI 42810301725](https://github.com/Jetnity/jetnity/actions/runs/42810301725). Root confirmed that job terminal before reading its non-Auth log. Typecheck reported TS7022 at native.ts(861,17). Lint, Tests/M04, hygiene and build did not execute. **There is no native or cleanup receipt for this failed attempt.** Overall CI was still in progress at Root's 11:49:52 UTC observation; this record does not invent companion or whole-run completion.
+
+[Root dispatch V14](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6766572359) authorizes only `: Record<string, unknown>` on the new lease-oracle local `value`. The annotation adds exactly 25 ASCII bytes. Removing it restores the published native.ts exactly; initializer, runtime expressions, all 36 queries, 31 groups/order, SQL and 17 other source pins remain unchanged.
+
+Final native: 168535 bytes; SHA256 `dbc3ad51567753dd5ebc71fe6106504f5a6d112f73aed8e62f136454a8c626a2`; Git blob `2be195a3346213b12a9498a07ae398dc9922dae1`.
+
+All-18-source aggregate: `1d30c2168051a359797cd6700ee3e1d6dab7b023a026119a1377cd8ee880d2bc`. SQL remains `9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f`.
+
+All twelve earlier failure objects, separate genuine R21 PR success/Root PASS/merge and previous Markdown tails remain exact. The confirmed terminal Typecheck-job failure is appended as record thirteen. The last actual native progress remains the earlier main-4bfa receipt; it is not assigned to this non-executed M04 attempt.
+
+Root's [safe V14 excerpt](M04_RECOVERY_R23_TYPECHECK_FAILURE_V14.txt): 1989 bytes, SHA256 `6cd22336ecb4d4ddbefc46dd8cb897c35b475fb88210f9c78324ade5821b4751`. This is a Root-prepared relative publication path, not a file claimed at historical head 54c4.
+
+Current R23 Typecheck/native/runtime/TL-PASS/Ready/merge acceptance is false. Root must reconstruct/review this delivery, publish a new head on Draft #1182 and obtain complete unchanged exact-head CI/Preview followed by the required actual-main CI/Production gates. No local/project/parser/SQL/native/build execution, installation, forbidden logs/hosted/#917 action or publication by the author. All special Owner/privacy gates remain; no automatic next product slice.
+
+## Previous author record — preserved verbatim
+
 # M04 Phase B — R22 / Recovery Task V13 current author status
 
 **AUTHOR STOP for independent Root review; R22 is prepared and unexecuted.** Same real Generation2 author/session. Current fix PR number is pending Root creation on `fix/official-truth-v3-m04-postmerge-r22-20261110`; **origin #1178 is already merged**. This is its finite post-merge review fix, not a new product slice.

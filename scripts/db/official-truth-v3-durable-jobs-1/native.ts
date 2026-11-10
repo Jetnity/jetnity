@@ -858,7 +858,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         assert.equal(base.createdAt, timeAt); assert.equal(base.updatedAt, leaseUpdated); assert.equal(base.lease.acquiredAt, leaseUpdated)
         for (const [label, acquiredAt, expiresAt, valid, extraKey] of leaseTimeCases) {
           // Only the final case intentionally fails at the earlier exact-lease-key guard.
-          const value = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
+          const value: Record<string, unknown> = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
           const query = f.owner.query('SELECT official_v3_jobs_private.job_v1($1::jsonb) AS result', text([JSON.stringify(value)]))
           if (valid) assert.deepEqual(result(await query), value, 'R22 ' + kind + ': ' + label)
           else await assert.rejects(query, code('P7601'), 'R22 ' + kind + ': ' + label)

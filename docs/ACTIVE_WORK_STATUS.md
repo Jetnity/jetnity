@@ -2,17 +2,17 @@
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
-### M04 current — R22 / Recovery V13, post-merge acceptance failed; correction pending
+### M04 current — R23 / Recovery V14, Typecheck fix prepared; full acceptance pending
 
-**2026-11-10 11:38:05 UTC.** [Current Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V13](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V13.md) · [Task V13](official-truth-product-v3/M04_RECOVERY_TASK_V13.md) · [actual evidence](official-truth-product-v3/M04_RECOVERY_R22_EVIDENCE_V13.json) · [live origin #1178](https://github.com/Jetnity/jetnity/pull/1178). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
+**2026-11-10 11:59:50 UTC.** [Current Handoff](official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V14](official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V14.md) · [Task V14](official-truth-product-v3/M04_RECOVERY_TASK_V14.md) · [Evidence V14](official-truth-product-v3/M04_RECOVERY_R23_EVIDENCE_V14.json) · [live Draft #1182](https://github.com/Jetnity/jetnity/pull/1182). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
 
-Origin #1178 genuinely passed R21 (31/31/all eight jobs) and is **MERGED** to **`4bfa8b466ebc0af761fc5050bb4c51d7e73400c7`**. Mandatory actual-main CI **42801478210 FAILED**: 24 groups, both R9 witnesses and full ledger passed; cycle group25 hit the unchanged 240-second budget at started/completed index 34/33, with 103 acknowledged commands and 34 STARTs; following DB outcome UNKNOWN. Cleanup is complete: 27209/27209 work items settled and 4242/4242 connections closed. **M04 remains unfinished.**
+Published R22 head **54c475a25e626fd811a2c523a3247a7523d1891c** is blocked: CI 42810301725 Repository-verification Typecheck **TS7022**, native.ts:861. Tests/M04 did not execute; no new native/cleanup receipt. Exact Preview ERROR. Same G2 author delivered only a **25-byte safe type annotation**; Root and reviewer independently matched Native **dbc3ad51567753dd5ebc71fe6106504f5a6d112f73aed8e62f136454a8c626a2** and all-18 aggregate **1d30c2168051a359797cd6700ee3e1d6dab7b023a026119a1377cd8ee880d2bc**. Other 17 sources, initializer/runtime bytes, 36 queries, 31 groups and all budgets remain exact. New head/CI still pending at this snapshot.
 
-Final v4 R22 source and four author docs are independently reconstructed/reviewed, unexecuted. Only local Discovery canonical reuse, two acquiredAt CASE expressions and a 7192-byte/36-query N02 insertion change; all 16 other source pins, 29 declarations, 31 groups/order and all limits remain. Aggregate **`8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b`**. Two unpublished review findings were corrected. Same actual G2 author/reviewer sessions; author STOP.
+Origin #1178 remains genuinely R21-passed/MERGED. Mandatory actual-main CI 42801478210 on **4bfa8b466ebc0af761fc5050bb4c51d7e73400c7** subsequently FAILED at group 25 after 24 passing groups; cleanup completed, following DB outcome UNKNOWN. That gate remains open. All 12 previous failures plus distinct Typecheck failure and genuine historical success remain separated. **M04 remains unfinished.**
 
-First unfinished step: Root publishes/readbacks new linked Draft on **`fix/official-truth-v3-m04-postmerge-r22-20261110`**, then full new exact-head and actual-main CI/Preview/Production gates. Current fix PR number pending at this snapshot. Historical success and twelve failures stay separate. Mode NORMAL; Production READY/main 4bfa is not CI acceptance. D1 remains separately unfinished/Draft; no automatic next product slice.
+First unfinished step: Root publishes/readbacks the finite R23 correction on existing Draft branch **fix/official-truth-v3-m04-postmerge-r22-20261110**, then complete new exact-head CI/Preview/live gates and actual-main CI/Production. No Ready/Merge from agents, no unchanged-known-bad rerun. Production READY on old main 4bfa does not close CI. D1 remains separately unfinished/Draft; no automatic next slice.
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED, without retry/substitute. #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. All hosted/local/environment boundaries remain as detailed in V13.
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED, without retry/substitute. #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. All hosted/local/environment boundaries remain detailed in V14.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_END -->
 

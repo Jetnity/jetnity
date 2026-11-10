@@ -1,0 +1,27 @@
+M04 CHANGES REQUIRED R23 / Recovery Task V14 — terminal non-Auth Typecheck failure excerpt
+Source: https://github.com/Jetnity/jetnity/actions/runs/42810301725/job/129809743296
+PR: https://github.com/Jetnity/jetnity/pull/1182
+Head: 54c475a25e626fd811a2c523a3247a7523d1891c
+Tree: aaaea9f8c46909c8614c33d66a48a7900edcdc0e
+Run attempt: 1; event: pull_request
+Root independently observed Repository verification terminal FAILURE at 2026-11-10 11:49:52 UTC before reading its complete decoded non-Auth log.
+Overall run was still in_progress at that observation. Unfinished companion-job results are not invented.
+Complete log: 106133 UTF-8 bytes / 106065 characters / 869 split lines
+Complete log SHA256: b48164c277aa81719c4f069024bbc28642b0a25b6360d394ce2c05b2a50655cf
+Original line numbers below; each selected source line is unchanged.
+M04 native/Tests did not execute. No new native receipt, time-budget result or cleanup receipt exists for this failed typecheck.
+No Auth log, Vercel build log or hosted data was read.
+
+841: 2026-11-10T11:48:22.8476436Z ##[group]Run npm run typecheck
+842: 2026-11-10T11:48:22.8476784Z [36;1mnpm run typecheck[0m
+843: 2026-11-10T11:48:22.8496850Z shell: /usr/bin/bash -e {0}
+844: 2026-11-10T11:48:22.8497116Z ##[endgroup]
+845: 2026-11-10T11:48:22.9463636Z 
+846: 2026-11-10T11:48:22.9464054Z > jetnity@1.0.0 typecheck
+847: 2026-11-10T11:48:22.9464758Z > next typegen && tsc -p tsconfig.json --noEmit
+848: 2026-11-10T11:48:22.9465150Z 
+849: 2026-11-10T11:48:23.2551829Z Generating route types...
+850: 2026-11-10T11:48:23.2859909Z ✓ Types generated successfully
+851: 2026-11-10T11:48:56.6243314Z ##[error]scripts/db/official-truth-v3-durable-jobs-1/native.ts(861,17): error TS7022: 'value' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+852: 2026-11-10T11:48:56.7972328Z ##[error]Process completed with exit code 2.
+853: 2026-11-10T11:48:56.8140712Z Post job cleanup.

@@ -1,3 +1,33 @@
+# M04 Phase B — R23 / Recovery Task V14 current author self-review
+
+**Source/data review only; AUTHOR STOP.** Same `/root/m04_durable_jobs_writer_g2` session, existing Draft #1182. No new runtime or Technical-Lead acceptance.
+
+## One permitted type annotation
+
+The exact published R22 source fails Typecheck TS7022 on the newly added local `value`. The only change is:
+
+```ts
+const value: Record<string, unknown> = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
+```
+
+`Record<string, unknown>` represents an object that intentionally includes valid and malformed negative-test variants. It does not assert that those variants are valid V3 domain records. There is no `any`, cast, suppression, ts-ignore, helper/contract edit or configuration exception. JSON serialization and equality assertions receive the same initializer. Exactly 25 added ASCII bytes are the entire source delta.
+
+Native pin: 168535 bytes / `dbc3ad51567753dd5ebc71fe6106504f5a6d112f73aed8e62f136454a8c626a2` / blob `2be195a3346213b12a9498a07ae398dc9922dae1`. All-18 aggregate: `1d30c2168051a359797cd6700ee3e1d6dab7b023a026119a1377cd8ee880d2bc`.
+
+Pure text comparison restores the complete exact-54c4 native file when the annotation is removed. All 17 other source pins, SQL, 36 queries, fixed expectations, 31 groups/order, R9, both full quotas, final N15 and every resource limit remain unchanged. The independent reviewer separately reconstructed these final source pins. Actual Typecheck and execution still require the new unchanged CI.
+
+## Historical evidence precision
+
+Root's terminal Repository verification job 129809743296 failed Typecheck in run 42810301725. Tests/M04 never executed; no native or cleanup receipt exists and no successful cleanup is inferred from ordinary job cleanup. Full non-Auth job log: 106133 bytes / 106065 characters / 869 lines, SHA256 `b48164c277aa81719c4f069024bbc28642b0a25b6360d394ce2c05b2a50655cf`. The author read only the sanitized [Root dispatch](https://github.com/Jetnity/jetnity/pull/1182#issuecomment-6766572359). Overall run was in progress at Root's stated 11:49:52 UTC observation.
+
+Exact Preview dpl_4Se4HcJSTKcnAmL7QAxAUKT7eEYU was ERROR / lint_or_type_error on head 54c4, according to Root's metadata verification. No Vercel/Auth logs were read. Root-prepared failure excerpt: 1989 bytes / SHA256 `6cd22336ecb4d4ddbefc46dd8cb897c35b475fb88210f9c78324ade5821b4751`.
+
+The twelve previous failure objects and complete separately stored genuine R21 PR success are preserved exactly. This thirteenth record is a confirmed Typecheck-job failure, distinct from earlier native budget failures. Last actually executed native progress remains historical main 4bfa. Current R23 execution/PASS fields remain false; the annotation is not a claim of measured performance or repaired native budget margin.
+
+P1 remains the failed Typecheck/Preview and unmet full exact-head plus actual-main acceptance. Existing quadratic-history performance limits and all Owner/hosted/privacy/#917 gates remain. Root owns Task/Review/Evidence/Excerpt V14, publication and complete re-gating. No author local execution, installation, environment reconstruction, publication, Ready, merge or next slice.
+
+## Previous author self-review — preserved verbatim
+
 # M04 Phase B — R22 / Recovery Task V13 current author self-review
 
 **Prepared source/data review only. AUTHOR STOP; no current native, runtime or Technical-Lead PASS.** Same Generation2/session `/root/m04_durable_jobs_writer_g2`. Origin #1178 is merged; the linked R22 fix PR remains pending Root creation.
