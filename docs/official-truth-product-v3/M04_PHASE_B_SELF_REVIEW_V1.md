@@ -1,3 +1,43 @@
+# M04 Phase B — R22 / Recovery Task V13 current author self-review
+
+**Prepared source/data review only. AUTHOR STOP; no current native, runtime or Technical-Lead PASS.** Same Generation2/session `/root/m04_durable_jobs_writer_g2`. Origin #1178 is merged; the linked R22 fix PR remains pending Root creation.
+
+## Scope and equivalence
+
+1. `subject_v1` retains the existing first canonical validation in local `pair_text` and hashes those same bytes. For two actual country JSON strings, closed Pair/Method shapes and JSON escaping make the unescaped root `,"method":` token unique. `overlay` inserts the actual kind's depth-1 canonical scalar immediately before that property; `strpos` explicitly uses C collation. The existing original full second expression remains for other shapes. Every Method/Pair guard and all Rule code are unchanged. This selector adds no refusal or unchecked constant-kind normalization. An unusual-collation fallback execution is not claimed.
+2. At the two existing `acquiredAt` parser positions, exact original-text C equality permits reuse of already validated `updated`. Unequal or NULL text invokes the original parser at the same position. Created/updated order, both expiry parses, range/state/fence checks and the 900-second duration remain byte-identical outside these two expressions. There is no hoisting or expiry cache.
+3. All outside-scope SQL bytes, 29 declaration signatures/attributes and all native bytes outside the single N02 insertion are preserved; the other 16 source pins and 31 proof names/order are unchanged. No history row, command/journal/transition check, R9 witness, full quota, final N15 or resource limit is removed.
+
+## Finite independent oracles
+
+The 7192-byte insertion adds exactly 36 direct SQL queries: three fixed Discovery subject strings/job digests, six refusals, one anonymous DO with two fixed Method-before-Pair error-message oracles, and thirteen lease-time vectors for each of Rule and Discovery. Expected strings/digests are literal independently derived data. Minimum/maximum MethodId length and revision, reordered input keys, hostile metadata and closed-key/method/pair refusals are retained.
+
+Both leased bases are derived by the unchanged actual queue using prospective enqueue/claim envelopes; no journal is seeded. Cases cover equal/older valid acquiredAt at exactly 900 seconds, before-created/future times, JSON null/object/malformed/noncanonical same-instant input, expiry-at-updated/malformed/>900 refusal, and an older acquiredAt lasting 900.001 seconds while only 899.001 seconds have elapsed from updatedAt. The latter distinguishes correct fallback from unconditional reuse in the upper bound. The final extra-lease-key case intentionally fails at the earlier exact-key guard.
+
+These are prepared oracles, not execution evidence. The independent reviewer verified the final literal bytes, fixed digests and bounded source semantics; Root alone decides acceptance after full actual CI.
+
+## Pre-publication findings resolved
+
+[Root dispatch v4](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6766052044) approved exactly two immediate fixes in the same session: remove the new claim envelope's extra root `kind` while preserving `claim(kind)` and locator-derived kind; apply C collation only to the new anchor search. The earlier SQL `c9717766...` / native `e4f03b2c...` pins are explicitly discarded, unpublished and unexecuted. Neither issue caused the historical main failure.
+
+Final candidate SQL: 138753 bytes / SHA256 `9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f` / blob `50fa3a48fb6af74dea120dc71940945bb9500537`.
+
+Final native: 168510 bytes / SHA256 `e296958fec8e6d7afa113ccb4d24f4d7a2434cb1e3bc232ac120eb2a9efb2ec1` / blob `f59f4b571cb22592cef94af3cbaff2bf12ca30de`. Insertion SHA256 `bdfb119db60b0812fd8e83c98f112fbcf403014f4df11147fdca8ca04e591f5b`.
+
+All-18 aggregate: `8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b`.
+
+## Evidence precision and risks
+
+Genuine R21 PR CI 42798428417 passed all 31 groups/all eight jobs and received Root FINAL PASS before merge to main4bfa. Actual-main CI 42801478210 then failed group25/N05 after 24 groups, full ledger and both R9 witnesses. First23 groups totalled 90384ms, ledger group111659ms, failing cycle group37652.09814ms. Cycle counters show 103 acknowledged commands and 34 STARTs; the next database outcome remains UNKNOWN. No server profiling or causal runner/code explanation is asserted.
+
+All eleven old failed-run objects and Markdown tails are preserved; actual-main is appended as failure twelve. The complete successful PR receipt is held separately, not rewritten as failure or treated as current R22 acceptance. Root's actual-main full-log SHA256 is `a14ef9c860a87b331346edf23583161f80b43c69d562759401e76fb4275efa59`; the author read sanitized Root evidence only.
+
+P1 remains the unmet mandatory actual-main acceptance gate. P2 remains quadratic full-history work and unproved reliable margin, full-cap Rule latency and Production capacity/SLO. Source counts describe conditional avoided work only: three Discovery subject calls can avoid six repeated container loops/eighteen key encodings per representative dedup row while actual-kind validation remains; equal leased time text can avoid two timestamp and two civil-date calls. Added selector/search/overlay work exists; no speed guarantee follows. No new permitted-evidence Production incident is established. Existing Owner/privacy/hosted/#917 gates remain.
+
+No local project/parser/SQL/native/build/test execution, installation, forbidden logs/hosted access, Git mutation, Ready, merge or next slice by this author. Root owns Task V13, Root Review, failure evidence/excerpt, linked Draft publication and all fresh gates.
+
+## Previous author self-review — preserved verbatim
+
 # M04 Phase-B author self-review V1 — R21 current
 
 **SAME GENERATION2 SESSION. AUTHOR REVIEW IS NOT TL ACCEPTANCE.**

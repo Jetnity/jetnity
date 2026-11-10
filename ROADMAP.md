@@ -2,13 +2,17 @@
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
 
-### M04 current — R21 / Recovery V12, source reviewed; full exact-head acceptance pending
+### M04 current — R22 / Recovery V13, post-merge acceptance failed; correction pending
 
-**2026-11-10 10:20:27 UTC.** [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V12](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V12.md) · [Task V12](docs/official-truth-product-v3/M04_RECOVERY_TASK_V12.md) · [Evidence](docs/official-truth-product-v3/M04_RECOVERY_R21_EVIDENCE_V12.json) · [live PR#1178](https://github.com/Jetnity/jetnity/pull/1178). Later head-bound receipts/live evidence supersede this pre-publication snapshot.
+**2026-11-10 11:38:05 UTC.** [Current Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md) · [Root Review V13](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V13.md) · [Task V13](docs/official-truth-product-v3/M04_RECOVERY_TASK_V13.md) · [actual evidence](docs/official-truth-product-v3/M04_RECOVERY_R22_EVIDENCE_V13.json) · [live origin #1178](https://github.com/Jetnity/jetnity/pull/1178). Later exact-head receipts/live evidence supersede this pre-publication snapshot.
 
-Published baseline **d51d420a0ba83c56c7cf72166b5d328491fe54a5**, main **890dfe9323b4b6d3644c372d81cb8893b6548d11**, ahead 13 / behind 0, 107 paths. Actual CI 42771272293 FAILURE: 23/31 groups passed, R9 passed; N05/A03 reached 215 acknowledged commits then 240 s deadline; next DB outcome UNKNOWN; cleanup complete. No runtime/TL-PASS, Ready or merge. R21 changes only three already-validated JSONB string outputs plus nine direct N02 queries; source aggregate **11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6**. Same real Generation2 author/reviewer/auditor resumed; four unfinished author documents now completed and independently reviewed. First unfinished step: Root publication/readback, then full unchanged exact-head CI/all 31groups and final gates. D1 remains separately unfinished; no automatic next slice.
+Origin #1178 genuinely passed R21 (31/31/all eight jobs) and is **MERGED** to **`4bfa8b466ebc0af761fc5050bb4c51d7e73400c7`**. Mandatory actual-main CI **42801478210 FAILED**: 24 groups, both R9 witnesses and full ledger passed; cycle group25 hit the unchanged 240-second budget at started/completed index 34/33, with 103 acknowledged commands and 34 STARTs; following DB outcome UNKNOWN. Cleanup is complete: 27209/27209 work items settled and 4242/4242 connections closed. **M04 remains unfinished.**
 
-Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback remains pending/UNKNOWN/Stage2 NOT_ATTEMPTED without retry/substitute. #1131/#1135/#968/#911/#913 holds and all hosted/local/environment boundaries remain as detailed in V12.
+Final v4 R22 source and four author docs are independently reconstructed/reviewed, unexecuted. Only local Discovery canonical reuse, two acquiredAt CASE expressions and a 7192-byte/36-query N02 insertion change; all 16 other source pins, 29 declarations, 31 groups/order and all limits remain. Aggregate **`8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b`**. Two unpublished review findings were corrected. Same actual G2 author/reviewer sessions; author STOP.
+
+First unfinished step: Root publishes/readbacks new linked Draft on **`fix/official-truth-v3-m04-postmerge-r22-20261110`**, then full new exact-head and actual-main CI/Preview/Production gates. Current fix PR number pending at this snapshot. Historical success and twelve failures stay separate. Mode NORMAL; Production READY/main 4bfa is not CI acceptance. D1 remains separately unfinished/Draft; no automatic next product slice.
+
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps; #917 refused readback pending/UNKNOWN/Stage2 NOT_ATTEMPTED, without retry/substitute. #1131 Ready STOP, both #1135 holds, #968 isolation and #911/#913 privacy remain. All hosted/local/environment boundaries remain as detailed in V13.
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
 

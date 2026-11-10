@@ -1,3 +1,38 @@
+# M04 Phase B — R22 / Recovery Task V13 current author status
+
+**AUTHOR STOP for independent Root review; R22 is prepared and unexecuted.** Same real Generation2 author/session. Current fix PR number is pending Root creation on `fix/official-truth-v3-m04-postmerge-r22-20261110`; **origin #1178 is already merged**. This is its finite post-merge review fix, not a new product slice.
+
+## Historical acceptance and current blocker
+
+- R21 head `ed41061cf144e5710bf49bacc729b60ac28543c7` genuinely passed all 31 native groups and all eight jobs in [CI 42798428417](https://github.com/Jetnity/jetnity/actions/runs/42798428417). [Root FINAL PASS](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765250488) and the merge remain valid historical events.
+- Actual main `4bfa8b466ebc0af761fc5050bb4c51d7e73400c7`, the same tree `793026a2c26725da06ff281924aaa561d43ee32f`, then failed mandatory [post-merge CI 42801478210](https://github.com/Jetnity/jetnity/actions/runs/42801478210). It passed 24 groups and the full ledger boundary, but group25/N05 timed out at the unchanged 240-second effect budget. Cycles acknowledged 103 commands and 34 STARTs; the next command's final database outcome is UNKNOWN. Groups26-31 were not reached.
+- Root's actual-main receipt reports 27209/27209 settled, zero pending; 4242/4242 connections closed; one cluster stopped; zero children/cleanup errors; 240472ms total/34ms cleanup. Core: 8683 total, 8679 pass, two failures, two inherited layout skips, zero cancelled. All six companion jobs passed. Closure remains held.
+
+The JSON records preserve all eleven prior failure objects exactly and append this twelfth failure. Genuine R21 success, its complete receipt and Root decision/merge are separately retained. Historical success cannot accept changed R22 bytes.
+
+## Frozen R22 delivery
+
+| Source | UTF-8 bytes | SHA256 |
+|---|---:|---|
+| jobs-candidate.sql | 138753 | `9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f` |
+| native.ts | 168510 | `e296958fec8e6d7afa113ccb4d24f4d7a2434cb1e3bc232ac120eb2a9efb2ec1` |
+
+All-18-source digest: `8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b`. Other 16 pins remain unchanged. SQL delta is confined to Discovery local canonical reuse and two acquiredAt expressions, with one local declaration. Native adds one 7192-byte N02 block containing exactly 36 direct queries. All 29 declarations, 31 groups/order, R9, full quotas, final N15, history/authority/error ordering and budgets remain.
+
+Discovery reuses the first validated Pair/Method bytes, preserves actual-kind scalar validation and uses a C-collated unique root insertion only for actual string countries; all other shapes retain the original second expression. Lease reuse requires exact C-equal original time text at the two existing guard positions; unequal/NULL input retains the original parser. Both expiry calls remain.
+
+The independent reviewer caught two unpublished candidate issues: a forbidden extra claim root-kind and missing C collation on the new anchor lookup. Both were corrected under [dispatch v4](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6766052044); discarded pins were never published or executed. Final source pins were independently reconstructed. This is source review only.
+
+Root-owned [actual-main failure evidence](M04_RECOVERY_R22_EVIDENCE_V13.json) and [safe excerpt](M04_RECOVERY_R22_NATIVE_FAILURE_V13.txt) accompany Task/Review V13. Excerpt: 8774 bytes, SHA256 `6d4b9d408c306e4eb638d7f436801575a5d8b41504f53665349c8c7432e6669a`; relative publication paths, not files claimed present at historical main4bfa.
+
+## Remaining gates
+
+All current R22 execution/native/runtime/TL-PASS/Ready/merge fields are false. Root must independently verify the complete source/document delivery, publish the linked Draft, and obtain unchanged full exact-head CI/Preview plus later actual-main CI/Production. No author local/project/parser/SQL/native/build execution, installation or Git publication occurred. No guaranteed speedup or margin, full-cap Rule latency or Production SLO is claimed; history verification remains quadratic.
+
+Method NOT_APPROVED; #1139 NOT_RELEASE_READY/17 gaps, #917 refusal/pending/UNKNOWN/Stage2 NOT_ATTEMPTED, #1131 Ready STOP, both #1135 holds, #968 and #911/#913 remain. No hosted/Auth/credential/migration action, provider/research/activation, #917 retry or automatic follow-up slice. D1 remains separate.
+
+## Previous author record — preserved verbatim
+
 # M04 Phase-B author delivery status V1 — R21 current
 
 **R21 FROZEN SOURCE / AUTHOR DOCUMENTS COMPLETE; NEW EXACT-HEAD EXECUTION PENDING.**

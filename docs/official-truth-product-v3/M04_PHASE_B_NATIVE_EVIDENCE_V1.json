@@ -1,13 +1,13 @@
 {
   "schema": "jetnity.m04.phase-b.native-evidence.v1",
-  "status": "R21_SAME_GENERATION2_EXISTING_JSONB_STRING_OUTPUT_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "savedAt": "2026-11-10T10:14:24.186Z",
+  "status": "R22_SAME_GENERATION2_POSTMERGE_LOCAL_REUSE_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "savedAt": "2026-11-10T11:30:30.222Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
-  "pullRequest": 1178,
-  "dispatchHead": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761461251",
-  "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6",
+  "pullRequest": null,
+  "dispatchHead": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372",
+  "sourceDigestSha256": "8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b",
   "sourcePins": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -81,8 +81,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
-      "bytes": 138224,
-      "sha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080"
+      "bytes": 138753,
+      "sha256": "9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
@@ -91,8 +91,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 161318,
-      "sha256": "c4001fd857386f2b789852f346086cb0167ffd627959802d65baf6d11bd86104"
+      "bytes": 168510,
+      "sha256": "e296958fec8e6d7afa113ccb4d24f4d7a2434cb1e3bc232ac120eb2a9efb2ec1"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -107,43 +107,45 @@
   "hostedAccess": false,
   "fullCoreExecuted": false,
   "fullBuildExecuted": false,
-  "executionMeaning": "Current R21 source is unexecuted. Eleven historical failures remain. Exact d51 passed first 23 groups including all R20 N02 cases and both R9 witnesses, then N05/A03 hit 240s after 215 acknowledged commits. The next call has UNKNOWN final database outcome; seven later groups were not reached. No current or whole-native PASS.",
+  "executionMeaning": "Current R22 source is unexecuted. The genuine R21 PR success (31/31 groups, all eight jobs, Root FINAL PASS and merge) is separately historical. Eleven earlier failures remain exact; twelfth actual-main4bfa failed group25 N05 at 240s after 24 groups, full ledger and 103 acknowledged cycle commands/34 STARTs. The next call has UNKNOWN final database outcome; groups26-31 were not reached. No current R22 acceptance.",
   "historicalCI": {
-    "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
-    "tree": "dd75f8b57600f3dd588efbf4049b8642d77ca714",
-    "runId": 42771272293,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42771272293",
+    "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "tree": "793026a2c26725da06ff281924aaa561d43ee32f",
+    "runId": 42801478210,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42801478210",
+    "event": "push",
     "attempt": 1,
-    "repositoryVerificationJobId": 129679380018,
+    "repositoryVerificationJobId": 129779815566,
     "repositoryVerificationConclusion": "failure",
     "status": "completed",
     "conclusion": "failure",
-    "updatedAt": "2026-11-10T07:08:39Z",
-    "source": "Root independently reread terminal metadata and the complete non-Auth log after interruption, confirming the same exact receipt. The author restored pinned source/evidence files through authorized GitHub reads and did not access logs.",
-    "fullLogSha256": "457e33fe7739810de9ae0b21f6b5206d976953120decddd61e44545054cc2470",
-    "fullLogBytes": 4251668,
-    "fullLogCharacters": 4242450,
-    "fullLogLines": 63148,
+    "updatedAt": "2026-11-10T10:57:05Z",
+    "source": "Root independently verified terminal run/jobs and read the complete terminal non-Auth Repository verification log. Author read only Root's persisted sanitized receipt.",
+    "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372",
+    "fullLogSha256": "a14ef9c860a87b331346edf23583161f80b43c69d562759401e76fb4275efa59",
+    "fullLogBytes": 4250541,
+    "fullLogLines": 63137,
     "core": {
-      "tests": 8682,
-      "passed": 8678,
+      "tests": 8683,
+      "passed": 8679,
       "failed": 2,
       "skipped": 2,
       "cancelled": 0,
-      "milliseconds": 844519.303993
+      "milliseconds": 680370.273089,
+      "skipMeaning": "Two inherited layout skips, no M04 skip"
     },
     "native": {
       "schema": "jetnity.m04.native.v1",
-      "candidateSha256": "18c5d6c7f724e9c90c2f6e2aa96b429afb397d405db355057071d195b1c5417e",
+      "candidateSha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 240376,
-      "cleanupMilliseconds": 26,
+      "effectAndCleanupMilliseconds": 240472,
+      "cleanupMilliseconds": 34,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 26644,
-        "settled": 26644,
+        "started": 27209,
+        "settled": 27209,
         "pending": 0,
         "connections": 4242,
         "closed": 4242,
@@ -152,95 +154,99 @@
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 44
+          "milliseconds": 26
         },
         {
           "id": "N02",
-          "milliseconds": 2293
+          "milliseconds": 1485
         },
         {
           "id": "N03",
-          "milliseconds": 2719
+          "milliseconds": 2138
         },
         {
           "id": "N07",
-          "milliseconds": 11105
+          "milliseconds": 9418
         },
         {
           "id": "N07/R4",
-          "milliseconds": 1013
+          "milliseconds": 874
         },
         {
           "id": "N08",
-          "milliseconds": 12978
+          "milliseconds": 11292
         },
         {
           "id": "N08/U04",
-          "milliseconds": 3658
+          "milliseconds": 2955
         },
         {
           "id": "N02/U04",
-          "milliseconds": 1509
+          "milliseconds": 923
         },
         {
           "id": "N04/N06",
-          "milliseconds": 2893
+          "milliseconds": 2438
         },
         {
           "id": "N04/N06/N10",
-          "milliseconds": 2901
+          "milliseconds": 2719
         },
         {
           "id": "N05/N09",
-          "milliseconds": 3143
+          "milliseconds": 2711
         },
         {
           "id": "N09",
-          "milliseconds": 20631
+          "milliseconds": 18629
         },
         {
           "id": "N10/U06",
-          "milliseconds": 7506
+          "milliseconds": 7281
         },
         {
           "id": "N11",
-          "milliseconds": 2276
+          "milliseconds": 2021
         },
         {
           "id": "N11",
-          "milliseconds": 127
+          "milliseconds": 158
         },
         {
           "id": "N12",
-          "milliseconds": 176
+          "milliseconds": 189
         },
         {
           "id": "N04/N10/N12",
-          "milliseconds": 5401
+          "milliseconds": 4478
         },
         {
           "id": "N12/U06/R9",
-          "milliseconds": 14160
+          "milliseconds": 13349
         },
         {
           "id": "N12/R7-03",
-          "milliseconds": 607
+          "milliseconds": 395
         },
         {
           "id": "N11",
-          "milliseconds": 3534
+          "milliseconds": 2998
         },
         {
           "id": "N11",
-          "milliseconds": 362
+          "milliseconds": 397
         },
         {
           "id": "N11",
-          "milliseconds": 419
+          "milliseconds": 235
         },
         {
           "id": "N13",
-          "milliseconds": 3149
+          "milliseconds": 3275
+        },
+        {
+          "id": "N05/A03",
+          "milliseconds": 111659
         }
       ],
       "nestedRaceWitnesses": [
@@ -248,16 +254,16 @@
           "boundary": "i1_timeout",
           "operation": "reserve_v1",
           "target": {
-            "pid": "25380",
-            "birth": "2026-11-10 07:03:43.10745+00"
+            "pid": "25029",
+            "birth": "2026-11-10 10:52:53.100515+00"
           },
           "control": {
-            "pid": "25379",
-            "birth": "2026-11-10 07:03:43.101889+00"
+            "pid": "25028",
+            "birth": "2026-11-10 10:52:53.095459+00"
           },
           "holder": {
-            "pid": "25067",
-            "birth": "2026-11-10 07:03:38.850301+00"
+            "pid": "24697",
+            "birth": "2026-11-10 10:52:49.10334+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -276,16 +282,16 @@
           "boundary": "worker_caller_abort",
           "operation": "reserve_v1",
           "target": {
-            "pid": "26145",
-            "birth": "2026-11-10 07:03:52.283896+00"
+            "pid": "25821",
+            "birth": "2026-11-10 10:53:01.848457+00"
           },
           "control": {
-            "pid": "26144",
-            "birth": "2026-11-10 07:03:52.223+00"
+            "pid": "25820",
+            "birth": "2026-11-10 10:53:01.843184+00"
           },
           "holder": {
-            "pid": "25786",
-            "birth": "2026-11-10 07:03:48.233729+00"
+            "pid": "25448",
+            "birth": "2026-11-10 10:52:58.194332+00"
           },
           "realSqlWaitObserved": true,
           "abortDelivered": true,
@@ -302,49 +308,49 @@
         }
       ],
       "quotaProgress": {
-        "currentGroup": "N05/A03",
-        "boundary": "ledger_fill",
+        "currentGroup": "N05",
+        "boundary": "cycle_claim",
         "indexBase": 0,
         "millisecondsCap": 300000,
         "timingMeaning": "client await durations including construction/transport; not server statement profiling",
         "ledger": {
-          "lastStartedIndex": 215,
-          "lastCompletedIndex": 214,
-          "commandRequestsStarted": 216,
-          "commandRequestsCompleted": 216,
-          "commandRequestMilliseconds": 480,
-          "fixedCallsStarted": 217,
-          "fixedCallsCompleted": 216,
-          "fixedCallMilliseconds": 136518,
-          "commandCallsStarted": 216,
-          "commandCallsCompleted": 215,
-          "commandCommits": 215,
-          "startCallsStarted": 0,
-          "startCallsCompleted": 0,
-          "startReservations": 0
+          "lastStartedIndex": 253,
+          "lastCompletedIndex": 253,
+          "commandRequestsStarted": 258,
+          "commandRequestsCompleted": 258,
+          "commandRequestMilliseconds": 458,
+          "fixedCallsStarted": 260,
+          "fixedCallsCompleted": 260,
+          "fixedCallMilliseconds": 111380,
+          "commandCallsStarted": 258,
+          "commandCallsCompleted": 258,
+          "commandCommits": 256,
+          "startCallsStarted": 1,
+          "startCallsCompleted": 1,
+          "startReservations": 1
         },
         "cycles": {
-          "lastStartedIndex": null,
-          "lastCompletedIndex": null,
-          "commandRequestsStarted": 0,
-          "commandRequestsCompleted": 0,
-          "commandRequestMilliseconds": 0,
-          "fixedCallsStarted": 0,
-          "fixedCallsCompleted": 0,
-          "fixedCallMilliseconds": 0,
-          "commandCallsStarted": 0,
-          "commandCallsCompleted": 0,
-          "commandCommits": 0,
-          "startCallsStarted": 0,
-          "startCallsCompleted": 0,
-          "startReservations": 0
+          "lastStartedIndex": 34,
+          "lastCompletedIndex": 33,
+          "commandRequestsStarted": 104,
+          "commandRequestsCompleted": 104,
+          "commandRequestMilliseconds": 206,
+          "fixedCallsStarted": 139,
+          "fixedCallsCompleted": 138,
+          "fixedCallMilliseconds": 37546,
+          "commandCallsStarted": 104,
+          "commandCallsCompleted": 103,
+          "commandCommits": 103,
+          "startCallsStarted": 34,
+          "startCallsCompleted": 34,
+          "startReservations": 34
         }
       },
       "connections": {
         "aggregateWorkConnectionBound": 40,
         "maximumJobs": 4,
         "maximumIntake": 1,
-        "maximumMethod": 3,
+        "maximumMethod": 2,
         "m04ObserverLimit": 2,
         "maximumM04Observers": 2,
         "methodObserverLimit": 1,
@@ -353,7 +359,7 @@
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "proof_24:N05/A03",
+        "phase": "proof_25:N05",
         "error": {
           "kind": "fixture",
           "code": "unclassified_failure"
@@ -363,52 +369,36 @@
       "cleanupFailureCount": 0,
       "nativePass": false
     },
-    "candidateSha256": "18c5d6c7f724e9c90c2f6e2aa96b429afb397d405db355057071d195b1c5417e",
-    "sourceDigestSha256": "cd76347b518c7c8cecd5661e73886712a8597164c8f98b3c8acebc84be9ae87e",
+    "nativeReceiptCompactSha256": "61ffb53fb9404a99082ccc9a9dd7eebc77ad57f3fd9417585ce6f7ff045fc305",
+    "candidateSha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080",
+    "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6",
     "reportedFailure": {
-      "phase": "proof_24:N05/A03",
-      "code": "unclassified_failure",
-      "error": "M04 240s effect budget exceeded",
-      "groupMilliseconds": 136801.231224,
-      "lastStartedIndex": 215,
-      "lastCompletedIndex": 214,
-      "acknowledgedCommandCommits": 215,
-      "unfinishedOutwardCommandOrdinal": 216,
-      "unfinishedCallDatabaseOutcome": "UNKNOWN",
-      "sqlStatement": null,
-      "predicate": null,
-      "perStatementTimings": null
+      "phase": "proof_25:N05",
+      "groupOrder": 25,
+      "groupId": "N05",
+      "groupMilliseconds": 37652.09814,
+      "message": "M04 240s effect budget exceeded",
+      "nextDatabaseOutcome": "UNKNOWN"
     },
-    "completedGroups": "First 23 ordered groups passed, including all R20 N02 queries and both R9 witnesses; their times sum to 102604 ms. Group 24 failed; groups 25-31 were not reached. No full native PASS.",
-    "diagnosis": "Recorded elapsed values do not establish a causal R20 speed or runner conclusion. R21 removes only three redundant JSONB string reconstructions after unchanged guards. All history and private error ordering remain.",
+    "completedGroups": 24,
+    "diagnosis": "Actual-main full ledger completed; cycle boundary timed out at global 240s after zero-based lastStarted34/lastCompleted33, 103 acknowledged cycle commands and 34 STARTs. Repeated deterministic validation is inspected from source; there is no server profile or causal timing attribution.",
     "terminalVerification": {
-      "reportedBy": "Root",
-      "rereadAfterInterruption": true,
-      "successfulCompanionJobs": 6,
-      "successfulCompanionJobIds": {
-        "atomic": 129679379701,
-        "ui": 129679379943,
-        "persisted": 129679379965,
-        "store": 129679379997,
-        "lifecycle": 129679380069,
-        "authMetadataOnly": 129679380165
-      },
-      "aggregateJobId": 129685618326,
+      "observedBy": "Root",
+      "at": "2026-11-10T10:58:11Z",
+      "aggregateJobId": 129786377654,
       "aggregateConclusion": "failure",
-      "repositoryVerificationSteps": {
-        "typecheck": "success",
-        "lint": "success",
-        "tests": "failure",
-        "hygiene": "skipped",
-        "productionBuild": "skipped"
-      },
-      "inheritedLayoutSkips": 2
+      "companions": "All six SUCCESS; Auth metadata only",
+      "typecheck": "success",
+      "lint": "success",
+      "tests": "failure",
+      "hygiene": "skipped",
+      "build": "skipped"
     },
     "safeExcerpt": {
-      "path": "docs/official-truth-product-v3/M04_RECOVERY_R21_NATIVE_FAILURE_V12.txt",
-      "bytes": 6417,
-      "sha256": "e2ace2b4101afc9b63f0bbcb636f003c33aaa9766f4950f27299155d2b9b0da9",
-      "source": "Root recreated this bounded original-line excerpt after interruption. These current pins replace the lost unpublished excerpt; the relative V12 file is not claimed present under historical d51."
+      "path": "docs/official-truth-product-v3/M04_RECOVERY_R22_NATIVE_FAILURE_V13.txt",
+      "bytes": 8774,
+      "sha256": "6d4b9d408c306e4eb638d7f436801575a5d8b41504f53665349c8c7432e6669a",
+      "publication": "Prepared by Root for V13; relative path, not present at historical main4bfa"
     }
   },
   "continuation": {
@@ -419,14 +409,14 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
+    "sourceBaseline": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 16,
-    "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R21 starts from published d51d420a. Root owns main ancestry, review and publication; the author performed no Git mutation.",
+    "rootReportedNewMain": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "mainIntegration": "R21 genuinely passed and origin #1178 merged to main4bfa with the same reviewed tree. Its mandatory actual-main CI failed. R22 is the finite linked post-merge review fix; Root alone publishes and gates it.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -434,11 +424,11 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V12.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V13.md"
   },
   "corrections": {
     "R9": {
-      "status": "CURRENT_R21_NATIVE_PENDING_HISTORICAL_D51_BOTH_R9_WITNESSES_PASSED",
+      "status": "CURRENT_R22_NATIVE_PENDING_HISTORICAL_R21_PR_AND_ACTUAL_MAIN_R9_PASSED",
       "unitWitnesses": 3,
       "nativeWitnessCases": [
         "natural I1 fixed5000ms timeout",
@@ -782,6 +772,72 @@
         ],
         "fullNativePass": false,
         "limit": "Historical exact-head evidence only; R21 must reprove both cases. No separately observed raw worker return or elapsed 30s worker timer claim."
+      },
+      "historicalActualMainExecution": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "group": "N12/U06/R9",
+        "milliseconds": 13349,
+        "witnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25029",
+              "birth": "2026-11-10 10:52:53.100515+00"
+            },
+            "control": {
+              "pid": "25028",
+              "birth": "2026-11-10 10:52:53.095459+00"
+            },
+            "holder": {
+              "pid": "24697",
+              "birth": "2026-11-10 10:52:49.10334+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25821",
+              "birth": "2026-11-10 10:53:01.848457+00"
+            },
+            "control": {
+              "pid": "25820",
+              "birth": "2026-11-10 10:53:01.843184+00"
+            },
+            "holder": {
+              "pid": "25448",
+              "birth": "2026-11-10 10:52:58.194332+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "fullNativePass": false,
+        "limit": "Actual-main historical evidence only. R22 must reprove both cases; no separate elapsed 30s worker-timer claim."
       }
     },
     "R10": {
@@ -1413,7 +1469,145 @@
         "sha256": "c4001fd857386f2b789852f346086cb0167ffd627959802d65baf6d11bd86104"
       },
       "nativeGitBlob": "abbbd77b0896876877e8aa1dd0dd786d6d39c03f",
-      "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6"
+      "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6",
+      "historicalSnapshotBeforeR22": true,
+      "historicalPRSuccess": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": 31,
+        "fullNativePass": true,
+        "allEightJobsPassed": true,
+        "rootFinalPass": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765250488",
+        "mergeHead": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "currentR22Acceptance": false
+      }
+    },
+    "R22": {
+      "status": "PREPARED_NOT_EXECUTED_FOR_ROOT_REVIEW",
+      "scope": "Two existing SQL bodies and one necessary local declaration; one additive N02 block. Other 16 source pins, every other SQL/native byte, 29 declarations and 31 groups/order remain.",
+      "discovery": {
+        "firstTraversal": "The unchanged first canonical_v1(v,0) result is retained in local pair_text at the same original evaluation point and hashed unchanged.",
+        "selector": "Both actual country JSONB values must have string type for reuse. This chooses an optimization, not acceptance/refusal.",
+        "insertion": "Insert before the unique root ,\"method\": with overlay(... from strpos(pair_text COLLATE \"C\", ',\"method\":') for 0); preserve the original comma/method suffix.",
+        "actualKind": "canonical_v1(to_jsonb(kind),1) preserves the actual passed argument and its original depth-1 leaf guard/encoding after the first canonical/hash.",
+        "fallback": "When the string-shape premise is not established, use the exact original canonical_v1(v||jsonb_build_object('kind',kind),0). No executed unusual-collation fallback path is claimed.",
+        "equivalence": "Closed pair/method keys plus string countries and validated MethodId/revision make the root separator unique; escaped string data cannot contain its unescaped structural token. C key order inserts kind between destinationCountryCode and method. All Method/Pair guards and the Rule branch remain."
+      },
+      "lease": {
+        "sites": 2,
+        "comparison": "Exact original acquiredAt/updatedAt text under COLLATE \"C\"",
+        "reuse": "Use the already validated updated timestamptz only on exact equality; ELSE retains the original acquiredAt parser at each same guard position.",
+        "preserved": "Created/updated validation order, both expiresAt calls, shape/range/fence/state guards, NULL behavior, 900-second bound and error order remain. No expiry reuse or hoisting."
+      },
+      "nativeOracles": {
+        "directQueries": 36,
+        "subjectFixedVectors": 3,
+        "subjectRefusals": 6,
+        "subjectGuardOrderDO": {
+          "queries": 1,
+          "cases": 2
+        },
+        "leaseVectorsPerKind": 13,
+        "kinds": 2,
+        "insertionBytes": 7192,
+        "insertionSha256": "bdfb119db60b0812fd8e83c98f112fbcf403014f4df11147fdca8ca04e591f5b",
+        "fixedSubjectExpectations": [
+          {
+            "label": "representative reordered keys",
+            "raw": "{\"method\":{\"revision\":17,\"methodId\":\"m04_fixture-1\"},\"destinationCountryCode\":\"NO\",\"citizenshipCountryCode\":\"DE\"}",
+            "pair": "{\"citizenshipCountryCode\":\"DE\",\"destinationCountryCode\":\"NO\",\"method\":{\"methodId\":\"m04_fixture-1\",\"revision\":17}}",
+            "subject": "{\"citizenshipCountryCode\":\"DE\",\"destinationCountryCode\":\"NO\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"m04_fixture-1\",\"revision\":17}}",
+            "jobKey": "combination-discovery-job:v3:d70b8ea47efcee1340b1b587302045063b85b85fcb9d549884a147e6f02efea3"
+          },
+          {
+            "label": "minimum MethodId and revision",
+            "raw": "{\"destinationCountryCode\":\"IS\",\"method\":{\"revision\":1,\"methodId\":\"aa\"},\"citizenshipCountryCode\":\"CH\"}",
+            "pair": "{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}",
+            "subject": "{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}",
+            "jobKey": "combination-discovery-job:v3:29462a8a134a608b3a6dda2e2458c7620b8e9bc5f665d442a883789281da68aa"
+          },
+          {
+            "label": "maximum MethodId and revision",
+            "raw": "{\"method\":{\"revision\":2147483647,\"methodId\":\"z_______________________________________________________________\"},\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\"}",
+            "pair": "{\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\",\"method\":{\"methodId\":\"z_______________________________________________________________\",\"revision\":2147483647}}",
+            "subject": "{\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"z_______________________________________________________________\",\"revision\":2147483647}}",
+            "jobKey": "combination-discovery-job:v3:bfe68f82f44aadb4463c0120d82e09d59f2db2bf9dda4f527c338e692f87eb93"
+          }
+        ],
+        "leaseCoverage": [
+          "equal valid exact 900 seconds",
+          "older valid acquiredAt fallback exact 900 seconds",
+          "future acquiredAt",
+          "acquiredAt before createdAt",
+          "JSON null acquiredAt",
+          "object acquiredAt",
+          "malformed acquiredAt",
+          "same instant noncanonical text",
+          "expiry equals updatedAt",
+          "malformed expiry",
+          "equal acquiredAt over 900 seconds",
+          "older acquiredAt 900.001 seconds, only 899.001 from updatedAt",
+          "extra lease key intentionally fails earlier shape guard"
+        ],
+        "derivation": "Both leased bases come from the unchanged commandRequest and actual queue enqueue/claim derivation; claim kind is inferred from its locator. Pure prospective envelopes only; no journal seeding or additional connection.",
+        "execution": "Prepared only; no project/parser/SQL/native execution."
+      },
+      "sourceWorkModel": {
+        "meaning": "Source-derived conditional work counts only, not profiling, measured speedup or a guarantee of sufficient margin.",
+        "representativeDiscoveryDedupSubjectCalls": 3,
+        "avoidedPairMethodContainerLoopsPerSuchRow": 6,
+        "avoidedAssociatedKeyEncodingsPerSuchRow": 18,
+        "actualKindScalarValidationRetained": true,
+        "limitation": "Complete history verification remains quadratic. New selector/search/overlay work exists; no elapsed-time or causal code/runner claim.",
+        "avoidedTimestampCallsPerEqualTextLeasedJobValidation": 2,
+        "avoidedCivilDateCallsPerEqualTextLeasedJobValidation": 2
+      },
+      "prePublicationReviewCorrections": [
+        {
+          "finding": "New claim oracle had a forbidden root kind and would fail before the lease queries.",
+          "correction": "Remove only the new claim root kind; preserve commandFixture.claim(kind) and the protected command reader.",
+          "unpublished": true,
+          "executed": false
+        },
+        {
+          "finding": "New anchor search lacked explicit deterministic collation.",
+          "correction": "Apply COLLATE \"C\" only to pair_text in the new strpos; preserve selector, actual kind validation and original fallback.",
+          "unpublished": true,
+          "executed": false
+        }
+      ],
+      "discardedCandidatePins": {
+        "sqlSha256": "c9717766f7480ec113adf7799e5d8650498eb3135e545450e3c41ff67db653dd",
+        "nativeSha256": "e4f03b2cbf5dd9e3b2f19125557cc16d5058f679c41e6a8cbb7afadbc1cdc9a9",
+        "accepted": false,
+        "published": false,
+        "executed": false
+      },
+      "performanceLimitation": "No speedup, reliable CI margin, full-cap Rule latency, Production capacity/SLO or activation approval. A new exact-head full CI and later actual-main CI remain mandatory.",
+      "currentExecution": false,
+      "nativePass": false,
+      "technicalLeadPass": false,
+      "ready": false,
+      "merge": false,
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372",
+      "authorization": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765830398",
+      "clarification": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765902293",
+      "reviewFixAuthorization": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6766052044",
+      "baselineHead": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "baselineTree": "793026a2c26725da06ff281924aaa561d43ee32f",
+      "candidateSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+        "bytes": 138753,
+        "sha256": "9a92e0b8d9b948df49e5c1557aa116af37607e6e282dd3af897be5b84bcf567f"
+      },
+      "candidateGitBlob": "50fa3a48fb6af74dea120dc71940945bb9500537",
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 168510,
+        "sha256": "e296958fec8e6d7afa113ccb4d24f4d7a2434cb1e3bc232ac120eb2a9efb2ec1"
+      },
+      "nativeGitBlob": "f59f4b571cb22592cef94af3cbaff2bf12ca30de",
+      "sourceDigestSha256": "8aa1579386054a9a991cc9dd63c0b61b96f60e716a731f956b66c4b5b210e77b"
     }
   },
   "executedNonNativeChecks": [
@@ -1450,7 +1644,9 @@
       "executedForR20": false,
       "r20Applicability": "Historical pre-R20 author check only; candidate SQL and native.ts changed and no local project check was rerun.",
       "executedForR21": false,
-      "r21Applicability": "Historical author result only; no R21 project check was executed."
+      "r21Applicability": "Historical author result only; no R21 project check was executed.",
+      "executedForR22": false,
+      "r22Applicability": "Historical author result only; no R22 project check was executed."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -1485,7 +1681,9 @@
       "executedForR20": false,
       "r20Applicability": "Historical pre-R20 author check only; candidate SQL and native.ts changed and no local project check was rerun.",
       "executedForR21": false,
-      "r21Applicability": "Historical author result only; no R21 project check was executed."
+      "r21Applicability": "Historical author result only; no R21 project check was executed.",
+      "executedForR22": false,
+      "r22Applicability": "Historical author result only; no R22 project check was executed."
     },
     {
       "name": "targeted ESLint",
@@ -1515,14 +1713,16 @@
       "executedForR20": false,
       "r20Applicability": "Historical pre-R20 author check only; candidate SQL and native.ts changed and no local project check was rerun.",
       "executedForR21": false,
-      "r21Applicability": "Historical author result only; no R21 project check was executed."
+      "r21Applicability": "Historical author result only; no R21 project check was executed.",
+      "executedForR22": false,
+      "r22Applicability": "Historical author result only; no R22 project check was executed."
     }
   ],
   "coverageMatrix": [
     {
       "id": "U01",
       "requirement": "Closed contract, all seventeen predicate families, strict shape/numeric/JSON admission",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -1546,7 +1746,7 @@
         "Duplicate status members, accessor rows, extra fields and negative-zero metadata rejected; only four JSON whitespace characters admitted.",
         "Raw Unicode/trim aliases normalize at JS edge; cycles/getters and excessive nesting/cardinality refuse. Native direct-entry checks are N02."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -1600,12 +1800,28 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U02",
       "requirement": "Full identity and support stripping after actual S0 validation",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -1625,7 +1841,7 @@
         "Changed research reason preserves stable subject; invalid support rejects before stripping; support-stripped duplicate operands collapse on second pass.",
         "Legacy/revision-2 and unresolved variants are included in finite identity vectors."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -1679,12 +1895,28 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U03",
       "requirement": "Immutable command and original claim/replay binding",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -1708,7 +1940,7 @@
         "START positive reply must bind original leased record and exact claim duration.",
         "Generic queue fail confirmation/CAS/post-CAS read uses retained immutable command; persistent replay/collision tests are N03/N09."
       ],
-      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "The terminal-capacity test uses actual generic queue/standalone MA1/scope with a handwritten fixed bridge. It does not measure the private authorityCore bridge at call240. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -1762,12 +1994,28 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U04",
       "requirement": "Whole-original/whole-batch D01 admission and bounded wire",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -1795,7 +2043,7 @@
         "Sixteen-original success preserves bytes, performs sixteen captures/reserves/finishes and48 reads within256 admissions.",
         "18.0/18e0/1.8e1 originals retain semantic compatibility; source-derived maximum160772 bytes is below262144. Native wire/row and actual persistence tests remain N02/N08."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -1914,12 +2162,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 7,
+            "id": "N08/U04",
+            "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+            "milliseconds": 3006
+          },
+          {
+            "order": 8,
+            "id": "N02/U04",
+            "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+            "milliseconds": 782
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 7,
+            "id": "N08/U04",
+            "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+            "milliseconds": 2955
+          },
+          {
+            "order": 8,
+            "id": "N02/U04",
+            "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+            "milliseconds": 923
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U05",
       "requirement": "MA1 custody, monotone deadlines and closed private outward surface",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
@@ -1947,7 +2237,7 @@
         "Four owned calls retain slots through abort; joint outward object has exactly three methods and no receipt/epoch/general-SQL escape.",
         "Actual private bridge uses terminal observedAt plus remaining original Held cap and refuses delayed positive ACK."
       ],
-      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "Same-Held exclusion is an internal source boundary; no production permit/debug export was added. Standalone overlap tests remain unchanged. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2001,12 +2291,28 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U06",
       "requirement": "Nested I1/worker race and actual owned drain/retired lane",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -2039,7 +2345,7 @@
         "Separate raw composition test directly observes raw integration unconfirmed while the same reserve and scope drain/finish remain pending; actual standalone MA1 plus labelled handwritten fixed bridge.",
         "No fail/complete CAS, no backoff state, no finish or late native admission; all held promises released and joined."
       ],
-      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "The raw-composition test does not measure private authorityCore. No separate raw worker promise or elapsed30s worker timer is claimed. Native PID/birth/SQL-wait witness is N12/U06/R9 and is unexecuted for this cut. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2158,12 +2464,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 13,
+            "id": "N10/U06",
+            "test": "delivered producer does not terminate a pending I1 evidence callback",
+            "milliseconds": 6296
+          },
+          {
+            "order": 18,
+            "id": "N12/U06/R9",
+            "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+            "milliseconds": 10599
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 13,
+            "id": "N10/U06",
+            "test": "delivered producer does not terminate a pending I1 evidence callback",
+            "milliseconds": 7281
+          },
+          {
+            "order": 18,
+            "id": "N12/U06/R9",
+            "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+            "milliseconds": 13349
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "U07",
       "requirement": "Uncertain I1 results cannot create known failure",
-      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R21",
+      "execution": "HISTORICAL_OFFLINE_PASS_NOT_RERUN_FOR_R22",
       "sourceAnchors": [
         {
           "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -2187,7 +2535,7 @@
         "Confirmed quarantine and privately owned known producer failure may produce one backoff; uncertain pre-START lookup cannot.",
         "Final failure reservation is excluded from processing terminality and retains sixteen admissions."
       ],
-      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance.",
+      "limits": "Protocol doubles/pure assertions, not native persistence or SQL acceptance. No R13 rerun. No R14 rerun. No R15 rerun. No R16 rerun. No R17 author rerun; listed historical 69 compound native observations are not current-head acceptance. No R18 author rerun; listed historical 1d8 compound native observations are not current-head acceptance. No R19 author rerun; historical f29 compound observations are not current-head acceptance. No R20 author rerun; historical 728 compound observations are not current-head acceptance. No R21 author rerun; historical d51 native observations are not current acceptance. No R22 author rerun; historical CI remains scoped to its exact head.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "No new author execution.",
@@ -2241,12 +2589,28 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N01",
       "requirement": "Exact fictional install and security/catalog inventory",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N01",
@@ -2262,7 +2626,7 @@
       "assertions": [
         "Independent29-function/seven-table/fourteen-guard/seven-policy inventory; fixed ownership, FORCE RLS, exact signatures/ACL/index/constraint checks; narrow runtime and denial paths; temporary catalog shadows."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "First N01 group passed41ms; later N01/N14/T02 group not reached.",
@@ -2381,12 +2745,54 @@
           }
         ],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 1,
+            "id": "N01",
+            "test": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+            "milliseconds": 28
+          },
+          {
+            "order": 28,
+            "id": "N01/N14/T02",
+            "test": "temporary catalog/type shadows do not influence the new install or runtime",
+            "milliseconds": 84
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 1,
+            "id": "N01",
+            "test": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
+            "milliseconds": 26
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [
+          {
+            "order": 28,
+            "id": "N01/N14/T02",
+            "test": "temporary catalog/type shadows do not influence the new install or runtime"
+          }
+        ],
+        "fullNativePass": false
       }
     },
     {
       "id": "N02",
       "requirement": "Native canonical/direct-entry identity",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N02",
@@ -2406,9 +2812,10 @@
         "R18: both-kind canonical command text/key/value parity; explicit original SQL-NULL error and oversized-command guard oracles in anonymous DO; JSON-null refusal. Canonical depth/ASCII/numeric rules and separate wire node guard unchanged. Prepared source, unexecuted.",
         "R19: fixed direct canonical/node oracles cover scalar roots and both object/array leaf paths, C order/escaping/ASCII, raw numeric normalization and safe bounds, true SQLNULL via local NULLIF, depth24 empty/nonempty and depth23 grandchild limits, key weights and exact small count/cap boundaries. Shared transport unchanged. Prepared source, unexecuted.",
         "R20: exactly 24 direct queries cover both-kind equal/different timestamp acceptance, equal invalid calendar and null/wrong-type timestamp fallback with keys retained, reversed lifecycle and noncanonical same-instant text, plus mixed raw numeric normalization and exact precision refusals. Existing R19 matrix and raw wire negative-zero guard unchanged. Prepared source, unexecuted.",
-        "R21: nine direct queries use fixed raw/expected JSON strings for empty, alternate ASCII escapes, slash, quote, backslash, literal backslash-u and string null across root/object/array, plus two successive/nested vectors. Existing guard rejection matrix and R20 cases remain exact. Prepared, not executed."
+        "R21: nine direct queries use fixed raw/expected JSON strings for empty, alternate ASCII escapes, slash, quote, backslash, literal backslash-u and string null across root/object/array, plus two successive/nested vectors. Existing guard rejection matrix and R20 cases remain exact. Prepared, not executed.",
+        "R22: 36 additive direct queries comprise three literal Discovery subjectText/jobKey oracles, six P7601 refusals, one anonymous DO with two fixed Method-before-Pair messages, and thirteen lease-time cases per kind. Exact/unequal acquiredAt paths, NULL/object/malformed/noncanonical values, expiry refusals and 900-second bounds are checked; one explicit malformed-shape case fails earlier. Prospective actual-queue bases, no journal write. Prepared, not executed."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "First N02 group failed42501; remaining N02 assertions and N02/U04 group not proved.",
@@ -2527,12 +2934,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 2,
+            "id": "N02",
+            "test": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+            "milliseconds": 1286
+          },
+          {
+            "order": 8,
+            "id": "N02/U04",
+            "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+            "milliseconds": 782
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 2,
+            "id": "N02",
+            "test": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
+            "milliseconds": 1485
+          },
+          {
+            "order": 8,
+            "id": "N02/U04",
+            "test": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
+            "milliseconds": 923
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N03",
       "requirement": "Durable commands, exact replay and dedup",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N03",
@@ -2544,7 +2993,7 @@
         "Database-backed command envelope replay, independent semantic subjects, cycle collision and active dedup assertions.",
         "R18: unused Rule age68 and coherent Discovery CH-to-SE each start with actual absent probe and two real initial/dedup commits. Identical malformed current/expected/next refuses prior validation; distinct valid forged next refuses with unchanged persisted state. No positive journal seeding. Prepared source, unexecuted."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -2633,12 +3082,42 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 3,
+            "id": "N03",
+            "test": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+            "milliseconds": 1393
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 3,
+            "id": "N03",
+            "test": "actual durable command replay, independent subjects, cycle collisions and active dedup",
+            "milliseconds": 2138
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N04",
       "requirement": "One original START winner, ACK uncertainty and restart",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -2664,7 +3143,7 @@
       "assertions": [
         "Two actual native starts contend after preflight, one acknowledged winner; older active start blocks new claim; process crash and lost START ACK do not create a second producer permit."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -2813,12 +3292,66 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 9,
+            "id": "N04/N06",
+            "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+            "milliseconds": 1579
+          },
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 1684
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 2712
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 9,
+            "id": "N04/N06",
+            "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+            "milliseconds": 2438
+          },
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 2719
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 4478
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N05",
       "requirement": "All older unknown and finite history/ledger caps",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -2841,7 +3374,7 @@
         "R17: genuine Discovery CH-to-IS and CH-to-NO histories, distinct from each other/prior CH-to-AQ; actual absent probes precede first writes. All actual 254/255/256 and 64/65 boundaries, full retained history, original credit/token/fence, unchanged-state and pointer-corruption assertions remain. Prepared source, unexecuted.",
         "R18: existing real 254/255/256 and 64/65 proofs keep every command/start/credit/fence/state/pointer assertion. Two constant-size progress records add finite boundary, zero-based indices, invocation/resolution/commit/reservation counts and capped aggregate client-await durations, without changing errors or budgets. Prepared source, unexecuted."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached. d51 acknowledged 215 commits; next database outcome UNKNOWN. Earlier 728 full Discovery quota evidence remains historical. No R21 speed or full-cap Rule/Production SLO claim.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31. Actual-main ledger had 256 acknowledged commits/one START; cycles had 103 acknowledged commands/34 STARTs with next DB outcome UNKNOWN. No full-cap Rule latency, causal speedup, reliable margin or Production SLO claim.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -2990,12 +3523,66 @@
           }
         ],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 11,
+            "id": "N05/N09",
+            "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+            "milliseconds": 1746
+          },
+          {
+            "order": 24,
+            "id": "N05/A03",
+            "test": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+            "milliseconds": 71992
+          },
+          {
+            "order": 25,
+            "id": "N05",
+            "test": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
+            "milliseconds": 74089
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 11,
+            "id": "N05/N09",
+            "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+            "milliseconds": 2711
+          },
+          {
+            "order": 24,
+            "id": "N05/A03",
+            "test": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
+            "milliseconds": 111659
+          }
+        ],
+        "failedOrderedGroups": [
+          {
+            "order": 25,
+            "id": "N05",
+            "test": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim"
+          }
+        ],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N06",
       "requirement": "Preflight/start contention and independent progress",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06",
@@ -3011,7 +3598,7 @@
       "assertions": [
         "Real competing native starts and actual row/advisory blocking; losing claim cannot change attempts/revision; separate subject progresses while original producer remains active."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3130,12 +3717,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 9,
+            "id": "N04/N06",
+            "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+            "milliseconds": 1579
+          },
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 1684
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 9,
+            "id": "N04/N06",
+            "test": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
+            "milliseconds": 2438
+          },
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 2719
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N07",
       "requirement": "Actual Rule S1/I1/PREPARED/completion/E1 path",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N07",
@@ -3153,7 +3782,7 @@
         "R15: coherent CH/DE/FR citizenship/passport contexts preserve age 18 and the three raw numeric spellings; inconsistent DE/FR variants explicitly reject; actual contextKey/jobKey sets must each have cardinality 3. Original-byte/prepared/completed/succeeded assertions remain. Prepared source, not executed.",
         "R16: actual raw S1 bridge reply must equal decoded completion; application DTO explicitly refuses P7604; both revision cases consume the raw reply with bounded labels and clone it for all four existing negatives; final store.open equality remains. Prepared source, not executed."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3272,12 +3901,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 4,
+            "id": "N07",
+            "test": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+            "milliseconds": 6075
+          },
+          {
+            "order": 5,
+            "id": "N07/R4",
+            "test": "actual S1 archived history and linked method revision survive full native consumption",
+            "milliseconds": 541
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 4,
+            "id": "N07",
+            "test": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
+            "milliseconds": 9418
+          },
+          {
+            "order": 5,
+            "id": "N07/R4",
+            "test": "actual S1 archived history and linked method revision survive full native consumption",
+            "milliseconds": 874
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N08",
       "requirement": "Sixteen persisted originals and whole-batch admission",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N08",
@@ -3298,7 +3969,7 @@
       "assertions": [
         "Sixteen actual persisted originals complete within fixed admission bounds and reopen later; duplicate/missing final member refuses before first S1 effect. Separate nested finish ACK-loss witness covers uncertainty, not a claim of a distinct16th-write-loss scenario."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3417,12 +4088,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 6,
+            "id": "N08",
+            "test": "sixteen actual persisted originals complete inside fixed call budgets",
+            "milliseconds": 6851
+          },
+          {
+            "order": 7,
+            "id": "N08/U04",
+            "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+            "milliseconds": 3006
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 6,
+            "id": "N08",
+            "test": "sixteen actual persisted originals complete inside fixed call budgets",
+            "milliseconds": 11292
+          },
+          {
+            "order": 7,
+            "id": "N08/U04",
+            "test": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
+            "milliseconds": 2955
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N09",
       "requirement": "Fresh-process PREPARED/completed recovery and claim fidelity",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N05/N09",
@@ -3438,7 +4151,7 @@
       "assertions": [
         "Process crash and separate fresh-process recovery of prepared/completed lost acknowledgement with original claim, no producer reuse; changed claim/revoked epoch recovery refusal assertions."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3557,12 +4270,54 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 11,
+            "id": "N05/N09",
+            "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+            "milliseconds": 1746
+          },
+          {
+            "order": 12,
+            "id": "N09",
+            "test": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+            "milliseconds": 16140
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 11,
+            "id": "N05/N09",
+            "test": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
+            "milliseconds": 2711
+          },
+          {
+            "order": 12,
+            "id": "N09",
+            "test": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
+            "milliseconds": 18629
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N10",
       "requirement": "Known failure versus unknown callback/native outcome",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N04/N06/N10",
@@ -3593,7 +4348,7 @@
       "assertions": [
         "Active producer/pending I1 evidence or lost START/finish acknowledgement preserves unknown; pre-S1 D01 failure may settle privately; actual final command/disposition ledger boundary is atomic. Source proof is separate from a measured native result."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3742,12 +4497,66 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 1684
+          },
+          {
+            "order": 13,
+            "id": "N10/U06",
+            "test": "delivered producer does not terminate a pending I1 evidence callback",
+            "milliseconds": 6296
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 2712
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 10,
+            "id": "N04/N06/N10",
+            "test": "older active start blocks a new claim while an independent subject progresses",
+            "milliseconds": 2719
+          },
+          {
+            "order": 13,
+            "id": "N10/U06",
+            "test": "delivered producer does not terminate a pending I1 evidence callback",
+            "milliseconds": 7281
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 4478
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N11",
       "requirement": "Real waits followed by final authority/clock",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N11",
@@ -3778,7 +4587,7 @@
       "assertions": [
         "PID+backend_start+holder+relation observed for MA1, subject, advisory, table, S1 operation, unique and immediate FK waits; due/lease checks, revoke and deferred-trigger drift; full staged state unchanged on refusal."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -3987,12 +4796,90 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 14,
+            "id": "N11",
+            "test": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+            "milliseconds": 1717
+          },
+          {
+            "order": 15,
+            "id": "N11",
+            "test": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+            "milliseconds": 85
+          },
+          {
+            "order": 20,
+            "id": "N11",
+            "test": "staged PREPARED waits on the actual S1 operation before final current MA1",
+            "milliseconds": 2040
+          },
+          {
+            "order": 21,
+            "id": "N11",
+            "test": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+            "milliseconds": 167
+          },
+          {
+            "order": 22,
+            "id": "N11",
+            "test": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+            "milliseconds": 180
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 14,
+            "id": "N11",
+            "test": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
+            "milliseconds": 2021
+          },
+          {
+            "order": 15,
+            "id": "N11",
+            "test": "actual revoke held in a native transaction defeats staged queue writes after the wait",
+            "milliseconds": 158
+          },
+          {
+            "order": 20,
+            "id": "N11",
+            "test": "staged PREPARED waits on the actual S1 operation before final current MA1",
+            "milliseconds": 2998
+          },
+          {
+            "order": 21,
+            "id": "N11",
+            "test": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
+            "milliseconds": 397
+          },
+          {
+            "order": 22,
+            "id": "N11",
+            "test": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
+            "milliseconds": 235
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N12",
       "requirement": "Acquisition/cancellation/ACK and nested executor terminal ownership",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N12",
@@ -4018,7 +4905,7 @@
       "assertions": [
         "Four held acquisitions refuse fifth; control failure and intentional child crash retain cleanup failures. New natural I1 timeout and explicit caller-abort reserve cases prove actual wait before cancellation, backend absence while same executor remains held, all four outer lanes, no terminal effects, exact S1 operations/reservations/completions unchanged, then same-operation join and no late admissions."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4197,12 +5084,78 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 16,
+            "id": "N12",
+            "test": "acquisition, control failure and real drain never free a live native lane",
+            "milliseconds": 142
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 2712
+          },
+          {
+            "order": 18,
+            "id": "N12/U06/R9",
+            "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+            "milliseconds": 10599
+          },
+          {
+            "order": 19,
+            "id": "N12/R7-03",
+            "test": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+            "milliseconds": 366
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 16,
+            "id": "N12",
+            "test": "acquisition, control failure and real drain never free a live native lane",
+            "milliseconds": 189
+          },
+          {
+            "order": 17,
+            "id": "N04/N10/N12",
+            "test": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
+            "milliseconds": 4478
+          },
+          {
+            "order": 18,
+            "id": "N12/U06/R9",
+            "test": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
+            "milliseconds": 13349
+          },
+          {
+            "order": 19,
+            "id": "N12/R7-03",
+            "test": "intentional child crash retains a thrown actual native cancellation cleanup failure",
+            "milliseconds": 395
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N13",
       "requirement": "Legacy original preserved but ineligible for M04 preparation",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N13",
@@ -4213,7 +5166,7 @@
       "assertions": [
         "Actual unchanged S1 accepts/reopens retained raw-alias original byte-for-byte; M04 full consumer refuses it; fresh privately owned D01 failure occurs before any new S1 call."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4302,12 +5255,42 @@
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 23,
+            "id": "N13",
+            "test": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+            "milliseconds": 2164
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [
+          {
+            "order": 23,
+            "id": "N13",
+            "test": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
+            "milliseconds": 3275
+          }
+        ],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [],
+        "fullNativePass": false
       }
     },
     {
       "id": "N14",
       "requirement": "Creator defaults, prerequisite drift and actual dependencies",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N14",
@@ -4328,7 +5311,7 @@
       "assertions": [
         "Finite creator ACL, role/membership/owner/body/language/ACL drift matrix refuses before creation with exact catalog restoration. Empty predecessor histories and clean reader membership reach actual2BP01 dependencies; wrong errors are not accepted."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4465,12 +5448,63 @@
           }
         ],
         "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 27,
+            "id": "N14",
+            "test": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
+            "milliseconds": 489
+          },
+          {
+            "order": 28,
+            "id": "N01/N14/T02",
+            "test": "temporary catalog/type shadows do not influence the new install or runtime",
+            "milliseconds": 84
+          },
+          {
+            "order": 29,
+            "id": "N14",
+            "test": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
+            "milliseconds": 98
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [
+          {
+            "order": 27,
+            "id": "N14",
+            "test": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation"
+          },
+          {
+            "order": 28,
+            "id": "N01/N14/T02",
+            "test": "temporary catalog/type shadows do not influence the new install or runtime"
+          },
+          {
+            "order": 29,
+            "id": "N14",
+            "test": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog"
+          }
+        ],
+        "fullNativePass": false
       }
     },
     {
       "id": "N15",
       "requirement": "Guarded rollback with nonempty and concurrent late history",
-      "execution": "R21_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
+      "execution": "R22_CURRENT_SOURCE_NOT_EXECUTED_NATIVE_CI_REQUIRED",
       "sourceAnchors": [
         {
           "id": "N15",
@@ -4491,7 +5525,7 @@
       "assertions": [
         "Any existing retained history blocks teardown; exact empty companion-first teardown preserves predecessors/defaults despite shadows; actual table-lock late writer forces post-wait recheck and refusal."
       ],
-      "limits": "Current R21 source is unexecuted. Historical d51 observations are limited to the listed groups; N05/A03 failed and seven later groups were not reached.",
+      "limits": "Current R22 source is unexecuted. Genuine R21 PR success is historical; actual-main4bfa passed only listed groups, failed group25 N05 and did not reach groups26-31.",
       "executedForR12": false,
       "executedForR13": false,
       "historical82bObservation": "Not reached.",
@@ -4608,6 +5642,57 @@
       "historicalD51Observation": {
         "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
         "runId": 42771272293,
+        "completedOrderedGroups": [],
+        "failedOrderedGroups": [],
+        "notReachedOrderedGroups": [
+          {
+            "order": 26,
+            "id": "N15",
+            "test": "nonempty real command/unknown/prepared/success/failure history forbids rollback"
+          },
+          {
+            "order": 30,
+            "id": "N15/T02",
+            "test": "empty companion-first exact teardown survives temporary shadows and preserves predecessors"
+          },
+          {
+            "order": 31,
+            "id": "N15",
+            "test": "rollback waits for actual late writer then rechecks nonempty history atomically"
+          }
+        ],
+        "fullNativePass": false
+      },
+      "executedForR22": false,
+      "historicalR21PRObservation": {
+        "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+        "runId": 42798428417,
+        "completedOrderedGroups": [
+          {
+            "order": 26,
+            "id": "N15",
+            "test": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
+            "milliseconds": 68
+          },
+          {
+            "order": 30,
+            "id": "N15/T02",
+            "test": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
+            "milliseconds": 64
+          },
+          {
+            "order": 31,
+            "id": "N15",
+            "test": "rollback waits for actual late writer then rechecks nonempty history atomically",
+            "milliseconds": 227
+          }
+        ],
+        "fullNativePass": true,
+        "currentR22Acceptance": false
+      },
+      "historicalActualMainObservation": {
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "runId": 42801478210,
         "completedOrderedGroups": [],
         "failedOrderedGroups": [],
         "notReachedOrderedGroups": [
@@ -4789,6 +5874,11 @@
     }
   ],
   "evidencePrecision": [
+    "R22 changes only Discovery local canonical reuse with actual-kind scalar validation and exact original fallback, two same-position C-equal acquiredAt CASE expressions, and one 7192-byte/36-query N02 insertion. All 29 declarations, 31 groups/order, R9, quotas and budgets remain.",
+    "Origin #1178 genuinely passed R21 and merged; current R22 fix PR number is pending Root creation. Historical PR success is separately preserved and never substituted for the failed actual-main gate.",
+    "Root supplies the actual-main terminal failure receipt. The author reads only sanitized evidence, never logs; all current R22 execution/PASS/Ready/merge fields remain false.",
+    "The independent reviewer caught the malformed new claim envelope and missing C search collation before publication. Both exact fixes are versioned in dispatch v4; discarded pins were never published or executed.",
+    "No executed unusual-collation fallback path, controlled speedup, reliable budget margin, full-cap Rule latency or Production SLO is claimed. Complete history work remains quadratic.",
     "R21 changes only three canonical string outputs and one 1555-byte, nine-query N02 insertion. Every ASCII extraction/guard, key encoder, command/transition error order, all 31 groups and every resource budget remain.",
     "The transient author store was lost during interruption. Exact d51 files and the previously frozen source transforms were restored through authorized GitHub reads and pure text/hash work; the four R21 documents had not been finished before interruption.",
     "Root supplies terminal d51 log/receipt evidence. Author source reads are not log execution evidence. Current R21 execution/PASS fields remain false.",
@@ -4858,10 +5948,10 @@
     }
   ],
   "nextSteps": [
-    "Root exact review of three canonical outputs, nine-query N02 block and four author documents",
-    "Root expected-head publication/readback preserving all other source bytes and current-main ancestry",
-    "New exact-head unchanged full CI: all 31 groups, both R9 cases, actual 254/255/256 and 64/65 quotas, inherited-boundary evidence and bounded cleanup",
-    "Root deployment/thread/Owner review; no activation or automatic follow-up slice"
+    "Root and independent reviewer verify the final v4 source/document bytes, all 18 pins and the twelve preserved failure histories plus genuine historical R21 success.",
+    "Root publishes the linked post-merge Draft fix with expected-head protection and complete tree readback; origin #1178 stays merged.",
+    "New exact-head unchanged full CI must pass all 31 groups, both R9 cases, full 254/255/256 and 64/65 quotas, inherited-boundary and final N15 cleanup.",
+    "Root checks exact Preview, review threads, current main and Owner gates before any PASS/Ready/merge; then mandatory actual-main CI/Production before closure. No activation or automatic next slice."
   ],
   "holdState": {
     "method": "NOT_APPROVED",
@@ -4876,12 +5966,13 @@
     ],
     "activation": false,
     "ready": false,
-    "merged": false
+    "merged": false,
+    "currentScope": "R22 unpublished linked post-merge review fix; origin #1178 remains historically merged"
   },
-  "disposition": "AUTHOR_STOP_R21_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R22_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "72868a287280a6c1d96222268a1413110ec95039",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760723089"
+    "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761461251"
   },
   "historicalCIRuns": [
     {
@@ -6742,6 +7833,299 @@
         "sha256": "e2ace2b4101afc9b63f0bbcb636f003c33aaa9766f4950f27299155d2b9b0da9",
         "source": "Root recreated this bounded original-line excerpt after interruption. These current pins replace the lost unpublished excerpt; the relative V12 file is not claimed present under historical d51."
       }
+    },
+    {
+      "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+      "tree": "793026a2c26725da06ff281924aaa561d43ee32f",
+      "runId": 42801478210,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42801478210",
+      "event": "push",
+      "attempt": 1,
+      "repositoryVerificationJobId": 129779815566,
+      "repositoryVerificationConclusion": "failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T10:57:05Z",
+      "source": "Root independently verified terminal run/jobs and read the complete terminal non-Auth Repository verification log. Author read only Root's persisted sanitized receipt.",
+      "sourceReceipt": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372",
+      "fullLogSha256": "a14ef9c860a87b331346edf23583161f80b43c69d562759401e76fb4275efa59",
+      "fullLogBytes": 4250541,
+      "fullLogLines": 63137,
+      "core": {
+        "tests": 8683,
+        "passed": 8679,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0,
+        "milliseconds": 680370.273089,
+        "skipMeaning": "Two inherited layout skips, no M04 skip"
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240472,
+        "cleanupMilliseconds": 34,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27209,
+          "settled": 27209,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 26
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1485
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2138
+          },
+          {
+            "id": "N07",
+            "milliseconds": 9418
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 874
+          },
+          {
+            "id": "N08",
+            "milliseconds": 11292
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 2955
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 923
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2438
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2719
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2711
+          },
+          {
+            "id": "N09",
+            "milliseconds": 18629
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 7281
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2021
+          },
+          {
+            "id": "N11",
+            "milliseconds": 158
+          },
+          {
+            "id": "N12",
+            "milliseconds": 189
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 4478
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 13349
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 395
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2998
+          },
+          {
+            "id": "N11",
+            "milliseconds": 397
+          },
+          {
+            "id": "N11",
+            "milliseconds": 235
+          },
+          {
+            "id": "N13",
+            "milliseconds": 3275
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 111659
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25029",
+              "birth": "2026-11-10 10:52:53.100515+00"
+            },
+            "control": {
+              "pid": "25028",
+              "birth": "2026-11-10 10:52:53.095459+00"
+            },
+            "holder": {
+              "pid": "24697",
+              "birth": "2026-11-10 10:52:49.10334+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25821",
+              "birth": "2026-11-10 10:53:01.848457+00"
+            },
+            "control": {
+              "pid": "25820",
+              "birth": "2026-11-10 10:53:01.843184+00"
+            },
+            "holder": {
+              "pid": "25448",
+              "birth": "2026-11-10 10:52:58.194332+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05",
+          "boundary": "cycle_claim",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 458,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 111380,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 34,
+            "lastCompletedIndex": 33,
+            "commandRequestsStarted": 104,
+            "commandRequestsCompleted": 104,
+            "commandRequestMilliseconds": 206,
+            "fixedCallsStarted": 139,
+            "fixedCallsCompleted": 138,
+            "fixedCallMilliseconds": 37546,
+            "commandCallsStarted": 104,
+            "commandCallsCompleted": 103,
+            "commandCommits": 103,
+            "startCallsStarted": 34,
+            "startCallsCompleted": 34,
+            "startReservations": 34
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_25:N05",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptCompactSha256": "61ffb53fb9404a99082ccc9a9dd7eebc77ad57f3fd9417585ce6f7ff045fc305",
+      "candidateSha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080",
+      "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6",
+      "reportedFailure": {
+        "phase": "proof_25:N05",
+        "groupOrder": 25,
+        "groupId": "N05",
+        "groupMilliseconds": 37652.09814,
+        "message": "M04 240s effect budget exceeded",
+        "nextDatabaseOutcome": "UNKNOWN"
+      },
+      "completedGroups": 24,
+      "diagnosis": "Actual-main full ledger completed; cycle boundary timed out at global 240s after zero-based lastStarted34/lastCompleted33, 103 acknowledged cycle commands and 34 STARTs. Repeated deterministic validation is inspected from source; there is no server profile or causal timing attribution.",
+      "terminalVerification": {
+        "observedBy": "Root",
+        "at": "2026-11-10T10:58:11Z",
+        "aggregateJobId": 129786377654,
+        "aggregateConclusion": "failure",
+        "companions": "All six SUCCESS; Auth metadata only",
+        "typecheck": "success",
+        "lint": "success",
+        "tests": "failure",
+        "hygiene": "skipped",
+        "build": "skipped"
+      },
+      "safeExcerpt": {
+        "path": "docs/official-truth-product-v3/M04_RECOVERY_R22_NATIVE_FAILURE_V13.txt",
+        "bytes": 8774,
+        "sha256": "6d4b9d408c306e4eb638d7f436801575a5d8b41504f53665349c8c7432e6669a",
+        "publication": "Prepared by Root for V13; relative path, not present at historical main4bfa"
+      }
     }
   ],
   "environment": "EXACT_GITHUB_FILE_READS_AND_IN_SESSION_TEXT_DATA_HASH_ONLY",
@@ -6786,6 +8170,10 @@
     {
       "head": "72868a287280a6c1d96222268a1413110ec95039",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6760723089"
+    },
+    {
+      "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6761461251"
     }
   ],
   "newLocalExecutionForR13": false,
@@ -6794,14 +8182,13 @@
   "newLocalExecutionForR16": false,
   "newLocalExecutionForR17": false,
   "historicalNativeProgress": {
-    "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
-    "runId": 42771272293,
-    "completedOrderedGroups": 23,
+    "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+    "runId": 42801478210,
+    "completedOrderedGroups": 24,
     "totalOrderedGroups": 31,
-    "failedOrder": 24,
-    "failedId": "N05/A03",
+    "failedOrder": 25,
+    "failedId": "N05",
     "notReachedOrders": [
-      25,
       26,
       27,
       28,
@@ -6811,48 +8198,48 @@
     ],
     "r9WitnessesPassed": 2,
     "quotaProgress": {
-      "currentGroup": "N05/A03",
-      "boundary": "ledger_fill",
+      "currentGroup": "N05",
+      "boundary": "cycle_claim",
       "indexBase": 0,
       "millisecondsCap": 300000,
       "timingMeaning": "client await durations including construction/transport; not server statement profiling",
       "ledger": {
-        "lastStartedIndex": 215,
-        "lastCompletedIndex": 214,
-        "commandRequestsStarted": 216,
-        "commandRequestsCompleted": 216,
-        "commandRequestMilliseconds": 480,
-        "fixedCallsStarted": 217,
-        "fixedCallsCompleted": 216,
-        "fixedCallMilliseconds": 136518,
-        "commandCallsStarted": 216,
-        "commandCallsCompleted": 215,
-        "commandCommits": 215,
-        "startCallsStarted": 0,
-        "startCallsCompleted": 0,
-        "startReservations": 0
+        "lastStartedIndex": 253,
+        "lastCompletedIndex": 253,
+        "commandRequestsStarted": 258,
+        "commandRequestsCompleted": 258,
+        "commandRequestMilliseconds": 458,
+        "fixedCallsStarted": 260,
+        "fixedCallsCompleted": 260,
+        "fixedCallMilliseconds": 111380,
+        "commandCallsStarted": 258,
+        "commandCallsCompleted": 258,
+        "commandCommits": 256,
+        "startCallsStarted": 1,
+        "startCallsCompleted": 1,
+        "startReservations": 1
       },
       "cycles": {
-        "lastStartedIndex": null,
-        "lastCompletedIndex": null,
-        "commandRequestsStarted": 0,
-        "commandRequestsCompleted": 0,
-        "commandRequestMilliseconds": 0,
-        "fixedCallsStarted": 0,
-        "fixedCallsCompleted": 0,
-        "fixedCallMilliseconds": 0,
-        "commandCallsStarted": 0,
-        "commandCallsCompleted": 0,
-        "commandCommits": 0,
-        "startCallsStarted": 0,
-        "startCallsCompleted": 0,
-        "startReservations": 0
+        "lastStartedIndex": 34,
+        "lastCompletedIndex": 33,
+        "commandRequestsStarted": 104,
+        "commandRequestsCompleted": 104,
+        "commandRequestMilliseconds": 206,
+        "fixedCallsStarted": 139,
+        "fixedCallsCompleted": 138,
+        "fixedCallMilliseconds": 37546,
+        "commandCallsStarted": 104,
+        "commandCallsCompleted": 103,
+        "commandCommits": 103,
+        "startCallsStarted": 34,
+        "startCallsCompleted": 34,
+        "startReservations": 34
       }
     },
-    "acknowledgedCommandCommits": 215,
+    "acknowledgedCycleCommandCommits": 103,
     "unfinishedCallDatabaseOutcome": "UNKNOWN",
     "fullNativePass": false,
-    "currentR21Executed": false
+    "currentR22Executed": false
   },
   "newLocalExecutionForR18": false,
   "historicalNativeProgressHistory": [
@@ -7010,6 +8397,67 @@
       "cycleStartReservations": 64,
       "fullNativePass": false,
       "currentR20Executed": false
+    },
+    {
+      "head": "d51d420a0ba83c56c7cf72166b5d328491fe54a5",
+      "runId": 42771272293,
+      "completedOrderedGroups": 23,
+      "totalOrderedGroups": 31,
+      "failedOrder": 24,
+      "failedId": "N05/A03",
+      "notReachedOrders": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "r9WitnessesPassed": 2,
+      "quotaProgress": {
+        "currentGroup": "N05/A03",
+        "boundary": "ledger_fill",
+        "indexBase": 0,
+        "millisecondsCap": 300000,
+        "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+        "ledger": {
+          "lastStartedIndex": 215,
+          "lastCompletedIndex": 214,
+          "commandRequestsStarted": 216,
+          "commandRequestsCompleted": 216,
+          "commandRequestMilliseconds": 480,
+          "fixedCallsStarted": 217,
+          "fixedCallsCompleted": 216,
+          "fixedCallMilliseconds": 136518,
+          "commandCallsStarted": 216,
+          "commandCallsCompleted": 215,
+          "commandCommits": 215,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        },
+        "cycles": {
+          "lastStartedIndex": null,
+          "lastCompletedIndex": null,
+          "commandRequestsStarted": 0,
+          "commandRequestsCompleted": 0,
+          "commandRequestMilliseconds": 0,
+          "fixedCallsStarted": 0,
+          "fixedCallsCompleted": 0,
+          "fixedCallMilliseconds": 0,
+          "commandCallsStarted": 0,
+          "commandCallsCompleted": 0,
+          "commandCommits": 0,
+          "startCallsStarted": 0,
+          "startCallsCompleted": 0,
+          "startReservations": 0
+        }
+      },
+      "acknowledgedCommandCommits": 215,
+      "unfinishedCallDatabaseOutcome": "UNKNOWN",
+      "fullNativePass": false,
+      "currentR21Executed": false
     }
   ],
   "newLocalExecutionForR19": false,
@@ -7017,5 +8465,359 @@
   "runtimePass": false,
   "ready": false,
   "merge": false,
-  "newLocalExecutionForR21": false
+  "newLocalExecutionForR21": false,
+  "originPullRequest": {
+    "number": 1178,
+    "state": "MERGED",
+    "mergeHead": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7"
+  },
+  "currentPullRequest": {
+    "number": null,
+    "state": "PENDING_ROOT_DRAFT_CREATION",
+    "branch": "fix/official-truth-v3-m04-postmerge-r22-20261110",
+    "scope": "Linked post-merge review fix for origin #1178; no new product slice"
+  },
+  "historicalSuccessfulCIRuns": [
+    {
+      "head": "ed41061cf144e5710bf49bacc729b60ac28543c7",
+      "tree": "793026a2c26725da06ff281924aaa561d43ee32f",
+      "runId": 42798428417,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42798428417",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "updatedAt": "2026-11-10T10:39:42Z",
+      "repositoryVerificationJobId": 129769441797,
+      "source": "Historical Root-owned exact-head native receipt, terminal all-eight-job verification, FINAL PASS and SHA-locked merge. Current R22 acceptance remains false.",
+      "nativeReceiptSource": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765106729",
+      "rootFinalPass": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765250488",
+      "fullLogSha256": "ae62a40c69cf31cc3e84684793eb3fa9d205698ded75dbe94b5259e7e98fdb10",
+      "fullLogBytes": 4268737,
+      "fullLogCharacters": 4259145,
+      "fullLogLines": 63400,
+      "core": {
+        "tests": 8689,
+        "passed": 8687,
+        "failed": 0,
+        "skipped": 2,
+        "cancelled": 0,
+        "milliseconds": 512099.265976,
+        "skipMeaning": "Two inherited layout skips, no M04 skip"
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 216548,
+        "cleanupMilliseconds": 170,
+        "clusters": 2,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 27552,
+          "settled": 27552,
+          "pending": 0,
+          "connections": 4249,
+          "closed": 4249,
+          "stoppedClusters": 2
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 28
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1286
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1393
+          },
+          {
+            "id": "N07",
+            "milliseconds": 6075
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 541
+          },
+          {
+            "id": "N08",
+            "milliseconds": 6851
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3006
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 782
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 1579
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 1684
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 1746
+          },
+          {
+            "id": "N09",
+            "milliseconds": 16140
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 6296
+          },
+          {
+            "id": "N11",
+            "milliseconds": 1717
+          },
+          {
+            "id": "N11",
+            "milliseconds": 85
+          },
+          {
+            "id": "N12",
+            "milliseconds": 142
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 2712
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 10599
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 366
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2040
+          },
+          {
+            "id": "N11",
+            "milliseconds": 167
+          },
+          {
+            "id": "N11",
+            "milliseconds": 180
+          },
+          {
+            "id": "N13",
+            "milliseconds": 2164
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 71992
+          },
+          {
+            "id": "N05",
+            "milliseconds": 74089
+          },
+          {
+            "id": "N15",
+            "milliseconds": 68
+          },
+          {
+            "id": "N14",
+            "milliseconds": 489
+          },
+          {
+            "id": "N01/N14/T02",
+            "milliseconds": 84
+          },
+          {
+            "id": "N14",
+            "milliseconds": 98
+          },
+          {
+            "id": "N15/T02",
+            "milliseconds": 64
+          },
+          {
+            "id": "N15",
+            "milliseconds": 227
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "24874",
+              "birth": "2026-11-10 10:28:21.930755+00"
+            },
+            "control": {
+              "pid": "24873",
+              "birth": "2026-11-10 10:28:21.927956+00"
+            },
+            "holder": {
+              "pid": "24501",
+              "birth": "2026-11-10 10:28:19.760872+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25727",
+              "birth": "2026-11-10 10:28:29.88803+00"
+            },
+            "control": {
+              "pid": "25726",
+              "birth": "2026-11-10 10:28:29.883876+00"
+            },
+            "holder": {
+              "pid": "25347",
+              "birth": "2026-11-10 10:28:27.026718+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "none",
+          "boundary": "done",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 364,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 71801,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 63,
+            "lastCompletedIndex": 63,
+            "commandRequestsStarted": 194,
+            "commandRequestsCompleted": 194,
+            "commandRequestMilliseconds": 304,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 259,
+            "fixedCallMilliseconds": 73917,
+            "commandCallsStarted": 194,
+            "commandCallsCompleted": 194,
+            "commandCommits": 193,
+            "startCallsStarted": 64,
+            "startCallsCompleted": 64,
+            "startReservations": 64
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 761,
+          "minimumOwned": 4182
+        },
+        "failure": null,
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": true
+      },
+      "nativeReceiptCompactSha256": "04c7d3b6348f5df6fc130f77b19399fecc363a68a846ca67a1c3ef76b5da0eb0",
+      "sourceDigestSha256": "11183e770f0c39dc51878e38b0a92a76a7b05a974f681bea13b87857daae60c6",
+      "terminalJobs": [
+        {
+          "name": "Atomic version refresh - native",
+          "id": 129769441444,
+          "conclusion": "success"
+        },
+        {
+          "name": "Accepted store trip integration - native (store)",
+          "id": 129769441683,
+          "conclusion": "success"
+        },
+        {
+          "name": "Accepted store trip integration - native (lifecycle)",
+          "id": 129769441742,
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository verification",
+          "id": 129769441797,
+          "conclusion": "success"
+        },
+        {
+          "name": "Official truth V3 - isolated UI",
+          "id": 129769441838,
+          "conclusion": "success"
+        },
+        {
+          "name": "Persisted canonical read - native",
+          "id": 129769442097,
+          "conclusion": "success"
+        },
+        {
+          "name": "Auth-Konfiguration gegen config.toml",
+          "id": 129769442304,
+          "conclusion": "success",
+          "metadataOnly": true
+        },
+        {
+          "name": "Typecheck, Lint & Build",
+          "id": 129778214950,
+          "conclusion": "success"
+        }
+      ],
+      "merge": {
+        "pullRequest": 1178,
+        "head": "4bfa8b466ebc0af761fc5050bb4c51d7e73400c7",
+        "tree": "793026a2c26725da06ff281924aaa561d43ee32f",
+        "source": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372",
+        "actor": "Root"
+      },
+      "postMergeAcceptance": "FAILED_AT_ACTUAL_MAIN_42801478210",
+      "currentR22Acceptance": false,
+      "limit": "Genuine historical PR PASS is preserved; it does not close the later failed actual-main gate or accept a changed R22 source. No causal performance or Production SLO conclusion."
+    }
+  ],
+  "technicalLeadPass": false,
+  "newLocalExecutionForR22": false
 }

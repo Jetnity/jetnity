@@ -1,0 +1,58 @@
+M04 R22 / Recovery V13 — actual product-main native failure
+Origin PR #1178 is merged; its reviewed R21 PR run passed. This file records the subsequent actual-main failure, not a failure of that earlier PR run.
+Main: 4bfa8b466ebc0af761fc5050bb4c51d7e73400c7
+Tree: 793026a2c26725da06ff281924aaa561d43ee32f
+Run: https://github.com/Jetnity/jetnity/actions/runs/42801478210
+Attempt: 1; event: push; conclusion: FAILURE
+Completed non-Auth Repository verification job: 129779815566
+Root independently observed completed job metadata at 2026-11-10 10:58:11 UTC before fetching its full log.
+Full log: 4250541 UTF-8 bytes; 63137 split lines; SHA256 a14ef9c860a87b331346edf23583161f80b43c69d562759401e76fb4275efa59
+Candidate SHA256: 063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080
+Complete native receipt and assessment: M04_RECOVERY_R22_EVIDENCE_V13.json; also https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6765598372
+No Auth log or hosted data read. The following selected lines are copied verbatim with their original 1-based line numbers; omitted intervals are not reconstructed.
+
+L33818: 2026-11-10T10:55:01.4186147Z     ok 18 - N12/U06/R9 actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races
+L33842: 2026-11-10T10:55:01.4283406Z     ok 22 - N11 actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority
+L33848: 2026-11-10T10:55:01.4287418Z     ok 23 - N13 legacy raw aliases remain in actual S1 unchanged but never become M04 preparation
+L33854: 2026-11-10T10:55:01.4291469Z     ok 24 - N05/A03 actual 254/255/256 ledger boundary preserves the sole original terminal credit
+L33860: 2026-11-10T10:55:39.0846748Z     not ok 25 - N05 sixty-four actual starts retain all older history and refuse the sixty-fifth claim
+L33861: 2026-11-10T10:55:39.0874504Z       ---
+L33862: 2026-11-10T10:55:39.0875378Z       duration_ms: 37652.09814
+L33863: 2026-11-10T10:55:39.0914606Z       type: 'test'
+L33864: 2026-11-10T10:55:39.0915692Z       location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:6219'
+L33865: 2026-11-10T10:55:39.0916740Z       failureType: 'testCodeFailure'
+L33866: 2026-11-10T10:55:39.0917236Z       error: 'M04 240s effect budget exceeded'
+L33867: 2026-11-10T10:55:39.0917744Z       code: 'ERR_TEST_FAILURE'
+L33868: 2026-11-10T10:55:39.0918243Z       stack: |-
+L33869: 2026-11-10T10:55:39.0919179Z         Timeout.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:457:52)
+L33870: 2026-11-10T10:55:39.0920154Z         listOnTimeout (node:internal/timers:585:17)
+L33871: 2026-11-10T10:55:39.0920856Z         process.processTimers (node:internal/timers:521:7)
+L33872: 2026-11-10T10:55:39.0921417Z       ...
+L33873: 2026-11-10T10:55:39.0921850Z     1..25
+L33874: 2026-11-10T10:55:39.0922923Z not ok 1696 - M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership
+L33875: 2026-11-10T10:55:39.0924011Z   ---
+L33876: 2026-11-10T10:55:39.0924499Z   duration_ms: 240474.623345
+L33877: 2026-11-10T10:55:39.0924991Z   type: 'test'
+L33878: 2026-11-10T10:55:39.0925817Z   location: '/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:46:1238'
+L33879: 2026-11-10T10:55:39.0926729Z   failureType: 'testCodeFailure'
+L33880: 2026-11-10T10:55:39.0927348Z   error: 'M04 native proof or terminal cleanup failed'
+L33881: 2026-11-10T10:55:39.0927933Z   code: 'ERR_TEST_FAILURE'
+L33882: 2026-11-10T10:55:39.0928472Z   name: 'AggregateError'
+L33883: 2026-11-10T10:55:39.0928916Z   stack: |-
+L33884: 2026-11-10T10:55:39.0929788Z     TestContext.<anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:1858:41)
+L33885: 2026-11-10T10:55:39.0930918Z     process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+L33886: 2026-11-10T10:55:39.0931714Z     async Test.run (node:internal/test_runner/test:1054:7)
+L33887: 2026-11-10T10:55:39.0932492Z     async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+L33888: 2026-11-10T10:55:39.0933555Z   ...
+L33889: 2026-11-10T10:55:39.0967958Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"063180813b9a4fac6df1493202c3e45c1b6d711de92cf9edcb2c7910b44e2080","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":240472,"cleanupMilliseconds":34,"clusters":1,"childProcesses":0,"lifetime":{"started":27209,"settled":27209,"pending":0,"connections":4242,"closed":4242,"stoppedClusters":1},"groups":[{"id":"N01","milliseconds":26},{"id":"N02","milliseconds":1485},{"id":"N03","milliseconds":2138},{"id":"N07","milliseconds":9418},{"id":"N07/R4","milliseconds":874},{"id":"N08","milliseconds":11292},{"id":"N08/U04","milliseconds":2955},{"id":"N02/U04","milliseconds":923},{"id":"N04/N06","milliseconds":2438},{"id":"N04/N06/N10","milliseconds":2719},{"id":"N05/N09","milliseconds":2711},{"id":"N09","milliseconds":18629},{"id":"N10/U06","milliseconds":7281},{"id":"N11","milliseconds":2021},{"id":"N11","milliseconds":158},{"id":"N12","milliseconds":189},{"id":"N04/N10/N12","milliseconds":4478},{"id":"N12/U06/R9","milliseconds":13349},{"id":"N12/R7-03","milliseconds":395},{"id":"N11","milliseconds":2998},{"id":"N11","milliseconds":397},{"id":"N11","milliseconds":235},{"id":"N13","milliseconds":3275},{"id":"N05/A03","milliseconds":111659}],"nestedRaceWitnesses":[{"boundary":"i1_timeout","operation":"reserve_v1","target":{"pid":"25029","birth":"2026-11-10 10:52:53.100515+00"},"control":{"pid":"25028","birth":"2026-11-10 10:52:53.095459+00"},"holder":{"pid":"24697","birth":"2026-11-10 10:52:49.10334+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":true,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"worker_only","nativeAdmissionsAfterDrain":45},{"boundary":"worker_caller_abort","operation":"reserve_v1","target":{"pid":"25821","birth":"2026-11-10 10:53:01.848457+00"},"control":{"pid":"25820","birth":"2026-11-10 10:53:01.843184+00"},"holder":{"pid":"25448","birth":"2026-11-10 10:52:58.194332+00"},"realSqlWaitObserved":true,"abortDelivered":true,"retainedExecutorDrained":true,"backendAbsentWhileExecutorHeld":true,"failConfirmObserved":false,"terminalEffects":0,"beforeDrainSlot":"unavailable","afterDrainSlot":"invalid","heldMethods":3,"completedMethods":0,"outwardStatus":"unconfirmed","nativeAdmissionsAfterDrain":44}],"quotaProgress":{"currentGroup":"N05","boundary":"cycle_claim","indexBase":0,"millisecondsCap":300000,"timingMeaning":"client await durations including construction/transport; not server statement profiling","ledger":{"lastStartedIndex":253,"lastCompletedIndex":253,"commandRequestsStarted":258,"commandRequestsCompleted":258,"commandRequestMilliseconds":458,"fixedCallsStarted":260,"fixedCallsCompleted":260,"fixedCallMilliseconds":111380,"commandCallsStarted":258,"commandCallsCompleted":258,"commandCommits":256,"startCallsStarted":1,"startCallsCompleted":1,"startReservations":1},"cycles":{"lastStartedIndex":34,"lastCompletedIndex":33,"commandRequestsStarted":104,"commandRequestsCompleted":104,"commandRequestMilliseconds":206,"fixedCallsStarted":139,"fixedCallsCompleted":138,"fixedCallMilliseconds":37546,"commandCallsStarted":104,"commandCallsCompleted":103,"commandCommits":103,"startCallsStarted":34,"startCallsCompleted":34,"startReservations":34}},"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":4,"maximumIntake":1,"maximumMethod":2,"m04ObserverLimit":2,"maximumM04Observers":2,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"proof_25:N05","error":{"kind":"fixture","code":"unclassified_failure"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+L33890: 2026-11-10T10:55:39.1835279Z # Subtest: actual native promise owns its lane after abort until terminal drain
+L33891: 2026-11-10T10:55:39.1836929Z ok 1697 - actual native promise owns its lane after abort until terminal drain
+L33892: 2026-11-10T10:55:39.1894670Z   ---
+L33893: 2026-11-10T10:55:39.1907652Z   duration_ms: 5.701525
+L33894: 2026-11-10T10:55:39.1924851Z   type: 'test'
+L63112: 2026-11-10T10:56:55.4249716Z # tests 8683
+L63114: 2026-11-10T10:56:55.4250027Z # pass 8679
+L63115: 2026-11-10T10:56:55.4250181Z # fail 2
+L63116: 2026-11-10T10:56:55.4250335Z # cancelled 0
+L63117: 2026-11-10T10:56:55.4250498Z # skipped 2
+L63119: 2026-11-10T10:56:55.4250834Z # duration_ms 680370.273089

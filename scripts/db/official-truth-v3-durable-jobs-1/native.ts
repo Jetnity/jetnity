@@ -794,6 +794,76 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       for (const [raw, expected] of mixedStringReuseCases) {
         assert.deepEqual(await canonicalAt(raw, 0), [{ canonical: expected }], 'R21 successive and nested string bytes')
       }
+      // R22: fixed Discovery bytes/digests and bounded same-text lease-time reuse.
+      // These expectations are literal independent inputs; no function under test builds them.
+      const subjectReuseCases = [
+        ["representative reordered keys","{\"method\":{\"revision\":17,\"methodId\":\"m04_fixture-1\"},\"destinationCountryCode\":\"NO\",\"citizenshipCountryCode\":\"DE\"}","{\"citizenshipCountryCode\":\"DE\",\"destinationCountryCode\":\"NO\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"m04_fixture-1\",\"revision\":17}}","combination-discovery-job:v3:d70b8ea47efcee1340b1b587302045063b85b85fcb9d549884a147e6f02efea3"],
+        ["minimum MethodId and revision","{\"destinationCountryCode\":\"IS\",\"method\":{\"revision\":1,\"methodId\":\"aa\"},\"citizenshipCountryCode\":\"CH\"}","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}","combination-discovery-job:v3:29462a8a134a608b3a6dda2e2458c7620b8e9bc5f665d442a883789281da68aa"],
+        ["maximum MethodId and revision","{\"method\":{\"revision\":2147483647,\"methodId\":\"z_______________________________________________________________\"},\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\"}","{\"citizenshipCountryCode\":\"FR\",\"destinationCountryCode\":\"SE\",\"kind\":\"combination_discovery\",\"method\":{\"methodId\":\"z_______________________________________________________________\",\"revision\":2147483647}}","combination-discovery-job:v3:bfe68f82f44aadb4463c0120d82e09d59f2db2bf9dda4f527c338e692f87eb93"],
+      ] as const
+      for (const [label, raw, subjectText, jobKey] of subjectReuseCases) {
+        const parsed = result(await f.owner.query("SELECT official_v3_jobs_private.subject_v1('combination_discovery',$1::jsonb) AS result", text([raw])))
+        assert.deepEqual(parsed, { kind: 'combination_discovery', jobKey, subjectText, contextKey: null }, 'R22 Discovery: ' + label)
+      }
+      const invalidSubjectReuseCases = [
+        ["extra pair metadata","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":1},\"metadata\":\",\\\"method\\\":{\\\"methodId\\\":\\\"injected\\\",\\\"revision\\\":1}\"}"],
+        ["missing country key","{\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}"],
+        ["invalid country","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"ZZ\",\"method\":{\"methodId\":\"aa\",\"revision\":1}}"],
+        ["hostile MethodId","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\\\",\\\"method\\\":{\",\"revision\":1}}"],
+        ["revision above limit","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"aa\",\"revision\":2147483648}}"],
+        ["MethodId above limit","{\"citizenshipCountryCode\":\"CH\",\"destinationCountryCode\":\"IS\",\"method\":{\"methodId\":\"z________________________________________________________________\",\"revision\":1}}"],
+      ] as const
+      for (const [label, raw] of invalidSubjectReuseCases) {
+        await assert.rejects(f.owner.query("SELECT official_v3_jobs_private.subject_v1('combination_discovery',$1::jsonb) AS result", text([raw])), code('P7601'), 'R22 Discovery refusal: ' + label)
+      }
+      await f.owner.query(`DO $r22_subject_order$
+        DECLARE actual_message text; bad_input jsonb; expected_message text;
+        BEGIN
+          FOR bad_input,expected_message IN SELECT * FROM (VALUES
+            ('{"citizenshipCountryCode":"CH","destinationCountryCode":"ZZ","method":{"methodId":"aa","revision":1,"extra":true}}'::jsonb,'m04 invalid method'::text),
+            ('{"citizenshipCountryCode":"CH","destinationCountryCode":"ZZ","method":{"methodId":"aa","revision":1},"metadata":true}'::jsonb,'m04 invalid pair'::text)
+          ) AS oracle(value,expected) LOOP
+            BEGIN
+              PERFORM official_v3_jobs_private.subject_v1('combination_discovery',bad_input);
+              RAISE EXCEPTION 'r22 invalid Discovery accepted';
+            EXCEPTION WHEN SQLSTATE 'P7601' THEN
+              GET STACKED DIAGNOSTICS actual_message = MESSAGE_TEXT;
+              IF actual_message IS DISTINCT FROM expected_message THEN RAISE EXCEPTION 'r22 subject guard order'; END IF;
+            END;
+          END LOOP;
+        END $r22_subject_order$`)
+      const leaseUpdated = '2026-11-09T00:00:02.000Z'
+      const leaseTimeCases = [
+        ['equal valid exact 900s', leaseUpdated, '2026-11-09T00:15:02.000Z', true, false],
+        ['older valid exact 900s', '2026-11-09T00:00:01.000Z', '2026-11-09T00:15:01.000Z', true, false],
+        ['future acquired', '2026-11-09T00:00:03.000Z', '2026-11-09T00:15:02.000Z', false, false],
+        ['acquired before created', '2026-11-08T23:59:59.999Z', '2026-11-09T00:15:02.000Z', false, false],
+        ['JSON null acquired', null, '2026-11-09T00:15:02.000Z', false, false],
+        ['object acquired', {}, '2026-11-09T00:15:02.000Z', false, false],
+        ['malformed acquired', 'not-a-time', '2026-11-09T00:15:02.000Z', false, false],
+        ['same instant different text', '2026-11-09T00:00:02.000+00:00', '2026-11-09T00:15:02.000Z', false, false],
+        ['expiry equals updated', leaseUpdated, leaseUpdated, false, false],
+        ['malformed expiry', leaseUpdated, 'not-a-time', false, false],
+        ['equal acquired over 900s', leaseUpdated, '2026-11-09T00:15:02.001Z', false, false],
+        ['older acquired over 900s but within updated bound', '2026-11-09T00:00:01.000Z', '2026-11-09T00:15:01.001Z', false, false],
+        ['extra lease key before malformed times', 'not-a-time', 'not-a-time', false, true],
+      ] as const
+      for (const kind of ['rule_research', 'combination_discovery'] as const) {
+        // Both records come from the unchanged actual queue; this helper never persists history.
+        const queued = await commandRequest({ action: 'enqueue', kind,
+          input: kind === 'rule_research' ? commandFixture.ruleInput : commandFixture.discoveryInput }, null, timeAt)
+        const claimed = await commandRequest({ action: 'claim', input: commandFixture.claim(kind) }, queued.body.commit.next, leaseUpdated)
+        const base = claimed.body.commit.next
+        assert.equal(base.state, 'leased'); assert.ok(base.lease)
+        assert.equal(base.createdAt, timeAt); assert.equal(base.updatedAt, leaseUpdated); assert.equal(base.lease.acquiredAt, leaseUpdated)
+        for (const [label, acquiredAt, expiresAt, valid, extraKey] of leaseTimeCases) {
+          // Only the final case intentionally fails at the earlier exact-lease-key guard.
+          const value = { ...base, lease: { ...base.lease, acquiredAt, expiresAt, ...(extraKey ? { extra: true } : {}) } }
+          const query = f.owner.query('SELECT official_v3_jobs_private.job_v1($1::jsonb) AS result', text([JSON.stringify(value)]))
+          if (valid) assert.deepEqual(result(await query), value, 'R22 ' + kind + ': ' + label)
+          else await assert.rejects(query, code('P7601'), 'R22 ' + kind + ': ' + label)
+        }
+      }
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,
