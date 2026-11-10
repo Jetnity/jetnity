@@ -1,3 +1,39 @@
+# M04 Phase-B author delivery status V1 — R15 current
+
+**R15 SAME-SESSION N07 FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Task V6 dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727); baseline `30c6299a76fda7b50493a46596a57af3777a7372`, tree `7746a6e6fe802262a94018005c4722c483142c82`.
+
+## Finite correction
+
+Only N07 setup in native.ts changes. The existing originals.context(country, originalDestination) builder creates coherent CH/DE/FR citizenship and passport links; each retains the same age 18 condition. The former inconsistent DE/FR variants are explicitly rejected by the unchanged protected reader. Actual contextKey and jobKey sets must each contain three distinct values.
+
+The three raw spellings **18.0 / 18e0 / 1.8e1**, actual producer/S1/I1/MA1 path, exact stored original-byte equality, prepared outcome, completed disposition and succeeded job assertions remain unchanged. All seventeen other source files, including SQL and rollback, are byte-identical.
+
+- native.ts: **140353 bytes**, SHA256 `a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea`.
+- Eighteen-source aggregate: `a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0`.
+- All eighteen source pins, twenty-two matrix rows and thirty-one native group obligations remain in the author JSON files.
+
+## Actual completed groups and failure
+
+[CI 42748744481](https://github.com/Jetnity/jetnity/actions/runs/42748744481) is independently verified **completed/failure**. Repository job 129607034059 and aggregate 129611926295 failed; all six companion jobs succeeded. Typecheck/lint succeeded; tests failed; hygiene/build were skipped.
+
+The first **N01, N02 and N03 groups passed in 23, 1134 and 1532 ms**. N02 contains the completed R13 and R14 assertions. The first N07 group failed `assert.ok(parsed.ok)` at native.ts:662:61. The log does not serialize the failing loop index. The other 27 groups and R9 witnesses were not reached.
+
+Core: 8662 tests / 8658 passed / 2 failed / 2 skipped / 0 cancelled. Cleanup: 2297/2297 settled, zero pending, 426/426 connections closed, one stopped cluster, zero errors; 5954 ms total / 155 ms cleanup. nativePass remains false. All five failed CI histories are preserved.
+
+## Author STOP and limits
+
+The shell is reachable but the original checkout is absent. No reconstruction, installation or local project test/parser/SQL/native/build execution was performed. Historical 64/64 checks do not validate this change. Corrected R15 source is unexecuted until new unchanged complete CI.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root owns Task V6, publication, independent acceptance and full exact-head re-gating. No Ready, merge, hosted action or follow-up slice. Method NOT_APPROVED, #1139 NOT_RELEASE_READY/17 gaps, #917 refusal and all existing Owner gates remain.
+
+---
+
+## Historical R14 and earlier author records
+
+The exact prior record follows. Its current wording and pins are historical; the R15 block and current JSON fields govern this delivery.
+
 # M04 Phase-B author delivery status V1 — R14 current
 
 **R14 SAME-SESSION FIXTURE CORRECTION PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**

@@ -1,0 +1,11 @@
+2026-11-10T03:28:49.7752749Z           assert.ok(parsed.ok)
+2026-11-10T03:28:49.7784263Z         <anonymous> (/home/runner/work/jetnity/jetnity/scripts/db/official-truth-v3-durable-jobs-1/native.ts:662:61)
+2026-11-10T03:28:49.7791687Z # M04_NATIVE_RECEIPT {"schema":"jetnity.m04.native.v1","candidateSha256":"a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59","rollbackSha256":"9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66","executed":true,"effectAndCleanupMilliseconds":5954,"cleanupMilliseconds":155,"clusters":1,"childProcesses":0,"lifetime":{"started":2297,"settled":2297,"pending":0,"connections":426,"closed":426,"stoppedClusters":1},"groups":[{"id":"N01","milliseconds":23},{"id":"N02","milliseconds":1134},{"id":"N03","milliseconds":1532}],"nestedRaceWitnesses":[],"connections":{"aggregateWorkConnectionBound":40,"maximumJobs":1,"maximumIntake":1,"maximumMethod":1,"m04ObserverLimit":2,"maximumM04Observers":1,"methodObserverLimit":1,"fixturePerClusterLimit":16,"inheritedCommitGuardPairs":0,"minimumOwned":0},"failure":{"phase":"proof_4:N07","error":{"kind":"assertion","code":"assertion_failed"}},"cleanupFailures":[],"cleanupFailureCount":0,"nativePass":false}
+2026-11-10T03:29:45.8374036Z # tests 8662
+2026-11-10T03:29:45.8374154Z # suites 971
+2026-11-10T03:29:45.8374271Z # pass 8658
+2026-11-10T03:29:45.8374382Z # fail 2
+2026-11-10T03:29:45.8374496Z # cancelled 0
+2026-11-10T03:29:45.8374613Z # skipped 2
+2026-11-10T03:29:45.8374726Z # todo 0
+2026-11-10T03:29:45.8374854Z # duration_ms 465963.789866

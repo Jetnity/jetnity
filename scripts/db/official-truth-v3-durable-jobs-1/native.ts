@@ -654,13 +654,20 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       assert.equal((await foreignApi.enqueueRule(foreign.ruleInput)).status, 'confirmed')
     })
     await proof('N07', 'actual S1/I1 Rule completion, immutable original and final MA1 authority', async () => {
+      const seenContextKeys = new Set<string>(), seenJobKeys = new Set<string>()
       for (const [index, spelling] of ['18.0', '18e0', '1.8e1'].entries()) {
         const input = m04Fixture('native-rule-' + index, { context: contextFor(18 + index) })
-        // The first spelling is 18.0; use the same semantic integer in later
-        // variants too, with another finite scope dimension for independent jobs.
-        const ctx = { ...input.context, scope: { ...input.context.scope, citizenship: { ...input.context.scope.citizenship, countryCodes: [['CH'], ['DE'], ['FR']][index] } }, conditions: contextFor(18).conditions }
+        // Keep age 18 identical while the coherent citizenship/passport scope
+        // distinguishes all three jobs and preserves each original number spelling.
+        const country = ['CH', 'DE', 'FR'][index]!
+        const inconsistent = { ...input.context, scope: { ...input.context.scope, citizenship: { ...input.context.scope.citizenship, countryCodes: [country] } }, conditions: contextFor(18).conditions }
+        if (country !== 'CH') assert.equal(readV3GlobalRuleContext(inconsistent).ok, false, 'foreign citizenship with the original CH passport link is rejected')
+        const ctx = { ...input.originals.context(country, input.context.scope.destinationCountryCode), conditions: contextFor(18).conditions }
         const parsed = readV3GlobalRuleContext(ctx); assert.ok(parsed.ok); if (!parsed.ok) throw Error('native context')
         const f2 = m04Fixture('native-rule-number-' + index, { context: parsed.value })
+        assert.equal(seenContextKeys.has(f2.identity.contextKey), false, 'each number spelling uses a distinct valid work context')
+        assert.equal(seenJobKeys.has(f2.identity.jobKey), false, 'each number spelling uses a distinct valid work job')
+        seenContextKeys.add(f2.identity.contextKey); seenJobKeys.add(f2.identity.jobKey)
         const originals: string[] = []
         const api = createV3PostgresDurableJobs(config(f2, native, method, { producer: { async produce(request, s) {
           const p = await f2.producer.produce(request, s); if (p.status !== 'delivered') return p
@@ -676,6 +683,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         assert.equal(states.starts.length, 1); assert.equal(states.results.length, 1); assert.equal(states.dispositions[0].kind, 'completed')
         assert.equal(states.subjects[0].current_job.state, 'succeeded')
       }
+      assert.equal(seenContextKeys.size, 3); assert.equal(seenJobKeys.size, 3)
       await assertNativeEmpty(native, method)
     })
     await proof('N07/R4', 'actual S1 archived history and linked method revision survive full native consumption', async () => {

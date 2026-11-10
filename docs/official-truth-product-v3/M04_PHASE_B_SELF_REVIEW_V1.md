@@ -1,3 +1,37 @@
+# M04 Phase-B author self-review V1 — R15 current
+
+**R15 SAME GENERATION2 / SAME SESSION. SOURCE REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Dispatch](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727) resumes `/root/m04_durable_jobs_writer_g2` from `30c6299a76fda7b50493a46596a57af3777a7372`.
+
+## Source-confirmed cause and bounded correction
+
+The native stack identifies parsed.ok at 662:61. The [originals context builder](https://github.com/Jetnity/jetnity/blob/30c6299a76fda7b50493a46596a57af3777a7372/lib/readiness/official-truth-product-v3/integration/test-support/originals.ts) sets citizenship, passport issuer and related citizenship together. The old N07 code changed only citizenship to DE/FR, leaving the passport link at CH. The [protected S0 refinement](https://github.com/Jetnity/jetnity/blob/30c6299a76fda7b50493a46596a57af3777a7372/lib/readiness/official-truth-product-v3/contract.ts) correctly rejects that inconsistency. The CI log does not separately identify the loop index.
+
+The correction uses the existing coherent builder with the same destination, then applies the common age 18 condition. Both original DE/FR inconsistencies remain explicit negative assertions. Parsed contexts must validate; actual contextKey and jobKey sets must each have cardinality three. No protected reader, fixture source, schema or permission changes.
+
+All three number spellings remain in the same loop. The real producer, S1/I1/MA1 path, exact original-byte comparison, prepared outcome, completed durable disposition and succeeded state body is byte-identical. All seventeen other sources are unchanged.
+
+Frozen native: **140353 bytes**, SHA256 `a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea`; aggregate `a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0`. Root and the read-only reviewer independently reconstructed both unique hunks and matched this pin. No execution or acceptance is implied.
+
+## Actual evidence and remaining proof
+
+I independently fetched [Repository verification 129607034059](https://github.com/Jetnity/jetnity/actions/runs/42748744481/job/129607034059). Full non-Auth log SHA256: `ee6012947a9e9faf770af914c21847274609d25ee588a8ebc12e12a612d65e0f`. Final metadata confirms run failure, six successful companions and failed aggregate 129611926295; typecheck/lint passed and hygiene/build were skipped.
+
+Receipt: first N01/N02/N03 passed in 23/1134/1532 ms; N07 assertion failed; 27 later groups and R9 not reached. The completed N02 group includes R13/R14. This does not complete M04 or all compound coverage rows.
+
+Core: 8662/8658 passed/2 failed/2 skipped/0 cancelled. Cleanup: 2297/2297 settled, zero pending, 426/426 closed, one stopped cluster, zero errors; 5954 ms total and 155 ms cleanup. All five failed histories and the complete 22-row/31-group inventory remain.
+
+Original checkout absent despite reachable shell. No repository reconstruction, install or local project execution occurred. Previous 64/64 results remain historical. The corrected R15 source has not run; complete unchanged CI is mandatory.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root alone publishes and accepts. No Ready, merge or next slice. Existing protected-source, resource, hosted and Owner gates remain; #917 is not retried or substituted.
+
+---
+
+## Historical R14 and earlier author self-reviews
+
+The exact earlier record follows. Its former current claims are historical; this R15 block governs the new delivery.
+
 # M04 Phase-B author self-review V1 — R14 current
 
 **R14 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**

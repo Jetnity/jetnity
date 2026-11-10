@@ -1,12 +1,12 @@
 {
   "schema": "jetnity.m04.phase-b.source-manifest.v1",
-  "status": "R14_SAME_GENERATION2_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
-  "capturedAt": "2026-11-10T03:15:26Z",
+  "status": "R15_SAME_GENERATION2_FIXTURE_CORRECTION_FOR_ROOT_REVIEW_NATIVE_PENDING",
+  "capturedAt": "2026-11-10T03:34:44Z",
   "author": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2",
   "session": "/root/m04_durable_jobs_writer_g2",
   "pullRequest": 1178,
-  "dispatchHead": "313c1db0d96d62f94f22c5db94c74bb75779f542",
-  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444",
+  "dispatchHead": "30c6299a76fda7b50493a46596a57af3777a7372",
+  "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727",
   "originalPhaseBDispatch": {
     "head": "05b30109ec4daa57a2ffcad7cd4dab9db292d4e1",
     "url": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6753900537"
@@ -19,13 +19,13 @@
     "sameOriginalSessionClaimed": false,
     "implementationEnvironment": "Codex fallback; no Cursor session claim",
     "soleWriter": true,
-    "sourceBaseline": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+    "sourceBaseline": "30c6299a76fda7b50493a46596a57af3777a7372",
     "sourceFilesChanged": [
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
     "sourceFilesUnchanged": 17,
     "rootReportedNewMain": "890dfe9323b4b6d3644c372d81cb8893b6548d11",
-    "mainIntegration": "R14 starts from published 313c1db. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
+    "mainIntegration": "R15 starts from published 30c6299. Root owns current-main ancestry, independent review and publication; the author performed no Git mutation.",
     "previousSourceBaseline": "d9d62c690658444e06d04becf93f21ffb9112165",
     "previousSourceFilesChanged": [
       "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
@@ -33,7 +33,7 @@
       "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
       "scripts/db/official-truth-v3-durable-jobs-1/native.ts"
     ],
-    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V5.md"
+    "currentRecoveryTask": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V6.md"
   },
   "frozenPlanSha256": "1952dc9c930021d32620f769595bb6f1641743574265f918cad6d36cfefdb88e",
   "sourceFiles": [
@@ -119,8 +119,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "bytes": 139506,
-      "sha256": "5cf0852b7ad101d6fa0a1d792c88657df9bb1d35a32d2bf7e2b4bd3765219921"
+      "bytes": 140353,
+      "sha256": "a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
@@ -128,7 +128,7 @@
       "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033"
     }
   ],
-  "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
+  "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
   "sourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
   "protectedDispatchComparison": {
     "head": "d9d62c690658444e06d04becf93f21ffb9112165",
@@ -437,7 +437,9 @@
     "historicalForR13": true,
     "r13Limit": "Historical d9 comparison predating current-main integration and R13; not rerun. R13 transforms only the two explicitly pinned owned source files.",
     "historicalForR14": true,
-    "r14Limit": "Historical d9 comparison, not rerun. The sole R14 source transformation is the approved native.ts fixture replacement; other 17 pins retained from 313c."
+    "r14Limit": "Historical d9 comparison, not rerun. The sole R14 source transformation is the approved native.ts fixture replacement; other 17 pins retained from 313c.",
+    "historicalForR15": true,
+    "r15Limit": "Historical d9 comparison was not rerun. R15 changes only the two approved N07 fixture hunks in native.ts; all 17 other pins are retained from 30c."
   },
   "historicalGeneration1": {
     "sourceDigestSha256": "def1398352cf6ff7bbfbbe2043bf826f5f971870c7c376de39afec06efab2bdd",
@@ -492,7 +494,9 @@
       "executedForR13": false,
       "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
       "executedForR14": false,
-      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
+      "executedForR15": false,
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
     },
     {
       "name": "focused TypeScript noEmit",
@@ -513,7 +517,9 @@
       "executedForR13": false,
       "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
       "executedForR14": false,
-      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
+      "executedForR15": false,
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
     },
     {
       "name": "targeted ESLint",
@@ -529,7 +535,9 @@
       "executedForR13": false,
       "r13Applicability": "Historical pre-R13 check only. The candidate SQL and native.ts changed; no rerun or validation of the corrected source occurred.",
       "executedForR14": false,
-      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun."
+      "r14Applicability": "Historical pre-R14 evidence only; native.ts changes and no unit/static/native check was rerun.",
+      "executedForR15": false,
+      "r15Applicability": "Historical pre-R15 check only; native.ts changes, and no local project execution was performed."
     }
   ],
   "corrections": {
@@ -701,6 +709,14 @@
         "N02OverallPass": false,
         "R9NativeWitnesses": [],
         "nativePass": false
+      },
+      "completionObservedIn30cCI": {
+        "runId": 42748744481,
+        "group": "N02",
+        "milliseconds": 1134,
+        "groupPass": true,
+        "fullNativePass": false,
+        "limit": "First N02 group completed; later compound N02 groups and R9 remain unproved."
       }
     },
     "R14": {
@@ -729,24 +745,73 @@
       "fullBuildExecuted": false,
       "previousChecks": "64/64 and static checks are historical, not rerun. The 313c CI executed the bounded R13 path before failing N02; corrected R14 source remains unexecuted.",
       "scope": "Only native.ts plus four author evidence files; no protected source/helper/role/ACL/budget/workflow/package or hosted change.",
-      "nextGate": "Independent Root review, expected-head publication and new exact-head unchanged complete CI; no Ready/merge/automatic next slice."
+      "nextGate": "Independent Root review, expected-head publication and new exact-head unchanged complete CI; no Ready/merge/automatic next slice.",
+      "completionObservedIn30cCI": {
+        "runId": 42748744481,
+        "group": "N02",
+        "milliseconds": 1134,
+        "groupPass": true,
+        "fullNativePass": false,
+        "limit": "First N02 group completed; later compound N02 groups and R9 remain unproved."
+      },
+      "historicalSnapshotBeforeR15": true
+    },
+    "R15": {
+      "finding": "R15",
+      "status": "COHERENT_N07_FIXTURE_PREPARED_NATIVE_PENDING",
+      "cause": "Changing citizenship alone leaves relatedCitizenshipCountryCode at CH; DE/FR contexts correctly fail protected S0 scope refinement.",
+      "correction": "Use input.originals.context(country, originalDestination) and the common age 18 conditions. Retain explicit rejection of both original inconsistent DE/FR contexts. Require three distinct actual contextKey and jobKey values.",
+      "preserved": "All three raw spellings 18.0/18e0/1.8e1 and the actual producer/S1/I1/MA1, exact original-byte equality, prepared outcome, completed disposition and succeeded-job assertions remain byte-identical.",
+      "replacementCount": 2,
+      "sourceFilesChanged": 1,
+      "sourceFilesUnchanged": 17,
+      "primarySources": [
+        {
+          "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
+          "blob": "f7915790ce334b16e24bbea84848e318cd1d0f89",
+          "meaning": "context(country,destination) supplies matching citizenship, passport issuer and passport-related citizenship."
+        },
+        {
+          "path": "lib/readiness/official-truth-product-v3/contract.ts",
+          "blob": "354c18e153f90a7febb7ea8f14558626202c187e",
+          "meaning": "Protected scope refinement rejects a passport-related citizenship different from the one context citizenship."
+        }
+      ],
+      "review": "Root and the independent read-only reviewer reconstructed both unique source hunks and matched the frozen native pin; no execution or Technical-Lead acceptance is claimed.",
+      "localTestsRun": false,
+      "newLocalExecution": false,
+      "nativeExecuted": false,
+      "fullBuildExecuted": false,
+      "scope": "Only native.ts and four author evidence files. No protected fixture/reader/helper, SQL/rollback, permission, workflow/package, deadline/resource or hosted change.",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6758201727",
+      "baselineHead": "30c6299a76fda7b50493a46596a57af3777a7372",
+      "baselineTree": "7746a6e6fe802262a94018005c4722c483142c82",
+      "nativeSource": {
+        "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "bytes": 140353,
+        "sha256": "a1e16286e9114b9a07271ddf4b9879f0714ad15295212dfe7016c157c2685dea"
+      },
+      "sourceDigestSha256": "a21b19390e4e1b3d49022cb7a86848568c4439eff3c39e4963131331e93d1da0",
+      "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION"
     }
   },
   "coverageMatrixPath": "docs/official-truth-product-v3/M04_PHASE_B_NATIVE_EVIDENCE_V1.json",
-  "nativeProof": "R14_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
+  "nativeProof": "R15_CURRENT_SOURCE_NOT_EXECUTED_PENDING_NEW_EXACT_HEAD_UNCHANGED_GITHUB_CI",
   "nativeExecuted": false,
   "historicalCI": {
-    "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
-    "tree": "fdc1b62d266aba6f28a04c85ba358966f915dd36",
-    "runId": 42746442139,
-    "url": "https://github.com/Jetnity/jetnity/actions/runs/42746442139",
-    "repositoryVerificationJobId": 129599589985,
+    "head": "30c6299a76fda7b50493a46596a57af3777a7372",
+    "tree": "7746a6e6fe802262a94018005c4722c483142c82",
+    "runId": 42748744481,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/42748744481",
+    "repositoryVerificationJobId": 129607034059,
     "repositoryVerificationConclusion": "failure",
-    "source": "Generation2 independently fetched the exact non-Auth Repository verification job log through GitHub; no local reproduction.",
-    "fullLogSha256": "cd8fe512ca2409cdaa4a48019a6f6a15b466fa54bc7d39659c78b388884f8a33",
+    "status": "completed",
+    "conclusion": "failure",
+    "source": "Generation2 independently fetched the exact non-Auth Repository verification log and terminal workflow/run-job metadata through GitHub.",
+    "fullLogSha256": "ee6012947a9e9faf770af914c21847274609d25ee588a8ebc12e12a612d65e0f",
     "core": {
-      "tests": 8660,
-      "passed": 8656,
+      "tests": 8662,
+      "passed": 8658,
       "failed": 2,
       "skipped": 2,
       "cancelled": 0
@@ -756,30 +821,38 @@
       "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
       "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
       "executed": true,
-      "effectAndCleanupMilliseconds": 2569,
-      "cleanupMilliseconds": 162,
+      "effectAndCleanupMilliseconds": 5954,
+      "cleanupMilliseconds": 155,
       "clusters": 1,
       "childProcesses": 0,
       "lifetime": {
-        "started": 587,
-        "settled": 587,
+        "started": 2297,
+        "settled": 2297,
         "pending": 0,
-        "connections": 90,
-        "closed": 90,
+        "connections": 426,
+        "closed": 426,
         "stoppedClusters": 1
       },
       "groups": [
         {
           "id": "N01",
-          "milliseconds": 28
+          "milliseconds": 23
+        },
+        {
+          "id": "N02",
+          "milliseconds": 1134
+        },
+        {
+          "id": "N03",
+          "milliseconds": 1532
         }
       ],
       "nestedRaceWitnesses": [],
       "connections": {
         "aggregateWorkConnectionBound": 40,
-        "maximumJobs": 0,
+        "maximumJobs": 1,
         "maximumIntake": 1,
-        "maximumMethod": 0,
+        "maximumMethod": 1,
         "m04ObserverLimit": 2,
         "maximumM04Observers": 1,
         "methodObserverLimit": 1,
@@ -788,7 +861,7 @@
         "minimumOwned": 0
       },
       "failure": {
-        "phase": "proof_2:N02",
+        "phase": "proof_4:N07",
         "error": {
           "kind": "assertion",
           "code": "assertion_failed"
@@ -799,23 +872,21 @@
       "nativePass": false
     },
     "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
-    "sourceDigestSha256": "5d33e2eef75e612b650bae2f2eb5ea0062918d1b7005ea2e2eb9bfba76b131f1",
+    "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
     "exactFailure": {
       "file": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
-      "line": 617,
-      "column": 14,
-      "assertion": "assert.ok(alternate)",
-      "code": "ERR_ASSERTION"
+      "line": 662,
+      "column": 61,
+      "assertion": "assert.ok(parsed.ok)",
+      "code": "ERR_ASSERTION",
+      "serializedLoopIndex": null
     },
-    "r13BoundedObservation": "Inferred from sequential execution reaching the explicit line 617 assertion: the earlier four denied USAGE assertions, restricted-runtime success, same-OID rename refusal, finally restoration/full-catalog equality and later probe success completed. No individual per-assertion receipt exists. This is bounded R13 evidence, not completion of N02, 31 native groups or R9.",
-    "diagnosis": "The failing fixture spread the full enqueue-shaped input into a strict four-field subject reader; operationId/jobId/attemptLimit correctly cause null. The reader and all actual negative SQL assertions remain unchanged.",
-    "status": "completed",
-    "conclusion": "failure",
+    "completedGroups": "First N01/N02/N03 groups passed in 23/1134/1532 ms. N02 includes the complete R13 restricted-runtime/drift and R14 strict-identity/native-forgery assertions. Other compound groups sharing these IDs are not thereby proved.",
+    "diagnosis": "The N07 fixture changes only citizenship to DE/FR while retaining the CH passport link. The protected scope reader correctly refuses the inconsistent context. The stack identifies the assertion, not the loop index.",
     "terminalVerification": {
-      "checkedAt": "2026-11-10T03:15:26Z",
-      "source": "Generation2 independently fetched commit workflow runs and run jobs through GitHub; no Auth logs accessed.",
+      "checkedAt": "2026-11-10T03:34:44Z",
       "successfulCompanionJobs": 6,
-      "aggregateJobId": 129604596107,
+      "aggregateJobId": 129611926295,
       "aggregateConclusion": "failure",
       "repositoryVerificationSteps": {
         "typecheck": "success",
@@ -835,15 +906,15 @@
   "ready": false,
   "merge": false,
   "openGates": [
-    "Independent Root exact-source review of the R14 fixture replacement and four author evidence files",
-    "Root expected-head publication preserving all 17 other sources, current-main ancestry and protected files",
-    "New exact-head unchanged complete CI with all 31 native groups, R9 witnesses and actual bounded cleanup evidence",
+    "Independent Root exact-source review of R15 and the four author evidence files",
+    "Root expected-head publication preserving the other 17 source files and current-main ancestry",
+    "New exact-head unchanged complete CI, all 31 native groups, R9 witnesses and bounded cleanup receipts",
     "Root exact-head deployment/thread/Owner-gate review; no activation or automatic follow-up slice"
   ],
-  "disposition": "AUTHOR_STOP_R14_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
+  "disposition": "AUTHOR_STOP_R15_FOR_ROOT_REVIEW_NO_AUTOMATIC_FOLLOWUP_SLICE",
   "previousRecoveryDispatch": {
-    "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
-    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662"
+    "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+    "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444"
   },
   "historicalCIRuns": [
     {
@@ -1090,9 +1161,108 @@
           "productionBuild": "skipped"
         }
       }
+    },
+    {
+      "head": "30c6299a76fda7b50493a46596a57af3777a7372",
+      "tree": "7746a6e6fe802262a94018005c4722c483142c82",
+      "runId": 42748744481,
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/42748744481",
+      "repositoryVerificationJobId": 129607034059,
+      "repositoryVerificationConclusion": "failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "source": "Generation2 independently fetched the exact non-Auth Repository verification log and terminal workflow/run-job metadata through GitHub.",
+      "fullLogSha256": "ee6012947a9e9faf770af914c21847274609d25ee588a8ebc12e12a612d65e0f",
+      "core": {
+        "tests": 8662,
+        "passed": 8658,
+        "failed": 2,
+        "skipped": 2,
+        "cancelled": 0
+      },
+      "native": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 5954,
+        "cleanupMilliseconds": 155,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 2297,
+          "settled": 2297,
+          "pending": 0,
+          "connections": 426,
+          "closed": 426,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 23
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1134
+          },
+          {
+            "id": "N03",
+            "milliseconds": 1532
+          }
+        ],
+        "nestedRaceWitnesses": [],
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 1,
+          "maximumIntake": 1,
+          "maximumMethod": 1,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 1,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_4:N07",
+          "error": {
+            "kind": "assertion",
+            "code": "assertion_failed"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "candidateSha256": "a22e6a015c8fc5a268500659ace31a938d2ce3614625e9df1982308b73199a59",
+      "sourceDigestSha256": "23f9a54835534afe9a8ca9be5a1aa51c37c5e7ae1e90b15f9b5e014b0cc51e5f",
+      "exactFailure": {
+        "file": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+        "line": 662,
+        "column": 61,
+        "assertion": "assert.ok(parsed.ok)",
+        "code": "ERR_ASSERTION",
+        "serializedLoopIndex": null
+      },
+      "completedGroups": "First N01/N02/N03 groups passed in 23/1134/1532 ms. N02 includes the complete R13 restricted-runtime/drift and R14 strict-identity/native-forgery assertions. Other compound groups sharing these IDs are not thereby proved.",
+      "diagnosis": "The N07 fixture changes only citizenship to DE/FR while retaining the CH passport link. The protected scope reader correctly refuses the inconsistent context. The stack identifies the assertion, not the loop index.",
+      "terminalVerification": {
+        "checkedAt": "2026-11-10T03:34:44Z",
+        "successfulCompanionJobs": 6,
+        "aggregateJobId": 129611926295,
+        "aggregateConclusion": "failure",
+        "repositoryVerificationSteps": {
+          "typecheck": "success",
+          "lint": "success",
+          "tests": "failure",
+          "hygiene": "skipped",
+          "productionBuild": "skipped"
+        }
+      }
     }
   ],
-  "environment": "UNAVAILABLE",
+  "environment": "ORIGINAL_CHECKOUT_ABSENT_NO_RECONSTRUCTION_OR_PROJECT_EXECUTION",
   "newLocalExecutionForR12": false,
   "recoveryDispatchHistory": [
     {
@@ -1106,8 +1276,13 @@
     {
       "head": "82b116fbb4c6f001f72e60459e83965edcaf8302",
       "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757521662"
+    },
+    {
+      "head": "313c1db0d96d62f94f22c5db94c74bb75779f542",
+      "dispatch": "https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6757910444"
     }
   ],
   "newLocalExecutionForR13": false,
-  "newLocalExecutionForR14": false
+  "newLocalExecutionForR14": false,
+  "newLocalExecutionForR15": false
 }
