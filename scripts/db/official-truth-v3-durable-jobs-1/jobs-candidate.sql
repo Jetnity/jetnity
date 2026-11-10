@@ -86,8 +86,18 @@ GRANT USAGE ON SCHEMA official_v3_jobs_api TO ot_v3_jobs_caller;
 CREATE FUNCTION official_v3_jobs_private.exact_keys_v1(v jsonb, expected text[]) RETURNS boolean
 LANGUAGE sql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
   SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    CASE WHEN
+      CASE WHEN cardinality(expected) BETWEEN 0 AND 32 THEN
+        CASE WHEN (SELECT count(*) FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END))=cardinality(expected) THEN
+          (CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END)
+          - (CASE WHEN array_ndims(expected)=1 THEN expected ELSE ARRAY(SELECT k FROM unnest(expected) k) END)='{}'::jsonb
+        ELSE false END
+      ELSE false END
+    THEN expected=expected
+    ELSE
     ARRAY(SELECT k FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k ORDER BY k COLLATE "C")
     = ARRAY(SELECT k FROM unnest(expected) k ORDER BY k COLLATE "C")
+    END
 $$;
 CREATE FUNCTION official_v3_jobs_private.unique_json_v1(v json, d integer) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
@@ -217,12 +227,24 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.civil_date_v1(t text) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE d date;
+DECLARE d date; year_value integer; month_value integer; day_value integer;
 BEGIN
   IF t IS NULL OR t !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' OR left(t,4)='0000' THEN RETURN false; END IF;
-  d:=make_date(substring(t,1,4)::integer,substring(t,6,2)::integer,substring(t,9,2)::integer);
-  RETURN to_char(d,'YYYY-MM-DD')=t;
-EXCEPTION WHEN datetime_field_overflow OR invalid_datetime_format THEN RETURN false;
+  year_value:=substring(t,1,4)::integer;
+  month_value:=substring(t,6,2)::integer;
+  day_value:=substring(t,9,2)::integer;
+  IF year_value BETWEEN 1 AND 9999 AND month_value BETWEEN 1 AND 12
+    AND day_value BETWEEN 1 AND CASE WHEN month_value=2 THEN
+      CASE WHEN year_value%4=0 AND (year_value%100<>0 OR year_value%400=0) THEN 29 ELSE 28 END
+      WHEN month_value IN (4,6,9,11) THEN 30 ELSE 31 END THEN
+    d:=make_date(year_value,month_value,day_value);
+    RETURN to_char(d,'YYYY-MM-DD')=t;
+  END IF;
+  BEGIN
+    d:=make_date(substring(t,1,4)::integer,substring(t,6,2)::integer,substring(t,9,2)::integer);
+    RETURN to_char(d,'YYYY-MM-DD')=t;
+  EXCEPTION WHEN datetime_field_overflow OR invalid_datetime_format THEN RETURN false;
+  END;
 END $$;
 CREATE FUNCTION official_v3_jobs_private.timestamp_v1(t text) RETURNS timestamptz
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
