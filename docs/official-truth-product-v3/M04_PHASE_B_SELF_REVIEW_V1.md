@@ -1,3 +1,64 @@
+# M04 Phase-B author self-review V1 — R18 current
+
+**R18 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**
+
+[Root dispatch and exact authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759595208) permits two local SQL computation reuses, meaningful native regressions, bounded quota progress and four author files. Baseline: `1d8eeddd8e2da9341f659f2b024e653c5ba5d310`, tree `224d89c68fbc665c39298b9c16bede277f87596f`.
+
+## Source equivalence
+
+command_v1 never changes input v between its original canonical calls. It now rejects SQL NULL explicitly with the original P7601/m04 invalid command outcome, computes the same canonical text once, checks the same 65536-byte limit and uses that same text/hash preimage at return. Existing shape/identity/domain checks remain. The canonical helper's depth, ASCII-key/string and numeric checks are untouched; node validation remains separately in wire_v1.
+
+transition_v1 sets internal kind to deduplicated only when an enqueue retains an already valid queued/leased/backoff job. That branch assigns n:=expected after job_v1 has fully validated current_record, and does not subsequently alter n. Skipping only the second validation of this identical local value preserves its validation result. IS DISTINCT FROM keeps job_v1 for all other or NULL kinds. Final supplied-next equality, audit, deadline, fence and command/identity guards remain exactly present.
+
+There is no cross-call cache, trusted caller bit, history-row exclusion, new SQL helper, signature, catalog object, grant or owner change. All other SQL function bodies and rollback remain unchanged. Every retained history row is still processed.
+
+## Meaningful regressions
+
+N02 tests real command_v1 output for Rule and Discovery against the existing canonical text/key/value. An anonymous DO asserts the original SQL-NULL error and the byte-size error for each kind. Oversized ASCII padding passes canonicalization but exceeds the command bound; if that bound were removed, the different invalid-enqueue message would fail the oracle. Unexpected errors rethrow. JSON-null separately rejects. Fixed internal messages are compared inside SQL without exposing raw errors or creating catalog objects.
+
+N03 uses Rule age 68 and coherent Discovery CH → SE; neither subject is otherwise used in the baseline source. Actual fixed absent probes precede first writes. Both obtain real initial and dedup commits, and retained history has exactly two commands. The malformed-prior negative makes current_record, commit.expected and commit.next the same malformed queued job, so unrelated equality guards cannot mask missing prior validation. The forged-next negative first proves its distinct next record is structurally valid, then requires real fixed rejection and unchanged persisted state. Pure transition checks never populate positive journals.
+
+Pre-publication P2 review caught that provisional Rule age 61 overlaps unchanged R9's computed helper range 61-63/65-67 (R9 main cases 60/64). The new N03 case now uses age 68; explicit and computed contexts were checked, and R9 remains byte-identical. This was a source-review isolation correction, not an observed CI failure.
+
+## Bounded diagnostics and preserved execution
+
+Two constant-size records describe ledger fill and start cycles. Finite boundary labels and zero-based last started/completed indices accompany started/resolved command construction and fixed calls, command commits and START reservations. Successful resolution is separate from commit/reservation; the expected rejected pointer probe counts as started only.
+
+Elapsed values are rounded aggregate client-await durations, capped at 300000 ms. They separate commandRequest work from fixed-call awaits including transport; they are not server CPU or individual-statement profiling. Wrapper finally blocks record elapsed values without changing replies/errors. No per-row trace, payload/token serialization, timer, resource or deadline is added.
+
+Every 254-command fill, original claim 255 and terminal credit, real START, interstitial refusal, exact-token/fence terminal Fail 256, exhausted state, cleared credit and beyond-cap refusal remains. All 64 real enqueue/claim/START/fail cycles, 65th enqueue/refused claim, 193 commands/64 starts/64 dispositions and pointer-corruption/refusal/restoration remain. The original ownership/cleanup, authority/catalog/history checks and all 31 groups/R9 cases remain mandatory.
+
+## Frozen pins
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 136035 | `520e9b3435676ce38eb8312b22a2935f8449afbf4c9d31d36a7bf7d92382d984` | `8202f4a667f0953e01364cfffcc4507747bc24f4` |
+| native.ts | 151886 | `9eb7de5270d0beffbfa2da1f38ef0478aca4858b98268f010eb65054f69643a5` | `55c4e57472efefd87d09065495e137e08fb88a24` |
+
+Eighteen-source aggregate: `166f8b79e2a4b564b17a835e44cd0f5294ea80ce7ca005d8c3bfda32775d6859`. Sixteen other source pins and all protected helpers, rollback, roles/grants, workflow/package and time/resource limits remain unchanged. Three SQL replacements in two functions and six native replacements; no local execution.
+
+## Independently fetched historical evidence
+
+[Repository verification 129638063982](https://github.com/Jetnity/jetnity/actions/runs/42758402735/job/129638063982): full non-Auth log **4249970 bytes / 63142 lines**, SHA256 `c1fb0d06b046fd1658caedb0a1d3f132c714bbf5d319cb7a9586e1f7a02f2247`. Terminal metadata confirms failed run/aggregate 129644016381 and six successful companions. Typecheck/lint passed; tests failed; hygiene/build skipped.
+
+First 23 groups passed again, including N07/R4 (783 ms), full N08 and both R9 cases (combined group 12673 ms). Real SQL-wait observations, backend-absent retained executor cleanup, unavailable→invalid admission and no terminal effects are historical exact-head receipts. Natural I1 fail-confirm and explicit worker caller abort remain distinct; no elapsed 30-second worker timer is claimed.
+
+N05/A03 then exceeded the 240-second effect budget after 154781.596676 ms; failed iteration and per-function cost are unknown. Seven later groups were not reached. Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled, 642911.28969 ms. Cleanup: 26975/26975 settled, zero pending, 4242/4242 closed, one stopped cluster, zero children/errors; 240354 ms total / 35 ms cleanup. Eight histories, eighteen pins, twenty-two matrix rows and thirty-one obligations remain. Overall nativePass is false.
+
+## Limits and STOP
+
+**No measured or promised speedup or full CI success.** Source analysis establishes only the removal of repeated pure computation within a call. Whole-history work remains; full-cap Rule latency and Production capacity/SLO approval remain unproved.
+
+No local project/parser/SQL/native/build execution, installation or checkout reconstruction occurred. Prior 64/64 author results remain historical; corrected R18 source has not run. Full unchanged exact-head CI must reprove every group and both R9 witnesses inside the original budgets.
+
+**AUTHOR STOP.** Root alone reviews, publishes and decides TL PASS/Ready/merge. No hosted action or follow-up slice. Method NOT_APPROVED, #1139/17 gaps, #917 specific refusal, #1131, both #1135 holds, #968 and #911/#913 remain.
+
+---
+
+## Historical R17 and earlier author self-reviews
+
+The exact previous records follow unchanged. Their source claims and headings remain historical and do not grant R18 acceptance.
+
 # M04 Phase-B author self-review V1 — R17 current
 
 **R17 SAME GENERATION2 / SAME SESSION. AUTHOR SELF-REVIEW IS NOT TECHNICAL-LEAD ACCEPTANCE.**

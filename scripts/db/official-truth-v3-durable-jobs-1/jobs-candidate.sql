@@ -399,7 +399,9 @@ CREATE FUNCTION official_v3_jobs_private.command_v1(v jsonb) RETURNS jsonb
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
 DECLARE a text:=v->>'action'; k text:=v->>'kind'; i jsonb:=v->'input'; identity jsonb; jkey text; f jsonb; t text;
 BEGIN
-  IF v IS NULL OR octet_length(official_v3_jobs_private.canonical_v1(v,0))>65536
+  IF v IS NULL THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
+  t:=official_v3_jobs_private.canonical_v1(v,0);
+  IF octet_length(t)>65536
     OR official_v3_jobs_private.exact_keys_v1(v,CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) IS NOT TRUE
     OR (a IN ('enqueue','claim','complete','fail')) IS NOT TRUE OR (i->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
   IF a='enqueue' THEN
@@ -435,7 +437,6 @@ BEGIN
     END IF;
     k:=CASE WHEN jkey LIKE 'research-job:%' THEN 'rule_research' ELSE 'combination_discovery' END;
   END IF;
-  t:=official_v3_jobs_private.canonical_v1(v,0);
   RETURN jsonb_build_object('value',v,'commandText',t,'commandKey','queue-command:v3:'||encode(sha256(convert_to(t,'UTF8')),'hex'),
     'operationId',i->'operationId','jobKey',jkey,'subjectText',identity->'subjectText','action',a,'kind',k);
 END $$;
@@ -514,7 +515,7 @@ BEGIN
       n:=n||jsonb_build_object('lastFailure',i->'reason');
     END IF;
   END IF;
-  n:=official_v3_jobs_private.job_v1(n);
+  IF kind IS DISTINCT FROM 'deduplicated' THEN n:=official_v3_jobs_private.job_v1(n); END IF;
   IF commit->'next' IS DISTINCT FROM n OR official_v3_jobs_private.timestamp_v1(commit->>'notAfter')<>end_time
     OR a IS DISTINCT FROM jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),
       'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision') THEN RAISE EXCEPTION 'm04 transition mismatch' USING ERRCODE='P7601'; END IF;

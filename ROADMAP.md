@@ -2,9 +2,9 @@
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
 
-### Official Truth V3 / M04 R17 — quota fixture correction, Draft
+### Official Truth V3 / M04 R18 — exact-head acceptance open
 
-Baseline 69f4dcc passed23 native groups including both actual R9 witnesses, but CI 42754606380 failed the fixed 240 s budget at N05/A03; seven later groups remain unproved. R17 preserves actual 254/255/256 and 64/65 boundaries using distinct compact Discovery fixtures; SQL/authority/full history/budgets unchanged. Newhead requires all 31 groups and full gates. [Task V8](docs/official-truth-product-v3/M04_RECOVERY_TASK_V8.md) · [Root Review V8](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V8.md) · [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md). Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending; no hosted/public activation or next slice. Later exact-head PR receipts/live evidence govern.
+Baseline 1d8 CI 42758402735 failed the fixed 240 s budget in N05/A03 after 23 groups/R9 passed. R18 permits two pure within-call SQL reuses, focused native regressions and finite progress receipts; full history/authority/all 31 groups/actual quota boundaries/budgets remain. [Task V9](docs/official-truth-product-v3/M04_RECOVERY_TASK_V9.md) · [Root Review V9](docs/official-truth-product-v3/M04_RECOVERY_ROOT_REVIEW_V9.md) · [Handoff](docs/official-truth-product-v3/M04_HANDOFF_V1.md). Draft; no Ready/merge. Method NOT_APPROVED/#1139 NOT_RELEASE_READY/#917 pending. Later PR receipts/live evidence win; no next slice.
 
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_END -->
 

@@ -1,3 +1,58 @@
+# M04 Phase-B author delivery status V1 — R18 current
+
+**R18 SAME-SESSION PURE SQL REUSE AND QUOTA PROGRESS PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
+
+Author: **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation2**, session `/root/m04_durable_jobs_writer_g2`. [Root dispatch and finite authorization](https://github.com/Jetnity/jetnity/pull/1178#issuecomment-6759595208); baseline `1d8eeddd8e2da9341f659f2b024e653c5ba5d310`, tree `224d89c68fbc665c39298b9c16bede277f87596f`.
+
+## Authorized changes and preserved checks
+
+In command_v1, explicit SQL NULL rejection keeps the original P7601 command error. The canonical text of unchanged input v is computed once and reused for the existing 65536-byte bound and command text/key. All shape, identity and domain checks remain. canonical_v1 still enforces depth, ASCII keys/strings and numeric rules; wire_v1 retains its separate node-count guard.
+
+In transition_v1, only the internally selected deduplicated enqueue branch reuses n:=expected after full validation of the prior job. Every other or NULL branch validates its derived next job. Supplied-next equality and all audit, deadline, fence, command and identity checks remain. No shared cache, caller trust flag, extra object or signature is introduced.
+
+N02 adds both-kind canonical text/key/value parity, exact original SQL-NULL and canonical-size guard oracles, and JSON-null refusal. N03 uses unused Rule age 68 and coherent Discovery CH → SE, each with a real absent probe followed by real initial/dedup commands. Identical malformed current/expected/next must fail prior validation; a structurally valid distinct forged next must fail with persisted state unchanged. The accepted history contains exactly two actual commands.
+
+Pre-publication P2 review caught that provisional Rule age 61 overlaps unchanged R9's computed helper range 61-63/65-67 (R9 main cases 60/64). The new N03 case now uses age 68; explicit and computed contexts were checked, and R9 remains byte-identical. This was a source-review isolation correction, not an observed CI failure.
+
+Two constant-size progress records cover ledger fill and start cycles. They record finite group/boundary labels, zero-based last started/completed indices, started/resolved construction and fixed-call counts, committed commands, reserved STARTs and bounded aggregate elapsed times. Successful resolution differs from a committed/reserved result; an expected rejected probe counts as started only. Timings include client construction/transport/await and are not server statement profiling. Capping diagnostic values at 300000 ms changes no execution deadline.
+
+Every actual 254/255/256 and 64/65 command/START/credit/token/fence/refusal/state/pointer assertion remains. All 31 groups and both R9 cases, full immutable history validation, catalog checks, final MA1 authority, ownership/cleanup and the 240-second effect / 60-second cleanup / 300-second outer ceilings remain.
+
+## Frozen source
+
+| Source | Bytes | SHA256 | Git blob |
+| --- | ---: | --- | --- |
+| jobs-candidate.sql | 136035 | `520e9b3435676ce38eb8312b22a2935f8449afbf4c9d31d36a7bf7d92382d984` | `8202f4a667f0953e01364cfffcc4507747bc24f4` |
+| native.ts | 151886 | `9eb7de5270d0beffbfa2da1f38ef0478aca4858b98268f010eb65054f69643a5` | `55c4e57472efefd87d09065495e137e08fb88a24` |
+
+Eighteen-source aggregate: `166f8b79e2a4b564b17a835e44cd0f5294ea80ce7ca005d8c3bfda32775d6859`. The other sixteen sources, rollback, protected sources, SQL signatures/catalog inventory, roles/grants, packages/workflows and budgets are unchanged. Three literal SQL replacements affect two functions; six native replacements add the authorized regressions/bookkeeping. Eighteen pins, twenty-two coverage rows and thirty-one group obligations remain.
+
+## Actual historical CI
+
+[CI 42758402735](https://github.com/Jetnity/jetnity/actions/runs/42758402735) is independently verified **completed/failure**. Repository job 129638063982 and aggregate 129644016381 failed; all six companions succeeded. Typecheck/lint passed; tests failed; hygiene/build were skipped.
+
+The first **23 ordered groups and both actual R9 witnesses passed again**. R9 retains real SQL-wait evidence and target/control/holder identities, explicitly distinguishes backend absence from the still-held executor, and observes unavailable admission before drain, invalid admission afterward, no terminal effects and actual executor drain. Natural I1 timeout observed fail-confirm; worker caller abort is a separate case and is not an elapsed 30-second timer proof.
+
+Group 24 N05/A03 reached the unchanged global 240-second effect deadline after **154781.596676 ms**. The failed iteration and individual SQL costs are unknown. Seven later groups were not reached. First-23 group times sum to 84770 ms. The R17 Discovery fixture correction alone did not make the full proof fit.
+
+Core: 8682 tests / 8678 passed / 2 failed / 2 skipped / 0 cancelled; 642911.28969 ms. Cleanup: 26975/26975 settled, zero pending, 4242/4242 connections closed, one stopped cluster, zero child processes/errors; 240354 ms total / 35 ms cleanup. Full non-Auth log: 4249970 UTF-8 bytes / 63142 lines, SHA256 `c1fb0d06b046fd1658caedb0a1d3f132c714bbf5d319cb7a9586e1f7a02f2247`.
+
+All **eight** failed CI histories remain. Historical partial progress is bound to its exact head; overall nativePass remains false.
+
+## Limits and author STOP
+
+**No measured or promised speedup or complete CI success.** Only duplicate pure computation in the same call is removed; every historical row remains checked. Full-cap Rule latency and Production capacity/SLO approval remain unproved. Repeated whole-history work remains a dormant performance limitation. The new counters provide bounded evidence if another failure occurs.
+
+Original checkout absent; no reconstruction, installation or local project/parser/test/SQL/native/build execution occurred. Historical 64/64 author checks do not validate these changes. Corrected R18 source is unexecuted.
+
+**AUTHOR STOP FOR ROOT REVIEW.** Root owns Task V9, publication and complete exact-head acceptance. No Ready, merge, hosted action or next slice. Method NOT_APPROVED, #1139 NOT_RELEASE_READY/17 gaps, #917 refusal and all existing Owner gates remain.
+
+---
+
+## Historical R17 and earlier author records
+
+The exact previous records follow unchanged. Their source pins, execution statements and current headings describe their historical cuts, not R18 acceptance.
+
 # M04 Phase-B author delivery status V1 — R17 current
 
 **R17 SAME-SESSION DISCOVERY QUOTA FIXTURES PREPARED; ROOT REVIEW AND NEW EXACT-HEAD CI REQUIRED.**
