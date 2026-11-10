@@ -14,7 +14,6 @@ import { WORLD_MAP_GRUNDKARTE_HINWEIS } from '@/lib/account/world-map-ansicht'
 import { explorerRecords, filterRecords, positionText, recordStatus, type ExplorerFilter } from '@/lib/account/world-explorer-1/presentation'
 import ExplorerMap from './ExplorerMap'
 import ExplorerDetails from './ExplorerDetails'
-import './atlas.css'
 
 const FILTERS = [['alle', 'Alle'], ['besucht', 'Besucht'], ['geplant', 'Geplant'], ['beides', 'Beides']] as const
 const PAGE_SIZE = 24

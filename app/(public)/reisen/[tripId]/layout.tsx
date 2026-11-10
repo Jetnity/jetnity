@@ -1,3 +1,4 @@
+import '@/components/trips/reiseplan/etappen.css'
 import type { ReactNode } from 'react'
 import 'leaflet/dist/leaflet.css'
 import '@/components/trips/organisieren/omio/vergleich.css'

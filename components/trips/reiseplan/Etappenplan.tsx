@@ -27,7 +27,6 @@ import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
 import StoppForm from './StoppForm'
-import './etappen.css'
 
 type Props = {
   reise: Trip
@@ -86,7 +85,7 @@ export default function Etappenplan({
   const [platzieren, setPlatzieren] = useState(false)
   const [ohneTage, setOhneTage] = useState<string | null>(null)
   const stages = [...reise.stages].sort((a, b) => a.position - b.position)
-  const activeDay = !focusRoute && tagId ? reise.days.find((d) => d.id === tagId) : undefined
+  const activeDay = !ohneTage && !focusRoute && tagId ? reise.days.find((d) => d.id === tagId) : undefined
   const activeStage = stages.find((s) => s.id === (ohneTage || activeDay?.stageId))
   const activeRun = activeDay && route.find((r) => r.art === 'lauf' && r.tagIds.includes(activeDay.id))
   const days = activeStage
@@ -337,8 +336,12 @@ export default function Etappenplan({
                         </button>
                       ))}
                     </div>
-                    {editor}
-                    {day}
+                    {activeDay && days.some((d) => d.id === activeDay.id) && (
+                      <>
+                        {editor}
+                        {day}
+                      </>
+                    )}
                     {!days.length && <p>Für diese Etappe sind noch keine Tage zugeordnet.</p>}
                   </>
                 )}

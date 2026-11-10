@@ -1422,7 +1422,7 @@ export default function TripWorkspace({
 
           {organisierenStart ? (
             <Organisieren
-              key={reise.id}
+              key={reise.id + ':' + reise.revision}
               reise={reise}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}

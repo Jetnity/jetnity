@@ -6,6 +6,7 @@
 // andere eine gültige Aussage – und der Ausfall wird als Ausfall gezeigt, nicht
 // als leere Historie.
 
+import '@/components/account/world-explorer-1/atlas.css'
 import type { Metadata } from 'next'
 
 import AccountBesuche from '@/components/account/AccountBesuche'
