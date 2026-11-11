@@ -1,7 +1,7 @@
 # Travelpayouts-Flugsuche – Vorschauauftrag vom 11.11.2026
 
 ## Auftrag und Ziel
-Der Owner möchte eine professionelle, echte Flugsuche im vorhandenen Jetnity-Flugreiter, mit Ergebnissen auf Jetnity und sichtbarer Chrome-Vorschau. Dieser Auftrag veröffentlicht die neue Funktion nicht in Production. Eigener Worktree und Branch ab main 1254a8d; die M04-Arbeit anderer Chats bleibt unberührt.
+Der Owner möchte eine professionelle, echte Flugsuche im vorhandenen Jetnity-Flugreiter, mit Ergebnissen auf Jetnity und sichtbarer Chrome-Vorschau. Der ursprüngliche Auftrag war eine private Vorschau; am 11.11.2026 hat der Owner die Veröffentlichung nach Prüfung der Sortierung ausdrücklich freigegeben. Eigener Worktree und Branch ab main 1254a8d; die M04-Arbeit anderer Chats bleibt unberührt.
 
 ## Umsetzungsplan
 - Offizielles White Label Web vom Typ Widget im Jetnity-Travelpayouts-Konto konfigurieren: Deutsch, CHF, Jetnity-Farben. Hotel-Popunder und Referral-Werbung ausschalten. Nur öffentliche Widget-ID; keine Search API und kein API-Token.
@@ -17,7 +17,7 @@ Der Owner möchte eine professionelle, echte Flugsuche im vorhandenen Jetnity-Fl
 - Eigenes Widget im Konto angelegt und gelesen: 24468; Marker 804084, Website https://jetnity.com/reisen, Projekt Jetnity, Deutsch/CHF. Jetnity-Grün, Hotel-Popunder und Referral-Werbung ausgeschaltet. Keine API-Schlüssel erzeugt.
 
 ## Status
-Echte Flugangebote im bestehenden Flüge-Reiter in der lokalen Chrome-Vorschau nachgewiesen. Keine Produktionsveröffentlichung. Production bleibt ohne den neuen öffentlichen Origin-Schalter beim bestehenden Booking-Handoff.
+Echte Flugangebote im bestehenden Flüge-Reiter in Chrome und auf dem getrennten HTTPS-Widget-Host nachgewiesen. Veröffentlichung vom Owner freigegeben; PR-, Preview- und Production-Nachweise werden im Release-Abschnitt geführt. Ohne den neuen öffentlichen Origin-Schalter bleibt der Booking-Handoff erhalten.
 
 ## Umsetzung
 
@@ -40,7 +40,7 @@ Echte Flugangebote im bestehenden Flüge-Reiter in der lokalen Chrome-Vorschau n
 
 Lokale Vorschau: `http://127.0.0.1:3982/vorschau` (Next Production-Build auf 3980, unabhängiger Widget-Host 3990). Der lokale Vorschau-Wrapper erstellt nur einen eigenen Browser-Entwurf und überschreibt keine andere Reise. Die Flughafensuche nutzt dort den öffentlichen bestehenden Jetnity-Katalog. Keine angemeldete Production-Reise bearbeitet.
 
-Getrennte Hosting-Konfiguration und offene Providergrenzen: [Widget-README](../widgets/travelpayouts/README.md). Vor einem späteren Rollout insbesondere die anbieterseitig fest gesetzte `citizenship: RU` trotz Schweizer Markt klären. Dies ist kein aus Jetnity übermittelter Pass-/Kontowert. Die Vorschau behauptet keine eigenständige Flight Search API, Buchungsbestätigung oder automatische Rückübernahme eines Tickets in den Plan.
+Getrennte Hosting-Konfiguration und offene Providergrenzen: [Widget-README](../widgets/travelpayouts/README.md). Offener Anbieterprüfpunkt bleibt die anbieterseitig fest gesetzte `citizenship: RU` trotz Schweizer Markt; die Wirkung auf Tarife ist nicht nachgewiesen. Dies ist kein aus Jetnity übermittelter Pass-/Kontowert. Die Vorschau behauptet keine eigenständige Flight Search API, Buchungsbestätigung oder automatische Rückübernahme eines Tickets in den Plan.
 
 
 ## Abschliessende Prüfung des finalen Stands
@@ -71,3 +71,17 @@ Geprüft am Production-Build in Chrome:
 - 20 gezielte Tests erfolgreich, darunter fünf neue Kalenderfälle für Schaltjahr, Jahreswechsel, Sommerzeit, Grenzen und ungültige Daten. Typecheck, gezielter ESLint, Production-Build und alle fünf Hygieneprüfungen erfolgreich. Bestehende Hinweise zu lokalen, nicht angewendeten RPCs unverändert. Keine neuen Abhängigkeiten, Kosten, Datenbank- oder Berechtigungsänderungen.
 
 Bildnachweise der Vorschau ausserhalb des Repositorys: `work/travelpayouts-calendar-final/`. Weiterhin lokale Vorschau; kein Push, Merge oder öffentlicher Rollout. Die oben dokumentierte anbieterseitige RU-Frage bleibt vor Veröffentlichung offen.
+
+
+## Freigegebene Veröffentlichung und Sortierung — 11.11.2026
+
+Der Owner hat die Veröffentlichung ausdrücklich beauftragt und zusätzlich die Sortierung wie bei Skyscanner angefragt. Im unveränderten offiziellen Widget wurden mit echten ZRH–BKK/BKK–ZRH-Angeboten geprüft:
+
+- „Empfohlen zuerst“ ist die Voreinstellung.
+- „Am günstigsten zuerst“ stellt die günstigeren Angebote vor die teureren; die tatsächliche Reihenfolge wurde nach Auswahl abgelesen.
+- „Reisedauer“ stellt die kürzeren Verbindungen vor die längeren. „Am schnellsten“ und „kürzeste Reisedauer“ sind hierfür dieselbe Auswahl.
+- Weitere Originaloptionen: Abflugzeit, Ankunftszeit, Zwischenstopp-Dauer und Bewertung. Keine selbst erfundenen Skyscanner-Kacheln oder Rankings.
+
+Der separate statische Vercel-Host `jetnity-flight-widget` (Projekt `prj_SrFRWKBWs8rzO5VrHVxhXKicQAqr`) ist unter `https://jetnity-flight-widget.vercel.app` erreichbar. Echte Ergebnisse laden über HTTPS; keine neuen Zugangsdaten oder Datenbankänderungen. Die Jetnity-App wird erst durch die öffentliche Origin-Konfiguration und ihren Neubau aktiviert. Bestehende Infrastruktur, kein zusätzliches bezahltes Produkt; übliche Hosting-Nutzung bleibt bestehen.
+
+Die RU-Frage bleibt offen und ist nicht als behoben dargestellt. Der dokumentierte Test hat korrekte Route, Daten, Personen, Reiseklasse, deutschen Markttext und CHF-Angebote nachgewiesen; es wird keine Tarifgleichheit für alle Staatsangehörigkeiten behauptet.

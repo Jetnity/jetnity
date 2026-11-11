@@ -20,6 +20,10 @@ Public widget ID: `24468`; partner marker: `804084`. Managed in the owner's Trav
 
 ## Known provider limits
 
-The provider's current public bundle sets `citizenship: "RU"` internally even when German/CHF searches have `market_code: "CH"`. Jetnity does not supply a traveller citizenship, and does not modify/intercept this payload. Clarify the significance with Travelpayouts before public rollout; do not represent this as a verified traveller nationality.
+The provider's current public bundle sets `citizenship: "RU"` internally even when German/CHF searches have `market_code: "CH"`. Jetnity does not supply a traveller citizenship, and does not modify/intercept this payload. Its effect on fares remains unverified; do not represent this as a verified traveller nationality or as resolved. The owner authorized publication after reviewing the preview.
 
 Some provider fallback/error copy is English despite German configuration. Filtering can show explicitly labelled relaxed alternatives when no exact match exists. The flexible-date strip and ticket totals may use different price bases; no Jetnity guarantee of a whole-market best price is made. Provider selection/booking callbacks and automatic transfer into the trip are not implemented or claimed. Physical iPhone/Safari and a hosted HTTPS preview remain separate checks.
+
+## Release hosting
+
+Approved static project: `jetnity-flight-widget` (`prj_SrFRWKBWs8rzO5VrHVxhXKicQAqr`). Public origin: `https://jetnity-flight-widget.vercel.app`. Deploy only this directory; never include application environment files or credentials.
