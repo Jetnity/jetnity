@@ -6256,3 +6256,12 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Entscheidung:** Ortsreferenzen werden im vorhandenen Reisegraphen geprüft, Koordinaten nicht aus freien Eintragstiteln erfunden. Nahe bekannte Stopps und explizit gewählte Transportorte können den Suchmittelpunkt bilden. Suchentwürfe sind temporär und je Etappe getrennt; Suche, Kartenauswahl und Anbieter-Handoff verändern keine Reise oder Buchungswahrheit. Originalpreise/-bilder verbleiben im offiziellen Rahmen. Native Dialog-Vergrösserung bewahrt diesen Rahmen, während ein bewusster Ansichtswechsel mit den Jetnity-Suchvorgaben neu lädt. Die Preis-Badge benennt deshalb nur die Startansicht.
 
 **Budgetgrenze:** Die öffentliche Anbieterimplementierung verarbeitet URL-`min`/`max` als USD pro Nacht und rechnet in Währung/Preisperiode um. Jetnity besitzt hierfür keine bestehende FX-Quelle. Statt einen CHF-Gesamtbetrag falsch zu übermitteln, bleibt der Währungs-/Zeitraumbezug im originalen Stay22-Budgetfilter. Keine neue bezahlte FX-Integration, keine automatische Budgetaufteilung und kein Bestpreisversprechen. Die Direct Travel API bleibt geschlossen. [Nachweise](docs/STAY22_REISEKONTEXT_2026-11-11.md).
+
+
+## Travelpayouts: Originalangebote im getrennten Ursprung — 11.11.2026
+
+**Kontext:** Der Owner wünscht eine hochwertige, reisebezogene Flugsuche mit echten Ergebnissen innerhalb von Jetnity und zunächst eine sichtbare Vorschau.
+
+**Entscheidung:** Das freigeschaltete offizielle Widget wird verwendet; keine nicht freigeschaltete Flight Search API oder ausgelesenen Ergebnisdaten. Ein eigenständiger Widget-Host trennt das notwendige Anbieter-Storage vom Jetnity-Konto. Nur begrenzte Suchparameter verlassen Jetnity. Bestehende Einwilligungsablehnungen werden respektiert. Eine Flugauswahl bleibt von einer bestätigten Buchung getrennt.
+
+**Grenzen:** Die Vorschau ist lokal. Der Anbieter setzt intern `citizenship: RU` auch für den Schweizer Markt; Bedeutung vor öffentlichem Rollout klären. Keine Änderung dieser Anbieteranfrage, keine behauptete Passinformation und kein garantierter Marktbestpreis. [Details](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).

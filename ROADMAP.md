@@ -559,3 +559,9 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 
 - Lokale Erweiterung: Etappenleiste mit gemerkten Suchwünschen, planbezogene Ortswahl, explizite Umgebungssuche, begrenzte Reisemarker, sichtbare Sterne-/Bewertungs-/Preisperiodenfilter, Karten-/Listenwechsel und vergrösserte Originalanzeige. Reiseplan öffnet die richtige Etappe und den gewählten Ort.
 - Kontrollierte Desktop-/Mobiltests und separate echte Stay22-Anzeige; Details, Freigabe zur Veröffentlichung und verbleibende Providergrenzen in [STAY22_REISEKONTEXT_2026-11-11.md](docs/STAY22_REISEKONTEXT_2026-11-11.md). Production-Rollout nach abschliessender Prüfung beauftragt, noch nicht als live bestätigt.
+
+
+### Travelpayouts-Flugvergleich: lokale Vorschau — 11.11.2026
+
+- Native Flugsuche im vorhandenen Reiter mit Reisevorbelegung, Hin-/Rück-/Gabelflug, Flughafenwahl, Belegung und Economy/Business. Originalangebote in CHF, Anbieterfilter und Buchungsweiterleitung im getrennten Rahmen.
+- Desktop und mobile Chrome-Emulation mit echten Ergebnissen geprüft, einschliesslich Dialog-Vergrösserung und Einwilligungswiderruf. Kein öffentlicher Rollout beauftragt oder ausgeführt. Unabhängiges HTTPS-Hosting, Anbieterklärung und Safari-Prüfung bleiben vor einer Veröffentlichung offen. [Nachweise](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).
