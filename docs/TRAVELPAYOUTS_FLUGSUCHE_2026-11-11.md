@@ -85,3 +85,13 @@ Der Owner hat die Veröffentlichung ausdrücklich beauftragt und zusätzlich die
 Der separate statische Vercel-Host `jetnity-flight-widget` (Projekt `prj_SrFRWKBWs8rzO5VrHVxhXKicQAqr`) ist unter `https://jetnity-flight-widget.vercel.app` erreichbar. Echte Ergebnisse laden über HTTPS; keine neuen Zugangsdaten oder Datenbankänderungen. Die Jetnity-App wird erst durch die öffentliche Origin-Konfiguration und ihren Neubau aktiviert. Bestehende Infrastruktur, kein zusätzliches bezahltes Produkt; übliche Hosting-Nutzung bleibt bestehen.
 
 Die RU-Frage bleibt offen und ist nicht als behoben dargestellt. Der dokumentierte Test hat korrekte Route, Daten, Personen, Reiseklasse, deutschen Markttext und CHF-Angebote nachgewiesen; es wird keine Tarifgleichheit für alle Staatsangehörigkeiten behauptet.
+
+## Release-Prüfung und CSS-Korrektur — 11.11.2026
+
+PR #1187 ist zur Veröffentlichung freigegeben. Die geschützte Vercel-App-Vorschau mit getrenntem HTTPS-Widget zeigte echte Gabelflugangebote ZRH–BKK/HKT–ZRH und funktionierende Preis-/Dauersortierung. Suchkalender und am Feld verankerte Reiseartauswahl ebenfalls geprüft; der gespeicherte Gastentwurf blieb bytegleich. Production ist noch nicht umgestellt.
+
+Gesamt-CI 43024295820 auf `87cf42e` scheiterte an zwei Ursachen: neue CSS-Imports direkt in Client-Komponenten brachen fünf bestehende Node/Workspace-Testdateien; separat überschritt der bestehende M04-Nativtest sein 240-Sekunden-Budget. Letzteres ist auch in Main-CI 42955908361 auf `1254a8d` vorhanden. Diese Ursachen werden nicht miteinander vermischt.
+
+Die neuen Kalender-/Auswahl- und Flugstile werden jetzt wie die übrigen Reisebereich-Stile im vorhandenen `app/(public)/reisen/[tripId]/layout.tsx` geladen. Keine Testausnahmen oder CSS-Mocks hinzugefügt. Alle 97 Tests der fünf zuvor betroffenen Workspace-Testdateien bestehen. Die unabhängige M04-Recovery bleibt unverändert; erforderliche Prüfungen werden weder umgangen noch abgeschwächt.
+
+Nach der Korrektur bestehen Production-Build, Typecheck, gezielter ESLint, Diff-Check und alle fünf Hygieneprüfungen. Der neu gebaute Kalender wurde in sichtbarem Chrome erneut geöffnet: Gestaltung wird über das Layout geladen, weisser Dialog mit 760 px Desktopbreite und fester Bildschirmposition. Keine Abhängigkeiten oder Testbedingungen geändert.

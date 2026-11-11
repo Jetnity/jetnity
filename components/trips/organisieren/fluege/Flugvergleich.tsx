@@ -23,7 +23,6 @@ import Suchkalender from '../auswahl/Suchkalender'
 import Suchauswahl from '../auswahl/Suchauswahl'
 import Fluggaeste, { type FluggaesteWert } from './Fluggaeste'
 import Flugergebnisse, { type FlugSuchauftrag } from './Flugergebnisse'
-import './flugsuche.css'
 
 function FlughafenFeld({
   label,

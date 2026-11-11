@@ -3,7 +3,6 @@
 import { useId } from 'react'
 import * as Menu from '@radix-ui/react-dropdown-menu'
 import { Check, ChevronDown } from 'lucide-react'
-import './suchauswahl.css'
 
 /** DOM-based menu: anchored to the field even at browser zoom, with keyboard navigation. */
 export default function Suchauswahl<T extends string>({ label, wert, optionen, setzen }: {

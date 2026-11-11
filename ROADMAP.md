@@ -561,7 +561,8 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 - Kontrollierte Desktop-/Mobiltests und separate echte Stay22-Anzeige; Details, Freigabe zur Veröffentlichung und verbleibende Providergrenzen in [STAY22_REISEKONTEXT_2026-11-11.md](docs/STAY22_REISEKONTEXT_2026-11-11.md). Production-Rollout nach abschliessender Prüfung beauftragt, noch nicht als live bestätigt.
 
 
-### Travelpayouts-Flugvergleich: lokale Vorschau — 11.11.2026
+### Travelpayouts-Flugvergleich: Veröffentlichung freigegeben, CI blockiert — 11.11.2026
 
 - Native Flugsuche im vorhandenen Reiter mit Reisevorbelegung, Hin-/Rück-/Gabelflug, Flughafenwahl, Belegung und Economy/Business. Originalangebote in CHF, Anbieterfilter und Buchungsweiterleitung im getrennten Rahmen.
-- Desktop und mobile Chrome-Emulation mit echten Ergebnissen geprüft, einschliesslich Dialog-Vergrösserung und Einwilligungswiderruf. Kein öffentlicher Rollout beauftragt oder ausgeführt. Unabhängiges HTTPS-Hosting, Anbieterklärung und Safari-Prüfung bleiben vor einer Veröffentlichung offen. [Nachweise](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).
+- Desktop und mobile Chrome-Emulation mit echten Ergebnissen geprüft, einschliesslich Dialog-Vergrösserung, Einwilligungswiderruf, gemeinsamem Hotel-/Flugkalender und verankerten Auswahllisten. Veröffentlichung vom Owner ausdrücklich beauftragt. Separates HTTPS-Widget und geschützte App-Vorschau mit echten Angeboten und Preis-/Dauersortierung nachgewiesen; jetnity.com noch nicht umgestellt.
+- PR #1187: CSS-Importfehler aus der Gesamtprüfung durch Laden im bestehenden Reise-Layout korrigiert; 97 betroffene Workspace-Regressionstests erfolgreich. Zusätzlich scheitert der bestehende M04-Nativtest am 240-Sekunden-Budget, auch im unveränderten Main-Lauf 42955908361. Erforderliche CI bleibt Freigabevoraussetzung; keine fremde M04-Recovery integriert und keine Prüfung abgeschwächt. Anbieterfeld `citizenship: RU` und physisches Safari/iPhone bleiben offen. [Nachweise](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).

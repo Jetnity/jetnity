@@ -4,7 +4,6 @@ import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type RefO
 import { CalendarDays, Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { tageDifferenz, tageUtc } from '@/lib/activities/zeit'
 import { datumVerschieben, kalenderGrenzen, monatVerschieben, monatsTage, zeitraumGueltig, type KalenderGrenzen } from '@/lib/trips/suchkalender'
-import './suchauswahl.css'
 
 type Teil = 'start' | 'ende'
 type Props = KalenderGrenzen & {
