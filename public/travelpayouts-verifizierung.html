@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Website-Verifizierung · Jetnity</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #153d34; background: #f5f8f3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 20px; }
+    main { max-width: 640px; margin: 8vh auto; padding: clamp(24px, 5vw, 48px); background: white; border: 1px solid #dae6dd; border-radius: 24px; }
+    img { width: 150px; height: auto; }
+    h1 { font-size: clamp(28px, 5vw, 36px); line-height: 1.2; margin-top: 32px; }
+    p { line-height: 1.65; }
+    button { font: inherit; font-weight: 650; color: white; background: #153d34; border: 0; border-radius: 12px; padding: 15px 22px; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: default; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #bde267; outline-offset: 4px; }
+    a { color: inherit; }
+    #status { min-height: 3.3em; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/brand/jetnity-logo.png" alt="Jetnity">
+    <h1>Website-Verifizierung</h1>
+    <p>Diese Seite dient zur Bestätigung von jetnity.com bei Travelpayouts.</p>
+    <p>Mit „Verifizierung starten“ wird der persönliche Travelpayouts-Code für Jetnity auf dieser Seite geladen. Die Bestätigung erfolgt durch Travelpayouts.</p>
+    <button id="start" type="button">Verifizierung starten</button>
+    <p id="status" role="status" aria-live="polite"></p>
+    <noscript><p>Bitte JavaScript aktivieren, um die Verifizierung zu starten.</p></noscript>
+    <p><a href="/">Zur Jetnity-Startseite</a></p>
+  </main>
+  <script>
+    (() => {
+      const button = document.getElementById('start');
+      const status = document.getElementById('status');
+      const isProduction = location.protocol === 'https:' &&
+        ['jetnity.com', 'www.jetnity.com'].includes(location.hostname);
+
+      if (!isProduction) {
+        button.disabled = true;
+        status.textContent = 'Die Verifizierung kann nur auf jetnity.com gestartet werden.';
+        return;
+      }
+
+      button.addEventListener('click', () => {
+        button.disabled = true;
+        // Official installation-check arguments copied from the project dashboard.
+        // Fixed public IDs, never user-supplied script URLs or private trip context.
+        const url = new URL(location.href);
+        url.search = '?init_marker=804084&init_trs=599224&init_locale=en';
+        url.hash = '';
+        history.replaceState(null, '', url);
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.setAttribute('data-cmp-ab', '2');
+        script.src = 'https://emrldtp.cc/NTk5MjI0.js?t=599224';
+        script.onload = () => {
+          status.textContent = 'Code geladen. Bitte die Meldung von Travelpayouts und den Status im Partnerkonto prüfen.';
+        };
+        script.onerror = () => {
+          status.textContent = 'Der Code konnte nicht geladen werden. Bitte die Seite neu laden und erneut versuchen.';
+        };
+        status.textContent = 'Verifizierung wird gestartet …';
+        document.head.appendChild(script);
+      }, { once: true });
+    })();
+  </script>
+</body>
+</html>
