@@ -54,3 +54,15 @@ Prüfung: 7 bestehende Stay22-Vertragstests erfolgreich, gezielter ESLint ohne B
 ## Standardkarte Strassen — 11.11.2026
 
 Auf Owner-Wunsch startet die Unterkunftssuche mit `mapstyle=streets` statt `light`. Die öffentliche Stay22-Widgetimplementierung ordnet `streets` dem Standard-Strassenstil `osm_bright` zu; die übrige native Kartenauswahl bleibt verfügbar. Nach erneutem Production-Build und neuer Suche in der bestehenden Chrome-Vorschau geprüft: farbige Strassenkarte mit originalen Hotelangeboten und Kartenattribution. Sieben bestehende Stay22-Vertragstests erfolgreich. Weiterhin nur lokale Vorschau, keine Veröffentlichung.
+
+## Kompakter Ergebnisbereich — 11.11.2026, 03:07
+
+Auf Owner-Wunsch wurde „Suche separat öffnen“ samt unterer Zusatzleiste entfernt. Erneut laden, Vergrössern und Ausblenden sind als beschriftete, tastaturbedienbare Symbolschaltflächen mit mindestens 44 Pixeln Höhe erreichbar. Die vorhandene Suche und Karten-/Listenwahl bleiben bestehen. Auch die Fehlertexte verweisen nicht mehr auf die entfernte Funktion.
+
+Die gesamte Ergebnisfläche einschliesslich Überschrift und Bedienleiste richtet sich nach der verfügbaren Bildschirmhöhe (maximal 700 Pixel), statt ausschliesslich die iframe-Höhe zu begrenzen. Auf kurzen Handys bis 700 × 700 Pixel scrollt der Kopfbereich während der Hotelsuche mit; dadurch verdeckt er die Ergebnisse nicht. Der erste neue Test bei 320 × 568 Pixeln deckte den zu hohen festen Kopfbereich auf. Nach der gezielten Korrektur passen Ergebnisfläche und Bedienung zwischen die sichtbaren Navigationsbereiche. Vergrössern erhält weiterhin denselben Anbieterrahmen und dessen aktuelle Auswahl.
+
+Prüfung: abschliessender Production-Build und gezielter ESLint erfolgreich; Exportprüfung erfolgreich. Alle vier vollständigen Browserabläufe (Desktop Chromium, Mobile Chromium, iPhone WebKit und Small mobile Chromium) mit zusätzlicher Prüfung des gesamten sichtbaren Ergebnisbereichs erfolgreich. Echte Klickpositionen, Vergrösserung/Fokus, Etappenwechsel, Reiseplanübergabe, Datenschutz-Ablehnung und unveränderter Reisegraph weiter erfolgreich. Die automatisierten Rahmen enthalten keine Hotel-Testangebote. Getrennt davon in der bestehenden sichtbaren Chrome-Vorschau originale Stay22-Fotos, Preise, Strassenkarte, vollständige Kartenbedienung und fehlenden separaten Suchlink geprüft. Kein Test auf einem physischen iPhone.
+
+Anpassungsgrenzen anhand der offiziellen Parameter erneut geprüft: Karte/Liste, Kartenstil, Farben, Preis pro Nacht/Aufenthalt, Stern-/Gästebewertungsanzeige und Punkt- statt Preismarker sind konfigurierbar. Freie Anordnung der einzelnen Kartenfelder oder beliebige Fotoformate werden durch die dokumentierten Einbettungsparameter nicht angeboten. Keine neue API-Freigabe oder frei gestaltbare eigene Ergebnisliste daraus ableiten. Quelle: https://dev.stay22.com/docs/maps/parameters.
+
+Weiterhin ausschliesslich lokale Vorschau; kein Push, Pull Request oder Deployment für diesen Feinschliff.

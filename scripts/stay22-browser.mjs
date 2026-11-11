@@ -80,6 +80,23 @@ for (const [engine, options, label] of [
     assert.match(await frame.getAttribute('sandbox'), /allow-popups-to-escape-sandbox/)
     const content = page.frameLocator('iframe.stay22-frame')
     await content.getByRole('button', { name: 'Filter prüfen', exact: true }).waitFor()
+    // Search must reveal the complete result surface, including both toolbars,
+    // between the fixed navigation bars without an extra outer-page scroll.
+    await page.waitForFunction(() => {
+      const results = document.querySelector('.stay22-results')
+      const panel = document.querySelector('.stay22-panel')
+      const header = document.querySelector('.workspace-header')
+      if (!results || !panel || !header) return false
+      const top = getComputedStyle(header).position === 'sticky' ? header.getBoundingClientRect().bottom : 0
+      const bottomNav = parseFloat(getComputedStyle(results).getPropertyValue('--ux-u1a-nav-offset')) || 0
+      return results.getBoundingClientRect().top >= top - 1 && panel.getBoundingClientRect().bottom <= innerHeight - bottomNav + 1
+    }).catch(async error => {
+      console.error(await page.evaluate(() => ({ viewport: innerHeight, results: document.querySelector('.stay22-results')?.getBoundingClientRect().toJSON(), panel: document.querySelector('.stay22-panel')?.getBoundingClientRect().toJSON(), header: document.querySelector('.workspace-header')?.getBoundingClientRect().toJSON(), bottomNav: getComputedStyle(document.documentElement).getPropertyValue('--ux-u1a-nav-offset') })))
+      await page.screenshot({ path: `/tmp/stay22-fit-failure-${label.replaceAll(' ', '-')}.png` })
+      throw error
+    })
+    assert.equal(await page.getByRole('link', { name: /Suche separat öffnen/ }).count(), 0)
+    await page.locator('.stay22-results').screenshot({ path: `/tmp/stay22-compact-${label.replaceAll(' ', '-')}.png` })
     // Align the frame between the persistent bars, as with an outer-page scroll.
     // Click actual screen coordinates: locator.click would scroll the parent
     // again for a fixed-position control inside a cross-origin frame.
