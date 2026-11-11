@@ -1,0 +1,3390 @@
+{
+  "schema": "jetnity.m04.recovery.r32.v23",
+  "capturedAt": "2026-11-10 20:51:29 UTC",
+  "status": "SOURCE_ONLY_CORRECTION_REVIEWED_NEW_HEAD_EXECUTION_PENDING",
+  "task": {
+    "path": "docs/official-truth-product-v3/M04_RECOVERY_TASK_V23.md",
+    "version": "V23 v2",
+    "initial": "https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778458903",
+    "implementationAmendment": "https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778784989",
+    "nativeScope": "UNCHANGED; no V23 v3"
+  },
+  "pullRequest": 1183,
+  "baseline": {
+    "main": "e7aae86c18238033c2186722e24c84dc7a5f69b9",
+    "mainTree": "8918d48841c19ddaf16c128973a0f03eed481f43",
+    "branch": "fix/official-truth-v3-m04-postmerge-r30-20261110",
+    "expectedHead": "46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8",
+    "headTree": "d1be88248356f66d28242a2a51cf061733c11a23",
+    "mergeBase": "e7aae86c18238033c2186722e24c84dc7a5f69b9",
+    "ahead": 2,
+    "behind": 0,
+    "parallel1181LeavesPreserved": 36
+  },
+  "correction": {
+    "sourcePaths": 1,
+    "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+    "function": "assert_history_v1",
+    "before": {
+      "bytes": 140541,
+      "sha256": "fa111694fb535b867bbb16e3d7b334d48d4e4092bf1f312dd2838a7eed2c37aa",
+      "blob": "90d9f0466869cf19654aac63245916c5bda16066"
+    },
+    "after": {
+      "bytes": 146813,
+      "sha256": "b4774a30188443162caec517543b7a6c8d6c90009882e5180c54b8c06384326a",
+      "blob": "9dea993d3a84611869a6553eff209813b6dd2506"
+    },
+    "oldSpan": "    PERFORM official_v3_jobs_private.transition_v1(c->'value',e->'expected',e);\n",
+    "replacement": "    DECLARE command jsonb:=c->'value'; current_record jsonb:=e->'expected'; commit jsonb:=e;\n      i jsonb:=command->'input'; expected jsonb; n jsonb; identity jsonb;\n      a jsonb:=commit->'audit'; f jsonb:=i->'fence'; kind text COLLATE \"default\"; action text COLLATE \"default\":=command->>'action'; at_time timestamptz; end_time timestamptz;\n      observed text COLLATE \"default\":=a->>'observedAt'; rev integer; delay_ms integer; result_key text COLLATE \"default\";\n    BEGIN\n      IF official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) IS NOT TRUE\n        OR octet_length(official_v3_jobs_private.canonical_v1(commit,0))>196608\n        OR official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) IS NOT TRUE\n        OR commit->'operationId' IS DISTINCT FROM c->'operationId' OR commit->'commandKey' IS DISTINCT FROM c->'commandKey'\n        OR commit->'jobKey' IS DISTINCT FROM c->'jobKey' OR commit->'expected' IS DISTINCT FROM current_record THEN RAISE EXCEPTION 'm04 invalid transition' USING ERRCODE='P7601'; END IF;\n      at_time:=official_v3_jobs_private.timestamp_v1(observed); end_time:=at_time+interval '5 seconds';\n      IF current_record IS DISTINCT FROM 'null'::jsonb THEN\n        expected:=official_v3_jobs_private.job_v1(current_record);\n        IF COALESCE(expected->'jobKey',expected#>'{identity,jobKey}') IS DISTINCT FROM c->'jobKey' OR expected->>'updatedAt'>observed THEN RAISE EXCEPTION 'm04 invalid prior' USING ERRCODE='P7601'; END IF;\n      END IF;\n      rev:=COALESCE((expected->>'revision')::integer,0)+1;\n      IF action='enqueue' THEN\n        IF expected->>'state' IN ('queued','leased','backoff') THEN n:=expected; kind:='deduplicated';\n        ELSE\n          IF expected->'jobId'=i->'jobId' THEN RAISE EXCEPTION 'm04 repeated cycle' USING ERRCODE='P7601'; END IF;\n          n:=jsonb_build_object('schema',3,'jobId',i->'jobId','operationId',i->'operationId','revision',rev,'predecessorRevision',expected->'revision',\n            'state','queued','createdAt',observed,'updatedAt',observed,'attempt',0,'attemptLimit',i->'attemptLimit','lease',NULL,'nextAttemptAt',NULL,'lastFailure',NULL);\n          identity:=official_v3_jobs_private.subject_v1(command->>'kind',i-'operationId'-'jobId'-'attemptLimit');\n          IF command->>'kind'='rule_research' THEN n:=n||jsonb_build_object('kind','research_job_record','jobKey',identity->'jobKey',\n            'context',i->'context','contextKey',identity->'contextKey','research',identity->'research','method',i->'method','resultDecisionRef',NULL);\n          ELSE n:=n||jsonb_build_object('kind','combination_discovery_job_record','identity',(i-'operationId'-'jobId'-'attemptLimit')||jsonb_build_object('kind','combination_discovery','jobKey',identity->'jobKey'),'resultDiscoveryRef',NULL); END IF;\n          kind:='enqueued';\n        END IF;\n      ELSIF action='claim' THEN\n        IF expected IS NULL OR expected->>'state' NOT IN ('queued','leased','backoff')\n          OR (expected->>'state'='backoff' AND expected->>'nextAttemptAt'>observed)\n          OR (expected->>'state'='leased' AND expected#>>'{lease,expiresAt}'>observed) THEN RAISE EXCEPTION 'm04 not due' USING ERRCODE='P7601'; END IF;\n        n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'nextAttemptAt',NULL);\n        IF (expected->>'attempt')::integer>=(expected->>'attemptLimit')::integer THEN\n          n:=n||jsonb_build_object('state','exhausted','lease',NULL,'lastFailure',COALESCE(NULLIF(expected->'lastFailure','null'::jsonb),'\"verification_unavailable\"'::jsonb)); kind:='exhausted';\n        ELSE\n          n:=n||jsonb_build_object('state','leased','attempt',(expected->>'attempt')::integer+1,'lease',jsonb_build_object('leaseId',i->'leaseId','generation',rev,\n            'acquiredAt',observed,'expiresAt',to_char((at_time+(i->>'leaseMilliseconds')::integer*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')));\n          kind:=CASE WHEN expected->>'state'='leased' THEN 'reclaimed' ELSE 'leased' END;\n        END IF;\n      ELSE\n        IF expected IS NULL OR expected->>'state'<>'leased' OR f IS DISTINCT FROM jsonb_build_object('jobId',expected->'jobId','revision',expected->'revision',\n          'leaseId',expected#>'{lease,leaseId}','generation',expected#>'{lease,generation}') OR expected#>>'{lease,expiresAt}'<=observed THEN RAISE EXCEPTION 'm04 obsolete fence' USING ERRCODE='P7601'; END IF;\n        end_time:=least(end_time,official_v3_jobs_private.timestamp_v1(expected#>>'{lease,expiresAt}'));\n        n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'lease',NULL);\n        IF action='complete' THEN\n          result_key:=CASE WHEN expected->>'kind'='research_job_record' THEN 'resultDecisionRef' ELSE 'resultDiscoveryRef' END;\n          n:=n||jsonb_build_object('state','succeeded','lastFailure',NULL,result_key,COALESCE(i->'decisionRef',i->'discoveryRef')); kind:='completed';\n        ELSE\n          IF (expected->>'attempt')::integer=(expected->>'attemptLimit')::integer THEN n:=n||jsonb_build_object('state','exhausted','nextAttemptAt',NULL); kind:='exhausted';\n          ELSE\n            delay_ms:=least(60000,1000*(2^((expected->>'attempt')::integer-1))::integer);\n            n:=n||jsonb_build_object('state','backoff','nextAttemptAt',to_char((at_time+delay_ms*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')); kind:='backoff';\n          END IF;\n          n:=n||jsonb_build_object('lastFailure',i->'reason');\n        END IF;\n      END IF;\n      IF kind IS DISTINCT FROM 'deduplicated' THEN n:=official_v3_jobs_private.job_v1(n); END IF;\n      IF commit->'next' IS DISTINCT FROM n OR official_v3_jobs_private.timestamp_v1(commit->>'notAfter')<>end_time\n        OR a IS DISTINCT FROM jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),\n          'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision') THEN RAISE EXCEPTION 'm04 transition mismatch' USING ERRCODE='P7601'; END IF;\n    END;\n",
+    "textReview": {
+      "old": {
+        "bytes": 80,
+        "sha256": "e9da87688fb7a51728cb08214275c117a17dd504d9f247c9fada6d21b5464166",
+        "blob": "5328de56e2bfd426c491ff892230bdb2c0e5136b"
+      },
+      "replacement": {
+        "bytes": 6352,
+        "sha256": "e20f73f6370c221699a1589d92aaf35fcea993b85848ec2b78a275a3dd4a931e",
+        "blob": "a7123ac68ab941153729d293155ba1450852df03"
+      },
+      "statements": {
+        "bytes": 5642,
+        "sha256": "099d492e01d2bc5d62e804f6c339a31ad3bf01c8a1f5efafb63fe2989da6ab7b",
+        "blob": "9171094f8a6c6eea8de68c00eb1ac25724dfac3b"
+      },
+      "statementLines": 56,
+      "inverse": true,
+      "onlyHistoryBody": true,
+      "headerCount": 29,
+      "allDeclarationAttributesIdentical": true,
+      "canonicalCallsInCopiedBody": 2
+    },
+    "standaloneTransitionUnchanged": true,
+    "other28FunctionBodiesUnchanged": true,
+    "allOther17SourceFilesUnchanged": true,
+    "nativeUnchanged": {
+      "bytes": 191098,
+      "sha256": "f5d849c643ff22d264bc9adc1a7cd65f12caaac80a804647604851f22effbde0",
+      "blob": "0b3f7d9906687ec42171de5af60fed009d07b39f"
+    },
+    "retainedChecks": [
+      "first full command validation on every row",
+      "original journal IF",
+      "both envelope canonicalizations",
+      "all56 transition statement lines",
+      "prior job validation",
+      "revision overflow",
+      "every history row and every later loop",
+      "pre/post-effect history boundaries",
+      "wait/transaction/S1/final MA1 authority order",
+      "all29 declarations/attributes and ACLs"
+    ],
+    "localContext": {
+      "perRowReinitialization": true,
+      "textLocalsDefaultCollation": [
+        "kind",
+        "action",
+        "observed",
+        "result_key"
+      ],
+      "sameSearchPath": true,
+      "sameSecurityInvoker": true,
+      "foundNotReadAfterReplacedPerform": true,
+      "sqlstatesAndExplicitMessagesUnchanged": true,
+      "exceptionContextStackIdentical": false
+    }
+  },
+  "workModel": {
+    "kind": "SOURCE_DERIVED_NOT_MEASURED",
+    "fixture": "N05/A03 Combination Discovery",
+    "successfulFillCommands": 254,
+    "historyRowVisits": 64516,
+    "firstEnqueuedRowVisits": 507,
+    "deduplicatedRowVisits": 64009,
+    "canonicalEntriesPerDedupRowBefore": 29,
+    "removed": {
+      "commandCalls": 64516,
+      "subjectCalls": 64516,
+      "canonicalEntries": 387096,
+      "exactKeysCalls": 258064,
+      "sha256Calls": 129032,
+      "jsonbFieldRemovalOperations": 193548,
+      "transitionFunctionEntries": 64516
+    },
+    "historyComplexity": "quadratic unchanged",
+    "envelopeTraversals": "both unchanged",
+    "countercosts": [
+      "three JSONB argument bindings and nested block initialization",
+      "larger copied function body and maintenance duplication",
+      "stable-expression snapshots may be required inside the VOLATILE caller"
+    ],
+    "wallTimeSavingMeasured": false,
+    "guaranteed240SecondPass": false,
+    "rejectedAlternative": "generic scalar-batching serializer rewrite; wider error-order and copying/aggregate costs"
+  },
+  "ownership": {
+    "authorName": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3",
+    "actualAuthorSession": "/root/m04_durable_jobs_writer_g3",
+    "sameSessionImmediateReviewFix": true,
+    "independentSourceReviewer": "/root/m04_recovery_source_review_g3",
+    "independentCiReviewer": "/root/m04_recovery_ci_audit_g3",
+    "rootOnlyPublicationReadyMerge": true,
+    "authorSelfReviewIsNotTechnicalLeadPass": true
+  },
+  "sourceReview": {
+    "authorPinsMatch": true,
+    "rootPinsMatch": true,
+    "independentReviewerPinsMatch": true,
+    "completeInverseRestoresR31": true,
+    "all56StatementLinesIdentical": true,
+    "all29DeclarationAttributePairsIdentical": true,
+    "verdict": "SOURCE_ONLY_ACCEPTABLE_FOR_BOUNDED_PUBLICATION",
+    "runtimeExecuted": false,
+    "technicalLeadPass": false
+  },
+  "primarySources": [
+    {
+      "repository": "postgres/postgres",
+      "commit": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "path": "src/pl/plpgsql/src/pl_comp.c",
+      "blob": "a341cde2c142052fbbae9bf2db48ddbc899a75c0",
+      "purpose": "input/default collation propagation"
+    },
+    {
+      "repository": "postgres/postgres",
+      "commit": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "path": "src/pl/plpgsql/src/pl_exec.c",
+      "blob": "4b76f7699a609dbf071ca711891ebcb34761a4f4",
+      "purpose": "per-block ordered reinitialization and stable-expression snapshots"
+    },
+    {
+      "repository": "postgres/postgres",
+      "commit": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "path": "src/pl/plpgsql/src/pl_gram.y",
+      "blob": "6a09bfdd67508d237309c1e703c52c12e070a4b4",
+      "purpose": "nested pl_block statement, variable declaration and COLLATE grammar"
+    },
+    {
+      "repository": "postgres/postgres",
+      "commit": "c372fbbd8e911f2412b80a8c39d7079366565d67",
+      "path": "src/pl/plpgsql/src/pl_unreserved_kwlist.h",
+      "blob": "3e258a6bb95fa2b0f2f3ee914909563151e8fac6",
+      "purpose": "commit is an allowed unreserved declaration identifier"
+    }
+  ],
+  "coverage": {
+    "nativeChanged": false,
+    "all31ExistingGroupsRequired": true,
+    "bothKindsAndMixedHistoryExisting": true,
+    "standaloneNegativeOraclesExisting": true,
+    "dedicatedNewMalformedPersistedEnvelopeNegativeOracle": false,
+    "limitation": "The copied-path malformed persisted-envelope negative is supported by exact56-line identity rather than a new dedicated runtime corruption oracle.",
+    "fixtureTamperProposalWithdrawn": true,
+    "replicationRoleOrTriggerBypassAuthorized": false
+  },
+  "m04SourcePins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
+      "bytes": 27466,
+      "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c",
+      "blob": "2909b02861c4fef06edf8d1c4adf7109df0db97b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "bytes": 22124,
+      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34",
+      "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
+      "bytes": 13319,
+      "sha256": "2c9ccbdb30eb00e8b56b1ab0a56dac578facfdcf8a7c39bcfd40f10d68daa895",
+      "blob": "01db56a4f260ad698a0dcb60d7f208407c51b37a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "bytes": 27249,
+      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d",
+      "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/native.test.ts",
+      "bytes": 150,
+      "sha256": "c8513b83b691584948583621552b222a325b9abf3858eba5c836b9423f7638c9",
+      "blob": "4bbfa957f78dabc539be864671ce775eff57455b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.test.ts",
+      "bytes": 4330,
+      "sha256": "fdd75e573e53263f5dce9e9571b0331ea63d8315682a5ca55befea9a49554326",
+      "blob": "39693def8fe2c9b6fa3f873752dc58dc6d9b9f75"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "bytes": 8816,
+      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e",
+      "blob": "c80c48cca369cc8ea0c30bc5f620cada639a1e05"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
+      "bytes": 5985,
+      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183",
+      "blob": "e2caa902072b421f8b5ed00bbad72eadf995cdce"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "bytes": 12578,
+      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8",
+      "blob": "3c519e73fc440146bafe168983ae96d765b4a66f"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "bytes": 16656,
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
+      "bytes": 37608,
+      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+      "blob": "4986199904f8e2b0fb8ab83b04f7f585e651f364"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
+      "bytes": 6321,
+      "sha256": "68312bc9424dc71066b6717135f4d13bf350968618dadda143b9b7e16f0bd927",
+      "blob": "5280246b707f506c5d9d83929562965faea9279c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors.ts",
+      "bytes": 6324,
+      "sha256": "aae453a17142947ab83de25fca7160c316277574f3d0941e5318f6ed6e0957e7",
+      "blob": "b3c25d9276e5d36e6ed7083da53de87fc8642056"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
+      "bytes": 6175,
+      "sha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+      "blob": "bb371a26f018107439d0031f5f72c23675aaf97c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
+      "bytes": 146813,
+      "sha256": "b4774a30188443162caec517543b7a6c8d6c90009882e5180c54b8c06384326a",
+      "blob": "9dea993d3a84611869a6553eff209813b6dd2506"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native-adapter.ts",
+      "bytes": 13389,
+      "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57",
+      "blob": "66e7dd443c51b7db8d90d99c8b6422d1226ff237"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
+      "bytes": 191098,
+      "sha256": "f5d849c643ff22d264bc9adc1a7cd65f12caaac80a804647604851f22effbde0",
+      "blob": "0b3f7d9906687ec42171de5af60fed009d07b39f"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-durable-jobs-1/process-worker.ts",
+      "bytes": 8128,
+      "sha256": "f37008c8a9164059d6b169997b07b9f5223297dd6187a316711c4226fda5e033",
+      "blob": "f3bd0bb399d5b5f7c0578d67c61adbce2adf5329"
+    }
+  ],
+  "m04SourceAggregateSha256": "afc52b76596a7f5d6416a5412a5706deec3208ba32a69bf9ac0cd5ad02408507",
+  "m04SourceDigestFormat": "UTF8 concatenation: SHA256 SPACE decimalBytes SPACE repositoryPath LF, sorted by repositoryPath",
+  "historicalEvidence": {
+    "prior20FailuresAndGenuineR21R29": {
+      "immutableV21Evidence": {
+        "path": "docs/official-truth-product-v3/M04_RECOVERY_R30_EVIDENCE_V21.json",
+        "bytes": 83770,
+        "sha256": "c2a90faecf28c386c6b78657c58d29865bcab0ed4ca06998d0f352ae0e7b3e71",
+        "blob": "4aa23e7fefc7d72d3ea43987edffd47346d5dea8"
+      },
+      "priorEvidencePins": [
+        {
+          "path": "docs/official-truth-product-v3/M04_RECOVERY_R29_EVIDENCE_V20.json",
+          "bytes": 41579,
+          "sha256": "8da5f628f64898274621f4b9961c0337a66b4dba303478b0c9d2aeef92061ca7",
+          "blob": "4b03e824cca52b38e32e3e3aeef74313b0800645",
+          "blobVerified": true
+        },
+        {
+          "path": "docs/official-truth-product-v3/M04_RECOVERY_R28_EVIDENCE_V19.json",
+          "bytes": 67179,
+          "sha256": "cefb772ea972eabe4c54a23e8bcf6b448762de51095d041043d62fb06da57e8d",
+          "blob": "1400069277d47c2884f18eb719cc89fcfa15ccff",
+          "blobVerified": true
+        }
+      ],
+      "changed": false,
+      "reference": "https://github.com/Jetnity/jetnity/blob/dfd0fcf0ca70a955ae568e19f0d4b633cb0d7066/docs/official-truth-product-v3/M04_RECOVERY_R30_EVIDENCE_V21.json"
+    },
+    "additionalFailure21": {
+      "runId": 42879088258,
+      "attempt": 1,
+      "head": "e7aae86c18238033c2186722e24c84dc7a5f69b9",
+      "event": "push",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T19:07:34Z",
+      "rootReceipt": "https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6776723484",
+      "jobs": [
+        {
+          "id": 130050220206,
+          "name": "Repository verification",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 130050220621,
+          "name": "Accepted store trip integration — native (store)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130050220698,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 130050220769,
+          "name": "Official truth V3 — isolated UI",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130050220775,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130050220862,
+          "name": "Atomic version refresh — native",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130050220872,
+          "name": "Persisted canonical read — native",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130060723464,
+          "name": "Typecheck, Lint & Build",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "nativeReceipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240270,
+        "cleanupMilliseconds": 19,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 26667,
+          "settled": 26667,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 66
+          },
+          {
+            "id": "N02",
+            "milliseconds": 2119
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2531
+          },
+          {
+            "id": "N07",
+            "milliseconds": 10971
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 1017
+          },
+          {
+            "id": "N08",
+            "milliseconds": 11923
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3602
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 1468
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2890
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2825
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 3066
+          },
+          {
+            "id": "N09",
+            "milliseconds": 20449
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 7464
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2244
+          },
+          {
+            "id": "N11",
+            "milliseconds": 163
+          },
+          {
+            "id": "N12",
+            "milliseconds": 163
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 5211
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 14918
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 577
+          },
+          {
+            "id": "N11",
+            "milliseconds": 3120
+          },
+          {
+            "id": "N11",
+            "milliseconds": 344
+          },
+          {
+            "id": "N11",
+            "milliseconds": 322
+          },
+          {
+            "id": "N13",
+            "milliseconds": 3201
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25374",
+              "birth": "2026-11-10 19:01:28.087658+00"
+            },
+            "control": {
+              "pid": "25370",
+              "birth": "2026-11-10 19:01:28.081889+00"
+            },
+            "holder": {
+              "pid": "25060",
+              "birth": "2026-11-10 19:01:23.891772+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26154",
+              "birth": "2026-11-10 19:01:38.110965+00"
+            },
+            "control": {
+              "pid": "26153",
+              "birth": "2026-11-10 19:01:38.105657+00"
+            },
+            "holder": {
+              "pid": "25790",
+              "birth": "2026-11-10 19:01:33.201374+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05/A03",
+          "boundary": "ledger_fill",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 252,
+            "commandRequestsStarted": 254,
+            "commandRequestsCompleted": 254,
+            "commandRequestMilliseconds": 515,
+            "fixedCallsStarted": 255,
+            "fixedCallsCompleted": 254,
+            "fixedCallMilliseconds": 138240,
+            "commandCallsStarted": 254,
+            "commandCallsCompleted": 253,
+            "commandCommits": 253,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          },
+          "cycles": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 3,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_24:N05/A03",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptPin": {
+        "bytes": 3769,
+        "sha256": "c03a461e58e4840cf7c6a115946c6ffb1d3a3d696862097a27982bcfcfcd73ba"
+      },
+      "repositoryLogPin": {
+        "bytes": 4257178,
+        "sha256": "2682aff8b0593181fd81d913e9843d27d799b4c430b093ff86e4af4f4e173ab6"
+      },
+      "lifecycleLogPin": {
+        "jobId": 130050220698,
+        "bytes": 161524,
+        "sha256": "b054c48129003cb7b9182d8cb26c67c0b2cb0c1828dc58c042b51354c82150c5",
+        "terminalObservedBeforeLog": true,
+        "rootObservedAt": "2026-11-10 18:59:20 UTC"
+      },
+      "lifecycle": {
+        "pass": 3,
+        "fail": 1,
+        "actualMountedReceipt": false,
+        "error": "spawnSync /usr/bin/google-chrome ETIMEDOUT",
+        "phase": "browser version discovery",
+        "durationMilliseconds": 5011.011834
+      },
+      "core": {
+        "tests": 8696,
+        "pass": 8692,
+        "fail": 2,
+        "skipped": 2,
+        "cancelled": 0,
+        "suites": 971,
+        "durationMilliseconds": 827539.016692
+      },
+      "unacknowledgedOutcome": "UNKNOWN",
+      "hygieneAndBuild": "skipped"
+    },
+    "r30Failure22": {
+      "runId": 42881395864,
+      "runNumber": 4091,
+      "attempt": 1,
+      "event": "pull_request",
+      "head": "dfd0fcf0ca70a955ae568e19f0d4b633cb0d7066",
+      "syntheticCheckout": "d4b1b892eb09f0eff15e693d708ac59d2e9b80dd",
+      "checkedTree": "0f02592c5e91111a7ba61b06d047defbcf1cf9c7",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T19:21:53Z",
+      "rootRepositoryTerminalObservedAt": "2026-11-10 19:19:28 UTC",
+      "rootAllTerminalObservedAt": "2026-11-10 19:24:08 UTC",
+      "independentAllTerminalObservedAt": "2026-11-10 19:23:25 UTC",
+      "jobs": [
+        {
+          "id": 130058297396,
+          "name": "Official truth V3 — isolated UI",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Bind synthetic evidence to this run and checkout",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Visitor, polling and isolated CI contract tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Isolated harness typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Synthetic HTTP composition",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Local process benchmark",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Actual isolated browser audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Preserve actual synthetic evidence, including failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27
+            }
+          ]
+        },
+        {
+          "id": 130058297664,
+          "name": "Atomic version refresh — native",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Atomic refresh native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130058297722,
+          "name": "Accepted store trip integration — native (store)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130058297759,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130058297771,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Zugang vorhanden?",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Abgleich",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 130058297808,
+          "name": "Repository verification",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Tests",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 9
+            },
+            {
+              "name": "Schutz der Admin-API",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10
+            },
+            {
+              "name": "Bezug auf das Schema",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11
+            },
+            {
+              "name": "Unerreichbarer Code",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 12
+            },
+            {
+              "name": "Exporte ohne Aufrufer",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 13
+            },
+            {
+              "name": "Ungenutzte Pakete",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 14
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            }
+          ]
+        },
+        {
+          "id": 130058297849,
+          "name": "Persisted canonical read — native",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Persisted native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130069109927,
+          "name": "Typecheck, Lint & Build",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 42881395864,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Require all five verification job families to succeed",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 2
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            }
+          ]
+        }
+      ],
+      "core": {
+        "tests": 8672,
+        "suites": 971,
+        "pass": 8669,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 2,
+        "durationMilliseconds": 769439.193071,
+        "typecheck": "success",
+        "lint": "success",
+        "hygiene": "skipped",
+        "productionBuild": "skipped"
+      },
+      "nativeReceipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "a61011a2bfd0d11c451302e8e434c25fec37f47415f34f3f25da785d1aea7174",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 1106,
+        "cleanupMilliseconds": 180,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 22,
+          "settled": 22,
+          "pending": 0,
+          "connections": 2,
+          "closed": 2,
+          "stoppedClusters": 1
+        },
+        "groups": [],
+        "nestedRaceWitnesses": [],
+        "quotaProgress": {
+          "currentGroup": "none",
+          "boundary": "not_started",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          },
+          "cycles": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 0,
+          "maximumIntake": 0,
+          "maximumMethod": 0,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 0,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "jobs_candidate",
+          "error": {
+            "kind": "postgres",
+            "code": "42601"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptPin": {
+        "bytes": 1762,
+        "sha256": "cb42e09d76812dc6457c5710409945335c0719aae1ad3cc214ec283fc2f55fd4"
+      },
+      "logPins": {
+        "r30repo": {
+          "bytes": 4244931,
+          "sha256": "3844d5cdfff6fbb90b12fc8e6e8300d61214f9700eb22a09108f4146438ac7af"
+        },
+        "r30ui": {
+          "bytes": 141602,
+          "sha256": "e65bf22545737ca489782de1f827426f92f6eba717b3d2771957586d9af9d7eb"
+        },
+        "r30atomic": {
+          "bytes": 184434,
+          "sha256": "b9947a5f5bb127adb9c48ef3019af4bbb751428deb3bf83a906333f3cefda264"
+        },
+        "r30store": {
+          "bytes": 136211,
+          "sha256": "7d05adbd582180d8a5a1f7a26fd87e50445dc6b233e551121aa33f4035ca7402"
+        },
+        "r30lifecycle": {
+          "bytes": 177494,
+          "sha256": "fb95e4ef24d22fead7dec64e2d934a8c05c6fe92682059ce98b0da569a5050a0"
+        },
+        "r30persisted": {
+          "bytes": 156945,
+          "sha256": "3826570ca55d2c2d53896aa544c4afcc0955f01a53f491c08638c82f236be6f1"
+        }
+      },
+      "auth": "METADATA_ONLY_NO_LOG_READ",
+      "ui": {
+        "tests": 50,
+        "pass": 50,
+        "layouts": 12,
+        "interactions": 11,
+        "screenshots": 10,
+        "artifactId": 13793897861,
+        "sourceHead": "dfd0fcf0ca70a955ae568e19f0d4b633cb0d7066",
+        "checkout": "d4b1b892eb09f0eff15e693d708ac59d2e9b80dd"
+      },
+      "lifecycle": {
+        "tests": 4,
+        "pass": 4,
+        "actualMounted": {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-10T19:06:07.554Z",
+          "readAt": "2026-11-10T19:08:49.368Z",
+          "expiresAt": "2026-11-10T19:09:04.368Z",
+          "deadlineFromRequestStartMs": 18047,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        },
+        "completedSuites": [
+          {
+            "proof": "native-suite-complete",
+            "suite": "boundaries",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 2,
+            "elapsedMs": 83717,
+            "journalOperations": 0,
+            "immutableVersions": 0,
+            "sourceFetches": 2,
+            "rpcCommits": 10,
+            "rpcRefusals": 0,
+            "witnessAdvances": 0,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 581,
+            "ownedSettled": 581,
+            "ownedPending": 0,
+            "ownedConnections": 90,
+            "ownedClosed": 90,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          {
+            "proof": "native-suite-complete",
+            "suite": "wait-lifecycle",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 136761,
+            "journalOperations": 4,
+            "immutableVersions": 2,
+            "sourceFetches": 3,
+            "rpcCommits": 99,
+            "rpcRefusals": 7,
+            "witnessAdvances": 4,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 5711,
+            "ownedSettled": 5711,
+            "ownedPending": 0,
+            "ownedConnections": 476,
+            "ownedClosed": 476,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          }
+        ]
+      },
+      "store": {
+        "tests": 4,
+        "pass": 4,
+        "completedSuites": [
+          {
+            "proof": "native-suite-complete",
+            "suite": "integrity-rls",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 120762,
+            "journalOperations": 2,
+            "immutableVersions": 2,
+            "sourceFetches": 2,
+            "rpcCommits": 86,
+            "rpcRefusals": 6,
+            "witnessAdvances": 2,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 2266,
+            "ownedSettled": 2266,
+            "ownedPending": 0,
+            "ownedConnections": 444,
+            "ownedClosed": 444,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          {
+            "proof": "native-suite-complete",
+            "suite": "native-publication",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 7,
+            "elapsedMs": 83204,
+            "journalOperations": 2,
+            "immutableVersions": 2,
+            "sourceFetches": 6,
+            "rpcCommits": 69,
+            "rpcRefusals": 5,
+            "witnessAdvances": 2,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 1574,
+            "ownedSettled": 1574,
+            "ownedPending": 0,
+            "ownedConnections": 296,
+            "ownedClosed": 296,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          }
+        ]
+      },
+      "persisted": {
+        "tests": 1,
+        "pass": 1,
+        "records": 95,
+        "readerResults": 45,
+        "completePhase": {
+          "schema": "official-truth-persisted-canonical-read-1",
+          "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+          "elapsedMs": 237550
+        }
+      },
+      "atomic": {
+        "tests": 1,
+        "pass": 1,
+        "completePhase": {
+          "schema": "official-truth-atomic-version-refresh-1",
+          "phase": "complete native refresh acceptance matrix finished",
+          "elapsedMs": 1025721,
+          "parentReserveMs": 174279
+        }
+      },
+      "newN02AndAllNativeGroupsExecuted": false,
+      "setupFailureDurationIsNotPerformanceEvidence": true
+    },
+    "externalE7Attempt2Failure23": {
+      "runId": 42879088258,
+      "attempt": 2,
+      "event": "push",
+      "head": "e7aae86c18238033c2186722e24c84dc7a5f69b9",
+      "startedAt": "2026-11-10T19:08:31Z",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T19:22:17Z",
+      "actor": "Jetnity",
+      "triggeringActor": "Jetnity",
+      "triggeredByRootOrAuditingAgent": false,
+      "jobs": [
+        {
+          "id": 130061355940,
+          "name": "Repository verification",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-10T19:08:36Z",
+          "completedAt": "2026-11-10T19:22:11Z",
+          "evidenceOrigin": "executed_attempt2"
+        },
+        {
+          "id": 130061356063,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T19:08:36Z",
+          "completedAt": "2026-11-10T19:20:16Z",
+          "evidenceOrigin": "executed_attempt2"
+        },
+        {
+          "id": 130061359092,
+          "name": "Official truth V3 — isolated UI",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T18:49:35Z",
+          "completedAt": "2026-11-10T18:51:11Z",
+          "evidenceOrigin": "carried_forward_attempt1"
+        },
+        {
+          "id": 130061413056,
+          "name": "Accepted store trip integration — native (store)",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T18:49:35Z",
+          "completedAt": "2026-11-10T18:57:14Z",
+          "evidenceOrigin": "carried_forward_attempt1"
+        },
+        {
+          "id": 130061417045,
+          "name": "Persisted canonical read — native",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T18:49:35Z",
+          "completedAt": "2026-11-10T18:54:32Z",
+          "evidenceOrigin": "carried_forward_attempt1"
+        },
+        {
+          "id": 130061441922,
+          "name": "Atomic version refresh — native",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T18:49:35Z",
+          "completedAt": "2026-11-10T19:07:29Z",
+          "evidenceOrigin": "carried_forward_attempt1"
+        },
+        {
+          "id": 130061451389,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-10T18:49:35Z",
+          "completedAt": "2026-11-10T18:50:39Z",
+          "evidenceOrigin": "carried_forward_attempt1"
+        },
+        {
+          "id": 130069359261,
+          "name": "Typecheck, Lint & Build",
+          "attempt": 2,
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-10T19:22:14Z",
+          "completedAt": "2026-11-10T19:22:17Z",
+          "evidenceOrigin": "executed_attempt2"
+        }
+      ],
+      "onlyRepositoryLifecycleAggregateNewlyExecuted": true,
+      "otherFiveSuccessStatusesCarriedForward": true,
+      "nativeReceipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "25edf46e7ab52d316fa1c30ea7dde33f43b439df115ff19f84099b8b6d7330ce",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240441,
+        "cleanupMilliseconds": 36,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 26999,
+          "settled": 26999,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 23
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1503
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2166
+          },
+          {
+            "id": "N07",
+            "milliseconds": 10443
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 913
+          },
+          {
+            "id": "N08",
+            "milliseconds": 11694
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3157
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 1149
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2633
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 2609
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2561
+          },
+          {
+            "id": "N09",
+            "milliseconds": 18436
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 6868
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2749
+          },
+          {
+            "id": "N11",
+            "milliseconds": 147
+          },
+          {
+            "id": "N12",
+            "milliseconds": 166
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 5933
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 12656
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 556
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2681
+          },
+          {
+            "id": "N11",
+            "milliseconds": 186
+          },
+          {
+            "id": "N11",
+            "milliseconds": 357
+          },
+          {
+            "id": "N13",
+            "milliseconds": 2928
+          },
+          {
+            "id": "N05/A03",
+            "milliseconds": 92308
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25865",
+              "birth": "2026-11-10 19:18:14.031008+00"
+            },
+            "control": {
+              "pid": "25864",
+              "birth": "2026-11-10 19:18:14.026909+00"
+            },
+            "holder": {
+              "pid": "25427",
+              "birth": "2026-11-10 19:18:10.854098+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26561",
+              "birth": "2026-11-10 19:18:22.764944+00"
+            },
+            "control": {
+              "pid": "26560",
+              "birth": "2026-11-10 19:18:22.755203+00"
+            },
+            "holder": {
+              "pid": "26214",
+              "birth": "2026-11-10 19:18:19.121036+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05",
+          "boundary": "cycle_start",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 253,
+            "lastCompletedIndex": 253,
+            "commandRequestsStarted": 258,
+            "commandRequestsCompleted": 258,
+            "commandRequestMilliseconds": 453,
+            "fixedCallsStarted": 260,
+            "fixedCallsCompleted": 260,
+            "fixedCallMilliseconds": 92031,
+            "commandCallsStarted": 258,
+            "commandCallsCompleted": 258,
+            "commandCommits": 256,
+            "startCallsStarted": 1,
+            "startCallsCompleted": 1,
+            "startReservations": 1
+          },
+          "cycles": {
+            "lastStartedIndex": 44,
+            "lastCompletedIndex": 43,
+            "commandRequestsStarted": 134,
+            "commandRequestsCompleted": 134,
+            "commandRequestMilliseconds": 232,
+            "fixedCallsStarted": 180,
+            "fixedCallsCompleted": 179,
+            "fixedCallMilliseconds": 54531,
+            "commandCallsStarted": 134,
+            "commandCallsCompleted": 134,
+            "commandCommits": 134,
+            "startCallsStarted": 45,
+            "startCallsCompleted": 44,
+            "startReservations": 44
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_25:N05",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptPin": {
+        "bytes": 3816,
+        "sha256": "a8f80732fad0aa7bd70918f6c01e06ce24c943eabcd4e60e5202d60831b3a82a"
+      },
+      "repositoryLogPin": {
+        "bytes": 4256938,
+        "sha256": "02f459ee40ff28c6f976f5e76b8cb0307a610bca94efa0f07fbb4693f3585b8d"
+      },
+      "lifecycleLogPin": {
+        "bytes": 176533,
+        "sha256": "4c929b93d9d6046363cc217700dc1e543ce38e7ae00c16a8ce451e4187141bb9"
+      },
+      "core": {
+        "tests": 8697,
+        "pass": 8693,
+        "fail": 2,
+        "skipped": 2,
+        "cancelled": 0,
+        "suites": 971,
+        "durationMilliseconds": 663843.522918
+      },
+      "lifecycle": {
+        "tests": 4,
+        "pass": 4,
+        "actualMounted": {
+          "proof": "actual-native-mounted-workspace",
+          "node": "22.23.4",
+          "react": "19.2.8",
+          "playwright": "1.55.0",
+          "browser": "156.0.8078.79",
+          "binaryVersion": "Google Chrome 156.0.8078.79",
+          "actualModules": [
+            "components/trips/useAcceptedStoreTrip.ts",
+            "components/trips/useOfficialTruthPilot.ts",
+            "components/trips/Reisevorbereitung.tsx"
+          ],
+          "bundleSha256": "76f5a82c5beb4f8b607c9ff1b074b830f1b4fc188a389d2922cc33fbb6b33cb9",
+          "bundleModules": 113,
+          "repoModules": 85,
+          "documentCharset": "UTF-8",
+          "proofs": [
+            "closed initial mount",
+            "actual native result in unchanged preparation renderer",
+            "real traveller buttons synchronously invalidate without persistence",
+            "retained unsaved draft blocks newer confirmed Trip and genuine fresh native result",
+            "actual reload editing save and matching native re-read recover",
+            "actual document and citizenship add remove preserve save recovery",
+            "local edit and confirmed fresh read independent of pilot invalid latch",
+            "loss of availability and context cannot revive old positive",
+            "out-of-order native reply after edit and newer confirmed read",
+            "irreversible wall-clock expiry and regression in current and pending attempts",
+            "pending hidden/pagehide resume suppresses late native reply and never auto-retries",
+            "latest lane owns pending results and failure without positive fallback",
+            "original monotonic deadline survives rerenders and expires"
+          ],
+          "storeRequests": 23,
+          "pilotRequests": 3,
+          "travellerWrites": 4,
+          "observerOwnership": {
+            "started": 61,
+            "settled": 61,
+            "pending": 0,
+            "retainedBytes": 0,
+            "observerErrors": 0
+          },
+          "nativeCurrentResults": 22,
+          "sourceFetchesDuringReads": 0,
+          "sourceCheckedAt": "2026-11-10T19:11:27.709Z",
+          "readAt": "2026-11-10T19:14:09.108Z",
+          "expiresAt": "2026-11-10T19:14:24.108Z",
+          "deadlineFromRequestStartMs": 18362,
+          "boundary": "Closed native DB + actual hook/lane/presentation mount. Existing pilot is negative transport only; no full hosted Next/managed Auth/origin claim."
+        }
+      },
+      "outstandingStartOutcome": "UNKNOWN",
+      "hygieneAndBuild": "skipped"
+    },
+    "countingNote": "All24 failed execution observations remain; this is not24 distinct run IDs. e7-main attempt1 and external attempt2 share one run ID, with five carried-forward companion statuses on attempt2. Genuine R21/R29 PR successes remain successes.",
+    "immutableV22Evidence": {
+      "path": "docs/official-truth-product-v3/M04_RECOVERY_R31_EVIDENCE_V22.json",
+      "bytes": 71561,
+      "sha256": "aa9630bce0ca658e95ba10c96aa00f0e64819a32012c76b3dfbff415f809268c",
+      "blob": "a38e44012bb985103560c3e0cc79bdab23cf35af",
+      "reference": "https://github.com/Jetnity/jetnity/blob/46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8/docs/official-truth-product-v3/M04_RECOVERY_R31_EVIDENCE_V22.json",
+      "changed": false
+    },
+    "r31Failure24": {
+      "runId": 42885977970,
+      "runNumber": 4092,
+      "attempt": 1,
+      "event": "pull_request",
+      "head": "46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8",
+      "syntheticCheckout": "54bc7b149797a099f60be5b1934185f7a133d26f",
+      "checkedTree": "d1be88248356f66d28242a2a51cf061733c11a23",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-10T19:47:17Z",
+      "rootTerminalMetadataReread": "2026-11-10 20:23:55 UTC",
+      "rootReceipt": "https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778458903",
+      "jobs": [
+        {
+          "id": 130074290296,
+          "name": "Auth-Konfiguration gegen config.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Zugang vorhanden?",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Abgleich",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 130074290719,
+          "name": "Official truth V3 — isolated UI",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Bind synthetic evidence to this run and checkout",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Visitor, polling and isolated CI contract tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Isolated harness typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Synthetic HTTP composition",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Local process benchmark",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Actual isolated browser audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Preserve actual synthetic evidence, including failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27
+            }
+          ]
+        },
+        {
+          "id": 130074290834,
+          "name": "Accepted store trip integration — native (store)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130074290863,
+          "name": "Repository verification",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Tests",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 9
+            },
+            {
+              "name": "Schutz der Admin-API",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10
+            },
+            {
+              "name": "Bezug auf das Schema",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11
+            },
+            {
+              "name": "Unerreichbarer Code",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 12
+            },
+            {
+              "name": "Exporte ohne Aufrufer",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 13
+            },
+            {
+              "name": "Ungenutzte Pakete",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 14
+            },
+            {
+              "name": "Production build",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 29
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            }
+          ]
+        },
+        {
+          "id": 130074290994,
+          "name": "Persisted canonical read — native",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Persisted native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130074291123,
+          "name": "Accepted store trip integration — native (lifecycle)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Accepted store native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130074291358,
+          "name": "Atomic version refresh — native",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Setup check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Operating mode",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Atomic refresh native proof",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 130083867087,
+          "name": "Typecheck, Lint & Build",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 42885977970,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Require all five verification job families to succeed",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 2
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            }
+          ]
+        }
+      ],
+      "nativeReceipt": {
+        "schema": "jetnity.m04.native.v1",
+        "candidateSha256": "fa111694fb535b867bbb16e3d7b334d48d4e4092bf1f312dd2838a7eed2c37aa",
+        "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+        "executed": true,
+        "effectAndCleanupMilliseconds": 240280,
+        "cleanupMilliseconds": 21,
+        "clusters": 1,
+        "childProcesses": 0,
+        "lifetime": {
+          "started": 26794,
+          "settled": 26794,
+          "pending": 0,
+          "connections": 4242,
+          "closed": 4242,
+          "stoppedClusters": 1
+        },
+        "groups": [
+          {
+            "id": "N01",
+            "milliseconds": 33
+          },
+          {
+            "id": "N02",
+            "milliseconds": 1859
+          },
+          {
+            "id": "N03",
+            "milliseconds": 2217
+          },
+          {
+            "id": "N07",
+            "milliseconds": 11369
+          },
+          {
+            "id": "N07/R4",
+            "milliseconds": 1015
+          },
+          {
+            "id": "N08",
+            "milliseconds": 13444
+          },
+          {
+            "id": "N08/U04",
+            "milliseconds": 3877
+          },
+          {
+            "id": "N02/U04",
+            "milliseconds": 1452
+          },
+          {
+            "id": "N04/N06",
+            "milliseconds": 2869
+          },
+          {
+            "id": "N04/N06/N10",
+            "milliseconds": 3077
+          },
+          {
+            "id": "N05/N09",
+            "milliseconds": 2867
+          },
+          {
+            "id": "N09",
+            "milliseconds": 20162
+          },
+          {
+            "id": "N10/U06",
+            "milliseconds": 7622
+          },
+          {
+            "id": "N11",
+            "milliseconds": 2219
+          },
+          {
+            "id": "N11",
+            "milliseconds": 204
+          },
+          {
+            "id": "N12",
+            "milliseconds": 167
+          },
+          {
+            "id": "N04/N10/N12",
+            "milliseconds": 5478
+          },
+          {
+            "id": "N12/U06/R9",
+            "milliseconds": 14404
+          },
+          {
+            "id": "N12/R7-03",
+            "milliseconds": 541
+          },
+          {
+            "id": "N11",
+            "milliseconds": 3016
+          },
+          {
+            "id": "N11",
+            "milliseconds": 389
+          },
+          {
+            "id": "N11",
+            "milliseconds": 393
+          },
+          {
+            "id": "N13",
+            "milliseconds": 3645
+          }
+        ],
+        "nestedRaceWitnesses": [
+          {
+            "boundary": "i1_timeout",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "25769",
+              "birth": "2026-11-10 19:42:29.818116+00"
+            },
+            "control": {
+              "pid": "25768",
+              "birth": "2026-11-10 19:42:29.811129+00"
+            },
+            "holder": {
+              "pid": "25254",
+              "birth": "2026-11-10 19:42:25.669554+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": true,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "worker_only",
+            "nativeAdmissionsAfterDrain": 45
+          },
+          {
+            "boundary": "worker_caller_abort",
+            "operation": "reserve_v1",
+            "target": {
+              "pid": "26392",
+              "birth": "2026-11-10 19:42:39.385111+00"
+            },
+            "control": {
+              "pid": "26391",
+              "birth": "2026-11-10 19:42:39.379687+00"
+            },
+            "holder": {
+              "pid": "26038",
+              "birth": "2026-11-10 19:42:34.892111+00"
+            },
+            "realSqlWaitObserved": true,
+            "abortDelivered": true,
+            "retainedExecutorDrained": true,
+            "backendAbsentWhileExecutorHeld": true,
+            "failConfirmObserved": false,
+            "terminalEffects": 0,
+            "beforeDrainSlot": "unavailable",
+            "afterDrainSlot": "invalid",
+            "heldMethods": 3,
+            "completedMethods": 0,
+            "outwardStatus": "unconfirmed",
+            "nativeAdmissionsAfterDrain": 44
+          }
+        ],
+        "quotaProgress": {
+          "currentGroup": "N05/A03",
+          "boundary": "ledger_fill",
+          "indexBase": 0,
+          "millisecondsCap": 300000,
+          "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+          "ledger": {
+            "lastStartedIndex": 243,
+            "lastCompletedIndex": 242,
+            "commandRequestsStarted": 244,
+            "commandRequestsCompleted": 244,
+            "commandRequestMilliseconds": 524,
+            "fixedCallsStarted": 245,
+            "fixedCallsCompleted": 244,
+            "fixedCallMilliseconds": 136719,
+            "commandCallsStarted": 244,
+            "commandCallsCompleted": 243,
+            "commandCommits": 243,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          },
+          "cycles": {
+            "lastStartedIndex": null,
+            "lastCompletedIndex": null,
+            "commandRequestsStarted": 0,
+            "commandRequestsCompleted": 0,
+            "commandRequestMilliseconds": 0,
+            "fixedCallsStarted": 0,
+            "fixedCallsCompleted": 0,
+            "fixedCallMilliseconds": 0,
+            "commandCallsStarted": 0,
+            "commandCallsCompleted": 0,
+            "commandCommits": 0,
+            "startCallsStarted": 0,
+            "startCallsCompleted": 0,
+            "startReservations": 0
+          }
+        },
+        "connections": {
+          "aggregateWorkConnectionBound": 40,
+          "maximumJobs": 4,
+          "maximumIntake": 1,
+          "maximumMethod": 2,
+          "m04ObserverLimit": 2,
+          "maximumM04Observers": 2,
+          "methodObserverLimit": 1,
+          "fixturePerClusterLimit": 16,
+          "inheritedCommitGuardPairs": 0,
+          "minimumOwned": 0
+        },
+        "failure": {
+          "phase": "proof_24:N05/A03",
+          "error": {
+            "kind": "fixture",
+            "code": "unclassified_failure"
+          }
+        },
+        "cleanupFailures": [],
+        "cleanupFailureCount": 0,
+        "nativePass": false
+      },
+      "nativeReceiptPin": {
+        "bytes": 3769,
+        "sha256": "12403ad5ed2b62642995a72c8b19ff6e6dce7e3af2ddd5fc895331913eaa9bdd"
+      },
+      "logPins": {
+        "repository": {
+          "bytes": 4258140,
+          "sha256": "421016998720aa1acd83768d062d6f04b65bf2f07988d854c7bc95b980599d9e"
+        },
+        "ui": {
+          "bytes": 141933,
+          "sha256": "b6866578d1026269f8df2cfd1d359839ef0e9194c172777113cea5e551ef97db"
+        },
+        "store": {
+          "bytes": 136119,
+          "sha256": "a03d9faf3d80a00539925793718bd7c38edf5d072c47b4ca0ba79e3f307d57bf"
+        },
+        "persisted": {
+          "bytes": 157205,
+          "sha256": "ed9802b75b56b0dffc3753f470ab06bcbae6943ab1196344a99815c8157da4bf"
+        },
+        "lifecycle": {
+          "bytes": 176976,
+          "sha256": "795d88769d4614f592fd0045438cff85dc34a43ebca276c15a2f2126a94b77fd"
+        },
+        "atomic": {
+          "bytes": 184229,
+          "sha256": "b2ac1bf4336e5079b0366ab00884ffb61af1e3c00f9a5e4d61a5cdd1eb19861f"
+        }
+      },
+      "core": {
+        "tests": 8696,
+        "pass": 8692,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 2,
+        "suites": 971,
+        "durationMilliseconds": 825058.342427,
+        "typecheck": "success",
+        "lint": "success",
+        "fiveHygieneChecks": "skipped",
+        "productionBuild": "skipped",
+        "failures": [
+          "N05/A03 ledger effect budget exceeded",
+          "mandatory M04 native proof parent"
+        ],
+        "unchangedInheritedSkips": [
+          "T09 shared Guest/Account layout",
+          "optional SHARED_LAYOUT_AUDIT_BASE layout audit"
+        ]
+      },
+      "ui": {
+        "tests": 50,
+        "pass": 50,
+        "layouts": 12,
+        "interactions": 11,
+        "screenshots": 10,
+        "artifactId": 13795498920,
+        "artifactSha256": "c5a3ba59c62e52def8a5d39f9ce86b0574f14da11fa6e858a78a4c3a35c3e355",
+        "sourceHead": "46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8",
+        "checkoutHead": "54bc7b149797a099f60be5b1934185f7a133d26f",
+        "worktreeDirty": false
+      },
+      "store": {
+        "pass": 4,
+        "tests": 4,
+        "structuredRecords": 39,
+        "completeReceipts": [
+          {
+            "proof": "native-suite-complete",
+            "suite": "integrity-rls",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 96108,
+            "journalOperations": 2,
+            "immutableVersions": 2,
+            "sourceFetches": 2,
+            "rpcCommits": 86,
+            "rpcRefusals": 6,
+            "witnessAdvances": 2,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 2269,
+            "ownedSettled": 2269,
+            "ownedPending": 0,
+            "ownedConnections": 444,
+            "ownedClosed": 444,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          {
+            "proof": "native-suite-complete",
+            "suite": "native-publication",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 7,
+            "elapsedMs": 66817,
+            "journalOperations": 2,
+            "immutableVersions": 2,
+            "sourceFetches": 6,
+            "rpcCommits": 69,
+            "rpcRefusals": 5,
+            "witnessAdvances": 2,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 1574,
+            "ownedSettled": 1574,
+            "ownedPending": 0,
+            "ownedConnections": 296,
+            "ownedClosed": 296,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          }
+        ]
+      },
+      "persisted": {
+        "pass": 1,
+        "tests": 1,
+        "structuredRecords": 95,
+        "readerResults": 45,
+        "terminalReceipts": [
+          {
+            "schema": "official-truth-persisted-canonical-read-1",
+            "phase": "candidate rollback leaves old metadata readers intact and positive reader unavailable",
+            "elapsedMs": 321065
+          },
+          {
+            "schema": "official-truth-persisted-canonical-read-1",
+            "phase": "complete native shared suite; synthetic only, no hosted apply or production authority",
+            "elapsedMs": 321065
+          }
+        ]
+      },
+      "lifecycle": {
+        "pass": 4,
+        "tests": 4,
+        "structuredRecords": 29,
+        "actualMountedBrowser": true,
+        "mountedStations": 13,
+        "ownedStarted": 61,
+        "ownedSettled": 61,
+        "ownedPending": 0,
+        "nativeAdmissions": 22,
+        "sourceReadFetches": 0,
+        "browser": "Chrome/156.0.8078.79",
+        "completeReceipts": [
+          {
+            "proof": "native-suite-complete",
+            "suite": "boundaries",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 2,
+            "elapsedMs": 82023,
+            "journalOperations": 0,
+            "immutableVersions": 0,
+            "sourceFetches": 2,
+            "rpcCommits": 10,
+            "rpcRefusals": 0,
+            "witnessAdvances": 0,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 581,
+            "ownedSettled": 581,
+            "ownedPending": 0,
+            "ownedConnections": 90,
+            "ownedClosed": 90,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          },
+          {
+            "proof": "native-suite-complete",
+            "suite": "wait-lifecycle",
+            "phase": "healthy ACL / provisional rows / HTTP / backend / product-key closure",
+            "semanticStep": null,
+            "completedPhases": 4,
+            "elapsedMs": 79573,
+            "journalOperations": 4,
+            "immutableVersions": 2,
+            "sourceFetches": 3,
+            "rpcCommits": 99,
+            "rpcRefusals": 7,
+            "witnessAdvances": 4,
+            "activeSql": 0,
+            "ownedClientBackends": 0,
+            "provisionalReservations": 0,
+            "provisionalStages": 0,
+            "keyCopiesWipedBeforeWitnessClose": true,
+            "ownedStarted": 4308,
+            "ownedSettled": 4308,
+            "ownedPending": 0,
+            "ownedConnections": 476,
+            "ownedClosed": 476,
+            "stoppedClusters": 1,
+            "teardownComplete": true
+          }
+        ]
+      },
+      "atomic": {
+        "pass": 1,
+        "tests": 1,
+        "structuredRecords": 152,
+        "negativeCompleteRollbackCases": 30,
+        "terminalReceipts": [
+          {
+            "schema": "official-truth-atomic-version-refresh-1",
+            "phase": "parent lifetime disposed all owned resources and settled initiated operations",
+            "elapsedMs": 765507,
+            "cleanup": {
+              "started": 10004,
+              "settled": 10004,
+              "pending": 0,
+              "connections": 248,
+              "closed": 248,
+              "stoppedClusters": 11
+            },
+            "parentAborted": false
+          },
+          {
+            "schema": "official-truth-atomic-version-refresh-1",
+            "phase": "complete native refresh acceptance matrix finished",
+            "elapsedMs": 765507,
+            "parentReserveMs": 434493
+          }
+        ]
+      },
+      "auth": {
+        "metadataOnly": true,
+        "logsRead": false
+      },
+      "notExecuted": [
+        "full ledger 254/255/256 boundary",
+        "64/65 cycle boundary",
+        "inherited 761/minOwned4182",
+        "final rollback and late-writer groups"
+      ],
+      "unacknowledgedOutcome": "UNKNOWN",
+      "sourceProfileClaim": false,
+      "sqlApplied": false,
+      "newHeadRequired": true,
+      "completeTerminalReceipt": "https://github.com/Jetnity/jetnity/pull/1183#issuecomment-6778720831"
+    }
+  },
+  "limits": {
+    "effectMilliseconds": 240000,
+    "cleanupMilliseconds": 60000,
+    "totalMilliseconds": 300000,
+    "outerLanes": 4,
+    "nativePerFamily": 4,
+    "activeNative": 8,
+    "totalNative": 256,
+    "reservedTerminalNative": 16,
+    "activeCallbacks": 8,
+    "totalCallbacks": 128,
+    "outerMilliseconds": 30000,
+    "childMilliseconds": 5000,
+    "clusters": 3,
+    "children": 2,
+    "aggregateWorkConnections": 40,
+    "m04Observers": 2,
+    "methodObservers": 1,
+    "fixtureConnectionsPerCluster": 16
+  },
+  "requiredNativeGroups": [
+    {
+      "id": "N01",
+      "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only"
+    },
+    {
+      "id": "N02",
+      "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses"
+    },
+    {
+      "id": "N03",
+      "name": "actual durable command replay, independent subjects, cycle collisions and active dedup"
+    },
+    {
+      "id": "N07",
+      "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority"
+    },
+    {
+      "id": "N07/R4",
+      "name": "actual S1 archived history and linked method revision survive full native consumption"
+    },
+    {
+      "id": "N08",
+      "name": "sixteen actual persisted originals complete inside fixed call budgets"
+    },
+    {
+      "id": "N08/U04",
+      "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch"
+    },
+    {
+      "id": "N02/U04",
+      "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound"
+    },
+    {
+      "id": "N04/N06",
+      "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation"
+    },
+    {
+      "id": "N04/N06/N10",
+      "name": "older active start blocks a new claim while an independent subject progresses"
+    },
+    {
+      "id": "N05/N09",
+      "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch"
+    },
+    {
+      "id": "N09",
+      "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse"
+    },
+    {
+      "id": "N10/U06",
+      "name": "delivered producer does not terminate a pending I1 evidence callback"
+    },
+    {
+      "id": "N11",
+      "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits"
+    },
+    {
+      "id": "N11",
+      "name": "actual revoke held in a native transaction defeats staged queue writes after the wait"
+    },
+    {
+      "id": "N12",
+      "name": "acquisition, control failure and real drain never free a live native lane"
+    },
+    {
+      "id": "N04/N10/N12",
+      "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer"
+    },
+    {
+      "id": "N12/U06/R9",
+      "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races"
+    },
+    {
+      "id": "N12/R7-03",
+      "name": "intentional child crash retains a thrown actual native cancellation cleanup failure"
+    },
+    {
+      "id": "N11",
+      "name": "staged PREPARED waits on the actual S1 operation before final current MA1"
+    },
+    {
+      "id": "N11",
+      "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke"
+    },
+    {
+      "id": "N11",
+      "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority"
+    },
+    {
+      "id": "N13",
+      "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation"
+    },
+    {
+      "id": "N05/A03",
+      "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit"
+    },
+    {
+      "id": "N05",
+      "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim"
+    },
+    {
+      "id": "N15",
+      "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback"
+    },
+    {
+      "id": "N14",
+      "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation"
+    },
+    {
+      "id": "N01/N14/T02",
+      "name": "temporary catalog/type shadows do not influence the new install or runtime"
+    },
+    {
+      "id": "N14",
+      "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog"
+    },
+    {
+      "id": "N15/T02",
+      "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors"
+    },
+    {
+      "id": "N15",
+      "name": "rollback waits for actual late writer then rechecks nonempty history atomically"
+    }
+  ],
+  "executionBoundaries": {
+    "localProjectParserSqlNativeSocketBuildExecution": false,
+    "cloneOrReplacementEnvironment": false,
+    "installationOrBinaryDownload": false,
+    "gitFetchOrPush": false,
+    "authLogAccess": false,
+    "hostedDatabaseAuthRlsAclMigrationCredentials": false,
+    "sourceProviderResearchCalls": false,
+    "schedulerNotificationActivation": false,
+    "newRecurringCost": false
+  },
+  "documentationCompletion": {
+    "status": "HELD_UNTIL_GENUINE_CORRECTED_ACTUAL_MAIN_PASS",
+    "finitePaths": 8,
+    "newCompletionRecords": 2,
+    "currentEntryFiles": 6,
+    "separateDraftPRAndActualMainGatesRequired": true,
+    "finalReceiptsOnExistingPr751NoSelfAttestationLoop": true
+  },
+  "specialProductOwnerGates": {
+    "method": "NOT_APPROVED",
+    "devPackage1139": "NOT_RELEASE_READY",
+    "preOwnerGaps": [
+      "E01",
+      "E04",
+      "E06",
+      "E07",
+      "E09",
+      "E10",
+      "E11",
+      "E13",
+      "E15",
+      "E16",
+      "E17",
+      "E18",
+      "E21",
+      "E22",
+      "E24",
+      "E25",
+      "E28"
+    ],
+    "readback917": "UNKNOWN / Stage2 NOT_ATTEMPTED; no retry or substitute",
+    "ready1131": "STOP",
+    "holds1135": "Both preserved",
+    "isolation968": "Generic overlap removal recorded as done; target-specific client/SSR/Auth binding remains unproved",
+    "privacy911And913": "OPEN",
+    "sql": "UNAPPLIED",
+    "d1": "Separately unfinished #1169"
+  },
+  "acceptanceRequirements": {
+    "ciJobs": 8,
+    "nativeGroups": 31,
+    "newN02OraclesRequired": true,
+    "realNestedR9Witnesses": 2,
+    "ledgerBoundaries": [
+      254,
+      255,
+      256
+    ],
+    "cycleBoundaries": [
+      64,
+      65
+    ],
+    "inheritedCommitGuardPairs": 761,
+    "minimumOwned": 4182,
+    "completeCleanup": true,
+    "rollbackAndLateWriter": true,
+    "actualMountedLifecycle": true,
+    "core": true,
+    "fiveHygieneChecks": true,
+    "productionBuild": true,
+    "exactPreview": true,
+    "freshLiveReviewModeRulesOwnerGates": true,
+    "actualMergedMainFullCiAndProductionBothAliases": true
+  },
+  "liveEvidence": {
+    "independentObservedAt": "2026-11-10 20:45:01–20:45:14 UTC",
+    "operatingMode": "NORMAL",
+    "ruleset": 21875372,
+    "strict": true,
+    "bypass": "never",
+    "openPrs": 14,
+    "allDraft": true,
+    "openNonPrIssues": 48,
+    "formalReviews": 0,
+    "inlineThreads": 0,
+    "unresolvedBranchToolbarThreads": 0,
+    "other13HeadsUnchanged": true,
+    "newExternalOwnerOrGuardianChange": false,
+    "preview": {
+      "deployment": "dpl_CZ3bJoQHK2BUL3A5b7DDnnAXp9iK",
+      "head": "46b4fa8fbc4fe8405d12e0dcc079c4600cdb7eb8",
+      "state": "READY",
+      "aliasError": null
+    },
+    "production": {
+      "deployment": "dpl_2QAy8s3qEWtinWYUwBeQTeFjtUwf",
+      "head": "e7aae86c18238033c2186722e24c84dc7a5f69b9",
+      "state": "READY",
+      "aliasError": null,
+      "bothAliasesIndividuallyRead": true,
+      "aliases": [
+        "jetnity.com",
+        "jetnity-app.vercel.app"
+      ]
+    },
+    "rootOwnDeploymentReadAt": "2026-11-10 20:29 UTC",
+    "rootOwnMainHeadCompareTreeAndSourceReconstruction": true,
+    "freshPreRefGuardRequired": true
+  },
+  "currentExecution": {
+    "executed": false,
+    "head": null,
+    "ci": null,
+    "sourceReviewOnly": true,
+    "technicalLeadPass": false,
+    "ready": false,
+    "merged": false,
+    "note": "New R32 source has not executed; R31 CI is a terminal failure, not a pending gate."
+  },
+  "riskAssessment": {
+    "P0": "No new P0 identified in this bounded source change; this is not a global project clearance.",
+    "P1": [
+      "R31 PR and actual e7 main native acceptance remain failed; no release approval",
+      "full new-head and subsequent actual-main gates required"
+    ],
+    "P2": [
+      "quadratic history and unmeasured net timing benefit",
+      "copied transition body must remain synchronized in later work",
+      "dedicated malformed persisted-envelope negative oracle not added"
+    ],
+    "P3": [
+      "two inherited unrelated skips remain explicit",
+      "pre-publication documents require later live receipts"
+    ]
+  },
+  "publicationScope": {
+    "deltaPaths": 10,
+    "cumulativePrPaths": 17,
+    "sourceDeltaPaths": 1,
+    "rootContinuityDeltaPaths": 9,
+    "newRecords": 3,
+    "unchangedPriorLeaves": 9403,
+    "newLeaves": 3,
+    "removedLeaves": 0,
+    "expectedTotalEntries": 10250,
+    "expectedTotalLeaves": 9413,
+    "all36Parallel1181LeavesUnchanged": true
+  },
+  "firstUnfinishedStep": "Publish reviewed source and nine continuity files as a child of46b using nonforce expected-head update; verify complete readback; require full fresh CI/native/Preview/live gates, then actual-main gates and the separately held documentation closure.",
+  "noAutomaticFollowupSlice": true
+}
