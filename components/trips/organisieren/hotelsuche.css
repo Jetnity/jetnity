@@ -1,0 +1,99 @@
+.stay22-guestbutton {text-align:left;align-items:stretch}
+.stay22-guestbutton b {display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:14px;font-weight:620;line-height:1.45}
+.stay22-guests {display:grid;grid-template-columns:160px 160px minmax(0,1fr);align-items:center;gap:12px;margin-top:18px;padding:12px 0 0;border-top:1px solid var(--org-line)}
+.stay22-guests legend {font-size:12px;font-weight:650;padding-right:10px;color:var(--org-muted)}
+.stay22-guests p,.stay22-other-place p {font-size:12px;line-height:1.6;color:var(--org-muted)}
+.stay22-other-place {margin-top:16px;max-width:600px;position:relative;z-index:3}
+.stay22-other-place>label {display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.stay22-placeinput {width:100%;min-height:46px;border:1px solid var(--org-line);border-radius:10px;padding:10px 12px;background:var(--org-white);color:var(--org-ink)}
+.stay22-other-place p {margin-top:5px}
+.stay22-intro {padding:30px 0 2px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+.stay22-intro h2 {font-size:22px;font-weight:650;letter-spacing:-.025em}
+.stay22-intro p {margin-top:5px;font-size:13px;line-height:1.65;color:var(--org-muted)}
+.stay22-features {display:flex;flex-wrap:wrap;gap:12px 20px;font-size:12px;color:var(--org-muted)}
+.stay22-features span {display:flex;align-items:center;gap:6px}
+.stay22-features svg {width:17px;height:17px}
+/* The page's scroll-padding already reserves the header and top spacing. */
+.stay22-results {display:flex;flex-direction:column;height:min(820px, calc(100dvh - var(--jet-header-h, 100px) - var(--ux-u1a-nav-offset, 0px) - 24px));min-height:320px;scroll-margin-top:0}
+.stay22-results .org-sectionhead {align-items:flex-start;flex-shrink:0;margin-bottom:0}
+.stay22-results .org-sectionhead>div {flex:1;min-width:0}
+.stay22-results .org-sectionhead h2 {scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);outline:none}
+.stay22-results .org-sectionhead p {font-size:13px;line-height:1.7;margin-top:7px}
+@media(min-width:1000px){
+  .stay22-results .org-sectionhead>div {display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 20px}
+  .stay22-results .org-sectionhead p {margin-top:0}
+}
+.stay22-panel {overflow:hidden;border:1px solid var(--org-line);border-radius:18px;background:var(--org-white);margin-top:14px;box-shadow:0 8px 30px #112f2208}
+.stay22-badge {font-size:11px;font-weight:650;border-radius:30px;background:var(--org-bg);padding:7px 10px;white-space:nowrap}
+.stay22-host {flex:1;min-width:0;min-height:0;background:#f5f7f2}
+.stay22-frame {display:block;border:0;width:100%;height:100%;min-height:0;max-width:100%;color-scheme:light;scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);scroll-margin-bottom:calc(var(--ux-u1a-nav-offset, 0px) + 20px)}
+.stay22-status {flex-shrink:0}
+.stay22-status:has(p) {padding:14px 20px;font-size:13px;line-height:1.6}
+.stay22-status p {display:flex;align-items:center;gap:8px}
+.stay22-smallbutton {display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 8px;border-radius:8px;font-size:12px;font-weight:600;color:var(--org-ink)}
+.stay22-iconbutton {flex-shrink:0;width:44px}
+.stay22-smallbutton:hover {background:var(--org-bg)}
+.stay22-error {margin-top:12px;font-size:13px;font-weight:600}
+/* The floating page shortcut would cover Stay22's own map controls. */
+.workspace-page:has(.stay22-search) [data-back-to-top] {display:none}
+@media(max-width:700px){
+  .stay22-guests {grid-template-columns:1fr 1fr}
+  .stay22-guests p {grid-column:1/-1}
+  .stay22-intro {padding-top:24px}
+}
+/* One compact search surface, with the itinerary as the starting point. */
+.stay22-stagebar {display:flex;gap:10px;overflow-x:auto;padding:20px 0 14px;scrollbar-width:thin}
+.stay22-stagebar button {display:flex;align-items:center;gap:10px;flex-shrink:0;text-align:left;border:1px solid var(--org-line);border-radius:12px;padding:10px 16px;background:var(--org-white);min-height:64px;max-width:260px}
+.stay22-stagebar button[aria-pressed=true] {border-color:var(--org-ink);background:var(--org-ink);color:var(--org-white)}
+.stay22-stage-number {display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;border:1px solid currentColor;border-radius:50%;font-size:12px}
+.stay22-stagebar b {font-size:14px;display:block;overflow-wrap:anywhere}
+.stay22-stagebar small {display:block;font-size:11px;margin-top:4px;opacity:.8}
+.stay22-stagebar button:hover {box-shadow:0 0 0 1px var(--org-ink)}
+.stay22-stages-more {margin-top:28px}
+.stay22-stages-more>summary {cursor:pointer;min-height:44px;padding:12px 0;font-size:13px;font-weight:650}
+.stay22-datecontext {display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;color:var(--org-muted);font-size:12px}
+.stay22-datecontext button {text-decoration:underline;min-height:44px;padding:0 8px;font-weight:650}
+.stay22-location {margin-top:20px;border:1px solid var(--org-line);border-radius:14px;padding:18px;background:var(--org-bg)}
+.stay22-location-title {display:flex;gap:10px;align-items:flex-start}
+.stay22-location-title strong {font-size:14px;font-weight:650}
+.stay22-location p {font-size:12px;line-height:1.65;color:var(--org-muted);margin-top:4px}
+.stay22-location-fields {display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:14px}
+.stay22-location-fields>label:not(.stay22-mapcheck) {flex:1;min-width:180px}
+.stay22-location label,.stay22-filters label {display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--org-muted)}
+.stay22-location input:not([type=checkbox]),.stay22-location select,.stay22-filters select {min-height:44px;width:100%;min-width:0;border:1px solid var(--org-line);border-radius:9px;background:var(--org-white);color:var(--org-ink);padding:9px 12px;font-size:14px}
+.stay22-location label.stay22-mapcheck {display:flex;flex-direction:row;align-items:center;gap:8px;min-height:44px;font-weight:500;cursor:pointer}
+.stay22-mapcheck input {width:18px;height:18px;accent-color:var(--org-ink);flex-shrink:0}
+.stay22-filters {display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-top:18px}
+.stay22-filters label {flex:1;min-width:130px}
+.stay22-panel {position:relative;width:100%;max-width:none;max-height:none;color:var(--org-ink);padding:0;margin-left:0;margin-right:0}
+.stay22-panel:not([open]) {display:none}
+.stay22-panel[open] {display:flex;flex-direction:column;flex:1;min-height:0}
+.stay22-viewbar {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;flex-shrink:0;gap:6px;padding:8px 12px;border-bottom:1px solid var(--org-line)}
+.stay22-viewbar>div {display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.stay22-viewbar>.stay22-viewactions {gap:4px;flex-wrap:nowrap}
+.stay22-viewbar button[aria-pressed=true] {background:var(--org-ink);color:var(--org-white)}
+.stay22-panel.stay22-expanded {position:fixed;inset:0;display:flex;flex-direction:column;width:min(1500px,96vw);height:94dvh;max-height:94dvh;margin:auto;z-index:1000;box-shadow:0 16px 80px #0004}
+.stay22-expanded::backdrop {background:#071c19b3;backdrop-filter:blur(3px)}
+.et-hotelort {display:flex;flex-direction:column;gap:8px;font-size:12px;padding:10px 0}
+.et-hotelort select {width:100%;min-width:0;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--foreground);padding:8px;font-size:14px}
+@media(max-width:700px){
+  .stay22-stagebar {gap:8px;padding-top:14px}
+  .stay22-stagebar button {padding:8px 12px;min-height:60px;max-width:230px}
+  .stay22-location {padding:14px}
+  .stay22-location-fields {gap:10px;flex-direction:column;align-items:stretch}
+  .stay22-location-fields>label:not(.stay22-mapcheck) {min-width:0}
+  .stay22-filters {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .stay22-filters label {min-width:0}
+  .stay22-filters select,.stay22-location select,.stay22-location input:not([type=checkbox]) {font-size:16px}
+  .stay22-viewbar {padding:6px 8px}
+  .stay22-viewbar>.stay22-viewactions {width:100%}
+  .stay22-viewactions .stay22-badge {flex:1;min-width:0}
+  .stay22-panel.stay22-expanded {width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+}
+.stay22-search {border-top:1px solid var(--org-line);border-radius:18px}
+.stay22-badge {white-space:normal}
+/* A wrapped fixed header leaves too little room for the map on short phones. */
+@media(max-width:700px) and (max-height:700px){
+  .workspace-shell:has(.stay22-search) .workspace-header {position:static}
+  .stay22-results {--jet-header-h:0px}
+}
