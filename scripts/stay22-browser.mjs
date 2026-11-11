@@ -130,8 +130,18 @@ for (const [engine, options, label] of [
     await modal.waitFor()
     assert.equal(await modal.evaluate(el => el.matches(':modal')), true)
     assert.equal(await frame.getAttribute('data-stay22-test'), 'same-frame')
+    // Let the expanded layout and native dialog scrolling settle before closing.
+    await page.waitForTimeout(600)
     await page.keyboard.press('Escape')
     await page.getByRole('region', { name: 'Hotelkarte und Ergebnisliste' }).waitFor()
+    await page.waitForFunction(() => {
+      const button = document.querySelector('.stay22-viewactions button[title="Vergrössern"]')
+      const frame = document.querySelector('iframe.stay22-frame')
+      if (!button || !frame) return false
+      const control = button.getBoundingClientRect()
+      const map = frame.getBoundingClientRect()
+      return control.top >= 0 && control.bottom <= innerHeight && map.top < innerHeight - 100
+    })
     assert.equal(await frame.getAttribute('data-stay22-test'), 'same-frame')
     assert.equal(calls.length, beforeExpand, 'enlargement and close preserve supplier frame')
     assert.equal(await page.getByRole('button', { name: 'Vergrössern', exact: true }).evaluate(el => el === document.activeElement), true)

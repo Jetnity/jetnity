@@ -16,7 +16,7 @@ Owner-Auftrag: bestätigte Vorschläge für Etappenwahl, Suche nahe Reiseorten, 
 
 ## Status
 
-Umsetzung lokal fertig und Production-Build erfolgreich. Keine Veröffentlichung aus diesem Dokument ableiten. Physischer iPhone-Test sowie Stay22-Verifikation/Auszahlungsdaten bleiben offene externe Punkte des bisherigen Standes.
+Die freigegebene Stay22-Integration ist über PR #1185 auf jetnity.com veröffentlicht (Main `ddd8af51e34925c36e7fbf80b57a034407669fc8`, Production `dpl_FVb5GoXEwHGk7BDNKymG38LwSjXw`). Die Abschnitte mit „nur lokale Vorschau“ dokumentieren den früheren Verlauf. Ein im Live-Smoke gefundener Scrollfehler wird separat korrigiert; siehe den letzten Abschnitt. Physischer iPhone-Test sowie Stay22-Verifikation/Auszahlungsdaten bleiben offene externe Punkte.
 
 ## Umgesetzt
 
@@ -41,7 +41,7 @@ Umsetzung lokal fertig und Production-Build erfolgreich. Keine Veröffentlichung
 
 Keine neuen Bibliotheken, bezahlten Dienste, Migrationen, RLS-/Auth-Änderungen oder Support-Nachrichten. Die API-Freigabe ist nicht erweitert worden. Kein garantierter billigster Anbieter für dasselbe Zimmer und dieselben Bedingungen. Anbieter-intern veränderte Filter, gespeicherte Favoriten oder abgeschlossene Buchungen werden nicht aus dem fremden Rahmen ausgelesen oder automatisch im Reiseplan bestätigt.
 
-Die produktive Darstellung auf einem physischen iPhone, die Verarbeitung von Kinderaltern/Mehrzimmerbelegung beim Buchungsanbieter sowie Stay22-E-Mail-Verifikation und Auszahlungsdaten bleiben gesonderte offene Punkte. Keine Veröffentlichung auf jetnity.com. Testbare lokale Vorschau: http://127.0.0.1:3972/vorschau.
+Die produktive Darstellung auf einem physischen iPhone, die Verarbeitung von Kinderaltern/Mehrzimmerbelegung beim Buchungsanbieter sowie Stay22-E-Mail-Verifikation und Auszahlungsdaten bleiben gesonderte offene Punkte. Der aktuelle Veröffentlichungsstand steht oben unter Status. Testbare lokale Vorschau: http://127.0.0.1:3972/vorschau.
 
 ## Owner-Feinschliff der Darstellung — 11.11.2026, 02:49
 
@@ -88,3 +88,16 @@ PR #1185, erster Head `03a1280`: CI #4100 / Run 42947919062 fehlgeschlagen. Nebe
 Alle fünf betroffenen Testdateien danach vollständig erfolgreich: 97/97 Tests, keine Skips. Gezielter ESLint und neuer Production-Build erfolgreich. Alle vier vollständigen Stay22-Browserabläufe (Desktop Chromium, Mobile Chromium, iPhone WebKit, 320 × 568) gegen diesen Build erfolgreich, einschliesslich Kartenhöhe, Vergrösserung, Fokus, Etappen-/Ortsübergabe und unverändertem Reisegraphen. CSS-Inhalt und freigegebene Gestaltung bleiben unverändert.
 
 Die Vercel-Vorschau des ersten Heads wurde erfolgreich gebaut. Der Test einer synthetischen Gastreise dort scheiterte jedoch an fehlenden bestehenden Supabase-Browser-Umgebungsvariablen der Preview-Umgebung. Das ist kein erfolgreicher Remote-Funktionstest; keine Production-Zugangsdaten wurden kopiert. Vollständige CI des korrigierten Heads, Merge und tatsächliche Production-Verifikation bleiben offen.
+
+
+## Production-Nachweis und Rückkehr aus der Kartenansicht — 11.11.2026
+
+PR #1185 wurde nach vollständigem PASS auf `af1b4297d0da01aa422f8c0099c6c1d8b61276d9` gemergt: CI 42950648202 mit allen acht Jobs erfolgreich, 8712 Tests erfolgreich / 0 Fehler / 2 bestehende Skips; auch alle 31 M04-Gruppen erfolgreich. Vercel Preview READY. Der tatsächliche Merge/Main ist `ddd8af51e34925c36e7fbf80b57a034407669fc8`. Production `dpl_FVb5GoXEwHGk7BDNKymG38LwSjXw` ist READY und dem Alias jetnity.com zugeordnet. Post-Merge-CI 42952694524 läuft zum Zeitpunkt dieses Nachtrags noch.
+
+Live-Smoke in einem isolierten Browserkontext mit synthetischer lokaler Gastreise und blockierten schreibenden Jetnity-API-Aufrufen: originale Stay22-Hotelbilder, Namen und CHF-Preise geladen; Strassenkarte, fehlendes externes Vergrössern, eigene Vergrösserung und gleicher Anbieterrahmen bestätigt. Keine Buchung, kein neuer Tab und kein veränderter Reisegraph. Runtime-Fehlerabfrage für diese Production-Version ohne Treffer. Der eigene Chrome-Vorschautab wurde auf die produktive Unterkunftsansicht umgestellt.
+
+Dabei blieb die Seite nach einer länger geöffneten grossen Karte am Seitenanfang (Scrollposition 894 → 0). Ein sofortiges Escape im bisherigen Test hatte den Fehler verdeckt. Der bestehende Browserablauf wartet jetzt auf die stabilisierte grosse Ansicht und prüft nach Escape die Sichtbarkeit von Kartenbedienung und Anbieterrahmen. Dieser Test schlug gegen die unveränderte veröffentlichte Version fehl.
+
+Korrektur: Scrollposition vor dem Öffnen merken, nach Rückkehr des normalen Layouts vor dem nächsten Bild wiederherstellen. Der native Dialog, Fokus, dieselbe Anbieterinstanz und deren Auswahl bleiben bestehen. Keine Suche oder Buchung wird dadurch ausgelöst; keine Änderung an Tracking, Datenschutz, Datenbank, Infrastruktur oder Kosten. Unmount gibt die Scrollsperre weiter frei.
+
+Lokale Prüfung der Korrektur: gezielter ESLint und Production-Build erfolgreich. Alle vier vollständigen Browserabläufe (Desktop Chromium, Mobile Chromium, iPhone WebKit und 320 × 568) einschliesslich der neuen Regression erfolgreich. Zusätzlich mit realem Stay22-Widget geprüft: Scrollposition 894 → grosse Ansicht → 894, Karte wieder vollständig sichtbar, derselbe Rahmen, geladene Fotos/Preise und unveränderter lokaler Reisegraph. Die Korrektur benötigt noch den eigenen Exact-Head-CI-/Preview-PASS und anschliessenden Production-Nachweis; nicht mit der bereits veröffentlichten Hauptintegration gleichsetzen.
