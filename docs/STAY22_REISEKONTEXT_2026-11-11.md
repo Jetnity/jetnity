@@ -50,3 +50,7 @@ Nach ausdrücklicher Bestätigung der Screenshots wurden das zusätzliche „Mit
 Der grün hinterlegte „Unterstützt von Stay22“-Hinweis wird mit dem offiziell dokumentierten Parameter `hidebrandlogo=true` ausgeblendet: https://dev.stay22.com/docs/maps/parameters (UI Toggles, am 11.11.2026 geprüft). Keine Überlagerung oder CSS-Manipulation des fremden Inhalts; Kartenattribution bleibt sichtbar. In der realen Chrome-Vorschau geprüft: originale Ergebnisse vorhanden, auffälliger Markenbalken verschwunden. Keine Änderung am Partnertracking oder an den Suchdaten.
 
 Prüfung: 7 bestehende Stay22-Vertragstests erfolgreich, gezielter ESLint ohne Befunde, Exportprüfung erfolgreich und Production-Build erfolgreich. Vorhandene vollständige Browserabläufe Desktop Chromium und Small mobile Chromium (320 × 568) erneut erfolgreich, einschliesslich echter Klickpositionen, Vergrösserung/Fokus, Reiseplanübergabe und Datenschutz-Ablehnung. Weiterhin nur lokale Vorschau; keine Veröffentlichung.
+
+## Standardkarte Strassen — 11.11.2026
+
+Auf Owner-Wunsch startet die Unterkunftssuche mit `mapstyle=streets` statt `light`. Die öffentliche Stay22-Widgetimplementierung ordnet `streets` dem Standard-Strassenstil `osm_bright` zu; die übrige native Kartenauswahl bleibt verfügbar. Nach erneutem Production-Build und neuer Suche in der bestehenden Chrome-Vorschau geprüft: farbige Strassenkarte mit originalen Hotelangeboten und Kartenattribution. Sieben bestehende Stay22-Vertragstests erfolgreich. Weiterhin nur lokale Vorschau, keine Veröffentlichung.

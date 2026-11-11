@@ -85,7 +85,7 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
     checkin: anreise, checkout: abreise, adults: String(erwachsene), children: String(kinder), rooms: String(zimmer),
     currency: waehrung, ljs: 'de', unitsystem: 'metric', priceper: filter.preis,
     maincolor: '153a33', fontcolor: 'ffffff', hotelscolor: '153a33', hotelsfontcolor: 'ffffff',
-    mapstyle: 'light', viewmode: 'all', listviewexpand: 'true', limit: '60', zoom: eingabe.umgebung ? '14' : '12',
+    mapstyle: 'streets', viewmode: 'all', listviewexpand: 'true', limit: '60', zoom: eingabe.umgebung ? '14' : '12',
     hidesearchbar: 'true', hidecheckinout: 'true', hideguestpicker: 'true', hidecurrency: 'true',
     hidemodeswitcher: 'true', hidebrandlogo: 'true',
   }
