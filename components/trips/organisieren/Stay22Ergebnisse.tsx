@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Columns2, List, Loader2, Map, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
 import { stay22Rahmen, type Stay22Phase } from '@/lib/providers/stay22/rahmen'
 import { stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
@@ -18,6 +18,7 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   const heading = useRef<HTMLHeadingElement>(null)
   const dialog = useRef<HTMLDialogElement>(null)
   const groesseButton = useRef<HTMLButtonElement>(null)
+  const scrollPosition = useRef<{ x: number; y: number } | null>(null)
   const [gross, setGross] = useState(false)
   const [ansicht, setAnsicht] = useState<Stay22Ansicht>(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches ? 'listview' : 'all')
   const [phase, setPhase] = useState<Stay22Phase>('laedt')
@@ -31,8 +32,16 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   useEffect(() => {
     if (host.current) return stay22Rahmen(host.current, url, setPhase)
   }, [url, versuch])
-  useEffect(() => {
-    if (!gross) return
+  useLayoutEffect(() => {
+    if (!gross) {
+      const position = scrollPosition.current
+      if (position) {
+        // Restore after the inline layout returns, before painting the page.
+        window.scrollTo({ left: position.x, top: position.y, behavior: 'instant' })
+        scrollPosition.current = null
+      }
+      return
+    }
     const vorher = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = vorher }
@@ -40,6 +49,7 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   const vergroessern = (wert: boolean) => {
     const el = dialog.current
     if (!el) return
+    if (wert) scrollPosition.current = { x: window.scrollX, y: window.scrollY }
     // The same frame stays mounted, including the supplier's current selection.
     el.close()
     if (wert) el.showModal()
