@@ -204,7 +204,7 @@ export default function Organisieren({
           {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {tab === 'unterkunft' && (
             <Hotelsuche
-              key={JSON.stringify([etappeId, suchId])}
+              key={JSON.stringify([reise.id, etappeId, suchId, reise.startDate, reise.endDate, reise.travellers, reise.currency, reise.stages, reise.days.map(d => [d.stageId, d.dayDate])])}
               reise={reise}
               start={einstieg ?? erste}
               etappen={etappen}

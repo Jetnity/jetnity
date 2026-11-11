@@ -1,0 +1,53 @@
+.stay22-powered,.stay22-eyebrow { color:var(--org-muted);font-size:12px;font-weight:650 }
+.stay22-powered {border:1px solid var(--org-line);padding:5px 10px;border-radius:30px}
+.stay22-guestbutton {text-align:left;align-items:stretch}
+.stay22-guestbutton b {display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:14px;font-weight:620;line-height:1.45}
+.stay22-formfoot {display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:16px;color:var(--org-muted)}
+.stay22-formfoot p {max-width:760px;font-size:11px;line-height:1.65}
+.stay22-formfoot a,.stay22-disclosure a {text-decoration:underline;text-underline-offset:3px}
+.stay22-formfoot label {display:flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap}
+.stay22-formfoot select {border:1px solid var(--org-line);border-radius:8px;min-height:40px;padding:5px 8px;background:var(--org-white);color:var(--org-ink)}
+.stay22-guests {display:grid;grid-template-columns:160px 160px minmax(0,1fr);align-items:center;gap:12px;margin-top:18px;padding:12px 0 0;border-top:1px solid var(--org-line)}
+.stay22-guests legend {font-size:12px;font-weight:650;padding-right:10px;color:var(--org-muted)}
+.stay22-guests p,.stay22-other-place p {font-size:12px;line-height:1.6;color:var(--org-muted)}
+.stay22-other-place {margin-top:16px;max-width:600px;position:relative;z-index:3}
+.stay22-other-place>label {display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.stay22-placeinput {width:100%;min-height:46px;border:1px solid var(--org-line);border-radius:10px;padding:10px 12px;background:var(--org-white);color:var(--org-ink)}
+.stay22-other-place p {margin-top:5px}
+.stay22-intro {padding:30px 0 2px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+.stay22-intro h2 {font-size:22px;font-weight:650;letter-spacing:-.025em}
+.stay22-intro p {margin-top:5px;font-size:13px;line-height:1.65;color:var(--org-muted)}
+.stay22-features {display:flex;flex-wrap:wrap;gap:12px 20px;font-size:12px;color:var(--org-muted)}
+.stay22-features span {display:flex;align-items:center;gap:6px}
+.stay22-features svg {width:17px;height:17px}
+.stay22-results .org-sectionhead {align-items:flex-start;flex-wrap:wrap}
+.stay22-eyebrow {display:flex;align-items:center;gap:7px;margin-bottom:7px;letter-spacing:.08em;text-transform:uppercase}
+.stay22-results .org-sectionhead h2 {scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);outline:none}
+.stay22-results .org-sectionhead p:not(.stay22-eyebrow) {font-size:13px;line-height:1.7;margin-top:7px}
+.stay22-panel {overflow:hidden;border:1px solid var(--org-line);border-radius:18px;background:var(--org-white);margin-top:20px;box-shadow:0 8px 30px #112f2208}
+.stay22-toolbar {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid var(--org-line)}
+.stay22-toolbar strong {font-size:15px;font-weight:650}
+.stay22-toolbar p {font-size:12px;line-height:1.5;margin-top:3px;color:var(--org-muted)}
+.stay22-badge {font-size:11px;font-weight:650;border-radius:30px;background:var(--org-bg);padding:7px 10px;white-space:nowrap}
+.stay22-host {min-width:0;background:#f5f7f2}
+.stay22-frame {display:block;border:0;width:100%;height:min(740px, calc(100dvh - var(--jet-header-h, 100px) - var(--ux-u1a-nav-offset, 0px) - 40px));min-height:320px;max-width:100%;color-scheme:light;scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);scroll-margin-bottom:calc(var(--ux-u1a-nav-offset, 0px) + 20px)}
+.stay22-status:has(p) {padding:14px 20px;font-size:13px;line-height:1.6}
+.stay22-status p {display:flex;align-items:center;gap:8px}
+.stay22-recovery {display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;border-top:1px solid var(--org-line);padding:6px 16px;font-size:11px;color:var(--org-muted)}
+.stay22-smallbutton {display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 8px;border-radius:8px;font-size:12px;font-weight:600;color:var(--org-ink)}
+.stay22-smallbutton:hover {background:var(--org-bg)}
+.stay22-disclosure {margin-top:14px;line-height:1.7}
+.stay22-error {margin-top:12px;font-size:13px;font-weight:600}
+/* The floating page shortcut would cover Stay22's own map controls. */
+@media(max-width:63.999rem){
+  .workspace-page:has(.stay22-frame) [data-back-to-top] {display:none}
+}
+@media(max-width:700px){
+  .stay22-formfoot {align-items:flex-start;flex-direction:column;gap:8px}
+  .stay22-guests {grid-template-columns:1fr 1fr}
+  .stay22-guests p {grid-column:1/-1}
+  .stay22-toolbar {padding:14px;align-items:flex-start;flex-direction:column;gap:8px}
+  .stay22-recovery {padding:8px 10px;gap:0 6px}
+  .stay22-recovery>span {width:100%;padding:4px 8px}
+  .stay22-intro {padding-top:24px}
+}

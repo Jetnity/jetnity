@@ -29,6 +29,12 @@ export default async function PrivacyPage() {
     <main className="bg-surface-75 text-brand-800">
       <article className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
         <PrivacyBeeEinbettung flaeche="datenschutz" einbetten={einbetten} />
+        <section aria-label="Stay22" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
+          <h2 className="text-lg font-semibold text-brand-800">Unterkunftssuche mit Stay22</h2>
+          <p className="mt-3">Wenn du in der Unterkunftssuche „Suchen“ wählst, lädt Jetnity die offizielle Stay22-Karte mit Unterkunftsangeboten in einem getrennten Rahmen. Stay22 erhält das öffentliche Reiseziel, gegebenenfalls dessen Koordinaten, An- und Abreise, Anzahl der Erwachsenen, Kinder und Zimmer sowie Sprache, Währung und Partnerkennung. Dabei fallen Verbindungsdaten wie die IP-Adresse an. Stay22 und seine Dienstleister können Cookies oder ähnliche Technologien verwenden. Private Reise-IDs, Namen der Reisenden und Buchungsunterlagen werden dafür nicht übergeben.</p>
+          <p className="mt-3">Bei Änderung der Suchangaben, Ausblenden oder Verlassen der Unterkunftssuche entfernt Jetnity die Einbindung. Bereits übermittelte Angaben werden dadurch nicht zurückgenommen. Vorhandene Ablehnungen oder Widerrufe in den Datenschutzeinstellungen werden respektiert. Die Anzeigeentscheidung wird nicht für spätere Besuche gespeichert. Buchung und Bezahlung erfolgen beim angezeigten Anbieter; eine vermittelte Buchung kann Jetnity eine Provision einbringen.</p>
+          <p className="mt-3"><a href="https://www.stay22.com/privacy" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4">Datenschutzhinweise von Stay22</a></p>
+        </section>
         <section aria-label="Booking.com" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
           <h2 className="text-lg font-semibold text-brand-800">Unterkünfte und Flüge bei Booking.com</h2>
           <p className="mt-3">Wenn du «Auf Booking.com suchen» wählst, öffnet sich die Partnersuche über CJ. Bei der Unterkunftssuche übergeben wir Reiseziel, gewählte Daten, Erwachsene, Zimmer und Währung. Bei Flügen übergeben wir Flughäfen, Flugtermine, Erwachsene, Reiseklasse, Währung und deine Auswahl zu Direktflügen.</p>
