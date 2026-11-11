@@ -66,3 +66,13 @@ Prüfung: abschliessender Production-Build und gezielter ESLint erfolgreich; Exp
 Anpassungsgrenzen anhand der offiziellen Parameter erneut geprüft: Karte/Liste, Kartenstil, Farben, Preis pro Nacht/Aufenthalt, Stern-/Gästebewertungsanzeige und Punkt- statt Preismarker sind konfigurierbar. Freie Anordnung der einzelnen Kartenfelder oder beliebige Fotoformate werden durch die dokumentierten Einbettungsparameter nicht angeboten. Keine neue API-Freigabe oder frei gestaltbare eigene Ergebnisliste daraus ableiten. Quelle: https://dev.stay22.com/docs/maps/parameters.
 
 Weiterhin ausschliesslich lokale Vorschau; kein Push, Pull Request oder Deployment für diesen Feinschliff.
+
+## Grössere Karte und Vergrösserung innerhalb Jetnity — 11.11.2026
+
+Auf erneuten Owner-Wunsch erhält der Ergebnisbereich wieder mehr Höhe: maximal 820 statt 700 Pixel, weiterhin begrenzt durch die verfügbare Bildschirmhöhe. Die dekorative Zeile „Dein Aufenthalt“ entfällt; auf breiten Bildschirmen stehen Suchzeitraum und Belegung neben dem Titel. Die erste Browserprüfung zeigte einen knappen unteren Überstand durch doppelte Berücksichtigung des Kopfbereichs beim Scrollen. Der zusätzliche Scroll-Abstand wurde entfernt; die globale Scroll-Polsterung berücksichtigt den Kopfbereich bereits.
+
+Der offiziell dokumentierte Stay22-Parameter `hideenlargemap=true` blendet das anbieterinterne Vergrösserungssymbol aus, das eine separate Stay22-Seite öffnete. Quelle am 11.11.2026 geprüft: https://dev.stay22.com/docs/maps/parameters, „UI Toggles“. Keine Überlagerung oder Manipulation des fremden Rahmeninhalts. Karten-Zoom, Anbieterfilter, Attribution und Buchungslinks bleiben verfügbar. Die Jetnity-Vergrösserung oben verwendet weiterhin denselben Rahmen im lokalen Dialog.
+
+Prüfung: sieben bestehende Stay22-Vertragstests, gezielter ESLint und abschliessender Production-Build erfolgreich. Nach der Scrollkorrektur alle vier vollständigen Browserabläufe (Desktop Chromium, Mobile Chromium, iPhone WebKit und Small mobile Chromium mit 320 × 568 Pixeln) erfolgreich: vollständige Ergebnisfläche zwischen den Navigationsleisten, tatsächliche Klickpositionen, derselbe Rahmen beim Vergrössern/Schliessen, Fokus-Rückgabe, Etappen-/Reiseplanübergabe, Datenschutz und unveränderter Reisegraph. Die automatisierten Rahmen enthalten keine Hotel-Testangebote.
+
+Zusätzlich im bestehenden sichtbaren Chrome-Tab mit realen Stay22-Fotos, Preisen und Strassenkarte geprüft: internes Vergrösserungssymbol fehlt, Plus/Minus bleiben sichtbar. Jetnity-Vergrösserung und Rückkehr funktionieren auf derselben Vorschau-URL. Keine Buchung ausgelöst. Weiterhin nur lokale Vorschau, keine Veröffentlichung auf jetnity.com.

@@ -1,4 +1,3 @@
-.stay22-eyebrow { color:var(--org-muted);font-size:12px;font-weight:650 }
 .stay22-guestbutton {text-align:left;align-items:stretch}
 .stay22-guestbutton b {display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:14px;font-weight:620;line-height:1.45}
 .stay22-guests {display:grid;grid-template-columns:160px 160px minmax(0,1fr);align-items:center;gap:12px;margin-top:18px;padding:12px 0 0;border-top:1px solid var(--org-line)}
@@ -14,12 +13,16 @@
 .stay22-features {display:flex;flex-wrap:wrap;gap:12px 20px;font-size:12px;color:var(--org-muted)}
 .stay22-features span {display:flex;align-items:center;gap:6px}
 .stay22-features svg {width:17px;height:17px}
-.stay22-results {display:flex;flex-direction:column;height:min(700px, calc(100dvh - var(--jet-header-h, 100px) - var(--ux-u1a-nav-offset, 0px) - 32px));min-height:320px;scroll-margin-top:calc(var(--jet-header-h, 100px) + 16px)}
+/* The page's scroll-padding already reserves the header and top spacing. */
+.stay22-results {display:flex;flex-direction:column;height:min(820px, calc(100dvh - var(--jet-header-h, 100px) - var(--ux-u1a-nav-offset, 0px) - 24px));min-height:320px;scroll-margin-top:0}
 .stay22-results .org-sectionhead {align-items:flex-start;flex-shrink:0;margin-bottom:0}
 .stay22-results .org-sectionhead>div {flex:1;min-width:0}
-.stay22-eyebrow {display:flex;align-items:center;gap:7px;margin-bottom:7px;letter-spacing:.08em;text-transform:uppercase}
 .stay22-results .org-sectionhead h2 {scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);outline:none}
-.stay22-results .org-sectionhead p:not(.stay22-eyebrow) {font-size:13px;line-height:1.7;margin-top:7px}
+.stay22-results .org-sectionhead p {font-size:13px;line-height:1.7;margin-top:7px}
+@media(min-width:1000px){
+  .stay22-results .org-sectionhead>div {display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 20px}
+  .stay22-results .org-sectionhead p {margin-top:0}
+}
 .stay22-panel {overflow:hidden;border:1px solid var(--org-line);border-radius:18px;background:var(--org-white);margin-top:14px;box-shadow:0 8px 30px #112f2208}
 .stay22-badge {font-size:11px;font-weight:650;border-radius:30px;background:var(--org-bg);padding:7px 10px;white-space:nowrap}
 .stay22-host {flex:1;min-width:0;min-height:0;background:#f5f7f2}

@@ -87,7 +87,7 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
     maincolor: '153a33', fontcolor: 'ffffff', hotelscolor: '153a33', hotelsfontcolor: 'ffffff',
     mapstyle: 'streets', viewmode: 'all', listviewexpand: 'true', limit: '60', zoom: eingabe.umgebung ? '14' : '12',
     hidesearchbar: 'true', hidecheckinout: 'true', hideguestpicker: 'true', hidecurrency: 'true',
-    hidemodeswitcher: 'true', hidebrandlogo: 'true',
+    hidemodeswitcher: 'true', hidebrandlogo: 'true', hideenlargemap: 'true',
   }
   for (const [name, wert] of Object.entries(parameter)) url.searchParams.set(name, wert)
   if (filter.sterne) url.searchParams.set('minstarrating', String(filter.sterne))

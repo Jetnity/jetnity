@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Columns2, List, Loader2, Map, MapPinned, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
+import { Columns2, List, Loader2, Map, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
 import { stay22Rahmen, type Stay22Phase } from '@/lib/providers/stay22/rahmen'
 import { stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
@@ -51,7 +51,6 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   return <section ref={ergebnisse} className="org-results stay22-results" aria-label="Unterkunftsangebote" data-stay22-phase={phase}>
     <div className="org-sectionhead">
       <div>
-        <p className="stay22-eyebrow"><MapPinned size={15} aria-hidden="true" /> Dein Aufenthalt</p>
         <h2 ref={heading} tabIndex={-1}>Unterkünfte in {suche.ort}</h2>
         <p>{etappenZeitraumAnzeigen(suche.anreise, suche.abreise)} · {suche.naechte} {suche.naechte === 1 ? 'Nacht' : 'Nächte'} · {suche.erwachsene} {suche.erwachsene === 1 ? 'Erwachsener' : 'Erwachsene'}{suche.kinder > 0 ? ` · ${suche.kinder} ${suche.kinder === 1 ? 'Kind' : 'Kinder'}` : ''} · {suche.zimmer} Zimmer</p>
       </div>
