@@ -559,3 +559,10 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 
 - Lokale Erweiterung: Etappenleiste mit gemerkten Suchwünschen, planbezogene Ortswahl, explizite Umgebungssuche, begrenzte Reisemarker, sichtbare Sterne-/Bewertungs-/Preisperiodenfilter, Karten-/Listenwechsel und vergrösserte Originalanzeige. Reiseplan öffnet die richtige Etappe und den gewählten Ort.
 - Kontrollierte Desktop-/Mobiltests und separate echte Stay22-Anzeige; Details, Freigabe zur Veröffentlichung und verbleibende Providergrenzen in [STAY22_REISEKONTEXT_2026-11-11.md](docs/STAY22_REISEKONTEXT_2026-11-11.md). Production-Rollout nach abschliessender Prüfung beauftragt, noch nicht als live bestätigt.
+
+
+### Travelpayouts-Flugvergleich: Veröffentlichung freigegeben, CI blockiert — 11.11.2026
+
+- Native Flugsuche im vorhandenen Reiter mit Reisevorbelegung, Hin-/Rück-/Gabelflug, Flughafenwahl, Belegung und Economy/Business. Originalangebote in CHF, Anbieterfilter und Buchungsweiterleitung im getrennten Rahmen.
+- Desktop und mobile Chrome-Emulation mit echten Ergebnissen geprüft, einschliesslich Dialog-Vergrösserung, Einwilligungswiderruf, gemeinsamem Hotel-/Flugkalender und verankerten Auswahllisten. Veröffentlichung vom Owner ausdrücklich beauftragt. Separates HTTPS-Widget und geschützte App-Vorschau mit echten Angeboten und Preis-/Dauersortierung nachgewiesen; jetnity.com noch nicht umgestellt.
+- PR #1187: CSS-Importfehler aus der Gesamtprüfung durch Laden im bestehenden Reise-Layout korrigiert; 97 betroffene Workspace-Regressionstests erfolgreich. Zusätzlich scheitert der bestehende M04-Nativtest am 240-Sekunden-Budget, auch im unveränderten Main-Lauf 42955908361. Erforderliche CI bleibt Freigabevoraussetzung; keine fremde M04-Recovery integriert und keine Prüfung abgeschwächt. Anbieterfeld `citizenship: RU` und physisches Safari/iPhone bleiben offen. [Nachweise](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).

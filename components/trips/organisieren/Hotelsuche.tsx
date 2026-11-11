@@ -12,6 +12,8 @@ import { hotelPlanOrte, hotelPosition } from '@/lib/trips/hotel-suchkontext'
 import { STAY22_FILTER, STAY22_WAEHRUNGEN, stay22OrtAusEtappe, stay22Suche, type Stay22Fehlerfeld, type Stay22Filter, type Stay22Ort, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import type { Trip, TripStage } from '@/types/trips'
 import { Feld } from './Suchfelder'
+import Suchkalender from './auswahl/Suchkalender'
+import { datumVerschieben } from '@/lib/trips/suchkalender'
 import Stay22Ergebnisse from './Stay22Ergebnisse'
 import useHotelUmgebung from './useHotelUmgebung'
 
@@ -135,8 +137,10 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
           {reise.stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           <option value="anderer-ort">Anderen Ort suchen</option>
         </select></Feld>
-        <Feld label="Anreise"><input name="anreise" aria-invalid={fehlerfeld === 'anreise'} aria-describedby={fehlerfeld === 'anreise' ? `${id}-fehler` : undefined} required type="date" min={heutigesDatum()} value={d.anreise} onChange={e => patch({ anreise: e.target.value })} /></Feld>
-        <Feld label="Abreise"><input name="abreise" aria-invalid={fehlerfeld === 'abreise'} aria-describedby={fehlerfeld === 'abreise' ? `${id}-fehler` : undefined} required type="date" min={d.anreise || heutigesDatum()} value={d.abreise} onChange={e => patch({ abreise: e.target.value })} /></Feld>
+        <Suchkalender start={d.anreise} ende={d.abreise} startLabel="Anreise" endeLabel="Abreise"
+          startName="anreise" endeName="abreise" fehler={fehlerfeld} fehlerId={`${id}-fehler`}
+          min={heutigesDatum()} max={datumVerschieben(heutigesDatum(), 730)} minTage={1} maxTage={90} naechte
+          setzen={(anreise, abreise) => patch({ anreise, abreise })} />
         <button type="button" name="gaeste" aria-describedby={fehlerfeld === 'gaeste' ? `${id}-fehler` : undefined} className="org-field stay22-guestbutton" aria-expanded={gaesteOffen} aria-controls={`${id}-gaeste`} onClick={() => setGaesteOffen(v => !v)}><span>Gäste</span><b>{personen} <ChevronDown size={15} aria-hidden="true" /></b></button>
         <Feld label="Zimmer"><select value={d.zimmer} onChange={e => patch({ zimmer: Number(e.target.value) })}>{Array.from({ length: Math.min(d.erwachsene, 8) }, (_, i) => <option key={i} value={i + 1}>{i + 1} Zimmer</option>)}</select></Feld>
         <button type="submit" className="org-go" disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> Suchen</button>
