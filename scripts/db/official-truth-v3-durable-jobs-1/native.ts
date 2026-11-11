@@ -972,6 +972,154 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         assert.equal(row.actual_c, row.wanted, 'R24 C fixed oracle: ' + row.label)
         assert.equal(row.actual_c, row.original_c, 'R24 C original expression: ' + row.label)
       }
+      // R30: eight fixed cross-condition key oracles; the complete R24 matrix remains unchanged.
+      const r30ExactKeyRows = await f.owner.query(String.raw`WITH cases(label,v,expected,wanted) AS (VALUES
+          ('01 multidimensional lower bounds exact','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'[-2:-1][4:5]={{d,b},{c,a}}'::text[],true),
+          ('02 multidimensional lower bounds NULL','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'[-2:-1][4:5]={{d,b},{c,NULL}}'::text[],false),
+          ('03 multidimensional lower bounds duplicate','{"a":1,"b":2,"c":3,"d":4}'::jsonb,'[-2:-1][4:5]={{d,b},{c,c}}'::text[],false),
+          ('04 scalar multidimensional expected','7'::jsonb,'{{d,b},{c,a}}'::text[],false),
+          ('05 SQL NULL multidimensional expected',NULL::jsonb,'{{d,b},{c,a}}'::text[],false),
+          ('06 32 slots with NULL','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32}'::jsonb,ARRAY['k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02',NULL]::text[],false),
+          ('07 32 slots with duplicate','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32}'::jsonb,ARRAY['k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k02']::text[],false),
+          ('08 32 keys with 33 slots','{"k01":1,"k02":2,"k03":3,"k04":4,"k05":5,"k06":6,"k07":7,"k08":8,"k09":9,"k10":10,"k11":11,"k12":12,"k13":13,"k14":14,"k15":15,"k16":16,"k17":17,"k18":18,"k19":19,"k20":20,"k21":21,"k22":22,"k23":23,"k24":24,"k25":25,"k26":26,"k27":27,"k28":28,"k29":29,"k30":30,"k31":31,"k32":32}'::jsonb,ARRAY['k32','k31','k30','k29','k28','k27','k26','k25','k24','k23','k22','k21','k20','k19','k18','k17','k16','k15','k14','k13','k12','k11','k10','k09','k08','k07','k06','k05','k04','k03','k02','k01','k01']::text[],false)
+        ), checks AS (
+          SELECT label,wanted,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original FROM cases
+        ), c_checks AS (
+          SELECT label,official_v3_jobs_private.exact_keys_v1(v,expected) AS actual_c,
+          (v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k),'{}'::text[])
+    = COALESCE((SELECT array_agg(k ORDER BY k COLLATE "C") FROM unnest(expected) k),'{}'::text[])) AS original_c
+          FROM (SELECT label,v,expected COLLATE "C" AS expected FROM cases) c_input
+        ) SELECT checks.label,wanted::text,actual::text,original::text,actual_c::text,original_c::text
+          FROM checks JOIN c_checks USING(label) ORDER BY checks.label COLLATE "C"`)
+      assert.equal(r30ExactKeyRows.length, 8)
+      for (const row of r30ExactKeyRows) {
+        assert.ok(row.wanted === 'true' || row.wanted === 'false', 'R30 literal key boolean: ' + row.label)
+        assert.equal(row.actual, row.wanted, 'R30 default fixed key oracle: ' + row.label)
+        assert.equal(row.actual, row.original, 'R30 default original key expression: ' + row.label)
+        assert.equal(row.actual_c, row.wanted, 'R30 C fixed key oracle: ' + row.label)
+        assert.equal(row.actual_c, row.original_c, 'R30 C original key expression: ' + row.label)
+      }
+      // R30: fixed calendar/timestamp oracles use variables, so IMMUTABLE calls cannot fold across contexts.
+      const r30SettingsBefore = await f.owner.query("SELECT current_setting('TimeZone') AS timezone, current_setting('DateStyle') AS datestyle")
+      await f.owner.query(String.raw`DO $r30_calendar$
+      DECLARE
+        r30_context record; r30_case record; r30_input text; r30_wanted boolean;
+        r30_actual boolean; r30_original boolean; r30_original_date date;
+        r30_timestamp timestamptz; r30_sqlstate text; r30_message text;
+        r30_context_count integer:=0; r30_calendar_count integer:=0; r30_timestamp_count integer:=0;
+        r30_saved_timezone text:=current_setting('TimeZone'); r30_saved_datestyle text:=current_setting('DateStyle');
+      BEGIN
+        FOR r30_context IN SELECT * FROM (VALUES
+          ('UTC','ISO, MDY'),('UTC','SQL, DMY'),('Pacific/Apia','ISO, MDY'),('Pacific/Apia','SQL, DMY')
+        ) AS contexts(zone_name,style_name) LOOP
+          PERFORM set_config('TimeZone',r30_context.zone_name,true);
+          PERFORM set_config('DateStyle',r30_context.style_name,true);
+          IF current_setting('TimeZone') IS DISTINCT FROM r30_context.zone_name
+            OR current_setting('DateStyle') IS DISTINCT FROM r30_context.style_name THEN
+            RAISE EXCEPTION 'R30 context settings mismatch';
+          END IF;
+          r30_context_count:=r30_context_count+1;
+          FOR r30_case IN SELECT * FROM (VALUES
+              ('01 SQL NULL',NULL::text,false,false),
+              ('02 empty','',false,false),
+              ('03 malformed','not-a-date',false,false),
+              ('04 short year','26-01-01',false,false),
+              ('05 missing zero','2026-1-01',false,false),
+              ('06 trailing space','2026-01-01 ',false,false),
+              ('07 timestamp suffix','2026-01-01T00:00:00Z',false,false),
+              ('08 year lower bound','0001-01-01',true,true),
+              ('09 year upper bound','9999-12-31',true,true),
+              ('10 year zero','0000-01-01',false,false),
+              ('11 year overflow','10000-01-01',false,false),
+              ('12 proleptic Gregorian','1582-10-10',true,true),
+              ('13 leap century','2000-02-29',true,true),
+              ('14 leap year','2024-02-29',true,true),
+              ('15 nonleap century 1900','1900-02-29',false,false),
+              ('16 nonleap century 2100','2100-02-29',false,false),
+              ('17 nonleap year','2026-02-29',false,false),
+              ('18 February last day','2026-02-28',true,true),
+              ('19 leap February overflow','2024-02-30',false,false),
+              ('20 April last day','2026-04-30',true,true),
+              ('21 April overflow','2026-04-31',false,false),
+              ('22 May last day','2026-05-31',true,true),
+              ('23 May overflow','2026-05-32',false,false),
+              ('24 June last day','2026-06-30',true,true),
+              ('25 June overflow','2026-06-31',false,false),
+              ('26 September last day','2026-09-30',true,true),
+              ('27 September overflow','2026-09-31',false,false),
+              ('28 November last day','2026-11-30',true,true),
+              ('29 November overflow','2026-11-31',false,false),
+              ('30 month zero','2026-00-01',false,false),
+              ('31 month overflow','2026-13-01',false,false),
+              ('32 day zero','2026-01-00',false,false),
+              ('33 January overflow','2026-01-32',false,false),
+              ('34 Apia before skipped day','2011-12-29',true,true),
+              ('35 Apia skipped day','2011-12-30',true,false),
+              ('36 Apia after skipped day','2011-12-31',true,true)
+          ) AS cases(label,input_text,wanted_utc,wanted_apia) LOOP
+            r30_input:=r30_case.input_text;
+            r30_wanted:=CASE WHEN r30_context.zone_name='UTC' THEN r30_case.wanted_utc ELSE r30_case.wanted_apia END;
+            r30_actual:=official_v3_jobs_private.civil_date_v1(r30_input);
+            BEGIN
+              IF r30_input IS NULL OR r30_input !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' OR left(r30_input,4)='0000' THEN
+                r30_original:=false;
+              ELSE
+                r30_original_date:=make_date(substring(r30_input,1,4)::integer,substring(r30_input,6,2)::integer,substring(r30_input,9,2)::integer);
+                r30_original:=to_char(r30_original_date,'YYYY-MM-DD')=r30_input;
+              END IF;
+            EXCEPTION WHEN datetime_field_overflow OR invalid_datetime_format THEN r30_original:=false;
+            END;
+            IF r30_actual IS DISTINCT FROM r30_wanted OR r30_original IS DISTINCT FROM r30_wanted
+              OR r30_actual IS DISTINCT FROM r30_original THEN
+              RAISE EXCEPTION 'R30 civil oracle mismatch: %, %, %',r30_context.zone_name,r30_context.style_name,r30_case.label;
+            END IF;
+            r30_calendar_count:=r30_calendar_count+1;
+          END LOOP;
+          FOR r30_case IN SELECT * FROM (VALUES
+              ('01 valid timestamp','2026-11-09T00:00:00.000Z',true,true,'2026-11-09T00:00:00.000Z'),
+              ('02 leap timestamp','2000-02-29T12:34:56.789Z',true,true,'2000-02-29T12:34:56.789Z'),
+              ('03 Apia before skipped day','2011-12-29T12:00:00.000Z',true,true,'2011-12-29T12:00:00.000Z'),
+              ('04 Apia skipped day','2011-12-30T12:00:00.000Z',true,false,'2011-12-30T12:00:00.000Z'),
+              ('05 Apia after skipped day','2011-12-31T12:00:00.000Z',true,true,'2011-12-31T12:00:00.000Z'),
+              ('06 invalid civil date','2026-02-29T00:00:00.000Z',false,false,NULL::text),
+              ('07 malformed timestamp','not-a-time',false,false,NULL::text),
+              ('08 SQL NULL timestamp',NULL::text,false,false,NULL::text)
+          ) AS cases(label,input_text,wanted_utc,wanted_apia,expected_text) LOOP
+            r30_input:=r30_case.input_text;
+            r30_wanted:=CASE WHEN r30_context.zone_name='UTC' THEN r30_case.wanted_utc ELSE r30_case.wanted_apia END;
+            r30_timestamp:=NULL; r30_sqlstate:=NULL; r30_message:=NULL;
+            BEGIN
+              r30_timestamp:=official_v3_jobs_private.timestamp_v1(r30_input);
+            EXCEPTION WHEN OTHERS THEN
+              GET STACKED DIAGNOSTICS r30_sqlstate=RETURNED_SQLSTATE,r30_message=MESSAGE_TEXT;
+            END;
+            IF r30_wanted THEN
+              IF r30_sqlstate IS NOT NULL OR r30_timestamp IS NULL
+                OR to_char(r30_timestamp AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') IS DISTINCT FROM r30_case.expected_text THEN
+                RAISE EXCEPTION 'R30 timestamp acceptance mismatch: %, %, %',r30_context.zone_name,r30_context.style_name,r30_case.label;
+              END IF;
+            ELSIF r30_sqlstate IS DISTINCT FROM 'P7601' OR r30_message IS DISTINCT FROM 'm04 invalid time' THEN
+              RAISE EXCEPTION 'R30 timestamp refusal mismatch: %, %, %, %, %',r30_context.zone_name,r30_context.style_name,r30_case.label,r30_sqlstate,r30_message;
+            END IF;
+            r30_timestamp_count:=r30_timestamp_count+1;
+          END LOOP;
+        END LOOP;
+        IF r30_context_count<>4 OR r30_calendar_count<>144 OR r30_timestamp_count<>32 THEN
+          RAISE EXCEPTION 'R30 fixed oracle cardinality mismatch';
+        END IF;
+        PERFORM set_config('TimeZone',r30_saved_timezone,true);
+        PERFORM set_config('DateStyle',r30_saved_datestyle,true);
+        IF current_setting('TimeZone') IS DISTINCT FROM r30_saved_timezone
+          OR current_setting('DateStyle') IS DISTINCT FROM r30_saved_datestyle THEN
+          RAISE EXCEPTION 'R30 local context restoration mismatch';
+        END IF;
+      END $r30_calendar$`)
+      assert.deepEqual(await f.owner.query("SELECT current_setting('TimeZone') AS timezone, current_setting('DateStyle') AS datestyle"),
+        r30SettingsBefore, 'R30 statement-local timezone and DateStyle restored')
       const empty = { operation: 'queue_read', body: { jobKey: 'research-job:v3:' + 'a'.repeat(64), continuation: null } }
       const before = await f.state(empty.body.jobKey)
       const s1SchemaUsage = await runtime.query(`SELECT has_schema_privilege('postgres','official_v3_intake_private','USAGE')::text AS owner_private,

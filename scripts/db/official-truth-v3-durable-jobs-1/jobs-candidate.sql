@@ -86,8 +86,18 @@ GRANT USAGE ON SCHEMA official_v3_jobs_api TO ot_v3_jobs_caller;
 CREATE FUNCTION official_v3_jobs_private.exact_keys_v1(v jsonb, expected text[]) RETURNS boolean
 LANGUAGE sql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
   SELECT v IS NOT NULL AND expected IS NOT NULL AND jsonb_typeof(v)='object' AND
+    CASE WHEN
+      CASE WHEN cardinality(expected) BETWEEN 0 AND 32 THEN
+        CASE WHEN (SELECT count(*) FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END))=cardinality(expected) THEN
+          (CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END)
+          - (CASE WHEN array_ndims(expected)=1 THEN expected ELSE ARRAY(SELECT k FROM unnest(expected) k) END)='{}'::jsonb
+        ELSE false END
+      ELSE false END
+    THEN expected=expected
+    ELSE
     ARRAY(SELECT k FROM jsonb_object_keys(CASE WHEN jsonb_typeof(v)='object' THEN v ELSE '{}'::jsonb END) k ORDER BY k COLLATE "C")
     = ARRAY(SELECT k FROM unnest(expected) k ORDER BY k COLLATE "C")
+    END
 $$;
 CREATE FUNCTION official_v3_jobs_private.unique_json_v1(v json, d integer) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
@@ -137,39 +147,111 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.canonical_v1(v jsonb,d integer) RETURNS text
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text;
+DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_value numeric; retained_object jsonb; retained_object_canonical text; object_keys text[]; object_values jsonb[]; part_index integer;
+  current_depth integer; child_depth integer; descend_object boolean; pending_positions integer[]; pending_cursor integer;
+  child_keys text[]; child_values jsonb[]; child_parts text[]; child_pending_positions integer[];
+  stack_parts text[]:='{}'; stack_keys text[]:='{}'; stack_values jsonb[]:='{}'; stack_pending integer[]:='{}';
+  frame_lengths integer[]:='{}'; frame_pending_lengths integer[]:='{}'; frame_cursors integer[]:='{}'; stack_level integer:=0;
+  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
-    FOR x IN SELECT * FROM jsonb_each(v) ORDER BY key COLLATE "C" LOOP
-      IF x.key ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      e:=x.value;
-      IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-      CASE jsonb_typeof(e)
-      WHEN 'object' THEN
-        IF retained_object IS NULL THEN
-          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-          retained_object:=e; retained_object_canonical:=child_text;
-        ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
-          child_text:=retained_object_canonical;
-        ELSE
-          child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-          retained_object:=e; retained_object_canonical:=child_text;
-        END IF;
-      WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,d+1);
-      WHEN 'string' THEN
-        s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
-        child_text:=e::text;
-      WHEN 'number' THEN
-        number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
-          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
-      WHEN 'boolean' THEN child_text:=e::text;
-      WHEN 'null' THEN child_text:='null';
-      ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
-      END CASE;
-      parts:=array_append(parts,to_jsonb(x.key)::text||':'||child_text);
-    END LOOP; RETURN '{'||array_to_string(parts,',')||'}';
+    current_depth:=d;
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),
+      array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(
+        CASE WHEN j.key ~ '[^ -~]' OR current_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||
+          CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text
+          WHEN 'null' THEN 'null'
+          ELSE NULL
+          END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO object_keys,object_values,parts FROM jsonb_each(v) j;
+    pending_positions:=array_positions(parts,NULL::text); pending_cursor:=1;
+    LOOP
+      IF pending_cursor<=cardinality(pending_positions) THEN
+        part_index:=pending_positions[pending_cursor];
+        IF object_keys[part_index] ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        e:=object_values[part_index];
+        IF current_depth+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        CASE jsonb_typeof(e)
+        WHEN 'object' THEN
+          IF retained_object IS NULL THEN descend_object:=true;
+          ELSIF (e::text) COLLATE "C" = (retained_object::text) COLLATE "C" THEN
+            child_text:=retained_object_canonical; descend_object:=false;
+          ELSE descend_object:=true;
+          END IF;
+          IF descend_object THEN
+            child_depth:=current_depth+1;
+            IF e IS NULL OR child_depth IS NULL OR child_depth<0 OR child_depth>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+            SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),
+              array_agg(j.value ORDER BY j.key COLLATE "C"),
+              COALESCE(array_agg(
+                CASE WHEN j.key ~ '[^ -~]' OR child_depth+1>24 THEN NULL
+                ELSE to_jsonb(j.key)::text||':'||
+                  CASE jsonb_typeof(j.value)
+                  WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+                  WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+                    AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+                  WHEN 'boolean' THEN j.value::text
+                  WHEN 'null' THEN 'null'
+                  ELSE NULL
+                  END
+                END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+              INTO child_keys,child_values,child_parts FROM jsonb_each(e) j;
+            child_pending_positions:=array_positions(child_parts,NULL::text);
+            IF cardinality(child_pending_positions)=0 THEN
+              child_text:='{'||array_to_string(child_parts,',')||'}';
+              retained_object:=e; retained_object_canonical:=child_text;
+            ELSE
+              frame_lengths[stack_level+1]:=cardinality(parts);
+              frame_pending_lengths[stack_level+1]:=cardinality(pending_positions);
+              frame_cursors[stack_level+1]:=pending_cursor;
+              stack_parts:=stack_parts||parts; stack_keys:=stack_keys||object_keys; stack_values:=stack_values||object_values;
+              stack_pending:=stack_pending||pending_positions;
+              object_keys:=child_keys; object_values:=child_values; parts:=child_parts;
+              pending_positions:=child_pending_positions; pending_cursor:=1;
+              retained_object:=NULL; retained_object_canonical:=NULL;
+              stack_level:=stack_level+1; current_depth:=child_depth;
+              CONTINUE;
+            END IF;
+          END IF;
+        WHEN 'array' THEN child_text:=official_v3_jobs_private.canonical_v1(e,current_depth+1);
+        WHEN 'string' THEN
+          s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+          child_text:=e::text;
+        WHEN 'number' THEN
+          number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+            RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF; child_text:=trunc(number_value)::text;
+        WHEN 'boolean' THEN child_text:=e::text;
+        WHEN 'null' THEN child_text:='null';
+        ELSE RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';
+        END CASE;
+        parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text; pending_cursor:=pending_cursor+1;
+      ELSE
+        child_text:='{'||array_to_string(parts,',')||'}';
+        IF stack_level=0 THEN RETURN child_text; END IF;
+        frame_length:=frame_lengths[stack_level]; pending_length:=frame_pending_lengths[stack_level];
+        parent_length:=cardinality(stack_parts)-frame_length; parent_pending_length:=cardinality(stack_pending)-pending_length;
+        parts:=stack_parts[parent_length+1:parent_length+frame_length];
+        object_keys:=stack_keys[parent_length+1:parent_length+frame_length];
+        object_values:=stack_values[parent_length+1:parent_length+frame_length];
+        pending_positions:=stack_pending[parent_pending_length+1:parent_pending_length+pending_length];
+        pending_cursor:=frame_cursors[stack_level];
+        stack_parts:=stack_parts[1:parent_length]; stack_keys:=stack_keys[1:parent_length]; stack_values:=stack_values[1:parent_length];
+        stack_pending:=stack_pending[1:parent_pending_length];
+        stack_level:=stack_level-1; current_depth:=current_depth-1;
+        part_index:=pending_positions[pending_cursor];
+        retained_object:=object_values[part_index]; retained_object_canonical:=child_text;
+        parts[part_index]:=to_jsonb(object_keys[part_index])::text||':'||child_text; pending_cursor:=pending_cursor+1;
+      END IF;
+    END LOOP;
   WHEN 'array' THEN
     FOR e IN SELECT value FROM jsonb_array_elements(v) LOOP
       IF d+1>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
@@ -217,12 +299,24 @@ BEGIN
 END $$;
 CREATE FUNCTION official_v3_jobs_private.civil_date_v1(t text) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE d date;
+DECLARE d date; year_value integer; month_value integer; day_value integer;
 BEGIN
   IF t IS NULL OR t !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' OR left(t,4)='0000' THEN RETURN false; END IF;
-  d:=make_date(substring(t,1,4)::integer,substring(t,6,2)::integer,substring(t,9,2)::integer);
-  RETURN to_char(d,'YYYY-MM-DD')=t;
-EXCEPTION WHEN datetime_field_overflow OR invalid_datetime_format THEN RETURN false;
+  year_value:=substring(t,1,4)::integer;
+  month_value:=substring(t,6,2)::integer;
+  day_value:=substring(t,9,2)::integer;
+  IF year_value BETWEEN 1 AND 9999 AND month_value BETWEEN 1 AND 12
+    AND day_value BETWEEN 1 AND (CASE WHEN month_value=2 THEN
+      CASE WHEN year_value%4=0 AND (year_value%100<>0 OR year_value%400=0) THEN 29 ELSE 28 END
+      WHEN month_value IN (4,6,9,11) THEN 30 ELSE 31 END) THEN
+    d:=make_date(year_value,month_value,day_value);
+    RETURN to_char(d,'YYYY-MM-DD')=t;
+  END IF;
+  BEGIN
+    d:=make_date(substring(t,1,4)::integer,substring(t,6,2)::integer,substring(t,9,2)::integer);
+    RETURN to_char(d,'YYYY-MM-DD')=t;
+  EXCEPTION WHEN datetime_field_overflow OR invalid_datetime_format THEN RETURN false;
+  END;
 END $$;
 CREATE FUNCTION official_v3_jobs_private.timestamp_v1(t text) RETURNS timestamptz
 LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
@@ -807,7 +901,9 @@ END $$;
 
 CREATE FUNCTION official_v3_jobs_private.assert_history_v1(k text) RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
-DECLARE s official_v3_jobs_private.subjects_v1%ROWTYPE; x record; c jsonb; e jsonb; unresolved text[]; ops integer; starts integer; credit jsonb;
+DECLARE s official_v3_jobs_private.subjects_v1%ROWTYPE; x record; c jsonb; e jsonb; unresolved text[]; ops integer; starts integer; credit jsonb; envelope_canonical text COLLATE "default";
+  validated_jobs jsonb:='{}'::jsonb; validated_job_count integer:=0; validated_job_bytes integer:=0; job_text text COLLATE "C"; job_bytes integer;
+  memo_subject_kind text COLLATE "C"; memo_subject_text text COLLATE "C"; memo_subject_result jsonb; command_identity jsonb;
 BEGIN
   SELECT * INTO s FROM official_v3_jobs_private.subjects_v1 WHERE job_key=k;
   IF NOT FOUND THEN RETURN; END IF;
@@ -817,11 +913,153 @@ BEGIN
   IF ops<>s.operation_count OR starts<>s.start_count OR ops>256 OR starts>64 OR cardinality(unresolved)>1
     OR s.open_attempt IS DISTINCT FROM unresolved[1] THEN RAISE EXCEPTION 'm04 history invariant' USING ERRCODE='P7603'; END IF;
   PERFORM official_v3_jobs_private.job_v1(s.current_job);
+  job_text:=s.current_job::text; job_bytes:=octet_length(job_text);
+  IF job_bytes<=1048576 THEN
+    validated_jobs:=jsonb_build_object(job_text,true); validated_job_count:=1; validated_job_bytes:=job_bytes;
+  END IF;
   FOR x IN SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE job_key=k LOOP
-    c:=official_v3_jobs_private.command_v1(x.command_text::jsonb); e:=x.envelope_text::jsonb;
-    IF c->>'commandText'<>x.command_text OR c->>'commandKey'<>x.command_key OR c->>'operationId'<>x.operation_id OR c->>'jobKey'<>k
-      OR official_v3_jobs_private.canonical_v1(e,0)<>x.envelope_text OR e#>>'{audit,reference}'<>x.audit_reference THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
-    PERFORM official_v3_jobs_private.transition_v1(c->'value',e->'expected',e);
+    command_identity:=NULL;
+    DECLARE v jsonb:=x.command_text::jsonb;
+      a text COLLATE "default":=v->>'action'; k text COLLATE "default":=v->>'kind'; i jsonb:=v->'input'; identity jsonb; jkey text COLLATE "default"; f jsonb; t text COLLATE "default";
+      subject_input jsonb; subject_input_text text COLLATE "C"; subject_bytes integer;
+    BEGIN
+      IF v IS NULL THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
+      t:=official_v3_jobs_private.canonical_v1(v,0);
+      IF octet_length(t)>65536
+        OR official_v3_jobs_private.exact_keys_v1(v,CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) IS NOT TRUE
+        OR (a IN ('enqueue','claim','complete','fail')) IS NOT TRUE OR (i->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
+      IF a='enqueue' THEN
+        IF k='rule_research' THEN
+          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+        ELSIF k='combination_discovery' THEN
+          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+        ELSE RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+        IF (i->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(i->'attemptLimit') IS DISTINCT FROM 'number'
+          OR (i->>'attemptLimit' ~ '^[1-9][0-9]?$') IS NOT TRUE OR (i->>'attemptLimit')::integer NOT BETWEEN 1 AND 16 THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+        subject_input:=i-'operationId'-'jobId'-'attemptLimit'; subject_input_text:=subject_input::text;
+        IF memo_subject_kind COLLATE "C" = k COLLATE "C" AND memo_subject_text COLLATE "C" = subject_input_text COLLATE "C" THEN
+          identity:=memo_subject_result;
+        ELSE
+          identity:=official_v3_jobs_private.subject_v1(k,subject_input);
+          subject_bytes:=octet_length(k)+octet_length(subject_input_text);
+          IF subject_bytes<=1048576 AND octet_length(identity::text)<=1048576-subject_bytes THEN
+            memo_subject_kind:=k; memo_subject_text:=subject_input_text; memo_subject_result:=identity;
+          END IF;
+        END IF;
+        jkey:=identity->>'jobKey';
+      ELSE
+        jkey:=i->>'jobKey';
+        IF (jkey ~ '^(research-job|combination-discovery-job):v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid locator' USING ERRCODE='P7601'; END IF;
+        IF a='claim' THEN
+          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) IS NOT TRUE
+            OR (i->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(i->'leaseMilliseconds') IS DISTINCT FROM 'number'
+            OR (i->>'leaseMilliseconds' ~ '^[1-9][0-9]{0,5}$') IS NOT TRUE OR (i->>'leaseMilliseconds')::integer>900000 THEN RAISE EXCEPTION 'm04 invalid claim' USING ERRCODE='P7601'; END IF;
+        ELSE
+          f:=i->'fence';
+          IF official_v3_jobs_private.exact_keys_v1(f,ARRAY['jobId','revision','leaseId','generation']) IS NOT TRUE
+            OR (f->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE OR (f->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE
+            OR jsonb_typeof(f->'revision') IS DISTINCT FROM 'number' OR (f->>'revision' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (f->>'revision')::numeric>2147483647
+            OR jsonb_typeof(f->'generation') IS DISTINCT FROM 'number' OR (f->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (f->>'generation')::numeric>2147483647 THEN RAISE EXCEPTION 'm04 invalid fence' USING ERRCODE='P7601'; END IF;
+          IF a='complete' THEN
+            IF (k IN ('rule_research','combination_discovery')) IS NOT TRUE OR (k='rule_research')<>(jkey LIKE 'research-job:%')
+              OR official_v3_jobs_private.exact_keys_v1(i,CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) IS NOT TRUE
+              OR (COALESCE(i->>'decisionRef',i->>'discoveryRef') ~ CASE WHEN k='rule_research' THEN '^source-decision:v3:[a-f0-9]{64}$' ELSE '^combination-discovery-result:v3:[a-f0-9]{64}$' END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid completion' USING ERRCODE='P7601'; END IF;
+          ELSE
+            IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','fence','reason']) IS NOT TRUE
+              OR (i->>'reason' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid failure' USING ERRCODE='P7601'; END IF;
+          END IF;
+        END IF;
+        k:=CASE WHEN jkey LIKE 'research-job:%' THEN 'rule_research' ELSE 'combination_discovery' END;
+      END IF;
+      c:=jsonb_build_object('value',v,'commandText',t,'commandKey','queue-command:v3:'||encode(sha256(convert_to(t,'UTF8')),'hex'),
+        'operationId',i->'operationId','jobKey',jkey,'subjectText',identity->'subjectText','action',a,'kind',k);
+      command_identity:=identity;
+    END;
+    e:=x.envelope_text::jsonb;
+    IF c->>'commandText'<>x.command_text OR c->>'commandKey'<>x.command_key OR c->>'operationId'<>x.operation_id OR c->>'jobKey'<>k THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
+    envelope_canonical:=official_v3_jobs_private.canonical_v1(e,0);
+    IF envelope_canonical<>x.envelope_text OR e#>>'{audit,reference}'<>x.audit_reference THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
+    DECLARE command jsonb:=c->'value'; current_record jsonb:=e->'expected'; commit jsonb:=e;
+      i jsonb:=command->'input'; expected jsonb; n jsonb; identity jsonb;
+      a jsonb:=commit->'audit'; f jsonb:=i->'fence'; kind text COLLATE "default"; action text COLLATE "default":=command->>'action'; at_time timestamptz; end_time timestamptz;
+      observed text COLLATE "default":=a->>'observedAt'; rev integer; delay_ms integer; result_key text COLLATE "default";
+    BEGIN
+      IF official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) IS NOT TRUE
+        OR octet_length(envelope_canonical)>196608
+        OR official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) IS NOT TRUE
+        OR commit->'operationId' IS DISTINCT FROM c->'operationId' OR commit->'commandKey' IS DISTINCT FROM c->'commandKey'
+        OR commit->'jobKey' IS DISTINCT FROM c->'jobKey' OR commit->'expected' IS DISTINCT FROM current_record THEN RAISE EXCEPTION 'm04 invalid transition' USING ERRCODE='P7601'; END IF;
+      at_time:=official_v3_jobs_private.timestamp_v1(observed); end_time:=at_time+interval '5 seconds';
+      IF current_record IS DISTINCT FROM 'null'::jsonb THEN
+        job_text:=current_record::text;
+        IF job_text IS NULL OR (validated_jobs ? job_text) IS NOT TRUE THEN
+          expected:=official_v3_jobs_private.job_v1(current_record);
+          job_bytes:=octet_length(job_text);
+          IF validated_job_count<256 AND job_bytes<=1048576-validated_job_bytes THEN
+            validated_jobs:=validated_jobs||jsonb_build_object(job_text,true);
+            validated_job_count:=validated_job_count+1; validated_job_bytes:=validated_job_bytes+job_bytes;
+          END IF;
+        ELSE expected:=current_record;
+        END IF;
+        IF COALESCE(expected->'jobKey',expected#>'{identity,jobKey}') IS DISTINCT FROM c->'jobKey' OR expected->>'updatedAt'>observed THEN RAISE EXCEPTION 'm04 invalid prior' USING ERRCODE='P7601'; END IF;
+      END IF;
+      rev:=COALESCE((expected->>'revision')::integer,0)+1;
+      IF action='enqueue' THEN
+        IF expected->>'state' IN ('queued','leased','backoff') THEN n:=expected; kind:='deduplicated';
+        ELSE
+          IF expected->'jobId'=i->'jobId' THEN RAISE EXCEPTION 'm04 repeated cycle' USING ERRCODE='P7601'; END IF;
+          n:=jsonb_build_object('schema',3,'jobId',i->'jobId','operationId',i->'operationId','revision',rev,'predecessorRevision',expected->'revision',
+            'state','queued','createdAt',observed,'updatedAt',observed,'attempt',0,'attemptLimit',i->'attemptLimit','lease',NULL,'nextAttemptAt',NULL,'lastFailure',NULL);
+          identity:=command_identity;
+          IF command->>'kind'='rule_research' THEN n:=n||jsonb_build_object('kind','research_job_record','jobKey',identity->'jobKey',
+            'context',i->'context','contextKey',identity->'contextKey','research',identity->'research','method',i->'method','resultDecisionRef',NULL);
+          ELSE n:=n||jsonb_build_object('kind','combination_discovery_job_record','identity',(i-'operationId'-'jobId'-'attemptLimit')||jsonb_build_object('kind','combination_discovery','jobKey',identity->'jobKey'),'resultDiscoveryRef',NULL); END IF;
+          kind:='enqueued';
+        END IF;
+      ELSIF action='claim' THEN
+        IF expected IS NULL OR expected->>'state' NOT IN ('queued','leased','backoff')
+          OR (expected->>'state'='backoff' AND expected->>'nextAttemptAt'>observed)
+          OR (expected->>'state'='leased' AND expected#>>'{lease,expiresAt}'>observed) THEN RAISE EXCEPTION 'm04 not due' USING ERRCODE='P7601'; END IF;
+        n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'nextAttemptAt',NULL);
+        IF (expected->>'attempt')::integer>=(expected->>'attemptLimit')::integer THEN
+          n:=n||jsonb_build_object('state','exhausted','lease',NULL,'lastFailure',COALESCE(NULLIF(expected->'lastFailure','null'::jsonb),'"verification_unavailable"'::jsonb)); kind:='exhausted';
+        ELSE
+          n:=n||jsonb_build_object('state','leased','attempt',(expected->>'attempt')::integer+1,'lease',jsonb_build_object('leaseId',i->'leaseId','generation',rev,
+            'acquiredAt',observed,'expiresAt',to_char((at_time+(i->>'leaseMilliseconds')::integer*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')));
+          kind:=CASE WHEN expected->>'state'='leased' THEN 'reclaimed' ELSE 'leased' END;
+        END IF;
+      ELSE
+        IF expected IS NULL OR expected->>'state'<>'leased' OR f IS DISTINCT FROM jsonb_build_object('jobId',expected->'jobId','revision',expected->'revision',
+          'leaseId',expected#>'{lease,leaseId}','generation',expected#>'{lease,generation}') OR expected#>>'{lease,expiresAt}'<=observed THEN RAISE EXCEPTION 'm04 obsolete fence' USING ERRCODE='P7601'; END IF;
+        end_time:=least(end_time,official_v3_jobs_private.timestamp_v1(expected#>>'{lease,expiresAt}'));
+        n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'lease',NULL);
+        IF action='complete' THEN
+          result_key:=CASE WHEN expected->>'kind'='research_job_record' THEN 'resultDecisionRef' ELSE 'resultDiscoveryRef' END;
+          n:=n||jsonb_build_object('state','succeeded','lastFailure',NULL,result_key,COALESCE(i->'decisionRef',i->'discoveryRef')); kind:='completed';
+        ELSE
+          IF (expected->>'attempt')::integer=(expected->>'attemptLimit')::integer THEN n:=n||jsonb_build_object('state','exhausted','nextAttemptAt',NULL); kind:='exhausted';
+          ELSE
+            delay_ms:=least(60000,1000*(2^((expected->>'attempt')::integer-1))::integer);
+            n:=n||jsonb_build_object('state','backoff','nextAttemptAt',to_char((at_time+delay_ms*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')); kind:='backoff';
+          END IF;
+          n:=n||jsonb_build_object('lastFailure',i->'reason');
+        END IF;
+      END IF;
+      IF kind IS DISTINCT FROM 'deduplicated' THEN
+        job_text:=n::text;
+        IF job_text IS NULL OR (validated_jobs ? job_text) IS NOT TRUE THEN
+          n:=official_v3_jobs_private.job_v1(n);
+          job_bytes:=octet_length(job_text);
+          IF validated_job_count<256 AND job_bytes<=1048576-validated_job_bytes THEN
+            validated_jobs:=validated_jobs||jsonb_build_object(job_text,true);
+            validated_job_count:=validated_job_count+1; validated_job_bytes:=validated_job_bytes+job_bytes;
+          END IF;
+        END IF;
+      END IF;
+      IF commit->'next' IS DISTINCT FROM n OR official_v3_jobs_private.timestamp_v1(commit->>'notAfter')<>end_time
+        OR a IS DISTINCT FROM jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),
+          'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision') THEN RAISE EXCEPTION 'm04 transition mismatch' USING ERRCODE='P7601'; END IF;
+    END;
   END LOOP;
   FOR x IN SELECT t.*,q.command_text,q.envelope_text,d.kind AS disposition_kind,d.queue_operation_id,r.result
       FROM official_v3_jobs_private.execution_starts_v1 t JOIN official_v3_jobs_private.queue_operations_v1 q ON q.operation_id=t.claim_operation_id
