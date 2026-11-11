@@ -18,7 +18,7 @@ test('Stay22 sucht den expliziten Aufenthalt mit Gesamtpreisen und der Jetnity-Z
   assert.equal(u.searchParams.has('roam'), false)
   assert.equal(u.searchParams.has('min'), false, 'kein unbewiesener Währungs-/Budgetfilter')
   assert.equal(u.searchParams.has('max'), false)
-  assert.deepEqual([...u.searchParams.keys()].sort(), ['aid','campaign','address','checkin','checkout','adults','children','rooms','currency','ljs','unitsystem','priceper','maincolor','fontcolor','hotelscolor','hotelsfontcolor','mapstyle','viewmode','listviewexpand','limit','zoom','hidesearchbar','hidecheckinout','hideguestpicker','hidecurrency','hidemodeswitcher','lat','lng'].sort())
+  assert.deepEqual([...u.searchParams.keys()].sort(), ['aid','campaign','address','checkin','checkout','adults','children','rooms','currency','ljs','unitsystem','priceper','maincolor','fontcolor','hotelscolor','hotelsfontcolor','mapstyle','viewmode','listviewexpand','limit','zoom','hidesearchbar','hidecheckinout','hideguestpicker','hidecurrency','hidemodeswitcher','hidebrandlogo','lat','lng'].sort())
 })
 
 test('Ungültige, fehlende, alte und verkehrte Reisedaten erzeugen niemals Ersatzangebote', () => {

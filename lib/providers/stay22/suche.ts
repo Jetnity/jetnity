@@ -4,7 +4,6 @@ import { landName } from '@/lib/country/darstellung'
 import type { TripStage } from '@/types/trips'
 
 export const STAY22_WAEHRUNGEN = ['CHF', 'EUR', 'USD', 'GBP', 'CAD', 'AUD'] as const
-export const STAY22_DATENSCHUTZ = 'https://www.stay22.com/privacy'
 export const STAY22_SANDBOX = 'allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox'
 
 export type Stay22Filter = { sterne: number; bewertung: number; preis: 'total' | 'nightly' }
@@ -88,7 +87,7 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
     maincolor: '153a33', fontcolor: 'ffffff', hotelscolor: '153a33', hotelsfontcolor: 'ffffff',
     mapstyle: 'light', viewmode: 'all', listviewexpand: 'true', limit: '60', zoom: eingabe.umgebung ? '14' : '12',
     hidesearchbar: 'true', hidecheckinout: 'true', hideguestpicker: 'true', hidecurrency: 'true',
-    hidemodeswitcher: 'true',
+    hidemodeswitcher: 'true', hidebrandlogo: 'true',
   }
   for (const [name, wert] of Object.entries(parameter)) url.searchParams.set(name, wert)
   if (filter.sterne) url.searchParams.set('minstarrating', String(filter.sterne))

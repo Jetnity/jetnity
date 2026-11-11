@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Columns2, List, Loader2, Map, MapPinned, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
 import { stay22Rahmen, type Stay22Phase } from '@/lib/providers/stay22/rahmen'
-import { STAY22_DATENSCHUTZ, stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
+import { stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 
 const ansichten = [
@@ -57,15 +57,13 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
       <button className="stay22-smallbutton" type="button" onClick={schliessen}><X size={16} aria-hidden="true" /> Ausblenden</button>
     </div>
     <dialog ref={dialog} role={gross ? 'dialog' : 'region'} aria-modal={gross || undefined} aria-label="Hotelkarte und Ergebnisliste" className={'stay22-panel' + (gross ? ' stay22-expanded' : '')} onCancel={e => { e.preventDefault(); vergroessern(false) }}>
-      <div className="stay22-toolbar">
-        <div><strong>Entdecke deinen passenden Aufenthalt</strong><p>Budget und Unterkunftsart über das Filtersymbol in der Anzeige wählen.</p></div>
-        <button ref={groesseButton} type="button" className="stay22-smallbutton" onClick={() => vergroessern(!gross)}>{gross ? <Minimize2 size={16} aria-hidden="true" /> : <Maximize2 size={16} aria-hidden="true" />}{gross ? 'Verkleinern' : 'Vergrössern'}</button>
-      </div>
       <div className="stay22-viewbar">
         <div role="group" aria-label="Ergebnisansicht">{ansichten.map(({ wert, text, Icon }) => <button key={wert} type="button" className="stay22-smallbutton" aria-pressed={ansicht === wert} onClick={() => setAnsicht(wert)}><Icon size={16} aria-hidden="true" />{text}</button>)}</div>
-        <span className="stay22-badge">Startansicht: {suche.filter.preis === 'total' ? 'Gesamter Aufenthalt' : 'Pro Nacht'} · {suche.waehrung}</span>
+        <div className="stay22-viewactions">
+          <span className="stay22-badge">Startansicht: {suche.filter.preis === 'total' ? 'Gesamter Aufenthalt' : 'Pro Nacht'} · {suche.waehrung}</span>
+          <button ref={groesseButton} type="button" className="stay22-smallbutton" onClick={() => vergroessern(!gross)}>{gross ? <Minimize2 size={16} aria-hidden="true" /> : <Maximize2 size={16} aria-hidden="true" />}{gross ? 'Verkleinern' : 'Vergrössern'}</button>
+        </div>
       </div>
-      <p className="stay22-viewhint">{suche.kartenorte > 0 ? 'Grüne Reisemarker zeigen deine ausgewählten Orte. ' : ''}Ein Ansichtswechsel lädt die Angebote mit den Suchfiltern von oben neu.</p>
       <div role="status" className="stay22-status">
         {phase === 'laedt' ? <p><Loader2 size={17} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> Stay22 wird geöffnet …</p> : null}
         {phase === 'langsam' ? <p>Die Anzeige braucht länger. Du kannst sie erneut laden oder separat öffnen.</p> : null}
@@ -74,11 +72,9 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
       </div>
       <div ref={host} hidden={blockiert} className="stay22-host" />
       <div className="stay22-recovery">
-        <span>Anzeige leer oder unvollständig?</span>
         <button type="button" className="stay22-smallbutton" onClick={() => setVersuch(v => v + 1)}><RotateCcw size={14} aria-hidden="true" /> Erneut laden</button>
         <a className="stay22-smallbutton" href={url} target="_blank" rel="sponsored noopener noreferrer" referrerPolicy="origin">Suche separat öffnen <ArrowUpRight size={14} aria-hidden="true" /><span className="sr-only">, neuer Tab</span></a>
       </div>
     </dialog>
-    <p className="org-note stay22-disclosure">Angebote und Bilder von Stay22 und seinen Buchungspartnern. Die Buchung öffnet beim angezeigten Anbieter. Preise können sich ändern; Zimmer, Belegung und Bedingungen dort prüfen. Die angezeigte Auswahl umfasst nicht den gesamten Markt. Bei einer Buchung kann Jetnity eine Provision erhalten. <a href={STAY22_DATENSCHUTZ} target="_blank" rel="noopener noreferrer">Datenschutz von Stay22</a></p>
   </section>
 }

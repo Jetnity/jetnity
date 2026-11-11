@@ -9,7 +9,7 @@ import { hotelDaten } from '@/lib/trips/organisieren/katalog'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { hotelPlanOrte, hotelPosition } from '@/lib/trips/hotel-suchkontext'
-import { STAY22_DATENSCHUTZ, STAY22_FILTER, STAY22_WAEHRUNGEN, stay22OrtAusEtappe, stay22Suche, type Stay22Fehlerfeld, type Stay22Filter, type Stay22Ort, type Stay22Suche } from '@/lib/providers/stay22/suche'
+import { STAY22_FILTER, STAY22_WAEHRUNGEN, stay22OrtAusEtappe, stay22Suche, type Stay22Fehlerfeld, type Stay22Filter, type Stay22Ort, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import type { Trip, TripStage } from '@/types/trips'
 import { Feld } from './Suchfelder'
 import Stay22Ergebnisse from './Stay22Ergebnisse'
@@ -130,7 +130,7 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
       setSuchlauf(v => v + 1)
       setErgebnis(result.suche)
     }}>
-      <div className="org-formtop"><h2>Finde deine Unterkunft</h2><span className="stay22-powered">Mit Stay22</span></div>
+      <div className="org-formtop"><h2>Finde deine Unterkunft</h2></div>
       <div className="org-fields">
         <Feld label="Reiseziel"><select name="ort" aria-invalid={fehlerfeld === 'ort'} aria-describedby={fehlerfeld === 'ort' ? `${id}-fehler` : undefined} value={stageId} onChange={e => waehlen(e.target.value)}>
           {reise.stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -140,7 +140,7 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
         <Feld label="Abreise"><input name="abreise" aria-invalid={fehlerfeld === 'abreise'} aria-describedby={fehlerfeld === 'abreise' ? `${id}-fehler` : undefined} required type="date" min={d.anreise || heutigesDatum()} value={d.abreise} onChange={e => patch({ abreise: e.target.value })} /></Feld>
         <button type="button" name="gaeste" aria-describedby={fehlerfeld === 'gaeste' ? `${id}-fehler` : undefined} className="org-field stay22-guestbutton" aria-expanded={gaesteOffen} aria-controls={`${id}-gaeste`} onClick={() => setGaesteOffen(v => !v)}><span>Gäste</span><b>{personen} <ChevronDown size={15} aria-hidden="true" /></b></button>
         <Feld label="Zimmer"><select value={d.zimmer} onChange={e => patch({ zimmer: Number(e.target.value) })}>{Array.from({ length: Math.min(d.erwachsene, 8) }, (_, i) => <option key={i} value={i + 1}>{i + 1} Zimmer</option>)}</select></Feld>
-        <button type="submit" className="org-go" aria-describedby={`${id}-hinweis`} disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> Suchen</button>
+        <button type="submit" className="org-go" disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> Suchen</button>
       </div>
       {stageId === 'anderer-ort' ? <div className="stay22-other-place"><label htmlFor={`${id}-ort`}>Stadt, Insel oder Region</label><OrtSuche rolle="ziel" variante="field" value={andererOrt} inputId={`${id}-ort`} ungueltig={fehlerfeld === 'ort' || Boolean(ortFehler)} describedBy={fehlerfeld === 'ort' ? `${id}-fehler` : ortFehler ? `${id}-ortfehler` : undefined} placeholder="Wohin möchtest du reisen?" inputClassName="stay22-placeinput" onChange={ortWaehlen} /><p>Diese Suche ändert deine Reiseetappen nicht.</p>{ortLaedt ? <p role="status">Reiseziel wird bestätigt …</p> : null}{ortFehler ? <p role="alert" id={`${id}-ortfehler`}>{ortFehler}</p> : null}</div> : null}
       {gaesteOffen ? <fieldset id={`${id}-gaeste`} className="stay22-guests"><legend>Belegung für die Suche</legend>
@@ -167,7 +167,6 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
         <label>Währung<select name="waehrung" value={d.waehrung} onChange={e => patch({ waehrung: e.target.value })}>{STAY22_WAEHRUNGEN.map(w => <option key={w}>{w}</option>)}</select></label>
         {d.filter.sterne > 0 || d.filter.bewertung > 0 ? <button type="button" className="stay22-smallbutton" onClick={() => patch({ filter: { ...d.filter, sterne: 0, bewertung: 0 } })}>Filter zurücksetzen</button> : null}
       </div>
-      <div className="stay22-formfoot"><p id={`${id}-hinweis`}>Mit „Suchen“ lädt Stay22 Angebote hier in Jetnity. Suchort, Termine, Belegung und gegebenenfalls Kartenorte sowie Verbindungsdaten werden übermittelt. <a href={STAY22_DATENSCHUTZ} target="_blank" rel="noopener noreferrer">Datenschutz</a></p></div>
       {fehler ? <p role="alert" id={`${id}-fehler`} className="stay22-error">{fehler}</p> : null}
     </form>
     {ergebnis ? <Stay22Ergebnisse key={suchlauf} suche={ergebnis} schliessen={() => setErgebnis(null)} /> : <div className="stay22-intro">
