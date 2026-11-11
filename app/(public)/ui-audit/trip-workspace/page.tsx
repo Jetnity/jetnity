@@ -10,6 +10,7 @@ import '@/components/trips/reiseplan/kartenauswahl.css'
 import 'leaflet/dist/leaflet.css'
 import '@/components/trips/organisieren/omio/vergleich.css'
 import '@/components/trips/organisieren/organisieren.css'
+import '@/components/trips/organisieren/hotelsuche.css'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 

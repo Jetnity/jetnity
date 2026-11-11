@@ -80,3 +80,11 @@ Zusätzlich im bestehenden sichtbaren Chrome-Tab mit realen Stay22-Fotos, Preise
 ## Veröffentlichung freigegeben — 11.11.2026
 
 Der Owner hat nach der letzten Vorschau ausdrücklich „ok. fertig und veröffentlichen bitte“ beauftragt. Dies ersetzt den bisherigen Vorschau-Hold für diese Stay22-Integration einschliesslich aller abgenommenen Darstellungsänderungen. Der Stand `474b690` wurde mit dem aktuellen Main `fbcb72e` konfliktfrei zusammengeführt. Die separate M04-Arbeit wird nicht verändert. Keine Migration, neue Secrets, Vertragsänderung oder Zahlung erforderlich. Veröffentlichung bleibt bis zu den Prüfungen des integrierten Standes und tatsächlicher Production-Verifikation offen; die Freigabe allein ist kein Live-Nachweis.
+
+## Integrierte Prüfung und CSS-Korrektur — 11.11.2026
+
+PR #1185, erster Head `03a1280`: CI #4100 / Run 42947919062 fehlgeschlagen. Neben dem bereits auf Main beobachteten M04-Zeitlimit (240 Sekunden, 24/31 Gruppen) verursachte der direkte CSS-Import in `Hotelsuche.tsx` fünf weitere Testfehler beim Import des Workspace in Node. Die Gestaltung wird jetzt wie die bestehenden Reiseplan- und Organisationsstile im Reise-Layout sowie auf der isolierten Audit-Seite eingebunden. Keine Testausschlüsse, Loader-Ausnahmen oder Änderungen an M04.
+
+Alle fünf betroffenen Testdateien danach vollständig erfolgreich: 97/97 Tests, keine Skips. Gezielter ESLint und neuer Production-Build erfolgreich. Alle vier vollständigen Stay22-Browserabläufe (Desktop Chromium, Mobile Chromium, iPhone WebKit, 320 × 568) gegen diesen Build erfolgreich, einschliesslich Kartenhöhe, Vergrösserung, Fokus, Etappen-/Ortsübergabe und unverändertem Reisegraphen. CSS-Inhalt und freigegebene Gestaltung bleiben unverändert.
+
+Die Vercel-Vorschau des ersten Heads wurde erfolgreich gebaut. Der Test einer synthetischen Gastreise dort scheiterte jedoch an fehlenden bestehenden Supabase-Browser-Umgebungsvariablen der Preview-Umgebung. Das ist kein erfolgreicher Remote-Funktionstest; keine Production-Zugangsdaten wurden kopiert. Vollständige CI des korrigierten Heads, Merge und tatsächliche Production-Verifikation bleiben offen.

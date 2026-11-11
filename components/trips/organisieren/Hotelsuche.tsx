@@ -14,7 +14,6 @@ import type { Trip, TripStage } from '@/types/trips'
 import { Feld } from './Suchfelder'
 import Stay22Ergebnisse from './Stay22Ergebnisse'
 import useHotelUmgebung from './useHotelUmgebung'
-import './hotelsuche.css'
 
 type Entwurf = {
   anreise: string; abreise: string; erwachsene: number; kinder: number; zimmer: number; waehrung: string
