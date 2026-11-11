@@ -48,3 +48,10 @@ Getrennte Hosting-Konfiguration und offene Providergrenzen: [Widget-README](../w
 25 gezielte Tests bestanden, Typecheck und Production-Build erfolgreich. ESLint ohne Fehler; bestehende Repository-Warnungen bleiben ausserhalb dieser Änderung. Repository-Prüfungen für tote Dateien, Exporte, Abhängigkeiten, API-Schutz und Schemabezug bestanden; bestehende lokale Schemahinweise unverändert. `git diff --check` sauber.
 
 Am finalen Build erneut echte Desktop- und Mobilangebote geladen: Wien liefert Vienna International Airport VIE; eine identische erneute Suche erstellt einen neuen Rahmen. Vergrössern/Verkleinern und Escape erhalten dasselbe iframe, sperren/entsperren das Hintergrundscrollen und bleiben in Jetnity. Mobil 390 px ohne horizontalen Überlauf, vergrösserter Dialog passt in den verfügbaren Bildschirm. Screenshots liegen ausserhalb des Repositorys unter `work/travelpayouts-preview-final/`.
+
+
+## Textbereinigung nach Owner-Rückmeldung — 11.11.2026
+
+Die drei ausdrücklich markierten Zusatztexte aus Suchmaske und Ergebnisfuss entfernt, einschliesslich nicht mehr verwendeter Stile und Icon-Import. Anbieterrahmen, Suchparameter und bestehende Einwilligungssteuerung unverändert. Chrome-Nachweis: alle drei Texte fehlen, echte Angebote laden, Dialog-Vergrösserung funktioniert. Build, Typecheck und gezielter ESLint erfolgreich. Lokale Vorschau, kein öffentlicher Rollout.
+
+Präzisierung zum Anbieterfeld: In den beobachteten Suchanfragen stehen gleichzeitig `citizenship: RU`, `market_code: CH`, CHF und Deutsch. Der Wert stammt aus dem Anbieter-Widget und nicht aus Jetnity-Reisendenprofilen. Auswirkungen auf Tarife oder Anbieter sind nicht nachgewiesen; dies ist ein offener Prüfpunkt, keine belegte Fehlfunktion.

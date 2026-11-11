@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
-  ArrowRight,
   Loader2,
   Maximize2,
   Minimize2,
@@ -134,13 +133,6 @@ export default function Flugergebnisse({ suche }: { suche: FlugSuchauftrag }) {
         </div>
       )}
       <div ref={host} className="flug-frame-host" />
-      <footer className="flug-results-footer">
-        <span>
-          Angebote von Travelpayouts · Buchung beim gewählten Anbieter{' '}
-          <ArrowRight size={14} aria-hidden="true" />
-        </span>
-        <span>Partnerlinks · Jetnity kann eine Provision erhalten.</span>
-      </footer>
     </dialog>
   )
 }

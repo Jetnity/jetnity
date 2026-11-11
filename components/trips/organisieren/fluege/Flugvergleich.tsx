@@ -263,12 +263,6 @@ export default function Flugvergleich({
             <Check size={15} aria-hidden="true" /> Ergebnisse direkt hier
             vergleichen
           </span>
-          <span>
-            Mit der Suche wird Travelpayouts geladen.{' '}
-            <a href="/datenschutz" target="_blank" rel="noopener noreferrer">
-              Datenschutz
-            </a>
-          </span>
         </div>
         {fehler && (
           <p className="flug-error" role="alert">

@@ -215,10 +215,6 @@
   gap: 7px;
   align-items: center;
 }
-.flug-form-foot a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .flug-error {
   background: #fff4ec;
   border-radius: 10px;
@@ -293,21 +289,6 @@
   height: clamp(650px, 78svh, 950px);
   border: 0;
   background: #f5f7f4;
-}
-.flug-results-footer {
-  padding: 14px 24px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 11px;
-  color: #587168;
-  border-top: 1px solid var(--flug-line);
-}
-.flug-results-footer > span {
-  display: flex;
-  gap: 5px;
-  align-items: center;
 }
 .flug-status {
   display: flex;
@@ -492,10 +473,6 @@
     height: 75svh;
     min-height: 580px;
   }
-  .flug-results-footer {
-    padding: 12px 15px;
-    line-height: 1.5;
-  }
   .flug-start h3 {
     font-size: 20px;
   }
@@ -525,7 +502,6 @@
 [data-workspace-theme='green'] .flug-openjaw p,
 [data-workspace-theme='green'] .flug-form-foot,
 [data-workspace-theme='green'] .flug-results-head p:last-child,
-[data-workspace-theme='green'] .flug-results-footer,
 [data-workspace-theme='green'] .flug-start p,
 [data-workspace-theme='green'] .flug-benefits {
   color: #aac6b8;
