@@ -152,48 +152,51 @@ DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_v
   child_keys text[]; child_values jsonb[]; child_parts text[]; child_pending_positions integer[];
   stack_parts text[]:='{}'; stack_keys text[]:='{}'; stack_values jsonb[]:='{}'; stack_pending integer[]:='{}';
   frame_lengths integer[]:='{}'; frame_pending_lengths integer[]:='{}'; frame_cursors integer[]:='{}'; stack_level integer:=0;
-  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer; fast_text text;
+  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer; fast_text text; fast_residue text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   IF jsonb_typeof(v)='object' THEN
+    IF v='{}'::jsonb THEN RETURN '{}'; END IF;
     fast_text:=v::text;
-    IF octet_length(fast_text)<=8192 THEN
-      IF strpos(substring(fast_text,2) COLLATE "C",'{')>0 THEN
-        WITH RECURSIVE walk_nodes(node,member_key,node_path,node_depth,node_type) AS (
-          SELECT v,NULL::text,ARRAY[]::text[],d,'object'::text
-          UNION ALL
-          SELECT j.value,j.key,array_append(w.node_path,j.key),w.node_depth+1,jsonb_typeof(j.value)
-            FROM walk_nodes w CROSS JOIN LATERAL jsonb_each(
-              CASE WHEN w.node_type='object' AND w.node_depth<24 THEN w.node ELSE '{}'::jsonb END) j
-            WHERE w.node_type='object' AND w.node_depth<24
-        ), encoded_nodes AS MATERIALIZED (
-          SELECT w.node_path,w.member_key,w.node_type='object' AS is_object,
-            CASE WHEN w.node_depth>24 OR (w.member_key IS NOT NULL AND w.member_key ~ '[^ -~]') THEN NULL
-            ELSE CASE w.node_type
-              WHEN 'object' THEN CASE WHEN w.node_depth=24 AND w.node<>'{}'::jsonb THEN NULL ELSE '{' END
-              WHEN 'string' THEN CASE WHEN (w.node#>>'{}') ~ '[^ -~]' THEN NULL ELSE w.node::text END
-              WHEN 'number' THEN CASE WHEN w.node::numeric=trunc(w.node::numeric)
-                AND w.node::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(w.node::numeric)::text END
-              WHEN 'boolean' THEN w.node::text
-              WHEN 'null' THEN 'null'
-              ELSE NULL
-              END
-            END AS piece
-            FROM walk_nodes w
-        ), token_rows AS (
-          SELECT e.node_path AS token_path,e.member_key,CASE WHEN e.is_object THEN 1 ELSE 2 END AS token_kind,e.piece FROM encoded_nodes e
-          UNION ALL
-          SELECT array_append(e.node_path,NULL::text),NULL::text,3,'}' FROM encoded_nodes e WHERE e.is_object
-        ), ordered_tokens AS (
-          SELECT t.token_path,t.member_key,t.piece,lag(t.token_kind) OVER (ORDER BY t.token_path COLLATE "C") AS previous_kind FROM token_rows t
-        )
-        SELECT CASE WHEN bool_and(o.piece IS NOT NULL) IS TRUE THEN string_agg(
-          (CASE WHEN o.member_key IS NOT NULL THEN CASE WHEN o.previous_kind=1 THEN '' ELSE ',' END||to_jsonb(o.member_key)::text||':' ELSE '' END)||o.piece,
-          '' ORDER BY o.token_path COLLATE "C") END INTO fast_text FROM ordered_tokens o;
-        IF fast_text IS NOT NULL THEN RETURN fast_text; END IF;
+    IF d<24 AND octet_length(fast_text)<=8192 THEN
+      IF strpos(fast_text COLLATE "C",chr(92))=0 THEN
+        IF fast_text !~ '[^ -~]' THEN
+          fast_residue:=regexp_replace(fast_text COLLATE "C",'"[^"]*"','','g');
+          IF strpos(fast_residue COLLATE "C",'.')=0
+            AND fast_residue COLLATE "C" !~ '[0-9]{16}'
+            AND strpos(fast_residue COLLATE "C",'[')=0
+            AND strpos(fast_residue COLLATE "C",'-0')=0
+            AND strpos(fast_text COLLATE "C",'{,')=0 THEN
+            IF strpos(substring(fast_residue,2) COLLATE "C",'{')=0 THEN
+              SELECT '{'||string_agg('"'||j.key||'":'||j.value::text,',' ORDER BY j.key COLLATE "C")||'}'
+                INTO fast_text FROM jsonb_each(v) j;
+            ELSE
+              WITH RECURSIVE walk_nodes(node,member_key,node_path,node_depth,node_type) AS (
+                SELECT v,NULL::text,ARRAY[]::text[],d,'object'::text
+                UNION ALL
+                SELECT j.value,j.key,array_append(w.node_path,j.key),w.node_depth+1,jsonb_typeof(j.value)
+                  FROM walk_nodes w CROSS JOIN LATERAL jsonb_each(
+                    CASE WHEN w.node_type='object' AND w.node_depth<24 THEN w.node ELSE '{}'::jsonb END) j
+                  WHERE w.node_type='object' AND w.node_depth<24
+              ), token_rows AS (
+                SELECT w.node_path AS token_path,
+                  CASE WHEN w.node_depth<24 THEN true ELSE w.node_type<>'object' OR w.node='{}'::jsonb END AS is_valid,
+                  (CASE WHEN w.member_key IS NULL THEN '' ELSE ',"'||w.member_key||'":' END)||
+                    CASE WHEN w.node_type='object' THEN '{' ELSE w.node::text END AS piece
+                  FROM walk_nodes w
+                UNION ALL
+                SELECT array_append(w.node_path,NULL::text),true,'}' FROM walk_nodes w WHERE w.node_type='object'
+              )
+              SELECT CASE WHEN bool_and(t.is_valid) IS TRUE THEN replace(
+                string_agg(t.piece,'' ORDER BY t.token_path COLLATE "C") COLLATE "C",'{,','{') END
+                INTO fast_text FROM token_rows t;
+            END IF;
+            IF fast_text IS NOT NULL THEN RETURN fast_text; END IF;
+          END IF;
+        END IF;
       END IF;
     END IF;
-    fast_text:=NULL;
+    fast_text:=NULL; fast_residue:=NULL;
   END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN

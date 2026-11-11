@@ -499,201 +499,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   }
   let phase = 'initial_setup', primaryPhase: string | null = null
   const setPhase = (value: string) => { assert.match(value, /^[A-Za-z0-9_:/-]{1,80}$/); phase = value }
-  // R37 diagnostic-only: one existing runtime, bounded completed-prefix observations.
-  const functionProfilePrefix = 'M04_FUNCTION_PROFILE_RECEIPT '
-  const functionProfileCheckpoints = ['before_ledger', 'ledger_64', 'ledger_128', 'ledger_192', 'ledger_254', 'after_ledger',
-    'before_cycles', 'cycles_16', 'cycles_32', 'cycles_48', 'cycles_64', 'after_cycles'] as const
-  const functionProfileIdentities = [
-    'exact_keys_v1(jsonb,text[])', 'unique_json_v1(json,integer)', 'nodes_v1(jsonb,integer,integer,integer)',
-    'canonical_v1(jsonb,integer)', 'wire_v1(text)', 'civil_date_v1(text)', 'timestamp_v1(text)',
-    'predicate_v1(jsonb)', 'expression_v1(jsonb,boolean,integer)', 'context_v1(jsonb)',
-    'subject_v1(text,jsonb)', 'job_v1(jsonb)', 'command_v1(jsonb)', 'reference_v1(jsonb)',
-    'transition_v1(jsonb,jsonb,jsonb)', 'immutable_v1()', 'assert_catalog_v1()', 'assert_history_v1(text)',
-    'consume_s1_v1(jsonb,jsonb,jsonb,text)', 'tx_queue_read_v1(jsonb,jsonb,integer,integer,timestamptz)',
-    'tx_queue_confirm_v1(jsonb,jsonb,integer,integer,timestamptz)', 'tx_queue_cas_v1(jsonb,jsonb,integer,integer,timestamptz)',
-    'tx_execution_read_v1(jsonb,jsonb,integer,integer,timestamptz)', 'tx_execution_start_v1(jsonb,jsonb,integer,integer,timestamptz)',
-    'tx_execution_prepare_v1(jsonb,jsonb,integer,integer,timestamptz)', 's1_read_v1(jsonb,text,integer)',
-    's1_shape_v1(jsonb,text)', 'ma1_require_v1(text,integer,text,text,integer)',
-  ].map(value => 'official_v3_jobs_private.' + value)
-    .concat(['official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)']).sort()
-  const functionProfileIdentityParameter = '{' + functionProfileIdentities.map(value => '"' + value + '"').join(',') + '}'
-  const functionProfileInventorySql =
-    "SELECT i.schema_name,i.function_name,i.identity,s.calls::text AS calls,s.total_time::text AS total_time_ms,s.self_time::text AS self_time_ms\n" +
-    "FROM (SELECT p.oid,n.nspname AS schema_name,p.proname AS function_name,n.nspname||'.'||p.proname||'('||\n" +
-    "pg_catalog.replace(pg_catalog.replace(pg_catalog.oidvectortypes(p.proargtypes),'timestamp with time zone','timestamptz'),' ','')||')' AS identity\n" +
-    "FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace\n" +
-    "WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api')) i\n" +
-    "LEFT JOIN pg_catalog.pg_stat_user_functions s ON s.funcid=i.oid\n" +
-    "WHERE i.identity=ANY($1::text[]) ORDER BY i.identity COLLATE \"C\""
-  const functionProfileConfigSql =
-    "SELECT s.setconfig::text AS config FROM pg_catalog.pg_db_role_setting s\n" +
-    "JOIN pg_catalog.pg_roles r ON r.oid=s.setrole JOIN pg_catalog.pg_database d ON d.oid=s.setdatabase\n" +
-    "WHERE r.rolname=$1 AND d.datname=pg_catalog.current_database()"
-  const functionProfileSettingSql = "SELECT pg_catalog.current_setting('track_functions') AS tracking"
-  const functionProfileSetup = {
-    started: false, priorConfigAbsent: false, setAttempted: false, setAcknowledged: false, connectionCreated: false,
-    resetAttempted: false, resetAcknowledged: false, restorationVerified: false, restorationSkippedAfterAbort: false,
-    runtimeIdentityVerified: false, existingSettingsVerified: false, completed: false,
-    ownerTrackingBefore: null as string | null, observerTrackingBefore: null as string | null,
-    runtimeTracking: null as string | null, milliseconds: 0,
-    failure: null as ReturnType<typeof nativeFailure> | null,
-  }
-  const functionProfileQueries = { started: 0, completed: 0, limit: 45 }
-  type FunctionProfileSnapshot = Readonly<{
-    checkpoint: string; phase: string; elapsedMilliseconds: number; queryMilliseconds: number; captureMillisecondsBeforeSerialization: number;
-    quota: Readonly<{ currentGroup: string; boundary: string; ledger: ReturnType<typeof newQuotaCounters>; cycles: ReturnType<typeof newQuotaCounters> }>;
-    rows: PgRows;
-  }>
-  const functionProfileSnapshots: FunctionProfileSnapshot[] = []
-  let functionProfileCaptureMilliseconds = 0
-  let functionProfileFailure: Readonly<{ checkpoint: string; error: ReturnType<typeof nativeFailure> }> | null = null
-  const functionProfileElapsed = (at: number) => Math.ceil(performance.now() - at)
-  function functionProfileSafeNumber(value: number, integer = true) {
-    assert.ok(Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER && (!integer || Number.isSafeInteger(value)),
-      'finite nonnegative function profile number')
-  }
-  function validateFunctionProfileRows(rows: PgRows) {
-    assert.equal(rows.length, 29, 'complete fixed M04 function inventory')
-    const identities: string[] = []
-    for (const row of rows) {
-      assert.deepEqual(Object.keys(row).sort(), ['calls', 'function_name', 'identity', 'schema_name', 'self_time_ms', 'total_time_ms'])
-      const schema = row.schema_name, name = row.function_name, identity = row.identity
-      assert.ok(typeof schema === 'string' && schema.length <= 64 && typeof name === 'string' && name.length <= 80 &&
-        typeof identity === 'string' && identity.length <= 200)
-      assert.equal(identity.startsWith(schema + '.' + name + '('), true)
-      identities.push(identity)
-      if (row.calls === null) {
-        assert.equal(row.total_time_ms, null); assert.equal(row.self_time_ms, null)
-      } else {
-        assert.ok(typeof row.calls === 'string' && row.calls.length <= 16 && /^(0|[1-9][0-9]*)$/.test(row.calls))
-        functionProfileSafeNumber(Number(row.calls))
-        for (const field of ['total_time_ms', 'self_time_ms'] as const) {
-          const value = row[field]
-          assert.ok(typeof value === 'string' && value.length <= 32 && /^(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$/.test(value))
-          functionProfileSafeNumber(Number(value), false)
-        }
-      }
-    }
-    assert.deepEqual(identities, functionProfileIdentities, 'unique exact identities in C order')
-  }
-  function serializeFunctionProfile(snapshots: readonly FunctionProfileSnapshot[] = functionProfileSnapshots) {
-    assert.equal(functionProfileIdentities.length, 29); assert.equal(new Set(functionProfileIdentities).size, 29)
-    assert.ok(snapshots.length <= 12)
-    functionProfileSafeNumber(functionProfileSetup.milliseconds); functionProfileSafeNumber(functionProfileCaptureMilliseconds)
-    functionProfileSafeNumber(functionProfileQueries.started); functionProfileSafeNumber(functionProfileQueries.completed)
-    assert.ok(functionProfileQueries.completed <= functionProfileQueries.started && functionProfileQueries.started <= 45)
-    for (const [index, snapshot] of snapshots.entries()) {
-      assert.equal(snapshot.checkpoint, functionProfileCheckpoints[index]); assert.match(snapshot.phase, /^[A-Za-z0-9_:/-]{1,80}$/)
-      functionProfileSafeNumber(snapshot.elapsedMilliseconds); functionProfileSafeNumber(snapshot.queryMilliseconds)
-      functionProfileSafeNumber(snapshot.captureMillisecondsBeforeSerialization)
-      for (const counters of [snapshot.quota.ledger, snapshot.quota.cycles]) {
-        for (const [key, value] of Object.entries(counters)) {
-          if (value === null) assert.ok(key === 'lastStartedIndex' || key === 'lastCompletedIndex')
-          else functionProfileSafeNumber(value)
-        }
-        assert.ok(counters.commandRequestsCompleted <= counters.commandRequestsStarted && counters.fixedCallsCompleted <= counters.fixedCallsStarted &&
-          counters.commandCallsCompleted <= counters.commandCallsStarted && counters.commandCommits <= counters.commandCallsCompleted &&
-          counters.startCallsCompleted <= counters.startCallsStarted && counters.startReservations <= counters.startCallsCompleted)
-      }
-      validateFunctionProfileRows(snapshot.rows)
-    }
-    const serialized = JSON.stringify({
-      schema: 'jetnity.m04.function-profile.v1', diagnosticOnly: true, mergeEligible: false,
-      scope: 'one_existing_jobs_runtime_backend', snapshotLimit: 12, functionCount: 29, maximumUtf8Bytes: 131072,
-      observedThrough: snapshots.length ? snapshots[snapshots.length - 1]!.checkpoint : null, laterOrInterruptedCalls: 'unknown',
-      timingMeaning: 'inclusive total times overlap; not CPU; own SET wrappers and error paths are incomplete',
-      collectionTimingMeaning: 'client setup/capture intervals; excludes final serialization/output and tracking hot-path overhead',
-      setup: functionProfileSetup, queries: functionProfileQueries, captureMilliseconds: functionProfileCaptureMilliseconds,
-      failure: functionProfileFailure, snapshots,
-    })
-    assert.ok(Buffer.byteLength(functionProfilePrefix + serialized, 'utf8') <= 131072, 'whole function profile diagnostic byte bound')
-    return serialized
-  }
-  async function functionProfileQuery(connection: LocalPgConnection, sql: string,
-    parameters: Parameters<LocalPgConnection['query']>[1] = []) {
-    lifetime.check()
-    assert.ok(functionProfileQueries.started < 45, 'finite function profile query count')
-    functionProfileQueries.started++
-    const rows = await connection.query(sql, parameters)
-    functionProfileQueries.completed++
-    return rows
-  }
-  async function connectProfiledRuntime(f: Fixture): Promise<LocalPgConnection> {
-    const at = performance.now()
-    functionProfileSetup.started = true
-    try {
-      const prior = await functionProfileQuery(f.owner, functionProfileConfigSql, text([M04_TEST_LOGIN.jobs]))
-      assert.deepEqual(prior, [], 'fresh jobs login has no database-specific configuration')
-      functionProfileSetup.priorConfigAbsent = true
-      const ownerBefore = await functionProfileQuery(f.owner, functionProfileSettingSql)
-      const observerBefore = await functionProfileQuery(f.observer, functionProfileSettingSql)
-      assert.deepEqual(ownerBefore, [{ tracking: 'none' }]); assert.deepEqual(observerBefore, [{ tracking: 'none' }])
-      functionProfileSetup.ownerTrackingBefore = ownerBefore[0]!.tracking!
-      functionProfileSetup.observerTrackingBefore = observerBefore[0]!.tracking!
-      let runtime: LocalPgConnection | undefined
-      let connectionFailure: Readonly<{ error: unknown }> | undefined, restorationFailure: Readonly<{ error: unknown }> | undefined
-      try {
-        functionProfileSetup.setAttempted = true
-        await functionProfileQuery(f.owner, 'ALTER ROLE ' + M04_TEST_LOGIN.jobs + " IN DATABASE postgres SET track_functions = 'all'")
-        functionProfileSetup.setAcknowledged = true
-        runtime = (await f.connect(M04_TEST_LOGIN.jobs, 'ot_v3_jobs_caller')).connection
-        functionProfileSetup.connectionCreated = true
-      } catch (error) { connectionFailure = { error } }
-      finally {
-        if (functionProfileSetup.setAttempted) {
-          if (parent.aborted || lifetime.signal.aborted) functionProfileSetup.restorationSkippedAfterAbort = true
-          else {
-            try {
-              functionProfileSetup.resetAttempted = true
-              await functionProfileQuery(f.owner, 'ALTER ROLE ' + M04_TEST_LOGIN.jobs + ' IN DATABASE postgres RESET track_functions')
-              functionProfileSetup.resetAcknowledged = true
-              const restored = await functionProfileQuery(f.owner, functionProfileConfigSql, text([M04_TEST_LOGIN.jobs]))
-              assert.deepEqual(restored, prior, 'exact role/database configuration restored')
-              functionProfileSetup.restorationVerified = true
-            } catch (error) { restorationFailure = { error } }
-          }
-        }
-      }
-      if (connectionFailure && restorationFailure) throw new AggregateError([connectionFailure.error, restorationFailure.error], 'M04 profile setup and restoration failed')
-      if (connectionFailure) throw connectionFailure.error
-      if (restorationFailure) throw restorationFailure.error
-      lifetime.check()
-      assert.equal(functionProfileSetup.restorationVerified, true); assert.ok(runtime)
-      const runtimeSetting = await functionProfileQuery(runtime,
-        "SELECT pg_catalog.current_setting('track_functions') AS tracking,session_user::text AS session_user,current_user::text AS current_user")
-      assert.deepEqual(runtimeSetting, [{ tracking: 'all', session_user: M04_TEST_LOGIN.jobs, current_user: 'ot_v3_jobs_caller' }])
-      functionProfileSetup.runtimeTracking = runtimeSetting[0]!.tracking!; functionProfileSetup.runtimeIdentityVerified = true
-      assert.deepEqual(await functionProfileQuery(f.owner, functionProfileSettingSql), ownerBefore)
-      assert.deepEqual(await functionProfileQuery(f.observer, functionProfileSettingSql), observerBefore)
-      functionProfileSetup.existingSettingsVerified = true; functionProfileSetup.completed = true
-      return runtime
-    } catch (error) { functionProfileSetup.failure = nativeFailure(error); throw error }
-    finally { functionProfileSetup.milliseconds = functionProfileElapsed(at) }
-  }
-  async function captureFunctionProfile(checkpoint: string, f: Fixture, runtime: LocalPgConnection) {
-    const at = performance.now()
-    try {
-      assert.equal(functionProfileSetup.completed, true)
-      assert.equal(checkpoint, functionProfileCheckpoints[functionProfileSnapshots.length], 'serial completed-prefix checkpoint')
-      lifetime.check()
-      const queryAt = performance.now()
-      await functionProfileQuery(runtime, 'SELECT pg_catalog.pg_stat_force_next_flush()')
-      await functionProfileQuery(f.observer, 'SELECT pg_catalog.pg_stat_clear_snapshot()')
-      const rows = await functionProfileQuery(f.observer, functionProfileInventorySql, [pgText(functionProfileIdentityParameter)])
-      const queryMilliseconds = functionProfileElapsed(queryAt)
-      validateFunctionProfileRows(rows)
-      const snapshot: FunctionProfileSnapshot = {
-        checkpoint, phase, elapsedMilliseconds: functionProfileElapsed(started), queryMilliseconds,
-        captureMillisecondsBeforeSerialization: functionProfileElapsed(at),
-        quota: { currentGroup: quotaProgress.currentGroup, boundary: quotaProgress.boundary,
-          ledger: { ...quotaProgress.ledger }, cycles: { ...quotaProgress.cycles } },
-        rows: rows.map(row => ({ ...row })),
-      }
-      serializeFunctionProfile([...functionProfileSnapshots, snapshot])
-      functionProfileSnapshots.push(snapshot)
-    } catch (error) { functionProfileFailure = { checkpoint, error: nativeFailure(error) }; throw error }
-    finally { functionProfileCaptureMilliseconds += functionProfileElapsed(at) }
-  }
   // T03: test fault families may coexist with the idle base family. Count
   // their extra observers explicitly and enforce the SAME aggregate work
   // lane limits across every instance; never multiply the runtime family cap.
@@ -753,7 +558,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       closeObserver() { if (methodClosed) return; underlyingMethod.closeObserver(); methodClosed = true; methodObservers-- },
     }
     cleanup.push(() => method.closeObserver())
-    const runtime = await connectProfiledRuntime(f)
+    const runtime = (await f.connect(M04_TEST_LOGIN.jobs, 'ot_v3_jobs_caller')).connection
     activeObserver = f.observer
     const currentEpoch = () => f.head().then(h => Number(h!.epoch))
     await proof('N01', 'exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only', async () => {
@@ -2137,7 +1942,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       const state = JSON.parse((await f.state(input.identity.jobKey))[0]!.state!)
       assert.equal(state.results, null); assert.equal(state.dispositions[0].kind, 'settled_failure'); assert.equal(state.dispositions[0].failure_reason, 'invalid_proposal')
     })
-    await captureFunctionProfile('before_ledger', f, runtime)
     await proof('N05/A03', 'actual 254/255/256 ledger boundary preserves the sole original terminal credit', async () => {
       const progress = quotaProgress.ledger
       quotaProgress.currentGroup = 'N05/A03'; quotaProgress.boundary = 'absent_probe'
@@ -2153,7 +1957,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
           operationId: ids('op3', 'quota-enqueue-' + n), jobId: ids('job3', 'quota-cycle-' + n), attemptLimit: 1 } }, current)
         assert.equal((await quotaFixed(progress, runtime, q, epoch)).status, 'committed', 'ledger command ' + n)
         current = q.body.commit.next; progress.lastCompletedIndex = n
-        if ([64, 128, 192, 254].includes(n + 1)) await captureFunctionProfile('ledger_' + (n + 1), f, runtime)
       }
       quotaProgress.boundary = 'claim_255'
       const originalClaim = { ...input.claim('combination_discovery'), operationId: ids('op3', 'quota-boundary-claim') }
@@ -2185,8 +1988,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       assert.deepEqual(JSON.parse((await f.state(input.discovery.jobKey))[0]!.state!), final)
       quotaProgress.boundary = 'done'; quotaProgress.currentGroup = 'none'
     })
-    await captureFunctionProfile('after_ledger', f, runtime)
-    await captureFunctionProfile('before_cycles', f, runtime)
     await proof('N05', 'sixty-four actual starts retain all older history and refuse the sixty-fifth claim', async () => {
       const progress = quotaProgress.cycles
       quotaProgress.currentGroup = 'N05'; quotaProgress.boundary = 'absent_probe'
@@ -2213,7 +2014,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
           fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
         assert.equal((await quotaFixed(progress, runtime, { ...failed, body: { ...failed.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }, epoch)).status, 'committed')
         current = failed.body.commit.next; progress.lastCompletedIndex = n
-        if ([16, 32, 48, 64].includes(n + 1)) await captureFunctionProfile('cycles_' + (n + 1), f, runtime)
       }
       quotaProgress.boundary = 'enqueue_65'
       const last = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
@@ -2235,7 +2035,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       assert.deepEqual(await f.state(input.discovery.jobKey), before)
       quotaProgress.boundary = 'done'; quotaProgress.currentGroup = 'none'
     })
-    await captureFunctionProfile('after_cycles', f, runtime)
     await proof('N15', 'nonempty real command/unknown/prepared/success/failure history forbids rollback', async () => {
       const snapshot = await catalog(f.owner)
       await refusal(f.owner, rollback, 'P7606')
@@ -2372,8 +2171,6 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
         assert.ok(cleanupReceipt.connections >= minimumInheritedConnections, 'actual inherited guard/control acquisitions remain in owned lifetime receipt')
       }
     } catch (error) { errors.push(error) }
-    try { t.diagnostic(functionProfilePrefix + serializeFunctionProfile()) }
-    catch (error) { errors.push(error) }
     t.diagnostic('M04_NATIVE_RECEIPT ' + JSON.stringify({ schema: 'jetnity.m04.native.v1', candidateSha256: digest(candidate), rollbackSha256: digest(rollback),
       executed: true, effectAndCleanupMilliseconds: Math.ceil(performance.now() - started), cleanupMilliseconds: Math.ceil(performance.now() - cleanupStarted),
       clusters, childProcesses: children.size, lifetime: cleanupReceipt ?? null, groups: proofs,
