@@ -39,9 +39,7 @@
 .stay22-disclosure {margin-top:14px;line-height:1.7}
 .stay22-error {margin-top:12px;font-size:13px;font-weight:600}
 /* The floating page shortcut would cover Stay22's own map controls. */
-@media(max-width:63.999rem){
-  .workspace-page:has(.stay22-search) [data-back-to-top] {display:none}
-}
+.workspace-page:has(.stay22-search) [data-back-to-top] {display:none}
 @media(max-width:700px){
   .stay22-formfoot {align-items:flex-start;flex-direction:column;gap:8px}
   .stay22-guests {grid-template-columns:1fr 1fr}
