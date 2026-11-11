@@ -179,7 +179,7 @@ export default function TripWorkspacePlan({
   kanteUnlesbar?: boolean
   onKanteWaehlen?: (kanteId: string, tagId: string) => void
   onAlleVerbindungen?: () => void
-  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string) => void
+  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string, hotelOrtKey?: string) => void
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)

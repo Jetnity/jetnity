@@ -541,3 +541,8 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 - Lokal umgesetzt: offizielle Stay22-Suche im Unterkunftsreiter mit Etappen-/freier Ortswahl, Datums-/Belegungsvalidierung, CHF-/weiterer Währungswahl, Original-Anbieteranzeige und Liste/Karte. Keine automatisch erfundenen oder kopierten Hotelangebote.
 - Nachweise und noch offene Anbieter-/Mobile-Abnahme: [Stay22-Arbeitsstand](docs/STAY22_HOTELSUCHE_2026-11-11.md). Keine Veröffentlichung auf jetnity.com aus diesem Arbeitsstand ableiten.
 - Extern offen: E-Mail-Verifikation, Auszahlungseinrichtung und Direct Travel API (aktuell geschlossen). Ein Vergleich desselben Zimmers über mehrere Anbieter und eine garantierte günstigste Auswahl sind nicht freigeschaltet/belegt.
+
+### Stay22: Reisebezug und Ergebnisbedienung
+
+- Lokale Erweiterung: Etappenleiste mit gemerkten Suchwünschen, planbezogene Ortswahl, explizite Umgebungssuche, begrenzte Reisemarker, sichtbare Sterne-/Bewertungs-/Preisperiodenfilter, Karten-/Listenwechsel und vergrösserte Originalanzeige. Reiseplan öffnet die richtige Etappe und den gewählten Ort.
+- Kontrollierte Desktop-/Mobiltests und separate echte Stay22-Anzeige; Details und verbleibende Providergrenzen in [STAY22_REISEKONTEXT_2026-11-11.md](docs/STAY22_REISEKONTEXT_2026-11-11.md). Weiter lokale Vorschau, kein Production-Rollout.

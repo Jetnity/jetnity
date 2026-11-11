@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { stay22Suche, stay22OrtAusEtappe, type Stay22Eingabe } from './suche'
+import { stay22Suche, stay22OrtAusEtappe, stay22Ansicht, type Stay22Eingabe } from './suche'
 import { stay22DatenschutzErlaubt } from './rahmen'
 import { CMP_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 
@@ -64,4 +64,35 @@ test('CMP-Ablehnung und fehlerhafte API blockieren die explizite Suche', () => {
   assert.equal(stay22DatenschutzErlaubt(api, false), false)
   consents.AD_STORAGE = true
   assert.equal(stay22DatenschutzErlaubt({ ...api, hasExplicitConsent: () => false }, false), false)
+})
+
+test('Bewiesene Filter und begrenzte Kartenorte werden ohne private Zusatzfelder übergeben', () => {
+  const result = stay22Suche({ ...eingabe, filter: { sterne: 4, bewertung: 8, preis: 'nightly' }, umgebung: true, kartenorte: [
+    { name: 'Reisestopp <1>\n', latitude: 13.75, longitude: 100.52 },
+    { name: 'Ungültig', latitude: NaN, longitude: 100.52 },
+    ...Array.from({ length: 12 }, (_, i) => ({ name: `Ort ${i}`, latitude: 13.7 + i / 100, longitude: 100.5 })),
+  ] }, heute)
+  assert.ok('suche' in result)
+  const p = new URL(result.suche.url).searchParams
+  assert.equal(p.get('minstarrating'), '4'); assert.equal(p.get('minguestrating'), '8')
+  assert.equal(p.get('priceper'), 'nightly'); assert.equal(p.get('zoom'), '14')
+  const pois = JSON.parse(p.get('poi')!)
+  assert.equal(pois.length, 8)
+  assert.equal(result.suche.kartenorte, 8)
+  assert.equal(pois[0].name, 'Reisestopp 1')
+  assert.deepEqual(Object.keys(pois[0]).sort(), ['lat', 'lng', 'name', 'size'])
+  for (const filter of [{ sterne: 8, bewertung: 8, preis: 'total' as const }, { sterne: 0, bewertung: NaN, preis: 'total' as const }]) assert.ok('fehler' in stay22Suche({ ...eingabe, filter }, heute))
+})
+
+
+test('Ansichtswechsel bewahrt Suchbedingungen und Ortsmarker', () => {
+  const result = stay22Suche(eingabe, heute)
+  assert.ok('suche' in result)
+  for (const ansicht of ['map', 'listview', 'all'] as const) {
+    const vorher: URLSearchParams = new URL(result.suche.url).searchParams
+    const danach: URLSearchParams = new URL(stay22Ansicht(result.suche.url, ansicht)).searchParams
+    assert.equal(danach.get('viewmode'), ansicht)
+    assert.equal(danach.get('listviewexpand'), String(ansicht === 'all'))
+    for (const [key, value] of vorher) if (!['viewmode','listviewexpand'].includes(key)) assert.equal(danach.get(key), value)
+  }
 })

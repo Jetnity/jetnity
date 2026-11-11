@@ -1118,9 +1118,9 @@ export default function TripWorkspace({
       kanteId={modus.ansicht === 'plan' ? modus.kanteId ?? null : null}
       kanteUnlesbar={kanteUnlesbar}
       onKanteWaehlen={kanteWechseln}
-      onEtappensuche={(kategorie, etappeId) => {
+      onEtappensuche={(kategorie, etappeId, hotelOrtKey) => {
         merkeAusloeser()
-        modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'push', true)
+        modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, hotelOrtKey, urlAnpassen: false }, 'push', true)
       }}
       onAlleVerbindungen={alleVerbindungenOeffnen}
     />
@@ -1439,6 +1439,7 @@ export default function TripWorkspace({
               key={reise.id + ':' + reise.revision}
               reise={reise}
               etappeId={modus.etappeId}
+              hotelOrtKey={modus.hotelOrtKey}
               kanteId={modus.kanteId}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}

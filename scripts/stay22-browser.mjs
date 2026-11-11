@@ -14,6 +14,7 @@ const trip = {
   days: [{ id: 'day1', stageId: 'bkk', dayIndex: 1, dayDate: date(10), title: null, items: [] }],
   ohneTag: [], party: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
 }
+trip.stages.push({ ...trip.stages[0], id: 'near', position: 2, name: 'Wat Pho', placeId: null, latitude: 13.7466, longitude: 100.4933, arrivalDate: null, departureDate: null }, { ...trip.stages[0], id: 'far', position: 3, name: 'Ko Chang', placeId: 'geonames:1611309', latitude: 12.05, longitude: 102.32, arrivalDate: date(14), departureDate: date(18) })
 const target = `${base}/reisen/${trip.id}?ansicht=organisieren&kategorie=unterkunft`
 const storageKey = 'jetnity:reise:v3'
 const original = JSON.stringify(trip)
@@ -22,7 +23,9 @@ for (const [engine, options, label] of [
   [chromium, { viewport: { width: 1440, height: 1000 } }, 'Desktop Chromium'],
   [chromium, devices['iPhone 13'], 'Mobile Chromium'],
   [webkit, devices['iPhone 13'], 'iPhone WebKit'],
+  [chromium, { ...devices['iPhone SE'], viewport: { width: 320, height: 568 } }, 'Small mobile Chromium'],
 ]) {
+  if (process.env.STAY22_BROWSER_CASE && process.env.STAY22_BROWSER_CASE !== label) continue
   const browser = await engine.launch()
   try {
     const context = await browser.newContext({ ...options, locale: 'de-CH' })
@@ -42,6 +45,24 @@ for (const [engine, options, label] of [
     const frame = page.locator('iframe.stay22-frame')
     const absent = async () => { assert.equal(await frame.count(), 0) }
     assert.equal(calls.length, 0, 'no provider request before explicit search')
+    await search.screenshot({ path: `/tmp/stay22-form-${label.replaceAll(' ', '-')}.png` })
+    const stagebar = page.getByRole('group', { name: 'Aufenthalt wählen' })
+    await search.getByRole('combobox', { name: 'Hotelsterne', exact: true }).selectOption('4')
+    await search.getByRole('combobox', { name: 'Gästebewertung', exact: true }).selectOption('8')
+    await search.getByLabel('Anreise', { exact: true }).fill(date(11))
+    await stagebar.getByRole('button', { name: /Ko Chang/ }).click()
+    assert.equal(await search.getByLabel('Anreise', { exact: true }).inputValue(), date(14))
+    assert.equal(await search.getByRole('combobox', { name: 'Hotelsterne', exact: true }).inputValue(), '0')
+    await stagebar.getByRole('button', { name: /Bangkok/ }).click()
+    assert.equal(await search.getByLabel('Anreise', { exact: true }).inputValue(), date(11))
+    assert.equal(await search.getByRole('combobox', { name: 'Hotelsterne', exact: true }).inputValue(), '4')
+    await search.getByRole('button', { name: 'Reisedaten übernehmen', exact: true }).click()
+    await search.getByRole('button', { name: 'Filter zurücksetzen', exact: true }).click()
+    assert.equal(calls.length, 0)
+    await stagebar.getByRole('button', { name: /Ko Chang/ }).click()
+    await page.getByText('Alle Reiseziele ansehen', { exact: true }).click()
+    await page.locator('.org-stages').getByRole('button', { name: /Bangkok/ }).click()
+    assert.equal(await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).inputValue(), 'bkk', 'external card selection can return to initial stage')
     await search.getByLabel('Abreise', { exact: true }).fill(date(10))
     await submit.click()
     await search.getByRole('alert').waitFor()
@@ -81,10 +102,22 @@ for (const [engine, options, label] of [
       assert.ok(box)
       const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
       const unobscured = await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.matches('iframe.stay22-frame'), point)
-      assert.equal(unobscured, true, `${label}: provider control is not obscured`)
+      assert.equal(unobscured, true, `${label}: ${before} is not obscured`)
       await page.mouse.click(point.x, point.y)
       await content.getByRole('button', { name: after, exact: true }).waitFor()
     }
+    await frame.evaluate(el => { el.dataset.stay22Test = 'same-frame' })
+    const beforeExpand = calls.length
+    await page.getByRole('button', { name: 'Vergrössern', exact: true }).click()
+    const modal = page.getByRole('dialog', { name: 'Hotelkarte und Ergebnisliste' })
+    await modal.waitFor()
+    assert.equal(await modal.evaluate(el => el.matches(':modal')), true)
+    assert.equal(await frame.getAttribute('data-stay22-test'), 'same-frame')
+    await page.keyboard.press('Escape')
+    await page.getByRole('region', { name: 'Hotelkarte und Ergebnisliste' }).waitFor()
+    assert.equal(await frame.getAttribute('data-stay22-test'), 'same-frame')
+    assert.equal(calls.length, beforeExpand, 'enlargement and close preserve supplier frame')
+    assert.equal(await page.getByRole('button', { name: 'Vergrössern', exact: true }).evaluate(el => el === document.activeElement), true)
     await submit.click()
     await page.waitForFunction(() => document.querySelector('[data-stay22-phase="rahmen"]'))
     assert.equal(calls.length, 2, 'same search opens a new provider frame')
@@ -101,6 +134,8 @@ for (const [engine, options, label] of [
     await page.getByRole('tab', { name: 'Unterkunft', exact: true }).click()
     await absent()
     await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).selectOption('anderer-ort')
+    await search.getByLabel('Anreise', { exact: true }).fill(date(10))
+    await search.getByLabel('Abreise', { exact: true }).fill(date(14))
     await search.getByLabel('Stadt, Insel oder Region').fill('unbestätigter Ort')
     await submit.click()
     await search.getByRole('alert').waitFor()
@@ -109,6 +144,93 @@ for (const [engine, options, label] of [
     await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).selectOption('bkk')
     await submit.click()
     await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    // Documented filters, plan POIs and view switching use the same search.
+    await search.getByRole('combobox', { name: 'Hotelsterne', exact: true }).selectOption('4')
+    await absent()
+    await search.getByRole('combobox', { name: 'Gästebewertung', exact: true }).selectOption('8')
+    await search.getByRole('combobox', { name: 'Preisanzeige', exact: true }).selectOption('nightly')
+    await search.getByRole('combobox', { name: 'Suchumgebung', exact: true }).selectOption('etappe:near')
+    await submit.click()
+    await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    const near = calls.at(-1)
+    assert.equal(near.searchParams.get('lat'), '13.7466')
+    assert.equal(near.searchParams.get('minstarrating'), '4')
+    assert.equal(near.searchParams.get('minguestrating'), '8')
+    assert.equal(near.searchParams.get('priceper'), 'nightly')
+    assert.ok(JSON.parse(near.searchParams.get('poi')).length >= 2)
+    assert.equal(near.href.includes(trip.id), false)
+    const views = page.getByRole('group', { name: 'Ergebnisansicht' })
+    for (const [name, mode] of [['Karte', 'map'], ['Liste', 'listview'], ['Karte & Liste', 'all']]) {
+      await views.getByRole('button', { name, exact: true }).click()
+      await page.waitForFunction(mode => new URL(document.querySelector('iframe.stay22-frame').src).searchParams.get('viewmode') === mode, mode)
+      await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+      assert.equal(calls.at(-1).searchParams.get('viewmode'), mode)
+      for (const key of ['checkin','checkout','lat','lng','poi','minstarrating','minguestrating']) assert.equal(calls.at(-1).searchParams.get(key), near.searchParams.get(key))
+    }
+    await search.getByRole('combobox', { name: 'Suchumgebung', exact: true }).selectOption('text')
+    await search.getByLabel('Ort in Bangkok', { exact: true }).fill('Hauptbahnhof')
+    await submit.click()
+    await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    assert.match(calls.at(-1).searchParams.get('address'), /^Hauptbahnhof, Bangkok/)
+    assert.equal(calls.at(-1).searchParams.has('lat'), false, 'explicit text is geocoded by supplier, no invented coordinates')
+    await search.getByLabel('Reiseorte auf der Karte zeigen', { exact: true }).uncheck()
+    await submit.click()
+    await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    assert.equal(calls.at(-1).searchParams.has('poi'), false)
+    // Actual itinerary entry and browser back use the context, no provider request on navigation.
+    const beforeNav = calls.length
+    await page.goto(`${base}/reisen/${trip.id}?ansicht=plan&tag=day1`, { waitUntil: 'domcontentloaded' })
+    await page.locator('.et-tabs').getByRole('button', { name: 'Übersicht', exact: true }).click()
+    await page.getByRole('combobox', { name: 'Unterkunft nahe einem Reiseort', exact: true }).selectOption('etappe:near')
+    await search.waitFor()
+    assert.equal(await search.getByRole('combobox', { name: 'Suchumgebung', exact: true }).inputValue(), 'etappe:near')
+    assert.equal(await search.getByLabel('Anreise', { exact: true }).inputValue(), date(10))
+    assert.equal(calls.length, beforeNav)
+    await page.goBack()
+    await page.locator('.et-tabs').getByRole('button', { name: 'Übersicht', exact: true }).click()
+    await page.getByRole('combobox', { name: 'Unterkunft nahe einem Reiseort', exact: true }).waitFor()
+    await page.goForward()
+    await search.waitFor()
+    await submit.click()
+    await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    if (label === 'Desktop Chromium') {
+      // Controlled first-party response: exercise a delayed confirmation, not a real city lookup.
+      await page.route('**/api/search/places?**', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify([{ id: 'geonames:2988507', label: 'Paris', description: 'Frankreich', typ: 'city' }]) }))
+      let release, received
+      const gate = new Promise(resolve => { release = resolve })
+      const requested = new Promise(resolve => { received = resolve })
+      let hold = true
+      await page.route(`${base}/reisen/**`, async route => {
+        if (route.request().method() !== 'POST' || !route.request().headers()['next-action']) return route.continue()
+        received()
+        if (hold) await gate
+        return route.fulfill({ contentType: 'text/x-component', body: '0:' + JSON.stringify({ a: { ok: true, wert: { id: 'geonames:2988507', name: 'Paris', region: 'Île-de-France', country: 'Frankreich', lat: 48.8534, lon: 2.3488, typ: 'city' } }, f: null }) + '\n' })
+      })
+      await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).selectOption('anderer-ort')
+      await search.getByLabel('Stadt, Insel oder Region').fill('Paris')
+      await page.getByRole('option', { name: /Paris/ }).click()
+      await requested
+      assert.equal(await submit.isDisabled(), true)
+      await stagebar.getByRole('button', { name: /Bangkok/ }).click()
+      hold = false; release()
+      await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).selectOption('anderer-ort')
+      assert.equal(await search.getByLabel('Stadt, Insel oder Region').inputValue(), '', 'unfinished selection is not retained')
+      await search.getByLabel('Anreise', { exact: true }).fill(date(10))
+      await search.getByLabel('Abreise', { exact: true }).fill(date(14))
+      await search.getByLabel('Stadt, Insel oder Region').fill('Paris')
+      await page.getByRole('option', { name: /Paris/ }).click()
+      await page.waitForFunction(() => !document.querySelector('form.stay22-search button[type=submit]').disabled)
+      await submit.click()
+      await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+      assert.equal(calls.at(-1).searchParams.get('lat'), '48.8534')
+      assert.equal(calls.at(-1).searchParams.get('lng'), '2.3488')
+      assert.match(calls.at(-1).searchParams.get('address'), /^Paris, Île-de-France, Frankreich$/)
+      await stagebar.getByRole('button', { name: /Bangkok/ }).click()
+      await search.getByRole('combobox', { name: 'Reiseziel', exact: true }).selectOption('anderer-ort')
+      assert.equal(await search.getByLabel('Stadt, Insel oder Region').inputValue(), 'Paris', 'confirmed selection is retained')
+      await submit.click()
+      await page.locator('[data-stay22-phase="rahmen"]').waitFor()
+    }
     const beforeRefusal = calls.length
     await page.evaluate(() => {
       window.PrivacyBee = { getAllConsents: () => ({ SECURITY_STORAGE: true, FUNCTIONALITY_STORAGE: true, ANALYTICS_STORAGE: false, AD_STORAGE: false, AD_USER_DATA: false, AD_PERSONALIZATION: false, PERSONALIZATION_STORAGE: false }), getConsent: () => false, hasExplicitConsent: () => true }
@@ -125,6 +247,6 @@ for (const [engine, options, label] of [
     assert.equal(calls.length, beforeRefusal, 'missing previously observed CMP stays closed')
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false)
     assert.equal(await page.evaluate(key => localStorage.getItem(key), storageKey), original, 'search does not mutate trip')
-    console.log(`${label}: input validation, parameters, iframe controls, repeat, stale removal, hide/tab teardown, unconfirmed place, refusal and unchanged trip passed`)
+    console.log(`${label}: validation, stage drafts and card return, POIs, views, modal preservation/focus, itinerary handoff/back, consent and unchanged graph passed${label === 'Desktop Chromium' ? '; delayed city confirmation and recovery passed' : ''}`)
   } finally { await browser.close() }
 }
