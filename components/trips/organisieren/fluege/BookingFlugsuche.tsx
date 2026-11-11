@@ -12,7 +12,11 @@ import {
 } from '@/lib/trips/organisieren/booking-flug'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
 import type { Trip } from '@/types/trips'
-import { Feld, Personen } from '../Suchfelder'
+import { Personen } from '../Suchfelder'
+import Suchkalender from '../auswahl/Suchkalender'
+import Suchauswahl from '../auswahl/Suchauswahl'
+import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { datumVerschieben } from '@/lib/trips/suchkalender'
 
 function FlughafenFeld({
   label,
@@ -94,11 +98,9 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
         {'ziel' in suche && <input type="hidden" name="url" value={suche.ziel} />}
         <div className="org-formtop">
           <h2>Flug suchen</h2>
-          <select aria-label="Reiseart" value={art} onChange={(e) => setArt(e.target.value as Flugart)}>
-            <option value="gabel">Gabelflug</option>
-            <option value="retour">Hin- und Rückflug</option>
-            <option value="einfach">Nur Hinflug</option>
-          </select>
+          <Suchauswahl label="Reiseart" wert={art} setzen={v => { setArt(v); setFehler('') }} optionen={[
+            { wert: 'gabel', text: 'Gabelflug' }, { wert: 'retour', text: 'Hin- und Rückflug' }, { wert: 'einfach', text: 'Nur Hinflug' },
+          ]} />
         </div>
         <div className={'org-fields ' + (art === 'einfach' ? 'org-four' : '')}>
           <FlughafenFeld
@@ -117,20 +119,9 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
               setNach(v)
             }}
           />
-          <Feld label="Hinflug">
-            <input required type="date" value={hin} onChange={(e) => setHin(e.target.value)} />
-          </Feld>
-          {art !== 'einfach' && (
-            <Feld label="Rückflug">
-              <input
-                required
-                type="date"
-                min={hin}
-                value={rueck}
-                onChange={(e) => setRueck(e.target.value)}
-              />
-            </Feld>
-          )}
+          <Suchkalender start={hin} ende={rueck} startLabel="Hinflug" endeLabel="Rückflug"
+            min={heutigesDatum()} max={datumVerschieben(heutigesDatum(), 330)} minTage={0} einzeln={art === 'einfach'}
+            setzen={(start, ende) => { setHin(start); setRueck(ende); setFehler('') }} />
           <Personen wert={gaeste} setzen={setGaeste} />
           <button className="org-go" type="submit">
             Auf Booking.com suchen <ArrowUpRight aria-hidden="true" />
@@ -147,15 +138,10 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
               }}
             />
           )}
-          <label>
-            Reiseklasse{' '}
-            <select value={kabine} onChange={(e) => setKabine(e.target.value as FlugKabine)}>
-              <option value="economy">Economy</option>
-              <option value="premium_economy">Premium Economy</option>
-              <option value="business">Business</option>
-              <option value="first">First Class</option>
-            </select>
-          </label>
+          <Suchauswahl label="Reiseklasse" wert={kabine} setzen={v => { setKabine(v); setFehler('') }} optionen={[
+            { wert: 'economy', text: 'Economy' }, { wert: 'premium_economy', text: 'Premium Economy' },
+            { wert: 'business', text: 'Business' }, { wert: 'first', text: 'First Class' },
+          ]} />
           <label>
             <input type="checkbox" checked={direkt} onChange={(e) => setDirekt(e.target.checked)} /> Nur
             Direktflüge

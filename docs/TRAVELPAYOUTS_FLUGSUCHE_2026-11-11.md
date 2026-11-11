@@ -55,3 +55,19 @@ Am finalen Build erneut echte Desktop- und Mobilangebote geladen: Wien liefert V
 Die drei ausdrücklich markierten Zusatztexte aus Suchmaske und Ergebnisfuss entfernt, einschliesslich nicht mehr verwendeter Stile und Icon-Import. Anbieterrahmen, Suchparameter und bestehende Einwilligungssteuerung unverändert. Chrome-Nachweis: alle drei Texte fehlen, echte Angebote laden, Dialog-Vergrösserung funktioniert. Build, Typecheck und gezielter ESLint erfolgreich. Lokale Vorschau, kein öffentlicher Rollout.
 
 Präzisierung zum Anbieterfeld: In den beobachteten Suchanfragen stehen gleichzeitig `citizenship: RU`, `market_code: CH`, CHF und Deutsch. Der Wert stammt aus dem Anbieter-Widget und nicht aus Jetnity-Reisendenprofilen. Auswirkungen auf Tarife oder Anbieter sind nicht nachgewiesen; dies ist ein offener Prüfpunkt, keine belegte Fehlfunktion.
+
+## Suchkalender und verankerte Auswahllisten — 11.11.2026
+
+Owner-Rückmeldung: native Datumsauswahl zu klein, Reiseart und Reiseklasse öffnen in Chrome versetzt. Gemeinsame Komponenten unter `components/trips/organisieren/auswahl/` ersetzen die nativen Kalender in Hotel-, Travelpayouts- und Booking-Flugsuche. Zwei Monate am Desktop, ein Monat als mobiler Dialog, markierter Zeitraum, explizites Übernehmen/Abbrechen, Escape und Tastatursteuerung. Die Menüs für Reiseart und Reiseklasse verwenden die bereits vorhandene Radix-Abhängigkeit, verankern sich am Auslöser und berücksichtigen Bildschirmränder.
+
+Die Kalendergrenzen folgen den Suchregeln: Hotels mindestens eine Nacht, maximal 90 Nächte und 730 Tage Suchhorizont; Flüge Rückreise auch am selben Tag, einfacher Flug ohne Rückreisedatum und 330 Tage Suchhorizont. Datenarithmetik verwendet UTC-Kalendertage. Suchänderungen bleiben transient und ändern keine Etappe, gespeicherte Reise oder Buchung. Keine Preisfarben ohne echte Kalenderpreisdaten.
+
+Geprüft am Production-Build in Chrome:
+
+- Desktop 1440 × 1000, kleiner Desktop 1024 × 768 und 720 × 600: Kalender bleibt im Bildschirm, Auswahllisten öffnen am jeweiligen Feld. Reiseartwechsel blendet Rückflug passend aus/ein; Reiseklasse per Maus und Tastatur auswählbar.
+- Mobile Chrome-Emulation 390 × 844: Kalender als untere Ansicht, Monatswechsel und Auswahl funktionieren, kein horizontaler Überlauf. Kein physischer iPhone-Test behauptet.
+- Übernehmen ändert beide Suchdaten; Abbrechen und Escape verwerfen den Entwurf und stellen den Fokus wieder her. Pfeiltasten bewegen den Tag. Hotel-Abreise am Anreisetag ist deaktiviert; eine Nacht ist auswählbar.
+- Echte Flugsuche übergibt ZRH–BKK am 16.11.2026 und HKT–ZRH am 07.12.2026; Originalangebote erscheinen. Hotelrahmen übernimmt die geprüfte Anreise 15.11.2026 und Abreise 16.11.2026. Der gespeicherte Reiseentwurf bleibt bytegleich.
+- 20 gezielte Tests erfolgreich, darunter fünf neue Kalenderfälle für Schaltjahr, Jahreswechsel, Sommerzeit, Grenzen und ungültige Daten. Typecheck, gezielter ESLint, Production-Build und alle fünf Hygieneprüfungen erfolgreich. Bestehende Hinweise zu lokalen, nicht angewendeten RPCs unverändert. Keine neuen Abhängigkeiten, Kosten, Datenbank- oder Berechtigungsänderungen.
+
+Bildnachweise der Vorschau ausserhalb des Repositorys: `work/travelpayouts-calendar-final/`. Weiterhin lokale Vorschau; kein Push, Merge oder öffentlicher Rollout. Die oben dokumentierte anbieterseitige RU-Frage bleibt vor Veröffentlichung offen.

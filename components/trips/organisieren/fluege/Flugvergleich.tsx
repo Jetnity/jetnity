@@ -19,7 +19,8 @@ import {
   type FlugVergleichEingabe,
 } from '@/lib/providers/travelpayouts/suche'
 import type { Trip } from '@/types/trips'
-import { Feld } from '../Suchfelder'
+import Suchkalender from '../auswahl/Suchkalender'
+import Suchauswahl from '../auswahl/Suchauswahl'
 import Fluggaeste, { type FluggaesteWert } from './Fluggaeste'
 import Flugergebnisse, { type FlugSuchauftrag } from './Flugergebnisse'
 import './flugsuche.css'
@@ -172,31 +173,14 @@ export default function Flugvergleich({
           </div>
         </div>
         <div className="flug-options">
-          <label>
-            Reiseart
-            <select
-              value={art}
-              onChange={(e) =>
-                setArt(e.target.value as FlugVergleichEingabe['art'])
-              }
-            >
-              <option value="retour">Hin- und Rückflug</option>
-              <option value="einfach">Nur Hinflug</option>
-              <option value="gabel">Gabelflug</option>
-            </select>
-          </label>
-          <label>
-            Reiseklasse
-            <select
-              value={kabine}
-              onChange={(e) =>
-                setKabine(e.target.value as FlugVergleichEingabe['kabine'])
-              }
-            >
-              <option value="economy">Economy</option>
-              <option value="business">Business</option>
-            </select>
-          </label>
+          <Suchauswahl label="Reiseart" wert={art} setzen={v => { setArt(v); setFehler('') }} optionen={[
+            { wert: 'retour', text: 'Hin- und Rückflug' },
+            { wert: 'einfach', text: 'Nur Hinflug' },
+            { wert: 'gabel', text: 'Gabelflug' },
+          ]} />
+          <Suchauswahl label="Reiseklasse" wert={kabine} setzen={v => { setKabine(v); setFehler('') }} optionen={[
+            { wert: 'economy', text: 'Economy' }, { wert: 'business', text: 'Business' },
+          ]} />
         </div>
         <div
           className={'flug-fields' + (art === 'einfach' ? ' flug-oneway' : '')}
@@ -217,28 +201,9 @@ export default function Flugvergleich({
             </button>
             <FlughafenFeld label="Nach" wert={nach} setzen={setNach} />
           </div>
-          <Feld label="Hinflug">
-            <input
-              required
-              type="date"
-              min={heute}
-              max={max}
-              value={hin}
-              onChange={(e) => setHin(e.target.value)}
-            />
-          </Feld>
-          {art !== 'einfach' && (
-            <Feld label="Rückflug">
-              <input
-                required
-                type="date"
-                min={hin > heute ? hin : heute}
-                max={max}
-                value={rueck}
-                onChange={(e) => setRueck(e.target.value)}
-              />
-            </Feld>
-          )}
+          <Suchkalender start={hin} ende={rueck} startLabel="Hinflug" endeLabel="Rückflug"
+            min={heute} max={max ?? heute} minTage={0} einzeln={art === 'einfach'}
+            setzen={(start, ende) => { setHin(start); setRueck(ende); setFehler('') }} />
           <Fluggaeste wert={gaeste} setzen={setGaeste} />
           <button className="org-go" type="submit">
             <Search size={20} aria-hidden="true" /> Flüge suchen
