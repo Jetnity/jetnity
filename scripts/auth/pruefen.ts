@@ -32,6 +32,24 @@ async function main() {
   const z = await ziel()
   const live = await authKonfiguration(z)
 
+  // One fixed diagnostic only; the unknown-key refusal below stays unchanged.
+  const observationField = 'external_email_magic_link_disabled'
+  const observationPresent = Object.prototype.hasOwnProperty.call(live, observationField)
+  const observationValue = observationPresent ? live[observationField] : undefined
+  const observationType = !observationPresent ? 'missing'
+    : observationValue === null ? 'null'
+      : Array.isArray(observationValue) ? 'array'
+        : typeof observationValue === 'boolean' || typeof observationValue === 'string'
+          || typeof observationValue === 'number' || typeof observationValue === 'object'
+          ? typeof observationValue : 'other'
+  console.error(JSON.stringify({
+    schema: 'jetnity.auth.single-switch-observation.v1',
+    field: observationField,
+    present: observationPresent,
+    type: observationType,
+    value: typeof observationValue === 'boolean' ? observationValue : null,
+  }))
+
   const ergebnis = befund(config, live)
 
   if (process.argv.includes('--json')) {

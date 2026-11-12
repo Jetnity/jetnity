@@ -1,0 +1,173 @@
+{
+  "schema": "jetnity.auth.single-switch-observation.manifest.v1",
+  "status": "SOURCE_PREPARED",
+  "preparedDateUTC": "2026-11-12",
+  "author": {
+    "logicalName": "Jetnity CH-DE Auth Configuration Observation 1 — Codex Generation1",
+    "actualSession": "/root/auth_configuration_observation_writer_g1",
+    "newSession": true
+  },
+  "taskURL": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822302560",
+  "soleParent": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+  "parentTree": "cbc79e627161d4ace132b84cf057c18adc86586c",
+  "containingCommitAndTree": "Reported by immutable Git-object delivery; not self-embedded.",
+  "scope": {
+    "paths": [
+      "scripts/auth/pruefen.ts",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json"
+    ],
+    "modified": [
+      "scripts/auth/pruefen.ts"
+    ],
+    "added": [
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json"
+    ],
+    "removed": [],
+    "parentLeafCount": 9476,
+    "expectedUnchangedParentLeaves": 9475,
+    "expectedCandidateLeafCount": 9479,
+    "completeRecursiveTreeComparison": "Required and reported in final author delivery; no ref publication."
+  },
+  "files": [
+    {
+      "path": "scripts/auth/pruefen.ts",
+      "gitBlob": "9d035c3da0ecd0e4343d0d63cb909c9680e5942a",
+      "utf8Bytes": 2529,
+      "sha256": "07729518d4a9a50fb71b664e162fb6a762b2a77691199cb4c26ea0b3fa254bcc"
+    },
+    {
+      "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+      "gitBlob": "7744d702610c45bb0d49372fa64769f8c79b4b62",
+      "utf8Bytes": 4900,
+      "sha256": "85cc5b8d692e7c7937b97add2498dbbc4a6f38d967b1f98f9e1a08134082f483"
+    },
+    {
+      "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+      "gitBlob": "1a45526446ff4919bc15cf0203560e8fbae30cf0",
+      "utf8Bytes": 4576,
+      "sha256": "1cbfbafffcb63d41d0f01e16b91866cc1c377afe05ac1346abef86548d9e33c3"
+    }
+  ],
+  "manifestSelfIdentity": {
+    "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+    "location": "External immutable Git delivery includes exact Git blob, UTF-8 bytes and SHA256; no circular self-hash."
+  },
+  "originalScript": {
+    "path": "scripts/auth/pruefen.ts",
+    "gitBlob": "c8fd418105c211a8827361300c92e13c8535bb8b",
+    "utf8Bytes": 1578,
+    "sha256": "10894ba9ecb529c67ee897aa171f60dee028b26f48fe8088e81813d0b33175c9"
+  },
+  "inverseSourceProof": {
+    "change": "Single insertion immediately after existing authKonfiguration(z) result.",
+    "insertedLines": 18,
+    "insertedUtf8Bytes": 951,
+    "insertedSha256": "440abb0742a7e805a2b6d5dc0f08639c851b97a89bc9591056ea8ff66493e1e7",
+    "removeInsertionRestoresWholeOriginal": true,
+    "projectOrParserExecution": false
+  },
+  "taskPreservation": {
+    "commentId": 6822302560,
+    "verbatim": true,
+    "commentUtf8Bytes": 4700,
+    "commentSha256": "bd75d8e966f0da79e3dd334d37bc9f063778788f1c9df81e10cecf66c32b449c"
+  },
+  "unchangedReadContracts": [
+    {
+      "path": "scripts/auth/ziel.ts",
+      "gitBlob": "6620f9746dbce409c5e8555fc33206aff2c28651",
+      "utf8Bytes": 7855,
+      "sha256": "98f9147b7bb7036e1d31c078b0e30fc1f1395d634b05dea6fbe5fb7f46ffb58b",
+      "readInFull": true
+    },
+    {
+      "path": "lib/supabase/auth-bericht.ts",
+      "gitBlob": "272db17b128c5f1f84b550fbfad9b4a0edadf9ff",
+      "utf8Bytes": 7175,
+      "sha256": "5205a4ff8bd7c69ac1464cd32c2a2808dfe9e2a2f1a767121d6308328d5a155b",
+      "readInFull": true
+    },
+    {
+      "path": "lib/supabase/auth-erwartung.ts",
+      "gitBlob": "0dfd71702f0d1226cd35cdac449b3260c961e31a",
+      "utf8Bytes": 19457,
+      "sha256": "51b0e3c566b8c3f1bccb46ac2463e0c20c8a4f854a73768fee036769d30853bb",
+      "readInFull": true
+    }
+  ],
+  "diagnostic": {
+    "schema": "jetnity.auth.single-switch-observation.v1",
+    "field": "external_email_magic_link_disabled",
+    "stream": "stderr",
+    "ownPropertyOnly": true,
+    "typeCategories": [
+      "missing",
+      "null",
+      "boolean",
+      "string",
+      "number",
+      "object",
+      "array",
+      "other"
+    ],
+    "valuePolicy": "Actual primitive boolean only; all nonboolean or missing values emit null.",
+    "defaulting": false,
+    "coercion": false,
+    "inversion": false,
+    "extraNetworkRequests": 0,
+    "wholeResponseSerialization": false,
+    "nonbooleanValueSerialization": false,
+    "nonbooleanValueHashing": false,
+    "otherKeyValueDisclosure": false,
+    "stdoutReportChanges": false
+  },
+  "preservedGates": {
+    "unknownKeyFailure": true,
+    "classificationUnchanged": true,
+    "expectedValuesUnchanged": true,
+    "comparisonAndReportUnchanged": true,
+    "targetAndRequestUnchanged": true,
+    "errorAndExitUnchanged": true,
+    "workflowUnchanged": true
+  },
+  "execution": {
+    "typedActualReadback": "NOT_RUN",
+    "currentFieldPresence": "UNKNOWN",
+    "currentFieldType": "UNKNOWN",
+    "currentFieldValue": "UNKNOWN",
+    "managementMapping": "UNVERIFIED",
+    "sourcePreparationOnly": true,
+    "typecheck": "NOT_RUN",
+    "lint": "NOT_RUN",
+    "tests": "NOT_RUN",
+    "build": "NOT_RUN",
+    "ci": "NOT_RUN",
+    "preview": "NOT_RUN",
+    "hostedMutation": false,
+    "credentialAccess": false,
+    "sourceObservation": false,
+    "refPublication": false,
+    "prPublication": false,
+    "ready": false,
+    "merged": false
+  },
+  "relatedFailure": {
+    "provenance": "Root's persisted Task V1 original-log review; not fetched or executed by this author.",
+    "pr": 1193,
+    "runId": 43206051112,
+    "runNumber": 4122,
+    "authJobId": 131141360881,
+    "logUtf8Bytes": 21280,
+    "logSha256": "e15a71b71a45543cf0db3c77832a63a33f67b120de2c17037efa3ff2ec7ed589",
+    "expectedValuesMatching": 55,
+    "keysObserved": 244,
+    "unclassifiedField": "external_email_magic_link_disabled",
+    "aa4123SameCauseAssumed": false
+  },
+  "firstUnfinishedStep": "Root independent exact-candidate review, then separately selected Draft CI and original actual Auth output review.",
+  "stop": "No Ready, merge or automatic follow-on; original #917/#1131 STOPs remain untouched."
+}
