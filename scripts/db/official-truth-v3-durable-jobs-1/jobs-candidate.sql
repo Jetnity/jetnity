@@ -152,9 +152,50 @@ DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_v
   child_keys text[]; child_values jsonb[]; child_parts text[]; child_pending_positions integer[];
   stack_parts text[]:='{}'; stack_keys text[]:='{}'; stack_values jsonb[]:='{}'; stack_pending integer[]:='{}';
   frame_lengths integer[]:='{}'; frame_pending_lengths integer[]:='{}'; frame_cursors integer[]:='{}'; stack_level integer:=0;
-  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer;
+  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer; fast_text text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(v)='object' THEN
+    IF v='{}'::jsonb THEN RETURN '{}'; END IF;
+    fast_text:=v::text;
+    IF d<24 AND octet_length(fast_text)<=8192 THEN
+      IF strpos(fast_text COLLATE "C",chr(92))=0 THEN
+        IF fast_text !~ '[^ -~]' THEN
+          -- Every object value follows '": ' in JSONB output; no escapes remain.
+          -- Matching an opening string quote only adds a conservative fallback.
+          IF fast_text COLLATE "C" !~ '": ([[]|-0|-?[0-9]{16}|-?[0-9]+[.])'
+            AND strpos(fast_text COLLATE "C",'{,')=0 THEN
+            IF strpos(fast_text COLLATE "C",'": {')=0 THEN
+              SELECT '{'||string_agg('"'||j.key||'":'||j.value::text,',' ORDER BY j.key COLLATE "C")||'}'
+                INTO fast_text FROM jsonb_each(v) j;
+            ELSE
+              WITH RECURSIVE walk_nodes(node,member_key,node_path,node_depth,node_type) AS (
+                SELECT v,NULL::text,ARRAY[]::text[],d,'object'::text
+                UNION ALL
+                SELECT j.value,j.key,array_append(w.node_path,j.key),w.node_depth+1,jsonb_typeof(j.value)
+                  FROM walk_nodes w CROSS JOIN LATERAL jsonb_each(
+                    CASE WHEN w.node_type='object' AND w.node_depth<24 THEN w.node ELSE '{}'::jsonb END) j
+                  WHERE w.node_type='object' AND w.node_depth<24
+              ), token_rows AS (
+                SELECT w.node_path AS token_path,
+                  CASE WHEN w.node_depth<24 THEN true ELSE w.node_type<>'object' OR w.node='{}'::jsonb END AS is_valid,
+                  (CASE WHEN w.member_key IS NULL THEN '' ELSE ',"'||w.member_key||'":' END)||
+                    CASE WHEN w.node_type='object' THEN '{' ELSE w.node::text END AS piece
+                  FROM walk_nodes w
+                UNION ALL
+                SELECT array_append(w.node_path,NULL::text),true,'}' FROM walk_nodes w WHERE w.node_type='object'
+              )
+              SELECT CASE WHEN bool_and(t.is_valid) IS TRUE THEN replace(
+                string_agg(t.piece,'' ORDER BY t.token_path COLLATE "C") COLLATE "C",'{,','{') END
+                INTO fast_text FROM token_rows t;
+            END IF;
+            IF fast_text IS NOT NULL THEN RETURN fast_text; END IF;
+          END IF;
+        END IF;
+      END IF;
+    END IF;
+    fast_text:=NULL;
+  END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
     current_depth:=d;
