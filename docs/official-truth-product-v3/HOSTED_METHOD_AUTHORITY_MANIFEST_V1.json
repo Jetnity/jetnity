@@ -1,0 +1,434 @@
+{
+  "schema": "jetnity.hma1.source-manifest.v1",
+  "status": "SOURCE_ONLY_NOT_RUN_STOP",
+  "author": {
+    "name": "Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1",
+    "session": "/root/hosted_method_authority_writer_g1",
+    "newSession": true,
+    "cursorUiSessionClaim": false
+  },
+  "task": {
+    "issue": 1139,
+    "comment": 6816388805,
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816388805",
+    "preservedVerbatimIn": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md"
+  },
+  "preparedDateUtc": "2026-11-12",
+  "dependency": {
+    "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
+    "tree": "8e60897fd154ef410752c392f0e657f21e62352e",
+    "acceptedMainAtTaskAssignment": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+    "pg1SourceCandidateNotAccepted": true,
+    "laterPg1DocsOnlySuccessor": {
+      "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+      "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+      "notThisParent": true
+    },
+    "rootMustBindFinalAcceptedPg1BeforePublicationAndCi": true
+  },
+  "scope": {
+    "newPathsOnly": 8,
+    "parentLeafCount": 9483,
+    "expectedCandidateLeafCount": 9491,
+    "allParentLeavesMustRemainByteIdentical": true,
+    "treeAndCommitPinnedExternally": true,
+    "manifestSelfPinExternal": true,
+    "manifestPath": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+    "files": [
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+        "gitBlob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+        "utf8Bytes": 69705,
+        "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+        "gitBlob": "ea8e9fb7008808819dc1b3d85719c5af96c2f708",
+        "utf8Bytes": 37179,
+        "sha256": "c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+        "gitBlob": "01118d016863dbc11d42931720131beca51bcd53",
+        "utf8Bytes": 54395,
+        "sha256": "d347427f7810719e2330d70096c8a3efb74b2d3c43ac3db4a6c969807c5d3992"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+        "gitBlob": "a29be615b12018567415131cc4331ca1071f577e",
+        "utf8Bytes": 346,
+        "sha256": "0cfcc4ce2b72d961d142fad5933ba860eac33fe5f5719409712b9a26b3999d41"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+        "gitBlob": "a66f1f5da072bf9e60d77c203ac8184fec470026",
+        "utf8Bytes": 10912,
+        "sha256": "c7ac083901b4f5d9a25cdecf71babe35931838592c91ca890babd34aa9809ff6"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+        "gitBlob": "c46e8ac4fbdb715ca6fae0c8c85252338d7b088e",
+        "utf8Bytes": 15921,
+        "sha256": "bdfcdff6c11cf9f8c8bcfbba17962817311281767df98ac476414ef40d65672c"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+        "gitBlob": "4c03b0205cf826199ef907d892f6e1093f1c4219",
+        "utf8Bytes": 8731,
+        "sha256": "02d9fd6fae9f12fb05071836e7f58450e0a0c9a827d4af6707be43ff388a44f5"
+      }
+    ]
+  },
+  "originalMa1": {
+    "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+    "gitBlob": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e",
+    "utf8Bytes": 52631,
+    "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+    "allCompleteFunctionDeclarationsPreserved": true,
+    "pureTextInverse": {
+      "exact": true,
+      "bytes": 52631,
+      "gitBlob": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e",
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6",
+      "declarations": 10
+    }
+  },
+  "finiteDelta": {
+    "groups": 7,
+    "applicationOrder": "array order; inverse is reverse array order",
+    "executionOrApplyTimeRewriting": false,
+    "spans": [
+      {
+        "index": 1,
+        "label": "header",
+        "occurrences": 1,
+        "beforeBytes": 170,
+        "beforeSha256": "e85cbc6e675cd4de374973f3cf51e2bb0ac762a3cdc2d31e96b7e55c0d114f09",
+        "afterBytes": 372,
+        "afterSha256": "6022b0f7abc902bcb6800ad03fa4aa047f46d66b9ac958e12d7a222339c7c459",
+        "before": "-- MA1 UNAPPLIED CANDIDATE. No migration/apply entry and no real method approval.\n-- Requires independently installed exact #1142. No existing Auth/default grants change.",
+        "after": "-- HMA1 UNAPPLIED hosted-creator companion. No installation or method approval is implied.\n-- Exact independent PG1 prerequisite; all ten original MA1 runtime declarations remain unchanged.\n-- Only newly created MA1 objects and the exact PostgreSQL17 automatic reader ADMIN edge.\n-- Root must bind actual target, API exclusion, signed Owner path and recovery before apply."
+      },
+      {
+        "index": 2,
+        "label": "creator-and-pg1-prerequisites",
+        "occurrences": 1,
+        "beforeBytes": 34,
+        "beforeSha256": "1df68696fe40ad1cd4066ed0bdfa10cf97498c8872fa800184875ca48abb3b46",
+        "afterBytes": 5471,
+        "afterSha256": "a4a805cbb13f220c83699c59d92c2704944db6399ec910055212262785ead8fa",
+        "before": "SET LOCAL search_path=pg_catalog;\n",
+        "after": "SET LOCAL search_path=pg_catalog;\nSET LOCAL lock_timeout='2s';\nSET LOCAL statement_timeout='30s';\n-- Consistent lock order with PG1 prevents its cooperating pre-use removal\n-- racing this installation. These are not a universal external DDL barrier.\nSELECT pg_catalog.pg_advisory_xact_lock(771101,1);\nSELECT pg_catalog.pg_advisory_xact_lock(771102,1);\nDO $hma1_creator$\nDECLARE owner_oid oid; version_number integer;\nBEGIN\n  version_number:=pg_catalog.current_setting('server_version_num')::integer;\n  SELECT oid INTO owner_oid FROM pg_catalog.pg_roles\n    WHERE rolname='postgres' AND NOT rolsuper AND rolbypassrls AND rolcreaterole;\n  IF owner_oid IS NULL OR session_user<>'postgres' OR current_user<>'postgres'\n    OR version_number<170000 OR version_number>=180000\n    OR pg_catalog.current_setting('server_encoding')<>'UTF8'\n    OR pg_catalog.current_setting('createrole_self_grant',true) IS DISTINCT FROM ''\n    OR pg_catalog.current_database()<>'postgres'\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_database WHERE datname=pg_catalog.current_database() AND datdba=owner_oid)\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_roles WHERE oid=10 AND rolsuper)\n    OR (SELECT count(*) FROM pg_catalog.pg_roles WHERE rolname IN ('anon','authenticated','service_role'))<>3\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members WHERE roleid=owner_oid)\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_roles r WHERE r.rolname IN ('anon','authenticated','service_role')\n      AND (pg_catalog.pg_has_role(r.oid,owner_oid,'SET') OR pg_catalog.pg_has_role(r.oid,owner_oid,'USAGE'))) THEN\n    RAISE EXCEPTION 'hma1 creator boundary invalid' USING ERRCODE='P7801';\n  END IF;\nEND\n$hma1_creator$;\n\n-- Read-only complete PG1 prerequisite before any destination mutation.\nDO $pg1_exact_inventory$\nDECLARE owner_oid oid:='postgres'::pg_catalog.regrole; namespace_oid oid; e record; f record;\nBEGIN\n  SELECT n.oid INTO namespace_oid FROM pg_catalog.pg_namespace n\n    WHERE n.nspname='jetnity_ot_auth' AND n.nspowner=owner_oid\n      AND pg_catalog.obj_description(n.oid,'pg_namespace')='jetnity:v3-private-owner-guards:1:unbound';\n  IF namespace_oid IS NULL\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_namespace n CROSS JOIN LATERAL\n      pg_catalog.aclexplode(COALESCE(n.nspacl,pg_catalog.acldefault('n',owner_oid))) a\n      WHERE n.oid=namespace_oid AND (a.grantee<>owner_oid OR a.grantor<>owner_oid))\n    OR NOT pg_catalog.has_schema_privilege(owner_oid,namespace_oid,'USAGE')\n    OR NOT pg_catalog.has_schema_privilege(owner_oid,namespace_oid,'CREATE')\n    OR (SELECT count(*) FROM pg_catalog.pg_proc WHERE pronamespace=namespace_oid)<>2\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_depend d WHERE d.refclassid='pg_catalog.pg_namespace'::pg_catalog.regclass\n      AND d.refobjid=namespace_oid AND (d.classid<>'pg_catalog.pg_proc'::pg_catalog.regclass\n        OR d.objsubid<>0 OR d.deptype<>'n' OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_proc p\n          WHERE p.oid=d.objid AND p.pronamespace=namespace_oid\n            AND p.proname IN ('own_active_session_v1','require_current_owner_session_v1') AND p.pronargs=0)))\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_depend d\n      WHERE d.classid='pg_catalog.pg_namespace'::pg_catalog.regclass AND d.objid=namespace_oid AND d.deptype='e') THEN\n    RAISE EXCEPTION 'pg1 exact inventory invalid' USING ERRCODE='P7703';\n  END IF;\n  FOR e IN SELECT * FROM (VALUES\n    ('own_active_session_v1','bool','s',ARRAY['search_path=pg_catalog']::text[],\n      '1bf7498146d4827371087a926327db1348ce2a4cc55693427ee154eb81082354'),\n    ('require_current_owner_session_v1','void','v',ARRAY['search_path=pg_catalog','lock_timeout=2s']::text[],\n      'ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b')\n  ) AS expected(name,result_type,volatility,config,body_hash) LOOP\n    SELECT p.* INTO f FROM pg_catalog.pg_proc p WHERE p.pronamespace=namespace_oid AND p.proname=e.name AND p.pronargs=0;\n    IF NOT FOUND OR f.proowner<>owner_oid OR f.prokind<>'f' OR NOT f.prosecdef OR f.proretset OR f.proleakproof\n      OR f.proisstrict OR f.provolatile::text<>e.volatility OR f.proparallel<>'u' OR f.pronargdefaults<>0\n      OR f.proallargtypes IS NOT NULL OR f.proargmodes IS NOT NULL OR f.proargnames IS NOT NULL\n      OR f.prorettype<>pg_catalog.to_regtype('pg_catalog.'||e.result_type)\n      OR f.prolang<>(SELECT oid FROM pg_catalog.pg_language WHERE lanname='plpgsql')\n      OR f.proconfig IS DISTINCT FROM e.config OR f.probin IS NOT NULL OR f.prosupport<>0::pg_catalog.oid\n      OR pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(f.prosrc,'UTF8')),'hex')<>e.body_hash\n      OR pg_catalog.obj_description(f.oid,'pg_proc') IS DISTINCT FROM 'jetnity:v3-private-owner-guards:1:unbound'\n      OR EXISTS(SELECT 1 FROM pg_catalog.aclexplode(COALESCE(f.proacl,pg_catalog.acldefault('f',owner_oid))) a\n        WHERE a.grantee<>owner_oid OR a.grantor<>owner_oid OR a.privilege_type<>'EXECUTE')\n      OR NOT pg_catalog.has_function_privilege(owner_oid,f.oid,'EXECUTE') THEN\n      RAISE EXCEPTION 'pg1 exact inventory invalid' USING ERRCODE='P7703';\n    END IF;\n    IF EXISTS(SELECT 1 FROM pg_catalog.pg_roles r WHERE r.rolname IN ('anon','authenticated','service_role')\n      AND (pg_catalog.has_function_privilege(r.oid,f.oid,'EXECUTE')\n        OR pg_catalog.has_schema_privilege(r.oid,namespace_oid,'USAGE,CREATE'))) THEN\n      RAISE EXCEPTION 'pg1 effective privileges invalid' USING ERRCODE='P7703';\n    END IF;\n  END LOOP;\nEND\n$pg1_exact_inventory$;\n"
+      },
+      {
+        "index": 3,
+        "label": "creator-reader-membership",
+        "occurrences": 1,
+        "beforeBytes": 168,
+        "beforeSha256": "3e56b4db1234f6ffa2fafd2750d8dd5ffef51ac813626ffbf8b690bab8ef241b",
+        "afterBytes": 638,
+        "afterSha256": "3cc7f8a87a1c542013dbef578ffb8af68bf85d389c6aa77476911baf477dbd05",
+        "before": "EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.roleid='ot_v3_method_reader'::pg_catalog.regrole\n      OR m.member='ot_v3_method_reader'::pg_catalog.regrole)",
+        "after": "(SELECT count(*) FROM pg_catalog.pg_auth_members m WHERE m.roleid='ot_v3_method_reader'::pg_catalog.regrole OR m.member='ot_v3_method_reader'::pg_catalog.regrole)<>1\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.roleid='ot_v3_method_reader'::pg_catalog.regrole\n      AND m.member='postgres'::pg_catalog.regrole AND m.grantor=10 AND m.admin_option AND NOT m.inherit_option AND NOT m.set_option)\n    OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,'ot_v3_method_reader'::pg_catalog.regrole,'SET')\n    OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,'ot_v3_method_reader'::pg_catalog.regrole,'USAGE')"
+      },
+      {
+        "index": 4,
+        "label": "final-reader-membership",
+        "occurrences": 1,
+        "beforeBytes": 100,
+        "beforeSha256": "353f09565081e815e8e79689e152bc17a22b192352322dbef4f669a126c19fb2",
+        "afterBytes": 420,
+        "afterSha256": "a3bb7630580966a5f08e32b6715eff7986fb816d60ee37b6881ca26dd800a3f3",
+        "before": "EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.roleid=reader_oid OR m.member=reader_oid)",
+        "after": "(SELECT count(*) FROM pg_catalog.pg_auth_members m WHERE m.roleid=reader_oid OR m.member=reader_oid)<>1\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.roleid=reader_oid\n      AND m.member=owner_oid AND m.grantor=10 AND m.admin_option AND NOT m.inherit_option AND NOT m.set_option)\n    OR pg_catalog.pg_has_role(owner_oid,reader_oid,'SET')\n    OR pg_catalog.pg_has_role(owner_oid,reader_oid,'USAGE')"
+      },
+      {
+        "index": 5,
+        "label": "three-package-markers",
+        "occurrences": 3,
+        "beforeBytes": 36,
+        "beforeSha256": "e5f8fd2e382a2d06f4baaaac571cfd2f654f23862b4396139a6e505ad523308f",
+        "afterBytes": 39,
+        "afterSha256": "7e79ecab5927dbbbe1a0c3262443f58f1bde174dd25f5adae8371fb91d21556a",
+        "before": "'jetnity:ma1:unapplied-candidate-v1'",
+        "after": "'jetnity:hma1:hosted-creator-v1:unused'"
+      },
+      {
+        "index": 6,
+        "label": "additional-exact-identity",
+        "occurrences": 1,
+        "beforeBytes": 9,
+        "beforeSha256": "d60cb359d759c17289fc7230cd43b8ec21dda61db61f3d041e01824f0f0b5aa1",
+        "afterBytes": 9435,
+        "afterSha256": "72dbca771bfb1bab17f8d873f676c6f9b2cbdb4b43e666cc547c61107291e969",
+        "before": "\nCOMMIT;\n",
+        "after": "\nDO $hma1_exact_identity$\nDECLARE owner_oid oid:='postgres'::pg_catalog.regrole; reader_oid oid:='ot_v3_method_reader'::pg_catalog.regrole; e record; f record;\nBEGIN\n  IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_roles WHERE oid=reader_oid AND rolconfig IS NULL)\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_db_role_setting WHERE setrole=reader_oid)\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl WHERE defaclrole=reader_oid)\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_shdepend WHERE refclassid='pg_catalog.pg_authid'::pg_catalog.regclass AND refobjid=reader_oid AND deptype='o')\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_roles WHERE oid=10 AND rolsuper)\n    OR (SELECT count(*) FROM pg_catalog.pg_auth_members m WHERE m.roleid=reader_oid OR m.member=reader_oid)<>1\n    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.roleid=reader_oid\n      AND m.member=owner_oid AND m.grantor=10 AND m.admin_option AND NOT m.inherit_option AND NOT m.set_option)\n    OR pg_catalog.pg_has_role(owner_oid,reader_oid,'SET')\n    OR pg_catalog.pg_has_role(owner_oid,reader_oid,'USAGE')\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_depend d WHERE d.deptype='e' AND (\n      (d.classid='pg_catalog.pg_namespace'::pg_catalog.regclass AND d.objid IN ('official_v3_method_private'::pg_catalog.regnamespace,'official_v3_method_api'::pg_catalog.regnamespace))\n      OR (d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid IN (SELECT oid FROM pg_catalog.pg_proc WHERE pronamespace IN ('official_v3_method_private'::pg_catalog.regnamespace,'official_v3_method_api'::pg_catalog.regnamespace)))\n      OR (d.classid='pg_catalog.pg_class'::pg_catalog.regclass AND d.objid IN (SELECT oid FROM pg_catalog.pg_class WHERE relnamespace IN ('official_v3_method_private'::pg_catalog.regnamespace,'official_v3_method_api'::pg_catalog.regnamespace))))) THEN\n    RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n  END IF;\n  IF (SELECT pg_catalog.array_agg(n.nspname||'.'||t.typname ORDER BY n.nspname,t.typname)\n      FROM pg_catalog.pg_type t JOIN pg_catalog.pg_namespace n ON n.oid=t.typnamespace\n      WHERE n.nspname IN ('official_v3_method_private','official_v3_method_api'))\n    IS DISTINCT FROM ARRAY[\n      'official_v3_method_private._heads_v1','official_v3_method_private._operations_v1','official_v3_method_private._revisions_v1',\n      'official_v3_method_private.heads_v1','official_v3_method_private.operations_v1','official_v3_method_private.revisions_v1']::text[]\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_type t WHERE t.typnamespace IN ('official_v3_method_private'::pg_catalog.regnamespace,'official_v3_method_api'::pg_catalog.regnamespace)\n      AND (t.typowner<>owner_oid OR t.typacl IS NOT NULL)) THEN\n    RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n  END IF;\n  -- Closed namespace inventory beyond tables/functions/types: reject foreign\n  -- collations, operators, conversions, defaults or other dependent objects.\n  IF EXISTS(SELECT 1 FROM pg_catalog.pg_depend d\n    WHERE d.refclassid='pg_catalog.pg_namespace'::pg_catalog.regclass\n      AND d.refobjid IN ('official_v3_method_private'::pg_catalog.regnamespace,'official_v3_method_api'::pg_catalog.regnamespace)\n      AND NOT(d.objsubid=0 AND d.deptype='n' AND (\n        (d.classid='pg_catalog.pg_class'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_class c\n          WHERE c.oid=d.objid AND c.relnamespace=d.refobjid))\n        OR (d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_proc p\n          WHERE p.oid=d.objid AND p.pronamespace=d.refobjid))\n        OR (d.classid='pg_catalog.pg_type'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_type t\n          WHERE t.oid=d.objid AND t.typnamespace=d.refobjid))\n        OR (d.classid='pg_catalog.pg_constraint'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_constraint c\n          WHERE c.oid=d.objid AND c.connamespace=d.refobjid))))) THEN\n    RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n  END IF;\n  FOR e IN SELECT * FROM (VALUES\n    ('official_v3_method_private.tuple_valid_v1(text,integer,text,text)','bool',false,'sql',ARRAY['p_method_id','p_revision','p_method_digest','p_package_digest']::text[],'15741698f4f66adb08e23694b15c6bb9d071b8c01e1123ba7087c4c3d50c6662'),\n    ('official_v3_method_private.timestamp_v1(text)','timestamptz',false,'plpgsql',ARRAY['p_value']::text[],'35e5ada766b2b82bc585d403725c2232ffb4c28b3395d9623797a873413cefb1'),\n    ('official_v3_method_private.command_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)','jsonb',false,'plpgsql',ARRAY['p_operation_id','p_action','p_method_id','p_revision','p_method_digest','p_package_digest','p_predecessor_revision','p_expected_revision','p_expected_method_digest','p_expected_package_digest','p_expected_epoch','p_expected_status','p_approval_mode','p_approval_until']::text[],'ef0a7fe89cd5bc2d15a40f8ec01ab1dd2bc2f7d6f64498409e9485761597561b'),\n    ('official_v3_method_private.immutable_v1()','trigger',false,'plpgsql',NULL::text[],'2a4782a3ca5e568a170743800ad36ea5c8c0a6b926c7524acfe9718c74ffe3a4'),\n    ('official_v3_method_api.confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)','jsonb',false,'plpgsql',ARRAY['p_operation_id','p_action','p_method_id','p_revision','p_method_digest','p_package_digest','p_predecessor_revision','p_expected_revision','p_expected_method_digest','p_expected_package_digest','p_expected_epoch','p_expected_status','p_approval_mode','p_approval_until']::text[],'232cdcfb8c10161336d2755a83c2a941dd3a582b235515b01f7d6c167579078b'),\n    ('official_v3_method_api.stage_draft_v1(text,text,integer,text,text,integer)','jsonb',false,'plpgsql',ARRAY['p_operation_id','p_method_id','p_revision','p_method_digest','p_package_digest','p_predecessor_revision']::text[],'947d017cbc27e70a1df22ecbd19214e295d5162f371e00c8d040076e5a168c90'),\n    ('official_v3_method_api.approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)','jsonb',false,'plpgsql',ARRAY['p_operation_id','p_method_id','p_revision','p_method_digest','p_package_digest','p_expected_revision','p_expected_method_digest','p_expected_package_digest','p_expected_epoch','p_expected_status','p_approval_mode','p_approval_until']::text[],'df1a49cd377c135460f3e3691303bbe527c4b3fc4e293b486a85ea5b8b1a3f49'),\n    ('official_v3_method_api.revoke_v1(text,text,integer,text,text,integer)','jsonb',false,'plpgsql',ARRAY['p_operation_id','p_method_id','p_revision','p_method_digest','p_package_digest','p_expected_epoch']::text[],'c6296c4a05ee52b32cdcf6145007dc5b8c3fd6867cf155e500b8bc27f738772f'),\n    ('official_v3_method_api.read_current_v1(text,integer,text,text,text)','record',true,'plpgsql',ARRAY['p_method_id','p_revision','p_method_digest','p_package_digest','p_checked_at']::text[],'e5688f6912d6ac5098d3826001386e19e163bf3df16ae3d7503a0ab18bb48de2'),\n    ('official_v3_method_private.require_current_locked_v1(text,integer,text,text,integer)','void',false,'plpgsql',ARRAY['p_method_id','p_revision','p_method_digest','p_package_digest','p_epoch']::text[],'7e98f2a32a2388efde95d729d425581bf9443e4397eb8311d82e6a46eb88ca8c')\n  ) AS expected(signature,result_type,returns_set,language_name,input_names,body_hash) LOOP\n    SELECT p.* INTO f FROM pg_catalog.pg_proc p WHERE p.oid=pg_catalog.to_regprocedure(e.signature);\n    IF NOT FOUND OR f.proowner<>owner_oid OR f.prokind<>'f' OR f.proretset<>e.returns_set OR f.proleakproof\n      OR f.provariadic<>0 OR f.probin IS NOT NULL OR f.prosupport<>0::pg_catalog.oid OR f.prosqlbody IS NOT NULL\n      OR f.prolang<>(SELECT oid FROM pg_catalog.pg_language WHERE lanname=e.language_name)\n      OR f.prorettype<>pg_catalog.to_regtype('pg_catalog.'||e.result_type)\n      OR pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(f.prosrc,'UTF8')),'hex')<>e.body_hash\n      OR EXISTS(SELECT 1 FROM pg_catalog.aclexplode(COALESCE(f.proacl,pg_catalog.acldefault('f',owner_oid))) a WHERE a.grantor<>owner_oid) THEN\n      RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n    END IF;\n    IF e.returns_set THEN\n      IF f.proallargtypes IS DISTINCT FROM ARRAY['text'::pg_catalog.regtype::oid,'integer'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,\n          'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'integer'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'integer'::pg_catalog.regtype::oid,\n          'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'text'::pg_catalog.regtype::oid,'integer'::pg_catalog.regtype::oid]\n        OR f.proargmodes IS DISTINCT FROM ARRAY['i','i','i','i','i','t','t','t','t','t','t','t','t','t','t']::\"char\"[]\n        OR f.proargnames IS DISTINCT FROM e.input_names||ARRAY['status','method_id','revision','method_digest','package_digest','epoch','approval_mode','approval_until','observed_at','remaining_ms']::text[] THEN\n        RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n      END IF;\n    ELSIF f.proallargtypes IS NOT NULL OR f.proargmodes IS NOT NULL OR f.proargnames IS DISTINCT FROM e.input_names THEN\n      RAISE EXCEPTION 'hma1 exact identity invalid' USING ERRCODE='P7802';\n    END IF;\n  END LOOP;\nEND\n$hma1_exact_identity$;\n\nCOMMIT;\n"
+      },
+      {
+        "index": 7,
+        "label": "creator-acl-origin",
+        "occurrences": 1,
+        "beforeBytes": 84,
+        "beforeSha256": "3494eaa4b2532c5649e5f809c9e7c6706f2a04fd3fbc03f175e3200a749c8cdc",
+        "afterBytes": 1294,
+        "afterSha256": "a14ae61e493781015e854be3cbc9d0fc80185680d5fe66f48d43d64537a4e5ad",
+        "before": "-- Inspect untouched effective creator ACLs before owner transfer or normalization.\n",
+        "after": "DO $hma1_creator_acl_origin$\nDECLARE owner_oid oid:='postgres'::pg_catalog.regrole;\nBEGIN\n  IF EXISTS(SELECT 1 FROM pg_catalog.pg_namespace n CROSS JOIN LATERAL\n      pg_catalog.aclexplode(COALESCE(n.nspacl,pg_catalog.acldefault('n',n.nspowner))) a\n      WHERE n.nspname IN ('official_v3_method_private','official_v3_method_api')\n        AND (n.nspowner<>owner_oid OR a.grantor<>owner_oid))\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace\n      CROSS JOIN LATERAL pg_catalog.aclexplode(COALESCE(c.relacl,pg_catalog.acldefault('r',c.relowner))) a\n      WHERE n.nspname='official_v3_method_private' AND c.relkind='r'\n        AND (c.relowner<>owner_oid OR a.grantor<>owner_oid))\n    OR EXISTS(SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace\n      CROSS JOIN LATERAL pg_catalog.aclexplode(COALESCE(p.proacl,pg_catalog.acldefault('f',p.proowner))) a\n      WHERE n.nspname IN ('official_v3_method_private','official_v3_method_api')\n        AND (p.proowner<>owner_oid OR a.grantor<>owner_oid)) THEN\n    RAISE EXCEPTION 'hma1 creator ACL origin invalid' USING ERRCODE='P7802';\n  END IF;\nEND\n$hma1_creator_acl_origin$;\n\n-- Inspect untouched effective creator ACLs before owner transfer or normalization.\n"
+      }
+    ]
+  },
+  "preservedFunctions": [
+    {
+      "name": "official_v3_method_private.tuple_valid_v1",
+      "signature": "official_v3_method_private.tuple_valid_v1(text,integer,text,text)",
+      "declarationBytes": 440,
+      "declarationSha256": "30a147ddffeec98fdd573804962e9692de08e5c11ce9fbf96def1776542a7990",
+      "bodyBytes": 193,
+      "bodySha256": "15741698f4f66adb08e23694b15c6bb9d071b8c01e1123ba7087c4c3d50c6662"
+    },
+    {
+      "name": "official_v3_method_private.timestamp_v1",
+      "signature": "official_v3_method_private.timestamp_v1(text)",
+      "declarationBytes": 958,
+      "declarationSha256": "cf0b10a86d6ecf27fdc44dcf06eac984bea97b1d8e5a0487732000daa168e240",
+      "bodyBytes": 775,
+      "bodySha256": "35e5ada766b2b82bc585d403725c2232ffb4c28b3395d9623797a873413cefb1"
+    },
+    {
+      "name": "official_v3_method_private.command_v1",
+      "signature": "official_v3_method_private.command_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)",
+      "declarationBytes": 3970,
+      "declarationSha256": "790f7f2d893f7b118e6b32cbe75997f4b7bf41271a649ea76d03c71d59619fa0",
+      "bodyBytes": 3471,
+      "bodySha256": "ef0a7fe89cd5bc2d15a40f8ec01ab1dd2bc2f7d6f64498409e9485761597561b"
+    },
+    {
+      "name": "official_v3_method_private.immutable_v1",
+      "signature": "official_v3_method_private.immutable_v1()",
+      "declarationBytes": 242,
+      "declarationSha256": "f7fd73d27f9da70c76e3e96530c8ef67357144bc71021ac05d5e33e91c8e4c59",
+      "bodyBytes": 74,
+      "bodySha256": "2a4782a3ca5e568a170743800ad36ea5c8c0a6b926c7524acfe9718c74ffe3a4"
+    },
+    {
+      "name": "official_v3_method_api.confirm_operation_v1",
+      "signature": "official_v3_method_api.confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)",
+      "declarationBytes": 2599,
+      "declarationSha256": "08388ed8d6375c1a6f97374ca16647d002b7245ded117e491fd1d751f6e272fa",
+      "bodyBytes": 2093,
+      "bodySha256": "232cdcfb8c10161336d2755a83c2a941dd3a582b235515b01f7d6c167579078b"
+    },
+    {
+      "name": "official_v3_method_api.stage_draft_v1",
+      "signature": "official_v3_method_api.stage_draft_v1(text,text,integer,text,text,integer)",
+      "declarationBytes": 2758,
+      "declarationSha256": "249f59a5fc066d0ac79a4e99de020e082cfa984c0d8f47d7aac5928d0dc4a4c9",
+      "bodyBytes": 2461,
+      "bodySha256": "947d017cbc27e70a1df22ecbd19214e295d5162f371e00c8d040076e5a168c90"
+    },
+    {
+      "name": "official_v3_method_api.approve_v1",
+      "signature": "official_v3_method_api.approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)",
+      "declarationBytes": 4559,
+      "declarationSha256": "8b62c0285e86cb5aba3162ee6c48f38b1d41fbef910cc4855d49ccaa925bbfbd",
+      "bodyBytes": 4111,
+      "bodySha256": "df1a49cd377c135460f3e3691303bbe527c4b3fc4e293b486a85ea5b8b1a3f49"
+    },
+    {
+      "name": "official_v3_method_api.revoke_v1",
+      "signature": "official_v3_method_api.revoke_v1(text,text,integer,text,text,integer)",
+      "declarationBytes": 2871,
+      "declarationSha256": "cd388f9d65356fc265e3b07a42048af6aa14a0efbaae52d33db428d3f3a49e37",
+      "bodyBytes": 2585,
+      "bodySha256": "c6296c4a05ee52b32cdcf6145007dc5b8c3fd6867cf155e500b8bc27f738772f"
+    },
+    {
+      "name": "official_v3_method_api.read_current_v1",
+      "signature": "official_v3_method_api.read_current_v1(text,integer,text,text,text)",
+      "declarationBytes": 2484,
+      "declarationSha256": "28b35822204af378a1c0cb8a4bc86b6ca08849be66d7bb3f4f301fa16dc0a24a",
+      "bodyBytes": 2041,
+      "bodySha256": "e5688f6912d6ac5098d3826001386e19e163bf3df16ae3d7503a0ab18bb48de2"
+    },
+    {
+      "name": "official_v3_method_private.require_current_locked_v1",
+      "signature": "official_v3_method_private.require_current_locked_v1(text,integer,text,text,integer)",
+      "declarationBytes": 1270,
+      "declarationSha256": "d79042c67e670ea0716ab63dca57278042d89d43fbf72d516f5e0141b7b9b5a2",
+      "bodyBytes": 994,
+      "bodySha256": "7e98f2a32a2388efde95d729d425581bf9443e4397eb8311d82e6a46eb88ca8c"
+    }
+  ],
+  "prerequisite": {
+    "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+    "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+    "utf8Bytes": 10945,
+    "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2",
+    "exactCopiedInventory": {
+      "utf8Bytes": 3716,
+      "sha256": "9f8b1139c8685dbe38a6b65ac60b2f1b644486fb3995e913d92a7e6e03036ea7"
+    },
+    "functions": [
+      {
+        "signature": "jetnity_ot_auth.own_active_session_v1()",
+        "bodySha256": "1bf7498146d4827371087a926327db1348ce2a4cc55693427ee154eb81082354"
+      },
+      {
+        "signature": "jetnity_ot_auth.require_current_owner_session_v1()",
+        "bodySha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b"
+      }
+    ],
+    "oldFull1142InstallerUsed": false,
+    "installedByAuthor": false
+  },
+  "reusedSources": [
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "gitBlob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+      "utf8Bytes": 5280
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "gitBlob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+      "utf8Bytes": 22433
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "gitBlob": "b1a81a0f63fb0debaffa4db739adbb483ac1efc5",
+      "utf8Bytes": 9025
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "gitBlob": "af7919f26cbb36038ba61a1b849815a3a29aac4b",
+      "utf8Bytes": 2050
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "gitBlob": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "utf8Bytes": 10485
+    }
+  ],
+  "syntheticAuthHelperBodyPins": [
+    {
+      "name": "auth.jwt()",
+      "utf8Bytes": 166,
+      "sha256": "fed2a8ac0349ffaba807c1b574698bfb1348825b8ef5163ad72d8408386f5e3e"
+    },
+    {
+      "name": "auth.uid()",
+      "utf8Bytes": 176,
+      "sha256": "9ab5ea099e74ec09e83b1505c51a3647791195aed7c742dcc3f257dfc7d2f300"
+    }
+  ],
+  "rootProvidedActualDevReceipts": {
+    "authorPerformedDatabaseReadback": false,
+    "urls": [
+      "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816048537",
+      "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816258415"
+    ],
+    "branch": "develop",
+    "project": "yfvbxvijcorffwxbxahl",
+    "parentProject": "qscbgcdmivbbnzrcyegn",
+    "version": 170006,
+    "creatorOid": 16388,
+    "creator": "postgres",
+    "creatorProfile": {
+      "login": true,
+      "inherit": true,
+      "superuser": false,
+      "bypassRls": true,
+      "createRole": true,
+      "createDb": true,
+      "replication": true,
+      "incomingEdges": 0,
+      "outgoingEdges": 10,
+      "roleConfigRows": 1,
+      "databaseRoleSettingRows": 1
+    },
+    "createroleSelfGrant": "",
+    "bootstrap": {
+      "oid": 10,
+      "name": "supabase_admin",
+      "superuser": true
+    },
+    "database": {
+      "oid": 5,
+      "name": "postgres",
+      "owner": "postgres",
+      "create": true,
+      "createWithGrantOption": true
+    },
+    "roleCreatedByReceipts": false
+  },
+  "native": {
+    "status": "NOT_RUN",
+    "mandatoryWrapper": true,
+    "existingTestCore": true,
+    "actualPostgresql17Required": true,
+    "optionalSkip": false,
+    "candidateConnection": "separate actual LOGIN postgres NOSUPERUSER/BYPASSRLS/CREATEROLE",
+    "bootstrap": "owned synthetic fixture only; OID10 SUPERUSER, name may differ from Dev",
+    "versionNegativeMethod": "finite synthetic expression injection into exact no-DDL creator guard, not a real PG16/18 run",
+    "helperBodiesExactButAuthClaimsRowsOwnersAndConfigurationSynthetic": true,
+    "groups": 8,
+    "effectBudgetMs": 180000,
+    "wrapperBudgetMs": 240000,
+    "existingDrainBudgetMs": 35000,
+    "maxReceiptBytesExclusive": 8192,
+    "ownCleanupUnconditional": true,
+    "actualQueryFailureAndTimeoutWitnessesAuthored": true,
+    "existingCiPostgresBinaryAvailabilityObservedByAuthor": false
+  },
+  "recovery": {
+    "status": "NOT_RUN",
+    "artifact": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+    "oldRollbackUnusedAndUnchanged": {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
+      "gitBlob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb"
+    },
+    "originalIdentityCurrentInventoryAndQuiescenceRequired": true,
+    "acknowledgmentGucsNotProof": true,
+    "unknownCommit": "STOP, separately reviewed bounded new-object readback; no blind retry",
+    "historyUse": "retain; existing supported signed Owner revocation or separately reviewed forward repair",
+    "explicitBootstrapGrantRevocation": false,
+    "cascade": false,
+    "pg1PlatformOrForeignObjectRemoval": false
+  },
+  "observedVerification": {
+    "immutableGitObjectCreation": true,
+    "pureSourceComparison": true,
+    "authorSideSqlReview": "bounded no concrete blocking finding; /root/hosted_method_authority_writer_g1/hma1_sql_sanity; not independent TL PASS",
+    "parser": "NOT_RUN",
+    "compiler": "NOT_RUN",
+    "projectTests": "NOT_RUN",
+    "nativePostgres": "NOT_RUN",
+    "sql": "NOT_RUN",
+    "build": "NOT_RUN",
+    "githubCi": "NOT_RUN",
+    "hostedQuery": "NOT_RUN",
+    "hostedInstall": "NOT_RUN"
+  },
+  "launch": {
+    "signedOwnerRequest": false,
+    "realMethodApproval": false,
+    "publicChToDeLive": false,
+    "sourceRevisionRefresh": false,
+    "pilotWindowExtension": false,
+    "cacheRefreshOrSchedulerActivation": false
+  },
+  "boundaries": {
+    "rootOnlyReadyMerge": true,
+    "authorBranchRefPrChanges": false,
+    "aaRearmOrCall": false,
+    "aaAtTask": "4120 failed before Tests; A4 RUN0/UNARMED",
+    "s1M04HostedExpansion": false,
+    "original917StopUnchanged": true,
+    "original1131StopUnchanged": true,
+    "followOnSelectedByAuthor": false
+  }
+}
