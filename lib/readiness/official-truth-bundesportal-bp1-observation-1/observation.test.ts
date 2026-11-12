@@ -24,7 +24,7 @@ Synthetic Schweiz visumfrei cue — not legal evidence.</p></body></html>`
 const SENTINEL = 'SYNTHETIC_PRIVATE_PASSPORT_ABC123_person@example.invalid'
 
 type Options = { bytes?: Uint8Array; status?: number; media?: string; length?: string; encoding?: string;
-  location?: string; address?: string; fail?: boolean; partial?: boolean; timeout?: boolean }
+  location?: string; address?: string; fail?: boolean; partial?: boolean; framingComplete?: boolean; timeout?: boolean }
 async function canonical(options: Options = {}, input?: unknown) {
   const q = bp1QuarantineCatalog()
   let requests = 0, cancelled = 0
@@ -40,7 +40,7 @@ async function canonical(options: Options = {}, input?: unknown) {
         headers: { get: key => ({ 'content-type': options.media ?? 'text/html; charset=utf-8',
           'content-length': options.length, 'content-encoding': options.encoding, location: options.location })[key] ?? null },
         body: (async function* () { yield options.bytes ?? Buffer.from(SYNTHETIC); if (options.partial) throw Error(SENTINEL) })(),
-        cancel() { cancelled++ }, framingComplete: () => false,
+        cancel() { cancelled++ }, framingComplete: () => !options.partial && options.framingComplete !== false,
       }
     },
   }
@@ -76,7 +76,7 @@ function native(t: TestContext, options: Options = {}) {
           response.headers = { 'content-type': options.media ?? 'text/html; charset=utf-8',
             'content-length': options.length, 'content-encoding': options.encoding, location: options.location,
             'set-cookie': [SENTINEL], 'x-private-test': SENTINEL }
-          response.complete = false // Existing isolated seam does NOT independently check this.
+          response.complete = !options.partial && options.framingComplete !== false // Synthetic native: only complete delivery is accepted.
           cb(response)
         })
       })
@@ -200,10 +200,16 @@ for (const bytes of [Buffer.alloc(65_536, 97), Buffer.from('é'.repeat(32_768))]
   assert.equal(result.observed?.bytes, 65_536)
 })
 
-test('reports actual legacy seam limits: 206, short declared body and no independent framing proof', async () => {
+test('synthetic BP1 native framing witness false never reaches source identity, even with complete-looking HTML', async () => {
+  const result = await canonical({ framingComplete: false })
+  assert.deepEqual(result.result, { status: 'blocked', reason: 'http_failed' })
+  assert.equal(result.observed, null)
+})
+
+test('short declared response is rejected before identity review, with no source body disclosed', async () => {
   const result = await canonical({ status: 206, length: '60000' })
-  assert.deepEqual(result.result, { status: 'blocked', reason: 'content_identity_mismatch' })
-  assert.equal(result.observed?.bytes, Buffer.byteLength(SYNTHETIC))
+  assert.deepEqual(result.result, { status: 'blocked', reason: 'http_failed' })
+  assert.equal(result.observed, null)
   const timeout = await canonical({ timeout: true })
   assert.deepEqual(timeout.result, { status: 'blocked', reason: 'timeout' }); assert.equal(timeout.observed, null)
 })
@@ -253,7 +259,7 @@ test('strict report rejects raw additions; all maximum finite fields remain unde
 
 test('protected transport/profile/application remain byte-identical, closed and unreachable from app', () => {
   const pins = {
-    'lib/readiness/official-truth-server-owned-retrieval.ts': '5998fdea54d3337fb68cd7111460b59e43a3cef7',
+    'lib/readiness/official-truth-server-owned-retrieval.ts': '463d0c24c4345df01b2ee462b13f3a39cf1196f4',
     'lib/readiness/official-truth-content-identity.ts': '4a4c3eea77b6e634fd83525849a4aaa6e6e50c18',
     'scripts/official-truth-ch-de-first-visa-vertical-1/source-probe.ts': '375adb52e2ef5ccb9045e17d830bf5d9111f6375',
     'lib/readiness/official-truth-ch-de-application-pilot-1/contract-server.ts': '90b9dd0108ed3e4d8049a3f8d35323c09b52e23f',

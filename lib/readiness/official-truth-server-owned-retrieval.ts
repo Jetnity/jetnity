@@ -246,7 +246,7 @@ export type OfficialTruthServerOwnedRetrievalHttpErgebnis =
       headers: HttpKopf
       body: AsyncIterable<Uint8Array> | null
       cancel?: () => void
-      /** Native HTTP parser framing proof; ignored by existing official retrieval. */
+      /** Native HTTP parser framing proof; checked after the complete bounded body read when supplied. */
       framingComplete?: () => boolean
     }
   | { ok: false; reason: 'address_not_permitted' | 'dns_failed' | 'dns_empty' | 'timeout' | 'http_failed' }
@@ -832,6 +832,19 @@ async function hopLesen(
   if (!koerper.ok) {
     antwort.cancel?.()
     return { art: 'blocked', reason: koerper.reason }
+  }
+  // A fully parsed HTML/JSON document can still be a truncated HTTP body.
+  // Do not let parser repair of a missing tail turn an incomplete response into
+  // source-owned evidence. The native HTTP client supplies IncomingMessage.complete.
+  let nativeFramingComplete = true
+  try {
+    if (antwort.framingComplete) nativeFramingComplete = antwort.framingComplete() === true
+  } catch {
+    nativeFramingComplete = false
+  }
+  if ((laenge.value !== null && koerper.bytes.byteLength !== laenge.value) || !nativeFramingComplete) {
+    antwort.cancel?.()
+    return { art: 'blocked', reason: 'http_failed' }
   }
   return { art: 'bytes', bytes: koerper.bytes, contentType }
 }

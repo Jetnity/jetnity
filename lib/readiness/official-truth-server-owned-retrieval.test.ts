@@ -64,6 +64,7 @@ type Schritt = {
   headers?: Record<string, string>
   body?: string | Uint8Array
   stuecke?: Uint8Array[]
+  framingComplete?: boolean
   location?: string
   haengen?: boolean
   lesen?: { gesehen: boolean; abgebrochen: boolean }
@@ -227,6 +228,7 @@ async function laufen(teil?: {
           if (spur) spur.gesehen = true
           for (const stueck of inhalt) yield stueck
         })(),
+        ...(schritt.framingComplete === undefined ? {} : { framingComplete: () => schritt.framingComplete === true }),
         cancel() {
           if (spur) spur.abgebrochen = true
         },
@@ -632,6 +634,39 @@ describe('official truth server-owned retrieval', () => {
     assert.equal(wert.requestUrl, AMTLICH_URL)
     assert.equal(wert.canonicalUrl, AMTLICH_URL)
     assert.equal(wert.sourceSnapshot, TEXT)
+  })
+
+  test('a parsable official-looking response is blocked when declared bytes or native frame are incomplete', async () => {
+    const declared = new TextEncoder().encode(TEXT).byteLength
+    for (const advertised of [declared - 1, declared + 1]) {
+      const read = { gesehen: false, abgebrochen: false }
+      const result = await laufen({ antwort: () => ({
+        body: TEXT, headers: { 'content-type': 'text/plain', 'content-length': String(advertised) },
+        framingComplete: true, lesen: read,
+      }) })
+      assert.equal(grund(result), 'http_failed', String(advertised))
+      assert.equal(read.gesehen, true)
+      assert.equal(read.abgebrochen, true)
+      assert.equal(JSON.stringify(result.ergebnis).includes(TEXT), false)
+    }
+    const framing = { gesehen: false, abgebrochen: false }
+    const invalidFrame = await laufen({ antwort: () => ({
+      body: TEXT, headers: { 'content-type': 'text/plain', 'content-length': String(declared) },
+      framingComplete: false, lesen: framing,
+    }) })
+    assert.equal(grund(invalidFrame), 'http_failed')
+    assert.equal(framing.abgebrochen, true)
+
+    const chunkedIncomplete = await laufen({ antwort: () => ({
+      body: TEXT, headers: { 'content-type': 'text/plain' }, framingComplete: false,
+    }) })
+    assert.equal(grund(chunkedIncomplete), 'http_failed')
+
+    const valid = await laufen({ antwort: () => ({
+      body: TEXT, headers: { 'content-type': 'text/plain', 'content-length': String(declared) },
+      framingComplete: true,
+    }) })
+    assert.equal(erfolg(valid).sourceSnapshot, TEXT)
   })
 
   test('18 und 19 zu grosse Content-Length und ein zu grosser Strom scheitern', async () => {
