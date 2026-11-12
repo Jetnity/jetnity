@@ -150,3 +150,62 @@ describe('Der Wert eines unbekannten Schlüssels bleibt drinnen', () => {
     assert.ok(ausgabe.includes('https://falsch.example'))
   })
 })
+
+describe('Der verpflichtende boolesche Magic-Link-Sollwert', () => {
+  const feld = 'external_email_magic_link_disabled'
+
+  test('explizit false ist akzeptiert und eingeordnet', () => {
+    const b = befund(CONFIG, lebendeKonfiguration({ [feld]: false }))
+
+    assert.equal(b.sauber, true)
+    assert.deepEqual(b.abweichungen, [])
+    assert.deepEqual(b.fehlend, [])
+    assert.deepEqual(b.verstoesse, [])
+    assert.deepEqual(b.unklassifiziert, [])
+  })
+
+  for (const [name, wert] of [
+    ['true', true],
+    ['null', null],
+    ['String false', 'false'],
+    ['Zahl 0', 0],
+    ['Objekt', { disabled: false }],
+  ] as const) {
+    test(name + ' wird als abweichender Wert abgelehnt', () => {
+      const b = befund(CONFIG, lebendeKonfiguration({ [feld]: wert }))
+
+      assert.equal(b.sauber, false)
+      assert.deepEqual(b.abweichungen.map((a) => a.api), [feld])
+      assert.equal(b.abweichungen[0]?.erwartet, false)
+      assert.deepEqual(b.abweichungen[0]?.gefunden, wert)
+      assert.deepEqual(b.fehlend, [])
+      assert.deepEqual(b.unklassifiziert, [])
+    })
+  }
+
+  test('ein fehlender Wert wird nicht als false vorausgesetzt', () => {
+    const live = lebendeKonfiguration()
+    delete live[feld]
+    const b = befund(CONFIG, live)
+
+    assert.equal(b.sauber, false)
+    assert.deepEqual(b.fehlend, [feld])
+    assert.deepEqual(b.abweichungen, [])
+    assert.deepEqual(b.unklassifiziert, [])
+  })
+
+  test('ein anderer unbekannter disabled-Schlüssel bleibt ein Fehler ohne Rohwert', () => {
+    const unbekannt = 'external_email_magic_link_future_disabled'
+    const live = lebendeKonfiguration({ [unbekannt]: GEHEIM })
+    const b = befund(CONFIG, live)
+
+    assert.equal(b.sauber, false)
+    assert.deepEqual(b.unklassifiziert, [unbekannt])
+    assert.deepEqual(b.abweichungen, [])
+    assert.deepEqual(b.fehlend, [])
+    const ausgabe = jedeAusgabe(live)
+    assert.ok(ausgabe.includes(unbekannt))
+    assert.equal(ausgabe.includes(GEHEIM), false)
+    assert.equal(ausgabe.includes(GEHEIM.slice(0, 12)), false)
+  })
+})

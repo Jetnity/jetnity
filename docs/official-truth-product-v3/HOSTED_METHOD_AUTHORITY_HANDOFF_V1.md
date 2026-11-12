@@ -1,3 +1,84 @@
+# HMA1 R5-C — exact Main/PG1 source integration; publication HOLD
+
+12 November 2026. **SOURCE_ONLY / NOT_RUN_FOR_R5_C / STOP.** Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, session `/root/hosted_method_authority_writer_g1`; no replacement or Cursor claim. [Root's R5-C task](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994) explicitly selected this integration after [independent R5-B SOURCE_PASS](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293).
+
+## Exact ancestry and present gate
+
+Ordered parents are **bebba745330a719edaee3e215ed7c232063a05fc** (reviewed R5-B, tree **67a650fff0533a3f64d9424d125442c95afc2e3f**) and **fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474** (actual merged Main, tree **d58c49fa41e28f203623dab56998dacf11eaabd3**). The author read both complete untruncated trees and the actual Main ref. Final commit/tree and the manifest self-pin are bound externally in immutable delivery, not by circular embedded hashes.
+
+At R5-C selection Root reported the exact PG1 predecessor PR #4130 passed all eight jobs and nine PG1 groups, receipt https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6824736281 . Actual post-merge Main push **#4132 / 43226332423 was still running**. Production listing **dpl_2WQAaTmydXw8WFXmedUYvEAdZQy2 READY** did not establish complete Main acceptance. These are attributed dispatch facts, not this author's independent hosted/CI checks.
+
+**No executable publication is selected.** Root must independently accept actual Main Actions, exact Production and independent jetnity.com alias first. The Main post-merge gate is recorded as pending at selection unless superseded by a later persisted Root receipt. A changed Main requires a new exact Root binding. No prior runtime or Preview gate transfers to this integrated candidate.
+
+## Complete composition and preservation
+
+Start from all **9,486 Main leaves** and overlay exactly the fifteen selected HMA paths. Final expected tree has **9,497 leaves**, exactly **four modified Main paths + eleven additions**, zero deletions and **9,482 unchanged Main leaves**. The four modified Main paths are CI, package.json, the protected-source contract and the UI CI contract; their bytes are exactly the already reviewed R5-B artifacts.
+
+Only three HMA provenance files receive newly authored bytes: Task, Handoff and Manifest. The other **twelve overlay files are exact R5-B**. Source composition carries every Main path outside those four modifications unchanged, including all seven current PG1 files and all Auth changes.
+
+Relative to R5-B, Main contributes exactly three added Auth evidence documents, two modified Auth source/test files and three updated PG1 provenance documents. Together with the three HMA provenance updates, that is **eight modifications + three additions**, zero deletions; **9,486 R5-B leaves remain unchanged**. The four PG1 implementation blobs match both parents exactly. No source conflict rewrite, AA/HS1/HM04 integration, signed Owner request or future PG17 membership is selected.
+
+The original test-path universe remains exactly the same 630 paths. Its reviewed split stays 629 Core + one HMA1 PG17 wrapper, with the additional selector contract exactly once in Core. Main's Auth changes update existing files without changing that path inventory. The full signed provisioning step, six-family gate, all native groups, installer/recovery and **180s effect / 35s drain / 240s wrapper** limits remain exact R5-B. The original #917/#1131 boundaries remain intact.
+
+## Twelve preserved R5-B overlay artifacts
+
+| Path | UTF8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| .github/workflows/ci.yml | 23906 | a422a67d3a0407f4c1301d3bcff75f736d7ea9b4 | 371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba |
+| docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json | 4169 | 623df1665b55be485b7a8fb5ba1c587dc3247dab | 200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973 |
+| docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md | 12288 | 66d6352d5f4ed9382ab37be5122a3835dd00e7d9 | 9f4c7c6cd002df699d4f5a12cc68ef5d07a522d7b7c2b7b3b763c8ca3a4cd649 |
+| lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts | 10779 | 0a11b2b2e2bd1df3bac812b9a1319b64435c0ca2 | 9ff3682f909665354616b9b0636b6f12d2c17f98a2e67af6a6637b2acae12cdc |
+| lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts | 343 | 98252252911d0aaa54484ce0d5cb48efde7be67d | 3d361e5e8f52aed6c8f748dbe92fe0d1bbe60735160169d4f955d27179fce24c |
+| package.json | 6460 | 2a8d677d575b5762a5dd7091d161ea0da6edcea9 | 46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0 |
+| scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql | 69705 | 9c17260c202e430e4c779e47fee0a62c047c4d87 | edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0 |
+| scripts/db/official-truth-v3-hosted-method-authority-1/native.ts | 62251 | 35442ef5d863a8a1bdbeb812e4aa2c1596d2b898 | b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e |
+| scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql | 37227 | 477c646b4c886f4532d1f938cdf9ce2ba95711a9 | c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d |
+| scripts/official-truth-product-v3-ui/ci-contract.test.mjs | 7754 | bc31a87dd7017e89a720c0218319cad5c00beb67 | b0520e3b768affee12aa65f628a8da962a19d19f5866f93815b4671a07fa1902 |
+| scripts/official-truth-v3-test-selection.mjs | 5970 | 51a2a59e03104f83f3d392f0ffb79639274c1ae9 | 647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61 |
+| scripts/official-truth-v3-test-selection.test.mjs | 7360 | bbc10fc9621e31c5af74421891608d3cdf27238d | edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730 |
+
+## Seven exact actual-Main PG1 identities
+
+| Path | UTF8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md | 40888 | 16855a45ccf6276113c8a5ba2f35d9316bf5c90f | aea57c9226d18e3eda8f03e42998eab4016a10e2491c51e2251bd98ef5ed157e |
+| docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json | 32870 | 417091805b8aebf5fb9680b7526e933af1bfcad1 | 74a0d0bec916a7faa63f369e726379591e063ecf3629b9af650061eab5b4e55c |
+| docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md | 19923 | 754ee3172ba816635f373a71cc32893dc7adb6b8 | 9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601 |
+| lib/readiness/official-truth-v3-private-owner-guards-1.test.ts | 397 | f18e5aebc4ea6725f631e5ec7316da9f659de024 | 601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13 |
+| scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql | 10945 | 9a8144e27405f93b9c0e5d003923efe8883bb4b4 | 3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2 |
+| scripts/db/official-truth-v3-private-owner-guards-1/native.ts | 42247 | 21886dbcbcaea1e04817df3fdd7eb7344a44c460 | 2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0 |
+| scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql | 6452 | cd5a53120d4eb77adb31d1cf63b467454f7ccd61 | 869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b |
+
+The wrapper, installer, native source and recovery are the same four implementation blobs as R5-B; the three documentation blobs above replace only R5-B's older R3 provenance with the actual merged Main versions. No copied Main file is reauthored.
+
+## Exact Main Auth identities imported relative to R5-B
+
+| Path | UTF8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md | 10327 | 7c3100827240d05c75ab1049a115fe66f1105086 | 822a5a1789e9cdb40b34a1ef87866a6ac4cfc5f0c42a27491f4b0eb4000bd641 |
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json | 12247 | ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0 | 383eb44c5149206ac226a85063b7e11b5bb3c28693dee7b3de2a2d811b77147a |
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md | 10169 | bec28fc005b3d1191354948ae7026d30bdfe1cde | 09bacca39ccf833c220b8cdd7a343b958fbb8107e70bf910ea640a3c812ebe66 |
+| lib/supabase/auth-bericht.test.ts | 8497 | 1406705421fe3b2c3d312bbc067556d695eb76a7 | e9413d4246959a3f0b012f91522571b7ba26c21a0ea5a669a2a4ef7909eaa25d |
+| lib/supabase/auth-erwartung.ts | 19854 | 25ef939f111ba0db5475cdf1e4d1c55364193512 | 46ead850c64d6cd0c152f7750c0cdf0f0934eea734e75274f2b19d30d89aa58e |
+
+These are unchanged Main artifacts, not newly implemented or runtime-verified by this author. All remaining Main leaves are preserved by the complete tree comparison.
+
+## Historical failure and review evidence
+
+The full prior Task and Handoff remain verbatim below, including all original selections, R4/R5-A/R5-B histories and actual failed #4128 evidence. Historical Task: blob **0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e**, 46,749 bytes, SHA256 **eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542**. Historical Handoff: blob **512a6b4b70689e40515d5c81bea033b2962b16d4**, 76,786 bytes, SHA256 **c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d**. Historical R5-B Manifest: blob **182d5d2638eb295546f36f91e5cecf822b4dece3**, 231,903 bytes, SHA256 **cbe62d238dc2bd55441af5bf7e01dc54e18d3a6dcb29d778451afd90c6059c2b**. The author re-read and independently matched these raw pins.
+
+Root's complete R5-B SOURCE_PASS receipt and the complete selected R5-C task are appended verbatim with their persisted URLs. The new manifest retains the original MA1 function/body/source inverses, prior exact-head evidence, R5-B code/contract pins and the actual failed CI receipt while separating historical parent state from current integrated provenance.
+
+Actual failed #4128 remains: 8,731 tests, 8,723 pass, six failures, two existing skips; complete original Core log **4,296,323 UTF8 bytes / SHA256 0f64803235e1741c97bd4051657caa262df1ab4749048c065066bb7a7abbd905**. HMA1 groups 01–03 passed on PG17; group 04 failed with 42601 and failed completion; later groups, late-writer proof and independent cleanup witnesses were not run. The source correction does not retrospectively convert those results to PASS.
+
+## Remaining gates and STOP
+
+**HMA1-CI-03, HMA1-PINS-01 and HMA1-NATIVE-03 remain pending actual new-head proof.** This integration adds no new implementation. Root must independently review the complete final parent composition, accept actual Main post-merge gates, then select publication and fresh PG16 Core, complete PG17 HMA1 including all groups/late-writer/drain, all six required families, Auth, hygiene/build, exact Preview and thread gates. Only Root may set Ready or merge.
+
+Source reads, pure text/hash/tree comparison and immutable Git-object write/readback are the only author activities. Project/parser/compiler/native/SQL/APT/test/build/CI/hosted/official-source-GET execution is **NOT_RUN_FOR_R5_C**. No refs or PR mutation, prerequisite installation, recovery execution, real method authority or public CH→DE activation. **Author STOP after immutable delivery.**
+
+## Complete preserved Handoff history through R5-B
+
 # HMA1 R5-B — source correction delivered for independent Root review
 
 12 November 2026. **SOURCE_ONLY / NOT_RUN_FOR_R5_B / STOP.** Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, actual session `/root/hosted_method_authority_writer_g1`; no Cursor claim and no author replacement. Root alone decides acceptance, publication, Ready and merge.
@@ -603,3 +684,90 @@ Retain full prior Task/Handoff history, append complete R5-A and R5-B with persi
 Installer SQL, recovery SQL/document, all7PG1files, Auth and common native infrastructure remain exact. HS1/HM04 are not integrated or silently prelisted; their exact wrappers require later selected additions and their own fixed budgets. Current main ee6801 is now accepted at [6824208724](https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6824208724), PG1R4#4130 andAAA7#4131running; none changes R5-B's soleparent/sourceboundary.
 
 Only source reads, pure in-memory composition/hash/tree comparison and immutable Git object write/readback are permitted. **No project/parser/compiler/native/SQL/APT/test/build/CI/hosted/source-GET execution; no ref/PR/Ready/merge.** Return immutable commit/tree/parent, full source and byte/blob/SHA256/tree proofs; STOP. Root reviews independently, selects accepted-main integration, publishes, and requires fresh PG16Core/fullPG17HMA(allgroups/latewriter/drain)/sixfamilies/Auth/build/Preview/threads. No oldheadgate transfer. Original #917/#1131 STOPs intact.
+
+
+---
+
+## Independent Root R5-B SOURCE_PASS — preserved complete receipt
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293
+
+## Root independent SOURCE_PASS — HMA1 R5-B (2026-11-12)
+
+Reviewed immutable commit **`bebba745330a719edaee3e215ed7c232063a05fc`**, tree **`67a650fff0533a3f64d9424d125442c95afc2e3f`**, sole parent **`20dea8b7965a430fa1dff0bfd9c426661e5575f6`**. Same original Generation1 author/session; no publication selected by this receipt.
+
+Root independently read all changed executable source, contracts and the amendment, full newly appended task/handoff text and manifest deltas; fetched complete original/new immutable trees and all artifact bytes. Exactly nine modifications, three additions, zero deletions; 9,491 parent leaves / 9,494 candidate leaves / 9,482 unchanged leaves. Canonical complete tree-list SHA256: parent `661aef6e596ae8a5cbe29129c81e4a21953e6f9c0e8f72caeb3ef5b38c904b77`, candidate `a997b2e861c61f52c5069cce7ae30a070ee0f45c32184d8582c125416f1c0dd7`.
+
+### Independent source findings
+- The callback adds exactly six Native bytes; reversing only that insertion returns the complete prior 62,245-byte source/hash. This repairs the concrete replacement-template dollar-delimiter defect while preserving all assertions, SQL bodies/restoration, groups and 180s/35s/240s budgets.
+- Wrapper comment-only inverse, all three package-script inverses, the complete workflow inverse and the protected-guard inverse each independently return their exact parent bytes. All existing UI/browser/artifact contracts after the aggregate are byte-identical.
+- The entire reviewed signed PG17 provision step is byte-identical (9,912 bytes / SHA256 `18b68f1d793ae82a0d1e32197977f0b130ee4e92953f1cc512e1083705f810c8`). It moves to one unconditional mandatory isolated PG17 family. The original Core retains PG16 assumptions; no binary/selector/timeout weakening. Six-family aggregate requires six exact successes, including failure for missing/empty/cancelled/skipped inputs.
+- Independent full-tree inventory proves the original 630 files: 625 lib + all five Script paths. Exact 629/1 disjoint partition plus one new required selector-contract file; all paths occur once. Current explicit PG17 membership is HMA1 only. Dynamic unrelated discovery remains complete. Root also checked [Node22 fs.globSync documentation](https://nodejs.org/docs/latest-v22.x/api/fs.html#fsglobsyncpattern-options); the selected API and cwd/array behavior are supported. No candidate code was executed during this source review.
+- Exactly two fixed chained protected-source successors, CI via R28 and package via MI1; historical manifest digests, 40/2/1/3 counts, lockfile and all previous UTF8/length/hash checks remain. The new amendment has fixed SHA256 `200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973`. No automatic pinning.
+- All full old Task/Handoff text and complete Root R5-B task are preserved verbatim. Historical R4 manifest's complete pin was independently verified; actual #4128 failures and bounded group01–03 evidence remain accurately limited.
+
+### Complete current artifact pins
+- `.github/workflows/ci.yml`: 23906 bytes / blob `a422a67d3a0407f4c1301d3bcff75f736d7ea9b4` / SHA256 `371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba`
+- `docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json`: 4169 bytes / blob `623df1665b55be485b7a8fb5ba1c587dc3247dab` / SHA256 `200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md`: 76786 bytes / blob `512a6b4b70689e40515d5c81bea033b2962b16d4` / SHA256 `c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json`: 231903 bytes / blob `182d5d2638eb295546f36f91e5cecf822b4dece3` / SHA256 `cbe62d238dc2bd55441af5bf7e01dc54e18d3a6dcb29d778451afd90c6059c2b`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md`: 46749 bytes / blob `0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e` / SHA256 `eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542`
+- `lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts`: 10779 bytes / blob `0a11b2b2e2bd1df3bac812b9a1319b64435c0ca2` / SHA256 `9ff3682f909665354616b9b0636b6f12d2c17f98a2e67af6a6637b2acae12cdc`
+- `lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts`: 343 bytes / blob `98252252911d0aaa54484ce0d5cb48efde7be67d` / SHA256 `3d361e5e8f52aed6c8f748dbe92fe0d1bbe60735160169d4f955d27179fce24c`
+- `package.json`: 6460 bytes / blob `2a8d677d575b5762a5dd7091d161ea0da6edcea9` / SHA256 `46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0`
+- `scripts/db/official-truth-v3-hosted-method-authority-1/native.ts`: 62251 bytes / blob `35442ef5d863a8a1bdbeb812e4aa2c1596d2b898` / SHA256 `b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e`
+- `scripts/official-truth-product-v3-ui/ci-contract.test.mjs`: 7754 bytes / blob `bc31a87dd7017e89a720c0218319cad5c00beb67` / SHA256 `b0520e3b768affee12aa65f628a8da962a19d19f5866f93815b4671a07fa1902`
+- `scripts/official-truth-v3-test-selection.mjs`: 5970 bytes / blob `51a2a59e03104f83f3d392f0ffb79639274c1ae9` / SHA256 `647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61`
+- `scripts/official-truth-v3-test-selection.test.mjs`: 7360 bytes / blob `bbc10fc9621e31c5af74421891608d3cdf27238d` / SHA256 `edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730`
+
+### Acceptance boundary
+No new P0/P1/P2 source finding in this selected R5-B delta. **The three prior runtime P1 findings remain OPEN pending actual new-head proof.** This is not Native/CI/hosted/Owner-AAL2 acceptance; no Ready, merge, Dev install or public activation. Root must separately select the exact main/PG1 integration and then publish only after the base's actual post-merge gates. PG1 #1193 has now merged as `fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474`, same reviewed tree `d58c49fa41e28f203623dab56998dacf11eaabd3`; its actual push #4132 is still running, not accepted by this source receipt. AA #1192 remains independently CHANGES REQUIRED and Run0 UNARMED.
+
+#917 denied action and #1131 boundaries remain intact. Installer/recovery/shared infrastructure/PG1/HS1/HM04 were not silently changed or accepted.
+
+
+---
+
+## Amendment R5-C — complete persisted source-integration task
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994
+
+## TL HMA1 R5-C — exact main/PG1 source integration, publication HOLD
+
+12 November 2026. Continue in the same reachable original session **Jetnity Official Truth V3 Hosted Method Authority1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. Root selects this finite source-integration step after [independent R5-B SOURCE_PASS6824803293](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293). This is not an automatic follow-on.
+
+### Exact parents and actual gate truth
+Prepare one immutable integration commit with ordered parents:
+1. Reviewed R5-B **bebba745330a719edaee3e215ed7c232063a05fc**, tree **67a650fff0533a3f64d9424d125442c95afc2e3f**.
+2. Actual current main **fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474**, tree **d58c49fa41e28f203623dab56998dacf11eaabd3**.
+
+Main fa8bd1 is the actual merged #1193. Its exact predecessor PR #4130 passed all eight jobs and all nine PG1 groups: [Root TL PASS6824736281](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6824736281). Actual push **#4132/43226332423 is still running**; Production listing READY dpl_2WQAaTmydXw8WFXmedUYvEAdZQy2 is not yet complete post-merge acceptance. **Prepare source now; no executable publication until Root independently accepts actual main Actions, exact Production and independent jetnity.com alias.** Do not label that gate passed in authored documents. If main changes, stop and ask Root for a new exact binding, not PO approval.
+
+### Exact composition
+Start from all 9,486 actual main leaves. Overlay precisely the following 15-path reviewed HMA delta, preserving R5-B code/artifact bytes:
+- .github/workflows/ci.yml
+- package.json
+- lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts
+- scripts/official-truth-product-v3-ui/ci-contract.test.mjs
+- docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json
+- scripts/official-truth-v3-test-selection.mjs
+- scripts/official-truth-v3-test-selection.test.mjs
+- scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql
+- scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql
+- scripts/db/official-truth-v3-hosted-method-authority-1/native.ts
+- lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts
+- docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md
+- docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md
+- docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md
+- docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json
+
+Only the last three HMA provenance documents may receive newly authored bytes in R5-C. All other 12 overlay paths must be byte/mode/type exact R5-B. Relative to main the final tree has exactly **four existing modifications + eleven additions**, zero deletions, **9,497 leaves** and **9,482 unchanged main leaves**. All seven actual-main PG1 paths and all Auth changes must be exact actual-main versions, not the old R3 docs inherited by R5-B. No manual source conflict rewrite, other main difference, AA/HS1/HM04 integration or future PG17 member.
+
+### Documentation
+Preserve full R5-B Task/Handoff history and pins, actual #4128 failed evidence, original source-only selection and actual previous source reviews. Add current R5-C header and this entire persisted task verbatim to Task/Handoff. Record exact integration parents and actual-main PG1 seven-file identities (read from full main tree), same four PG1 implementation blobs and current provenance. Manifest must distinguish the historical R5-B tree from the integrated candidate, bind this 15-path overlay and untouched-main proof, all 12 unchanged R5-B overlay pins and the three authored docs, with no circular selfhash/commit/tree. Keep actual #4132/Production acceptance explicitly pending or attributed only to a subsequently persisted Root receipt.
+
+Source composition and immutable readback are NOT_RUN; prior runtime gates do not transfer. All three predecessor P1 findings remain pending actual new PG16-Core/fullPG17-HMA/sixfamily/Auth/build/Preview/thread gates. Root alone publishes, Ready and merges.
+
+### Delivery / STOP
+Read complete original/current trees; compare every path/type/mode/blob. Return immutable commit, tree, ordered parents, complete changed-path proofs relative to both parents, source/doc pins and exact preservation evidence. No ref/PR mutation, local/project/parser/compiler/SQL/APT/test/native/build/CI/hosted/source-GET execution. No hidden prerequisite installation, signed Owner claim or public activation. Unchanged installer/recovery, 180s/35s/240s limits, all groups and six-family gate. #917/#1131 boundaries intact. STOP after delivery.
+

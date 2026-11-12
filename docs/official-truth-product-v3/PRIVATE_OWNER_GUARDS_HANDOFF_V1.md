@@ -1,3 +1,98 @@
+# PG1 — current R4 integration handoff
+
+Prepared 2026-11-12 by **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**, the same original reachable session `/root/v3_private_owner_guards_writer_g1`.
+
+**SOURCE_PREPARED; CURRENT INTEGRATION NOT_RUN; DEV_UNAPPLIED; ROOT REVIEW AND PUBLICATION HOLD.**
+
+Binding R4: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6823360792
+
+This current section supersedes historical current-state wording below. Complete previous Handoff history is retained byte-exact, followed by the full R4 body and persisted URL. Historical source/runtime results remain tied to their own heads; none is transferred to this integration.
+
+## Exact current head/base provenance
+
+This is an immutable source-preparation integration with **two ordered parents**, not a single-parent successor:
+
+| Position | Commit | Tree | Meaning |
+| --- | --- | --- | --- |
+| 1 | `e464f6d8ffac77a124d5ab28637c7435337b222e` | `693400d99182fcf5bb48449cceb4fc2158c33c40` | Existing Draft #1193 R3 head |
+| 2 | `ee6801e99e86144e60dbe86d72576f9ad7c3e9bb` | `c2fad9aff45aa07addb541fea8e6a38fb9f2a19e` | Fresh actual Auth-corrected main and current integration baseline |
+
+The second parent's own ordered parents are `dfd692440762b50183fdebbfd6bf8dabde4662d0` and `72ec65f55e2e69e737b774b83b20201fed1e1892`. The earlier `dfd692` / `cbc79e627161d4ace132b84cf057c18adc86586c` basis remains historical origin only. The resulting integration commit/tree and manifest self-identity are external immutable receipt values; no circular self-pin is embedded here.
+
+All 9479 selected-main leaves are retained with exact path, mode, type and Git blob identity. The only seven additions against that main are the existing PG1 package; total leaves are 9486. There are no other changed, added or deleted paths against main. Of PG1's seven paths, only Task, Handoff and Manifest provenance changes relative to R3. All four R3 code files remain exact.
+
+Compared with first parent R3, the tree incorporates the five already-reviewed Auth-main paths (three added provenance documents and two modified sources), plus only three modified PG1 provenance documents. This is the authorized second-parent integration, not an additional authored Auth change.
+
+Full, untruncated parent-tree maps were read and compared in memory; no PG1/main path collision or unexpected conflict was found. Final complete tree/blob readback and comparison are supplied in the external delivery receipt. The Manifest records both parent trees, selected-main inventory identity, all seven PG1 paths, the five Auth-main pins and invariant counts.
+
+## Gate truth at R4 selection
+
+Root's R4 record was created at **2026-11-12 12:16:28Z**. The author read it and the linked evidence in full. This section records that evidence; it is not an author CI/hosting query or dispatch.
+
+| Scope | Actual recorded evidence | Limit for this integration |
+| --- | --- | --- |
+| PG1 R3 `e464f6d8` | #4124 / `43209347822` passed all nine PG1 groups, Core, build, five companions and aggregate; overall run FAILED on Auth alone. | Old-head evidence, not successor acceptance. |
+| Auth correction #1194 | Root TL-PASS at `72ec65f55e2e69e737b774b83b20201fed1e1892`; #4127 / `43212581593` SUCCESS. The tested checkout tree equals selected main tree `c2fad9af`. | Accepted source basis; no automatic PG1 integration gate. |
+| Merged main `ee6801e` | #1194 merged at 12:12:26Z. At R4 selection, post-merge #4129 / `43215792152` was still running; Auth job `131174573164` had succeeded. | Full main post-merge acceptance was not asserted in R4. Root must independently resolve the HOLD. |
+| Production baseline | R4 records `dpl_9K9EfdobAp4ySCBbWoBnqE4vw78B` READY on exact main, with jetnity.com pointing to it. | This is the Auth-corrected main deployment, not PG1 installation or public CH→DE activation. |
+| Current R4 integration | Source preparation only; no new execution, Preview or runtime receipt. | All exact-head gates are NOT_RUN; no transferred PASS. |
+
+**Publication remains Root-owned and on the R4 HOLD until Root establishes complete main post-merge evidence and independently reviews this successor.** This preparation does not release that HOLD. Root may then publish a new head and requires fresh complete exact-head CI, Preview, review-thread, source and target gates. The author has not updated any ref or PR, marked Ready or merged.
+
+### Exact R3 execution history now available
+
+Source: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822867554
+
+Run #4124 / `43209347822` / attempt 1 is tied to `e464f6d8ffac77a124d5ab28637c7435337b222e`. Root read verify job `131152625125`, 4298493 UTF-8 log bytes, SHA256 `7c09bae3c99ef22e4d83b3b70ea8ed8ae3e3aa292ef5f6e09ceb35f7f5087893`.
+
+All nine PG1 groups passed. The actual receipt reports effect 2729 ms, cleanup 152 ms, elapsed 2880 ms; main 391/391 operations, zero pending, 10/10 closed connections and one stopped cluster. Failure witness: 5/5 operations, 2/2 closed connections, one cluster; timeout witness: 6/6 operations, 2/2 closed connections, one cluster. Both real waits were observed and original queries joined; only the timeout witness's timer fired.
+
+Complete Core had 8738 tests, 8736 pass, zero failures, two existing skips and 971 suites. Typecheck, lint, Admin guard, schema/dead-code/export/dependency checks and production build succeeded; all five companions and the aggregate were terminal SUCCESS. The overall run remained FAILED because Auth job `131152625291` failed on the single unclassified `external_email_magic_link_disabled` field. Its log was 21099 bytes, SHA256 `f14c0c4adde97e76ede0e291b9c8683aa8adc234b3e4cc3863f03fea7951360f`; all 55 prior expected values matched across 244 keys. This history closes the duplicate-column defect for that exact run, without granting whole-run or successor PASS.
+
+### Accepted Auth-main source integration
+
+Source: https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643
+
+The correction classifies the observed field as required literal boolean false; it preserves generic unknown-key rejection and all 55 older expectations. Root recorded all 56 expected values matching and all 244 returned keys classified in successful #4127. No hosted Auth security setting was changed by that correction or by this integration author.
+
+All five Auth-main changed paths below retain exact actual-main mode/type/blob; their full UTF-8/SHA256 pins are in the Manifest:
+
+| Actual-main path | Preserved blob |
+| --- | --- |
+| `docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md` | `7c3100827240d05c75ab1049a115fe66f1105086` |
+| `docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json` | `ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0` |
+| `docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md` | `bec28fc005b3d1191354948ae7026d30bdfe1cde` |
+| `lib/supabase/auth-bericht.test.ts` | `1406705421fe3b2c3d312bbc067556d695eb76a7` |
+| `lib/supabase/auth-erwartung.ts` | `25ef939f111ba0db5475cdf1e4d1c55364193512` |
+
+## Four R3 code sources retained exactly
+
+| Path | Git blob | UTF-8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql` | `9a8144e27405f93b9c0e5d003923efe8883bb4b4` | 10945 | `3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql` | `cd5a53120d4eb77adb31d1cf63b467454f7ccd61` | 6452 | `869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/native.ts` | `21886dbcbcaea1e04817df3fdd7eb7344a44c460` | 42247 | `2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0` |
+| `lib/readiness/official-truth-v3-private-owner-guards-1.test.ts` | `f18e5aebc4ea6725f631e5ec7316da9f659de024` | 397 | `601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13` |
+
+All original guard declarations/bodies, nine Native groups, both R3 alias fixes, ownership/cleanup infrastructure, source pins, fixed deadlines and wrapper requirements remain unchanged. No HMA1, HS1, AA, HM04 or caller/Owner-binding package is added. Historical references to separate tasks are preserved solely as history.
+
+The previous Task is an exact prefix; full R4 and its URL are appended verbatim. Current Task blob `754ee3172ba816635f373a71cc32893dc7adb6b8`, 19923 UTF-8 bytes, SHA256 `9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601`. The complete previous Handoff is retained below, including its own nested history, with original blob `8dc967afc88543ad6b812879eb693a06b44d41ee`, 26083 UTF-8 bytes and SHA256 `fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc`.
+
+## Current limits and first unfinished step
+
+Every integration-head type/lint/core/native/hygiene/build/CI/Preview/review/target gate remains unexecuted or unverified for this candidate. The source comparison is not an independent TL PASS. Actual Dev is UNAPPLIED, real signed Owner/AAL2 authority is absent, and no public CH→DE answer is activated. Hosted prerequisite compatibility, API exclusion, target/recovery/time-of-use evidence and real authorization remain separately gated.
+
+Root's first unfinished action is to complete the main post-merge readback and independent exact-successor review before releasing the publication HOLD. After publication all new-head gates must run afresh. Same original session handles any resulting review-fix; no automatic follow-on is selected.
+
+Only immutable Git source objects and pure in-memory source/metadata operations were used. No project/parser/compiler/SQL/native/test/build/CI/hosted/source-GET execution, package installation, credential or Auth interaction, ref/PR update, Ready or merge was performed. #917/#1131 denied-action boundaries remain unchanged.
+
+**STOP — R4 source-only integration delivery; executable publication is exclusively Root's decision after the required HOLD and gates.**
+
+## Preserved complete previous Handoff — historical R3 delivery
+
+Everything between the following history markers is the exact prior Handoff; its previous current-state wording is historical and superseded by the R4 front section.
+
+<!-- BEGIN VERBATIM PREVIOUS R3 HANDOFF -->
 # PG1 — same-session R3 review-fix handoff
 
 Prepared 2026-11-12. The complete previous Handoff is retained below as dated history, byte-for-byte. Its prior current-state/ancestry/NOT_RUN wording belongs to that historical source snapshot and is superseded by the **Current R3 handoff** after the history. The new R3 successor has not executed.
@@ -220,3 +315,48 @@ The first unfinished step is Root's independent exact-candidate review of R3, fo
 Only immutable Git objects and pure in-memory source/metadata operations were used. No project/parser/compiler/native/SQL/test/build/APT execution, hosted/Auth query or change, source network request, branch/ref/PR publication, Ready, merge or follow-on occurred. #917/#1131 STOPs remain intact.
 
 **STOP — source-only R3 delivery for independent Root review.**
+
+<!-- END VERBATIM PREVIOUS R3 HANDOFF -->
+
+## Persisted R4 task — verbatim
+
+URL: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6823360792
+
+## Technical Lead — PG1 integration review-fix R4 / exact Auth-main source preparation
+
+**12 November 2026. Explicitly selected by Root for CH→DE.** Continue with **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**, original reachable session /root/v3_private_owner_guards_writer_g1. This is the same scoped #1193 prerequisite, not a new product slice.
+
+### Live integration basis
+
+#1194 was independently TL-PASS at https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643 and merged at12:12:26Z. Fresh actual main is **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, tree **c2fad9aff45aa07addb541fea8e6a38fb9f2a19e**, parents[dfd692440762b50183fdebbfd6bf8dabde4662d0,72ec65f55e2e69e737b774b83b20201fed1e1892]. This merge tree equals the exact successful #4127 tested checkout tree. Production dpl_9K9EfdobAp4ySCBbWoBnqE4vw78B is READY on that exact main and jetnity.com alias points to it.
+
+Separate merged-main CI **#4129/43215792152** is still running; actual Auth job131174573164 already SUCCESS. **Full post-merge acceptance is not yet asserted.** This task authorizes immutable source preparation in parallel; Root keeps executable publication on HOLD until the main post-merge evidence and independent successor review are complete.
+
+Existing Draft #1193 head **e464f6d8ffac77a124d5ab28637c7435337b222e**, tree **693400d99182fcf5bb48449cceb4fc2158c33c40**. Its actual #4124 PG1/Core/build/five companions passed; Auth alone failed on the field now classified in #1194. Preserve that evidence and failure truth: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822867554 .
+
+### Exact permitted successor
+
+Prepare one immutable integration commit with ordered parents:
+1. **e464f6d8ffac77a124d5ab28637c7435337b222e**
+2. **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**
+
+Retain every actual-main leaf byte/mode/type exact. Add only the existing seven-file PG1 package. Of that package, the four code files **install-candidate.sql, recovery-candidate.sql, native.ts, mandatory wrapper** remain exactly R3. Only existing **PRIVATE_OWNER_GUARDS_TASK_V1.md, PRIVATE_OWNER_GUARDS_HANDOFF_V1.md, PRIVATE_OWNER_GUARDS_MANIFEST_V1.json** may change for this integration's provenance. Use their actual existing repository paths, do not create similarly named alternatives. No workflow/shared module/original MA1/Auth implementation change.
+
+Preserve the complete previous Task and Handoff history byte exactly, append this R4 and its persisted URL verbatim, and put current head/base/history/gate truth at the front of the Handoff. Manifest binds both exact parents/base trees, all seven resulting PG1 file pins and unchanged code, the full-tree comparison and the fact that previous runtime gates do not transfer to the successor. No circular embedded self-pin; final manifest/commit/tree identities belong in the external immutable delivery receipt.
+
+Required source-level comparison:
+- all9,479 current-main leaves preserved exactly;
+- exactly seven PG1 new leaves relative to main, total9,486;
+- no additional changed/new/deleted path;
+- all five Auth-main changed paths exact to actual main;
+- all four R3 PG1 source blobs exact.
+
+Do not include HMA1, HS1, AA, HM04 or a caller/Owner binding. No runtime repair or budget change is selected; if any unexpected conflict or source mismatch exists, stop and report the exact evidence rather than invent a fix.
+
+### Delivery and gates
+
+Deliver immutable commit/tree/ordered parents, full untruncated tree comparison, all seven byte/blob/SHA256 pins, complete provenance documents and explicit NOT_RUN status. Source-only in-memory preparation and immutable Git object writes/readback are allowed. No local/project/parser/compiler/SQL/native/test/build/CI/hosted/source-GET execution, package installation, ref/PR update, Ready or merge.
+
+Root independently reviews and publishes a new head only after the stated HOLD is resolved, then requires complete fresh exact-head CI/Preview/review-thread/source/target gates. All nine PG1 native groups and fixed budgets stay unchanged. Actual Dev remains UNAPPLIED; no signed Owner/AAL2 request or public CH→DE truth may be fabricated.
+
+Same reachable session handles any review finding. Root alone Ready/merge. #917/#1131 denied-action boundaries remain unchanged. STOP after this delivery; no follow-on.

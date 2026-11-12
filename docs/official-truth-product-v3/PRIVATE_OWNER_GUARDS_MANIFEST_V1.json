@@ -1,16 +1,15 @@
 {
   "schema": "jetnity.pg1.source-manifest.v1",
-  "status": "SOURCE_PREPARED_HOSTED_UNAPPLIED_CURRENT_HEAD_NOT_RUN",
+  "status": "SOURCE_PREPARED_INTEGRATION_NOT_RUN_DEV_UNAPPLIED_PUBLICATION_HOLD",
   "task": "V3-PRIVATE-OWNER-GUARDS-1",
   "version": 1,
   "preparedDateUTC": "2026-11-12",
   "author": {
     "name": "Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1",
     "session": "/root/v3_private_owner_guards_writer_g1",
-    "kind": "same-delegated-Codex-session-CI-review-fix-R3",
+    "kind": "same-delegated-Codex-session-integration-review-fix-R4",
     "cursorSessionClaimed": false
   },
-  "soleParent": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
   "containingCommitAndTree": "External immutable Git identities in author delivery; no circular self-pin.",
   "bindingTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6815884525",
@@ -51,26 +50,50 @@
     "merged": false,
     "followOn": false,
     "deltaBasis": "integrationBaseline",
-    "parentDelta": {
-      "basis": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-      "addedLeaves": 0,
-      "removedLeaves": 0,
-      "modifiedPaths": [
-        "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
-      ],
-      "unchangedCodePaths": [
-        "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
-        "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
-        "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts"
-      ],
-      "nativeChange": "Only four explicit SELECT output aliases across the two set_config pairs at unchanged lines 191 and 490.",
-      "completePreviousTaskPreservedAsExactPrefix": true,
-      "completePreviousHandoffPreservedAsDatedVerbatimHistory": true
-    },
-    "publicationScope": "The false ref/PR publication flag describes author actions only; Root previously published the immediate parent as Draft #1193."
+    "publicationScope": "Author publishes no ref/PR. Root retains the R4 HOLD pending complete main post-merge evidence and independent successor review.",
+    "parentDeltas": [
+      {
+        "parent": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+        "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+        "addedPaths": [
+          "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+          "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+          "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md"
+        ],
+        "modifiedPaths": [
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+          "lib/supabase/auth-bericht.test.ts",
+          "lib/supabase/auth-erwartung.ts"
+        ],
+        "deletedPaths": [],
+        "explanation": "Only the five exact second-parent Auth-main paths and three PG1 provenance edits differ from R3.",
+        "allFourR3CodeBlobsUnchanged": true
+      },
+      {
+        "parent": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+        "tree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+        "addedPaths": [
+          "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+          "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+          "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+          "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+          "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
+        ],
+        "modifiedPaths": [],
+        "deletedPaths": [],
+        "all9479MainLeavesPreserved": true
+      }
+    ],
+    "expectedFinalLeaves": 9486,
+    "onlyPg1ProvenanceAuthoredInR4": [
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
+    ]
   },
   "code": [
     {
@@ -101,15 +124,15 @@
   "documentation": [
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-      "blob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
-      "bytes": 15253,
-      "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396"
+      "blob": "754ee3172ba816635f373a71cc32893dc7adb6b8",
+      "bytes": 19923,
+      "sha256": "9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601"
     },
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-      "blob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
-      "bytes": 26083,
-      "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc"
+      "blob": "16855a45ccf6276113c8a5ba2f35d9316bf5c90f",
+      "bytes": 40888,
+      "sha256": "aea57c9226d18e3eda8f03e42998eab4016a10e2491c51e2251bd98ef5ed157e"
     }
   ],
   "manifestSelfIdentity": "This path's Git blob/UTF-8 bytes/SHA256 are in final external author readback; not recursively embedded.",
@@ -204,7 +227,7 @@
       "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
     }
   ],
-  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All original integration-baseline leaves and PG1 install/recovery/wrapper remain exact. Native changes only four output aliases in two SELECTs. No old Auth fixture or authority loader is imported.",
+  "runtimeImportScope": "All four R3 PG1 code files, original guards, nine groups, fixed budgets and reused source pins remain exact. All 9479 selected-main leaves are retained. Only PG1 provenance is authored in R4; no HMA1/HS1/AA/HM04/caller binding or old Auth fixture/authority loader is added. Existing historical task references are not execution authority.",
   "existingDisposableRollback": {
     "blob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
     "changed": false,
@@ -367,12 +390,12 @@
     "runtimePass": false,
     "technicalLeadPass": false
   },
-  "firstUnfinishedStep": "Root independent R3 exact-candidate review, then Root-controlled published-head update and fresh complete exact-head gating. Parent CI4122 failed in PG1-03 and the separate Auth job; no parent result grants successor PASS. No Auth or platform change belongs to this correction.",
+  "firstUnfinishedStep": "Root completes actual-main post-merge acceptance and independently reviews the exact R4 integration before releasing the publication HOLD; then publishes and requires all fresh exact-head CI/Preview/review-thread/source/target gates. Previous R3/#4124 and Auth-main/#4127 results do not transfer.",
   "stop": "No execution, ref/PR, Ready, merge, hosted write or follow-on by author.",
-  "parentTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
   "integrationBaseline": {
-    "commit": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-    "tree": "cbc79e627161d4ace132b84cf057c18adc86586c"
+    "commit": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+    "tree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+    "leaves": 9479
   },
   "documentationAmendment": {
     "id": "R2",
@@ -448,7 +471,7 @@
       "m04ProfileMismatchResolved": false
     }
   },
-  "statusScope": "Current R3 successor; the failed parent CI is historical evidence under reviewFixR3 and the Handoff.",
+  "statusScope": "Current R4 integration. R1/R2/R3 and old-head runtime evidence remain history and grant no transferred acceptance.",
   "reviewFixR3": {
     "url": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
     "originalBodyUtf8Bytes": 3841,
@@ -560,5 +583,279 @@
       "merge": false
     },
     "existingProvenance": "Earlier task/amendment/prerequisite/AA records are retained as attributed history, not fresh acceptance or a new execution selection."
+  },
+  "orderedParents": [
+    {
+      "sha": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+      "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+      "role": "first: existing PG1 R3 head"
+    },
+    {
+      "sha": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+      "tree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+      "role": "second: exact current Auth-corrected main"
+    }
+  ],
+  "originalImplementationBase": {
+    "commit": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+    "tree": "cbc79e627161d4ace132b84cf057c18adc86586c"
+  },
+  "integrationR4": {
+    "taskUrl": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6823360792",
+    "taskRecordedAtUTC": "2026-11-12T12:16:28Z",
+    "taskBody": {
+      "bytes": 4335,
+      "sha256": "a3eddde9c8e56f77b4df315d9349d0aef193e3ba4ee26587d8d368ff94863544",
+      "appendedVerbatimToTaskAndHandoff": true
+    },
+    "sameOriginalAuthorAndSession": true,
+    "orderedParents": [
+      {
+        "sha": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+        "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+        "role": "first: existing PG1 R3 head"
+      },
+      {
+        "sha": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+        "tree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+        "role": "second: exact current Auth-corrected main"
+      }
+    ],
+    "actualMain": {
+      "commit": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+      "tree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+      "orderedParents": [
+        "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+        "72ec65f55e2e69e737b774b83b20201fed1e1892"
+      ],
+      "mergedAtUTC": "2026-11-12T12:12:26Z",
+      "fetchedMainMatchesSelectedBase": true
+    },
+    "priorDocuments": {
+      "task": {
+        "blob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
+        "bytes": 15253,
+        "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396",
+        "exactPrefixPreserved": true
+      },
+      "handoff": {
+        "blob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
+        "bytes": 26083,
+        "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc",
+        "completeHistoryPreservedVerbatim": true,
+        "currentGateTruthAtFront": true
+      }
+    },
+    "fullTreeComparison": {
+      "basis": "Complete untruncated Git-tree maps, every leaf compared by path/mode/type/Git blob.",
+      "parentTreesUntruncated": true,
+      "actualMainLeaves": 9479,
+      "allActualMainLeavesRetained": true,
+      "additionsRelativeToMain": 7,
+      "modifiedMainLeaves": 0,
+      "deletedMainLeaves": 0,
+      "expectedResultLeaves": 9486,
+      "fourR3CodeBlobsExact": true,
+      "fiveAuthMainChangedPathsExact": true,
+      "firstParentDelta": {
+        "added": 3,
+        "modified": 5,
+        "deleted": 0,
+        "onlyAuthMainInheritanceAndPg1Provenance": true
+      },
+      "unexpectedConflict": false,
+      "otherModulesAdded": false,
+      "sourceInventory": {
+        "format": "Sorted UTF-8 lines path NUL mode NUL type NUL GitSHA, LF terminated.",
+        "main": {
+          "leaves": 9479,
+          "bytes": 1147434,
+          "sha256": "493054588f27ba38d04b905d723c29fe8383b68665e9e88c578a722f167b40a3"
+        },
+        "firstParent": {
+          "leaves": 9483,
+          "bytes": 1147890,
+          "sha256": "50ebec2337bae340b44c9e5fd516a9169cb1c4e92b71d0abebf745f359d5b433"
+        }
+      },
+      "proofStage": "Constructed in memory from exact parent maps. Final immutable candidate tree/full untruncated comparison is supplied in the external delivery receipt; no circular candidate-tree or manifest self-pin."
+    },
+    "authMainChangedPaths": [
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "status": "added",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7c3100827240d05c75ab1049a115fe66f1105086",
+        "bytes": 10327,
+        "previousBlob": null,
+        "sha256": "822a5a1789e9cdb40b34a1ef87866a6ac4cfc5f0c42a27491f4b0eb4000bd641"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+        "status": "added",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0",
+        "bytes": 12247,
+        "previousBlob": null,
+        "sha256": "383eb44c5149206ac226a85063b7e11b5bb3c28693dee7b3de2a2d811b77147a"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "status": "added",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bec28fc005b3d1191354948ae7026d30bdfe1cde",
+        "bytes": 10169,
+        "previousBlob": null,
+        "sha256": "09bacca39ccf833c220b8cdd7a343b958fbb8107e70bf910ea640a3c812ebe66"
+      },
+      {
+        "path": "lib/supabase/auth-bericht.test.ts",
+        "status": "modified",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1406705421fe3b2c3d312bbc067556d695eb76a7",
+        "bytes": 8497,
+        "previousBlob": "ad2506e0690ec52725a5cf13db00478107afeea1",
+        "sha256": "e9413d4246959a3f0b012f91522571b7ba26c21a0ea5a669a2a4ef7909eaa25d"
+      },
+      {
+        "path": "lib/supabase/auth-erwartung.ts",
+        "status": "modified",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "25ef939f111ba0db5475cdf1e4d1c55364193512",
+        "bytes": 19854,
+        "previousBlob": "0dfd71702f0d1226cd35cdac449b3260c961e31a",
+        "sha256": "46ead850c64d6cd0c152f7750c0cdf0f0934eea734e75274f2b19d30d89aa58e"
+      }
+    ],
+    "priorPg1Runtime": {
+      "source": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822867554",
+      "head": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+      "runId": 43209347822,
+      "runNumber": 4124,
+      "attempt": 1,
+      "overallConclusion": "failure",
+      "verifyJobId": 131152625125,
+      "verifyLog": {
+        "bytes": 4298493,
+        "sha256": "7c09bae3c99ef22e4d83b3b70ea8ed8ae3e3aa292ef5f6e09ceb35f7f5087893"
+      },
+      "allNinePg1Groups": "passed",
+      "core": {
+        "tests": 8738,
+        "passed": 8736,
+        "failed": 0,
+        "existingSkips": 2,
+        "suites": 971
+      },
+      "typeLintAdminGuardHygieneBuild": "success",
+      "fiveCompanions": "success",
+      "aggregate": "success",
+      "nativeReceipt": {
+        "effectMs": 2729,
+        "cleanupMs": 152,
+        "elapsedMs": 2880,
+        "main": {
+          "started": 391,
+          "settled": 391,
+          "pending": 0,
+          "connections": 10,
+          "closed": 10,
+          "stoppedClusters": 1
+        },
+        "failureWitness": {
+          "started": 5,
+          "settled": 5,
+          "connections": 2,
+          "closed": 2,
+          "stoppedClusters": 1
+        },
+        "timeoutWitness": {
+          "started": 6,
+          "settled": 6,
+          "connections": 2,
+          "closed": 2,
+          "stoppedClusters": 1
+        },
+        "bothActualWaitsObserved": true,
+        "originalQueriesJoined": true,
+        "timerFiredOnlyForTimeout": true
+      },
+      "authJob": {
+        "id": 131152625291,
+        "conclusion": "failure",
+        "logBytes": 21099,
+        "logSha256": "f14c0c4adde97e76ede0e291b9c8683aa8adc234b3e4cc3863f03fea7951360f",
+        "onlyUnclassifiedKey": "external_email_magic_link_disabled",
+        "expectedMatched": 55,
+        "returnedKeys": 244
+      },
+      "runtimeAcceptanceTransfersToSuccessor": false,
+      "wholeRunPass": false
+    },
+    "authCorrectionAcceptance": {
+      "source": "https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643",
+      "tlAcceptedHead": "72ec65f55e2e69e737b774b83b20201fed1e1892",
+      "runId": 43212581593,
+      "runNumber": 4127,
+      "attempt": 1,
+      "conclusion": "success",
+      "testedCheckout": "179cd711367f0117cc5de8f27261daca3fa1c578",
+      "testedTree": "c2fad9aff45aa07addb541fea8e6a38fb9f2a19e",
+      "treeEqualsActualMain": true,
+      "authExpectedMatched": 56,
+      "authReturnedKeysClassified": 244,
+      "hostedAuthSettingsChanged": false,
+      "successorGateTransfers": false
+    },
+    "r4SelectionSnapshot": {
+      "recordedAtUTC": "2026-11-12T12:16:28Z",
+      "mainPostMergeCi": {
+        "runId": 43215792152,
+        "runNumber": 4129,
+        "status": "running",
+        "authJobId": 131174573164,
+        "authConclusion": "success",
+        "fullPostMergeAcceptanceAsserted": false
+      },
+      "production": {
+        "deploymentId": "dpl_9K9EfdobAp4ySCBbWoBnqE4vw78B",
+        "state": "READY",
+        "commit": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+        "alias": "jetnity.com",
+        "aliasPointsToDeployment": true,
+        "source": "Root R4 task; no author provider call"
+      },
+      "snapshotIsNewSuccessorAcceptance": false
+    },
+    "publication": {
+      "state": "HOLD",
+      "owner": "Root / Technical Lead",
+      "releaseRequires": [
+        "complete main post-merge evidence",
+        "independent exact-successor review"
+      ],
+      "releasedByAuthor": false,
+      "refOrPrUpdatedByAuthor": false
+    },
+    "currentSuccessor": {
+      "execution": "NOT_RUN",
+      "allNinePg1Groups": "NOT_RUN",
+      "ci": "NOT_RUN",
+      "preview": "NOT_VERIFIED",
+      "reviewThreads": "NOT_VERIFIED",
+      "target": "UNAPPLIED",
+      "realSignedOwnerAal2": false,
+      "publicChDeActivated": false,
+      "priorGatesTransfer": false,
+      "rootReady": false,
+      "merged": false
+    },
+    "authorActions": "Only immutable Git-object read/write/readback and pure in-memory source/metadata preparation.",
+    "stop": "No project/parser/compiler/SQL/native/test/build/CI/hosted/source-GET execution; no package installation, ref/PR, Ready, merge or follow-on."
   }
 }

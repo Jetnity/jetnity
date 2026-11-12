@@ -1,13 +1,14 @@
 {
   "schema": "jetnity.hma1.source-manifest.v1",
-  "status": "R5_B_SOURCE_ONLY_CHANGES_REQUIRED_PENDING_NEW_HEAD_GATES_STOP",
+  "status": "R5_C_SOURCE_INTEGRATION_NOT_RUN_PUBLICATION_HOLD_STOP",
   "author": {
     "name": "Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1",
     "session": "/root/hosted_method_authority_writer_g1",
     "newSession": false,
     "cursorUiSessionClaim": false,
     "sameOriginalSessionForR5B": true,
-    "originalV1CreatedThisSession": true
+    "originalV1CreatedThisSession": true,
+    "sameOriginalSessionForR5C": true
   },
   "task": {
     "issue": 1139,
@@ -17,64 +18,96 @@
   },
   "preparedDateUtc": "2026-11-12",
   "dependency": {
-    "soleParent": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
-    "parentTree": "76be1bc78228cc13aecfd3cb3ce2f2c268851f29",
-    "additionalParents": [],
-    "additionalIntegration": false,
-    "inheritedPg1R3Unchanged": true,
-    "exactPg1R3Files": [
+    "orderedParents": [
+      {
+        "commit": "bebba745330a719edaee3e215ed7c232063a05fc",
+        "tree": "67a650fff0533a3f64d9424d125442c95afc2e3f",
+        "purpose": "retain independently source-reviewed R5-B history"
+      },
+      {
+        "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+        "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+        "purpose": "explicitly bind actual merged Main/PG1/Auth without rewriting their sources"
+      }
+    ],
+    "comparisonBase": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "comparisonTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "currentMainPg1Files": [
       {
         "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-        "gitBlob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
-        "utf8Bytes": 26083,
-        "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc"
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 40888,
+        "sha256": "aea57c9226d18e3eda8f03e42998eab4016a10e2491c51e2251bd98ef5ed157e",
+        "gitBlob": "16855a45ccf6276113c8a5ba2f35d9316bf5c90f"
       },
       {
         "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
-        "gitBlob": "a4df211a2021fa0888cb5b93663eb105dd29f2a1",
-        "utf8Bytes": 21965,
-        "sha256": "7569c44125d446de5990cc5b3a919b614f288413b01dda27e0c94e7127d728e3"
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 32870,
+        "sha256": "74a0d0bec916a7faa63f369e726379591e063ecf3629b9af650061eab5b4e55c",
+        "gitBlob": "417091805b8aebf5fb9680b7526e933af1bfcad1"
       },
       {
         "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-        "gitBlob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
-        "utf8Bytes": 15253,
-        "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396"
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 19923,
+        "sha256": "9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601",
+        "gitBlob": "754ee3172ba816635f373a71cc32893dc7adb6b8"
       },
       {
         "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
-        "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+        "mode": "100644",
+        "type": "blob",
         "utf8Bytes": 397,
-        "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+        "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13",
+        "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024"
       },
       {
         "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
-        "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+        "mode": "100644",
+        "type": "blob",
         "utf8Bytes": 10945,
-        "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+        "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2",
+        "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4"
       },
       {
         "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-        "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+        "mode": "100644",
+        "type": "blob",
         "utf8Bytes": 42247,
-        "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
+        "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0",
+        "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460"
       },
       {
         "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
-        "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+        "mode": "100644",
+        "type": "blob",
         "utf8Bytes": 6452,
-        "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+        "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b",
+        "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61"
       }
     ],
-    "rootMustSelectAcceptedMainAndPg1IntegrationBeforeAnyExecutablePublication": true,
+    "pg1ImplementationFourBlobsExactBothParents": true,
+    "allCurrentMainAuthFilesExact": true,
+    "actualMainPostMergeAcceptanceAtTaskSelection": "PENDING",
+    "actualMainRunAtSelection": {
+      "number": 4132,
+      "id": "43226332423",
+      "status": "running",
+      "source": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994"
+    },
+    "noRuntimeGateTransfer": true,
+    "rootMustAcceptActualMainActionsProductionAndIndependentAliasBeforePublication": true,
     "authorRefPrPublication": false,
-    "historicalR4Dependency": {
-      "soleParent": "8150c358c3d64c245d518eff05467058540c8747",
-      "parentTree": "1abbe38d7910da8e40ddb6fd4b3a39e53c836abc",
-      "comparisonBase": "e464f6d8ffac77a124d5ab28637c7435337b222e",
-      "comparisonTree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
-      "inheritedPg1R3Unchanged": true,
+    "historicalR5BDependency": {
+      "soleParent": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
+      "parentTree": "76be1bc78228cc13aecfd3cb3ce2f2c268851f29",
+      "additionalParents": [],
       "additionalIntegration": false,
+      "inheritedPg1R3Unchanged": true,
       "exactPg1R3Files": [
         {
           "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
@@ -119,117 +152,15 @@
           "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
         }
       ],
-      "pg1ExecutionAcceptanceConferredByR4": false,
-      "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+      "rootMustSelectAcceptedMainAndPg1IntegrationBeforeAnyExecutablePublication": true,
       "authorRefPrPublication": false,
-      "historicalR3Dependency": {
-        "orderedParents": [
-          {
-            "commit": "5d576988167c17879f64562efa66c78dc37b8219",
-            "tree": "7da693e885482c9ad28919f46c3c744653957261",
-            "purpose": "retain exact HMA1 R1/R2 history"
-          },
-          {
-            "commit": "e464f6d8ffac77a124d5ab28637c7435337b222e",
-            "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
-            "purpose": "explicitly bind independently source-reviewed PG1 R3"
-          }
-        ],
+      "historicalR4Dependency": {
+        "soleParent": "8150c358c3d64c245d518eff05467058540c8747",
+        "parentTree": "1abbe38d7910da8e40ddb6fd4b3a39e53c836abc",
         "comparisonBase": "e464f6d8ffac77a124d5ab28637c7435337b222e",
         "comparisonTree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
-        "acceptedMainAtRootR3Checkpoint": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-        "pg1R3RootSourceReview": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375",
-        "pg1R3Included": true,
-        "pg1R3RuntimeAccepted": false,
-        "pg1CiAtRootR3Task": {
-          "id": 43209347822,
-          "number": 4124,
-          "status": "pending",
-          "authorExecutedOrAccepted": false
-        },
-        "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
-        "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
-        "authorRefPrPublication": false,
-        "historicalR1R2Dependency": {
-          "orderedParents": [
-            {
-              "commit": "2f412904edc188bebcc7287e8e3cdae5bf1a9c5a",
-              "tree": "1fc41142fe2339f99c8f0dddb4325e6ab6b85701",
-              "purpose": "retain exact original HMA1 history"
-            },
-            {
-              "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-              "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-              "purpose": "bind exact source-reviewed PG1 R2"
-            }
-          ],
-          "comparisonBase": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-          "comparisonTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-          "acceptedMainAtRootR1Task": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-          "pg1R2RuntimeAccepted": false,
-          "rootReportedPg1Run4122": "failed PG1-03 local_pg_duplicate_column",
-          "separatePg1R3Task": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
-          "pg1R3Included": false,
-          "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
-          "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
-          "authorRefPrPublication": false,
-          "historicalV1Dependency": {
-            "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
-            "tree": "8e60897fd154ef410752c392f0e657f21e62352e",
-            "acceptedMainAtTaskAssignment": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-            "pg1SourceCandidateNotAccepted": true,
-            "laterPg1DocsOnlySuccessor": {
-              "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-              "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-              "notThisParent": true
-            },
-            "rootMustBindFinalAcceptedPg1BeforePublicationAndCi": true
-          },
-          "exactPg1R2Files": [
-            {
-              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-              "gitBlob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
-              "utf8Bytes": 19704,
-              "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
-            },
-            {
-              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
-              "gitBlob": "4b4ea654202fe6f7402c2cc6203c00d2cf69fc0e",
-              "utf8Bytes": 17215,
-              "sha256": "03606e6383434ee17de42d9e44460065fa1142d0bb7ef005bcf3aed390dc7934"
-            },
-            {
-              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-              "gitBlob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
-              "utf8Bytes": 11179,
-              "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
-            },
-            {
-              "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
-              "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
-              "utf8Bytes": 397,
-              "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
-            },
-            {
-              "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
-              "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
-              "utf8Bytes": 10945,
-              "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
-            },
-            {
-              "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-              "gitBlob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
-              "utf8Bytes": 42162,
-              "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
-            },
-            {
-              "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
-              "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
-              "utf8Bytes": 6452,
-              "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
-            }
-          ]
-        },
+        "inheritedPg1R3Unchanged": true,
+        "additionalIntegration": false,
         "exactPg1R3Files": [
           {
             "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
@@ -273,58 +204,258 @@
             "utf8Bytes": 6452,
             "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
           }
-        ]
+        ],
+        "pg1ExecutionAcceptanceConferredByR4": false,
+        "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+        "authorRefPrPublication": false,
+        "historicalR3Dependency": {
+          "orderedParents": [
+            {
+              "commit": "5d576988167c17879f64562efa66c78dc37b8219",
+              "tree": "7da693e885482c9ad28919f46c3c744653957261",
+              "purpose": "retain exact HMA1 R1/R2 history"
+            },
+            {
+              "commit": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+              "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+              "purpose": "explicitly bind independently source-reviewed PG1 R3"
+            }
+          ],
+          "comparisonBase": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+          "comparisonTree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+          "acceptedMainAtRootR3Checkpoint": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+          "pg1R3RootSourceReview": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375",
+          "pg1R3Included": true,
+          "pg1R3RuntimeAccepted": false,
+          "pg1CiAtRootR3Task": {
+            "id": 43209347822,
+            "number": 4124,
+            "status": "pending",
+            "authorExecutedOrAccepted": false
+          },
+          "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+          "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
+          "authorRefPrPublication": false,
+          "historicalR1R2Dependency": {
+            "orderedParents": [
+              {
+                "commit": "2f412904edc188bebcc7287e8e3cdae5bf1a9c5a",
+                "tree": "1fc41142fe2339f99c8f0dddb4325e6ab6b85701",
+                "purpose": "retain exact original HMA1 history"
+              },
+              {
+                "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+                "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+                "purpose": "bind exact source-reviewed PG1 R2"
+              }
+            ],
+            "comparisonBase": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+            "comparisonTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+            "acceptedMainAtRootR1Task": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+            "pg1R2RuntimeAccepted": false,
+            "rootReportedPg1Run4122": "failed PG1-03 local_pg_duplicate_column",
+            "separatePg1R3Task": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
+            "pg1R3Included": false,
+            "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+            "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
+            "authorRefPrPublication": false,
+            "historicalV1Dependency": {
+              "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
+              "tree": "8e60897fd154ef410752c392f0e657f21e62352e",
+              "acceptedMainAtTaskAssignment": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+              "pg1SourceCandidateNotAccepted": true,
+              "laterPg1DocsOnlySuccessor": {
+                "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+                "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+                "notThisParent": true
+              },
+              "rootMustBindFinalAcceptedPg1BeforePublicationAndCi": true
+            },
+            "exactPg1R2Files": [
+              {
+                "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+                "gitBlob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
+                "utf8Bytes": 19704,
+                "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
+              },
+              {
+                "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+                "gitBlob": "4b4ea654202fe6f7402c2cc6203c00d2cf69fc0e",
+                "utf8Bytes": 17215,
+                "sha256": "03606e6383434ee17de42d9e44460065fa1142d0bb7ef005bcf3aed390dc7934"
+              },
+              {
+                "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+                "gitBlob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
+                "utf8Bytes": 11179,
+                "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
+              },
+              {
+                "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+                "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+                "utf8Bytes": 397,
+                "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+              },
+              {
+                "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+                "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+                "utf8Bytes": 10945,
+                "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+              },
+              {
+                "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+                "gitBlob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
+                "utf8Bytes": 42162,
+                "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
+              },
+              {
+                "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+                "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+                "utf8Bytes": 6452,
+                "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+              }
+            ]
+          },
+          "exactPg1R3Files": [
+            {
+              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+              "gitBlob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
+              "utf8Bytes": 26083,
+              "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc"
+            },
+            {
+              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+              "gitBlob": "a4df211a2021fa0888cb5b93663eb105dd29f2a1",
+              "utf8Bytes": 21965,
+              "sha256": "7569c44125d446de5990cc5b3a919b614f288413b01dda27e0c94e7127d728e3"
+            },
+            {
+              "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+              "gitBlob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
+              "utf8Bytes": 15253,
+              "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396"
+            },
+            {
+              "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+              "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+              "utf8Bytes": 397,
+              "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+            },
+            {
+              "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+              "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+              "utf8Bytes": 10945,
+              "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+            },
+            {
+              "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+              "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+              "utf8Bytes": 42247,
+              "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
+            },
+            {
+              "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+              "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+              "utf8Bytes": 6452,
+              "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+            }
+          ]
+        }
       }
     }
   },
   "scope": {
-    "comparisonBase": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
-    "comparisonTree": "76be1bc78228cc13aecfd3cb3ce2f2c268851f29",
-    "totalPaths": 12,
-    "modifiedExistingPaths": [
+    "comparisonBase": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "comparisonTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "comparisonBaseLeafCount": 9486,
+    "firstParent": "bebba745330a719edaee3e215ed7c232063a05fc",
+    "firstParentTree": "67a650fff0533a3f64d9424d125442c95afc2e3f",
+    "firstParentLeafCount": 9494,
+    "totalOverlayPaths": 15,
+    "modifiedExistingMainPaths": [
       ".github/workflows/ci.yml",
-      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
-      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
       "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
-      "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
       "package.json",
-      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
       "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
     ],
-    "newPaths": [
+    "addedRelativeToMain": [
       "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
       "scripts/official-truth-v3-test-selection.mjs",
       "scripts/official-truth-v3-test-selection.test.mjs"
     ],
-    "deletedPaths": [],
-    "parentLeafCount": 9491,
-    "expectedCandidateLeafCount": 9494,
-    "expectedUnchangedParentLeaves": 9482,
-    "allOtherParentLeavesMustRetainExactPathTypeModeBlob": true,
-    "expectedChangedPaths": [
+    "deletedRelativeToMain": [],
+    "expectedCandidateLeafCount": 9497,
+    "expectedUnchangedMainLeaves": 9482,
+    "firstParentModifiedPaths": [
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+      "lib/supabase/auth-bericht.test.ts",
+      "lib/supabase/auth-erwartung.ts"
+    ],
+    "firstParentAddedPaths": [
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md"
+    ],
+    "firstParentDeletedPaths": [],
+    "expectedUnchangedFirstParentLeaves": 9486,
+    "newlyAuthoredPaths": [
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md"
+    ],
+    "twelveOtherOverlayPathsByteModeTypeExactR5B": true,
+    "allOtherMainLeavesRetainExactPathTypeModeBlob": true,
+    "expectedOverlayPaths": [
       ".github/workflows/ci.yml",
       "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
       "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
       "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
       "package.json",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
       "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
       "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
       "scripts/official-truth-v3-test-selection.mjs",
       "scripts/official-truth-v3-test-selection.test.mjs"
     ],
-    "completeParentLeafProof": {
-      "format": "sorted by path; mode + SPACE + type + SPACE + gitBlob + TAB + path + LF",
-      "leafCount": 9491,
-      "utf8Bytes": 1148877,
-      "sha256": "661aef6e596ae8a5cbe29129c81e4a21953e6f9c0e8f72caeb3ef5b38c904b77"
+    "parentCompleteLeafProofs": {
+      "main": {
+        "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+        "leafCount": 9486,
+        "format": "sorted by path; mode + SPACE + type + SPACE + gitBlob + TAB + path + LF",
+        "utf8Bytes": 1148277,
+        "sha256": "539a27f590629a750cddcf5227dcb72169578216ab1a75b8862f334a44c5c289",
+        "untruncated": true
+      },
+      "r5b": {
+        "tree": "67a650fff0533a3f64d9424d125442c95afc2e3f",
+        "leafCount": 9494,
+        "format": "sorted by path; mode + SPACE + type + SPACE + gitBlob + TAB + path + LF",
+        "utf8Bytes": 1149207,
+        "sha256": "a997b2e861c61f52c5069cce7ae30a070ee0f45c32184d8582c125416f1c0dd7",
+        "untruncated": true
+      }
     },
-    "treeAndCommitPinnedExternally": true,
-    "manifestSelfPinExternal": true,
     "manifestPath": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+    "manifestSelfPinExternal": true,
+    "treeAndCommitPinnedExternally": true,
     "files": [
       {
         "path": ".github/workflows/ci.yml",
@@ -346,17 +477,25 @@
         "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
         "mode": "100644",
         "type": "blob",
-        "utf8Bytes": 76786,
-        "sha256": "c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d",
-        "gitBlob": "512a6b4b70689e40515d5c81bea033b2962b16d4"
+        "utf8Bytes": 99211,
+        "sha256": "97add1db896efa9ce95bbd51bbeb8bde8670a12125367321b6b97211fe33d33a",
+        "gitBlob": "be3d5e251a7f844044da3ad9b46dbe5130203bdb"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+        "gitBlob": "66d6352d5f4ed9382ab37be5122a3835dd00e7d9",
+        "utf8Bytes": 12288,
+        "sha256": "9f4c7c6cd002df699d4f5a12cc68ef5d07a522d7b7c2b7b3b763c8ca3a4cd649",
+        "mode": "100644",
+        "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
         "mode": "100644",
         "type": "blob",
-        "utf8Bytes": 46749,
-        "sha256": "eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542",
-        "gitBlob": "0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e"
+        "utf8Bytes": 60215,
+        "sha256": "54774f7371cca2dfd39596c2dee77eb2fba49de7094bd5f7d463a4001a14391e",
+        "gitBlob": "8a29bec9f6fe17a1b3fc409a160c6009f6179be1"
       },
       {
         "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
@@ -383,12 +522,28 @@
         "gitBlob": "2a8d677d575b5762a5dd7091d161ea0da6edcea9"
       },
       {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+        "gitBlob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+        "utf8Bytes": 69705,
+        "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
         "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
         "mode": "100644",
         "type": "blob",
         "utf8Bytes": 62251,
         "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e",
         "gitBlob": "35442ef5d863a8a1bdbeb812e4aa2c1596d2b898"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+        "gitBlob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+        "utf8Bytes": 37227,
+        "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d",
+        "mode": "100644",
+        "type": "blob"
       },
       {
         "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
@@ -703,7 +858,7 @@
     "roleCreatedByReceipts": false
   },
   "native": {
-    "status": "NOT_RUN_FOR_R5_B",
+    "status": "NOT_RUN_FOR_R5_C",
     "mandatoryWrapper": true,
     "existingTestCore": false,
     "actualPostgresql17Required": true,
@@ -722,9 +877,9 @@
     "existingCiPostgresBinaryAvailabilityObservedByAuthor": true,
     "preparedVerifyMajor": 16,
     "preparedProvisioningExecuted": false,
-    "currentRevision": "R5-B",
+    "currentRevision": "R5-C",
     "lateWriterProof": {
-      "status": "NOT_RUN_FOR_R5_B; predecessor entry null",
+      "status": "NOT_RUN_FOR_R5_C; predecessor #4128 entry null",
       "withinExistingGroup": "HMA1-04",
       "separateOwnedFixture": true,
       "parentEffectBudgetUnchanged": true,
@@ -772,10 +927,11 @@
     ],
     "priorFailedGroup": "HMA1-04",
     "priorLaterGroupsNotRun": true,
-    "allNewHeadGroupsRequireFreshExecution": true
+    "allNewHeadGroupsRequireFreshExecution": true,
+    "sourceByteExactR5B": true
   },
   "recovery": {
-    "status": "NOT_RUN_FOR_R5_B",
+    "status": "NOT_RUN_FOR_R5_C",
     "artifact": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
     "oldRollbackUnusedAndUnchanged": {
       "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
@@ -799,39 +955,40 @@
     "externalQuiescenceAndIdentityRequirementsUnchanged": true,
     "allOtherOriginalSqlBytesUnchanged": true,
     "sqlAndRecoveryDocumentByteExactR4": true,
-    "predecessorPartialGroup04IsNotCompleteRecoveryProof": true
+    "predecessorPartialGroup04IsNotCompleteRecoveryProof": true,
+    "sourceAndRecoveryDocumentByteExactR5B": true
   },
   "observedVerification": {
     "sourceReads": true,
     "pureSourceCompositionHashAndTreeComparison": true,
-    "immutableGitBlobWriteAndReadback": true,
-    "projectOrParserExecution": false,
+    "bothCompleteUntruncatedParentTreesRead": true,
+    "actualMainRefReadAndBound": true,
+    "originalR5BDocRawPinsIndependentlyMatched": true,
+    "currentMainSevenPg1RawPinsIndependentlyMatched": true,
+    "currentMainAuthDeltaRawPinsIndependentlyMatched": true,
+    "sourceIntegrationOnly": true,
+    "noNewImplementationBytes": true,
+    "twelveReviewedOverlayArtifactsPreserved": true,
+    "onlyThreeHmaProvenanceFilesNewlyAuthored": true,
+    "fullPriorTaskAndHandoffVerbatim": true,
+    "fullIndependentRootR5BReceiptAndR5CTaskVerbatimInBothDocuments": true,
+    "candidateImmutableWriteReadbackAndFinalTreeProof": "bound externally by delivery; no circular embedded self-pin",
     "parser": "NOT_RUN",
     "compiler": "NOT_RUN",
-    "projectTests": "NOT_RUN_FOR_R5_B",
-    "nativePostgres": "NOT_RUN_FOR_R5_B",
-    "sql": "NOT_RUN_FOR_R5_B",
-    "apt": "NOT_RUN_FOR_R5_B",
-    "build": "NOT_RUN_FOR_R5_B",
-    "githubCi": "NOT_RUN_FOR_R5_B",
+    "projectTests": "NOT_RUN_FOR_R5_C",
+    "nativePostgres": "NOT_RUN_FOR_R5_C",
+    "sql": "NOT_RUN_FOR_R5_C",
+    "apt": "NOT_RUN_FOR_R5_C",
+    "build": "NOT_RUN_FOR_R5_C",
+    "githubCi": "NOT_RUN_FOR_R5_C",
     "hostedQuery": "NOT_RUN",
     "hostedInstall": "NOT_RUN",
     "officialSourceGet": "NOT_RUN",
-    "finalCandidateIndependentTlReview": "PENDING_ROOT",
-    "nativeOnlyCallbackInverseExact": true,
-    "wrapperOnlyCommentInverseExact": true,
-    "workflowFullParentInverseExact": true,
-    "completeProvisionStepAndRunBodyMovedByteExact": true,
-    "fullPriorTaskAndHandoffVerbatim": true,
-    "fullR5AAndR5BTasksVerbatimInBothDocuments": true,
-    "original630FilePartitionDerivedFromCompleteImmutableParentTree": true,
-    "executableSelectorContractAuthoredNotRun": true,
+    "independentRootR5BSourceReview": "SOURCE_PASS at referenced R5-B only",
+    "finalIntegratedCandidateIndependentRootReview": "PENDING_ROOT",
     "authorRefPrReadyMerge": false,
     "authorSubagentImplementation": false,
-    "predecessorFullCoreLogReadAndHashMatched": true,
-    "protectedGuardFullParentInverseExact": true,
-    "packageFullParentInverseExact": true,
-    "uiExistingInvariantTailExact": true
+    "noRuntimeGateTransfer": true
   },
   "launch": {
     "signedOwnerRequest": false,
@@ -853,7 +1010,12 @@
     "rootMustSelectFinalAcceptedIntegrationBeforePublication": true,
     "existingPg16AssertionsAndSharedSelectorUnchanged": true,
     "allExistingBudgetsUnchanged": true,
-    "hostedFutureWrappersNotPrelisted": true
+    "hostedFutureWrappersNotPrelisted": true,
+    "r5cSourceIntegrationExplicitlySelected": true,
+    "rootMustAcceptMainPostMergeBeforePublication": true,
+    "noFurtherMainChangesSilentlyIntegrated": true,
+    "aaHs1Hm04Integration": false,
+    "allCurrentMainPg1AuthPreserved": true
   },
   "amendments": [
     {
@@ -885,6 +1047,11 @@
       "name": "R5-B",
       "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081",
       "scope": "twelve-path callback-only native fix, exact Core/PG17 test partition, mandatory isolated job/six-family aggregate and two-path protected successor"
+    },
+    {
+      "name": "R5-C",
+      "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994",
+      "scope": "exact R5-B/Main composition; twelve reviewed overlay artifacts unchanged; only three HMA provenance documents newly authored"
     }
   ],
   "nativeRevisionR2": {
@@ -968,7 +1135,7 @@
       "sha256": "4ede4bda2b96c3abbef0de729305b3013eb3f2a8a5d250ea56b2d1a99f9a1d1c",
       "byteExactR4": true
     },
-    "provisioningExecution": "NOT_RUN_FOR_R5_B; actual predecessor success remains historical",
+    "provisioningExecution": "NOT_RUN_FOR_R5_C; workflow is byte-exact R5-B",
     "keysPackagesOriginsTlsSignatureSandboxAndSelectedFileChecksPreserved": true,
     "systemClusterAndServiceSuppressionRestorationPreserved": true,
     "sharedFindLocalPgBinsUnchanged": true,
@@ -1007,7 +1174,8 @@
       "https://nodejs.org/docs/latest-v22.x/api/fs.html#fsglobsyncpattern-options",
       "https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md",
       "https://www.postgresql.org/download/linux/ubuntu/"
-    ]
+    ],
+    "fullWorkflowByteExactR5B": true
   },
   "historicalV1Manifest": {
     "gitBlob": "a00fa7c4edd04131b886625e2a8e0df0c6338768",
@@ -1301,10 +1469,11 @@
     "noGateTransferToHma1": true
   },
   "currentTask": {
-    "name": "R5-B",
-    "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081",
-    "diagnosis": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661",
-    "completeVerbatimInTaskAndHandoff": true
+    "name": "R5-C",
+    "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994",
+    "completeVerbatimInTaskAndHandoff": true,
+    "utf8Bytes": 4697,
+    "sha256": "26bc32dde0378450e4c0544a77f5abfdf800dd218fa221f35d651a5b39455255"
   },
   "historicalR4Scope": {
     "comparisonBase": "PG1 R3 e464f6d8ffac77a124d5ab28637c7435337b222e",
@@ -3270,6 +3439,745 @@
     "typeLintHygieneBuild": "NOT_RUN",
     "exactHeadPreviewAndThreads": "NOT_RUN",
     "allThreeP1FindingsRemainOpenUntilActualNewGates": true,
+    "ready": false,
+    "merged": false,
+    "hostedInstall": false,
+    "publicActivation": false
+  },
+  "historicalR5BCurrentTask": {
+    "name": "R5-B",
+    "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081",
+    "diagnosis": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661",
+    "completeVerbatimInTaskAndHandoff": true
+  },
+  "historicalR5BScope": {
+    "comparisonBase": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
+    "comparisonTree": "76be1bc78228cc13aecfd3cb3ce2f2c268851f29",
+    "totalPaths": 12,
+    "modifiedExistingPaths": [
+      ".github/workflows/ci.yml",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+      "package.json",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs"
+    ],
+    "newPaths": [
+      "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "scripts/official-truth-v3-test-selection.mjs",
+      "scripts/official-truth-v3-test-selection.test.mjs"
+    ],
+    "deletedPaths": [],
+    "parentLeafCount": 9491,
+    "expectedCandidateLeafCount": 9494,
+    "expectedUnchangedParentLeaves": 9482,
+    "allOtherParentLeavesMustRetainExactPathTypeModeBlob": true,
+    "expectedChangedPaths": [
+      ".github/workflows/ci.yml",
+      "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+      "package.json",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "scripts/official-truth-v3-test-selection.mjs",
+      "scripts/official-truth-v3-test-selection.test.mjs"
+    ],
+    "completeParentLeafProof": {
+      "format": "sorted by path; mode + SPACE + type + SPACE + gitBlob + TAB + path + LF",
+      "leafCount": 9491,
+      "utf8Bytes": 1148877,
+      "sha256": "661aef6e596ae8a5cbe29129c81e4a21953e6f9c0e8f72caeb3ef5b38c904b77"
+    },
+    "treeAndCommitPinnedExternally": true,
+    "manifestSelfPinExternal": true,
+    "manifestPath": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+    "files": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 23906,
+        "sha256": "371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba",
+        "gitBlob": "a422a67d3a0407f4c1301d3bcff75f736d7ea9b4"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 4169,
+        "sha256": "200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973",
+        "gitBlob": "623df1665b55be485b7a8fb5ba1c587dc3247dab"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 76786,
+        "sha256": "c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d",
+        "gitBlob": "512a6b4b70689e40515d5c81bea033b2962b16d4"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 46749,
+        "sha256": "eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542",
+        "gitBlob": "0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 10779,
+        "sha256": "9ff3682f909665354616b9b0636b6f12d2c17f98a2e67af6a6637b2acae12cdc",
+        "gitBlob": "0a11b2b2e2bd1df3bac812b9a1319b64435c0ca2"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 343,
+        "sha256": "3d361e5e8f52aed6c8f748dbe92fe0d1bbe60735160169d4f955d27179fce24c",
+        "gitBlob": "98252252911d0aaa54484ce0d5cb48efde7be67d"
+      },
+      {
+        "path": "package.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 6460,
+        "sha256": "46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0",
+        "gitBlob": "2a8d677d575b5762a5dd7091d161ea0da6edcea9"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 62251,
+        "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e",
+        "gitBlob": "35442ef5d863a8a1bdbeb812e4aa2c1596d2b898"
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 7754,
+        "sha256": "b0520e3b768affee12aa65f628a8da962a19d19f5866f93815b4671a07fa1902",
+        "gitBlob": "bc31a87dd7017e89a720c0218319cad5c00beb67"
+      },
+      {
+        "path": "scripts/official-truth-v3-test-selection.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 5970,
+        "sha256": "647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61",
+        "gitBlob": "51a2a59e03104f83f3d392f0ffb79639274c1ae9"
+      },
+      {
+        "path": "scripts/official-truth-v3-test-selection.test.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 7360,
+        "sha256": "edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730",
+        "gitBlob": "bbc10fc9621e31c5af74421891608d3cdf27238d"
+      }
+    ]
+  },
+  "historicalR5BManifest": {
+    "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+    "mode": "100644",
+    "type": "blob",
+    "utf8Bytes": 231903,
+    "sha256": "cbe62d238dc2bd55441af5bf7e01dc54e18d3a6dcb29d778451afd90c6059c2b",
+    "gitBlob": "182d5d2638eb295546f36f91e5cecf822b4dece3",
+    "commit": "bebba745330a719edaee3e215ed7c232063a05fc",
+    "tree": "67a650fff0533a3f64d9424d125442c95afc2e3f",
+    "rootIndependentSourcePass": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293"
+  },
+  "historicalR5BObservedVerification": {
+    "sourceReads": true,
+    "pureSourceCompositionHashAndTreeComparison": true,
+    "immutableGitBlobWriteAndReadback": true,
+    "projectOrParserExecution": false,
+    "parser": "NOT_RUN",
+    "compiler": "NOT_RUN",
+    "projectTests": "NOT_RUN_FOR_R5_B",
+    "nativePostgres": "NOT_RUN_FOR_R5_B",
+    "sql": "NOT_RUN_FOR_R5_B",
+    "apt": "NOT_RUN_FOR_R5_B",
+    "build": "NOT_RUN_FOR_R5_B",
+    "githubCi": "NOT_RUN_FOR_R5_B",
+    "hostedQuery": "NOT_RUN",
+    "hostedInstall": "NOT_RUN",
+    "officialSourceGet": "NOT_RUN",
+    "finalCandidateIndependentTlReview": "PENDING_ROOT",
+    "nativeOnlyCallbackInverseExact": true,
+    "wrapperOnlyCommentInverseExact": true,
+    "workflowFullParentInverseExact": true,
+    "completeProvisionStepAndRunBodyMovedByteExact": true,
+    "fullPriorTaskAndHandoffVerbatim": true,
+    "fullR5AAndR5BTasksVerbatimInBothDocuments": true,
+    "original630FilePartitionDerivedFromCompleteImmutableParentTree": true,
+    "executableSelectorContractAuthoredNotRun": true,
+    "authorRefPrReadyMerge": false,
+    "authorSubagentImplementation": false,
+    "predecessorFullCoreLogReadAndHashMatched": true,
+    "protectedGuardFullParentInverseExact": true,
+    "packageFullParentInverseExact": true,
+    "uiExistingInvariantTailExact": true
+  },
+  "r5bIndependentRootSourceReview": {
+    "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293",
+    "commit": "bebba745330a719edaee3e215ed7c232063a05fc",
+    "tree": "67a650fff0533a3f64d9424d125442c95afc2e3f",
+    "status": "SOURCE_PASS",
+    "utf8Bytes": 6205,
+    "sha256": "602ae2888773ca5d8db1c5fb8c9009291c8d5614dc4daf6b1b7867b5ad8f7172",
+    "completeVerbatimInTaskAndHandoff": true,
+    "notRuntimeCiHostedOrReleaseAcceptance": true
+  },
+  "r5cComposition": {
+    "startFromCompleteMainTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "overlayPaths": [
+      ".github/workflows/ci.yml",
+      "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+      "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+      "package.json",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+      "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+      "scripts/official-truth-v3-test-selection.mjs",
+      "scripts/official-truth-v3-test-selection.test.mjs"
+    ],
+    "onlyAuthoredPaths": [
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md"
+    ],
+    "preservedR5BOverlayPins": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 23906,
+        "sha256": "371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba",
+        "gitBlob": "a422a67d3a0407f4c1301d3bcff75f736d7ea9b4"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 4169,
+        "sha256": "200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973",
+        "gitBlob": "623df1665b55be485b7a8fb5ba1c587dc3247dab"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+        "gitBlob": "66d6352d5f4ed9382ab37be5122a3835dd00e7d9",
+        "utf8Bytes": 12288,
+        "sha256": "9f4c7c6cd002df699d4f5a12cc68ef5d07a522d7b7c2b7b3b763c8ca3a4cd649",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 10779,
+        "sha256": "9ff3682f909665354616b9b0636b6f12d2c17f98a2e67af6a6637b2acae12cdc",
+        "gitBlob": "0a11b2b2e2bd1df3bac812b9a1319b64435c0ca2"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 343,
+        "sha256": "3d361e5e8f52aed6c8f748dbe92fe0d1bbe60735160169d4f955d27179fce24c",
+        "gitBlob": "98252252911d0aaa54484ce0d5cb48efde7be67d"
+      },
+      {
+        "path": "package.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 6460,
+        "sha256": "46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0",
+        "gitBlob": "2a8d677d575b5762a5dd7091d161ea0da6edcea9"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+        "gitBlob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+        "utf8Bytes": 69705,
+        "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 62251,
+        "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e",
+        "gitBlob": "35442ef5d863a8a1bdbeb812e4aa2c1596d2b898"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+        "gitBlob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+        "utf8Bytes": 37227,
+        "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "scripts/official-truth-product-v3-ui/ci-contract.test.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 7754,
+        "sha256": "b0520e3b768affee12aa65f628a8da962a19d19f5866f93815b4671a07fa1902",
+        "gitBlob": "bc31a87dd7017e89a720c0218319cad5c00beb67"
+      },
+      {
+        "path": "scripts/official-truth-v3-test-selection.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 5970,
+        "sha256": "647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61",
+        "gitBlob": "51a2a59e03104f83f3d392f0ffb79639274c1ae9"
+      },
+      {
+        "path": "scripts/official-truth-v3-test-selection.test.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 7360,
+        "sha256": "edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730",
+        "gitBlob": "bbc10fc9621e31c5af74421891608d3cdf27238d"
+      }
+    ],
+    "authoredDocPinsExcludingManifestSelf": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 60215,
+        "sha256": "54774f7371cca2dfd39596c2dee77eb2fba49de7094bd5f7d463a4001a14391e",
+        "gitBlob": "8a29bec9f6fe17a1b3fc409a160c6009f6179be1"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 99211,
+        "sha256": "97add1db896efa9ce95bbd51bbeb8bde8670a12125367321b6b97211fe33d33a",
+        "gitBlob": "be3d5e251a7f844044da3ad9b46dbe5130203bdb"
+      }
+    ],
+    "all12PreservedPinsBoundToFirstParentTree": true,
+    "currentMainPg1Pins": [
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 40888,
+        "sha256": "aea57c9226d18e3eda8f03e42998eab4016a10e2491c51e2251bd98ef5ed157e",
+        "gitBlob": "16855a45ccf6276113c8a5ba2f35d9316bf5c90f"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 32870,
+        "sha256": "74a0d0bec916a7faa63f369e726379591e063ecf3629b9af650061eab5b4e55c",
+        "gitBlob": "417091805b8aebf5fb9680b7526e933af1bfcad1"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 19923,
+        "sha256": "9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601",
+        "gitBlob": "754ee3172ba816635f373a71cc32893dc7adb6b8"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 397,
+        "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13",
+        "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 10945,
+        "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2",
+        "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 42247,
+        "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0",
+        "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 6452,
+        "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b",
+        "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61"
+      }
+    ],
+    "currentMainAuthDeltaPins": [
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 10327,
+        "sha256": "822a5a1789e9cdb40b34a1ef87866a6ac4cfc5f0c42a27491f4b0eb4000bd641",
+        "gitBlob": "7c3100827240d05c75ab1049a115fe66f1105086"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 12247,
+        "sha256": "383eb44c5149206ac226a85063b7e11b5bb3c28693dee7b3de2a2d811b77147a",
+        "gitBlob": "ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 10169,
+        "sha256": "09bacca39ccf833c220b8cdd7a343b958fbb8107e70bf910ea640a3c812ebe66",
+        "gitBlob": "bec28fc005b3d1191354948ae7026d30bdfe1cde"
+      },
+      {
+        "path": "lib/supabase/auth-bericht.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 8497,
+        "sha256": "e9413d4246959a3f0b012f91522571b7ba26c21a0ea5a669a2a4ef7909eaa25d",
+        "gitBlob": "1406705421fe3b2c3d312bbc067556d695eb76a7"
+      },
+      {
+        "path": "lib/supabase/auth-erwartung.ts",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 19854,
+        "sha256": "46ead850c64d6cd0c152f7750c0cdf0f0934eea734e75274f2b19d30d89aa58e",
+        "gitBlob": "25ef939f111ba0db5475cdf1e4d1c55364193512"
+      }
+    ],
+    "mainPg1ImplementationFourPinsMatchR5B": true,
+    "firstParentCopiedMainChanges": {
+      "added": [
+        {
+          "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "7c3100827240d05c75ab1049a115fe66f1105086",
+          "utf8Bytes": 10327
+        },
+        {
+          "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0",
+          "utf8Bytes": 12247
+        },
+        {
+          "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "gitBlob": "bec28fc005b3d1191354948ae7026d30bdfe1cde",
+          "utf8Bytes": 10169
+        }
+      ],
+      "modified": [
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+          "before": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
+            "utf8Bytes": 26083
+          },
+          "after": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "16855a45ccf6276113c8a5ba2f35d9316bf5c90f",
+            "utf8Bytes": 40888
+          }
+        },
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+          "before": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "a4df211a2021fa0888cb5b93663eb105dd29f2a1",
+            "utf8Bytes": 21965
+          },
+          "after": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "417091805b8aebf5fb9680b7526e933af1bfcad1",
+            "utf8Bytes": 32870
+          }
+        },
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+          "before": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
+            "utf8Bytes": 15253
+          },
+          "after": {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "754ee3172ba816635f373a71cc32893dc7adb6b8",
+            "utf8Bytes": 19923
+          }
+        },
+        {
+          "path": "lib/supabase/auth-bericht.test.ts",
+          "before": {
+            "path": "lib/supabase/auth-bericht.test.ts",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "ad2506e0690ec52725a5cf13db00478107afeea1",
+            "utf8Bytes": 6460
+          },
+          "after": {
+            "path": "lib/supabase/auth-bericht.test.ts",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "1406705421fe3b2c3d312bbc067556d695eb76a7",
+            "utf8Bytes": 8497
+          }
+        },
+        {
+          "path": "lib/supabase/auth-erwartung.ts",
+          "before": {
+            "path": "lib/supabase/auth-erwartung.ts",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "0dfd71702f0d1226cd35cdac449b3260c961e31a",
+            "utf8Bytes": 19457
+          },
+          "after": {
+            "path": "lib/supabase/auth-erwartung.ts",
+            "mode": "100644",
+            "type": "blob",
+            "gitBlob": "25ef939f111ba0db5475cdf1e4d1c55364193512",
+            "utf8Bytes": 19854
+          }
+        }
+      ],
+      "deleted": []
+    },
+    "firstParentOwnDocChanges": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+        "before": {
+          "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "utf8Bytes": 76786,
+          "sha256": "c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d",
+          "gitBlob": "512a6b4b70689e40515d5c81bea033b2962b16d4"
+        },
+        "after": {
+          "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "utf8Bytes": 99211,
+          "sha256": "97add1db896efa9ce95bbd51bbeb8bde8670a12125367321b6b97211fe33d33a",
+          "gitBlob": "be3d5e251a7f844044da3ad9b46dbe5130203bdb"
+        }
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+        "before": {
+          "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+          "mode": "100644",
+          "type": "blob",
+          "utf8Bytes": 231903,
+          "sha256": "cbe62d238dc2bd55441af5bf7e01dc54e18d3a6dcb29d778451afd90c6059c2b",
+          "gitBlob": "182d5d2638eb295546f36f91e5cecf822b4dece3"
+        },
+        "after": {
+          "externalManifestSelfPin": true
+        }
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+        "before": {
+          "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "utf8Bytes": 46749,
+          "sha256": "eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542",
+          "gitBlob": "0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e"
+        },
+        "after": {
+          "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+          "mode": "100644",
+          "type": "blob",
+          "utf8Bytes": 60215,
+          "sha256": "54774f7371cca2dfd39596c2dee77eb2fba49de7094bd5f7d463a4001a14391e",
+          "gitBlob": "8a29bec9f6fe17a1b3fc409a160c6009f6179be1"
+        }
+      }
+    ],
+    "expectedMainDiff": {
+      "modified": 4,
+      "added": 11,
+      "deleted": 0,
+      "unchanged": 9482
+    },
+    "expectedFirstParentDiff": {
+      "modified": 8,
+      "added": 3,
+      "deleted": 0,
+      "unchanged": 9486
+    },
+    "expectedFinalLeaves": 9497,
+    "original630TestPathUniverseExactR5B": true,
+    "originalUniversePathListSha256": "7446d306c47a4a02d3d4c520c7840967055b8706127700a6b7ce5ada1a49bfae",
+    "splitUnchanged": {
+      "coreOriginal": 629,
+      "hostedPg17": 1,
+      "additionalCoreContract": 1
+    },
+    "hostedPg17MemberUnchanged": "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
+    "noManualSourceConflictRewrite": true,
+    "noOtherMainDifference": true,
+    "noAaHs1Hm04Integration": true,
+    "noFuturePg17Member": true,
+    "fixedBudgetsUnchanged": {
+      "effectMs": 180000,
+      "drainMs": 35000,
+      "wrapperMs": 240000
+    },
+    "allNativeGroupsAndSixFamilyGateUnchanged": true
+  },
+  "r5cHistoricalPreservation": {
+    "fullPriorTask": {
+      "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "utf8Bytes": 46749,
+      "sha256": "eba4e5bc13dd4062c7e650bd9d853eeddf1ac4128d0ccf412860e2c9f8173542",
+      "gitBlob": "0b3c8769fbab6576c4ba71acaf54c86e9ca6b99e"
+    },
+    "fullPriorHandoff": {
+      "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "utf8Bytes": 76786,
+      "sha256": "c1d8759ae07d4c8e28ed634a5c469f78cd909d7bd23ba5ff1cf25eca99180b4d",
+      "gitBlob": "512a6b4b70689e40515d5c81bea033b2962b16d4"
+    },
+    "fullPriorManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "mode": "100644",
+      "type": "blob",
+      "utf8Bytes": 231903,
+      "sha256": "cbe62d238dc2bd55441af5bf7e01dc54e18d3a6dcb29d778451afd90c6059c2b",
+      "gitBlob": "182d5d2638eb295546f36f91e5cecf822b4dece3"
+    },
+    "fullTaskAndHandoffBytesRemainContiguousVerbatim": true,
+    "previousSourcePinsAndExactSourceInversesPreserved": true,
+    "previousActualCi4128EvidencePreserved": true,
+    "r5bPg1R3DocPinsAreHistoricalOnly": true,
+    "currentPg1Provenance": [
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 40888,
+        "sha256": "aea57c9226d18e3eda8f03e42998eab4016a10e2491c51e2251bd98ef5ed157e",
+        "gitBlob": "16855a45ccf6276113c8a5ba2f35d9316bf5c90f"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 32870,
+        "sha256": "74a0d0bec916a7faa63f369e726379591e063ecf3629b9af650061eab5b4e55c",
+        "gitBlob": "417091805b8aebf5fb9680b7526e933af1bfcad1"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "utf8Bytes": 19923,
+        "sha256": "9de37ddda92c14a7355c49fa9b64739000bea2a675e8d8b638490c4e9a1aa601",
+        "gitBlob": "754ee3172ba816635f373a71cc32893dc7adb6b8"
+      }
+    ]
+  },
+  "externalContextAtR5CSelection": {
+    "attributedToRootTask": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994",
+    "actualMain": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "mergedPr": 1193,
+    "priorPg1PrGates": {
+      "runNumber": 4130,
+      "allEightJobs": "success",
+      "allNinePg1Groups": "success",
+      "rootReceipt": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6824736281"
+    },
+    "actualMainPush": {
+      "runNumber": 4132,
+      "runId": "43226332423",
+      "status": "running",
+      "postMergeAcceptance": "PENDING"
+    },
+    "productionListing": {
+      "id": "dpl_2WQAaTmydXw8WFXmedUYvEAdZQy2",
+      "listingStatus": "READY",
+      "completePostMergeAcceptance": false
+    },
+    "independentMainAliasAcceptance": "PENDING_ROOT",
+    "authorIndependentlyExecutedOrVerifiedCiProduction": false,
+    "publicationHold": true,
+    "canOnlyBeSupersededByLaterPersistedRootAcceptanceReceipt": true
+  },
+  "r5cNextRequiredGates": {
+    "independentRootCompositionSourceReview": "PENDING",
+    "actualMainPostMergeActionsProductionAliasAcceptance": "PENDING_AT_SELECTION",
+    "acceptedMainPg1SourceIntegration": "EXPLICITLY_SELECTED_SOURCE_ONLY",
+    "publication": "HOLD_FOR_ROOT",
+    "freshPg16Core": "NOT_RUN",
+    "fullPg17HmaAllGroupsLateWriterAndDrain": "NOT_RUN",
+    "sixRequiredFamilies": "NOT_RUN",
+    "auth": "NOT_RUN",
+    "typeLintHygieneBuild": "NOT_RUN",
+    "exactHeadPreviewAndThreads": "NOT_RUN",
+    "allThreePredecessorP1FindingsRemainPendingActualNewGates": true,
     "ready": false,
     "merged": false,
     "hostedInstall": false,
