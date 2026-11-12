@@ -173,8 +173,65 @@ export async function runHostedIntakeNative(t:TestContext):Promise<void>{
       const effective=await installer.query("SELECT pg_catalog.pg_has_role('postgres','ot_v3_intake_owner','SET')::text AS owner_set,pg_catalog.pg_has_role('postgres','ot_v3_intake_owner','USAGE')::text AS owner_usage,pg_catalog.pg_has_role('postgres','ot_v3_intake_caller','SET')::text AS caller_set,pg_catalog.pg_has_role('postgres','ot_v3_intake_caller','USAGE')::text AS caller_usage,current_user AS current_identity,session_user AS session_identity")
       assert.deepEqual(effective,[{owner_set:'false',owner_usage:'false',caller_set:'false',caller_usage:'false',current_identity:'postgres',session_identity:'postgres'}])
     }
+    // Diagnostic-only replay after an unexpected original installer refusal.
+    // It cannot install: every original byte remains except fixed SQLSTATE labels
+    // and the terminal COMMIT -> ROLLBACK. The original assertion still fails.
+    const installGuardSites=[{"code":"H3101","site":"hs1 unexpected initial ACL"},{"code":"H3102","site":"hs1 unexpected initial column ACL"},{"code":"H3103","site":"hs1 function inventory mismatch"},{"code":"H3104","site":"hs1 exact function mismatch"},{"code":"H3105","site":"hs1 schema/class/type inventory mismatch"},{"code":"H3106","site":"hs1 schema ACL mismatch"},{"code":"H3107","site":"hs1 table/index mismatch"},{"code":"H3108","site":"hs1 row/array type mismatch"},{"code":"H3109","site":"hs1 FORCE RLS policy mismatch"},{"code":"H3110","site":"hs1 type ACL mismatch"},{"code":"H3111","site":"hs1 exact column mismatch"},{"code":"H3112","site":"hs1 column/default inventory mismatch"},{"code":"H3113","site":"hs1 exact constraint mismatch"},{"code":"H3114","site":"hs1 exact trigger mismatch"},{"code":"H3115","site":"hs1 foreign object/dependency or label"},{"code":"H3116","site":"hs1 effective schema/owner privilege"},{"code":"H3117","site":"hs1 effective table/column privilege"},{"code":"H3118","site":"hs1 effective function privilege"}] as const
+    let installDiagnosticAttempted=false
+    const diagnoseInstallGuard=async()=>{
+      const before=await snapshot()
+      await noPackage()
+      assert.deepEqual(before,baseline,'diagnostic requires the unchanged pristine fixture')
+      let siteIndex=0
+      const labelled=candidate.replace(/ERRCODE='P7312'/g,()=>{
+        assert.ok(siteIndex<installGuardSites.length)
+        return "ERRCODE='"+installGuardSites[siteIndex++].code+"'"
+      })
+      assert.equal(siteIndex,18)
+      assert.equal(installGuardSites.length,18)
+      assert.ok(labelled.endsWith('\nCOMMIT;\n'))
+      const probe=labelled.slice(0,-'\nCOMMIT;\n'.length)+'\nROLLBACK;\n'
+      let inverse=probe.slice(0,-'\nROLLBACK;\n'.length)+'\nCOMMIT;\n'
+      for(const item of installGuardSites){
+        const marker="ERRCODE='"+item.code+"'"
+        assert.equal(inverse.split(marker).length,2)
+        inverse=inverse.replace(marker,()=>"ERRCODE='P7312'")
+      }
+      assert.equal(inverse,candidate,'complete diagnostic inverse preserves original SQL')
+      let observed:typeof installGuardSites[number]|undefined
+      try{
+        await installer.query(probe)
+      }catch(error){
+        if(error instanceof LocalPgError)observed=installGuardSites.find(item=>item.code===error.code)
+      }finally{
+        await installer.query('ROLLBACK')
+        await noPackage()
+        assert.deepEqual(await snapshot(),before,'diagnostic leaves all fixture state unchanged')
+      }
+      // Only a fixed source site/code; no database rows or exception details.
+      t.diagnostic('HS1_INSTALL_GUARD_DIAG '+JSON.stringify(observed??{code:'UNMAPPED',site:'no_mapped_guard'}))
+    }
     const rejectScript=async(sql:string,code:string)=>{
-      await assert.rejects(installer.query(sql),sqlError(code))
+      const observedQuery=async()=>{
+        try{return await installer.query(sql)}
+        catch(error){
+          // Only install fault scripts can enter this path; recovery and
+          // pre-existing-role fixtures never run a pristine-install probe.
+          const prefix=candidate.slice(0,candidate.indexOf('-- HS1_AFTER_ROLE_CREATION'))
+          if(!installDiagnosticAttempted&&code==='P7311'&&sql.startsWith(prefix)
+            &&error instanceof LocalPgError&&error.code==='P7312'){
+            installDiagnosticAttempted=true
+            await installer.query('ROLLBACK')
+            try{await diagnoseInstallGuard()}
+            catch{
+              t.diagnostic('HS1_INSTALL_GUARD_DIAG '+JSON.stringify({code:'UNMAPPED',site:'diagnostic_cleanup_failed'}))
+              effect.abort(error)
+            }
+          }
+          throw error // The original SQL failure remains the assertion input.
+        }
+      }
+      await assert.rejects(observedQuery(),sqlError(code))
       await installer.query('ROLLBACK')
       assert.equal((await installer.query('SELECT current_user AS installer_identity'))[0]!.installer_identity,'postgres')
     }

@@ -6,7 +6,7 @@
   "generation": "replacement after original Generation1",
   "sessionKind": "documented replacement",
   "mode": "NORMAL",
-  "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+  "soleParent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
   "task": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826971069",
     "bodyUtf8Bytes": 2624,
@@ -64,9 +64,9 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
       "mode": "100644",
-      "bytes": 64749,
-      "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21",
-      "gitBlob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916"
+      "bytes": 68633,
+      "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
+      "gitBlob": "c5afa5dee2b11631c065038df919300842f82312"
     },
     {
       "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
@@ -78,16 +78,16 @@
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
       "mode": "100644",
-      "bytes": 23129,
-      "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
-      "gitBlob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d"
+      "bytes": 23960,
+      "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
+      "gitBlob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "mode": "100644",
-      "bytes": 21219,
-      "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
-      "gitBlob": "e031a550960c2a5b2a313586e1732eda8f584c88"
+      "bytes": 22050,
+      "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
+      "gitBlob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
@@ -103,32 +103,24 @@
     "identity": "Manifest UTF8 bytes/SHA256/Git blob are provided by immutable delivery receipt and enclosing Git tree. No circular self-digest is embedded."
   },
   "baseTreeProof": {
-    "parent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "parent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
     "recursiveReadTruncated": false,
     "leafCount": 9538,
     "modifiedPaths": [
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
     ],
-    "expectedModifiedLeaves": 13,
-    "expectedComplementLeaves": 9525,
+    "expectedModifiedLeaves": 5,
+    "expectedComplementLeaves": 9533,
     "expectedNewLeaves": 0,
     "expectedDeletedLeaves": 0,
     "expectedFinalLeafCount": 9538,
     "canonicalLeafFormat": "ASCII path sort; mode SPACE type SPACE Git object SHA TAB path LF",
-    "complementSha256": "8bd46a1094463150dc176b653d814163af677a042817dcdffdcd161685b7718f",
+    "complementSha256": "acad2f91643afaf53ae0a10f2d17b373ceca5046cf4bf67dbcce5faf22c40fd0",
     "deliveryReadbackRequired": "Actual complete final tree and all raw changed files; final commit/tree and manifest self pin are external."
   },
   "preservation": {
@@ -906,8 +898,8 @@
         "originalStart": 6365,
         "originalEnd": 10938,
         "originalSha256": "9252e20e71a7c1b21cf4fbfe59f88e24f2df6b464d0d2d51c4a3fd9f9c64ffa8",
-        "candidateStart": 36819,
-        "candidateEnd": 41802,
+        "candidateStart": 40703,
+        "candidateEnd": 45686,
         "candidateSha256": "ba3602e347bd4dbed9a5ad55821c7514b8b2cecc36de522be0d4ea61bde69f91",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -916,8 +908,8 @@
         "originalStart": 10938,
         "originalEnd": 12256,
         "originalSha256": "105326a80667cb57f8b7d555dfc63f6ab333d4731e7ecfa41000cd85301cf71a",
-        "candidateStart": 41802,
-        "candidateEnd": 43119,
+        "candidateStart": 45686,
+        "candidateEnd": 47003,
         "candidateSha256": "35fd10e8f2392bf8e97093db1c2b13cfc2ca36a6e9ddac5e4c40c21232d06f8f",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -926,8 +918,8 @@
         "originalStart": 12256,
         "originalEnd": 14007,
         "originalSha256": "99bf054be6e43e6d5624ca75b997af4bde85c5a466e1a5b9de1a7103502e5978",
-        "candidateStart": 43119,
-        "candidateEnd": 44869,
+        "candidateStart": 47003,
+        "candidateEnd": 48753,
         "candidateSha256": "894045f65be7bfb1ef701ed287f2ada41cb4838a0dc89ba0e7550260bc42927c",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -936,8 +928,8 @@
         "originalStart": 14007,
         "originalEnd": 15558,
         "originalSha256": "2133a068101d9bb4f242af70bdb81d04d268f9911b013d780da1662c41d974d7",
-        "candidateStart": 44869,
-        "candidateEnd": 46419,
+        "candidateStart": 48753,
+        "candidateEnd": 50303,
         "candidateSha256": "0244602032b12091bf8973c2efabbc78407d39fa2892ee05390d5fb4df32c98d",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -946,8 +938,8 @@
         "originalStart": 15558,
         "originalEnd": 18022,
         "originalSha256": "be522bb071e8b156681a05a7e43358043a3b6a76b4973f8e468e81da1cb089d9",
-        "candidateStart": 46419,
-        "candidateEnd": 48882,
+        "candidateStart": 50303,
+        "candidateEnd": 52766,
         "candidateSha256": "b698d09b77a707fdff72aed9c1f185763b84f4b59291618fea7abf23ca9e1b18",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -956,8 +948,8 @@
         "originalStart": 18022,
         "originalEnd": 19529,
         "originalSha256": "b7c4553a8240e31505ed1d252ba418705dd3659fc5be1ac8f229c84b6243a378",
-        "candidateStart": 48882,
-        "candidateEnd": 50388,
+        "candidateStart": 52766,
+        "candidateEnd": 54272,
         "candidateSha256": "ba320ac84d728203b8e1e778ae8074ab16c59ec6296194046bcc144d8a1bd99a",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -966,8 +958,8 @@
         "originalStart": 19529,
         "originalEnd": 21213,
         "originalSha256": "4ec82bf5473d6c77e622bf330ea6399c219e10aeda4d1a32be95c95eff08a319",
-        "candidateStart": 50388,
-        "candidateEnd": 52071,
+        "candidateStart": 54272,
+        "candidateEnd": 55955,
         "candidateSha256": "8455643cec4b28b7114cbb07a872eec4e836c34ce8078abfe867039856679c98",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -976,8 +968,8 @@
         "originalStart": 21213,
         "originalEnd": 23620,
         "originalSha256": "659552436e6d85a1ce6f94c654b62fd479cae6cc4f3df8f34173c9eed4e8005e",
-        "candidateStart": 52071,
-        "candidateEnd": 54450,
+        "candidateStart": 55955,
+        "candidateEnd": 58334,
         "candidateSha256": "e441954af80a862135714fc35f4a7f8a9d726e3bda2e0cfc46952c4c06ea6e70",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -986,8 +978,8 @@
         "originalStart": 23620,
         "originalEnd": 26950,
         "originalSha256": "0bff59681f16614a1e7843b96a59ff648fb69a71d4d2e1ef311174e8efb21bbd",
-        "candidateStart": 54450,
-        "candidateEnd": 57752,
+        "candidateStart": 58334,
+        "candidateEnd": 61636,
         "candidateSha256": "66db81917fc311dcc313a9c4b84db0fc64cad85016f59855c93ad04d91bf121b",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -996,8 +988,8 @@
         "originalStart": 26950,
         "originalEnd": 30792,
         "originalSha256": "60515d81057a88528f0f75828b37dec84e552c1c8a32a48c22f6f4815f703b33",
-        "candidateStart": 57752,
-        "candidateEnd": 62836,
+        "candidateStart": 61636,
+        "candidateEnd": 66720,
         "candidateSha256": "1fadc26da585c96d5fc2ac490893b7120512c5e266cfdbd9299e09633b9fa8c4",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       }
@@ -1101,83 +1093,83 @@
     "candidateInverse": [
       {
         "start": 0,
-        "end": 36819,
+        "end": 40703,
         "classification": "new HS1 harness/install/recovery source",
-        "sha256": "83044dee32f49b27842161d61936357e3c6d3fc5363d5f1a0fe20302c58faded"
+        "sha256": "64c9faab79dffe2d88e841e9681e08fe5e8be4d924ed222d0be3d1cfaf35a920"
       },
       {
-        "start": 36819,
-        "end": 41802,
+        "start": 40703,
+        "end": 45686,
         "classification": "adapted original S1 semantic group",
         "group": "exact least privileges, FORCE RLS, fixed definers, no PUBLIC or API roles, immutable originals",
         "sha256": "ba3602e347bd4dbed9a5ad55821c7514b8b2cecc36de522be0d4ea61bde69f91"
       },
       {
-        "start": 41802,
-        "end": 43119,
+        "start": 45686,
+        "end": 47003,
         "classification": "adapted original S1 semantic group",
         "group": "direct RPC retains supported full shapes and rejects PII/null/free-text at every depth before INSERT",
         "sha256": "35fd10e8f2392bf8e97093db1c2b13cfc2ca36a6e9ddac5e4c40c21232d06f8f"
       },
       {
-        "start": 43119,
-        "end": 44869,
+        "start": 47003,
+        "end": 48753,
         "classification": "adapted original S1 semantic group",
         "group": "byte-preserving capture/reconnect, whitespace collision and complete server binding collisions",
         "sha256": "894045f65be7bfb1ef701ed287f2ada41cb4838a0dc89ba0e7550260bc42927c"
       },
       {
-        "start": 44869,
-        "end": 46419,
+        "start": 48753,
+        "end": 50303,
         "classification": "adapted original S1 semantic group",
         "group": "independent concurrent clients serialize; expiry reclaims generation and rejects old ticket",
         "sha256": "0244602032b12091bf8973c2efabbc78407d39fa2892ee05390d5fb4df32c98d"
       },
       {
-        "start": 46419,
-        "end": 48882,
+        "start": 50303,
+        "end": 52766,
         "classification": "adapted original S1 semantic group",
         "group": "I1 uses durable quarantine for every terminal outcome and full archived escalation replay",
         "sha256": "b698d09b77a707fdff72aed9c1f185763b84f4b59291618fea7abf23ca9e1b18"
       },
       {
-        "start": 48882,
-        "end": 50388,
+        "start": 52766,
+        "end": 54272,
         "classification": "adapted original S1 semantic group",
         "group": "finish direct RPC refuses null, incomplete nested records and free text without storing a completion",
         "sha256": "ba320ac84d728203b8e1e778ae8074ab16c59ec6296194046bcc144d8a1bd99a"
       },
       {
-        "start": 50388,
-        "end": 52071,
+        "start": 54272,
+        "end": 55955,
         "classification": "adapted original S1 semantic group",
         "group": "actual commit then lost acknowledgement requires same-operation readback, with no duplicate completion",
         "sha256": "8455643cec4b28b7114cbb07a872eec4e836c34ce8078abfe867039856679c98"
       },
       {
-        "start": 52071,
-        "end": 54450,
+        "start": 55955,
+        "end": 58334,
         "classification": "adapted original S1 semantic group",
         "group": "failure before commit, transaction abort and post-write lease lapse leave no partial data",
         "sha256": "e441954af80a862135714fc35f4a7f8a9d726e3bda2e0cfc46952c4c06ea6e70"
       },
       {
-        "start": 54450,
-        "end": 57752,
+        "start": 58334,
+        "end": 61636,
         "classification": "adapted original S1 semantic group",
         "group": "cancellation owns, terminates and drains a genuinely blocked PostgreSQL call",
         "sha256": "66db81917fc311dcc313a9c4b84db0fc64cad85016f59855c93ad04d91bf121b"
       },
       {
-        "start": 57752,
-        "end": 62836,
+        "start": 61636,
+        "end": 66720,
         "classification": "adapted original S1 semantic group",
         "group": "actual importer process interruption and new process reconnect preserve original and completed outcome",
         "sha256": "1fadc26da585c96d5fc2ac490893b7120512c5e266cfdbd9299e09633b9fa8c4"
       },
       {
-        "start": 62836,
-        "end": 64749,
+        "start": 66720,
+        "end": 68633,
         "classification": "new used-history refusal and owned settlement receipt",
         "sha256": "6451d6e4b4a312fdc2a91e7ad714e8a2706cecc96b279f85d837a2a2d8b6fe55"
       }
@@ -1268,6 +1260,29 @@
   "sourceReadback": {
     "changedArtifactBlobs": [
       {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "mode": "100644",
+        "bytes": 68633,
+        "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
+        "gitBlob": "c5afa5dee2b11631c065038df919300842f82312"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "bytes": 23960,
+        "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
+        "gitBlob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "bytes": 22050,
+        "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
+        "gitBlob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5"
+      }
+    ],
+    "unchangedArtifactPins": [
+      {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
         "mode": "100644",
         "bytes": 123734,
@@ -1282,18 +1297,11 @@
         "gitBlob": "828ab2b2ded83acdeb45d71454049d655e9af184"
       },
       {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
         "mode": "100644",
-        "bytes": 23129,
-        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
-        "gitBlob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
-        "mode": "100644",
-        "bytes": 21219,
-        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
-        "gitBlob": "e031a550960c2a5b2a313586e1732eda8f584c88"
+        "bytes": 348,
+        "sha256": "39a52aafd6caf137ef1e8b0bd22844889c7fd90747e209c82fb0f5c141889263",
+        "gitBlob": "18aa68d5a8d845c6e94df52a24e4c95ff2d21d16"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
@@ -1301,22 +1309,6 @@
         "bytes": 13120,
         "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
         "gitBlob": "34c82c92f2f056f9b08475481493d65926b5e24c"
-      }
-    ],
-    "unchangedArtifactPins": [
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-        "mode": "100644",
-        "bytes": 64749,
-        "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21",
-        "gitBlob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916"
-      },
-      {
-        "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
-        "mode": "100644",
-        "bytes": 348,
-        "sha256": "39a52aafd6caf137ef1e8b0bd22844889c7fd90747e209c82fb0f5c141889263",
-        "gitBlob": "18aa68d5a8d845c6e94df52a24e4c95ff2d21d16"
       }
     ],
     "meaning": "Current immutable blob identities; final exact raw-byte and tree readback is recorded externally after commit creation."
@@ -1415,7 +1407,7 @@
     "originalS1RollbackExecuted": false,
     "sharedWireDuplicateColumnRefusalUnchanged": true
   },
-  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX2",
+  "status": "SOURCE_ONLY_NOT_RUN_DIAGNOSTIC",
   "scopeContinuity": {
     "issue917": "human evidence scoped; denied action neither repeated nor rerouted",
     "issue1131": "NOT_REQUIRED and untouched",
@@ -1452,7 +1444,7 @@
       "immutable Git blobs/tree/commit and raw readback"
     ]
   },
-  "sourceRevision": "HS1/HM04-FIX2",
+  "sourceRevision": "HS1-DIAG1",
   "originalInstallationTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822245339",
     "bodyUtf8Bytes": 11579,
@@ -1460,19 +1452,11 @@
     "preservedVerbatim": true
   },
   "modifiedPaths": [
-    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
     "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-    "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-    "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-    "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-    "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-    "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+    "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
   ],
   "label1": {
     "schema": "hs1-native-label1-inverse-v1",
@@ -3296,6 +3280,198 @@
       "blob": "4dcfdf20fdcff236fa9b663b40562739c59cb3aa",
       "bytes": 138536,
       "sha256": "7d99657a689a233eaec3dc4f97969a8e96e176af5e75acaf3bb5a2c9b2beb3f1"
+    }
+  },
+  "diagnostic1": {
+    "id": "HS1-DIAG1",
+    "status": "SOURCE_ONLY_NOT_RUN_DIAGNOSTIC",
+    "session": "/root/hs1_hm04_fix",
+    "soleParent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "parentTree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "selection": "Root current-thread bounded unexpected-P7312 diagnostic selection; no original-session or runtime PASS claim.",
+    "cause": "CI4143 reached unexpected P7312 where an installer fault expects P7311; the unchanged wire intentionally exposes only SQLSTATE.",
+    "maximumDiagnosticAttempts": 1,
+    "admission": "Original installer-fault refusal must be LocalPgError P7312 while expected code is P7311; recovery and existing-role fixtures excluded.",
+    "sites": [
+      {
+        "code": "H3101",
+        "site": "hs1 unexpected initial ACL"
+      },
+      {
+        "code": "H3102",
+        "site": "hs1 unexpected initial column ACL"
+      },
+      {
+        "code": "H3103",
+        "site": "hs1 function inventory mismatch"
+      },
+      {
+        "code": "H3104",
+        "site": "hs1 exact function mismatch"
+      },
+      {
+        "code": "H3105",
+        "site": "hs1 schema/class/type inventory mismatch"
+      },
+      {
+        "code": "H3106",
+        "site": "hs1 schema ACL mismatch"
+      },
+      {
+        "code": "H3107",
+        "site": "hs1 table/index mismatch"
+      },
+      {
+        "code": "H3108",
+        "site": "hs1 row/array type mismatch"
+      },
+      {
+        "code": "H3109",
+        "site": "hs1 FORCE RLS policy mismatch"
+      },
+      {
+        "code": "H3110",
+        "site": "hs1 type ACL mismatch"
+      },
+      {
+        "code": "H3111",
+        "site": "hs1 exact column mismatch"
+      },
+      {
+        "code": "H3112",
+        "site": "hs1 column/default inventory mismatch"
+      },
+      {
+        "code": "H3113",
+        "site": "hs1 exact constraint mismatch"
+      },
+      {
+        "code": "H3114",
+        "site": "hs1 exact trigger mismatch"
+      },
+      {
+        "code": "H3115",
+        "site": "hs1 foreign object/dependency or label"
+      },
+      {
+        "code": "H3116",
+        "site": "hs1 effective schema/owner privilege"
+      },
+      {
+        "code": "H3117",
+        "site": "hs1 effective table/column privilege"
+      },
+      {
+        "code": "H3118",
+        "site": "hs1 effective function privilege"
+      }
+    ],
+    "logFields": [
+      "code",
+      "site"
+    ],
+    "originalFailureRethrown": true,
+    "completeProbeInverseAsserted": true,
+    "probeAlwaysRollback": true,
+    "noPackageAndBaselineAsserted": true,
+    "unmappedDiagnostic": "Only fixed UNMAPPED/no_mapped_guard or UNMAPPED/diagnostic_cleanup_failed; no raw error/row data. Cleanup failure aborts the owned effect and the original failure still reaches its assertion.",
+    "source": {
+      "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+      "blob": "c5afa5dee2b11631c065038df919300842f82312",
+      "bytes": 68633,
+      "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
+      "old": {
+        "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
+        "bytes": 64749,
+        "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21"
+      },
+      "inverse": {
+        "oldStart": 16802,
+        "oldEnd": 16922,
+        "newStart": 16802,
+        "newEnd": 20806,
+        "before": "    const rejectScript=async(sql:string,code:string)=>{\n      await assert.rejects(installer.query(sql),sqlError(code))\n",
+        "after": "    // Diagnostic-only replay after an unexpected original installer refusal.\n    // It cannot install: every original byte remains except fixed SQLSTATE labels\n    // and the terminal COMMIT -> ROLLBACK. The original assertion still fails.\n    const installGuardSites=[{\"code\":\"H3101\",\"site\":\"hs1 unexpected initial ACL\"},{\"code\":\"H3102\",\"site\":\"hs1 unexpected initial column ACL\"},{\"code\":\"H3103\",\"site\":\"hs1 function inventory mismatch\"},{\"code\":\"H3104\",\"site\":\"hs1 exact function mismatch\"},{\"code\":\"H3105\",\"site\":\"hs1 schema/class/type inventory mismatch\"},{\"code\":\"H3106\",\"site\":\"hs1 schema ACL mismatch\"},{\"code\":\"H3107\",\"site\":\"hs1 table/index mismatch\"},{\"code\":\"H3108\",\"site\":\"hs1 row/array type mismatch\"},{\"code\":\"H3109\",\"site\":\"hs1 FORCE RLS policy mismatch\"},{\"code\":\"H3110\",\"site\":\"hs1 type ACL mismatch\"},{\"code\":\"H3111\",\"site\":\"hs1 exact column mismatch\"},{\"code\":\"H3112\",\"site\":\"hs1 column/default inventory mismatch\"},{\"code\":\"H3113\",\"site\":\"hs1 exact constraint mismatch\"},{\"code\":\"H3114\",\"site\":\"hs1 exact trigger mismatch\"},{\"code\":\"H3115\",\"site\":\"hs1 foreign object/dependency or label\"},{\"code\":\"H3116\",\"site\":\"hs1 effective schema/owner privilege\"},{\"code\":\"H3117\",\"site\":\"hs1 effective table/column privilege\"},{\"code\":\"H3118\",\"site\":\"hs1 effective function privilege\"}] as const\n    let installDiagnosticAttempted=false\n    const diagnoseInstallGuard=async()=>{\n      const before=await snapshot()\n      await noPackage()\n      assert.deepEqual(before,baseline,'diagnostic requires the unchanged pristine fixture')\n      let siteIndex=0\n      const labelled=candidate.replace(/ERRCODE='P7312'/g,()=>{\n        assert.ok(siteIndex<installGuardSites.length)\n        return \"ERRCODE='\"+installGuardSites[siteIndex++].code+\"'\"\n      })\n      assert.equal(siteIndex,18)\n      assert.equal(installGuardSites.length,18)\n      assert.ok(labelled.endsWith('\\nCOMMIT;\\n'))\n      const probe=labelled.slice(0,-'\\nCOMMIT;\\n'.length)+'\\nROLLBACK;\\n'\n      let inverse=probe.slice(0,-'\\nROLLBACK;\\n'.length)+'\\nCOMMIT;\\n'\n      for(const item of installGuardSites){\n        const marker=\"ERRCODE='\"+item.code+\"'\"\n        assert.equal(inverse.split(marker).length,2)\n        inverse=inverse.replace(marker,()=>\"ERRCODE='P7312'\")\n      }\n      assert.equal(inverse,candidate,'complete diagnostic inverse preserves original SQL')\n      let observed:typeof installGuardSites[number]|undefined\n      try{\n        await installer.query(probe)\n      }catch(error){\n        if(error instanceof LocalPgError)observed=installGuardSites.find(item=>item.code===error.code)\n      }finally{\n        await installer.query('ROLLBACK')\n        await noPackage()\n        assert.deepEqual(await snapshot(),before,'diagnostic leaves all fixture state unchanged')\n      }\n      // Only a fixed source site/code; no database rows or exception details.\n      t.diagnostic('HS1_INSTALL_GUARD_DIAG '+JSON.stringify(observed??{code:'UNMAPPED',site:'no_mapped_guard'}))\n    }\n    const rejectScript=async(sql:string,code:string)=>{\n      const observedQuery=async()=>{\n        try{return await installer.query(sql)}\n        catch(error){\n          // Only install fault scripts can enter this path; recovery and\n          // pre-existing-role fixtures never run a pristine-install probe.\n          const prefix=candidate.slice(0,candidate.indexOf('-- HS1_AFTER_ROLE_CREATION'))\n          if(!installDiagnosticAttempted&&code==='P7311'&&sql.startsWith(prefix)\n            &&error instanceof LocalPgError&&error.code==='P7312'){\n            installDiagnosticAttempted=true\n            await installer.query('ROLLBACK')\n            try{await diagnoseInstallGuard()}\n            catch{\n              t.diagnostic('HS1_INSTALL_GUARD_DIAG '+JSON.stringify({code:'UNMAPPED',site:'diagnostic_cleanup_failed'}))\n              effect.abort(error)\n            }\n          }\n          throw error // The original SQL failure remains the assertion input.\n        }\n      }\n      await assert.rejects(observedQuery(),sqlError(code))\n"
+      },
+      "fullInverseVerified": true
+    },
+    "documentation": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "blob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396",
+        "bytes": 23960,
+        "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
+        "previous": {
+          "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+          "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+          "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d",
+          "bytes": 23129,
+          "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512"
+        },
+        "priorExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "blob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5",
+        "bytes": 22050,
+        "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
+        "previous": {
+          "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+          "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+          "blob": "e031a550960c2a5b2a313586e1732eda8f584c88",
+          "bytes": 21219,
+          "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1"
+        },
+        "priorExactPrefix": true
+      }
+    ],
+    "scope": {
+      "changedPaths": [
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
+      ],
+      "leaves": 9538,
+      "changed": 5,
+      "unchanged": 9533,
+      "added": 0,
+      "removed": 0,
+      "baseSerializationSha256": "fa7b1b7beac991d480dbe2e164e1c0a5e8d06a165e2815db8533b44eb6efb542",
+      "complementSerializationSha256": "acad2f91643afaf53ae0a10f2d17b373ceca5046cf4bf67dbcce5faf22c40fd0"
+    },
+    "preserved": {
+      "sqlArtifacts": true,
+      "all18Hs1Groups": true,
+      "all31Hm04Groups": true,
+      "hm04Native": true,
+      "budgetsQuotasLifetime": true,
+      "originalPredicates": true,
+      "tenOriginalSemanticGroupsExact": true
+    },
+    "downstream": "Root rebinds COMPOSED/HDP current HS1 Native/manifests and combines HMT FIX3; full fresh gates remain mandatory.",
+    "execution": {
+      "project": false,
+      "parser": false,
+      "compiler": false,
+      "SQL": false,
+      "native": false,
+      "tests": false,
+      "CI": false,
+      "hosted": false,
+      "sourceGET": false,
+      "refs": false,
+      "ready": false,
+      "merge": false
+    },
+    "history": "Previous FIX1/FIX2 and historical package evidence remain unchanged. This diagnostic is not a guard repair or a passing proof.",
+    "previousManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+      "blob": "4a0afe1750ba0c3bea1facf0bb37729d48fc1f40",
+      "bytes": 175657,
+      "sha256": "627d61a2355dcf4d55165ea87e4f211721108a11701d3666f7fb06d9d865a099"
     }
   }
 }

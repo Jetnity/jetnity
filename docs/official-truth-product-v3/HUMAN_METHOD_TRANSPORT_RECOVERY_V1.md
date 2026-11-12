@@ -72,3 +72,8 @@ The original eight proof groups and all recovery refusal tests remain mandatory 
 Selected task: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449. On sole parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1`, the recovery candidate changes only the ordering of trim and whitespace collapse in its complete definition/body comparisons, matching the installer and bounded Native diagnostic. Exact strings, metadata, ACL/dependency checks, original OIDs, quiescence, fresh post-lock history refusal and DROP RESTRICT behavior remain unchanged.
 
 Continued replacement Generation2 session `/root/hmt_diagnosis`; SOURCE ONLY / NOT_RUN. No recovery or Dev action is authorized by this correction, and no runtime success is claimed. Prior evidence remains above; #917/#1131 boundaries are unchanged.
+
+
+---
+
+HMT1-FIX3 on `4afd9543d953fba974750854ba7f1defb7bcfce2` corrects only the receipt regexp that caused `2201B` in the [actual HMT1-03 recovery test](https://github.com/Jetnity/jetnity/actions/runs/43266988022/job/131353065696). `char_length` must remain within 12–256 and the entire receipt must still match `[A-Za-z0-9:/#._-]+`; null, short, long or disallowed-character receipts still refuse. Original identities, external quiescence, deadlines, complete inventory, fresh post-lock history checks and DROP RESTRICT remain unchanged. SOURCE ONLY / NOT_RUN; no recovery authority or runtime success is supplied by this correction.

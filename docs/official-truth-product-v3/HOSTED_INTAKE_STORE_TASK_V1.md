@@ -187,3 +187,8 @@ Continuation of the documented replacement session `/root/hs1_hm04_fix`; selecte
 The `hs1_function_pins` SQL alias `p` and the `hs1_structure` SQL aliases `c`/`a` collided with declared PL/pgSQL records. Only those query aliases and their qualified references now use `function_inventory`, `class_inventory`, and `attribute_inventory`; installer and recovery retain every predicate, expected value and all 14 original runtime function bodies. HS1 Native is unchanged.
 
 CI4140 on the parent exposed `42702`; this candidate has not been executed. Current pins and inverse mappings are in the package manifest; earlier task/evidence text remains historical. Root must integrate COMPOSED/HDP pins and independently run the complete new-head gates before Dev installation. Unused-only recovery, #917 and #1131 boundaries remain unchanged.
+
+
+## HS1 DIAG1 — one bounded unexpected-guard probe
+
+Root selected a Native-only diagnostic on parent `4afd9543d953fba974750854ba7f1defb7bcfce2` after CI4143 reached `P7312`. Only an unexpected `P7312` in an installer fault case expecting `P7311` admits one owned probe: the 18 existing guard sites receive fixed codes H3101–H3118, and the terminal COMMIT becomes ROLLBACK. The probe verifies its complete inverse, always rolls back and asserts no package plus the exact fixture baseline; output contains only a fixed code/site. The original error is rethrown to the unchanged assertion predicate, so diagnostic output cannot become a passing test. Original SQL, all 18 groups, budgets, quotas and cleanup remain; this source has not run. Current pins, site map and inverse are in the manifest, with earlier evidence retained.

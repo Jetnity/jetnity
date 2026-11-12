@@ -475,7 +475,8 @@ BEGIN
   IF pg_catalog.current_setting('jetnity.hmt1_recovery_context',true)
        IS DISTINCT FROM 'root-verified-unused-quiescent-v1'
     OR pg_catalog.current_setting('jetnity.hmt1_original_oids',true) IS DISTINCT FROM original_oids
-    OR receipt IS NULL OR receipt !~ '^[A-Za-z0-9:/#._-]{12,256}$'
+    OR receipt IS NULL OR pg_catalog.char_length(receipt) NOT BETWEEN 12 AND 256
+    OR receipt !~ '^[A-Za-z0-9:/#._-]+$'
     OR pg_catalog.current_setting('jetnity.hmt1_quiescence_until',true) IS NULL THEN
     RAISE EXCEPTION 'hmt1 recovery external receipt or original identities missing' USING ERRCODE='P7905';
   END IF;

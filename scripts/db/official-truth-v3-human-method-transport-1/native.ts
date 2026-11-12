@@ -21,7 +21,7 @@ const SOURCE_PINS = Object.freeze([
   ],
   [
     "./recovery-candidate.sql",
-    "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
+    "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459"
   ],
   [
     "../official-truth-v3-hosted-method-authority-1/install-candidate.sql",

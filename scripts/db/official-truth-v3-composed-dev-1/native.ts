@@ -397,9 +397,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-    "bytes": 82578,
-    "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
-    "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
+    "bytes": 82633,
+    "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+    "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",

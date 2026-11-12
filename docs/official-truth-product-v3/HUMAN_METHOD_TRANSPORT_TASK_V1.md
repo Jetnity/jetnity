@@ -164,3 +164,8 @@ Root selects two disjoint source-only corrections on sole parent e932:
 Use only those existing package files and necessary current evidence/pins; keep new docs concise. Root handles coherent COMPOSED/HDP integration and fresh full gates after independent source review. No actual Dev change, role impersonation, old #917 scope or #1131 action. Other CI4140 jobs are still being observed; no full PASS is claimed.
 
 This is continued work by replacement Generation2 session `/root/hmt_diagnosis`; HRS helper and retained UI work stay paused. Only this package's installer, recovery, Native and four existing evidence files change. Full equality and all prior security/resource boundaries remain required; this delivery is SOURCE ONLY / NOT_RUN.
+
+
+---
+
+HMT1-FIX3 follows Root's in-session source-only selection on sole parent `4afd9543d953fba974750854ba7f1defb7bcfce2`. [CI4143 Hosted](https://github.com/Jetnity/jetnity/actions/runs/43266988022/job/131353065696) passes HMT1-01/02 and fails HMT1-03 with `2201B`: the recovery receipt pattern uses `{12,256}`, exceeding PostgreSQL's maximum regexp bound of 255. Replace only that expression with the same anchored character class and a separate inclusive 12–256 character-length check; update the recovery Native pin and existing evidence. All guards, cases and limits remain; continued replacement session `/root/hmt_diagnosis`, SOURCE ONLY / NOT_RUN.

@@ -12,9 +12,9 @@
   },
   "status": {
     "sourceAssembly": "COMPLETE_CANDIDATE",
-    "technicalLeadAcceptance": "PENDING_INDEPENDENT_ROOT_REVIEW",
+    "technicalLeadAcceptance": "SOURCE_REVIEWED_RUNTIME_PENDING",
     "execution": "NOT_RUN",
-    "publication": "UNPUBLISHED_HOLD_FOR_ROOT_REVIEW",
+    "publication": "SELECTED_FOR_FRESH_GATES",
     "hosted": "UNAPPLIED",
     "publicAnswer": "NOT_ACTIVATED",
     "officialSourceGet": "NOT_ATTEMPTED",
@@ -52,8 +52,8 @@
     }
   ],
   "parent": {
-    "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "commit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
     "soleParent": true,
     "leafCount": 9538,
     "failedPublishedParent": true,
@@ -74,16 +74,16 @@
   },
   "sourceOrigins": [
     {
-      "package": "HS1/HM04 FIX2",
-      "commit": "3a88fed3a6cd32c852814b4b23598653faadd56e",
-      "tree": "70a3cb07ea12338745ea022e36ee4b64c8876a2d",
-      "changedPaths": 13
+      "package": "HS1 DIAG1",
+      "commit": "473978440d58958bee93abea353d6a470ab5ef91",
+      "tree": "90d7b5c91412fbeced4aebebaf2dcd8aa4b14aeb",
+      "changedPaths": 5
     },
     {
-      "package": "HMT1 FIX2",
-      "commit": "d7ebe727c7c90813a358baf10d6c6ccd642e558a",
-      "tree": "f240ef7c91cb833feb494adeb87ec13da2743be4",
-      "changedPaths": 7
+      "package": "HMT1 FIX3",
+      "commit": "d0d70fafb2d3a3d005b548569b5617cffa1813de",
+      "tree": "10eeff84f4ff9ee2d9ce6944c93d7c714f2a9b35",
+      "changedPaths": 6
     }
   ],
   "originalSourceReceiptPins": [
@@ -139,171 +139,97 @@
   ],
   "currentRootReceiptPins": [
     {
-      "id": 6830207449,
-      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449",
-      "bytes": 1679,
-      "sha256": "030a8c5087043cbb917dc8ffd95c8ebe3fb9ce1688dab308b048ff28a924f47c"
+      "id": 6830894319,
+      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830894319"
     }
   ],
   "scope": {
     "modifiedImportedPaths": [
       {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-        "bytes": 53970,
-        "blob": "a4b8ef43620933e5e293cbaed68d08138457125e",
-        "sha256": "8f7c672f7feca85cc5206f0c3cdd36d702b3acdb75d25ba902d83d0321369833",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "bytes": 637717,
-        "blob": "f4edf684a7b136b212204ce53d17cdae25b888cb",
-        "sha256": "8fc69dc3ddf736cd134d6da68cbba99e74f09c1430e2f230d5bd1a26773fa593",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-        "bytes": 22614,
-        "blob": "80c403ec634117aae8d0d9e17ef33cf2f17b32db",
-        "sha256": "56c952f34a2435f57bc794a433f0e4ebae22855e48f6a5376ea04c85d5b7c83b",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-        "bytes": 34429,
-        "blob": "916ca3b18fc70fb220ec79e85fa62d3020d918c0",
-        "sha256": "17f95b2a9faca07dcaac83b23e9dd9cf3db19ed6f6aa5dff8609d39f408f2116",
+        "bytes": 638807,
+        "sha256": "e08a04556ecfa923ea309382f963da4fbfb8d222e8e1f09b605e1491cc6b301a",
+        "blob": "d6fd7b026ecb28d284c35d5bace97b14ab27c0a7",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
-        "bytes": 21219,
-        "blob": "e031a550960c2a5b2a313586e1732eda8f584c88",
-        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+        "bytes": 22050,
+        "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
+        "blob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-        "bytes": 175657,
-        "blob": "4a0afe1750ba0c3bea1facf0bb37729d48fc1f40",
-        "sha256": "627d61a2355dcf4d55165ea87e4f211721108a11701d3666f7fb06d9d865a099",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
-        "bytes": 13120,
-        "blob": "34c82c92f2f056f9b08475481493d65926b5e24c",
-        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+        "bytes": 185481,
+        "sha256": "11f6f5c6e63568e1fdd870dc4fa361589c2c8ef14c3b08c6d7eab13612478577",
+        "blob": "66df1e9f3db51ffe711c40ff9e4c9d3cb90d0941",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-        "bytes": 23129,
-        "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d",
-        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+        "bytes": 23960,
+        "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
+        "blob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "bytes": 68633,
+        "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
+        "blob": "c5afa5dee2b11631c065038df919300842f82312",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
-        "bytes": 15404,
-        "blob": "44aab5cb4d8ab9312fb1697193910c57d0d47660",
-        "sha256": "fe9281ed7db97b12920ebeaf713c1e53dd0edfff3494088784e02e3da1aa4529",
+        "bytes": 16446,
+        "sha256": "911874cd20cfbd3c7cbaf58a6e33cd6d5c842431d664c102e1ec0c99a7801e78",
+        "blob": "58578570dd7adbb63888d413b073c7a03eead1d8",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
-        "bytes": 35538,
-        "blob": "7e24e7145a43f088503a95654822096bbd41eb46",
-        "sha256": "380e2a623c2e1c77c91ec7fb20ad5bfb97d6384f6a2803b4869984bb747c3b3f",
+        "bytes": 39320,
+        "sha256": "87cba6ffbf7c34b8f102ab12a9f882bab5e3d17d3110f2bf0316bd482a55c072",
+        "blob": "7a29da5caad0bd301b0f618da86b28ff4def19e3",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
-        "bytes": 8904,
-        "blob": "de36fcd4ec28536b61e2b23645ab84cd8f74d56c",
-        "sha256": "7f04e47473fe5e537f9698267e9069aa61e86e7401803d37281fe1b47829a511",
+        "bytes": 9542,
+        "sha256": "e22b5b990890b683915880880ff93aa0c32b4d7e5e14c0f9ee2f9c2dcec6da98",
+        "blob": "b6f3b51ba81c4ab603a127a8e15fbc00b7055d6d",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
-        "bytes": 24877,
-        "blob": "7d154fd751abe893541ee491d8d9b17d4cda7c94",
-        "sha256": "c03a8c6ccdcb21beba9c1d82e1b75f0d30361dd582ff286ca5b5c9587497c987",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "bytes": 343198,
-        "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
-        "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "bytes": 233228,
-        "blob": "86c35585a450678026829964088b507368be2b15",
-        "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "bytes": 119673,
-        "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
-        "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-        "bytes": 123734,
-        "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
-        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-        "bytes": 42689,
-        "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
-        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-        "bytes": 53457,
-        "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716",
-        "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c",
+        "bytes": 25536,
+        "sha256": "c1ed1ce53540528858d97af012ef87453b0fbae23155d1be70fcd25f0a3e3c0d",
+        "blob": "ab71e3007a4d4abfa9e4f05adadbfd581336c2a8",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
         "bytes": 71545,
-        "blob": "ac90f2bf4a81828157fed9c307513e0bdb107c96",
-        "sha256": "b9f6cf05b9bffc42e50257da791485d17af0716ac2f1addf3699dd70c2d5e8bf",
+        "sha256": "b7ca669495c10289b7f943b7786df8a97a57fc6391f3d78e81efdfbb210d0a38",
+        "blob": "acc823f1097b0973c0baf25bf09eb607fd2f101e",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-        "bytes": 82578,
-        "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
-        "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595",
+        "bytes": 82633,
+        "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+        "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a",
         "mode": "100644",
         "type": "blob"
       }
@@ -312,39 +238,22 @@
       "scripts/db/official-truth-v3-composed-dev-1/native.ts"
     ],
     "modifiedEvidencePaths": [
-      "docs/official-truth-product-v3/COMPOSED_DEV_HANDOFF_V1.md",
       "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/COMPOSED_DEV_TASK_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_HANDOFF_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_TASK_V1.md"
+      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json"
     ],
     "allModifiedPaths": [
-      "docs/official-truth-product-v3/COMPOSED_DEV_HANDOFF_V1.md",
       "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/COMPOSED_DEV_TASK_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_TASK_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
       "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
       "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
       "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-      "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
       "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
       "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql"
     ],
@@ -357,193 +266,118 @@
     "parentLeaves": 9538,
     "candidateLeaves": 9538,
     "addedLeaves": 0,
-    "modifiedExistingLeaves": 27,
+    "modifiedExistingLeaves": 14,
     "deletedLeaves": 0,
-    "unchangedParentLeaves": 9511,
-    "exactImports": 20,
-    "onlyComposedCodeEdits": "six complete HS1/HM04/HMT installer/recovery pin objects",
-    "canonicalLeafStream": "Ordinal path sort; each UTF-8 line is mode SP type SP Gitblob TAB path LF.",
-    "parentLeafStreamSha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d",
-    "complementLeafStreamSha256": "a12a055b0bf79bf19fc9fdf92dc41e956e02175d436f89b4f1dc059ec2cbd7bc",
+    "unchangedParentLeaves": 9524,
+    "exactImports": 11,
+    "onlyComposedCodeEdits": "one complete HMT recovery pin object",
     "everyComplementPathModeTypeBlobExact": true,
-    "actualFinalTreeCommitReadback": "Required after immutable object creation; external receipt avoids circular hashes."
+    "finalReadback": "required after creation"
   },
   "importsProof": {
-    "count": 20,
+    "count": 11,
     "fullRawUtf8BytesGitBlobSha1Sha256Backread": true,
     "exactOriginPathModeTypeBlobSize": true,
     "origins": [
       {
-        "package": "HS1/HM04 FIX2",
-        "commit": "3a88fed3a6cd32c852814b4b23598653faadd56e",
-        "tree": "70a3cb07ea12338745ea022e36ee4b64c8876a2d",
-        "changedPaths": 13
+        "package": "HS1 DIAG1",
+        "commit": "473978440d58958bee93abea353d6a470ab5ef91",
+        "tree": "90d7b5c91412fbeced4aebebaf2dcd8aa4b14aeb",
+        "changedPaths": 5
       },
       {
-        "package": "HMT1 FIX2",
-        "commit": "d7ebe727c7c90813a358baf10d6c6ccd642e558a",
-        "tree": "f240ef7c91cb833feb494adeb87ec13da2743be4",
-        "changedPaths": 7
+        "package": "HMT1 FIX3",
+        "commit": "d0d70fafb2d3a3d005b548569b5617cffa1813de",
+        "tree": "10eeff84f4ff9ee2d9ce6944c93d7c714f2a9b35",
+        "changedPaths": 6
       }
     ],
     "pins": [
       {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-        "bytes": 53970,
-        "blob": "a4b8ef43620933e5e293cbaed68d08138457125e",
-        "sha256": "8f7c672f7feca85cc5206f0c3cdd36d702b3acdb75d25ba902d83d0321369833",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "bytes": 637717,
-        "blob": "f4edf684a7b136b212204ce53d17cdae25b888cb",
-        "sha256": "8fc69dc3ddf736cd134d6da68cbba99e74f09c1430e2f230d5bd1a26773fa593",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-        "bytes": 22614,
-        "blob": "80c403ec634117aae8d0d9e17ef33cf2f17b32db",
-        "sha256": "56c952f34a2435f57bc794a433f0e4ebae22855e48f6a5376ea04c85d5b7c83b",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-        "bytes": 34429,
-        "blob": "916ca3b18fc70fb220ec79e85fa62d3020d918c0",
-        "sha256": "17f95b2a9faca07dcaac83b23e9dd9cf3db19ed6f6aa5dff8609d39f408f2116",
+        "bytes": 638807,
+        "sha256": "e08a04556ecfa923ea309382f963da4fbfb8d222e8e1f09b605e1491cc6b301a",
+        "blob": "d6fd7b026ecb28d284c35d5bace97b14ab27c0a7",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
-        "bytes": 21219,
-        "blob": "e031a550960c2a5b2a313586e1732eda8f584c88",
-        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+        "bytes": 22050,
+        "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
+        "blob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-        "bytes": 175657,
-        "blob": "4a0afe1750ba0c3bea1facf0bb37729d48fc1f40",
-        "sha256": "627d61a2355dcf4d55165ea87e4f211721108a11701d3666f7fb06d9d865a099",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
-        "bytes": 13120,
-        "blob": "34c82c92f2f056f9b08475481493d65926b5e24c",
-        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+        "bytes": 185481,
+        "sha256": "11f6f5c6e63568e1fdd870dc4fa361589c2c8ef14c3b08c6d7eab13612478577",
+        "blob": "66df1e9f3db51ffe711c40ff9e4c9d3cb90d0941",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-        "bytes": 23129,
-        "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d",
-        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+        "bytes": 23960,
+        "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
+        "blob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396",
+        "mode": "100644",
+        "type": "blob"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "bytes": 68633,
+        "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
+        "blob": "c5afa5dee2b11631c065038df919300842f82312",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
-        "bytes": 15404,
-        "blob": "44aab5cb4d8ab9312fb1697193910c57d0d47660",
-        "sha256": "fe9281ed7db97b12920ebeaf713c1e53dd0edfff3494088784e02e3da1aa4529",
+        "bytes": 16446,
+        "sha256": "911874cd20cfbd3c7cbaf58a6e33cd6d5c842431d664c102e1ec0c99a7801e78",
+        "blob": "58578570dd7adbb63888d413b073c7a03eead1d8",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
-        "bytes": 35538,
-        "blob": "7e24e7145a43f088503a95654822096bbd41eb46",
-        "sha256": "380e2a623c2e1c77c91ec7fb20ad5bfb97d6384f6a2803b4869984bb747c3b3f",
+        "bytes": 39320,
+        "sha256": "87cba6ffbf7c34b8f102ab12a9f882bab5e3d17d3110f2bf0316bd482a55c072",
+        "blob": "7a29da5caad0bd301b0f618da86b28ff4def19e3",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
-        "bytes": 8904,
-        "blob": "de36fcd4ec28536b61e2b23645ab84cd8f74d56c",
-        "sha256": "7f04e47473fe5e537f9698267e9069aa61e86e7401803d37281fe1b47829a511",
+        "bytes": 9542,
+        "sha256": "e22b5b990890b683915880880ff93aa0c32b4d7e5e14c0f9ee2f9c2dcec6da98",
+        "blob": "b6f3b51ba81c4ab603a127a8e15fbc00b7055d6d",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
-        "bytes": 24877,
-        "blob": "7d154fd751abe893541ee491d8d9b17d4cda7c94",
-        "sha256": "c03a8c6ccdcb21beba9c1d82e1b75f0d30361dd582ff286ca5b5c9587497c987",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "bytes": 343198,
-        "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
-        "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "bytes": 233228,
-        "blob": "86c35585a450678026829964088b507368be2b15",
-        "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "bytes": 119673,
-        "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
-        "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-        "bytes": 123734,
-        "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
-        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-        "bytes": 42689,
-        "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
-        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
-        "mode": "100644",
-        "type": "blob"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-        "bytes": 53457,
-        "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716",
-        "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c",
+        "bytes": 25536,
+        "sha256": "c1ed1ce53540528858d97af012ef87453b0fbae23155d1be70fcd25f0a3e3c0d",
+        "blob": "ab71e3007a4d4abfa9e4f05adadbfd581336c2a8",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
         "bytes": 71545,
-        "blob": "ac90f2bf4a81828157fed9c307513e0bdb107c96",
-        "sha256": "b9f6cf05b9bffc42e50257da791485d17af0716ac2f1addf3699dd70c2d5e8bf",
+        "sha256": "b7ca669495c10289b7f943b7786df8a97a57fc6391f3d78e81efdfbb210d0a38",
+        "blob": "acc823f1097b0973c0baf25bf09eb607fd2f101e",
         "mode": "100644",
         "type": "blob"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-        "bytes": 82578,
-        "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
-        "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595",
+        "bytes": 82633,
+        "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+        "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a",
         "mode": "100644",
         "type": "blob"
       }
@@ -555,8 +389,8 @@
   "consumedDependencyProof": {
     "count": 66,
     "completeNativeDataLiteralMatchesManifest": true,
-    "parentUnchangedEntries": 60,
-    "importedEntries": 6,
+    "parentUnchangedEntries": 65,
+    "importedEntries": 1,
     "fullRawUtf8LengthGitBlobSha1Sha256Backread": true,
     "assembledPathModeTypeBlobSizeMatch": true,
     "missingCount": 0,
@@ -565,15 +399,15 @@
     "noProjectParserCompilerOrCodeExecution": true,
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "bytes": 74195,
-      "blob": "37acd2e6444bf5e70e1f6655657a14ce4eb078a9",
-      "sha256": "9fb020a4c654f39c226857ee6b6ba6d7fb2b7edef23f00665413046d4c283176"
+      "bytes": 59680,
+      "sha256": "d233adffcc46e44d4acf3140cc01afa087e0a4e824f07b58228b64111652449f",
+      "blob": "41139960a2d3dfd9717d404ab210b5158be0aeac"
     },
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
       "bytes": 90987,
-      "blob": "2c9475997ae04d19b466ecacbdc4d2efdc6ab466",
-      "sha256": "e41640d2ccfe47429f7f4f99ef5f27922d41a942fa41ef28c5c0467e89ae5dfa"
+      "sha256": "582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429",
+      "blob": "555a49ff94764ba8636258c3da4dc3454e958897"
     },
     "pins": [
       {
@@ -944,9 +778,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-        "bytes": 82578,
-        "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
-        "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
+        "bytes": 82633,
+        "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+        "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
@@ -973,10 +807,10 @@
         "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352"
       }
     ],
-    "currentCandidateChangedPins": 6,
-    "currentCandidateUnchangedPins": 60,
+    "currentCandidateChangedPins": 1,
+    "currentCandidateUnchangedPins": 65,
     "currentAuthorFullRawSourcesBackread": 66,
-    "currentAuthorFullRawChangedSourcesBackread": 6,
+    "currentAuthorFullRawChangedSourcesBackread": 1,
     "all66CurrentPathModeTypeBlobSizeMatch": true
   },
   "selector": {
@@ -2546,350 +2380,184 @@
   ],
   "stop": "STOP after immutable source delivery. Replacement integration session remains reachable. Root alone independently reviews, publishes, gates, marks Ready and merges.",
   "inverseToParent": {
-    "targetCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-    "targetTree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
-    "restoreExactly27Paths": [
-      {
-        "path": "docs/official-truth-product-v3/COMPOSED_DEV_HANDOFF_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "03adcfdb1475c362b0e2ba6c00478b8066548dd7"
-      },
+    "targetCommit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "targetTree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "restorePaths": [
       {
         "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
         "mode": "100644",
         "type": "blob",
-        "blob": "7e5821dc0acb519cd68eebaa65fb1b7508acddef"
-      },
-      {
-        "path": "docs/official-truth-product-v3/COMPOSED_DEV_TASK_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "6a764817e6462b86720d8ded09a1e206392254de"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_HANDOFF_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "c58845fb5fe589fa7928c7077feee89d6e5a804a"
+        "blob": "37acd2e6444bf5e70e1f6655657a14ce4eb078a9"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
         "mode": "100644",
         "type": "blob",
-        "blob": "d052693fca0de19acde8afb8e33264f9daae43d6"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_TASK_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "8f72dedac06d267cc252d289d96df70009c3d074"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "a7abf68711a891b6934662990e23a6637aeede52"
+        "blob": "7a420964fa9b50e4131491f7b2d61cc94deb2961"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
         "mode": "100644",
         "type": "blob",
-        "blob": "620a9a0e21179067870b248bdbeffe20eb230188"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28"
+        "blob": "f4edf684a7b136b212204ce53d17cdae25b888cb"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
         "mode": "100644",
         "type": "blob",
-        "blob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63"
+        "blob": "e031a550960c2a5b2a313586e1732eda8f584c88"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
         "mode": "100644",
         "type": "blob",
-        "blob": "4dcfdf20fdcff236fa9b663b40562739c59cb3aa"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f"
+        "blob": "4a0afe1750ba0c3bea1facf0bb37729d48fc1f40"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
         "mode": "100644",
         "type": "blob",
-        "blob": "a96a5783544c8494f337552eab3fe66e50df4c47"
+        "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
         "mode": "100644",
         "type": "blob",
-        "blob": "ea8225302f365bde35ac4500b089b50ad2481fa1"
+        "blob": "44aab5cb4d8ab9312fb1697193910c57d0d47660"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
         "mode": "100644",
         "type": "blob",
-        "blob": "890efb7468e1fc46453b4a2b44171461ad85b773"
+        "blob": "7e24e7145a43f088503a95654822096bbd41eb46"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
         "mode": "100644",
         "type": "blob",
-        "blob": "f5b597d63862418435d1d834963237d83ecb7f6e"
+        "blob": "de36fcd4ec28536b61e2b23645ab84cd8f74d56c"
       },
       {
         "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
         "mode": "100644",
         "type": "blob",
-        "blob": "e7234ccca57d896024ac3c5cace28bd90d35a0d0"
+        "blob": "7d154fd751abe893541ee491d8d9b17d4cda7c94"
       },
       {
         "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
         "mode": "100644",
         "type": "blob",
-        "blob": "b27cf3286cc4da3c7501870c98fa010f457c98d4"
+        "blob": "2c9475997ae04d19b466ecacbdc4d2efdc6ab466"
       },
       {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
         "mode": "100644",
         "type": "blob",
-        "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "f93c254231af405101492cde0a6947bf4d4d4b89"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-        "mode": "100644",
-        "type": "blob",
-        "blob": "35032f238248155338c0a8d379b32e514acb699c"
+        "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
         "mode": "100644",
         "type": "blob",
-        "blob": "b57f1f6d66d3a98d28721db2c2b31f6d058df0b1"
+        "blob": "ac90f2bf4a81828157fed9c307513e0bdb107c96"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
         "mode": "100644",
         "type": "blob",
-        "blob": "b3350758015503f63514552954cc6bcf2f1b8eb8"
+        "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9"
       }
     ],
-    "allOther9511LeavesExact": true
+    "allOther9524LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "HDP1-FIX2-INTEGRATION-G2",
-    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449",
-    "rootSelection": "Root selected the exact two immutable FIX2 imports and this seven-path assembly in session. Both input candidates received Root independent source PASS; this assembled head still requires Root independent acceptance and fresh full gates.",
-    "author": {
-      "name": "Jetnity Official Truth Composed Dev/HDP FIX2 Assembly — Generation2",
-      "actualSession": "/root/hmt_diagnosis",
-      "rootSelectedAssemblySession": true,
-      "previousAssemblySession": "/root/source_and_schema",
-      "rootOwnsAcceptance": true
-    },
+    "revision": "HDP1-FIX3-HS1-DIAG1",
+    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830894319",
+    "author": "Root",
     "parent": {
-      "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-      "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+      "commit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+      "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
       "soleParent": true
     },
     "origins": [
       {
-        "package": "HS1/HM04 FIX2",
-        "commit": "3a88fed3a6cd32c852814b4b23598653faadd56e",
-        "tree": "70a3cb07ea12338745ea022e36ee4b64c8876a2d",
-        "changedPaths": 13
+        "package": "HS1 DIAG1",
+        "commit": "473978440d58958bee93abea353d6a470ab5ef91",
+        "tree": "90d7b5c91412fbeced4aebebaf2dcd8aa4b14aeb",
+        "changedPaths": 5
       },
       {
-        "package": "HMT1 FIX2",
-        "commit": "d7ebe727c7c90813a358baf10d6c6ccd642e558a",
-        "tree": "f240ef7c91cb833feb494adeb87ec13da2743be4",
-        "changedPaths": 7
+        "package": "HMT1 FIX3",
+        "commit": "d0d70fafb2d3a3d005b548569b5617cffa1813de",
+        "tree": "10eeff84f4ff9ee2d9ce6944c93d7c714f2a9b35",
+        "changedPaths": 6
       }
     ],
     "priorFailure": {
-      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449",
-      "run": "43263850640",
-      "runNumber": 4140,
-      "jobId": 131342004913,
-      "jobUrl": "https://github.com/Jetnity/jetnity/actions/runs/43263850640/job/131342004913",
-      "head": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-      "jobLogBytes": 174664,
-      "jobLogSha256": "97246a3d1b8558b4473bd9773d21947a93dcbb2faba6c0db8b7a8f365aec6f74",
+      "runId": 43266988022,
+      "runNumber": 4143,
+      "jobId": 131353065696,
       "hosted": {
-        "tests": 28,
-        "pass": 21,
-        "fail": 7,
-        "cancelled": 0,
-        "skip": 0
+        "tests": 30,
+        "pass": 23,
+        "fail": 7
       },
-      "pai": "10/10 historical pass on parent only",
-      "hma": "8/8 historical pass on parent only",
-      "hsHmComposed": "42702 on parent",
-      "hmt": "P7903 on parent; DIAG1 identified a trailing normalization space in all four full definitions",
-      "candidateExecution": "NOT_RUN",
+      "hs": "P7312, exact guard pending diagnostic",
+      "hmt": "2201B invalid repetition bound",
       "priorPassesTransferred": false
     },
     "treeProof": {
       "parentLeaves": 9538,
       "candidateLeaves": 9538,
       "addedLeaves": 0,
-      "modifiedExistingLeaves": 27,
+      "modifiedExistingLeaves": 14,
       "deletedLeaves": 0,
-      "unchangedParentLeaves": 9511,
-      "exactImports": 20,
-      "onlyComposedCodeEdits": "six complete HS1/HM04/HMT installer/recovery pin objects",
-      "canonicalLeafStream": "Ordinal path sort; each UTF-8 line is mode SP type SP Gitblob TAB path LF.",
-      "parentLeafStreamSha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d",
-      "complementLeafStreamSha256": "a12a055b0bf79bf19fc9fdf92dc41e956e02175d436f89b4f1dc059ec2cbd7bc",
+      "unchangedParentLeaves": 9524,
+      "exactImports": 11,
+      "onlyComposedCodeEdits": "one complete HMT recovery pin object",
       "everyComplementPathModeTypeBlobExact": true,
-      "actualFinalTreeCommitReadback": "Required after immutable object creation; external receipt avoids circular hashes."
+      "finalReadback": "required after creation"
     },
     "nativeInverse": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
       "before": {
-        "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
         "bytes": 90987,
-        "blob": "b27cf3286cc4da3c7501870c98fa010f457c98d4",
-        "sha256": "7ffde54b9a84898beaa95e9223845e7a026cf47e1664eec6fe1291ad41e80031"
+        "sha256": "e41640d2ccfe47429f7f4f99ef5f27922d41a942fa41ef28c5c0467e89ae5dfa",
+        "blob": "2c9475997ae04d19b466ecacbdc4d2efdc6ab466"
       },
       "after": {
-        "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
         "bytes": 90987,
-        "blob": "2c9475997ae04d19b466ecacbdc4d2efdc6ab466",
-        "sha256": "e41640d2ccfe47429f7f4f99ef5f27922d41a942fa41ef28c5c0467e89ae5dfa"
+        "sha256": "582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429",
+        "blob": "555a49ff94764ba8636258c3da4dc3454e958897"
       },
       "changedPinObjects": [
         {
           "before": {
-            "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-            "bytes": 123166,
-            "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
-            "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
-          },
-          "after": {
-            "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-            "bytes": 123734,
-            "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
-            "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
-          }
-        },
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-            "bytes": 42121,
-            "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
-            "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
-          },
-          "after": {
-            "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-            "bytes": 42689,
-            "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
-            "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2"
-          }
-        },
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-            "bytes": 53457,
-            "blob": "35032f238248155338c0a8d379b32e514acb699c",
-            "sha256": "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e"
-          },
-          "after": {
-            "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-            "bytes": 53457,
-            "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716",
-            "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c"
-          }
-        },
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-            "bytes": 82578,
-            "blob": "b3350758015503f63514552954cc6bcf2f1b8eb8",
-            "sha256": "466aec15092184101cca179201612b5569e3af3a758c71d1f0ad47ee962959e7"
-          },
-          "after": {
             "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
             "bytes": 82578,
             "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
             "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
-          }
-        },
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-            "bytes": 342630,
-            "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
-            "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
           },
           "after": {
-            "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-            "bytes": 343198,
-            "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
-            "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6"
-          }
-        },
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-            "bytes": 119673,
-            "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
-            "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
-          },
-          "after": {
-            "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-            "bytes": 119673,
-            "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
-            "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651"
+            "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+            "bytes": 82633,
+            "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+            "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
           }
         }
       ],
       "wholeFileInverseExact": true,
-      "nonPinPrefixAndSuffixExact": true,
-      "other60PinsExact": true,
-      "projectCodeExecuted": false
+      "other65PinsExact": true
     },
-    "ready": false,
-    "merged": false,
+    "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
+  },
+  "previousIntegrationReference": {
+    "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
+    "bytes": 212514,
+    "sha256": "5832263954ec854b214c6279c3f43c970779cee7b085caa3a22e79e9802aae83",
+    "blob": "7a420964fa9b50e4131491f7b2d61cc94deb2961"
   }
 }

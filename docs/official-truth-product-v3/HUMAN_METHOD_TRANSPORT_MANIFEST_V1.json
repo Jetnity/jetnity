@@ -1,6 +1,6 @@
 {
   "schema": "jetnity.human-method-transport.source-manifest.v1",
-  "status": "HMT1_FIX2_SOURCE_ONLY_NOT_RUN",
+  "status": "HMT1_FIX3_SOURCE_ONLY_NOT_RUN",
   "author": {
     "name": "Jetnity Official Truth V3 Human Method Transport1 — Codex Generation2",
     "session": "/root/hmt_diagnosis",
@@ -16,15 +16,14 @@
     "completeVerbatimTaskPath": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md"
   },
   "sourceParent": {
-    "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "commit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
     "parentCount": 1,
     "baseLeaves": 9538
   },
   "scope": {
     "addedPaths": [],
     "modifiedExistingPaths": [
-      "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
       "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
       "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
       "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
@@ -34,7 +33,7 @@
     ],
     "deletedPaths": [],
     "expectedFinalLeaves": 9538,
-    "unchangedParentLeaves": 9531,
+    "unchangedParentLeaves": 9532,
     "unselectedLeafBytesTypeModePreserved": true,
     "noRefPrReadyMerge": true,
     "noHmaIntegration": true,
@@ -53,17 +52,17 @@
       "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
       "mode": "100644",
       "type": "blob",
-      "bytes": 82578,
-      "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595",
-      "gitBlobSha1": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9"
+      "bytes": 82633,
+      "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+      "gitBlobSha1": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
     },
     {
       "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
       "mode": "100644",
       "type": "blob",
       "bytes": 71545,
-      "sha256": "b9f6cf05b9bffc42e50257da791485d17af0716ac2f1addf3699dd70c2d5e8bf",
-      "gitBlobSha1": "ac90f2bf4a81828157fed9c307513e0bdb107c96"
+      "sha256": "b7ca669495c10289b7f943b7786df8a97a57fc6391f3d78e81efdfbb210d0a38",
+      "gitBlobSha1": "acc823f1097b0973c0baf25bf09eb607fd2f101e"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
@@ -77,25 +76,25 @@
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 24877,
-      "sha256": "c03a8c6ccdcb21beba9c1d82e1b75f0d30361dd582ff286ca5b5c9587497c987",
-      "gitBlobSha1": "7d154fd751abe893541ee491d8d9b17d4cda7c94"
+      "bytes": 25536,
+      "sha256": "c1ed1ce53540528858d97af012ef87453b0fbae23155d1be70fcd25f0a3e3c0d",
+      "gitBlobSha1": "ab71e3007a4d4abfa9e4f05adadbfd581336c2a8"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 15404,
-      "sha256": "fe9281ed7db97b12920ebeaf713c1e53dd0edfff3494088784e02e3da1aa4529",
-      "gitBlobSha1": "44aab5cb4d8ab9312fb1697193910c57d0d47660"
+      "bytes": 16446,
+      "sha256": "911874cd20cfbd3c7cbaf58a6e33cd6d5c842431d664c102e1ec0c99a7801e78",
+      "gitBlobSha1": "58578570dd7adbb63888d413b073c7a03eead1d8"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 8904,
-      "sha256": "7f04e47473fe5e537f9698267e9069aa61e86e7401803d37281fe1b47829a511",
-      "gitBlobSha1": "de36fcd4ec28536b61e2b23645ab84cd8f74d56c"
+      "bytes": 9542,
+      "sha256": "e22b5b990890b683915880880ff93aa0c32b4d7e5e14c0f9ee2f9c2dcec6da98",
+      "gitBlobSha1": "b6f3b51ba81c4ab603a127a8e15fbc00b7055d6d"
     }
   ],
   "manifestSelf": {
@@ -191,7 +190,7 @@
     },
     {
       "relativePath": "./recovery-candidate.sql",
-      "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
+      "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459"
     },
     {
       "relativePath": "../official-truth-v3-hosted-method-authority-1/install-candidate.sql",
@@ -473,7 +472,8 @@
     "inert UTF-8 SHA-256 and Git blob SHA-1 calculation",
     "immutable blob exact full readback, then complete tree and sole-parent commit readback required in delivery receipt",
     "complete failed CI4140 job log read/hash and exact four definition/body comparisons",
-    "complete inert inverse restores all three parent code blobs"
+    "complete inert inverse restores all three parent code blobs",
+    "full actual CI4143 Hosted log read/hash, unique invalid regexp bound identified and both source inverses verified"
   ],
   "verificationNotPerformed": [
     "parser",
@@ -831,5 +831,92 @@
       "noRetryOrAdditionalResources": true
     },
     "remaining": "Root independent source review, coherent COMPOSED/HDP dependency integration and fresh full exact-head gates; HRS helper and retained UI work remain paused."
+  },
+  "historicalBeforeFix3": {
+    "manifest": {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
+      "gitBlobSha1": "7e24e7145a43f088503a95654822096bbd41eb46",
+      "bytes": 35538,
+      "sha256": "380e2a623c2e1c77c91ec7fb20ad5bfb97d6384f6a2803b4869984bb747c3b3f"
+    },
+    "status": "HMT1_FIX2_SOURCE_ONLY_NOT_RUN",
+    "sourceParent": {
+      "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+      "parentCount": 1,
+      "baseLeaves": 9538
+    },
+    "scope": {
+      "addedPaths": [],
+      "modifiedExistingPaths": [
+        "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+        "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+        "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+        "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
+        "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
+        "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json"
+      ],
+      "deletedPaths": [],
+      "expectedFinalLeaves": 9538,
+      "unchangedParentLeaves": 9531,
+      "unselectedLeafBytesTypeModePreserved": true,
+      "noRefPrReadyMerge": true,
+      "noHmaIntegration": true,
+      "noSelectorPackageCiUiChange": true
+    }
+  },
+  "reviewFix3": {
+    "authority": "Root in-session selection after actual CI4143 failure; same HMT two-code-file and existing-evidence scope.",
+    "session": "/root/hmt_diagnosis",
+    "continuedReplacementSession": true,
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "failure": {
+      "head": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+      "runId": 43266988022,
+      "runNumber": 4143,
+      "jobId": 131353065696,
+      "jobLogBytes": 179420,
+      "jobLogSha256": "c8472ba0048018f05bedc5fb96a015039fc6c8d49e036fee2af4a2019b18a911",
+      "completedHmtGroups": [
+        "HMT1-01",
+        "HMT1-02"
+      ],
+      "failedHmtGroup": "HMT1-03",
+      "sqlstate": "2201B",
+      "parentPassesTransferred": false
+    },
+    "cause": {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+      "invalidPattern": "^[A-Za-z0-9:/#._-]{12,256}$",
+      "postgresBoundMaximum": 255,
+      "primarySource": "https://www.postgresql.org/docs/17/functions-matching.html#POSIX-SYNTAX-DETAILS"
+    },
+    "exactTextEdits": {
+      "recovery": {
+        "before": "    OR receipt IS NULL OR receipt !~ '^[A-Za-z0-9:/#._-]{12,256}$'",
+        "after": "    OR receipt IS NULL OR pg_catalog.char_length(receipt) NOT BETWEEN 12 AND 256\n    OR receipt !~ '^[A-Za-z0-9:/#._-]+$'"
+      },
+      "native": {
+        "before": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595",
+        "after": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459"
+      }
+    },
+    "inverse": {
+      "bothParentCodeBodiesRestoredExactly": true,
+      "parentRecoveryBlob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
+      "parentNativeBlob": "ac90f2bf4a81828157fed9c307513e0bdb107c96"
+    },
+    "preserved": {
+      "receiptMinimumCharacters": 12,
+      "receiptMaximumCharacters": 256,
+      "anchoredCharacterClass": "[A-Za-z0-9:/#._-]",
+      "nullRefusal": true,
+      "refusalSqlstate": "P7905",
+      "installerUnchanged": true,
+      "allEightTestBodiesUnchanged": true,
+      "allOtherSecurityPredicatesAndResourcesUnchanged": true
+    },
+    "next": "Root reviews exact source, updates downstream COMPOSED recovery pin and performs complete fresh gates. HRS helper resumes; no Dev, HTTP/MFA or public activation claim."
   }
 }

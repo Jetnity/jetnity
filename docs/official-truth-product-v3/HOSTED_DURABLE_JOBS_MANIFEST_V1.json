@@ -43,31 +43,23 @@
     "permittedWork": "GitHub source/metadata reads; immutable source Git objects; pure in-memory text, UTF-8 hashing, inverse reconstruction and tree comparison only"
   },
   "baseline": {
-    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
-    "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+    "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "commit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
     "count": 9538,
     "serialization": "ASCII path sort; mode + SPACE + type + SPACE + Git object SHA + TAB + path + LF",
     "serializedBytes": 1154460,
-    "sha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d",
+    "sha256": "fa7b1b7beac991d480dbe2e164e1c0a5e8d06a165e2815db8533b44eb6efb542",
     "soleParentRequired": true,
     "candidateLeavesExpected": 9538,
     "changedExistingPaths": [
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
     ],
-    "changedLeavesExpected": 13,
-    "unchangedLeavesExpected": 9525,
+    "changedLeavesExpected": 5,
+    "unchangedLeavesExpected": 9533,
     "addedPaths": [],
     "removedPaths": [],
     "wrapperExact": {
@@ -78,7 +70,7 @@
     },
     "originalPreHm04LeavesExpected": 9479,
     "originalPreHm04LeavesRemainExact": true,
-    "proofRule": "Exactly thirteen modified existing leaves on the exact CI4140 parent; both wrappers, HS1 Native, all original proof groups and 9525 complement leaves stay exact.",
+    "proofRule": "Five current diagnostic/evidence leaves change; every SQL artifact, HM04 Native and 9533 complement leaves remain exact.",
     "externalFinalIdentity": true
   },
   "artifacts": [
@@ -558,9 +550,9 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     },
     {
-      "id": "HS1-FIX2",
+      "id": "HS1-FIX2-DIAG1",
       "key": "hs1",
-      "consumed": "Current alias-corrected installer/recovery; current immutable artifact pins are explicit. FIX1 and earlier source identities remain historical.",
+      "consumed": "Installer/recovery remain exact FIX2; current HS1 Native adds the bounded rollback-only diagnostic. Historical pins and proof claims remain scoped.",
       "codePins": [
         {
           "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
@@ -577,9 +569,9 @@
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-          "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
-          "bytes": 64749,
-          "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21"
+          "blob": "c5afa5dee2b11631c065038df919300842f82312",
+          "bytes": 68633,
+          "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a"
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
@@ -14910,5 +14902,42 @@
       "bytes": 600444,
       "sha256": "304763aa6adf70e63f77e35e11fa061243cd0b3c211b17808169c389ebec387f"
     }
+  },
+  "diagnostic1": {
+    "id": "HS1-DIAG1",
+    "status": "SOURCE_ONLY_NOT_RUN_DIAGNOSTIC",
+    "soleParent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "parentTree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "scope": {
+      "changedPaths": [
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
+      ],
+      "leaves": 9538,
+      "changed": 5,
+      "unchanged": 9533,
+      "added": 0,
+      "removed": 0,
+      "baseSerializationSha256": "fa7b1b7beac991d480dbe2e164e1c0a5e8d06a165e2815db8533b44eb6efb542",
+      "complementSerializationSha256": "acad2f91643afaf53ae0a10f2d17b373ceca5046cf4bf67dbcce5faf22c40fd0"
+    },
+    "hs1Native": {
+      "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+      "blob": "c5afa5dee2b11631c065038df919300842f82312",
+      "bytes": 68633,
+      "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a"
+    },
+    "hm04NativeUnchanged": true,
+    "previousManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+      "blob": "f4edf684a7b136b212204ce53d17cdae25b888cb",
+      "bytes": 637717,
+      "sha256": "8fc69dc3ddf736cd134d6da68cbba99e74f09c1430e2f230d5bd1a26773fa593"
+    },
+    "history": "Previous FIX1/FIX2 and historical package evidence remain unchanged. This diagnostic is not a guard repair or a passing proof."
   }
 }
