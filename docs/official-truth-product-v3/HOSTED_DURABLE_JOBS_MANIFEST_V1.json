@@ -569,9 +569,9 @@
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-          "blob": "c5afa5dee2b11631c065038df919300842f82312",
-          "bytes": 68633,
-          "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a"
+          "blob": "fa58410d80f7b420cf97429ab220544b9a1ddcef",
+          "bytes": 76320,
+          "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134"
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",

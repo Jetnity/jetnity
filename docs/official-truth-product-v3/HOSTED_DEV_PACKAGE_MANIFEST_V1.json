@@ -148,8 +148,8 @@
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
         "bytes": 638807,
-        "sha256": "e08a04556ecfa923ea309382f963da4fbfb8d222e8e1f09b605e1491cc6b301a",
-        "blob": "d6fd7b026ecb28d284c35d5bace97b14ab27c0a7",
+        "sha256": "66af2f648c77fd7c845c1093f1eb181ff3d85248f016cbf1baf0bea98e9f3899",
+        "blob": "ee1a383528edd54ae98d97a0ac7b9b37a0d26883",
         "mode": "100644",
         "type": "blob"
       },
@@ -164,8 +164,8 @@
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
         "bytes": 185481,
-        "sha256": "11f6f5c6e63568e1fdd870dc4fa361589c2c8ef14c3b08c6d7eab13612478577",
-        "blob": "66df1e9f3db51ffe711c40ff9e4c9d3cb90d0941",
+        "sha256": "eb9a4c0ff53c7a7ed8b98a2ad1b5504a3b600de29068168ab38cc26af39640a5",
+        "blob": "da1f596488c86433355e19bdfb522e50d4fd56b4",
         "mode": "100644",
         "type": "blob"
       },
@@ -179,9 +179,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-        "bytes": 68633,
-        "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
-        "blob": "c5afa5dee2b11631c065038df919300842f82312",
+        "bytes": 76320,
+        "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134",
+        "blob": "fa58410d80f7b420cf97429ab220544b9a1ddcef",
         "mode": "100644",
         "type": "blob"
       },
@@ -296,8 +296,8 @@
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
         "bytes": 638807,
-        "sha256": "e08a04556ecfa923ea309382f963da4fbfb8d222e8e1f09b605e1491cc6b301a",
-        "blob": "d6fd7b026ecb28d284c35d5bace97b14ab27c0a7",
+        "sha256": "66af2f648c77fd7c845c1093f1eb181ff3d85248f016cbf1baf0bea98e9f3899",
+        "blob": "ee1a383528edd54ae98d97a0ac7b9b37a0d26883",
         "mode": "100644",
         "type": "blob"
       },
@@ -312,8 +312,8 @@
       {
         "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
         "bytes": 185481,
-        "sha256": "11f6f5c6e63568e1fdd870dc4fa361589c2c8ef14c3b08c6d7eab13612478577",
-        "blob": "66df1e9f3db51ffe711c40ff9e4c9d3cb90d0941",
+        "sha256": "eb9a4c0ff53c7a7ed8b98a2ad1b5504a3b600de29068168ab38cc26af39640a5",
+        "blob": "da1f596488c86433355e19bdfb522e50d4fd56b4",
         "mode": "100644",
         "type": "blob"
       },
@@ -327,9 +327,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-        "bytes": 68633,
-        "sha256": "6643c36ab6dd025d9e63623750f5d404b5663d8166a58247ab0bc2dbdbcbe64a",
-        "blob": "c5afa5dee2b11631c065038df919300842f82312",
+        "bytes": 76320,
+        "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134",
+        "blob": "fa58410d80f7b420cf97429ab220544b9a1ddcef",
         "mode": "100644",
         "type": "blob"
       },
