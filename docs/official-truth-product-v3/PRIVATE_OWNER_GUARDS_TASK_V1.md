@@ -87,3 +87,33 @@ Independent reviewer /root/ch_de_release_gate_audit identified cleanup preemptio
 Fix this bounded failure path before final delivery: use the existing owned lifetime as the authoritative cleanup, removing the redundant fixture-close preamble/helper, or unconditionally attempt disposal independently while retaining both primary and cleanup failures. No early exception may bypass disposal. Do not weaken negative cases, counters, deadlines or existing ownership infrastructure. Existing owned disposal already captures each individual close/stop error and continues through the remaining resources. Preserve truthful receipts when disposal itself fails.
 
 The reported Auth helper-fidelity improvement (exact two bodies from actual Dev receipt6816048537 plus claim/claims/sub mismatch negatives) is within V1 and remains synthetic. Deliver the final new native/source pins and full seven-path candidate only after both corrections, with this R1 and URL preserved in Task/Handoff. All previous seven-path/source-only/no-Ready/no-merge/no-follow-on/STOP boundaries remain. No project/native/SQL execution, branch/ref/PR or external call is authorized for the author.
+
+---
+
+## Persisted same-session CI review amendment R3
+
+URL: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580
+
+The complete previous Task above is preserved verbatim. The following R3 body is appended verbatim.
+
+## Technical Lead — PG1 CI CHANGES REQUIRED / TASK V1 amendment R3
+
+**12 November 2026.** Exact Draft #1193 head `9ed5b60d7ca77974864a32a03ed029fc51234e22`, tree `7921abb6dc8dfd9110ada61ab5af62469c28008f`; main `dfd692440762b50183fdebbfd6bf8dabde4662d0`, mode NORMAL.
+
+### Actual failure, independently read by Root
+
+Run `43206051112` / #4122 / attempt1, Repository verification job `131141360305`, completed **FAILURE** at 11:15:51Z. Full original log is 4,279,667 UTF-8 bytes / SHA256 `0d1e1ef3799c62ad0070b19cef89172625151fb10d55f4dbe484ae52cc00d9cb`. Typecheck/Lint passed; Tests failed and all following verification steps were skipped. Core: 8,732 tests, 8,728 pass, 2 failures, 2 pre-existing skips, 971 suites. The second failure is the enclosing PG1 test, not a separate proved production defect.
+
+PG1-03 fails with `local_pg_duplicate_column` during `bindRecovery`. Root read the actual native source and unchanged pg-wire RowDescription decoder: duplicate output names correctly refuse. Both unaliased set_config calls in the same SELECT default to `set_config`. Native source has two such two-call SELECTs: recovery context+OID at line191, and claim.sub clearing+claim setting at line490. The later case has not executed and would repeat the same defect. PG1-01/02 actually completed. Receipt confirms 130 operations started/settled, 7 connections all closed, 1 owned cluster stopped, no cleanup failure. Groups03–09 are not PASS. SQL installation/recovery are not changed by this fixture failure.
+
+The separate Auth job `131141360881` also failed: all55 expected values match and no unexpected provider/hook is enabled, but Supabase now returns the previously unclassified key `external_email_magic_link_disabled`. This is an independent newly discovered CI blocker under separate Root investigation; do not weaken or change Auth in this task. Full log: 21,280 bytes / SHA256 `e15a71b71a45543cf0db3c77832a63a33f67b120de2c17037efa3ff2ec7ed589`. No credential value is recorded here.
+
+### Same-session R3 scope
+
+Author remains **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**, original session `/root/v3_private_owner_guards_writer_g1`.
+
+Create an immutable successor with sole parent `9ed5b60d7ca77974864a32a03ed029fc51234e22`. In the existing native.ts only, add distinct explicit output aliases to each of the two set_config expressions in each of those two SELECTs. Preserve function arguments, parameters, ordering, number of queries, fixture claims/context, guards, all nine proof groups, cleanup/lifetime/budgets, shared pg-wire behavior and runtime source. Do not suppress duplicate-column validation, remove negative cases, or catch/ignore this error. Inspect the whole new native module for any other actual repeated output names and report any additional finding to Root before expanding this bounded edit.
+
+Preserve installer, recovery SQL, test wrapper and all existing base files byte exact. Only native.ts and the existing Task/Handoff/Manifest may change. Preserve complete previous Task content and append this R3 verbatim with URL. Preserve the previous Handoff as dated history, then record actual failure and truthful new NOT_RUN state; update only the changed native/source/ancestry pins in Manifest. No invented new CI or PG1 acceptance.
+
+Deliver exact new commit/tree, all seven current pins, four-path parent delta and complete unchanged-tree proof. Source-only immutable Git objects. **No project/parser/compiler/native/SQL/test/build/APT execution, no hosted query/apply, no Auth change, no branch/ref/PR publication, Ready or merge.** Root independently reviews and may publish the correction with a fresh complete exact-head gate. The current published head remains unchanged until Root does so. Stop after delivery; no automatic follow-on. #917/#1131 STOPs remain intact.

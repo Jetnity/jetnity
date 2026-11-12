@@ -1,3 +1,12 @@
+# PG1 — same-session R3 review-fix handoff
+
+Prepared 2026-11-12. The complete previous Handoff is retained below as dated history, byte-for-byte. Its prior current-state/ancestry/NOT_RUN wording belongs to that historical source snapshot and is superseded by the **Current R3 handoff** after the history. The new R3 successor has not executed.
+
+## Preserved R2 Handoff history — 2026-11-12
+
+Published parent: `9ed5b60d7ca77974864a32a03ed029fc51234e22`; historical Handoff blob `b82504256fb97bfa37adf26e7cca84d52d2c4dbe`, 19704 UTF-8 bytes, SHA256 `256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc`.
+
+<!-- BEGIN VERBATIM PREVIOUS HANDOFF -->
 # PG1 — Private Owner Guards handoff V1
 
 ## Status and actual session
@@ -152,3 +161,62 @@ The first unfinished step is Root's independent re-gating of this final R2 packa
 Actual Dev validation/installation and bounded recovery evidence follow only as separately reviewed Root work. Real signed Owner method approval, actual source binding, cache/publication/visitor wiring and public CH→DE activation remain subsequent explicit Root steps under the Product Owner's existing authorization. No automatic follow-on is started by this author.
 
 **STOP — no Ready, merge, branch/ref/PR, hosted installation or activation by the author.**
+
+<!-- END VERBATIM PREVIOUS HANDOFF -->
+
+## Current R3 handoff — 2026-11-12
+
+**SOURCE_PREPARED; NEW_HEAD_NOT_RUN; HOSTED_UNAPPLIED; ROOT REVIEW REQUIRED.**
+
+Binding amendment: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580
+
+Author remains **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**; same actual session `/root/v3_private_owner_guards_writer_g1`. No new implementer or Cursor-session claim.
+
+The successor's sole parent is the exact published `9ed5b60d7ca77974864a32a03ed029fc51234e22`, tree `7921abb6dc8dfd9110ada61ab5af62469c28008f`. The integration baseline remains `dfd692440762b50183fdebbfd6bf8dabde4662d0`, tree `cbc79e627161d4ace132b84cf057c18adc86586c`. Exactly Native, Task, Handoff and Manifest change against the immediate parent; the same seven allowed paths remain additions against the integration baseline. The installer, recovery SQL, wrapper and every original integration-baseline leaf remain exact. The resulting commit/tree and complete seven-file immutable readback are external identities in the author delivery.
+
+### Actual parent CI evidence, not a new-head gate
+
+Root independently read the original logs and persisted the following in R3; this author did not run or dispatch CI.
+
+| Parent observation | Actual result recorded by Root |
+| --- | --- |
+| Exact head | `9ed5b60d7ca77974864a32a03ed029fc51234e22` |
+| CI | `43206051112` / #4122 / attempt 1 |
+| Repository verification job | `131141360305`, FAILURE at 2026-11-12 11:15:51Z |
+| Gates | Typecheck and Lint passed; Tests failed; following verification steps skipped |
+| Core summary | 8732 tests; 8728 pass; 2 failures; 2 pre-existing skips; 971 suites |
+| PG1 progress | PG1-01 and PG1-02 completed; PG1-03 failed in bindRecovery; PG1-04 through PG1-09 were not reached |
+| Failure | `local_pg_duplicate_column`; the second core failure is the enclosing PG1 test |
+| Owned cleanup receipt | 130 operations started and settled; 7 connections all closed; 1 owned cluster stopped; no cleanup failure |
+
+The full original verification log is 4279667 UTF-8 bytes, SHA256 `0d1e1ef3799c62ad0070b19cef89172625151fb10d55f4dbe484ae52cc00d9cb`. PG1-03 through PG1-09 are not PASS. Earlier completed groups and Typecheck/Lint do not satisfy the new successor's exact-head gates.
+
+The separate Auth job `131141360881` also failed. Root's receipt states all 55 expected values matched and no unexpected provider/hook was enabled, while the previously unclassified key `external_email_magic_link_disabled` was returned. Its original log is 21280 bytes, SHA256 `e15a71b71a45543cf0db3c77832a63a33f67b120de2c17037efa3ff2ec7ed589`. That blocker is separate Root work: this correction changes no Auth policy, configuration, test or key classification and makes no hosted/Auth query. No credential value is included.
+
+### Bounded source correction
+
+The unchanged pg-wire RowDescription decoder correctly rejects repeated output column names. Two Native SELECTs returned two unaliased set_config values, each defaulting to the same name. Only their explicit output aliases were added:
+
+| Parent/current line | First output alias | Second output alias |
+| --- | --- | --- |
+| 191, recovery context and namespace OID | `recovery_context` | `recovery_namespace_oid` |
+| 490, clear claim.sub and set claim | `cleared_claim_sub` | `selected_claim` |
+
+All function arguments, parameter arrays, ordering, number of queries, claims/context values, guards, nine proof groups, cleanup/lifetime, fixed budgets and shared pg-wire behavior remain unchanged. Removing these four alias insertions reproduces the complete parent Native bytes exactly. The full 615-line Native module was inspected for actual repeated output names; no additional case was found and no scope expansion was made. This was pure source inspection, not SQL/project parsing or execution.
+
+| Changed source identity | Current Git blob | UTF-8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| Native | `21886dbcbcaea1e04817df3fdd7eb7344a44c460` | 42247 | `2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0` |
+| Task with appended R3 | `c8bbf5b9cee4430b848cf57aa768c35b92388da5` | 15253 | `4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396` |
+
+The complete previous Task remains an exact prefix, and the entire persisted R3 body and URL are appended verbatim. The complete previous Handoff above is exact dated history. All unchanged original guard and reused-runtime pins remain in the Manifest; no guard/source authority was rewritten.
+
+### Current validation and unresolved gates
+
+Every new-head project/parser/compiler/type/lint/core/native/hygiene/build/CI gate is **NOT_RUN**, including all nine PG1 groups. There is no new CI run, PASS receipt or hosted installation. The source fix does not close the separate Auth CI blocker, prove hosted MA1 creator-membership compatibility, resolve M04's role-profile gap or establish Data API exposure, real signed Owner authority or public CH→DE activation.
+
+The first unfinished step is Root's independent exact-candidate review of R3, followed by a Root-controlled update of the published PR and a fresh complete exact-head gate. The author has not changed the published ref. An additional failure returns to this same reachable session; no failed assertion or shared transport validation is weakened.
+
+Only immutable Git objects and pure in-memory source/metadata operations were used. No project/parser/compiler/native/SQL/test/build/APT execution, hosted/Auth query or change, source network request, branch/ref/PR publication, Ready, merge or follow-on occurred. #917/#1131 STOPs remain intact.
+
+**STOP — source-only R3 delivery for independent Root review.**

@@ -1,16 +1,16 @@
 {
   "schema": "jetnity.pg1.source-manifest.v1",
-  "status": "SOURCE_PREPARED_SQL_UNAPPLIED_ALL_EXECUTION_NOT_RUN",
+  "status": "SOURCE_PREPARED_HOSTED_UNAPPLIED_CURRENT_HEAD_NOT_RUN",
   "task": "V3-PRIVATE-OWNER-GUARDS-1",
   "version": 1,
   "preparedDateUTC": "2026-11-12",
   "author": {
     "name": "Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1",
     "session": "/root/v3_private_owner_guards_writer_g1",
-    "kind": "same-delegated-Codex-session-documentation-review-fix-R2",
+    "kind": "same-delegated-Codex-session-CI-review-fix-R3",
     "cursorSessionClaimed": false
   },
-  "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
+  "soleParent": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
   "containingCommitAndTree": "External immutable Git identities in author delivery; no circular self-pin.",
   "bindingTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6815884525",
@@ -52,16 +52,25 @@
     "followOn": false,
     "deltaBasis": "integrationBaseline",
     "parentDelta": {
-      "basis": "28ee04afcd74123cea8803f67d379184353e231d",
+      "basis": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
       "addedLeaves": 0,
       "removedLeaves": 0,
       "modifiedPaths": [
+        "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
         "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
         "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
       ],
-      "allFourCodeBlobsUnchanged": true,
-      "completeTaskV1R1Unchanged": true
-    }
+      "unchangedCodePaths": [
+        "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+        "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+        "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts"
+      ],
+      "nativeChange": "Only four explicit SELECT output aliases across the two set_config pairs at unchanged lines 191 and 490.",
+      "completePreviousTaskPreservedAsExactPrefix": true,
+      "completePreviousHandoffPreservedAsDatedVerbatimHistory": true
+    },
+    "publicationScope": "The false ref/PR publication flag describes author actions only; Root previously published the immediate parent as Draft #1193."
   },
   "code": [
     {
@@ -78,9 +87,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-      "blob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
-      "bytes": 42162,
-      "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
+      "blob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+      "bytes": 42247,
+      "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
     },
     {
       "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
@@ -92,15 +101,15 @@
   "documentation": [
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-      "blob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
-      "bytes": 11179,
-      "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
+      "blob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
+      "bytes": 15253,
+      "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396"
     },
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-      "blob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
-      "bytes": 19704,
-      "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
+      "blob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
+      "bytes": 26083,
+      "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc"
     }
   ],
   "manifestSelfIdentity": "This path's Git blob/UTF-8 bytes/SHA256 are in final external author readback; not recursively embedded.",
@@ -195,7 +204,7 @@
       "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
     }
   ],
-  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All original integration-baseline source leaves and the four previously reviewed PG1 code leaves remain exact. No old Auth fixture or authority loader is imported.",
+  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All original integration-baseline leaves and PG1 install/recovery/wrapper remain exact. Native changes only four output aliases in two SELECTs. No old Auth fixture or authority loader is imported.",
   "existingDisposableRollback": {
     "blob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
     "changed": false,
@@ -358,9 +367,9 @@
     "runtimePass": false,
     "technicalLeadPass": false
   },
-  "firstUnfinishedStep": "Root independent regating of the final R2 package and exact identities, then Root-selected publication and required exact-head CI. AA4120 is consumed failed before Tests; A4 is RUN0/UNARMED with no observation, retry or positive rearm. Hosted MA1 creator-membership compatibility and actual target gates remain separately unproven.",
+  "firstUnfinishedStep": "Root independent R3 exact-candidate review, then Root-controlled published-head update and fresh complete exact-head gating. Parent CI4122 failed in PG1-03 and the separate Auth job; no parent result grants successor PASS. No Auth or platform change belongs to this correction.",
   "stop": "No execution, ref/PR, Ready, merge, hosted write or follow-on by author.",
-  "parentTree": "8e60897fd154ef410752c392f0e657f21e62352e",
+  "parentTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
   "integrationBaseline": {
     "commit": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
     "tree": "cbc79e627161d4ace132b84cf057c18adc86586c"
@@ -438,5 +447,118 @@
       "implementedByPg1": false,
       "m04ProfileMismatchResolved": false
     }
+  },
+  "statusScope": "Current R3 successor; the failed parent CI is historical evidence under reviewFixR3 and the Handoff.",
+  "reviewFixR3": {
+    "url": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
+    "originalBodyUtf8Bytes": 3841,
+    "originalBodySha256": "4d5303a0446c7eb2040ded1c13be0e77cccbce0673e7e02bbc914125cf39c764",
+    "sameAuthorAndSession": true,
+    "parent": {
+      "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+      "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+      "nativeBlob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
+      "nativeSha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
+    },
+    "nativeDelta": {
+      "changedLines": [
+        191,
+        490
+      ],
+      "aliasInsertions": [
+        "recovery_context",
+        "recovery_namespace_oid",
+        "cleared_claim_sub",
+        "selected_claim"
+      ],
+      "inverseAliasRemovalExactlyRestoresParent": true,
+      "fullNativeSourceInspected": true,
+      "additionalDuplicateOutputFinding": false,
+      "argumentsAndParameterArraysUnchanged": true,
+      "queryCountAndOrderingUnchanged": true,
+      "nineGroupsCleanupAndBudgetsUnchanged": true,
+      "sharedWireUnchanged": true,
+      "sqlInstallRecoveryWrapperUnchanged": true
+    },
+    "previousTask": {
+      "blob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
+      "bytes": 11179,
+      "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75",
+      "exactPrefixPreserved": true,
+      "r3AppendedVerbatim": true
+    },
+    "previousHandoff": {
+      "blob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
+      "bytes": 19704,
+      "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc",
+      "historyDateUTC": "2026-11-12",
+      "preservedVerbatim": true,
+      "priorCurrentStatusSuperseded": true
+    },
+    "parentCi": {
+      "evidenceAttribution": "Root's independently read logs, persisted in R3; author did not execute CI",
+      "runId": 43206051112,
+      "runNumber": 4122,
+      "attempt": 1,
+      "verifyJobId": 131141360305,
+      "conclusion": "failure",
+      "completedAtUTC": "2026-11-12T11:15:51Z",
+      "typecheck": "passed",
+      "lint": "passed",
+      "tests": "failed",
+      "laterVerificationSteps": "skipped",
+      "logBytes": 4279667,
+      "logSha256": "0d1e1ef3799c62ad0070b19cef89172625151fb10d55f4dbe484ae52cc00d9cb",
+      "core": {
+        "tests": 8732,
+        "passed": 8728,
+        "failed": 2,
+        "preExistingSkipped": 2,
+        "suites": 971
+      },
+      "completedPg1Groups": [
+        "PG1-01",
+        "PG1-02"
+      ],
+      "failedPg1Group": "PG1-03",
+      "notReachedPg1Groups": [
+        "PG1-04",
+        "PG1-05",
+        "PG1-06",
+        "PG1-07",
+        "PG1-08",
+        "PG1-09"
+      ],
+      "error": "local_pg_duplicate_column during bindRecovery",
+      "enclosingPg1FailureIsSeparateProvedProductionDefect": false,
+      "cleanup": {
+        "started": 130,
+        "settled": 130,
+        "connections": 7,
+        "closed": 7,
+        "stoppedClusters": 1,
+        "failure": false
+      }
+    },
+    "separateAuthJob": {
+      "jobId": 131141360881,
+      "conclusion": "failure",
+      "logBytes": 21280,
+      "logSha256": "e15a71b71a45543cf0db3c77832a63a33f67b120de2c17037efa3ff2ec7ed589",
+      "newUnclassifiedKey": "external_email_magic_link_disabled",
+      "expectedValuesMatched": 55,
+      "unexpectedProviderOrHookEnabled": false,
+      "disposition": "Separate Root investigation; no Auth query/change/classification fix by this task."
+    },
+    "currentSuccessor": {
+      "execution": "NOT_RUN",
+      "allNineNativeGroups": "NOT_RUN",
+      "independentRootReview": "REQUIRED",
+      "publishedByAuthor": false,
+      "realHostedInstall": false,
+      "ready": false,
+      "merge": false
+    },
+    "existingProvenance": "Earlier task/amendment/prerequisite/AA records are retained as attributed history, not fresh acceptance or a new execution selection."
   }
 }

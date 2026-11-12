@@ -188,7 +188,7 @@ async function fixture(lifetime: OwnedTestLifetime) {
   const bindRecovery = async (oid?: string, context = 'root-verified-unbound-quiescent-v1') => {
     const actual = oid ?? (await snapshot()).schema[0]?.oid
     assert.ok(actual)
-    await installer.query("SELECT pg_catalog.set_config('jetnity.pg1_recovery_context',$1,false),pg_catalog.set_config('jetnity.pg1_recovery_namespace_oid',$2,false)",
+    await installer.query("SELECT pg_catalog.set_config('jetnity.pg1_recovery_context',$1,false) AS recovery_context,pg_catalog.set_config('jetnity.pg1_recovery_namespace_oid',$2,false) AS recovery_namespace_oid",
       [pgText(context), pgText(actual)])
   }
   let operation = 0
@@ -487,7 +487,7 @@ export async function runPrivateOwnerGuardsNative(t: TestContext): Promise<void>
       await db.human.query("SELECT pg_catalog.set_config('request.jwt.claim.sub',$1,false)", [pgText(AUTH.other)])
       await assert.rejects(db.stage(ma1SyntheticTuple('pg1-uid-mismatch')), code('42501'))
       assert.deepEqual(await db.history(), before)
-      await db.human.query("SELECT pg_catalog.set_config('request.jwt.claim.sub','',false),pg_catalog.set_config('request.jwt.claim',$1,false)",
+      await db.human.query("SELECT pg_catalog.set_config('request.jwt.claim.sub','',false) AS cleared_claim_sub,pg_catalog.set_config('request.jwt.claim',$1,false) AS selected_claim",
         [pgText(JSON.stringify(claims({ sub: AUTH.other, session_id: AUTH.foreignSession })))])
       await assert.rejects(db.stage(ma1SyntheticTuple('pg1-claim-precedence')), code('42501'))
       assert.deepEqual(await db.history(), before)
