@@ -4,7 +4,7 @@ import 'server-only'
 // No environment/caller override, setter, registry admission or product-window change.
 export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   runNumber: 0 as number,
-  baseSha: 'ee6801e99e86144e60dbe86d72576f9ad7c3e9bb',
+  baseSha: 'b5f33f66faab89454a874e641dbd0dfa66b09d2d',
   repository: 'Jetnity/jetnity',
   repositoryId: 1020187087,
   workflowName: 'CI',
@@ -33,19 +33,21 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   // This policy's own blob/tree is externally bound by Root exact-head review.
   sourceInventory: Object.freeze([
     Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 29611, sha256: 'ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 56184, sha256: '89aca333a71996c489b172e1512470ad7870e982c398d0a47fb303c5eed06521' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 56184, sha256: '13fe0530ef3c4007fc44ccf30dda1f58673a5341177e88c6be9665a4f9f39876' }),
     Object.freeze({ path: 'lib/readiness/official-truth-bounded-response-body.ts', bytes: 1278, sha256: '186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 12325, sha256: '3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18' }),
-    Object.freeze({ path: 'package.json', bytes: 6467, sha256: '5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df' }),
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' }),
+    Object.freeze({ path: 'package.json', bytes: 6460, sha256: '46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0' }),
     Object.freeze({ path: 'package-lock.json', bytes: 320689, sha256: '71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),
     Object.freeze({ path: 'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts', bytes: 6501, sha256: '49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298' }),
     Object.freeze({ path: 'lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts', bytes: 9176, sha256: '74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572' }),
     Object.freeze({ path: 'lib/readiness/official-truth-content-identity-r2.test.ts', bytes: 41838, sha256: 'be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16' }),
     Object.freeze({ path: 'lib/readiness/official-truth-retrieval-physical-internal.ts', bytes: 17726, sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1-server.ts', bytes: 20051, sha256: '69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1-server.ts', bytes: 20156, sha256: 'a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.mjs', bytes: 5970, sha256: '647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.test.mjs', bytes: 7360, sha256: 'edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730' }),
   ]),
 } as const)

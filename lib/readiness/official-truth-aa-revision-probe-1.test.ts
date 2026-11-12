@@ -825,7 +825,7 @@ async function syntheticPreflight(): Promise<void> {
   assert.equal(policy.reviewedSourceBlob, 'e00f71f993fe558d657ca409436ee62410869b25')
   assert.equal(policy.maxBytes, 131_072)
   assert.equal(policy.timeoutMs, 10_000)
-  assert.equal(policy.sourceInventory.length, 15)
+  assert.equal(policy.sourceInventory.length, 17)
   for (const pin of policy.sourceInventory) {
     assert(Object.isFrozen(pin))
     const bytes = sourceBytes.get(pin.path)

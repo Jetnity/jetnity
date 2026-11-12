@@ -91,6 +91,8 @@ const AA_PROBE_SOURCE_PATHS = Object.freeze([
   'lib/readiness/official-truth-content-identity-r2.test.ts',
   'lib/readiness/official-truth-retrieval-physical-internal.ts',
   'lib/readiness/official-truth-aa-revision-probe-1-server.ts',
+  'scripts/official-truth-v3-test-selection.mjs',
+  'scripts/official-truth-v3-test-selection.test.mjs',
 ] as const)
 const AA_PROBE_EVENT_MAX = 262_144
 const AA_PROBE_SOURCE_MAX = 1_048_576

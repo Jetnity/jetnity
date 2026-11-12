@@ -1,3 +1,111 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A9 + A9-A1
+
+## Current A9 source state — 12 November 2026
+
+**SOURCE-ONLY / Run 0 UNARMED / NOT_RUN / unpublished immutable integration candidate / executable publication HOLD / independent A9 Technical Lead review and fresh exact-head gates pending.**
+
+The actual author is the same original **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**, session **/root/aa_revision_probe_writer_g1**. No new session, resumed Cursor UI session or delegated author is claimed. No subagent was used.
+
+Root independently accepted the preceding A8-B source candidate in [receipt 6826532002](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826532002). That is an exact A8-B SOURCE PASS only. It does not become A9 PASS or evidence that an earlier runtime failure is cured.
+
+This integration follows the complete [A9 task](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826548986) and its explicit [A9-A1 correction](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826586679). The malformed 43-character selector-test Gitblob in the original task was reported before substitution. Root reread the actual selected tree and corrected it to **bbc10fc9621e31c5af74421891608d3cdf27238d**. The originally stated 7,360-byte length and SHA256 were already correct. Both the full original task and the full explicit correction are preserved verbatim; the erroneous Gitblob string is void.
+
+## Exact ordered parents and independent source reconstruction
+
+The final immutable integration has these ordered parents:
+
+1. A8-B **d041feb553519aab574ce2c50aa8e5cdd9e694c1**, tree **1fb28e84e7d8a41b6e1bf07284ecda6ddf8eb617**.
+2. Selected actual main **b5f33f66faab89454a874e641dbd0dfa66b09d2d**, tree **77666e58d26538fb704389366b77e3a4a1903ac2**.
+
+Both complete commit objects and untruncated recursive trees were independently read. The main ref was read as exactly b5f33f66faab89454a874e641dbd0dfa66b09d2d. This main has ordered parents [fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474, fd1e27fd4893a837d6bd3fe1180a94589ffa1fae].
+
+The selected prior source base ee6801e99e86144e60dbe86d72576f9ad7c3e9bb / tree c2fad9aff45aa07addb541fea8e6a38fb9f2a19e was also read. Relative to it, A8-B has 11 different leaves and main has 23 different leaves, with **no overlapping changed paths**. All 23 complete inherited-main files were read and hashed; their exact original blobs are adopted. The accepted Auth state is already shared by both selected parent trees and remains exact.
+
+The tree is composed from actual main plus the accepted AA delta and only the seven selected authored paths. The complete expected comparison is:
+
+| Comparison | Existing modified leaves | Added leaves | Removed leaves | Unchanged leaves |
+|---|---:|---:|---:|---:|
+| Against A8-B first parent, 9,486 leaves | 12 | 18 | 0 | 9,474 |
+| Against actual-main second parent, 9,497 leaves | 4 | 7 | 0 | 9,493 |
+
+The resulting tree has 9,504 leaves. Its 30 first-parent differences partition into **23 exact inherited-main paths and seven authored AA paths**. Its 11 differences from main are precisely the accepted AA delta after the finite A9 amendments. Every unaffected SHA, mode and type is preserved. Final commit/tree identities and completed full readback comparison are external delivery bindings so that this document does not contain self-referential hashes.
+
+## Actual-main inheritance without reauthoring
+
+Current PG1/Auth/HMA1 source, protected-source amendments, CI contract, complete six-family workflow and package commands are retained exactly. No broad legacy Core command is restored. No inherited test or source is weakened.
+
+| Inherited actual-main path | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| .github/workflows/ci.yml | 23906 | `a422a67d3a0407f4c1301d3bcff75f736d7ea9b4` | `371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba` |
+| lib/readiness/official-truth-atomic-version-refresh-1.test.ts | 24194 | `c3797969869961bda770b8836267ba3d817dbdd8` | `2923b9e11bd784b471e3f69111cb846db36a042cc103dac1308b597d2d25aeab` |
+| package.json | 6460 | `2a8d677d575b5762a5dd7091d161ea0da6edcea9` | `46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0` |
+| scripts/official-truth-v3-test-selection.mjs | 5970 | `51a2a59e03104f83f3d392f0ffb79639274c1ae9` | `647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61` |
+| scripts/official-truth-v3-test-selection.test.mjs | 7360 | `bbc10fc9621e31c5af74421891608d3cdf27238d` | `edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730` |
+
+The manifest includes all 23 inherited changes, with source/target Gitblobs, complete byte counts, SHA256, modes and types. Inheritance is explicitly distinguished from authorship. The selector continues to discover all original test families, puts only the selected HMA wrapper into its PG17 family, and adds its mandatory contract to Core. AA remains in the existing discovered lib test family; no selector source or test was changed here.
+
+At A9 selection Root records #1195 merged at **14:33:46 UTC**, with actual-main push **#4135 / 43238479829 RUNNING**. Those are attributed Root observations at selection, not this author's current hosted readback. This author performed no CI/Production/Preview/hosted read or mutation. Executable publication remains reserved to Root after actual-main #4135 and Production acceptance, followed by independent candidate review and new exact-head gates.
+
+## Only four finite source amendments
+
+**Probe:** Add exactly the two selector paths to the required source inventory list. The addition is **105 UTF-8 bytes**. Removing precisely those bytes restores the entire accepted Probe blob 8db7b78650fcd783a75f8b45753e196b8c0fd0f0. No transport, claim, output, S1, fingerprint, deadline, argument, event, retry or fixture behavior changes.
+
+**AA test:** Change only `assert.equal(policy.sourceInventory.length, 15)` to `assert.equal(policy.sourceInventory.length, 17)`. All other 56,184-byte-file content remains exact, including every prior synthetic case, import guard, legacy private-port exception, fixture and awaited preflight-before-real-entry order. Reversing the selected count restores c5acfc4e7320cf4794c547b915bbdb35efec4b22.
+
+**BP1:** Update only the fixed complete Probe byte count, Gitblob and SHA256 in the existing three-source preservation predicate. Reader/Physical pins, all 29 inverse spans, the original Reader pin, four other protected files, all 22 whole-source mutants, all seven inverse-span mutants and all unrelated BP1 code remain byte-exact. Reversing that single pin replacement restores 7f95fd1225f9f1042251bd0ffbedfb13a9ede0a9.
+
+**Policy:** Keep runNumber **0**, set only baseSha to **b5f33f66faab89454a874e641dbd0dfa66b09d2d**, update the actual CI/package/Probe/AA-test pins and append the two selector pins. The other eleven previous inventory entries remain exact; the inventory now has exactly **17 paths**. All fixed AA URL, official reviewed V2 pin, source binding, limits, branch/event/attempt/job and one-shot semantics remain unchanged. Reversing the six finite text replacements restores 37bdeeb201d799bd918a62400e518c4052ad9bd2.
+
+The manifest provides before/after literal changes, exact UTF-8 byte spans, hashes and the complete preserved intervals for all four source files. No parser/compiler/test was executed to make these inert source comparisons.
+
+## Five accepted implementation files unchanged
+
+| Path | UTF-8 bytes | Retained A8-B Gitblob |
+|---|---:|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 29611 | `933591ff7074c599dc5032f135103bd65f738314` |
+| lib/readiness/official-truth-retrieval-physical-internal.ts | 17726 | `bd995580bee6adb6b1a213b17a6001caa8f0aeff` |
+| scripts/db/official-truth-integrated-pilot-1/r2-proof.ts | 11305 | `9aec7a10a01bfe0717c6abc9bb6395ea9d937533` |
+| scripts/db/official-truth-integrated-pilot-1/storage.ts | 18102 | `109e8ac57029a03afa55219c8132e8bf004b2dee` |
+| lib/readiness/official-truth-server-owned-retrieval.test.ts | 68545 | `1db87d5a80e913479157340803ddcdf2ac528d4d` |
+
+The full existing Reader inverse was independently recomputed from the unchanged actual Reader/Physical byte spans. It still reconstructs **46,071 bytes**, original Gitblob **5998fdea54d3337fb68cd7111460b59e43a3cef7**, SHA256 **b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994**.
+
+The current Probe's actual import/appendix spans also reconstruct the original complete A7 Reader **2b14953968da35ca47b272fd67a1a912613b8e6d**, 65,490 bytes, SHA256 a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143. Relative to that historical appendix, precisely four owned/selector inventory paths, now 234 bytes, are excluded. The new A9 change accounts for only 105 of those bytes; the first 129 belong to accepted A8-B. The manifest records the updated target offsets without changing any original source span.
+
+No result-contract, SQL, wire, timeout, storage, cleanup or R2 diagnosis behavior is reauthored. R2 without a fresh successor readback remains UNKNOWN. The earlier 20-second COMMIT and independent Chrome failures remain historical failures and are not relabeled as cured.
+
+## Complete documentation and scoped self-review
+
+The prior Task remains a complete **64,700-byte prefix**. The appended material contains the complete Root A8-B SOURCE-PASS receipt, the complete A9 task, and the complete A9-A1 correction, each reread unchanged before embedding. The entire prior **98,405-byte Handoff** is preserved verbatim below, including all older history. The complete prior **53,306-byte Manifest** is preserved as a recoverable exact UTF-8 string inside the new manifest; current lineage/pins/inverse metadata are separate current fields.
+
+All 17 selected actual runtime source contents were read and byte/Gitblob/SHA256 checked. Eleven previous entries remain exact; only CI/package/AA-test/Probe pins change and two selector entries are added. A bounded read-only check of the 23 inherited main changes found no additional changed Reader/Physical/AA/BP1 protected-source predicate. HMA historical test-universe lists do not replace its actual dynamic selector contract.
+
+The four new source blobs were created as immutable objects and reread in full before this handoff. That is source preparation and author self-review only. It is not independent A9 Technical Lead PASS.
+
+| Authored source/document | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-aa-revision-probe-1-server.ts | 20156 | `df24e34575ef7d0ca211471b6a6a019f600871ec` | `a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 56184 | `df87618a6e9a22e752b972d5fc2b072f90b5a121` | `13fe0530ef3c4007fc44ccf30dda1f58673a5341177e88c6be9665a4f9f39876` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 4574 | `64052a43b7319988b862a48523b2d09d6402f264` | `4619156e12dda8120a899626a038dfa9250c53b0e38e67b401d1d8affa43b51b` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 35509 | `256dc4f180815fd0994568c55e0805f44cc88515` | `7a14cfa974556438f1d4f2976fc35826db17b9f31f1d9e52564035670d4e9a0d` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 75249 | `5410b2119427da2782bfa4bb195d64e21a5b9fde` | `3d120f2b3b1761aabe764bc0653fff3ade0b58835728821fdac5e1c05ad29593` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json | 123750 | `e740313710fbb3eb61dafbb0ca44bd14ff68d71e` | `a76d2bca1ccf156357c77a3e9df065ebc47539dab38bb7482b90149f6c7a41fb` |
+
+The Handoff's own pin and final exact tree/commit pins are supplied externally at immutable delivery.
+
+## Authority boundary and required next step
+
+No project/parser/compiler/AST/native/SQL/APT/test/build execution, CI dispatch/rerun, official-source GET, hosted read/mutation, ref/PR publication, Ready or merge occurred. No positive policy arm or consumed invocation was reused. No official current revision, pilot-window extension or public activation is established by this source work. #917/#1131 remain untouched.
+
+The unchanged finite AST guard recognizes its reviewed static/constant forms; arbitrary runtime-computed paths/names remain unresolved. Root's complete independent exact-tree/diff/source review and legacy pins remain necessary. This limitation authorizes no new consumer.
+
+The author stops after immutable delivery and remains available in the same original session. Root independently reviews A9; publication may be selected only after actual-main #4135/Production acceptance. Fresh exact-head CI/Preview and any later one-shot source verification or pilot-window extension remain separate explicit Root steps.
+
+## Preserved complete A8-B handoff history
+
+The exact prior Handoff follows: 98,405 bytes, Gitblob 8fd1b771fbe39f927bb743ebf343ea861750433d, SHA256 08fecedd9b659e9d37207445041b4af766608af2bda7b12ab955a1fd85cd592e. Its internal “current” headings refer to their historical revisions and do not supersede the A9 state above.
+
+<!-- BEGIN VERBATIM A8-B HANDOFF 8fd1b771fbe39f927bb743ebf343ea861750433d -->
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A8-B + A1 + A2
 
 ## Current source state — 12 November 2026
@@ -837,3 +945,4 @@ Original Reader: 46071 UTF-8 bytes, SHA256 `b83340d46dbf8dbc3d1ba389d6b38964bf48
 
 Original reviewed metadata remains blob `e00f71f993fe558d657ca409436ee62410869b25`, 2142 bytes, SHA256 `478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5`. Its exact original source is checked by the new test before the real entry. No production import of the dormant reviewed candidate was added; only its immutable nine-field research binding and already-reviewed public pin are copied into the new policy.
 <!-- END VERBATIM PRIOR HANDOFF d285e32eac66330360058d7c1404317bfadc24d2 -->
+<!-- END VERBATIM A8-B HANDOFF 8fd1b771fbe39f927bb743ebf343ea861750433d -->

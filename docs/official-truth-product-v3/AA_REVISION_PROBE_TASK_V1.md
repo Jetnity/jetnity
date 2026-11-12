@@ -510,3 +510,93 @@ Every other original Reader test byte and all dynamic test scenarios remain unch
 
 Perform a finite read-only check for any further concrete source-layout gates before delivering objects; report exact paths and predicates if necessary. This is not permission to widen scope autonomously. No new source fetch, execution, timeouts, policy arming, ref, CI, Ready or merge.
 <!-- END VERBATIM ROOT RECEIPT 6825553869 -->
+
+
+---
+
+## A9 / A9-A1 — actual-main source integration and exact correction
+
+The complete A8-B Task prefix above remains unchanged. The following Root source acceptance, new integration task and explicit transcription correction are preserved verbatim. A8-B SOURCE PASS does not grant A9 publication, execution or runtime PASS.
+
+### Root receipt 6826532002
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826532002
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6826532002 -->
+## AA V1/A8-B — INDEPENDENT ROOT SOURCE PASS — 2026-11-12
+
+Exact unpublished commit `d041feb553519aab574ce2c50aa8e5cdd9e694c1`, tree `1fb28e84e7d8a41b6e1bf07284ecda6ddf8eb617`, sole parent `6ffbb8f1cf415e7e608634e236a47cf9872efebd`. Root independently accepts the source-only implementation of tasks 6825483434 / 6825534691 / 6825553869. Same original author/session: Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1.
+
+### Independently verified
+- Actual complete trees: exactly12 changed paths (9 modified / 3 new), 9,474 other parent leaves unchanged; no deletion. All12 actual blobs fetched and SHA256/byte lengths checked, not just author excerpts.
+- All29 ordered inverse spans reproduce the full original Reader: blob5998fdea54d3337fb68cd7111460b59e43a3cef7 /46,071 bytes /SHA256 b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994. All Reader/Physical target bytes partition into exact retained spans and reviewed import/header/export-keyword wiring. No hidden unmapped bytes.
+- Actual retained probe imports/appendix reconstruct the complete old A7 Reader; the only body addition is the two required owned inventory paths. All four amended proof/test files independently reconstruct their full predecessors from complete changed/retained partitions.
+- Storage is exactly restored to109e8ac57029a03afa55219c8132e8bf004b2dee. R2 captures the actual ot_provenance_writer connection through the original connect method only for diagnostics, restores the method in finally and changes no storage result, SQL, readback or wire behavior.
+- Reader no longer imports Probe/Policy/S1; the original Bern bodies and public Reader API are preserved. Physical contains actual DNS/HTTPS/body handling, only finite dependencies and explicit named consumers in Reader/Probe. Probe remains no-argument and synthetic test is its sole consumer.
+- Root read all new import-boundary/negative cases. Existing one-level fixture loader actually loads Physical under original native-port fakes, then injects that object privately into the actual Probe fixture; no production port or actual test ESM Physical import is added.
+- BP1 requires complete current Reader/Physical/Probe byte length, Gitblob and SHA256 before inverse proof. All existing protected behavior remains; 22 whole-source and7 span mutants are authored. The finite AST guard is not claimed to resolve arbitrary computed imports.
+- All15 actual inventory blobs match the declared pins. The11 original non-Reader/test entries remain exact. Complete original Task46,809bytes remains a prefix; complete original Handoff80,917bytes remains verbatim.
+- Additional read-only source audit by /root/ch_de_ci_reconstruction found no concrete P1/P2/P3 within actual imports/native fixture/guard/BP1 boundaries. Root performed its own tree/inverse/semantic review; author/auditor statements are not runtime PASS.
+
+### Boundary
+**SOURCE PASS only.** Run0 remains UNARMED; source inventory still names old CI/package/base, so this commit is not selected for publication. Explicit actual-main integration is required next. No claim that removing Reader→S1→parse5 cures the observed20s COMMIT failure or separate Chrome timeout. No tests/parser/compiler/native/SQL/CI/source GET executed in this review, no official current revision/pilot extension/public activation. No #917/#1131 action.
+
+Pins: Reader933591ff… /29,611 /ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2; Physicalbd995580… /17,726 /aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f; Probe8db7b786… /20,051 /69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617. Full source pins remain in reviewed manifest3c6f8e874aa86b433648cf9e53d44d24c741a696 /53,306 /e244a77d9ff56c279c916498ddd2b17abc89dc02b5272e6d21f84e278ab223fc.
+<!-- END VERBATIM ROOT RECEIPT 6826532002 -->
+
+### Root receipt 6826548986
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826548986
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6826548986 -->
+## AA V1/A9 — ROOT-SELECTED ACTUAL-MAIN INTEGRATION / SOURCE ONLY
+
+Implementer: same reachable **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**, /root/aa_revision_probe_writer_g1. No new session. Root selects this finite integration now; no automatic follow-on or live probe.
+
+### Exact inputs
+- Independently SOURCE-PASS A8-B: d041feb553519aab574ce2c50aa8e5cdd9e694c1, tree1fb28e84e7d8a41b6e1bf07284ecda6ddf8eb617, Root receipt6826532002.
+- Actual new main b5f33f66faab89454a874e641dbd0dfa66b09d2d, tree77666e58d26538fb704389366b77e3a4a1903ac2, parents[fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474,fd1e27fd4893a837d6bd3fe1180a94589ffa1fae]. #1195 independently gated in6826483778 and merged14:33:46UTC. Actual push CI#4135/43238479829 is RUNNING, not postmerge-PASS yet.
+- Final immutable commit must have ordered parents[d041feb553519aab574ce2c50aa8e5cdd9e694c1,b5f33f66faab89454a874e641dbd0dfa66b09d2d]. Preserve actual-main tree plus the accepted AA delta, with only the finite amendments below.
+
+### Authorized source integration
+1. Carry ALL current-main PG1/Auth/HMA1 files and protected-source amendments exactly. In particular:
+   - .github/workflows/ci.yml blob a422a67d3a0407f4c1301d3bcff75f736d7ea9b4;23,906bytes;371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba.
+   - package.json blob2a8d677d575b5762a5dd7091d161ea0da6edcea9;6,460bytes;46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0.
+   - selector scripts/official-truth-v3-test-selection.mjs blob51a2a59e03104f83f3d392f0ffb79639274c1ae9;5,970bytes;647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61.
+   - selector test scripts/official-truth-v3-test-selection.test.mjs blobbbc10fc9621e31c5af74421891608d3cdf2ac528d4d;7,360bytes;edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730.
+   - latest atomic CI-contract c3797969869961bda770b8836267ba3d817dbdd8 and all other HMA main leaves EXACT. Do not restore an old broad test command or change six-family CI.
+
+2. Policy stays runNumber0 UNARMED. Set only baseSha to b5f33… and update exact current CI/package/owned AA test/Probe pins. Expand the finite inventory from15 to17 by adding the two actual selector files above. Retain all other original entries and all URL/official pin/limit/binding/branch/event/attempt semantics.
+
+3. In Probe, only add the same two selector paths to the exact REQUIRED inventory list. In AA test, only change the expected inventory count15→17. No behavior/fixture/guard/preflight reorder or old case removal. Update actual whole Probe/AA-test pins accordingly in Policy, BP1 protected-source predicate and Manifest. BP1 must still require complete exact Reader/Physical/Probe pins and complete original Reader inverse; its only permitted source amendment is updating the fixed complete Probe bytes/blob/SHA256 for this inventory-only addition. Keep all22+7 mutants, all guards and original4 protected files intact. If any other concrete incompatibility is found, report it; do not broaden this task silently.
+
+4. Preserve accepted A8 Reader933591ff…, Physicalbd995580…, R2 9aec7a10…, restored Storage109e8ac…, Reader-test1db87d5… EXACT. Any update needed solely for current scope is limited to:
+   lib/readiness/official-truth-aa-revision-probe-1-policy.ts
+   lib/readiness/official-truth-aa-revision-probe-1-server.ts
+   lib/readiness/official-truth-aa-revision-probe-1.test.ts
+   lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts
+   docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md
+   docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md
+   docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json
+
+5. Preserve complete prior Task/Handoff/history and include this full task. Update actual lineage, source pins and inverse metadata without relabeling historical failed runs. Provide full exact tree comparison against both selected parents and all current-main unaffected leaves; identify authored changes separately from inherited main integration. Independently back-read all new Git objects. Supply byte inverses for the finite source changes.
+
+### Execution/authority boundary
+Source-only Git object authoring and inert text/hash/tree work ONLY. No project/parser/compiler/AST/native/SQL/APT/test/build execution, no CI dispatch/rerun, no official GET, no ref/PR publication, no Ready/merge, no hosted read/mutation. #917/#1131 remain untouched. This source task does not reuse any consumed positive invocation or arm a new one.
+
+STOP after immutable delivery. Root will independently review; publication can be selected only after actual-main #4135/Production acceptance. Full new exact-head CI/Preview gates remain required. Actual fresh one-shot source verification and pilot-window extension are later explicit Root steps, not claimed by this integration.
+<!-- END VERBATIM ROOT RECEIPT 6826548986 -->
+
+### Root receipt 6826586679
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6826586679
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6826586679 -->
+## AA V1/A9-A1 — correction of one transcription error in Root task
+
+The author correctly refused to silently accept the malformed 43-character selector-test blob in A9 comment6826548986. Root independently re-read the selected actual-main tree77666e58d26538fb704389366b77e3a4a1903ac2 and the complete blob.
+
+Correct exact pin for `scripts/official-truth-v3-test-selection.test.mjs`: **bbc10fc9621e31c5af74421891608d3cdf27238d**, **7360 UTF-8 bytes**, SHA256 **edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730**. The erroneous string `bbc10fc9621e31c5af74421891608d3cdf2ac528d4d` in the original task is void. Byte length and SHA256 in that task were already correct.
+
+Use this actual main leaf unchanged. No source scope, execution authority, policy, selected parents or other pin changes. Preserve this correction together with the complete original task; continue the same session's finite SOURCE-ONLY integration.
+<!-- END VERBATIM ROOT RECEIPT 6826586679 -->

@@ -268,7 +268,7 @@ const BP1_READER_AA_PRESERVATION = Object.freeze({
   sources: Object.freeze({
     reader: Object.freeze({ bytes: 29611, blob: '933591ff7074c599dc5032f135103bd65f738314', sha256: 'ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2' }),
     physical: Object.freeze({ bytes: 17726, blob: 'bd995580bee6adb6b1a213b17a6001caa8f0aeff', sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),
-    probe: Object.freeze({ bytes: 20051, blob: '8db7b78650fcd783a75f8b45753e196b8c0fd0f0', sha256: '69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617' }),
+    probe: Object.freeze({ bytes: 20156, blob: 'df24e34575ef7d0ca211471b6a6a019f600871ec', sha256: 'a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f' }),
   }),
   // Immutable A3 evidence only. It is not an alternative accepted current layout.
   priorA3Layout: Object.freeze({
