@@ -1089,7 +1089,21 @@ export async function runComposedDevNative(t: TestContext): Promise<void> {
       const approvedFresh = await confirmFresh(lifetime, u, [{ command: stage, receipt: staged }, { command: approve, receipt: approved }])
       const history = await methodHistory(u.bootstrap.connection) as Record<string, unknown[]>
       assert.equal(history.revisions!.length, 1); assert.equal(history.heads!.length, 1); assert.equal(history.operations!.length, 2)
-      const native = await createM04NativeExecutors(u.cluster, lifetime); nativeAdapters.push(native)
+      const enqueueTimings: { id: number; kind: string; operation: string; operations: readonly Readonly<{
+        phase: string; elapsedMs: number; outcome: string; code: string | null;
+        commitAcknowledged?: boolean; commitDispatched?: boolean;
+      }>[] }[] = []
+      const native = await createM04NativeExecutors(u.cluster, lifetime, { async beforeDrain(call) {
+        if (enqueueTimings.length >= 32) return
+        // Existing wire metadata only: no SQL, parameters, identities or source bytes.
+        enqueueTimings.push({ id: call.id, kind: call.kind, operation: call.operation,
+          operations: (call.target?.operationDiagnostics ?? []).slice(-16).map(item => ({
+            phase: item.phase, elapsedMs: Math.ceil(item.elapsedMs), outcome: item.outcome,
+            code: item.code && /^[0-9A-Z]{5}$/.test(item.code) ? item.code : null,
+            ...(typeof item.commitAcknowledged === 'boolean' ? { commitAcknowledged: item.commitAcknowledged } : {}),
+            ...(typeof item.commitDispatched === 'boolean' ? { commitDispatched: item.commitDispatched } : {}),
+          })) })
+      } }); nativeAdapters.push(native)
       const method = await createMa1NativeExecutor(u.cluster, lifetime); methodAdapters.push(method)
       const input = m04Fixture('composed-dev1-one-research')
       const api = createV3PostgresDurableJobs({ binding: BINDING, registry: input.originals.registry, clock: input.clock,
@@ -1098,7 +1112,7 @@ export async function runComposedDevNative(t: TestContext): Promise<void> {
       const enqueueStarted = performance.now()
       const enqueued = await lifetime.run(() => api.enqueueRule(input.ruleInput, lifetime.signal))
       if (enqueued.status !== 'confirmed') console.error('COMPOSED_C03_ENQUEUE_DIAG', JSON.stringify({
-        status: enqueued.status, milliseconds: Math.ceil(performance.now() - enqueueStarted),
+        status: enqueued.status, milliseconds: Math.ceil(performance.now() - enqueueStarted), timings: enqueueTimings,
         jobs: { admitted: native.evidence.admitted, dispatched: native.evidence.dispatched,
           acknowledged: native.evidence.acknowledged, aborted: native.evidence.aborted, drained: native.evidence.drained,
           sqlCodes: native.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(0, 32),

@@ -106,9 +106,9 @@
   "currentRootReceiptPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 92092,
-      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
-      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939"
+      "bytes": 93164,
+      "sha256": "ce39c46c59a296c93bfc53ce8a144c3305d0264b8a042d9a1ac0f64225085e98",
+      "blob": "4679d83c48ce0a419e01e186a77319760cf216cb"
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
@@ -197,15 +197,15 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "blob": "28949cddd448ef7014d2438e40ad8b03c3bd0f4e",
-        "bytes": 625945,
-        "sha256": "38f69cc5c6b1ac516d4a160af27b18c48c8e55af07352885d5827bb27dc0ff7c"
+        "blob": "9b27309cd5f30b748e75711f92aff66a20d0f4c6",
+        "bytes": 627761,
+        "sha256": "4e83b8d66bf956cef82ad13ce31415ad78080f6a056326614ad22a5ad94079f7"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "blob": "b79d6610a6710bf0eb331a42b3042c64b323f369",
-        "bytes": 235837,
-        "sha256": "9eb221bb3e9ee67f7b660803a175c91461b6ff1f22b44404e19b7976868cedb0"
+        "blob": "19be372cfa94656dad8e08213e908a028ba9f930",
+        "bytes": 236406,
+        "sha256": "f8e905de99a9f3982c09e26b524aaf4bef0ea4c316bfbfced86b61bd5c22aa1b"
       }
     ],
     "collisionCount": 0,
@@ -225,15 +225,15 @@
     "noProjectParserCompilerOrCodeExecution": true,
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "bytes": 57226,
-      "sha256": "ce30d2ea7b40c398956d99e22ea743913589397f8673cbbffaa13684dfa03f24",
-      "blob": "3482ec7e82627f8825d57732568ee3c47db8b827"
+      "bytes": 57095,
+      "sha256": "4cfd3d6473098bfbb58358d684727ebbc58f54dd0ed3a5ed9526e66829ac6753",
+      "blob": "a896dfde9c45f6688674e211f149068014a467e6"
     },
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 92092,
-      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
-      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939"
+      "bytes": 93164,
+      "sha256": "ce39c46c59a296c93bfc53ce8a144c3305d0264b8a042d9a1ac0f64225085e98",
+      "blob": "4679d83c48ce0a419e01e186a77319760cf216cb"
     },
     "pins": [
       {
@@ -2339,33 +2339,26 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "BOUNDED_EXISTING_FAILURE_METADATA",
+    "revision": "STRICT_OID_FIX_AND_EXISTING_WIRE_TIMING",
     "parent": {
-      "commit": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
-      "tree": "0f9b95bbdcea43509ed100c418c1af1d201da39c"
+      "commit": "c2ddea097b181162cb8df4f07986358750dad912",
+      "tree": "3b6463ad04b98596874291127e1a2cc365f7b68e"
     },
     "changedFiles": 5,
     "originalLeafCount": 9545,
     "unchangedLeaves": 9540,
     "added": 0,
     "deleted": 0,
-    "hm04AssertionPredicatesUnchanged": true,
-    "composedEnqueueAssertionUnchanged": true,
-    "allSqlUnchanged": true,
-    "all66ConsumedComposedPinsUnchanged": true,
+    "hm04Change": "strict JSON OID string, same exact grantor and flags",
+    "composedPredicateUnchanged": true,
+    "allSqlAnd66ConsumedPinsUnchanged": true,
     "original31GroupsUnchanged": true,
-    "maximumCatalogDifferenceRows": 8,
-    "maximumFieldsPerRow": 16,
-    "maximumExistingAdapterCallsReported": 32,
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
   },
   "previousIntegrationReference": {
-    "ref": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
-    "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
-    "bytes": 173505,
-    "sha256": "c433c755c05c3e6387473ed61a969127e40d0a70d03fb475b1ee0456243bb0a6",
-    "blob": "22c47a5678d36ea71921ce48089a6a62668adbbf"
+    "parent": "c2ddea097b181162cb8df4f07986358750dad912",
+    "manifestBlob": "a2751e444ab84e93cd6522d6b23d37f185b09c3b"
   }
 }

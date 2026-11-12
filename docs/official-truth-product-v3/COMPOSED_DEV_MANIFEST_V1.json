@@ -1176,9 +1176,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 92092,
-      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939",
-      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
+      "bytes": 93164,
+      "blob": "4679d83c48ce0a419e01e186a77319760cf216cb",
+      "sha256": "ce39c46c59a296c93bfc53ce8a144c3305d0264b8a042d9a1ac0f64225085e98",
       "role": "existing proof; one HMT recovery source pin updated, all test code unchanged"
     },
     {
@@ -1337,11 +1337,12 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "BOUNDED_C03_EXISTING_ADAPTER_FAILURE_REPORT",
-    "parent": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
-    "predicateAndRuntimeUnchanged": true,
-    "noAdditionalSqlOrIo": true,
+    "revision": "EXISTING_WIRE_PHASE_FAILURE_TIMINGS",
+    "parent": "c2ddea097b181162cb8df4f07986358750dad912",
+    "predicatesSqlAndBudgetsUnchanged": true,
+    "existingBeforeDrainHookOnly": true,
     "maximumCallsReported": 32,
+    "maximumPhasesPerCall": 16,
     "all66ConsumedPinsUnchanged": true,
     "runtime": "NOT_RUN",
     "hostedApplied": false,
@@ -1397,10 +1398,7 @@
     }
   },
   "previousIntegrationReference": {
-    "ref": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
-    "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-    "bytes": 57270,
-    "sha256": "3bfc1bf16c7d3b4b53abc5abcde5e45a07e9db7880d32407c4f4f1b505f1b653",
-    "blob": "a641b5f412a3badfdc5dfbc99760ad3673e90a7b"
+    "parent": "c2ddea097b181162cb8df4f07986358750dad912",
+    "manifestBlob": "3482ec7e82627f8825d57732568ee3c47db8b827"
   }
 }

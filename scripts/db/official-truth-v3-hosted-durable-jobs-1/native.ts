@@ -79,8 +79,9 @@ function unchangedPredecessors(beforeText: string, afterText: string) {
   const additions = (after.memberships ?? []).filter((m: Record<string, unknown>) => !priorKeys.has(String(m.roleid) + ':' + String(m.member) + ':' + String(m.grantor)))
   const creator = after.roles.find((r: Record<string, unknown>) => r.rolname === 'postgres').oid
   const jobs = new Set(after.roles.filter((r: Record<string, unknown>) => ['ot_v3_jobs_owner', 'ot_v3_jobs_caller'].includes(String(r.rolname))).map((r: Record<string, unknown>) => r.oid))
-  assert.equal(additions.length, 2)
-  assert.ok(additions.every((m: Record<string, unknown>) => jobs.has(m.roleid) && m.member === creator && m.grantor === 10
+  assert.equal(additions.length, 2, 'predecessor membership addition count')
+  // PostgreSQL catalog OIDs remain their exact decimal JSON strings.
+  assert.ok(additions.every((m: Record<string, unknown>) => jobs.has(m.roleid) && m.member === creator && m.grantor === '10'
     && m.admin_option === true && m.inherit_option === false && m.set_option === false), 'only two exact automatic bootstrap additions')
 
 }
@@ -636,6 +637,12 @@ function nativeFailure(error: unknown, depth = 0): Readonly<{ kind: string; code
   if (error instanceof assert.AssertionError) {
     // Bounded catalog metadata only; never source bodies, credentials or raw
     // assertion messages. All original predicates and throws remain intact.
+    const membershipFailure = [
+      ['all predecessor membership rows remain exact', 'predecessor_membership_rows'],
+      ['predecessor membership addition count', 'predecessor_membership_addition_count'],
+      ['only two exact automatic bootstrap additions', 'predecessor_membership_bootstrap_options'],
+    ].find(([message]) => error.message.startsWith(message!))
+    if (membershipFailure) return { kind: 'assertion', code: membershipFailure[1]! }
     const categories = ['schemas','relations','columns','constraints','indexes','functions',
       'triggers','policies','roles','dependencies','defaults'] as const
     const category = categories.find(name => error.message.startsWith('candidate cannot change predecessor ' + name))
