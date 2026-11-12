@@ -1,3 +1,85 @@
+# Hosted Method Authority 1 — current R3 dependency-integration handoff
+
+**12 November 2026. SOURCE CANDIDATE / ALL EXECUTION NOT_RUN / STOP.**
+
+Unchanged exact author: **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**.
+Unchanged actual session: `/root/hosted_method_authority_writer_g1`. No Cursor session is claimed. No child agent was used for this bounded integration.
+
+Root's explicit [R3 amendment6822373048](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822373048) selects only the dependency integration described here. The full original Task, R1 and R2 remain an exact prefix; the complete R3 amendment and URL are appended verbatim. The full previous R1/R2 Handoff, including its complete preserved V1 history, is retained verbatim below.
+
+## Exact current ancestry and scope
+
+The immutable successor has ordered parents:
+
+1. HMA1 R1/R2 `5d576988167c17879f64562efa66c78dc37b8219`, tree `7da693e885482c9ad28919f46c3c744653957261`.
+2. Explicitly selected PG1 R3 `e464f6d8ffac77a124d5ab28637c7435337b222e`, tree `693400d99182fcf5bb48449cceb4fc2158c33c40`.
+
+Both histories are retained. No ref is rewritten or published. All seven PG1 package paths are copied byte-for-byte from that exact R3. Four differ from the first parent's R2 dependency: PG1 Native, Task, Handoff and Manifest.
+
+Only the three HMA1 documentation files Task/Handoff/Manifest additionally change. Thus the complete first-parent delta is exactly **seven existing-file changes**, with9,484 first-parent leaves unchanged, zero additions/deletions and9,491 total leaves.
+
+Against PG1 R3, the overall HMA1 scope remains **the same eight HMA1 additions and the single .github/workflows/ci.yml modification**. All9,482 other PG1-R3 leaves remain identical. Final commit/tree and the complete nontruncated leaf comparison are supplied by the immutable delivery receipt. The manifest is pinned externally to avoid self-reference.
+
+## Implementation and CI preserved exactly
+
+R3 makes **no HMA1 implementation or CI change**. The four HMA1 code files, Recovery document and current CI are exactly the first-parent blobs below:
+
+| Path | Git blob | UTF8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql` | `9c17260c202e430e4c779e47fee0a62c047c4d87` | 69705 | `edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0` |
+| `scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql` | `ea8e9fb7008808819dc1b3d85719c5af96c2f708` | 37179 | `c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a` |
+| `scripts/db/official-truth-v3-hosted-method-authority-1/native.ts` | `aea19da909f42509a5bb57e3cbdf825583deec45` | 54554 | `66af779ba1b0a639487f7ac9a270aedc8826f62195e5de23c3dec17dc3212474` |
+| `lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts` | `a29be615b12018567415131cc4331ca1071f577e` | 346 | `0cfcc4ce2b72d961d142fad5933ba860eac33fe5f5719409712b9a26b3999d41` |
+| `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md` | `4c03b0205cf826199ef907d892f6e1093f1c4219` | 8731 | `02d9fd6fae9f12fb05071836e7f58450e0a0c9a827d4af6707be43ff388a44f5` |
+| `.github/workflows/ci.yml` | `38ef34d4ace40047577adde149b366767ce096d1` | 22234 | `a348d9816b70403b750da104d15ae09ae6b3c82451b57a046a763c1c410ad5ec` |
+
+The eight HMA1 R2 result aliases remain unchanged, as do every SQL function declaration/body, guard, grant, assertion, proof group, query, parameter, budget and owned-cleanup path. Both source-inverse descriptions and all original MA1/PG1/reused-source pins remain in the manifest.
+
+The full verify-only PG17 provisioning step remains exactly CI blob `38ef34d4ace40047577adde149b366767ce096d1`. Its unchanged complete insertion and Unified Diff remain in the manifest. R3 does not change package selection, signature/TLS verification, service/cluster suppression, selector/path/version checks, existing commands, companion jobs, permissions, aggregation or final gates.
+
+## Exact selected PG1 R3 package
+
+Root independently source-reviewed PG1 R3 in [6822329375](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375), published it at the exact second parent, and reported fresh [CI43209347822 / #4124](https://github.com/Jetnity/jetnity/actions/runs/43209347822) **pending at the R3 task checkpoint**. This author read that Root source-review receipt and the exact immutable commit/tree/package blobs; it did not execute or independently accept CI.
+
+PG1 R3 changes only four output aliases in its Native and the corresponding Task/Handoff/Manifest provenance. Installer, recovery and wrapper remain byte-identical. Its older R2 #4122 failure is preserved as failed historical evidence. The new source review is **SOURCE_PASS**, not execution, Ready, merge or install acceptance.
+
+| Path | Git blob | UTF8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md` | `8dc967afc88543ad6b812879eb693a06b44d41ee` | 26083 | `fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc` |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json` | `a4df211a2021fa0888cb5b93663eb105dd29f2a1` | 21965 | `7569c44125d446de5990cc5b3a919b614f288413b01dda27e0c94e7127d728e3` |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md` | `c8bbf5b9cee4430b848cf57aa768c35b92388da5` | 15253 | `4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396` |
+| `lib/readiness/official-truth-v3-private-owner-guards-1.test.ts` | `f18e5aebc4ea6725f631e5ec7316da9f659de024` | 397 | `601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql` | `9a8144e27405f93b9c0e5d003923efe8883bb4b4` | 10945 | `3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/native.ts` | `21886dbcbcaea1e04817df3fdd7eb7344a44c460` | 42247 | `2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql` | `cd5a53120d4eb77adb31d1cf63b467454f7ccd61` | 6452 | `869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b` |
+
+This R3 integration explicitly supersedes the earlier current-dependency statements that R3 was not included; those statements are retained only inside dated historical Handoffs below. No further dependency is inferred or silently selected.
+
+## Current external gates — attributed Root checkpoint
+
+Root's HMA1 R3 task additionally records:
+
+- The separate [Auth single-switch diagnostic6822302560](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822302560) is source preparation only. It does not accept the unknown key or change an Auth configuration/expectation.
+- AA A5's actual verify job failed two pre-existing native proofs, identified by Root as R3 commit-bound57P01 with absent receipt and R2 independent.ok false. Those failures are not a positive source observation. Run0 remains UNARMED.
+- HMA1 has had no CI execution or hosted apply. Root's final independent HMA1 source/CI review remains underway.
+- Data-API settings recorded in the prior E18 checkpoint remain separate from effective-caller and actual signed Owner proof.
+
+These are attributed live-work checkpoints, not targets for this integration. They authorize no Auth edit, AA rearm/source GET, unrelated native change, guard relaxation, platform retry or operational action. The original #917/#1131 restrictions are unchanged.
+
+## Required next gate and truthful status
+
+Root may explicitly publish a reviewed stacked Draft for ordinary CI. The author does not publish it. **Ready, merge or installation require actual PG1/main integration and all final-head source, CI, Core/native, hygiene/build, companion, Preview, thread and exact-target gates.** Any later base change must be incorporated explicitly with a new head and full re-gating.
+
+P1 unresolved: PG1 execution acceptance is not established; HMA1 candidate/PG17 provisioning/full Core compatibility remain NOT_RUN; separate Auth and AA native failures are open external gates; no actual hosted install/readback or signed Owner request. Final source review remains Root-owned. P2: final accepted main/dependency and complete exact-head gates remain. No source defect is declared repaired by this documentation-only integration beyond the explicitly copied independently reviewed PG1 source correction.
+
+Only immutable Git reads/writes and pure source/metadata comparisons occurred. No project/parser/compiler/native/SQL/APT/test/build/CI/hosted execution, source GET, credentials, ref/PR publication, Ready or merge. No S1/M04 or follow-on was selected.
+
+**Hosted installation unproven. Actual signed Owner request absent. Public CH→DE launch false. Author STOP after delivery.**
+
+---
+
+## Historical HMA1 R1/R2 handoff — 12 November 2026, preserved verbatim
+
 # Hosted Method Authority 1 — current R1/R2 source handoff
 
 **12 November 2026. SOURCE CANDIDATE / ALL EXECUTION NOT_RUN / STOP.**

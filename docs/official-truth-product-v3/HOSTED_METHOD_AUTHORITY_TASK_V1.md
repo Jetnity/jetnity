@@ -141,3 +141,32 @@ The installer, recovery SQL and wrapper remain byte exact V1; the recovery docum
 PG1's separate R3 task is [6822141580](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580); it is not permission to silently substitute a new dependency. Root will explicitly select the final PG1 integration before final acceptance. The new independent Auth configuration CI blocker remains outside HMA1 scope.
 
 Source-only immutable Git objects; no project/parser/compiler/native/SQL/APT/test/build/CI execution, hosted mutation, ref/PR publication, Ready or merge. Deliver exact narrow delta and complete manifest/tree evidence, then STOP. All original platform boundaries and final exact-head re-gating remain.
+
+
+---
+
+## Amendment R3 — 12 November 2026
+
+Source: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822373048
+
+## Technical Lead — HMA1 amendment R3 / bind the reviewed PG1 correction
+
+**12 November 2026.** Same original author/session, **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1** /root/hosted_method_authority_writer_g1. This is an explicit dependency integration, not an author-selected follow-on or execution permission.
+
+Root received HMA1 R1/R2 candidate `5d576988167c17879f64562efa66c78dc37b8219`, tree `7da693e885482c9ad28919f46c3c744653957261`, two parents2f412904edc188bebcc7287e8e3cdae5bf1a9c5a and9ed5b60d7ca77974864a32a03ed029fc51234e22. Root has read the entire CI insertion, independently confirmed its exact inverse and the eight native aliases; full final source review remains underway. No HMA1 CI or hosted apply occurred.
+
+PG1 R3 is now independently source-reviewed in [6822329375](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375), published by Root at `e464f6d8ffac77a124d5ab28637c7435337b222e`, tree `693400d99182fcf5bb48449cceb4fc2158c33c40`, with fresh CI `43209347822`/#4124 pending. It changes only four result aliases in PG1 Native and exact Task/Handoff/Manifest provenance. PG1 installer/recovery/wrapper remain byte exact. Its previous R2 test failure is not accepted.
+
+### Exact integration scope
+
+Create a successor with **first parent5d576988167c17879f64562efa66c78dc37b8219 and second parent e464f6d8ffac77a124d5ab28637c7435337b222e**. Preserve both histories, no refs or force rewrite.
+
+Copy all seven PG1 package paths byte exact from R3 (four differ from HMA1's older dependency). Keep all HMA1 code, Recovery document and final CI blob `38ef34d4ace40047577adde149b366767ce096d1` byte exact. Change only HMA1 Task/Handoff/Manifest to append this R3 and URL verbatim, retain all earlier history, accurately update ancestry/dependency pins and retain NOT_RUN/final-base gates. Do not claim PG1 execution acceptance before actual Root evidence.
+
+Total overall HMA1 scope against PG1 R3 remains the same eight additions plus .github/workflows/ci.yml; every other leaf unchanged. First-parent delta is exactly four PG1 paths and three HMA1 documentation paths. No other implementation, CI, SQL, guard, proof, budget or Auth change.
+
+The separate Auth single-switch diagnostic [6822302560](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822302560) is source preparation only and does not accept the key. AA A5's actual verify job has failed two pre-existing native proofs (R3 commit-bound57P01 with absent receipt; R2 independent.ok false). That is not positive source observation; Run0 remains UNARMED. These are current external gates to record as attributed history, not scope for HMA1 edits.
+
+Root may explicitly publish a reviewed stacked Draft for ordinary CI only. Ready/merge/install still require actual PG1/main integration and all final-head CI/Preview/thread/source/target gates; a later base change gets explicit new head and full re-gating.
+
+Deliver full exact commit/tree/path/pin proof, task preservation and truthful NOT_RUN then STOP. **No local/project/parser/compiler/native/SQL/APT/test/build/CI/hosted execution, source GET, credentials, ref/PR publication, Ready or merge.** Original #917/#1131 boundaries remain unchanged.
