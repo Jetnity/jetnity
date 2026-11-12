@@ -251,6 +251,47 @@ test('strict report rejects raw additions; all maximum finite fields remain unde
     startedAt: '2026-10-14T10:00:00.000Z', completedAt: '2026-10-14T10:00:10.000Z', completeBodyBytes: 65_536, indicators }))
 })
 
+// AA TASK V1/A3: preserve every original Reader byte while pinning exactly the
+// two independently reviewed additions. Byte offsets are fixed, not marker searches.
+const BP1_READER_PATH = 'lib/readiness/official-truth-server-owned-retrieval.ts'
+const BP1_READER_AA_PRESERVATION = Object.freeze({
+  originalBytes: 46_071,
+  originalBlob: '5998fdea54d3337fb68cd7111460b59e43a3cef7',
+  originalSha256: 'b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994',
+  currentBytes: 65_490,
+  currentBlob: '2b14953968da35ca47b272fd67a1a912613b8e6d',
+  currentSha256: 'a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143',
+  importsStart: 960, importsEnd: 1_650, importsBytes: 690,
+  importsSha256: 'ee791811f307ed420b4c41c5d8fa812a0655d7b960ec1d0c0996ae73463be95f',
+  appendixStart: 46_761, appendixEnd: 65_490, appendixBytes: 18_729,
+  appendixSha256: 'b5ebcb13fbeb6ec1bb3538233f2a26e81bea575b1fc7bfa088e3530a48b5ea32',
+})
+
+/** Local test predicate only. Returns the complete pinned original or null. */
+function bp1PreservedOriginalReader(bytes: Buffer): Buffer | null {
+  const pin = BP1_READER_AA_PRESERVATION
+  if (bytes.length !== pin.currentBytes
+    || pin.importsEnd - pin.importsStart !== pin.importsBytes
+    || pin.appendixStart !== pin.originalBytes + pin.importsBytes
+    || pin.appendixEnd !== pin.currentBytes
+    || pin.appendixEnd - pin.appendixStart !== pin.appendixBytes) return null
+  const imports = bytes.subarray(pin.importsStart, pin.importsEnd)
+  const appendix = bytes.subarray(pin.appendixStart, pin.appendixEnd)
+  if (imports.length !== pin.importsBytes || appendix.length !== pin.appendixBytes
+    || createHash('sha256').update(imports).digest('hex') !== pin.importsSha256
+    || createHash('sha256').update(appendix).digest('hex') !== pin.appendixSha256) return null
+  const original = Buffer.concat([
+    bytes.subarray(0, pin.importsStart),
+    bytes.subarray(pin.importsEnd, pin.appendixStart),
+  ])
+  if (original.length !== pin.originalBytes
+    || createHash('sha1').update('blob ' + original.length + '\0').update(original).digest('hex') !== pin.originalBlob
+    || createHash('sha256').update(original).digest('hex') !== pin.originalSha256) return null
+  if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== pin.currentBlob
+    || createHash('sha256').update(bytes).digest('hex') !== pin.currentSha256) return null
+  return original
+}
+
 test('protected transport/profile/application remain byte-identical, closed and unreachable from app', () => {
   const pins = {
     'lib/readiness/official-truth-server-owned-retrieval.ts': '5998fdea54d3337fb68cd7111460b59e43a3cef7',
@@ -261,7 +302,9 @@ test('protected transport/profile/application remain byte-identical, closed and 
     'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': '975206af1755dba3282193f456d1f92d92f8d0ad',
   }
   for (const [path, expected] of Object.entries(pins)) {
-    const bytes = readFileSync(path)
+    const currentBytes = readFileSync(path)
+    const bytes = path === BP1_READER_PATH ? bp1PreservedOriginalReader(currentBytes) : currentBytes
+    assert.ok(bytes, path)
     assert.equal(createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'), expected, path)
   }
   assert.equal(applicationPilotEnabled(), false); assert.equal(applicationContract('bp1', 'anything'), null)
@@ -281,6 +324,44 @@ test('protected transport/profile/application remain byte-identical, closed and 
   assert.doesNotMatch(probe, /node:https|node:dns|fetch\s*\(|axios|process\.env|writeFile|console\.|sourceSnapshot|sourceContentHash/)
 })
 
+
+test('AA A3 exact Reader preservation refuses original, addition and boundary mutations in memory', () => {
+  const bytes = readFileSync(BP1_READER_PATH)
+  const pin = BP1_READER_AA_PRESERVATION
+  const original = bp1PreservedOriginalReader(bytes)
+  assert.ok(original, 'exact reviewed Reader must reconstruct the complete pinned original')
+  assert.equal(original.length, pin.originalBytes)
+  const imports = bytes.subarray(pin.importsStart, pin.importsEnd)
+  const appendix = bytes.subarray(pin.appendixStart, pin.appendixEnd)
+  const flip = (offset: number): Buffer => {
+    const changed = Buffer.from(bytes)
+    changed[offset] = changed[offset]! ^ 1
+    return changed
+  }
+  const mutants: [string, Buffer][] = [
+    ['altered original prefix', flip(0)],
+    ['altered original final byte', flip(pin.appendixStart - 1)],
+    ['altered import addition', flip(pin.importsStart + 17)],
+    ['altered appendix addition', flip(pin.appendixStart + 17)],
+    ['missing import addition', Buffer.concat([bytes.subarray(0, pin.importsStart), bytes.subarray(pin.importsEnd)])],
+    ['missing appendix addition', bytes.subarray(0, pin.appendixStart)],
+    ['duplicated import addition', Buffer.concat([bytes.subarray(0, pin.importsEnd), imports, bytes.subarray(pin.importsEnd)])],
+    ['duplicated appendix addition', Buffer.concat([bytes, appendix])],
+    ['misplaced import addition', Buffer.concat([
+      bytes.subarray(0, pin.importsStart), bytes.subarray(pin.importsEnd, pin.importsEnd + 1),
+      imports, bytes.subarray(pin.importsEnd + 1),
+    ])],
+    ['misplaced appendix addition', Buffer.concat([
+      bytes.subarray(0, pin.appendixStart - 1), appendix, bytes.subarray(pin.appendixStart - 1, pin.appendixStart),
+    ])],
+    ['extra trailing byte', Buffer.concat([bytes, Buffer.from('\n')])],
+    ['unextended original is not the selected current Reader', original],
+  ]
+  for (const [name, changed] of mutants) {
+    // Boolean-only assertion output; do not print the complete source buffers.
+    assert.equal(bp1PreservedOriginalReader(changed) === null, true, name)
+  }
+})
 
 test('cold imports and real CLI default/plan/invalid process paths are network-free', () => {
   const block = `const https = require('node:https'), dns = require('node:dns');
