@@ -193,7 +193,7 @@ export async function startOwnedTlsPgFixture(t: TestContext) {
     const guard = await inspector.query(`SELECT current_user AS owner,current_setting('data_directory') AS directory,
       pg_catalog.inet_server_addr()::text AS address,pg_catalog.inet_server_port() AS port,
       (SELECT ssl FROM pg_catalog.pg_stat_ssl WHERE pid=pg_catalog.pg_backend_pid()) AS tls`)
-    assert.deepEqual(guard.rows, [{ owner: ADMIN, directory: data, address: '127.0.0.1', port, tls: true }])
+    assert.deepEqual(guard.rows, [{ owner: ADMIN, directory: data, address: '127.0.0.1/32', port, tls: true }])
     for (const entry of Object.values(V3_PG_LOGINS)) {
       await inspector.query(`CREATE ROLE ${entry.login} LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 2 PASSWORD '${loginPassword}'`)
     }

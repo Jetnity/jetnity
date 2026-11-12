@@ -26,9 +26,9 @@ import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 const HRS_FIXTURE_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-  bytes: 196627,
-  blob: 'c46020228bfd23f0ecf60703e6e91e8e8020ae9e',
-  sha256: '160fafafe0355a55ce0db7cbffaf22f7ec8dd57aeda04d8e52140cd0cacaf36e',
+  bytes: 197456,
+  blob: 'cabb74731ee7e344d1df1bf7649ff678bdc09e5c',
+  sha256: '96cd558455dfecd24170e46f18279a7160ef7790f31ffe90f4c20ac212fc3576',
 } as const
 
 function isPinnedHrsFixture(path: string, bytes: Buffer): boolean {

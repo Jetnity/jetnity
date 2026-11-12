@@ -17,7 +17,7 @@
     "automaticFollowOn": false
   },
   "author": {
-    "name": "Jetnity Official Truth Composed Dev/HDP FIX2 Assembly — Generation2",
+    "name": "Jetnity Official Truth Composed Dev/HDP FIX2 Assembly \u2014 Generation2",
     "actualSession": "/root/hmt_diagnosis",
     "rootSelectedAssemblySession": true,
     "previousAssemblySession": "/root/source_and_schema",
@@ -32,12 +32,12 @@
     },
     "a1": {
       "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6827347738",
-      "fullText": "## COMPOSED-DEV1 / A1 — existing ownership hook clarification\nRoot independently reread accepted main's complete existing test-lifetime.ts blob b1a81a0f63fb0debaffa4db739adbb483ac1efc5 and its installConnectOwnership() implementation. The required unchanged shared OwnedTestLifetime intentionally wraps LocalPgConnection.connect for its registered owned clusters and restores the original through its restoration stack.\n\nFor task6827211581, **this one existing unchanged installConnectOwnership() hook is explicitly selected**, including its existing connection-close/query/commit wrappers and restoration. The general prohibition on process-global mutation excludes this required reviewed ownership mechanism only. No additional global/env/argv/prototype/source mutation or patchConnect fault injection is selected. Assert exact original LocalPgConnection.connect restoration after unconditional disposal.\n\nUse the existing lifetime's actual terminal ledger for started/settled/pending/connections/closed and fixed budgets; any test-instance-only budget observation must preserve all original promise registration, actual calls, cancellation and teardown, including already-started promises. Do not weaken/reimplement the helper or claim a hand-maintained count proves its actual connections. No new source path or changed prerequisite, no execution or hosted authorization. All other task instructions and STOP remain exact.",
+      "fullText": "## COMPOSED-DEV1 / A1 \u2014 existing ownership hook clarification\nRoot independently reread accepted main's complete existing test-lifetime.ts blob b1a81a0f63fb0debaffa4db739adbb483ac1efc5 and its installConnectOwnership() implementation. The required unchanged shared OwnedTestLifetime intentionally wraps LocalPgConnection.connect for its registered owned clusters and restores the original through its restoration stack.\n\nFor task6827211581, **this one existing unchanged installConnectOwnership() hook is explicitly selected**, including its existing connection-close/query/commit wrappers and restoration. The general prohibition on process-global mutation excludes this required reviewed ownership mechanism only. No additional global/env/argv/prototype/source mutation or patchConnect fault injection is selected. Assert exact original LocalPgConnection.connect restoration after unconditional disposal.\n\nUse the existing lifetime's actual terminal ledger for started/settled/pending/connections/closed and fixed budgets; any test-instance-only budget observation must preserve all original promise registration, actual calls, cancellation and teardown, including already-started promises. Do not weaken/reimplement the helper or claim a hand-maintained count proves its actual connections. No new source path or changed prerequisite, no execution or hosted authorization. All other task instructions and STOP remain exact.",
       "sha256": "114311a732a184d5077a51df3ba946358556dc5f45a50f7beca6b0de07e7f8a1"
     },
     "a2": {
       "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6827822422",
-      "fullText": "## COMPOSED-DEV1 / A2 — concrete total-connection bound correction\nRoot selects one resource-bound correction to task6827211581/A16827347738: **maximum384 total actual connections**, replacing128. This is an aggregate count across both owned clusters, not a concurrent-connection reinterpretation.\n\nThe original required adapters open fresh actual target/control connections, and the unchanged commit-deadline path additionally owns guard/control connections. The mandatory queue/worker plus MA1 proof chain already has a source-level lower bound above128 before completing S1 and fixture/revoke work. Reusing those reviewed paths is required; pooling away fresh identities, suppressing COMMIT guards or substituting executors is not permitted.\n\n384 is a finite selected ceiling, not measured consumption or a PASS. The actual shared terminal ledger must report every connection and require closed=connections<=384. Keep exactly2clusters,4096 registered operations,180000ms effects,35000ms total drain and240000ms wrapper. Every fresh identity, full-tuple confirmation, genuine SQL transaction/COMMIT, primary-error preservation and unconditional actual exit/drain obligation remains unchanged. No new file or prerequisite changes, no runtime/hosted execution. Preserve this full clarification in Task/Handoff/Manifest as current authority and label the earlier128 as superseded, not satisfied. Continue the same six-file source task.",
+      "fullText": "## COMPOSED-DEV1 / A2 \u2014 concrete total-connection bound correction\nRoot selects one resource-bound correction to task6827211581/A16827347738: **maximum384 total actual connections**, replacing128. This is an aggregate count across both owned clusters, not a concurrent-connection reinterpretation.\n\nThe original required adapters open fresh actual target/control connections, and the unchanged commit-deadline path additionally owns guard/control connections. The mandatory queue/worker plus MA1 proof chain already has a source-level lower bound above128 before completing S1 and fixture/revoke work. Reusing those reviewed paths is required; pooling away fresh identities, suppressing COMMIT guards or substituting executors is not permitted.\n\n384 is a finite selected ceiling, not measured consumption or a PASS. The actual shared terminal ledger must report every connection and require closed=connections<=384. Keep exactly2clusters,4096 registered operations,180000ms effects,35000ms total drain and240000ms wrapper. Every fresh identity, full-tuple confirmation, genuine SQL transaction/COMMIT, primary-error preservation and unconditional actual exit/drain obligation remains unchanged. No new file or prerequisite changes, no runtime/hosted execution. Preserve this full clarification in Task/Handoff/Manifest as current authority and label the earlier128 as superseded, not satisfied. Continue the same six-file source task.",
       "sha256": "2c16ed495eeeef0ce4b15012d5a7f126b6fb47db0b9bd49271662c9321567aec"
     },
     "order": [
@@ -414,9 +414,9 @@
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-      "bytes": 22433,
-      "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
-      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+      "bytes": 30699,
+      "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
+      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
     },
     {
       "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
@@ -1177,9 +1177,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "0b77ae7de6cf27d9a4ffdbbcd5d352ba58d49eb8",
+      "blob": "a0d7ed3543ef7d92fff39e4a79cd56d08c6b2907",
       "bytes": 100410,
-      "sha256": "0e6ae62af769f697849396db64c30e911fc5ee90fe6b798f6a4f4e20317ae826"
+      "sha256": "c1f80020a84b56ac5487e45a6ae16f6fa9d8b0f8c4baee50f15ea3d4cdaa74b2"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1223,7 +1223,7 @@
     },
     "commit": "a686e608f597ffa82d44fc9d3992b9b566b89688",
     "author": {
-      "name": "Jetnity Official Truth V3 Composed Dev Proof1 — Codex Generation1",
+      "name": "Jetnity Official Truth V3 Composed Dev Proof1 \u2014 Codex Generation1",
       "actualSession": "/root/human_method_transport_writer_g1",
       "sameReachableSessionAsHmt1": true,
       "rootOwnsAcceptance": true
@@ -1337,18 +1337,17 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "CI4159_MINIMAL_SOURCE_CORRECTIONS",
-    "parent": "1dba7bd5e5ba40706d8a7418a5dc494b23f0b933",
+    "revision": "CI4160_PASSIVE_DIAGNOSTIC",
+    "parent": "5637c689398f944eab228d9797a121793a745ffa",
     "sourceRebindings": [
       {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "before": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
-        "after": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd"
+        "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+        "before": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+        "after": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c"
       }
     ],
     "originalOperationsAssertionsBudgetsUnchanged": true,
-    "diagnosticExpressionPins": "All 14 current diagnostic expressions unchanged.",
-    "compatibility": "The original completely absent HRS branch remains accepted; separate HRS Native verifies the installed branch.",
+    "diagnosticExpressionPins": "All 14 diagnostic expressions unchanged.",
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
@@ -1403,7 +1402,7 @@
     }
   },
   "previousIntegrationReference": {
-    "parent": "1dba7bd5e5ba40706d8a7418a5dc494b23f0b933",
-    "manifestBlob": "0240872067e0f8daedbda21c0a204d1592a0d8f1"
+    "parent": "5637c689398f944eab228d9797a121793a745ffa",
+    "manifestBlob": "92eb448c3c84835ce2d92e87ff75db479ea366c1"
   }
 }

@@ -61,8 +61,8 @@
       "mode": "100644",
       "type": "blob",
       "bytes": 60316,
-      "sha256": "8feb21f40f19e22d6c7caeed2929ee4e4881991dff0f484b3dff90048adb393f",
-      "gitBlobSha1": "79ce6820c1d26eacb9d05147911457fd19a73bf8"
+      "sha256": "8832e54a1d3365f7bf8e46028528e4f3036641ef9f67ba3eb84f4b8a149be722",
+      "gitBlobSha1": "cbf41e504206afb805aef1cbc33f2b1e6bb802be"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
@@ -122,10 +122,10 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
-      "commit": "b26c3a5ed0a16ef6d5c768a09391cfaa0412625b",
-      "blob": "35442ef5d863a8a1bdbeb812e4aa2c1596d2b898",
+      "commit": "96cd022a5c9e1814ab94d0593b640d755d41eead",
+      "blob": "3337dac96e0a22622625477123b48a9868ed6e97",
       "bytes": 62251,
-      "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e",
+      "sha256": "228e074a0fd6bb6b8e7b7480edb67666d6ce0a8f8909f6ce36380bc9e36f4297",
       "role": "selected synthetic setup pattern source; not imported/executed"
     },
     {
@@ -148,11 +148,11 @@
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
-      "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+      "commit": "96a9276bfab2e9aec9dd85a1c64ec447c9bfc3fd",
+      "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
       "mode": "100644",
       "type": "blob",
-      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b",
       "role": "preserved shared source dependency"
     },
     {
@@ -202,7 +202,7 @@
     },
     {
       "relativePath": "../official-truth-v3-hosted-method-authority-1/native.ts",
-      "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e"
+      "sha256": "228e074a0fd6bb6b8e7b7480edb67666d6ce0a8f8909f6ce36380bc9e36f4297"
     },
     {
       "relativePath": "../official-truth-v3-private-owner-guards-1/install-candidate.sql",
@@ -214,7 +214,7 @@
     },
     {
       "relativePath": "../official-truth-integrated-pilot-1/pg-wire.ts",
-      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
     },
     {
       "relativePath": "../official-truth-atomic-version-refresh-1/test-lifetime.ts",

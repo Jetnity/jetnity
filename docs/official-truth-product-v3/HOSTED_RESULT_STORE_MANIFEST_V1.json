@@ -99,9 +99,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "c46020228bfd23f0ecf60703e6e91e8e8020ae9e",
-      "bytes": 196627,
-      "sha256": "160fafafe0355a55ce0db7cbffaf22f7ec8dd57aeda04d8e52140cd0cacaf36e"
+      "blob": "cabb74731ee7e344d1df1bf7649ff678bdc09e5c",
+      "bytes": 197456,
+      "sha256": "96cd558455dfecd24170e46f18279a7160ef7790f31ffe90f4c20ac212fc3576"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -119,9 +119,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "7546d5be9cc494d6b7f81e6ff6dca6a7842c9cf8",
+      "blob": "154a4bb27cd11bb6a6424c7415a81416e585220f",
       "bytes": 643618,
-      "sha256": "2a59fc74f72df86af2dd5dd352c8bf9d3488390308b8d3ea35299123c7a82da5"
+      "sha256": "b4b8f1ad5b0847aa84ea2a00ae57f313ce63735297164d522962be1c2c98e0b6"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
@@ -167,9 +167,9 @@
   },
   "sourceClosure": {
     "native": {
-      "blob": "c46020228bfd23f0ecf60703e6e91e8e8020ae9e",
-      "bytes": 196627,
-      "sha256": "160fafafe0355a55ce0db7cbffaf22f7ec8dd57aeda04d8e52140cd0cacaf36e"
+      "blob": "cabb74731ee7e344d1df1bf7649ff678bdc09e5c",
+      "bytes": 197456,
+      "sha256": "96cd558455dfecd24170e46f18279a7160ef7790f31ffe90f4c20ac212fc3576"
     },
     "literalCount": 72,
     "pins": [
@@ -487,9 +487,9 @@
       },
       {
         "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-        "bytes": 22433,
-        "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
-        "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+        "bytes": 30699,
+        "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
+        "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
       },
       {
         "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -920,9 +920,9 @@
     "changedGuardOnly": "assert_catalog_v1",
     "preservationManifest": {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "7546d5be9cc494d6b7f81e6ff6dca6a7842c9cf8",
+      "blob": "154a4bb27cd11bb6a6424c7415a81416e585220f",
       "bytes": 643618,
-      "sha256": "2a59fc74f72df86af2dd5dd352c8bf9d3488390308b8d3ea35299123c7a82da5"
+      "sha256": "b4b8f1ad5b0847aa84ea2a00ae57f313ce63735297164d522962be1c2c98e0b6"
     },
     "historicalBaseline": {
       "originalInstall": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",

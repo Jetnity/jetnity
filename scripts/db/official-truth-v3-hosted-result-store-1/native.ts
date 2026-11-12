@@ -90,7 +90,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
   assert.ok(bindingRead)
   const binding:Hrs1Binding=bindingRead
   const control={epoch:1,mode:'agrees' as 'agrees'|'conflicts'|'not_found'|'unreachable'|'unclear',unavailable:false,resolve:false,
-    retrievedAt:new Date().toISOString(),expiresAt:null as string|null,inspections:0,finalizations:0,reproofs:0,extracts:0,observations:0,producerCalls:0}
+    retrievedAt:new Date().toISOString(),expiresAt:null as string|null,inspections:0,finalizations:0,finalizationAttempts:0,reproofs:0,extracts:0,observations:0,reopens:0,producerCalls:0}
   const originals=new Map<string,Hrs1Original>()
   const held=new WeakMap<object,{verification:Hrs1Verification;generation:string}>()
   const known=new Map<string,{verification:Hrs1Verification;generation:string}>()
@@ -154,8 +154,8 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
   }
   const issuer:Hrs1SourceCustodyIssuer=Object.freeze<Hrs1SourceCustodyIssuer>({
     async inspect(challenge,signal){
-      if(!active(signal)||!hrs1Same(challenge.binding,binding)||!hrs1Same(challenge.request.context,context))return null
       control.inspections++
+      if(!active(signal)||!hrs1Same(challenge.binding,binding)||!hrs1Same(challenge.request.context,context))return null
       const request=challenge.request,primary=material('primary',request.clock.now),prior=challenge.history.decision
       const currentOriginals:Hrs1Original[]=[primary],conflicts=detached(prior?.knownConflicts??[])
       for(const old of challenge.stickyDecision?.knownConflicts??[])if(!conflicts.some(c=>c.reference===old.reference))conflicts.push(detached(old))
@@ -196,6 +196,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       return active(signal)&&verification.validUntilExclusive>clock().now?issue(verification):null
     },
     async finalize(receipt,inspection,decision,archiveAppend,at,signal){
+      control.finalizationAttempts++
       const actual=held.get(receipt)
       if(!active(signal)||!actual||actual.generation!==generation()||!hrs1Same(actual.verification,inspection)
         ||!hrs1Same(archiveAppend,inspection.archiveAppend)||!hrs1Same(at,hrs1Clock(at.now,binding.legalTimeZone))
@@ -214,14 +215,16 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
         &&hrs1Same(at,hrs1Clock(at.now,binding.legalTimeZone))&&at.now<verification.validUntilExclusive?actual.verification:null
     },
     async reopen(verification,signal){
+      control.reopens++
       const actual=known.get(verification.reference)
       return active(signal)&&actual?.generation===generation()&&hrs1Same(actual.verification,verification)
         &&clock().now<verification.validUntilExclusive?issue(actual.verification):null
     },
     async observe(target,configured,signal){
+      control.observations++
       if(!active(signal)||!hrs1Same(configured,binding)||!hrs1Same(target.context,context))return{status:'unavailable'}
       const role=SOURCE_ROLES.find(r=>hrs1Same(fixtureSource(r),target.source));if(!role)return{status:'unavailable'}
-      control.observations++;const at=clock(),original=material(role,at.now),evidence=hrs1OriginalEvidence(original)
+      const at=clock(),original=material(role,at.now),evidence=hrs1OriginalEvidence(original)
       const body={target,method:METHOD_REF,observation:{source:evidence.source,fingerprint:{sourceContentHash:evidence.sourceContentHash,
         sourceFingerprintProtocol:evidence.sourceFingerprintProtocol},retrievedAt:evidence.retrievedAt},original,
         status:original.observation===null?'unclear' as const:'observed' as const,checkedAt:at.now}
@@ -229,6 +232,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       const receipt=Object.freeze(Object.create(null) as object);observationHeld.set(receipt,{value,generation:generation()});return{receipt,value}
     },
     async reproveObservation(receipt,value,at,signal){
+      control.reproofs++
       const actual=observationHeld.get(receipt)
       return active(signal)&&actual?.generation===generation()&&hrs1Same(actual.value,value)
         &&hrs1Same(at,hrs1Clock(at.now,binding.legalTimeZone))&&at.now<expiry([actual.value.original])?actual.value:null
@@ -594,9 +598,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-    "bytes": 22433,
-    "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
-    "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    "bytes": 30699,
+    "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
+    "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1780,12 +1784,16 @@ async function n04(h:Harness){
   assert.equal(projection.reference,published.projectionRef);assert.deepEqual(projection.rule,outcome.value.version)
   assert.equal((await h.raw('projection_current',{binding:projectionBinding(projection)})).status,'current')
   assert.equal((await h.raw('projection_batch',{bindings:[projectionBinding(projection)]})).status,'confirmed')
+  const issuerWork=()=>({inspect:h.fixture.control.inspections,finalize:h.fixture.control.finalizationAttempts,
+    reprove:h.fixture.control.reproofs,observe:h.fixture.control.observations,extract:h.fixture.control.extracts,reopen:h.fixture.control.reopens})
+  const beforeIssuerWork=issuerWork()
   const answer=await h.jobs.query({destinationCountryCode:'DE',citizenshipCountryCodes:['CH']},h.signal)
   assert.equal(answer.ok,true);assert.ok(answer.ok)
   assert.equal(answer.answer.response.dataMode,'synthetic_test');assert.equal(answer.answer.response.notice,'SYNTHETIC_TEST_DATA_NO_TRAVEL_ADVICE')
   const accepted=answer.answer.response.cells.flatMap(c=>c.results).filter(r=>r.status==='accepted')
   assert.equal(accepted.length,1);assert.equal(accepted[0]!.projection.reference,projection.reference)
   assert.equal(answer.answer.sources[projection.reference]?.href,fixtureUrl('primary'))
+  assert.deepEqual(issuerWork(),beforeIssuerWork,'the actual accepted cache hit performs zero source-issuer work, including rejected calls and reopen')
   await frozen(h.common)
   return{worked,projection,verification:v}
 }
@@ -2310,7 +2318,11 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     assert.deepEqual(completed,GROUPS);assert.equal(budget.active,0);assert.equal(budget.maximumActive,2)
     assert.equal(budget.directAdmitted,8);assert.equal(budget.directSettled,budget.directAdmitted)
     assert.equal(budget.admitted,h.hrs.evidence.admitted+budget.directAdmitted);assert.ok(budget.admitted<=256)
-  }catch(error){failed=true;failure=error}
+  }catch(error){
+    failed=true;failure=error
+    const guard=completed.length===0&&error instanceof LocalPgError&&error.code==='P7802'?error.guardDiagnostic:undefined
+    if(guard)t.diagnostic('HRS1_ORIGINAL_GUARD_DIAG '+JSON.stringify({phase:'N01_original_failure',code:'P7802',...guard}))
+  }
   finally{
     clearTimeout(timer)
     const cleanupStart=performance.now(),errors:unknown[]=[],disposals:Promise<unknown>[]=[]

@@ -33,7 +33,7 @@ const SOURCE_PINS = Object.freeze([
   ],
   [
     "../official-truth-v3-hosted-method-authority-1/native.ts",
-    "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e"
+    "228e074a0fd6bb6b8e7b7480edb67666d6ce0a8f8909f6ce36380bc9e36f4297"
   ],
   [
     "../official-truth-v3-private-owner-guards-1/install-candidate.sql",
@@ -45,7 +45,7 @@ const SOURCE_PINS = Object.freeze([
   ],
   [
     "../official-truth-integrated-pilot-1/pg-wire.ts",
-    "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
   ],
   [
     "../official-truth-atomic-version-refresh-1/test-lifetime.ts",
