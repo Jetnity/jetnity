@@ -124,7 +124,8 @@ async function finiteSecurityInventory(owner: LocalPgConnection) {
     assert.equal(row.lanname, name === 'exact_keys_v1' || bridges.some(value => value.startsWith(name + '(')) ? 'sql' : 'plpgsql')
     assert.equal(row.proparallel, 'u'); assert.equal(row.strict, 'false'); assert.equal(row.prokind, 'f')
     assert.equal(row.defaults, '0'); assert.equal(row.variadic, '0'); assert.equal(row.modes, null)
-    assert.equal(row.config, '{"search_path=pg_catalog, pg_temp"}')
+    assert.equal(row.config, name === 'assert_catalog_v1'
+      ? '{"search_path=pg_catalog, pg_temp",jit=off}' : '{"search_path=pg_catalog, pg_temp"}')
     const acl = JSON.parse(row.acl!) as { grantee: string; grantor: string; privilege: string; grantable: boolean }[]
     const grantees = s1 || ma1 ? [expectedOwner, 'ot_v3_jobs_owner'] : isApi ? ['ot_v3_jobs_caller', 'ot_v3_jobs_owner'] : ['ot_v3_jobs_owner']
     assert.deepEqual(acl.map(a => a.grantee).sort(), grantees.sort())
@@ -904,7 +905,8 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
       const rows = await f.owner.query("SELECT c.relrowsecurity::text AS rls,c.relforcerowsecurity::text AS force,pg_get_userbyid(c.relowner) AS owner FROM pg_catalog.pg_class c WHERE c.relnamespace='official_v3_jobs_private'::regnamespace AND c.relkind='r'")
       assert.ok(rows.every(r => r.rls === 'true' && r.force === 'true' && r.owner === 'ot_v3_jobs_owner'))
       const functions = await f.owner.query("SELECT p.proconfig::text AS config,pg_get_userbyid(p.proowner) AS owner,p.proname FROM pg_catalog.pg_proc p WHERE p.pronamespace IN ('official_v3_jobs_private'::regnamespace,'official_v3_jobs_api'::regnamespace)")
-      assert.ok(functions.every(r => r.config === '{"search_path=pg_catalog, pg_temp"}'))
+      assert.ok(functions.every(r => r.config === (r.proname === 'assert_catalog_v1'
+        ? '{"search_path=pg_catalog, pg_temp",jit=off}' : '{"search_path=pg_catalog, pg_temp"}')))
       assert.equal(functions.filter(r => r.owner === 'ot_v3_intake_owner').length, 2)
       const role = await runtime.query('SELECT session_user::text AS login,current_user::text AS role')
       assert.deepEqual(role, [{ login: M04_TEST_LOGIN.jobs, role: 'ot_v3_jobs_caller' }])
@@ -2552,7 +2554,7 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
       await pristine.installer.query(shadows)
       await pristine.installer.query('SET search_path=pg_temp,public')
       await pristine.installer.query(candidate)
-      const funcs = await pristine.owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api') AND p.proconfig=ARRAY['search_path=pg_catalog, pg_temp']")
+      const funcs = await pristine.owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api') AND p.proconfig=(CASE WHEN n.nspname='official_v3_jobs_private' AND p.proname='assert_catalog_v1' THEN ARRAY['search_path=pg_catalog, pg_temp','jit=off'] ELSE ARRAY['search_path=pg_catalog, pg_temp'] END)")
       assert.equal(funcs[0]?.n, '30')
       await pristine.bindJobsRunner()
       const probeRuntime = await pristine.connect(M04_TEST_LOGIN.jobs)

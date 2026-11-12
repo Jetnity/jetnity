@@ -1842,7 +1842,7 @@ BEGIN
 END $$;
 
 CREATE FUNCTION official_v3_jobs_private.assert_catalog_v1() RETURNS void
-LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $$
+LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp SET jit=off AS $$
 DECLARE creator oid; owner_id oid:='ot_v3_jobs_owner'::pg_catalog.regrole;
   caller_id oid:='ot_v3_jobs_caller'::pg_catalog.regrole; intake_id oid:='ot_v3_intake_owner'::pg_catalog.regrole;
   login_id oid; expected record; actual_function pg_catalog.pg_proc%ROWTYPE; expected_types oid[];
@@ -2828,7 +2828,10 @@ BEGIN
       OR actual_function.proargnames IS DISTINCT FROM expected.argument_names
       OR actual_function.proallargtypes IS NOT NULL OR actual_function.proargmodes IS NOT NULL
       OR ARRAY(SELECT a FROM pg_catalog.unnest(actual_function.proargtypes::oid[]) a) IS DISTINCT FROM expected_types
-      OR actual_function.proconfig IS DISTINCT FROM ARRAY['search_path=pg_catalog, pg_temp']::text[]
+      OR actual_function.proconfig IS DISTINCT FROM (CASE
+        WHEN expected.schema_name='official_v3_jobs_private' AND expected.function_name='assert_catalog_v1'
+          THEN ARRAY['search_path=pg_catalog, pg_temp','jit=off']::text[]
+        ELSE ARRAY['search_path=pg_catalog, pg_temp']::text[] END)
       OR (expected.function_name IN ('s1_read_v1','s1_shape_v1','ma1_require_v1','ma1_tuple_valid_v1')
           AND actual_function.prosqlbody IS NULL)
       OR EXISTS(SELECT 1 FROM pg_catalog.aclexplode(COALESCE(actual_function.proacl,pg_catalog.acldefault('f',actual_function.proowner))) a
@@ -3619,7 +3622,10 @@ BEGIN
       OR actual_function.proargnames IS DISTINCT FROM expected.argument_names
       OR actual_function.proallargtypes IS NOT NULL OR actual_function.proargmodes IS NOT NULL
       OR ARRAY(SELECT a FROM pg_catalog.unnest(actual_function.proargtypes::oid[]) a) IS DISTINCT FROM expected_types
-      OR actual_function.proconfig IS DISTINCT FROM ARRAY['search_path=pg_catalog, pg_temp']::text[]
+      OR actual_function.proconfig IS DISTINCT FROM (CASE
+        WHEN expected.schema_name='official_v3_jobs_private' AND expected.function_name='assert_catalog_v1'
+          THEN ARRAY['search_path=pg_catalog, pg_temp','jit=off']::text[]
+        ELSE ARRAY['search_path=pg_catalog, pg_temp']::text[] END)
       OR (expected.function_name IN ('s1_read_v1','s1_shape_v1','ma1_require_v1','ma1_tuple_valid_v1')
           AND actual_function.prosqlbody IS NULL)
       OR EXISTS(SELECT 1 FROM pg_catalog.aclexplode(COALESCE(actual_function.proacl,pg_catalog.acldefault('f',actual_function.proowner))) a
