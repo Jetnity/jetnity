@@ -270,3 +270,39 @@ PR remains Draft/CHANGES REQUIRED. Current Previewdpl_FYqy1Eoc9eJyD2qffpyaZxg4GY
 ## Persisted Root amendment A4
 
 https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6816241910
+
+
+## Technical Lead — CHANGES REQUIRED / AA A5 immediate review fix
+
+**12 November 2026.** Exact PR #1192 head `b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68`, tree `d3fbe3d45952b221174a3f18d7f0521c5c45c08f`; current main remains `dfd692440762b50183fdebbfd6bf8dabde4662d0`.
+
+### Actual A4 execution and finding AA-A5-SCHEMA-01
+
+[CI 43168250658 / #4121 / attempt 1](https://github.com/Jetnity/jetnity/actions/runs/43168250658) is completed FAILURE. Verify job 131015096539 passed Typecheck, Lint, Tests and Admin API protection, then failed `check:schema-bezug`. The three following hygiene checks and Production build were skipped. All five companion lanes and Auth metadata check succeeded; the required aggregator failed. Exact-head Preview `dpl_ADR4uaV21xL57PYV64pjzpLgYfCX` is READY, which does not replace CI.
+
+Root read the original verify log and the exact two source sites plus the complete unchanged schema-usage checker. Original log: **4,277,093 UTF-8 bytes**, SHA256 `158836d3d2dc86a31dbb716629455f50770597c4c2280570e48b144b4712a5f5`. Actual diagnostics at 06:39:18 UTC:
+
+- Table `x`: AA test line 136, actually `Buffer.from('x')` in the synthetic file-growth fault.
+- Table `changed`: AA test line 726, actually `Buffer.from('changed')` in the synthetic source-inventory mutation.
+
+The unchanged checker `scripts/db/verwendung.mjs`, blob `192a2f9002515cccc2d67db4782bfedbff6748b1`, recognizes literal `.from(...)` without receiver typing. These two sites are Buffer construction, not database access or missing migrations.
+
+Core: 8,730 tests, 8,728 pass, zero failures, two existing skips. The AA synthetic preflight entry actually passed. **Policy remained Run 0 / UNARMED; no real AA observation or MATCH.** This unarmed failed CI may not be treated as full gate PASS or silently retried. Historical failed selection #4120 remains consumed.
+
+### TASK V1 amendment A5 — same original author and session
+
+Author **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**, actual original session **/root/aa_revision_probe_writer_g1**.
+
+1. Replace only the two offending Buffer literal constructions with byte-identical numeric byte constructions: `Buffer.from([120])` and `Buffer.from([99, 104, 97, 110, 103, 101, 100])`. Preserve both original negative cases, their assertions and all other test behavior. No checker/schema/generated-type change, suppression, skip, test deletion or workflow change.
+2. Keep policy `runNumber: 0`, base SHA, selection and every security/budget boundary exact. Refresh only the AA test inventory byte count and SHA256 required by those two substitutions. The other twelve inventory entries stay exact.
+3. Reader blob `2b14953968da35ca47b272fd67a1a912613b8e6d` and BP1 test blob `7b027b49af72a3f16b230acfeff7434f9a71b64e` remain byte-exact.
+4. Preserve the complete prior Task and append this amendment verbatim with its comment URL. Preserve the prior Handoff verbatim as history and add the new current status: actual failed #4121, successful tests but skipped remaining gates, no AA request, same-session fix, current unarmed state and remaining full CI/Preview/threads/main gates.
+5. Deliver an immutable fast-forward successor with sole parent `b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68`. Exactly the existing six paths against main; only AA test, policy, Task and Handoff may change against the parent. Supply the complete six-file manifest, hashes and exact inverse proof that the two substitutions recover the prior test.
+
+Author must not execute project/parser/compiler/tests/build/SQL/network work, publish a ref or PR, set Ready, merge, rerun CI, arm a positive run or request the external AA source. Root independently reviews and alone publishes the expected-old-head update. A later positive one-shot selection requires its own explicit Root decision and fresh inventory after actual complete unarmed gates.
+
+#917 and #1131 boundaries remain unchanged. Public CH→DE remains NOT LIVE. **Stop after delivery; no automatic follow-on.**
+
+## Persisted Root amendment A5
+
+https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6821817364

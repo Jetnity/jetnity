@@ -133,7 +133,7 @@ class FixtureFs {
       readSync: (fd: number, target: Buffer, offset: number, length: number) => {
         const record = this.descriptors.get(fd)!
         if (record.path === this.faultPath && this.fault === 'growth' && record.position === 0) {
-          this.files.set(record.path, Buffer.concat([this.files.get(record.path)!, Buffer.from('x')]))
+          this.files.set(record.path, Buffer.concat([this.files.get(record.path)!, Buffer.from([120])]))
         }
         const file = this.files.get(record.path)!
         const count = Math.min(length, Math.max(0, file.length - record.position))
@@ -723,7 +723,7 @@ async function syntheticPreflight(): Promise<void> {
     policy.sourceInventory.map((pin, i) => i === 0 ? { ...pin, path: '../reader.ts' } : pin),
   ]) await refusal(fixture({ policy: { sourceInventory } }), 'source_inventory_invalid')
   const changedSource = fixture()
-  changedSource.files.files.set(join(workspace, readerPath), Buffer.from('changed'))
+  changedSource.files.files.set(join(workspace, readerPath), Buffer.from([99, 104, 97, 110, 103, 101, 100]))
   await refusal(changedSource, 'source_inventory_invalid')
 
   for (const fault of ['claim_sync', 'claim_close'] as const) {

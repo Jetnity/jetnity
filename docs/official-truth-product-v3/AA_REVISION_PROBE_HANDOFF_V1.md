@@ -1,3 +1,101 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A5
+
+## Current A5 state
+
+**UNARMED / policy.runNumber: 0 / immediate same-session source fix / independent review and new-head gates pending.**
+
+Authority is [Root TASK V1/A5](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6821817364). The corrected persisted comment, dated 12 November 2026 without the removed clock time, is appended verbatim to the Task with its URL.
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**.
+Same original actual session: **/root/aa_revision_probe_writer_g1**.
+No successor or resumed Cursor UI session is claimed.
+
+This immutable candidate is not published by its author. Existing PR #1192 remains Draft/CHANGES REQUIRED on published head `b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68` until Root independently reviews and performs the expected-old-head update. That exact head is the candidate's sole parent; the intended update is a normal fast-forward. Current integration base/main is `dfd692440762b50183fdebbfd6bf8dabde4662d0`.
+
+The preceding A4 candidate was actually published and its unarmed CI ran. Its old source-only/not-published statements below are historical, superseded for current status by the following actual failure evidence. Policy stays Run0. Historical positive selection #4120 remains consumed; A5 selects no positive run, retry or external source request.
+
+## Actual A4 CI and finding AA-A5-SCHEMA-01
+
+[CI 43168250658 / #4121 / attempt 1](https://github.com/Jetnity/jetnity/actions/runs/43168250658), verify job **131015096539**, completed FAILURE on exact head b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68.
+
+The author independently read actual job step metadata: Typecheck, Lint, Tests and Admin API protection SUCCESS; schema usage FAILURE; the following unreachable-code, uncalled-export and unused-package checks SKIPPED; Production build SKIPPED. All five companion lanes and the Auth metadata lane succeeded, while the required aggregator failed. No Auth log was read.
+
+Root's full original verify-log review, recorded in A5, covers **4,277,093 UTF-8 bytes**, SHA256 `158836d3d2dc86a31dbb716629455f50770597c4c2280570e48b144b4712a5f5`. Root records 8,730 core tests, 8,728 passed, zero failed and two existing skips, including a passed AA synthetic preflight entry. Those detailed counts and the original-log observation are attributed to Root's review; this author did not claim to read that complete log.
+
+The actual diagnostics at 06:39:18 UTC identify table names x and changed at AA test lines 136 and 726. The author read both exact source sites and the complete unchanged checker `scripts/db/verwendung.mjs`, Gitblob `192a2f9002515cccc2d67db4782bfedbff6748b1`. Its literal .from recognition does not type the receiver. Both reported sites construct synthetic Buffer bytes: one extends a file during the growth-fault case; the other mutates source-inventory bytes. They are not database calls or missing migrations.
+
+**The policy in that run was Run0 / UNARMED. There is no real AA observation or MATCH.** Successful synthetic tests do not make this failed CI a complete gate PASS. The exact-old-head Preview `dpl_ADR4uaV21xL57PYV64pjzpLgYfCX` is READY according to Root A5 evidence, but neither replaces CI nor covers the forthcoming head.
+
+This is an ordinary source/checker compatibility failure, not a platform/security denial. #917 and #1131 boundaries remain unchanged.
+
+## Exact two-site fix and inverse proof
+
+Only these two AA-test source constructions change:
+
+| Existing construction | A5 construction | Identical byte values |
+|---|---|---|
+| `Buffer.from('x')` | `Buffer.from([120])` | 120 |
+| `Buffer.from('changed')` | `Buffer.from([99, 104, 97, 110, 103, 101, 100])` | 99, 104, 97, 110, 103, 101, 100 |
+
+Each old construction occurs exactly once at the parent, and each replacement occurs exactly once in the candidate. All other test text is exact, including both negative cases, their assertions, fixture behavior, preflight sequencing and the real-entry call site. There is no suppression, skip, deletion, receiver-checker change or relaxed assertion.
+
+The source-only inverse operation replaces those two complete numeric constructions with their original string constructions. It recovers the entire parent test source byte-for-byte:
+
+- Parent/inverse bytes: **45422**.
+- Parent/inverse SHA256: `c29587c5314b7c4f3a7dea5d66e3fb7c9e612b3822076a4f8b99fb508793b4a5`.
+- Parent Gitblob: `6da4fe65f0c40c56c4cf49bcdff2ea4d6d975fe6`.
+- Candidate bytes: **45448**.
+- Candidate SHA256: `ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72`.
+- Candidate Gitblob: `a3f35c4f1d400b8acaca38c82484f0b7093dee07`.
+
+These are source/metadata comparisons and independent byte hashing, not execution of the test, fixture, checker or project code.
+
+## Policy, Reader and history preservation
+
+Policy changes only the AA-test inventory row's byte count and SHA256, from 45422 / c29587c5314b7c4f3a7dea5d66e3fb7c9e612b3822076a4f8b99fb508793b4a5 to 45448 / ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72. Reversing that single row restores the complete parent policy source exactly. All twelve other inventory rows are exact.
+
+Run number 0, base SHA, URL, binding, expected V2 pin, budget, claim, selection/caller restrictions and finite-output behavior remain unchanged. Run0 refuses before event/filesystem/claim/DNS/HTTPS effects. No future positive run is selected here.
+
+Reader `2b14953968da35ca47b272fd67a1a912613b8e6d` and BP1 test `7b027b49af72a3f16b230acfeff7434f9a71b64e` stay byte-identical. A3's full original Reader reconstruction, exact two-addition/current-Reader pins and negative preservation witnesses remain unchanged.
+
+The full **32623-byte prior Task** is an exact prefix followed by the complete corrected A5 comment and its URL. The full **41267-byte prior A4 Handoff** is retained verbatim in the historical section below, including all earlier amendments, limitations and failed-selection history.
+
+## Current source manifest
+
+The five non-Handoff blobs are fixed before this document is written. This Handoff's own hash and the final candidate commit/tree are supplied externally to avoid self-reference.
+
+| Path | UTF-8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 65490 | `2b14953968da35ca47b272fd67a1a912613b8e6d` | `a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 3874 | `1630bdc14e40893fe9a1e398d8f5922c64aee849` | `6bcb96a7091349d0e7cac7d6cac67bd18a49cbdad9dc89b1f1c04be8e8c6e667` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 45448 | `a3f35c4f1d400b8acaca38c82484f0b7093dee07` | `ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 25526 | `7b027b49af72a3f16b230acfeff7434f9a71b64e` | `3804730801ec6713d75ee62d71a7e9c2e02a779469e59270d09a1e168b90884b` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 36733 | `b636b0eb4a4632cfaee313de16b5f6c247218345` | `5c0fa6a04ea011a5502c376c6bdc170d4511ac4d65c5fb9a085b72e992e5d200` |
+
+Exactly AA test, policy, Task and Handoff may differ from the sole parent. Exactly the existing six paths differ from integration main, with all 9474 other main leaves preserved in object, mode and type. No schema, generated type, checker, workflow, package, SQL, public route or additional consumer changes are part of A5.
+
+## Honest self-review and remaining gates
+
+Verification by this author is limited to complete source/metadata comparisons, byte hashing, inverse proof, Git-object readback and full-tree preservation. **No project, parser/compiler, test, lint, build, install, native/SQL or external-source execution was performed.** No ref/PR was published or updated, no CI was rerun, no positive run was armed and no Ready/merge action occurred.
+
+Author self-review is not independent Technical Lead PASS. Root and an independent reviewer must review the exact new candidate before Root alone may update the branch with expected old head b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68. A subsequent ordinary unarmed CI verifies a new head; it does not retry the consumed selection #4120 or convert failed #4121 to success.
+
+Required new-head evidence remains full actual CI, including synthetic preflight, preserved BP1 tests and every later hygiene/build gate, all required companion lanes, exact new-head Preview, current main/base equality, and review-thread/review disposition. Earlier passed stages or READY Preview do not cover a changed head.
+
+Only after actual complete unarmed gates may Root make a separate explicit decision about a later positive one-shot selection, with fresh main/workflow inventory and independently reviewed exact-head source. A5 does not authorize that follow-on. A real platform/security denial remains a stop and is never retried or routed around.
+
+A1's exact passive private Native-Harness boundary and R1's bounded AST-analysis statement remain unchanged. Arbitrary runtime-computed paths/names are not universally resolved by the source guard; full exact-tree/diff/source review and unchanged legacy pins remain separately necessary. No new consumer is permitted.
+
+No hosted installation, D1 activation, custody/legal admission, pilot-window extension or public CH-DE activation is claimed. **Public CH-DE remains NOT LIVE.** All existing product/authority/install/public gates and #917/#1131 STOPs remain intact.
+
+**Author stops after immutable candidate delivery. Same actual session remains reachable for an explicit immediate review fix; there is no automatic follow-on.**
+
+## Historical A4 handoff — preserved verbatim
+
+The following complete document is the prior published b16bf9933e234e8ab1ee89c9d76f3c66e7a2ba68 Handoff. Its pending/not-published statements predate actual failed CI #4121 and this A5 correction. It is retained as history and cannot override the current evidence or Run0 disposition above.
+
+---
+
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A4
 
 ## Current A4 state
