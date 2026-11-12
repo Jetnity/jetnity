@@ -135,12 +135,16 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     { path: 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
       previousReviewed: { bytes: 22433, sha256: '57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8' },
       reviewed: { bytes: 30699, sha256: '9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b' } },
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' },
+      reviewed: { bytes: 23939, sha256: '7ebcde1fa3c9717ed7fbf555d0bace34a4da1457563de6fea2296437520400ae' } },
   ] as const
   assert.deepEqual(currentSourceAmendment.map(row => row.path), [
     'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
     'package-lock.json', 'package.json', 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
+    '.github/workflows/ci.yml',
   ])
-  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 4)
+  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 5)
   let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
@@ -195,5 +199,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
-  assert.equal(reviewedCurrentRows, 4)
+  assert.equal(reviewedCurrentRows, 5)
 })

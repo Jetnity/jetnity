@@ -421,7 +421,7 @@ jobs:
         run: npm run check:operating-mode
 
       - name: Visitor, polling and isolated CI contract tests
-        run: node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
+        run: node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-product-v3/visitor/*.test.ts scripts/official-truth-product-v3-ui/*.test.mjs
 
       - name: Isolated harness typecheck
         run: node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false -p scripts/official-truth-product-v3-ui/tsconfig.json

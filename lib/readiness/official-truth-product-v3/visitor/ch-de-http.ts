@@ -7,7 +7,7 @@ import type { V3VisitorLoad } from './controller'
 import type { V3VisitorView } from './presentation'
 
 export const CH_DE_VISA_HTTP_PATH = '/api/readiness/ch-de-visa'
-const citizenshipCountryCodes = ['CH']
+const citizenshipCountryCodes: V3VisitorInput['citizenshipCountryCodes'] = ['CH']
 Object.freeze(citizenshipCountryCodes)
 export const CH_DE_VISA_INPUT: V3VisitorInput = Object.freeze({
   destinationCountryCode: 'DE', citizenshipCountryCodes,
