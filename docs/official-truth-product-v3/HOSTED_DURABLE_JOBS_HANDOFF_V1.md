@@ -420,3 +420,9 @@ CI4148 on a4731c2fbbddccab15c641dd8154426d59c68121 identified C0109: the engine'
 The selected correction preserves original S1/MA1 execution bodies and all proof groups/budgets. Four real ALTER-column negatives are added inside existing HS1 installer/recovery groups; temporary diagnostics are removed. This source has not been executed, installed or accepted as a runtime pass.
 
 The copied HS1 preflight and exact current HS1 installer digest are rebound together. HM04 recovery changes only its two dependency-context literals; HM04 Native changes only its selected HS1 hash. Original 31 groups, runtime semantics, ownership and all quotas remain unchanged; COMPOSED and selector/guard pins are Root integration work.
+
+## 2026-11-12 — bounded CI4151 installer diagnosis (source-only)
+
+CI4151 passed all 18 HS1 groups, eight HMA groups, eight HMT groups and ten PAI groups; the combined install then refused with P7603. HM04's separate initial source check used two obsolete HS1 reused pins; those pins now identify the actual corrected installer/recovery bytes. No HM04 SQL or permission predicate changes in this addition.
+
+The Native positive install retains its original candidate and assertions. Only an unexpected original P7603 admits one owned diagnostic attempt: 49 fixed error-site codes in the six existing installer DO blocks, unchanged predicates and stored function bodies, terminal ROLLBACK, package absence and the original full catalog baseline checked before and after. Output contains only fixed code/site labels; diagnostic success never substitutes for the original failed group, whose original error is rethrown. All groups, budgets and cleanup remain unchanged. This source delivery is NOT_RUN; Root must obtain the actual site and remove the temporary instrumentation after the confirmed correction.

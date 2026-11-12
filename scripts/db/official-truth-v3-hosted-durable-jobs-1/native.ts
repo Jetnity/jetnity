@@ -316,8 +316,152 @@ async function bindRecovery(owner: LocalPgConnection, installer: LocalPgConnecti
     text(['jetnity.' + packageName + '_recovery_context', recoveryContext, 'jetnity.' + packageName + '_recovery_identity', identity]))
 }
 
+
+// Temporary, failure-only installer diagnosis. Runtime SQL bodies and all
+// original assertions stay exact. One owned attempt always rolls back.
+const hm04InstallGuardStages = [
+  {
+    "tag": "hm04_bootstrap_edges",
+    "sites": [
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary"
+    ]
+  },
+  {
+    "tag": "hm04_owner_set_edge",
+    "sites": [
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary"
+    ]
+  },
+  {
+    "tag": "hm04_two_set_edges",
+    "sites": [
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary"
+    ]
+  },
+  {
+    "tag": "hm04_created_final_objects",
+    "sites": [
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary",
+      "hm04 function inventory",
+      "hm04 exact function identity/ACL: %",
+      "hm04 closed structure/namespace/type/owner boundary",
+      "hm04 effective privilege boundary",
+      "hm04 parsed dependency count",
+      "hm04 exact parsed dependency: %",
+      "hm04 unknown consumer/ownership/extension/label",
+      "hm04 HS1 owner foreign object"
+    ]
+  },
+  {
+    "tag": "hm04_bound_final_objects",
+    "sites": [
+      "hm04 original Creator/package binding",
+      "hm04 catalog drift: jobs-functions",
+      "hm04 catalog drift: jobs-relations",
+      "hm04 catalog drift: jobs-types",
+      "hm04 catalog drift: jobs-schemas",
+      "hm04 catalog drift: jobs-dependencies",
+      "hm04 catalog drift: prerequisite-functions",
+      "hm04 catalog drift: prerequisite-relations",
+      "hm04 catalog drift: prerequisite-types",
+      "hm04 catalog drift: prerequisite-schemas",
+      "hm04 catalog drift: prerequisite-dependencies",
+      "hm04 catalog drift: protected-roles",
+      "hm04 catalog drift: creator-edges",
+      "hm04 catalog drift: creator-defaults",
+      "hm04 catalog drift: database",
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary"
+    ]
+  },
+  {
+    "tag": "hm04_final_creator_readback",
+    "sites": [
+      "hm04 restricted role/default boundary",
+      "hm04 exact protected membership boundary",
+      "hm04 caller graph boundary",
+      "hm04 function inventory",
+      "hm04 exact function identity/ACL: %",
+      "hm04 closed structure/namespace/type/owner boundary",
+      "hm04 effective privilege boundary",
+      "hm04 parsed dependency count",
+      "hm04 exact parsed dependency: %",
+      "hm04 unknown consumer/ownership/extension/label",
+      "hm04 HS1 owner foreign object"
+    ]
+  }
+] as const
+let hm04InstallGuardDiagnosticUsed = false
+type InstallGuardDiagnostic = (entry: Readonly<{ code: string; site: string }>) => void
+function hm04InstallGuardDiagnosticSource() {
+  let diagnosticSource = candidate, ordinal = 0
+  const sites = new Map<string, string>()
+  for (const stage of hm04InstallGuardStages) {
+    const startMarker = 'DO $' + stage.tag + '$'
+    const endMarker = 'END $' + stage.tag + '$;'
+    const start = diagnosticSource.indexOf(startMarker)
+    assert.ok(start >= 0 && diagnosticSource.indexOf(startMarker, start + startMarker.length) === -1)
+    const end = diagnosticSource.indexOf(endMarker, start)
+    assert.ok(end > start)
+    const block = diagnosticSource.slice(start, end + endMarker.length)
+    let index = 0
+    const mapped = block.replace(/RAISE EXCEPTION '([^']*)'([^\n]*?)ERRCODE='P7603'/g, (match, message: string) => {
+      assert.equal(message, stage.sites[index++], 'fixed installer guard identity')
+      const mappedCode = 'H4' + String(++ordinal).padStart(3, '0')
+      sites.set(mappedCode, stage.tag + ': ' + message)
+      return match.replace("ERRCODE='P7603'", "ERRCODE='" + mappedCode + "'")
+    })
+    assert.equal(index, stage.sites.length, 'all selected installer guards are mapped once')
+    diagnosticSource = diagnosticSource.slice(0, start) + mapped + diagnosticSource.slice(end + endMarker.length)
+  }
+  assert.equal(ordinal, 49)
+  assert.match(diagnosticSource, /\nCOMMIT;\n$/)
+  diagnosticSource = diagnosticSource.replace(/\nCOMMIT;\n$/, '\nROLLBACK;\n')
+  return { source: diagnosticSource, sites }
+}
+async function diagnoseHm04InstallGuard(installer: LocalPgConnection, owner: LocalPgConnection,
+  before: string, diagnostic: InstallGuardDiagnostic) {
+  if (hm04InstallGuardDiagnosticUsed) return
+  hm04InstallGuardDiagnosticUsed = true
+  async function absentAndUnchanged() {
+    assert.deepEqual(await owner.query("SELECT (SELECT count(*)::text FROM pg_catalog.pg_namespace WHERE nspname IN "
+      + "('official_v3_jobs_private','official_v3_jobs_api')) AS schemas,"
+      + "(SELECT count(*)::text FROM pg_catalog.pg_roles WHERE rolname IN ('ot_v3_jobs_owner','ot_v3_jobs_caller')) AS roles"),
+      [{ schemas: '0', roles: '0' }], 'diagnosis leaves no HM04 package')
+    assert.equal(await catalog(owner), before, 'diagnosis restores the complete original catalog baseline')
+  }
+  try {
+    await installer.query('ROLLBACK')
+    await absentAndUnchanged()
+    const mapped = hm04InstallGuardDiagnosticSource()
+    try {
+      await installer.query(mapped.source)
+      diagnostic({ code: 'H4U01', site: 'unexpected diagnostic completion' })
+    } catch (error) {
+      if (error instanceof LocalPgError && mapped.sites.has(error.code)) {
+        diagnostic({ code: error.code, site: mapped.sites.get(error.code)! })
+      } else {
+        diagnostic({ code: 'H4U02', site: 'unexpected diagnostic failure' })
+      }
+    }
+  } finally {
+    await installer.query('ROLLBACK')
+    await absentAndUnchanged()
+    diagnostic({ code: 'H4R01', site: 'rollback no-package and original baseline verified' })
+  }
+}
+
 async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalProofCluster, install = true, approve = true,
-  phase: (step: string) => void = () => {}) {
+  phase: (step: string) => void = () => {}, diagnostic: InstallGuardDiagnostic = () => {}) {
   phase('fixture_acquire')
   const cluster = allocate(), all = new Set<LocalPgConnection>()
   let maxFixtureConnections = 0
@@ -396,7 +540,23 @@ async function makeFixture(lifetime: OwnedTestLifetime, allocate: () => LocalPro
   phase('intake_candidate'); await installer.query(s1Candidate)
   phase('predecessor_catalog')
   const predecessorCatalog = await catalog(owner)
-  if (install) { phase('jobs_candidate'); await installer.query(candidate); phase('predecessor_unchanged'); unchangedPredecessors(predecessorCatalog, await catalog(owner)) }
+  if (install) {
+    phase('jobs_candidate')
+    try {
+      await installer.query(candidate)
+    } catch (original) {
+      if (code('P7603')(original)) {
+        try {
+          await diagnoseHm04InstallGuard(installer, owner, predecessorCatalog, diagnostic)
+        } catch {
+          diagnostic({ code: 'H4E01', site: 'diagnostic or rollback baseline verification failed' })
+        }
+      }
+      throw original
+    }
+    phase('predecessor_unchanged')
+    unchangedPredecessors(predecessorCatalog, await catalog(owner))
+  }
   phase('human_fixture')
   const human = (await connect(MA1_AUTH.humanLogin, 'authenticated')).connection
   await human.query("SELECT set_config('request.jwt.claims',$1::text,false)", [pgText(JSON.stringify(ma1Claims()))])
@@ -833,7 +993,8 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
   let primary: unknown, primaryFailurePresent = false, cleanupReceipt: Awaited<ReturnType<OwnedTestLifetime['dispose']>> | undefined
   try {
     assertHostedSourcePins()
-    const f = await makeFixture(lifetime, allocate, true, true, setPhase)
+    const f = await makeFixture(lifetime, allocate, true, true, setPhase,
+      entry => t.diagnostic('HM04_INSTALL_GUARD_DIAG ' + JSON.stringify(entry)))
     cleanup.push(() => f.close())
     setPhase('grant_runners')
     await f.grantRunners()
