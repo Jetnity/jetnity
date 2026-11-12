@@ -18,7 +18,7 @@ const SOURCE_PINS = Object.freeze([
   ],
   [
     "./recovery-candidate.sql",
-    "c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a"
+    "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
   ],
   [
     "../official-truth-v3-private-owner-guards-1/install-candidate.sql",
@@ -410,6 +410,119 @@ async function cleanupWitness(parent: OwnedTestLifetime, mode: 'failure' | 'time
 }
 
 
+async function lateWriterRecoveryWitness(parent: OwnedTestLifetime) {
+  // A separate owned fixture retains the existing main history and eight groups.
+  // Its work shares the unchanged parent effect budget and existing owned drain.
+  const lifetime = new OwnedTestLifetime(parent.signal)
+  lifetime.installConnectOwnership()
+  let cluster: LocalProofCluster | undefined, terminal: Terminal | undefined
+  let failed = false, failure: unknown
+  let evidence: Readonly<{
+    sessionDefault: string; selectedIsolation: string; preLockSnapshot: string
+    committedWriterXid: string; historyCounts: PgRows; retainedIdentities: PgRows
+    recoveryPrefixBytes: number; recoverySuffixBytes: number
+  }> | undefined
+  try {
+    cluster = lifetime.startCluster(startLocalProofCluster)
+    const db = await fixture(cluster)
+    await transaction(db.installer, pg1)
+    await transaction(db.installer, install)
+    const identities = await db.identitiesNow(), inventory = await db.snapshot()
+    const unrelated = await db.unrelated()
+    assert.deepEqual(await db.history(), [{ revisions: '0', heads: '0', operations: '0' }])
+    const writer = await db.connect(LOGIN.human, 'authenticated')
+    assert.notEqual(db.identities.get(writer)!.pid, db.identities.get(db.installer)!.pid)
+    assert.deepEqual(await writer.query('SELECT session_user::text AS session,current_user::text AS role'),
+      [{ session: LOGIN.human, role: 'authenticated' }])
+    await setClaims(writer, claims())
+    await db.bindRecovery(identities[0])
+    await db.installer.query('SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ')
+    const isolationSql = "SELECT current_setting('default_transaction_isolation') AS session_default,"
+      + "current_setting('transaction_isolation') AS selected_isolation"
+    assert.deepEqual(await db.installer.query(isolationSql),
+      [{ session_default: 'repeatable read', selected_isolation: 'repeatable read' }])
+
+    // Split at the exact existing lock statement, outside every complete DO
+    // block. Prefix + suffix is the whole candidate, with no omitted statement.
+    const boundary = 'LOCK TABLE official_v3_method_private.revisions_v1,official_v3_method_private.heads_v1,\n'
+      + '  official_v3_method_private.operations_v1 IN ACCESS EXCLUSIVE MODE NOWAIT;'
+    const at = recovery.indexOf(boundary)
+    assert.ok(at > 0); assert.equal(recovery.indexOf(boundary, at + boundary.length), -1)
+    const prefix = recovery.slice(0, at), suffix = recovery.slice(at)
+    assert.equal(prefix + suffix, recovery)
+    await db.installer.query(prefix)
+    const selected = (await db.installer.query("SELECT current_setting('default_transaction_isolation') AS session_default,"
+      + "current_setting('transaction_isolation') AS selected_isolation,pg_catalog.pg_current_snapshot()::text AS pre_lock_snapshot"))[0]
+    assert.ok(selected?.session_default && selected.selected_isolation && selected.pre_lock_snapshot)
+    assert.equal(selected.session_default, 'repeatable read')
+    assert.equal(selected.selected_isolation, 'read committed')
+    assert.ok(selected.pre_lock_snapshot.length < 256)
+
+    // The real synthetic Owner transaction starts after the actual recovery
+    // catalog prefix/snapshot and commits before any candidate history lock.
+    const binding = ma1SyntheticTuple('hma1-recovery-late')
+    await writer.query('BEGIN')
+    const staged = acknowledgment(await db.stage(binding, writer))
+    assert.equal(staged.status, 'recorded'); assert.equal(staged.actorId, AUTH.owner)
+    const approved = acknowledgment(await writer.query(APPROVE, values([db.op(),binding.methodId,1,binding.methodDigest,binding.packageDigest,
+      null,null,null,0,null,'until_revoked',null])))
+    assert.equal(approved.status, 'recorded'); assert.equal(approved.actorId, AUTH.owner)
+    assert.equal(approved.after?.status, 'approved'); assert.equal(approved.after?.epoch, 1)
+    const writerXid = (await writer.query('SELECT pg_catalog.pg_current_xact_id()::text AS writer_xid'))[0]?.writer_xid
+    assert.ok(writerXid); assert.match(writerXid, /^[0-9]+$/)
+    await writer.query('COMMIT')
+    // A fresh independent observer sees the committed rows. The actual writer
+    // XID was not visible to the earlier pre-lock snapshot.
+    assert.deepEqual(await db.bootstrap.query('SELECT pg_catalog.pg_visible_in_snapshot($1::pg_catalog.xid8,$2::pg_catalog.pg_snapshot)::text AS visible_before',
+      [pgText(writerXid),pgText(selected.pre_lock_snapshot)]), [{ visible_before: 'false' }])
+    const fullHistory = async () => ({
+      revisions: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.revisions_v1 v ORDER BY method_id,revision'),
+      heads: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.heads_v1 v ORDER BY method_id'),
+      operations: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.operations_v1 v ORDER BY operation_id'),
+    })
+    const retained = await fullHistory(), counts = await db.history()
+    assert.deepEqual(counts, [{ revisions: '1', heads: '1', operations: '2' }])
+    assert.equal(retained.revisions.length, 1); assert.equal(retained.heads.length, 1); assert.equal(retained.operations.length, 2)
+    await assert.rejects(transaction(db.installer, suffix), code('P7803'))
+    // Compare every column of every retained row, all original object/role
+    // identities and the complete catalog snapshot after the explicit rollback.
+    assert.deepEqual(await fullHistory(), retained)
+    assert.deepEqual(await db.history(), counts)
+    assert.deepEqual(await db.identitiesNow(), identities)
+    assert.deepEqual(await db.snapshot(), inventory)
+    assert.deepEqual(await db.unrelated(), unrelated)
+    await db.installer.query(block(pg1, 'pg1_exact_inventory'))
+    await db.installer.query(block(install, 'ma1_exact_boundary'))
+    await db.installer.query(block(install, 'hma1_exact_identity'))
+    assert.deepEqual(await db.installer.query(isolationSql),
+      [{ session_default: 'repeatable read', selected_isolation: 'repeatable read' }])
+    evidence = {
+      sessionDefault: selected.session_default, selectedIsolation: selected.selected_isolation,
+      preLockSnapshot: selected.pre_lock_snapshot, committedWriterXid: writerXid,
+      historyCounts: counts, retainedIdentities: identities,
+      recoveryPrefixBytes: Buffer.byteLength(prefix), recoverySuffixBytes: Buffer.byteLength(suffix),
+    }
+  } catch (error) { failed = true; failure = error }
+  finally {
+    // No fixture-close preamble may prevent unconditional ownership disposal.
+    try {
+      terminal = await lifetime.dispose()
+      assert.equal(terminal.pending, 0); assert.equal(terminal.started, terminal.settled)
+      assert.equal(terminal.connections, terminal.closed)
+      assert.equal(terminal.stoppedClusters, cluster ? 1 : 0)
+      if (cluster) assert.equal(existsSync(cluster.root), false, 'late-writer owned cluster must be absent')
+    } catch (error) {
+      failure = failed ? new AggregateError([failure, error], 'hma1 late-writer proof and cleanup failed') : error
+      failed = true
+    }
+  }
+  if (failed) throw failure
+  assert.ok(evidence && terminal)
+  return { schema: 'jetnity.hma1.recovery-late-writer.v1', syntheticOnly: true,
+    recoverySha256: SOURCE_PINS[1][1], ...evidence, refusal: 'P7803',
+    completeHistoryAndIdentitiesRetained: true, terminal }
+}
+
 export async function runHostedMethodAuthorityNative(t: TestContext): Promise<void> {
   const started = performance.now(), cutoff = new AbortController()
   const timer = setTimeout(() => cutoff.abort(Error('hma1_effect_budget_expired')), EFFECT_MS)
@@ -420,6 +533,7 @@ export async function runHostedMethodAuthorityNative(t: TestContext): Promise<vo
   let failed = false, failure: unknown, terminal: Terminal | undefined
   let effectEnded = started, cleanupEnded = started
   let automaticEdge: PgRows = [], actualVersion: number | null = null
+  let lateWriter: Awaited<ReturnType<typeof lateWriterRecoveryWitness>> | undefined
   const group = async (name: string, work: () => Promise<void>) => {
     lifetime.check()
     let passed = false
@@ -637,6 +751,7 @@ export async function runHostedMethodAuthorityNative(t: TestContext): Promise<vo
       await db.bindRecovery()
       automaticEdge = await db.graph()
       assert.equal(automaticEdge.length, 1)
+      lateWriter = await lateWriterRecoveryWitness(lifetime)
     })
     const binding = ma1SyntheticTuple('hma1-positive')
     await group('HMA1-05 real synthetic Owner/AAL2 stage approve read revoke and retained history', async () => {
@@ -828,7 +943,7 @@ export async function runHostedMethodAuthorityNative(t: TestContext): Promise<vo
     source: { install: SOURCE_PINS[0][1], recovery: SOURCE_PINS[1][1], pg1: SOURCE_PINS[2][1], originalMa1: SOURCE_PINS[3][1] },
     completed, effectLimitMs: EFFECT_MS, effectMs: Math.ceil(effectEnded - started),
     cleanupMs: Math.ceil(cleanupEnded - effectEnded), elapsedMs: Math.ceil(cleanupEnded - started),
-    main: terminal ?? null, cleanupWitnesses: cleanup,
+    main: terminal ?? null, cleanupWitnesses: cleanup, lateWriterRecovery: lateWriter ?? null,
   }
   assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 8192)
   t.diagnostic('HMA1_NATIVE_RECEIPT ' + JSON.stringify(receipt))

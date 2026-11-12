@@ -4,6 +4,7 @@
 -- through COMMIT. GUCs below acknowledge those external facts; they do not prove them.
 -- Missing evidence or unknown commit outcome => do not execute or replay.
 BEGIN;
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 SET LOCAL search_path=pg_catalog;
 SET LOCAL lock_timeout='2s';
 SET LOCAL statement_timeout='30s';

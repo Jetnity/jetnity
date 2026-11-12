@@ -1,3 +1,117 @@
+# Hosted Method Authority 1 — current R4 review-fix handoff
+
+**12 November 2026. CHANGES REQUIRED successor / SOURCE CANDIDATE / R4 ALL EXECUTION NOT_RUN / STOP.**
+
+Same exact author/session: **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. No Cursor claim, new author, subagent or author-selected follow-on.
+
+Full task: [Root R4 / 6822763677](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677). The entire previous Task with original V1 and R1/R2/R3 remains an exact prefix; complete R4 and its URL are appended verbatim. The complete earlier R3/R1/R2/V1 Handoff is retained as dated history below. Earlier SOURCE_PASS statements are historical and **superseded by Root's concrete R4 CHANGES REQUIRED findings**.
+
+## Parent, scope and unchanged authority
+
+Sole parent: current Draft #1195 head `8150c358c3d64c245d518eff05467058540c8747`, tree `1abbe38d7910da8e40ddb6fd4b3a39e53c836abc`. No additional parent, dependency integration, ref rewrite or publication is authorized or performed.
+
+Exactly seven existing first-parent paths change:
+
+- `.github/workflows/ci.yml`
+- `scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql`
+- `scripts/db/official-truth-v3-hosted-method-authority-1/native.ts`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json`
+
+The other9,484 first-parent leaves remain identical; total9,491, no additions/deletions. Overall comparison against inherited PG1 R3 `e464f6d8ffac77a124d5ab28637c7435337b222e` still contains only the existing eight HMA1 additions plus ci.yml. All seven PG1 R3 package files remain byte exact; no Auth/AA/HS1 integration is included.
+
+Installer `9c17260c202e430e4c779e47fee0a62c047c4d87` and wrapper `a29be615b12018567415131cc4331ca1071f577e` are unchanged. All ten accepted original MA1 runtime declarations/bodies, installation permissions, Owner/AAL2 checks, method/epoch/history semantics and shared modules remain unchanged.
+
+## Observed predecessor CI failure — HMA1-CI-02
+
+Root independently fetched verify job `131159643738`, [run43211401472 / #4126 / attempt1](https://github.com/Jetnity/jetnity/actions/runs/43211401472). Its original full log was222,848 UTF8 bytes, SHA256 `804562bf40d1d8a7193e4da6ec69fc60e4d36d2cef6ebd4a9999c8d18887350d`. These are Root-provided observed run facts, not an author execution or independently fetched author log.
+
+Official signature/source selection and APT installation reached both PostgreSQL packages at **17.11-1.pgdg24.04+2**. The intended policy-rc.d service-start refusal was ordinary ephemeral package configuration, **not a platform approval rejection**.
+
+At11:45:07Z the Node heredoc failed because named import findLocalPgBins was unavailable through the TS module's CommonJS interoperation. The helper really exports that function. The failure does not demonstrate package unavailability, justify a fallback, or invalidate the intended exact binary-selection guard.
+
+Typecheck and Lint succeeded for that predecessor. **No provisioning receipt, helper-selected path/version proof or Core/native execution followed the import error.** Tests and later hygiene/build were skipped; Auth was a separate known failure. None of those prior gates is transferred to R4.
+
+### Exact CI correction
+
+Only the heredoc import span changes: default-import the exact same local-cluster.ts module, destructure findLocalPgBins from its CommonJS exports object, then assert typeof findLocalPgBins equals function before invoking it. No alternate selector/loader, fallback, dependency, helper edit or package-format change exists.
+
+Removing that exact new span and restoring the old named-import line reconstructs all22,234 parent CI bytes. Removing the complete updated provisioning insertion reconstructs original CI blob `22f6e50aaff600749814bf7e77e24c728b1cd5d5`. Full current insertion, Unified Diff and the narrow R4 before/after span are in the manifest.
+
+Official signed packages, TLS/signature verification, four selected-path/realpath/package/major checks, the default-priority sibling refusal, service/cluster protections, all cleanup, receipt limits, verify/companion structure and fixed budgets remain unchanged.
+
+Root's primary Node references:
+
+- https://nodejs.org/api/esm.html#interoperability-with-commonjs
+- https://r2.nodejs.org/docs/latest-jod/api/esm.html
+
+## Unexecuted recovery risk — HMA1-RECOVERY-02
+
+Root independently confirmed that the prior recovery began with plain BEGIN. If the session default were REPEATABLE READ, its catalog reads could establish an old snapshot; subsequent ACCESS EXCLUSIVE NOWAIT locking would not refresh that snapshot. History committed by a separate writer between the early snapshot and table locks could be absent from the later ordinary emptiness SELECT.
+
+This is a concrete source-level P1 risk. **It is not an executed data-loss observation, hosted incident or accepted recovery.** The package remains unapplied.
+
+### Exact SQL correction
+
+The only recovery SQL change is the48-byte insertion immediately after the opening BEGIN:
+
+~~~sql
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+~~~
+
+It occurs before any query and does not depend on or modify the session default. Every creator/PG1/object/body/owner/ACL/membership validator, original identity acknowledgment, external no-consumer/controlled-quiescence prerequisite, lock, NOWAIT, emptiness guard, deadline and RESTRICT teardown remains byte-identical. Deleting this single insertion restores the complete37,179-byte parent recovery `ea8e9fb7008808819dc1b3d85719c5af96c2f708`.
+
+The existing locks still refuse active conflicting writers. With explicit READ COMMITTED, the subsequent emptiness statement observes commits completed before the locks. Root's external identity and controlled-quiescence evidence remains mandatory; this SQL isolation correction does not prove absence of textual consumers or authorize concurrent production work.
+
+## Meaningful source-authored late-writer witness
+
+The existing group04 now also invokes a separate owned local fixture. The main fixture and every previous case/history expectation remain unchanged. All **eight groups** and existing effect180s, wrapper240s, owned-drain35s budgets remain fixed. No optional skip, suppression or enlarged timeout exists.
+
+The authored witness performs these actual future native operations:
+
+1. Create/register a fresh owned PostgreSQL17 cluster; use the existing synthetic fixture and actual non-superuser LOGIN postgres connection to install exact PG1 and HMA1.
+2. Capture original object/role identities and full catalog snapshot, verify empty history, open a separate authenticated synthetic Owner+AAL2 connection with a distinct observed backend PID, and bind the original recovery identities.
+3. Set the recovery connection's session default to REPEATABLE READ and observe that default. Split the complete actual recovery only at its unique existing history-table LOCK statement, outside all complete DO blocks. Prefix plus suffix equals the whole candidate with no omitted statement.
+4. Execute the exact prefix, including the new transaction-isolation selection and all catalog guards. Observe repeatable-read session default, actual read-committed transaction and a real pg_current_snapshot value.
+5. Start a separate real synthetic Owner transaction after that observation. Call unchanged stage and approve, assert recorded Owner/approved epoch1 results, obtain the actual writer XID and COMMIT before running any recovery history lock.
+6. Use a fresh independent fixture observer to verify that writer XID was not visible to the earlier snapshot and read complete row-to-JSON contents from every row of all three history tables. Expected committed counts are one revision, one head and two operations; no history row or result is manufactured.
+7. Continue the exact recovery suffix. Require P7803 and explicit rollback, then compare every retained history column/row, original OIDs, catalog snapshot and unrelated fixture data. Re-run the complete unchanged PG1 validator and **both complete HMA1 catalog validators**. Observe that the next transaction again inherits the unchanged repeatable-read session default.
+8. Unconditionally dispose the witness-owned lifetime on success, failure or parent abort, checking zero pending operations, settled/closed counts and absent cluster directory. The main lifetime remains separately owned.
+
+The witness shares the existing parent effect budget. Its separate fixture retains used history until the owned cluster is disposed; it never deletes rows or invokes an unused-removal path to reset the main fixture. It deliberately violates the production quiescence precondition only inside this negative disposable fixture, to establish fail-closed history retention.
+
+The bounded final native receipt now carries a synthetic-only late-writer entry with actual observed isolation/snapshot/XID metadata, history counts, identity pins and terminal ownership counts. No Auth claims or full history rows are emitted in that receipt. Its original8192-byte limit remains.
+
+Native's finite delta has exactly five source change groups: affected recovery SHA pin; new owned witness helper; bounded witness-result variable; one invocation inside existing group04; one receipt field. Reversing these five exact spans restores the entire54,554-byte parent Native `aea19da909f42509a5bb57e3cbdf825583deec45`, SHA256 `66af779ba1b0a639487f7ac9a270aedc8826f62195e5de23c3dec17dc3212474`. All prior native source, R2 aliases, eight cases and assertions are preserved.
+
+**All new SQL/native/cleanup/provisioning outcomes are NOT_RUN.** Source-authored future assertions are not reported as passed.
+
+## Current code pins
+
+| Artifact | UTF8 bytes | Git blob | SHA256 |
+| --- | ---: | --- | --- |
+| `.github/workflows/ci.yml` | 22398 | `60a791ee8642eb0164c9c2679872e1595a6faa73` | `cb73cdd0294884896335177e5c0b5114739ecd1f6ffd130826de34d2024d509b` |
+| `scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql` | 37227 | `477c646b4c886f4532d1f938cdf9ce2ba95711a9` | `c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d` |
+| `scripts/db/official-truth-v3-hosted-method-authority-1/native.ts` | 62245 | `2f13ee37d83d716d88234d4af604cb5474d81c64` | `0147707273062b4e291125f747168d5eed392181ef3f02b010fe9bf98794e341` |
+
+Task and Recovery-plan pins, current Handoff and Manifest are delivered with the final immutable tree receipt. The manifest includes every current nine-path identity, all seven exact PG1 dependency pins and the complete finite source deltas. Its own pin and final commit/tree are external to avoid self-reference.
+
+## Required gate and remaining truth
+
+Root must independently review this exact successor before any expected-old-head publication. Fresh complete CI/Core/native/hygiene/build/companion/Preview/thread/source/target gates are mandatory. Actual PG1/main integration and final-base gates remain; a later base change requires an explicit new head and full re-gating.
+
+P1 open until actual evidence: new CI import interoperation, all mandatory PG17/Core behavior, late-writer refusal/retention and cleanup are unexecuted; AA failures and all exact-head Auth gates remain Root-owned. At delivery Root reports an actual Auth-job PASS on separate [#1194](https://github.com/Jetnity/jetnity/pull/1194), with its overall CI still running. That later separate result does not change the failed historical #4126 Auth gate, integrate Auth changes here or transfer a full-CI PASS to HMA1. Historical source reviews are not R4 PASS. No managed-role/Auth/global-default change, #917/#1131 retry/workaround, source/provider/scheduler activation or follow-on occurs.
+
+Only immutable Git reads/writes and pure in-memory source/metadata checks were performed. No local/project/parser/compiler/native/SQL/APT/test/build/CI/hosted/source-GET execution, credentials, ref/PR publication, Ready or merge.
+
+**Actual hosted install unproven. Actual signed Owner request absent. Public CH→DE launch false. Author STOP after delivery.**
+
+---
+
+## Historical HMA1 R3 handoff — 12 November 2026, preserved verbatim
+
 # Hosted Method Authority 1 — current R3 dependency-integration handoff
 
 **12 November 2026. SOURCE CANDIDATE / ALL EXECUTION NOT_RUN / STOP.**

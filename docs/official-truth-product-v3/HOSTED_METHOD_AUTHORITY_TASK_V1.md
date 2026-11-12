@@ -170,3 +170,45 @@ The separate Auth single-switch diagnostic [6822302560](https://github.com/Jetni
 Root may explicitly publish a reviewed stacked Draft for ordinary CI only. Ready/merge/install still require actual PG1/main integration and all final-head CI/Preview/thread/source/target gates; a later base change gets explicit new head and full re-gating.
 
 Deliver full exact commit/tree/path/pin proof, task preservation and truthful NOT_RUN then STOP. **No local/project/parser/compiler/native/SQL/APT/test/build/CI/hosted execution, source GET, credentials, ref/PR publication, Ready or merge.** Original #917/#1131 boundaries remain unchanged.
+
+
+---
+
+## Amendment R4 — 12 November 2026
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677
+
+## Technical Lead — HMA1 CHANGES REQUIRED / R4 CI import and recovery snapshot safety
+
+**12 November 2026.** Same original HMA1 author/session: **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. Sole parent is current Draft #1195 head **8150c358c3d64c245d518eff05467058540c8747**, tree **1abbe38d7910da8e40ddb6fd4b3a39e53c836abc**. Prior SOURCE PASS is superseded by the new concrete findings below; no Ready/merge/install acceptance existed.
+
+### HMA1-CI-02 / P1 — actual module interoperation failure
+
+Root fetched original verify job **131159643738**, run **43211401472 / #4126 / attempt1**. Full log **222,848 UTF-8 bytes / SHA256 804562bf40d1d8a7193e4da6ec69fc60e4d36d2cef6ebd4a9999c8d18887350d**.
+
+Actual signature/source selection and package installation reached PostgreSQL17.11 **17.11-1.pgdg24.04+2** for both official PGDG packages. The intended policy-rc.d refusal prevented a service start; this is expected local package configuration, **not a platform approval refusal**. The Node heredoc then failed at11:45:07Z: named import `findLocalPgBins` was unavailable from the TS module's CommonJS interoperation. No provisioning receipt or Core/native execution followed. This is not package unavailability or a reason to weaken binary verification. Typecheck/Lint reached success; later Tests/hygiene/build were skipped. Auth is a separate known failure.
+
+Root read the Node primary documentation: https://nodejs.org/api/esm.html#interoperability-with-commonjs . CommonJS exports are available through default import; named synthetic exports depend on static analysis. The helper source genuinely exports findLocalPgBins and must remain unchanged.
+
+**Fix:** replace the heredoc's named local-helper import with a default import of that exact same module and destructure findLocalPgBins from the resulting CommonJS exports object; require its type to be function before invocation. Preserve the actual unchanged selector, four path/realpath/major/package checks, signed official package rules, cleanup, budgets and receipt. No alternate loader/selector fallback, package format change, extra dependency or change to local-cluster.ts.
+
+### HMA1-RECOVERY-02 / P1 — stale snapshot may miss late committed history
+
+Independent HS1 reviewer identified the inherited-isolation defect; Root independently checked HMA1's actual full recovery source and confirmed the same pattern: plain BEGIN, catalog reads establish a snapshot, then ACCESS EXCLUSIVE NOWAIT locks and an ordinary emptiness SELECT. Under inherited REPEATABLE READ, a writer committed after the earlier snapshot but before the lock can be invisible to emptiness. Lock acquisition does not refresh that snapshot. This is a concrete source risk, not an executed data-loss observation; the package is unapplied.
+
+Primary PostgreSQL17 references read by Root:
+- https://www.postgresql.org/docs/17/transaction-iso.html
+- https://www.postgresql.org/docs/17/sql-begin.html
+- https://www.postgresql.org/docs/17/sql-set-transaction.html
+
+**Fix:** immediately after the opening BEGIN and before any query, add **SET TRANSACTION ISOLATION LEVEL READ COMMITTED;**. Keep external independent identity/no-consumer/controlled-quiescence prerequisites, all catalog/ACL/body/membership checks, existing locks, NOWAIT, emptiness guard, exact RESTRICT teardown and all deadlines. Do not rely on an assumed session default, clear any history, loosen a guard or move locks after emptiness.
+
+Add a meaningful owned native late-writer proof: begin recovery from a session configured with repeatable-read default, establish its pre-lock catalog snapshot using the actual recovery prefix, commit real new MA1 history on a separate owned synthetic Owner connection before the existing history-table locks, then continue the exact recovery suffix. Prove actual selected isolation, P7803 refusal and complete retained history/identities after rollback. Use exact source splitting at an explicit existing boundary without omitting any candidate statement or manufacturing rows/results. Preserve all existing eight groups and fixed effect/drain/wrapper budgets; report if additional scope is required instead of widening them. Current accepted original MA1 function bodies remain byte exact.
+
+### Scope and delivery
+
+Allowed first-parent changes: **.github/workflows/ci.yml**, HMA1 **recovery-candidate.sql**, **native.ts**, and its **Task/Handoff/Recovery/Manifest** documents — exactly seven existing paths. Installer and wrapper stay byte exact; all seven PG1 dependency files stay byte exact R3. Overall scope versus PG1 remains the existing nine HMA1 paths. No Auth or AA integration implicit.
+
+Update only affected recovery/native/CI pins and the source-preservation proof, preserve original Task plus R1/R2/R3 verbatim and append this R4 with URL, retain complete dated Handoff history. Document observed CI failure and unexecuted recovery risk separately. Keep actual install/source/Owner/public gates false.
+
+Prepare immutable sole-parent candidate, full tree comparison and complete changed-path pins. Root reviews before any expected-old-head publication and fresh full re-gating. **Source-only:** no project/parser/compiler/native/SQL/APT/test/build/CI/hosted/source-GET execution, no ref/PR publication, Ready, merge or automatic follow-on. Original #917/#1131 denied actions remain untouched. STOP after delivery.

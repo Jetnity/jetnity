@@ -9,6 +9,35 @@ Author: Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation
 
 No recovery has been executed. No actual installation/role/object OID is inferred from a native fixture or from the historic Dev postgres/bootstrap OIDs.
 
+## R4 snapshot safety — 12 November 2026
+
+Root's explicit correction is recorded in https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677. The earlier plain-BEGIN artifact could inherit REPEATABLE READ: its catalog queries establish an older snapshot, and acquiring the subsequent table locks does not refresh that snapshot. A separately committed writer between those catalog reads and the locks could therefore be missed by the ordinary emptiness query. This is a confirmed source risk in an unapplied candidate, not an observed hosted data-loss incident.
+
+The recovery now begins with these adjacent statements before any query:
+
+~~~sql
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+~~~
+
+This is the only SQL change. It does not depend on or alter the session's default isolation. READ COMMITTED gives the later emptiness statement a fresh statement snapshot after the unchanged ACCESS EXCLUSIVE NOWAIT locks. Committed history preceding those locks must be retained; an active conflicting writer still causes the existing NOWAIT refusal. All lock/statement deadlines, exact object/body/owner/ACL/membership checks, history refusal and RESTRICT teardown remain unchanged.
+
+This transaction-isolation requirement supplements the independently established original identity, no-consumer and controlled-quiescence prerequisites; it does not replace them. The acknowledgment GUCs are still not proof. Unknown commit still means STOP, no blind retry. Nothing authorizes clearing history or permitting consumers so an unused removal can pass.
+
+The source-authored late-writer scenario uses a separate newly owned disposable cluster inside existing Native group04. It installs exact PG1/HMA1 with the real non-superuser fixture installer, binds the original new identities, and explicitly configures that recovery session's default as REPEATABLE READ. It executes the whole actual recovery prefix up to the existing history-table LOCK statement and observes the still-repeatable-read session default, actual READ COMMITTED transaction and actual pre-lock snapshot.
+
+A separate authenticated synthetic Owner+AAL2 connection then performs real stage and approve calls in one transaction and commits. Its actual XID is checked against the earlier snapshot; an independent fixture observer reads every column of all resulting revision/head/operation rows. Only then does the exact remaining recovery suffix run. The expected result is P7803 followed by rollback, with all row contents, OIDs, metadata and unrelated fixture data retained. Both complete original HMA1 catalog validators and the PG1 validator are run again afterward. No history rows or query results are manufactured or deleted.
+
+The proof preserves all eight existing groups and the fixed effect180s / wrapper240s / owned-drain35s budgets. The separate cluster has unconditional owned disposal, including failure/parent-abort paths. This intentionally adversarial fixture interleaving does not grant a production exception to Root's quiescence requirement.
+
+**NOT_RUN:** the amended SQL, late-writer proof, cleanup proof and actual hosted recovery. No native/Core execution followed the prior #4126 provisioning-import failure. Root must independently review the new head and select fresh existing CI; source preparation is not recovery or launch acceptance.
+
+Root-provided PostgreSQL17 references:
+
+- https://www.postgresql.org/docs/17/transaction-iso.html
+- https://www.postgresql.org/docs/17/sql-begin.html
+- https://www.postgresql.org/docs/17/sql-set-transaction.html
+
 ## Before installation
 
 Root must independently bind the final accepted PG1 base, exact full HMA1 artifact, current target and approved execution surface, the real creator attributes, PostgreSQL17/UTF8/self-grant/bootstrap conditions, private PG1 identity and current API exclusion/privilege boundaries. This document authorizes no apply. Actual signed Owner authority remains a separate operational gate.

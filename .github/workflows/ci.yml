@@ -181,7 +181,9 @@ jobs:
           import assert from 'node:assert/strict'
           import { execFileSync } from 'node:child_process'
           import { realpathSync } from 'node:fs'
-          import { findLocalPgBins } from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'
+          import localProofClusterModule from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'
+          const { findLocalPgBins } = localProofClusterModule
+          assert.equal(typeof findLocalPgBins, 'function', 'local proof selector export missing')
           const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()
           const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION
           assert.match(expectedVersion ?? '', /^17\.[0-9]+-[0-9]+\.pgdg24\.04\+[0-9]+$/)

@@ -1,6 +1,6 @@
 {
   "schema": "jetnity.hma1.source-manifest.v1",
-  "status": "SOURCE_ONLY_R3_DEPENDENCY_INTEGRATION_NOT_RUN_STOP",
+  "status": "R4_CHANGES_REQUIRED_SUCCESSOR_SOURCE_ONLY_NOT_RUN_STOP",
   "author": {
     "name": "Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1",
     "session": "/root/hosted_method_authority_writer_g1",
@@ -15,113 +15,12 @@
   },
   "preparedDateUtc": "2026-11-12",
   "dependency": {
-    "orderedParents": [
-      {
-        "commit": "5d576988167c17879f64562efa66c78dc37b8219",
-        "tree": "7da693e885482c9ad28919f46c3c744653957261",
-        "purpose": "retain exact HMA1 R1/R2 history"
-      },
-      {
-        "commit": "e464f6d8ffac77a124d5ab28637c7435337b222e",
-        "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
-        "purpose": "explicitly bind independently source-reviewed PG1 R3"
-      }
-    ],
+    "soleParent": "8150c358c3d64c245d518eff05467058540c8747",
+    "parentTree": "1abbe38d7910da8e40ddb6fd4b3a39e53c836abc",
     "comparisonBase": "e464f6d8ffac77a124d5ab28637c7435337b222e",
     "comparisonTree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
-    "acceptedMainAtRootR3Checkpoint": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-    "pg1R3RootSourceReview": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375",
-    "pg1R3Included": true,
-    "pg1R3RuntimeAccepted": false,
-    "pg1CiAtRootR3Task": {
-      "id": 43209347822,
-      "number": 4124,
-      "status": "pending",
-      "authorExecutedOrAccepted": false
-    },
-    "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
-    "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
-    "authorRefPrPublication": false,
-    "historicalR1R2Dependency": {
-      "orderedParents": [
-        {
-          "commit": "2f412904edc188bebcc7287e8e3cdae5bf1a9c5a",
-          "tree": "1fc41142fe2339f99c8f0dddb4325e6ab6b85701",
-          "purpose": "retain exact original HMA1 history"
-        },
-        {
-          "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-          "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-          "purpose": "bind exact source-reviewed PG1 R2"
-        }
-      ],
-      "comparisonBase": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-      "comparisonTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-      "acceptedMainAtRootR1Task": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-      "pg1R2RuntimeAccepted": false,
-      "rootReportedPg1Run4122": "failed PG1-03 local_pg_duplicate_column",
-      "separatePg1R3Task": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
-      "pg1R3Included": false,
-      "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
-      "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
-      "authorRefPrPublication": false,
-      "historicalV1Dependency": {
-        "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
-        "tree": "8e60897fd154ef410752c392f0e657f21e62352e",
-        "acceptedMainAtTaskAssignment": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-        "pg1SourceCandidateNotAccepted": true,
-        "laterPg1DocsOnlySuccessor": {
-          "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
-          "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
-          "notThisParent": true
-        },
-        "rootMustBindFinalAcceptedPg1BeforePublicationAndCi": true
-      },
-      "exactPg1R2Files": [
-        {
-          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-          "gitBlob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
-          "utf8Bytes": 19704,
-          "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
-        },
-        {
-          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
-          "gitBlob": "4b4ea654202fe6f7402c2cc6203c00d2cf69fc0e",
-          "utf8Bytes": 17215,
-          "sha256": "03606e6383434ee17de42d9e44460065fa1142d0bb7ef005bcf3aed390dc7934"
-        },
-        {
-          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-          "gitBlob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
-          "utf8Bytes": 11179,
-          "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
-        },
-        {
-          "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
-          "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
-          "utf8Bytes": 397,
-          "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
-        },
-        {
-          "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
-          "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
-          "utf8Bytes": 10945,
-          "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
-        },
-        {
-          "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-          "gitBlob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
-          "utf8Bytes": 42162,
-          "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
-        },
-        {
-          "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
-          "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
-          "utf8Bytes": 6452,
-          "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
-        }
-      ]
-    },
+    "inheritedPg1R3Unchanged": true,
+    "additionalIntegration": false,
     "exactPg1R3Files": [
       {
         "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
@@ -165,7 +64,163 @@
         "utf8Bytes": 6452,
         "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
       }
-    ]
+    ],
+    "pg1ExecutionAcceptanceConferredByR4": false,
+    "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+    "authorRefPrPublication": false,
+    "historicalR3Dependency": {
+      "orderedParents": [
+        {
+          "commit": "5d576988167c17879f64562efa66c78dc37b8219",
+          "tree": "7da693e885482c9ad28919f46c3c744653957261",
+          "purpose": "retain exact HMA1 R1/R2 history"
+        },
+        {
+          "commit": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+          "tree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+          "purpose": "explicitly bind independently source-reviewed PG1 R3"
+        }
+      ],
+      "comparisonBase": "e464f6d8ffac77a124d5ab28637c7435337b222e",
+      "comparisonTree": "693400d99182fcf5bb48449cceb4fc2158c33c40",
+      "acceptedMainAtRootR3Checkpoint": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+      "pg1R3RootSourceReview": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822329375",
+      "pg1R3Included": true,
+      "pg1R3RuntimeAccepted": false,
+      "pg1CiAtRootR3Task": {
+        "id": 43209347822,
+        "number": 4124,
+        "status": "pending",
+        "authorExecutedOrAccepted": false
+      },
+      "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+      "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
+      "authorRefPrPublication": false,
+      "historicalR1R2Dependency": {
+        "orderedParents": [
+          {
+            "commit": "2f412904edc188bebcc7287e8e3cdae5bf1a9c5a",
+            "tree": "1fc41142fe2339f99c8f0dddb4325e6ab6b85701",
+            "purpose": "retain exact original HMA1 history"
+          },
+          {
+            "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+            "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+            "purpose": "bind exact source-reviewed PG1 R2"
+          }
+        ],
+        "comparisonBase": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+        "comparisonTree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+        "acceptedMainAtRootR1Task": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+        "pg1R2RuntimeAccepted": false,
+        "rootReportedPg1Run4122": "failed PG1-03 local_pg_duplicate_column",
+        "separatePg1R3Task": "https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580",
+        "pg1R3Included": false,
+        "rootMustBindFinalAcceptedPg1BeforeMergeInstallAndFinalGates": true,
+        "rootMaySelectStackedDraftForCiAfterIndependentReview": true,
+        "authorRefPrPublication": false,
+        "historicalV1Dependency": {
+          "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
+          "tree": "8e60897fd154ef410752c392f0e657f21e62352e",
+          "acceptedMainAtTaskAssignment": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+          "pg1SourceCandidateNotAccepted": true,
+          "laterPg1DocsOnlySuccessor": {
+            "commit": "9ed5b60d7ca77974864a32a03ed029fc51234e22",
+            "tree": "7921abb6dc8dfd9110ada61ab5af62469c28008f",
+            "notThisParent": true
+          },
+          "rootMustBindFinalAcceptedPg1BeforePublicationAndCi": true
+        },
+        "exactPg1R2Files": [
+          {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+            "gitBlob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
+            "utf8Bytes": 19704,
+            "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
+          },
+          {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+            "gitBlob": "4b4ea654202fe6f7402c2cc6203c00d2cf69fc0e",
+            "utf8Bytes": 17215,
+            "sha256": "03606e6383434ee17de42d9e44460065fa1142d0bb7ef005bcf3aed390dc7934"
+          },
+          {
+            "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+            "gitBlob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
+            "utf8Bytes": 11179,
+            "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
+          },
+          {
+            "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+            "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+            "utf8Bytes": 397,
+            "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+          },
+          {
+            "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+            "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+            "utf8Bytes": 10945,
+            "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+          },
+          {
+            "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+            "gitBlob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
+            "utf8Bytes": 42162,
+            "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
+          },
+          {
+            "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+            "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+            "utf8Bytes": 6452,
+            "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+          }
+        ]
+      },
+      "exactPg1R3Files": [
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+          "gitBlob": "8dc967afc88543ad6b812879eb693a06b44d41ee",
+          "utf8Bytes": 26083,
+          "sha256": "fd8e84c3f17370017cfbc2f21ce9f6ca86da1554724f075a9896490cc797c5bc"
+        },
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
+          "gitBlob": "a4df211a2021fa0888cb5b93663eb105dd29f2a1",
+          "utf8Bytes": 21965,
+          "sha256": "7569c44125d446de5990cc5b3a919b614f288413b01dda27e0c94e7127d728e3"
+        },
+        {
+          "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+          "gitBlob": "c8bbf5b9cee4430b848cf57aa768c35b92388da5",
+          "utf8Bytes": 15253,
+          "sha256": "4261f5a0a46a88c8fb49149408849b0a8eb5d0d252eb0b7afbf4075148aee396"
+        },
+        {
+          "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+          "gitBlob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+          "utf8Bytes": 397,
+          "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+          "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+          "utf8Bytes": 10945,
+          "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+          "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+          "utf8Bytes": 42247,
+          "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+          "gitBlob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+          "utf8Bytes": 6452,
+          "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+        }
+      ]
+    }
   },
   "scope": {
     "comparisonBase": "PG1 R3 e464f6d8ffac77a124d5ab28637c7435337b222e",
@@ -179,13 +234,13 @@
     "expectedCandidateLeafCount": 9491,
     "allOtherParentLeavesMustRemainByteIdentical": true,
     "firstParentExpectedChangedPaths": [
+      ".github/workflows/ci.yml",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
-      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
-      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
-      "scripts/db/official-truth-v3-private-owner-guards-1/native.ts"
+      "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql"
     ],
     "treeAndCommitPinnedExternally": true,
     "manifestSelfPinExternal": true,
@@ -199,15 +254,15 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
-        "gitBlob": "ea8e9fb7008808819dc1b3d85719c5af96c2f708",
-        "utf8Bytes": 37179,
-        "sha256": "c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a"
+        "gitBlob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+        "utf8Bytes": 37227,
+        "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
-        "gitBlob": "aea19da909f42509a5bb57e3cbdf825583deec45",
-        "utf8Bytes": 54554,
-        "sha256": "66af779ba1b0a639487f7ac9a270aedc8826f62195e5de23c3dec17dc3212474"
+        "gitBlob": "2f13ee37d83d716d88234d4af604cb5474d81c64",
+        "utf8Bytes": 62245,
+        "sha256": "0147707273062b4e291125f747168d5eed392181ef3f02b010fe9bf98794e341"
       },
       {
         "path": "lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts",
@@ -217,32 +272,33 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md",
-        "gitBlob": "6d64a4a66d991464ef441f27c39725e30a12f51a",
-        "utf8Bytes": 24544,
-        "sha256": "e4ea8f5e12a978cc5232a6c41130e3475491a5e80574ac1e0ff6338ec41d5f2b"
+        "gitBlob": "d06522483502e05e51b5e5fcda0c609c0ae7b100",
+        "utf8Bytes": 30111,
+        "sha256": "c6c8337d60d211c69ab2f913d94c031a65588ff62f7661aa91602a1659efc5f5"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md",
-        "gitBlob": "b9af8ca594216fe4a5e1be034c41b704b1770e8d",
-        "utf8Bytes": 37960,
-        "sha256": "7b64ffb59b6afc65b90472a77307efcd412ab3f6a01221b252080e5dd026fa72"
+        "gitBlob": "6dcc8691844b45996bc841a45f39b2a922f3bdc1",
+        "utf8Bytes": 50384,
+        "sha256": "bed7979dfc6d9e29b7cb34e014e9b345be7d9b3c7c7c502f9f30ab5a807118ed"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
-        "gitBlob": "4c03b0205cf826199ef907d892f6e1093f1c4219",
-        "utf8Bytes": 8731,
-        "sha256": "02d9fd6fae9f12fb05071836e7f58450e0a0c9a827d4af6707be43ff388a44f5"
+        "gitBlob": "66d6352d5f4ed9382ab37be5122a3835dd00e7d9",
+        "utf8Bytes": 12288,
+        "sha256": "9f4c7c6cd002df699d4f5a12cc68ef5d07a522d7b7c2b7b3b763c8ca3a4cd649"
       },
       {
         "path": ".github/workflows/ci.yml",
-        "gitBlob": "38ef34d4ace40047577adde149b366767ce096d1",
-        "utf8Bytes": 22234,
-        "sha256": "a348d9816b70403b750da104d15ae09ae6b3c82451b57a046a763c1c410ad5ec"
+        "gitBlob": "60a791ee8642eb0164c9c2679872e1595a6faa73",
+        "utf8Bytes": 22398,
+        "sha256": "cb73cdd0294884896335177e5c0b5114739ecd1f6ffd130826de34d2024d509b"
       }
     ],
     "expectedUnchangedPg1R3Leaves": 9482,
     "allSevenPg1R3PathsMustRemainByteIdentical": true,
-    "firstParentExpectedUnchangedLeaves": 9484
+    "firstParentExpectedUnchangedLeaves": 9484,
+    "r4NoAdditionsOrDeletionsVsFirstParent": true
   },
   "originalMa1": {
     "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
@@ -531,7 +587,7 @@
     "roleCreatedByReceipts": false
   },
   "native": {
-    "status": "NOT_RUN",
+    "status": "NOT_RUN_FOR_R4",
     "mandatoryWrapper": true,
     "existingTestCore": true,
     "actualPostgresql17Required": true,
@@ -549,10 +605,40 @@
     "actualQueryFailureAndTimeoutWitnessesAuthored": true,
     "existingCiPostgresBinaryAvailabilityObservedByAuthor": false,
     "preparedVerifyMajor": 17,
-    "preparedProvisioningExecuted": false
+    "preparedProvisioningExecuted": false,
+    "currentRevision": "R4",
+    "lateWriterProof": {
+      "status": "NOT_RUN",
+      "withinExistingGroup": "HMA1-04",
+      "separateOwnedFixture": true,
+      "parentEffectBudgetUnchanged": true,
+      "ownDrainBudgetUnchanged": true,
+      "wholeExactRecoveryPrefixAndSuffix": true,
+      "existingBoundary": "history-table ACCESS EXCLUSIVE NOWAIT LOCK statement",
+      "sessionDefault": "repeatable read",
+      "requiredActualIsolation": "read committed",
+      "actualSnapshotAndActualWriterXidCompared": true,
+      "separateActualAuthenticatedSyntheticOwnerTransaction": true,
+      "realStageApproveCommit": true,
+      "expectedCommittedHistory": {
+        "revisions": 1,
+        "heads": 1,
+        "operations": 2
+      },
+      "expectedSuffixFailure": "P7803",
+      "explicitRollback": true,
+      "compareEveryHistoryColumnAndRow": true,
+      "compareOriginalOidsAndCatalogSnapshot": true,
+      "rerunCompletePg1AndBothHmaCatalogValidators": true,
+      "unconditionalOwnedDisposal": true,
+      "fixedEffectMs": 180000,
+      "fixedWrapperMs": 240000,
+      "fixedDrainMs": 35000,
+      "fixedReceiptMaxBytesExclusive": 8192
+    }
   },
   "recovery": {
-    "status": "NOT_RUN",
+    "status": "NOT_RUN_FOR_R4",
     "artifact": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
     "oldRollbackUnusedAndUnchanged": {
       "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.rollback.sql",
@@ -564,7 +650,17 @@
     "historyUse": "retain; existing supported signed Owner revocation or separately reviewed forward repair",
     "explicitBootstrapGrantRevocation": false,
     "cascade": false,
-    "pg1PlatformOrForeignObjectRemoval": false
+    "pg1PlatformOrForeignObjectRemoval": false,
+    "currentPin": {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+      "gitBlob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+      "utf8Bytes": 37227,
+      "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
+    },
+    "explicitIsolationBeforeAnyQuery": "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;",
+    "sessionDefaultChanged": false,
+    "externalQuiescenceAndIdentityRequirementsUnchanged": true,
+    "allOtherOriginalSqlBytesUnchanged": true
   },
   "observedVerification": {
     "immutableGitObjectCreation": true,
@@ -573,16 +669,16 @@
     "parser": "NOT_RUN",
     "compiler": "NOT_RUN",
     "projectTests": "NOT_RUN",
-    "nativePostgres": "NOT_RUN",
-    "sql": "NOT_RUN",
+    "nativePostgres": "NOT_RUN_FOR_R4",
+    "sql": "NOT_RUN_FOR_R4",
     "build": "NOT_RUN",
-    "githubCi": "NOT_RUN",
+    "githubCi": "NOT_RUN_FOR_R4; predecessor run4126 facts separately attributed",
     "hostedQuery": "NOT_RUN",
     "hostedInstall": "NOT_RUN",
     "authorSideCiAdvice": "bounded old workflow/selector source advice only; final CI draft not reviewed by helper; not TL PASS",
-    "finalCandidateIndependentTlReview": "PENDING_ROOT",
-    "apt": "NOT_RUN",
-    "workflowProvisioning": "NOT_RUN",
+    "finalCandidateIndependentTlReview": "PENDING_ROOT; prior SOURCE_PASS superseded by R4 CHANGES_REQUIRED",
+    "apt": "NOT_RUN_FOR_R4",
+    "workflowProvisioning": "NOT_RUN_FOR_R4",
     "pureNativeEightAliasInverse": true,
     "pureCompleteWorkflowInsertionInverse": true,
     "originalTaskFullPrefixAndBothAmendmentsVerbatim": true,
@@ -590,7 +686,13 @@
     "allSevenPg1R3RawSourcePinsRead": true,
     "fullPriorTaskAndAllThreeAmendmentsVerbatim": true,
     "fullPriorHandoffHistoryVerbatim": true,
-    "authorChildDelegationForR3": false
+    "authorChildDelegationForR3": false,
+    "pureRecoveryR4SingleInsertionInverse": true,
+    "pureCiR4SingleSpanInverse": true,
+    "pureNativeR4FiveSpanInverse": true,
+    "pureRecoveryPlanR4InsertionInverse": true,
+    "fullPriorTaskAndAllFourAmendmentsVerbatim": true,
+    "authorChildDelegationForR4": false
   },
   "launch": {
     "signedOwnerRequest": false,
@@ -625,6 +727,11 @@
       "name": "R3",
       "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822373048",
       "scope": "explicit exact PG1 R3 dependency integration only; HMA1 Task/Handoff/Manifest provenance"
+    },
+    {
+      "name": "R4",
+      "url": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677",
+      "scope": "CI default-import interoperation; explicit recovery READ COMMITTED; meaningful owned late-writer native proof and affected provenance"
     }
   ],
   "nativeRevisionR2": {
@@ -680,16 +787,16 @@
     },
     "current": {
       "path": ".github/workflows/ci.yml",
-      "gitBlob": "38ef34d4ace40047577adde149b366767ce096d1",
-      "utf8Bytes": 22234,
-      "sha256": "a348d9816b70403b750da104d15ae09ae6b3c82451b57a046a763c1c410ad5ec"
+      "gitBlob": "60a791ee8642eb0164c9c2679872e1595a6faa73",
+      "utf8Bytes": 22398,
+      "sha256": "cb73cdd0294884896335177e5c0b5114739ecd1f6ffd130826de34d2024d509b"
     },
     "job": "verify",
     "insertion": "one mandatory step immediately before Tests, after Operating mode and unchanged Typecheck/Lint",
     "fullOriginalWorkflowInverseExact": true,
     "existingCommandsPermissionsTriggersConcurrencyTimeoutsCompanionsAndAggregationUnchanged": true,
-    "insertionLiteral": "      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged\n      # selector must choose the official files; companion jobs stay unchanged.\n      - name: Provision mandatory PostgreSQL 17 from signed official packages\n        shell: bash\n        run: |\n          set -euo pipefail\n          . /etc/os-release\n          test \"$ID\" = ubuntu\n          test \"$VERSION_ID\" = 24.04\n          test \"$VERSION_CODENAME\" = noble\n          test \"$(dpkg --print-architecture)\" = amd64\n          command -v curl >/dev/null\n          command -v gpg >/dev/null\n          test -f /usr/share/keyrings/ubuntu-archive-keyring.gpg\n          hma_tmp=\"$(mktemp -d /tmp/jetnity-hma1-pgdg.XXXXXX)\"\n          chmod 755 \"$hma_tmp\"\n          hma_policy_changed=0\n          hma_cluster_config_changed=0\n          hma_policy_present=0\n          hma_cluster_config_present=0\n          hma_cleanup() {\n            hma_status=$?\n            trap - EXIT\n            set +e\n            if [ \"$hma_policy_changed\" = 1 ]; then\n              if [ \"$hma_policy_present\" = 1 ]; then\n                sudo cp -a \"$hma_tmp/policy-rc.d.original\" /usr/sbin/policy-rc.d || hma_status=1\n              else\n                sudo rm -f /usr/sbin/policy-rc.d || hma_status=1\n              fi\n            fi\n            if [ \"$hma_cluster_config_changed\" = 1 ]; then\n              if [ \"$hma_cluster_config_present\" = 1 ]; then\n                sudo cp -a \"$hma_tmp/createcluster.conf.original\" /etc/postgresql-common/createcluster.conf || hma_status=1\n              else\n                sudo rm -f /etc/postgresql-common/createcluster.conf || hma_status=1\n              fi\n            fi\n            sudo rm -rf -- \"$hma_tmp\" || hma_status=1\n            exit \"$hma_status\"\n          }\n          trap hma_cleanup EXIT\n          hma_no_system_cluster() {\n            for hma_root in /etc/postgresql/17 /var/lib/postgresql/17; do\n              test ! -L \"$hma_root\"\n              if [ -e \"$hma_root\" ]; then\n                test -d \"$hma_root\"\n                test -z \"$(sudo find \"$hma_root\" -mindepth 1 -maxdepth 1 -print -quit)\"\n              fi\n            done\n          }\n          hma_no_system_cluster\n          test ! -L /usr/sbin/policy-rc.d\n          test ! -L /etc/postgresql-common/createcluster.conf\n          if [ -e /usr/sbin/policy-rc.d ]; then\n            test -f /usr/sbin/policy-rc.d\n            sudo cp -a /usr/sbin/policy-rc.d \"$hma_tmp/policy-rc.d.original\"\n            hma_policy_present=1\n          fi\n          if [ -e /etc/postgresql-common/createcluster.conf ]; then\n            test -f /etc/postgresql-common/createcluster.conf\n            sudo cp -a /etc/postgresql-common/createcluster.conf \"$hma_tmp/createcluster.conf.original\"\n            hma_cluster_config_present=1\n          fi\n          printf '#!/bin/sh\\nexit 101\\n' > \"$hma_tmp/policy-rc.d\"\n          printf 'create_main_cluster = false\\n' > \"$hma_tmp/createcluster.conf\"\n          hma_policy_changed=1\n          sudo install -m 755 \"$hma_tmp/policy-rc.d\" /usr/sbin/policy-rc.d\n          sudo install -d -m 755 /etc/postgresql-common\n          hma_cluster_config_changed=1\n          sudo install -m 644 \"$hma_tmp/createcluster.conf\" /etc/postgresql-common/createcluster.conf\n\n          # Isolated APT sources avoid duplicating or rewriting an image's PGDG\n          # configuration. Only official Ubuntu dependency and HTTPS PGDG indices.\n          mkdir -m 700 \"$hma_tmp/gnupg\"\n          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --connect-timeout 10 --max-time 60 \\\n            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output \"$hma_tmp/pgdg.asc\"\n          gpg --batch --no-options --homedir \"$hma_tmp/gnupg\" --with-colons --show-keys \"$hma_tmp/pgdg.asc\" > \"$hma_tmp/key-info\"\n          hma_fingerprint=\"$(awk -F: '$1==\"pub\"{pub++} $1==\"fpr\" && primary==\"\"{primary=$10} END{if(pub!=1)exit 1;print primary}' \"$hma_tmp/key-info\")\"\n          test \"$hma_fingerprint\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\n          chmod 644 \"$hma_tmp/pgdg.asc\"\n          cat > \"$hma_tmp/sources.list\" <<HMA_SOURCES\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble main universe\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble-updates main universe\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://security.ubuntu.com/ubuntu noble-security main universe\n          deb [arch=amd64 signed-by=$hma_tmp/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n          HMA_SOURCES\n          sudo install -d -m 755 \"$hma_tmp/lists\" \"$hma_tmp/archives\"\n          sudo install -d -o _apt -m 700 \"$hma_tmp/lists/partial\" \"$hma_tmp/archives/partial\"\n          hma_apt_options=(\n            -o \"Dir::Etc::sourcelist=$hma_tmp/sources.list\"\n            -o \"Dir::Etc::sourceparts=-\"\n            -o \"Dir::State::lists=$hma_tmp/lists\"\n            -o \"Dir::Cache::archives=$hma_tmp/archives\"\n            -o \"Acquire::AllowInsecureRepositories=false\"\n            -o \"Acquire::AllowDowngradeToInsecureRepositories=false\"\n            -o \"APT::Get::AllowUnauthenticated=false\"\n            -o \"APT::Update::Error-Mode=any\"\n            -o \"Acquire::https::Verify-Peer=true\"\n            -o \"Acquire::https::Verify-Host=true\"\n            -o \"Acquire::https::Timeout=30\"\n            -o \"Acquire::Retries=0\"\n          )\n          sudo apt-get \"${hma_apt_options[@]}\" update\n          hma_pgdg_version() {\n            apt-cache \"${hma_apt_options[@]}\" madison \"$1\" |\n              awk -F'|' -v wanted=\"$1\" '{\n                name=$1;version=$2;origin=$3\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",name)\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",version)\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",origin)\n                if(name==wanted && origin==\"https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages\" && selected==\"\")selected=version\n              } END{if(selected==\"\")exit 1;print selected}'\n          }\n          hma_server_version=\"$(hma_pgdg_version postgresql-17)\"\n          hma_client_version=\"$(hma_pgdg_version postgresql-client-17)\"\n          [[ \"$hma_server_version\" =~ ^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$ ]]\n          test \"$hma_server_version\" = \"$hma_client_version\"\n          printf 'HMA1 PGDG key: %s\\nHMA1 package origin: https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64\\n' \"$hma_fingerprint\"\n          printf 'HMA1 selected packages: postgresql-17=%s postgresql-client-17=%s\\n' \"$hma_server_version\" \"$hma_client_version\"\n          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get \"${hma_apt_options[@]}\" --assume-yes --no-install-recommends --reinstall install \\\n            \"postgresql-17=$hma_server_version\" \"postgresql-client-17=$hma_client_version\"\n          hma_no_system_cluster\n          apt-cache \"${hma_apt_options[@]}\" policy postgresql-17 postgresql-client-17\n\n          # Invoke the existing selector without changing it, PATH or a sibling\n          # toolchain. These commands report versions; no database is started.\n          HMA1_EXPECTED_PACKAGE_VERSION=\"$hma_server_version\" node --import tsx --input-type=module <<'HMA_NODE'\n          import assert from 'node:assert/strict'\n          import { execFileSync } from 'node:child_process'\n          import { realpathSync } from 'node:fs'\n          import { findLocalPgBins } from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n          const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()\n          const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION\n          assert.match(expectedVersion ?? '', /^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$/)\n          const packages = ['postgresql-17', 'postgresql-client-17'].map(name => {\n            const fields = run('dpkg-query', ['-W', '-f=${binary:Package}\\t${Version}\\t${Architecture}\\t${db:Status-Status}', name]).split('\\t')\n            assert.ok(fields[0] === name || fields[0] === name + ':amd64')\n            assert.deepEqual(fields.slice(1), [expectedVersion, 'amd64', 'installed'])\n            assert.equal(run('dpkg', ['--verify', name]), '', 'installed package content differs')\n            return { name, version: fields[1], architecture: fields[2], origin: 'https://apt.postgresql.org/pub/repos/apt noble-pgdg/main' }\n          })\n          const bins = findLocalPgBins()\n          assert.ok(bins, 'mandatory PostgreSQL17 binaries missing')\n          const programs = ['initdb', 'pg_ctl', 'postgres', 'psql'].map(name => {\n            const expected = '/usr/lib/postgresql/17/bin/' + name\n            assert.equal(bins[name], expected, 'unchanged selector chose another root')\n            assert.equal(realpathSync(bins[name]), expected, 'selected binary resolves outside the official path')\n            const owner = run('dpkg-query', ['-S', expected])\n            const expectedPackage = name === 'psql' ? 'postgresql-client-17' : 'postgresql-17'\n            assert.ok(owner === expectedPackage + ': ' + expected || owner === expectedPackage + ':amd64: ' + expected)\n            const version = run(expected, ['--version'])\n            assert.ok(version.length <= 256)\n            assert.match(version, new RegExp('^' + name + ' \\\\(PostgreSQL\\\\) 17\\\\.[0-9]+(?:\\\\s|$)'))\n            return { name, path: bins[name], resolved: realpathSync(bins[name]), package: expectedPackage, version }\n          })\n          const receipt = { schema: 'jetnity.hma1.ci-postgres17.v1', keyFingerprint: 'B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8', packages, programs, databaseStarted: false }\n          assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 4096)\n          console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))\n          HMA_NODE\n\n",
-    "unifiedDiff": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -50,6 +50,167 @@\n       - name: Lint\n         run: npm run lint\n \n+      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged\n+      # selector must choose the official files; companion jobs stay unchanged.\n+      - name: Provision mandatory PostgreSQL 17 from signed official packages\n+        shell: bash\n+        run: |\n+          set -euo pipefail\n+          . /etc/os-release\n+          test \"$ID\" = ubuntu\n+          test \"$VERSION_ID\" = 24.04\n+          test \"$VERSION_CODENAME\" = noble\n+          test \"$(dpkg --print-architecture)\" = amd64\n+          command -v curl >/dev/null\n+          command -v gpg >/dev/null\n+          test -f /usr/share/keyrings/ubuntu-archive-keyring.gpg\n+          hma_tmp=\"$(mktemp -d /tmp/jetnity-hma1-pgdg.XXXXXX)\"\n+          chmod 755 \"$hma_tmp\"\n+          hma_policy_changed=0\n+          hma_cluster_config_changed=0\n+          hma_policy_present=0\n+          hma_cluster_config_present=0\n+          hma_cleanup() {\n+            hma_status=$?\n+            trap - EXIT\n+            set +e\n+            if [ \"$hma_policy_changed\" = 1 ]; then\n+              if [ \"$hma_policy_present\" = 1 ]; then\n+                sudo cp -a \"$hma_tmp/policy-rc.d.original\" /usr/sbin/policy-rc.d || hma_status=1\n+              else\n+                sudo rm -f /usr/sbin/policy-rc.d || hma_status=1\n+              fi\n+            fi\n+            if [ \"$hma_cluster_config_changed\" = 1 ]; then\n+              if [ \"$hma_cluster_config_present\" = 1 ]; then\n+                sudo cp -a \"$hma_tmp/createcluster.conf.original\" /etc/postgresql-common/createcluster.conf || hma_status=1\n+              else\n+                sudo rm -f /etc/postgresql-common/createcluster.conf || hma_status=1\n+              fi\n+            fi\n+            sudo rm -rf -- \"$hma_tmp\" || hma_status=1\n+            exit \"$hma_status\"\n+          }\n+          trap hma_cleanup EXIT\n+          hma_no_system_cluster() {\n+            for hma_root in /etc/postgresql/17 /var/lib/postgresql/17; do\n+              test ! -L \"$hma_root\"\n+              if [ -e \"$hma_root\" ]; then\n+                test -d \"$hma_root\"\n+                test -z \"$(sudo find \"$hma_root\" -mindepth 1 -maxdepth 1 -print -quit)\"\n+              fi\n+            done\n+          }\n+          hma_no_system_cluster\n+          test ! -L /usr/sbin/policy-rc.d\n+          test ! -L /etc/postgresql-common/createcluster.conf\n+          if [ -e /usr/sbin/policy-rc.d ]; then\n+            test -f /usr/sbin/policy-rc.d\n+            sudo cp -a /usr/sbin/policy-rc.d \"$hma_tmp/policy-rc.d.original\"\n+            hma_policy_present=1\n+          fi\n+          if [ -e /etc/postgresql-common/createcluster.conf ]; then\n+            test -f /etc/postgresql-common/createcluster.conf\n+            sudo cp -a /etc/postgresql-common/createcluster.conf \"$hma_tmp/createcluster.conf.original\"\n+            hma_cluster_config_present=1\n+          fi\n+          printf '#!/bin/sh\\nexit 101\\n' > \"$hma_tmp/policy-rc.d\"\n+          printf 'create_main_cluster = false\\n' > \"$hma_tmp/createcluster.conf\"\n+          hma_policy_changed=1\n+          sudo install -m 755 \"$hma_tmp/policy-rc.d\" /usr/sbin/policy-rc.d\n+          sudo install -d -m 755 /etc/postgresql-common\n+          hma_cluster_config_changed=1\n+          sudo install -m 644 \"$hma_tmp/createcluster.conf\" /etc/postgresql-common/createcluster.conf\n+\n+          # Isolated APT sources avoid duplicating or rewriting an image's PGDG\n+          # configuration. Only official Ubuntu dependency and HTTPS PGDG indices.\n+          mkdir -m 700 \"$hma_tmp/gnupg\"\n+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --connect-timeout 10 --max-time 60 \\\n+            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output \"$hma_tmp/pgdg.asc\"\n+          gpg --batch --no-options --homedir \"$hma_tmp/gnupg\" --with-colons --show-keys \"$hma_tmp/pgdg.asc\" > \"$hma_tmp/key-info\"\n+          hma_fingerprint=\"$(awk -F: '$1==\"pub\"{pub++} $1==\"fpr\" && primary==\"\"{primary=$10} END{if(pub!=1)exit 1;print primary}' \"$hma_tmp/key-info\")\"\n+          test \"$hma_fingerprint\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\n+          chmod 644 \"$hma_tmp/pgdg.asc\"\n+          cat > \"$hma_tmp/sources.list\" <<HMA_SOURCES\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble main universe\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble-updates main universe\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://security.ubuntu.com/ubuntu noble-security main universe\n+          deb [arch=amd64 signed-by=$hma_tmp/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n+          HMA_SOURCES\n+          sudo install -d -m 755 \"$hma_tmp/lists\" \"$hma_tmp/archives\"\n+          sudo install -d -o _apt -m 700 \"$hma_tmp/lists/partial\" \"$hma_tmp/archives/partial\"\n+          hma_apt_options=(\n+            -o \"Dir::Etc::sourcelist=$hma_tmp/sources.list\"\n+            -o \"Dir::Etc::sourceparts=-\"\n+            -o \"Dir::State::lists=$hma_tmp/lists\"\n+            -o \"Dir::Cache::archives=$hma_tmp/archives\"\n+            -o \"Acquire::AllowInsecureRepositories=false\"\n+            -o \"Acquire::AllowDowngradeToInsecureRepositories=false\"\n+            -o \"APT::Get::AllowUnauthenticated=false\"\n+            -o \"APT::Update::Error-Mode=any\"\n+            -o \"Acquire::https::Verify-Peer=true\"\n+            -o \"Acquire::https::Verify-Host=true\"\n+            -o \"Acquire::https::Timeout=30\"\n+            -o \"Acquire::Retries=0\"\n+          )\n+          sudo apt-get \"${hma_apt_options[@]}\" update\n+          hma_pgdg_version() {\n+            apt-cache \"${hma_apt_options[@]}\" madison \"$1\" |\n+              awk -F'|' -v wanted=\"$1\" '{\n+                name=$1;version=$2;origin=$3\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",name)\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",version)\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",origin)\n+                if(name==wanted && origin==\"https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages\" && selected==\"\")selected=version\n+              } END{if(selected==\"\")exit 1;print selected}'\n+          }\n+          hma_server_version=\"$(hma_pgdg_version postgresql-17)\"\n+          hma_client_version=\"$(hma_pgdg_version postgresql-client-17)\"\n+          [[ \"$hma_server_version\" =~ ^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$ ]]\n+          test \"$hma_server_version\" = \"$hma_client_version\"\n+          printf 'HMA1 PGDG key: %s\\nHMA1 package origin: https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64\\n' \"$hma_fingerprint\"\n+          printf 'HMA1 selected packages: postgresql-17=%s postgresql-client-17=%s\\n' \"$hma_server_version\" \"$hma_client_version\"\n+          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get \"${hma_apt_options[@]}\" --assume-yes --no-install-recommends --reinstall install \\\n+            \"postgresql-17=$hma_server_version\" \"postgresql-client-17=$hma_client_version\"\n+          hma_no_system_cluster\n+          apt-cache \"${hma_apt_options[@]}\" policy postgresql-17 postgresql-client-17\n+\n+          # Invoke the existing selector without changing it, PATH or a sibling\n+          # toolchain. These commands report versions; no database is started.\n+          HMA1_EXPECTED_PACKAGE_VERSION=\"$hma_server_version\" node --import tsx --input-type=module <<'HMA_NODE'\n+          import assert from 'node:assert/strict'\n+          import { execFileSync } from 'node:child_process'\n+          import { realpathSync } from 'node:fs'\n+          import { findLocalPgBins } from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n+          const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()\n+          const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION\n+          assert.match(expectedVersion ?? '', /^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$/)\n+          const packages = ['postgresql-17', 'postgresql-client-17'].map(name => {\n+            const fields = run('dpkg-query', ['-W', '-f=${binary:Package}\\t${Version}\\t${Architecture}\\t${db:Status-Status}', name]).split('\\t')\n+            assert.ok(fields[0] === name || fields[0] === name + ':amd64')\n+            assert.deepEqual(fields.slice(1), [expectedVersion, 'amd64', 'installed'])\n+            assert.equal(run('dpkg', ['--verify', name]), '', 'installed package content differs')\n+            return { name, version: fields[1], architecture: fields[2], origin: 'https://apt.postgresql.org/pub/repos/apt noble-pgdg/main' }\n+          })\n+          const bins = findLocalPgBins()\n+          assert.ok(bins, 'mandatory PostgreSQL17 binaries missing')\n+          const programs = ['initdb', 'pg_ctl', 'postgres', 'psql'].map(name => {\n+            const expected = '/usr/lib/postgresql/17/bin/' + name\n+            assert.equal(bins[name], expected, 'unchanged selector chose another root')\n+            assert.equal(realpathSync(bins[name]), expected, 'selected binary resolves outside the official path')\n+            const owner = run('dpkg-query', ['-S', expected])\n+            const expectedPackage = name === 'psql' ? 'postgresql-client-17' : 'postgresql-17'\n+            assert.ok(owner === expectedPackage + ': ' + expected || owner === expectedPackage + ':amd64: ' + expected)\n+            const version = run(expected, ['--version'])\n+            assert.ok(version.length <= 256)\n+            assert.match(version, new RegExp('^' + name + ' \\\\(PostgreSQL\\\\) 17\\\\.[0-9]+(?:\\\\s|$)'))\n+            return { name, path: bins[name], resolved: realpathSync(bins[name]), package: expectedPackage, version }\n+          })\n+          const receipt = { schema: 'jetnity.hma1.ci-postgres17.v1', keyFingerprint: 'B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8', packages, programs, databaseStarted: false }\n+          assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 4096)\n+          console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))\n+          HMA_NODE\n+\n       - name: Tests\n         run: npm run test:core\n \n",
+    "insertionLiteral": "      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged\n      # selector must choose the official files; companion jobs stay unchanged.\n      - name: Provision mandatory PostgreSQL 17 from signed official packages\n        shell: bash\n        run: |\n          set -euo pipefail\n          . /etc/os-release\n          test \"$ID\" = ubuntu\n          test \"$VERSION_ID\" = 24.04\n          test \"$VERSION_CODENAME\" = noble\n          test \"$(dpkg --print-architecture)\" = amd64\n          command -v curl >/dev/null\n          command -v gpg >/dev/null\n          test -f /usr/share/keyrings/ubuntu-archive-keyring.gpg\n          hma_tmp=\"$(mktemp -d /tmp/jetnity-hma1-pgdg.XXXXXX)\"\n          chmod 755 \"$hma_tmp\"\n          hma_policy_changed=0\n          hma_cluster_config_changed=0\n          hma_policy_present=0\n          hma_cluster_config_present=0\n          hma_cleanup() {\n            hma_status=$?\n            trap - EXIT\n            set +e\n            if [ \"$hma_policy_changed\" = 1 ]; then\n              if [ \"$hma_policy_present\" = 1 ]; then\n                sudo cp -a \"$hma_tmp/policy-rc.d.original\" /usr/sbin/policy-rc.d || hma_status=1\n              else\n                sudo rm -f /usr/sbin/policy-rc.d || hma_status=1\n              fi\n            fi\n            if [ \"$hma_cluster_config_changed\" = 1 ]; then\n              if [ \"$hma_cluster_config_present\" = 1 ]; then\n                sudo cp -a \"$hma_tmp/createcluster.conf.original\" /etc/postgresql-common/createcluster.conf || hma_status=1\n              else\n                sudo rm -f /etc/postgresql-common/createcluster.conf || hma_status=1\n              fi\n            fi\n            sudo rm -rf -- \"$hma_tmp\" || hma_status=1\n            exit \"$hma_status\"\n          }\n          trap hma_cleanup EXIT\n          hma_no_system_cluster() {\n            for hma_root in /etc/postgresql/17 /var/lib/postgresql/17; do\n              test ! -L \"$hma_root\"\n              if [ -e \"$hma_root\" ]; then\n                test -d \"$hma_root\"\n                test -z \"$(sudo find \"$hma_root\" -mindepth 1 -maxdepth 1 -print -quit)\"\n              fi\n            done\n          }\n          hma_no_system_cluster\n          test ! -L /usr/sbin/policy-rc.d\n          test ! -L /etc/postgresql-common/createcluster.conf\n          if [ -e /usr/sbin/policy-rc.d ]; then\n            test -f /usr/sbin/policy-rc.d\n            sudo cp -a /usr/sbin/policy-rc.d \"$hma_tmp/policy-rc.d.original\"\n            hma_policy_present=1\n          fi\n          if [ -e /etc/postgresql-common/createcluster.conf ]; then\n            test -f /etc/postgresql-common/createcluster.conf\n            sudo cp -a /etc/postgresql-common/createcluster.conf \"$hma_tmp/createcluster.conf.original\"\n            hma_cluster_config_present=1\n          fi\n          printf '#!/bin/sh\\nexit 101\\n' > \"$hma_tmp/policy-rc.d\"\n          printf 'create_main_cluster = false\\n' > \"$hma_tmp/createcluster.conf\"\n          hma_policy_changed=1\n          sudo install -m 755 \"$hma_tmp/policy-rc.d\" /usr/sbin/policy-rc.d\n          sudo install -d -m 755 /etc/postgresql-common\n          hma_cluster_config_changed=1\n          sudo install -m 644 \"$hma_tmp/createcluster.conf\" /etc/postgresql-common/createcluster.conf\n\n          # Isolated APT sources avoid duplicating or rewriting an image's PGDG\n          # configuration. Only official Ubuntu dependency and HTTPS PGDG indices.\n          mkdir -m 700 \"$hma_tmp/gnupg\"\n          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --connect-timeout 10 --max-time 60 \\\n            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output \"$hma_tmp/pgdg.asc\"\n          gpg --batch --no-options --homedir \"$hma_tmp/gnupg\" --with-colons --show-keys \"$hma_tmp/pgdg.asc\" > \"$hma_tmp/key-info\"\n          hma_fingerprint=\"$(awk -F: '$1==\"pub\"{pub++} $1==\"fpr\" && primary==\"\"{primary=$10} END{if(pub!=1)exit 1;print primary}' \"$hma_tmp/key-info\")\"\n          test \"$hma_fingerprint\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\n          chmod 644 \"$hma_tmp/pgdg.asc\"\n          cat > \"$hma_tmp/sources.list\" <<HMA_SOURCES\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble main universe\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble-updates main universe\n          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://security.ubuntu.com/ubuntu noble-security main universe\n          deb [arch=amd64 signed-by=$hma_tmp/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n          HMA_SOURCES\n          sudo install -d -m 755 \"$hma_tmp/lists\" \"$hma_tmp/archives\"\n          sudo install -d -o _apt -m 700 \"$hma_tmp/lists/partial\" \"$hma_tmp/archives/partial\"\n          hma_apt_options=(\n            -o \"Dir::Etc::sourcelist=$hma_tmp/sources.list\"\n            -o \"Dir::Etc::sourceparts=-\"\n            -o \"Dir::State::lists=$hma_tmp/lists\"\n            -o \"Dir::Cache::archives=$hma_tmp/archives\"\n            -o \"Acquire::AllowInsecureRepositories=false\"\n            -o \"Acquire::AllowDowngradeToInsecureRepositories=false\"\n            -o \"APT::Get::AllowUnauthenticated=false\"\n            -o \"APT::Update::Error-Mode=any\"\n            -o \"Acquire::https::Verify-Peer=true\"\n            -o \"Acquire::https::Verify-Host=true\"\n            -o \"Acquire::https::Timeout=30\"\n            -o \"Acquire::Retries=0\"\n          )\n          sudo apt-get \"${hma_apt_options[@]}\" update\n          hma_pgdg_version() {\n            apt-cache \"${hma_apt_options[@]}\" madison \"$1\" |\n              awk -F'|' -v wanted=\"$1\" '{\n                name=$1;version=$2;origin=$3\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",name)\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",version)\n                gsub(/^[ \\t]+|[ \\t]+$/,\"\",origin)\n                if(name==wanted && origin==\"https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages\" && selected==\"\")selected=version\n              } END{if(selected==\"\")exit 1;print selected}'\n          }\n          hma_server_version=\"$(hma_pgdg_version postgresql-17)\"\n          hma_client_version=\"$(hma_pgdg_version postgresql-client-17)\"\n          [[ \"$hma_server_version\" =~ ^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$ ]]\n          test \"$hma_server_version\" = \"$hma_client_version\"\n          printf 'HMA1 PGDG key: %s\\nHMA1 package origin: https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64\\n' \"$hma_fingerprint\"\n          printf 'HMA1 selected packages: postgresql-17=%s postgresql-client-17=%s\\n' \"$hma_server_version\" \"$hma_client_version\"\n          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get \"${hma_apt_options[@]}\" --assume-yes --no-install-recommends --reinstall install \\\n            \"postgresql-17=$hma_server_version\" \"postgresql-client-17=$hma_client_version\"\n          hma_no_system_cluster\n          apt-cache \"${hma_apt_options[@]}\" policy postgresql-17 postgresql-client-17\n\n          # Invoke the existing selector without changing it, PATH or a sibling\n          # toolchain. These commands report versions; no database is started.\n          HMA1_EXPECTED_PACKAGE_VERSION=\"$hma_server_version\" node --import tsx --input-type=module <<'HMA_NODE'\n          import assert from 'node:assert/strict'\n          import { execFileSync } from 'node:child_process'\n          import { realpathSync } from 'node:fs'\n          import localProofClusterModule from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n          const { findLocalPgBins } = localProofClusterModule\n          assert.equal(typeof findLocalPgBins, 'function', 'local proof selector export missing')\n          const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()\n          const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION\n          assert.match(expectedVersion ?? '', /^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$/)\n          const packages = ['postgresql-17', 'postgresql-client-17'].map(name => {\n            const fields = run('dpkg-query', ['-W', '-f=${binary:Package}\\t${Version}\\t${Architecture}\\t${db:Status-Status}', name]).split('\\t')\n            assert.ok(fields[0] === name || fields[0] === name + ':amd64')\n            assert.deepEqual(fields.slice(1), [expectedVersion, 'amd64', 'installed'])\n            assert.equal(run('dpkg', ['--verify', name]), '', 'installed package content differs')\n            return { name, version: fields[1], architecture: fields[2], origin: 'https://apt.postgresql.org/pub/repos/apt noble-pgdg/main' }\n          })\n          const bins = findLocalPgBins()\n          assert.ok(bins, 'mandatory PostgreSQL17 binaries missing')\n          const programs = ['initdb', 'pg_ctl', 'postgres', 'psql'].map(name => {\n            const expected = '/usr/lib/postgresql/17/bin/' + name\n            assert.equal(bins[name], expected, 'unchanged selector chose another root')\n            assert.equal(realpathSync(bins[name]), expected, 'selected binary resolves outside the official path')\n            const owner = run('dpkg-query', ['-S', expected])\n            const expectedPackage = name === 'psql' ? 'postgresql-client-17' : 'postgresql-17'\n            assert.ok(owner === expectedPackage + ': ' + expected || owner === expectedPackage + ':amd64: ' + expected)\n            const version = run(expected, ['--version'])\n            assert.ok(version.length <= 256)\n            assert.match(version, new RegExp('^' + name + ' \\\\(PostgreSQL\\\\) 17\\\\.[0-9]+(?:\\\\s|$)'))\n            return { name, path: bins[name], resolved: realpathSync(bins[name]), package: expectedPackage, version }\n          })\n          const receipt = { schema: 'jetnity.hma1.ci-postgres17.v1', keyFingerprint: 'B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8', packages, programs, databaseStarted: false }\n          assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 4096)\n          console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))\n          HMA_NODE\n\n",
+    "unifiedDiff": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -50,6 +50,169 @@\n       - name: Lint\n         run: npm run lint\n \n+      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged\n+      # selector must choose the official files; companion jobs stay unchanged.\n+      - name: Provision mandatory PostgreSQL 17 from signed official packages\n+        shell: bash\n+        run: |\n+          set -euo pipefail\n+          . /etc/os-release\n+          test \"$ID\" = ubuntu\n+          test \"$VERSION_ID\" = 24.04\n+          test \"$VERSION_CODENAME\" = noble\n+          test \"$(dpkg --print-architecture)\" = amd64\n+          command -v curl >/dev/null\n+          command -v gpg >/dev/null\n+          test -f /usr/share/keyrings/ubuntu-archive-keyring.gpg\n+          hma_tmp=\"$(mktemp -d /tmp/jetnity-hma1-pgdg.XXXXXX)\"\n+          chmod 755 \"$hma_tmp\"\n+          hma_policy_changed=0\n+          hma_cluster_config_changed=0\n+          hma_policy_present=0\n+          hma_cluster_config_present=0\n+          hma_cleanup() {\n+            hma_status=$?\n+            trap - EXIT\n+            set +e\n+            if [ \"$hma_policy_changed\" = 1 ]; then\n+              if [ \"$hma_policy_present\" = 1 ]; then\n+                sudo cp -a \"$hma_tmp/policy-rc.d.original\" /usr/sbin/policy-rc.d || hma_status=1\n+              else\n+                sudo rm -f /usr/sbin/policy-rc.d || hma_status=1\n+              fi\n+            fi\n+            if [ \"$hma_cluster_config_changed\" = 1 ]; then\n+              if [ \"$hma_cluster_config_present\" = 1 ]; then\n+                sudo cp -a \"$hma_tmp/createcluster.conf.original\" /etc/postgresql-common/createcluster.conf || hma_status=1\n+              else\n+                sudo rm -f /etc/postgresql-common/createcluster.conf || hma_status=1\n+              fi\n+            fi\n+            sudo rm -rf -- \"$hma_tmp\" || hma_status=1\n+            exit \"$hma_status\"\n+          }\n+          trap hma_cleanup EXIT\n+          hma_no_system_cluster() {\n+            for hma_root in /etc/postgresql/17 /var/lib/postgresql/17; do\n+              test ! -L \"$hma_root\"\n+              if [ -e \"$hma_root\" ]; then\n+                test -d \"$hma_root\"\n+                test -z \"$(sudo find \"$hma_root\" -mindepth 1 -maxdepth 1 -print -quit)\"\n+              fi\n+            done\n+          }\n+          hma_no_system_cluster\n+          test ! -L /usr/sbin/policy-rc.d\n+          test ! -L /etc/postgresql-common/createcluster.conf\n+          if [ -e /usr/sbin/policy-rc.d ]; then\n+            test -f /usr/sbin/policy-rc.d\n+            sudo cp -a /usr/sbin/policy-rc.d \"$hma_tmp/policy-rc.d.original\"\n+            hma_policy_present=1\n+          fi\n+          if [ -e /etc/postgresql-common/createcluster.conf ]; then\n+            test -f /etc/postgresql-common/createcluster.conf\n+            sudo cp -a /etc/postgresql-common/createcluster.conf \"$hma_tmp/createcluster.conf.original\"\n+            hma_cluster_config_present=1\n+          fi\n+          printf '#!/bin/sh\\nexit 101\\n' > \"$hma_tmp/policy-rc.d\"\n+          printf 'create_main_cluster = false\\n' > \"$hma_tmp/createcluster.conf\"\n+          hma_policy_changed=1\n+          sudo install -m 755 \"$hma_tmp/policy-rc.d\" /usr/sbin/policy-rc.d\n+          sudo install -d -m 755 /etc/postgresql-common\n+          hma_cluster_config_changed=1\n+          sudo install -m 644 \"$hma_tmp/createcluster.conf\" /etc/postgresql-common/createcluster.conf\n+\n+          # Isolated APT sources avoid duplicating or rewriting an image's PGDG\n+          # configuration. Only official Ubuntu dependency and HTTPS PGDG indices.\n+          mkdir -m 700 \"$hma_tmp/gnupg\"\n+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --connect-timeout 10 --max-time 60 \\\n+            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output \"$hma_tmp/pgdg.asc\"\n+          gpg --batch --no-options --homedir \"$hma_tmp/gnupg\" --with-colons --show-keys \"$hma_tmp/pgdg.asc\" > \"$hma_tmp/key-info\"\n+          hma_fingerprint=\"$(awk -F: '$1==\"pub\"{pub++} $1==\"fpr\" && primary==\"\"{primary=$10} END{if(pub!=1)exit 1;print primary}' \"$hma_tmp/key-info\")\"\n+          test \"$hma_fingerprint\" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8\n+          chmod 644 \"$hma_tmp/pgdg.asc\"\n+          cat > \"$hma_tmp/sources.list\" <<HMA_SOURCES\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble main universe\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble-updates main universe\n+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://security.ubuntu.com/ubuntu noble-security main universe\n+          deb [arch=amd64 signed-by=$hma_tmp/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main\n+          HMA_SOURCES\n+          sudo install -d -m 755 \"$hma_tmp/lists\" \"$hma_tmp/archives\"\n+          sudo install -d -o _apt -m 700 \"$hma_tmp/lists/partial\" \"$hma_tmp/archives/partial\"\n+          hma_apt_options=(\n+            -o \"Dir::Etc::sourcelist=$hma_tmp/sources.list\"\n+            -o \"Dir::Etc::sourceparts=-\"\n+            -o \"Dir::State::lists=$hma_tmp/lists\"\n+            -o \"Dir::Cache::archives=$hma_tmp/archives\"\n+            -o \"Acquire::AllowInsecureRepositories=false\"\n+            -o \"Acquire::AllowDowngradeToInsecureRepositories=false\"\n+            -o \"APT::Get::AllowUnauthenticated=false\"\n+            -o \"APT::Update::Error-Mode=any\"\n+            -o \"Acquire::https::Verify-Peer=true\"\n+            -o \"Acquire::https::Verify-Host=true\"\n+            -o \"Acquire::https::Timeout=30\"\n+            -o \"Acquire::Retries=0\"\n+          )\n+          sudo apt-get \"${hma_apt_options[@]}\" update\n+          hma_pgdg_version() {\n+            apt-cache \"${hma_apt_options[@]}\" madison \"$1\" |\n+              awk -F'|' -v wanted=\"$1\" '{\n+                name=$1;version=$2;origin=$3\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",name)\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",version)\n+                gsub(/^[ \\t]+|[ \\t]+$/,\"\",origin)\n+                if(name==wanted && origin==\"https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages\" && selected==\"\")selected=version\n+              } END{if(selected==\"\")exit 1;print selected}'\n+          }\n+          hma_server_version=\"$(hma_pgdg_version postgresql-17)\"\n+          hma_client_version=\"$(hma_pgdg_version postgresql-client-17)\"\n+          [[ \"$hma_server_version\" =~ ^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$ ]]\n+          test \"$hma_server_version\" = \"$hma_client_version\"\n+          printf 'HMA1 PGDG key: %s\\nHMA1 package origin: https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64\\n' \"$hma_fingerprint\"\n+          printf 'HMA1 selected packages: postgresql-17=%s postgresql-client-17=%s\\n' \"$hma_server_version\" \"$hma_client_version\"\n+          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get \"${hma_apt_options[@]}\" --assume-yes --no-install-recommends --reinstall install \\\n+            \"postgresql-17=$hma_server_version\" \"postgresql-client-17=$hma_client_version\"\n+          hma_no_system_cluster\n+          apt-cache \"${hma_apt_options[@]}\" policy postgresql-17 postgresql-client-17\n+\n+          # Invoke the existing selector without changing it, PATH or a sibling\n+          # toolchain. These commands report versions; no database is started.\n+          HMA1_EXPECTED_PACKAGE_VERSION=\"$hma_server_version\" node --import tsx --input-type=module <<'HMA_NODE'\n+          import assert from 'node:assert/strict'\n+          import { execFileSync } from 'node:child_process'\n+          import { realpathSync } from 'node:fs'\n+          import localProofClusterModule from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n+          const { findLocalPgBins } = localProofClusterModule\n+          assert.equal(typeof findLocalPgBins, 'function', 'local proof selector export missing')\n+          const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()\n+          const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION\n+          assert.match(expectedVersion ?? '', /^17\\.[0-9]+-[0-9]+\\.pgdg24\\.04\\+[0-9]+$/)\n+          const packages = ['postgresql-17', 'postgresql-client-17'].map(name => {\n+            const fields = run('dpkg-query', ['-W', '-f=${binary:Package}\\t${Version}\\t${Architecture}\\t${db:Status-Status}', name]).split('\\t')\n+            assert.ok(fields[0] === name || fields[0] === name + ':amd64')\n+            assert.deepEqual(fields.slice(1), [expectedVersion, 'amd64', 'installed'])\n+            assert.equal(run('dpkg', ['--verify', name]), '', 'installed package content differs')\n+            return { name, version: fields[1], architecture: fields[2], origin: 'https://apt.postgresql.org/pub/repos/apt noble-pgdg/main' }\n+          })\n+          const bins = findLocalPgBins()\n+          assert.ok(bins, 'mandatory PostgreSQL17 binaries missing')\n+          const programs = ['initdb', 'pg_ctl', 'postgres', 'psql'].map(name => {\n+            const expected = '/usr/lib/postgresql/17/bin/' + name\n+            assert.equal(bins[name], expected, 'unchanged selector chose another root')\n+            assert.equal(realpathSync(bins[name]), expected, 'selected binary resolves outside the official path')\n+            const owner = run('dpkg-query', ['-S', expected])\n+            const expectedPackage = name === 'psql' ? 'postgresql-client-17' : 'postgresql-17'\n+            assert.ok(owner === expectedPackage + ': ' + expected || owner === expectedPackage + ':amd64: ' + expected)\n+            const version = run(expected, ['--version'])\n+            assert.ok(version.length <= 256)\n+            assert.match(version, new RegExp('^' + name + ' \\\\(PostgreSQL\\\\) 17\\\\.[0-9]+(?:\\\\s|$)'))\n+            return { name, path: bins[name], resolved: realpathSync(bins[name]), package: expectedPackage, version }\n+          })\n+          const receipt = { schema: 'jetnity.hma1.ci-postgres17.v1', keyFingerprint: 'B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8', packages, programs, databaseStarted: false }\n+          assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 4096)\n+          console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))\n+          HMA_NODE\n+\n       - name: Tests\n         run: npm run test:core\n \n",
     "key": {
       "url": "https://www.postgresql.org/media/keys/ACCC4CF8.asc",
       "primaryFingerprint": "B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8"
@@ -725,7 +832,7 @@
       "https://www.postgresql.org/download/linux/ubuntu/"
     ],
     "sourceObservationByAuthor": false,
-    "aptOrProvisionExecution": "NOT_RUN",
+    "aptOrProvisionExecution": "NOT_RUN_FOR_R4",
     "coreEveryExistingTestMandatory": true,
     "companionsUnchangedAndNotRelabeled17": true,
     "retries": 0,
@@ -733,7 +840,10 @@
     "continueOnError": false,
     "fallbackMajor": false,
     "hostedOrSecretInput": false,
-    "needrestartListOnly": true
+    "needrestartListOnly": true,
+    "r4ExactModuleDefaultImportAndDestructure": true,
+    "r4FunctionTypeAssertionBeforeSelectorInvocation": true,
+    "r4NoAlternateLoaderSelectorOrFallback": true
   },
   "historicalV1Manifest": {
     "gitBlob": "a00fa7c4edd04131b886625e2a8e0df0c6338768",
@@ -845,5 +955,185 @@
     "hmaCiExecuted": false,
     "hmaHostedApply": false,
     "outsideHmaIntegrationScope": true
+  },
+  "r4SourceDelta": {
+    "parentCommit": "8150c358c3d64c245d518eff05467058540c8747",
+    "recovery": {
+      "base": {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+        "gitBlob": "ea8e9fb7008808819dc1b3d85719c5af96c2f708",
+        "utf8Bytes": 37179,
+        "sha256": "c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a"
+      },
+      "current": {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+        "gitBlob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+        "utf8Bytes": 37227,
+        "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
+      },
+      "inverseExact": true,
+      "spans": [
+        {
+          "before": "BEGIN;\nSET LOCAL search_path=pg_catalog;",
+          "after": "BEGIN;\nSET TRANSACTION ISOLATION LEVEL READ COMMITTED;\nSET LOCAL search_path=pg_catalog;",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ci": {
+      "base": {
+        "path": ".github/workflows/ci.yml",
+        "gitBlob": "38ef34d4ace40047577adde149b366767ce096d1",
+        "utf8Bytes": 22234,
+        "sha256": "a348d9816b70403b750da104d15ae09ae6b3c82451b57a046a763c1c410ad5ec"
+      },
+      "current": {
+        "path": ".github/workflows/ci.yml",
+        "gitBlob": "60a791ee8642eb0164c9c2679872e1595a6faa73",
+        "utf8Bytes": 22398,
+        "sha256": "cb73cdd0294884896335177e5c0b5114739ecd1f6ffd130826de34d2024d509b"
+      },
+      "inverseExact": true,
+      "spans": [
+        {
+          "before": "          import { findLocalPgBins } from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n",
+          "after": "          import localProofClusterModule from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'\n          const { findLocalPgBins } = localProofClusterModule\n          assert.equal(typeof findLocalPgBins, 'function', 'local proof selector export missing')\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "native": {
+      "base": {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+        "gitBlob": "aea19da909f42509a5bb57e3cbdf825583deec45",
+        "utf8Bytes": 54554,
+        "sha256": "66af779ba1b0a639487f7ac9a270aedc8826f62195e5de23c3dec17dc3212474"
+      },
+      "current": {
+        "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+        "gitBlob": "2f13ee37d83d716d88234d4af604cb5474d81c64",
+        "utf8Bytes": 62245,
+        "sha256": "0147707273062b4e291125f747168d5eed392181ef3f02b010fe9bf98794e341"
+      },
+      "inverseExact": true,
+      "groups": 5,
+      "spans": [
+        {
+          "label": "recovery-source-pin",
+          "before": "c445fb4eff4a76e75162f5698fc3a7a6942e2775f82929e42639e25308843f1a",
+          "after": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d",
+          "occurrences": 1
+        },
+        {
+          "label": "owned-late-writer-helper",
+          "before": "export async function runHostedMethodAuthorityNative(t: TestContext): Promise<void> {",
+          "after": "async function lateWriterRecoveryWitness(parent: OwnedTestLifetime) {\n  // A separate owned fixture retains the existing main history and eight groups.\n  // Its work shares the unchanged parent effect budget and existing owned drain.\n  const lifetime = new OwnedTestLifetime(parent.signal)\n  lifetime.installConnectOwnership()\n  let cluster: LocalProofCluster | undefined, terminal: Terminal | undefined\n  let failed = false, failure: unknown\n  let evidence: Readonly<{\n    sessionDefault: string; selectedIsolation: string; preLockSnapshot: string\n    committedWriterXid: string; historyCounts: PgRows; retainedIdentities: PgRows\n    recoveryPrefixBytes: number; recoverySuffixBytes: number\n  }> | undefined\n  try {\n    cluster = lifetime.startCluster(startLocalProofCluster)\n    const db = await fixture(cluster)\n    await transaction(db.installer, pg1)\n    await transaction(db.installer, install)\n    const identities = await db.identitiesNow(), inventory = await db.snapshot()\n    const unrelated = await db.unrelated()\n    assert.deepEqual(await db.history(), [{ revisions: '0', heads: '0', operations: '0' }])\n    const writer = await db.connect(LOGIN.human, 'authenticated')\n    assert.notEqual(db.identities.get(writer)!.pid, db.identities.get(db.installer)!.pid)\n    assert.deepEqual(await writer.query('SELECT session_user::text AS session,current_user::text AS role'),\n      [{ session: LOGIN.human, role: 'authenticated' }])\n    await setClaims(writer, claims())\n    await db.bindRecovery(identities[0])\n    await db.installer.query('SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ')\n    const isolationSql = \"SELECT current_setting('default_transaction_isolation') AS session_default,\"\n      + \"current_setting('transaction_isolation') AS selected_isolation\"\n    assert.deepEqual(await db.installer.query(isolationSql),\n      [{ session_default: 'repeatable read', selected_isolation: 'repeatable read' }])\n\n    // Split at the exact existing lock statement, outside every complete DO\n    // block. Prefix + suffix is the whole candidate, with no omitted statement.\n    const boundary = 'LOCK TABLE official_v3_method_private.revisions_v1,official_v3_method_private.heads_v1,\\n'\n      + '  official_v3_method_private.operations_v1 IN ACCESS EXCLUSIVE MODE NOWAIT;'\n    const at = recovery.indexOf(boundary)\n    assert.ok(at > 0); assert.equal(recovery.indexOf(boundary, at + boundary.length), -1)\n    const prefix = recovery.slice(0, at), suffix = recovery.slice(at)\n    assert.equal(prefix + suffix, recovery)\n    await db.installer.query(prefix)\n    const selected = (await db.installer.query(\"SELECT current_setting('default_transaction_isolation') AS session_default,\"\n      + \"current_setting('transaction_isolation') AS selected_isolation,pg_catalog.pg_current_snapshot()::text AS pre_lock_snapshot\"))[0]\n    assert.ok(selected?.session_default && selected.selected_isolation && selected.pre_lock_snapshot)\n    assert.equal(selected.session_default, 'repeatable read')\n    assert.equal(selected.selected_isolation, 'read committed')\n    assert.ok(selected.pre_lock_snapshot.length < 256)\n\n    // The real synthetic Owner transaction starts after the actual recovery\n    // catalog prefix/snapshot and commits before any candidate history lock.\n    const binding = ma1SyntheticTuple('hma1-recovery-late')\n    await writer.query('BEGIN')\n    const staged = acknowledgment(await db.stage(binding, writer))\n    assert.equal(staged.status, 'recorded'); assert.equal(staged.actorId, AUTH.owner)\n    const approved = acknowledgment(await writer.query(APPROVE, values([db.op(),binding.methodId,1,binding.methodDigest,binding.packageDigest,\n      null,null,null,0,null,'until_revoked',null])))\n    assert.equal(approved.status, 'recorded'); assert.equal(approved.actorId, AUTH.owner)\n    assert.equal(approved.after?.status, 'approved'); assert.equal(approved.after?.epoch, 1)\n    const writerXid = (await writer.query('SELECT pg_catalog.pg_current_xact_id()::text AS writer_xid'))[0]?.writer_xid\n    assert.ok(writerXid); assert.match(writerXid, /^[0-9]+$/)\n    await writer.query('COMMIT')\n    // A fresh independent observer sees the committed rows. The actual writer\n    // XID was not visible to the earlier pre-lock snapshot.\n    assert.deepEqual(await db.bootstrap.query('SELECT pg_catalog.pg_visible_in_snapshot($1::pg_catalog.xid8,$2::pg_catalog.pg_snapshot)::text AS visible_before',\n      [pgText(writerXid),pgText(selected.pre_lock_snapshot)]), [{ visible_before: 'false' }])\n    const fullHistory = async () => ({\n      revisions: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.revisions_v1 v ORDER BY method_id,revision'),\n      heads: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.heads_v1 v ORDER BY method_id'),\n      operations: await db.bootstrap.query('SELECT pg_catalog.row_to_json(v)::text AS value FROM official_v3_method_private.operations_v1 v ORDER BY operation_id'),\n    })\n    const retained = await fullHistory(), counts = await db.history()\n    assert.deepEqual(counts, [{ revisions: '1', heads: '1', operations: '2' }])\n    assert.equal(retained.revisions.length, 1); assert.equal(retained.heads.length, 1); assert.equal(retained.operations.length, 2)\n    await assert.rejects(transaction(db.installer, suffix), code('P7803'))\n    // Compare every column of every retained row, all original object/role\n    // identities and the complete catalog snapshot after the explicit rollback.\n    assert.deepEqual(await fullHistory(), retained)\n    assert.deepEqual(await db.history(), counts)\n    assert.deepEqual(await db.identitiesNow(), identities)\n    assert.deepEqual(await db.snapshot(), inventory)\n    assert.deepEqual(await db.unrelated(), unrelated)\n    await db.installer.query(block(pg1, 'pg1_exact_inventory'))\n    await db.installer.query(block(install, 'ma1_exact_boundary'))\n    await db.installer.query(block(install, 'hma1_exact_identity'))\n    assert.deepEqual(await db.installer.query(isolationSql),\n      [{ session_default: 'repeatable read', selected_isolation: 'repeatable read' }])\n    evidence = {\n      sessionDefault: selected.session_default, selectedIsolation: selected.selected_isolation,\n      preLockSnapshot: selected.pre_lock_snapshot, committedWriterXid: writerXid,\n      historyCounts: counts, retainedIdentities: identities,\n      recoveryPrefixBytes: Buffer.byteLength(prefix), recoverySuffixBytes: Buffer.byteLength(suffix),\n    }\n  } catch (error) { failed = true; failure = error }\n  finally {\n    // No fixture-close preamble may prevent unconditional ownership disposal.\n    try {\n      terminal = await lifetime.dispose()\n      assert.equal(terminal.pending, 0); assert.equal(terminal.started, terminal.settled)\n      assert.equal(terminal.connections, terminal.closed)\n      assert.equal(terminal.stoppedClusters, cluster ? 1 : 0)\n      if (cluster) assert.equal(existsSync(cluster.root), false, 'late-writer owned cluster must be absent')\n    } catch (error) {\n      failure = failed ? new AggregateError([failure, error], 'hma1 late-writer proof and cleanup failed') : error\n      failed = true\n    }\n  }\n  if (failed) throw failure\n  assert.ok(evidence && terminal)\n  return { schema: 'jetnity.hma1.recovery-late-writer.v1', syntheticOnly: true,\n    recoverySha256: SOURCE_PINS[1][1], ...evidence, refusal: 'P7803',\n    completeHistoryAndIdentitiesRetained: true, terminal }\n}\n\nexport async function runHostedMethodAuthorityNative(t: TestContext): Promise<void> {",
+          "occurrences": 1
+        },
+        {
+          "label": "bounded-witness-receipt-variable",
+          "before": "  let automaticEdge: PgRows = [], actualVersion: number | null = null\n",
+          "after": "  let automaticEdge: PgRows = [], actualVersion: number | null = null\n  let lateWriter: Awaited<ReturnType<typeof lateWriterRecoveryWitness>> | undefined\n",
+          "occurrences": 1
+        },
+        {
+          "label": "existing-group-four-witness",
+          "before": "      automaticEdge = await db.graph()\n      assert.equal(automaticEdge.length, 1)\n    })",
+          "after": "      automaticEdge = await db.graph()\n      assert.equal(automaticEdge.length, 1)\n      lateWriter = await lateWriterRecoveryWitness(lifetime)\n    })",
+          "occurrences": 1
+        },
+        {
+          "label": "bounded-receipt-evidence",
+          "before": "    main: terminal ?? null, cleanupWitnesses: cleanup,\n",
+          "after": "    main: terminal ?? null, cleanupWitnesses: cleanup, lateWriterRecovery: lateWriter ?? null,\n",
+          "occurrences": 1
+        }
+      ],
+      "originalEightGroupsAndAssertionsPreserved": true,
+      "originalR2AliasesPreserved": true,
+      "allBudgetsUnchanged": true
+    },
+    "recoveryPlan": {
+      "base": {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+        "gitBlob": "4c03b0205cf826199ef907d892f6e1093f1c4219",
+        "utf8Bytes": 8731,
+        "sha256": "02d9fd6fae9f12fb05071836e7f58450e0a0c9a827d4af6707be43ff388a44f5"
+      },
+      "current": {
+        "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_RECOVERY_V1.md",
+        "gitBlob": "66d6352d5f4ed9382ab37be5122a3835dd00e7d9",
+        "utf8Bytes": 12288,
+        "sha256": "9f4c7c6cd002df699d4f5a12cc68ef5d07a522d7b7c2b7b3b763c8ca3a4cd649"
+      },
+      "inverseExact": true,
+      "spans": [
+        {
+          "before": "## Before installation\n",
+          "after": "## R4 snapshot safety — 12 November 2026\n\nRoot's explicit correction is recorded in https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677. The earlier plain-BEGIN artifact could inherit REPEATABLE READ: its catalog queries establish an older snapshot, and acquiring the subsequent table locks does not refresh that snapshot. A separately committed writer between those catalog reads and the locks could therefore be missed by the ordinary emptiness query. This is a confirmed source risk in an unapplied candidate, not an observed hosted data-loss incident.\n\nThe recovery now begins with these adjacent statements before any query:\n\n~~~sql\nBEGIN;\nSET TRANSACTION ISOLATION LEVEL READ COMMITTED;\n~~~\n\nThis is the only SQL change. It does not depend on or alter the session's default isolation. READ COMMITTED gives the later emptiness statement a fresh statement snapshot after the unchanged ACCESS EXCLUSIVE NOWAIT locks. Committed history preceding those locks must be retained; an active conflicting writer still causes the existing NOWAIT refusal. All lock/statement deadlines, exact object/body/owner/ACL/membership checks, history refusal and RESTRICT teardown remain unchanged.\n\nThis transaction-isolation requirement supplements the independently established original identity, no-consumer and controlled-quiescence prerequisites; it does not replace them. The acknowledgment GUCs are still not proof. Unknown commit still means STOP, no blind retry. Nothing authorizes clearing history or permitting consumers so an unused removal can pass.\n\nThe source-authored late-writer scenario uses a separate newly owned disposable cluster inside existing Native group04. It installs exact PG1/HMA1 with the real non-superuser fixture installer, binds the original new identities, and explicitly configures that recovery session's default as REPEATABLE READ. It executes the whole actual recovery prefix up to the existing history-table LOCK statement and observes the still-repeatable-read session default, actual READ COMMITTED transaction and actual pre-lock snapshot.\n\nA separate authenticated synthetic Owner+AAL2 connection then performs real stage and approve calls in one transaction and commits. Its actual XID is checked against the earlier snapshot; an independent fixture observer reads every column of all resulting revision/head/operation rows. Only then does the exact remaining recovery suffix run. The expected result is P7803 followed by rollback, with all row contents, OIDs, metadata and unrelated fixture data retained. Both complete original HMA1 catalog validators and the PG1 validator are run again afterward. No history rows or query results are manufactured or deleted.\n\nThe proof preserves all eight existing groups and the fixed effect180s / wrapper240s / owned-drain35s budgets. The separate cluster has unconditional owned disposal, including failure/parent-abort paths. This intentionally adversarial fixture interleaving does not grant a production exception to Root's quiescence requirement.\n\n**NOT_RUN:** the amended SQL, late-writer proof, cleanup proof and actual hosted recovery. No native/Core execution followed the prior #4126 provisioning-import failure. Root must independently review the new head and select fresh existing CI; source preparation is not recovery or launch acceptance.\n\nRoot-provided PostgreSQL17 references:\n\n- https://www.postgresql.org/docs/17/transaction-iso.html\n- https://www.postgresql.org/docs/17/sql-begin.html\n- https://www.postgresql.org/docs/17/sql-set-transaction.html\n\n## Before installation\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "installerAndWrapperUnchanged": true,
+    "allSevenPg1R3PathsUnchanged": true,
+    "acceptedOriginalMa1RuntimeDeclarationsAndBodiesUnchanged": true
+  },
+  "rootProvidedPredecessorCiEvidence": {
+    "source": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6822763677",
+    "head": "8150c358c3d64c245d518eff05467058540c8747",
+    "runId": 43211401472,
+    "runNumber": 4126,
+    "attempt": 1,
+    "verifyJob": 131159643738,
+    "logUtf8Bytes": 222848,
+    "logSha256": "804562bf40d1d8a7193e4da6ec69fc60e4d36d2cef6ebd4a9999c8d18887350d",
+    "authorFetchedLogOrExecutedRun": false,
+    "typecheck": "success",
+    "lint": "success",
+    "signedOfficialPgdgInstallationReached": true,
+    "installedVersionBothPackages": "17.11-1.pgdg24.04+2",
+    "policyRcDServiceStartRefusal": "expected ephemeral package configuration; not platform approval rejection",
+    "failure": {
+      "atUtc": "2026-11-12T11:45:07Z",
+      "kind": "named local-helper import unavailable through CommonJS interoperation"
+    },
+    "provisioningReceipt": false,
+    "selectedBinaryProof": false,
+    "coreNativeExecuted": false,
+    "laterTestsHygieneBuild": "skipped",
+    "auth": "separate known failure",
+    "transferredToR4Pass": false
+  },
+  "r4RecoveryRisk": {
+    "id": "HMA1-RECOVERY-02",
+    "priority": "P1",
+    "classification": "independently confirmed source risk, not executed data loss",
+    "inheritedRepeatableReadMayHideLateCommittedHistory": true,
+    "packageUnapplied": true,
+    "proposedCorrection": "explicit READ COMMITTED immediately after BEGIN plus owned late-writer source proof",
+    "runtimeVerification": "NOT_RUN",
+    "externalNoConsumerControlledQuiescenceNotReplaced": true
+  },
+  "r4PrimarySourcesProvidedByRoot": [
+    "https://nodejs.org/api/esm.html#interoperability-with-commonjs",
+    "https://r2.nodejs.org/docs/latest-jod/api/esm.html",
+    "https://www.postgresql.org/docs/17/transaction-iso.html",
+    "https://www.postgresql.org/docs/17/sql-begin.html",
+    "https://www.postgresql.org/docs/17/sql-set-transaction.html"
+  ],
+  "historicalR3Manifest": {
+    "path": "docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json",
+    "gitBlob": "e2692895dbe174d45ec844242f735fdb009c3ab8",
+    "utf8Bytes": 75718,
+    "sha256": "5ebdb6cb55c7f8c967ff2d8bf43511070f3b28cd3cef31e2a756a768885559cc"
+  },
+  "externalContextAtR4Delivery": {
+    "attributedToRootMessage": true,
+    "authPr": 1194,
+    "actualAuthJob": "PASS",
+    "overallCi": "running",
+    "notIntegratedHere": true,
+    "noGateTransferToHma1": true
   }
 }
