@@ -990,7 +990,7 @@ BEGIN
   ('outbox_v1','f','FOREIGN KEY (decision_ref) REFERENCES official_v3_result_private.decisions_v1(reference)'),
   ('outbox_v1','f','FOREIGN KEY (operation_kind, operation_id) REFERENCES official_v3_result_private.operations_v1(operation_kind, operation_id)'),
   ('binding_v1','c','CHECK (singleton)'),
-  ('originals_v1','c','CHECK (((octet_length(body_text) >= 1) AND (octet_length(body_text) <= 131072) AND (raw_digest ~ ''^[a-f0-9]{64}$''::text)))'),
+  ('originals_v1','c','CHECK ((((octet_length(body_text) >= 1) AND (octet_length(body_text) <= 131072)) AND (raw_digest ~ ''^[a-f0-9]{64}$''::text)))'),
   ('qualifications_v1','c','CHECK ((kind = ANY (ARRAY[''verification''::text, ''observation''::text])))'),
   ('qualifications_v1','c','CHECK ((isfinite(valid_until) AND (digest ~ ''^[a-f0-9]{64}$''::text) AND (jsonb_typeof(original_ids) = ''array''::text)))'),
   ('archive_pages_v1','c','CHECK ((revision > 0))'),

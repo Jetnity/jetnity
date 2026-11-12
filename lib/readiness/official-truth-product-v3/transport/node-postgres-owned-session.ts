@@ -259,8 +259,8 @@ function session(target: V3PgTarget, address: string, password: string, kind: V3
 export async function openOwnedV3PgPair(kind: V3PgLogin, operationDeadline: number,
   cleanupDeadline: number, signal: AbortSignal): Promise<PgOwnedPair | null> {
   if (!Object.hasOwn(V3_PG_LOGINS, kind) || signal.aborted || !Number.isFinite(operationDeadline)
-    || !Number.isFinite(cleanupDeadline) || cleanupDeadline < operationDeadline || cleanupDeadline - operationDeadline > 5000
-    || operationDeadline - performance.now() > 5000 || performance.now() >= operationDeadline) return null
+    || !Number.isFinite(cleanupDeadline) || cleanupDeadline < operationDeadline || cleanupDeadline > operationDeadline + 5000
+    || operationDeadline > performance.now() + 5000 || performance.now() >= operationDeadline) return null
   const target = selectedV3PgTarget()
   if (!admittedTarget(target)) return null
   const password = readV3PgPassword(kind)

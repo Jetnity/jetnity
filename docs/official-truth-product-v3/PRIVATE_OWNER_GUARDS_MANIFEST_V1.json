@@ -110,9 +110,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-      "blob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+      "blob": "7c288584c09b5dcf44729ec40a69473fadaa9ffd",
       "bytes": 42247,
-      "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
+      "sha256": "5416805d9d4a916eaeb9f1e1da7a86b5f0a5caff2351cd1bbaf4ed3b5881e854"
     },
     {
       "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",

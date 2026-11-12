@@ -106,15 +106,15 @@
   "currentRootReceiptPins": [
     {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "blob": "97bbd2b7244737d6af58fbde7df54f65db66199d",
-      "bytes": 57224,
-      "sha256": "873ec3656d61b68b451d5cf6bb79c2a8e3e9dfa2a9a870b5478ca652b7c8a3fb"
+      "blob": "f0958e89dc9a6d1c44836547450c059610c135e1",
+      "bytes": 57245,
+      "sha256": "2e75f59790eae46f19aa13ff998d5b8e5299e14dfbc70699bc3297fa352c3aff"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "154a4bb27cd11bb6a6424c7415a81416e585220f",
-      "bytes": 643618,
-      "sha256": "b4b8f1ad5b0847aa84ea2a00ae57f313ce63735297164d522962be1c2c98e0b6"
+      "blob": "ec5d26dc59938130ac3b9491ba14427cd025c728",
+      "bytes": 644974,
+      "sha256": "5380907ebf8376e4426eeb2c4b8489fcb942a5760910117ea83a6dfcb3a1b5b8"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
@@ -130,9 +130,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-      "blob": "887d41f88d6348e82c580675acb7e899a218d98b",
-      "bytes": 44450,
-      "sha256": "4518f0581055b2399c2dd5edf19ca37717c855b0080979a09b31fb701af2cd67"
+      "blob": "bb016bc4021040de5866b8a6e2b5827a390e80b3",
+      "bytes": 45448,
+      "sha256": "62be4c5d7b868c3fc633a627505a230dd2fc114704eb8522efd89cf9da834a03"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
@@ -142,9 +142,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
-      "blob": "13b004a99625aa8ecde8531c9d8838642f448a4d",
+      "blob": "11d514ffd9ce4d7f5dcc0ea9b1c32bfa13a90495",
       "bytes": 32870,
-      "sha256": "9d28077aa3d6fdecf80df24ff51a8a3838c11eddf305e71573852c6467dfad4e"
+      "sha256": "7ad134383e96af5e0d138ea5ab78add6506a071d2f84a40d4692b83410015d93"
     },
     {
       "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json",
@@ -178,15 +178,15 @@
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
+      "blob": "7bb320a162b03d9ce1e4ceb2552ecd9b4e3e8bbb",
       "bytes": 59026,
-      "blob": "e885db9438d9ddc92ce1f899d2244f008ab7faa7",
-      "sha256": "7cef9582f0eb9261948a349477bb4e1497543a52e4a915dc6098bf59d5f44996"
+      "sha256": "c67da94e74eb443b1f80fbe1707d6deed30cd49e60b9d958713d09fb045bb550"
     },
     {
       "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts",
+      "blob": "71be6507ddd9307dcd9cda1aa354a420972f2777",
       "bytes": 37016,
-      "blob": "5ac2a45584eb13d3d773d2e5570a0c4b487e42ad",
-      "sha256": "a40c502fe98cc7336ce7b8ec56f9f7d3da9f517b978e289cdf5bd7579dbe4cad"
+      "sha256": "3f35679f919f3771f96e10359a1dfe22a2f707edd25f8617e285f4015534b1f8"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
@@ -238,21 +238,21 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-owned-session.ts",
-      "blob": "69ff8ad3fcf73e67d0ce26bce9a62c95161552fc",
+      "blob": "a2d133bb7194ee244ade4627f2af2da851dc2403",
       "bytes": 17782,
-      "sha256": "074f9e22a34d982316c81d1bb1f63ab6ccdc6ae35ca6361a83b0ac396f5ddcd3"
+      "sha256": "16c671b2800541c18535271a90ae52e456f0ba971508318c449a065de4c57f4f"
     },
     {
       "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
+      "blob": "40e9ce23565c251490584a5f75a2f2551f5cbbb0",
       "bytes": 60064,
-      "blob": "d83a053840fe3886b4951c3dcb601073085e9c72",
-      "sha256": "4d30a1e701066c1f4f516d0f88f2c08a2e5fede453793c33ae725147e4d6a7f7"
+      "sha256": "c469ff7c9ce9d32c2490a242aebfcf2fdca58403c8081e0dd59569ca313b7605"
     },
     {
       "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
+      "blob": "e0b87ba980d5ab861e2e8bdf161c8ec7fc1dc305",
       "bytes": 90727,
-      "blob": "0ed2e3e1794a0dcf17ee5133da8eccb5a8dd9c9b",
-      "sha256": "60d635cb9b80154779ca57eb301c7914470760d383af71f3b3c4af8d60b8bc2a"
+      "sha256": "6a13077bd1e940571245bc656574b8e3d1656a76d88084141c8d1ced4a4db9b3"
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
@@ -262,15 +262,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "a0d7ed3543ef7d92fff39e4a79cd56d08c6b2907",
+      "blob": "d8606ade5892d5f4facaa1a33e3ca3c472eef7b1",
       "bytes": 100410,
-      "sha256": "c1f80020a84b56ac5487e45a6ae16f6fa9d8b0f8c4baee50f15ea3d4cdaa74b2"
+      "sha256": "e9deca366806083f92401dcaba9ccc3ae28c322b39a812c69c27dc5687580fd0"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
-      "bytes": 442780,
-      "sha256": "22b1ba34a765038eb713e395c127e8862f80738afbdd678cfe7319f9b11b9678"
+      "blob": "0cd707fc73593048feeb076fceead13580af2c02",
+      "bytes": 442782,
+      "sha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
@@ -280,21 +280,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-      "blob": "c412b61f5fd06f29345bdf0e6dbff0ef931d7e81",
-      "bytes": 364941,
-      "sha256": "87631ac49761d0e310fddb984b8bbd3d01508380d41f310f96f96ad6d3c60465"
+      "blob": "a8d0279a436067816ef6b6fbc9ce01f250722580",
+      "bytes": 364943,
+      "sha256": "867ca58c4f1c71e328952e5c400941aeb81a419fc241fcd1802413e2d5d4f6a3"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "cabb74731ee7e344d1df1bf7649ff678bdc09e5c",
+      "blob": "14782d15899d27447d08f808925a2397abd787d0",
       "bytes": 197456,
-      "sha256": "96cd558455dfecd24170e46f18279a7160ef7790f31ffe90f4c20ac212fc3576"
+      "sha256": "0fe60602f21fc069f729a36fbcae0549bbaae5a51b554a614ad24ad2fd7c8f4d"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-      "blob": "2ef041a1e683a1394facd0ae6514b8d91d1a3688",
-      "bytes": 160989,
-      "sha256": "9f577d897419f67add68b2c53fd0dcba865a0b846541cc2b1735decbfc7c0d6c"
+      "blob": "c74d35592a91b70f3a75d86cffd7f98efa43d03f",
+      "bytes": 160993,
+      "sha256": "9ed61b93ca11817d7bc0d5f78c57dbb7a938b20c2e8e59af34309ec6078ad819"
     },
     {
       "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
@@ -307,6 +307,12 @@
       "blob": "b59dc9f3ed8b02b8660aec43d47f5da98034acd0",
       "bytes": 22721,
       "sha256": "5284e8a5d4e4da565ac84ea0cb8da5bcf7cfc59fb2c91ae3937c046427f9b5e7"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+      "blob": "7c288584c09b5dcf44729ec40a69473fadaa9ffd",
+      "bytes": 42247,
+      "sha256": "5416805d9d4a916eaeb9f1e1da7a86b5f0a5caff2351cd1bbaf4ed3b5881e854"
     },
     {
       "path": "scripts/db/profile-authority-integrity-1/native.ts",
@@ -366,9 +372,9 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "blob": "154a4bb27cd11bb6a6424c7415a81416e585220f",
-        "bytes": 643618,
-        "sha256": "b4b8f1ad5b0847aa84ea2a00ae57f313ce63735297164d522962be1c2c98e0b6"
+        "blob": "ec5d26dc59938130ac3b9491ba14427cd025c728",
+        "bytes": 644974,
+        "sha256": "5380907ebf8376e4426eeb2c4b8489fcb942a5760910117ea83a6dfcb3a1b5b8"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
@@ -396,9 +402,9 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-        "blob": "887d41f88d6348e82c580675acb7e899a218d98b",
-        "bytes": 44450,
-        "sha256": "4518f0581055b2399c2dd5edf19ca37717c855b0080979a09b31fb701af2cd67"
+        "blob": "bb016bc4021040de5866b8a6e2b5827a390e80b3",
+        "bytes": 45448,
+        "sha256": "62be4c5d7b868c3fc633a627505a230dd2fc114704eb8522efd89cf9da834a03"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_TASK_V1.md",
@@ -450,9 +456,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "blob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
-        "bytes": 442780,
-        "sha256": "22b1ba34a765038eb713e395c127e8862f80738afbdd678cfe7319f9b11b9678"
+        "blob": "0cd707fc73593048feeb076fceead13580af2c02",
+        "bytes": 442782,
+        "sha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -462,21 +468,21 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-        "blob": "c412b61f5fd06f29345bdf0e6dbff0ef931d7e81",
-        "bytes": 364941,
-        "sha256": "87631ac49761d0e310fddb984b8bbd3d01508380d41f310f96f96ad6d3c60465"
+        "blob": "a8d0279a436067816ef6b6fbc9ce01f250722580",
+        "bytes": 364943,
+        "sha256": "867ca58c4f1c71e328952e5c400941aeb81a419fc241fcd1802413e2d5d4f6a3"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-        "blob": "cabb74731ee7e344d1df1bf7649ff678bdc09e5c",
+        "blob": "14782d15899d27447d08f808925a2397abd787d0",
         "bytes": 197456,
-        "sha256": "96cd558455dfecd24170e46f18279a7160ef7790f31ffe90f4c20ac212fc3576"
+        "sha256": "0fe60602f21fc069f729a36fbcae0549bbaae5a51b554a614ad24ad2fd7c8f4d"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-        "blob": "2ef041a1e683a1394facd0ae6514b8d91d1a3688",
-        "bytes": 160989,
-        "sha256": "9f577d897419f67add68b2c53fd0dcba865a0b846541cc2b1735decbfc7c0d6c"
+        "blob": "c74d35592a91b70f3a75d86cffd7f98efa43d03f",
+        "bytes": 160993,
+        "sha256": "9ed61b93ca11817d7bc0d5f78c57dbb7a938b20c2e8e59af34309ec6078ad819"
       }
     ],
     "externalRuntimePins": [
@@ -889,9 +895,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "bytes": 442780,
-        "blob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
-        "sha256": "22b1ba34a765038eb713e395c127e8862f80738afbdd678cfe7319f9b11b9678"
+        "bytes": 442782,
+        "blob": "0cd707fc73593048feeb076fceead13580af2c02",
+        "sha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -914,9 +920,9 @@
     ],
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "a0d7ed3543ef7d92fff39e4a79cd56d08c6b2907",
+      "blob": "d8606ade5892d5f4facaa1a33e3ca3c472eef7b1",
       "bytes": 100410,
-      "sha256": "c1f80020a84b56ac5487e45a6ae16f6fa9d8b0f8c4baee50f15ea3d4cdaa74b2"
+      "sha256": "e9deca366806083f92401dcaba9ccc3ae28c322b39a812c69c27dc5687580fd0"
     },
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
@@ -2330,7 +2336,7 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "CI4160_TEST_FIXES_AND_PASSIVE_DIAGNOSTIC",
+    "revision": "CI4163_NATIVE_EXPECTATIONS_AND_ABSOLUTE_DEADLINES",
     "status": "SOURCE_REVIEWED_NOT_RUN",
     "allRuntimeTargetsAndIssuerSelectorsRemainNull": true,
     "hrsPins": 72,
@@ -2347,11 +2353,11 @@
       "databaseCalls": 0
     },
     "next": "Fresh full CI; green gates required before actual Dev installation.",
-    "previousActualFailureRun": 43311029813,
-    "correction": "Exact inet fixture expectation, finite source witness repairs, source-change suppression assertion and original P7802 diagnostic only; no SQL replay or SQL change."
+    "previousActualFailureRun": 43315961338,
+    "correction": "Four exact originals_v1 CHECK expectation parentheses, two equivalent absolute deadline comparisons, and one PG1 native pg-wire source pin; all SQL functions, rights, cleanup assertions and budgets unchanged."
   },
   "previousIntegrationReference": {
-    "parent": "5637c689398f944eab228d9797a121793a745ffa",
-    "manifestBlob": "77f6545a30cf78afde7e1f936ac4d9da2d298182"
+    "parent": "70f64a8efbcdcb6501e96250d1c4c0c4266a1c07",
+    "manifestBlob": "995fc3959f265a443c1a8233a6d0660d32808362"
   }
 }
