@@ -50,6 +50,167 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged
+      # selector must choose the official files; companion jobs stay unchanged.
+      - name: Provision mandatory PostgreSQL 17 from signed official packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          test "$ID" = ubuntu
+          test "$VERSION_ID" = 24.04
+          test "$VERSION_CODENAME" = noble
+          test "$(dpkg --print-architecture)" = amd64
+          command -v curl >/dev/null
+          command -v gpg >/dev/null
+          test -f /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          hma_tmp="$(mktemp -d /tmp/jetnity-hma1-pgdg.XXXXXX)"
+          chmod 755 "$hma_tmp"
+          hma_policy_changed=0
+          hma_cluster_config_changed=0
+          hma_policy_present=0
+          hma_cluster_config_present=0
+          hma_cleanup() {
+            hma_status=$?
+            trap - EXIT
+            set +e
+            if [ "$hma_policy_changed" = 1 ]; then
+              if [ "$hma_policy_present" = 1 ]; then
+                sudo cp -a "$hma_tmp/policy-rc.d.original" /usr/sbin/policy-rc.d || hma_status=1
+              else
+                sudo rm -f /usr/sbin/policy-rc.d || hma_status=1
+              fi
+            fi
+            if [ "$hma_cluster_config_changed" = 1 ]; then
+              if [ "$hma_cluster_config_present" = 1 ]; then
+                sudo cp -a "$hma_tmp/createcluster.conf.original" /etc/postgresql-common/createcluster.conf || hma_status=1
+              else
+                sudo rm -f /etc/postgresql-common/createcluster.conf || hma_status=1
+              fi
+            fi
+            sudo rm -rf -- "$hma_tmp" || hma_status=1
+            exit "$hma_status"
+          }
+          trap hma_cleanup EXIT
+          hma_no_system_cluster() {
+            for hma_root in /etc/postgresql/17 /var/lib/postgresql/17; do
+              test ! -L "$hma_root"
+              if [ -e "$hma_root" ]; then
+                test -d "$hma_root"
+                test -z "$(sudo find "$hma_root" -mindepth 1 -maxdepth 1 -print -quit)"
+              fi
+            done
+          }
+          hma_no_system_cluster
+          test ! -L /usr/sbin/policy-rc.d
+          test ! -L /etc/postgresql-common/createcluster.conf
+          if [ -e /usr/sbin/policy-rc.d ]; then
+            test -f /usr/sbin/policy-rc.d
+            sudo cp -a /usr/sbin/policy-rc.d "$hma_tmp/policy-rc.d.original"
+            hma_policy_present=1
+          fi
+          if [ -e /etc/postgresql-common/createcluster.conf ]; then
+            test -f /etc/postgresql-common/createcluster.conf
+            sudo cp -a /etc/postgresql-common/createcluster.conf "$hma_tmp/createcluster.conf.original"
+            hma_cluster_config_present=1
+          fi
+          printf '#!/bin/sh\nexit 101\n' > "$hma_tmp/policy-rc.d"
+          printf 'create_main_cluster = false\n' > "$hma_tmp/createcluster.conf"
+          hma_policy_changed=1
+          sudo install -m 755 "$hma_tmp/policy-rc.d" /usr/sbin/policy-rc.d
+          sudo install -d -m 755 /etc/postgresql-common
+          hma_cluster_config_changed=1
+          sudo install -m 644 "$hma_tmp/createcluster.conf" /etc/postgresql-common/createcluster.conf
+
+          # Isolated APT sources avoid duplicating or rewriting an image's PGDG
+          # configuration. Only official Ubuntu dependency and HTTPS PGDG indices.
+          mkdir -m 700 "$hma_tmp/gnupg"
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --connect-timeout 10 --max-time 60 \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output "$hma_tmp/pgdg.asc"
+          gpg --batch --no-options --homedir "$hma_tmp/gnupg" --with-colons --show-keys "$hma_tmp/pgdg.asc" > "$hma_tmp/key-info"
+          hma_fingerprint="$(awk -F: '$1=="pub"{pub++} $1=="fpr" && primary==""{primary=$10} END{if(pub!=1)exit 1;print primary}' "$hma_tmp/key-info")"
+          test "$hma_fingerprint" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+          chmod 644 "$hma_tmp/pgdg.asc"
+          cat > "$hma_tmp/sources.list" <<HMA_SOURCES
+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble main universe
+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://archive.ubuntu.com/ubuntu noble-updates main universe
+          deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] https://security.ubuntu.com/ubuntu noble-security main universe
+          deb [arch=amd64 signed-by=$hma_tmp/pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main
+          HMA_SOURCES
+          sudo install -d -m 755 "$hma_tmp/lists" "$hma_tmp/archives"
+          sudo install -d -o _apt -m 700 "$hma_tmp/lists/partial" "$hma_tmp/archives/partial"
+          hma_apt_options=(
+            -o "Dir::Etc::sourcelist=$hma_tmp/sources.list"
+            -o "Dir::Etc::sourceparts=-"
+            -o "Dir::State::lists=$hma_tmp/lists"
+            -o "Dir::Cache::archives=$hma_tmp/archives"
+            -o "Acquire::AllowInsecureRepositories=false"
+            -o "Acquire::AllowDowngradeToInsecureRepositories=false"
+            -o "APT::Get::AllowUnauthenticated=false"
+            -o "APT::Update::Error-Mode=any"
+            -o "Acquire::https::Verify-Peer=true"
+            -o "Acquire::https::Verify-Host=true"
+            -o "Acquire::https::Timeout=30"
+            -o "Acquire::Retries=0"
+          )
+          sudo apt-get "${hma_apt_options[@]}" update
+          hma_pgdg_version() {
+            apt-cache "${hma_apt_options[@]}" madison "$1" |
+              awk -F'|' -v wanted="$1" '{
+                name=$1;version=$2;origin=$3
+                gsub(/^[ \t]+|[ \t]+$/,"",name)
+                gsub(/^[ \t]+|[ \t]+$/,"",version)
+                gsub(/^[ \t]+|[ \t]+$/,"",origin)
+                if(name==wanted && origin=="https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages" && selected=="")selected=version
+              } END{if(selected=="")exit 1;print selected}'
+          }
+          hma_server_version="$(hma_pgdg_version postgresql-17)"
+          hma_client_version="$(hma_pgdg_version postgresql-client-17)"
+          [[ "$hma_server_version" =~ ^17\.[0-9]+-[0-9]+\.pgdg24\.04\+[0-9]+$ ]]
+          test "$hma_server_version" = "$hma_client_version"
+          printf 'HMA1 PGDG key: %s\nHMA1 package origin: https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64\n' "$hma_fingerprint"
+          printf 'HMA1 selected packages: postgresql-17=%s postgresql-client-17=%s\n' "$hma_server_version" "$hma_client_version"
+          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l apt-get "${hma_apt_options[@]}" --assume-yes --no-install-recommends --reinstall install \
+            "postgresql-17=$hma_server_version" "postgresql-client-17=$hma_client_version"
+          hma_no_system_cluster
+          apt-cache "${hma_apt_options[@]}" policy postgresql-17 postgresql-client-17
+
+          # Invoke the existing selector without changing it, PATH or a sibling
+          # toolchain. These commands report versions; no database is started.
+          HMA1_EXPECTED_PACKAGE_VERSION="$hma_server_version" node --import tsx --input-type=module <<'HMA_NODE'
+          import assert from 'node:assert/strict'
+          import { execFileSync } from 'node:child_process'
+          import { realpathSync } from 'node:fs'
+          import { findLocalPgBins } from './scripts/db/official-truth-integrated-pilot-1/local-cluster.ts'
+          const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', timeout: 10_000, maxBuffer: 16_384 }).trim()
+          const expectedVersion = process.env.HMA1_EXPECTED_PACKAGE_VERSION
+          assert.match(expectedVersion ?? '', /^17\.[0-9]+-[0-9]+\.pgdg24\.04\+[0-9]+$/)
+          const packages = ['postgresql-17', 'postgresql-client-17'].map(name => {
+            const fields = run('dpkg-query', ['-W', '-f=${binary:Package}\t${Version}\t${Architecture}\t${db:Status-Status}', name]).split('\t')
+            assert.ok(fields[0] === name || fields[0] === name + ':amd64')
+            assert.deepEqual(fields.slice(1), [expectedVersion, 'amd64', 'installed'])
+            assert.equal(run('dpkg', ['--verify', name]), '', 'installed package content differs')
+            return { name, version: fields[1], architecture: fields[2], origin: 'https://apt.postgresql.org/pub/repos/apt noble-pgdg/main' }
+          })
+          const bins = findLocalPgBins()
+          assert.ok(bins, 'mandatory PostgreSQL17 binaries missing')
+          const programs = ['initdb', 'pg_ctl', 'postgres', 'psql'].map(name => {
+            const expected = '/usr/lib/postgresql/17/bin/' + name
+            assert.equal(bins[name], expected, 'unchanged selector chose another root')
+            assert.equal(realpathSync(bins[name]), expected, 'selected binary resolves outside the official path')
+            const owner = run('dpkg-query', ['-S', expected])
+            const expectedPackage = name === 'psql' ? 'postgresql-client-17' : 'postgresql-17'
+            assert.ok(owner === expectedPackage + ': ' + expected || owner === expectedPackage + ':amd64: ' + expected)
+            const version = run(expected, ['--version'])
+            assert.ok(version.length <= 256)
+            assert.match(version, new RegExp('^' + name + ' \\(PostgreSQL\\) 17\\.[0-9]+(?:\\s|$)'))
+            return { name, path: bins[name], resolved: realpathSync(bins[name]), package: expectedPackage, version }
+          })
+          const receipt = { schema: 'jetnity.hma1.ci-postgres17.v1', keyFingerprint: 'B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8', packages, programs, databaseStarted: false }
+          assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 4096)
+          console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))
+          HMA_NODE
+
       - name: Tests
         run: npm run test:core
 

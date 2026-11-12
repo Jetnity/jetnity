@@ -338,8 +338,8 @@ async function fixture(cluster: LocalProofCluster) {
   const bindRecovery = async (binding?: PgRows[number], context = 'root-verified-unused-quiescent-v1') => {
     const row = binding ?? (await identitiesNow())[0]!
     assert.ok(row.private_oid && row.api_oid && row.reader_oid)
-    await installer.query("SELECT set_config('jetnity.hma1_recovery_context',$1,false),set_config('jetnity.hma1_recovery_private_oid',$2,false),"
-      + "set_config('jetnity.hma1_recovery_api_oid',$3,false),set_config('jetnity.hma1_recovery_reader_oid',$4,false)",
+    await installer.query("SELECT set_config('jetnity.hma1_recovery_context',$1,false) AS recovery_context,set_config('jetnity.hma1_recovery_private_oid',$2,false) AS recovery_private_oid,"
+      + "set_config('jetnity.hma1_recovery_api_oid',$3,false) AS recovery_api_oid,set_config('jetnity.hma1_recovery_reader_oid',$4,false) AS recovery_reader_oid",
     [pgText(context),pgText(row.private_oid),pgText(row.api_oid),pgText(row.reader_oid)])
   }
   return { cluster, version, bootstrap, observer, installer, human, connect, identities, graph, identitiesNow, history, snapshot, bindRecovery, unrelated, stage, op: () => ma1Operation(++operation) }
@@ -682,10 +682,10 @@ export async function runHostedMethodAuthorityNative(t: TestContext): Promise<vo
       await setClaims(db.human, claims())
       await db.human.query("SELECT set_config('request.jwt.claim.sub',$1,false)", [pgText(AUTH.other)])
       await assert.rejects(db.stage(ma1SyntheticTuple('hma1-uid-mismatch')), code('42501'))
-      await db.human.query("SELECT set_config('request.jwt.claim.sub','',false),set_config('request.jwt.claim',$1,false)",
+      await db.human.query("SELECT set_config('request.jwt.claim.sub','',false) AS cleared_sub,set_config('request.jwt.claim',$1,false) AS precedence_claim",
         [pgText(JSON.stringify(claims({ sub: AUTH.other, session_id: AUTH.foreign })))])
       await assert.rejects(db.stage(ma1SyntheticTuple('hma1-jwt-precedence')), code('42501'))
-      await db.human.query("SELECT set_config('request.jwt.claim','',false),set_config('request.jwt.claims','{invalid-json',false)")
+      await db.human.query("SELECT set_config('request.jwt.claim','',false) AS cleared_claim,set_config('request.jwt.claims','{invalid-json',false) AS malformed_claims")
       await assert.rejects(db.stage(ma1SyntheticTuple('hma1-malformed-json')), code('22P02'))
       await setClaims(db.human, claims())
       const mutations = [

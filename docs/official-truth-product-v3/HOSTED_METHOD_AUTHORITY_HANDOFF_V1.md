@@ -1,3 +1,110 @@
+# Hosted Method Authority 1 — current R1/R2 source handoff
+
+**12 November 2026. SOURCE CANDIDATE / ALL EXECUTION NOT_RUN / STOP.**
+
+Exact author and unchanged session: **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. No Cursor session is claimed.
+
+Root amendments: [R1](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822033975), [R2](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822152461). The complete original Task remains the exact prefix of the Task file; complete R1 then R2 are appended verbatim with their URLs. The complete earlier Handoff is retained below as dated historical evidence.
+
+## Current candidate and ancestry
+
+R1 was not committed before R2 arrived. Both bounded changes therefore belong to one immutable integration successor with ordered parents:
+
+1. HMA1 V1 `2f412904edc188bebcc7287e8e3cdae5bf1a9c5a`, tree `1fc41142fe2339f99c8f0dddb4325e6ab6b85701`.
+2. Exact source-reviewed PG1 R2 `9ed5b60d7ca77974864a32a03ed029fc51234e22`, tree `7921abb6dc8dfd9110ada61ab5af62469c28008f`.
+
+The first-parent history is retained. The two final PG1 documentation blobs are copied exactly from R2; **all seven PG1 paths match R2 byte-for-byte**. No R3 dependency correction is silently included.
+
+Against PG1 R2 the entire permitted scope is **eight new HMA1 paths plus one changed existing path, .github/workflows/ci.yml**. All 9,482 other PG1-R2 leaves must remain identical; total candidate leaf count is9,491. Final commit/tree and the complete nontruncated comparison are supplied in the immutable delivery receipt; the manifest's own pin is external to avoid self-reference.
+
+The HMA1 installer, recovery SQL, wrapper and recovery document remain exact V1. The native file changes only by the eight R2 aliases; all source/runtime guards, assertions, parameter values/order, query counts and proof budgets stay unchanged. The shared helper and duplicate-column transport guard remain unchanged.
+
+## R1: mandatory actual PostgreSQL17 in verify only
+
+Root's actual #4121 verify evidence found PostgreSQL16.15. HMA1 correctly rejects that major. The previous workflow `22f6e50aaff600749814bf7e77e24c728b1cd5d5` did not provision17; modifying PATH would not change the helper's fixed root priority.
+
+The candidate adds exactly **one step before Tests, after Operating mode and the unchanged Typecheck/Lint steps**, exclusively in verify. Removing that exact insertion reconstructs the complete old workflow byte-for-byte. Job permissions, triggers, concurrency, timeouts, all previous commands, companion jobs and required aggregation remain unchanged.
+
+Current CI file: Git blob `38ef34d4ace40047577adde149b366767ce096d1`, 22234 UTF8 bytes, SHA256 `a348d9816b70403b750da104d15ae09ae6b3c82451b57a046a763c1c410ad5ec`.
+
+The authored step:
+
+- Requires Ubuntu24.04/noble/amd64, existing curl/gpg and the standard Ubuntu archive keyring.
+- Uses a newly owned temporary APT source/index/archive directory. It does not modify or duplicate the runner's existing repository files, avoiding competing Signed-By configuration.
+- Fetches the official HTTPS PGDG key and requires exactly the published primary fingerprint `B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8`. TLS and signature validation remain enabled.
+- Uses only HTTPS official PGDG noble-pgdg plus official signed Ubuntu noble/noble-updates/noble-security dependency indices. The two requested PostgreSQL packages are selected specifically from the exact PGDG noble-pgdg/main amd64 metadata origin, must have matching17.x PGDG24.04 package versions, and are installed/reinstalled with those exact version arguments. Ordinary dependency resolution stays within those isolated official sources.
+- Preserves APT's sandbox and authentication checks; update errors are fatal, explicit retries are0, and unavailable packages fail the mandatory step. No unsigned source, arbitrary binary download, curl-pipe-shell, third-party setup action, fallback major, optional skip or continue-on-error exists.
+- Temporarily saves/replaces policy-rc.d with the standard package service-start denial and postgresql-common createcluster.conf with create_main_cluster=false. Existing policy/configuration are restored in an EXIT trap, including failure paths; only this new temporary directory is removed. NEEDRESTART_MODE=l keeps package-triggered needrestart in list-only mode. No existing PG17 system-cluster directory contents are accepted before or after install.
+- Records exact selected versions and origin, checks installed package identity/status/version/architecture and package content with dpkg, and calls the **unchanged** findLocalPgBins. Every selected path and resolved realpath must equal /usr/lib/postgresql/17/bin/{initdb,pg_ctl,postgres,psql}, have the appropriate installed package owner and report major17. A higher-priority sibling toolchain causes failure; it is neither deleted nor overridden.
+- Produces a bounded4096-byte provisioning receipt of package identities, paths and versions; the version checks start no database. Native tests continue to create only their existing owned Unix-socket clusters, and HMA1 still independently checks server_version_num.
+
+This changes the actual PostgreSQL major for **all Core proofs in verify**, so every existing Core test must run again. Companion jobs are unchanged and are not represented as PostgreSQL17. No old PG16 green gate transfers. All compiler/lint/Core/native/hygiene/build/companion/Preview gates remain mandatory for the new head. A concrete incompatibility returns to Root for a versioned same-session fix.
+
+No package installation, shell/Node provisioning, binary selection, parser, native test or workflow was executed by this author. Existing-package availability, apt behavior and installed identity remain **NOT_RUN**, not a provisioning success claim. Primary source references below were supplied and independently read by Root; this author performed no external source observation.
+
+## R2: exactly eight explicit output aliases
+
+After the actual PG1 #4122 duplicate-column failure, this author reported and Root independently confirmed three analogous HMA1 SELECT sites. The unchanged transport intentionally rejects repeated result-column names.
+
+Current native file: Git blob `aea19da909f42509a5bb57e3cbdf825583deec45`, 54554 UTF8 bytes, SHA256 `66af779ba1b0a639487f7ac9a270aedc8826f62195e5de23c3dec17dc3212474`.
+
+The sole native delta consists of the following four string replacements across the three authorized SELECTs, producing eight distinct result aliases:
+
+| Span | Before | After |
+| --- | --- | --- |
+| 1 | `SELECT set_config('jetnity.hma1_recovery_context',$1,false),set_config('jetnity.hma1_recovery_private_oid',$2,false),` | `SELECT set_config('jetnity.hma1_recovery_context',$1,false) AS recovery_context,set_config('jetnity.hma1_recovery_private_oid',$2,false) AS recovery_private_oid,` |
+| 2 | `set_config('jetnity.hma1_recovery_api_oid',$3,false),set_config('jetnity.hma1_recovery_reader_oid',$4,false)` | `set_config('jetnity.hma1_recovery_api_oid',$3,false) AS recovery_api_oid,set_config('jetnity.hma1_recovery_reader_oid',$4,false) AS recovery_reader_oid` |
+| 3 | `SELECT set_config('request.jwt.claim.sub','',false),set_config('request.jwt.claim',$1,false)` | `SELECT set_config('request.jwt.claim.sub','',false) AS cleared_sub,set_config('request.jwt.claim',$1,false) AS precedence_claim` |
+| 4 | `SELECT set_config('request.jwt.claim','',false),set_config('request.jwt.claims','{invalid-json',false)` | `SELECT set_config('request.jwt.claim','',false) AS cleared_claim,set_config('request.jwt.claims','{invalid-json',false) AS malformed_claims` |
+
+Removing exactly those eight inserted alias strings reconstructs all54,395 bytes of original native `01118d016863dbc11d42931720131beca51bcd53`, SHA256 `d347427f7810719e2330d70096c8a3efb74b2d3c43ac3db4a6c969807c5d3992`. All arguments, parameter order, query count, claim/context values, expected errors, proof cases and cleanup remain identical. The remaining set_config statements were scanned in the complete module; they are single-result SELECTs and no additional analogous duplicate-column site was identified. This was text inspection only, not compilation or execution.
+
+## Exact PG1 R2 dependency preserved
+
+| Path | Git blob | UTF8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md` | `b82504256fb97bfa37adf26e7cca84d52d2c4dbe` | 19704 | `256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc` |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json` | `4b4ea654202fe6f7402c2cc6203c00d2cf69fc0e` | 17215 | `03606e6383434ee17de42d9e44460065fa1142d0bb7ef005bcf3aed390dc7934` |
+| `docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md` | `f321aea04cc2aef70c2089d3145d488ae7290b48` | 11179 | `4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75` |
+| `lib/readiness/official-truth-v3-private-owner-guards-1.test.ts` | `f18e5aebc4ea6725f631e5ec7316da9f659de024` | 397 | `601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql` | `9a8144e27405f93b9c0e5d003923efe8883bb4b4` | 10945 | `3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/native.ts` | `d607f819d4094833efba01f2f198bf8f2cbf9209` | 42162 | `62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89` |
+| `scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql` | `cd5a53120d4eb77adb31d1cf63b467454f7ccd61` | 6452 | `869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b` |
+
+These files are an exact historical/source dependency binding. Root subsequently reported actual PG1 #4122 failure at PG1-03 with local_pg_duplicate_column and selected [separate PG1 R3 task6822141580](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580). R3 is not included. **PG1 R2 is not accepted for merge/install**, and no source-only wording here overrides the actual failed run.
+
+Root may independently select a stacked Draft PR for ordinary CI while PG1 remains open. That is not Ready, merge or installation authority. Before HMA1 merge or target use, Root must explicitly incorporate the final accepted PG1/main and repeat complete exact-head/final-base gates. Every changed head invalidates earlier gates.
+
+## Updated external context and unresolved gates
+
+R1 records AA A5 at `bb3b22d7ce6f60b2226e7d069287f99960de093f`, Run0/UNARMED, with fresh CI pending at that checkpoint. It supersedes the older A4 context retained only in historical V1 below. No positive source selection exists and this author neither rearmed nor called AA.
+
+[E18 6821829506](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6821829506) now records actual Dev Data API settings; effective caller proof remains separate. R2 also records an independent Auth configuration CI blocker outside this scope. None of these updates supplies current Owner/AAL2 authority, hosted installation, signed requests or live public answers.
+
+P1 open: no execution of this candidate; PG1 #4122 failed and its separately selected correction is not integrated; actual PostgreSQL17 provisioning and full Core compatibility unproven; independent Auth CI remains outside this patch; no actual hosted install/readback or signed Owner request. P2: final accepted dependency/main binding and full Preview/companion gates remain. Original #917/#1131 boundaries stay unchanged. S1/M04 remain outside scope. No new source/admission/recovery weakening is introduced.
+
+**Hosted install unproven. Actual signed Owner request absent. Public CH→DE launch false.**
+
+## Provisioning sources and verification boundary
+
+Root's R1 records its independent reads of:
+
+- https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
+- https://www.postgresql.org/download/linux/ubuntu/
+
+Authored fixed HTTPS sources/key:
+
+- https://www.postgresql.org/media/keys/ACCC4CF8.asc
+- https://apt.postgresql.org/pub/repos/apt — noble-pgdg/main, exact published key fingerprint above.
+- https://archive.ubuntu.com/ubuntu — noble and noble-updates dependencies, signed by the runner's standard Ubuntu archive keyring.
+- https://security.ubuntu.com/ubuntu — noble-security dependencies, same archive keyring.
+
+Only immutable Git reads/writes and pure in-memory source/metadata checks occurred. No parser/compiler/project/native/SQL/APT/test/build/CI execution, external package/source observation, hosted query or mutation, credential/Auth operation, ref/PR publication, Ready or merge. The author-side CI helper only advised on the old workflow/selector and did **not** review this candidate or confer TL PASS. Root must independently review the exact final head. The author stops after immutable delivery.
+
+---
+
+## Historical HMA1 V1 handoff — 12 November 2026, preserved verbatim
+
 # Hosted Method Authority 1 — source-only handoff V1
 
 ## Status and exact author

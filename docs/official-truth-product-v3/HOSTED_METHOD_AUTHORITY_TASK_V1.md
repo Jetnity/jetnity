@@ -73,3 +73,71 @@ Task preserves this entire text and persisted URL. Handoff/manifest distinguish 
 
 No branch/ref/PR, Ready, merge, Supabase query/apply, credential/Auth interaction, original #917 fact reconstruction, #1131 action, network source call, scheduler/provider activation or follow-on by the author. If the eight paths cannot safely satisfy the contract, report the concrete dependency before expanding scope. Root selects the next task only after independent review.
 
+
+
+---
+
+## Amendment R1 — 12 November 2026
+
+Source: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822033975
+
+## Technical Lead — HMA1 source review / CHANGES REQUIRED / amendment R1
+
+**12 November 2026.** Reviewed immutable HMA1 candidate `2f412904edc188bebcc7287e8e3cdae5bf1a9c5a`, tree `1fc41142fe2339f99c8f0dddb4325e6ab6b85701`; current main `dfd692440762b50183fdebbfd6bf8dabde4662d0`, mode NORMAL.
+
+### Independent source findings
+
+Root read the new installer deltas, complete native proof, recovery-specific text and shared full validators, handoff/recovery plan and exact manifest. Root independently checked the full nontruncated eight-addition tree, all package identities, complete task preservation, all ten byte-exact MA1 declarations/bodies and the exact seven-change forward/inverse reconstruction of original MA1. Independent reviewer `/root/ch_de_method_readiness` separately confirmed the safety and preservation invariants. The author-side helper is not a TL review.
+
+No concrete new P0 or admission/recovery defect was found in that source scope. All execution remains NOT_RUN. Two concrete prerequisites prevent publication as currently prepared:
+
+1. **HMA1-CI-01 / P1:** the actual existing verify run #4121 uses PostgreSQL **16.15**. The unchanged shared helper picks fixed roots (sibling toolchain first, then installed17,16,15); HMA1 correctly requires an actual server major17. Current workflow blob `22f6e50aaff600749814bf7e77e24c728b1cd5d5` does not provision17. PATH changes or weakening the version guard would not solve this.
+2. **HMA1-BASE-01 / P2:** bind the final source-reviewed PG1 R2 `9ed5b60d7ca77974864a32a03ed029fc51234e22`, tree `7921abb6dc8dfd9110ada61ab5af62469c28008f`, not its earlier docs-only predecessor. [PG1 Root source review](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6821858548), Draft #1193. Its actual CI is pending; no merge/install acceptance is inferred.
+
+Root independently read current primary documentation:
+- https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md — image documentation lists PostgreSQL16.15.
+- https://www.postgresql.org/download/linux/ubuntu/ — official signed PGDG APT supports Ubuntu noble24.04 and version-specific server/client packages.
+- Official repository key fingerprint: `B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8`.
+
+### Versioned R1 scope — same original HMA1 author/session
+
+**Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, actual original session `/root/hosted_method_authority_writer_g1`.
+
+Prepare an immutable integration successor with **first parent 2f412904edc188bebcc7287e8e3cdae5bf1a9c5a and second parent 9ed5b60d7ca77974864a32a03ed029fc51234e22**. The Git create-commit connector supports additional_parent_shas. Both histories are retained; no existing ref is rewritten. Copy the two final PG1 documentation blobs exactly, with all seven PG1 paths identical to R2.
+
+The permitted overall scope against PG1 R2 is the same eight new HMA1 paths plus **one modified existing path: .github/workflows/ci.yml**. No other existing leaf may change.
+
+1. Preserve the four HMA1 code blobs exactly: install `9c17260c202e430e4c779e47fee0a62c047c4d87`, recovery `ea8e9fb7008808819dc1b3d85719c5af96c2f708`, native `01118d016863dbc11d42931720131beca51bcd53`, wrapper `a29be615b12018567415131cc4331ca1071f577e`. Keep all guards, function bodies, proof cases, budgets and shared modules exact. The HMA1 recovery document remains exact.
+2. Add a narrowly scoped PostgreSQL17 provisioning step **only to the existing verify job**, after Operating mode and before Tests. Do not alter job permissions, triggers, concurrency, timeouts, existing commands, companion jobs or required aggregation. No optional skip, continue-on-error, retry loop or fallback to a different major.
+3. Use only official signed PGDG `postgresql-17` and `postgresql-client-17` packages for Ubuntu24.04. Keep APT signature/TLS checks. The existing official configured repository may be used; if repository setup is needed, use the documented HTTPS PGDG source and verify the exact published key fingerprint before installing. No curl-pipe-shell, third-party setup action, unsigned package or arbitrary binary download. Record package version and origin. Package unavailability or failed verification is a failed mandatory gate, not permission to switch sources.
+4. Use standard ephemeral runner package configuration to avoid starting or adopting a system database service. Tests must continue using only the existing owned Unix-socket clusters. No hosted connection, credentials, secret input, Dev or Production change.
+5. After provisioning, use the **unchanged existing findLocalPgBins** to identify the actually selected initdb, pg_ctl, postgres and psql. Require all four resolved paths to be the official installed `/usr/lib/postgresql/17/bin/` programs and each reported major to be17; record their finite paths/versions and package identities. If the higher-priority sibling toolchain wins, fail closed; do not delete/replace it or alter helper selection. The native proof still independently verifies server_version_num.
+6. This moves the verify job's Core proofs onto PostgreSQL17; every existing Core test remains mandatory. The separate companion jobs remain unchanged and are not relabeled as17. Full new-head Core, native, type/lint/hygiene/build/companion/Preview gates remain required. No old PG16 pass is transferred to17; an actual incompatibility returns to Root for a concrete same-session review fix.
+7. Preserve the complete original Task and append this R1 verbatim with URL. Preserve the full earlier Handoff as dated history and add accurate current parent/dependency/CI preparation status. Update the manifest with exact two-parent ancestry, PG1 R2 identities, the new CI file identity and bounded scope; preserve all original source/inverse/function pins.
+8. Deliver the full nine-path manifest versus PG1 R2, complete tree comparison, exact CI insertion/diff, package/provisioning source references and truthful NOT_RUN state. Root must independently review the final new head.
+
+Root may select a stacked source-reviewed Draft PR for ordinary CI after this correction while PG1's own Draft remains open. This authorizes no Ready, merge or install: actual PG1 acceptance/main integration and complete final-base exact-head gates remain required before HMA1 merge or any target use. Any later base change is explicitly incorporated with a new head and full re-gating.
+
+Latest external context: AA A5 is now published at `bb3b22d7ce6f60b2226e7d069287f99960de093f`, Run0 / UNARMED, fresh CI pending. No positive source selection. [E18 6821829506](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6821829506) now records actual Dev Data API settings, with effective caller proof still separate. These facts update the handoff; they do not change HMA1 runtime authority.
+
+**Author boundary remains source-only:** no parser/compiler/project/native/SQL/build/CI execution, no actual APT installation, no external source observation, no live database query, no ref/PR publication, Ready or merge. Source-authoring and immutable Git objects only. No S1/M04 expansion, managed-role/Auth/global-default change, #917/#1131 retry or workaround. Stop after delivery; no automatic follow-on.
+
+---
+
+## Amendment R2 — 12 November 2026
+
+Source: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822152461
+
+## Technical Lead — HMA1 amendment R2 / distinct native result-column names
+
+**12 November 2026.** This bounded amendment supplements [R1](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822033975) in the same original author/session, **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`.
+
+After the actual PG1 #4122 native failure, the author correctly reported three analogous HMA1 source defects outside R1's initial byte-preservation scope. Root independently read all three sites in exact native blob `01118d016863dbc11d42931720131beca51bcd53`: recovery binding at lines341–342 has four unaliased set_config result columns; claim precedence at685 and malformed-JSON preparation at688 each have two. Root also read the unchanged LocalPgConnection RowDescription decoder: duplicate names intentionally throw `duplicate_column`. This is a source finding; HMA1 has not executed.
+
+**Additional permitted edit:** add a distinct explicit output alias to every set_config expression within these three SELECTs only. Keep each argument, order, parameter list, query count, claim/context value, expected error and proof case unchanged. Keep the shared wire protocol duplicate-name guard unchanged. No suppression, catch/ignore, skip, widened budget or changed assertion. Scan the remainder of this native module for the same actual defect and report any additional scope before changing it.
+
+The installer, recovery SQL and wrapper remain byte exact V1; the recovery document remains byte exact. Native.ts may now differ only by those eight aliases. All R1 CI/provisioning and two-parent integration requirements remain binding. Overall scope remains nine paths versus PG1 R2. Append complete R1 then this R2 verbatim with their URLs to the preserved original Task; preserve historical Handoff and accurately update native pins/manifest and NOT_RUN state. If R1 has not yet been committed, include R2 in the same selected two-parent integration; if R1 has already been committed, use a successor retaining that commit and report exact ancestry. No ref rewrites.
+
+PG1's separate R3 task is [6822141580](https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822141580); it is not permission to silently substitute a new dependency. Root will explicitly select the final PG1 integration before final acceptance. The new independent Auth configuration CI blocker remains outside HMA1 scope.
+
+Source-only immutable Git objects; no project/parser/compiler/native/SQL/APT/test/build/CI execution, hosted mutation, ref/PR publication, Ready or merge. Deliver exact narrow delta and complete manifest/tree evidence, then STOP. All original platform boundaries and final exact-head re-gating remain.

@@ -6,13 +6,15 @@
 
 Author: **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**.
 
-Actual new session: `/root/v3_private_owner_guards_writer_g1`. This is a real delegated Codex session, not a claimed Cursor UI session. Source corrections remained in this same session.
+Actual session: `/root/v3_private_owner_guards_writer_g1`. This is the same real delegated Codex session, not a claimed Cursor UI session. Source corrections and this R2 documentation review-fix remained in this session.
 
 Binding task: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6815884525
 
 Binding review amendment R1: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816224733
 
-Immutable sole-parent base: `dfd692440762b50183fdebbfd6bf8dabde4662d0`; base tree: `cbc79e627161d4ace132b84cf057c18adc86586c`. Seven new paths only, no old leaf changed. The containing immutable commit/tree and final seven-blob readback are supplied separately in the author delivery so this file has no circular self-identity claim.
+Current documentation amendment R2: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816413260
+
+Current immutable successor sole parent: `28ee04afcd74123cea8803f67d379184353e231d`; parent tree: `8e60897fd154ef410752c392f0e657f21e62352e`. Exactly this Handoff and the Manifest differ from that parent; all four code files and complete Task V1/R1 remain exact. The unchanged integration baseline is `dfd692440762b50183fdebbfd6bf8dabde4662d0`, tree `cbc79e627161d4ace132b84cf057c18adc86586c`; the same seven additions remain against that baseline, with all 9476 original leaves unchanged. The containing immutable commit/tree and final seven-blob readback are supplied separately in the author delivery so this file has no circular self-identity claim.
 
 Root alone publishes, performs independent review, sets PASS/Ready or merges. This author did not publish a branch/ref/PR, run any CI/project/compiler/parser/native/test/SQL, contact Supabase, change a hosted project, invoke a provider, retrieve an official source, schedule a job or enable a public route. All preparation used immutable Git source objects and pure in-memory source/metadata comparisons. Hash equality and written assertions are not runtime proof.
 
@@ -75,6 +77,10 @@ The actual bodies were observed on 2026-11-12 at 06:02:26 UTC. The fixture expli
 
 The fixture's minimal postgres role is deliberately not the actual hosted profile. The actual hosted role attributes conflict with M04's separate strict role-profile assumption. This slice does not change M04 or managed postgres to hide that mismatch. Root must resolve the production composition separately.
 
+Hosted MA1 creator-membership compatibility is a distinct unproven boundary. Root's later receipt https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816258415 observes PostgreSQL 17.6 (server_version_num 170006), the existing empty createrole_self_grant setting, creator/database prerequisites and the selected membership-option catalog columns. It created no new role, observed no resulting creator membership edge and proves no successful hosted MA1 installation. The local superuser bootstrap installation in PG1 cannot establish the hosted non-superuser creator's compatibility.
+
+Root separately selected the source-only HMA1 task https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816388805 to address that MA1 installation boundary. That task is preparation, not accepted code, runtime proof or hosted installation. PG1 does not fix this boundary, and HMA1's selection does not resolve the separately known M04 platform-owner-profile mismatch.
+
 Actual Data API exposure settings and the signed-request route remain separate gates. A browser sign-in wall or synthetic local fixture cannot establish them. No secret, signed token or real account state was obtained or used here.
 
 ## Native proof authored, not run
@@ -131,11 +137,17 @@ Source review checked the exact copied guard declarations and bodies against ori
 Risk disposition at handoff:
 
 - P0: no production execution or public authority was attempted; #917/#1131 STOPs are unchanged.
-- P1: source correctness and cleanup are still unexecuted; independent Root review and exact-head CI are required. Hosted project identity/Auth/API/effective rights/recovery/quiescence and a real trusted signed Owner request remain unproven for this package. M04's managed-role mismatch remains unresolved.
+- P1: source correctness and cleanup are still unexecuted; independent Root review and exact-head CI are required. Hosted project identity/Auth/API/effective rights/recovery/quiescence and a real trusted signed Owner request remain unproven for this package. M04's known managed-role profile mismatch remains unresolved; hosted MA1 creator-membership compatibility is separately unproven.
 - P2: the deliberately conservative recovery refuses any known V3 namespace/role and cannot serve a bound environment; a supported revocation or separately reviewed forward repair is needed there. The fixture proves no production-role parity.
 - P3: no product feature/UI/public activation or follow-up work is included. The final author receipt must be attached to subsequent review for immutable provenance.
 
-The first unfinished step is Root's independent review of the complete immutable candidate, including R1, then exact-head required type/lint/core/native/hygiene/build and GitHub CI after Root selects publication without consuming AA CI4120 prematurely. Every changed head invalidates prior exact-head gates. Any review fix returns to this same reachable author session.
+## Current R2 disposition and first unfinished step
+
+Root's R2 records independent source review of parent `28ee04afcd74123cea8803f67d379184353e231d`, including the four code paths, all seven identities, original leaves and complete V1/R1 preservation. Root and reviewer `/root/ch_de_release_gate_audit` confirmed the stale AA selection wording as a P2 documentation issue. This same author/session corrects only Handoff and Manifest; code/source-authority/test behavior remains unchanged. This source review is not runtime, installation, Ready or merge PASS.
+
+The current AA state follows Root's PR #1192/A4 decision https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6816241910: selected CI 43165807743 / #4120 / attempt 1 is consumed and FAILED at Lint in verify job 131007285525. Typecheck passed; Tests and later hygiene/build steps were skipped. The selected job did not execute the AA entry and produced no AA observation or MATCH. The A4 correction is explicitly policy.runNumber=0 (RUN0/UNARMED). No retry of 4120, positive rearm or source observation is selected by this PG1 correction.
+
+The first unfinished step is Root's independent re-gating of this final R2 package and its exact identities, followed by Root-selected publication and required exact-head type/lint/core/native/hygiene/build and GitHub CI. AA source execution remains governed separately by the current UNARMED decision; PG1 grants no AA execution or future positive selection. Every changed head invalidates prior exact-head gates. Any review fix returns to this same reachable author session.
 
 Actual Dev validation/installation and bounded recovery evidence follow only as separately reviewed Root work. Real signed Owner method approval, actual source binding, cache/publication/visitor wiring and public CH→DE activation remain subsequent explicit Root steps under the Product Owner's existing authorization. No automatic follow-on is started by this author.
 
