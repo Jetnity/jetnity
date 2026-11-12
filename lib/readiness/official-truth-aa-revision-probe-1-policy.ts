@@ -3,7 +3,7 @@ import 'server-only'
 // Closed research task data. Run 0 is unarmed; only Root may select one reviewed CI run.
 // No environment/caller override, setter, registry admission or product-window change.
 export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
-  runNumber: 0 as number,
+  runNumber: 4150 as number,
   baseSha: 'b5f33f66faab89454a874e641dbd0dfa66b09d2d',
   repository: 'Jetnity/jetnity',
   repositoryId: 1020187087,
