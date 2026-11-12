@@ -240,15 +240,15 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-      "bytes": 22124,
-      "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779",
-      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34"
+      "bytes": 25086,
+      "blob": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5",
+      "sha256": "f9edce307a52cca4860c820adbc8c356fa3637e209dc6de4fe743070fbc69b34"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-      "bytes": 27249,
-      "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3",
-      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d"
+      "bytes": 27465,
+      "blob": "e54779dfa4cd65372f0f375182beafd4a1d155c1",
+      "sha256": "95e8233bd0fdbaa41fbb5cea03ec8a5a415161116cbdb44871d25f6c12661f06"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
@@ -264,9 +264,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "bytes": 16656,
-      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1",
-      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+      "bytes": 33339,
+      "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
+      "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -282,9 +282,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
-      "bytes": 15204,
-      "blob": "0d29c60f54bf002a5d81f1a07670d742a25e08b1",
-      "sha256": "f74a719086b63277eb50a7d38f165e00d3387cf20beb465882bf8fde0bff0e8a"
+      "bytes": 15888,
+      "blob": "446e727e3e3030ef4949829864abb5c531abc5a7",
+      "sha256": "d535f20a230d5d7d00bc29c1a9abb17cea360efe590789ec047be6ee29d0a10e"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
@@ -330,9 +330,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-      "bytes": 12288,
-      "blob": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e",
-      "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127"
+      "bytes": 12562,
+      "blob": "8082bada0dad76c657b3c7a0367e56b4d634e5ce",
+      "sha256": "a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
@@ -504,15 +504,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "bytes": 343804,
-      "blob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
-      "sha256": "b75587b414c2f93f78b61ee2fe3c6cd72d49294ad84b5a4685333e34c0526b8f"
+      "bytes": 442213,
+      "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+      "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "bytes": 119659,
-      "blob": "cc6fa87662468768c5898b1585de545fd8652c8c",
-      "sha256": "9138b4ce7590d1305ed6de15e42144454a4d07729a91f27e010d3ed5d7e264bc"
+      "bytes": 163561,
+      "blob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
+      "sha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -534,14 +534,15 @@
     "completeGitBlobSha1": true,
     "utf8Roundtrip": true,
     "files": 66,
-    "unchangedModuleClosure": 53,
-    "unchangedSql": 10,
+    "unchangedModuleClosure": 48,
+    "unchangedSql": 8,
     "unchangedBaselineJson": 1,
     "noNativeSelfPin": true,
     "absenceOrMismatch": "fail; no skip/extraction/fallback",
-    "changedSql": 1,
+    "changedSql": 2,
     "sqlFiles": 10,
-    "fixtureAndWrapper": 2
+    "fixtureAndWrapper": 2,
+    "changedRuntimeModules": 5
   },
   "externalImports": [
     "node:assert/strict",
@@ -1176,10 +1177,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 100408,
-      "blob": "d082553688f6ceb1a9d2fa4e7915f8695101a675",
-      "sha256": "877d191131174c95e8b188acc2e589725fe7a2d7ebdfafd6830e813f3293470c",
-      "role": "existing proof; one HMT recovery source pin updated, all test code unchanged"
+      "blob": "f608146967d820cf20173990e3b960ac1c1bc6be",
+      "bytes": 100410,
+      "sha256": "8420140516ccab8b3f7496effdf3d74b930d04b65f6c942333efb1b4224b4f8e"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1337,23 +1337,49 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "FAILURE_ONLY_C03_CATALOG_COMPONENT_MEASUREMENT",
-    "parent": "114811a6ba20b5d78d741c613cac35ea006248c2",
-    "originalSuccessPredicateUnchanged": true,
-    "allSqlAnd66ConsumedPinsUnchanged": true,
-    "measurement": {
-      "trigger": "existing C03 enqueue status is not confirmed",
-      "components": 14,
-      "expressionPins": "embedded exact source digests",
-      "role": "ot_v3_jobs_owner",
-      "transaction": "READ ONLY",
-      "maxTotalMs": 15000,
-      "ownedClusterOnly": true,
-      "deadlineStopsActualOwnedCluster": true,
-      "actualBackendAbsenceOrClusterStopJoined": true,
-      "output": "fixed component names and finite timing/JIT numbers only",
-      "guardAndJitSettingsUnchanged": true
-    },
+    "revision": "COHERENT_HRS_A3_FUNCTION_LOCAL_JIT",
+    "parent": "2838ecf05d0e3c19de4d41348c0e4965e71a5e9f",
+    "sourceRebindings": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+        "before": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779",
+        "after": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+        "before": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3",
+        "after": "e54779dfa4cd65372f0f375182beafd4a1d155c1"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "before": "19be9e9b914e37d115828edebdd71d14033fbfb1",
+        "after": "00d4edcb7daa090b61a28add33167ecd977e6324"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+        "before": "0d29c60f54bf002a5d81f1a07670d742a25e08b1",
+        "after": "446e727e3e3030ef4949829864abb5c531abc5a7"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "before": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e",
+        "after": "8082bada0dad76c657b3c7a0367e56b4d634e5ce"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "before": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
+        "after": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+        "before": "cc6fa87662468768c5898b1585de545fd8652c8c",
+        "after": "bf2e49359556daf4593e338076c4a97f6465bfc5"
+      }
+    ],
+    "originalOperationsAssertionsBudgetsUnchanged": true,
+    "diagnosticExpressionPins": "14 exact current expressions; only jobs-functions changes with jit=off",
+    "compatibility": "COMPOSED checks the original wholly absent HRS branch; the separate HRS Native checks the complete installed HRS branch",
+    "jitScope": "official_v3_jobs_private.assert_catalog_v1 only; no global, session, rights or deadline change",
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
@@ -1408,7 +1434,7 @@
     }
   },
   "previousIntegrationReference": {
-    "parent": "114811a6ba20b5d78d741c613cac35ea006248c2",
-    "manifestBlob": "a896dfde9c45f6688674e211f149068014a467e6"
+    "parent": "31771376b82f5d60132004e7dc555a4a446598b3",
+    "manifestBlob": "a59636599e21636f2a5f27b243a4b9297bfec04d"
   }
 }

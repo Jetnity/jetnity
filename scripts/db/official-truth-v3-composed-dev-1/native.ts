@@ -139,15 +139,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "bytes": 22124,
-    "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779",
-    "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34"
+    "bytes": 25086,
+    "blob": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5",
+    "sha256": "f9edce307a52cca4860c820adbc8c356fa3637e209dc6de4fe743070fbc69b34"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-    "bytes": 27249,
-    "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3",
-    "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d"
+    "bytes": 27465,
+    "blob": "e54779dfa4cd65372f0f375182beafd4a1d155c1",
+    "sha256": "95e8233bd0fdbaa41fbb5cea03ec8a5a415161116cbdb44871d25f6c12661f06"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
@@ -163,9 +163,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "bytes": 16656,
-    "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1",
-    "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+    "bytes": 33339,
+    "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
+    "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -181,9 +181,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
-    "bytes": 15204,
-    "blob": "0d29c60f54bf002a5d81f1a07670d742a25e08b1",
-    "sha256": "f74a719086b63277eb50a7d38f165e00d3387cf20beb465882bf8fde0bff0e8a"
+    "bytes": 15888,
+    "blob": "446e727e3e3030ef4949829864abb5c531abc5a7",
+    "sha256": "d535f20a230d5d7d00bc29c1a9abb17cea360efe590789ec047be6ee29d0a10e"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
@@ -229,9 +229,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-    "bytes": 12288,
-    "blob": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e",
-    "sha256": "ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127"
+    "bytes": 12562,
+    "blob": "8082bada0dad76c657b3c7a0367e56b4d634e5ce",
+    "sha256": "a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
@@ -403,15 +403,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 343804,
-    "blob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
-    "sha256": "b75587b414c2f93f78b61ee2fe3c6cd72d49294ad84b5a4685333e34c0526b8f"
+    "bytes": 442213,
+    "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+    "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-    "bytes": 119659,
-    "blob": "cc6fa87662468768c5898b1585de545fd8652c8c",
-    "sha256": "9138b4ce7590d1305ed6de15e42144454a4d07729a91f27e010d3ed5d7e264bc"
+    "bytes": 163561,
+    "blob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
+    "sha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -686,73 +686,73 @@ async function wrapperIdentity(bootstrap: LocalPgConnection): Promise<PgRows> {
 const C03_CATALOG_COMPONENT_PINS = [
   {
     "component": "jobs-functions",
-    "sha256": "89dd5fefe47a9884bd8a55b3b59fe981304441a67d773ca0cf540b3f8975f03e",
-    "bytes": 569
+    "bytes": 10270,
+    "sha256": "ab72ef1eb97f37cb16b8222bd35cec2da6fd18684c4700cc1bca83e4e066e720"
   },
   {
     "component": "jobs-relations",
-    "sha256": "1adf44f61c95156c13b022e8aacc29a9d594b8e8f6da0b6e427af0f56a06aefa",
-    "bytes": 1874
+    "bytes": 1874,
+    "sha256": "1adf44f61c95156c13b022e8aacc29a9d594b8e8f6da0b6e427af0f56a06aefa"
   },
   {
     "component": "jobs-types",
-    "sha256": "7df581650c5d6746705e7f9a532b3d2b8dc1a3d48387d91439d138b237a7794c",
-    "bytes": 365
+    "bytes": 365,
+    "sha256": "7df581650c5d6746705e7f9a532b3d2b8dc1a3d48387d91439d138b237a7794c"
   },
   {
     "component": "jobs-schemas",
-    "sha256": "1ece741cca1dbe662e78d50ed0ff298545910e48d82c1001df35120e99856aca",
-    "bytes": 315
+    "bytes": 315,
+    "sha256": "1ece741cca1dbe662e78d50ed0ff298545910e48d82c1001df35120e99856aca"
   },
   {
     "component": "jobs-dependencies",
-    "sha256": "d733c4d06d5fdf0efdaf96c2efbc0aa27070cea4ef3526d1659a349f61273095",
-    "bytes": 2962
+    "bytes": 2962,
+    "sha256": "d733c4d06d5fdf0efdaf96c2efbc0aa27070cea4ef3526d1659a349f61273095"
   },
   {
     "component": "prerequisite-functions",
-    "sha256": "f378ff95c868b19e096b223cabb1a6ac4ed7fc84ed4dbb855a9d321c1e4c6bf1",
-    "bytes": 645
+    "bytes": 645,
+    "sha256": "f378ff95c868b19e096b223cabb1a6ac4ed7fc84ed4dbb855a9d321c1e4c6bf1"
   },
   {
     "component": "prerequisite-relations",
-    "sha256": "2e73b6bf750932e04361d789bf8f7db8d94985437baf9cc93fc1d6589d2e4d72",
-    "bytes": 1950
+    "bytes": 1950,
+    "sha256": "2e73b6bf750932e04361d789bf8f7db8d94985437baf9cc93fc1d6589d2e4d72"
   },
   {
     "component": "prerequisite-types",
-    "sha256": "2c34984dfdf6e9b0c9326a06b6615e6b943511886f284b658ac89abd66162310",
-    "bytes": 441
+    "bytes": 441,
+    "sha256": "2c34984dfdf6e9b0c9326a06b6615e6b943511886f284b658ac89abd66162310"
   },
   {
     "component": "prerequisite-schemas",
-    "sha256": "9732bc8a02ef2a46b20847b9c6708324c460050ea36dcd45328a504a2a645397",
-    "bytes": 391
+    "bytes": 391,
+    "sha256": "9732bc8a02ef2a46b20847b9c6708324c460050ea36dcd45328a504a2a645397"
   },
   {
     "component": "prerequisite-dependencies",
-    "sha256": "7002cc18724092f460368cc694f80fc8cf15b6a1c38b917c1315d1176b34d408",
-    "bytes": 3038
+    "bytes": 3038,
+    "sha256": "7002cc18724092f460368cc694f80fc8cf15b6a1c38b917c1315d1176b34d408"
   },
   {
     "component": "protected-roles",
-    "sha256": "e9e90add47c7d55ec7ab3ed595da16841b0ede2096dbab5ae2fee60b53a7419b",
-    "bytes": 838
+    "bytes": 838,
+    "sha256": "e9e90add47c7d55ec7ab3ed595da16841b0ede2096dbab5ae2fee60b53a7419b"
   },
   {
     "component": "creator-edges",
-    "sha256": "04f9237bd8d4dea322a0f02380c07424f171724b1463fb040c9fd9f91b47782a",
-    "bytes": 763
+    "bytes": 763,
+    "sha256": "04f9237bd8d4dea322a0f02380c07424f171724b1463fb040c9fd9f91b47782a"
   },
   {
     "component": "creator-defaults",
-    "sha256": "50fcf6733c38a6ccef0ed3381da2c3f9d53b49a1fd519e0408917c9759921452",
-    "bytes": 721
+    "bytes": 721,
+    "sha256": "50fcf6733c38a6ccef0ed3381da2c3f9d53b49a1fd519e0408917c9759921452"
   },
   {
     "component": "database",
-    "sha256": "a97fb6b34550ba9b9e2249295f7338907dfced08f5d5978bd971290f154fa865",
-    "bytes": 570
+    "bytes": 570,
+    "sha256": "a97fb6b34550ba9b9e2249295f7338907dfced08f5d5978bd971290f154fa865"
   }
 ] as const
 async function measureC03CatalogComponents(lifetime: OwnedTestLifetime,

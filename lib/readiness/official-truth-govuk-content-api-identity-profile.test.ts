@@ -358,9 +358,9 @@ describe('registry and production dormancy', () => {
   // #1196: one reviewed literal PINS row, never permission for a runtime import.
   const COMPOSED_GOVUK_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
-    bytes: 90987,
-    blob: 'beb5d99906db4810fd25eaa2870a8a0b5279b652',
-    sha256: '0cc3c1a1d945292f86cc3e8e39240f981ad777fac00b65e882788f59309bed6d',
+    bytes: 100410,
+    blob: 'f608146967d820cf20173990e3b960ac1c1bc6be',
+    sha256: '8420140516ccab8b3f7496effdf3d74b930d04b65f6c942333efb1b4224b4f8e',
     contextStart: 4322,
     contextEnd: 4568,
     tokenStart: 4353,
@@ -418,6 +418,69 @@ describe('registry and production dormancy', () => {
     }
   })
 
+  // HRS: one reviewed literal PINS row, never permission for a runtime import.
+  const HRS_GOVUK_METADATA_PIN = {
+    path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
+    bytes: 196490,
+    blob: '8adace1fae63e16c677d2c79fc905205392c7692',
+    sha256: 'd7cb8bb5a27c27845e5ce21bac25b1c2241177b1b1ea4f4e69271e808afa335f',
+    contextStart: 27344,
+    contextEnd: 27590,
+    tokenStart: 27375,
+  } as const
+  const HRS_GOVUK_METADATA_TOKEN = 'official-truth-govuk-content-api-identity-profile'
+  const HRS_GOVUK_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.ts",
+    "bytes": 13601,
+    "blob": "505ecc92bada48cf7ef81bd812210c1a5dac8d7b",
+    "sha256": "9b756a4347248decf20eb11264e2577f1f2eb0cbcdad0018d6d86d3e37002828"
+  }`
+
+  function isPinnedHrsGovukMetadata(path: string, bytes: Buffer): boolean {
+    if (path !== HRS_GOVUK_METADATA_PIN.path || bytes.length !== HRS_GOVUK_METADATA_PIN.bytes) return false
+    if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== HRS_GOVUK_METADATA_PIN.blob
+      || createHash('sha256').update(bytes).digest('hex') !== HRS_GOVUK_METADATA_PIN.sha256) return false
+    const token = Buffer.from(HRS_GOVUK_METADATA_TOKEN, 'utf8')
+    const first = bytes.indexOf(token)
+    if (first !== HRS_GOVUK_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+    return bytes.subarray(HRS_GOVUK_METADATA_PIN.contextStart, HRS_GOVUK_METADATA_PIN.contextEnd)
+      .equals(Buffer.from(HRS_GOVUK_METADATA_CONTEXT, 'utf8'))
+  }
+
+  test('HRS official-truth-govuk-content-api-identity-profile pin metadata rejects changed sources and actual imports', () => {
+    const bytes = readFileSync(HRS_GOVUK_METADATA_PIN.path)
+    assert.equal(isPinnedHrsGovukMetadata(HRS_GOVUK_METADATA_PIN.path, bytes), true)
+    for (const path of [
+      './' + HRS_GOVUK_METADATA_PIN.path,
+      HRS_GOVUK_METADATA_PIN.path + '.evil.ts',
+      'scripts/db/official-truth-v3-hosted-result-store-1/native-other.ts',
+      'scripts/db/official-truth-v3-hosted-result-store-1/../official-truth-v3-hosted-result-store-1/native.ts',
+      'app/api/official-truth-v3-hosted-result-store-1/native.ts',
+    ]) assert.equal(isPinnedHrsGovukMetadata(path, bytes), false, path)
+    const token = Buffer.from(HRS_GOVUK_METADATA_TOKEN, 'utf8')
+    const start = HRS_GOVUK_METADATA_PIN.tokenStart
+    const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+    const changedByte = Buffer.from(bytes)
+    changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+    const changedContext = Buffer.from(bytes)
+    changedContext[HRS_GOVUK_METADATA_PIN.contextStart] = changedContext[HRS_GOVUK_METADATA_PIN.contextStart]! ^ 1
+    const sourceWithImport = "\nimport { GOVUK_ETA_NATIONAL_LIST_CONTENT_API_IDENTITY_PROFILE } from '../../../lib/readiness/official-truth-govuk-content-api-identity-profile'\n"
+    const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/official-truth-govuk-content-api-identity-profile')\n"
+    const cases: readonly [string, Buffer][] = [
+      ['changed complete bytes at same length', changedByte],
+      ['changed literal context at same length', changedContext],
+      ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+      ['missing token', withoutToken],
+      ['duplicated token', Buffer.concat([bytes, token])],
+      ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+      ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+      ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+    ]
+    for (const [name, candidate] of cases) {
+      assert.equal(isPinnedHrsGovukMetadata(HRS_GOVUK_METADATA_PIN.path, candidate), false, name)
+    }
+  })
+
   test('the registry is the sole allowed non-test production importer of this module', () => {
     const root = process.cwd(), importers: string[] = []
     const metadataReferences: string[] = []
@@ -433,13 +496,16 @@ describe('registry and production dormancy', () => {
             if (name === COMPOSED_GOVUK_METADATA_PIN.path) {
               assert.equal(isPinnedComposedGovukMetadata(name, bytes), true, 'COMPOSED GovUK pin must match its complete reviewed revision')
               metadataReferences.push(name)
+            } else if (name === HRS_GOVUK_METADATA_PIN.path) {
+              assert.equal(isPinnedHrsGovukMetadata(name, bytes), true, 'HRS GovUK pin must match its complete reviewed revision')
+              metadataReferences.push(name)
             } else importers.push(name)
           }
         }
       }
     }
     walk(root)
-    assert.deepEqual(metadataReferences, [COMPOSED_GOVUK_METADATA_PIN.path])
+    assert.deepEqual(metadataReferences.sort(), [COMPOSED_GOVUK_METADATA_PIN.path, HRS_GOVUK_METADATA_PIN.path].sort())
     assert.deepEqual(importers, ['lib/readiness/official-truth-content-identity.ts'])
   })
   test('profile has one type-only dependency and no network, database, clock or registration authority', () => {

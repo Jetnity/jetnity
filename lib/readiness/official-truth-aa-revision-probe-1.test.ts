@@ -20,6 +20,13 @@ import { chDeAaS1VisaRowResearchFromHtml } from './official-truth-ch-de-aa-s1-vi
 
 const readerPath = 'lib/readiness/official-truth-server-owned-retrieval.ts'
 const physicalPath = 'lib/readiness/official-truth-retrieval-physical-internal.ts'
+// The independently reviewed V3 reader uses only four pure physical helpers and a type.
+const aaBernReaderPath = 'lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts'
+const aaBernReaderPin = {
+  bytes: 13558,
+  blob: 'e9d801ddc8292428b8454b67eea4c9eb7c30d5aa',
+  sha256: '3f2660c8959a065a09a433cfb05be97db626b70c5c39276d5df455c3b65ede5d',
+} as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'
 const reviewedPath = 'lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts'
@@ -463,6 +470,10 @@ function sourceModule(file: string, value: string, sourcePath: string): boolean 
 function readerModule(file: string, value: string): boolean { return sourceModule(file, value, readerPath) }
 
 const physicalImports = {
+  [aaBernReaderPath]: [
+    'value:officialTruthServerOwnedRetrievalAdresseZulaessig', 'value:medientyp',
+    'value:inhaltLaenge', 'value:textAus', 'type:OfficialTruthServerOwnedRetrievalLookup',
+  ],
   [readerPath]: [
     'value:officialTruthServerOwnedRetrievalAdresseZulaessig', 'value:officialTruthServerOwnedRetrievalLookup',
     'value:serverDns', 'value:serverHttp', 'value:serverUhr', 'value:hopLesen', 'value:textAus', 'value:uhrLesen',
@@ -508,6 +519,12 @@ function declarationExports(tree: ts.SourceFile): string[] {
 }
 function importBoundary(file: string, source: string): void {
   const owned = file === probePath || file === testPath
+  if (file === aaBernReaderPath) {
+    const bytes = Buffer.from(source, 'utf8')
+    assert.equal(bytes.length, aaBernReaderPin.bytes)
+    assert.equal(sha(bytes), aaBernReaderPin.sha256)
+    assert.equal(createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex'), aaBernReaderPin.blob)
+  }
   const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true)
   let passiveNamespaces = 0, r2ReaderImports = 0, physicalSelections = 0, physicalReexports = 0, probeSelections = 0
   if (file === legacyNativePath) {
@@ -535,7 +552,8 @@ function importBoundary(file: string, source: string): void {
         }
       }
       if (sourceModule(file, target, physicalPath)) {
-        assert(file === readerPath || file === probePath, 'Only Reader and probe may import the physical module')
+        assert(file === readerPath || file === probePath || file === aaBernReaderPath,
+          'Only the exact original Reader, consumed probe and pinned V3 reader may import the physical module')
         assert(node.importClause)
         assert.deepEqual(namedImportSelection(node.importClause), physicalImports[file])
         physicalSelections += 1
@@ -638,7 +656,7 @@ function importBoundary(file: string, source: string): void {
   visit(tree)
   if (file === legacyNativePath) assert.equal(passiveNamespaces, 1)
   if (file === legacyR2Path) assert.equal(r2ReaderImports, 1)
-  if (file === readerPath || file === probePath) assert.equal(physicalSelections, 1)
+  if (file === readerPath || file === probePath || file === aaBernReaderPath) assert.equal(physicalSelections, 1)
   if (file === testPath) assert.equal(probeSelections, 1)
   if (file === physicalPath) {
     assert.deepEqual(declarationExports(tree), [
@@ -845,6 +863,21 @@ function importInventory(): void {
   const readerSource = sourceBytes.get(readerPath)!.toString('utf8')
   assert.throws(() => importBoundary(readerPath, readerSource + "\nimport './official-truth-ch-de-aa-s1-visa-row-research-server'\n"))
   assert.throws(() => importBoundary(readerPath, readerSource + "\nexport { AA_REVISION_PROBE_V1_POLICY } from './official-truth-aa-revision-probe-1-policy'\n"))
+  const aaBernSource = fs.readFileSync(aaBernReaderPath, 'utf8')
+  importBoundary(aaBernReaderPath, aaBernSource)
+  for (const path of ['./' + aaBernReaderPath, aaBernReaderPath + '.evil.ts',
+    aaBernReaderPath + '/../unreviewed.ts', 'app/' + aaBernReaderPath,
+    'lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read-copy.ts']) {
+    assert.throws(() => importBoundary(path, aaBernSource), path)
+  }
+  for (const source of [
+    aaBernSource + '\n',
+    aaBernSource.replace('medientyp,', 'medientyp as renamed,'),
+    aaBernSource.replace('type OfficialTruthServerOwnedRetrievalLookup', 'OfficialTruthServerOwnedRetrievalLookup'),
+    aaBernSource + "\nexport { medientyp } from '@/lib/readiness/official-truth-retrieval-physical-internal'\n",
+    aaBernSource + "\nvoid import('@/lib/readiness/official-truth-retrieval-physical-internal')\n",
+    aaBernSource + "\nconst moduleName = '@/lib/readiness/official-truth-retrieval-physical-internal'; void import(moduleName)\n",
+  ]) assert.throws(() => importBoundary(aaBernReaderPath, source))
 }
 
 async function syntheticPreflight(): Promise<void> {

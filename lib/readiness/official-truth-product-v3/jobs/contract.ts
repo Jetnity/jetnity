@@ -60,7 +60,10 @@ export type M04FixedRequest = Readonly<{ readonly [fixedInvocation]: true;
   epoch: number | null; budget: Readonly<{ deadline: number }>; notAfter: string }>
 export interface M04TerminalExecutor {
   executeFixed(request: M04FixedRequest, signal: AbortSignal): Promise<
-    Readonly<{ status: 'acknowledged'; rows: unknown }> | Readonly<{ status: 'unavailable' | 'unconfirmed' }>>
+    Readonly<{ status: 'acknowledged'; rows: unknown }> | Readonly<{ status: 'unavailable' | 'unconfirmed' }>
+    /** All owned local children are settled/closed; remote outcome is unproved.
+     * The physical pair remains poisoned. No replay, reconnect or slot reuse. */
+    | Readonly<{ status: 'blocked_remote_unknown' }>>
 }
 export type M04FixedOperation = (request: M04Operation, signal: AbortSignal,
   receipt?: object, terminal?: boolean) => Promise<M04NativeReply>
