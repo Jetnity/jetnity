@@ -1,0 +1,351 @@
+{
+  "schema": "jetnity.pg1.source-manifest.v1",
+  "status": "SOURCE_PREPARED_SQL_UNAPPLIED_ALL_EXECUTION_NOT_RUN",
+  "task": "V3-PRIVATE-OWNER-GUARDS-1",
+  "version": 1,
+  "preparedDateUTC": "2026-11-12",
+  "author": {
+    "name": "Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1",
+    "session": "/root/v3_private_owner_guards_writer_g1",
+    "kind": "actual-new-delegated-Codex-session",
+    "cursorSessionClaimed": false
+  },
+  "soleParent": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+  "baseTree": "cbc79e627161d4ace132b84cf057c18adc86586c",
+  "containingCommitAndTree": "External immutable Git identities in author delivery; no circular self-pin.",
+  "bindingTask": {
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6815884525",
+    "originalBodyUtf8Bytes": 8867,
+    "originalBodySha256": "e976f606cbfc336627e865cc0f455655b315cc87b1bf8ca84e0fdca4bfc1c82b",
+    "preservedVerbatim": true
+  },
+  "amendment": {
+    "id": "R1",
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816224733",
+    "originalBodyUtf8Bytes": 1849,
+    "originalBodySha256": "24e03bf57cf73155a7f6b14a3799fbf3c71519e1c004eb93e9b156f456f4c5c5",
+    "preservedVerbatimIn": [
+      "PRIVATE_OWNER_GUARDS_TASK_V1.md",
+      "PRIVATE_OWNER_GUARDS_HANDOFF_V1.md"
+    ],
+    "sameSessionFix": "Removed redundant fixture close helper and pre-disposal close preamble; existing OwnedTestLifetime.dispose is authoritative."
+  },
+  "scope": {
+    "addedPaths": [
+      "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+      "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
+    ],
+    "expectedAddedLeaves": 7,
+    "existingLeavesChanged": 0,
+    "oldPublicCapabilityPilotGrantLedgerAccess": false,
+    "oldAuthorityLoadedByNative": false,
+    "legacyClosure": false,
+    "full1142Installation": false,
+    "issue1131": "NOT_REQUIRED_UNTOUCHED",
+    "refBranchPrPublication": false,
+    "ready": false,
+    "merged": false,
+    "followOn": false
+  },
+  "code": [
+    {
+      "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+      "blob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+      "bytes": 10945,
+      "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-private-owner-guards-1/recovery-candidate.sql",
+      "blob": "cd5a53120d4eb77adb31d1cf63b467454f7ccd61",
+      "bytes": 6452,
+      "sha256": "869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+      "blob": "d607f819d4094833efba01f2f198bf8f2cbf9209",
+      "bytes": 42162,
+      "sha256": "62a4a718b3d6d84cbe78ceda6ab7c09b18798d203353aa78fb91261d663c8f89"
+    },
+    {
+      "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
+      "blob": "f18e5aebc4ea6725f631e5ec7316da9f659de024",
+      "bytes": 397,
+      "sha256": "601629591fadf5cb5ee600ae3f75efbc3db6e22bd341a4e4589f8b02dea28a13"
+    }
+  ],
+  "documentation": [
+    {
+      "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_TASK_V1.md",
+      "blob": "f321aea04cc2aef70c2089d3145d488ae7290b48",
+      "bytes": 11179,
+      "sha256": "4af67097e03ac66bc609818a798f4a9c2705584a7bae555e5b7df5e47c1e3e75"
+    },
+    {
+      "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+      "blob": "879c276e7e81cfb0c505bc0be5a91ac2ed99009e",
+      "bytes": 16976,
+      "sha256": "738d959911a1e8b6d3b18d13c8269d58b098cc1fd0b1d804fe4ac5ba9a1ce00a"
+    }
+  ],
+  "manifestSelfIdentity": "This path's Git blob/UTF-8 bytes/SHA256 are in final external author readback; not recursively embedded.",
+  "originalAuthority": {
+    "path": "scripts/db/official-truth-owner-session-candidate-1/authority-candidate.sql",
+    "blob": "407c28bc7623f659e49c3f408bee28302ef717e1",
+    "bytes": 5873,
+    "sha256": "169c6b02c2776ac163590b1cd6ffb6d43133621c9dc9e31b687f083d2ab4aa50",
+    "role": "Source reference only; full old installer is never loaded or executed by new native proof."
+  },
+  "guards": [
+    {
+      "schema": "jetnity_ot_auth",
+      "name": "own_active_session_v1",
+      "signature": "()",
+      "completeDeclaration": {
+        "bytes": 1545,
+        "sha256": "1600e77651e4f571d2d281c1900488ce1e372a9a8fca3c904792a93eb9d6ebf0",
+        "originalSourceByteExact": true
+      },
+      "body": {
+        "bytes": 1379,
+        "sha256": "1bf7498146d4827371087a926327db1348ce2a4cc55693427ee154eb81082354",
+        "originalSourceByteExact": true
+      },
+      "owner": "postgres",
+      "securityDefiner": true,
+      "parallel": "unsafe",
+      "volatility": "stable",
+      "searchPath": "pg_catalog",
+      "lockTimeout": null,
+      "acl": "owner-only"
+    },
+    {
+      "schema": "jetnity_ot_auth",
+      "name": "require_current_owner_session_v1",
+      "signature": "()",
+      "completeDeclaration": {
+        "bytes": 2111,
+        "sha256": "204b7f7e102222b9cb070f9d6998959664de8e4827ac0bc0e87d9483ec0c630b",
+        "originalSourceByteExact": true
+      },
+      "body": {
+        "bytes": 1911,
+        "sha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+        "originalSourceByteExact": true
+      },
+      "owner": "postgres",
+      "securityDefiner": true,
+      "parallel": "unsafe",
+      "volatility": "volatile",
+      "searchPath": "pg_catalog",
+      "lockTimeout": "2s",
+      "acl": "owner-only"
+    }
+  ],
+  "reusedUnchangedSources": [
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/method-candidate.sql",
+      "blob": "6af3e5a76d1eaa4343ee0b1fb812454cce9f7f3e",
+      "bytes": 52631,
+      "sha256": "269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "blob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+      "bytes": 5280,
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+      "bytes": 22433,
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "blob": "b1a81a0f63fb0debaffa4db739adbb483ac1efc5",
+      "bytes": 9025,
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "blob": "af7919f26cbb36038ba61a1b849815a3a29aac4b",
+      "bytes": 2050,
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "blob": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "bytes": 10485,
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
+    }
+  ],
+  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All existing leaves remain bound to the sole-parent tree. No old Auth fixture or authority loader is imported.",
+  "existingDisposableRollback": {
+    "blob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
+    "changed": false,
+    "used": false,
+    "hostedRecovery": false
+  },
+  "managedAuthBodyReferences": [
+    {
+      "name": "jwt",
+      "bytes": 166,
+      "sha256": "fed2a8ac0349ffaba807c1b574698bfb1348825b8ef5163ad72d8408386f5e3e",
+      "observedAt": "2026-11-12 06:02:26.357402+00",
+      "sourceReceipt": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816048537",
+      "exactBodyCopiedToSyntheticFixture": true,
+      "hostedOwnerAndConfigurationCopied": false,
+      "signedJwtProof": false
+    },
+    {
+      "name": "uid",
+      "bytes": 176,
+      "sha256": "9ab5ea099e74ec09e83b1505c51a3647791195aed7c742dcc3f257dfc7d2f300",
+      "observedAt": "2026-11-12 06:02:26.357476+00",
+      "sourceReceipt": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816048537",
+      "exactBodyCopiedToSyntheticFixture": true,
+      "hostedOwnerAndConfigurationCopied": false,
+      "signedJwtProof": false
+    }
+  ],
+  "actualDevReceipt": {
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816048537",
+    "observedBy": "Root, separately bound Dev query",
+    "authorPerformedQuery": false,
+    "postgres": {
+      "oid": 16388,
+      "superuser": false,
+      "bypassRls": true,
+      "login": true,
+      "inherit": true,
+      "createDb": true,
+      "createRole": true,
+      "replication": true,
+      "incomingMemberships": 0,
+      "outgoingMemberships": 10,
+      "roleConfigCount": 1,
+      "dbRoleSettingCount": 1,
+      "applicationRolesCanSetOrInherit": false
+    },
+    "selectedCustomDefaultAclRows": 0,
+    "selectedCustomDefaultAclOverflow": false,
+    "builtinAclProof": false,
+    "apiSettingsVerified": false,
+    "hostedInstall": false,
+    "syntheticFixtureIsHostedProfile": false,
+    "m04RoleProfileMismatch": "Unresolved outside this task; never alter managed postgres to satisfy a fixture."
+  },
+  "nativePlan": {
+    "status": "NOT_RUN",
+    "wrapperRequired": true,
+    "optionalSkip": false,
+    "effectLimitMs": 180000,
+    "wrapperTimeoutMs": 240000,
+    "existingOwnedLifetimeDrainMs": 35000,
+    "ownedClusters": 3,
+    "mainConnectionInventoryMaximum": 64,
+    "childWitnesses": [
+      "actual failure",
+      "actual timeout"
+    ],
+    "claimRefusalCases": 15,
+    "currentStateRefusalCases": 11,
+    "legacyBooleanCounterexample": true,
+    "nowaitRowLockCases": 3,
+    "observedMethodWaitCases": 2,
+    "terminalReceiptSchema": "jetnity.pg1.native.v1",
+    "hostedInstall": false,
+    "signedOwnerRequest": false,
+    "methodApprovalIsSynthetic": true,
+    "groups": [
+      {
+        "id": "PG1-01",
+        "purpose": "Creator/default ACL/collision/member/extra-grant atomic refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-02",
+        "purpose": "Exact real catalog owners/body/config/shape/ACL and direct application-role denials",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-03",
+        "purpose": "Exact unused recovery and context/OID/ACL/body/object/consumer refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-04",
+        "purpose": "Unchanged MA1 Definer stage/approve/read/revoke and history retention",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-05",
+        "purpose": "Malformed/missing/foreign/expired and helper-precedence claim refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-06",
+        "purpose": "Current Auth/session/profile state and legacy-boolean refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-07",
+        "purpose": "Observed real held rows produce NOWAIT refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-08",
+        "purpose": "Observed method wait followed by fresh expiry/profile refusal",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "PG1-09",
+        "purpose": "Actual blocked failure/timeout queries join and owned clusters stop",
+        "status": "NOT_RUN"
+      }
+    ]
+  },
+  "recovery": {
+    "status": "UNAPPLIED",
+    "scope": "Only exact unused new namespace/two guards",
+    "knownV3ConsumersRefuse": true,
+    "ma1BoundRefuses": true,
+    "methodHistoryDeleted": false,
+    "cascade": false,
+    "settingsAreProof": false,
+    "requiresExternalRootTargetConsumerEvidence": true,
+    "requiresQuiescenceThroughCommit": true,
+    "dependencyCatalogAloneSufficient": false,
+    "unknownCommit": "Separate allowed new-object readback; no blind replay"
+  },
+  "executionGates": {
+    "projectParser": "NOT_RUN",
+    "compiler": "NOT_RUN",
+    "type": "NOT_RUN",
+    "lint": "NOT_RUN",
+    "core": "NOT_RUN",
+    "native": "NOT_RUN",
+    "hygiene": "NOT_RUN",
+    "build": "NOT_RUN",
+    "githubCi": "NOT_RUN",
+    "actualDevValidation": "PARTIAL_ROOT_RECEIPT_ONLY_NOT_COMPLETE_FOR_INSTALL",
+    "actualDevInstall": "NOT_ATTEMPTED",
+    "actualRecovery": "NOT_ATTEMPTED",
+    "realSignedOwnerRequest": "NOT_ATTEMPTED",
+    "officialSourceBinding": "NOT_ATTEMPTED",
+    "publicActivation": "NOT_ATTEMPTED"
+  },
+  "authorSourceReview": {
+    "originalGuardDeclarationAndBodyComparison": "PURE_IN_MEMORY_EQUAL",
+    "bindingTaskAndR1Preservation": "PURE_IN_MEMORY_EQUAL",
+    "runtimePass": false,
+    "technicalLeadPass": false
+  },
+  "firstUnfinishedStep": "Root independent complete-candidate review and exact-head CI after Root-owned publication selection; actual target gates remain separate.",
+  "stop": "No execution, ref/PR, Ready, merge, hosted write or follow-on by author."
+}
