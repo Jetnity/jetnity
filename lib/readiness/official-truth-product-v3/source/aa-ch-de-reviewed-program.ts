@@ -65,7 +65,7 @@ const graph: ContentIdentityGraph = immutable({
 })
 const registry: QuellenRegistry = Object.freeze({ ...authority.registry, contentIdentity: graph })
 
-export const AA_BERN_CH_DE_QUALIFICATION_POLICY = immutable({
+const AA_BERN_CH_DE_QUALIFICATION_POLICY = immutable({
   schema: 1, revision: 1, context, contextKey, legalTimeZone: 'Europe/Berlin',
   scope: 'Swiss national passports; direct entry to Germany; visa requirement alone',
   primary: 'Current complete AA article: Swiss row has no footnote marker; all nine notes were reviewed, including bilateral exceptions.',
@@ -95,7 +95,7 @@ const draftInput: V3MethodRevisionDraft = {
 }
 const draftRead = readV3MethodRevisionDraft(draftInput)
 if (!draftRead.ok) throw Error('reviewed_ch_de_method_draft_invalid')
-export const AA_BERN_CH_DE_METHOD_DRAFT = immutable(draftRead.value)
+const AA_BERN_CH_DE_METHOD_DRAFT = immutable(draftRead.value)
 const operation = immutable({
   activeFrom: '2026-11-12T19:41:09.241Z', activeUntilExclusive: '2027-11-13T00:00:00.000Z',
   sourceMaxAgeMilliseconds: 86400000, projectionMaxAgeMilliseconds: 3600000,

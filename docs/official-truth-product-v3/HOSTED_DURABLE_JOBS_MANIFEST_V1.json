@@ -109,8 +109,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "0cd707fc73593048feeb076fceead13580af2c02",
-      "sha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9",
+      "blob": "b2da0a69eb935f19765fec16b5553b1299a0110d",
+      "sha256": "c9c4200c858e83b68f5d1cff3820223be8999ee44fe15ac1631110d29a7fc113",
       "bytes": 442782
     },
     {
@@ -707,7 +707,7 @@
       "originalBytes": 160983,
       "candidateBytes": 442782,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9",
+      "candidateSha256": "c9c4200c858e83b68f5d1cff3820223be8999ee44fe15ac1631110d29a7fc113",
       "retained": [
         {
           "originalStart": 7915,
@@ -1188,8 +1188,8 @@
           "start": 0,
           "end": 136875,
           "kind": "new",
-          "sha256": "ebf8b5e526428083fd29f7cb4805e8871f00ee3a5ea46bad0bb3beacdc38e7e6",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sha256": "5c202595d7ac3d1c4f43f2b6baffad907544b1748a90fd213e132e3b356dc04f",
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 136875,
@@ -1212,7 +1212,7 @@
           "end": 200012,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 200012,
@@ -1235,7 +1235,7 @@
           "end": 200599,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 200599,
@@ -1258,7 +1258,7 @@
           "end": 201216,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 201216,
@@ -1281,7 +1281,7 @@
           "end": 201849,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 201849,
@@ -1304,7 +1304,7 @@
           "end": 202485,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 202485,
@@ -1327,7 +1327,7 @@
           "end": 203138,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 203138,
@@ -1350,7 +1350,7 @@
           "end": 203780,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 203780,
@@ -1389,7 +1389,7 @@
           "end": 277091,
           "kind": "new",
           "sha256": "939d8f315c5a2353869e1953ede2f2522a1e0f53cd870d4561bd8a506601b96c",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 277091,
@@ -1404,7 +1404,7 @@
           "end": 299374,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 299374,
@@ -1419,7 +1419,7 @@
           "end": 315051,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 315051,
@@ -1434,7 +1434,7 @@
           "end": 319742,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 319742,
@@ -1449,7 +1449,7 @@
           "end": 320199,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         },
         {
           "start": 320199,
@@ -1464,7 +1464,7 @@
           "end": 442782,
           "kind": "new",
           "sha256": "6ba339ffdcd7be576fdb2a11f0984e3a943283169e81733bdd703e77bc208980",
-          "sourceBlob": "0cd707fc73593048feeb076fceead13580af2c02"
+          "sourceBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d"
         }
       ],
       "editAnnotations": [
@@ -1496,6 +1496,11 @@
           "reason": "CI4162 original P7802 identifies originals_v1: require the exact nested PostgreSQL BETWEEN/AND deparser parentheses; actual constraint and strict comparison remain unchanged.",
           "parentBlob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
           "exactEditsBlob": "360d14c10753010e4adeca5793fd3b391a1838f6"
+        },
+        {
+          "reason": "CI4163 P7801: bind the exact HRS validator body after reading the canonical context from subjectText; HM04 function declarations and all rights remain unchanged.",
+          "parentBlob": "0cd707fc73593048feeb076fceead13580af2c02",
+          "exactEditsBlob": "d7779f157345252b51e542e17ea03fa98c036f29"
         }
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
@@ -1504,9 +1509,9 @@
         "intermediateSha256": "eac887ab9c1acd6988543a4ffb022f9e00af238b3ff7751ae6b8f6a715b127b4",
         "intermediateBytes": 341956,
         "currentRevision": {
-          "parentBlob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
-          "candidateBlob": "0cd707fc73593048feeb076fceead13580af2c02",
-          "exactEditsBlob": "360d14c10753010e4adeca5793fd3b391a1838f6"
+          "parentBlob": "0cd707fc73593048feeb076fceead13580af2c02",
+          "candidateBlob": "b2da0a69eb935f19765fec16b5553b1299a0110d",
+          "exactEditsBlob": "d7779f157345252b51e542e17ea03fa98c036f29"
         }
       }
     },
@@ -14390,16 +14395,16 @@
     "status": "SOURCE_ONLY_NOT_RUN",
     "parent": "95afa6f9133d38454efd83716538b8b0566a4934",
     "installer": {
-      "blob": "0cd707fc73593048feeb076fceead13580af2c02",
+      "blob": "b2da0a69eb935f19765fec16b5553b1299a0110d",
       "bytes": 442782,
-      "sha256": "875e58aa40c957266779c89c4f1805e2f7163415d1c52230d3b378c4d5c33dd9"
+      "sha256": "c9c4200c858e83b68f5d1cff3820223be8999ee44fe15ac1631110d29a7fc113"
     },
     "recovery": {
       "blob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
       "bytes": 163561,
       "sha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00"
     },
-    "exactTextInverse": "2a9317a0c87b3d326f56134fbef9935f71212134",
+    "exactTextInverse": "f616b6e6bea950205698ab9debd8b93a5dca361b",
     "predecessorManifest": "b7cc245d4331324db50c482d0e82936d9c0a77f3",
     "optionalCatalogRows": {
       "absent": 15,
@@ -14563,5 +14568,13 @@
     "observedRun": 43315961338,
     "observedJob": 131523916686,
     "observedGuard": "hrs1_constraint:originals_v1"
+  },
+  "bindingContextFix4163": {
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "parent": "13fa82821b501108b56187b94d03a7ba83b3133f",
+    "previousManifest": "ec5d26dc59938130ac3b9491ba14427cd025c728",
+    "exactEdits": "d7779f157345252b51e542e17ea03fa98c036f29",
+    "bodyHash": "e4eaa720f3c5c92083a882ba1352be1bae3b8b2ee0488b939d57a6938c2a9b98",
+    "hm04Change": "One finite expected HRS binding_valid_v1 body hash; all HM04 function declarations, rights, groups and budgets unchanged."
   }
 }

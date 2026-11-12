@@ -338,6 +338,8 @@ const reviewedFoundationImports = new Map<string, readonly string[]>([
   ['lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts\0official-truth-autonomous-provenance-artifact', ['immutable', 'ownRecord']],
   ['lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts\0official-truth-autonomous-provenance-artifact', ['immutable']],
   ['lib/readiness/official-truth-product-v3/transport/node-postgres-executors.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  // UI1197: untrusted proposal data only; the Producer issues no accepted evidence.
+  ['lib/readiness/official-truth-product-v3/source/aa-ch-de-delivery-producer.ts\0official-truth-autonomous-provenance-artifact', ['immutable', 'ownRecord']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-artifact',
     ['decodeProvenanceBytes', 'historicalValuesEqual', 'ownRecord', 'pinsEqual', 'provenanceCanonical', 'provenanceHash', 'readPin', 'Pin']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-record',
@@ -509,6 +511,7 @@ test('MA1 exact shape-reader consumers retain raw path, module and single-name g
 test('HRS/A3 exact pure consumers retain path, module and complete-name-set denials', () => {
   const artifactModule = 'official-truth-autonomous-provenance-artifact'
   const reviewed: readonly (readonly [string, readonly string[]])[] = [
+    ['lib/readiness/official-truth-product-v3/source/aa-ch-de-delivery-producer.ts', ['immutable', 'ownRecord']],
     ['lib/readiness/official-truth-product-v3/result/composition.ts', ['ownRecord']],
     ['lib/readiness/official-truth-product-v3/result/contract.ts', ['ownRecord', 'immutable']],
     ['lib/readiness/official-truth-product-v3/result/postgres.ts', ['ownRecord', 'immutable']],

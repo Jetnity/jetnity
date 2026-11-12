@@ -12,10 +12,11 @@ const PROOF = 'scripts/db/official-truth-v3-node-postgres-transport-1/'
 const sessions = RUNTIME + 'node-postgres-owned-session.ts'
 const selection = RUNTIME + 'node-postgres-selection.ts'
 const executors = RUNTIME + 'node-postgres-executors.ts'
+const composition = 'lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts'
 const allowed: Readonly<Record<string, readonly string[]>> = {
   [sessions]: [executors, PROOF + 'offline.test.ts'],
-  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts'],
-  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts'],
+  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition],
+  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition],
   pg: [sessions, PROOF + 'owned-tls-fixture.ts'],
 }
 function files(directory: string): string[] {
@@ -43,6 +44,7 @@ test('private Node-Postgres construction has only the finite reviewed importers'
       if (selected === sessions && path === PROOF + 'offline.test.ts') {
         assert.ok(ts.isImportDeclaration(node) && node.importClause?.isTypeOnly, 'offline fixture receives no real connection constructor')
       }
+      if (path === composition) assert.ok(ts.isImportDeclaration(node), 'the fixed server composition uses only direct imports')
       assert.ok(!ts.isExportDeclaration(node), 'private transport has no re-export entry point')
       const importers = seen.get(selected) ?? new Set<string>(); importers.add(path); seen.set(selected, importers)
     }
@@ -54,7 +56,7 @@ test('private Node-Postgres construction has only the finite reviewed importers'
         || ts.isIdentifier(node.expression) && node.expression.text === 'require')) {
         const arg = node.arguments[0]
         if (arg && ts.isStringLiteral(arg)) check(arg.text, node)
-        else if (path.startsWith(RUNTIME)) assert.fail('runtime transport has no computed loader')
+        else if (path.startsWith(RUNTIME) || path === composition) assert.fail('runtime transport has no computed loader')
       }
       ts.forEachChild(node, visit)
     }
@@ -63,4 +65,20 @@ test('private Node-Postgres construction has only the finite reviewed importers'
   for (const [selected, importers] of Object.entries(allowed)) assert.deepEqual([...(seen.get(selected) ?? [])].sort(), [...importers].sort(), selected)
   const manifest = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')) as { dependencies: Record<string, string>; devDependencies: Record<string, string> }
   assert.equal(manifest.dependencies.pg, '8.23.1'); assert.equal(manifest.devDependencies['@types/pg'], '8.23.1')
+})
+
+test('the CH-to-DE server entry adds no other transport or browser importer', () => {
+  const permits = (from: string, specifier: string) => allowed[target(from, specifier)]?.includes(from) ?? false
+  assert.equal(permits(composition, '../transport/node-postgres-selection'), true)
+  assert.equal(permits(composition, '../transport/node-postgres-executors'), true)
+  for (const specifier of ['../transport/node-postgres-owned-session', 'pg', 'pg/native', 'pg-native']) {
+    assert.equal(permits(composition, specifier), false, specifier)
+  }
+  for (const from of ['app/api/readiness/route.ts', 'components/readiness/OfficialTruthVisitorV3.tsx',
+    composition.replace('/runtime/', '/runtime-copy/'), composition.replace('.ts', '-copy.ts')]) {
+    for (const path of [selection, executors, sessions]) assert.equal(permits(from, '@/' + path), false, from + ': ' + path)
+  }
+  const source = ts.createSourceFile(composition, readFileSync(resolve(ROOT, composition), 'utf8'), ts.ScriptTarget.Latest, true)
+  assert.ok(source.statements.some(node => ts.isImportDeclaration(node) && !node.importClause
+    && ts.isStringLiteral(node.moduleSpecifier) && node.moduleSpecifier.text === 'server-only'))
 })
