@@ -1,3 +1,15 @@
 {
-  "version": 2
+  "version": 2,
+  "functions": {
+    "app/api/readiness/ch-de-visa/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-visa-tick/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    }
+  }
 }

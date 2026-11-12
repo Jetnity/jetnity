@@ -103,6 +103,26 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: FACT_ENTRY_SOURCE,
           sqlPath: FACT_ENTRY_SQL,
         },
+        {
+          name: 'official_v3_method_stage_draft_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_approve_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_revoke_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_confirm_operation_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
       ],
     )
 
