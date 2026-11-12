@@ -22,6 +22,7 @@ import type { Trip, TripStage } from '@/types/trips'
 import Flugsuche from './Flugsuche'
 import type { Suchkategorie } from '@/lib/trips/workspace-mode'
 import Hotelsuche from './Hotelsuche'
+import { hotelKontextVersion } from '@/lib/trips/hotel-suchkontext'
 import Aktivitaeten from './Aktivitaeten'
 import dynamic from 'next/dynamic'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
@@ -88,17 +89,19 @@ export default function Organisieren({
   kategorieWaehlen,
   partnerAktivitaeten,
   etappeId,
+  hotelOrtKey,
   kanteId,
 }: {
   reise: Trip
   tab: Suchkategorie
   kategorieWaehlen: (kategorie: Suchkategorie, etappeId?: string) => void
   etappeId?: string
+  hotelOrtKey?: string
   kanteId?: string
   partnerAktivitaeten?: ReactNode
 }) {
   const uid = useId()
-  const [suchId, setSuchId] = useState(0)
+  const [auswahlVersion, setAuswahlVersion] = useState(0)
   const einstieg = reise.stages.find(s => s.id === etappeId)
   const erste = reise.stages[0]
   const land = erste?.countryCode
@@ -111,7 +114,7 @@ export default function Organisieren({
     <Etappenkarten
       reise={reise}
       waehlen={(s) => {
-        setSuchId((x) => x + 1)
+        setAuswahlVersion(v => v + 1)
         kategorieWaehlen('unterkunft', s.id)
         document.getElementById(uid + '-tabs')?.scrollIntoView({ block: 'nearest' })
       }}
@@ -204,9 +207,11 @@ export default function Organisieren({
           {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {tab === 'unterkunft' && (
             <Hotelsuche
-              key={JSON.stringify([etappeId, suchId])}
+              key={hotelKontextVersion(reise) + ':' + (hotelOrtKey ?? '')}
               reise={reise}
               start={einstieg ?? erste}
+              startOrt={hotelOrtKey}
+              auswahlVersion={auswahlVersion}
               etappen={etappen}
             />
           )}

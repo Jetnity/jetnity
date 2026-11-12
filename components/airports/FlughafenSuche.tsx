@@ -9,6 +9,7 @@ import Suchliste from '@/components/suche/Suchliste'
 import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
 import { FLUGHAFEN_MELDUNG } from '@/lib/airports/auswahl'
 import type { FlughafenOption } from '@/lib/airports/suche'
+import { flughafenSuchbegriff } from '@/lib/airports/suchbegriffe'
 import { ariaBeschrieben } from '@/lib/formular/feldfehler'
 import { iataLesen } from '@/lib/route/referenz'
 import { sucheAnfrageDarfSchreiben, sucheAnfrageStarten } from '@/lib/suche/anfrage'
@@ -93,7 +94,7 @@ export default function FlughafenSuche({
     const timer = window.setTimeout(async () => {
       const darf = () => sucheAnfrageDarfSchreiben(anfrage.current, id, steuer.signal)
       try {
-        const res = await fetch(`/api/search/airports?q=${encodeURIComponent(suche)}`, {
+        const res = await fetch(`/api/search/airports?q=${encodeURIComponent(flughafenSuchbegriff(suche))}`, {
           signal: steuer.signal,
         })
         if (!darf()) return

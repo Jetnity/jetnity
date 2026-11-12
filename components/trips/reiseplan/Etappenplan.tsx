@@ -26,6 +26,7 @@ import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
+import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import EtappenTage from './EtappenTage'
 import StoppForm from './StoppForm'
 
@@ -40,7 +41,7 @@ type Props = {
   onEdge?: (id: string, day: string) => void
   onSaved?: (graph: Trip) => void
   verbindung?: { vonId: string; nachId: string }
-  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string) => void
+  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string, hotelOrtKey?: string) => void
   onItem?: (id: string) => void
   onAdd: (tag: string, kind: TripItemKind) => void
   edge: ReactNode
@@ -323,6 +324,12 @@ export default function Etappenplan({
                         <button type="button" onClick={() => onEtappensuche('unterkunft', activeStage.id)}>
                           <BedDouble size={17} /> Unterkünfte suchen <ArrowRight size={14} />
                         </button>
+                        {hotelPlanOrte(reise, activeStage).length > 0 ? <label className="et-hotelort">Unterkunft nahe einem Reiseort
+                          <select value="" onChange={e => { if (e.target.value) onEtappensuche('unterkunft', activeStage.id, e.target.value) }}>
+                            <option value="">Reiseort auswählen</option>
+                            {hotelPlanOrte(reise, activeStage).map(ort => <option key={ort.key} value={ort.key}>{ort.name}</option>)}
+                          </select>
+                        </label> : null}
                         <button type="button" onClick={() => onEtappensuche('aktivitaeten', activeStage.id)}>
                           <Ticket size={17} /> Aktivitäten entdecken <ArrowRight size={14} />
                         </button>

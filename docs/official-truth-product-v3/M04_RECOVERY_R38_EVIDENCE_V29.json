@@ -1,4 +1,599 @@
 {
+  "integrationAmendmentV4": {
+    "schema": "jetnity.m04.integration-amendment.v4",
+    "capturedAt": "2026-11-12 00:22:38 UTC",
+    "taskUrl": "https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6810563848",
+    "status": "SOURCE_REVIEWED_FINAL_IMMUTABLE_AND_NEW_HEAD_GATES_PENDING",
+    "main": {
+      "sha": "8b479a24b43b28aad12fc73748ceffba5a1d73ee",
+      "tree": "01d24fc2af3f88e88d0d2fe4876064748669070e"
+    },
+    "preparedCandidate": {
+      "sha": "ac6d487c674a9133342b645cadd5251a6176b397",
+      "tree": "1e09f4153d0155fedd113703393ad6987e8804fd",
+      "unpublished": true
+    },
+    "expectedOrderedParents": [
+      "ac6d487c674a9133342b645cadd5251a6176b397",
+      "8b479a24b43b28aad12fc73748ceffba5a1d73ee"
+    ],
+    "expectedPublishedParent": "994eed7511d612db5158a2af77b5ad3d35f4b6c6",
+    "expectedCounts": {
+      "leaves": 9465,
+      "directoriesIncludingRoot": 844,
+      "entries": 10308,
+      "deltaFromMain": 16,
+      "mainModified": 7,
+      "mainAdded": 9,
+      "deltaFromCandidate": 56,
+      "candidateModified": 22,
+      "candidateAdded": 34,
+      "unchangedMainLeaves": 9449,
+      "ahead": 4,
+      "behind": 0
+    },
+    "preservedMain": {
+      "changedFromBase": 49,
+      "wholeChangedFilesPreserved": 47,
+      "markerExteriors": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md"
+      ],
+      "protectedSourcesChangedOnMain": 0,
+      "current1181Leaves": 36
+    },
+    "source": {
+      "sqlBlob": "1bb764344f22569dec9d3320667e0125d64c1cbf",
+      "nativeBlob": "0b3f7d9906687ec42171de5af60fed009d07b39f",
+      "sourceAggregate": "77f86edfbac0bbcf277913f1225f044fbbb11c22ac6f0ce0c65332d552864b13",
+      "rootActualBlobAndByteReads": 18,
+      "sourceReview": "NO_CONCRETE_BLOCKER_SOURCE_ONLY",
+      "runtimePass": false
+    },
+    "currentMainCi": {
+      "runId": 43109339061,
+      "attempt2": {
+        "conclusion": "success",
+        "jobs": 8,
+        "coreJobId": 130864735103,
+        "tests": 8728,
+        "passed": 8726,
+        "failed": 0,
+        "skipped": 2,
+        "m04": {
+          "schema": "jetnity.m04.native.v1",
+          "candidateSha256": "0221d673c11c8206c56037f8cddeeae5b6eb765c1c9ed44a9bebf548f7ab429b",
+          "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+          "executed": true,
+          "effectAndCleanupMilliseconds": 173487,
+          "cleanupMilliseconds": 187,
+          "clusters": 2,
+          "childProcesses": 0,
+          "lifetime": {
+            "started": 27556,
+            "settled": 27556,
+            "pending": 0,
+            "connections": 4249,
+            "closed": 4249,
+            "stoppedClusters": 2
+          },
+          "groups": [
+            {
+              "id": "N01",
+              "milliseconds": 37
+            },
+            {
+              "id": "N02",
+              "milliseconds": 1533
+            },
+            {
+              "id": "N03",
+              "milliseconds": 1518
+            },
+            {
+              "id": "N07",
+              "milliseconds": 6648
+            },
+            {
+              "id": "N07/R4",
+              "milliseconds": 650
+            },
+            {
+              "id": "N08",
+              "milliseconds": 8428
+            },
+            {
+              "id": "N08/U04",
+              "milliseconds": 2799
+            },
+            {
+              "id": "N02/U04",
+              "milliseconds": 638
+            },
+            {
+              "id": "N04/N06",
+              "milliseconds": 1681
+            },
+            {
+              "id": "N04/N06/N10",
+              "milliseconds": 1905
+            },
+            {
+              "id": "N05/N09",
+              "milliseconds": 2166
+            },
+            {
+              "id": "N09",
+              "milliseconds": 16422
+            },
+            {
+              "id": "N10/U06",
+              "milliseconds": 6364
+            },
+            {
+              "id": "N11",
+              "milliseconds": 1775
+            },
+            {
+              "id": "N11",
+              "milliseconds": 113
+            },
+            {
+              "id": "N12",
+              "milliseconds": 164
+            },
+            {
+              "id": "N04/N10/N12",
+              "milliseconds": 2723
+            },
+            {
+              "id": "N12/U06/R9",
+              "milliseconds": 10586
+            },
+            {
+              "id": "N12/R7-03",
+              "milliseconds": 368
+            },
+            {
+              "id": "N11",
+              "milliseconds": 2201
+            },
+            {
+              "id": "N11",
+              "milliseconds": 182
+            },
+            {
+              "id": "N11",
+              "milliseconds": 211
+            },
+            {
+              "id": "N13",
+              "milliseconds": 2135
+            },
+            {
+              "id": "N05/A03",
+              "milliseconds": 36210
+            },
+            {
+              "id": "N05",
+              "milliseconds": 63272
+            },
+            {
+              "id": "N15",
+              "milliseconds": 52
+            },
+            {
+              "id": "N14",
+              "milliseconds": 367
+            },
+            {
+              "id": "N01/N14/T02",
+              "milliseconds": 69
+            },
+            {
+              "id": "N14",
+              "milliseconds": 80
+            },
+            {
+              "id": "N15/T02",
+              "milliseconds": 49
+            },
+            {
+              "id": "N15",
+              "milliseconds": 200
+            }
+          ],
+          "nestedRaceWitnesses": [
+            {
+              "boundary": "i1_timeout",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "25044",
+                "birth": "2026-11-11 23:52:17.307478+00"
+              },
+              "control": {
+                "pid": "25043",
+                "birth": "2026-11-11 23:52:17.305022+00"
+              },
+              "holder": {
+                "pid": "24661",
+                "birth": "2026-11-11 23:52:15.185667+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": true,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "worker_only",
+              "nativeAdmissionsAfterDrain": 45
+            },
+            {
+              "boundary": "worker_caller_abort",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "25893",
+                "birth": "2026-11-11 23:52:25.293471+00"
+              },
+              "control": {
+                "pid": "25892",
+                "birth": "2026-11-11 23:52:25.29007+00"
+              },
+              "holder": {
+                "pid": "25525",
+                "birth": "2026-11-11 23:52:22.412987+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": false,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "unconfirmed",
+              "nativeAdmissionsAfterDrain": 44
+            }
+          ],
+          "quotaProgress": {
+            "currentGroup": "none",
+            "boundary": "done",
+            "indexBase": 0,
+            "millisecondsCap": 300000,
+            "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+            "ledger": {
+              "lastStartedIndex": 253,
+              "lastCompletedIndex": 253,
+              "commandRequestsStarted": 258,
+              "commandRequestsCompleted": 258,
+              "commandRequestMilliseconds": 414,
+              "fixedCallsStarted": 260,
+              "fixedCallsCompleted": 260,
+              "fixedCallMilliseconds": 35974,
+              "commandCallsStarted": 258,
+              "commandCallsCompleted": 258,
+              "commandCommits": 256,
+              "startCallsStarted": 1,
+              "startCallsCompleted": 1,
+              "startReservations": 1
+            },
+            "cycles": {
+              "lastStartedIndex": 63,
+              "lastCompletedIndex": 63,
+              "commandRequestsStarted": 194,
+              "commandRequestsCompleted": 194,
+              "commandRequestMilliseconds": 331,
+              "fixedCallsStarted": 260,
+              "fixedCallsCompleted": 259,
+              "fixedCallMilliseconds": 63053,
+              "commandCallsStarted": 194,
+              "commandCallsCompleted": 194,
+              "commandCommits": 193,
+              "startCallsStarted": 64,
+              "startCallsCompleted": 64,
+              "startReservations": 64
+            }
+          },
+          "connections": {
+            "aggregateWorkConnectionBound": 40,
+            "maximumJobs": 4,
+            "maximumIntake": 1,
+            "maximumMethod": 3,
+            "m04ObserverLimit": 2,
+            "maximumM04Observers": 2,
+            "methodObserverLimit": 1,
+            "fixturePerClusterLimit": 16,
+            "inheritedCommitGuardPairs": 761,
+            "minimumOwned": 4182
+          },
+          "failure": null,
+          "cleanupFailures": [],
+          "cleanupFailureCount": 0,
+          "nativePass": true
+        }
+      },
+      "attempt1": {
+        "conclusion": "failure",
+        "coreJobId": 130820906612,
+        "reason": "M04 240s effect budget exceeded",
+        "m04": {
+          "schema": "jetnity.m04.native.v1",
+          "candidateSha256": "0221d673c11c8206c56037f8cddeeae5b6eb765c1c9ed44a9bebf548f7ab429b",
+          "rollbackSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
+          "executed": true,
+          "effectAndCleanupMilliseconds": 240330,
+          "cleanupMilliseconds": 23,
+          "clusters": 1,
+          "childProcesses": 0,
+          "lifetime": {
+            "started": 27256,
+            "settled": 27256,
+            "pending": 0,
+            "connections": 4242,
+            "closed": 4242,
+            "stoppedClusters": 1
+          },
+          "groups": [
+            {
+              "id": "N01",
+              "milliseconds": 33
+            },
+            {
+              "id": "N02",
+              "milliseconds": 1916
+            },
+            {
+              "id": "N03",
+              "milliseconds": 2127
+            },
+            {
+              "id": "N07",
+              "milliseconds": 10704
+            },
+            {
+              "id": "N07/R4",
+              "milliseconds": 1032
+            },
+            {
+              "id": "N08",
+              "milliseconds": 14714
+            },
+            {
+              "id": "N08/U04",
+              "milliseconds": 4014
+            },
+            {
+              "id": "N02/U04",
+              "milliseconds": 1210
+            },
+            {
+              "id": "N04/N06",
+              "milliseconds": 2653
+            },
+            {
+              "id": "N04/N06/N10",
+              "milliseconds": 2943
+            },
+            {
+              "id": "N05/N09",
+              "milliseconds": 2901
+            },
+            {
+              "id": "N09",
+              "milliseconds": 19359
+            },
+            {
+              "id": "N10/U06",
+              "milliseconds": 7697
+            },
+            {
+              "id": "N11",
+              "milliseconds": 2187
+            },
+            {
+              "id": "N11",
+              "milliseconds": 187
+            },
+            {
+              "id": "N12",
+              "milliseconds": 172
+            },
+            {
+              "id": "N04/N10/N12",
+              "milliseconds": 5513
+            },
+            {
+              "id": "N12/U06/R9",
+              "milliseconds": 14237
+            },
+            {
+              "id": "N12/R7-03",
+              "milliseconds": 546
+            },
+            {
+              "id": "N11",
+              "milliseconds": 2910
+            },
+            {
+              "id": "N11",
+              "milliseconds": 283
+            },
+            {
+              "id": "N11",
+              "milliseconds": 356
+            },
+            {
+              "id": "N13",
+              "milliseconds": 3211
+            },
+            {
+              "id": "N05/A03",
+              "milliseconds": 65607
+            }
+          ],
+          "nestedRaceWitnesses": [
+            {
+              "boundary": "i1_timeout",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "25706",
+                "birth": "2026-11-11 22:21:26.33386+00"
+              },
+              "control": {
+                "pid": "25704",
+                "birth": "2026-11-11 22:21:26.328427+00"
+              },
+              "holder": {
+                "pid": "25215",
+                "birth": "2026-11-11 22:21:22.172963+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": true,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "worker_only",
+              "nativeAdmissionsAfterDrain": 45
+            },
+            {
+              "boundary": "worker_caller_abort",
+              "operation": "reserve_v1",
+              "target": {
+                "pid": "26327",
+                "birth": "2026-11-11 22:21:35.748769+00"
+              },
+              "control": {
+                "pid": "26326",
+                "birth": "2026-11-11 22:21:35.741927+00"
+              },
+              "holder": {
+                "pid": "26003",
+                "birth": "2026-11-11 22:21:31.441053+00"
+              },
+              "realSqlWaitObserved": true,
+              "abortDelivered": true,
+              "retainedExecutorDrained": true,
+              "backendAbsentWhileExecutorHeld": true,
+              "failConfirmObserved": false,
+              "terminalEffects": 0,
+              "beforeDrainSlot": "unavailable",
+              "afterDrainSlot": "invalid",
+              "heldMethods": 3,
+              "completedMethods": 0,
+              "outwardStatus": "unconfirmed",
+              "nativeAdmissionsAfterDrain": 44
+            }
+          ],
+          "quotaProgress": {
+            "currentGroup": "N05",
+            "boundary": "cycle_enqueue",
+            "indexBase": 0,
+            "millisecondsCap": 300000,
+            "timingMeaning": "client await durations including construction/transport; not server statement profiling",
+            "ledger": {
+              "lastStartedIndex": 253,
+              "lastCompletedIndex": 253,
+              "commandRequestsStarted": 258,
+              "commandRequestsCompleted": 258,
+              "commandRequestMilliseconds": 531,
+              "fixedCallsStarted": 260,
+              "fixedCallsCompleted": 260,
+              "fixedCallMilliseconds": 65235,
+              "commandCallsStarted": 258,
+              "commandCallsCompleted": 258,
+              "commandCommits": 256,
+              "startCallsStarted": 1,
+              "startCallsCompleted": 1,
+              "startReservations": 1
+            },
+            "cycles": {
+              "lastStartedIndex": 50,
+              "lastCompletedIndex": 49,
+              "commandRequestsStarted": 151,
+              "commandRequestsCompleted": 151,
+              "commandRequestMilliseconds": 303,
+              "fixedCallsStarted": 202,
+              "fixedCallsCompleted": 201,
+              "fixedCallMilliseconds": 72568,
+              "commandCallsStarted": 151,
+              "commandCallsCompleted": 150,
+              "commandCommits": 150,
+              "startCallsStarted": 50,
+              "startCallsCompleted": 50,
+              "startReservations": 50
+            }
+          },
+          "connections": {
+            "aggregateWorkConnectionBound": 40,
+            "maximumJobs": 4,
+            "maximumIntake": 1,
+            "maximumMethod": 2,
+            "m04ObserverLimit": 2,
+            "maximumM04Observers": 2,
+            "methodObserverLimit": 1,
+            "fixturePerClusterLimit": 16,
+            "inheritedCommitGuardPairs": 0,
+            "minimumOwned": 0
+          },
+          "failure": {
+            "phase": "proof_25:N05",
+            "error": {
+              "kind": "fixture",
+              "code": "unclassified_failure"
+            }
+          },
+          "cleanupFailures": [],
+          "cleanupFailureCount": 0,
+          "nativePass": false
+        }
+      },
+      "rootReadTerminalMetadataBeforeBothCoreLogs": true,
+      "sourceSameAcrossAttempts": true,
+      "rootTriggeredRerun": false,
+      "notCandidateAcceptance": true
+    },
+    "production": {
+      "deployment": "dpl_Cm8P2afhTZXoESUqk21nKLdXkbQt",
+      "sha": "8b479a24b43b28aad12fc73748ceffba5a1d73ee",
+      "status": "READY",
+      "aliases": [
+        "jetnity.com",
+        "jetnity-app.vercel.app"
+      ],
+      "entryAnswerActivated": false
+    },
+    "currentOwner": {
+      "authorization": "PO_AUTHORIZATION_RECEIVED",
+      "technicalOperation": "NOT_OPERATIONAL",
+      "receipt": "https://github.com/Jetnity/jetnity/issues/751#issuecomment-6810491439",
+      "devGapsRemain": 17,
+      "platformStopsPreserved": [
+        917,
+        1131
+      ],
+      "runtimeMethodApprovalCreated": false
+    },
+    "reviewSessions": {
+      "historicalAuthor": "/root/m04_durable_jobs_writer_g3",
+      "historicalRuntimeResumed": false,
+      "currentSourceReviewer": "/root/ch_de_ci_reconstruction",
+      "currentPackageReviewer": "/root/ch_de_release_gate_audit",
+      "root": "/root"
+    },
+    "historyPreserved": "All preceding V29 fields below retain their original dated contents; this amendment is the current integration snapshot.",
+    "firstUnfinishedStep": "Verify final immutable combined commit and independent package reviews, recheck live refs/gates, then publish one expected-head fast-forward. New full CI/Preview and eventual actual-main/Production verification remain."
+  },
   "schema": "jetnity.official-truth-v3.m04-recovery-r38-evidence.v29",
   "capturedAt": "2026-11-11 03:34:13 UTC",
   "status": "EXACT_NONINSTRUMENTED_SOURCE_SELECTED_IMMUTABLE_AND_RUNTIME_GATES_PENDING",

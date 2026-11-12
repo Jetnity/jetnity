@@ -6237,3 +6237,31 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Alternative und Begründung:** Gleichzeitige unabhängige Datenmodelle würden Zustände, Bedingungen und Autoritäten auseinanderlaufen lassen. Eine erneute reine Planungsphase würde den konkreten Implementierungsauftrag nicht erfüllen. Deshalb zuerst ein kleiner gemeinsamer, adversarial geprüfter Vertrag, dann disjunkte Autoren und ein zusammenhängender Integrationstest. Vorhandene Länder-, Claim-, Quellen- und Research-Verträge werden wiederverwendet; Legacy-Speichergrenzen werden ausdrücklich erweitert statt durch Typ-Casts übergangen.
 
 **Konsequenzen:** Eine klare amtliche Zielland-Primärquelle ist Pflicht; eine verfügbare unabhängige amtliche Gegenprüfung wird berücksichtigt, ihr Fehlen allein blockiert nicht. Echte vergleichbare Konflikte und unklare Primäraussagen eskalieren. Vergleichskontext, rechtliche Gültigkeit, Methoden-/Versionsbindung und positiver Konfliktauflösungsbeleg gehören in den Vertrag. Besucher geben nur Ziel und Staatsangehörigkeiten an und erhalten getrennte bedingte Aussagen mit tatsächlichem Quellenstand. Keine neue bezahlte Infrastruktur, DB-/Provider-/Production-Aktivierung oder automatischer Ownerfreigabeverzicht aus diesem Codeauftrag. Die historischen #917- und #1131-Grenzen bleiben erhalten. [Versionierter Auftrag](docs/official-truth-product-v3/PROGRAM_V1.md) · [Live-Evidence-Bus #1162](https://github.com/Jetnity/jetnity/issues/1162).
+
+
+## Stay22: offizielle Ergebnisanzeige statt eigener Hotelkatalog — 11.11.2026
+
+**Kontext:** Der Owner möchte echte Unterkunftsbilder und Preise direkt im Jetnity-Unterkunftsreiter vergleichen. Das angemeldete Stay22-Konto bietet Maps; Direct Travel API ist geschlossen. Roam optimiert Buchungswahrscheinlichkeit und belegt keinen Bestpreis.
+
+**Entscheidung:** Eine explizit gestartete offizielle Stay22-Einbettung nutzt öffentlichen Ort, Aufenthalt und Belegung aus der vorhandenen Reise. Originalangebote bleiben unter Anbieterhoheit. Änderungen verwerfen alte Ergebnisse; die Suche verändert den Reisegraphen nicht. Bestehende Datenschutz-Ablehnungen und Widerrufe gelten für den fremden Rahmen.
+
+**Alternativen und Begründung:** Ein eigener Vergleichskatalog benötigt freigegebenen Datenzugang; Widget-Scraping oder manuell ersetzte Hotelbilder erfüllen den Auftrag nicht. Ein bloßer Partnerlink zeigt keine Angebote in Jetnity. Die Einbettung nutzt die nachweislich vorhandene Möglichkeit, ohne nicht verfügbare API-Funktionen vorzutäuschen.
+
+**Konsequenzen:** Kein Markt-/Bestpreisversprechen, keine behauptete Vergleichbarkeit desselben Zimmers über mehrere Buchungsseiten, keine API-Tokens, neue Bibliotheken oder Datenbankmigration. Live-Anbieterbelegung und mobile Originalanzeige müssen vor dem Rollout zusätzlich geprüft werden. Der erste Stand bleibt lokale Vorschau. [Details](docs/STAY22_HOTELSUCHE_2026-11-11.md).
+
+## Stay22-Reisekontext und kontrollierbare Originalanzeige — 11.11.2026
+
+**Kontext:** Der Owner möchte die Hotelsuche mit Etappen und geplanten Orten verbinden sowie Karte, Liste und Filter professioneller bedienen.
+
+**Entscheidung:** Ortsreferenzen werden im vorhandenen Reisegraphen geprüft, Koordinaten nicht aus freien Eintragstiteln erfunden. Nahe bekannte Stopps und explizit gewählte Transportorte können den Suchmittelpunkt bilden. Suchentwürfe sind temporär und je Etappe getrennt; Suche, Kartenauswahl und Anbieter-Handoff verändern keine Reise oder Buchungswahrheit. Originalpreise/-bilder verbleiben im offiziellen Rahmen. Native Dialog-Vergrösserung bewahrt diesen Rahmen, während ein bewusster Ansichtswechsel mit den Jetnity-Suchvorgaben neu lädt. Die Preis-Badge benennt deshalb nur die Startansicht.
+
+**Budgetgrenze:** Die öffentliche Anbieterimplementierung verarbeitet URL-`min`/`max` als USD pro Nacht und rechnet in Währung/Preisperiode um. Jetnity besitzt hierfür keine bestehende FX-Quelle. Statt einen CHF-Gesamtbetrag falsch zu übermitteln, bleibt der Währungs-/Zeitraumbezug im originalen Stay22-Budgetfilter. Keine neue bezahlte FX-Integration, keine automatische Budgetaufteilung und kein Bestpreisversprechen. Die Direct Travel API bleibt geschlossen. [Nachweise](docs/STAY22_REISEKONTEXT_2026-11-11.md).
+
+
+## Travelpayouts: Originalangebote im getrennten Ursprung — 11.11.2026
+
+**Kontext:** Der Owner wünscht eine hochwertige, reisebezogene Flugsuche mit echten Ergebnissen innerhalb von Jetnity und zunächst eine sichtbare Vorschau.
+
+**Entscheidung:** Das freigeschaltete offizielle Widget wird verwendet; keine nicht freigeschaltete Flight Search API oder ausgelesenen Ergebnisdaten. Ein eigenständiger Widget-Host trennt das notwendige Anbieter-Storage vom Jetnity-Konto. Nur begrenzte Suchparameter verlassen Jetnity. Bestehende Einwilligungsablehnungen werden respektiert. Eine Flugauswahl bleibt von einer bestätigten Buchung getrennt.
+
+**Grenzen:** Die Vorschau ist lokal. Der Anbieter setzt intern `citizenship: RU` auch für den Schweizer Markt; Bedeutung vor öffentlichem Rollout klären. Keine Änderung dieser Anbieteranfrage, keine behauptete Passinformation und kein garantierter Marktbestpreis. [Details](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).

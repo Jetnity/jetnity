@@ -1,3 +1,25 @@
+# Root source and integration review — V29 v4, 12 November 2026
+
+Pre-publication source review. No candidate runtime/TL-PASS, Ready or merge is claimed.
+
+Root read complete R38 canonical_v1, actual SQL diff against current main, original validating CASE fallback, current task amendments and full recursive trees. Root separately fetched all18 protected source files on ac6d; every Git blob and actual UTF8 byte length matches the R38 manifest. The only implementation delta against8b479a24 is2425 added characters inside canonical_v1; native is the unchanged original.
+
+Root traced entry/NULL/depth guards, bounded typed-jsonb eligibility, strings with no raw escapes and the original printable-character predicate, integer narrowing, arrays declining to fallback, scalar output, nested C-ordered paths, closing tokens, protected comma cleanup and depth24 handling. No concrete semantic blocker was found. This is source reasoning, not measured performance. Serialization/scans/aggregate allocations and cold fallback costs remain P2; exhaustive8KiB/lexical admission edges are not new tested claims.
+
+Independent /root/ch_de_ci_reconstruction reviewed the complete function, exact preservation boundary, canonical/native witnesses and pinned PostgreSQL primary source. It independently confirmed all29 declarations, the entire unchanged fallback and native restoration, including numeric output, JSON escaping, C-order/array comparison and depth. Disposition: source-only accepted for integration and fresh gates. No concrete blocker or runtime acceptance. Earlier G3 source reviews below remain historical, not a claimed resumed session.
+
+Independent /root/ch_de_release_gate_audit read untruncated base/current/candidate trees, all18 protected source contents and marker boundaries. Main changed49paths fromfbcb; only ARCHITECTURE and ROADMAP overlap the16cumulative M04 paths. All47 other Main changes and current36 #1181 leaves are retained. Expected final9465leaves/844directories includingroot/10308entries;56paths vsac6d,16vsmain;9449 Main leaves whole-file exact. Final immutable commit readback and final-commit peer review remain required.
+
+Root independently verified main8b479a24/tree01d24fc2, both CI43109339061 attempt terminal job sets and both Core originals. Attempt1/130820906612 failed M04 at240330ms with24/31groups, complete ledger,50acknowledgedstarts/150commandACKs; next ENQUEUE unknown;27256/27256operations,4242/4242connections,1stoppedcluster,0cleanupfailures. Attempt2/130864735103 passed:8728/8726PASS/0FAIL/2Skips, M0431/31/nativePass,173487ms, full256/64,761/minOwned4182,27556/27556work,4249/4249connections,2stoppedclusters/0cleanupfailures; Typecheck/Lint/5hygiene/BuildSUCCESS. Same SQL/native in both; no Root-triggered rerun. Neither is new-R38 acceptance. Raw native receipts are preserved in the current V4 amendment.
+
+Production dpl_Cm8P2afhTZXoESUqk21nKLdXkbQt READY/exact8b479a24 and both aliases were separately read. Current Owner authorization is recorded in #751/6810491439 and specific #917/#1139/#1169 receipts; no repeated PO question. It does not resolve recorded platform refusals or17technical target gaps. No Hosted or Auth-log operation was performed.
+
+[Current V29 v4 task](https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6810563848) permits immutable construction followed by exact result readback and final peer reviews before one expected-head nonforce advance. Full new-head/actual-main gates remain. Historical G3 author is preserved; current audit sessions are identified accurately. Root alone owns publication/PASS/Ready/merge.
+
+---
+
+## Complete previous V29 review — historical source and evidence retained verbatim
+
 # M04 Recovery V29 — Root exact-source review and independent evidence
 
 **Source review complete; immutable package, runtime, Ready and merge gates remain pending.** This record binds only the selected noninstrumented R38 proposal. It is not TL-PASS.

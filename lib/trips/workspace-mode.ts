@@ -8,12 +8,13 @@ import {
   type PreparationBereichId,
   type PreparationZiel,
 } from '@/lib/readiness/preparation-premium-experience-5'
+import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import { itemInReise } from '@/lib/trips/detail'
 import type { Trip, TripItem } from '@/types/trips'
 
 export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung'] as const
 const WORKSPACE_BEREICHE = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
-export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'etappe', 'vorbereitung', 'reisender'] as const
+export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'etappe', 'hotelort', 'vorbereitung', 'reisender'] as const
 /** Opaque plan selection. Not travel intent. Stage ids are at most 80 characters each. */
 export const WORKSPACE_KANTE_MAX = 200
 
@@ -37,6 +38,7 @@ export type WorkspaceModus = {
   bereich: WorkspaceBereich | null
   kategorie?: Suchkategorie
   etappeId?: string
+  hotelOrtKey?: string
   tagId?: string
   itemId?: string
   /** Existing connection id, for example `connection:<stageId>:<stageId>`. Presentation only. */
@@ -118,6 +120,8 @@ function rohLesen(params: URLSearchParams): Navigation {
     const etappeId = refLesen(params, 'etappe', 80)
     const kanteId = refLesen(params, 'kante', WORKSPACE_KANTE_MAX)
     if (etappeId && (reiter === 'unterkunft' || reiter === 'aktivitaeten')) ziel.etappeId = etappeId
+    const hotelOrtKey = refLesen(params, 'hotelort', 100)
+    if (ziel.etappeId && reiter === 'unterkunft' && hotelOrtKey) ziel.hotelOrtKey = hotelOrtKey
     if (kanteId && reiter === 'verbindungen') ziel.kanteId = kanteId
     return ziel
   }
@@ -135,6 +139,7 @@ export function queryFuerModus(aktuell: URLSearchParams, modus: Navigation): URL
     else if (istWorkspaceBereich(modus.bereich)) next.append('bereich', modus.bereich)
     const reiter = modus.kategorie ?? kategorieFuerBereich(modus.bereich)
     if ((reiter === 'unterkunft' || reiter === 'aktivitaeten') && refGueltig(modus.etappeId, 80)) next.append('etappe', modus.etappeId)
+    if (reiter === 'unterkunft' && refGueltig(modus.etappeId, 80) && refGueltig(modus.hotelOrtKey, 100)) next.append('hotelort', modus.hotelOrtKey)
     if (reiter === 'verbindungen' && refGueltig(modus.kanteId, WORKSPACE_KANTE_MAX)) next.append('kante', modus.kanteId)
   }
   if (modus.ansicht === 'plan') {
@@ -166,6 +171,7 @@ export function modusUrl(href: string, modus: Navigation): string {
 export function modusFuerReise(modus: WorkspaceModus, reise: Trip, ohneTag: readonly TripItem[]): WorkspaceModus {
   const next = modusAusQuery(queryFuerModus(new URLSearchParams(), modus))
   if (next.etappeId && !reise.stages.some(etappe => etappe.id === next.etappeId)) delete next.etappeId
+  if (next.hotelOrtKey && !hotelPlanOrte({ ...reise, ohneTag: [...ohneTag] }, reise.stages.find(s => s.id === next.etappeId)).some(ort => ort.key === next.hotelOrtKey)) delete next.hotelOrtKey
   if (next.ansicht === 'plan') {
     if (next.tagId && !reise.days.some((tag) => tag.id === next.tagId)) delete next.tagId
     if (next.itemId) {

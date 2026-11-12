@@ -1,3 +1,97 @@
+# M04 Recovery Task V29 — current binding amendment v4
+
+# M04 Recovery V29 v4 — aktuelle Main-Integration für CH→DE
+
+Root Technical Lead, 12.11.2026 (Europe/Zurich). Fortsetzung des vorhandenen R38-Kandidaten und von V29 v3, kein neuer Optimierungsentwurf. [Aktueller Ownerauftrag](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6810491439).
+
+## Exakter Umfang
+
+Aktueller main **8b479a24b43b28aad12fc73748ceffba5a1d73ee**, Tree **01d24fc2af3f88e88d0d2fe4876064748669070e**. Draft-Head bleibt **994eed7511d612db5158a2af77b5ad3d35f4b6c6**. Vorbereiteter R38 **ac6d487c674a9133342b645cadd5251a6176b397**, Tree **1e09f4153d0155fedd113703393ad6987e8804fd**.
+
+Root integriert den unveränderten vorbereiteten R38-Code mit heutigem main in EINEM unveröffentlichten Integrationscommit, geordnete Eltern **[ac6d487c674a9133342b645cadd5251a6176b397, 8b479a24b43b28aad12fc73748ceffba5a1d73ee]**. Erwartete Branch-Advance bleibt fast-forward von994eed, force=false. Weder ac6d allein noch ein Zwischencommit wird veröffentlicht. Bei neuer Main-/Head-Drift neu rekonstruieren.
+
+SQL bleibt exakt **1bb764344f22569dec9d3320667e0125d64c1cbf**, 161095 Bytes, SHA256 **868778c647464bf51ff179e39b86c2f4d6771cad07998165898f2f222e5fa84a**. Native bleibt wiederhergestelltes Original **0b3f7d9906687ec42171de5af60fed009d07b39f**, 191098 Bytes, SHA256 **f5d849c643ff22d264bc9adc1a7cd65f12caaac80a804647604851f22effbde0**. Kein Instrumentierungsmerge, keine Quoten-/Beweis-/Timeout-Absenkung. Alle18 Quellen bleiben auf dem R38-Aggregat **77f86edfbac0bbcf277913f1225f044fbbb11c22ac6f0ce0c65332d552864b13**.
+
+## Vollständige Integration ohne Überschreiben neuer Arbeit
+
+Root- und unabhängiger Baumvergleich: neuer main hat49 Änderungen gegenüber fbcb, davon15 geändert/34neu/0entfernt. Nur ARCHITECTURE.md und ROADMAP.md überschneiden den M04-Gesamtdiff. Alle18 M04-Quellen auf main sind gegenüber fbcb unverändert.
+
+Basis ist heutiger Main-Tree; überlagert werden nur die16 bestehenden kumulativen M04-Pfade (7geändert/9neu). Die ursprüngliche Native-Datei ist bereits gleich main und braucht kein abweichendes Overlay. Die fünf Current-Markerdateien erhalten ausschließlich einen neuen datierten Markerinhalt; ihre vollständigen heutigen Main-Aussenbereiche bleiben exakt. Alle47 übrigen Main-Änderungspfade bleiben als ganze Dateien exakt. Alle36 früheren #1181-Pfade werden in ihrer heutigen Main-Version erhalten.
+
+Nur dieselben9 V29-/Current-Dokumente werden aktualisiert: JETNITY_START_HERE.md, docs/ACTIVE_WORK_STATUS.md, ROADMAP.md, JETNITY_HANDOFF.md, ARCHITECTURE.md, M04_HANDOFF_V1.md, M04_RECOVERY_TASK_V29.md, M04_RECOVERY_ROOT_REVIEW_V29.md und M04_RECOVERY_R38_EVIDENCE_V29.json. Das bisherige vollständige R38-Handoff und die alten V1/V2-Auftrags-/Review-/Evidence-Inhalte bleiben erhalten. V3- und V4-Amendment werden präzise hinzugefügt. Die sechs V27/V28-Recordblobs bleiben exakt.
+
+Erwarteter finaler Baum: **9465 Blätter /844 Verzeichnisse einschließlich Root /10308 Einträge**. Gegen ac6d **56Pfade=22geändert+34neu**; gegen aktuellen main **16=7geändert+9neu**, **4ahead/0behind**, merge-base exakt8b479a24. **9449 Main-Blätter** bleiben als ganze Datei exakt; zusätzliche Marker-Aussenbereiche werden separat geprüft.
+
+## Aktuelle CI-Wahrheit und Grenzen
+
+Actual-main43109339061 Attempt2 ist SUCCESS mit8/8Jobs. Root las Terminalmetadaten und das Original von Repository130864735103:8728Tests/8726PASS/0FAIL/2bekannteSkips, M04 31/31/nativePass,173487ms, vollständige256/64Quoten,761Guardpaare/minOwned4182,27556/27556Operationen,4249/4249Verbindungen,2Cluster gestoppt,0Cleanupfehler. Typecheck/Lint/5Hygiene/Build grün. Attempt1 desselben Codes scheiterte an240s; sein Fehlschlag bleibt separat. Es gibt keinen Beleg einer zwischen den Versuchen erfolgten M04-Reparatur. Die Optimierung benötigt deshalb weiterhin eigene Ausführung.
+
+Production dpl_Cm8P2afhTZXoESUqk21nKLdXkbQt READY/exakt8b479a24; beide Aliase getrennt verifiziert. Das ist keine CH→DE-Feature-Aktivierung.
+
+## Ownerentscheid und Sicherheit
+
+Heutige PO-Freigabe für D1, Dev-Paket und CH→DE-Publikation ist erhalten, ohne sie erneut zu erfragen. Aktueller Status **PO_AUTHORIZATION_RECEIVED / TECHNICAL_OPERATION_NOT_VERIFIED**. SQL weiterhin nicht auf Hosted-Zielen verifiziert/installiert;17technische #1139-Punkte offen. #917-Readback- und #1131-Ready-STOP bleiben unverändert, ebenso unabhängige #1135/#968/#911/#913-Grenzen. Keine verweigerte Aktion wird wiederholt/umgeleitet oder durch neue Daten als erledigt deklariert. Keine lokale/ersetzende Projekt-/SQL-/Testausführung oder Auth-Loglesung; nur der bestehende bereits geprüfte CI-Weg führt Projektcode aus.
+
+## Unabhängige Prüfung und STOP
+
+Root prüft Quellenfunktion, Fallback, Baum, Eltern, komplette Diffs, alle18Sourcepins, Marker-Aussenbereiche, unveränderte Artefakte und neue Dokumentinhalte. Neue unabhängige Read-only-Reviewer sind **/root/ch_de_ci_reconstruction** (Quellen) und **/root/ch_de_release_gate_audit** (Integration/Paket); sie sind ausdrücklich keine Wiederaufnahme der historischenG3-Sessions. Der Autor der wiederverwendeten unveränderten Implementierung bleibt die dokumentierte Generation3. Keine neue Autorimplementierung oder behauptete Session-Reaktivierung.
+
+Vor Ref-Advance unabhängige Reviewbelege am finalen unveröffentlichten Commit sowie frische Main-/Head-/Mode-/Regel-/Thread-/Owner-Gates. Dann eine reguläre Veröffentlichung. Neue vollständige8Job-CI/31Gruppen/Originalquoten/R9/Rollback/Drain/Companions/Build/ExactPreview; nur Root darf danach PASS/Ready/expected-headMerge. Anschließend eigener vollständiger tatsächlicher Main-/Production-Nachweis. Kein unveränderter Rerun, kein vorheriger grüner Lauf als Ersatz.
+
+Die bestehende endliche Dokumentationsschließung bleibt bis echter korrigierter Actual-Main-Abnahme offen. Der aktuelle Ownerauftrag erlaubt anschließend nur explizit erforderliche CH→DE-Schritte; Reviewer starten keinen Folgeslice.
+
+---
+
+## Dated v3 integration amendment — historical main pin superseded by v4
+
+# M04 Recovery V29 v3 — integrate newly merged main before publishing R38
+
+Root Technical Lead amendment, 2026-11-11 03:40 UTC. Same selected R38 repair, same author/session, same Draft #1184. This amendment supersedes only V29v2's old-main/sole-parent publication assumptions. SQL/native content, source review, full runtime gates and all Owner stops remain binding.
+
+## Live event and decision
+
+Root's final publication gate found that parallel #1185 merged at03:25:41UTC, moving main to **ddd8af51e34925c36e7fbf80b57a034407669fc8**, tree **ee08bdc846d419ed2ee8f845914e9ec30eb33b11**, ordered parents [fbcb72e7c65a5e7c7e4f2e20105ab6f4b2201a54,af1b4297d0da01aa422f8c0099c6c1d8b61276d9]. M04 branch is still **994eed7511d612db5158a2af77b5ad3d35f4b6c6**. No R38 CI has been triggered.
+
+The source-correct candidate **ac6d487c674a9133342b645cadd5251a6176b397**, tree **1e09f4153d0155fedd113703393ad6987e8804fd**, soleparent994eed, remains UNPUBLISHED. Root read/hash-verified all11 files and full10268-entry tree,9420 prior leaves,all18sources,all36 then-current #1181 leaves, five marker exteriors and whole60587-byte preceding handoff. Author independently reread all18sources; independent source reviewer reread21files/1494762bytes and full R37 custody. Its old-main integration gate is now invalid, not a new runtime failure. Preserve this immutable preparation in history.
+
+Root will create ONE integration commit with ordered parents **[ac6d487c674a9133342b645cadd5251a6176b397,ddd8af51e34925c36e7fbf80b57a034407669fc8]**, then publish only the resulting final commit by expected-parent fast-forward from actual branch994eed, force=false. This retains the unpublished source commit and current main as ancestors. Do not publish ac6d alone or run intermediate CI.
+
+## Exact integration and preservation
+
+New main changed23paths:12modified/11added. Its only overlap with the M04 current-document paths is **ARCHITECTURE.md and ROADMAP.md**. Retain their complete latest-main content outside the existing M04 marker interiors. The other21 new-main paths must remain byte-exact. No independent approval/review of #1185 is asserted by this preservation.
+
+Seven of #1181's former36 files were legitimately updated by #1185. Preserve the latest-main versions of all36; do not restore their old blobs. Record the7old/new identities. The18 M04 protected source blobs on latest main are checked for conflict; final selected SQL/native and source aggregate stay EXACTLY:
+- SQL161095B/SHA256868778c647464bf51ff179e39b86c2f4d6771cad07998165898f2f222e5fa84a/blob1bb764344f22569dec9d3320667e0125d64c1cbf.
+- Native191098B/SHA256f5d849c643ff22d264bc9adc1a7cd65f12caaac80a804647604851f22effbde0/blob0b3f7d9906687ec42171de5af60fed009d07b39f.
+-18-source aggregate77f86edfbac0bbcf277913f1225f044fbbb11c22ac6f0ce0c65332d552864b13.
+
+Only the same nine V29/current documentation files may additionally be updated for this event: six current-entry files and TASK_V29,ROOT_REVIEW_V29,R38_EVIDENCE_V29. No new documentation filename or implementation change. Full v1/v2 task bodies remain verbatim once; v3 becomes current. Preserve the complete R37 predecessor handoff, full R37 runtime/profile/companions/unknowns, all historical failures and genuine successes, all source/cost receipts and the ac6d preparation receipt. No need to duplicate semantic source research; fresh final-commit source identities/inverse boundaries must be checked.
+
+Expected integration delta against ac6d: **30paths=19modified/11added** (the9docs plus23main paths with2overlaps). Expected cumulative delta against current main: **16paths=7modified/9added**, restored native equals main; **4ahead/0behind**, merge-base exactlyddd8af. Final tree **9442leaves/839directories includingroot/10280entries**; all9426 latest-main leaves outside the7approved M04 modifications remain exact. Main's23changed paths retain21whole-file identities plus the2exact marker exteriors.
+
+Root must independently verify full finaltree/parents/compares/allchangedcontents/currentmarker regions/entirepredecessor/allsourcepins, then obtain independent final-commit source and package reviews. Recheck actual main/head/threads/Owner/rules/mode immediately before expected-parent advance. Any new drift invalidates this integration assumption and must be reconstructed, not overwritten.
+
+## Current CI and Production truth
+
+New main CI **42952694524/#4102/attempt1** is in_progress as of03:38:54UTC: UI/Persisted/Store/Lifecycle/Auth metadata successful; Atomic/Repository running; no aggregate yet. This is unreviewed new-main runtime evidence, not M04 recovery acceptance. Root authorizes no running-job log reads; Auth logs remain prohibited. Preserve later actual disposition honestly.
+
+Production **dpl_FVb5GoXEwHGk7BDNKymG38LwSjXw** is READY/exactddd8af/targetproduction/correctproject, aliasError=null. Both jetnity.com and jetnity-app.vercel.app independently resolve it with no redirect (Root03:37,peer03:39). Old R37 Preview8oSR remainsREADY/exact994eed; it does not prove final R38. Twelve-source Owner/Guardian delta through03:39 contains only known Root checkpoint/task comments; no new instruction.
+
+## Unchanged gates
+
+This is an integration amendment within the already-authorized recovery. Sameauthor **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3**, /root/m04_durable_jobs_writer_g3. Root alone may publish/Ready/merge; self-review is not TL-PASS. The new head invalidates earlier exact-head gates. Require fresh noninstrumented full8jobCI, all31groups/full254–256/full64–65/realR9/inherited761/min4182/finalrollback, complete companions and exact Preview. Only then Root may Ready/merge after fresh live gates; actual merged-main fullCI and both Production aliases remain mandatory.
+
+Then, only after genuine corrected actual-main PASS, the already-contracted finite8path documentation closure with its own full gates, final existing PR/#751 receipts and STOP. No automatic product follow-up or self-attestation loop.
+
+All V29v2 limits remain: no local/replacement execution or unchanged-head rerun; no Auth logs or hosted DB/Auth/RLS/migration/credentials/provider/research/scheduler/notification/newcost/publicactivation. SQL_UNAPPLIED/METHOD_NOT_APPROVED; #917UNKNOWN/Stage2NOT_ATTEMPTED/no individual access/retry/reroute/substitute; #1139NOT_RELEASE_READY/17gaps; #1131ReadySTOP; both#1135holds; #968 isolation/clientSSRAuthunproved; #911/#913privacy; D1#1169separatelyunfinished.
+
+First unfinished step: construct the exact integration commit and independently verify the final combined head before publishing the same Draft branch. No additional Product Owner approval is needed for this authorized integration.
+
+
+---
+
+## Complete prior v2 and v1 task record retained verbatim
+
 # M04 Recovery Task V29
 
 ## Current binding version: v2
