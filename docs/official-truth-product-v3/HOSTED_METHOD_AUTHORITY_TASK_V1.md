@@ -1,3 +1,28 @@
+# HMA1 R6 — source-only mandatory CI contract alignment
+
+12 November 2026. Same original reachable author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, session `/root/hosted_method_authority_writer_g1`. No replacement session or Cursor UI claim.
+
+Selected task: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6825682837
+
+**SOURCE_ONLY / NOT_RUN_FOR_R6 / UNPUBLISHED / STOP.** Sole immutable parent **b26c3a5ed0a16ef6d5c768a09391cfaa0412625b**, tree **eb71fad26c651edada873229efd62982472e5948**. No additional parent or integration is selected. Root records accepted Main **fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474** in the R6 task; the R5-C pending-at-selection Main gate retained below is historical.
+
+Exactly four existing paths change:
+
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json`
+- `docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md`
+- `lib/readiness/official-truth-atomic-version-refresh-1.test.ts`
+
+Only the existing CI-contract test block changes in executable test source. Four finite text replacements align the exact full npm test chain, exact Core and explicitly required hosted-PG17 command, exact ordered six-family needs, and sixth strict aggregate result with the already selected R5-B architecture. The existing test title, every old family and its order, every wrapper digest and entry inventory, tsconfig expectation, accepted-store runner/20-minute bound/matrix, operating-mode bindings and strict aggregate conditions remain unchanged.
+
+The other three changes preserve complete provenance and record the byte-exact inverse. Every other parent leaf remains exact: **9,497 total leaves, four modifications, zero additions/deletions, 9,493 unchanged leaves**. CI, package and lock, selector and its contract, protected-source/UI amendment, HMA installer/recovery/native/wrapper and all PG1/Auth files are unchanged. No imports, budgets, permissions, source GET, additional hosted package or automatic follow-on.
+
+Actual predecessor #4133 passed all eight HMA1 PG17 groups and all seven companion jobs. Core had one stale-contract failure; the mandatory aggregate correctly failed, and later hygiene/build gates were skipped. Root's full nine-log receipt is appended verbatim and bound in the manifest. The author read run/jobs/checked-out-merge metadata and source only; full-log hashes and runtime details are attributed to Root.
+
+R6 corrects that source contract but has no parser/compiler/test/native/SQL/APT/build/CI/hosted execution evidence. Root alone independently reviews, selects any publication and repeats all exact-head gates before Ready or merge. Dev installation still requires the separate E10 profile-integrity prerequisite; #917/#1131 STOPs remain intact.
+
+## Complete preserved Task history through R5-C
+
 # HMA1 — current R5-C integration binding and publication HOLD
 
 12 November 2026. Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, session `/root/hosted_method_authority_writer_g1`. No replacement session or Cursor claim.
@@ -441,3 +466,52 @@ Source composition and immutable readback are NOT_RUN; prior runtime gates do no
 ### Delivery / STOP
 Read complete original/current trees; compare every path/type/mode/blob. Return immutable commit, tree, ordered parents, complete changed-path proofs relative to both parents, source/doc pins and exact preservation evidence. No ref/PR mutation, local/project/parser/compiler/SQL/APT/test/native/build/CI/hosted/source-GET execution. No hidden prerequisite installation, signed Owner claim or public activation. Unchanged installer/recovery, 180s/35s/240s limits, all groups and six-family gate. #917/#1131 boundaries intact. STOP after delivery.
 
+
+
+## Complete Root R6 task and actual #4133 receipt — verbatim
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6825682837
+
+The following complete Root receipt applies to predecessor b26c3a5ed0a16ef6d5c768a09391cfaa0412625b only. Its historical runtime results do not transfer to R6.
+
+---
+
+## TL CHANGES REQUIRED — HMA1 R6 / exact mandatory-CI contract alignment
+
+2026-11-12. Same original reachable author/session: **Jetnity Official Truth V3 Hosted Method Authority1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. Immediate review fix on published Draft #1195 head `b26c3a5ed0a16ef6d5c768a09391cfaa0412625b`, tree `eb71fad26c651edada873229efd62982472e5948`. Current accepted main remains `fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474`.
+
+### Complete actual R5-C gate result
+
+Run [#4133](https://github.com/Jetnity/jetnity/actions/runs/43229715610), attempt 1, checked-out merge `171bb1b2251a81e4949740386cda395756b0a3a6`, ordered parents [fa8bd1…, b26c3…], tree exactly eb71fad… = selected candidate tree.
+
+Root retrieved/hash-bound all nine complete job logs. Core `131221477512`: 4,290,363 UTF8 bytes, SHA256 `8ec00c95be32a0124bee58c842f0de0d484562fc17a3b360edc1d434f7214456`; 8,753 tests, 8,750 pass, **1 fail**, 0 cancelled, 2 pre-existing skipped, 972 suites. Typecheck/lint completed; later build gates were skipped after the failed test. The sole failed test is `CI keeps complete native proofs mandatory with unchanged existing test commands` in `lib/readiness/official-truth-atomic-version-refresh-1.test.ts`, line 97. It still expects the old four-family pkg.scripts.test string; actual correctly contains the selected new `&& npm run test:hosted-v3-native`. Root read the full affected test block and found further stale assertions immediately after that first failure: old test:core command, five-family needs list and five-family aggregate inventory.
+
+Seven other jobs passed. Full pins:
+- Atomic 131221478041: 185,869 / `ea27cb07d7d607ed666fd8e7e53c0ba15892c6c59c3edc9754ca31011d48e623`, 1/1.
+- Store 131221478066: 138,004 / `a7b2f655cc303bbebfaf6d4d69e3fcf461360639a05ad158b691508c92984b80`, 4/4.
+- UI 131221478141: 144,241 / `149314fbfb1f9f115bb4ab6d07b3a023ed5fdfc20169ad96c6575ec19bc71f6a`, 51/51 plus existing smoke/benchmark/browser steps.
+- Persisted 131221478425: 159,007 / `c3625cfa50eeb090d28686e0a2e77016279510cc54289bf8df7102b1f17fb8c7`, 1/1.
+- Auth 131221478481: 21,267 / `c63832d490852af78668ecc0505bede3aa8132948141f30ca6210de6b82ae697`.
+- Lifecycle 131221480730: 179,029 / `9be85379d3b2e4b9b0a6d1142cdbf3e07eeec7df39b130f380cd18a8b8157b7a`, 4/4, actual Chrome156 browser proof 22 current results,61/61 observer operations,0pending,0 source fetches during reads.
+- Hosted PG17 131221478086: 139,874 / `ef2b936e41a412931710fd7c90e33f17dd23a14236adf68dea8df8d360a95f89`: **all eight HMA1 groups passed**, actual PostgreSQL170011, real NOSUPER LOGIN postgres installer,1,156/1,156 operations,12/12connections,0pending,1cluster; effect6,803ms/cleanup145ms/elapsed6,947ms. Failure and timeout witnesses each joined original actual query and drained5/5 and6/6ops,2/2connections. Actual late-writer recovery inherited REPEATABLE READ, selected READ COMMITTED, waited then saw1revision/1head/2operations and refusedP7803 retaining identities/history.
+- Aggregate 131231033496:4,306 / `4ed0484b5507d27809905c093fd411c628847654f45a7449e40d01103fdf0f15`, correctly FAILED because Core failed; all six families mandatory.
+
+The previous R4 runtime failures (PG17 contaminating legacy PG16 selection, protected-CI lineage, malformed HMA SQL interpolation) did not recur on this exact head: original PG16 proofs, protected tests and actual HMA native groups passed. This does not waive the new red CI contract gate or transfer results to a new head.
+
+Exact Preview `dpl_F941eFuWvN9yaDtSzz1mSfyoaM5b` / `jetnity-a3n8j0mrr-jetnity-e1b93c82.vercel.app` READY, head b26c3…, aliasError null. Review threads/reviews both empty at13:59. None of this authorizes Ready/merge while Core is red. No retry selected.
+
+### Selected R6 source fix — four paths only
+
+Author an unpublished commit with sole parent b26c3a5ed0a16ef6d5c768a09391cfaa0412625b. Exactly these four existing paths may change:
+1. lib/readiness/official-truth-atomic-version-refresh-1.test.ts
+2. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md
+3. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md
+4. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json
+
+In test blob `e405dbd711b6dc56697b407d1f6178fb5f873a62`, change only the affected existing CI-contract test block. Align exact pkg.test/pkg.test:core expectations with the already independently selected R5-B commands, explicitly require the exact new hosted-v3 command, six-family needs and sixth aggregate result. Preserve every old family, order, mandatory condition and existing wrapper hash/entry inventory/tsconfig/operating-mode/strict aggregate assertion. Do not use permissive contains-only substitutes for exact commands, remove a group, broaden a skip or remove the proof. All surrounding tests and original implementation/canonical/native bodies remain byte-exact. Preserve the accepted-store job bound and matrix.
+
+Append complete history, this task, exact actual #4133 receipts and old/new gate evidence to Task/Handoff. Update complete manifest pins/tree/delta; retain every historical source/native failure and successful receipt with their exact heads. Record a byte-exact inverse for the single changed test block. No rewriting old evidence as an R6 pass.
+
+Everything else in b26c3… is unchanged, including CI, package/lock, selector/selector test, HMA installer/recovery/native/wrapper, PG1/Auth and UI amendment. No new paths, imports to application, permission changes, runner/time/budget changes or source GET.
+
+Deliver immutable blobs/tree/commit and full unchanged-leaf proof. Source-only/NOT_RUN; no project/parser/compiler/test/native/SQL/APT/build/hosted action, CI rerun, ref/PR mutation, Ready or merge. Root will independently review, select publication and perform full new exact-head re-gating. New E10 profile integrity findings remain a separate Dev-install prerequisite; #917/#1131 boundaries remain intact.

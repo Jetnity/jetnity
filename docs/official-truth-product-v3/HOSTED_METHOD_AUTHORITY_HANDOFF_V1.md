@@ -1,3 +1,68 @@
+# HMA1 R6 — four-path CI contract review fix
+
+12 November 2026. **SOURCE_ONLY / NOT_RUN_FOR_R6 / UNPUBLISHED / STOP.** Same original reachable author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, session `/root/hosted_method_authority_writer_g1`; no replacement or Cursor claim.
+
+## Exact parent and selected scope
+
+[Root's R6 task](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6825682837) selects sole parent **b26c3a5ed0a16ef6d5c768a09391cfaa0412625b**, tree **eb71fad26c651edada873229efd62982472e5948**, the published Draft #1195 predecessor. Root records Main **fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474** as accepted. This amendment adds no parent, dependency or source integration. Final candidate commit/tree and the manifest self-pin are bound externally in the immutable delivery to avoid circular source hashes.
+
+Exactly four existing files change: the atomic-refresh CI-contract test and the HMA Task/Handoff/Manifest. There are **9,497 final leaves, four modifications, no additions/deletions and 9,493 unchanged leaves**. Their complete sorted complement has 1149113 UTF8 bytes and SHA256 `cf8e6617e813436c3011dc2d75ef6b3f74dd765b0cfd2dccc066ada1d3ff83bf`, using `mode + SPACE + type + SPACE + gitBlob + TAB + path + LF`.
+
+## Single-block source delta and inverse
+
+Path: `lib/readiness/official-truth-atomic-version-refresh-1.test.ts`.
+
+- Before: `e405dbd711b6dc56697b407d1f6178fb5f873a62`, 24091 UTF8 bytes, SHA256 `06fe1dc21c9d605e1cb9c6f96dc715674481889fc5106ea54031f49ad2b4b102`.
+- After: `c3797969869961bda770b8836267ba3d817dbdd8`, 24194 UTF8 bytes, SHA256 `2923b9e11bd784b471e3f69111cb846db36a042cc103dac1308b597d2d25aeab`.
+
+Only the existing `CI keeps complete native proofs mandatory with unchanged existing test commands` block changes. Its historical test name stays exact. Four finite replacements produce these exact selected assertions:
+
+```text
+pkg.scripts.test = npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native && npm run test:hosted-v3-native
+pkg.scripts['test:core'] = node scripts/official-truth-v3-test-selection.mjs core
+pkg.scripts['test:hosted-v3-native'] = node scripts/official-truth-v3-test-selection.mjs hosted-pg17
+needs = [verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui, hosted_v3_native_pg17]
+HOSTED_V3_NATIVE_PG17_RESULT = needs.hosted_v3_native_pg17.result; success is required
+```
+
+The full original and revised block text plus every exact replacement are stored in manifest `r6SourceDelta`. The original block is 5807 UTF8 bytes / SHA256 `4d08c81896a91e8a1ba0cce97cf8499681e5964b812f993cdbb91bc7f9cb9bee`; the revised block is 5910 UTF8 bytes / SHA256 `1f057115660bc95c21828e9e96464ba2f404c246303b1187033c9ab496d1e325`. A single exact block substitution via callback restores the complete original source length, SHA256 and Git blob. That inverse was checked by pure text comparison, without loading or executing the repository code.
+
+The unchanged prefix is 7727 UTF8 bytes / SHA256 `ec345b188ff6280f1a0f33c83c2960577918a85d0df89e8f5b7ad910b61f94ed`; the unchanged suffix is 10557 UTF8 bytes / SHA256 `2a161c762c4bb4d52cd3a63c4cfd5cc13addffc978d717b70562381bd716aa85`. Thus every surrounding test and import remains byte-exact. Inside the block every old family and order, eight wrapper hashes and entry inventory, implementation hash, tsconfig expectation, accepted-store Ubuntu/20-minute matrix, operating-mode binding, always() and strict no-continue-on-error/success condition remain intact. No contains-only substitute replaces an exact package command.
+
+## Actual predecessor #4133 evidence
+
+These are exact **predecessor** results, retained as history. [Run #4133](https://github.com/Jetnity/jetnity/actions/runs/43229715610), attempt 1, head **b26c3a5ed0a16ef6d5c768a09391cfaa0412625b**, checked-out merge **171bb1b2251a81e4949740386cda395756b0a3a6**, ordered parents [fa8bd1…, b26c3…], has tree exactly **eb71fad26c651edada873229efd62982472e5948**. The author independently read Git/run/jobs metadata; Root retrieved and hash-bound the complete nine logs. No author execution or rerun took place.
+
+| Family / actual job | Conclusion | Complete log UTF8 bytes | SHA256 |
+|---|---|---:|---|
+| core / 131221477512 | failure | 4290363 | `8ec00c95be32a0124bee58c842f0de0d484562fc17a3b360edc1d434f7214456` |
+| atomic / 131221478041 | success | 185869 | `ea27cb07d7d607ed666fd8e7e53c0ba15892c6c59c3edc9754ca31011d48e623` |
+| store / 131221478066 | success | 138004 | `a7b2f655cc303bbebfaf6d4d69e3fcf461360639a05ad158b691508c92984b80` |
+| ui / 131221478141 | success | 144241 | `149314fbfb1f9f115bb4ab6d07b3a023ed5fdfc20169ad96c6575ec19bc71f6a` |
+| persisted / 131221478425 | success | 159007 | `c3625cfa50eeb090d28686e0a2e77016279510cc54289bf8df7102b1f17fb8c7` |
+| auth / 131221478481 | success | 21267 | `c63832d490852af78668ecc0505bede3aa8132948141f30ca6210de6b82ae697` |
+| lifecycle / 131221480730 | success | 179029 | `9be85379d3b2e4b9b0a6d1142cdbf3e07eeec7df39b130f380cd18a8b8157b7a` |
+| hostedPg17 / 131221478086 | success | 139874 | `ef2b936e41a412931710fd7c90e33f17dd23a14236adf68dea8df8d360a95f89` |
+| aggregate / 131231033496 | failure | 4306 | `4ed0484b5507d27809905c093fd411c628847654f45a7449e40d01103fdf0f15` |
+
+Core ran **8,753 tests / 8,750 pass / one fail / zero cancelled / two existing skipped / 972 suites**. Typecheck/lint passed. The only failure is this old CI-contract expectation at line 97; the full block also contained the subsequent old Core, needs and result-inventory assertions now selected for alignment. Later hygiene and build gates were skipped, and the six-family aggregate correctly failed.
+
+The seven companion jobs succeeded: Atomic 1/1, Store 4/4, UI 51/51 plus its existing smoke/benchmark/browser steps, Persisted 1/1, Auth, Lifecycle 4/4, and Hosted PG17. Lifecycle used actual Chrome 156 with 22 current results, 61/61 observer operations, zero pending and zero source fetches during reads.
+
+Actual HMA1 PostgreSQL 170011 passed **all eight groups** using real NOSUPER LOGIN postgres installation: 1,156/1,156 operations, 12/12 connections, zero pending, one cluster; effect 6,803 ms / cleanup 145 ms / elapsed 6,947 ms as recorded by Root. Failure/timeout witnesses joined the original actual queries and drained 5/5 and 6/6 operations, each 2/2 connections. The actual late-writer recovery inherited REPEATABLE READ, selected READ COMMITTED, waited, observed one revision/one head/two operations and refused P7803 while retaining identities/history.
+
+The old #4128 PG16-selection, protected-CI-lineage and malformed-SQL failures did not recur on b26c3. Those historical failures remain preserved below and in the manifest. This successful native evidence does not waive Core's red contract gate and does not count as an R6 native PASS.
+
+Root's exact predecessor Preview was READY: `dpl_F941eFuWvN9yaDtSzz1mSfyoaM5b`, https://jetnity-a3n8j0mrr-jetnity-e1b93c82.vercel.app, head b26c3, aliasError null. Root recorded zero review threads and zero reviews at 13:59 UTC. These predecessor checks must also be renewed after any new head.
+
+## Preserved boundaries and remaining gates
+
+CI/package/lock, Core/PG17 selector and contract, protected-source/UI amendment, every HMA installer/recovery/native/wrapper source, all seven PG1 files and every Auth leaf remain exact parent. All original group inventories, mandatory six-family behavior, signed PG17 provisioning, accepted-store bounds and HMA **180s effect / 35s drain / 240s wrapper** limits remain unchanged. No application import, source GET, hosted installation or activation is introduced.
+
+R6 parser, compiler, tests, native PostgreSQL, SQL, APT, build, CI, hosted actions and source requests are **NOT_RUN**. New independent Root source review, full new-head mandatory families plus Auth, hygiene/build, exact Preview and review-thread gates are pending. Only Root may publish refs, set Ready or merge. Separate E10 profile-integrity findings remain a Dev-install prerequisite; #917/#1131 boundaries remain intact. This author stops after immutable delivery.
+
+## Complete preserved Handoff history through R5-C
+
 # HMA1 R5-C — exact Main/PG1 source integration; publication HOLD
 
 12 November 2026. **SOURCE_ONLY / NOT_RUN_FOR_R5_C / STOP.** Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, session `/root/hosted_method_authority_writer_g1`; no replacement or Cursor claim. [Root's R5-C task](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824855994) explicitly selected this integration after [independent R5-B SOURCE_PASS](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824803293).
@@ -771,3 +836,52 @@ Source composition and immutable readback are NOT_RUN; prior runtime gates do no
 ### Delivery / STOP
 Read complete original/current trees; compare every path/type/mode/blob. Return immutable commit, tree, ordered parents, complete changed-path proofs relative to both parents, source/doc pins and exact preservation evidence. No ref/PR mutation, local/project/parser/compiler/SQL/APT/test/native/build/CI/hosted/source-GET execution. No hidden prerequisite installation, signed Owner claim or public activation. Unchanged installer/recovery, 180s/35s/240s limits, all groups and six-family gate. #917/#1131 boundaries intact. STOP after delivery.
 
+
+
+## Complete Root R6 task and actual #4133 receipt — verbatim
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6825682837
+
+The following complete Root receipt applies to predecessor b26c3a5ed0a16ef6d5c768a09391cfaa0412625b only. Its historical runtime results do not transfer to R6.
+
+---
+
+## TL CHANGES REQUIRED — HMA1 R6 / exact mandatory-CI contract alignment
+
+2026-11-12. Same original reachable author/session: **Jetnity Official Truth V3 Hosted Method Authority1 — Codex Generation1**, `/root/hosted_method_authority_writer_g1`. Immediate review fix on published Draft #1195 head `b26c3a5ed0a16ef6d5c768a09391cfaa0412625b`, tree `eb71fad26c651edada873229efd62982472e5948`. Current accepted main remains `fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474`.
+
+### Complete actual R5-C gate result
+
+Run [#4133](https://github.com/Jetnity/jetnity/actions/runs/43229715610), attempt 1, checked-out merge `171bb1b2251a81e4949740386cda395756b0a3a6`, ordered parents [fa8bd1…, b26c3…], tree exactly eb71fad… = selected candidate tree.
+
+Root retrieved/hash-bound all nine complete job logs. Core `131221477512`: 4,290,363 UTF8 bytes, SHA256 `8ec00c95be32a0124bee58c842f0de0d484562fc17a3b360edc1d434f7214456`; 8,753 tests, 8,750 pass, **1 fail**, 0 cancelled, 2 pre-existing skipped, 972 suites. Typecheck/lint completed; later build gates were skipped after the failed test. The sole failed test is `CI keeps complete native proofs mandatory with unchanged existing test commands` in `lib/readiness/official-truth-atomic-version-refresh-1.test.ts`, line 97. It still expects the old four-family pkg.scripts.test string; actual correctly contains the selected new `&& npm run test:hosted-v3-native`. Root read the full affected test block and found further stale assertions immediately after that first failure: old test:core command, five-family needs list and five-family aggregate inventory.
+
+Seven other jobs passed. Full pins:
+- Atomic 131221478041: 185,869 / `ea27cb07d7d607ed666fd8e7e53c0ba15892c6c59c3edc9754ca31011d48e623`, 1/1.
+- Store 131221478066: 138,004 / `a7b2f655cc303bbebfaf6d4d69e3fcf461360639a05ad158b691508c92984b80`, 4/4.
+- UI 131221478141: 144,241 / `149314fbfb1f9f115bb4ab6d07b3a023ed5fdfc20169ad96c6575ec19bc71f6a`, 51/51 plus existing smoke/benchmark/browser steps.
+- Persisted 131221478425: 159,007 / `c3625cfa50eeb090d28686e0a2e77016279510cc54289bf8df7102b1f17fb8c7`, 1/1.
+- Auth 131221478481: 21,267 / `c63832d490852af78668ecc0505bede3aa8132948141f30ca6210de6b82ae697`.
+- Lifecycle 131221480730: 179,029 / `9be85379d3b2e4b9b0a6d1142cdbf3e07eeec7df39b130f380cd18a8b8157b7a`, 4/4, actual Chrome156 browser proof 22 current results,61/61 observer operations,0pending,0 source fetches during reads.
+- Hosted PG17 131221478086: 139,874 / `ef2b936e41a412931710fd7c90e33f17dd23a14236adf68dea8df8d360a95f89`: **all eight HMA1 groups passed**, actual PostgreSQL170011, real NOSUPER LOGIN postgres installer,1,156/1,156 operations,12/12connections,0pending,1cluster; effect6,803ms/cleanup145ms/elapsed6,947ms. Failure and timeout witnesses each joined original actual query and drained5/5 and6/6ops,2/2connections. Actual late-writer recovery inherited REPEATABLE READ, selected READ COMMITTED, waited then saw1revision/1head/2operations and refusedP7803 retaining identities/history.
+- Aggregate 131231033496:4,306 / `4ed0484b5507d27809905c093fd411c628847654f45a7449e40d01103fdf0f15`, correctly FAILED because Core failed; all six families mandatory.
+
+The previous R4 runtime failures (PG17 contaminating legacy PG16 selection, protected-CI lineage, malformed HMA SQL interpolation) did not recur on this exact head: original PG16 proofs, protected tests and actual HMA native groups passed. This does not waive the new red CI contract gate or transfer results to a new head.
+
+Exact Preview `dpl_F941eFuWvN9yaDtSzz1mSfyoaM5b` / `jetnity-a3n8j0mrr-jetnity-e1b93c82.vercel.app` READY, head b26c3…, aliasError null. Review threads/reviews both empty at13:59. None of this authorizes Ready/merge while Core is red. No retry selected.
+
+### Selected R6 source fix — four paths only
+
+Author an unpublished commit with sole parent b26c3a5ed0a16ef6d5c768a09391cfaa0412625b. Exactly these four existing paths may change:
+1. lib/readiness/official-truth-atomic-version-refresh-1.test.ts
+2. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_TASK_V1.md
+3. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md
+4. docs/official-truth-product-v3/HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json
+
+In test blob `e405dbd711b6dc56697b407d1f6178fb5f873a62`, change only the affected existing CI-contract test block. Align exact pkg.test/pkg.test:core expectations with the already independently selected R5-B commands, explicitly require the exact new hosted-v3 command, six-family needs and sixth aggregate result. Preserve every old family, order, mandatory condition and existing wrapper hash/entry inventory/tsconfig/operating-mode/strict aggregate assertion. Do not use permissive contains-only substitutes for exact commands, remove a group, broaden a skip or remove the proof. All surrounding tests and original implementation/canonical/native bodies remain byte-exact. Preserve the accepted-store job bound and matrix.
+
+Append complete history, this task, exact actual #4133 receipts and old/new gate evidence to Task/Handoff. Update complete manifest pins/tree/delta; retain every historical source/native failure and successful receipt with their exact heads. Record a byte-exact inverse for the single changed test block. No rewriting old evidence as an R6 pass.
+
+Everything else in b26c3… is unchanged, including CI, package/lock, selector/selector test, HMA installer/recovery/native/wrapper, PG1/Auth and UI amendment. No new paths, imports to application, permission changes, runner/time/budget changes or source GET.
+
+Deliver immutable blobs/tree/commit and full unchanged-leaf proof. Source-only/NOT_RUN; no project/parser/compiler/test/native/SQL/APT/build/hosted action, CI rerun, ref/PR mutation, Ready or merge. Root will independently review, select publication and perform full new exact-head re-gating. New E10 profile integrity findings remain a separate Dev-install prerequisite; #917/#1131 boundaries remain intact.
