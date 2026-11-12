@@ -489,7 +489,7 @@ function namedImportSelection(clause: ts.ImportClause): string[] {
   assert(!clause.name && clause.namedBindings && ts.isNamedImports(clause.namedBindings),
     'Only exact named static imports may cross the physical/probe boundary')
   return clause.namedBindings.elements.map(name => {
-    assert.equal(name.propertyName, undefined, 'Physical/probe aliases are forbidden')
+    assert.equal(name.propertyName === undefined, true, 'Physical/probe aliases are forbidden')
     return (clause.isTypeOnly || name.isTypeOnly ? 'type:' : 'value:') + name.name.text
   })
 }
@@ -573,7 +573,7 @@ function importBoundary(file: string, source: string): void {
           assert.equal(file, readerPath, 'Only original Reader APIs may be reexported from physical')
           assert(node.exportClause && ts.isNamedExports(node.exportClause))
           const selection = node.exportClause.elements.map(name => {
-            assert.equal(name.propertyName, undefined)
+            assert.equal(name.propertyName === undefined, true)
             assert.equal(name.isTypeOnly, false)
             return name.name.text
           })
@@ -690,7 +690,7 @@ function legacyPrivatePortBoundary(): void {
   assert.equal(ports.length, 1)
   const port = ports[0]!
   assert(ts.isVariableDeclaration(port) && port.initializer && ts.isObjectLiteralExpression(port.initializer))
-  assert.equal(port.parent.parent.parent, runtime.body)
+  assert.equal(port.parent.parent.parent === runtime.body, true)
   assert.equal(port.initializer.properties.length, 2)
   const spread = port.initializer.properties[0]!, replacement = port.initializer.properties[1]!
   assert(ts.isSpreadAssignment(spread) && ts.isIdentifier(spread.expression) && spread.expression.text === 'retrieval')
@@ -762,7 +762,7 @@ function legacyPrivatePortBoundary(): void {
     && ts.isNamedImports(selected.importClause.namedBindings))
   const elements = selected.importClause.namedBindings.elements
   assert.equal(elements.length, 1)
-  assert.equal(elements[0]!.propertyName, undefined)
+  assert.equal(elements[0]!.propertyName === undefined, true)
   assert.equal(elements[0]!.name.text, 'loadOfficialTruthServerOwnedRetrievalWithCatalogTransport')
 }
 function importInventory(): void {

@@ -52,7 +52,7 @@ jobs:
           const policy = requireSource(
             'lib/readiness/official-truth-aa-revision-probe-1-policy.ts',
             4574,
-            'ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd',
+            '4859076f1ff3f643ae5ac05ddc143f16f9fdeb1e28b2863534ed143be8984183',
           )
           const runRows = policy.split('\n').filter(line => line.trimStart().startsWith('runNumber:'))
           if (runRows.length !== 1 || runRows[0] !== '  runNumber: 0 as number,') {
@@ -60,8 +60,8 @@ jobs:
           }
           requireSource(
             'lib/readiness/official-truth-aa-revision-probe-1.test.ts',
-            58259,
-            'f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853',
+            58295,
+            '119846975735e92c6e3cdce3f116dea25c37d7cadf3e175a22a47989a57ffa05',
           )
           console.log('AA_DIAGNOSTIC_RUN0_PIN_CONFIRMED')
           NODE
