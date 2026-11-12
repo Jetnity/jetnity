@@ -1,3 +1,13 @@
+# Current source integration: HRS1 / HM04 A3
+
+**SOURCE_ONLY / NOT_RUN / UNAPPLIED.** Replacement session `/root/hs1_hm04_fix`; selected [HRS task](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6828412299) and [continuation](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6830134112), parent `114811a6ba20b5d78d741c613cac35ea006248c2`.
+
+A3 permits only the completely absent original HRS topology or the completely inventoried HRS1 package and its exact parsed `s1_read_locked_v1(jsonb,text,int4)` bridge. HM04 binds the original HRS metadata before creating its own objects, compares it during runtime and unused recovery, and adds no HRS permission, incoming dependency or database ACL. Its current 30 declarations retain 29 complete declarations unchanged; only the catalog guard changes. The original 31 Native groups and budgets remain; Native is `19be372cfa94656dad8e08213e908a028ba9f930`.
+
+Unused reverse order is HM04 → HRS → HMT → HS1 → HMA1, retaining PG1/PAI; used history still refuses removal. The manifest contains current pins and complete original-byte partitions. The HRS factory/source/transport and guard dependencies require coherent Root integration and complete new-head gates before Dev. No execution, installation or runtime PASS is claimed.
+
+## Preserved earlier source records
+
 # Current revision: HM04 SOURCE-V2 / A2
 
 **SOURCE CANDIDATE — NOT_RUN / UNAPPLIED / UNPUBLISHED. Independent Root re-review is required.**
