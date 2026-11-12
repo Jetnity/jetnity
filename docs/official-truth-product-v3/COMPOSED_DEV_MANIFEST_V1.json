@@ -1176,9 +1176,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 90987,
-      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55",
-      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
+      "bytes": 92092,
+      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939",
+      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
       "role": "existing proof; one HMT recovery source pin updated, all test code unchanged"
     },
     {
@@ -1337,13 +1337,12 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "HM04_H4014_EXACT_CATALOG_TYPES",
-    "parent": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
-    "origin": "6c96b5a56cbc479b0856a3e9a20e9191ad938403",
-    "changedConsumedPins": 2,
-    "retainedConsumedPins": 64,
-    "nativeOutsidePinsByteExact": true,
-    "all66PathModeTypeBlobSizeMatch": true,
+    "revision": "BOUNDED_C03_EXISTING_ADAPTER_FAILURE_REPORT",
+    "parent": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
+    "predicateAndRuntimeUnchanged": true,
+    "noAdditionalSqlOrIo": true,
+    "maximumCallsReported": 32,
+    "all66ConsumedPinsUnchanged": true,
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
@@ -1398,10 +1397,10 @@
     }
   },
   "previousIntegrationReference": {
-    "ref": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
+    "ref": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
     "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-    "bytes": 59680,
-    "blob": "41139960a2d3dfd9717d404ab210b5158be0aeac",
-    "sha256": "d233adffcc46e44d4acf3140cc01afa087e0a4e824f07b58228b64111652449f"
+    "bytes": 57270,
+    "sha256": "3bfc1bf16c7d3b4b53abc5abcde5e45a07e9db7880d32407c4f4f1b505f1b653",
+    "blob": "a641b5f412a3badfdc5dfbc99760ad3673e90a7b"
   }
 }

@@ -71,7 +71,7 @@ function unchangedPredecessors(beforeText: string, afterText: string) {
     assert.deepEqual((after[name] ?? []).filter((row: Record<string, unknown>) => ids.has(row[field])), prior,
       'candidate cannot change predecessor ' + name)
   }
-  assert.deepEqual(after.defaults, before.defaults)
+  assert.deepEqual(after.defaults, before.defaults, 'candidate cannot change predecessor defaults')
   const priorMembers = (before.memberships ?? []) as Record<string, unknown>[]
   const priorKeys = new Set(priorMembers.map(m => String(m.roleid) + ':' + String(m.member) + ':' + String(m.grantor)))
   const same = (after.memberships ?? []).filter((m: Record<string, unknown>) => priorKeys.has(String(m.roleid) + ':' + String(m.member) + ':' + String(m.grantor)))
@@ -633,7 +633,43 @@ function nativeFailure(error: unknown, depth = 0): Readonly<{ kind: string; code
       'duplicate_column', 'row_bound', 'column_count', 'commit_deadline_not_armed', 'commit_bound_elapsed', 'connection_state', 'parameter_bound', 'query_failed']
     return { kind: 'postgres', code: /^[0-9A-Z]{5}$/.test(error.code) || wireCodes.includes(error.code) ? error.code : 'unclassified' }
   }
-  if (error instanceof assert.AssertionError) return { kind: 'assertion', code: 'assertion_failed' }
+  if (error instanceof assert.AssertionError) {
+    // Bounded catalog metadata only; never source bodies, credentials or raw
+    // assertion messages. All original predicates and throws remain intact.
+    const categories = ['schemas','relations','columns','constraints','indexes','functions',
+      'triggers','policies','roles','dependencies','defaults'] as const
+    const category = categories.find(name => error.message.startsWith('candidate cannot change predecessor ' + name))
+    if (category) {
+      const actual: unknown[] = Array.isArray(error.actual) ? error.actual : []
+      const expected: unknown[] = Array.isArray(error.expected) ? error.expected : []
+      const differences: { index: number; fields: string[]; actual: unknown; expected: unknown }[] = []
+      const view = (row: unknown, fields: string[]) => {
+        if (!row || typeof row !== 'object' || Array.isArray(row)) return null
+        const value = row as Record<string, unknown>
+        return Object.fromEntries(fields.map(field => {
+          const item = value[field]
+          const acl = field.endsWith('acl') && Array.isArray(item) && item.length <= 8
+            && item.every(cell => typeof cell === 'string' && cell.length <= 160
+              && /^[a-z0-9_]*=[A-Za-z*]+\/[a-z0-9_]+$/.test(cell))
+          return [field, item === null || typeof item === 'boolean' || typeof item === 'number' || acl
+            ? item : { type: Array.isArray(item) ? 'array' : typeof item }]
+        }))
+      }
+      for (let index = 0; index < Math.min(2048, Math.max(actual.length, expected.length)) && differences.length < 8; index++) {
+        const left = actual[index], right = expected[index]
+        if (JSON.stringify(left) === JSON.stringify(right)) continue
+        const leftRow = left && typeof left === 'object' && !Array.isArray(left) ? left as Record<string, unknown> : {}
+        const rightRow = right && typeof right === 'object' && !Array.isArray(right) ? right as Record<string, unknown> : {}
+        const fields = [...new Set([...Object.keys(leftRow), ...Object.keys(rightRow)])]
+          .filter(field => /^[a-z][a-z0-9_]{0,31}$/.test(field) && field !== 'rolpassword'
+            && JSON.stringify(leftRow[field]) !== JSON.stringify(rightRow[field])).sort().slice(0, 16)
+        differences.push({ index, fields, actual: view(left, fields), expected: view(right, fields) })
+      }
+      return { kind: 'assertion', code: 'predecessor_' + category,
+        causes: [{ kind: 'catalog_metadata', code: category, actualCount: actual.length, expectedCount: expected.length, differences }] }
+    }
+    return { kind: 'assertion', code: 'assertion_failed' }
+  }
   if (error instanceof AggregateError) return { kind: 'aggregate', code: 'multiple_failures',
     causes: depth < 2 ? error.errors.slice(0, 8).map(value => nativeFailure(value, depth + 1)) : [] }
   return { kind: 'fixture', code: 'unclassified_failure' }

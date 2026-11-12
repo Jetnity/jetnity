@@ -106,9 +106,9 @@
   "currentRootReceiptPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 90987,
-      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
-      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55"
+      "bytes": 92092,
+      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
+      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939"
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
@@ -197,15 +197,15 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "blob": "cbfd963c9365bfeaf40ecbe84fac4b710fc61e0a",
-        "bytes": 622856,
-        "sha256": "128e4ae3e9282b9c4b6c46338a218c70212bfdb2a59280533a15afb8efa7568a"
+        "blob": "28949cddd448ef7014d2438e40ad8b03c3bd0f4e",
+        "bytes": 625945,
+        "sha256": "38f69cc5c6b1ac516d4a160af27b18c48c8e55af07352885d5827bb27dc0ff7c"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "blob": "777c0adfdef0f341d87e698e01d481d5149504b9",
-        "bytes": 233228,
-        "sha256": "ef06af449271c28ce85516dd19dda731cecabc7f7ad9df018e9abd58d6b7b7be"
+        "blob": "b79d6610a6710bf0eb331a42b3042c64b323f369",
+        "bytes": 235837,
+        "sha256": "9eb221bb3e9ee67f7b660803a175c91461b6ff1f22b44404e19b7976868cedb0"
       }
     ],
     "collisionCount": 0,
@@ -225,15 +225,15 @@
     "noProjectParserCompilerOrCodeExecution": true,
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "bytes": 57270,
-      "sha256": "3bfc1bf16c7d3b4b53abc5abcde5e45a07e9db7880d32407c4f4f1b505f1b653",
-      "blob": "a641b5f412a3badfdc5dfbc99760ad3673e90a7b"
+      "bytes": 57226,
+      "sha256": "ce30d2ea7b40c398956d99e22ea743913589397f8673cbbffaa13684dfa03f24",
+      "blob": "3482ec7e82627f8825d57732568ee3c47db8b827"
     },
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 90987,
-      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
-      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55"
+      "bytes": 92092,
+      "sha256": "60c0c122038dae6b20710594b1cc63b1ee80c911e27f9b8a5a0844ee0e205fdd",
+      "blob": "ff55590bdf4e5dd7be6b56bf0c54f57f8909d939"
     },
     "pins": [
       {
@@ -2339,62 +2339,33 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "HM04_CATALOG_TYPE_REPAIR_AND_ACCEPTED_MAIN",
-    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6833403277",
-    "parents": [
-      {
-        "commit": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
-        "tree": "c9dd00acba1635e5ae7b9c887d259224d5273148"
-      },
-      {
-        "commit": "63544e820e912bd275556588c956a09b99b1cf90",
-        "acceptedMain": true
-      }
-    ],
-    "origin": {
-      "commit": "6c96b5a56cbc479b0856a3e9a20e9191ad938403",
-      "tree": "c8ea76aa4c7338a769baa0fd5f4cdc5f49dd5250",
-      "selectedPaths": 5
+    "revision": "BOUNDED_EXISTING_FAILURE_METADATA",
+    "parent": {
+      "commit": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
+      "tree": "0f9b95bbdcea43509ed100c418c1af1d201da39c"
     },
-    "treeProof": {
-      "parentLeaves": 9538,
-      "candidateLeaves": 9545,
-      "addedLeaves": 7,
-      "modifiedExistingLeaves": 14,
-      "deletedLeaves": 0,
-      "unchangedParentLeaves": 9524,
-      "exactSourceImports": 5,
-      "exactAcceptedMainImports": 13,
-      "rootChangedFiles": 3,
-      "everyComplementPathModeTypeBlobExact": true,
-      "finalReadback": "required after creation"
-    },
-    "sourceReview": {
-      "sqlCompleteInverseToParent": true,
-      "finiteInventoryTables": 4,
-      "storedRuntimeBodiesUnchanged": true,
-      "allAclPredicatesRetained": true,
-      "nullTypeResolutionRefused": true,
-      "diagnosticRemoved": true,
-      "hm04NativeRestored": "777c0adfdef0f341d87e698e01d481d5149504b9",
-      "hm04ConsumedPins": 35,
-      "hm04ConsumedPreservationMaps": 3,
-      "retainedSpansRechecked": 68,
-      "partitionSpansRechecked": 251,
-      "originalGroups": 31,
-      "composedNativeOnlyTwoSqlPinRecordsChanged": true,
-      "all66ComposedPinsMatch": true,
-      "mainMergeConflicts": 0
-    },
+    "changedFiles": 5,
+    "originalLeafCount": 9545,
+    "unchangedLeaves": 9540,
+    "added": 0,
+    "deleted": 0,
+    "hm04AssertionPredicatesUnchanged": true,
+    "composedEnqueueAssertionUnchanged": true,
+    "allSqlUnchanged": true,
+    "all66ConsumedComposedPinsUnchanged": true,
+    "original31GroupsUnchanged": true,
+    "maximumCatalogDifferenceRows": 8,
+    "maximumFieldsPerRow": 16,
+    "maximumExistingAdapterCallsReported": 32,
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
   },
   "previousIntegrationReference": {
-    "ref": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
+    "ref": "96e84da28f9739b2e961622afe1ba4f5bcc44b1d",
     "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
-    "bytes": 173442,
-    "sha256": "85c2a20f0e6b453ed92b1250a5aae62336584ac8e083dc7b4e94f1ce75f714c8",
-    "blob": "0d1fa8dd1451d9f5683c5c997df730aae7040581"
+    "bytes": 173505,
+    "sha256": "c433c755c05c3e6387473ed61a969127e40d0a70d03fb475b1ee0456243bb0a6",
+    "blob": "22c47a5678d36ea71921ce48089a6a62668adbbf"
   }
 }

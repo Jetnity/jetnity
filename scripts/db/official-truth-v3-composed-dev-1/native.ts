@@ -1095,7 +1095,20 @@ export async function runComposedDevNative(t: TestContext): Promise<void> {
       const api = createV3PostgresDurableJobs({ binding: BINDING, registry: input.originals.registry, clock: input.clock,
         methodExecutor: method.executor, jobsExecutor: native.jobs, intakeExecutor: native.intake,
         producer: input.producer, evidence: input.evidence, history: input.history })
+      const enqueueStarted = performance.now()
       const enqueued = await lifetime.run(() => api.enqueueRule(input.ruleInput, lifetime.signal))
+      if (enqueued.status !== 'confirmed') console.error('COMPOSED_C03_ENQUEUE_DIAG', JSON.stringify({
+        status: enqueued.status, milliseconds: Math.ceil(performance.now() - enqueueStarted),
+        jobs: { admitted: native.evidence.admitted, dispatched: native.evidence.dispatched,
+          acknowledged: native.evidence.acknowledged, aborted: native.evidence.aborted, drained: native.evidence.drained,
+          sqlCodes: native.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(0, 32),
+          callCount: native.evidence.calls.length,
+          calls: native.evidence.calls.slice(0, 32).map(call => ({ kind: call.kind, operation: call.operation,
+            dispatched: call.dispatched, committed: call.committed, drained: call.drained })) },
+        method: { admitted: method.evidence.admitted, dispatched: method.evidence.dispatched,
+          aborted: method.evidence.aborted, drained: method.evidence.drained,
+          sqlCodes: method.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(0, 32) },
+      }))
       assert.equal(enqueued.status, 'confirmed')
       const result = await lifetime.run(() => api.workOnce(input.claim(), lifetime.signal))
       await assertWorkerResult(u, input, result)
