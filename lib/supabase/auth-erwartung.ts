@@ -204,6 +204,15 @@ export const AUTH_ABBILDUNG: Abbildung[] = [
  */
 export const OHNE_TOML_SCHLUESSEL: Erwartung[] = [
   {
+    api: 'external_email_magic_link_disabled',
+    wert: false,
+    quelle: 'lib/supabase/auth-erwartung.ts',
+    grund:
+      'Expliziter Sollwert für den bestehenden Admin-E-Mail-Magic-Link-Weg und den am 12. November 2026 ' +
+      'unabhängig beobachteten booleschen Wert false. Kein TOML-Mapping ausgewählt; keine Aussage ' +
+      'zu Management-Default oder Engine-Inversion.',
+  },
+  {
     api: 'password_hibp_enabled',
     wert: true,
     quelle: 'lib/supabase/auth-erwartung.ts',

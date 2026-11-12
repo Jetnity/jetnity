@@ -4,7 +4,7 @@ import 'server-only'
 // No environment/caller override, setter, registry admission or product-window change.
 export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   runNumber: 0 as number,
-  baseSha: 'dfd692440762b50183fdebbfd6bf8dabde4662d0',
+  baseSha: 'ee6801e99e86144e60dbe86d72576f9ad7c3e9bb',
   repository: 'Jetnity/jetnity',
   repositoryId: 1020187087,
   workflowName: 'CI',

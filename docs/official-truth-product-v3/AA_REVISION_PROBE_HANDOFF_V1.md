@@ -1,3 +1,150 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A7
+
+## Current A7 state — 12 November 2026
+
+**SOURCE PREPARATION / Run 0 UNARMED / executable publication HOLD / independent review and fresh final-head gates pending.**
+
+Authority is [Root TASK V1/A7](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6823551510), reread unchanged before verbatim embedding in Task. A7 explicitly permits source preparation while Auth-main's own post-merge acceptance is pending. It does not grant executable publication, a positive probe selection or a retry of the actual failed A5 run.
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**.
+Same original actual session: **/root/aa_revision_probe_writer_g1**.
+No successor or resumed Cursor UI session is claimed. This A7 task uses no subagent.
+
+## Exact ordered parents and integration provenance
+
+The immutable integration commit has these ordered parents:
+
+1. A6 source candidate **7aa2f2fda1ad06fe2c85584f86f049c575d919da**, tree **a4f5a83a0d92b7e6daf8c6479c6e3d1155b63171**.
+2. Actual Auth-main **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, tree **c2fad9aff45aa07addb541fea8e6a38fb9f2a19e**.
+
+The author independently read both complete untruncated recursive trees and both commit objects. A6's sole parent is the still-published A5 head bb3b22d7ce6f60b2226e7d069287f99960de093f. Auth-main has ordered parents [dfd692440762b50183fdebbfd6bf8dabde4662d0, 72ec65f55e2e69e737b774b83b20201fed1e1892]. The actual main ref was independently read as ee6801e99e86144e60dbe86d72576f9ad7c3e9bb. The PR metadata response still displayed its earlier base dfd692; that display was not used to substitute another main identity.
+
+Root's [A6 bounded SOURCE_PASS](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6823074837) is confined to the earlier source candidate and retains publication HOLD. Root's [Auth exact-head TL-PASS](https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643) covers the accepted Auth correction before its merge. Both receipts were read; neither is transferred as a runtime/Ready verdict for A7.
+
+At A7 selection Root recorded Auth #1194 merged at 12:12:26Z, actual-main Production/jetnity.com READY on ee6801, and own main CI **#4129 / 43215792152 still running**. Those deployment/run observations are attributed to Root A7, not to a new hosted or log read by this author. Full actual-main post-merge acceptance is not asserted here. Root must accept that evidence and independently review A7 before executable publication.
+
+This is an immutable two-parent Git-object composition only. No branch/PR ref, Ready state or repository merge action was performed by the author.
+
+## Five exact Auth-main paths adopted without authorship changes
+
+Complete actual source bytes were read at ee6801 and independently hashed. The full old-base-to-Auth-main comparison contains exactly these five disjoint paths: two existing source modifications and three added documents. Their Gitblobs, byte counts, SHA256, 100644 modes and blob types are adopted unchanged.
+
+| Path | UTF-8 bytes | Exact Auth-main Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/supabase/auth-bericht.test.ts | 8497 | `1406705421fe3b2c3d312bbc067556d695eb76a7` | `e9413d4246959a3f0b012f91522571b7ba26c21a0ea5a669a2a4ef7909eaa25d` |
+| lib/supabase/auth-erwartung.ts | 19854 | `25ef939f111ba0db5475cdf1e4d1c55364193512` | `46ead850c64d6cd0c152f7750c0cdf0f0934eea734e75274f2b19d30d89aa58e` |
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md | 10327 | `7c3100827240d05c75ab1049a115fe66f1105086` | `822a5a1789e9cdb40b34a1ef87866a6ac4cfc5f0c42a27491f4b0eb4000bd641` |
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json | 12247 | `ff7dd2f520c191a7c9c55d5c542b09c1ad4838e0` | `383eb44c5149206ac226a85063b7e11b5bb3c28693dee7b3de2a2d811b77147a` |
+| docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md | 10169 | `bec28fc005b3d1191354948ae7026d30bdfe1cde` | `09bacca39ccf833c220b8cdd7a343b958fbb8107e70bf910ea640a3c812ebe66` |
+
+No Auth source, expectation, fixture, diagnostic or document is reauthored by A7. No hosted Auth configuration or actual Auth response/log is read or changed. The existing accepted source correction and its provenance remain byte-exact.
+
+## Only authored policy change
+
+After all thirteen actual source pins had been checked, the policy changed only this selected base identity:
+
+```diff
+-  baseSha: 'dfd692440762b50183fdebbfd6bf8dabde4662d0',
++  baseSha: 'ee6801e99e86144e60dbe86d72576f9ad7c3e9bb',
+```
+
+The full inverse of that single line replacement restores the complete A6 policy:
+**3874 UTF-8 bytes**, Gitblob `1630bdc14e40893fe9a1e398d8f5922c64aee849`, SHA256 `6bcb96a7091349d0e7cac7d6cac67bd18a49cbdad9dc89b1f1c04be8e8c6e667`.
+
+The new policy is **3874 bytes**, Gitblob `8c53a47e1df0e5084fe5587af489d015563bb1cd`, SHA256 `ba82538f4a8b065fc4a29689046ecbd6ca634a41bf6520dfe113ad6aad57ea4c`.
+
+Run number stays **0 / UNARMED**. Every other policy byte remains exact, including all thirteen inventory rows, selected branch/job/repository, workflow identity, fixed source URL, V2 fingerprint, binding, byte/time limits and authority/output boundaries. The base update does not select a positive run or reset a consumed claim.
+
+## Actual thirteen-entry byte inventory
+
+The complete Reader and AA-test bytes were read from A6; the other eleven files were read directly at actual Auth-main ee6801. Each byte count and independent SHA256 matches the unchanged policy row. For every one of those eleven main files, the Gitblob also equals the A6 parent tree's blob. The integrated final tree retains the exact resulting thirteen objects.
+
+| Path | Actual UTF-8 bytes | Actual Gitblob | Actual SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 65490 | `2b14953968da35ca47b272fd67a1a912613b8e6d` | `a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 45448 | `a3f35c4f1d400b8acaca38c82484f0b7093dee07` | `ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72` |
+| lib/readiness/official-truth-bounded-response-body.ts | 1278 | `783d802fff48a2969b86945515b159a513df76e9` | `186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2` |
+| lib/readiness/official-truth-source-fingerprint-v2.ts | 5156 | `72d324d019625c5028be8f47763fdd0f6ffe38e5` | `d8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac` |
+| lib/readiness/digest.ts | 3013 | `bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54` | `e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190` |
+| lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts | 6702 | `888435e2867ff373b85b0299833c3f1fe34c0af3` | `059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e` |
+| .github/workflows/ci.yml | 12325 | `22f6e50aaff600749814bf7e77e24c728b1cd5d5` | `3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18` |
+| package.json | 6467 | `3e8a2b7a40007af29320919401369f17ee53672a` | `5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df` |
+| package-lock.json | 320689 | `7b5394006458d34c833cdb5438b06f9f6af28353` | `71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e` |
+| scripts/server-only-test-register.mjs | 508 | `97e3f68e1669235c63d2763f611d1a6d0e18ff1b` | `d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32` |
+| scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts | 6501 | `7f79dba1cbdc4a6807f094a4873ba3ad635b7b46` | `49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298` |
+| lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts | 9176 | `b77667a2b345ff272a5379aaa9a08d409e25d208` | `74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572` |
+| lib/readiness/official-truth-content-identity-r2.test.ts | 41838 | `01c032582fb37fd0881c828610a83db483c6d688` | `be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16` |
+
+The actual workflow is exactly Auth-main's `.github/workflows/ci.yml`: Gitblob `22f6e50aaff600749814bf7e77e24c728b1cd5d5`, 12325 bytes, SHA256 `3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18`. Package and lockfile identities also remain exact. No HMA1 PG17 CI insertion, package integration, inventory rebinding or alternate workflow is present.
+
+A later main/workflow/pinned-source change requires a new explicit Root integration/policy decision. This candidate does not silently follow another base.
+
+## Five preserved A6 implementation blobs
+
+The following implementation files are byte-identical to A6:
+
+- Reader `2b14953968da35ca47b272fd67a1a912613b8e6d`.
+- AA test `a3f35c4f1d400b8acaca38c82484f0b7093dee07`.
+- BP1 test `7b027b49af72a3f16b230acfeff7434f9a71b64e`.
+- Storage diagnostic `3079ee3149dc4ac0f505e1d683cb1099baa2b5ca`.
+- R2 diagnostic `e473bdf01ce26ec9f2f92d71cf0f25f4bda270c6`.
+
+The existing Reader primitives, original-byte preservation, BP1 assertions, A6 failure-only record and storage snapshot, R2/R3 assertions, SQL/queries, native guards, cleanup and deadlines are not changed by A7. There is no new Reader consumer, export, callback, runtime adapter or source request.
+
+## Current eight-path AA manifest
+
+Seven non-Handoff blobs are fixed before writing this document. This Handoff's own hash and the final integration commit/tree are supplied externally to avoid a self-reference loop.
+
+| Path | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 65490 | `2b14953968da35ca47b272fd67a1a912613b8e6d` | `a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 3874 | `8c53a47e1df0e5084fe5587af489d015563bb1cd` | `ba82538f4a8b065fc4a29689046ecbd6ca634a41bf6520dfe113ad6aad57ea4c` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 45448 | `a3f35c4f1d400b8acaca38c82484f0b7093dee07` | `ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 25526 | `7b027b49af72a3f16b230acfeff7434f9a71b64e` | `3804730801ec6713d75ee62d71a7e9c2e02a779469e59270d09a1e168b90884b` |
+| scripts/db/official-truth-integrated-pilot-1/storage.ts | 18155 | `3079ee3149dc4ac0f505e1d683cb1099baa2b5ca` | `5234193604d89a9cf0955aa847fb495d862ea6e779fb50597aeeda920757e920` |
+| scripts/db/official-truth-integrated-pilot-1/r2-proof.ts | 10693 | `e473bdf01ce26ec9f2f92d71cf0f25f4bda270c6` | `d2cc6c9d91574945d226607fb60eba95b80c49b2217b0a0521726fd71f5d674a` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 46809 | `004cf197bf2c404e51a040856dc35105f57d71a7` | `9c3bd6a5f8d155ef27da489334f3e16dff784b56bf2d6fac6a63d6c54817a371` |
+
+The complete final scope versus selected actual main ee6801 is exactly the existing eight A6 paths: four source modifications and four additions. All **9475 other actual-main leaves** are preserved in object, mode and type. Final total is **9483 leaves**, with no deleted paths.
+
+First-parent differences are exactly the five adopted Auth-main paths plus three A7-authored paths: policy, Task and Handoff. That is eight paths, five modified and three added; all **9475 other A6-parent leaves** remain exact. The full recursive comparison is required and supplied, independent of GitHub's abbreviated PR file list.
+
+## Preserved task and dated history
+
+The complete existing Task and Handoff history were read before this integration. The full **42267-byte A6 Task** remains an exact prefix, followed by the complete A7 comment verbatim and its persisted URL. Its prior Gitblob is `cfbf5f02a0c4fd28de1241ecfb052f8e28bb996c`, SHA256 `d37a492cabb993edabd1f0bb5545abb1dcb596e29eba8c1d76b3167eb5463801`.
+
+The full **64959-byte A6 Handoff**, Gitblob `e2aa87003914726c45025faa43062add055cfe78`, SHA256 `7eecf99b4a1f8e2b840ba980cf9747d5d63e1b85be8f48ace165e1a45b280fa7`, is retained verbatim below as dated history. It contains the complete earlier source reviews, A1 passive transport and R1 static-analysis limitation, A2 selection, A3 preservation correction, A4/A5 failures and A6 diagnostic rationale/inverses. None of that evidence is deleted or relabeled.
+
+Earlier dfd692 base identities and earlier sole-parent/source-preparation statuses are historical. Only this A7 section and its explicit task supersede the current integration/base provenance; Run0 and every unresolved runtime limitation remain authoritative.
+
+## Actual runtime failures remain unresolved
+
+Actual A5 run **#4123 / 43206762401 / attempt1** remains FAILURE. Root's original verify log was 4,237,330 UTF-8 bytes, SHA256 `449fed066f4769e75545dfbe8eb20b1185c127cbdd26a1164c1be83cf866204d`: 8,730 tests, 8,726 passed, two failed and two existing skips. The AA synthetic preflight passed without an actual AA observation.
+
+R3 selected_escaping_and_500 reached a 20,039 ms COMMIT failure with57P01, no ACK and independent receipt_absent. R2's independent persistence result was false. A6 adds finite diagnostic evidence only and preserves those failed assertions. Its bounded diagnostic has not been executed by this author or treated as a repair.
+
+The controlled runtime's capture of loaded source means zero AA influence is not established. A4-to-A5 Reader equality does not prove a runner problem, a timeout cause or a flake. A7's Auth adoption does not resolve those questions. No earlier Auth, A4, A5, M04, Preview or source-review result is transferred as A7 runtime acceptance.
+
+Historical positive selection #4120 remains consumed. This integration does not invent a new run number, rerun that selection, reset a claim or positively arm the probe.
+
+## Execution HOLD, honest self-review and author stop
+
+Author verification is limited to complete Git source/metadata reads, pure in-memory byte hashing/composition, exact policy inverse, immutable source-object readback, the thirteen actual byte pins and complete tree/path comparisons. No project/parser/compiler/native/SQL/test/build/CI/source-GET/hosted execution occurred. The Supabase skill was read for the exact Auth-file adoption; its general runtime-query workflow was not performed under this source-only task.
+
+**HOLD executable publication** until Root accepts actual Auth-main post-merge evidence and independently reviews this exact successor. The author has no authority to lift that HOLD. Only Root may then select fresh existing CI for this integrated head, with the unchanged actual R2/R3 assertions and A6 bounded diagnostic; no blind rerun is selected here.
+
+The eventual final head requires complete independent source review, current-main/workflow equality, actual full CI/native evidence and permitted original logs, exact Preview and review-thread disposition. Every changed head invalidates earlier exact-head gates. Ready, merge and actual-main/Production acceptance remain Root-only decisions; author self-review is not TL-PASS.
+
+Exact official-source/revision observation, custody, extended pilot window, Dev installation/D1 operation and public CH-DE readiness remain unfinished. Original #917/#1131 STOPs, actual Owner/AAL2 and source/custody/window gates are unchanged. No raw source, secret, Auth response or new observation hash is emitted or adopted.
+
+**STOP after immutable delivery.** No ref/PR update, Ready, merge, source request, retry/rearm or unrelated follow-on. The original session remains reachable for an explicitly selected task. **Public CH-DE is not made live by A7.**
+
+## Historical A6 handoff — 12 November 2026 — preserved verbatim
+
+The following complete A6 document belongs to first parent 7aa2f2fda1ad06fe2c85584f86f049c575d919da. It includes all prior history. Its old-base and sole-parent statements are retained as dated provenance; the current ordered-parent/base identities and executable HOLD are stated above.
+
+---
+
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A6
 
 ## Current A6 state — 12 November 2026

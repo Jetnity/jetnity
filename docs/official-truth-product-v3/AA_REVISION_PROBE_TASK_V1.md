@@ -339,3 +339,44 @@ Root will separately decide when to publish after independent source review and 
 ## Persisted Root amendment A6
 
 https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6822711007
+
+
+## Technical Lead — AA Revision Probe1 A7 / exact Auth-main diagnostic integration
+
+**12 November 2026. Explicit source preparation selected by Root.** Same author **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**, original reachable /root/aa_revision_probe_writer_g1. This continues #1192 under preserved V1/A1–A6 history.
+
+### Actual basis and remaining failures
+
+Auth #1194 was independently TL-PASS and merged at12:12:26Z. Actual main **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, tree **c2fad9aff45aa07addb541fea8e6a38fb9f2a19e**, is now the exact READY Production deployment/jetnity.com alias. Separate main CI #4129/43215792152 is still running; full post-merge acceptance is not asserted. [Auth TL evidence](https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643).
+
+Root independently SOURCE_PASSed A6 at https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6823074837 . Immutable A6 **7aa2f2fda1ad06fe2c85584f86f049c575d919da**, tree **a4f5a83a0d92b7e6daf8c6479c6e3d1155b63171**, sole parent published A5 **bb3b22d7ce6f60b2226e7d069287f99960de093f**.
+
+Actual A5 #4123 remains failed: R3 selected_escaping_and_500 COMMIT20,039ms/57P01/noACK; R2 independent result false. A6 exposes only bounded failure diagnostics and preserves every query, assertion and deadline. No cause, successful retry, runtime fix or AA influence classification is invented. All prior failure/actual-log evidence must remain in full history.
+
+### Selected immutable successor
+
+Create one integration commit with ordered parents:
+1. **7aa2f2fda1ad06fe2c85584f86f049c575d919da**
+2. **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**
+
+Integrate the five exact Auth-main paths without alterations. Keep all current A6 source blobs exact except the one selected policy-base identity change below; in particular preserve Reader, AA tests, BP1 tests, storage.ts and r2-proof.ts exactly.
+
+Permitted A7-authored changes only:
+- `lib/readiness/official-truth-aa-revision-probe-1-policy.ts`: replace the exact baseSha dfd692440762b50183fdebbfd6bf8dabde4662d0 with **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, after verifying all13 unchanged pinned inventory entries against actual source bytes. **Run stays0 / UNARMED.** No other policy semantics, source URL/fingerprint/limits/one-GET behavior or inventories change. If any inventory differs, report exact evidence; do not silently rebind another source.
+- Existing AA Task and Handoff: preserve all earlier bytes/history, append this A7 and URL verbatim, put exact new parent/base/provenance and still-unresolved runtime gates at the front of Handoff, update affected current policy/source pins explicitly. No previous run/source/window result is transferred.
+
+The workflow is exactly the current Auth-main workflow; no HMA1 PG17 CI insertion or other package integration is selected here. Any subsequent accepted-main/workflow change will require a new explicit integration/policy inventory decision.
+
+Full resulting scope versus actual main remains the eight A6 paths: four existing-source modifications and four additions. All other current-main leaves are exact; expected final9,483leaves. No deleted paths. First-parent differences are the five Auth-main paths plus these three A7-authored paths; preserve all others. Produce complete actual tree/path/byte/blob/SHA256 evidence, not only GitHub's truncated file list.
+
+### Execution HOLD and delivery
+
+This is source preparation parallel to the pending Auth-main post-merge run. **HOLD executable publication until Root accepts actual main post-merge evidence and independently reviews this successor.** Root may then select fresh existing CI for this new exact integrated head, including the unchanged actual R2/R3 assertions and A6 bounded diagnostic. No blind rerun, positive probe activation, invented run number or reuse of the consumed historical #4120 authorization.
+
+No local/project/parser/compiler/native/SQL/test/build/CI/source-GET/hosted execution, ref/PR update, Ready, merge or unrelated follow-on. Only immutable Git source objects and pure in-memory metadata composition/readback. Exact source/revision observation, custody and extended pilot window remain unfinished. #917/#1131 STOPs unchanged.
+
+Deliver the immutable commit/tree/ordered parents, complete scope/pin comparisons and preserved Task/Handoff. Stop. Root independently evaluates every changed head; author self-review is not a TL PASS.
+
+## Persisted Root amendment A7
+
+https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6823551510
