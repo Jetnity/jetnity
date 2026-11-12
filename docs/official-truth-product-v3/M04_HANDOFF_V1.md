@@ -1,3 +1,23 @@
+# M04 current handoff — R39 diagnostic / Recovery V30
+
+**12.11.2026 — CH→DE / M04 R39-Diagnose unter Recovery V30.** R38 auf `2ee54f59cb86ac03ee6a35b3c2d5a819eadda364` ist [unabhängig CHANGES REQUIRED](https://github.com/Jetnity/jetnity/pull/1184#pullrequestreview-5867339258): [CI43127654239](https://github.com/Jetnity/jetnity/actions/runs/43127654239) terminal FAILURE,24/31 M04-Gruppen am unveränderten240s-Limit; vollständiger256erLedger,51vollständigeCycles, folgendeCLAIM-Wirkung UNKNOWN. Alle6Begleiter erfolgreich, aber kein Runtime-PASS/Ready/Merge.
+
+[Auftrag V30](M04_RECOVERY_TASK_V30.md), [Root-Review](M04_RECOVERY_ROOT_REVIEW_V30.md), [vollständige R38-Fehlerevidence/R39-Planung](M04_RECOVERY_R38_FAILURE_AND_R39_PLAN_V30.json), [aktueller M04-Handoff](M04_HANDOFF_V1.md). Root wählt die exakte Wiederverwendung des vorhandenen G3-R37-Profilers (native Blob15923a09…, SHA25619289ec3…) auf unverändertem R38-SQL (Blob1bb76434…, SHA256868778c6…). Alle31Nachweise/Quoten/Budgets bleiben bestehen. **Instrumentierter R39-Head niemals Ready/mergefähig, auch bei grüner CI.** Neue Messung und Auswertung offen; spätere Korrektur erst nach exakter Native-Rücknahme auf0b3f7d99… und vollständigen neuen Gates.
+
+Dies ist der datierte Vorpublikationsstand: erwarteter Parent/Draft-Head `2ee54f59cb86ac03ee6a35b3c2d5a819eadda364`, main/Mergebase `8b479a24b43b28aad12fc73748ceffba5a1d73ee`. Der spätere tatsächlich veröffentlichte Head und die Lauf-IDs stehen in den neuesten [PR#1184](https://github.com/Jetnity/jetnity/pull/1184)- und [#751](https://github.com/Jetnity/jetnity/issues/751)-Receipts; keine Selbstattestation eines noch unbekannten Commit-Hashs.
+
+Historischer Implementierungsautor **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation3**, Session `/root/m04_durable_jobs_writer_g3`, ist aktuell nicht verfügbar (direkter Follow-up: live agent path not found). Keine Session-Wiederaufnahme oder neue Autorimplementierung behauptet. Root integriert ausschließlich das unveränderte vorhandene Artefakt; unabhängige Reviewer `/root/ch_de_ci_reconstruction` und `/root/ch_de_release_gate_audit`. Neue Implementierung nach der Messung benötigt tatsächliche geklärte Agentenbindung.
+
+Aktuelle [PO-Freigabe für alle fünf CH→DE-Schritte](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6810491439) gilt; [D1-Delta](https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6810794730): PO_AUTHORIZATION_RECEIVED / TECHNICALLY_NOT_OPERATIONAL.17technische#1139Punkte offen, #917-Readback- und #1131-Ready-STOP bleiben unangetastet. Keine Hosted-Installation oder öffentliche Einreiseantwort. Keine neuen Reise-/Hotel-/Flugfunktionen. Die endliche8PfadDocs-Schließung bleibt bis echter korrigierterActual-mainAbnahme offen.
+
+## First unfinished step and limits
+
+Construct and independently review the immutable ten-path package, publish once through the existing CI, then inspect complete terminal Native/Profile/companion evidence. R39 is a diagnostic, never mergeable. Do not infer a corrected runtime or actual Dev/Production binding. The original author-session limitation remains explicit for any later new implementation. No local/replacement execution, Auth logs, hosted change or stopped-action retry. Full31proofs/quotas/240000–60000–300000ms limits remain. R38 failure, earlier records and actual main success stay separately dated.
+
+---
+
+## Complete preceding handoff retained unchanged
+
 # M04 current handoff — R38 / Recovery V29 v4, 12 November 2026
 
 **12.11.2026 — CH→DE-Priorität; M04 R38 / Recovery V29 v4, datierter Integrationskandidat vor Veröffentlichung.** Der [aktuelle Ownerauftrag](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6810491439) genehmigt die fünf erforderlichen CH→DE-Schritte einmalig. Aktuelle Entscheidung **PO_AUTHORIZATION_RECEIVED**; tatsächlicher Betrieb weiterhin **NOT_OPERATIONAL / FEATURE_NOT_LIVE**. Neue Reise-, Hotel- und Flug-Funktionen sind nicht beauftragt.
