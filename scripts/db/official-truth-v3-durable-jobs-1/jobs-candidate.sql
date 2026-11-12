@@ -152,7 +152,7 @@ DECLARE x record; e jsonb; s text; parts text[]:='{}'; child_text text; number_v
   child_keys text[]; child_values jsonb[]; child_parts text[]; child_pending_positions integer[];
   stack_parts text[]:='{}'; stack_keys text[]:='{}'; stack_values jsonb[]:='{}'; stack_pending integer[]:='{}';
   frame_lengths integer[]:='{}'; frame_pending_lengths integer[]:='{}'; frame_cursors integer[]:='{}'; stack_level integer:=0;
-  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer; fast_text text; fast_residue text;
+  frame_length integer; pending_length integer; parent_length integer; parent_pending_length integer; fast_text text;
 BEGIN
   IF v IS NULL OR d IS NULL OR d<0 OR d>24 THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
   IF jsonb_typeof(v)='object' THEN
@@ -161,13 +161,11 @@ BEGIN
     IF d<24 AND octet_length(fast_text)<=8192 THEN
       IF strpos(fast_text COLLATE "C",chr(92))=0 THEN
         IF fast_text !~ '[^ -~]' THEN
-          fast_residue:=regexp_replace(fast_text COLLATE "C",'"[^"]*"','','g');
-          IF strpos(fast_residue COLLATE "C",'.')=0
-            AND fast_residue COLLATE "C" !~ '[0-9]{16}'
-            AND strpos(fast_residue COLLATE "C",'[')=0
-            AND strpos(fast_residue COLLATE "C",'-0')=0
+          -- Every object value follows '": ' in JSONB output; no escapes remain.
+          -- Matching an opening string quote only adds a conservative fallback.
+          IF fast_text COLLATE "C" !~ '": ([[]|-0|-?[0-9]{16}|-?[0-9]+[.])'
             AND strpos(fast_text COLLATE "C",'{,')=0 THEN
-            IF strpos(substring(fast_residue,2) COLLATE "C",'{')=0 THEN
+            IF strpos(fast_text COLLATE "C",'": {')=0 THEN
               SELECT '{'||string_agg('"'||j.key||'":'||j.value::text,',' ORDER BY j.key COLLATE "C")||'}'
                 INTO fast_text FROM jsonb_each(v) j;
             ELSE
@@ -196,7 +194,7 @@ BEGIN
         END IF;
       END IF;
     END IF;
-    fast_text:=NULL; fast_residue:=NULL;
+    fast_text:=NULL;
   END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN

@@ -1,3 +1,25 @@
+# M04 current handoff — R40 correction / Recovery V31 v2
+
+**12.11.2026 — CH→DE / M04 R40-Korrekturkandidat unter Recovery V31 v2.** Generation4 hat die enge Auswahlkorrektur geliefert; Root und unabhängige Reviewer haben die Quellen akzeptiert. **Neue CI-/Preview-/Release-Gates sind noch offen; keine Laufzeitverbesserung, Ready-/Merge-Freigabe oder öffentliche Einreiseantwort wird behauptet.**
+
+[Auftrag V31](M04_RECOVERY_TASK_V31.md), [Root-Review](M04_RECOVERY_ROOT_REVIEW_V31.md), [vollständige R39-Evidence und R40-Planung](M04_RECOVERY_R39_EVIDENCE_AND_R40_PLAN_V31.json), [aktueller M04-Handoff](M04_HANDOFF_V1.md). Immutable Source-Kandidat `b54ae82183fc5f91b02b2ac17f277a3e72cad704`: SQL `7021673c611b0b2cc5dc62cbd5dccb92e5024837`; Native exakt auf `0b3f7d9906687ec42171de5af60fed009d07b39f` wiederhergestellt. Die 16 anderen Quellen, beide positiven Emitter, der volle7778-Byte-Fallback,29Security-/Funktionsheader,31Nachweise und sämtliche Quoten/Budgets sind unverändert.
+
+Dieser datierte Vorpublikationsstand erwartet Draft-Head `b01cd488c6d652129a2b8baa23b1a88b812a2111` und main/Mergebase `8b479a24b43b28aad12fc73748ceffba5a1d73ee`. Tatsächlicher neuer Head und spätere Lauf-/Review-/Release-Receipts stehen in [PR#1184](https://github.com/Jetnity/jetnity/pull/1184) und [#751](https://github.com/Jetnity/jetnity/issues/751). R38 bleibt FAILURE24/31; R39 [43132314920](https://github.com/Jetnity/jetnity/actions/runs/43132314920) ist akzeptierte31/31-Diagnose, niemals selbst mergebar. Vollständige Originale und alte Handoffs bleiben erhalten.
+
+Tatsächlicher neuer Autor **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4**, Session `/root/m04_durable_jobs_writer_g4`. G3 `/root/m04_durable_jobs_writer_g3` war nach direktem Follow-up nicht erreichbar; keine Wiederaufnahme wird behauptet. Die [ausdrücklich genehmigte dauerhafte Nachfolgeregel](https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6811958036) ist im Betriebsstandard ergänzt. Root steuert Review/Publikation und allein Ready/Merge; Agenten-Self-Review ist kein TL-PASS.
+
+[Aktuelle Ownerentscheidungen](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6811993763): alle fünf CH→DE-Schritte freigegeben, Ziel15.11.2026 Europe/Zurich, keine neuen Reise-/Hotel-/Flugfunktionen. [Menschlicher Stage1-Run2 anerkannt](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6812112217): beobachtete Funktion/ACL/Fingerprint ohne Abweichung; tatsächlich vergebene Ledger-ID/Eintrag/Historienabgleich fehlen separat. [#1139-Kriterien berichtigt](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6812118367), kein pauschaler17-Punkte-PASS. #1142 noch nicht nachgewiesen auf Dev installiert. #1131 bleibt unverändert; keine direkte Compile-Abhängigkeit, vollständige Quellen-/Transport-Release-Evidence aber noch offen. Die ursprünglichen Plattform-STOPs werden nicht wiederholt oder umgangen.
+
+Pilotverlängerung über13.11. ist genehmigt, aber noch nicht mit vollständiger aktueller Behördenquelle/revidierten Bindungen umgesetzt. D1 ist einmalig genehmigt und technisch noch nicht betriebsbereit. Keine Hosted-Änderung oder öffentliche Antwort durch diesen Code-/Dokumentstand. Die endliche8Pfad-Dokumentenschließung bleibt bis echter korrigierterActual-main-Abnahme offen.
+
+## First unfinished step
+
+Root complete-package review and fresh expected-head publication, followed by full new CI/Preview and independent terminal evidence. All later states must be read live from PR#1184/#751. No blocked action retry, no source-window activation, no hosted install or public launch is asserted. Generation4 remains the same actual session for immediate fixes. A source acceptance is not a runtime or release PASS.
+
+---
+
+## Complete preceding handoff retained unchanged
+
 # M04 current handoff — R39 diagnostic / Recovery V30
 
 **12.11.2026 — CH→DE / M04 R39-Diagnose unter Recovery V30.** R38 auf `2ee54f59cb86ac03ee6a35b3c2d5a819eadda364` ist [unabhängig CHANGES REQUIRED](https://github.com/Jetnity/jetnity/pull/1184#pullrequestreview-5867339258): [CI43127654239](https://github.com/Jetnity/jetnity/actions/runs/43127654239) terminal FAILURE,24/31 M04-Gruppen am unveränderten240s-Limit; vollständiger256erLedger,51vollständigeCycles, folgendeCLAIM-Wirkung UNKNOWN. Alle6Begleiter erfolgreich, aber kein Runtime-PASS/Ready/Merge.
