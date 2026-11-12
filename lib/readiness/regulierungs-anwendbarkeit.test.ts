@@ -6,6 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 
 import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
@@ -56,6 +57,69 @@ import {
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
+
+// #1196: one reviewed literal PINS row, never permission for a runtime import.
+const COMPOSED_REGULATORY_METADATA_PIN = {
+  path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
+  bytes: 90987,
+  blob: '555a49ff94764ba8636258c3da4dc3454e958897',
+  sha256: '582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429',
+  contextStart: 11576,
+  contextEnd: 11800,
+  tokenStart: 11607,
+} as const
+const COMPOSED_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
+const COMPOSED_REGULATORY_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+    "bytes": 108170,
+    "blob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+    "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+  }`
+
+function isPinnedComposedRegulatoryMetadata(path: string, bytes: Buffer): boolean {
+  if (path !== COMPOSED_REGULATORY_METADATA_PIN.path || bytes.length !== COMPOSED_REGULATORY_METADATA_PIN.bytes) return false
+  if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== COMPOSED_REGULATORY_METADATA_PIN.blob
+    || createHash('sha256').update(bytes).digest('hex') !== COMPOSED_REGULATORY_METADATA_PIN.sha256) return false
+  const token = Buffer.from(COMPOSED_REGULATORY_METADATA_TOKEN, 'utf8')
+  const first = bytes.indexOf(token)
+  if (first !== COMPOSED_REGULATORY_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+  return bytes.subarray(COMPOSED_REGULATORY_METADATA_PIN.contextStart, COMPOSED_REGULATORY_METADATA_PIN.contextEnd)
+    .equals(Buffer.from(COMPOSED_REGULATORY_METADATA_CONTEXT, 'utf8'))
+}
+
+test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources and actual imports', () => {
+  const bytes = readFileSync(COMPOSED_REGULATORY_METADATA_PIN.path)
+  assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, bytes), true)
+  for (const path of [
+    './' + COMPOSED_REGULATORY_METADATA_PIN.path,
+    COMPOSED_REGULATORY_METADATA_PIN.path + '.evil.ts',
+    'scripts/db/official-truth-v3-composed-dev-1/native-other.ts',
+    'scripts/db/official-truth-v3-composed-dev-1/../official-truth-v3-composed-dev-1/native.ts',
+    'app/api/official-truth-v3-composed-dev-1/native.ts',
+  ]) assert.equal(isPinnedComposedRegulatoryMetadata(path, bytes), false, path)
+  const token = Buffer.from(COMPOSED_REGULATORY_METADATA_TOKEN, 'utf8')
+  const start = COMPOSED_REGULATORY_METADATA_PIN.tokenStart
+  const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+  const changedByte = Buffer.from(bytes)
+  changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+  const changedContext = Buffer.from(bytes)
+  changedContext[COMPOSED_REGULATORY_METADATA_PIN.contextStart] = changedContext[COMPOSED_REGULATORY_METADATA_PIN.contextStart]! ^ 1
+  const sourceWithImport = "\nimport { civilDateOrdinalLesen } from '../../../lib/readiness/regulierungs-anwendbarkeit'\n"
+  const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/regulierungs-anwendbarkeit')\n"
+  const cases: readonly [string, Buffer][] = [
+    ['changed complete bytes at same length', changedByte],
+    ['changed literal context at same length', changedContext],
+    ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+    ['missing token', withoutToken],
+    ['duplicated token', Buffer.concat([bytes, token])],
+    ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+    ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+    ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+  ]
+  for (const [name, candidate] of cases) {
+    assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, candidate), false, name)
+  }
+})
 
 function ev(n: number): string {
   return `ev2_${n.toString(16).padStart(32, '0')}`
@@ -1064,10 +1128,24 @@ describe('regulierungs-anwendbarkeit', () => {
       }
     }
     assert.equal(eigene.has(`${hier}/official-truth-product-v3/storage/unreviewed.ts`), false)
-    const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
+    const metadaten: string[] = []
+    const referenzen = dateien(wurzel).filter((pfad) => {
+      const bytes = readFileSync(pfad)
+      if (!bytes.toString('utf8').includes('regulierungs-anwendbarkeit')) return false
+      if (pfad === join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path)) {
+        assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, bytes), true,
+          'COMPOSED regulatory pin must match its complete reviewed revision')
+        metadaten.push(pfad)
+        return false
+      }
+      return true
+    })
+    assert.deepEqual(metadaten, [join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path)])
+    assert.equal(eigene.has(join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path)), false)
+    const fremd = referenzen.filter((pfad) => !eigene.has(pfad))
     assert.deepEqual(fremd, [])
-    const produktion = dateien(wurzel).filter(
-      (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx') && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'),
+    const produktion = referenzen.filter(
+      (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx'),
     )
     assert.deepEqual(
       produktion.sort(),

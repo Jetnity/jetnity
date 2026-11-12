@@ -482,6 +482,69 @@ describe('dormancy and architectural boundaries', () => {
     assert.match(source, /import \{ evidenceScopeLesen \} from/)
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)
   })
+  // #1196: one reviewed literal PINS row, never permission for a runtime import.
+  const COMPOSED_CONTENT_METADATA_PIN = {
+    path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
+    bytes: 90987,
+    blob: '555a49ff94764ba8636258c3da4dc3454e958897',
+    sha256: '582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429',
+    contextStart: 3870,
+    contextEnd: 4098,
+    tokenStart: 3901,
+  } as const
+  const COMPOSED_CONTENT_METADATA_TOKEN = 'official-truth-content-identity'
+  const COMPOSED_CONTENT_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/official-truth-content-identity.ts",
+    "bytes": 27496,
+    "blob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18",
+    "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6"
+  }`
+
+  function isPinnedComposedContentMetadata(path: string, bytes: Buffer): boolean {
+    if (path !== COMPOSED_CONTENT_METADATA_PIN.path || bytes.length !== COMPOSED_CONTENT_METADATA_PIN.bytes) return false
+    if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== COMPOSED_CONTENT_METADATA_PIN.blob
+      || createHash('sha256').update(bytes).digest('hex') !== COMPOSED_CONTENT_METADATA_PIN.sha256) return false
+    const token = Buffer.from(COMPOSED_CONTENT_METADATA_TOKEN, 'utf8')
+    const first = bytes.indexOf(token)
+    if (first !== COMPOSED_CONTENT_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+    return bytes.subarray(COMPOSED_CONTENT_METADATA_PIN.contextStart, COMPOSED_CONTENT_METADATA_PIN.contextEnd)
+      .equals(Buffer.from(COMPOSED_CONTENT_METADATA_CONTEXT, 'utf8'))
+  }
+
+  test('COMPOSED official-truth-content-identity pin metadata rejects changed sources and actual imports', () => {
+    const bytes = readFileSync(COMPOSED_CONTENT_METADATA_PIN.path)
+    assert.equal(isPinnedComposedContentMetadata(COMPOSED_CONTENT_METADATA_PIN.path, bytes), true)
+    for (const path of [
+      './' + COMPOSED_CONTENT_METADATA_PIN.path,
+      COMPOSED_CONTENT_METADATA_PIN.path + '.evil.ts',
+      'scripts/db/official-truth-v3-composed-dev-1/native-other.ts',
+      'scripts/db/official-truth-v3-composed-dev-1/../official-truth-v3-composed-dev-1/native.ts',
+      'app/api/official-truth-v3-composed-dev-1/native.ts',
+    ]) assert.equal(isPinnedComposedContentMetadata(path, bytes), false, path)
+    const token = Buffer.from(COMPOSED_CONTENT_METADATA_TOKEN, 'utf8')
+    const start = COMPOSED_CONTENT_METADATA_PIN.tokenStart
+    const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+    const changedByte = Buffer.from(bytes)
+    changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+    const changedContext = Buffer.from(bytes)
+    changedContext[COMPOSED_CONTENT_METADATA_PIN.contextStart] = changedContext[COMPOSED_CONTENT_METADATA_PIN.contextStart]! ^ 1
+    const sourceWithImport = "\nimport { createContentIdentityGraph } from '../../../lib/readiness/official-truth-content-identity'\n"
+    const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/official-truth-content-identity')\n"
+    const cases: readonly [string, Buffer][] = [
+      ['changed complete bytes at same length', changedByte],
+      ['changed literal context at same length', changedContext],
+      ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+      ['missing token', withoutToken],
+      ['duplicated token', Buffer.concat([bytes, token])],
+      ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+      ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+      ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+    ]
+    for (const [name, candidate] of cases) {
+      assert.equal(isPinnedComposedContentMetadata(COMPOSED_CONTENT_METADATA_PIN.path, candidate), false, name)
+    }
+  })
+
   const reviewedContentIdentityImporters = [
     // #1155 R1/R2: exact dormant canonical producer and historical reproof.
     'lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts',
@@ -660,6 +723,7 @@ describe('dormancy and architectural boundaries', () => {
   })
   test('repository search pins the finite R3 application and isolated developer importers', () => {
     const root = process.cwd(), importers: string[] = []
+    const metadataReferences: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
         if (entry.name.startsWith('.') || ['node_modules', 'dist', 'out'].includes(entry.name)) continue
@@ -667,11 +731,19 @@ describe('dormancy and architectural boundaries', () => {
         if (entry.isDirectory()) walk(path)
         else if (/\.(?:[cm]?[jt]sx?)$/.test(entry.name) && !/\.test\.[^.]+$/.test(entry.name)
           && entry.name !== 'official-truth-content-identity.ts') {
-          if (/['"][^'"]*official-truth-content-identity(?:\.ts)?['"]/.test(readFileSync(path, 'utf8'))) importers.push(relative(root, path))
+          const bytes = readFileSync(path), name = relative(root, path)
+          if (/['"][^'"]*official-truth-content-identity(?:\.ts)?['"]/.test(bytes.toString('utf8'))) {
+            if (name === COMPOSED_CONTENT_METADATA_PIN.path) {
+              assert.equal(isPinnedComposedContentMetadata(name, bytes), true, 'COMPOSED content pin must match its complete reviewed revision')
+              metadataReferences.push(name)
+            } else importers.push(name)
+          }
         }
       }
     }
     walk(root)
+    assert.deepEqual(metadataReferences, [COMPOSED_CONTENT_METADATA_PIN.path])
+    assert.equal(contentIdentityImporterAllowed(COMPOSED_CONTENT_METADATA_PIN.path), false)
     for (const path of importers) assert.ok(contentIdentityImporterAllowed(path), `unreviewed content-identity importer ${path}`)
     assert.deepEqual(importers.sort(), [...reviewedContentIdentityImporters].sort())
   })
