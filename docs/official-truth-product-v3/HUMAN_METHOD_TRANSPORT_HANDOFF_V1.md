@@ -69,3 +69,22 @@ Success/failure receipts include exact dependency source hashes, completed manda
 
 #917's denied platform action was not retried, rerouted, reformulated or delegated. The human Run2 evidence has only its documented Stage1 scope. #1131 remains NOT_REQUIRED and untouched. No unrelated travel/hotel/flight feature is included. STOP after immutable delivery.
 
+
+---
+
+## HMT1-FIX1 / DIAG1 — current replacement delivery
+
+**SOURCE ONLY / NOT_RUN / diagnostic candidate; P7903 unresolved.**
+Author: **Jetnity Official Truth V3 Human Method Transport1 — Codex Generation2**, actual session `/root/hmt_diagnosis`; the original Generation1 session is unreachable from this parent thread and was not impersonated.
+Sole parent `a686e608f597ffa82d44fc9d3992b9b566b89688`, tree `b4f54fad7d9981f8b7676b42b271bf6740a17f48`.
+The prior actual Hosted job 131322201372 failed HMT1-01 with P7903 before any HMT group completed; its complete Root observation and DIAG1 task are appended in the task document.
+
+Only the first positive HMT1-01 install is instrumented. A unique final inventory boundary splits the selected installer into byte-identical prefix and suffix. The same registered NOSUPERUSER installer connection executes the prefix, exactly one fixed catalog query for four synthetic wrapper identities, then the unchanged inventory/receipt/COMMIT suffix. No installer/recovery byte, expected guard, role, ACL, dependency, fixture, claim or wire behavior changes.
+
+The query returns the four fixed wrappers in source order, complete relevant identity fields, bounded normalized definition/body with original and normalized byte lengths, finite direct/shared/ACL samples with exact counts, and exact effective-right mismatch counts. It reads no Auth/session/claim rows and outputs no credentials. Serialized diagnostic is capped at 16 KiB, emitted separately from the unchanged 32 KiB native receipt after unconditional disposal. An unavailable diagnostic uses a finite code; query/primary failure is retained with awaited original rollback, and a local bounds failure cannot turn into success. No retry, new connection, new transaction, extra cluster, SQL after disposal or changed time/resource budget is added.
+
+Native current pin: 71545 UTF-8 bytes / SHA-256 `e4d8bf39881ac41c9203c78be519074a5c3ff7ce017ab4bdcc3ff660d0fda5d1` / Git blob `b57f1f6d66d3a98d28721db2c2b31f6d058df0b1`.
+Four exact source edits have a complete inert inverse restoring original blob `42139d341977af27994cd812d1f970c05500319b` / SHA-256 `92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8`.
+All eight groups, original hostile cases and 180/35/240-second limits remain. Exactly Native plus the four existing evidence documents change; 9,533 other leaves remain byte/type/mode exact against the selected parent.
+
+Root next independently reviews this candidate, reconciles it with the other #1196 corrections and selects the real full CI. A diagnostic result, if executed, must identify the actual failed inventory predicate before any installer change is selected. No hosted Dev write, actual Owner/AAL2 proof or public activation occurred. Retained UI work remains paused; #917/#1131 boundaries are unchanged. STOP reachable after immutable delivery.

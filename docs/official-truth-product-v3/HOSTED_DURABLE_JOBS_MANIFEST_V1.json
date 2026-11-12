@@ -1,10 +1,14 @@
 {
   "schema": "jetnity.hm04.source.v2",
-  "status": "SOURCE_V2_A2_CANDIDATE_NOT_RUN_UNAPPLIED_UNPUBLISHED",
+  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX1",
   "author": {
-    "display": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4",
-    "session": "/root/m04_durable_jobs_writer_g4",
-    "continuity": "same original reachable Generation4 session; no successor",
+    "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
+    "session": "/root/hs1_hm04_fix",
+    "replacementFor": [
+      "HS1 Generation1 /root/hosted_intake_writer_g1",
+      "HM04 Generation4 /root/m04_durable_jobs_writer_g4"
+    ],
+    "reason": "Original sessions are unreachable in the new Technical Lead thread; the Product Owner has permanently authorized documented replacements.",
     "selfReviewIsTlPass": false
   },
   "binding": {
@@ -13,7 +17,12 @@
     "revision": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826242276",
     "historicalV1SourceReview": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825977269",
     "historicalV1ReviewIsCurrentPass": false,
-    "reason": "A2 immediate same-session review fix: real restricted Creator provisioning creates a mandatory bootstrap ADMIN-only incidence. V1 A1 composition is P1 blocked."
+    "reason": "Selected concrete HS1/HM04 syntax, heterogeneous drain typing and exact prerequisite-context binding; previous A2 task remains historical.",
+    "currentFix": [
+      "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466",
+      "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816"
+    ],
+    "currentParent": "a686e608f597ffa82d44fc9d3992b9b566b89688"
   },
   "sourceOnly": {
     "executedProject": false,
@@ -34,25 +43,32 @@
     "permittedWork": "GitHub source/metadata reads; immutable source Git objects; pure in-memory text, UTF-8 hashing, inverse reconstruction and tree comparison only"
   },
   "baseline": {
-    "tree": "0009fdd6da1ad45930073181eff776e931852cc6",
-    "commit": "d346d8a013ec4151d802430ce46ca4c806bc8f08",
-    "count": 9487,
+    "tree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
+    "commit": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "count": 9538,
     "serialization": "ASCII path sort; mode + SPACE + type + SPACE + Git object SHA + TAB + path + LF",
-    "serializedBytes": 1148389,
-    "sha256": "f0acaa7839f3566230f4270120d733f7b61fd44e5cb4ee2ad2072fac9b85a3d2",
+    "serializedBytes": 1154460,
+    "sha256": "8c5d8961b981f89f4db60ed36e54df7f9e371e5fc7c28d2753163df6223004c2",
     "soleParentRequired": true,
-    "candidateLeavesExpected": 9487,
+    "candidateLeavesExpected": 9538,
     "changedExistingPaths": [
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql"
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
     ],
-    "changedLeavesExpected": 7,
-    "unchangedLeavesExpected": 9480,
+    "changedLeavesExpected": 14,
+    "unchangedLeavesExpected": 9524,
     "addedPaths": [],
     "removedPaths": [],
     "wrapperExact": {
@@ -63,27 +79,27 @@
     },
     "originalPreHm04LeavesExpected": 9479,
     "originalPreHm04LeavesRemainExact": true,
-    "proofRule": "Construct on exact base_tree with exactly these seven existing 100644 blob changes; compare all 9487 paths/modes/types/object IDs; require 9480 exact leaves, zero added/removed leaves and wrapper exact. Full tree/sole parent readback follows externally to avoid self-reference.",
+    "proofRule": "Exactly fourteen modified existing leaves on the exact failed HDP parent; both wrappers and 9524 other leaves stay exact.",
     "externalFinalIdentity": true
   },
   "artifacts": [
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-      "blob": "18acf028455f60df1f378374ed171473b55b2f84",
-      "bytes": 50111,
-      "sha256": "c9b3281dfec4371838e223bfbd787b689afbe42c5e6154512947c1c35596bea5"
+      "blob": "a7abf68711a891b6934662990e23a6637aeede52",
+      "bytes": 52916,
+      "sha256": "0b66668395463bc705540675a128fe1fb10a42021e7ce247bf39d2c1914be261"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "blob": "39afb8c0654566596dc5ce3ba9b23d53b55c1646",
-      "bytes": 20584,
-      "sha256": "e048f95d94f82e0e7d78b8445497e21390f3227c8f866c6a30e2f31ed3571935"
+      "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c",
+      "bytes": 21560,
+      "sha256": "299dd8af0b705444b82103c6e7730ff3693ffcec6cdc3b7cc5a80841abfe4f24"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-      "blob": "ee48439d215f75bfa0a3e9a55b0cb987c5ea7003",
-      "bytes": 31082,
-      "sha256": "3626bbe3a0606fe1e8bb2266a5ebe742003af1a4a995d0816d6641ed0ef4c556"
+      "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28",
+      "bytes": 33375,
+      "sha256": "52abcd1328016552bb9481d7c45dd89a058110f9a2c67303b2955185b6466597"
     },
     {
       "path": "lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts",
@@ -93,21 +109,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "7e6686da97cf42abaa340b81f07982ced48ecfcf",
-      "bytes": 342626,
-      "sha256": "1dbf982c580368405d36daa8f193d2d1e9dd2097379bc736657b964683f38695"
+      "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
+      "bytes": 342630,
+      "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "blob": "7cbb20039ebcfe004c1938575b103bcdfcc58ebc",
+      "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a",
       "bytes": 233228,
-      "sha256": "9ffd98e3be6ae319291e1dedfe575d4eb146848856d6dcff93b8e549580ab307"
+      "sha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "blob": "f212b46cc1cadbc192b77da53c6767cdf87b0749",
+      "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
       "bytes": 119673,
-      "sha256": "39e68835cac901e90bccd1a33bf32a27c42d3e40d1f3750f7851ed0567cc39c3"
+      "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
     }
   ],
   "self": {
@@ -267,17 +283,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "blob": "6ee66138a4710f4f1b0eefa4f2c30150b1bbd1e6",
-      "bytes": 123162,
-      "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-      "sha256": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9"
+      "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+      "bytes": 123166,
+      "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-      "blob": "a2e5961e1c16dacfa92a111353b2f110296a1c19",
-      "bytes": 42117,
-      "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-      "sha256": "539d6014fbe75129fa528f7214e69658f0fc0ff9ad7c8879efaf18f183ebcdf8"
+      "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+      "bytes": 42121,
+      "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
@@ -545,11 +559,9 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     },
     {
-      "id": "HS1",
+      "id": "HS1-FIX1",
       "key": "hs1",
-      "commit": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-      "tree": "d3bdd862efb7799bca5d03873b84d139dac7ce5b",
-      "consumed": "Selected installer/recovery; source reviewed, NOT_RUN/UNAPPLIED at task binding.",
+      "consumed": "Corrected current installer/recovery; exact current artifact blobs in this tree. Original pre-fix identity retained in historicalA2Identity.",
       "codePins": [
         {
           "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
@@ -560,27 +572,26 @@
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-          "blob": "6ee66138a4710f4f1b0eefa4f2c30150b1bbd1e6",
-          "bytes": 123162,
-          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-          "sha256": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9"
+          "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+          "bytes": 123166,
+          "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-          "blob": "a71ca9a0168bea7c49a54a6affd4d310794337dd",
-          "bytes": 64710,
-          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-          "sha256": "d373c6aaac7d61006fcbc56d95151907bf34a2415e40fa943f2a1e086568cd02"
+          "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
+          "bytes": 64749,
+          "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21"
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-          "blob": "a2e5961e1c16dacfa92a111353b2f110296a1c19",
-          "bytes": 42117,
-          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
-          "sha256": "539d6014fbe75129fa528f7214e69658f0fc0ff9ad7c8879efaf18f183ebcdf8"
+          "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+          "bytes": 42121,
+          "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
         }
       ],
-      "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
+      "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration.",
+      "sourceCommitBeforeFix": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+      "sourceTreeBeforeFix": "d3bdd862efb7799bca5d03873b84d139dac7ce5b"
     }
   ],
   "prerequisiteBlockProvenance": [
@@ -623,8 +634,8 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "label": "hs1_function_pins",
-      "bytes": 5739,
-      "sha256": "a262f8dd84ef6c2b9e9d64dfa63239b02b35bbf0c38bf21f780771d92a40b79d",
+      "bytes": 5741,
+      "sha256": "cead3e453fdaf1f78aefc3244b241d20b19d82a9944aa5e769703a52cf37681a",
       "sourceStart": 93309,
       "candidateStart": 36175,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
@@ -632,10 +643,10 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "label": "hs1_structure",
-      "bytes": 15464,
-      "sha256": "e2992035d731ef88a1432197b055d22b557e88ef9397cbd6f7d20afa157f43b2",
-      "sourceStart": 99049,
-      "candidateStart": 41916,
+      "bytes": 15466,
+      "sha256": "b3fdeac179dffaecd1f54cf0a0e24ca91bb1da56d48b49dea0d7b955d4788781",
+      "sourceStart": 99051,
+      "candidateStart": 41918,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -643,8 +654,8 @@
       "label": "hs1_dependency_boundary",
       "bytes": 4514,
       "sha256": "1002664e821a48712d721a1ec535e2d3764fbcf2b721067bc569b27ff5046d9a",
-      "sourceStart": 114674,
-      "candidateStart": 57382,
+      "sourceStart": 114678,
+      "candidateStart": 57386,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -652,8 +663,8 @@
       "label": "hs1_effective_privileges",
       "bytes": 2177,
       "sha256": "77320fc284a5496fdd37b839a0187748bf0e2794266de049a59a292a425c12e7",
-      "sourceStart": 119189,
-      "candidateStart": 61898,
+      "sourceStart": 119193,
+      "candidateStart": 61902,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     }
   ],
@@ -680,169 +691,169 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "originalBytes": 160983,
-      "candidateBytes": 342626,
+      "candidateBytes": 342630,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "1dbf982c580368405d36daa8f193d2d1e9dd2097379bc736657b964683f38695",
+      "candidateSha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5",
       "retained": [
         {
           "originalStart": 7915,
           "originalEnd": 70828,
-          "candidateStart": 71183,
-          "candidateEnd": 134096,
+          "candidateStart": 71187,
+          "candidateEnd": 134100,
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205"
         },
         {
           "originalStart": 70893,
           "originalEnd": 71098,
-          "candidateStart": 134096,
-          "candidateEnd": 134301,
+          "candidateStart": 134100,
+          "candidateEnd": 134305,
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec"
         },
         {
           "originalStart": 71109,
           "originalEnd": 71463,
-          "candidateStart": 134320,
-          "candidateEnd": 134674,
+          "candidateStart": 134324,
+          "candidateEnd": 134678,
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4"
         },
         {
           "originalStart": 71531,
           "originalEnd": 71745,
-          "candidateStart": 134674,
-          "candidateEnd": 134888,
+          "candidateStart": 134678,
+          "candidateEnd": 134892,
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4"
         },
         {
           "originalStart": 71756,
           "originalEnd": 72116,
-          "candidateStart": 134907,
-          "candidateEnd": 135267,
+          "candidateStart": 134911,
+          "candidateEnd": 135271,
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973"
         },
         {
           "originalStart": 72192,
           "originalEnd": 72430,
-          "candidateStart": 135267,
-          "candidateEnd": 135505,
+          "candidateStart": 135271,
+          "candidateEnd": 135509,
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23"
         },
         {
           "originalStart": 72441,
           "originalEnd": 72817,
-          "candidateStart": 135524,
-          "candidateEnd": 135900,
+          "candidateStart": 135528,
+          "candidateEnd": 135904,
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91"
         },
         {
           "originalStart": 72893,
           "originalEnd": 73131,
-          "candidateStart": 135900,
-          "candidateEnd": 136138,
+          "candidateStart": 135904,
+          "candidateEnd": 136142,
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc"
         },
         {
           "originalStart": 73142,
           "originalEnd": 73518,
-          "candidateStart": 136157,
-          "candidateEnd": 136533,
+          "candidateStart": 136161,
+          "candidateEnd": 136537,
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e"
         },
         {
           "originalStart": 73595,
           "originalEnd": 73836,
-          "candidateStart": 136533,
-          "candidateEnd": 136774,
+          "candidateStart": 136537,
+          "candidateEnd": 136778,
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94"
         },
         {
           "originalStart": 73847,
           "originalEnd": 74225,
-          "candidateStart": 136793,
-          "candidateEnd": 137171,
+          "candidateStart": 136797,
+          "candidateEnd": 137175,
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86"
         },
         {
           "originalStart": 74307,
           "originalEnd": 74563,
-          "candidateStart": 137171,
-          "candidateEnd": 137427,
+          "candidateStart": 137175,
+          "candidateEnd": 137431,
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c"
         },
         {
           "originalStart": 74574,
           "originalEnd": 74962,
-          "candidateStart": 137446,
-          "candidateEnd": 137834,
+          "candidateStart": 137450,
+          "candidateEnd": 137838,
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff"
         },
         {
           "originalStart": 75037,
           "originalEnd": 75272,
-          "candidateStart": 137834,
-          "candidateEnd": 138069,
+          "candidateStart": 137838,
+          "candidateEnd": 138073,
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5"
         },
         {
           "originalStart": 75283,
           "originalEnd": 75739,
-          "candidateStart": 138088,
-          "candidateEnd": 138544,
+          "candidateStart": 138092,
+          "candidateEnd": 138548,
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293"
         },
         {
           "originalStart": 75987,
           "originalEnd": 75988,
-          "candidateStart": 138544,
-          "candidateEnd": 138545,
+          "candidateStart": 138548,
+          "candidateEnd": 138549,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77198,
           "originalEnd": 77199,
-          "candidateStart": 138545,
-          "candidateEnd": 138546,
+          "candidateStart": 138549,
+          "candidateEnd": 138550,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77512,
           "originalEnd": 106302,
-          "candidateStart": 138546,
-          "candidateEnd": 167336,
+          "candidateStart": 138550,
+          "candidateEnd": 167340,
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d"
         },
         {
           "originalStart": 113882,
           "originalEnd": 136122,
-          "candidateStart": 200035,
-          "candidateEnd": 222275,
+          "candidateStart": 200039,
+          "candidateEnd": 222279,
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3"
         },
         {
           "originalStart": 136163,
           "originalEnd": 151653,
-          "candidateStart": 222318,
-          "candidateEnd": 237808,
+          "candidateStart": 222322,
+          "candidateEnd": 237812,
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db"
         },
         {
           "originalStart": 75739,
           "originalEnd": 75987,
-          "candidateStart": 242686,
-          "candidateEnd": 242934,
+          "candidateStart": 242690,
+          "candidateEnd": 242938,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         {
           "originalStart": 75988,
           "originalEnd": 77198,
-          "candidateStart": 243143,
-          "candidateEnd": 244353,
+          "candidateStart": 243147,
+          "candidateEnd": 244357,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         {
           "originalStart": 77199,
           "originalEnd": 77512,
-          "candidateStart": 237995,
-          "candidateEnd": 238308,
+          "candidateStart": 237999,
+          "candidateEnd": 238312,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         }
       ],
@@ -859,8 +870,8 @@
           "end": 70828,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
-          "candidateStart": 71183,
-          "candidateEnd": 134096
+          "candidateStart": 71187,
+          "candidateEnd": 134100
         },
         {
           "start": 70828,
@@ -874,8 +885,8 @@
           "end": 71098,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
-          "candidateStart": 134096,
-          "candidateEnd": 134301
+          "candidateStart": 134100,
+          "candidateEnd": 134305
         },
         {
           "start": 71098,
@@ -889,8 +900,8 @@
           "end": 71463,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
-          "candidateStart": 134320,
-          "candidateEnd": 134674
+          "candidateStart": 134324,
+          "candidateEnd": 134678
         },
         {
           "start": 71463,
@@ -904,8 +915,8 @@
           "end": 71745,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
-          "candidateStart": 134674,
-          "candidateEnd": 134888
+          "candidateStart": 134678,
+          "candidateEnd": 134892
         },
         {
           "start": 71745,
@@ -919,8 +930,8 @@
           "end": 72116,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
-          "candidateStart": 134907,
-          "candidateEnd": 135267
+          "candidateStart": 134911,
+          "candidateEnd": 135271
         },
         {
           "start": 72116,
@@ -934,8 +945,8 @@
           "end": 72430,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
-          "candidateStart": 135267,
-          "candidateEnd": 135505
+          "candidateStart": 135271,
+          "candidateEnd": 135509
         },
         {
           "start": 72430,
@@ -949,8 +960,8 @@
           "end": 72817,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
-          "candidateStart": 135524,
-          "candidateEnd": 135900
+          "candidateStart": 135528,
+          "candidateEnd": 135904
         },
         {
           "start": 72817,
@@ -964,8 +975,8 @@
           "end": 73131,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
-          "candidateStart": 135900,
-          "candidateEnd": 136138
+          "candidateStart": 135904,
+          "candidateEnd": 136142
         },
         {
           "start": 73131,
@@ -979,8 +990,8 @@
           "end": 73518,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
-          "candidateStart": 136157,
-          "candidateEnd": 136533
+          "candidateStart": 136161,
+          "candidateEnd": 136537
         },
         {
           "start": 73518,
@@ -994,8 +1005,8 @@
           "end": 73836,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
-          "candidateStart": 136533,
-          "candidateEnd": 136774
+          "candidateStart": 136537,
+          "candidateEnd": 136778
         },
         {
           "start": 73836,
@@ -1009,8 +1020,8 @@
           "end": 74225,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
-          "candidateStart": 136793,
-          "candidateEnd": 137171
+          "candidateStart": 136797,
+          "candidateEnd": 137175
         },
         {
           "start": 74225,
@@ -1024,8 +1035,8 @@
           "end": 74563,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
-          "candidateStart": 137171,
-          "candidateEnd": 137427
+          "candidateStart": 137175,
+          "candidateEnd": 137431
         },
         {
           "start": 74563,
@@ -1039,8 +1050,8 @@
           "end": 74962,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
-          "candidateStart": 137446,
-          "candidateEnd": 137834
+          "candidateStart": 137450,
+          "candidateEnd": 137838
         },
         {
           "start": 74962,
@@ -1054,8 +1065,8 @@
           "end": 75272,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
-          "candidateStart": 137834,
-          "candidateEnd": 138069
+          "candidateStart": 137838,
+          "candidateEnd": 138073
         },
         {
           "start": 75272,
@@ -1069,56 +1080,56 @@
           "end": 75739,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
-          "candidateStart": 138088,
-          "candidateEnd": 138544
+          "candidateStart": 138092,
+          "candidateEnd": 138548
         },
         {
           "start": 75739,
           "end": 75987,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
-          "candidateStart": 242686,
-          "candidateEnd": 242934
+          "candidateStart": 242690,
+          "candidateEnd": 242938
         },
         {
           "start": 75987,
           "end": 75988,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 138544,
-          "candidateEnd": 138545
+          "candidateStart": 138548,
+          "candidateEnd": 138549
         },
         {
           "start": 75988,
           "end": 77198,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
-          "candidateStart": 243143,
-          "candidateEnd": 244353
+          "candidateStart": 243147,
+          "candidateEnd": 244357
         },
         {
           "start": 77198,
           "end": 77199,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 138545,
-          "candidateEnd": 138546
+          "candidateStart": 138549,
+          "candidateEnd": 138550
         },
         {
           "start": 77199,
           "end": 77512,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
-          "candidateStart": 237995,
-          "candidateEnd": 238308
+          "candidateStart": 237999,
+          "candidateEnd": 238312
         },
         {
           "start": 77512,
           "end": 106302,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
-          "candidateStart": 138546,
-          "candidateEnd": 167336
+          "candidateStart": 138550,
+          "candidateEnd": 167340
         },
         {
           "start": 106302,
@@ -1132,8 +1143,8 @@
           "end": 136122,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
-          "candidateStart": 200035,
-          "candidateEnd": 222275
+          "candidateStart": 200039,
+          "candidateEnd": 222279
         },
         {
           "start": 136122,
@@ -1147,8 +1158,8 @@
           "end": 151653,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
-          "candidateStart": 222318,
-          "candidateEnd": 237808
+          "candidateStart": 222322,
+          "candidateEnd": 237812
         },
         {
           "start": 151653,
@@ -1161,284 +1172,284 @@
       "candidateInverse": [
         {
           "start": 0,
-          "end": 71183,
+          "end": 71187,
           "kind": "new",
-          "sha256": "69b58635e663e63f472514d570b28d0a84937cf4a90fbc6343f0985d3bdc76e3",
+          "sha256": "499bfc3d6709a67e8acbc86363c62388b3a62a331a0d689f054957d5ee5428fb",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 71183,
-          "end": 134096,
+          "start": 71187,
+          "end": 134100,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
           "originalStart": 7915,
           "originalEnd": 70828
         },
         {
-          "start": 134096,
-          "end": 134301,
+          "start": 134100,
+          "end": 134305,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
           "originalStart": 70893,
           "originalEnd": 71098
         },
         {
-          "start": 134301,
-          "end": 134320,
+          "start": 134305,
+          "end": 134324,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 134320,
-          "end": 134674,
+          "start": 134324,
+          "end": 134678,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
           "originalStart": 71109,
           "originalEnd": 71463
         },
         {
-          "start": 134674,
-          "end": 134888,
+          "start": 134678,
+          "end": 134892,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
           "originalStart": 71531,
           "originalEnd": 71745
         },
         {
-          "start": 134888,
-          "end": 134907,
+          "start": 134892,
+          "end": 134911,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 134907,
-          "end": 135267,
+          "start": 134911,
+          "end": 135271,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
           "originalStart": 71756,
           "originalEnd": 72116
         },
         {
-          "start": 135267,
-          "end": 135505,
+          "start": 135271,
+          "end": 135509,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
           "originalStart": 72192,
           "originalEnd": 72430
         },
         {
-          "start": 135505,
-          "end": 135524,
+          "start": 135509,
+          "end": 135528,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 135524,
-          "end": 135900,
+          "start": 135528,
+          "end": 135904,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
           "originalStart": 72441,
           "originalEnd": 72817
         },
         {
-          "start": 135900,
-          "end": 136138,
+          "start": 135904,
+          "end": 136142,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
           "originalStart": 72893,
           "originalEnd": 73131
         },
         {
-          "start": 136138,
-          "end": 136157,
+          "start": 136142,
+          "end": 136161,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 136157,
-          "end": 136533,
+          "start": 136161,
+          "end": 136537,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
           "originalStart": 73142,
           "originalEnd": 73518
         },
         {
-          "start": 136533,
-          "end": 136774,
+          "start": 136537,
+          "end": 136778,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
           "originalStart": 73595,
           "originalEnd": 73836
         },
         {
-          "start": 136774,
-          "end": 136793,
+          "start": 136778,
+          "end": 136797,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 136793,
-          "end": 137171,
+          "start": 136797,
+          "end": 137175,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
           "originalStart": 73847,
           "originalEnd": 74225
         },
         {
-          "start": 137171,
-          "end": 137427,
+          "start": 137175,
+          "end": 137431,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
           "originalStart": 74307,
           "originalEnd": 74563
         },
         {
-          "start": 137427,
-          "end": 137446,
+          "start": 137431,
+          "end": 137450,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 137446,
-          "end": 137834,
+          "start": 137450,
+          "end": 137838,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
           "originalStart": 74574,
           "originalEnd": 74962
         },
         {
-          "start": 137834,
-          "end": 138069,
+          "start": 137838,
+          "end": 138073,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
           "originalStart": 75037,
           "originalEnd": 75272
         },
         {
-          "start": 138069,
-          "end": 138088,
+          "start": 138073,
+          "end": 138092,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 138088,
-          "end": 138544,
+          "start": 138092,
+          "end": 138548,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
           "originalStart": 75283,
           "originalEnd": 75739
         },
         {
-          "start": 138544,
-          "end": 138545,
+          "start": 138548,
+          "end": 138549,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 75987,
           "originalEnd": 75988
         },
         {
-          "start": 138545,
-          "end": 138546,
+          "start": 138549,
+          "end": 138550,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 77198,
           "originalEnd": 77199
         },
         {
-          "start": 138546,
-          "end": 167336,
+          "start": 138550,
+          "end": 167340,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
           "originalStart": 77512,
           "originalEnd": 106302
         },
         {
-          "start": 167336,
-          "end": 200035,
+          "start": 167340,
+          "end": 200039,
           "kind": "new",
-          "sha256": "b6095d32f9d9f31d348185a7461b305e910554d3c1bf7d6ba6f9bdc0643b2abf",
+          "sha256": "6567806bca181baf12d21604de47ad291b55ae274e86154fba1f3a29c70caff4",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 200035,
-          "end": 222275,
+          "start": 200039,
+          "end": 222279,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
           "originalStart": 113882,
           "originalEnd": 136122
         },
         {
-          "start": 222275,
-          "end": 222318,
+          "start": 222279,
+          "end": 222322,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 222318,
-          "end": 237808,
+          "start": 222322,
+          "end": 237812,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
           "originalStart": 136163,
           "originalEnd": 151653
         },
         {
-          "start": 237808,
-          "end": 237995,
+          "start": 237812,
+          "end": 237999,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 237995,
-          "end": 238308,
+          "start": 237999,
+          "end": 238312,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
           "originalStart": 77199,
           "originalEnd": 77512
         },
         {
-          "start": 238308,
-          "end": 242686,
+          "start": 238312,
+          "end": 242690,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 242686,
-          "end": 242934,
+          "start": 242690,
+          "end": 242938,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
           "originalStart": 75739,
           "originalEnd": 75987
         },
         {
-          "start": 242934,
-          "end": 243143,
+          "start": 242938,
+          "end": 243147,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 243143,
-          "end": 244353,
+          "start": 243147,
+          "end": 244357,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
           "originalStart": 75988,
           "originalEnd": 77198
         },
         {
-          "start": 244353,
-          "end": 342626,
+          "start": 244357,
+          "end": 342630,
           "kind": "new",
-          "sha256": "7079025b8958f493bcfd24101d283c4ef0eb3dbb56b4b8cad4db75da04f0d39d",
+          "sha256": "006d32a3e5ea4bb2caa3216f4276d11186a250df121386dab46661de58010ad7",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         }
       ],
@@ -1462,7 +1473,7 @@
       "originalBytes": 6175,
       "candidateBytes": 119673,
       "originalSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
-      "candidateSha256": "39e68835cac901e90bccd1a33bf32a27c42d3e40d1f3750f7851ed0567cc39c3",
+      "candidateSha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707",
       "retained": [
         {
           "originalStart": 1470,
@@ -2394,7 +2405,7 @@
           "start": 0,
           "end": 113496,
           "kind": "new",
-          "sha256": "dafaa780f2a8ec60114ee2d9bda51e7092b9cdcdcf4b30f57cfb2c573b4d2d2c",
+          "sha256": "57da2f5cceccdc3605102bb85e6aba172dba44a4564b03eb8ecd84834af93003",
           "sourceBlob": "f212b46cc1cadbc192b77da53c6767cdf87b0749"
         },
         {
@@ -2934,7 +2945,7 @@
       "originalBytes": 199707,
       "candidateBytes": 233228,
       "originalSha256": "a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea",
-      "candidateSha256": "9ffd98e3be6ae319291e1dedfe575d4eb146848856d6dcff93b8e549580ab307",
+      "candidateSha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611",
       "retained": [
         {
           "originalStart": 91,
@@ -4035,7 +4046,7 @@
           "start": 21014,
           "end": 34160,
           "kind": "new",
-          "sha256": "75f4da161ff5dab04de8dc790650c5fd5dd9da83a3b6bd1926e10959ee0c8a90",
+          "sha256": "2cc3495c589624564fe806ec0cbb82676b7bb709d3791185b5d937120adee57b",
           "sourceBlob": "7cbb20039ebcfe004c1938575b103bcdfcc58ebc"
         },
         {
@@ -4410,8 +4421,8 @@
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
         "candidate": {
-          "start": 71183,
-          "end": 72193,
+          "start": 71187,
+          "end": 72197,
           "bytes": 1010,
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         }
@@ -4428,8 +4439,8 @@
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
         "candidate": {
-          "start": 72194,
-          "end": 73167,
+          "start": 72198,
+          "end": 73171,
           "bytes": 973,
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         }
@@ -4446,8 +4457,8 @@
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
         "candidate": {
-          "start": 73168,
-          "end": 74636,
+          "start": 73172,
+          "end": 74640,
           "bytes": 1468,
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         }
@@ -4464,8 +4475,8 @@
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
         "candidate": {
-          "start": 74637,
-          "end": 85833,
+          "start": 74641,
+          "end": 85837,
           "bytes": 11196,
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         }
@@ -4482,8 +4493,8 @@
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
         "candidate": {
-          "start": 85834,
-          "end": 86893,
+          "start": 85838,
+          "end": 86897,
           "bytes": 1059,
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         }
@@ -4500,8 +4511,8 @@
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
         "candidate": {
-          "start": 86894,
-          "end": 88033,
+          "start": 86898,
+          "end": 88037,
           "bytes": 1139,
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         }
@@ -4518,8 +4529,8 @@
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
         "candidate": {
-          "start": 88034,
-          "end": 88681,
+          "start": 88038,
+          "end": 88685,
           "bytes": 647,
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         }
@@ -4536,8 +4547,8 @@
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
         "candidate": {
-          "start": 88683,
-          "end": 93862,
+          "start": 88687,
+          "end": 93866,
           "bytes": 5179,
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         }
@@ -4554,8 +4565,8 @@
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
         "candidate": {
-          "start": 93863,
-          "end": 97426,
+          "start": 93867,
+          "end": 97430,
           "bytes": 3563,
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         }
@@ -4572,8 +4583,8 @@
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
         "candidate": {
-          "start": 97428,
-          "end": 104211,
+          "start": 97432,
+          "end": 104215,
           "bytes": 6783,
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         }
@@ -4590,8 +4601,8 @@
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
         "candidate": {
-          "start": 104212,
-          "end": 110277,
+          "start": 104216,
+          "end": 110281,
           "bytes": 6065,
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         }
@@ -4608,8 +4619,8 @@
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
         "candidate": {
-          "start": 110278,
-          "end": 116421,
+          "start": 110282,
+          "end": 116425,
           "bytes": 6143,
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         }
@@ -4626,8 +4637,8 @@
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
         "candidate": {
-          "start": 116422,
-          "end": 121000,
+          "start": 116426,
+          "end": 121004,
           "bytes": 4578,
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         }
@@ -4644,8 +4655,8 @@
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
         "candidate": {
-          "start": 121001,
-          "end": 122703,
+          "start": 121005,
+          "end": 122707,
           "bytes": 1702,
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         }
@@ -4662,8 +4673,8 @@
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
         "candidate": {
-          "start": 122704,
-          "end": 128949,
+          "start": 122708,
+          "end": 128953,
           "bytes": 6245,
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         }
@@ -4680,8 +4691,8 @@
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
         "candidate": {
-          "start": 133088,
-          "end": 134095,
+          "start": 133092,
+          "end": 134099,
           "bytes": 1007,
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         }
@@ -4698,8 +4709,8 @@
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         "candidate": {
-          "start": 242686,
-          "end": 242934,
+          "start": 242690,
+          "end": 242938,
           "bytes": 248,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         }
@@ -4716,8 +4727,8 @@
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         "candidate": {
-          "start": 243143,
-          "end": 244353,
+          "start": 243147,
+          "end": 244357,
           "bytes": 1210,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         }
@@ -4734,8 +4745,8 @@
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         "candidate": {
-          "start": 237995,
-          "end": 238308,
+          "start": 237999,
+          "end": 238312,
           "bytes": 313,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         }
@@ -4752,8 +4763,8 @@
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
         "candidate": {
-          "start": 138548,
-          "end": 149994,
+          "start": 138552,
+          "end": 149998,
           "bytes": 11446,
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         }
@@ -4770,8 +4781,8 @@
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
         "candidate": {
-          "start": 149996,
-          "end": 167334,
+          "start": 150000,
+          "end": 167338,
           "bytes": 17338,
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         }
@@ -4788,10 +4799,10 @@
           "sha256": "d66534a4b4493b8349cea92e7b7f1c388b63becbd401f23bfe171f785ae1e3e4"
         },
         "candidate": {
-          "start": 167336,
-          "end": 200035,
+          "start": 167340,
+          "end": 200039,
           "bytes": 32699,
-          "sha256": "b6095d32f9d9f31d348185a7461b305e910554d3c1bf7d6ba6f9bdc0643b2abf"
+          "sha256": "6567806bca181baf12d21604de47ad291b55ae274e86154fba1f3a29c70caff4"
         }
       },
       {
@@ -4806,8 +4817,8 @@
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
         "candidate": {
-          "start": 200207,
-          "end": 200867,
+          "start": 200211,
+          "end": 200871,
           "bytes": 660,
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         }
@@ -4824,8 +4835,8 @@
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
         "candidate": {
-          "start": 200868,
-          "end": 202025,
+          "start": 200872,
+          "end": 202029,
           "bytes": 1157,
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         }
@@ -4842,8 +4853,8 @@
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
         "candidate": {
-          "start": 202026,
-          "end": 205088,
+          "start": 202030,
+          "end": 205092,
           "bytes": 3062,
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         }
@@ -4860,8 +4871,8 @@
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
         "candidate": {
-          "start": 205089,
-          "end": 207747,
+          "start": 205093,
+          "end": 207751,
           "bytes": 2658,
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         }
@@ -4878,8 +4889,8 @@
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
         "candidate": {
-          "start": 207748,
-          "end": 213128,
+          "start": 207752,
+          "end": 213132,
           "bytes": 5380,
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         }
@@ -4896,8 +4907,8 @@
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
         "candidate": {
-          "start": 213129,
-          "end": 220839,
+          "start": 213133,
+          "end": 220843,
           "bytes": 7710,
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         }
@@ -4914,8 +4925,8 @@
           "sha256": "2eb370f96a4bc5b0ac28cc68adb4120b742613f8a10eb5ae5e502b7bbe3e902b"
         },
         "candidate": {
-          "start": 220841,
-          "end": 237808,
+          "start": 220845,
+          "end": 237812,
           "bytes": 16967,
           "sha256": "401c11c9349930123792180067813ce53f1cb54574a14d3265944b892b9de126"
         }
@@ -4928,7 +4939,7 @@
       },
       {
         "name": "official_v3_jobs_private.assert_catalog_v1",
-        "change": "Fresh SOURCE-V1 hosted fingerprints and protected graph remain exact; only the selected A2 exact two-incidence restricted LOGIN predicate replaces A1. No other runtime fingerprint or header change."
+        "change": "Fresh SOURCE-V1 hosted fingerprints and protected graph remain exact; only the selected A2 exact two-incidence restricted LOGIN predicate replaces A1. No other runtime fingerprint or header change. Review fix changes only the exact selected HS1 source-context digest; the fresh catalog fingerprint captures the corrected function body."
       }
     ],
     "newTupleBridge": {
@@ -5461,14 +5472,15 @@
   ],
   "hs1Boundary": {
     "installerPreCreationNoConsumerBlockExact": true,
-    "originalHs1ArtifactChanged": false,
+    "originalHs1ArtifactChanged": true,
     "applyNoConsumerBlockAtRuntime": false,
     "originalObjectsFullyFingerprintBound": true,
     "allowedAddedOwnerConsumers": [
       "official_v3_jobs_private.s1_read_v1",
       "official_v3_jobs_private.s1_shape_v1"
     ],
-    "unknownConsumerOrOwnerObjectRefused": true
+    "unknownConsumerOrOwnerObjectRefused": true,
+    "originalHs1ArtifactChange": "Only selected CASE parentheses in hosted installation/recovery; original S1 remains byte exact and all hosted function declarations/bodies remain unchanged."
   },
   "installSequence": [
     "Native/source composition prerequisite: real NOSUPER Creator creates designated restricted worker LOGIN and captures exact LOGIN/Creator/automatic membership OIDs before HM04 freeze; no real hosted provisioning executed here",
@@ -6837,12 +6849,13 @@
   "manifestRevisionInverse": {
     "original": {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "80df981dc591dc72fc2611f5db6f622e50f77adb",
-      "bytes": 259007,
-      "sha256": "b20ce382908f7b61ca6d745b2fb44dc54f79f8f332da7c48667f82e03abc2f4d"
+      "blob": "029c393c99e41abd8cf29cb7ed6c5be939e1b41d",
+      "bytes": 578156,
+      "sha256": "f0f45be0f3fb7e1e90ec9c901da2d032b5103cd1903f88106fc5b6b092925b2a",
+      "ref": "a686e608f597ffa82d44fc9d3992b9b566b89688"
     },
     "candidate": "EXTERNAL_FINAL_RECEIPT",
-    "coverage": "Full immutable original/current manifest blobs, partition [0,fullBytes) in each direction; complete literal original text and actual current raw pin are delivered in the external immutable receipt to avoid circular pins."
+    "coverage": "Full prior/current immutable manifest blobs; previous revision inverse remains in historicalA2Identity."
   },
   "callerA2": {
     "maximumDirectLogins": 1,
@@ -13170,5 +13183,491 @@
     "fullHistoricalSources": "All original full source bodies remain retrievable by the immutable historical artifact blobs and original R41 pins below; all three old prose documents remain byte-exact contiguous content in their current revisions.",
     "reviewUrl": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825977269",
     "reviewBodyPreservedIn": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md"
-  }
+  },
+  "reviewFix": {
+    "id": "HS1/HM04-FIX1",
+    "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
+    "author": {
+      "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
+      "session": "/root/hs1_hm04_fix",
+      "replacementFor": [
+        "HS1 Generation1 /root/hosted_intake_writer_g1",
+        "HM04 Generation4 /root/m04_durable_jobs_writer_g4"
+      ],
+      "reason": "Original sessions are unreachable in the new Technical Lead thread; the Product Owner has permanently authorized documented replacements.",
+      "selfReviewIsTlPass": false
+    },
+    "soleParent": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "parentTree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
+    "baseLeaves": 9538,
+    "changedPaths": [
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+    ],
+    "changedExistingLeaves": 14,
+    "unchangedLeaves": 9524,
+    "newLeaves": 0,
+    "deletedLeaves": 0,
+    "baseInventory": {
+      "serialization": "ASCII path sort; mode SPACE type SPACE Git object SHA TAB path LF",
+      "bytes": 1154460,
+      "sha256": "8c5d8961b981f89f4db60ed36e54df7f9e371e5fc7c28d2753163df6223004c2",
+      "truncated": false
+    },
+    "complement": {
+      "leaves": 9524,
+      "bytes": 1152780,
+      "sha256": "b744aafe3929bdf6510a9f7140415c092da9f14cd3dedc769a6241989eaa1a1b"
+    },
+    "taskUrls": [
+      "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466",
+      "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816"
+    ],
+    "rootAddition": "HM04 recovery-candidate.sql is selected solely for corrected HS1 context/digest binding and directly affected exact body identities; all recovery semantics remain.",
+    "historicalFailure": {
+      "run": 43258240430,
+      "attempt": 1,
+      "head": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+      "coreJob": 131322201382,
+      "coreLogSha256": "3d20826117e7e24ce8ea3b977aa0b4aa83e4ddef2d3d773c8f6fb193d05c8890",
+      "hostedJob": 131322201372,
+      "hostedLogSha256": "3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c",
+      "tests": 19,
+      "passed": 10,
+      "failed": 9,
+      "skipped": 0,
+      "conclusion": "FAILURE; no current runtime acceptance"
+    },
+    "changes": [
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+        "bytes": 123166,
+        "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+        "old": {
+          "blob": "6ee66138a4710f4f1b0eefa4f2c30150b1bbd1e6",
+          "bytes": 123162,
+          "sha256": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9"
+        },
+        "edits": [
+          {
+            "before": "<>CASE WHEN x.definer THEN 2 ELSE 1 END",
+            "after": "<>(CASE WHEN x.definer THEN 2 ELSE 1 END)",
+            "oldStart": 98610,
+            "oldEnd": 98649,
+            "newStart": 98610,
+            "newEnd": 98651
+          },
+          {
+            "before": "<>CASE WHEN x.oid=api_id THEN 3 ELSE 2 END",
+            "after": "<>(CASE WHEN x.oid=api_id THEN 3 ELSE 2 END)",
+            "oldStart": 100454,
+            "oldEnd": 100496,
+            "newStart": 100456,
+            "newEnd": 100500
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+        "bytes": 42121,
+        "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2",
+        "old": {
+          "blob": "a2e5961e1c16dacfa92a111353b2f110296a1c19",
+          "bytes": 42117,
+          "sha256": "539d6014fbe75129fa528f7214e69658f0fc0ff9ad7c8879efaf18f183ebcdf8"
+        },
+        "edits": [
+          {
+            "before": "<>CASE WHEN x.definer THEN 2 ELSE 1 END",
+            "after": "<>(CASE WHEN x.definer THEN 2 ELSE 1 END)",
+            "oldStart": 13376,
+            "oldEnd": 13415,
+            "newStart": 13376,
+            "newEnd": 13417
+          },
+          {
+            "before": "<>CASE WHEN x.oid=api_id THEN 3 ELSE 2 END",
+            "after": "<>(CASE WHEN x.oid=api_id THEN 3 ELSE 2 END)",
+            "oldStart": 15220,
+            "oldEnd": 15262,
+            "newStart": 15222,
+            "newEnd": 15266
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "mode": "100644",
+        "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
+        "bytes": 64749,
+        "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21",
+        "old": {
+          "blob": "6114d5b6a985bcc7715ee2b41cc9101bed10e957",
+          "bytes": 64740,
+          "sha256": "8a24ad65bdfa85d4e91539b7c9be7e45dac5128625368d605a9cb990134fa2d8"
+        },
+        "edits": [
+          {
+            "before": "await lifetime.drain([closed,output,...jobs])",
+            "after": "await lifetime.drain<unknown>([closed,output,...jobs])",
+            "oldStart": 61829,
+            "oldEnd": 61874,
+            "newStart": 61829,
+            "newEnd": 61883
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
+        "bytes": 342630,
+        "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5",
+        "old": {
+          "blob": "7e6686da97cf42abaa340b81f07982ced48ecfcf",
+          "bytes": 342626,
+          "sha256": "1dbf982c580368405d36daa8f193d2d1e9dd2097379bc736657b964683f38695"
+        },
+        "edits": [
+          {
+            "before": "<>CASE WHEN x.definer THEN 2 ELSE 1 END",
+            "after": "<>(CASE WHEN x.definer THEN 2 ELSE 1 END)",
+            "oldStart": 41476,
+            "oldEnd": 41515,
+            "newStart": 41476,
+            "newEnd": 41517
+          },
+          {
+            "before": "<>CASE WHEN x.oid=api_id THEN 3 ELSE 2 END",
+            "after": "<>(CASE WHEN x.oid=api_id THEN 3 ELSE 2 END)",
+            "oldStart": 43321,
+            "oldEnd": 43363,
+            "newStart": 43323,
+            "newEnd": 43367
+          },
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 169126,
+            "oldEnd": 169190,
+            "newStart": 169130,
+            "newEnd": 169194
+          },
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 291390,
+            "oldEnd": 291454,
+            "newStart": 291394,
+            "newEnd": 291458
+          },
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 293262,
+            "oldEnd": 293326,
+            "newStart": 293266,
+            "newEnd": 293330
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
+        "bytes": 119673,
+        "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707",
+        "old": {
+          "blob": "f212b46cc1cadbc192b77da53c6767cdf87b0749",
+          "bytes": 119673,
+          "sha256": "39e68835cac901e90bccd1a33bf32a27c42d3e40d1f3750f7851ed0567cc39c3"
+        },
+        "edits": [
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 17517,
+            "oldEnd": 17581,
+            "newStart": 17517,
+            "newEnd": 17581
+          },
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 65969,
+            "oldEnd": 66033,
+            "newStart": 65969,
+            "newEnd": 66033
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+        "mode": "100644",
+        "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a",
+        "bytes": 233228,
+        "sha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611",
+        "old": {
+          "blob": "7cbb20039ebcfe004c1938575b103bcdfcc58ebc",
+          "bytes": 233228,
+          "sha256": "9ffd98e3be6ae319291e1dedfe575d4eb146848856d6dcff93b8e549580ab307"
+        },
+        "edits": [
+          {
+            "before": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9",
+            "after": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "oldStart": 23647,
+            "oldEnd": 23711,
+            "newStart": 23647,
+            "newEnd": 23711
+          }
+        ],
+        "fullInverse": "Apply the literal edits in reverse new-byte offset order; all untouched bytes remain exact.",
+        "inverseVerified": true
+      }
+    ],
+    "documentation": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "blob": "a96a5783544c8494f337552eab3fe66e50df4c47",
+        "bytes": 22075,
+        "sha256": "f595552b95f0e94dead0688d1d7663f72cf2e72f658b15f4f95e8860a93c004d",
+        "old": {
+          "blob": "fce6cb0433dbd6b1521e261e50ab18aaac071fcd",
+          "bytes": 19911,
+          "sha256": "5bfc268d61570b1068e709a9d3a53bb528ac429ba42421fb0d514fd99beae839"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63",
+        "bytes": 20165,
+        "sha256": "1b97529d170323993608367b031c9e88d36d6f005c64a75aa2659a1e9b02a24d",
+        "old": {
+          "blob": "c9b0b292f0c8208a5aa12f2fec573b8d61a9553d",
+          "bytes": 17491,
+          "sha256": "49f8731e2a395e7e6c4fcefef1a8d549120009d58d7d827e9fc4a8103b25ce04"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f",
+        "bytes": 12066,
+        "sha256": "7c5d27060102251486610f4430a69a21ba2778894d0fc38a26af84e711f00668",
+        "old": {
+          "blob": "411981bf7237ebff0e7231d4ddc7a8781f5b7eaf",
+          "bytes": 11080,
+          "sha256": "9f13a0cecf48a81c12ba97ca8c0f3a5038a033afb9148aa66e51133f51a510ed"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+        "mode": "100644",
+        "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28",
+        "bytes": 33375,
+        "sha256": "52abcd1328016552bb9481d7c45dd89a058110f9a2c67303b2955185b6466597",
+        "old": {
+          "blob": "ee48439d215f75bfa0a3e9a55b0cb987c5ea7003",
+          "bytes": 31082,
+          "sha256": "3626bbe3a0606fe1e8bb2266a5ebe742003af1a4a995d0816d6641ed0ef4c556"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "a7abf68711a891b6934662990e23a6637aeede52",
+        "bytes": 52916,
+        "sha256": "0b66668395463bc705540675a128fe1fb10a42021e7ce247bf39d2c1914be261",
+        "old": {
+          "blob": "18acf028455f60df1f378374ed171473b55b2f84",
+          "bytes": 50111,
+          "sha256": "c9b3281dfec4371838e223bfbd787b689afbe42c5e6154512947c1c35596bea5"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c",
+        "bytes": 21560,
+        "sha256": "299dd8af0b705444b82103c6e7730ff3693ffcec6cdc3b7cc5a80841abfe4f24",
+        "old": {
+          "blob": "39afb8c0654566596dc5ce3ba9b23d53b55c1646",
+          "bytes": 20584,
+          "sha256": "e048f95d94f82e0e7d78b8445497e21390f3227c8f866c6a30e2f31ed3571935"
+        },
+        "priorRawTextExactPrefix": true
+      }
+    ],
+    "boundsPreserved": {
+      "HS1Groups": 18,
+      "HS1EffectMs": 150000,
+      "HS1DrainMs": 35000,
+      "HS1WrapperMs": 210000,
+      "HM04Groups": 31,
+      "HM04EffectMs": 240000,
+      "HM04DrainMs": 60000,
+      "HM04WrapperMs": 300000,
+      "fullQuotas": true,
+      "ownedPromisesAndActualCleanup": true
+    },
+    "downstream": "Root must explicitly rebind all consumed COMPOSED/HDP dependencies to this candidate and merge the disjoint HMT/PAI fixes before complete new exact-head gates.",
+    "execution": {
+      "project": false,
+      "parser": false,
+      "compiler": false,
+      "SQL": false,
+      "native": false,
+      "tests": false,
+      "CI": false,
+      "hosted": false,
+      "sourceGET": false,
+      "refs": false,
+      "ready": false,
+      "merge": false
+    },
+    "stops": {
+      "denied917ActionRepeated": false,
+      "issue1131": "NOT_REQUIRED; untouched"
+    },
+    "previousManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "blob": "029c393c99e41abd8cf29cb7ed6c5be939e1b41d",
+      "bytes": 578156,
+      "sha256": "f0f45be0f3fb7e1e90ec9c901da2d032b5103cd1903f88106fc5b6b092925b2a",
+      "ref": "a686e608f597ffa82d44fc9d3992b9b566b89688"
+    },
+    "historyRule": "The full previous manifest remains immutable at previousManifest; existing historical sourceVersionHistory/historicalV1 and prior revision mappings are retained unchanged and do not claim to map this fix."
+  },
+  "historicalA2Identity": {
+    "author": {
+      "display": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4",
+      "session": "/root/m04_durable_jobs_writer_g4",
+      "continuity": "same original reachable Generation4 session; no successor",
+      "selfReviewIsTlPass": false
+    },
+    "binding": {
+      "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6824410013",
+      "a1": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6824554341",
+      "revision": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826242276",
+      "historicalV1SourceReview": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825977269",
+      "historicalV1ReviewIsCurrentPass": false,
+      "reason": "A2 immediate same-session review fix: real restricted Creator provisioning creates a mandatory bootstrap ADMIN-only incidence. V1 A1 composition is P1 blocked."
+    },
+    "baseline": {
+      "tree": "0009fdd6da1ad45930073181eff776e931852cc6",
+      "commit": "d346d8a013ec4151d802430ce46ca4c806bc8f08",
+      "count": 9487,
+      "serialization": "ASCII path sort; mode + SPACE + type + SPACE + Git object SHA + TAB + path + LF",
+      "serializedBytes": 1148389,
+      "sha256": "f0acaa7839f3566230f4270120d733f7b61fd44e5cb4ee2ad2072fac9b85a3d2",
+      "soleParentRequired": true,
+      "candidateLeavesExpected": 9487,
+      "changedExistingPaths": [
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql"
+      ],
+      "changedLeavesExpected": 7,
+      "unchangedLeavesExpected": 9480,
+      "addedPaths": [],
+      "removedPaths": [],
+      "wrapperExact": {
+        "path": "lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts",
+        "blob": "5175ad93ff6485b02c95f2aa9da93e0d0632a204",
+        "bytes": 512,
+        "sha256": "29c745f9db3d79286c9cebadbbfe7f42d80e5875878fef04247c02daf8a87779"
+      },
+      "originalPreHm04LeavesExpected": 9479,
+      "originalPreHm04LeavesRemainExact": true,
+      "proofRule": "Construct on exact base_tree with exactly these seven existing 100644 blob changes; compare all 9487 paths/modes/types/object IDs; require 9480 exact leaves, zero added/removed leaves and wrapper exact. Full tree/sole parent readback follows externally to avoid self-reference.",
+      "externalFinalIdentity": true
+    },
+    "manifestRevisionInverse": {
+      "original": {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "blob": "80df981dc591dc72fc2611f5db6f622e50f77adb",
+        "bytes": 259007,
+        "sha256": "b20ce382908f7b61ca6d745b2fb44dc54f79f8f332da7c48667f82e03abc2f4d"
+      },
+      "candidate": "EXTERNAL_FINAL_RECEIPT",
+      "coverage": "Full immutable original/current manifest blobs, partition [0,fullBytes) in each direction; complete literal original text and actual current raw pin are delivered in the external immutable receipt to avoid circular pins."
+    },
+    "hs1Prerequisite": {
+      "id": "HS1",
+      "key": "hs1",
+      "commit": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+      "tree": "d3bdd862efb7799bca5d03873b84d139dac7ce5b",
+      "consumed": "Selected installer/recovery; source reviewed, NOT_RUN/UNAPPLIED at task binding.",
+      "codePins": [
+        {
+          "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
+          "blob": "18aa68d5a8d845c6e94df52a24e4c95ff2d21d16",
+          "bytes": 348,
+          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+          "sha256": "39a52aafd6caf137ef1e8b0bd22844889c7fd90747e209c82fb0f5c141889263"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+          "blob": "6ee66138a4710f4f1b0eefa4f2c30150b1bbd1e6",
+          "bytes": 123162,
+          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+          "sha256": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+          "blob": "a71ca9a0168bea7c49a54a6affd4d310794337dd",
+          "bytes": 64710,
+          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+          "sha256": "d373c6aaac7d61006fcbc56d95151907bf34a2415e40fa943f2a1e086568cd02"
+        },
+        {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+          "blob": "a2e5961e1c16dacfa92a111353b2f110296a1c19",
+          "bytes": 42117,
+          "ref": "4278696db179cd1b1d056bb64237e3bfff12ef8a",
+          "sha256": "539d6014fbe75129fa528f7214e69658f0fc0ff9ad7c8879efaf18f183ebcdf8"
+        }
+      ],
+      "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
+    }
+  },
+  "revisionPreservationScope": "Historical V1 to A2 mapping retained verbatim; current exact forward/inverse edits are reviewFix.changes."
 }

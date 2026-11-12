@@ -94,3 +94,27 @@ C05 establishes closure of this proof's own real local callers. A caller flag or
 Root must review the complete source, immutable pins and inverse tree evidence, then separately integrate and run actual mandatory PG17 tests plus all unchanged individual proof gates. Every changed head invalidates earlier exact-head gates. No author claim is TL-PASS. Source review, parser/compiler tests, native execution, CI, hosted application and production checks remain unperformed by this author.
 
 #917 denied actions are never repeated or routed elsewhere; #1131 remains NOT_REQUIRED and untouched. No hosted operation, credential access, official-source GET, ref/PR publication, Ready, merge, CI dispatch or package/selector change occurred in this source task. Stop after immutable delivery; this same session remains reachable for immediate Root review corrections.
+
+
+## Current FIX1 integration — 12 November 2026
+
+This section supersedes the earlier delivery/session and current-pin statements while preserving their complete historical text. Replacement integration author: **Jetnity Official Truth Composed Dev/HDP Review Fix — Generation2**, actual session `/root/source_and_schema`; the original sessions are not reachable in this chat, as recorded in [TL continuation](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829730765). Root selected this source-only assembly after independently reviewing the three returned fixes.
+
+Sole parent `a686e608f597ffa82d44fc9d3992b9b566b89688`, tree `b4f54fad7d9981f8b7676b42b271bf6740a17f48`. Import exactly the 24 disjoint changed blobs below without alteration; change only COMPOSED's four consumed HS1/HM04 SQL pins and the six COMPOSED/HDP evidence documents. The full candidate retains 9,538 leaves: 31 existing paths changed, no additions/deletions, 9,507 other paths/modes/types/blobs exact. Selectors, CI, package/lock, fixtures, wrappers and COMPOSED's non-pin implementation remain exact.
+
+- HS1 FIX1 and HM04 FIX1/A1: `3c4135470e7f361b5860861a796763c7cb91984b` (14 existing paths).
+- PAI1 FIX1: `102a294bd583969ad162b54994682bed98cdc71c` (5 existing paths).
+- HMT1 DIAG1: `7e77d601661b43ff612d332f7313018c61c4df16` (5 existing paths).
+
+[Actual failed CI4139](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466) remains failed evidence: Core Typecheck failed and Hosted PG17 returned 19 tests / 10 pass / 9 fail; COMPOSED C01 failed with 42601. The supplied HS1/HM04 syntax corrections and PAI column aliases are source-reviewed repairs; **HMT DIAG1 only adds bounded evidence for the unresolved P7903** and is not a causal fix or runtime PASS. No result from the failed parent transfers to this candidate.
+
+The complete 66-entry COMPOSED pin set matches the assembled tree, with 62 unchanged dependencies and these four selected corrections:
+
+| Complete source | Git blob | UTF-8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| `official-truth-v3-hosted-intake-store-1/install-candidate.sql` | `f93c254231af405101492cde0a6947bf4d4d4b89` | 123166 | `9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55` |
+| `official-truth-v3-hosted-intake-store-1/recovery-candidate.sql` | `e87024ebe82102e4756ee0a87ccb966c9de1b75f` | 42121 | `2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2` |
+| `official-truth-v3-hosted-durable-jobs-1/install-candidate.sql` | `3b615dbdce93048bb56f589bcdb41de17252dda0` | 342630 | `8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5` |
+| `official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql` | `795dfc4c72f829102aedf52b53cc5c4e2aacea99` | 119673 | `cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707` |
+
+No project/parser/compiler/native/SQL/test/build execution, hosted action, source GET, ref/PR publication, Ready or merge was performed by this author. Original guards, proof cases, resource limits and awaited cleanup remain unchanged. Root must independently review this exact tree and run fresh complete CI/native/Preview gates; HMT's unresolved cause remains open even if earlier source-review receipts passed. No Dev install, real Owner/AAL2 proof, D1 approval or public CH-DE result is claimed. #917's rejected action and #1131 remain untouched. STOP after immutable delivery; Root alone publishes and accepts.

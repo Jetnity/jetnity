@@ -605,7 +605,7 @@ BEGIN
         (CASE x.defaults WHEN 0 THEN NULL WHEN 3 THEN '0, 16, 8192' ELSE '0' END)
       OR pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(p.prosrc,'UTF8')),'hex')<>x.body_hash
       OR (SELECT count(*) FROM pg_catalog.aclexplode(COALESCE(p.proacl,pg_catalog.acldefault('f',owner_id))))
-        <>CASE WHEN x.definer THEN 2 ELSE 1 END
+        <>(CASE WHEN x.definer THEN 2 ELSE 1 END)
       OR EXISTS (SELECT 1 FROM pg_catalog.aclexplode(COALESCE(p.proacl,pg_catalog.acldefault('f',owner_id))) a
         WHERE a.grantor<>owner_id OR a.privilege_type<>'EXECUTE' OR a.is_grantable
           OR NOT (a.grantee=owner_id OR x.definer AND a.grantee=caller_id)) THEN
@@ -632,7 +632,7 @@ BEGIN
   END IF;
   FOR x IN SELECT n.* FROM pg_catalog.pg_namespace n WHERE n.oid IN (private_id,api_id) LOOP
     IF (SELECT count(*) FROM pg_catalog.aclexplode(COALESCE(x.nspacl,pg_catalog.acldefault('n',owner_id))))
-        <>CASE WHEN x.oid=api_id THEN 3 ELSE 2 END
+        <>(CASE WHEN x.oid=api_id THEN 3 ELSE 2 END)
       OR EXISTS (SELECT 1 FROM pg_catalog.aclexplode(COALESCE(x.nspacl,pg_catalog.acldefault('n',owner_id))) e
         WHERE e.grantor<>owner_id OR e.is_grantable
           OR NOT (e.grantee=owner_id AND e.privilege_type IN ('CREATE','USAGE')

@@ -1,3 +1,16 @@
+<!-- PAI1_FIX1_CURRENT_BEGIN -->
+## PAI1-FIX1 — current source-only correction, 12 November 2026
+
+New replacement author: **Jetnity Profile Authority Integrity1 — Codex Generation2**, session `/root/pai_fix`; the original Generation1 session is unreachable in the current thread, and the Product Owner's standing replacement-session authorization applies.
+Sole parent: `a686e608f597ffa82d44fc9d3992b9b566b89688`; base tree: `b4f54fad7d9981f8b7676b42b271bf6740a17f48`.
+Selected [PAI1-FIX1 task](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829530744); [actual CI4139 failure](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466).
+The only executable source edit adds distinct `claim_reset`, `sub_reset`, and `claims_value` result labels to the existing three-expression `setClaims()` SELECT.
+All calls, arguments, parameter, false flag, order, await, assertions, ten proof groups and resource limits remain exact; the wire reader, installer, baseline and wrapper are unchanged.
+Current native: **62649 UTF-8 bytes**, SHA-256 `926ba90156ef7ea279a34fb64d2bdb3fe66eb3c07bc149dccc858ebe36f20cf7`, Git blob `7fefc442cfbd7344fa9cbe992bcd733803e1c094`.
+**NOT_RUN / NOT_INSTALLED / NOT_TL_PASS**: no project, parser, compiler, test, native, SQL, CI, hosted, official-source or ref action was performed by this replacement author.
+The earlier SOURCE-V1/A1 material below is preserved historical evidence; this section records the current revision.
+<!-- PAI1_FIX1_CURRENT_END -->
+
 # Profile Authority Integrity 1 — author handoff V1
 
 ## State and exact selection
@@ -117,3 +130,8 @@ The next exact step is independent Root review of the immutable eight-file commi
 ## Primary documentation consulted
 
 [PostgreSQL 17 CREATE TRIGGER](https://www.postgresql.org/docs/17/sql-createtrigger.html) and [PostgreSQL 17 trigger overview](https://www.postgresql.org/docs/17/trigger-definition.html) support the selected BEFORE ROW semantics, alphabetic trigger order, INSERT/UPDATE behavior and ordinary triggers firing during FK actions. The exact actual cascade invoker is deliberately proved by the authored native observer rather than inferred from those general pages. [Supabase changelog](https://supabase.com/changelog) was checked as required by the Supabase skill; this package introduces no SDK or platform version upgrade.
+
+
+## FIX1 source preservation and next step
+
+Exactly five existing paths change: Native and these four PAI evidence documents; every other 9,533 parent leaf must retain mode/type/blob identity. The old Native is 62,605 UTF-8 bytes, SHA-256 `b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f`, Git blob `74ee8cad74835c6e6fa6757cfefb40d878704898`. One exact SELECT replacement is reversible to the complete original bytes. Historical CI4139 failed at PAI1-01 with `local_pg_duplicate_column`; no complete PAI runtime PASS is claimed. Root must independently review, select coherent integration with the other #1196 fixes and run full fresh gates before any Dev decision. #917's denied action and #1131 remain excluded.

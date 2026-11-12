@@ -382,3 +382,24 @@ Current accepted main is fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474; this source p
 P1 remains actual permission/lifecycle and E10 profile integrity before hosted installation; P2 remains unmeasured complete workload with the larger fresh catalog checks and package composition. No runtime result or target mutation has occurred. No change to #917 STOP or #1131 NOT_REQUIRED. Original Generation4 session remains reachable for any immediate review fix; no automatic next slice.
 
 **Next:** Root finishes HMT review and HMA R6 re-gating, then issues a concrete bounded integration task.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Actual HDP CI4139 / run43258240430: HM04 failed at intake_candidate with SQLSTATE42601; its 31 groups are not passed. The two copied HS1 CASE operands are parenthesized. The exact selected HS1 installer digest changes to 9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55 in all three installer package-context occurrences, both recovery occurrences and the one Native assertion. The runtime assert_catalog_v1 body changes only in that context digest; its complete current body is covered by the unchanged fresh computed catalog fingerprint. No fixed self-body guard is removed or weakened. All 31 groups, full quotas, original 240/60/300-second limits and cleanup semantics remain mandatory.
+
+- scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql — blob 3b615dbdce93048bb56f589bcdb41de17252dda0, 342630 UTF8 bytes, SHA256 8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5
+- scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql — blob 795dfc4c72f829102aedf52b53cc5c4e2aacea99, 119673 UTF8 bytes, SHA256 cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707
+- scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts — blob 1dab19eb84e429cd47ff8305164e31ca89b7908a, 233228 UTF8 bytes, SHA256 26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611
+
+Historical actual failure remains FAILURE: Core typecheck stopped later Core gates; Hosted PG17 had 19 tests, 10 PASS, 9 FAIL, 0 skip. Sources: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466 and https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816.
+
+Both wrappers remain exact. All old task/handoff text above is retained byte-for-byte; manifests retain historical pins and append the precise forward/inverse edit ledger. The current 14-path combined candidate changes six source files and these eight evidence documents, with 9524 other parent leaves exact. Downstream COMPOSED/HDP consumes these changed hashes and must be rebound explicitly by Root.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

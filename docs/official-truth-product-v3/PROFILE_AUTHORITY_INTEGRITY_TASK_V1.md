@@ -1,3 +1,16 @@
+<!-- PAI1_FIX1_CURRENT_BEGIN -->
+## PAI1-FIX1 — current source-only correction, 12 November 2026
+
+New replacement author: **Jetnity Profile Authority Integrity1 — Codex Generation2**, session `/root/pai_fix`; the original Generation1 session is unreachable in the current thread, and the Product Owner's standing replacement-session authorization applies.
+Sole parent: `a686e608f597ffa82d44fc9d3992b9b566b89688`; base tree: `b4f54fad7d9981f8b7676b42b271bf6740a17f48`.
+Selected [PAI1-FIX1 task](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829530744); [actual CI4139 failure](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466).
+The only executable source edit adds distinct `claim_reset`, `sub_reset`, and `claims_value` result labels to the existing three-expression `setClaims()` SELECT.
+All calls, arguments, parameter, false flag, order, await, assertions, ten proof groups and resource limits remain exact; the wire reader, installer, baseline and wrapper are unchanged.
+Current native: **62649 UTF-8 bytes**, SHA-256 `926ba90156ef7ea279a34fb64d2bdb3fe66eb3c07bc149dccc858ebe36f20cf7`, Git blob `7fefc442cfbd7344fa9cbe992bcd733803e1c094`.
+**NOT_RUN / NOT_INSTALLED / NOT_TL_PASS**: no project, parser, compiler, test, native, SQL, CI, hosted, official-source or ref action was performed by this replacement author.
+The earlier SOURCE-V1/A1 material below is preserved historical evidence; this section records the current revision.
+<!-- PAI1_FIX1_CURRENT_END -->
+
 # Profile Authority Integrity 1 — complete source task and evidence
 
 **State: SOURCE ONLY / UNPUBLISHED / NOT RUN / NOT INSTALLED.**
@@ -923,3 +936,59 @@ SELECT pg_catalog.jsonb_build_object(
 All work in this author session is inert text, JSON, hashing and immutable Git-object construction. No parser, compiler, project test, PostgreSQL cluster, SQL, hosted metadata query, hosted write, official-source request, ref, PR, Ready or merge has been executed. Exact-head independent Root review is next; author self-review is never Technical-Lead PASS.
 
 Every new candidate head invalidates earlier exact-head gates. Immediate review fixes belong to this same named session while reachable. If Root selects a replacement because a session is unreachable, the Product Owner's standing replacement-session exception must be recorded; it does not remove any independent review or security boundary.
+
+
+## Complete selected PAI1-FIX1 task
+
+## PAI1-FIX1 — exact baseline claim-query result labels; immediate original-session review-fix
+
+Root selection under CHANGES REQUIRED https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466. Original implementation identity: **Jetnity Profile Authority Integrity1 — Codex Generation1**, original task #1139 comment6825593411/A1 comment6825665177. Return to that original reachable session; if it truly cannot be reached, record the replacement session under the user's standing exception, never impersonate the original.
+
+**Sole source parent:** failed HDP integration commit `a686e608f597ffa82d44fc9d3992b9b566b89688`, tree `b4f54fad7d9981f8b7676b42b271bf6740a17f48`,9538 leaves. No publication or hosted operation is selected.
+
+### Concrete independently read failure and cause
+
+Actual CI4139/run43258240430/Hosted job131322201372: PAI1-01 exits with `local_pg_duplicate_column`, before its original-defect proof completes. Full log159255bytes/SHA256 `3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c`.
+
+Root read the complete Native blob `74ee8cad74835c6e6fa6757cfefb40d878704898`,62605bytes/SHA256 `b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f`, and actual unchanged wire reader. `setClaims()` executes one SELECT containing three `pg_catalog.set_config(...)` expressions with no aliases. Each result column is therefore named set_config; the existing wire reader rejects duplicate result-column names. This runs at the first f.update through asHuman, matching the actual first-group failure.
+
+### Narrow correction
+
+Add three explicit distinct result aliases to that one SELECT, for example claim_reset/sub_reset/claims_value. Preserve the three actual set_config expressions, arguments, parameter, false/local flag, order, query count and await. Do not expose their returned claim contents in logs. Change no wire-reader behavior, JWT precedence, simulated identity, fixture rows, old profile/Auth baseline, production SQL, security guard, scenario, assertion, timing, cleanup or role semantics.
+
+Allowed changes: `scripts/db/profile-authority-integrity-1/native.ts` and its four existing PROFILE_AUTHORITY_INTEGRITY Task/Handoff/Recovery/Manifest evidence documents only. The installer, observed-baseline.json, wrapper and all other9533parent leaves stay exact. Retain all ten proof groups, the three real old-contract defects, false one-account sequence refusal, full Auth cascade, original90s effects/35s drain/130s wrapper,3clusters/16connections/4096operations and actual ownership accounting.
+
+Preserve complete prior task/handoff/history and this exact task; report actual old failure honestly. Produce complete before/after pins, one exact forward edit/inverse for Native and full complement proof. Update only affected current pins; historical original pins remain historical. No runtime PASS or Dev correction claim.
+
+SOURCE ONLY: immutable Git objects and inert text/hash/tree comparisons; no project/parser/compiler/test/native/SQL/build/APT/CI/hosted/sourceGET, ref/PR/Ready/merge, real account or credential action. Return exact new commit/tree and full pins, then STOP reachable for independent Root review and coherent full re-gating. All #917/#1131 boundaries remain.
+
+
+## Retained actual CI4139 failure and correction boundary
+
+## TL CHANGES REQUIRED — HDP1-A1 / CI4139
+
+Exact head `a686e608f597ffa82d44fc9d3992b9b566b89688`, run `43258240430`, attempt1. Root independently read both complete failing logs. No Ready, merge, Dev installation, source/public activation or retry of this unchanged head is selected.
+
+**Core job131322201382:** 108128 bytes, SHA256 `3d20826117e7e24ce8ea3b977aa0b4aa83e4ddef2d3d773c8f6fb193d05c8890`. Typecheck fails at HS1 native.ts(683,40): Promise<Record<string,unknown>> cannot be passed as Promise<void>. Later Core gates did not execute.
+
+**Hosted PG17 job131322201372:** 159255 bytes, SHA256 `3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c`. Actual signed packages/owned server report PG170012. Six mandatory wrappers executed; 19 tests,10pass,9fail,0cancel,0skip.
+
+- COMPOSED C01 fails with SQLSTATE42601 before any group completes.
+- HM04 fails specifically at phase intake_candidate with SQLSTATE42601; all25 owned operations settled, three connections closed and one started cluster stopped. Its own31-group proof is not passed.
+- HS1's first atomic prerequisite group passes; its next hostile-grant group encounters42601 instead of the expected guarded refusal. This is a real failure, not acceptable refusal evidence.
+- HMT's first group fails withP7903; no HMT group completes. Actual442/442 owned operations, four connections closed, one started cluster stopped.
+- PAI1's first baseline-defect group fails with local_pg_duplicate_column from the actual wire reader; no subsequent profile-integrity proof passes.
+- The unchanged HMA1 package still passes all eight groups, actual owned waits/rollback/late-writer recovery and terminal cleanup. That does not waive any failure above.
+
+### Immediate versioned original-session review-fix assignments
+
+**HS1/HDP1-FIX1:** original Hosted Intake / HDP1 Generation1 session takes the immediate HS1 type/SQL42601 review-fix. Source parent is this exact failed a686 head. Permitted source edits only within the original eight HS1 package paths: install/recovery/native/wrapper and four HOSTED_INTAKE_STORE evidence documents, plus the three HOSTED_DEV_PACKAGE evidence documents. Diagnose the actual syntax/typed ownership cause first; report it precisely. Repair syntax/types while preserving every role/grantor/dependency/RLS/catalog requirement, every scenario, original effect/drain/deadline limits, actual joins and failure propagation. No catch/skip/expected42601 workaround, relaxed inventory or runtime authority. Any changed self-body/dependency pins must be complete and independently reconstructable. Do not silently rewrite COMPOSED or HM04 source pins; report the exact downstream dependency amendment needed for a separately selected integration.
+
+**HMT1-FIX1:** original Human Method Transport Generation1 session pauses the in-progress UI task with its source retained and immediately diagnoses the actual P7903. Source parent is the same failed a686 head. Permitted source edits only within its original eight HMT package paths (install/recovery/native/wrapper plus four HUMAN_METHOD_TRANSPORT evidence documents). Any correction must retain all four parsed SQL INVOKER wrappers, exact actual Owner/AAL2 PG1 chain, role/ACL/dependency/function-identity checks, unchanged historical receipts, fresh confirmation, every eight Native groups and original resource/cleanup limits. Do not convert a shape/identity refusal into expected success or relax the guard. If the existing redacted SQLSTATE does not identify the cause, report the precise bounded diagnostic source amendment first; do not claim a speculative cause. The UI task remains unfinished, with its A1 dependency parent historical until Root reconciles the corrected integration.
+
+PAI1-FIX1 remains assigned to the original PAI author once its precise baseline query defect is independently identified. No changes to the production wire reader or old profile/Auth baseline are authorized.
+
+All fixes are **SOURCE ONLY**: immutable Git object authoring and inert text/hash/tree inspection; no parser/compiler/project/test/native/SQL/APT/CI/hosted/sourceGET execution or refs/PRs/Ready/merge. Preserve every prior task/handoff/failure verbatim, append the exact fix task, provide complete parent→candidate diff/inverse/full pins and honest NOT_RUN status, then STOP reachable. Root reviews actual changes, selects a coherent new integration head and performs complete fresh exact-head gates. No author self-review substitutes for TL-PASS.
+
+#917's accepted human Stage1 readback stays scoped; the denied action is not repeated, rerouted or delegated. #1131 remains NOT_REQUIRED and untouched. No weakening of user or platform security boundaries.
+

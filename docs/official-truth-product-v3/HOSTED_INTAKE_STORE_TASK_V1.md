@@ -161,3 +161,20 @@ Keep the complete previous Task/Handoff/history verbatim, append this complete t
 
 ### Delivery boundary
 Only immutable Git objects and inert text/hash/tree comparisons; no parser/compiler/SQL/native/tests/build/APT execution, CI/ref/PR publication, Ready, merge, hosted action or official source GET. Full actual tree/sole-parent and raw file readback; give exact pins, complete complement equality and a full Native inverse restoring a71ca9a…. STOP for independent Root review. Same session remains available. #917/#1131 remain untouched. Actual joint PG17/main integration will be a separate explicit Root task; do not begin it automatically.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Root task: implement the specific HS1 type/SQL syntax and copied HM04 syntax corrections on the failed HDP parent; keep every guard, scenario, quota and resource boundary; bind complete current installer/dependency pins; deliver only immutable source objects for independent review. Root additionally selected HM04 recovery-candidate.sql solely for the corrected HS1 dependency-context digest and directly affected exact body identities, preserving unused/history refusal rules. COMPOSED and HDP pin reconciliation belongs to Root.
+
+Actual HDP CI4139 / run43258240430: Typecheck failed at HS1 native.ts(683,40), and HS1 encountered SQLSTATE42601. Both installer and recovery have two top-level IF comparisons with CASE expressions whose inner THEN must be protected by parentheses. Only those CASE operands are parenthesized, with every value, guard and clause retained. Native explicitly selects drain<unknown> for the original [closed, output, ...jobs] promises; the same objects are registered and awaited with unchanged failure/cleanup behavior. All 18 groups and 150/35/210-second limits remain mandatory.
+
+Historical actual failure remains FAILURE: Core typecheck stopped later Core gates; Hosted PG17 had 19 tests, 10 PASS, 9 FAIL, 0 skip. Sources: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466 and https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

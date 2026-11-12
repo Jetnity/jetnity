@@ -124,7 +124,7 @@ async function candidate(connection: LocalPgConnection, sql = install): Promise<
 async function setClaims(connection: LocalPgConnection, value: unknown): Promise<void> {
   const encoded = JSON.stringify(value)
   assert.ok(typeof encoded === 'string')
-  await connection.query("SELECT pg_catalog.set_config('request.jwt.claim','',false),pg_catalog.set_config('request.jwt.claim.sub','',false),pg_catalog.set_config('request.jwt.claims',$1,false)", [pgText(encoded)])
+  await connection.query("SELECT pg_catalog.set_config('request.jwt.claim','',false) AS claim_reset,pg_catalog.set_config('request.jwt.claim.sub','',false) AS sub_reset,pg_catalog.set_config('request.jwt.claims',$1,false) AS claims_value", [pgText(encoded)])
 }
 async function fixture(lifetime: OwnedTestLifetime, budget: Budget) {
   const cluster = newCluster(lifetime, budget)

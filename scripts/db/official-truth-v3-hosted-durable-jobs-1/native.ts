@@ -246,7 +246,7 @@ function assertHostedSourcePins(): void {
   }
   assert.equal(digest(pg1Candidate), '3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2')
   assert.equal(digest(ma1Candidate), 'edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0')
-  assert.equal(digest(s1Candidate), '7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9')
+  assert.equal(digest(s1Candidate), '9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55')
 }
 const AUTH_HELPER_BODIES = Object.freeze({
   "jwt": "\n  select \n    coalesce(\n        nullif(current_setting('request.jwt.claim', true), ''),\n        nullif(current_setting('request.jwt.claims', true), '')\n    )::jsonb\n",

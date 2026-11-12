@@ -2,27 +2,21 @@
   "schema": "jetnity.profile-authority-integrity.source-manifest.v1",
   "selection": {
     "task": "PROFILE-AUTHORITY-INTEGRITY-1",
-    "version": "SOURCE-V1",
-    "amendment": "A1",
+    "version": "PAI1-FIX1",
     "date": "2026-11-12",
-    "authorSession": "Jetnity Profile Authority Integrity1 — Codex Generation1",
+    "authorSession": "Jetnity Profile Authority Integrity1 — Codex Generation2",
+    "session": "/root/pai_fix",
+    "replacementReason": "Original Generation1 session unreachable in current thread; Product Owner standing replacement-session authorization",
     "rootTask": {
-      "issue": 1139,
-      "comment": "6825593411",
-      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825593411",
-      "bytes": 12094,
-      "sha256": "ca75147bef77bc630911ad8af37e802e6924326ca4cb36fb412884a2f2a8c304"
-    },
-    "rootSupplement": {
-      "issue": 1139,
-      "comment": "6825665177",
-      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825665177",
-      "bytes": 1893,
-      "sha256": "436ecfbe14f341cb2e58d6df97106934b7da7959468d0422e2bb1ad716169623"
+      "issue": 1196,
+      "comment": "6829530744",
+      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829530744",
+      "bytes": 3244,
+      "sha256": "0231f74d749b5a3150f73ad0d7282793d0f8ae55f0d93fbcf2bc6d23ff034290"
     }
   },
   "truth": {
-    "state": "SOURCE_ONLY_UNPUBLISHED_NOT_RUN_NOT_INSTALLED",
+    "state": "PAI1_FIX1_SOURCE_ONLY_NOT_RUN_NOT_INSTALLED_NOT_TL_PASS",
     "authorSelfReviewIsTechnicalLeadPass": false,
     "ready": false,
     "executedParser": false,
@@ -43,18 +37,18 @@
   },
   "gitEnvelope": {
     "repository": "Jetnity/jetnity",
-    "soleParent": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
-    "baseTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
-    "baseLeafCount": 9486,
-    "expectedNewLeafCount": 9494,
+    "soleParent": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "baseTree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
+    "baseLeafCount": 9538,
+    "expectedNewLeafCount": 9538,
     "baseLeafStream": {
       "encoding": "UTF-8",
       "sort": "ascending path by code point",
       "record": "path\\tmode\\ttype\\tsha\\n",
-      "sha256": "3893a6aaa16111dfba0af90e401674420040bb4c17b3ee4143eb1aa1467f9622"
+      "sha256": "e6449be11cc6f0a14f496e1d5d7e44f5236b5eb787b93708f64c5b8fb2fa4346"
     },
-    "existingLeafMutationsAllowed": 0,
-    "addedLeafCount": 8,
+    "existingLeafMutationsAllowed": 5,
+    "addedLeafCount": 0,
     "allPaths": [
       "scripts/db/profile-authority-integrity-1/install-candidate.sql",
       "scripts/db/profile-authority-integrity-1/observed-baseline.json",
@@ -65,7 +59,15 @@
       "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
       "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json"
     ],
-    "candidateCommitTreeAndActualCompleteTreeReadback": "External delivery receipt; never self-referential in this source tree"
+    "candidateCommitTreeAndActualCompleteTreeReadback": "External delivery receipt; never self-referential in this source tree",
+    "changedPaths": [
+      "scripts/db/profile-authority-integrity-1/native.ts",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json"
+    ],
+    "unchangedComplementLeaves": 9533
   },
   "artifacts": [
     {
@@ -88,9 +90,9 @@
       "path": "scripts/db/profile-authority-integrity-1/native.ts",
       "mode": "100644",
       "type": "blob",
-      "bytes": 62605,
-      "sha256": "b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f",
-      "gitBlob": "74ee8cad74835c6e6fa6757cfefb40d878704898"
+      "bytes": 62649,
+      "sha256": "926ba90156ef7ea279a34fb64d2bdb3fe66eb3c07bc149dccc858ebe36f20cf7",
+      "gitBlob": "7fefc442cfbd7344fa9cbe992bcd733803e1c094"
     },
     {
       "path": "lib/readiness/profile-authority-integrity-1.test.ts",
@@ -104,25 +106,25 @@
       "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 54311,
-      "sha256": "56f11c73424f13484a8822952387690a9ef0318163d2842285c487ee458a6766",
-      "gitBlob": "be5613ac44f8cae6d8960f56930866bbee4294a9"
+      "bytes": 63858,
+      "sha256": "7d37ff2ff2f995165a826cf74840f8cc15a52da6d8994c2c45bba1c064ea43c3",
+      "gitBlob": "19e0d2acad50a0244b73c887ffab1febed3ef2ef"
     },
     {
       "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 18004,
-      "sha256": "c5ee49cc63108e97b14cce4dc5fc04f67967eba2fe9ded0630f6ab5ae6a9aab1",
-      "gitBlob": "caccc4f01b468ad7adc2f8eac47ea1f865552363"
+      "bytes": 20241,
+      "sha256": "f0d1a45d22b198164db054a11c7bc5e505ad224d77fbd39d78b205f1e8926bb8",
+      "gitBlob": "e530ce427e593b3eabb198fc52ffd3ccccff52e2"
     },
     {
       "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 5581,
-      "sha256": "106722108d3ef559cbd748e71ee5cc8bb82ab41de399a224b8838f87afe27b8f",
-      "gitBlob": "6fb20d7bfe299608c77c72efbfc1ec6f613b726b"
+      "bytes": 7543,
+      "sha256": "770bf55d926fa6153276faa780181821fa523a74ffbfc4a6148952ea4c388942",
+      "gitBlob": "c9b8f439ded7201e99386f022e7ec00198fb9333"
     }
   ],
   "manifestSelf": {
@@ -290,7 +292,7 @@
     }
   },
   "native": {
-    "status": "AUTHORED_NOT_EXECUTED",
+    "status": "PAI1_FIX1_AUTHORED_NOT_EXECUTED_AFTER_CI4139_FAILURE",
     "wrapper": "lib/readiness/profile-authority-integrity-1.test.ts",
     "mandatoryPgFamily": 17,
     "ciRoutingAdded": false,
@@ -398,5 +400,188 @@
     "https://www.postgresql.org/docs/17/trigger-definition.html",
     "https://supabase.com/changelog"
   ],
-  "nextRequiredStep": "Root independent exact-source review of immutable eight-file commit; Root alone selects actual execution/integration/PG17 routing, re-gating, publication and separately bound Dev apply/readback"
+  "nextRequiredStep": "Root independent review of the five-path PAI1-FIX1 source-only correction; coherent #1196 integration and full fresh execution gates before any Dev install decision.",
+  "historicalSourceV1A1": {
+    "selection": {
+      "task": "PROFILE-AUTHORITY-INTEGRITY-1",
+      "version": "SOURCE-V1",
+      "amendment": "A1",
+      "date": "2026-11-12",
+      "authorSession": "Jetnity Profile Authority Integrity1 — Codex Generation1",
+      "rootTask": {
+        "issue": 1139,
+        "comment": "6825593411",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825593411",
+        "bytes": 12094,
+        "sha256": "ca75147bef77bc630911ad8af37e802e6924326ca4cb36fb412884a2f2a8c304"
+      },
+      "rootSupplement": {
+        "issue": 1139,
+        "comment": "6825665177",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825665177",
+        "bytes": 1893,
+        "sha256": "436ecfbe14f341cb2e58d6df97106934b7da7959468d0422e2bb1ad716169623"
+      }
+    },
+    "truth": {
+      "state": "SOURCE_ONLY_UNPUBLISHED_NOT_RUN_NOT_INSTALLED",
+      "authorSelfReviewIsTechnicalLeadPass": false,
+      "ready": false,
+      "executedParser": false,
+      "executedCompiler": false,
+      "executedProjectTests": false,
+      "executedNative": false,
+      "executedSql": false,
+      "hostedMetadataCalledByAuthor": false,
+      "hostedMutation": false,
+      "officialSourceFetch": false,
+      "refMutation": false,
+      "pullRequestMutation": false,
+      "merged": false,
+      "e10Closed": false,
+      "e18Closed": false,
+      "e24Closed": false,
+      "chToDePublished": false
+    },
+    "gitEnvelope": {
+      "repository": "Jetnity/jetnity",
+      "soleParent": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "baseTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+      "baseLeafCount": 9486,
+      "expectedNewLeafCount": 9494,
+      "baseLeafStream": {
+        "encoding": "UTF-8",
+        "sort": "ascending path by code point",
+        "record": "path\\tmode\\ttype\\tsha\\n",
+        "sha256": "3893a6aaa16111dfba0af90e401674420040bb4c17b3ee4143eb1aa1467f9622"
+      },
+      "existingLeafMutationsAllowed": 0,
+      "addedLeafCount": 8,
+      "allPaths": [
+        "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+        "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+        "scripts/db/profile-authority-integrity-1/native.ts",
+        "lib/readiness/profile-authority-integrity-1.test.ts",
+        "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
+        "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+        "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json"
+      ],
+      "candidateCommitTreeAndActualCompleteTreeReadback": "External delivery receipt; never self-referential in this source tree"
+    },
+    "artifacts": [
+      {
+        "path": "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 36608,
+        "sha256": "2dda7f1bd523e5046bcc72f352a876133d1c7ed01994eb7687c6d1c9d3218774",
+        "gitBlob": "1b7e36b8100e5425a833d7c44189ab6632611308"
+      },
+      {
+        "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 38527,
+        "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8",
+        "gitBlob": "bd32f072ae7d8edaee67297a26adab9c3a886d73"
+      },
+      {
+        "path": "scripts/db/profile-authority-integrity-1/native.ts",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 62605,
+        "sha256": "b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f",
+        "gitBlob": "74ee8cad74835c6e6fa6757cfefb40d878704898"
+      },
+      {
+        "path": "lib/readiness/profile-authority-integrity-1.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 569,
+        "sha256": "684526827bb055a4da3b80807171a88753a02d97245e5d094b9f7966090efbc0",
+        "gitBlob": "6b18b4e9e806c39ad13bea853c2ba2c8ed1c0377"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 54311,
+        "sha256": "56f11c73424f13484a8822952387690a9ef0318163d2842285c487ee458a6766",
+        "gitBlob": "be5613ac44f8cae6d8960f56930866bbee4294a9"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 18004,
+        "sha256": "c5ee49cc63108e97b14cce4dc5fc04f67967eba2fe9ded0630f6ab5ae6a9aab1",
+        "gitBlob": "caccc4f01b468ad7adc2f8eac47ea1f865552363"
+      },
+      {
+        "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 5581,
+        "sha256": "106722108d3ef559cbd748e71ee5cc8bb82ab41de399a224b8838f87afe27b8f",
+        "gitBlob": "6fb20d7bfe299608c77c72efbfc1ec6f613b726b"
+      }
+    ],
+    "nativeStatus": "AUTHORED_NOT_EXECUTED",
+    "nextRequiredStep": "Root independent exact-source review of immutable eight-file commit; Root alone selects actual execution/integration/PG17 routing, re-gating, publication and separately bound Dev apply/readback"
+  },
+  "reviewFix1": {
+    "actualFailure": {
+      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466",
+      "run": "43258240430",
+      "attempt": 1,
+      "job": "131322201372",
+      "group": "PAI1-01",
+      "code": "local_pg_duplicate_column",
+      "hostedLog": {
+        "bytes": 159255,
+        "sha256": "3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c"
+      },
+      "originalFullFailureTextInTask": true
+    },
+    "cause": "Three set_config expressions in setClaims SELECT return duplicate default result-column labels; unchanged wire reader refuses them.",
+    "before": {
+      "path": "scripts/db/profile-authority-integrity-1/native.ts",
+      "bytes": 62605,
+      "sha256": "b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f",
+      "gitBlob": "74ee8cad74835c6e6fa6757cfefb40d878704898"
+    },
+    "after": {
+      "path": "scripts/db/profile-authority-integrity-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 62649,
+      "sha256": "926ba90156ef7ea279a34fb64d2bdb3fe66eb3c07bc149dccc858ebe36f20cf7",
+      "gitBlob": "7fefc442cfbd7344fa9cbe992bcd733803e1c094"
+    },
+    "edit": {
+      "occurrences": 1,
+      "from": "SELECT pg_catalog.set_config('request.jwt.claim','',false),pg_catalog.set_config('request.jwt.claim.sub','',false),pg_catalog.set_config('request.jwt.claims',$1,false)",
+      "to": "SELECT pg_catalog.set_config('request.jwt.claim','',false) AS claim_reset,pg_catalog.set_config('request.jwt.claim.sub','',false) AS sub_reset,pg_catalog.set_config('request.jwt.claims',$1,false) AS claims_value",
+      "inverse": "Replace the unique to string with from; complete parent Native bytes are recovered."
+    },
+    "preserved": [
+      "all three set_config calls and arguments",
+      "false/local flag",
+      "parameter and expression order",
+      "one query and await",
+      "wire reader",
+      "installer and observed-baseline.json",
+      "wrapper and all ten mandatory proof groups",
+      "all assertions and ownership/cleanup",
+      "90s effect/35s drain/130s wrapper",
+      "3 clusters/16 connections/4096 operations",
+      "all prior source-task and handoff text"
+    ],
+    "runtimeExecuted": false,
+    "hostedInstalled": false,
+    "independentRootReviewRequired": true,
+    "fullFreshIntegrationGatesRequired": true,
+    "sourceDocumentHistoryPreservedVerbatim": true
+  }
 }

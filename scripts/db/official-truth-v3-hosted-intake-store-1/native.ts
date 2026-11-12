@@ -680,7 +680,7 @@ export async function runHostedIntakeNative(t:TestContext):Promise<void>{
         }finally{
           clearTimeout(timer)
           if(!ended)child.kill('SIGKILL')
-          await lifetime.drain([closed,output,...jobs])
+          await lifetime.drain<unknown>([closed,output,...jobs])
           releaseStop();children.delete(child)
         }
       }

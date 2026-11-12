@@ -167,3 +167,16 @@ Source-only immutable Git objects and inert text/hash/tree comparisons. **No pro
 ## V2 recovery lifetime clarification
 
 The exact same worker LOGIN and automatic Creator-administration row survive Caller unbinding and unused HM04 removal. The unchanged final recovery gate still requires no live Caller binding. No role/grant cleanup step was added to recovery SQL. The authored fixture retains the LOGIN for the existing reinstall proof; any actual Creator deletion would be eligible only after successful HM04 teardown and separate scope selection. Both A2 copies preserve the original same-Creator, READ COMMITTED, seven-lock, fresh-history and RESTRICT contracts.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Recovery changes only two exact HS1 package-context digest literals so both checks bind the corrected prerequisite; all locks, isolation, graph checks, unused/history refusal and RESTRICT teardown remain exact.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

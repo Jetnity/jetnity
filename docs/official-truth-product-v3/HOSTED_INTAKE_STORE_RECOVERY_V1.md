@@ -83,3 +83,16 @@ The original S1 semantic coverage also remains: full retained shapes, before-ins
 - R2 / HS1-RECOVERY-02 / P1: https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822764045 — explicit READ COMMITTED before queries; meaningful inherited-repeatable-read late-writer source proof.
 
 Those findings are source fixes awaiting full independent review and runtime gates. They are not proof of a hosted installation or public CH→DE activation.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Recovery changes only the same two CASE parentheses as installation; READ COMMITTED selection, exact identity, locks, no-consumer/quiescence checks, used-history refusal and all RESTRICT teardown statements remain exact.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

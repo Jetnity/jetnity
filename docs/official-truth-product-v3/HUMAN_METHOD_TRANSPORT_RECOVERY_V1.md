@@ -54,3 +54,12 @@ Use the authorized human revoke operation and a separately reviewed forward repa
 
 The public CH→DE answer, D1 approval, source freshness and public cache automation are outside this source delivery. No automatic next slice is selected.
 
+
+---
+
+## HMT1-FIX1 / DIAG1 recovery boundary
+
+12 November 2026, replacement author **Jetnity Official Truth V3 Human Method Transport1 — Codex Generation2**, session `/root/hmt_diagnosis`.
+The selected source parent is `a686e608f597ffa82d44fc9d3992b9b566b89688`. This diagnostic changes no install-candidate.sql or recovery-candidate.sql bytes and grants no hosted recovery permission.
+At only the first positive Native install, the exact installer prefix and suffix share the original connection and transaction around one read-only catalog query. Any primary failure keeps the original awaited ROLLBACK behavior; a rollback failure remains aggregated with the primary error. Diagnostic serialization failure cannot report PASS. Cleanup still disposes the sole owned lifetime unconditionally before reporting, under the unchanged total drain.
+The original eight proof groups and all recovery refusal tests remain mandatory and unexecuted in this delivery. The original P7903 is unresolved until actual diagnostic execution and independent review. No ref, PR, CI, local SQL, hosted action, source GET, credentials or #917/#1131 action occurred.

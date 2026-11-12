@@ -252,3 +252,20 @@ The existing wrapper and every other leaf remain byte/type/mode exact. No new pa
 HMT public wrappers must precede HM04's final prerequisite-dependency freeze; later HMT installation would correctly be detected as drift. HMT independent SOURCE PASS is https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826146481 . Do not integrate or execute HMT in this bounded fix; Root separately selects the complete accepted-package composition/PG17 routing and full Native proof.
 
 Source-only immutable Git objects and inert text/hash/tree comparisons. **No project/parser/compiler/test/native/SQL/APT/build/CI/hosted/sourceGET execution; no ref/PR, Ready or merge.** No attempt to remove protected bootstrap grants. #917 STOP absolute; #1131 remains NOT_REQUIRED/untouched. E10 remains open. Deliver full raw pins/tree/soleparent/unchanged-leaf and complete inverse proofs, then STOP for independent Root review. No PO re-approval required or requested.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Root task: implement the specific HS1 type/SQL syntax and copied HM04 syntax corrections on the failed HDP parent; keep every guard, scenario, quota and resource boundary; bind complete current installer/dependency pins; deliver only immutable source objects for independent review. Root additionally selected HM04 recovery-candidate.sql solely for the corrected HS1 dependency-context digest and directly affected exact body identities, preserving unused/history refusal rules. COMPOSED and HDP pin reconciliation belongs to Root.
+
+Actual HDP CI4139 / run43258240430: HM04 failed at intake_candidate with SQLSTATE42601; its 31 groups are not passed. The two copied HS1 CASE operands are parenthesized. The exact selected HS1 installer digest changes to 9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55 in all three installer package-context occurrences, both recovery occurrences and the one Native assertion. The runtime assert_catalog_v1 body changes only in that context digest; its complete current body is covered by the unchanged fresh computed catalog fingerprint. No fixed self-body guard is removed or weakened. All 31 groups, full quotas, original 240/60/300-second limits and cleanup semantics remain mandatory.
+
+Historical actual failure remains FAILURE: Core typecheck stopped later Core gates; Hosted PG17 had 19 tests, 10 PASS, 9 FAIL, 0 skip. Sources: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466 and https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

@@ -1,10 +1,12 @@
 {
   "schema": "jetnity.human-method-transport.source-manifest.v1",
-  "status": "SOURCE_ONLY_UNPUBLISHED_UNAPPLIED_NOT_RUN",
+  "status": "HMT1_DIAG1_SOURCE_ONLY_NOT_RUN_P7903_UNRESOLVED",
   "author": {
-    "name": "Jetnity Official Truth V3 Human Method Transport1 — Codex Generation1",
-    "session": "/root/human_method_transport_writer_g1",
+    "name": "Jetnity Official Truth V3 Human Method Transport1 — Codex Generation2",
+    "session": "/root/hmt_diagnosis",
     "newSession": true,
+    "replacementFor": "/root/human_method_transport_writer_g1",
+    "replacementReason": "Original session is not available in the new parent thread; permanent PO replacement-session exception applies.",
     "rootOwnsAcceptance": true
   },
   "authorization": {
@@ -14,12 +16,10 @@
     "completeVerbatimTaskPath": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md"
   },
   "sourceParent": {
-    "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
-    "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "commit": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "tree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
     "parentCount": 1,
-    "baseLeaves": 9486,
-    "baseLeafInventorySha256": "d17063fa89c6f7700fb40f138fd67b49c55f07c7846bdec65281413adc614c53",
-    "inventoryEncoding": "UTF-8 JSON.stringify of all non-tree leaves, each {path,mode,type,sha}, sorted by JavaScript lexical path ordering"
+    "baseLeaves": 9538
   },
   "scope": {
     "addedPaths": [
@@ -61,9 +61,9 @@
       "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
       "mode": "100644",
       "type": "blob",
-      "bytes": 60316,
-      "sha256": "92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8",
-      "gitBlobSha1": "42139d341977af27994cd812d1f970c05500319b"
+      "bytes": 71545,
+      "sha256": "e4d8bf39881ac41c9203c78be519074a5c3ff7ce017ab4bdcc3ff660d0fda5d1",
+      "gitBlobSha1": "b57f1f6d66d3a98d28721db2c2b31f6d058df0b1"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
@@ -77,25 +77,25 @@
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 13958,
-      "sha256": "81dcc830e3e17c2c8cc95220465ca88ee4838166ddf52c078c8e59fddc8b8353",
-      "gitBlobSha1": "5f813e9b3cd669695a19cebd5826ab21e1eb9189"
+      "bytes": 22723,
+      "sha256": "ae9d0684a6f9b8dba424bbc4898b9b4c1df6d25817aa169bed1377458e464481",
+      "gitBlobSha1": "e7234ccca57d896024ac3c5cace28bd90d35a0d0"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 10363,
-      "sha256": "31f3feb5b25cd5963b6bae778bea4c06cdd46b0c138ef6d9f3f2682c5ab75eb5",
-      "gitBlobSha1": "90ffbfaa2c9f6cc49d54437e6ab0a61c38863df9"
+      "bytes": 13241,
+      "sha256": "6c03633a085374bfbc37a81b4c935debdebb628d96477397bc38e39d9efb2562",
+      "gitBlobSha1": "ea8225302f365bde35ac4500b089b50ad2481fa1"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
       "mode": "100644",
       "type": "blob",
-      "bytes": 6973,
-      "sha256": "27ef12443a2a68a57f2a5b2938921591e437ec6beae06c310480ba4bcc67d2f5",
-      "gitBlobSha1": "9dad9379108c8319625bf3ead60d624fb5482947"
+      "bytes": 8120,
+      "sha256": "1a1cfccdf9a627daec8e2f82bf3c7d22cdf9a8d3724f69975c705bc94829eb1e",
+      "gitBlobSha1": "f5b597d63862418435d1d834963237d83ecb7f6e"
     }
   ],
   "manifestSelf": {
@@ -504,5 +504,182 @@
     "1131": "NOT_REQUIRED_UNTOUCHED",
     "automaticFollowOn": false,
     "stopAfterImmutableDelivery": true
+  },
+  "historicalBeforeDiag1": {
+    "manifestBlob": "7730009b6ed6526ffce214048ecfe5896a915b59",
+    "status": "SOURCE_ONLY_UNPUBLISHED_UNAPPLIED_NOT_RUN",
+    "author": {
+      "name": "Jetnity Official Truth V3 Human Method Transport1 — Codex Generation1",
+      "session": "/root/human_method_transport_writer_g1",
+      "newSession": true,
+      "rootOwnsAcceptance": true
+    },
+    "sourceParent": {
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+      "parentCount": 1,
+      "baseLeaves": 9486,
+      "baseLeafInventorySha256": "d17063fa89c6f7700fb40f138fd67b49c55f07c7846bdec65281413adc614c53",
+      "inventoryEncoding": "UTF-8 JSON.stringify of all non-tree leaves, each {path,mode,type,sha}, sorted by JavaScript lexical path ordering"
+    },
+    "authoredArtifacts": [
+      {
+        "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 53457,
+        "sha256": "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e",
+        "gitBlobSha1": "35032f238248155338c0a8d379b32e514acb699c"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 82578,
+        "sha256": "466aec15092184101cca179201612b5569e3af3a758c71d1f0ad47ee962959e7",
+        "gitBlobSha1": "b3350758015503f63514552954cc6bcf2f1b8eb8"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 60316,
+        "sha256": "92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8",
+        "gitBlobSha1": "42139d341977af27994cd812d1f970c05500319b"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 439,
+        "sha256": "f471be4cc81a58d9c4d715e642210ae9b50415836c3e3836e888b6d2c4337061",
+        "gitBlobSha1": "e5ce7611c0e894f25a5617dfc5fb8d60ce8b0055"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 13958,
+        "sha256": "81dcc830e3e17c2c8cc95220465ca88ee4838166ddf52c078c8e59fddc8b8353",
+        "gitBlobSha1": "5f813e9b3cd669695a19cebd5826ab21e1eb9189"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 10363,
+        "sha256": "31f3feb5b25cd5963b6bae778bea4c06cdd46b0c138ef6d9f3f2682c5ab75eb5",
+        "gitBlobSha1": "90ffbfaa2c9f6cc49d54437e6ab0a61c38863df9"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
+        "mode": "100644",
+        "type": "blob",
+        "bytes": 6973,
+        "sha256": "27ef12443a2a68a57f2a5b2938921591e437ec6beae06c310480ba4bcc67d2f5",
+        "gitBlobSha1": "9dad9379108c8319625bf3ead60d624fb5482947"
+      }
+    ]
+  },
+  "reviewFixDiag1": {
+    "task": {
+      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829594544",
+      "bytes": 3082,
+      "sha256": "0acdf603206ca5fb159228b7d40a4e674d3766ad38bee9fd3b1da7060ba32ae2",
+      "completeBodyPath": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md"
+    },
+    "priorFailure": {
+      "url": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466",
+      "head": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+      "runId": 43258240430,
+      "attempt": 1,
+      "jobId": 131322201372,
+      "jobLogBytes": 159255,
+      "jobLogSha256": "3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c",
+      "firstHmtGroup": "P7903",
+      "completedHmtGroups": 0,
+      "status": "FAILED_NOT_REPAIRED_BY_DIAGNOSTIC"
+    },
+    "currentStatus": "SOURCE_ONLY_NOT_RUN",
+    "changedPaths": [
+      "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json"
+    ],
+    "unchangedParentLeaves": 9533,
+    "installAndRecoveryUnchanged": true,
+    "oldNative": {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 60316,
+      "sha256": "92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8",
+      "gitBlobSha1": "42139d341977af27994cd812d1f970c05500319b"
+    },
+    "newNative": {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 71545,
+      "sha256": "e4d8bf39881ac41c9203c78be519074a5c3ff7ce017ab4bdcc3ff660d0fda5d1",
+      "gitBlobSha1": "b57f1f6d66d3a98d28721db2c2b31f6d058df0b1"
+    },
+    "diagnostic": {
+      "firstPositiveInstallOnly": true,
+      "boundary": "DO $hmt1_exact_inventory$",
+      "prefixAndSuffixUnchanged": true,
+      "sameExistingConnection": true,
+      "oneReadOnlyQuery": true,
+      "rows": 4,
+      "maximumSerializedBytes": 16384,
+      "originalNativeReceiptMaximumBytes": 32768,
+      "normalizedDefinitionCharacterLimit": 2048,
+      "normalizedBodyCharacterLimit": 1024,
+      "dependencyAndAclSampleRowLimit": 8,
+      "exactMismatchCounts": true,
+      "noAuthOrClaimRows": true,
+      "primaryFailurePreserved": true,
+      "ownedRollbackAwaited": true,
+      "executeStatus": "NOT_RUN",
+      "queryBytes": 8149,
+      "querySha256": "00b273a01852bfbba56efaf9f2c224d8016745c33d2278218a76c90e1e31b811"
+    },
+    "inverse": {
+      "helperRemoval": {
+        "start": "\ntype Hmt1CatalogDiagnostic =",
+        "endExclusive": "async function setClaims(connection:LocalPgConnection,value:unknown):Promise<void> {",
+        "bytes": 10948,
+        "sha256": "9991c2d2648e769fb856042891478613791e456a055c89efe6eb60751ded35af"
+      },
+      "exactReplacements": [
+        {
+          "from": "  let cluster:LocalProofCluster|undefined,f:Fixture|undefined,actualNativeHash:string|null=null\n  let catalogDiagnostic:Hmt1CatalogDiagnostic|undefined\n",
+          "to": "  let cluster:LocalProofCluster|undefined,f:Fixture|undefined,actualNativeHash:string|null=null\n"
+        },
+        {
+          "from": "      assert.equal(await db.functionOids(),null)\n      await installWithCatalogDiagnostic(db.installer,install,value=>{catalogDiagnostic=value})\n      await db.installer.query(\"SET search_path=pg_catalog\")",
+          "to": "      assert.equal(await db.functionOids(),null)\n      await transaction(db.installer,install)\n      await db.installer.query(\"SET search_path=pg_catalog\")"
+        },
+        {
+          "from": "  if(catalogDiagnostic!==undefined){\n    try { t.diagnostic('HMT1_DIAG1 '+JSON.stringify(catalogDiagnostic)) }\n    catch(error) { if(!failed){failed=true;failure=error} }\n  }\n  const receipt={\n    schema:'jetnity.hmt1.native.v1'",
+          "to": "  const receipt={\n    schema:'jetnity.hmt1.native.v1'"
+        }
+      ],
+      "restoresNativeSha256": "92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8",
+      "inertFullStringComparison": true
+    },
+    "preserved": {
+      "mandatoryGroups": 8,
+      "effectLimitMs": 180000,
+      "totalDrainLimitMs": 35000,
+      "wrapperLimitMs": 240000,
+      "totalConnectionLimit": 160,
+      "maximumOwnedClusters": 3,
+      "allHostilePreflights": true,
+      "allInstallerInventoryGuards": true,
+      "wrapperAndPg1HmaAndWireUnchanged": true
+    }
   }
 }

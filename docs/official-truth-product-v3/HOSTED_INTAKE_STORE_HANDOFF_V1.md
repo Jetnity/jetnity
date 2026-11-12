@@ -156,3 +156,24 @@ Keep the complete previous Task/Handoff/history verbatim, append this complete t
 
 ### Delivery boundary
 Only immutable Git objects and inert text/hash/tree comparisons; no parser/compiler/SQL/native/tests/build/APT execution, CI/ref/PR publication, Ready, merge, hosted action or official source GET. Full actual tree/sole-parent and raw file readback; give exact pins, complete complement equality and a full Native inverse restoring a71ca9a…. STOP for independent Root review. Same session remains available. #917/#1131 remain untouched. Actual joint PG17/main integration will be a separate explicit Root task; do not begin it automatically.
+
+
+---
+
+## Current review fix HS1/HM04-FIX1 — 12 November 2026
+
+New replacement session /root/hs1_hm04_fix under the Product Owner’s permanent approval for unreachable original sessions; this is not the original HS1 Generation1 or HM04 Generation4 session.
+
+Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54fad7d9981f8b7676b42b271bf6740a17f48; 9538 leaves. Earlier author/session and NOT_RUN paragraphs above are dated historical evidence.
+
+Actual HDP CI4139 / run43258240430: Typecheck failed at HS1 native.ts(683,40), and HS1 encountered SQLSTATE42601. Both installer and recovery have two top-level IF comparisons with CASE expressions whose inner THEN must be protected by parentheses. Only those CASE operands are parenthesized, with every value, guard and clause retained. Native explicitly selects drain<unknown> for the original [closed, output, ...jobs] promises; the same objects are registered and awaited with unchanged failure/cleanup behavior. All 18 groups and 150/35/210-second limits remain mandatory.
+
+- scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql — blob f93c254231af405101492cde0a6947bf4d4d4b89, 123166 UTF8 bytes, SHA256 9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55
+- scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql — blob e87024ebe82102e4756ee0a87ccb966c9de1b75f, 42121 UTF8 bytes, SHA256 2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2
+- scripts/db/official-truth-v3-hosted-intake-store-1/native.ts — blob 25fb64ae0c42d688bd6701f7c1a1db3bd4c74916, 64749 UTF8 bytes, SHA256 4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21
+
+Historical actual failure remains FAILURE: Core typecheck stopped later Core gates; Hosted PG17 had 19 tests, 10 PASS, 9 FAIL, 0 skip. Sources: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466 and https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816.
+
+Both wrappers remain exact. All old task/handoff text above is retained byte-for-byte; manifests retain historical pins and append the precise forward/inverse edit ledger. The current 14-path combined candidate changes six source files and these eight evidence documents, with 9524 other parent leaves exact. Downstream COMPOSED/HDP consumes these changed hashes and must be rebound explicitly by Root.
+
+SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.

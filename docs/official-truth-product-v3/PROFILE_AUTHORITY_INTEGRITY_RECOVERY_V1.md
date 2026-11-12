@@ -1,3 +1,16 @@
+<!-- PAI1_FIX1_CURRENT_BEGIN -->
+## PAI1-FIX1 — current source-only correction, 12 November 2026
+
+New replacement author: **Jetnity Profile Authority Integrity1 — Codex Generation2**, session `/root/pai_fix`; the original Generation1 session is unreachable in the current thread, and the Product Owner's standing replacement-session authorization applies.
+Sole parent: `a686e608f597ffa82d44fc9d3992b9b566b89688`; base tree: `b4f54fad7d9981f8b7676b42b271bf6740a17f48`.
+Selected [PAI1-FIX1 task](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829530744); [actual CI4139 failure](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466).
+The only executable source edit adds distinct `claim_reset`, `sub_reset`, and `claims_value` result labels to the existing three-expression `setClaims()` SELECT.
+All calls, arguments, parameter, false flag, order, await, assertions, ten proof groups and resource limits remain exact; the wire reader, installer, baseline and wrapper are unchanged.
+Current native: **62649 UTF-8 bytes**, SHA-256 `926ba90156ef7ea279a34fb64d2bdb3fe66eb3c07bc149dccc858ebe36f20cf7`, Git blob `7fefc442cfbd7344fa9cbe992bcd733803e1c094`.
+**NOT_RUN / NOT_INSTALLED / NOT_TL_PASS**: no project, parser, compiler, test, native, SQL, CI, hosted, official-source or ref action was performed by this replacement author.
+The earlier SOURCE-V1/A1 material below is preserved historical evidence; this section records the current revision.
+<!-- PAI1_FIX1_CURRENT_END -->
+
 # Profile Authority Integrity 1 — forward recovery
 
 **SOURCE ONLY / UNAPPLIED. No rollback-to-vulnerable script is provided.** This document belongs to the SOURCE-V1/A1 candidate with sole parent `fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474`; it is not an instruction to execute SQL from this author session.
@@ -37,3 +50,8 @@ Fixture-only adversarial mutations in `native.ts` are confined to owned disposab
 The profile table lock protects conflicting writes and table DDL. It cannot establish that an independently privileged database operator has stopped changing helper functions, role memberships, schema ACLs or creator defaults. Root must separately establish an operator-quiescent interval covering actual apply and readback. A caller flag, zero count, snapshot, invented catalog lock or source assertion is not evidence of that external condition.
 
 An actual successful source review and mandatory PG17 native result are still prerequisites. Root then binds the exact Dev target, current catalogs, external quiescence, source digest and recovery readback before a selected apply. No Production equivalence, signed Owner/AAL2 result, E18/E24 closure or CH→DE publication follows from this document.
+
+
+## FIX1 recovery scope
+
+This correction changes only fixture result-column labels; the installer and all database recovery rules above remain byte-exact. It neither installs the profile guard nor authorizes rollback to the vulnerable state. A future failed native proof must retain its original error and owned cleanup; no duplicate-column suppression is introduced. Current execution status remains NOT_RUN pending Root's complete integration and gates.

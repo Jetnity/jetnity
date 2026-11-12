@@ -85,3 +85,63 @@ Primary semantics Root checked: https://docs.postgrest.org/en/stable/references/
 Root explicitly selected this new implementation session. It is not a fabricated Cursor UI session or a successor to the reachable HMA1 implementer. The same-session review-fix rule applies to this delivered source. Root separately supplied HMA1 R5-C candidate `b26c3a5ed0a16ef6d5c768a09391cfaa0412625b`, tree `eb71fad26c651edada873229efd62982472e5948`; its installer/recovery/native pins are unchanged from the selected R5-B prerequisites. R5-C independent source/runtime acceptance remained pending at dispatch. This source does not import that branch's leaves into its tree.
 
 This session performed source reads, inert string composition and immutable metadata/hash/readback only. No parser, compiler, native PostgreSQL, SQL, project test/build, CI, source GET, hosted action, branch/ref, PR, Ready or merge is authorized here. All native groups are authored **NOT_RUN**. Root must explicitly integrate the accepted HMA1 sibling and select this exact wrapper into the closed PG17 test partition before any publication/runtime acceptance.
+
+---
+
+## HMT1-FIX1 / DIAG1 — replacement session, 12 November 2026
+
+Selected replacement: **Jetnity Official Truth V3 Human Method Transport1 — Codex Generation2**, actual session **/root/hmt_diagnosis**.
+The original Generation1 session `/root/human_method_transport_writer_g1` is not available in this new parent thread; this is an openly documented replacement under the permanent PO exception, not a claimed resumption.
+Sole source parent: `a686e608f597ffa82d44fc9d3992b9b566b89688`, tree `b4f54fad7d9981f8b7676b42b271bf6740a17f48` (9,538 leaves).
+This source-only diagnostic is **NOT_RUN** and does not fix or waive P7903. Root owns independent review, coherent package integration and actual CI selection.
+
+### Prior observed failure — complete Root evidence
+
+Source: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466
+
+## TL CHANGES REQUIRED — HDP1-A1 / CI4139
+
+Exact head `a686e608f597ffa82d44fc9d3992b9b566b89688`, run `43258240430`, attempt1. Root independently read both complete failing logs. No Ready, merge, Dev installation, source/public activation or retry of this unchanged head is selected.
+
+**Core job131322201382:** 108128 bytes, SHA256 `3d20826117e7e24ce8ea3b977aa0b4aa83e4ddef2d3d773c8f6fb193d05c8890`. Typecheck fails at HS1 native.ts(683,40): Promise<Record<string,unknown>> cannot be passed as Promise<void>. Later Core gates did not execute.
+
+**Hosted PG17 job131322201372:** 159255 bytes, SHA256 `3e7a7eb2f7a293a83419fccf087ecf2d67816f2db4f122ed625f878019cfe55c`. Actual signed packages/owned server report PG170012. Six mandatory wrappers executed; 19 tests,10pass,9fail,0cancel,0skip.
+
+- COMPOSED C01 fails with SQLSTATE42601 before any group completes.
+- HM04 fails specifically at phase intake_candidate with SQLSTATE42601; all25 owned operations settled, three connections closed and one started cluster stopped. Its own31-group proof is not passed.
+- HS1's first atomic prerequisite group passes; its next hostile-grant group encounters42601 instead of the expected guarded refusal. This is a real failure, not acceptable refusal evidence.
+- HMT's first group fails withP7903; no HMT group completes. Actual442/442 owned operations, four connections closed, one started cluster stopped.
+- PAI1's first baseline-defect group fails with local_pg_duplicate_column from the actual wire reader; no subsequent profile-integrity proof passes.
+- The unchanged HMA1 package still passes all eight groups, actual owned waits/rollback/late-writer recovery and terminal cleanup. That does not waive any failure above.
+
+### Immediate versioned original-session review-fix assignments
+
+**HS1/HDP1-FIX1:** original Hosted Intake / HDP1 Generation1 session takes the immediate HS1 type/SQL42601 review-fix. Source parent is this exact failed a686 head. Permitted source edits only within the original eight HS1 package paths: install/recovery/native/wrapper and four HOSTED_INTAKE_STORE evidence documents, plus the three HOSTED_DEV_PACKAGE evidence documents. Diagnose the actual syntax/typed ownership cause first; report it precisely. Repair syntax/types while preserving every role/grantor/dependency/RLS/catalog requirement, every scenario, original effect/drain/deadline limits, actual joins and failure propagation. No catch/skip/expected42601 workaround, relaxed inventory or runtime authority. Any changed self-body/dependency pins must be complete and independently reconstructable. Do not silently rewrite COMPOSED or HM04 source pins; report the exact downstream dependency amendment needed for a separately selected integration.
+
+**HMT1-FIX1:** original Human Method Transport Generation1 session pauses the in-progress UI task with its source retained and immediately diagnoses the actual P7903. Source parent is the same failed a686 head. Permitted source edits only within its original eight HMT package paths (install/recovery/native/wrapper plus four HUMAN_METHOD_TRANSPORT evidence documents). Any correction must retain all four parsed SQL INVOKER wrappers, exact actual Owner/AAL2 PG1 chain, role/ACL/dependency/function-identity checks, unchanged historical receipts, fresh confirmation, every eight Native groups and original resource/cleanup limits. Do not convert a shape/identity refusal into expected success or relax the guard. If the existing redacted SQLSTATE does not identify the cause, report the precise bounded diagnostic source amendment first; do not claim a speculative cause. The UI task remains unfinished, with its A1 dependency parent historical until Root reconciles the corrected integration.
+
+PAI1-FIX1 remains assigned to the original PAI author once its precise baseline query defect is independently identified. No changes to the production wire reader or old profile/Auth baseline are authorized.
+
+All fixes are **SOURCE ONLY**: immutable Git object authoring and inert text/hash/tree inspection; no parser/compiler/project/test/native/SQL/APT/CI/hosted/sourceGET execution or refs/PRs/Ready/merge. Preserve every prior task/handoff/failure verbatim, append the exact fix task, provide complete parent→candidate diff/inverse/full pins and honest NOT_RUN status, then STOP reachable. Root reviews actual changes, selects a coherent new integration head and performs complete fresh exact-head gates. No author self-review substitutes for TL-PASS.
+
+#917's accepted human Stage1 readback stays scoped; the denied action is not repeated, rerouted or delegated. #1131 remains NOT_REQUIRED and untouched. No weakening of user or platform security boundaries.
+
+### Selected DIAG1 task — complete authoritative body
+
+Source: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829594544
+
+## HMT1-FIX1 / DIAG1 — selected bounded actual-catalog diagnosis, no guard relaxation
+
+Root reviewed the full failed log and actual HMT first-group source. The unwrapped P7903 is emitted by one of five families in the unchanged final hmt1_exact_inventory block, but the existing wire transport intentionally exposes only SQLSTATE. No actual failed predicate or corrected expected value is yet established.
+
+This explicitly selects the original HMT Generation1 author's proposed diagnostic source amendment before any speculative installer change. It extends #1196 comment6829449466 only as follows.
+
+At the **one first positive install** in HMT1-01, replace the single transaction call with a bounded helper that splits the exact selected install string at its unique final `DO $hmt1_exact_inventory$` boundary. Assert uniqueness and complete prefix+suffix equality. On the same existing actual NOSUPERUSER postgres installer connection, execute the byte-identical prefix, run exactly one finite read-only catalog query for the four fixed public wrapper names, then execute the byte-identical inventory/receipt/COMMIT suffix. Preserve the original thrown error and await ROLLBACK through the existing owned lifetime on failure. Do not retry or create a new connection, cluster, identity, success path or transaction.
+
+The fixed query may return only these four synthetic wrapper metadata rows: function identity fields; bounded normalized pg_get_functiondef/pg_get_function_sqlbody plus original lengths; finite direct dependency, shared dependency and explicit ACL summaries; exact effective-right mismatch counts. Include complete identity and actual mismatch facts needed to distinguish the five existing refusal families. No real accounts, Auth rows, session/claim data, arbitrary SQL text, environment, credentials, hosted metadata or broad catalog dump. Cap the serialized diagnostic at16KiB and preserve the original receipt's32KiB cap. If bounds/diagnosis fail, preserve the actual primary failure and report a finite diagnostic-unavailable code; never turn it into PASS.
+
+All query promises remain registered/awaited by the same original lifetime; actual operation/connection/resource bounds and terminal assertions remain unchanged. All original hostile preflights and eight proof groups remain mandatory. The full original install/recovery bytes, function/ACL/dependency checks, wrapper, PG1/HMA and wire reader remain exact.
+
+Allowed edits for this diagnostic head: HMT native.ts and its four existing HUMAN_METHOD_TRANSPORT evidence documents only;9533other parent leaves exact. Soleparenta686e608f597ffa82d44fc9d3992b9b566b89688. Preserve complete prior tasks, full DIAG1 and failed evidence. Publish no ref/PR; execute nothing. Return complete immutable source, exact inverse/pins/tree and NOT_RUN, then STOP. Root must independently review and select a coherent new integration/CI before any actual diagnostic execution.
+
+The retained UI work, including A1b #1169 comment6829466460, stays paused. #917/#1131 and genuine human identity boundaries remain unchanged.

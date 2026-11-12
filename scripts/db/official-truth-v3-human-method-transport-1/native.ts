@@ -325,6 +325,157 @@ async function transaction(connection:LocalPgConnection,candidate:string):Promis
     throw error
   }
 }
+
+type Hmt1CatalogDiagnostic =
+  | Readonly<{schema:'jetnity.hmt1.catalog-diagnostic.v1';status:'observed';rows:readonly unknown[]}>
+  | Readonly<{schema:'jetnity.hmt1.catalog-diagnostic.v1';status:'unavailable';code:'source_split'|'prefix'|'query'|'bounds'}>
+const HMT1_DIAG1_LIMIT=16_384
+// One selected read of four synthetic wrapper identities; no Auth, claim or
+// credential values. Samples are finite and exact full mismatch counts remain.
+const HMT1_DIAG1_SQL = `WITH expected(ordinal,name,signature,target_signature) AS (
+  VALUES
+    (1,'official_v3_method_stage_draft_v1','public.official_v3_method_stage_draft_v1(text,text,integer,text,text,integer)','official_v3_method_api.stage_draft_v1(text,text,integer,text,text,integer)'),
+    (2,'official_v3_method_approve_v1','public.official_v3_method_approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)','official_v3_method_api.approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)'),
+    (3,'official_v3_method_revoke_v1','public.official_v3_method_revoke_v1(text,text,integer,text,text,integer)','official_v3_method_api.revoke_v1(text,text,integer,text,text,integer)'),
+    (4,'official_v3_method_confirm_operation_v1','public.official_v3_method_confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)','official_v3_method_api.confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)')
+), observed AS (
+  SELECT e.*,p.*,pg_catalog.to_regprocedure(e.target_signature)::oid AS target_oid,
+    pg_catalog.pg_get_functiondef(p.oid) AS definition,
+    pg_catalog.pg_get_function_sqlbody(p.oid) AS body
+  FROM expected e LEFT JOIN pg_catalog.pg_proc p ON p.oid=pg_catalog.to_regprocedure(e.signature)
+)
+SELECT pg_catalog.jsonb_build_object(
+  'name',f.name,'signature',f.signature,'targetOid',f.target_oid,
+  'fourNameCount',(SELECT count(*) FROM pg_catalog.pg_proc
+    WHERE pronamespace=2200 AND proname IN (
+      'official_v3_method_stage_draft_v1','official_v3_method_approve_v1',
+      'official_v3_method_revoke_v1','official_v3_method_confirm_operation_v1')),
+  'identity',pg_catalog.jsonb_build_object(
+    'oid',f.oid,'namespace',f.pronamespace,'owner',f.proowner,'language',f.prolang,
+    'kind',f.prokind,'securityDefiner',f.prosecdef,'returnsSet',f.proretset,
+    'leakproof',f.proleakproof,'strict',f.proisstrict,'volatility',f.provolatile,
+    'parallel',f.proparallel,'variadic',f.provariadic,'returnType',f.prorettype,
+    'argumentCount',f.pronargs,'defaultCount',f.pronargdefaults,
+    'argumentTypes',f.proargtypes::text,'allArgumentTypes',f.proallargtypes,
+    'argumentModes',f.proargmodes,'argumentNames',f.proargnames,
+    'argumentDefaultsNull',f.proargdefaults IS NULL,'transformTypes',f.protrftypes,
+    'binaryNull',f.probin IS NULL,'support',f.prosupport,
+    'parsedBodyPresent',f.prosqlbody IS NOT NULL,'sourceEmpty',f.prosrc='',
+    'cost',f.procost,'rows',f.prorows,'config',f.proconfig,
+    'comment',pg_catalog.left(pg_catalog.obj_description(f.oid,'pg_proc'),128),
+    'commentBytes',pg_catalog.octet_length(pg_catalog.obj_description(f.oid,'pg_proc'))),
+  'definition',pg_catalog.jsonb_build_object(
+    'originalBytes',pg_catalog.octet_length(f.definition),
+    'normalizedBytes',pg_catalog.octet_length(pg_catalog.regexp_replace(pg_catalog.btrim(f.definition),'[[:space:]]+',' ','g')),
+    'normalized',pg_catalog.left(pg_catalog.regexp_replace(pg_catalog.btrim(f.definition),'[[:space:]]+',' ','g'),2048)),
+  'body',pg_catalog.jsonb_build_object(
+    'originalBytes',pg_catalog.octet_length(f.body),
+    'normalizedBytes',pg_catalog.octet_length(pg_catalog.regexp_replace(pg_catalog.btrim(f.body),'[[:space:]]+',' ','g')),
+    'normalized',pg_catalog.left(pg_catalog.regexp_replace(pg_catalog.btrim(f.body),'[[:space:]]+',' ','g'),1024)),
+  'dependencies',pg_catalog.jsonb_build_object(
+    'count',(SELECT count(*) FROM pg_catalog.pg_depend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid),
+    'mismatches',(SELECT count(*) FROM pg_catalog.pg_depend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid
+        AND (d.objsubid<>0 OR d.refobjsubid<>0 OR d.deptype<>'n'
+          OR NOT((d.refclassid='pg_catalog.pg_namespace'::pg_catalog.regclass AND d.refobjid=2200)
+            OR (d.refclassid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.refobjid=f.target_oid)))),
+    'namespaceCount',(SELECT count(*) FROM pg_catalog.pg_depend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid
+        AND d.refclassid='pg_catalog.pg_namespace'::pg_catalog.regclass AND d.refobjid=2200),
+    'targetCount',(SELECT count(*) FROM pg_catalog.pg_depend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid
+        AND d.refclassid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.refobjid=f.target_oid),
+    'incomingCount',(SELECT count(*) FROM pg_catalog.pg_depend d
+      WHERE d.refclassid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.refobjid=f.oid),
+    'initialPrivilegeCount',(SELECT count(*) FROM pg_catalog.pg_init_privs d
+      WHERE d.classoid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objoid=f.oid),
+    'securityLabelCount',(SELECT count(*) FROM pg_catalog.pg_seclabel d
+      WHERE d.classoid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objoid=f.oid),
+    'sample',COALESCE((SELECT pg_catalog.jsonb_agg(pg_catalog.to_jsonb(d)) FROM (
+      SELECT classid,objsubid,refclassid,refobjid,refobjsubid,deptype FROM pg_catalog.pg_depend
+      WHERE classid='pg_catalog.pg_proc'::pg_catalog.regclass AND objid=f.oid
+      ORDER BY classid,objsubid,refclassid,refobjid,refobjsubid,deptype LIMIT 8
+    ) d),'[]'::jsonb)),
+  'acl',pg_catalog.jsonb_build_object(
+    'null',f.proacl IS NULL,'count',(SELECT count(*) FROM pg_catalog.aclexplode(f.proacl)),
+    'grantees',(SELECT count(DISTINCT a.grantee) FROM pg_catalog.aclexplode(f.proacl) a),
+    'mismatches',(SELECT count(*) FROM pg_catalog.aclexplode(f.proacl) a
+      WHERE a.grantor<>'postgres'::pg_catalog.regrole
+        OR a.grantee NOT IN ('postgres'::pg_catalog.regrole,'authenticated'::pg_catalog.regrole)
+        OR a.privilege_type<>'EXECUTE' OR a.is_grantable),
+    'sample',COALESCE((SELECT pg_catalog.jsonb_agg(pg_catalog.to_jsonb(a)) FROM (
+      SELECT grantor,grantee,privilege_type,is_grantable FROM pg_catalog.aclexplode(f.proacl)
+      ORDER BY grantor,grantee,privilege_type,is_grantable LIMIT 8
+    ) a),'[]'::jsonb)),
+  'sharedDependencies',pg_catalog.jsonb_build_object(
+    'count',(SELECT count(*) FROM pg_catalog.pg_shdepend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid),
+    'distinctCount',(SELECT count(DISTINCT (d.refobjid,d.deptype)) FROM pg_catalog.pg_shdepend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid),
+    'mismatches',(SELECT count(*) FROM pg_catalog.pg_shdepend d
+      WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid
+        AND (d.dbid<>(SELECT oid FROM pg_catalog.pg_database WHERE datname=pg_catalog.current_database())
+          OR d.objsubid<>0 OR d.refclassid<>'pg_catalog.pg_authid'::pg_catalog.regclass
+          OR NOT((d.deptype='o' AND d.refobjid='postgres'::pg_catalog.regrole)
+            OR (d.deptype='a' AND d.refobjid='authenticated'::pg_catalog.regrole)))),
+    'sample',COALESCE((SELECT pg_catalog.jsonb_agg(pg_catalog.to_jsonb(d)) FROM (
+      SELECT dbid,classid,objsubid,refclassid,refobjid,deptype FROM pg_catalog.pg_shdepend
+      WHERE classid='pg_catalog.pg_proc'::pg_catalog.regclass AND objid=f.oid
+      ORDER BY dbid,classid,objsubid,refclassid,refobjid,deptype LIMIT 8
+    ) d),'[]'::jsonb)),
+  'effectiveRights',(SELECT pg_catalog.jsonb_build_object(
+    'deniedRoleExecuteCount',count(*) FILTER(WHERE r.rolname IN ('anon','service_role','ot_v3_method_reader')
+      AND pg_catalog.has_function_privilege(r.oid,f.oid,'EXECUTE')),
+    'usageMismatchCount',count(*) FILTER(WHERE pg_catalog.has_function_privilege(r.oid,f.oid,'EXECUTE')
+      IS DISTINCT FROM (r.oid='postgres'::pg_catalog.regrole OR r.oid='authenticated'::pg_catalog.regrole
+        OR pg_catalog.pg_has_role(r.oid,'authenticated'::pg_catalog.regrole,'USAGE'))),
+    'grantMismatchCount',count(*) FILTER(WHERE r.oid<>'postgres'::pg_catalog.regrole
+      AND pg_catalog.has_function_privilege(r.oid,f.oid,'EXECUTE WITH GRANT OPTION'))
+  ) FROM pg_catalog.pg_roles r WHERE NOT r.rolsuper)
+)::text AS evidence
+FROM observed f ORDER BY f.ordinal`
+async function installWithCatalogDiagnostic(connection:LocalPgConnection,candidate:string,record:(value:Hmt1CatalogDiagnostic)=>void):Promise<void> {
+  const unavailable=(code:'source_split'|'prefix'|'query'|'bounds')=>record({schema:'jetnity.hmt1.catalog-diagnostic.v1',status:'unavailable',code})
+  unavailable('source_split')
+  const boundary='DO $hmt1_exact_inventory$'
+  const at=candidate.indexOf(boundary)
+  assert.ok(at>0,'hmt1 diagnostic inventory boundary absent')
+  assert.equal(candidate.indexOf(boundary,at+boundary.length),-1,'hmt1 diagnostic boundary is not unique')
+  const prefix=candidate.slice(0,at),suffix=candidate.slice(at)
+  assert.equal(prefix+suffix,candidate,'hmt1 diagnostic split changed the selected installer')
+  let diagnosticFailed=false,diagnosticFailure:unknown
+  try {
+    unavailable('prefix')
+    await connection.query(prefix)
+    unavailable('query')
+    const rows=await connection.query(HMT1_DIAG1_SQL)
+    try {
+      assert.equal(rows.length,4,'hmt1 diagnostic requires exactly four fixed wrapper rows')
+      const parsed=rows.map((row,index)=>{
+        assert.ok(row.evidence && Buffer.byteLength(row.evidence)<=HMT1_DIAG1_LIMIT,'hmt1 diagnostic row bounds')
+        const value:unknown=JSON.parse(row.evidence)
+        assert.ok(value && typeof value==='object' && !Array.isArray(value),'hmt1 diagnostic object absent')
+        assert.equal((value as Record<string,unknown>).name,WRAPPERS[index]!.publicName,'hmt1 diagnostic wrapper order drift')
+        return value
+      })
+      const diagnostic:Hmt1CatalogDiagnostic={schema:'jetnity.hmt1.catalog-diagnostic.v1',status:'observed',rows:parsed}
+      assert.ok(Buffer.byteLength(JSON.stringify(diagnostic))<=HMT1_DIAG1_LIMIT,'hmt1 diagnostic total bounds')
+      record(diagnostic)
+    }catch(error){
+      // The read succeeded, so the byte-identical inventory still runs and its
+      // actual refusal stays primary. If it succeeds, bounds failure still fails.
+      unavailable('bounds');diagnosticFailed=true;diagnosticFailure=error
+    }
+    await connection.query(suffix)
+    if(diagnosticFailed)throw diagnosticFailure
+  }catch(error){
+    try { await connection.query('ROLLBACK') }
+    catch(rollbackError) { throw new AggregateError([error,rollbackError],'hmt1 candidate and rollback failed') }
+    throw error
+  }
+}
+
 async function setClaims(connection:LocalPgConnection,value:unknown):Promise<void> {
   const json=JSON.stringify(value); assert.equal(typeof json,'string')
   await connection.query("SELECT set_config('request.jwt.claims',$1,false)",[pgText(json!)])
@@ -527,6 +678,7 @@ export async function runHumanMethodTransportNative(t:TestContext):Promise<void>
   const completed:string[]=[],groupEvidence:Record<string,unknown>={}
   let failed=false,failure:unknown,terminal:Terminal|undefined
   let cluster:LocalProofCluster|undefined,f:Fixture|undefined,actualNativeHash:string|null=null
+  let catalogDiagnostic:Hmt1CatalogDiagnostic|undefined
   let effectEnded=started,cleanupEnded=started
   const group=async(name:string,work:()=>Promise<unknown>)=>{
     lifetime.check();let passed=false,groupFailed=false,groupFailure:unknown
@@ -614,7 +766,7 @@ export async function runHumanMethodTransportNative(t:TestContext):Promise<void>
       assert.deepEqual(await db.snapshot(),clean)
       assert.deepEqual(await db.prerequisiteSnapshot(),untouched)
       assert.equal(await db.functionOids(),null)
-      await transaction(db.installer,install)
+      await installWithCatalogDiagnostic(db.installer,install,value=>{catalogDiagnostic=value})
       await db.installer.query("SET search_path=pg_catalog")
       await db.installer.query(block(install,'hmt1_exact_inventory'))
       assert.deepEqual(await db.prerequisiteSnapshot(),untouched)
@@ -933,6 +1085,10 @@ export async function runHumanMethodTransportNative(t:TestContext):Promise<void>
   if(effectEnded-started>EFFECT_MS||cleanupEnded-effectEnded>DRAIN_MS){
     const budgetError=Error('hmt1 selected effect or total cleanup limit exceeded')
     failure=failed?new AggregateError([failure,budgetError],'hmt1 failure and budget exceeded'):budgetError;failed=true
+  }
+  if(catalogDiagnostic!==undefined){
+    try { t.diagnostic('HMT1_DIAG1 '+JSON.stringify(catalogDiagnostic)) }
+    catch(error) { if(!failed){failed=true;failure=error} }
   }
   const receipt={
     schema:'jetnity.hmt1.native.v1',status:failed?'failed':'passed',syntheticOnly:true,

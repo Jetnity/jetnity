@@ -379,15 +379,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-    "bytes": 123162,
-    "blob": "6ee66138a4710f4f1b0eefa4f2c30150b1bbd1e6",
-    "sha256": "7197138e3d2be969cbc0b5c76f89143b9268035287aa84647b2a9747c7c6ecd9"
+    "bytes": 123166,
+    "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+    "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-    "bytes": 42117,
-    "blob": "a2e5961e1c16dacfa92a111353b2f110296a1c19",
-    "sha256": "539d6014fbe75129fa528f7214e69658f0fc0ff9ad7c8879efaf18f183ebcdf8"
+    "bytes": 42121,
+    "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+    "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -403,15 +403,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 342626,
-    "blob": "7e6686da97cf42abaa340b81f07982ced48ecfcf",
-    "sha256": "1dbf982c580368405d36daa8f193d2d1e9dd2097379bc736657b964683f38695"
+    "bytes": 342630,
+    "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
+    "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
     "bytes": 119673,
-    "blob": "f212b46cc1cadbc192b77da53c6767cdf87b0749",
-    "sha256": "39e68835cac901e90bccd1a33bf32a27c42d3e40d1f3750f7851ed0567cc39c3"
+    "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
+    "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
