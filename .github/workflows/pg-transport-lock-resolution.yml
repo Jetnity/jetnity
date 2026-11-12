@@ -1,0 +1,75 @@
+name: V3 PG transport dependency resolution
+
+on:
+  push:
+    branches: [feat/official-truth-v3-pg-transport-1-20261112]
+    paths: [.github/workflows/pg-transport-lock-resolution.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  resolve:
+    if: github.repository == 'Jetnity/jetnity' && github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      npm_config_ignore_scripts: 'true'
+      npm_config_audit: 'false'
+      npm_config_fund: 'false'
+      npm_config_fetch_retries: '0'
+      npm_config_fetch_timeout: '15000'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Bind unchanged input manifests
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict'
+          import { createHash } from 'node:crypto'
+          import { readFileSync } from 'node:fs'
+          assert.equal(process.versions.node.split('.')[0], '22')
+          for (const [path, sha] of [
+            ['package.json', '46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0'],
+            ['package-lock.json', '71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e'],
+          ]) assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'), sha)
+          NODE
+      - name: Resolve pinned driver and versioned declarations without package scripts
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund --save-exact --registry=https://registry.npmjs.org pg@8.23.1
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund --save-dev --save-exact --registry=https://registry.npmjs.org @types/pg@8
+      - name: Record resolved versions and content identities
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict'
+          import { createHash } from 'node:crypto'
+          import { readFileSync, writeFileSync } from 'node:fs'
+          const manifest = JSON.parse(readFileSync('package.json', 'utf8'))
+          const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'))
+          assert.equal(manifest.dependencies.pg, '8.23.1')
+          assert.match(manifest.devDependencies['@types/pg'], /^8\.\d+\.\d+$/)
+          assert.equal(lock.packages['node_modules/pg'].version, manifest.dependencies.pg)
+          assert.equal(lock.packages['node_modules/@types/pg'].version, manifest.devDependencies['@types/pg'])
+          const files = ['package.json', 'package-lock.json'].map(path => {
+            const bytes = readFileSync(path)
+            return { path, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') }
+          })
+          const receipt = { schema: 'jetnity.pg-transport.dependency-resolution.v1', node: process.versions.node,
+            pg: manifest.dependencies.pg, typesPg: manifest.devDependencies['@types/pg'], files,
+            packageScriptsExecuted: false, projectCodeExecuted: false, databaseAccessed: false }
+          writeFileSync('pg-lock-resolution.json', JSON.stringify(receipt, null, 2) + '\n')
+          console.log(JSON.stringify(receipt))
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pg-transport-lock-resolution
+          path: |
+            package.json
+            package-lock.json
+            pg-lock-resolution.json
+          if-no-files-found: error
+          retention-days: 7
